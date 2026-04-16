@@ -2,10 +2,8 @@ import mapboxgl from "mapbox-gl";
 import { MutableRefObject, useEffect } from "react";
 
 import {
-  addBorderCountry,
   addBorderLandscape,
   removeAnrPlotGeometryOverlay,
-  removeBorderCountry,
   removeBorderLandscape,
   upsertAnrPlotGeometryOverlay
 } from "../layers/overlayLayers";
@@ -18,7 +16,6 @@ type AnrMapOverlay = {
 
 type UseMapOverlaysParams = {
   map: MutableRefObject<mapboxgl.Map | null>;
-  selectedCountry?: string | null;
   selectedLandscapes?: string[];
   anrMapOverlay?: AnrMapOverlay;
   anrPlotGeometryDto?: { geojson?: any } | null;
@@ -29,7 +26,6 @@ type UseMapOverlaysParams = {
 
 export function useMapOverlays({
   map,
-  selectedCountry,
   selectedLandscapes,
   anrMapOverlay,
   anrPlotGeometryDto,
@@ -60,16 +56,6 @@ export function useMapOverlays({
       removeAnrPlotGeometryOverlay(currentMap);
     };
   }, [map, anrMapOverlay, anrPlotGeometryDto, styleReady, styleVersion, sourcesAdded]);
-
-  useEffect(() => {
-    if (map.current == null || !sourcesAdded) return;
-    if (selectedCountry) {
-      addBorderCountry(map.current, selectedCountry);
-    } else {
-      removeBorderCountry(map.current);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCountry, styleReady, styleVersion, sourcesAdded]);
 
   useEffect(() => {
     if (map.current == null || !sourcesAdded) return;

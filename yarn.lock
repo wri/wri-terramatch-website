@@ -5626,16 +5626,16 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-2.0.0.tgz#f544a148d3ab35801c1f633a7441fd87c2e484bf"
   integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
 
-"@transifex/cli@^5.0.6":
-  version "5.0.6"
-  resolved "https://registry.yarnpkg.com/@transifex/cli/-/cli-5.0.6.tgz#728c425b9ab97197233724bdae4dcb4eb4e612fd"
-  integrity sha512-WguHcMwawlT0V1dkhU8InRj3QaVZdyDOVJIGa3Fwhu+m/dTupOlJvcZHJ4Tuc+WVS/E7OrrMg3j60LJA1XcKbA==
+"@transifex/cli@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@transifex/cli/-/cli-5.4.0.tgz#69d1bbd6ad8fb5467b1eaf75488031911fef997a"
+  integrity sha512-LK8zpd8L0WXMny18u2SuhT5n+J5pAgeXQKYA6vMnDhxCvpk+6loSWOG6+6yvtHsHaWKZrqeabV1WgFUIMFXH+g==
   dependencies:
     "@babel/parser" "^7.20.3"
     "@babel/traverse" "^7.20.1"
     "@colors/colors" "^1.5.0"
     "@oclif/core" "^1.20.4"
-    "@transifex/native" "^5.0.6"
+    "@transifex/native" "^5.4.0"
     "@vue/compiler-sfc" "^3.2.45"
     angular-html-parser "^1.8.0"
     axios "^1.1.3"
@@ -5643,21 +5643,20 @@
     glob "^8.0.3"
     lodash "^4.17.21"
     pug "^3.0.2"
-    shelljs "^0.8.5"
 
-"@transifex/native@^5.0.6":
-  version "5.0.6"
-  resolved "https://registry.yarnpkg.com/@transifex/native/-/native-5.0.6.tgz#f2edea5e6242ec27a9fb1f7c98c327c2ed823d6f"
-  integrity sha512-IQICEHqOTZAFn8ig1p8IWr3B6GACm55u1UjkGu2IQUBPPrN92530VR9k3Gox80qk+H7CqW383Cc4Ail1+zVdUw==
+"@transifex/native@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@transifex/native/-/native-5.4.0.tgz#fc96855752248cd1bc43f3d51f5f6b728c842ecd"
+  integrity sha512-8ZIWSSrnzuIlCQv0xOJlkiK1Yse4e5TaQuGyq1vE97jYDddZrxi8JMFHdsigWYYKmKK9GzwRKVccRHC9KWS6Wg==
   dependencies:
     "@messageformat/core" "^3.0.0"
     axios "^0.27.2"
     md5 "^2.3.0"
 
-"@transifex/react@^5.0.6":
-  version "5.0.6"
-  resolved "https://registry.yarnpkg.com/@transifex/react/-/react-5.0.6.tgz#39d1f47c621982aac1de99190428dc78ba406f91"
-  integrity sha512-EA7QNTr5DP7YptfoDkXBJNaaP8JXmmVFuJUfpfO1O2wHVYgjEJI7tdxrPRVxyzGzACUjJtEJZqIOpxXhiZ7IRg==
+"@transifex/react@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@transifex/react/-/react-5.4.0.tgz#b0341b1420fb6c7ed06618dabe31c5e6a70c1026"
+  integrity sha512-n3T9mUmmtk1r03+nnTB/kAF6cfcghRxWrOe3lLFsvd5P6Tnvm5fXapaI+S/DSzT3uWlBbcOT2nVpxBTiIGehZA==
 
 "@trysound/sax@0.2.0":
   version "0.2.0"
@@ -11365,7 +11364,7 @@ glob@^10.0.0:
     package-json-from-dist "^1.0.0"
     path-scurry "^1.11.1"
 
-glob@^7.0.0, glob@^7.1.3, glob@^7.1.4:
+glob@^7.1.3, glob@^7.1.4:
   version "7.2.3"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.2.3.tgz#b8df0fb802bbfa8e89bd1d938b4e16578ed44f2b"
   integrity sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==
@@ -11933,11 +11932,6 @@ internal-slot@^1.0.3, internal-slot@^1.0.4:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/internmap/-/internmap-2.0.3.tgz#6685f23755e43c524e251d29cbc97248e3061009"
   integrity sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==
-
-interpret@^1.0.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.4.0.tgz#665ab8bc4da27a774a40584e812e3e0fa45b1a1e"
-  integrity sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==
 
 ipaddr.js@1.9.1:
   version "1.9.1"
@@ -16305,10 +16299,10 @@ react-hook-form@^7.40.0, react-hook-form@^7.42.1:
   resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.43.1.tgz#0d0d7822f3f7fc05ffc41d5f012b49b90fcfa0f0"
   integrity sha512-+s3+s8LLytRMriwwuSqeLStVjRXFGxgjjx2jED7Z+wz1J/88vpxieRQGvJVvzrzVxshZ0BRuocFERb779m2kNg==
 
-react-if@^4.1.4:
-  version "4.1.4"
-  resolved "https://registry.yarnpkg.com/react-if/-/react-if-4.1.4.tgz#aa33d954993f9d9992f0c7ab8ca9e40c5f2509f2"
-  integrity sha512-bjufPfCdPBiBy9EO/BeoxaqGc/xCwTu0coKtHfjpJw+v85DLMbpG43IUPISh+m3DzENx1rOYLpqbp2KaDmEYlg==
+react-if@^4.1.6:
+  version "4.1.6"
+  resolved "https://registry.yarnpkg.com/react-if/-/react-if-4.1.6.tgz#ee3fff723da8807be511c1745e66dc62112a333e"
+  integrity sha512-vEwRUAiNVD+UWE5vRIU+wTPZOSlw81xpR8ffDRxkff+68y63I8Lbv9PIGdookNDAKbyCRqtKxccKoFtgIhEM/w==
 
 react-inlinesvg@^3.0.0:
   version "3.0.1"
@@ -16618,13 +16612,6 @@ recharts@^2.13.0:
     tiny-invariant "^1.3.1"
     victory-vendor "^36.6.8"
 
-rechoir@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
-  integrity sha512-HFM8rkZ+i3zrV+4LQjwQ0W+ez98pApMGM3HUrN04j3CqzPOzl9nmP15Y8YXNm8QHGv/eacOVEjqhmWpkRV0NAw==
-  dependencies:
-    resolve "^1.1.6"
-
 redent@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/redent/-/redent-3.0.0.tgz#e557b7998316bb53c9f1f56fa626352c6963059f"
@@ -16895,7 +16882,7 @@ resolve@1.22.8:
     path-parse "^1.0.7"
     supports-preserve-symlinks-flag "^1.0.0"
 
-resolve@^1.1.6, resolve@^1.1.7, resolve@^1.10.0, resolve@^1.14.2, resolve@^1.15.1, resolve@^1.19.0, resolve@^1.20.0, resolve@^1.22.1:
+resolve@^1.1.7, resolve@^1.10.0, resolve@^1.14.2, resolve@^1.15.1, resolve@^1.19.0, resolve@^1.20.0, resolve@^1.22.1:
   version "1.22.1"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.22.1.tgz#27cb2ebb53f91abb49470a928bba7558066ac177"
   integrity sha512-nBpuuYuY5jFsli/JIs1oldw6fOQCBioohqWZg/2hiaOybXOft4lonv85uDOKXdf8rhyK159cxU5cDcK/NKk8zw==
@@ -17341,15 +17328,6 @@ shell-quote@^1.6.1:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.8.0.tgz#20d078d0eaf71d54f43bd2ba14a1b5b9bfa5c8ba"
   integrity sha512-QHsz8GgQIGKlRi24yFc6a6lN69Idnx634w49ay6+jA5yFh7a1UY+4Rp6HPx/L/1zcEDPEij8cIsiqR6bQsE5VQ==
-
-shelljs@^0.8.5:
-  version "0.8.5"
-  resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.8.5.tgz#de055408d8361bed66c669d2f000538ced8ee20c"
-  integrity sha512-TiwcRcrkhHvbrZbnRcFYMLl30Dfov3HKqzp5tO5b4pt6G/SezKcYhmDg15zXVBswHmctSAQKznqNW2LO5tTDow==
-  dependencies:
-    glob "^7.0.0"
-    interpret "^1.0.0"
-    rechoir "^0.6.2"
 
 should-equal@^2.0.0:
   version "2.0.0"

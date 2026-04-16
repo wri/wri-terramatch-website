@@ -15,57 +15,43 @@ import {
 } from "../adapters/geoserver";
 import { AnrPlotMapPopup } from "../components/AnrPlotMapPopup";
 import { BASEMAP_CONFIGS, MapStyle } from "../MapControls/types";
-import { setFilterCountry, setFilterLandscape } from "./polygonLayers";
+import { setFilterLandscape } from "./polygonLayers";
 
 const GOOGLE_RASTER_SOURCE_ID = "google-satellite-source";
 const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
 
-export const addBorderCountry = (map: mapboxgl.Map, country: string): void => {
-  if (country == null || country === "" || map == null) return;
-  try {
-    const styleName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
-    const countryLayer = layersList.find(layer => layer.name === styleName);
-    if (countryLayer == null) return;
-    const sourceName = countryLayer.name;
-    const GEOSERVER_TILE_URL = getGeoserverURL(countryLayer.geoserverLayerName);
-
-    if (!map.getSource(sourceName)) {
-      map.addSource(sourceName, { type: "vector", tiles: [GEOSERVER_TILE_URL] });
-    }
-    if (map.getLayer(sourceName)) map.removeLayer(sourceName);
-
-    const style = countryLayer.styles[0];
-    map.addLayer({
-      ...style,
-      id: sourceName,
-      source: sourceName,
-      "source-layer": countryLayer.geoserverLayerName
-    } as mapboxgl.LayerSpecification);
-    setFilterCountry(map, sourceName, country);
-  } catch (e) {
-    Log.warn("addBorderCountry:", e);
-  }
-};
-
-export const addBorderLandscape = (map: mapboxgl.Map, landscapes: string[]): void => {
+export const addBorderLandscape = (
+  map: mapboxgl.Map,
+  /** Values must match MVT `landscape` (DB display names), not short codes. */
+  landscapes: string[]
+): void => {
   if (landscapes == null || landscapes.length === 0 || map == null) return;
   const landscapeLayer = layersList.find(layer => layer.name === LAYERS_NAMES.LANDSCAPES);
   if (landscapeLayer == null) return;
   const sourceName = landscapeLayer.name;
-  const GEOSERVER_TILE_URL = getGeoserverURL(landscapeLayer.geoserverLayerName);
+  // Always use the default workspace (no `*_db` suffix). `landscape_geom` is published there
+  // alongside base layers; it is not duplicated under the dashboard DB workspace.
+  const GEOSERVER_TILE_URL = getGeoserverURL(landscapeLayer.geoserverLayerName, undefined, "0");
+
+  const existingSource = map.getSource(sourceName) as mapboxgl.VectorTileSource | undefined;
+  const existingTileUrl = existingSource?.tiles?.[0];
+  if (existingTileUrl != null && existingTileUrl !== GEOSERVER_TILE_URL) {
+    if (map.getLayer(sourceName)) map.removeLayer(sourceName);
+    map.removeSource(sourceName);
+  }
 
   if (!map.getSource(sourceName)) {
     map.addSource(sourceName, { type: "vector", tiles: [GEOSERVER_TILE_URL] });
   }
-  if (map.getLayer(sourceName)) map.removeLayer(sourceName);
-
-  const style = landscapeLayer.styles[0];
-  map.addLayer({
-    ...style,
-    id: sourceName,
-    source: sourceName,
-    "source-layer": landscapeLayer.geoserverLayerName
-  } as mapboxgl.LayerSpecification);
+  if (!map.getLayer(sourceName)) {
+    const style = landscapeLayer.styles[0];
+    map.addLayer({
+      ...style,
+      id: sourceName,
+      source: sourceName,
+      "source-layer": landscapeLayer.geoserverLayerName
+    } as mapboxgl.LayerSpecification);
+  }
   setFilterLandscape(map, sourceName, landscapes);
 };
 
@@ -77,17 +63,6 @@ export const removeBorderLandscape = (map: mapboxgl.Map): void => {
     if (map.getSource(layerName)) map.removeSource(layerName);
   } catch (error) {
     Log.warn("Error removing border landscape:", error);
-  }
-};
-
-export const removeBorderCountry = (map: mapboxgl.Map): void => {
-  if (!map || !map.isStyleLoaded()) return;
-  const layerName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
-  try {
-    if (map.getLayer(layerName)) map.removeLayer(layerName);
-    if (map.getSource(layerName)) map.removeSource(layerName);
-  } catch (error) {
-    Log.warn("Error removing border country:", error);
   }
 };
 

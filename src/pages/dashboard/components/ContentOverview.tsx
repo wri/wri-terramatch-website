@@ -3,7 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import mapboxgl from "mapbox-gl";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -20,40 +20,39 @@ import {
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalExpand from "@/components/extensive/Modal/ModalExpand";
-import ModalStory from "@/components/extensive/Modal/ModalStory";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
-import { useDashboardImpactStory } from "@/connections/DashboardEntity";
 import { useGadmChoices } from "@/connections/Gadm";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { DashboardImpactStoryFullDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import {
+  DASHBOARD_MOBILE_MEDIA_QUERY,
+  IMPACT_STORIES_TOOLTIP,
+  MAP_TOOLTIP,
+  MODAL_EXPAND_ID,
+  MODAL_TABLE_PAGE_SIZE,
+  RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP,
+  TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP,
+  TERRAFUND_MRV_LINK,
+  TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP,
+  TOTAL_NUMBER_OF_SITES_TOOLTIP,
+  VISIBLE_TABLE_ROWS_ON_DASHBOARD
+} from "@/pages/dashboard/constants/contentOverviewConstants";
+import { useDashboardImpactStoryModal } from "@/pages/dashboard/hooks/useDashboardImpactStoryModal";
+import { useDashboardMapViewportSync } from "@/pages/dashboard/hooks/useDashboardMapViewportSync";
+import { clampLongitudeLatitude } from "@/pages/dashboard/utils/mapViewport";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
-import { parseImpactStoryContent } from "@/utils/impactStory";
-import Log from "@/utils/log";
 
 import ContentDashboardtWrapper from "./ContentDashboardWrapper";
+import { DashboardExpandedMapModalContent } from "./DashboardExpandedMapModalContent";
+import { DashboardMapLegend } from "./DashboardMapLegend";
+import { buildImpactStoriesModalColumns, ImpactStoryModalRow } from "./impactStoriesModalColumns";
 import SecDashboard from "./SecDashboard";
-import TooltipGridMap from "./TooltipGridMap";
 
-const TOTAL_NUMBER_OF_SITES_TOOLTIP =
-  "Sites are the fundamental unit for reporting data on TerraMatch. They consist of either a single restoration area or a grouping of restoration areas, represented by one or several geospatial polygons.";
-const TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP =
-  "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects.";
-const MAP_TOOLTIP =
-  "Click on a country or project to view additional information. Zooming in on the map will display satellite imagery. Those with access to individual project pages can see approved polygons and photos.";
-const TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP =
-  "Total hectares under restoration broken down by target land use types.";
-const RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP =
-  "Total hectares under restoration broken down by restoration strategy. Please note that multiple restoration strategies can occur within a single hectare.";
-const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
-const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's MRV framework</a>`;
-export const IMPACT_STORIES_TOOLTIP =
-  "Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at <a href='mailto:info@terramatch.org' class='underline !text-primary'>info@terramatch.org</a>.";
+export { IMPACT_STORIES_TOOLTIP };
 
 interface RowData {
   country: string | null;
@@ -66,7 +65,7 @@ interface ContentOverviewProps<TData> {
   titleTable: string;
   textTooltipTable?: string;
   centroids?: DashboardGetProjectsData[];
-  polygonsData?: { data: Record<string, string[]>; centroids: any[] };
+  polygonsData?: { data: Record<string, string[]>; centroids: unknown[] };
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
   bbox?: BBox | undefined;
   isUserAllowed?: boolean;
@@ -75,7 +74,7 @@ interface ContentOverviewProps<TData> {
     totalEnterpriseCount: number;
     totalNonProfitCount: number;
   };
-  transformedStories: any;
+  transformedStories: ImpactStoryModalRow[];
   isLoading: boolean;
   hasAccess?: boolean;
   projectFrameworkKey?: string | null;
@@ -99,82 +98,34 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     hasAccess,
     projectFrameworkKey
   } = props;
+
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
   const { openModal, closeModal, setModalLoading } = useModalContext();
   const { filters, setFilters, dashboardCountries } = useDashboardContext();
-  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
-  const [selectedLandscapes, setSelectedLandscapes] = useState<string[] | undefined>(undefined);
+
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
   const [modalMapLoaded, setModalMapLoaded] = useState(false);
-  const [projectUUID, setProjectUUID] = useState<string | undefined>(undefined);
+  const [selectedProjectUuid, setSelectedProjectUuid] = useState<string | undefined>(undefined);
+
   const countryChoices = useGadmChoices({ level: 0 });
-  const isMobile = useMediaQuery("(max-width: 1200px)");
+  const isMobile = useMediaQuery(DASHBOARD_MOBILE_MEDIA_QUERY);
   const router = useRouter();
-  const { country } = router.query;
-  useValueChanged(filters.country, () => {
-    setSelectedCountry(filters.country.country_slug);
-  });
-  useValueChanged(filters.landscapes, () => {
-    setSelectedLandscapes(filters.landscapes ?? []);
-  });
+  const { country: countryQueryParam } = router.query;
+
+  const landscapeNamesForBorderOverlay = useMemo(() => filters.landscapes ?? [], [filters.landscapes]);
+
+  const { openStoryFromListItem } = useDashboardImpactStoryModal();
+
   useValueChanged(filters.uuid, () => {
-    setProjectUUID(filters.uuid);
+    setSelectedProjectUuid(filters.uuid);
   });
+
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
   const [currentCenter, setCurrentCenter] = useState<[number, number] | undefined>(undefined);
   const [currentZoom, setCurrentZoom] = useState<number | undefined>(undefined);
   const [currentMapStyle, setCurrentMapStyle] = useState<MapStyle | undefined>(MapStyle.Street);
-  const [selectedStoryId, setSelectedStoryId] = useState<string | undefined>(undefined);
-  const [pendingStoryData, setPendingStoryData] = useState<any>(null);
-  const [, { data: impactStory, loadFailure }] = useDashboardImpactStory({ id: selectedStoryId });
-
-  useEffect(() => {
-    if (selectedStoryId && pendingStoryData && impactStory) {
-      const fullStory = impactStory as unknown as DashboardImpactStoryFullDto;
-      const parsedData = {
-        uuid: fullStory.uuid ?? "",
-        title: fullStory.title ?? "",
-        date: fullStory.date ?? "",
-        content: fullStory.content ? parseImpactStoryContent(fullStory.content) : "",
-        category: fullStory.category ?? [],
-        thumbnail: fullStory.thumbnail ?? "",
-        organization: {
-          name: fullStory.organisation?.name ?? "",
-          category: fullStory.category ?? pendingStoryData.category ?? [],
-          country:
-            fullStory.organisation?.countries && fullStory.organisation.countries.length > 0
-              ? fullStory.organisation.countries
-                  .map((c: any) => {
-                    const found = countryChoices.find(country => country.id === c.label);
-                    return found ? found.name : c.label;
-                  })
-                  .join(", ")
-              : "No country",
-          facebook_url: fullStory.organisation?.facebook_url ?? pendingStoryData.organization?.facebook_url ?? "",
-          instagram_url: fullStory.organisation?.instagram_url ?? pendingStoryData.organization?.instagram_url ?? "",
-          linkedin_url: fullStory.organisation?.linkedin_url ?? pendingStoryData.organization?.linkedin_url ?? "",
-          twitter_url: fullStory.organisation?.twitter_url ?? pendingStoryData.organization?.twitter_url ?? ""
-        },
-        status: fullStory.status ?? ""
-      };
-      openModal(ModalId.MODAL_STORY, <ModalStory data={parsedData} preview={false} title={t("IMPACT STORY")} />);
-
-      setSelectedStoryId(undefined);
-      setPendingStoryData(null);
-    }
-  }, [selectedStoryId, pendingStoryData, impactStory, openModal, t, countryChoices]);
-
-  useEffect(() => {
-    if (selectedStoryId && pendingStoryData && loadFailure) {
-      Log.error("Error fetching story details:", loadFailure.message);
-      openModal(ModalId.MODAL_STORY, <ModalStory data={pendingStoryData} preview={false} title={t("IMPACT STORY")} />);
-
-      setSelectedStoryId(undefined);
-      setPendingStoryData(null);
-    }
-  }, [selectedStoryId, pendingStoryData, loadFailure, openModal, t]);
 
   useValueChanged(initialBbox, () => {
     if (initialBbox) {
@@ -183,266 +134,126 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   });
 
   useValueChanged(modalMapLoaded, () => {
-    setModalLoading("modalExpand", modalMapLoaded);
+    setModalLoading(MODAL_EXPAND_ID, modalMapLoaded);
   });
 
-  const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));
+  const { handleCloseExpandedMapModal } = useDashboardMapViewportSync({
+    dashboardMapFunctions,
+    dashboardMapLoaded,
+    modalMapFunctions,
+    modalMapLoaded,
+    setCurrentCenter,
+    setCurrentZoom,
+    setCurrentMapStyle
+  });
 
-  useEffect(() => {
-    const { map } = dashboardMapFunctions;
-    const currentMap = map.current as mapboxgl.Map;
-
-    if (!currentMap || !dashboardMapLoaded) return;
-
-    const syncMapState = () => {
-      const center = currentMap.getCenter();
-      const zoom = currentMap.getZoom();
-      const style = getCurrentMapStyle(currentMap);
-
-      const clampedLng = clamp(center.lng, -180, 180);
-      const clampedLat = clamp(center.lat, -90, 90);
-
-      setCurrentCenter([clampedLng, clampedLat]);
-      setCurrentZoom(zoom);
-      if (style) {
-        setCurrentMapStyle(style);
-      }
-    };
-
-    syncMapState();
-
-    currentMap.on("moveend", syncMapState);
-    currentMap.on("zoomend", syncMapState);
-    currentMap.on("style.load", syncMapState);
-
-    return () => {
-      currentMap.off("moveend", syncMapState);
-      currentMap.off("zoomend", syncMapState);
-      currentMap.off("style.load", syncMapState);
-    };
-  }, [dashboardMapFunctions, dashboardMapLoaded]);
-
-  const handleDashboardStyleChange = (style: MapStyle) => {
+  const handleMapStyleChange = (style: MapStyle) => {
     setCurrentMapStyle(style);
   };
 
-  useEffect(() => {
-    const { map } = modalMapFunctions;
-    const currentMap = map.current as mapboxgl.Map;
+  const handleOpenExpandedMap = useCallback(() => {
+    const dashboardMap = dashboardMapFunctions.map.current as mapboxgl.Map | null;
 
-    if (!currentMap || !modalMapLoaded) return;
+    let initialCenter: [number, number] | undefined;
+    let initialZoom: number | undefined;
+    let mapStyleForModal: MapStyle | undefined;
 
-    const handleMoveEnd = () => {
-      const center = currentMap.getCenter();
-      const zoom = currentMap.getZoom();
+    if (dashboardMap) {
+      const center = dashboardMap.getCenter();
+      const zoom = dashboardMap.getZoom();
+      const styleFromMap = getCurrentMapStyle(dashboardMap);
+      const [clampedLng, clampedLat] = clampLongitudeLatitude(center.lng, center.lat);
+      initialCenter = [clampedLng, clampedLat];
+      initialZoom = zoom;
+      mapStyleForModal = styleFromMap ?? currentMapStyle;
 
-      const clampedLng = clamp(center.lng, -180, 180);
-      const clampedLat = clamp(center.lat, -90, 90);
-
-      setCurrentCenter([clampedLng, clampedLat]);
-      setCurrentZoom(zoom);
-    };
-
-    currentMap.on("moveend", handleMoveEnd);
-    currentMap.on("zoomend", handleMoveEnd);
-
-    return () => {
-      currentMap.off("moveend", handleMoveEnd);
-      currentMap.off("zoomend", handleMoveEnd);
-    };
-  }, [modalMapFunctions, modalMapLoaded]);
-
-  const handleModalStyleChange = (style: MapStyle) => {
-    setCurrentMapStyle(style);
-  };
-
-  const handleCloseModal = () => {
-    const { map: modalMap } = modalMapFunctions;
-    if (modalMap.current) {
-      const modalStyle = getCurrentMapStyle(modalMap.current);
-      if (modalStyle) {
-        setCurrentMapStyle(modalStyle);
+      if (styleFromMap != null && styleFromMap !== currentMapStyle) {
+        setCurrentMapStyle(styleFromMap);
       }
     }
 
-    const { map } = modalMapFunctions;
-    const currentMap = map.current as mapboxgl.Map;
-    if (currentMap) {
-      const center = currentMap.getCenter();
-      const zoom = currentMap.getZoom();
-
-      const clampedLng = clamp(center.lng, -180, 180);
-      const clampedLat = clamp(center.lat, -90, 90);
-
-      setCurrentCenter([clampedLng, clampedLat]);
-      setCurrentZoom(zoom);
-    }
-  };
-
-  const columnsModalImpactStories = [
-    {
-      header: "Impact Story",
-      accessorKey: "title",
-      enableSorting: true
-    },
-    {
-      header: "Country",
-      cell: (props: any) => {
-        const countries = props.row.original.organization.countries_data || [];
-        if (countries.length === 0) {
-          return <Text variant="text-14">-</Text>;
-        }
-
-        return (
-          <div className="flex flex-wrap items-center gap-2">
-            {countries.map((country: any, index: number) => (
-              <div key={index} className="flex items-center gap-2">
-                <img src={country.icon} alt={`${country.label} flag`} className="h-3 w-5 min-w-[20px] object-cover" />
-                <Text variant="text-14">{country.label}</Text>
-              </div>
-            ))}
-          </div>
-        );
-      },
-      accessorKey: "organization.countries_data",
-      enableSorting: true
-    },
-    {
-      header: "Organization",
-      accessorKey: "organization.name",
-      enableSorting: true
-    },
-    {
-      header: "Date Created",
-      accessorKey: "date",
-      enableSorting: false
-    },
-    {
-      header: "",
-      accessorKey: "link",
-      enableSorting: false,
-      cell: ({ row }: { row: any }) => {
-        const handleClick = () => {
-          ModalStoryOpen(row.original);
-        };
-
-        return (
-          <button onClick={handleClick}>
-            <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90 text-darkCustom hover:text-primary" />
-          </button>
-        );
-      }
-    }
-  ];
-  const ModalMap = () => {
-    const { map } = dashboardMapFunctions;
-    const currentMap = map.current as mapboxgl.Map;
-
-    let dashboardCenter: [number, number] | undefined = undefined;
-    let dashboardZoom: number | undefined = undefined;
-    let dashboardStyle: MapStyle | undefined = undefined;
-
-    if (currentMap) {
-      const center = currentMap.getCenter();
-      const zoom = currentMap.getZoom();
-      const style = getCurrentMapStyle(currentMap);
-
-      const clampedLng = clamp(center.lng, -180, 180);
-      const clampedLat = clamp(center.lat, -90, 90);
-
-      dashboardCenter = [clampedLng, clampedLat];
-      dashboardZoom = zoom;
-      dashboardStyle = style || currentMapStyle;
-
-      if (style && style !== currentMapStyle) {
-        setCurrentMapStyle(style);
-      }
-    }
-
-    const handleModalClose = (modalId: any) => {
-      handleCloseModal();
+    const handleExpandedMapModalClose = (modalId: string) => {
+      handleCloseExpandedMapModal();
       closeModal(modalId);
     };
+
     openModal(
-      "modalExpand",
-      <ModalExpand id="modalExpand" title={t("MAP")} closeModal={handleModalClose} popUpContent={MAP_TOOLTIP}>
-        <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
-          <LoadingContainerOpacity loading={modalMapLoaded}>
-            <MapContainer
-              id="modal"
-              showLegend={false}
-              mapFunctions={modalMapFunctions}
-              dashboardMode={"modal"}
-              className="custom-popup-close-button !h-full"
-              centroids={centroids}
-              showPopups={true}
-              polygonsData={polygonsData?.data as Record<string, string[]>}
-              polygonsCentroids={polygonsData?.centroids}
-              center={dashboardCenter || currentCenter}
-              zoom={dashboardZoom !== undefined ? dashboardZoom : currentZoom}
-              mapStyle={dashboardStyle !== undefined ? dashboardStyle : currentMapStyle}
-              onStyleChange={handleModalStyleChange}
-              selectedCountry={selectedCountry}
-              selectedLandscapes={selectedLandscapes}
-              setLoader={setModalMapLoaded}
-              projectUUID={projectUUID}
-              hasAccess={hasAccess}
-              dashboardContext={{
-                setFilters,
-                dashboardCountries,
-                dashboardMode: "modal"
-              }}
-            />
-          </LoadingContainerOpacity>
-          <TooltipGridMap label="Angola" learnMore={true} />
-          <When condition={!projectUUID}>
-            <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg border border-neutral-175 bg-white px-4 py-2">
-              <div className="flex gap-2">
-                <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
-                <Text variant="text-12" className="text-darkCustom">
-                  {t("Non-Profit Projects ({count})", { count: projectCounts?.totalNonProfitCount ?? 0 })}
-                </Text>
-              </div>
-              <div className="flex items-center gap-2">
-                <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
-                <Text variant="text-12" className="text-darkCustom">
-                  {t("Enterprise Projects ({count})", { count: projectCounts?.totalEnterpriseCount ?? 0 })}
-                </Text>
-              </div>
-            </div>
-          </When>
-        </div>
+      MODAL_EXPAND_ID,
+      <ModalExpand
+        id={MODAL_EXPAND_ID}
+        title={t("MAP")}
+        closeModal={handleExpandedMapModalClose}
+        popUpContent={MAP_TOOLTIP}
+      >
+        <DashboardExpandedMapModalContent
+          modalMapFunctions={modalMapFunctions}
+          modalMapLoaded={modalMapLoaded}
+          centroids={centroids}
+          polygonsData={polygonsData}
+          initialCenter={initialCenter ?? currentCenter}
+          initialZoom={initialZoom !== undefined ? initialZoom : currentZoom}
+          mapStyle={mapStyleForModal ?? currentMapStyle}
+          onModalMapStyleChange={handleMapStyleChange}
+          landscapeNamesForBorderOverlay={landscapeNamesForBorderOverlay}
+          onModalMapLoadComplete={setModalMapLoaded}
+          selectedProjectUuid={selectedProjectUuid}
+          hasAccess={hasAccess}
+          setFilters={setFilters}
+          dashboardCountries={dashboardCountries}
+          translate={t}
+          nonProfitProjectCount={projectCounts?.totalNonProfitCount ?? 0}
+          enterpriseProjectCount={projectCounts?.totalEnterpriseCount ?? 0}
+        />
       </ModalExpand>
     );
-  };
+  }, [
+    centroids,
+    polygonsData,
+    currentCenter,
+    currentZoom,
+    currentMapStyle,
+    dashboardMapFunctions,
+    dashboardCountries,
+    handleCloseExpandedMapModal,
+    closeModal,
+    hasAccess,
+    landscapeNamesForBorderOverlay,
+    modalMapFunctions,
+    modalMapLoaded,
+    openModal,
+    projectCounts?.totalEnterpriseCount,
+    projectCounts?.totalNonProfitCount,
+    selectedProjectUuid,
+    setFilters,
+    t
+  ]);
 
-  const ModalTable = () => {
+  const openActiveTableModal = useCallback(() => {
     openModal(
-      "modalExpand",
-      <ModalExpand id="modalExpand" title={titleTable} popUpContent={textTooltipTable} closeModal={closeModal}>
+      MODAL_EXPAND_ID,
+      <ModalExpand id={MODAL_EXPAND_ID} title={titleTable} popUpContent={textTooltipTable} closeModal={closeModal}>
         <div className="w-full px-6 mobile:px-4 mobile:pb-5">
           <Table
-            columns={columns.map(column => {
-              column.header === "Hectares" ? (column.header = "Restoration Hectares") : column.header;
-              return {
+            columns={
+              columns.map(column => ({
                 ...column,
+                header: column.header === "Hectares" ? "Restoration Hectares" : column.header,
                 enableSorting: isMobile ? false : Boolean(column.header?.length)
-              };
-            })}
+              })) as ColumnDef<RowData>[]
+            }
             data={data}
             variant={VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL}
             hasPagination={true}
             invertSelectPagination={true}
-            initialTableState={{ pagination: { pageSize: 10 } }}
+            initialTableState={{ pagination: { pageSize: MODAL_TABLE_PAGE_SIZE } }}
             classNameWrapper="mobile:px-0"
             onRowClick={row => {
-              closeModal("modalExpand");
+              closeModal(MODAL_EXPAND_ID);
               if (row?.country) {
                 setFilters(prevValues => ({
                   ...prevValues,
                   uuid: (row.uuid ?? "") as string,
-                  country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country) ?? prevValues.country
+                  country: dashboardCountries?.find(c => c.country_slug === row?.country) ?? prevValues.country
                 }));
               }
 
@@ -452,46 +263,53 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                   uuid: (row.uuid ?? "") as string
                 }));
               }
-              return;
             }}
           />
         </div>
       </ModalExpand>
     );
-  };
+  }, [columns, closeModal, dashboardCountries, data, isMobile, openModal, setFilters, textTooltipTable, titleTable]);
 
-  const ModalTableImpactStories = () => {
+  const impactStoriesModalColumns = useMemo(
+    () => buildImpactStoriesModalColumns(openStoryFromListItem),
+    [openStoryFromListItem]
+  );
+
+  const openImpactStoriesTableModal = useCallback(() => {
     openModal(
-      "modalExpand",
+      MODAL_EXPAND_ID,
       <ModalExpand
-        id="modalExpand"
+        id={MODAL_EXPAND_ID}
         title={t("IMPACT STORIES")}
         popUpContent={t(IMPACT_STORIES_TOOLTIP)}
         closeModal={closeModal}
       >
         <div className="w-full px-6 mobile:px-4">
           <Table
-            columns={columnsModalImpactStories}
+            columns={impactStoriesModalColumns}
             data={transformedStories}
             variant={VARIANT_TABLE_DASHBOARD_COUNTRIES_MODAL}
             hasPagination={true}
             invertSelectPagination={true}
-            initialTableState={{ pagination: { pageSize: 10 } }}
+            initialTableState={{ pagination: { pageSize: MODAL_TABLE_PAGE_SIZE } }}
             classNameWrapper="mobile:px-0"
           />
         </div>
       </ModalExpand>
     );
-  };
+  }, [closeModal, impactStoriesModalColumns, openModal, t, transformedStories]);
 
-  const ModalStoryOpen = (storyData: any) => {
-    setSelectedStoryId(storyData.uuid);
-    setPendingStoryData(storyData);
-  };
-
-  const columnMobile = (columns as any[]).filter(
-    column => column.accessorKey === "country" || column.accessorKey === "project" || column.accessorKey === "link"
+  const mobileTableColumns = useMemo(
+    () =>
+      (columns as ColumnDef<RowData>[]).filter(column => {
+        const accessorKey = "accessorKey" in column ? column.accessorKey : undefined;
+        return accessorKey === "country" || accessorKey === "project" || accessorKey === "link";
+      }),
+    [columns]
   );
+
+  const nonProfitProjectCount = projectCounts?.totalNonProfitCount ?? 0;
+  const enterpriseProjectCount = projectCounts?.totalEnterpriseCount ?? 0;
 
   return (
     <ContentDashboardtWrapper isLeftWrapper={false}>
@@ -499,9 +317,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         <Button
           className="absolute right-5 top-6 z-10 mobile:hidden"
           variant="white-button-map"
-          onClick={() => {
-            ModalMap();
-          }}
+          onClick={handleOpenExpandedMap}
         >
           <div className="flex items-center gap-1">
             <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
@@ -515,42 +331,32 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             id="dashboard"
             showLegend={false}
             mapFunctions={dashboardMapFunctions}
-            dashboardMode={"dashboard"}
+            dashboardMode="dashboard"
             className="custom-popup-close-button !h-[600px] mobile:!h-[381px]"
             centroids={centroids}
             showPopups={true}
             polygonsData={polygonsData?.data as Record<string, string[]>}
-            polygonsCentroids={polygonsData?.centroids}
+            polygonsCentroids={polygonsData?.centroids as { uuid: string; long: number; lat: number }[] | undefined}
             bbox={currentBbox}
             center={currentCenter}
             zoom={currentZoom}
             mapStyle={currentMapStyle}
-            onStyleChange={handleDashboardStyleChange}
-            selectedCountry={selectedCountry}
+            onStyleChange={handleMapStyleChange}
             setLoader={setDashboardMapLoaded}
-            selectedLandscapes={selectedLandscapes}
-            projectUUID={projectUUID}
+            selectedLandscapes={landscapeNamesForBorderOverlay}
+            projectUUID={selectedProjectUuid}
             hasAccess={hasAccess}
           />
         </LoadingContainerOpacity>
-        <When condition={!projectUUID}>
-          <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded border border-neutral-175 bg-white px-4 py-2 mobile:hidden">
-            <div className="flex gap-2">
-              <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
-              <Text variant="text-12" className="text-darkCustom">
-                {t("Non-Profit Projects ({count})", { count: projectCounts?.totalNonProfitCount ?? 0 })}
-              </Text>
-            </div>
-            <div className="flex items-center gap-2">
-              <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
-              <Text variant="text-12" className="text-darkCustom">
-                {t("Enterprise Projects ({count})", { count: projectCounts?.totalEnterpriseCount ?? 0 })}
-              </Text>
-            </div>
-          </div>
+        <When condition={!selectedProjectUuid}>
+          <DashboardMapLegend
+            nonProfitProjectCount={nonProfitProjectCount}
+            enterpriseProjectCount={enterpriseProjectCount}
+            translate={t}
+          />
         </When>
       </div>
-      <When condition={!country}>
+      <When condition={!countryQueryParam}>
         <PageCard
           className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
           classNameSubTitle="mt-4"
@@ -562,12 +368,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           tooltipTrigger="click"
           iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
           headerChildren={
-            <Button
-              variant="white-border"
-              onClick={() => {
-                ModalTable();
-              }}
-            >
+            <Button variant="white-border" onClick={openActiveTableModal}>
               <div className="flex items-center gap-1">
                 <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
                 {!isMobile && (
@@ -580,8 +381,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           }
         >
           <Table
-            visibleRows={50}
-            columns={isMobile ? columnMobile : columns}
+            visibleRows={VISIBLE_TABLE_ROWS_ON_DASHBOARD}
+            columns={isMobile ? mobileTableColumns : columns}
             data={data}
             classNameWrapper="mobile:px-0"
             onRowClick={row => {
@@ -607,7 +408,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                   uuid: row.uuid
                 }));
               }
-              return;
             }}
             classNameTableWrapper={
               filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
@@ -669,7 +469,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           isLoading={isLoadingHectaresUnderRestoration}
         />
       </PageCard>
-      <When condition={!!country}>
+      <When condition={!!countryQueryParam}>
         <PageCard
           className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
           classNameSubTitle="mt-4"
@@ -682,12 +482,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           tooltipTrigger="click"
           iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
           headerChildren={
-            <Button
-              variant="white-border"
-              onClick={() => {
-                ModalTable();
-              }}
-            >
+            <Button variant="white-border" onClick={openActiveTableModal}>
               <div className="flex items-center gap-1">
                 <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
                 {!isMobile && (
@@ -700,8 +495,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           }
         >
           <Table
-            visibleRows={50}
-            columns={isMobile ? columnMobile : columns}
+            visibleRows={VISIBLE_TABLE_ROWS_ON_DASHBOARD}
+            columns={isMobile ? mobileTableColumns : columns}
             data={data}
             classNameWrapper="mobile:px-0"
             onRowClick={row => {
@@ -709,8 +504,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                 setFilters(prevValues => ({
                   ...prevValues,
                   uuid: row.uuid as string,
-                  country:
-                    dashboardCountries?.find(country => country.country_slug === row?.country) ?? prevValues.country
+                  country: dashboardCountries?.find(c => c.country_slug === row?.country) ?? prevValues.country
                 }));
               }
 
@@ -720,7 +514,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                   uuid: row.uuid
                 }));
               }
-              return;
             }}
             classNameTableWrapper={
               filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
@@ -743,7 +536,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         tooltipTrigger="click"
         iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
         headerChildren={
-          <Button variant="white-border" onClick={ModalTableImpactStories}>
+          <Button variant="white-border" onClick={openImpactStoriesTableModal}>
             <div className="flex items-center gap-1">
               <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
               {!isMobile && (
@@ -762,16 +555,11 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         ) : transformedStories.length > 0 ? (
           <div className="-mr-2 max-h-[513px] overflow-scroll pr-2 lg:max-h-[520px] wide:max-h-[560px]">
             <List
-              items={
-                transformedStories as {
-                  thumbnail?: string;
-                  title: string;
-                  organization: { name: string; country: string };
-                }[]
-              }
+              items={transformedStories}
               render={item => (
                 <button
-                  onClick={() => ModalStoryOpen(item)}
+                  type="button"
+                  onClick={() => openStoryFromListItem(item)}
                   className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored mobile:items-start mobile:border-transparent mobile:bg-grey-925 mobile:p-2"
                 >
                   <img
@@ -789,7 +577,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
                     <Text variant="text-12-light" className="flex items-center gap-1.5 capitalize text-grey-700">
                       <Icon name={IconNames.PIN} className="h-4 w-4" />{" "}
                       {(() => {
-                        const gadmCountry = countryChoices.find(country => country.id === item.organization.country);
+                        const gadmCountry = countryChoices.find(choice => choice.id === item.organization.country);
                         return gadmCountry ? gadmCountry.name : item.organization.country;
                       })()}
                     </Text>

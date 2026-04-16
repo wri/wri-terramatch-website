@@ -21,18 +21,7 @@ export const DashboardPopup = (event: PopupComponentProps) => {
   const { closeModal } = useModalContext();
 
   const learnMoreEvent = () => {
-    if (isoCountry && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
-      const selectedCountry = dashboardCountries?.find(
-        (country: CountriesProps) => country.country_slug === isoCountry
-      );
-      if (selectedCountry) {
-        setFilters?.(prev => ({
-          ...prev,
-          uuid: "",
-          country: selectedCountry
-        }));
-      }
-    } else if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
+    if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
       const projectCountry = projectFullDto?.country;
       const selectedCountry = dashboardCountries?.find(
         (country: CountriesProps) => country.country_slug === projectCountry

@@ -2,7 +2,6 @@ import mapboxgl from "mapbox-gl";
 import { useEffect, useMemo, useState } from "react";
 
 import { useDashboardProject } from "@/connections/DashboardEntity";
-import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { useSitePolygons } from "@/connections/SitePolygons";
 import { LAYERS_NAMES } from "@/constants/layers";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -21,7 +20,7 @@ export function usePopupData(event: PopupEvent) {
   const itemUuid = event?.feature?.properties?.uuid;
   const { layerName } = event;
 
-  const [popupType, setPopupType] = useState<"country" | "project" | "polygon" | null>(null);
+  const [popupType, setPopupType] = useState<"project" | "polygon" | null>(null);
   const [popupData, setPopupData] = useState<{ label?: string; organization?: string; hectares?: string } | null>(null);
   const [items, setItems] = useState<Item[]>([]);
   const [label, setLabel] = useState<string>(event?.feature?.properties?.country);
@@ -29,12 +28,6 @@ export function usePopupData(event: PopupEvent) {
 
   const [projectLoaded, { data: projectFullDto }] = useDashboardProject({
     id: itemUuid && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : null
-  });
-
-  const [countryDataLoaded, { data: countryData }] = useTotalSectionHeader({
-    filter: {
-      country: isoCountry != null && layerName === LAYERS_NAMES.WORLD_COUNTRIES ? isoCountry : undefined
-    }
   });
 
   const [polygonDataLoaded, { data: polygonDataArray }] = useSitePolygons({
@@ -84,38 +77,6 @@ export function usePopupData(event: PopupEvent) {
     }
     return { data };
   };
-
-  useEffect(() => {
-    if (countryDataLoaded && countryData != null && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
-      setIsLoading(false);
-      const parsedItems = [
-        {
-          id: "1",
-          title: "No. of Projects",
-          value: ((countryData.totalEnterpriseCount ?? 0) + (countryData.totalNonProfitCount ?? 0)).toLocaleString()
-        },
-        {
-          id: "2",
-          title: "Trees Planted",
-          value: (countryData.totalTreesRestored ?? 0).toLocaleString()
-        },
-        {
-          id: "3",
-          title: "Restoration Hectares",
-          value: (countryData.totalHectaresRestored ?? 0).toLocaleString()
-        },
-        {
-          id: "4",
-          title: "Jobs Created",
-          value: (countryData.totalEntries ?? 0).toLocaleString()
-        }
-      ];
-      setItems(parsedItems);
-      setPopupType("country");
-    } else if (isoCountry != null && layerName === LAYERS_NAMES.WORLD_COUNTRIES && !countryDataLoaded) {
-      setIsLoading(true);
-    }
-  }, [countryDataLoaded, countryData, isoCountry, layerName]);
 
   useEffect(() => {
     async function fetchProjectData() {

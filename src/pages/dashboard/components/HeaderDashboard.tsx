@@ -1,5 +1,5 @@
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { T, useT } from "@transifex/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -269,18 +269,18 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
   const getHeaderTitle = () => {
     if (isProjectInsightsPage) {
-      return <T _str="Project Insights" _tags="dash" />;
+      return t("Project Insights");
     }
     if (isProjectListPage) {
-      return <T _str="Project List" _tags="dash" />;
+      return t("Project List");
     }
     if (isHomepage) {
-      return <T _str="Learn More" _tags="dash" />;
+      return t("Learn More");
     }
     if (isImpactStoryPage) {
-      return <T _str="Impact Story" _tags="dash" />;
+      return t("Impact Story");
     }
-    return <T _str="TerraMatch Dashboards" _tags="dash" />;
+    return t("TerraMatch Dashboards");
   };
 
   const isValidDate = (value: string | undefined): boolean => {

@@ -28,6 +28,7 @@ import {
 import ContentDashboardtWrapper from "./components/ContentDashboardWrapper";
 import ContentOverview, { IMPACT_STORIES_TOOLTIP } from "./components/ContentOverview";
 import DashboardBreadcrumbs from "./components/DashboardBreadcrumbs";
+import type { ImpactStoryModalRow } from "./components/impactStoriesModalColumns";
 import SecDashboard from "./components/SecDashboard";
 import { useDashboardData } from "./hooks/useDashboardData";
 
@@ -702,7 +703,7 @@ const Dashboard = () => {
         polygonsData={polygonsData}
         bbox={filters.uuid ? safeBbox(projectBbox) : safeBbox(currentBbox)}
         projectCounts={projectCounts}
-        transformedStories={transformedStories}
+        transformedStories={transformedStories as ImpactStoryModalRow[]}
         isLoading={isLoadingImpactStories}
         hasAccess={singleDashboardProject?.hasAccess}
       />
