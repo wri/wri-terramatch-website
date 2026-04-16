@@ -29,7 +29,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
   const noGoalTableColumns = useMemo(
     () => [
       { key: "name", label: t("Species Name") },
-      { key: "amount", label: t("Number of Trees Expected") }
+      { key: "amount", label: t("Number of Trees") }
     ],
     [t]
   );
