@@ -1,8 +1,10 @@
+import { Flex, Text } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 import { Tag } from "@worldresources/wri-design-systems";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
+import CloseButton from "@/redesignComponents/actions/Buttons/CloseButton/CloseButton";
 
 import Checkbox from "../../Forms/Actions/Checkbox/Checkbox";
 import Search from "../../Forms/Actions/Search/Search";
@@ -38,10 +40,13 @@ export const DrawerDefault: Story = {
   args: {
     trigger: <Button>Open Drawer</Button>,
     children: ({ onClose }) => (
-      <div>
-        <p>Drawer Content</p>
-        <Button onClick={onClose}>Close Drawer</Button>
-      </div>
+      <Flex flexDirection="column" gap={4} padding={4}>
+        <Flex gap={2} justifyContent="space-between">
+          <Text>Title</Text>
+          <CloseButton onClick={onClose} />
+        </Flex>
+        <Flex>Content</Flex>
+      </Flex>
     )
   }
 };
