@@ -1,71 +1,60 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 import { Tag } from "@worldresources/wri-design-systems";
 
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 
 import Checkbox from "../../Forms/Actions/Checkbox/Checkbox";
 import Search from "../../Forms/Actions/Search/Search";
 import CheckboxList from "../../Forms/Inputs/CheckboxList";
-import { LanguageIcon } from "../../foundations/Icons";
-import FilterPanel from "./FilterPanel";
-import FilterCard from "./FilterPanelElements/FilteCards";
+import FilterPanel from "../FilterPanel/FilterPanel";
+import FilterCard from "../FilterPanel/FilterPanelElements/FilteCards";
+import Drawer from "./Drawer";
 
-const sampleOptions = [
-  {
-    id: "1",
-    label: "Location Name 1",
-    caption: "City • Address",
-    icon: <LanguageIcon />
-  },
-  {
-    id: "2",
-    label: "Location Name 2",
-    caption: "City • Address",
-    icon: <LanguageIcon />
-  },
-  {
-    id: "3",
-    label: "Location Name 3",
-    caption: "City • Address",
-    icon: <LanguageIcon />
-  },
-  {
-    id: "4",
-    label: "Location Name 4",
-    caption: "City • Address",
-    icon: <LanguageIcon />
-  },
-  {
-    id: "5",
-    label: "Location Name 5",
-    caption: "City • Address",
-    icon: <LanguageIcon />
+const meta: Meta<typeof Drawer> = {
+  title: "Redesign Components/Containers/Drawer",
+  component: Drawer,
+  tags: ["autodocs"],
+  argTypes: {
+    trigger: {
+      control: "text"
+    },
+    children: {
+      control: "text"
+    }
   }
-];
-
-const meta = {
-  title: "Redesign Components/Containers/Panel/Filter Panel",
-  component: FilterPanel,
-  parameters: {
-    layout: "centered"
-  },
-  tags: ["autodocs"]
-} satisfies Meta<typeof FilterPanel>;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof Drawer>;
 
-export const Default: Story = {
+const sampleOptions = [
+  { label: "Option 1", value: "1" },
+  { label: "Option 2", value: "2" },
+  { label: "Option 3", value: "3" }
+];
+
+export const DrawerDefault: Story = {
   args: {
-    title: "Filters",
-    content: <></>
-  },
-  render: function Render(args) {
-    return (
+    trigger: <Button>Open Drawer</Button>,
+    children: ({ onClose }) => (
+      <div>
+        <p>Drawer Content</p>
+        <Button onClick={onClose}>Close Drawer</Button>
+      </div>
+    )
+  }
+};
+
+export const DrawerFilterPanel: Story = {
+  args: {
+    trigger: <Button>Open Drawer</Button>,
+    children: ({ onClose }) => (
       <FilterPanel
-        {...args}
+        title="Filters"
         variant="fixed"
-        className="h-[770px]"
+        onClose={onClose}
+        className="h-screen"
         content={
           <>
             <Search options={sampleOptions} placeholder="Search" />
@@ -187,6 +176,6 @@ export const Default: Story = {
           />
         }
       />
-    );
+    )
   }
 };
