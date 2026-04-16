@@ -19,8 +19,8 @@ const meta = {
     (Story: any) => (
       <div
         style={{
-          height: "1030px",
-          width: "800px",
+          height: "64.375rem",
+          width: "50rem",
           display: "flex",
           alignItems: "center",
           justifyContent: "center"
@@ -53,16 +53,16 @@ export const Default: Story = {
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-start",
-            gap: "4px"
+            gap: "0.25rem"
           }}
         >
           <NotificationIcon />
           <p
             style={{
-              fontSize: "16px",
-              lineHeight: "24px",
+              fontSize: "1rem",
+              lineHeight: "1.5rem",
               fontWeight: "bold",
-              marginBottom: "4px",
+              marginBottom: "0.25rem",
               color: getThemedColor("neutral", 800)
             }}
           >
@@ -71,8 +71,8 @@ export const Default: Story = {
         </div>
         <p
           style={{
-            fontSize: "14px",
-            lineHeight: "20px",
+            fontSize: "0.875rem",
+            lineHeight: "1.25rem",
             color: getThemedColor("neutral", 700)
           }}
         >
@@ -81,7 +81,7 @@ export const Default: Story = {
       </div>
     ),
     content: (
-      <div style={{ padding: "12px" }}>
+      <div style={{ padding: "0.75rem" }}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit
         amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a,
         semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum
