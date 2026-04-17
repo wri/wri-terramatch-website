@@ -137,11 +137,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
             </Flex>
           );
 
-          if (
-            SPECIAL_ENTRY_TITLES.has(entry.title ?? "") ||
-            entry.inputType === "treeSpecies" ||
-            entry.inputType === "file"
-          ) {
+          if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "file") {
             return (
               <Fragment key={`${step.id}-${entry.title}-${index}`}>
                 <SpecialEntryRenderer entry={entry} entityName={entityName} entityUUID={entityUUID} />

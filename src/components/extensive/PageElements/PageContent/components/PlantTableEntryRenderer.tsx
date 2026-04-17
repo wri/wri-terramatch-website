@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useMemo } from "react";
 
-import { Framework } from "@/context/framework.provider";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
   NO_COUNT_TABLE_SPECIES_PER_PAGE,
@@ -18,48 +18,39 @@ import {
 
 import { plantsToNoCountRows } from "../utils/detailUtils";
 
-export type PlantTableRawValue = {
-  props: {
-    tableType: "noCount" | "noGoal";
-    plants: Parameters<typeof plantsToNoCountRows>[0];
-  };
-};
-
 type PlantTableEntryRendererProps = {
-  rawValue: PlantTableRawValue;
-  framework?: Framework;
+  tableType: "noCount" | "noGoal";
+  plants: Parameters<typeof plantsToNoCountRows>[0];
 };
 
-export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ rawValue, framework }) => {
+export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tableType, plants }) => {
+  const { framework } = useFrameworkContext();
   const t = useT();
   const noGoalTableColumns = useMemo(
     () => [
       { key: "name", label: t("Species Name") },
-      { key: "amount", label: t("Number of Trees Expected") }
+      { key: "amount", label: t("Number of Trees") }
     ],
     [t]
   );
 
-  if (rawValue.props.tableType === "noGoal" || framework === Framework.TF) {
+  if (tableType === "noGoal" || framework === Framework.TF) {
     return (
       <Table
-        data={rawValue.props.plants}
+        data={plants}
         columns={noGoalTableColumns}
         variant="full-width"
         css={FULL_WIDTH_TABLE_HEADER_STYLES}
-        totalItems={rawValue.props.plants.length}
+        totalItems={plants.length}
         showItemCount={false}
-        className={classNames(
-          "mt-[2px] !w-[725px]",
-          rawValue.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
-        )}
+        className={classNames("mt-[2px] !w-[725px]", plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3")}
       />
     );
   }
 
-  if (rawValue.props.tableType === "noCount") {
-    const noCountTableRowCount = rawValue.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
-    const dataPlants = plantsToNoCountRows(rawValue.props.plants);
+  if (tableType === "noCount") {
+    const noCountTableRowCount = plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
+    const dataPlants = plantsToNoCountRows(plants);
 
     return (
       <Table
