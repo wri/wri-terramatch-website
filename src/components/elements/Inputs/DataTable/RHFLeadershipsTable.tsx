@@ -5,11 +5,9 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { useGadmOptions } from "@/connections/Gadm";
-import { useMyOrg } from "@/connections/Organisation";
 import { getGenderOptions } from "@/constants/options/gender";
 import { useLocalStepsProvider } from "@/context/wizardForm.provider";
-import { useDeleteV2LeadershipsUUID, usePatchV2LeadershipsUUID, usePostV2Leaderships } from "@/generated/apiComponents";
-import { V2LeadershipsRead } from "@/generated/apiSchemas";
+import { LeadershipDto } from "@/generated/v3/userService/userServiceSchemas";
 import { Option } from "@/types/common";
 import { formatOptionsList } from "@/utils/options";
 
@@ -23,25 +21,7 @@ export interface RHFLeadershipsTableProps
   collection?: string;
 }
 
-// TODO: these normalize methods are only needed until we move leaders creation to v3 (and probably
-//  have it sync as part of the form data instead of creating with API calls.
-const v2Normalize = (data: any) => {
-  const { firstName, lastName, ...rest } = data;
-  return {
-    first_name: firstName,
-    last_name: lastName,
-    ...rest
-  };
-};
-
-const v3Normalize = (data: any) => {
-  const { first_name, last_name, ...rest } = data;
-  return {
-    firstName: first_name,
-    lastName: last_name,
-    ...rest
-  };
-};
+type Leadership = Partial<Omit<LeadershipDto, "entityType" | "entityUuid">>;
 
 export const getLeadershipsTableColumns = (
   t: typeof useT | Function = (t: string) => t
@@ -108,71 +88,49 @@ const getLeadershipsTableQuestions = (countryOptions: Option[], t: typeof useT):
 const RHFLeadershipsDataTable: FC<PropsWithChildren<RHFLeadershipsTableProps>> = ({ onChangeCapture, ...props }) => {
   const t = useT();
   const { field } = useController(props);
-  const { formHook, collection } = props;
-  const value = field?.value || [];
+  const value: Leadership[] = useMemo(() => field.value ?? [], [field.value]);
+  const { onChange } = field;
+  const { collection } = props;
   const countryOptions = useGadmOptions({ level: 0 });
   const [tableKey, setTableKey] = useState(0);
 
-  const [, { organisationId }] = useMyOrg();
-
-  const refreshTable = () => {
+  const refreshTable = useCallback(() => {
     setTableKey(prev => prev + 1);
-  };
+  }, []);
 
-  const { mutate: createMember } = usePostV2Leaderships({
-    onSuccess(data) {
-      const _tmp = [...value];
-      //@ts-ignore
-      _tmp.push(v3Normalize(data.data));
-      field.onChange(_tmp);
-      clearErrors();
-    }
-  });
+  const handleCreate = useCallback(
+    (data: Leadership) => {
+      onChange([...value, data]);
+      props.formHook?.trigger();
+    },
+    [onChange, props.formHook, value]
+  );
 
-  const { mutate: removeMember } = useDeleteV2LeadershipsUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore
-      _.remove(value, v => v.uuid === variables.pathParams.uuid);
-      field.onChange(value);
-      clearErrors();
-    }
-  });
+  const handleDelete = useCallback(
+    (uuid?: string) => {
+      onChange(value.filter(item => (uuid == null ? item.uuid != null : item.uuid !== uuid)));
+      props.formHook?.trigger();
+    },
+    [onChange, props.formHook, value]
+  );
 
-  const { mutate: updateTeamMember } = usePatchV2LeadershipsUUID({
-    onSuccess(data, variables) {
-      const _tmp = [...value];
-      //@ts-ignore
-      const index = _tmp.findIndex(item => item.uuid === data.data.uuid);
+  const handleUpdate = useCallback(
+    (data: Leadership) => {
+      onChange(
+        value.reduce(
+          (update, entry) => (entry.uuid === data.uuid ? [...update, data] : [...update, entry]),
+          [] as Leadership[]
+        )
+      );
+      props.formHook?.trigger();
+      props.formHook?.reset(props.formHook?.getValues());
+      props.formHook?.clearErrors(props.name);
+      refreshTable();
+    },
+    [onChange, props.formHook, props.name, refreshTable, value]
+  );
 
-      if (index !== -1) {
-        //@ts-ignore
-        _tmp[index] = v3Normalize(data.data);
-        field.onChange(_tmp);
-        onChangeCapture?.();
-        formHook?.reset(formHook.getValues());
-        clearErrors();
-        refreshTable();
-      }
-    }
-  });
-
-  const clearErrors = useCallback(() => {
-    formHook?.clearErrors(props.name);
-  }, [formHook, props.name]);
-
-  const conditionalFunctions =
-    collection === "leadership-team"
-      ? {
-          handleUpdate: (data: V2LeadershipsRead) => {
-            if (data.uuid != null) {
-              updateTeamMember({
-                pathParams: { uuid: data.uuid },
-                body: { ...v2Normalize(data) }
-              });
-            }
-          }
-        }
-      : {};
+  const conditionalFunctions = collection === "leadership-team" ? { handleUpdate } : {};
 
   const { columns, steps } = useMemo(
     () => ({
@@ -189,20 +147,8 @@ const RHFLeadershipsDataTable: FC<PropsWithChildren<RHFLeadershipsTableProps>> =
       {...props}
       {...conditionalFunctions}
       value={value}
-      handleCreate={data => {
-        createMember({
-          body: {
-            ...v2Normalize(data),
-            organisation_id: organisationId,
-            collection
-          }
-        });
-      }}
-      handleDelete={uuid => {
-        if (uuid) {
-          removeMember({ pathParams: { uuid } });
-        }
-      }}
+      handleCreate={handleCreate}
+      handleDelete={handleDelete}
       addButtonCaption={t("Add team member")}
       modalEditTitle={t("Update team member")}
       tableColumns={columns}

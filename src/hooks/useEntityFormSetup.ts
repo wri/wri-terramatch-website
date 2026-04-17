@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
@@ -10,9 +9,6 @@ import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
 
 export const useEntityFormSetup = (entityName: EntityName, entityUUID: string) => {
-  const router = useRouter();
-  const mode = router.query.mode as string | undefined;
-
   const model = useMemo(
     () => ({ model: v3EntityName(entityName) as FormEntity, uuid: entityUUID }),
     [entityName, entityUUID]
@@ -22,10 +18,7 @@ export const useEntityFormSetup = (entityName: EntityName, entityUUID: string) =
 
   const framework = toFramework(formData?.frameworkKey) as Framework;
 
-  const feedbackFields = useMemo(
-    () => (mode?.includes("provide-feedback") ? formData?.feedbackFields ?? [] : []),
-    [formData?.feedbackFields, mode]
-  );
+  const feedbackFields = useMemo(() => formData?.feedbackFields ?? [], [formData?.feedbackFields]);
 
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.formUuid, feedbackFields);
   const defaultValues = useDefaultValues(formData, fieldsProvider);

@@ -40,7 +40,7 @@ const EntityStatusModal: FC<EntityStatusModalProps> = ({
           ? {
               as: Link,
               children: t("Provide Feedback"),
-              href: `/entity/${kebabCase(entityName)}/edit/${entityUuid}?mode=provide-feedback-entity`,
+              href: `/entity/${kebabCase(entityName)}/edit/${entityUuid}?formStepId=summary`,
               onClick: () => {
                 closeModal(ModalId.STATUS);
               }

@@ -33,6 +33,9 @@ export const getEntityDetailPageLink = (entityName: EntityName, uuid: string, ta
     tab ? `?tab=${tab}` : ""
   }`;
 
+export const getEntityEditPageLink = (entityName: EntityName, uuid: string) =>
+  `/entity/${singularEntityName(entityName)}/edit/${uuid}?mode=edit&formStepId=summary`;
+
 export const isEntityReport = (entityName: EntityName) => {
   return entityName.includes("report");
 };

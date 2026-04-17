@@ -1,19 +1,22 @@
 import { FC } from "react";
 
 import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/types";
+import { EntityName, SingularEntityName } from "@/types/common";
 
 import AdditionalDocumentationSection from "./AdditionalDocumentationSection";
+import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
 import PhotosAndVideosSection from "./PhotosAndVideosSection";
 
 export const SPECIAL_ENTRY_TITLES = new Set([
   "Photos and videos",
   "Additional Documentation",
-  "If you have any additional documentation on your site you would like to share, please add it below."
+  "If you have any additional documentation on your site you would like to share, please add it below.",
+  "Additional Information"
 ]);
 
 type SpecialEntryRendererProps = {
   entry: FormEntry;
-  entityName?: "projects" | "sites";
+  entityName?: EntityName | SingularEntityName;
   entityUUID?: string;
 };
 
@@ -22,6 +25,10 @@ const SpecialEntryRenderer: FC<SpecialEntryRendererProps> = ({ entry, entityName
 
   if (entry.title === "Photos and videos") {
     return <PhotosAndVideosSection value={value} entityName={entityName} entityUUID={entityUUID} />;
+  }
+
+  if (entry.title === "Additional Information" || entry.title === "Tree Species - Additional Information") {
+    return <EntryDefaultValueRenderer entry={entry} />;
   }
 
   return <AdditionalDocumentationSection value={value} entityName={entityName} entityUUID={entityUUID} />;

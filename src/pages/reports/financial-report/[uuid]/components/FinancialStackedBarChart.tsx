@@ -83,9 +83,9 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialIndicator
               displayValue = Math.abs(value);
             }
 
-            let formattedValue = formatYAxisNumber(Math.abs(displayValue), currencySymbol);
+            let formattedValue = formatYAxisNumber(Math.abs(displayValue), currencySymbol, currency);
             if (name == "Profit") {
-              formattedValue = formatProfitValue(displayValue, currencySymbol);
+              formattedValue = formatProfitValue(displayValue, currencySymbol, currency);
             }
 
             return (
@@ -102,7 +102,7 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialIndicator
 
   const formatYAxis = (value: number) => {
     if (value === 0) return `${currencySymbol}0`;
-    return formatYAxisNumber(value, currencySymbol);
+    return formatYAxisNumber(value, currencySymbol, currency);
   };
 
   const getYAxisTicks = () => {
@@ -165,7 +165,7 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialIndicator
           fontWeight="500"
           dominantBaseline="hanging"
         >
-          {formatYAxisNumber(Math.abs(value), currencySymbol)}
+          {formatYAxisNumber(Math.abs(value), currencySymbol, currency)}
         </text>
       );
     }
@@ -277,7 +277,7 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialIndicator
                       fontSize="12"
                       fontWeight="500"
                     >
-                      {formatYAxisNumber(entry.revenue, currencySymbol)}
+                      {formatYAxisNumber(entry.revenue, currencySymbol, currency)}
                     </text>
                   )
                 );

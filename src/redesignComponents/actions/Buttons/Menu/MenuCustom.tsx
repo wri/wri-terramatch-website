@@ -10,15 +10,19 @@ const TypedMenuPositioner = MenuPositioner as FC<MenuContainerTyped>;
 const TypedMenuContent = MenuContent as FC<MenuContainerTyped>;
 const TypedMenuItem = MenuItem as FC<MenuItemTyped>;
 
-const MenuCustom: FC<MenuCustomProps> = ({ label, items }) => {
+const MenuCustom: FC<MenuCustomProps> = ({ label, items, customTrigger }) => {
   const [open, setOpen] = useState(false);
 
   return (
     <Menu.Root open={open} onOpenChange={(e: { open: boolean }) => setOpen(e.open)}>
       <TypedMenuTrigger asChild>
-        <Button variant="borderless" size="small">
-          {label}
-        </Button>
+        {customTrigger ? (
+          customTrigger
+        ) : (
+          <Button variant="borderless" size="small">
+            {label}
+          </Button>
+        )}
       </TypedMenuTrigger>
       <Portal>
         <TypedMenuPositioner>

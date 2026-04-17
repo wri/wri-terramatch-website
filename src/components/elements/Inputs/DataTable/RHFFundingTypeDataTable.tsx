@@ -6,8 +6,8 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { useCurrencyContext } from "@/context/currency.provider";
-import { useLocalStepsProvider } from "@/context/wizardForm.provider";
-import { currencyInput } from "@/utils/financialReport";
+import { useLocalStepsProvider, useWizardOrgFormDetails } from "@/context/wizardForm.provider";
+import { formatFinancialAmount, getCurrencySymbolPrefix } from "@/utils/financialReport";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
@@ -70,7 +70,8 @@ export const getFundingTypeQuestions = (t: typeof useT | Function = (t: string) 
     label: t("Funding amount"),
     name: "amount",
     inputType: "number",
-    validation: { required: true }
+    validation: { required: true },
+    additionalProps: { financialAmount: true }
   }
 ];
 
@@ -81,6 +82,13 @@ const RHFFundingTypeDataTable: FC<PropsWithChildren<RHFFundingTypeTableProps>> =
   const [tableKey, setTableKey] = useState(0);
 
   const { currency } = useCurrencyContext();
+  const orgDetails = useWizardOrgFormDetails();
+  const isoCurrency =
+    currency != null && currency !== ""
+      ? String(currency)
+      : orgDetails?.currency != null && orgDetails.currency !== ""
+      ? String(orgDetails.currency)
+      : undefined;
 
   const refreshTable = () => {
     setTableKey(prev => prev + 1);
@@ -134,14 +142,20 @@ const RHFFundingTypeDataTable: FC<PropsWithChildren<RHFFundingTypeTableProps>> =
         col.accessorKey === "amount"
           ? {
               ...col,
-              cell: (props: any) =>
-                (currencyInput[currency] ? currencyInput[currency] + " " : "") + (props.getValue() ?? "")
+              cell: (cellProps: { getValue: () => unknown }) => {
+                const raw = cellProps.getValue();
+                const n = typeof raw === "number" ? raw : Number(raw);
+                if (!Number.isFinite(n)) {
+                  return "";
+                }
+                return `${getCurrencySymbolPrefix(isoCurrency)} ${formatFinancialAmount(n, isoCurrency)}`.trim();
+              }
             }
           : col
       ),
       steps: [{ id: "fundingTypeTable", fields: getFundingTypeQuestions(t) }]
     }),
-    [currency, t]
+    [isoCurrency, t]
   );
   const fieldsProvider = useLocalStepsProvider(steps);
 
@@ -149,6 +163,7 @@ const RHFFundingTypeDataTable: FC<PropsWithChildren<RHFFundingTypeTableProps>> =
     <DataTable<FundingTypeData>
       key={tableKey}
       {...props}
+      orgDetails={orgDetails}
       value={value}
       handleCreate={createItem}
       handleDelete={removeItem}

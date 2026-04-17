@@ -8,9 +8,7 @@ const MainLayout = (props: PropsWithChildren<MainLayoutProps>) => {
   return (
     <div className="flex h-screen w-full flex-col">
       <Navbar />
-      <main className={`flex min-h-0 flex-[1_1_0] flex-col mobile:overflow-auto ${props.className}`}>
-        {props.children}
-      </main>
+      <main className={`flex min-h-0 flex-[1_1_0] flex-col overflow-auto ${props.className}`}>{props.children}</main>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Case, Default, Switch } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -12,6 +12,7 @@ import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Table from "@/components/elements/Table/Table";
 import { FilterValue } from "@/components/elements/TableFilters/TableFilter";
 import Text from "@/components/elements/Text/Text";
+import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -38,6 +39,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { v3EntityName } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+import BulkNothingToReportModal from "@/pages/project/[uuid]/reporting-task/BulkNothingToReportModal";
 import ReportingTaskHeader from "@/pages/project/[uuid]/reporting-task/components/ReportingTaskHeader";
 import NothingToReportModal from "@/pages/project/[uuid]/reporting-task/NothingToReportModal";
 import {
@@ -58,6 +60,9 @@ const StatusMapping: { [index: string]: Status } = {
 
 const NOTHING_TO_REPORT_DISPLAYABLE_STATUSES = ["due", "started"];
 
+const BULK_MODAL_COPY =
+  'Indicate here if any of the sites/nurseries below had no activity to report during the reporting period. You can select sites/nurseries individually, or use the "Select All" button if applicable. Be sure to press "Submit" to confirm your selection and send to your project manager for review. <br />Please note: you must report any planting, assisted natural regeneration activities, maintenance, monitoring, or nursery seedlings by filling out the reports for that site/nursery individually.';
+
 export type TaskReport = (ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto | SrpReportLightDto) & {
   completionStatus: string;
   type: "site-report" | "nursery-report" | "project-report" | "srp-report";
@@ -67,8 +72,19 @@ export type TaskReport = (ProjectReportLightDto | SiteReportLightDto | NurseryRe
 export type TaskReports = {
   mandatory: TaskReport[];
   additional: TaskReport[];
+  nothingToReportEligible: TaskReport[];
+  srpReports: TaskReport[];
   outstandingMandatoryCount: number;
   outstandingAdditionalCount: number;
+};
+
+const shouldShowNothingToReportButton = (report: TaskReport) => {
+  const { type, status, completion } = report;
+  return (
+    NOTHING_TO_REPORT_MODELS.includes(v3EntityName(type) as NothingToReportEntity) &&
+    NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) &&
+    completion != 100
+  );
 };
 
 const mapTaskReport =
@@ -119,17 +135,16 @@ const ReportingTaskPage = () => {
   const t = useT();
   const { format } = useDate();
   const router = useRouter();
-  const { openModal } = useModalContext();
+  const { openModal, closeModal } = useModalContext();
   const [tourEnabled, setTourEnabled] = useState(false);
   const reportingTaskUUID = router.query.reportingTaskUUID as string;
   const projectUUID = router.query.uuid as string;
-  const [reportsTableData, setReportsTableData] = useState([] as TaskReport[]);
-  const [srpReportsTableData, setSrpReportsTableData] = useState([] as TaskReport[]);
 
   const [filters, setFilters] = useState<FilterValue[]>([]);
-  const [, { data: task, projectReportUuid, siteReportUuids, nurseryReportUuids, srpReportUuids }] = useTask({
-    id: reportingTaskUUID
-  });
+  const [, { data: task, update: updateTask, projectReportUuid, siteReportUuids, nurseryReportUuids, srpReportUuids }] =
+    useTask({
+      id: reportingTaskUUID
+    });
   const [, { data: projectReport }] = useLightProjectReport({ id: projectReportUuid });
   const [, { data: siteReports }] = useLightSiteReportList({ ids: siteReportUuids });
   const [, { data: nurseryReports }] = useLightNurseryReportList({ ids: nurseryReportUuids });
@@ -147,15 +162,14 @@ const ReportingTaskPage = () => {
       return true;
     });
 
-    const srpReportsMapped = srpReports?.map(mapTaskReport(format));
-    setSrpReportsTableData(srpReportsMapped ?? []);
-
-    setReportsTableData(additional);
+    const nothingToReportEligible = additional.filter(shouldShowNothingToReportButton);
 
     const mandatory = projectReport == null ? [] : [mapTaskReport(format)(projectReport)];
     return {
       mandatory,
       additional,
+      nothingToReportEligible,
+      srpReports: srpReports?.map(mapTaskReport(format)) ?? [],
       outstandingMandatoryCount: mandatory.filter(report => report.completion! < 100).length,
       outstandingAdditionalCount: additional.filter(report => report!.completion! < 100).length
     } as TaskReports;
@@ -163,27 +177,11 @@ const ReportingTaskPage = () => {
 
   const tourSteps = useGetReportingTasksTourSteps(reports);
 
-  const nothingToReportSuccess = useCallback(
-    (report: TaskReportDto) => {
-      setReportsTableData(tableData => {
-        const index = tableData.findIndex(({ uuid }) => uuid === report.uuid);
-        if (index < 0) return tableData;
-
-        const update = [...tableData];
-        update[index] = mapTaskReport(format)(report);
-        return update;
-      });
-    },
-    [format]
-  );
   const nothingToReportHandler = useCallback(
     (entity: NothingToReportEntity, uuid: string) => {
-      openModal(
-        ModalId.CONFIRM_UPDATE,
-        <NothingToReportModal entity={entity} uuid={uuid} onSuccess={nothingToReportSuccess} />
-      );
+      openModal(ModalId.CONFIRM_UPDATE, <NothingToReportModal entity={entity} uuid={uuid} />);
     },
-    [nothingToReportSuccess, openModal]
+    [openModal]
   );
 
   const tableColumns: ColumnDef<RowData>[] = [
@@ -225,13 +223,10 @@ const ReportingTaskPage = () => {
       cell: props => {
         const record = props.row.original as TaskReport;
         const { index } = props.row;
-        const { status, type, completion, uuid, completionStatus } = record;
+        const { type, uuid, completionStatus } = record;
 
         const v3Name = v3EntityName(type);
-        const shouldShowButton =
-          NOTHING_TO_REPORT_MODELS.includes(v3Name as NothingToReportEntity) &&
-          NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) &&
-          completion != 100;
+        const shouldShowButton = shouldShowNothingToReportButton(record);
 
         const handleClick = useCallback(() => {
           nothingToReportHandler(v3Name as NothingToReportEntity, uuid);
@@ -312,10 +307,9 @@ const ReportingTaskPage = () => {
       cell: props => {
         const record = props.row.original as TaskReport;
         const { index } = props.row;
-        const { status, completion, uuid, completionStatus } = record;
+        const { uuid, completionStatus } = record;
         const type = "srp-report";
-        const shouldShowButton =
-          NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) && !(type === "srp-report" || completion === 100);
+        const shouldShowButton = shouldShowNothingToReportButton(record);
 
         const handleClick = useCallback(() => {
           nothingToReportHandler("srpReports", uuid);
@@ -356,6 +350,52 @@ const ReportingTaskPage = () => {
     }
   ];
 
+  const openBulkConfirmationModal = useCallback(
+    (reports: TaskReport[]) => {
+      if (reports.length === 0) return;
+      openModal(
+        ModalId.CONFIRMATION_MODAL,
+        <ModalConfirm
+          className="pointer-events-auto z-[99999]"
+          title={t("Confirm Bulk Nothing to Report Submission")}
+          content={
+            <div className="max-h-[140px] overflow-y-auto lg:max-h-[150px]">
+              {reports.map(report => (
+                <li key={report.uuid} className="text-12-light">
+                  {`${report.type === "site-report" ? t("Site") : t("Nursery")} Report - ${report.parentName}`}
+                </li>
+              ))}
+            </div>
+          }
+          onClose={() => closeModal(ModalId.CONFIRMATION_MODAL)}
+          onConfirm={() => {
+            updateTask?.({
+              siteReportNothingToReportUuids: reports
+                .filter(report => report.type === "site-report")
+                .map(({ uuid }) => uuid),
+              nurseryReportNothingToReportUuids: reports
+                .filter(report => report.type === "nursery-report")
+                .map(({ uuid }) => uuid)
+            });
+          }}
+        />
+      );
+    },
+    [closeModal, openModal, t, updateTask]
+  );
+
+  const openBulkModal = useCallback(() => {
+    openModal(
+      ModalId.BULK_NOTHING_TO_REPORT,
+      <BulkNothingToReportModal
+        data={reports.nothingToReportEligible}
+        content={t(BULK_MODAL_COPY)}
+        onClose={() => closeModal(ModalId.BULK_NOTHING_TO_REPORT)}
+        onSubmit={openBulkConfirmationModal}
+      />
+    );
+  }, [closeModal, openBulkConfirmationModal, openModal, reports.nothingToReportEligible, t]);
+
   return (
     projectLoaded && (
       <FrameworkProvider frameworkKey={project?.frameworkKey}>
@@ -371,14 +411,21 @@ const ReportingTaskPage = () => {
             {project?.frameworkKey === "ppc" && (
               <PageSection>
                 <PageCard title={t("Annual Socioeconomic Restoration Partners Report")}>
-                  <Table data={srpReportsTableData} hasPagination={false} columns={tableColumnsSRP} />
+                  <Table data={reports.srpReports} hasPagination={false} columns={tableColumnsSRP} />
                 </PageCard>
               </PageSection>
             )}
             <PageSection>
-              <PageCard title={t("Additional Reports")}>
+              <PageCard
+                title={t("Additional Reports")}
+                headerChildren={
+                  <Button disabled={reports.nothingToReportEligible.length === 0} onClick={openBulkModal}>
+                    {t('Report "No Updates"')}
+                  </Button>
+                }
+              >
                 <Table
-                  data={reportsTableData}
+                  data={reports.additional}
                   columns={tableColumns}
                   onTableStateChange={state => setFilters(state.filters)}
                   hasPagination={true}

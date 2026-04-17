@@ -5,9 +5,8 @@ import { startIndicatorCalculationResource } from "@/connections/Indicators";
 import { Indicator, sitePolygonsConnection, useAllSitePolygons } from "@/connections/SitePolygons";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
-import { Indicators } from "@/generated/apiSchemas";
 import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchService/researchServiceComponents";
-import { IndicatorsAttributes } from "@/generated/v3/researchService/researchServiceSchemas";
+import { IndicatorsAttributes, SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { EntityName } from "@/types/common";
 import { loadConnection } from "@/utils/loadConnection";
 import Log from "@/utils/log";
@@ -15,7 +14,15 @@ import { transformSitePolygonsToIndicators } from "@/utils/MonitoredIndicatorUti
 
 const ALL_POLYGONS_PAGE_SIZE = 100;
 
-type IndicatorsWithPolyId = Indicators & {
+// TODO: Move this definition to camel case.
+export type MonitoredIndicator = {
+  poly_name?: string;
+  status?: SitePolygonLightDto["status"];
+  plantstart?: string;
+  site_name?: string;
+  indicator_slug: Indicator;
+  year_of_analysis?: number;
+  created_at?: string;
   poly_id?: string;
   site_id?: string;
 };
@@ -102,9 +109,9 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const { modalOpened } = useModalContext();
   const [isLoadingVerify, setIsLoadingVerify] = useState<boolean>(false);
   const [isLoadingRerunVerify, setIsLoadingRerunVerify] = useState<boolean>(false);
-  const [treeCoverLossData, setTreeCoverLossData] = useState<Indicators[]>([]);
+  const [treeCoverLossData, setTreeCoverLossData] = useState<MonitoredIndicator[]>([]);
   const [polygonOptions, setPolygonOptions] = useState<PolygonOption[]>([{ title: "All Polygons", value: "0" }]);
-  const [treeCoverLossFiresData, setTreeCoverLossFiresData] = useState<Indicators[]>([]);
+  const [treeCoverLossFiresData, setTreeCoverLossFiresData] = useState<MonitoredIndicator[]>([]);
   const [analysisToSlug, setAnalysisToSlug] = useState<
     Record<string, string[] | Record<string, string> | { message?: string }>
   >({
@@ -201,7 +208,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
 
     return indicatorData
       .filter(
-        (polygon: Indicators) =>
+        (polygon: MonitoredIndicator) =>
           polygon?.status === "approved" &&
           (polygon?.poly_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
             polygon?.site_name?.toLowerCase().includes(searchTerm?.toLowerCase()))
@@ -215,10 +222,10 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     const options = [
       { title: "All Polygons", value: "0" },
       ...indicatorData
-        .filter((item: IndicatorsWithPolyId) => item.status === "approved")
-        .map((item: IndicatorsWithPolyId) => ({
-          title: item.poly_name || "",
-          value: item.poly_id || ""
+        .filter((item: MonitoredIndicator) => item.status === "approved")
+        .map((item: MonitoredIndicator) => ({
+          title: item.poly_name ?? "",
+          value: item.poly_id ?? ""
         }))
         .sort((a, b) => a.title.localeCompare(b.title))
     ];
@@ -234,7 +241,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     };
   });
 
-  const totalPolygonsApproved = headerBarPolygonStatus.find(item => item.status_key === "approved")?.count;
+  const totalPolygonsApproved = headerBarPolygonStatus.find(item => item.status_key == "approved")?.count;
 
   const { data: missingPolygonsData } = useAllSitePolygons({
     entityName: entity as "sites" | "projects",

@@ -63,21 +63,64 @@ export const Default: Story = {
   }
 };
 
+export const Discrete: Story = {
+  args: {
+    width: "250px",
+    min: 0,
+    max: 100,
+    value: [50],
+    marks: [
+      { value: 0, label: 0 },
+      { value: 25, label: 25 },
+      { value: 50, label: 50 },
+      { value: 75, label: 75 },
+      { value: 100, label: 100 }
+    ]
+  }
+};
+
+export const DiscreteWithSteps: Story = {
+  args: {
+    width: "250px",
+    min: 0,
+    max: 100,
+    value: [50],
+    marks: [
+      { value: 0, label: 0 },
+      { value: 25, label: 25 },
+      { value: 50, label: 50 },
+      { value: 75, label: 75 },
+      { value: 100, label: 100 }
+    ],
+    step: 25
+  }
+};
+
+export const Range: Story = {
+  args: {
+    width: "250px",
+    min: 0,
+    max: 100,
+    value: [20, 80]
+  }
+};
+
+export const Centred: Story = {
+  args: {
+    width: "250px",
+    min: 0,
+    max: 100,
+    value: [50],
+    isCentred: true
+  }
+};
+
 export const Disabled: Story = {
   args: {
+    width: "250px",
     min: 0,
     max: 100,
     step: 10,
     disabled: true
-  },
-  render: args => {
-    const [value] = useState<number[]>([40]);
-
-    return (
-      <div style={{ width: "320px", padding: "24px" }}>
-        <Slider {...args} value={value} />
-        <div style={{ marginTop: "12px", fontSize: "14px" }}>Disabled slider (value: {value.join(", ")})</div>
-      </div>
-    );
   }
 };

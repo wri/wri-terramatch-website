@@ -9,6 +9,7 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import { AccordionStatus } from "@/redesignComponents/containers/Accordion/types";
+import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
 import { useEntryTypeMap, useEntryTypes, useTableStatus } from "./hooks";
 import TrackingSection from "./TrackingSection";
@@ -37,12 +38,11 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
   const { sectionLabel, rowLabelSingular, rowLabelPlural } = useTrackingLabels(type);
   const rowLabel = total === 1 ? rowLabelSingular : rowLabelPlural;
   const user = useIsAdmin();
-
   const prefix = title == null ? `${t(sectionLabel)} ${t(rowLabel)}` : `${title} - ${t(sectionLabel)} ${t(rowLabel)}`;
 
   const boldNumber = (
     <Text as="span" textStyle="600" color="primary.900">
-      {total}
+      {`${prefix}: ${formatNumberLocaleString(total)}`}
     </Text>
   );
 
@@ -53,7 +53,6 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
       variant="secondary"
       header={
         <AccordionHeader
-          label={prefix}
           title={boldNumber}
           status={STATUS_MAP[status]}
           statusLabel={shouldShowError ? t("Totals don't match across categories") : undefined}

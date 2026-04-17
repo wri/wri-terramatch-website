@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { BooleanField, Datagrid, ImageField, List, SearchInput, SelectInput, TextField } from "react-admin";
+import { Datagrid, ImageField, List, SearchInput, SelectInput, TextField } from "react-admin";
 
 import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ListActionsCreate from "@/admin/components/Actions/ListActionsCreate";
@@ -29,7 +29,6 @@ export const FormList = () => {
           <ImageField source="banner.url" label="Banner Image" />
           <TextField source="title" label="Title" />
           <TextField source="type" label="Form Type" />
-          <BooleanField source="published" label="Published" />
         </Datagrid>
       </List>
     </>

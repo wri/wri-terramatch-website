@@ -36,6 +36,7 @@ import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessa
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
+import { hasFeedbackInStep } from "./feedbackUtils";
 import { FormFooter } from "./FormFooter";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
@@ -55,6 +56,8 @@ export type WizardFormEntity = {
   projectName?: string | null;
   projectUuid?: string | null;
   taskUuid?: string | null;
+  feedback?: string | null;
+  feedbackFields?: string[] | null;
 };
 
 export interface WizardFormProps {
@@ -146,7 +149,9 @@ function WizardForm(props: WizardFormProps) {
 
   const { onChange } = props;
   const _onChange = useDebounce(
-    useCallback(() => !formHasError.current && onChange?.(formHook.getValues()), [formHook, onChange]),
+    useCallback(() => {
+      if (!formHasError.current) onChange?.(formHook.getValues());
+    }, [formHook, onChange]),
     // Send an update to the server at most once per second
     1000
   );
@@ -318,7 +323,11 @@ function WizardForm(props: WizardFormProps) {
   const stepTabItems = useMemo(
     (): TabItem[] =>
       steps.map(({ id, title, validation }, index) => {
-        const state: TabItem["state"] = validation.isValidSync(formHook.getValues())
+        const hasFeedback = hasFeedbackInStep(props.fieldsProvider, id, entity?.feedbackFields);
+
+        const state: TabItem["state"] = hasFeedback
+          ? "error"
+          : validation.isValidSync(formHook.getValues())
           ? stepsVisited.current.includes(index)
             ? "complete"
             : "unstarted"
@@ -332,7 +341,7 @@ function WizardForm(props: WizardFormProps) {
           }
         };
       }),
-    [formHook, renderStep, steps, t]
+    [entity?.feedbackFields, formHook, props.fieldsProvider, renderStep, steps, t]
   );
 
   const summaryItem = useMemo(
@@ -355,6 +364,8 @@ function WizardForm(props: WizardFormProps) {
             enableSaveChangesButton={isEntityApproved}
             saveChanges={() => onClickSaveChanges()}
             onSaveAndExit={onClickSaveAndExit}
+            feedback={entity?.feedback}
+            feedbackFields={entity?.feedbackFields}
           />
         );
       }
@@ -372,7 +383,9 @@ function WizardForm(props: WizardFormProps) {
       onSubmitStep,
       isEntityApproved,
       onClickSaveChanges,
-      onClickSaveAndExit
+      onClickSaveAndExit,
+      entity?.feedback,
+      entity?.feedbackFields
     ]
   );
 
@@ -437,12 +450,7 @@ function WizardForm(props: WizardFormProps) {
         >
           <div className={twMerge("flex h-full w-full flex-col", props.className)}>
             {entity != null && (
-              <Box
-                className={classNames(
-                  "sticky top-0 z-20 bg-theme-neutral-200 pb-1",
-                  isAdmin ? "top-0" : "sm:!top-[70px]"
-                )}
-              >
+              <Box className={classNames("sticky top-0 z-20 bg-theme-neutral-200 pb-1")}>
                 {!isAdmin && <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }} />}
                 <div className="bg-theme-neutral-300 pt-[1px]">
                   <PageHeader

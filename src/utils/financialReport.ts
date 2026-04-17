@@ -1,4 +1,123 @@
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSchemas";
+
+const LOCALE_BY_ISO_CURRENCY: Record<string, string> = {
+  BRL: "pt-BR",
+  EUR: "de-DE",
+  GBP: "en-GB",
+  CHF: "de-CH",
+  NOK: "nb-NO",
+  SEK: "sv-SE",
+  DKK: "da-DK",
+  PLN: "pl-PL",
+  TRY: "tr-TR"
+};
+
+export function getLocaleForIsoCurrency(currencyCode: string | undefined): string {
+  if (currencyCode == null || currencyCode === "") {
+    return "en-US";
+  }
+  return LOCALE_BY_ISO_CURRENCY[currencyCode] ?? "en-US";
+}
+
+function usesCommaDecimalLocale(locale: string): boolean {
+  return locale === "pt-BR" || locale === "de-DE" || locale === "de-CH" || locale === "de-AT";
+}
+
+export const currencyInput: Record<string, string> = {
+  USD: "$",
+  EUR: "€",
+  GBP: "£"
+};
+
+/**
+ * Normalizes a user-typed amount string to a JS decimal string (`.` as decimal separator).
+ */
+export function parseFinancialAmountInput(raw: string, currencyCode: string | undefined): number | null {
+  const trimmed = raw.trim().replace(/\s/g, "");
+  if (trimmed === "") {
+    return null;
+  }
+  const locale = getLocaleForIsoCurrency(currencyCode);
+  const normalized = usesCommaDecimalLocale(locale)
+    ? trimmed.replace(/\./g, "").replace(",", ".")
+    : trimmed.replace(/,/g, "");
+  const n = Number(normalized);
+  return Number.isFinite(n) ? n : null;
+}
+
+/** Formats a monetary amount for display (2 decimals). Backend values remain plain decimal numbers. */
+export function formatFinancialAmount(value: number, currencyCode: string | undefined): string {
+  if (!Number.isFinite(value)) {
+    return "";
+  }
+  const locale = getLocaleForIsoCurrency(currencyCode);
+  return new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(value);
+}
+
+export function formatMonetaryCanonicalForDisplay(
+  value: number | null | undefined,
+  currencyCode: string | undefined
+): string {
+  if (value == null || !Number.isFinite(value)) {
+    return "";
+  }
+  return formatFinancialAmount(value, currencyCode);
+}
+
+export function getCurrencySymbolPrefix(currencyCode: string | undefined): string {
+  if (currencyCode == null || currencyCode === "") {
+    return "";
+  }
+  const fromMap = currencyInput[currencyCode];
+  if (typeof fromMap === "string" && fromMap.length > 0) {
+    return fromMap;
+  }
+  try {
+    const parts = new Intl.NumberFormat("en", {
+      style: "currency",
+      currency: currencyCode,
+      currencyDisplay: "narrowSymbol"
+    }).formatToParts(0);
+    const sym = parts.find(p => p.type === "currency")?.value;
+    return sym ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function hasIntegerNumberAdditionalProps(field: FieldDefinition): boolean {
+  const props = field.additionalProps;
+  if (props == null) {
+    return false;
+  }
+  return props.integer === true || props.integerOnly === true || props.decimals === 0 || props.precision === 0;
+}
+
+function isLegacyProjectBudgetField(field: FieldDefinition): boolean {
+  const model = String(field.model ?? "").toLowerCase();
+  const isProjectModel = model === "projects" || model === "project-pitches" || model === "projectpitches";
+  // Temporary compatibility fallback until these questions are explicitly configured via additionalProps.
+  // If project/pitch budget was switched to number-currency via backend data migration, force integer behavior.
+  return isProjectModel && field.inputType === "number-currency" && field.additionalProps?.financialAmount !== true;
+}
+
+export function shouldUseIntegerNumberInput(field: FieldDefinition): boolean {
+  return hasIntegerNumberAdditionalProps(field) || isLegacyProjectBudgetField(field);
+}
+
+export function shouldFormatFinancialNumberField(field: FieldDefinition): boolean {
+  if (shouldUseIntegerNumberInput(field)) {
+    return false;
+  }
+  if (field.additionalProps?.financialAmount === true) {
+    return true;
+  }
+  return field.inputType === "number-currency";
+}
 
 export const formatDocumentData = (documents: FinancialIndicatorDto[]) => {
   if (documents == null || !Array.isArray(documents)) {
@@ -29,12 +148,6 @@ export const formatExchangeData = (documents: FinancialIndicatorDto[]) => {
     .map(financial => ({ label: String(financial?.year), exchangeRate: financial?.exchangeRate ?? 0 }))
     .sort((a, b) => Number(b.label) - Number(a.label));
 };
-
-export const currencyInput = {
-  USD: "$",
-  EUR: "€",
-  GBP: "£"
-} as any;
 
 type FinancialRatioStats = {
   latestRatio: number;
@@ -91,55 +204,58 @@ export const calculateFinancialRatioStats = (financialData: FinancialIndicatorDt
   };
 };
 
-export const formatLargeNumber = (value: number, currency: string = ""): string => {
+export const formatLargeNumber = (value: number, currencySymbol: string = "", isoCurrency?: string): string => {
   const absValue = Math.abs(value);
+  const locale = getLocaleForIsoCurrency(isoCurrency);
 
   if (absValue >= 1000000) {
     const millions = value / 1000000;
     const formatted = millions.toFixed(1).replace(/\.0$/, "");
-    return `${currency}${formatted}M`;
+    return `${currencySymbol}${formatted}M`;
   } else if (absValue >= 1000) {
     const thousands = value / 1000;
     const formatted = thousands.toFixed(1).replace(/\.0$/, "");
-    return `${currency}${formatted}K`;
+    return `${currencySymbol}${formatted}K`;
   } else {
-    return `${currency}${value.toLocaleString()}`;
+    return `${currencySymbol}${value.toLocaleString(locale)}`;
   }
 };
 
-export const formatYAxisNumber = (value: number, currency: string = ""): string => {
-  if (value === 0) return `${currency}0`;
+export const formatYAxisNumber = (value: number, currencySymbol: string = "", isoCurrency?: string): string => {
+  if (value === 0) return `${currencySymbol}0`;
 
   const absValue = Math.abs(value);
+  const locale = getLocaleForIsoCurrency(isoCurrency);
 
   if (absValue >= 1000000) {
     const millions = value / 1000000;
     const formatted = millions.toFixed(1).replace(/\.0$/, "");
-    return `${currency}${formatted}M`;
+    return `${currencySymbol}${formatted}M`;
   } else if (absValue >= 1000) {
     const thousands = value / 1000;
     const formatted = thousands.toFixed(1).replace(/\.0$/, "");
-    return `${currency}${formatted}K`;
+    return `${currencySymbol}${formatted}K`;
   } else {
-    return `${currency}${value.toLocaleString()}`;
+    return `${currencySymbol}${value.toLocaleString(locale)}`;
   }
 };
 
-export const formatProfitValue = (value: number, currency: string) => {
-  if (value === 0) return `${currency}0`;
+export const formatProfitValue = (value: number, currencySymbol: string, isoCurrency?: string) => {
+  if (value === 0) return `${currencySymbol}0`;
 
   const absValue = Math.abs(value);
   const sign = value < 0 ? "-" : "";
+  const locale = getLocaleForIsoCurrency(isoCurrency);
 
   if (absValue >= 1000000) {
     const millions = absValue / 1000000;
     const formatted = millions.toFixed(1).replace(/\.0$/, "");
-    return `${sign}${currency}${formatted}M`;
+    return `${sign}${currencySymbol}${formatted}M`;
   } else if (absValue >= 1000) {
     const thousands = absValue / 1000;
     const formatted = thousands.toFixed(1).replace(/\.0$/, "");
-    return `${sign}${currency}${formatted}K`;
+    return `${sign}${currencySymbol}${formatted}K`;
   } else {
-    return `${sign}${currency}${absValue.toLocaleString()}`;
+    return `${sign}${currencySymbol}${absValue.toLocaleString(locale)}`;
   }
 };

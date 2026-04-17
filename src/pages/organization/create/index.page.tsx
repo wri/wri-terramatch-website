@@ -16,6 +16,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import { OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import { formDefaultValues } from "@/helpers/customForms";
+import Log from "@/utils/log";
 
 import { getSteps } from "./getCreateOrganisationSteps";
 
@@ -45,7 +46,7 @@ const CreateOrganisationForm = () => {
       await updateOrganisation({ status: "pending" }, { id: uuid });
       router.push("/organization/create/confirm");
     } catch (error) {
-      console.error("Failed to submit organization:", error);
+      Log.error("Failed to submit organization:", error);
     }
   }, [uuid, router]);
 
@@ -57,7 +58,7 @@ const CreateOrganisationForm = () => {
       router.push("/assign");
       closeModal(ModalId.WARNING);
     } catch (error) {
-      console.error("Failed to delete draft organization:", error);
+      Log.error("Failed to delete draft organization:", error);
     }
   }, [uuid, queryClient, router, closeModal]);
 

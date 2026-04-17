@@ -9,17 +9,18 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 import { formatDateValue, getDateFormatString, parseDateInput } from "@/utils/date";
 
-import { DateRangeInputs, DayView, MonthView, YearView } from "./components";
+import { DayView, MonthView, YearView } from "../components";
 import {
-  calendarGlobalStyles,
-  dateRangePickerStyles,
+  datePickerControlStyles,
   FieldCaption,
   FieldContainer,
   FieldErrorBar,
   FieldErrorMessage,
   FieldLabel,
   RequiredIndicator
-} from "./styled";
+} from "../styled";
+import { DateRangeInputs } from "./components";
+import { calendarGlobalStyles } from "./styled";
 import type { PreservedDate } from "./types";
 
 interface DateRangeInputProps {
@@ -35,7 +36,7 @@ interface DateRangeInputProps {
 }
 
 const StyledPickerWrapper = styled.div<{ $size: "default" | "small" }>`
-  ${({ $size }) => dateRangePickerStyles($size)}
+  ${({ $size }) => datePickerControlStyles($size)}
 `;
 
 export const DateRangeInput: FC<DateRangeInputProps> = ({

@@ -8,7 +8,7 @@ import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useMyOrg } from "@/connections/Organisation";
-import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -63,10 +63,11 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
 
   const needMoreInformation =
     project.updateRequestStatus === NEEDS_MORE_INFORMATION || project.status === NEEDS_MORE_INFORMATION;
+  const awaitingApproval = project.updateRequestStatus === AWAITING_APPROVAL || project.status === AWAITING_APPROVAL;
   const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
 
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation) {
+    if (needMoreInformation && !awaitingApproval) {
       openModal(
         ModalId.STATUS,
         <EntityStatusModal
@@ -80,7 +81,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
     } else {
       handleEdit();
     }
-  }, [needMoreInformation, statusProps, openModal, project.feedback, project.uuid, handleEdit]);
+  }, [needMoreInformation, statusProps, openModal, project.feedback, project.uuid, handleEdit, awaitingApproval]);
 
   return (
     <Box gap={2} className="flex flex-col">

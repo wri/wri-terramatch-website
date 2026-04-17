@@ -41,7 +41,7 @@ export const CloneForm = () => {
   );
 
   const cloneForm = useCallback<SubmitHandler<TitleForm>>(
-    ({ title }) => create(formBuilderToAttributes({ ...record, title, published: false, frameworkKey: undefined })),
+    ({ title }) => create(formBuilderToAttributes({ ...record, title, frameworkKey: undefined })),
     [create, record]
   );
 

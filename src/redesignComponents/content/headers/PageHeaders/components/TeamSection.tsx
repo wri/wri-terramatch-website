@@ -3,7 +3,10 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC } from "react";
 
+import { ContextCondition } from "@/context/ContextCondition";
+import { Framework, TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS } from "@/context/framework.provider";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
+import { PpcProgramBannerLogo } from "@/redesignComponents/foundations/Logos/PpcProgramBannerLogo";
 import { TerraFundAFR100 } from "@/redesignComponents/foundations/Logos/TerraFundAFR100";
 import Avatar, { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
 
@@ -26,7 +29,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
       width="240px"
       minWidth="240px"
       height="auto"
-      className="flex flex-col gap-2 pt-11"
+      className="flex flex-col gap-2 pt-11 mobile:!w-full mobile:flex-row mobile:items-center mobile:justify-between mobile:pt-0"
       css={{
         "&": {
           alignItems: "self-end !important"
@@ -81,7 +84,13 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
         </Flex>
       </div>
 
-      <TerraFundAFR100 className="mt-auto" />
+      {/* Logos read framework from FrameworkProvider (project page); no frameworkKey prop. */}
+      <ContextCondition frameworksShow={TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS}>
+        <TerraFundAFR100 className="mt-auto" />
+      </ContextCondition>
+      <ContextCondition frameworksShow={[Framework.PPC]}>
+        <PpcProgramBannerLogo className="mt-auto" />
+      </ContextCondition>
     </Box>
   );
 };

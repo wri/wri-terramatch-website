@@ -293,6 +293,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
       py={5}
       justifyContent="space-between"
       background="secondary.neutral"
+      className="mobile:flex-col"
     >
       <Flex gap={5}>
         <div className={IMAGE_CONTAINER_CLASSES}>

@@ -14,7 +14,7 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
-import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -41,11 +41,11 @@ interface ProjectOverviewTabProps {
 const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
-  const { openModal } = useModalContext();
   const { framework } = useFrameworkContext();
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
+  const { openModal } = useModalContext();
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
@@ -77,13 +77,12 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
       }));
   }, [associatedUsers]);
-
   const needMoreInformation =
     project.updateRequestStatus === NEEDS_MORE_INFORMATION || project.status === NEEDS_MORE_INFORMATION;
+  const awaitingApproval = project.updateRequestStatus === AWAITING_APPROVAL || project.status === AWAITING_APPROVAL;
   const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
-
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation) {
+    if (needMoreInformation && !awaitingApproval) {
       openModal(
         ModalId.STATUS,
         <EntityStatusModal
@@ -97,7 +96,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     } else {
       handleEdit();
     }
-  }, [needMoreInformation, statusProps, openModal, project.feedback, project.uuid, handleEdit]);
+  }, [openModal, project.feedback, project.uuid, handleEdit, needMoreInformation, statusProps, awaitingApproval]);
 
   const goToTab = useCallback(
     (tab: string) => {
@@ -254,12 +253,15 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         </PageItem>
         <PageItem
           flexProps={{ width: "fit-content", overflow: "hidden" }}
-          className="!w-full !max-w-full sm:!w-[30%] sm:!max-w-[30%]"
+          className="!w-full !max-w-full sm:!w-[35%] sm:!max-w-[35%] lg:!w-[30%] lg:!max-w-[30%]"
           title={t("Project Set Up")}
           tag={(() => {
             const tagState = mapStatusToTagStateEntity(project?.status);
-
-            return project?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
+            return project.updateRequestStatus === "awaiting-approval" ? (
+              <TagSubmission state="pending-approval" />
+            ) : project?.status != null ? (
+              <TagSubmission state={tagState?.type as TagSubmissionState} />
+            ) : null;
           })()}
           buttonProps={{
             variant: "primary",

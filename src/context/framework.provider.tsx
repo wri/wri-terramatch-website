@@ -18,6 +18,14 @@ export enum Framework {
 export const ALL_TF = [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES, Framework.TF_3];
 export const isTerrafund = (framework: Framework) => ALL_TF.includes(framework as (typeof ALL_TF)[number]);
 
+/** TerraFund for AFR100 project banner logo: Top 100, Landscapes, Enterprises, EPA-Ghana only */
+export const TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS: readonly Framework[] = [
+  Framework.TF,
+  Framework.TF_LANDSCAPES,
+  Framework.ENTERPRISES,
+  Framework.EPA_GHANA_PILOT
+];
+
 export const ALL_FF = [Framework.FF, Framework.FF_1];
 
 export const toFramework = (frameworkKey?: string | null) =>

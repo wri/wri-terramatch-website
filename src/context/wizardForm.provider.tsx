@@ -92,6 +92,12 @@ export const createLocalStepsProvider = (
       .map(({ name, children }) => [name, (children ?? []).map(({ name }) => name)])
   );
 
+  const enhancedFeedbackRequired = (fieldId: string): boolean => {
+    if (feedbackRequired(fieldId)) return true;
+    const field = fieldsByName.get(fieldId);
+    return field?.linkedFieldKey != null && feedbackRequired(field.linkedFieldKey);
+  };
+
   return {
     stepIds: () => stepIds ?? [],
     step: (id: string) => stepsById.get(id),
@@ -99,7 +105,7 @@ export const createLocalStepsProvider = (
     fieldByName: (name: string) => fieldsByName.get(name),
     fieldByKey: (linkedFieldKey: string) => fieldsByKey.get(linkedFieldKey),
     childNames: (childName: string) => childNames.get(childName) ?? [],
-    feedbackRequired
+    feedbackRequired: enhancedFeedbackRequired
   };
 };
 
@@ -156,7 +162,7 @@ export type OrgFormDetails = {
   type?: string;
 };
 
-export const useV2OrgFormDetails = (orgUuid?: string) => {
+export const useOrgFormDetails = (orgUuid?: string) => {
   const [loaded, { data: orgData, isLoading: orgLoading }] = useOrganisation(orgUuid != null ? { id: orgUuid } : {});
   return useMemo<[boolean, OrgFormDetails]>(() => {
     if (orgUuid == null) return [true, {}];
@@ -227,7 +233,7 @@ export const useFormEntities = () => {
   );
 };
 
-export const useOrgFormDetails = () => useContext(WizardFormContext).orgDetails;
+export const useWizardOrgFormDetails = () => useContext(WizardFormContext).orgDetails;
 
 export const useProjectFormDetails = () => useContext(WizardFormContext).projectDetails;
 

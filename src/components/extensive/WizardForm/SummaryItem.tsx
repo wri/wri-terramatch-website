@@ -25,6 +25,8 @@ type SummaryItemProps = {
   submitButtonDisable?: boolean;
   enableSaveChangesButton?: boolean;
   saveChanges: () => void;
+  feedback?: string | null;
+  feedbackFields?: string[] | null;
 };
 
 const SummaryItem: FC<SummaryItemProps> = ({
@@ -38,7 +40,9 @@ const SummaryItem: FC<SummaryItemProps> = ({
   onSaveAndExit,
   submitButtonDisable,
   enableSaveChangesButton,
-  saveChanges
+  saveChanges,
+  feedback,
+  feedbackFields
 }) => {
   const t = useT();
   const user = useIsAdmin();
@@ -46,7 +50,6 @@ const SummaryItem: FC<SummaryItemProps> = ({
   const [, { data: actions }] = useActions({
     enabled: !user
   });
-
   const entity = models as FormModel;
   const action = useMemo(() => {
     return actions?.find(a => {
@@ -69,7 +72,12 @@ const SummaryItem: FC<SummaryItemProps> = ({
       })}
     >
       <FormStepHeader id="step" title={title} subtitle={subtitle}>
-        <FormSummary values={formHook.getValues()} onEdit={setSelectedStepIndex} />
+        <FormSummary
+          values={formHook.getValues()}
+          onEdit={setSelectedStepIndex}
+          feedback={feedback}
+          feedbackFieldsOptions={feedbackFields}
+        />
       </FormStepHeader>
       <FormFooter
         className={classNames(
