@@ -1008,39 +1008,6 @@ export const usePatchV2FinancialIndicators = (
   );
 };
 
-export type GetV2DisturbanceReportsExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DisturbanceReportsExportVariables = ApiContext["fetcherOptions"];
-
-export const fetchGetV2DisturbanceReportsExport = (
-  variables: GetV2DisturbanceReportsExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<Record<string, any>, GetV2DisturbanceReportsExportError, undefined, {}, {}, {}>({
-    url: "/v2/disturbance-reports/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2DisturbanceReportsExport = <TData = Record<string, any>>(
-  variables: GetV2DisturbanceReportsExportVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<Record<string, any>, GetV2DisturbanceReportsExportError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Record<string, any>, GetV2DisturbanceReportsExportError, TData>(
-    queryKeyFn({ path: "/v2/disturbance-reports/export", operationId: "getV2DisturbanceReportsExport", variables }),
-    ({ signal }) => fetchGetV2DisturbanceReportsExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type QueryOperation =
   | {
       path: "/v2/admin/forms/applications/{UUID}/export";
@@ -1076,9 +1043,4 @@ export type QueryOperation =
       path: "/v2/{ENTITY}/{UUID}/export";
       operationId: "getV2ENTITYUUIDExport";
       variables: GetV2ENTITYUUIDExportVariables;
-    }
-  | {
-      path: "/v2/disturbance-reports/export";
-      operationId: "getV2DisturbanceReportsExport";
-      variables: GetV2DisturbanceReportsExportVariables;
     };
