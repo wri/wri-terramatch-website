@@ -5,6 +5,9 @@ import mapboxgl from "mapbox-gl";
 import { useRouter } from "next/router";
 import React, { useCallback, useMemo, useState } from "react";
 
+import { DashboardExpandedMapModalContent } from "@/components/dashboard/DashboardExpandedMapModalContent";
+import { DashboardMapLegend } from "@/components/dashboard/DashboardMapLegend";
+import { buildImpactStoriesModalColumns, ImpactStoryModalRow } from "@/components/dashboard/impactStoriesModalColumns";
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
@@ -26,6 +29,7 @@ import { useGadmChoices } from "@/connections/Gadm";
 import { CHART_TYPES } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useDashboardImpactStoryModal } from "@/hooks/useDashboardImpactStoryModal";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import {
   DASHBOARD_MOBILE_MEDIA_QUERY,
@@ -40,15 +44,11 @@ import {
   TOTAL_NUMBER_OF_SITES_TOOLTIP,
   VISIBLE_TABLE_ROWS_ON_DASHBOARD
 } from "@/pages/dashboard/constants/contentOverviewConstants";
-import { useDashboardImpactStoryModal } from "@/pages/dashboard/hooks/useDashboardImpactStoryModal";
 import { useDashboardMapViewportSync } from "@/pages/dashboard/hooks/useDashboardMapViewportSync";
 import { clampLongitudeLatitude } from "@/pages/dashboard/utils/mapViewport";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./ContentDashboardWrapper";
-import { DashboardExpandedMapModalContent } from "./DashboardExpandedMapModalContent";
-import { DashboardMapLegend } from "./DashboardMapLegend";
-import { buildImpactStoriesModalColumns, ImpactStoryModalRow } from "./impactStoriesModalColumns";
 import SecDashboard from "./SecDashboard";
 
 export { IMPACT_STORIES_TOOLTIP };

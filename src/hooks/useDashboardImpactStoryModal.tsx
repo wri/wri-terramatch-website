@@ -1,13 +1,13 @@
 import { useT } from "@transifex/react";
 import { useEffect, useState } from "react";
 
+import type { ImpactStoryModalRow } from "@/components/dashboard/impactStoriesModalColumns";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalStory, { ImpactStoryData } from "@/components/extensive/Modal/ModalStory";
 import { useDashboardImpactStory } from "@/connections/DashboardEntity";
 import { useGadmChoices } from "@/connections/Gadm";
 import { useModalContext } from "@/context/modal.provider";
 import { DashboardImpactStoryFullDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
-import type { ImpactStoryModalRow } from "@/pages/dashboard/components/impactStoriesModalColumns";
 import { parseImpactStoryContent } from "@/utils/impactStory";
 import Log from "@/utils/log";
 
