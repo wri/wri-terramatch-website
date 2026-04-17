@@ -21,13 +21,13 @@ export const DashboardPopup = (event: PopupComponentProps) => {
   const { closeModal } = useModalContext();
 
   const learnMoreEvent = () => {
-    if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
+    if (itemUuid != null && layerName === LAYERS_NAMES.CENTROIDS) {
       const projectCountry = projectFullDto?.country;
       const selectedCountry = dashboardCountries?.find(
         (country: CountriesProps) => country.country_slug === projectCountry
       );
 
-      if (selectedCountry) {
+      if (selectedCountry != null) {
         setFilters?.(prev => ({
           ...prev,
           uuid: itemUuid,
@@ -51,7 +51,7 @@ export const DashboardPopup = (event: PopupComponentProps) => {
     <ReduxProvider store={ApiSlice.redux}>
       <QueryClientProvider client={client}>
         {popupType === "project" && layerName === LAYERS_NAMES.CENTROIDS ? (
-          <PopupMapImage label={popupData?.label || "-"} items={items} learnMore={learnMoreEvent} />
+          <PopupMapImage label={popupData?.label ?? "-"} items={items} learnMore={learnMoreEvent} />
         ) : (
           <TooltipGridMap
             label={label}

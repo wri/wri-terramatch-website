@@ -27,7 +27,7 @@ export function usePopupData(event: PopupEvent) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [projectLoaded, { data: projectFullDto }] = useDashboardProject({
-    id: itemUuid && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : null
+    id: itemUuid != null && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : null
   });
 
   const [polygonDataLoaded, { data: polygonDataArray }] = useSitePolygons({
@@ -192,9 +192,9 @@ export function usePopupData(event: PopupEvent) {
     }
 
     setItems([]);
-    if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
+    if (itemUuid != null && layerName === LAYERS_NAMES.CENTROIDS) {
       fetchProjectData();
-    } else if (itemUuid && layerName === LAYERS_NAMES.POLYGON_GEOMETRY) {
+    } else if (itemUuid != null && layerName === LAYERS_NAMES.POLYGON_GEOMETRY) {
       processPolygonData();
     }
   }, [layerName, itemUuid, projectFullDto, projectLoaded, polygonDataLoaded, polygonData]);

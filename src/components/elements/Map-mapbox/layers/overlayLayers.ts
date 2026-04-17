@@ -43,7 +43,7 @@ export const addBorderLandscape = (
   if (!map.getSource(sourceName)) {
     map.addSource(sourceName, { type: "vector", tiles: [GEOSERVER_TILE_URL] });
   }
-  if (!map.getLayer(sourceName)) {
+  if (map.getLayer(sourceName) == null) {
     const style = landscapeLayer.styles[0];
     map.addLayer({
       ...style,
