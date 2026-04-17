@@ -19,6 +19,7 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnUnmount } from "@/hooks/useOnMount";
+import { usePolygonClippingCompletion } from "@/hooks/usePolygonClippingCompletion";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
@@ -66,6 +67,7 @@ const PolygonDrawer = ({
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygonLightDto>();
   const [openAttributes, setOpenAttributes] = useState(true);
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
+  const [pendingClipping, setPendingClipping] = useState(false);
   const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygonLightDto>();
   const [isLoadingDropdown, setIsLoadingDropdown] = useState(false);
   const t = useT();
@@ -212,11 +214,24 @@ const PolygonDrawer = ({
     if (polygonSelected) {
       showLoader();
       clipSinglePolygon(polygonSelected);
+      setPendingClipping(true);
     } else {
       Log.error("Polygon UUID is missing");
       openNotification("error", t("Error"), t("Cannot fix polygons: Polygon UUID is missing."));
     }
   };
+
+  usePolygonClippingCompletion({
+    pendingClipping,
+    setPendingClipping,
+    onSuccess: () => {
+      hideLoader();
+    },
+    onFailure: () => {
+      openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
+      hideLoader();
+    }
+  });
 
   const auditData = {
     entity: "site-polygon",
