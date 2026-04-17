@@ -1,5 +1,5 @@
 import { useMediaQuery } from "@mui/material";
-import { T, useT } from "@transifex/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useMemo, useState } from "react";
 import { Else, If, Then, When } from "react-if";
@@ -62,21 +62,6 @@ export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="u
 
 export const NUMBER_OF_TREES_PLANTED_TOOLTIP =
   "Total number of trees that funded projects have planted to date, as reported through 6-month progress reports and displayed as progress towards goal.";
-
-const LABEL_LEGEND = [
-  {
-    tooltip: { key: "Total", render: <T _str="Total" _tags="dash" /> },
-    color: "bg-blueCustom-900"
-  },
-  {
-    tooltip: { key: "Non-Profit", render: <T _str="Non-Profit" _tags="dash" /> },
-    color: "bg-secondary-600"
-  },
-  {
-    tooltip: { key: "Enterprise", render: <T _str="Enterprise" _tags="dash" /> },
-    color: "bg-primary"
-  }
-];
 
 export interface DashboardTableDataProps {
   label: string;
@@ -148,18 +133,33 @@ const Dashboard = () => {
 
   const dataToggle = useMemo(
     () => [
-      { tooltip: { key: "Absolute", render: <T _str="Absolute" _tags="dash" /> } },
-      { tooltip: { key: "Relative", render: <T _str="Relative" _tags="dash" /> } }
+      { tooltip: { key: "Absolute", render: t("Absolute") } },
+      { tooltip: { key: "Relative", render: t("Relative") } }
     ],
-    []
+    [t]
   );
 
   const dataToggleGraphic = useMemo(
+    () => [{ tooltip: { key: "Table", render: t("Table") } }, { tooltip: { key: "Graph", render: t("Graph") } }],
+    [t]
+  );
+
+  const labelLegend = useMemo(
     () => [
-      { tooltip: { key: "Table", render: <T _str="Table" _tags="dash" /> } },
-      { tooltip: { key: "Graph", render: <T _str="Graph" _tags="dash" /> } }
+      {
+        tooltip: { key: "Total", render: t("Total") },
+        color: "bg-blueCustom-900"
+      },
+      {
+        tooltip: { key: "Non-Profit", render: t("Non-Profit") },
+        color: "bg-secondary-600"
+      },
+      {
+        tooltip: { key: "Enterprise", render: t("Enterprise") },
+        color: "bg-primary"
+      }
     ],
-    []
+    [t]
   );
 
   useEffect(() => {
@@ -548,7 +548,7 @@ const Dashboard = () => {
           <SecDashboard
             title={t("Number of Trees Planted")}
             type="legend"
-            secondOptionsData={LABEL_LEGEND}
+            secondOptionsData={labelLegend}
             tooltip={t(NUMBER_OF_TREES_PLANTED_TOOLTIP)}
             data={numberTreesPlanted}
             dataForChart={dashboardRestorationGoalData}
