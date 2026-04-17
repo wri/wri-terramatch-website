@@ -17,6 +17,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import NurseriesTable from "@/components/extensive/Tables/NurseriesTable";
 import SitesTable from "@/components/extensive/Tables/SitesTable";
 import { deleteProject } from "@/connections/Entity";
+import { useReportingFramework } from "@/connections/ReportingFramework";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
@@ -34,11 +35,13 @@ export interface ProjectCardProps
   project: ProjectLightDto;
 }
 
-const FrameworkName = () => {
+const FrameworkName = ({ frameworkKey }: { frameworkKey?: string | null }) => {
   const title = useFrameworkTitle();
+  const [, { data: frameworkData }] = useReportingFramework({ frameworkKey: frameworkKey ?? undefined });
+
   return (
     <Text variant="text-light-subtitle-400" className="capitalize">
-      {title}
+      {frameworkData?.name || title}
     </Text>
   );
 };
@@ -98,7 +101,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
             )}
             <div className="flex">
               <Text variant="text-bold-subtitle-500">{t("Framework")}:&#160;</Text>
-              <FrameworkName />
+              <FrameworkName frameworkKey={project.frameworkKey} />
             </div>
             <div className="flex">
               <Text variant="text-bold-subtitle-500">{t("Organisation")}:&#160;</Text>
