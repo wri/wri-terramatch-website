@@ -1,10 +1,9 @@
+import { DashboardExpandedMapLegend } from "@/components/dashboard/DashboardExpandedMapLegend";
 import { DashboardGetProjectsData, MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { MapFunctions } from "@/components/elements/Map-mapbox/Map.d";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
 import { CountriesProps, DashboardFilters } from "@/context/dashboard.provider";
-
-import { DashboardExpandedMapLegend } from "./DashboardExpandedMapLegend";
 
 export type DashboardExpandedMapModalContentProps = {
   modalMapFunctions: MapFunctions;

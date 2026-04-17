@@ -13,6 +13,12 @@ const isValidGeographicBBox = (bbox: BBox): boolean => {
   return isValidLng && isValidLat && isOrdered;
 };
 
+// Drops altitude values from a potentially 3D bbox to produce a 2D bounds
+const to2DBounds = (bbox: BBox): [number, number, number, number] => {
+  const [minLng, minLat, , , maxLng, maxLat] = bbox.length === 6 ? bbox : [bbox[0], bbox[1], 0, 0, bbox[2], bbox[3]];
+  return [minLng, minLat, maxLng, maxLat];
+};
+
 export const zoomToBbox = (
   bbox: BBox,
   map: MapboxMap,
@@ -27,7 +33,7 @@ export const zoomToBbox = (
   }
 
   try {
-    map.fitBounds(bbox, { padding: hasControls ? 100 : 30, linear: false, animate: true });
+    map.fitBounds(to2DBounds(bbox), { padding: hasControls ? 100 : 30, linear: false, animate: true });
   } catch (error) {
     Log.warn("zoomToBbox: error fitting bounds:", error);
   }
