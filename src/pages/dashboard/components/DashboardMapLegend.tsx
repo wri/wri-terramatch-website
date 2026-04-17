@@ -7,9 +7,6 @@ type DashboardMapLegendProps = {
   translate: (key: string, options?: Record<string, string | number>) => string;
 };
 
-/**
- * Legend for project-type counts shown on the dashboard map (non-profit vs enterprise).
- */
 export function DashboardMapLegend({
   nonProfitProjectCount,
   enterpriseProjectCount,

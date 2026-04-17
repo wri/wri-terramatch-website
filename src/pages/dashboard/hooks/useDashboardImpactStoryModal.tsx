@@ -17,10 +17,6 @@ type PendingStoryData = Record<string, unknown> & {
   organization?: { facebook_url?: string; instagram_url?: string; linkedin_url?: string; twitter_url?: string };
 };
 
-/**
- * Loads full impact story details when the user opens a story from the dashboard list,
- * then opens the standard story modal (or falls back to list data on error).
- */
 export function useDashboardImpactStoryModal() {
   const t = useT();
   const { openModal } = useModalContext();

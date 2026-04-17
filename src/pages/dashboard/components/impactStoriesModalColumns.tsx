@@ -15,9 +15,6 @@ export type ImpactStoryModalRow = {
   uuid?: string;
 };
 
-/**
- * Table columns for the expanded "Impact Stories" modal on the dashboard overview.
- */
 export function buildImpactStoriesModalColumns(
   onOpenStory: (row: ImpactStoryModalRow) => void
 ): ColumnDef<ImpactStoryModalRow>[] {

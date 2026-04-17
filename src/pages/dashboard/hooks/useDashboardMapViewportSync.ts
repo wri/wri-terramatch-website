@@ -16,10 +16,6 @@ type UseDashboardMapViewportSyncParams = {
   setCurrentMapStyle: Dispatch<SetStateAction<MapStyle | undefined>>;
 };
 
-/**
- * Subscribes to dashboard and modal Mapbox instances so shared viewport state stays aligned
- * when the user pans or zooms, and when the basemap style reloads (dashboard map only).
- */
 export function useDashboardMapViewportSync({
   dashboardMapFunctions,
   dashboardMapLoaded,

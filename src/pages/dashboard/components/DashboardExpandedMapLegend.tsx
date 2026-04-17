@@ -7,9 +7,6 @@ type DashboardExpandedMapLegendProps = {
   translate: (key: string, options?: Record<string, string | number>) => string;
 };
 
-/**
- * Same legend as the inline dashboard map, positioned for the expanded (modal) map layout.
- */
 export function DashboardExpandedMapLegend({
   nonProfitProjectCount,
   enterpriseProjectCount,

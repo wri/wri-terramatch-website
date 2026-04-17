@@ -7,7 +7,6 @@ import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContain
 import { CountriesProps, DashboardFilters } from "@/context/dashboard.provider";
 
 import { DashboardExpandedMapLegend } from "./DashboardExpandedMapLegend";
-import TooltipGridMap from "./TooltipGridMap";
 
 export type DashboardExpandedMapModalContentProps = {
   modalMapFunctions: MapFunctions;
@@ -18,7 +17,6 @@ export type DashboardExpandedMapModalContentProps = {
   initialZoom: number | undefined;
   mapStyle: MapStyle | undefined;
   onModalMapStyleChange: (style: MapStyle) => void;
-  /** Display names matching the MVT `landscape` attribute (same strings as the dashboard filter). */
   landscapeNamesForBorderOverlay: string[];
   onModalMapLoadComplete: (loaded: boolean) => void;
   selectedProjectUuid: string | undefined;
@@ -30,9 +28,6 @@ export type DashboardExpandedMapModalContentProps = {
   enterpriseProjectCount: number;
 };
 
-/**
- * Map instance used inside the expanded dashboard modal; shares filter context with the inline map.
- */
 export function DashboardExpandedMapModalContent({
   modalMapFunctions,
   modalMapLoaded,
@@ -80,7 +75,6 @@ export function DashboardExpandedMapModalContent({
           }}
         />
       </LoadingContainerOpacity>
-      <TooltipGridMap label="Angola" learnMore={true} />
       <When condition={!selectedProjectUuid}>
         <DashboardExpandedMapLegend
           nonProfitProjectCount={nonProfitProjectCount}
