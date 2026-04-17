@@ -107,8 +107,7 @@ export const getFormEntries = (
       entries.push({
         title: field.label ?? "",
         inputType: field.inputType,
-        value: getFormattedAnswer(field, values, fieldsProvider) ?? nullText ?? t("Answer Not Provided"),
-        optionsList: field.optionsList ?? null
+        value: getFormattedAnswer(field, values, fieldsProvider) ?? nullText ?? t("Answer Not Provided")
       });
     } else {
       addFormEntries(entries, field, values, props);

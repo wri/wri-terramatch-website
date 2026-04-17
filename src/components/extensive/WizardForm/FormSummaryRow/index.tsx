@@ -6,7 +6,6 @@ import type * as yup from "yup";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
-import { getMonthOptions } from "@/constants/options/months";
 import { Framework, toFramework, useFramework } from "@/context/framework.provider";
 import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -99,11 +98,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
                     "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
                   })}
                 >
-                  {entry.optionsList === "months" ? (
-                    <Text textStyle="400" className="flex-1" color="neutral.900">
-                      {getMonthOptions(t).find(opt => String(opt.value) === String(entry.value))?.title}
-                    </Text>
-                  ) : typeof entry.value === "string" ? (
+                  {typeof entry.value === "string" ? (
                     <Text
                       textStyle="400"
                       className="flex-1"

@@ -1,6 +1,5 @@
 import { Box, Card, Typography } from "@mui/material";
-import { useT } from "@transifex/react";
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 
 import ChangeBox from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeBox";
 import DisturbanceReportEntriesVisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsTab/DisturbanceReportEntriesVisualDiff";
@@ -9,20 +8,12 @@ import FinancialVisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsT
 import { StepChange } from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
 import VisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsTab/VisualDiff";
 import List from "@/components/extensive/List/List";
-import { getMonthOptions } from "@/constants/options/months";
 
 export interface IChangeRowProps {
   stepChange: StepChange;
 }
 
 const ChangeRow: FC<IChangeRowProps> = ({ stepChange }) => {
-  const t = useT();
-  const monthOptions = getMonthOptions(t);
-  const formatOptionValue = (value: ReactNode, optionsList?: string | null) => {
-    if (optionsList !== "months" || value == null) return value;
-    return monthOptions.find(option => String(option.value) === String(value))?.title ?? value;
-  };
-
   return (
     <Card sx={{ padding: 4 }}>
       <Typography variant="h5" component="h3" className="capitalize">
@@ -31,7 +22,7 @@ const ChangeRow: FC<IChangeRowProps> = ({ stepChange }) => {
       <List
         className="my-4 flex flex-col gap-4"
         items={stepChange.changes}
-        render={({ title, inputType, currentValue, newValue, optionsList }) => (
+        render={({ title, inputType, currentValue, newValue }) => (
           <div>
             <Typography variant="h6" component="h4" className="capitalize">
               {title}
@@ -39,7 +30,7 @@ const ChangeRow: FC<IChangeRowProps> = ({ stepChange }) => {
             {newValue == null ? (
               <Box sx={{ flexGrow: 1 }}>
                 Existing Value (unchanged):
-                <FieldView inputType={inputType} value={formatOptionValue(currentValue, optionsList)} />
+                <FieldView inputType={inputType} value={currentValue} />
               </Box>
             ) : inputType === "long-text" ? (
               <VisualDiff {...{ inputType, currentValue, newValue }} />
@@ -52,11 +43,7 @@ const ChangeRow: FC<IChangeRowProps> = ({ stepChange }) => {
                 newValue={newValue}
               />
             ) : (
-              <ChangeBox
-                inputType={inputType}
-                oldView={formatOptionValue(currentValue, optionsList)}
-                newView={formatOptionValue(newValue, optionsList)}
-              />
+              <ChangeBox inputType={inputType} oldView={currentValue} newView={newValue} />
             )}
           </div>
         )}

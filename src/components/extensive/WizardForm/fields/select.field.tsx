@@ -50,9 +50,9 @@ export const SelectField: FormFieldFactory = {
     const formOptions =
       options == null && optionsList != null ? getHardcodedOptions(optionsList) : toFormOptions(options);
     if (Array.isArray(value)) {
-      return value.map(v => formOptions.find(o => o.value === v)?.title).filter(isNotNull) ?? value;
+      return value.map(v => formOptions.find(o => String(o.value) === String(v))?.title).filter(isNotNull) ?? value;
     } else {
-      return formOptions.find(o => o.value === value)?.title ?? value;
+      return formOptions.find(o => String(o.value) === String(value))?.title ?? value;
     }
   },
 

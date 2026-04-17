@@ -1,5 +1,4 @@
 import { Typography } from "@mui/material";
-import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { camelCase } from "lodash";
 import { FC } from "react";
@@ -13,7 +12,6 @@ import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTab
 import { FormSummaryRowProps } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { SupportedEntity } from "@/connections/EntityAssociation";
-import { getMonthOptions } from "@/constants/options/months";
 import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 
 type InformationTabRowProps = Omit<FormSummaryRowProps, "index" | "type">;
@@ -27,7 +25,6 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
   const nurseryTotalFallback = usePlantTotalCount({ entity: entityName, entityUuid, collection: "nursery-seedling" });
   const totalTreePlanted = usePlantTotalCount({ entity: entityName, entityUuid, collection: "tree-planted" });
   const title = useFieldsProvider().step(props.stepId)?.title;
-  const t = useT();
   return (
     <>
       <Text variant="text-16-semibold" className="text-darkCustom">
@@ -94,10 +91,7 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
                         variant="text-14-semibold"
                         className="text-darkCustom"
                         dangerouslySetInnerHTML={{
-                          __html:
-                            entry.optionsList === "months"
-                              ? getMonthOptions(t).find(opt => String(opt.value) === String(entry.value))?.title
-                              : formatEntryValue(entry.value)
+                          __html: formatEntryValue(entry.value)
                         }}
                       />
                     ) : (
