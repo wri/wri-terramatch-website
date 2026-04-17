@@ -9,11 +9,12 @@ import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrappe
 import { FormFieldFactory, SharedFieldProps } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
 import { useCurrencyContext } from "@/context/currency.provider";
-import { useOrgFormDetails } from "@/context/wizardForm.provider";
+import { useWizardOrgFormDetails } from "@/context/wizardForm.provider";
 import {
   formatFinancialAmount,
   parseFinancialAmountInput,
-  shouldFormatFinancialNumberField
+  shouldFormatFinancialNumberField,
+  shouldUseIntegerNumberInput
 } from "@/utils/financialReport";
 import { addValidationWith } from "@/utils/yup";
 
@@ -33,7 +34,7 @@ const FinancialAmountInput: FC<SharedFieldProps> = props => {
   const { name, control, error, label, required, placeholder, description, feedbackRequired } = props;
   const id = useId();
   const { currency } = useCurrencyContext();
-  const orgDetails = useOrgFormDetails();
+  const orgDetails = useWizardOrgFormDetails();
   const isoCurrency =
     currency != null && currency !== ""
       ? String(currency)
@@ -137,6 +138,16 @@ export const NumberField: FormFieldFactory = {
       return validator;
     }
 
+    if (shouldUseIntegerNumberInput(field)) {
+      let validator = yup
+        .number()
+        .transform((value, originalValue) => (originalValue === "" || originalValue == null ? undefined : value))
+        .integer();
+      if (isNumber(validation?.min)) validator = validator.min(validation?.min!);
+      if (isNumber(validation?.max)) validator = validator.max(validation?.max!);
+      return validator;
+    }
+
     let validator = yup.number();
     if (isNumber(validation?.min)) validator = validator.min(validation?.min!);
     if (isNumber(validation?.max)) validator = validator.max(validation?.max!);
@@ -153,6 +164,9 @@ export const NumberField: FormFieldFactory = {
     }
     if (shouldFormatFinancialNumberField(field)) {
       return <FinancialAmountInput {...sharedProps} />;
+    }
+    if (shouldUseIntegerNumberInput(field)) {
+      return <Input {...sharedProps} type="number" step={additionalProps?.step ?? 1} />;
     }
     return <Input {...sharedProps} type="number" step={additionalProps?.step} />;
   },
@@ -186,6 +200,14 @@ export const NumberField: FormFieldFactory = {
     }
     const { name, validation } = field;
     const value = formValues[name];
+    if (shouldUseIntegerNumberInput(field)) {
+      if (value == null || value === "") {
+        return formValues;
+      }
+      const numberValue = Number(value);
+      formValues[name] = Number.isFinite(numberValue) ? Math.trunc(numberValue) : value;
+      return formValues;
+    }
     formValues[name] = value == null && (validation?.min ?? 0) < 0 ? value : Number(value);
     return formValues;
   }

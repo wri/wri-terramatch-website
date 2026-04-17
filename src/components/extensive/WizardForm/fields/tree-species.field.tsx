@@ -4,8 +4,9 @@ import * as yup from "yup";
 import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
+import TreeSpeciesEntryValue from "@/components/extensive/WizardForm/TreeSpeciesEntryValue";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { getAnswer, treeSpeciesEntryValue } from "@/components/extensive/WizardForm/utils";
+import { getAnswer } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";
 import { addValidationWith } from "@/utils/yup";
 
@@ -71,11 +72,9 @@ export const TreeSpeciesField: FormFieldFactory = {
     }
   },
 
-  addFormEntries: addEntryWith((field, formValues, { entity, fieldsProvider }) => {
-    const value = (getAnswer(field, formValues, fieldsProvider) ?? []) as TreeSpeciesValue[];
-    const collection = resolveTreeSpeciesFormCollection(value[0]?.collection ?? field.collection, field.linkedFieldKey);
-    return treeSpeciesEntryValue(collection || undefined, entity, field, formValues, fieldsProvider);
-  }),
+  addFormEntries: addEntryWith((field, values, { fieldsProvider }) => (
+    <TreeSpeciesEntryValue {...{ field, values, fieldsProvider }} />
+  )),
 
   formBuilderAdditionalOptions: ({ getSource }) => (
     <BooleanInput

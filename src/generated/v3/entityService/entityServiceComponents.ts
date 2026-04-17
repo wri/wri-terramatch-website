@@ -3032,6 +3032,45 @@ export const entityCreate = new V3ApiEndpoint<EntityCreateResponse, EntityCreate
   "POST"
 );
 
+export type EntityExportAllPathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+};
+
+export type EntityExportAllError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type EntityExportAllVariables = {
+  pathParams: EntityExportAllPathParams;
+};
+
+export const entityExportAll = new V3ApiEndpoint<undefined, EntityExportAllError, EntityExportAllVariables, {}>(
+  "/entities/v3/{entity}/exportAll",
+  "GET"
+);
+
 export type EntityGetPathParams = {
   /**
    * UUID of the resource.
@@ -3419,45 +3458,6 @@ export type EntityUpdateVariables = {
 export const entityUpdate = new V3ApiEndpoint<undefined, EntityUpdateError, EntityUpdateVariables, {}>(
   "/entities/v3/{entity}/{uuid}",
   "PATCH"
-);
-
-export type EntityExportAllPathParams = {
-  /**
-   * Entity type to retrieve
-   */
-  entity:
-    | "projects"
-    | "sites"
-    | "nurseries"
-    | "projectReports"
-    | "nurseryReports"
-    | "siteReports"
-    | "financialReports"
-    | "disturbanceReports"
-    | "srpReports";
-};
-
-export type EntityExportAllError = Fetcher.ErrorWrapper<{
-  status: 401;
-  payload: {
-    /**
-     * @example 401
-     */
-    statusCode: number;
-    /**
-     * @example Unauthorized
-     */
-    message: string;
-  };
-}>;
-
-export type EntityExportAllVariables = {
-  pathParams: EntityExportAllPathParams;
-};
-
-export const entityExportAll = new V3ApiEndpoint<undefined, EntityExportAllError, EntityExportAllVariables, {}>(
-  "/entities/v3/{entity}/exportAll",
-  "GET"
 );
 
 export type FormDataGetPathParams = {
@@ -6382,7 +6382,7 @@ export const operationsByTag = {
   reminders: { sendReminder },
   auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
   aggregateReports: { getAggregateReports },
-  entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate, entityExportAll },
+  entities: { entityIndex, entityCreate, entityExportAll, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },
   entityAssociations: { entityAssociationIndex },

@@ -1084,59 +1084,6 @@ export type V2TreeSpeciesRead = {
   collection?: string;
 };
 
-export type V2LeadershipsCreate = {
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-  nationality?: string;
-};
-
-export type V2LeadershipsUpdate = {
-  first_name?: string;
-  last_name?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-  nationality?: string;
-};
-
-export type V2LeadershipsRead = {
-  uuid?: string;
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-  nationality?: string;
-  collection?: string;
-};
-
-export type V2OwnershipStakeCreate = {
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-  percent_ownership?: number;
-};
-
-export type V2OwnershipStakeRead = {
-  uuid?: string;
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-  percent_ownership?: number;
-};
-
-export type V2OwnershipStakeUpdate = {
-  first_name?: string;
-  last_name?: string;
-  title?: string;
-  gender?: string;
-  year_of_birth?: number;
-  percent_ownership?: number;
-};
-
 export type V2FundingTypeRead = {
   uuid?: string;
   organisation_id?: string;
@@ -1244,15 +1191,4 @@ export type UserCreateComplete = {
   job_role?: string;
   phone_number?: string;
   role?: string;
-};
-
-export type V2FinancialIndicatorsRead = Record<string, any>[];
-
-export type V2FinancialIndicatorsUpdate = {
-  organisation_id?: string;
-  profit_analysis_data?: Record<string, any>[];
-  current_radio_data?: Record<string, any>[];
-  documentation_data?: Record<string, any>[];
-  local_currency?: string;
-  financial_year_start_month?: number;
 };

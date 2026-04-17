@@ -43,7 +43,7 @@ const Banner: FC<BannerProps> = ({ breadcrumbs, suffix, toolbar, className, chil
   });
   return (
     <>
-      <Box className={classNames("border-theme-neutral-300 sticky top-[0px] z-20 border-b px-1", className)}>
+      <Box className={classNames("sticky top-[0px] z-20 border-b border-theme-neutral-300 px-1", className)}>
         <ToolbarObject
           breadcrumbs={{
             links: breadcrumbsWithTranslatedLabels.map(link => ({
@@ -57,7 +57,7 @@ const Banner: FC<BannerProps> = ({ breadcrumbs, suffix, toolbar, className, chil
         />
       </Box>
       {children}
-      <Box className="border-theme-neutral-200 sticky top-[45px] z-20 border-b-4 px-0.5">
+      <Box className="sticky top-[45px] z-20 border-b-4 border-theme-neutral-200 px-0.5">
         <ViewToolbar tabBar={toolbar.tabBar} />
       </Box>
     </>

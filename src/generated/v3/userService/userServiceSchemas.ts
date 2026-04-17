@@ -174,7 +174,7 @@ export type OrganisationFullDto = {
   district: string | null;
   accountNumber1: string | null;
   accountNumber2: string | null;
-  loanStatusAmount: string | null;
+  loanStatusAmount: number | null;
   loanStatusTypes: string[] | null;
   approachOfMarginalizedCommunities: string | null;
   communityEngagementNumbersMarginalized: string | null;
