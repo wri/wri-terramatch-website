@@ -30,10 +30,10 @@ const FinancialMetrics = ({
 }: {
   data: FinancialIndicatorDto[];
   years?: number[];
-  fieldsProvider: FormFieldsProvider;
-  model: FormModel;
-  orgDetails: OrgFormDetails;
-  values: Record<string, unknown>;
+  fieldsProvider?: FormFieldsProvider;
+  model?: FormModel;
+  orgDetails?: OrgFormDetails;
+  values?: Record<string, unknown>;
 }) => {
   const ctx = useShowContext();
   const fincialReportData = ctx.record;
@@ -96,15 +96,17 @@ const FinancialMetrics = ({
 
   return (
     <div className="rounded-lg bg-white px-6 py-6 shadow-all">
-      <div className="grid w-[150%] grid-cols-2">
-        <WizardFormProvider fieldsProvider={fieldsProvider} models={model} orgDetails={orgDetails}>
-          {fieldsProvider.stepIds().map(stepId => (
-            <div key={stepId}>
-              <InformationTabRow stepId={stepId} values={values} />
-            </div>
-          ))}
-        </WizardFormProvider>
-      </div>
+      {fieldsProvider != null && model != null && orgDetails != null && values != null ? (
+        <div className="grid w-[150%] grid-cols-2">
+          <WizardFormProvider fieldsProvider={fieldsProvider} models={model} orgDetails={orgDetails}>
+            {fieldsProvider.stepIds().map(stepId => (
+              <div key={stepId}>
+                <InformationTabRow stepId={stepId} values={values} />
+              </div>
+            ))}
+          </WizardFormProvider>
+        </div>
+      ) : null}
       <div className="w-full max-w-[47.8vw] overflow-hidden lg:max-w-[57vw] wide:max-w-[65vw]">
         <Table
           columns={ColumnsTableFinancialMetrics}
