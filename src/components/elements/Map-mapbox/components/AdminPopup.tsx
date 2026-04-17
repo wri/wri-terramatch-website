@@ -10,7 +10,7 @@ const client = new QueryClient();
 
 export const AdminPopup = (event: PopupComponentProps) => {
   const { feature, popup, setPolygonFromMap, type, setEditPolygon } = event;
-  const uuidPolygon = feature.properties?.uuid;
+  const uuidPolygon = (feature.properties?.uuid ?? "") as string;
   return (
     <ReduxProvider store={ApiSlice.redux}>
       <QueryClientProvider client={client}>
