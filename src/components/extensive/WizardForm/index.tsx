@@ -448,7 +448,7 @@ function WizardForm(props: WizardFormProps) {
         >
           <div className={twMerge("flex h-full w-full flex-col", props.className)}>
             {entity != null && (
-              <Box className={classNames("bg-theme-neutral-200 sticky top-0 z-20 pb-1")}>
+              <Box background={"neutral.200"} className={classNames("sticky top-0 z-20 pb-1")}>
                 {!isAdmin && <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }} />}
                 <div className="bg-theme-neutral-300 pt-[1px]">
                   <PageHeader
