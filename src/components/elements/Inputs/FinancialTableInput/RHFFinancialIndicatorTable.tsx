@@ -849,24 +849,26 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         feedbackRequired={props.feedbackRequired}
         error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
       >
-        <div className="mb-10 space-y-6">
-          <Dropdown
-            options={getCurrencyOptions(t)}
-            label={t("Local Currency")}
-            placeholder={t("USD - US Dollar")}
-            value={[selectCurrency]}
-            defaultValue={orgDetails?.currency ? [orgDetails?.currency] : [selectCurrency]}
-            onChange={e => setSelectCurrency(e?.[0])}
-          />
-          <Dropdown
-            options={getMonthOptions(t)}
-            label={t("Financial Year Start Month")}
-            placeholder={t("Select Month")}
-            value={[selectFinancialMonth]}
-            defaultValue={orgDetails?.startMonth ? [orgDetails?.startMonth] : [selectFinancialMonth]}
-            onChange={e => setSelectFinancialMonth(e?.[0])}
-          />
-        </div>
+        {!isFinancialReport && (
+          <div className="mb-10 space-y-6">
+            <Dropdown
+              options={getCurrencyOptions(t)}
+              label={t("Local Currency")}
+              placeholder={t("USD - US Dollar")}
+              value={[selectCurrency]}
+              defaultValue={orgDetails?.currency ? [orgDetails?.currency] : [selectCurrency]}
+              onChange={e => setSelectCurrency(e?.[0])}
+            />
+            <Dropdown
+              options={getMonthOptions(t)}
+              label={t("Financial Year Start Month")}
+              placeholder={t("Select Month")}
+              value={[selectFinancialMonth]}
+              defaultValue={orgDetails?.startMonth ? [orgDetails?.startMonth] : [selectFinancialMonth]}
+              onChange={e => setSelectFinancialMonth(e?.[0])}
+            />
+          </div>
+        )}
         {collection?.includes("profit") && (
           <div className="mb-10">
             <FinancialTableInput

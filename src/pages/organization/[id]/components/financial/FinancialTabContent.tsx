@@ -126,7 +126,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
               <Text variant="text-16-light">{t("Local Currency")}</Text>
               <Text variant="text-18-bold">
                 {organization?.currency
-                  ? getCurrencyOptions(t).find(opt => opt.value == organization?.currency)?.title
+                  ? getCurrencyOptions(t).find(opt => opt.value == organization?.currency?.toUpperCase())?.title
                   : "Not Provided"}
               </Text>
             </div>

@@ -1,13 +1,13 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { useT } from "@transifex/react";
 import { useShowContext } from "react-admin";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_FINANCIAL_METRICS } from "@/components/elements/Table/TableVariants";
-import Text from "@/components/elements/Text/Text";
-import { getMonthOptions } from "@/constants/options/months";
+import WizardFormProvider, { FormFieldsProvider, FormModel, OrgFormDetails } from "@/context/wizardForm.provider";
 import { FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSchemas";
 import { formatFinancialAmount, getCurrencySymbolPrefix, getLocaleForIsoCurrency } from "@/utils/financialReport";
+
+import InformationTabRow from "../../InformationTab/components/InformationTabRow";
 
 const COLLECTION_LABELS: Record<string, string> = {
   revenue: "Revenue",
@@ -20,9 +20,22 @@ const COLLECTION_LABELS: Record<string, string> = {
   "description-documents": "Description Documents"
 };
 
-const FinancialMetrics = ({ data, years }: { data: FinancialIndicatorDto[]; years?: number[] }) => {
+const FinancialMetrics = ({
+  data,
+  years,
+  fieldsProvider,
+  model,
+  orgDetails,
+  values
+}: {
+  data: FinancialIndicatorDto[];
+  years?: number[];
+  fieldsProvider: FormFieldsProvider;
+  model: FormModel;
+  orgDetails: OrgFormDetails;
+  values: Record<string, unknown>;
+}) => {
   const ctx = useShowContext();
-  const t = useT();
   const fincialReportData = ctx.record;
   const financialMetrics = Object?.values(
     data?.reduce((acc, financial) => {
@@ -81,25 +94,16 @@ const FinancialMetrics = ({ data, years }: { data: FinancialIndicatorDto[]; year
       : [])
   ];
 
-  const startMonth = fincialReportData?.fin_start_month ?? fincialReportData?.finStartMonth;
-
   return (
     <div className="rounded-lg bg-white px-6 py-6 shadow-all">
-      <div className="mb-5 grid w-[70%] grid-cols-2 gap-6">
-        <div className="flex flex-col gap-0">
-          <Text variant="text-14-light" className="text-darkCustom-300">
-            Start of financial year (month)
-          </Text>
-          <Text variant="text-14">
-            {startMonth ? getMonthOptions(t).find(opt => opt.value == startMonth)?.title : "Not Provided"}
-          </Text>
-        </div>
-        <div className="flex flex-col gap-0">
-          <Text variant="text-14-light" className="text-darkCustom-300">
-            Currency
-          </Text>
-          <Text variant="text-14">{fincialReportData?.currency ?? "Not Provided"}</Text>
-        </div>
+      <div className="grid w-[150%] grid-cols-2">
+        <WizardFormProvider fieldsProvider={fieldsProvider} models={model} orgDetails={orgDetails}>
+          {fieldsProvider.stepIds().map(stepId => (
+            <div key={stepId}>
+              <InformationTabRow stepId={stepId} values={values} />
+            </div>
+          ))}
+        </WizardFormProvider>
       </div>
       <div className="w-full max-w-[47.8vw] overflow-hidden lg:max-w-[57vw] wide:max-w-[65vw]">
         <Table

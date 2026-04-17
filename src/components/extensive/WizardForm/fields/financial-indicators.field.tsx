@@ -82,19 +82,22 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
   appendAnswers: () => undefined,
 
-  addFormEntries: (entries, field, formValues, { t, record, type, orgDetails }) => {
+  addFormEntries: (entries, field, formValues, { t, record, type, orgDetails, entity }) => {
     const values = formValues[field.name];
 
     const currencyCode = type === "financial-reports" ? record?.currency : orgDetails?.currency;
     const currencyDisplayName = currencyCode
       ? getCurrencyOptions(t).find(opt => opt.value === currencyCode)?.title
       : undefined;
+    const excluded = ["financial-reports", "financialReports"];
 
-    entries.push({
-      title: t("Local Currency"),
-      inputType: "select",
-      value: currencyDisplayName ?? t("Answer Not Provided")
-    });
+    if (!excluded.includes(entity?.entityName!)) {
+      entries.push({
+        title: t("Local Currency"),
+        inputType: "select",
+        value: currencyDisplayName ?? t("Answer Not Provided")
+      });
+    }
 
     if (!Array.isArray(values) || values?.length === 0) return;
 

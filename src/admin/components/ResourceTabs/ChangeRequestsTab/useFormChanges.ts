@@ -13,6 +13,7 @@ interface FormChange {
   inputType: FieldInputType;
   currentValue: any;
   newValue?: any;
+  optionsList?: string | null;
 }
 
 export interface StepChange {
@@ -66,7 +67,8 @@ export default function useFormChanges(
               title: entry.title ?? "",
               inputType: entry.inputType,
               currentValue,
-              newValue: isEqual(currentValue, newValue) ? undefined : newValue
+              newValue: isEqual(currentValue, newValue) ? undefined : newValue,
+              optionsList: entry.optionsList ?? currentEntry?.optionsList ?? null
             };
           })
         };

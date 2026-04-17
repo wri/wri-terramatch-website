@@ -8,6 +8,7 @@ export type FormEntry = {
   title?: string;
   inputType: FieldInputType;
   value: any;
+  optionsList?: string | null;
 };
 
 type EntryFactory = (field: FieldDefinition, formValues: Dictionary<any>, additional: GetEntryValueProps) => any;
@@ -18,7 +19,8 @@ export const addEntryWith =
     entries.push({
       title: field.label ?? "",
       inputType: field.inputType,
-      value: factory(field, formValues, additional)
+      value: factory(field, formValues, additional),
+      optionsList: field.optionsList ?? null
     });
   };
 
