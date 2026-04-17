@@ -20,17 +20,11 @@ import { setFilterLandscape } from "./polygonLayers";
 const GOOGLE_RASTER_SOURCE_ID = "google-satellite-source";
 const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
 
-export const addBorderLandscape = (
-  map: mapboxgl.Map,
-  /** Values must match MVT `landscape` (DB display names), not short codes. */
-  landscapes: string[]
-): void => {
+export const addBorderLandscape = (map: mapboxgl.Map, landscapes: string[]): void => {
   if (landscapes == null || landscapes.length === 0 || map == null) return;
   const landscapeLayer = layersList.find(layer => layer.name === LAYERS_NAMES.LANDSCAPES);
   if (landscapeLayer == null) return;
   const sourceName = landscapeLayer.name;
-  // Always use the default workspace (no `*_db` suffix). `landscape_geom` is published there
-  // alongside base layers; it is not duplicated under the dashboard DB workspace.
   const GEOSERVER_TILE_URL = getGeoserverURL(landscapeLayer.geoserverLayerName, undefined, "0");
 
   const existingSource = map.getSource(sourceName) as mapboxgl.VectorTileSource | undefined;

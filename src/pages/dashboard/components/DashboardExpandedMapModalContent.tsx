@@ -1,5 +1,3 @@
-import { When } from "react-if";
-
 import { DashboardGetProjectsData, MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { MapFunctions } from "@/components/elements/Map-mapbox/Map.d";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
@@ -75,13 +73,13 @@ export function DashboardExpandedMapModalContent({
           }}
         />
       </LoadingContainerOpacity>
-      <When condition={!selectedProjectUuid}>
+      {!selectedProjectUuid && (
         <DashboardExpandedMapLegend
           nonProfitProjectCount={nonProfitProjectCount}
           enterpriseProjectCount={enterpriseProjectCount}
           translate={translate}
         />
-      </When>
+      )}
     </div>
   );
 }

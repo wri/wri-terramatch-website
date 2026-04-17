@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { When } from "react-if";
 
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
@@ -85,9 +84,7 @@ const MonitoredDataMap = ({
           entityData={transformedEntityData}
         />
       </LoadingContainerOpacity>
-      <When condition={selected.includes("6")}>
-        <NoDataMap />
-      </When>
+      {selected.includes("6") && <NoDataMap />}
     </div>
   );
 };

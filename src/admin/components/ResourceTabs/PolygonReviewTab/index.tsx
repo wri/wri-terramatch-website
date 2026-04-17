@@ -5,7 +5,6 @@ import { SortingState } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
-import { Else, If, Then } from "react-if";
 
 import ModalApprove from "@/admin/components/extensive/Modal/ModalApprove";
 import Button from "@/components/elements/Button/Button";
@@ -874,16 +873,13 @@ const PolygonReviewTab: FC<IProps> = props => {
                           <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-4 lg:w-4" />
                         </ToolTip>
                       </Text>
-                      <If condition={sitePolygonData.length < total}>
-                        <Then>
-                          <Box sx={{ width: "100%" }}>
-                            <LinearProgress sx={{ borderRadius: 5 }} />
-                          </Box>
-                        </Then>
-                        <Else>
-                          <LinearProgressBarMonitored data={dataPolygonOverview} />
-                        </Else>
-                      </If>
+                      {sitePolygonData.length < total ? (
+                        <Box sx={{ width: "100%" }}>
+                          <LinearProgress sx={{ borderRadius: 5 }} />
+                        </Box>
+                      ) : (
+                        <LinearProgressBarMonitored data={dataPolygonOverview} />
+                      )}
                     </div>
                   </div>
                   <div className="min-w-[450px] flex-[18]">

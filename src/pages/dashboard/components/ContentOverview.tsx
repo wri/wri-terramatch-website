@@ -4,7 +4,6 @@ import { useT } from "@transifex/react";
 import mapboxgl from "mapbox-gl";
 import { useRouter } from "next/router";
 import React, { useCallback, useMemo, useState } from "react";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -348,15 +347,15 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             hasAccess={hasAccess}
           />
         </LoadingContainerOpacity>
-        <When condition={!selectedProjectUuid}>
+        {!selectedProjectUuid && (
           <DashboardMapLegend
             nonProfitProjectCount={nonProfitProjectCount}
             enterpriseProjectCount={enterpriseProjectCount}
             translate={t}
           />
-        </When>
+        )}
       </div>
-      <When condition={!countryQueryParam}>
+      {!countryQueryParam && (
         <PageCard
           className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
           classNameSubTitle="mt-4"
@@ -415,7 +414,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
           />
         </PageCard>
-      </When>
+      )}
 
       <PageCard
         className="border-0 px-4 py-6 mobile:order-5 mobile:px-0"
@@ -469,7 +468,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           isLoading={isLoadingHectaresUnderRestoration}
         />
       </PageCard>
-      <When condition={!!countryQueryParam}>
+      {!!countryQueryParam && (
         <PageCard
           className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
           classNameSubTitle="mt-4"
@@ -521,7 +520,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
           />
         </PageCard>
-      </When>
+      )}
 
       <PageCard
         className="border-0 px-4 py-6 mobile:order-7 mobile:px-0"

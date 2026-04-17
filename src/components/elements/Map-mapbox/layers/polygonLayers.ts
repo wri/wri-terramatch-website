@@ -59,7 +59,6 @@ export const addFilterOnLayer = (layer: LayerType, parsedPolygonData: Record<str
   addSourceToLayer(layer, map, parsedPolygonData);
 };
 
-/** `landscapes` must match the MVT `landscape` attribute (full names in DB / GeoServer), not slug codes. */
 export const setFilterLandscape = (map: mapboxgl.Map, layerName: string, landscapes: string[]) => {
   map.setFilter(layerName, ["in", ["get", "landscape"], ["literal", landscapes]]);
 };
