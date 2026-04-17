@@ -162,7 +162,7 @@ export type OrgFormDetails = {
   type?: string;
 };
 
-export const useV2OrgFormDetails = (orgUuid?: string) => {
+export const useOrgFormDetails = (orgUuid?: string) => {
   const [loaded, { data: orgData, isLoading: orgLoading }] = useOrganisation(orgUuid != null ? { id: orgUuid } : {});
   return useMemo<[boolean, OrgFormDetails]>(() => {
     if (orgUuid == null) return [true, {}];
@@ -233,7 +233,7 @@ export const useFormEntities = () => {
   );
 };
 
-export const useOrgFormDetails = () => useContext(WizardFormContext).orgDetails;
+export const useWizardOrgFormDetails = () => useContext(WizardFormContext).orgDetails;
 
 export const useProjectFormDetails = () => useContext(WizardFormContext).projectDetails;
 

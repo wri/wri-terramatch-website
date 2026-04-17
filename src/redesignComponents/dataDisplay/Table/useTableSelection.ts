@@ -9,7 +9,6 @@ export const useTableSelection = (initialSelectable: boolean = false, sortedData
   useEffect(() => {
     if (sortedData != null && sortedData.length > 0) {
       const syncedRows = sortedData.filter(row => selectedRowIds.has(row.id));
-      console.log("useTableSelection - syncedRows:", syncedRows.length);
       setSelectedRows(syncedRows);
     } else {
       setSelectedRows([]);

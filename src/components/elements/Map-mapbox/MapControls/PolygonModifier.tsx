@@ -11,6 +11,7 @@ import { deleteProjectPolygon } from "@/connections/ProjectPolygons";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import Log from "@/utils/log";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -37,7 +38,7 @@ const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonM
       reloadSiteData?.();
       openNotification("success", t("Polygon updated successfully"), t("The polygon has been updated."));
     } catch (error) {
-      console.error("Error saving polygon:", error);
+      Log.error("Error saving polygon:", error);
       openNotification("error", t("Error updating polygon"), t("There was an error updating the polygon."));
     }
   };
@@ -50,7 +51,7 @@ const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonM
         openNotification("success", t("Polygon deleted"), t("The polygon has been deleted successfully."));
       }
     } catch (error) {
-      console.error("Error deleting polygon:", error);
+      Log.error("Error deleting polygon:", error);
       openNotification("error", t("Error deleting polygon"), t("There was an error deleting the polygon."));
     }
   };

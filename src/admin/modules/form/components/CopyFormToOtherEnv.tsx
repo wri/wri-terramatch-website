@@ -66,7 +66,8 @@ export const CopyFormToOtherEnv = () => {
     }
 
     const token = (await loginResp.json()).data.attributes.token;
-    const formData = { ...record, title: formTitle, frameworkKey };
+    // TODO TM-3259: remove this after BB release
+    const formData = { ...record, title: formTitle, frameworkKey, published: false };
     const formAttributes = JSON.parse(
       JSON.stringify(formBuilderToAttributes(formData)).replace(
         /"(uuid|stageId|id|formId)":\s?("[^"]+"|null|undefined),?/gim,
