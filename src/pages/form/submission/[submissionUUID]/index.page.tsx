@@ -12,7 +12,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useApplication } from "@/connections/Application";
 import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { FormModel, useApiFieldsProvider, useV2OrgFormDetails } from "@/context/wizardForm.provider";
+import { FormModel, useApiFieldsProvider, useOrgFormDetails } from "@/context/wizardForm.provider";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useFormSubmission } from "@/hooks/useFormGet";
@@ -54,7 +54,7 @@ const SubmissionPage = () => {
     [fieldsProvider, formData?.answers]
   );
 
-  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(formData?.organisationUuid ?? undefined);
+  const [orgDetailsLoaded, orgDetails] = useOrgFormDetails(formData?.organisationUuid ?? undefined);
 
   const { openModal, closeModal } = useModalContext();
   const handleSubmit = useCallback(() => {

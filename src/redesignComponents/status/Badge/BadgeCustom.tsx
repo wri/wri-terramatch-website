@@ -11,6 +11,7 @@ interface BadgeProps {
   children: React.ReactNode;
   color?: string;
   className?: string;
+  size?: "small" | "big";
 }
 
 const Badge = ({
@@ -20,7 +21,8 @@ const Badge = ({
   labelClassName,
   children,
   color,
-  className
+  className,
+  size = "small"
 }: BadgeProps) => {
   const getNotificationCount = () => {
     let notification = "";
@@ -44,8 +46,8 @@ const Badge = ({
     >
       <Flex className="relative flex">
         {notification.length > 0 && hasNotification ? (
-          <div className="absolute -top-2 left-2 flex items-center justify-center rounded-full bg-theme-error-500 px-1">
-            <Text textStyle="300-bold">{notification}</Text>
+          <div className="absolute -top-1 left-2 flex items-center justify-center rounded-full bg-theme-error-500 px-1 py-0.5">
+            <Text textStyle={size === "small" ? "50-bold" : "300-bold"}>{notification}</Text>
           </div>
         ) : null}
         {children ?? defaultChildren}

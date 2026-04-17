@@ -14,6 +14,7 @@ import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashb
 import { HookFilters } from "@/types/connection";
 import { calculateTotalsFromProjects, groupProjectsByCountry } from "@/utils/dashboardUtils";
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
+import Log from "@/utils/log";
 
 export const TREES_PLANTED_TOOLTIP =
   "Total number of trees planted by funded projects to date, as reported through six-month progress reports.";
@@ -321,7 +322,7 @@ export const useDashboardData = (filters: any) => {
         bbox: [minLong, minLat, maxLong, maxLat]
       };
     } catch (error) {
-      console.error("Error calculating bbox:", error);
+      Log.error("Error calculating bbox:", error);
       return { data: transformedData, bbox: [] };
     }
   }, [dashboardProjects]);
