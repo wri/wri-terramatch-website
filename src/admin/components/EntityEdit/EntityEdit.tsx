@@ -1,6 +1,5 @@
 import { Dictionary } from "lodash";
-import { notFound } from "next/navigation";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { Edit, useCreatePath, useEditContext, useResourceContext } from "react-admin";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -79,10 +78,15 @@ const EntityEditDisplay = () => {
     [fieldsProvider, updateEntityAnswers]
   );
 
-  if (loadFailure != null || formLoadFailure != null) {
+  const hasLoadFailure = loadFailure != null || formLoadFailure != null;
+
+  useEffect(() => {
+    if (!hasLoadFailure) return;
     Log.error("Form data load failed", { loadFailure, formLoadFailure });
-    return notFound();
-  }
+    navigate(createPath({ resource, type: "list" }));
+  }, [createPath, formLoadFailure, hasLoadFailure, loadFailure, navigate, resource]);
+
+  if (hasLoadFailure) return null;
 
   return (
     <LoadingContainer loading={orgLoading || isLoading || !providerLoaded || !entityLoading}>

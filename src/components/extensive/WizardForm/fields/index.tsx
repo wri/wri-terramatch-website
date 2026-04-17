@@ -42,6 +42,7 @@ export const FormFieldFactories: Record<FieldInputType, FormFieldFactory> = {
   date: DateField,
   "long-text": LongTextField,
   number: NumberField,
+  "number-currency": NumberField,
   "number-percentage": NumberPercentageField,
   url: UrlField,
   tel: TelephoneField,

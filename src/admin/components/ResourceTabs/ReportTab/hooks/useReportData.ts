@@ -5,6 +5,7 @@ import { GetListResult, useDataProvider, useShowContext } from "react-admin";
 import { useDisturbance } from "@/connections/Disturbance";
 import { selectTrackings, usePlants } from "@/connections/EntityAssociation";
 import { isNotNull } from "@/utils/array";
+import Log from "@/utils/log";
 
 import { BeneficiaryData, EmploymentDemographicData, ProjectReport, ReportData, Site, SiteReport } from "../types";
 import { processBeneficiaryData, processDemographicData } from "../utils/demographicsProcessor";
@@ -107,7 +108,7 @@ export const useReportData = () => {
                 siteReports: siteReportsResult?.data || []
               };
             } catch (siteReportError) {
-              console.error(`Error fetching site reports for site ${site.uuid}:`, siteReportError);
+              Log.error(`Error fetching site reports for site ${site.uuid}:`, siteReportError);
               return {
                 ...site,
                 siteReports: []
@@ -120,7 +121,7 @@ export const useReportData = () => {
 
         setSites(sitesWithDisturbances);
       } catch (err) {
-        console.error("Error fetching report data:", err);
+        Log.error("Error fetching report data:", err);
         setError(err instanceof Error ? err : new Error("Unknown error occurred"));
       } finally {
         setIsLoading(false);

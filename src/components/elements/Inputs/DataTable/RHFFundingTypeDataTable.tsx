@@ -6,7 +6,7 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { useCurrencyContext } from "@/context/currency.provider";
-import { useLocalStepsProvider, useOrgFormDetails } from "@/context/wizardForm.provider";
+import { useLocalStepsProvider, useWizardOrgFormDetails } from "@/context/wizardForm.provider";
 import { formatFinancialAmount, getCurrencySymbolPrefix } from "@/utils/financialReport";
 import { formatOptionsList } from "@/utils/options";
 
@@ -82,7 +82,7 @@ const RHFFundingTypeDataTable: FC<PropsWithChildren<RHFFundingTypeTableProps>> =
   const [tableKey, setTableKey] = useState(0);
 
   const { currency } = useCurrencyContext();
-  const orgDetails = useOrgFormDetails();
+  const orgDetails = useWizardOrgFormDetails();
   const isoCurrency =
     currency != null && currency !== ""
       ? String(currency)

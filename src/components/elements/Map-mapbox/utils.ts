@@ -787,7 +787,7 @@ export const addSourceToLayer = (
       }
     }
   } catch (e) {
-    console.warn(e);
+    Log.warn(e);
   }
 };
 const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
@@ -823,7 +823,7 @@ export const addDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Reco
       loadDeleteLayer(layer, map, polygonsData);
     }
   } catch (e) {
-    console.warn(e);
+    Log.warn(e);
   }
 };
 const moveDeleteLayers = (map: mapboxgl.Map) => {
@@ -894,7 +894,7 @@ export const addBorderCountry = (map: mapboxgl.Map, country: string) => {
     } as mapboxgl.AnyLayer);
     setFilterCountry(map, sourceName, country);
   } catch (e) {
-    console.warn(e);
+    Log.warn(e);
   }
 };
 export const addBorderLandscape = (map: mapboxgl.Map, landscapes: string[]) => {
@@ -1538,7 +1538,7 @@ export async function storePolygon(
         setPolygonFromMap({ uuid: result.polygonUuid, isOpen: true, primary_uuid: result.primaryUuid });
       }
     } catch (error) {
-      console.error("Failed to create site polygon:", error);
+      Log.error("Failed to create site polygon:", error);
       throw error;
     }
   }

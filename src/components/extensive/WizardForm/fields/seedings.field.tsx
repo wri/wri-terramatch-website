@@ -3,12 +3,9 @@ import { BooleanInput } from "react-admin";
 import RHFSeedingTable, { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFSeedingTableInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
+import TreeSpeciesEntryValue from "@/components/extensive/WizardForm/TreeSpeciesEntryValue";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import {
-  appendTableAnswers,
-  dataTableEntryValue,
-  treeSpeciesEntryValue
-} from "@/components/extensive/WizardForm/utils";
+import { appendTableAnswers, dataTableEntryValue } from "@/components/extensive/WizardForm/utils";
 import { addValidationWith, arrayValidator } from "@/utils/yup";
 
 export const SeedingsField: FormFieldFactory = {
@@ -27,9 +24,9 @@ export const SeedingsField: FormFieldFactory = {
     appendTableAnswers(csv, label, headers, formValues[name]);
   },
 
-  addFormEntries: addEntryWith((field, formValues, { t, entity, fieldsProvider }) => {
+  addFormEntries: addEntryWith((field, formValues, { t, fieldsProvider }) => {
     if (field.additionalProps?.capture_count === true) {
-      return treeSpeciesEntryValue("seeds", entity, field, formValues, fieldsProvider);
+      return <TreeSpeciesEntryValue {...{ field, values: formValues, fieldsProvider }} />;
     } else {
       return dataTableEntryValue(getSeedingTableColumns(t, false), field, formValues);
     }

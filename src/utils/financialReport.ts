@@ -58,6 +58,16 @@ export function formatFinancialAmount(value: number, currencyCode: string | unde
   }).format(value);
 }
 
+export function formatMonetaryCanonicalForDisplay(
+  value: number | null | undefined,
+  currencyCode: string | undefined
+): string {
+  if (value == null || !Number.isFinite(value)) {
+    return "";
+  }
+  return formatFinancialAmount(value, currencyCode);
+}
+
 export function getCurrencySymbolPrefix(currencyCode: string | undefined): string {
   if (currencyCode == null || currencyCode === "") {
     return "";
@@ -79,37 +89,34 @@ export function getCurrencySymbolPrefix(currencyCode: string | undefined): strin
   }
 }
 
-function linkedKeyMatchesFinancialPatterns(linkedFieldKey: string | null | undefined): boolean {
-  if (linkedFieldKey == null || linkedFieldKey === "") {
+function hasIntegerNumberAdditionalProps(field: FieldDefinition): boolean {
+  const props = field.additionalProps;
+  if (props == null) {
     return false;
   }
-  const k = linkedFieldKey.toLowerCase().replace(/_/g, "-");
-  if (k.includes("lat-") || k.includes("long-")) {
-    return false;
-  }
-  if (k.includes("average-worker-income") || k.includes("averageworkerincome")) {
-    return true;
-  }
-  if (k.includes("project-budget") || k.includes("projectbudget")) {
-    return true;
-  }
-  if (k.includes("loan-status-amount") || k.includes("loanstatusamount")) {
-    return true;
-  }
-  if (/-budget$/.test(k) || k.endsWith("budget")) {
-    return true;
-  }
-  return false;
+  return props.integer === true || props.integerOnly === true || props.decimals === 0 || props.precision === 0;
+}
+
+function isLegacyProjectBudgetField(field: FieldDefinition): boolean {
+  const model = String(field.model ?? "").toLowerCase();
+  const isProjectModel = model === "projects" || model === "project-pitches" || model === "projectpitches";
+  // Temporary compatibility fallback until these questions are explicitly configured via additionalProps.
+  // If project/pitch budget was switched to number-currency via backend data migration, force integer behavior.
+  return isProjectModel && field.inputType === "number-currency" && field.additionalProps?.financialAmount !== true;
+}
+
+export function shouldUseIntegerNumberInput(field: FieldDefinition): boolean {
+  return hasIntegerNumberAdditionalProps(field) || isLegacyProjectBudgetField(field);
 }
 
 export function shouldFormatFinancialNumberField(field: FieldDefinition): boolean {
+  if (shouldUseIntegerNumberInput(field)) {
+    return false;
+  }
   if (field.additionalProps?.financialAmount === true) {
     return true;
   }
-  if (field.linkedFieldKey?.includes("lat-") || field.linkedFieldKey?.includes("long-")) {
-    return false;
-  }
-  return linkedKeyMatchesFinancialPatterns(field.linkedFieldKey);
+  return field.inputType === "number-currency";
 }
 
 export const formatDocumentData = (documents: FinancialIndicatorDto[]) => {
