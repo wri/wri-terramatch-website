@@ -1,4 +1,5 @@
 import * as turfHelper from "@turf/helpers";
+import type { Feature as GeoJsonFeature } from "geojson";
 
 import { FeatureCollection } from "../GeoJSON";
 
@@ -20,7 +21,7 @@ export const convertToAcceptedGEOJSON = (geojson: any): any => {
 
 export const convertToGeoJSON = (featureCollection: FeatureCollection) => {
   const { features } = featureCollection;
-  return features.reduce((acc: GeoJSON.Feature[], feature) => {
+  return features.reduce((acc: GeoJsonFeature[], feature) => {
     const { geometry, properties } = feature;
     const coordinates = geometry.coordinates;
     const type = geometry.type;

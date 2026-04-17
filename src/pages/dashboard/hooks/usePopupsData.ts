@@ -17,18 +17,19 @@ type Item = {
 };
 
 export function usePopupData(event: PopupEvent) {
-  const isoCountry = event?.feature?.properties?.iso;
-  const itemUuid = event?.feature?.properties?.uuid;
+  const properties = event?.feature?.properties ?? {};
+  const isoCountry = typeof properties.iso === "string" ? properties.iso : undefined;
+  const itemUuid = typeof properties.uuid === "string" ? properties.uuid : undefined;
   const { layerName } = event;
 
   const [popupType, setPopupType] = useState<"country" | "project" | "polygon" | null>(null);
   const [popupData, setPopupData] = useState<{ label?: string; organization?: string; hectares?: string } | null>(null);
   const [items, setItems] = useState<Item[]>([]);
-  const [label, setLabel] = useState<string>(event?.feature?.properties?.country);
+  const [label, setLabel] = useState<string>(typeof properties.country === "string" ? properties.country : "");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [projectLoaded, { data: projectFullDto }] = useDashboardProject({
-    id: itemUuid && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : null
+    id: itemUuid && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : undefined
   });
 
   const [countryDataLoaded, { data: countryData }] = useTotalSectionHeader({
