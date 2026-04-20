@@ -7,6 +7,7 @@ import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { isProjectPitchesEntityName } from "@/helpers/entity";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
@@ -99,8 +100,7 @@ export function useMapDraw({
     if (!polygonFromMap?.isOpen || polygonFromMap?.uuid === "") return;
 
     const polygonuuid = polygonFromMap.uuid;
-    const isProjectPolygon =
-      polygonFromMap?.entityName === "project-pitches" || polygonFromMap?.entityName === "project-pitch";
+    const isProjectPolygon = isProjectPitchesEntityName(polygonFromMap?.entityName ?? "");
     const projectPitchUuid = polygonFromMap?.projectPitchUuid;
 
     try {
@@ -135,7 +135,7 @@ export function useMapDraw({
   const onSaveEdit = useCallback(async () => {
     if (map.current == null || draw.current == null) return;
     const geojson = draw.current.getAll();
-    if (!geojson || !polygonFromMap?.uuid) return;
+    if (geojson == null || polygonFromMap?.uuid == null || polygonFromMap.uuid === "") return;
 
     const feature = geojson.features[0];
 
@@ -148,7 +148,7 @@ export function useMapDraw({
         if (draw.current) draw.current.deleteAll();
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        const isProjectPolygon = polygonFromMap.entityName === "project-pitches";
+        const isProjectPolygon = isProjectPitchesEntityName(polygonFromMap?.entityName ?? "");
         const updatedGeometry = await fetchPolygonGeometry(
           polygonFromMap.uuid,
           true,
@@ -176,7 +176,7 @@ export function useMapDraw({
     try {
       showLoader();
       const siteId = selectedPolygon.siteId;
-      if (!siteId) throw new Error("Missing siteId for polygon");
+      if (siteId == null || siteId === "") throw new Error("Missing siteId for polygon");
 
       await createVersionWithGeometry(selectedPolygon.primaryUuid, "Updated geometry", {
         type: "Feature",

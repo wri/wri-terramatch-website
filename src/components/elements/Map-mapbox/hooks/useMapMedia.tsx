@@ -48,11 +48,11 @@ export function useMapMedia({
     const handleDelete = async (id: string) => {
       try {
         await deleteMedia(id);
-        setShouldRefetchMediaData(true);
+        closeModal(ModalId.DELETE_IMAGE);
       } catch (error) {
         Log.error(error);
+        openNotification("error", t("Error"), t("Failed to delete image."));
       }
-      closeModal(ModalId.DELETE_IMAGE);
     };
 
     const openModalImageDetail = (data: MediaDto) => {

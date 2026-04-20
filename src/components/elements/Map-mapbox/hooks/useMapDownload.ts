@@ -1,6 +1,8 @@
 import _ from "lodash";
 import { useState } from "react";
 
+import { isProjectPitchesEntityName } from "@/helpers/entity";
+
 import { downloadMultiplePolygonsGeoJson, downloadProjectPolygonsGeoJson } from "../utils";
 
 type UseMapDownloadParams = {
@@ -28,7 +30,7 @@ export function useMapDownload({
   const downloadGeoJsonPolygon = async () => {
     setIsDownloadingPolygons(true);
     try {
-      const isProjectContext = entityData?.entityName === "project-pitches";
+      const isProjectContext = isProjectPitchesEntityName(entityData?.entityName ?? "");
       const projectPitchUuid = entityData?.entityUUID;
 
       if (isProjectContext && projectPitchUuid != null) {
