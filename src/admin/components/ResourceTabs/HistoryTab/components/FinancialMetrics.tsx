@@ -1,8 +1,12 @@
 import { ColumnDef } from "@tanstack/react-table";
+import { useT } from "@transifex/react";
 import { useShowContext } from "react-admin";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_FINANCIAL_METRICS } from "@/components/elements/Table/TableVariants";
+import Text from "@/components/elements/Text/Text";
+import { getCurrencyOptions } from "@/constants/options/localCurrency";
+import { getMonthOptions } from "@/constants/options/months";
 import WizardFormProvider, { FormFieldsProvider, FormModel, OrgFormDetails } from "@/context/wizardForm.provider";
 import { FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSchemas";
 import { formatFinancialAmount, getCurrencySymbolPrefix, getLocaleForIsoCurrency } from "@/utils/financialReport";
@@ -26,7 +30,8 @@ const FinancialMetrics = ({
   fieldsProvider,
   model,
   orgDetails,
-  values
+  values,
+  orgModel = false
 }: {
   data: FinancialIndicatorDto[];
   years?: number[];
@@ -34,8 +39,10 @@ const FinancialMetrics = ({
   model?: FormModel;
   orgDetails?: OrgFormDetails;
   values?: Record<string, unknown>;
+  orgModel?: boolean;
 }) => {
   const ctx = useShowContext();
+  const t = useT();
   const fincialReportData = ctx.record;
   const financialMetrics = Object?.values(
     data?.reduce((acc, financial) => {
@@ -96,6 +103,27 @@ const FinancialMetrics = ({
 
   return (
     <div className="rounded-lg bg-white px-6 py-6 shadow-all">
+      {orgModel && (
+        <div className="mb-5 grid w-[70%] grid-cols-2 gap-6">
+          <div className="flex flex-col gap-0">
+            <Text variant="text-14-light" className="text-darkCustom-300">
+              {t("Start of financial year (month)")}
+            </Text>
+            <Text variant="text-14">
+              {getMonthOptions(t).find(opt => opt.value == fincialReportData?.finStartMonth)?.title ??
+                t("Not Provided")}
+            </Text>
+          </div>
+          <div className="flex flex-col gap-0">
+            <Text variant="text-14-light" className="text-darkCustom-300">
+              {t("Currency")}
+            </Text>
+            <Text variant="text-14">
+              {getCurrencyOptions(t).find(opt => opt.value == fincialReportData?.currency)?.title ?? t("Not Provided")}
+            </Text>
+          </div>
+        </div>
+      )}
       {fieldsProvider != null && model != null && orgDetails != null && values != null ? (
         <div className="grid w-[150%] grid-cols-2">
           <WizardFormProvider fieldsProvider={fieldsProvider} models={model} orgDetails={orgDetails}>
