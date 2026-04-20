@@ -15,14 +15,13 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useBoundingBox } from "@/connections/BoundingBox";
+import { pruneBoundingBoxesCache, useBoundingBox } from "@/connections/BoundingBox";
 import { deleteSitePolygon } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 import { AssistedNaturalRegenIcon } from "@/redesignComponents/foundations/Icons";
-import ApiSlice from "@/store/apiSlice";
 import { OptionValue } from "@/types/common";
 import Log from "@/utils/log";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
@@ -178,8 +177,7 @@ const Polygons = (props: IPolygonProps) => {
           return;
         }
         await deleteSitePolygon(sitePolygonUuid);
-        ApiSlice.pruneCache("boundingBoxes");
-        ApiSlice.pruneIndex("boundingBoxes", "");
+        pruneBoundingBoxesCache();
         reloadSiteData?.();
         closeModal(ModalId.CONFIRM_POLYGON_DELETION);
       } catch (error) {

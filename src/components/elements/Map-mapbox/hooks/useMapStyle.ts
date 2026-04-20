@@ -57,7 +57,7 @@ export function useMapStyle({
   }, [projectUUID]);
 
   useEffect(() => {
-    if (map.current == null || !projectUUID || userChangedStyle || !styleReady) return;
+    if (map.current == null || projectUUID == null || projectUUID === "" || userChangedStyle || !styleReady) return;
     setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectUUID, userChangedStyle, styleReady]);

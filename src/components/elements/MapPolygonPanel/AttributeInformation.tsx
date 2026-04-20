@@ -13,7 +13,7 @@ import {
 } from "@/components/elements/Map-mapbox/utils";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { loadAnrPlotGeometryGeoJson } from "@/connections/AnrPlotGeometry";
-import { createVersionWithAttributes } from "@/connections/SitePolygons";
+import { createVersionWithAttributes, pruneSitePolygonsCache } from "@/connections/SitePolygons";
 import {
   dropdownOptionsRestoration,
   dropdownOptionsTarget,
@@ -22,7 +22,6 @@ import {
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import Text from "../Text/Text";
@@ -114,8 +113,7 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
         numTrees: treesPlanted
       });
 
-      ApiSlice.pruneCache("sitePolygons");
-      ApiSlice.pruneIndex("sitePolygons", "");
+      pruneSitePolygonsCache();
 
       setShouldRefetchPolygonData(true);
 

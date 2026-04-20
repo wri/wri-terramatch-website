@@ -47,7 +47,7 @@ export const useGoogleSatellite = (
       return true;
     };
 
-    const observer = new MutationObserver(() => applyAttribution());
+    const observer = new MutationObserver(applyAttribution);
     observer.observe(currentContainer, { childList: true, subtree: true });
     applyAttribution();
     return () => observer.disconnect();

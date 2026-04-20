@@ -21,18 +21,6 @@ type MapAreaType = {
   setHasOverlaps: (value: boolean) => void;
   selectedPolygonsInCheckbox: string[];
   setSelectedPolygonsInCheckbox: (value: string[]) => void;
-  polygonNotificationStatus: {
-    open: boolean;
-    message: string;
-    type: "success" | "error" | "warning";
-    title: string;
-  };
-  setPolygonNotificationStatus: (value: {
-    open: boolean;
-    message: string;
-    type: "success" | "error" | "warning";
-    title: string;
-  }) => void;
   setSelectedPolyVersion: (value: SitePolygon) => void;
   selectedPolyVersion: SitePolygon | undefined;
   openModalConfirmation: boolean;
@@ -47,8 +35,6 @@ type MapAreaType = {
   setPolygonData: (value: any[]) => void;
   validFilter: string;
   setValidFilter: (value: string) => void;
-  isFetchingValidationData: boolean;
-  setIsFetchingValidationData: (value: boolean) => void;
   resetSiteMapInteractionState: () => void;
 };
 
@@ -71,13 +57,6 @@ const defaultValue: MapAreaType = {
   setHasOverlaps: () => {},
   selectedPolygonsInCheckbox: [],
   setSelectedPolygonsInCheckbox: () => {},
-  polygonNotificationStatus: {
-    open: false,
-    message: "",
-    type: "success",
-    title: ""
-  },
-  setPolygonNotificationStatus: () => {},
   setSelectedPolyVersion: () => {},
   selectedPolyVersion: undefined,
   openModalConfirmation: false,
@@ -92,8 +71,6 @@ const defaultValue: MapAreaType = {
   setPolygonData: () => {},
   validFilter: "all",
   setValidFilter: () => {},
-  isFetchingValidationData: false,
-  setIsFetchingValidationData: () => {},
   resetSiteMapInteractionState: () => {}
 };
 
@@ -115,22 +92,10 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<any>({});
   const [polygonData, setPolygonData] = useState<any[]>([]);
   const [validFilter, setValidFilter] = useState<string>("all");
-  const [isFetchingValidationData, setIsFetchingValidationData] = useState<boolean>(false);
   const [editPolygon, setEditPolygonInternal] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
     isOpen: false,
     uuid: "",
     primary_uuid: ""
-  });
-  const [polygonNotificationStatus, setPolygonNotificationStatus] = useState<{
-    open: boolean;
-    message: string;
-    type: "success" | "error" | "warning";
-    title: string;
-  }>({
-    open: false,
-    message: "",
-    type: "success",
-    title: ""
   });
 
   const setEditPolygon = (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => {
@@ -149,12 +114,6 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPreviewVersion(false);
     setStatusSelectedPolygon("");
     setSelectedPolygonsInCheckbox([]);
-    setPolygonNotificationStatus({
-      open: false,
-      message: "",
-      type: "success",
-      title: ""
-    });
     setHasOverlaps(false);
   }, []);
 
@@ -177,8 +136,6 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setHasOverlaps,
     selectedPolygonsInCheckbox,
     setSelectedPolygonsInCheckbox,
-    polygonNotificationStatus,
-    setPolygonNotificationStatus,
     setSelectedPolyVersion,
     selectedPolyVersion,
     setOpenModalConfirmation,
@@ -193,8 +150,6 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonData,
     validFilter,
     setValidFilter,
-    isFetchingValidationData,
-    setIsFetchingValidationData,
     resetSiteMapInteractionState
   };
 

@@ -16,20 +16,18 @@ type UseMapFullscreenParams = {
   mapContainer: MutableRefObject<HTMLDivElement | null>;
   map: MutableRefObject<mapboxgl.Map | null>;
 };
-export function useMapFullscreen({ mapContainer, map }: UseMapFullscreenParams) {
-  const [isFullscreen, setIsFullscreen] = useState<boolean>(() => {
-    const doc = document as DocumentWithFullscreen;
-    return !!(doc.fullscreenElement ?? doc.webkitFullscreenElement);
-  });
 
-  const getFullscreenStatus = (): boolean => {
-    const doc = document as DocumentWithFullscreen;
-    return !!(doc.fullscreenElement ?? doc.webkitFullscreenElement);
-  };
+const getIsFullscreen = (): boolean => {
+  const doc = document as DocumentWithFullscreen;
+  return doc.fullscreenElement != null || doc.webkitFullscreenElement != null;
+};
+
+export function useMapFullscreen({ mapContainer, map }: UseMapFullscreenParams) {
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(getIsFullscreen);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(getFullscreenStatus());
+      setIsFullscreen(getIsFullscreen());
       if (map.current != null) {
         requestAnimationFrame(() => map.current?.resize());
       }
@@ -51,7 +49,7 @@ export function useMapFullscreen({ mapContainer, map }: UseMapFullscreenParams) 
     const doc = document as DocumentWithFullscreen;
 
     try {
-      if (!getFullscreenStatus()) {
+      if (!getIsFullscreen()) {
         if (element.requestFullscreen) {
           await element.requestFullscreen();
         } else if (element.webkitRequestFullscreen) {

@@ -1,7 +1,7 @@
+import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { createProjectPolygonWithReplace } from "@/connections/ProjectPolygons";
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { CreateSitePolygonAttributesDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import type { PolygonFromMapState } from "../Map.d";
@@ -27,8 +27,7 @@ export async function storePolygon(
 
   try {
     const result = await createSitePolygonsResource(attributes);
-    ApiSlice.pruneCache("boundingBoxes");
-    ApiSlice.pruneIndex("boundingBoxes", "");
+    pruneBoundingBoxesCache();
     if (refetchSitePolygons != null) await refetchSitePolygons();
     if (setPolygonFromMap != null) {
       setPolygonFromMap({
