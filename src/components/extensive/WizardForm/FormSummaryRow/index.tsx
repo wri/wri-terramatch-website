@@ -1,7 +1,6 @@
 import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Else, If, Then } from "react-if";
 import type * as yup from "yup";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
@@ -85,11 +84,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
         className="flex flex-col gap-3"
         items={entries}
         render={entry => {
-          if (
-            SPECIAL_ENTRY_TITLES.has(entry.title ?? "") ||
-            entry.inputType === "treeSpecies" ||
-            entry.inputType === "file"
-          ) {
+          if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "file") {
             return <SpecialEntryRenderer entry={entry} entityName={entities[0]?.entityName} />;
           }
           return (
@@ -103,25 +98,26 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
                     "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
                   })}
                 >
-                  <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
-                    <Then>
-                      <Text
-                        textStyle="400"
-                        className="flex-1"
-                        color="neutral.900"
-                        dangerouslySetInnerHTML={{ __html: entry.value }}
-                      />
-                    </Then>
-                    <Else>
-                      <div
-                        className={classNames("", {
-                          "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
-                        })}
-                      >
-                        {formatEntryValue(entry.value)}
-                      </div>
-                    </Else>
-                  </If>
+                  {typeof entry.value === "string" ? (
+                    <Text
+                      textStyle="400"
+                      className="flex-1"
+                      color="neutral.900"
+                      dangerouslySetInnerHTML={{ __html: entry.value }}
+                    />
+                  ) : typeof entry.value === "number" ? (
+                    <Text textStyle="400" className="flex-1" color="neutral.900">
+                      {entry.value}
+                    </Text>
+                  ) : (
+                    <div
+                      className={classNames("", {
+                        "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
+                      })}
+                    >
+                      {formatEntryValue(entry.value)}
+                    </div>
+                  )}
                 </div>
               </div>
             </>

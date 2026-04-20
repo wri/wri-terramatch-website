@@ -498,10 +498,16 @@ const FF_LAND_USE: Dictionary<string> = {
 };
 
 const LAND_USE: Dictionary<string> = {
-  ...FF_LAND_USE,
+  agroforest: "Agroforest",
+  "natural-forest": "Natural Forest",
+  "riparian-area-or-wetland": "Riparian Area or Wetland",
+  silvopasture: "Silvopasture",
+  "urban-forest": "Urban Forest",
+  "woodlot-or-plantation": "Woodlot or Plantation",
   mangrove: "Mangrove",
   peatland: "Peatland",
-  "open-natural-ecosystem": "Open Natural Ecosystem"
+  "open-natural-ecosystem": "Open Natural Ecosystem",
+  unknown: "Unknown"
 };
 
 const HISTORICAL: Dictionary<TypeMapValue> = {
@@ -544,8 +550,7 @@ const FF_HECTARES_GOAL: Dictionary<TypeMapValue> = {
   "land-use": {
     title: "Land Use",
     typeMap: FF_LAND_USE,
-    balanced: true,
-    onlyIfPresent: ["unknown"]
+    balanced: true
   }
 };
 
