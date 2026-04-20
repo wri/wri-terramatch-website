@@ -2,6 +2,7 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import mapboxgl from "mapbox-gl";
 import { MutableRefObject, useCallback } from "react";
 
+import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
@@ -156,8 +157,7 @@ export function useMapDraw({
         if (updatedGeometry != null && map.current != null) {
           addSourcesToLayers(map.current, { [FORM_POLYGONS]: [polygonFromMap.uuid] }, centroids);
         }
-        ApiSlice.pruneCache("boundingBoxes");
-        ApiSlice.pruneIndex("boundingBoxes", "");
+        pruneBoundingBoxesCache();
         openNotification("success", t("Success"), t("Project polygon updated successfully."));
       } catch (e: any) {
         openNotification("error", t("Error"), e?.message ?? t("Please try again later."));
@@ -187,8 +187,7 @@ export function useMapDraw({
       if (selectedPolygon.polygonUuid != null) {
         await ApiSlice.pruneCache("sitePolygons", [selectedPolygon.polygonUuid]);
       }
-      ApiSlice.pruneCache("boundingBoxes");
-      ApiSlice.pruneIndex("boundingBoxes", "");
+      pruneBoundingBoxesCache();
 
       const polygonVersionResponse = await loadListPolygonVersions({ uuid: selectedPolygon.primaryUuid });
       const polygonActive = polygonVersionResponse?.data?.find((item: SitePolygonLightDto) => item.isActive);

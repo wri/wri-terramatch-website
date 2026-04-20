@@ -27,7 +27,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useBoundingBox } from "@/connections/BoundingBox";
+import { pruneBoundingBoxesCache, useBoundingBox } from "@/connections/BoundingBox";
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { pruneEntityCache } from "@/connections/Entity";
 import { useMedias } from "@/connections/EntityAssociation";
@@ -37,7 +37,7 @@ import {
   useUploadGeometry,
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
-import { bulkUpdateSitePolygonStatus, deleteSitePolygon } from "@/connections/SitePolygons";
+import { bulkUpdateSitePolygonStatus, deleteSitePolygon, pruneSitePolygonsCache } from "@/connections/SitePolygons";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -331,8 +331,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const deletePolygon = async (uuid: string) => {
     try {
       await deleteSitePolygon(uuid);
-      ApiSlice.pruneCache("boundingBoxes");
-      ApiSlice.pruneIndex("boundingBoxes", "");
+      pruneBoundingBoxesCache();
       refetch?.();
       const { map } = mapFunctions;
       if (map?.current) {
@@ -435,8 +434,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       pruneEntityCache("sites", siteUuid);
       ApiSlice.pruneIndex("sites", "");
 
-      ApiSlice.pruneCache("sitePolygons");
-      ApiSlice.pruneIndex("sitePolygons", "");
+      pruneSitePolygonsCache();
 
       ApiSlice.pruneCache("validations");
       ApiSlice.pruneIndex("validations", "");
@@ -504,8 +502,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
     try {
       await Promise.all(uploadPromises);
-      ApiSlice.pruneCache("boundingBoxes");
-      ApiSlice.pruneIndex("boundingBoxes", "");
+      pruneBoundingBoxesCache();
       openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
       refetch();
     } catch (error) {
@@ -563,8 +560,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         );
 
         await Promise.all(uploadPromises);
-        ApiSlice.pruneCache("boundingBoxes");
-        ApiSlice.pruneIndex("boundingBoxes", "");
+        pruneBoundingBoxesCache();
         openNotification("success", t("Success!"), t("Polygons versioned successfully"));
         refetch();
       }
@@ -656,8 +652,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               pruneEntityCache("sites", siteUuid);
               ApiSlice.pruneIndex("sites", "");
             }
-            ApiSlice.pruneCache("sitePolygons");
-            ApiSlice.pruneIndex("sitePolygons", "");
+            pruneSitePolygonsCache();
             ApiSlice.pruneCache("validations");
             ApiSlice.pruneIndex("validations", "");
 

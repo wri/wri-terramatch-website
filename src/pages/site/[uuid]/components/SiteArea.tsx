@@ -6,10 +6,10 @@ import OverviewMapArea from "@/components/elements/Map-mapbox/components/Overvie
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { updatePolygonVersionAsync, useListPolygonVersions } from "@/connections/PolygonVersion";
+import { pruneSitePolygonsCache } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import ApiSlice from "@/store/apiSlice";
 
 interface SiteAreaProps {
   sites: any;
@@ -56,8 +56,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
           isActive: true
         });
 
-        ApiSlice.pruneCache("sitePolygons");
-        ApiSlice.pruneIndex("sitePolygons", "");
+        pruneSitePolygonsCache();
 
         await refetchPolygonVersions();
 
