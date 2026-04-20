@@ -1,6 +1,7 @@
 import { isEmpty } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 
+import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
@@ -47,11 +48,15 @@ export const sitePolygonsConnection = v3Resource("sitePolygons", sitePolygonsInd
 
 export const useSitePolygons = connectionHook(sitePolygonsConnection);
 
+export const pruneSitePolygonsCache = (): void => {
+  ApiSlice.pruneCache("sitePolygons");
+  ApiSlice.pruneIndex("sitePolygons", "");
+};
+
 const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygons)
   .create<SitePolygonLightDto, CreateSitePolygonAttributesDto>()
   .refetch(() => {
-    ApiSlice.pruneCache("sitePolygons");
-    ApiSlice.pruneIndex("sitePolygons", "");
+    pruneSitePolygonsCache();
   })
   .buildConnection();
 
@@ -64,8 +69,7 @@ const deleteSitePolygonInternal = deleterAsync("sitePolygons", deleteSitePolygon
 
 export const deleteSitePolygon = async (uuid: string): Promise<void> => {
   await deleteSitePolygonInternal(uuid);
-  ApiSlice.pruneCache("boundingBoxes");
-  ApiSlice.pruneIndex("boundingBoxes", "");
+  pruneBoundingBoxesCache();
 };
 
 type SitePolygonResourceIdentifier = {
@@ -168,10 +172,8 @@ export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => 
     });
   });
 
-  ApiSlice.pruneCache("sitePolygons");
-  ApiSlice.pruneIndex("sitePolygons", "");
-  ApiSlice.pruneCache("boundingBoxes");
-  ApiSlice.pruneIndex("boundingBoxes", "");
+  pruneSitePolygonsCache();
+  pruneBoundingBoxesCache();
 };
 
 export const loadAllSitePolygons = async (
@@ -352,8 +354,7 @@ export const createSitePolygonsResource = async (
     }
   });
 
-  ApiSlice.pruneCache("sitePolygons");
-  ApiSlice.pruneIndex("sitePolygons", "");
+  pruneSitePolygonsCache();
 
   return response.data?.attributes!;
 };

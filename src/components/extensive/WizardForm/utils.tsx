@@ -142,7 +142,8 @@ export const getAnswer = (
 export const getFormattedAnswer = (
   field: FieldDefinition,
   values: Dictionary<any>,
-  fieldsProvider: FormFieldsProvider
+  fieldsProvider: FormFieldsProvider,
+  t?: typeof useT
 ): string | undefined => {
   const answer = getAnswer(field, values, fieldsProvider);
 
@@ -155,6 +156,8 @@ export const getFormattedAnswer = (
     return answer.length > 0 ? answer.join(", ") : undefined;
   } else if (typeof answer === "boolean") {
     return answer ? "Yes" : "No";
+  } else if (field.optionsList == "months") {
+    return getMonthOptions(t).find(opt => opt.value === answer)?.title;
   } else {
     return answer;
   }

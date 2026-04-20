@@ -13,9 +13,7 @@ const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: an
   const { selectedPolyVersion } = useMapAreaContext();
   const { isEditing, setIsEditing } = useContext(MapEditingContext);
 
-  useOnUnmount(() => {
-    onCancel();
-  });
+  useOnUnmount(onCancel ?? (() => {}));
 
   const handleSaveButton = () => {
     onSave();
