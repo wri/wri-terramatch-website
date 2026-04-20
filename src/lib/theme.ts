@@ -82,7 +82,8 @@ const themeConfig = {
       "500": { value: "1.125rem" }, // 18px
       "400": { value: "1rem" }, // 16px
       "300": { value: "0.875rem" }, // 14px
-      "200": { value: "0.75rem" } // 12px
+      "200": { value: "0.75rem" }, // 12px
+      "50": { value: "0.5rem" } // 8px
     },
     lineHeights: {
       "1200": { value: "4.5rem" }, // 72px
@@ -94,7 +95,8 @@ const themeConfig = {
       "600": { value: "1.5rem" }, // 24px
       "500": { value: "1.25rem" }, // 20px
       "400": { value: "1rem" }, // 16px
-      "300": { value: "0.75rem" } // 12px
+      "300": { value: "0.75rem" }, // 12px
+      "100": { value: "0.5rem" } // 8px
     }
   },
   textStyles: defineTextStyles({
@@ -255,6 +257,22 @@ const themeConfig = {
       value: {
         fontSize: "200",
         lineHeight: "400",
+        fontWeight: "bold"
+      }
+    },
+    "50": {
+      description: "Caption text style - (8px font, 8px line height)",
+      value: {
+        fontSize: "50",
+        lineHeight: "100",
+        fontWeight: "normal"
+      }
+    },
+    "50-bold": {
+      description: "Caption text style - (8px font, 8px line height, bold)",
+      value: {
+        fontSize: "50",
+        lineHeight: "100",
         fontWeight: "bold"
       }
     }

@@ -9,6 +9,7 @@ import { useOrganisations, useOrgCreate, useOrgJoin } from "@/connections/Organi
 import { useMyUser } from "@/connections/User";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useInputDelay } from "@/hooks/useInputDelay";
+import Log from "@/utils/log";
 
 import { useOrganizationCreateContext } from "../context/OrganizationCreate.provider";
 import OrganizationAssignPanel from "./OrganizationCreatePanel";
@@ -89,7 +90,7 @@ const OrganizationAssignForm = () => {
   const handleJoin = useCallback(() => {
     if (user?.emailAddress == null) {
       // User email not available - cannot join organization
-      console.error("Cannot join organization: user email not available");
+      Log.error("Cannot join organization: user email not available");
       return;
     }
 

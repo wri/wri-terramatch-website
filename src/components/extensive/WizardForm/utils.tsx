@@ -4,19 +4,15 @@ import { Dictionary, isEmpty, isFunction } from "lodash";
 import { useMemo } from "react";
 import * as yup from "yup";
 
-import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
-import TreeSpeciesTable, { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable";
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
 import { Answer, FieldDefinition } from "@/components/extensive/WizardForm/types";
-import { SupportedEntity } from "@/connections/EntityAssociation";
 import { loadGadmCodes } from "@/connections/Gadm";
 import { getMonthOptions } from "@/constants/options/months";
 import { Framework } from "@/context/framework.provider";
 import { FormFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
 import { FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
-import { v3Entity } from "@/helpers/entity";
-import { Entity, Option, UploadedFile } from "@/types/common";
+import { Option, UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
@@ -209,32 +205,6 @@ export const appendAnswersAsCSVRow = (
   } else {
     appendAnswers(field, csv, values, fieldsProvider);
   }
-};
-
-export const treeSpeciesEntryValue = (
-  collection: string | undefined,
-  entity: Entity | undefined,
-  field: FieldDefinition,
-  values: any,
-  fieldsProvider: FormFieldsProvider
-) => {
-  const value = (getAnswer(field, values, fieldsProvider) ?? []) as TreeSpeciesValue[];
-  const plants = value.map(
-    ({ name, amount, taxonId }) =>
-      ({
-        name,
-        amount,
-        // ?? null is important here for the isEqual check in useFormChanges. The v3 API always
-        // returns null, so if taxon_id is undefined here, we want it to be explicitly null
-        // for comparison.
-        taxonId: taxonId ?? null
-      } as PlantData)
-  );
-  const supportedEntity = v3Entity(entity) as SupportedEntity | undefined;
-  const tableType = field.additionalProps?.with_numbers !== true ? "noCount" : "noGoal";
-  return (
-    <TreeSpeciesTable {...{ plants, collection, tableType }} entity={supportedEntity} entityUuid={entity?.entityUUID} />
-  );
 };
 
 export const dataTableEntryValue = (headers: AccessorKeyColumnDef<any>[], field: FieldDefinition, values: any) => {

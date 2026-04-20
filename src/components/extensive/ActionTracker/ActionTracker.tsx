@@ -9,7 +9,7 @@ import ApplicationsCard from "./cards/ApplicationsCard";
 import ProjectsCard from "./cards/ProjectsCard";
 import ReportsCard from "./cards/ReportsCard";
 
-const PROJECT_TARGETABLE_TYPES = ["projects", "sites", "nurseries"];
+const PROJECT_TARGETABLE_TYPES = ["projects"];
 const REPORT_TARGETABLE_TYPES = ["projectReports", "siteReports", "nurseryReports"];
 
 const ActionTracker = () => {

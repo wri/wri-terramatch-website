@@ -10,7 +10,7 @@ import { useApplication } from "@/connections/Application";
 import { useForm } from "@/connections/Form";
 import { useSubmission } from "@/connections/FormSubmission";
 import { useFramework } from "@/context/framework.provider";
-import { FormModel, useApiFieldsProvider, useV2OrgFormDetails } from "@/context/wizardForm.provider";
+import { FormModel, useApiFieldsProvider, useOrgFormDetails } from "@/context/wizardForm.provider";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useSubmissionUpdate } from "@/hooks/useFormUpdate";
@@ -67,7 +67,7 @@ const RequestMoreInformationPage = () => {
     [fieldsProvider, submission?.answers]
   );
   const [, { data: form }] = useForm({ id: submission?.formUuid ?? undefined, enabled: submission?.formUuid != null });
-  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(submission?.organisationUuid ?? undefined);
+  const [orgDetailsLoaded, orgDetails] = useOrgFormDetails(submission?.organisationUuid ?? undefined);
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
