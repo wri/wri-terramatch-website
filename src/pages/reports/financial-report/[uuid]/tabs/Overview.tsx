@@ -67,7 +67,7 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
               <Text variant="text-16-light">{t("Local Currency")}</Text>
               <Text variant="text-18-bold">
                 {report?.currency
-                  ? getCurrencyOptions(t).find(opt => opt.value == report?.currency?.toUpperCase())?.title
+                  ? getCurrencyOptions(t).find(opt => opt.value == report?.currency)?.title
                   : "Not Provided"}
               </Text>
             </div>
