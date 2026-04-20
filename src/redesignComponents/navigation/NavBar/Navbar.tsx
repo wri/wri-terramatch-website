@@ -56,7 +56,6 @@ const Navbar: FC<NavbarProps> = ({
               prefix={accountPrefix}
               suffix={accountSuffix}
               variant="mega"
-              s
             />
           ) : (
             <>
