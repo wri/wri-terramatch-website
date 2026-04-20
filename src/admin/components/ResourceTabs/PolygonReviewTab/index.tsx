@@ -10,6 +10,7 @@ import { Else, If, Then } from "react-if";
 import ModalApprove from "@/admin/components/extensive/Modal/ModalApprove";
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
+import { zoomToBbox } from "@/components/elements/Map-mapbox/adapters/camera";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
@@ -26,7 +27,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useBoundingBox } from "@/connections/BoundingBox";
+import { pruneBoundingBoxesCache, useBoundingBox } from "@/connections/BoundingBox";
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { pruneEntityCache } from "@/connections/Entity";
 import { useMedias } from "@/connections/EntityAssociation";
@@ -36,7 +37,7 @@ import {
   useUploadGeometry,
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
-import { bulkUpdateSitePolygonStatus, deleteSitePolygon } from "@/connections/SitePolygons";
+import { bulkUpdateSitePolygonStatus, deleteSitePolygon, pruneSitePolygonsCache } from "@/connections/SitePolygons";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -191,7 +192,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     polygonData: polygonList,
     shouldRefetchValidation,
     setShouldRefetchValidation,
-    validFilter
+    validFilter,
+    isUserDrawingEnabled
   } = useMapAreaContext();
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   // Local table pagination/sorting over the full dataset already loaded for the map
@@ -205,13 +207,15 @@ const PolygonReviewTab: FC<IProps> = props => {
   const compareGeometry = useCompareGeometry({});
   const uploadGeometryWithVersions = useUploadGeometryWithVersions({});
 
+  const isValidBbox = (b: unknown): b is [number, number, number, number] =>
+    Array.isArray(b) && b.length === 4 && (b as unknown[]).every(n => typeof n === "number");
+
+  const siteBbox = useBoundingBox({ siteUuid: record?.uuid });
+  const activeBbox = isValidBbox(siteBbox) ? siteBbox : undefined;
+
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
-  const bbox = useBoundingBox(
-    currentPolygonUuid != null ? { polygonUuid: currentPolygonUuid } : { siteUuid: record?.uuid }
-  );
-  const isValidBbox = (bbox: unknown): bbox is [number, number, number, number] =>
-    Array.isArray(bbox) && bbox.length === 4 && bbox.every(n => typeof n === "number");
-  const activeBbox = isValidBbox(bbox) ? bbox : undefined;
+  const polygonBboxForFly = useBoundingBox(currentPolygonUuid != null ? { polygonUuid: currentPolygonUuid } : {});
+
   const {
     data: sitePolygonData,
     refetch,
@@ -225,17 +229,31 @@ const PolygonReviewTab: FC<IProps> = props => {
   };
   const mapFunctions = useMap(onSave);
 
+  useEffect(() => {
+    if (isUserDrawingEnabled === true) {
+      return;
+    }
+    if (isValidBbox(polygonBboxForFly) && mapFunctions.map?.current != null) {
+      zoomToBbox(polygonBboxForFly, mapFunctions.map.current, true);
+      setCurrentPolygonUuid(undefined);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [polygonBboxForFly, isUserDrawingEnabled]);
+
   const flyToPolygonBounds = useCallback(async (uuid: string) => {
     setCurrentPolygonUuid(uuid);
   }, []);
 
   useEffect(() => {
-    if (selectPolygonFromMap?.uuid) {
+    if (isUserDrawingEnabled === true) {
+      return;
+    }
+    if (selectPolygonFromMap?.uuid != null && selectPolygonFromMap.uuid !== "") {
       flyToPolygonBounds(selectPolygonFromMap.uuid);
     }
-  }, [flyToPolygonBounds, selectPolygonFromMap]);
+  }, [flyToPolygonBounds, selectPolygonFromMap?.uuid, isUserDrawingEnabled]);
 
-  const [, { data: modelFilesData }] = useMedias({
+  const [, { data: mediaFiles }] = useMedias({
     entity: "sites",
     uuid: record?.uuid,
     enabled: record?.uuid != null
@@ -313,6 +331,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const deletePolygon = async (uuid: string) => {
     try {
       await deleteSitePolygon(uuid);
+      pruneBoundingBoxesCache();
       refetch?.();
       const { map } = mapFunctions;
       if (map?.current) {
@@ -415,8 +434,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       pruneEntityCache("sites", siteUuid);
       ApiSlice.pruneIndex("sites", "");
 
-      ApiSlice.pruneCache("sitePolygons");
-      ApiSlice.pruneIndex("sitePolygons", "");
+      pruneSitePolygonsCache();
 
       ApiSlice.pruneCache("validations");
       ApiSlice.pruneIndex("validations", "");
@@ -484,6 +502,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
     try {
       await Promise.all(uploadPromises);
+      pruneBoundingBoxesCache();
       openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
       refetch();
     } catch (error) {
@@ -541,6 +560,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         );
 
         await Promise.all(uploadPromises);
+        pruneBoundingBoxesCache();
         openNotification("success", t("Success!"), t("Polygons versioned successfully"));
         refetch();
       }
@@ -632,8 +652,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               pruneEntityCache("sites", siteUuid);
               ApiSlice.pruneIndex("sites", "");
             }
-            ApiSlice.pruneCache("sitePolygons");
-            ApiSlice.pruneIndex("sitePolygons", "");
+            pruneSitePolygonsCache();
             ApiSlice.pruneCache("validations");
             ApiSlice.pruneIndex("validations", "");
 
@@ -926,7 +945,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                   mapFunctions={mapFunctions}
                   tooltipType="edit"
                   sitePolygonData={sitePolygonData}
-                  modelFilesData={modelFilesData}
+                  mediaFiles={mediaFiles}
                   setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
                   isLoadingDelayedJob={props.isLoadingDelayedJob}
                   setAlertTitle={props.setAlertTitle}

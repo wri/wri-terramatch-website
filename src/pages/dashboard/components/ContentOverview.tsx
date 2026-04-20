@@ -372,7 +372,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               id="modal"
               showLegend={false}
               mapFunctions={modalMapFunctions}
-              isDashboard={"modal"}
+              dashboardMode={"modal"}
               className="custom-popup-close-button !h-full"
               centroids={centroids}
               showPopups={true}
@@ -390,7 +390,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               dashboardContext={{
                 setFilters,
                 dashboardCountries,
-                isDashboard: "modal"
+                dashboardMode: "modal"
               }}
             />
           </LoadingContainerOpacity>
@@ -515,7 +515,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             id="dashboard"
             showLegend={false}
             mapFunctions={dashboardMapFunctions}
-            isDashboard={"dashboard"}
+            dashboardMode={"dashboard"}
             className="custom-popup-close-button !h-[600px] mobile:!h-[381px]"
             centroids={centroids}
             showPopups={true}

@@ -38,7 +38,7 @@ const MonitoredDataMap = ({
     }
   });
 
-  const [, { data: modelFilesData }] = useMedias({
+  const [, { data: mediaFiles }] = useMedias({
     entity: entityName as SupportedEntity,
     uuid: entityUuid
   });
@@ -79,7 +79,7 @@ const MonitoredDataMap = ({
           polygonsData={polygonsData}
           bbox={entityBbox}
           setLoader={setLoading}
-          modelFilesData={modelFilesData}
+          mediaFiles={mediaFiles}
           showPopups={true}
           tooltipType="view"
           entityData={transformedEntityData}

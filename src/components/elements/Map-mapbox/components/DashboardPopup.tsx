@@ -1,6 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { LAYERS_NAMES } from "@/constants/layers";
@@ -10,21 +9,16 @@ import TooltipGridMap from "@/pages/dashboard/components/TooltipGridMap";
 import { usePopupData } from "@/pages/dashboard/hooks/usePopupsData";
 import ApiSlice from "@/store/apiSlice";
 
+import type { PopupComponentProps } from "../Map.d";
 import PopupMapImage from "./PopupMapImage";
+
 const client = new QueryClient();
 
-export const DashboardPopup = (event: any) => {
-  const { popupType, popupData, items, label, isLoading, isoCountry, itemUuid, layerName, projectFullDto } =
-    usePopupData(event);
-  const { addPopupToMap, removePopupFromMap, setFilters, dashboardCountries, isDashboard } = event;
+export const DashboardPopup = (event: PopupComponentProps) => {
+  const { popupType, popupData, items, label, isoCountry, itemUuid, layerName, projectFullDto } = usePopupData(event);
+  const { popup, setFilters, dashboardCountries, dashboardMode } = event;
   const router = useRouter();
   const { closeModal } = useModalContext();
-
-  useEffect(() => {
-    if (!isLoading && (items.length > 0 || popupData)) {
-      addPopupToMap();
-    }
-  }, [isLoading, items, popupData, addPopupToMap]);
 
   const learnMoreEvent = () => {
     if (isoCountry && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
@@ -32,8 +26,8 @@ export const DashboardPopup = (event: any) => {
         (country: CountriesProps) => country.country_slug === isoCountry
       );
       if (selectedCountry) {
-        setFilters((prevValues: any) => ({
-          ...prevValues,
+        setFilters?.(prev => ({
+          ...prev,
           uuid: "",
           country: selectedCountry
         }));
@@ -45,8 +39,8 @@ export const DashboardPopup = (event: any) => {
       );
 
       if (selectedCountry) {
-        setFilters((prevValues: any) => ({
-          ...prevValues,
+        setFilters?.(prev => ({
+          ...prev,
           uuid: itemUuid,
           country: selectedCountry
         }));
@@ -58,9 +52,9 @@ export const DashboardPopup = (event: any) => {
       }
     }
 
-    removePopupFromMap();
+    popup?.remove();
 
-    if (isDashboard === "modal") {
+    if (dashboardMode === "modal") {
       closeModal("modalExpand");
     }
   };
@@ -73,7 +67,7 @@ export const DashboardPopup = (event: any) => {
           <TooltipGridMap
             label={label}
             learnMore={
-              layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && isDashboard === "dashboard" ? learnMoreEvent : null
+              layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && dashboardMode === "dashboard" ? learnMoreEvent : null
             }
             isoCountry={isoCountry}
             items={items}

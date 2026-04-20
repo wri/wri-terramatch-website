@@ -7,17 +7,13 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices } from "@/connections/Gadm";
 import { LAYERS_NAMES } from "@/constants/layers";
-import { CountriesProps } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { usePopupData } from "@/pages/dashboard/hooks/usePopupsData";
 
+import type { MobilePopupData } from "../Map.d";
+
 interface MobilePopupProps {
-  event: {
-    setFilters: (fn: (prev: any) => any) => void;
-    dashboardCountries?: CountriesProps[];
-    isDashboard?: string;
-    [key: string]: any;
-  };
+  event: MobilePopupData;
   onClose: () => void;
   variant: "mobile" | "desktop";
 }
@@ -25,7 +21,7 @@ interface MobilePopupProps {
 export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, variant = "desktop" }) => {
   const t = useT();
   const { items, label, isoCountry, itemUuid, layerName, projectFullDto, popupType } = usePopupData(event);
-  const { setFilters, dashboardCountries, isDashboard } = event;
+  const { setFilters, dashboardCountries, dashboardMode } = event;
   const countryChoices = useGadmChoices({ level: 0 });
   const router = useRouter();
   const { closeModal } = useModalContext();
@@ -46,7 +42,7 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, varian
     if (layerName === LAYERS_NAMES.WORLD_COUNTRIES && isoCountry) {
       const selectedCountry = dashboardCountries?.find(country => country.country_slug === isoCountry);
       if (selectedCountry) {
-        setFilters(prev => ({
+        setFilters?.(prev => ({
           ...prev,
           uuid: "",
           country: selectedCountry
@@ -55,7 +51,7 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, varian
     } else if (layerName === LAYERS_NAMES.CENTROIDS && itemUuid) {
       const projectCountry = projectFullDto?.country;
       if (projectCountry) {
-        setFilters(prev => ({
+        setFilters?.(prev => ({
           ...prev,
           uuid: itemUuid,
           country: {
@@ -77,7 +73,7 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, varian
 
     onClose();
 
-    if (isDashboard === "modal") {
+    if (dashboardMode === "modal") {
       closeModal("modalExpand");
     }
   };

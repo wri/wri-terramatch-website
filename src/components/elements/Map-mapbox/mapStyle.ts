@@ -5,7 +5,6 @@ const { theme } = resolveConfig(tailwindConfig);
 const colors = theme?.colors as any;
 
 const editMapStyle = [
-  // polygon fill
   {
     id: "gl-draw-polygon-fill",
     type: "fill",
@@ -16,7 +15,6 @@ const editMapStyle = [
       "fill-opacity": 0.1
     }
   },
-  // vertex point halos
   {
     id: "gl-draw-polygon-and-line-vertex-halo-active",
     type: "circle",
@@ -26,7 +24,6 @@ const editMapStyle = [
       "circle-color": colors.primary[500]
     }
   },
-  // vertex points
   {
     id: "gl-draw-polygon-and-line-vertex-active",
     type: "circle",
@@ -36,8 +33,7 @@ const editMapStyle = [
       "circle-color": colors.primary[500]
     }
   },
-  // polygon outline stroke
-  // This doesn't style the first edge of the polygon, which uses the line stroke styling instead
+  // First closing edge uses line stroke, not this layer.
   {
     id: "gl-draw-polygon-stroke-active",
     type: "line",
@@ -52,7 +48,6 @@ const editMapStyle = [
       "line-width": 2
     }
   },
-  // polygon mid points
   {
     id: "gl-draw-polygon-midpoint",
     type: "circle",
@@ -66,7 +61,6 @@ const editMapStyle = [
 ];
 
 const staticMapStyles = [
-  // polygon fill
   {
     id: "gl-draw-polygon-fill-static",
     type: "fill",
@@ -82,14 +76,13 @@ const staticMapStyles = [
       "fill-opacity": [
         "case",
         ["==", ["feature-state", "clicked"], true],
-        0.75, // on click fill-opacity
+        0.75,
         ["==", ["feature-state", "hover"], true],
-        0.5, // on hover fill-opacity
-        0.25 // default fill-opacity
+        0.5,
+        0.25
       ]
     }
   },
-  // polygon outline
   {
     id: "gl-draw-polygon-stroke-static",
     type: "line",
@@ -103,10 +96,10 @@ const staticMapStyles = [
       "line-width": [
         "case",
         ["==", ["feature-state", "clicked"], true],
-        4, // on click line-width
+        4,
         ["==", ["feature-state", "hover"], true],
-        4, // on hover line-width
-        2 // default line-width
+        4,
+        2
       ]
     }
   }

@@ -16,7 +16,7 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useBoundingBox } from "@/connections/BoundingBox";
+import { pruneBoundingBoxesCache, useBoundingBox } from "@/connections/BoundingBox";
 import { deleteSitePolygon } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -178,6 +178,7 @@ const Polygons = (props: IPolygonProps) => {
           return;
         }
         await deleteSitePolygon(sitePolygonUuid);
+        pruneBoundingBoxesCache();
         reloadSiteData?.();
         closeModal(ModalId.CONFIRM_POLYGON_DELETION);
       } catch (error) {

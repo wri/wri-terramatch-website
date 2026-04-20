@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { When } from "react-if";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useOnMount } from "@/hooks/useOnMount";
+import { useOnUnmount } from "@/hooks/useOnMount";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -14,11 +14,7 @@ const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: an
   const { selectedPolyVersion } = useMapAreaContext();
   const { isEditing, setIsEditing } = useContext(MapEditingContext);
 
-  useOnMount(() => {
-    return () => {
-      onCancel();
-    };
-  });
+  useOnUnmount(onCancel ?? (() => {}));
 
   const handleSaveButton = () => {
     onSave();

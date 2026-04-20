@@ -1,19 +1,11 @@
-import { Map, MapboxGeoJSONFeature, MapMouseEvent } from "mapbox-gl";
+import { GeoJSONFeature, Map, MapMouseEvent } from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 
-/**
- * When a feature is selected `clicked` true or false will be set in feature status using map.setFeatureState()
- * using that you can filter feature in styles to assign styling.
- * @param map mapbox instance
- * @returns [selectedFeature, method to update selected feature]
- */
-export const useSelectFeature = (
-  map?: Map
-): [MapboxGeoJSONFeature | undefined, (feature?: MapboxGeoJSONFeature) => void] => {
-  const [selectedFeature, _setSelectedFeature] = useState<MapboxGeoJSONFeature>();
-  const clickedFeatureRef = useRef<MapboxGeoJSONFeature>();
+export const useSelectFeature = (map?: Map): [GeoJSONFeature | undefined, (feature?: GeoJSONFeature) => void] => {
+  const [selectedFeature, _setSelectedFeature] = useState<GeoJSONFeature>();
+  const clickedFeatureRef = useRef<GeoJSONFeature>();
 
-  const setSelectedFeature = (feature?: MapboxGeoJSONFeature) => {
+  const setSelectedFeature = (feature?: GeoJSONFeature) => {
     clickedFeatureRef.current = feature;
     _setSelectedFeature(feature);
   };
@@ -27,14 +19,12 @@ export const useSelectFeature = (
       const feature = features?.[0];
 
       if (feature && !feature.properties?.image_url) {
-        //Click on feature
         if (clickedFeatureRef.current) {
           map.setFeatureState(clickedFeatureRef.current, { clicked: false });
         }
         setSelectedFeature(feature);
         map.setFeatureState(feature, { clicked: true });
       } else {
-        //Click away
         if (clickedFeatureRef.current) {
           map.setFeatureState(clickedFeatureRef.current, { clicked: false });
         }
