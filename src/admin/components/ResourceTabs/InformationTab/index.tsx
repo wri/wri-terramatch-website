@@ -149,7 +149,14 @@ const InformationTab: FC<IProps> = props => {
               {fields.map(field =>
                 field.inputType === "financialIndicators" ? (
                   <>
-                    <FinancialMetrics data={values[field.name]} years={field.years ?? undefined} />
+                    <FinancialMetrics
+                      data={values[field.name]}
+                      years={field.years ?? undefined}
+                      fieldsProvider={fieldsProvider}
+                      model={model}
+                      orgDetails={orgDetails}
+                      values={values}
+                    />
                     <Accordion
                       title="Financial Documents per Year"
                       variant="drawer"
