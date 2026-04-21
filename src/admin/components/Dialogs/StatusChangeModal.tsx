@@ -55,11 +55,15 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
   const t = useT();
 
   const v3Resource = useMemo(() => v3EntityName(resource as SingularEntityName) as FormEntity, [resource]);
-  const [, { isUpdating, update }] = useFullEntity(v3Resource, record.uuid);
+  const [, { isUpdating, updateFailure, update }] = useFullEntity(v3Resource, record.uuid);
 
   // For a v3 update, the store already has the updated resource, but react-admin doesn't know about it.
   // This will be a quick cache get in that case, instead of another server round trip.
-  useRequestComplete(isUpdating, refetch);
+  useRequestComplete(
+    isUpdating,
+    updateFailure,
+    useCallback(failure => (failure == null ? refetch() : undefined), [refetch])
+  );
 
   const dialogTitle = useMemo(() => {
     let name;
@@ -155,6 +159,7 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
 
   useRequestComplete(
     isUpdating,
+    updateFailure,
     useCallback(() => {
       if (status === "due") {
         // When we reset a report, there are potentially many cached resources in the FE that have

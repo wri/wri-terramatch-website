@@ -37,7 +37,6 @@ export { JobsIcon } from "./DataVisualisation/JobsIcon";
 export { JobsCircleIcon } from "./DataVisualisation/JobsCircleIcon";
 export { LandscapeIcon } from "./DataVisualisation/LandscapeIcon";
 export { LanguageIcon } from "./NavigationSections/LanguageIcon";
-export { LeadingIcon } from "./Function/LeadingIcon";
 export { LoadingIcon } from "./Function/LoadingIcon";
 export { MessagesIcon } from "./NavigationSections/MessagesIcon";
 export { MoreVertIcon } from "./Function/MoreVertIcon";

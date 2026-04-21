@@ -11,6 +11,7 @@ export interface MapMarkerProps {
   count?: number;
   mode?: "dark" | "light";
   variant?: "cluster" | "simple-pin" | "icon";
+  triggerRef?: React.RefObject<HTMLButtonElement>;
 }
 
 const BOX_SHADOW = "0px 1px 2px -1px rgba(0, 0, 0, 0.10), 0px 1px 3px 0px rgba(0, 0, 0, 0.10) !important";
@@ -31,7 +32,8 @@ const PointMarker: FC<MapMarkerProps> = ({
   showFocusState,
   count,
   mode,
-  variant
+  variant,
+  triggerRef
 }) => {
   return (
     <Box
@@ -54,6 +56,7 @@ const PointMarker: FC<MapMarkerProps> = ({
         count={count}
         mode={mode}
         variant={variant}
+        ref={triggerRef}
       />
     </Box>
   );

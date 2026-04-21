@@ -17,8 +17,6 @@ import { useParams } from "react-router-dom";
 import { DataMutationCallback, useTableData } from "@/components/elements/Inputs/FinancialTableInput/useTableData";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { deleteMedia, fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
-import { getCurrencyOptions } from "@/constants/options/localCurrency";
-import { getMonthOptions } from "@/constants/options/months";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useWizardOrgFormDetails } from "@/context/wizardForm.provider";
 import { isTranslatableError } from "@/generated/v3/utils";
@@ -34,7 +32,6 @@ import {
 } from "@/utils/financialReport";
 
 import Text from "../../Text/Text";
-import Dropdown from "../Dropdown/Dropdown";
 import FileInput from "../FileInput/FileInput";
 import Input from "../Input/Input";
 import InputWrapper from "../InputElements/InputWrapper";
@@ -119,8 +116,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const [resetTable, setResetTable] = useState(0);
     const { openNotification } = useNotificationContext();
 
-    const { data, updateData, selectCurrency, setSelectCurrency, selectFinancialMonth, setSelectFinancialMonth } =
-      useTableData(props);
+    const { data, updateData, selectCurrency } = useTableData(props);
 
     // UUID is filled in with override in the call to uploadFile
     const uploadFile = useUploadFile({
@@ -849,24 +845,6 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         feedbackRequired={props.feedbackRequired}
         error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
       >
-        <div className="mb-10 space-y-6">
-          <Dropdown
-            options={getCurrencyOptions(t)}
-            label={t("Local Currency")}
-            placeholder={t("USD - US Dollar")}
-            value={[selectCurrency]}
-            defaultValue={orgDetails?.currency ? [orgDetails?.currency] : [selectCurrency]}
-            onChange={e => setSelectCurrency(e?.[0])}
-          />
-          <Dropdown
-            options={getMonthOptions(t)}
-            label={t("Financial Year Start Month")}
-            placeholder={t("Select Month")}
-            value={[selectFinancialMonth]}
-            defaultValue={orgDetails?.startMonth ? [orgDetails?.startMonth] : [selectFinancialMonth]}
-            onChange={e => setSelectFinancialMonth(e?.[0])}
-          />
-        </div>
         {collection?.includes("profit") && (
           <div className="mb-10">
             <FinancialTableInput

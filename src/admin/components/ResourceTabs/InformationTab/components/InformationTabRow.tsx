@@ -25,16 +25,16 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
   const nurseryTotalFallback = usePlantTotalCount({ entity: entityName, entityUuid, collection: "nursery-seedling" });
   const totalTreePlanted = usePlantTotalCount({ entity: entityName, entityUuid, collection: "tree-planted" });
   const title = useFieldsProvider().step(props.stepId)?.title;
-
   return (
     <>
       <Text variant="text-16-semibold" className="text-darkCustom">
-        {title}
+        {entityName != "financialReports" && title}
       </Text>
       <List
         className={classNames("mt-4 gap-4", {
           "grid grid-cols-3": entityName === "sites",
-          "flex flex-col": entityName !== "sites"
+          "flex flex-col": entityName !== "sites",
+          "grid grid-cols-2": entityName === "financialReports"
         })}
         items={entries}
         render={entry => {
@@ -62,7 +62,7 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
                   </Typography>
                   {formatEntryValue(entry.value)}
                 </>
-              ) : (
+              ) : entityName != "financialReports" ? (
                 <>
                   <Typography className={LabeledClasses.label}>
                     <Text as="span" variant="text-14-light" className="capitalize text-grey-700">
@@ -79,6 +79,26 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
                     formatEntryValue(entry.value)
                   )}
                 </>
+              ) : (
+                entityName == "financialReports" &&
+                entry.inputType == "select" && (
+                  <>
+                    <Text variant="text-14-light" className="text-darkCustom-300">
+                      {entry.title}
+                    </Text>
+                    {typeof entry.value === "string" || typeof entry.value === "number" ? (
+                      <Text
+                        variant="text-14-semibold"
+                        className="text-darkCustom"
+                        dangerouslySetInnerHTML={{
+                          __html: formatEntryValue(entry.value)
+                        }}
+                      />
+                    ) : (
+                      formatEntryValue(entry.value)
+                    )}
+                  </>
+                )
               )}
             </div>
           );

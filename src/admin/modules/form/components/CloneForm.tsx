@@ -28,16 +28,20 @@ export const CloneForm = () => {
 
   useRequestComplete(
     isCreating,
-    useCallback(() => {
-      if (createFailure != null) {
-        Log.error("Form clone failed", createFailure);
-        notify("Form clone failed", { type: "error" });
-      } else {
-        notify("Form clone succeeded");
-      }
+    createFailure,
+    useCallback(
+      failure => {
+        if (failure != null) {
+          Log.error("Form clone failed", failure);
+          notify("Form clone failed", { type: "error" });
+        } else {
+          notify("Form clone succeeded");
+        }
 
-      setOpen(false);
-    }, [createFailure, notify])
+        setOpen(false);
+      },
+      [notify]
+    )
   );
 
   const cloneForm = useCallback<SubmitHandler<TitleForm>>(

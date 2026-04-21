@@ -13,6 +13,7 @@ export interface NavbarLinkItem {
   label: string;
   href?: string;
   onClick?: () => void;
+  isActive?: boolean;
 }
 
 export interface NavbarProps {
@@ -42,8 +43,15 @@ const Navbar: FC<NavbarProps> = ({
         <Flex gap={4} alignItems="center" pl={4}>
           <TMLogo boxSize="52px" />
           {navLinks.map((link, index) => (
-            <Button key={index} variant="borderless" className="!text-white" onClick={link.onClick}>
-              <span className="text-white">{link.label}</span>
+            <Button
+              key={index}
+              variant="borderless"
+              className={`!text-white ${
+                link.isActive ? "!bg-theme-primary-500/20 !opacity-100" : "opacity-80 hover:opacity-100"
+              }`}
+              onClick={link.onClick}
+            >
+              <span className={`text-white ${link.isActive ? "" : ""}`}>{link.label}</span>
             </Button>
           ))}
         </Flex>
@@ -61,7 +69,9 @@ const Navbar: FC<NavbarProps> = ({
             <>
               <Button
                 variant="outline"
-                className="!border-white !text-white hover:!border-theme-primary-800 hover:!text-theme-primary-800"
+                color="neutral.100 !important"
+                borderColor="neutral.100 !important"
+                className="hover:!border-theme-primary-800 hover:!text-theme-primary-800"
                 size="small"
               >
                 Create account

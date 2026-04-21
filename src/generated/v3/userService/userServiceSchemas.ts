@@ -802,45 +802,49 @@ export type UserUpdateAttributes = {
    *
    * @format uuid
    */
-  organisationUuid?: Record<string, any> | null;
+  organisationUuid?: string | null;
   /**
    * First name
    */
-  firstName?: Record<string, any> | null;
+  firstName?: string | null;
   /**
    * Last name
    */
-  lastName?: Record<string, any> | null;
+  lastName?: string | null;
   /**
    * Email address
    *
    * @format email
    */
-  emailAddress?: Record<string, any> | null;
+  emailAddress?: string | null;
+  /**
+   * Password
+   */
+  password?: string | null;
   /**
    * Job role
    */
-  jobRole?: Record<string, any> | null;
+  jobRole?: string | null;
   /**
    * Phone number
    */
-  phoneNumber?: Record<string, any> | null;
+  phoneNumber?: string | null;
   /**
    * Country
    */
-  country?: Record<string, any> | null;
+  country?: string | null;
   /**
    * Program
    */
-  program?: Record<string, any> | null;
+  program?: string | null;
   /**
    * New default locale for the given user
    */
-  locale: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
+  locale?: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
   /**
    * Primary role
    */
-  primaryRole?: Record<string, any> | null;
+  primaryRole?: string | null;
   directFrameworks?: string[] | null;
 };
 
