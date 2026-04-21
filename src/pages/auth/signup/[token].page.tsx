@@ -42,20 +42,24 @@ const InviteSignupPage = () => {
   const [, { isCreating, createFailure, create: signUp }] = useUserCreation({});
   useRequestComplete(
     isCreating,
-    useCallback(() => {
-      if (createFailure == null) {
-        openToast(t("Account created successfully"));
-        router.push("/auth/login");
-      } else {
-        const message =
-          createFailure.statusCode == 422 && createFailure.message == "User already exists"
-            ? t(
-                "An account with this email address already exists. Please try signing in with your existing account, or reset your password if you have forgotten it."
-              )
-            : t("An error occurred. Please try again later.");
-        form.setError("root", { message, type: "validate" });
-      }
-    }, [createFailure, form, openToast, router, t])
+    createFailure,
+    useCallback(
+      failure => {
+        if (failure == null) {
+          openToast(t("Account created successfully"));
+          router.push("/auth/login");
+        } else {
+          const message =
+            failure.statusCode == 422 && failure.message == "User already exists"
+              ? t(
+                  "An account with this email address already exists. Please try signing in with your existing account, or reset your password if you have forgotten it."
+                )
+              : t("An error occurred. Please try again later.");
+          form.setError("root", { message, type: "validate" });
+        }
+      },
+      [form, openToast, router, t]
+    )
   );
 
   const { strength } = usePasswordStrength({ password: form.watch("password") });

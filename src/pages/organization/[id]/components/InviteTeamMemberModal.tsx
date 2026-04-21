@@ -48,22 +48,25 @@ const InviteTeamMemberModal = ({ organisationUUID, onSuccess }: InviteTeamMember
     reset();
   }, [closeModal, reset]);
 
-  const handleInviteComplete = useCallback(() => {
-    if (inviteFailure == null) {
-      if (onSuccess != null) {
-        onSuccess();
+  const handleInviteComplete = useCallback(
+    failure => {
+      if (failure == null) {
+        if (onSuccess != null) {
+          onSuccess();
+        }
+        openToast(t("Invitation sent successfully"));
+        hideModal();
+      } else {
+        setError("email", {
+          message: t("This user already has a TerraMatch account, please try a different email address."),
+          type: "validate"
+        });
       }
-      openToast(t("Invitation sent successfully"));
-      hideModal();
-    } else {
-      setError("email", {
-        message: t("This user already has a TerraMatch account, please try a different email address."),
-        type: "validate"
-      });
-    }
-  }, [inviteFailure, onSuccess, openToast, t, setError, hideModal]);
+    },
+    [onSuccess, openToast, t, setError, hideModal]
+  );
 
-  useRequestComplete(isLoading, handleInviteComplete);
+  useRequestComplete(isLoading, inviteFailure, handleInviteComplete);
 
   const onSubmit = (data: FormValues) => {
     inviteTeamMember({
