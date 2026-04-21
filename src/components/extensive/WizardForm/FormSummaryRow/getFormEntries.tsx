@@ -19,6 +19,7 @@ import {
   useWizardOrgFormDetails
 } from "@/context/wizardForm.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { isProjectPitchesEntityName } from "@/helpers/entity";
 import { Entity, EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
 
@@ -31,6 +32,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
 
   const uuid = entity?.entityUUID ?? record?.uuid;
   const entityType = entity?.entityName ?? (type as EntityName);
+  const isProjectPitchEntity = isProjectPitchesEntityName(entityType);
 
   const { data: sitePolygonData } = useAllSitePolygons({
     entityName: "sites",
@@ -40,7 +42,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
 
   const [, { data: projectPolygonData }] = useProjectPolygonByPitch({
     filter: { projectPitchUuid: uuid },
-    enabled: (entityType === "projects" || entityType === "project-pitches") && uuid != null
+    enabled: (entityType === "projects" || isProjectPitchEntity) && uuid != null
   });
 
   const bboxParams =
@@ -48,7 +50,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
       ? { siteUuid: record?.uuid }
       : entityType === "projects"
       ? { projectUuid: uuid }
-      : entityType === "project-pitches"
+      : isProjectPitchEntity
       ? { projectPitchUuid: uuid }
       : {};
 
@@ -125,15 +127,16 @@ const getEntityPolygonData = (
   sitePolygonData?: SitePolygonLightDto[],
   projectPolygonData?: any
 ) => {
-  if (!record && !entity) {
+  if (record == null && entity == null) {
     return null;
   }
 
-  const entityType = entity?.entityName || (type as EntityName);
+  const entityType = entity?.entityName ?? (type as EntityName);
+  const isProjectPitchEntity = isProjectPitchesEntityName(entityType);
 
   if (entityType === "sites") {
     return sitePolygonData ? parsePolygonDataV3(sitePolygonData) : null;
-  } else if (entityType === "projects" || entityType === "project-pitches") {
+  } else if (entityType === "projects" || isProjectPitchEntity) {
     const polygonUuid = projectPolygonData?.polygonUuid;
     return projectPolygonData ? { [FORM_POLYGONS]: [polygonUuid] } : null;
   }

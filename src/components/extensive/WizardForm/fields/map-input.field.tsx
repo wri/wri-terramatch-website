@@ -1,5 +1,5 @@
 import RHFMap from "@/components/elements/Inputs/Map/RHFMap";
-import MapContainer from "@/components/elements/Map-mapbox/Map";
+import FormMapContainer from "@/components/elements/Map-mapbox/FormMapContainer";
 import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { MapAreaProvider } from "@/context/mapArea.provider";
@@ -30,10 +30,10 @@ export const MapInputField: FormFieldFactory = {
         : undefined;
 
     return (
-      <MapContainer
+      <FormMapContainer
         polygonsData={entityPolygonData}
         bbox={bbox}
-        className="h-[240px] flex-1"
+        sizeVariant="summary"
         hasControls={false}
         showPopups={type === "sites"}
         showLegend={type === "sites"}

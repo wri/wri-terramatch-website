@@ -22,12 +22,14 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { isProjectPitchesEntityName } from "@/helpers/entity";
 import { useOnMount } from "@/hooks/useOnMount";
 
 import { addOrUpdateMarkerAndZoom, zoomToBbox, zoomToCenter } from "./adapters/camera";
 import { PopupMobile } from "./components/PopupMobile";
 import { useMapReadiness } from "./core/useMapReadiness";
 import { BBox } from "./GeoJSON";
+import { useFormMapSizing } from "./hooks/useFormMapSizing";
 import { useGoogleSatellite } from "./hooks/useGoogleSatellite";
 import { useMapCamera } from "./hooks/useMapCamera";
 import { useMapDownload } from "./hooks/useMapDownload";
@@ -126,6 +128,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   hasAccess?: boolean;
   dashboardContext?: DashboardPopupContext;
   disabledPolygonPanel?: boolean;
+  disableRequestAnimationFrameResize?: boolean;
 }
 
 export const MapEditingContext = createContext({
@@ -171,6 +174,7 @@ export const MapContainer = ({
   hasAccess,
   dashboardContext,
   disabledPolygonPanel = false,
+  disableRequestAnimationFrameResize = false,
   ...props
 }: MapProps) => {
   if (!mapFunctions) return null;
@@ -246,7 +250,7 @@ export const MapContainer = ({
   });
 
   const polygonBbox = useBoundingBox(
-    entityData?.entityName === "project-pitch"
+    isProjectPitchesEntityName(entityData?.entityName)
       ? { projectPitchUuid: entityData?.entityUUID }
       : { polygonUuid: polygonFromMap?.uuid }
   );
@@ -376,7 +380,11 @@ export const MapContainer = ({
     openNotification
   });
 
-  const { isFullscreen, toggleFullscreen } = useMapFullscreen({ mapContainer, map });
+  const { isFullscreen, toggleFullscreen } = useMapFullscreen({
+    mapContainer,
+    map,
+    disableRequestAnimationFrameResize
+  });
 
   const { isDownloadingPolygons, downloadGeoJsonPolygon } = useMapDownload({
     polygonsData,
@@ -392,6 +400,8 @@ export const MapContainer = ({
     if (map.current == null || location == null || location.lat === 0 || location.lng === 0) return;
     mapMarkerRef.current = addOrUpdateMarkerAndZoom(map.current, location, mapMarkerRef.current);
   }, [map, location]);
+
+  useFormMapSizing({ map, mapContainer, disableRequestAnimationFrameResize });
 
   return (
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>

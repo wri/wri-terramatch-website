@@ -4,7 +4,7 @@ import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
-import MapContainer from "@/components/elements/Map-mapbox/Map";
+import FormMapContainer from "@/components/elements/Map-mapbox/FormMapContainer";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { FormModelType } from "@/connections/Form";
 import { useProjectPolygonByPitch } from "@/connections/ProjectPolygons";
@@ -145,7 +145,7 @@ const RHFMap = ({
   return (
     <SitePolygonDataProvider sitePolygonData={undefined} reloadSiteData={reloadSiteDataWithBoundingBox}>
       <InputWrapper {...inputWrapperProps}>
-        <MapContainer
+        <FormMapContainer
           polygonsData={polygonDataMap}
           bbox={validBbox}
           polygonFromMap={polygonFromMap}
@@ -155,7 +155,7 @@ const RHFMap = ({
           captureAdditionalPolygonProperties={entityName != null && entityName !== "project"}
           mapFunctions={mapFunctions}
           showLegend={false}
-          formMap={true}
+          sizeVariant="input"
         />
       </InputWrapper>
     </SitePolygonDataProvider>
