@@ -3032,6 +3032,45 @@ export const entityCreate = new V3ApiEndpoint<EntityCreateResponse, EntityCreate
   "POST"
 );
 
+export type EntityExportAllPathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+};
+
+export type EntityExportAllError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type EntityExportAllVariables = {
+  pathParams: EntityExportAllPathParams;
+};
+
+export const entityExportAll = new V3ApiEndpoint<undefined, EntityExportAllError, EntityExportAllVariables, {}>(
+  "/entities/v3/{entity}/exportAll",
+  "GET"
+);
+
 export type EntityGetPathParams = {
   /**
    * UUID of the resource.
@@ -5248,6 +5287,50 @@ export const formPullTranslations = new V3ApiEndpoint<
   {}
 >("/forms/v3/forms/{uuid}/translations", "GET");
 
+export type FormSubmissionsExportCsvPathParams = {
+  uuid: string;
+};
+
+export type FormSubmissionsExportCsvError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormSubmissionsExportCsvVariables = {
+  pathParams: FormSubmissionsExportCsvPathParams;
+};
+
+export const formSubmissionsExportCsv = new V3ApiEndpoint<
+  undefined,
+  FormSubmissionsExportCsvError,
+  FormSubmissionsExportCsvVariables,
+  {}
+>("/forms/v3/forms/{uuid}/exportSubmissions", "GET");
+
 export type ApplicationIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -6299,14 +6382,23 @@ export const operationsByTag = {
   reminders: { sendReminder },
   auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
   aggregateReports: { getAggregateReports },
-  entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
+  entities: { entityIndex, entityCreate, entityExportAll, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
   submissions: { submissionGet, submissionUpdate, submissionCreate },
-  forms: { formIndex, formCreate, formGet, formDelete, formUpdate, formPushTranslation, formPullTranslations },
+  forms: {
+    formIndex,
+    formCreate,
+    formGet,
+    formDelete,
+    formUpdate,
+    formPushTranslation,
+    formPullTranslations,
+    formSubmissionsExportCsv
+  },
   applications: { applicationIndex, applicationGet, applicationDelete, applicationHistoryGet },
   fundingProgrammes: {
     fundingProgrammesIndex,

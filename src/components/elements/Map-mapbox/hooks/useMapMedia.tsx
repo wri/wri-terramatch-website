@@ -83,11 +83,11 @@ export function useMapMedia({
     const handleDownload = async (uuid: string, file_name: string): Promise<void> => {
       showLoader();
       try {
-        const blob = await downloadImage(uuid);
+        const { fileName, blob } = await downloadImage(uuid);
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = file_name ?? "image.jpg";
+        link.download = file_name ?? fileName ?? "image.jpg";
         document.body.appendChild(link);
         link.click();
         link.remove();

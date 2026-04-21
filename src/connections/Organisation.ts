@@ -15,6 +15,7 @@ import {
   createUserAssociation,
   organisationCreation,
   organisationDelete,
+  organisationExportCsv,
   organisationIndex,
   OrganisationIndexQueryParams,
   organisationShow,
@@ -22,6 +23,7 @@ import {
   updateUserAssociation
 } from "@/generated/v3/userService/userServiceComponents";
 import {
+  FileDownloadDto,
   FinancialIndicatorDto,
   FinancialReportLightDto,
   FundingTypeDto,
@@ -33,9 +35,11 @@ import {
   TreeSpeciesDto,
   UserAssociationDto
 } from "@/generated/v3/userService/userServiceSchemas";
+import { V3ApiEndpoint } from "@/generated/v3/utils";
 import { useConnection } from "@/hooks/useConnection";
-import { ApiDataStore } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore } from "@/store/apiSlice";
 import { Connected, Connection, Filter } from "@/types/connection";
+import { loadConnection } from "@/utils/loadConnection";
 
 type OrganisationConnection = {
   organisation?: OrganisationLightDto | OrganisationFullDto;
@@ -375,3 +379,14 @@ export const useOrganisationTreeSpecies = connectionHook(organisationTreeSpecies
 export const useOrganisationLeadership = connectionHook(organisationLeadershipConnection);
 export const useOrganisationOwnershipStakes = connectionHook(organisationOwnershipStakesConnection);
 export const useOrganisationFinancialReports = connectionHook(organisationFinancialReportsConnection);
+
+const exportConnection = v3Resource("fileDownloads", organisationExportCsv as V3ApiEndpoint<FileDownloadDto>)
+  .singleByCustomId(
+    () => ({}),
+    () => "organisationsExport"
+  )
+  .buildConnection();
+export const downloadOrganisationCsv = async () => {
+  ApiSlice.pruneCache("fileDownloads", ["organisationsExport"]);
+  return (await loadConnection(exportConnection)) as DataConnection<FileDownloadDto> & LoadFailureConnection;
+};

@@ -8,11 +8,9 @@ import {
   loadOrganisations,
   updateOrganisation
 } from "@/connections/Organisation";
-import { fetchGetV2AdminOrganisationsExport, GetV2AdminOrganisationsExportError } from "@/generated/apiComponents";
 import { OrganisationFullDto, OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
-import { downloadFileBlob } from "@/utils/network";
 
-import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
 import { handleUploads } from "../utils/upload";
 
@@ -116,15 +114,5 @@ export const organisationDataProvider: OrganisationDataProvider = {
     } catch (err) {
       throw v3ErrorForRA("Organisation update failed", err);
     }
-  },
-
-  export() {
-    return fetchGetV2AdminOrganisationsExport({})
-      .then((response: any) => {
-        downloadFileBlob(response, "Organisations.csv");
-      })
-      .catch(e => {
-        throw getFormattedErrorForRA(e as GetV2AdminOrganisationsExportError);
-      });
   }
 };
