@@ -9,6 +9,7 @@ import { useOrganisations, useOrgCreate, useOrgJoin } from "@/connections/Organi
 import { useMyUser } from "@/connections/User";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useInputDelay } from "@/hooks/useInputDelay";
+import { first } from "@/utils/array";
 import Log from "@/utils/log";
 
 import { useOrganizationCreateContext } from "../context/OrganizationCreate.provider";
@@ -71,7 +72,7 @@ const OrganizationAssignForm = () => {
    */
   useEffect(() => {
     if (createFailure != null && !organisationCreateLoading) {
-      const errorMessage = createFailure.message ?? "Failed to create organization";
+      const errorMessage = first(createFailure.message) ?? "Failed to create organization";
       form.setError("name", { message: errorMessage });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
