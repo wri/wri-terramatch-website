@@ -13,7 +13,7 @@ import {
   TextField
 } from "react-admin";
 
-import { getFormattedErrorForRA } from "@/admin/apiProvider/utils/error";
+import { v3ErrorForRA } from "@/admin/apiProvider/utils/error";
 import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
@@ -24,7 +24,7 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
-import { fetchGetV2SrpReportsExport, GetV2SrpReportsExportError } from "@/generated/apiComponents";
+import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
 import { SrpReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { downloadFileBlob } from "@/utils/network";
 
@@ -103,10 +103,10 @@ export const SRPReportList: FC = () => {
   const handleExport = async () => {
     setExporting(true);
     try {
-      const response = (await fetchGetV2SrpReportsExport({})) as Blob;
-      await downloadFileBlob(response, "SRPReports.csv");
+      const { fileName, blob } = await entityExportAll.fetchBlob({ pathParams: { entity: "srpReports" } });
+      await downloadFileBlob(blob, fileName ?? "SRPReports.csv");
     } catch (e) {
-      throw getFormattedErrorForRA(e as GetV2SrpReportsExportError);
+      throw v3ErrorForRA("Failed to fetch SRP report exports", e);
     } finally {
       setExporting(false);
     }

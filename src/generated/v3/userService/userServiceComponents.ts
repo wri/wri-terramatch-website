@@ -515,6 +515,61 @@ export const organisationCreation = new V3ApiEndpoint<
   {}
 >("/organisations/v3/organisations", "POST");
 
+export type OrganisationExportCsvError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export const organisationExportCsv = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example fileDownloads
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example fileDownloads
+         */
+        type?: string;
+        id?: string;
+        attributes?: Schemas.FileDownloadDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  OrganisationExportCsvError,
+  {},
+  {}
+>("/organisations/v3/organisations/export", "GET");
+
 export type OrganisationShowPathParams = {
   uuid: string;
 };
@@ -1935,7 +1990,14 @@ export const operationsByTag = {
   login: { authLogin },
   resetPassword: { requestPasswordReset, resetPassword },
   verificationUser: { verifyUser, resendUserVerification },
-  organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
+  organisations: {
+    organisationIndex,
+    organisationCreation,
+    organisationExportCsv,
+    organisationShow,
+    organisationUpdate,
+    organisationDelete
+  },
   actions: { actionsIndex },
   users: { userIndex, userCreation, usersFind, userUpdate, userDelete, userVerify },
   userAssociation: {

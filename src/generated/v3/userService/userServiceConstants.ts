@@ -7,6 +7,8 @@ import {
   OrganisationLightDto,
   OrganisationFullDto,
   UserDto,
+  FileDownloadDto,
+  DelayedJobDto,
   FinancialIndicatorDto,
   FinancialReportLightDto,
   MediaDto,
@@ -27,6 +29,8 @@ export const USER_SERVICE_RESOURCES = [
   "resendVerifications",
   "organisations",
   "users",
+  "fileDownloads",
+  "delayedJobs",
   "financialIndicators",
   "financialReports",
   "media",
@@ -47,6 +51,8 @@ export type UserServiceApiResources = {
   resendVerifications: StoreResourceMap<ResendVerificationResponseDto>;
   organisations: StoreResourceMap<OrganisationLightDto | OrganisationFullDto>;
   users: StoreResourceMap<UserDto>;
+  fileDownloads: StoreResourceMap<FileDownloadDto>;
+  delayedJobs: StoreResourceMap<DelayedJobDto>;
   financialIndicators: StoreResourceMap<FinancialIndicatorDto>;
   financialReports: StoreResourceMap<FinancialReportLightDto>;
   media: StoreResourceMap<MediaDto>;

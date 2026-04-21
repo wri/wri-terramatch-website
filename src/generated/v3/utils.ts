@@ -177,7 +177,7 @@ export class V3ApiEndpoint<
    * *only*, and should only be needed for downloading blobs for saving on the client filesystem
    * (like a CSV download).
    */
-  async fetchBlob(variables: TVariables, headers?: THeaders): Promise<Blob> {
+  async fetchBlob(variables: TVariables, headers?: THeaders): Promise<{ fileName?: string; blob: Blob }> {
     const { url, body, requestHeaders } = this.prepareRequest(variables, headers);
     const response = await fetch(url, { method: this.method, body, headers: requestHeaders });
 
@@ -185,12 +185,19 @@ export class V3ApiEndpoint<
       throw await response.json();
     }
 
-    if (response.headers.get("content-type")?.includes("json")) {
+    const type = response.headers.get("content-type");
+    if (type?.includes("json")) {
       // this API integration only supports JSON type responses.
-      throw new Error(`fetchBlob is only to be used for non-JSON endpoints [${response.headers.get("content-type")}]`);
+      throw new Error(`fetchBlob is only to be used for non-JSON endpoints [${type}]`);
     }
 
-    return await response.blob();
+    const disposition = response.headers.get("content-disposition");
+    const fileName =
+      disposition == null
+        ? undefined
+        : decodeURIComponent(disposition.split("filename=")[1].split(";")[0].replace(/['"]/g, ""));
+
+    return { fileName, blob: await response.blob() };
   }
 
   isFetchingSelector(variables: Omit<RequestVariables, "body">) {
