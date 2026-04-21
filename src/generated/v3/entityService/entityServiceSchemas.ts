@@ -1424,6 +1424,8 @@ export type ProjectFullDto = {
   sdgsImpacted: string | null;
   totalHectaresRestoredGoal: number | null;
   treesGrownGoal: number | null;
+  treesToBeRestoredGoal: number;
+  treesToBePlantedSpeciesGoalTotal: number;
   jobsCreatedGoal: number | null;
   survivalRate: number | null;
   lastReportedSurvivalRate: number | null;

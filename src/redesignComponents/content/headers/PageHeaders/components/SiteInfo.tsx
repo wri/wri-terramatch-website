@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC, useCallback, useMemo } from "react";
@@ -104,23 +104,40 @@ const SiteInfo: FC<SiteInfoProps> = ({
           }}
           maxLines={2}
           readMoreOnClick={() => router.push(`/site/${site.uuid}?tab=details`)}
+          id={site.ppcExternalId?.toString() ?? "-"}
         />
       ) : (
-        <div className="flex w-fit gap-2">
-          <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEditClick}>
-            {t("Edit")}
-          </Button>
-          <Button
-            variant="secondary"
-            size="small"
-            leftIcon={<DownloadIcon />}
-            className="w-auto"
-            onClick={handleExport}
-            loading={exportLoader}
-          >
-            {t("Download Site Files")}
-          </Button>
-        </div>
+        <>
+          <Flex gap={1} className="items-center">
+            <Text textStyle="300" color="neutral.900">
+              {t("ID:")}
+            </Text>
+            <Text textStyle="300-bold" color="neutral.900">
+              {site.ppcExternalId ?? "-"}
+            </Text>
+          </Flex>
+          <div className="flex w-fit gap-2">
+            <Button
+              variant="secondary"
+              size="small"
+              leftIcon={<EditIcon />}
+              className="w-auto"
+              onClick={handleEditClick}
+            >
+              {t("Edit")}
+            </Button>
+            <Button
+              variant="secondary"
+              size="small"
+              leftIcon={<DownloadIcon />}
+              className="w-auto"
+              onClick={handleExport}
+              loading={exportLoader}
+            >
+              {t("Download Site Files")}
+            </Button>
+          </div>
+        </>
       )}
     </Box>
   );
