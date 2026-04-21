@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import { FC, ReactNode, useCallback, useRef, useState } from "react";
+import { FC, PropsWithChildren, ReactNode, useCallback, useRef, useState } from "react";
 
 import { ArrowOutwardIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -17,22 +17,19 @@ type ResizableSplitViewProps = {
 
 type TopProps = {
   height: number;
-  children: ReactNode;
   onMouseDown: () => void;
 };
 
-type BottomProps = {
-  children: ReactNode;
-};
+type BottomProps = {};
 
 type ResizableSplitViewComponentType = FC<ResizableSplitViewProps> & {
-  Top: FC<TopProps>;
-  Bottom: FC<BottomProps>;
+  Top: FC<PropsWithChildren<TopProps>>;
+  Bottom: FC<PropsWithChildren<BottomProps>>;
 };
 
 export const ResizableSplitView: FC<ResizableSplitViewProps> & {
-  Top: FC<TopProps>;
-  Bottom: FC<BottomProps>;
+  Top: FC<PropsWithChildren<TopProps>>;
+  Bottom: FC<PropsWithChildren<BottomProps>>;
 } = (({ children, initialTopHeight = 60, min = 30, max = 85 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [topHeight, setTopHeight] = useState<number>(initialTopHeight);
@@ -77,7 +74,7 @@ export const ResizableSplitView: FC<ResizableSplitViewProps> & {
   );
 }) as ResizableSplitViewComponentType;
 
-ResizableSplitView.Top = function Top({ height, children, onMouseDown }: TopProps) {
+ResizableSplitView.Top = function Top({ height, children, onMouseDown }: PropsWithChildren<TopProps>) {
   return (
     <Box h={`${height}%`} position="relative">
       {children}
@@ -133,7 +130,7 @@ ResizableSplitView.Top = function Top({ height, children, onMouseDown }: TopProp
   );
 };
 
-ResizableSplitView.Bottom = function Bottom({ children }: BottomProps) {
+ResizableSplitView.Bottom = function Bottom({ children }: PropsWithChildren<BottomProps>) {
   return (
     <Box flex="1" overflow="auto" bg="gray.50">
       {children}
