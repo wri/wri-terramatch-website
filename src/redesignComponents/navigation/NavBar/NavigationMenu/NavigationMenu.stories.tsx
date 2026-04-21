@@ -1,4 +1,4 @@
-﻿import { Box } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
@@ -6,21 +6,21 @@ import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
 import NavigationMenu, { NavigationMenuItem } from "./NavigationMenu";
 
 const StoryMenuWrapper = ({ children }: { children: React.ReactNode }) => (
-  <Box pt="10px">
+  <Box pt="0.625rem">
     <Box position="relative" display="inline-block">
       <Box
         position="absolute"
-        top="-6px"
-        right="26px"
-        width="12px"
-        height="12px"
+        top="-0.375rem"
+        right="1.625rem"
+        width="0.75rem"
+        height="0.75rem"
         bg="white"
-        borderTop="1px solid"
-        borderLeft="1px solid"
+        borderTop="0.0625rem solid"
+        borderLeft="0.0625rem solid"
         borderColor="neutral.300"
         transform="rotate(45deg)"
         zIndex={5}
-        borderTopLeftRadius="2px"
+        borderTopLeftRadius="0.125rem"
       />
       <Box position="relative" zIndex={2}>
         {children}
@@ -128,21 +128,21 @@ export const ListMenu: Story = {
 
 export const VariantComparison: Story = {
   render: () => (
-    <div style={{ display: "flex", gap: "40px", alignItems: "flex-start", padding: "20px" }}>
+    <div style={{ display: "flex", gap: "2.5rem", alignItems: "flex-start", padding: "1.25rem" }}>
       <div>
-        <p style={{ fontSize: "16px", fontWeight: "600", marginBottom: "16px", textAlign: "center" }}>Mega menu</p>
+        <p style={{ fontSize: "1rem", fontWeight: "600", marginBottom: "1rem", textAlign: "center" }}>Mega menu</p>
         <StoryMenuWrapper>
           <NavigationMenu variant="mega" items={megaItems} />
         </StoryMenuWrapper>
       </div>
       <div>
-        <p style={{ fontSize: "16px", fontWeight: "600", marginBottom: "16px", textAlign: "center" }}>Simple menu</p>
+        <p style={{ fontSize: "1rem", fontWeight: "600", marginBottom: "1rem", textAlign: "center" }}>Simple menu</p>
         <StoryMenuWrapper>
           <NavigationMenu variant="simple" items={simpleItems} />
         </StoryMenuWrapper>
       </div>
       <div>
-        <p style={{ fontSize: "16px", fontWeight: "600", marginBottom: "16px", textAlign: "center" }}>List menu</p>
+        <p style={{ fontSize: "1rem", fontWeight: "600", marginBottom: "1rem", textAlign: "center" }}>List menu</p>
         <StoryMenuWrapper>
           <NavigationMenu variant="list" items={listItems} selectedIndex={1} />
         </StoryMenuWrapper>
