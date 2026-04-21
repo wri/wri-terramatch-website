@@ -104,14 +104,14 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
     border-color: ${getThemedColor("error", 500)};
   }
 
-  [data-part="control"]:focus-within {
+  [data-part="control"]:focus-visible {
     border: 2px solid ${getThemedColor("neutral", 700)};
     outline: 2px solid ${getThemedColor("primary", 700)};
     outline-offset: 2px;
     box-shadow: 0 0 0 2px ${getThemedColor("neutral", 100)}, rgba(0, 0, 0, 0.05) 0px 2px 2px 4px;
   }
 
-  &[data-invalid] [data-part="control"]:focus-within {
+  &[data-invalid] [data-part="control"]:focus-visible {
     border: 2px solid ${getThemedColor("error", 900)};
     outline: 2px solid ${getThemedColor("primary", 700)};
     outline-offset: 2px;
