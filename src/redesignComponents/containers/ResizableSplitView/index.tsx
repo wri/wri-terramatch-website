@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import { FC, ReactNode, useRef, useState } from "react";
+import { FC, ReactNode, useCallback, useRef, useState } from "react";
 
 import { ArrowOutwardIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -25,39 +25,40 @@ type BottomProps = {
   children: ReactNode;
 };
 
-type ResizableSplitViewComponent = FC<ResizableSplitViewProps> & {
+type ResizableSplitViewComponentType = FC<ResizableSplitViewProps> & {
   Top: FC<TopProps>;
   Bottom: FC<BottomProps>;
 };
 
-export const ResizableSplitView: ResizableSplitViewComponent = ({
-  children,
-  initialTopHeight = 60,
-  min = 30,
-  max = 85
-}) => {
+export const ResizableSplitView: FC<ResizableSplitViewProps> & {
+  Top: FC<TopProps>;
+  Bottom: FC<BottomProps>;
+} = (({ children, initialTopHeight = 60, min = 30, max = 85 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [topHeight, setTopHeight] = useState<number>(initialTopHeight);
   const isDragging = useRef<boolean>(false);
 
-  const handleMouseDown = () => {
+  const handleMouseDown = useCallback(() => {
     isDragging.current = true;
-  };
+  }, []);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging.current || !containerRef.current) return;
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isDragging.current || !containerRef.current) return;
 
-    const rect = containerRef.current.getBoundingClientRect();
-    const newHeight = ((e.clientY - rect.top) / rect.height) * 100;
+      const rect = containerRef.current.getBoundingClientRect();
+      const newHeight = ((e.clientY - rect.top) / rect.height) * 100;
 
-    if (newHeight > min && newHeight < max) {
-      setTopHeight(newHeight);
-    }
-  };
+      if (newHeight > min && newHeight < max) {
+        setTopHeight(newHeight);
+      }
+    },
+    [max, min]
+  );
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     isDragging.current = false;
-  };
+  }, []);
 
   return (
     <Box
@@ -74,7 +75,7 @@ export const ResizableSplitView: ResizableSplitViewComponent = ({
       })}
     </Box>
   );
-};
+}) as ResizableSplitViewComponentType;
 
 ResizableSplitView.Top = function Top({ height, children, onMouseDown }: TopProps) {
   return (
