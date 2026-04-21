@@ -116,14 +116,14 @@ const ApplicationsExportModal: FC<ApplicationsExportModalProps> = ({ handleClose
         Log.error("Funding programme uuid is required");
       } else {
         if (stageUuid == null || stageUuid === "all") {
-          exportApplications({ fundingProgrammeUuid }, "Applications.csv");
+          exportApplications({ fundingProgrammeUuid });
         } else {
           const programme = fundingProgrammes?.find(({ uuid }) => uuid === fundingProgrammeUuid);
           const stage = programme?.stages?.find(({ uuid }) => uuid === stageUuid);
           if (stage?.formUuid == null) {
             Log.error("Unable to find form for stage", { fundingProgrammeUuid, stageUuid });
           } else {
-            exportApplications({ formUuid: stage.formUuid }, "Applications.csv");
+            exportApplications({ formUuid: stage.formUuid });
           }
         }
       }

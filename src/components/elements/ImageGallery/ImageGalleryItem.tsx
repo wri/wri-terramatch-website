@@ -86,12 +86,12 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
   const handleDownload = useCallback(async (): Promise<void> => {
     showLoader();
     try {
-      const blob = await downloadImage(data.uuid);
+      const { fileName, blob } = await downloadImage(data.uuid);
       const url = window.URL.createObjectURL(blob);
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = link.download = data?.fileName ?? "image.jpg";
+      link.download = link.download = data?.fileName ?? fileName ?? "image.jpg";
       document.body.appendChild(link);
       link.click();
 

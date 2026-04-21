@@ -764,14 +764,14 @@ const DataCard = ({
   const handleExport = async () => {
     try {
       setExporting(true);
-      const blob = await exportIndicatorCsv.fetchBlob({
+      const { blob } = await exportIndicatorCsv.fetchBlob({
         pathParams: {
           entityType: type,
           entityUuid: record.uuid,
           slug: indicatorSlug as ExportIndicatorCsvPathParams["slug"]
         }
       });
-      downloadFileBlob(blob!, `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`);
+      downloadFileBlob(blob, `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`);
 
       openNotification("success", t("Success! Export completed."), t("The export has been completed successfully."));
       setExporting(false);
