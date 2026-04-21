@@ -41,7 +41,6 @@ import {
   JobsIcon,
   LandscapeIcon,
   LanguageIcon,
-  LeadingIcon,
   LoadingIcon,
   MangroveIcon,
   MessagesIcon,
@@ -104,7 +103,7 @@ type Story = StoryObj;
 const IconWrapper = ({ children, name }: { children: React.ReactNode; name: string }) => (
   <Flex alignItems="center" justifyContent="center" p={4} flexDirection="column">
     <Box mb={2}>{children}</Box>
-    <Box fontSize="xs" color="gray.600">
+    <Box fontSize="xs" color="gray.600" textAlign="center">
       {name}
     </Box>
   </Flex>
@@ -284,9 +283,6 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Information">
             <InfoIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Leading">
-            <LeadingIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Loading">
             <LoadingIcon boxSize={8} />
@@ -527,9 +523,6 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Information">
           <InfoIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Leading">
-          <LeadingIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Loading">
           <LoadingIcon boxSize={8} />
