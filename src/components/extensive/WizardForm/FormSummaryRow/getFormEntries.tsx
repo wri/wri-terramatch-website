@@ -134,8 +134,9 @@ const getEntityPolygonData = (
   if (entityType === "sites") {
     return sitePolygonData ? parsePolygonDataV3(sitePolygonData) : null;
   } else if (entityType === "projects" || entityType === "project-pitches") {
-    const polygonUuid = projectPolygonData?.polygonUuid;
-    return projectPolygonData ? { [FORM_POLYGONS]: [polygonUuid] } : null;
+    if (projectPolygonData == null) return null;
+    const polygonUuid = projectPolygonData.polygonUuid;
+    return polygonUuid ? { [FORM_POLYGONS]: [polygonUuid] } : null;
   }
 
   return null;
