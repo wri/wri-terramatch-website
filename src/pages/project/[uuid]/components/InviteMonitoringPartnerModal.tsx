@@ -50,21 +50,25 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
 
   useRequestComplete(
     isCreating,
-    useCallback(() => {
-      if (createFailure != null) {
-        setError("email", {
-          message: t(
-            "This user is already a monitoring partner for this project, please try a different email address."
-          ),
-          type: "validate"
-        });
-      } else {
-        ApiSlice.pruneCache("associatedUsers");
-        onSuccess?.();
-        openToast(t("Invitation sent successfully"));
-        handleClose();
-      }
-    }, [createFailure, setError, onSuccess, openToast, handleClose, t])
+    createFailure,
+    useCallback(
+      failure => {
+        if (failure != null) {
+          setError("email", {
+            message: t(
+              "This user is already a monitoring partner for this project, please try a different email address."
+            ),
+            type: "validate"
+          });
+        } else {
+          ApiSlice.pruneCache("associatedUsers");
+          onSuccess?.();
+          openToast(t("Invitation sent successfully"));
+          handleClose();
+        }
+      },
+      [setError, onSuccess, openToast, handleClose, t]
+    )
   );
 
   const onSubmit = (data: FormValues) => {
