@@ -7,7 +7,7 @@ import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
 
 import { addDeleteLayer, addFilterOnLayer, addSourcesToLayers } from "../layers/polygonLayers";
-import { DashboardGetProjectsData } from "../Map.d";
+import { DashboardGetProjectsData, PolygonCentroid } from "../Map.d";
 
 type UseMapLayersParams = {
   map: MutableRefObject<mapboxgl.Map | null>;
@@ -16,7 +16,7 @@ type UseMapLayersParams = {
   styleVersion: number;
   polygonsData?: Record<string, string[]>;
   centroids?: DashboardGetProjectsData[];
-  polygonsCentroids?: any[];
+  polygonsCentroids?: PolygonCentroid[];
   dashboardMode?: string;
   projectUUID?: string;
   hasAccess?: boolean;

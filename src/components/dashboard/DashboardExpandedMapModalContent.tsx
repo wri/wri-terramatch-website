@@ -2,6 +2,7 @@ import { DashboardExpandedMapLegend } from "@/components/dashboard/DashboardExpa
 import { DashboardGetProjectsData, MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { MapFunctions } from "@/components/elements/Map-mapbox/Map.d";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
+import { buildDashboardMapProps } from "@/components/elements/Map-mapbox/mapProps.builders";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
 import { CountriesProps, DashboardFilters } from "@/context/dashboard.provider";
 
@@ -49,27 +50,23 @@ export function DashboardExpandedMapModalContent({
       <LoadingContainerOpacity loading={modalMapLoaded}>
         <MapContainer
           id="modal"
-          showLegend={false}
-          mapFunctions={modalMapFunctions}
-          dashboardMode="modal"
-          className="custom-popup-close-button !h-full"
-          centroids={centroids}
-          showPopups={true}
-          polygonsData={polygonsData?.data as Record<string, string[]>}
-          polygonsCentroids={polygonsData?.centroids as { uuid: string; long: number; lat: number }[] | undefined}
-          center={initialCenter}
-          zoom={initialZoom}
-          mapStyle={mapStyle}
-          onStyleChange={onModalMapStyleChange}
-          selectedLandscapes={landscapeNamesForBorderOverlay}
-          setLoader={onModalMapLoadComplete}
-          projectUUID={selectedProjectUuid}
-          hasAccess={hasAccess}
-          dashboardContext={{
-            setFilters,
-            dashboardCountries,
-            dashboardMode: "modal"
-          }}
+          {...buildDashboardMapProps({
+            mode: "modal",
+            mapFunctions: modalMapFunctions,
+            centroids,
+            polygonsData: polygonsData?.data as Record<string, string[]> | undefined,
+            polygonsCentroids: polygonsData?.centroids as { uuid: string; long: number; lat: number }[] | undefined,
+            center: initialCenter,
+            zoom: initialZoom,
+            mapStyle,
+            onStyleChange: onModalMapStyleChange,
+            selectedLandscapes: landscapeNamesForBorderOverlay,
+            setLoader: onModalMapLoadComplete,
+            projectUUID: selectedProjectUuid,
+            hasAccess,
+            dashboardContext: { setFilters, dashboardCountries, dashboardMode: "modal" },
+            className: "custom-popup-close-button !h-full"
+          })}
         />
       </LoadingContainerOpacity>
       {!selectedProjectUuid && (

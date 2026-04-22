@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { parsePolygonDataV3 } from "@/components/elements/Map-mapbox/utils";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
@@ -22,7 +22,7 @@ const MonitoredDataMap = ({
   entityUuid: string;
   record?: any;
 }) => {
-  const mapFunctions = useMap();
+  const mapFunctions = useBaseMap();
   const [polygonsData, setPolygonsData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 

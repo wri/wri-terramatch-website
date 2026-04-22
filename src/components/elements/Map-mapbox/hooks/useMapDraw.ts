@@ -20,7 +20,7 @@ import {
 } from "../interactions/draw";
 import { removePopups } from "../interactions/popups";
 import { addSourcesToLayers } from "../layers/polygonLayers";
-import { DashboardGetProjectsData } from "../Map.d";
+import { DashboardGetProjectsData, PolygonFromMapState } from "../Map.d";
 import { filterPolygonFromLayers } from "./useMapLayers";
 
 type UseMapDrawParams = {
@@ -28,7 +28,7 @@ type UseMapDrawParams = {
   draw: MutableRefObject<MapboxDraw | null>;
   isUserDrawingEnabled: boolean;
   formMap?: boolean;
-  polygonFromMap?: { uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string } | null;
+  polygonFromMap?: PolygonFromMapState | null;
   polygonsData?: Record<string, string[]>;
   centroids?: DashboardGetProjectsData[];
   sitePolygonData?: SitePolygonLightDto[];
