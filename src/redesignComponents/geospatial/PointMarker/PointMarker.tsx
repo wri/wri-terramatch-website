@@ -12,6 +12,7 @@ export interface MapMarkerProps {
   mode?: "dark" | "light";
   variant?: "cluster" | "simple-pin" | "icon";
   triggerRef?: React.RefObject<HTMLButtonElement>;
+  color?: string;
 }
 
 const BOX_SHADOW = "0px 1px 2px -1px rgba(0, 0, 0, 0.10), 0px 1px 3px 0px rgba(0, 0, 0, 0.10) !important";
@@ -33,7 +34,8 @@ const PointMarker: FC<MapMarkerProps> = ({
   count,
   mode,
   variant,
-  triggerRef
+  triggerRef,
+  color = "primary.500"
 }) => {
   return (
     <Box
@@ -42,7 +44,16 @@ const PointMarker: FC<MapMarkerProps> = ({
         "& button": {
           ...(variant === "icon" ? { width: "40px", height: "40px" } : { fontWeight: "400" }),
           transition: "all 0.1s ease-in-out",
-          boxShadow: BOX_SHADOW
+          boxShadow: BOX_SHADOW,
+          ...(variant === "simple-pin" && {
+            width: "16px",
+            height: "16px",
+            borderColor: "neutral.100",
+            backgroundColor: color
+          })
+        },
+        "& button::after": {
+          display: "none"
         },
         "& button:hover": { scale: 1.25 }
       }}

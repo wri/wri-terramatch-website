@@ -4,7 +4,13 @@ import { ComponentProps, FC } from "react";
 
 const MapPopUp: FC<ComponentProps<typeof WriMapPopup>> = props => {
   return (
-    <Box>
+    <Box
+      css={{
+        "& [aria-modal='true'] > div:first-of-type": {
+          minHeight: "2.5rem"
+        }
+      }}
+    >
       <WriMapPopup {...props} />
     </Box>
   );

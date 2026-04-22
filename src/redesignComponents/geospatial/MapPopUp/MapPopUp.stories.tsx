@@ -1,9 +1,10 @@
+import { Flex, Text } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 import { useRef, useState } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { NotificationIcon, PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
+import { NotificationIcon, PlaceholderIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
 
 import PointMarker from "../PointMarker/PointMarker";
 import MapPopUp from "./MapPopUp";
@@ -102,6 +103,51 @@ export const Default: Story = {
           backgroundColor="#8ECA3FCC"
           icon={<PlaceholderIcon color="neutral.100" />}
           variant="icon"
+          onClick={() => setOpen(true)}
+          triggerRef={triggerRef}
+          showFocusState={open}
+        />
+        <MapPopUp {...args} open={open} onOpenChange={setOpen} anchorRef={triggerRef} placement="right" />
+      </div>
+    );
+  }
+};
+
+export const MapPopUpWithIcon: Story = {
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    anchorRef: null as any,
+    header: (
+      <Text textStyle="400-bold" color="neutral-900">
+        Title
+      </Text>
+    ),
+    content: (
+      <Flex justifyContent="space-between" alignItems="center" gap="0.25rem" padding="0.75rem">
+        <Flex gap={2} alignItems="center">
+          <TreeCircleIcon boxSize={6} />
+          <Text textStyle="400" color="neutral-700">
+            Label
+          </Text>
+        </Flex>
+        <Text textStyle="400-bold" color="neutral-900">
+          XXX,XXX
+        </Text>
+      </Flex>
+    ),
+    footer
+  },
+  render: args => {
+    const [open, setOpen] = useState(false);
+    const triggerRef = useRef<HTMLButtonElement>(null);
+
+    return (
+      <div>
+        <PointMarker
+          ariaLabel="This is a custom icon marker"
+          backgroundColor="#8ECA3FCC"
+          variant="simple-pin"
           onClick={() => setOpen(true)}
           triggerRef={triggerRef}
           showFocusState={open}
