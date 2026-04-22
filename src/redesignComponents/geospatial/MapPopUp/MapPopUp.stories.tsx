@@ -146,7 +146,6 @@ export const MapPopUpWithIcon: Story = {
       <div>
         <PointMarker
           ariaLabel="This is a custom icon marker"
-          backgroundColor="#8ECA3FCC"
           variant="simple-pin"
           onClick={() => setOpen(true)}
           triggerRef={triggerRef}
