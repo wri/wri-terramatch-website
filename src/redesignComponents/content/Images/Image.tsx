@@ -123,7 +123,7 @@ const BaseImage: FC<BaseImageProps> = ({
                 {t("Add Image")}
               </Button>
             )}
-            {menuItems && <MenuCustom label={menuLabel ?? "Add Image"} items={menuItems} />}
+            {menuItems && <MenuCustom label={menuLabel ?? t("Add Image")} items={menuItems} />}
           </div>
         ) : (
           <div
