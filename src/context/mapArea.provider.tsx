@@ -2,16 +2,23 @@ import React, { createContext, ReactNode, useCallback, useContext, useState } fr
 
 import { EditPolygonState } from "@/components/elements/Map-mapbox/Map.d";
 import { SitePolygon } from "@/generated/apiSchemas";
+import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { Entity } from "@/types/common";
+
+export type MapAreaSiteData = Entity | SiteFullDto;
+
+export function isMapAreaSiteFullDto(siteData: MapAreaSiteData | undefined): siteData is SiteFullDto {
+  return siteData != null && "lightResource" in siteData;
+}
 
 type MapAreaType = {
   isUserDrawingEnabled: boolean;
   setIsUserDrawingEnabled: (arg0: boolean) => void;
   editPolygon: EditPolygonState;
   setEditPolygon: (value: EditPolygonState) => void;
-  siteData: Entity | undefined;
-  setSiteData: (value: Entity | undefined) => void;
+  siteData: MapAreaSiteData | undefined;
+  setSiteData: (value: MapAreaSiteData | undefined) => void;
   shouldRefetchPolygonData: boolean;
   setShouldRefetchPolygonData: (value: boolean) => void;
   shouldRefetchMediaData: boolean;
@@ -81,7 +88,7 @@ const MapAreaContext = createContext<MapAreaType>(defaultValue);
 
 export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isUserDrawingEnabled, setIsUserDrawingEnabled] = useState<boolean>(false);
-  const [siteData, setSiteData] = useState<Entity | undefined>(undefined);
+  const [siteData, setSiteData] = useState<MapAreaSiteData | undefined>(undefined);
   const [shouldRefetchPolygonData, setShouldRefetchPolygonData] = useState<boolean>(false);
   const [shouldRefetchMediaData, setShouldRefetchMediaData] = useState<boolean>(false);
   const [shouldRefetchValidation, setShouldRefetchValidation] = useState<boolean>(false);
