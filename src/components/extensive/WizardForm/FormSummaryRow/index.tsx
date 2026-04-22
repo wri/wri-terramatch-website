@@ -89,13 +89,15 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
           }
           return (
             <>
-              <div className={classNames("flex flex-col items-start gap-1 transition-all delay-300 duration-300")}>
-                <Text textStyle="300-bold" className=" flex-1" color="primary.900">
+              <div
+                className={classNames("flex w-full flex-col items-start gap-1 transition-all delay-300 duration-300")}
+              >
+                <Text textStyle="300-bold" className="w-full flex-1" color="primary.900">
                   {entry.title}
                 </Text>
                 <div
-                  className={classNames("flex-1", {
-                    "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
+                  className={classNames("w-full flex-1", {
+                    "!min-w-full": isTrackingType(entry.value?.props?.type)
                   })}
                 >
                   {typeof entry.value === "string" ? (
@@ -111,8 +113,8 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
                     </Text>
                   ) : (
                     <div
-                      className={classNames("", {
-                        "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
+                      className={classNames("w-full", {
+                        "!min-w-full": isTrackingType(entry.value?.props?.type)
                       })}
                     >
                       {formatEntryValue(entry.value)}

@@ -274,6 +274,14 @@ export const MapContainer = ({
     }
   });
 
+  useOnMount(() => {
+    const el = mapContainer.current;
+    if (el == null) return;
+    const ro = new ResizeObserver(() => map.current?.resize());
+    ro.observe(el);
+    return () => ro.disconnect();
+  });
+
   const { styleReady, styleVersion } = useMapReadiness(map?.current);
 
   const { currentStyle, handleStyleChange } = useMapStyle({
