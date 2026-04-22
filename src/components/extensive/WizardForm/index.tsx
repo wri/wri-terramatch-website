@@ -284,7 +284,7 @@ function WizardForm(props: WizardFormProps) {
           secondaryButtonProps={
             formModel?.model != "organisations"
               ? {
-                  children: "Save and Exit",
+                  children: t("Save and Exit"),
                   onClick: () => {
                     if (isAdmin) {
                       formHook.handleSubmit(onSubmitStep, onSubmitStep);
