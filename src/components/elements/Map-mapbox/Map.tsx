@@ -115,7 +115,6 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
   listViewProjects?: DashboardGetProjectsData[];
   role?: string;
-  selectedCountry?: string | null;
   selectedLandscapes?: string[];
   projectUUID?: string | undefined;
   setLoader?: (value: boolean) => void;
@@ -189,7 +188,6 @@ export const MapContainer = ({
     setPolygonFromMap,
     polygonFromMap,
     sitePolygonData,
-    selectedCountry,
     selectedLandscapes,
     projectUUID,
     setLoader
@@ -333,7 +331,6 @@ export const MapContainer = ({
 
   useMapOverlays({
     map,
-    selectedCountry,
     selectedLandscapes,
     anrMapOverlay,
     anrPlotGeometryDto,

@@ -20,8 +20,8 @@ interface MobilePopupProps {
 
 export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, variant = "desktop" }) => {
   const t = useT();
-  const { items, label, isoCountry, itemUuid, layerName, projectFullDto, popupType } = usePopupData(event);
-  const { setFilters, dashboardCountries, dashboardMode } = event;
+  const { items, label, itemUuid, layerName, projectFullDto, popupType } = usePopupData(event);
+  const { setFilters, dashboardMode } = event;
   const countryChoices = useGadmChoices({ level: 0 });
   const router = useRouter();
   const { closeModal } = useModalContext();
@@ -32,25 +32,14 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, varian
       return t("Polygon");
     } else if (popupType === "project") {
       return t("Project");
-    } else if (popupType === "country") {
-      return t("Country");
     }
     return t("Project");
   };
 
   const handleLearnMore = () => {
-    if (layerName === LAYERS_NAMES.WORLD_COUNTRIES && isoCountry) {
-      const selectedCountry = dashboardCountries?.find(country => country.country_slug === isoCountry);
-      if (selectedCountry) {
-        setFilters?.(prev => ({
-          ...prev,
-          uuid: "",
-          country: selectedCountry
-        }));
-      }
-    } else if (layerName === LAYERS_NAMES.CENTROIDS && itemUuid) {
+    if (layerName === LAYERS_NAMES.CENTROIDS && itemUuid != null) {
       const projectCountry = projectFullDto?.country;
-      if (projectCountry) {
+      if (projectCountry != null) {
         setFilters?.(prev => ({
           ...prev,
           uuid: itemUuid,

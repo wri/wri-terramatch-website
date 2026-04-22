@@ -2,7 +2,6 @@ import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
@@ -277,9 +276,7 @@ const PolygonDrawer = ({
             <Text variant="text-14-semibold" className="w-[15%] break-words">
               Status:
             </Text>
-            <When condition={selectedPolygon?.status}>
-              <Status className="w-[35%]" status={selectedPolygon?.status as StatusEnum} />
-            </When>
+            {selectedPolygon?.status && <Status className="w-[35%]" status={selectedPolygon?.status as StatusEnum} />}
           </div>
           <StatusDisplay
             titleStatus="sitePolygons"

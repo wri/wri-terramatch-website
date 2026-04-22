@@ -2,7 +2,6 @@ import { Box, LinearProgress } from "@mui/material";
 import { useT } from "@transifex/react";
 import isEmpty from "lodash/isEmpty";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Drawer from "@/components/elements/Drawer/Drawer";
@@ -362,19 +361,23 @@ const Polygons = (props: IPolygonProps) => {
         </Text>
         <div className="flex items-center justify-start gap-2">
           <div className="flex flex-col gap-1">
-            <When condition={props.totalPolygons ?? 0 > 0}>
-              <Text variant={window.innerWidth > 1900 ? "text-14" : "text-12"} className="text-darkCustom">
-                <span className="font-bold">{(progress ?? displayPolygonCount).toLocaleString()}</span> of{" "}
-                <span className="font-bold">{(props.totalPolygons ?? 0).toLocaleString()}</span> polygons loaded
-              </Text>
-              <Box sx={{ width: "100%" }}>
-                <LinearProgress
-                  variant={progress != null && progress < (props.totalPolygons ?? 0) ? "indeterminate" : "determinate"}
-                  value={((progress ?? displayPolygonCount) / (props.totalPolygons ?? 1)) * 100}
-                  sx={{ borderRadius: 5 }}
-                />
-              </Box>
-            </When>
+            {(props.totalPolygons ?? 0) > 0 && (
+              <>
+                <Text variant={window.innerWidth > 1900 ? "text-14" : "text-12"} className="text-darkCustom">
+                  <span className="font-bold">{(progress ?? displayPolygonCount).toLocaleString()}</span> of{" "}
+                  <span className="font-bold">{(props.totalPolygons ?? 0).toLocaleString()}</span> polygons loaded
+                </Text>
+                <Box sx={{ width: "100%" }}>
+                  <LinearProgress
+                    variant={
+                      progress != null && progress < (props.totalPolygons ?? 0) ? "indeterminate" : "determinate"
+                    }
+                    value={((progress ?? displayPolygonCount) / (props.totalPolygons ?? 1)) * 100}
+                    sx={{ borderRadius: 5 }}
+                  />
+                </Box>
+              </>
+            )}
           </div>
         </div>
       </div>

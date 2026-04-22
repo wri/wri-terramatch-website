@@ -20,7 +20,6 @@ export const LAYERS_NAMES = {
   DELETED_GEOMETRIES: "deleted_geometries",
   CENTROIDS: "centroids",
   LANDSCAPES: "landscape_geom",
-  WORLD_COUNTRIES: "world_countries_generalized",
   POLYGON_CENTROIDS: "polygon_centroids"
 };
 export const layersList: LayerType[] = [
@@ -222,42 +221,6 @@ export const layersList: LayerType[] = [
       })
     ],
     hover: true
-  },
-  {
-    name: LAYERS_NAMES.WORLD_COUNTRIES,
-    geoserverLayerName: LAYERS_NAMES.WORLD_COUNTRIES,
-    styles: [
-      lineStyle({
-        type: "line",
-        paint: {
-          "line-color": "#ff5a5f",
-          "line-width": ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]
-        }
-      }),
-      fillStyle({
-        type: "fill",
-        paint: {
-          "fill-color": "#ff5a5f",
-          "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.4, 0]
-        }
-      })
-    ],
-    hover: true
-  },
-  {
-    geoserverLayerName: LAYERS_NAMES.WORLD_COUNTRIES,
-    name: `${LAYERS_NAMES.WORLD_COUNTRIES}-line`,
-    styles: [
-      {
-        type: "line",
-        layout: {},
-        paint: {
-          "line-color": "#ff5a5f",
-          "line-width": 2
-        }
-      }
-    ],
-    hover: false
   },
   {
     geoserverLayerName: LAYERS_NAMES.LANDSCAPES,

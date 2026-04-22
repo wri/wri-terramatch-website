@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
@@ -97,7 +96,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
   return (
     <div className="relative flex h-[650px] rounded-lg text-darkCustom wide:h-[1225px]">
       <div className="relative h-auto w-auto">
-        <When condition={!!selectedPolyVersion && openModalConfirmation}>
+        {!!selectedPolyVersion && openModalConfirmation && (
           <div className="absolute top-5 left-[43vw] z-20 text-center">
             <Button variant="primary" className="" onClick={makeActivePolygon}>
               {t("Confirm Version")}
@@ -117,8 +116,8 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
               {t("Cancel")}
             </Button>
           </div>
-        </When>
-        <When condition={!!previewVersion}>
+        )}
+        {!!previewVersion && (
           <div className="absolute bottom-8 left-[54vw] z-20 w-[22vw] rounded bg-white p-3">
             <button className="absolute top-3 right-4 hover:opacity-60" onClick={() => setPreviewVersion?.(false)}>
               <Icon name={IconNames.CLEAR} className="h-3 w-3 wide:h-4 wide:w-4" />
@@ -179,7 +178,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
               </Text>
             </div>
           </div>
-        </When>
+        )}
       </div>
       <OverviewMapArea
         entityModel={sites}

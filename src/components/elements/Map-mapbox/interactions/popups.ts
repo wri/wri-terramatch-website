@@ -202,7 +202,6 @@ export const addPopupToLayer = (
   const clickHandler = (e: MapLayerInteractionEvent) => {
     const currentMode = draw?.getMode();
     if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
-    if (name === LAYERS_NAMES.WORLD_COUNTRIES) return;
     handleLayerClick(e, popupComponent, map, name, options);
   };
 

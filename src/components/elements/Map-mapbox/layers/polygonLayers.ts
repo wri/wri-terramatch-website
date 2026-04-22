@@ -59,10 +59,6 @@ export const addFilterOnLayer = (layer: LayerType, parsedPolygonData: Record<str
   addSourceToLayer(layer, map, parsedPolygonData);
 };
 
-export const setFilterCountry = (map: mapboxgl.Map, layerName: string, country: string) => {
-  map.setFilter(layerName, ["==", ["get", "iso"], country]);
-};
-
 export const setFilterLandscape = (map: mapboxgl.Map, layerName: string, landscapes: string[]) => {
   map.setFilter(layerName, ["in", ["get", "landscape"], ["literal", landscapes]]);
 };
@@ -305,9 +301,6 @@ export const addSourcesToLayers = (
   layersList.forEach((layer: LayerType) => {
     if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
       addSourceToLayer(layer, map, polygonsData, zoomFilter, dashboardMode, cacheKey);
-    }
-    if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES && dashboardMode) {
-      addSourceToLayer(layer, map, undefined, undefined, undefined, cacheKey);
     }
     if (layer.name === LAYERS_NAMES.CENTROIDS && dashboardMode) {
       addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));
