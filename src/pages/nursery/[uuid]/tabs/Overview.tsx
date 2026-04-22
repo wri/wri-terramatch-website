@@ -105,7 +105,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
           />
         </PageItem>
         <PageItem
-          title="About Nurseries"
+          title={t("About Nurseries")}
           flexProps={{ maxWidth: "37%" }}
           className="!w-full !max-w-full sm:!w-[37%] sm:!max-w-[37%]"
         >

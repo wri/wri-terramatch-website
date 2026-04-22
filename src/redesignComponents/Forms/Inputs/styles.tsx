@@ -7,6 +7,9 @@ type SliderInputStyleOptions = {
 const centeredSliderMarkerStyles = {
   "& .chakra-slider__markerGroup > .chakra-slider__marker:nth-child(2)": {
     "--translate-y": "-24% !important"
+  },
+  "& .chakra-slider__range": {
+    "border-radius": "0rem"
   }
 };
 
