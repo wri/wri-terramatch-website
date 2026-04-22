@@ -18,7 +18,7 @@ import {
 import MetricCardsRow, {
   METRIC_CARD_CLASS_NAME
 } from "../../../../components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
-import { KEY_INDICATORS_TOOLTIP_CONTENT } from "./constants/keyIndicatorsTooltipContent";
+import { useKeyIndicatorsTooltipContent } from "./constants/keyIndicatorsTooltipContent";
 
 interface KeyIndicatorsInsightsProps {
   project: ProjectFullDto;
@@ -34,10 +34,11 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
   const hectaresTargetPercentage =
     totalHectaresRestoredGoal > 0 ? Math.round((totalHectaresRestored / totalHectaresRestoredGoal) * 100) : undefined;
   const framework = project?.frameworkKey;
+  const keyIndicatorsTooltipContent = useKeyIndicatorsTooltipContent();
 
   const keyIndicatorsTooltipContentItem = useMemo(() => {
-    return KEY_INDICATORS_TOOLTIP_CONTENT.find(content => content.frameworks.includes(project.frameworkKey!));
-  }, [project.frameworkKey]);
+    return keyIndicatorsTooltipContent.find(content => content.frameworks.includes(project.frameworkKey!));
+  }, [project.frameworkKey, keyIndicatorsTooltipContent]);
 
   const MAX_CARD = 4;
 

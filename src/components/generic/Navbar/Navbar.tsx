@@ -1,4 +1,5 @@
 import { useMediaQuery } from "@mui/material";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { Else, If, Then, When } from "react-if";
@@ -12,6 +13,7 @@ import Container from "../Layout/Container";
 import NavbarContent from "./NavbarContent";
 
 const Navbar = (): JSX.Element => {
+  const t = useT();
   const { isOpen, setIsOpen, linksDisabled } = useNavbarContext();
   const [isOpenMessage, setIsOpenMessage] = useState(true);
 
@@ -75,10 +77,12 @@ const Navbar = (): JSX.Element => {
         <InlineMessage
           className="!w-full"
           variant="warning"
-          label="We are Improving TerraMatch"
-          caption="You may notice some pages look different while we update the design to make your experience better. "
+          label={t("We are Improving TerraMatch")}
+          caption={t(
+            "You may notice some pages look different while we update the design to make your experience better. "
+          )}
           size="full-width"
-          actionLabel="Close"
+          actionLabel={t("Close")}
           onActionClick={() => setIsOpenMessage(false)}
           isButtonRight={true}
         />
