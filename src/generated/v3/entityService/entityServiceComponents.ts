@@ -3048,6 +3048,19 @@ export type EntityExportAllPathParams = {
     | "srpReports";
 };
 
+export type EntityExportAllQueryParams = {
+  frameworkKey?:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | "fundo-flora-1";
+};
+
 export type EntityExportAllError = Fetcher.ErrorWrapper<{
   status: 401;
   payload: {
@@ -3062,14 +3075,34 @@ export type EntityExportAllError = Fetcher.ErrorWrapper<{
   };
 }>;
 
-export type EntityExportAllVariables = {
-  pathParams: EntityExportAllPathParams;
+export type EntityExportAllResponse = {
+  meta?: {
+    /**
+     * @example fileDownloads
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example fileDownloads
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.FileDownloadDto;
+  };
 };
 
-export const entityExportAll = new V3ApiEndpoint<undefined, EntityExportAllError, EntityExportAllVariables, {}>(
-  "/entities/v3/{entity}/exportAll",
-  "GET"
-);
+export type EntityExportAllVariables = {
+  pathParams: EntityExportAllPathParams;
+  queryParams?: EntityExportAllQueryParams;
+};
+
+export const entityExportAll = new V3ApiEndpoint<
+  EntityExportAllResponse,
+  EntityExportAllError,
+  EntityExportAllVariables,
+  {}
+>("/entities/v3/{entity}/exportAll", "GET");
 
 export type EntityGetPathParams = {
   /**

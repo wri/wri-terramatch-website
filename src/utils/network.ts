@@ -22,7 +22,7 @@ export const downloadFile = async (fileUrl: string) => {
  * @param presignedUrl File Url to download
  * @param fileName File Name to download
  */
-export const downloadPresignedUrl = async (presignedUrl: string, fileName: string) => {
+export const downloadPresignedUrl = (presignedUrl: string, fileName: string) => {
   try {
     const link = document.createElement("a");
     link.href = presignedUrl;
