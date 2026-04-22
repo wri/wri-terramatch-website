@@ -677,6 +677,15 @@ export type UserFramework = {
   slug: string;
 };
 
+/** Project reference returned on user detail (e.g. monitoring partner affiliations). */
+export type UserProjectAffiliation = {
+  /**
+   * @format uuid
+   */
+  uuid: string;
+  name: string;
+};
+
 export type UserDto = {
   uuid: string;
   firstName: string | null;
@@ -717,6 +726,14 @@ export type UserDto = {
   locale: string | null;
   frameworks: UserFramework[];
   directFrameworks: UserFramework[];
+  /**
+   * Projects where this user is a monitoring partner (GET /users/v3/users/:uuid).
+   */
+  monitoringPartnerProjects?: UserProjectAffiliation[];
+  /**
+   * Projects this user manages (admin user detail), when provided by the API.
+   */
+  managedProjects?: UserProjectAffiliation[];
 };
 
 export type OrganisationCreateAttributes = {

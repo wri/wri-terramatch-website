@@ -14,9 +14,11 @@ import {
 
 import { createUser, deleteUser, loadUser, loadUserIndex, updateUserResource } from "@/connections/User";
 import { UserCreateBaseAttributes, UserDto, UserUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
 
 import { v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
+import { enrichUserDtoWithProjectAffiliations } from "./userDtoProjectAffiliations";
 
 /** Coerce form/API shapes to the string[] expected by `UserUpdateAttributes.directFrameworks`. */
 const directFrameworksToApiSlugs = (value: unknown): string[] => {
@@ -95,12 +97,24 @@ export const userDataProvider: Partial<DataProvider> = {
   },
 
   async getOne<RecordType>(_: string, { id }: GetOneParams) {
+    const uuid = id as string;
+    const meUserId = ApiSlice.currentState.meta.meUserId;
+    // List/index cache can satisfy `loadUser` with a row missing detail-only attributes (e.g.
+    // monitoringPartnerProjects). Drop the cached user so the detail GET runs for Show — except
+    // for the logged-in user: that entry is `users[meUserId]` and is required by `useMyUser` /
+    // `selectMe`. Pruning it removes the session user from the store, unmounts `<Admin>` (no
+    // resources), and floods the menu with "Resource not found" (super admins often open their own profile).
+    if (meUserId == null || uuid !== meUserId) {
+      ApiSlice.pruneCache("users", [uuid]);
+    }
+
     const connected = await loadUser({ id });
     if (connected.loadFailure != null) {
       throw v3ErrorForRA("User get fetch failed", connected.loadFailure);
     }
 
-    return { data: { ...connected.data, id: connected.data!.uuid } } as RecordType;
+    const enriched = enrichUserDtoWithProjectAffiliations(uuid, connected.data!);
+    return { data: { ...enriched, id: enriched.uuid } } as RecordType;
   },
 
   async getMany(_: string, params: GetManyParams) {
@@ -112,7 +126,9 @@ export const userDataProvider: Partial<DataProvider> = {
       }
 
       const data = results
-        .map(r => (r.data != null ? { ...r.data, id: r.data.uuid } : null))
+        .map(r =>
+          r.data != null ? { ...enrichUserDtoWithProjectAffiliations(r.data.uuid, r.data), id: r.data.uuid } : null
+        )
         .filter((item): item is UserDto & { id: string; lightResource: boolean } => item != null);
 
       return { data } as GetManyResult;
@@ -153,7 +169,8 @@ export const userDataProvider: Partial<DataProvider> = {
 
     try {
       const resp = await updateUserResource(body, { id: uuid });
-      return { data: { ...resp, id: resp.uuid } } as RecordType;
+      const enriched = enrichUserDtoWithProjectAffiliations(resp.uuid, resp);
+      return { data: { ...enriched, id: enriched.uuid } } as RecordType;
     } catch (err) {
       throw v3ErrorForRA("User update failed", err);
     }
