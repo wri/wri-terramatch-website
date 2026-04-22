@@ -18,7 +18,6 @@ import {
   COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
   ICriteriaCheckItem,
-  PLANT_START_DATE_CRITERIA_ID,
   WITHIN_COUNTRY_CRITERIA_ID
 } from "@/types/validation";
 
@@ -110,9 +109,7 @@ const MapMenuPanelItem = ({
       setShowWarning(
         validationData.criteriaList?.some(
           (criteria: ValidationCriteriaDto) =>
-            criteria.criteriaId === ESTIMATED_AREA_CRITERIA_ID ||
-            criteria.criteriaId === WITHIN_COUNTRY_CRITERIA_ID ||
-            criteria.criteriaId === PLANT_START_DATE_CRITERIA_ID
+            criteria.criteriaId === ESTIMATED_AREA_CRITERIA_ID || criteria.criteriaId === WITHIN_COUNTRY_CRITERIA_ID
         )
       );
     } else {

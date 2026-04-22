@@ -4,7 +4,6 @@ import {
   COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
   ICriteriaCheckItem,
-  PLANT_START_DATE_CRITERIA_ID,
   WITHIN_COUNTRY_CRITERIA_ID
 } from "@/types/validation";
 
@@ -58,7 +57,7 @@ export const parseValidationDataFromContext = (polygonValidation: any) => {
   return transformedData;
 };
 
-const EXCLUDED_CRITERIA_IDS = [ESTIMATED_AREA_CRITERIA_ID, WITHIN_COUNTRY_CRITERIA_ID, PLANT_START_DATE_CRITERIA_ID];
+const EXCLUDED_CRITERIA_IDS = [ESTIMATED_AREA_CRITERIA_ID, WITHIN_COUNTRY_CRITERIA_ID];
 
 interface ExtraInfoItem {
   exists: boolean;
@@ -127,9 +126,7 @@ export const hasCompletedDataWhitinStimatedAreaCriteriaInvalid = (criteriaData: 
 
   return criteriaData.criteriaList.some(
     (criteria: any) =>
-      (criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID ||
-        criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID ||
-        criteria.criteria_id === PLANT_START_DATE_CRITERIA_ID) &&
+      (criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID || criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID) &&
       criteria.valid === 0
   );
 };
@@ -147,15 +144,11 @@ export const hasCompletedDataWhitinStimatedAreaCriteriaInvalidV3 = (criteriaData
 };
 
 export const isCompletedDataOrEstimatedArea = (item: ICriteriaCheckItem): boolean => {
-  return (
-    +item.id === ESTIMATED_AREA_CRITERIA_ID ||
-    +item.id === WITHIN_COUNTRY_CRITERIA_ID ||
-    +item.id === PLANT_START_DATE_CRITERIA_ID
-  );
+  return +item.id === ESTIMATED_AREA_CRITERIA_ID || +item.id === WITHIN_COUNTRY_CRITERIA_ID;
 };
 
 export const shouldShowAsWarning = (item: ICriteriaCheckItem): boolean => {
-  // Always show as warning for estimated area, country, and plant start date
+  // Always show as warning for estimated area and country
   if (isCompletedDataOrEstimatedArea(item)) {
     return true;
   }
