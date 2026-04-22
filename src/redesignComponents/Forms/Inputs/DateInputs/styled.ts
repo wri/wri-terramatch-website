@@ -92,7 +92,7 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
     align-items: center;
     gap: 0.25rem;
     height: ${size === "small" ? "28px" : "40px"};
-    border: 1px solid ${getThemedColor("neutral", 400)};
+    border: 1px solid ${getThemedColor("neutral", 700)};
     border-radius: ${size === "small" ? "4px" : "0.5rem"};
     padding: ${size === "small" ? "4px 8px" : "12px"};
     background: ${getThemedColor("neutral", 100)};
