@@ -64,6 +64,11 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
     ...aggregateProps,
     collection: "tree-planted"
   });
+  const totalCountReplanting = usePlantTotalCount({ ...aggregateProps, collection: "replanting" });
+  const { speciesCount: totalCountReplantingSpecies } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: "replanting"
+  });
 
   const [aggregateLoaded, aggregateState] = useAggregateReports({
     entity: "sites",
@@ -314,6 +319,39 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
             </div>
             <div>
               <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="anr" visibleRows={5} />
+            </div>
+          </div>
+        </PageCard>
+      </PageRow>
+      <PageRow>
+        <PageCard title={t("Trees Replanting Progress")}>
+          <div className="grid grid-cols-2 gap-16">
+            <div className="flex flex-col gap-4">
+              <GoalProgressCard
+                hasProgress={false}
+                classNameCard="!pl-0"
+                items={[
+                  {
+                    iconName: IconNames.TREE_CIRCLE_PD,
+                    label: t("number of trees REPLANTED:"),
+                    variantLabel: "text-14" as TextVariants,
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: totalCountReplanting
+                  },
+                  {
+                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                    label: t("number of species REPLANTED:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: totalCountReplantingSpecies
+                  }
+                ]}
+              />
+            </div>
+            <div>
+              <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="replanting" visibleRows={5} />
             </div>
           </div>
         </PageCard>
