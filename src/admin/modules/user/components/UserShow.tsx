@@ -10,10 +10,7 @@ import {
 } from "react-admin";
 import type { To } from "react-router-dom";
 
-import {
-  type UserShowProjectAffiliationKind,
-  userShowProjectRows
-} from "@/admin/apiProvider/dataProviders/userDtoProjectAffiliations";
+import { userShowMonitoringProjectRows } from "@/admin/apiProvider/dataProviders/userDtoProjectAffiliations";
 import ShowActions from "@/admin/components/Actions/ShowActions";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
@@ -23,17 +20,13 @@ import { UserShowAside } from "./UserShowAside";
 
 type UserShowRecord = UserDto & { id: string };
 
-/**
- * Same structure as the historical implementation: read project lists from the show `record`,
- * map to { name, uuid }, render links. Keys are resolved in `userShowProjectRows` (v3 + legacy).
- */
-const UserProjectsTable = ({ title, kind }: { title: string; kind: UserShowProjectAffiliationKind }) => {
+const MonitoringPartnerProjectsTable = ({ title }: { title: string }) => {
   const { isLoading: ctxLoading, record } = useShowContext<UserShowRecord>();
   const basename = useBasename();
 
   if (ctxLoading || record == null) return null;
 
-  const projects = userShowProjectRows(record as Record<string, unknown>, kind);
+  const projects = userShowMonitoringProjectRows(record as Record<string, unknown>);
   if (projects.length === 0) return null;
 
   return (
@@ -85,8 +78,7 @@ export const UserShow = () => (
         />
         <FunctionField label="Direct Frameworks" render={renderFrameworks("directFrameworks")} />
       </SimpleShowLayout>
-      <UserProjectsTable title="Monitoring Partner Affiliations" kind="monitoring" />
-      <UserProjectsTable title="Managed Projects" kind="managed" />
+      <MonitoringPartnerProjectsTable title="Monitoring Partner Affiliations" />
     </div>
   </Show>
 );
