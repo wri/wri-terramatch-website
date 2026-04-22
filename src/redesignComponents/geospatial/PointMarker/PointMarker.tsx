@@ -15,13 +15,14 @@ export interface MapMarkerProps {
   color?: string;
 }
 
-const BOX_SHADOW = "0px 1px 2px -1px rgba(0, 0, 0, 0.10), 0px 1px 3px 0px rgba(0, 0, 0, 0.10) !important";
+const BOX_SHADOW =
+  "0rem 0.0625rem 0.125rem -0.0625rem rgba(0, 0, 0, 0.10), 0rem 0.0625rem 0.1875rem 0rem rgba(0, 0, 0, 0.10) !important";
 
 const FOCUS_STATE_STYLES = {
-  outline: "2px solid #50B6E2",
+  outline: "0.125rem solid #50B6E2",
   borderRadius: "50%",
   scale: "1.25",
-  outlineOffset: "0px !important",
+  outlineOffset: "0rem !important",
   "& button:hover": { scale: "1 !important" }
 };
 
@@ -42,12 +43,12 @@ const PointMarker: FC<MapMarkerProps> = ({
       css={{
         "& > div": showFocusState && FOCUS_STATE_STYLES,
         "& button": {
-          ...(variant === "icon" ? { width: "40px", height: "40px" } : { fontWeight: "400" }),
+          ...(variant === "icon" ? { width: "2.5rem", height: "2.5rem" } : { fontWeight: "400" }),
           transition: "all 0.1s ease-in-out",
           boxShadow: BOX_SHADOW,
           ...(variant === "simple-pin" && {
-            width: "16px",
-            height: "16px",
+            width: "1rem",
+            height: "1rem",
             borderColor: "neutral.100",
             backgroundColor: color
           })
