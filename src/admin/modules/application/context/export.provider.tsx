@@ -5,7 +5,7 @@ import { useNotify } from "react-admin";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import { fetchGetV2AdminFormsApplicationsUUIDExport } from "@/generated/apiComponents";
 import { formSubmissionsExportCsv } from "@/generated/v3/entityService/entityServiceComponents";
-import { downloadFileBlob, downloadPresignedUrl } from "@/utils/network";
+import { downloadFileBlob, downloadFileUrl } from "@/utils/network";
 
 type ExportType = {
   loading: boolean;
@@ -35,7 +35,7 @@ const ExportProvider = ({ children }: ExportProviderProps) => {
           setLoading(true);
           const { fileName, response } = await fn();
           if (isString(response)) {
-            await downloadPresignedUrl(response, fileName);
+            downloadFileUrl(response, fileName);
           } else {
             await downloadFileBlob(response, fileName);
           }

@@ -12,11 +12,11 @@ import { downloadEntityAllCsv, SupportedEntity } from "@/connections/Entity";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
-import { fetchGetV2AdminENTITYExportFRAMEWORKPm } from "@/generated/apiComponents";
+import { entityExportAll, EntityExportAllQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import { v3EntityName } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
-import { downloadPresignedUrl } from "@/utils/network";
+import { downloadFileBlob, downloadFileUrl } from "@/utils/network";
 
 interface FrameworkSelectionDialogContentProps {
   onCancel: () => void;
@@ -72,25 +72,28 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
         openToast("Something went wrong!", ToastType.ERROR);
       };
 
-      const exportPrefix = split(entity, "-").map(capitalize).join(" ");
       try {
-        const fileName = `${exportPrefix} - ${framework}.csv`;
+        const entityName = v3EntityName(entity) as SupportedEntity;
+        const frameworkKey = toFramework(framework);
         if (isSuperAdmin || isFrameworkAdmin) {
-          const { data, loadFailure } = await downloadEntityAllCsv(
-            v3EntityName(entity) as SupportedEntity,
-            toFramework(framework)
-          );
+          const { data, loadFailure } = await downloadEntityAllCsv(entityName, frameworkKey);
           if (loadFailure != null) {
             reportError(loadFailure);
           } else {
-            downloadPresignedUrl(data?.url as string, fileName);
+            downloadFileUrl(data?.url as string);
           }
         } else {
-          const data = await fetchGetV2AdminENTITYExportFRAMEWORKPm({ pathParams: { entity, framework } });
-          if (data.url == null) {
+          try {
+            const { fileName, blob } = await entityExportAll.fetchBlob({
+              pathParams: { entity: entityName },
+              queryParams: { frameworkKey: frameworkKey as EntityExportAllQueryParams["frameworkKey"] }
+            });
+            await downloadFileBlob(
+              blob,
+              fileName ?? `${split(entity, "-").map(capitalize).join(" ")} - ${framework}.csv`
+            );
+          } catch {
             reportError();
-          } else {
-            downloadPresignedUrl(data.url, fileName);
           }
         }
       } catch (error) {
