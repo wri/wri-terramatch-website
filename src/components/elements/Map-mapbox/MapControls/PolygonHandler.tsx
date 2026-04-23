@@ -38,7 +38,11 @@ export const PolygonHandler = () => {
   }, [file, saveFlags]);
 
   const uploadFile = async () => {
-    if (!siteData?.entityUUID) {
+    const projectPitchUuid =
+      siteData != null && "entityUUID" in siteData && typeof siteData.entityUUID === "string"
+        ? siteData.entityUUID
+        : undefined;
+    if (projectPitchUuid == null || projectPitchUuid === "") {
       openNotification("error", t("Error"), t("Missing project pitch information"));
       return;
     }
@@ -50,7 +54,6 @@ export const PolygonHandler = () => {
 
     showLoader();
     const fileToUpload = file.rawFile as File;
-    const projectPitchUuid = siteData.entityUUID;
 
     try {
       await uploadProjectPolygonFileResource(projectPitchUuid, fileToUpload);

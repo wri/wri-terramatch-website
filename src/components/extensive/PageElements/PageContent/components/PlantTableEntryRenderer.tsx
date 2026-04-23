@@ -1,4 +1,4 @@
-import { TableCell, TableRow, Text } from "@chakra-ui/react";
+import { TableCell, TableRow, Text, useBreakpointValue } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useMemo } from "react";
@@ -6,9 +6,10 @@ import { FC, useMemo } from "react";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
+  getNoCountTableColumns,
   NO_COUNT_TABLE_SPECIES_PER_PAGE,
-  NO_COUNT_TABLE_SPECIES_PER_ROW,
-  noCountTableColumns
+  NO_COUNT_TABLE_SPECIES_PER_ROW_DESKTOP,
+  NO_COUNT_TABLE_SPECIES_PER_ROW_MOBILE
 } from "@/pages/project/[uuid]/tabs/constants/Detail.constants";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import {
@@ -26,6 +27,15 @@ type PlantTableEntryRendererProps = {
 export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tableType, plants }) => {
   const { framework } = useFrameworkContext();
   const t = useT();
+  const isMobile = useBreakpointValue({ base: true, lg: false }) ?? false;
+  const noCountTableSpeciesPerRow = isMobile
+    ? NO_COUNT_TABLE_SPECIES_PER_ROW_MOBILE
+    : NO_COUNT_TABLE_SPECIES_PER_ROW_DESKTOP;
+  const noCountTableColumns = useMemo(
+    () => getNoCountTableColumns(noCountTableSpeciesPerRow),
+    [noCountTableSpeciesPerRow]
+  );
+
   const noGoalTableColumns = useMemo(
     () => [
       { key: "name", label: t("Species Name") },
@@ -43,14 +53,17 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
         css={FULL_WIDTH_TABLE_HEADER_STYLES}
         totalItems={plants.length}
         showItemCount={false}
-        className={classNames("mt-[2px] !w-[725px]", plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3")}
+        className={classNames(
+          "mt-[0.125rem] !w-[45.3125rem] mobile:!w-full",
+          plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
+        )}
       />
     );
   }
 
   if (tableType === "noCount") {
-    const noCountTableRowCount = plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
-    const dataPlants = plantsToNoCountRows(plants);
+    const noCountTableRowCount = plants.length / noCountTableSpeciesPerRow;
+    const dataPlants = plantsToNoCountRows(plants, noCountTableSpeciesPerRow);
 
     return (
       <Table
@@ -62,7 +75,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
         showItemCount={false}
         pageSize={NO_COUNT_TABLE_SPECIES_PER_PAGE}
         showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
-        className={classNames("mt-[2px]", dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3")}
+        className={classNames("mt-[0.125rem]", dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3")}
         renderRow={rowData => {
           const row = rowData as Record<number, string> & { id: number };
           return (

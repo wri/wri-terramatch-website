@@ -1,7 +1,5 @@
 import * as yup from "yup";
 
-import { NO_COUNT_TABLE_SPECIES_PER_ROW } from "@/pages/project/[uuid]/tabs/constants/Detail.constants";
-
 export const getFieldsRequiringAttentionCount = (
   validation: yup.ObjectSchema<Record<string, unknown>>,
   values: Record<string, unknown> | undefined
@@ -17,14 +15,15 @@ export const getFieldsRequiringAttentionCount = (
 };
 
 export function plantsToNoCountRows(
-  plants: Array<{ name?: string | null }>
+  plants: Array<{ name?: string | null }>,
+  speciesPerRow: number
 ): Array<Record<number, string> & { id: number }> {
   const rows: Array<Record<number, string> & { id: number }> = [];
-  for (let i = 0; i < plants.length; i += NO_COUNT_TABLE_SPECIES_PER_ROW) {
+  for (let i = 0; i < plants.length; i += speciesPerRow) {
     const row: Record<number, string> & { id: number } = {
-      id: Math.floor(i / NO_COUNT_TABLE_SPECIES_PER_ROW) + 1
+      id: Math.floor(i / speciesPerRow) + 1
     };
-    for (let j = 0; j < NO_COUNT_TABLE_SPECIES_PER_ROW; j++) {
+    for (let j = 0; j < speciesPerRow; j++) {
       row[j + 1] = plants[i + j]?.name ?? "";
     }
     rows.push(row);

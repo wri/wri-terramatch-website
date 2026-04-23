@@ -1,9 +1,9 @@
 import { useMediaQuery } from "@mui/material";
-import { T, useT } from "@transifex/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useMemo, useState } from "react";
-import { Else, If, Then, When } from "react-if";
 
+import type { ImpactStoryModalRow } from "@/components/dashboard/impactStoriesModalColumns";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
@@ -61,21 +61,6 @@ export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="u
 
 export const NUMBER_OF_TREES_PLANTED_TOOLTIP =
   "Total number of trees that funded projects have planted to date, as reported through 6-month progress reports and displayed as progress towards goal.";
-
-const LABEL_LEGEND = [
-  {
-    tooltip: { key: "Total", render: <T _str="Total" _tags="dash" /> },
-    color: "bg-blueCustom-900"
-  },
-  {
-    tooltip: { key: "Non-Profit", render: <T _str="Non-Profit" _tags="dash" /> },
-    color: "bg-secondary-600"
-  },
-  {
-    tooltip: { key: "Enterprise", render: <T _str="Enterprise" _tags="dash" /> },
-    color: "bg-primary"
-  }
-];
 
 export interface DashboardTableDataProps {
   label: string;
@@ -147,18 +132,33 @@ const Dashboard = () => {
 
   const dataToggle = useMemo(
     () => [
-      { tooltip: { key: "Absolute", render: <T _str="Absolute" _tags="dash" /> } },
-      { tooltip: { key: "Relative", render: <T _str="Relative" _tags="dash" /> } }
+      { tooltip: { key: "Absolute", render: t("Absolute") } },
+      { tooltip: { key: "Relative", render: t("Relative") } }
     ],
-    []
+    [t]
   );
 
   const dataToggleGraphic = useMemo(
+    () => [{ tooltip: { key: "Table", render: t("Table") } }, { tooltip: { key: "Graph", render: t("Graph") } }],
+    [t]
+  );
+
+  const labelLegend = useMemo(
     () => [
-      { tooltip: { key: "Table", render: <T _str="Table" _tags="dash" /> } },
-      { tooltip: { key: "Graph", render: <T _str="Graph" _tags="dash" /> } }
+      {
+        tooltip: { key: "Total", render: t("Total") },
+        color: "bg-blueCustom-900"
+      },
+      {
+        tooltip: { key: "Non-Profit", render: t("Non-Profit") },
+        color: "bg-secondary-600"
+      },
+      {
+        tooltip: { key: "Enterprise", render: t("Enterprise") },
+        color: "bg-primary"
+      }
     ],
-    []
+    [t]
   );
 
   useEffect(() => {
@@ -400,41 +400,39 @@ const Dashboard = () => {
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap mobile:bg-white">
       <ContentDashboardtWrapper isLeftWrapper={true}>
-        <When condition={(filters.country.id !== 0 || filters.landscapes.length > 0) && !filters.uuid}>
+        {(filters.country.id !== 0 || filters.landscapes.length > 0) && !filters.uuid && (
           <div className="flex items-center gap-2">
             <Text variant="text-14-light" className="uppercase text-black">
               {t("results for:")}
             </Text>
 
-            <When condition={filters.country.id !== 0 && filters.landscapes.length === 0 && !filters.uuid}>
-              <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
-              <Text variant="text-24-semibold" className="text-black">
-                {t(
-                  countryChoices.find(country => country.id === filters.country?.country_slug)?.name ||
-                    filters.country?.data.label
-                )}
-              </Text>
-            </When>
+            {filters.country.id !== 0 && filters.landscapes.length === 0 && !filters.uuid && (
+              <>
+                <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
+                <Text variant="text-24-semibold" className="text-black">
+                  {t(
+                    countryChoices.find(country => country.id === filters.country?.country_slug)?.name ||
+                      filters.country?.data.label
+                  )}
+                </Text>
+              </>
+            )}
 
-            <When condition={filters.landscapes.length === 1 && filters.country.id === 0 && !filters.uuid}>
+            {filters.landscapes.length === 1 && filters.country.id === 0 && !filters.uuid && (
               <Text variant="text-24-semibold" className="text-black">
                 {filters.landscapes[0]}
               </Text>
-            </When>
+            )}
 
-            <When
-              condition={
-                (filters.landscapes.length > 1 && filters.country.id === 0) ||
-                (filters.landscapes.length > 0 && filters.country.id !== 0)
-              }
-            >
+            {((filters.landscapes.length > 1 && filters.country.id === 0) ||
+              (filters.landscapes.length > 0 && filters.country.id !== 0)) && (
               <Text variant="text-24-semibold" className="text-black">
                 {filters.country.id === 0 ? t("Multiple Landscapes") : t("Multiple Countries/Landscapes")}
               </Text>
-            </When>
+            )}
           </div>
-        </When>
-        <When condition={filters.uuid}>
+        )}
+        {filters.uuid && (
           <div>
             <DashboardBreadcrumbs
               cohort={cohortArray}
@@ -445,7 +443,7 @@ const Dashboard = () => {
               clasNameText="!no-underline mt-0.5 hover:mb-0.5 hover:mt-0"
             />
           </div>
-        </When>
+        )}
         <BlurContainer
           isBlur={isUserAllowed !== undefined ? !isUserAllowed?.allowed : false}
           textType={user !== undefined ? TEXT_TYPES.LOGGED_USER : TEXT_TYPES.NOT_LOGGED_USER}
@@ -483,23 +481,20 @@ const Dashboard = () => {
             ))}
           </div>
         </BlurContainer>
-        <When condition={filters.uuid}>
+        {filters.uuid && (
           <PageCard className="border-0 px-4 py-6" gap={8}>
             <div className="flex items-center">
-              <If condition={!projectLoaded}>
-                <Then>
-                  <div className="bg-gray-200 mr-5 flex h-[18vh] w-[14vw] items-center justify-center rounded-3xl">
-                    <Text variant="text-20-bold">{t("Loading...")}</Text>
-                  </div>
-                </Then>
-                <Else>
-                  <img
-                    src={coverImage?.thumbUrl ?? "/images/_AJL2963.jpg"}
-                    alt="project cover"
-                    className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
-                  />
-                </Else>
-              </If>
+              {!projectLoaded ? (
+                <div className="bg-gray-200 mr-5 flex h-[18vh] w-[14vw] items-center justify-center rounded-3xl">
+                  <Text variant="text-20-bold">{t("Loading...")}</Text>
+                </div>
+              ) : (
+                <img
+                  src={coverImage?.thumbUrl ?? "/images/_AJL2963.jpg"}
+                  alt="project cover"
+                  className="mr-5 h-[18vh] w-[14vw] rounded-3xl object-cover"
+                />
+              )}
               <div>
                 <Text variant="text-20-bold">{t(singleDashboardProject?.name)}</Text>
                 <Text variant="text-14-light" className="text-darkCustom">
@@ -527,7 +522,7 @@ const Dashboard = () => {
               variantTitle="text-18-semibold"
             />
           </PageCard>
-        </When>
+        )}
         <PageCard
           className="border-0 px-4 py-6 mobile:order-3 mobile:px-0 mobile:pb-4 mobile:pt-0"
           classNameSubTitle="mt-4"
@@ -547,7 +542,7 @@ const Dashboard = () => {
           <SecDashboard
             title={t("Number of Trees Planted")}
             type="legend"
-            secondOptionsData={LABEL_LEGEND}
+            secondOptionsData={labelLegend}
             tooltip={t(NUMBER_OF_TREES_PLANTED_TOOLTIP)}
             data={numberTreesPlanted}
             dataForChart={dashboardRestorationGoalData}
@@ -567,7 +562,7 @@ const Dashboard = () => {
             isUserAllowed={isUserAllowed?.allowed}
             isLoading={isLoadingTreeRestorationGoal}
           />
-          <When condition={!filters.uuid}>
+          {!filters.uuid && (
             <SecDashboard
               title={t("Top 5 projects with the Most Planted Trees")}
               type="toggle"
@@ -577,7 +572,7 @@ const Dashboard = () => {
               tooltip={t(TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP)}
               isUserAllowed={isUserAllowed?.allowed}
             />
-          </When>
+          )}
         </PageCard>
         <PageCard
           className="border-0 px-4 py-6 mobile:order-4 mobile:px-0 mobile:py-4"
@@ -702,7 +697,7 @@ const Dashboard = () => {
         polygonsData={polygonsData}
         bbox={filters.uuid ? safeBbox(projectBbox) : safeBbox(currentBbox)}
         projectCounts={projectCounts}
-        transformedStories={transformedStories}
+        transformedStories={transformedStories as ImpactStoryModalRow[]}
         isLoading={isLoadingImpactStories}
         hasAccess={singleDashboardProject?.hasAccess}
       />

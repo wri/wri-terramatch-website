@@ -198,7 +198,7 @@ const Table: FC<TableProps> = ({
           textStyle="500"
           fontWeight="400"
           color={getThemedColor("neutral", 700)}
-          className="absolute bottom-[30px] left-1/2 w-fit -translate-x-1/2 text-center"
+          className="absolute bottom-[1.875rem] left-1/2 w-fit -translate-x-1/2 text-center mobile:hidden"
         >
           Showing {`${displayStart} - ${displayEnd} of ${actualTotalItems}`}
         </Text>

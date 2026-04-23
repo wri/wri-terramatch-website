@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo } from "react";
-import { When } from "react-if";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import Form from "@/components/extensive/Form/Form";
@@ -157,13 +156,13 @@ const OrganizationAssignForm = () => {
           error={form.formState.errors.name}
           clearable
         />
-        <When condition={!type && searchedTerm}>
+        {!type && searchedTerm && (
           <OrganizationAssignPanel
             searchedTerm={searchedTerm}
             organizations={(organisationsData ?? []) as unknown as Array<{ uuid: string; name: string }>}
             loading={loading}
           />
-        </When>
+        )}
       </div>
       <Form.Footer
         secondaryButtonProps={{

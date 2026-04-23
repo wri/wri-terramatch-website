@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import { useEffect, useMemo, useState } from "react";
 import { useShowContext } from "react-admin";
 
-import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { parsePolygonDataV3 } from "@/components/elements/Map-mapbox/utils";
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
 import { FormEntry, GetFormEntriesProps } from "@/components/extensive/WizardForm/FormSummaryRow/types";
@@ -56,7 +56,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
 
   const entityPolygonData = getEntityPolygonData(record, type, entity, sitePolygonData, projectPolygonData);
 
-  const mapFunctions = useMap();
+  const mapFunctions = useBaseMap();
 
   const [externalSourcesLoaded, setExternalSourcesLoaded] = useState(false);
   useEffect(() => {
@@ -134,8 +134,9 @@ const getEntityPolygonData = (
   if (entityType === "sites") {
     return sitePolygonData ? parsePolygonDataV3(sitePolygonData) : null;
   } else if (entityType === "projects" || entityType === "project-pitches") {
-    const polygonUuid = projectPolygonData?.polygonUuid;
-    return projectPolygonData ? { [FORM_POLYGONS]: [polygonUuid] } : null;
+    if (projectPolygonData == null) return null;
+    const polygonUuid = projectPolygonData.polygonUuid;
+    return polygonUuid ? { [FORM_POLYGONS]: [polygonUuid] } : null;
   }
 
   return null;

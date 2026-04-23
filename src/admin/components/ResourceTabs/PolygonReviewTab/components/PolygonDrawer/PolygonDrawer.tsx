@@ -2,7 +2,6 @@ import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
@@ -20,6 +19,7 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnUnmount } from "@/hooks/useOnMount";
+import { usePolygonClippingCompletion } from "@/hooks/usePolygonClippingCompletion";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
@@ -67,6 +67,7 @@ const PolygonDrawer = ({
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygonLightDto>();
   const [openAttributes, setOpenAttributes] = useState(true);
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
+  const [pendingClipping, setPendingClipping] = useState(false);
   const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygonLightDto>();
   const [isLoadingDropdown, setIsLoadingDropdown] = useState(false);
   const t = useT();
@@ -74,7 +75,7 @@ const PolygonDrawer = ({
   const contextMapArea = useMapAreaContext();
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygonLightDto>;
   const sitePolygonRefresh = context?.reloadSiteData;
-  const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
+  const isDrawingEnabled = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygonLightDto) => item?.polygonUuid === polygonSelected);
   const anrPlotsEligible = useMemo(
     () => isSitePolygonEligibleForAnrMonitoringPlots(selectedPolygon),
@@ -183,36 +184,6 @@ const PolygonDrawer = ({
   });
 
   useEffect(() => {
-    if (anrMapOverlay == null) {
-      return;
-    }
-    if (!isOpenPolygonDrawer) {
-      anrMapOverlay.resetAnrMapOverlay();
-      prevActiveTabForAnrRef.current = null;
-      return;
-    }
-    anrMapOverlay.setDrawerOpen(true);
-    const onAnrTab = activeTab === "anrMonitoringPlots";
-    anrMapOverlay.setAnrTabActive(onAnrTab);
-
-    if (selectedPolygon?.uuid != null && selectedPolygon.uuid !== "") {
-      anrMapOverlay.syncDrawerSelection({
-        sitePolygonUuid: selectedPolygon.uuid,
-        geometryPolygonUuid: polygonSelected
-      });
-    }
-
-    if (onAnrTab && prevActiveTabForAnrRef.current !== "anrMonitoringPlots") {
-      anrMapOverlay.setShowPlotsOnMap(true);
-    }
-    prevActiveTabForAnrRef.current = activeTab;
-  }, [anrMapOverlay, activeTab, isOpenPolygonDrawer, polygonSelected, selectedPolygon?.uuid]);
-
-  useOnUnmount(() => {
-    anrMapOverlayRef.current?.resetAnrMapOverlay();
-  });
-
-  useEffect(() => {
     if (Array.isArray(sitePolygonData)) {
       const PolygonData = sitePolygonData.find((data: SitePolygonLightDto) => data.polygonUuid === polygonSelected);
       setSelectedPolygonData(PolygonData ?? undefined);
@@ -223,11 +194,11 @@ const PolygonDrawer = ({
     }
   }, [polygonSelected, setStatusSelectedPolygon, sitePolygonData]);
   useEffect(() => {
-    if (openEditNewPolygon) {
+    if (isDrawingEnabled) {
       setOpenAttributes(true);
       setActiveTab(prev => (initialTopTab === "attributes" ? "attributes" : prev));
     }
-  }, [initialTopTab, openEditNewPolygon]);
+  }, [initialTopTab, isDrawingEnabled]);
 
   useEffect(() => {
     setSelectPolygonVersion(selectedPolygonData);
@@ -243,11 +214,24 @@ const PolygonDrawer = ({
     if (polygonSelected) {
       showLoader();
       clipSinglePolygon(polygonSelected);
+      setPendingClipping(true);
     } else {
       Log.error("Polygon UUID is missing");
       openNotification("error", t("Error"), t("Cannot fix polygons: Polygon UUID is missing."));
     }
   };
+
+  usePolygonClippingCompletion({
+    pendingClipping,
+    setPendingClipping,
+    onSuccess: () => {
+      hideLoader();
+    },
+    onFailure: () => {
+      openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
+      hideLoader();
+    }
+  });
 
   const auditData = {
     entity: "site-polygon",
@@ -307,9 +291,7 @@ const PolygonDrawer = ({
             <Text variant="text-14-semibold" className="w-[15%] break-words">
               Status:
             </Text>
-            <When condition={selectedPolygon?.status}>
-              <Status className="w-[35%]" status={selectedPolygon?.status as StatusEnum} />
-            </When>
+            {selectedPolygon?.status && <Status className="w-[35%]" status={selectedPolygon?.status as StatusEnum} />}
           </div>
           <StatusDisplay
             titleStatus="sitePolygons"
