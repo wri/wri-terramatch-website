@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap, MapMouseEvent, Popup } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -10,9 +10,9 @@ import { Feature, GeoJsonProperties, Geometry } from "../GeoJSON";
 import { registerPopup, removePopups } from "../interactions/popups";
 import { getPulsingDot } from "../pulsing.dot";
 
-const mediaClickHandlers = new WeakMap<mapboxgl.Map, (e: mapboxgl.MapMouseEvent) => void>();
+const mediaClickHandlers = new WeakMap<MapboxMap, (e: MapMouseEvent) => void>();
 
-export const removeMediaLayer = (map: mapboxgl.Map) => {
+export const removeMediaLayer = (map: MapboxMap) => {
   const layerName = LAYERS_NAMES.MEDIA_IMAGES;
 
   const existingHandler = mediaClickHandlers.get(map);
@@ -27,7 +27,7 @@ export const removeMediaLayer = (map: mapboxgl.Map) => {
 };
 
 export const addMediaSourceAndLayer = (
-  map: mapboxgl.Map,
+  map: MapboxMap,
   mediaFiles: MediaDto[],
   setImageCover: Function,
   handleDownload: Function,
@@ -69,7 +69,7 @@ export const addMediaSourceAndLayer = (
   map.addLayer({ id: layerName, type: "symbol", source: layerName, layout: { "icon-image": "pulsing-dot" } });
   map.moveLayer(layerName);
 
-  const clickHandler = (e: mapboxgl.MapMouseEvent) => {
+  const clickHandler = (e: MapMouseEvent) => {
     e.preventDefault();
     e.features!.forEach((feature: any) => {
       const popupContent = document.createElement("div");
@@ -88,7 +88,7 @@ export const addMediaSourceAndLayer = (
         })
       );
 
-      const mediaPopup = new mapboxgl.Popup({ className: "popup-media", closeButton: false })
+      const mediaPopup = new Popup({ className: "popup-media", closeButton: false })
         .setLngLat(feature.geometry.coordinates)
         .setDOMContent(popupContent)
         .addTo(map);

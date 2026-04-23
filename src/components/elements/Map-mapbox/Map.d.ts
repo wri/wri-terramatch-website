@@ -1,5 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import mapboxgl from "mapbox-gl";
+import { GeoJSONFeature, Map as MapboxMap, Popup } from "mapbox-gl";
 import { MutableRefObject, RefObject } from "react";
 
 import { CountriesProps, DashboardFilters } from "@/context/dashboard.provider";
@@ -68,8 +68,8 @@ export type DashboardPopupContext = {
 
 /** Props received by every popup component (AdminPopup, DashboardPopup). */
 export type PopupComponentProps = {
-  feature: mapboxgl.GeoJSONFeature;
-  popup: mapboxgl.Popup;
+  feature: GeoJSONFeature;
+  popup: Popup;
   layerName?: string;
   setPolygonFromMap?: SetPolygonFromMap;
   sitePolygonData?: SitePolygonLightDto[];
@@ -88,7 +88,7 @@ export type MobilePopupData = Omit<PopupComponentProps, "popup"> & {
 };
 
 export interface MapFunctions {
-  map: MutableRefObject<mapboxgl.Map | null>;
+  map: MutableRefObject<MapboxMap | null>;
   mapContainer: RefObject<HTMLDivElement>;
   draw: MutableRefObject<MapboxDraw | null>;
   styleLoaded: boolean;

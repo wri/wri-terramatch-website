@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect } from "react";
 
 import {
@@ -15,7 +15,7 @@ type AnrMapOverlay = {
 } | null;
 
 type UseMapOverlaysParams = {
-  map: MutableRefObject<mapboxgl.Map | null>;
+  map: MutableRefObject<MapboxMap | null>;
   selectedLandscapes?: string[];
   anrMapOverlay?: AnrMapOverlay;
   anrPlotGeometryDto?: { geojson?: any } | null;

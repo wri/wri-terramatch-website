@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { useEffect, useRef } from "react";
 
 import { MapStyle } from "../MapControls/types";
@@ -8,7 +8,7 @@ export const useGoogleSatellite = (
   currentStyle: MapStyle,
   styleReady: boolean,
   styleVersion: number,
-  map: React.RefObject<mapboxgl.Map | null>,
+  map: React.RefObject<MapboxMap | null>,
   mapContainer: React.RefObject<HTMLDivElement | null>
 ) => {
   const currentStyleRef = useRef(currentStyle);

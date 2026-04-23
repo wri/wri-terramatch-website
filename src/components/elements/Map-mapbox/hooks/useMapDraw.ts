@@ -1,5 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useCallback } from "react";
 
 import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
@@ -24,7 +24,7 @@ import { DashboardGetProjectsData, PolygonFromMapState } from "../Map.d";
 import { filterPolygonFromLayers } from "./useMapLayers";
 
 type UseMapDrawParams = {
-  map: MutableRefObject<mapboxgl.Map | null>;
+  map: MutableRefObject<MapboxMap | null>;
   draw: MutableRefObject<MapboxDraw | null>;
   isUserDrawingEnabled: boolean;
   formMap?: boolean;

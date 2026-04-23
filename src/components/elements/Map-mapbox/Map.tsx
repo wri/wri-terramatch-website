@@ -2,7 +2,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
-import mapboxgl from "mapbox-gl";
+import { Marker } from "mapbox-gl";
 import { useRouter } from "next/router";
 import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { ValidationError } from "yup";
@@ -197,7 +197,7 @@ export const MapContainer = ({
   const [viewImages, setViewImages] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [mobilePopupData, setMobilePopupData] = useState<MobilePopupData | null>(null);
-  const mapMarkerRef = useRef<mapboxgl.Marker | null>(null);
+  const mapMarkerRef = useRef<Marker | null>(null);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
   const context = useSitePolygonData();

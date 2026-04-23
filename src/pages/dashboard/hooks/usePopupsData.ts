@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import { GeoJSONFeature } from "mapbox-gl";
 import { useEffect, useMemo, useState } from "react";
 
 import { useDashboardProject } from "@/connections/DashboardEntity";
@@ -7,7 +7,7 @@ import { LAYERS_NAMES } from "@/constants/layers";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
-type PopupEvent = { feature?: mapboxgl.GeoJSONFeature; layerName?: string };
+type PopupEvent = { feature?: GeoJSONFeature; layerName?: string };
 
 type Item = {
   id: string;

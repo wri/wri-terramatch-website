@@ -1,5 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import mapboxgl, { Map as MapboxMap } from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { useCallback, useRef, useState } from "react";
 
 import { mapboxToken } from "@/constants/environment";
@@ -53,7 +53,7 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
     const styleToUse =
       requestedStyle === MapStyle.GoogleSatellite ? BASEMAP_CONFIGS[MapStyle.GoogleSatellite].style : requestedStyle;
 
-    map.current = new mapboxgl.Map({
+    map.current = new MapboxMap({
       container: mapContainer.current as HTMLDivElement,
       style: styleToUse,
       zoom: INITIAL_ZOOM,
@@ -74,7 +74,7 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
     });
 
     const addControlToMap = () => {
-      const currentMap = map.current as mapboxgl.Map;
+      const currentMap = map.current as MapboxMap;
       const currentDraw = draw.current as ControlType;
       if (currentMap.hasControl(currentDraw)) {
         currentMap.removeControl(currentDraw);

@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect, useState } from "react";
 
 import Log from "@/utils/log";
@@ -14,7 +14,7 @@ type HTMLElementWithFullscreen = HTMLElement & {
 
 type UseMapFullscreenParams = {
   mapContainer: MutableRefObject<HTMLDivElement | null>;
-  map: MutableRefObject<mapboxgl.Map | null>;
+  map: MutableRefObject<MapboxMap | null>;
 };
 
 const getIsFullscreen = (): boolean => {

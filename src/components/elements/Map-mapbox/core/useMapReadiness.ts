@@ -1,8 +1,8 @@
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { useEffect, useState } from "react";
 
 /** styleVersion re-triggers deps after each style.load; `map` (instance) must be the effect dep, not the ref. */
-export function useMapReadiness(map: mapboxgl.Map | null | undefined): {
+export function useMapReadiness(map: MapboxMap | null | undefined): {
   styleReady: boolean;
   styleVersion: number;
 } {

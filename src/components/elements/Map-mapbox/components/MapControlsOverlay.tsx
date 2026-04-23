@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import React from "react";
 
 import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
@@ -29,7 +29,7 @@ export type DrawControlsProps = {
 };
 
 export type StyleControlsProps = {
-  map: mapboxgl.Map | null;
+  map: MapboxMap | null;
   currentStyle: MapStyle;
   handleStyleChange: (style: MapStyle) => void;
   styleReady: boolean;
@@ -57,7 +57,7 @@ export type FormControlsProps = {
 };
 
 export type CameraResetProps = {
-  map: mapboxgl.Map | null;
+  map: MapboxMap | null;
   center?: [number, number];
   zoom?: number;
   bbox?: BBox;

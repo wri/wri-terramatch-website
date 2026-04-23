@@ -1,6 +1,6 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import _ from "lodash";
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
@@ -10,7 +10,7 @@ import { addDeleteLayer, addFilterOnLayer, addSourcesToLayers } from "../layers/
 import { DashboardGetProjectsData, PolygonCentroid } from "../Map.d";
 
 type UseMapLayersParams = {
-  map: MutableRefObject<mapboxgl.Map | null>;
+  map: MutableRefObject<MapboxMap | null>;
   draw: MutableRefObject<MapboxDraw | null>;
   styleReady: boolean;
   styleVersion: number;
@@ -124,7 +124,7 @@ export function useMapLayers({
 export function filterPolygonFromLayers(
   polygonuuid: string,
   polygonsData: Record<string, string[]> | undefined,
-  map: mapboxgl.Map
+  map: MapboxMap
 ) {
   if (polygonsData == null) return;
   const newPolygonData: Record<string, string[]> = JSON.parse(JSON.stringify(polygonsData));

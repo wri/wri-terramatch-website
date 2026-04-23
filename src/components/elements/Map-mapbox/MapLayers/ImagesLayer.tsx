@@ -1,5 +1,5 @@
 import { Canvg } from "canvg";
-import mapboxgl, { GeoJSONSourceSpecification, MapMouseEvent } from "mapbox-gl";
+import { GeoJSONSourceSpecification, Map as MapboxMap, MapMouseEvent } from "mapbox-gl";
 import { useEffect } from "react";
 
 import ImageGalleryPreviewer from "@/components/elements/ImageGallery/ImageGalleryPreviewer";
@@ -124,7 +124,7 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
   return null;
 };
 
-const loadImage = async (map: mapboxgl.Map, imageName: string, svgString: string) => {
+const loadImage = async (map: MapboxMap, imageName: string, svgString: string) => {
   if (!!imageName && !!svgString && !map?.hasImage(imageName)) {
     const marker = new Image();
     const canvas = document.createElement("canvas");
