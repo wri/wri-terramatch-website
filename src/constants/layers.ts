@@ -1,14 +1,21 @@
+import {
+  CircleLayerSpecification,
+  FillLayerSpecification,
+  LayerSpecification,
+  LineLayerSpecification
+} from "mapbox-gl";
+
 import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
 
 import { DELETED_POLYGONS } from "./statuses";
 
-type LayerStyleFragment<T extends mapboxgl.LayerSpecification> = Omit<T, "id" | "source" | "source-layer"> & {
+type LayerStyleFragment<T extends LayerSpecification> = Omit<T, "id" | "source" | "source-layer"> & {
   metadata?: unknown;
 };
 
-type FillStyle = LayerStyleFragment<mapboxgl.FillLayerSpecification>;
-type LineStyle = LayerStyleFragment<mapboxgl.LineLayerSpecification>;
-type CircleStyle = LayerStyleFragment<mapboxgl.CircleLayerSpecification>;
+type FillStyle = LayerStyleFragment<FillLayerSpecification>;
+type LineStyle = LayerStyleFragment<LineLayerSpecification>;
+type CircleStyle = LayerStyleFragment<CircleLayerSpecification>;
 
 const fillStyle = (style: FillStyle) => style;
 const lineStyle = (style: LineStyle) => style;

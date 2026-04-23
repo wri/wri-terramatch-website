@@ -1,5 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import mapboxgl from "mapbox-gl";
+import { LayerSpecification, Map as MapboxMap, MapMouseEvent, MapTouchEvent, Popup } from "mapbox-gl";
 import React, { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -18,11 +18,11 @@ import type {
   TooltipType
 } from "../Map.d";
 
-type MapboxPopup = InstanceType<typeof mapboxgl.Popup>;
+type MapboxPopup = InstanceType<typeof Popup>;
 
-const popupRegistries = new WeakMap<mapboxgl.Map, Record<"POLYGON" | "MEDIA", MapboxPopup[]>>();
+const popupRegistries = new WeakMap<MapboxMap, Record<"POLYGON" | "MEDIA", MapboxPopup[]>>();
 
-function getPopupRegistry(map: mapboxgl.Map): Record<"POLYGON" | "MEDIA", MapboxPopup[]> {
+function getPopupRegistry(map: MapboxMap): Record<"POLYGON" | "MEDIA", MapboxPopup[]> {
   if (!popupRegistries.has(map)) {
     popupRegistries.set(map, { POLYGON: [], MEDIA: [] });
   }
@@ -30,11 +30,11 @@ function getPopupRegistry(map: mapboxgl.Map): Record<"POLYGON" | "MEDIA", Mapbox
 }
 
 // Mapbox click and touchend layer events share the same data shape (lngLat, features, point).
-type MapLayerInteractionEvent = mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent;
+type MapLayerInteractionEvent = MapMouseEvent | MapTouchEvent;
 
-const clickHandlerRegistries = new WeakMap<mapboxgl.Map, Record<string, (e: MapLayerInteractionEvent) => void>>();
+const clickHandlerRegistries = new WeakMap<MapboxMap, Record<string, (e: MapLayerInteractionEvent) => void>>();
 
-function getClickHandlers(map: mapboxgl.Map): Record<string, (e: MapLayerInteractionEvent) => void> {
+function getClickHandlers(map: MapboxMap): Record<string, (e: MapLayerInteractionEvent) => void> {
   if (!clickHandlerRegistries.has(map)) {
     clickHandlerRegistries.set(map, {});
   }
@@ -57,7 +57,7 @@ export type PopupHandlerOptions = {
 const handleLayerClick = (
   e: MapLayerInteractionEvent,
   PopupComponent: React.ComponentType<PopupComponentProps>,
-  map: mapboxgl.Map,
+  map: MapboxMap,
   layerName: string | undefined,
   options: PopupHandlerOptions
 ): void => {
@@ -124,7 +124,7 @@ const handleLayerClick = (
   const popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
-  const newPopup = new mapboxgl.Popup(popupOptions).setLngLat(lngLat).setDOMContent(popupContent);
+  const newPopup = new Popup(popupOptions).setLngLat(lngLat).setDOMContent(popupContent);
   newPopup.on("close", () => {
     root.unmount();
   });
@@ -149,11 +149,11 @@ const handleLayerClick = (
   );
 };
 
-export const registerPopup = (map: mapboxgl.Map, key: "POLYGON" | "MEDIA", popup: MapboxPopup): void => {
+export const registerPopup = (map: MapboxMap, key: "POLYGON" | "MEDIA", popup: MapboxPopup): void => {
   getPopupRegistry(map)[key].push(popup);
 };
 
-export const removePopups = (map: mapboxgl.Map, key: "POLYGON" | "MEDIA"): void => {
+export const removePopups = (map: MapboxMap, key: "POLYGON" | "MEDIA"): void => {
   const registry = getPopupRegistry(map);
   if (registry[key] == null) return;
   registry[key].forEach(popup => popup.remove());
@@ -161,7 +161,7 @@ export const removePopups = (map: mapboxgl.Map, key: "POLYGON" | "MEDIA"): void 
 };
 
 export const addPopupsToMap = (
-  map: mapboxgl.Map,
+  map: MapboxMap,
   popupComponent: React.ComponentType<PopupComponentProps>,
   draw: MapboxDraw,
   options: PopupHandlerOptions
@@ -173,7 +173,7 @@ export const addPopupsToMap = (
 };
 
 export const addPopupToLayer = (
-  map: mapboxgl.Map,
+  map: MapboxMap,
   popupComponent: React.ComponentType<PopupComponentProps>,
   layer: LayerType,
   draw: MapboxDraw,
@@ -194,7 +194,7 @@ export const addPopupToLayer = (
 
   if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
     targetLayers = targetLayers.filter(
-      l => (l as mapboxgl.LayerSpecification & { metadata?: { type?: string } })?.metadata?.type === "big-circle"
+      l => (l as LayerSpecification & { metadata?: { type?: string } })?.metadata?.type === "big-circle"
     );
   }
 

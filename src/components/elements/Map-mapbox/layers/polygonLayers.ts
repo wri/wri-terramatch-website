@@ -1,5 +1,5 @@
 import _ from "lodash";
-import mapboxgl from "mapbox-gl";
+import { FilterSpecification, LayerSpecification, Map as MapboxMap } from "mapbox-gl";
 
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -17,7 +17,7 @@ export const getFeatureProperties = <T>(properties: GeoJSON.GeoJsonProperties, k
 const showPolygons = (
   styles: LayerWithStyle[],
   name: string,
-  map: mapboxgl.Map,
+  map: MapboxMap,
   field: string,
   parsedPolygonData: Record<string, string[]> | undefined,
   zoomFilter?: number | undefined
@@ -33,14 +33,14 @@ const showPolygons = (
     ];
     const completeFilter = (
       zoomFilter ? ["all", uuidFilter, [">", ["zoom"], zoomFilter]] : ["all", uuidFilter]
-    ) as mapboxgl.FilterSpecification;
+    ) as FilterSpecification;
     map.setFilter(layerName, completeFilter);
     map.setLayoutProperty(layerName, "visibility", "visible");
   });
 };
 
 export const loadLayersInMap = (
-  map: mapboxgl.Map,
+  map: MapboxMap,
   polygonsData: Record<string, string[]> | undefined,
   layer: LayerType,
   zoomFilter?: number | undefined
@@ -50,22 +50,22 @@ export const loadLayersInMap = (
   }
 };
 
-export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
+export const addFilterOfPolygonsData = (map: MapboxMap, polygonsData: Record<string, string[]> | undefined) => {
   if (map == null || polygonsData == null) return;
   layersList.forEach((layer: LayerType) => loadLayersInMap(map, polygonsData, layer));
 };
 
-export const addFilterOnLayer = (layer: LayerType, parsedPolygonData: Record<string, string[]>, map: mapboxgl.Map) => {
+export const addFilterOnLayer = (layer: LayerType, parsedPolygonData: Record<string, string[]>, map: MapboxMap) => {
   addSourceToLayer(layer, map, parsedPolygonData);
 };
 
-export const setFilterLandscape = (map: mapboxgl.Map, layerName: string, landscapes: string[]) => {
+export const setFilterLandscape = (map: MapboxMap, layerName: string, landscapes: string[]) => {
   map.setFilter(layerName, ["in", ["get", "landscape"], ["literal", landscapes]]);
 };
 
 export const addGeojsonSourceToLayer = (
   centroids: DashboardGetProjectsData[] | undefined,
-  map: mapboxgl.Map,
+  map: MapboxMap,
   layer: LayerType,
   zoomFilterValue: number | undefined,
   existsPolygons: boolean
@@ -117,9 +117,9 @@ export const addGeojsonSourceToLayer = (
   keys[name] = cacheKey;
 };
 
-const centroidSourceKeys = new WeakMap<mapboxgl.Map, Record<string, string>>();
+const centroidSourceKeys = new WeakMap<MapboxMap, Record<string, string>>();
 
-function getCentroidSourceKeys(map: mapboxgl.Map): Record<string, string> {
+function getCentroidSourceKeys(map: MapboxMap): Record<string, string> {
   if (!centroidSourceKeys.has(map)) centroidSourceKeys.set(map, {});
   return centroidSourceKeys.get(map)!;
 }
@@ -140,16 +140,16 @@ function computeCentroidsFingerprint(centroids: DashboardGetProjectsData[]): str
   return `${hash >>> 0}:${centroids.length}`;
 }
 
-const sourceCacheKeys = new WeakMap<mapboxgl.Map, Record<string, string>>();
+const sourceCacheKeys = new WeakMap<MapboxMap, Record<string, string>>();
 
-function getSourceCacheKeys(map: mapboxgl.Map): Record<string, string> {
+function getSourceCacheKeys(map: MapboxMap): Record<string, string> {
   if (!sourceCacheKeys.has(map)) sourceCacheKeys.set(map, {});
   return sourceCacheKeys.get(map)!;
 }
 
 export const addSourceToLayer = (
   layer: LayerType,
-  map: mapboxgl.Map,
+  map: MapboxMap,
   polygonsData: Record<string, string[]> | undefined,
   zoomFilter?: number | undefined,
   dashboardMode?: string | undefined,
@@ -192,7 +192,7 @@ export const addSourceToLayer = (
   }
 };
 
-const loadDeleteLayer = (layer: LayerType, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
+const loadDeleteLayer = (layer: LayerType, map: MapboxMap, polygonsData: Record<string, string[]> | undefined) => {
   const { name, geoserverLayerName, styles } = layer;
   styles?.forEach((style: LayerWithStyle, index: number) => {
     if (map.getLayer(`${name}-${index}`)) {
@@ -203,14 +203,14 @@ const loadDeleteLayer = (layer: LayerType, map: mapboxgl.Map, polygonsData: Reco
       id: `${name}-${index}`,
       source: name,
       "source-layer": geoserverLayerName
-    } as mapboxgl.LayerSpecification);
+    } as LayerSpecification);
   });
   loadLayersInMap(map, polygonsData, layer);
 };
 
 export const addDeleteLayer = (
   layer: LayerType,
-  map: mapboxgl.Map,
+  map: MapboxMap,
   polygonsData: Record<string, string[]> | undefined
 ) => {
   const { name, geoserverLayerName, styles } = layer;
@@ -231,7 +231,7 @@ export const addDeleteLayer = (
   }
 };
 
-const moveDeleteLayers = (map: mapboxgl.Map) => {
+const moveDeleteLayers = (map: MapboxMap) => {
   const layers = layersList.filter(layer => layer.name === LAYERS_NAMES.DELETED_GEOMETRIES);
   layers.forEach(layer => {
     const { name, styles } = layer;
@@ -244,7 +244,7 @@ const moveDeleteLayers = (map: mapboxgl.Map) => {
 };
 
 export const addLayerGeojsonStyle = (
-  map: mapboxgl.Map,
+  map: MapboxMap,
   layerName: string,
   sourceName: string,
   style: LayerWithStyle,
@@ -254,15 +254,12 @@ export const addLayerGeojsonStyle = (
   if (map.getLayer(`${layerName}-${index}`)) {
     map.removeLayer(`${layerName}-${index}`);
   }
-  map.addLayer(
-    { ...style, id: `${layerName}-${index}`, source: sourceName } as mapboxgl.LayerSpecification,
-    beforeLayer
-  );
+  map.addLayer({ ...style, id: `${layerName}-${index}`, source: sourceName } as LayerSpecification, beforeLayer);
   moveDeleteLayers(map);
 };
 
 export const addLayerStyle = (
-  map: mapboxgl.Map,
+  map: MapboxMap,
   layerName: string,
   sourceName: string,
   style: LayerWithStyle,
@@ -282,14 +279,14 @@ export const addLayerStyle = (
       ...(zoomFilter && {
         filter: ["all", style.filter || ["==", true, true], [">=", ["zoom"], zoomFilter]]
       })
-    } as mapboxgl.LayerSpecification,
+    } as LayerSpecification,
     beforeLayer
   );
   moveDeleteLayers(map);
 };
 
 export const addSourcesToLayers = (
-  map: mapboxgl.Map,
+  map: MapboxMap,
   polygonsData: Record<string, string[]> | undefined,
   centroids: DashboardGetProjectsData[] | undefined,
   zoomFilter?: number | undefined,
@@ -312,7 +309,7 @@ export const addSourcesToLayers = (
 };
 
 export const addPolygonCentroidsLayer = (
-  map: mapboxgl.Map,
+  map: MapboxMap,
   centroids: { uuid: string; long: number; lat: number }[],
   zoomFilterValue?: number
 ) => {
@@ -354,9 +351,7 @@ export const addPolygonCentroidsLayer = (
     map.addImage("pulsing-dot-centroids", pulsingDot, { pixelRatio: 4 });
     map.addSource(layerName, { type: "geojson", data: { type: "FeatureCollection", features } });
 
-    const filter = (
-      zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0]
-    ) as mapboxgl.FilterSpecification;
+    const filter = (zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0]) as FilterSpecification;
     map.addLayer({
       id: layerName,
       type: "symbol",

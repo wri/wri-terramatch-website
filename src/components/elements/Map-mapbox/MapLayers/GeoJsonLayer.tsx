@@ -17,7 +17,7 @@ export const GeoJSONLayer = ({ geojson }: GeoJSONLayerProps) => {
       if (!map || !draw || !geojson) return;
 
       draw?.set(geojson);
-      map.fitBounds(bbox(geojson) as LngLatBoundsLike, { padding: 50, animate: false });
+      map.fitBounds(bbox(geojson) as unknown as LngLatBoundsLike, { padding: 50, animate: false });
     } catch (e) {
       Log.error("invalid geoJSON", e);
     }

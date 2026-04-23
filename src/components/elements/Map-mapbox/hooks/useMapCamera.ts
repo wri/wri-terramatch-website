@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect, useRef } from "react";
 
 import { zoomToBbox, zoomToCenter } from "../adapters/camera";
@@ -6,7 +6,7 @@ import { BBox } from "../GeoJSON";
 import { PolygonFromMapState } from "../Map.d";
 
 type UseMapCameraParams = {
-  map: MutableRefObject<mapboxgl.Map | null>;
+  map: MutableRefObject<MapboxMap | null>;
   bbox?: BBox;
   center?: [number, number];
   zoom?: number;
