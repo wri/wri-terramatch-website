@@ -46,12 +46,12 @@ const Navbar: FC<NavbarProps> = ({
             <Button
               key={index}
               variant="borderless"
-              className={`!text-white ${
-                link.isActive ? "!bg-theme-primary-500/20 !opacity-100" : "opacity-80 hover:opacity-100"
-              }`}
+              className={`!text-white ${link.isActive ? "!opacity-100" : "opacity-100 hover:opacity-100"}`}
               onClick={link.onClick}
             >
-              <span className={`text-white ${link.isActive ? "" : ""}`}>{link.label}</span>
+              <span className={` ${link.isActive ? "font-bold text-theme-primary-300" : "text-theme-neutral-100"}`}>
+                {link.label}
+              </span>
             </Button>
           ))}
         </Flex>

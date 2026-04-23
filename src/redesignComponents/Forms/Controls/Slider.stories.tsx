@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Slider } from "@worldresources/wri-design-systems";
 import { useState } from "react";
+
+import Slider from "./Slider";
 
 const meta: Meta<typeof Slider> = {
   title: "Redesign Components/Forms/Controls/Slider",
