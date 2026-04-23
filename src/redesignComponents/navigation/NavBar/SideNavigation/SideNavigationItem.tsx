@@ -138,7 +138,7 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
       className={classNames(
         "h-9 w-full items-center justify-between gap-2",
         "rounded-md border-2 border-theme-primary-800 px-3 py-2 text-theme-neutral-100",
-        "hover:bg-theme-primary-500-40"
+        "hover:bg-theme-primary-500/40"
       )}
     >
       {itemMainContent}
@@ -159,7 +159,7 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
       className={classNames(
         "h-9 w-full items-center justify-between gap-2",
         "rounded-md border-2 border-theme-primary-800 px-3 py-2 text-theme-neutral-100",
-        "hover:bg-theme-primary-500-40",
+        "hover:bg-theme-primary-500/40",
         "focus-within:border-theme-neutral-100 focus-within:ring-2 focus-within:ring-theme-primary-800"
       )}
     >
@@ -190,7 +190,7 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
                     className={classNames(
                       "w-full items-center justify-between gap-2 rounded-md border-2 border-transparent p-1",
                       "focus-within:border-theme-neutral-100 focus-within:ring-2 focus-within:ring-theme-primary-800",
-                      "hover:bg-theme-primary-500-40"
+                      "hover:bg-theme-primary-500/40"
                     )}
                     color="neutral.100"
                   >
