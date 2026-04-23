@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { ResizableSplitView } from "./index";
+import ResizableSplitView from "./index";
 
 const meta = {
   title: "Redesign Components/Containers/ResizableSplitView",
