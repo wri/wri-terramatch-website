@@ -677,12 +677,13 @@ export type UserFramework = {
   slug: string;
 };
 
-export type UserProjectAffiliation = {
+export type UserMonitoringPartnerProjectEmbedded = {
   /**
    * @format uuid
    */
   uuid: string;
   name: string;
+  lightResource: true;
 };
 
 export type UserDto = {
@@ -725,10 +726,7 @@ export type UserDto = {
   locale: string | null;
   frameworks: UserFramework[];
   directFrameworks: UserFramework[];
-  /**
-   * Admin UI only: resolved from JSON:API `relationships.monitoringPartnerProjects` + included `projects`.
-   */
-  monitoringPartnerProjects?: UserProjectAffiliation[];
+  monitoringPartnerProjects?: UserMonitoringPartnerProjectEmbedded[];
 };
 
 export type OrganisationCreateAttributes = {

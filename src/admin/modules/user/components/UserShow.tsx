@@ -10,15 +10,32 @@ import {
 } from "react-admin";
 import type { To } from "react-router-dom";
 
-import { userShowMonitoringProjectRows } from "@/admin/apiProvider/dataProviders/userDtoProjectAffiliations";
 import ShowActions from "@/admin/components/Actions/ShowActions";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
-import { UserDto, UserFramework } from "@/generated/v3/userService/userServiceSchemas";
+import {
+  UserDto,
+  UserFramework,
+  UserMonitoringPartnerProjectEmbedded
+} from "@/generated/v3/userService/userServiceSchemas";
 
 import { UserShowAside } from "./UserShowAside";
 
 type UserShowRecord = UserDto & { id: string };
+
+type MonitoringPartnerProjectTableRow = Pick<UserMonitoringPartnerProjectEmbedded, "uuid" | "name">;
+
+function userShowMonitoringProjectRows(record: UserDto | undefined): MonitoringPartnerProjectTableRow[] {
+  const raw = record?.monitoringPartnerProjects;
+  if (!Array.isArray(raw)) return [];
+
+  const out: MonitoringPartnerProjectTableRow[] = [];
+  for (const item of raw) {
+    if (item?.uuid == null || item.name == null) continue;
+    out.push({ uuid: item.uuid, name: item.name });
+  }
+  return out;
+}
 
 const MonitoringPartnerProjectsTable = ({ title }: { title: string }) => {
   const { isLoading: ctxLoading, record } = useShowContext<UserShowRecord>();
@@ -26,7 +43,7 @@ const MonitoringPartnerProjectsTable = ({ title }: { title: string }) => {
 
   if (ctxLoading || record == null) return null;
 
-  const projects = userShowMonitoringProjectRows(record as Record<string, unknown>);
+  const projects = userShowMonitoringProjectRows(record);
   if (projects.length === 0) return null;
 
   return (
