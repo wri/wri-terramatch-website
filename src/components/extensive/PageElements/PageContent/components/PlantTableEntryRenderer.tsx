@@ -54,7 +54,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
         totalItems={plants.length}
         showItemCount={false}
         className={classNames(
-          "mt-[2px] !w-[725px] mobile:!w-full",
+          "mt-[0.125rem] !w-[45.3125rem] mobile:!w-full",
           plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
         )}
       />
@@ -75,7 +75,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
         showItemCount={false}
         pageSize={NO_COUNT_TABLE_SPECIES_PER_PAGE}
         showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
-        className={classNames("mt-[2px]", dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3")}
+        className={classNames("mt-[0.125rem]", dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3")}
         renderRow={rowData => {
           const row = rowData as Record<number, string> & { id: number };
           return (
