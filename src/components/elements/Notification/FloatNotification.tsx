@@ -6,9 +6,9 @@ import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
+import { pruneSitePolygonsCache } from "@/connections/SitePolygons";
 import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import ApiSlice from "@/store/apiSlice";
 import { getErrorMessageFromPayload } from "@/utils/errors";
 
 import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBar";
@@ -151,8 +151,7 @@ const FloatNotification = () => {
 
           if (job.status === "succeeded") {
             // Prune cache for sitePolygons since indicators are related to polygons
-            ApiSlice.pruneCache("sitePolygons");
-            ApiSlice.pruneIndex("sitePolygons", "");
+            pruneSitePolygonsCache();
           }
         }
       }

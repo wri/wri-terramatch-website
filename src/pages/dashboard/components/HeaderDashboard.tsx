@@ -1,9 +1,8 @@
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { T, useT } from "@transifex/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { When } from "react-if";
 
 import { Choice } from "@/admin/types/common";
 import Button from "@/components/elements/Button/Button";
@@ -269,18 +268,18 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
   const getHeaderTitle = () => {
     if (isProjectInsightsPage) {
-      return <T _str="Project Insights" _tags="dash" />;
+      return t("Project Insights");
     }
     if (isProjectListPage) {
-      return <T _str="Project List" _tags="dash" />;
+      return t("Project List");
     }
     if (isHomepage) {
-      return <T _str="Learn More" _tags="dash" />;
+      return t("Learn More");
     }
     if (isImpactStoryPage) {
-      return <T _str="Impact Story" _tags="dash" />;
+      return t("Impact Story");
     }
-    return <T _str="TerraMatch Dashboards" _tags="dash" />;
+    return t("TerraMatch Dashboards");
   };
 
   const isValidDate = (value: string | undefined): boolean => {
@@ -300,7 +299,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           className="relative w-full whitespace-nowrap text-white"
         >
           {getHeaderTitle()}
-          <When condition={isProjectInsightsPage}>
+          {isProjectInsightsPage && (
             <ToolTip
               title={""}
               content={t(PROJECT_INSIGHTS_SECTION_TOOLTIP)}
@@ -311,274 +310,276 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
             >
               <Icon name={IconNames.INFO_CIRCLE} className="h-3.5 w-3.5 text-white lg:h-5 lg:w-5" />
             </ToolTip>
-          </When>
+          )}
           <Text variant={isMobile ? "text-16" : "text-18"} as={"span"} className="absolute top-1 text-white lg:top-2">
             &nbsp;&nbsp;{t("BETA")}
           </Text>
         </Text>
-        <When condition={!isHomepage}>
+        {!isHomepage && (
           <Text variant="text-16" className="absolute top-3 right-3 text-white">
             {t("Last Updated on {date}", {
               date: isValidDate(lastUpdatedAt) ? new Date(String(lastUpdatedAt))?.toISOString().split("T")[0] : ""
             })}
           </Text>
-        </When>
-        <When condition={!isProjectInsightsPage && !isHomepage}>
-          <div className="hidden w-full items-center gap-2 mobile:flex">
-            <When condition={router.pathname !== "/dashboard"}>
-              <BlurContainer className="hidden lg:min-w-[287px] mobile:block">
-                <FilterSearchBox
-                  onChange={e => setSearchTerm(e)}
-                  placeholder="Search"
-                  variant={FILTER_SEARCH_BOX_AIRTABLE}
-                  value={searchTerm}
-                />
-              </BlurContainer>
-            </When>
-            <When condition={!isImpactStoryPage}>
-              <BlurContainer
-                className={classNames("flex min-w-0 items-center justify-center", {
-                  "h-10 max-h-10 w-10 flex-none": router.pathname !== "/dashboard"
-                })}
-              >
+        )}
+        {!isProjectInsightsPage && !isHomepage && (
+          <>
+            <div className="hidden w-full items-center gap-2 mobile:flex">
+              {router.pathname !== "/dashboard" && (
+                <BlurContainer className="hidden lg:min-w-[287px] mobile:block">
+                  <FilterSearchBox
+                    onChange={e => setSearchTerm(e)}
+                    placeholder="Search"
+                    variant={FILTER_SEARCH_BOX_AIRTABLE}
+                    value={searchTerm}
+                  />
+                </BlurContainer>
+              )}
+              {!isImpactStoryPage && (
+                <BlurContainer
+                  className={classNames("flex min-w-0 items-center justify-center", {
+                    "h-10 max-h-10 w-10 flex-none": router.pathname !== "/dashboard"
+                  })}
+                >
+                  <button
+                    onClick={() => {
+                      setIsFiltersOpen(true);
+                    }}
+                    className={classNames("relative z-[4] flex w-full items-center justify-center gap-2 py-2")}
+                  >
+                    <Icon name={IconNames.FILTER} className="h-3 w-3 text-white" />
+                    {(router.pathname === "/dashboard" || isProjectInsightsPage) && (
+                      <Text variant="text-14-bold" className="text-white">
+                        Filters
+                      </Text>
+                    )}
+                  </button>
+                </BlurContainer>
+              )}
+            </div>
+            <div
+              className={classNames(
+                "flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:flex-col mobile:bg-white",
+                {
+                  "mobile:top-[60px] mobile:h-[calc(100vh-60px)]": isFiltersOpen,
+                  "mobile:-top-full": !isFiltersOpen
+                }
+              )}
+            >
+              <div className="hidden w-full items-center justify-center py-4 mobile:flex">
+                <Text variant={"text-16-bold"} className="text-black">
+                  Filters
+                </Text>
                 <button
                   onClick={() => {
-                    setIsFiltersOpen(true);
+                    setIsFiltersOpen(false);
                   }}
-                  className={classNames("relative z-[4] flex w-full items-center justify-center gap-2 py-2")}
                 >
-                  <Icon name={IconNames.FILTER} className="h-3 w-3 text-white" />
-                  <When condition={router.pathname === "/dashboard" || isProjectInsightsPage}>
-                    <Text variant="text-14-bold" className="text-white">
-                      Filters
-                    </Text>
-                  </When>
+                  <Icon name={IconNames.CLEAR} className="absolute right-0 mr-2 h-4 w-4 text-black" />
                 </button>
-              </BlurContainer>
-            </When>
-          </div>
-          <div
-            className={classNames(
-              "flexl-col flex w-full max-w-full items-start gap-3 overflow-x-clip overflow-y-visible transition-all duration-300 small:items-center mobile:absolute mobile:left-0 mobile:z-30 mobile:flex-col mobile:bg-white",
-              {
-                "mobile:top-[60px] mobile:h-[calc(100vh-60px)]": isFiltersOpen,
-                "mobile:-top-full": !isFiltersOpen
-              }
-            )}
-          >
-            <div className="hidden w-full items-center justify-center py-4 mobile:flex">
-              <Text variant={"text-16-bold"} className="text-black">
-                Filters
-              </Text>
-              <button
-                onClick={() => {
-                  setIsFiltersOpen(false);
-                }}
-              >
-                <Icon name={IconNames.CLEAR} className="absolute right-0 mr-2 h-4 w-4 text-black" />
-              </button>
-            </div>
-            <div className="flex max-w-[90%] flex-wrap items-center gap-3 small:flex-nowrap mobile:w-full mobile:max-w-full mobile:flex-col">
-              <ResponsiveDropdownContainer
-                className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]"
-                disabled={isProjectPage}
-                isMobile={isMobile}
-                showClear
-                showSelectAll
-                showLabelAsMultiple
-                multiSelect
-                prefix={
-                  <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
-                    {isMobile ? t("Landscape") : t("Landscape:")}
-                  </Text>
-                }
-                inputVariant="text-14-semibold"
-                variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
-                placeholder={t("All Data")}
-                multipleText={t("Multiple Landscapes")}
-                value={filters.landscapes}
-                onChange={value => {
-                  handleChange("landscapes", value);
-                }}
-                onClear={() => {
-                  handleChange("landscapes", []);
-                }}
-                options={LANDSCAPE_OPTIONS}
-                optionClassName="hover:bg-grey-200"
-                containerClassName="z-[4] w-full"
-              />
-              <ResponsiveDropdownContainer
-                key={`country-${filters.country?.id || "empty"}-${valueForCountry.join("-")}`}
-                className="min-w-[175px] lg:min-w-[195px] wide:min-w-[215px]"
-                disabled={isProjectPage}
-                isMobile={isMobile}
-                showClear
-                prefix={
-                  <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
-                    {isMobile ? t("Country") : t("Country:")}
-                  </Text>
-                }
-                inputVariant="text-14-semibold"
-                variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
-                placeholder={t("All Data")}
-                value={valueForCountry}
-                onChange={value => {
-                  handleChangeCountry(value);
-                }}
-                onClear={() => {
-                  setSelectedCountry(undefined);
-                  setFilters(prevValues => ({
-                    ...prevValues,
-                    uuid: "",
-                    country: {
-                      country_slug: "",
-                      id: 0,
-                      data: {
-                        label: "",
-                        icon: ""
-                      }
-                    }
-                  }));
-                }}
-                options={activeCountries.map((country: CountriesProps) => ({
-                  title: country.data.label,
-                  value: country.id,
-                  prefix: (
-                    <img src={country.data.icon} alt="flag" className="h-4 w-[26.5px] min-w-[26.5px] object-cover" />
-                  )
-                }))}
-                optionClassName="hover:bg-grey-200"
-                containerClassName="z-[3] w-full"
-              />
-              <ResponsiveDropdownContainer
-                className="min-w-[242px] lg:min-w-[272px] wide:min-w-[292px]"
-                disabled={isProjectPage}
-                isMobile={isMobile}
-                showSelectAll
-                showLabelAsMultiple
-                showClear
-                prefix={
-                  <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
-                    {isMobile ? t("Organization Type") : t("Organization Type:")}
-                  </Text>
-                }
-                inputVariant="text-14-semibold"
-                multiSelect
-                variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
-                placeholder={t("All Data")}
-                multipleText={t("Multiple Organizations Types")}
-                value={filters.organizations}
-                onChange={value => {
-                  handleChange("organizations", value);
-                }}
-                onClear={() => {
-                  handleChange("organizations", []);
-                }}
-                options={organizationOptions}
-                optionClassName="hover:bg-grey-200"
-                containerClassName="z-[2] w-full"
-              />
-              <ResponsiveDropdownContainer
-                key={`cohort-${filters.cohort.join("-") || "empty"}`}
-                className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]"
-                disabled={isProjectPage}
-                isMobile={isMobile}
-                showSelectAll
-                showLabelAsMultiple
-                showClear
-                prefix={
-                  <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
-                    {isMobile ? t("Cohort") : t("Cohort:")}
-                  </Text>
-                }
-                inputVariant="text-14-semibold"
-                multiSelect
-                variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
-                placeholder={t("All Data")}
-                multipleText={t("Multiple Cohorts")}
-                value={valueForCohort}
-                onChange={(value: OptionValue[]) => {
-                  handleChange("cohort", value);
-                }}
-                onClear={() => {
-                  handleChange("cohort", []);
-                }}
-                options={optionsCohort}
-                optionClassName="hover:bg-grey-200"
-                containerClassName="z-[5] w-full"
-              />
-            </div>
-            <div className="flex h-full w-auto flex-col items-start justify-between gap-3 lg:min-w-[287px] small:w-[-webkit-fill-available] small:flex-row small:items-center mobile:w-full mobile:justify-end mobile:p-4">
-              <When condition={isMobile}>
-                <Button variant="primary" fullWidth onClick={resetValues} disabled={isProjectPage}>
-                  {t("Clear Filters")}
-                </Button>
-              </When>
-              <When condition={!isMobile}>
-                <button
-                  className="text-14-semibold min-h-10 whitespace-nowrap p-1 text-white disabled:opacity-70"
-                  onClick={resetValues}
+              </div>
+              <div className="flex max-w-[90%] flex-wrap items-center gap-3 small:flex-nowrap mobile:w-full mobile:max-w-full mobile:flex-col">
+                <ResponsiveDropdownContainer
+                  className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]"
                   disabled={isProjectPage}
-                >
-                  {t("Clear Filters")}
-                </button>
-              </When>
-              <When condition={isProjectListPage}>
-                <Menu
-                  classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit max-h-[252px]"
-                  menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
-                  disabled={searchTerm.length < 3 || !optionMenu.length}
-                  isDefaultOpen={true}
-                  menu={optionMenu.map((option: DashboardProjectsLightDto, index: number) => ({
-                    id: String(index),
-                    render: () => (
-                      <span
-                        className="leading-[normal] tracking-[normal]"
-                        onClick={async () => {
-                          showLoader();
-                          setFilters(prevValues => ({
-                            ...prevValues,
-                            uuid: option.uuid,
-                            country:
-                              activeCountries?.find(country => country.country_slug === option.country) ||
-                              prevValues.country
-                          }));
-                          router.push({
-                            pathname: "/dashboard",
-                            query: {
-                              ...filters,
-                              country: option.country ?? "",
-                              uuid: option.uuid
-                            }
-                          });
-                          hideLoader();
-                        }}
-                      >
-                        <Text variant="text-12-semibold" className="text-darkCustom" as="span">
-                          {t(option.country ?? "")},&nbsp;{t(option.organisationName ?? "")},&nbsp;
-                        </Text>
-                        <Text variant="text-12-light" className="text-darkCustom" as="span">
-                          {t(option.name ?? "")},&nbsp;{t(option.frameworkKey ?? "")}
-                        </Text>
-                      </span>
+                  isMobile={isMobile}
+                  showClear
+                  showSelectAll
+                  showLabelAsMultiple
+                  multiSelect
+                  prefix={
+                    <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
+                      {isMobile ? t("Landscape") : t("Landscape:")}
+                    </Text>
+                  }
+                  inputVariant="text-14-semibold"
+                  variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
+                  placeholder={t("All Data")}
+                  multipleText={t("Multiple Landscapes")}
+                  value={filters.landscapes}
+                  onChange={value => {
+                    handleChange("landscapes", value);
+                  }}
+                  onClear={() => {
+                    handleChange("landscapes", []);
+                  }}
+                  options={LANDSCAPE_OPTIONS}
+                  optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[4] w-full"
+                />
+                <ResponsiveDropdownContainer
+                  key={`country-${filters.country?.id || "empty"}-${valueForCountry.join("-")}`}
+                  className="min-w-[175px] lg:min-w-[195px] wide:min-w-[215px]"
+                  disabled={isProjectPage}
+                  isMobile={isMobile}
+                  showClear
+                  prefix={
+                    <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
+                      {isMobile ? t("Country") : t("Country:")}
+                    </Text>
+                  }
+                  inputVariant="text-14-semibold"
+                  variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
+                  placeholder={t("All Data")}
+                  value={valueForCountry}
+                  onChange={value => {
+                    handleChangeCountry(value);
+                  }}
+                  onClear={() => {
+                    setSelectedCountry(undefined);
+                    setFilters(prevValues => ({
+                      ...prevValues,
+                      uuid: "",
+                      country: {
+                        country_slug: "",
+                        id: 0,
+                        data: {
+                          label: "",
+                          icon: ""
+                        }
+                      }
+                    }));
+                  }}
+                  options={activeCountries.map((country: CountriesProps) => ({
+                    title: country.data.label,
+                    value: country.id,
+                    prefix: (
+                      <img src={country.data.icon} alt="flag" className="h-4 w-[26.5px] min-w-[26.5px] object-cover" />
                     )
                   }))}
-                >
-                  <When condition={!isMobile}>
-                    <BlurContainer className="lg:min-w-[287px]">
-                      <FilterSearchBox
-                        onChange={e => setSearchTerm(e)}
-                        placeholder="Search"
-                        variant={FILTER_SEARCH_BOX_AIRTABLE}
-                        value={searchTerm}
-                      />
-                    </BlurContainer>
-                  </When>
-                </Menu>
-              </When>
+                  optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[3] w-full"
+                />
+                <ResponsiveDropdownContainer
+                  className="min-w-[242px] lg:min-w-[272px] wide:min-w-[292px]"
+                  disabled={isProjectPage}
+                  isMobile={isMobile}
+                  showSelectAll
+                  showLabelAsMultiple
+                  showClear
+                  prefix={
+                    <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
+                      {isMobile ? t("Organization Type") : t("Organization Type:")}
+                    </Text>
+                  }
+                  inputVariant="text-14-semibold"
+                  multiSelect
+                  variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
+                  placeholder={t("All Data")}
+                  multipleText={t("Multiple Organizations Types")}
+                  value={filters.organizations}
+                  onChange={value => {
+                    handleChange("organizations", value);
+                  }}
+                  onClear={() => {
+                    handleChange("organizations", []);
+                  }}
+                  options={organizationOptions}
+                  optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[2] w-full"
+                />
+                <ResponsiveDropdownContainer
+                  key={`cohort-${filters.cohort.join("-") || "empty"}`}
+                  className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]"
+                  disabled={isProjectPage}
+                  isMobile={isMobile}
+                  showSelectAll
+                  showLabelAsMultiple
+                  showClear
+                  prefix={
+                    <Text variant={isMobile ? "text-14-semibold" : "text-14-light"}>
+                      {isMobile ? t("Cohort") : t("Cohort:")}
+                    </Text>
+                  }
+                  inputVariant="text-14-semibold"
+                  multiSelect
+                  variant={isMobile ? VARIANT_DROPDOWN_COLLAPSE : VARIANT_DROPDOWN_HEADER}
+                  placeholder={t("All Data")}
+                  multipleText={t("Multiple Cohorts")}
+                  value={valueForCohort}
+                  onChange={(value: OptionValue[]) => {
+                    handleChange("cohort", value);
+                  }}
+                  onClear={() => {
+                    handleChange("cohort", []);
+                  }}
+                  options={optionsCohort}
+                  optionClassName="hover:bg-grey-200"
+                  containerClassName="z-[5] w-full"
+                />
+              </div>
+              <div className="flex h-full w-auto flex-col items-start justify-between gap-3 lg:min-w-[287px] small:w-[-webkit-fill-available] small:flex-row small:items-center mobile:w-full mobile:justify-end mobile:p-4">
+                {isMobile && (
+                  <Button variant="primary" fullWidth onClick={resetValues} disabled={isProjectPage}>
+                    {t("Clear Filters")}
+                  </Button>
+                )}
+                {!isMobile && (
+                  <button
+                    className="text-14-semibold min-h-10 whitespace-nowrap p-1 text-white disabled:opacity-70"
+                    onClick={resetValues}
+                    disabled={isProjectPage}
+                  >
+                    {t("Clear Filters")}
+                  </button>
+                )}
+                {isProjectListPage && (
+                  <Menu
+                    classNameContentMenu="max-w-[196px] lg:max-w-[287px] w-inherit max-h-[252px]"
+                    menuItemVariant={MENU_ITEM_VARIANT_SEARCH}
+                    disabled={searchTerm.length < 3 || !optionMenu.length}
+                    isDefaultOpen={true}
+                    menu={optionMenu.map((option: DashboardProjectsLightDto, index: number) => ({
+                      id: String(index),
+                      render: () => (
+                        <span
+                          className="leading-[normal] tracking-[normal]"
+                          onClick={async () => {
+                            showLoader();
+                            setFilters(prevValues => ({
+                              ...prevValues,
+                              uuid: option.uuid,
+                              country:
+                                activeCountries?.find(country => country.country_slug === option.country) ||
+                                prevValues.country
+                            }));
+                            router.push({
+                              pathname: "/dashboard",
+                              query: {
+                                ...filters,
+                                country: option.country ?? "",
+                                uuid: option.uuid
+                              }
+                            });
+                            hideLoader();
+                          }}
+                        >
+                          <Text variant="text-12-semibold" className="text-darkCustom" as="span">
+                            {t(option.country ?? "")},&nbsp;{t(option.organisationName ?? "")},&nbsp;
+                          </Text>
+                          <Text variant="text-12-light" className="text-darkCustom" as="span">
+                            {t(option.name ?? "")},&nbsp;{t(option.frameworkKey ?? "")}
+                          </Text>
+                        </span>
+                      )
+                    }))}
+                  >
+                    {!isMobile && (
+                      <BlurContainer className="lg:min-w-[287px]">
+                        <FilterSearchBox
+                          onChange={e => setSearchTerm(e)}
+                          placeholder="Search"
+                          variant={FILTER_SEARCH_BOX_AIRTABLE}
+                          value={searchTerm}
+                        />
+                      </BlurContainer>
+                    )}
+                  </Menu>
+                )}
+              </div>
             </div>
-          </div>
-        </When>
+          </>
+        )}
       </div>
     </header>
   );

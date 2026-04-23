@@ -1,6 +1,6 @@
 import MapboxDraw, { MapboxDrawOptions } from "@mapbox/mapbox-gl-draw";
 import classNames from "classnames";
-import mapboxgl, { EventData, Map, MapboxEvent, MapboxOptions } from "mapbox-gl";
+import mapboxgl, { MapboxOptions } from "mapbox-gl";
 import {
   createContext,
   DetailedHTMLProps,
@@ -12,7 +12,7 @@ import {
   useState
 } from "react";
 interface IMapContext {
-  map?: Map;
+  map?: mapboxgl.Map;
   draw?: MapboxDraw;
 }
 
@@ -21,11 +21,11 @@ export const MapContext = createContext<IMapContext>({
   draw: undefined
 });
 
-interface AuthProviderProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+interface MapProviderProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   mapOptions?: Omit<MapboxOptions, "container">;
   drawOptions?: MapboxDrawOptions;
-  onLoadMap?: (map: Map, draw?: MapboxDraw) => void;
-  onDrawSet?: (featureCollection: GeoJSON.FeatureCollection, map: Map, draw?: MapboxDraw) => void;
+  onLoadMap?: (map: mapboxgl.Map, draw?: MapboxDraw) => void;
+  onDrawSet?: (featureCollection: GeoJSON.FeatureCollection, map: mapboxgl.Map, draw?: MapboxDraw) => void;
   initialState?: { geoJson?: any };
 }
 
@@ -37,13 +37,13 @@ const MapProvider = ({
   onDrawSet,
   initialState,
   ...containerProps
-}: PropsWithChildren<AuthProviderProps>) => {
+}: PropsWithChildren<MapProviderProps>) => {
   const mapId = useId();
-  const [map, setMap] = useState<Map>();
+  const [map, setMap] = useState<mapboxgl.Map>();
   const [draw, setDraw] = useState<any>();
 
   useEffect(() => {
-    let onLoadListener: (ev: MapboxEvent & EventData) => void;
+    let onLoadListener: (() => void) | undefined;
 
     if (!map || !draw) {
       const map = new mapboxgl.Map({ ...mapOptions, container: mapId });
@@ -65,7 +65,9 @@ const MapProvider = ({
     }
 
     return () => {
-      map?.off("load", onLoadListener);
+      if (map != null && onLoadListener != null) {
+        map.off("load", onLoadListener);
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

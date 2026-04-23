@@ -15,7 +15,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { loadAnrPlotGeometryGeoJson, useAnrPlotGeometry } from "@/connections/AnrPlotGeometry";
 import { usePolygonValidation } from "@/connections/Validation";
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
-import { useMapAreaContext } from "@/context/mapArea.provider";
+import { isMapAreaSiteFullDto, useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnUnmount } from "@/hooks/useOnMount";
@@ -59,6 +59,9 @@ const MapEditPolygonPanel = ({
     setHasOverlaps,
     shouldRefetchValidation
   } = useMapAreaContext();
+  const siteFull = isMapAreaSiteFullDto(siteData) ? siteData : undefined;
+  const projectDisplayName = siteFull?.projectName ?? "-";
+  const siteDisplayName = siteFull?.name ?? "-";
   const { onCancel } = mapFunctions;
   const handleClose = () => {
     setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" });
@@ -193,10 +196,10 @@ const MapEditPolygonPanel = ({
       <div className="flex items-start justify-between gap-4">
         <div>
           <Text variant="text-12-light" className="text-white ">
-            {siteData?.project?.name ?? "-"}
+            {projectDisplayName}
           </Text>
           <Text variant="text-20-bold" className="mb-4 text-white">
-            {siteData?.name ?? "-"}
+            {siteDisplayName}
           </Text>
         </div>
 

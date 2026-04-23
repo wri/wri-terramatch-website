@@ -3,7 +3,7 @@ export type GeoJsonGeometryTypes = Geometry["type"];
 
 export type GeoJsonTypes = GeoJSON["type"];
 
-export type BBox = [number, number, number, number];
+export type BBox = [number, number, number, number] | [number, number, number, number, number, number];
 
 export type Position = number[];
 

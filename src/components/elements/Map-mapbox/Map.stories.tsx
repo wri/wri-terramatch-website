@@ -8,8 +8,11 @@ import ToastProvider from "@/context/toast.provider";
 import Log from "@/utils/log";
 
 import Component from "./Map";
-import sample from "./sample.json";
-import sample2 from "./sample-2.json";
+import sampleRaw from "./sample.json";
+import sample2Raw from "./sample-2.json";
+
+const sample = sampleRaw as unknown as GeoJSON.FeatureCollection;
+const sample2 = sample2Raw as unknown as GeoJSON.FeatureCollection;
 
 const meta: Meta<typeof Component> = {
   title: "Components/Elements/Mapbox",
