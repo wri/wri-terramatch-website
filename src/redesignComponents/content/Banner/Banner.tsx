@@ -1,4 +1,5 @@
 import { Box } from "@chakra-ui/react";
+import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Link from "next/link";
@@ -34,6 +35,8 @@ export interface BannerProps {
 
 const Banner: FC<BannerProps> = ({ breadcrumbs, suffix, toolbar, className, children }) => {
   const t = useT();
+  const isMobile = useMediaQuery("(max-width: 1200px)");
+  const maxLabelLength = isMobile ? 15 : 25;
   const breadcrumbsWithTranslatedLabels = breadcrumbs.map(link => {
     return {
       label: link.label != null ? t(link.label) : "",
@@ -51,17 +54,26 @@ const Banner: FC<BannerProps> = ({ breadcrumbs, suffix, toolbar, className, chil
         <ToolbarObject
           breadcrumbs={{
             links: breadcrumbsWithTranslatedLabels.map(link => ({
-              label: (link.label ?? "").length > 25 ? `${(link.label ?? "").slice(0, 25)}...` : link.label ?? "",
+              label:
+                (link.label ?? "").length > maxLabelLength
+                  ? `${(link.label ?? "").slice(0, maxLabelLength)}...`
+                  : link.label ?? "",
               link: link.link,
               icon: link.icon
             })),
             linkRouter: NextLinkAdapter
           }}
           suffix={suffix}
+          className=" gap-3 mobile:flex-col mobile:items-start"
+          classNameSuffix="mobile:w-full mobile:flex mobile:justify-end"
         />
       </Box>
       {children}
-      <Box borderBottom="4px solid" borderColor="neutral.200" className="sticky top-[45px] z-20 px-0.5">
+      <Box
+        borderBottom="4px solid"
+        borderColor="neutral.200"
+        className="sticky top-[45px] z-20 px-0.5 mobile:top-[81px]"
+      >
         <ViewToolbar tabBar={toolbar.tabBar} />
       </Box>
     </>
