@@ -22,18 +22,15 @@ type TopProps = {
 
 type BottomProps = {};
 
-type ResizableSplitViewComponentType = FC<ResizableSplitViewProps> & {
+type ResizableSplitViewComponent = FC<ResizableSplitViewProps> & {
   Top: FC<PropsWithChildren<TopProps>>;
   Bottom: FC<PropsWithChildren<BottomProps>>;
 };
 
-export const ResizableSplitView: FC<ResizableSplitViewProps> & {
-  Top: FC<PropsWithChildren<TopProps>>;
-  Bottom: FC<PropsWithChildren<BottomProps>>;
-} = (({ children, initialTopHeight = 60, min = 30, max = 85 }) => {
+const ResizableSplitView = (({ children, initialTopHeight = 60, min = 30, max = 85 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [topHeight, setTopHeight] = useState<number>(initialTopHeight);
-  const isDragging = useRef<boolean>(false);
+  const isDragging = useRef(false);
 
   const handleMouseDown = useCallback(() => {
     isDragging.current = true;
@@ -50,7 +47,7 @@ export const ResizableSplitView: FC<ResizableSplitViewProps> & {
         setTopHeight(newHeight);
       }
     },
-    [max, min]
+    [min, max]
   );
 
   const handleMouseUp = useCallback(() => {
@@ -72,7 +69,7 @@ export const ResizableSplitView: FC<ResizableSplitViewProps> & {
       })}
     </Box>
   );
-}) as ResizableSplitViewComponentType;
+}) as ResizableSplitViewComponent;
 
 ResizableSplitView.Top = function Top({ height, children, onMouseDown }: PropsWithChildren<TopProps>) {
   return (
@@ -86,7 +83,6 @@ ResizableSplitView.Top = function Top({ height, children, onMouseDown }: PropsWi
           h="0px"
           border="1px dashed"
           borderColor="primary.800"
-          zIndex={1}
           top="50%"
           transform="translateY(-50%)"
         />
@@ -99,7 +95,6 @@ ResizableSplitView.Top = function Top({ height, children, onMouseDown }: PropsWi
           top="50%"
           left="50%"
           transform="translate(-50%, -50%)"
-          zIndex={2}
           display="flex"
           alignItems="center"
           justifyContent="center"
@@ -111,8 +106,8 @@ ResizableSplitView.Top = function Top({ height, children, onMouseDown }: PropsWi
           transition="transform 0.2s"
         >
           <Box
-            height={10}
-            width={10}
+            h={10}
+            w={10}
             shadow="md"
             bg="neutral.100"
             border="1px solid"
@@ -137,3 +132,5 @@ ResizableSplitView.Bottom = function Bottom({ children }: PropsWithChildren<Bott
     </Box>
   );
 };
+
+export default ResizableSplitView;
