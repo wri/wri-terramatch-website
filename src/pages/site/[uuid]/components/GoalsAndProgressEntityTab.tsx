@@ -19,7 +19,9 @@ import {
   TOOLTIP_TREES_PLANTED_PROJECT,
   TOOLTIP_TREES_PLANTED_SITE,
   TOOLTIP_TREES_REGENERATING_PROJECT,
-  TOOLTIP_TREES_REGENERATING_SITE
+  TOOLTIP_TREES_REGENERATING_SITE,
+  TOOLTIP_TREES_REPLANTING_PROJECT,
+  TOOLTIP_TREES_REPLANTING_SITE
 } from "./constants";
 
 interface GoalsAndProgressEntityTabProps {
@@ -291,11 +293,12 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             tooltipContent: project ? TOOLTIP_TREES_REGENERATING_PROJECT : TOOLTIP_TREES_REGENERATING_SITE
           },
           {
-            iconName: IconNames.LEAF_PLANTED_CIRCLE,
+            iconName: IconNames.TREE_CIRCLE_PD,
             label: t("Trees Replanted:"),
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
-            value: totalCountReplanting
+            value: totalCountReplanting,
+            tooltipContent: project ? TOOLTIP_TREES_REPLANTING_PROJECT : TOOLTIP_TREES_REPLANTING_SITE
           }
         ]}
         className="pr-[41px] lg:pr-[150px] mobile:w-[400px] mobile:!pr-0"
