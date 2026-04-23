@@ -1,4 +1,4 @@
-export type TextBadgeVariant = "primary" | "secondary";
+export type TextBadgeVariant = "primary" | "secondary" | "error";
 
 export interface TextBadgeProps {
   children: React.ReactNode;
