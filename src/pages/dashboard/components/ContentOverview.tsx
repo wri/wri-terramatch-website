@@ -10,9 +10,10 @@ import { DashboardMapLegend } from "@/components/dashboard/DashboardMapLegend";
 import { buildImpactStoriesModalColumns, ImpactStoryModalRow } from "@/components/dashboard/impactStoriesModalColumns";
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
-import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { DashboardGetProjectsData, MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
+import { buildDashboardMapProps } from "@/components/elements/Map-mapbox/mapProps.builders";
 import { getCurrentMapStyle } from "@/components/elements/Map-mapbox/utils";
 import Table from "@/components/elements/Table/Table";
 import {
@@ -99,8 +100,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   } = props;
 
   const t = useT();
-  const modalMapFunctions = useMap();
-  const dashboardMapFunctions = useMap();
+  const modalMapFunctions = useBaseMap();
+  const dashboardMapFunctions = useBaseMap();
   const { openModal, closeModal, setModalLoading } = useModalContext();
   const { filters, setFilters, dashboardCountries } = useDashboardContext();
 
@@ -328,23 +329,23 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         <LoadingContainerOpacity loading={dashboardMapLoaded}>
           <MapContainer
             id="dashboard"
-            showLegend={false}
-            mapFunctions={dashboardMapFunctions}
-            dashboardMode="dashboard"
-            className="custom-popup-close-button !h-[600px] mobile:!h-[381px]"
-            centroids={centroids}
-            showPopups={true}
-            polygonsData={polygonsData?.data as Record<string, string[]>}
-            polygonsCentroids={polygonsData?.centroids as { uuid: string; long: number; lat: number }[] | undefined}
-            bbox={currentBbox}
-            center={currentCenter}
-            zoom={currentZoom}
-            mapStyle={currentMapStyle}
-            onStyleChange={handleMapStyleChange}
-            setLoader={setDashboardMapLoaded}
-            selectedLandscapes={landscapeNamesForBorderOverlay}
-            projectUUID={selectedProjectUuid}
-            hasAccess={hasAccess}
+            {...buildDashboardMapProps({
+              mode: "dashboard",
+              mapFunctions: dashboardMapFunctions,
+              centroids,
+              polygonsData: polygonsData?.data as Record<string, string[]> | undefined,
+              polygonsCentroids: polygonsData?.centroids as { uuid: string; long: number; lat: number }[] | undefined,
+              bbox: currentBbox,
+              center: currentCenter,
+              zoom: currentZoom,
+              mapStyle: currentMapStyle,
+              onStyleChange: handleMapStyleChange,
+              setLoader: setDashboardMapLoaded,
+              selectedLandscapes: landscapeNamesForBorderOverlay,
+              projectUUID: selectedProjectUuid,
+              hasAccess,
+              className: "custom-popup-close-button !h-[600px] mobile:!h-[381px]"
+            })}
           />
         </LoadingContainerOpacity>
         {!selectedProjectUuid && (

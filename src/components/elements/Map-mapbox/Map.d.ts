@@ -31,6 +31,12 @@ export type DashboardGetProjectsData = {
   centroid?: { lat?: number; long?: number };
 };
 
+export type PolygonCentroid = {
+  uuid: string;
+  lat: number;
+  long: number;
+};
+
 /** Shape used when entityData carries project/polygon routing context. */
 export type EntityData = {
   entityName?: string;

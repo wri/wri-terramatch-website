@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
-import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
@@ -63,7 +63,7 @@ const OverviewMapArea = ({
   } = useMapAreaContext();
   const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refetch);
 
-  const mapFunctions = useMap(onSave);
+  const mapFunctions = useBaseMap(onSave);
 
   const [, { data: mediaFiles }] = useMedias({
     entity: type as SupportedEntity,

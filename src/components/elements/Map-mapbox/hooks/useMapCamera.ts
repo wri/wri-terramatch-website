@@ -3,6 +3,7 @@ import { MutableRefObject, useEffect, useRef } from "react";
 
 import { zoomToBbox, zoomToCenter } from "../adapters/camera";
 import { BBox } from "../GeoJSON";
+import { PolygonFromMapState } from "../Map.d";
 
 type UseMapCameraParams = {
   map: MutableRefObject<mapboxgl.Map | null>;
@@ -11,7 +12,7 @@ type UseMapCameraParams = {
   zoom?: number;
   hasControls?: boolean;
   shouldBboxZoom?: boolean;
-  polygonFromMap?: { isOpen: boolean; uuid: string } | null;
+  polygonFromMap?: Pick<PolygonFromMapState, "isOpen" | "uuid"> | null;
   polygonBbox?: BBox | null;
   isUserDrawingEnabled?: boolean;
   isEditing?: boolean;

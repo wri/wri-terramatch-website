@@ -1,14 +1,24 @@
 import React, { createContext, ReactNode, useCallback, useContext, useState } from "react";
 
+import { EditPolygonState } from "@/components/elements/Map-mapbox/Map.d";
 import { SitePolygon } from "@/generated/apiSchemas";
+import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { Entity } from "@/types/common";
+
+export type MapAreaSiteData = Entity | SiteFullDto;
+
+export function isMapAreaSiteFullDto(siteData: MapAreaSiteData | undefined): siteData is SiteFullDto {
+  return siteData != null && "lightResource" in siteData;
+}
 
 type MapAreaType = {
   isUserDrawingEnabled: boolean;
   setIsUserDrawingEnabled: (arg0: boolean) => void;
-  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string };
-  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void;
-  siteData: any;
-  setSiteData: (value: any) => void;
+  editPolygon: EditPolygonState;
+  setEditPolygon: (value: EditPolygonState) => void;
+  siteData: MapAreaSiteData | undefined;
+  setSiteData: (value: MapAreaSiteData | undefined) => void;
   shouldRefetchPolygonData: boolean;
   setShouldRefetchPolygonData: (value: boolean) => void;
   shouldRefetchMediaData: boolean;
@@ -29,10 +39,10 @@ type MapAreaType = {
   setPreviewVersion: (value: boolean) => void;
   statusSelectedPolygon: string;
   setStatusSelectedPolygon: (value: string) => void;
-  polygonCriteriaMap: any;
-  setPolygonCriteriaMap: (value: any) => void;
-  polygonData: any[];
-  setPolygonData: (value: any[]) => void;
+  polygonCriteriaMap: Record<string, unknown>;
+  setPolygonCriteriaMap: (value: Record<string, unknown>) => void;
+  polygonData: SitePolygonLightDto[];
+  setPolygonData: (value: SitePolygonLightDto[]) => void;
   validFilter: string;
   setValidFilter: (value: string) => void;
   resetSiteMapInteractionState: () => void;
@@ -41,7 +51,7 @@ type MapAreaType = {
 const defaultValue: MapAreaType = {
   isUserDrawingEnabled: false,
   setIsUserDrawingEnabled: () => {},
-  editPolygon: { isOpen: false, uuid: "", primary_uuid: "" },
+  editPolygon: { isOpen: false, uuid: "" },
   setEditPolygon: () => {},
   siteData: undefined,
   setSiteData: () => {},
@@ -78,7 +88,7 @@ const MapAreaContext = createContext<MapAreaType>(defaultValue);
 
 export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isUserDrawingEnabled, setIsUserDrawingEnabled] = useState<boolean>(false);
-  const [siteData, setSiteData] = useState<any>();
+  const [siteData, setSiteData] = useState<MapAreaSiteData | undefined>(undefined);
   const [shouldRefetchPolygonData, setShouldRefetchPolygonData] = useState<boolean>(false);
   const [shouldRefetchMediaData, setShouldRefetchMediaData] = useState<boolean>(false);
   const [shouldRefetchValidation, setShouldRefetchValidation] = useState<boolean>(false);
@@ -89,25 +99,24 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [previewVersion, setPreviewVersion] = useState<boolean>(false);
   const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
   const [selectedPolygonsInCheckbox, setSelectedPolygonsInCheckbox] = useState<string[]>([]);
-  const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<any>({});
-  const [polygonData, setPolygonData] = useState<any[]>([]);
+  const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, unknown>>({});
+  const [polygonData, setPolygonData] = useState<SitePolygonLightDto[]>([]);
   const [validFilter, setValidFilter] = useState<string>("all");
-  const [editPolygon, setEditPolygonInternal] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
+  const [editPolygon, setEditPolygonInternal] = useState<EditPolygonState>({
     isOpen: false,
-    uuid: "",
-    primary_uuid: ""
+    uuid: ""
   });
 
-  const setEditPolygon = (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => {
+  const setEditPolygon = useCallback((value: EditPolygonState) => {
     setEditPolygonInternal(value);
     if (!value.isOpen) {
       setShouldRefetchPolygonData(false);
     }
-  };
+  }, []);
 
   const resetSiteMapInteractionState = useCallback(() => {
     setIsUserDrawingEnabled(false);
-    setEditPolygonInternal({ isOpen: false, uuid: "", primary_uuid: "" });
+    setEditPolygonInternal({ isOpen: false, uuid: "" });
     setShouldRefetchPolygonData(false);
     setSelectedPolyVersion(undefined);
     setOpenModalConfirmation(false);

@@ -106,6 +106,7 @@ const handleLayerClick = (
   const isCentroidLayer = layerName === LAYERS_NAMES.CENTROIDS;
   const popupOptions = {
     className: isCentroidLayer ? "popup-map no-tip" : "popup-map",
+    closeButton: false,
     offset: isCentroidLayer
       ? {
           top: [0, 9] as [number, number],

@@ -316,9 +316,20 @@ export const addPolygonCentroidsLayer = (
   centroids: { uuid: string; long: number; lat: number }[],
   zoomFilterValue?: number
 ) => {
-  if (map == null || centroids == null || centroids.length === 0) return;
+  if (map == null) return;
 
   const layerName = LAYERS_NAMES.POLYGON_CENTROIDS;
+
+  try {
+    if (map.getLayer(layerName) != null) map.removeLayer(layerName);
+    if (map.getSource(layerName) != null) map.removeSource(layerName);
+    if (map.hasImage("pulsing-dot-centroids")) map.removeImage("pulsing-dot-centroids");
+  } catch (error) {
+    Log.error("addPolygonCentroidsLayer: cleanup failed:", error);
+  }
+
+  if (centroids == null || centroids.length === 0) return;
+
   const validCentroids = centroids.filter(
     c =>
       c != null &&
@@ -333,10 +344,6 @@ export const addPolygonCentroidsLayer = (
   if (validCentroids.length === 0) return;
 
   try {
-    if (map.getLayer(layerName)) map.removeLayer(layerName);
-    if (map.getSource(layerName)) map.removeSource(layerName);
-    if (map.hasImage("pulsing-dot-centroids")) map.removeImage("pulsing-dot-centroids");
-
     const features: GeoJSON.Feature[] = validCentroids.map(centroid => ({
       type: "Feature",
       geometry: { type: "Point", coordinates: [centroid.long, centroid.lat] },

@@ -11,7 +11,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { uploadVersionForPolygon } from "@/connections/GeometryUpload";
 import { deletePolygonVersion, loadListPolygonVersions, updatePolygonVersionAsync } from "@/connections/PolygonVersion";
 import { createBlankVersion, pruneSitePolygonsCache } from "@/connections/SitePolygons";
-import { useMapAreaContext } from "@/context/mapArea.provider";
+import { isMapAreaSiteFullDto, useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -75,7 +75,11 @@ const VersionInformation = ({
       return;
     }
 
-    const siteId = siteData?.uuid ?? polygonDefault?.siteId ?? getSiteIdFromPolyVersion(selectedPolyVersion) ?? null;
+    const siteId =
+      (isMapAreaSiteFullDto(siteData) ? siteData.uuid : undefined) ??
+      polygonDefault?.siteId ??
+      getSiteIdFromPolyVersion(selectedPolyVersion) ??
+      null;
 
     if (!siteId) {
       openNotification("error", t("Error!"), t("Missing site information"));
