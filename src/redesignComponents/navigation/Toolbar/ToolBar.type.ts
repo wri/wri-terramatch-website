@@ -10,6 +10,7 @@ export interface ToolbarProps {
   contentLeft: React.ReactNode;
   contentRight?: React.ReactNode;
   className?: string;
+  classNameContentRight?: string;
 }
 
 export interface BulkActionToolbarProps {
@@ -36,6 +37,8 @@ export interface ToolbarSlot {
 export interface ToolbarObjectProps {
   breadcrumbs: BreadcrumbProps;
   suffix?: React.ReactNode;
+  className?: string;
+  classNameSuffix?: string;
 }
 
 export type ListItemVariant = "data" | "navigation" | "select";

@@ -1,4 +1,5 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
+import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useMemo, useState } from "react";
 
@@ -50,6 +51,7 @@ export const TEAM_MEMBER_ROLE_CHOICES = [
 
 const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   const t = useT();
+  const isMobile = useMediaQuery("(max-width: 1200px)");
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -180,7 +182,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                   />
                 </ChakraTableCell>
                 <ChakraTableCell>{t(rowData?.organisationName)}</ChakraTableCell>
-                <ChakraTableCell>{rowData?.emailAddress}</ChakraTableCell>
+                {!isMobile && <ChakraTableCell>{rowData?.emailAddress}</ChakraTableCell>}
                 <ChakraTableCell>
                   {rowData?.roleName != null
                     ? t(TEAM_MEMBER_ROLE_CHOICES.find(choice => choice.id === rowData.roleName)?.name)
@@ -232,7 +234,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                 </ChakraTableCell>
               </TableRow>
             ),
-            [t]
+            [t, isMobile]
           )}
           columns={[
             {
@@ -245,11 +247,15 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
               label: t("Organization"),
               sortable: true
             },
-            {
-              key: "emailAddress",
-              label: t("Email"),
-              sortable: true
-            },
+            ...(isMobile
+              ? []
+              : [
+                  {
+                    key: "emailAddress",
+                    label: t("Email"),
+                    sortable: true
+                  }
+                ]),
             {
               key: "roleName",
               label: t("Role"),
