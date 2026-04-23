@@ -13,17 +13,16 @@ import type { To } from "react-router-dom";
 import ShowActions from "@/admin/components/Actions/ShowActions";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
-import {
-  UserDto,
-  UserFramework,
-  UserMonitoringPartnerProjectEmbedded
-} from "@/generated/v3/userService/userServiceSchemas";
+import { UserDto, UserFramework } from "@/generated/v3/userService/userServiceSchemas";
 
 import { UserShowAside } from "./UserShowAside";
 
 type UserShowRecord = UserDto & { id: string };
 
-type MonitoringPartnerProjectTableRow = Pick<UserMonitoringPartnerProjectEmbedded, "uuid" | "name">;
+type MonitoringPartnerProjectTableRow = Pick<
+  NonNullable<UserDto["monitoringPartnerProjects"]>[number],
+  "uuid" | "name"
+>;
 
 function userShowMonitoringProjectRows(record: UserDto | undefined): MonitoringPartnerProjectTableRow[] {
   const raw = record?.monitoringPartnerProjects;
