@@ -4,7 +4,6 @@ import React from "react";
 import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { Framework, isTerrafund } from "@/context/framework.provider";
 
 import {
