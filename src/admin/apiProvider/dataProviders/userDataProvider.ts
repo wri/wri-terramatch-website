@@ -14,7 +14,6 @@ import {
 
 import { createUser, deleteUser, loadUser, loadUserIndex, updateUserResource } from "@/connections/User";
 import { UserCreateBaseAttributes, UserDto, UserUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
 
 import { v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
@@ -96,12 +95,6 @@ export const userDataProvider: Partial<DataProvider> = {
   },
 
   async getOne<RecordType>(_: string, { id }: GetOneParams) {
-    const uuid = id as string;
-    const meUserId = ApiSlice.currentState.meta.meUserId;
-    if (meUserId == null || uuid !== meUserId) {
-      ApiSlice.pruneCache("users", [uuid]);
-    }
-
     const connected = await loadUser({ id });
     if (connected.loadFailure != null) {
       throw v3ErrorForRA("User get fetch failed", connected.loadFailure);
