@@ -150,7 +150,7 @@
     "lint-staged": "^12.3.7",
     "next-router-mock": "^0.9.3",
     "patch-package": "^8.0.0",
-    "postcss": "^8.4.14",
+    "postcss": "^8.5.10",
     "prettier": "^2.5.1",
     "storybook": "^7.6.21",
     "svg-url-loader": "^8.0.0",
