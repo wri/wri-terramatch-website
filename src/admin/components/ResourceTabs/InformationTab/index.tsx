@@ -269,18 +269,6 @@ const InformationTab: FC<IProps> = props => {
                           collection="tree-planted"
                           secondColumnWidth="45%"
                         />
-                        {props.type === "projects" ? (
-                          <div className="flex items-center gap-1 py-1">
-                            <div className="flex items-center gap-0.5">
-                              <Text variant="text-16-bold" className="capitalize">
-                                Trees to be Restored:
-                              </Text>
-                            </div>
-                            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                              {(record.treesToBeRestoredGoal ?? 0).toLocaleString()}
-                            </Text>
-                          </div>
-                        ) : null}
                       </div>
                     ) : null}
                     {props.type === "project-reports" ? (
