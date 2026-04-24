@@ -7,6 +7,7 @@ import { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable/index"
 import { SupportedEntity, usePlants } from "@/connections/EntityAssociation";
 import { TreeReportCountsEntity, useTreeReportCounts } from "@/connections/TreeReportCounts";
 import { Framework, isTerrafund, useFrameworkContext } from "@/context/framework.provider";
+import Log from "@/utils/log";
 
 export const useTableType = (entity: SupportedEntity, collection?: string, fromProps?: TableType): TableType => {
   const { framework } = useFrameworkContext();
@@ -73,11 +74,10 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
   });
 
   return useMemo(() => {
-    // For nurseries or projectReports with nursery-seedling, and for *Reports with tree-planted,
-    // combine plants and reportCounts to match table data (entityPlants + reportPlants)
     if (
       (entity === "nurseries" && collection === "nursery-seedling") ||
       (entity === "projectReports" && collection === "nursery-seedling") ||
+      (entity === "projectReports" && collection === "non-tree") ||
       (entity.endsWith("Reports") && collection === "tree-planted")
     ) {
       const plantsTotal = sumBy(plants ?? [], "amount");
@@ -88,7 +88,26 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
             ([reportName]) => !(plants ?? []).some(({ name }) => name?.toLowerCase() === reportName?.toLowerCase())
           )
           .reduce((sum, [, { amount }]) => sum + (amount ?? 0), 0);
-        return plantsTotal + reportPlantsTotal;
+        const result = plantsTotal + reportPlantsTotal;
+        if (entity === "projectReports" && collection === "non-tree") {
+          Log.debug("[usePlantTotalCount] projectReports / non-tree", {
+            entityUuid,
+            plantsTotal,
+            reportPlantsTotal,
+            plantRows: (plants ?? []).map(p => ({ name: p.name, amount: p.amount })),
+            reportCountKeys: reportCountsEntries.map(([name]) => name),
+            result
+          });
+        }
+        return result;
+      }
+      if (entity === "projectReports" && collection === "non-tree") {
+        Log.debug("[usePlantTotalCount] projectReports / non-tree (no reportCount rows or all overlap plants)", {
+          entityUuid,
+          plantsTotal,
+          plantRows: (plants ?? []).map(p => ({ name: p.name, amount: p.amount })),
+          reportCounts: reportCounts ?? {}
+        });
       }
       return plantsTotal;
     }
@@ -104,7 +123,7 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
     }
 
     return sumBy(plants ?? [], "amount");
-  }, [entity, plants, reportCounts, collection]);
+  }, [entity, entityUuid, plants, reportCounts, collection]);
 };
 
 export const usePlantSpeciesCount = ({ entity, entityUuid, collection }: AggregateTreeHookProps) => {
