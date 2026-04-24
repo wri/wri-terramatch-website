@@ -169,7 +169,16 @@ const MapControlsOverlay = ({
             </ControlGroup>
           ) : null}
 
-          <ControlGroup position="top-right" className="top-[4.5rem]">
+          {dashboardMode === "modal" && map != null ? (
+            <ControlGroup position="top-right" className="!top-5 z-20">
+              <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
+            </ControlGroup>
+          ) : null}
+
+          <ControlGroup
+            position="top-right"
+            className={dashboardMode === "modal" ? "top-[8.25rem] z-20" : "top-[4.5rem] z-20"}
+          >
             <ZoomControl map={map} />
           </ControlGroup>
 
@@ -215,7 +224,10 @@ const MapControlsOverlay = ({
 
           {!editable && !viewImages ? <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} /> : null}
 
-          <ControlGroup position="top-right" className="top-[10.5rem]">
+          <ControlGroup
+            position="top-right"
+            className={dashboardMode === "modal" ? "top-[14.5rem] z-20" : "top-[10.5rem]"}
+          >
             <button
               type="button"
               className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200"
@@ -252,7 +264,7 @@ const MapControlsOverlay = ({
 
           {!formMap && showViewGallery ? (
             <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
-              {(dashboardMode === "dashboard" || dashboardMode === "modal") && styleReady && map != null && (
+              {dashboardMode === "dashboard" && styleReady && map != null && (
                 <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
               )}
               {dashboardMode !== "dashboard" && dashboardMode !== "modal" && !disabledPolygonPanel && (

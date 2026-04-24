@@ -82,8 +82,6 @@ export function useMapLayers({
 }: UseMapLayersParams) {
   const [sourcesAdded, setSourcesAdded] = useState(false);
 
-  // Seed refs from parent (e.g. the embedded map) so the first effect run
-  // uses the same cache key and skips an unnecessary timestamp bump.
   const prevPolygonFingerprintRef = useRef<string>(initialPolygonFingerprint ?? "");
   const tileVersionRef = useRef<string>(initialTileVersion ?? "0");
 

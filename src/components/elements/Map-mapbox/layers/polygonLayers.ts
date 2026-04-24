@@ -71,11 +71,15 @@ export const addGeojsonSourceToLayer = (
   existsPolygons: boolean
 ) => {
   const { name, styles } = layer;
-  if (map == null || centroids == null || centroids.length === 0) return;
+  if (map == null || centroids == null || centroids.length === 0) {
+    return;
+  }
 
   const keys = getCentroidSourceKeys(map);
   const cacheKey = `${existsPolygons ? "1" : "0"}:${computeCentroidsFingerprint(centroids)}:${zoomFilterValue ?? "n"}`;
-  if (map.getSource(name) != null && keys[name] === cacheKey) return;
+  if (map.getSource(name) != null && keys[name] === cacheKey) {
+    return;
+  }
 
   if (map.getSource(name)) {
     styles?.forEach((_: unknown, index: number) => {
@@ -306,12 +310,15 @@ export const addSourcesToLayers = (
   cacheKey: string = "0"
 ) => {
   if (map == null) return;
+
+  const existsPolygonsForCentroidGeojson = !_.isEmpty(polygonsData);
+
   layersList.forEach((layer: LayerType) => {
     if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
       addSourceToLayer(layer, map, polygonsData, zoomFilter, dashboardMode, cacheKey);
     }
     if (layer.name === LAYERS_NAMES.CENTROIDS && dashboardMode) {
-      addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));
+      addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, existsPolygonsForCentroidGeojson);
     }
   });
   if (dashboardMode) {
@@ -319,8 +326,6 @@ export const addSourcesToLayers = (
   }
 };
 
-// Tracks pending idle-retry for addPolygonCentroidsLayer per map instance so
-// we can cancel a superseded retry before scheduling a new one.
 const pendingCentroidRetryByMap = new WeakMap<MapboxMap, (() => void) | null>();
 
 export const addPolygonCentroidsLayer = (
@@ -330,7 +335,6 @@ export const addPolygonCentroidsLayer = (
 ) => {
   if (map == null) return;
 
-  // Cancel any previous pending retry for this map.
   const prevRetry = pendingCentroidRetryByMap.get(map);
   if (prevRetry != null) {
     map.off("idle", prevRetry);
@@ -362,10 +366,6 @@ export const addPolygonCentroidsLayer = (
 
   if (validCentroids.length === 0) return;
 
-  // Do NOT gate on isStyleLoaded() here — in Mapbox GL v3, isStyleLoaded() can
-  // return false while tiles are loading even when the style spec is accessible.
-  // The try/catch below catches any real "style not ready" errors and retries.
-
   try {
     const features: GeoJSON.Feature[] = validCentroids.map(centroid => ({
       type: "Feature",
@@ -387,8 +387,6 @@ export const addPolygonCentroidsLayer = (
       filter
     });
   } catch (error) {
-    // Fallback: style appeared loaded but addImage/addLayer still failed
-    // (can happen on the very first render of a new map). Retry on idle.
     Log.warn("addPolygonCentroidsLayer: retrying on idle after error:", error);
     const retryFn = () => {
       pendingCentroidRetryByMap.set(map, null);

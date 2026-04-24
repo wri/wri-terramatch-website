@@ -2,7 +2,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
-import { Marker } from "mapbox-gl";
+import { Map as MapboxMap, Marker } from "mapbox-gl";
 import { useRouter } from "next/router";
 import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { ValidationError } from "yup";
@@ -289,13 +289,26 @@ export const MapContainer = ({
     return () => ro.disconnect();
   });
 
-  const { styleReady, styleVersion } = useMapReadiness(map?.current);
+  const [mapInstanceForReadiness, setMapInstanceForReadiness] = useState<MapboxMap | null>(null);
+  useEffect(() => {
+    if (map == null) return;
+    const t = window.setInterval(() => {
+      setMapInstanceForReadiness(prev => {
+        const c = map.current;
+        return c === prev ? prev : c;
+      });
+    }, 100);
+    return () => {
+      clearInterval(t);
+    };
+  }, [map]);
+
+  const { styleReady, styleVersion } = useMapReadiness(mapInstanceForReadiness);
 
   const { currentStyle, handleStyleChange } = useMapStyle({
     map,
     mapStyleProp,
     styleReady,
-    styleVersion,
     projectUUID,
     dashboardMode,
     onStyleChange

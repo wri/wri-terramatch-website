@@ -1,3 +1,5 @@
+import { useLayoutEffect, useRef } from "react";
+
 import { DashboardExpandedMapLegend } from "@/components/dashboard/DashboardExpandedMapLegend";
 import { DashboardGetProjectsData, MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { MapFunctions } from "@/components/elements/Map-mapbox/Map.d";
@@ -50,8 +52,23 @@ export function DashboardExpandedMapModalContent({
   initialTileVersion,
   initialPolygonFingerprint
 }: DashboardExpandedMapModalContentProps) {
+  const shellRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const el = shellRef.current;
+    if (el == null) return;
+    const ro = new ResizeObserver(() => {
+      modalMapFunctions.map.current?.resize();
+    });
+    ro.observe(el);
+    modalMapFunctions.map.current?.resize();
+    return () => {
+      ro.disconnect();
+    };
+  }, [modalMapFunctions]);
+
   return (
-    <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
+    <div ref={shellRef} className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
       <LoadingContainerOpacity loading={modalMapLoaded}>
         <MapContainer
           id="modal"

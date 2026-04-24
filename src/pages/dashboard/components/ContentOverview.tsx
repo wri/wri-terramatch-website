@@ -187,12 +187,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
 
     openModal(
       MODAL_EXPAND_ID,
-      <ModalExpand
-        id={MODAL_EXPAND_ID}
-        title={t("MAP")}
-        closeModal={handleExpandedMapModalClose}
-        popUpContent={MAP_TOOLTIP}
-      >
+      <ModalExpand id={MODAL_EXPAND_ID} title="MAP" closeModal={handleExpandedMapModalClose} popUpContent={MAP_TOOLTIP}>
         <DashboardExpandedMapModalContent
           modalMapFunctions={modalMapFunctions}
           modalMapLoaded={modalMapLoaded}

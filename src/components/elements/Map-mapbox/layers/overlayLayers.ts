@@ -245,10 +245,23 @@ export const getCurrentMapStyle = (map: MapboxMap): MapStyle | undefined => {
   try {
     if (map.getLayer(GOOGLE_RASTER_LAYER_ID)) return MapStyle.GoogleSatellite;
     const internalStyle = (map as MapboxMap & { style?: { url?: string; name?: string } }).style;
-    const styleUrl = internalStyle?.url ?? internalStyle?.name;
+    const styleFromSpec = map.getStyle() as { name?: string; metadata?: { "mapbox:uri"?: string } } | null | undefined;
+    const fromSpec = styleFromSpec?.name;
+    const styleUrl = internalStyle?.url ?? internalStyle?.name ?? fromSpec;
     if (styleUrl) {
       if (styleUrl === MapStyle.Street || styleUrl.includes("clve3yxzq01w101pefkkg3rci")) return MapStyle.Street;
       if (styleUrl === MapStyle.Satellite || styleUrl.includes("clv3bkxut01y301pk317z5afu")) return MapStyle.Satellite;
+    }
+    const uri = styleFromSpec?.metadata?.["mapbox:uri"];
+    if (typeof uri === "string") {
+      if (uri === MapStyle.Street || uri.includes("clve3yxzq01w101pefkkg3rci")) return MapStyle.Street;
+      if (uri === MapStyle.Satellite || uri.includes("clv3bkxut01y301pk317z5afu")) return MapStyle.Satellite;
+    }
+    // Last resort: v3+ may omit style.url; scan serialized spec for Terramatch style fragment ids
+    if (styleFromSpec != null) {
+      const blob = JSON.stringify(styleFromSpec);
+      if (blob.includes("clve3yxzq01w101pefkkg3rci")) return MapStyle.Street;
+      if (blob.includes("clv3bkxut01y301pk317z5afu")) return MapStyle.Satellite;
     }
   } catch (e) {
     Log.warn("Error getting current map style:", e);
