@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { FC, useMemo } from "react";
 
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { getThemedColor } from "@/lib/theme";
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
   getNoCountTableColumns,
@@ -80,15 +81,21 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
         renderRow={rowData => {
           const row = rowData as { name?: string; amount?: number | string };
           const isTotalRow = row.name === totalRowName;
+          const totalRowStyle = isTotalRow
+            ? {
+                fontWeight: 700,
+                color: getThemedColor("neutral", 800)
+              }
+            : undefined;
           return (
             <TableRow>
               <TableCell>
-                <Text textStyle={isTotalRow ? "500" : "400"} color={isTotalRow ? "red.500" : "neutral.700"}>
+                <Text textStyle="400" color="neutral.700" style={totalRowStyle}>
                   {isTotalRow ? t("Total") : row.name}
                 </Text>
               </TableCell>
               <TableCell>
-                <Text textStyle={isTotalRow ? "500" : "400"} color={isTotalRow ? "red.500" : "neutral.700"}>
+                <Text textStyle="400" color="neutral.700" style={totalRowStyle}>
                   {row.amount}
                 </Text>
               </TableCell>
@@ -124,7 +131,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
                     <Text
                       textStyle="400"
                       className={classNames(
-                        "border-theme-neutral-300 truncate border-b py-4",
+                        "truncate border-b border-theme-neutral-300 py-4",
                         idx === noCountTableColumns.length - 1 ? "" : "mr-8"
                       )}
                       color="neutral.900"

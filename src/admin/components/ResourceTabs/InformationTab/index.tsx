@@ -268,6 +268,7 @@ const InformationTab: FC<IProps> = props => {
                           {...{ entity, entityUuid }}
                           collection="tree-planted"
                           secondColumnWidth="45%"
+                          {...(props.type === "projects" ? { tableType: "treeCountGoal" } : {})}
                         />
                       </div>
                     ) : null}
