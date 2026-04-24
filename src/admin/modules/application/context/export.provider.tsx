@@ -3,9 +3,9 @@ import { createContext, ReactNode, useCallback, useContext, useMemo, useState } 
 import { useNotify } from "react-admin";
 
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
-import { fetchGetV2AdminFormsApplicationsUUIDExport } from "@/generated/apiComponents";
+import { downloadApplicationExport } from "@/connections/FundingProgramme";
 import { formSubmissionsExportCsv } from "@/generated/v3/entityService/entityServiceComponents";
-import { downloadFileBlob, downloadPresignedUrl } from "@/utils/network";
+import { downloadFileBlob, downloadFileUrl } from "@/utils/network";
 
 type ExportType = {
   loading: boolean;
@@ -30,14 +30,14 @@ const ExportProvider = ({ children }: ExportProviderProps) => {
 
   const exportApplications = useCallback(
     async ({ fundingProgrammeUuid, formUuid }: { fundingProgrammeUuid?: string; formUuid?: string }) => {
-      const exporter = async (fn: () => Promise<{ fileName: string; response: Blob | string }>) => {
+      const exporter = async (fn: () => Promise<{ fileName?: string; response: Blob | string }>) => {
         try {
           setLoading(true);
           const { fileName, response } = await fn();
           if (isString(response)) {
-            await downloadPresignedUrl(response, fileName);
+            downloadFileUrl(response, fileName);
           } else {
-            await downloadFileBlob(response, fileName);
+            await downloadFileBlob(response, fileName ?? "Applications.csv");
           }
           setLoading(false);
         } catch (err: any) {
@@ -50,14 +50,15 @@ const ExportProvider = ({ children }: ExportProviderProps) => {
       if (formUuid != null) {
         return exporter(async () => {
           const { fileName, blob } = await formSubmissionsExportCsv.fetchBlob({ pathParams: { uuid: formUuid } });
-          return { fileName: fileName ?? "Applications.csv", response: blob };
+          return { fileName, response: blob };
         });
       } else if (fundingProgrammeUuid != null) {
         return exporter(async () => {
-          const response = (await fetchGetV2AdminFormsApplicationsUUIDExport({
-            pathParams: { uuid: fundingProgrammeUuid }
-          })) as unknown as { url: string };
-          return { fileName: "Applications.csv", response: response.url };
+          const { data, loadFailure } = await downloadApplicationExport(fundingProgrammeUuid);
+          if (loadFailure != null) {
+            throw loadFailure;
+          }
+          return { response: data?.url as string };
         });
       }
 

@@ -123,12 +123,22 @@ export const useGadmChoices = (props: GadmConnectionProps) => {
 };
 
 export const findCachedGadmTitle = (level: 0 | 1 | 2, code: string, parentCodes?: string[]) => {
-  if (level > 0 && isEmpty(parentCodes)) return null;
-
   const { gadm } = DataApiSlice.currentState;
-  parentCodes = isEmpty(parentCodes) ? ["global"] : (parentCodes as string[]);
-  for (const parentCode of parentCodes) {
-    const title = gadm[`level${level}`][parentCode]?.[code];
+  const levelCodes = gadm[`level${level}`];
+  const inferredParentCodes = level === 1 ? [code.split(".")[0]].filter(Boolean) : [];
+  const lookupParentCodes =
+    level === 0 ? ["global"] : [...inferredParentCodes, ...((parentCodes as string[] | undefined) ?? [])];
+
+  // First try with the expected parent codes.
+  for (const parentCode of lookupParentCodes) {
+    const title = levelCodes[parentCode]?.[code];
+    if (title != null) return title;
+  }
+
+  // Fallback: some records can have stale/mismatched parent values in answers.
+  // Search all cached parent buckets so we can still resolve the label from the code.
+  for (const codesByParent of Object.values(levelCodes)) {
+    const title = codesByParent?.[code];
     if (title != null) return title;
   }
   return null;
