@@ -101,46 +101,6 @@ export const requestPasswordReset = new V3ApiEndpoint<
   {}
 >("/auth/v3/passwordResets", "POST");
 
-export type GetResetPasswordInformationPathParams = {
-  token: string;
-};
-
-export type GetResetPasswordInformationError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetResetPasswordInformationResponse = {
-  meta?: {
-    /**
-     * @example passwordResets
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example passwordResets
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.ResetPasswordResponseDto;
-  };
-};
-
-export type GetResetPasswordInformationVariables = {
-  pathParams: GetResetPasswordInformationPathParams;
-};
-
-/**
- * Get reset password token
- */
-export const getResetPasswordInformation = new V3ApiEndpoint<
-  GetResetPasswordInformationResponse,
-  GetResetPasswordInformationError,
-  GetResetPasswordInformationVariables,
-  {}
->("/auth/v3/passwordResets/{token}", "GET");
-
 export type ResetPasswordPathParams = {
   token: string;
 };
@@ -2076,7 +2036,7 @@ export const acceptProjectInvite = new V3ApiEndpoint<
 
 export const operationsByTag = {
   login: { authLogin },
-  resetPassword: { requestPasswordReset, getResetPasswordInformation, resetPassword },
+  resetPassword: { requestPasswordReset, resetPassword },
   verificationUser: { verifyUser, resendUserVerification },
   organisations: {
     organisationIndex,
