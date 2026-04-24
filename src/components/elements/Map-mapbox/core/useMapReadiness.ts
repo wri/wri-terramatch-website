@@ -1,7 +1,6 @@
 import { Map as MapboxMap } from "mapbox-gl";
 import { useEffect, useState } from "react";
 
-// Bump on every `style.load` so layers re-attach after `setStyle` (not only the first load).
 export function useMapReadiness(map: MapboxMap | null | undefined): {
   styleReady: boolean;
   styleVersion: number;

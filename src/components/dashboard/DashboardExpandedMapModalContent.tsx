@@ -26,7 +26,6 @@ export type DashboardExpandedMapModalContentProps = {
   translate: (key: string, options?: Record<string, string | number>) => string;
   nonProfitProjectCount: number;
   enterpriseProjectCount: number;
-  /** Tile-version seed from the embedded map for browser tile-cache sharing. */
   initialTileVersion?: string;
   initialPolygonFingerprint?: string;
 };

@@ -173,8 +173,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       }
     }
 
-    // Read the embedded map's tile-version and polygon fingerprint so the modal
-    // can share the same browser tile cache rather than re-fetching all tiles.
     const embeddedTileVersion = getMapTileVersion(dashboardMap);
     const embeddedPolygonFingerprint = computePolygonFingerprint(
       polygonsData?.data as Record<string, string[]> | undefined

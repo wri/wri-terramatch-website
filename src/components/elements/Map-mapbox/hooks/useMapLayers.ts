@@ -21,13 +21,6 @@ type UseMapLayersParams = {
   projectUUID?: string;
   hasAccess?: boolean;
   selectedPolygonsInCheckbox?: string[];
-  /**
-   * Seed values so a freshly-mounted map (e.g. the expanded modal) starts with
-   * the same tile-version as the already-loaded embedded map. When both values
-   * match the current polygonsData fingerprint the hook skips the timestamp bump
-   * and passes the same RND param to Geoserver, allowing the browser to serve
-   * tiles from cache instead of re-fetching.
-   */
   initialTileVersion?: string;
   initialPolygonFingerprint?: string;
 };

@@ -76,11 +76,9 @@ export interface BaseMapProps {
   legendPosition?: ControlMapPosition;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
-  /** Seed the tile-version cache key from an already-loaded map instance (e.g.
-   *  the embedded dashboard map) so the new instance reuses browser tile cache. */
+  /** Tile cache key from another map; modal can reuse the same Geoserver RND. */
   initialTileVersion?: string;
-  /** Matching polygon fingerprint for initialTileVersion; prevents an unnecessary
-   *  timestamp bump on the first effect run of the new map instance. */
+  /** When it matches current polygon data, skip bumping the tile cache on mount. */
   initialPolygonFingerprint?: string;
 }
 

@@ -37,12 +37,6 @@ export function useDashboardMapViewportSync({
       setCurrentZoom(zoom);
     };
 
-    // Read style once on initial attach so the parent React state is seeded, but defer
-    // with rAF so that useGoogleSatellite has already applied the Google raster layer
-    // before we call getCurrentMapStyle. Without the deferral, getCurrentMapStyle sees
-    // the bare Street style (before the raster overlay is added) and pushes MapStyle.Street
-    // into React state, overwriting the intended GoogleSatellite — which then cascades
-    // through useMapStyle.setMapStyle and removes the raster.
     const syncStyleDeferred = () => {
       requestAnimationFrame(() => {
         const style = getCurrentMapStyle(currentMap);
@@ -55,10 +49,6 @@ export function useDashboardMapViewportSync({
 
     currentMap.on("moveend", syncViewport);
     currentMap.on("zoomend", syncViewport);
-    // style.load viewport sync only covers center/zoom — style must NOT be read here
-    // because at style.load time the Google raster layer is not yet applied (it's applied
-    // by the React useGoogleSatellite effect on the next render). Reading style here
-    // would always return MapStyle.Street for the Google satellite basemap.
     const onStyleLoad = () => syncViewport();
     currentMap.on("style.load", onStyleLoad);
 

@@ -93,7 +93,7 @@ export interface MapFunctions {
   draw: MutableRefObject<MapboxDraw | null>;
   onCancel: (parsedPolygonData: Record<string, string[]> | undefined) => void;
   initMap: (useDashboardStyle?: boolean, initialStyle?: MapStyle) => void;
-  /** @deprecated No-op stub — readiness is tracked by useMapReadiness instead. */
+  /** @deprecated */
   setStyleLoaded: (value: boolean) => void;
   handleTrashDelete: () => void;
 }

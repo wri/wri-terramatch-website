@@ -19,10 +19,6 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
   const map = useRef<MapboxMap | null>(null);
   const draw = useRef<MapboxDraw | null>(null);
 
-  // Private toggle — only purpose is to trigger a re-render after style.load so
-  // that useMapReadiness(map?.current) receives the live map instance on the first
-  // re-render following initMap(). useMapReadiness is the single source of truth
-  // for styleReady/styleVersion; this state is intentionally NOT exposed.
   const [, _forceRerender] = useState(false);
 
   const onCancel = (parsedPolygonData: Record<string, string[]> | undefined) => {
@@ -46,8 +42,6 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
     }
   };
 
-  // Fires on every style.load → triggers a re-render → Map.tsx passes the live
-  // map?.current to useMapReadiness for the first time.
   const handleFirstStyleLoad = useCallback(() => {
     _forceRerender(v => !v);
   }, []);
@@ -90,13 +84,9 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
     };
 
     if (map.current != null && draw.current != null) {
-      // Register style.load to trigger a re-render so Map.tsx passes map?.current
-      // to useMapReadiness. Without this, useMapReadiness stays on null indefinitely
-      // and styleReady never becomes true (no buttons, no layers).
       map.current.on("style.load", handleFirstStyleLoad);
 
       if (map.current.isStyleLoaded()) {
-        // Style was already loaded synchronously (rare but defensive).
         handleFirstStyleLoad();
         addControlToMap();
       } else {
@@ -115,8 +105,6 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
     }
   };
 
-  // setStyleLoaded is kept as a no-op stub for interface compatibility (Map.d.ts).
-  // Actual readiness is tracked by useMapReadiness via the _forceRerender above.
   const setStyleLoaded = (_value: boolean) => {};
 
   return {

@@ -20,12 +20,6 @@ import { setFilterLandscape } from "./polygonLayers";
 const GOOGLE_RASTER_SOURCE_ID = "google-satellite-source";
 const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
 
-// ---------------------------------------------------------------------------
-// Cancellable once("style.load") registry
-// Prevents stacked one-shot callbacks from rapid style switches. Each map
-// instance keeps at most one pending handler; registering a new one cancels
-// the previous.
-// ---------------------------------------------------------------------------
 const pendingStyleLoadHandlers = new WeakMap<MapboxMap, (() => void) | null>();
 
 function registerOnceStyleLoad(map: MapboxMap, handler: () => void): void {
@@ -41,11 +35,6 @@ function registerOnceStyleLoad(map: MapboxMap, handler: () => void): void {
   map.once("style.load", wrapped);
 }
 
-// ---------------------------------------------------------------------------
-// Hidden-layer tracking for Google Satellite overlay
-// Records exactly which base-style layer IDs we set to visibility:"none" so
-// removeGoogleSatelliteLayer restores only those layers and nothing else.
-// ---------------------------------------------------------------------------
 const hiddenBaseLayersByMap = new WeakMap<MapboxMap, Set<string>>();
 
 function getHiddenBaseLayers(map: MapboxMap): Set<string> {
@@ -102,10 +91,6 @@ export const updateMapProjection = (map: MapboxMap, currentStyle: MapStyle): voi
 
 export const addGoogleSatelliteLayer = (map: MapboxMap): void => {
   if (map == null) return;
-  // Guard: getStyle() throws (or returns null) when the map is mid-transition.
-  // We use try/catch rather than isStyleLoaded() because isStyleLoaded() can
-  // return false inside style.load callbacks (pending transitions), which would
-  // prevent the Google raster from being applied even in the correct callsite.
   let mapStyle: ReturnType<MapboxMap["getStyle"]>;
   try {
     mapStyle = map.getStyle();
@@ -165,8 +150,6 @@ export const addGoogleSatelliteLayer = (map: MapboxMap): void => {
       maxzoom: 22
     });
 
-    // Insert raster above background but below all vector layers.
-    // Re-query after removeGoogleSatelliteLayer so firstLayerId is fresh.
     const freshLayers = map.getStyle().layers ?? [];
     const firstLayerId = freshLayers.find(l => l.type !== "background")?.id;
     map.addLayer(
@@ -193,7 +176,6 @@ export const removeGoogleSatelliteLayer = (map: MapboxMap): void => {
     let restoredCount = 0;
 
     if (hiddenSet.size > 0) {
-      // Precise restore: only layers that addGoogleSatelliteLayer explicitly hid.
       hiddenSet.forEach(layerId => {
         try {
           if (map.getLayer(layerId) != null && map.getLayoutProperty(layerId, "visibility") === "none") {
@@ -206,8 +188,6 @@ export const removeGoogleSatelliteLayer = (map: MapboxMap): void => {
       });
       hiddenSet.clear();
     } else {
-      // Fallback (hiddenSet empty — e.g. first call before tracking was populated):
-      // restore all base-style layers that are currently hidden.
       const polygonLayerPrefixes = [
         LAYERS_NAMES.POLYGON_GEOMETRY,
         LAYERS_NAMES.DELETED_GEOMETRIES,
@@ -257,7 +237,6 @@ export const getCurrentMapStyle = (map: MapboxMap): MapStyle | undefined => {
       if (uri === MapStyle.Street || uri.includes("clve3yxzq01w101pefkkg3rci")) return MapStyle.Street;
       if (uri === MapStyle.Satellite || uri.includes("clv3bkxut01y301pk317z5afu")) return MapStyle.Satellite;
     }
-    // Last resort: v3+ may omit style.url; scan serialized spec for Terramatch style fragment ids
     if (styleFromSpec != null) {
       const blob = JSON.stringify(styleFromSpec);
       if (blob.includes("clve3yxzq01w101pefkkg3rci")) return MapStyle.Street;
@@ -283,16 +262,9 @@ export const setMapStyle = (
     setCurrentStyle(targetStyle);
 
     if (currentStyle === MapStyle.Street) {
-      // Street → Google: Street style is the base — apply raster overlay directly.
-      // Do NOT gate on isStyleLoaded(): in Mapbox GL v3, isStyleLoaded() can return
-      // false while tiles are loading even though the style spec is fully accessible.
-      // addGoogleSatelliteLayer has its own try/catch guard.
       addGoogleSatelliteLayer(map);
       updateMapProjection(map, targetStyle);
     } else {
-      // Non-Street (e.g. Satellite) → Google: swap to Street base first, then
-      // apply the Google raster overlay once the base style fires style.load.
-      // registerOnceStyleLoad cancels any previous stale once-handler.
       registerOnceStyleLoad(map, () => {
         addGoogleSatelliteLayer(map);
         updateMapProjection(map, targetStyle);
@@ -304,12 +276,6 @@ export const setMapStyle = (
 
   if (currentStyle === MapStyle.GoogleSatellite) {
     if (targetStyle === MapStyle.Street) {
-      // Google → Street: just remove the raster overlay — no style URL swap needed.
-      // Do NOT gate on isStyleLoaded(): in Mapbox GL v3, isStyleLoaded() returns false
-      // while Google satellite tiles are still loading. Gating causes the code to fall
-      // into registerOnceStyleLoad(), but style.load never fires (no setStyle call),
-      // leaving the map permanently stuck on Google. removeGoogleSatelliteLayer has
-      // its own try/catch guard.
       removeGoogleSatelliteLayer(map);
       setCurrentStyle(targetStyle);
       updateMapProjection(map, targetStyle);
@@ -317,8 +283,6 @@ export const setMapStyle = (
     }
   }
 
-  // All other transitions (Street↔Satellite, Google→Satellite, etc.):
-  // full Mapbox style URL swap.
   setCurrentStyle(targetStyle);
   map.setStyle(targetConfig.style);
   registerOnceStyleLoad(map, () => updateMapProjection(map, targetStyle));

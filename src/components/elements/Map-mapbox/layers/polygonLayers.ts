@@ -151,12 +151,7 @@ function getSourceCacheKeys(map: MapboxMap): Record<string, string> {
   return sourceCacheKeys.get(map)!;
 }
 
-/**
- * Returns the tile-version string (cache-busting RND param) that was last used
- * when adding the polygon-geometry vector source to this map. Consumers (e.g.
- * ContentOverview opening the expanded modal) can seed the modal map with the
- * same value so both instances share the browser tile cache.
- */
+/** Last Geoserver RND used for the polygon layer on this map (for `initialTileVersion`). */
 export function getMapTileVersion(map: MapboxMap | null | undefined): string {
   if (map == null) return "0";
   return getSourceCacheKeys(map)[LAYERS_NAMES.POLYGON_GEOMETRY] ?? "0";

@@ -19,11 +19,6 @@ export const useGoogleSatellite = (
     const currentContainer = mapContainer.current;
     if (!currentMap || !currentContainer || !styleReady) return;
 
-    // addGoogleSatelliteLayer / removeGoogleSatelliteLayer each carry their own
-    // try/catch guard (map.getStyle() throws when mid-transition). No duplicate
-    // isStyleLoaded() check here — it can return false inside style.load callbacks
-    // due to pending transitions, which would silently drop the safety-net call.
-
     if (currentStyle === MapStyle.GoogleSatellite) {
       const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
       if (!currentMap.getLayer(GOOGLE_RASTER_LAYER_ID)) {
