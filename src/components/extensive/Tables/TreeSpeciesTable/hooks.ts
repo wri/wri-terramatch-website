@@ -27,13 +27,11 @@ export const useTableType = (entity: SupportedEntity, collection?: string, fromP
           : "treeCountGoal";
 
       case "tree-planted":
-        if (entity === "projects" && (framework === Framework.HBF || isTerrafund(framework))) {
+        // Project-level rollup: show site-report counts as a single Count column (no per-species vs project-target comparison).
+        if (entity === "sites" && framework === Framework.HBF) {
           return "treeCountGoal";
-        } else if (entity === "sites" && framework === Framework.HBF) {
-          return "treeCountGoal";
-        } else {
-          return "noGoal";
         }
+        return "noGoal";
 
       default:
         return "noGoal";
@@ -174,6 +172,10 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
           goalCount: amount ?? 0,
           treeCountGoal: [reportAmount, amount ?? 0]
         };
+      }
+      if (entity === "projects" && collection === "tree-planted" && tableType === "noGoal") {
+        const reportAmount = getReportAmount(name);
+        return { ...tableRowData, treeCount: reportAmount, goalCount: reportAmount };
       }
       if (entity.endsWith("Reports")) {
         return { ...tableRowData, treeCount: amount };
