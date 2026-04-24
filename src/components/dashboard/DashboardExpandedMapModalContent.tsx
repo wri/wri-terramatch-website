@@ -1,3 +1,5 @@
+import { useLayoutEffect, useRef } from "react";
+
 import { DashboardExpandedMapLegend } from "@/components/dashboard/DashboardExpandedMapLegend";
 import { DashboardGetProjectsData, MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { MapFunctions } from "@/components/elements/Map-mapbox/Map.d";
@@ -24,6 +26,8 @@ export type DashboardExpandedMapModalContentProps = {
   translate: (key: string, options?: Record<string, string | number>) => string;
   nonProfitProjectCount: number;
   enterpriseProjectCount: number;
+  initialTileVersion?: string;
+  initialPolygonFingerprint?: string;
 };
 
 export function DashboardExpandedMapModalContent({
@@ -43,10 +47,27 @@ export function DashboardExpandedMapModalContent({
   dashboardCountries,
   translate,
   nonProfitProjectCount,
-  enterpriseProjectCount
+  enterpriseProjectCount,
+  initialTileVersion,
+  initialPolygonFingerprint
 }: DashboardExpandedMapModalContentProps) {
+  const shellRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const el = shellRef.current;
+    if (el == null) return;
+    const ro = new ResizeObserver(() => {
+      modalMapFunctions.map.current?.resize();
+    });
+    ro.observe(el);
+    modalMapFunctions.map.current?.resize();
+    return () => {
+      ro.disconnect();
+    };
+  }, [modalMapFunctions]);
+
   return (
-    <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
+    <div ref={shellRef} className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
       <LoadingContainerOpacity loading={modalMapLoaded}>
         <MapContainer
           id="modal"
@@ -65,7 +86,9 @@ export function DashboardExpandedMapModalContent({
             projectUUID: selectedProjectUuid,
             hasAccess,
             dashboardContext: { setFilters, dashboardCountries, dashboardMode: "modal" },
-            className: "custom-popup-close-button !h-full"
+            className: "custom-popup-close-button !h-full",
+            initialTileVersion,
+            initialPolygonFingerprint
           })}
         />
       </LoadingContainerOpacity>

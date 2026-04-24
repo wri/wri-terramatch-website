@@ -29,28 +29,33 @@ export function useDashboardMapViewportSync({
     const currentMap = dashboardMapFunctions.map.current as MapboxMap | null;
     if (!currentMap || !dashboardMapLoaded) return;
 
-    const syncMapState = () => {
+    const syncViewport = () => {
       const center = currentMap.getCenter();
       const zoom = currentMap.getZoom();
-      const style = getCurrentMapStyle(currentMap);
       const [clampedLng, clampedLat] = clampLongitudeLatitude(center.lng, center.lat);
       setCurrentCenter([clampedLng, clampedLat]);
       setCurrentZoom(zoom);
-      if (style) {
-        setCurrentMapStyle(style);
-      }
     };
 
-    syncMapState();
+    const syncStyleDeferred = () => {
+      requestAnimationFrame(() => {
+        const style = getCurrentMapStyle(currentMap);
+        if (style != null) setCurrentMapStyle(style);
+      });
+    };
 
-    currentMap.on("moveend", syncMapState);
-    currentMap.on("zoomend", syncMapState);
-    currentMap.on("style.load", syncMapState);
+    syncViewport();
+    syncStyleDeferred();
+
+    currentMap.on("moveend", syncViewport);
+    currentMap.on("zoomend", syncViewport);
+    const onStyleLoad = () => syncViewport();
+    currentMap.on("style.load", onStyleLoad);
 
     return () => {
-      currentMap.off("moveend", syncMapState);
-      currentMap.off("zoomend", syncMapState);
-      currentMap.off("style.load", syncMapState);
+      currentMap.off("moveend", syncViewport);
+      currentMap.off("zoomend", syncViewport);
+      currentMap.off("style.load", onStyleLoad);
     };
   }, [dashboardMapFunctions, dashboardMapLoaded, setCurrentCenter, setCurrentZoom, setCurrentMapStyle]);
 

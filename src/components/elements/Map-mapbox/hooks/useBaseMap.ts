@@ -18,7 +18,8 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<MapboxMap | null>(null);
   const draw = useRef<MapboxDraw | null>(null);
-  const [styleLoaded, setStyleLoaded] = useState(false);
+
+  const [, _forceRerender] = useState(false);
 
   const onCancel = (parsedPolygonData: Record<string, string[]> | undefined) => {
     if (map.current != null && draw.current != null) {
@@ -41,8 +42,8 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
     }
   };
 
-  const handleStyleLoad = useCallback(() => {
-    setStyleLoaded(true);
+  const handleFirstStyleLoad = useCallback(() => {
+    _forceRerender(v => !v);
   }, []);
 
   const initMap = (useDashboardStyle?: boolean, initialStyle?: MapStyle) => {
@@ -83,10 +84,10 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
     };
 
     if (map.current != null && draw.current != null) {
-      map.current.on("style.load", handleStyleLoad);
+      map.current.on("style.load", handleFirstStyleLoad);
 
       if (map.current.isStyleLoaded()) {
-        handleStyleLoad();
+        handleFirstStyleLoad();
         addControlToMap();
       } else {
         addControlToMap();
@@ -104,10 +105,11 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
     }
   };
 
+  const setStyleLoaded = (_value: boolean) => {};
+
   return {
     mapContainer,
     map,
-    styleLoaded,
     draw,
     onCancel,
     initMap,

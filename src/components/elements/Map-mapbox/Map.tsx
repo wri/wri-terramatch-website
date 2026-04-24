@@ -2,7 +2,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
-import { Marker } from "mapbox-gl";
+import { Map as MapboxMap, Marker } from "mapbox-gl";
 import { useRouter } from "next/router";
 import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { ValidationError } from "yup";
@@ -76,6 +76,10 @@ export interface BaseMapProps {
   legendPosition?: ControlMapPosition;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
+  /** Tile cache key from another map; modal can reuse the same Geoserver RND. */
+  initialTileVersion?: string;
+  /** When it matches current polygon data, skip bumping the tile cache on mount. */
+  initialPolygonFingerprint?: string;
 }
 
 export interface DashboardMapExtras {
@@ -176,7 +180,7 @@ export const MapContainer = ({
 }: MapProps) => {
   if (mapFunctions == null) return null;
 
-  const { map, mapContainer, draw, onCancel, initMap, setStyleLoaded } = mapFunctions;
+  const { map, mapContainer, draw, onCancel, initMap } = mapFunctions;
 
   const {
     polygonsData,
@@ -191,7 +195,9 @@ export const MapContainer = ({
     sitePolygonData,
     selectedLandscapes,
     projectUUID,
-    setLoader
+    setLoader,
+    initialTileVersion,
+    initialPolygonFingerprint
   } = props;
 
   const [viewImages, setViewImages] = useState(false);
@@ -261,7 +267,6 @@ export const MapContainer = ({
         mapMarkerRef.current = null;
       }
       if (map.current != null) {
-        setStyleLoaded(false);
         map.current.remove();
         map.current = null;
       }
@@ -282,13 +287,26 @@ export const MapContainer = ({
     return () => ro.disconnect();
   });
 
-  const { styleReady, styleVersion } = useMapReadiness(map?.current);
+  const [mapInstanceForReadiness, setMapInstanceForReadiness] = useState<MapboxMap | null>(null);
+  useEffect(() => {
+    if (map == null) return;
+    const t = window.setInterval(() => {
+      setMapInstanceForReadiness(prev => {
+        const c = map.current;
+        return c === prev ? prev : c;
+      });
+    }, 100);
+    return () => {
+      clearInterval(t);
+    };
+  }, [map]);
+
+  const { styleReady, styleVersion } = useMapReadiness(mapInstanceForReadiness);
 
   const { currentStyle, handleStyleChange } = useMapStyle({
     map,
     mapStyleProp,
     styleReady,
-    styleVersion,
     projectUUID,
     dashboardMode,
     onStyleChange
@@ -305,7 +323,9 @@ export const MapContainer = ({
     dashboardMode,
     projectUUID,
     hasAccess,
-    selectedPolygonsInCheckbox
+    selectedPolygonsInCheckbox,
+    initialTileVersion,
+    initialPolygonFingerprint
   });
 
   useMapPopups({
