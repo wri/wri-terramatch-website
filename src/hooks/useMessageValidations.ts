@@ -343,7 +343,7 @@ export const useMessageValidators = () => {
           case "DATE_OUTSIDE_SITE_RANGE":
             return [
               t(
-                "Plant Start Date ({providedValue}) for polygon {polygonName} in site {siteName} should be within two years of the site's establishment date ({siteStartDate}). Allowed range: {minDate} to {maxDate}",
+                "Plant Start Date ({providedValue}) for polygon {polygonName} in site {siteName} should be no more than two years before, or up to three years after, the site's establishment date ({siteStartDate}). Allowed range: {minDate} to {maxDate}.",
                 {
                   providedValue: info.providedValue,
                   polygonName: info.polygonName || "Unnamed Polygon",
