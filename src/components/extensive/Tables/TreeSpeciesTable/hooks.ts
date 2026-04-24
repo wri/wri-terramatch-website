@@ -7,7 +7,6 @@ import { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable/index"
 import { SupportedEntity, usePlants } from "@/connections/EntityAssociation";
 import { TreeReportCountsEntity, useTreeReportCounts } from "@/connections/TreeReportCounts";
 import { Framework, isTerrafund, useFrameworkContext } from "@/context/framework.provider";
-import Log from "@/utils/log";
 
 export const useTableType = (entity: SupportedEntity, collection?: string, fromProps?: TableType): TableType => {
   const { framework } = useFrameworkContext();
@@ -88,26 +87,7 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
             ([reportName]) => !(plants ?? []).some(({ name }) => name?.toLowerCase() === reportName?.toLowerCase())
           )
           .reduce((sum, [, { amount }]) => sum + (amount ?? 0), 0);
-        const result = plantsTotal + reportPlantsTotal;
-        if (entity === "projectReports" && collection === "non-tree") {
-          Log.debug("[usePlantTotalCount] projectReports / non-tree", {
-            entityUuid,
-            plantsTotal,
-            reportPlantsTotal,
-            plantRows: (plants ?? []).map(p => ({ name: p.name, amount: p.amount })),
-            reportCountKeys: reportCountsEntries.map(([name]) => name),
-            result
-          });
-        }
-        return result;
-      }
-      if (entity === "projectReports" && collection === "non-tree") {
-        Log.debug("[usePlantTotalCount] projectReports / non-tree (no reportCount rows or all overlap plants)", {
-          entityUuid,
-          plantsTotal,
-          plantRows: (plants ?? []).map(p => ({ name: p.name, amount: p.amount })),
-          reportCounts: reportCounts ?? {}
-        });
+        return plantsTotal + reportPlantsTotal;
       }
       return plantsTotal;
     }
@@ -123,7 +103,7 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
     }
 
     return sumBy(plants ?? [], "amount");
-  }, [entity, entityUuid, plants, reportCounts, collection]);
+  }, [entity, plants, reportCounts, collection]);
 };
 
 export const usePlantSpeciesCount = ({ entity, entityUuid, collection }: AggregateTreeHookProps) => {
