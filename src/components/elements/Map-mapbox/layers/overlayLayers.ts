@@ -14,7 +14,12 @@ import {
   getGeoserverURL
 } from "../adapters/geoserver";
 import { AnrPlotMapPopup } from "../components/AnrPlotMapPopup";
-import { BASEMAP_CONFIGS, MapStyle } from "../MapControls/types";
+import {
+  BASEMAP_CONFIGS,
+  MapStyle,
+  TERRAMATCH_SATELLITE_STYLE_ID,
+  TERRAMATCH_STREET_STYLE_ID
+} from "../MapControls/types";
 import { setFilterLandscape } from "./polygonLayers";
 
 const GOOGLE_RASTER_SOURCE_ID = "google-satellite-source";
@@ -222,18 +227,19 @@ export const getCurrentMapStyle = (map: MapboxMap): MapStyle | undefined => {
     const fromSpec = styleFromSpec?.name;
     const styleUrl = internalStyle?.url ?? internalStyle?.name ?? fromSpec;
     if (styleUrl) {
-      if (styleUrl === MapStyle.Street || styleUrl.includes("clve3yxzq01w101pefkkg3rci")) return MapStyle.Street;
-      if (styleUrl === MapStyle.Satellite || styleUrl.includes("clv3bkxut01y301pk317z5afu")) return MapStyle.Satellite;
+      if (styleUrl === MapStyle.Street || styleUrl.includes(TERRAMATCH_STREET_STYLE_ID)) return MapStyle.Street;
+      if (styleUrl === MapStyle.Satellite || styleUrl.includes(TERRAMATCH_SATELLITE_STYLE_ID))
+        return MapStyle.Satellite;
     }
     const uri = styleFromSpec?.metadata?.["mapbox:uri"];
     if (typeof uri === "string") {
-      if (uri === MapStyle.Street || uri.includes("clve3yxzq01w101pefkkg3rci")) return MapStyle.Street;
-      if (uri === MapStyle.Satellite || uri.includes("clv3bkxut01y301pk317z5afu")) return MapStyle.Satellite;
+      if (uri === MapStyle.Street || uri.includes(TERRAMATCH_STREET_STYLE_ID)) return MapStyle.Street;
+      if (uri === MapStyle.Satellite || uri.includes(TERRAMATCH_SATELLITE_STYLE_ID)) return MapStyle.Satellite;
     }
     if (styleFromSpec != null) {
       const blob = JSON.stringify(styleFromSpec);
-      if (blob.includes("clve3yxzq01w101pefkkg3rci")) return MapStyle.Street;
-      if (blob.includes("clv3bkxut01y301pk317z5afu")) return MapStyle.Satellite;
+      if (blob.includes(TERRAMATCH_STREET_STYLE_ID)) return MapStyle.Street;
+      if (blob.includes(TERRAMATCH_SATELLITE_STYLE_ID)) return MapStyle.Satellite;
     }
   } catch (e) {
     Log.warn("Error getting current map style:", e);
