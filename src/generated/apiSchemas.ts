@@ -1095,11 +1095,6 @@ export type V2FundingTypeRead = {
 
 export type Empty = Record<string, any>;
 
-export type AuthChange = {
-  token?: string;
-  password?: string;
-};
-
 export type AuthReset = {
   email_address?: string;
   callback_url?: string;
@@ -1180,15 +1175,4 @@ export type SitePolygon = {
   is_active?: boolean;
   version_name?: string;
   validation_status?: boolean;
-};
-
-export type UserCreateComplete = {
-  token?: string;
-  password?: string;
-  first_name?: string;
-  last_name?: string;
-  email_address?: string;
-  job_role?: string;
-  phone_number?: string;
-  role?: string;
 };

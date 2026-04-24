@@ -17,6 +17,7 @@ import {
   OwnershipStakeDto,
   TreeSpeciesDto,
   ActionDto,
+  SendLoginDetailsResponseDto,
   UserAssociationDto,
   OrganisationInviteDto,
   ProjectInviteAcceptanceDto
@@ -39,6 +40,7 @@ export const USER_SERVICE_RESOURCES = [
   "ownershipStakes",
   "treeSpecies",
   "actions",
+  "sendLoginDetails",
   "associatedUsers",
   "organisationInvites",
   "projectInviteAcceptances"
@@ -61,6 +63,7 @@ export type UserServiceApiResources = {
   ownershipStakes: StoreResourceMap<OwnershipStakeDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   actions: StoreResourceMap<ActionDto>;
+  sendLoginDetails: StoreResourceMap<SendLoginDetailsResponseDto>;
   associatedUsers: StoreResourceMap<UserAssociationDto>;
   organisationInvites: StoreResourceMap<OrganisationInviteDto>;
   projectInviteAcceptances: StoreResourceMap<ProjectInviteAcceptanceDto>;
