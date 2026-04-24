@@ -7,9 +7,11 @@ import { AddManagerDialog } from "@/admin/components/Dialogs/AddManagerDialog";
 import { InviteMonitoringPartnerDialog } from "@/admin/components/Dialogs/InviteMonitoringPartnerDialog";
 import modules from "@/admin/modules";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
+import { SupportedEntity } from "@/connections/Entity";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
-import { fetchGetV2ProjectsUUIDENTITYExport } from "@/generated/apiComponents";
+import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
+import { v3EntityName } from "@/helpers/entity";
 import Log from "@/utils/log";
 import { downloadFileBlob } from "@/utils/network";
 
@@ -31,15 +33,15 @@ const QuickActions: FC = () => {
         Log.error("Failed to download project polygons:", error);
       }
     } else {
-      // Use V2 API for other exports (CSV reports)
-      fetchGetV2ProjectsUUIDENTITYExport({
-        pathParams: {
-          uuid: record.uuid,
-          entity
-        }
-      }).then((response: any) => {
-        downloadFileBlob(response, `${record.name} ${entity.replace("-reports", "")} reports.csv`);
-      });
+      try {
+        const { blob } = await entityExportAll.fetchBlob({
+          pathParams: { entity: v3EntityName(entity) as SupportedEntity },
+          queryParams: { projectUuid: record.uuid }
+        });
+        await downloadFileBlob(blob, `${record.name} ${entity.replace("-reports", "")} reports.csv`);
+      } catch (error) {
+        Log.error("Failed to download entity CSV:", error);
+      }
     }
   };
 

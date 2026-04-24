@@ -3049,6 +3049,9 @@ export type EntityExportAllPathParams = {
 };
 
 export type EntityExportAllQueryParams = {
+  /**
+   * Filter by framework. If projectUuid is provided, this is ignored.
+   */
   frameworkKey?:
     | "terrafund"
     | "terrafund-landscapes"
@@ -3059,6 +3062,10 @@ export type EntityExportAllQueryParams = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1";
+  /**
+   * Filter by project
+   */
+  projectUuid?: string;
 };
 
 export type EntityExportAllError = Fetcher.ErrorWrapper<{

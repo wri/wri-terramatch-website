@@ -76,7 +76,7 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
         const entityName = v3EntityName(entity) as SupportedEntity;
         const frameworkKey = toFramework(framework);
         if (isSuperAdmin || isFrameworkAdmin) {
-          const { data, loadFailure } = await downloadEntityAllCsv(entityName, frameworkKey);
+          const { data, loadFailure } = await downloadEntityAllCsv({ entity: entityName, framework: frameworkKey });
           if (loadFailure != null) {
             reportError(loadFailure);
           } else {

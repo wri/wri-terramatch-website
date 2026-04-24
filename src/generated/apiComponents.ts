@@ -352,50 +352,6 @@ export const usePostV2UsersResend = (
   );
 };
 
-export type GetV2ProjectsUUIDENTITYExportPathParams = {
-  /**
-   * allowed values sites|nurseries|project-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type GetV2ProjectsUUIDENTITYExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2ProjectsUUIDENTITYExportVariables = {
-  pathParams: GetV2ProjectsUUIDENTITYExportPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2ProjectsUUIDENTITYExport = (
-  variables: GetV2ProjectsUUIDENTITYExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<Blob, GetV2ProjectsUUIDENTITYExportError, undefined, {}, {}, GetV2ProjectsUUIDENTITYExportPathParams>({
-    url: "/v2/projects/{uuid}/{entity}/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2ProjectsUUIDENTITYExport = <TData = Blob>(
-  variables: GetV2ProjectsUUIDENTITYExportVariables,
-  options?: Omit<reactQuery.UseQueryOptions<Blob, GetV2ProjectsUUIDENTITYExportError, TData>, "queryKey" | "queryFn">
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Blob, GetV2ProjectsUUIDENTITYExportError, TData>(
-    queryKeyFn({
-      path: "/v2/projects/{UUID}/{ENTITY}/export",
-      operationId: "getV2ProjectsUUIDENTITYExport",
-      variables
-    }),
-    ({ signal }) => fetchGetV2ProjectsUUIDENTITYExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2ENTITYUUIDExportPathParams = {
   /**
    * allowed values sites|nurseries|projects|project-reports/site-reports/nursery-reports
@@ -443,11 +399,6 @@ export type QueryOperation =
       path: "/auth/mail";
       operationId: "getAuthMail";
       variables: GetAuthMailVariables;
-    }
-  | {
-      path: "/v2/projects/{UUID}/{ENTITY}/export";
-      operationId: "getV2ProjectsUUIDENTITYExport";
-      variables: GetV2ProjectsUUIDENTITYExportVariables;
     }
   | {
       path: "/v2/{ENTITY}/{UUID}/export";
