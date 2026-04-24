@@ -59,57 +59,6 @@ export const usePostV2AdminENTITYUUIDReminder = (
   );
 };
 
-export type GetV2AdminFormsApplicationsUUIDExportPathParams = {
-  uuid: string;
-};
-
-export type GetV2AdminFormsApplicationsUUIDExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminFormsApplicationsUUIDExportVariables = {
-  pathParams: GetV2AdminFormsApplicationsUUIDExportPathParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * The UUID provided is the Funding Programme ID that the applications are for
- */
-export const fetchGetV2AdminFormsApplicationsUUIDExport = (
-  variables: GetV2AdminFormsApplicationsUUIDExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    undefined,
-    GetV2AdminFormsApplicationsUUIDExportError,
-    undefined,
-    {},
-    {},
-    GetV2AdminFormsApplicationsUUIDExportPathParams
-  >({ url: "/v2/admin/forms/applications/{uuid}/export", method: "get", ...variables, signal });
-
-/**
- * The UUID provided is the Funding Programme ID that the applications are for
- */
-export const useGetV2AdminFormsApplicationsUUIDExport = <TData = undefined>(
-  variables: GetV2AdminFormsApplicationsUUIDExportVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<undefined, GetV2AdminFormsApplicationsUUIDExportError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<undefined, GetV2AdminFormsApplicationsUUIDExportError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/forms/applications/{UUID}/export",
-      operationId: "getV2AdminFormsApplicationsUUIDExport",
-      variables
-    }),
-    ({ signal }) => fetchGetV2AdminFormsApplicationsUUIDExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2ApplicationsUUIDExportPathParams = {
   uuid: string;
 };
@@ -519,11 +468,6 @@ export const useGetV2ENTITYUUIDExport = <TData = Blob>(
 };
 
 export type QueryOperation =
-  | {
-      path: "/v2/admin/forms/applications/{UUID}/export";
-      operationId: "getV2AdminFormsApplicationsUUIDExport";
-      variables: GetV2AdminFormsApplicationsUUIDExportVariables;
-    }
   | {
       path: "/v2/applications/{UUID}/export";
       operationId: "getV2ApplicationsUUIDExport";
