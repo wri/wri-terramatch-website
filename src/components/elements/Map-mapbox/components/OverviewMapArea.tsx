@@ -131,7 +131,7 @@ const OverviewMapArea = ({
   });
 
   useEffect(() => {
-    if (!delayedJobs || delayedJobs.length === 0) return;
+    if (delayedJobs == null || delayedJobs.length === 0) return;
 
     const newlyCompleted = delayedJobs.filter(
       job => job.name === "Polygon Validation" && job.status !== "pending" && !processedPolyValidationJobs.has(job.uuid)

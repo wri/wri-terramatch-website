@@ -161,7 +161,7 @@ const FloatNotification = () => {
   }, [delayedJobs, processedIndicatorJobs]);
 
   useEffect(() => {
-    if (!delayedJobs || delayedJobs.length === 0) return;
+    if (delayedJobs == null || delayedJobs.length === 0) return;
 
     delayedJobs.forEach(job => {
       if (job.name === "Polygon Validation" && !processedValidationJobs.has(job.uuid)) {

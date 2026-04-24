@@ -400,7 +400,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   }, [pendingValidationRefresh, delayedJobs]);
 
   useEffect(() => {
-    if (!delayedJobs || !record || pendingValidationRefresh) return;
+    if (delayedJobs == null || record == null || pendingValidationRefresh) return;
 
     const hasActiveValidationJob = delayedJobs.some(
       job => job.name === "Polygon Validation" && job.status === "pending"
