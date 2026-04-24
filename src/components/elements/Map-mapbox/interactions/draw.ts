@@ -1,6 +1,6 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import bbox from "@turf/bbox";
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 
 import { loadPolygonGeoJson, loadProjectPolygonsGeoJson } from "@/connections/GeoJsonExport";
 import { updateProjectPolygonResource } from "@/connections/ProjectPolygons";
@@ -31,12 +31,12 @@ const extractGeoJsonFromResponse = (
   return undefined;
 };
 
-export const startDrawing = (draw: MapboxDraw, map: mapboxgl.Map): void => {
+export const startDrawing = (draw: MapboxDraw, map: MapboxMap): void => {
   draw.changeMode("draw_polygon");
   map.getCanvas().style.cursor = "crosshair";
 };
 
-export const stopDrawing = (draw: MapboxDraw, map: mapboxgl.Map): void => {
+export const stopDrawing = (draw: MapboxDraw, map: MapboxMap): void => {
   draw.changeMode("simple_select");
   map.getCanvas().style.cursor = "auto";
 };
@@ -46,7 +46,7 @@ export const addGeojsonToDraw = (
   uuid: string,
   cb: (uuid: string) => void,
   currentDraw: MapboxDraw,
-  map?: mapboxgl.Map
+  map?: MapboxMap
 ): void => {
   if (geojson == null) return;
 
@@ -84,7 +84,7 @@ const getPolygonColor = (polygonStatus: string | undefined): string => {
 export const drawTemporaryPolygon = (
   geojson: GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry,
   cb: (polyId: string) => void,
-  map: mapboxgl.Map,
+  map: MapboxMap,
   polygonVersion?: PolygonVersion
 ): void => {
   if (geojson == null) return;

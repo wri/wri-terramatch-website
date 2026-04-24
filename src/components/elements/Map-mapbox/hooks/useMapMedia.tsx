@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import React, { MutableRefObject, useEffect } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -10,7 +10,7 @@ import Log from "@/utils/log";
 import { addMediaSourceAndLayer } from "../layers/mediaLayers";
 
 type UseMapMediaParams = {
-  map: MutableRefObject<mapboxgl.Map | null>;
+  map: MutableRefObject<MapboxMap | null>;
   mediaFiles?: MediaDto[];
   styleReady: boolean;
   styleVersion: number;

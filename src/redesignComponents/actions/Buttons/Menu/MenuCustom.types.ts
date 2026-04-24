@@ -26,7 +26,7 @@ export interface MenuItemOption {
 }
 
 export interface MenuCustomProps {
-  label: string;
+  label?: string;
   items: MenuItemOption[];
   customTrigger?: ReactNode;
 }

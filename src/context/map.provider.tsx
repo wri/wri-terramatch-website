@@ -1,6 +1,6 @@
 import MapboxDraw, { MapboxDrawOptions } from "@mapbox/mapbox-gl-draw";
 import classNames from "classnames";
-import mapboxgl, { MapboxOptions } from "mapbox-gl";
+import { Map as MapboxMap, MapboxOptions } from "mapbox-gl";
 import {
   createContext,
   DetailedHTMLProps,
@@ -12,7 +12,7 @@ import {
   useState
 } from "react";
 interface IMapContext {
-  map?: mapboxgl.Map;
+  map?: MapboxMap;
   draw?: MapboxDraw;
 }
 
@@ -24,8 +24,8 @@ export const MapContext = createContext<IMapContext>({
 interface MapProviderProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   mapOptions?: Omit<MapboxOptions, "container">;
   drawOptions?: MapboxDrawOptions;
-  onLoadMap?: (map: mapboxgl.Map, draw?: MapboxDraw) => void;
-  onDrawSet?: (featureCollection: GeoJSON.FeatureCollection, map: mapboxgl.Map, draw?: MapboxDraw) => void;
+  onLoadMap?: (map: MapboxMap, draw?: MapboxDraw) => void;
+  onDrawSet?: (featureCollection: GeoJSON.FeatureCollection, map: MapboxMap, draw?: MapboxDraw) => void;
   initialState?: { geoJson?: any };
 }
 
@@ -39,14 +39,14 @@ const MapProvider = ({
   ...containerProps
 }: PropsWithChildren<MapProviderProps>) => {
   const mapId = useId();
-  const [map, setMap] = useState<mapboxgl.Map>();
+  const [map, setMap] = useState<MapboxMap>();
   const [draw, setDraw] = useState<any>();
 
   useEffect(() => {
     let onLoadListener: (() => void) | undefined;
 
     if (!map || !draw) {
-      const map = new mapboxgl.Map({ ...mapOptions, container: mapId });
+      const map = new MapboxMap({ ...mapOptions, container: mapId });
       let draw: MapboxDraw | undefined = undefined;
 
       if (drawOptions) {

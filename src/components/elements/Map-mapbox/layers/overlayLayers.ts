@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import { LayerSpecification, Map as MapboxMap, MapMouseEvent, Popup, VectorTileSource } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot, Root } from "react-dom/client";
 
@@ -20,14 +20,14 @@ import { setFilterLandscape } from "./polygonLayers";
 const GOOGLE_RASTER_SOURCE_ID = "google-satellite-source";
 const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
 
-export const addBorderLandscape = (map: mapboxgl.Map, landscapes: string[]): void => {
+export const addBorderLandscape = (map: MapboxMap, landscapes: string[]): void => {
   if (landscapes == null || landscapes.length === 0 || map == null) return;
   const landscapeLayer = layersList.find(layer => layer.name === LAYERS_NAMES.LANDSCAPES);
   if (landscapeLayer == null) return;
   const sourceName = landscapeLayer.name;
   const GEOSERVER_TILE_URL = getGeoserverURL(landscapeLayer.geoserverLayerName, undefined, "0");
 
-  const existingSource = map.getSource(sourceName) as mapboxgl.VectorTileSource | undefined;
+  const existingSource = map.getSource(sourceName) as VectorTileSource | undefined;
   const existingTileUrl = existingSource?.tiles?.[0];
   if (existingTileUrl != null && existingTileUrl !== GEOSERVER_TILE_URL) {
     if (map.getLayer(sourceName)) map.removeLayer(sourceName);
@@ -44,12 +44,12 @@ export const addBorderLandscape = (map: mapboxgl.Map, landscapes: string[]): voi
       id: sourceName,
       source: sourceName,
       "source-layer": landscapeLayer.geoserverLayerName
-    } as mapboxgl.LayerSpecification);
+    } as LayerSpecification);
   }
   setFilterLandscape(map, sourceName, landscapes);
 };
 
-export const removeBorderLandscape = (map: mapboxgl.Map): void => {
+export const removeBorderLandscape = (map: MapboxMap): void => {
   if (!map || !map.isStyleLoaded()) return;
   const layerName = LAYERS_NAMES.LANDSCAPES;
   try {
@@ -60,16 +60,16 @@ export const removeBorderLandscape = (map: mapboxgl.Map): void => {
   }
 };
 
-export const updateMapProjection = (map: mapboxgl.Map, currentStyle: MapStyle): void => {
+export const updateMapProjection = (map: MapboxMap, currentStyle: MapStyle): void => {
   const config = BASEMAP_CONFIGS[currentStyle];
   if (config?.projection) {
     map.setProjection(config.projection);
   }
 };
 
-export const addGoogleSatelliteLayer = (map: mapboxgl.Map): void => {
+export const addGoogleSatelliteLayer = (map: MapboxMap): void => {
   if (map == null) return;
-  let mapStyle: ReturnType<mapboxgl.Map["getStyle"]>;
+  let mapStyle: ReturnType<MapboxMap["getStyle"]>;
   try {
     mapStyle = map.getStyle();
   } catch {
@@ -136,7 +136,7 @@ export const addGoogleSatelliteLayer = (map: mapboxgl.Map): void => {
   }
 };
 
-export const removeGoogleSatelliteLayer = (map: mapboxgl.Map): void => {
+export const removeGoogleSatelliteLayer = (map: MapboxMap): void => {
   if (map == null) return;
   try {
     if (map.getStyle() == null) return;
@@ -180,11 +180,11 @@ export const removeGoogleSatelliteLayer = (map: mapboxgl.Map): void => {
   }
 };
 
-export const getCurrentMapStyle = (map: mapboxgl.Map): MapStyle | undefined => {
+export const getCurrentMapStyle = (map: MapboxMap): MapStyle | undefined => {
   if (map == null) return undefined;
   try {
     if (map.getLayer(GOOGLE_RASTER_LAYER_ID)) return MapStyle.GoogleSatellite;
-    const internalStyle = (map as mapboxgl.Map & { style?: { url?: string; name?: string } }).style;
+    const internalStyle = (map as MapboxMap & { style?: { url?: string; name?: string } }).style;
     const styleUrl = internalStyle?.url ?? internalStyle?.name;
     if (styleUrl) {
       if (styleUrl === MapStyle.Street || styleUrl.includes("clve3yxzq01w101pefkkg3rci")) return MapStyle.Street;
@@ -198,7 +198,7 @@ export const getCurrentMapStyle = (map: mapboxgl.Map): MapStyle | undefined => {
 
 export const setMapStyle = (
   targetStyle: MapStyle,
-  map: mapboxgl.Map,
+  map: MapboxMap,
   setCurrentStyle: (style: MapStyle) => void,
   currentStyle: string | MapStyle
 ): void => {
@@ -247,17 +247,17 @@ export const setMapStyle = (
 };
 
 type AnrPlotOverlayState = {
-  clickHandler: ((e: mapboxgl.MapMouseEvent) => void) | null;
+  clickHandler: ((e: MapMouseEvent) => void) | null;
   mouseEnterHandler: (() => void) | null;
   mouseLeaveHandler: (() => void) | null;
-  popup: InstanceType<typeof mapboxgl.Popup> | null;
+  popup: InstanceType<typeof Popup> | null;
   popupRoot: Root | null;
   pendingIdleRetry: { fn: () => void } | null;
 };
 
-const anrPlotOverlayStateByMap = new WeakMap<mapboxgl.Map, AnrPlotOverlayState>();
+const anrPlotOverlayStateByMap = new WeakMap<MapboxMap, AnrPlotOverlayState>();
 
-function getAnrPlotOverlayState(map: mapboxgl.Map): AnrPlotOverlayState {
+function getAnrPlotOverlayState(map: MapboxMap): AnrPlotOverlayState {
   const existing = anrPlotOverlayStateByMap.get(map);
   if (existing != null) return existing;
   const created: AnrPlotOverlayState = {
@@ -272,7 +272,7 @@ function getAnrPlotOverlayState(map: mapboxgl.Map): AnrPlotOverlayState {
   return created;
 }
 
-function cancelAnrPendingRetry(map: mapboxgl.Map) {
+function cancelAnrPendingRetry(map: MapboxMap) {
   const state = getAnrPlotOverlayState(map);
   if (state.pendingIdleRetry != null) {
     map.off("idle", state.pendingIdleRetry.fn);
@@ -280,7 +280,7 @@ function cancelAnrPendingRetry(map: mapboxgl.Map) {
   }
 }
 
-export function removeAnrPlotGeometryOverlay(map: mapboxgl.Map | null | undefined): void {
+export function removeAnrPlotGeometryOverlay(map: MapboxMap | null | undefined): void {
   if (map == null) return;
   cancelAnrPendingRetry(map);
   const state = getAnrPlotOverlayState(map);
@@ -313,7 +313,7 @@ export function removeAnrPlotGeometryOverlay(map: mapboxgl.Map | null | undefine
   }
 }
 
-export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown, options: { visible: boolean }): void {
+export function upsertAnrPlotGeometryOverlay(map: MapboxMap, geojson: unknown, options: { visible: boolean }): void {
   if (map == null) return;
   removeAnrPlotGeometryOverlay(map);
   const state = getAnrPlotOverlayState(map);
@@ -369,7 +369,7 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
       }
     }
 
-    state.clickHandler = (e: mapboxgl.MapMouseEvent) => {
+    state.clickHandler = (e: MapMouseEvent) => {
       const feature = e.features?.[0];
       if (feature == null) return;
       if (state.popup != null) {
@@ -402,7 +402,7 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
           }
         })
       );
-      const popup = new mapboxgl.Popup({ className: "popup-map", closeButton: false })
+      const popup = new Popup({ className: "popup-map", closeButton: false })
         .setLngLat(e.lngLat)
         .setDOMContent(popupContent)
         .addTo(map);

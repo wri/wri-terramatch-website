@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
 
 import { MapFunctions } from "@/components/elements/Map-mapbox/Map.d";
@@ -26,7 +26,7 @@ export function useDashboardMapViewportSync({
   setCurrentMapStyle
 }: UseDashboardMapViewportSyncParams): { handleCloseExpandedMapModal: () => void } {
   useEffect(() => {
-    const currentMap = dashboardMapFunctions.map.current as mapboxgl.Map | null;
+    const currentMap = dashboardMapFunctions.map.current as MapboxMap | null;
     if (!currentMap || !dashboardMapLoaded) return;
 
     const syncMapState = () => {
@@ -55,7 +55,7 @@ export function useDashboardMapViewportSync({
   }, [dashboardMapFunctions, dashboardMapLoaded, setCurrentCenter, setCurrentZoom, setCurrentMapStyle]);
 
   useEffect(() => {
-    const currentMap = modalMapFunctions.map.current as mapboxgl.Map | null;
+    const currentMap = modalMapFunctions.map.current as MapboxMap | null;
     if (!currentMap || !modalMapLoaded) return;
 
     const handleMoveEnd = () => {
@@ -84,7 +84,7 @@ export function useDashboardMapViewportSync({
       }
     }
 
-    const currentMap = modalMapFunctions.map.current as mapboxgl.Map | null;
+    const currentMap = modalMapFunctions.map.current as MapboxMap | null;
     if (!currentMap) return;
 
     const center = currentMap.getCenter();

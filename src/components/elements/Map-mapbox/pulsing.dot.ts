@@ -1,6 +1,6 @@
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 
-export const getPulsingDot = function (map: mapboxgl.Map, size = 40, color = "rgba(255, 200, 200, 1)") {
+export const getPulsingDot = function (map: MapboxMap, size = 40, color = "rgba(255, 200, 200, 1)") {
   const pulsingDot = {
     width: size,
     height: size,

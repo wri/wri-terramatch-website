@@ -1,7 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { useRouter } from "next/router";
 import React, { useCallback, useMemo, useState } from "react";
 
@@ -152,7 +152,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   };
 
   const handleOpenExpandedMap = useCallback(() => {
-    const dashboardMap = dashboardMapFunctions.map.current as mapboxgl.Map | null;
+    const dashboardMap = dashboardMapFunctions.map.current as MapboxMap | null;
 
     let initialCenter: [number, number] | undefined;
     let initialZoom: number | undefined;

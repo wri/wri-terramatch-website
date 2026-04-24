@@ -677,6 +677,15 @@ export type UserFramework = {
   slug: string;
 };
 
+export type UserMonitoringPartnerProjectEmbedded = {
+  /**
+   * @format uuid
+   */
+  uuid: string;
+  name: string;
+  lightResource: true;
+};
+
 export type UserDto = {
   uuid: string;
   firstName: string | null;
@@ -717,6 +726,7 @@ export type UserDto = {
   locale: string | null;
   frameworks: UserFramework[];
   directFrameworks: UserFramework[];
+  monitoringPartnerProjects?: UserMonitoringPartnerProjectEmbedded[];
 };
 
 export type OrganisationCreateAttributes = {

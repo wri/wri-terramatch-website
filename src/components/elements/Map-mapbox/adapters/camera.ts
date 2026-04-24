@@ -1,4 +1,4 @@
-import mapboxgl, { LngLat, Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl";
+import { LngLat, Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl";
 
 import Log from "@/utils/log";
 
@@ -62,7 +62,7 @@ export const zoomToCenter = (center: [number, number], zoom: number, map: Mapbox
 export const addMarkerAndZoom = (map: MapboxMap, location: { lng: number; lat: number }): void => {
   if (map == null) return;
   const { lng, lat } = location;
-  const lngLat = new mapboxgl.LngLat(lng, lat);
+  const lngLat = new LngLat(lng, lat);
   createMarker(lngLat, map);
   map.setCenter([lng, lat]);
   map.setZoom(14);
@@ -74,7 +74,7 @@ export const addOrUpdateMarkerAndZoom = (
   marker: MapboxMarker | null
 ): MapboxMarker => {
   const { lng, lat } = location;
-  const lngLat = new mapboxgl.LngLat(lng, lat);
+  const lngLat = new LngLat(lng, lat);
   const nextMarker = marker == null ? createMarker(lngLat, map) : marker.setLngLat(lngLat);
   map.setCenter([lng, lat]);
   map.setZoom(14);
@@ -82,5 +82,5 @@ export const addOrUpdateMarkerAndZoom = (
 };
 
 export const createMarker = (lngLat: LngLat, map: MapboxMap): MapboxMarker => {
-  return new mapboxgl.Marker({ color: "#ba5856" }).setLngLat(lngLat).addTo(map);
+  return new MapboxMarker({ color: "#ba5856" }).setLngLat(lngLat).addTo(map);
 };

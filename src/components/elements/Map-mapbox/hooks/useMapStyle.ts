@@ -1,11 +1,11 @@
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect, useState } from "react";
 
 import { getCurrentMapStyle, setMapStyle } from "../layers/overlayLayers";
 import { MapStyle } from "../MapControls/types";
 
 type UseMapStyleParams = {
-  map: MutableRefObject<mapboxgl.Map | null>;
+  map: MutableRefObject<MapboxMap | null>;
   mapStyleProp?: MapStyle;
   styleReady: boolean;
   styleVersion: number;

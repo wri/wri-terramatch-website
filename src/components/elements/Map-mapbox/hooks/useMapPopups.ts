@@ -1,5 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect, useRef } from "react";
 
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -16,7 +16,7 @@ import type {
 } from "../Map.d";
 
 type UseMapPopupsParams = {
-  map: MutableRefObject<mapboxgl.Map | null>;
+  map: MutableRefObject<MapboxMap | null>;
   draw: MutableRefObject<MapboxDraw | null>;
   sourcesAdded: boolean;
   showPopups?: boolean;
