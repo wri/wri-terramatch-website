@@ -195,7 +195,6 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
     formAnswersSayPlantingCompleted,
     plantingCompletedLabel
   });
-
   return (
     <PageBody>
       <PageRow>
