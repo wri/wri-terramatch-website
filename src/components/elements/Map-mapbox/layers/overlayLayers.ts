@@ -140,8 +140,6 @@ export const addGoogleSatelliteLayer = (map: MapboxMap): void => {
         }
       });
 
-    if (hiddenSet.size > 0) Log.info(`Hidden ${hiddenSet.size} Street layers for Google Satellite`);
-
     map.addSource(GOOGLE_RASTER_SOURCE_ID, {
       type: "raster",
       tiles: [config.rasterUrl],
@@ -173,14 +171,12 @@ export const removeGoogleSatelliteLayer = (map: MapboxMap): void => {
     if (map.getSource(GOOGLE_RASTER_SOURCE_ID) != null) map.removeSource(GOOGLE_RASTER_SOURCE_ID);
 
     const hiddenSet = getHiddenBaseLayers(map);
-    let restoredCount = 0;
 
     if (hiddenSet.size > 0) {
       hiddenSet.forEach(layerId => {
         try {
           if (map.getLayer(layerId) != null && map.getLayoutProperty(layerId, "visibility") === "none") {
             map.setLayoutProperty(layerId, "visibility", "visible");
-            restoredCount++;
           }
         } catch (e) {
           Log.warn("Error restoring tracked layer visibility:", e);
@@ -206,15 +202,12 @@ export const removeGoogleSatelliteLayer = (map: MapboxMap): void => {
           try {
             if (map.getLayoutProperty(l.id, "visibility") === "none") {
               map.setLayoutProperty(l.id, "visibility", "visible");
-              restoredCount++;
             }
           } catch (e) {
             Log.warn("Error restoring layer visibility (fallback):", e);
           }
         });
     }
-
-    if (restoredCount > 0) Log.info(`Restored ${restoredCount} Street layers after Google Satellite`);
   } catch (error) {
     Log.warn("Error removing Google satellite layer:", error);
   }
