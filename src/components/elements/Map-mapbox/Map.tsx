@@ -76,6 +76,12 @@ export interface BaseMapProps {
   legendPosition?: ControlMapPosition;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
+  /** Seed the tile-version cache key from an already-loaded map instance (e.g.
+   *  the embedded dashboard map) so the new instance reuses browser tile cache. */
+  initialTileVersion?: string;
+  /** Matching polygon fingerprint for initialTileVersion; prevents an unnecessary
+   *  timestamp bump on the first effect run of the new map instance. */
+  initialPolygonFingerprint?: string;
 }
 
 export interface DashboardMapExtras {
@@ -176,7 +182,7 @@ export const MapContainer = ({
 }: MapProps) => {
   if (mapFunctions == null) return null;
 
-  const { map, mapContainer, draw, onCancel, initMap, setStyleLoaded } = mapFunctions;
+  const { map, mapContainer, draw, onCancel, initMap } = mapFunctions;
 
   const {
     polygonsData,
@@ -191,7 +197,9 @@ export const MapContainer = ({
     sitePolygonData,
     selectedLandscapes,
     projectUUID,
-    setLoader
+    setLoader,
+    initialTileVersion,
+    initialPolygonFingerprint
   } = props;
 
   const [viewImages, setViewImages] = useState(false);
@@ -261,7 +269,6 @@ export const MapContainer = ({
         mapMarkerRef.current = null;
       }
       if (map.current != null) {
-        setStyleLoaded(false);
         map.current.remove();
         map.current = null;
       }
@@ -305,7 +312,9 @@ export const MapContainer = ({
     dashboardMode,
     projectUUID,
     hasAccess,
-    selectedPolygonsInCheckbox
+    selectedPolygonsInCheckbox,
+    initialTileVersion,
+    initialPolygonFingerprint
   });
 
   useMapPopups({

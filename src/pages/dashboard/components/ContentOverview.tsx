@@ -11,10 +11,11 @@ import { buildImpactStoriesModalColumns, ImpactStoryModalRow } from "@/component
 import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
+import { computePolygonFingerprint } from "@/components/elements/Map-mapbox/hooks/useMapLayers";
 import { DashboardGetProjectsData, MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
 import { buildDashboardMapProps } from "@/components/elements/Map-mapbox/mapProps.builders";
-import { getCurrentMapStyle } from "@/components/elements/Map-mapbox/utils";
+import { getCurrentMapStyle, getMapTileVersion } from "@/components/elements/Map-mapbox/utils";
 import Table from "@/components/elements/Table/Table";
 import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES,
@@ -172,6 +173,13 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       }
     }
 
+    // Read the embedded map's tile-version and polygon fingerprint so the modal
+    // can share the same browser tile cache rather than re-fetching all tiles.
+    const embeddedTileVersion = getMapTileVersion(dashboardMap);
+    const embeddedPolygonFingerprint = computePolygonFingerprint(
+      polygonsData?.data as Record<string, string[]> | undefined
+    );
+
     const handleExpandedMapModalClose = (modalId: string) => {
       handleCloseExpandedMapModal();
       closeModal(modalId);
@@ -203,6 +211,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           translate={t}
           nonProfitProjectCount={projectCounts?.totalNonProfitCount ?? 0}
           enterpriseProjectCount={projectCounts?.totalEnterpriseCount ?? 0}
+          initialTileVersion={embeddedTileVersion}
+          initialPolygonFingerprint={embeddedPolygonFingerprint}
         />
       </ModalExpand>
     );

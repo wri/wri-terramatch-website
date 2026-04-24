@@ -42,6 +42,10 @@ export function useMapStyle({
   useEffect(() => {
     if (map.current == null || !styleReady) return;
     if (mapStyleProp != null && mapStyleProp !== currentStyle) {
+      // Do NOT guard on isStyleLoaded() here — in Mapbox GL v3, isStyleLoaded()
+      // can return false while tiles are loading even though the style is accessible.
+      // Gating on it prevents the modal map from applying its initial Google style.
+      // addGoogleSatelliteLayer/removeGoogleSatelliteLayer carry their own try/catch guards.
       const actualStyle = getCurrentMapStyle(map.current);
       if (actualStyle !== mapStyleProp) {
         setMapStyle(mapStyleProp, map.current, setCurrentStyle, currentStyle);

@@ -147,6 +147,17 @@ function getSourceCacheKeys(map: MapboxMap): Record<string, string> {
   return sourceCacheKeys.get(map)!;
 }
 
+/**
+ * Returns the tile-version string (cache-busting RND param) that was last used
+ * when adding the polygon-geometry vector source to this map. Consumers (e.g.
+ * ContentOverview opening the expanded modal) can seed the modal map with the
+ * same value so both instances share the browser tile cache.
+ */
+export function getMapTileVersion(map: MapboxMap | null | undefined): string {
+  if (map == null) return "0";
+  return getSourceCacheKeys(map)[LAYERS_NAMES.POLYGON_GEOMETRY] ?? "0";
+}
+
 export const addSourceToLayer = (
   layer: LayerType,
   map: MapboxMap,
@@ -308,12 +319,23 @@ export const addSourcesToLayers = (
   }
 };
 
+// Tracks pending idle-retry for addPolygonCentroidsLayer per map instance so
+// we can cancel a superseded retry before scheduling a new one.
+const pendingCentroidRetryByMap = new WeakMap<MapboxMap, (() => void) | null>();
+
 export const addPolygonCentroidsLayer = (
   map: MapboxMap,
   centroids: { uuid: string; long: number; lat: number }[],
   zoomFilterValue?: number
 ) => {
   if (map == null) return;
+
+  // Cancel any previous pending retry for this map.
+  const prevRetry = pendingCentroidRetryByMap.get(map);
+  if (prevRetry != null) {
+    map.off("idle", prevRetry);
+    pendingCentroidRetryByMap.set(map, null);
+  }
 
   const layerName = LAYERS_NAMES.POLYGON_CENTROIDS;
 
@@ -340,6 +362,10 @@ export const addPolygonCentroidsLayer = (
 
   if (validCentroids.length === 0) return;
 
+  // Do NOT gate on isStyleLoaded() here — in Mapbox GL v3, isStyleLoaded() can
+  // return false while tiles are loading even when the style spec is accessible.
+  // The try/catch below catches any real "style not ready" errors and retries.
+
   try {
     const features: GeoJSON.Feature[] = validCentroids.map(centroid => ({
       type: "Feature",
@@ -361,7 +387,15 @@ export const addPolygonCentroidsLayer = (
       filter
     });
   } catch (error) {
-    Log.error("addPolygonCentroidsLayer: unexpected error (style may not be ready):", error);
+    // Fallback: style appeared loaded but addImage/addLayer still failed
+    // (can happen on the very first render of a new map). Retry on idle.
+    Log.warn("addPolygonCentroidsLayer: retrying on idle after error:", error);
+    const retryFn = () => {
+      pendingCentroidRetryByMap.set(map, null);
+      addPolygonCentroidsLayer(map, centroids, zoomFilterValue);
+    };
+    pendingCentroidRetryByMap.set(map, retryFn);
+    map.once("idle", retryFn);
   }
 };
 

@@ -20,6 +20,39 @@ import { setFilterLandscape } from "./polygonLayers";
 const GOOGLE_RASTER_SOURCE_ID = "google-satellite-source";
 const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
 
+// ---------------------------------------------------------------------------
+// Cancellable once("style.load") registry
+// Prevents stacked one-shot callbacks from rapid style switches. Each map
+// instance keeps at most one pending handler; registering a new one cancels
+// the previous.
+// ---------------------------------------------------------------------------
+const pendingStyleLoadHandlers = new WeakMap<MapboxMap, (() => void) | null>();
+
+function registerOnceStyleLoad(map: MapboxMap, handler: () => void): void {
+  const prev = pendingStyleLoadHandlers.get(map);
+  if (prev != null) {
+    map.off("style.load", prev);
+  }
+  const wrapped = () => {
+    pendingStyleLoadHandlers.set(map, null);
+    handler();
+  };
+  pendingStyleLoadHandlers.set(map, wrapped);
+  map.once("style.load", wrapped);
+}
+
+// ---------------------------------------------------------------------------
+// Hidden-layer tracking for Google Satellite overlay
+// Records exactly which base-style layer IDs we set to visibility:"none" so
+// removeGoogleSatelliteLayer restores only those layers and nothing else.
+// ---------------------------------------------------------------------------
+const hiddenBaseLayersByMap = new WeakMap<MapboxMap, Set<string>>();
+
+function getHiddenBaseLayers(map: MapboxMap): Set<string> {
+  if (!hiddenBaseLayersByMap.has(map)) hiddenBaseLayersByMap.set(map, new Set());
+  return hiddenBaseLayersByMap.get(map)!;
+}
+
 export const addBorderLandscape = (map: MapboxMap, landscapes: string[]): void => {
   if (landscapes == null || landscapes.length === 0 || map == null) return;
   const landscapeLayer = layersList.find(layer => layer.name === LAYERS_NAMES.LANDSCAPES);
@@ -69,6 +102,10 @@ export const updateMapProjection = (map: MapboxMap, currentStyle: MapStyle): voi
 
 export const addGoogleSatelliteLayer = (map: MapboxMap): void => {
   if (map == null) return;
+  // Guard: getStyle() throws (or returns null) when the map is mid-transition.
+  // We use try/catch rather than isStyleLoaded() because isStyleLoaded() can
+  // return false inside style.load callbacks (pending transitions), which would
+  // prevent the Google raster from being applied even in the correct callsite.
   let mapStyle: ReturnType<MapboxMap["getStyle"]>;
   try {
     mapStyle = map.getStyle();
@@ -96,7 +133,9 @@ export const addGoogleSatelliteLayer = (map: MapboxMap): void => {
     ];
     const isPolygonLayer = (layerId: string) => polygonLayerPrefixes.some(prefix => layerId.startsWith(prefix));
 
-    let hiddenCount = 0;
+    const hiddenSet = getHiddenBaseLayers(map);
+    hiddenSet.clear();
+
     layers
       .filter(
         layer =>
@@ -109,14 +148,14 @@ export const addGoogleSatelliteLayer = (map: MapboxMap): void => {
         try {
           if (map.getLayoutProperty(layer.id, "visibility") !== "none") {
             map.setLayoutProperty(layer.id, "visibility", "none");
-            hiddenCount++;
+            hiddenSet.add(layer.id);
           }
         } catch (e) {
           Log.warn("Error setting layer visibility:", e);
         }
       });
 
-    if (hiddenCount > 0) Log.info(`Hidden ${hiddenCount} Street layers`);
+    if (hiddenSet.size > 0) Log.info(`Hidden ${hiddenSet.size} Street layers for Google Satellite`);
 
     map.addSource(GOOGLE_RASTER_SOURCE_ID, {
       type: "raster",
@@ -126,7 +165,10 @@ export const addGoogleSatelliteLayer = (map: MapboxMap): void => {
       maxzoom: 22
     });
 
-    const firstLayerId = layers.find(l => l.type !== "background")?.id;
+    // Insert raster above background but below all vector layers.
+    // Re-query after removeGoogleSatelliteLayer so firstLayerId is fresh.
+    const freshLayers = map.getStyle().layers ?? [];
+    const firstLayerId = freshLayers.find(l => l.type !== "background")?.id;
     map.addLayer(
       { id: GOOGLE_RASTER_LAYER_ID, type: "raster", source: GOOGLE_RASTER_SOURCE_ID, paint: { "raster-opacity": 1 } },
       firstLayerId
@@ -144,37 +186,55 @@ export const removeGoogleSatelliteLayer = (map: MapboxMap): void => {
     return;
   }
   try {
-    if (map.getLayer(GOOGLE_RASTER_LAYER_ID)) map.removeLayer(GOOGLE_RASTER_LAYER_ID);
-    if (map.getSource(GOOGLE_RASTER_SOURCE_ID)) map.removeSource(GOOGLE_RASTER_SOURCE_ID);
+    if (map.getLayer(GOOGLE_RASTER_LAYER_ID) != null) map.removeLayer(GOOGLE_RASTER_LAYER_ID);
+    if (map.getSource(GOOGLE_RASTER_SOURCE_ID) != null) map.removeSource(GOOGLE_RASTER_SOURCE_ID);
 
-    const layers = map.getStyle()?.layers ?? [];
-    const polygonLayerPrefixes = [
-      LAYERS_NAMES.POLYGON_GEOMETRY,
-      LAYERS_NAMES.DELETED_GEOMETRIES,
-      LAYERS_NAMES.CENTROIDS,
-      LAYERS_NAMES.POLYGON_CENTROIDS,
-      ANR_PLOT_LAYER_PREFIX
-    ];
-    const isPolygonLayer = (layerId: string) => polygonLayerPrefixes.some(prefix => layerId.startsWith(prefix));
-
+    const hiddenSet = getHiddenBaseLayers(map);
     let restoredCount = 0;
-    layers
-      .filter(layer => {
-        const isBaseMapLayer = layer.type === "background" || layer.type === "fill" || layer.type === "raster";
-        return isBaseMapLayer && !isPolygonLayer(layer.id);
-      })
-      .forEach(layer => {
+
+    if (hiddenSet.size > 0) {
+      // Precise restore: only layers that addGoogleSatelliteLayer explicitly hid.
+      hiddenSet.forEach(layerId => {
         try {
-          if (map.getLayoutProperty(layer.id, "visibility") === "none") {
-            map.setLayoutProperty(layer.id, "visibility", "visible");
+          if (map.getLayer(layerId) != null && map.getLayoutProperty(layerId, "visibility") === "none") {
+            map.setLayoutProperty(layerId, "visibility", "visible");
             restoredCount++;
           }
         } catch (e) {
-          Log.warn("Error restoring layer visibility:", e);
+          Log.warn("Error restoring tracked layer visibility:", e);
         }
       });
+      hiddenSet.clear();
+    } else {
+      // Fallback (hiddenSet empty — e.g. first call before tracking was populated):
+      // restore all base-style layers that are currently hidden.
+      const polygonLayerPrefixes = [
+        LAYERS_NAMES.POLYGON_GEOMETRY,
+        LAYERS_NAMES.DELETED_GEOMETRIES,
+        LAYERS_NAMES.CENTROIDS,
+        LAYERS_NAMES.POLYGON_CENTROIDS,
+        ANR_PLOT_LAYER_PREFIX
+      ];
+      const isPolygonLayer = (id: string) => polygonLayerPrefixes.some(p => id.startsWith(p));
+      const layers = map.getStyle()?.layers ?? [];
+      layers
+        .filter(l => {
+          const isBase = l.type === "background" || l.type === "fill" || l.type === "raster";
+          return isBase && !isPolygonLayer(l.id);
+        })
+        .forEach(l => {
+          try {
+            if (map.getLayoutProperty(l.id, "visibility") === "none") {
+              map.setLayoutProperty(l.id, "visibility", "visible");
+              restoredCount++;
+            }
+          } catch (e) {
+            Log.warn("Error restoring layer visibility (fallback):", e);
+          }
+        });
+    }
 
-    if (restoredCount > 0) Log.info(`Restored ${restoredCount} Street layers`);
+    if (restoredCount > 0) Log.info(`Restored ${restoredCount} Street layers after Google Satellite`);
   } catch (error) {
     Log.warn("Error removing Google satellite layer:", error);
   }
@@ -208,17 +268,22 @@ export const setMapStyle = (
 
   if (targetStyle === MapStyle.GoogleSatellite) {
     setCurrentStyle(targetStyle);
+
     if (currentStyle === MapStyle.Street) {
-      if (map.isStyleLoaded()) {
+      // Street → Google: Street style is the base — apply raster overlay directly.
+      // Do NOT gate on isStyleLoaded(): in Mapbox GL v3, isStyleLoaded() can return
+      // false while tiles are loading even though the style spec is fully accessible.
+      // addGoogleSatelliteLayer has its own try/catch guard.
+      addGoogleSatelliteLayer(map);
+      updateMapProjection(map, targetStyle);
+    } else {
+      // Non-Street (e.g. Satellite) → Google: swap to Street base first, then
+      // apply the Google raster overlay once the base style fires style.load.
+      // registerOnceStyleLoad cancels any previous stale once-handler.
+      registerOnceStyleLoad(map, () => {
         addGoogleSatelliteLayer(map);
         updateMapProjection(map, targetStyle);
-      } else {
-        map.once("style.load", () => {
-          addGoogleSatelliteLayer(map);
-          updateMapProjection(map, targetStyle);
-        });
-      }
-    } else {
+      });
       map.setStyle(targetConfig.style);
     }
     return;
@@ -226,24 +291,24 @@ export const setMapStyle = (
 
   if (currentStyle === MapStyle.GoogleSatellite) {
     if (targetStyle === MapStyle.Street) {
-      if (map.isStyleLoaded()) {
-        removeGoogleSatelliteLayer(map);
-        setCurrentStyle(targetStyle);
-        updateMapProjection(map, targetStyle);
-      } else {
-        map.once("style.load", () => {
-          removeGoogleSatelliteLayer(map);
-          setCurrentStyle(targetStyle);
-          updateMapProjection(map, targetStyle);
-        });
-      }
+      // Google → Street: just remove the raster overlay — no style URL swap needed.
+      // Do NOT gate on isStyleLoaded(): in Mapbox GL v3, isStyleLoaded() returns false
+      // while Google satellite tiles are still loading. Gating causes the code to fall
+      // into registerOnceStyleLoad(), but style.load never fires (no setStyle call),
+      // leaving the map permanently stuck on Google. removeGoogleSatelliteLayer has
+      // its own try/catch guard.
+      removeGoogleSatelliteLayer(map);
+      setCurrentStyle(targetStyle);
+      updateMapProjection(map, targetStyle);
       return;
     }
   }
 
+  // All other transitions (Street↔Satellite, Google→Satellite, etc.):
+  // full Mapbox style URL swap.
   setCurrentStyle(targetStyle);
   map.setStyle(targetConfig.style);
-  map.once("style.load", () => updateMapProjection(map, targetStyle));
+  registerOnceStyleLoad(map, () => updateMapProjection(map, targetStyle));
 };
 
 type AnrPlotOverlayState = {

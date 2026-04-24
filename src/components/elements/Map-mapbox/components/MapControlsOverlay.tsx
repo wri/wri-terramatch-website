@@ -163,7 +163,7 @@ const MapControlsOverlay = ({
             </ControlGroup>
           ) : null}
 
-          {dashboardMode !== "dashboard" && styleReady && map != null ? (
+          {dashboardMode !== "dashboard" && dashboardMode !== "modal" && styleReady && map != null ? (
             <ControlGroup position="top-right">
               <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
             </ControlGroup>
@@ -252,7 +252,7 @@ const MapControlsOverlay = ({
 
           {!formMap && showViewGallery ? (
             <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
-              {dashboardMode === "dashboard" && styleReady && map != null && (
+              {(dashboardMode === "dashboard" || dashboardMode === "modal") && styleReady && map != null && (
                 <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
               )}
               {dashboardMode !== "dashboard" && dashboardMode !== "modal" && !disabledPolygonPanel && (

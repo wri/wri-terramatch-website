@@ -24,6 +24,9 @@ export type DashboardExpandedMapModalContentProps = {
   translate: (key: string, options?: Record<string, string | number>) => string;
   nonProfitProjectCount: number;
   enterpriseProjectCount: number;
+  /** Tile-version seed from the embedded map for browser tile-cache sharing. */
+  initialTileVersion?: string;
+  initialPolygonFingerprint?: string;
 };
 
 export function DashboardExpandedMapModalContent({
@@ -43,7 +46,9 @@ export function DashboardExpandedMapModalContent({
   dashboardCountries,
   translate,
   nonProfitProjectCount,
-  enterpriseProjectCount
+  enterpriseProjectCount,
+  initialTileVersion,
+  initialPolygonFingerprint
 }: DashboardExpandedMapModalContentProps) {
   return (
     <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
@@ -65,7 +70,9 @@ export function DashboardExpandedMapModalContent({
             projectUUID: selectedProjectUuid,
             hasAccess,
             dashboardContext: { setFilters, dashboardCountries, dashboardMode: "modal" },
-            className: "custom-popup-close-button !h-full"
+            className: "custom-popup-close-button !h-full",
+            initialTileVersion,
+            initialPolygonFingerprint
           })}
         />
       </LoadingContainerOpacity>

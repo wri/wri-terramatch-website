@@ -21,9 +21,18 @@ type UseMapLayersParams = {
   projectUUID?: string;
   hasAccess?: boolean;
   selectedPolygonsInCheckbox?: string[];
+  /**
+   * Seed values so a freshly-mounted map (e.g. the expanded modal) starts with
+   * the same tile-version as the already-loaded embedded map. When both values
+   * match the current polygonsData fingerprint the hook skips the timestamp bump
+   * and passes the same RND param to Geoserver, allowing the browser to serve
+   * tiles from cache instead of re-fetching.
+   */
+  initialTileVersion?: string;
+  initialPolygonFingerprint?: string;
 };
 
-const hashString = (value: string): number => {
+export const hashString = (value: string): number => {
   let hash = 2166136261;
   for (let i = 0; i < value.length; i++) {
     hash ^= value.charCodeAt(i);
@@ -32,7 +41,7 @@ const hashString = (value: string): number => {
   return hash >>> 0;
 };
 
-const computePolygonFingerprint = (polygonsData?: Record<string, string[]>): string => {
+export const computePolygonFingerprint = (polygonsData?: Record<string, string[]>): string => {
   if (polygonsData == null) return "0:0:0";
   const statuses = Object.keys(polygonsData).sort();
   let combinedHash = 2166136261;
@@ -67,12 +76,16 @@ export function useMapLayers({
   dashboardMode,
   projectUUID,
   hasAccess,
-  selectedPolygonsInCheckbox
+  selectedPolygonsInCheckbox,
+  initialTileVersion,
+  initialPolygonFingerprint
 }: UseMapLayersParams) {
   const [sourcesAdded, setSourcesAdded] = useState(false);
 
-  const prevPolygonFingerprintRef = useRef<string>("");
-  const tileVersionRef = useRef<string>("0");
+  // Seed refs from parent (e.g. the embedded map) so the first effect run
+  // uses the same cache key and skips an unnecessary timestamp bump.
+  const prevPolygonFingerprintRef = useRef<string>(initialPolygonFingerprint ?? "");
+  const tileVersionRef = useRef<string>(initialTileVersion ?? "0");
 
   useEffect(() => {
     if (!styleReady || map.current == null || (!dashboardMode && _.isEmpty(polygonsData))) {
