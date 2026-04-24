@@ -19,6 +19,7 @@ type RequestResetPasswordConnection = {
 };
 
 const requestPasswordConnection: Connection<RequestResetPasswordConnection> = {
+  // @ts-expect-error
   selector: createSelector(
     [requestPasswordReset.isFetchingSelector({}), requestPasswordReset.fetchFailedSelector({}), selectResetPassword],
     (isLoading, requestFailed, selector) => {

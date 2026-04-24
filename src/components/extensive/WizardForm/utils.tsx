@@ -1,6 +1,6 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { Dictionary, isEmpty, isFunction } from "lodash";
+import { Dictionary, isEmpty, isFunction, uniq } from "lodash";
 import { useMemo } from "react";
 import * as yup from "yup";
 
@@ -96,6 +96,13 @@ export const loadExternalAnswerSources = async (
   fieldsProvider: FormFieldsProvider
 ) => {
   const promises: Promise<unknown>[] = [];
+  const inferLevel1ParentCodes = (fieldValue: unknown) =>
+    uniq(
+      toArray(fieldValue)
+        .filter((code): code is string => typeof code === "string")
+        .map(code => code.split(".")[0])
+        .filter(Boolean)
+    );
 
   for (const fieldId of fieldIds) {
     const field = fieldsProvider.fieldByName(fieldId);
@@ -116,12 +123,18 @@ export const loadExternalAnswerSources = async (
       if (level === 0) {
         promises.push(loadGadmCodes({ level }));
       } else {
+        let parentCodes: string[] = [];
         const filterField = SELECT_FILTER_QUESTION[field.linkedFieldKey ?? ""];
         if (filterField != null) {
-          const parentCodes = toArray(values?.[fieldsProvider.fieldByKey(filterField)?.name ?? ""] ?? []) as string[];
-          if (!isEmpty(parentCodes)) {
-            promises.push(loadGadmCodes({ level, parentCodes }));
-          }
+          parentCodes = toArray(values?.[fieldsProvider.fieldByKey(filterField)?.name ?? ""] ?? []) as string[];
+        }
+
+        if (level === 1) {
+          parentCodes = uniq([...parentCodes, ...inferLevel1ParentCodes(values?.[field.name])]);
+        }
+
+        if (!isEmpty(parentCodes)) {
+          promises.push(loadGadmCodes({ level, parentCodes }));
         }
       }
     }

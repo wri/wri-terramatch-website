@@ -5,11 +5,10 @@ import { FunctionField, RaRecord, SelectField, TextField, useNotify, useRefresh,
 import Aside from "@/admin/components/Aside/Aside";
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
 import ResetPasswordDialog from "@/admin/modules/user/components/ResetPasswordDialog";
-import { useAdminUserVerify } from "@/connections/AdminUsers";
+import { sendLoginDetailsToUser, useAdminUserVerify } from "@/connections/AdminUsers";
 import { sendRequestPasswordReset } from "@/connections/ResetPassword";
 import { useResendVerification } from "@/connections/VerificationUser";
 import { DECLARED_ENV } from "@/constants/environment";
-import { usePostAuthSendLoginDetails } from "@/generated/apiComponents";
 import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
 import { localeChoices, userPrimaryRoleChoices } from "../const";
@@ -47,13 +46,6 @@ export const UserShowAside = () => {
       notify(`Failed to send reset password email.`, { type: "error" });
     }
   }, [notify, record?.emailAddress, refresh]);
-
-  const { mutate: sendLoginDetails } = usePostAuthSendLoginDetails({
-    onSuccess() {
-      notify(`Login details email has been sent successfully.`, { type: "success" });
-      refresh();
-    }
-  });
 
   return (
     <div className="user-aside">
@@ -110,14 +102,15 @@ export const UserShowAside = () => {
             <Button
               variant="contained"
               className="!rounded-lg !bg-primary"
-              onClick={() =>
-                sendLoginDetails({
-                  body: {
-                    email_address: record?.emailAddress,
-                    callback_url: window.location.origin + "/auth/set-password/"
-                  }
-                })
-              }
+              onClick={async () => {
+                try {
+                  await sendLoginDetailsToUser(record?.emailAddress as string);
+                  notify(`Login details email has been sent successfully.`, { type: "success" });
+                  refresh();
+                } catch (error) {
+                  notify(`Failed to send login details email.`, { type: "error" });
+                }
+              }}
             >
               Send Login Details
             </Button>
