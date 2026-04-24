@@ -1,5 +1,4 @@
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { Card, Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Card, Grid, Stack, Typography } from "@mui/material";
 import classNames from "classnames";
 import { camelCase } from "lodash";
 import { FC, useMemo } from "react";
@@ -33,9 +32,6 @@ import NurseryInformationAside from "./components/NurseryInformationAside";
 import ProjectInformationAside from "./components/ProjectInformationAside";
 import ReportInformationAside from "./components/ReportInformationAside";
 import SiteInformationAside from "./components/SiteInformationAside";
-
-const TREES_TO_BE_RESTORED_TOOLTIP =
-  "This is the expected number of trees that will be restored through this project. It represents the following calculation: [trees to be planted × expected survival rate] + [trees to be regenerated].";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: Exclude<EntityName, "project-pitches">;
@@ -279,15 +275,6 @@ const InformationTab: FC<IProps> = props => {
                               <Text variant="text-16-bold" className="capitalize">
                                 Trees to be Restored:
                               </Text>
-                              <Tooltip title={TREES_TO_BE_RESTORED_TOOLTIP}>
-                                <IconButton
-                                  size="small"
-                                  aria-label="Trees to be restored — how this value is calculated"
-                                  className="!p-0.5"
-                                >
-                                  <InfoOutlinedIcon fontSize="small" className="text-neutral-500" />
-                                </IconButton>
-                              </Tooltip>
                             </div>
                             <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
                               {(record.treesToBeRestoredGoal ?? 0).toLocaleString()}
