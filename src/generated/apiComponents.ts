@@ -59,57 +59,6 @@ export const usePostV2AdminENTITYUUIDReminder = (
   );
 };
 
-export type GetV2AdminFormsApplicationsUUIDExportPathParams = {
-  uuid: string;
-};
-
-export type GetV2AdminFormsApplicationsUUIDExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminFormsApplicationsUUIDExportVariables = {
-  pathParams: GetV2AdminFormsApplicationsUUIDExportPathParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * The UUID provided is the Funding Programme ID that the applications are for
- */
-export const fetchGetV2AdminFormsApplicationsUUIDExport = (
-  variables: GetV2AdminFormsApplicationsUUIDExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    undefined,
-    GetV2AdminFormsApplicationsUUIDExportError,
-    undefined,
-    {},
-    {},
-    GetV2AdminFormsApplicationsUUIDExportPathParams
-  >({ url: "/v2/admin/forms/applications/{uuid}/export", method: "get", ...variables, signal });
-
-/**
- * The UUID provided is the Funding Programme ID that the applications are for
- */
-export const useGetV2AdminFormsApplicationsUUIDExport = <TData = undefined>(
-  variables: GetV2AdminFormsApplicationsUUIDExportVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<undefined, GetV2AdminFormsApplicationsUUIDExportError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<undefined, GetV2AdminFormsApplicationsUUIDExportError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/forms/applications/{UUID}/export",
-      operationId: "getV2AdminFormsApplicationsUUIDExport",
-      variables
-    }),
-    ({ signal }) => fetchGetV2AdminFormsApplicationsUUIDExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2ApplicationsUUIDExportPathParams = {
   uuid: string;
 };
@@ -403,164 +352,6 @@ export const usePostV2UsersResend = (
   );
 };
 
-export type PostV2ExportImageError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2ExportImageRequestBody = {
-  /**
-   * The URL of the image to be downloaded.
-   */
-  uuid: string;
-};
-
-export type PostV2ExportImageVariables = {
-  body: PostV2ExportImageRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2ExportImage = (variables: PostV2ExportImageVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, PostV2ExportImageError, PostV2ExportImageRequestBody, {}, {}, {}>({
-    url: "/v2/export-image",
-    method: "post",
-    ...variables,
-    signal
-  });
-
-export const usePostV2ExportImage = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, PostV2ExportImageError, PostV2ExportImageVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PostV2ExportImageError, PostV2ExportImageVariables>(
-    (variables: PostV2ExportImageVariables) => fetchPostV2ExportImage({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type GetV2AdminENTITYExportFRAMEWORKPmPathParams = {
-  /**
-   * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
-   */
-  entity: string;
-  /**
-   * allowed values terrafund/ppc and more frameworks
-   */
-  framework: string;
-};
-
-export type GetV2AdminENTITYExportFRAMEWORKPmError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminENTITYExportFRAMEWORKPmResponse = {
-  url?: string;
-};
-
-export type GetV2AdminENTITYExportFRAMEWORKPmVariables = {
-  pathParams: GetV2AdminENTITYExportFRAMEWORKPmPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminENTITYExportFRAMEWORKPm = (
-  variables: GetV2AdminENTITYExportFRAMEWORKPmVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2AdminENTITYExportFRAMEWORKPmResponse,
-    GetV2AdminENTITYExportFRAMEWORKPmError,
-    undefined,
-    {},
-    {},
-    GetV2AdminENTITYExportFRAMEWORKPmPathParams
-  >({ url: "/v2/admin/{entity}/export/{framework}/pm", method: "get", ...variables, signal });
-
-export const useGetV2AdminENTITYExportFRAMEWORKPm = <TData = GetV2AdminENTITYExportFRAMEWORKPmResponse>(
-  variables: GetV2AdminENTITYExportFRAMEWORKPmVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2AdminENTITYExportFRAMEWORKPmResponse,
-      GetV2AdminENTITYExportFRAMEWORKPmError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2AdminENTITYExportFRAMEWORKPmResponse, GetV2AdminENTITYExportFRAMEWORKPmError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/{ENTITY}/export/{FRAMEWORK}/pm",
-      operationId: "getV2AdminENTITYExportFRAMEWORKPm",
-      variables
-    }),
-    ({ signal }) => fetchGetV2AdminENTITYExportFRAMEWORKPm({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2AdminENTITYPresignedUrlFRAMEWORKPathParams = {
-  /**
-   * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
-   */
-  entity: string;
-  /**
-   * allowed values terrafund/ppc
-   */
-  framework: string;
-};
-
-export type GetV2AdminENTITYPresignedUrlFRAMEWORKError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminENTITYPresignedUrlFRAMEWORKResponse = {
-  url?: string;
-};
-
-export type GetV2AdminENTITYPresignedUrlFRAMEWORKVariables = {
-  pathParams: GetV2AdminENTITYPresignedUrlFRAMEWORKPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminENTITYPresignedUrlFRAMEWORK = (
-  variables: GetV2AdminENTITYPresignedUrlFRAMEWORKVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2AdminENTITYPresignedUrlFRAMEWORKResponse,
-    GetV2AdminENTITYPresignedUrlFRAMEWORKError,
-    undefined,
-    {},
-    {},
-    GetV2AdminENTITYPresignedUrlFRAMEWORKPathParams
-  >({ url: "/v2/admin/{entity}/presigned-url/{framework}", method: "get", ...variables, signal });
-
-export const useGetV2AdminENTITYPresignedUrlFRAMEWORK = <TData = GetV2AdminENTITYPresignedUrlFRAMEWORKResponse>(
-  variables: GetV2AdminENTITYPresignedUrlFRAMEWORKVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2AdminENTITYPresignedUrlFRAMEWORKResponse,
-      GetV2AdminENTITYPresignedUrlFRAMEWORKError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2AdminENTITYPresignedUrlFRAMEWORKResponse,
-    GetV2AdminENTITYPresignedUrlFRAMEWORKError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/admin/{ENTITY}/presigned-url/{FRAMEWORK}",
-      operationId: "getV2AdminENTITYPresignedUrlFRAMEWORK",
-      variables
-    }),
-    ({ signal }) => fetchGetV2AdminENTITYPresignedUrlFRAMEWORK({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2ProjectsUUIDENTITYExportPathParams = {
   /**
    * allowed values sites|nurseries|project-reports
@@ -644,11 +435,6 @@ export const useGetV2ENTITYUUIDExport = <TData = Blob>(
 
 export type QueryOperation =
   | {
-      path: "/v2/admin/forms/applications/{UUID}/export";
-      operationId: "getV2AdminFormsApplicationsUUIDExport";
-      variables: GetV2AdminFormsApplicationsUUIDExportVariables;
-    }
-  | {
       path: "/v2/applications/{UUID}/export";
       operationId: "getV2ApplicationsUUIDExport";
       variables: GetV2ApplicationsUUIDExportVariables;
@@ -657,16 +443,6 @@ export type QueryOperation =
       path: "/auth/mail";
       operationId: "getAuthMail";
       variables: GetAuthMailVariables;
-    }
-  | {
-      path: "/v2/admin/{ENTITY}/export/{FRAMEWORK}/pm";
-      operationId: "getV2AdminENTITYExportFRAMEWORKPm";
-      variables: GetV2AdminENTITYExportFRAMEWORKPmVariables;
-    }
-  | {
-      path: "/v2/admin/{ENTITY}/presigned-url/{FRAMEWORK}";
-      operationId: "getV2AdminENTITYPresignedUrlFRAMEWORK";
-      variables: GetV2AdminENTITYPresignedUrlFRAMEWORKVariables;
     }
   | {
       path: "/v2/projects/{UUID}/{ENTITY}/export";
