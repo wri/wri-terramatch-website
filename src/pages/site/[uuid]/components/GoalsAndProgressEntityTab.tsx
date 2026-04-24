@@ -4,6 +4,7 @@ import React from "react";
 import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { Framework, isTerrafund } from "@/context/framework.provider";
 
 import {
@@ -18,7 +19,9 @@ import {
   TOOLTIP_TREES_PLANTED_PROJECT,
   TOOLTIP_TREES_PLANTED_SITE,
   TOOLTIP_TREES_REGENERATING_PROJECT,
-  TOOLTIP_TREES_REGENERATING_SITE
+  TOOLTIP_TREES_REGENERATING_SITE,
+  TOOLTIP_TREES_REPLANTING_PROJECT,
+  TOOLTIP_TREES_REPLANTING_SITE
 } from "./constants";
 
 interface GoalsAndProgressEntityTabProps {
@@ -247,6 +250,12 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
   };
   const frameworkKey = entity.frameworkKey as Framework;
   const framework = isTerrafund(frameworkKey) ? Framework.TF : frameworkKey;
+  const totalCountReplanting = usePlantTotalCount({
+    entity: project ? "projects" : "sites",
+    entityUuid: entity?.uuid,
+    collection: "replanting"
+  });
+
   return (
     <div className="flex w-full flex-wrap items-start justify-between gap-4">
       {chartsDataMapping[framework as keyof ChartsData]?.map((chart, index) => (
@@ -282,6 +291,14 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             classNameLabel: " text-neutral-650 uppercase",
             value: entity.treesRegeneratingSpeciesCount,
             tooltipContent: project ? TOOLTIP_TREES_REGENERATING_PROJECT : TOOLTIP_TREES_REGENERATING_SITE
+          },
+          {
+            iconName: IconNames.TREE_CIRCLE_PD,
+            label: t("Trees Replanted:"),
+            variantLabel: "text-14",
+            classNameLabel: " text-neutral-650 uppercase",
+            value: totalCountReplanting,
+            tooltipContent: project ? TOOLTIP_TREES_REPLANTING_PROJECT : TOOLTIP_TREES_REPLANTING_SITE
           }
         ]}
         className="pr-[41px] lg:pr-[150px] mobile:w-[400px] mobile:!pr-0"

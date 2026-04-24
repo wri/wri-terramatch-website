@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 
 import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/ControlButtonsGroup";
 import ControlDivider from "@/components/elements/Map-mapbox/components/ControlDivider";
@@ -13,7 +13,7 @@ export const StyleControl = ({
   currentStyle,
   setCurrentStyle
 }: {
-  map: mapboxgl.Map;
+  map: MapboxMap;
   currentStyle: MapStyle;
   setCurrentStyle: (style: MapStyle) => void;
 }) => {

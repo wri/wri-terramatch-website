@@ -1,5 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useState } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { LanguageIcon } from "@/redesignComponents/foundations/Icons";
@@ -37,6 +37,12 @@ const Navbar: FC<NavbarProps> = ({
   accountSuffix,
   onAccountSelect
 }) => {
+  const [selectedLanguageIndex, setSelectedLanguageIndex] = useState<number | undefined>(undefined);
+
+  const handleLanguageSelect = (index: number) => {
+    setSelectedLanguageIndex(index);
+    onLanguageSelect?.(index);
+  };
   return (
     <Box backgroundColor="primary.900">
       <Flex justifyContent="space-between" alignItems="center" gap={4}>
@@ -46,12 +52,12 @@ const Navbar: FC<NavbarProps> = ({
             <Button
               key={index}
               variant="borderless"
-              className={`!text-white ${
-                link.isActive ? "!bg-theme-primary-500/20 !opacity-100" : "opacity-80 hover:opacity-100"
-              }`}
+              className={`!text-white ${link.isActive ? "!opacity-100" : "opacity-100 hover:opacity-100"}`}
               onClick={link.onClick}
             >
-              <span className={`text-white ${link.isActive ? "" : ""}`}>{link.label}</span>
+              <span className={` ${link.isActive ? "font-bold text-theme-primary-300" : "text-theme-neutral-100"}`}>
+                {link.label}
+              </span>
             </Button>
           ))}
         </Flex>
@@ -82,7 +88,13 @@ const Navbar: FC<NavbarProps> = ({
             </>
           )}
           <SimpleDivider backgroundColor="neutral.500" className="!h-12 !w-px" />
-          <NavbarMenu items={languageItems} label={<LanguageIcon />} onSelect={onLanguageSelect} variant="simple" />
+          <NavbarMenu
+            items={languageItems}
+            label={<LanguageIcon />}
+            variant="list"
+            selectedIndex={selectedLanguageIndex}
+            onSelect={handleLanguageSelect}
+          />
         </Flex>
       </Flex>
     </Box>

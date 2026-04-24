@@ -17,7 +17,7 @@ import { singularEntityName } from "@/helpers/entity";
 import ApiSlice from "@/store/apiSlice";
 import { Entity, EntityName } from "@/types/common";
 
-import { useMap } from "../../Map-mapbox/hooks/useMap";
+import { useBaseMap } from "../../Map-mapbox/hooks/useBaseMap";
 import { storePolygonProject } from "../../Map-mapbox/utils";
 
 export interface RHFMapProps extends UseControllerProps, InputWrapperProps {
@@ -41,7 +41,7 @@ const RHFMap = ({
       storePolygonProject(geojson, entityUUID, entityName, refetchData, setPolygonFromMap);
     }
   };
-  const mapFunctions = useMap(onSave);
+  const mapFunctions = useBaseMap(onSave);
   const t = useT();
   const {
     field: { value }

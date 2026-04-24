@@ -93,7 +93,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
         secondaryButtonProps={
           entity?.model != "organisations"
             ? {
-                children: "Save and Exit",
+                children: t("Save and Exit"),
                 onClick: saveChanges
               }
             : undefined

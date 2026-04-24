@@ -189,8 +189,6 @@ const GENDERS: Dictionary<string> = {
   unknown: "Unknown"
 };
 
-const HBF_GENDERS = Object.fromEntries(Object.entries(GENDERS).filter(([key]) => key !== "unknown"));
-
 const CASTES: Dictionary<string> = {
   marginalized: "Marginalized"
 };
@@ -203,7 +201,9 @@ const AGES: Dictionary<string> = {
 };
 
 const HBF_AGES: Dictionary<string> = {
-  youth: "Youth (15-29)"
+  youth: "Youth (15-29)",
+  "non-youth": "Non Youth (over 29)",
+  unknown: "Unknown"
 };
 
 const JOBS_AGES: Dictionary<string> = {
@@ -294,7 +294,7 @@ const DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
 const HBF_DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
   gender: {
     title: "Gender",
-    typeMap: HBF_GENDERS,
+    typeMap: GENDERS,
     balanced: true
   },
   age: {

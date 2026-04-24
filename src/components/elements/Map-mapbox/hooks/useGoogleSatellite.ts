@@ -1,15 +1,14 @@
-import mapboxgl from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 import { useEffect, useRef } from "react";
-
-import Log from "@/utils/log";
 
 import { MapStyle } from "../MapControls/types";
 import { addGoogleSatelliteLayer, removeGoogleSatelliteLayer, updateMapProjection } from "../utils";
 
 export const useGoogleSatellite = (
   currentStyle: MapStyle,
-  styleLoaded: boolean,
-  map: React.RefObject<mapboxgl.Map | null>,
+  styleReady: boolean,
+  styleVersion: number,
+  map: React.RefObject<MapboxMap | null>,
   mapContainer: React.RefObject<HTMLDivElement | null>
 ) => {
   const currentStyleRef = useRef(currentStyle);
@@ -18,91 +17,39 @@ export const useGoogleSatellite = (
   useEffect(() => {
     const currentMap = map.current;
     const currentContainer = mapContainer.current;
-    if (!currentMap || !currentContainer) return;
-
-    let isEffectActive = true;
-    let rafId: number | null = null;
-
-    const addGoogleLayer = () => {
-      if (!isEffectActive) return true;
-
-      const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
-      if (currentMap.getLayer(GOOGLE_RASTER_LAYER_ID)) {
-        return true;
-      }
-
-      if (currentMap.isStyleLoaded()) {
-        addGoogleSatelliteLayer(currentMap);
-        updateMapProjection(currentMap, MapStyle.GoogleSatellite);
-        return true;
-      }
-      return false;
-    };
-
-    const updateAttribution = () => {
-      const attributionInner = currentContainer.querySelector(".mapboxgl-ctrl-attrib-inner");
-      if (!attributionInner) return false;
-
-      const existingGoogle = attributionInner.querySelector(".google-attribution-text");
-
-      if (currentStyleRef.current === MapStyle.GoogleSatellite) {
-        if (!existingGoogle) {
-          const googleText = document.createElement("span");
-          googleText.className = "google-attribution-text";
-          googleText.textContent = " © Google";
-          attributionInner.appendChild(googleText);
-        }
-        return true;
-      } else {
-        existingGoogle?.remove();
-        return true;
-      }
-    };
-
-    const pollForGoogleSetup = (attemptsLeft = 180) => {
-      if (!isEffectActive) return;
-      if (currentStyleRef.current !== MapStyle.GoogleSatellite) return;
-
-      const layerAdded = addGoogleLayer();
-      const attributionAdded = updateAttribution();
-
-      if (layerAdded && attributionAdded) return;
-
-      if (attemptsLeft > 0) {
-        rafId = requestAnimationFrame(() => pollForGoogleSetup(attemptsLeft - 1));
-      } else {
-        if (!layerAdded) {
-          Log.error("Failed to add Google layer after 180 attempts");
-        }
-      }
-    };
+    if (!currentMap || !currentContainer || !styleReady) return;
 
     if (currentStyle === MapStyle.GoogleSatellite) {
-      const handleStyleLoad = () => {
-        if (isEffectActive && currentStyleRef.current === MapStyle.GoogleSatellite) {
-          pollForGoogleSetup();
-        }
-      };
-
-      const layerAdded = addGoogleLayer();
-      const attributionAdded = updateAttribution();
-
-      if (!layerAdded || !attributionAdded) {
-        pollForGoogleSetup();
+      const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
+      if (!currentMap.getLayer(GOOGLE_RASTER_LAYER_ID)) {
+        addGoogleSatelliteLayer(currentMap);
+        updateMapProjection(currentMap, MapStyle.GoogleSatellite);
       }
-
-      currentMap.on("style.load", handleStyleLoad);
-
-      return () => {
-        isEffectActive = false;
-        currentMap.off("style.load", handleStyleLoad);
-        if (rafId != null) {
-          cancelAnimationFrame(rafId);
-        }
-      };
     } else {
       removeGoogleSatelliteLayer(currentMap);
-      updateAttribution();
     }
-  }, [currentStyle, styleLoaded, map, mapContainer]);
+
+    const applyAttribution = (): boolean => {
+      const attributionInner = currentContainer.querySelector(".mapboxgl-ctrl-attrib-inner");
+      if (attributionInner == null) return false;
+
+      const existingGoogle = attributionInner.querySelector(".google-attribution-text");
+      if (currentStyleRef.current === MapStyle.GoogleSatellite) {
+        if (existingGoogle == null) {
+          const span = document.createElement("span");
+          span.className = "google-attribution-text";
+          span.textContent = " © Google";
+          attributionInner.appendChild(span);
+        }
+      } else {
+        existingGoogle?.remove();
+      }
+      return true;
+    };
+
+    const observer = new MutationObserver(applyAttribution);
+    observer.observe(currentContainer, { childList: true, subtree: true });
+    applyAttribution();
+    return () => observer.disconnect();
+  }, [currentStyle, styleReady, styleVersion, map, mapContainer]);
 };

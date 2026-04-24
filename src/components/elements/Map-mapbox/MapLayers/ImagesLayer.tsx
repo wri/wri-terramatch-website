@@ -1,5 +1,5 @@
 import { Canvg } from "canvg";
-import { EventData, GeoJSONSourceRaw, Map, MapboxEvent, MapMouseEvent } from "mapbox-gl";
+import { GeoJSONSourceSpecification, Map as MapboxMap, MapMouseEvent } from "mapbox-gl";
 import { useEffect } from "react";
 
 import ImageGalleryPreviewer from "@/components/elements/ImageGallery/ImageGalleryPreviewer";
@@ -8,7 +8,7 @@ import { useMapContext } from "@/context/map.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { toDataURL } from "@/utils/image";
 
-interface ImagesLayerProps extends Omit<GeoJSONSourceRaw, "cluster" | "type"> {
+interface ImagesLayerProps extends Omit<GeoJSONSourceSpecification, "cluster" | "type"> {
   source: string;
   onDeleteImage?: (uuid: string) => void;
 }
@@ -54,47 +54,29 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
 
   useEffect(() => {
     if (!map) return;
-    const onLoadListener = (e: MapboxEvent & EventData) => {
-      const map = e.target;
+    const onLoadListener = () => {
+      const currentMap = map;
 
-      // Add a new source from our GeoJSON data and
-      // set the 'cluster' option to true. GL-JS will
-      // add the point_count property to your source data.
-      map.addSource(source, {
+      currentMap.addSource(source, {
         type: "geojson",
-        // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
-        // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
         data,
         cluster: true,
-        clusterMaxZoom: 14, // Max zoom to cluster points on
-        clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+        clusterMaxZoom: 14,
+        clusterRadius: 50
       });
 
-      map.addLayer({
+      currentMap.addLayer({
         id: "clusters",
         type: "circle",
         source,
         filter: ["has", "point_count"],
         paint: {
-          // Use step expressions (https://docs.mapbox.com/style-spec/reference/expressions/#step)
-          // with three steps to implement three types of circles:
-          //   * Blue, 20px circles when point count is less than 100
-          //   * Yellow, 30px circles when point count is between 100 and 750
-          //   * Pink, 40px circles when point count is greater than or equal to 750
           "circle-color": "#27A9E0",
-          "circle-radius": [
-            "step",
-            ["get", "point_count"],
-            20, //output
-            25, //threshold
-            40, //output
-            50, //threshold
-            80 // output
-          ]
+          "circle-radius": ["step", ["get", "point_count"], 20, 25, 40, 50, 80]
         }
       });
 
-      map.addLayer({
+      currentMap.addLayer({
         id: "cluster-count",
         type: "symbol",
         source,
@@ -109,7 +91,7 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
         }
       });
 
-      map.addLayer({
+      currentMap.addLayer({
         id: "unclustered-point",
         type: "circle",
         source,
@@ -121,14 +103,13 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
           "circle-stroke-color": "#fff"
         }
       });
-      // Add a layer to use the image to represent the data.
-      map.addLayer({
+      currentMap.addLayer({
         id: "image",
         type: "symbol",
         filter: ["!", ["has", "point_count"]],
-        source, // reference the data source
+        source,
         layout: {
-          "icon-image": ["get", "id"], // reference the image
+          "icon-image": ["get", "id"],
           "icon-size": 1
         }
       });
@@ -143,7 +124,7 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
   return null;
 };
 
-const loadImage = async (map: Map, imageName: string, svgString: string) => {
+const loadImage = async (map: MapboxMap, imageName: string, svgString: string) => {
   if (!!imageName && !!svgString && !map?.hasImage(imageName)) {
     const marker = new Image();
     const canvas = document.createElement("canvas");

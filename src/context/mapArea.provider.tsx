@@ -1,16 +1,24 @@
 import React, { createContext, ReactNode, useCallback, useContext, useState } from "react";
 
+import { EditPolygonState } from "@/components/elements/Map-mapbox/Map.d";
 import { SitePolygon } from "@/generated/apiSchemas";
+import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { Entity } from "@/types/common";
+
+export type MapAreaSiteData = Entity | SiteFullDto;
+
+export function isMapAreaSiteFullDto(siteData: MapAreaSiteData | undefined): siteData is SiteFullDto {
+  return siteData != null && "lightResource" in siteData;
+}
 
 type MapAreaType = {
   isUserDrawingEnabled: boolean;
   setIsUserDrawingEnabled: (arg0: boolean) => void;
-  toggleAttribute: (arg0: boolean) => void;
-  openEditNewPolygon: boolean;
-  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string };
-  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void;
-  siteData: any;
-  setSiteData: (value: any) => void;
+  editPolygon: EditPolygonState;
+  setEditPolygon: (value: EditPolygonState) => void;
+  siteData: MapAreaSiteData | undefined;
+  setSiteData: (value: MapAreaSiteData | undefined) => void;
   shouldRefetchPolygonData: boolean;
   setShouldRefetchPolygonData: (value: boolean) => void;
   shouldRefetchMediaData: boolean;
@@ -23,18 +31,6 @@ type MapAreaType = {
   setHasOverlaps: (value: boolean) => void;
   selectedPolygonsInCheckbox: string[];
   setSelectedPolygonsInCheckbox: (value: string[]) => void;
-  polygonNotificationStatus: {
-    open: boolean;
-    message: string;
-    type: "success" | "error" | "warning";
-    title: string;
-  };
-  setpolygonNotificationStatus: (value: {
-    open: boolean;
-    message: string;
-    type: "success" | "error" | "warning";
-    title: string;
-  }) => void;
   setSelectedPolyVersion: (value: SitePolygon) => void;
   selectedPolyVersion: SitePolygon | undefined;
   openModalConfirmation: boolean;
@@ -43,23 +39,19 @@ type MapAreaType = {
   setPreviewVersion: (value: boolean) => void;
   statusSelectedPolygon: string;
   setStatusSelectedPolygon: (value: string) => void;
-  polygonCriteriaMap: any;
-  setPolygonCriteriaMap: (value: any) => void;
-  polygonData: any[];
-  setPolygonData: (value: any[]) => void;
+  polygonCriteriaMap: Record<string, unknown>;
+  setPolygonCriteriaMap: (value: Record<string, unknown>) => void;
+  polygonData: SitePolygonLightDto[];
+  setPolygonData: (value: SitePolygonLightDto[]) => void;
   validFilter: string;
   setValidFilter: (value: string) => void;
-  isFetchingValidationData: boolean;
-  setIsFetchingValidationData: (value: boolean) => void;
   resetSiteMapInteractionState: () => void;
 };
 
 const defaultValue: MapAreaType = {
   isUserDrawingEnabled: false,
   setIsUserDrawingEnabled: () => {},
-  toggleAttribute: () => {},
-  openEditNewPolygon: false,
-  editPolygon: { isOpen: false, uuid: "", primary_uuid: "" },
+  editPolygon: { isOpen: false, uuid: "" },
   setEditPolygon: () => {},
   siteData: undefined,
   setSiteData: () => {},
@@ -75,13 +67,6 @@ const defaultValue: MapAreaType = {
   setHasOverlaps: () => {},
   selectedPolygonsInCheckbox: [],
   setSelectedPolygonsInCheckbox: () => {},
-  polygonNotificationStatus: {
-    open: false,
-    message: "",
-    type: "success",
-    title: ""
-  },
-  setpolygonNotificationStatus: () => {},
   setSelectedPolyVersion: () => {},
   selectedPolyVersion: undefined,
   openModalConfirmation: false,
@@ -96,8 +81,6 @@ const defaultValue: MapAreaType = {
   setPolygonData: () => {},
   validFilter: "all",
   setValidFilter: () => {},
-  isFetchingValidationData: false,
-  setIsFetchingValidationData: () => {},
   resetSiteMapInteractionState: () => {}
 };
 
@@ -105,8 +88,7 @@ const MapAreaContext = createContext<MapAreaType>(defaultValue);
 
 export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isUserDrawingEnabled, setIsUserDrawingEnabled] = useState<boolean>(false);
-  const [openEditNewPolygon, setOpenEditNewPolygon] = useState<boolean>(false);
-  const [siteData, setSiteData] = useState<any>();
+  const [siteData, setSiteData] = useState<MapAreaSiteData | undefined>(undefined);
   const [shouldRefetchPolygonData, setShouldRefetchPolygonData] = useState<boolean>(false);
   const [shouldRefetchMediaData, setShouldRefetchMediaData] = useState<boolean>(false);
   const [shouldRefetchValidation, setShouldRefetchValidation] = useState<boolean>(false);
@@ -117,61 +99,36 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [previewVersion, setPreviewVersion] = useState<boolean>(false);
   const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
   const [selectedPolygonsInCheckbox, setSelectedPolygonsInCheckbox] = useState<string[]>([]);
-  const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<any>({});
-  const [polygonData, setPolygonData] = useState<any[]>([]);
+  const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, unknown>>({});
+  const [polygonData, setPolygonData] = useState<SitePolygonLightDto[]>([]);
   const [validFilter, setValidFilter] = useState<string>("all");
-  const [isFetchingValidationData, setIsFetchingValidationData] = useState<boolean>(false);
-  const [editPolygon, setEditPolygonInternal] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
+  const [editPolygon, setEditPolygonInternal] = useState<EditPolygonState>({
     isOpen: false,
-    uuid: "",
-    primary_uuid: ""
+    uuid: ""
   });
 
-  const setEditPolygon = (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => {
+  const setEditPolygon = useCallback((value: EditPolygonState) => {
     setEditPolygonInternal(value);
     if (!value.isOpen) {
       setShouldRefetchPolygonData(false);
     }
-  };
-  const [polygonNotificationStatus, setpolygonNotificationStatus] = useState<{
-    open: boolean;
-    message: string;
-    type: "success" | "error" | "warning";
-    title: string;
-  }>({
-    open: false,
-    message: "",
-    type: "success",
-    title: ""
-  });
-  const toggleAttribute = (isOpen: boolean) => {
-    setOpenEditNewPolygon(isOpen);
-  };
+  }, []);
 
   const resetSiteMapInteractionState = useCallback(() => {
     setIsUserDrawingEnabled(false);
-    setOpenEditNewPolygon(false);
-    setEditPolygonInternal({ isOpen: false, uuid: "", primary_uuid: "" });
+    setEditPolygonInternal({ isOpen: false, uuid: "" });
     setShouldRefetchPolygonData(false);
     setSelectedPolyVersion(undefined);
     setOpenModalConfirmation(false);
     setPreviewVersion(false);
     setStatusSelectedPolygon("");
     setSelectedPolygonsInCheckbox([]);
-    setpolygonNotificationStatus({
-      open: false,
-      message: "",
-      type: "success",
-      title: ""
-    });
     setHasOverlaps(false);
   }, []);
 
   const contextValue: MapAreaType = {
     isUserDrawingEnabled,
     setIsUserDrawingEnabled,
-    toggleAttribute,
-    openEditNewPolygon,
     editPolygon,
     setEditPolygon,
     siteData,
@@ -188,8 +145,6 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setHasOverlaps,
     selectedPolygonsInCheckbox,
     setSelectedPolygonsInCheckbox,
-    polygonNotificationStatus,
-    setpolygonNotificationStatus,
     setSelectedPolyVersion,
     selectedPolyVersion,
     setOpenModalConfirmation,
@@ -204,8 +159,6 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonData,
     validFilter,
     setValidFilter,
-    isFetchingValidationData,
-    setIsFetchingValidationData,
     resetSiteMapInteractionState
   };
 
