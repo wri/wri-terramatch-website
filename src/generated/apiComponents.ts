@@ -352,40 +352,6 @@ export const usePostV2UsersResend = (
   );
 };
 
-export type PostV2ExportImageError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2ExportImageRequestBody = {
-  /**
-   * The URL of the image to be downloaded.
-   */
-  uuid: string;
-};
-
-export type PostV2ExportImageVariables = {
-  body: PostV2ExportImageRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2ExportImage = (variables: PostV2ExportImageVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, PostV2ExportImageError, PostV2ExportImageRequestBody, {}, {}, {}>({
-    url: "/v2/export-image",
-    method: "post",
-    ...variables,
-    signal
-  });
-
-export const usePostV2ExportImage = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, PostV2ExportImageError, PostV2ExportImageVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PostV2ExportImageError, PostV2ExportImageVariables>(
-    (variables: PostV2ExportImageVariables) => fetchPostV2ExportImage({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2ProjectsUUIDENTITYExportPathParams = {
   /**
    * allowed values sites|nurseries|project-reports
