@@ -6,7 +6,6 @@ export enum MapStyle {
   GoogleSatellite = "google-satellite"
 }
 
-/** Mapbox `mapbox://` URL last segment — still appears in v3 `metadata` / stringified spec when the full URL is missing. */
 function mapboxStyleUrlId(style: MapStyle): string {
   if (style === MapStyle.GoogleSatellite) return "";
   return style.split("/").pop() ?? "";

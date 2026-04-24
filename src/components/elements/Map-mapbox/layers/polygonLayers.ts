@@ -151,7 +151,6 @@ function getSourceCacheKeys(map: MapboxMap): Record<string, string> {
   return sourceCacheKeys.get(map)!;
 }
 
-/** Last Geoserver RND used for the polygon layer on this map (for `initialTileVersion`). */
 export function getMapTileVersion(map: MapboxMap | null | undefined): string {
   if (map == null) return "0";
   return getSourceCacheKeys(map)[LAYERS_NAMES.POLYGON_GEOMETRY] ?? "0";
