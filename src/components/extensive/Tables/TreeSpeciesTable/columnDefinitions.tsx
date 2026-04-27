@@ -135,7 +135,7 @@ const columnNoGoal = ({ secondColumnWidth, headerName }: ColumnDefinitionProps) 
   rowSpeciesName(headerName),
   {
     accessorKey: "treeCount",
-    header: "Count",
+    header: "COUNT",
     enableSorting: false,
     meta: { width: secondColumnWidth },
     cell: (props: any) => {

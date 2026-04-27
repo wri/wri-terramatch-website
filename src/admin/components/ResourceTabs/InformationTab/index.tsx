@@ -258,17 +258,13 @@ const InformationTab: FC<IProps> = props => {
                             Trees Planted:
                           </Text>
                           <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                            {(props.type === "projects"
-                              ? record.treesToBePlantedSpeciesGoalTotal ?? 0
-                              : totalCountTreePlanted ?? 0
-                            ).toLocaleString()}
+                            {totalCountTreePlanted.toLocaleString()}
                           </Text>
                         </div>
                         <TreeSpeciesTable
                           {...{ entity, entityUuid }}
                           collection="tree-planted"
                           secondColumnWidth="45%"
-                          {...(props.type === "projects" ? { tableType: "treeCountGoal" } : {})}
                         />
                       </div>
                     ) : null}
