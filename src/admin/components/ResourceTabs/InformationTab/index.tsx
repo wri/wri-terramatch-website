@@ -255,7 +255,7 @@ const InformationTab: FC<IProps> = props => {
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-1 py-1">
                           <Text variant="text-16-bold" className="capitalize">
-                            {props.type === "projects" ? "Trees to be Planted:" : "Trees Planted:"}
+                            Trees Planted:
                           </Text>
                           <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
                             {(props.type === "projects"
