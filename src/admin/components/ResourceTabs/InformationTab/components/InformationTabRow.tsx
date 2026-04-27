@@ -12,6 +12,7 @@ import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTab
 import { FormSummaryRowProps } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { SupportedEntity } from "@/connections/EntityAssociation";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { type FormFieldsProvider, useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 
 type InformationTabRowProps = Omit<FormSummaryRowProps, "index" | "type">;
@@ -26,8 +27,12 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
   const nurseryTotalFallback = usePlantTotalCount({ entity: entityName, entityUuid, collection: "nursery-seedling" });
   const totalTreePlanted = usePlantTotalCount({ entity: entityName, entityUuid, collection: "tree-planted" });
   const fieldsProvider = useFieldsProvider();
+  const { framework } = useFrameworkContext();
   const title = fieldsProvider.step(props.stepId)?.title;
-  const showTreesToBeRestored = entityName === "projects" && stepIncludesTreesGoalField(fieldsProvider, props.stepId);
+  const showTreesToBeRestored =
+    entityName === "projects" &&
+    framework === Framework.TF_3 &&
+    stepIncludesTreesGoalField(fieldsProvider, props.stepId);
   return (
     <>
       <Text variant="text-16-semibold" className="text-darkCustom">
