@@ -3500,6 +3500,49 @@ export const entityUpdate = new V3ApiEndpoint<undefined, EntityUpdateError, Enti
   "PATCH"
 );
 
+export type EntityExportPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+};
+
+export type EntityExportError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type EntityExportVariables = {
+  pathParams: EntityExportPathParams;
+};
+
+export const entityExport = new V3ApiEndpoint<undefined, EntityExportError, EntityExportVariables, {}>(
+  "/entities/v3/{entity}/{uuid}/export",
+  "GET"
+);
+
 export type FormDataGetPathParams = {
   /**
    * UUID of the resource.
@@ -6486,7 +6529,7 @@ export const operationsByTag = {
   reminders: { sendReminder },
   auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
   aggregateReports: { getAggregateReports },
-  entities: { entityIndex, entityCreate, entityExportAll, entityGet, entityDelete, entityUpdate },
+  entities: { entityIndex, entityCreate, entityExportAll, entityGet, entityDelete, entityUpdate, entityExport },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },
   entityAssociations: { entityAssociationIndex },

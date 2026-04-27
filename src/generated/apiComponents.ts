@@ -352,43 +352,6 @@ export const usePostV2UsersResend = (
   );
 };
 
-export type GetV2ENTITYUUIDExportPathParams = {
-  /**
-   * allowed values sites|nurseries|projects|project-reports/site-reports/nursery-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type GetV2ENTITYUUIDExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2ENTITYUUIDExportVariables = {
-  pathParams: GetV2ENTITYUUIDExportPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2ENTITYUUIDExport = (variables: GetV2ENTITYUUIDExportVariables, signal?: AbortSignal) =>
-  apiFetch<Blob, GetV2ENTITYUUIDExportError, undefined, {}, {}, GetV2ENTITYUUIDExportPathParams>({
-    url: "/v2/{entity}/{uuid}/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2ENTITYUUIDExport = <TData = Blob>(
-  variables: GetV2ENTITYUUIDExportVariables,
-  options?: Omit<reactQuery.UseQueryOptions<Blob, GetV2ENTITYUUIDExportError, TData>, "queryKey" | "queryFn">
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Blob, GetV2ENTITYUUIDExportError, TData>(
-    queryKeyFn({ path: "/v2/{ENTITY}/{UUID}/export", operationId: "getV2ENTITYUUIDExport", variables }),
-    ({ signal }) => fetchGetV2ENTITYUUIDExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type QueryOperation =
   | {
       path: "/v2/applications/{UUID}/export";
@@ -399,9 +362,4 @@ export type QueryOperation =
       path: "/auth/mail";
       operationId: "getAuthMail";
       variables: GetAuthMailVariables;
-    }
-  | {
-      path: "/v2/{ENTITY}/{UUID}/export";
-      operationId: "getV2ENTITYUUIDExport";
-      variables: GetV2ENTITYUUIDExportVariables;
     };

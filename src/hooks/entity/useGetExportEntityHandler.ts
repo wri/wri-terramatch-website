@@ -1,55 +1,39 @@
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
+import { SupportedEntity } from "@/connections/Entity";
 import { ToastType, useToastContext } from "@/context/toast.provider";
-import { fetchGetV2ENTITYUUIDExport } from "@/generated/apiComponents";
+import { entityExport } from "@/generated/v3/entityService/entityServiceComponents";
+import { v3EntityName } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
+import Log from "@/utils/log";
 import { downloadFileBlob } from "@/utils/network";
 
 /**
  * To get entity export handler
- * @param entity EntityName
- * @param uuid string
- * @param name string
- * @param extension string = "zip"
- * @returns { handleExport }
  */
-export const useGetExportEntityHandler = (
-  entity: EntityName,
-  uuid: string,
-  name?: string | null,
-  extension: string = "zip"
-) => {
+export const useGetExportEntityHandler = (entity: EntityName, uuid: string) => {
   const t = useT();
   const { openToast } = useToastContext();
   const [loading, setLoading] = useState(false);
 
-  const onSuccess = (response: any) => {
-    downloadFileBlob(response, `${entity}-${name}.${extension}`);
-    openToast(t(`{name} successfully exported`, { name }));
-  };
-
-  const onError = () => {
-    openToast(t("Something went wrong!"), ToastType.ERROR);
-  };
-
-  return {
-    handleExport: () => {
-      setLoading(true);
-      fetchGetV2ENTITYUUIDExport({ pathParams: { entity, uuid } })
-        .then((response: any) => {
-          if (response.message) {
-            return fetchGetV2ENTITYUUIDExport({ pathParams: { entity, uuid }, queryParams: { force: true } });
-          } else {
-            return response;
-          }
+  const handleExport = useCallback(() => {
+    setLoading(true);
+    entityExport
+      .fetchBlob({ pathParams: { entity: v3EntityName(entity) as SupportedEntity, uuid } })
+      .then(({ fileName, blob }) =>
+        downloadFileBlob(blob, fileName as string).then(() => {
+          openToast(t(`${entity} successfully exported`, { entity }));
         })
-        .then(onSuccess)
-        .catch(onError)
-        .finally(() => {
-          setLoading(false);
-        });
-    },
-    loading
-  };
+      )
+      .catch(error => {
+        Log.error("Error exporting entity", error);
+        openToast(t("Something went wrong!"), ToastType.ERROR);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [entity, openToast, t, uuid]);
+
+  return { handleExport, loading };
 };
