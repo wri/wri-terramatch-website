@@ -1454,6 +1454,54 @@ export const userVerify = new V3ApiEndpoint<UserVerifyResponse, UserVerifyError,
   "PATCH"
 );
 
+export type SendLoginDetailsError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type SendLoginDetailsResponse = {
+  meta?: {
+    /**
+     * @example sendLoginDetails
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example sendLoginDetails
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SendLoginDetailsResponseDto;
+  };
+};
+
+export type SendLoginDetailsVariables = {
+  body: Schemas.SendLoginDetailsRequestDto;
+};
+
+/**
+ * Send login details to a user by email address
+ */
+export const sendLoginDetails = new V3ApiEndpoint<
+  SendLoginDetailsResponse,
+  SendLoginDetailsError,
+  SendLoginDetailsVariables,
+  {}
+>("/users/v3/users/sendLoginDetails", "POST");
+
 export type GetUserAssociationPathParams = {
   /**
    * UUID of the resource.
@@ -1999,7 +2047,7 @@ export const operationsByTag = {
     organisationDelete
   },
   actions: { actionsIndex },
-  users: { userIndex, userCreation, usersFind, userUpdate, userDelete, userVerify },
+  users: { userIndex, userCreation, usersFind, userUpdate, userDelete, userVerify, sendLoginDetails },
   userAssociation: {
     getUserAssociation,
     createUserAssociation,

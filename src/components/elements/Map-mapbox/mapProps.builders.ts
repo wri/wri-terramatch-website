@@ -51,6 +51,8 @@ type DashboardMapBuilderOpts = {
   setLoader?: (value: boolean) => void;
   dashboardContext?: DashboardPopupContext;
   className?: string;
+  initialTileVersion?: string;
+  initialPolygonFingerprint?: string;
 };
 
 export function buildDashboardMapProps(opts: DashboardMapBuilderOpts): BaseMapProps & DashboardMapExtras {
@@ -70,7 +72,9 @@ export function buildDashboardMapProps(opts: DashboardMapBuilderOpts): BaseMapPr
     hasAccess,
     setLoader,
     dashboardContext,
-    className
+    className,
+    initialTileVersion,
+    initialPolygonFingerprint
   } = opts;
 
   return {
@@ -91,7 +95,9 @@ export function buildDashboardMapProps(opts: DashboardMapBuilderOpts): BaseMapPr
     className,
     dashboardMode: mode,
     showLegend: false,
-    showPopups: true
+    showPopups: true,
+    initialTileVersion,
+    initialPolygonFingerprint
   };
 }
 

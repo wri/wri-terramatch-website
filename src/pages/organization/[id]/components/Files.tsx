@@ -4,7 +4,7 @@ import FilePreviewCard from "@/components/elements/FilePreviewCard/FilePreviewCa
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import { UploadedFile } from "@/types/common";
-import { downloadFile } from "@/utils/network";
+import { downloadFileUrl } from "@/utils/network";
 
 type FilesProps = {
   title?: string;
@@ -26,7 +26,7 @@ const Files = ({ files, title }: FilesProps) => {
           <FilePreviewCard
             file={file as UploadedFile}
             onDownload={f => {
-              if (f.url != null) downloadFile(f.url);
+              if (f.url != null) downloadFileUrl(f.url);
             }}
           />
         )}

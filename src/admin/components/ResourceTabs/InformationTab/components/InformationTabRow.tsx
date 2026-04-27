@@ -2,7 +2,7 @@ import { Typography } from "@mui/material";
 import classNames from "classnames";
 import { camelCase } from "lodash";
 import { FC } from "react";
-import { LabeledClasses } from "react-admin";
+import { LabeledClasses, useShowContext } from "react-admin";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import DisturbanceReport from "@/admin/modules/disturbanceReport/components/DisturbanceReport";
@@ -12,7 +12,7 @@ import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTab
 import { FormSummaryRowProps } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { SupportedEntity } from "@/connections/EntityAssociation";
-import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
+import { type FormFieldsProvider, useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 
 type InformationTabRowProps = Omit<FormSummaryRowProps, "index" | "type">;
 
@@ -21,10 +21,13 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
   const entityName = camelCase(entity?.entityName ?? "projects") as SupportedEntity;
   const entityUuid = entity?.entityUUID ?? "";
   const entries = useGetFormEntries({ ...props, entity });
+  const { record } = useShowContext();
   // usePlantTotalCount already combines plants and reportCounts, filtering duplicates for nurseries
   const nurseryTotalFallback = usePlantTotalCount({ entity: entityName, entityUuid, collection: "nursery-seedling" });
   const totalTreePlanted = usePlantTotalCount({ entity: entityName, entityUuid, collection: "tree-planted" });
-  const title = useFieldsProvider().step(props.stepId)?.title;
+  const fieldsProvider = useFieldsProvider();
+  const title = fieldsProvider.step(props.stepId)?.title;
+  const showTreesToBeRestored = entityName === "projects" && stepIncludesTreesGoalField(fieldsProvider, props.stepId);
   return (
     <>
       <Text variant="text-16-semibold" className="text-darkCustom">
@@ -104,8 +107,29 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
           );
         }}
       />
+      {showTreesToBeRestored ? (
+        <Typography className={LabeledClasses.label}>
+          <div className="mt-4 flex items-center gap-2 py-1">
+            <Text as="span" variant="text-16-bold" className="capitalize text-darkCustom">
+              Trees to be Restored:
+            </Text>
+            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+              {(record?.treesToBeRestoredGoal ?? 0).toLocaleString()}
+            </Text>
+          </div>
+        </Typography>
+      ) : null}
     </>
   );
 };
+
+function stepIncludesTreesGoalField(fieldsProvider: FormFieldsProvider, stepId: string): boolean {
+  const visit = (fieldName: string): boolean => {
+    const field = fieldsProvider.fieldByName(fieldName);
+    if (field?.inputType === "treesGoal") return true;
+    return fieldsProvider.childNames(fieldName).some(child => visit(child));
+  };
+  return fieldsProvider.fieldNames(stepId).some(visit);
+}
 
 export default InformationTabRow;

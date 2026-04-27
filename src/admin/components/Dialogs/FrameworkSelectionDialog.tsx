@@ -8,13 +8,15 @@ import * as yup from "yup";
 
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import { validateForm } from "@/admin/utils/forms";
+import { downloadEntityAllCsv, SupportedEntity } from "@/connections/Entity";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
-import {
-  fetchGetV2AdminENTITYExportFRAMEWORKPm,
-  fetchGetV2AdminENTITYPresignedUrlFRAMEWORK
-} from "@/generated/apiComponents";
+import { toFramework } from "@/context/framework.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
+import { entityExportAll, EntityExportAllQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
+import { v3EntityName } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
-import { downloadPresignedUrl } from "@/utils/network";
+import Log from "@/utils/log";
+import { downloadFileBlob, downloadFileUrl } from "@/utils/network";
 
 interface FrameworkSelectionDialogContentProps {
   onCancel: () => void;
@@ -57,36 +59,51 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
   const [exporting, setExporting] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const { openToast } = useToastContext();
+
   const { isSuperAdmin, isFrameworkAdmin } = useGetUserRole();
 
   const onExport = useCallback(
-    (framework: string) => {
+    async (framework: string) => {
       setExporting(true);
 
-      const exportPrefix = split(entity, "-").map(capitalize).join(" ");
+      const reportError = (error?: any) => {
+        Log.error("Export failed", error);
+        openToast("Something went wrong!", ToastType.ERROR);
+      };
 
-      const getExport =
-        isSuperAdmin || isFrameworkAdmin
-          ? fetchGetV2AdminENTITYPresignedUrlFRAMEWORK
-          : fetchGetV2AdminENTITYExportFRAMEWORKPm;
-
-      getExport({
-        pathParams: { entity, framework }
-      })
-        .then((data: any) => {
-          if (!data.url) {
-            return getExport({ pathParams: { entity, framework } });
+      try {
+        const entityName = v3EntityName(entity) as SupportedEntity;
+        const frameworkKey = toFramework(framework);
+        if (isSuperAdmin || isFrameworkAdmin) {
+          const { data, loadFailure } = await downloadEntityAllCsv(entityName, frameworkKey);
+          if (loadFailure != null) {
+            reportError(loadFailure);
+          } else {
+            downloadFileUrl(data?.url as string);
           }
-          return data;
-        })
-        .then(data => {
-          downloadPresignedUrl(data.url, `${exportPrefix} - ${framework}.csv`);
-        })
-        .finally(() => setExporting(false));
-
-      setModalOpen(false);
+        } else {
+          try {
+            const { fileName, blob } = await entityExportAll.fetchBlob({
+              pathParams: { entity: entityName },
+              queryParams: { frameworkKey: frameworkKey as EntityExportAllQueryParams["frameworkKey"] }
+            });
+            await downloadFileBlob(
+              blob,
+              fileName ?? `${split(entity, "-").map(capitalize).join(" ")} - ${framework}.csv`
+            );
+          } catch {
+            reportError();
+          }
+        }
+      } catch (error) {
+        reportError(error);
+      } finally {
+        setExporting(false);
+        setModalOpen(false);
+      }
     },
-    [entity, isSuperAdmin, isFrameworkAdmin]
+    [entity, isSuperAdmin, isFrameworkAdmin, openToast]
   );
 
   return {

@@ -100,7 +100,8 @@ export const userDataProvider: Partial<DataProvider> = {
       throw v3ErrorForRA("User get fetch failed", connected.loadFailure);
     }
 
-    return { data: { ...connected.data, id: connected.data!.uuid } } as RecordType;
+    const data = connected.data!;
+    return { data: { ...data, id: data.uuid } } as RecordType;
   },
 
   async getMany(_: string, params: GetManyParams) {

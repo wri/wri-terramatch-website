@@ -26,6 +26,7 @@ import { downloadOrganisationCsv } from "@/connections/Organisation";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import Log from "@/utils/log";
+import { downloadFileUrl } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import { useGetOrganisationsTotals } from "../hooks/useGetOrganisationsTotal";
@@ -120,9 +121,7 @@ export const OrganisationsList = () => {
     const { data, loadFailure } = await downloadOrganisationCsv();
     if (data != null) {
       openToast(t("Successfully exported"));
-      const link = document.createElement("a");
-      link.href = data.url;
-      link.click();
+      downloadFileUrl(data.url);
     } else {
       Log.error("Organisation export failed", loadFailure);
       openToast(t("Something went wrong!"), ToastType.ERROR);

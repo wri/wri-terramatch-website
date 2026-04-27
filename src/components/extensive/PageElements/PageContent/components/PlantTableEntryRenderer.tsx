@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { FC, useMemo } from "react";
 
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { getThemedColor } from "@/lib/theme";
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
   getNoCountTableColumns,
@@ -43,11 +44,31 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
     ],
     [t]
   );
+  const totalRowName = "__total_row__";
+  const totalAmount = useMemo(
+    () =>
+      plants.reduce((sum, plant) => {
+        const plantAmount = (plant as { amount?: number | string }).amount;
+        const amount = typeof plantAmount === "number" ? plantAmount : Number(plantAmount ?? 0);
+        return sum + (amount ? amount : 0);
+      }, 0),
+    [plants]
+  );
+  const noGoalTableData = useMemo(
+    () => [
+      ...plants,
+      {
+        name: totalRowName,
+        amount: totalAmount
+      }
+    ],
+    [plants, totalAmount]
+  );
 
   if (tableType === "noGoal" || framework === Framework.TF) {
     return (
       <Table
-        data={plants}
+        data={noGoalTableData}
         columns={noGoalTableColumns}
         variant="full-width"
         css={FULL_WIDTH_TABLE_HEADER_STYLES}
@@ -57,6 +78,30 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
           "mt-[0.125rem] !w-[45.3125rem] mobile:!w-full",
           plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
         )}
+        renderRow={rowData => {
+          const row = rowData as { name?: string; amount?: number | string };
+          const isTotalRow = row.name === totalRowName;
+          const totalRowStyle = isTotalRow
+            ? {
+                fontWeight: 700,
+                color: getThemedColor("neutral", 800)
+              }
+            : undefined;
+          return (
+            <TableRow>
+              <TableCell>
+                <Text textStyle="400" color="neutral.700" style={totalRowStyle}>
+                  {isTotalRow ? t("Total") : row.name}
+                </Text>
+              </TableCell>
+              <TableCell>
+                <Text textStyle="400" color="neutral.700" style={totalRowStyle}>
+                  {row.amount}
+                </Text>
+              </TableCell>
+            </TableRow>
+          );
+        }}
       />
     );
   }

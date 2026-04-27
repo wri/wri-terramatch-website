@@ -3048,6 +3048,19 @@ export type EntityExportAllPathParams = {
     | "srpReports";
 };
 
+export type EntityExportAllQueryParams = {
+  frameworkKey?:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | "fundo-flora-1";
+};
+
 export type EntityExportAllError = Fetcher.ErrorWrapper<{
   status: 401;
   payload: {
@@ -3062,14 +3075,34 @@ export type EntityExportAllError = Fetcher.ErrorWrapper<{
   };
 }>;
 
-export type EntityExportAllVariables = {
-  pathParams: EntityExportAllPathParams;
+export type EntityExportAllResponse = {
+  meta?: {
+    /**
+     * @example fileDownloads
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example fileDownloads
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.FileDownloadDto;
+  };
 };
 
-export const entityExportAll = new V3ApiEndpoint<undefined, EntityExportAllError, EntityExportAllVariables, {}>(
-  "/entities/v3/{entity}/exportAll",
-  "GET"
-);
+export type EntityExportAllVariables = {
+  pathParams: EntityExportAllPathParams;
+  queryParams?: EntityExportAllQueryParams;
+};
+
+export const entityExportAll = new V3ApiEndpoint<
+  EntityExportAllResponse,
+  EntityExportAllError,
+  EntityExportAllVariables,
+  {}
+>("/entities/v3/{entity}/exportAll", "GET");
 
 export type EntityGetPathParams = {
   /**
@@ -6028,6 +6061,70 @@ export const fundingProgrammeUpdate = new V3ApiEndpoint<
   {}
 >("/fundingProgrammes/v3/fundingProgrammes/{uuid}", "PUT");
 
+export type FundingProgrammeExportAllPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type FundingProgrammeExportAllError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FundingProgrammeExportAllResponse = {
+  meta?: {
+    /**
+     * @example fileDownloads
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example fileDownloads
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.FileDownloadDto;
+  };
+};
+
+export type FundingProgrammeExportAllVariables = {
+  pathParams: FundingProgrammeExportAllPathParams;
+};
+
+export const fundingProgrammeExportAll = new V3ApiEndpoint<
+  FundingProgrammeExportAllResponse,
+  FundingProgrammeExportAllError,
+  FundingProgrammeExportAllVariables,
+  {}
+>("/fundingProgrammes/v3/fundingProgrammes/{uuid}/exportAll", "GET");
+
 export type ReportingFrameworksIndexQueryParams = {
   /**
    * Whether to return translated content. Defaults to true.
@@ -6405,7 +6502,8 @@ export const operationsByTag = {
     fundingProgrammeCreate,
     fundingProgrammeGet,
     fundingProgrammeDelete,
-    fundingProgrammeUpdate
+    fundingProgrammeUpdate,
+    fundingProgrammeExportAll
   },
   reportingFrameworks: {
     reportingFrameworksIndex,

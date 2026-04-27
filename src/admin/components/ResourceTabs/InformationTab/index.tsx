@@ -1,5 +1,4 @@
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { Card, Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Card, Grid, Stack, Typography } from "@mui/material";
 import classNames from "classnames";
 import { camelCase } from "lodash";
 import { FC, useMemo } from "react";
@@ -33,9 +32,6 @@ import NurseryInformationAside from "./components/NurseryInformationAside";
 import ProjectInformationAside from "./components/ProjectInformationAside";
 import ReportInformationAside from "./components/ReportInformationAside";
 import SiteInformationAside from "./components/SiteInformationAside";
-
-const TREES_TO_BE_RESTORED_TOOLTIP =
-  "This is the expected number of trees that will be restored through this project. It represents the following calculation: [trees to be planted × expected survival rate] + [trees to be regenerated].";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: Exclude<EntityName, "project-pitches">;
@@ -203,7 +199,7 @@ const InformationTab: FC<IProps> = props => {
               <div className="pl-8">
                 {["projects", "sites", "site-reports", "project-reports", "nursery-reports"].includes(props.type) ? (
                   <div className="flex flex-col gap-10">
-                    {props.type !== "nursery-reports" && props.type !== "site-reports" ? (
+                    {props.type !== "nursery-reports" ? (
                       <ContextCondition frameworksHide={[Framework.PPC]}>
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-1 py-1">
@@ -272,28 +268,8 @@ const InformationTab: FC<IProps> = props => {
                           {...{ entity, entityUuid }}
                           collection="tree-planted"
                           secondColumnWidth="45%"
+                          {...(props.type === "projects" ? { tableType: "treeCountGoal" } : {})}
                         />
-                        {props.type === "projects" ? (
-                          <div className="flex items-center gap-1 py-1">
-                            <div className="flex items-center gap-0.5">
-                              <Text variant="text-16-bold" className="capitalize">
-                                Trees to be Restored:
-                              </Text>
-                              <Tooltip title={TREES_TO_BE_RESTORED_TOOLTIP}>
-                                <IconButton
-                                  size="small"
-                                  aria-label="Trees to be restored — how this value is calculated"
-                                  className="!p-0.5"
-                                >
-                                  <InfoOutlinedIcon fontSize="small" className="text-neutral-500" />
-                                </IconButton>
-                              </Tooltip>
-                            </div>
-                            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                              {(record.treesToBeRestoredGoal ?? 0).toLocaleString()}
-                            </Text>
-                          </div>
-                        ) : null}
                       </div>
                     ) : null}
                     {props.type === "project-reports" ? (
@@ -316,17 +292,34 @@ const InformationTab: FC<IProps> = props => {
                       </ContextCondition>
                     ) : null}
                     {props.type === "site-reports" ? (
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1 py-1">
-                          <Text variant="text-16-bold" className="capitalize">
-                            Trees Regenerating By Species:
-                          </Text>
-                          <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                            {totalCountAnr.toLocaleString() ?? 0}
-                          </Text>
+                      <>
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1 py-1">
+                            <Text variant="text-16-bold" className="capitalize">
+                              Trees Regenerating By Species:
+                            </Text>
+                            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                              {totalCountAnr.toLocaleString() ?? 0}
+                            </Text>
+                          </div>
+                          <TreeSpeciesTable {...{ entity, entityUuid }} collection="anr" secondColumnWidth="45%" />
                         </div>
-                        <TreeSpeciesTable {...{ entity, entityUuid }} collection="anr" secondColumnWidth="45%" />
-                      </div>
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1 py-1">
+                            <Text variant="text-16-bold" className="capitalize">
+                              Trees Replanted:
+                            </Text>
+                            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                              {totalCountReplanting.toLocaleString() ?? 0}
+                            </Text>
+                          </div>
+                          <TreeSpeciesTable
+                            {...{ entity, entityUuid }}
+                            collection="replanting"
+                            secondColumnWidth="45%"
+                          />
+                        </div>
+                      </>
                     ) : null}
                     {["projects", "sites"].includes(props.type) ? (
                       <div className="flex flex-col gap-1">

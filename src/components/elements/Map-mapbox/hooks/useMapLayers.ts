@@ -21,9 +21,11 @@ type UseMapLayersParams = {
   projectUUID?: string;
   hasAccess?: boolean;
   selectedPolygonsInCheckbox?: string[];
+  initialTileVersion?: string;
+  initialPolygonFingerprint?: string;
 };
 
-const hashString = (value: string): number => {
+export const hashString = (value: string): number => {
   let hash = 2166136261;
   for (let i = 0; i < value.length; i++) {
     hash ^= value.charCodeAt(i);
@@ -32,7 +34,7 @@ const hashString = (value: string): number => {
   return hash >>> 0;
 };
 
-const computePolygonFingerprint = (polygonsData?: Record<string, string[]>): string => {
+export const computePolygonFingerprint = (polygonsData?: Record<string, string[]>): string => {
   if (polygonsData == null) return "0:0:0";
   const statuses = Object.keys(polygonsData).sort();
   let combinedHash = 2166136261;
@@ -67,12 +69,14 @@ export function useMapLayers({
   dashboardMode,
   projectUUID,
   hasAccess,
-  selectedPolygonsInCheckbox
+  selectedPolygonsInCheckbox,
+  initialTileVersion,
+  initialPolygonFingerprint
 }: UseMapLayersParams) {
   const [sourcesAdded, setSourcesAdded] = useState(false);
 
-  const prevPolygonFingerprintRef = useRef<string>("");
-  const tileVersionRef = useRef<string>("0");
+  const prevPolygonFingerprintRef = useRef<string>(initialPolygonFingerprint ?? "");
+  const tileVersionRef = useRef<string>(initialTileVersion ?? "0");
 
   useEffect(() => {
     if (!styleReady || map.current == null || (!dashboardMode && _.isEmpty(polygonsData))) {

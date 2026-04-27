@@ -400,6 +400,19 @@ const PolygonReviewTab: FC<IProps> = props => {
   }, [pendingValidationRefresh, delayedJobs]);
 
   useEffect(() => {
+    if (delayedJobs == null || record == null || pendingValidationRefresh) return;
+
+    const hasActiveValidationJob = delayedJobs.some(
+      job => job.name === "Polygon Validation" && job.status === "pending"
+    );
+
+    if (hasActiveValidationJob) {
+      setPendingValidationRefresh(true);
+      listDelayedJobs.fetch({});
+    }
+  }, [delayedJobs, pendingValidationRefresh, record]);
+
+  useEffect(() => {
     if (!pendingValidationRefresh || !delayedJobs || delayedJobs.length === 0 || !record) {
       return;
     }

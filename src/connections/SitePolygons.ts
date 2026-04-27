@@ -6,6 +6,7 @@ import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
+import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import {
   bulkDeleteSitePolygons as bulkDeleteSitePolygonsEndpoint,
   createSitePolygons,
@@ -138,6 +139,10 @@ export const bulkUpdateSitePolygonStatus = async (
       }
     });
   });
+
+  if (status === "submitted") {
+    listDelayedJobs.fetch({});
+  }
 };
 
 export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {

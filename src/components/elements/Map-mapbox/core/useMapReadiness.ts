@@ -1,7 +1,6 @@
 import { Map as MapboxMap } from "mapbox-gl";
 import { useEffect, useState } from "react";
 
-/** styleVersion re-triggers deps after each style.load; `map` (instance) must be the effect dep, not the ref. */
 export function useMapReadiness(map: MapboxMap | null | undefined): {
   styleReady: boolean;
   styleVersion: number;
@@ -12,21 +11,38 @@ export function useMapReadiness(map: MapboxMap | null | undefined): {
   useEffect(() => {
     if (map == null) return;
 
-    const handleStyleLoad = () => {
+    let cancelled = false;
+
+    const bump = () => {
+      if (cancelled || map == null) return;
       setStyleReady(true);
       setStyleVersion(v => v + 1);
     };
 
     if (map.isStyleLoaded()) {
-      handleStyleLoad();
+      bump();
     } else {
       setStyleReady(false);
     }
 
-    map.on("style.load", handleStyleLoad);
+    const onStyleLoad = () => bump();
+
+    const onMapLoad = () => {
+      if (cancelled || map == null) return;
+      setStyleReady(true);
+    };
+
+    map.on("style.load", onStyleLoad);
+    map.on("load", onMapLoad);
+    map.once("idle", () => {
+      if (cancelled || map == null) return;
+      setStyleReady(true);
+    });
 
     return () => {
-      map.off("style.load", handleStyleLoad);
+      cancelled = true;
+      map.off("style.load", onStyleLoad);
+      map.off("load", onMapLoad);
       setStyleReady(false);
     };
   }, [map]);
