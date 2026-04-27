@@ -27,8 +27,11 @@ export const useTableType = (entity: SupportedEntity, collection?: string, fromP
           : "treeCountGoal";
 
       case "tree-planted":
-        // Project-level rollup: show site-report counts as a single Count column (no per-species vs project-target comparison).
         if (entity === "sites" && framework === Framework.HBF) {
+          return "treeCountGoal";
+        }
+        // PPC does not use establishment targets; show a single report-based Count. HBF / Terrafund projects compare to goals.
+        if (entity === "projects" && (framework === Framework.HBF || isTerrafund(framework))) {
           return "treeCountGoal";
         }
         return "noGoal";
