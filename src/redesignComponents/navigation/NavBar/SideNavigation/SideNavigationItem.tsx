@@ -1,4 +1,4 @@
-import { Accordion as AccordionChakra, Button, Flex, Link, Text } from "@chakra-ui/react";
+import { Accordion as AccordionChakra, Button, Flex, Text } from "@chakra-ui/react";
 import classNames from "classnames";
 import type { FC, KeyboardEvent, MouseEvent, ReactNode } from "react";
 
@@ -8,6 +8,19 @@ import { ChevronDownIcon, MoreVertIcon, PlusIcon } from "@/redesignComponents/fo
 import Badge from "@/redesignComponents/status/Badge/BadgeCustom";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
+import SideNavigationLinkItem from "./SideNavigationLinkItem";
+
+type SideNavigationChildItem = {
+  icon: ReactNode;
+  label: string;
+  href: string;
+  notificationValue?: number;
+  onAddClick?: () => void;
+  MenuItems?: MenuItemOption[];
+};
+
+const actionButtonClassName = "min-h-0 min-w-0 h-fit";
+
 interface SideNavigationItemProps {
   icon?: ReactNode;
   label?: string;
@@ -15,17 +28,11 @@ interface SideNavigationItemProps {
   onAddClick?: () => void;
   MenuItems?: MenuItemOption[];
   href?: string;
-  items?: {
-    icon: ReactNode;
-    label: string;
-    onAddClick?: () => void;
-    href?: string;
-    MenuItems?: MenuItemOption[];
-  }[];
+  items?: SideNavigationChildItem[];
   isCollapsed?: boolean;
 }
 
-const focusVisibleStyles = {
+const interactiveItemProps = {
   _focusVisible: {
     outline: "none"
   },
@@ -33,15 +40,9 @@ const focusVisibleStyles = {
     "&:focus-visible [data-side-navigation-item-row]": {
       borderColor: "var(--chakra-colors-neutral-100)"
     }
-  }
-};
-
-const interactiveItemProps = {
-  ...focusVisibleStyles,
+  },
   "data-side-navigation-item": "trigger"
 } as const;
-
-const actionButtonClassName = "min-h-0 min-w-0 h-fit";
 
 const SideNavigationItem: FC<SideNavigationItemProps> = props => {
   const {
@@ -64,12 +65,6 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
 
   const handleMenuTriggerClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-  };
-
-  const handleLinkKeyDown = (event: KeyboardEvent<HTMLAnchorElement>) => {
-    if (event.key === "Enter") {
-      event.currentTarget.click();
-    }
   };
 
   const handleAccordionRootKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -137,8 +132,9 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
       data-side-navigation-item-row
       className={classNames(
         "h-9 w-full items-center justify-between gap-2",
-        "rounded-md border-2 border-theme-primary-800 px-3 py-2 text-theme-neutral-100",
-        "hover:bg-theme-primary-500/40"
+        "border-theme-primary-800 text-theme-neutral-100 rounded-md border-2 px-3 py-2",
+        "hover:bg-theme-primary-500/20",
+        "active:bg-theme-primary-500/40"
       )}
     >
       {itemMainContent}
@@ -153,28 +149,6 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
     </Flex>
   );
 
-  const linkRow = (
-    <Flex
-      data-side-navigation-item-row
-      className={classNames(
-        "h-9 w-full items-center justify-between gap-2",
-        "rounded-md border-2 border-theme-primary-800 px-3 py-2 text-theme-neutral-100",
-        "hover:bg-theme-primary-500/40",
-        "focus-within:border-theme-neutral-100 focus-within:ring-2 focus-within:ring-theme-primary-800"
-      )}
-    >
-      <Link
-        href={href}
-        className="min-w-0 flex-1 focus:outline-none"
-        onKeyDown={handleLinkKeyDown}
-        {...focusVisibleStyles}
-      >
-        {itemMainContent}
-      </Link>
-      {isCollapsed ? null : itemActions}
-    </Flex>
-  );
-
   if (hasItems) {
     return (
       <AccordionChakra.Root collapsible onKeyDown={handleAccordionRootKeyDown}>
@@ -182,51 +156,19 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
           <AccordionChakra.ItemTrigger {...interactiveItemProps}>{itemRow}</AccordionChakra.ItemTrigger>
           <AccordionChakra.ItemContent>
             <Flex>
-              <div className="mr-1 ml-5 w-[0.125rem] shrink-0 bg-theme-neutral-100" />
+              <div className="bg-theme-neutral-100 mr-1 ml-5 w-[0.125rem] shrink-0" />
               <Flex flexDirection="column" gap={1} width="100%">
                 {items.map(item => (
-                  <Flex
+                  <SideNavigationLinkItem
                     key={item.label}
-                    className={classNames(
-                      "w-full items-center justify-between gap-2 rounded-md border-2 border-transparent p-1",
-                      "focus-within:border-theme-neutral-100 focus-within:ring-2 focus-within:ring-theme-primary-800",
-                      "hover:bg-theme-primary-500/40"
-                    )}
-                    color="neutral.100"
-                  >
-                    <Link
-                      href={item.href}
-                      className="min-w-0 flex-1 focus:outline-none"
-                      onKeyDown={handleLinkKeyDown}
-                      {...focusVisibleStyles}
-                    >
-                      <Flex alignItems="center" gap={2}>
-                        <Badge hasNotification={isCollapsed} notificationCount={notificationValue}>
-                          {item.icon}
-                        </Badge>
-                        {item.label}
-                      </Flex>
-                    </Link>
-                    {isCollapsed ? null : (
-                      <Flex alignItems="center" gap={2}>
-                        {item.onAddClick ? (
-                          <Button onClick={item.onAddClick} className={actionButtonClassName}>
-                            <PlusIcon boxSize={4} />
-                          </Button>
-                        ) : null}
-                        {item.MenuItems ? (
-                          <MenuCustom
-                            customTrigger={
-                              <Button onClick={handleMenuTriggerClick} className={actionButtonClassName}>
-                                <MoreVertIcon boxSize={4} />
-                              </Button>
-                            }
-                            items={item.MenuItems}
-                          />
-                        ) : null}
-                      </Flex>
-                    )}
-                  </Flex>
+                    icon={item.icon}
+                    label={item.label}
+                    href={item.href ?? ""}
+                    onAddClick={item.onAddClick}
+                    MenuItems={item.MenuItems}
+                    isCollapsed={isCollapsed}
+                    notificationValue={item.notificationValue}
+                  />
                 ))}
               </Flex>
             </Flex>
@@ -237,7 +179,17 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
   }
 
   if (hasHref) {
-    return linkRow;
+    return (
+      <SideNavigationLinkItem
+        icon={icon}
+        label={label}
+        href={href}
+        onAddClick={onAddClick}
+        MenuItems={MenuItems}
+        isCollapsed={isCollapsed}
+        notificationValue={notificationValue}
+      />
+    );
   }
 
   return null;

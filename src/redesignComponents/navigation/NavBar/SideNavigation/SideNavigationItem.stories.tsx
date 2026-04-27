@@ -12,7 +12,18 @@ const baseMenuItems = [
   { label: "Action 2", value: "action2", onClick: noop },
   { label: "Action 3", value: "action3", onClick: noop }
 ];
-const storybookDocsPath = "/?path=/docs/redesign-components-navigation-sidenavigation-sidenavigationitem--docs";
+const currentStorybookPath =
+  typeof window !== "undefined" ? `${window.location.pathname}${window.location.search}${window.location.hash}` : "/";
+const getStorybookPathWithNavItem = (navItem: string) => {
+  if (typeof window === "undefined") {
+    return currentStorybookPath;
+  }
+
+  const nextUrl = new URL(currentStorybookPath, window.location.origin);
+  nextUrl.searchParams.set("navItem", navItem);
+
+  return `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`;
+};
 
 const meta = {
   title: "Redesign Components/Navigation/SideNavigation/SideNavigationItem",
@@ -23,7 +34,7 @@ const meta = {
   },
   render: args => (
     <BrowserRouter>
-      <Box backgroundColor="primary.800" padding="1.25rem" borderRadius="0.5rem">
+      <Box width="20rem" backgroundColor="primary.800" padding="1.25rem" borderRadius="0.5rem">
         <SideNavigationItem {...args} />
       </Box>
     </BrowserRouter>
@@ -33,16 +44,25 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const AsLink: Story = {
+export const AsLinkActive: Story = {
   args: {
     icon: <PlaceholderIcon boxSize={4} />,
     label: "Label",
     notificationValue: 2,
-    onAddClick: noop,
+    onAddClick: () => alert("add click"),
     MenuItems: baseMenuItems,
-    href: storybookDocsPath,
-    items: [],
-    isCollapsed: false
+    href: currentStorybookPath
+  }
+};
+
+export const AsLinkInactive: Story = {
+  args: {
+    icon: <PlaceholderIcon boxSize={4} />,
+    label: "Label",
+    notificationValue: 2,
+    onAddClick: () => alert("add click"),
+    MenuItems: baseMenuItems,
+    href: getStorybookPathWithNavItem("1")
   }
 };
 
@@ -51,29 +71,29 @@ export const AsAccordion: Story = {
     icon: <PlaceholderIcon boxSize={4} />,
     label: "Label",
     notificationValue: 5,
-    onAddClick: noop,
+    onAddClick: () => alert("add click"),
     MenuItems: baseMenuItems,
     href: "",
     items: [
       {
         icon: <PlaceholderIcon boxSize={4} />,
-        label: "Label",
-        onAddClick: noop,
-        href: storybookDocsPath,
+        label: "Label 1",
+        onAddClick: () => alert("add click"),
+        href: getStorybookPathWithNavItem("1"),
         MenuItems: baseMenuItems
       },
       {
         icon: <PlaceholderIcon boxSize={4} />,
-        label: "Label",
-        onAddClick: noop,
-        href: storybookDocsPath,
+        label: "Label 2",
+        onAddClick: () => alert("add click"),
+        href: getStorybookPathWithNavItem("2"),
         MenuItems: baseMenuItems
       },
       {
         icon: <PlaceholderIcon boxSize={4} />,
-        label: "Label",
-        onAddClick: noop,
-        href: storybookDocsPath,
+        label: "Label 3",
+        onAddClick: () => alert("add click"),
+        href: getStorybookPathWithNavItem("3"),
         MenuItems: baseMenuItems
       }
     ],
