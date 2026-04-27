@@ -15,7 +15,7 @@ export interface SiteHeaderProps {
 const SiteHeader: FC<SiteHeaderProps> = ({ site }) => (
   <>
     <PageHeader title={site.name ?? ""} />
-    <Box display="flex" gap={4} px={6} py={5} justifyContent="space-between">
+    <Box display="flex" gap={4} px={6} py={5} justifyContent="space-between" className="mobile:flex-col">
       <Flex gap={5}>
         <SiteInfo
           site={site}

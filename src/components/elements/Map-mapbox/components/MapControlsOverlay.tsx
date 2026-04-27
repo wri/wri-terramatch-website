@@ -170,14 +170,14 @@ const MapControlsOverlay = ({
           ) : null}
 
           {dashboardMode === "modal" && map != null ? (
-            <ControlGroup position="top-right" className="!top-5 z-20">
+            <ControlGroup position="top-right" className="!top-5 z-[19]">
               <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
             </ControlGroup>
           ) : null}
 
           <ControlGroup
             position="top-right"
-            className={dashboardMode === "modal" ? "top-[8.25rem] z-20" : "top-[4.5rem] z-20"}
+            className={dashboardMode === "modal" ? "top-[8.25rem] z-[19]" : "top-[4.5rem] z-[19]"}
           >
             <ZoomControl map={map} />
           </ControlGroup>
@@ -226,7 +226,7 @@ const MapControlsOverlay = ({
 
           <ControlGroup
             position="top-right"
-            className={dashboardMode === "modal" ? "top-[14.5rem] z-20" : "top-[10.5rem]"}
+            className={dashboardMode === "modal" ? "top-[14.5rem] z-[19]" : "top-[10.5rem]"}
           >
             <button
               type="button"

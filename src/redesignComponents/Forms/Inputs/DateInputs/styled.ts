@@ -101,7 +101,8 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
   }
 
   [data-part="control"]:active,
-  &[data-open] [data-part="control"] {
+  [data-state="open"] [data-part="control"],
+  [data-part="control"]:has(input:not(:placeholder-shown)) {
     border: 0.0625rem solid ${getThemedColor("neutral", 700)};
   }
 
