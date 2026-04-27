@@ -22,7 +22,7 @@ interface SideNavigationLink {
     icon: React.ReactNode;
     label: string;
     onAddClick?: () => void;
-    href?: string;
+    href: string;
     MenuItems?: MenuItemOption[];
   }[];
 }
