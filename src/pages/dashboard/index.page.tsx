@@ -1,7 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import type { ImpactStoryModalRow } from "@/components/dashboard/impactStoriesModalColumns";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -92,7 +92,7 @@ const Dashboard = () => {
   const t = useT();
   const [, { user }] = useMyUser();
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(undefined);
-  const { filters, setFilters, setLastUpdatedAt } = useDashboardContext();
+  const { filters, setFilters } = useDashboardContext();
   const countryChoices = useGadmChoices({ level: 0 });
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const {
@@ -118,8 +118,7 @@ const Dashboard = () => {
     isUserAllowed,
     generalBbox,
     transformedStories,
-    isLoadingImpactStories,
-    lastUpdatedAt
+    isLoadingImpactStories
   } = useDashboardData(filters);
 
   const cohortArray = useMemo(() => {
@@ -160,11 +159,6 @@ const Dashboard = () => {
     ],
     [t]
   );
-
-  useEffect(() => {
-    setLastUpdatedAt?.(lastUpdatedAt ?? "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setLastUpdatedAt, dashboardRestorationGoalData]);
 
   useValueChanged(generalBbox, () => {
     if (generalBbox) {
