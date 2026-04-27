@@ -22,7 +22,7 @@ interface SideNavigationLink {
     icon: React.ReactNode;
     label: string;
     onAddClick?: () => void;
-    href?: string;
+    href: string;
     MenuItems?: MenuItemOption[];
   }[];
 }
@@ -48,7 +48,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups }) => {
   return (
     <Flex
       className={classNames(
-        "flex-col bg-theme-primary-800",
+        "bg-theme-primary-800 flex-col",
         shellTransition,
         isCollapsed ? COLLAPSED_WIDTH_CLASS : EXPANDED_WIDTH_CLASS
       )}
