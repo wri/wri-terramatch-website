@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { FC, useState } from "react";
+import { FC } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -15,10 +15,10 @@ import {
   useRecordContext
 } from "react-admin";
 
-import { v3ErrorForRA } from "@/admin/apiProvider/utils/error";
 import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
+import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
@@ -30,9 +30,7 @@ import {
   getReportStatusOptions
 } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
-import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
 import { FinancialReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -98,20 +96,12 @@ const FinancialReportsDataGrid: FC = () => {
 };
 
 export const FinancialReportsList: FC = () => {
-  const [exporting, setExporting] = useState<boolean>(false);
   const frameworkInputChoices = useUserFrameworkChoices();
 
-  const handleExport = async () => {
-    setExporting(true);
-    try {
-      const { fileName, blob } = await entityExportAll.fetchBlob({ pathParams: { entity: "financialReports" } });
-      await downloadFileBlob(blob, fileName ?? "FinancialReports.csv");
-    } catch (e) {
-      throw v3ErrorForRA("Failed to fetch financial report exports", e);
-    } finally {
-      setExporting(false);
-    }
-  };
+  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport(
+    "financial-reports",
+    frameworkInputChoices
+  );
 
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
@@ -160,10 +150,12 @@ export const FinancialReportsList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={handleExport} />} filters={filters}>
+      <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
         <AutoResetSort />
         <FinancialReportsDataGrid />
       </List>
+
+      <FrameworkSelectionDialog {...frameworkDialogProps} />
 
       <ExportProcessingAlert show={exporting} />
     </>
