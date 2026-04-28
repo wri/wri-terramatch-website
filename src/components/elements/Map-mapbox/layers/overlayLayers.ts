@@ -77,7 +77,7 @@ export const addBorderLandscape = (map: MapboxMap, landscapes: string[]): void =
 };
 
 export const removeBorderLandscape = (map: MapboxMap): void => {
-  if (!map || !map.isStyleLoaded()) return;
+  if (map == null) return;
   const layerName = LAYERS_NAMES.LANDSCAPES;
   try {
     if (map.getLayer(layerName)) map.removeLayer(layerName);
