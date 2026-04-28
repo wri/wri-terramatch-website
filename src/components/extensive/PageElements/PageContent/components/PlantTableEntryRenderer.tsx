@@ -75,7 +75,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
         totalItems={plants.length}
         showItemCount={false}
         className={classNames(
-          "mt-[0.125rem] !w-[45.3125rem] mobile:!w-full",
+          "mt-[0.125rem] !w-full max-w-[45.3125rem]",
           plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
         )}
         renderRow={rowData => {
