@@ -10,7 +10,7 @@ export const getBadgeClasses = (type: TabType, isSelected: boolean): string => {
     [NAVIGATION_CLASSES.badge.complete]: type === "complete" || isSelected,
     [NAVIGATION_CLASSES.badge.available]: type === "available",
     [NAVIGATION_CLASSES.badge.disabled]: type === "disabled",
-
+    [NAVIGATION_CLASSES.badge.warning]: type === "warning",
     [NAVIGATION_CLASSES.badge.error]: type === "error"
   });
 };
@@ -43,7 +43,8 @@ const mapStatusToTabType = (status: BadgeStatus): TabType => {
     active: "complete",
     available: "available",
     disabled: "disabled",
-    error: "error"
+    error: "error",
+    warning: "warning"
   };
   return typeMap[status];
 };
@@ -54,6 +55,7 @@ export const getStepBadgeClasses = (status: BadgeStatus): string => {
     [NAVIGATION_CLASSES.badge.complete]: type === "complete",
     [NAVIGATION_CLASSES.badge.available]: type === "available",
     [NAVIGATION_CLASSES.badge.disabled]: type === "disabled",
+    [NAVIGATION_CLASSES.badge.warning]: type === "warning",
     [NAVIGATION_CLASSES.badge.error]: type === "error"
   });
 };
@@ -64,6 +66,10 @@ export const getBadgeContent = (
   isSelected: boolean = false,
   showNumberForActive: boolean = false
 ): ReactNode => {
+  if (type === "warning") {
+    return React.createElement(InformationRequiredSimpleIcon, { className: "max-w-4 w-4" });
+  }
+
   if (type === "error") {
     return React.createElement(InformationRequiredSimpleIcon, { className: "max-w-4 w-4" });
   }
@@ -103,6 +109,8 @@ export const getStepLabelStyle = (status: BadgeStatus): { color: string; fontWei
       return { color: "neutral.600" };
     case "error":
       return { color: "error.900" };
+    case "warning":
+      return { color: "warning.900" };
     default:
       return { color: "neutral.600" };
   }
