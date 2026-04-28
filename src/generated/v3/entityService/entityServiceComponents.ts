@@ -3538,10 +3538,46 @@ export type EntityExportVariables = {
   pathParams: EntityExportPathParams;
 };
 
-export const entityExport = new V3ApiEndpoint<undefined, EntityExportError, EntityExportVariables, {}>(
-  "/entities/v3/{entity}/{uuid}/export",
-  "GET"
-);
+export const entityExport = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example fileDownloads
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example fileDownloads
+         */
+        type?: string;
+        id?: string;
+        attributes?: Schemas.FileDownloadDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  EntityExportError,
+  EntityExportVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/export", "GET");
 
 export type FormDataGetPathParams = {
   /**
