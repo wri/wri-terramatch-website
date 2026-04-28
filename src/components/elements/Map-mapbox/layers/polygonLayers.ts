@@ -60,7 +60,7 @@ export const addFilterOnLayer = (layer: LayerType, parsedPolygonData: Record<str
 };
 
 export const setFilterLandscape = (map: MapboxMap, layerName: string, landscapes: string[]) => {
-  map.setFilter(layerName, ["in", ["get", "landscape"], ["literal", landscapes]]);
+  map.setFilter(layerName, ["match", ["get", "landscape"], landscapes, true, false]);
 };
 
 export const addGeojsonSourceToLayer = (

@@ -33,6 +33,8 @@ export function useMapOverlays({
   styleVersion,
   sourcesAdded
 }: UseMapOverlaysParams) {
+  const selectedLandscapeKey = selectedLandscapes?.join("|") ?? "";
+
   useEffect(() => {
     if (map.current == null) return;
     const currentMap = map.current;
@@ -58,12 +60,17 @@ export function useMapOverlays({
   }, [map, anrMapOverlay, anrPlotGeometryDto, styleReady, styleVersion, sourcesAdded]);
 
   useEffect(() => {
-    if (map.current == null || !sourcesAdded) return;
-    if (selectedLandscapes != null && selectedLandscapes.length > 0) {
-      addBorderLandscape(map.current, selectedLandscapes);
-    } else {
-      removeBorderLandscape(map.current);
+    const currentMap = map.current;
+    if (currentMap == null) return;
+
+    if (selectedLandscapes == null || selectedLandscapes.length === 0) {
+      removeBorderLandscape(currentMap);
+      return;
     }
+
+    if (!styleReady || !sourcesAdded) return;
+
+    addBorderLandscape(currentMap, selectedLandscapes);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedLandscapes, styleReady, styleVersion, sourcesAdded]);
+  }, [selectedLandscapeKey, styleReady, styleVersion, sourcesAdded]);
 }
