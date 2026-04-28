@@ -202,7 +202,7 @@ const OverviewMapArea = ({
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}
         bbox={extentBbox}
-        tooltipType={type === "sites" ? "edit" : "goTo"}
+        tooltipType={disabledPolygonPanel ? "view" : type === "sites" ? "edit" : "goTo"}
         showPopups
         showLegend
         siteData={true}
