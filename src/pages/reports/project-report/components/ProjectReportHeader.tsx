@@ -17,11 +17,7 @@ interface ProjectReportHeaderProps {
 const ProjectReportHeader = ({ title, report }: ProjectReportHeaderProps) => {
   const t = useT();
 
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
-    "project-reports",
-    report.uuid,
-    report.reportTitle
-  );
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("project-reports", report.uuid);
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "project-reports",
     entityUUID: report?.uuid,

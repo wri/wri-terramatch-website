@@ -52,7 +52,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
     entityStatus: project.status ?? "started",
     updateRequestStatus: project.updateRequestStatus ?? "no-update"
   });
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("projects", project.uuid, project.name);
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("projects", project.uuid);
   const [, myOrg] = useMyOrg();
   const router = useRouter();
 

@@ -17,11 +17,7 @@ const FinancialReportHeader = ({ financialReport }: FinancialReportHeaderProps) 
 
   if (!financialReport) return null;
 
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
-    "financial-reports",
-    financialReport.uuid,
-    `${financialReport.organisationName} - Financial Report`
-  );
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("financial-reports", financialReport.uuid);
 
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "financial-reports",
