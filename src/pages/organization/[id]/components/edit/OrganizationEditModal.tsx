@@ -134,17 +134,21 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
 
   const [, { updateFailure }] = useOrganisation(uuid != null ? { id: uuid } : {});
 
-  const handleSave = useCallback(
-    async (data: unknown) => {
+  const saveOrganisation = useCallback(
+    async (data: unknown, showSuccessModal: boolean) => {
       if (uuid == null) return;
 
       try {
         const formData = normalizedFormData(data as Record<string, unknown>, provider);
+        if (typeof formData.finStartMonth === "string" && formData.finStartMonth.trim() !== "") {
+          formData.finStartMonth = Number(formData.finStartMonth);
+        }
         const attributes = formData as unknown as OrganisationUpdateAttributes;
 
         const updatedOrg = await updateOrganisation(attributes, { id: uuid });
 
         if (updatedOrg?.uuid != null) {
+          if (!showSuccessModal) return;
           closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
           return openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
         } else {
@@ -155,6 +159,20 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
       }
     },
     [closeModal, openModal, provider, uuid]
+  );
+
+  const handleStepSave = useCallback(
+    async (data: unknown) => {
+      await saveOrganisation(data, false);
+    },
+    [saveOrganisation]
+  );
+
+  const handleSubmit = useCallback(
+    async (data: unknown) => {
+      await saveOrganisation(data, true);
+    },
+    [saveOrganisation]
   );
 
   const error =
@@ -171,7 +189,8 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
         framework={Framework.UNDEFINED}
         models={models}
         fieldsProvider={provider}
-        onSave={handleSave}
+        onStepSave={handleStepSave}
+        onSubmit={handleSubmit}
         defaultValues={defaultValues}
         errors={error}
       />
