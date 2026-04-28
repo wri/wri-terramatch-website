@@ -7,57 +7,6 @@ import * as reactQuery from "@tanstack/react-query";
 import { useApiContext, ApiContext } from "./apiContext";
 import type * as Fetcher from "./apiFetcher";
 import { apiFetch } from "./apiFetcher";
-import type * as RequestBodies from "./apiRequestBodies";
-
-export type PostV2AdminENTITYUUIDReminderPathParams = {
-  /**
-   * allowed values are project-reports, site-reports, nursery-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type PostV2AdminENTITYUUIDReminderError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2AdminENTITYUUIDReminderRequestBody = {
-  feedback?: string;
-};
-
-export type PostV2AdminENTITYUUIDReminderVariables = {
-  body?: PostV2AdminENTITYUUIDReminderRequestBody;
-  pathParams: PostV2AdminENTITYUUIDReminderPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2AdminENTITYUUIDReminder = (
-  variables: PostV2AdminENTITYUUIDReminderVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    undefined,
-    PostV2AdminENTITYUUIDReminderError,
-    PostV2AdminENTITYUUIDReminderRequestBody,
-    {},
-    {},
-    PostV2AdminENTITYUUIDReminderPathParams
-  >({ url: "/v2/admin/{entity}/{uuid}/reminder", method: "post", ...variables, signal });
-
-export const usePostV2AdminENTITYUUIDReminder = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      undefined,
-      PostV2AdminENTITYUUIDReminderError,
-      PostV2AdminENTITYUUIDReminderVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PostV2AdminENTITYUUIDReminderError, PostV2AdminENTITYUUIDReminderVariables>(
-    (variables: PostV2AdminENTITYUUIDReminderVariables) =>
-      fetchPostV2AdminENTITYUUIDReminder({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
 
 export type GetV2ApplicationsUUIDExportPathParams = {
   uuid: string;
@@ -95,79 +44,19 @@ export const useGetV2ApplicationsUUIDExport = <TData = undefined>(
   );
 };
 
-export type PutV2AuthCompleteSignupError = Fetcher.ErrorWrapper<undefined>;
-
-export type PutV2AuthCompleteSignupRequestBody = {
-  token?: string;
-  password?: string;
-  first_name?: string;
-  last_name?: string;
-  email_address?: string;
-  job_role?: string;
-  phone_number?: string;
-  role?: string;
-};
-
-export type PutV2AuthCompleteSignupVariables = {
-  body?: PutV2AuthCompleteSignupRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPutV2AuthCompleteSignup = (variables: PutV2AuthCompleteSignupVariables, signal?: AbortSignal) =>
-  apiFetch<Record<string, any>, PutV2AuthCompleteSignupError, PutV2AuthCompleteSignupRequestBody, {}, {}, {}>({
-    url: "/v2/auth/complete/signup",
-    method: "put",
-    ...variables,
-    signal
-  });
-
-export const usePutV2AuthCompleteSignup = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<Record<string, any>, PutV2AuthCompleteSignupError, PutV2AuthCompleteSignupVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<Record<string, any>, PutV2AuthCompleteSignupError, PutV2AuthCompleteSignupVariables>(
-    (variables: PutV2AuthCompleteSignupVariables) => fetchPutV2AuthCompleteSignup({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PostAuthResetError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostAuthResetVariables = {
-  body?: RequestBodies.PostAuthResetBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostAuthReset = (variables: PostAuthResetVariables, signal?: AbortSignal) =>
-  apiFetch<Record<string, any>, PostAuthResetError, RequestBodies.PostAuthResetBody, {}, {}, {}>({
-    url: "/auth/reset",
-    method: "post",
-    ...variables,
-    signal
-  });
-
-export const usePostAuthReset = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<Record<string, any>, PostAuthResetError, PostAuthResetVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<Record<string, any>, PostAuthResetError, PostAuthResetVariables>(
-    (variables: PostAuthResetVariables) => fetchPostAuthReset({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type PostAuthSendLoginDetailsError = Fetcher.ErrorWrapper<undefined>;
 
+export type PostAuthSendLoginDetailsRequestBody = {
+  email_address?: string;
+  callback_url?: string;
+};
+
 export type PostAuthSendLoginDetailsVariables = {
-  body?: RequestBodies.PostAuthResetBody;
+  body?: PostAuthSendLoginDetailsRequestBody;
 } & ApiContext["fetcherOptions"];
 
 export const fetchPostAuthSendLoginDetails = (variables: PostAuthSendLoginDetailsVariables, signal?: AbortSignal) =>
-  apiFetch<Record<string, any>, PostAuthSendLoginDetailsError, RequestBodies.PostAuthResetBody, {}, {}, {}>({
+  apiFetch<Record<string, any>, PostAuthSendLoginDetailsError, PostAuthSendLoginDetailsRequestBody, {}, {}, {}>({
     url: "/auth/send-login-details",
     method: "post",
     ...variables,
@@ -316,38 +205,6 @@ export const usePostAuthStore = (
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<Record<string, any>, PostAuthStoreError, PostAuthStoreVariables>(
     (variables: PostAuthStoreVariables) => fetchPostAuthStore({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PostV2UsersResendError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2UsersResendRequestBody = {
-  callback_url?: string;
-  email_address?: string;
-};
-
-export type PostV2UsersResendVariables = {
-  body?: PostV2UsersResendRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2UsersResend = (variables: PostV2UsersResendVariables, signal?: AbortSignal) =>
-  apiFetch<Record<string, any>, PostV2UsersResendError, PostV2UsersResendRequestBody, {}, {}, {}>({
-    url: "/v2/users/resend",
-    method: "post",
-    ...variables,
-    signal
-  });
-
-export const usePostV2UsersResend = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<Record<string, any>, PostV2UsersResendError, PostV2UsersResendVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<Record<string, any>, PostV2UsersResendError, PostV2UsersResendVariables>(
-    (variables: PostV2UsersResendVariables) => fetchPostV2UsersResend({ ...fetcherOptions, ...variables }),
     options
   );
 };
