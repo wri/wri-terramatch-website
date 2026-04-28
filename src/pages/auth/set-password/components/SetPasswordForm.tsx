@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { UseFormReturn } from "react-hook-form";
-import { Else, If, Then } from "react-if";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
@@ -32,14 +31,13 @@ const SetPasswordForm = ({ form, userMail, tokenUsed, loading, handleSave, succe
 
   return (
     <Form>
-      <If condition={tokenUsed}>
-        <Then>
-          <Form.Header title={t("Link expired")} />
-        </Then>
-        <Else>
+      {tokenUsed ? (
+        <Form.Header title={t("Link expired")} />
+      ) : (
+        <>
           <Form.Header title={t("Set Password")} />
-          <If condition={!success}>
-            <Then>
+          {!success ? (
+            <>
               <div className="flex flex-col gap-4">
                 <Input
                   name="userMail"
@@ -80,8 +78,9 @@ const SetPasswordForm = ({ form, userMail, tokenUsed, loading, handleSave, succe
                   disabled: loading
                 }}
               />
-            </Then>
-            <Else>
+            </>
+          ) : (
+            <>
               <Text variant="text-body-1000" className="text-center">
                 {t("Your password has been set. Please click Sign in to continue using TerraMatch.")}
               </Text>
@@ -99,10 +98,10 @@ const SetPasswordForm = ({ form, userMail, tokenUsed, loading, handleSave, succe
                   disabled: loading
                 }}
               />
-            </Else>
-          </If>
-        </Else>
-      </If>
+            </>
+          )}
+        </>
+      )}
     </Form>
   );
 };

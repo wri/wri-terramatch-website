@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -48,30 +48,33 @@ const ResetPasswordPage = () => {
     }
   }, [resetPasswordTokenData, router]);
 
-  const handleSave = async (data: ResetPasswordData) => {
-    try {
-      if (strength !== "Strong")
-        return form.setError("password", {
-          message: t(
-            "The password does not meet the minimum requirements. Please check that it contains at least 8 characters, including uppercase letters, lowercase letters and numbers."
-          )
-        });
-      if (data.password !== data.confirmPassword)
-        return form.setError("confirmPassword", { message: t("Passwords must match.") });
+  const handleSave = useCallback(
+    async (data: ResetPasswordData) => {
+      try {
+        if (strength !== "Strong")
+          return form.setError("password", {
+            message: t(
+              "The password does not meet the minimum requirements. Please check that it contains at least 8 characters, including uppercase letters, lowercase letters and numbers."
+            )
+          });
+        if (data.password !== data.confirmPassword)
+          return form.setError("confirmPassword", { message: t("Passwords must match.") });
 
-      if (!router.query.token) {
-        router.push("/");
-      } else {
-        setHasBeenCalled(true);
-        await resetPassword(data.password);
+        if (!router.query.token) {
+          router.push("/");
+        } else {
+          setHasBeenCalled(true);
+          await resetPassword(data.password);
+        }
+      } catch (err: any) {
+        if (err.errors.length > 0) {
+          const errorMessage = err.errors[0].detail;
+          form.setError("password", { message: errorMessage });
+        }
       }
-    } catch (err: any) {
-      if (err.errors.length > 0) {
-        const errorMessage = err.errors[0].detail;
-        form.setError("password", { message: errorMessage });
-      }
-    }
-  };
+    },
+    [form, resetPassword, router, strength, t]
+  );
 
   if (!resetPasswordTokenLoaded) return null;
 
