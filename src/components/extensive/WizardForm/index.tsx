@@ -294,7 +294,12 @@ function WizardForm(props: WizardFormProps) {
                     }
                   }
                 }
-              : undefined
+              : {
+                  children: t("Save and Exit"),
+                  onClick: () => {
+                    props.onSubmit?.(formHook.getValues());
+                  }
+                }
           }
           tertiaryButtonProps={{
             children: t("Download"),
