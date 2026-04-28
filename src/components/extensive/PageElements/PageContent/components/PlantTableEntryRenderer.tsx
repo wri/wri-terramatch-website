@@ -25,6 +25,8 @@ type PlantTableEntryRendererProps = {
   plants: Parameters<typeof plantsToNoCountRows>[0];
 };
 
+export const NO_GOAL_PLANTS_PER_PAGE = 10;
+
 export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tableType, plants }) => {
   const { framework } = useFrameworkContext();
   const t = useT();
@@ -55,13 +57,21 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
     [plants]
   );
   const noGoalTableData = useMemo(
-    () => [
-      ...plants,
-      {
-        name: totalRowName,
-        amount: totalAmount
-      }
-    ],
+    () =>
+      plants.reduce<Array<{ name?: string; amount?: number | string }>>((rows, plant, index) => {
+        rows.push(plant as { name?: string; amount?: number | string });
+
+        const isChunkEnd = (index + 1) % NO_GOAL_PLANTS_PER_PAGE === 0;
+        const isLastPlant = index === plants.length - 1;
+        if (isChunkEnd || isLastPlant) {
+          rows.push({
+            name: totalRowName,
+            amount: totalAmount
+          });
+        }
+
+        return rows;
+      }, []),
     [plants, totalAmount]
   );
 
@@ -73,6 +83,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
         variant="full-width"
         css={FULL_WIDTH_TABLE_HEADER_STYLES}
         totalItems={plants.length}
+        pageSize={NO_GOAL_PLANTS_PER_PAGE + 1}
         showItemCount={false}
         className={classNames(
           "mt-[0.125rem] !w-full max-w-[45.3125rem]",
