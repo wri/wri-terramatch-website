@@ -3,47 +3,17 @@
  *
  * @version 1.0.0
  */
-import * as reactQuery from "@tanstack/react-query";
-import { useApiContext, ApiContext } from "./apiContext";
-import type * as Fetcher from "./apiFetcher";
-import { apiFetch } from "./apiFetcher";
+import { ApiContext } from "./apiContext";
 
 export type GetV2ApplicationsUUIDExportPathParams = {
   uuid: string;
 };
 
-export type GetV2ApplicationsUUIDExportError = Fetcher.ErrorWrapper<undefined>;
-
 export type GetV2ApplicationsUUIDExportVariables = {
   pathParams: GetV2ApplicationsUUIDExportPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchGetV2ApplicationsUUIDExport = (
-  variables: GetV2ApplicationsUUIDExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<undefined, GetV2ApplicationsUUIDExportError, undefined, {}, {}, GetV2ApplicationsUUIDExportPathParams>({
-    url: "/v2/applications/{uuid}/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2ApplicationsUUIDExport = <TData = undefined>(
-  variables: GetV2ApplicationsUUIDExportVariables,
-  options?: Omit<reactQuery.UseQueryOptions<undefined, GetV2ApplicationsUUIDExportError, TData>, "queryKey" | "queryFn">
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<undefined, GetV2ApplicationsUUIDExportError, TData>(
-    queryKeyFn({ path: "/v2/applications/{UUID}/export", operationId: "getV2ApplicationsUUIDExport", variables }),
-    ({ signal }) => fetchGetV2ApplicationsUUIDExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
+// leaving this in place until TM-3125 (remove v2 API integration)
 export type QueryOperation = {
   path: "/v2/applications/{UUID}/export";
   operationId: "getV2ApplicationsUUIDExport";

@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "patch-package",
     "dev": "next dev",
-    "build": "yarn generate:api && yarn generate:services && next build",
+    "build": "yarn generate:services && next build",
     "start": "next start",
     "test": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -15,7 +15,6 @@
     "prepare": "husky install",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "generate:api": "openapi-codegen gen api",
     "generate:jobService": "openapi-codegen gen jobService && yarn format src/generated/v3/jobService",
     "generate:userService": "openapi-codegen gen userService && yarn format src/generated/v3/userService",
     "generate:entityService": "openapi-codegen gen entityService && yarn format src/generated/v3/entityService",
