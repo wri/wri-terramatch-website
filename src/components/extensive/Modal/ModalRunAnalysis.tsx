@@ -62,6 +62,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
   const runAnalysis = async () => {
     const indicatorSlugSelected = selectSlug ? indicatorSlugAnalysis : indicatorSlug;
     setLoadingAnalysis?.(true);
+    let analysisRequest: Promise<unknown>;
 
     if (isRerunMode) {
       if (totalPolygonsForRerun === 0) {
@@ -73,7 +74,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         );
       }
 
-      await runAnalysisIndicator({
+      analysisRequest = runAnalysisIndicator({
         slug: indicatorSlugSelected as StartIndicatorCalculationPathParams["slug"],
         body: {
           polygonUuids: rerunAnalysisToSlug[`${indicatorSlugSelected}`] || [],
@@ -98,7 +99,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         );
       }
 
-      await runAnalysisIndicator({
+      analysisRequest = runAnalysisIndicator({
         slug: indicatorSlugSelected as StartIndicatorCalculationPathParams["slug"],
         body: {
           polygonUuids: polygonUuids,
@@ -107,6 +108,16 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         }
       });
     }
+
+    void analysisRequest
+      .catch(error => {
+        const errorMessage =
+          error instanceof Error ? error.message : t("There was an error running the analysis. Please try again.");
+        openNotification("error", t("Error"), errorMessage);
+      })
+      .finally(() => {
+        setLoadingAnalysis?.(false);
+      });
 
     setIndicatorSlugAnalysis?.("treeCoverLoss");
     onClose?.();

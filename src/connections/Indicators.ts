@@ -6,7 +6,6 @@ import {
   StartIndicatorCalculationPathParams
 } from "@/generated/v3/researchService/researchServiceComponents";
 import { IndicatorsAttributes, SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { loadConnection } from "@/utils/loadConnection";
 
 const startIndicatorCalculationConnection = v3Resource("sitePolygons", startIndicatorCalculation)
   .create<SitePolygonLightDto, { slug: StartIndicatorCalculationPathParams["slug"] }>(({ slug }) => ({
@@ -20,12 +19,6 @@ const startIndicatorCalculationConnection = v3Resource("sitePolygons", startIndi
 export const useStartIndicatorCalculation = connectionHook(startIndicatorCalculationConnection);
 export const loadStartIndicatorCalculation = connectionLoader(startIndicatorCalculationConnection);
 
-const startIndicatorCalculationResourceConnection = v3Resource("sitePolygons", startIndicatorCalculation)
-  .create<SitePolygonLightDto, { slug: StartIndicatorCalculationPathParams["slug"] }>(({ slug }) => ({
-    pathParams: { slug }
-  }))
-  .buildConnection();
-
 export const startIndicatorCalculationResource = async ({
   slug,
   body
@@ -33,6 +26,14 @@ export const startIndicatorCalculationResource = async ({
   slug: StartIndicatorCalculationPathParams["slug"];
   body: IndicatorsAttributes;
 }) => {
-  const { create } = await loadConnection(startIndicatorCalculationResourceConnection, { slug });
-  (create as (attributes: IndicatorsAttributes) => void)(body);
+  await startIndicatorCalculation.fetchParallel({
+    pathParams: { slug },
+    body: {
+      data: {
+        type: "sitePolygons",
+        attributes: body
+      }
+    }
+  });
+  pruneSitePolygonsCache();
 };

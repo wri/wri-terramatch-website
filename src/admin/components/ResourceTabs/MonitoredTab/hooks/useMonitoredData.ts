@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { startIndicatorCalculationResource } from "@/connections/Indicators";
@@ -107,6 +107,7 @@ interface PolygonOption {
 export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const { searchTerm, indicatorSlug, loadingAnalysis } = useMonitoredDataContext();
   const { modalOpened } = useModalContext();
+  const wasLoadingAnalysis = useRef(false);
   const [isLoadingVerify, setIsLoadingVerify] = useState<boolean>(false);
   const [isLoadingRerunVerify, setIsLoadingRerunVerify] = useState<boolean>(false);
   const [treeCoverLossData, setTreeCoverLossData] = useState<MonitoredIndicator[]>([]);
@@ -132,7 +133,11 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const [rerunDropdownOptions, setRerunDropdownOptions] = useState(DROPDOWN_OPTIONS);
   const [totalPolygonsForRerun, setTotalPolygonsForRerun] = useState<number>(0);
 
-  const { data: sitePolygonsData, isLoading: isLoadingSitePolygons } = useAllSitePolygons({
+  const {
+    data: sitePolygonsData,
+    isLoading: isLoadingSitePolygons,
+    refetch: refetchSitePolygons
+  } = useAllSitePolygons({
     entityName: entity as "sites" | "projects",
     entityUuid: entity_uuid!,
     enabled: !!entity_uuid && !!entity
@@ -158,7 +163,11 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     slug === "treeCoverLoss" ? "treeCoverLossFires" : slug === "treeCoverLossFires" ? "treeCoverLoss" : undefined;
 
   const complementarySlug = getComplementarySlug(indicatorSlug || "");
-  const { data: complementarySitePolygonsData, isLoading: isLoadingComplementary } = useAllSitePolygons({
+  const {
+    data: complementarySitePolygonsData,
+    isLoading: isLoadingComplementary,
+    refetch: refetchComplementarySitePolygons
+  } = useAllSitePolygons({
     entityName: entity as "sites" | "projects",
     entityUuid: entity_uuid!,
     enabled:
@@ -169,6 +178,16 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     filter: {
       "presentIndicator[]": complementarySlug ? [complementarySlug] : undefined,
       "polygonStatus[]": ["approved"]
+    }
+  });
+
+  const { data: missingPolygonsData, refetch: refetchMissingPolygons } = useAllSitePolygons({
+    entityName: entity as "sites" | "projects",
+    entityUuid: entity_uuid!,
+    enabled: !!indicatorSlug && !!entity_uuid && !!entity,
+    filter: {
+      "polygonStatus[]": ["approved"],
+      "missingIndicator[]": indicatorSlug ? [indicatorSlug as Indicator] : undefined
     }
   });
 
@@ -183,6 +202,16 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   }, [complementarySitePolygonsData, complementarySlug]);
 
   const isLoadingIndicator = isLoadingSitePolygons || isLoadingComplementary;
+
+  useEffect(() => {
+    if (wasLoadingAnalysis.current && !loadingAnalysis) {
+      void refetchSitePolygons();
+      void refetchComplementarySitePolygons();
+      void refetchMissingPolygons();
+    }
+
+    wasLoadingAnalysis.current = !!loadingAnalysis;
+  }, [loadingAnalysis, refetchComplementarySitePolygons, refetchMissingPolygons, refetchSitePolygons]);
 
   useEffect(() => {
     if (indicatorSlug === "treeCoverLoss") {
@@ -242,16 +271,6 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   });
 
   const totalPolygonsApproved = headerBarPolygonStatus.find(item => item.status_key == "approved")?.count;
-
-  const { data: missingPolygonsData } = useAllSitePolygons({
-    entityName: entity as "sites" | "projects",
-    entityUuid: entity_uuid!,
-    enabled: !!indicatorSlug && !!entity_uuid && !!entity,
-    filter: {
-      "polygonStatus[]": ["approved"],
-      "missingIndicator[]": indicatorSlug ? [indicatorSlug as Indicator] : undefined
-    }
-  });
 
   const polygonMissingAnalysis = totalPolygonsApproved ? totalPolygonsApproved - (missingPolygonsData?.length ?? 0) : 0;
 
