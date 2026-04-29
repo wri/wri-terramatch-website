@@ -1,4 +1,4 @@
-import { camelCase, kebabCase } from "lodash";
+import { camelCase } from "lodash";
 import pluralize from "pluralize";
 
 import { BaseModelNames, Entity, EntityName, ReportsModelNames, SingularEntityName } from "@/types/common";
@@ -10,8 +10,11 @@ export const singularEntityName = (name: EntityName | SingularEntityName): Singu
 
 export const v3Entity = (entity?: Entity) => (entity == null ? undefined : v3EntityName(entity.entityName));
 export const v3EntityName = (name: EntityName | SingularEntityName) => camelCase(pluralEntityName(name)) as EntityName;
-
-export const v2EntityName = (name: EntityName | SingularEntityName) => kebabCase(pluralEntityName(name)) as EntityName;
+export const isProjectPitchesEntityName = (name?: string | null): boolean => {
+  if (name == null || name === "") return false;
+  const normalizedName = v3EntityName(name as EntityName | SingularEntityName) as string;
+  return normalizedName === "projectPitches";
+};
 
 export const ReportModelNameToBaseModel = (reportModelName: ReportsModelNames, singular?: boolean) => {
   const mapping: any = {

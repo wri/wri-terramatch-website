@@ -284,7 +284,7 @@ function WizardForm(props: WizardFormProps) {
           secondaryButtonProps={
             formModel?.model != "organisations"
               ? {
-                  children: "Save and Exit",
+                  children: t("Save and Exit"),
                   onClick: () => {
                     if (isAdmin) {
                       formHook.handleSubmit(onSubmitStep, onSubmitStep);
@@ -294,7 +294,12 @@ function WizardForm(props: WizardFormProps) {
                     }
                   }
                 }
-              : undefined
+              : {
+                  children: t("Save and Exit"),
+                  onClick: () => {
+                    props.onSubmit?.(formHook.getValues());
+                  }
+                }
           }
           tertiaryButtonProps={{
             children: t("Download"),
@@ -326,7 +331,7 @@ function WizardForm(props: WizardFormProps) {
         const hasFeedback = hasFeedbackInStep(props.fieldsProvider, id, entity?.feedbackFields);
 
         const state: TabItem["state"] = hasFeedback
-          ? "error"
+          ? "warning"
           : validation.isValidSync(formHook.getValues())
           ? stepsVisited.current.includes(index)
             ? "complete"
@@ -450,7 +455,7 @@ function WizardForm(props: WizardFormProps) {
         >
           <div className={twMerge("flex h-full w-full flex-col", props.className)}>
             {entity != null && (
-              <Box className={classNames("sticky top-0 z-20 bg-theme-neutral-200 pb-1")}>
+              <Box background={"neutral.200"} className={classNames("sticky top-0 z-20 pb-1")}>
                 {!isAdmin && <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }} />}
                 <div className="bg-theme-neutral-300 pt-[1px]">
                   <PageHeader

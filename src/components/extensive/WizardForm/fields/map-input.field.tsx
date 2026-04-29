@@ -19,8 +19,6 @@ export const MapInputField: FormFieldFactory = {
   appendAnswers: () => undefined,
 
   addFormEntries: addEntryWith((field, formValues, { entityPolygonData, bbox, type, mapFunctions, record, entity }) => {
-    if (Object.keys(entityPolygonData ?? {}).length === 0) return null;
-
     const entityData =
       entity != null
         ? {
@@ -31,14 +29,14 @@ export const MapInputField: FormFieldFactory = {
 
     return (
       <MapContainer
-        polygonsData={entityPolygonData}
+        polygonsData={entityPolygonData ?? {}}
         bbox={bbox}
-        className="h-[240px] flex-1"
+        className="h-[240px] w-full flex-1"
         hasControls={false}
         showPopups={type === "sites"}
         showLegend={type === "sites"}
         mapFunctions={mapFunctions}
-        showDownloadPolygons={true}
+        showDownloadPolygons={!!(entityPolygonData && Object.keys(entityPolygonData).length > 0)}
         record={record}
         entityData={entityData}
       />

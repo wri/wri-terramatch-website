@@ -32,7 +32,19 @@ export type ResetPasswordResponseDto = {
    *
    * @example user@example.com
    */
-  emailAddress: string;
+  emailAddress?: string;
+  /**
+   * Token used
+   *
+   * @example true
+   */
+  tokenUsed?: boolean;
+  /**
+   * Locale
+   *
+   * @example en
+   */
+  locale?: string;
 };
 
 export type ResetPasswordRequest = {
@@ -174,7 +186,7 @@ export type OrganisationFullDto = {
   district: string | null;
   accountNumber1: string | null;
   accountNumber2: string | null;
-  loanStatusAmount: string | null;
+  loanStatusAmount: number | null;
   loanStatusTypes: string[] | null;
   approachOfMarginalizedCommunities: string | null;
   communityEngagementNumbersMarginalized: string | null;
@@ -207,7 +219,6 @@ export type OrganisationFullDto = {
   growthStage: string | null;
   totalEmployees: number | null;
   additionalComments: string | null;
-  consortium: string | null;
   femaleYouthLeadershipExample: string | null;
   level0PastRestoration: string[] | null;
   level1PastRestoration: string[] | null;
@@ -236,6 +247,53 @@ export type OrganisationFullDto = {
    * @format date-time
    */
   updatedAt: string;
+};
+
+export type FileDownloadDto = {
+  url: string;
+};
+
+export type DelayedJobDto = {
+  /**
+   * The unique identifier for the delayed job.
+   */
+  uuid: string;
+  /**
+   * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
+   */
+  status: "pending" | "failed" | "succeeded";
+  /**
+   * If the job is out of pending state, this is the HTTP status code for the completed process
+   */
+  statusCode: number | null;
+  /**
+   * If the job is out of pending state, this is the JSON payload for the completed process
+   */
+  payload: Record<string, any> | null;
+  /**
+   * If the job is in progress, this is the total content to process
+   */
+  totalContent: number | null;
+  /**
+   * If the job is in progress, this is the total content processed
+   */
+  processedContent: number | null;
+  /**
+   * If the job is in progress, this is the progress message
+   */
+  progressMessage: string | null;
+  /**
+   * Indicates whether the jobs have been acknowledged (cleared)
+   */
+  isAcknowledged: boolean | null;
+  /**
+   * The name of the delayedJob
+   */
+  name: string | null;
+  /**
+   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
+   */
+  entityName?: string | null;
 };
 
 export type EmbeddedMediaDto = {
@@ -631,6 +689,18 @@ export type UserFramework = {
   slug: string;
 };
 
+export type UserMonitoringPartnerProjectLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  /**
+   * @format uuid
+   */
+  uuid: string;
+  name: string | null;
+};
+
 export type UserDto = {
   uuid: string;
   firstName: string | null;
@@ -671,6 +741,7 @@ export type UserDto = {
   locale: string | null;
   frameworks: UserFramework[];
   directFrameworks: UserFramework[];
+  monitoringPartnerProjects: UserMonitoringPartnerProjectLightDto[];
 };
 
 export type OrganisationCreateAttributes = {
@@ -756,45 +827,49 @@ export type UserUpdateAttributes = {
    *
    * @format uuid
    */
-  organisationUuid?: Record<string, any> | null;
+  organisationUuid?: string | null;
   /**
    * First name
    */
-  firstName?: Record<string, any> | null;
+  firstName?: string | null;
   /**
    * Last name
    */
-  lastName?: Record<string, any> | null;
+  lastName?: string | null;
   /**
    * Email address
    *
    * @format email
    */
-  emailAddress?: Record<string, any> | null;
+  emailAddress?: string | null;
+  /**
+   * Password
+   */
+  password?: string | null;
   /**
    * Job role
    */
-  jobRole?: Record<string, any> | null;
+  jobRole?: string | null;
   /**
    * Phone number
    */
-  phoneNumber?: Record<string, any> | null;
+  phoneNumber?: string | null;
   /**
    * Country
    */
-  country?: Record<string, any> | null;
+  country?: string | null;
   /**
    * Program
    */
-  program?: Record<string, any> | null;
+  program?: string | null;
   /**
    * New default locale for the given user
    */
-  locale: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
+  locale?: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
   /**
    * Primary role
    */
-  primaryRole?: Record<string, any> | null;
+  primaryRole?: string | null;
   directFrameworks?: string[] | null;
 };
 
@@ -828,6 +903,29 @@ export type UserCreateBaseData = {
 
 export type UserCreateBaseBody = {
   data: UserCreateBaseData;
+};
+
+export type SendLoginDetailsResponseDto = {
+  /**
+   * Whether the login details were sent successfully
+   */
+  success: boolean;
+};
+
+export type SendLoginDetailsAttributes = {
+  /**
+   * Email address of the user to send login details to
+   */
+  emailAddress: string;
+};
+
+export type SendLoginDetailsRequestData = {
+  type: "sendLoginDetails";
+  attributes: SendLoginDetailsAttributes;
+};
+
+export type SendLoginDetailsRequestDto = {
+  data: SendLoginDetailsRequestData;
 };
 
 export type UserAssociationDto = {

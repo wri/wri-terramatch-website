@@ -10,12 +10,12 @@ export const FieldContainer = styled.div<{ $size: "default" | "small"; $noMargin
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: ${({ $size }) => ($size === "small" ? "12px" : "16px")};
-  margin-bottom: ${({ $noMarginBottom }) => ($noMarginBottom ? "0" : "20px")};
+  gap: ${({ $size }) => ($size === "small" ? "0.75rem" : "1rem")};
+  margin-bottom: ${({ $noMarginBottom }) => ($noMarginBottom ? "0" : "1.25rem")};
 `;
 
 export const FieldErrorBar = styled.div`
-  width: 3px;
+  width: 0.1875rem;
   height: 100%;
   background-color: ${getThemedColor("error", 900)};
   position: absolute;
@@ -25,10 +25,10 @@ export const FieldErrorBar = styled.div`
 
 export const FieldLabel = styled.label<{ $size: "default" | "small"; $disabled?: boolean }>`
   color: ${({ $disabled }) => getThemedColor("neutral", $disabled ? 600 : 900)};
-  font-size: ${({ $size }) => ($size === "small" ? "14px" : "16px")};
+  font-size: ${({ $size }) => ($size === "small" ? "0.875rem" : "1rem")};
   font-weight: 400;
-  line-height: ${({ $size }) => ($size === "small" ? "20px" : "24px")};
-  margin-bottom: 2px;
+  line-height: ${({ $size }) => ($size === "small" ? "1.25rem" : "1.5rem")};
+  margin-bottom: 0.125rem;
   display: flex;
   align-items: flex-start;
   -webkit-user-select: text;
@@ -43,21 +43,21 @@ export const FieldLabel = styled.label<{ $size: "default" | "small"; $disabled?:
   }
 
   .chakra-field__requiredIndicator {
-    margin-top: 4px;
+    margin-top: 0.25rem;
     color: ${({ $disabled }) => ($disabled ? getThemedColor("neutral", 600) : getThemedColor("error", 500))} !important;
   }
 `;
 
 export const RequiredIndicator = styled.span<{ $disabled?: boolean }>`
-  margin-top: 4px;
+  margin-top: 0.25rem;
   color: ${({ $disabled }) => ($disabled ? getThemedColor("neutral", 600) : getThemedColor("error", 500))} !important;
 `;
 
 export const FieldCaption = styled.p<{ $size: "default" | "small"; $disabled?: boolean }>`
   color: ${({ $disabled }) => getThemedColor("neutral", $disabled ? 600 : 700)};
-  font-size: ${({ $size }) => ($size === "small" ? "12px" : "14px")};
+  font-size: ${({ $size }) => ($size === "small" ? "0.75rem" : "0.875rem")};
   font-weight: 400;
-  line-height: ${({ $size }) => ($size === "small" ? "16px" : "20px")};
+  line-height: ${({ $size }) => ($size === "small" ? "1rem" : "1.25rem")};
 
   &:first-letter {
     text-transform: uppercase;
@@ -66,10 +66,10 @@ export const FieldCaption = styled.p<{ $size: "default" | "small"; $disabled?: b
 
 export const FieldErrorMessage = styled.p<{ $size: "default" | "small" }>`
   color: ${getThemedColor("error", 900)};
-  font-size: ${({ $size }) => ($size === "small" ? "12px" : "14px")};
+  font-size: ${({ $size }) => ($size === "small" ? "0.75rem" : "0.875rem")};
   font-weight: 700;
-  line-height: ${({ $size }) => ($size === "small" ? "16px" : "20px")};
-  margin-top: 2px;
+  line-height: ${({ $size }) => ($size === "small" ? "1rem" : "1.25rem")};
+  margin-top: 0.125rem;
 `;
 
 export const datePickerControlStyles = (size: "default" | "small" = "default") => css`
@@ -77,10 +77,10 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
 
   [data-part="label"] {
     position: absolute;
-    width: 1px;
-    height: 1px;
+    width: 0.0625rem;
+    height: 0.0625rem;
     padding: 0;
-    margin: -1px;
+    margin: -0.0625rem;
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
@@ -91,38 +91,44 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    height: ${size === "small" ? "28px" : "40px"};
-    border: 1px solid ${getThemedColor("neutral", 400)};
-    border-radius: ${size === "small" ? "4px" : "0.5rem"};
-    padding: ${size === "small" ? "4px 8px" : "12px"};
+    height: ${size === "small" ? "1.75rem" : "2.5rem"};
+    border: 0.0625rem solid ${getThemedColor("neutral", 400)};
+    border-radius: ${size === "small" ? "0.25rem" : "0.5rem"};
+    padding: ${size === "small" ? "0.25rem 0.5rem" : "0.75rem"};
     background: ${getThemedColor("neutral", 100)};
-    box-shadow: 0px 1px 2px 0px #0000000d;
+    box-shadow: 0 0.0625rem 0.125rem 0 #0000000d;
     transition: border-color 0.15s;
+  }
+
+  [data-part="control"]:active,
+  [data-state="open"] [data-part="control"],
+  [data-part="control"]:has(input:not(:placeholder-shown)) {
+    border: 0.0625rem solid ${getThemedColor("neutral", 700)};
   }
 
   &[data-invalid] [data-part="control"] {
     border-color: ${getThemedColor("error", 500)};
   }
 
-  [data-part="control"]:focus-within {
-    border: 2px solid ${getThemedColor("neutral", 700)};
-    outline: 2px solid ${getThemedColor("primary", 700)};
-    outline-offset: 2px;
-    box-shadow: 0 0 0 2px ${getThemedColor("neutral", 100)}, rgba(0, 0, 0, 0.05) 0px 2px 2px 4px;
+  [data-part="control"]:focus-visible {
+    border: 0.125rem solid ${getThemedColor("neutral", 700)};
+    outline: 0.125rem solid ${getThemedColor("primary", 700)};
+    outline-offset: 0.125rem;
+    box-shadow: 0 0 0 0.125rem ${getThemedColor("neutral", 100)}, rgba(0, 0, 0, 0.05) 0 0.125rem 0.125rem 0.25rem;
   }
 
-  &[data-invalid] [data-part="control"]:focus-within {
-    border: 2px solid ${getThemedColor("error", 900)};
-    outline: 2px solid ${getThemedColor("primary", 700)};
-    outline-offset: 2px;
-    box-shadow: 0 0 0 2px ${getThemedColor("neutral", 100)}, rgba(0, 0, 0, 0.05) 0px 2px 2px 4px;
+  &[data-invalid] [data-part="control"]:focus-visible {
+    border: 0.125rem solid ${getThemedColor("error", 900)};
+    outline: 0.125rem solid ${getThemedColor("primary", 700)};
+    outline-offset: 0.125rem;
+    box-shadow: 0 0 0 0.125rem ${getThemedColor("neutral", 100)}, rgba(0, 0, 0, 0.05) 0 0.125rem 0.125rem 0.25rem;
   }
 
   [data-part="input"] {
     border: none;
     outline: none;
     background: transparent;
-    font-size: ${size === "small" ? "14px" : "16px"};
+    font-size: ${size === "small" ? "0.875rem" : "1rem"};
     color: ${getThemedColor("neutral", 900)};
     width: 100%;
     padding: 0;
@@ -167,13 +173,13 @@ export const calendarBaseGlobalStyles = css`
 
   [data-scope="date-picker"][data-part="content"] {
     background: ${getThemedColor("neutral", 100)};
-    border: 1px solid ${getThemedColor("neutral", 600)};
+    border: 0.0625rem solid ${getThemedColor("neutral", 600)};
     border-radius: 0.75rem;
     padding: 1rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.12);
     min-width: 17rem;
-    min-height: 372px;
-    max-width: 286px;
+    min-height: 23.25rem;
+    max-width: 17.875rem;
     font-family: inherit;
   }
 
@@ -181,7 +187,7 @@ export const calendarBaseGlobalStyles = css`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 6px;
+    margin-bottom: 0.375rem;
   }
 
   [data-scope="date-picker"] [data-part="prev-trigger"],
@@ -290,8 +296,8 @@ export const calendarBaseGlobalStyles = css`
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
     position: relative;
-    lineHeight: "500",
-    fontWeight: "normal"
+    line-height: ${getThemedLineHeight("500")};
+    font-weight: normal;
     z-index: 1;
   }
 
@@ -301,7 +307,7 @@ export const calendarBaseGlobalStyles = css`
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-today] {
     color: ${getThemedColor("accessible", "controls-on-neutral-lights")};
-    border: 2px solid ${getThemedColor("primary", 500)};
+    border: 0.125rem solid ${getThemedColor("primary", 500)};
     border-radius: 50%;
   }
 

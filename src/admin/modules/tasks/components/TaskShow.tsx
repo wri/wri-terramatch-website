@@ -31,6 +31,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useDate } from "@/hooks/useDate";
+import { first } from "@/utils/array";
 
 const ReadableStatus: { [index: string]: string } = {
   due: "Due",
@@ -248,15 +249,19 @@ function ShowReports() {
 
   useRequestComplete(
     taskIsUpdating,
-    useCallback(() => {
-      if (taskUpdateFailure == null) {
-        openNotification("success", "Reports approved successfully", "");
-        closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
-        closeModal(ModalId.APPROVE_POLYGONS);
-      } else {
-        openNotification("error", "Failed to approve reports", taskUpdateFailure.message ?? "An error occurred");
-      }
-    }, [closeModal, openNotification, taskUpdateFailure])
+    taskUpdateFailure,
+    useCallback(
+      failure => {
+        if (failure == null) {
+          openNotification("success", "Reports approved successfully", "");
+          closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
+          closeModal(ModalId.APPROVE_POLYGONS);
+        } else {
+          openNotification("error", "Failed to approve reports", first(failure.message) ?? "An error occurred");
+        }
+      },
+      [closeModal, openNotification]
+    )
   );
 
   return isLoading ? null : (

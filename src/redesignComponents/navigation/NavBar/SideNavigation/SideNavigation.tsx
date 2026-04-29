@@ -1,41 +1,47 @@
-import { Button, Flex, Link, Text } from "@chakra-ui/react";
+import { Button, Flex, Text } from "@chakra-ui/react";
 import classNames from "classnames";
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useState } from "react";
 
+import { MenuItemOption } from "@/redesignComponents/actions/Buttons/Menu/MenuCustom.types";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
-import Badge from "@/redesignComponents/status/Badge/BadgeCustom";
+
+import SideNavigationItem from "./SideNavigationItem";
 
 const EXPANDED_WIDTH_CLASS = "w-56";
 const COLLAPSED_WIDTH_CLASS = "w-12";
 
-interface SideNavigationProps {
-  title: string;
-  notifications: {
+interface SideNavigationLink {
+  icon: React.ReactNode;
+  label: string;
+  href?: string;
+  notificationValue?: number;
+  onAddClick?: () => void;
+  MenuItems?: MenuItemOption[];
+  items?: {
     icon: React.ReactNode;
     label: string;
-    value: number;
-  }[];
-  links: {
-    icon: React.ReactNode;
-    label: string;
+    onAddClick?: () => void;
     href: string;
+    MenuItems?: MenuItemOption[];
   }[];
 }
 
-const SideNavigation: FC<SideNavigationProps> = ({ title, notifications, links }) => {
+interface SideNavigationGroup {
+  links: SideNavigationLink[];
+}
+
+interface SideNavigationProps {
+  title: string;
+  groups: SideNavigationGroup[];
+}
+
+const SideNavigation: FC<SideNavigationProps> = ({ title, groups }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
-
-  const textClassName = useMemo(() => {
-    return classNames(
-      "min-w-0 overflow-hidden whitespace-nowrap transition-[max-width,opacity] duration-500 ease-in-out",
-      isCollapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"
-    );
-  }, [isCollapsed]);
 
   const shellTransition = "overflow-hidden transition-[width] duration-300 ease-in-out motion-reduce:transition-none";
 
@@ -55,7 +61,10 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, notifications, links }
         color="neutral.100"
         onClick={handleCollapse}
       >
-        <Text textStyle="400-bold" className={textClassName}>
+        <Text
+          textStyle="400-bold"
+          className={classNames(isCollapsed ? "max-w-0 opacity-0" : "max-w-[12.5rem] opacity-100")}
+        >
           {title}
         </Text>
         <ChevronRightIcon
@@ -66,64 +75,31 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, notifications, links }
           )}
         />
       </Button>
-      <SimpleDivider backgroundColor="primary.700" />
-      <Flex className="flex flex-col gap-4 p-4">
-        {notifications.map(item => (
+      {groups.map((group, index) => (
+        <React.Fragment key={index}>
+          <SimpleDivider backgroundColor="primary.700" />
           <Flex
-            key={item.label}
             className={classNames(
-              "h-6 items-center transition-[gap] duration-300 ease-in-out motion-reduce:transition-none",
-              isCollapsed ? "gap-0" : "gap-2"
+              "flex flex-col gap-1 py-2 transition-[padding] duration-300 ease-in-out motion-reduce:transition-none",
+              isCollapsed ? "px-0" : "px-2"
             )}
-            color="neutral.100"
           >
-            <Badge
-              className={classNames(
-                "transition-[gap] duration-300 ease-in-out motion-reduce:transition-none",
-                isCollapsed ? "gap-0" : "gap-2"
-              )}
-              labelClassName={textClassName}
-              hasNotification={item.value > 0 && isCollapsed}
-              notificationCount={item.value}
-              label={item.label}
-            >
-              {item.icon}
-            </Badge>
-            {item.value > 0 ? (
-              <div
-                className={classNames(
-                  "flex min-w-0 items-center justify-center overflow-hidden rounded-full bg-theme-error-500 transition-[max-width,opacity,transform,padding] duration-300 ease-in-out motion-reduce:transition-none",
-                  !isCollapsed ? "max-w-[4rem] scale-100 px-1 opacity-100" : "max-w-0 scale-95 px-0 opacity-0"
-                )}
-                aria-hidden={isCollapsed}
-              >
-                <Text textStyle="300-bold" className="whitespace-nowrap">
-                  {item.value}
-                </Text>
-              </div>
-            ) : null}
+            {group.links.map(link => (
+              <SideNavigationItem
+                key={link.label}
+                icon={link.icon}
+                label={link.label}
+                href={link.href}
+                notificationValue={link.notificationValue}
+                onAddClick={link.onAddClick}
+                MenuItems={link.MenuItems}
+                items={link.items}
+                isCollapsed={isCollapsed}
+              />
+            ))}
           </Flex>
-        ))}
-      </Flex>
-      <SimpleDivider backgroundColor="primary.700" />
-      <Flex className="flex flex-col gap-4 p-4">
-        {links.map(link => (
-          <Link
-            key={link.label}
-            href={link.href}
-            className={classNames(
-              "flex h-6 items-center transition-[gap] duration-300 ease-in-out motion-reduce:transition-none",
-              isCollapsed ? "gap-0" : "gap-2"
-            )}
-            color="neutral.100"
-          >
-            <span className="shrink-0">{link.icon}</span>
-            <Text textStyle="400" className={textClassName}>
-              {link.label}
-            </Text>
-          </Link>
-        ))}
-      </Flex>
+        </React.Fragment>
+      ))}
       <SimpleDivider backgroundColor="primary.700" />
     </Flex>
   );

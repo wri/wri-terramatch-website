@@ -14,7 +14,7 @@ import {
   TextField
 } from "react-admin";
 
-import { getFormattedErrorForRA } from "@/admin/apiProvider/utils/error";
+import { v3ErrorForRA } from "@/admin/apiProvider/utils/error";
 import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
@@ -24,7 +24,7 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
-import { fetchGetV2DisturbanceReportsExport, GetV2DisturbanceReportsExportError } from "@/generated/apiComponents";
+import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
 import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
@@ -88,10 +88,10 @@ export const DisturbanceReportList: FC = () => {
   const handleExport = async () => {
     setExporting(true);
     try {
-      const response = (await fetchGetV2DisturbanceReportsExport({})) as Blob;
-      await downloadFileBlob(response, "DisturbanceReports.csv");
+      const { fileName, blob } = await entityExportAll.fetchBlob({ pathParams: { entity: "disturbanceReports" } });
+      await downloadFileBlob(blob, fileName ?? "DisturbanceReports.csv");
     } catch (e) {
-      throw getFormattedErrorForRA(e as GetV2DisturbanceReportsExportError);
+      throw v3ErrorForRA("Failed to fetch disturbance report exports", e);
     } finally {
       setExporting(false);
     }

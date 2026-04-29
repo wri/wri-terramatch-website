@@ -70,7 +70,6 @@ const ContentForSubmission: FC<{ siteName: string; polygons: SitePolygonLightDto
 
 const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
   const t = useT();
-  const [editPolygon, setEditPolygon] = useState(false);
   const contextMapArea = useMapAreaContext();
   const {
     setSiteData,
@@ -498,7 +497,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
             </div>
           </div>
         </div>
-        <SiteArea sites={site} setEditPolygon={setEditPolygon} editPolygon={editPolygon} refetch={refetchEntity} />
+        <SiteArea sites={site} refetch={refetchEntity} />
       </Box>
     </PageBody>
   );

@@ -27,13 +27,14 @@ export const useTableType = (entity: SupportedEntity, collection?: string, fromP
           : "treeCountGoal";
 
       case "tree-planted":
+        if (entity === "sites" && framework === Framework.HBF) {
+          return "treeCountGoal";
+        }
+        // PPC does not use establishment targets; show a single report-based Count. HBF / Terrafund projects compare to goals.
         if (entity === "projects" && (framework === Framework.HBF || isTerrafund(framework))) {
           return "treeCountGoal";
-        } else if (entity === "sites" && framework === Framework.HBF) {
-          return "treeCountGoal";
-        } else {
-          return "noGoal";
         }
+        return "noGoal";
 
       default:
         return "noGoal";
@@ -73,11 +74,10 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
   });
 
   return useMemo(() => {
-    // For nurseries or projectReports with nursery-seedling, and for *Reports with tree-planted,
-    // combine plants and reportCounts to match table data (entityPlants + reportPlants)
     if (
       (entity === "nurseries" && collection === "nursery-seedling") ||
       (entity === "projectReports" && collection === "nursery-seedling") ||
+      (entity === "projectReports" && collection === "non-tree") ||
       (entity.endsWith("Reports") && collection === "tree-planted")
     ) {
       const plantsTotal = sumBy(plants ?? [], "amount");
@@ -175,6 +175,10 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
           goalCount: amount ?? 0,
           treeCountGoal: [reportAmount, amount ?? 0]
         };
+      }
+      if (entity === "projects" && collection === "tree-planted" && tableType === "noGoal") {
+        const reportAmount = getReportAmount(name);
+        return { ...tableRowData, treeCount: reportAmount, goalCount: reportAmount };
       }
       if (entity.endsWith("Reports")) {
         return { ...tableRowData, treeCount: amount };

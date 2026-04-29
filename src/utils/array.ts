@@ -48,3 +48,5 @@ export function objectArrayHasDuplication(arr: any[], keys: string[]) {
  * foo.filter(isNotNull); // results in ["one", "two", "three"], and the type is `string[]` without any 'as' statement.
  */
 export const isNotNull = <T>(value: T | null | undefined): value is T => value != null;
+
+export const first = <T>(array: T | T[] | undefined): T | undefined => (Array.isArray(array) ? array[0] : array);

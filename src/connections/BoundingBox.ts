@@ -5,6 +5,7 @@ import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { boundingBoxGet, BoundingBoxGetQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { BoundingBoxDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
+import ApiSlice from "@/store/apiSlice";
 
 const hasValidParams = ({
   polygonUuid,
@@ -25,6 +26,11 @@ const boundingBoxConnection = v3Resource("boundingBoxes", boundingBoxGet)
   .singleByFilter<BoundingBoxDto, BoundingBoxGetQueryParams>()
   .enabledProp()
   .buildConnection();
+
+export const pruneBoundingBoxesCache = (): void => {
+  ApiSlice.pruneCache("boundingBoxes");
+  ApiSlice.pruneIndex("boundingBoxes", "");
+};
 
 export const useBoundingBox = (filter: BoundingBoxGetQueryParams) => {
   const result = useConnection(boundingBoxConnection, { filter, enabled: hasValidParams(filter) });

@@ -10,7 +10,7 @@ const getStatusIcon = (status: AccordionStatus, boxSize: number = 4) =>
   status === "complete" ? (
     <CheckApprovedIcon boxSize={boxSize} color="success.500" />
   ) : (
-    <InformationRequiredIcon boxSize={boxSize} color="error.500" />
+    <InformationRequiredIcon boxSize={boxSize} color="warning.500" />
   );
 
 interface StatusLabelTagProps {

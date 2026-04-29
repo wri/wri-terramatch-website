@@ -1,13 +1,14 @@
 import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { FunctionField, RaRecord, SelectField, TextField, useNotify, useRefresh, useShowContext } from "react-admin";
 
 import Aside from "@/admin/components/Aside/Aside";
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
-import { useAdminUserVerify } from "@/connections/AdminUsers";
+import ResetPasswordDialog from "@/admin/modules/user/components/ResetPasswordDialog";
+import { sendLoginDetailsToUser, useAdminUserVerify } from "@/connections/AdminUsers";
 import { sendRequestPasswordReset } from "@/connections/ResetPassword";
 import { useResendVerification } from "@/connections/VerificationUser";
-import { usePostAuthSendLoginDetails } from "@/generated/apiComponents";
+import { DECLARED_ENV } from "@/constants/environment";
 import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
 import { localeChoices, userPrimaryRoleChoices } from "../const";
@@ -15,11 +16,13 @@ import { localeChoices, userPrimaryRoleChoices } from "../const";
 export const UserShowAside = () => {
   const notify = useNotify();
   const refresh = useRefresh();
+  const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
   const [showVerifyEmailDialog, setShowVerifyEmailDialog] = useState(false);
 
   const { record } = useShowContext<RaRecord>();
 
-  const [, { create: verifyUser }] = useAdminUserVerify({ uuid: record?.uuid as string });
+  const uuid = record?.uuid as string;
+  const [, { create: verifyUser }] = useAdminUserVerify({ uuid });
 
   const { create: resendVerificationEmail } = useResendVerification(
     {},
@@ -30,7 +33,7 @@ export const UserShowAside = () => {
     "Failed to resend verification email."
   );
 
-  const handleSendPasswordResetEmail = async () => {
+  const handleSendPasswordResetEmail = useCallback(async () => {
     try {
       if (record?.emailAddress == null) {
         notify(`User email is not available.`, { type: "warning" });
@@ -42,14 +45,7 @@ export const UserShowAside = () => {
     } catch (error) {
       notify(`Failed to send reset password email.`, { type: "error" });
     }
-  };
-
-  const { mutate: sendLoginDetails } = usePostAuthSendLoginDetails({
-    onSuccess() {
-      notify(`Login details email has been sent successfully.`, { type: "success" });
-      refresh();
-    }
-  });
+  }, [notify, record?.emailAddress, refresh]);
 
   return (
     <div className="user-aside">
@@ -106,14 +102,15 @@ export const UserShowAside = () => {
             <Button
               variant="contained"
               className="!rounded-lg !bg-primary"
-              onClick={() =>
-                sendLoginDetails({
-                  body: {
-                    email_address: record?.emailAddress,
-                    callback_url: window.location.origin + "/auth/set-password/"
-                  }
-                })
-              }
+              onClick={async () => {
+                try {
+                  await sendLoginDetailsToUser(record?.emailAddress as string);
+                  notify(`Login details email has been sent successfully.`, { type: "success" });
+                  refresh();
+                } catch (error) {
+                  notify(`Failed to send login details email.`, { type: "error" });
+                }
+              }}
             >
               Send Login Details
             </Button>
@@ -144,12 +141,23 @@ export const UserShowAside = () => {
             <Button variant="contained" className="!rounded-lg !bg-primary" onClick={handleSendPasswordResetEmail}>
               Send Reset Password Email
             </Button>
-            <Button variant="contained" className="!rounded-lg !bg-primary" onClick={handleSendPasswordResetEmail}>
-              Reset Password
-            </Button>
+            {DECLARED_ENV !== "prod" && (
+              <Button
+                variant="contained"
+                className="!rounded-lg !bg-primary"
+                onClick={() => setShowResetPasswordDialog(true)}
+              >
+                Reset Password
+              </Button>
+            )}
           </Stack>
         </Box>
       </Aside>
+      <ResetPasswordDialog
+        open={showResetPasswordDialog}
+        userUUID={uuid}
+        onHide={() => setShowResetPasswordDialog(false)}
+      />
       <ConfirmationDialog
         open={showVerifyEmailDialog}
         title="Email Verification"

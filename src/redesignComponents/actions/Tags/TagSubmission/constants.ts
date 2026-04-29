@@ -12,16 +12,6 @@ import {
 
 import type { TagSubmissionState } from "./TagSubmission.type";
 
-export const TAG_LABELS: Record<TagSubmissionState, string> = {
-  draft: "Draft",
-  "nothing-reported": "Nothing Reported",
-  "pending-approval-neutral": "Pending Approval",
-  "pending-approval": "Pending Approval",
-  "information-required": "Information Required",
-  approved: "Approved",
-  due: "Due"
-};
-
 export const DEFAULT_SIZE = "default" as const;
 export const ICON_SIZE_DEFAULT = "h-3 w-3";
 export const ICON_SIZE_SMALL = "h-2.5 w-2.5";

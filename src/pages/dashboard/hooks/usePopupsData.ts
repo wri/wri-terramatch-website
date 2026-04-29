@@ -1,11 +1,13 @@
+import { GeoJSONFeature } from "mapbox-gl";
 import { useEffect, useMemo, useState } from "react";
 
 import { useDashboardProject } from "@/connections/DashboardEntity";
-import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { useSitePolygons } from "@/connections/SitePolygons";
 import { LAYERS_NAMES } from "@/constants/layers";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
+
+type PopupEvent = { feature?: GeoJSONFeature; layerName?: string };
 
 type Item = {
   id: string;
@@ -13,25 +15,20 @@ type Item = {
   value: string;
 };
 
-export function usePopupData(event: any) {
-  const isoCountry = event?.feature?.properties?.iso;
-  const itemUuid = event?.feature?.properties?.uuid;
+export function usePopupData(event: PopupEvent) {
+  const properties = event?.feature?.properties ?? {};
+  const isoCountry = typeof properties.iso === "string" ? properties.iso : undefined;
+  const itemUuid = typeof properties.uuid === "string" ? properties.uuid : undefined;
   const { layerName } = event;
 
-  const [popupType, setPopupType] = useState<"country" | "project" | "polygon" | null>(null);
-  const [popupData, setPopupData] = useState<any>(null);
+  const [popupType, setPopupType] = useState<"project" | "polygon" | null>(null);
+  const [popupData, setPopupData] = useState<{ label?: string; organization?: string; hectares?: string } | null>(null);
   const [items, setItems] = useState<Item[]>([]);
-  const [label, setLabel] = useState<string>(event?.feature?.properties?.country);
+  const [label, setLabel] = useState<string>(typeof properties.country === "string" ? properties.country : "");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [projectLoaded, { data: projectFullDto }] = useDashboardProject({
-    id: itemUuid && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : null
-  });
-
-  const [countryDataLoaded, { data: countryData }] = useTotalSectionHeader({
-    filter: {
-      country: isoCountry != null && layerName === LAYERS_NAMES.WORLD_COUNTRIES ? isoCountry : undefined
-    }
+    id: itemUuid != null && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : undefined
   });
 
   const [polygonDataLoaded, { data: polygonDataArray }] = useSitePolygons({
@@ -47,8 +44,17 @@ export function usePopupData(event: any) {
     return polygonDataArray?.[0];
   }, [polygonDataArray]);
 
-  const createProjectDataFromEntity = (projectFullDto: any) => {
-    if (!projectFullDto) return null;
+  const createProjectDataFromEntity = (
+    projectFullDto:
+      | {
+          name?: string | null;
+          organisationName?: string | null;
+          totalHectaresRestoredSum?: number;
+        }
+      | null
+      | undefined
+  ) => {
+    if (projectFullDto == null) return null;
 
     const data = [
       {
@@ -74,38 +80,6 @@ export function usePopupData(event: any) {
   };
 
   useEffect(() => {
-    if (countryDataLoaded && countryData != null && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
-      setIsLoading(false);
-      const parsedItems = [
-        {
-          id: "1",
-          title: "No. of Projects",
-          value: ((countryData.totalEnterpriseCount ?? 0) + (countryData.totalNonProfitCount ?? 0)).toLocaleString()
-        },
-        {
-          id: "2",
-          title: "Trees Planted",
-          value: (countryData.totalTreesRestored ?? 0).toLocaleString()
-        },
-        {
-          id: "3",
-          title: "Restoration Hectares",
-          value: (countryData.totalHectaresRestored ?? 0).toLocaleString()
-        },
-        {
-          id: "4",
-          title: "Jobs Created",
-          value: (countryData.totalEntries ?? 0).toLocaleString()
-        }
-      ];
-      setItems(parsedItems);
-      setPopupType("country");
-    } else if (isoCountry != null && layerName === LAYERS_NAMES.WORLD_COUNTRIES && !countryDataLoaded) {
-      setIsLoading(true);
-    }
-  }, [countryDataLoaded, countryData, isoCountry, layerName]);
-
-  useEffect(() => {
     async function fetchProjectData() {
       setIsLoading(true);
       try {
@@ -114,7 +88,7 @@ export function usePopupData(event: any) {
 
           if (entityData) {
             const label = projectFullDto.name ?? "Unknown Project";
-            const organization = projectFullDto.organisationName;
+            const organization = projectFullDto.organisationName ?? undefined;
             const hectares = projectFullDto.totalHectaresRestoredSum?.toString();
 
             setPopupType("project");
@@ -219,9 +193,9 @@ export function usePopupData(event: any) {
     }
 
     setItems([]);
-    if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
+    if (itemUuid != null && layerName === LAYERS_NAMES.CENTROIDS) {
       fetchProjectData();
-    } else if (itemUuid && layerName === LAYERS_NAMES.POLYGON_GEOMETRY) {
+    } else if (itemUuid != null && layerName === LAYERS_NAMES.POLYGON_GEOMETRY) {
       processPolygonData();
     }
   }, [layerName, itemUuid, projectFullDto, projectLoaded, polygonDataLoaded, polygonData]);

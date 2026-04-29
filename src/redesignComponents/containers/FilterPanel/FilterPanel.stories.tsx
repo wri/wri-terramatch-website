@@ -65,7 +65,7 @@ export const Default: Story = {
       <FilterPanel
         {...args}
         variant="fixed"
-        classNameContent="!h-[628px]"
+        className="h-[770px]"
         content={
           <>
             <Search options={sampleOptions} placeholder="Search" />

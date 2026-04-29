@@ -152,6 +152,58 @@ export const resetPassword = new V3ApiEndpoint<ResetPasswordResponse, ResetPassw
   "PUT"
 );
 
+export type GetResetPasswordPathParams = {
+  token: string;
+};
+
+export type GetResetPasswordError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type GetResetPasswordResponse = {
+  meta?: {
+    /**
+     * @example passwordResets
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResetPasswordResponseDto;
+  };
+};
+
+export type GetResetPasswordVariables = {
+  pathParams: GetResetPasswordPathParams;
+};
+
+/**
+ * Get the reset password status for a token
+ */
+export const getResetPassword = new V3ApiEndpoint<
+  GetResetPasswordResponse,
+  GetResetPasswordError,
+  GetResetPasswordVariables,
+  {}
+>("/auth/v3/passwordResets/{token}", "GET");
+
 export type VerifyUserError = Fetcher.ErrorWrapper<{
   status: 400;
   payload: {
@@ -514,6 +566,61 @@ export const organisationCreation = new V3ApiEndpoint<
   OrganisationCreationVariables,
   {}
 >("/organisations/v3/organisations", "POST");
+
+export type OrganisationExportCsvError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export const organisationExportCsv = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example fileDownloads
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example fileDownloads
+         */
+        type?: string;
+        id?: string;
+        attributes?: Schemas.FileDownloadDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  OrganisationExportCsvError,
+  {},
+  {}
+>("/organisations/v3/organisations/export", "GET");
 
 export type OrganisationShowPathParams = {
   uuid: string;
@@ -1399,6 +1506,54 @@ export const userVerify = new V3ApiEndpoint<UserVerifyResponse, UserVerifyError,
   "PATCH"
 );
 
+export type SendLoginDetailsError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type SendLoginDetailsResponse = {
+  meta?: {
+    /**
+     * @example sendLoginDetails
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example sendLoginDetails
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SendLoginDetailsResponseDto;
+  };
+};
+
+export type SendLoginDetailsVariables = {
+  body: Schemas.SendLoginDetailsRequestDto;
+};
+
+/**
+ * Send login details to a user by email address
+ */
+export const sendLoginDetails = new V3ApiEndpoint<
+  SendLoginDetailsResponse,
+  SendLoginDetailsError,
+  SendLoginDetailsVariables,
+  {}
+>("/users/v3/users/sendLoginDetails", "POST");
+
 export type GetUserAssociationPathParams = {
   /**
    * UUID of the resource.
@@ -1933,11 +2088,18 @@ export const acceptProjectInvite = new V3ApiEndpoint<
 
 export const operationsByTag = {
   login: { authLogin },
-  resetPassword: { requestPasswordReset, resetPassword },
+  resetPassword: { requestPasswordReset, resetPassword, getResetPassword },
   verificationUser: { verifyUser, resendUserVerification },
-  organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
+  organisations: {
+    organisationIndex,
+    organisationCreation,
+    organisationExportCsv,
+    organisationShow,
+    organisationUpdate,
+    organisationDelete
+  },
   actions: { actionsIndex },
-  users: { userIndex, userCreation, usersFind, userUpdate, userDelete, userVerify },
+  users: { userIndex, userCreation, usersFind, userUpdate, userDelete, userVerify, sendLoginDetails },
   userAssociation: {
     getUserAssociation,
     createUserAssociation,

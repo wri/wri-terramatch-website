@@ -61,7 +61,7 @@ const ManagerType = ({ nursery }: { nursery: NurseryFullDto }) => {
       width="240px"
       minWidth="240px"
       height="auto"
-      className="flex flex-col gap-2 pt-5"
+      className="flex flex-col gap-2 pt-5 mobile:!w-full"
       css={{ "&": { alignItems: "self-end !important" } }}
     >
       <div className="flex w-fit flex-col justify-center gap-2">

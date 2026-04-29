@@ -3,7 +3,7 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { useT } from "@transifex/react";
 //@ts-ignore
 import circleToPolygon from "circle-to-polygon";
-import { MapboxGeoJSONFeature } from "mapbox-gl";
+import { GeoJSONFeature } from "mapbox-gl";
 import { FieldError, useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -21,8 +21,8 @@ import { useModalContext } from "@/context/modal.provider";
 
 interface ShapePropertiesModalProps {
   draw?: MapboxDraw;
-  feature: MapboxGeoJSONFeature;
-  onSubmit: (properties: Omit<IPropertiesValues, "Radius">, feature: MapboxGeoJSONFeature) => void;
+  feature: GeoJSONFeature;
+  onSubmit: (properties: Omit<IPropertiesValues, "Radius">, feature: GeoJSONFeature) => void;
   additionalPolygonProperties?: AdditionalPolygonProperties;
 }
 

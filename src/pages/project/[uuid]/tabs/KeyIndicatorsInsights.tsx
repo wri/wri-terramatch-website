@@ -2,10 +2,9 @@ import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
-import { useTrackings } from "@/connections/EntityAssociation";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
-import { ProjectFullDto, TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import {
   AreaHectaresIcon,
@@ -19,21 +18,10 @@ import {
 import MetricCardsRow, {
   METRIC_CARD_CLASS_NAME
 } from "../../../../components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
-import { KEY_INDICATORS_TOOLTIP_CONTENT } from "./constants/keyIndicatorsTooltipContent";
+import { useKeyIndicatorsTooltipContent } from "./constants/keyIndicatorsTooltipContent";
 
 interface KeyIndicatorsInsightsProps {
   project: ProjectFullDto;
-}
-
-function computeTreesGrownFromTrackings(entries: TrackingEntryDto[], survivalRate: number | null | undefined): number {
-  let treesPlanted = 0;
-  let treesRegenerated = 0;
-  for (const e of entries) {
-    if (e.type === "years") treesPlanted += e.amount;
-    if (e.type === "strategy" && e.subtype === "anr") treesRegenerated += e.amount;
-  }
-  const rate = survivalRate ?? 0;
-  return Math.round(treesPlanted * (rate / 100) + treesRegenerated);
 }
 
 const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) => {
@@ -46,25 +34,11 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
   const hectaresTargetPercentage =
     totalHectaresRestoredGoal > 0 ? Math.round((totalHectaresRestored / totalHectaresRestoredGoal) * 100) : undefined;
   const framework = project?.frameworkKey;
-
-  const [, { data: trackings }] = useTrackings({
-    entity: "projects",
-    uuid: project?.uuid ?? "",
-    enabled: framework == "terra-fund-3" || framework == Framework.TF_3
-  });
-
-  const treesGrownTf3 = useMemo(() => {
-    if (!(framework == "terra-fund-3" || framework == Framework.TF_3)) return null;
-    const treesGoalTrackings = trackings?.filter(
-      t => t.domain === "restoration" && t.type === "trees-goal" && t.collection === "all"
-    );
-    const allEntries = treesGoalTrackings?.flatMap(t => t?.entries ?? []);
-    return computeTreesGrownFromTrackings(allEntries ?? [], project?.survivalRate ?? 0);
-  }, [framework, trackings, project?.survivalRate]);
+  const keyIndicatorsTooltipContent = useKeyIndicatorsTooltipContent();
 
   const keyIndicatorsTooltipContentItem = useMemo(() => {
-    return KEY_INDICATORS_TOOLTIP_CONTENT.find(content => content.frameworks.includes(project.frameworkKey!));
-  }, [project.frameworkKey]);
+    return keyIndicatorsTooltipContent.find(content => content.frameworks.includes(project.frameworkKey!));
+  }, [project.frameworkKey, keyIndicatorsTooltipContent]);
 
   const MAX_CARD = 4;
 
@@ -126,7 +100,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
       {(project?.frameworkKey == "terra-fund-3" || project?.frameworkKey == Framework.TF_3) && (
         <MetricCard
           title={t(`${keyIndicatorsTooltipContentItem?.treesToBeRestored.title}`)}
-          progress={treesGrownTf3 ?? 0}
+          progress={project.treesToBeRestoredGoal ?? 0}
           goal={0}
           variant="large"
           icon={<TreeIcon />}

@@ -94,7 +94,7 @@ const useLanguageTransition = () => {
   }, [router, user?.locale]);
 
   useEffect(() => {
-    const routerLocale = normalizeLocale(router.locale);
+    const routerLocale = normalizeLocale(router.locale ?? "en");
     if (tx.getCurrentLocale() !== routerLocale) {
       Log.info("Updating in-browser locale", { normalized: routerLocale, locale: router.locale });
       tx.setCurrentLocale(routerLocale);

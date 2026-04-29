@@ -8,6 +8,17 @@ export interface CountriesProps {
   id: number;
   country_slug: string;
 }
+export type DashboardFilters = React.Dispatch<
+  React.SetStateAction<{
+    programmes: string[];
+    landscapes: string[];
+    country: CountriesProps;
+    organizations: string[];
+    cohort: string[];
+    uuid: string;
+  }>
+>;
+
 type DashboardType = {
   filters: {
     programmes: string[];
@@ -17,16 +28,7 @@ type DashboardType = {
     cohort: string[];
     uuid: string;
   };
-  setFilters: React.Dispatch<
-    React.SetStateAction<{
-      programmes: string[];
-      landscapes: string[];
-      country: { country_slug: string; id: number; data: any };
-      organizations: string[];
-      cohort: string[];
-      uuid: string;
-    }>
-  >;
+  setFilters: DashboardFilters;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   dashboardCountries: CountriesProps[];

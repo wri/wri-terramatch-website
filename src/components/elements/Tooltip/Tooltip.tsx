@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import { useOnMount } from "@/hooks/useOnMount";
@@ -185,11 +184,11 @@ const ToolTip = ({
             )}
             style={placement === "top" ? { marginLeft: `${placementArrowLeft}px` } : {}}
           />
-          <When condition={!!title}>
+          {title != null && title !== "" ? (
             <Text variant="text-12-bold" className="mb-1">
               {t(title)}
             </Text>
-          </When>
+          ) : null}
           <Text
             variant={textVariantContent ?? "text-12-light"}
             className={classNames("leading-[normal]", { "!font-light ": colorBackground === "black" })}

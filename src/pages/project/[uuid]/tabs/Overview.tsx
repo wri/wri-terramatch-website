@@ -28,7 +28,7 @@ import Log from "@/utils/log";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
-import { MRV_ONBOARDING_CONTENT } from "./constants/mrvOnboardingContent";
+import { useMrvOnboardingContent } from "./constants/mrvOnboardingContent";
 import EntitySetUpSection from "./EntitySetUpSection";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 import LatestImagesSectionTab from "./LatestImagesSection";
@@ -45,6 +45,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
+  const mrvOnboardingContent = useMrvOnboardingContent();
   const { openModal } = useModalContext();
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "projects",
@@ -108,8 +109,8 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   );
 
   const mrvOnboardingContentItem = useMemo(() => {
-    return MRV_ONBOARDING_CONTENT.find(content => content.frameworks.includes(project.frameworkKey!));
-  }, [project.frameworkKey]);
+    return mrvOnboardingContent.find(content => content.frameworks.includes(project.frameworkKey!));
+  }, [project.frameworkKey, mrvOnboardingContent]);
 
   const handleInviteClick = useCallback(() => {
     setShowInviteModal(true);
@@ -198,7 +199,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
       />
       <Flex gap={7} className="flex-col sm:flex-row">
         <PageItem
-          title="Project Map"
+          title={t("Project Map")}
           flexProps={{ flex: 1 }}
           buttonProps={{
             variant: "secondary",

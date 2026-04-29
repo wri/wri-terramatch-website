@@ -2,25 +2,15 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
-import _ from "lodash";
-import mapboxgl, { LngLat } from "mapbox-gl";
+import { Map as MapboxMap, Marker } from "mapbox-gl";
 import { useRouter } from "next/router";
-import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
+import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { ValidationError } from "yup";
 
 import ControlGroup, { ControlMapPosition } from "@/components/elements/Map-mapbox/components/ControlGroup";
 import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/MapLayers/ShapePropertiesModal";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { useAnrPlotGeometry } from "@/connections/AnrPlotGeometry";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { deleteMedia, downloadImage, updateMedia } from "@/connections/Media";
-import { loadListPolygonVersions } from "@/connections/PolygonVersion";
-import { createVersionWithGeometry } from "@/connections/SitePolygons";
-import { LAYERS_NAMES, layersList } from "@/constants/layers";
-import { DELETED_POLYGONS, FORM_POLYGONS } from "@/constants/statuses";
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -31,165 +21,138 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
-import { useValueChanged } from "@/hooks/useValueChanged";
-import ApiSlice from "@/store/apiSlice";
-import Log from "@/utils/log";
 
-import { AdminPopup } from "./components/AdminPopup";
-import { DashboardPopup } from "./components/DashboardPopup";
+import { addOrUpdateMarkerAndZoom } from "./adapters/camera";
+import MapCanvas from "./components/MapCanvas";
+import MapControlsOverlay from "./components/MapControlsOverlay";
 import { PopupMobile } from "./components/PopupMobile";
+import { useMapReadiness } from "./core/useMapReadiness";
 import { BBox } from "./GeoJSON";
 import { useGoogleSatellite } from "./hooks/useGoogleSatellite";
-import type { TooltipType } from "./Map.d";
-import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
-import CheckPolygonControl from "./MapControls/CheckPolygonControl";
-import EditControl from "./MapControls/EditControl";
+import { useMapCamera } from "./hooks/useMapCamera";
+import { useMapDownload } from "./hooks/useMapDownload";
+import { useMapDraw } from "./hooks/useMapDraw";
+import { useMapFullscreen } from "./hooks/useMapFullscreen";
+import { useMapLayers } from "./hooks/useMapLayers";
+import { useMapMedia } from "./hooks/useMapMedia";
+import { useMapOverlays } from "./hooks/useMapOverlays";
+import { useMapPopups } from "./hooks/useMapPopups";
+import { useMapStyle } from "./hooks/useMapStyle";
+import { addGeojsonToDraw } from "./interactions/draw";
+import type {
+  DashboardGetProjectsData,
+  DashboardPopupContext,
+  EntityData,
+  MapFunctions,
+  MobilePopupData,
+  PolygonCentroid,
+  PolygonFromMapState,
+  SetPolygonFromMap,
+  TooltipType
+} from "./Map.d";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
 import { FilterControl } from "./MapControls/FilterControl";
-import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
-import { PolygonHandler } from "./MapControls/PolygonHandler";
-import PolygonModifier from "./MapControls/PolygonModifier";
-import ProcessBulkPolygonsControl from "./MapControls/ProcessBulkPolygonsControl";
-import { StyleControl } from "./MapControls/StyleControl";
-import TrashButton from "./MapControls/TrashButton";
 import { MapStyle } from "./MapControls/types";
-import ViewImageGalleryButton from "./MapControls/ViewImageGalleryButton";
-import { ZoomControl } from "./MapControls/ZoomControl";
-import {
-  addBorderCountry,
-  addBorderLandscape,
-  addDeleteLayer,
-  addFilterOnLayer,
-  addGeojsonToDraw,
-  addMarkerAndZoom,
-  addMediaSourceAndLayer,
-  addPopupsToMap,
-  addSourcesToLayers,
-  downloadMultiplePolygonsGeoJson,
-  downloadProjectPolygonsGeoJson,
-  drawTemporaryPolygon,
-  fetchPolygonGeometry,
-  getCurrentMapStyle,
-  removeAnrPlotGeometryOverlay,
-  removeBorderCountry,
-  removeBorderLandscape,
-  removePopups,
-  setMapStyle,
-  startDrawing,
-  stopDrawing,
-  updatePolygonProjectGeometry,
-  upsertAnrPlotGeometryOverlay,
-  zoomToBbox,
-  zoomToCenter
-} from "./utils";
 
-interface LegendItem {
-  color: string;
-  text: string;
-  uuid: string;
-}
+export type { DashboardGetProjectsData, PolygonCentroid };
 
-// Fullscreen API type definitions for Safari (webkit) and Chrome
-interface DocumentWithFullscreen extends Document {
-  webkitFullscreenElement?: Element | null;
-  webkitExitFullscreen?: () => Promise<void>;
-}
-
-interface HTMLElementWithFullscreen extends HTMLElement {
-  webkitRequestFullscreen?: () => Promise<void>;
-}
-
-export type DashboardGetProjectsData = {
-  uuid?: string;
-  name?: string;
-  lat?: number;
-  long?: number;
-};
-
-interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onError"> {
-  geojson?: any;
-  editable?: boolean;
-
-  onGeojsonChange?: (featuresCollection?: GeoJSON.FeatureCollection | null) => void;
-  onError?: (hasError: boolean, errors: { [index: string | number]: ValidationError | undefined }) => void;
-  onDeleteImage?: (uuid: string) => void;
-  additionalPolygonProperties?: AdditionalPolygonProperties;
-  captureAdditionalPolygonProperties?: boolean;
-  hasControls?: boolean;
-  siteData?: boolean;
-  status?: boolean;
-  validationType?: string;
-  editPolygon?: boolean;
-  polygonChecks?: boolean;
-  legend?: LegendItem[];
-  centroids?: DashboardGetProjectsData[];
+export interface BaseMapProps {
+  mapFunctions?: MapFunctions;
   polygonsData?: Record<string, string[]>;
-  polygonsCentroids?: any[];
   bbox?: BBox;
   center?: [number, number];
   zoom?: number;
   mapStyle?: MapStyle;
   onStyleChange?: (style: MapStyle) => void;
-  setPolygonFromMap?: React.Dispatch<
-    React.SetStateAction<{ uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string }>
-  >;
-  polygonFromMap?: { uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string };
-  record?: any;
   showPopups?: boolean;
   showLegend?: boolean;
-  showDownloadPolygons?: boolean;
-  mapFunctions?: any;
+  hasControls?: boolean;
+  entityData?: EntityData;
+  mediaFiles?: MediaDto[];
   tooltipType?: TooltipType;
   sitePolygonData?: SitePolygonLightDto[];
+  className?: string;
+  legendPosition?: ControlMapPosition;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
-  modelFilesData?: MediaDto[];
-  formMap?: boolean;
-  pdView?: boolean;
-  location?: LngLat;
-  isDashboard?: "dashboard" | "modal" | undefined;
-  entityData?: any;
-  imageGalleryRef?: React.RefObject<HTMLDivElement>;
-  listViewProjects?: any;
-  role?: any;
-  selectedCountry?: string | null;
+  /** Tile cache key from another map; modal can reuse the same Geoserver RND. */
+  initialTileVersion?: string;
+  /** When it matches current polygon data, skip bumping the tile cache on mount. */
+  initialPolygonFingerprint?: string;
+}
+
+export interface DashboardMapExtras {
+  dashboardMode: "dashboard" | "modal";
+  dashboardContext?: DashboardPopupContext;
+  centroids?: DashboardGetProjectsData[];
+  polygonsCentroids?: PolygonCentroid[];
   selectedLandscapes?: string[];
-  projectUUID?: string | undefined;
+  projectUUID?: string;
+  hasAccess?: boolean;
   setLoader?: (value: boolean) => void;
+}
+
+export interface AdminMapExtras {
+  status?: boolean;
+  validationType?: string;
+  polygonChecks?: boolean;
+  siteData?: boolean;
+  record?: { uuid?: string; organisation?: { name?: string } };
+  showDownloadPolygons?: boolean;
   setIsLoadingDelayedJob?: (value: boolean) => void;
   isLoadingDelayedJob?: boolean;
   setAlertTitle?: (value: string) => void;
-  showViewGallery?: boolean;
-  legendPosition?: ControlMapPosition;
-  hasAccess?: boolean;
-  dashboardContext?: {
-    setFilters: (fn: (prev: any) => any) => void;
-    dashboardCountries?: any[];
-    isDashboard?: string;
-  };
   disabledPolygonPanel?: boolean;
+  setPolygonFromMap?: SetPolygonFromMap;
+  polygonFromMap?: PolygonFromMapState;
+  imageGalleryRef?: React.RefObject<HTMLDivElement>;
+  showViewGallery?: boolean;
 }
+
+export interface FormMapExtras {
+  formMap?: boolean;
+  editable?: boolean;
+  geojson?: GeoJSON.FeatureCollection | GeoJSON.Feature | null;
+  onGeojsonChange?: (featuresCollection?: GeoJSON.FeatureCollection | null) => void;
+  onError?: (hasError: boolean, errors: { [index: string | number]: ValidationError | undefined }) => void;
+  onDeleteImage?: (uuid: string) => void;
+  additionalPolygonProperties?: AdditionalPolygonProperties;
+  captureAdditionalPolygonProperties?: boolean;
+  setPolygonFromMap?: SetPolygonFromMap;
+  polygonFromMap?: PolygonFromMapState;
+}
+
+export interface ReadOnlyMapExtras {
+  location?: { lat: number; lng: number } | null;
+}
+
+interface MapProps
+  extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onError">,
+    BaseMapProps,
+    Partial<DashboardMapExtras>,
+    AdminMapExtras,
+    FormMapExtras,
+    ReadOnlyMapExtras {}
 
 export const MapEditingContext = createContext({
   isEditing: false,
-  setIsEditing: (value: boolean) => {}
+  setIsEditing: (_value: boolean) => {}
 });
 
 export const MapContainer = ({
   onError: _onError,
   editable,
   geojson,
-  onGeojsonChange,
+  onGeojsonChange: _onGeojsonChange,
   className,
-  onDeleteImage,
+  onDeleteImage: _onDeleteImage,
   hasControls = true,
-  additionalPolygonProperties,
-  captureAdditionalPolygonProperties,
+  additionalPolygonProperties: _additionalPolygonProperties,
+  captureAdditionalPolygonProperties: _captureAdditionalPolygonProperties,
   siteData = false,
   status = false,
   validationType = "bulkValidation",
-  editPolygon = false,
   polygonChecks = false,
   record,
   showPopups = false,
@@ -199,14 +162,12 @@ export const MapContainer = ({
   tooltipType = "view",
   polygonsExists = true,
   shouldBboxZoom = true,
-  isDashboard = undefined,
+  dashboardMode = undefined,
   formMap,
-  pdView = false,
   location,
   entityData,
   imageGalleryRef,
   centroids,
-  listViewProjects,
   setIsLoadingDelayedJob,
   isLoadingDelayedJob,
   setAlertTitle,
@@ -217,8 +178,10 @@ export const MapContainer = ({
   disabledPolygonPanel = false,
   ...props
 }: MapProps) => {
-  const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
-  const [viewImages, setViewImages] = useState(false);
+  if (mapFunctions == null) return null;
+
+  const { map, mapContainer, draw, onCancel, initMap } = mapFunctions;
+
   const {
     polygonsData,
     polygonsCentroids,
@@ -230,30 +193,33 @@ export const MapContainer = ({
     setPolygonFromMap,
     polygonFromMap,
     sitePolygonData,
-    selectedCountry,
     selectedLandscapes,
     projectUUID,
-    setLoader
+    setLoader,
+    initialTileVersion,
+    initialPolygonFingerprint
   } = props;
-  const [currentStyle, setCurrentStyle] = useState<MapStyle>(() => {
-    return mapStyleProp !== undefined ? mapStyleProp : isDashboard ? MapStyle.Street : MapStyle.Satellite;
-  });
+
+  const [viewImages, setViewImages] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
-  const [userChangedStyle, setUserChangedStyle] = useState(false);
-  const [isMapReady, setIsMapReady] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(() => {
-    // Initialize fullscreen state based on current browser state
-    const doc = document as DocumentWithFullscreen;
-    return !!(doc.fullscreenElement || doc.webkitFullscreenElement);
-  });
+  const [mobilePopupData, setMobilePopupData] = useState<MobilePopupData | null>(null);
+  const mapMarkerRef = useRef<Marker | null>(null);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
-  const [mobilePopupData, setMobilePopupData] = useState<any>(null);
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const dashboardContextFromHook = useDashboardContext();
   const { setFilters, dashboardCountries } = dashboardContextFromHook ?? {};
+
+  const resolvedDashboardContext: DashboardPopupContext | undefined =
+    dashboardMode != null
+      ? {
+          dashboardMode,
+          setFilters: dashboardContext?.setFilters ?? setFilters,
+          dashboardCountries: dashboardContext?.dashboardCountries ?? dashboardCountries
+        }
+      : undefined;
+
   const { reloadSiteData } = context ?? {};
   const t = useT();
   const { showLoader, hideLoader } = useLoading();
@@ -263,7 +229,7 @@ export const MapContainer = ({
   const {
     isUserDrawingEnabled,
     selectedPolyVersion,
-    editPolygon: editPolygonSelected,
+    editPolygon,
     setEditPolygon,
     setShouldRefetchPolygonData,
     setShouldRefetchMediaData,
@@ -285,801 +251,208 @@ export const MapContainer = ({
     enabled: anrPlotGeometryFetchEnabled
   });
 
-  const handleStyleChange = (newStyle: MapStyle) => {
-    setCurrentStyle(newStyle);
-    setUserChangedStyle(true);
-    onStyleChange?.(newStyle);
-  };
-  if (!mapFunctions) {
-    return null;
-  }
-  const { map, mapContainer, draw, onCancel, styleLoaded, initMap, setStyleLoaded } = mapFunctions;
-
   const polygonBbox = useBoundingBox(
-    entityData?.entityName == "project-pitch"
+    entityData?.entityName === "project-pitch"
       ? { projectPitchUuid: entityData?.entityUUID }
       : { polygonUuid: polygonFromMap?.uuid }
   );
 
   useOnMount(() => {
-    const initialStyle = mapStyleProp !== undefined ? mapStyleProp : isDashboard ? MapStyle.Street : MapStyle.Satellite;
-    initMap(!!isDashboard, initialStyle);
+    const initialStyle =
+      mapStyleProp !== undefined ? mapStyleProp : dashboardMode ? MapStyle.Street : MapStyle.Satellite;
+    initMap(!!dashboardMode, initialStyle);
     return () => {
-      if (map.current) {
-        setStyleLoaded(false);
+      if (mapMarkerRef.current != null) {
+        mapMarkerRef.current.remove();
+        mapMarkerRef.current = null;
+      }
+      if (map.current != null) {
         map.current.remove();
         map.current = null;
       }
     };
   });
 
-  useEffect(() => {
-    if (!map?.current) return;
-
-    const handleMapReady = () => {
-      setIsMapReady(true);
-    };
-
-    if (map.current.isStyleLoaded()) {
-      handleMapReady();
-    } else {
-      map.current.once("style.load", handleMapReady);
-    }
-
-    map.current.on("style.load", handleMapReady);
-
-    return () => {
-      map.current?.off("style.load", handleMapReady);
-    };
-  }, [map]);
-
-  useEffect(() => {
-    if (!map) return;
-    if (location && location.lat !== 0 && location.lng !== 0) {
-      addMarkerAndZoom(map.current, location);
-    }
-  }, [map, location]);
-
-  useValueChanged(isUserDrawingEnabled, () => {
-    if (map?.current && draw?.current) {
-      if (isUserDrawingEnabled) {
-        startDrawing(draw.current, map.current);
-        if (formMap && polygonFromMap?.uuid) {
-          handleAddGeojsonToDraw(polygonFromMap?.uuid);
-        }
-      } else {
-        stopDrawing(draw.current, map.current);
-      }
-    }
-  });
-
-  useEffect(() => {
-    if (!map?.current || (!isDashboard && _.isEmpty(polygonsData))) return;
-
-    const currentMap = map.current as mapboxgl.Map;
-    let isEffectActive = true;
-    let hasSetupRun = false;
-
-    const setupMap = () => {
-      if (!isEffectActive || hasSetupRun) return;
-      hasSetupRun = true;
-
-      const zoomFilter = isDashboard ? 9 : undefined;
-      let polygonsDataToUse = polygonsData;
-      if (isDashboard && projectUUID && hasAccess === false) {
-        polygonsDataToUse = {};
-      }
-
-      addSourcesToLayers(currentMap, polygonsDataToUse, centroids, zoomFilter, isDashboard, polygonsCentroids);
-      setSourcesAdded(true);
-
-      if (showPopups) {
-        addPopupsToMap(
-          currentMap,
-          isDashboard ? DashboardPopup : AdminPopup,
-          setPolygonFromMap,
-          sitePolygonData,
-          tooltipType,
-          editPolygonSelected,
-          setEditPolygon,
-          draw.current,
-          isDashboard,
-          dashboardContext?.setFilters ?? setFilters,
-          dashboardContext?.dashboardCountries ?? dashboardCountries,
-          setLoader,
-          selectedCountry,
-          isMobile || isDashboard ? setMobilePopupData : undefined
-        );
-      }
-    };
-
-    setSourcesAdded(false);
-
-    const isMapReady = () => {
-      try {
-        return !currentMap.isMoving() && currentMap.loaded() && currentMap.isStyleLoaded();
-      } catch {
-        return false;
-      }
-    };
-    if (isMapReady()) {
-      setupMap();
-    } else {
-      const handleIdle = () => {
-        setupMap();
-      };
-      currentMap.on("idle", handleIdle);
-      const cleanupIdle = () => {
-        if (hasSetupRun) {
-          currentMap.off("idle", handleIdle);
-        }
-      };
-      currentMap.once("idle", cleanupIdle);
-    }
-
-    const handleStyleLoad = () => {
-      hasSetupRun = false;
-      setSourcesAdded(false);
-      const handleIdleAfterStyle = () => {
-        setupMap();
-        currentMap.off("idle", handleIdleAfterStyle);
-      };
-      if (isMapReady()) {
-        setupMap();
-      } else {
-        currentMap.on("idle", handleIdleAfterStyle);
-      }
-    };
-
-    currentMap.on("style.load", handleStyleLoad);
-
-    return () => {
-      isEffectActive = false;
-      currentMap.off("style.load", handleStyleLoad);
-      currentMap.off("idle", () => {});
-    };
-  }, [
-    sitePolygonData,
-    polygonsCentroids,
-    polygonsData,
-    showPopups,
-    centroids,
-    dashboardCountries,
-    draw,
-    editPolygonSelected,
-    isDashboard,
-    isMobile,
-    map,
-    selectedCountry,
-    setEditPolygon,
-    setFilters,
-    setLoader,
-    setPolygonFromMap,
-    tooltipType,
-    projectUUID,
-    hasAccess,
-    dashboardContext
-  ]);
-
-  useGoogleSatellite(currentStyle, styleLoaded, map, mapContainer);
-
-  useEffect(() => {
-    if (!map?.current) {
-      return;
-    }
-    const currentMap = map.current;
-
-    const applyAnrOverlay = () => {
-      const features = anrPlotGeometryDto?.geojson?.features;
-      const shouldShow =
-        anrMapOverlay != null &&
-        anrMapOverlay.drawerOpen &&
-        anrMapOverlay.anrTabActive &&
-        anrMapOverlay.showPlotsOnMap &&
-        features != null &&
-        features.length > 0;
-      if (!shouldShow) {
-        removeAnrPlotGeometryOverlay(currentMap);
-        return;
-      }
-      upsertAnrPlotGeometryOverlay(currentMap, anrPlotGeometryDto?.geojson, { visible: true });
-    };
-
-    currentMap.on("style.load", applyAnrOverlay);
-    applyAnrOverlay();
-    return () => {
-      currentMap.off("style.load", applyAnrOverlay);
-      removeAnrPlotGeometryOverlay(currentMap);
-    };
-  }, [map, anrMapOverlay, anrPlotGeometryDto, styleLoaded, sourcesAdded]);
-
-  useEffect(() => {
-    if (!map.current || !styleLoaded) return;
-
-    if (mapStyleProp != null && mapStyleProp !== currentStyle) {
-      const actualStyle = getCurrentMapStyle(map.current);
-      if (actualStyle !== mapStyleProp) {
-        setMapStyle(mapStyleProp, map.current, setCurrentStyle, currentStyle);
-      } else {
-        setCurrentStyle(mapStyleProp);
-      }
-    }
-  }, [mapStyleProp, map, currentStyle, styleLoaded]);
-
-  useEffect(() => {
-    if (!map.current || !shouldBboxZoom) return;
-
-    if (center && zoom !== undefined) {
-      const currentCenter = map.current.getCenter();
-      const currentZoom = map.current.getZoom();
-      const [lng, lat] = center;
-
-      const centerChanged = Math.abs(currentCenter.lng - lng) > 0.0001 || Math.abs(currentCenter.lat - lat) > 0.0001;
-      const zoomChanged = Math.abs(currentZoom - zoom) > 0.01;
-
-      if (centerChanged || zoomChanged) {
-        zoomToCenter(center, zoom, map.current);
-      }
-    } else if (bbox) {
-      zoomToBbox(bbox, map.current, hasControls);
-    }
-  }, [bbox, center, zoom, map, hasControls, shouldBboxZoom]);
-
-  useEffect(() => {
-    if (!map.current || !sourcesAdded) return;
-    const setupBorders = () => {
-      if (selectedCountry) {
-        addBorderCountry(map.current, selectedCountry);
-      } else {
-        removeBorderCountry(map.current);
-      }
-    };
-    if (map.current.isStyleLoaded()) {
-      setupBorders();
-    } else {
-      map.current.once("render", () => {
-        setupBorders();
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCountry, styleLoaded, sourcesAdded]);
-  useEffect(() => {
-    if (!map.current || !sourcesAdded) return;
-    const setupBorders = () => {
-      if (selectedLandscapes && selectedLandscapes.length > 0) {
-        addBorderLandscape(map.current, selectedLandscapes);
-      } else {
-        removeBorderLandscape(map.current);
-      }
-    };
-    if (map.current.isStyleLoaded()) {
-      setupBorders();
-    } else {
-      map.current.once("render", () => {
-        setupBorders();
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedLandscapes, styleLoaded, sourcesAdded]);
-  useEffect(() => {
-    setUserChangedStyle(false);
-  }, [projectUUID]);
-
-  useEffect(() => {
-    if (!map.current || !projectUUID || userChangedStyle) return;
-
-    if (map.current.isStyleLoaded()) {
-      setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
-    } else {
-      map.current.once("render", () => {
-        setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectUUID, userChangedStyle]);
-
-  useEffect(() => {
-    const isProjectPath = router.isReady && router.asPath.includes("project");
-    const handleDelete = async (id: string) => {
-      try {
-        await deleteMedia(id);
-        setShouldRefetchMediaData(true);
-      } catch (error) {
-        Log.error(error);
-      }
-      closeModal(ModalId.DELETE_IMAGE);
-    };
-
-    const openModalImageDetail = (data: MediaDto) => {
-      openModal(
-        ModalId.MODAL_IMAGE_DETAIL,
-        <ModalImageDetails
-          title="IMAGE DETAILS"
-          data={data}
-          entityData={entityData}
-          onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
-          reloadGalleryImages={() => {
-            setShouldRefetchMediaData(true);
-          }}
-          handleDelete={handleDelete}
-        />,
-        true
-      );
-    };
-
-    const setImageCover = async (uuid: string) => {
-      const result = await updateMedia({ isCover: true, profileImageScale: 0, profileImagePosition: {} }, { id: uuid });
-      if (result) {
-        openNotification("success", t("Success!"), t("Image set as cover successfully"));
-        setShouldRefetchMediaData(true);
-      } else {
-        openNotification("error", t("Error!"), t("Failed to set image as cover"));
-      }
-    };
-
-    const handleDownload = async (uuid: string, file_name: string): Promise<void> => {
-      showLoader();
-      try {
-        const blob = await downloadImage(uuid);
-        const url = window.URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = file_name || "image.jpg";
-        document.body.appendChild(link);
-        link.click();
-
-        link.remove();
-        window.URL.revokeObjectURL(url);
-        hideLoader();
-        openNotification("success", t("Success!"), t("Image downloaded successfully"));
-      } catch (error) {
-        Log.error("Download error:", error);
-        hideLoader();
-      }
-    };
-
-    if (map?.current && styleLoaded && props?.modelFilesData) {
-      addMediaSourceAndLayer(
-        map.current,
-        props?.modelFilesData,
-        setImageCover,
-        handleDownload,
-        handleDelete,
-        openModalImageDetail,
-        isProjectPath
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props?.modelFilesData, styleLoaded]);
-
   useOnMount(() => {
-    if (geojson && map.current && draw.current) {
+    if (geojson != null && map.current != null && draw.current != null) {
       addGeojsonToDraw(geojson, "", () => {}, draw.current, map.current);
     }
   });
 
-  function handleAddGeojsonToDraw(polygonuuid: string) {
-    if (polygonsData && map.current && draw.current) {
-      const currentMap = map.current;
-      const newPolygonData = JSON.parse(JSON.stringify(polygonsData));
-      const statuses = ["submitted", "approved", "need-more-info", "draft", "form-polygons"];
-      statuses.forEach(status => {
-        if (newPolygonData[status]) {
-          newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
-        }
-      });
-      addFilterOnLayer(
-        layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
-        newPolygonData,
-        currentMap
-      );
-    }
-  }
-
-  useEffect(() => {
-    if (selectedPolygonsInCheckbox && map.current && styleLoaded) {
-      const newPolygonData = {
-        [DELETED_POLYGONS]: selectedPolygonsInCheckbox
-      };
-      addDeleteLayer(
-        layersList.find(layer => layer.name === LAYERS_NAMES.DELETED_GEOMETRIES),
-        map.current as mapboxgl.Map,
-        newPolygonData
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPolygonsInCheckbox, styleLoaded]);
-
-  const handleEditPolygon = async () => {
-    removePopups("POLYGON");
-    if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
-      const polygonuuid = polygonFromMap?.uuid as string;
-      const isProjectPolygon =
-        polygonFromMap?.entityName == "project-pitches" || polygonFromMap?.entityName == "project-pitch";
-      const projectPitchUuid = polygonFromMap?.projectPitchUuid;
-
-      try {
-        const geometry = await fetchPolygonGeometry(polygonuuid, true, isProjectPolygon ? projectPitchUuid : undefined);
-        if (geometry == null) {
-          openNotification("error", t("Error"), t("No geometry found for polygon. The polygon may have been deleted."));
-          return;
-        }
-        if (map.current && draw.current && geometry) {
-          addGeojsonToDraw(geometry, polygonuuid, () => handleAddGeojsonToDraw(polygonuuid), draw.current);
-        }
-      } catch (error) {
-        Log.error("Error fetching polygon geometry:", error);
-        openNotification("error", t("Error"), t("Failed to load polygon geometry. Please try again."));
-      }
-    }
-  };
-
-  const onSaveEdit = async () => {
-    if (map.current && draw.current) {
-      const geojson = draw.current.getAll();
-      if (geojson) {
-        if (polygonFromMap?.uuid) {
-          !pdView && onCancelEdit();
-          const feature = geojson.features[0];
-
-          if (formMap) {
-            try {
-              showLoader();
-              const projectPitchUuid = polygonFromMap?.projectPitchUuid;
-              await updatePolygonProjectGeometry([feature], polygonFromMap.uuid, reloadSiteData);
-
-              if (draw.current) {
-                draw.current.deleteAll();
-              }
-
-              await new Promise(resolve => setTimeout(resolve, 100));
-
-              const isProjectPolygon = polygonFromMap?.entityName == "project-pitches";
-
-              const updatedGeometry = await fetchPolygonGeometry(
-                polygonFromMap.uuid,
-                true,
-                isProjectPolygon ? projectPitchUuid : undefined
-              );
-              if (updatedGeometry && map.current) {
-                const newPolygonData = { [FORM_POLYGONS]: [polygonFromMap.uuid] };
-                addSourcesToLayers(map.current, newPolygonData, centroids);
-              }
-
-              openNotification("success", t("Success"), t("Project polygon updated successfully."));
-            } catch (e: any) {
-              openNotification("error", t("Error"), e?.message || t("Please try again later."));
-            } finally {
-              hideLoader();
-            }
-            return;
-          }
-
-          const selectedPolygon = sitePolygonData?.find(item => item.polygonUuid === polygonFromMap?.uuid);
-          if (selectedPolygon?.primaryUuid == null) {
-            openNotification("error", t("Error"), t("Missing polygon information"));
-            return;
-          }
-
-          try {
-            showLoader();
-
-            const siteId = selectedPolygon?.siteId;
-            if (!siteId) {
-              throw new Error("Missing siteId for polygon");
-            }
-
-            await createVersionWithGeometry(
-              selectedPolygon.primaryUuid,
-              pdView ? "Updated geometry" : "Updated geometry from admin panel",
-              {
-                type: "Feature",
-                geometry: feature.geometry,
-                properties: {
-                  site_id: siteId
-                }
-              }
-            );
-
-            if (selectedPolygon.polygonUuid != null) {
-              await ApiSlice.pruneCache("sitePolygons", [selectedPolygon.polygonUuid]);
-            }
-
-            const polygonVersionResponse = await loadListPolygonVersions({
-              uuid: selectedPolygon.primaryUuid
-            });
-
-            const polygonActive = polygonVersionResponse?.data?.find((item: SitePolygonLightDto) => item.isActive);
-            if (selectedPolygon?.uuid) {
-              reloadSiteData?.();
-            }
-            setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.polygonUuid as string });
-            setStatusSelectedPolygon?.(polygonActive?.status as string);
-
-            onCancel(polygonsData);
-            addSourcesToLayers(map.current, polygonsData, centroids);
-            setShouldRefetchPolygonData(true);
-            openNotification("success", t("Success"), t("Site polygon version created successfully."));
-          } catch (e: any) {
-            openNotification("error", t("Error"), e?.message || t("Please try again later."));
-          } finally {
-            hideLoader();
-          }
-        }
-      }
-    }
-  };
-
-  const onCancelEdit = () => {
-    onCancel(polygonsData);
-  };
-
-  const addGeometryVersion = async () => {
-    const polygonUuid = (selectedPolyVersion as any)?.polygonUuid ?? (selectedPolyVersion as any)?.poly_id;
-    if (!polygonUuid) {
-      Log.warn("Cannot add geometry version: polygonUuid is undefined", selectedPolyVersion);
-      return;
-    }
-    const geometry = await fetchPolygonGeometry(polygonUuid);
-    drawTemporaryPolygon(geometry, () => {}, map.current, selectedPolyVersion);
-  };
-
-  useValueChanged(selectedPolyVersion, () => {
-    if (map?.current?.getSource("temp-polygon-source") || map?.current?.getLayer("temp-polygon-source-line")) {
-      map?.current.removeLayer("temp-polygon-source-line");
-      map?.current?.removeLayer("temp-polygon-source");
-      map?.current?.removeSource("temp-polygon-source");
-    }
-
-    const polygonUuid = (selectedPolyVersion as any)?.polygonUuid ?? (selectedPolyVersion as any)?.poly_id;
-    if (selectedPolyVersion && polygonUuid) {
-      addGeometryVersion();
-    }
+  useOnMount(() => {
+    const el = mapContainer.current;
+    if (el == null) return;
+    const ro = new ResizeObserver(() => map.current?.resize());
+    ro.observe(el);
+    return () => ro.disconnect();
   });
 
+  const [mapInstanceForReadiness, setMapInstanceForReadiness] = useState<MapboxMap | null>(null);
   useEffect(() => {
-    if (polygonFromMap?.isOpen && polygonFromMap?.uuid && polygonBbox && map.current) {
-      zoomToBbox(polygonBbox as BBox, map.current, true);
-    }
-  }, [polygonFromMap, polygonBbox, map]);
-
-  const downloadGeoJsonPolygon = async () => {
-    setIsDownloadingPolygons(true);
-    try {
-      const isProjectContext = entityData?.entityName == "project-pitches";
-      const projectPitchUuid = entityData?.entityUUID;
-
-      if (isProjectContext && projectPitchUuid != null) {
-        const projectName = record?.organisation?.name ?? "project";
-        const filename = `${_.replace(projectName, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}`;
-        await downloadProjectPolygonsGeoJson(projectPitchUuid, filename);
-        openNotification("success", t("Success"), t("Successfully downloaded project polygons."));
-      } else {
-        let polygonsToDownload: string[] = [];
-        if (polygonsData) {
-          const allPolygons: string[] = [];
-          Object.values(polygonsData).forEach(statusPolygons => {
-            if (Array.isArray(statusPolygons)) {
-              allPolygons.push(...statusPolygons);
-            }
-          });
-          polygonsToDownload = allPolygons;
-        }
-
-        if (polygonsToDownload.length === 0) {
-          openNotification("error", t("Error"), t("No polygons found to download."));
-          return;
-        }
-
-        const nameFile = record?.organisation?.name ?? "polygons";
-        const filename = `${_.replace(nameFile, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}`;
-        await downloadMultiplePolygonsGeoJson(polygonsToDownload, filename);
-        openNotification(
-          "success",
-          t("Success"),
-          t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`)
-        );
-      }
-    } catch (error: any) {
-      Log.error("Download error:", error);
-      // Show more specific error message
-      const errorMessage = error?.message ?? t("Failed to download polygons. Please try again.");
-      openNotification("error", t("Error"), errorMessage);
-    } finally {
-      setIsDownloadingPolygons(false);
-    }
-  };
-
-  const getFullscreenStatus = (): boolean => {
-    const doc = document as DocumentWithFullscreen;
-    return !!(doc.fullscreenElement || doc.webkitFullscreenElement);
-  };
-
-  const toggleFullscreen = async () => {
-    if (!mapContainer.current) return;
-
-    const element = mapContainer.current as HTMLElementWithFullscreen;
-    const doc = document as DocumentWithFullscreen;
-
-    const isCurrentlyFullscreen = getFullscreenStatus();
-
-    try {
-      if (!isCurrentlyFullscreen) {
-        if (element.requestFullscreen) {
-          await element.requestFullscreen();
-        } else if (element.webkitRequestFullscreen) {
-          await element.webkitRequestFullscreen();
-        }
-      } else {
-        if (doc.exitFullscreen) {
-          await doc.exitFullscreen();
-        } else if (doc.webkitExitFullscreen) {
-          await doc.webkitExitFullscreen();
-        }
-      }
-    } catch (error) {
-      Log.error("Fullscreen error:", error);
-    }
-  };
-
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      const isCurrentlyFullscreen = getFullscreenStatus();
-      setIsFullscreen(isCurrentlyFullscreen);
-
-      if (map.current) {
-        requestAnimationFrame(() => {
-          map.current?.resize();
-        });
-      }
-    };
-
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
-
+    if (map == null) return;
+    const t = window.setInterval(() => {
+      setMapInstanceForReadiness(prev => {
+        const c = map.current;
+        return c === prev ? prev : c;
+      });
+    }, 100);
     return () => {
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+      clearInterval(t);
     };
   }, [map]);
 
+  const { styleReady, styleVersion } = useMapReadiness(mapInstanceForReadiness);
+
+  const { currentStyle, handleStyleChange } = useMapStyle({
+    map,
+    mapStyleProp,
+    styleReady,
+    projectUUID,
+    dashboardMode,
+    onStyleChange
+  });
+
+  const { sourcesAdded } = useMapLayers({
+    map,
+    draw,
+    styleReady,
+    styleVersion,
+    polygonsData,
+    centroids,
+    polygonsCentroids,
+    dashboardMode,
+    projectUUID,
+    hasAccess,
+    selectedPolygonsInCheckbox,
+    initialTileVersion,
+    initialPolygonFingerprint
+  });
+
+  useMapPopups({
+    map,
+    draw,
+    sourcesAdded,
+    showPopups,
+    sitePolygonData,
+    tooltipType,
+    isMobile,
+    setLoader,
+    setPolygonFromMap,
+    setEditPolygon,
+    editPolygon,
+    setMobilePopupData,
+    dashboardContext: resolvedDashboardContext
+  });
+
+  useMapCamera({
+    map,
+    bbox,
+    center,
+    zoom,
+    hasControls,
+    shouldBboxZoom,
+    polygonFromMap,
+    polygonBbox,
+    isUserDrawingEnabled,
+    isEditing
+  });
+
+  useMapOverlays({
+    map,
+    selectedLandscapes,
+    anrMapOverlay,
+    anrPlotGeometryDto,
+    styleReady,
+    styleVersion,
+    sourcesAdded
+  });
+
+  useMapMedia({
+    map,
+    mediaFiles: props.mediaFiles,
+    styleReady,
+    styleVersion,
+    entityData,
+    t,
+    showLoader,
+    hideLoader,
+    openNotification,
+    openModal,
+    closeModal,
+    setShouldRefetchMediaData,
+    router
+  });
+
+  const { handleEditPolygon, onSaveEdit, onCancelEdit } = useMapDraw({
+    map,
+    draw,
+    isUserDrawingEnabled,
+    formMap,
+    polygonFromMap,
+    polygonsData,
+    centroids,
+    sitePolygonData,
+    selectedPolyVersion,
+    onCancel,
+    setPolygonFromMap,
+    reloadSiteData,
+    setShouldRefetchPolygonData,
+    setStatusSelectedPolygon,
+    t,
+    showLoader,
+    hideLoader,
+    openNotification
+  });
+
+  const { isFullscreen, toggleFullscreen } = useMapFullscreen({ mapContainer, map });
+
+  const { isDownloadingPolygons, downloadGeoJsonPolygon } = useMapDownload({
+    polygonsData,
+    entityData,
+    record,
+    t,
+    openNotification
+  });
+
+  useGoogleSatellite(currentStyle, styleReady, styleVersion, map, mapContainer);
+
+  useEffect(() => {
+    if (map.current == null || location == null || location.lat === 0 || location.lng === 0) return;
+    mapMarkerRef.current = addOrUpdateMarkerAndZoom(map.current, location, mapMarkerRef.current);
+  }, [map, location]);
+
   return (
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
-      <div ref={mapContainer} className={twMerge("relative h-[500px] wide:h-[700px]", className)} id="map-container">
-        {showDownloadPolygons ? (
-          <ControlGroup position="top-right">
-            <button
-              type="button"
-              className="shadow-lg z-10 flex h-10 w-56 items-center justify-center gap-2 rounded border border-neutral-175 bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
-              onClick={downloadGeoJsonPolygon}
-              disabled={isDownloadingPolygons}
-            >
-              {isDownloadingPolygons ? (
-                <Icon name={IconNames.SPINNER} className="h-5 w-5 animate-spin lg:h-6 lg:w-6" />
-              ) : (
-                <Icon name={IconNames.DOWNLOAD} className="h-5 w-5 lg:h-6 lg:w-6" />
-              )}
-              <span>{isDownloadingPolygons ? "Downloading..." : "Download Polygons"}</span>
-            </button>
-          </ControlGroup>
-        ) : null}
-        {hasControls ? (
-          <>
-            {polygonFromMap?.isOpen && !formMap && !disabledPolygonPanel ? (
-              <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
-                <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
-              </ControlGroup>
-            ) : null}
-            {selectedPolygonsInCheckbox.length > 0 && !disabledPolygonPanel ? (
-              <ControlGroup position={siteData ? "top-centerSite" : "top-centerPolygonsInCheckbox"}>
-                <ProcessBulkPolygonsControl
-                  entityData={record}
-                  setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
-                  isLoadingDelayedJob={isLoadingDelayedJob!}
-                  setAlertTitle={setAlertTitle!}
-                />
-              </ControlGroup>
-            ) : null}
-            {isDashboard !== "dashboard" && isMapReady && map.current != null ? (
-              <ControlGroup position="top-right">
-                <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
-              </ControlGroup>
-            ) : null}
-            <ControlGroup position="top-right" className="top-[4.5rem]">
-              <ZoomControl map={map.current} />
-            </ControlGroup>
+      <MapCanvas mapContainer={mapContainer} className={className}>
+        <MapControlsOverlay
+          hasControls={hasControls}
+          draw={{
+            handleEditPolygon,
+            onSaveEdit,
+            onCancelEdit,
+            isEditing,
+            handleTrashDelete: mapFunctions.handleTrashDelete
+          }}
+          style={{ map: map.current, currentStyle, handleStyleChange, styleReady }}
+          admin={{
+            record,
+            siteData,
+            validationType,
+            status,
+            isFullscreen,
+            setIsLoadingDelayedJob,
+            isLoadingDelayedJob,
+            setAlertTitle,
+            disabledPolygonPanel,
+            selectedPolygonsInCheckbox
+          }}
+          form={{ formMap, editable, polygonFromMap, viewImages, setViewImages }}
+          camera={{ map: map.current, center, zoom, bbox, hasControls }}
+          gallery={{ dashboardMode, showViewGallery, imageGalleryRef }}
+          download={{ showDownloadPolygons, isDownloadingPolygons, downloadGeoJsonPolygon }}
+          fullscreen={{ dashboardMode, isFullscreen, toggleFullscreen }}
+        />
 
-            {record?.uuid != null && validationType === "bulkValidation" && !disabledPolygonPanel ? (
-              <ControlGroup position={siteData ? "top-left-site" : "top-left"} isFullscreen={isFullscreen}>
-                <CheckPolygonControl
-                  siteRecord={record}
-                  polygonCheck={!siteData}
-                  setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
-                  isLoadingDelayedJob={isLoadingDelayedJob!}
-                  setAlertTitle={setAlertTitle!}
-                />
-              </ControlGroup>
-            ) : null}
-            {formMap ? (
-              <>
-                <ControlGroup position="top-left">
-                  <PolygonHandler />
-                </ControlGroup>
-                <ControlGroup position="top-right" className="top-[17rem]">
-                  <PolygonModifier
-                    polygonFromMap={polygonFromMap}
-                    onClick={handleEditPolygon}
-                    onSave={onSaveEdit}
-                    onCancel={onCancelEdit}
-                  />
-                </ControlGroup>
-              </>
-            ) : null}
-            {status && validationType === "individualValidation" && !disabledPolygonPanel ? (
-              <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
-                <CheckIndividualPolygonControl viewRequestSuport={!siteData} entityData={record} />
-              </ControlGroup>
-            ) : null}
-            {viewImages ? (
-              <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
-                <ImageControl viewImages={viewImages} setViewImages={setViewImages} />
-              </ControlGroup>
-            ) : null}
-            {editPolygon ? (
-              <ControlGroup position="top-right" className="top-64">
-                <button type="button" className="rounded-lg bg-white p-2.5 text-primary hover:text-primary ">
-                  <Icon name={IconNames.EDIT} className="h-5 w-5 lg:h-6 lg:w-6" />
-                </button>
-              </ControlGroup>
-            ) : null}
-            {!editable && !viewImages ? (
-              <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}></ControlGroup>
-            ) : null}
-            <ControlGroup position="top-right" className="top-[10.5rem]">
-              <button
-                type="button"
-                className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
-                onClick={() => {
-                  if (center && zoom !== undefined && map.current) {
-                    zoomToCenter(center, zoom, map.current);
-                  } else if (bbox && map.current) {
-                    zoomToBbox(bbox, map.current, hasControls);
-                  }
-                }}
-              >
-                <Icon name={IconNames.IC_EARTH_MAP} className="h-6 w-6" />
-              </button>
-            </ControlGroup>
-            {isDashboard == null ? (
-              <ControlGroup position="top-right" className="top-[13.75rem]">
-                <button
-                  type="button"
-                  className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
-                  onClick={toggleFullscreen}
-                  aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-                >
-                  <Icon name={isFullscreen ? IconNames.IC_SHINK : IconNames.IC_EXPAND} className="h-6 w-6" />
-                </button>
-              </ControlGroup>
-            ) : null}
-            {isEditing ? (
-              <ControlGroup position="top-right" className="top-[272px]">
-                <TrashButton onClick={mapFunctions?.handleTrashDelete} />
-              </ControlGroup>
-            ) : null}
-            {!formMap && showViewGallery ? (
-              <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
-                {isDashboard === "dashboard" && isMapReady && map.current != null && (
-                  <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
-                )}
-                {isDashboard !== "dashboard" && isDashboard !== "modal" && !disabledPolygonPanel && (
-                  <ViewImageGalleryButton imageGalleryRef={imageGalleryRef} />
-                )}
-              </ControlGroup>
-            ) : null}
-          </>
-        ) : null}
         {showLegend ? (
           <ControlGroup
             position={
@@ -1090,20 +463,23 @@ export const MapContainer = ({
             <FilterControl />
           </ControlGroup>
         ) : null}
+
         {polygonChecks ? (
           <ControlGroup position="bottom-left" className="bottom-13">
             <PolygonCheck />
           </ControlGroup>
         ) : null}
+
         {!polygonsExists && !disabledPolygonPanel ? <EmptyStateDisplay /> : null}
-        {(isMobile || isDashboard) && mobilePopupData !== null ? (
+
+        {(isMobile || dashboardMode != null) && mobilePopupData != null ? (
           <PopupMobile
             event={mobilePopupData}
             onClose={() => setMobilePopupData(null)}
             variant={isMobile ? "mobile" : "desktop"}
           />
         ) : null}
-      </div>
+      </MapCanvas>
     </MapEditingContext.Provider>
   );
 };

@@ -1,10 +1,12 @@
 import { isEmpty } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 
+import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
+import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import {
   bulkDeleteSitePolygons as bulkDeleteSitePolygonsEndpoint,
   createSitePolygons,
@@ -47,20 +49,29 @@ export const sitePolygonsConnection = v3Resource("sitePolygons", sitePolygonsInd
 
 export const useSitePolygons = connectionHook(sitePolygonsConnection);
 
+export const pruneSitePolygonsCache = (): void => {
+  ApiSlice.pruneCache("sitePolygons");
+  ApiSlice.pruneIndex("sitePolygons", "");
+};
+
 const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygons)
   .create<SitePolygonLightDto, CreateSitePolygonAttributesDto>()
   .refetch(() => {
-    ApiSlice.pruneCache("sitePolygons");
-    ApiSlice.pruneIndex("sitePolygons", "");
+    pruneSitePolygonsCache();
   })
   .buildConnection();
 
 export const useCreateSitePolygon = connectionHook(createSitePolygonsConnection);
 export const loadCreateSitePolygon = connectionLoader(createSitePolygonsConnection);
 
-export const deleteSitePolygon = deleterAsync("sitePolygons", deleteSitePolygonEndpoint, (uuid: string) => ({
+const deleteSitePolygonInternal = deleterAsync("sitePolygons", deleteSitePolygonEndpoint, (uuid: string) => ({
   pathParams: { uuid }
 }));
+
+export const deleteSitePolygon = async (uuid: string): Promise<void> => {
+  await deleteSitePolygonInternal(uuid);
+  pruneBoundingBoxesCache();
+};
 
 type SitePolygonResourceIdentifier = {
   type: "sitePolygons";
@@ -128,6 +139,10 @@ export const bulkUpdateSitePolygonStatus = async (
       }
     });
   });
+
+  if (status === "submitted") {
+    listDelayedJobs.fetch({});
+  }
 };
 
 export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {
@@ -162,8 +177,8 @@ export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => 
     });
   });
 
-  ApiSlice.pruneCache("sitePolygons");
-  ApiSlice.pruneIndex("sitePolygons", "");
+  pruneSitePolygonsCache();
+  pruneBoundingBoxesCache();
 };
 
 export const loadAllSitePolygons = async (
@@ -344,8 +359,7 @@ export const createSitePolygonsResource = async (
     }
   });
 
-  ApiSlice.pruneCache("sitePolygons");
-  ApiSlice.pruneIndex("sitePolygons", "");
+  pruneSitePolygonsCache();
 
   return response.data?.attributes!;
 };

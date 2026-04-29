@@ -12,7 +12,6 @@ import {
   PROFIT_ANALYSIS_COLUMNS
 } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { formatFinancialAmount, getLocaleForIsoCurrency } from "@/utils/financialReport";
 import { addValidationWith } from "@/utils/yup";
 
@@ -82,19 +81,10 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
   appendAnswers: () => undefined,
 
-  addFormEntries: (entries, field, formValues, { t, record, type, orgDetails }) => {
+  addFormEntries: (entries, field, formValues, { t, record, type, orgDetails, entity }) => {
     const values = formValues[field.name];
 
     const currencyCode = type === "financial-reports" ? record?.currency : orgDetails?.currency;
-    const currencyDisplayName = currencyCode
-      ? getCurrencyOptions(t).find(opt => opt.value === currencyCode)?.title
-      : undefined;
-
-    entries.push({
-      title: t("Local Currency"),
-      inputType: "select",
-      value: currencyDisplayName ?? t("Answer Not Provided")
-    });
 
     if (!Array.isArray(values) || values?.length === 0) return;
 

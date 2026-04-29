@@ -2,7 +2,7 @@ import { Typography } from "@mui/material";
 import classNames from "classnames";
 import { camelCase } from "lodash";
 import { FC } from "react";
-import { LabeledClasses } from "react-admin";
+import { LabeledClasses, useShowContext } from "react-admin";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import DisturbanceReport from "@/admin/modules/disturbanceReport/components/DisturbanceReport";
@@ -12,7 +12,8 @@ import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTab
 import { FormSummaryRowProps } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { SupportedEntity } from "@/connections/EntityAssociation";
-import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { type FormFieldsProvider, useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 
 type InformationTabRowProps = Omit<FormSummaryRowProps, "index" | "type">;
 
@@ -21,20 +22,27 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
   const entityName = camelCase(entity?.entityName ?? "projects") as SupportedEntity;
   const entityUuid = entity?.entityUUID ?? "";
   const entries = useGetFormEntries({ ...props, entity });
+  const { record } = useShowContext();
   // usePlantTotalCount already combines plants and reportCounts, filtering duplicates for nurseries
   const nurseryTotalFallback = usePlantTotalCount({ entity: entityName, entityUuid, collection: "nursery-seedling" });
   const totalTreePlanted = usePlantTotalCount({ entity: entityName, entityUuid, collection: "tree-planted" });
-  const title = useFieldsProvider().step(props.stepId)?.title;
-
+  const fieldsProvider = useFieldsProvider();
+  const { framework } = useFrameworkContext();
+  const title = fieldsProvider.step(props.stepId)?.title;
+  const showTreesToBeRestored =
+    entityName === "projects" &&
+    framework === Framework.TF_3 &&
+    stepIncludesTreesGoalField(fieldsProvider, props.stepId);
   return (
     <>
       <Text variant="text-16-semibold" className="text-darkCustom">
-        {title}
+        {entityName != "financialReports" && title}
       </Text>
       <List
         className={classNames("mt-4 gap-4", {
           "grid grid-cols-3": entityName === "sites",
-          "flex flex-col": entityName !== "sites"
+          "flex flex-col": entityName !== "sites",
+          "grid grid-cols-2": entityName === "financialReports"
         })}
         items={entries}
         render={entry => {
@@ -62,7 +70,7 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
                   </Typography>
                   {formatEntryValue(entry.value)}
                 </>
-              ) : (
+              ) : entityName != "financialReports" ? (
                 <>
                   <Typography className={LabeledClasses.label}>
                     <Text as="span" variant="text-14-light" className="capitalize text-grey-700">
@@ -79,13 +87,54 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
                     formatEntryValue(entry.value)
                   )}
                 </>
+              ) : (
+                entityName == "financialReports" &&
+                entry.inputType == "select" && (
+                  <>
+                    <Text variant="text-14-light" className="text-darkCustom-300">
+                      {entry.title}
+                    </Text>
+                    {typeof entry.value === "string" || typeof entry.value === "number" ? (
+                      <Text
+                        variant="text-14-semibold"
+                        className="text-darkCustom"
+                        dangerouslySetInnerHTML={{
+                          __html: formatEntryValue(entry.value)
+                        }}
+                      />
+                    ) : (
+                      formatEntryValue(entry.value)
+                    )}
+                  </>
+                )
               )}
             </div>
           );
         }}
       />
+      {showTreesToBeRestored ? (
+        <Typography className={LabeledClasses.label}>
+          <div className="mt-4 flex items-center gap-2 py-1">
+            <Text as="span" variant="text-16-bold" className="capitalize text-darkCustom">
+              Trees to be Restored:
+            </Text>
+            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+              {(record?.treesToBeRestoredGoal ?? 0).toLocaleString()}
+            </Text>
+          </div>
+        </Typography>
+      ) : null}
     </>
   );
 };
+
+function stepIncludesTreesGoalField(fieldsProvider: FormFieldsProvider, stepId: string): boolean {
+  const visit = (fieldName: string): boolean => {
+    const field = fieldsProvider.fieldByName(fieldName);
+    if (field?.inputType === "treesGoal") return true;
+    return fieldsProvider.childNames(fieldName).some(child => visit(child));
+  };
+  return fieldsProvider.fieldNames(stepId).some(visit);
+}
 
 export default InformationTabRow;

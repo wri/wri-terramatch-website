@@ -21,6 +21,7 @@ import * as yup from "yup";
 import { useUserAssociationCreation } from "@/connections/UserAssociation";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import ApiSlice from "@/store/apiSlice";
+import { first } from "@/utils/array";
 
 interface AddManagerDialogProps extends DialogProps {
   handleClose: () => void;
@@ -51,20 +52,24 @@ export const AddManagerDialog = ({ handleClose, ...props }: AddManagerDialogProp
 
   useRequestComplete(
     isCreating,
-    useCallback(() => {
-      if (createFailure != null) {
-        setError("email", {
-          message: createFailure.message as string,
-          type: "validate"
-        });
-      } else {
-        notify("Manager was added successfully");
-        ApiSlice.pruneCache("associatedUsers");
-        refresh();
-        reset();
-        handleClose();
-      }
-    }, [createFailure, notify, reset, refresh, handleClose, setError])
+    createFailure,
+    useCallback(
+      failure => {
+        if (failure != null) {
+          setError("email", {
+            message: first(failure.message),
+            type: "validate"
+          });
+        } else {
+          notify("Manager was added successfully");
+          ApiSlice.pruneCache("associatedUsers");
+          refresh();
+          reset();
+          handleClose();
+        }
+      },
+      [notify, reset, refresh, handleClose, setError]
+    )
   );
 
   const onSubmit = (data: FormValues) => {

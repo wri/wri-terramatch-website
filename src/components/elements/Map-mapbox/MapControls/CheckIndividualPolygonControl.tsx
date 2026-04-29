@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { When } from "react-if";
 
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
-import { useDelayedJobs } from "@/connections/DelayedJob";
 import { clipSinglePolygon } from "@/connections/PolygonClipping";
 import { useListPolygonVersions } from "@/connections/PolygonVersion";
 import { createPolygonValidation, usePolygonValidation } from "@/connections/Validation";
@@ -11,6 +10,7 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { parseV3ValidationData } from "@/helpers/polygonValidation";
+import { usePolygonClippingCompletion } from "@/hooks/usePolygonClippingCompletion";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
@@ -40,7 +40,6 @@ const CheckIndividualPolygonControl = ({
   const t = useT();
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
-  const [, { delayedJobs }] = useDelayedJobs();
 
   const v3ValidationData = usePolygonValidation({
     polygonUuid: editPolygon?.uuid || ""
@@ -86,81 +85,52 @@ const CheckIndividualPolygonControl = ({
     }
   };
 
-  useEffect(() => {
-    if (!(pendingClipping && delayedJobs && delayedJobs.length > 0)) {
-      return;
-    }
+  usePolygonClippingCompletion({
+    pendingClipping,
+    setPendingClipping,
+    onSuccess: async completedClippingJob => {
+      const clippedData = completedClippingJob.payload?.data;
 
-    const completedClippingJob = delayedJobs.find(job => {
-      const isCompleted = job.status === "succeeded" || job.status === "failed";
-      const isPolygonClipping = job.name === "Polygon Clipping";
-      return isCompleted && isPolygonClipping;
-    });
+      let polygonNames = "";
 
-    if (completedClippingJob) {
-      const handleSuccess = async () => {
-        const clippedData = completedClippingJob.payload?.data;
-
-        let polygonNames = "";
-
-        if (Array.isArray(clippedData) && clippedData.length > 0) {
-          polygonNames = clippedData
-            .map((item: any) => item.attributes?.polyName)
-            .filter(Boolean)
-            .join(", ");
-        } else if (clippedData && typeof clippedData === "object" && clippedData.attributes?.polyName) {
-          polygonNames = clippedData.attributes.polyName;
-        }
-
-        if (polygonNames) {
-          openNotification("success", t("Success! The following polygons have been fixed:"), polygonNames);
-        } else {
-          openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
-        }
-
-        setShouldRefetchPolygonData(true);
-        setShouldRefetchValidation(true);
-        setShouldRefetchPolygonVersions(true);
-
-        ApiSlice.pruneCache("validations");
-        ApiSlice.pruneIndex("sitePolygons", "");
-
-        await refetchPolygonVersionsHook();
-
-        const polygonActive = polygonVersionsData?.find(item => item.isActive);
-
-        setEditPolygon({
-          isOpen: true,
-          uuid: polygonActive?.polygonUuid as string,
-          primary_uuid: polygonActive?.primaryUuid!
-        });
-        hideLoader();
-      };
-
-      if (completedClippingJob.status === "succeeded") {
-        handleSuccess();
-      } else {
-        openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
-        hideLoader();
+      if (Array.isArray(clippedData) && clippedData.length > 0) {
+        polygonNames = clippedData
+          .map((item: any) => item.attributes?.polyName)
+          .filter(Boolean)
+          .join(", ");
+      } else if (clippedData && typeof clippedData === "object" && clippedData.attributes?.polyName) {
+        polygonNames = clippedData.attributes.polyName;
       }
 
-      setPendingClipping(false);
+      if (polygonNames) {
+        openNotification("success", t("Success! The following polygons have been fixed:"), polygonNames);
+      } else {
+        openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
+      }
+
+      setShouldRefetchPolygonData(true);
+      setShouldRefetchValidation(true);
+      setShouldRefetchPolygonVersions(true);
+
+      ApiSlice.pruneCache("validations");
+      ApiSlice.pruneIndex("sitePolygons", "");
+
+      await refetchPolygonVersionsHook();
+
+      const polygonActive = polygonVersionsData?.find(item => item.isActive);
+
+      setEditPolygon({
+        isOpen: true,
+        uuid: polygonActive?.polygonUuid as string,
+        primary_uuid: polygonActive?.primaryUuid!
+      });
+      hideLoader();
+    },
+    onFailure: () => {
+      openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
+      hideLoader();
     }
-  }, [
-    delayedJobs,
-    pendingClipping,
-    openNotification,
-    t,
-    setShouldRefetchPolygonData,
-    setShouldRefetchValidation,
-    setShouldRefetchPolygonVersions,
-    editPolygon?.uuid,
-    editPolygon?.primary_uuid,
-    setEditPolygon,
-    hideLoader,
-    refetchPolygonVersionsHook,
-    polygonVersionsData
-  ]);
+  });
 
   useValueChanged(clickedValidation, () => {
     if (clickedValidation) {

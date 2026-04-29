@@ -21,6 +21,7 @@ import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
+import { TextVariants } from "@/types/common";
 import { getNewRestorationGoalDataForChart, isAggregateReportsEmpty } from "@/utils/dashboardUtils";
 
 /** Extended so component compiles when API/OpenAPI schema does not yet expose lastReportedSurvivalRate on ProjectFullDto (e.g. before yarn generate:entityService). */
@@ -81,6 +82,12 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     ],
     [t]
   );
+
+  const totalCountReplanting = usePlantTotalCount({ ...aggregateProps, collection: "replanting" });
+  const { speciesCount: totalCountReplantingSpecies } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: "replanting"
+  });
 
   return (
     <PageBody className="bg-theme-neutral-200 pt-5 text-darkCustom">
@@ -445,7 +452,39 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
           </PageCard>
         </PageRow>
       </ContextCondition>
-
+      <PageRow className="mx-0 w-full !max-w-full gap-8 px-6">
+        <PageCard title={t("Trees Replanting Progress")}>
+          <div className="grid grid-cols-2 gap-16">
+            <div className="flex flex-col gap-4">
+              <GoalProgressCard
+                hasProgress={false}
+                classNameCard="!pl-0"
+                items={[
+                  {
+                    iconName: IconNames.TREE_CIRCLE_PD,
+                    label: t("number of trees REPLANTED:"),
+                    variantLabel: "text-14" as TextVariants,
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: totalCountReplanting
+                  },
+                  {
+                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                    label: t("number of species REPLANTED:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: totalCountReplantingSpecies
+                  }
+                ]}
+              />
+            </div>
+            <div>
+              <TreeSpeciesTable entity="projects" entityUuid={project.uuid} collection="replanting" visibleRows={5} />
+            </div>
+          </div>
+        </PageCard>
+      </PageRow>
       <br />
       <br />
     </PageBody>

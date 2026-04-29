@@ -10,12 +10,11 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { uploadVersionForPolygon } from "@/connections/GeometryUpload";
 import { deletePolygonVersion, loadListPolygonVersions, updatePolygonVersionAsync } from "@/connections/PolygonVersion";
-import { createBlankVersion } from "@/connections/SitePolygons";
-import { useMapAreaContext } from "@/context/mapArea.provider";
+import { createBlankVersion, pruneSitePolygonsCache } from "@/connections/SitePolygons";
+import { isMapAreaSiteFullDto, useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
 import { FileType, UploadedFile } from "@/types/common";
 import { extractErrorMessage } from "@/utils/errors";
 import { getNameFromPolyVersion, getPolygonUuidFromPolyVersion, getSiteIdFromPolyVersion } from "@/utils/polygonUtils";
@@ -76,7 +75,11 @@ const VersionInformation = ({
       return;
     }
 
-    const siteId = siteData?.uuid ?? polygonDefault?.siteId ?? getSiteIdFromPolyVersion(selectedPolyVersion) ?? null;
+    const siteId =
+      (isMapAreaSiteFullDto(siteData) ? siteData.uuid : undefined) ??
+      polygonDefault?.siteId ??
+      getSiteIdFromPolyVersion(selectedPolyVersion) ??
+      null;
 
     if (!siteId) {
       openNotification("error", t("Error!"), t("Missing site information"));
@@ -94,8 +97,7 @@ const VersionInformation = ({
     try {
       await uploadVersionForPolygon(polygonUuid, file.rawFile as File, siteId);
 
-      ApiSlice.pruneCache("sitePolygons");
-      ApiSlice.pruneIndex("sitePolygons", "");
+      pruneSitePolygonsCache();
 
       await refetchPolygonVersions?.();
 
@@ -177,8 +179,7 @@ const VersionInformation = ({
     try {
       const newVersion = await createBlankVersion(editPolygon.primary_uuid, "Created new version");
 
-      ApiSlice.pruneCache("sitePolygons");
-      ApiSlice.pruneIndex("sitePolygons", "");
+      pruneSitePolygonsCache();
 
       await refetchPolygonVersions?.();
 
@@ -241,8 +242,7 @@ const VersionInformation = ({
   const handleDeletePolygonVersion = async (polyId: string) => {
     try {
       await deletePolygonVersion(polyId);
-      ApiSlice.pruneCache("sitePolygons");
-      ApiSlice.pruneIndex("sitePolygons", "");
+      pruneSitePolygonsCache();
 
       await refetchPolygonVersions?.();
 
@@ -281,8 +281,7 @@ const VersionInformation = ({
           isActive: true
         });
 
-        ApiSlice.pruneCache("sitePolygons");
-        ApiSlice.pruneIndex("sitePolygons", "");
+        pruneSitePolygonsCache();
         await refetchPolygonVersions?.();
 
         await recallEntityData?.();

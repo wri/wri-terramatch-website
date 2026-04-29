@@ -149,7 +149,14 @@ const InformationTab: FC<IProps> = props => {
               {fields.map(field =>
                 field.inputType === "financialIndicators" ? (
                   <>
-                    <FinancialMetrics data={values[field.name]} years={field.years ?? undefined} />
+                    <FinancialMetrics
+                      data={values[field.name]}
+                      years={field.years ?? undefined}
+                      fieldsProvider={fieldsProvider}
+                      model={model}
+                      orgDetails={orgDetails}
+                      values={values}
+                    />
                     <Accordion
                       title="Financial Documents per Year"
                       variant="drawer"
@@ -192,7 +199,7 @@ const InformationTab: FC<IProps> = props => {
               <div className="pl-8">
                 {["projects", "sites", "site-reports", "project-reports", "nursery-reports"].includes(props.type) ? (
                   <div className="flex flex-col gap-10">
-                    {props.type !== "nursery-reports" && props.type !== "site-reports" ? (
+                    {props.type !== "nursery-reports" ? (
                       <ContextCondition frameworksHide={[Framework.PPC]}>
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-1 py-1">
@@ -251,7 +258,7 @@ const InformationTab: FC<IProps> = props => {
                             Trees Planted:
                           </Text>
                           <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                            {totalCountTreePlanted.toLocaleString() ?? 0}
+                            {totalCountTreePlanted.toLocaleString()}
                           </Text>
                         </div>
                         <TreeSpeciesTable
@@ -281,17 +288,34 @@ const InformationTab: FC<IProps> = props => {
                       </ContextCondition>
                     ) : null}
                     {props.type === "site-reports" ? (
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1 py-1">
-                          <Text variant="text-16-bold" className="capitalize">
-                            Trees Regenerating By Species:
-                          </Text>
-                          <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                            {totalCountAnr.toLocaleString() ?? 0}
-                          </Text>
+                      <>
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1 py-1">
+                            <Text variant="text-16-bold" className="capitalize">
+                              Trees Regenerating By Species:
+                            </Text>
+                            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                              {totalCountAnr.toLocaleString() ?? 0}
+                            </Text>
+                          </div>
+                          <TreeSpeciesTable {...{ entity, entityUuid }} collection="anr" secondColumnWidth="45%" />
                         </div>
-                        <TreeSpeciesTable {...{ entity, entityUuid }} collection="anr" secondColumnWidth="45%" />
-                      </div>
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1 py-1">
+                            <Text variant="text-16-bold" className="capitalize">
+                              Trees Replanted:
+                            </Text>
+                            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                              {totalCountReplanting.toLocaleString() ?? 0}
+                            </Text>
+                          </div>
+                          <TreeSpeciesTable
+                            {...{ entity, entityUuid }}
+                            collection="replanting"
+                            secondColumnWidth="45%"
+                          />
+                        </div>
+                      </>
                     ) : null}
                     {["projects", "sites"].includes(props.type) ? (
                       <div className="flex flex-col gap-1">
@@ -304,6 +328,19 @@ const InformationTab: FC<IProps> = props => {
                           </Text>
                         </div>
                         <TreeSpeciesTable {...{ entity, entityUuid }} collection="anr" secondColumnWidth="45%" />
+                      </div>
+                    ) : null}
+                    {["projects", "sites"].includes(props.type) ? (
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1 py-1">
+                          <Text variant="text-16-bold" className="capitalize">
+                            Trees Replanted:
+                          </Text>
+                          <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                            {totalCountReplanting.toLocaleString() ?? 0}
+                          </Text>
+                        </div>
+                        <TreeSpeciesTable {...{ entity, entityUuid }} collection="replanting" secondColumnWidth="45%" />
                       </div>
                     ) : null}
                   </div>

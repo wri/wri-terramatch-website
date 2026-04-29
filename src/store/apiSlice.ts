@@ -25,17 +25,18 @@ import { USER_SERVICE_RESOURCES, UserServiceApiResources } from "@/generated/v3/
 import { LoginDto } from "@/generated/v3/userService/userServiceSchemas";
 import { resolveUrl } from "@/generated/v3/utils";
 import { __TEST_HYDRATE__, AppStore } from "@/store/store";
+import { first } from "@/utils/array";
 
 export type PendingError = {
   statusCode: number;
-  message: string;
+  message: string | string[];
   error?: string;
 };
 
 export type CompletedCreation = { resourceIds: string[] };
 
 export const isPendingErrorState = (error: unknown): error is PendingError =>
-  error != null && isNumber((error as PendingError).statusCode) && isString((error as PendingError).message);
+  error != null && isNumber((error as PendingError).statusCode) && isString(first((error as PendingError).message));
 
 export type Pending = boolean | PendingError | CompletedCreation;
 

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { When } from "react-if";
 
-import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { parsePolygonDataV3 } from "@/components/elements/Map-mapbox/utils";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
@@ -23,7 +22,7 @@ const MonitoredDataMap = ({
   entityUuid: string;
   record?: any;
 }) => {
-  const mapFunctions = useMap();
+  const mapFunctions = useBaseMap();
   const [polygonsData, setPolygonsData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
@@ -38,7 +37,7 @@ const MonitoredDataMap = ({
     }
   });
 
-  const [, { data: modelFilesData }] = useMedias({
+  const [, { data: mediaFiles }] = useMedias({
     entity: entityName as SupportedEntity,
     uuid: entityUuid
   });
@@ -79,15 +78,13 @@ const MonitoredDataMap = ({
           polygonsData={polygonsData}
           bbox={entityBbox}
           setLoader={setLoading}
-          modelFilesData={modelFilesData}
+          mediaFiles={mediaFiles}
           showPopups={true}
           tooltipType="view"
           entityData={transformedEntityData}
         />
       </LoadingContainerOpacity>
-      <When condition={selected.includes("6")}>
-        <NoDataMap />
-      </When>
+      {selected.includes("6") && <NoDataMap />}
     </div>
   );
 };

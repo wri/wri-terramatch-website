@@ -4,7 +4,6 @@ import classNames from "classnames";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { useBasename, useShowContext } from "react-admin";
-import { When } from "react-if";
 import { useNavigate } from "react-router-dom";
 
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
@@ -765,14 +764,14 @@ const DataCard = ({
   const handleExport = async () => {
     try {
       setExporting(true);
-      const blob = await exportIndicatorCsv.fetchBlob({
+      const { blob } = await exportIndicatorCsv.fetchBlob({
         pathParams: {
           entityType: type,
           entityUuid: record.uuid,
           slug: indicatorSlug as ExportIndicatorCsvPathParams["slug"]
         }
       });
-      downloadFileBlob(blob!, `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`);
+      downloadFileBlob(blob, `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`);
 
       openNotification("success", t("Success! Export completed."), t("The export has been completed successfully."));
       setExporting(false);
@@ -969,23 +968,25 @@ const DataCard = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <When condition={tabActive === 0}>
-                <FilterSearchBox
-                  placeholder="Search"
-                  onChange={e => {
-                    setSearchTerm(e);
-                  }}
-                  variant={FILTER_SEARCH_MONITORING}
-                />
-                <Button variant="white-border" className="!h-[32px] !min-h-[32px] !w-8 p-0" onClick={handleExport}>
-                  <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4 text-darkCustom" />
-                </Button>
-              </When>
+              {tabActive === 0 && (
+                <>
+                  <FilterSearchBox
+                    placeholder="Search"
+                    onChange={e => {
+                      setSearchTerm(e);
+                    }}
+                    variant={FILTER_SEARCH_MONITORING}
+                  />
+                  <Button variant="white-border" className="!h-[32px] !min-h-[32px] !w-8 p-0" onClick={handleExport}>
+                    <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4 text-darkCustom" />
+                  </Button>
+                </>
+              )}
 
               <Toggle items={toggleItems} onChangeActiveIndex={setTabActive} defaultActiveIndex={tabActive} />
             </div>
           </div>
-          <When condition={tabActive === 0}>
+          {tabActive === 0 && (
             <div className="relative w-full px-6 pb-6">
               <SitePolygonsTable
                 entityName={type}
@@ -996,8 +997,8 @@ const DataCard = ({
                 variant={VARIANT_TABLE_MONITORED}
               />
             </div>
-          </When>
-          <When condition={tabActive === 1}>
+          )}
+          {tabActive === 1 && (
             <div className="relative z-auto flex w-full max-w-[calc(100vw-356px)] gap-2 px-6 pt-2 pb-6">
               <Dropdown
                 containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-[1] !h-8", {
@@ -1032,12 +1033,12 @@ const DataCard = ({
                 record={record}
                 totalHectaresRestoredGoal={totalHectaresRestoredGoal}
               />
-              <When condition={selected.includes("6")}>{noDataGraph}</When>
+              {selected.includes("6") && noDataGraph}
             </div>
-          </When>
-          <When condition={tabActive === 2}>
+          )}
+          {tabActive === 2 && (
             <MonitoredDataMap entityName={type!} entityUuid={record.uuid} selected={selected} record={record} />
-          </When>
+          )}
         </div>
       </div>
       <ExportProcessingAlert show={exporting} />

@@ -10,16 +10,28 @@ import {
   ICON_SIZE_SMALL,
   NEUTRAL_STATES,
   NEUTRAL_TEXT_STATES,
-  TAG_LABELS,
   WARNING_STATES,
   WARNING_TEXT_STATES
 } from "./constants";
-import { type TagSubmissionProps } from "./TagSubmission.type";
+import { type TagSubmissionProps, TagSubmissionState } from "./TagSubmission.type";
+
+export const useTagLabel = (tag: TagSubmissionState) => {
+  const t = useT();
+  const map = {
+    draft: t("Draft"),
+    "nothing-reported": t("Nothing Reported"),
+    "pending-approval-neutral": t("Pending Approval"),
+    "pending-approval": t("Pending Approval"),
+    "information-required": t("Information Required"),
+    approved: t("Approved"),
+    due: t("Due")
+  };
+
+  return map[tag];
+};
 
 const TagSubmission: FC<TagSubmissionProps> = ({ state, className, size = DEFAULT_SIZE }) => {
-  const t = useT();
-
-  const label = TAG_LABELS[state];
+  const label = useTagLabel(state);
   const iconConfig = ICON_MAP[state];
   const IconComponent = iconConfig.component;
 
@@ -62,7 +74,7 @@ const TagSubmission: FC<TagSubmissionProps> = ({ state, className, size = DEFAUL
             "leading-[16px]": size === "small"
           })}
         >
-          {t(label)}
+          {label}
         </span>
       </Tag.Label>
     </Tag.Root>

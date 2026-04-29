@@ -1,10 +1,17 @@
 import { createSelector } from "reselect";
 
 import { connectionHook } from "@/connections/util/connectionShortcuts";
-import { requestPasswordReset, resetPassword } from "@/generated/v3/userService/userServiceComponents";
+import {
+  getResetPassword,
+  requestPasswordReset,
+  resetPassword
+} from "@/generated/v3/userService/userServiceComponents";
+import { ResetPasswordResponseDto } from "@/generated/v3/userService/userServiceSchemas";
 import { ApiDataStore, PendingError } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
+
+import { v3Resource } from "./util/apiConnectionFactory";
 
 export const sendRequestPasswordReset = (emailAddress: string, callbackUrl: string) =>
   requestPasswordReset.fetch({ body: { emailAddress, callbackUrl } });
@@ -19,6 +26,7 @@ type RequestResetPasswordConnection = {
 };
 
 const requestPasswordConnection: Connection<RequestResetPasswordConnection> = {
+  // @ts-expect-error
   selector: createSelector(
     [requestPasswordReset.isFetchingSelector({}), requestPasswordReset.fetchFailedSelector({}), selectResetPassword],
     (isLoading, requestFailed, selector) => {
@@ -70,6 +78,19 @@ const resetPasswordConnection: Connection<ResetPasswordConnection, ResetPassword
       )
   )
 };
+
+const getResetPasswordConnection = v3Resource("passwordResets", getResetPassword)
+  .singleByCustomId<ResetPasswordResponseDto, { token: string }>(
+    ({ token }) => ({ pathParams: { token: token } }),
+    ({ token }) => {
+      return token;
+    }
+  )
+  .isLoading()
+  .enabledProp()
+  .buildConnection();
+
+export const useGetResetPassword = connectionHook(getResetPasswordConnection);
 
 export const useRequestPassword = connectionHook(requestPasswordConnection);
 

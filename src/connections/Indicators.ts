@@ -1,3 +1,4 @@
+import { pruneSitePolygonsCache } from "@/connections/SitePolygons";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
@@ -5,7 +6,6 @@ import {
   StartIndicatorCalculationPathParams
 } from "@/generated/v3/researchService/researchServiceComponents";
 import { IndicatorsAttributes, SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
 import { loadConnection } from "@/utils/loadConnection";
 
 const startIndicatorCalculationConnection = v3Resource("sitePolygons", startIndicatorCalculation)
@@ -13,8 +13,7 @@ const startIndicatorCalculationConnection = v3Resource("sitePolygons", startIndi
     pathParams: { slug }
   }))
   .refetch(() => {
-    ApiSlice.pruneCache("sitePolygons");
-    ApiSlice.pruneIndex("sitePolygons", "");
+    pruneSitePolygonsCache();
   })
   .buildConnection();
 

@@ -147,7 +147,11 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         onAddTeamClick={handleInvite}
         gotoTeamMembers={() => navigateToTab("team-members")}
         breadcrumbs={[
-          { label: t("Projects"), link: "/my-projects", icon: <ProjectIcon className="!text-theme-primary-900" /> },
+          {
+            label: t("Projects"),
+            link: "/my-projects",
+            icon: <ProjectIcon className="!text-theme-primary-900" />
+          },
           { label: project?.name ?? "", link: `/project/${project?.uuid}` },
           ...(activeSuffixView
             ? [

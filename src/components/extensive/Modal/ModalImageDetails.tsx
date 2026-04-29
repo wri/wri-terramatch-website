@@ -7,8 +7,9 @@ import Button from "@/components/elements/Button/Button";
 import Input from "@/components/elements/Inputs/Input/Input";
 import RadioGroup from "@/components/elements/Inputs/RadioGroup/RadioGroup";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
-import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
+import { buildReadOnlyMapProps } from "@/components/elements/Map-mapbox/mapProps.builders";
 import Text from "@/components/elements/Text/Text";
 import Toggle from "@/components/elements/Toggle/Toggle";
 import Modal from "@/components/extensive/Modal/Modal";
@@ -63,7 +64,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   const [initialFormData, setInitialFormData] = useState({ ...formData });
   const [descriptionCharCount, setDescriptionCharCount] = useState(data.description?.length ?? 0);
   const maxDescriptionLength = 500;
-  const mapFunctions = useMap();
+  const mapFunctions = useBaseMap();
   const [isUpdating, setIsUpdating] = useState(false);
 
   useOnMount(() => {
@@ -298,12 +299,11 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
             )
           ) : (
             <MapContainer
-              className="h-[240px] flex-1"
-              hasControls={false}
-              showPopups={false}
-              showLegend={false}
-              mapFunctions={mapFunctions}
-              location={new LngLat(lng ?? 0, lat ?? 0)}
+              {...buildReadOnlyMapProps({
+                mapFunctions,
+                className: "h-[240px] flex-1",
+                location: new LngLat(lng ?? 0, lat ?? 0)
+              })}
             />
           )}
           <div className="grid grid-cols-2">

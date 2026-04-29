@@ -10,10 +10,16 @@ import Log from "@/utils/log";
  *
  * Note: the onComplete callback is a hook dependency and should be stable (use useCallback).
  */
-export const useRequestComplete = (isFetching: boolean, onComplete: () => unknown) => {
+export const useRequestComplete = (
+  isFetching: boolean,
+  fetchFailure: PendingError | undefined,
+  onComplete: (failure?: PendingError) => unknown
+) => {
   const previousIsUpdating = useRef(isFetching);
+  const failureRef = useRef(fetchFailure);
+  failureRef.current = fetchFailure;
   useEffect(() => {
-    if (previousIsUpdating.current && !isFetching) onComplete();
+    if (previousIsUpdating.current && !isFetching) onComplete(failureRef.current);
     previousIsUpdating.current = isFetching;
   }, [isFetching, onComplete]);
 };
@@ -33,14 +39,18 @@ export const useRequestSuccess = (
   const t = useT();
   useRequestComplete(
     isFetching,
-    useCallback(() => {
-      if (fetchFailure == null) {
-        onSuccess();
-      } else if (failureMessage != null) {
-        Log.error(`Request failed: ${failureMessage}`, fetchFailure);
-        openToast(t(failureMessage), ToastType.ERROR);
-      }
-    }, [failureMessage, fetchFailure, onSuccess, openToast, t])
+    fetchFailure,
+    useCallback(
+      failure => {
+        if (failure == null) {
+          onSuccess();
+        } else if (failureMessage != null) {
+          Log.error(`Request failed: ${failureMessage}`, failure);
+          openToast(t(failureMessage), ToastType.ERROR);
+        }
+      },
+      [failureMessage, onSuccess, openToast, t]
+    )
   );
 };
 

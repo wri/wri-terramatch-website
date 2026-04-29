@@ -10,6 +10,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { uploadVersionForPolygon } from "@/connections/GeometryUpload";
 import {
   deletePolygonVersion,
@@ -294,6 +295,7 @@ const VersionHistory = ({
         await ApiSlice.pruneCache("sitePolygons", [polygonUuidToUpdate]);
       }
       await ApiSlice.pruneIndex("sitePolygons", "");
+      pruneBoundingBoxesCache();
       await refreshSiteData?.();
       await refreshPolygonList?.();
 

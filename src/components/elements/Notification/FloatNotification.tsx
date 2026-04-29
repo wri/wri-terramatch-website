@@ -6,6 +6,7 @@ import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
+import { pruneSitePolygonsCache } from "@/connections/SitePolygons";
 import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -99,6 +100,7 @@ const FloatNotification = () => {
   const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
   const [cachedSiteNames, setCachedSiteNames] = useState<Record<string, string>>({});
   const [processedIndicatorJobs, setProcessedIndicatorJobs] = useState<Set<string>>(new Set());
+  const [processedValidationJobs, setProcessedValidationJobs] = useState<Set<string>>(new Set());
 
   const clearJobs = useCallback(() => {
     if (delayedJobs == null) return;
@@ -151,13 +153,30 @@ const FloatNotification = () => {
 
           if (job.status === "succeeded") {
             // Prune cache for sitePolygons since indicators are related to polygons
-            ApiSlice.pruneCache("sitePolygons");
-            ApiSlice.pruneIndex("sitePolygons", "");
+            pruneSitePolygonsCache();
           }
         }
       }
     });
   }, [delayedJobs, processedIndicatorJobs]);
+
+  useEffect(() => {
+    if (delayedJobs == null || delayedJobs.length === 0) return;
+
+    delayedJobs.forEach(job => {
+      if (job.name === "Polygon Validation" && !processedValidationJobs.has(job.uuid)) {
+        const isCompleted = job.status === "succeeded" || job.status === "failed";
+
+        if (isCompleted) {
+          setProcessedValidationJobs(prev => new Set(prev).add(job.uuid));
+
+          pruneSitePolygonsCache();
+          ApiSlice.pruneCache("validations");
+          ApiSlice.pruneIndex("validations", "");
+        }
+      }
+    });
+  }, [delayedJobs, processedValidationJobs]);
 
   return (
     <div className="fixed bottom-[3.5rem] right-6 z-50 mobile:bottom-2.5">

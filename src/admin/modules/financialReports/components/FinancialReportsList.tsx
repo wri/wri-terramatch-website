@@ -15,7 +15,7 @@ import {
   useRecordContext
 } from "react-admin";
 
-import { getFormattedErrorForRA } from "@/admin/apiProvider/utils/error";
+import { v3ErrorForRA } from "@/admin/apiProvider/utils/error";
 import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
@@ -30,7 +30,7 @@ import {
   getReportStatusOptions
 } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
-import { fetchGetV2FinancialReportsExport, GetV2FinancialReportsExportError } from "@/generated/apiComponents";
+import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
 import { FinancialReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
@@ -104,10 +104,10 @@ export const FinancialReportsList: FC = () => {
   const handleExport = async () => {
     setExporting(true);
     try {
-      const response = (await fetchGetV2FinancialReportsExport({})) as Blob;
-      await downloadFileBlob(response, "FinancialReports.csv");
+      const { fileName, blob } = await entityExportAll.fetchBlob({ pathParams: { entity: "financialReports" } });
+      await downloadFileBlob(blob, fileName ?? "FinancialReports.csv");
     } catch (e) {
-      throw getFormattedErrorForRA(e as GetV2FinancialReportsExportError);
+      throw v3ErrorForRA("Failed to fetch financial report exports", e);
     } finally {
       setExporting(false);
     }

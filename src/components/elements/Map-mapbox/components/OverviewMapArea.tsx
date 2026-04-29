@@ -1,11 +1,12 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
-import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { useDelayedJobs } from "@/connections/DelayedJob";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
@@ -39,13 +40,13 @@ const OverviewMapArea = ({
 }: EntityAreaProps) => {
   const t = useT();
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
-  const [entityBbox, setEntityBbox] = useState<BBox>();
   const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
   const [stateViewPanel, setStateViewPanel] = useState(false);
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [sortField, setSortField] = useState<string>("createdAt");
   const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("ASC");
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
+  const [processedPolyValidationJobs, setProcessedPolyValidationJobs] = useState<Set<string>>(new Set());
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
 
@@ -62,11 +63,13 @@ const OverviewMapArea = ({
     polygonData: sitePolygonDataV3,
     validFilter
   } = useMapAreaContext();
+
+  const [, { delayedJobs }] = useDelayedJobs();
   const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refetch);
 
-  const mapFunctions = useMap(onSave);
+  const mapFunctions = useBaseMap(onSave);
 
-  const [, { data: modelFilesData }] = useMedias({
+  const [, { data: mediaFiles }] = useMedias({
     entity: type as SupportedEntity,
     uuid: entityModel?.uuid
   });
@@ -86,19 +89,16 @@ const OverviewMapArea = ({
     type === "sites" ? { country: entityModel?.projectCountry } : { country: entityModel?.country }
   );
 
+  const extentBbox = useMemo((): BBox | undefined => {
+    if (polygonsData.length > 0) {
+      return modelBbox as BBox | undefined;
+    }
+    return countryBbox as BBox | undefined;
+  }, [polygonsData.length, modelBbox, countryBbox]);
+
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);
     setPolygonData(polygonsData);
-    if (loading) {
-      return;
-    }
-    if (polygonsData.length > 0) {
-      if (modelBbox) {
-        setEntityBbox(modelBbox as BBox);
-      }
-    } else if (countryBbox) {
-      setEntityBbox(countryBbox as BBox);
-    }
   });
   useEffect(() => {
     refetch();
@@ -129,6 +129,23 @@ const OverviewMapArea = ({
       setShouldRefetchValidation(false);
     }
   });
+
+  useEffect(() => {
+    if (delayedJobs == null || delayedJobs.length === 0) return;
+
+    const newlyCompleted = delayedJobs.filter(
+      job => job.name === "Polygon Validation" && job.status !== "pending" && !processedPolyValidationJobs.has(job.uuid)
+    );
+
+    if (newlyCompleted.length > 0) {
+      setProcessedPolyValidationJobs(prev => {
+        const next = new Set(prev);
+        newlyCompleted.forEach(j => next.add(j.uuid));
+        return next;
+      });
+      refetch();
+    }
+  }, [delayedJobs, processedPolyValidationJobs, refetch]);
   useEffect(() => {
     if (polygonsData?.length > 0) {
       const dataMap = parsePolygonDataV3(polygonsData);
@@ -159,7 +176,7 @@ const OverviewMapArea = ({
           items={(polygonsData ?? []) as SitePolygonLightDto[]}
           mapFunctions={mapFunctions}
           polygonsData={polygonDataMap}
-          className="absolute z-20 flex h-full w-[29vw] flex-col rounded-l bg-[#ffffff12] p-6"
+          className="absolute z-[19] flex h-full w-[29vw] flex-col rounded-l bg-[#ffffff12] p-6"
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
           onCheckboxChange={handleCheckboxChange}
@@ -184,7 +201,7 @@ const OverviewMapArea = ({
       <MapContainer
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}
-        bbox={entityBbox}
+        bbox={extentBbox}
         tooltipType={type === "sites" ? "edit" : "goTo"}
         showPopups
         showLegend
@@ -203,9 +220,8 @@ const OverviewMapArea = ({
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
-        modelFilesData={modelFilesData}
+        mediaFiles={mediaFiles}
         sitePolygonData={sitePolygonDataV3}
-        pdView={true}
         disabledPolygonPanel={disabledPolygonPanel}
       />
     </AnrMapOverlayProvider>

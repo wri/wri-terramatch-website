@@ -1,5 +1,6 @@
 import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
 
 import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -13,11 +14,28 @@ const meta = {
   parameters: {
     layout: "fullscreen"
   },
-  render: args => (
-    <div className="py-20">
-      <Navbar {...args} />
-    </div>
-  )
+  render: args => {
+    const NavbarWithState = () => {
+      const [activeIndex, setActiveIndex] = useState(0);
+
+      const navLinks = args.navLinks?.map((link, index) => ({
+        ...link,
+        isActive: index === activeIndex,
+        onClick: () => {
+          setActiveIndex(index);
+          if (link.onClick) link.onClick();
+        }
+      }));
+
+      return (
+        <div className="py-20">
+          <Navbar {...args} navLinks={navLinks} />
+        </div>
+      );
+    };
+
+    return <NavbarWithState />;
+  }
 } satisfies Meta<typeof Navbar>;
 
 export default meta;

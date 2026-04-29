@@ -22,10 +22,11 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { downloadOrganisationCsv } from "@/connections/Organisation";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { ToastType, useToastContext } from "@/context/toast.provider";
-import { fetchGetV2AdminOrganisationsExport } from "@/generated/apiComponents";
-import { downloadFileBlob } from "@/utils/network";
+import Log from "@/utils/log";
+import { downloadFileUrl } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import { useGetOrganisationsTotals } from "../hooks/useGetOrganisationsTotal";
@@ -112,34 +113,22 @@ export const OrganisationsList = () => {
   const t = useT();
   const [exporting, setExporting] = useState<boolean>(false);
   const { openToast } = useToastContext();
-  const onSuccess = (response: any) => {
-    openToast(t("successfully exported"));
-    downloadFileBlob(response, `organisations.csv`);
-  };
   const { isSuperAdmin } = useGetUserRole();
 
-  const onError = () => {
-    openToast(t("Something went wrong!"), ToastType.ERROR);
-  };
-
-  const handleExport = () => {
+  const handleExport = useCallback(async () => {
     setExporting(true);
-    fetchGetV2AdminOrganisationsExport({})
-      .then((response: any) => {
-        if (response.message) {
-          return fetchGetV2AdminOrganisationsExport({ queryParams: { force: true } });
-        } else {
-          return response;
-        }
-      })
-      .then((response: any) => {
-        onSuccess(response);
-      })
-      .catch(onError)
-      .finally(() => {
-        setExporting(false);
-      });
-  };
+
+    const { data, loadFailure } = await downloadOrganisationCsv();
+    if (data != null) {
+      openToast(t("Successfully exported"));
+      downloadFileUrl(data.url);
+    } else {
+      Log.error("Organisation export failed", loadFailure);
+      openToast(t("Something went wrong!"), ToastType.ERROR);
+    }
+
+    setExporting(false);
+  }, [openToast, t]);
 
   return (
     <>

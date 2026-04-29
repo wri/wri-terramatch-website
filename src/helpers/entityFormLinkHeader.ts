@@ -98,7 +98,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         label: isAdmin ? linkLabel : t("My Projects"),
         link: isAdmin ? adminListPath! : "/my-projects"
       },
-      { label: entityTitle, link: entityPageLink },
+      { label: entityTitle.length > 25 ? `${entityTitle.slice(0, 25)}...` : entityTitle, link: entityPageLink },
       { label: t("Edit"), link: editLink }
     ]),
     sites: withFirstIcon([

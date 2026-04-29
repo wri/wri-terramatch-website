@@ -15,7 +15,7 @@ export interface NurseryHeaderProps {
 const NurseryHeader: FC<NurseryHeaderProps> = ({ nursery }) => (
   <>
     <PageHeader title={nursery.name ?? ""} />
-    <Box display="flex" gap={4} px={6} py={5} justifyContent="space-between">
+    <Box display="flex" gap={4} px={6} py={5} justifyContent="space-between" className="mobile:flex-col">
       <Flex gap={5}>
         <NurseryInfo
           nursery={nursery}

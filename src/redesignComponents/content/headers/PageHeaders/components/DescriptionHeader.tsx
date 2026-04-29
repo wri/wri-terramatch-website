@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC } from "react";
@@ -15,6 +15,7 @@ export interface DescriptionHeaderProps {
   downloadButtonProps?: IButtonProps;
   maxLines?: number;
   readMoreOnClick?: () => void;
+  id?: string;
 }
 
 const DescriptionHeader: FC<DescriptionHeaderProps> = ({
@@ -23,7 +24,8 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
   backgroundColor = "secondary.neutral",
   downloadButtonProps = null,
   maxLines = 3,
-  readMoreOnClick
+  readMoreOnClick,
+  id
 }) => {
   const t = useT();
   const { descriptionRef, isClamped, isExpanded, toggleExpand } = useClampedText(description, maxLines);
@@ -89,6 +91,14 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
           </Button>
         ) : null}
       </Box>
+      <Flex gap={1} className="items-center">
+        <Text textStyle="300" color="neutral.900">
+          {t("ID:")}
+        </Text>
+        <Text textStyle="300-bold" color="neutral.900">
+          {id}
+        </Text>
+      </Flex>
       <div className="flex w-fit gap-2">
         <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
           {t("Edit")}

@@ -1,4 +1,5 @@
 ﻿import { Box, Button, Menu, MenuContent, MenuPositioner, MenuTrigger, Portal, Text } from "@chakra-ui/react";
+import { MenuItem } from "@chakra-ui/react";
 import { css, Global } from "@emotion/react";
 import { FC, ReactNode, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -41,6 +42,7 @@ export interface MenuItemTyped {
 const TypedMenuTrigger = MenuTrigger as FC<MenuTriggerTyped>;
 const TypedMenuPositioner = MenuPositioner as FC<MenuContainerTyped>;
 const TypedMenuContent = MenuContent as FC<MenuContainerTyped>;
+const TypedMenuItem = MenuItem as FC<MenuItemTyped>;
 
 const Caret: FC<{ direction: "top" | "bottom" }> = ({ direction }) => {
   const isTop = direction === "top";
@@ -108,9 +110,8 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
             "hover:!bg-theme-primary-700",
             "active:!bg-theme-primary-800",
             "data-[state=open]:!bg-theme-primary-800",
-            "focus-within:ring-2 focus-within:ring-theme-primary-700 focus-within:ring-offset-2",
-            "focus:outline-none",
             "disabled:!text-neutral-200",
+            "outline-none",
             disabled && "cursor-default"
           )}
         >
@@ -148,13 +149,28 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
                 gap={2}
               >
                 {items.map((item, index) => (
-                  <NavigationMenuItemRow
+                  <TypedMenuItem
                     key={index}
-                    variant={variant}
-                    item={item}
-                    isSelected={index === selectedIndex}
-                    showBorder={false}
-                  />
+                    value={String(index)}
+                    pb={variant === "mega" ? 2 : undefined}
+                    borderBottom={variant === "mega" && index !== items.length - 1 ? "1px solid" : "none"}
+                    borderColor="neutral.300"
+                    _hover={{ backgroundColor: "primary.500/20", outline: "none" }}
+                    _highlighted={{
+                      outline: "2px solid",
+                      outlineColor: "primary.700",
+                      backgroundColor: "neutral.100"
+                    }}
+                    cursor="pointer"
+                    onClick={() => onSelect?.(index)}
+                  >
+                    <NavigationMenuItemRow
+                      variant={variant}
+                      item={item}
+                      isSelected={index === selectedIndex}
+                      showBorder={false}
+                    />
+                  </TypedMenuItem>
                 ))}
               </Box>
               <Caret direction="bottom" />

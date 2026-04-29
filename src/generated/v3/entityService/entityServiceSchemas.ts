@@ -1336,6 +1336,10 @@ export type DisturbanceReportLightDto = {
   reportId: number;
 };
 
+export type FileDownloadDto = {
+  url: string;
+};
+
 export type ProjectFullDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -1462,6 +1466,14 @@ export type ProjectFullDto = {
    */
   assistedNaturalRegenerationList: ANRDto[];
   goalTreesRestoredAnr: number | null;
+  /**
+   * Expected trees restored from project tree goals: (sum of trees-goal tracking entries with type years) × (survivalRate / 100) + ANR strategy goal, rounded to the nearest integer.
+   */
+  treesToBeRestoredGoal: number;
+  /**
+   * Sum of visible project-level tree-planted species goal amounts (v2_tree_species on this project, collection tree-planted).
+   */
+  treesToBePlantedSpeciesGoalTotal: number;
   seedsGrownGoal: number | null;
   directSeedingSurvivalRate: number | null;
   nurserySeedlingsGoal: number | null;

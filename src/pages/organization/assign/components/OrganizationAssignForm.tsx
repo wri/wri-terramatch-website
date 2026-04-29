@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo } from "react";
-import { When } from "react-if";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import Form from "@/components/extensive/Form/Form";
@@ -9,6 +8,7 @@ import { useOrganisations, useOrgCreate, useOrgJoin } from "@/connections/Organi
 import { useMyUser } from "@/connections/User";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useInputDelay } from "@/hooks/useInputDelay";
+import { first } from "@/utils/array";
 import Log from "@/utils/log";
 
 import { useOrganizationCreateContext } from "../context/OrganizationCreate.provider";
@@ -71,7 +71,7 @@ const OrganizationAssignForm = () => {
    */
   useEffect(() => {
     if (createFailure != null && !organisationCreateLoading) {
-      const errorMessage = createFailure.message ?? "Failed to create organization";
+      const errorMessage = first(createFailure.message) ?? "Failed to create organization";
       form.setError("name", { message: errorMessage });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -156,13 +156,13 @@ const OrganizationAssignForm = () => {
           error={form.formState.errors.name}
           clearable
         />
-        <When condition={!type && searchedTerm}>
+        {!type && searchedTerm && (
           <OrganizationAssignPanel
             searchedTerm={searchedTerm}
             organizations={(organisationsData ?? []) as unknown as Array<{ uuid: string; name: string }>}
             loading={loading}
           />
-        </When>
+        )}
       </div>
       <Form.Footer
         secondaryButtonProps={{

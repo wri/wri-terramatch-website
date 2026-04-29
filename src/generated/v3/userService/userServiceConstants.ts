@@ -7,6 +7,8 @@ import {
   OrganisationLightDto,
   OrganisationFullDto,
   UserDto,
+  FileDownloadDto,
+  DelayedJobDto,
   FinancialIndicatorDto,
   FinancialReportLightDto,
   MediaDto,
@@ -15,6 +17,7 @@ import {
   OwnershipStakeDto,
   TreeSpeciesDto,
   ActionDto,
+  SendLoginDetailsResponseDto,
   UserAssociationDto,
   OrganisationInviteDto,
   ProjectInviteAcceptanceDto
@@ -27,6 +30,8 @@ export const USER_SERVICE_RESOURCES = [
   "resendVerifications",
   "organisations",
   "users",
+  "fileDownloads",
+  "delayedJobs",
   "financialIndicators",
   "financialReports",
   "media",
@@ -35,6 +40,7 @@ export const USER_SERVICE_RESOURCES = [
   "ownershipStakes",
   "treeSpecies",
   "actions",
+  "sendLoginDetails",
   "associatedUsers",
   "organisationInvites",
   "projectInviteAcceptances"
@@ -47,6 +53,8 @@ export type UserServiceApiResources = {
   resendVerifications: StoreResourceMap<ResendVerificationResponseDto>;
   organisations: StoreResourceMap<OrganisationLightDto | OrganisationFullDto>;
   users: StoreResourceMap<UserDto>;
+  fileDownloads: StoreResourceMap<FileDownloadDto>;
+  delayedJobs: StoreResourceMap<DelayedJobDto>;
   financialIndicators: StoreResourceMap<FinancialIndicatorDto>;
   financialReports: StoreResourceMap<FinancialReportLightDto>;
   media: StoreResourceMap<MediaDto>;
@@ -55,6 +63,7 @@ export type UserServiceApiResources = {
   ownershipStakes: StoreResourceMap<OwnershipStakeDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   actions: StoreResourceMap<ActionDto>;
+  sendLoginDetails: StoreResourceMap<SendLoginDetailsResponseDto>;
   associatedUsers: StoreResourceMap<UserAssociationDto>;
   organisationInvites: StoreResourceMap<OrganisationInviteDto>;
   projectInviteAcceptances: StoreResourceMap<ProjectInviteAcceptanceDto>;

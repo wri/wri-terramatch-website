@@ -6,7 +6,7 @@ import Button from "@/components/elements/Button/Button";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { parsePolygonDataV3 } from "@/components/elements/Map-mapbox/utils";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -55,7 +55,7 @@ const EntityMapAndGalleryCard = ({
     isPublic: undefined,
     modelType: undefined
   });
-  const mapFunctions = useMap();
+  const mapFunctions = useBaseMap();
   const imageGalleryRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const queryUuid = router.query.uuid as string;
@@ -205,7 +205,7 @@ const EntityMapAndGalleryCard = ({
             showLegend
             hasControls
             showPopups
-            modelFilesData={mediaList}
+            mediaFiles={mediaList}
             entityData={entityData}
             imageGalleryRef={imageGalleryRef}
           />

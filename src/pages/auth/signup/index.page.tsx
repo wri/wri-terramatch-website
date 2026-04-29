@@ -49,22 +49,26 @@ const SignUpPage = ({
   const [, { isCreating, createFailure, data: newUser, create: signUp }] = useUserCreation({});
   useRequestComplete(
     isCreating,
-    useCallback(() => {
-      if (createFailure == null) {
-        return router.push(`/auth/signup/confirm?email=${encodeURIComponent(newUser?.emailAddress ?? "")}`);
-      } else {
-        let message: string;
-        if (createFailure.statusCode == 422 && createFailure.message == "User already exists") {
-          message = t(
-            "An account with this email address already exists. Please try signing in with your existing account, or reset your password if you have forgotten it."
-          );
-          form.setError("email_address", { message: message, type: "validate" });
+    createFailure,
+    useCallback(
+      failure => {
+        if (failure == null) {
+          return router.push(`/auth/signup/confirm?email=${encodeURIComponent(newUser?.emailAddress ?? "")}`);
         } else {
-          message = t("An error occurred. Please try again later.");
-          form.setError("root", { message: message, type: "validate" });
+          let message: string;
+          if (failure.statusCode == 422 && failure.message == "User already exists") {
+            message = t(
+              "An account with this email address already exists. Please try signing in with your existing account, or reset your password if you have forgotten it."
+            );
+            form.setError("email_address", { message: message, type: "validate" });
+          } else {
+            message = t("An error occurred. Please try again later.");
+            form.setError("root", { message: message, type: "validate" });
+          }
         }
-      }
-    }, [createFailure, form, newUser?.emailAddress, router, t])
+      },
+      [form, newUser?.emailAddress, router, t]
+    )
   );
 
   const { strength } = usePasswordStrength({ password: form.watch("password") });

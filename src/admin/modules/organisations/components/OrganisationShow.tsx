@@ -98,7 +98,7 @@ const OrganisationDataConsumer = () => {
 
   return (
     <div className="flex flex-col gap-8 p-2">
-      <FinancialMetrics data={financialIndicators} years={years} />
+      <FinancialMetrics data={financialIndicators} years={years} orgModel />
       <Accordion
         title="Financial Documents per Year"
         variant="drawer"

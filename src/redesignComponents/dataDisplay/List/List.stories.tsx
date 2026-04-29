@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import ProfileItem from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileItem";
 
-import { LeadingIcon, TreeCircleIcon } from "../../foundations/Icons";
+import { TreeCircleIcon, UserIcon } from "../../foundations/Icons";
 import List from "./List";
 
 const meta: Meta<typeof List> = {
@@ -111,16 +111,16 @@ export const LinkListItems: Story = {
         label: "Label",
         caption: "Data",
         variant: "navigation",
-        icon: <LeadingIcon className="h-4.5 w-4.5" />
+        icon: <UserIcon className="h-4.5 w-4.5" />
       },
       {
         id: "2",
         label: "Label",
         caption: "Data",
         variant: "navigation",
-        icon: <LeadingIcon className="h-4.5 w-4.5" />
+        icon: <UserIcon className="h-4.5 w-4.5" />
       },
-      { id: "3", label: "Label", caption: "Data", variant: "navigation", icon: <LeadingIcon className="h-4.5 w-4.5" /> }
+      { id: "3", label: "Label", caption: "Data", variant: "navigation", icon: <UserIcon className="h-4.5 w-4.5" /> }
     ]
   }
 };

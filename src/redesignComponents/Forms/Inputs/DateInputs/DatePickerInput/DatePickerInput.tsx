@@ -95,7 +95,11 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
             {errorMessage}
           </FieldErrorMessage>
         ) : null}
-        <StyledPickerWrapper $size={size} data-invalid={errorMessage != null ? "" : undefined}>
+        <StyledPickerWrapper
+          $size={size}
+          data-invalid={errorMessage != null ? "" : undefined}
+          data-open={picker.open ? "" : undefined}
+        >
           <Global styles={calendarBaseGlobalStyles} />
           <DatePicker.RootProvider value={picker}>
             <DatePicker.Control

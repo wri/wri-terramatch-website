@@ -1,20 +1,16 @@
+import { isString } from "lodash";
 import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react";
 import { useNotify } from "react-admin";
 
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
-import {
-  fetchGetV2AdminFormsApplicationsUUIDExport,
-  fetchGetV2AdminFormsSubmissionsUUIDExport
-} from "@/generated/apiComponents";
-import { downloadFileBlob, downloadPresignedUrl } from "@/utils/network";
+import { downloadApplicationExport } from "@/connections/FundingProgramme";
+import { formSubmissionsExportCsv } from "@/generated/v3/entityService/entityServiceComponents";
+import { downloadFileBlob, downloadFileUrl } from "@/utils/network";
 
 type ExportType = {
   loading: boolean;
   error?: string;
-  exportApplications: (
-    data: { fundingProgrammeUuid: string } | { formUuid: string },
-    fileName: string
-  ) => Promise<void>;
+  exportApplications: (data: { fundingProgrammeUuid: string } | { formUuid: string }) => Promise<void>;
 };
 
 export const ExportContext = createContext<ExportType>({
@@ -33,21 +29,17 @@ const ExportProvider = ({ children }: ExportProviderProps) => {
   const notify = useNotify();
 
   const exportApplications = useCallback(
-    async (
-      { fundingProgrammeUuid, formUuid }: { fundingProgrammeUuid?: string; formUuid?: string },
-      fileName: string
-    ) => {
-      const exporter = async (fileName: string, fn: () => Promise<any>) => {
+    async ({ fundingProgrammeUuid, formUuid }: { fundingProgrammeUuid?: string; formUuid?: string }) => {
+      const exporter = async (fn: () => Promise<{ fileName?: string; response: Blob | string }>) => {
         try {
           setLoading(true);
-          const res = await fn();
-          if (res?.url) {
-            await downloadPresignedUrl(res.url, fileName);
+          const { fileName, response } = await fn();
+          if (isString(response)) {
+            downloadFileUrl(response, fileName);
           } else {
-            await downloadFileBlob(res, fileName);
+            await downloadFileBlob(response, fileName ?? "Applications.csv");
           }
           setLoading(false);
-          return res;
         } catch (err: any) {
           setLoading(false);
           setError(err.message);
@@ -56,11 +48,18 @@ const ExportProvider = ({ children }: ExportProviderProps) => {
       };
 
       if (formUuid != null) {
-        return exporter(fileName, () => fetchGetV2AdminFormsSubmissionsUUIDExport({ pathParams: { uuid: formUuid } }));
+        return exporter(async () => {
+          const { fileName, blob } = await formSubmissionsExportCsv.fetchBlob({ pathParams: { uuid: formUuid } });
+          return { fileName, response: blob };
+        });
       } else if (fundingProgrammeUuid != null) {
-        return exporter(fileName, () =>
-          fetchGetV2AdminFormsApplicationsUUIDExport({ pathParams: { uuid: fundingProgrammeUuid } })
-        );
+        return exporter(async () => {
+          const { data, loadFailure } = await downloadApplicationExport(fundingProgrammeUuid);
+          if (loadFailure != null) {
+            throw loadFailure;
+          }
+          return { response: data?.url as string };
+        });
       }
 
       throw new Error("Incorrect Props supplied to export applications");

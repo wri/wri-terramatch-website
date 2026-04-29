@@ -3,8 +3,9 @@ import { get } from "lodash";
 import { useEffect, useState } from "react";
 import { useRecordContext } from "react-admin";
 
-import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
+import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { buildReadOnlyMapProps } from "@/components/elements/Map-mapbox/mapProps.builders";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useProjectPolygonByPitch } from "@/connections/ProjectPolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
@@ -17,7 +18,7 @@ interface MapFieldProps {
 
 const MapField = ({ source, emptyText = "Not Provided" }: MapFieldProps) => {
   const record = useRecordContext<any>();
-  const mapFunctions = useMap();
+  const mapFunctions = useBaseMap();
   const [polygonBbox, setPolygonBbox] = useState<any>(null);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
 
@@ -53,13 +54,12 @@ const MapField = ({ source, emptyText = "Not Provided" }: MapFieldProps) => {
 
   return record && projectBoundary ? (
     <MapContainer
-      polygonsData={polygonDataMap}
-      bbox={polygonBbox}
-      className="h-[240px] flex-1"
-      hasControls={false}
-      showPopups={false}
-      showLegend={false}
-      mapFunctions={mapFunctions}
+      {...buildReadOnlyMapProps({
+        mapFunctions,
+        polygonsData: polygonDataMap,
+        bbox: polygonBbox,
+        className: "h-[240px] flex-1"
+      })}
     />
   ) : (
     <Typography component="span" variant="body2">
