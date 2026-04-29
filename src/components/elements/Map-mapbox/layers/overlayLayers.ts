@@ -14,11 +14,38 @@ import {
   getGeoserverURL
 } from "../adapters/geoserver";
 import { AnrPlotMapPopup } from "../components/AnrPlotMapPopup";
-import { BASEMAP_CONFIGS, MapStyle } from "../MapControls/types";
+import {
+  BASEMAP_CONFIGS,
+  MapStyle,
+  TERRAMATCH_SATELLITE_STYLE_ID,
+  TERRAMATCH_STREET_STYLE_ID
+} from "../MapControls/types";
 import { setFilterLandscape } from "./polygonLayers";
 
 const GOOGLE_RASTER_SOURCE_ID = "google-satellite-source";
 const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
+
+const pendingStyleLoadHandlers = new WeakMap<MapboxMap, (() => void) | null>();
+
+function registerOnceStyleLoad(map: MapboxMap, handler: () => void): void {
+  const prev = pendingStyleLoadHandlers.get(map);
+  if (prev != null) {
+    map.off("style.load", prev);
+  }
+  const wrapped = () => {
+    pendingStyleLoadHandlers.set(map, null);
+    handler();
+  };
+  pendingStyleLoadHandlers.set(map, wrapped);
+  map.once("style.load", wrapped);
+}
+
+const hiddenBaseLayersByMap = new WeakMap<MapboxMap, Set<string>>();
+
+function getHiddenBaseLayers(map: MapboxMap): Set<string> {
+  if (!hiddenBaseLayersByMap.has(map)) hiddenBaseLayersByMap.set(map, new Set());
+  return hiddenBaseLayersByMap.get(map)!;
+}
 
 export const addBorderLandscape = (map: MapboxMap, landscapes: string[]): void => {
   if (landscapes == null || landscapes.length === 0 || map == null) return;
@@ -50,7 +77,7 @@ export const addBorderLandscape = (map: MapboxMap, landscapes: string[]): void =
 };
 
 export const removeBorderLandscape = (map: MapboxMap): void => {
-  if (!map || !map.isStyleLoaded()) return;
+  if (map == null) return;
   const layerName = LAYERS_NAMES.LANDSCAPES;
   try {
     if (map.getLayer(layerName)) map.removeLayer(layerName);
@@ -96,7 +123,9 @@ export const addGoogleSatelliteLayer = (map: MapboxMap): void => {
     ];
     const isPolygonLayer = (layerId: string) => polygonLayerPrefixes.some(prefix => layerId.startsWith(prefix));
 
-    let hiddenCount = 0;
+    const hiddenSet = getHiddenBaseLayers(map);
+    hiddenSet.clear();
+
     layers
       .filter(
         layer =>
@@ -109,14 +138,12 @@ export const addGoogleSatelliteLayer = (map: MapboxMap): void => {
         try {
           if (map.getLayoutProperty(layer.id, "visibility") !== "none") {
             map.setLayoutProperty(layer.id, "visibility", "none");
-            hiddenCount++;
+            hiddenSet.add(layer.id);
           }
         } catch (e) {
           Log.warn("Error setting layer visibility:", e);
         }
       });
-
-    if (hiddenCount > 0) Log.info(`Hidden ${hiddenCount} Street layers`);
 
     map.addSource(GOOGLE_RASTER_SOURCE_ID, {
       type: "raster",
@@ -126,7 +153,8 @@ export const addGoogleSatelliteLayer = (map: MapboxMap): void => {
       maxzoom: 22
     });
 
-    const firstLayerId = layers.find(l => l.type !== "background")?.id;
+    const freshLayers = map.getStyle().layers ?? [];
+    const firstLayerId = freshLayers.find(l => l.type !== "background")?.id;
     map.addLayer(
       { id: GOOGLE_RASTER_LAYER_ID, type: "raster", source: GOOGLE_RASTER_SOURCE_ID, paint: { "raster-opacity": 1 } },
       firstLayerId
@@ -144,37 +172,47 @@ export const removeGoogleSatelliteLayer = (map: MapboxMap): void => {
     return;
   }
   try {
-    if (map.getLayer(GOOGLE_RASTER_LAYER_ID)) map.removeLayer(GOOGLE_RASTER_LAYER_ID);
-    if (map.getSource(GOOGLE_RASTER_SOURCE_ID)) map.removeSource(GOOGLE_RASTER_SOURCE_ID);
+    if (map.getLayer(GOOGLE_RASTER_LAYER_ID) != null) map.removeLayer(GOOGLE_RASTER_LAYER_ID);
+    if (map.getSource(GOOGLE_RASTER_SOURCE_ID) != null) map.removeSource(GOOGLE_RASTER_SOURCE_ID);
 
-    const layers = map.getStyle()?.layers ?? [];
-    const polygonLayerPrefixes = [
-      LAYERS_NAMES.POLYGON_GEOMETRY,
-      LAYERS_NAMES.DELETED_GEOMETRIES,
-      LAYERS_NAMES.CENTROIDS,
-      LAYERS_NAMES.POLYGON_CENTROIDS,
-      ANR_PLOT_LAYER_PREFIX
-    ];
-    const isPolygonLayer = (layerId: string) => polygonLayerPrefixes.some(prefix => layerId.startsWith(prefix));
+    const hiddenSet = getHiddenBaseLayers(map);
 
-    let restoredCount = 0;
-    layers
-      .filter(layer => {
-        const isBaseMapLayer = layer.type === "background" || layer.type === "fill" || layer.type === "raster";
-        return isBaseMapLayer && !isPolygonLayer(layer.id);
-      })
-      .forEach(layer => {
+    if (hiddenSet.size > 0) {
+      hiddenSet.forEach(layerId => {
         try {
-          if (map.getLayoutProperty(layer.id, "visibility") === "none") {
-            map.setLayoutProperty(layer.id, "visibility", "visible");
-            restoredCount++;
+          if (map.getLayer(layerId) != null && map.getLayoutProperty(layerId, "visibility") === "none") {
+            map.setLayoutProperty(layerId, "visibility", "visible");
           }
         } catch (e) {
-          Log.warn("Error restoring layer visibility:", e);
+          Log.warn("Error restoring tracked layer visibility:", e);
         }
       });
-
-    if (restoredCount > 0) Log.info(`Restored ${restoredCount} Street layers`);
+      hiddenSet.clear();
+    } else {
+      const polygonLayerPrefixes = [
+        LAYERS_NAMES.POLYGON_GEOMETRY,
+        LAYERS_NAMES.DELETED_GEOMETRIES,
+        LAYERS_NAMES.CENTROIDS,
+        LAYERS_NAMES.POLYGON_CENTROIDS,
+        ANR_PLOT_LAYER_PREFIX
+      ];
+      const isPolygonLayer = (id: string) => polygonLayerPrefixes.some(p => id.startsWith(p));
+      const layers = map.getStyle()?.layers ?? [];
+      layers
+        .filter(l => {
+          const isBase = l.type === "background" || l.type === "fill" || l.type === "raster";
+          return isBase && !isPolygonLayer(l.id);
+        })
+        .forEach(l => {
+          try {
+            if (map.getLayoutProperty(l.id, "visibility") === "none") {
+              map.setLayoutProperty(l.id, "visibility", "visible");
+            }
+          } catch (e) {
+            Log.warn("Error restoring layer visibility (fallback):", e);
+          }
+        });
+    }
   } catch (error) {
     Log.warn("Error removing Google satellite layer:", error);
   }
@@ -185,10 +223,23 @@ export const getCurrentMapStyle = (map: MapboxMap): MapStyle | undefined => {
   try {
     if (map.getLayer(GOOGLE_RASTER_LAYER_ID)) return MapStyle.GoogleSatellite;
     const internalStyle = (map as MapboxMap & { style?: { url?: string; name?: string } }).style;
-    const styleUrl = internalStyle?.url ?? internalStyle?.name;
+    const styleFromSpec = map.getStyle() as { name?: string; metadata?: { "mapbox:uri"?: string } } | null | undefined;
+    const fromSpec = styleFromSpec?.name;
+    const styleUrl = internalStyle?.url ?? internalStyle?.name ?? fromSpec;
     if (styleUrl) {
-      if (styleUrl === MapStyle.Street || styleUrl.includes("clve3yxzq01w101pefkkg3rci")) return MapStyle.Street;
-      if (styleUrl === MapStyle.Satellite || styleUrl.includes("clv3bkxut01y301pk317z5afu")) return MapStyle.Satellite;
+      if (styleUrl === MapStyle.Street || styleUrl.includes(TERRAMATCH_STREET_STYLE_ID)) return MapStyle.Street;
+      if (styleUrl === MapStyle.Satellite || styleUrl.includes(TERRAMATCH_SATELLITE_STYLE_ID))
+        return MapStyle.Satellite;
+    }
+    const uri = styleFromSpec?.metadata?.["mapbox:uri"];
+    if (typeof uri === "string") {
+      if (uri === MapStyle.Street || uri.includes(TERRAMATCH_STREET_STYLE_ID)) return MapStyle.Street;
+      if (uri === MapStyle.Satellite || uri.includes(TERRAMATCH_SATELLITE_STYLE_ID)) return MapStyle.Satellite;
+    }
+    if (styleFromSpec != null) {
+      const blob = JSON.stringify(styleFromSpec);
+      if (blob.includes(TERRAMATCH_STREET_STYLE_ID)) return MapStyle.Street;
+      if (blob.includes(TERRAMATCH_SATELLITE_STYLE_ID)) return MapStyle.Satellite;
     }
   } catch (e) {
     Log.warn("Error getting current map style:", e);
@@ -208,17 +259,15 @@ export const setMapStyle = (
 
   if (targetStyle === MapStyle.GoogleSatellite) {
     setCurrentStyle(targetStyle);
+
     if (currentStyle === MapStyle.Street) {
-      if (map.isStyleLoaded()) {
+      addGoogleSatelliteLayer(map);
+      updateMapProjection(map, targetStyle);
+    } else {
+      registerOnceStyleLoad(map, () => {
         addGoogleSatelliteLayer(map);
         updateMapProjection(map, targetStyle);
-      } else {
-        map.once("style.load", () => {
-          addGoogleSatelliteLayer(map);
-          updateMapProjection(map, targetStyle);
-        });
-      }
-    } else {
+      });
       map.setStyle(targetConfig.style);
     }
     return;
@@ -226,24 +275,16 @@ export const setMapStyle = (
 
   if (currentStyle === MapStyle.GoogleSatellite) {
     if (targetStyle === MapStyle.Street) {
-      if (map.isStyleLoaded()) {
-        removeGoogleSatelliteLayer(map);
-        setCurrentStyle(targetStyle);
-        updateMapProjection(map, targetStyle);
-      } else {
-        map.once("style.load", () => {
-          removeGoogleSatelliteLayer(map);
-          setCurrentStyle(targetStyle);
-          updateMapProjection(map, targetStyle);
-        });
-      }
+      removeGoogleSatelliteLayer(map);
+      setCurrentStyle(targetStyle);
+      updateMapProjection(map, targetStyle);
       return;
     }
   }
 
   setCurrentStyle(targetStyle);
   map.setStyle(targetConfig.style);
-  map.once("style.load", () => updateMapProjection(map, targetStyle));
+  registerOnceStyleLoad(map, () => updateMapProjection(map, targetStyle));
 };
 
 type AnrPlotOverlayState = {

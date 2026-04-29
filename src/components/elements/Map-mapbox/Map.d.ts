@@ -91,9 +91,9 @@ export interface MapFunctions {
   map: MutableRefObject<MapboxMap | null>;
   mapContainer: RefObject<HTMLDivElement>;
   draw: MutableRefObject<MapboxDraw | null>;
-  styleLoaded: boolean;
   onCancel: (parsedPolygonData: Record<string, string[]> | undefined) => void;
   initMap: (useDashboardStyle?: boolean, initialStyle?: MapStyle) => void;
+  /** @deprecated */
   setStyleLoaded: (value: boolean) => void;
   handleTrashDelete: () => void;
 }

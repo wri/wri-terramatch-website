@@ -60,7 +60,7 @@ export const addFilterOnLayer = (layer: LayerType, parsedPolygonData: Record<str
 };
 
 export const setFilterLandscape = (map: MapboxMap, layerName: string, landscapes: string[]) => {
-  map.setFilter(layerName, ["in", ["get", "landscape"], ["literal", landscapes]]);
+  map.setFilter(layerName, ["match", ["get", "landscape"], landscapes, true, false]);
 };
 
 export const addGeojsonSourceToLayer = (
@@ -71,11 +71,15 @@ export const addGeojsonSourceToLayer = (
   existsPolygons: boolean
 ) => {
   const { name, styles } = layer;
-  if (map == null || centroids == null || centroids.length === 0) return;
+  if (map == null || centroids == null || centroids.length === 0) {
+    return;
+  }
 
   const keys = getCentroidSourceKeys(map);
   const cacheKey = `${existsPolygons ? "1" : "0"}:${computeCentroidsFingerprint(centroids)}:${zoomFilterValue ?? "n"}`;
-  if (map.getSource(name) != null && keys[name] === cacheKey) return;
+  if (map.getSource(name) != null && keys[name] === cacheKey) {
+    return;
+  }
 
   if (map.getSource(name)) {
     styles?.forEach((_: unknown, index: number) => {
@@ -145,6 +149,11 @@ const sourceCacheKeys = new WeakMap<MapboxMap, Record<string, string>>();
 function getSourceCacheKeys(map: MapboxMap): Record<string, string> {
   if (!sourceCacheKeys.has(map)) sourceCacheKeys.set(map, {});
   return sourceCacheKeys.get(map)!;
+}
+
+export function getMapTileVersion(map: MapboxMap | null | undefined): string {
+  if (map == null) return "0";
+  return getSourceCacheKeys(map)[LAYERS_NAMES.POLYGON_GEOMETRY] ?? "0";
 }
 
 export const addSourceToLayer = (
@@ -295,12 +304,15 @@ export const addSourcesToLayers = (
   cacheKey: string = "0"
 ) => {
   if (map == null) return;
+
+  const existsPolygonsForCentroidGeojson = !_.isEmpty(polygonsData);
+
   layersList.forEach((layer: LayerType) => {
     if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
       addSourceToLayer(layer, map, polygonsData, zoomFilter, dashboardMode, cacheKey);
     }
     if (layer.name === LAYERS_NAMES.CENTROIDS && dashboardMode) {
-      addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));
+      addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, existsPolygonsForCentroidGeojson);
     }
   });
   if (dashboardMode) {
@@ -308,12 +320,20 @@ export const addSourcesToLayers = (
   }
 };
 
+const pendingCentroidRetryByMap = new WeakMap<MapboxMap, (() => void) | null>();
+
 export const addPolygonCentroidsLayer = (
   map: MapboxMap,
   centroids: { uuid: string; long: number; lat: number }[],
   zoomFilterValue?: number
 ) => {
   if (map == null) return;
+
+  const prevRetry = pendingCentroidRetryByMap.get(map);
+  if (prevRetry != null) {
+    map.off("idle", prevRetry);
+    pendingCentroidRetryByMap.set(map, null);
+  }
 
   const layerName = LAYERS_NAMES.POLYGON_CENTROIDS;
 
@@ -361,7 +381,13 @@ export const addPolygonCentroidsLayer = (
       filter
     });
   } catch (error) {
-    Log.error("addPolygonCentroidsLayer: unexpected error (style may not be ready):", error);
+    Log.warn("addPolygonCentroidsLayer: retrying on idle after error:", error);
+    const retryFn = () => {
+      pendingCentroidRetryByMap.set(map, null);
+      addPolygonCentroidsLayer(map, centroids, zoomFilterValue);
+    };
+    pendingCentroidRetryByMap.set(map, retryFn);
+    map.once("idle", retryFn);
   }
 };
 

@@ -86,7 +86,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
         <Button
           variant="borderless"
           size="small"
-          className="-mr-2"
+          className="-mr-2 mobile:block mobile:!w-[200px] mobile:truncate"
           onClick={() => router.push(`/project/${projectUuid}`)}
         >
           {projectName}

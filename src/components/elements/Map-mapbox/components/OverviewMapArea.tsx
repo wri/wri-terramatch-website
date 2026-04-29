@@ -6,6 +6,7 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { useDelayedJobs } from "@/connections/DelayedJob";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
@@ -45,6 +46,7 @@ const OverviewMapArea = ({
   const [sortField, setSortField] = useState<string>("createdAt");
   const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("ASC");
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
+  const [processedPolyValidationJobs, setProcessedPolyValidationJobs] = useState<Set<string>>(new Set());
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
 
@@ -61,6 +63,8 @@ const OverviewMapArea = ({
     polygonData: sitePolygonDataV3,
     validFilter
   } = useMapAreaContext();
+
+  const [, { delayedJobs }] = useDelayedJobs();
   const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refetch);
 
   const mapFunctions = useBaseMap(onSave);
@@ -125,6 +129,23 @@ const OverviewMapArea = ({
       setShouldRefetchValidation(false);
     }
   });
+
+  useEffect(() => {
+    if (delayedJobs == null || delayedJobs.length === 0) return;
+
+    const newlyCompleted = delayedJobs.filter(
+      job => job.name === "Polygon Validation" && job.status !== "pending" && !processedPolyValidationJobs.has(job.uuid)
+    );
+
+    if (newlyCompleted.length > 0) {
+      setProcessedPolyValidationJobs(prev => {
+        const next = new Set(prev);
+        newlyCompleted.forEach(j => next.add(j.uuid));
+        return next;
+      });
+      refetch();
+    }
+  }, [delayedJobs, processedPolyValidationJobs, refetch]);
   useEffect(() => {
     if (polygonsData?.length > 0) {
       const dataMap = parsePolygonDataV3(polygonsData);

@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { FC, useMemo } from "react";
 
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { getThemedColor } from "@/lib/theme";
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
   getNoCountTableColumns,
@@ -24,6 +25,8 @@ type PlantTableEntryRendererProps = {
   plants: Parameters<typeof plantsToNoCountRows>[0];
 };
 
+export const NO_GOAL_PLANTS_PER_PAGE = 10;
+
 export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tableType, plants }) => {
   const { framework } = useFrameworkContext();
   const t = useT();
@@ -43,20 +46,73 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
     ],
     [t]
   );
+  const totalRowName = "__total_row__";
+  const totalAmount = useMemo(
+    () =>
+      plants.reduce((sum, plant) => {
+        const plantAmount = (plant as { amount?: number | string }).amount;
+        const amount = typeof plantAmount === "number" ? plantAmount : Number(plantAmount ?? 0);
+        return sum + (amount ? amount : 0);
+      }, 0),
+    [plants]
+  );
+  const noGoalTableData = useMemo(
+    () =>
+      plants.reduce<Array<{ name?: string; amount?: number | string }>>((rows, plant, index) => {
+        rows.push(plant as { name?: string; amount?: number | string });
+
+        const isChunkEnd = (index + 1) % NO_GOAL_PLANTS_PER_PAGE === 0;
+        const isLastPlant = index === plants.length - 1;
+        if (isChunkEnd || isLastPlant) {
+          rows.push({
+            name: totalRowName,
+            amount: totalAmount
+          });
+        }
+
+        return rows;
+      }, []),
+    [plants, totalAmount]
+  );
 
   if (tableType === "noGoal" || framework === Framework.TF) {
     return (
       <Table
-        data={plants}
+        data={noGoalTableData}
         columns={noGoalTableColumns}
         variant="full-width"
         css={FULL_WIDTH_TABLE_HEADER_STYLES}
         totalItems={plants.length}
+        pageSize={NO_GOAL_PLANTS_PER_PAGE + 1}
         showItemCount={false}
         className={classNames(
-          "mt-[0.125rem] !w-[45.3125rem] mobile:!w-full",
+          "mt-[0.125rem] !w-full max-w-[45.3125rem]",
           plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
         )}
+        renderRow={rowData => {
+          const row = rowData as { name?: string; amount?: number | string };
+          const isTotalRow = row.name === totalRowName;
+          const totalRowStyle = isTotalRow
+            ? {
+                fontWeight: 700,
+                color: getThemedColor("neutral", 800)
+              }
+            : undefined;
+          return (
+            <TableRow>
+              <TableCell>
+                <Text textStyle="400" color="neutral.700" style={totalRowStyle}>
+                  {isTotalRow ? t("Total") : row.name}
+                </Text>
+              </TableCell>
+              <TableCell>
+                <Text textStyle="400" color="neutral.700" style={totalRowStyle}>
+                  {row.amount}
+                </Text>
+              </TableCell>
+            </TableRow>
+          );
+        }}
       />
     );
   }

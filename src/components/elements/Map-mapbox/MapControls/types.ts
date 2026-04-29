@@ -6,6 +6,14 @@ export enum MapStyle {
   GoogleSatellite = "google-satellite"
 }
 
+function mapboxStyleUrlId(style: MapStyle): string {
+  if (style === MapStyle.GoogleSatellite) return "";
+  return style.split("/").pop() ?? "";
+}
+
+export const TERRAMATCH_STREET_STYLE_ID = mapboxStyleUrlId(MapStyle.Street);
+export const TERRAMATCH_SATELLITE_STYLE_ID = mapboxStyleUrlId(MapStyle.Satellite);
+
 export interface BasemapConfig {
   style: MapStyle;
   requiresRasterLayer: boolean;

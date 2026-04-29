@@ -32,7 +32,19 @@ export type ResetPasswordResponseDto = {
    *
    * @example user@example.com
    */
-  emailAddress: string;
+  emailAddress?: string;
+  /**
+   * Token used
+   *
+   * @example true
+   */
+  tokenUsed?: boolean;
+  /**
+   * Locale
+   *
+   * @example en
+   */
+  locale?: string;
 };
 
 export type ResetPasswordRequest = {
@@ -677,13 +689,16 @@ export type UserFramework = {
   slug: string;
 };
 
-export type UserMonitoringPartnerProjectEmbedded = {
+export type UserMonitoringPartnerProjectLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   /**
    * @format uuid
    */
   uuid: string;
-  name: string;
-  lightResource: true;
+  name: string | null;
 };
 
 export type UserDto = {
@@ -726,7 +741,7 @@ export type UserDto = {
   locale: string | null;
   frameworks: UserFramework[];
   directFrameworks: UserFramework[];
-  monitoringPartnerProjects?: UserMonitoringPartnerProjectEmbedded[];
+  monitoringPartnerProjects: UserMonitoringPartnerProjectLightDto[];
 };
 
 export type OrganisationCreateAttributes = {
@@ -888,6 +903,29 @@ export type UserCreateBaseData = {
 
 export type UserCreateBaseBody = {
   data: UserCreateBaseData;
+};
+
+export type SendLoginDetailsResponseDto = {
+  /**
+   * Whether the login details were sent successfully
+   */
+  success: boolean;
+};
+
+export type SendLoginDetailsAttributes = {
+  /**
+   * Email address of the user to send login details to
+   */
+  emailAddress: string;
+};
+
+export type SendLoginDetailsRequestData = {
+  type: "sendLoginDetails";
+  attributes: SendLoginDetailsAttributes;
+};
+
+export type SendLoginDetailsRequestDto = {
+  data: SendLoginDetailsRequestData;
 };
 
 export type UserAssociationDto = {

@@ -8,7 +8,6 @@ type UseMapStyleParams = {
   map: MutableRefObject<MapboxMap | null>;
   mapStyleProp?: MapStyle;
   styleReady: boolean;
-  styleVersion: number;
   projectUUID?: string;
   dashboardMode?: string;
   onStyleChange?: (style: MapStyle) => void;
@@ -23,7 +22,6 @@ export function useMapStyle({
   map,
   mapStyleProp,
   styleReady,
-  styleVersion,
   projectUUID,
   dashboardMode,
   onStyleChange
@@ -50,7 +48,7 @@ export function useMapStyle({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapStyleProp, map, styleReady, styleVersion]);
+  }, [mapStyleProp, map, styleReady]);
 
   useEffect(() => {
     setUserChangedStyle(false);

@@ -123,11 +123,11 @@ export const useGadmChoices = (props: GadmConnectionProps) => {
 };
 
 export const findCachedGadmTitle = (level: 0 | 1 | 2, code: string, parentCodes?: string[]) => {
-  if (level > 0 && isEmpty(parentCodes)) return null;
-
   const { gadm } = DataApiSlice.currentState;
   const levelCodes = gadm[`level${level}`];
-  const lookupParentCodes = isEmpty(parentCodes) ? ["global"] : (parentCodes as string[]);
+  const inferredParentCodes = level === 1 ? [code.split(".")[0]].filter(Boolean) : [];
+  const lookupParentCodes =
+    level === 0 ? ["global"] : [...inferredParentCodes, ...((parentCodes as string[] | undefined) ?? [])];
 
   // First try with the expected parent codes.
   for (const parentCode of lookupParentCodes) {

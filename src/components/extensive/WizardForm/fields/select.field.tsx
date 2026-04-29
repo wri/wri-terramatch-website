@@ -37,13 +37,13 @@ export const SelectField: FormFieldFactory = {
         if (level === 0) return findCachedGadmTitle(level, value) ?? value;
 
         const filterLinkedKey = SELECT_FILTER_QUESTION[linkedFieldKey ?? ""];
-        if (filterLinkedKey == null) return value;
+        if (filterLinkedKey == null) return findCachedGadmTitle(level, value) ?? value;
 
         const filterField = fieldByKey(filterLinkedKey);
-        if (filterField == null) return value;
+        if (filterField == null) return findCachedGadmTitle(level, value) ?? value;
 
         const parentCodes = toArray(formValues?.[filterField.name]) as string[];
-        return findCachedGadmTitle(level, value, parentCodes) ?? value;
+        return findCachedGadmTitle(level, value, parentCodes) ?? findCachedGadmTitle(level, value) ?? value;
       });
     }
 

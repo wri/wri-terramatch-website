@@ -1,14 +1,14 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { usePasswordStrength } from "@/components/extensive/PasswordStrength/hooks/usePasswordStrength";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { useGetAuthMail, usePostAuthStore } from "@/generated/apiComponents";
+import { useGetResetPassword, useResetPassword } from "@/connections/ResetPassword";
 
 import SetPasswordForm from "./components/SetPasswordForm";
 
@@ -22,8 +22,12 @@ export type ResetPasswordData = yup.InferType<typeof ResetPasswordDataSchema>;
 const ResetPasswordPage = () => {
   const router = useRouter();
   const t = useT();
+  const [hasBeenCalled, setHasBeenCalled] = useState<boolean>(false);
 
-  const { mutateAsync: requestResetPassword, isLoading, error, isSuccess } = usePostAuthStore();
+  const [, { isLoading, requestFailed, resetPassword }] = useResetPassword({
+    token: router.query.token as string
+  });
+
   const form = useForm<ResetPasswordData>({
     resolver: yupResolver(ResetPasswordDataSchema),
     mode: "all"
@@ -31,67 +35,60 @@ const ResetPasswordPage = () => {
 
   const { strength } = usePasswordStrength({ password: form.watch("password") });
 
-  const { isLoading: gettingEmail, data: authMailData } = useGetAuthMail(
-    {
-      queryParams: {
-        token: router.query.token as string
-      }
-    },
-    {
-      enabled: !!router.query.token
-    }
-  );
+  const [resetPasswordTokenLoaded, { data: resetPasswordTokenData }] = useGetResetPassword({
+    token: router.query.token as string,
+    enabled: !!router.query.token
+  });
 
   useEffect(() => {
-    const locale = authMailData?.data?.locale;
+    const locale = resetPasswordTokenData?.locale;
     // Make sure we're displaying in the user's selected locale
     if (locale != null && locale !== router.locale) {
       router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale });
     }
-  }, [authMailData, router]);
+  }, [resetPasswordTokenData, router]);
 
-  const handleSave = async (data: ResetPasswordData) => {
-    try {
-      if (strength !== "Strong")
-        return form.setError("password", {
-          message: t(
-            "The password does not meet the minimum requirements. Please check that it contains at least 8 characters, including uppercase letters, lowercase letters and numbers."
-          )
-        });
-      if (data.password !== data.confirmPassword)
-        return form.setError("confirmPassword", { message: t("Passwords must match.") });
+  const handleSave = useCallback(
+    async (data: ResetPasswordData) => {
+      try {
+        if (strength !== "Strong")
+          return form.setError("password", {
+            message: t(
+              "The password does not meet the minimum requirements. Please check that it contains at least 8 characters, including uppercase letters, lowercase letters and numbers."
+            )
+          });
+        if (data.password !== data.confirmPassword)
+          return form.setError("confirmPassword", { message: t("Passwords must match.") });
 
-      if (!router.query.token) {
-        router.push("/");
-      } else {
-        await requestResetPassword({
-          body: {
-            token: router.query.token as string,
-            password: data.password
-          }
-        });
+        if (!router.query.token) {
+          router.push("/");
+        } else {
+          setHasBeenCalled(true);
+          await resetPassword(data.password);
+        }
+      } catch (err: any) {
+        if (err.errors.length > 0) {
+          const errorMessage = err.errors[0].detail;
+          form.setError("password", { message: errorMessage });
+        }
       }
-    } catch (err: any) {
-      if (err.errors.length > 0) {
-        const errorMessage = err.errors[0].detail;
-        form.setError("password", { message: errorMessage });
-      }
-    }
-  };
+    },
+    [form, resetPassword, router, strength, t]
+  );
 
-  if (gettingEmail) return null;
+  if (!resetPasswordTokenLoaded) return null;
 
   return (
     <BackgroundLayout>
       <ContentLayout>
         <SetPasswordForm
           form={form}
-          userMail={authMailData?.data?.email_address ?? undefined}
-          tokenUsed={authMailData?.data?.token_used ?? false}
+          userMail={resetPasswordTokenData?.emailAddress ?? undefined}
+          tokenUsed={resetPasswordTokenData?.tokenUsed ?? false}
           loading={isLoading}
           handleSave={handleSave}
-          apiError={error}
-          success={isSuccess}
+          apiError={requestFailed}
+          success={hasBeenCalled}
         />
       </ContentLayout>
     </BackgroundLayout>
