@@ -152,6 +152,58 @@ export const resetPassword = new V3ApiEndpoint<ResetPasswordResponse, ResetPassw
   "PUT"
 );
 
+export type GetResetPasswordPathParams = {
+  token: string;
+};
+
+export type GetResetPasswordError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type GetResetPasswordResponse = {
+  meta?: {
+    /**
+     * @example passwordResets
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResetPasswordResponseDto;
+  };
+};
+
+export type GetResetPasswordVariables = {
+  pathParams: GetResetPasswordPathParams;
+};
+
+/**
+ * Get the reset password status for a token
+ */
+export const getResetPassword = new V3ApiEndpoint<
+  GetResetPasswordResponse,
+  GetResetPasswordError,
+  GetResetPasswordVariables,
+  {}
+>("/auth/v3/passwordResets/{token}", "GET");
+
 export type VerifyUserError = Fetcher.ErrorWrapper<{
   status: 400;
   payload: {
@@ -2036,7 +2088,7 @@ export const acceptProjectInvite = new V3ApiEndpoint<
 
 export const operationsByTag = {
   login: { authLogin },
-  resetPassword: { requestPasswordReset, resetPassword },
+  resetPassword: { requestPasswordReset, resetPassword, getResetPassword },
   verificationUser: { verifyUser, resendUserVerification },
   organisations: {
     organisationIndex,

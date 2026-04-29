@@ -36,7 +36,7 @@ export interface BannerProps {
 const Banner: FC<BannerProps> = ({ breadcrumbs, suffix, toolbar, className, children }) => {
   const t = useT();
   const isMobile = useMediaQuery("(max-width: 1200px)");
-  const maxLabelLength = isMobile ? 15 : 25;
+  const maxLabelLength = isMobile ? 18 : 25;
   const breadcrumbsWithTranslatedLabels = breadcrumbs.map(link => {
     return {
       label: link.label != null ? t(link.label) : "",

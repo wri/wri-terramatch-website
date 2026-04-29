@@ -47,7 +47,7 @@ const FormNavigation: FC<FormNavigationProps> = props => {
     <div className="w-fit overflow-y-auto overflow-x-clip pr-4 pb-4">
       <div className="w-fit">
         <TabsRoot
-          defaultValue={defaultValue ?? tabs?.[0]?.value}
+          value={selectedTab}
           orientation="horizontal"
           width="full"
           onValueChange={handleValueChange}

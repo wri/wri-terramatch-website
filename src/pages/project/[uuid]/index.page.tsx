@@ -1,4 +1,3 @@
-import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -47,7 +46,6 @@ const SUFFIX_VIEW_KEYS = ["reporting-tasks", "sites", "nurseries"];
 
 const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const t = useT();
-  const isMobile = useMediaQuery("(max-width: 1200px)");
   const router = useRouter();
   const { framework } = useFrameworkContext();
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -150,7 +148,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         gotoTeamMembers={() => navigateToTab("team-members")}
         breadcrumbs={[
           {
-            label: isMobile ? " " : t("Projects"),
+            label: t("Projects"),
             link: "/my-projects",
             icon: <ProjectIcon className="!text-theme-primary-900" />
           },

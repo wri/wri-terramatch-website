@@ -15,7 +15,8 @@ export type WizardEditFormProps = {
   fieldsProvider: FormFieldsProvider;
   models: FormModelsDefinition;
   framework: Framework;
-  onSave: (data: any) => void;
+  onStepSave: (data: any) => void;
+  onSubmit: (data: any) => void;
   defaultValues?: any;
   errors?: any;
 };
@@ -25,7 +26,8 @@ const WizardEditForm = ({
   fieldsProvider,
   models,
   framework,
-  onSave,
+  onStepSave,
+  onSubmit,
   defaultValues,
   errors
 }: WizardEditFormProps) => {
@@ -48,7 +50,6 @@ const WizardEditForm = ({
         models={models}
         fieldsProvider={fieldsProvider}
         hideBackButton
-        disableAutoProgress
         errors={errors}
         submitButtonText={t("Save")}
         nextButtonText={t("Save")}
@@ -56,7 +57,8 @@ const WizardEditForm = ({
           hide: true
         }}
         defaultValues={defaultValues || {}}
-        onStepChange={onSave}
+        onStepChange={onStepSave}
+        onSubmit={onSubmit}
         onBackFirstStep={() => null}
         hideSaveAndCloseButton
         className="max-w-none p-0"

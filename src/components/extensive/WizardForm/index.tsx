@@ -294,7 +294,12 @@ function WizardForm(props: WizardFormProps) {
                     }
                   }
                 }
-              : undefined
+              : {
+                  children: t("Save and Exit"),
+                  onClick: () => {
+                    props.onSubmit?.(formHook.getValues());
+                  }
+                }
           }
           tertiaryButtonProps={{
             children: t("Download"),
@@ -326,7 +331,7 @@ function WizardForm(props: WizardFormProps) {
         const hasFeedback = hasFeedbackInStep(props.fieldsProvider, id, entity?.feedbackFields);
 
         const state: TabItem["state"] = hasFeedback
-          ? "error"
+          ? "warning"
           : validation.isValidSync(formHook.getValues())
           ? stepsVisited.current.includes(index)
             ? "complete"
