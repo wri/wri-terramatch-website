@@ -5716,6 +5716,53 @@ export const applicationDelete = new V3ApiEndpoint<
   {}
 >("/applications/v3/applications/{uuid}", "DELETE");
 
+export type ApplicationExportGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type ApplicationExportGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ApplicationExportGetVariables = {
+  pathParams: ApplicationExportGetPathParams;
+};
+
+export const applicationExportGet = new V3ApiEndpoint<
+  undefined,
+  ApplicationExportGetError,
+  ApplicationExportGetVariables,
+  {}
+>("/applications/v3/applications/{uuid}/export", "GET");
+
 export type ApplicationHistoryGetPathParams = {
   /**
    * UUID of the resource.
@@ -6582,7 +6629,7 @@ export const operationsByTag = {
     formPullTranslations,
     formSubmissionsExportCsv
   },
-  applications: { applicationIndex, applicationGet, applicationDelete, applicationHistoryGet },
+  applications: { applicationIndex, applicationGet, applicationDelete, applicationExportGet, applicationHistoryGet },
   fundingProgrammes: {
     fundingProgrammesIndex,
     fundingProgrammeCreate,

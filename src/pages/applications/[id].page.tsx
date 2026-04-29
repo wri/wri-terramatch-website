@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { last } from "lodash";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
@@ -20,10 +19,8 @@ const ApplicationPage = () => {
   const uuid = router.query.id as string;
 
   const [applicationLoaded, { data: application }] = useApplication({ id: uuid });
-  const currentSubmission = last(application?.submissions);
   const applicationName =
     application != null ? `${application.organisationName} - ${application.fundingProgrammeName}` : "N/A";
-  const applicationStatus = currentSubmission?.status ?? undefined;
   const submissionUuids = useMemo(
     () => application?.submissions.map(({ uuid }) => uuid) ?? [],
     [application?.submissions]
@@ -37,7 +34,7 @@ const ApplicationPage = () => {
             <title>{t("Application details")}</title>
           </Head>
           <LoadingContainer loading={!applicationLoaded}>
-            <ApplicationHeader name={applicationName} status={applicationStatus} uuid={uuid} />
+            <ApplicationHeader name={applicationName} uuid={uuid} />
 
             <div className="m-auto flex max-w-[82vw] flex-col gap-15 py-15">
               <ApplicationStatus application={application} />
