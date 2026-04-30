@@ -1,7 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { ImpactStoryModalRow } from "@/components/dashboard/impactStoriesModalColumns";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
