@@ -101,9 +101,7 @@ export const UserShowAside = () => {
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               variant="contained"
-              className={`!rounded-lg ${
-                record?.passwordEmpty ? "!bg-gray-500 !text-white !opacity-50" : "!bg-primary"
-              }`}
+              className={`!rounded-lg ${record?.canLogIn ? "!bg-gray-500 !text-white !opacity-50" : "!bg-primary"}`}
               onClick={async () => {
                 try {
                   await sendLoginDetailsToUser(record?.emailAddress as string);
@@ -113,7 +111,7 @@ export const UserShowAside = () => {
                   notify(`Failed to send login details email.`, { type: "error" });
                 }
               }}
-              disabled={record?.passwordEmpty}
+              disabled={record?.canLogIn}
             >
               Send Login Details
             </Button>
