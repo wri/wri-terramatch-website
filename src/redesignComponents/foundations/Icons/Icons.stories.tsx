@@ -17,8 +17,8 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-  CloseFullscreenIcon,
   CloseIcon,
+  CompressIcon,
   CorrectIcon,
   DashboardIcon,
   DeleteIcon,
@@ -251,8 +251,8 @@ export const AllIcons: Story = {
           <IconWrapper name="Close">
             <CloseIcon boxSize={8} />
           </IconWrapper>
-          <IconWrapper name="Close Fullscreen">
-            <CloseFullscreenIcon boxSize={8} />
+          <IconWrapper name="Compress">
+            <CompressIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Correct">
             <CorrectIcon boxSize={8} />
@@ -491,8 +491,8 @@ export const Function: Story = {
         <IconWrapper name="Close">
           <CloseIcon boxSize={8} />
         </IconWrapper>
-        <IconWrapper name="Close Fullscreen">
-          <CloseFullscreenIcon boxSize={8} />
+        <IconWrapper name="Compress">
+          <CompressIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Correct">
           <CorrectIcon boxSize={8} />

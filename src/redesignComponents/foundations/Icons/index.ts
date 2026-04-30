@@ -14,7 +14,7 @@ export { ChevronDownIcon } from "./Function/ChevronDownIcon";
 export { ChevronDownAltIcon } from "./Function/ChevronDownAltIcon";
 export { ChevronRightIcon } from "./Function/ChevronRightIcon";
 export { ChevronUpIcon } from "./Function/ChevronUpIcon";
-export { CloseFullscreenIcon } from "./Function/CloseFullscreenIcon";
+export { CompressIcon } from "./Function/CompressIcon";
 export { CloseIcon } from "./Function/CloseIcon";
 export { CorrectIcon } from "./Function/CorrectIcon";
 export { DisallowedIcon } from "./Function/DisallowedIcon";
