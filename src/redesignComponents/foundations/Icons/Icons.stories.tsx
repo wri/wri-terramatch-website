@@ -5,6 +5,7 @@ import {
   AgriculturalLandIcon,
   AgroforestyIcon,
   ApplicationsIcon,
+  AreaHectaresCircleIcon,
   AreaHectaresIcon,
   ArrowForwardIcon,
   AssistedNaturalRegenIcon,
@@ -127,6 +128,9 @@ export const AllIcons: Story = {
         <VStack align="stretch" gap={4}>
           <IconWrapper name="Area / Hectares">
             <AreaHectaresIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Area Hectares Circle">
+            <AreaHectaresCircleIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Jobs / Workdays">
             <JobsIcon boxSize={8} />
@@ -420,6 +424,9 @@ export const DataVisualisation: Story = {
       <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
         <IconWrapper name="Area / Hectares">
           <AreaHectaresIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Area Hectares Circle">
+          <AreaHectaresCircleIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Jobs / Workdays">
           <JobsIcon boxSize={8} />
