@@ -1,4 +1,4 @@
-import { SitePolygon } from "@/generated/apiSchemas";
+import { SitePolygon } from "@/context/mapArea.provider";
 
 export const getSiteIdFromPolyVersion = (polyVersion: SitePolygon | undefined): string | null => {
   if (polyVersion == null) return null;

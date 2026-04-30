@@ -1,7 +1,6 @@
 import React, { createContext, ReactNode, useCallback, useContext, useState } from "react";
 
 import { EditPolygonState } from "@/components/elements/Map-mapbox/Map.d";
-import { SitePolygon } from "@/generated/apiSchemas";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { Entity } from "@/types/common";
@@ -11,6 +10,52 @@ export type MapAreaSiteData = Entity | SiteFullDto;
 export function isMapAreaSiteFullDto(siteData: MapAreaSiteData | undefined): siteData is SiteFullDto {
   return siteData != null && "lightResource" in siteData;
 }
+
+// TODO TM-3352 this is a legacy definition from V2, but is still in heavy use and will be removed.
+export type SitePolygon = {
+  id?: number;
+  uuid?: string;
+  primary_uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  source?: string;
+  country?: string;
+  is_active?: boolean;
+  version_name?: string;
+  validation_status?: boolean;
+};
 
 type MapAreaType = {
   isUserDrawingEnabled: boolean;

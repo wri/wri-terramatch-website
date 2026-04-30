@@ -19,9 +19,9 @@ import {
   useListPolygonVersions
 } from "@/connections/PolygonVersion";
 import { createBlankVersion } from "@/connections/SitePolygons";
+import { SitePolygon } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { SitePolygon } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { FileType, UploadedFile } from "@/types/common";
