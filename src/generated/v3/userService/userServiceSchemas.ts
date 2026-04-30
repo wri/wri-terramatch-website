@@ -742,6 +742,7 @@ export type UserDto = {
   frameworks: UserFramework[];
   directFrameworks: UserFramework[];
   monitoringPartnerProjects: UserMonitoringPartnerProjectLightDto[];
+  canLogIn: boolean;
 };
 
 export type OrganisationCreateAttributes = {
