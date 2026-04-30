@@ -141,7 +141,7 @@ const AuditLogTable: FC<{
               <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                 {generateUserName(item.firstName, item.lastName)}
               </Text>
-              {auditData?.entity !== "site-polygon" && fullColumns != null ? (
+              {auditData?.entity !== "site-polygon" && fullColumns ? (
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                   {item.status != null ? formattedTextStatus(item.status) : "-"}
                 </Text>
@@ -155,12 +155,12 @@ const AuditLogTable: FC<{
                   auditData?.entity
                 )}
               </Text>
-              {fullColumns != null ? (
+              {fullColumns ? (
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2">
                   {item.comment ?? "-"}
                 </Text>
               ) : null}
-              {fullColumns != null ? (
+              {fullColumns ? (
                 <div className="grid max-w-full gap-2 gap-y-1 border-b border-b-grey-750 py-2">
                   {item.attachments?.map((attachmentItem: MediaDto) => (
                     <Text
