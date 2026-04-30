@@ -869,6 +869,22 @@ const DataCard = ({
         }`
       : "";
 
+  const selectedChartHasData = selected.some(chartId => {
+    switch (chartId) {
+      case "1":
+      case "2":
+        return parsedData.length > 0;
+      case "3":
+        return (ecoRegionData?.chartData?.length ?? 0) > 0;
+      case "4":
+        return strategiesData.length > 0;
+      case "5":
+        return (landUseData?.graphicTargetLandUseTypes?.length ?? 0) > 0;
+      default:
+        return false;
+    }
+  });
+
   const monitoredDescriptionParams: Record<string, any> = {
     treeCover: {},
     treeCoverLoss: {
@@ -1000,16 +1016,18 @@ const DataCard = ({
           )}
           {tabActive === 1 && (
             <div className="relative z-auto flex w-full max-w-[calc(100vw-356px)] gap-2 px-6 pt-2 pb-6">
-              <Dropdown
-                containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-[1] !h-8", {
-                  hidden: selected.includes("6")
-                })}
-                optionsClassName="!w-max right-0"
-                className="!h-8 w-max"
-                options={polygonOptions}
-                defaultValue={["0"]}
-                onChange={option => setSelectedPolygonUuid(option[0])}
-              />
+              {selectedChartHasData && (
+                <Dropdown
+                  containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-[1] !h-8", {
+                    hidden: selected.includes("6")
+                  })}
+                  optionsClassName="!w-max right-0"
+                  className="!h-8 w-max"
+                  options={polygonOptions}
+                  defaultValue={["0"]}
+                  onChange={option => setSelectedPolygonUuid(option[0])}
+                />
+              )}
               <div className="sticky top-[77px] flex h-[calc(100vh-320px)] w-1/4 min-w-[29%] max-w-[calc(29vw-356px)] flex-col gap-3">
                 <Text variant={"text-14-semibold"} className="w-fit text-blueCustom-900">
                   Indicator Description
