@@ -2,7 +2,6 @@ import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { Map as MapboxMap } from "mapbox-gl";
-import { useRouter } from "next/router";
 import React, { useCallback, useMemo, useState } from "react";
 
 import { DashboardExpandedMapModalContent } from "@/components/dashboard/DashboardExpandedMapModalContent";
@@ -112,8 +111,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
 
   const countryChoices = useGadmChoices({ level: 0 });
   const isMobile = useMediaQuery(DASHBOARD_MOBILE_MEDIA_QUERY);
-  const router = useRouter();
-  const { country: countryQueryParam } = router.query;
 
   const landscapeNamesForBorderOverlay = useMemo(() => filters.landscapes ?? [], [filters.landscapes]);
 
@@ -359,66 +356,65 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           />
         )}
       </div>
-      {!countryQueryParam && (
-        <PageCard
-          className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
-          classNameSubTitle="mt-4"
-          gap={6}
-          isUserAllowed={isUserAllowed}
-          subtitleMore={true}
-          title={t(titleTable)}
-          tooltip={textTooltipTable}
-          tooltipTrigger="click"
-          iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
-          headerChildren={
-            <Button variant="white-border" onClick={openActiveTableModal}>
-              <div className="flex items-center gap-1">
-                <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
-                {!isMobile && (
-                  <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-                    {t("See All")}
-                  </Text>
-                )}
-              </div>
-            </Button>
-          }
-        >
-          <Table
-            visibleRows={VISIBLE_TABLE_ROWS_ON_DASHBOARD}
-            columns={isMobile ? mobileTableColumns : columns}
-            data={data}
-            classNameWrapper="mobile:px-0"
-            onRowClick={row => {
-              if (row?.country && filters.country.id === 0) {
-                setFilters(prevValues => ({
-                  ...prevValues,
-                  uuid: "",
-                  country: {
-                    country_slug: row.uuid as string,
-                    id: 1,
-                    data: {
-                      label: row.country?.split("_")[0] ?? "",
-                      icon: `/flags/${(row.uuid as string).toLowerCase()}.svg`
-                    }
+      <PageCard
+        className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
+        classNameSubTitle="mt-4"
+        gap={6}
+        isUserAllowed={isUserAllowed}
+        projectFrameworkKey={projectFrameworkKey}
+        subtitleMore={true}
+        title={t(titleTable)}
+        tooltip={textTooltipTable}
+        tooltipTrigger="click"
+        iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
+        headerChildren={
+          <Button variant="white-border" onClick={openActiveTableModal}>
+            <div className="flex items-center gap-1">
+              <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
+              {!isMobile && (
+                <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
+                  {t("See All")}
+                </Text>
+              )}
+            </div>
+          </Button>
+        }
+      >
+        <Table
+          visibleRows={VISIBLE_TABLE_ROWS_ON_DASHBOARD}
+          columns={isMobile ? mobileTableColumns : columns}
+          data={data}
+          classNameWrapper="mobile:px-0"
+          onRowClick={row => {
+            if (row?.country && filters.country.id === 0) {
+              setFilters(prevValues => ({
+                ...prevValues,
+                uuid: "",
+                country: {
+                  country_slug: row.uuid as string,
+                  id: 1,
+                  data: {
+                    label: row.country?.split("_")[0] ?? "",
+                    icon: `/flags/${(row.uuid as string).toLowerCase()}.svg`
                   }
-                }));
-                return;
-              }
-
-              if (row.uuid) {
-                setFilters(prevValues => ({
-                  ...prevValues,
-                  uuid: row.uuid
-                }));
-              }
-            }}
-            classNameTableWrapper={
-              filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
+                }
+              }));
+              return;
             }
-            variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
-          />
-        </PageCard>
-      )}
+
+            if (row.uuid) {
+              setFilters(prevValues => ({
+                ...prevValues,
+                uuid: row.uuid
+              }));
+            }
+          }}
+          classNameTableWrapper={
+            filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
+          }
+          variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
+        />
+      </PageCard>
 
       <PageCard
         className="border-0 px-4 py-6 mobile:order-5 mobile:px-0"
@@ -472,60 +468,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           isLoading={isLoadingHectaresUnderRestoration}
         />
       </PageCard>
-      {!!countryQueryParam && (
-        <PageCard
-          className="border-0 px-4 py-6 uppercase mobile:order-6 mobile:px-0"
-          classNameSubTitle="mt-4"
-          gap={6}
-          isUserAllowed={isUserAllowed}
-          projectFrameworkKey={projectFrameworkKey}
-          subtitleMore={true}
-          title={t(titleTable)}
-          tooltip={textTooltipTable}
-          tooltipTrigger="click"
-          iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"
-          headerChildren={
-            <Button variant="white-border" onClick={openActiveTableModal}>
-              <div className="flex items-center gap-1">
-                <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
-                {!isMobile && (
-                  <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-                    {t("See All")}
-                  </Text>
-                )}
-              </div>
-            </Button>
-          }
-        >
-          <Table
-            visibleRows={VISIBLE_TABLE_ROWS_ON_DASHBOARD}
-            columns={isMobile ? mobileTableColumns : columns}
-            data={data}
-            classNameWrapper="mobile:px-0"
-            onRowClick={row => {
-              if (row?.country) {
-                setFilters(prevValues => ({
-                  ...prevValues,
-                  uuid: row.uuid as string,
-                  country: dashboardCountries?.find(c => c.country_slug === row?.country) ?? prevValues.country
-                }));
-              }
-
-              if (row.uuid) {
-                setFilters(prevValues => ({
-                  ...prevValues,
-                  uuid: row.uuid
-                }));
-              }
-            }}
-            classNameTableWrapper={
-              filters.country.id === 0 ? "" : "!max-h-[391px] lg:!max-h-[423px] wide:!max-h-[457  px]"
-            }
-            variant={VARIANT_TABLE_DASHBOARD_COUNTRIES}
-          />
-        </PageCard>
-      )}
-
       <PageCard
         className="border-0 px-4 py-6 mobile:order-7 mobile:px-0"
         classNameSubTitle="mt-4"
