@@ -1,12 +1,3 @@
-export type V2GenericList = {
-  uuid?: string;
-  name?: string;
-  input_type?: string;
-  model_key?: string;
-  option_list_key?: string;
-  options?: string[];
-};
-
 export type SitePolygon = {
   id?: number;
   uuid?: string;

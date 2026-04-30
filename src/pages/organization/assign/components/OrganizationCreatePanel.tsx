@@ -5,7 +5,7 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import { V2GenericList } from "@/generated/apiSchemas";
+import { OrganisationLightDto } from "@/generated/v3/userService/userServiceSchemas";
 
 import { useOrganizationCreateContext } from "../context/OrganizationCreate.provider";
 import OrganizationSelectRow from "./OrganizationSelectRow";
@@ -13,7 +13,7 @@ import OrganizationSelectRow from "./OrganizationSelectRow";
 type OrganizationCreatePanelProps = {
   loading: boolean;
   searchedTerm: string;
-  organizations: V2GenericList[];
+  organizations: OrganisationLightDto[];
 };
 
 const OrganizationAssignPanel = ({ loading, searchedTerm, organizations }: OrganizationCreatePanelProps) => {
