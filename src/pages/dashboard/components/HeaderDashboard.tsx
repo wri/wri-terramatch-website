@@ -56,8 +56,13 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const t = useT();
   const router = useRouter();
   const { showLoader, hideLoader } = useLoading();
-  const { filters, setFilters, setSearchTerm, searchTerm, lastUpdatedAt } = useDashboardContext();
-  const { activeProjects } = useDashboardData(filters);
+  const { filters, setFilters, setSearchTerm, searchTerm, lastUpdatedAt, setLastUpdatedAt } = useDashboardContext();
+  const { activeProjects, lastUpdatedAt: lastUpdatedFromData } = useDashboardData(filters);
+
+  useEffect(() => {
+    setLastUpdatedAt?.(lastUpdatedFromData ?? "");
+  }, [setLastUpdatedAt, lastUpdatedFromData]);
+
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
