@@ -742,7 +742,7 @@ export type UserDto = {
   frameworks: UserFramework[];
   directFrameworks: UserFramework[];
   monitoringPartnerProjects: UserMonitoringPartnerProjectLightDto[];
-  passwordNotNull: boolean;
+  passwordEmpty: boolean;
 };
 
 export type OrganisationCreateAttributes = {

@@ -102,7 +102,7 @@ export const UserShowAside = () => {
             <Button
               variant="contained"
               className={`!rounded-lg ${
-                record?.passwordNotNull ? "!bg-gray-500 !text-white !opacity-50" : "!bg-primary"
+                record?.passwordEmpty ? "!bg-gray-500 !text-white !opacity-50" : "!bg-primary"
               }`}
               onClick={async () => {
                 try {
@@ -113,7 +113,7 @@ export const UserShowAside = () => {
                   notify(`Failed to send login details email.`, { type: "error" });
                 }
               }}
-              disabled={record?.passwordNotNull}
+              disabled={record?.passwordEmpty}
             >
               Send Login Details
             </Button>
