@@ -18,11 +18,7 @@ const SocioEconomicReportHeader = ({ socioEconomicReport }: SocioEconomicReportH
 
   if (!socioEconomicReport) return null;
 
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
-    "srp-reports",
-    socioEconomicReport.uuid,
-    `Annual Socio-Economic Report - ${socioEconomicReport.organisationName}`
-  );
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("srp-reports", socioEconomicReport.uuid);
 
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "srp-reports",

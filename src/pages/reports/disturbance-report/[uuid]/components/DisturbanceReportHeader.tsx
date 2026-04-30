@@ -31,8 +31,7 @@ const DisturbanceReportHeader = ({ disturbanceReport }: DisturbanceReportHeaderP
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
     "disturbance-reports",
-    disturbanceReport?.uuid ?? "",
-    `${disturbanceReport?.projectName ?? ""} - Disturbance Report`
+    disturbanceReport?.uuid ?? ""
   );
 
   const { handleEdit } = useGetEditEntityHandler({

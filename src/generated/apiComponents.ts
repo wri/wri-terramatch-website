@@ -3,191 +3,19 @@
  *
  * @version 1.0.0
  */
-import * as reactQuery from "@tanstack/react-query";
-import { useApiContext, ApiContext } from "./apiContext";
-import type * as Fetcher from "./apiFetcher";
-import { apiFetch } from "./apiFetcher";
-
-export type PostV2AdminENTITYUUIDReminderPathParams = {
-  /**
-   * allowed values are project-reports, site-reports, nursery-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type PostV2AdminENTITYUUIDReminderError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2AdminENTITYUUIDReminderRequestBody = {
-  feedback?: string;
-};
-
-export type PostV2AdminENTITYUUIDReminderVariables = {
-  body?: PostV2AdminENTITYUUIDReminderRequestBody;
-  pathParams: PostV2AdminENTITYUUIDReminderPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2AdminENTITYUUIDReminder = (
-  variables: PostV2AdminENTITYUUIDReminderVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    undefined,
-    PostV2AdminENTITYUUIDReminderError,
-    PostV2AdminENTITYUUIDReminderRequestBody,
-    {},
-    {},
-    PostV2AdminENTITYUUIDReminderPathParams
-  >({ url: "/v2/admin/{entity}/{uuid}/reminder", method: "post", ...variables, signal });
-
-export const usePostV2AdminENTITYUUIDReminder = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      undefined,
-      PostV2AdminENTITYUUIDReminderError,
-      PostV2AdminENTITYUUIDReminderVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PostV2AdminENTITYUUIDReminderError, PostV2AdminENTITYUUIDReminderVariables>(
-    (variables: PostV2AdminENTITYUUIDReminderVariables) =>
-      fetchPostV2AdminENTITYUUIDReminder({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
+import { ApiContext } from "./apiContext";
 
 export type GetV2ApplicationsUUIDExportPathParams = {
   uuid: string;
 };
 
-export type GetV2ApplicationsUUIDExportError = Fetcher.ErrorWrapper<undefined>;
-
 export type GetV2ApplicationsUUIDExportVariables = {
   pathParams: GetV2ApplicationsUUIDExportPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchGetV2ApplicationsUUIDExport = (
-  variables: GetV2ApplicationsUUIDExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<undefined, GetV2ApplicationsUUIDExportError, undefined, {}, {}, GetV2ApplicationsUUIDExportPathParams>({
-    url: "/v2/applications/{uuid}/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2ApplicationsUUIDExport = <TData = undefined>(
-  variables: GetV2ApplicationsUUIDExportVariables,
-  options?: Omit<reactQuery.UseQueryOptions<undefined, GetV2ApplicationsUUIDExportError, TData>, "queryKey" | "queryFn">
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<undefined, GetV2ApplicationsUUIDExportError, TData>(
-    queryKeyFn({ path: "/v2/applications/{UUID}/export", operationId: "getV2ApplicationsUUIDExport", variables }),
-    ({ signal }) => fetchGetV2ApplicationsUUIDExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
+// leaving this in place until TM-3125 (remove v2 API integration)
+export type QueryOperation = {
+  path: "/v2/applications/{UUID}/export";
+  operationId: "getV2ApplicationsUUIDExport";
+  variables: GetV2ApplicationsUUIDExportVariables;
 };
-
-export type GetV2ProjectsUUIDENTITYExportPathParams = {
-  /**
-   * allowed values sites|nurseries|project-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type GetV2ProjectsUUIDENTITYExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2ProjectsUUIDENTITYExportVariables = {
-  pathParams: GetV2ProjectsUUIDENTITYExportPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2ProjectsUUIDENTITYExport = (
-  variables: GetV2ProjectsUUIDENTITYExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<Blob, GetV2ProjectsUUIDENTITYExportError, undefined, {}, {}, GetV2ProjectsUUIDENTITYExportPathParams>({
-    url: "/v2/projects/{uuid}/{entity}/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2ProjectsUUIDENTITYExport = <TData = Blob>(
-  variables: GetV2ProjectsUUIDENTITYExportVariables,
-  options?: Omit<reactQuery.UseQueryOptions<Blob, GetV2ProjectsUUIDENTITYExportError, TData>, "queryKey" | "queryFn">
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Blob, GetV2ProjectsUUIDENTITYExportError, TData>(
-    queryKeyFn({
-      path: "/v2/projects/{UUID}/{ENTITY}/export",
-      operationId: "getV2ProjectsUUIDENTITYExport",
-      variables
-    }),
-    ({ signal }) => fetchGetV2ProjectsUUIDENTITYExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2ENTITYUUIDExportPathParams = {
-  /**
-   * allowed values sites|nurseries|projects|project-reports/site-reports/nursery-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type GetV2ENTITYUUIDExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2ENTITYUUIDExportVariables = {
-  pathParams: GetV2ENTITYUUIDExportPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2ENTITYUUIDExport = (variables: GetV2ENTITYUUIDExportVariables, signal?: AbortSignal) =>
-  apiFetch<Blob, GetV2ENTITYUUIDExportError, undefined, {}, {}, GetV2ENTITYUUIDExportPathParams>({
-    url: "/v2/{entity}/{uuid}/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2ENTITYUUIDExport = <TData = Blob>(
-  variables: GetV2ENTITYUUIDExportVariables,
-  options?: Omit<reactQuery.UseQueryOptions<Blob, GetV2ENTITYUUIDExportError, TData>, "queryKey" | "queryFn">
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Blob, GetV2ENTITYUUIDExportError, TData>(
-    queryKeyFn({ path: "/v2/{ENTITY}/{UUID}/export", operationId: "getV2ENTITYUUIDExport", variables }),
-    ({ signal }) => fetchGetV2ENTITYUUIDExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type QueryOperation =
-  | {
-      path: "/v2/applications/{UUID}/export";
-      operationId: "getV2ApplicationsUUIDExport";
-      variables: GetV2ApplicationsUUIDExportVariables;
-    }
-  | {
-      path: "/v2/projects/{UUID}/{ENTITY}/export";
-      operationId: "getV2ProjectsUUIDENTITYExport";
-      variables: GetV2ProjectsUUIDENTITYExportVariables;
-    }
-  | {
-      path: "/v2/{ENTITY}/{UUID}/export";
-      operationId: "getV2ENTITYUUIDExport";
-      variables: GetV2ENTITYUUIDExportVariables;
-    };

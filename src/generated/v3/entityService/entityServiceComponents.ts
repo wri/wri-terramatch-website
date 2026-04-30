@@ -3049,6 +3049,9 @@ export type EntityExportAllPathParams = {
 };
 
 export type EntityExportAllQueryParams = {
+  /**
+   * Filter by framework. If projectUuid is provided, this is ignored.
+   */
   frameworkKey?:
     | "terrafund"
     | "terrafund-landscapes"
@@ -3059,6 +3062,10 @@ export type EntityExportAllQueryParams = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1";
+  /**
+   * Filter by project
+   */
+  projectUuid?: string;
 };
 
 export type EntityExportAllError = Fetcher.ErrorWrapper<{
@@ -3492,6 +3499,85 @@ export const entityUpdate = new V3ApiEndpoint<undefined, EntityUpdateError, Enti
   "/entities/v3/{entity}/{uuid}",
   "PATCH"
 );
+
+export type EntityExportPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+};
+
+export type EntityExportError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type EntityExportVariables = {
+  pathParams: EntityExportPathParams;
+};
+
+export const entityExport = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example fileDownloads
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example fileDownloads
+         */
+        type?: string;
+        id?: string;
+        attributes?: Schemas.FileDownloadDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  EntityExportError,
+  EntityExportVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/export", "GET");
 
 export type FormDataGetPathParams = {
   /**
@@ -5630,6 +5716,53 @@ export const applicationDelete = new V3ApiEndpoint<
   {}
 >("/applications/v3/applications/{uuid}", "DELETE");
 
+export type ApplicationExportGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type ApplicationExportGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ApplicationExportGetVariables = {
+  pathParams: ApplicationExportGetPathParams;
+};
+
+export const applicationExportGet = new V3ApiEndpoint<
+  undefined,
+  ApplicationExportGetError,
+  ApplicationExportGetVariables,
+  {}
+>("/applications/v3/applications/{uuid}/export", "GET");
+
 export type ApplicationHistoryGetPathParams = {
   /**
    * UUID of the resource.
@@ -6479,7 +6612,7 @@ export const operationsByTag = {
   reminders: { sendReminder },
   auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
   aggregateReports: { getAggregateReports },
-  entities: { entityIndex, entityCreate, entityExportAll, entityGet, entityDelete, entityUpdate },
+  entities: { entityIndex, entityCreate, entityExportAll, entityGet, entityDelete, entityUpdate, entityExport },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },
   entityAssociations: { entityAssociationIndex },
@@ -6496,7 +6629,7 @@ export const operationsByTag = {
     formPullTranslations,
     formSubmissionsExportCsv
   },
-  applications: { applicationIndex, applicationGet, applicationDelete, applicationHistoryGet },
+  applications: { applicationIndex, applicationGet, applicationDelete, applicationExportGet, applicationHistoryGet },
   fundingProgrammes: {
     fundingProgrammesIndex,
     fundingProgrammeCreate,

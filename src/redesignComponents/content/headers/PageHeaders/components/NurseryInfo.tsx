@@ -46,7 +46,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
     entityStatus: nursery.status ?? "started",
     updateRequestStatus: nursery.updateRequestStatus ?? "no-update"
   });
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery.uuid, nursery.name);
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery.uuid);
 
   const needMoreInformation =
     nursery.updateRequestStatus === NEEDS_MORE_INFORMATION || nursery.status === NEEDS_MORE_INFORMATION;

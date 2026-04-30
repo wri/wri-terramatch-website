@@ -44,7 +44,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
   const needMoreInformation =
     site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
   const awaitingApproval = site.updateRequestStatus === AWAITING_APPROVAL || site.status === AWAITING_APPROVAL;
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid, site.name ?? "");
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid);
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "sites",
     entityUUID: site.uuid,

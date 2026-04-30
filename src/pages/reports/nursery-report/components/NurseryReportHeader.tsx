@@ -17,11 +17,7 @@ interface NurseryReportHeaderProps {
 const NurseryReportHeader = ({ report, title }: NurseryReportHeaderProps) => {
   const t = useT();
 
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
-    "nursery-reports",
-    report?.uuid,
-    `${report?.nurseryName} - ${report?.reportTitle}`
-  );
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nursery-reports", report?.uuid);
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "nursery-reports",
     entityUUID: report?.uuid,

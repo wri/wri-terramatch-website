@@ -8,6 +8,7 @@ import {
   EntityCreateResponse,
   EntityCreateVariables,
   entityDelete,
+  entityExport,
   entityExportAll,
   EntityExportAllQueryParams,
   entityGet,
@@ -339,4 +340,15 @@ const exportAllConnection = v3Resource("fileDownloads", entityExportAll)
 export const downloadEntityAllCsv = async (entity: SupportedEntity, framework: Framework) => {
   ApiSlice.pruneCache("fileDownloads", [`${entity}Export`]);
   return await loadConnection(exportAllConnection, { entity, framework });
+};
+
+const exportProjectConnection = v3Resource("fileDownloads", entityExport)
+  .singleByCustomId<FileDownloadDto, { uuid: string }>(
+    ({ uuid }) => (uuid == null ? undefined : { pathParams: { entity: "projects", uuid } }),
+    ({ uuid }) => `projectExport|${uuid}`
+  )
+  .buildConnection();
+export const downloadProjectZip = async (uuid: string) => {
+  ApiSlice.pruneCache("fileDownloads", [`projectExport|${uuid}`]);
+  return await loadConnection(exportProjectConnection, { uuid });
 };

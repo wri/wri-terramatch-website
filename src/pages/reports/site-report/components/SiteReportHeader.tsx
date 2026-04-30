@@ -17,11 +17,7 @@ interface SiteReportHeaderProps {
 const SiteReportHeader = ({ report, reportTitle }: SiteReportHeaderProps) => {
   const t = useT();
 
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
-    "site-reports",
-    report.uuid,
-    `${report.siteName} - ${report.reportTitle}`
-  );
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("site-reports", report.uuid);
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "site-reports",
     entityUUID: report.uuid,
