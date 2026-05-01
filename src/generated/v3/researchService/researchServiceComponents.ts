@@ -194,6 +194,10 @@ export type SitePolygonsIndexQueryParams = {
   includeTestProjects?: boolean;
   search?: string;
   /**
+   * Select the fields used by search.
+   */
+  ["searchFields[]"]?: ("siteName" | "polyName" | "polygonUuid")[];
+  /**
    * Whether to include the complete sitePolygon Dto or not
    *
    * @default false

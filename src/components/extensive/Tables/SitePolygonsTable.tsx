@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { TableVariant } from "@/components/elements/Table/TableVariants";
 import { Indicator, sitePolygonsConnection } from "@/connections/SitePolygons";
+import { ConnectionProps } from "@/types/connection";
 import { processIndicatorData } from "@/utils/MonitoredIndicatorUtils";
 
 export interface SitePolygonsTableProps {
@@ -23,17 +24,20 @@ const SitePolygonsTable = ({
   variant
 }: SitePolygonsTableProps) => {
   const dataProcessor = useMemo(() => processIndicatorData(presentIndicator), [presentIndicator]);
+  const filter = {
+    "presentIndicator[]": [presentIndicator],
+    "polygonStatus[]": ["approved"],
+    search: searchTerm,
+    "searchFields[]": ["siteName", "polyName"]
+  } as ConnectionProps<typeof sitePolygonsConnection>["filter"];
+
   return (
     <ConnectionTable
       connection={sitePolygonsConnection}
       connectionProps={{
         entityName,
         entityUuid,
-        filter: {
-          "presentIndicator[]": [presentIndicator],
-          "polygonStatus[]": ["approved"],
-          search: searchTerm
-        }
+        filter
       }}
       variant={variant}
       columns={presentIndicator ? TABLE_COLUMNS_MAPPING[presentIndicator] : []}
