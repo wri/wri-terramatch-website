@@ -144,7 +144,7 @@ export function usePopupData(event: PopupEvent) {
 
       if (polygon.siteName != null) {
         items.push({
-          id: "site_name",
+          id: "siteName",
           title: "Site",
           value: polygon.siteName
         });
@@ -152,7 +152,7 @@ export function usePopupData(event: PopupEvent) {
 
       if (polygon.numTrees != null) {
         items.push({
-          id: "num_trees",
+          id: "numTrees",
           title: "Number of trees",
           value: polygon.numTrees.toString()
         });
@@ -160,7 +160,7 @@ export function usePopupData(event: PopupEvent) {
 
       if (polygon.plantStart != null) {
         items.push({
-          id: "plantstart",
+          id: "plantStart",
           title: "Plant Start Date",
           value: formatDate(polygon.plantStart)
         });

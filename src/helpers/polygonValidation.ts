@@ -72,7 +72,7 @@ export const isOnlyNumTreesMissing = (extraInfo: any): boolean => {
     const infoArray: ExtraInfoItem[] = extraInfo;
 
     const dataFields = infoArray.filter(info =>
-      ["poly_name", "practice", "target_sys", "distr", "num_trees", "plantstart"].includes(info.field)
+      ["polyName", "practice", "targetSys", "distr", "numTrees", "plantStart"].includes(info.field)
     );
 
     if (dataFields.length === 0) return false;
@@ -80,8 +80,8 @@ export const isOnlyNumTreesMissing = (extraInfo: any): boolean => {
     // A field is invalid if it's missing (!exists) OR has an error value
     const invalidFields = dataFields.filter(info => !info.exists || info.error != null);
 
-    // Only exclude DATA_CRITERIA_ID if EXACTLY num_trees is the only invalid field
-    return invalidFields.length === 1 && invalidFields[0].field === "num_trees";
+    // Only exclude DATA_CRITERIA_ID if EXACTLY numTrees is the only invalid field
+    return invalidFields.length === 1 && invalidFields[0].field === "numTrees";
   } catch {
     return false;
   }
@@ -153,7 +153,7 @@ export const shouldShowAsWarning = (item: ICriteriaCheckItem): boolean => {
     return true;
   }
 
-  // For Data Completed validation, only show as warning if only num_trees is missing
+  // For Data Completed validation, only show as warning if only numTrees is missing
   if (+item.id === COMPLETED_DATA_CRITERIA_ID && !item.status) {
     return isOnlyNumTreesMissing(item.extra_info);
   }

@@ -13,8 +13,8 @@ import { BBox } from "../GeoJSON";
 
 /** Shape of a polygon version record as returned by the versions API. */
 export type PolygonVersion = {
-  poly_id?: string;
-  is_active?: boolean;
+  polygonUuid?: string | null;
+  isActive?: boolean;
   status?: string;
 };
 
@@ -83,14 +83,14 @@ const getPolygonColor = (polygonStatus: string | undefined): string => {
 
 export const drawTemporaryPolygon = (
   geojson: GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry,
-  cb: (polyId: string) => void,
+  cb: (polygonUuid: string) => void,
   map: MapboxMap,
   polygonVersion?: PolygonVersion
 ): void => {
   if (geojson == null) return;
 
   const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
-  if (polygonVersion?.poly_id != null && polygonVersion?.is_active !== true) {
+  if (polygonVersion?.polygonUuid != null && polygonVersion?.isActive !== true) {
     map.addSource("temp-polygon-source", { type: "geojson", data: geojsonFormatted });
     map.addLayer({
       id: "temp-polygon-source",
@@ -112,7 +112,7 @@ export const drawTemporaryPolygon = (
     });
   }
   zoomToBbox(bbox(geojsonFormatted) as BBox, map, false);
-  cb(polygonVersion?.poly_id ?? "");
+  cb(polygonVersion?.polygonUuid ?? "");
 };
 
 export async function fetchPolygonGeometry(

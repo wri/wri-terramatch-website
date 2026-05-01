@@ -11,51 +11,7 @@ export function isMapAreaSiteFullDto(siteData: MapAreaSiteData | undefined): sit
   return siteData != null && "lightResource" in siteData;
 }
 
-// TODO TM-3352 this is a legacy definition from V2, but is still in heavy use and will be removed.
-export type SitePolygon = {
-  id?: number;
-  uuid?: string;
-  primary_uuid?: string;
-  project_id?: string;
-  proj_name?: string;
-  org_name?: string;
-  poly_id?: string;
-  poly_name?: string;
-  site_id?: string;
-  site_name?: string;
-  /**
-   * @format date
-   */
-  plantstart?: string;
-  practice?: string;
-  target_sys?: string;
-  distr?: string;
-  num_trees?: number;
-  /**
-   * @format float
-   */
-  calc_area?: number;
-  created_by?: string;
-  last_modified_by?: string;
-  /**
-   * @format date-time
-   */
-  deleted_at?: string;
-  /**
-   * @format date-time
-   */
-  created_at?: string;
-  /**
-   * @format date-time
-   */
-  updated_at?: string;
-  status?: string;
-  source?: string;
-  country?: string;
-  is_active?: boolean;
-  version_name?: string;
-  validation_status?: boolean;
-};
+export type SelectedPolygonVersionState = SitePolygonLightDto;
 
 type MapAreaType = {
   isUserDrawingEnabled: boolean;
@@ -76,8 +32,8 @@ type MapAreaType = {
   setHasOverlaps: (value: boolean) => void;
   selectedPolygonsInCheckbox: string[];
   setSelectedPolygonsInCheckbox: (value: string[]) => void;
-  setSelectedPolyVersion: (value: SitePolygon) => void;
-  selectedPolyVersion: SitePolygon | undefined;
+  setSelectedPolyVersion: (value: SelectedPolygonVersionState | undefined) => void;
+  selectedPolyVersion: SelectedPolygonVersionState | undefined;
   openModalConfirmation: boolean;
   setOpenModalConfirmation: (value: boolean) => void;
   previewVersion: boolean;
@@ -139,7 +95,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [shouldRefetchValidation, setShouldRefetchValidation] = useState<boolean>(false);
   const [shouldRefetchPolygonVersions, setShouldRefetchPolygonVersions] = useState<boolean>(false);
   const [hasOverlaps, setHasOverlaps] = useState<boolean>(false);
-  const [selectedPolyVersion, setSelectedPolyVersion] = useState<SitePolygon | undefined>();
+  const [selectedPolyVersion, setSelectedPolyVersion] = useState<SelectedPolygonVersionState | undefined>();
   const [openModalConfirmation, setOpenModalConfirmation] = useState<boolean>(false);
   const [previewVersion, setPreviewVersion] = useState<boolean>(false);
   const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");
