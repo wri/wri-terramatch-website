@@ -33,13 +33,13 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   subtitle?: string;
   status: string;
   isSelected?: boolean;
-  poly_id?: string;
-  site_id?: string;
+  polygonUuid?: string;
+  siteId?: string;
   setClickedButton: React.Dispatch<React.SetStateAction<string>>;
   refContainer: React.RefObject<HTMLDivElement> | null;
   type: string;
-  poly_name?: string;
-  primary_uuid?: string;
+  polygonName?: string;
+  primaryUuid?: string;
   isCollapsed?: boolean;
   validationStatus?: string;
   isAdmin?: boolean;
@@ -51,9 +51,9 @@ const MapMenuPanelItem = ({
   title,
   subtitle,
   status,
-  poly_id = "",
-  site_id,
-  primary_uuid,
+  polygonUuid = "",
+  siteId,
+  primaryUuid,
   isSelected,
   setClickedButton,
   className,
@@ -73,7 +73,7 @@ const MapMenuPanelItem = ({
   const [adjustedValidationStatus, setAdjustedValidationStatus] = useState(validationStatus);
   const isAdminUser = useIsAdmin();
   const adminCheck = isAdmin || isAdminUser;
-  const validationData = usePolygonValidation({ polygonUuid: openCollapse ? poly_id ?? "" : "" });
+  const validationData = usePolygonValidation({ polygonUuid: openCollapse ? polygonUuid ?? "" : "" });
 
   useEffect(() => {
     if (validationData != null) {
@@ -115,7 +115,7 @@ const MapMenuPanelItem = ({
     } else {
       setAdjustedValidationStatus(validationStatus);
     }
-  }, [validationData, poly_id, adminCheck, validationStatus]);
+  }, [validationData, polygonUuid, adminCheck, validationStatus]);
 
   const openFormModalHandlerConfirm = () => {
     openModal(
@@ -316,7 +316,7 @@ const MapMenuPanelItem = ({
             )}
           </Text>
         </When>
-        <ChecklistErrorsInformation polygonUuid={poly_id} />
+        <ChecklistErrorsInformation polygonUuid={polygonUuid} />
       </When>
     </div>
   );

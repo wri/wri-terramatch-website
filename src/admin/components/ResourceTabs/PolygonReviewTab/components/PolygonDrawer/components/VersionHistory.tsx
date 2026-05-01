@@ -21,7 +21,6 @@ import {
 import { createBlankVersion } from "@/connections/SitePolygons";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { SitePolygon } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { FileType, UploadedFile } from "@/types/common";
@@ -92,7 +91,7 @@ const VersionHistory = ({
   }, [selectPolygonVersion, selectedPolygon]);
 
   const updatePolygonData = useCallback(
-    async (polygonData: SitePolygon | undefined) => {
+    async (polygonData: SitePolygonLightDto | undefined) => {
       if (polygonData != null) {
         if (setSelectedPolygonData != null) {
           setSelectedPolygonData(polygonData);
@@ -101,11 +100,11 @@ const VersionHistory = ({
           setSelectedPolygonToDrawer({
             id: selectedPolygonIndex as string,
             status: polygonData?.status as string,
-            label: polygonData?.poly_name as string,
-            uuid: polygonData?.poly_id as string
+            label: (polygonData?.name ?? "") as string,
+            uuid: (polygonData?.polygonUuid ?? "") as string
           });
         }
-        setPolygonFromMap({ isOpen: true, uuid: polygonData?.poly_id ?? "", source: "drawer" });
+        setPolygonFromMap({ isOpen: true, uuid: polygonData?.polygonUuid ?? "", source: "drawer" });
         if (setStatusSelectedPolygon != null) {
           setStatusSelectedPolygon(polygonData?.status ?? "");
         }
@@ -184,13 +183,7 @@ const VersionHistory = ({
       const polygonActive = versionsList?.[0];
 
       if (polygonActive) {
-        const legacyPolygonData = {
-          poly_id: polygonActive.polygonUuid,
-          poly_name: polygonActive.name,
-          status: polygonActive.status,
-          primary_uuid: polygonActive.primaryUuid
-        } as SitePolygon;
-        await updatePolygonData(legacyPolygonData);
+        await updatePolygonData(polygonActive);
       }
       setIsLoadingDropdown(false);
       openNotification("success", t("Success!"), t("File uploaded successfully"));
@@ -220,14 +213,7 @@ const VersionHistory = ({
 
       await refetchVersionsList();
 
-      const legacyPolygonData = {
-        poly_id: newVersion.polygonUuid,
-        poly_name: newVersion.name,
-        status: newVersion.status,
-        primary_uuid: newVersion.primaryUuid
-      } as SitePolygon;
-
-      await updatePolygonData(legacyPolygonData);
+      await updatePolygonData(newVersion);
       setIsLoadingDropdown(false);
       openNotification("success", "Success!", "New version created successfully");
     } catch (error) {

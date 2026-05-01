@@ -147,7 +147,7 @@ const MapSidePanel = ({
       setClickedButton("");
     } else if (clickedButton === "editPolygon") {
       setTabEditPolygon("Attributes");
-      setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primary_uuid: selected?.primaryUuid ?? "" });
+      setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primaryUuid: selected?.primaryUuid ?? "" });
       if (selected?.polygonUuid) {
         flyToPolygonBounds();
       }
@@ -158,7 +158,7 @@ const MapSidePanel = ({
         return;
       }
       setTabEditPolygon("ANR Monitoring Plots");
-      setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primary_uuid: selected?.primaryUuid ?? "" });
+      setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primaryUuid: selected?.primaryUuid ?? "" });
       if (selected?.polygonUuid) {
         flyToPolygonBounds();
       }
@@ -347,8 +347,8 @@ const MapSidePanel = ({
                 isSelected={selected?.uuid === item.uuid}
                 refContainer={refContainer}
                 type={type}
-                poly_id={item.polygonUuid ?? ""}
-                site_id={entityUuid}
+                polygonUuid={item.polygonUuid ?? ""}
+                siteId={entityUuid}
                 validationStatus={item.validationStatus ?? "notChecked"}
                 isAdmin={isAdmin}
                 anrMonitoringPlotsEligible={isSitePolygonEligibleForAnrMonitoringPlots(item)}
