@@ -52,12 +52,12 @@ interface PlantStartDateInfo {
 
 const FIELDS_TO_VALIDATE: Record<string, string> = {
   polyName: "Polygon Name",
-  plantstart: "Plant Start Date",
+  plantStart: "Plant Start Date",
   practice: "Restoration Practice",
-  target_sys: "Target Land Use System",
+  targetSys: "Target Land Use System",
   distr: "Tree Distribution",
-  planting_status: "Planting Status",
-  num_trees: "Number of Trees"
+  plantingStatus: "Planting Status",
+  numTrees: "Number of Trees"
 };
 
 export const useMessageValidators = () => {
@@ -102,7 +102,6 @@ export const useMessageValidators = () => {
         if (extraInfo == null) return [];
 
         try {
-          // Handle both V2 (string) and V3 (object) data formats
           const infoObject = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
           if (infoObject && typeof infoObject === "object" && "countryName" in infoObject) {
             const countryName = infoObject.countryName || "Unknown Country";
@@ -131,11 +130,11 @@ export const useMessageValidators = () => {
         const infoArray: ExtraInfoItem[] = extraInfo;
         return infoArray
           .filter(info => {
-            // Filter out deleted plantend field
+            // Filter out deleted plantEnd field
             if (info.field === "plantend") {
               return false;
             }
-            if (!isAdmin && info.field === "planting_status") {
+            if (!isAdmin && info.field === "plantingStatus") {
               return false;
             }
             return true;
@@ -145,7 +144,7 @@ export const useMessageValidators = () => {
               return t("{field} is missing", { field: FIELDS_TO_VALIDATE[info.field] });
             }
             switch (info.field) {
-              case "target_sys":
+              case "targetSys":
                 return t(
                   "{field}: {error} is not a valid {field} because it is not one of ['agroforest', 'natural-forest', 'mangrove', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'woodlot-or-plantation', 'urban-forest']",
                   { field: FIELDS_TO_VALIDATE[info.field], error: info.error }
@@ -155,7 +154,7 @@ export const useMessageValidators = () => {
                   "{field}: {error} is not a valid {field} because it is not one of ['single-line', 'partial', 'full']",
                   { field: FIELDS_TO_VALIDATE[info.field], error: info.error }
                 );
-              case "num_trees":
+              case "numTrees":
                 return t("{field} {error} tree count is missing", {
                   field: FIELDS_TO_VALIDATE[info.field],
                   error: info.error
@@ -297,7 +296,6 @@ export const useMessageValidators = () => {
     () => (extraInfo: any) => {
       if (extraInfo == null) return [];
       try {
-        // Handle both V2 (string) and V3 (object) data formats
         const info: PlantStartDateInfo = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
 
         switch (info.errorType) {

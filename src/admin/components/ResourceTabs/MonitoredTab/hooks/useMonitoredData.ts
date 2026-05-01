@@ -14,17 +14,16 @@ import { transformSitePolygonsToIndicators } from "@/utils/MonitoredIndicatorUti
 
 const ALL_POLYGONS_PAGE_SIZE = 100;
 
-// TODO: Move this definition to camel case.
 export type MonitoredIndicator = {
-  poly_name?: string;
+  polygonName?: string;
   status?: SitePolygonLightDto["status"];
-  plantstart?: string;
-  site_name?: string;
-  indicator_slug: Indicator;
-  year_of_analysis?: number;
-  created_at?: string;
-  poly_id?: string;
-  site_id?: string;
+  plantStart?: string;
+  siteName?: string;
+  indicatorSlug: Indicator;
+  yearOfAnalysis?: number;
+  createdAt?: string;
+  polygonUuid?: string;
+  siteId?: string;
 };
 
 const dataPolygonOverview = [
@@ -239,10 +238,10 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
       .filter(
         (polygon: MonitoredIndicator) =>
           polygon?.status === "approved" &&
-          (polygon?.poly_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-            polygon?.site_name?.toLowerCase().includes(searchTerm?.toLowerCase()))
+          (polygon?.polygonName?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+            polygon?.siteName?.toLowerCase().includes(searchTerm?.toLowerCase()))
       )
-      .sort((a, b) => (a.poly_name || "").localeCompare(b.poly_name || ""));
+      .sort((a, b) => (a.polygonName || "").localeCompare(b.polygonName || ""));
   }, [indicatorData, searchTerm]);
 
   useEffect(() => {
@@ -253,8 +252,8 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
       ...indicatorData
         .filter((item: MonitoredIndicator) => item.status === "approved")
         .map((item: MonitoredIndicator) => ({
-          title: item.poly_name ?? "",
-          value: item.poly_id ?? ""
+          title: item.polygonName ?? "",
+          value: item.polygonUuid ?? ""
         }))
         .sort((a, b) => a.title.localeCompare(b.title))
     ];

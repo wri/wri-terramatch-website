@@ -13,7 +13,7 @@ import { ModalBaseSubmit } from "../../../../components/extensive/Modal/ModalsBa
 
 type IdentifiedPolygonItem = {
   id: number | string;
-  poly_name: string;
+  name: string;
   is_present: boolean;
 };
 
@@ -58,7 +58,7 @@ const ModalIdentified: FC<ModalApproveProps> = ({
         const polygon = sitePolygonData.find(p => p.uuid === uuid);
         return {
           id: polygon?.uuid ?? uuid,
-          poly_name: polygon?.name ?? t("Unnamed Polygon"),
+          name: polygon?.name ?? t("Unnamed Polygon"),
           is_present: polygon != null
         };
       })
@@ -118,7 +118,7 @@ const ModalIdentified: FC<ModalApproveProps> = ({
           {transformedPolygons.map((item, index) => (
             <div key={item.id ?? index} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
               <Text variant="text-12" className="flex-[2]">
-                {item.poly_name}
+                {item.name}
               </Text>
               <div className="flex flex-1 items-center justify-center">
                 <div className="flex w-full items-center justify-start gap-2">

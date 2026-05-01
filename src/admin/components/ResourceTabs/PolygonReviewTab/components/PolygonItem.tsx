@@ -31,7 +31,7 @@ const PolygonItem = ({
   title,
   subtitle,
   status,
-  primaryUuid: primary_uuid,
+  primaryUuid,
   className,
   menu,
   siteId,
