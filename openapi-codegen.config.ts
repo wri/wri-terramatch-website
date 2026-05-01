@@ -1,6 +1,6 @@
 import { defineConfig } from "@openapi-codegen/cli";
 import { Config } from "@openapi-codegen/cli/lib/types";
-import { generateFetchers, generateReactQueryComponents, generateSchemaTypes } from "@openapi-codegen/typescript";
+import { generateFetchers, generateSchemaTypes } from "@openapi-codegen/typescript";
 import { ConfigBase, Context } from "@openapi-codegen/typescript/lib/generators/types";
 import c from "case";
 import dotenv from "dotenv";
@@ -17,7 +17,6 @@ const ENVIRONMENT_NAMES = ["local", "dev", "test", "staging", "prod"] as const;
 type EnvironmentName = (typeof ENVIRONMENT_NAMES)[number];
 
 type Environment = {
-  apiBaseUrl: string;
   userServiceUrl: string;
   jobServiceUrl: string;
   researchServiceUrl: string;
@@ -27,7 +26,6 @@ type Environment = {
 
 const ENVIRONMENTS: { [Property in EnvironmentName]: Environment } = {
   local: {
-    apiBaseUrl: "http://localhost:8080",
     userServiceUrl: "http://localhost:4010",
     jobServiceUrl: "http://localhost:4020",
     researchServiceUrl: "http://localhost:4030",
@@ -35,7 +33,6 @@ const ENVIRONMENTS: { [Property in EnvironmentName]: Environment } = {
     dashboardServiceUrl: "http://localhost:4060"
   },
   dev: {
-    apiBaseUrl: "https://api-dev.terramatch.org",
     userServiceUrl: "https://api-dev.terramatch.org",
     jobServiceUrl: "https://api-dev.terramatch.org",
     researchServiceUrl: "https://api-dev.terramatch.org",
@@ -43,7 +40,6 @@ const ENVIRONMENTS: { [Property in EnvironmentName]: Environment } = {
     dashboardServiceUrl: "https://api-dev.terramatch.org"
   },
   test: {
-    apiBaseUrl: "https://api-test.terramatch.org",
     userServiceUrl: "https://api-test.terramatch.org",
     jobServiceUrl: "https://api-test.terramatch.org",
     researchServiceUrl: "https://api-test.terramatch.org",
@@ -51,7 +47,6 @@ const ENVIRONMENTS: { [Property in EnvironmentName]: Environment } = {
     dashboardServiceUrl: "https://api-test.terramatch.org"
   },
   staging: {
-    apiBaseUrl: "https://api-staging.terramatch.org",
     userServiceUrl: "https://api-staging.terramatch.org",
     jobServiceUrl: "https://api-staging.terramatch.org",
     researchServiceUrl: "https://api-staging.terramatch.org",
@@ -59,7 +54,6 @@ const ENVIRONMENTS: { [Property in EnvironmentName]: Environment } = {
     dashboardServiceUrl: "https://api-staging.terramatch.org"
   },
   prod: {
-    apiBaseUrl: "https://api.terramatch.org",
     userServiceUrl: "https://api.terramatch.org",
     jobServiceUrl: "https://api.terramatch.org",
     researchServiceUrl: "https://api.terramatch.org",
@@ -74,7 +68,6 @@ if (!ENVIRONMENT_NAMES.includes(declaredEnv as EnvironmentName)) {
 }
 
 const DEFAULTS = ENVIRONMENTS[declaredEnv];
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULTS.apiBaseUrl;
 const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE_URL ?? DEFAULTS.userServiceUrl;
 const jobServiceUrl = process.env.NEXT_PUBLIC_JOB_SERVICE_URL ?? DEFAULTS.jobServiceUrl;
 const researchServiceUrl = process.env.NEXT_PUBLIC_RESEARCH_SERVICE_URL ?? DEFAULTS.researchServiceUrl;
@@ -93,43 +86,7 @@ const SERVICES = {
   "dashboard-service": dashboardServiceUrl
 };
 
-const config: Record<string, Config> = {
-  api: {
-    from: {
-      source: "url",
-      url: `${apiBaseUrl}/documentation/v2/raw`
-    },
-    outputDir: "src/generated",
-    to: async context => {
-      let paths = context.openAPIDocument.paths;
-      let newPaths: any = {};
-      //! Treat carefully this might potentially break the api generation
-      // This Logic will make sure every single endpoint has a `operationId` key (needed to generate endpoints)
-      Object.keys(paths).forEach(k => {
-        newPaths[k] = {};
-        const eps = Object.keys(paths[k]).filter(ep => ep !== "parameters");
-        eps.forEach(ep => {
-          const current = paths[k][ep];
-          const operationId = ep + k.replaceAll("/", "-").replaceAll("{", "").replaceAll("}", "");
-          newPaths[k][ep] = {
-            ...current,
-            operationId
-          };
-        });
-      });
-      context.openAPIDocument.paths = newPaths;
-      const filenamePrefix = "api";
-      const { schemasFiles } = await generateSchemaTypes(context, {
-        filenamePrefix
-      });
-      await generateReactQueryComponents(context, {
-        filenamePrefix,
-        schemasFiles
-      });
-    }
-  }
-};
-
+const config: Record<string, Config> = {};
 for (const [service, baseUrl] of Object.entries(SERVICES)) {
   const name = _.camelCase(service);
   config[name] = {

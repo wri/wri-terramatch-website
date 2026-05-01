@@ -32,7 +32,7 @@ type UseMapDrawParams = {
   polygonsData?: Record<string, string[]>;
   centroids?: DashboardGetProjectsData[];
   sitePolygonData?: SitePolygonLightDto[];
-  selectedPolyVersion?: any;
+  selectedPolyVersion?: SitePolygonLightDto;
   onCancel: (polygonsData: any) => void;
   setPolygonFromMap?: any;
   reloadSiteData?: () => any;
@@ -84,7 +84,7 @@ export function useMapDraw({
     if (m.getLayer("temp-polygon-source-line") != null) m.removeLayer("temp-polygon-source-line");
     if (m.getLayer("temp-polygon-source") != null) m.removeLayer("temp-polygon-source");
     if (m.getSource("temp-polygon-source") != null) m.removeSource("temp-polygon-source");
-    const polygonUuid = (selectedPolyVersion as any)?.polygonUuid ?? (selectedPolyVersion as any)?.poly_id;
+    const polygonUuid = selectedPolyVersion?.polygonUuid ?? null;
     if (selectedPolyVersion != null && polygonUuid != null) {
       fetchPolygonGeometry(polygonUuid).then(geometry => {
         if (geometry != null && map.current != null) {
@@ -181,7 +181,7 @@ export function useMapDraw({
       await createVersionWithGeometry(selectedPolygon.primaryUuid, "Updated geometry", {
         type: "Feature",
         geometry: feature.geometry,
-        properties: { site_id: siteId }
+        properties: { siteId }
       });
 
       if (selectedPolygon.polygonUuid != null) {

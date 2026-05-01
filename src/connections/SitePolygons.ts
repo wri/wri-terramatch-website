@@ -371,7 +371,7 @@ export type CreateVersionOptions = {
     type: "Feature";
     geometry: any;
     properties: {
-      site_id: string;
+      siteId: string;
     };
   };
   attributeChanges?: AttributeChangesDto;

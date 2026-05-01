@@ -1,7 +1,6 @@
 import React, { createContext, ReactNode, useCallback, useContext, useState } from "react";
 
 import { EditPolygonState } from "@/components/elements/Map-mapbox/Map.d";
-import { SitePolygon } from "@/generated/apiSchemas";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { Entity } from "@/types/common";
@@ -11,6 +10,8 @@ export type MapAreaSiteData = Entity | SiteFullDto;
 export function isMapAreaSiteFullDto(siteData: MapAreaSiteData | undefined): siteData is SiteFullDto {
   return siteData != null && "lightResource" in siteData;
 }
+
+export type SelectedPolygonVersionState = SitePolygonLightDto;
 
 type MapAreaType = {
   isUserDrawingEnabled: boolean;
@@ -31,8 +32,8 @@ type MapAreaType = {
   setHasOverlaps: (value: boolean) => void;
   selectedPolygonsInCheckbox: string[];
   setSelectedPolygonsInCheckbox: (value: string[]) => void;
-  setSelectedPolyVersion: (value: SitePolygon) => void;
-  selectedPolyVersion: SitePolygon | undefined;
+  setSelectedPolyVersion: (value: SelectedPolygonVersionState | undefined) => void;
+  selectedPolyVersion: SelectedPolygonVersionState | undefined;
   openModalConfirmation: boolean;
   setOpenModalConfirmation: (value: boolean) => void;
   previewVersion: boolean;
@@ -94,7 +95,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [shouldRefetchValidation, setShouldRefetchValidation] = useState<boolean>(false);
   const [shouldRefetchPolygonVersions, setShouldRefetchPolygonVersions] = useState<boolean>(false);
   const [hasOverlaps, setHasOverlaps] = useState<boolean>(false);
-  const [selectedPolyVersion, setSelectedPolyVersion] = useState<SitePolygon | undefined>();
+  const [selectedPolyVersion, setSelectedPolyVersion] = useState<SelectedPolygonVersionState | undefined>();
   const [openModalConfirmation, setOpenModalConfirmation] = useState<boolean>(false);
   const [previewVersion, setPreviewVersion] = useState<boolean>(false);
   const [statusSelectedPolygon, setStatusSelectedPolygon] = useState<string>("");

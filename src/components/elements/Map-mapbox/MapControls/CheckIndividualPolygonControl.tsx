@@ -47,10 +47,10 @@ const CheckIndividualPolygonControl = ({
 
   const connectionProps = useMemo(
     () => ({
-      uuid: editPolygon?.primary_uuid ?? undefined,
-      enabled: !!editPolygon?.primary_uuid
+      uuid: editPolygon?.primaryUuid ?? undefined,
+      enabled: editPolygon?.primaryUuid != null
     }),
-    [editPolygon?.primary_uuid]
+    [editPolygon?.primaryUuid]
   );
 
   const [, { data: polygonVersionsData, refetch: refetchPolygonVersionsHook }] =
@@ -122,7 +122,7 @@ const CheckIndividualPolygonControl = ({
       setEditPolygon({
         isOpen: true,
         uuid: polygonActive?.polygonUuid as string,
-        primary_uuid: polygonActive?.primaryUuid!
+        primaryUuid: polygonActive?.primaryUuid!
       });
       hideLoader();
     },

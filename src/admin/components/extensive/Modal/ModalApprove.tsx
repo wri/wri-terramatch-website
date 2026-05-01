@@ -44,7 +44,7 @@ export interface DisplayedPolygonType {
   canBeApproved: boolean | undefined;
   failingCriterias: string[] | undefined;
   status: StatusEnum | undefined;
-  validation_status?: string | null;
+  validationStatus?: string | null;
 }
 
 const checkCriteriaCanBeApproved = (validationStatus: string | null, checked: boolean, canBeApproved?: boolean) => {
@@ -143,7 +143,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
           canBeApproved,
           failingCriterias: [],
           status: polygon.status as StatusEnum,
-          validation_status: polygon.validationStatus
+          validationStatus: polygon.validationStatus
         };
       })
     );

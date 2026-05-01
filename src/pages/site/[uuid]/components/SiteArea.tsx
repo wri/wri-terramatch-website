@@ -32,8 +32,8 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
   const { openNotification } = useNotificationContext();
 
   const [, { data: polygonVersionsV3, refetch: refetchPolygonVersions }] = useListPolygonVersions({
-    uuid: polygon?.primary_uuid || undefined,
-    enabled: !!polygon?.primary_uuid
+    uuid: polygon?.primaryUuid ?? undefined,
+    enabled: polygon?.primaryUuid != null
   });
 
   const makeActivePolygon = async () => {
@@ -61,16 +61,16 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
 
         await refetch?.();
 
-        setSelectedPolyVersion({} as any);
+        setSelectedPolyVersion(undefined);
         setPreviewVersion(false);
         setOpenModalConfirmation(false);
-
-        const selectedVersion = selectedPolyVersion as any;
-        setEditPolygon?.({
-          isOpen: true,
-          uuid: selectedVersion?.poly_id as string,
-          primary_uuid: selectedVersion?.primary_uuid ?? undefined
-        });
+        if (selectedPolyVersion.polygonUuid != null) {
+          setEditPolygon?.({
+            isOpen: true,
+            uuid: selectedPolyVersion.polygonUuid,
+            primaryUuid: selectedPolyVersion.primaryUuid ?? undefined
+          });
+        }
 
         setShouldRefetchPolygonData(true);
 
@@ -107,8 +107,8 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
               className="text-12-bold m-auto rounded-lg bg-[#a2a295b5] px-4 py-1 text-black underline underline-offset-2 hover:text-white"
               onClick={() => {
                 setOpenModalConfirmation(false);
-                setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: undefined });
-                setSelectedPolyVersion({} as any);
+                setEditPolygon?.({ isOpen: false, uuid: "", primaryUuid: undefined });
+                setSelectedPolyVersion(undefined);
                 setPreviewVersion(false);
                 refetch?.();
               }}
@@ -130,7 +130,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
                 {t("Polygon Name")}
               </Text>
               <Text variant="text-10-light" className="capitalize">
-                {convertText((selectedPolyVersion as any)?.poly_name as string) ?? "-"}
+                {convertText(selectedPolyVersion?.versionName ?? selectedPolyVersion?.name ?? "-")}
               </Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
@@ -138,13 +138,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
                 {t("Restoration Practice")}
               </Text>
               <Text variant="text-10-light" className="capitalize">
-                {selectedPolyVersion?.practice
-                  ? convertText(
-                      Array.isArray(selectedPolyVersion.practice)
-                        ? selectedPolyVersion.practice.join(", ")
-                        : (selectedPolyVersion.practice as string)
-                    )
-                  : "-"}
+                {selectedPolyVersion?.practice != null ? convertText(selectedPolyVersion.practice.join(", ")) : "-"}
               </Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
@@ -152,7 +146,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
                 {t("Target Land Use System")}
               </Text>
               <Text variant="text-10-light" className="capitalize">
-                {convertText((selectedPolyVersion as any)?.target_sys as string) ?? "-"}
+                {convertText(selectedPolyVersion?.targetSys ?? "-")}
               </Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
@@ -160,13 +154,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
                 {t("Tree Distribution")}
               </Text>
               <Text variant="text-10-light" className="capitalize">
-                {selectedPolyVersion?.distr
-                  ? convertText(
-                      Array.isArray(selectedPolyVersion.distr)
-                        ? selectedPolyVersion.distr.join(", ")
-                        : (selectedPolyVersion.distr as string)
-                    )
-                  : "-"}
+                {selectedPolyVersion?.distr != null ? convertText(selectedPolyVersion.distr.join(", ")) : "-"}
               </Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">

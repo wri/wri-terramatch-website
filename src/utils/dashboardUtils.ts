@@ -175,7 +175,7 @@ export interface ChartCategory {
 
 interface PolygonIndicator {
   id?: number;
-  poly_name?: string;
+  polygonName?: string;
   status?: string;
   data?: Record<string, number>;
   value?: Record<string, any>;

@@ -24,8 +24,8 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
   const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
-    setShowWarning(item.validation_status === "partial");
-    setIsChecked(item.checked || ["passed", "partial", "failed"].includes(item.validation_status));
+    setShowWarning(item.validationStatus === "partial");
+    setIsChecked(item.checked || ["passed", "partial", "failed"].includes(item.validationStatus));
   }, [item]);
 
   const canBeApproved = () => {
@@ -37,7 +37,7 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
       return item.canBeApproved;
     }
 
-    if (item.validation_status === "passed" || item.validation_status === "partial") {
+    if (item.validationStatus === "passed" || item.validationStatus === "partial") {
       return true;
     }
 

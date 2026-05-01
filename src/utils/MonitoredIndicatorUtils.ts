@@ -151,12 +151,12 @@ export const processIndicatorData = (presentIndicator: Indicator) => (polygons: 
       if (indicator == null) return null;
 
       const commonFields = {
-        poly_name: sitePolygon.name,
+        polygonName: sitePolygon.name,
         size: formattedValue(sitePolygon.calcArea, 1),
         status: sitePolygon.status,
-        plantstart: formatDate(sitePolygon.plantStart),
-        site_id: sitePolygon.siteId,
-        poly_id: sitePolygon.polygonUuid,
+        plantStart: formatDate(sitePolygon.plantStart),
+        siteId: sitePolygon.siteId,
+        polygonUuid: sitePolygon.polygonUuid,
         siteName: sitePolygon.siteName
       };
 
@@ -177,7 +177,7 @@ export const processIndicatorData = (presentIndicator: Indicator) => (polygons: 
           const treeCoverLoss = indicator as IndicatorTreeCoverLossDto;
           return {
             ...commonFields,
-            site_name: sitePolygon.siteName,
+            siteName: sitePolygon.siteName,
             data: {
               "2010": formattedValue(treeCoverLoss.value?.["2010"], 3),
               "2011": formattedValue(treeCoverLoss.value?.["2011"], 3),
@@ -203,7 +203,7 @@ export const processIndicatorData = (presentIndicator: Indicator) => (polygons: 
           const hectares = indicator as IndicatorHectaresDto;
           return {
             ...commonFields,
-            site_name: sitePolygon.siteName,
+            siteName: sitePolygon.siteName,
             data: {
               tree_planting: formattedValue(hectares.value?.["tree-planting"], 3),
               assisted_natural_regeneration: formattedValue(hectares.value?.["assisted-natural-regeneration"], 3),
@@ -231,7 +231,7 @@ export const processIndicatorData = (presentIndicator: Indicator) => (polygons: 
 
           return {
             ...commonFields,
-            site_name: sitePolygon.siteName,
+            siteName: sitePolygon.siteName,
             data: data
           };
         }
@@ -240,7 +240,7 @@ export const processIndicatorData = (presentIndicator: Indicator) => (polygons: 
           const hectares = indicator as IndicatorHectaresDto;
           return {
             ...commonFields,
-            site_name: sitePolygon.siteName,
+            siteName: sitePolygon.siteName,
             data: {
               agroforest: formattedValue(hectares.value?.agroforest, 3),
               natural_forest: formattedValue(hectares.value?.["natural-forest"], 3),
@@ -280,15 +280,15 @@ export const transformSitePolygonsToIndicators = (
       if (indicator == null) return null;
 
       const baseIndicator: MonitoredIndicator = {
-        poly_name: sitePolygon.name ?? undefined,
+        polygonName: sitePolygon.name ?? undefined,
         status: sitePolygon.status ?? undefined,
-        plantstart: sitePolygon.plantStart ? formatDate(sitePolygon.plantStart) : undefined,
-        site_name: sitePolygon.siteName ?? undefined,
-        poly_id: sitePolygon.polygonUuid ?? undefined,
-        site_id: sitePolygon.siteId ?? undefined,
-        created_at: sitePolygon.createdAt ?? undefined,
-        indicator_slug: indicatorSlug,
-        year_of_analysis: (indicator as { yearOfAnalysis?: number }).yearOfAnalysis
+        plantStart: sitePolygon.plantStart ? formatDate(sitePolygon.plantStart) : undefined,
+        siteName: sitePolygon.siteName ?? undefined,
+        polygonUuid: sitePolygon.polygonUuid ?? undefined,
+        siteId: sitePolygon.siteId ?? undefined,
+        createdAt: sitePolygon.createdAt ?? undefined,
+        indicatorSlug,
+        yearOfAnalysis: (indicator as { yearOfAnalysis?: number }).yearOfAnalysis
       };
 
       switch (indicatorSlug) {

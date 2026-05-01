@@ -24,7 +24,7 @@ export interface DisplayedPolygonType {
   checked: boolean | undefined;
   canBeApproved: boolean | undefined;
   failingCriterias: string[] | undefined;
-  validation_status?: string | null;
+  validationStatus?: string | null;
 }
 
 const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
