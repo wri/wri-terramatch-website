@@ -10,9 +10,15 @@ import { useTablePagination, useTablePaginationState } from "./useTablePaginatio
 import { useTableSelection } from "./useTableSelection";
 import { useTableSorting } from "./useTableSorting";
 
+export type TableColumn = {
+  key: string;
+  label: string;
+  sortable?: boolean;
+};
+
 interface TableProps {
   data: any[];
-  columns: any[];
+  columns: TableColumn[];
   selectable?: boolean;
   isScrollable?: boolean;
   scrollableWidth?: string;
@@ -30,7 +36,7 @@ interface TableProps {
 
 interface SelectableRowProps {
   rowData: RowData;
-  columns: any[];
+  columns: TableColumn[];
   renderDataCell: (rowData: RowData, columnKey: string) => React.ReactNode;
   selectedRows: RowData[];
   onRowSelected: (rowData: RowData, checked: boolean) => void;
