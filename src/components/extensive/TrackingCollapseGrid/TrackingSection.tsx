@@ -86,7 +86,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
       <>
         <div className="col-span-2 border-b border-theme-primary-200 bg-theme-primary-900 px-3 py-2.5">
           <Text textStyle="400-bold" color="neutral.100">
-            {t(`By: {title}`, { title })}
+            {t(`By: ${title}`)}
           </Text>
         </div>
         {/* Column headers */}
