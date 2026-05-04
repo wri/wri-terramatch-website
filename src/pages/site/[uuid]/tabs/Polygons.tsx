@@ -38,7 +38,7 @@ import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessa
 
 interface SitePolygonsTabProps {
   site: SiteFullDto;
-  refetch: () => Promise<any>;
+  refetch: () => void;
 }
 
 type SiteTypeConfig = { icon: ReactNode; label: string; tooltip?: string };
@@ -418,7 +418,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site, refetch }) => {
   return (
     <PageContent>
       <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
-        <div className="h-full w-full bg-theme-neutral-400">Map Placeholder</div>
+        <div className="bg-theme-neutral-400 h-full w-full">Map Placeholder</div>
       </ResizeBox>
       <Flex className="items-center justify-between gap-4">
         <Flex className="items-center gap-4">
