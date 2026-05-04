@@ -5,7 +5,6 @@ import { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
 
 import type { TitleCellProps } from "./components/TitleCell";
 
-// Minimal contract every row must satisfy — the Table component only depends on this.
 export type BaseRow = { id: string | number };
 
 export type ActionCellProps = {
@@ -13,8 +12,6 @@ export type ActionCellProps = {
   onButtonIconClick: () => void;
 };
 
-// Domain-specific row shape used by the admin user / team-member tables.
-// Keep this here so existing consumers don't need to change their import path.
 export type RowData = BaseRow & {
   uuid?: string;
   fullName: string;
