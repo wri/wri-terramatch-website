@@ -354,7 +354,7 @@ const MetricCard: FC<MetricCardProps> = props => {
     <Flex
       padding={3}
       className={twMerge(
-        "border-theme-neutral-300 bg-theme-neutral-100 h-fit justify-start rounded-lg border p-3",
+        "h-fit justify-start rounded-lg border border-theme-neutral-300 bg-theme-neutral-100 p-3",
         className
       )}
     >

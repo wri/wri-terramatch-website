@@ -106,7 +106,7 @@ const ResizableBox: FC<ResizableBoxProps> = ({
       >
         <Box
           onMouseDown={handleMouseDown}
-          className="shadow-md z-2 bg-theme-neutral-100 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-neutral-300 p-2.5"
+          className="shadow-md z-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-neutral-300 bg-theme-neutral-100 p-2.5"
           style={{
             display: isDragging || isHovered ? "block" : "none",
             cursor: isDragging ? "grabbing" : isHovered ? "grab" : "default"
