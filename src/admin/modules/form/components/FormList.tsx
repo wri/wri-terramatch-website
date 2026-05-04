@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useMemo } from "react";
 import {
   Datagrid,
   FunctionField,
@@ -16,6 +16,8 @@ import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ListActionsCreate from "@/admin/components/Actions/ListActionsCreate";
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
+import { useFundingProgrammes } from "@/connections/FundingProgramme";
+import { useReportingFrameworks } from "@/connections/ReportingFramework";
 import { Forms } from "@/generated/v3/entityService/entityServiceConstants";
 import { FormLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
@@ -47,6 +49,20 @@ export const FormList: FC = () => {
     },
     [createPath]
   );
+  const [, { data: fundingProgrammes }] = useFundingProgrammes({ translated: false });
+  const [, { data: reportingFrameworks }] = useReportingFrameworks({ translated: false });
+  const inUseChoices = useMemo(() => {
+    return [
+      ...(reportingFrameworks ?? []).map(({ uuid, name }) => ({
+        name: `Framework: ${name}`,
+        id: `framework-${uuid}`
+      })),
+      ...(fundingProgrammes ?? []).map(({ uuid, name }) => ({
+        name: `Funding Programme: ${name}`,
+        id: `funding-programme-${uuid}`
+      }))
+    ];
+  }, [fundingProgrammes, reportingFrameworks]);
 
   return (
     <>
@@ -60,7 +76,14 @@ export const FormList: FC = () => {
         actions={<ListActionsCreate showFilters />}
         filters={[
           <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
-          <SelectInput key="type" label="Type" source="type" className="select-page-admin" choices={TYPE_CHOICES} />
+          <SelectInput key="type" label="Type" source="type" className="select-page-admin" choices={TYPE_CHOICES} />,
+          <SelectInput
+            key="inUse"
+            label="In Use"
+            source="attachedTo"
+            className="select-page-admin"
+            choices={inUseChoices}
+          />
         ]}
       >
         <AutoResetSort />
