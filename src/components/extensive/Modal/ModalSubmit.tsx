@@ -22,7 +22,7 @@ export interface DisplayedPolygonType {
   canBeApproved: boolean | undefined;
   failingCriterias: string[] | undefined;
   status: StatusEnum | undefined;
-  validation_status?: string | null;
+  validationStatus?: string | null;
 }
 
 export interface ModalSubmitProps extends ModalProps {
@@ -84,7 +84,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
           name: polygon.name ?? "Unnamed Polygon",
           failingCriterias: [],
           status: polygon.status as StatusEnum,
-          validation_status: polygon.validationStatus
+          validationStatus: polygon.validationStatus
         };
       })
     );

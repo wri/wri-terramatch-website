@@ -18,7 +18,6 @@ export type WizardEditFormProps = {
   onStepSave: (data: any) => void;
   onSubmit: (data: any) => void;
   defaultValues?: any;
-  errors?: any;
 };
 
 const WizardEditForm = ({
@@ -28,8 +27,7 @@ const WizardEditForm = ({
   framework,
   onStepSave,
   onSubmit,
-  defaultValues,
-  errors
+  defaultValues
 }: WizardEditFormProps) => {
   const { closeModal } = useModalContext();
   const t = useT();
@@ -50,7 +48,6 @@ const WizardEditForm = ({
         models={models}
         fieldsProvider={fieldsProvider}
         hideBackButton
-        errors={errors}
         submitButtonText={t("Save")}
         nextButtonText={t("Save")}
         header={{

@@ -31,7 +31,7 @@ interface DisplayedPolygonType {
   canBeApproved?: boolean | undefined;
   failingCriterias?: string[] | undefined;
   status: StatusEnum | undefined;
-  validation_status?: string | null;
+  validationStatus?: string | null;
 }
 
 const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
@@ -75,7 +75,7 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
             polygonValidationStatus === "partial" ||
             polygonValidationStatus === "failed",
           status: polygon.status as StatusEnum,
-          validation_status: polygonValidationStatus
+          validationStatus: polygonValidationStatus
         } as DisplayedPolygonType;
       });
 

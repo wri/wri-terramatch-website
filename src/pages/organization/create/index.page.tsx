@@ -95,11 +95,6 @@ const CreateOrganisationForm = () => {
     [update, uuid]
   );
 
-  const updateError =
-    updateFailure != null
-      ? { statusCode: updateFailure.statusCode, message: updateFailure.message, error: updateFailure.error }
-      : undefined;
-
   return (
     <BackgroundLayout>
       <LoadingContainer loading={!orgLoaded && uuid != null}>
@@ -108,7 +103,6 @@ const CreateOrganisationForm = () => {
           models={models}
           fieldsProvider={provider}
           formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
-          errors={updateError}
           defaultValues={defaultValues}
           onChange={onChange}
           onSubmit={handleSubmit}

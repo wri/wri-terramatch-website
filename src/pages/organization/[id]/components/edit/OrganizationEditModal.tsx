@@ -10,7 +10,6 @@ import WizardEditForm from "@/components/extensive/WizardForm/modals/WizardEditF
 import { useGadmOptions } from "@/connections/Gadm";
 import {
   updateOrganisation,
-  useOrganisation,
   useOrganisationFundingTypes,
   useOrganisationLeadership,
   useOrganisationMedia,
@@ -132,8 +131,6 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
     provider
   ]);
 
-  const [, { updateFailure }] = useOrganisation(uuid != null ? { id: uuid } : {});
-
   const saveOrganisation = useCallback(
     async (data: unknown, showSuccessModal: boolean) => {
       if (uuid == null) return;
@@ -175,11 +172,6 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
     [saveOrganisation]
   );
 
-  const error =
-    updateFailure != null
-      ? { statusCode: updateFailure.statusCode, message: updateFailure.message, error: updateFailure.error }
-      : undefined;
-
   const models = useMemo(() => ({ model: "organisations", uuid } as const), [uuid]);
 
   return (
@@ -192,7 +184,6 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
         onStepSave={handleStepSave}
         onSubmit={handleSubmit}
         defaultValues={defaultValues}
-        errors={error}
       />
     </EditModalBase>
   );

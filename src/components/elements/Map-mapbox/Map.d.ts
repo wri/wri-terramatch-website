@@ -56,7 +56,7 @@ export type SetPolygonFromMap = React.Dispatch<React.SetStateAction<PolygonFromM
 export type EditPolygonState = {
   isOpen: boolean;
   uuid: string;
-  primary_uuid?: string;
+  primaryUuid?: string;
 };
 
 /** Groups the three dashboard-specific props that always travel together. */

@@ -23,8 +23,8 @@ export const AdminPopup = (event: PopupComponentProps) => {
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <ChakraProvider value={system}>
-      <ReduxProvider store={ApiSlice.redux}>
+    <ReduxProvider store={ApiSlice.redux}>
+      <ChakraProvider value={system}>
         <QueryClientProvider client={client}>
           {!newStyling ? (
             <TooltipMap
@@ -37,12 +37,12 @@ export const AdminPopup = (event: PopupComponentProps) => {
                   setEditPolygon?.({ isOpen: false, uuid: "" });
                 }
               }}
-              setEditPolygon={(primary_uuid?: string) => {
+              setEditPolygon={(primaryUuid?: string) => {
                 setPolygonFromMap?.({ isOpen: true, uuid: uuidPolygon });
                 setEditPolygon?.({
                   isOpen: true,
                   uuid: uuidPolygon,
-                  primary_uuid: primary_uuid
+                  primaryUuid
                 });
                 if (popup) {
                   popup.remove();
@@ -77,7 +77,7 @@ export const AdminPopup = (event: PopupComponentProps) => {
             </>
           )}
         </QueryClientProvider>
-      </ReduxProvider>
-    </ChakraProvider>
+      </ChakraProvider>
+    </ReduxProvider>
   );
 };

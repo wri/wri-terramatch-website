@@ -1,12 +1,12 @@
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { V2GenericList } from "@/generated/apiSchemas";
+import { OrganisationLightDto } from "@/generated/v3/userService/userServiceSchemas";
 
 import { useOrganizationCreateContext } from "../context/OrganizationCreate.provider";
 
 type OrganizationSelectRowProps = {
-  organization: V2GenericList;
+  organization: OrganisationLightDto;
 };
 
 const OrganizationSelectRow = ({ organization }: OrganizationSelectRowProps) => {

@@ -159,7 +159,7 @@ const OrganizationAssignForm = () => {
         {!type && searchedTerm && (
           <OrganizationAssignPanel
             searchedTerm={searchedTerm}
-            organizations={(organisationsData ?? []) as unknown as Array<{ uuid: string; name: string }>}
+            organizations={organisationsData ?? []}
             loading={loading}
           />
         )}

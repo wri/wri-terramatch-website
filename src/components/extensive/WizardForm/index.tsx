@@ -3,7 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 import { useForm, UseFormProps, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
@@ -22,7 +22,6 @@ import WizardFormProvider, {
   ProjectFormDetails,
   useFieldsProvider
 } from "@/context/wizardForm.provider";
-import { ErrorWrapper } from "@/generated/apiFetcher";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -78,7 +77,6 @@ export interface WizardFormProps {
   formStatus?: "saving" | "saved";
   title?: string;
   subtitle?: string;
-  errors?: ErrorWrapper<null>;
   summaryOptions?: FormSummaryOptions & {
     downloadButtonText?: string;
   };
@@ -215,19 +213,6 @@ function WizardForm(props: WizardFormProps) {
     }
     onClickSaveAndClose();
   }, [onClickSaveAndClose, isAdmin, formHook, onSubmitStep]);
-
-  useEffect(() => {
-    if (props.errors != null) {
-      formHook.clearErrors();
-      props.errors.errors?.forEach(error => {
-        formHook.setError(error.source, {
-          message: error.detail,
-          type: error.code
-        });
-      });
-    }
-    formHook.reset(formHook.getValues());
-  }, [formHook, props.errors]);
 
   useOnMount(() => {
     // We linked directly to a step; stay on that step.

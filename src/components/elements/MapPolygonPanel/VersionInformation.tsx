@@ -17,7 +17,6 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { FileType, UploadedFile } from "@/types/common";
 import { extractErrorMessage } from "@/utils/errors";
-import { getNameFromPolyVersion, getPolygonUuidFromPolyVersion, getSiteIdFromPolyVersion } from "@/utils/polygonUtils";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
@@ -78,7 +77,7 @@ const VersionInformation = ({
     const siteId =
       (isMapAreaSiteFullDto(siteData) ? siteData.uuid : undefined) ??
       polygonDefault?.siteId ??
-      getSiteIdFromPolyVersion(selectedPolyVersion) ??
+      selectedPolyVersion?.siteId ??
       null;
 
     if (!siteId) {
@@ -103,16 +102,16 @@ const VersionInformation = ({
 
       await recallEntityData?.();
 
-      if (editPolygon?.primary_uuid) {
+      if (editPolygon?.primaryUuid) {
         const response = await loadListPolygonVersions({
-          uuid: editPolygon.primary_uuid
+          uuid: editPolygon.primaryUuid
         });
         const polygonActive = response?.data?.find(item => item.isActive);
         if (polygonActive) {
           setEditPolygon({
             isOpen: true,
             uuid: polygonActive.polygonUuid as string,
-            primary_uuid: polygonActive.primaryUuid ?? undefined
+            primaryUuid: polygonActive.primaryUuid ?? undefined
           });
         }
       }
@@ -171,13 +170,13 @@ const VersionInformation = ({
   };
 
   const createNewVersion = async () => {
-    if (!editPolygon.primary_uuid) {
+    if (!editPolygon.primaryUuid) {
       openNotification("error", t("Error!"), t("Missing polygon information"));
       return;
     }
 
     try {
-      const newVersion = await createBlankVersion(editPolygon.primary_uuid, "Created new version");
+      const newVersion = await createBlankVersion(editPolygon.primaryUuid, "Created new version");
 
       pruneSitePolygonsCache();
 
@@ -188,7 +187,7 @@ const VersionInformation = ({
       setEditPolygon?.({
         isOpen: true,
         uuid: newVersion.polygonUuid as string,
-        primary_uuid: newVersion.primaryUuid ?? undefined
+        primaryUuid: newVersion.primaryUuid ?? undefined
       });
 
       openNotification("success", t("Success!"), t("New version created successfully"));
@@ -207,20 +206,10 @@ const VersionInformation = ({
         </Text>
       ),
       onClick: async () => {
-        setSelectedPolyVersion({} as any);
+        setSelectedPolyVersion(undefined);
         const version = polygonVersionData?.find(item => item.uuid === versionUuid);
         if (version) {
-          setSelectedPolyVersion({
-            uuid: version.uuid,
-            poly_id: version.polygonUuid,
-            poly_name: version.versionName ?? version.name,
-            primary_uuid: version.primaryUuid,
-            practice: Array.isArray(version.practice) ? version.practice.join(", ") : version.practice ?? "",
-            target_sys: version.targetSys ?? "",
-            distr: Array.isArray(version.distr) ? version.distr.join(", ") : version.distr ?? "",
-            source: version.source ?? "",
-            is_active: version.isActive
-          } as any);
+          setSelectedPolyVersion(version);
           setPreviewVersion?.(true);
         } else {
           openNotification("error", t("Error!"), t("Polygon version not found"));
@@ -248,16 +237,16 @@ const VersionInformation = ({
 
       await recallEntityData?.();
 
-      if (editPolygon?.primary_uuid) {
+      if (editPolygon?.primaryUuid) {
         const response = await loadListPolygonVersions({
-          uuid: editPolygon.primary_uuid
+          uuid: editPolygon.primaryUuid
         });
         const polygonActive = response?.data?.find(item => item.isActive);
         if (polygonActive) {
           setEditPolygon({
             isOpen: true,
             uuid: polygonActive.polygonUuid as string,
-            primary_uuid: polygonActive.primaryUuid ?? undefined
+            primaryUuid: polygonActive.primaryUuid ?? undefined
           });
         }
       }
@@ -268,8 +257,8 @@ const VersionInformation = ({
     }
   };
 
-  const makeActivePolygon = async (polygon: any) => {
-    const versionActive = polygonVersionData?.find(item => item?.uuid === (polygon?.uuid as string));
+  const makeActivePolygon = async (polygon: SitePolygonLightDto) => {
+    const versionActive = polygonVersionData?.find(item => item?.uuid === polygon?.uuid);
     if (!versionActive) {
       openNotification("error", t("Error!"), t("Polygon version not found"));
       return;
@@ -277,7 +266,7 @@ const VersionInformation = ({
 
     if (!versionActive.isActive) {
       try {
-        await updatePolygonVersionAsync(polygon?.uuid as string, {
+        await updatePolygonVersionAsync(polygon.uuid, {
           isActive: true
         });
 
@@ -288,11 +277,11 @@ const VersionInformation = ({
 
         setPreviewVersion(false);
         setOpenModalConfirmation(false);
-        setSelectedPolyVersion({} as any);
+        setSelectedPolyVersion(undefined);
         setEditPolygon?.({
           isOpen: true,
-          uuid: (polygon as SitePolygonLightDto)?.polygonUuid as string,
-          primary_uuid: (polygon as SitePolygonLightDto)?.primaryUuid ?? undefined
+          uuid: polygon.polygonUuid as string,
+          primaryUuid: polygon.primaryUuid ?? undefined
         });
 
         openNotification("success", t("Success!"), t("Polygon version made active successfully"));
@@ -370,10 +359,10 @@ const VersionInformation = ({
           className="text-white hover:text-primary-300"
           onClick={() => {
             const polygonDefault = polygonVersionData?.find(polygon => polygon.polygonUuid == editPolygon?.uuid);
-            const polygonUuid =
-              getPolygonUuidFromPolyVersion(selectedPolyVersion) ?? polygonDefault?.polygonUuid ?? null;
+            const polygonUuid = selectedPolyVersion?.polygonUuid ?? polygonDefault?.polygonUuid ?? null;
             const polygonName =
-              getNameFromPolyVersion(selectedPolyVersion) ??
+              selectedPolyVersion?.versionName ??
+              selectedPolyVersion?.name ??
               polygonDefault?.name ??
               polygonDefault?.versionName ??
               null;

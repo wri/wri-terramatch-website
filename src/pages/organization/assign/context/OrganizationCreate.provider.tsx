@@ -3,7 +3,7 @@ import { createContext, Dispatch, SetStateAction, useContext, useEffect, useStat
 import { useForm, UseFormReturn } from "react-hook-form";
 import * as yup from "yup";
 
-import { V2GenericList } from "@/generated/apiSchemas";
+import { OrganisationLightDto } from "@/generated/v3/userService/userServiceSchemas";
 
 const OrganizationCreateFormDataSchema = yup.object({
   name: yup.string().required()
@@ -16,8 +16,8 @@ export type OrganizationCreateType = "join" | "create";
 interface IOrganizationCreateContext {
   type: OrganizationCreateType | null;
   setType: Dispatch<SetStateAction<OrganizationCreateType | null>>;
-  selectedOrganization?: V2GenericList;
-  setSelectedOrganization: Dispatch<SetStateAction<V2GenericList | undefined>>;
+  selectedOrganization?: OrganisationLightDto;
+  setSelectedOrganization: Dispatch<SetStateAction<OrganisationLightDto | undefined>>;
   form: UseFormReturn<OrganizationCreateFormData>;
 }
 
@@ -33,7 +33,7 @@ export const OrganizationCreateContext = createContext<IOrganizationCreateContex
 type OrganizationAssignProviderProps = { children: React.ReactNode };
 const OrganizationAssignProvider = ({ children }: OrganizationAssignProviderProps) => {
   const [type, setType] = useState<OrganizationCreateType | null>(null);
-  const [selectedOrganization, setSelectedOrganization] = useState<V2GenericList>();
+  const [selectedOrganization, setSelectedOrganization] = useState<OrganisationLightDto>();
 
   const form = useForm<OrganizationCreateFormData>({
     resolver: yupResolver(OrganizationCreateFormDataSchema)

@@ -64,10 +64,10 @@ const MapEditPolygonPanel = ({
   const siteDisplayName = siteFull?.name ?? "-";
   const { onCancel } = mapFunctions;
   const handleClose = () => {
-    setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" });
+    setEditPolygon?.({ isOpen: false, uuid: "", primaryUuid: "" });
     setHasOverlaps(false);
     setOpenModalConfirmation(false);
-    setSelectedPolyVersion({});
+    setSelectedPolyVersion(undefined);
     setPreviewVersion(false);
     onCancel(polygonDataForCancel);
     recallEntityData?.();
