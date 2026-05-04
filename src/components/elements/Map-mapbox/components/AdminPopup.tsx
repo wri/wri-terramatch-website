@@ -1,42 +1,83 @@
+import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useRef, useState } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 
+import { system } from "@/lib/theme";
+import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
+import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
 import ApiSlice from "@/store/apiSlice";
 
 import TooltipMap from "../../TooltipMap/TooltipMap";
 import type { PopupComponentProps } from "../Map.d";
+import PopupContentPolygon from "./PopupPolygon/PopupContentPolygon";
+import PopupFooterPolygon from "./PopupPolygon/PopupFooterPolygon";
+import PopupHeaderPolygon from "./PopupPolygon/PopupHeaderPolygon";
 
 const client = new QueryClient();
 
 export const AdminPopup = (event: PopupComponentProps) => {
-  const { feature, popup, setPolygonFromMap, type, setEditPolygon } = event;
+  const { feature, popup, setPolygonFromMap, type, setEditPolygon, newStyling } = event;
   const uuidPolygon = (feature.properties?.uuid ?? "") as string;
+  const [open, setOpen] = useState(true);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
   return (
-    <ReduxProvider store={ApiSlice.redux}>
-      <QueryClientProvider client={client}>
-        <TooltipMap
-          polygon={uuidPolygon}
-          type={type}
-          setTooltipOpen={() => {
-            if (popup) {
-              popup.remove();
-              setPolygonFromMap?.({ isOpen: false, uuid: "" });
-              setEditPolygon?.({ isOpen: false, uuid: "" });
-            }
-          }}
-          setEditPolygon={(primary_uuid?: string) => {
-            setPolygonFromMap?.({ isOpen: true, uuid: uuidPolygon });
-            setEditPolygon?.({
-              isOpen: true,
-              uuid: uuidPolygon,
-              primary_uuid: primary_uuid
-            });
-            if (popup) {
-              popup.remove();
-            }
-          }}
-        />
-      </QueryClientProvider>
-    </ReduxProvider>
+    <ChakraProvider value={system}>
+      <ReduxProvider store={ApiSlice.redux}>
+        <QueryClientProvider client={client}>
+          {!newStyling ? (
+            <TooltipMap
+              polygon={uuidPolygon}
+              type={type}
+              setTooltipOpen={() => {
+                if (popup) {
+                  popup.remove();
+                  setPolygonFromMap?.({ isOpen: false, uuid: "" });
+                  setEditPolygon?.({ isOpen: false, uuid: "" });
+                }
+              }}
+              setEditPolygon={(primary_uuid?: string) => {
+                setPolygonFromMap?.({ isOpen: true, uuid: uuidPolygon });
+                setEditPolygon?.({
+                  isOpen: true,
+                  uuid: uuidPolygon,
+                  primary_uuid: primary_uuid
+                });
+                if (popup) {
+                  popup.remove();
+                }
+              }}
+            />
+          ) : (
+            <>
+              <PointMarker
+                ariaLabel="This is a custom icon marker"
+                variant="simple-pin"
+                onClick={() => setOpen(true)}
+                triggerRef={triggerRef}
+                showFocusState={open}
+              />
+              <MapPopUp
+                anchorRef={triggerRef}
+                content={<PopupContentPolygon />}
+                footer={<PopupFooterPolygon />}
+                placement="right"
+                open={open}
+                onOpenChange={open => {
+                  if (!open) {
+                    setOpen(open);
+                    popup.remove();
+                  } else {
+                    setOpen(open);
+                  }
+                }}
+                header={<PopupHeaderPolygon />}
+              />
+            </>
+          )}
+        </QueryClientProvider>
+      </ReduxProvider>
+    </ChakraProvider>
   );
 };

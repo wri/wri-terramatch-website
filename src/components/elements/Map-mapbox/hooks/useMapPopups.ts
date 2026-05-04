@@ -30,6 +30,7 @@ type UseMapPopupsParams = {
   setMobilePopupData: (v: MobilePopupData) => void;
   /** Full dashboard context; undefined in admin mode — drives popup component choice and filter callbacks. */
   dashboardContext?: DashboardPopupContext | null;
+  newStyling: boolean;
 };
 
 export function useMapPopups({
@@ -45,7 +46,8 @@ export function useMapPopups({
   setEditPolygon,
   editPolygon,
   setMobilePopupData,
-  dashboardContext
+  dashboardContext,
+  newStyling
 }: UseMapPopupsParams) {
   const callbacksRef = useRef({ setPolygonFromMap, setEditPolygon, setMobilePopupData });
   useEffect(() => {
@@ -71,7 +73,19 @@ export function useMapPopups({
       dashboard: dashboardContext ?? undefined,
       setLoader,
       setMobilePopupData:
-        isMobile || dashboardContext?.dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined
+        isMobile || dashboardContext?.dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined,
+      newStyling
     });
-  }, [sourcesAdded, sitePolygonData, tooltipType, isMobile, showPopups, setLoader, dashboardContext, map, draw]);
+  }, [
+    sourcesAdded,
+    sitePolygonData,
+    tooltipType,
+    isMobile,
+    showPopups,
+    setLoader,
+    dashboardContext,
+    map,
+    draw,
+    newStyling
+  ]);
 }

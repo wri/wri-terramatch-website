@@ -344,7 +344,8 @@ export const MapContainer = ({
     setEditPolygon,
     editPolygon,
     setMobilePopupData,
-    dashboardContext: resolvedDashboardContext
+    dashboardContext: resolvedDashboardContext,
+    newStyling: newStyling
   });
 
   useMapCamera({

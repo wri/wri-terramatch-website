@@ -19,6 +19,7 @@ import {
   ChevronUpIcon,
   CloseFullscreenIcon,
   CloseIcon,
+  CommentIcon,
   CompressIcon,
   CorrectIcon,
   DashboardIcon,
@@ -259,6 +260,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Correct">
             <CorrectIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Comment">
+            <CommentIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Compress">
             <CompressIcon boxSize={8} />
@@ -508,6 +512,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Correct">
           <CorrectIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Comment">
+          <CommentIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Compress">
           <CompressIcon boxSize={8} />

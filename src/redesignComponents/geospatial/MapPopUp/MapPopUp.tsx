@@ -8,6 +8,10 @@ const MapPopUp: FC<ComponentProps<typeof WriMapPopup>> = props => {
       css={{
         "& [aria-modal='true'] > div:first-of-type": {
           minHeight: "2.5rem"
+        },
+        "& [aria-modal='true']": {
+          width: "fit-content",
+          maxWidth: "max-content"
         }
       }}
     >

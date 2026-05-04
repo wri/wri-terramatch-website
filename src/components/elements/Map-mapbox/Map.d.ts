@@ -80,6 +80,7 @@ export type PopupComponentProps = {
   setFilters?: DashboardFilters;
   dashboardCountries?: CountriesProps[];
   dashboardMode?: string;
+  newStyling?: boolean;
 };
 
 /** Data shape passed to setMobilePopupData; mirrors PopupComponentProps minus the live Popup instance. */
