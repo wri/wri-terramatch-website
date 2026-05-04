@@ -316,8 +316,23 @@ export const getThemedLineHeight = (token: LineHeightToken): string => {
 };
 
 export const getThemedColor = (
-  variant: "neutral" | "primary" | "secondary" | "success" | "warning" | "error" | "accessible",
+  variant:
+    | "neutral"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "error"
+    | "accessible"
+    | "neutralActive"
+    | "neutralPassive"
+    | "negative"
+    | "attention"
+    | "positive",
   index:
+    | 1
+    | 2
+    | 3
     | 100
     | 200
     | 300
