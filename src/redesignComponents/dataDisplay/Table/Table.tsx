@@ -1,11 +1,11 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
-import React, { FC, useCallback, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
 import { getTableWrapperStyles } from "./tableStyles";
-import { type RowData, DEFAULT_CURRENT_PAGE } from "./tableUtils";
+import { type BaseRow, DEFAULT_CURRENT_PAGE } from "./tableUtils";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
 import { useTableSelection } from "./useTableSelection";
 import { useTableSorting } from "./useTableSorting";
@@ -16,15 +16,15 @@ export type TableColumn = {
   sortable?: boolean;
 };
 
-interface TableProps {
-  data: any[];
+interface TableProps<T extends BaseRow> {
+  data: T[];
   columns: TableColumn[];
   selectable?: boolean;
   isScrollable?: boolean;
   scrollableWidth?: string;
   scrollableHeight?: string;
-  renderRow?: (rowData: RowData) => React.ReactNode;
-  renderDataCell?: (rowData: RowData, columnKey: string) => React.ReactNode;
+  renderRow?: (rowData: T, rowProps?: Record<string, unknown>) => React.ReactNode;
+  renderDataCell?: (rowData: T, columnKey: string) => React.ReactNode;
   totalItems?: number;
   showItemCount?: boolean;
   variant?: "default" | "full-width";
@@ -32,17 +32,28 @@ interface TableProps {
   pageSize?: number;
   className?: string;
   showPagination?: boolean;
+  /** Controlled selection state. When provided, overrides the internal useTableSelection state. */
+  selectedRows?: T[];
+  /** Called when the "select all" header checkbox is toggled. Receives the checked flag and the
+   *  currently visible page rows so the consumer can sync their own selectedRows state. */
+  onAllRowsSelected?: (checked: boolean, visibleRows: T[]) => void;
 }
 
-interface SelectableRowProps {
-  rowData: RowData;
+interface SelectableRowProps<T extends BaseRow> {
+  rowData: T;
   columns: TableColumn[];
-  renderDataCell: (rowData: RowData, columnKey: string) => React.ReactNode;
-  selectedRows: RowData[];
-  onRowSelected: (rowData: RowData, checked: boolean) => void;
+  renderDataCell: (rowData: T, columnKey: string) => React.ReactNode;
+  selectedRows: T[];
+  onRowSelected: (rowData: T, checked: boolean) => void;
 }
 
-const SelectableRow: FC<SelectableRowProps> = ({ rowData, columns, renderDataCell, selectedRows, onRowSelected }) => {
+const SelectableRow = <T extends BaseRow>({
+  rowData,
+  columns,
+  renderDataCell,
+  selectedRows,
+  onRowSelected
+}: SelectableRowProps<T>) => {
   const handleOnRowSelected = useCallback(
     ({ checked }: any) => {
       onRowSelected(rowData, checked);
@@ -64,7 +75,7 @@ const SelectableRow: FC<SelectableRowProps> = ({ rowData, columns, renderDataCel
   );
 };
 
-const Table: FC<TableProps> = ({
+const Table = <T extends BaseRow>({
   data,
   columns,
   selectable = false,
@@ -79,15 +90,24 @@ const Table: FC<TableProps> = ({
   css,
   pageSize: initialPageSize,
   className,
-  showPagination = true
-}) => {
+  showPagination = true,
+  selectedRows: controlledSelectedRows,
+  onAllRowsSelected: controlledOnAllRowsSelected
+}: TableProps<T>) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
     DEFAULT_CURRENT_PAGE,
     initialPageSize
   );
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
   const { sortColumn, setSortColumn, sortedData } = useTableSorting(data);
-  const { selectedRows, handleRowSelected, onAllItemsSelected } = useTableSelection(selectable, sortedData);
+  const {
+    selectedRows: internalSelectedRows,
+    handleRowSelected,
+    onAllItemsSelected: internalOnAllItemsSelected
+  } = useTableSelection(selectable, sortedData);
+
+  // When a consumer passes controlled selectedRows, use those; otherwise fall back to internal state.
+  const selectedRows = controlledSelectedRows ?? internalSelectedRows;
 
   const actualTotalItems = totalItems ?? data.length;
   const totalPages = Math.ceil(actualTotalItems / pageSize);
@@ -98,16 +118,16 @@ const Table: FC<TableProps> = ({
     }
   }, [currentPage, totalPages, setCurrentPage]);
 
-  const dataByPage = sortedData.slice(startRange, endRange) as RowData[];
+  const dataByPage = sortedData.slice(startRange, endRange);
 
-  const defaultRenderDataCell = useCallback((rowData: RowData, columnKey: string) => {
-    return (rowData as any)[columnKey];
+  const defaultRenderDataCell = useCallback((rowData: T, columnKey: string) => {
+    return (rowData as Record<string, unknown>)[columnKey] as React.ReactNode;
   }, []);
 
   const renderDataCell = customRenderDataCell ?? defaultRenderDataCell;
 
   const defaultRenderRow = useCallback(
-    (rowData: RowData) => {
+    (rowData: T) => {
       return (
         <TableRow className="group">
           {columns.map(column => (
@@ -121,13 +141,17 @@ const Table: FC<TableProps> = ({
 
   const handleAllItemsSelected = useCallback(
     (checked: boolean) => {
-      onAllItemsSelected(checked, dataByPage);
+      if (controlledOnAllRowsSelected != null) {
+        controlledOnAllRowsSelected(checked, dataByPage);
+      } else {
+        internalOnAllItemsSelected(checked, dataByPage);
+      }
     },
-    [onAllItemsSelected, dataByPage]
+    [controlledOnAllRowsSelected, internalOnAllItemsSelected, dataByPage]
   );
 
   const defaultSelectableRenderRow = useCallback(
-    (rowData: RowData) => {
+    (rowData: T) => {
       return (
         <SelectableRow
           rowData={rowData}
@@ -142,15 +166,13 @@ const Table: FC<TableProps> = ({
   );
 
   const finalRenderRow = useCallback(
-    (rowData: RowData) => {
+    (rowData: T, rowProps?: Record<string, unknown>) => {
       if (customRenderRow != null) {
-        return customRenderRow(rowData);
+        return customRenderRow(rowData, rowProps);
       }
-
       if (selectable) {
         return defaultSelectableRenderRow(rowData);
       }
-
       return defaultRenderRow(rowData);
     },
     [customRenderRow, selectable, defaultSelectableRenderRow, defaultRenderRow]
@@ -180,7 +202,7 @@ const Table: FC<TableProps> = ({
       <WriTable
         columns={columns}
         data={dataByPage}
-        renderRow={finalRenderRow}
+        renderRow={finalRenderRow as (rowData: BaseRow, rowProps?: Record<string, unknown>) => React.ReactNode}
         onSortColumn={setSortColumn}
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}

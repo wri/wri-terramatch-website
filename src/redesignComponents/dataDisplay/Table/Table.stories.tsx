@@ -1,5 +1,6 @@
 import { Box, TableCell, TableRow } from "@mui/material";
 import { Meta, StoryObj } from "@storybook/react";
+import React from "react";
 
 import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -7,11 +8,31 @@ import ActionCell from "./components/ActionCell";
 import CustomTableCell from "./components/TableCell";
 import TitleCell from "./components/TitleCell";
 import Table from "./Table";
-import { FULL_WIDTH_TABLE_HEADER_STYLES } from "./tableStyles";
-import { NO_HEADER_TABLE_WRAPPER_STYLES } from "./tableStyles";
-import { type RowData, hasCustomCellContent } from "./tableUtils";
+import { FULL_WIDTH_TABLE_HEADER_STYLES, NO_HEADER_TABLE_WRAPPER_STYLES } from "./tableStyles";
+import { type BaseRow, type RowData, hasCustomCellContent } from "./tableUtils";
 
-const defaultRenderDataCell = (rowData: RowData, columnKey: string) => {
+// Local story row type — extends only BaseRow so story objects don't need
+// all required RowData admin fields, while still accepting every optional RowData field.
+type StoryRowData = BaseRow &
+  Partial<Omit<RowData, "id">> & {
+    name?: string;
+    email?: string;
+    age?: number;
+    department?: string;
+    location?: string;
+    startDate?: string;
+    budget?: string;
+    teamSize?: string;
+    priority?: string;
+    category?: string;
+    region?: string;
+    manager?: string;
+    completion?: string;
+    image?: string;
+    [key: number]: string | undefined;
+  };
+
+const defaultRenderDataCell = (rowData: StoryRowData, columnKey: string) => {
   if (columnKey === "actions" && rowData.actionCell != null) {
     return <ActionCell button={rowData.actionCell.button} onButtonIconClick={rowData.actionCell.onButtonIconClick} />;
   }
@@ -21,7 +42,7 @@ const defaultRenderDataCell = (rowData: RowData, columnKey: string) => {
       return <TitleCell {...rowData.title} />;
     }
 
-    if (hasCustomCellContent(rowData)) {
+    if (hasCustomCellContent(rowData as RowData)) {
       return (
         <CustomTableCell
           avatars={rowData.avatars}
@@ -35,13 +56,13 @@ const defaultRenderDataCell = (rowData: RowData, columnKey: string) => {
       );
     }
 
-    return rowData.fullName ?? (rowData as any)[columnKey];
+    return (rowData.name ?? rowData.fullName ?? (rowData as Record<string, unknown>)[columnKey]) as React.ReactNode;
   }
 
-  return (rowData as any)[columnKey];
+  return (rowData as Record<string, unknown>)[columnKey] as React.ReactNode;
 };
 
-const meta: Meta<typeof Table> = {
+const meta: Meta<typeof Table<StoryRowData>> = {
   title: "Redesign Components/Data Display/Table",
   component: Table,
   tags: ["autodocs"],
@@ -72,18 +93,23 @@ const meta: Meta<typeof Table> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Table>;
+type Story = StoryObj<typeof Table<StoryRowData>>;
 
 // Sample data generators
-const generateSampleData = (count: number) => {
+const generateSampleData = (count: number): StoryRowData[] => {
   return Array.from({ length: count }, (_, index) => ({
     id: index + 1,
+    fullName: `Label ${index + 1}`,
+    emailAddress: "label@example.com",
+    organisationName: "Label",
+    roleName: "Label",
+    status: "Label",
+    isManager: false,
     name: `Label ${index + 1}`,
-    email: `Label`,
+    email: "Label",
     age: Math.floor(Math.random() * 50) + 18,
     department: "Label",
     location: "Label",
-    status: "Label",
     startDate: "Label",
     budget: "Label",
     teamSize: "Label",
@@ -453,9 +479,10 @@ const columns = [
 ];
 
 const data = Array.from({ length: 100 }, (_, index) => ({
+  id: index + 1,
   "Column 1": `Label ${index + 1}`,
   "Column 2": `Label ${index + 1}`
-}));
+})) as unknown as StoryRowData[];
 
 export const VariantFullWidth: Story = {
   args: {
@@ -501,15 +528,15 @@ const noHeaderData: NoHeaderRowData[] = [
 
 export const WithNoHeader: Story = {
   args: {
-    data: noHeaderData,
+    data: noHeaderData as unknown as StoryRowData[],
     columns: noHeaderColumns,
     totalItems: noHeaderData.length,
     showItemCount: false,
     variant: "full-width",
     css: NO_HEADER_TABLE_WRAPPER_STYLES,
     pageSize: 4,
-    renderRow: (rowData: RowData) => {
-      const row = rowData as NoHeaderRowData;
+    renderRow: (rowData: StoryRowData) => {
+      const row = rowData as unknown as NoHeaderRowData;
       return (
         <TableRow>
           <TableCell>

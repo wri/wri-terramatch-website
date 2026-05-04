@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import router from "next/router";
 import { FC, ReactNode } from "react";
 
+import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
@@ -26,7 +27,7 @@ import {
 
 type SiteTypeConfig = { icon: ReactNode; label: string; tooltip?: string };
 
-const SITE_RESTORATION_STRATEGY_MAP: Record<string, SiteTypeConfig> = {
+const SITE_RESTORATION_STRATEGY_MAP: Record<restorationStrategyType, SiteTypeConfig> = {
   "tree-planting": {
     icon: <TreePlantingIcon className="h-8 w-8 text-theme-secondary-800" />,
     label: "Tree Planting",
@@ -47,7 +48,7 @@ const SITE_RESTORATION_STRATEGY_MAP: Record<string, SiteTypeConfig> = {
   }
 };
 
-const SITE_TARGET_LAND_USE_MAP: Record<string, SiteTypeConfig> = {
+const SITE_TARGET_LAND_USE_MAP: Record<targetLandUseType, SiteTypeConfig> = {
   agroforest: {
     icon: <AgroforestyIcon className="h-8 w-8 text-theme-secondary-800" />,
     label: "Agroforesty",
@@ -119,12 +120,14 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
         : site.restorationStrategy
       : null;
   const restorationStrategyConfig =
-    restorationStrategyKey != null ? SITE_RESTORATION_STRATEGY_MAP[restorationStrategyKey] ?? null : null;
+    restorationStrategyKey != null
+      ? SITE_RESTORATION_STRATEGY_MAP[restorationStrategyKey as restorationStrategyType] ?? null
+      : null;
 
   const targetLandUseKeys: string[] =
     site.landUseTypes != null ? (Array.isArray(site.landUseTypes) ? site.landUseTypes : [site.landUseTypes]) : [];
   const targetLandUseConfigs = targetLandUseKeys
-    .map(key => SITE_TARGET_LAND_USE_MAP[key])
+    .map(key => SITE_TARGET_LAND_USE_MAP[key as targetLandUseType])
     .filter((c): c is SiteTypeConfig => c != null);
 
   const MAX_VISIBLE_LAND_USE = 2;
