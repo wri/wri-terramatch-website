@@ -53,9 +53,9 @@ export const FormList: FC = () => {
   const [, { data: reportingFrameworks }] = useReportingFrameworks({ translated: false });
   const inUseChoices = useMemo(() => {
     return [
-      ...(reportingFrameworks ?? []).map(({ uuid, name }) => ({
+      ...(reportingFrameworks ?? []).map(({ name, slug }) => ({
         name: `Framework: ${name}`,
-        id: `framework-${uuid}`
+        id: `framework-${slug}`
       })),
       ...(fundingProgrammes ?? []).map(({ uuid, name }) => ({
         name: `Funding Programme: ${name}`,
