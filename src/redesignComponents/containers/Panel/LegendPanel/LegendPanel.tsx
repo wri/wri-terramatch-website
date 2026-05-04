@@ -43,7 +43,7 @@ const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title = "Legend" }) =>
   return (
     <Box position="relative" display="inline-block" ref={containerRef}>
       <Box
-        className="w-fit min-w-[220px]"
+        className="w-fit min-w-[13.75rem]"
         bg={"neutral.100"}
         onClick={() => setOpen(!open)}
         pt={2}
@@ -53,7 +53,7 @@ const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title = "Legend" }) =>
         display={"flex"}
         justifyContent={"space-between"}
         alignItems={"center"}
-        rounded={open ? "4px 4px 0 0" : "4px"}
+        rounded={open ? "0.25rem 0.25rem 0 0" : "0.25rem"}
         tabIndex={0}
         aria-expanded={open}
       >
@@ -69,7 +69,7 @@ const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title = "Legend" }) =>
       </Box>
 
       {open && (
-        <Box left={0} bg="white" borderRadius={"0 0 4px 4px"} minW="220px" px={4} pb={3} zIndex={9999}>
+        <Box left={0} bg="white" borderRadius={"0 0 0.25rem 0.25rem"} minW="13.75rem" px={4} pb={3} zIndex={9999}>
           <Flex gap={3} flexDir={"column"}>
             <SimpleDivider />
             {legendItems.map((legendItem, index) => (
@@ -83,7 +83,7 @@ const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title = "Legend" }) =>
                           w={4}
                           bg={legendItem.color}
                           borderRadius="full"
-                          border="1px solid"
+                          border="0.0625rem solid"
                           borderColor="neutral.400"
                           flexShrink={0}
                         />
@@ -93,7 +93,7 @@ const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title = "Legend" }) =>
                           w={4}
                           bg={legendItem.color}
                           borderRadius="full"
-                          border="1px solid"
+                          border="0.0625rem solid"
                           borderColor="neutral.400"
                           flexShrink={0}
                         />

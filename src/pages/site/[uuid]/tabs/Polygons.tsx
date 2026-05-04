@@ -13,8 +13,13 @@ interface SitePolygonsTabProps {
 const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site, refetch }) => {
   return (
     <PageContent>
-      <Box h={"400px"} w={"100%"} rounded={"2px"} bg={"#33694b"} position={"relative"}>
-        <PolygonsMap entityModel={site} type="sites" className="max-h-[432px]" disabledPolygonPanel={true} />
+      <Box h={"25rem"} w={"100%"} rounded={"0.125rem"} position={"relative"}>
+        <PolygonsMap
+          entityModel={site}
+          type="sites"
+          className="max-h-full overflow-hidden rounded-[0.125rem]"
+          disabledPolygonPanel={true}
+        />
       </Box>
     </PageContent>
   );
