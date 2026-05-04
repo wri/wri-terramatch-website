@@ -19,6 +19,7 @@ import {
   ChevronUpIcon,
   CloseFullscreenIcon,
   CloseIcon,
+  CompressIcon,
   CorrectIcon,
   DashboardIcon,
   DeleteIcon,
@@ -43,6 +44,7 @@ import {
   LanguageIcon,
   LoadingIcon,
   MangroveIcon,
+  MapViewIcon,
   MessagesIcon,
   MoreVertIcon,
   NaturalForestIcon,
@@ -68,6 +70,7 @@ import {
   RegenerationIcon,
   RejectedIcon,
   ReportsIcon,
+  SatelliteViewIcon,
   SearchIcon,
   SeedlingsCircleIcon,
   SeedlingsIcon,
@@ -257,6 +260,9 @@ export const AllIcons: Story = {
           <IconWrapper name="Correct">
             <CorrectIcon boxSize={8} />
           </IconWrapper>
+          <IconWrapper name="Compress">
+            <CompressIcon boxSize={8} />
+          </IconWrapper>
           <IconWrapper name="Disallowed">
             <DisallowedIcon boxSize={8} />
           </IconWrapper>
@@ -287,6 +293,9 @@ export const AllIcons: Story = {
           <IconWrapper name="Loading">
             <LoadingIcon boxSize={8} />
           </IconWrapper>
+          <IconWrapper name="Map View">
+            <MapViewIcon boxSize={8} />
+          </IconWrapper>
           <IconWrapper name="More Vert">
             <MoreVertIcon boxSize={8} />
           </IconWrapper>
@@ -307,6 +316,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Photo Library">
             <PhotoLibraryIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Satellite View">
+            <SatelliteViewIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Search">
             <SearchIcon boxSize={8} />
@@ -497,6 +509,9 @@ export const Function: Story = {
         <IconWrapper name="Correct">
           <CorrectIcon boxSize={8} />
         </IconWrapper>
+        <IconWrapper name="Compress">
+          <CompressIcon boxSize={8} />
+        </IconWrapper>
         <IconWrapper name="Disallowed">
           <DisallowedIcon boxSize={8} />
         </IconWrapper>
@@ -527,6 +542,9 @@ export const Function: Story = {
         <IconWrapper name="Loading">
           <LoadingIcon boxSize={8} />
         </IconWrapper>
+        <IconWrapper name="Map View">
+          <MapViewIcon boxSize={8} />
+        </IconWrapper>
         <IconWrapper name="More Vert">
           <MoreVertIcon boxSize={8} />
         </IconWrapper>
@@ -547,6 +565,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Photo">
           <PhotosIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Satellite View">
+          <SatelliteViewIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Search">
           <SearchIcon boxSize={8} />

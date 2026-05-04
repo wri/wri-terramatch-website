@@ -92,6 +92,7 @@ export interface MapControlsOverlayProps {
   gallery: GalleryProps;
   download: DownloadProps;
   fullscreen: FullscreenProps;
+  newStyling?: boolean;
 }
 
 const MapControlsOverlay = ({
@@ -102,7 +103,8 @@ const MapControlsOverlay = ({
   camera,
   gallery,
   download,
-  fullscreen
+  fullscreen,
+  newStyling
 }: MapControlsOverlayProps) => {
   const {
     record,
@@ -147,13 +149,16 @@ const MapControlsOverlay = ({
       {hasControls ? (
         <>
           {polygonFromMap?.isOpen && !formMap && !disabledPolygonPanel ? (
-            <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
+            <ControlGroup position={siteData ? "top-centerSite" : "top-center"} newStyling={newStyling}>
               <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
             </ControlGroup>
           ) : null}
 
           {selectedPolygonsInCheckbox.length > 0 && !disabledPolygonPanel ? (
-            <ControlGroup position={siteData ? "top-centerSite" : "top-centerPolygonsInCheckbox"}>
+            <ControlGroup
+              position={siteData ? "top-centerSite" : "top-centerPolygonsInCheckbox"}
+              newStyling={newStyling}
+            >
               <ProcessBulkPolygonsControl
                 entityData={record}
                 setIsLoadingDelayedJob={setIsLoadingDelayedJob}
@@ -164,26 +169,52 @@ const MapControlsOverlay = ({
           ) : null}
 
           {dashboardMode !== "dashboard" && dashboardMode !== "modal" && styleReady && map != null ? (
-            <ControlGroup position="top-right">
-              <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
+            <ControlGroup position="top-right" newStyling={newStyling}>
+              <StyleControl
+                map={map}
+                currentStyle={currentStyle}
+                setCurrentStyle={handleStyleChange}
+                newStyling={newStyling}
+              />
             </ControlGroup>
           ) : null}
 
           {dashboardMode === "modal" && map != null ? (
-            <ControlGroup position="top-right" className="!top-5 z-[19]">
-              <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
+            <ControlGroup position="top-right" className="!top-5 z-[19]" newStyling={newStyling}>
+              <StyleControl
+                map={map}
+                currentStyle={currentStyle}
+                setCurrentStyle={handleStyleChange}
+                newStyling={newStyling}
+              />
             </ControlGroup>
           ) : null}
 
           <ControlGroup
-            position="top-right"
-            className={dashboardMode === "modal" ? "top-[8.25rem] z-[19]" : "top-[4.5rem] z-[19]"}
+            position={newStyling ? "bottom-right" : "top-right"}
+            className={
+              dashboardMode === "modal"
+                ? "top-[8.25rem] z-[19]"
+                : newStyling
+                ? "-bottom-2 z-[19]"
+                : "top-[4.5rem] z-[19]"
+            }
+            newStyling={newStyling}
           >
-            <ZoomControl map={map} />
+            <ZoomControl
+              map={map}
+              newStyling={newStyling}
+              isFullscreen={isFullscreen}
+              toggleFullscreen={toggleFullscreen}
+            />
           </ControlGroup>
 
           {record?.uuid != null && validationType === "bulkValidation" && !disabledPolygonPanel ? (
-            <ControlGroup position={siteData ? "top-left-site" : "top-left"} isFullscreen={isFullscreen}>
+            <ControlGroup
+              position={siteData ? "top-left-site" : "top-left"}
+              isFullscreen={isFullscreen}
+              newStyling={newStyling}
+            >
               <CheckPolygonControl
                 siteRecord={record.uuid != null ? { ...record, uuid: record.uuid } : undefined}
                 polygonCheck={!siteData}
@@ -196,10 +227,10 @@ const MapControlsOverlay = ({
 
           {formMap ? (
             <>
-              <ControlGroup position="top-left">
+              <ControlGroup position="top-left" newStyling={newStyling}>
                 <PolygonHandler />
               </ControlGroup>
-              <ControlGroup position="top-right" className="top-[17rem]">
+              <ControlGroup position="top-right" className="top-[17rem]" newStyling={newStyling}>
                 <PolygonModifier
                   polygonFromMap={polygonFromMap}
                   onClick={handleEditPolygon}
@@ -211,40 +242,44 @@ const MapControlsOverlay = ({
           ) : null}
 
           {status && validationType === "individualValidation" && !disabledPolygonPanel ? (
-            <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
+            <ControlGroup position={siteData ? "top-left-site" : "top-left"} newStyling={newStyling}>
               <CheckIndividualPolygonControl viewRequestSuport={!siteData} entityData={record} />
             </ControlGroup>
           ) : null}
 
           {viewImages ? (
-            <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
+            <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} newStyling={newStyling}>
               <ImageControl viewImages={viewImages} setViewImages={setViewImages} />
             </ControlGroup>
           ) : null}
 
-          {!editable && !viewImages ? <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} /> : null}
-
-          <ControlGroup
-            position="top-right"
-            className={dashboardMode === "modal" ? "top-[14.5rem] z-[19]" : "top-[10.5rem]"}
-          >
-            <button
-              type="button"
-              className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200"
-              onClick={() => {
-                if (center != null && zoom !== undefined && map != null) {
-                  zoomToCenter(center, zoom, map);
-                } else if (bbox != null && map != null) {
-                  zoomToBbox(bbox, map, hasControls ?? false);
-                }
-              }}
+          {!editable && !viewImages ? (
+            <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} newStyling={newStyling} />
+          ) : null}
+          {!newStyling && (
+            <ControlGroup
+              position="top-right"
+              className={dashboardMode === "modal" ? "top-[14.5rem] z-[19]" : "top-[10.5rem]"}
+              newStyling={newStyling}
             >
-              <Icon name={IconNames.IC_EARTH_MAP} className="h-6 w-6" />
-            </button>
-          </ControlGroup>
+              <button
+                type="button"
+                className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200"
+                onClick={() => {
+                  if (center != null && zoom !== undefined && map != null) {
+                    zoomToCenter(center, zoom, map);
+                  } else if (bbox != null && map != null) {
+                    zoomToBbox(bbox, map, hasControls ?? false);
+                  }
+                }}
+              >
+                <Icon name={IconNames.IC_EARTH_MAP} className="h-6 w-6" />
+              </button>
+            </ControlGroup>
+          )}
 
-          {dashboardMode == null ? (
-            <ControlGroup position="top-right" className="top-[13.75rem]">
+          {dashboardMode == null && !newStyling ? (
+            <ControlGroup position="top-right" className="top-[13.75rem]" newStyling={newStyling}>
               <button
                 type="button"
                 className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200"
@@ -257,15 +292,24 @@ const MapControlsOverlay = ({
           ) : null}
 
           {isEditing ? (
-            <ControlGroup position="top-right" className="top-[272px]">
+            <ControlGroup position="top-right" className="top-[272px]" newStyling={newStyling}>
               <TrashButton onClick={handleTrashDelete} />
             </ControlGroup>
           ) : null}
 
           {!formMap && showViewGallery ? (
-            <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
+            <ControlGroup
+              position="bottom-right"
+              className="bottom-8 flex flex-row gap-2 mobile:hidden"
+              newStyling={newStyling}
+            >
               {dashboardMode === "dashboard" && styleReady && map != null && (
-                <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
+                <StyleControl
+                  map={map}
+                  currentStyle={currentStyle}
+                  setCurrentStyle={handleStyleChange}
+                  newStyling={newStyling}
+                />
               )}
               {dashboardMode !== "dashboard" && dashboardMode !== "modal" && !disabledPolygonPanel && (
                 <ViewImageGalleryButton imageGalleryRef={imageGalleryRef} />

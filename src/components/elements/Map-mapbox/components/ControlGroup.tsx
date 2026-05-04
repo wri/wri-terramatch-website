@@ -18,18 +18,23 @@ export interface ControlGroupProps
     PropsWithChildren {
   position: ControlMapPosition;
   isFullscreen?: boolean;
+  newStyling?: boolean;
 }
 
-const ControlGroup = ({ children, position, className, isFullscreen, ...props }: ControlGroupProps) => {
+const ControlGroup = ({ children, position, className, isFullscreen, newStyling, ...props }: ControlGroupProps) => {
   return (
     <div
       {...props}
       className={twMerge(
         classNames("absolute z-[18] flex flex-col gap-8", {
-          "top-5": position.includes("top"),
-          "left-5 items-start": position.includes("left"),
-          "right-5 items-end": position.includes("right"),
-          "bottom-8": position.includes("bottom"),
+          "top-5": position.includes("top") && !newStyling,
+          "top-2": position.includes("top") && newStyling,
+          "left-5 items-start": position.includes("left") && !newStyling,
+          "left-2 items-start": position.includes("left") && newStyling,
+          "right-5 items-end": position.includes("right") && !newStyling,
+          "right-2 items-end": position.includes("right") && newStyling,
+          "bottom-8": position.includes("bottom") && !newStyling,
+          "bottom-2": position.includes("bottom") && newStyling,
           "!left-[30vw] items-start": position.includes("site"),
           "!left-5": isFullscreen,
           "left-[45%]": position.includes("center"),

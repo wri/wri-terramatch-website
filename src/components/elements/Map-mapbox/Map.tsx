@@ -51,7 +51,7 @@ import type {
   TooltipType
 } from "./Map.d";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
-import { FilterControl } from "./MapControls/FilterControl";
+import FilterControl from "./MapControls/FilterControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import { MapStyle } from "./MapControls/types";
 
@@ -80,6 +80,8 @@ export interface BaseMapProps {
   initialTileVersion?: string;
   /** When it matches current polygon data, skip bumping the tile cache on mount. */
   initialPolygonFingerprint?: string;
+  /** new Styling for polygons */
+  newStyling?: boolean;
 }
 
 export interface DashboardMapExtras {
@@ -176,6 +178,7 @@ export const MapContainer = ({
   hasAccess,
   dashboardContext,
   disabledPolygonPanel = false,
+  newStyling = false,
   ...props
 }: MapProps) => {
   if (mapFunctions == null) return null;
@@ -425,6 +428,7 @@ export const MapContainer = ({
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
       <MapCanvas mapContainer={mapContainer} className={className}>
         <MapControlsOverlay
+          newStyling={newStyling}
           hasControls={hasControls}
           draw={{
             handleEditPolygon,
@@ -455,12 +459,13 @@ export const MapContainer = ({
 
         {showLegend ? (
           <ControlGroup
+            newStyling={newStyling}
             position={
               disabledPolygonPanel ? "bottom-left" : siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"
             }
             isFullscreen={isFullscreen}
           >
-            <FilterControl />
+            <FilterControl newStyling={newStyling} />
           </ControlGroup>
         ) : null}
 
