@@ -45,7 +45,6 @@ import {
   getOrderTop3,
   replaceTextWithParams
 } from "@/utils/MonitoredIndicatorUtils";
-import { downloadFileBlob } from "@/utils/network";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
 import MonitoredCharts from "./MonitoredCharts";
@@ -764,14 +763,16 @@ const DataCard = ({
   const handleExport = async () => {
     try {
       setExporting(true);
-      const { blob } = await exportIndicatorCsv.fetchBlob({
-        pathParams: {
-          entityType: type,
-          entityUuid: record.uuid,
-          slug: indicatorSlug as ExportIndicatorCsvPathParams["slug"]
-        }
-      });
-      downloadFileBlob(blob, `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`);
+      await exportIndicatorCsv.downloadFile(
+        {
+          pathParams: {
+            entityType: type,
+            entityUuid: record.uuid,
+            slug: indicatorSlug as ExportIndicatorCsvPathParams["slug"]
+          }
+        },
+        `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`
+      );
 
       openNotification("success", t("Success! Export completed."), t("The export has been completed successfully."));
       setExporting(false);

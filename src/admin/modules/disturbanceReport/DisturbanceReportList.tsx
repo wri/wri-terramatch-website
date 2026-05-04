@@ -26,7 +26,6 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
 import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
 import Intensity, { IntensityEnum } from "./components/Intensity";
@@ -88,8 +87,7 @@ export const DisturbanceReportList: FC = () => {
   const handleExport = async () => {
     setExporting(true);
     try {
-      const { fileName, blob } = await entityExportAll.fetchBlob({ pathParams: { entity: "disturbanceReports" } });
-      await downloadFileBlob(blob, fileName ?? "DisturbanceReports.csv");
+      await entityExportAll.downloadFile({ pathParams: { entity: "disturbanceReports" } });
     } catch (e) {
       throw v3ErrorForRA("Failed to fetch disturbance report exports", e);
     } finally {

@@ -5,15 +5,11 @@ import { resourceCreator, resourceUpdater } from "@/connections/util/resourceMut
 import {
   fundingProgrammeCreate,
   fundingProgrammeDelete,
-  fundingProgrammeExportAll,
-  FundingProgrammeExportAllPathParams,
   fundingProgrammeGet,
   fundingProgrammesIndex,
   fundingProgrammeUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { FileDownloadDto, FundingProgrammeDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
-import { loadConnection } from "@/utils/loadConnection";
+import { FundingProgrammeDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 const fundingProgrammeConnection = v3Resource("fundingProgrammes", fundingProgrammeGet)
   .singleResource<FundingProgrammeDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
@@ -41,14 +37,3 @@ const createFundingProgrammeConnection = v3Resource("fundingProgrammes", funding
   .buildConnection();
 export const createFundingProgramme = resourceCreator(createFundingProgrammeConnection);
 export const updateFundingProgramme = resourceUpdater(fundingProgrammeConnection);
-
-const exportAllConnection = v3Resource("fileDownloads", fundingProgrammeExportAll)
-  .singleByCustomId<FileDownloadDto, FundingProgrammeExportAllPathParams>(
-    pathParams => ({ pathParams }),
-    ({ uuid }) => `fundingProgrammeExport|${uuid}`
-  )
-  .buildConnection();
-export const downloadApplicationExport = async (uuid: string) => {
-  ApiSlice.pruneCache("fileDownloads", [`fundingProgrammeExport|${uuid}`]);
-  return await loadConnection(exportAllConnection, { uuid });
-};
