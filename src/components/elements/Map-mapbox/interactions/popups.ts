@@ -52,7 +52,7 @@ export type PopupHandlerOptions = {
   dashboard?: DashboardPopupContext;
   setLoader?: (value: boolean) => void;
   setMobilePopupData?: (value: MobilePopupData) => void;
-  newStyling?: boolean;
+  championsMap?: boolean;
 };
 
 const handleLayerClick = (
@@ -78,7 +78,7 @@ const handleLayerClick = (
     dashboard,
     setLoader,
     setMobilePopupData,
-    newStyling
+    championsMap
   } = options;
 
   if (setMobilePopupData != null && dashboard?.dashboardMode != null) {
@@ -147,7 +147,7 @@ const handleLayerClick = (
       type,
       editPolygon,
       setEditPolygon,
-      newStyling
+      championsMap
     })
   );
 };

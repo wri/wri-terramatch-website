@@ -130,7 +130,7 @@ const PolygonsMap = ({ entityModel, type, className, disabledPolygonPanel = true
   return (
     <AnrMapOverlayProvider>
       <MapContainer
-        newStyling={true}
+        championsMap={true}
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}
         bbox={extentBbox}

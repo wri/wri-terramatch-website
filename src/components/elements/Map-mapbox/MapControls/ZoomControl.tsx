@@ -1,6 +1,7 @@
 import { Map as MapboxMap } from "mapbox-gl";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
+import { useChampionsMap } from "@/components/elements/Map-mapbox/championsMap.context";
 import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/ControlButtonsGroup";
 import ControlDivider from "@/components/elements/Map-mapbox/components/ControlDivider";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -9,16 +10,15 @@ import MapControls from "@/redesignComponents/geospatial/MapControls/MapControls
 
 export const ZoomControl = ({
   map,
-  newStyling,
   isFullscreen,
   toggleFullscreen
 }: {
   map: MapboxMap | null;
-  newStyling?: boolean;
   isFullscreen?: boolean;
   toggleFullscreen: () => void;
 }) => {
-  if (newStyling) {
+  const championsMap = useChampionsMap();
+  if (championsMap) {
     return (
       <MapControls
         defaultGaps

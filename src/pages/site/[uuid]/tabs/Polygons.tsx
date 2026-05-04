@@ -7,10 +7,9 @@ import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface SitePolygonsTabProps {
   site: SiteFullDto;
-  refetch: () => Promise<any>;
 }
 
-const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site, refetch }) => {
+const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   return (
     <PageContent>
       <Box h={"25rem"} w={"100%"} rounded={"0.125rem"} position={"relative"}>

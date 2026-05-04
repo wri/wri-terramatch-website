@@ -4,14 +4,12 @@ import { FC, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
+import { useChampionsMap } from "@/components/elements/Map-mapbox/championsMap.context";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import LegendPanel from "@/redesignComponents/containers/Panel/LegendPanel/LegendPanel";
 
-interface FilterControlProps {
-  newStyling?: boolean;
-}
-
-const FilterControl: FC<FilterControlProps> = ({ newStyling }: FilterControlProps) => {
+const FilterControl: FC = () => {
+  const championsMap = useChampionsMap();
   const [showFilters, setShowFilters] = useState(false);
   const t = useT();
 
@@ -31,7 +29,7 @@ const FilterControl: FC<FilterControlProps> = ({ newStyling }: FilterControlProp
 
   return (
     <div className="">
-      {newStyling ? (
+      {championsMap ? (
         <LegendPanel
           legendItems={legendItems.map(legendItem => {
             return {

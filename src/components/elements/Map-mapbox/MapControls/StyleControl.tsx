@@ -3,6 +3,7 @@ import { TabBar } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
 import { Map as MapboxMap } from "mapbox-gl";
 
+import { useChampionsMap } from "@/components/elements/Map-mapbox/championsMap.context";
 import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/ControlButtonsGroup";
 import ControlDivider from "@/components/elements/Map-mapbox/components/ControlDivider";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
@@ -13,20 +14,19 @@ import { setMapStyle } from "../utils";
 export const StyleControl = ({
   map,
   currentStyle,
-  setCurrentStyle,
-  newStyling
+  setCurrentStyle
 }: {
   map: MapboxMap;
   currentStyle: MapStyle;
   setCurrentStyle: (style: MapStyle) => void;
-  newStyling?: boolean;
 }) => {
   const t = useT();
+  const championsMap = useChampionsMap();
 
   const buttonBaseClass = "h-fit px-3 py-2 border border-neutral-175 bg-white whitespace-nowrap";
   const activeClass = "text-body-500 font-medium";
   const inactiveClass = "text-body-400";
-  if (newStyling) {
+  if (championsMap) {
     const styleToValue = (style: MapStyle): string => (style === MapStyle.Street ? "street" : "satellite");
 
     return (
