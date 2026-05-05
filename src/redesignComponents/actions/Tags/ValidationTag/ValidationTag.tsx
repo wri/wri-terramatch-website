@@ -6,7 +6,7 @@ import { ActionStatusTagState } from "../ActionStatusTag/ActionStatusTag.type";
 export type ValidationTagState = "not-started" | "partially-passed" | "failed" | "passed";
 
 export interface ValidationTagMapProps {
-  className: string;
+  className?: string;
   status: ValidationTagState;
   size?: "small" | "default";
 }

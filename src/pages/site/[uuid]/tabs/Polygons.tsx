@@ -418,7 +418,11 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   return (
     <PageContent>
       <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
-        <PolygonsMap entityModel={site} type="sites" className="max-h-full overflow-hidden rounded-[0.125rem]" />
+        <PolygonsMap
+          entityModel={site}
+          type="sites"
+          className="max-h-full overflow-hidden !rounded-[0.25rem_0.25rem_0_0]"
+        />
       </ResizeBox>
       <Flex className="items-center justify-between gap-4">
         <Flex className="items-center gap-4">
