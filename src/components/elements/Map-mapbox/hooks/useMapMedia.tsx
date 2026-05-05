@@ -3,7 +3,8 @@ import React, { MutableRefObject, useEffect } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
-import { deleteMedia, downloadImage, updateMedia } from "@/connections/Media";
+import { deleteMedia, updateMedia } from "@/connections/Media";
+import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Log from "@/utils/log";
 
@@ -80,18 +81,10 @@ export function useMapMedia({
       }
     };
 
-    const handleDownload = async (uuid: string, file_name: string): Promise<void> => {
+    const handleDownload = async (uuid: string, fileName: string): Promise<void> => {
       showLoader();
       try {
-        const { fileName, blob } = await downloadImage(uuid);
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = file_name ?? fileName ?? "image.jpg";
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
+        await exportImage.downloadFile({ pathParams: { uuid } }, fileName);
         openNotification("success", t("Success!"), t("Image downloaded successfully"));
       } catch (error) {
         Log.error("Download error:", error);

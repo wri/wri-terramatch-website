@@ -76,6 +76,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     ApiSlice.pruneCache("treeSpecies");
     ApiSlice.pruneCache("seedings");
     ApiSlice.pruneCache("treeReportCounts");
+    ApiSlice.pruneCache("invasives");
   });
 
   const isReport = isEntityReport(entityName);

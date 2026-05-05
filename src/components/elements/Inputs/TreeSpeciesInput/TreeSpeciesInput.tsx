@@ -71,6 +71,12 @@ const getColumnTitles = ({
       totalToDateColumn: "TOTAL REGENERATING TO DATE:"
     };
   }
+  if (collection === "invasive") {
+    return {
+      totalReportedColumn: isReport ? "TOTAL REMOVED THIS REPORT:" : withNumbers ? "TREES REMOVED:" : "",
+      totalToDateColumn: "TOTAL REMOVED TO DATE:"
+    };
+  }
   return {
     totalReportedColumn: isReport ? "TOTAL PLANTED THIS REPORT:" : withNumbers ? "TREES TO BE PLANTED:" : "",
     totalToDateColumn: "TOTAL PLANTED TO DATE:"

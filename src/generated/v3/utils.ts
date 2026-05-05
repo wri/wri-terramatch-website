@@ -19,7 +19,7 @@ import {
 import { Dictionary, isObject } from "lodash";
 import qs, { ParsedQs } from "qs";
 import { getAccessToken, removeAccessToken } from "@/admin/apiProvider/utils/token";
-import { delayedJobsFind } from "@/generated/v3/jobService/jobServiceComponents";
+import { downloadFileBlob, downloadFileUrl } from "@/utils/network";
 
 export type ErrorPayload = { statusCode: number; message: string };
 export type ErrorWrapper<TError extends undefined | { payload: ErrorPayload }> =
@@ -173,12 +173,16 @@ export class V3ApiEndpoint<
   }
 
   /**
-   * Fetch the raw payload from this endpoint. This is meant to be used for non-JSON endpoints
-   * *only*, and should only be needed for downloading blobs for saving on the client filesystem
-   * (like a CSV download).
+   * A utility to get a file from a backend endpoint. These endpoints are expected to generate
+   * either a non-JSON content type that will be downloaded as a blob or a single FileDownloadDto in
+   * eventual response. Supports delayed job handling.
+   *
+   * A default file name may be provided, but in most cases it should not be necessary. In the case
+   * of a FileDownloadDto, the file's name at its URL is used, and in the case of a blob download, the
+   * file name is typically provided by the server in the Content-Disposition header.
    */
-  async fetchBlob(variables: TVariables, headers?: THeaders): Promise<{ fileName?: string; blob: Blob }> {
-    const { url, body, requestHeaders } = this.prepareRequest(variables, headers);
+  async downloadFile(variables: TVariables, defaultFileName?: string) {
+    const { url, body, requestHeaders } = this.prepareRequest(variables);
     const response = await fetch(url, { method: this.method, body, headers: requestHeaders });
 
     if (!response.ok) {
@@ -186,9 +190,32 @@ export class V3ApiEndpoint<
     }
 
     const type = response.headers.get("content-type");
-    if (type?.includes("json")) {
-      // this API integration only supports JSON type responses.
-      throw new Error(`fetchBlob is only to be used for non-JSON endpoints [${type}]`);
+    if (type == null) {
+      throw new Error("No content type found");
+    }
+
+    if (type.includes("json")) {
+      let responsePayload = await response.json();
+      if (isPendingError(responsePayload)) throw responsePayload;
+
+      if (
+        !url.includes("jobs/v3/delayedJobs") &&
+        responsePayload?.data?.attributes?.uuid != null &&
+        responsePayload?.data?.type == "delayedJobs"
+      ) {
+        responsePayload = await processDelayedJob<JsonApiResponse>(responsePayload.data.attributes.uuid);
+      }
+
+      const { data } = responsePayload as JsonApiResponse;
+      if (data == null || Array.isArray(data) || data.type !== "fileDownloads") {
+        throw new Error("Unexpected response format for file download");
+      }
+
+      // avoid importing the FileDownloadDto due to circular dependency
+      const downloadUrl = data.attributes.url as string;
+      const fileName = downloadUrl.split("/").pop();
+      downloadFileUrl(downloadUrl, fileName ?? defaultFileName);
+      return;
     }
 
     const disposition = response.headers.get("content-disposition");
@@ -197,7 +224,7 @@ export class V3ApiEndpoint<
         ? undefined
         : decodeURIComponent(disposition.split("filename=")[1].split(";")[0].replace(/['"]/g, ""));
 
-    return { fileName, blob: await response.blob() };
+    await downloadFileBlob(await response.blob(), fileName ?? defaultFileName);
   }
 
   isFetchingSelector(variables: Omit<RequestVariables, "body">) {
