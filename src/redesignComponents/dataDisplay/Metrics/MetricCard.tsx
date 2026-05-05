@@ -56,7 +56,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
             </Text>
           )}
         </Flex>
-        {selection ? (
+        {selection != null ? (
           <>
             <SimpleDivider variant="vertical" className="!h-3" />
             <Flex gap={1} className="items-center">
@@ -113,7 +113,7 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
               </Text>
             )}
           </Flex>
-          {selection ? (
+          {selection != null ? (
             <>
               <SimpleDivider variant="vertical" className="!h-3" />
               <Flex gap={1} className="items-center">
