@@ -66,7 +66,7 @@ export type DashboardPopupContext = {
   dashboardMode?: string;
 };
 
-/** Props received by every popup component (AdminPopup, DashboardPopup). */
+/** Props received by every popup component (PolygonPopup, DashboardPopup). */
 export type PopupComponentProps = {
   feature: GeoJSONFeature;
   popup: Popup;

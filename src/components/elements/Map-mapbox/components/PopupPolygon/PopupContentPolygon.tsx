@@ -1,20 +1,50 @@
 import { Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 
-import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import { AreaHectaresIcon, CommentIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
 
-const PopupContentPolygon = () => {
+import type { NormalizedPolygonValidationStatus } from "../../sitePolygonMapLookup";
+
+type PopupContentPolygonProps = {
+  treesPlantedDisplay: string;
+  areaHectaresDisplay: string;
+  commentsDisplay: string;
+  validationStatus: NormalizedPolygonValidationStatus;
+};
+
+const validationLabelKey: Record<NormalizedPolygonValidationStatus, string> = {
+  passed: "Passed",
+  partial: "Passed",
+  failed: "Failed",
+  notChecked: "Not Checked"
+};
+
+const validationColor: Record<NormalizedPolygonValidationStatus, string> = {
+  passed: "success.900",
+  partial: "warning.800",
+  failed: "error.600",
+  notChecked: "neutral.600"
+};
+
+const PopupContentPolygon = ({
+  treesPlantedDisplay,
+  areaHectaresDisplay,
+  commentsDisplay,
+  validationStatus
+}: PopupContentPolygonProps) => {
+  const t = useT();
+
   return (
     <Flex padding="0.75rem" direction="column" gap={4} width="20rem">
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
         <Flex alignItems="center" gap={2}>
           <TreeCircleIcon boxSize={6} />
           <Text color="neutral.700" textStyle="400" textWrap="nowrap">
-            Trees Planted
+            {t("Trees Planted")}
           </Text>
         </Flex>
         <Text color="neutral.900" textStyle="400-bold">
-          XXX,XXX
+          {treesPlantedDisplay}
         </Text>
       </Flex>
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
@@ -32,31 +62,33 @@ const PopupContentPolygon = () => {
             <AreaHectaresIcon boxSize={3.5} color="secondary.800" />
           </Flex>
           <Text color="neutral.700" textStyle="400" textWrap="nowrap">
-            Area (ha)
+            {t("Area (ha)")}
           </Text>
         </Flex>
         <Text color="neutral.900" textStyle="400-bold">
-          XXX,XXX
+          {areaHectaresDisplay}
         </Text>
       </Flex>
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
         <Flex alignItems="center" gap={2}>
           <CommentIcon boxSize={4} color="neutral.800" />
           <Text color="neutral.700" textStyle="400" textWrap="nowrap">
-            Comments
+            {t("Comments")}
           </Text>
         </Flex>
         <Text color="neutral.900" textStyle="400-bold">
-          2
+          {commentsDisplay}
         </Text>
       </Flex>
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
         <Flex alignItems="center" gap={2}>
           <Text color="neutral.700" textStyle="400" textWrap="nowrap">
-            Validation
+            {t("Validation")}
           </Text>
         </Flex>
-        <ValidationTag status="passed" />
+        <Text color={validationColor[validationStatus]} textStyle="400-bold">
+          {t(validationLabelKey[validationStatus])}
+        </Text>
       </Flex>
     </Flex>
   );
