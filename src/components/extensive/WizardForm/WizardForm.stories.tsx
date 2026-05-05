@@ -1,7 +1,6 @@
 import "@/yup.locale";
 
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { createLocalStepsProvider } from "@/context/wizardForm.provider";
 import { FileType } from "@/types/common";
@@ -16,8 +15,6 @@ const meta: Meta<typeof Component> = {
 
 export default meta;
 type Story = StoryObj<typeof Component>;
-
-const client = new QueryClient();
 
 const PROVIDER = createLocalStepsProvider([
   {
@@ -231,11 +228,9 @@ const PROVIDER = createLocalStepsProvider([
 
 export const CreateForm: Story = {
   render: (args: Props) => (
-    <QueryClientProvider client={client}>
-      <div className="flex w-full justify-center bg-background px-3">
-        <Component {...args} />
-      </div>
-    </QueryClientProvider>
+    <div className="flex w-full justify-center bg-background px-3">
+      <Component {...args} />
+    </div>
   ),
   args: {
     fieldsProvider: PROVIDER,

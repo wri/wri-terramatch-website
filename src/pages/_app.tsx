@@ -1,7 +1,6 @@
 import "src/styles/globals.css";
 
 import { ChakraProvider } from "@chakra-ui/react";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { tx } from "@transifex/native";
 import { useT } from "@transifex/react";
 import { Toast as WRIToast } from "@worldresources/wri-design-systems";
@@ -22,7 +21,6 @@ import ModalProvider from "@/context/modal.provider";
 import { MonitoredDataProvider } from "@/context/monitoredData.provider";
 import NavbarProvider from "@/context/navbar.provider";
 import NotificationProvider from "@/context/notification.provider";
-import WrappedQueryClientProvider from "@/context/queryclient.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
 import { system } from "@/lib/theme";
@@ -92,32 +90,29 @@ const _App = ({ Component, pageProps }: AppProps) => {
   return (
     <ChakraProvider value={system}>
       <ToastProvider>
-        <WrappedQueryClientProvider>
-          <WrappedReduxProvider>
-            <Bootstrap>
-              <LoadingProvider>
-                <NotificationProvider>
-                  <ModalProvider>
-                    {isOnDashboards ? (
-                      <DashboardStack>
-                        <Component {...pageProps} />
-                      </DashboardStack>
-                    ) : isAdmin ? (
-                      <AdminStack>
-                        <Component {...pageProps} />
-                      </AdminStack>
-                    ) : (
-                      <PDStack>
-                        <Component {...pageProps} />
-                      </PDStack>
-                    )}
-                  </ModalProvider>
-                </NotificationProvider>
-              </LoadingProvider>
-              <ReactQueryDevtools initialIsOpen={false} />
-            </Bootstrap>
-          </WrappedReduxProvider>
-        </WrappedQueryClientProvider>
+        <WrappedReduxProvider>
+          <Bootstrap>
+            <LoadingProvider>
+              <NotificationProvider>
+                <ModalProvider>
+                  {isOnDashboards ? (
+                    <DashboardStack>
+                      <Component {...pageProps} />
+                    </DashboardStack>
+                  ) : isAdmin ? (
+                    <AdminStack>
+                      <Component {...pageProps} />
+                    </AdminStack>
+                  ) : (
+                    <PDStack>
+                      <Component {...pageProps} />
+                    </PDStack>
+                  )}
+                </ModalProvider>
+              </NotificationProvider>
+            </LoadingProvider>
+          </Bootstrap>
+        </WrappedReduxProvider>
       </ToastProvider>
     </ChakraProvider>
   );

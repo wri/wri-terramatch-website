@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Grid, Stack } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
+import { useCallback } from "react";
 import {
   Button as AdminButton,
   Labeled,
@@ -14,9 +14,10 @@ import {
 import { When } from "react-if";
 
 import Aside from "@/admin/components/Aside/Aside";
-import { updateOrganisation } from "@/connections/Organisation";
+import { useOrganisation } from "@/connections/Organisation";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -29,23 +30,14 @@ export const OrganisationShowAside = ({ financialReportTab }: { financialReportT
   const status = hasOrganisationAttrib ? record?.organisationStatus : record?.status;
   const createPath = useCreatePath();
 
-  const { mutate: approve } = useMutation({
-    mutationFn: async (organisationUuid: string) => {
-      return updateOrganisation({ status: "approved" }, { id: organisationUuid });
-    },
-    onSuccess() {
-      refresh();
-    }
-  });
-
-  const { mutate: reject } = useMutation({
-    mutationFn: async (organisationUuid: string) => {
-      return updateOrganisation({ status: "rejected" }, { id: organisationUuid });
-    },
-    onSuccess() {
-      refresh();
-    }
-  });
+  const [, { update: updateOrg, isUpdating, updateFailure }] = useOrganisation({ id: uuid });
+  const approve = useCallback(() => {
+    updateOrg({ status: "approved" });
+  }, [updateOrg]);
+  const reject = useCallback(() => {
+    updateOrg({ status: "rejected" });
+  }, [updateOrg]);
+  useRequestSuccess(isUpdating, updateFailure, refresh);
 
   return (
     <Aside title={financialReportTab ? "Organisation Details" : "Organisation Review"}>
@@ -88,11 +80,11 @@ export const OrganisationShowAside = ({ financialReportTab }: { financialReportT
               />
             ) : (
               <>
-                <Button variant="contained" onClick={() => approve(uuid)}>
+                <Button variant="contained" onClick={approve}>
                   {" "}
                   Approve
                 </Button>
-                <Button variant="outlined" onClick={() => reject(uuid)}>
+                <Button variant="outlined" onClick={reject}>
                   {" "}
                   Reject
                 </Button>

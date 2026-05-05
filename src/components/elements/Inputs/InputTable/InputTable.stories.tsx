@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 
 import Component, { InputTableProps as Props } from "./InputTable";
@@ -12,16 +11,10 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-const client = new QueryClient();
-
 export const Default: Story = {
   render: (args: Props) => {
     const [value, setValue] = useState({});
-    return (
-      <QueryClientProvider client={client}>
-        <Component {...args} value={value} onChange={setValue} />
-      </QueryClientProvider>
-    );
+    return <Component {...args} value={value} onChange={setValue} />;
   },
   args: {
     headers: ["Breakdown", "Percentage(%)"],
