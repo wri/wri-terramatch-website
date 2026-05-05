@@ -1,17 +1,22 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
+import { useChampionsMap } from "@/components/elements/Map-mapbox/championsMap.context";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import LegendPanel from "@/redesignComponents/containers/Panel/LegendPanel/LegendPanel";
 
-interface FilterControlProps {
-  newStyling?: boolean;
-}
+const CHAMPIONS_LEGEND_SPECS = [
+  { text: "Draft", color: "neutralActive.3" },
+  { text: "Pending Approval", color: "neutralActive.1" },
+  { text: "Information Required", color: "attention.1" },
+  { text: "Approved", color: "positive.1" }
+] as const;
 
-const FilterControl: FC<FilterControlProps> = ({ newStyling }: FilterControlProps) => {
+const FilterControl: FC = () => {
+  const championsMap = useChampionsMap();
   const [showFilters, setShowFilters] = useState(false);
   const t = useT();
 
@@ -22,27 +27,21 @@ const FilterControl: FC<FilterControlProps> = ({ newStyling }: FilterControlProp
     { color: "green", text: "Approved" }
   ];
 
-  const legendItems = [
-    { text: "Draft", color: "neutralActive.3" },
-    { text: "Pending Approval", color: "neutralActive.1" },
-    { text: "Information Required", color: "attention.1" },
-    { text: "Approved", color: "positive.1" }
-  ];
+  const legendPanelItems = useMemo(
+    () =>
+      CHAMPIONS_LEGEND_SPECS.map(legendItem => ({
+        attribute: t(legendItem.text),
+        color: legendItem.color,
+        indicatorType: "raster" as const,
+        show: false
+      })),
+    [t]
+  );
 
   return (
     <div className="">
-      {newStyling ? (
-        <LegendPanel
-          legendItems={legendItems.map(legendItem => {
-            return {
-              attribute: t(legendItem.text),
-              color: legendItem.color,
-              indicatorType: "raster",
-              show: false
-            };
-          })}
-          title="Legend"
-        />
+      {championsMap ? (
+        <LegendPanel legendItems={legendPanelItems} title="Legend" />
       ) : (
         <>
           <When condition={showFilters}>
@@ -73,7 +72,7 @@ const FilterControl: FC<FilterControlProps> = ({ newStyling }: FilterControlProp
               {t("Polygon Status")}
               <Icon
                 name={IconNames.CHEVRON_DOWN}
-                className={classNames("fill-neutral-900 transition", showFilters && "rotate-180")}
+                className={classNames("fill-neutral-900 transition", showFilters ? "rotate-180" : undefined)}
                 width={16}
               />
             </div>

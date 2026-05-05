@@ -17,7 +17,7 @@ import PopupHeaderPolygon from "./PopupPolygon/PopupHeaderPolygon";
 const client = new QueryClient();
 
 export const AdminPopup = (event: PopupComponentProps) => {
-  const { feature, popup, setPolygonFromMap, type, setEditPolygon, newStyling } = event;
+  const { feature, popup, setPolygonFromMap, type, setEditPolygon, championsMap } = event;
   const uuidPolygon = (feature.properties?.uuid ?? "") as string;
   const [open, setOpen] = useState(true);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -26,7 +26,7 @@ export const AdminPopup = (event: PopupComponentProps) => {
     <ReduxProvider store={ApiSlice.redux}>
       <ChakraProvider value={system}>
         <QueryClientProvider client={client}>
-          {!newStyling ? (
+          {!championsMap ? (
             <TooltipMap
               polygon={uuidPolygon}
               type={type}
@@ -64,12 +64,12 @@ export const AdminPopup = (event: PopupComponentProps) => {
                 footer={<PopupFooterPolygon />}
                 placement="right"
                 open={open}
-                onOpenChange={open => {
-                  if (!open) {
-                    setOpen(open);
-                    popup.remove();
+                onOpenChange={nextOpen => {
+                  if (!nextOpen) {
+                    setOpen(nextOpen);
+                    popup?.remove();
                   } else {
-                    setOpen(open);
+                    setOpen(nextOpen);
                   }
                 }}
                 header={<PopupHeaderPolygon />}

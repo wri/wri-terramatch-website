@@ -1,31 +1,50 @@
 import classNames from "classnames";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import type { PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 import { parsePolygonDataV3, storePolygon } from "../utils";
 
+/** Fields required for polygon loading, bbox, and `storePolygon` on this map. */
+export type PolygonsMapEntityModel = {
+  uuid: string;
+  projectCountry?: string | null;
+  country?: string | null;
+  organisation?: { name?: string };
+};
+
+type PolygonsMapEntityType = "sites" | "projects";
+
 interface PolygonsMapProps {
-  entityModel: any;
-  type: string;
+  entityModel: PolygonsMapEntityModel;
+  type: PolygonsMapEntityType;
   className?: string;
   disabledPolygonPanel?: boolean;
 }
 
+const EMPTY_POLYGON_MAP: Record<string, string[]> = {
+  [SUBMITTED]: [],
+  [APPROVED]: [],
+  [NEEDS_MORE_INFORMATION]: [],
+  [DRAFT]: []
+};
+
+type PolygonGeometryFeature = Pick<GeoJSON.Feature, "geometry">;
+
 const PolygonsMap = ({ entityModel, type, className, disabledPolygonPanel = true }: PolygonsMapProps) => {
-  const [polygonDataMap, setPolygonDataMap] = useState<any>({});
-  const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
+  const [polygonDataMap, setPolygonDataMap] = useState<Record<string, string[]>>(() => ({ ...EMPTY_POLYGON_MAP }));
+  const [polygonFromMap, setPolygonFromMap] = useState<PolygonFromMapState>({ isOpen: false, uuid: "" });
 
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
@@ -33,7 +52,6 @@ const PolygonsMap = ({ entityModel, type, className, disabledPolygonPanel = true
   const {
     editPolygon,
     shouldRefetchPolygonData,
-    setEditPolygon,
     setSelectedPolygonsInCheckbox,
     setPolygonCriteriaMap,
     setPolygonData,
@@ -44,28 +62,36 @@ const PolygonsMap = ({ entityModel, type, className, disabledPolygonPanel = true
     validFilter
   } = useMapAreaContext();
 
-  const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refetch);
-
-  const mapFunctions = useBaseMap(onSave);
-
-  const [, { data: mediaFiles }] = useMedias({
-    entity: type as SupportedEntity,
-    uuid: entityModel?.uuid
-  });
-
   const {
     data: polygonsData,
     refetch,
     polygonCriteriaMap,
     loading
-  } = useLoadSitePolygonsData(entityModel?.uuid, type, "", "createdAt", "ASC", validFilter);
+  } = useLoadSitePolygonsData(entityModel.uuid, type, "", "createdAt", "ASC", validFilter);
+
+  const onSave = useCallback(
+    (geojson: unknown, _record: unknown) => {
+      if (!Array.isArray(geojson)) return;
+      void storePolygon(geojson as PolygonGeometryFeature[], entityModel, setPolygonFromMap, refetch);
+    },
+    [entityModel, refetch, setPolygonFromMap]
+  );
+
+  const mapFunctions = useBaseMap(onSave);
+
+  const [, { data: mediaFiles }] = useMedias({
+    entity: type as SupportedEntity,
+    uuid: entityModel.uuid
+  });
 
   const modelBbox = useBoundingBox(
-    type === "sites" ? { siteUuid: entityModel?.uuid } : { projectUuid: entityModel?.uuid }
+    type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
   );
 
   const countryBbox = useBoundingBox(
-    type === "sites" ? { country: entityModel?.projectCountry } : { country: entityModel?.country }
+    type === "sites"
+      ? { country: entityModel.projectCountry ?? undefined }
+      : { country: entityModel.country ?? undefined }
   );
 
   const extentBbox = useMemo((): BBox | undefined => {
@@ -73,7 +99,7 @@ const PolygonsMap = ({ entityModel, type, className, disabledPolygonPanel = true
       return modelBbox as BBox | undefined;
     }
     return countryBbox as BBox | undefined;
-  }, [polygonsData.length, modelBbox, countryBbox]);
+  }, [polygonsData, modelBbox, countryBbox]);
 
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);
@@ -81,9 +107,8 @@ const PolygonsMap = ({ entityModel, type, className, disabledPolygonPanel = true
   });
 
   useEffect(() => {
-    refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [validFilter]);
+    void refetch();
+  }, [validFilter, refetch]);
 
   useEffect(() => {
     if (disabledPolygonPanel) {
@@ -112,25 +137,18 @@ const PolygonsMap = ({ entityModel, type, className, disabledPolygonPanel = true
   });
 
   useEffect(() => {
-    if (polygonsData?.length > 0) {
+    if (polygonsData.length > 0) {
       const dataMap = parsePolygonDataV3(polygonsData);
       setPolygonDataMap(dataMap);
     } else {
-      setPolygonDataMap({
-        [SUBMITTED]: [],
-        [APPROVED]: [],
-        [NEEDS_MORE_INFORMATION]: [],
-        [DRAFT]: []
-      });
+      setPolygonDataMap({ ...EMPTY_POLYGON_MAP });
     }
   }, [polygonsData]);
-
-  const stateViewPanel = false;
 
   return (
     <AnrMapOverlayProvider>
       <MapContainer
-        newStyling={true}
+        championsMap={true}
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}
         bbox={extentBbox}
@@ -138,7 +156,7 @@ const PolygonsMap = ({ entityModel, type, className, disabledPolygonPanel = true
         showPopups
         showLegend
         siteData={true}
-        status={type === "sites" && !disabledPolygonPanel && (stateViewPanel || editPolygon.isOpen)}
+        status={type === "sites" && !disabledPolygonPanel && editPolygon.isOpen}
         validationType={
           type === "sites" && !disabledPolygonPanel
             ? editPolygon.isOpen
@@ -153,7 +171,7 @@ const PolygonsMap = ({ entityModel, type, className, disabledPolygonPanel = true
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
         mediaFiles={mediaFiles}
-        sitePolygonData={sitePolygonDataV3 as SitePolygonLightDto[]}
+        sitePolygonData={sitePolygonDataV3}
         disabledPolygonPanel={disabledPolygonPanel}
       />
     </AnrMapOverlayProvider>
