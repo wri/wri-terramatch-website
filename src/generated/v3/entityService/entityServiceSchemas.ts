@@ -986,6 +986,10 @@ export type AggregateReportsDto = {
    * Trees regenerating (ANR) by reporting period (when framework supports it).
    */
   treesRegenerating?: AggregateReportSeriesItemDto[];
+  /**
+   * Invasive species by reporting period (when framework supports it).
+   */
+  invasive?: AggregateReportSeriesItemDto[];
 };
 
 export type ANRDto = {
@@ -1604,6 +1608,7 @@ export type SiteFullDto = {
   organisationUuid: string | null;
   treesPlantedPolygonsCount: number | null;
   hectaresRestoredPolygonsCount: number | null;
+  invasiveTreesCount: number | null;
 };
 
 export type NurseryFullDto = {
@@ -1994,6 +1999,7 @@ export type SiteReportFullDto = {
   publicNarrative: string | null;
   pctSurvivalToDate: number | null;
   anrPractices: string[] | null;
+  totalInvasiveTreesCount: number | null;
   socioeconomicBenefits: MediaDto[];
   media: MediaDto[];
   file: MediaDto[];
