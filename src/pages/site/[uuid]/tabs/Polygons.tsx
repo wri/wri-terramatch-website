@@ -13,12 +13,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   return (
     <PageContent>
       <Box h={"25rem"} w={"100%"} rounded={"0.125rem"} position={"relative"}>
-        <PolygonsMap
-          entityModel={site}
-          type="sites"
-          className="max-h-full overflow-hidden rounded-[0.125rem]"
-          disabledPolygonPanel={true}
-        />
+        <PolygonsMap entityModel={site} type="sites" className="max-h-full overflow-hidden rounded-[0.125rem]" />
       </Box>
     </PageContent>
   );

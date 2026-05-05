@@ -30,7 +30,6 @@ interface PolygonsMapProps {
   entityModel: PolygonsMapEntityModel;
   type: PolygonsMapEntityType;
   className?: string;
-  disabledPolygonPanel?: boolean;
 }
 
 const EMPTY_POLYGON_MAP: Record<string, string[]> = {
@@ -42,7 +41,8 @@ const EMPTY_POLYGON_MAP: Record<string, string[]> = {
 
 type PolygonGeometryFeature = Pick<GeoJSON.Feature, "geometry">;
 
-const PolygonsMap = ({ entityModel, type, className, disabledPolygonPanel = true }: PolygonsMapProps) => {
+const PolygonsMap = ({ entityModel, type, className }: PolygonsMapProps) => {
+  const disabledPolygonPanel = true;
   const [polygonDataMap, setPolygonDataMap] = useState<Record<string, string[]>>(() => ({ ...EMPTY_POLYGON_MAP }));
   const [polygonFromMap, setPolygonFromMap] = useState<PolygonFromMapState>({ isOpen: false, uuid: "" });
 
