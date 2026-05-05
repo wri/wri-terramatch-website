@@ -5,8 +5,10 @@ import { FC, ReactNode, useMemo } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useDate } from "@/hooks/useDate";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import MappedTag, { MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
 import ValidationTag, { ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
@@ -36,6 +38,10 @@ import {
   WoodlotIcon
 } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import {
+  mapSitePolygonStatusToMappedTagState,
+  mapSitePolygonValidationStatusToValidationTagState
+} from "@/utils/mapStatusToTagStateEntity";
 
 interface SitePolygonsTabProps {
   site: SiteFullDto;
@@ -49,195 +55,12 @@ type PolygonTableRow = {
   submission: MappedTagState;
   validation: ValidationTagState;
   restorationPractice: restorationStrategyType[];
-  targetLandUse: targetLandUseType;
+  targetLandUse: targetLandUseType | null;
   plantingDate: string;
   treeDistribution: string[];
   treesPlanted: number;
   area: number;
 };
-
-const MOCKED_DATA: PolygonTableRow[] = [
-  {
-    id: "1",
-    polygonName: "Polygon 1",
-    submission: "draft",
-    validation: "not-started",
-    restorationPractice: ["tree-planting"],
-    targetLandUse: "agroforest",
-    plantingDate: "2026-01-01",
-    treeDistribution: ["single line"],
-    treesPlanted: 100,
-    area: 100
-  },
-  {
-    id: "2",
-    polygonName: "Polygon 2",
-    submission: "pending-approval",
-    validation: "partially-passed",
-    restorationPractice: ["tree-planting", "assisted-natural-regeneration"],
-    targetLandUse: "agricultural-land",
-    plantingDate: "2026-01-01",
-    treeDistribution: ["single line", "partial"],
-    treesPlanted: 100,
-    area: 100
-  },
-  {
-    id: "3",
-    polygonName: "Polygon 3",
-    submission: "information-required",
-    validation: "failed",
-    restorationPractice: ["tree-planting", "assisted-natural-regeneration", "direct-seeding"],
-    targetLandUse: "grassland",
-    plantingDate: "2026-01-01",
-    treeDistribution: ["single line", "partial", "full"],
-    treesPlanted: 100,
-    area: 100
-  },
-  {
-    id: "4",
-    polygonName: "Polygon 4",
-    submission: "approved",
-    validation: "passed",
-    restorationPractice: ["tree-planting", "assisted-natural-regeneration", "direct-seeding"],
-    targetLandUse: "mangrove",
-    plantingDate: "2026-01-01",
-    treeDistribution: ["single line", "partial", "full"],
-    treesPlanted: 100,
-    area: 100
-  },
-  {
-    id: "5",
-    polygonName: "Polygon 5",
-    submission: "draft",
-    validation: "partially-passed",
-    restorationPractice: ["tree-planting"],
-    targetLandUse: "open-natural-ecosystem",
-    plantingDate: "2026-01-15",
-    treeDistribution: ["partial"],
-    treesPlanted: 220,
-    area: 45
-  },
-  {
-    id: "6",
-    polygonName: "Polygon 6",
-    submission: "pending-approval",
-    validation: "not-started",
-    restorationPractice: ["assisted-natural-regeneration"],
-    targetLandUse: "natural-forest",
-    plantingDate: "2026-02-01",
-    treeDistribution: ["single line", "full"],
-    treesPlanted: 340,
-    area: 62
-  },
-  {
-    id: "7",
-    polygonName: "Polygon 7",
-    submission: "information-required",
-    validation: "passed",
-    restorationPractice: ["tree-planting", "direct-seeding"],
-    targetLandUse: "peatland",
-    plantingDate: "2026-02-14",
-    treeDistribution: ["full"],
-    treesPlanted: 180,
-    area: 28
-  },
-  {
-    id: "8",
-    polygonName: "Polygon 8",
-    submission: "approved",
-    validation: "failed",
-    restorationPractice: ["tree-planting", "assisted-natural-regeneration"],
-    targetLandUse: "riparian-area-or-wetland",
-    plantingDate: "2026-03-01",
-    treeDistribution: ["single line", "partial"],
-    treesPlanted: 410,
-    area: 95
-  },
-  {
-    id: "9",
-    polygonName: "Polygon 9",
-    submission: "draft",
-    validation: "not-started",
-    restorationPractice: ["direct-seeding"],
-    targetLandUse: "silvopasture",
-    plantingDate: "2026-03-10",
-    treeDistribution: ["single line"],
-    treesPlanted: 95,
-    area: 18
-  },
-  {
-    id: "10",
-    polygonName: "Polygon 10",
-    submission: "pending-approval",
-    validation: "partially-passed",
-    restorationPractice: ["tree-planting", "assisted-natural-regeneration", "direct-seeding"],
-    targetLandUse: "urban-forest",
-    plantingDate: "2026-03-22",
-    treeDistribution: ["partial", "full"],
-    treesPlanted: 275,
-    area: 52
-  },
-  {
-    id: "11",
-    polygonName: "Polygon 11",
-    submission: "information-required",
-    validation: "not-started",
-    restorationPractice: ["tree-planting"],
-    targetLandUse: "woodlot-or-plantation",
-    plantingDate: "2026-04-05",
-    treeDistribution: ["single line", "partial", "full"],
-    treesPlanted: 520,
-    area: 120
-  },
-  {
-    id: "12",
-    polygonName: "Polygon 12",
-    submission: "approved",
-    validation: "partially-passed",
-    restorationPractice: ["assisted-natural-regeneration", "direct-seeding"],
-    targetLandUse: "agroforest",
-    plantingDate: "2026-04-18",
-    treeDistribution: ["full"],
-    treesPlanted: 160,
-    area: 33
-  },
-  {
-    id: "13",
-    polygonName: "Polygon 13",
-    submission: "draft",
-    validation: "passed",
-    restorationPractice: ["tree-planting", "assisted-natural-regeneration"],
-    targetLandUse: "agricultural-land",
-    plantingDate: "2026-05-01",
-    treeDistribution: ["single line", "partial"],
-    treesPlanted: 300,
-    area: 71
-  },
-  {
-    id: "14",
-    polygonName: "Polygon 14",
-    submission: "pending-approval",
-    validation: "failed",
-    restorationPractice: ["tree-planting", "direct-seeding"],
-    targetLandUse: "grassland",
-    plantingDate: "2026-05-12",
-    treeDistribution: ["partial"],
-    treesPlanted: 145,
-    area: 24
-  },
-  {
-    id: "15",
-    polygonName: "Polygon 15",
-    submission: "information-required",
-    validation: "partially-passed",
-    restorationPractice: ["assisted-natural-regeneration"],
-    targetLandUse: "mangrove",
-    plantingDate: "2026-05-28",
-    treeDistribution: ["single line", "full"],
-    treesPlanted: 390,
-    area: 88
-  }
-];
 
 const TARGET_LAND_USE_MAP: Record<targetLandUseType, SiteTypeConfig> = {
   agroforest: {
@@ -304,7 +127,33 @@ const SITE_RESTORATION_STRATEGY_MAP: Record<restorationStrategyType, ReactNode> 
   )
 };
 
+const isRestorationStrategy = (value: string): value is restorationStrategyType => {
+  return value === "tree-planting" || value === "assisted-natural-regeneration" || value === "direct-seeding";
+};
+
+const isTargetLandUseType = (value: string): value is targetLandUseType => {
+  return value in TARGET_LAND_USE_MAP;
+};
+
+const formatDistributionValue = (value: string): string => {
+  return value
+    .split("-")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+const getTargetLandUseConfig = (targetLandUse: targetLandUseType | null) => {
+  if (targetLandUse == null) {
+    return { icon: null, label: "-" };
+  }
+  return TARGET_LAND_USE_MAP[targetLandUse];
+};
+
 const renderRestorationPractice = (restorationPractice: restorationStrategyType[]) => {
+  if (restorationPractice.length === 0) {
+    return <Text>-</Text>;
+  }
+
   return (
     <Flex className="items-center gap-2">
       {restorationPractice.map((rp, index) => (
@@ -319,8 +168,31 @@ const renderRestorationPractice = (restorationPractice: restorationStrategyType[
 
 const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
+  const { format } = useDate();
+  const { data: polygonsData = [] } = useAllSitePolygons({
+    entityName: "sites",
+    entityUuid: site.uuid,
+    enabled: !!site.uuid
+  });
 
-  const { selectedRows, handleRowSelected, onAllItemsSelected } = useTableSelection<PolygonTableRow>(true, MOCKED_DATA);
+  const polygonRows = useMemo<PolygonTableRow[]>(
+    () =>
+      polygonsData.map(polygon => ({
+        id: polygon.uuid,
+        polygonName: polygon.name ?? t("Unnamed Polygon"),
+        submission: mapSitePolygonStatusToMappedTagState(polygon.status),
+        validation: mapSitePolygonValidationStatusToValidationTagState(polygon.validationStatus),
+        restorationPractice: (polygon.practice ?? []).filter(isRestorationStrategy),
+        targetLandUse: polygon.targetSys != null && isTargetLandUseType(polygon.targetSys) ? polygon.targetSys : null,
+        plantingDate: polygon.plantStart != null ? format(polygon.plantStart, "yyyy-MM-dd") : "-",
+        treeDistribution: (polygon.distr ?? []).map(formatDistributionValue),
+        treesPlanted: polygon.numTrees ?? 0,
+        area: polygon.calcArea ?? 0
+      })),
+    [format, polygonsData, t]
+  );
+
+  const { selectedRows, handleRowSelected, onAllItemsSelected } = useTableSelection<PolygonTableRow>(true, polygonRows);
 
   const columns = useMemo(
     () => [
@@ -397,8 +269,8 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
         </TableCell>
         <TableCell className="min-w-[11.563rem] max-w-[18.75rem]">
           <Flex className="items-center gap-2" color="neutral.800">
-            {TARGET_LAND_USE_MAP[row.targetLandUse as targetLandUseType].icon}
-            <Text>{TARGET_LAND_USE_MAP[row.targetLandUse as targetLandUseType].label}</Text>
+            {getTargetLandUseConfig(row.targetLandUse).icon}
+            <Text>{getTargetLandUseConfig(row.targetLandUse).label}</Text>
           </Flex>
         </TableCell>
         <TableCell className="min-w-[10.188rem] max-w-[12.5rem]">
@@ -462,7 +334,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
         />
       </Flex>
       <Table<PolygonTableRow>
-        data={MOCKED_DATA}
+        data={polygonRows}
         columns={columns}
         isScrollable
         scrollableWidth="100%"
