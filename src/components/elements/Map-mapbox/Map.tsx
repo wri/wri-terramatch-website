@@ -4,7 +4,7 @@ import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { Map as MapboxMap, Marker } from "mapbox-gl";
 import { useRouter } from "next/router";
-import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useRef, useState } from "react";
+import React, { createContext, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { ValidationError } from "yup";
 
 import ControlGroup, { ControlMapPosition } from "@/components/elements/Map-mapbox/components/ControlGroup";
@@ -23,6 +23,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { useOnMount } from "@/hooks/useOnMount";
 
 import { addOrUpdateMarkerAndZoom } from "./adapters/camera";
+import { ChampionsMapProvider } from "./championsMap.context";
 import MapCanvas from "./components/MapCanvas";
 import MapControlsOverlay from "./components/MapControlsOverlay";
 import { PopupMobile } from "./components/PopupMobile";
@@ -51,7 +52,7 @@ import type {
   TooltipType
 } from "./Map.d";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
-import { FilterControl } from "./MapControls/FilterControl";
+import FilterControl from "./MapControls/FilterControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import { MapStyle } from "./MapControls/types";
 
@@ -80,6 +81,8 @@ export interface BaseMapProps {
   initialTileVersion?: string;
   /** When it matches current polygon data, skip bumping the tile cache on mount. */
   initialPolygonFingerprint?: string;
+  /** Champions (non-admin) map layout and controls; omit or false for the default map. */
+  championsMap?: boolean;
 }
 
 export interface DashboardMapExtras {
@@ -140,7 +143,11 @@ export const MapEditingContext = createContext({
   setIsEditing: (_value: boolean) => {}
 });
 
-export const MapContainer = ({
+type MapContainerInnerProps = Omit<MapProps, "championsMap"> & {
+  mapFunctions: NonNullable<MapProps["mapFunctions"]>;
+};
+
+const MapContainerInner: FC<MapContainerInnerProps> = ({
   onError: _onError,
   editable,
   geojson,
@@ -163,7 +170,7 @@ export const MapContainer = ({
   polygonsExists = true,
   shouldBboxZoom = true,
   dashboardMode = undefined,
-  formMap,
+  formMap: isFormMap,
   location,
   entityData,
   imageGalleryRef,
@@ -177,9 +184,7 @@ export const MapContainer = ({
   dashboardContext,
   disabledPolygonPanel = false,
   ...props
-}: MapProps) => {
-  if (mapFunctions == null) return null;
-
+}) => {
   const { map, mapContainer, draw, onCancel, initMap } = mapFunctions;
 
   const {
@@ -200,7 +205,7 @@ export const MapContainer = ({
     initialPolygonFingerprint
   } = props;
 
-  const [viewImages, setViewImages] = useState(false);
+  const [isViewingImages, setIsViewingImages] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [mobilePopupData, setMobilePopupData] = useState<MobilePopupData | null>(null);
   const mapMarkerRef = useRef<Marker | null>(null);
@@ -387,7 +392,7 @@ export const MapContainer = ({
     map,
     draw,
     isUserDrawingEnabled,
-    formMap,
+    formMap: isFormMap,
     polygonFromMap,
     polygonsData,
     centroids,
@@ -446,7 +451,13 @@ export const MapContainer = ({
             disabledPolygonPanel,
             selectedPolygonsInCheckbox
           }}
-          form={{ formMap, editable, polygonFromMap, viewImages, setViewImages }}
+          form={{
+            formMap: isFormMap,
+            editable,
+            polygonFromMap,
+            viewImages: isViewingImages,
+            setViewImages: setIsViewingImages
+          }}
           camera={{ map: map.current, center, zoom, bbox, hasControls }}
           gallery={{ dashboardMode, showViewGallery, imageGalleryRef }}
           download={{ showDownloadPolygons, isDownloadingPolygons, downloadGeoJsonPolygon }}
@@ -481,6 +492,15 @@ export const MapContainer = ({
         ) : null}
       </MapCanvas>
     </MapEditingContext.Provider>
+  );
+};
+
+export const MapContainer: FC<MapProps> = ({ mapFunctions, championsMap = false, ...rest }) => {
+  if (mapFunctions == null) return null;
+  return (
+    <ChampionsMapProvider championsMap={championsMap}>
+      <MapContainerInner mapFunctions={mapFunctions} {...rest} />
+    </ChampionsMapProvider>
   );
 };
 

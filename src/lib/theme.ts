@@ -60,6 +60,27 @@ const themeConfig = {
         500: { value: "#C11101" },
         900: { value: "#8D0D01" }
       },
+      negative: {
+        1: { value: "#E72828" },
+        2: { value: "#D40909" }
+      },
+      attention: {
+        1: { value: "#FFC506" },
+        2: { value: "#CE8303" }
+      },
+      positive: {
+        1: { value: "#18CD49" },
+        2: { value: "#2AA04A" }
+      },
+      neutralActive: {
+        1: { value: "#0096FA" },
+        2: { value: "#298ED2" },
+        3: { value: "#7485F7" }
+      },
+      neutralPassive: {
+        1: { value: "#C9C9C9" },
+        2: { value: "#8D8D8D" }
+      },
       accessible: {
         "text-on-primary-mids": { value: "#032230" },
         "text-on-secondary-mids": { value: "#F7FBFD" },
@@ -295,8 +316,23 @@ export const getThemedLineHeight = (token: LineHeightToken): string => {
 };
 
 export const getThemedColor = (
-  variant: "neutral" | "primary" | "secondary" | "success" | "warning" | "error" | "accessible",
+  variant:
+    | "neutral"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "error"
+    | "accessible"
+    | "neutralActive"
+    | "neutralPassive"
+    | "negative"
+    | "attention"
+    | "positive",
   index:
+    | 1
+    | 2
+    | 3
     | 100
     | 200
     | 300

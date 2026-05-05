@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
-import type { RowData } from "./tableUtils";
+import type { BaseRow } from "./tableUtils";
 
-export const useTableSelection = (initialSelectable: boolean = false, sortedData?: RowData[]) => {
+export const useTableSelection = <T extends BaseRow>(initialSelectable: boolean = false, sortedData?: T[]) => {
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string | number>>(new Set());
-  const [selectedRows, setSelectedRows] = useState<RowData[]>([]);
+  const [selectedRows, setSelectedRows] = useState<T[]>([]);
 
   useEffect(() => {
     if (sortedData != null && sortedData.length > 0) {
@@ -15,7 +15,7 @@ export const useTableSelection = (initialSelectable: boolean = false, sortedData
     }
   }, [sortedData, selectedRowIds]);
 
-  const handleRowSelected = useCallback((rowData: RowData, checked: boolean) => {
+  const handleRowSelected = useCallback((rowData: T, checked: boolean) => {
     setSelectedRowIds(current => {
       const newSet = new Set(current);
       if (checked) {
@@ -27,7 +27,7 @@ export const useTableSelection = (initialSelectable: boolean = false, sortedData
     });
   }, []);
 
-  const onAllItemsSelected = useCallback((checked: boolean, dataByPage: RowData[]) => {
+  const onAllItemsSelected = useCallback((checked: boolean, dataByPage: T[]) => {
     if (checked) {
       setSelectedRowIds(new Set(dataByPage.map(row => row.id)));
     } else {
