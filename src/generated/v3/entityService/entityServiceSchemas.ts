@@ -986,6 +986,10 @@ export type AggregateReportsDto = {
    * Trees regenerating (ANR) by reporting period (when framework supports it).
    */
   treesRegenerating?: AggregateReportSeriesItemDto[];
+  /**
+   * Invasive species by reporting period (when framework supports it).
+   */
+  invasive?: AggregateReportSeriesItemDto[];
 };
 
 export type ANRDto = {
@@ -1604,6 +1608,7 @@ export type SiteFullDto = {
   organisationUuid: string | null;
   treesPlantedPolygonsCount: number | null;
   hectaresRestoredPolygonsCount: number | null;
+  invasiveTreesCount: number | null;
 };
 
 export type NurseryFullDto = {
@@ -1994,6 +1999,7 @@ export type SiteReportFullDto = {
   publicNarrative: string | null;
   pctSurvivalToDate: number | null;
   anrPractices: string[] | null;
+  totalInvasiveTreesCount: number | null;
   socioeconomicBenefits: MediaDto[];
   media: MediaDto[];
   file: MediaDto[];
@@ -3070,6 +3076,12 @@ export type Forms = {
   FORM_TYPES: string[];
 };
 
+export type FormAttachment = {
+  name: string;
+  type: "fundingProgramme" | "framework" | "entity";
+  adminId?: string | null;
+};
+
 export type FormLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -3093,6 +3105,10 @@ export type FormLightDto = {
     | "srp-report"
     | null;
   banner: MediaDto;
+  /**
+   * The funding programme, reporting framework or entity that is using this form.
+   */
+  attachedTo?: FormAttachment;
 };
 
 export type FormQuestionOptionDto = {
@@ -3226,6 +3242,10 @@ export type FormFullDto = {
     | "srp-report"
     | null;
   banner: MediaDto;
+  /**
+   * The funding programme, reporting framework or entity that is using this form.
+   */
+  attachedTo?: FormAttachment;
   /**
    * Indicates whether the text fields in this form response have been translated to the user's locale
    */

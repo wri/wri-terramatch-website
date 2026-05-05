@@ -5,7 +5,6 @@ import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import { applicationExportGet } from "@/generated/v3/entityService/entityServiceComponents";
 import Log from "@/utils/log";
-import { downloadFileBlob } from "@/utils/network";
 
 interface ApplicationHeaderProps {
   name: string;
@@ -17,8 +16,7 @@ const ApplicationHeader: FC<ApplicationHeaderProps> = ({ name, uuid }) => {
 
   const handleExport = useCallback(async () => {
     try {
-      const { fileName, blob } = await applicationExportGet.fetchBlob({ pathParams: { uuid } });
-      return downloadFileBlob(blob, fileName ?? "Application.csv");
+      await applicationExportGet.downloadFile({ pathParams: { uuid } });
     } catch (err) {
       Log.error("Failed to fetch applications exports", err);
     }

@@ -2,7 +2,6 @@ import exifr from "exifr";
 
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
-  exportImage,
   getMedia,
   mediaDelete,
   mediaUpdate,
@@ -31,8 +30,6 @@ export const updateMedia = resourceUpdater(mediaConnection);
 export const useMedia = connectionHook(mediaConnection);
 
 export const deleteMedia = deleterAsync("media", mediaDelete, uuid => ({ pathParams: { uuid: uuid } }));
-
-export const downloadImage = (uuid: string) => exportImage.fetchBlob({ pathParams: { uuid } });
 
 export const prepareFileForUpload = async (
   file: File,

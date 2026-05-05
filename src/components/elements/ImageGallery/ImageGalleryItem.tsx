@@ -8,10 +8,11 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
-import { downloadImage, updateMedia } from "@/connections/Media";
+import { updateMedia } from "@/connections/Media";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
+import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { EntityName } from "@/types/common";
@@ -86,17 +87,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
   const handleDownload = useCallback(async (): Promise<void> => {
     showLoader();
     try {
-      const { fileName, blob } = await downloadImage(data.uuid);
-      const url = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = link.download = data?.fileName ?? fileName ?? "image.jpg";
-      document.body.appendChild(link);
-      link.click();
-
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      await exportImage.downloadFile({ pathParams: { uuid: data.uuid } }, data?.fileName);
       hideLoader();
       openNotification("success", t("Success!"), t("Image downloaded successfully"));
     } catch (error) {
