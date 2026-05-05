@@ -26,7 +26,6 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
 import { SrpReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { downloadFileBlob } from "@/utils/network";
 
 const SRPReportDataGrid: FC = () => {
   const tableMenu = [
@@ -103,8 +102,7 @@ export const SRPReportList: FC = () => {
   const handleExport = async () => {
     setExporting(true);
     try {
-      const { fileName, blob } = await entityExportAll.fetchBlob({ pathParams: { entity: "srpReports" } });
-      await downloadFileBlob(blob, fileName ?? "SRPReports.csv");
+      await entityExportAll.downloadFile({ pathParams: { entity: "srpReports" } });
     } catch (e) {
       throw v3ErrorForRA("Failed to fetch SRP report exports", e);
     } finally {
