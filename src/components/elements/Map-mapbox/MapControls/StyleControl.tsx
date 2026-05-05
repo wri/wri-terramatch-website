@@ -1,12 +1,30 @@
 import { useT } from "@transifex/react";
+import { TabBar } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
 import { Map as MapboxMap } from "mapbox-gl";
 
+import { useChampionsMap } from "@/components/elements/Map-mapbox/championsMap.context";
 import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/ControlButtonsGroup";
 import ControlDivider from "@/components/elements/Map-mapbox/components/ControlDivider";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
+import { MapViewIcon, SatelliteViewIcon } from "@/redesignComponents/foundations/Icons";
 
 import { setMapStyle } from "../utils";
+
+const styleToValue = (style: MapStyle): string => (style === MapStyle.Street ? "street" : "satellite");
+
+const championsStyleTabs = [
+  {
+    icon: <SatelliteViewIcon boxSize={4} />,
+    label: "Satellite",
+    value: "satellite"
+  },
+  {
+    icon: <MapViewIcon boxSize={4} />,
+    label: "Map",
+    value: "street"
+  }
+];
 
 export const StyleControl = ({
   map,
@@ -18,11 +36,27 @@ export const StyleControl = ({
   setCurrentStyle: (style: MapStyle) => void;
 }) => {
   const t = useT();
+  const championsMap = useChampionsMap();
 
   const buttonBaseClass = "h-fit px-3 py-2 border border-neutral-175 bg-white whitespace-nowrap";
   const activeClass = "text-body-500 font-medium";
   const inactiveClass = "text-body-400";
+  if (championsMap) {
+    const selectedStyleValue = styleToValue(currentStyle);
 
+    return (
+      <TabBar
+        key={selectedStyleValue}
+        defaultValue={selectedStyleValue}
+        tabs={championsStyleTabs}
+        onTabClick={(value: string) => {
+          const targetStyle = value === "street" ? MapStyle.Street : MapStyle.Satellite;
+          setMapStyle(targetStyle, map, setCurrentStyle, currentStyle);
+        }}
+        variant="view"
+      />
+    );
+  }
   return (
     <ControlButtonsGroup direction="row" className="h-auto">
       <button

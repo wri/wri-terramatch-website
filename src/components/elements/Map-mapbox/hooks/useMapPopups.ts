@@ -4,6 +4,7 @@ import { MutableRefObject, useEffect, useRef } from "react";
 
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
+import { useChampionsMap } from "../championsMap.context";
 import { AdminPopup } from "../components/AdminPopup";
 import { DashboardPopup } from "../components/DashboardPopup";
 import { addPopupsToMap } from "../interactions/popups";
@@ -47,6 +48,7 @@ export function useMapPopups({
   setMobilePopupData,
   dashboardContext
 }: UseMapPopupsParams) {
+  const championsMap = useChampionsMap();
   const callbacksRef = useRef({ setPolygonFromMap, setEditPolygon, setMobilePopupData });
   useEffect(() => {
     callbacksRef.current = { setPolygonFromMap, setEditPolygon, setMobilePopupData };
@@ -71,7 +73,19 @@ export function useMapPopups({
       dashboard: dashboardContext ?? undefined,
       setLoader,
       setMobilePopupData:
-        isMobile || dashboardContext?.dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined
+        isMobile || dashboardContext?.dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined,
+      championsMap
     });
-  }, [sourcesAdded, sitePolygonData, tooltipType, isMobile, showPopups, setLoader, dashboardContext, map, draw]);
+  }, [
+    sourcesAdded,
+    sitePolygonData,
+    tooltipType,
+    isMobile,
+    showPopups,
+    setLoader,
+    dashboardContext,
+    map,
+    draw,
+    championsMap
+  ]);
 }

@@ -23,6 +23,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { useOnMount } from "@/hooks/useOnMount";
 
 import { addOrUpdateMarkerAndZoom } from "./adapters/camera";
+import { ChampionsMapProvider } from "./championsMap.context";
 import MapCanvas from "./components/MapCanvas";
 import MapControlsOverlay from "./components/MapControlsOverlay";
 import { PopupMobile } from "./components/PopupMobile";
@@ -51,7 +52,7 @@ import type {
   TooltipType
 } from "./Map.d";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
-import { FilterControl } from "./MapControls/FilterControl";
+import FilterControl from "./MapControls/FilterControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import { MapStyle } from "./MapControls/types";
 
@@ -80,6 +81,8 @@ export interface BaseMapProps {
   initialTileVersion?: string;
   /** When it matches current polygon data, skip bumping the tile cache on mount. */
   initialPolygonFingerprint?: string;
+  /** Champions (non-admin) map layout and controls; omit or false for the default map. */
+  championsMap?: boolean;
 }
 
 export interface DashboardMapExtras {
@@ -140,7 +143,11 @@ export const MapEditingContext = createContext({
   setIsEditing: (_value: boolean) => {}
 });
 
-export const MapContainer = ({
+type MapContainerInnerProps = Omit<MapProps, "championsMap"> & {
+  mapFunctions: NonNullable<MapProps["mapFunctions"]>;
+};
+
+const MapContainerInner = ({
   onError: _onError,
   editable,
   geojson,
@@ -177,9 +184,7 @@ export const MapContainer = ({
   dashboardContext,
   disabledPolygonPanel = false,
   ...props
-}: MapProps) => {
-  if (mapFunctions == null) return null;
-
+}: MapContainerInnerProps) => {
   const { map, mapContainer, draw, onCancel, initMap } = mapFunctions;
 
   const {
@@ -481,6 +486,15 @@ export const MapContainer = ({
         ) : null}
       </MapCanvas>
     </MapEditingContext.Provider>
+  );
+};
+
+export const MapContainer = ({ mapFunctions, championsMap = false, ...rest }: MapProps) => {
+  if (mapFunctions == null) return null;
+  return (
+    <ChampionsMapProvider championsMap={championsMap}>
+      <MapContainerInner mapFunctions={mapFunctions} {...rest} />
+    </ChampionsMapProvider>
   );
 };
 

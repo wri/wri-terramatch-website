@@ -6,6 +6,7 @@ import {
 } from "mapbox-gl";
 
 import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
+import { getThemedColor } from "@/lib/theme";
 
 import { DELETED_POLYGONS } from "./statuses";
 
@@ -39,7 +40,7 @@ export const layersList: LayerType[] = [
         type: "fill",
         layout: {},
         paint: {
-          "fill-color": "#E468EF",
+          "fill-color": getThemedColor("neutralActive", 3),
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
@@ -49,9 +50,8 @@ export const layersList: LayerType[] = [
         type: "line",
         layout: {},
         paint: {
-          "line-color": "#E468EF",
-          "line-width": 2,
-          "line-dasharray": [2, 4]
+          "line-color": getThemedColor("neutralActive", 3),
+          "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
@@ -60,8 +60,8 @@ export const layersList: LayerType[] = [
         type: "fill",
         layout: {},
         paint: {
-          "fill-color": "#2398D8",
-          "fill-opacity": 0.5
+          "fill-color": getThemedColor("neutralActive", 1),
+          "fill-opacity": 0.3
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
@@ -70,9 +70,8 @@ export const layersList: LayerType[] = [
         type: "line",
         layout: {},
         paint: {
-          "line-color": "#2398D8",
-          "line-width": 2,
-          "line-dasharray": [4, 2]
+          "line-color": getThemedColor("neutralActive", 1),
+          "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
@@ -81,8 +80,8 @@ export const layersList: LayerType[] = [
         type: "fill",
         layout: {},
         paint: {
-          "fill-color": "#72D961",
-          "fill-opacity": 0.5
+          "fill-color": getThemedColor("positive", 1),
+          "fill-opacity": 0.3
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
@@ -91,9 +90,8 @@ export const layersList: LayerType[] = [
         type: "line",
         layout: {},
         paint: {
-          "line-color": "#72D961",
-          "line-width": 2,
-          "line-dasharray": [1, 3]
+          "line-color": getThemedColor("positive", 1),
+          "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
@@ -102,8 +100,8 @@ export const layersList: LayerType[] = [
         type: "fill",
         layout: {},
         paint: {
-          "fill-color": "#FF8938",
-          "fill-opacity": 0.5
+          "fill-color": getThemedColor("attention", 1),
+          "fill-opacity": 0.3
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
@@ -112,9 +110,8 @@ export const layersList: LayerType[] = [
         type: "line",
         layout: {},
         paint: {
-          "line-color": "#FF8938",
-          "line-width": 2,
-          "line-dasharray": [3, 1]
+          "line-color": getThemedColor("attention", 1),
+          "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
       }),

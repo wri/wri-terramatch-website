@@ -8,6 +8,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import Log from "@/utils/log";
 
 import { ANR_PLOT_FILL_LAYER_ID } from "../adapters/geoserver";
+import PopupProviders from "../components/PopupProviders";
 import type {
   DashboardPopupContext,
   EditPolygonState,
@@ -52,6 +53,7 @@ export type PopupHandlerOptions = {
   dashboard?: DashboardPopupContext;
   setLoader?: (value: boolean) => void;
   setMobilePopupData?: (value: MobilePopupData) => void;
+  championsMap?: boolean;
 };
 
 const handleLayerClick = (
@@ -76,7 +78,8 @@ const handleLayerClick = (
     setEditPolygon,
     dashboard,
     setLoader,
-    setMobilePopupData
+    setMobilePopupData,
+    championsMap
   } = options;
 
   if (setMobilePopupData != null && dashboard?.dashboardMode != null) {
@@ -133,19 +136,24 @@ const handleLayerClick = (
   getPopupRegistry(map)["POLYGON"].push(newPopup);
 
   root.render(
-    createElement(PopupComponent, {
-      feature,
-      popup: newPopup,
-      layerName,
-      setFilters: dashboard?.setFilters,
-      dashboardCountries: dashboard?.dashboardCountries,
-      dashboardMode: dashboard?.dashboardMode,
-      setPolygonFromMap,
-      sitePolygonData,
-      type,
-      editPolygon,
-      setEditPolygon
-    })
+    createElement(
+      PopupProviders,
+      null,
+      createElement(PopupComponent, {
+        feature,
+        popup: newPopup,
+        layerName,
+        setFilters: dashboard?.setFilters,
+        dashboardCountries: dashboard?.dashboardCountries,
+        dashboardMode: dashboard?.dashboardMode,
+        setPolygonFromMap,
+        sitePolygonData,
+        type,
+        editPolygon,
+        setEditPolygon,
+        championsMap
+      })
+    )
   );
 };
 

@@ -4,6 +4,7 @@ import { Checkbox } from "@worldresources/wri-design-systems";
 import { FC, ReactNode } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
@@ -38,7 +39,6 @@ import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessa
 
 interface SitePolygonsTabProps {
   site: SiteFullDto;
-  refetch: () => void;
 }
 
 type SiteTypeConfig = { icon: ReactNode; label: string; tooltip?: string };
@@ -56,7 +56,7 @@ type PolygonTableRow = {
   area: number;
 };
 
-const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site, refetch }) => {
+const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
 
   const mockedData: PolygonTableRow[] = [
@@ -418,7 +418,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site, refetch }) => {
   return (
     <PageContent>
       <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
-        <div className="bg-theme-neutral-400 h-full w-full">Map Placeholder</div>
+        <PolygonsMap entityModel={site} type="sites" className="max-h-full overflow-hidden rounded-[0.125rem]" />
       </ResizeBox>
       <Flex className="items-center justify-between gap-4">
         <Flex className="items-center gap-4">
