@@ -438,6 +438,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
             progress={4897}
             goal={10000}
             tooltipContent={t("Trees Planted")}
+            className="min-w-[12.5rem]"
           />
           <MetricCard
             color="secondary.700"
@@ -448,6 +449,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
             goal={3000}
             selection={976}
             tooltipContent={t("Restoration Area")}
+            className="min-w-[12.5rem]"
           />
         </Flex>
         <InlineMessage

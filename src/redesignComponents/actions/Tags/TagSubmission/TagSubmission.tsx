@@ -49,8 +49,8 @@ const TagSubmissionActionStatusTagStateMap: Record<TagSubmissionState, ActionSta
   "pending-approval-neutral": "neutral-light",
   "pending-approval": "attention",
   "information-required": "attention",
-  approved: "warning",
-  due: "success"
+  approved: "success",
+  due: "warning"
 };
 
 function getTagSubmissionIcon(state: TagSubmissionState, size: "small" | "default"): ReactElement {

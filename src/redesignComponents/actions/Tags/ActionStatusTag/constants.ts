@@ -15,9 +15,9 @@ export const ACTION_STATUS_TAG_MAP: Record<ActionStatusTagState, ActionStatusTag
     className: "border-theme-warning-300 bg-theme-warning-100 text-theme-warning-900"
   },
   success: {
-    className: "border-theme-error-300 bg-theme-error-100 text-theme-error-900"
+    className: "border-theme-success-300 bg-theme-success-100 text-theme-success-900"
   },
   warning: {
-    className: "border-theme-success-300 bg-theme-success-100 text-theme-success-900"
+    className: "border-theme-error-300 bg-theme-error-100 text-theme-error-900"
   }
 };
