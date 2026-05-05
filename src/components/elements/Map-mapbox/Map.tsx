@@ -170,7 +170,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
   polygonsExists = true,
   shouldBboxZoom = true,
   dashboardMode = undefined,
-  formMap,
+  formMap: isFormMap,
   location,
   entityData,
   imageGalleryRef,
@@ -205,7 +205,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     initialPolygonFingerprint
   } = props;
 
-  const [viewImages, setViewImages] = useState(false);
+  const [isViewingImages, setIsViewingImages] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [mobilePopupData, setMobilePopupData] = useState<MobilePopupData | null>(null);
   const mapMarkerRef = useRef<Marker | null>(null);
@@ -392,7 +392,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     map,
     draw,
     isUserDrawingEnabled,
-    formMap,
+    formMap: isFormMap,
     polygonFromMap,
     polygonsData,
     centroids,
@@ -451,7 +451,13 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
             disabledPolygonPanel,
             selectedPolygonsInCheckbox
           }}
-          form={{ formMap, editable, polygonFromMap, viewImages, setViewImages }}
+          form={{
+            formMap: isFormMap,
+            editable,
+            polygonFromMap,
+            viewImages: isViewingImages,
+            setViewImages: setIsViewingImages
+          }}
           camera={{ map: map.current, center, zoom, bbox, hasControls }}
           gallery={{ dashboardMode, showViewGallery, imageGalleryRef }}
           download={{ showDownloadPolygons, isDownloadingPolygons, downloadGeoJsonPolygon }}

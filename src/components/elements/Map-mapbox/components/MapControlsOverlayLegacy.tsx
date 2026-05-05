@@ -44,7 +44,7 @@ const MapControlsOverlayLegacy: FC<MapControlsOverlayProps> = ({
     disabledPolygonPanel,
     selectedPolygonsInCheckbox
   } = admin;
-  const { formMap, editable, polygonFromMap, viewImages, setViewImages } = form;
+  const { formMap: isFormMap, editable, polygonFromMap, viewImages: isViewingImages, setViewImages } = form;
   const { map, center, zoom, bbox, hasControls: cameraHasControls } = camera;
   const { dashboardMode, showViewGallery, imageGalleryRef } = gallery;
   const { showDownloadPolygons, isDownloadingPolygons, downloadGeoJsonPolygon } = download;
@@ -74,7 +74,7 @@ const MapControlsOverlayLegacy: FC<MapControlsOverlayProps> = ({
 
       {hasControls ? (
         <>
-          {polygonFromMap?.isOpen && !formMap && !disabledPolygonPanel ? (
+          {polygonFromMap?.isOpen && !isFormMap && !disabledPolygonPanel ? (
             <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
               <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
             </ControlGroup>
@@ -122,7 +122,7 @@ const MapControlsOverlayLegacy: FC<MapControlsOverlayProps> = ({
             </ControlGroup>
           ) : null}
 
-          {formMap === true ? (
+          {isFormMap ? (
             <>
               <ControlGroup position="top-left">
                 <PolygonHandler />
@@ -144,13 +144,15 @@ const MapControlsOverlayLegacy: FC<MapControlsOverlayProps> = ({
             </ControlGroup>
           ) : null}
 
-          {viewImages ? (
+          {isViewingImages ? (
             <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
-              <ImageControl viewImages={viewImages} setViewImages={setViewImages} />
+              <ImageControl viewImages={isViewingImages} setViewImages={setViewImages} />
             </ControlGroup>
           ) : null}
 
-          {!editable && !viewImages ? <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} /> : null}
+          {!editable && !isViewingImages ? (
+            <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} />
+          ) : null}
 
           <ControlGroup
             position="top-right"
@@ -190,7 +192,7 @@ const MapControlsOverlayLegacy: FC<MapControlsOverlayProps> = ({
             </ControlGroup>
           ) : null}
 
-          {formMap !== true && showViewGallery ? (
+          {!isFormMap && showViewGallery ? (
             <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
               {dashboardMode === "dashboard" && styleReady && map != null && (
                 <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />

@@ -40,7 +40,7 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
     disabledPolygonPanel,
     selectedPolygonsInCheckbox
   } = admin;
-  const { formMap, editable, polygonFromMap, viewImages, setViewImages } = form;
+  const { formMap: isFormMap, editable, polygonFromMap, viewImages: isViewingImages, setViewImages } = form;
   const { map } = camera;
   const { dashboardMode, showViewGallery, imageGalleryRef } = gallery;
   const { showDownloadPolygons, isDownloadingPolygons, downloadGeoJsonPolygon } = download;
@@ -70,7 +70,7 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
 
       {hasControls ? (
         <>
-          {polygonFromMap?.isOpen && !formMap && !disabledPolygonPanel ? (
+          {polygonFromMap?.isOpen && !isFormMap && !disabledPolygonPanel ? (
             <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
               <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
             </ControlGroup>
@@ -118,7 +118,7 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
             </ControlGroup>
           ) : null}
 
-          {formMap === true ? (
+          {isFormMap ? (
             <>
               <ControlGroup position="top-left">
                 <PolygonHandler />
@@ -140,13 +140,15 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
             </ControlGroup>
           ) : null}
 
-          {viewImages ? (
+          {isViewingImages ? (
             <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
-              <ImageControl viewImages={viewImages} setViewImages={setViewImages} />
+              <ImageControl viewImages={isViewingImages} setViewImages={setViewImages} />
             </ControlGroup>
           ) : null}
 
-          {!editable && !viewImages ? <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} /> : null}
+          {!editable && !isViewingImages ? (
+            <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} />
+          ) : null}
 
           {isEditing ? (
             <ControlGroup position="top-right" className="top-[272px]">
@@ -154,7 +156,7 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
             </ControlGroup>
           ) : null}
 
-          {formMap !== true && showViewGallery ? (
+          {isFormMap !== true && showViewGallery ? (
             <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
               {dashboardMode === "dashboard" && styleReady && map != null && (
                 <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
