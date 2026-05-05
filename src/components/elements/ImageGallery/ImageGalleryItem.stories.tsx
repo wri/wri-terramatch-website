@@ -1,6 +1,5 @@
 import { faker } from "@faker-js/faker";
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Component from "./ImageGalleryItem";
 
@@ -15,17 +14,13 @@ type Story = StoryObj<typeof Component>;
 faker.setDefaultRefDate("2023-01-01");
 faker.seed(0);
 
-const queryClient = new QueryClient();
-
 export const Default: Story = {
   decorators: [
     Story => {
       return (
-        <QueryClientProvider client={queryClient}>
-          <div className="p-4">
-            <Story />
-          </div>
-        </QueryClientProvider>
+        <div className="p-4">
+          <Story />
+        </div>
       );
     }
   ],

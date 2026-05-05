@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { filter } from "lodash";
 import { PropsWithChildren, useMemo } from "react";
 import { Provider as ReduxProvider } from "react-redux";
@@ -17,7 +16,7 @@ export type AppStore = {
   dataApi: DataApiStore;
 };
 
-export const makeStore = (queryClient?: QueryClient) => {
+export const makeStore = () => {
   const store = configureStore({
     reducer: {
       api: apiSlice.reducer,
@@ -45,7 +44,6 @@ export const makeStore = (queryClient?: QueryClient) => {
   });
 
   ApiSlice.redux = store;
-  ApiSlice.queryClient = queryClient;
   DataApiSlice.redux = store;
 
   if (typeof window !== "undefined" && (window as any).terramatch != null) {
@@ -57,7 +55,6 @@ export const makeStore = (queryClient?: QueryClient) => {
 };
 
 export const WrappedReduxProvider = ({ children }: PropsWithChildren) => {
-  const queryClient = useQueryClient();
-  const store = useMemo(() => makeStore(queryClient), [queryClient]);
+  const store = useMemo(() => makeStore(), []);
   return <ReduxProvider store={store}>{children}</ReduxProvider>;
 };

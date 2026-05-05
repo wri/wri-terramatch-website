@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
@@ -30,38 +29,34 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-const client = new QueryClient();
-
 export const Default: Story = {
   render: (args: Props<any>) => {
     const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
 
     return (
-      <QueryClientProvider client={client}>
-        <Component
-          {...args}
-          onTableStateChange={setTableState}
-          data={tableData.filter((data: any) => {
-            for (const filter of tableState.filters) {
-              if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
-                return false;
-              } else if (filter.filter.type === "search") {
-                //Weak implementation of full text search for demo purpose only
-                const values: any[] = Object.values(data);
-                for (const val of values) {
-                  if (`${val}`.toLowerCase().includes(filter.value)) {
-                    return true;
-                  }
+      <Component
+        {...args}
+        onTableStateChange={setTableState}
+        data={tableData.filter((data: any) => {
+          for (const filter of tableState.filters) {
+            if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+              return false;
+            } else if (filter.filter.type === "search") {
+              //Weak implementation of full text search for demo purpose only
+              const values: any[] = Object.values(data);
+              for (const val of values) {
+                if (`${val}`.toLowerCase().includes(filter.value)) {
+                  return true;
                 }
-                return false;
               }
+              return false;
             }
-            return true;
-          })}
-        >
-          <Button>Create</Button>
-        </Component>
-      </QueryClientProvider>
+          }
+          return true;
+        })}
+      >
+        <Button>Create</Button>
+      </Component>
     );
   },
   args: {
@@ -129,31 +124,29 @@ export const Primary: Story = {
     const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
 
     return (
-      <QueryClientProvider client={client}>
-        <Component
-          {...args}
-          onTableStateChange={setTableState}
-          data={tableData.filter((data: any) => {
-            for (const filter of tableState.filters) {
-              if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
-                return false;
-              } else if (filter.filter.type === "search") {
-                //Weak implementation of full text search for demo purpose only
-                const values: any[] = Object.values(data);
-                for (const val of values) {
-                  if (`${val}`.toLowerCase().includes(filter.value)) {
-                    return true;
-                  }
+      <Component
+        {...args}
+        onTableStateChange={setTableState}
+        data={tableData.filter((data: any) => {
+          for (const filter of tableState.filters) {
+            if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+              return false;
+            } else if (filter.filter.type === "search") {
+              //Weak implementation of full text search for demo purpose only
+              const values: any[] = Object.values(data);
+              for (const val of values) {
+                if (`${val}`.toLowerCase().includes(filter.value)) {
+                  return true;
                 }
-                return false;
               }
+              return false;
             }
-            return true;
-          })}
-        >
-          <Button>Create</Button>
-        </Component>
-      </QueryClientProvider>
+          }
+          return true;
+        })}
+      >
+        <Button>Create</Button>
+      </Component>
     );
   },
   args: {
@@ -221,31 +214,29 @@ export const SecundaryWhite: Story = {
     const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
 
     return (
-      <QueryClientProvider client={client}>
-        <Component
-          {...args}
-          onTableStateChange={setTableState}
-          data={tableData.filter((data: any) => {
-            for (const filter of tableState.filters) {
-              if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
-                return false;
-              } else if (filter.filter.type === "search") {
-                //Weak implementation of full text search for demo purpose only
-                const values: any[] = Object.values(data);
-                for (const val of values) {
-                  if (`${val}`.toLowerCase().includes(filter.value)) {
-                    return true;
-                  }
+      <Component
+        {...args}
+        onTableStateChange={setTableState}
+        data={tableData.filter((data: any) => {
+          for (const filter of tableState.filters) {
+            if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+              return false;
+            } else if (filter.filter.type === "search") {
+              //Weak implementation of full text search for demo purpose only
+              const values: any[] = Object.values(data);
+              for (const val of values) {
+                if (`${val}`.toLowerCase().includes(filter.value)) {
+                  return true;
                 }
-                return false;
               }
+              return false;
             }
-            return true;
-          })}
-        >
-          <Button>Create</Button>
-        </Component>
-      </QueryClientProvider>
+          }
+          return true;
+        })}
+      >
+        <Button>Create</Button>
+      </Component>
     );
   },
   args: {
@@ -313,31 +304,29 @@ export const TableBorder: Story = {
     const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
 
     return (
-      <QueryClientProvider client={client}>
-        <Component
-          {...args}
-          onTableStateChange={setTableState}
-          data={tableData.filter((data: any) => {
-            for (const filter of tableState.filters) {
-              if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
-                return false;
-              } else if (filter.filter.type === "search") {
-                //Weak implementation of full text search for demo purpose only
-                const values: any[] = Object.values(data);
-                for (const val of values) {
-                  if (`${val}`.toLowerCase().includes(filter.value)) {
-                    return true;
-                  }
+      <Component
+        {...args}
+        onTableStateChange={setTableState}
+        data={tableData.filter((data: any) => {
+          for (const filter of tableState.filters) {
+            if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+              return false;
+            } else if (filter.filter.type === "search") {
+              //Weak implementation of full text search for demo purpose only
+              const values: any[] = Object.values(data);
+              for (const val of values) {
+                if (`${val}`.toLowerCase().includes(filter.value)) {
+                  return true;
                 }
-                return false;
               }
+              return false;
             }
-            return true;
-          })}
-        >
-          <Button>Create</Button>
-        </Component>
-      </QueryClientProvider>
+          }
+          return true;
+        })}
+      >
+        <Button>Create</Button>
+      </Component>
     );
   },
   args: {
@@ -405,31 +394,29 @@ export const TableBorderAll: Story = {
     const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
 
     return (
-      <QueryClientProvider client={client}>
-        <Component
-          {...args}
-          onTableStateChange={setTableState}
-          data={tableData.filter((data: any) => {
-            for (const filter of tableState.filters) {
-              if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
-                return false;
-              } else if (filter.filter.type === "search") {
-                //Weak implementation of full text search for demo purpose only
-                const values: any[] = Object.values(data);
-                for (const val of values) {
-                  if (`${val}`.toLowerCase().includes(filter.value)) {
-                    return true;
-                  }
+      <Component
+        {...args}
+        onTableStateChange={setTableState}
+        data={tableData.filter((data: any) => {
+          for (const filter of tableState.filters) {
+            if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+              return false;
+            } else if (filter.filter.type === "search") {
+              //Weak implementation of full text search for demo purpose only
+              const values: any[] = Object.values(data);
+              for (const val of values) {
+                if (`${val}`.toLowerCase().includes(filter.value)) {
+                  return true;
                 }
-                return false;
               }
+              return false;
             }
-            return true;
-          })}
-        >
-          <Button>Create</Button>
-        </Component>
-      </QueryClientProvider>
+          }
+          return true;
+        })}
+      >
+        <Button>Create</Button>
+      </Component>
     );
   },
   args: {
@@ -497,31 +484,29 @@ export const TableAirtable: Story = {
     const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
 
     return (
-      <QueryClientProvider client={client}>
-        <Component
-          {...args}
-          onTableStateChange={setTableState}
-          data={tableData.filter((data: any) => {
-            for (const filter of tableState.filters) {
-              if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
-                return false;
-              } else if (filter.filter.type === "search") {
-                //Weak implementation of full text search for demo purpose only
-                const values: any[] = Object.values(data);
-                for (const val of values) {
-                  if (`${val}`.toLowerCase().includes(filter.value)) {
-                    return true;
-                  }
+      <Component
+        {...args}
+        onTableStateChange={setTableState}
+        data={tableData.filter((data: any) => {
+          for (const filter of tableState.filters) {
+            if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+              return false;
+            } else if (filter.filter.type === "search") {
+              //Weak implementation of full text search for demo purpose only
+              const values: any[] = Object.values(data);
+              for (const val of values) {
+                if (`${val}`.toLowerCase().includes(filter.value)) {
+                  return true;
                 }
-                return false;
               }
+              return false;
             }
-            return true;
-          })}
-        >
-          <Button>Create</Button>
-        </Component>
-      </QueryClientProvider>
+          }
+          return true;
+        })}
+      >
+        <Button>Create</Button>
+      </Component>
     );
   },
   args: {
@@ -588,31 +573,29 @@ export const TableSitePolygon: Story = {
     const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
 
     return (
-      <QueryClientProvider client={client}>
-        <Component
-          {...args}
-          onTableStateChange={setTableState}
-          data={tableData.filter((data: any) => {
-            for (const filter of tableState.filters) {
-              if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
-                return false;
-              } else if (filter.filter.type === "search") {
-                //Weak implementation of full text search for demo purpose only
-                const values: any[] = Object.values(data);
-                for (const val of values) {
-                  if (`${val}`.toLowerCase().includes(filter.value)) {
-                    return true;
-                  }
+      <Component
+        {...args}
+        onTableStateChange={setTableState}
+        data={tableData.filter((data: any) => {
+          for (const filter of tableState.filters) {
+            if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+              return false;
+            } else if (filter.filter.type === "search") {
+              //Weak implementation of full text search for demo purpose only
+              const values: any[] = Object.values(data);
+              for (const val of values) {
+                if (`${val}`.toLowerCase().includes(filter.value)) {
+                  return true;
                 }
-                return false;
               }
+              return false;
             }
-            return true;
-          })}
-        >
-          <Button>Create</Button>
-        </Component>
-      </QueryClientProvider>
+          }
+          return true;
+        })}
+      >
+        <Button>Create</Button>
+      </Component>
     );
   },
   args: {
@@ -680,33 +663,31 @@ export const TableVersion: Story = {
     const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
 
     return (
-      <QueryClientProvider client={client}>
-        <div className="bg-neutral-600">
-          <Component
-            {...args}
-            onTableStateChange={setTableState}
-            data={tableData.filter((data: any) => {
-              for (const filter of tableState.filters) {
-                if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
-                  return false;
-                } else if (filter.filter.type === "search") {
-                  //Weak implementation of full text search for demo purpose only
-                  const values: any[] = Object.values(data);
-                  for (const val of values) {
-                    if (`${val}`.toLowerCase().includes(filter.value)) {
-                      return true;
-                    }
+      <div className="bg-neutral-600">
+        <Component
+          {...args}
+          onTableStateChange={setTableState}
+          data={tableData.filter((data: any) => {
+            for (const filter of tableState.filters) {
+              if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+                return false;
+              } else if (filter.filter.type === "search") {
+                //Weak implementation of full text search for demo purpose only
+                const values: any[] = Object.values(data);
+                for (const val of values) {
+                  if (`${val}`.toLowerCase().includes(filter.value)) {
+                    return true;
                   }
-                  return false;
                 }
+                return false;
               }
-              return true;
-            })}
-          >
-            <Button>Create</Button>
-          </Component>
-        </div>
-      </QueryClientProvider>
+            }
+            return true;
+          })}
+        >
+          <Button>Create</Button>
+        </Component>
+      </div>
     );
   },
   args: {
@@ -774,33 +755,31 @@ export const TableOrganization: Story = {
     const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
 
     return (
-      <QueryClientProvider client={client}>
-        <div className="bg-neutral-600">
-          <Component
-            {...args}
-            onTableStateChange={setTableState}
-            data={tableData.filter((data: any) => {
-              for (const filter of tableState.filters) {
-                if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
-                  return false;
-                } else if (filter.filter.type === "search") {
-                  //Weak implementation of full text search for demo purpose only
-                  const values: any[] = Object.values(data);
-                  for (const val of values) {
-                    if (`${val}`.toLowerCase().includes(filter.value)) {
-                      return true;
-                    }
+      <div className="bg-neutral-600">
+        <Component
+          {...args}
+          onTableStateChange={setTableState}
+          data={tableData.filter((data: any) => {
+            for (const filter of tableState.filters) {
+              if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+                return false;
+              } else if (filter.filter.type === "search") {
+                //Weak implementation of full text search for demo purpose only
+                const values: any[] = Object.values(data);
+                for (const val of values) {
+                  if (`${val}`.toLowerCase().includes(filter.value)) {
+                    return true;
                   }
-                  return false;
                 }
+                return false;
               }
-              return true;
-            })}
-          >
-            <Button>Create</Button>
-          </Component>
-        </div>
-      </QueryClientProvider>
+            }
+            return true;
+          })}
+        >
+          <Button>Create</Button>
+        </Component>
+      </div>
     );
   },
   args: {
@@ -867,33 +846,31 @@ export const TableDashboardCountries: Story = {
     const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
 
     return (
-      <QueryClientProvider client={client}>
-        <div className="bg-neutral-600">
-          <Component
-            {...args}
-            onTableStateChange={setTableState}
-            data={tableData.filter((data: any) => {
-              for (const filter of tableState.filters) {
-                if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
-                  return false;
-                } else if (filter.filter.type === "search") {
-                  //Weak implementation of full text search for demo purpose only
-                  const values: any[] = Object.values(data);
-                  for (const val of values) {
-                    if (`${val}`.toLowerCase().includes(filter.value)) {
-                      return true;
-                    }
+      <div className="bg-neutral-600">
+        <Component
+          {...args}
+          onTableStateChange={setTableState}
+          data={tableData.filter((data: any) => {
+            for (const filter of tableState.filters) {
+              if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+                return false;
+              } else if (filter.filter.type === "search") {
+                //Weak implementation of full text search for demo purpose only
+                const values: any[] = Object.values(data);
+                for (const val of values) {
+                  if (`${val}`.toLowerCase().includes(filter.value)) {
+                    return true;
                   }
-                  return false;
                 }
+                return false;
               }
-              return true;
-            })}
-          >
-            <Button>Create</Button>
-          </Component>
-        </div>
-      </QueryClientProvider>
+            }
+            return true;
+          })}
+        >
+          <Button>Create</Button>
+        </Component>
+      </div>
     );
   },
   args: {
@@ -960,33 +937,31 @@ export const TableDashboardCountriesModal: Story = {
     const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
 
     return (
-      <QueryClientProvider client={client}>
-        <div className="bg-neutral-600">
-          <Component
-            {...args}
-            onTableStateChange={setTableState}
-            data={tableData.filter((data: any) => {
-              for (const filter of tableState.filters) {
-                if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
-                  return false;
-                } else if (filter.filter.type === "search") {
-                  //Weak implementation of full text search for demo purpose only
-                  const values: any[] = Object.values(data);
-                  for (const val of values) {
-                    if (`${val}`.toLowerCase().includes(filter.value)) {
-                      return true;
-                    }
+      <div className="bg-neutral-600">
+        <Component
+          {...args}
+          onTableStateChange={setTableState}
+          data={tableData.filter((data: any) => {
+            for (const filter of tableState.filters) {
+              if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+                return false;
+              } else if (filter.filter.type === "search") {
+                //Weak implementation of full text search for demo purpose only
+                const values: any[] = Object.values(data);
+                for (const val of values) {
+                  if (`${val}`.toLowerCase().includes(filter.value)) {
+                    return true;
                   }
-                  return false;
                 }
+                return false;
               }
-              return true;
-            })}
-          >
-            <Button>Create</Button>
-          </Component>
-        </div>
-      </QueryClientProvider>
+            }
+            return true;
+          })}
+        >
+          <Button>Create</Button>
+        </Component>
+      </div>
     );
   },
   args: {
@@ -1053,33 +1028,31 @@ export const TableAirtableDashboard: Story = {
     const [tableState, setTableState] = useState<TableState>({ sorting: [], filters: [] });
 
     return (
-      <QueryClientProvider client={client}>
-        <div className="bg-neutral-600">
-          <Component
-            {...args}
-            onTableStateChange={setTableState}
-            data={tableData.filter((data: any) => {
-              for (const filter of tableState.filters) {
-                if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
-                  return false;
-                } else if (filter.filter.type === "search") {
-                  //Weak implementation of full text search for demo purpose only
-                  const values: any[] = Object.values(data);
-                  for (const val of values) {
-                    if (`${val}`.toLowerCase().includes(filter.value)) {
-                      return true;
-                    }
+      <div className="bg-neutral-600">
+        <Component
+          {...args}
+          onTableStateChange={setTableState}
+          data={tableData.filter((data: any) => {
+            for (const filter of tableState.filters) {
+              if (filter.filter.type === "dropDown" && data?.[filter.filter.accessorKey] !== filter.value) {
+                return false;
+              } else if (filter.filter.type === "search") {
+                //Weak implementation of full text search for demo purpose only
+                const values: any[] = Object.values(data);
+                for (const val of values) {
+                  if (`${val}`.toLowerCase().includes(filter.value)) {
+                    return true;
                   }
-                  return false;
                 }
+                return false;
               }
-              return true;
-            })}
-          >
-            <Button>Create</Button>
-          </Component>
-        </div>
-      </QueryClientProvider>
+            }
+            return true;
+          })}
+        >
+          <Button>Create</Button>
+        </Component>
+      </div>
     );
   },
   args: {
