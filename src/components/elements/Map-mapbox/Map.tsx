@@ -4,7 +4,7 @@ import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { Map as MapboxMap, Marker } from "mapbox-gl";
 import { useRouter } from "next/router";
-import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useRef, useState } from "react";
+import React, { createContext, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { ValidationError } from "yup";
 
 import ControlGroup, { ControlMapPosition } from "@/components/elements/Map-mapbox/components/ControlGroup";
@@ -147,7 +147,7 @@ type MapContainerInnerProps = Omit<MapProps, "championsMap"> & {
   mapFunctions: NonNullable<MapProps["mapFunctions"]>;
 };
 
-const MapContainerInner = ({
+const MapContainerInner: FC<MapContainerInnerProps> = ({
   onError: _onError,
   editable,
   geojson,
@@ -184,7 +184,7 @@ const MapContainerInner = ({
   dashboardContext,
   disabledPolygonPanel = false,
   ...props
-}: MapContainerInnerProps) => {
+}) => {
   const { map, mapContainer, draw, onCancel, initMap } = mapFunctions;
 
   const {
@@ -489,7 +489,7 @@ const MapContainerInner = ({
   );
 };
 
-export const MapContainer = ({ mapFunctions, championsMap = false, ...rest }: MapProps) => {
+export const MapContainer: FC<MapProps> = ({ mapFunctions, championsMap = false, ...rest }) => {
   if (mapFunctions == null) return null;
   return (
     <ChampionsMapProvider championsMap={championsMap}>

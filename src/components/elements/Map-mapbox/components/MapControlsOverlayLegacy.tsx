@@ -1,3 +1,5 @@
+import type { FC } from "react";
+
 import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
@@ -19,7 +21,7 @@ import type { MapControlsOverlayProps } from "./MapControlsOverlay.types";
  * this will be deleted or joined with the Champions map controls
  * once the redesign is complete
  */
-const MapControlsOverlayLegacy = ({
+const MapControlsOverlayLegacy: FC<MapControlsOverlayProps> = ({
   hasControls,
   draw,
   style,
@@ -120,7 +122,7 @@ const MapControlsOverlayLegacy = ({
             </ControlGroup>
           ) : null}
 
-          {formMap ? (
+          {formMap === true ? (
             <>
               <ControlGroup position="top-left">
                 <PolygonHandler />
@@ -136,7 +138,7 @@ const MapControlsOverlayLegacy = ({
             </>
           ) : null}
 
-          {status && validationType === "individualValidation" && !disabledPolygonPanel ? (
+          {status != null && status && validationType === "individualValidation" && !disabledPolygonPanel ? (
             <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
               <CheckIndividualPolygonControl viewRequestSuport={!siteData} entityData={record} />
             </ControlGroup>
@@ -188,7 +190,7 @@ const MapControlsOverlayLegacy = ({
             </ControlGroup>
           ) : null}
 
-          {!formMap && showViewGallery ? (
+          {formMap !== true && showViewGallery ? (
             <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
               {dashboardMode === "dashboard" && styleReady && map != null && (
                 <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />

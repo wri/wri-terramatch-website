@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useMemo, useState } from "react";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import { useChampionsMap } from "@/components/elements/Map-mapbox/championsMap.context";
@@ -44,7 +43,7 @@ const FilterControl: FC = () => {
         <LegendPanel legendItems={legendPanelItems} title="Legend" />
       ) : (
         <>
-          <When condition={showFilters}>
+          {showFilters ? (
             <div className="relative">
               <div className="absolute bottom-1 w-max rounded-lg bg-white p-2 shadow">
                 {buttons.map((button, index) => (
@@ -62,7 +61,7 @@ const FilterControl: FC = () => {
                 ))}
               </div>
             </div>
-          </When>
+          ) : null}
           <Button
             variant="text"
             className="text-12-bold h-fit rounded border border-neutral-175 bg-white p-2 shadow"

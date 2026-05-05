@@ -1,6 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
-import { FC, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, ReactNode, useRef, useState } from "react";
 
+import { useOnMount } from "@/hooks/useOnMount";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ChevronDownIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
@@ -28,7 +29,7 @@ const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title = "Legend" }) =>
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useOnMount(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setOpen(false);
@@ -38,7 +39,7 @@ const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title = "Legend" }) =>
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  });
 
   return (
     <Box position="relative" display="inline-block" ref={containerRef}>

@@ -1,3 +1,5 @@
+import type { FC } from "react";
+
 import { useChampionsMap } from "../championsMap.context";
 import type { MapControlsOverlayProps } from "./MapControlsOverlay.types";
 import MapControlsOverlayChampions from "./MapControlsOverlayChampions";
@@ -15,7 +17,7 @@ export type {
   StyleControlsProps
 } from "./MapControlsOverlay.types";
 
-const MapControlsOverlay = (props: MapControlsOverlayProps) => {
+const MapControlsOverlay: FC<MapControlsOverlayProps> = props => {
   const championsMap = useChampionsMap();
   return championsMap ? <MapControlsOverlayChampions {...props} /> : <MapControlsOverlayLegacy {...props} />;
 };

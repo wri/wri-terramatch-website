@@ -1,15 +1,19 @@
 import { Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
+import type { FC } from "react";
 
 import { AreaHectaresIcon, CommentIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
 
-const PopupContentPolygon = () => {
+const PopupContentPolygon: FC = () => {
+  const t = useT();
+
   return (
     <Flex padding="0.75rem" direction="column" gap={4} width="20rem">
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
         <Flex alignItems="center" gap={2}>
           <TreeCircleIcon boxSize={6} />
           <Text color="neutral.700" textStyle="400" textWrap="nowrap">
-            Trees Planted
+            {t("Trees Planted")}
           </Text>
         </Flex>
         <Text color="neutral.900" textStyle="400-bold">
@@ -31,7 +35,7 @@ const PopupContentPolygon = () => {
             <AreaHectaresIcon boxSize={3.5} color="secondary.800" />
           </Flex>
           <Text color="neutral.700" textStyle="400" textWrap="nowrap">
-            Area (ha)
+            {t("Area (ha)")}
           </Text>
         </Flex>
         <Text color="neutral.900" textStyle="400-bold">
@@ -42,7 +46,7 @@ const PopupContentPolygon = () => {
         <Flex alignItems="center" gap={2}>
           <CommentIcon boxSize={4} color="neutral.800" />
           <Text color="neutral.700" textStyle="400" textWrap="nowrap">
-            Comments
+            {t("Comments")}
           </Text>
         </Flex>
         <Text color="neutral.900" textStyle="400-bold">
@@ -52,11 +56,11 @@ const PopupContentPolygon = () => {
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
         <Flex alignItems="center" gap={2}>
           <Text color="neutral.700" textStyle="400" textWrap="nowrap">
-            Validation
+            {t("Validation")}
           </Text>
         </Flex>
         <Text color="success.900" textStyle="400-bold">
-          Passed
+          {t("Passed")}
         </Text>
       </Flex>
     </Flex>
