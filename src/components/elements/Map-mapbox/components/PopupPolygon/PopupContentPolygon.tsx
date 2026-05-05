@@ -2,6 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import type { FC } from "react";
 
+import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import { AreaHectaresIcon, CommentIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
 
 const PopupContentPolygon: FC = () => {
@@ -59,9 +60,7 @@ const PopupContentPolygon: FC = () => {
             {t("Validation")}
           </Text>
         </Flex>
-        <Text color="success.900" textStyle="400-bold">
-          {t("Passed")}
-        </Text>
+        <ValidationTag status="passed" />
       </Flex>
     </Flex>
   );

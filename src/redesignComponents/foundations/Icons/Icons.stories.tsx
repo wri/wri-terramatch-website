@@ -5,6 +5,7 @@ import {
   AgriculturalLandIcon,
   AgroforestyIcon,
   ApplicationsIcon,
+  AreaHectaresCircleIcon,
   AreaHectaresIcon,
   ArrowForwardIcon,
   AssistedNaturalRegenIcon,
@@ -17,7 +18,6 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-  CloseFullscreenIcon,
   CloseIcon,
   CommentIcon,
   CompressIcon,
@@ -131,6 +131,9 @@ export const AllIcons: Story = {
         <VStack align="stretch" gap={4}>
           <IconWrapper name="Area / Hectares">
             <AreaHectaresIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Area Hectares Circle">
+            <AreaHectaresCircleIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Jobs / Workdays">
             <JobsIcon boxSize={8} />
@@ -255,8 +258,8 @@ export const AllIcons: Story = {
           <IconWrapper name="Close">
             <CloseIcon boxSize={8} />
           </IconWrapper>
-          <IconWrapper name="Close Fullscreen">
-            <CloseFullscreenIcon boxSize={8} />
+          <IconWrapper name="Compress">
+            <CompressIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Correct">
             <CorrectIcon boxSize={8} />
@@ -437,6 +440,9 @@ export const DataVisualisation: Story = {
         <IconWrapper name="Area / Hectares">
           <AreaHectaresIcon boxSize={8} />
         </IconWrapper>
+        <IconWrapper name="Area Hectares Circle">
+          <AreaHectaresCircleIcon boxSize={8} />
+        </IconWrapper>
         <IconWrapper name="Jobs / Workdays">
           <JobsIcon boxSize={8} />
         </IconWrapper>
@@ -507,8 +513,8 @@ export const Function: Story = {
         <IconWrapper name="Close">
           <CloseIcon boxSize={8} />
         </IconWrapper>
-        <IconWrapper name="Close Fullscreen">
-          <CloseFullscreenIcon boxSize={8} />
+        <IconWrapper name="Compress">
+          <CompressIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Correct">
           <CorrectIcon boxSize={8} />

@@ -5,13 +5,14 @@ import { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
 
 import type { TitleCellProps } from "./components/TitleCell";
 
+export type BaseRow = { id: string | number };
+
 export type ActionCellProps = {
   button: IButtonProps;
   onButtonIconClick: () => void;
 };
 
-export type RowData = {
-  id: string | number;
+export type RowData = BaseRow & {
   uuid?: string;
   fullName: string;
   emailAddress: string;
@@ -57,7 +58,7 @@ export const calculatePaginationRange = (currentPage: number, pageSize: number) 
   return { startRange, endRange };
 };
 
-export const sortData = <T extends Record<string, any>>(data: T[], sortColumn: SortColumn | null): T[] => {
+export const sortData = <T extends BaseRow>(data: T[], sortColumn: SortColumn | null): T[] => {
   if (sortColumn == null || sortColumn.key === "") {
     return [...data];
   }
@@ -66,16 +67,13 @@ export const sortData = <T extends Record<string, any>>(data: T[], sortColumn: S
   const isDesc = order === "desc";
 
   return [...data].sort((a, b) => {
-    if (typeof a[key] === "string" && typeof b[key] === "string") {
-      const newA = a[key];
-      const newB = b[key];
+    const aVal = (a as Record<string, unknown>)[key];
+    const bVal = (b as Record<string, unknown>)[key];
 
-      return isDesc ? newA.localeCompare(newB) : newB.localeCompare(newA);
+    if (typeof aVal === "string" && typeof bVal === "string") {
+      return isDesc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
     }
 
-    const newA = a[key] as number;
-    const newB = b[key] as number;
-
-    return isDesc ? newA - newB : newB - newA;
+    return isDesc ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
   });
 };
