@@ -16,7 +16,7 @@ import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
+import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 import ChevronRightIcon from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";

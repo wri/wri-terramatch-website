@@ -1,5 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 
+import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import { AreaHectaresIcon, CommentIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
 
 const PopupContentPolygon = () => {
@@ -55,9 +56,7 @@ const PopupContentPolygon = () => {
             Validation
           </Text>
         </Flex>
-        <Text color="success.900" textStyle="400-bold">
-          Passed
-        </Text>
+        <ValidationTag status="passed" />
       </Flex>
     </Flex>
   );

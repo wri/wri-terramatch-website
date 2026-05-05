@@ -1,4 +1,4 @@
-import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
+import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 
 export const mapStatusToTagStateEntity = (
   status: string | null | undefined

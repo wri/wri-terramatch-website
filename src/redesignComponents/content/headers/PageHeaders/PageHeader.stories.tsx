@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { type TagSubmissionProps } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
+import { type TagSubmissionProps } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 
 import PageHeader from "./PageHeader";
 

@@ -26,6 +26,8 @@ export interface MetricCardProps {
   title: string;
   progress: number;
   goal: number;
+  progressSuffix?: string;
+  goalSuffix?: string;
   tooltipContent?: ReactNode;
   variant?: MetricCardVariant;
   icon?: ReactNode;
@@ -34,22 +36,51 @@ export interface MetricCardProps {
   className?: string;
   classNameTitle?: string;
   frameworkKey?: string;
+  selection?: number;
 }
 
 export interface MetricCardCommonVariantProps
-  extends Pick<MetricCardProps, "title" | "progress" | "goal" | "tooltipContent" | "color" | "type" | "frameworkKey"> {
+  extends Pick<
+    MetricCardProps,
+    | "title"
+    | "progress"
+    | "goal"
+    | "progressSuffix"
+    | "goalSuffix"
+    | "tooltipContent"
+    | "color"
+    | "type"
+    | "frameworkKey"
+  > {
   iconWithColor: ReactNode;
   classNameTitle?: string;
 }
 
 export type NoGoalMetricCardContentProps = Pick<
   MetricCardCommonVariantProps,
-  "title" | "progress" | "color" | "iconWithColor" | "type" | "tooltipContent" | "classNameTitle"
+  | "title"
+  | "progress"
+  | "progressSuffix"
+  | "color"
+  | "iconWithColor"
+  | "type"
+  | "tooltipContent"
+  | "classNameTitle"
+  | "selection"
 >;
 
 export type ProgressBarMetricCardContentProps = Pick<
   MetricCardCommonVariantProps,
-  "title" | "progress" | "goal" | "color" | "iconWithColor" | "type" | "tooltipContent" | "classNameTitle"
+  | "title"
+  | "progress"
+  | "goal"
+  | "progressSuffix"
+  | "goalSuffix"
+  | "color"
+  | "iconWithColor"
+  | "type"
+  | "tooltipContent"
+  | "classNameTitle"
 >;
 
 export type DonutChartMetricCardContentProps = MetricCardCommonVariantProps;
