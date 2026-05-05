@@ -986,6 +986,10 @@ export type AggregateReportsDto = {
    * Trees regenerating (ANR) by reporting period (when framework supports it).
    */
   treesRegenerating?: AggregateReportSeriesItemDto[];
+  /**
+   * Invasive species by reporting period (when framework supports it).
+   */
+  invasive?: AggregateReportSeriesItemDto[];
 };
 
 export type ANRDto = {
