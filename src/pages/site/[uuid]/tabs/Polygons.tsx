@@ -3,8 +3,8 @@ import { useT } from "@transifex/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
 import { FC, ReactNode } from "react";
 
-import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
