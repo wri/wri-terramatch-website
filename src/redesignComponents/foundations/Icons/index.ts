@@ -15,7 +15,6 @@ export { ChevronDownIcon } from "./Function/ChevronDownIcon";
 export { ChevronDownAltIcon } from "./Function/ChevronDownAltIcon";
 export { ChevronRightIcon } from "./Function/ChevronRightIcon";
 export { ChevronUpIcon } from "./Function/ChevronUpIcon";
-export { CompressIcon } from "./Function/CompressIcon";
 export { CloseIcon } from "./Function/CloseIcon";
 export { CommentIcon } from "./Function/CommentIcon";
 export { CorrectIcon } from "./Function/CorrectIcon";
