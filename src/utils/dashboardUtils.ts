@@ -323,13 +323,15 @@ export type AggregateReportData = {
 const AGGREGATE_REPORT_CATEGORIES: ReadonlyArray<keyof AggregateReportsDto> = [
   "treePlanted",
   "seedingRecords",
-  "treesRegenerating"
+  "treesRegenerating",
+  "invasive"
 ] as const;
 
 const CATEGORY_DISPLAY_NAMES: Record<(typeof AGGREGATE_REPORT_CATEGORIES)[number], string> = {
   treePlanted: "Tree Planted",
   seedingRecords: "Seeding Records",
-  treesRegenerating: "Trees Regenerating"
+  treesRegenerating: "Trees Regenerating",
+  invasive: "Invasive Species"
 };
 
 function getDueDateString(dueDate: Record<string, any> | null): string | null {

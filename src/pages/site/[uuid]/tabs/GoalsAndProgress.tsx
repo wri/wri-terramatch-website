@@ -69,6 +69,11 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
     ...aggregateProps,
     collection: "replanting"
   });
+  const totalCountInvasive = usePlantTotalCount({ ...aggregateProps, collection: "invasive" });
+  const { speciesCount: totalCountInvasiveSpecies } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: "invasive"
+  });
 
   const [aggregateLoaded, aggregateState] = useAggregateReports({
     entity: "sites",
@@ -352,6 +357,39 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
             </div>
             <div>
               <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="replanting" visibleRows={5} />
+            </div>
+          </div>
+        </PageCard>
+      </PageRow>
+      <PageRow>
+        <PageCard title={t("EXOTIC TREES REMOVAL PROGRESS")}>
+          <div className="grid grid-cols-2 gap-16">
+            <div className="flex flex-col gap-4">
+              <GoalProgressCard
+                hasProgress={false}
+                classNameCard="!pl-0"
+                items={[
+                  {
+                    iconName: IconNames.TREE_CIRCLE_PD,
+                    label: t("number of trees REMOVED:"),
+                    variantLabel: "text-14" as TextVariants,
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: totalCountInvasive
+                  },
+                  {
+                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                    label: t("number of species REMOVED:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: totalCountInvasiveSpecies
+                  }
+                ]}
+              />
+            </div>
+            <div>
+              <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="invasive" visibleRows={5} />
             </div>
           </div>
         </PageCard>

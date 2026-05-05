@@ -1,11 +1,11 @@
-import { isString } from "lodash";
 import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react";
 import { useNotify } from "react-admin";
 
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
-import { downloadApplicationExport } from "@/connections/FundingProgramme";
-import { formSubmissionsExportCsv } from "@/generated/v3/entityService/entityServiceComponents";
-import { downloadFileBlob, downloadFileUrl } from "@/utils/network";
+import {
+  formSubmissionsExportCsv,
+  fundingProgrammeExportAll
+} from "@/generated/v3/entityService/entityServiceComponents";
 
 type ExportType = {
   loading: boolean;
@@ -30,36 +30,18 @@ const ExportProvider = ({ children }: ExportProviderProps) => {
 
   const exportApplications = useCallback(
     async ({ fundingProgrammeUuid, formUuid }: { fundingProgrammeUuid?: string; formUuid?: string }) => {
-      const exporter = async (fn: () => Promise<{ fileName?: string; response: Blob | string }>) => {
-        try {
-          setLoading(true);
-          const { fileName, response } = await fn();
-          if (isString(response)) {
-            downloadFileUrl(response, fileName);
-          } else {
-            await downloadFileBlob(response, fileName ?? "Applications.csv");
-          }
-          setLoading(false);
-        } catch (err: any) {
-          setLoading(false);
-          setError(err.message);
-          notify(err.message ?? "Export Error", { undoable: false, type: "error" });
+      try {
+        setLoading(true);
+        if (formUuid != null) {
+          await formSubmissionsExportCsv.downloadFile({ pathParams: { uuid: formUuid } });
+        } else if (fundingProgrammeUuid != null) {
+          await fundingProgrammeExportAll.downloadFile({ pathParams: { uuid: fundingProgrammeUuid } });
         }
-      };
-
-      if (formUuid != null) {
-        return exporter(async () => {
-          const { fileName, blob } = await formSubmissionsExportCsv.fetchBlob({ pathParams: { uuid: formUuid } });
-          return { fileName, response: blob };
-        });
-      } else if (fundingProgrammeUuid != null) {
-        return exporter(async () => {
-          const { data, loadFailure } = await downloadApplicationExport(fundingProgrammeUuid);
-          if (loadFailure != null) {
-            throw loadFailure;
-          }
-          return { response: data?.url as string };
-        });
+      } catch (err: any) {
+        setError(err.message);
+        notify(err.message ?? "Export Error", { undoable: false, type: "error" });
+      } finally {
+        setLoading(false);
       }
 
       throw new Error("Incorrect Props supplied to export applications");
