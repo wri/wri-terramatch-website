@@ -15,7 +15,10 @@ import ViewImageGalleryButton from "../MapControls/ViewImageGalleryButton";
 import { ZoomControl } from "../MapControls/ZoomControl";
 import type { MapControlsOverlayProps } from "./MapControlsOverlay.types";
 
-/** Default map controls layout (admin, dashboard, forms, etc.). */
+/** Default map controls layout (admin, dashboard, forms, etc.).
+ * this will be deleted or joined with the Champions map controls
+ * once the redesign is complete
+ */
 const MapControlsOverlayLegacy = ({
   hasControls,
   draw,

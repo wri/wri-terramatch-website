@@ -11,6 +11,21 @@ import { MapViewIcon, SatelliteViewIcon } from "@/redesignComponents/foundations
 
 import { setMapStyle } from "../utils";
 
+const styleToValue = (style: MapStyle): string => (style === MapStyle.Street ? "street" : "satellite");
+
+const championsStyleTabs = [
+  {
+    icon: <SatelliteViewIcon boxSize={4} />,
+    label: "Satellite",
+    value: "satellite"
+  },
+  {
+    icon: <MapViewIcon boxSize={4} />,
+    label: "Map",
+    value: "street"
+  }
+];
+
 export const StyleControl = ({
   map,
   currentStyle,
@@ -27,23 +42,13 @@ export const StyleControl = ({
   const activeClass = "text-body-500 font-medium";
   const inactiveClass = "text-body-400";
   if (championsMap) {
-    const styleToValue = (style: MapStyle): string => (style === MapStyle.Street ? "street" : "satellite");
+    const selectedStyleValue = styleToValue(currentStyle);
 
     return (
       <TabBar
-        defaultValue={styleToValue(currentStyle)}
-        tabs={[
-          {
-            icon: <SatelliteViewIcon boxSize={4} />,
-            label: "Satellite",
-            value: "satellite"
-          },
-          {
-            icon: <MapViewIcon boxSize={4} />,
-            label: "Map",
-            value: "street"
-          }
-        ]}
+        key={selectedStyleValue}
+        defaultValue={selectedStyleValue}
+        tabs={championsStyleTabs}
         onTabClick={(value: string) => {
           const targetStyle = value === "street" ? MapStyle.Street : MapStyle.Satellite;
           setMapStyle(targetStyle, map, setCurrentStyle, currentStyle);
