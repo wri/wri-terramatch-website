@@ -2116,6 +2116,12 @@ export type GetAuditStatusesResponse = {
 
 export type GetAuditStatusesVariables = {
   pathParams: GetAuditStatusesPathParams;
+  queryParams?: {
+    /**
+     * Comma-separated audit type filters (e.g. polygon-data-submission,ready-for-baseline).
+     */
+    types?: string;
+  };
 };
 
 export const getAuditStatuses = new V3ApiEndpoint<

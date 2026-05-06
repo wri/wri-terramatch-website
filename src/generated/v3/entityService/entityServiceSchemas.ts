@@ -1116,6 +1116,19 @@ export type ProjectLightDto = {
    */
   updatedAt: string;
   treesPlantedCount: number | null;
+  /**
+   * Polygon data submission tracking (TM-3300)
+   */
+  polygonDataSubmission?:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received"
+    | null;
+  /**
+   * Whether the project is ready for baseline analysis (TM-3300)
+   */
+  readyForBaseline?: boolean;
 };
 
 export type SiteLightDto = {
@@ -1413,6 +1426,19 @@ export type ProjectFullDto = {
    * True for projects that are test data and do not represent actual planting on the ground.
    */
   isTest: boolean;
+  /**
+   * Polygon data submission tracking (TM-3300)
+   */
+  polygonDataSubmission?:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received"
+    | null;
+  /**
+   * Whether the project is ready for baseline analysis (TM-3300)
+   */
+  readyForBaseline?: boolean;
   feedback: string | null;
   feedbackFields: string[] | null;
   cohort: string[] | null;
@@ -2372,6 +2398,22 @@ export type ProjectUpdateAttributes = {
    * Update the isTest flag.
    */
   isTest?: boolean;
+  /**
+   * Polygon data submission tracking (TM-3300)
+   */
+  polygonDataSubmission?:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received";
+  /**
+   * Whether the project is ready for baseline analysis (TM-3300)
+   */
+  readyForBaseline?: boolean;
+  /**
+   * Optional comment for polygon handoff audit rows (TM-3300)
+   */
+  polygonHandoffComment?: string | null;
 };
 
 export type ProjectUpdateData = {

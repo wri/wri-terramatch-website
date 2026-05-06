@@ -5,6 +5,7 @@ import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTa
 import { AuditStatusEntityType, useAuditStatuses, useCreateAuditStatus } from "@/connections/AuditStatus";
 import { bulkUpdateSitePolygonStatus, PolygonStatus, useAllSitePolygons } from "@/connections/SitePolygons";
 import { usePolygonValidation } from "@/connections/Validation";
+import { PROJECT_POLYGON_HANDOFF_AUDIT_TYPES } from "@/constants/polygonHandoff";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isValidCriteriaData } from "@/helpers/polygonValidation";
 import ApiSlice from "@/store/apiSlice";
@@ -15,7 +16,6 @@ import {
   getValueForStatusNursery
 } from "@/utils/statusUtils";
 
-import useLoadEntityList from "./useLoadEntityList";
 import { useStatusActionsMap } from "./useStatusActionsMap";
 
 const ReverseButtonStates2: { [key: number]: string } = {
@@ -52,12 +52,15 @@ const useAuditLogActions = ({
   record,
   buttonToggle,
   entityLevel,
-  isProjectReport
+  isProjectReport,
+  useProjectPolygonHandoff = false
 }: {
   record: any;
   buttonToggle?: number;
   entityLevel?: number;
   isProjectReport?: boolean;
+  /** When true, the project-level Audit Log "Polygon Handoff" tab loads project audits (TM-3300). */
+  useProjectPolygonHandoff?: boolean;
 }): AuditLogActionsResponse => {
   const t = useT();
   const isLevelDisturbanceReport = entityLevel === AuditLogButtonStates.DISTURBANCE_REPORT;
@@ -69,6 +72,7 @@ const useAuditLogActions = ({
   const isNursery = buttonToggle === AuditLogButtonStates.NURSERY;
   const isPolygon = buttonToggle === AuditLogButtonStates.POLYGON;
   const isSiteProject = entityLevel === AuditLogButtonStates.PROJECT;
+  const isProjectHandoffAuditMode = useProjectPolygonHandoff && isPolygon && isSiteProject;
 
   const getV3EntityTypeFromButtonToggle = (toggle: number): AuditStatusEntityType => {
     const mapping: Record<number, AuditStatusEntityType> = {
@@ -90,7 +94,9 @@ const useAuditLogActions = ({
     return mapped;
   };
 
-  const v3EntityType = getV3EntityTypeFromButtonToggle(buttonToggle!);
+  const v3EntityType: AuditStatusEntityType = isProjectHandoffAuditMode
+    ? "projects"
+    : getV3EntityTypeFromButtonToggle(buttonToggle!);
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
     entity: record,
     entityType: v3EntityType,
@@ -126,7 +132,10 @@ const useAuditLogActions = ({
   ].some(word => ReverseButtonStates2[entityLevel!].includes(word));
 
   const polygonValidationData = usePolygonValidation({
-    polygonUuid: selected?.polygonUuid != null && isPolygon && !verifyEntity ? (selected.polygonUuid as string) : ""
+    polygonUuid:
+      selected?.polygonUuid != null && isPolygon && !verifyEntity && !isProjectHandoffAuditMode
+        ? (selected.polygonUuid as string)
+        : ""
   });
 
   const hasInvalidPolygonCriteria = useMemo(() => {
@@ -163,6 +172,15 @@ const useAuditLogActions = ({
       };
     }
     if (isSiteProject || isProjectReport) {
+      if (isProjectHandoffAuditMode) {
+        return {
+          selectedEntityItem: record,
+          loadToEntity: () => {},
+          ListItemToEntity: [],
+          setSelectedToEntity: null,
+          checkPolygons: false
+        };
+      }
       return {
         selectedEntityItem: isProject ? record : selected,
         loadToEntity: !isProject || isProjectReport ? loadEntityList : () => {},
@@ -189,15 +207,25 @@ const useAuditLogActions = ({
     }
   })();
 
-  const targetUuid =
-    buttonToggle == AuditLogButtonStates.PROJECT
-      ? record?.projectUuid ?? record.uuid
-      : entityHandlers.selectedEntityItem?.uuid;
+  const targetUuid = isProjectHandoffAuditMode
+    ? record?.uuid
+    : buttonToggle == AuditLogButtonStates.PROJECT
+    ? record?.projectUuid ?? record.uuid
+    : entityHandlers.selectedEntityItem?.uuid;
 
-  const [isAuditLogLoaded, auditStatusConnection] = useAuditStatuses({
-    entity: v3EntityType,
-    uuid: targetUuid ?? ""
-  });
+  const auditStatusHookProps =
+    isProjectHandoffAuditMode && record?.uuid != null
+      ? {
+          entity: "projects" as const,
+          uuid: record.uuid,
+          types: PROJECT_POLYGON_HANDOFF_AUDIT_TYPES
+        }
+      : {
+          entity: v3EntityType,
+          uuid: targetUuid ?? ""
+        };
+
+  const [isAuditLogLoaded, auditStatusConnection] = useAuditStatuses(auditStatusHookProps);
 
   const { data: auditStatusesData, refetch: auditStatusRefetch } = auditStatusConnection;
 
@@ -207,7 +235,7 @@ const useAuditLogActions = ({
 
   useEffect(() => {
     refetch();
-  }, [buttonToggle, record, entityListItem, refetch, selected, targetUuid, v3EntityType]);
+  }, [buttonToggle, record, entityListItem, refetch, selected, targetUuid, v3EntityType, isProjectHandoffAuditMode]);
 
   const buttonStates = ReverseButtonStates2[entityLevel!];
   const getValuesStatusEntity = (() => {
@@ -256,6 +284,9 @@ const useAuditLogActions = ({
 
   const onStatusChange = useCallback(
     async (status: string, comment: string): Promise<void> => {
+      if (isProjectHandoffAuditMode) {
+        return;
+      }
       const uuid = targetUuid;
       if (uuid == null) {
         Log.error("Cannot update polygon status: target UUID is missing", { v3EntityType, buttonToggle });
@@ -265,7 +296,7 @@ const useAuditLogActions = ({
       await bulkUpdateSitePolygonStatus([uuid], status as PolygonStatus, comment);
       ApiSlice.pruneCache("auditStatuses");
     },
-    [targetUuid, v3EntityType, buttonToggle]
+    [targetUuid, v3EntityType, buttonToggle, isProjectHandoffAuditMode]
   );
 
   const handleChangeRequestSuccess = useCallback(() => {
@@ -274,7 +305,9 @@ const useAuditLogActions = ({
   }, [refetch]);
 
   const { create: createChangeRequest } = useCreateAuditStatus(
-    { entity: v3EntityType, uuid: targetUuid ?? "" },
+    isProjectHandoffAuditMode
+      ? { entity: "projects", uuid: record?.uuid ?? "" }
+      : { entity: v3EntityType, uuid: targetUuid ?? "" },
     handleChangeRequestSuccess,
     "Failed to create change request. Please try again."
   );
@@ -310,7 +343,10 @@ const useAuditLogActions = ({
     auditLogData,
     refetch,
     isLoading,
-    auditData: { entity: ReverseButtonStates2[buttonToggle!], entityUuid: entityHandlers.selectedEntityItem?.uuid }
+    auditData: {
+      entity: isProjectHandoffAuditMode ? "project" : ReverseButtonStates2[buttonToggle!],
+      entityUuid: isProjectHandoffAuditMode ? record?.uuid ?? "" : entityHandlers.selectedEntityItem?.uuid ?? ""
+    }
   };
 };
 

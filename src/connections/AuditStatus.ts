@@ -6,16 +6,20 @@ import {
   CreateAuditStatusPathParams,
   deleteAuditStatus,
   getAuditStatuses,
-  GetAuditStatusesPathParams
+  GetAuditStatusesPathParams,
+  GetAuditStatusesVariables
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 
 export type AuditStatusEntityType = GetAuditStatusesPathParams["entity"];
 
+export type AuditStatusIndexProps = GetAuditStatusesPathParams & GetAuditStatusesVariables["queryParams"];
+
 const auditStatusIndexConnection = v3Resource("auditStatuses", getAuditStatuses)
-  .index<AuditStatusDto, GetAuditStatusesPathParams>(({ entity, uuid }) => ({
-    pathParams: { entity, uuid }
+  .index<AuditStatusDto, AuditStatusIndexProps>(({ entity, uuid, types }) => ({
+    pathParams: { entity, uuid },
+    ...(types != null && types !== "" ? { queryParams: { types } } : {})
   }))
   .enabledProp()
   .refetch(() => ApiSlice.pruneIndex("auditStatuses", ""))
