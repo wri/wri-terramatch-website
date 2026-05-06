@@ -9,8 +9,7 @@ import type { PopupComponentProps } from "../../Map.d";
 import {
   formatAreaHectaresForPopup,
   formatTreesPlantedForPopup,
-  normalizePolygonValidationStatus,
-  POPUP_METRIC_UNAVAILABLE
+  normalizePolygonValidationStatus
 } from "../../sitePolygonMapLookup";
 import PopupContentPolygon from "../PopupPolygon/PopupContentPolygon";
 import PopupFooterPolygon from "../PopupPolygon/PopupFooterPolygon";
@@ -18,11 +17,10 @@ import PopupHeaderPolygon from "../PopupPolygon/PopupHeaderPolygon";
 
 type PolygonPopupChampionsProps = {
   popup: PopupComponentProps["popup"];
-  polygonUuid: string;
   sitePolygon?: SitePolygonLightDto;
 };
 
-export function PolygonPopupChampions({ popup, polygonUuid: _polygonUuid, sitePolygon }: PolygonPopupChampionsProps) {
+export function PolygonPopupChampions({ popup, sitePolygon }: PolygonPopupChampionsProps) {
   const [open, setOpen] = useState(true);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -45,11 +43,11 @@ export function PolygonPopupChampions({ popup, polygonUuid: _polygonUuid, sitePo
   const metrics = useMemo(() => {
     const validationStatus = normalizePolygonValidationStatus(sitePolygon?.validationStatus);
     return {
-      polygonName: sitePolygon?.name,
+      polygonName: sitePolygon?.name ?? undefined,
       treesPlantedDisplay: formatTreesPlantedForPopup(sitePolygon?.numTrees),
       areaHectaresDisplay: formatAreaHectaresForPopup(sitePolygon?.calcArea),
       validationStatus,
-      commentsDisplay: commentsCount > 0 ? commentsCount.toString() : POPUP_METRIC_UNAVAILABLE
+      commentsDisplay: commentsCount.toString()
     };
   }, [commentsCount, sitePolygon]);
 

@@ -16,7 +16,7 @@ export function PolygonPopup(event: PopupComponentProps) {
   );
 
   if (championsMap) {
-    return <PolygonPopupChampions popup={popup} polygonUuid={polygonUuid} sitePolygon={selectedSitePolygon} />;
+    return <PolygonPopupChampions popup={popup} sitePolygon={selectedSitePolygon} />;
   }
 
   return (

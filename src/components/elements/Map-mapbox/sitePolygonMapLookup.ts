@@ -1,8 +1,9 @@
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 
 export const POPUP_METRIC_UNAVAILABLE = "\u2014";
 
-export type NormalizedPolygonValidationStatus = "notChecked" | "passed" | "partial" | "failed";
+export type NormalizedPolygonValidationStatus = ValidationTagState;
 
 export const findSitePolygonByMapFeatureUuid = (
   sitePolygons: SitePolygonLightDto[] | undefined,
@@ -18,17 +19,15 @@ export const normalizePolygonValidationStatus = (
   validationStatus: string | null | undefined
 ): NormalizedPolygonValidationStatus => {
   if (validationStatus == null || validationStatus === "") {
-    return "notChecked";
+    return "not-started";
   }
-  if (
-    validationStatus === "passed" ||
-    validationStatus === "partial" ||
-    validationStatus === "failed" ||
-    validationStatus === "notChecked"
-  ) {
+  if (validationStatus === "passed" || validationStatus === "failed") {
     return validationStatus;
   }
-  return "notChecked";
+  if (validationStatus === "partial") {
+    return "partially-passed";
+  }
+  return "not-started";
 };
 
 export const formatTreesPlantedForPopup = (value: number | null | undefined): string => {
