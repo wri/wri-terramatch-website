@@ -400,7 +400,7 @@ const SiteReportDetailPage = () => {
                           </div>
                         </div>
                         <div>
-                          <Text variant="text-20-bold">{t("EXOTIC TREES REMOVED")}</Text>
+                          <Text variant="text-20-bold">{t("INVASIVE TREES REMOVED")}</Text>
                           <GoalProgressCard
                             hasProgress={false}
                             classNameCard="!pl-0"
