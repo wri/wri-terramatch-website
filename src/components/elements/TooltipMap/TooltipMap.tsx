@@ -1,21 +1,26 @@
 import { useT } from "@transifex/react";
 import { useMemo } from "react";
 
+import { findSitePolygonByMapFeatureUuid } from "@/components/elements/Map-mapbox/sitePolygonPopupUtils";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useSitePolygons } from "@/connections/SitePolygons";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import type { TooltipType } from "../Map-mapbox/Map.d";
 import { formatPlannedStartDate } from "../Map-mapbox/utils";
 import Text from "../Text/Text";
+
+const EMPTY_SITE_POLYGON_LIST: SitePolygonLightDto[] = [];
+
 export interface TooltipMapProps {
   setTooltipOpen: () => void;
   setEditPolygon: (value?: string) => void;
-  polygon: any;
+  polygonUuid: string;
+  sitePolygonData?: SitePolygonLightDto[];
   type?: TooltipType;
-  popup?: any;
+  popup?: unknown;
 }
-const topBorderColorPopup: any = {
+
+const topBorderColorPopup: Record<SitePolygonLightDto["status"], string> = {
   submitted: "border-t-primary",
   approved: "border-t-[#72D961]",
   "needs-more-information": "border-t-[#FF8938]",
@@ -23,21 +28,15 @@ const topBorderColorPopup: any = {
 };
 
 const TooltipMap = (props: TooltipMapProps) => {
-  const { setTooltipOpen, setEditPolygon, polygon, type } = props;
+  const { setTooltipOpen, setEditPolygon, polygonUuid, sitePolygonData, type } = props;
   const t = useT();
 
-  const [, connectionData] = useSitePolygons({
-    filter: {
-      "polygonUuid[]": polygon != null ? [polygon] : []
-    },
-    enabled: polygon != null,
-    pageSize: 1,
-    pageNumber: 1
-  });
+  const sitePolygonsStable = sitePolygonData ?? EMPTY_SITE_POLYGON_LIST;
 
-  const polygonData = useMemo<SitePolygonLightDto | undefined>(() => {
-    return connectionData.data?.[0];
-  }, [connectionData.data]);
+  const polygonData = useMemo(
+    () => findSitePolygonByMapFeatureUuid(sitePolygonsStable, polygonUuid),
+    [sitePolygonsStable, polygonUuid]
+  );
 
   const formatArrayField = (arr: string[] | null | undefined): string => {
     if (arr == null || arr.length === 0) {
@@ -79,7 +78,7 @@ const TooltipMap = (props: TooltipMapProps) => {
         </Text>
       </div>
       <Text variant="text-10-bold" className="text-center leading-[normal] text-black">
-        {polygonData?.name != null ? polygonData.name : t("Unnamed Polygon")}
+        {polygonData?.name != null && polygonData.name !== "" ? polygonData.name : t("Unnamed Polygon")}
       </Text>
       <hr className="my-2 border border-grey-750" />
       <div className="grid grid-cols-2 gap-4">

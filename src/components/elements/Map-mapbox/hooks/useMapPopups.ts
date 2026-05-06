@@ -5,8 +5,8 @@ import { MutableRefObject, useEffect, useRef } from "react";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import { useChampionsMap } from "../championsMap.context";
-import { AdminPopup } from "../components/AdminPopup";
 import { DashboardPopup } from "../components/DashboardPopup";
+import { PolygonPopup } from "../components/PolygonPopup/PolygonPopup";
 import { addPopupsToMap } from "../interactions/popups";
 import type {
   DashboardPopupContext,
@@ -26,6 +26,7 @@ type UseMapPopupsParams = {
   isMobile: boolean;
   setLoader?: (v: boolean) => void;
   setPolygonFromMap?: SetPolygonFromMap;
+  setShouldRefetchPolygonData?: (v: boolean) => void;
   setEditPolygon: (v: EditPolygonState) => void;
   editPolygon: EditPolygonState;
   setMobilePopupData: (v: MobilePopupData) => void;
@@ -43,6 +44,7 @@ export function useMapPopups({
   isMobile,
   setLoader,
   setPolygonFromMap,
+  setShouldRefetchPolygonData,
   setEditPolygon,
   editPolygon,
   setMobilePopupData,
@@ -62,10 +64,11 @@ export function useMapPopups({
   useEffect(() => {
     if (!sourcesAdded || map.current == null || draw.current == null || !showPopups) return;
 
-    const PopupComponent = dashboardContext?.dashboardMode != null ? DashboardPopup : AdminPopup;
+    const PopupComponent = dashboardContext?.dashboardMode != null ? DashboardPopup : PolygonPopup;
 
     addPopupsToMap(map.current, PopupComponent, draw.current, {
       setPolygonFromMap: callbacksRef.current.setPolygonFromMap,
+      setShouldRefetchPolygonData,
       sitePolygonData,
       type: tooltipType ?? "goTo",
       editPolygon: editPolygonRef.current,
@@ -83,6 +86,7 @@ export function useMapPopups({
     isMobile,
     showPopups,
     setLoader,
+    setShouldRefetchPolygonData,
     dashboardContext,
     map,
     draw,

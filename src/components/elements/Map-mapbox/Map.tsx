@@ -343,6 +343,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     isMobile,
     setLoader,
     setPolygonFromMap,
+    setShouldRefetchPolygonData,
     setEditPolygon,
     editPolygon,
     setMobilePopupData,

@@ -2,10 +2,22 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import type { FC } from "react";
 
-import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
+import ValidationTag, { type ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import { AreaHectaresIcon, CommentIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
 
-const PopupContentPolygon: FC = () => {
+type PopupContentPolygonProps = {
+  treesPlantedDisplay?: string;
+  areaHectaresDisplay?: string;
+  commentsDisplay?: string;
+  validationStatus?: ValidationTagState;
+};
+
+const PopupContentPolygon: FC<PopupContentPolygonProps> = ({
+  treesPlantedDisplay = "\u2014",
+  areaHectaresDisplay = "\u2014",
+  commentsDisplay = "\u2014",
+  validationStatus = "not-started"
+}) => {
   const t = useT();
 
   return (
@@ -18,7 +30,7 @@ const PopupContentPolygon: FC = () => {
           </Text>
         </Flex>
         <Text color="neutral.900" textStyle="400-bold">
-          XXX,XXX
+          {treesPlantedDisplay}
         </Text>
       </Flex>
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
@@ -40,7 +52,7 @@ const PopupContentPolygon: FC = () => {
           </Text>
         </Flex>
         <Text color="neutral.900" textStyle="400-bold">
-          XXX,XXX
+          {areaHectaresDisplay}
         </Text>
       </Flex>
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
@@ -51,7 +63,7 @@ const PopupContentPolygon: FC = () => {
           </Text>
         </Flex>
         <Text color="neutral.900" textStyle="400-bold">
-          2
+          {commentsDisplay}
         </Text>
       </Flex>
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
@@ -60,7 +72,7 @@ const PopupContentPolygon: FC = () => {
             {t("Validation")}
           </Text>
         </Flex>
-        <ValidationTag status="passed" />
+        <ValidationTag status={validationStatus} />
       </Flex>
     </Flex>
   );
