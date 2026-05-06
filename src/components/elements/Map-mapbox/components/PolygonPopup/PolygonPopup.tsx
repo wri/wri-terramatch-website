@@ -7,7 +7,16 @@ import { findSitePolygonByMapFeatureUuid } from "../../sitePolygonMapLookup";
 import { PolygonPopupChampions } from "./PolygonPopupChampions";
 
 export function PolygonPopup(event: PopupComponentProps) {
-  const { feature, popup, setPolygonFromMap, type, setEditPolygon, championsMap, sitePolygonData } = event;
+  const {
+    feature,
+    popup,
+    setPolygonFromMap,
+    setShouldRefetchPolygonData,
+    type,
+    setEditPolygon,
+    championsMap,
+    sitePolygonData
+  } = event;
   const polygonUuid = (feature.properties?.uuid ?? "") as string;
 
   const selectedSitePolygon = useMemo(
@@ -16,7 +25,13 @@ export function PolygonPopup(event: PopupComponentProps) {
   );
 
   if (championsMap) {
-    return <PolygonPopupChampions popup={popup} sitePolygon={selectedSitePolygon} />;
+    return (
+      <PolygonPopupChampions
+        popup={popup}
+        setShouldRefetchPolygonData={setShouldRefetchPolygonData}
+        sitePolygon={selectedSitePolygon}
+      />
+    );
   }
 
   return (

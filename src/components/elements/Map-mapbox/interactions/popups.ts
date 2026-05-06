@@ -45,6 +45,7 @@ function getClickHandlers(map: MapboxMap): Record<string, (e: MapLayerInteractio
 /** Options forwarded from useMapPopups down to every layer click handler. */
 export type PopupHandlerOptions = {
   setPolygonFromMap?: SetPolygonFromMap;
+  setShouldRefetchPolygonData?: (value: boolean) => void;
   sitePolygonData?: SitePolygonLightDto[];
   type: TooltipType;
   editPolygon: EditPolygonState;
@@ -72,6 +73,7 @@ const handleLayerClick = (
 
   const {
     setPolygonFromMap,
+    setShouldRefetchPolygonData,
     sitePolygonData,
     type,
     editPolygon,
@@ -88,6 +90,7 @@ const handleLayerClick = (
       layerName,
       type,
       setPolygonFromMap,
+      setShouldRefetchPolygonData,
       sitePolygonData,
       editPolygon,
       setEditPolygon,
@@ -147,6 +150,7 @@ const handleLayerClick = (
         dashboardCountries: dashboard?.dashboardCountries,
         dashboardMode: dashboard?.dashboardMode,
         setPolygonFromMap,
+        setShouldRefetchPolygonData,
         sitePolygonData,
         type,
         editPolygon,

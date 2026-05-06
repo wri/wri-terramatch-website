@@ -74,6 +74,7 @@ export type PopupComponentProps = {
   setPolygonFromMap?: SetPolygonFromMap;
   sitePolygonData?: SitePolygonLightDto[];
   type: TooltipType;
+  setShouldRefetchPolygonData?: (value: boolean) => void;
   editPolygon: EditPolygonState;
   setEditPolygon: (value: EditPolygonState) => void;
   // Dashboard-specific (undefined in admin mode)

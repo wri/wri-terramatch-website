@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 
 import { useAuditStatuses } from "@/connections/AuditStatus";
+import { bulkUpdateSitePolygonStatus } from "@/connections/SitePolygons";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
@@ -17,10 +18,11 @@ import PopupHeaderPolygon from "../PopupPolygon/PopupHeaderPolygon";
 
 type PolygonPopupChampionsProps = {
   popup: PopupComponentProps["popup"];
+  setShouldRefetchPolygonData?: PopupComponentProps["setShouldRefetchPolygonData"];
   sitePolygon?: SitePolygonLightDto;
 };
 
-export function PolygonPopupChampions({ popup, sitePolygon }: PolygonPopupChampionsProps) {
+export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, sitePolygon }: PolygonPopupChampionsProps) {
   const [open, setOpen] = useState(true);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -51,6 +53,19 @@ export function PolygonPopupChampions({ popup, sitePolygon }: PolygonPopupChampi
     };
   }, [commentsCount, sitePolygon]);
 
+  const sitePolygonStatus = sitePolygon?.status;
+  const submitDisabled = sitePolygonStatus === "submitted" || sitePolygonStatus === "approved";
+
+  const handleSubmit = async () => {
+    if (submitDisabled || sitePolygon?.uuid == null || sitePolygon.uuid === "") {
+      return;
+    }
+    setOpen(false);
+    popup?.remove();
+    await bulkUpdateSitePolygonStatus([sitePolygon.uuid], "submitted", "");
+    setShouldRefetchPolygonData?.(true);
+  };
+
   return (
     <>
       <PointMarker
@@ -71,7 +86,12 @@ export function PolygonPopupChampions({ popup, sitePolygon }: PolygonPopupChampi
           />
         }
         footer={
-          <PopupFooterPolygon polygonUuid={sitePolygon?.polygonUuid ?? undefined} polygonName={metrics.polygonName} />
+          <PopupFooterPolygon
+            polygonUuid={sitePolygon?.polygonUuid ?? undefined}
+            polygonName={metrics.polygonName}
+            submitDisabled={submitDisabled}
+            onSubmit={handleSubmit}
+          />
         }
         placement="right"
         open={open}
