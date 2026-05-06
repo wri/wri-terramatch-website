@@ -194,6 +194,34 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const { selectedRows, handleRowSelected, onAllItemsSelected } = useTableSelection<PolygonTableRow>(true, polygonRows);
 
+  const { totalTreesPlanted, totalRestorationAreaHa } = useMemo(() => {
+    let trees = 0;
+    let area = 0;
+    for (const polygon of polygonsData) {
+      trees += polygon.numTrees ?? 0;
+      area += polygon.calcArea ?? 0;
+    }
+    return {
+      totalTreesPlanted: trees,
+      totalRestorationAreaHa: Math.round(area * 100) / 100
+    };
+  }, [polygonsData]);
+
+  const { selectedTreesPlanted, selectedRestorationAreaHa } = useMemo(
+    () =>
+      selectedRows.reduce(
+        (acc, row) => ({
+          selectedTreesPlanted: acc.selectedTreesPlanted + row.treesPlanted,
+          selectedRestorationAreaHa: acc.selectedRestorationAreaHa + row.area
+        }),
+        { selectedTreesPlanted: 0, selectedRestorationAreaHa: 0 }
+      ),
+    [selectedRows]
+  );
+
+  const selectedRestorationAreaRounded = Math.round(selectedRestorationAreaHa * 100) / 100;
+  const hasPolygonSelection = selectedRows.length > 0;
+
   const columns = useMemo(
     () => [
       {
@@ -307,8 +335,9 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
             icon={<TreeIcon />}
             variant="medium"
             title={t("Trees Planted")}
-            progress={4897}
-            goal={10000}
+            progress={totalTreesPlanted}
+            goal={Math.max(totalTreesPlanted, 1)}
+            selection={hasPolygonSelection ? selectedTreesPlanted : undefined}
             tooltipContent={t("Trees Planted")}
             className="min-w-[12.5rem]"
           />
@@ -317,9 +346,9 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
             icon={<AreaHectaresIcon />}
             variant="medium"
             title={t("Restoration Area")}
-            progress={1587}
-            goal={3000}
-            selection={976}
+            progress={totalRestorationAreaHa}
+            goal={Math.max(totalRestorationAreaHa, 1)}
+            selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
             tooltipContent={t("Restoration Area")}
             className="min-w-[12.5rem]"
           />
