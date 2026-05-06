@@ -1,37 +1,11 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import type { FC } from "react";
 
+import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import { AreaHectaresIcon, CommentIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
 
-import type { NormalizedPolygonValidationStatus } from "../../sitePolygonMapLookup";
-
-type PopupContentPolygonProps = {
-  treesPlantedDisplay: string;
-  areaHectaresDisplay: string;
-  commentsDisplay: string;
-  validationStatus: NormalizedPolygonValidationStatus;
-};
-
-const validationLabelKey: Record<NormalizedPolygonValidationStatus, string> = {
-  passed: "Passed",
-  partial: "Passed",
-  failed: "Failed",
-  notChecked: "Not Checked"
-};
-
-const validationColor: Record<NormalizedPolygonValidationStatus, string> = {
-  passed: "success.900",
-  partial: "warning.800",
-  failed: "error.600",
-  notChecked: "neutral.600"
-};
-
-const PopupContentPolygon = ({
-  treesPlantedDisplay,
-  areaHectaresDisplay,
-  commentsDisplay,
-  validationStatus
-}: PopupContentPolygonProps) => {
+const PopupContentPolygon: FC = () => {
   const t = useT();
 
   return (
@@ -44,7 +18,7 @@ const PopupContentPolygon = ({
           </Text>
         </Flex>
         <Text color="neutral.900" textStyle="400-bold">
-          {treesPlantedDisplay}
+          XXX,XXX
         </Text>
       </Flex>
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
@@ -66,7 +40,7 @@ const PopupContentPolygon = ({
           </Text>
         </Flex>
         <Text color="neutral.900" textStyle="400-bold">
-          {areaHectaresDisplay}
+          XXX,XXX
         </Text>
       </Flex>
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
@@ -77,7 +51,7 @@ const PopupContentPolygon = ({
           </Text>
         </Flex>
         <Text color="neutral.900" textStyle="400-bold">
-          {commentsDisplay}
+          2
         </Text>
       </Flex>
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
@@ -86,9 +60,7 @@ const PopupContentPolygon = ({
             {t("Validation")}
           </Text>
         </Flex>
-        <Text color={validationColor[validationStatus]} textStyle="400-bold">
-          {t(validationLabelKey[validationStatus])}
-        </Text>
+        <ValidationTag status="passed" />
       </Flex>
     </Flex>
   );

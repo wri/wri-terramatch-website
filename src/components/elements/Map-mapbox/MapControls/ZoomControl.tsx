@@ -1,4 +1,5 @@
 import { Map as MapboxMap } from "mapbox-gl";
+import type { FC } from "react";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
 import { useChampionsMap } from "@/components/elements/Map-mapbox/championsMap.context";
@@ -8,17 +9,14 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import { CheckIndeterminateIcon, CompressIcon, ExpandIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
 import MapControls from "@/redesignComponents/geospatial/MapControls/MapControls";
 
-export const ZoomControl = ({
-  map,
-  isFullscreen,
-  toggleFullscreen
-}: {
+type ZoomControlProps = {
   map: MapboxMap | null;
   isFullscreen?: boolean;
   toggleFullscreen: () => void;
-}) => {
-  const championsMap = useChampionsMap();
-  if (championsMap) {
+};
+
+export const ZoomControl: FC<ZoomControlProps> = ({ map, isFullscreen, toggleFullscreen }) => {
+  if (useChampionsMap()) {
     return (
       <MapControls
         defaultGaps

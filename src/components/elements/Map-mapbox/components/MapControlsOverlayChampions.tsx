@@ -1,3 +1,5 @@
+import type { FC } from "react";
+
 import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
@@ -15,7 +17,7 @@ import { ZoomControl } from "../MapControls/ZoomControl";
 import type { MapControlsOverlayProps } from "./MapControlsOverlay.types";
 
 /** Champions (non-admin) map controls: redesign spacing, legend, style tabs, and combined zoom/fullscreen. */
-const MapControlsOverlayChampions = ({
+const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
   hasControls,
   draw,
   style,
@@ -38,7 +40,7 @@ const MapControlsOverlayChampions = ({
     disabledPolygonPanel,
     selectedPolygonsInCheckbox
   } = admin;
-  const { formMap, editable, polygonFromMap, viewImages, setViewImages } = form;
+  const { formMap: isFormMap, editable, polygonFromMap, viewImages: isViewingImages, setViewImages } = form;
   const { map } = camera;
   const { dashboardMode, showViewGallery, imageGalleryRef } = gallery;
   const { showDownloadPolygons, isDownloadingPolygons, downloadGeoJsonPolygon } = download;
@@ -68,7 +70,7 @@ const MapControlsOverlayChampions = ({
 
       {hasControls ? (
         <>
-          {polygonFromMap?.isOpen && !formMap && !disabledPolygonPanel ? (
+          {polygonFromMap?.isOpen && !isFormMap && !disabledPolygonPanel ? (
             <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
               <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
             </ControlGroup>
@@ -116,7 +118,7 @@ const MapControlsOverlayChampions = ({
             </ControlGroup>
           ) : null}
 
-          {formMap ? (
+          {isFormMap ? (
             <>
               <ControlGroup position="top-left">
                 <PolygonHandler />
@@ -132,19 +134,21 @@ const MapControlsOverlayChampions = ({
             </>
           ) : null}
 
-          {status && validationType === "individualValidation" && !disabledPolygonPanel ? (
+          {status != null && status && validationType === "individualValidation" && !disabledPolygonPanel ? (
             <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
               <CheckIndividualPolygonControl viewRequestSuport={!siteData} entityData={record} />
             </ControlGroup>
           ) : null}
 
-          {viewImages ? (
+          {isViewingImages ? (
             <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
-              <ImageControl viewImages={viewImages} setViewImages={setViewImages} />
+              <ImageControl viewImages={isViewingImages} setViewImages={setViewImages} />
             </ControlGroup>
           ) : null}
 
-          {!editable && !viewImages ? <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} /> : null}
+          {!editable && !isViewingImages ? (
+            <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} />
+          ) : null}
 
           {isEditing ? (
             <ControlGroup position="top-right" className="top-[272px]">
@@ -152,7 +156,7 @@ const MapControlsOverlayChampions = ({
             </ControlGroup>
           ) : null}
 
-          {!formMap && showViewGallery ? (
+          {isFormMap !== true && showViewGallery ? (
             <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
               {dashboardMode === "dashboard" && styleReady && map != null && (
                 <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />

@@ -14,8 +14,8 @@ export interface ValidationTagMapProps {
 const ValidationTagStateMap: Record<ValidationTagState, ActionStatusTagState> = {
   "not-started": "neutral-light",
   "partially-passed": "attention",
-  failed: "success",
-  passed: "warning"
+  failed: "warning",
+  passed: "success"
 };
 
 const ValidationTagLabelMap: Record<ValidationTagState, string> = {

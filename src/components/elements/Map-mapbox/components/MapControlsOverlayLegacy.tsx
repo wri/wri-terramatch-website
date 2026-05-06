@@ -1,3 +1,5 @@
+import type { FC } from "react";
+
 import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
@@ -19,7 +21,7 @@ import type { MapControlsOverlayProps } from "./MapControlsOverlay.types";
  * this will be deleted or joined with the Champions map controls
  * once the redesign is complete
  */
-const MapControlsOverlayLegacy = ({
+const MapControlsOverlayLegacy: FC<MapControlsOverlayProps> = ({
   hasControls,
   draw,
   style,
@@ -42,7 +44,7 @@ const MapControlsOverlayLegacy = ({
     disabledPolygonPanel,
     selectedPolygonsInCheckbox
   } = admin;
-  const { formMap, editable, polygonFromMap, viewImages, setViewImages } = form;
+  const { formMap: isFormMap, editable, polygonFromMap, viewImages: isViewingImages, setViewImages } = form;
   const { map, center, zoom, bbox, hasControls: cameraHasControls } = camera;
   const { dashboardMode, showViewGallery, imageGalleryRef } = gallery;
   const { showDownloadPolygons, isDownloadingPolygons, downloadGeoJsonPolygon } = download;
@@ -72,7 +74,7 @@ const MapControlsOverlayLegacy = ({
 
       {hasControls ? (
         <>
-          {polygonFromMap?.isOpen && !formMap && !disabledPolygonPanel ? (
+          {polygonFromMap?.isOpen && !isFormMap && !disabledPolygonPanel ? (
             <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
               <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
             </ControlGroup>
@@ -120,7 +122,7 @@ const MapControlsOverlayLegacy = ({
             </ControlGroup>
           ) : null}
 
-          {formMap ? (
+          {isFormMap ? (
             <>
               <ControlGroup position="top-left">
                 <PolygonHandler />
@@ -136,19 +138,21 @@ const MapControlsOverlayLegacy = ({
             </>
           ) : null}
 
-          {status && validationType === "individualValidation" && !disabledPolygonPanel ? (
+          {status != null && status && validationType === "individualValidation" && !disabledPolygonPanel ? (
             <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
               <CheckIndividualPolygonControl viewRequestSuport={!siteData} entityData={record} />
             </ControlGroup>
           ) : null}
 
-          {viewImages ? (
+          {isViewingImages ? (
             <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
-              <ImageControl viewImages={viewImages} setViewImages={setViewImages} />
+              <ImageControl viewImages={isViewingImages} setViewImages={setViewImages} />
             </ControlGroup>
           ) : null}
 
-          {!editable && !viewImages ? <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} /> : null}
+          {!editable && !isViewingImages ? (
+            <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} />
+          ) : null}
 
           <ControlGroup
             position="top-right"
@@ -188,7 +192,7 @@ const MapControlsOverlayLegacy = ({
             </ControlGroup>
           ) : null}
 
-          {!formMap && showViewGallery ? (
+          {!isFormMap && showViewGallery ? (
             <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
               {dashboardMode === "dashboard" && styleReady && map != null && (
                 <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />

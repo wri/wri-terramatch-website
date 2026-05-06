@@ -4,7 +4,7 @@ import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { Map as MapboxMap, Marker } from "mapbox-gl";
 import { useRouter } from "next/router";
-import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useRef, useState } from "react";
+import React, { createContext, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { ValidationError } from "yup";
 
 import ControlGroup, { ControlMapPosition } from "@/components/elements/Map-mapbox/components/ControlGroup";
@@ -147,7 +147,7 @@ type MapContainerInnerProps = Omit<MapProps, "championsMap"> & {
   mapFunctions: NonNullable<MapProps["mapFunctions"]>;
 };
 
-const MapContainerInner = ({
+const MapContainerInner: FC<MapContainerInnerProps> = ({
   onError: _onError,
   editable,
   geojson,
@@ -170,7 +170,7 @@ const MapContainerInner = ({
   polygonsExists = true,
   shouldBboxZoom = true,
   dashboardMode = undefined,
-  formMap,
+  formMap: isFormMap,
   location,
   entityData,
   imageGalleryRef,
@@ -184,7 +184,7 @@ const MapContainerInner = ({
   dashboardContext,
   disabledPolygonPanel = false,
   ...props
-}: MapContainerInnerProps) => {
+}) => {
   const { map, mapContainer, draw, onCancel, initMap } = mapFunctions;
 
   const {
@@ -205,7 +205,7 @@ const MapContainerInner = ({
     initialPolygonFingerprint
   } = props;
 
-  const [viewImages, setViewImages] = useState(false);
+  const [isViewingImages, setIsViewingImages] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [mobilePopupData, setMobilePopupData] = useState<MobilePopupData | null>(null);
   const mapMarkerRef = useRef<Marker | null>(null);
@@ -392,7 +392,7 @@ const MapContainerInner = ({
     map,
     draw,
     isUserDrawingEnabled,
-    formMap,
+    formMap: isFormMap,
     polygonFromMap,
     polygonsData,
     centroids,
@@ -451,7 +451,13 @@ const MapContainerInner = ({
             disabledPolygonPanel,
             selectedPolygonsInCheckbox
           }}
-          form={{ formMap, editable, polygonFromMap, viewImages, setViewImages }}
+          form={{
+            formMap: isFormMap,
+            editable,
+            polygonFromMap,
+            viewImages: isViewingImages,
+            setViewImages: setIsViewingImages
+          }}
           camera={{ map: map.current, center, zoom, bbox, hasControls }}
           gallery={{ dashboardMode, showViewGallery, imageGalleryRef }}
           download={{ showDownloadPolygons, isDownloadingPolygons, downloadGeoJsonPolygon }}
@@ -489,7 +495,7 @@ const MapContainerInner = ({
   );
 };
 
-export const MapContainer = ({ mapFunctions, championsMap = false, ...rest }: MapProps) => {
+export const MapContainer: FC<MapProps> = ({ mapFunctions, championsMap = false, ...rest }) => {
   if (mapFunctions == null) return null;
   return (
     <ChampionsMapProvider championsMap={championsMap}>

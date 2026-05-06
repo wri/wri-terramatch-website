@@ -5,8 +5,8 @@ import { MutableRefObject, useEffect, useRef } from "react";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import { useChampionsMap } from "../championsMap.context";
+import { AdminPopup } from "../components/AdminPopup";
 import { DashboardPopup } from "../components/DashboardPopup";
-import { PolygonPopup } from "../components/PolygonPopup/PolygonPopup";
 import { addPopupsToMap } from "../interactions/popups";
 import type {
   DashboardPopupContext,
@@ -62,7 +62,7 @@ export function useMapPopups({
   useEffect(() => {
     if (!sourcesAdded || map.current == null || draw.current == null || !showPopups) return;
 
-    const PopupComponent = dashboardContext?.dashboardMode != null ? DashboardPopup : PolygonPopup;
+    const PopupComponent = dashboardContext?.dashboardMode != null ? DashboardPopup : AdminPopup;
 
     addPopupsToMap(map.current, PopupComponent, draw.current, {
       setPolygonFromMap: callbacksRef.current.setPolygonFromMap,

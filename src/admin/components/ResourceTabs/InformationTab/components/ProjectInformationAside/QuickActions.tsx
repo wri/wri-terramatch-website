@@ -13,7 +13,6 @@ import { Framework } from "@/context/framework.provider";
 import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
 import { v3EntityName } from "@/helpers/entity";
 import Log from "@/utils/log";
-import { downloadFileBlob } from "@/utils/network";
 
 const QuickActions: FC = () => {
   const { record } = useShowContext();
@@ -34,11 +33,10 @@ const QuickActions: FC = () => {
       }
     } else {
       try {
-        const { blob } = await entityExportAll.fetchBlob({
+        await entityExportAll.downloadFile({
           pathParams: { entity: v3EntityName(entity) as SupportedEntity },
           queryParams: { projectUuid: record.uuid }
         });
-        await downloadFileBlob(blob, `${record.name} ${entity.replace("-reports", "")} reports.csv`);
       } catch (error) {
         Log.error("Failed to download entity CSV:", error);
       }

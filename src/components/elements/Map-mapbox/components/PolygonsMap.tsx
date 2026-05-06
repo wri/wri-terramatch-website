@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import type { FC } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -41,7 +42,8 @@ const EMPTY_POLYGON_MAP: Record<string, string[]> = {
 
 type PolygonGeometryFeature = Pick<GeoJSON.Feature, "geometry">;
 
-const PolygonsMap = ({ entityModel, type, className }: PolygonsMapProps) => {
+const PolygonsMap: FC<PolygonsMapProps> = ({ entityModel, type, className }) => {
+  // Champions map keeps polygon panel disabled until edit/validation UX is migrated.
   const disabledPolygonPanel = true;
   const [polygonDataMap, setPolygonDataMap] = useState<Record<string, string[]>>(() => ({ ...EMPTY_POLYGON_MAP }));
   const [polygonFromMap, setPolygonFromMap] = useState<PolygonFromMapState>({ isOpen: false, uuid: "" });
