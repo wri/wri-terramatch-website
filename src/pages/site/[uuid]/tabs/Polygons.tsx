@@ -245,7 +245,8 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
       },
       {
         key: "targetLandUse",
-        label: t("Target Land Use")
+        label: t("Target Land Use"),
+        sortable: true
       },
       {
         key: "plantingDate",
@@ -254,7 +255,8 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
       },
       {
         key: "treeDistribution",
-        label: t("Tree Distribution")
+        label: t("Tree Distribution"),
+        sortable: true
       },
       {
         key: "treesPlanted",
@@ -281,46 +283,45 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
         <TableCell>
           <Checkbox name={`checkbox-${row.id}`} onCheckedChange={handleOnRowSelected} checked={isSelected} />
         </TableCell>
-        <TableCell className="min-w-[10.688rem] max-w-[18.75rem]">
-          <Text textStyle="400-bold" color="neutral.800">
+        <TableCell className="min-w-[17.75rem] max-w-[17.75rem]">
+          <Text textStyle="400-bold" color="neutral.800" className="truncate">
             {row.polygonName}
           </Text>
         </TableCell>
-        <TableCell className="min-w-[9.375rem] max-w-[16.875rem]">
+        <TableCell className="min-w-[15.875rem]">
           <MappedTag state={row.submission} />
         </TableCell>
-        <TableCell className="min-w-[8.563rem] max-w-[13.75rem]">
+        <TableCell className="min-w-[12.75rem]">
           <ValidationTag className="" status={row.validation} />
         </TableCell>
-        <TableCell className="min-w-[12.5rem] max-w-[17.5rem]">
+        <TableCell className="min-w-[15.5rem]">
           <Flex className="items-center gap-2">{renderRestorationPractice(row.restorationPractice)}</Flex>
         </TableCell>
-        <TableCell className="min-w-[11.563rem] max-w-[18.75rem]">
+        <TableCell className="min-w-[16.75rem]">
           <Flex className="items-center gap-2" color="neutral.800">
             {getTargetLandUseConfig(row.targetLandUse).icon}
             <Text>{getTargetLandUseConfig(row.targetLandUse).label}</Text>
           </Flex>
         </TableCell>
-        <TableCell className="min-w-[10.188rem] max-w-[12.5rem]">
+        <TableCell className="min-w-[11.5rem]">
           <FeedbackTag
-            type="info-white"
+            type="info-grey"
             className="w-fit"
             label={row.plantingDate}
-            size="small"
             icon={<CalendarIcon boxSize={2.5} />}
           />
         </TableCell>
-        <TableCell className="min-w-[11.875rem] max-w-[16.875rem]">
+        <TableCell className="min-w-[15.875rem]">
           <Text>{row.treeDistribution.join(", ")}</Text>
         </TableCell>
-        <TableCell className="min-w-[8.875rem] max-w-[13.75rem]">{row.treesPlanted}</TableCell>
-        <TableCell className="min-w-[8.25rem] max-w-[16.75rem]">{row.area}</TableCell>
+        <TableCell className="min-w-[12.75rem]">{row.treesPlanted}</TableCell>
+        <TableCell className="min-w-[15.75rem]">{row.area}</TableCell>
       </TableRow>
     );
   };
 
   return (
-    <PageContent>
+    <PageContent className="bg-theme-neutral-100">
       <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
         <PolygonsMap
           entityModel={site}
