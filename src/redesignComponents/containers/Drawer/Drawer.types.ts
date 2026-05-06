@@ -2,7 +2,10 @@ import { ReactNode } from "react";
 
 export interface DrawerProps {
   children: (props: { onClose: () => void }) => ReactNode;
-  trigger: ReactNode;
+  trigger?: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  defaultOpen?: boolean;
 }
 
 export interface DrawerTyped {

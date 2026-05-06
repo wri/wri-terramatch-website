@@ -33,6 +33,7 @@ import {
   DueIcon,
   EditIcon,
   ExpandIcon,
+  FilterIcon,
   GrasslandIcon,
   IncorrectIcon,
   IndeterminateIcon,
@@ -288,6 +289,9 @@ export const AllIcons: Story = {
           <IconWrapper name="Expand">
             <ExpandIcon boxSize={8} />
           </IconWrapper>
+          <IconWrapper name="Filter">
+            <FilterIcon boxSize={8} />
+          </IconWrapper>
           <IconWrapper name="Incorrect">
             <IncorrectIcon boxSize={8} />
           </IconWrapper>
@@ -542,6 +546,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Expand">
           <ExpandIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Filter">
+          <FilterIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Incorrect">
           <IncorrectIcon boxSize={8} />

@@ -52,6 +52,7 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
 }) => {
   const [dates, setDates] = useState<DateValue[]>([]);
   const preservedRef = useRef<PreservedDate | null>(null);
+  const portalContainerRef = useRef<HTMLDivElement | null>(null);
   const browserLocale = useMemo(() => navigator.language, []);
   const dateFormat = useMemo(() => getDateFormatString(browserLocale), [browserLocale]);
 
@@ -140,6 +141,7 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
           </FieldErrorMessage>
         ) : null}
         <StyledPickerWrapper
+          ref={portalContainerRef}
           $size={size}
           data-invalid={errorMessage != null ? "" : undefined}
           data-open={picker.open ? "" : undefined}
@@ -167,7 +169,7 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
                 <DatePicker.Input index={1} placeholder={dateFormat} />
               </div>
             </DatePicker.Control>
-            <Portal>
+            <Portal container={portalContainerRef}>
               <DatePicker.Positioner>
                 <DatePicker.Content>
                   <DateRangeInputs onClearDate={handleClearDate} preservedRef={preservedRef} dateFormat={dateFormat} />
