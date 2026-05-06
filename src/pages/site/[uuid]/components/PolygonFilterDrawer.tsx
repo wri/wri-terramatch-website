@@ -20,7 +20,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({ trigger }) => {
     <Drawer trigger={trigger}>
       {({ onClose }) => (
         <FilterPanel
-          title="Filters"
+          title={t("Filters")}
           variant="fixed"
           onClose={onClose}
           className="h-screen"
