@@ -357,7 +357,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
       <PolygonFilterDrawer
         trigger={
           <Button size="small" variant="secondary" leftIcon={<FilterIcon />}>
-            Add Filter
+            {t("Add Filter")}
           </Button>
         }
       />

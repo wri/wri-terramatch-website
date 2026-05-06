@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import React, { FC } from "react";
 
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
@@ -14,6 +15,7 @@ interface PolygonFilterDrawerProps {
 }
 
 const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({ trigger }) => {
+  const t = useT();
   return (
     <Drawer trigger={trigger}>
       {({ onClose }) => (
@@ -24,38 +26,38 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({ trigger }) => {
           className="h-screen"
           content={
             <>
-              <FilterCard label="Submission Status">
+              <FilterCard label={t("Submission Status")}>
                 <Checkbox name="submission-status-draft" value="draft" defaultChecked>
-                  Draft
+                  {t("Draft")}
                 </Checkbox>
                 <Checkbox name="submission-status-pending-approval" value="pending-approval">
-                  Pending Approval
+                  {t("Pending Approval")}
                 </Checkbox>
                 <Checkbox name="submission-status-information-required" value="information-required">
-                  Information Required
+                  {t("Information Required")}
                 </Checkbox>
                 <Checkbox name="submission-status-approved" value="approved">
-                  Approved
+                  {t("Approved")}
                 </Checkbox>
               </FilterCard>
-              <FilterCard label="System Validation">
+              <FilterCard label={t("System Validation")}>
                 <Checkbox name="system-validation-not-started" value="not-started">
-                  Not Started
+                  {t("Not Started")}
                 </Checkbox>
                 <Checkbox name="system-validation-failed" value="failed" defaultChecked>
-                  Failed
+                  {t("Failed")}
                 </Checkbox>
                 <Checkbox name="system-validation-partially-passed" value="partially-passed" defaultChecked>
-                  Partially Passed
+                  {t("Partially Passed")}
                 </Checkbox>
                 <Checkbox name="system-validation-passed" value="passed">
-                  Passed
+                  {t("Passed")}
                 </Checkbox>
               </FilterCard>
-              <FilterCard label="Plant Start Date">
+              <FilterCard label={t("Plant Start Date")}>
                 <DateRangeInput />
               </FilterCard>
-              <FilterCard label="Restoration Practice">
+              <FilterCard label={t("Restoration Practice")}>
                 <SelectInput
                   items={[
                     {
@@ -72,10 +74,10 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({ trigger }) => {
                     }
                   ]}
                   onChange={function noRefCheck() {}}
-                  placeholder="Please select"
+                  placeholder={t("Please Select")}
                 />
               </FilterCard>
-              <FilterCard label="Target Land Use">
+              <FilterCard label={t("Target Land Use")}>
                 <SelectInput
                   items={[
                     {
@@ -92,10 +94,10 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({ trigger }) => {
                     }
                   ]}
                   onChange={function noRefCheck() {}}
-                  placeholder="Please select"
+                  placeholder={t("Please Select")}
                 />
               </FilterCard>
-              <FilterCard label="Submission Cycle">
+              <FilterCard label={t("Submission Cycle")}>
                 <SelectInput
                   items={[
                     {
@@ -112,12 +114,12 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({ trigger }) => {
                     }
                   ]}
                   onChange={function noRefCheck() {}}
-                  placeholder="Please select"
+                  placeholder={t("Please Select")}
                 />
               </FilterCard>
-              <FilterCard label="Overlap">
+              <FilterCard label={t("Overlap")}>
                 <Switch name="overlap" defaultChecked>
-                  Show Polygon Overlaps
+                  {t("Show Polygon Overlaps")}
                 </Switch>
               </FilterCard>
             </>
@@ -126,11 +128,11 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({ trigger }) => {
             <ButtonGroup
               buttons={[
                 {
-                  children: "Clear all",
+                  children: t("Clear all"),
                   variant: "secondary"
                 },
                 {
-                  children: "Apply",
+                  children: t("Apply"),
                   variant: "primary",
                   onClick: onClose
                 }
