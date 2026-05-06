@@ -19,6 +19,7 @@ interface IImageGalleryCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDi
   imageSize?: number;
   className?: string;
   onSelectImage?: (image: GalleryImageType) => void;
+  classNameImage?: string;
 }
 
 const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
@@ -28,7 +29,8 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
   imageSize = 164,
   onSelectImage,
   onScroll,
-  className
+  className,
+  classNameImage
 }) => {
   const imageCount = images?.length ?? 0;
   const minimumCapacity = Math.max(MIN_ITEMS, columns * MIN_ROWS);
@@ -53,7 +55,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
             src={image.src}
             alt={image.alt}
             size={imageSize}
-            className="min-w-full bg-theme-neutral-200"
+            className={twMerge("min-w-full bg-theme-neutral-200", classNameImage)}
             hoverContent={" "}
           />
         </GridItem>
@@ -66,7 +68,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
           <GridItem key={`placeholder-${index}`}>
             {showAddSlot ? (
               <GalleryImage
-                className="min-w-full bg-theme-neutral-200"
+                className={twMerge("min-w-full bg-theme-neutral-200", classNameImage)}
                 alt={isEmpty ? t("No images available") : t("Add image")}
                 isAdd={true}
                 onClickAdd={onClickAdd}

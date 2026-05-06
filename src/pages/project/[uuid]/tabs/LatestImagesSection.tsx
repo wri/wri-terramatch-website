@@ -35,7 +35,15 @@ const LatestImagesSectionTab: FC<{ entityUuid: string; entityName: SupportedEnti
       src: media.url ?? "",
       alt: media.name
     })) ?? [];
-  return <ImageGalleryCard images={images} onClickAdd={() => goToTab("gallery")} columns={columns} />;
+  return (
+    <ImageGalleryCard
+      classNameImage="!w-auto"
+      className="w-full"
+      images={images}
+      onClickAdd={() => goToTab("gallery")}
+      columns={columns}
+    />
+  );
 };
 
 export default LatestImagesSectionTab;

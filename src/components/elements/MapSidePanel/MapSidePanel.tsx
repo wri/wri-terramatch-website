@@ -251,14 +251,14 @@ const MapSidePanel = ({
   return (
     <div {...props} className={classNames("flex h-[250px] flex-1 flex-col", className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full rounded-l-lg backdrop-blur-md" />
-      <div className="mb-4 flex items-center justify-between rounded-tl-lg">
+      <div className="mb-4 flex items-center justify-between rounded-tl-lg mobile:flex-col mobile:gap-2">
         <button className="text-white hover:text-primary-300" onClick={() => setIsUserDrawingEnabled(true)}>
           <Text variant="text-14-bold" className="flex items-center uppercase">
-            <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
+            <Icon name={IconNames.PLUS_PA} className="h-4 w-4 mobile:hidden" />
             &nbsp; {t("new Polygon")}
           </Text>
         </button>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ">
           <div className="relative" ref={menuCheckboxRef}>
             <div className="rounded bg-white p-1.5" onClick={() => setOpenMenu(!openMenu)}>
               <Icon name={IconNames.IC_FILTER} className="h-4 w-4 text-blueCustom-900 hover:text-primary-500" />
@@ -295,12 +295,12 @@ const MapSidePanel = ({
         </div>
       </div>
       {filteredItems.length > 0 && (
-        <div className="mb-4 flex items-center justify-between">
-          <Text variant="text-12" className="text-white">
+        <div className="mb-4 flex items-center justify-between mobile:justify-center">
+          <Text variant="text-12" className="text-white mobile:hidden">
             Showing {(startIndex + 1).toLocaleString()}-{Math.min(endIndex, filteredItems.length).toLocaleString()} of{" "}
             {filteredItems.length.toLocaleString()} polygons
           </Text>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ">
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage <= 1}
