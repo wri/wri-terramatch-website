@@ -68,13 +68,7 @@ export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, site
 
   return (
     <>
-      <PointMarker
-        ariaLabel="This is a custom icon marker"
-        variant="simple-pin"
-        onClick={() => setOpen(true)}
-        triggerRef={triggerRef}
-        showFocusState={open}
-      />
+      <PointMarker variant="simple-pin" onClick={() => setOpen(true)} triggerRef={triggerRef} showFocusState={open} />
       <MapPopUp
         anchorRef={triggerRef}
         content={
