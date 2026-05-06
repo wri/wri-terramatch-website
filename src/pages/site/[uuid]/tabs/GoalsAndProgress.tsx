@@ -362,7 +362,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
         </PageCard>
       </PageRow>
       <PageRow>
-        <PageCard title={t("EXOTIC TREES REMOVAL PROGRESS")}>
+        <PageCard title={t("INVASIVE TREES REMOVAL PROGRESS")}>
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
               <GoalProgressCard
