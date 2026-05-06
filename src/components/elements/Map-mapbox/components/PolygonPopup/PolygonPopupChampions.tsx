@@ -70,7 +70,9 @@ export function PolygonPopupChampions({ popup, sitePolygon }: PolygonPopupChampi
             validationStatus={metrics.validationStatus}
           />
         }
-        footer={<PopupFooterPolygon />}
+        footer={
+          <PopupFooterPolygon polygonUuid={sitePolygon?.polygonUuid ?? undefined} polygonName={metrics.polygonName} />
+        }
         placement="right"
         open={open}
         onOpenChange={nextOpen => {
