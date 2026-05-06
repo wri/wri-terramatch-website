@@ -1,4 +1,7 @@
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import { ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 
 export const mapStatusToTagStateEntity = (
   status: string | null | undefined
@@ -16,5 +19,34 @@ export const mapStatusToTagStateEntity = (
       return { type: "approved" };
     default:
       return undefined;
+  }
+};
+
+export const mapSitePolygonStatusToMappedTagState = (status: SitePolygonLightDto["status"]): MappedTagState => {
+  switch (status) {
+    case "approved":
+      return "approved";
+    case "submitted":
+      return "pending-approval";
+    case "needs-more-information":
+      return "information-required";
+    case "draft":
+    default:
+      return "draft";
+  }
+};
+
+export const mapSitePolygonValidationStatusToValidationTagState = (
+  status: SitePolygonLightDto["validationStatus"]
+): ValidationTagState => {
+  switch (status) {
+    case "passed":
+      return "passed";
+    case "failed":
+      return "failed";
+    case "partial":
+      return "partially-passed";
+    default:
+      return "not-started";
   }
 };
