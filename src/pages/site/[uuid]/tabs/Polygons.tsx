@@ -1,11 +1,12 @@
 import { Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
-import { FC, ReactNode, useMemo } from "react";
+import { FC, ReactNode, useEffect, useMemo } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { useAllSiteValidations } from "@/connections/Validation";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
@@ -38,6 +39,7 @@ import {
   WoodlotIcon
 } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import {
   mapSitePolygonStatusToMappedTagState,
   mapSitePolygonValidationStatusToValidationTagState
@@ -174,6 +176,33 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     entityUuid: site.uuid,
     enabled: !!site.uuid
   });
+
+  const { allValidations: overlapValidations, fetchAllValidationPages: fetchOverlapValidations } =
+    useAllSiteValidations(site.uuid, OVERLAPPING_CRITERIA_ID);
+
+  const polygonIdsKey = useMemo(
+    () =>
+      polygonsData
+        .map(p => p.uuid)
+        .filter(Boolean)
+        .sort()
+        .join(","),
+    [polygonsData]
+  );
+
+  useEffect(() => {
+    if (site.uuid == null || site.uuid === "") {
+      return;
+    }
+    void fetchOverlapValidations();
+  }, [site.uuid, polygonIdsKey, fetchOverlapValidations]);
+
+  const polygonsWithOverlapCount = useMemo(() => {
+    const ids = new Set(
+      overlapValidations.map(v => v.polygonUuid).filter((id): id is string => id != null && id !== "")
+    );
+    return ids.size;
+  }, [overlapValidations]);
 
   const polygonRows = useMemo<PolygonTableRow[]>(
     () =>
@@ -354,14 +383,20 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
             className="min-w-[12.5rem]"
           />
         </Flex>
-        <InlineMessage
-          actionLabel={t("Selected Polygons")}
-          isButtonRight
-          size="small"
-          label={t("6 Overlaps detected")}
-          onActionClick={function noRefCheck() {}}
-          variant="error"
-        />
+        {polygonsWithOverlapCount > 0 && (
+          <InlineMessage
+            actionLabel={t("Selected Polygons")}
+            isButtonRight
+            size="small"
+            label={
+              polygonsWithOverlapCount === 1
+                ? t("1 overlap detected")
+                : t("{count} overlaps detected", { count: polygonsWithOverlapCount })
+            }
+            onActionClick={function noRefCheck() {}}
+            variant="error"
+          />
+        )}
       </Flex>
       <Table<PolygonTableRow>
         data={polygonRows}
