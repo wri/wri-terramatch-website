@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import TooltipMap from "@/components/elements/TooltipMap/TooltipMap";
 
 import type { PopupComponentProps } from "../../Map.d";
-import { findSitePolygonByMapFeatureUuid } from "../../sitePolygonMapLookup";
+import { findSitePolygonByMapFeatureUuid } from "../../sitePolygonPopupUtils";
 import { PolygonPopupChampions } from "./PolygonPopupChampions";
 
 export function PolygonPopup(event: PopupComponentProps) {

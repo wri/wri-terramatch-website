@@ -11,7 +11,7 @@ import {
   formatAreaHectaresForPopup,
   formatTreesPlantedForPopup,
   normalizePolygonValidationStatus
-} from "../../sitePolygonMapLookup";
+} from "../../sitePolygonPopupUtils";
 import PopupContentPolygon from "../PopupPolygon/PopupContentPolygon";
 import PopupFooterPolygon from "../PopupPolygon/PopupFooterPolygon";
 import PopupHeaderPolygon from "../PopupPolygon/PopupHeaderPolygon";

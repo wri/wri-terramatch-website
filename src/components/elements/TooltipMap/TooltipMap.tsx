@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import { useMemo } from "react";
 
-import { findSitePolygonByMapFeatureUuid } from "@/components/elements/Map-mapbox/sitePolygonMapLookup";
+import { findSitePolygonByMapFeatureUuid } from "@/components/elements/Map-mapbox/sitePolygonPopupUtils";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
