@@ -168,7 +168,7 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
 
 export const calendarBaseGlobalStyles = css`
   [data-scope="date-picker"][data-part="positioner"] {
-    z-index: 50;
+    z-index: var(--chakra-z-index-popover) !important;
   }
 
   [data-scope="date-picker"][data-part="content"] {

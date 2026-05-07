@@ -30,6 +30,7 @@ export { DragIcon } from "./Function/DragIcon";
 export { DueIcon } from "./Status/DueIcon";
 export { EditIcon } from "./Function/EditIcon";
 export { ExpandIcon } from "./Function/ExpandIcon";
+export { FilterIcon } from "./Function/FilterIcon";
 export { GrasslandIcon } from "./RestorationAndLand/GrasslandIcon";
 export { IncorrectIcon } from "./Function/IncorrectIcon";
 export { IndeterminateIcon } from "./Function/IndeterminateIcon";
