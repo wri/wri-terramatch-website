@@ -10,6 +10,8 @@ import { useAllSiteValidations } from "@/connections/Validation";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
+import PolygonFilterDrawer from "@/pages/site/[uuid]/components/PolygonFilterDrawer";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { getThemedColor } from "@/lib/theme";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import MappedTag, { MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
@@ -26,6 +28,7 @@ import {
   AssistedNaturalRegenIcon,
   CalendarIcon,
   DirectSeedingIcon,
+  FilterIcon,
   GrasslandIcon,
   MangroveIcon,
   NaturalForestIcon,
@@ -430,7 +433,14 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   );
 
   return (
-    <PageContent className="bg-theme-neutral-100">
+    <PageContent className="bg-theme-neutral.100">
+      <PolygonFilterDrawer
+        trigger={
+          <Button size="small" variant="secondary" leftIcon={<FilterIcon />}>
+            {t("Add Filter")}
+          </Button>
+        }
+      />
       <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
         <PolygonsMap
           entityModel={site}
