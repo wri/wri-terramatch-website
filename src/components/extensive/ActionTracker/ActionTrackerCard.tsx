@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
-import { useMemo } from "react";
-import { Else, If, Then, When } from "react-if";
+import { FC, useMemo } from "react";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -61,16 +60,10 @@ export type ActionTrackerCardProps = {
   limit?: number;
 };
 
-const ActionTrackerCard = (props: ActionTrackerCardProps) => {
+const ActionTrackerCard: FC<ActionTrackerCardProps> = props => {
   const items = useMemo(() => {
-    if (!props.data || props.data.length === 0) {
-      return [];
-    }
-
-    if (props.limit) {
-      return [...props.data].splice(0, props.limit);
-    }
-
+    if (props.data.length === 0) return [];
+    if (props.limit != null) return [...props.data].splice(0, props.limit);
     return props.data;
   }, [props.data, props.limit]);
 
@@ -83,24 +76,19 @@ const ActionTrackerCard = (props: ActionTrackerCardProps) => {
       <Text variant="text-heading-500" className="mb-2">
         {props.title}
       </Text>
-      <When condition={!!props.subtitle}>
-        <Text variant="text-body-500">{props.subtitle}</Text>
-      </When>
-      <If condition={!!items.length}>
-        <Then>
+      {props.subtitle != null && <Text variant="text-body-500">{props.subtitle}</Text>}
+      {items.length > 0 ? (
+        <>
           <List
             className="scroll-indicator-hide mt-4 flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto rounded-lg border border-neutral border-opacity-30 p-4 wide:p-6"
             items={items}
             render={row => <ActionTrackerCardRow {...row} />}
           />
-          <When condition={!!props.cta}>
-            <Button {...props.cta} className="mt-4" />
-          </When>
-        </Then>
-        <Else>
-          <ActionTrackerCardEmptyState {...props.emptyState} className="mt-4" />
-        </Else>
-      </If>
+          {props.cta != null && <Button {...props.cta} className="mt-4" />}
+        </>
+      ) : (
+        <ActionTrackerCardEmptyState {...props.emptyState} className="mt-4" />
+      )}
     </div>
   );
 };

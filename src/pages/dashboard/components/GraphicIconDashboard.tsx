@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { MouseEvent, useState } from "react";
-import { When } from "react-if";
+import { FC, MouseEvent, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -9,17 +8,14 @@ import { getPercentage } from "@/utils/dashboardUtils";
 
 import { DashboardTableDataProps } from "../index.page";
 
-const GraphicIconDashboard = ({
-  data,
-  maxValue,
-  title,
-  className
-}: {
+type GraphicIconDashboardProps = {
   data: DashboardTableDataProps[];
   maxValue: number;
   title?: string;
   className?: string;
-}) => {
+};
+
+const GraphicIconDashboard: FC<GraphicIconDashboardProps> = ({ data, maxValue, title, className }) => {
   const t = useT();
   const [tooltip, setTooltip] = useState<{
     text: string | null;
@@ -79,81 +75,83 @@ const GraphicIconDashboard = ({
 
   return (
     <div className={classNames("relative grid w-full gap-4", className)}>
-      <When condition={title}>
+      {title != null && (
         <Text variant="text-14" className="text-14 mb-1 uppercase text-darkCustom">
           {title}
         </Text>
-      </When>
-      <When condition={sortedData.length > 0}>
-        <div className="relative flex h-9 w-full rounded bg-blueCustom-30 first:rounded-l first-of-type:rounded-l lg:h-10">
-          {sortedData.map((item, index) => {
-            const percentage = getPercentage(item.value, maxValue);
-            return (
-              <div
-                className={classNames(
-                  "relative h-9 w-0 hover:border hover:border-white lg:h-10",
-                  colorIconLabel(item.label).color,
-                  index === 0 && "rounded-l",
-                  index === sortedData.length - 1 && "rounded-r"
-                )}
-                style={{ width: `${percentage}%` }}
-                key={index}
-                onMouseMove={e => handleMouseMove(e, item.label, item.valueText)}
-                onMouseLeave={handleMouseLeave}
-              />
-            );
-          })}
-        </div>
-        {tooltip.text && tooltip.position && (
-          <div
-            className="shadow-md fixed z-10 w-auto rounded border border-darkCustom bg-white p-2"
-            style={{
-              left: `${tooltip.position.left}px`,
-              top: `${tooltip.position.top}px`,
-              transform: "translateX(-50%)"
-            }}
-          >
-            <p className="text-12-bold text-darkCustom">{`${t(tooltip.label)} `}</p>
-            <span className="text-12-light text-darkCustom">{t(tooltip.text)}</span>
-          </div>
-        )}
-        <div className="w-full">
-          {sortedData.map((item, index) => {
-            const percentage = getPercentage(item.value, maxValue);
-            return (
-              <div
-                key={index}
-                className={`${index + 1 !== sortedData.length ? "border-b" : ""} w-full border-grey-350 py-2`}
-              >
-                <div className="mb-1 flex w-full justify-between">
-                  <div className="flex gap-1">
-                    <Icon name={IconNames[colorIconLabel(item.label).icon]} />
-                    <Text variant="text-14-light" className="text-darkCustom">
-                      {t(item.label)}
-                    </Text>
-                  </div>
-                  <Text variant="text-14" className="text-darkCustom">
-                    {t(item.valueText)}
-                  </Text>
-                </div>
+      )}
+      {sortedData.length > 0 && (
+        <>
+          <div className="relative flex h-9 w-full rounded bg-blueCustom-30 first:rounded-l first-of-type:rounded-l lg:h-10">
+            {sortedData.map((item, index) => {
+              const percentage = getPercentage(item.value, maxValue);
+              return (
                 <div
-                  className="relative h-4 rounded bg-blueCustom-30 lg:h-5"
+                  className={classNames(
+                    "relative h-9 w-0 hover:border hover:border-white lg:h-10",
+                    colorIconLabel(item.label).color,
+                    index === 0 && "rounded-l",
+                    index === sortedData.length - 1 && "rounded-r"
+                  )}
+                  style={{ width: `${percentage}%` }}
+                  key={index}
                   onMouseMove={e => handleMouseMove(e, item.label, item.valueText)}
                   onMouseLeave={handleMouseLeave}
+                />
+              );
+            })}
+          </div>
+          {tooltip.text && tooltip.position && (
+            <div
+              className="shadow-md fixed z-10 w-auto rounded border border-darkCustom bg-white p-2"
+              style={{
+                left: `${tooltip.position.left}px`,
+                top: `${tooltip.position.top}px`,
+                transform: "translateX(-50%)"
+              }}
+            >
+              <p className="text-12-bold text-darkCustom">{`${t(tooltip.label)} `}</p>
+              <span className="text-12-light text-darkCustom">{t(tooltip.text)}</span>
+            </div>
+          )}
+          <div className="w-full">
+            {sortedData.map((item, index) => {
+              const percentage = getPercentage(item.value, maxValue);
+              return (
+                <div
+                  key={index}
+                  className={`${index + 1 !== sortedData.length ? "border-b" : ""} w-full border-grey-350 py-2`}
                 >
+                  <div className="mb-1 flex w-full justify-between">
+                    <div className="flex gap-1">
+                      <Icon name={IconNames[colorIconLabel(item.label).icon]} />
+                      <Text variant="text-14-light" className="text-darkCustom">
+                        {t(item.label)}
+                      </Text>
+                    </div>
+                    <Text variant="text-14" className="text-darkCustom">
+                      {t(item.valueText)}
+                    </Text>
+                  </div>
                   <div
-                    className={classNames(
-                      "relative h-4 w-0 rounded hover:border hover:border-white lg:h-5",
-                      colorIconLabel(item.label).color
-                    )}
-                    style={{ width: `${percentage}%` }}
-                  />
+                    className="relative h-4 rounded bg-blueCustom-30 lg:h-5"
+                    onMouseMove={e => handleMouseMove(e, item.label, item.valueText)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <div
+                      className={classNames(
+                        "relative h-4 w-0 rounded hover:border hover:border-white lg:h-5",
+                        colorIconLabel(item.label).color
+                      )}
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      </When>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 };

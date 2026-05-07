@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
+import { FC } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -17,7 +17,7 @@ type BuildStrongerProfileProps = {
   onEdit: () => void;
 };
 
-const BuildStrongerProfile = ({ subtitle, steps, onEdit }: BuildStrongerProfileProps) => {
+const BuildStrongerProfile: FC<BuildStrongerProfileProps> = ({ subtitle, steps, onEdit }) => {
   const t = useT();
 
   return (
@@ -33,14 +33,14 @@ const BuildStrongerProfile = ({ subtitle, steps, onEdit }: BuildStrongerProfileP
         </div>
         <List
           items={steps}
-          render={step => (
-            <When condition={step.showWhen}>
+          render={step =>
+            step.showWhen ? (
               <div className="mb-6 flex flex-col justify-between gap-2 rounded-xl bg-white p-4 pr-6 shadow">
                 <Text variant="text-heading-200">{step.title}</Text>
                 <Text variant="text-body-600">{step.subtitle}</Text>
               </div>
-            </When>
-          )}
+            ) : null
+          }
         />
       </div>
     </section>

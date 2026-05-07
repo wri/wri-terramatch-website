@@ -1,8 +1,7 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { PropsWithChildren, useState } from "react";
-import { When } from "react-if";
+import { FC, PropsWithChildren, useState } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { Option } from "@/types/common";
@@ -23,7 +22,7 @@ export interface FilterDropDownProps {
   classNameContent?: string;
 }
 
-const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
+const FilterDropDown: FC<PropsWithChildren<FilterDropDownProps>> = props => {
   const [selected, setSelected] = useState(props.defaultValue);
   const t = useT();
 
@@ -36,11 +35,11 @@ const FilterDropDown = (props: PropsWithChildren<FilterDropDownProps>) => {
     <Listbox as="div" className={classNames("space-y-2", props.className)} value={selected} onChange={onChangeHandler}>
       {({ open, value }) => (
         <div className="flex items-center gap-3">
-          <When condition={!!props.label}>
+          {props.label != null && (
             <Listbox.Label as={Text} variant="text-16-bold">
               {t(props.label)}
             </Listbox.Label>
-          </When>
+          )}
           <div className="relative">
             <Listbox.Button
               as="div"

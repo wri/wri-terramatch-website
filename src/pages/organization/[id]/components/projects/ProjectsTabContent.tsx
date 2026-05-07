@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { Else, If, Then } from "react-if";
+import { FC } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
@@ -17,15 +17,15 @@ import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchem
 import { Status } from "@/types/common";
 import { formatOptionsList } from "@/utils/options";
 
-const ProjectsTabContent = () => {
+const ProjectsTabContent: FC = () => {
   const t = useT();
   const [, { data: projects }] = useProjectIndex({});
   const countryOptions = useGadmOptions({ level: 0 });
 
   return (
     <Container className="px-8 py-15">
-      <If condition={(projects?.length ?? 0) > 0}>
-        <Then>
+      {(projects?.length ?? 0) > 0 ? (
+        <>
           <div className="mb-8 flex">
             <Text variant="text-heading-1000" className="flex-1">
               {t("Projects")}
@@ -62,40 +62,35 @@ const ProjectsTabContent = () => {
                   header: "",
                   enableSorting: false,
                   accessorKey: "uuid",
-                  cell: props => (
-                    <If condition={props.row.original?.status === "started"}>
-                      <Then>
-                        <Button as={Link} href={`/entity/projects/edit/${props.getValue()}`} className="float-right">
-                          {t("Continue")}
-                        </Button>
-                      </Then>
-                      <Else>
-                        <Button as={Link} href={`/project/${props.getValue()}`} className="float-right">
-                          {t("View")}
-                        </Button>
-                      </Else>
-                    </If>
-                  )
+                  cell: props =>
+                    props.row.original?.status === "started" ? (
+                      <Button as={Link} href={`/entity/projects/edit/${props.getValue()}`} className="float-right">
+                        {t("Continue")}
+                      </Button>
+                    ) : (
+                      <Button as={Link} href={`/project/${props.getValue()}`} className="float-right">
+                        {t("View")}
+                      </Button>
+                    )
                 }
               ]}
               data={projects ?? []}
               initialTableState={{ pagination: { pageSize: 5 } }}
             />
           </div>
-        </Then>
-        <Else>
-          <EmptyState
-            title={t("Create a project")}
-            subtitle={t("Your organization currently does not have any available projects.")}
-            iconProps={{ name: IconNames.LIGHT_BULB_CIRCLE, className: "fill-success" }}
-            ctaProps={{
-              as: Link,
-              href: "/project/reporting-framework-select",
-              children: t("Create Project")
-            }}
-          />
-        </Else>
-      </If>
+        </>
+      ) : (
+        <EmptyState
+          title={t("Create a project")}
+          subtitle={t("Your organization currently does not have any available projects.")}
+          iconProps={{ name: IconNames.LIGHT_BULB_CIRCLE, className: "fill-success" }}
+          ctaProps={{
+            as: Link,
+            href: "/project/reporting-framework-select",
+            children: t("Create Project")
+          }}
+        />
+      )}
     </Container>
   );
 };

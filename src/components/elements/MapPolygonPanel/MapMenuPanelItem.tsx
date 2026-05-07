@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
-import { When } from "react-if";
+import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -27,7 +26,7 @@ import { StatusEnum } from "../Status/constants/statusMap";
 import Status from "../Status/Status";
 import ChecklistErrorsInformation from "./ChecklistErrorsInformation";
 
-export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+export type MapMenuPanelItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   uuid: string;
   title: string;
   subtitle?: string;
@@ -44,9 +43,9 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   validationStatus?: string;
   isAdmin?: boolean;
   anrMonitoringPlotsEligible?: boolean;
-}
+};
 
-const MapMenuPanelItem = ({
+const MapMenuPanelItem: FC<MapMenuPanelItemProps> = ({
   uuid,
   title,
   subtitle,
@@ -64,7 +63,7 @@ const MapMenuPanelItem = ({
   isAdmin,
   anrMonitoringPlotsEligible = false,
   ...props
-}: MapMenuPanelItemProps) => {
+}) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
   const [openCollapse, setOpenCollapse] = useState(false);
@@ -278,13 +277,13 @@ const MapMenuPanelItem = ({
           </div>
           <div className="flex items-center justify-between">
             <Status status={status as StatusEnum} variant="small" textVariant="text-10" />
-            <When condition={adjustedValidationStatus === "notChecked"}>
+            {adjustedValidationStatus === "notChecked" && (
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-grey-700">
                 <Icon name={IconNames.CROSS_CIRCLE} className="h-2 w-2" />
                 {t("Not Checked")}
               </Text>
-            </When>
-            <When condition={adjustedValidationStatus === "passed" || adjustedValidationStatus === "partial"}>
+            )}
+            {(adjustedValidationStatus === "passed" || adjustedValidationStatus === "partial") && (
               <Text
                 variant="text-10"
                 className={classNames("flex items-center gap-1 text-green", {
@@ -298,26 +297,28 @@ const MapMenuPanelItem = ({
                 />
                 {t("Passed")}
               </Text>
-            </When>
-            <When condition={adjustedValidationStatus === "failed"}>
+            )}
+            {adjustedValidationStatus === "failed" && (
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-red-200">
                 <Icon name={IconNames.ROUND_RED_CROSS} className="h-2 w-2" />
                 {t("Failed")}
               </Text>
-            </When>
+            )}
           </div>
         </div>
       </div>
-      <When condition={openCollapse}>
-        <When condition={adjustedValidationStatus === "partial"}>
-          <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
-            {t(
-              "This polygon passes even though both validations below have failed. It can still be approved by TerraMatch staff."
-            )}
-          </Text>
-        </When>
-        <ChecklistErrorsInformation polygonUuid={polygonUuid} />
-      </When>
+      {openCollapse && (
+        <>
+          {adjustedValidationStatus === "partial" && (
+            <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
+              {t(
+                "This polygon passes even though both validations below have failed. It can still be approved by TerraMatch staff."
+              )}
+            </Text>
+          )}
+          <ChecklistErrorsInformation polygonUuid={polygonUuid} />
+        </>
+      )}
     </div>
   );
 };

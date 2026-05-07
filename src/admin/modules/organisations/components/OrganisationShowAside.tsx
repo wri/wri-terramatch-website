@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Grid, Stack } from "@mui/material";
-import { useCallback } from "react";
+import { FC, useCallback } from "react";
 import {
   Button as AdminButton,
   Labeled,
@@ -11,7 +11,6 @@ import {
   useRefresh,
   useShowContext
 } from "react-admin";
-import { When } from "react-if";
 
 import Aside from "@/admin/components/Aside/Aside";
 import { useOrganisation } from "@/connections/Organisation";
@@ -22,7 +21,7 @@ import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
-export const OrganisationShowAside = ({ financialReportTab }: { financialReportTab?: boolean }) => {
+export const OrganisationShowAside: FC<{ financialReportTab?: boolean }> = ({ financialReportTab = false }) => {
   const refresh = useRefresh();
   const { record } = useShowContext<OrganisationFullDto & RaRecord>();
   const hasOrganisationAttrib = !!record?.organisationUuid;
@@ -64,7 +63,7 @@ export const OrganisationShowAside = ({ financialReportTab }: { financialReportT
       </Grid>
       <Divider />
       <Box pt={2}>
-        <When condition={status !== "draft"}>
+        {status !== "draft" && (
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             {financialReportTab ? (
               <AdminButton
@@ -91,7 +90,7 @@ export const OrganisationShowAside = ({ financialReportTab }: { financialReportT
               </>
             )}
           </Stack>
-        </When>
+        )}
       </Box>
     </Aside>
   );

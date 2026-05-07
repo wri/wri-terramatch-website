@@ -1,24 +1,22 @@
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes } from "react";
-import { When } from "react-if";
+import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 
-export interface ActionTrackerCardEmptyStateProps
-  extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+export type ActionTrackerCardEmptyStateProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   subtitle: string;
   title: string;
   buttonProps?: IButtonProps;
-}
+};
 
-const ActionTrackerCardEmptyState = ({
+const ActionTrackerCardEmptyState: FC<ActionTrackerCardEmptyStateProps> = ({
   title,
   subtitle,
   buttonProps,
   className,
   ...props
-}: ActionTrackerCardEmptyStateProps) => (
+}) => (
   <div
     {...props}
     className={classNames(
@@ -32,9 +30,7 @@ const ActionTrackerCardEmptyState = ({
     <Text variant="text-light-caption-200" className="text-center">
       {subtitle}
     </Text>
-    <When condition={!!buttonProps}>
-      <Button {...buttonProps} className="mt-6" />
-    </When>
+    {buttonProps != null && <Button {...buttonProps} className="mt-6" />}
   </div>
 );
 

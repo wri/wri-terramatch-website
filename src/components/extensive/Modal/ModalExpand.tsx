@@ -1,7 +1,6 @@
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -11,18 +10,17 @@ import Icon, { IconNames } from "../Icon/Icon";
 import { ExpandModalBase } from "./ModalsBases";
 
 export type ModalBaseProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
-export interface ModalExpandProps extends ModalBaseProps {
+type ModalExpandProps = ModalBaseProps & {
   id: string;
   title: string;
   popUpContent?: string;
   closeModal: (id: string) => void;
-}
+};
 
 const ModalExpand: FC<ModalExpandProps> = ({ id, title, children, popUpContent, closeModal, ...rest }) => {
   const t = useT();
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
-  <Text variant="text-12-light" className="!font-light leading-[normal]"></Text>;
   return (
     <ExpandModalBase {...rest}>
       <div className="flex w-full items-center justify-between p-6 mobile:p-4">
@@ -30,11 +28,11 @@ const ModalExpand: FC<ModalExpandProps> = ({ id, title, children, popUpContent, 
           <Text variant={isMobile ? "text-16-bold" : "text-28-bold"} className="text-center uppercase">
             {t(title)}
           </Text>
-          <When condition={popUpContent}>
-            <Tooltip content={popUpContent || ""} width="w-[300px] lg:w-[325px]" trigger={isMobile ? "click" : "hover"}>
+          {popUpContent != null && (
+            <Tooltip content={popUpContent} width="w-[300px] lg:w-[325px]" trigger={isMobile ? "click" : "hover"}>
               <Icon name={IconNames.IC_INFO} />
             </Tooltip>
-          </When>
+          )}
         </div>
 
         <Button variant={isMobile ? "white-border" : "white-button-map"} onClick={() => closeModal(id)}>

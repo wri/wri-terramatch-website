@@ -216,7 +216,7 @@ const MapControlsOverlay = ({
 
           {status && validationType === "individualValidation" && !disabledPolygonPanel ? (
             <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
-              <CheckIndividualPolygonControl viewRequestSuport={!siteData} entityData={record} />
+              <CheckIndividualPolygonControl viewRequestSupport={!siteData} />
             </ControlGroup>
           ) : null}
 

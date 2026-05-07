@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 import { useShowContext } from "react-admin";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -19,7 +18,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
-interface AttributeInformationProps {
+type AttributeInformationProps = {
   selectedPolygon: SitePolygonLightDto;
   sitePolygonRefresh: () => void;
   setSelectedPolygonData: any;
@@ -31,9 +30,9 @@ interface AttributeInformationProps {
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string; source?: string }>>;
   setIsLoadingDropdownVersions: Dispatch<SetStateAction<boolean>>;
   setIsOpenPolygonDrawer: Dispatch<SetStateAction<boolean>>;
-}
+};
 
-const AttributeInformation = ({
+const AttributeInformation: FC<AttributeInformationProps> = ({
   selectedPolygon,
   sitePolygonRefresh,
   setSelectedPolygonData,
@@ -45,7 +44,7 @@ const AttributeInformation = ({
   setPolygonFromMap,
   setIsLoadingDropdownVersions,
   setIsOpenPolygonDrawer
-}: AttributeInformationProps) => {
+}) => {
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
@@ -167,10 +166,11 @@ const AttributeInformation = ({
     }
   };
 
-  const handleCloseDrawer = () => {
+  const handleCloseDrawer = useCallback(() => {
     setIsOpenPolygonDrawer(false);
-  };
-  const handleChangeTreesPlanted = (e: React.ChangeEvent<HTMLInputElement>) => {
+  }, [setIsOpenPolygonDrawer]);
+
+  const handleChangeTreesPlanted = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
 
     if (value.length > 1 && value.startsWith("0")) {
@@ -180,7 +180,8 @@ const AttributeInformation = ({
     if (/^\d*$/.test(value)) {
       setTreesPlanted(Number(value));
     }
-  };
+  }, []);
+
   return (
     <div className="flex flex-col gap-4">
       <Input
@@ -204,37 +205,39 @@ const AttributeInformation = ({
           onChange={e => setPlantStartDate(e.target.value)}
         />
       </label>
-      <When condition={!isLoadingVersions && !isLoadingDropdown}>
-        <Dropdown
-          label="Restoration Practice"
-          labelClassName="capitalize"
-          labelVariant="text-14-light"
-          placeholder="Select Restoration Practice"
-          multiSelect
-          value={restorationPractice}
-          onChange={e => setRestorationPractice(e as string[])}
-          options={dropdownOptionsRestoration}
-        />
-        <Dropdown
-          label="Target Land Use System"
-          labelClassName="capitalize"
-          labelVariant="text-14-light"
-          placeholder="Select Target Land Use System"
-          options={dropdownOptionsTarget}
-          value={targetLandUseSystem}
-          onChange={e => setTargetLandUseSystem(e as string[])}
-        />
-        <Dropdown
-          multiSelect
-          label="Tree Distribution"
-          labelClassName="capitalize"
-          labelVariant="text-14-light"
-          placeholder="Select Tree Distribution"
-          options={dropdownOptionsTree}
-          value={treeDistribution}
-          onChange={e => setTreeDistribution(e as string[])}
-        />
-      </When>
+      {!isLoadingVersions && !isLoadingDropdown && (
+        <>
+          <Dropdown
+            label="Restoration Practice"
+            labelClassName="capitalize"
+            labelVariant="text-14-light"
+            placeholder="Select Restoration Practice"
+            multiSelect
+            value={restorationPractice}
+            onChange={e => setRestorationPractice(e as string[])}
+            options={dropdownOptionsRestoration}
+          />
+          <Dropdown
+            label="Target Land Use System"
+            labelClassName="capitalize"
+            labelVariant="text-14-light"
+            placeholder="Select Target Land Use System"
+            options={dropdownOptionsTarget}
+            value={targetLandUseSystem}
+            onChange={e => setTargetLandUseSystem(e as string[])}
+          />
+          <Dropdown
+            multiSelect
+            label="Tree Distribution"
+            labelClassName="capitalize"
+            labelVariant="text-14-light"
+            placeholder="Select Tree Distribution"
+            options={dropdownOptionsTree}
+            value={treeDistribution}
+            onChange={e => setTreeDistribution(e as string[])}
+          />
+        </>
+      )}
       <Input
         label="Trees Planted"
         labelClassName="capitalize"

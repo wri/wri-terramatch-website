@@ -1,6 +1,5 @@
-import { Fragment, PropsWithChildren, useEffect, useId } from "react";
+import { FC, Fragment, PropsWithChildren, useEffect, useId } from "react";
 import { FieldError } from "react-hook-form";
-import { Else, If, Then } from "react-if";
 
 import List from "@/components/extensive/List/List";
 import { useStateWithEffect } from "@/hooks/useStateWithEffect";
@@ -30,10 +29,8 @@ export interface SelectProps extends InputWrapperProps {
 
 /**
  * Notice: Use RHFSelect with React Hook Form
- * @param props PropsWithChildren<SelectProps>
- * @returns Select component
  */
-const Select = (props: PropsWithChildren<SelectProps>) => {
+const Select: FC<PropsWithChildren<SelectProps>> = props => {
   const id = useId();
   const [selected, setSelected, setSelectedWithoutEffect] = useStateWithEffect<OptionValue[]>(
     props.defaultValue || props.value || [],
@@ -87,32 +84,25 @@ const Select = (props: PropsWithChildren<SelectProps>) => {
         itemAs={Fragment}
         items={options}
         render={option => {
-          let isSelected;
-          if (typeof selected === "string" || Array.isArray(selected)) {
-            isSelected = selected?.includes(option.value);
-          } else {
-            isSelected = selected === option.value;
-          }
-          return (
-            <If condition={props.multiSelect}>
-              <Then>
-                <Checkbox
-                  name=""
-                  checked={isSelected}
-                  label={option.title}
-                  className="flex-row-reverse justify-end gap-3"
-                  onClick={() => onChange(option.value)}
-                />
-              </Then>
-              <Else>
-                <Radio
-                  checked={isSelected}
-                  label={option.title}
-                  className="flex-row-reverse justify-end gap-3"
-                  onClick={() => onChange(option.value)}
-                />
-              </Else>
-            </If>
+          const isSelected =
+            typeof selected === "string" || Array.isArray(selected)
+              ? selected?.includes(option.value)
+              : selected === option.value;
+          return props.multiSelect ? (
+            <Checkbox
+              name=""
+              checked={isSelected}
+              label={option.title}
+              className="flex-row-reverse justify-end gap-3"
+              onClick={() => onChange(option.value)}
+            />
+          ) : (
+            <Radio
+              checked={isSelected}
+              label={option.title}
+              className="flex-row-reverse justify-end gap-3"
+              onClick={() => onChange(option.value)}
+            />
           );
         }}
       />

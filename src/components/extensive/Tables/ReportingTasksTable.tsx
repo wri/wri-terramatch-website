@@ -5,7 +5,7 @@ import { useMemo } from "react";
 
 import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
-import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
+import ActionTableCell from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
 import { useLightProject } from "@/connections/Entity";
 import { taskIndexConnection } from "@/connections/Task";
