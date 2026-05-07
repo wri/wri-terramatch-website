@@ -43,7 +43,7 @@ const AuditLog: FC<AuditLogProps> = ({ financialReport, refresh: refetchReport }
           <LoadingContainer wrapInPaper loading={isLoading}>
             <PageCard>
               <div className="flex max-h-[200vh] gap-6 overflow-auto mobile:flex-col">
-                <div className="grid w-[64%] gap-6 mobile:w-full">
+                <div className="grid w-[64%] gap-6 mobile:block mobile:w-full">
                   <SiteAuditLogEntityStatus
                     record={selected}
                     auditLogData={auditLogData}
