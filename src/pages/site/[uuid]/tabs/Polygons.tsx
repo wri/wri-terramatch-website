@@ -1,7 +1,7 @@
 import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
-import { FC, memo, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, memo, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -174,7 +174,7 @@ const renderRestorationPractice = (restorationPractice: restorationStrategyType[
 
 const HOVERED_ROW_STYLE: React.CSSProperties = {
   backgroundColor: getThemedColor("primary", 100),
-  borderBottom: `1px solid ${getThemedColor("primary", 700)}`
+  borderBottom: `2px solid ${getThemedColor("primary", 700)}`
 };
 
 interface PolygonRowProps {
@@ -210,7 +210,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   return (
     <TableRow
       {...(rowProps as Record<string, unknown>)}
-      aria-selected={isSelected}
+      aria-selected={isSelected || isHovered}
       onMouseEnter={handleMouseEnter}
       style={isHovered ? HOVERED_ROW_STYLE : undefined}
     >
@@ -218,9 +218,11 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
         <Checkbox name={`checkbox-${row.id}`} onCheckedChange={handleOnRowSelected} checked={isSelected} />
       </TableCell>
       <TableCell className="min-w-[17.75rem] max-w-[17.75rem]">
-        <Text textStyle="400-bold" color="neutral.800" className="truncate">
-          {row.polygonName}
-        </Text>
+        <Box>
+          <Text textStyle="400-bold" color="neutral.800" className="truncate">
+            {row.polygonName}
+          </Text>
+        </Box>
       </TableCell>
       <TableCell className="min-w-[15.875rem]">
         <MappedTag state={row.submission} />
@@ -259,6 +261,8 @@ const PolygonRow = memo(PolygonRowComponent);
 const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const [isStickyActive, setIsStickyActive] = useState(false);
   const { data: polygonsData = [] } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: site.uuid,
@@ -432,6 +436,64 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     [handleRowSelected, hoveredPolygonUuid, selectedRowIds]
   );
 
+  const getPolygonsTableStyles = (isStickyActive: boolean) => ({
+    "& table td": {
+      height: "3rem"
+    },
+    "& table th:first-child": {
+      position: "sticky",
+      left: 0,
+      zIndex: 2,
+      background: getThemedColor("neutral", 200)
+    },
+    "& table td:first-child": {
+      position: "sticky",
+      left: 0,
+      zIndex: 2,
+      background: getThemedColor("neutral", 100),
+      transition: "background-color 0.15s ease-in-out"
+    },
+    "& table th:nth-child(2)": {
+      position: "sticky",
+      left: "3rem",
+      zIndex: 2,
+      background: getThemedColor("neutral", 200),
+      padding: 0
+    },
+    "& table td:nth-child(2)": {
+      position: "sticky",
+      left: "3rem",
+      zIndex: 2,
+      background: getThemedColor("neutral", 100),
+      padding: 0,
+      transition: "background-color 0.15s ease-in-out"
+    },
+    "& table tbody tr:hover td:nth-child(2), & table tbody tr:hover td:first-child, & table tbody tr[aria-selected='true'] td:nth-child(2), & table tbody tr[aria-selected='true'] td:first-child":
+      {
+        background: getThemedColor("primary", 100)
+      },
+    "& table th:nth-child(2) > div, & table td:nth-child(2) div": {
+      position: "relative",
+      padding: "0.75rem",
+      display: "flex",
+      alignItems: "center",
+      height: "100%",
+      ...(isStickyActive && {
+        borderRight: `1px solid ${getThemedColor("neutral", 400)}`
+      })
+    }
+  });
+
+  useEffect(() => {
+    const container = tableContainerRef.current?.children[0]?.children[0];
+    if (container == null) return;
+    const handleScroll = () => {
+      setIsStickyActive(container.scrollLeft > 0);
+    };
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <PageContent className="bg-theme-neutral.100">
       <PolygonFilterDrawer
@@ -491,15 +553,15 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
       </Flex>
       <Box onMouseLeave={handleClearHover}>
         <Table<PolygonTableRow>
+          css={getPolygonsTableStyles(isStickyActive)}
+          containerRef={tableContainerRef}
           data={polygonRows}
           columns={columns}
-          isScrollable
-          scrollableWidth="100%"
           showPagination
           pageSize={10}
           selectable
           selectedRows={selectedRows}
-          onAllRowsSelected={onAllItemsSelected}
+          onAllItemsSelected={onAllItemsSelected}
           renderRow={selectableRenderRow}
         />
       </Box>
