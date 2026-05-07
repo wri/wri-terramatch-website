@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { When } from "react-if";
+import { FC } from "react";
 
 import ButtonField from "@/components/elements/Field/ButtonField";
 import Paper from "@/components/elements/Paper/Paper";
@@ -11,7 +11,11 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
-const GalleryTab = (props: EntityMapAndGalleryCardProps & { sharedDriveLink?: string }) => {
+type GalleryTabProps = EntityMapAndGalleryCardProps & {
+  sharedDriveLink?: string;
+};
+
+const GalleryTab: FC<GalleryTabProps> = ({ sharedDriveLink, ...props }) => {
   const t = useT();
   return (
     <PageBody className="bg-theme-neutral-200 pt-5">
@@ -19,19 +23,19 @@ const GalleryTab = (props: EntityMapAndGalleryCardProps & { sharedDriveLink?: st
         <PageColumn>
           <EntityMapAndGalleryCard {...props} />
 
-          <When condition={props.modelName === "project-reports" && !!props.sharedDriveLink}>
+          {props.modelName === "project-reports" && sharedDriveLink != null && (
             <Paper>
               <ButtonField
                 label={t("Shared Drive link")}
                 buttonProps={{
                   as: Link,
                   children: t("View"),
-                  href: props.sharedDriveLink,
+                  href: sharedDriveLink,
                   target: "_blank"
                 }}
               />
             </Paper>
-          </When>
+          )}
         </PageColumn>
       </PageRow>
       <br />

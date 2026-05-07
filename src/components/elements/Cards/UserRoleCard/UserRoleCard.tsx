@@ -1,27 +1,25 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import clsx from "clsx";
-import React from "react";
-import { When } from "react-if";
+import { FC, useMemo } from "react";
 
 import Menu, { MenuItemProps } from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-export interface UserRoleCardProps {
+export type UserRoleCardProps = {
   title: string;
   description: string;
   selected: boolean;
   options?: MenuItemProps[];
-  menu?: MenuItemProps[];
   titleOptions?: string;
   setSelectedOption?: any;
   refContentCard?: React.RefObject<HTMLDivElement>;
   selectedOption?: string;
   icon?: IconNames;
-}
+};
 
-const UserRoleCard: React.FC<UserRoleCardProps> = ({
+const UserRoleCard: FC<UserRoleCardProps> = ({
   title,
   description,
   selected,
@@ -30,20 +28,23 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
   setSelectedOption,
   refContentCard,
   selectedOption,
-  menu,
   icon
 }) => {
   const t = useT();
-  const MenuOption: MenuItemProps[] = options ?? [
-    {
-      id: "1",
-      render: () => (
-        <Text variant="text-12-bold" className="text-primary">
-          {t("Select Fund")}
-        </Text>
-      )
-    }
-  ];
+  const MenuOption: MenuItemProps[] = useMemo(
+    () =>
+      options ?? [
+        {
+          id: "1",
+          render: () => (
+            <Text variant="text-12-bold" className="text-primary">
+              {t("Select Fund")}
+            </Text>
+          )
+        }
+      ],
+    [options, t]
+  );
 
   const displayOptions =
     selectedOption == null
@@ -56,7 +57,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
           }
         });
 
-  const diplayTitle = displayOptions ? displayOptions.data.label : "";
+  const displayTitle = displayOptions?.data.label ?? "";
 
   return (
     <article
@@ -75,7 +76,7 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
         <Text variant="text-12-light" className="text-left leading-normal text-darkCustom-50">
           {description}
         </Text>
-        <When condition={!!titleOptions}>
+        {titleOptions != null && (
           <Menu
             menu={MenuOption}
             setSelectedOption={setSelectedOption}
@@ -85,10 +86,10 @@ const UserRoleCard: React.FC<UserRoleCardProps> = ({
           >
             <Text variant="text-12-bold" className="text-primary">
               {titleOptions ?? t("Select Fund")}
-              {diplayTitle ? `: ${diplayTitle}` : ""}
+              {displayTitle != null ? `: ${displayTitle}` : ""}
             </Text>
           </Menu>
-        </When>
+        )}
       </div>
       <Icon
         name={selected ? IconNames.APPROVED_COLORLESS : IconNames.NO_SUCCESS}

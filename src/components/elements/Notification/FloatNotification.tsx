@@ -1,8 +1,7 @@
 import { LinearProgress } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { When } from "react-if";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
@@ -92,7 +91,8 @@ const getSiteNameForJob = (job: DelayedJobDto, cachedSiteNames: Record<string, s
   }
   return "Unknown";
 };
-const FloatNotification = () => {
+
+const FloatNotification: FC = () => {
   const firstRender = useRef(true);
   const t = useT();
   const [openModalNotification, setOpenModalNotification] = useState(false);
@@ -299,11 +299,11 @@ const FloatNotification = () => {
             </div>
           </div>
         </div>
-        <When condition={isLoaded && (notAcknowledgedJobs ?? []).length > 0}>
+        {isLoaded && (notAcknowledgedJobs ?? []).length > 0 && (
           <div className="text-12-bold absolute right-[-4px] top-[-4px] z-20 flex min-h-[20px] min-w-[20px] items-center justify-center rounded-full bg-red-300 leading-[normal] text-white">
-            {notAcknowledgedJobs?.length}
+            {notAcknowledgedJobs.length}
           </div>
-        </When>
+        )}
         <button
           onClick={() => {
             setOpenModalNotification(!openModalNotification);

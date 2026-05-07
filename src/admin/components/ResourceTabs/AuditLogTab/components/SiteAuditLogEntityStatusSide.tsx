@@ -1,6 +1,6 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Dispatch, SetStateAction } from "react";
-import { When } from "react-if";
+import { Dispatch, FC, SetStateAction } from "react";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
@@ -10,21 +10,7 @@ import { SelectedItem } from "@/hooks/AuditStatus/useLoadEntityList";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay";
 
-const SiteAuditLogEntityStatusSide = ({
-  refresh,
-  record,
-  polygonList,
-  selectedPolygon,
-  setSelectedPolygon,
-  entityType = "sitePolygons",
-  getValueForStatus,
-  progressBarLabels,
-  showChangeRequest = false,
-  checkPolygonsSite,
-  viewPD = false,
-  onStatusChange,
-  onChangeRequest
-}: {
+type SiteAndAuditLogEntityStatusSideProps = {
   entityType: AuditStatusEntityType;
   refresh?: () => void;
   record?: any;
@@ -38,26 +24,43 @@ const SiteAuditLogEntityStatusSide = ({
   viewPD?: boolean;
   onStatusChange?: (status: string, comment: string) => Promise<void>;
   onChangeRequest?: (comment: string) => void;
+};
+
+const SiteAuditLogEntityStatusSide: FC<SiteAndAuditLogEntityStatusSideProps> = ({
+  refresh,
+  record,
+  polygonList,
+  selectedPolygon,
+  setSelectedPolygon,
+  entityType = "sitePolygons",
+  getValueForStatus,
+  progressBarLabels,
+  showChangeRequest = false,
+  checkPolygonsSite,
+  viewPD = false,
+  onStatusChange,
+  onChangeRequest
 }) => {
   const displayEntityName = formatAuditStatusEntityForDisplay(entityType);
+  const t = useT();
 
   return (
     <div className="flex flex-col gap-6 overflow-visible">
-      <When condition={polygonList?.length}>
+      {polygonList != null && polygonList.length > 0 && (
         <Dropdown
-          label={`Select ${displayEntityName}`}
+          label={t("Select ${displayEntityName}", { displayEntityName })}
           labelVariant="text-16-bold"
           labelClassName="capitalize"
           optionsClassName="max-w-full"
           value={[selectedPolygon?.uuid ?? ""]}
-          placeholder={`Select ${displayEntityName}`}
-          options={polygonList!}
+          placeholder={t("Select {displayEntityName}", { displayEntityName })}
+          options={polygonList}
           onChange={e => {
-            setSelectedPolygon && setSelectedPolygon(polygonList?.find(item => item?.uuid === e[0]));
+            setSelectedPolygon?.(polygonList.find(item => item?.uuid === e[0]));
           }}
         />
-      </When>
-      <Text variant="text-16-bold">{`${displayEntityName} Status`}</Text>
+      )}
+      <Text variant="text-16-bold">{t("{displayEntityName} Status", { displayEntityName })}</Text>
       <StepProgressbar
         color="secondary"
         value={getValueForStatus?.(record?.status) ?? 0}

@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
-import React from "react";
-import { Else, If, Then, When } from "react-if";
+import React, { FC } from "react";
 
 import TreePlantingChart from "@/admin/components/ResourceTabs/MonitoredTab/components/TreePlantingChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
@@ -16,7 +15,7 @@ import Loader from "@/components/generic/Loading/Loader";
 import { useAggregateReports } from "@/connections/AggregateReports";
 import { SupportedEntity } from "@/connections/EntityAssociation";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
-import { Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
+import { ALL_TF, Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TextVariants } from "@/types/common";
 import { getNewRestorationGoalDataForChart, isAggregateReportsEmpty } from "@/utils/dashboardUtils";
@@ -45,7 +44,7 @@ export const LABEL_LEGEND = [
   }
 ];
 
-const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
+const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
   const t = useT();
 
   const isTerrafund = frameworkIsTerrafund(site.frameworkKey as Framework);
@@ -176,96 +175,99 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
         <PageCard title={t(isTerrafund ? "Non-Tree Planting Progress" : "Seed Planting Progress")}>
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
-              <When condition={site.frameworkKey === Framework.PPC}>
-                <GoalProgressCard
-                  hasProgress={false}
-                  classNameCard="!pl-0"
-                  items={[
-                    {
-                      iconName: IconNames.LEAF_CIRCLE_PD,
-                      label: t("number of seeds PLANTED:"),
-                      variantLabel: "text-14" as TextVariants,
-                      classNameLabel: " text-neutral-650 uppercase !w-auto",
-                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: site.seedsPlantedCount.toLocaleString()
-                    },
-                    {
-                      iconName: IconNames.SURVIVAL_RATE,
-                      label: t("Estimated Survival Rate:"),
-                      variantLabel: "text-14",
-                      classNameLabel: " text-neutral-650 uppercase !w-auto",
-                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: site.directSeedingSurvivalRate ? `${site.directSeedingSurvivalRate}%` : "-"
-                    },
-                    {
-                      iconName: IconNames.LEAF_PLANTED_CIRCLE,
-                      label: t("number of species PLANTED:"),
-                      variantLabel: "text-14",
-                      classNameLabel: " text-neutral-650 uppercase !w-auto",
-                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: speciesCount
-                    }
-                  ]}
-                />
-              </When>
-              <When condition={isTerrafund}>
-                <GoalProgressCard
-                  hasProgress={false}
-                  classNameCard="!pl-0"
-                  items={[
-                    {
-                      iconName: IconNames.NON_TREES_PLANTED_CIRCLE,
-                      label: t("number of Non-Trees PLANTED:"),
-                      variantLabel: "text-14",
-                      classNameLabel: " text-neutral-650 uppercase !w-auto",
-                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: treeCount.toLocaleString()
-                    },
-                    {
-                      iconName: IconNames.LEAF_PLANTED_CIRCLE,
-                      label: t("number of species PLANTED:"),
-                      variantLabel: "text-14",
-                      classNameLabel: " text-neutral-650 uppercase !w-auto",
-                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: speciesCount
-                    }
-                  ]}
-                />
-              </When>
-              <When condition={site.frameworkKey === Framework.HBF}>
-                <GoalProgressCard
-                  hasProgress={false}
-                  classNameCard="!pl-0"
-                  items={[
-                    {
-                      iconName: IconNames.LEAF_CIRCLE_PD,
-                      label: t("number of seeds PLANTED:"),
-                      variantLabel: "text-14",
-                      classNameLabel: " text-neutral-650 uppercase !w-auto",
-                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: site.seedsPlantedCount.toLocaleString()
-                    },
-                    {
-                      iconName: IconNames.LEAF_PLANTED_CIRCLE,
-                      label: t("number of species PLANTED:"),
-                      variantLabel: "text-14",
-                      classNameLabel: " text-neutral-650 uppercase !w-auto",
-                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: speciesCount
-                    }
-                  ]}
-                />
-              </When>
+              <GoalProgressCard
+                frameworksShow={[Framework.PPC]}
+                hasProgress={false}
+                classNameCard="!pl-0"
+                items={[
+                  {
+                    iconName: IconNames.LEAF_CIRCLE_PD,
+                    label: t("number of seeds PLANTED:"),
+                    variantLabel: "text-14" as TextVariants,
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: site.seedsPlantedCount.toLocaleString()
+                  },
+                  {
+                    iconName: IconNames.SURVIVAL_RATE,
+                    label: t("Estimated Survival Rate:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: site.directSeedingSurvivalRate ? `${site.directSeedingSurvivalRate}%` : "-"
+                  },
+                  {
+                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                    label: t("number of species PLANTED:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: speciesCount
+                  }
+                ]}
+              />
+              <GoalProgressCard
+                frameworksShow={ALL_TF}
+                hasProgress={false}
+                classNameCard="!pl-0"
+                items={[
+                  {
+                    iconName: IconNames.NON_TREES_PLANTED_CIRCLE,
+                    label: t("number of Non-Trees PLANTED:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: treeCount.toLocaleString()
+                  },
+                  {
+                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                    label: t("number of species PLANTED:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: speciesCount
+                  }
+                ]}
+              />
+              <GoalProgressCard
+                frameworksShow={[Framework.HBF]}
+                hasProgress={false}
+                classNameCard="!pl-0"
+                items={[
+                  {
+                    iconName: IconNames.LEAF_CIRCLE_PD,
+                    label: t("number of seeds PLANTED:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: site.seedsPlantedCount.toLocaleString()
+                  },
+                  {
+                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                    label: t("number of species PLANTED:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: speciesCount
+                  }
+                ]}
+              />
             </div>
             <div>
-              <If condition={isTerrafund}>
-                <Then>
-                  <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="non-tree" visibleRows={5} />
-                </Then>
-                <Else>
-                  <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="seeds" visibleRows={5} />
-                </Else>
-              </If>
+              <TreeSpeciesTable
+                frameworksShow={ALL_TF}
+                entity="sites"
+                entityUuid={site.uuid}
+                collection="non-tree"
+                visibleRows={5}
+              />
+              <TreeSpeciesTable
+                frameworksHide={ALL_TF}
+                entity="sites"
+                entityUuid={site.uuid}
+                collection="seeds"
+                visibleRows={5}
+              />
             </div>
           </div>
         </PageCard>

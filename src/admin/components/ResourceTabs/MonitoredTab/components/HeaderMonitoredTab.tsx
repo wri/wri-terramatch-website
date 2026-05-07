@@ -1,5 +1,5 @@
+import { FC } from "react";
 import { useShowContext } from "react-admin";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
@@ -14,7 +14,7 @@ import { EntityName } from "@/types/common";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
 
-const HeaderMonitoredTab = ({ type }: { type?: EntityName }) => {
+const HeaderMonitoredTab: FC<{ type?: EntityName }> = ({ type }) => {
   const { openModal, closeModal } = useModalContext();
   const { record } = useShowContext();
   const { headerBarPolygonStatus, totalPolygonsStatus, polygonMissingAnalysis, totalPolygonsForRerun } =
@@ -101,7 +101,7 @@ use the "Rerun existing analysis" option in the analysis modal. This will overwr
               {totalPolygonsStatus}
             </Text>
           </div>
-          <When condition={type === "projects"}>
+          {type === "projects" && (
             <div>
               <Text variant="text-12" className=" text-darkCustom">
                 No. of Sites
@@ -110,7 +110,7 @@ use the "Rerun existing analysis" option in the analysis modal. This will overwr
                 {record?.project ? record?.project?.total_sites : record?.totalSites}
               </Text>
             </div>
-          </When>
+          )}
         </div>
       </div>
       <div className="flex gap-4">

@@ -15,7 +15,6 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import dynamic from "next/dynamic";
 import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
-import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import SpinnerLottie from "@/assets/animations/spinner.json";
@@ -74,14 +73,6 @@ export interface TableState {
   filters: FilterValue[];
 }
 
-export type TableHeader = { title: string; key: string; valueTransformer?: (value: string | number) => string };
-
-/**
- * @param data: Table data
- * @param columns: Table column definition
- * @param serverSideData?: Should be passed if sorting or pagination is server side
- * @param onTableStateChange: Table state change listener
- */
 function Table<TData extends RowData>({
   data,
   columns,
@@ -167,7 +158,7 @@ function Table<TData extends RowData>({
   return (
     <div className={classNames("w-full", variant.className, contentClassName)}>
       <div className={`overflow-x-auto px-4 md:px-0 ${classNameWrapper}`}>
-        <When condition={!!columnFilters && columnFilters.length > 0}>
+        {(columnFilters?.length ?? 0) > 0 && (
           <TableFilter
             filters={filters}
             columnFilters={columnFilters!}
@@ -176,7 +167,7 @@ function Table<TData extends RowData>({
               onTableStateChange?.({ sorting: tableState.sorting, filters: [...filters] });
             }}
           />
-        </When>
+        )}
         {children}
         <div className={classNames(variant.tableWrapper, classNameTableWrapper)}>
           <table {...props} className={classNames(className, "w-full", variant.table)}>
@@ -238,7 +229,7 @@ function Table<TData extends RowData>({
                               >
                                 {flexRender(header.column.columnDef.header, header.getContext())}
                               </span>
-                              <When condition={header.column.getCanSort()}>
+                              {header.column.getCanSort() && (
                                 <span
                                   ref={el => {
                                     if (el && !iconRefs.current.includes(el)) {
@@ -262,7 +253,7 @@ function Table<TData extends RowData>({
                                     height={14}
                                   />
                                 </span>
-                              </When>
+                              )}
                             </div>
                           </div>
                         </th>
@@ -274,36 +265,31 @@ function Table<TData extends RowData>({
               ))}
             </thead>
             <tbody className={variant.tBody}>
-              <If condition={isLoading}>
-                <Then>
-                  <LoadingCell />
-                </Then>
-                <Else>
-                  {getRowModel().rows.length === 0 ? (
-                    <tr className={variant.trHeader}>
-                      <td
-                        className={classNames(`text-normal-subtitle-400 px-6 py-4 ${variant.tdBody}`)}
-                        align={"center"}
-                        colSpan={columns.length}
-                      >
-                        {t("No results")}
-                      </td>
-                    </tr>
-                  ) : (
-                    getRowModel().rows.map(row => (
-                      <tr
-                        key={row.id}
-                        className={classNames(getRowClassName?.(row.original), "rounded-lg", variant.trBody)}
-                        onClick={() => onRowClick?.(row.original)}
-                      >
-                        {row.getVisibleCells().map(cell => (
-                          <TableCell<TData> key={cell.id} cell={cell} variant={variant} />
-                        ))}
-                      </tr>
-                    ))
-                  )}
-                </Else>
-              </If>
+              {isLoading ? (
+                <LoadingCell />
+              ) : getRowModel().rows.length === 0 ? (
+                <tr className={variant.trHeader}>
+                  <td
+                    className={classNames(`text-normal-subtitle-400 px-6 py-4 ${variant.tdBody}`)}
+                    align={"center"}
+                    colSpan={columns.length}
+                  >
+                    {t("No results")}
+                  </td>
+                </tr>
+              ) : (
+                getRowModel().rows.map(row => (
+                  <tr
+                    key={row.id}
+                    className={classNames(getRowClassName?.(row.original), "rounded-lg", variant.trBody)}
+                    onClick={() => onRowClick?.(row.original)}
+                  >
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell<TData> key={cell.id} cell={cell} variant={variant} />
+                    ))}
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

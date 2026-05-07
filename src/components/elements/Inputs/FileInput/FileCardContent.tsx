@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { ChangeEvent, useState } from "react";
-import { When } from "react-if";
+import { ChangeEvent, FC, useState } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
@@ -23,7 +22,7 @@ interface FileCardContentProps {
   onPrivateChange?: (checked: boolean) => void;
 }
 
-export const FileCardContent = ({
+export const FileCardContent: FC<FileCardContentProps> = ({
   title,
   subtitle,
   errorMessage,
@@ -33,7 +32,7 @@ export const FileCardContent = ({
   thumbnailContainerClassName,
   showPrivateCheckbox,
   onPrivateChange
-}: FileCardContentProps) => {
+}) => {
   const t = useT();
   const [isPublic, setIsPublic] = useState<boolean>(!!file?.isPublic);
 
@@ -59,7 +58,7 @@ export const FileCardContent = ({
         <Text variant={variant.titleVariant} className={variant.titleClassName} title={title}>
           {title}
         </Text>
-        <When condition={errorMessage || subtitle}>
+        {(errorMessage != null || subtitle != null) && (
           <Text
             variant={variant.subTitletitleVariant}
             containHtml
@@ -68,14 +67,13 @@ export const FileCardContent = ({
           >
             {errorMessage?.replace(/,?\s*bin\b/g, "") || subtitle}
           </Text>
-        </When>
-        <When condition={showPrivateCheckbox}>
+        )}
+        {showPrivateCheckbox && (
           <div className="mt-1 flex items-center gap-2">
             <Checkbox name="" inputClassName="h-4 w-4" onChange={handlePrivateChange} checked={!isPublic} />
-
             <Text variant="text-light-body-300">{t("Check this box to mark the file as private")}</Text>
           </div>
-        </When>
+        )}
       </div>
     </>
   );

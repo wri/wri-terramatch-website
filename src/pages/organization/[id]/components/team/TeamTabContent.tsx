@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useCallback, useRef, useState } from "react";
-import { When } from "react-if";
+import { FC, useCallback, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -19,7 +18,7 @@ import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import InviteTeamMemberModal from "../InviteTeamMemberModal";
 import TeamMemberCard from "./TeamMemberCard";
 
-const TeamTabContent = () => {
+const TeamTabContent: FC = () => {
   const t = useT();
 
   const { query } = useRouter();
@@ -110,7 +109,7 @@ const TeamTabContent = () => {
       <LoadingContainer loading={false}>
         <Text variant="text-heading-2000">{t("Meet the Team")}</Text>
 
-        <When condition={(approvedUsers?.length ?? 0) > 0}>
+        {(approvedUsers?.length ?? 0) > 0 && (
           <div className="mt-12 rounded-lg bg-neutral-150 py-8 px-14">
             <div className="flex items-center justify-between">
               <Text variant="text-heading-200">
@@ -125,9 +124,9 @@ const TeamTabContent = () => {
               render={user => <TeamMemberCard user={user} />}
             />
           </div>
-        </When>
+        )}
 
-        <When condition={(pendingUsers?.length ?? 0) > 0}>
+        {(pendingUsers?.length ?? 0) > 0 && (
           <div className="mt-12 rounded-lg bg-neutral-150 py-8 px-14">
             <Text variant="text-heading-200">
               {t("Requests to Join Organization ({n})", { n: pendingUsers?.length })}
@@ -145,7 +144,7 @@ const TeamTabContent = () => {
               )}
             />
           </div>
-        </When>
+        )}
       </LoadingContainer>
     </Container>
   );

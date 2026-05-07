@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { Else, If, Then } from "react-if";
+import { FC } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
@@ -22,7 +22,7 @@ interface NurseryReportsTabProps {
   taskUuid: string;
 }
 
-const NurseryReportsTab = ({ taskUuid }: NurseryReportsTabProps) => {
+const NurseryReportsTab: FC<NurseryReportsTabProps> = ({ taskUuid }) => {
   const t = useT();
   const { format } = useDate();
   const [loaded, { nurseryReportUuids }] = useTask({ id: taskUuid });
@@ -94,28 +94,24 @@ const NurseryReportsTab = ({ taskUuid }: NurseryReportsTabProps) => {
                     header: "",
                     enableSorting: false,
                     accessorKey: "uuid",
-                    cell: props => (
-                      <If condition={props.row.original?.status === "started"}>
-                        <Then>
-                          <Button
-                            as={Link}
-                            href={`/entity/nursery-reports/edit/${props.getValue()}`}
-                            className="float-right"
-                          >
-                            {t("Continue")}
-                          </Button>
-                        </Then>
-                        <Else>
-                          <Button
-                            as={Link}
-                            href={getEntityDetailPageLink("nursery-reports", props.getValue() as string)}
-                            className="float-right"
-                          >
-                            {t("View Report")}
-                          </Button>
-                        </Else>
-                      </If>
-                    )
+                    cell: props =>
+                      props.row.original?.status === "started" ? (
+                        <Button
+                          as={Link}
+                          href={`/entity/nursery-reports/edit/${props.getValue()}`}
+                          className="float-right"
+                        >
+                          {t("Continue")}
+                        </Button>
+                      ) : (
+                        <Button
+                          as={Link}
+                          href={getEntityDetailPageLink("nursery-reports", props.getValue() as string)}
+                          className="float-right"
+                        >
+                          {t("View Report")}
+                        </Button>
+                      )
                   }
                 ]}
                 initialTableState={{ pagination: { pageSize: 5 } }}

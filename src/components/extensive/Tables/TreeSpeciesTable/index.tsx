@@ -5,6 +5,7 @@ import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVar
 import Text from "@/components/elements/Text/Text";
 import { TableType } from "@/components/extensive/Tables/TreeSpeciesTable/columnDefinitions";
 import { SupportedEntity, usePlants } from "@/connections/EntityAssociation";
+import { withFrameworkShow } from "@/context/framework.provider";
 import Log from "@/utils/log";
 
 import { TreeSpeciesTableRowData, useTableData, useTableType, useTreeTableColumns } from "./hooks";
@@ -180,4 +181,4 @@ const TreeSpeciesTable: FC<TreeSpeciesTableProps> = props => {
   return null;
 };
 
-export default TreeSpeciesTable;
+export default withFrameworkShow(TreeSpeciesTable);

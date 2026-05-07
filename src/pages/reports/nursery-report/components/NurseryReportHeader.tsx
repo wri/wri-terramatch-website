@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
+import { FC } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
@@ -14,7 +14,7 @@ interface NurseryReportHeaderProps {
   title: string;
 }
 
-const NurseryReportHeader = ({ report, title }: NurseryReportHeaderProps) => {
+const NurseryReportHeader: FC<NurseryReportHeaderProps> = ({ report, title }) => {
   const t = useT();
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nursery-reports", report?.uuid);
@@ -35,12 +35,12 @@ const NurseryReportHeader = ({ report, title }: NurseryReportHeaderProps) => {
       hasBackButton={false}
     >
       <div className="flex gap-4">
-        <When condition={!report?.nothingToReport}>
+        {!report?.nothingToReport && (
           <Button variant="secondary" onClick={handleExport}>
             {t("Export")}
             <InlineLoader loading={exportLoader} />
           </Button>
-        </When>
+        )}
         <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
       </div>
     </PageHeader>

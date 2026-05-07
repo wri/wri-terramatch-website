@@ -5,13 +5,12 @@ import "swiper/css/pagination";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useRef } from "react";
-import { When } from "react-if";
 import { Navigation, Pagination, SwiperOptions } from "swiper";
 import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
 
 import Icon, { IconNames } from "../Icon/Icon";
 
-export interface CarouselProps<T> extends SwiperProps {
+export type CarouselProps<T> = SwiperProps & {
   items: T[];
   carouselItem: (item: T, index: number) => JSX.Element | null;
   className?: string;
@@ -25,7 +24,7 @@ export interface CarouselProps<T> extends SwiperProps {
   buttonsOutside?: boolean;
   smallSwiperButtons?: boolean;
   numberSlidesPerView?: number | "auto";
-}
+};
 
 export type CarouselBreakPoints = {
   [width: number]: SwiperOptions;
@@ -59,9 +58,7 @@ const Carousel = <T extends Record<any, any>>({
   };
 
   useEffect(() => {
-    if (selectedImage !== undefined && swiperRef.current) {
-      swiperRef.current.slideTo(selectedImage);
-    }
+    if (selectedImage != null) swiperRef.current?.slideTo(selectedImage);
   }, [selectedImage]);
 
   return (
@@ -123,11 +120,11 @@ const Carousel = <T extends Record<any, any>>({
           />
         </button>
       </div>
-      <When condition={!hidePaginationBullet}>
+      {!hidePaginationBullet && (
         <div className="swiper-pagination !relative mt-8">
           <span className="swiper-pagination-bullet"></span>
         </div>
-      </When>
+      )}
     </div>
   );
 };

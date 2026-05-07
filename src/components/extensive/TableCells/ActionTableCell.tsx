@@ -1,23 +1,23 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
+import { FC } from "react";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import IconButton from "@/components/elements/IconButton/IconButton";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 
-interface ActionTableCellProps {
+type ActionTableCellProps = {
   primaryButtonProps: IButtonProps;
   hasDeleteButton?: boolean;
   onDelete?: () => void;
-}
+};
 
-export const ActionTableCell = ({ primaryButtonProps, hasDeleteButton, onDelete }: ActionTableCellProps) => {
+const ActionTableCell: FC<ActionTableCellProps> = ({ primaryButtonProps, hasDeleteButton, onDelete }) => {
   const t = useT();
 
   return (
     <div className="flex justify-end gap-4">
       <Button {...primaryButtonProps} />
-      <When condition={hasDeleteButton}>
+      {hasDeleteButton && (
         <IconButton
           onClick={() => onDelete?.()}
           aria-label={t("Delete")}
@@ -28,7 +28,9 @@ export const ActionTableCell = ({ primaryButtonProps, hasDeleteButton, onDelete 
             height: 32
           }}
         />
-      </When>
+      )}
     </div>
   );
 };
+
+export default ActionTableCell;

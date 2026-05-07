@@ -1,8 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Link from "next/link";
-import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, useState } from "react";
-import { Else, If, Then, When } from "react-if";
+import { DetailedHTMLProps, FC, HTMLAttributes, PropsWithChildren, useCallback, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import ExpandedCard from "@/components/elements/Cards/ExpandedCard/ExpandedCard";
@@ -29,13 +28,13 @@ import Log from "@/utils/log";
 
 import { StatusEnum } from "../../Status/constants/statusMap";
 
-export interface ProjectCardProps
-  extends PropsWithChildren,
-    DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  project: ProjectLightDto;
-}
+type ProjectCardProps = PropsWithChildren<
+  DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
+    project: ProjectLightDto;
+  }
+>;
 
-const FrameworkName = ({ frameworkKey }: { frameworkKey?: string | null }) => {
+const FrameworkName: FC<{ frameworkKey?: string | null }> = ({ frameworkKey }) => {
   const title = useFrameworkTitle();
   const [, { data: frameworkData }] = useReportingFramework({ frameworkKey: frameworkKey ?? undefined });
 
@@ -46,7 +45,7 @@ const FrameworkName = ({ frameworkKey }: { frameworkKey?: string | null }) => {
   );
 };
 
-const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCardProps) => {
+const ProjectCard: FC<ProjectCardProps> = ({ project, title, children, className, ...rest }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const { openToast } = useToastContext();
@@ -55,7 +54,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
   const [nurseriesCount, setNurseriesCount] = useState<number | undefined>();
   const [siteCount, setSiteCount] = useState<number | undefined>();
 
-  const onDeleteProject = () => {
+  const onDeleteProject = useCallback(() => {
     openModal(
       ModalId.CONFIRM_PROJECT_DRAFT_DELETION,
       <Modal
@@ -83,7 +82,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
         }}
       />
     );
-  };
+  }, [closeModal, openModal, openToast, project.uuid, t]);
 
   return (
     <FrameworkProvider frameworkKey={project.frameworkKey}>
@@ -109,28 +108,29 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
             </div>
           </div>
           <div className="flex gap-4 mobile:flex-col mobile:self-baseline">
-            <If condition={statusProps?.status === StatusEnum.EDIT}>
-              <Then>
+            {statusProps?.status === StatusEnum.EDIT ? (
+              <>
                 <Button as={Link} href={`/entity/projects/edit/${project.uuid}`}>
                   {t("Continue Project")}
                 </Button>
                 <IconButton
                   iconProps={{ name: IconNames.TRASH_CIRCLE, className: "fill-error", width: 32 }}
-                  onClick={() => onDeleteProject()}
+                  onClick={onDeleteProject}
                 />
-              </Then>
-              <Else>
+              </>
+            ) : (
+              <>
                 <Button as={Link} variant="secondary" href={`/project/${project.uuid}?tab=reporting-tasks`}>
                   {t("View reporting tasks")}
                 </Button>
                 <Button as={Link} href={`/project/${project.uuid}`}>
                   {t("View Project")}
                 </Button>
-              </Else>
-            </If>
+              </>
+            )}
           </div>
         </div>
-        <When condition={statusProps?.status !== StatusEnum.EDIT}>
+        {statusProps?.status !== StatusEnum.EDIT && (
           <div className="space-y-6 p-8 mobile:px-3">
             <ExpandedCard
               headerChildren={
@@ -196,7 +196,7 @@ const ProjectCard = ({ project, title, children, className, ...rest }: ProjectCa
               />
             </ExpandedCard>
           </div>
-        </When>
+        )}
       </Paper>
     </FrameworkProvider>
   );

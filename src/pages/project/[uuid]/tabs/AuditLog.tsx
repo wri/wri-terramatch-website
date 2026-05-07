@@ -1,5 +1,4 @@
 import { FC, useState } from "react";
-import { When } from "react-if";
 
 import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogSiteTabSelection";
 import SiteAuditLogEntityStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatus";
@@ -68,10 +67,9 @@ const AuditLog: FC<AuditLogProps> = ({ project, refresh: refreshProject }) => {
                     entityLevel={AuditLogButtonStates.PROJECT}
                     existNurseries={project?.totalNurseries > 0}
                   />
-                  <When condition={buttonToggle === ButtonStates.PROJECTS}>
+                  {buttonToggle === ButtonStates.PROJECTS ? (
                     <SiteAuditLogProjectStatus viewPD={true} record={project} auditLogData={auditLogData} />
-                  </When>
-                  <When condition={buttonToggle !== ButtonStates.PROJECTS}>
+                  ) : (
                     <SiteAuditLogEntityStatus
                       record={selected}
                       auditLogData={auditLogData}
@@ -80,7 +78,7 @@ const AuditLog: FC<AuditLogProps> = ({ project, refresh: refreshProject }) => {
                       entityType={entityType}
                       viewPD={true}
                     />
-                  </When>
+                  )}
                 </div>
                 <div className="w-[32%] pl-8 mobile:w-full">
                   <SiteAuditLogEntityStatusSide

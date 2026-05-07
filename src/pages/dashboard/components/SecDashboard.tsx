@@ -1,8 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { When } from "react-if";
+import { FC, useEffect, useState } from "react";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
@@ -40,25 +39,7 @@ interface secondOptionsDataItem {
   color?: string;
 }
 
-const SecDashboard = ({
-  title,
-  type,
-  secondOptionsData = [],
-  className,
-  classNameBody,
-  classNameHeader,
-  classNameTitle,
-  shouldShowOnlyOneLine = false,
-  variantTitle,
-  tooltip,
-  isTableProject,
-  data,
-  dataForChart,
-  chartType,
-  isUserAllowed = true,
-  isLoading = false,
-  showTreesRestoredGraph = true
-}: {
+type SecDashboardProps = {
   title: string;
   type?: "legend" | "toggle";
   secondOptionsData?: secondOptionsDataItem[];
@@ -76,6 +57,26 @@ const SecDashboard = ({
   isUserAllowed?: boolean;
   isLoading?: boolean;
   showTreesRestoredGraph?: boolean;
+};
+
+const SecDashboard: FC<SecDashboardProps> = ({
+  title,
+  type,
+  secondOptionsData = [],
+  className,
+  classNameBody,
+  classNameHeader,
+  classNameTitle,
+  shouldShowOnlyOneLine = false,
+  variantTitle,
+  tooltip,
+  isTableProject,
+  data,
+  dataForChart,
+  chartType,
+  isUserAllowed = true,
+  isLoading = false,
+  showTreesRestoredGraph = true
 }) => {
   const router = useRouter();
   const [toggleValue, setToggleValue] = useState(0);
@@ -131,16 +132,16 @@ const SecDashboard = ({
         )}
       >
         <div className="flex items-center gap-1">
-          <Text variant={variantTitle || "text-14"} className={classNames("uppercase text-darkCustom", classNameTitle)}>
+          <Text variant={variantTitle ?? "text-14"} className={classNames("uppercase text-darkCustom", classNameTitle)}>
             {t(title)}
           </Text>
-          <When condition={!!tooltip}>
+          {tooltip != null && (
             <ToolTip title={t(title)} content={t(tooltip)} width="w-52 lg:w-64" trigger="click">
               <Icon name={IconNames.IC_INFO} className="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5" />
             </ToolTip>
-          </When>
+          )}
         </div>
-        <When condition={type === "legend"}>
+        {type === "legend" && (
           <div className="flex gap-4">
             {secondOptionsData &&
               secondOptionsData.map((item: secondOptionsDataItem, index: number) => (
@@ -152,14 +153,14 @@ const SecDashboard = ({
                 </div>
               ))}
           </div>
-        </When>
-        <When condition={type === "toggle"}>
+        )}
+        {type === "toggle" && (
           <Toggle
             items={secondOptionsData.map(item => item.tooltip)}
             onChangeActiveIndex={setToggleValue}
             variant={VARIANT_TOGGLE_DASHBOARD}
           />
-        </When>
+        )}
       </div>
       <div
         className={classNames(
@@ -167,10 +168,10 @@ const SecDashboard = ({
           classNameBody
         )}
       >
-        {data?.value !== undefined && (
+        {data?.value != null && (
           <ValueNumberDashboard value={data.value} unit={data.unit} totalValue={data.totalValue} />
         )}
-        <When condition={data?.totalValue && showTreesRestoredGraph}>
+        {data?.totalValue != null && showTreesRestoredGraph && (
           <div className="relative h-9 w-[315px]">
             <div className="absolute inset-0 z-0 h-full w-full">
               <HorizontalStackedBarChart data={restorationGoalResume} className="h-full w-full" />
@@ -182,8 +183,8 @@ const SecDashboard = ({
               className="z-1 absolute right-0 h-9 w-[316px]"
             />
           </div>
-        </When>
-        <When condition={chartType === CHART_TYPES.multiLineChart}>
+        )}
+        {chartType === CHART_TYPES.multiLineChart && (
           <BlurContainer
             isBlur={
               (isUserAllowed == null || isUserAllowed) &&
@@ -202,8 +203,8 @@ const SecDashboard = ({
               isAbsoluteData={toggleValue === 1}
             />
           </BlurContainer>
-        </When>
-        <When condition={chartType === CHART_TYPES.groupedBarChart}>
+        )}
+        {chartType === CHART_TYPES.groupedBarChart && (
           <BlurContainer
             isBlur={
               (isUserAllowed == null || isUserAllowed) &&
@@ -220,8 +221,8 @@ const SecDashboard = ({
               }
             />
           </BlurContainer>
-        </When>
-        <When condition={chartType === CHART_TYPES.doughnutChart}>
+        )}
+        {chartType === CHART_TYPES.doughnutChart && (
           <BlurContainer
             isBlur={
               (isUserAllowed == null || isUserAllowed) &&
@@ -238,8 +239,8 @@ const SecDashboard = ({
               }
             />
           </BlurContainer>
-        </When>
-        <When condition={chartType === CHART_TYPES.simpleBarChart}>
+        )}
+        {chartType === CHART_TYPES.simpleBarChart && (
           <BlurContainer
             isBlur={
               (isUserAllowed == null || isUserAllowed) &&
@@ -258,57 +259,59 @@ const SecDashboard = ({
               total={dataForChart?.totalSection?.totalHectaresRestored}
             />
           </BlurContainer>
-        </When>
-        <When condition={data?.graphic}>
-          <img src={data?.graphic} alt={data?.graphic} className="w-full" />
-          <div>
-            <When condition={!!data?.graphicLegend}>
-              <div className="flex gap-3">
-                {data?.graphicLegend?.map((item, index) => (
-                  <div key={index} className="flex items-baseline gap-1">
-                    <div className={classNames("h-2 w-2 rounded-full lg:h-3 lg:w-3", item.color)} />
-                    <div>
-                      <Text variant="text-12-light" className="text-darkCustom">
-                        {t(item.label)}
-                      </Text>
-                      <Text variant="text-12-light" className="text-darkCustom opacity-60">
-                        {t(item.value)}
-                      </Text>
+        )}
+        {data?.graphic != null && (
+          <>
+            <img src={data.graphic} alt={data.graphic} className="w-full" />
+            <div>
+              {data?.graphicLegend != null && (
+                <div className="flex gap-3">
+                  {data.graphicLegend.map((item, index) => (
+                    <div key={index} className="flex items-baseline gap-1">
+                      <div className={classNames("h-2 w-2 rounded-full lg:h-3 lg:w-3", item.color)} />
+                      <div>
+                        <Text variant="text-12-light" className="text-darkCustom">
+                          {t(item.label)}
+                        </Text>
+                        <Text variant="text-12-light" className="text-darkCustom opacity-60">
+                          {t(item.value)}
+                        </Text>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </When>
-          </div>
-        </When>
-        <When condition={!!data?.tableData}>
-          <When condition={toggleValue === 1}>
-            {data?.tableData && <GraphicDashboard data={data?.tableData} maxValue={data.maxValue ?? 0} />}
-          </When>
-          <When condition={toggleValue === 0}>
-            <div className="w-full">
-              {data && (
-                <>
-                  <Table
-                    data={data?.tableData ?? []}
-                    hasPagination={false}
-                    columns={tableColumns}
-                    variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
-                    classNameWrapper="mobile:px-0"
-                  />
-                  <Text
-                    variant="text-14"
-                    className="mt-1 cursor-pointer pt-2 pl-4 text-primary underline"
-                    onClick={handleViewAllClick}
-                  >
-                    {t("VIEW ALL PROJECTS")}
-                  </Text>
-                </>
+                  ))}
+                </div>
               )}
             </div>
-          </When>
-        </When>
-        <When condition={chartType === CHART_TYPES.barChart}>
+          </>
+        )}
+        {data?.tableData != null && (
+          <>
+            {toggleValue === 1 && <GraphicDashboard data={data.tableData} maxValue={data.maxValue ?? 0} />}
+            {toggleValue === 0 && (
+              <div className="w-full">
+                {data && (
+                  <>
+                    <Table
+                      data={data.tableData}
+                      hasPagination={false}
+                      columns={tableColumns}
+                      variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+                      classNameWrapper="mobile:px-0"
+                    />
+                    <Text
+                      variant="text-14"
+                      className="mt-1 cursor-pointer pt-2 pl-4 text-primary underline"
+                      onClick={handleViewAllClick}
+                    >
+                      {t("VIEW ALL PROJECTS")}
+                    </Text>
+                  </>
+                )}
+              </div>
+            )}
+          </>
+        )}
+        {chartType === CHART_TYPES.barChart && (
           <BlurContainer
             isBlur={
               (isUserAllowed == null || isUserAllowed) &&
@@ -330,10 +333,8 @@ const SecDashboard = ({
               }
             />
           </BlurContainer>
-        </When>
-        <When condition={!!data?.objetiveText}>
-          <ObjectiveSec data={data} />
-        </When>
+        )}
+        {data?.objetiveText != null && <ObjectiveSec data={data} />}
       </div>
     </div>
   );

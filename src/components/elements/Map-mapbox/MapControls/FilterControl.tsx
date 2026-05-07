@@ -1,12 +1,11 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useState } from "react";
-import { When } from "react-if";
+import { FC, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-export const FilterControl = () => {
+export const FilterControl: FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const t = useT();
 
@@ -19,7 +18,7 @@ export const FilterControl = () => {
 
   return (
     <div className="">
-      <When condition={showFilters}>
+      {showFilters && (
         <div className="relative">
           <div className="absolute bottom-1 w-max rounded-lg bg-white p-2 shadow">
             {buttons.map((button, index) => (
@@ -37,7 +36,7 @@ export const FilterControl = () => {
             ))}
           </div>
         </div>
-      </When>
+      )}
       <Button
         variant="text"
         className="text-12-bold h-fit rounded border border-neutral-175 bg-white p-2 shadow"

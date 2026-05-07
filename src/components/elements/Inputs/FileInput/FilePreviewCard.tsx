@@ -1,8 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import dynamic from "next/dynamic";
-import { useCallback } from "react";
-import { Else, If, Then } from "react-if";
+import { FC, useCallback } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
 import SpinnerLottie from "@/assets/animations/spinner.json";
@@ -30,13 +29,13 @@ export interface FilePreviewCardProps {
   onPrivateChange?: (file: Partial<UploadedFile>, checked: boolean) => void;
 }
 
-const FilePreviewCard = ({
+const FilePreviewCard: FC<FilePreviewCardProps> = ({
   file,
   className,
   showPrivateCheckbox,
   onDelete,
   variant = VARIANT_FILE_PREVIEW_CARD_DEFAULT
-}: FilePreviewCardProps) => {
+}) => {
   const handlePrivateChange = useCallback(
     (checked: boolean) => {
       if (file == null) return;
@@ -77,11 +76,10 @@ const FilePreviewCard = ({
           <Failed title={file.fileName ?? ""} errorMessage={file.uploadState.error} variant={variant} />
         )}
       </div>
-      <If condition={file.uploadState?.isLoading || file.uploadState?.isDeleting}>
-        <Then>
-          <Lottie animationData={SpinnerLottie} className="h-8 w-8" />
-        </Then>
-        <Else>
+      {file.uploadState?.isLoading || file.uploadState?.isDeleting ? (
+        <Lottie animationData={SpinnerLottie} className="h-8 w-8" />
+      ) : (
+        <>
           <div className="ml-auto flex items-center gap-4 self-end">
             <IconButton
               type="button"
@@ -94,7 +92,7 @@ const FilePreviewCard = ({
                 width: 32
               }}
             />
-            {variant.type === "image" ? (
+            {variant.type === "image" && (
               <div
                 className={classNames("flex items-center justify-center rounded border py-2", {
                   "border-blue": geotagged,
@@ -112,11 +110,11 @@ const FilePreviewCard = ({
                   {geotagged ? t("GeoTagged Verified") : t("Not Verified")}
                 </Text>
               </div>
-            ) : null}
+            )}
             {variant.type === "geoFile" ? <Icon name={IconNames.CHECK_POLYGON} className="h-6 w-6" /> : null}
           </div>
-        </Else>
-      </If>
+        </>
+      )}
     </div>
   );
 };
@@ -127,7 +125,7 @@ interface UploadingProps {
   variant: FilePreviewCardVariant;
 }
 
-const Uploading = ({ title, file, variant }: UploadingProps) => {
+const Uploading: FC<UploadingProps> = ({ title, file, variant }) => {
   const t = useT();
   const { format } = useFileSize();
 
@@ -154,7 +152,7 @@ interface UploadedProps extends UploadingProps {
   variant: FilePreviewCardVariant;
 }
 
-const Uploaded = ({ title, file, showPrivateCheckbox, onPrivateChange, variant }: UploadedProps) => {
+const Uploaded: FC<UploadedProps> = ({ title, file, showPrivateCheckbox, onPrivateChange, variant }) => {
   const t = useT();
   const { format } = useFileSize();
 
@@ -185,7 +183,7 @@ interface FailedContentProps {
   variant: FilePreviewCardVariant;
 }
 
-const Failed = ({ title, errorMessage: errorState, variant }: FailedContentProps) => {
+const Failed: FC<FailedContentProps> = ({ title, errorMessage: errorState, variant }) => {
   const t = useT();
 
   let errorMessage;
