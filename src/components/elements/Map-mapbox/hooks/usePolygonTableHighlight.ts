@@ -109,7 +109,6 @@ export function usePolygonTableHighlightFill({
     }
   }, [map, styleReady, styleVersion, sourcesAdded, highlight]);
 
-  // Reset memo whenever the underlying style is rebuilt; the layers we cached against are gone.
   useEffect(() => {
     lastAppliedRef.current = new Map();
   }, [styleVersion, sourcesAdded]);
