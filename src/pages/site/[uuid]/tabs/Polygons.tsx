@@ -1,10 +1,11 @@
-import { Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
+import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
 import { FC, ReactNode, useEffect, useMemo } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
@@ -25,6 +26,7 @@ import {
   AssistedNaturalRegenIcon,
   CalendarIcon,
   DirectSeedingIcon,
+  DownloadIcon,
   GrasslandIcon,
   MangroveIcon,
   NaturalForestIcon,
@@ -353,7 +355,39 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
 
   return (
     <PageContent className="bg-theme-neutral-100">
-      <SearchBar polygonRows={polygonRows} />
+      <PageItem
+        title={t("Polygons")}
+        flexProps={{ width: "100%" }}
+        buttonProps={{
+          variant: "secondary",
+          size: "small",
+          children: t("Download All"),
+          leftIcon: <DownloadIcon />
+        }}
+        multiActionButtonProps={{
+          mainActionLabel: t("Add"),
+          size: "small",
+          leftIcon: <PlusIcon />,
+          mainActionOnClick: () => {},
+          otherActions: [
+            {
+              label: t("Save as Draft"),
+              onClick: () => {},
+              value: "draft"
+            },
+            {
+              label: t("Save and Close"),
+              onClick: () => {},
+              value: "save-close"
+            }
+          ],
+          variant: "primary"
+        }}
+      >
+        <Box mt={-4.5} mb={-5}>
+          <SearchBar polygonRows={polygonRows} />
+        </Box>
+      </PageItem>
       <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
         <PolygonsMap
           entityModel={site}
