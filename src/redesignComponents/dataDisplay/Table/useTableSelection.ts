@@ -37,6 +37,7 @@ export const useTableSelection = <T extends BaseRow>(initialSelectable: boolean 
 
   return {
     selectedRows,
+    selectedRowIds,
     setSelectedRows,
     setSelectedRowIds,
     handleRowSelected,

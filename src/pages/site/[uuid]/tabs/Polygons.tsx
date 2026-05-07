@@ -1,8 +1,7 @@
 import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
-import classNames from "classnames";
-import { FC, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, memo, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -170,6 +169,90 @@ const renderRestorationPractice = (restorationPractice: restorationStrategyType[
   );
 };
 
+const HOVERED_ROW_STYLE: React.CSSProperties = {
+  backgroundColor: getThemedColor("primary", 100),
+  borderBottom: `1px solid ${getThemedColor("primary", 700)}`
+};
+
+interface PolygonRowProps {
+  row: PolygonTableRow;
+  rowProps?: Record<string, unknown>;
+  isSelected: boolean;
+  isHovered: boolean;
+  onHover: (uuid: string) => void;
+  onSelectChange: (row: PolygonTableRow, checked: boolean) => void;
+}
+
+const PolygonRowComponent: FC<PolygonRowProps> = ({
+  row,
+  rowProps,
+  isSelected,
+  isHovered,
+  onHover,
+  onSelectChange
+}) => {
+  const handleOnRowSelected = useCallback(
+    ({ checked }: { checked?: boolean | "indeterminate" }) => {
+      onSelectChange(row, Boolean(checked));
+    },
+    [row, onSelectChange]
+  );
+
+  const handleMouseEnter = useCallback(() => {
+    onHover(row.id);
+  }, [row.id, onHover]);
+
+  const targetLandUseConfig = getTargetLandUseConfig(row.targetLandUse);
+
+  return (
+    <TableRow
+      {...(rowProps as Record<string, unknown>)}
+      aria-selected={isSelected}
+      onMouseEnter={handleMouseEnter}
+      style={isHovered ? HOVERED_ROW_STYLE : undefined}
+    >
+      <TableCell>
+        <Checkbox name={`checkbox-${row.id}`} onCheckedChange={handleOnRowSelected} checked={isSelected} />
+      </TableCell>
+      <TableCell className="min-w-[17.75rem] max-w-[17.75rem]">
+        <Text textStyle="400-bold" color="neutral.800" className="truncate">
+          {row.polygonName}
+        </Text>
+      </TableCell>
+      <TableCell className="min-w-[15.875rem]">
+        <MappedTag state={row.submission} />
+      </TableCell>
+      <TableCell className="min-w-[12.75rem]">
+        <ValidationTag className="" status={row.validation} />
+      </TableCell>
+      <TableCell className="min-w-[15.5rem]">
+        <Flex className="items-center gap-2">{renderRestorationPractice(row.restorationPractice)}</Flex>
+      </TableCell>
+      <TableCell className="min-w-[16.75rem]">
+        <Flex className="items-center gap-2" color="neutral.800">
+          {targetLandUseConfig.icon}
+          <Text>{targetLandUseConfig.label}</Text>
+        </Flex>
+      </TableCell>
+      <TableCell className="min-w-[11.5rem]">
+        <FeedbackTag
+          type="info-grey"
+          className="w-fit"
+          label={row.plantingDate}
+          icon={<CalendarIcon boxSize={2.5} />}
+        />
+      </TableCell>
+      <TableCell className="min-w-[15.875rem]">
+        <Text>{row.treeDistribution.join(", ")}</Text>
+      </TableCell>
+      <TableCell className="min-w-[12.75rem]">{row.treesPlanted}</TableCell>
+      <TableCell className="min-w-[15.75rem]">{row.area}</TableCell>
+    </TableRow>
+  );
+};
+
+const PolygonRow = memo(PolygonRowComponent);
+
 const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
@@ -223,14 +306,12 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     [format, polygonsData, t]
   );
 
-  const { selectedRows, setSelectedRowIds, handleRowSelected, onAllItemsSelected } = useTableSelection<PolygonTableRow>(
-    true,
-    polygonRows
-  );
+  const { selectedRows, selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } =
+    useTableSelection<PolygonTableRow>(true, polygonRows);
 
   const [hoveredPolygonUuid, setHoveredPolygonUuid] = useState<string | null>(null);
 
-  const selectedPolygonUuids = useMemo(() => selectedRows.map(row => row.id), [selectedRows]);
+  const selectedPolygonUuids = useMemo(() => Array.from(selectedRowIds, id => String(id)), [selectedRowIds]);
 
   const handlePolygonClickedFromMap = useCallback(
     (uuid: string) => {
@@ -253,6 +334,8 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     }),
     [hoveredPolygonUuid, selectedPolygonUuids, handlePolygonClickedFromMap]
   );
+
+  const handleClearHover = useCallback(() => setHoveredPolygonUuid(null), []);
 
   const { totalTreesPlanted, totalRestorationAreaHa } = useMemo(() => {
     let trees = 0;
@@ -333,70 +416,17 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   );
 
   const selectableRenderRow = useCallback(
-    (row: PolygonTableRow, rowProps?: Record<string, unknown>) => {
-      const isSelected = selectedRows.some(item => item.id === row.id);
-      const isHovered = hoveredPolygonUuid === row.id;
-      const handleOnRowSelected = ({ checked }: any) => {
-        handleRowSelected(row, Boolean(checked));
-      };
-
-      return (
-        <TableRow
-          {...(rowProps as any)}
-          aria-selected={isSelected}
-          onMouseEnter={() => {
-            setHoveredPolygonUuid(row.id);
-          }}
-          className={classNames((rowProps as { className?: string })?.className)}
-          style={
-            isHovered
-              ? {
-                  backgroundColor: getThemedColor("primary", 100),
-                  borderBottom: `1px solid ${getThemedColor("primary", 700)}`
-                }
-              : undefined
-          }
-        >
-          <TableCell>
-            <Checkbox name={`checkbox-${row.id}`} onCheckedChange={handleOnRowSelected} checked={isSelected} />
-          </TableCell>
-          <TableCell className="min-w-[17.75rem] max-w-[17.75rem]">
-            <Text textStyle="400-bold" color="neutral.800" className="truncate">
-              {row.polygonName}
-            </Text>
-          </TableCell>
-          <TableCell className="min-w-[15.875rem]">
-            <MappedTag state={row.submission} />
-          </TableCell>
-          <TableCell className="min-w-[12.75rem]">
-            <ValidationTag className="" status={row.validation} />
-          </TableCell>
-          <TableCell className="min-w-[15.5rem]">
-            <Flex className="items-center gap-2">{renderRestorationPractice(row.restorationPractice)}</Flex>
-          </TableCell>
-          <TableCell className="min-w-[16.75rem]">
-            <Flex className="items-center gap-2" color="neutral.800">
-              {getTargetLandUseConfig(row.targetLandUse).icon}
-              <Text>{getTargetLandUseConfig(row.targetLandUse).label}</Text>
-            </Flex>
-          </TableCell>
-          <TableCell className="min-w-[11.5rem]">
-            <FeedbackTag
-              type="info-grey"
-              className="w-fit"
-              label={row.plantingDate}
-              icon={<CalendarIcon boxSize={2.5} />}
-            />
-          </TableCell>
-          <TableCell className="min-w-[15.875rem]">
-            <Text>{row.treeDistribution.join(", ")}</Text>
-          </TableCell>
-          <TableCell className="min-w-[12.75rem]">{row.treesPlanted}</TableCell>
-          <TableCell className="min-w-[15.75rem]">{row.area}</TableCell>
-        </TableRow>
-      );
-    },
-    [handleRowSelected, hoveredPolygonUuid, selectedRows]
+    (row: PolygonTableRow, rowProps?: Record<string, unknown>) => (
+      <PolygonRow
+        row={row}
+        rowProps={rowProps}
+        isSelected={selectedRowIds.has(row.id)}
+        isHovered={hoveredPolygonUuid === row.id}
+        onHover={setHoveredPolygonUuid}
+        onSelectChange={handleRowSelected}
+      />
+    ),
+    [handleRowSelected, hoveredPolygonUuid, selectedRowIds]
   );
 
   return (
@@ -449,7 +479,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           />
         )}
       </Flex>
-      <Box onMouseLeave={() => setHoveredPolygonUuid(null)}>
+      <Box onMouseLeave={handleClearHover}>
         <Table<PolygonTableRow>
           data={polygonRows}
           columns={columns}
@@ -459,7 +489,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           pageSize={10}
           selectable
           selectedRows={selectedRows}
-          onAllRowsSelected={(checked, visibleRows) => onAllItemsSelected(checked, visibleRows)}
+          onAllRowsSelected={onAllItemsSelected}
           renderRow={selectableRenderRow}
         />
       </Box>

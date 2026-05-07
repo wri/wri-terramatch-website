@@ -10,6 +10,7 @@ import {
 import Log from "@/utils/log";
 
 const POLYGON_FILL_LAYER_IDS = getPolygonGeometryFillLayerConfigs().map(c => c.layerId);
+const EMPTY_SELECTION: string[] = [];
 
 const HOVER_FILL_OPACITY = 0.6;
 const SELECTED_FILL_OPACITY = 1;
@@ -76,24 +77,31 @@ export function usePolygonTableHighlightFill({
   sourcesAdded,
   highlight
 }: UsePolygonTableHighlightFillParams): void {
+  const lastAppliedRef = useRef<Map<string, string>>(new Map());
+
   useEffect(() => {
-    if (highlight == null || !styleReady || !sourcesAdded || map.current == null) return;
+    if (!styleReady || !sourcesAdded || map.current == null) return;
 
     const m = map.current;
     const configs = getPolygonGeometryFillLayerConfigs();
-    const { hoveredPolygonUuid, selectedPolygonUuids } = highlight;
+    const hoveredUuid = highlight?.hoveredPolygonUuid ?? null;
+    const selectedUuids = highlight?.selectedPolygonUuids ?? EMPTY_SELECTION;
+    const fingerprint = `${hoveredUuid ?? ""}|${selectedUuids.join(",")}`;
 
     for (const { layerId, baseFillOpacity } of configs) {
       if (m.getLayer(layerId) == null) continue;
+      const key = `${layerId}@${baseFillOpacity}`;
+      if (lastAppliedRef.current.get(key) === fingerprint) continue;
       try {
-        const value = buildFillOpacityExpression(baseFillOpacity, hoveredPolygonUuid, selectedPolygonUuids);
+        const value = buildFillOpacityExpression(baseFillOpacity, hoveredUuid, selectedUuids);
         m.setPaintProperty(layerId, "fill-opacity", value);
+        lastAppliedRef.current.set(key, fingerprint);
       } catch (error) {
         if (!isTransientMapboxError(error)) {
           Log.warn("usePolygonTableHighlightFill: setPaintProperty failed", {
             layerId,
-            hoveredPolygonUuid,
-            selectedCount: selectedPolygonUuids.length,
+            hoveredUuid,
+            selectedCount: selectedUuids.length,
             error
           });
         }
@@ -101,21 +109,10 @@ export function usePolygonTableHighlightFill({
     }
   }, [map, styleReady, styleVersion, sourcesAdded, highlight]);
 
+  // Reset memo whenever the underlying style is rebuilt; the layers we cached against are gone.
   useEffect(() => {
-    if (highlight != null || !styleReady || !sourcesAdded || map.current == null) return;
-
-    const m = map.current;
-    for (const { layerId, baseFillOpacity } of getPolygonGeometryFillLayerConfigs()) {
-      if (m.getLayer(layerId) == null) continue;
-      try {
-        m.setPaintProperty(layerId, "fill-opacity", baseFillOpacity);
-      } catch (error) {
-        if (!isTransientMapboxError(error)) {
-          Log.warn("usePolygonTableHighlightFill: restore fill-opacity failed", { layerId, error });
-        }
-      }
-    }
-  }, [highlight, map, styleReady, styleVersion, sourcesAdded]);
+    lastAppliedRef.current = new Map();
+  }, [styleVersion, sourcesAdded]);
 }
 
 type UsePolygonTableHighlightPointerParams = {
