@@ -2117,10 +2117,8 @@ export type GetAuditStatusesResponse = {
 export type GetAuditStatusesVariables = {
   pathParams: GetAuditStatusesPathParams;
   queryParams?: {
-    /**
-     * Comma-separated audit type filters (e.g. polygon-data-submission,ready-for-baseline).
-     */
-    types?: string;
+    /** Audit type filters; repeat the query param for each value. */
+    types?: string[];
   };
 };
 

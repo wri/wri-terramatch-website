@@ -19,7 +19,7 @@ export type AuditStatusIndexProps = GetAuditStatusesPathParams & GetAuditStatuse
 const auditStatusIndexConnection = v3Resource("auditStatuses", getAuditStatuses)
   .index<AuditStatusDto, AuditStatusIndexProps>(({ entity, uuid, types }) => ({
     pathParams: { entity, uuid },
-    ...(types != null && types !== "" ? { queryParams: { types } } : {})
+    ...(types != null && types.length > 0 ? { queryParams: { types: [...types] } } : {})
   }))
   .enabledProp()
   .refetch(() => ApiSlice.pruneIndex("auditStatuses", ""))
