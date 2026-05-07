@@ -9,8 +9,9 @@ import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionB
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { CloseIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
 
-import Toolbar from "./Toolbar";
-import { SearchProps, ToolbarTableProps } from "./ToolBar.type";
+import Toolbar from "../Toolbar";
+import { SearchProps, ToolbarTableProps } from "../ToolBar.type";
+import FilterTag from "./FilterTag";
 
 const ToolbarTable: FC<ToolbarTableProps> = ({
   search,
@@ -19,7 +20,9 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   className,
   onClearFilters,
   tooltipContent,
-  showClearFilters = true
+  showClearFilters = true,
+  onClickFilterButton,
+  selectedFilters
 }) => {
   const t = useT();
   return (
@@ -49,41 +52,47 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
             </div>
           )}
           {search != null && filters != null && <span className="text-theme-neutral-500 mobile:hidden">&#124;</span>}
-          {filters != null && filters.length > 0 ? (
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="text-14 flex flex-wrap items-center gap-3 text-theme-neutral-900">
-                {t("Filter by:")}
-                {filters.map((filter, index) => (
-                  <MultiActionButton key={index} {...filter} size="small" />
-                ))}
-              </div>
-              {showClearFilters && (
-                <Button variant="borderless" size="small" leftIcon={<CloseIcon />} onClick={onClearFilters}>
-                  {t("Clear All Filters")}
-                </Button>
-              )}
-            </div>
-          ) : (
-            <Button
-              variant="secondary"
-              size="small"
-              leftIcon={
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M2.5 8.32914V7.21803H7.5V8.32914H2.5ZM1.25 5.55136V4.44025H8.75V5.55136H1.25ZM0 2.77359V1.66248H10V2.77359H0Z"
-                    fill="#5C5959"
-                  />
-                </svg>
-              }
-            >
-              {t("Add Filter")}
-            </Button>
-          )}
+          <div className="flex flex-wrap items-center gap-4">
+            {filters != null && filters.length > 0 ? (
+              <>
+                <div className="text-14 flex flex-wrap items-center gap-3 text-theme-neutral-900">
+                  {t("Filter by:")}
+                  {filters.map((filter, index) => (
+                    <MultiActionButton key={index} {...filter} size="small" />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <Button
+                variant="secondary"
+                size="small"
+                onClick={onClickFilterButton}
+                leftIcon={
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M2.5 8.32914V7.21803H7.5V8.32914H2.5ZM1.25 5.55136V4.44025H8.75V5.55136H1.25ZM0 2.77359V1.66248H10V2.77359H0Z"
+                      fill="#5C5959"
+                    />
+                  </svg>
+                }
+              >
+                {selectedFilters && selectedFilters.length > 0
+                  ? t("Filter" + " (" + selectedFilters.length + ")")
+                  : t("Add Filter")}
+              </Button>
+            )}
+            <FilterTag selectedFilters={selectedFilters} />
+            {showClearFilters && (
+              <Button variant="borderless" size="small" leftIcon={<CloseIcon />} onClick={onClearFilters}>
+                {t("Clear All Filters")}
+              </Button>
+            )}
+          </div>
         </div>
       }
       contentRight={
         <Flex gap={2} alignItems="center" justifyContent="right">
-          <Button {...button} size="small" />{" "}
+          {button != null && <Button {...button} size="small" />}
           {tooltipContent && (
             <Tooltip content={tooltipContent} position="top">
               <InfoIcon className="text-theme-neutral-800" />

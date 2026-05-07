@@ -45,13 +45,15 @@ import {
   mapSitePolygonValidationStatusToValidationTagState
 } from "@/utils/mapStatusToTagStateEntity";
 
+import SearchBar from "../components/SearchBar";
+
 interface SitePolygonsTabProps {
   site: SiteFullDto;
 }
 
 type SiteTypeConfig = { icon: ReactNode; label: string; tooltip?: string };
 
-type PolygonTableRow = {
+export type PolygonTableRow = {
   id: string;
   polygonName: string;
   submission: MappedTagState;
@@ -351,6 +353,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
 
   return (
     <PageContent className="bg-theme-neutral-100">
+      <SearchBar polygonRows={polygonRows} />
       <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
         <PolygonsMap
           entityModel={site}
