@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Search } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
@@ -46,9 +46,14 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                   } as SearchProps)}
                 />
               </div>
-              <span className="text-14-bold flex min-w-fit items-center gap-0.5 text-theme-neutral-900">
-                {search.count != null ? `${search.count} ${search.label}` : ""}
-              </span>
+              <div className="flex items-center gap-1">
+                <Text textStyle="400-bold" color={"primary.900"}>
+                  {search.count != null ? `${search.count}` : ""}
+                </Text>
+                <Text textStyle="400" color={"primary.900"}>
+                  {search.label}
+                </Text>
+              </div>
             </div>
           )}
           {search != null && filters != null && <span className="text-theme-neutral-500 mobile:hidden">&#124;</span>}
