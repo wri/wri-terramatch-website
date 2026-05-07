@@ -31,6 +31,12 @@ interface PolygonsMapProps {
   entityModel: PolygonsMapEntityModel;
   type: PolygonsMapEntityType;
   className?: string;
+  polygonTableHighlight?: {
+    hoveredPolygonUuid: string | null;
+    selectedPolygonUuids: string[];
+    onHoveredPolygonFromMap?: (uuid: string | null) => void;
+    onPolygonClickedFromMap?: (uuid: string) => void;
+  };
 }
 
 const EMPTY_POLYGON_MAP: Record<string, string[]> = {
@@ -42,7 +48,7 @@ const EMPTY_POLYGON_MAP: Record<string, string[]> = {
 
 type PolygonGeometryFeature = Pick<GeoJSON.Feature, "geometry">;
 
-const PolygonsMap: FC<PolygonsMapProps> = ({ entityModel, type, className }) => {
+const PolygonsMap: FC<PolygonsMapProps> = ({ entityModel, type, className, polygonTableHighlight }) => {
   // Champions map keeps polygon panel disabled until edit/validation UX is migrated.
   const disabledPolygonPanel = true;
   const [polygonDataMap, setPolygonDataMap] = useState<Record<string, string[]>>(() => ({ ...EMPTY_POLYGON_MAP }));
@@ -175,6 +181,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({ entityModel, type, className }) => 
         mediaFiles={mediaFiles}
         sitePolygonData={sitePolygonDataV3}
         disabledPolygonPanel={disabledPolygonPanel}
+        polygonTableHighlight={polygonTableHighlight}
       />
     </AnrMapOverlayProvider>
   );
