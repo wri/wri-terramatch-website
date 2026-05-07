@@ -5,8 +5,12 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Text from "@/components/elements/Text/Text";
-import { useFullEntity } from "@/connections/Entity";
-import { POLYGON_DATA_SUBMISSION_OPTION_VALUES, PolygonDataSubmissionOption } from "@/constants/polygonHandoff";
+import { useFullProject } from "@/connections/Entity";
+import {
+  POLYGON_DATA_SUBMISSION_OPTION_VALUES,
+  PolygonDataSubmissionOption,
+  PolygonHandoffUpdateAttributes
+} from "@/constants/polygonHandoff";
 import { useNotificationContext } from "@/context/notification.provider";
 import { ProjectUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
@@ -29,13 +33,13 @@ const PolygonHandoffPanel: FC<Props> = ({
 }) => {
   const t = useT();
   const { openNotification } = useNotificationContext();
-  const [, { isUpdating, updateFailure, update }] = useFullEntity("projects", projectUuid);
+  const [, { isUpdating, updateFailure, update }] = useFullProject({ id: projectUuid });
 
   const options = useMemo(
     () =>
       [...POLYGON_DATA_SUBMISSION_OPTION_VALUES].map(value => ({
-        uuid: value,
-        name: t(`Polygon submission: ${value.replace(/-/g, " ")}`)
+        title: t(`Polygon submission: ${value.replace(/-/g, " ")}`),
+        value
       })),
     [t]
   );
@@ -50,16 +54,14 @@ const PolygonHandoffPanel: FC<Props> = ({
   }, [polygonDataSubmission, readyForBaseline]);
 
   const handleSubmit = useCallback(() => {
-    const attrs: ProjectUpdateAttributes = {
-      polygonDataSubmission: submission as PolygonDataSubmissionOption,
-      readyForBaseline: baseline
-    };
     const trimmed = comment.trim();
-    if (trimmed !== "") {
-      attrs.polygonHandoffComment = trimmed;
-    }
-    update({ id: projectUuid, type: "projects", attributes: attrs });
-  }, [submission, baseline, comment, projectUuid, update]);
+    const attrs: PolygonHandoffUpdateAttributes = {
+      polygonDataSubmission: submission as PolygonDataSubmissionOption,
+      readyForBaseline: baseline,
+      ...(trimmed !== "" ? { polygonHandoffComment: trimmed } : {})
+    };
+    update(attrs as ProjectUpdateAttributes);
+  }, [submission, baseline, comment, update]);
 
   useRequestComplete(
     isUpdating,
@@ -93,7 +95,7 @@ const PolygonHandoffPanel: FC<Props> = ({
         label={t("Polygon Data Submission")}
         options={options}
         value={[submission]}
-        onChange={v => setSubmission(v[0] ?? "no-polygons-submitted")}
+        onChange={v => setSubmission(String(v[0] ?? "no-polygons-submitted"))}
       />
       <FormControlLabel
         control={<Switch checked={baseline} onChange={(_, checked) => setBaseline(checked)} color="primary" />}

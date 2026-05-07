@@ -9,3 +9,9 @@ export const POLYGON_DATA_SUBMISSION_OPTION_VALUES = [
 ] as const;
 
 export type PolygonDataSubmissionOption = (typeof POLYGON_DATA_SUBMISSION_OPTION_VALUES)[number];
+
+export type PolygonHandoffUpdateAttributes = {
+  polygonDataSubmission: PolygonDataSubmissionOption;
+  readyForBaseline: boolean;
+  polygonHandoffComment?: string | null;
+};
