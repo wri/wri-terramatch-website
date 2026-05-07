@@ -50,14 +50,6 @@ const Banner: FC<BannerProps> = ({ breadcrumbs, suffix, toolbar, className, chil
   const breadcrumbCount = breadcrumbs.length || 1;
   const availableWidth = viewportWidth - HORIZONTAL_PADDING;
   const widthPerCrumb = availableWidth / breadcrumbCount - OVERHEAD_PER_CRUMB;
-  console.log("availableWidth", availableWidth);
-  console.log("breadcrumbCount", breadcrumbCount);
-  console.log("widthPerCrumb", widthPerCrumb);
-  console.log("CHAR_WIDTH_PX", CHAR_WIDTH_PX);
-  console.log(
-    "Math.max(6, Math.floor(widthPerCrumb / CHAR_WIDTH_PX))",
-    Math.max(6, Math.floor(widthPerCrumb / CHAR_WIDTH_PX))
-  );
   const maxLabelLength = isMobile ? Math.max(2, Math.floor(widthPerCrumb / CHAR_WIDTH_PX)) : 25;
   const breadcrumbsWithTranslatedLabels = breadcrumbs.map(link => {
     return {
