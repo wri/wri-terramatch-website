@@ -91,7 +91,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
         <PageCard
           title={t(site.frameworkKey === Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
         >
-          <div className="grid grid-cols-2 gap-16">
+          <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
             <div className="flex flex-col gap-4">
               <GoalProgressCard
                 hasProgress={false}
@@ -173,7 +173,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
       </PageRow>
       <PageRow>
         <PageCard title={t(isTerrafund ? "Non-Tree Planting Progress" : "Seed Planting Progress")}>
-          <div className="grid grid-cols-2 gap-16">
+          <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
             <div className="flex flex-col gap-4">
               <GoalProgressCard
                 frameworksShow={[Framework.PPC]}
@@ -274,7 +274,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
       </PageRow>
       <PageRow frameworksShow={[Framework.HBF]}>
         <PageCard title={t("Non-Tree Planting Progress")}>
-          <div className="grid grid-cols-2 gap-16">
+          <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
             <div className="flex flex-col gap-4">
               <GoalProgressCard
                 hasProgress={false}
@@ -307,7 +307,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
       </PageRow>
       <PageRow>
         <PageCard title={t("Assisted Natural Regeneration Progress")}>
-          <div className="grid grid-cols-2 gap-16">
+          <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
             <div className="flex flex-col gap-4">
               <GoalProgressCard
                 hasProgress={false}
@@ -332,7 +332,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
       </PageRow>
       <PageRow>
         <PageCard title={t("Trees Replanting Progress")}>
-          <div className="grid grid-cols-2 gap-16">
+          <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
             <div className="flex flex-col gap-4">
               <GoalProgressCard
                 hasProgress={false}
@@ -365,7 +365,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
       </PageRow>
       <PageRow>
         <PageCard title={t("INVASIVE TREES REMOVAL PROGRESS")}>
-          <div className="grid grid-cols-2 gap-16">
+          <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
             <div className="flex flex-col gap-4">
               <GoalProgressCard
                 hasProgress={false}

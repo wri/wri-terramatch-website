@@ -169,6 +169,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [pendingValidationRefresh, setPendingValidationRefresh] = useState<boolean>(false);
   const [pendingJobUuids, setPendingJobUuids] = useState<Set<string>>(new Set());
+  const [processedValidationJobs, setProcessedValidationJobs] = useState<Set<string>>(new Set());
 
   const [, { delayedJobs }] = useDelayedJobs();
 
@@ -413,7 +414,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   }, [delayedJobs, pendingValidationRefresh, record]);
 
   useEffect(() => {
-    if (!pendingValidationRefresh || !delayedJobs || delayedJobs.length === 0 || !record) {
+    if (!pendingValidationRefresh || !delayedJobs || delayedJobs.length === 0 || record == null) {
       return;
     }
 
@@ -421,24 +422,20 @@ const PolygonReviewTab: FC<IProps> = props => {
     const projectUuid = "projectUuid" in record ? record.projectUuid : null;
 
     const completedJobs = delayedJobs.filter(job => {
+      if (processedValidationJobs.has(job.uuid)) return false;
+
       const isCompleted = job.status === "succeeded" || job.status === "failed";
       if (!isCompleted) return false;
 
       const wasTracked = pendingJobUuids.has(job.uuid);
-
-      const matchesEntity = job.entityName === "sites" || (projectUuid && job.entityName === "projects");
       const matchesSite = job.payload?.data?.attributes?.siteUuid === siteUuid;
-      const matchesProject = projectUuid && job.payload?.data?.attributes?.projectUuid === projectUuid;
-      const isValidationRelated =
-        job.name?.toLowerCase().includes("validation") ||
-        job.name?.toLowerCase().includes("area") ||
-        job.name?.toLowerCase().includes("polygon");
+      const matchesProject = projectUuid != null && job.payload?.data?.attributes?.projectUuid === projectUuid;
 
-      return wasTracked || matchesEntity || matchesSite || matchesProject || isValidationRelated;
+      return wasTracked || matchesSite || matchesProject;
     });
 
     if (completedJobs.length > 0) {
-      if (projectUuid) {
+      if (projectUuid != null) {
         pruneEntityCache("projects", projectUuid);
         ApiSlice.pruneIndex("projects", "");
       }
@@ -451,7 +448,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       ApiSlice.pruneCache("validations");
       ApiSlice.pruneIndex("validations", "");
 
-      if (sitePolygonData && Array.isArray(sitePolygonData)) {
+      if (Array.isArray(sitePolygonData)) {
         const polygonUuids = sitePolygonData
           .map(polygon => polygon.polygonUuid)
           .filter((uuid): uuid is string => Boolean(uuid));
@@ -459,6 +456,12 @@ const PolygonReviewTab: FC<IProps> = props => {
           ApiSlice.pruneCache("validations", polygonUuids);
         }
       }
+
+      setProcessedValidationJobs(prev => {
+        const next = new Set(prev);
+        completedJobs.forEach(j => next.add(j.uuid));
+        return next;
+      });
 
       refetch();
       setShouldRefetchValidation(true);
@@ -470,6 +473,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     delayedJobs,
     pendingValidationRefresh,
     pendingJobUuids,
+    processedValidationJobs,
     record,
     refetch,
     sitePolygonData,

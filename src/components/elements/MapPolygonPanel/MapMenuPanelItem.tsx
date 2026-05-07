@@ -236,7 +236,7 @@ const MapMenuPanelItem: FC<MapMenuPanelItemProps> = ({
         }
       )}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 mobile:flex-col">
         <div className="min-h-11 min-w-11">
           <Icon
             name={IconNames[imageStatus as keyof typeof IconNames]}

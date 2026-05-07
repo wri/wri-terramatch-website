@@ -37,6 +37,7 @@ const About: FC<AboutProps> = ({ title, description, links }) => {
               size="small"
               rightIcon={<ChevronRightIcon />}
               key={link.title}
+              className="mobile:max-w-full mobile:[text-wrap:auto]"
               onClick={() => window.open(link.link, "_blank")}
             >
               {t(link.title)}

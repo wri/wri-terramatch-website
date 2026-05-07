@@ -136,6 +136,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
             leftIcon={<DownloadIcon />}
             onClick={handleExport}
             loading={exportLoader}
+            className="mobile:mt-2"
           >
             {t("Download Project Files")}
           </Button>

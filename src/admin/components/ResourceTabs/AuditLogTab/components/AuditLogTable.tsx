@@ -117,96 +117,98 @@ const AuditLogTable: FC<{
     }
   };
   return (
-    <>
-      <div className={`grid ${gridColumnSize}`}>
-        {columnTitles.map(title => (
-          <Text key={title} variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
-            {title}
-          </Text>
-        ))}
-      </div>
-      <div
-        className={classNames(`mr-[-7px] grid pr-[7px] ${gridColumnSize}`, {
-          "h-max min-h-max overflow-y-auto overflow-x-hidden pb-10": !fullColumns,
-          "max-h-[50vh] min-h-[10vh] overflow-auto ": fullColumns
-        })}
-        ref={menuOverflowContainerRef}
-      >
-        {auditLogData?.data?.map((item: AuditStatusDto, index: number) => {
-          return (
-            <Fragment key={index}>
-              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                {item.dateCreated != null ? convertDateFormat(item.dateCreated) : "-"}
-              </Text>
-              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                {generateUserName(item.firstName, item.lastName)}
-              </Text>
-              {auditData?.entity !== "site-polygon" && fullColumns ? (
+    <div className="mobile:block mobile:w-full mobile:overflow-auto">
+      <div className="mobile:w-max">
+        <div className={`grid ${gridColumnSize}`}>
+          {columnTitles.map(title => (
+            <Text key={title} variant="text-12-light" className="border-b border-b-grey-750 text-grey-700">
+              {title}
+            </Text>
+          ))}
+        </div>
+        <div
+          className={classNames(`mr-[-7px] grid pr-[7px] ${gridColumnSize}`, {
+            "h-max min-h-max overflow-y-auto overflow-x-hidden pb-10": !fullColumns,
+            "max-h-[50vh] min-h-[10vh] overflow-auto ": fullColumns
+          })}
+          ref={menuOverflowContainerRef}
+        >
+          {auditLogData?.data?.map((item: AuditStatusDto, index: number) => {
+            return (
+              <Fragment key={index}>
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                  {item.status != null ? formattedTextStatus(item.status) : "-"}
+                  {item.dateCreated != null ? convertDateFormat(item.dateCreated) : "-"}
                 </Text>
-              ) : null}
-              <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                {getTextForActionTable(
-                  {
-                    type: item.type ?? "",
-                    status: item.status ?? ""
-                  },
-                  auditData?.entity
-                )}
-              </Text>
-              {fullColumns ? (
-                <Text variant="text-12" className="border-b border-b-grey-750 py-2">
-                  {item.comment ?? "-"}
+                <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                  {generateUserName(item.firstName, item.lastName)}
                 </Text>
-              ) : null}
-              {fullColumns ? (
-                <div className="grid max-w-full gap-2 gap-y-1 border-b border-b-grey-750 py-2">
-                  {item.attachments?.map((attachmentItem: MediaDto) => (
-                    <Text
-                      key={attachmentItem.uuid}
-                      variant="text-12-light"
-                      className="h-min w-fit max-w-full cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-neutral-40 px-2 py-0.5"
-                      as={"span"}
-                      onClick={() => {
-                        if (attachmentItem.url != null) window.open(attachmentItem.url, "_blank");
-                      }}
+                {auditData?.entity !== "site-polygon" && fullColumns ? (
+                  <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                    {item.status != null ? formattedTextStatus(item.status) : "-"}
+                  </Text>
+                ) : null}
+                <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
+                  {getTextForActionTable(
+                    {
+                      type: item.type ?? "",
+                      status: item.status ?? ""
+                    },
+                    auditData?.entity
+                  )}
+                </Text>
+                {fullColumns ? (
+                  <Text variant="text-12" className="border-b border-b-grey-750 py-2">
+                    {item.comment ?? "-"}
+                  </Text>
+                ) : null}
+                {fullColumns ? (
+                  <div className="grid max-w-full gap-2 gap-y-1 border-b border-b-grey-750 py-2">
+                    {item.attachments?.map((attachmentItem: MediaDto) => (
+                      <Text
+                        key={attachmentItem.uuid}
+                        variant="text-12-light"
+                        className="h-min w-fit max-w-full cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded-xl bg-neutral-40 px-2 py-0.5"
+                        as={"span"}
+                        onClick={() => {
+                          if (attachmentItem.url != null) window.open(attachmentItem.url, "_blank");
+                        }}
+                      >
+                        {attachmentItem.fileName}
+                      </Text>
+                    ))}
+                  </div>
+                ) : null}
+                {isAdmin && fullColumns ? (
+                  <div className="justify-cente flex items-center border-b border-b-grey-750 py-2">
+                    <Menu
+                      container={menuOverflowContainerRef.current}
+                      className="h-fit cursor-pointer"
+                      menu={[
+                        {
+                          id: "0",
+                          render: () => (
+                            <Text
+                              variant="text-14-semibold"
+                              className="flex items-center"
+                              onClick={() => deleteAuditStatus(item.uuid)}
+                            >
+                              <Icon name={IconNames.TRASH} className="h-4 w-4 lg:h-5 lg:w-5" />
+                              &nbsp; Delete
+                            </Text>
+                          )
+                        }
+                      ]}
                     >
-                      {attachmentItem.fileName}
-                    </Text>
-                  ))}
-                </div>
-              ) : null}
-              {isAdmin && fullColumns ? (
-                <div className="justify-cente flex items-center border-b border-b-grey-750 py-2">
-                  <Menu
-                    container={menuOverflowContainerRef.current}
-                    className="h-fit cursor-pointer"
-                    menu={[
-                      {
-                        id: "0",
-                        render: () => (
-                          <Text
-                            variant="text-14-semibold"
-                            className="flex items-center"
-                            onClick={() => deleteAuditStatus(item.uuid)}
-                          >
-                            <Icon name={IconNames.TRASH} className="h-4 w-4 lg:h-5 lg:w-5" />
-                            &nbsp; Delete
-                          </Text>
-                        )
-                      }
-                    ]}
-                  >
-                    <Icon name={IconNames.ELIPSES} className="h-5 w-5" />
-                  </Menu>
-                </div>
-              ) : null}
-            </Fragment>
-          );
-        })}
+                      <Icon name={IconNames.ELIPSES} className="h-5 w-5" />
+                    </Menu>
+                  </div>
+                ) : null}
+              </Fragment>
+            );
+          })}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

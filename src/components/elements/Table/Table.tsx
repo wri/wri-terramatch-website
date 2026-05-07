@@ -157,7 +157,7 @@ function Table<TData extends RowData>({
 
   return (
     <div className={classNames("w-full", variant.className, contentClassName)}>
-      <div className={`overflow-x-auto px-4 md:px-0 ${classNameWrapper}`}>
+      <div className={`overflow-x-auto px-4 md:px-0 mobile:px-0 ${classNameWrapper}`}>
         {(columnFilters?.length ?? 0) > 0 && (
           <TableFilter
             filters={filters}
