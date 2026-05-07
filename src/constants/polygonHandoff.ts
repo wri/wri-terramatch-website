@@ -10,8 +10,6 @@ export const POLYGON_DATA_SUBMISSION_OPTION_VALUES = [
 
 export type PolygonDataSubmissionOption = (typeof POLYGON_DATA_SUBMISSION_OPTION_VALUES)[number];
 
-export type PolygonHandoffUpdateAttributes = {
-  polygonDataSubmission: PolygonDataSubmissionOption;
-  readyForBaseline: boolean;
-  polygonHandoffComment?: string | null;
-};
+export function isPolygonDataSubmissionOption(value: string): value is PolygonDataSubmissionOption {
+  return (POLYGON_DATA_SUBMISSION_OPTION_VALUES as readonly string[]).includes(value);
+}

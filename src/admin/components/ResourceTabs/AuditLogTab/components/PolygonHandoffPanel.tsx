@@ -7,9 +7,9 @@ import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Text from "@/components/elements/Text/Text";
 import { useFullProject } from "@/connections/Entity";
 import {
+  isPolygonDataSubmissionOption,
   POLYGON_DATA_SUBMISSION_OPTION_VALUES,
-  PolygonDataSubmissionOption,
-  PolygonHandoffUpdateAttributes
+  PolygonDataSubmissionOption
 } from "@/constants/polygonHandoff";
 import { useNotificationContext } from "@/context/notification.provider";
 import { ProjectUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -55,12 +55,15 @@ const PolygonHandoffPanel: FC<Props> = ({
 
   const handleSubmit = useCallback(() => {
     const trimmed = comment.trim();
-    const attrs: PolygonHandoffUpdateAttributes = {
-      polygonDataSubmission: submission as PolygonDataSubmissionOption,
+    const submissionValue: PolygonDataSubmissionOption = isPolygonDataSubmissionOption(submission)
+      ? submission
+      : "no-polygons-submitted";
+    const attrs: ProjectUpdateAttributes = {
+      polygonDataSubmission: submissionValue,
       readyForBaseline: baseline,
       ...(trimmed !== "" ? { polygonHandoffComment: trimmed } : {})
     };
-    update(attrs as ProjectUpdateAttributes);
+    update(attrs);
   }, [submission, baseline, comment, update]);
 
   useRequestComplete(
