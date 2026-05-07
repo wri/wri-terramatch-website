@@ -59,7 +59,6 @@ const useAuditLogActions = ({
   buttonToggle?: number;
   entityLevel?: number;
   isProjectReport?: boolean;
-  /** When true, the project-level Audit Log "Polygon Handoff" tab loads project audits (TM-3300). */
   useProjectPolygonHandoff?: boolean;
 }): AuditLogActionsResponse => {
   const t = useT();

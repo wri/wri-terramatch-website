@@ -62,7 +62,6 @@ const AuditLogTable: FC<{
   auditData?: { entity: string; entityUuid: string };
   refresh?: () => void;
   fullColumns?: boolean;
-  /** TM-3300: use polygon-style column layout while keeping auditData.entity for deletes (e.g. project + project uuid). */
   polygonHandoffColumnStyle?: boolean;
 }> = ({ auditLogData, auditData, refresh, fullColumns = true, polygonHandoffColumnStyle = false }) => {
   const menuOverflowContainerRef = useRef(null);
