@@ -209,7 +209,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   const polygonRows = useMemo<PolygonTableRow[]>(
     () =>
       polygonsData.map(polygon => ({
-        id: polygon.uuid,
+        id: polygon.polygonUuid ?? polygon.uuid,
         polygonName: polygon.name ?? t("Unnamed Polygon"),
         submission: mapSitePolygonStatusToMappedTagState(polygon.status),
         validation: mapSitePolygonValidationStatusToValidationTagState(polygon.validationStatus),
