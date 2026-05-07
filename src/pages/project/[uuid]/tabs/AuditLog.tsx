@@ -1,5 +1,4 @@
 import { FC, useState } from "react";
-import { When } from "react-if";
 
 import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogSiteTabSelection";
 import AuditLogTable from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogTable";
@@ -78,34 +77,34 @@ const AuditLog: FC<AuditLogProps> = ({ project, refresh: refreshProject }) => {
                   entityLevel={AuditLogButtonStates.PROJECT}
                   existNurseries={project?.totalNurseries > 0}
                 />
-                <When condition={buttonToggle === ButtonStates.POLYGON}>
-                  <PolygonHandoffPanel
-                    projectUuid={project.uuid}
-                    polygonDataSubmission={project.polygonDataSubmission}
-                    readyForBaseline={project.readyForBaseline}
-                    onSaved={refreshAll}
-                  />
-                  <div>
-                    <Text variant="text-16-bold" className="mb-4">
-                      History and Discussion
-                    </Text>
-                    {auditLogData != null ? (
-                      <AuditLogTable
-                        auditLogData={auditLogData}
-                        auditData={auditData}
-                        refresh={refetch}
-                        polygonHandoffColumnStyle
-                      />
-                    ) : null}
-                  </div>
-                </When>
-                <When condition={buttonToggle !== ButtonStates.POLYGON}>
+                {buttonToggle === ButtonStates.POLYGON ? (
+                  <>
+                    <PolygonHandoffPanel
+                      projectUuid={project.uuid}
+                      polygonDataSubmission={project.polygonDataSubmission}
+                      readyForBaseline={project.readyForBaseline}
+                      onSaved={refreshAll}
+                    />
+                    <div>
+                      <Text variant="text-16-bold" className="mb-4">
+                        History and Discussion
+                      </Text>
+                      {auditLogData != null ? (
+                        <AuditLogTable
+                          auditLogData={auditLogData}
+                          auditData={auditData}
+                          refresh={refetch}
+                          polygonHandoffColumnStyle
+                        />
+                      ) : null}
+                    </div>
+                  </>
+                ) : (
                   <div className="flex gap-6 mobile:flex-col">
                     <div className="grid w-[64%] gap-6 mobile:w-full">
-                      <When condition={buttonToggle === ButtonStates.PROJECTS}>
+                      {buttonToggle === ButtonStates.PROJECTS ? (
                         <SiteAuditLogProjectStatus viewPD={true} record={project} auditLogData={auditLogData} />
-                      </When>
-                      <When condition={buttonToggle !== ButtonStates.PROJECTS}>
+                      ) : (
                         <SiteAuditLogEntityStatus
                           record={selected}
                           auditLogData={auditLogData}
@@ -114,7 +113,7 @@ const AuditLog: FC<AuditLogProps> = ({ project, refresh: refreshProject }) => {
                           entityType={entityType}
                           viewPD={true}
                         />
-                      </When>
+                      )}
                     </div>
                     <div className="w-[32%] pl-8 mobile:w-full">
                       <SiteAuditLogEntityStatusSide
@@ -134,7 +133,7 @@ const AuditLog: FC<AuditLogProps> = ({ project, refresh: refreshProject }) => {
                       />
                     </div>
                   </div>
-                </When>
+                )}
               </div>
             </PageCard>
           </LoadingContainer>
