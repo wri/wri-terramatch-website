@@ -48,7 +48,7 @@ const SiteAuditLogEntityStatusSide: FC<SiteAndAuditLogEntityStatusSideProps> = (
     <div className="flex flex-col gap-6 overflow-visible">
       {polygonList != null && polygonList.length > 0 && (
         <Dropdown
-          label={t("Select ${displayEntityName}", { displayEntityName })}
+          label={t("Select {displayEntityName}", { displayEntityName })}
           labelVariant="text-16-bold"
           labelClassName="capitalize"
           optionsClassName="max-w-full"

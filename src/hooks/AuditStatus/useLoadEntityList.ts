@@ -142,6 +142,8 @@ const useLoadEntityList = ({
         status: polygon.status,
         polygonUuid: polygon.polygonUuid ?? undefined
       }));
+    } else if (entityType === "projects") {
+      _entityList = [];
     } else if (isProjectReport) {
       const res = await loadReportsForTask({ pathParams: { uuid: entity.taskUuid } });
       _entityList = res.data;

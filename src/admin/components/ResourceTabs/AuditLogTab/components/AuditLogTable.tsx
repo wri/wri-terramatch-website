@@ -24,6 +24,12 @@ const getTextForActionTable = (item: { type: string; status: string }, entity?: 
       return "Updated";
     }
     return text;
+  } else if (item.type === "polygon-data-submission") {
+    return item.status != null
+      ? `Polygon data submission: ${formattedTextStatus(item.status)}`
+      : "Polygon Data Submission";
+  } else if (item.type === "ready-for-baseline") {
+    return item.status === "yes" ? "Ready for baseline: Yes" : "Ready for baseline: No";
   } else if (item.type === "change-request-updated") {
     return "Change Request Updated";
   } else if (item.type === "reminder-sent") {
@@ -56,10 +62,14 @@ const AuditLogTable: FC<{
   auditData?: { entity: string; entityUuid: string };
   refresh?: () => void;
   fullColumns?: boolean;
-}> = ({ auditLogData, auditData, refresh, fullColumns = true }) => {
+  polygonHandoffColumnStyle?: boolean;
+}> = ({ auditLogData, auditData, refresh, fullColumns = true, polygonHandoffColumnStyle = false }) => {
   const menuOverflowContainerRef = useRef(null);
   const route = useRouter();
   const isAdmin = route.asPath.includes("admin");
+
+  const columnLayoutEntity = polygonHandoffColumnStyle ? "site-polygon" : (auditData?.entity as string);
+  const showAuditStatusColumn = columnLayoutEntity !== "site-polygon" && fullColumns;
 
   const getColumnTitles = (entity: string, isAdmin: boolean, fullColumns: boolean) => {
     if (entity === "site-polygon") {
@@ -89,8 +99,8 @@ const AuditLogTable: FC<{
     }
   };
 
-  const columnTitles = getColumnTitles(auditData?.entity as string, isAdmin, fullColumns);
-  const gridColumnSize = getGridColumnSize(auditData?.entity as string, isAdmin);
+  const columnTitles = getColumnTitles(columnLayoutEntity, isAdmin, fullColumns);
+  const gridColumnSize = getGridColumnSize(columnLayoutEntity, isAdmin);
 
   const { openNotification } = useNotificationContext();
   const t = useT();
@@ -142,7 +152,7 @@ const AuditLogTable: FC<{
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                   {generateUserName(item.firstName, item.lastName)}
                 </Text>
-                {auditData?.entity !== "site-polygon" && fullColumns ? (
+                {showAuditStatusColumn ? (
                   <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                     {item.status != null ? formattedTextStatus(item.status) : "-"}
                   </Text>
