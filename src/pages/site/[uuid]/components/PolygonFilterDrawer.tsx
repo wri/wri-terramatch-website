@@ -12,12 +12,14 @@ import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
 interface PolygonFilterDrawerProps {
   trigger?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({ trigger }) => {
+const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({ trigger, open, onOpenChange }) => {
   const t = useT();
   return (
-    <Drawer trigger={trigger}>
+    <Drawer trigger={trigger} open={open} onOpenChange={onOpenChange}>
       {({ onClose }) => (
         <FilterPanel
           title={t("Filters")}
