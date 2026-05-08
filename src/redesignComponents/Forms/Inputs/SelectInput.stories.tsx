@@ -39,7 +39,7 @@ const meta = {
   args: { onChange: action("onChange") },
   decorators: [
     (Story: React.ComponentType) => (
-      <div style={{ width: "400px" }}>
+      <div style={{ width: "25rem" }}>
         <Story />
       </div>
     )

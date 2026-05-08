@@ -31,8 +31,8 @@ const FeedbackTag: FC<FeedbackTagProps> = ({
       css={{
         "& span": {
           fontWeight: "bold",
-          fontSize: size === "small" ? "10px" : size === "default" ? "12px" : "16px",
-          lineHeight: size === "small" ? "16px" : size === "default" ? "20px" : "24px"
+          fontSize: size === "small" ? "0.625rem" : size === "default" ? "0.75rem" : "1rem",
+          lineHeight: size === "small" ? "1rem" : size === "default" ? "1.25rem" : "1.5rem"
         },
         "& svg": {
           size: size === "small" ? 8 : size === "default" ? 10 : 12
