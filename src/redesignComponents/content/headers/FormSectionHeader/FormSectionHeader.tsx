@@ -25,9 +25,9 @@ const StatusLabelTag: FC<StatusLabelTagProps> = ({ label, status }) => {
       gap={2}
       paddingX={2}
       paddingY={1}
-      borderRadius="4px"
+      borderRadius="0.25rem"
       backgroundColor="error.100"
-      border="1px solid"
+      border="0.0625rem solid"
       borderColor="error.300"
     >
       {getStatusIcon(status, 2.5)}
@@ -52,7 +52,7 @@ const FormSectionHeader: FC<FormSectionHeaderProps> = ({
     <Flex
       alignItems="center"
       justifyContent="space-between"
-      borderBottom={showBorder ? "1px solid" : "none"}
+      borderBottom={showBorder ? "0.0625rem solid" : "none"}
       borderColor="neutral.300"
       paddingBottom={showBorder ? 4 : 0}
       paddingTop={2}
