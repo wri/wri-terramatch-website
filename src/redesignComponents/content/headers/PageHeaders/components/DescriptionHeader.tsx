@@ -54,12 +54,12 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
             textStyle="300"
             color="neutral.900"
             position="absolute"
-            bottom="-5px"
+            bottom="-0.3125rem"
             backgroundColor={backgroundColor}
-            right="-1px"
+            right="-0.0625rem"
             style={{
               display: "block",
-              lineHeight: "20px",
+              lineHeight: "1.25rem",
               verticalAlign: "baseline",
               padding: "0",
               height: "auto"
@@ -84,7 +84,7 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
             rightIcon={<ChevronRightIcon className={classNames({ "-rotate-90": !readMoreOnClick })} />}
             style={{
               display: "inline-flex",
-              lineHeight: "20px"
+              lineHeight: "1.25rem"
             }}
           >
             {t("Read Less")}
