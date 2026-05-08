@@ -160,7 +160,9 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
       profileImagePosition: null
     },
     consortiumPartnershipAgreements: [],
-    treesRegeneratingSpeciesCount: 0
+    treesRegeneratingSpeciesCount: 0,
+    polygonDataSubmission: "no-polygons-submitted",
+    readyForBaseline: false
   };
 
   return { ...baseProject, ...overrides };

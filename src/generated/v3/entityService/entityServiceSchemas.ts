@@ -1116,6 +1116,19 @@ export type ProjectLightDto = {
    */
   updatedAt: string;
   treesPlantedCount: number | null;
+  /**
+   * Polygon data submission tracking
+   */
+  polygonDataSubmission:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received"
+    | null;
+  /**
+   * Whether the project is ready for baseline analysis
+   */
+  readyForBaseline: boolean;
 };
 
 export type SiteLightDto = {
@@ -1409,6 +1422,19 @@ export type ProjectFullDto = {
    */
   updatedAt: string;
   treesPlantedCount: number | null;
+  /**
+   * Polygon data submission tracking
+   */
+  polygonDataSubmission:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received"
+    | null;
+  /**
+   * Whether the project is ready for baseline analysis
+   */
+  readyForBaseline: boolean;
   /**
    * True for projects that are test data and do not represent actual planting on the ground.
    */
@@ -2372,6 +2398,22 @@ export type ProjectUpdateAttributes = {
    * Update the isTest flag.
    */
   isTest?: boolean;
+  /**
+   * Polygon data submission tracking
+   */
+  polygonDataSubmission?:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received";
+  /**
+   * Whether the project is ready for baseline analysis
+   */
+  readyForBaseline?: boolean;
+  /**
+   * Optional comment recorded on polygon handoff audit entries when updating submission/baseline
+   */
+  polygonHandoffComment?: string;
 };
 
 export type ProjectUpdateData = {
@@ -3485,6 +3527,8 @@ export type ApplicationHistoryEntryDto = {
     | "change-request-updated"
     | "updated"
     | "reminder-sent"
+    | "polygon-data-submission"
+    | "ready-for-baseline"
     | null;
   status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
   /**
