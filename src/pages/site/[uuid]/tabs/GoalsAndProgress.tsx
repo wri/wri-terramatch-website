@@ -364,7 +364,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
         </PageCard>
       </PageRow>
       <PageRow>
-        <PageCard title={t("INVASIVE TREES REMOVAL PROGRESS")}>
+        <PageCard title={t("Invasive Tree Removal Progress")}>
           <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
             <div className="flex flex-col gap-4">
               <GoalProgressCard
