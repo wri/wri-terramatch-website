@@ -174,7 +174,12 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
     treesRegeneratingSpeciesCount: 0
   };
 
-  return { ...baseProject, ...overrides };
+  return {
+    polygonDataSubmission: null,
+    readyForBaseline: null,
+    ...baseProject,
+    ...overrides
+  } as ProjectFullDto;
 };
 
 const meta: Meta<typeof ProjectHeader> = {
