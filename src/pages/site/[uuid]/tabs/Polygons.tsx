@@ -5,13 +5,12 @@ import { FC, memo, ReactNode, useCallback, useEffect, useMemo, useState } from "
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
-import PolygonFilterDrawer from "@/pages/site/[uuid]/components/PolygonFilterDrawer";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { getThemedColor } from "@/lib/theme";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import MappedTag, { MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
@@ -28,7 +27,7 @@ import {
   AssistedNaturalRegenIcon,
   CalendarIcon,
   DirectSeedingIcon,
-  FilterIcon,
+  DownloadIcon,
   GrasslandIcon,
   MangroveIcon,
   NaturalForestIcon,
@@ -49,13 +48,15 @@ import {
   mapSitePolygonValidationStatusToValidationTagState
 } from "@/utils/mapStatusToTagStateEntity";
 
+import SearchBar from "../components/SearchBar";
+
 interface SitePolygonsTabProps {
   site: SiteFullDto;
 }
 
 type SiteTypeConfig = { icon: ReactNode; label: string; tooltip?: string };
 
-type PolygonTableRow = {
+export type PolygonTableRow = {
   id: string;
   polygonName: string;
   submission: MappedTagState;
@@ -433,14 +434,40 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   );
 
   return (
-    <PageContent className="bg-theme-neutral.100">
-      <PolygonFilterDrawer
-        trigger={
-          <Button size="small" variant="secondary" leftIcon={<FilterIcon />}>
-            {t("Add Filter")}
-          </Button>
-        }
-      />
+    <PageContent className="bg-theme-neutral-100">
+      <PageItem
+        title={t("Polygons")}
+        flexProps={{ width: "100%" }}
+        buttonProps={{
+          variant: "secondary",
+          size: "small",
+          children: t("Download All"),
+          leftIcon: <DownloadIcon />
+        }}
+        multiActionButtonProps={{
+          mainActionLabel: t("Add"),
+          size: "small",
+          leftIcon: <PlusIcon />,
+          mainActionOnClick: () => {},
+          otherActions: [
+            {
+              label: t("Save as Draft"),
+              onClick: () => {},
+              value: "draft"
+            },
+            {
+              label: t("Save and Close"),
+              onClick: () => {},
+              value: "save-close"
+            }
+          ],
+          variant: "primary"
+        }}
+      >
+        <Box mt={-4.5} mb={-5}>
+          <SearchBar polygonRows={polygonRows} />
+        </Box>
+      </PageItem>
       <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
         <PolygonsMap
           entityModel={site}

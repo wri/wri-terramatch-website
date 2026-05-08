@@ -15,6 +15,7 @@ export interface IMultiActionButtonProps {
     onClick: VoidFunction;
   }[];
   disabled?: boolean;
+  leftIcon?: React.ReactNode;
   className?: string;
 }
 

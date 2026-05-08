@@ -14,7 +14,7 @@ import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/T
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { DeleteIcon, UserAddIcon } from "@/redesignComponents/foundations/Icons";
-import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
+import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 

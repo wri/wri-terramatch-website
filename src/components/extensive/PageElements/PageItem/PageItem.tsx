@@ -3,6 +3,10 @@ import { FC, ReactNode } from "react";
 
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import MultiActionButton, {
+  IMultiActionButtonProps
+} from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
+import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 export interface PageItemProps {
   title: string;
@@ -12,6 +16,7 @@ export interface PageItemProps {
   flexProps?: FlexProps;
   tag?: ReactNode;
   className?: string;
+  multiActionButtonProps?: IMultiActionButtonProps;
 }
 
 const PageItem: FC<PageItemProps> = ({
@@ -21,7 +26,8 @@ const PageItem: FC<PageItemProps> = ({
   children,
   flexProps,
   tag,
-  className
+  className,
+  multiActionButtonProps = null
 }) => (
   <Flex direction="column" gap={4} flex={1} {...flexProps} className={className}>
     <Flex alignItems="center" justifyContent="space-between">
@@ -34,6 +40,12 @@ const PageItem: FC<PageItemProps> = ({
       <Flex gap={4}>
         {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
         {buttonProps !== null && <Button {...buttonProps} />}
+        {multiActionButtonProps !== null && (
+          <>
+            <SimpleDivider className="!h-7 !w-[0.063rem]" />
+            <MultiActionButton {...multiActionButtonProps} />
+          </>
+        )}
       </Flex>
     </Flex>
     {children}
