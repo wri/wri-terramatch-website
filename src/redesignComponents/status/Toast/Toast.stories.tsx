@@ -140,7 +140,7 @@ export const WithAction: Story = {
 
 export const AllPlacements: Story = {
   render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
       <Button
         variant="primary"
         onClick={() =>
