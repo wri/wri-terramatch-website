@@ -1,8 +1,8 @@
 import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
 import Link from "next/link";
+import { FC } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { When } from "react-if";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
@@ -13,13 +13,12 @@ import { RequestResetData } from "../index.page";
 
 type RequestResetProps = {
   form: UseFormReturn<RequestResetData>;
-  handleSave: (data: RequestResetData) => Promise<any>;
+  handleSave: (data: RequestResetData) => Promise<unknown>;
   loading?: boolean;
   apiError?: PendingError | null;
-  success?: boolean;
 };
 
-const RequestResetForm = ({ form, handleSave, loading, apiError, success }: RequestResetProps) => {
+const RequestResetForm: FC<RequestResetProps> = ({ form, handleSave, loading, apiError }) => {
   const t = useT();
   const errors = form.formState.errors;
 
@@ -57,11 +56,11 @@ const RequestResetForm = ({ form, handleSave, loading, apiError, success }: Requ
             classNameContainerInput="!mt-0"
             classNameError="!mt-0"
           />
-          <When condition={!!apiError}>
+          {apiError != null && (
             <Text variant="text-12-light" className="text-right">
               {t("Cant verify your email address.")}
             </Text>
-          </When>
+          )}
         </div>
         <Form.Footer
           primaryButtonProps={{

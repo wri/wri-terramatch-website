@@ -3,8 +3,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useCallback, useMemo, useState } from "react";
-import { Case, Default, Switch } from "react-if";
+import React, { FC, useCallback, useMemo, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import StatusBar from "@/components/elements/StatusBar/StatusBar";
@@ -131,7 +130,7 @@ const mapTaskReport =
     };
   };
 
-const ReportingTaskPage = () => {
+const ReportingTaskPage: FC = () => {
   const t = useT();
   const { format } = useDate();
   const router = useRouter();
@@ -233,6 +232,40 @@ const ReportingTaskPage = () => {
           ApiSlice.pruneCache("actions");
         }, [uuid, v3Name]);
 
+        const renderContinueButton = () => {
+          switch (completionStatus) {
+            case "not-started":
+            case "nothing-to-report":
+              return (
+                <Button as={Link} href={`/entity/${type}s/create/framework?entity_uuid=${uuid}`}>
+                  {t("Write report")}
+                </Button>
+              );
+
+            case "approved":
+            case "awaiting-approval":
+              return (
+                <Button as={Link} href={`/reports/${type}/${uuid}`}>
+                  {t("View Completed Report")}
+                </Button>
+              );
+
+            case "needs-more-information":
+              return (
+                <Button as={Link} href={`/reports/${type}/${uuid}`}>
+                  {t("View Feedback")}
+                </Button>
+              );
+
+            default:
+              return (
+                <Button as={Link} href={`/entity/${type}s/edit/${uuid}`}>
+                  {t("Continue report")}
+                </Button>
+              );
+          }
+        };
+
         return (
           <div className="flex justify-end gap-4">
             {shouldShowButton ? (
@@ -240,28 +273,7 @@ const ReportingTaskPage = () => {
                 {t("Nothing to report")}
               </Button>
             ) : null}
-            <Switch>
-              <Case condition={completionStatus === "not-started" || completionStatus === "nothing-to-report"}>
-                <Button as={Link} href={`/entity/${type}s/create/framework?entity_uuid=${uuid}`}>
-                  {t("Write report")}
-                </Button>
-              </Case>
-              <Case condition={["approved", "awaiting-approval"].includes(completionStatus)}>
-                <Button as={Link} href={`/reports/${type}/${uuid}`}>
-                  {t("View Completed Report")}
-                </Button>
-              </Case>
-              <Case condition={completionStatus === "needs-more-information"}>
-                <Button as={Link} href={`/reports/${type}/${uuid}`}>
-                  {t("View Feedback")}
-                </Button>
-              </Case>
-              <Default>
-                <Button as={Link} href={`/entity/${type}s/edit/${uuid}`}>
-                  {t("Continue report")}
-                </Button>
-              </Default>
-            </Switch>
+            {renderContinueButton()}
           </div>
         );
       }
@@ -315,6 +327,40 @@ const ReportingTaskPage = () => {
           nothingToReportHandler("srpReports", uuid);
         }, [uuid]);
 
+        const renderContinueButton = () => {
+          switch (completionStatus) {
+            case "not-started":
+            case "nothing-to-report":
+              return (
+                <Button as={Link} href={`/entity/${type}s/edit/${uuid}`}>
+                  {t("Write report")}
+                </Button>
+              );
+
+            case "approved":
+            case "awaiting-approval":
+              return (
+                <Button as={Link} href={`/reports/${type}/${uuid}`}>
+                  {t("View Completed Report")}
+                </Button>
+              );
+
+            case "needs-more-information":
+              return (
+                <Button as={Link} href={`/reports/${type}/${uuid}`}>
+                  {t("View Feedback")}
+                </Button>
+              );
+
+            default:
+              return (
+                <Button as={Link} href={`/entity/${type}s/edit/${uuid}`}>
+                  {t("Continue report")}
+                </Button>
+              );
+          }
+        };
+
         return (
           <div className="flex justify-end gap-4">
             {shouldShowButton ? (
@@ -322,28 +368,7 @@ const ReportingTaskPage = () => {
                 {t("Nothing to report")}
               </Button>
             ) : null}
-            <Switch>
-              <Case condition={completionStatus === "not-started" || completionStatus === "nothing-to-report"}>
-                <Button as={Link} href={`/entity/${type}s/edit/${uuid}`}>
-                  {t("Write report")}
-                </Button>
-              </Case>
-              <Case condition={["approved", "awaiting-approval"].includes(completionStatus)}>
-                <Button as={Link} href={`/reports/${type}/${uuid}`}>
-                  {t("View Completed Report")}
-                </Button>
-              </Case>
-              <Case condition={completionStatus === "needs-more-information"}>
-                <Button as={Link} href={`/reports/${type}/${uuid}`}>
-                  {t("View Feedback")}
-                </Button>
-              </Case>
-              <Default>
-                <Button as={Link} href={`/entity/${type}s/edit/${uuid}`}>
-                  {t("Continue report")}
-                </Button>
-              </Default>
-            </Switch>
+            {renderContinueButton()}
           </div>
         );
       }
@@ -396,88 +421,87 @@ const ReportingTaskPage = () => {
     );
   }, [closeModal, openBulkConfirmationModal, openModal, reports.nothingToReportEligible, t]);
 
+  if (!projectLoaded) return null;
   return (
-    projectLoaded && (
-      <FrameworkProvider frameworkKey={project?.frameworkKey}>
-        <LoadingContainer loading={task == null}>
-          <ReportingTaskHeader {...{ project, taskUuid: reportingTaskUUID, reports }} />
-          <StatusBar status={StatusMapping?.[task?.status ?? ""]} />
-          <PageBody className={classNames(tourEnabled && "pb-52 xl:pb-52")}>
+    <FrameworkProvider frameworkKey={project?.frameworkKey}>
+      <LoadingContainer loading={task == null}>
+        <ReportingTaskHeader {...{ project, taskUuid: reportingTaskUUID, reports }} />
+        <StatusBar status={StatusMapping?.[task?.status ?? ""]} />
+        <PageBody className={classNames(tourEnabled && "pb-52 xl:pb-52")}>
+          <PageSection>
+            <PageCard title={t("Mandatory Project Report")}>
+              <Table data={reports.mandatory} hasPagination={false} columns={tableColumns} />
+            </PageCard>
+          </PageSection>
+          {project?.frameworkKey === "ppc" && (
             <PageSection>
-              <PageCard title={t("Mandatory Project Report")}>
-                <Table data={reports.mandatory} hasPagination={false} columns={tableColumns} />
+              <PageCard title={t("Annual Socioeconomic Restoration Partners Report")}>
+                <Table data={reports.srpReports} hasPagination={false} columns={tableColumnsSRP} />
               </PageCard>
             </PageSection>
-            {project?.frameworkKey === "ppc" && (
-              <PageSection>
-                <PageCard title={t("Annual Socioeconomic Restoration Partners Report")}>
-                  <Table data={reports.srpReports} hasPagination={false} columns={tableColumnsSRP} />
-                </PageCard>
-              </PageSection>
-            )}
-            <PageSection>
-              <PageCard
-                title={t("Additional Reports")}
-                headerChildren={
-                  <Button disabled={reports.nothingToReportEligible.length === 0} onClick={openBulkModal}>
-                    {t('Report "No Updates"')}
-                  </Button>
-                }
-              >
-                <Table
-                  data={reports.additional}
-                  columns={tableColumns}
-                  onTableStateChange={state => setFilters(state.filters)}
-                  hasPagination={true}
-                  resetOnDataChange={false}
-                  initialTableState={{ pagination: { pageSize: 10 } }}
-                  columnFilters={[
-                    {
-                      type: "dropDown",
-                      accessorKey: "type",
-                      label: t("Report type"),
-                      options: [
-                        {
-                          title: t("Site"),
-                          value: "site-report"
-                        },
-                        {
-                          title: t("Nursery"),
-                          value: "nursery-report"
-                        }
-                      ],
-                      hide: project?.frameworkKey === "ppc"
-                    },
-                    {
-                      type: "dropDown",
-                      accessorKey: "completionStatus",
-                      label: t("Report Status"),
-                      options: Object.entries(CompletionStatusMapping(t)).map(([value, status]: any) => ({
-                        title: status.statusText,
-                        value
-                      }))
-                    }
-                  ]}
-                  alwaysShowPagination
-                />
-              </PageCard>
-            </PageSection>
-            <WelcomeTour
-              tourId="reporting-tasks"
-              hasWelcomeModal={false}
-              tourSteps={tourSteps}
-              onStart={() => setTourEnabled(true)}
-              onFinish={() => setTourEnabled(false)}
-            />
-            <br />
-            <br />
-            <br />
+          )}
+          <PageSection>
+            <PageCard
+              title={t("Additional Reports")}
+              headerChildren={
+                <Button disabled={reports.nothingToReportEligible.length === 0} onClick={openBulkModal}>
+                  {t('Report "No Updates"')}
+                </Button>
+              }
+            >
+              <Table
+                data={reports.additional}
+                columns={tableColumns}
+                onTableStateChange={state => setFilters(state.filters)}
+                hasPagination={true}
+                resetOnDataChange={false}
+                initialTableState={{ pagination: { pageSize: 10 } }}
+                columnFilters={[
+                  {
+                    type: "dropDown",
+                    accessorKey: "type",
+                    label: t("Report type"),
+                    options: [
+                      {
+                        title: t("Site"),
+                        value: "site-report"
+                      },
+                      {
+                        title: t("Nursery"),
+                        value: "nursery-report"
+                      }
+                    ],
+                    hide: project?.frameworkKey === "ppc"
+                  },
+                  {
+                    type: "dropDown",
+                    accessorKey: "completionStatus",
+                    label: t("Report Status"),
+                    options: Object.entries(CompletionStatusMapping(t)).map(([value, status]: any) => ({
+                      title: status.statusText,
+                      value
+                    }))
+                  }
+                ]}
+                alwaysShowPagination
+              />
+            </PageCard>
+          </PageSection>
+          <WelcomeTour
+            tourId="reporting-tasks"
+            hasWelcomeModal={false}
+            tourSteps={tourSteps}
+            onStart={() => setTourEnabled(true)}
+            onFinish={() => setTourEnabled(false)}
+          />
+          <br />
+          <br />
+          <br />
 
-            <PageFooter />
-          </PageBody>
-        </LoadingContainer>
-      </FrameworkProvider>
-    )
+          <PageFooter />
+        </PageBody>
+      </LoadingContainer>
+    </FrameworkProvider>
   );
 };
 

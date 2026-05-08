@@ -1,5 +1,5 @@
 import { useMediaQuery } from "@mui/material";
-import { When } from "react-if";
+import { FC, useCallback } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
 import Text from "@/components/elements/Text/Text";
@@ -11,7 +11,7 @@ import Icon, { IconNames } from "../Icon/Icon";
 import { ModalBase, ModalProps } from "./Modal";
 import { ModalId } from "./ModalConst";
 
-export interface ImpactStoryData {
+export type ImpactStoryData = {
   uuid: string;
   title: string;
   date: string;
@@ -23,18 +23,18 @@ export interface ImpactStoryData {
     country?: string;
   };
   status: string;
-}
+};
 
-export interface ModalStoryProps extends ModalProps {
+type ModalStoryProps = ModalProps & {
   data: ImpactStoryData;
   preview?: boolean;
-}
+};
 
-const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
+const ModalStory: FC<ModalStoryProps> = ({ className, preview, data, ...rest }) => {
   const { closeModal } = useModalContext();
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     closeModal(ModalId.MODAL_STORY);
-  };
+  }, [closeModal]);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
   return (
@@ -81,11 +81,11 @@ const ModalStory = ({ className, preview, data, ...rest }: ModalStoryProps) => {
         </div>
       </div>
 
-      <When condition={preview}>
+      {preview && (
         <div className="w-full bg-purpleCustom-1000 py-3 text-center font-bold leading-[normal] text-white">
           Impact Story Preview
         </div>
-      </When>
+      )}
     </ModalBase>
   );
 };

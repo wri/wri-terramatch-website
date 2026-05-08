@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { isNumber } from "lodash";
 import { forwardRef, HTMLProps, RefObject } from "react";
-import { When } from "react-if";
 
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Text from "@/components/elements/Text/Text";
@@ -16,7 +15,7 @@ export interface InputLabelProps extends HTMLProps<HTMLLabelElement> {
   suffixLabelView?: boolean;
 }
 
-export default forwardRef(function InputLabel(props: InputLabelProps, ref) {
+const InputLabel = forwardRef<HTMLInputElement, InputLabelProps>((props, ref) => {
   const t = useT();
   const {
     feedbackRequired,
@@ -28,8 +27,8 @@ export default forwardRef(function InputLabel(props: InputLabelProps, ref) {
     ...labelProps
   } = props;
 
-  return (
-    <When condition={!!props.children}>
+  return props.children == null ? null : (
+    <>
       <Text<HTMLLabelElement>
         {...labelProps}
         ref={ref as RefObject<HTMLLabelElement>}
@@ -40,11 +39,13 @@ export default forwardRef(function InputLabel(props: InputLabelProps, ref) {
         {`${isNumber(children) ? children : t(children)} ${required && suffixLabelView ? "*" : ""}`}
       </Text>
 
-      <When condition={feedbackRequired}>
+      {feedbackRequired && (
         <StatusPill status="warning" className="inline-flex w-fit">
           <Text variant="text-bold-caption-100">{t("More Info Requested")}</Text>
         </StatusPill>
-      </When>
-    </When>
+      )}
+    </>
   );
 });
+
+export default InputLabel;

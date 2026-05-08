@@ -1,4 +1,4 @@
-import { When } from "react-if";
+import { FC } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalFixOverlaps from "@/components/extensive/Modal/ModalFixOverlaps";
@@ -12,7 +12,7 @@ import { usePolygonFixability } from "./CheckPolygonControl/hooks/usePolygonFixa
 import { usePolygonFixing } from "./CheckPolygonControl/hooks/usePolygonFixing";
 import { useSiteValidation } from "./CheckPolygonControl/hooks/useSiteValidation";
 
-export interface CheckSitePolygonProps {
+type CheckSitePolygonProps = {
   siteRecord?: {
     uuid: string;
   };
@@ -20,10 +20,15 @@ export interface CheckSitePolygonProps {
   setIsLoadingDelayedJob?: (isLoading: boolean) => void;
   isLoadingDelayedJob?: boolean;
   setAlertTitle?: (value: string) => void;
-}
+};
 
-const CheckPolygonControl = (props: CheckSitePolygonProps) => {
-  const { siteRecord, polygonCheck, setIsLoadingDelayedJob, isLoadingDelayedJob, setAlertTitle } = props;
+const CheckPolygonControl: FC<CheckSitePolygonProps> = ({
+  siteRecord,
+  polygonCheck,
+  setIsLoadingDelayedJob,
+  isLoadingDelayedJob,
+  setAlertTitle
+}) => {
   const siteUuid = siteRecord?.uuid;
   const { setSelectedPolygonsInCheckbox } = useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
@@ -87,7 +92,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
           />
         )}
       </div>
-      <When condition={polygonCheck}>
+      {polygonCheck && (
         <PolygonChecksPanel
           hasOverlaps={hasOverlaps}
           canFixAny={fixabilityResult.canFixAny}
@@ -95,7 +100,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
           totalCount={fixabilityResult.totalCount}
           getFixabilityMessage={getFixabilityMessage}
         />
-      </When>
+      )}
     </div>
   );
 };

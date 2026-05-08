@@ -183,7 +183,11 @@ const MapControlsOverlay = ({
           </ControlGroup>
 
           {record?.uuid != null && validationType === "bulkValidation" && !disabledPolygonPanel ? (
-            <ControlGroup position={siteData ? "top-left-site" : "top-left"} isFullscreen={isFullscreen}>
+            <ControlGroup
+              className="mobile:!bottom-21 mobile:!top-auto"
+              position={siteData ? "top-left-site" : "top-left"}
+              isFullscreen={isFullscreen}
+            >
               <CheckPolygonControl
                 siteRecord={record.uuid != null ? { ...record, uuid: record.uuid } : undefined}
                 polygonCheck={!siteData}
@@ -212,7 +216,7 @@ const MapControlsOverlay = ({
 
           {status && validationType === "individualValidation" && !disabledPolygonPanel ? (
             <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
-              <CheckIndividualPolygonControl viewRequestSuport={!siteData} entityData={record} />
+              <CheckIndividualPolygonControl viewRequestSupport={!siteData} />
             </ControlGroup>
           ) : null}
 

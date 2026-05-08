@@ -3111,6 +3111,12 @@ export type Forms = {
   FORM_TYPES: string[];
 };
 
+export type FormAttachment = {
+  name: string;
+  type: "fundingProgramme" | "framework" | "entity";
+  adminId?: string | null;
+};
+
 export type FormLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -3134,6 +3140,10 @@ export type FormLightDto = {
     | "srp-report"
     | null;
   banner: MediaDto;
+  /**
+   * The funding programme, reporting framework or entity that is using this form.
+   */
+  attachedTo?: FormAttachment;
 };
 
 export type FormQuestionOptionDto = {
@@ -3267,6 +3277,10 @@ export type FormFullDto = {
     | "srp-report"
     | null;
   banner: MediaDto;
+  /**
+   * The funding programme, reporting framework or entity that is using this form.
+   */
+  attachedTo?: FormAttachment;
   /**
    * Indicates whether the text fields in this form response have been translated to the user's locale
    */

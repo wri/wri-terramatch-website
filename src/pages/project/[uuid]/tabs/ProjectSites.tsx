@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { Else, If, Then } from "react-if";
+import { FC } from "react";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import { DEFAULT_PAGE_SIZE } from "@/components/elements/ServerSideTable/ServerSideTable";
@@ -14,14 +14,14 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useSiteIndex } from "@/connections/Entity";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-interface ProjectNurseriesTabProps {
+type ProjectNurseriesTabProps = {
   project: ProjectFullDto;
-}
+};
 
-const ProjectSitesTab = ({ project }: ProjectNurseriesTabProps) => {
+const ProjectSitesTab: FC<ProjectNurseriesTabProps> = ({ project }) => {
   const t = useT();
 
-  const [isLoaded, { data: sites }] = useSiteIndex({
+  const [isLoaded, { indexTotal }] = useSiteIndex({
     filter: { projectUuid: project.uuid },
     pageSize: DEFAULT_PAGE_SIZE,
     pageNumber: 1
@@ -32,27 +32,24 @@ const ProjectSitesTab = ({ project }: ProjectNurseriesTabProps) => {
       <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageColumn>
           <LoadingContainer wrapInPaper loading={!isLoaded}>
-            <If condition={sites?.length === 0}>
-              <Then>
-                <EmptyState
-                  iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
-                  title={t("No Sites Added")}
-                  subtitle={t(
-                    "You haven't added any sites yet. To see them listed here and track their approval process, create one using the button bellow."
-                  )}
-                  ctaProps={{
-                    as: Link,
-                    href: `/entity/sites/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`,
-                    children: "Add Site"
-                  }}
-                />
-              </Then>
-              <Else>
-                <PageCard title={t("Project Sites")}>
-                  <SitesTable project={project} alwaysShowPagination />
-                </PageCard>
-              </Else>
-            </If>
+            {indexTotal === 0 ? (
+              <EmptyState
+                iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
+                title={t("No Sites Added")}
+                subtitle={t(
+                  "You haven't added any sites yet. To see them listed here and track their approval process, create one using the button bellow."
+                )}
+                ctaProps={{
+                  as: Link,
+                  href: `/entity/sites/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`,
+                  children: "Add Site"
+                }}
+              />
+            ) : (
+              <PageCard title={t("Project Sites")}>
+                <SitesTable project={project} alwaysShowPagination />
+              </PageCard>
+            )}
           </LoadingContainer>
         </PageColumn>
       </PageRow>

@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { ModalSubmitProps as Props } from "./ModalSubmit";
 import Component from "./ModalSubmit";
@@ -12,14 +11,10 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-const client = new QueryClient();
-
 export const Default: Story = {
   render: (args: Props) => (
     <div className="flex items-center justify-center bg-primary-400 p-8">
-      <QueryClientProvider client={client}>
-        <Component {...args} />
-      </QueryClientProvider>
+      <Component {...args} />
     </div>
   ),
   args: {

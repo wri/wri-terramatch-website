@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Log from "@/utils/log";
 
@@ -13,16 +12,8 @@ const meta: Meta<typeof Components> = {
 export default meta;
 type Story = StoryObj<typeof Components>;
 
-const client = new QueryClient();
-
 export const Default: Story = {
-  decorators: [
-    Story => (
-      <QueryClientProvider client={client}>
-        <Story />
-      </QueryClientProvider>
-    )
-  ],
+  decorators: [Story => <Story />],
   args: {
     label: "Tree Species Grown",
     description:

@@ -1,8 +1,8 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { FC } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { Else, If, Then } from "react-if";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
@@ -20,7 +20,7 @@ type ResetPasswordFormProps = {
   success?: boolean;
 };
 
-const ResetPasswordForm = ({ form, loading, handleSave, success }: ResetPasswordFormProps) => {
+const ResetPasswordForm: FC<ResetPasswordFormProps> = ({ form, loading, handleSave, success }) => {
   const t = useT();
   const errors = form.formState.errors;
   const router = useRouter();
@@ -31,8 +31,8 @@ const ResetPasswordForm = ({ form, loading, handleSave, success }: ResetPassword
   return (
     <Form>
       <Form.Header title={t("Reset Password")} />
-      <If condition={!success}>
-        <Then>
+      {!success ? (
+        <>
           <div className="flex flex-col gap-4">
             <Input
               name="password"
@@ -65,8 +65,9 @@ const ResetPasswordForm = ({ form, loading, handleSave, success }: ResetPassword
               disabled: loading
             }}
           />
-        </Then>
-        <Else>
+        </>
+      ) : (
+        <>
           <Text variant="text-body-1000" className="text-center">
             {t("Your password has been reset. Please click Sign in to continue using TerraMatch.")}
           </Text>
@@ -84,8 +85,8 @@ const ResetPasswordForm = ({ form, loading, handleSave, success }: ResetPassword
               disabled: loading
             }}
           />
-        </Else>
-      </If>
+        </>
+      )}
     </Form>
   );
 };

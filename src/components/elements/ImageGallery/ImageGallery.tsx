@@ -331,7 +331,7 @@ const ImageGallery = ({
     <>
       <div {...rest} className={classNames("space-y-8", className)}>
         <div className="flex justify-between gap-4 mobile:!flex-col">
-          <div className="flex gap-4">
+          <div className="flex gap-4 mobile:!flex-col">
             <FilterSearchBox
               value={searchText}
               onChange={e => {
@@ -344,7 +344,7 @@ const ImageGallery = ({
             />
             <Toggle items={tabs} onChangeActiveIndex={setActiveIndex} />
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 mobile:!flex-col">
             <button className="text-primary hover:text-red" onClick={handleClearFilters}>
               <Text variant="text-14-bold">{t("Clear Filters")}</Text>
             </button>
@@ -395,7 +395,7 @@ const ImageGallery = ({
         ) : (
           <>
             {data.length > 0 ? (
-              <div className="grid grid-cols-3 gap-4 mobile:!grid-cols-2">
+              <div className="grid grid-cols-3 gap-4 mobile:!grid-cols-1">
                 {data.map(item => (
                   <ItemComponent
                     key={item.uuid}

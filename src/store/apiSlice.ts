@@ -1,5 +1,4 @@
 import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { QueryClient } from "@tanstack/react-query";
 import { compareDesc } from "date-fns";
 import { WritableDraft } from "immer";
 import { Dictionary, isNumber, isString, uniq } from "lodash";
@@ -436,11 +435,6 @@ authListenerMiddleware.startListening({
 
 export default class ApiSlice {
   static redux: Store;
-  private static _queryClient?: QueryClient;
-
-  static set queryClient(value: QueryClient | undefined) {
-    this._queryClient = value;
-  }
 
   static get currentState() {
     return ApiSlice.getState(this.redux.getState());
@@ -476,7 +470,5 @@ export default class ApiSlice {
 
   static clearApiCache() {
     this.redux.dispatch(apiSlice.actions.clearApiCache());
-    this._queryClient?.getQueryCache()?.clear();
-    this._queryClient?.clear();
   }
 }
