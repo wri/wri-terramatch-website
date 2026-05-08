@@ -33,6 +33,8 @@ interface DateRangeInputProps {
   disabled?: boolean;
   size?: "default" | "small";
   noMarginBottom?: boolean;
+  value?: DateValue[];
+  onValueChange?: (value: DateValue[]) => void;
 }
 
 const StyledPickerWrapper = styled.div<{ $size: "default" | "small" }>`
@@ -48,9 +50,22 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
   required,
   disabled,
   size = "default",
-  noMarginBottom = false
+  noMarginBottom = false,
+  value: valueProp,
+  onValueChange
 }) => {
-  const [dates, setDates] = useState<DateValue[]>([]);
+  const [uncontrolledDates, setUncontrolledDates] = useState<DateValue[]>([]);
+  const dates = valueProp ?? uncontrolledDates;
+  const setDates = useCallback(
+    (next: DateValue[]) => {
+      if (valueProp !== undefined) {
+        onValueChange?.(next);
+      } else {
+        setUncontrolledDates(next);
+      }
+    },
+    [onValueChange, valueProp]
+  );
   const preservedRef = useRef<PreservedDate | null>(null);
   const portalContainerRef = useRef<HTMLDivElement | null>(null);
   const browserLocale = useMemo(() => navigator.language, []);
@@ -112,7 +127,7 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
 
       picker.setOpen(true);
     },
-    [dates, picker]
+    [dates, picker, setDates]
   );
 
   return (

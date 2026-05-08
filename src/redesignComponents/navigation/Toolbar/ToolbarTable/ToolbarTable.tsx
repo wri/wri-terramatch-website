@@ -29,23 +29,21 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
     <Toolbar
       className={classNames("mobile:mb-6 mobile:flex-col mobile:!items-start", className)}
       contentLeft={
-        <div className="flex flex-wrap items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0">
+        <div className="flex items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0">
           {search != null && (
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="mt-2.5 mb-5">
-                <Search
-                  {...({
-                    placeholder: search.placeholder,
-                    disabled: search.disabled,
-                    options: search.options,
-                    resultsMaxHeight: search.resultsMaxHeight,
-                    isLoading: search.isLoading,
-                    displayResults: search.displayResults ?? "none",
-                    onQueryChange: search.onQueryChange,
-                    size: "default"
-                  } as SearchProps)}
-                />
-              </div>
+            <div className="flex w-full min-w-[26rem] max-w-[26rem] items-center gap-4">
+              <Search
+                {...({
+                  placeholder: search.placeholder,
+                  disabled: search.disabled,
+                  options: search.options,
+                  resultsMaxHeight: search.resultsMaxHeight,
+                  isLoading: search.isLoading,
+                  displayResults: search.displayResults ?? "none",
+                  onQueryChange: search.onQueryChange,
+                  size: "default"
+                } as SearchProps)}
+              />
               <div className="flex items-center gap-1">
                 <Text textStyle="400-bold" color={"primary.900"}>
                   {search.count != null ? `${search.count}` : ""}
@@ -57,10 +55,10 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
             </div>
           )}
           {search != null && filters != null && <span className="text-theme-neutral-500 mobile:hidden">&#124;</span>}
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex min-w-[0] items-center gap-4">
             {filters != null && filters.length > 0 ? (
               <>
-                <div className="text-14 flex flex-wrap items-center gap-3 text-theme-neutral-900">
+                <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-3">
                   {t("Filter by:")}
                   {filters.map((filter, index) => (
                     <MultiActionButton key={index} {...filter} size="small" />

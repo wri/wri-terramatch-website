@@ -64,7 +64,7 @@ const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
   };
 
   return (
-    <Flex align="center" gap={2} maxW="60vw" position="relative">
+    <Flex align="center" gap={2} minW="0" position="relative">
       {showLeftButton && (
         <>
           <Box
