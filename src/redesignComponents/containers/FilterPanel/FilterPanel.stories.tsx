@@ -65,11 +65,11 @@ export const Default: Story = {
       <FilterPanel
         {...args}
         variant="fixed"
-        className="h-[770px]"
+        className="h-[48.125rem]"
         content={
           <>
             <Search options={sampleOptions} placeholder="Search" />
-            <div style={{ display: "flex", gap: "10px", marginBottom: "12px" }}>
+            <div style={{ display: "flex", gap: "0.625rem", marginBottom: "0.75rem" }}>
               <Tag variant="info-white" label="Label" closable />
               <Tag variant="info-white" label="Label 1" closable />
             </div>
@@ -79,8 +79,8 @@ export const Default: Story = {
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: "20px",
-                    marginBottom: "40px"
+                    gap: "1.25rem",
+                    marginBottom: "2.5rem"
                   }}
                 >
                   <Checkbox name="Checkbox" value="1" defaultChecked>
@@ -152,8 +152,8 @@ export const Default: Story = {
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: "20px",
-                    marginBottom: "40px"
+                    gap: "1.25rem",
+                    marginBottom: "2.5rem"
                   }}
                 >
                   <Checkbox name="Checkbox" value="1" defaultChecked>

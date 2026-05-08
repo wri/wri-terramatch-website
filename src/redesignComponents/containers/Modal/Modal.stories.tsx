@@ -42,7 +42,7 @@ const ModalContent = ({ isLarge = false }: { isLarge?: boolean }) => {
         alt="Modal Example"
         width={100}
         height={100}
-        className="h-full w-full max-w-[292px] rounded-lg border border-theme-neutral-300 object-cover"
+        className="h-full w-full max-w-[18.25rem] rounded-lg border border-theme-neutral-300 object-cover"
       />
     </div>
   );

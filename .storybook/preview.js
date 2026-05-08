@@ -1,4 +1,5 @@
 import "src/styles/globals.css";
+import "./storybook.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import { tx } from "@transifex/native";
 import { Toast as WRIToast } from "@worldresources/wri-design-systems";
