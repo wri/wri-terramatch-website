@@ -42,17 +42,13 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({ trigger, open, onOp
   const browserLocale = useMemo(() => navigator.language, []);
   const dateFormatPattern = useMemo(() => getDateFormatString(browserLocale), [browserLocale]);
 
-  const [submissionSelected, setSubmissionSelected] = useState<Set<SubmissionValue>>(
-    () => new Set<SubmissionValue>(["draft"])
-  );
-  const [systemValidationSelected, setSystemValidationSelected] = useState<Set<SystemValidationValue>>(
-    () => new Set<SystemValidationValue>(["failed", "partially-passed"])
-  );
+  const [submissionSelected, setSubmissionSelected] = useState<Set<SubmissionValue>>(() => new Set());
+  const [systemValidationSelected, setSystemValidationSelected] = useState<Set<SystemValidationValue>>(() => new Set());
   const [plantDateRange, setPlantDateRange] = useState<DateValue[]>([]);
   const [restorationPractice, setRestorationPractice] = useState<string | undefined>(undefined);
   const [targetLandUse, setTargetLandUse] = useState<string | undefined>(undefined);
   const [submissionCycle, setSubmissionCycle] = useState<string | undefined>(undefined);
-  const [showOverlap, setShowOverlap] = useState(true);
+  const [showOverlap, setShowOverlap] = useState(false);
 
   const submissionLabels = useMemo(
     (): Record<SubmissionValue, string> => ({
