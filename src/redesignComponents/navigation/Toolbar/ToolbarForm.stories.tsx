@@ -11,7 +11,7 @@ const meta: Meta<typeof ToolbarForm> = {
   },
   decorators: [
     Story => (
-      <div style={{ backgroundColor: "#F5F5F5", padding: "20px", borderRadius: "8px" }}>
+      <div style={{ backgroundColor: "#F5F5F5", padding: "1.25rem", borderRadius: "0.5rem" }}>
         <Story />
       </div>
     )

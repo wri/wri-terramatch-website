@@ -50,20 +50,20 @@ const Caret: FC<{ direction: "top" | "bottom" }> = ({ direction }) => {
     <Box
       className={isTop ? "navbar-caret-top" : "navbar-caret-bottom"}
       ml="auto"
-      pr="20px"
-      mb={isTop ? "-7px" : undefined}
-      mt={isTop ? undefined : "-7px"}
+      pr="1.25rem"
+      mb={isTop ? "-0.4375rem" : undefined}
+      mt={isTop ? undefined : "-0.4375rem"}
       zIndex={1}
       position="relative"
     >
       <Box
-        w="12px"
-        h="12px"
+        w="0.75rem"
+        h="0.75rem"
         bg="white"
-        borderTop={isTop ? "1px solid" : undefined}
-        borderLeft={isTop ? "1px solid" : undefined}
-        borderBottom={isTop ? undefined : "1px solid"}
-        borderRight={isTop ? undefined : "1px solid"}
+        borderTop={isTop ? "0.0625rem solid" : undefined}
+        borderLeft={isTop ? "0.0625rem solid" : undefined}
+        borderBottom={isTop ? undefined : "0.0625rem solid"}
+        borderRight={isTop ? undefined : "0.0625rem solid"}
         borderColor="neutral.300"
         transform="rotate(45deg)"
       />
@@ -138,12 +138,12 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
               <Caret direction="top" />
               <Box
                 bg="white"
-                borderRadius="8px"
-                border="1px solid"
+                borderRadius="0.5rem"
+                border="0.0625rem solid"
                 borderColor="neutral.300"
-                boxShadow="0 4px 16px rgba(0, 0, 0, 0.08)"
+                boxShadow="0 0.25rem 1rem rgba(0, 0, 0, 0.08)"
                 p={3}
-                minW={variant === "mega" ? "280px" : "200px"}
+                minW={variant === "mega" ? "17.5rem" : "12.5rem"}
                 display="flex"
                 flexDirection="column"
                 gap={2}
@@ -153,11 +153,11 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
                     key={index}
                     value={String(index)}
                     pb={variant === "mega" ? 2 : undefined}
-                    borderBottom={variant === "mega" && index !== items.length - 1 ? "1px solid" : "none"}
+                    borderBottom={variant === "mega" && index !== items.length - 1 ? "0.0625rem solid" : "none"}
                     borderColor="neutral.300"
                     _hover={{ backgroundColor: "primary.500/20", outline: "none" }}
                     _highlighted={{
-                      outline: "2px solid",
+                      outline: "0.125rem solid",
                       outlineColor: "primary.700",
                       backgroundColor: "neutral.100"
                     }}
