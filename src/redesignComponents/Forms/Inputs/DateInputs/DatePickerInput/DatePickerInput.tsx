@@ -73,7 +73,7 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
   return (
     <FieldContainer $size={size} $noMarginBottom={noMarginBottom} className="ds-date-picker-input-container">
       {errorMessage != null ? <FieldErrorBar /> : null}
-      <div style={{ marginLeft: errorMessage != null ? "19px" : "0px" }}>
+      <div style={{ marginLeft: errorMessage != null ? "1.1875rem" : "0px" }}>
         {label != null ? (
           <FieldLabel $size={size} $disabled={disabled} aria-label={label}>
             {required ? (
@@ -111,7 +111,7 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
             </DatePicker.Control>
             <Portal>
               <DatePicker.Positioner>
-                <DatePicker.Content className="!min-h-[325px]">
+                <DatePicker.Content className="!min-h-[20.3125rem]">
                   <DayView />
                   <MonthView />
                   <YearView />

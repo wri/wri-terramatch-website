@@ -10,10 +10,6 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    defaultValue: {
-      control: "text",
-      description: "Name of the checkbox to be checked by default (single checkbox only)"
-    },
     horizontal: {
       control: "boolean",
       description: "Display checkboxes horizontally"
@@ -34,7 +30,7 @@ const meta = {
   args: { onCheckedChange: () => {} },
   decorators: [
     (Story: React.ComponentType) => (
-      <div style={{ width: "400px" }}>
+      <div style={{ width: "25rem" }}>
         <Story />
       </div>
     )
@@ -80,8 +76,7 @@ export const WithDefaultValue: Story = {
   args: {
     label: "With Default Value",
     caption: "Option 1 is pre-selected",
-    checkboxes: defaultCheckboxes,
-    defaultValue: "option-1"
+    checkboxes: defaultCheckboxes
   }
 };
 

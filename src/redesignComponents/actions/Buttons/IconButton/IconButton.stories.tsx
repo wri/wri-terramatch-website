@@ -35,19 +35,19 @@ export const Disabled: Story = {
 // Different Sizes
 export const SmallIcon: Story = {
   args: {
-    icon: <MoreVertIcon className="h-[10px] w-[10px]" />
+    icon: <MoreVertIcon className="h-[0.625rem] w-[0.625rem]" />
   }
 };
 
 export const MediumIcon: Story = {
   args: {
-    icon: <MoreVertIcon className="h-[16px] w-[16px]" />
+    icon: <MoreVertIcon className="h-[1rem] w-[1rem]" />
   }
 };
 
 export const LargeIcon: Story = {
   args: {
-    icon: <MoreVertIcon className="h-[20px] w-[20px]" />
+    icon: <MoreVertIcon className="h-[1.25rem] w-[1.25rem]" />
   }
 };
 
@@ -63,12 +63,12 @@ export const AllStates: Story = {
   render: () => (
     <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", alignItems: "center" }}>
       <div style={{ textAlign: "center" }}>
-        <IconButton icon={<MoreVertIcon className="m-1 !h-[16px] !w-[16px]" />} />
-        <p style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}>Default</p>
+        <IconButton icon={<MoreVertIcon className="m-1 !h-[1rem] !w-[1rem]" />} />
+        <p style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#666" }}>Default</p>
       </div>
       <div style={{ textAlign: "center" }}>
-        <IconButton icon={<MoreVertIcon className="m-1 !h-[16px] !w-[16px]" />} disabled />
-        <p style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}>Disabled</p>
+        <IconButton icon={<MoreVertIcon className="m-1 !h-[1rem] !w-[1rem]" />} disabled />
+        <p style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#666" }}>Disabled</p>
       </div>
     </div>
   )

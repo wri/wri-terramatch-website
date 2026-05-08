@@ -117,7 +117,7 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
   return (
     <FieldContainer $size={size} $noMarginBottom={noMarginBottom} className="ds-date-range-input-container">
       {errorMessage != null ? <FieldErrorBar /> : null}
-      <div style={{ marginLeft: errorMessage != null ? "19px" : "0px" }}>
+      <div style={{ marginLeft: errorMessage != null ? "1.1875rem" : "0px" }}>
         {label != null ? (
           <FieldLabel $size={size} $disabled={disabled} aria-label={label}>
             {required ? (

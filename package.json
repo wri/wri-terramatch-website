@@ -49,7 +49,7 @@
     "@transifex/native": "^5.0.6",
     "@transifex/react": "^5.0.6",
     "@turf/bbox": "^6.5.0",
-    "@worldresources/wri-design-systems": "^2.184.2",
+    "@worldresources/wri-design-systems": "^2.191.16",
     "canvg": "^4.0.3",
     "case": "^1.6.3",
     "circle-to-polygon": "^2.2.0",
