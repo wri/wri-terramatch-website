@@ -69,72 +69,77 @@ const AuditLog: FC<AuditLogProps> = ({ project, refresh: refreshProject }) => {
         <PageColumn>
           <LoadingContainer wrapInPaper loading={isLoading}>
             <PageCard>
-              <div className="flex max-h-[200vh] flex-col gap-6 overflow-auto mobile:flex-col">
-                <AuditLogSiteTabSelection
-                  buttonToggle={buttonToggle}
-                  setButtonToggle={setButtonToggle}
-                  framework={project?.frameworkKey as string}
-                  entityLevel={AuditLogButtonStates.PROJECT}
-                  existNurseries={project?.totalNurseries > 0}
-                />
-                {buttonToggle === ButtonStates.POLYGON ? (
-                  <>
-                    <PolygonHandoffPanel
-                      projectUuid={project.uuid}
-                      polygonDataSubmission={project.polygonDataSubmission}
-                      readyForBaseline={project.readyForBaseline}
-                      onSaved={refreshAll}
-                    />
-                    <div>
-                      <Text variant="text-16-bold" className="mb-4">
-                        History and Discussion
-                      </Text>
-                      {auditLogData != null ? (
-                        <AuditLogTable
-                          auditLogData={auditLogData}
-                          auditData={auditData}
-                          refresh={refetch}
-                          polygonHandoffColumnStyle
-                        />
-                      ) : null}
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex gap-6 mobile:flex-col">
-                    <div className="grid w-[64%] gap-6 mobile:w-full">
-                      {buttonToggle === ButtonStates.PROJECTS ? (
-                        <SiteAuditLogProjectStatus viewPD={true} record={project} auditLogData={auditLogData} />
-                      ) : (
-                        <SiteAuditLogEntityStatus
-                          record={selected}
-                          auditLogData={auditLogData}
-                          refresh={refetch}
-                          buttonToggle={buttonToggle}
-                          entityType={entityType}
-                          viewPD={true}
-                        />
-                      )}
-                    </div>
-                    <div className="w-[32%] pl-8 mobile:w-full">
-                      <SiteAuditLogEntityStatusSide
-                        getValueForStatus={valuesForStatus}
-                        progressBarLabels={statusLabels}
-                        refresh={refreshAll}
-                        record={selected}
-                        polygonList={entityListItem}
-                        selectedPolygon={selected}
-                        setSelectedPolygon={setSelected}
-                        checkPolygonsSite={checkPolygonsSite}
-                        entityType={entityType}
-                        showChangeRequest={false}
-                        viewPD={true}
-                        onStatusChange={onStatusChange}
-                        onChangeRequest={onChangeRequest}
+              {buttonToggle === ButtonStates.POLYGON ? (
+                <div className="flex max-h-[200vh] flex-col gap-6 overflow-auto mobile:flex-col">
+                  <AuditLogSiteTabSelection
+                    buttonToggle={buttonToggle}
+                    setButtonToggle={setButtonToggle}
+                    framework={project?.frameworkKey as string}
+                    entityLevel={AuditLogButtonStates.PROJECT}
+                    existNurseries={project?.totalNurseries > 0}
+                  />
+                  <PolygonHandoffPanel
+                    projectUuid={project.uuid}
+                    polygonDataSubmission={project.polygonDataSubmission}
+                    readyForBaseline={project.readyForBaseline}
+                    onSaved={refreshAll}
+                  />
+                  <div>
+                    <Text variant="text-16-bold" className="mb-4">
+                      History and Discussion
+                    </Text>
+                    {auditLogData != null ? (
+                      <AuditLogTable
+                        auditLogData={auditLogData}
+                        auditData={auditData}
+                        refresh={refetch}
+                        polygonHandoffColumnStyle
                       />
-                    </div>
+                    ) : null}
                   </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="flex max-h-[200vh] gap-6 overflow-auto mobile:flex-col">
+                  <div className="grid w-[64%] gap-6 mobile:block mobile:w-full">
+                    <AuditLogSiteTabSelection
+                      buttonToggle={buttonToggle}
+                      setButtonToggle={setButtonToggle}
+                      framework={project?.frameworkKey as string}
+                      entityLevel={AuditLogButtonStates.PROJECT}
+                      existNurseries={project?.totalNurseries > 0}
+                    />
+                    {buttonToggle === ButtonStates.PROJECTS ? (
+                      <SiteAuditLogProjectStatus viewPD={true} record={project} auditLogData={auditLogData} />
+                    ) : (
+                      <SiteAuditLogEntityStatus
+                        record={selected}
+                        auditLogData={auditLogData}
+                        refresh={refetch}
+                        buttonToggle={buttonToggle}
+                        entityType={entityType}
+                        viewPD={true}
+                      />
+                    )}
+                  </div>
+                  <div className="w-[32%] pl-8 mobile:w-full">
+                    <SiteAuditLogEntityStatusSide
+                      getValueForStatus={valuesForStatus}
+                      progressBarLabels={statusLabels}
+                      refresh={refreshAll}
+                      record={selected}
+                      polygonList={entityListItem}
+                      selectedPolygon={selected}
+                      setSelectedPolygon={setSelected}
+                      checkPolygonsSite={checkPolygonsSite}
+                      entityType={entityType}
+                      showChangeRequest={false}
+                      viewPD={true}
+                      onStatusChange={onStatusChange}
+                      onChangeRequest={onChangeRequest}
+                    />
+                  </div>
+                </div>
+              )}
             </PageCard>
           </LoadingContainer>
         </PageColumn>
