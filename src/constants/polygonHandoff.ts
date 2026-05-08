@@ -1,4 +1,4 @@
-export const PROJECT_POLYGON_HANDOFF_AUDIT_TYPES = ["polygon-data-submission", "ready-for-baseline"] as const;
+export const PROJECT_POLYGON_HANDOFF_AUDIT_TYPES = ["polygon-data-submission", "ready-for-baseline"];
 
 export const POLYGON_DATA_SUBMISSION_OPTION_VALUES = [
   "no-polygons-submitted",

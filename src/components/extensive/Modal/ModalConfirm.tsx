@@ -100,12 +100,12 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
         <Button
           className="w-full py-3"
           onClick={() => {
-            onClose();
             if (selectedOption === null && menu?.length > 0) {
               setShowError(true);
               setTimeout(() => setShowError(false), 3000);
               return;
             }
+            onClose();
             onConfirm(data, selectedOption ?? [0]);
           }}
         >
