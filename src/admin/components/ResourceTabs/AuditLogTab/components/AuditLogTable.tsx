@@ -69,6 +69,7 @@ const AuditLogTable: FC<{
   const isAdmin = route.asPath.includes("admin");
 
   const columnLayoutEntity = polygonHandoffColumnStyle ? "site-polygon" : (auditData?.entity as string);
+  const showAuditStatusColumn = columnLayoutEntity !== "site-polygon" && fullColumns;
 
   const getColumnTitles = (entity: string, isAdmin: boolean, fullColumns: boolean) => {
     if (entity === "site-polygon") {
@@ -151,7 +152,7 @@ const AuditLogTable: FC<{
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                   {generateUserName(item.firstName, item.lastName)}
                 </Text>
-                {columnLayoutEntity !== "site-polygon" && fullColumns ? (
+                {showAuditStatusColumn ? (
                   <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                     {item.status != null ? formattedTextStatus(item.status) : "-"}
                   </Text>
