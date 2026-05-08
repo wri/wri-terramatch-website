@@ -24,7 +24,7 @@ const BASE_CSS: Record<string, any> = {
     marginTop: 0
   },
   "& [aria-roledescription]": {
-    columnGap: "16px",
+    columnGap: "1rem",
     marginBottom: "0 !important"
   },
   "& [aria-roledescription] > div > div:first-of-type > p": {
