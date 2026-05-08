@@ -17,7 +17,7 @@ const meta: Meta<typeof ToolbarObject> = {
   decorators: [
     Story => (
       <BrowserRouter>
-        <div style={{ backgroundColor: "#F5F5F5", padding: "20px", borderRadius: "8px" }}>
+        <div style={{ backgroundColor: "#F5F5F5", padding: "1.25rem", borderRadius: "0.5rem" }}>
           <Story />
         </div>
       </BrowserRouter>
@@ -37,7 +37,7 @@ const renderSuffix = (slots: ToolbarSlot[]) => {
         <p className="text-10-bold leading-[normal] text-theme-neutral-800">{slot.title}</p>
         <p className="text-10 leading-[normal] text-theme-neutral-700">{slot.description}</p>
       </div>
-      {index < slots.length - 1 && <div className="h-3.5 w-[1px] bg-theme-neutral-300" />}
+      {index < slots.length - 1 && <div className="h-3.5 w-[0.0625rem] bg-theme-neutral-300" />}
     </Fragment>
   ));
 };
