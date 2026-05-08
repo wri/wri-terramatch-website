@@ -47,7 +47,7 @@ const Navbar: FC<NavbarProps> = ({
     <Box backgroundColor="primary.900">
       <Flex justifyContent="space-between" alignItems="center" gap={4}>
         <Flex gap={4} alignItems="center" pl={4}>
-          <TMLogo boxSize="52px" />
+          <TMLogo boxSize="3.25rem" />
           {navLinks.map((link, index) => (
             <Button
               key={index}
