@@ -57,7 +57,7 @@ export const Default: Story = {
     };
 
     return (
-      <div style={{ width: "320px", padding: "24px" }}>
+      <div style={{ width: "20rem", padding: "1.5rem" }}>
         <Slider {...args} value={value} onChange={handleChange} />
       </div>
     );
@@ -66,7 +66,7 @@ export const Default: Story = {
 
 export const Discrete: Story = {
   args: {
-    width: "250px",
+    width: "15.625rem",
     min: 0,
     max: 100,
     value: [50],
@@ -82,7 +82,7 @@ export const Discrete: Story = {
 
 export const DiscreteWithSteps: Story = {
   args: {
-    width: "250px",
+    width: "15.625rem",
     min: 0,
     max: 100,
     value: [50],
@@ -99,7 +99,7 @@ export const DiscreteWithSteps: Story = {
 
 export const Range: Story = {
   args: {
-    width: "250px",
+    width: "15.625rem",
     min: 0,
     max: 100,
     value: [20, 80]
@@ -108,7 +108,7 @@ export const Range: Story = {
 
 export const Centred: Story = {
   args: {
-    width: "250px",
+    width: "15.625rem",
     min: 0,
     max: 100,
     value: [50],
@@ -118,7 +118,7 @@ export const Centred: Story = {
 
 export const Disabled: Story = {
   args: {
-    width: "250px",
+    width: "15.625rem",
     min: 0,
     max: 100,
     step: 10,
