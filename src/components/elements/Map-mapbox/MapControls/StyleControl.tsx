@@ -7,17 +7,26 @@ import { useChampionsMap } from "@/components/elements/Map-mapbox/championsMap.c
 import ControlButtonsGroup from "@/components/elements/Map-mapbox/components/ControlButtonsGroup";
 import ControlDivider from "@/components/elements/Map-mapbox/components/ControlDivider";
 import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
-import { MapViewIcon, SatelliteViewIcon } from "@/redesignComponents/foundations/Icons";
+import { GoogleViewIcon, MapViewIcon, SatelliteViewIcon } from "@/redesignComponents/foundations/Icons";
 
 import { setMapStyle } from "../utils";
 
-const styleToValue = (style: MapStyle): string => (style === MapStyle.Street ? "street" : "satellite");
+const styleToValue = (style: MapStyle): string => {
+  if (style === MapStyle.Street) return "street";
+  if (style === MapStyle.GoogleSatellite) return "google-satellite";
+  return "satellite";
+};
 
 const championsStyleTabs = [
   {
     icon: <SatelliteViewIcon boxSize={4} />,
     label: "Satellite",
     value: "satellite"
+  },
+  {
+    icon: <GoogleViewIcon boxSize={4} />,
+    label: "Google",
+    value: "google-satellite"
   },
   {
     icon: <MapViewIcon boxSize={4} />,
@@ -50,7 +59,12 @@ export const StyleControl = ({
         defaultValue={selectedStyleValue}
         tabs={championsStyleTabs}
         onTabClick={(value: string) => {
-          const targetStyle = value === "street" ? MapStyle.Street : MapStyle.Satellite;
+          const targetStyle =
+            value === "street"
+              ? MapStyle.Street
+              : value === "google-satellite"
+              ? MapStyle.GoogleSatellite
+              : MapStyle.Satellite;
           setMapStyle(targetStyle, map, setCurrentStyle, currentStyle);
         }}
         variant="view"

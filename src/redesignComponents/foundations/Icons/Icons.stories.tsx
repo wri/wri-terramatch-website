@@ -34,6 +34,7 @@ import {
   EditIcon,
   ExpandIcon,
   FilterIcon,
+  GoogleViewIcon,
   GrasslandIcon,
   IncorrectIcon,
   IndeterminateIcon,
@@ -288,6 +289,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Expand">
             <ExpandIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Google View">
+            <GoogleViewIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Filter">
             <FilterIcon boxSize={8} />
@@ -546,6 +550,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Expand">
           <ExpandIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Google View">
+          <GoogleViewIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Filter">
           <FilterIcon boxSize={8} />
