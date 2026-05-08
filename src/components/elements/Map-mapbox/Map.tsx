@@ -39,6 +39,7 @@ import { useMapMedia } from "./hooks/useMapMedia";
 import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
 import { useMapStyle } from "./hooks/useMapStyle";
+import { usePolygonTableHighlightFill, usePolygonTableHighlightPointer } from "./hooks/usePolygonTableHighlight";
 import { addGeojsonToDraw } from "./interactions/draw";
 import type {
   DashboardGetProjectsData,
@@ -83,6 +84,12 @@ export interface BaseMapProps {
   initialPolygonFingerprint?: string;
   /** Champions (non-admin) map layout and controls; omit or false for the default map. */
   championsMap?: boolean;
+  polygonTableHighlight?: {
+    hoveredPolygonUuid: string | null;
+    selectedPolygonUuids: string[];
+    onHoveredPolygonFromMap?: (uuid: string | null) => void;
+    onPolygonClickedFromMap?: (uuid: string) => void;
+  };
 }
 
 export interface DashboardMapExtras {
@@ -185,6 +192,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
   disabledPolygonPanel = false,
   ...props
 }) => {
+  const resizeDebounceTimeoutRef = useRef<number | null>(null);
   const { map, mapContainer, draw, onCancel, initMap } = mapFunctions;
 
   const {
@@ -202,7 +210,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     projectUUID,
     setLoader,
     initialTileVersion,
-    initialPolygonFingerprint
+    initialPolygonFingerprint,
+    polygonTableHighlight
   } = props;
 
   const [isViewingImages, setIsViewingImages] = useState(false);
@@ -287,9 +296,38 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
   useOnMount(() => {
     const el = mapContainer.current;
     if (el == null) return;
-    const ro = new ResizeObserver(() => map.current?.resize());
+    const resizeNow = () => {
+      map.current?.resize();
+    };
+    const scheduleResize = () => {
+      if (resizeDebounceTimeoutRef.current != null) {
+        clearTimeout(resizeDebounceTimeoutRef.current);
+      }
+      resizeDebounceTimeoutRef.current = window.setTimeout(() => {
+        resizeDebounceTimeoutRef.current = null;
+        resizeNow();
+      }, 22);
+    };
+    const handleMouseUp = () => {
+      if (resizeDebounceTimeoutRef.current != null) {
+        clearTimeout(resizeDebounceTimeoutRef.current);
+        resizeDebounceTimeoutRef.current = null;
+      }
+      resizeNow();
+    };
+    const ro = new ResizeObserver(() => {
+      scheduleResize();
+    });
     ro.observe(el);
-    return () => ro.disconnect();
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("mouseup", handleMouseUp);
+      if (resizeDebounceTimeoutRef.current != null) {
+        clearTimeout(resizeDebounceTimeoutRef.current);
+        resizeDebounceTimeoutRef.current = null;
+      }
+    };
   });
 
   const [mapInstanceForReadiness, setMapInstanceForReadiness] = useState<MapboxMap | null>(null);
@@ -331,6 +369,23 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     selectedPolygonsInCheckbox,
     initialTileVersion,
     initialPolygonFingerprint
+  });
+
+  usePolygonTableHighlightFill({
+    map,
+    styleReady,
+    styleVersion,
+    sourcesAdded,
+    highlight: polygonTableHighlight
+  });
+
+  usePolygonTableHighlightPointer({
+    map,
+    draw,
+    styleReady,
+    styleVersion,
+    sourcesAdded,
+    highlight: polygonTableHighlight
   });
 
   useMapPopups({
