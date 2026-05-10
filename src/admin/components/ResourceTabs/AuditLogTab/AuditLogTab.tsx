@@ -13,6 +13,7 @@ import PolygonHandoffPanel from "./components/PolygonHandoffPanel";
 import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "./components/SiteAuditLogEntityStatusSide";
 import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
+import { ADMIN_SHOW_AUDIT_LOG_TAB_INDEX } from "./constants/adminShowAuditLogTabIndex";
 import { AuditLogButtonStates } from "./constants/enum";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
@@ -77,11 +78,11 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const formatUrl = () => {
     switch (ReverseButtonStates2[buttonToggle!]) {
       case "project-reports":
-        return `/${modules.projectReport.ResourceName}/${selected?.uuid}/show/4`;
+        return `/${modules.projectReport.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
       case "site-reports":
-        return `/${modules.siteReport.ResourceName}/${selected?.uuid}/show/4`;
+        return `/${modules.siteReport.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
       case "nursery-reports":
-        return `/${modules.nurseryReport.ResourceName}/${selected?.uuid}/show/4`;
+        return `/${modules.nurseryReport.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
       default:
         return "";
     }
@@ -91,8 +92,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     isProjectReport
       ? formatUrl()
       : isNurseryToggle
-      ? `/${modules.nursery.ResourceName}/${selected?.uuid}/show/4`
-      : `/${modules.site.ResourceName}/${selected?.uuid}/show/6`
+      ? `/${modules.nursery.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.nursery}`
+      : `/${modules.site.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.site}`
   }`;
 
   const title = () => selected?.title ?? selected?.name ?? record?.report_title;
@@ -186,7 +187,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                     <Button
                       className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] text-center !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
                       component={Link}
-                      to={`${basename}/${modules.projectReport.ResourceName}/${record?.project_report?.uuid}/show/4`}
+                      to={`${basename}/${modules.projectReport.ResourceName}/${record?.project_report?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`}
                       fullWidth
                       label="OPEN PROJECT REPORT AUDIT LOG"
                     />
@@ -205,7 +206,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                       component={Link}
                       to={`${basename}/${modules.project.ResourceName}/${
                         record?.project?.uuid || record?.projectUuid
-                      }/show/5`}
+                      }/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.project}`}
                       fullWidth
                       label="OPEN PROJECT AUDIT LOG"
                     />
@@ -270,10 +271,9 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
             {(buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity) && !reportsLevel ? (
               <>
                 <div className="mb-6">
-                  {!isSite && !verifyEntity && !isProjectReport && !isNurseryToggle && (
+                  {!isSite && !verifyEntity && !isProjectReport && !isNurseryToggle ? (
                     <Text variant="text-16-bold">History and Discussion for {title()}</Text>
-                  )}
-                  {(isSite || verifyEntity || isProjectReport || isNurseryToggle) && (
+                  ) : (
                     <Text variant="text-16-bold">
                       History and Discussion for{" "}
                       <Link className="text-16-bold !text-[#000000DD]" to={redirectTo}>
@@ -282,8 +282,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                     </Text>
                   )}
                 </div>
-                {auditLogData == null ? null : (
-                  <AuditLogTable auditLogData={auditLogData!} auditData={auditData} refresh={refetch} />
+                {auditLogData != null && (
+                  <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refetch} />
                 )}
               </>
             ) : null}
