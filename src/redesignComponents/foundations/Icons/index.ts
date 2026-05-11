@@ -83,5 +83,6 @@ export { UserIcon } from "./Function/UserIcon";
 export { UserAddIcon } from "./Function/UserAddIcon";
 export { VisibilityIcon } from "./Function/VisibilityIcon";
 export { VisibilityOffIcon } from "./Function/VisibilityOffIcon";
+export { WarningIcon } from "./Function/WarningIcon";
 export { WetlandIcon } from "./RestorationAndLand/WetlandIcon";
 export { WoodlotIcon } from "./RestorationAndLand/WoodlotIcon";
