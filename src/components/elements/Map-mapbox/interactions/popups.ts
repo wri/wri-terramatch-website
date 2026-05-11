@@ -18,6 +18,7 @@ import type {
   SetPolygonFromMap,
   TooltipType
 } from "../Map.d";
+import { clearActivePopup, setActivePopup } from "./popupCoordinator";
 
 type MapboxPopup = InstanceType<typeof Popup>;
 
@@ -70,6 +71,8 @@ const handleLayerClick = (
     Log.warn("No feature found in click event");
     return;
   }
+  // Mark the click as consumed so the global background-click handler doesn't close this popup.
+  e.preventDefault();
 
   const {
     setPolygonFromMap,
@@ -133,10 +136,13 @@ const handleLayerClick = (
   const newPopup = new Popup(popupOptions).setLngLat(lngLat).setDOMContent(popupContent);
   newPopup.on("close", () => {
     root.unmount();
+    clearActivePopup(map, "POLYGON");
   });
 
   newPopup.addTo(map);
   getPopupRegistry(map)["POLYGON"].push(newPopup);
+  // Coordinator: opening a polygon popup must close any active popup of another kind (e.g. media).
+  setActivePopup(map, "POLYGON", () => removePopups(map, "POLYGON"));
 
   root.render(
     createElement(

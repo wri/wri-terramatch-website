@@ -3,9 +3,11 @@ export * from "./adapters/geoserver";
 export * from "./adapters/camera";
 export * from "./layers/polygonLayers";
 export * from "./layers/overlayLayers";
-export * from "./layers/mediaLayers";
+export * from "./layers/mediaSymbolLayer";
+export * from "./layers/mediaMarkers";
 export * from "./interactions/draw";
 export * from "./interactions/popups";
+export * from "./interactions/popupCoordinator";
 export * from "./services/polygonService";
 
 import {
