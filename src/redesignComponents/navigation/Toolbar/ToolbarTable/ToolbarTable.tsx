@@ -8,6 +8,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { CloseIcon, FilterIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
+import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 import Toolbar from "../Toolbar";
 import { SearchProps, ToolbarTableProps } from "../ToolBar.type";
@@ -29,24 +30,22 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
     <Toolbar
       className={classNames("mobile:mb-6 mobile:flex-col mobile:!items-start", className)}
       contentLeft={
-        <div className="flex flex-wrap items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0">
+        <div className="flex items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0">
           {search != null && (
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="mt-2.5 mb-5">
-                <Search
-                  {...({
-                    placeholder: search.placeholder,
-                    disabled: search.disabled,
-                    options: search.options,
-                    resultsMaxHeight: search.resultsMaxHeight,
-                    isLoading: search.isLoading,
-                    displayResults: search.displayResults ?? "none",
-                    onQueryChange: search.onQueryChange,
-                    size: "default"
-                  } as SearchProps)}
-                />
-              </div>
-              <div className="mb-3 flex items-center gap-1">
+            <div className="flex w-full min-w-[26rem] max-w-[26rem] items-center gap-4">
+              <Search
+                {...({
+                  placeholder: search.placeholder,
+                  disabled: search.disabled,
+                  options: search.options,
+                  resultsMaxHeight: search.resultsMaxHeight,
+                  isLoading: search.isLoading,
+                  displayResults: search.displayResults ?? "none",
+                  onQueryChange: search.onQueryChange,
+                  size: "default"
+                } as SearchProps)}
+              />
+              <div className="flex items-center gap-1">
                 <Text textStyle="400-bold" color={"primary.900"}>
                   {search.count != null ? `${search.count}` : ""}
                 </Text>
@@ -56,13 +55,13 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
               </div>
             </div>
           )}
-          {search != null && filters != null && (
-            <span className="mb-3 text-theme-neutral-500 mobile:hidden">&#124;</span>
+          {((search != null && filters != null) || selectedFilters != null) && (
+            <SimpleDivider backgroundColor="neutral.500" className="!h-4 mobile:hidden" variant="vertical" />
           )}
-          <div className="mb-3 flex flex-wrap items-center gap-4">
+          <div className="flex min-w-[0] items-center gap-4">
             {filters != null && filters.length > 0 ? (
               <>
-                <div className="text-14 flex flex-wrap items-center gap-3 text-theme-neutral-900">
+                <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-3">
                   {t("Filter by:")}
                   {filters.map((filter, index) => (
                     <MultiActionButton key={index} {...filter} size="small" />
@@ -86,7 +85,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
         </div>
       }
       contentRight={
-        <Flex gap={2} alignItems="center" justifyContent="right" className="mb-3">
+        <Flex gap={2} alignItems="center" justifyContent="right">
           {button != null && <Button {...button} size="small" />}
           {tooltipContent && (
             <Tooltip content={tooltipContent} position="top">

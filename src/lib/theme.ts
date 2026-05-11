@@ -1,4 +1,5 @@
 import { createSystem, defineTextStyles } from "@chakra-ui/react";
+import { drawerSlotRecipe } from "@chakra-ui/react/theme";
 import { designSystemStyles } from "@worldresources/wri-design-systems";
 
 const themeConfig = {
@@ -297,7 +298,23 @@ const themeConfig = {
         fontWeight: "bold"
       }
     }
-  })
+  }),
+  slotRecipes: {
+    drawer: {
+      ...drawerSlotRecipe,
+      variants: {
+        ...drawerSlotRecipe.variants,
+        size: {
+          ...(drawerSlotRecipe.variants?.size ?? {}),
+          filterPanel: {
+            content: {
+              maxW: "22rem"
+            }
+          }
+        }
+      }
+    }
+  }
 };
 
 export const system = createSystem(designSystemStyles._config, {

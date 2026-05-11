@@ -1,6 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
+import { twMerge } from "tailwind-merge";
 
 import CloseButton from "@/redesignComponents/actions/Buttons/CloseButton/CloseButton";
 
@@ -18,7 +19,7 @@ export interface FilterPanelProps {
 const FilterPanel: FC<FilterPanelProps> = ({ title, onClose, content, variant = "fixed", footer, className }) => {
   const t = useT();
   return (
-    <Box className={className}>
+    <Box className={twMerge("w-full", className)}>
       <Panel
         variant={variant}
         header={
@@ -36,20 +37,7 @@ const FilterPanel: FC<FilterPanelProps> = ({ title, onClose, content, variant = 
             </Flex>
           </Box>
         }
-        content={
-          <Flex
-            overflowY="auto"
-            p={4}
-            pr={2}
-            mr={2}
-            gap={3}
-            flexDirection="column"
-            scrollbarWidth="auto"
-            css={{ scrollbarWidth: "none" }}
-          >
-            {content}
-          </Flex>
-        }
+        content={<Flex className="min-h-0 flex-col gap-3 overflow-auto p-4 pr-2">{content}</Flex>}
         footer={footer}
       />
     </Box>

@@ -526,9 +526,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           variant: "primary"
         }}
       >
-        <Box mt={-4.5} mb={-5}>
-          <SearchBar polygonRows={polygonRows} />
-        </Box>
+        <SearchBar polygonRows={polygonRows} />
       </PageItem>
       <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
         <PolygonsMap
