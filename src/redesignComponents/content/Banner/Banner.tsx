@@ -3,7 +3,7 @@ import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Link from "next/link";
-import { FC, forwardRef } from "react";
+import { FC, forwardRef, useEffect, useState } from "react";
 
 import { ViewToolbarProps } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
@@ -36,7 +36,21 @@ export interface BannerProps {
 const Banner: FC<BannerProps> = ({ breadcrumbs, suffix, toolbar, className, children }) => {
   const t = useT();
   const isMobile = useMediaQuery("(max-width: 1200px)");
-  const maxLabelLength = isMobile ? 18 : 25;
+  const [viewportWidth, setViewportWidth] = useState(() => (typeof window !== "undefined" ? window.innerWidth : 390));
+
+  useEffect(() => {
+    const handleResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const CHAR_WIDTH_PX = 12;
+  const OVERHEAD_PER_CRUMB = 40; // separator + icon + gaps per item
+  const HORIZONTAL_PADDING = 32; // container px-1 on each side
+  const breadcrumbCount = breadcrumbs.length || 1;
+  const availableWidth = viewportWidth - HORIZONTAL_PADDING;
+  const widthPerCrumb = availableWidth / breadcrumbCount - OVERHEAD_PER_CRUMB;
+  const maxLabelLength = isMobile ? Math.max(2, Math.floor(widthPerCrumb / CHAR_WIDTH_PX)) : 25;
   const breadcrumbsWithTranslatedLabels = breadcrumbs.map(link => {
     return {
       label: link.label != null ? t(link.label) : "",

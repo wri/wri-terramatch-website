@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { When } from "react-if";
+import { FC } from "react";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -16,7 +16,7 @@ export type FilePreviewCardProps = {
   className?: string;
 };
 
-const FilePreviewCard = ({ accessLevel, file, onDelete, onDownload, className }: FilePreviewCardProps) => {
+const FilePreviewCard: FC<FilePreviewCardProps> = ({ accessLevel, file, onDelete, onDownload, className }) => {
   const t = useT();
 
   return (
@@ -26,22 +26,20 @@ const FilePreviewCard = ({ accessLevel, file, onDelete, onDownload, className }:
           className="flex items-center justify-center rounded-lg bg-cover bg-no-repeat"
           style={{ backgroundImage: `url(${file.url})` }}
         >
-          <When condition={!file.mimeType?.includes("image")}>
-            <Icon name={IconNames.DOCUMENT} />
-          </When>
+          {!file.mimeType.includes("image") && <Icon name={IconNames.DOCUMENT} />}
         </div>
         <div className="flex flex-1 flex-col items-start gap-1">
           <Text variant="text-body-900" className=" capitalize line-clamp-1">
             {file.fileName}
           </Text>
-          <When condition={accessLevel}>
+          {accessLevel != null && (
             <Text variant="text-body-600">{accessLevel === "public" ? t("Public") : t("Private")}</Text>
-          </When>
+          )}
         </div>
       </div>
-      <When condition={!!onDelete}>
+      {onDelete != null && (
         <IconButton
-          onClick={() => onDelete?.(file)}
+          onClick={() => onDelete(file)}
           iconProps={{
             name: IconNames.TRASH_CIRCLE,
             className: " fill-error",
@@ -49,17 +47,17 @@ const FilePreviewCard = ({ accessLevel, file, onDelete, onDownload, className }:
             height: 28
           }}
         />
-      </When>
-      <When condition={!!onDownload}>
+      )}
+      {onDownload != null && (
         <IconButton
-          onClick={() => onDownload?.(file)}
+          onClick={() => onDownload(file)}
           iconProps={{
             name: IconNames.DOWNLOAD,
             width: 24,
             height: 28
           }}
         />
-      </When>
+      )}
     </div>
   );
 };

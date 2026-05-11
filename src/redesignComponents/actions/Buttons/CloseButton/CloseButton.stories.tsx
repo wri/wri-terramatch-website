@@ -42,10 +42,10 @@ export const InCardHeader: Story = {
   render: () => (
     <div
       style={{
-        border: "1px solid #e0e0e0",
-        borderRadius: "8px",
-        padding: "16px",
-        maxWidth: "400px"
+        border: "0.0625rem solid #e0e0e0",
+        borderRadius: "0.5rem",
+        padding: "1rem",
+        maxWidth: "25rem"
       }}
     >
       <div
@@ -53,10 +53,10 @@ export const InCardHeader: Story = {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: "12px"
+          marginBottom: "0.75rem"
         }}
       >
-        <h3 style={{ margin: 0, fontSize: "18px" }}>Card Title</h3>
+        <h3 style={{ margin: 0, fontSize: "1.125rem" }}>Card Title</h3>
         <CloseButton />
       </div>
       <p style={{ margin: 0, color: "#666" }}>This is a card with a close button in the header.</p>
@@ -69,11 +69,11 @@ export const InModalHeader: Story = {
   render: () => (
     <div
       style={{
-        border: "1px solid #e0e0e0",
-        borderRadius: "8px",
+        border: "0.0625rem solid #e0e0e0",
+        borderRadius: "0.5rem",
         padding: "0",
-        maxWidth: "500px",
-        boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
+        maxWidth: "31.25rem",
+        boxShadow: "0 0.25rem 0.375rem rgba(0,0,0,0.1)"
       }}
     >
       <div
@@ -81,14 +81,14 @@ export const InModalHeader: Story = {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "16px 20px",
-          borderBottom: "1px solid #e0e0e0"
+          padding: "1rem 1.25rem",
+          borderBottom: "0.0625rem solid #e0e0e0"
         }}
       >
-        <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 600 }}>Modal Title</h2>
+        <h2 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 600 }}>Modal Title</h2>
         <CloseButton />
       </div>
-      <div style={{ padding: "20px" }}>
+      <div style={{ padding: "1.25rem" }}>
         <p style={{ margin: 0, color: "#666" }}>Modal content goes here...</p>
       </div>
     </div>
@@ -101,18 +101,18 @@ export const InAlert: Story = {
     <div
       style={{
         display: "flex",
-        gap: "12px",
+        gap: "0.75rem",
         alignItems: "flex-start",
-        padding: "12px 16px",
+        padding: "0.75rem 1rem",
         backgroundColor: "#E3F2FD",
-        border: "1px solid #2196F3",
-        borderRadius: "6px",
-        maxWidth: "400px"
+        border: "0.0625rem solid #2196F3",
+        borderRadius: "0.375rem",
+        maxWidth: "25rem"
       }}
     >
       <div style={{ flex: 1 }}>
-        <strong style={{ display: "block", marginBottom: "4px", color: "#1976D2" }}>Info</strong>
-        <p style={{ margin: 0, color: "#1565C0", fontSize: "14px" }}>
+        <strong style={{ display: "block", marginBottom: "0.25rem", color: "#1976D2" }}>Info</strong>
+        <p style={{ margin: 0, color: "#1565C0", fontSize: "0.875rem" }}>
           This is an informational message that can be dismissed.
         </p>
       </div>
@@ -127,11 +127,11 @@ export const AllStates: Story = {
     <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", alignItems: "center" }}>
       <div style={{ textAlign: "center" }}>
         <CloseButton />
-        <p style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}>Default</p>
+        <p style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#666" }}>Default</p>
       </div>
       <div style={{ textAlign: "center" }}>
         <CloseButton disabled />
-        <p style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}>Disabled</p>
+        <p style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#666" }}>Disabled</p>
       </div>
     </div>
   )

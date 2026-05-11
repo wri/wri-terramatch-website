@@ -3,8 +3,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { When } from "react-if";
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   downloadGeoJsonFile,
@@ -16,8 +15,7 @@ import { loadAnrPlotGeometryGeoJson, useAnrPlotGeometry } from "@/connections/An
 import { usePolygonValidation } from "@/connections/Validation";
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { isMapAreaSiteFullDto, useMapAreaContext } from "@/context/mapArea.provider";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto, ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnUnmount } from "@/hooks/useOnMount";
 import ApiSlice from "@/store/apiSlice";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
@@ -38,7 +36,7 @@ export interface MapEditPolygonPanelProps {
   recallEntityData?: () => void;
 }
 
-const MapEditPolygonPanel = ({
+const MapEditPolygonPanel: FC<MapEditPolygonPanelProps> = ({
   tabEditPolygon,
   setTabEditPolygon,
   polygonVersionData,
@@ -46,7 +44,7 @@ const MapEditPolygonPanel = ({
   mapFunctions,
   polygonData: polygonDataForCancel,
   recallEntityData
-}: MapEditPolygonPanelProps) => {
+}) => {
   const t = useT();
   const {
     editPolygon,
@@ -267,7 +265,7 @@ const MapEditPolygonPanel = ({
         ) : null}
       </div>
       <div className="mr-[-10px] mt-4 h-[calc(100%-132px)] overflow-y-auto pr-2">
-        <When condition={tabEditPolygon === "Attributes"}>
+        {tabEditPolygon === "Attributes" && (
           <AttributeInformation
             handleClose={handleClose}
             sitePolygonUuid={sitePolygonUuidForAnr}
@@ -277,18 +275,16 @@ const MapEditPolygonPanel = ({
             attributePlotsVisible={attributePlotsVisible}
             setAttributePlotsVisible={setAttributePlotsVisible}
           />
-        </When>
-        <When condition={tabEditPolygon === "Checklist"}>
-          <ChecklistInformation criteriaData={criteriaData ?? ({} as CriteriaData)} />
-        </When>
-        <When condition={tabEditPolygon === "Version"}>
+        )}
+        {tabEditPolygon === "Checklist" && <ChecklistInformation criteriaData={criteriaData ?? ({} as CriteriaData)} />}
+        {tabEditPolygon === "Version" && (
           <VersionInformation
             polygonVersionData={polygonVersionData}
             refetchPolygonVersions={refetchPolygonVersions}
             recallEntityData={recallEntityData}
           />
-        </When>
-        <When condition={tabEditPolygon === "ANR Monitoring Plots" && anrPlotsEligible}>
+        )}
+        {tabEditPolygon === "ANR Monitoring Plots" && anrPlotsEligible && (
           <div className="flex flex-col gap-4 pr-2">
             {isAnrPlotsDataPending ? (
               <div className="flex flex-col items-center justify-center gap-3 py-8 text-white">
@@ -339,7 +335,7 @@ const MapEditPolygonPanel = ({
               </>
             )}
           </div>
-        </When>
+        )}
       </div>
     </>
   );

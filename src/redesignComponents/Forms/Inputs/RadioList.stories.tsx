@@ -48,7 +48,7 @@ const meta = {
   },
   decorators: [
     (Story: React.ComponentType) => (
-      <div style={{ width: "400px" }}>
+      <div style={{ width: "25rem" }}>
         <Story />
       </div>
     )
@@ -155,7 +155,7 @@ export const CardVariant: Story = {
       args.onCheckedChange?.(name, selectedValue);
     };
     return (
-      <div style={{ width: "366px" }}>
+      <div style={{ width: "22.875rem" }}>
         <RadioList {...args} defaultValue={value} onCheckedChange={handleCheckedChange} />
       </div>
     );
@@ -180,7 +180,7 @@ export const CardVariantWithErrorMessage: Story = {
       args.onCheckedChange?.(name, selectedValue);
     };
     return (
-      <div style={{ width: "366px" }}>
+      <div style={{ width: "22.875rem" }}>
         <RadioList {...args} defaultValue={value} onCheckedChange={handleCheckedChange} />
       </div>
     );

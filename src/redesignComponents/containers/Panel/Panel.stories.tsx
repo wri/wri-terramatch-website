@@ -32,7 +32,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    width: "400px",
+    width: "25rem",
     content: (
       <Flex className="items-center justify-between gap-2 px-4 py-3">
         <Flex className="items-center gap-2">
@@ -55,7 +55,7 @@ export const Default: Story = {
 
 export const PanelWithBreadcrumb: Story = {
   args: {
-    width: "400px",
+    width: "25rem",
     content: (
       <Flex className="items-center justify-between gap-2 px-4 py-3">
         <Flex className="items-center gap-2">
@@ -85,7 +85,7 @@ export const PanelWithBreadcrumb: Story = {
 
 export const PanelTitle: Story = {
   args: {
-    width: "400px",
+    width: "25rem",
     content: (
       <Flex className="flex-col gap-2 p-4">
         <Flex className="w-full items-center justify-between gap-2">
@@ -108,7 +108,7 @@ export const PanelTitle: Story = {
 
 export const PanelTitleHideCloseButton: Story = {
   args: {
-    width: "400px",
+    width: "25rem",
     content: (
       <Flex className="flex-col gap-2 p-4">
         <Flex className="w-full items-center justify-between gap-2">
@@ -129,7 +129,7 @@ export const PanelTitleHideCloseButton: Story = {
 };
 export const PanelTitleAccordion: Story = {
   args: {
-    width: "400px",
+    width: "25rem",
     content: (
       <Flex className="flex-col gap-2">
         <Accordion
@@ -204,7 +204,7 @@ export const StandardPanelHeaderIcon: Story = {
     ),
     content: (
       <Flex className="flex-col pt-4">
-        <Flex className="flex-col gap-2 border-b border-theme-neutral-300">
+        <Flex className="border-theme-neutral-300 flex-col gap-2 border-b">
           <Flex className="w-full items-center justify-between gap-2 px-4">
             <Text textStyle="600-bold" color="neutral.800">
               Title
@@ -238,7 +238,7 @@ export const PanelContent: Story = {
     width: "fit-content",
     content: (
       <Flex className="flex-col p-4">
-        <Flex className="flex-col gap-2 rounded-lg border border-dashed border-theme-neutral-700 bg-theme-neutral-200 p-4">
+        <Flex className="border-theme-neutral-700 bg-theme-neutral-200 flex-col gap-2 rounded-lg border border-dashed p-4">
           <Text color="neutral.800" textStyle="700-bold" className="whitespace-nowrap">
             Component placeholder
           </Text>

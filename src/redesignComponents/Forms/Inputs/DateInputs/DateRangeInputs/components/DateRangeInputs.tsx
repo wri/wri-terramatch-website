@@ -26,19 +26,19 @@ const DateRangeInputs: FC<DateRangeInputsProps> = ({ onClearDate, preservedRef, 
     : "";
 
   return (
-    <div className="mb-3 grid w-full max-w-[320px] grid-cols-2 items-center gap-2">
-      <div className="ql-align-center flex h-10 items-center gap-1 rounded border border-theme-neutral-700 pl-3 pr-1.5">
+    <div className="mb-3 grid w-full max-w-[20rem] grid-cols-2 items-center gap-2">
+      <div className="ql-align-center border-theme-neutral-700 flex h-10 items-center gap-1 rounded border pl-3 pr-1.5">
         <input
           readOnly
-          className="text-14-light w-full leading-[normal] !tracking-[-0.25px] outline-none"
+          className="text-14-light w-full leading-[normal] !tracking-[-0.015625rem] outline-none"
           value={startText}
         />
         <CloseButton onClick={() => onClearDate(0)} className="!bg-transparent" />
       </div>
-      <div className="ql-align-center flex h-10 items-center gap-1 rounded border border-theme-neutral-700 pl-3 pr-1.5">
+      <div className="ql-align-center border-theme-neutral-700 flex h-10 items-center gap-1 rounded border pl-3 pr-1.5">
         <input
           readOnly
-          className="text-14-light w-full leading-[normal] !tracking-[-0.25px] outline-none"
+          className="text-14-light w-full leading-[normal] !tracking-[-0.015625rem] outline-none"
           value={endText}
         />
         <CloseButton onClick={() => onClearDate(1)} className="!bg-transparent" />

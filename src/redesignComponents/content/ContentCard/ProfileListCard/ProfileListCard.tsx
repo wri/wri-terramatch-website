@@ -74,12 +74,12 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
                 <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
                 <Text
                   textStyle="200-bold"
-                  padding="6px 8px"
-                  borderRadius="4px"
+                  padding="0.375rem 0.5rem"
+                  borderRadius="0.25rem"
                   backgroundColor="transparent"
                   color="secondary.900"
                   width="auto"
-                  className="flex items-center gap-1 px-2 py-1.5 group-hover:bg-theme-primary-500/20"
+                  className="group-hover:bg-theme-primary-500/20 flex items-center gap-1 px-2 py-1.5"
                 >
                   {t("Invite Team Member")}
                   <ChevronRightIcon color="neutral.800" className="h-2.5 w-2.5" />
@@ -99,7 +99,7 @@ const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items, onInviteCli
       paddingX={5}
       paddingY={4}
       backgroundColor="white"
-      borderRadius="4px"
+      borderRadius="0.25rem"
       gap={6}
       display="flex"
       flexDirection="column"

@@ -1,7 +1,6 @@
 import classNames from "classnames";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { FC, ReactNode, useEffect, useRef, useState } from "react";
 import React from "react";
-import { Else, If, Then } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import { MenuItemProps } from "@/components/elements/Menu/Menu";
@@ -19,7 +18,7 @@ import {
   MENU_PLACEMENT_RIGHT_TOP
 } from "./MenuVariant";
 
-export interface MenuCollapseProps {
+export type MenuCollapseProps = {
   extraData?: any;
   menu: MenuItemProps[];
   setSelected?: (id: string) => void;
@@ -33,24 +32,22 @@ export interface MenuCollapseProps {
   setSelectedOption?: any;
   classNameContentMenu?: string;
   selectedOption?: string;
-}
+};
 
-const MenuColapse = (props: MenuCollapseProps) => {
-  const {
-    menu,
-    placement = MENU_PLACEMENT_BOTTOM_RIGHT,
-    menuItemVariant = MENU_ITEM_VARIANT_BLUE,
-    variant,
-    children,
-    isDefaultOpen,
-    className,
-    container,
-    setSelectedOption,
-    classNameContentMenu,
-    selectedOption,
-    extraData
-  } = props;
-
+const MenuCollapse: FC<MenuCollapseProps> = ({
+  menu,
+  placement = MENU_PLACEMENT_BOTTOM_RIGHT,
+  menuItemVariant = MENU_ITEM_VARIANT_BLUE,
+  variant,
+  children,
+  isDefaultOpen,
+  className,
+  container,
+  setSelectedOption,
+  classNameContentMenu,
+  selectedOption,
+  extraData
+}) => {
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   const [openItems, setOpenItems] = useState<{ [key: string]: boolean }>({});
   const menuContainerRef = useRef<HTMLDivElement>(null);
@@ -178,91 +175,83 @@ const MenuColapse = (props: MenuCollapseProps) => {
           )}
           style={calculateMenuStyle()}
         >
-          {menu?.map(item => (
-            <If condition={item?.type === "line"} key={item.id}>
-              <Then>
-                <div className="mx-2 border-b border-[#d7dbdc]" />
-              </Then>
-              <Else>
-                <If condition={item?.type === "collapse"} key={item.id}>
-                  <Then>
-                    <div>
-                      <button
-                        className="my-1 flex w-full items-center justify-between"
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleToggleItem(item.id);
-                        }}
-                      >
-                        {item?.render()}
-                        <Icon
-                          name={IconNames.IC_ARROW_COLLAPSE}
-                          className={tw("mr-2 text-neutral-500", !openItems[item.id] && "rotate-180")}
-                          width={12}
-                        />
-                      </button>
-                      {openItems[item.id] && (
-                        <div className="pl-1">
-                          {item?.children?.map(itemChildren => (
-                            <MenuItem
-                              MenuItemVariant={itemChildren?.MenuItemVariant ?? menuItemVariant}
-                              selected={setSelectedOption && selectedOption === itemChildren?.country_slug}
-                              key={itemChildren?.id}
-                              render={itemChildren?.data?.label ?? itemChildren?.render()}
-                              onClick={() => {
-                                if (itemChildren?.onClick) {
-                                  if (itemChildren?.is_airtable) {
-                                    itemChildren?.onClick(extraData);
-                                  } else {
-                                    itemChildren?.onClick();
-                                  }
-                                }
-                                setSelectedOption?.(itemChildren?.country_slug);
-                              }}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </Then>
-                  <Else>
-                    <MenuItem
-                      MenuItemVariant={item?.MenuItemVariant ?? menuItemVariant}
-                      selected={setSelectedOption && selectedOption === (item?.country_slug ?? item?.data?.label)}
-                      key={item?.id}
-                      render={
-                        (item?.data?.icon ? (
-                          <div className="flex items-center">
-                            <img
-                              src={`${item?.data?.icon?.toLowerCase()}`}
-                              className="mr-2 h-[16.7px] w-[25px] object-cover lg:h-[21.7px] lg:w-[30px] wide:h-[26.7px] wide:w-[35px]"
-                              alt="info"
-                            />
-                            {item?.data?.label}
-                          </div>
-                        ) : (
-                          item?.data?.label
-                        )) ?? item?.render()
-                      }
-                      onClick={() => {
-                        if (item?.onClick) {
-                          if (item?.is_airtable) {
-                            item?.onClick(extraData);
-                          } else {
-                            item?.onClick();
+          {menu.map(item =>
+            item.type === "line" ? (
+              <div key={item.id} className="mx-2 border-b border-[#d7dbdc]" />
+            ) : item.type === "collapse" ? (
+              <div key={item.id}>
+                <button
+                  className="my-1 flex w-full items-center justify-between"
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleToggleItem(item.id);
+                  }}
+                >
+                  {item.render()}
+                  <Icon
+                    name={IconNames.IC_ARROW_COLLAPSE}
+                    className={tw("mr-2 text-neutral-500", !openItems[item.id] && "rotate-180")}
+                    width={12}
+                  />
+                </button>
+                {openItems[item.id] && (
+                  <div className="pl-1">
+                    {item.children?.map(itemChildren => (
+                      <MenuItem
+                        MenuItemVariant={itemChildren?.MenuItemVariant ?? menuItemVariant}
+                        selected={setSelectedOption && selectedOption === itemChildren?.country_slug}
+                        key={itemChildren?.id}
+                        render={itemChildren?.data?.label ?? itemChildren?.render()}
+                        onClick={() => {
+                          if (itemChildren?.onClick) {
+                            if (itemChildren?.is_airtable) {
+                              itemChildren?.onClick(extraData);
+                            } else {
+                              itemChildren?.onClick();
+                            }
                           }
-                        }
-                        setSelectedOption?.(item?.country_slug ?? item?.data?.label);
-                      }}
-                    />
-                  </Else>
-                </If>
-              </Else>
-            </If>
-          ))}
+                          setSelectedOption?.(itemChildren?.country_slug);
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <MenuItem
+                MenuItemVariant={item.MenuItemVariant ?? menuItemVariant}
+                selected={setSelectedOption && selectedOption === (item.country_slug ?? item.data?.label)}
+                key={item.id}
+                render={
+                  (item.data?.icon ? (
+                    <div className="flex items-center">
+                      <img
+                        src={`${item.data?.icon?.toLowerCase()}`}
+                        className="mr-2 h-[16.7px] w-[25px] object-cover lg:h-[21.7px] lg:w-[30px] wide:h-[26.7px] wide:w-[35px]"
+                        alt="info"
+                      />
+                      {item.data?.label}
+                    </div>
+                  ) : (
+                    item.data?.label
+                  )) ?? item.render()
+                }
+                onClick={() => {
+                  if (item.onClick) {
+                    if (item.is_airtable) {
+                      item.onClick(extraData);
+                    } else {
+                      item.onClick();
+                    }
+                  }
+                  setSelectedOption?.(item.country_slug ?? item.data?.label);
+                }}
+              />
+            )
+          )}
         </div>
       </div>
     </div>
   );
 };
-export default MenuColapse;
+export default MenuCollapse;

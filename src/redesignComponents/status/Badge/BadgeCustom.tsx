@@ -35,7 +35,7 @@ const Badge = ({
 
   const notification = getNotificationCount();
 
-  const defaultChildren = <NotificationIcon color="currentColor" height="16px" width="16px" />;
+  const defaultChildren = <NotificationIcon color="currentColor" className="h-4 w-4" />;
 
   return (
     <Flex
@@ -46,7 +46,7 @@ const Badge = ({
     >
       <Flex className="relative flex">
         {notification.length > 0 && hasNotification ? (
-          <div className="absolute -top-1 left-2 flex items-center justify-center rounded-full bg-theme-error-500 px-1 py-0.5">
+          <div className="bg-theme-error-500 absolute -top-1 left-2 flex items-center justify-center rounded-full px-1 py-0.5">
             <Text textStyle={size === "small" ? "50-bold" : "300-bold"}>{notification}</Text>
           </div>
         ) : null}

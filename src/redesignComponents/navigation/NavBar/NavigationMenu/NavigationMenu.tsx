@@ -61,7 +61,7 @@ export const NavigationMenuItemRow: FC<NavigationMenuItemRowProps> = ({
   if (variant === "list") {
     return (
       <Flex justifyContent="space-between" w="full" alignItems="center" {...interactiveRowStyles} onClick={onClick}>
-        <Text textStyle="400" color="neutral.900" fontSize="14px" fontWeight={isSelected ? "700" : "400"}>
+        <Text textStyle="400" color="neutral.900" fontSize="0.875rem" fontWeight={isSelected ? "700" : "400"}>
           {item.label}
         </Text>
         {isSelected && <CheckIcon color="accessible.controls-on-neutral-lights" boxSize={4} />}
@@ -71,20 +71,20 @@ export const NavigationMenuItemRow: FC<NavigationMenuItemRowProps> = ({
 
   return (
     <Box {...interactiveRowStyles} onClick={onClick}>
-      <Text textStyle="400" color="neutral.900" fontSize="14px">
+      <Text textStyle="400" color="neutral.900" fontSize="0.875rem">
         {item.label}
       </Text>
     </Box>
   );
 };
 
-const MenuContainer: FC<{ children: ReactNode; minW?: string }> = ({ children, minW = "200px" }) => (
+const MenuContainer: FC<{ children: ReactNode; minW?: string }> = ({ children, minW = "12.5rem" }) => (
   <Flex
     bg="white"
-    borderRadius="8px"
-    border="1px solid"
+    borderRadius="0.5rem"
+    border="0.0625rem solid"
     borderColor="neutral.300"
-    boxShadow="0 4px 16px rgba(0, 0, 0, 0.08)"
+    boxShadow="0 0.25rem 1rem rgba(0, 0, 0, 0.08)"
     p={3}
     minW={minW}
     flexDirection="column"
@@ -104,17 +104,17 @@ const NavigationMenu: FC<NavigationMenuProps> = ({ variant, items, selectedIndex
 
   return (
     <Menu.Root>
-      <MenuContainer minW={variant === "mega" ? "280px" : "200px"}>
+      <MenuContainer minW={variant === "mega" ? "17.5rem" : "12.5rem"}>
         {items.map((item, index) => (
           <TypedMenuItem
             key={index}
             value={String(index)}
             pb={variant === "mega" ? 2 : undefined}
-            borderBottom={variant === "mega" && index !== items.length - 1 ? "1px solid" : "none"}
+            borderBottom={variant === "mega" && index !== items.length - 1 ? "0.0625rem solid" : "none"}
             borderColor="neutral.300"
             _hover={{ backgroundColor: "primary.500/20", outline: "none" }}
             _highlighted={{
-              outline: "2px solid",
+              outline: "0.125rem solid",
               outlineColor: "primary.700",
               backgroundColor: "neutral.100"
             }}

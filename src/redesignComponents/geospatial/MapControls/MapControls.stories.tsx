@@ -26,13 +26,13 @@ export const Default: Story = {
       {
         icon: <PlusIcon />,
         ariaLabel: "zoom in",
-        label: "zoom in",
+        label: "Zoom in",
         gap: false
       },
       {
         icon: <CheckIndeterminateIcon />,
         ariaLabel: "zoom out",
-        label: "zoom out"
+        label: "Zoom out"
       },
       {
         icon: <ExpandIcon />,
@@ -60,7 +60,7 @@ export const WithTooltip: Story = {
       {
         icon: <CheckIndeterminateIcon />,
         ariaLabel: "zoom out",
-        label: "zoom out",
+        label: "Zoom out",
         tooltip: "Zoom out tooltip"
       }
     ]

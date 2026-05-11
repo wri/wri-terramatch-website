@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Else, If, Then } from "react-if";
+import { FC } from "react";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -14,34 +14,31 @@ interface SiteCompletedReportsTabProps {
   site: SiteFullDto;
 }
 
-const SiteCompletedReportsTab = ({ site }: SiteCompletedReportsTabProps) => {
+const SiteCompletedReportsTab: FC<SiteCompletedReportsTabProps> = ({ site }) => {
   const t = useT();
 
   return (
     <PageBody>
       <PageRow>
         <PageColumn>
-          <If condition={site.totalSiteReports === 0}>
-            <Then>
-              <EmptyState
-                iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
-                title={t("No Completed Site Reports")}
-                subtitle={t(
-                  "This section is where your completed site reports will appear. When you or your team submit a report, it will appear here. You'll be able to track the progress of the review process, stay informed, and manage your reports all in one place."
-                )}
-              />
-            </Then>
-            <Else>
-              <PageCard
-                title={t("Completed Site Reports")}
-                subtitle={t(
-                  "This is a list of all the reports you have completed for this Site. You can monitor their review process and approval status in this section."
-                )}
-              >
-                <CompletedReportsTable modelName="sites" modelUUID={site.uuid} />
-              </PageCard>
-            </Else>
-          </If>
+          {site.totalSiteReports === 0 ? (
+            <EmptyState
+              iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
+              title={t("No Completed Site Reports")}
+              subtitle={t(
+                "This section is where your completed site reports will appear. When you or your team submit a report, it will appear here. You'll be able to track the progress of the review process, stay informed, and manage your reports all in one place."
+              )}
+            />
+          ) : (
+            <PageCard
+              title={t("Completed Site Reports")}
+              subtitle={t(
+                "This is a list of all the reports you have completed for this Site. You can monitor their review process and approval status in this section."
+              )}
+            >
+              <CompletedReportsTable modelName="sites" modelUUID={site.uuid} />
+            </PageCard>
+          )}
         </PageColumn>
       </PageRow>
       <br />

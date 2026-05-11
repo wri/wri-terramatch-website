@@ -22,7 +22,7 @@ const meta = {
     },
     customSize: {
       control: "text",
-      description: "Custom size in CSS units (e.g., '60px')"
+      description: "Custom size in CSS units (e.g., '3.75rem')"
     },
     src: {
       control: "text",
@@ -86,9 +86,9 @@ export const Add: Story = {
     variant: "add"
   },
   render: args => (
-    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
       <Avatar {...args} />
-      <span style={{ fontSize: "14px", color: "#6B7280" }}>Add member</span>
+      <span style={{ fontSize: "0.875rem", color: "#6B7280" }}>Add member</span>
     </div>
   )
 };
@@ -123,14 +123,14 @@ export const SizeComparison: Story = {
     name: "Nathan Smith"
   },
   render: () => (
-    <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
       <div style={{ textAlign: "center" }}>
         <Avatar name="Nathan Smith" size="small" />
-        <p style={{ fontSize: "12px", marginTop: "8px" }}>Small (1.5625rem)</p>
+        <p style={{ fontSize: "0.75rem", marginTop: "0.5rem" }}>Small (1.5625rem)</p>
       </div>
       <div style={{ textAlign: "center" }}>
         <Avatar name="Nathan Smith" size="medium" />
-        <p style={{ fontSize: "12px", marginTop: "8px" }}>Medium (2.375rem)</p>
+        <p style={{ fontSize: "0.75rem", marginTop: "0.5rem" }}>Medium (2.375rem)</p>
       </div>
     </div>
   )
@@ -141,14 +141,14 @@ export const VariantComparison: Story = {
     name: "Nathan Smith"
   },
   render: () => (
-    <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
       <div style={{ textAlign: "center" }}>
         <Avatar name="Nathan Smith" />
-        <p style={{ fontSize: "12px", marginTop: "8px" }}>Initials</p>
+        <p style={{ fontSize: "0.75rem", marginTop: "0.5rem" }}>Initials</p>
       </div>
       <div style={{ textAlign: "center" }}>
         <Avatar name="Jane Doe" src="https://i.pravatar.cc/150?img=1" />
-        <p style={{ fontSize: "12px", marginTop: "8px" }}>Image</p>
+        <p style={{ fontSize: "0.75rem", marginTop: "0.5rem" }}>Image</p>
       </div>
       <div style={{ textAlign: "center" }}>
         <Avatar
@@ -157,7 +157,7 @@ export const VariantComparison: Story = {
           onClick={() => console.log("Add clicked")}
           variant="add"
         />
-        <p style={{ fontSize: "12px", marginTop: "8px" }}>Add</p>
+        <p style={{ fontSize: "0.75rem", marginTop: "0.5rem" }}>Add</p>
       </div>
     </div>
   )
@@ -168,14 +168,14 @@ export const AddSizes: Story = {
     name: "Add User"
   },
   render: () => (
-    <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
       <div style={{ textAlign: "center" }}>
         <Avatar name="Add User" size="small" variant="add" onClick={() => console.log("Small add clicked")} />
-        <p style={{ fontSize: "12px", marginTop: "8px" }}>Small</p>
+        <p style={{ fontSize: "0.75rem", marginTop: "0.5rem" }}>Small</p>
       </div>
       <div style={{ textAlign: "center" }}>
         <Avatar name="Add User" size="medium" variant="add" onClick={() => console.log("Medium add clicked")} />
-        <p style={{ fontSize: "12px", marginTop: "8px" }}>Medium</p>
+        <p style={{ fontSize: "0.75rem", marginTop: "0.5rem" }}>Medium</p>
       </div>
     </div>
   )

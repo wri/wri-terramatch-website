@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
+import { FC } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Card from "@/components/elements/Cards/Generic/GenericCard";
@@ -12,7 +12,7 @@ export type TeamMemberCardProps = {
   onReject?: (user?: UserAssociationDto) => void;
 };
 
-const TeamMemberCard = ({ user, type = "approved", onApprove, onReject }: TeamMemberCardProps) => {
+const TeamMemberCard: FC<TeamMemberCardProps> = ({ user, type = "approved", onApprove, onReject }) => {
   const t = useT();
 
   return (
@@ -33,7 +33,7 @@ const TeamMemberCard = ({ user, type = "approved", onApprove, onReject }: TeamMe
         }`}</Card.DataRow>
       </Card.Body>
 
-      <When condition={type === "pending"}>
+      {type === "pending" && (
         <Card.ActionContainer className="flex justify-between gap-3">
           <Button onClick={() => (onApprove != null ? onApprove(user) : null)} className="flex-1">
             {t("Approve")}
@@ -43,7 +43,7 @@ const TeamMemberCard = ({ user, type = "approved", onApprove, onReject }: TeamMe
             {t("Reject")}
           </Button>
         </Card.ActionContainer>
-      </When>
+      )}
     </Card.Container>
   );
 };

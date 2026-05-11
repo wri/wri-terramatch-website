@@ -24,7 +24,7 @@ export const Default: Story = {
 
 export const InContext: Story = {
   render: () => (
-    <div style={{ padding: "20px", display: "flex", alignItems: "center", gap: "8px" }}>
+    <div style={{ padding: "1.25rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
       <span>Item 1</span>
       <EllipsisDivider />
       <span>Item 2</span>

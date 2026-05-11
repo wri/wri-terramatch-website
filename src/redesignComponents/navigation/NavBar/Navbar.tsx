@@ -47,7 +47,7 @@ const Navbar: FC<NavbarProps> = ({
     <Box backgroundColor="primary.900">
       <Flex justifyContent="space-between" alignItems="center" gap={4}>
         <Flex gap={4} alignItems="center" pl={4}>
-          <TMLogo boxSize="52px" />
+          <TMLogo boxSize="3.25rem" />
           {navLinks.map((link, index) => (
             <Button
               key={index}
@@ -55,7 +55,7 @@ const Navbar: FC<NavbarProps> = ({
               className={`!text-white ${link.isActive ? "!opacity-100" : "opacity-100 hover:opacity-100"}`}
               onClick={link.onClick}
             >
-              <span className={` ${link.isActive ? "font-bold text-theme-primary-300" : "text-theme-neutral-100"}`}>
+              <span className={` ${link.isActive ? "text-theme-primary-300 font-bold" : "text-theme-neutral-100"}`}>
                 {link.label}
               </span>
             </Button>

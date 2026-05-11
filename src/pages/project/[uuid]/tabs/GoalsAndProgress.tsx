@@ -492,7 +492,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
         </PageCard>
       </PageRow>
       <PageRow className="mx-0 w-full !max-w-full gap-8 px-6">
-        <PageCard title={t("EXOTIC TREES REMOVAL PROGRESS")}>
+        <PageCard title={t("Invasive Tree Removal Progress")}>
           <div className="grid grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
               <GoalProgressCard

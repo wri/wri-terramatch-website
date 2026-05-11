@@ -108,7 +108,7 @@ export const CustomResultsRenderingLocation: Story = {
     options: mockOptions,
     displayResults: "custom",
     renderResults: ({ items, highlightedIndex, query, onSelect }) => (
-      <Box shadow="md" rounded="6px" border="1px solid" borderColor="neutral.300" bg="neutral.200">
+      <Box shadow="md" rounded="0.375rem" border="0.0625rem solid" borderColor="neutral.300" bg="neutral.200">
         <Text textStyle="300" color="neutral.700" padding={3}>
           Showing {items.length} results
         </Text>
@@ -181,7 +181,7 @@ export const MaxHeightResults: Story = {
       { id: "10", label: "Pepper", caption: "Vegetable" }
     ],
     displayResults: "list",
-    resultsMaxHeight: "150px",
+    resultsMaxHeight: "9.375rem",
     onSelect: option => {
       console.log("Selected:", option);
     }

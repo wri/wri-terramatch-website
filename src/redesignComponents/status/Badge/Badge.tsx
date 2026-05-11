@@ -7,11 +7,11 @@ const Badge: FC<ComponentProps<typeof WriBadge>> = props => {
     <Box
       css={{
         "& span, & div:not([aria-hidden='true'])": {
-          padding: "2px",
-          paddingRight: "3px"
+          padding: "0.125rem",
+          paddingRight: "0.1875rem"
         },
         "& p[aria-label]": {
-          fontSize: "8px"
+          fontSize: "0.5rem"
         }
       }}
     >

@@ -450,10 +450,10 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
   };
 
   return (
-    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7">
+    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-7 mobile:w-full">
       <Box className="relative h-auto">
         <div className="mb-6 flex gap-11">
-          <div className="w-[54%]">
+          <div className="w-[54%] mobile:w-full">
             <Text variant="text-14-light" className="mb-6">
               {t("Use the map below to view, add, remove or edit polygons associated to a site. ")}
               <a
@@ -467,7 +467,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
                 {t("Access our guide for adding polygons to a site on TerraMatch here.")}
               </a>
             </Text>
-            <div className="flex w-full gap-3">
+            <div className="flex w-full gap-3 mobile:flex-col">
               <AddDataButton
                 openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
                 openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}

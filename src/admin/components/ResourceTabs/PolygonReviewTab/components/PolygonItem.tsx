@@ -2,8 +2,7 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
-import { When } from "react-if";
+import { DetailedHTMLProps, FC, HTMLAttributes, useCallback, useEffect, useState } from "react";
 
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import ChecklistErrorsInformation from "@/components/elements/MapPolygonPanel/ChecklistErrorsInformation";
@@ -12,7 +11,7 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+type MapMenuPanelItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   uuid: string;
   title: string;
   subtitle?: string;
@@ -24,9 +23,11 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   primaryUuid?: string;
   isCollapsed?: boolean;
   validationStatus?: string;
-}
+  isChecked: boolean;
+  onCheckboxChange: (uuid: string, isChecked: boolean) => void;
+};
 
-const PolygonItem = ({
+const PolygonItem: FC<MapMenuPanelItemProps> = ({
   uuid = "",
   title,
   subtitle,
@@ -40,19 +41,18 @@ const PolygonItem = ({
   onCheckboxChange,
   validationStatus,
   ...props
-}: MapMenuPanelItemProps & { isChecked: boolean; onCheckboxChange: (uuid: string, isChecked: boolean) => void }) => {
+}) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const [openCollapse, setOpenCollapse] = useState(false);
-  const [showWarning, setShowWarning] = useState(validationStatus == "partial");
   const t = useT();
 
   useEffect(() => {
     setOpenCollapse(isCollapsed);
   }, [isCollapsed]);
 
-  const handleCheckboxClick = () => {
+  const handleCheckboxClick = useCallback(() => {
     onCheckboxChange(uuid, !isChecked);
-  };
+  }, [isChecked, onCheckboxChange, uuid]);
 
   return (
     <div
@@ -88,18 +88,18 @@ const PolygonItem = ({
           </div>
           <div className="flex items-center justify-between">
             <Status status={status as StatusEnum} variant="small" textVariant="text-10" />
-            <When condition={validationStatus == null}>
+            {validationStatus == null && (
               <Box sx={{ width: "100%", maxWidth: 100, ml: 1 }}>
                 <LinearProgress />
               </Box>
-            </When>
-            <When condition={validationStatus == "notChecked"}>
+            )}
+            {validationStatus == "notChecked" && (
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-grey-700">
                 <Icon name={IconNames.CROSS_CIRCLE} className="h-2 w-2" />
                 Not Checked
               </Text>
-            </When>
-            <When condition={validationStatus == "passed" || validationStatus == "partial"}>
+            )}
+            {(validationStatus == "passed" || validationStatus == "partial") && (
               <Text
                 variant="text-10"
                 className={classNames("flex items-center gap-1 text-green", {
@@ -113,25 +113,27 @@ const PolygonItem = ({
                 />
                 Passed
               </Text>
-            </When>
-            <When condition={validationStatus === "failed"}>
+            )}
+            {validationStatus === "failed" && (
               <Text variant="text-10" className="flex items-center gap-1 whitespace-nowrap text-red-200">
                 <Icon name={IconNames.ROUND_RED_CROSS} className="h-2 w-2" />
                 Failed
               </Text>
-            </When>
+            )}
           </div>
         </div>
       </div>
-      <When condition={openCollapse}>
-        <When condition={validationStatus === "partial"}>
-          <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
-            This polygon passes even though both validations below have failed. It can still be approved by TerraMatch
-            staff.
-          </Text>
-        </When>
-        <ChecklistErrorsInformation polygonUuid={uuid} showWarning={showWarning} onWarningChange={setShowWarning} />
-      </When>
+      {openCollapse && (
+        <>
+          {validationStatus === "partial" && (
+            <Text variant="text-10-light" className="mt-4 text-blueCustom-900 opacity-80">
+              This polygon passes even though both validations below have failed. It can still be approved by TerraMatch
+              staff.
+            </Text>
+          )}
+          <ChecklistErrorsInformation polygonUuid={uuid} />
+        </>
+      )}
     </div>
   );
 };

@@ -96,9 +96,9 @@ const SectionShare = ({ data, className }: SectionShareProps) => {
       >
         {t("Share")}
       </Button>
-      <ShareSection label="COUNTRY" value={data?.organization?.country} />
-      <ShareSection label="ORGANIZATION" value={data?.organization?.name} />
-      <ShareSection label="IMPACT CATEGORY" value={getCategoryTitles(data?.organization?.category)} />
+      <ShareSection label={t("COUNTRY")} value={t(data?.organization?.country)} />
+      <ShareSection label={t("ORGANIZATION")} value={data?.organization?.name} />
+      <ShareSection label={t("IMPACT CATEGORY")} value={getCategoryTitles(data?.organization?.category).map(t)} />
 
       {socialMediaLinks.length > 0 && (
         <div className="flex gap-x-4">

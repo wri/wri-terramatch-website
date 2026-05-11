@@ -1,19 +1,19 @@
 import DownloadIcon from "@mui/icons-material/GetApp";
+import { FC } from "react";
 import { Button, CreateButton, FilterButton, TopToolbar } from "react-admin";
-import { When } from "react-if";
 
-interface ListActionsCreateProps {
+type ListActionsCreateProps = {
   onExport?: () => void;
   showFilters?: boolean;
-}
+};
 
-const ListActionsCreate = ({ onExport, showFilters }: ListActionsCreateProps) => (
+const ListActionsCreate: FC<ListActionsCreateProps> = ({ onExport, showFilters }) => (
   <TopToolbar>
     {showFilters === true ? <FilterButton className="filter-button-page-admin" /> : null}
     <CreateButton className="filter-button-page-admin" />
-    <When condition={!!onExport}>
+    {onExport != null && (
       <Button className="button-page-admin" label="Export" startIcon={<DownloadIcon />} onClick={onExport} />
-    </When>
+    )}
   </TopToolbar>
 );
 
