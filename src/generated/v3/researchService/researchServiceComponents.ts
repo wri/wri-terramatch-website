@@ -187,12 +187,62 @@ export type SitePolygonsIndexQueryParams = {
    */
   lastModifiedDate?: string;
   /**
+   * Inclusive lower bound for plant start date (plantStart)
+   *
+   * @format date
+   */
+  plantStartFrom?: string;
+  /**
+   * Inclusive upper bound for plant start date (plantStart)
+   *
+   * @format date
+   */
+  plantStartTo?: string;
+  /**
+   * Filter by restoration practice (any selected value matches)
+   */
+  ["practice[]"]?: ("tree-planting" | "direct-seeding" | "assisted-natural-regeneration")[];
+  /**
+   * Filter by target land use / target system (any selected value matches)
+   */
+  ["targetSys[]"]?: (
+    | "agroforest"
+    | "agricultural-land"
+    | "grassland"
+    | "open-natural-ecosystem"
+    | "natural-forest"
+    | "mangrove"
+    | "peatland"
+    | "riparian-area-or-wetland"
+    | "silvopasture"
+    | "woodlot-or-plantation"
+    | "urban-forest"
+  )[];
+  /**
+   * Filter by tree distribution (any selected value matches)
+   */
+  ["distr[]"]?: ("single-line" | "partial" | "full")[];
+  /**
+   * Filter by polygon source (any selected value matches)
+   */
+  ["source[]"]?: ("terramatch" | "greenhouse" | "research")[];
+  /**
    * Include polygons for test projects in the results.
    *
    * @default false
    */
   includeTestProjects?: boolean;
+  /**
+   * Filter to polygons with a failed overlap validation.
+   *
+   * @default false
+   */
+  hasOverlap?: boolean;
   search?: string;
+  /**
+   * Select the fields used by search.
+   */
+  ["searchFields[]"]?: ("siteName" | "polyName" | "polygonUuid")[];
   /**
    * Whether to include the complete sitePolygon Dto or not
    *

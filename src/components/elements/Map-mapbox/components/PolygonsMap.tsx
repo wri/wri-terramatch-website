@@ -12,6 +12,7 @@ import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
@@ -31,6 +32,7 @@ interface PolygonsMapProps {
   entityModel: PolygonsMapEntityModel;
   type: PolygonsMapEntityType;
   className?: string;
+  polygonsDataOverride?: SitePolygonLightDto[];
   polygonTableHighlight?: {
     hoveredPolygonUuid: string | null;
     selectedPolygonUuids: string[];
@@ -48,7 +50,13 @@ const EMPTY_POLYGON_MAP: Record<string, string[]> = {
 
 type PolygonGeometryFeature = Pick<GeoJSON.Feature, "geometry">;
 
-const PolygonsMap: FC<PolygonsMapProps> = ({ entityModel, type, className, polygonTableHighlight }) => {
+const PolygonsMap: FC<PolygonsMapProps> = ({
+  entityModel,
+  type,
+  className,
+  polygonsDataOverride,
+  polygonTableHighlight
+}) => {
   // Champions map keeps polygon panel disabled until edit/validation UX is migrated.
   const disabledPolygonPanel = true;
   const [polygonDataMap, setPolygonDataMap] = useState<Record<string, string[]>>(() => ({ ...EMPTY_POLYGON_MAP }));
@@ -71,11 +79,21 @@ const PolygonsMap: FC<PolygonsMapProps> = ({ entityModel, type, className, polyg
   } = useMapAreaContext();
 
   const {
-    data: polygonsData,
+    data: fetchedPolygonsData,
     refetch,
     polygonCriteriaMap,
     loading
-  } = useLoadSitePolygonsData(entityModel.uuid, type, "", "createdAt", "ASC", validFilter);
+  } = useLoadSitePolygonsData(
+    entityModel.uuid,
+    type,
+    "",
+    "createdAt",
+    "ASC",
+    validFilter,
+    polygonsDataOverride == null
+  );
+
+  const polygonsData = polygonsDataOverride ?? fetchedPolygonsData;
 
   const onSave = useCallback(
     (geojson: unknown, _record: unknown) => {
@@ -103,11 +121,17 @@ const PolygonsMap: FC<PolygonsMapProps> = ({ entityModel, type, className, polyg
   );
 
   const extentBbox = useMemo((): BBox | undefined => {
+    if (polygonsDataOverride != null) {
+      return modelBbox as BBox | undefined;
+    }
     if (polygonsData.length > 0) {
       return modelBbox as BBox | undefined;
     }
+    if (loading) {
+      return modelBbox as BBox | undefined;
+    }
     return countryBbox as BBox | undefined;
-  }, [polygonsData, modelBbox, countryBbox]);
+  }, [polygonsDataOverride, polygonsData, modelBbox, countryBbox, loading]);
 
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);
@@ -115,8 +139,15 @@ const PolygonsMap: FC<PolygonsMapProps> = ({ entityModel, type, className, polyg
   });
 
   useEffect(() => {
+    if (polygonsDataOverride != null) {
+      setPolygonData(polygonsDataOverride);
+    }
+  }, [polygonsDataOverride, setPolygonData]);
+
+  useEffect(() => {
+    if (polygonsDataOverride != null) return;
     void refetch();
-  }, [validFilter, refetch]);
+  }, [validFilter, refetch, polygonsDataOverride]);
 
   useEffect(() => {
     if (disabledPolygonPanel) {

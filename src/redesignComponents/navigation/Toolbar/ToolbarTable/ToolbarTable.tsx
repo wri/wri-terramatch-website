@@ -34,6 +34,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
           {search != null && (
             <div className="flex w-full min-w-[26rem] max-w-[26rem] items-center gap-4">
               <Search
+                key={search.resetKey ?? "search"}
                 {...({
                   placeholder: search.placeholder,
                   disabled: search.disabled,
