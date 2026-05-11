@@ -32,7 +32,7 @@ const PageItem: FC<PageItemProps> = ({
     <Flex
       alignItems="center"
       justifyContent="space-between"
-      className={classNames("mobile:flex-col mobile:!items-start mobile:gap-2", classNameHeader)}
+      className={classNames("mobile:!items-start mobile:gap-2", classNameHeader)}
     >
       <div className="flex items-center gap-2">
         <Text color="primary.900" textStyle="600">
@@ -40,7 +40,7 @@ const PageItem: FC<PageItemProps> = ({
         </Text>
         {tag !== null && tag}
       </div>
-      <Flex gap={4} className={classNames("mobile:w-full mobile:justify-end", classNameRightSectionHeader)}>
+      <Flex gap={4} className={classNames("mobile:justify-end", classNameRightSectionHeader)}>
         {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
         {buttonProps !== null && <Button {...buttonProps} />}
       </Flex>
