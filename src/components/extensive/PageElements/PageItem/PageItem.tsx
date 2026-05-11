@@ -13,6 +13,8 @@ export interface PageItemProps {
   flexProps?: FlexProps;
   tag?: ReactNode;
   className?: string;
+  classNameHeader?: string;
+  classNameRightSectionHeader?: string;
 }
 
 const PageItem: FC<PageItemProps> = ({
@@ -22,13 +24,15 @@ const PageItem: FC<PageItemProps> = ({
   children,
   flexProps,
   tag,
-  className
+  className,
+  classNameHeader,
+  classNameRightSectionHeader
 }) => (
   <Flex direction="column" gap={4} flex={1} {...flexProps} className={classNames(className)}>
     <Flex
       alignItems="center"
       justifyContent="space-between"
-      className="mobile:flex-col mobile:!items-start mobile:gap-2"
+      className={classNames("mobile:flex-col mobile:!items-start mobile:gap-2", classNameHeader)}
     >
       <div className="flex items-center gap-2">
         <Text color="primary.900" textStyle="600">
@@ -36,7 +40,7 @@ const PageItem: FC<PageItemProps> = ({
         </Text>
         {tag !== null && tag}
       </div>
-      <Flex gap={4} className="mobile:w-full mobile:justify-end">
+      <Flex gap={4} className={classNames("mobile:w-full mobile:justify-end", classNameRightSectionHeader)}>
         {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
         {buttonProps !== null && <Button {...buttonProps} />}
       </Flex>
