@@ -14,7 +14,6 @@ import { MediaCallbacks } from "./mediaTypes";
 
 const PULSING_DOT_IMAGE = "pulsing-dot";
 
-/** GeoJSON feature properties are `unknown`-valued; narrow for props and callbacks that expect strings. */
 function stringFromGeoJsonProperty(value: unknown): string {
   return typeof value === "string" ? value : "";
 }
