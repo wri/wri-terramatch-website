@@ -14,6 +14,7 @@ import {
 import { useNotificationContext } from "@/context/notification.provider";
 import { ProjectUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
+import ApiSlice from "@/store/apiSlice";
 
 type Props = {
   projectUuid: string;
@@ -64,6 +65,7 @@ const PolygonHandoffPanel: FC<Props> = ({
       ...(trimmed !== "" ? { polygonHandoffComment: trimmed } : {})
     };
     update(attrs);
+    ApiSlice.pruneCache("auditStatuses");
   }, [submission, baseline, comment, update]);
 
   useRequestComplete(
