@@ -61,7 +61,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
           <div className="flex min-w-[0] items-center gap-4">
             {filters != null && filters.length > 0 ? (
               <>
-                <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-3">
+                <div className="text-14 flex flex-wrap items-center gap-3 text-theme-neutral-900">
                   {t("Filter by:")}
                   {filters.map((filter, index) => (
                     <MultiActionButton key={index} {...filter} size="small" />
