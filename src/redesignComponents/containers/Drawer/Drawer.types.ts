@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export interface DrawerProps {
   children: (props: { onClose: () => void }) => ReactNode;
@@ -6,12 +6,14 @@ export interface DrawerProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   defaultOpen?: boolean;
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "full" | "filterPanel";
 }
 
 export interface DrawerTyped {
   children: ReactNode;
   open: boolean;
   onOpenChange: (e: { open: boolean }) => void;
+  size: NonNullable<DrawerProps["size"]>;
 }
 
 export interface DrawerTriggerTyped {

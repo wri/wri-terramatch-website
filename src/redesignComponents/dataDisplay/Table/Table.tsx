@@ -1,6 +1,6 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
-import React, { useCallback, useEffect } from "react";
+import React, { Ref, useCallback, useEffect } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
@@ -20,9 +20,9 @@ interface TableProps<T extends BaseRow> {
   data: T[];
   columns: TableColumn[];
   selectable?: boolean;
-  isScrollable?: boolean;
-  scrollableWidth?: string;
-  scrollableHeight?: string;
+  height?: string;
+  stickyHeader?: boolean;
+  loading?: boolean;
   renderRow?: (rowData: T, rowProps?: Record<string, unknown>) => React.ReactNode;
   renderDataCell?: (rowData: T, columnKey: string) => React.ReactNode;
   totalItems?: number;
@@ -32,11 +32,14 @@ interface TableProps<T extends BaseRow> {
   pageSize?: number;
   className?: string;
   showPagination?: boolean;
+  /** Ref forwarded to the wrapper Box. Useful for consumers that need to listen to scroll on the
+   *  WriTable scroll container (e.g. for sticky columns). */
+  containerRef?: Ref<HTMLDivElement>;
   /** Controlled selection state. When provided, overrides the internal useTableSelection state. */
   selectedRows?: T[];
   /** Called when the "select all" header checkbox is toggled. Receives the checked flag and the
    *  currently visible page rows so the consumer can sync their own selectedRows state. */
-  onAllRowsSelected?: (checked: boolean, visibleRows: T[]) => void;
+  onAllItemsSelected?: (checked: boolean, visibleRows: T[]) => void;
 }
 
 interface SelectableRowProps<T extends BaseRow> {
@@ -79,9 +82,9 @@ const Table = <T extends BaseRow>({
   data,
   columns,
   selectable = false,
-  isScrollable = false,
-  scrollableWidth = "100%",
-  scrollableHeight = "100%",
+  height,
+  stickyHeader,
+  loading,
   renderRow: customRenderRow,
   renderDataCell: customRenderDataCell,
   totalItems,
@@ -91,15 +94,16 @@ const Table = <T extends BaseRow>({
   pageSize: initialPageSize,
   className,
   showPagination = true,
+  containerRef,
   selectedRows: controlledSelectedRows,
-  onAllRowsSelected: controlledOnAllRowsSelected
+  onAllItemsSelected: controlledOnAllItemsSelected
 }: TableProps<T>) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
     DEFAULT_CURRENT_PAGE,
     initialPageSize
   );
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
-  const { sortColumn, setSortColumn, sortedData } = useTableSorting(data);
+  const { setSortColumn, sortedData } = useTableSorting(data);
   const {
     selectedRows: internalSelectedRows,
     handleRowSelected,
@@ -141,13 +145,13 @@ const Table = <T extends BaseRow>({
 
   const handleAllItemsSelected = useCallback(
     (checked: boolean) => {
-      if (controlledOnAllRowsSelected != null) {
-        controlledOnAllRowsSelected(checked, dataByPage);
+      if (controlledOnAllItemsSelected != null) {
+        controlledOnAllItemsSelected(checked, dataByPage);
       } else {
         internalOnAllItemsSelected(checked, dataByPage);
       }
     },
-    [controlledOnAllRowsSelected, internalOnAllItemsSelected, dataByPage]
+    [controlledOnAllItemsSelected, internalOnAllItemsSelected, dataByPage]
   );
 
   const defaultSelectableRenderRow = useCallback(
@@ -185,18 +189,8 @@ const Table = <T extends BaseRow>({
 
   return (
     <Box
-      css={getTableWrapperStyles(
-        sortColumn,
-        columns,
-        selectable,
-        isScrollable,
-        scrollableWidth,
-        scrollableHeight,
-        dataByPage,
-        pageSize,
-        actualTotalItems,
-        css
-      )}
+      ref={containerRef}
+      css={getTableWrapperStyles(selectable, dataByPage, pageSize, actualTotalItems, css)}
       className={className}
     >
       <WriTable
@@ -220,6 +214,9 @@ const Table = <T extends BaseRow>({
         selectedRows={selectedRows}
         selectable={selectable}
         variant={variant}
+        height={height}
+        stickyHeader={stickyHeader}
+        loading={loading}
       />
       {showItemCount && shouldShowPagination && (
         <Text

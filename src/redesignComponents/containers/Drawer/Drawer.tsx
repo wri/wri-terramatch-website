@@ -9,7 +9,14 @@ const TypedDrawerPositioner = DrawerPositioner as FC<DrawerContainerTyped>;
 const TypedDrawerContent = DrawerContent as FC<DrawerContainerTyped>;
 const TypedDrawerBackdrop = DrawerBackdrop as FC;
 
-const Drawer: FC<DrawerProps> = ({ children, trigger, open: openProp, onOpenChange, defaultOpen = false }) => {
+const Drawer: FC<DrawerProps> = ({
+  children,
+  trigger,
+  open: openProp,
+  onOpenChange,
+  defaultOpen = false,
+  size = "xs"
+}) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const isControlled = openProp !== undefined;
   const open = isControlled ? openProp : uncontrolledOpen;
@@ -24,7 +31,7 @@ const Drawer: FC<DrawerProps> = ({ children, trigger, open: openProp, onOpenChan
   const handleClose = () => setOpen(false);
 
   return (
-    <TypedDrawerRoot open={open} onOpenChange={e => setOpen(e.open)}>
+    <TypedDrawerRoot open={open} onOpenChange={e => setOpen(e.open)} size={size}>
       {trigger != null ? <TypedDrawerTrigger asChild>{trigger}</TypedDrawerTrigger> : null}
       <Portal>
         <TypedDrawerBackdrop />

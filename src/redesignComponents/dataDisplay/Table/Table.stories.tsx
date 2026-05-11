@@ -450,9 +450,8 @@ const manyData = generateSampleData(100);
 export const WithManyColumns: Story = {
   args: {
     data: manyData,
-    isScrollable: true,
-    scrollableWidth: "800px",
-    scrollableHeight: "500px",
+    height: "500px",
+    stickyHeader: true,
     columns: [
       { key: "name", label: "Label", sortable: true },
       { key: "email", label: "Label", sortable: true },
