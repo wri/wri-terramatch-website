@@ -2,8 +2,7 @@ import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { When } from "react-if";
+import React, { FC, useEffect, useState } from "react";
 
 import { removeAccessToken } from "@/admin/apiProvider/utils/token";
 import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdown";
@@ -16,14 +15,14 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useLogin } from "@/connections/Login";
 import { useMyUser, ValidLocale } from "@/connections/User";
 
-interface NavItem {
+type NavItem = {
   path: string;
   icon: IconNames;
   label: string;
   disabled?: boolean;
-}
+};
 
-const Sidebar = () => {
+const Sidebar: FC = () => {
   const router = useRouter();
   const [, { data: login }] = useLogin({});
   const [, { setLocale }] = useMyUser();
@@ -164,7 +163,7 @@ const Sidebar = () => {
           style={isMobile ? { height: `${window.innerHeight - 60}px` } : {}}
         >
           {NAV_ITEMS.map(item => renderNavItem(item))}
-          <When condition={isMobile}>
+          {isMobile && (
             <button
               key={"logout mobile"}
               className={classNames(
@@ -187,7 +186,7 @@ const Sidebar = () => {
               </div>
               <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90" />
             </button>
-          </When>
+          )}
         </div>
       </div>
 

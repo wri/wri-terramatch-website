@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Toast from "@/components/elements/Toast/Toast";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
@@ -27,11 +26,9 @@ export const Default: Story = {
     Story => (
       <ModalProvider>
         <ToastProvider>
-          <QueryClientProvider client={new QueryClient()}>
-            <Story />
-            <ModalRoot />
-            <Toast />
-          </QueryClientProvider>
+          <Story />
+          <ModalRoot />
+          <Toast />
         </ToastProvider>
       </ModalProvider>
     )

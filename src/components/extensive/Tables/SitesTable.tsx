@@ -10,7 +10,7 @@ import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
-import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
+import ActionTableCell from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
 import { deleteSite, indexSiteConnection } from "@/connections/Entity";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";

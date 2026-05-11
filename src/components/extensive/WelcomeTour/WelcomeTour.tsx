@@ -1,7 +1,6 @@
 import { Dialog } from "@headlessui/react";
 import { useMediaQuery } from "@mui/material";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { When } from "react-if";
 import Joyride, { Step } from "react-joyride";
 
 import { useMyUser } from "@/connections/User";
@@ -15,14 +14,14 @@ import WelcomeModal from "./WelcomeModal";
 const TOUR_SKIPPED_KEY = "WRI_TOUR_SKIPPED";
 const TOUR_COMPLETED_KEY = "WRI_TOUR_COMPLETED";
 
-interface IProps {
+type IProps = {
   tourId: string;
   tourSteps: Step[];
   hasWelcomeModal?: boolean;
   onDontShowAgain?: () => void;
   onStart?: () => void;
   onFinish?: () => void;
-}
+};
 
 const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontShowAgain, hasWelcomeModal = true }) => {
   const { openModal, closeModal } = useModalContext();
@@ -113,39 +112,37 @@ const WelcomeTour: FC<IProps> = ({ tourId, tourSteps, onFinish, onStart, onDontS
     }
   }, [onStart, tourEnabled]);
 
-  return (
-    <When condition={tourEnabled}>
-      <Dialog as="div" className="z-20" onClose={() => closeModal(ModalId.WELCOME_MODAL)} open>
-        <div className="fixed inset-0 z-10 bg-black bg-opacity-25">
-          <Joyride
-            // Force re-render so tooltip re-focuses on correct place
-            key={isLg ? 1 : 0}
-            steps={tourSteps}
-            run={tourEnabled}
-            tooltipComponent={ToolTip}
-            showProgress
-            continuous
-            disableOverlay
-            floaterProps={floaterProps}
-            styles={{
-              options: {
-                arrowColor: "#4EBBEA",
-                spotlightShadow: "none"
-              }
-            }}
-            callback={data => {
-              if (data.status === "finished" && user?.uuid) {
-                localStorage.setItem(TOUR_COMPLETED_STORAGE_KEY, "true");
-                setTourEnabled(false);
-                setNavLinksDisabled?.(false);
-                onFinish?.();
-              }
-            }}
-          />
-        </div>
-      </Dialog>
-    </When>
-  );
+  return tourEnabled ? (
+    <Dialog as="div" className="z-20" onClose={() => closeModal(ModalId.WELCOME_MODAL)} open>
+      <div className="fixed inset-0 z-10 bg-black bg-opacity-25">
+        <Joyride
+          // Force re-render so tooltip re-focuses on correct place
+          key={isLg ? 1 : 0}
+          steps={tourSteps}
+          run={tourEnabled}
+          tooltipComponent={ToolTip}
+          showProgress
+          continuous
+          disableOverlay
+          floaterProps={floaterProps}
+          styles={{
+            options: {
+              arrowColor: "#4EBBEA",
+              spotlightShadow: "none"
+            }
+          }}
+          callback={data => {
+            if (data.status === "finished" && user?.uuid) {
+              localStorage.setItem(TOUR_COMPLETED_STORAGE_KEY, "true");
+              setTourEnabled(false);
+              setNavLinksDisabled?.(false);
+              onFinish?.();
+            }
+          }}
+        />
+      </div>
+    </Dialog>
+  ) : null;
 };
 
 export default WelcomeTour;

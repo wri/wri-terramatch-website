@@ -8,7 +8,7 @@ import { ConnectionTable } from "@/components/elements/ServerSideTable/Connectio
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
-import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
+import ActionTableCell from "@/components/extensive/TableCells/ActionTableCell";
 import { applicationsConnection } from "@/connections/Application";
 import { ApplicationDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Status } from "@/types/common";

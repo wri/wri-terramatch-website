@@ -24,13 +24,13 @@ const ToolbarForm: FC<ToolbarFormProps> = ({
           <Button {...primaryButtonProps} variant="primary" />
           {secondaryButtonProps && (
             <>
-              <div className="h-4 w-[1px] bg-theme-neutral-300" />
+              <div className="bg-theme-neutral-300 h-4 w-[0.0625rem]" />
               <Button {...secondaryButtonProps} variant="secondary" />
             </>
           )}
           {tertiaryButtonProps && (
             <>
-              <div className="h-4 w-[1px] bg-theme-neutral-300" />
+              <div className="bg-theme-neutral-300 h-4 w-[0.0625rem]" />
               <Button {...tertiaryButtonProps} variant="borderless" />
             </>
           )}

@@ -4,8 +4,8 @@ import { camelCase } from "lodash";
 import { FC, useMemo } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
-import { MonitoringPartnersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/MonitoringPartners";
-import { ProjectManagersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/ProjectManagersTable";
+import MonitoringPartnersTable from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/MonitoringPartners";
+import ProjectManagersTable from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/ProjectManagersTable";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
@@ -348,7 +348,7 @@ const InformationTab: FC<IProps> = props => {
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-1 py-1">
                           <Text variant="text-16-bold" className="capitalize">
-                            Exotic Trees Removed:
+                            Invasive Trees Removed:
                           </Text>
                           <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
                             {totalCountInvasive.toLocaleString() ?? 0}

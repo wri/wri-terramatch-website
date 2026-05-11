@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { When } from "react-if";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -22,16 +21,18 @@ import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import Log from "@/utils/log";
 import { checkPolygonsFixability, getFixabilitySummaryMessage } from "@/utils/polygonFixValidation";
 
-const ProcessBulkPolygonsControl = ({
-  entityData,
-  setIsLoadingDelayedJob,
-  isLoadingDelayedJob,
-  setAlertTitle
-}: {
+type ProcessBulkPolygonsControlProps = {
   entityData: any;
   setIsLoadingDelayedJob?: (value: boolean) => void;
   isLoadingDelayedJob?: boolean;
   setAlertTitle?: (value: string) => void;
+};
+
+const ProcessBulkPolygonsControl: FC<ProcessBulkPolygonsControlProps> = ({
+  entityData,
+  setIsLoadingDelayedJob,
+  isLoadingDelayedJob,
+  setAlertTitle
 }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
@@ -336,7 +337,7 @@ const ProcessBulkPolygonsControl = ({
         <Text variant="text-10-bold" className="text-white">
           {t("Click below to process the selected polygons")}
         </Text>
-        <When condition={selectedPolygonsInCheckbox.length > 0 && fixabilityResult.totalCount > 0}>
+        {selectedPolygonsInCheckbox.length > 0 && fixabilityResult.totalCount > 0 && (
           <div className="mt-2 rounded bg-white bg-opacity-10 p-2">
             <Text variant="text-8-light" className="text-white">
               {fixabilityResult.canFixAny
@@ -347,7 +348,7 @@ const ProcessBulkPolygonsControl = ({
                 : t("None of the selected polygons can be fixed")}
             </Text>
           </div>
-        </When>
+        )}
         <div className="grid grid-cols-3 gap-2">
           <Button
             variant="text"

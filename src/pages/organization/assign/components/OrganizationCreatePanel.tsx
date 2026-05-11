@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Else, If, Then } from "react-if";
+import { FC } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -16,28 +16,26 @@ type OrganizationCreatePanelProps = {
   organizations: OrganisationLightDto[];
 };
 
-const OrganizationAssignPanel = ({ loading, searchedTerm, organizations }: OrganizationCreatePanelProps) => {
+const OrganizationAssignPanel: FC<OrganizationCreatePanelProps> = ({ loading, searchedTerm, organizations }) => {
   const t = useT();
   const { setType } = useOrganizationCreateContext();
 
   return (
     <section className="w-full rounded-lg border border-solid border-neutral-400 px-6 pb-6">
       {/* Loader */}
-      <If condition={loading}>
-        <Then>
-          <div className="flex h-20 items-center justify-center pt-6">
-            <Text variant="text-body-600">{t("Loading...")}</Text>
-          </div>
-        </Then>
-        <Else>
+      {loading ? (
+        <div className="flex h-20 items-center justify-center pt-6">
+          <Text variant="text-body-600">{t("Loading...")}</Text>
+        </div>
+      ) : (
+        <>
           {/* Empty State */}
-          <If condition={organizations.length === 0}>
-            <Then>
-              <Text variant="text-body-500" className="mt-6">
-                {t(`No existing organizations found for "{searchedTerm}"`, { searchedTerm })}
-              </Text>
-            </Then>
-            <Else>
+          {organizations.length === 0 ? (
+            <Text variant="text-body-500" className="mt-6">
+              {t(`No existing organizations found for "{searchedTerm}"`, { searchedTerm })}
+            </Text>
+          ) : (
+            <>
               <Text variant="text-body-500" className="mt-6 mb-2">
                 {t(`{number} existing organizations found for "{searchedTerm}"`, {
                   searchedTerm,
@@ -50,8 +48,8 @@ const OrganizationAssignPanel = ({ loading, searchedTerm, organizations }: Organ
                 render={organization => <OrganizationSelectRow organization={organization} />}
                 className="h-[250px] overflow-y-auto px-4"
               />
-            </Else>
-          </If>
+            </>
+          )}
 
           <Button
             className="mt-8"
@@ -61,8 +59,8 @@ const OrganizationAssignPanel = ({ loading, searchedTerm, organizations }: Organ
           >
             {t(`Create new organization: "{searchedTerm}"`, { searchedTerm })}
           </Button>
-        </Else>
-      </If>
+        </>
+      )}
     </section>
   );
 };

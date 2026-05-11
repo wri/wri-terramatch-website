@@ -65,12 +65,12 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
       css={{
         "&:has(a:focus-visible)": {
           borderColor: "var(--chakra-colors-neutral-100)",
-          boxShadow: "0 0 0 2px var(--chakra-colors-primary-800)"
+          boxShadow: "0 0 0 0.125rem var(--chakra-colors-primary-800)"
         }
       }}
       className={classNames(
         "w-full items-center justify-between gap-2 rounded-md border-2",
-        "h-9 border-theme-primary-800 px-3 py-2 hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40",
+        "border-theme-primary-800 hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40 h-9 px-3 py-2",
         isActive ? "text-theme-primary-300" : "text-theme-neutral-100"
       )}
     >

@@ -73,7 +73,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
 
   return (
     <Box gap={2} className="flex flex-col">
-      <Text textStyle="400" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
+      <Text textStyle="400" color="neutral.900" className="-ml-[0.5rem] flex items-center gap-2">
         <Button
           variant="borderless"
           size="small"

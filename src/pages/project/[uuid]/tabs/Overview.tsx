@@ -346,6 +346,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
                   <Button
                     variant="borderless"
                     size="small"
+                    className="mobile:max-w-full mobile:truncate"
                     rightIcon={<ChevronRightIcon />}
                     onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
                   >

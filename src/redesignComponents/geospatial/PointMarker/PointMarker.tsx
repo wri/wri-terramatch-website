@@ -20,13 +20,15 @@ export interface MapMarkerProps {
 const BOX_SHADOW =
   "0rem 0.0625rem 0.125rem -0.0625rem rgba(0, 0, 0, 0.10), 0rem 0.0625rem 0.1875rem 0rem rgba(0, 0, 0, 0.10) !important";
 
-const FOCUS_STATE_STYLES = {
-  outline: "0.125rem solid #50B6E2",
+const FOCUS_STATE_STYLES = (variant?: string) => ({
+  outline: "0.125rem solid primary.600",
+  outlineColor: variant === "simple-pin" ? "transparent" : "primary.600 !important",
   borderRadius: "50%",
   scale: "1.25",
+  opacity: 1,
   outlineOffset: "0rem !important",
   "& button:hover": { scale: "1 !important" }
-};
+});
 
 const ICON_SIZE: Record<NonNullable<MapMarkerProps["size"]>, string> = {
   sm: "1.75rem",
@@ -49,11 +51,13 @@ const PointMarker: FC<MapMarkerProps> = ({
   const iconDimension = ICON_SIZE[size];
   return (
     <Box
+      className="point-marker"
       css={{
-        "& > div": showFocusState && FOCUS_STATE_STYLES,
+        "& > div": showFocusState && FOCUS_STATE_STYLES(variant),
         "& button": {
           ...(variant === "icon" ? { width: iconDimension, height: iconDimension } : { fontWeight: "400" }),
           transition: "all 0.1s ease-in-out",
+          opacity: 0.8,
           boxShadow: BOX_SHADOW,
           ...(variant === "simple-pin" && {
             width: "1rem",
@@ -65,7 +69,7 @@ const PointMarker: FC<MapMarkerProps> = ({
         "& button::after": {
           display: "none"
         },
-        "& button:hover": { scale: 1.25 }
+        "& button:hover": { scale: 1.25, opacity: 1 }
       }}
     >
       <MapMarker

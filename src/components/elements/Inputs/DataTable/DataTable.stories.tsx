@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useMemo, useState } from "react";
 
@@ -19,8 +18,6 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-const client = new QueryClient();
-
 export const Default: Story = {
   render: (args: Props<any>) => {
     const [value, setValue] = useState([]);
@@ -33,11 +30,7 @@ export const Default: Story = {
       [t]
     );
     const provider = useLocalStepsProvider(steps);
-    return (
-      <QueryClientProvider client={client}>
-        <Component {...args} tableColumns={columns} fieldsProvider={provider} value={value} onChange={setValue} />
-      </QueryClientProvider>
-    );
+    return <Component {...args} tableColumns={columns} fieldsProvider={provider} value={value} onChange={setValue} />;
   },
   args: {
     label: "What are your funding sources?",

@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import { FC, useState } from "react";
-import { When } from "react-if";
 
 import { useMonitoredData } from "@/admin/components/ResourceTabs/MonitoredTab/hooks/useMonitoredData";
 import Button from "@/components/elements/Button/Button";
@@ -19,7 +18,7 @@ import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
 import { ModalBaseWithMonitored } from "./ModalsBases";
 
-export interface ModalRunAnalysisProps extends ModalProps {
+type ModalRunAnalysisProps = ModalProps & {
   secondaryButtonText?: string;
   onClose?: () => void;
   primaryButtonText: string;
@@ -27,7 +26,7 @@ export interface ModalRunAnalysisProps extends ModalProps {
   projectName?: string;
   entityType?: EntityName;
   entityUuid?: string;
-}
+};
 
 const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
   primaryButtonProps,
@@ -183,16 +182,16 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
             </div>
           </div>
 
-          <When condition={isRerunMode && totalPolygonsForRerun === 0}>
+          {isRerunMode && totalPolygonsForRerun === 0 && (
             <div className="border-yellow-200 bg-yellow-50 flex items-center gap-2 rounded-lg border p-3">
               <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="h-5 w-5 text-yellow-600" />
               <Text variant="text-12" className="text-yellow-800">
                 {t("All polygons have complete analysis data. No rerun is needed.")}
               </Text>
             </div>
-          </When>
+          )}
 
-          <When condition={!loadingVerify && !loadingRerunVerify}>
+          {!loadingVerify && !loadingRerunVerify && (
             <Dropdown
               placeholder={
                 isRerunMode
@@ -221,26 +220,26 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
               labelClassName="!capitalize !text-darkCustom"
               labelVariant="text-14-light"
             />
-          </When>
+          )}
 
-          <When condition={loadingVerify || loadingRerunVerify}>
+          {(loadingVerify || loadingRerunVerify) && (
             <div className="flex items-center justify-center py-8">
               <InlineLoader loading={true} />
               <Text variant="text-12" className="ml-2 text-neutral-600">
                 {t("Loading indicator data...")}
               </Text>
             </div>
-          </When>
+          )}
         </div>
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
-        <When condition={!!secondaryButtonProps}>
+        {secondaryButtonProps != null && (
           <Button {...secondaryButtonProps!} variant="white-page-admin">
             <Text variant="text-14-bold" className="capitalize text-darkCustom">
               {secondaryButtonText}
             </Text>
           </Button>
-        </When>
+        )}
         <Button
           {...primaryButtonProps}
           onClick={runAnalysis}

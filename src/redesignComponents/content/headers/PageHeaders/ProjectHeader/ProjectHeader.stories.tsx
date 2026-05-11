@@ -1,20 +1,9 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import FrameworkProvider from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import ProjectHeader from "./ProjectHeader";
-
-// Create a QueryClient instance for Storybook
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      refetchOnWindowFocus: false
-    }
-  }
-});
 
 // Mock fetch to avoid hitting real endpoints in Storybook
 // Note: This is a simple mock. For more complex scenarios, consider using MSW (Mock Service Worker)
@@ -171,16 +160,12 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
       profileImagePosition: null
     },
     consortiumPartnershipAgreements: [],
-    treesRegeneratingSpeciesCount: 0
-  } as Omit<ProjectFullDto, "polygonDataSubmission" | "readyForBaseline">;
-
-  const compatFields = {
-    polygonDataSubmission: null,
-    readyForBaseline: null
-  } as Partial<Record<"polygonDataSubmission" | "readyForBaseline", null>>;
+    treesRegeneratingSpeciesCount: 0,
+    polygonDataSubmission: "no-polygons-submitted",
+    readyForBaseline: false
+  };
 
   return {
-    ...compatFields,
     ...baseProject,
     ...overrides
   } as ProjectFullDto;
@@ -201,11 +186,9 @@ const meta: Meta<typeof ProjectHeader> = {
       const project = context.args?.project as ProjectFullDto | undefined;
       const frameworkKey = project?.frameworkKey ?? "terrafund";
       return (
-        <QueryClientProvider client={queryClient}>
-          <FrameworkProvider frameworkKey={frameworkKey}>
-            <Story />
-          </FrameworkProvider>
-        </QueryClientProvider>
+        <FrameworkProvider frameworkKey={frameworkKey}>
+          <Story />
+        </FrameworkProvider>
       );
     }
   ]

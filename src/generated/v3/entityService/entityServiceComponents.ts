@@ -2035,6 +2035,13 @@ export type GetAuditStatusesPathParams = {
     | "sitePolygons";
 };
 
+export type GetAuditStatusesQueryParams = {
+  /**
+   * Filter by audit `type` values. When omitted, all audit rows are returned.
+   */
+  types?: string[];
+};
+
 export type GetAuditStatusesError = Fetcher.ErrorWrapper<
   | {
       status: 401;
@@ -2116,6 +2123,7 @@ export type GetAuditStatusesResponse = {
 
 export type GetAuditStatusesVariables = {
   pathParams: GetAuditStatusesPathParams;
+  queryParams?: GetAuditStatusesQueryParams;
 };
 
 export const getAuditStatuses = new V3ApiEndpoint<
@@ -2453,6 +2461,18 @@ export type EntityIndexQueryParams = {
    * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
    */
   taskId?: number;
+  /**
+   * Filter projects by polygon data submission status
+   */
+  polygonDataSubmission?:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received";
+  /**
+   * Filter projects where ready for baseline is true or false
+   */
+  readyForBaseline?: boolean;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -4005,6 +4025,18 @@ export type EntityAssociationIndexQueryParams = {
    * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
    */
   taskId?: number;
+  /**
+   * Filter projects by polygon data submission status
+   */
+  polygonDataSubmission?:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received";
+  /**
+   * Filter projects where ready for baseline is true or false
+   */
+  readyForBaseline?: boolean;
   modelType?: string;
   /**
    * @default false
@@ -4893,6 +4925,7 @@ export type FormIndexQueryParams = {
     | "nursery"
     | "nursery-report"
     | "srp-report";
+  attachedTo?: string;
 };
 
 export type FormIndexError = Fetcher.ErrorWrapper<{

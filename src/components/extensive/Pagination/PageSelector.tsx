@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes } from "react";
-import { When } from "react-if";
+import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
 import Text from "@/components/elements/Text/Text";
@@ -10,7 +9,7 @@ import { TextVariants } from "@/types/common";
 
 import { VariantPagination } from "./PaginationVariant";
 
-export interface PageSelectorProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+export type PageSelectorProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   pageIndex: number;
   variantText?: TextVariants;
 
@@ -24,9 +23,9 @@ export interface PageSelectorProps extends DetailedHTMLProps<HTMLAttributes<HTML
   setPageIndex: (index: number) => void;
 
   variant?: VariantPagination;
-}
+};
 
-function PageSelector({
+const PageSelector: FC<PageSelectorProps> = ({
   nextPage,
   getCanNextPage,
   getPageCount,
@@ -38,7 +37,7 @@ function PageSelector({
   variantText,
   variant,
   ...props
-}: PageSelectorProps) {
+}) => {
   const currentPage = pageIndex + 1;
   const t = useT();
 
@@ -47,23 +46,25 @@ function PageSelector({
       {...props}
       className={classNames(className, "flex items-center justify-center gap-5", variant?.contentPageSelector)}
     >
-      <When condition={variant?.labelsPagination ?? false}>
-        <Text variant={"text-12-semibold"} className={classNames("text-black mobile:order-2")}>
-          {t("Page")}
-        </Text>
-        <Text
-          variant={"text-12-semibold"}
-          className={classNames(
-            "text-black mobile:order-3 mobile:!w-fit mobile:border-none mobile:bg-transparent mobile:p-0",
-            variant?.iconContentPagination
-          )}
-        >
-          {currentPage}
-        </Text>
-        <Text variant={"text-12-semibold"} className={classNames("text-black mobile:order-4")}>
-          {t("of")} {getPageCount()}
-        </Text>
-      </When>
+      {(variant?.labelsPagination ?? false) && (
+        <>
+          <Text variant={"text-12-semibold"} className={classNames("text-black mobile:order-2")}>
+            {t("Page")}
+          </Text>
+          <Text
+            variant={"text-12-semibold"}
+            className={classNames(
+              "text-black mobile:order-3 mobile:!w-fit mobile:border-none mobile:bg-transparent mobile:p-0",
+              variant?.iconContentPagination
+            )}
+          >
+            {currentPage}
+          </Text>
+          <Text variant={"text-12-semibold"} className={classNames("text-black mobile:order-4")}>
+            {t("of")} {getPageCount()}
+          </Text>
+        </>
+      )}
       <IconButton
         iconProps={{
           name: IconNames.CHEVRON_LEFT,
@@ -103,7 +104,7 @@ function PageSelector({
       />
     </div>
   );
-}
+};
 
 function getPaginationItems(current: number, max: number) {
   if (!current || !max) return [];

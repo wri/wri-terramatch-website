@@ -12,7 +12,7 @@ const meta = {
   args: { onChange: () => {} },
   decorators: [
     (Story: any) => (
-      <div style={{ width: "370px" }}>
+      <div style={{ width: "23.125rem" }}>
         <Story />
       </div>
     )

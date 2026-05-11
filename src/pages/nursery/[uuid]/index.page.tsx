@@ -57,7 +57,7 @@ const NurseryDetailPage = () => {
     { key: "audit-log", title: t("Audit Log"), body: <AuditLog nursery={nursery} /> }
   ];
 
-  const suffixContent = isSuffixView ? <CompletedReportsTab nursery={nursery} /> : null;
+  const suffixContent = isSuffixView && nursery != null ? <CompletedReportsTab nursery={nursery} /> : null;
 
   return (
     <FrameworkProvider frameworkKey={nursery?.frameworkKey}>
@@ -91,7 +91,7 @@ const NurseryDetailPage = () => {
                     >
                       {t("Project Profile")}
                     </Button>
-                    <span className="text-sm text-theme-neutral-300">|</span>
+                    <span className="text-theme-neutral-300 text-sm">|</span>
                     <Button
                       variant="borderless"
                       size="small"

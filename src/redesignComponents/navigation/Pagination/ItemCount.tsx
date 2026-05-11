@@ -34,7 +34,7 @@ const ItemCount: FC<ItemCountProps> = ({
           width: "100%"
         },
         "& > div > div": {
-          marginBottom: "0px !important",
+          marginBottom: "0rem !important",
           zIndex: 10,
           justifyContent: "space-between"
         }

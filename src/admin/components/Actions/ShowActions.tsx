@@ -1,4 +1,5 @@
 import { Box, Typography } from "@mui/material";
+import { FC } from "react";
 import {
   Button,
   DeleteWithConfirmButton,
@@ -10,7 +11,6 @@ import {
   useRecordContext,
   useResourceContext
 } from "react-admin";
-import { When } from "react-if";
 
 import { useCanUserEdit } from "@/admin/hooks/useCanUserEdit";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -18,23 +18,23 @@ import { SUBMITTED } from "@/constants/statuses";
 
 import ShowTitle from "../ShowTitle";
 
-interface IProps {
+type ShowActionsProps = {
   resourceName?: string;
   moduleName?: string;
   hasDelete?: boolean;
   deleteProps?: DeleteWithConfirmButtonProps<any>;
   hasEdit?: boolean;
   toggleTestStatus?: () => void;
-}
+};
 
-const ShowActions = ({
+const ShowActions: FC<ShowActionsProps> = ({
   resourceName,
   moduleName,
   hasDelete = true,
   hasEdit = true,
   toggleTestStatus,
   deleteProps = {}
-}: IProps) => {
+}) => {
   const record = useRecordContext<any>();
   const resource = useResourceContext();
   const title = useGetRecordRepresentation(resource)(record);
@@ -48,16 +48,16 @@ const ShowActions = ({
 
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
-      <When condition={resource === "siteReport" || resource === "nurseryReport"}>
+      {(resource === "siteReport" || resource === "nurseryReport") && (
         <Link to={`/${resource}`}>
           <Icon name={IconNames.CHEVRON_LEFT_PA} className="mr-2 h-10 w-9" />
         </Link>
-      </When>
-      <When condition={title != null}>
+      )}
+      {title != null && (
         <Typography variant="h4" component="h2" sx={{ flexGrow: 1 }}>
           {resource !== "srpReport" && <ShowTitle moduleName={moduleName} />}
         </Typography>
-      </When>
+      )}
       <TopToolbar sx={{ marginBottom: 2, marginLeft: "auto" }}>
         {record && toggleTestStatus && (
           <Button

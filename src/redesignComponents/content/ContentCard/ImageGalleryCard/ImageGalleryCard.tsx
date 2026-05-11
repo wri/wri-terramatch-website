@@ -19,6 +19,7 @@ interface IImageGalleryCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDi
   imageSize?: number;
   className?: string;
   onSelectImage?: (image: GalleryImageType) => void;
+  classNameImage?: string;
 }
 
 const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
@@ -28,7 +29,8 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
   imageSize = 164,
   onSelectImage,
   onScroll,
-  className
+  className,
+  classNameImage
 }) => {
   const imageCount = images?.length ?? 0;
   const minimumCapacity = Math.max(MIN_ITEMS, columns * MIN_ROWS);
@@ -44,7 +46,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
       gapY={5}
       gapX={5}
       onScroll={onScroll}
-      className={twMerge("rounded-md bg-theme-neutral-100 p-5", className)}
+      className={twMerge("bg-theme-neutral-100 rounded-md p-5", className)}
     >
       {images?.map(image => (
         <GridItem key={image.uuid}>
@@ -53,7 +55,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
             src={image.src}
             alt={image.alt}
             size={imageSize}
-            className="min-w-full bg-theme-neutral-200"
+            className={twMerge("bg-theme-neutral-200 min-w-full", classNameImage)}
             hoverContent={" "}
           />
         </GridItem>
@@ -66,7 +68,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
           <GridItem key={`placeholder-${index}`}>
             {showAddSlot ? (
               <GalleryImage
-                className="min-w-full bg-theme-neutral-200"
+                className={twMerge("bg-theme-neutral-200 min-w-full", classNameImage)}
                 alt={isEmpty ? t("No images available") : t("Add image")}
                 isAdd={true}
                 onClickAdd={onClickAdd}
@@ -74,7 +76,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
               />
             ) : (
               <div
-                className="min-w-full rounded-md bg-theme-neutral-200"
+                className="bg-theme-neutral-200 min-w-full rounded-md"
                 style={{ width: imageSize, height: imageSize }}
               />
             )}

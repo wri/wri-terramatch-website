@@ -1,7 +1,6 @@
 import { Box, Card, Divider, Stack, SxProps, Theme, Typography } from "@mui/material";
 import { ComponentType, FC } from "react";
 import { FunctionField, Labeled, NumberField, useShowContext } from "react-admin";
-import { When } from "react-if";
 
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingEntity, TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
@@ -53,7 +52,7 @@ type CollectionsProps = {
 // An HOC to make sure the wrapped component is only added to the component tree if there is a valid
 // demographic entity and set of collections for this totalsType and shown resource. That allows
 // DemographicsTotalField to assume that it's valid to run its connection hooks and display data.
-function withTotalsShow<T extends CollectionsProps>(WrappedComponent: ComponentType<T>) {
+const withTotalsShow = <T extends CollectionsProps>(WrappedComponent: ComponentType<T>) => {
   const displayName = WrappedComponent.displayName ?? WrappedComponent.name ?? "Component";
   const TotalsShow = (props: Omit<T, "demographicType" | "entity" | "collections"> & TotalShowProps) => {
     const { totalsType, ...rest } = props;
@@ -72,7 +71,7 @@ function withTotalsShow<T extends CollectionsProps>(WrappedComponent: ComponentT
 
   TotalsShow.displayName = `withTotalsShow(${displayName})`;
   return TotalsShow;
-}
+};
 
 type DemographicsTotalFieldProps = CollectionsProps & {
   label: string;
@@ -145,42 +144,42 @@ const HighLevelMetrics: FC = () => {
               emptyText="0"
             />
           </Labeled>
-          <When condition={resource === "siteReport"}>
+          {resource === "siteReport" && (
             <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>
               <NumberField source="totalTreesRegeneratingSpeciesCount" emptyText="0" />
             </Labeled>
-          </When>
-          <When condition={resource === "projectReport"}>
+          )}
+          {resource === "projectReport" && (
             <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>
               <NumberField source="treesRegeneratingSpeciesCount" emptyText="0" />
             </Labeled>
-          </When>
+          )}
           <ContextCondition frameworksShow={[Framework.PPC]}>
-            <When condition={resource === "projectReport" || resource === "siteReport"}>
+            {(resource === "projectReport" || resource === "siteReport") && (
               <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx}>
                 <NumberField
                   source={record.seedsPlantedCount ? "seedsPlantedCount" : "totalSeedsPlantedCount"}
                   emptyText="0"
                 />
               </Labeled>
-            </When>
+            )}
           </ContextCondition>
           <ContextCondition frameworksShow={[Framework.PPC]}>
-            <When condition={resource === "projectReport" || resource === "siteReport"}>
+            {(resource === "projectReport" || resource === "siteReport") && (
               <Labeled label="Estimate Number of Trees Restored via ANR" sx={inlineLabelSx}>
                 <NumberField
                   source={resource === "projectReport" ? "regeneratedTreesCount" : "numTreesRegenerating"}
                   emptyText="0"
                 />
               </Labeled>
-            </When>
+            )}
           </ContextCondition>
           <ContextCondition frameworksShow={ALL_TF}>
-            <When condition={resource !== "siteReport"}>
+            {resource !== "siteReport" && (
               <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
                 <NumberField source="seedlingsGrown" emptyText="0" />
               </Labeled>
-            </When>
+            )}
           </ContextCondition>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             <DemographicsTotalField

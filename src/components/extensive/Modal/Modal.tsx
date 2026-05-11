@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { DetailedHTMLProps, FC, HTMLAttributes, ReactNode } from "react";
-import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
@@ -9,13 +8,13 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconProps } from "../Icon/Icon";
 
 export type ModalBaseProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
-export interface ModalProps extends ModalBaseProps {
+export type ModalProps = ModalBaseProps & {
   title: string;
   iconProps?: IconProps;
   content?: ReactNode;
   primaryButtonProps?: IButtonProps;
   secondaryButtonProps?: IButtonProps;
-}
+};
 
 export const ModalBase: FC<ModalBaseProps> = ({ children, className, ...rest }) => (
   <div
@@ -37,35 +36,29 @@ const Modal: FC<ModalProps> = ({
   secondaryButtonProps,
   children,
   ...rest
-}) => {
-  return (
-    <ModalBase {...rest}>
-      <When condition={!!iconProps}>
-        <Icon
-          {...iconProps!}
-          width={iconProps?.width || 40}
-          className={twMerge("mb-8", iconProps?.className)}
-          style={{ minHeight: iconProps?.height || iconProps?.width || 40 }}
-        />
-      </When>
-      <Text variant="text-bold-headline-1000" className="text-center uppercase">
-        {title}
+}) => (
+  <ModalBase {...rest}>
+    {iconProps != null && (
+      <Icon
+        {...iconProps!}
+        width={iconProps?.width || 40}
+        className={twMerge("mb-8", iconProps?.className)}
+        style={{ minHeight: iconProps?.height || iconProps?.width || 40 }}
+      />
+    )}
+    <Text variant="text-bold-headline-1000" className="text-center uppercase">
+      {title}
+    </Text>
+    {content != null && (
+      <Text variant="text-light-body-300" className="mt-2 text-center" containHtml>
+        {content}
       </Text>
-      <When condition={!!content}>
-        <Text variant="text-light-body-300" className="mt-2 text-center" containHtml>
-          {content}
-        </Text>
-      </When>
-      <div
-        className={classNames("mt-15 flex w-full gap-3", secondaryButtonProps ? "justify-between" : "justify-center")}
-      >
-        <When condition={!!secondaryButtonProps}>
-          <Button {...secondaryButtonProps!} variant="secondary" />
-        </When>
-        <Button {...primaryButtonProps} />
-      </div>
-    </ModalBase>
-  );
-};
+    )}
+    <div className={classNames("mt-15 flex w-full gap-3", secondaryButtonProps ? "justify-between" : "justify-center")}>
+      {secondaryButtonProps != null && <Button {...secondaryButtonProps!} variant="secondary" />}
+      <Button {...primaryButtonProps} />
+    </div>
+  </ModalBase>
+);
 
 export default Modal;

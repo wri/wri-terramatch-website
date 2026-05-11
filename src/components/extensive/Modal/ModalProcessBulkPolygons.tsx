@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import { FC, useEffect, useState } from "react";
-import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
@@ -14,7 +13,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { ModalProps } from "./Modal";
 import { ModalBaseSubmit } from "./ModalsBases";
 
-export interface ModalDeleteBulkPolygonsProps extends ModalProps {
+type ModalDeleteBulkPolygonsProps = Omit<ModalProps, "onClick"> & {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   onClose?: () => void;
@@ -22,9 +21,9 @@ export interface ModalDeleteBulkPolygonsProps extends ModalProps {
   selectedPolygonsInCheckbox: string[];
   refetch?: () => void;
   onClick?: (currentSelectedUuids: any) => void;
-}
+};
 
-interface DisplayedPolygonType {
+type DisplayedPolygonType = {
   id: string | undefined;
   name: string | undefined;
   checked: boolean | undefined;
@@ -32,7 +31,7 @@ interface DisplayedPolygonType {
   failingCriterias?: string[] | undefined;
   status: StatusEnum | undefined;
   validationStatus?: string | null;
-}
+};
 
 const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   iconProps,
@@ -108,23 +107,23 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
         </div>
       </header>
       <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
-        <When condition={!!iconProps}>
+        {iconProps != null && (
           <Icon
-            {...iconProps!}
-            width={iconProps?.width ?? 40}
-            className={twMerge("mb-8", iconProps?.className)}
-            style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
+            {...iconProps}
+            width={iconProps.width ?? 40}
+            className={twMerge("mb-8", iconProps.className)}
+            style={{ minHeight: iconProps.height ?? iconProps.width ?? 40 }}
           />
-        </When>
+        )}
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{t(title)}</Text>
         </div>
         <div className="mb-2 flex items-center">
-          <When condition={!!content}>
+          {content != null && (
             <Text as="div" variant="text-12-light" className="my-1" containHtml>
               {t(content)}
             </Text>
-          </When>
+          )}
           <Text variant="text-14-bold" className="ml-auto flex items-center justify-end gap-2">
             <Checkbox
               className="flex h-min items-center"
@@ -163,13 +162,13 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
         </div>
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
-        <When condition={!!secondaryButtonProps}>
-          <Button {...secondaryButtonProps!} variant="white-page-admin">
+        {secondaryButtonProps != null && (
+          <Button {...secondaryButtonProps} variant="white-page-admin">
             <Text variant="text-14-bold" className="capitalize">
               {secondaryButtonText}
             </Text>
           </Button>
-        </When>
+        )}
         <Button {...primaryButtonProps} onClick={() => onClick && onClick(currentSelectedUuids)}>
           <Text variant="text-14-bold" className="capitalize text-white">
             {primaryButtonText}

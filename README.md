@@ -14,7 +14,7 @@ yarn dev
 
 ### Api Fetchers/Hooks Generation
 
-To generate Api types/queries/fetchers/hooks, this repo uses:
+To generate Api types/fetchers/hooks, this repo uses:
 
 - `@openapi-codegen/cli` (https://www.npmjs.com/package/@openapi-codegen/cli)
 - `@openapi-codegen/typescript` (https://www.npmjs.com/package/@openapi-codegen/typescript)
@@ -100,4 +100,3 @@ Additionally, consider automating this step using GitHub Actions for increased e
 # License
 
 MIT License
-Developed by 3 Sided Cube
