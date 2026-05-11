@@ -31,7 +31,6 @@ function getPopupRegistry(map: MapboxMap): Record<"POLYGON" | "MEDIA", MapboxPop
   return popupRegistries.get(map)!;
 }
 
-// Mapbox click and touchend layer events share the same data shape (lngLat, features, point).
 type MapLayerInteractionEvent = MapMouseEvent | MapTouchEvent;
 
 const clickHandlerRegistries = new WeakMap<MapboxMap, Record<string, (e: MapLayerInteractionEvent) => void>>();
@@ -43,7 +42,6 @@ function getClickHandlers(map: MapboxMap): Record<string, (e: MapLayerInteractio
   return clickHandlerRegistries.get(map)!;
 }
 
-/** Options forwarded from useMapPopups down to every layer click handler. */
 export type PopupHandlerOptions = {
   setPolygonFromMap?: SetPolygonFromMap;
   setShouldRefetchPolygonData?: (value: boolean) => void;
@@ -51,7 +49,6 @@ export type PopupHandlerOptions = {
   type: TooltipType;
   editPolygon: EditPolygonState;
   setEditPolygon: (value: EditPolygonState) => void;
-  /** Present only in dashboard mode; drives popup content and filter callbacks. */
   dashboard?: DashboardPopupContext;
   setLoader?: (value: boolean) => void;
   setMobilePopupData?: (value: MobilePopupData) => void;
@@ -71,7 +68,6 @@ const handleLayerClick = (
     Log.warn("No feature found in click event");
     return;
   }
-  // Mark the click as consumed so the global background-click handler doesn't close this popup.
   e.preventDefault();
 
   const {
@@ -141,7 +137,6 @@ const handleLayerClick = (
 
   newPopup.addTo(map);
   getPopupRegistry(map)["POLYGON"].push(newPopup);
-  // Coordinator: opening a polygon popup must close any active popup of another kind (e.g. media).
   setActivePopup(map, "POLYGON", () => removePopups(map, "POLYGON"));
 
   root.render(

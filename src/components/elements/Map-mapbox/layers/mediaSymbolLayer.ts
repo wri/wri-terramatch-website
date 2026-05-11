@@ -20,7 +20,6 @@ function stringFromGeoJsonProperty(value: unknown): string {
 
 const mediaClickHandlers = new WeakMap<MapboxMap, (e: MapMouseEvent) => void>();
 
-// Mapbox throws on style ops after `map.remove()` or during style swaps because `map.style` becomes undefined.
 const isStyleAlive = (map: MapboxMap): boolean => {
   try {
     return map.getStyle() != null;
@@ -37,7 +36,7 @@ export const removeMediaSymbolLayer = (map: MapboxMap): void => {
     try {
       map.off("click", layerName, existingHandler);
     } catch {
-      // map may already be removed; safe to ignore
+      /* noop */
     }
     mediaClickHandlers.delete(map);
   }
@@ -91,7 +90,6 @@ export const addMediaSymbolLayer = (map: MapboxMap, mediaFiles: MediaDto[], call
     e.preventDefault();
     const feature = e.features?.[0];
     if (feature == null) return;
-    // Only one media popup at a time (matches champions UX). Close any prior media popup before opening.
     removePopups(map, "MEDIA");
 
     const popupContent = document.createElement("div");
@@ -129,7 +127,6 @@ export const addMediaSymbolLayer = (map: MapboxMap, mediaFiles: MediaDto[], call
     });
 
     registerPopup(map, "MEDIA", mediaPopup);
-    // Coordinator: opening media closes any active popup of another kind (e.g. polygon).
     setActivePopup(map, "MEDIA", () => removePopups(map, "MEDIA"));
   };
 

@@ -31,7 +31,6 @@ type UseMapPopupsParams = {
   setEditPolygon: (v: EditPolygonState) => void;
   editPolygon: EditPolygonState;
   setMobilePopupData: (v: MobilePopupData) => void;
-  /** Full dashboard context; undefined in admin mode — drives popup component choice and filter callbacks. */
   dashboardContext?: DashboardPopupContext | null;
 };
 
@@ -82,7 +81,6 @@ export function useMapPopups({
       championsMap
     });
 
-    // Background click closes every active popup on the map (standard GIS UX).
     enableBackgroundClickClose(mapInstance);
     return () => {
       disableBackgroundClickClose(mapInstance);

@@ -51,7 +51,6 @@ const selectionStores = new WeakMap<MapboxMap, SelectionStore>();
 
 const isGeolocated = (file: MediaDto): file is GeolocatedMedia => file.lat != null && file.lng != null;
 
-// React 18 forbids synchronous unmount inside an effect cleanup or event handler; defer to a microtask.
 const scheduleUnmount = (root: Root): void => {
   queueMicrotask(() => root.unmount());
 };
@@ -80,7 +79,6 @@ const createSelectionStore = (map: MapboxMap): SelectionStore => {
         return;
       }
       setActivePopup(map, "MEDIA", () => {
-        // Closer must dismiss locally without re-entering setActivePopup.
         if (selected == null) return;
         const stale = selected;
         selected = null;
