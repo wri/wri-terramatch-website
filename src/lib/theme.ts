@@ -8,8 +8,6 @@ type RawTokenGroup = Record<string | number, string>;
 type ChakraToken = { value: string };
 type ChakraTokenGroup = Record<string | number, ChakraToken>;
 
-// Wrap each leaf string in Chakra's { value } token shape while keeping the
-// same source-of-truth values from `theme.tokens.js` (also consumed by Tailwind).
 const wrapTokenGroup = (group: RawTokenGroup): ChakraTokenGroup =>
   Object.fromEntries(Object.entries(group).map(([k, v]) => [k, { value: v }]));
 

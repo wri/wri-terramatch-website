@@ -1,14 +1,3 @@
-/**
- * Design-system color tokens (single source of truth).
- *
- * Authored as plain CommonJS so it can be `require`d from `tailwind.config.js`
- * without any TypeScript transpiler (e.g. esbuild-register / tsx). It is also
- * `import`ed from `src/lib/theme.ts` and wrapped into Chakra's `{ value }`
- * token shape there.
- *
- * Do NOT add any TS-only syntax to this file.
- */
-
 /** @type {Record<string, Record<string | number, string>>} */
 const colors = {
   neutral: {
