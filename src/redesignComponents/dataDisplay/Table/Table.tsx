@@ -192,6 +192,7 @@ const Table = <T extends BaseRow>({
       ref={containerRef}
       css={getTableWrapperStyles(selectable, dataByPage, pageSize, actualTotalItems, css)}
       className={className}
+      {...(height != null ? { height } : {})}
     >
       <WriTable
         columns={columns}
@@ -214,7 +215,6 @@ const Table = <T extends BaseRow>({
         selectedRows={selectedRows}
         selectable={selectable}
         variant={variant}
-        height={height}
         stickyHeader={stickyHeader}
         loading={loading}
       />
