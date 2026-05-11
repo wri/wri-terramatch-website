@@ -18,8 +18,8 @@ const FilterCard: FC<FilterCardsProps> = ({ label, caption, children, className 
       p={4}
       w="100%"
       css={{
-        borderRadius: "4px",
-        border: `1px solid ${getThemedColor("neutral", 400)}`,
+        borderRadius: "0.25rem",
+        border: `0.0625rem solid ${getThemedColor("neutral", 400)}`,
         background: ` ${getThemedColor("neutral", 100)}`
       }}
       className={className}

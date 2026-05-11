@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
-import React from "react";
-import { When } from "react-if";
+import { FC } from "react";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
@@ -14,7 +13,7 @@ type TeamAndResourcesProps = {
   organization?: OrganisationFullDto;
 };
 
-const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
+const TeamAndResources: FC<TeamAndResourcesProps> = ({ organization }) => {
   const t = useT();
   const countryOptions = useGadmOptions({ level: 0 });
 
@@ -26,7 +25,7 @@ const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
     <section className="my-10 rounded-lg bg-neutral-150 p-8">
       <Text variant="text-heading-300">{t("Team and Resources")}</Text>
       <div className="mt-10 flex flex-col gap-12">
-        <When condition={leadershipTeam && leadershipTeam.length > 0}>
+        {leadershipTeam != null && leadershipTeam.length > 0 && (
           <Table
             variant={VARIANT_TABLE_BORDER_ALL}
             columns={[
@@ -72,7 +71,7 @@ const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
               age: leader.age ?? null
             }))}
           />
-        </When>
+        )}
         <Table
           variant={VARIANT_TABLE_BORDER_ALL}
           columns={[

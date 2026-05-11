@@ -64,7 +64,7 @@ const BaseImage: FC<BaseImageProps> = ({
   const hoverContentComponent = (
     <div
       className={classNames(
-        "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+        "absolute inset-[0.1875rem] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
         borderRadius
       )}
       role="button"
@@ -88,7 +88,7 @@ const BaseImage: FC<BaseImageProps> = ({
   const videoComponent = (
     <div
       className={classNames(
-        "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-[#3D3B3B80] duration-200 group-hover:opacity-0",
+        "absolute inset-[0.1875rem] flex flex-col items-center justify-center gap-1 bg-[#3D3B3B80] duration-200 group-hover:opacity-0",
         isVideo && "bg-[#3D3B3B80]",
         borderRadius
       )}
@@ -113,7 +113,7 @@ const BaseImage: FC<BaseImageProps> = ({
         isAdd ? (
           <div
             className={classNames(
-              "flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1 bg-theme-neutral-200",
+              "flex h-[calc(100%-0.25rem)] w-[calc(100%-0.25rem)] flex-col items-center justify-center gap-1 bg-theme-neutral-200",
               borderRadius
             )}
           >
@@ -145,7 +145,12 @@ const BaseImage: FC<BaseImageProps> = ({
         )
       ) : isVideo ? (
         <>
-          <div className={classNames("relative h-[calc(100%-4px)] w-[calc(100%-4px)] overflow-hidden", borderRadius)}>
+          <div
+            className={classNames(
+              "relative h-[calc(100%-0.25rem)] w-[calc(100%-0.25rem)] overflow-hidden",
+              borderRadius
+            )}
+          >
             <video src={src!} className="h-full w-full object-cover" muted onError={() => setLoadError(true)} />
           </div>
 
@@ -154,7 +159,12 @@ const BaseImage: FC<BaseImageProps> = ({
         </>
       ) : (
         <>
-          <div className={classNames("relative h-[calc(100%-4px)] w-[calc(100%-4px)] overflow-hidden", borderRadius)}>
+          <div
+            className={classNames(
+              "relative h-[calc(100%-0.25rem)] w-[calc(100%-0.25rem)] overflow-hidden",
+              borderRadius
+            )}
+          >
             <Image
               src={src!}
               alt={alt ?? defaultAlt}

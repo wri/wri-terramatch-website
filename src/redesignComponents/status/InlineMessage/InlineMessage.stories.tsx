@@ -115,7 +115,7 @@ export const NoIconWithButtonIcon: Story = {
     icon: null,
     actionLabel: "Mark complete",
     isButtonRight: true,
-    buttonLeftIcon: <CheckApprovedIcon height="16px" width="16px" />
+    buttonLeftIcon: <CheckApprovedIcon className="h-4 w-4" />
   }
 };
 
@@ -135,7 +135,7 @@ export const AllVariants: Story = {
     size: "large"
   },
   render: () => (
-    <SimpleGrid columns={1} gap={4} width="600px">
+    <SimpleGrid columns={1} gap={4} width="37.5rem">
       <InlineMessage
         variant="info-white"
         label="Info White"

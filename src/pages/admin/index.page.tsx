@@ -4,7 +4,7 @@ import { Admin, Resource } from "react-admin";
 
 import { authProvider } from "@/admin/apiProvider/authProvider";
 import { dataProvider } from "@/admin/apiProvider/dataProviders";
-import { AppLayout } from "@/admin/components/AppLayout";
+import AppLayout from "@/admin/components/AppLayout";
 import { theme } from "@/admin/components/theme";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMyUser } from "@/connections/User";

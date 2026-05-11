@@ -7,7 +7,7 @@ export const StyledAvatarWrapper = styled.div`
   border-radius: 50%;
   width: fit-content;
   height: fit-content;
-  border: 1px solid ${getThemedColor("primary", 800)};
+  border: 0.0625rem solid ${getThemedColor("primary", 800)};
 
   & div:has(> div > p[aria-label*="unread"]) {
     left: 60% !important;
@@ -19,13 +19,13 @@ export const StyledAvatarWrapper = styled.div`
   }
 
   &.avatar-add {
-    border: 1px solid ${getThemedColor("neutral", 500)};
+    border: 0.0625rem solid ${getThemedColor("neutral", 500)};
     background-color: ${getThemedColor("neutral", 200)} !important;
   }
 
   > div:first-child {
     border-radius: 50%;
-    border: 1px solid ${getThemedColor("neutral", 100)};
+    border: 0.0625rem solid ${getThemedColor("neutral", 100)};
     background-color: ${getThemedColor("primary", 300)};
   }
 
@@ -50,8 +50,8 @@ export const StyledAvatarWrapper = styled.div`
     }
 
     &:focus-visible {
-      outline: 2px solid ${getThemedColor("primary", 700)};
-      outline-offset: 2px;
+      outline: 0.125rem solid ${getThemedColor("primary", 700)};
+      outline-offset: 0.125rem;
     }
 
     &:active:not(:disabled) {

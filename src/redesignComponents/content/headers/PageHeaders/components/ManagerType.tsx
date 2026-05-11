@@ -58,13 +58,13 @@ const ManagerType = ({ nursery }: { nursery: NurseryFullDto }) => {
 
   return (
     <Box
-      width="240px"
-      minWidth="240px"
+      width="15rem"
+      minWidth="15rem"
       height="auto"
       className="flex flex-col gap-2 pt-5 mobile:!w-full"
       css={{ "&": { alignItems: "self-end !important" } }}
     >
-      <div className="flex w-fit flex-col justify-center gap-2">
+      <div className="flex w-fit flex-col justify-center gap-2 mobile:w-full">
         <Text color="primary.900" textStyle="300-bold">
           {t("Management Type:")}
         </Text>

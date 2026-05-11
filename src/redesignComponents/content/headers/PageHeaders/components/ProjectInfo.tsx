@@ -86,15 +86,15 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   return (
     <Box gap={2} className="flex flex-col">
       <Text
-        fontSize="28px"
-        lineHeight="36px"
+        fontSize="1.75rem"
+        lineHeight="2.25rem"
         color="primary.900"
         fontWeight="bold"
         className="flex items-baseline gap-3"
       >
         {title} <ProgressTag {...tag} />
       </Text>
-      <Text textStyle="400" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
+      <Text textStyle="400" color="neutral.900" className="-ml-[0.5rem] flex items-center gap-2">
         <Button variant="borderless" size="small" className="-mr-2" onClick={handleOrganizationNav}>
           {organization}
         </Button>
@@ -136,6 +136,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
             leftIcon={<DownloadIcon />}
             onClick={handleExport}
             loading={exportLoader}
+            className="mobile:mt-2"
           >
             {t("Download Project Files")}
           </Button>

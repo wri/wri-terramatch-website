@@ -42,7 +42,7 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
     if (entityLevel === AuditLogButtonStates.SITE && !isReport && !isAdmin) {
       return [
         { index: AuditLogButtonStates.SITE, name: t("Site Status") },
-        { index: AuditLogButtonStates.POLYGON, name: t("Polygon Status") }
+        { index: AuditLogButtonStates.POLYGON, name: t("Polygon Handoff") }
       ];
     }
     if (isReport) {
@@ -52,7 +52,7 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
       }
       return tabsReport;
     }
-    let tabs = [t("Project Status"), t("Site Status"), t("Polygon Status")];
+    let tabs = [t("Project Status"), t("Site Status"), t("Polygon Handoff")];
     if (!doesNotHaveNurseries && AuditLogButtonStates.PROJECT == entityLevel && existNurseries) {
       tabs.push(t("Nursery Status"));
     }

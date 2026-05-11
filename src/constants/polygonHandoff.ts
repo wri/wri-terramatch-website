@@ -1,0 +1,14 @@
+export const PROJECT_POLYGON_HANDOFF_AUDIT_TYPES = ["polygon-data-submission", "ready-for-baseline"];
+
+export const POLYGON_DATA_SUBMISSION_OPTION_VALUES = [
+  "no-polygons-submitted",
+  "not-applicable",
+  "polygons-partially-submitted",
+  "all-polygons-received"
+] as const;
+
+export type PolygonDataSubmissionOption = (typeof POLYGON_DATA_SUBMISSION_OPTION_VALUES)[number];
+
+export function isPolygonDataSubmissionOption(value: string): value is PolygonDataSubmissionOption {
+  return (POLYGON_DATA_SUBMISSION_OPTION_VALUES as readonly string[]).includes(value);
+}

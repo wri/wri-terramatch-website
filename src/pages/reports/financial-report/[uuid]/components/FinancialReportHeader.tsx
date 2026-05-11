@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
+import { FC } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
@@ -12,10 +12,10 @@ type FinancialReportHeaderProps = {
   financialReport?: FinancialReportFullDto;
 };
 
-const FinancialReportHeader = ({ financialReport }: FinancialReportHeaderProps) => {
+const FinancialReportHeader: FC<FinancialReportHeaderProps> = ({ financialReport }) => {
   const t = useT();
 
-  if (!financialReport) return null;
+  if (financialReport == null) return null;
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("financial-reports", financialReport.uuid);
 
@@ -28,19 +28,19 @@ const FinancialReportHeader = ({ financialReport }: FinancialReportHeaderProps) 
   return (
     <PageHeader
       className="h-[203px]"
-      title={`Financial Report ${
-        financialReport?.createdAt ? new Date(financialReport?.createdAt).toLocaleDateString() : ""
-      }`}
-      subtitles={[`${t("Organisation")}: ${financialReport?.organisationName}`]}
+      title={t("Financial Report {createdAt}", {
+        createdAt: financialReport.createdAt == null ? "" : new Date(financialReport.createdAt).toLocaleDateString()
+      })}
+      subtitles={[t("Organisation: {name}", { name: financialReport.organisationName })]}
       hasBackButton={false}
     >
       <div className="flex gap-4">
-        <When condition={!financialReport.nothingToReport}>
+        {!financialReport.nothingToReport && (
           <Button variant="secondary" onClick={handleExport}>
             {t("Export")}
             <InlineLoader loading={exportLoader} />
           </Button>
-        </When>
+        )}
         <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
       </div>
     </PageHeader>

@@ -183,7 +183,7 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
           <Flex className="w-auto" alignItems="center" gap={3}>
             {visibleLandUseConfigs.length > 0 ? (
               visibleLandUseConfigs.map((config, idx) => (
-                <Flex key={targetLandUseKeys[idx]} className="flex-col" minWidth={"136px"} alignItems="center" gap={1}>
+                <Flex key={targetLandUseKeys[idx]} className="flex-col" minWidth={"8.5rem"} alignItems="center" gap={1}>
                   {config.icon}
                   <Text textStyle="400-bold" color="secondary.800" className="text-center leading-5">
                     {t(config.label)}{" "}

@@ -1,8 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
-import { Else, If, Then, When } from "react-if";
+import { FC, useEffect, useState } from "react";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -12,7 +11,7 @@ import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessa
 import Container from "../Layout/Container";
 import NavbarContent from "./NavbarContent";
 
-const Navbar = (): JSX.Element => {
+const Navbar: FC = () => {
   const t = useT();
   const { isOpen, setIsOpen, linksDisabled } = useNavbarContext();
   const [isOpenMessage, setIsOpenMessage] = useState(true);
@@ -37,33 +36,30 @@ const Navbar = (): JSX.Element => {
           <a href={"/home"} title="Homepage" aria-label="Homepage">
             <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
           </a>
-          <When condition={!isOpen}>
-            <NavbarContent className="hidden items-center sm:flex sm:gap-4 lg:gap-8" />
-          </When>
-          <If condition={isOpen}>
-            <Then>
-              <IconButton
-                iconProps={{
-                  name: IconNames.X_CIRCLE,
-                  width: 30,
-                  height: 30,
-                  className: "block sm:hidden fill-black"
-                }}
-                disabled={linksDisabled}
-                onClick={() => setIsOpen?.(e => !e)}
-              />
-            </Then>
-            <Else>
+          {isOpen ? (
+            <IconButton
+              iconProps={{
+                name: IconNames.X_CIRCLE,
+                width: 30,
+                height: 30,
+                className: "block sm:hidden fill-black"
+              }}
+              disabled={linksDisabled}
+              onClick={() => setIsOpen?.(e => !e)}
+            />
+          ) : (
+            <>
+              <NavbarContent className="hidden items-center sm:flex sm:gap-4 lg:gap-8" />
               <IconButton
                 className="tour-menu-button block sm:hidden"
                 iconProps={{ name: IconNames.MENU, width: 28, height: 16, className: "fill-black" }}
                 disabled={linksDisabled}
                 onClick={() => setIsOpen?.(e => !e)}
               />
-            </Else>
-          </If>
+            </>
+          )}
         </Container>
-        <When condition={isOpen}>
+        {isOpen && (
           <NavbarContent
             className={classNames(
               "relative flex flex-col items-center justify-center gap-4 sm:hidden",
@@ -71,9 +67,9 @@ const Navbar = (): JSX.Element => {
             )}
             handleClose={() => setIsOpen?.(false)}
           />
-        </When>
+        )}
       </header>
-      <When condition={isOpenMessage}>
+      {isOpenMessage && (
         <InlineMessage
           className="!w-full"
           variant="warning"
@@ -86,7 +82,7 @@ const Navbar = (): JSX.Element => {
           onActionClick={() => setIsOpenMessage(false)}
           isButtonRight={true}
         />
-      </When>
+      )}
     </>
   );
 };

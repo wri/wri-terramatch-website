@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
+import { FC } from "react";
 import { Layout, LayoutProps } from "react-admin";
-import { When } from "react-if";
 
 import { BackButton } from "@/admin/components/BackButton";
 import ExportProvider from "@/admin/modules/application/context/export.provider";
@@ -10,11 +10,12 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { AppBar } from "./AppBar";
 import AppMenu from "./AppMenu";
 
-export const AppLayout = (props: LayoutProps) => {
-  const { loading } = useLoading();
-  const regex = new RegExp("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", "gi");
+const IS_DETAIL_PAGE = new RegExp("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", "gi");
 
-  const isDetailPage = regex.test(window.location.hash);
+const AppLayout: FC<LayoutProps> = props => {
+  const { loading } = useLoading();
+  const isDetailPage = IS_DETAIL_PAGE.test(window.location.hash);
+
   return (
     <ExportProvider>
       {loading && (
@@ -23,13 +24,15 @@ export const AppLayout = (props: LayoutProps) => {
         </div>
       )}
       <Layout {...props} appBar={AppBar} menu={AppMenu}>
-        <When condition={isDetailPage}>
+        {isDetailPage && (
           <Box marginTop={2}>
             <BackButton />
           </Box>
-        </When>
+        )}
         {props.children}
       </Layout>
     </ExportProvider>
   );
 };
+
+export default AppLayout;

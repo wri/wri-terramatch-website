@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
+import { FC } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
@@ -14,7 +14,7 @@ interface SiteReportHeaderProps {
   reportTitle: string;
 }
 
-const SiteReportHeader = ({ report, reportTitle }: SiteReportHeaderProps) => {
+const SiteReportHeader: FC<SiteReportHeaderProps> = ({ report, reportTitle }) => {
   const t = useT();
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("site-reports", report.uuid);
@@ -31,16 +31,16 @@ const SiteReportHeader = ({ report, reportTitle }: SiteReportHeaderProps) => {
     <PageHeader
       className="h-[203px]"
       title={reportTitle}
-      subtitles={[`${t("Organisation")}: ${report.organisationName}`, frameworkTitle]}
+      subtitles={[t("Organisation: {name}", { name: report.organisationName }), frameworkTitle]}
       hasBackButton={false}
     >
       <div className="flex gap-4">
-        <When condition={!report.nothingToReport}>
+        {!report.nothingToReport && (
           <Button variant="secondary" onClick={handleExport}>
             {t("Export")}
             <InlineLoader loading={exportLoader} />
           </Button>
-        </When>
+        )}
         <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
       </div>
     </PageHeader>

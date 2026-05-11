@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { Else, If, Then } from "react-if";
+import { FC } from "react";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import { DEFAULT_PAGE_SIZE } from "@/components/elements/ServerSideTable/ServerSideTable";
@@ -14,14 +14,14 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useNurseryIndex } from "@/connections/Entity";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-interface ProjectNurseriesTabProps {
+type ProjectNurseriesTabProps = {
   project: ProjectFullDto;
-}
+};
 
-const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
+const ProjectNurseriesTab: FC<ProjectNurseriesTabProps> = ({ project }) => {
   const t = useT();
 
-  const [isLoaded, { data: nurseries }] = useNurseryIndex({
+  const [isLoaded, { indexTotal }] = useNurseryIndex({
     filter: { projectUuid: project.uuid },
     pageSize: DEFAULT_PAGE_SIZE,
     pageNumber: 1
@@ -32,37 +32,29 @@ const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
       <PageRow>
         <PageColumn>
           <LoadingContainer wrapInPaper loading={!isLoaded}>
-            <If
-              condition={
-                //@ts-ignore
-                nurseries?.meta?.unfiltered_total === 0
-              }
-            >
-              <Then>
-                <EmptyState
-                  iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
-                  title={t("No Nurseries Added")}
-                  subtitle={t(
-                    "You haven't added any nurseries yet. To see them listed here and track their approval process, create one using the button bellow."
-                  )}
-                  ctaProps={{
-                    as: Link,
-                    href: `/entity/nurseries/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`,
-                    children: "Add Nursery"
-                  }}
-                />
-              </Then>
-              <Else>
-                <PageCard
-                  title={t("Project Nurseries")}
-                  subtitle={t(
-                    "This table displays all the nurseries associated with this project. You can use it to keep track of your nursery approvals."
-                  )}
-                >
-                  <NurseriesTable project={project} alwaysShowPagination />
-                </PageCard>
-              </Else>
-            </If>
+            {indexTotal === 0 ? (
+              <EmptyState
+                iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
+                title={t("No Nurseries Added")}
+                subtitle={t(
+                  "You haven't added any nurseries yet. To see them listed here and track their approval process, create one using the button bellow."
+                )}
+                ctaProps={{
+                  as: Link,
+                  href: `/entity/nurseries/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`,
+                  children: "Add Nursery"
+                }}
+              />
+            ) : (
+              <PageCard
+                title={t("Project Nurseries")}
+                subtitle={t(
+                  "This table displays all the nurseries associated with this project. You can use it to keep track of your nursery approvals."
+                )}
+              >
+                <NurseriesTable project={project} alwaysShowPagination />
+              </PageCard>
+            )}
           </LoadingContainer>
         </PageColumn>
       </PageRow>

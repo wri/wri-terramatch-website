@@ -89,7 +89,7 @@ export const Disabled: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "400px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "25rem" }}>
       <TextInput label="Required Input" placeholder="This field is required" required name="required" />
       <TextInput label="Optional Input" placeholder="This field is optional" name="optional" />
       <TextInput label="Small Input" placeholder="Small size input" size="small" name="small" />

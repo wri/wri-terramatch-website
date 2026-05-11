@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import _ from "lodash";
-import { useMemo } from "react";
-import { When } from "react-if";
+import { FC, useMemo } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -24,7 +23,7 @@ type OverviewTabContentProps = {
   organization?: OrganisationFullDto;
 };
 
-const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
+const OverviewTabContent: FC<OverviewTabContentProps> = ({ organization }) => {
   const t = useT();
   const { openModal } = useModalContext();
 
@@ -137,21 +136,19 @@ const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
       {/* About */}
       <About organization={organization} />
       {/* Past Restoration Experience */}
-      <When condition={!incompleteSteps.pastRestorationExperience}>
-        <PastRestorationExperience organization={organization} />
-      </When>
+      {!incompleteSteps.pastRestorationExperience && <PastRestorationExperience organization={organization} />}
       {/* Previous Annual Reports */}
-      <When condition={previousAnnualReportsFiles.length > 0}>
+      {previousAnnualReportsFiles.length > 0 && (
         <Files title={t("Monitoring reports from past projects:")} files={previousAnnualReportsFiles} />
-      </When>
+      )}
       <PastCommunityExperience organization={organization} />
       <TeamAndResources organization={organization} />
       {/* Files */}
-      <When condition={!incompleteSteps.legitimacy}>
+      {!incompleteSteps.legitimacy && (
         <Files title={t("Proof of legally registered, letter of references and additional documents.")} files={files} />
-      </When>
+      )}
       {/* Build a Stronger Profile */}
-      <When condition={showIncompleteStepsSection}>
+      {showIncompleteStepsSection && (
         <BuildStrongerProfile
           steps={[
             {
@@ -172,7 +169,7 @@ const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
             openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />)
           }
         />
-      </When>
+      )}
     </Container>
   );
 };

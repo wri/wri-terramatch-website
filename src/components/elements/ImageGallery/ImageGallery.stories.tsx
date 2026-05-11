@@ -1,6 +1,5 @@
 import { faker } from "@faker-js/faker";
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
@@ -64,8 +63,6 @@ const mockQuery = (page: number, pageSize: number) => {
   };
 };
 
-const queryClient = new QueryClient();
-
 export const Default: Story = {
   render: args => {
     const [pagination, setPagination] = useState({ page: 1, pageSize: 5 });
@@ -77,22 +74,20 @@ export const Default: Story = {
     };
 
     return (
-      <QueryClientProvider client={queryClient}>
-        <ModalProvider>
-          <ModalRoot />
+      <ModalProvider>
+        <ModalRoot />
 
-          <Component
-            {...args}
-            data={data}
-            pageCount={pageCount}
-            onGalleryStateChange={setPagination}
-            onDeleteConfirm={handleImageDelete}
-            setFilters={() => {}}
-            onChangeGeotagged={() => {}}
-            onChangeSearch={() => {}}
-          />
-        </ModalProvider>
-      </QueryClientProvider>
+        <Component
+          {...args}
+          data={data}
+          pageCount={pageCount}
+          onGalleryStateChange={setPagination}
+          onDeleteConfirm={handleImageDelete}
+          setFilters={() => {}}
+          onChangeGeotagged={() => {}}
+          onChangeSearch={() => {}}
+        />
+      </ModalProvider>
     );
   },
   args: {

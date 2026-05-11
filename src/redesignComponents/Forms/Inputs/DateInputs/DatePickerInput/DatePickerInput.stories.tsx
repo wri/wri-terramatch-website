@@ -11,7 +11,7 @@ const meta = {
   tags: ["autodocs"],
   decorators: [
     (Story: React.ComponentType) => (
-      <div style={{ width: "283px" }}>
+      <div style={{ width: "17.6875rem" }}>
         <Story />
       </div>
     )
@@ -68,7 +68,7 @@ export const Disabled: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", maxWidth: "283px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", maxWidth: "17.6875rem" }}>
       <DatePickerInput label="Label" required />
       <DatePickerInput label="Label" />
       <DatePickerInput label="Label" caption="Caption" required />

@@ -7,10 +7,11 @@ import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
 import ReadablePlantingStatusField from "@/admin/components/Fields/ReadablePlantingStatusField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
+import PolygonHandoffPanel from "@/admin/components/ResourceTabs/AuditLogTab/components/PolygonHandoffPanel";
 
 const ProjectOverview: FC = () => {
   const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | undefined>();
-  const { record } = useShowContext();
+  const { record, refetch } = useShowContext();
 
   return (
     <>
@@ -54,22 +55,31 @@ const ProjectOverview: FC = () => {
         <Divider />
 
         <Box pt={2}>
-          <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
-            <Button
-              variant="outlined"
-              disabled={record?.status === "needs-more-information"}
-              onClick={() => setStatusModal("needs-more-information")}
-            >
-              Request More Info
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<Check />}
-              disabled={record?.status === "approved" || record?.updateRequestStatus === "awaiting-approval"}
-              onClick={() => setStatusModal("approved")}
-            >
-              Approve
-            </Button>
+          <Stack gap={2}>
+            <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
+              <Button
+                variant="outlined"
+                disabled={record?.status === "needs-more-information"}
+                onClick={() => setStatusModal("needs-more-information")}
+              >
+                Request More Info
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={<Check />}
+                disabled={record?.status === "approved" || record?.updateRequestStatus === "awaiting-approval"}
+                onClick={() => setStatusModal("approved")}
+              >
+                Approve
+              </Button>
+            </Stack>
+            <PolygonHandoffPanel
+              variant="compact"
+              projectUuid={record.uuid}
+              polygonDataSubmission={record.polygonDataSubmission}
+              readyForBaseline={record.readyForBaseline}
+              onSaved={() => refetch()}
+            />
           </Stack>
         </Box>
       </Card>
