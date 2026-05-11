@@ -1,6 +1,6 @@
 import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import type { FC } from "react";
+import { type FC, memo } from "react";
 
 type PopupHeaderMediaProps = {
   name: string;
@@ -17,4 +17,4 @@ const PopupHeaderMedia: FC<PopupHeaderMediaProps> = ({ name }) => {
   );
 };
 
-export default PopupHeaderMedia;
+export default memo(PopupHeaderMedia);

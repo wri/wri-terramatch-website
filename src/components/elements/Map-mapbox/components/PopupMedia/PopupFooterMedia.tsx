@@ -1,6 +1,6 @@
 import { Grid } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import type { FC } from "react";
+import { type FC, memo } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { DeleteIcon, DownloadIcon, EditIcon, PhotosIcon } from "@/redesignComponents/foundations/Icons";
@@ -38,4 +38,4 @@ const PopupFooterMedia: FC<PopupFooterMediaProps> = ({ isProjectPath, onDownload
   );
 };
 
-export default PopupFooterMedia;
+export default memo(PopupFooterMedia);

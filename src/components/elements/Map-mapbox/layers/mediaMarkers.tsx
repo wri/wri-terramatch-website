@@ -1,5 +1,15 @@
 import { Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl";
-import { FC, ReactNode, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  FC,
+  memo,
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore
+} from "react";
 import { createPortal } from "react-dom";
 import { createRoot, Root } from "react-dom/client";
 
@@ -17,18 +27,16 @@ import { MediaCallbacks } from "./mediaTypes";
 
 type GeolocatedMedia = MediaDto & { lat: number; lng: number };
 
-type SelectionListener = (selected: string | null) => void;
+type SelectionListener = () => void;
+
 type SelectionStore = {
   get: () => string | null;
   set: (uuid: string | null) => void;
-  subscribe: (listener: SelectionListener) => () => void;
+  subscribe: (uuid: string, listener: SelectionListener) => () => void;
 };
 
-/**
- * One React root per map; portals deliver each marker's React subtree into its
- * Mapbox-managed DOM container. Drastically lower mount cost than per-marker roots
- * (one Redux+Chakra provider tree instead of N).
- */
+type CallbacksRef = MutableRefObject<MediaCallbacks>;
+
 type MediaOverlayMount = {
   root: Root;
   update: (files: MediaDto[], callbacks: MediaCallbacks) => void;
@@ -36,6 +44,7 @@ type MediaOverlayMount = {
 
 const MEDIA_MARKER_BG = "#2A698D";
 const MARKER_CLASS = "media-photo-marker";
+const ACTIVE_MARKER_Z_INDEX = "10";
 
 const overlayMounts = new WeakMap<MapboxMap, MediaOverlayMount>();
 const selectionStores = new WeakMap<MapboxMap, SelectionStore>();
@@ -49,32 +58,47 @@ const scheduleUnmount = (root: Root): void => {
 
 const createSelectionStore = (map: MapboxMap): SelectionStore => {
   let selected: string | null = null;
-  const listeners = new Set<SelectionListener>();
-  const notify = (uuid: string | null): void => {
-    listeners.forEach(listener => listener(uuid));
+  const listenersByUuid = new Map<string, Set<SelectionListener>>();
+
+  const notifyUuid = (uuid: string | null): void => {
+    if (uuid == null) return;
+    const set = listenersByUuid.get(uuid);
+    if (set == null) return;
+    set.forEach(listener => listener());
   };
+
   return {
     get: () => selected,
     set: uuid => {
       if (selected === uuid) return;
+      const prev = selected;
       selected = uuid;
-      notify(uuid);
+      notifyUuid(prev);
+      notifyUuid(uuid);
       if (uuid == null) {
         clearActivePopup(map, "MEDIA");
         return;
       }
-      // Closer must dismiss locally without re-entering setActivePopup (avoids re-clearing other kinds).
       setActivePopup(map, "MEDIA", () => {
-        if (selected !== null) {
-          selected = null;
-          notify(null);
-        }
+        // Closer must dismiss locally without re-entering setActivePopup.
+        if (selected == null) return;
+        const stale = selected;
+        selected = null;
+        notifyUuid(stale);
       });
     },
-    subscribe: listener => {
-      listeners.add(listener);
+    subscribe: (uuid, listener) => {
+      let set = listenersByUuid.get(uuid);
+      if (set == null) {
+        set = new Set();
+        listenersByUuid.set(uuid, set);
+      }
+      set.add(listener);
       return () => {
-        listeners.delete(listener);
+        const target = listenersByUuid.get(uuid);
+        if (target == null) return;
+        target.delete(listener);
+        if (target.size === 0) listenersByUuid.delete(uuid);
       };
     }
   };
@@ -89,23 +113,44 @@ const getSelectionStore = (map: MapboxMap): SelectionStore => {
   return store;
 };
 
-// Mapbox listens for click/mousedown/touchstart on its canvas container; our marker DOM bubbles up to it.
-// Stop propagation here so a click on a media marker never triggers underlying layer click handlers
-// (e.g. polygon popup) or starts a map drag/pan.
 const stopPropagation = (event: Event): void => event.stopPropagation();
+
+const getServerSnapshot = (): boolean => false;
 
 type MediaMarkerViewProps = {
   file: GeolocatedMedia;
   store: SelectionStore;
-  callbacks: MediaCallbacks;
+  callbacksRef: CallbacksRef;
+  isOpen: boolean;
 };
 
-const MediaMarkerView: FC<MediaMarkerViewProps> = ({ file, store, callbacks }) => {
+const MediaMarkerView: FC<MediaMarkerViewProps> = ({ file, store, callbacksRef, isOpen }) => {
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const isOpen = useSyncExternalStore(
-    store.subscribe,
-    () => store.get() === file.uuid,
-    () => false
+
+  const handleSelect = useCallback(() => store.set(file.uuid), [store, file.uuid]);
+  const handleOpenChange = useCallback(
+    (next: boolean): void => {
+      if (!next && store.get() === file.uuid) store.set(null);
+    },
+    [store, file.uuid]
+  );
+
+  const popupHeader = useMemo(() => <PopupHeaderMedia name={file.name} />, [file.name]);
+  const popupContent = useMemo(
+    () => <PopupContentMedia uuid={file.uuid} thumbUrl={file.thumbUrl ?? ""} createdAt={file.createdAt} />,
+    [file.uuid, file.thumbUrl, file.createdAt]
+  );
+  const popupFooter = useMemo(
+    () => (
+      <PopupFooterMedia
+        isProjectPath={callbacksRef.current.isProjectPath}
+        onDownload={() => callbacksRef.current.handleDownload(file.uuid, file.name)}
+        onEdit={() => callbacksRef.current.openModalImageDetail(file)}
+        onMakeCover={() => callbacksRef.current.setImageCover(file.uuid)}
+        onDelete={() => callbacksRef.current.handleDelete(file.uuid)}
+      />
+    ),
+    [callbacksRef, file]
   );
 
   return (
@@ -114,7 +159,7 @@ const MediaMarkerView: FC<MediaMarkerViewProps> = ({ file, store, callbacks }) =
         ariaLabel={file.name}
         backgroundColor={MEDIA_MARKER_BG}
         icon={<PhotosIcon color="neutral.100" />}
-        onClick={() => store.set(file.uuid)}
+        onClick={handleSelect}
         showFocusState={isOpen}
         size="sm"
         triggerRef={triggerRef}
@@ -124,36 +169,27 @@ const MediaMarkerView: FC<MediaMarkerViewProps> = ({ file, store, callbacks }) =
         <MapPopUp
           anchorRef={triggerRef}
           open
-          onOpenChange={next => {
-            if (!next && store.get() === file.uuid) store.set(null);
-          }}
+          onOpenChange={handleOpenChange}
           placement="right"
-          header={<PopupHeaderMedia name={file.name} />}
-          content={<PopupContentMedia uuid={file.uuid} thumbUrl={file.thumbUrl ?? ""} createdAt={file.createdAt} />}
-          footer={
-            <PopupFooterMedia
-              isProjectPath={callbacks.isProjectPath}
-              onDownload={() => callbacks.handleDownload(file.uuid, file.name)}
-              onEdit={() => callbacks.openModalImageDetail(file)}
-              onMakeCover={() => callbacks.setImageCover(file.uuid)}
-              onDelete={() => callbacks.handleDelete(file.uuid)}
-            />
-          }
+          header={popupHeader}
+          content={popupContent}
+          footer={popupFooter}
         />
       ) : null}
     </>
   );
 };
 
+const MemoMediaMarkerView = memo(MediaMarkerView);
+
 type MediaMarkerPortalProps = {
   map: MapboxMap;
-  lat: number;
-  lng: number;
-  children: ReactNode;
+  file: GeolocatedMedia;
+  store: SelectionStore;
+  callbacksRef: CallbacksRef;
 };
 
-const MediaMarkerPortal: FC<MediaMarkerPortalProps> = ({ map, lat, lng, children }) => {
-  // Lazy-init the host element exactly once per portal lifetime; Mapbox attaches/detaches it.
+const MediaMarkerPortal: FC<MediaMarkerPortalProps> = ({ map, file, store, callbacksRef }) => {
   const [el] = useState<HTMLDivElement>(() => {
     const div = document.createElement("div");
     div.className = MARKER_CLASS;
@@ -163,46 +199,60 @@ const MediaMarkerPortal: FC<MediaMarkerPortalProps> = ({ map, lat, lng, children
     return div;
   });
 
+  const subscribe = useCallback(
+    (listener: SelectionListener) => store.subscribe(file.uuid, listener),
+    [store, file.uuid]
+  );
+  const getSnapshot = useCallback(() => store.get() === file.uuid, [store, file.uuid]);
+  const isOpen = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
   useEffect(() => {
-    const marker = new MapboxMarker({ element: el }).setLngLat([lng, lat]).addTo(map);
+    const marker = new MapboxMarker({ element: el }).setLngLat([file.lng, file.lat]).addTo(map);
     return () => {
       marker.remove();
     };
-  }, [map, el, lng, lat]);
+  }, [map, el, file.lng, file.lat]);
 
-  return createPortal(children, el);
+  useEffect(() => {
+    el.style.zIndex = isOpen ? ACTIVE_MARKER_Z_INDEX : "";
+  }, [el, isOpen]);
+
+  return createPortal(
+    <MemoMediaMarkerView file={file} store={store} callbacksRef={callbacksRef} isOpen={isOpen} />,
+    el
+  );
 };
+
+const MemoMediaMarkerPortal = memo(MediaMarkerPortal);
 
 type MediaMarkersOverlayProps = {
   map: MapboxMap;
   files: GeolocatedMedia[];
-  callbacks: MediaCallbacks;
+  callbacksRef: CallbacksRef;
   store: SelectionStore;
 };
 
-const MediaMarkersOverlay: FC<MediaMarkersOverlayProps> = ({ map, files, callbacks, store }) => (
+const MediaMarkersOverlay: FC<MediaMarkersOverlayProps> = ({ map, files, callbacksRef, store }) => (
   <>
     {files.map(file => (
-      <MediaMarkerPortal key={file.uuid} map={map} lat={file.lat} lng={file.lng}>
-        <MediaMarkerView file={file} store={store} callbacks={callbacks} />
-      </MediaMarkerPortal>
+      <MemoMediaMarkerPortal key={file.uuid} map={map} file={file} store={store} callbacksRef={callbacksRef} />
     ))}
   </>
 );
 
 const createOverlayMount = (map: MapboxMap): MediaOverlayMount => {
-  // Detached host: portals deliver content into Mapbox-managed marker DOM, this never enters the page.
   const host = document.createElement("div");
   const root = createRoot(host);
   const store = getSelectionStore(map);
 
+  const callbacksRef: CallbacksRef = { current: null as unknown as MediaCallbacks };
+
   let lastFiles: GeolocatedMedia[] = [];
-  let lastCallbacks: MediaCallbacks | null = null;
   const render = (): void => {
-    if (lastCallbacks == null) return;
+    if (callbacksRef.current == null) return;
     root.render(
       <PopupProviders>
-        <MediaMarkersOverlay map={map} files={lastFiles} callbacks={lastCallbacks} store={store} />
+        <MediaMarkersOverlay map={map} files={lastFiles} callbacksRef={callbacksRef} store={store} />
       </PopupProviders>
     );
   };
@@ -211,7 +261,7 @@ const createOverlayMount = (map: MapboxMap): MediaOverlayMount => {
     root,
     update: (files, callbacks) => {
       lastFiles = files.filter(isGeolocated);
-      lastCallbacks = callbacks;
+      callbacksRef.current = callbacks;
       render();
     }
   };

@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { type FC, useState } from "react";
+import { type FC, memo, useCallback, useState } from "react";
 
 import ImagePreview from "@/components/elements/ImageGallery/ImagePreview";
 import ImageWithPlaceholder from "@/components/elements/ImageWithPlaceholder/ImageWithPlaceholder";
@@ -18,11 +18,14 @@ const PopupContentMedia: FC<PopupContentMediaProps> = ({ uuid, thumbUrl, created
   const t = useT();
   const [previewOpen, setPreviewOpen] = useState(false);
 
+  const openPreview = useCallback(() => setPreviewOpen(true), []);
+  const closePreview = useCallback(() => setPreviewOpen(false), []);
+
   return (
     <Flex padding="0.75rem" direction="column" gap={2} width="16rem">
       <button
         type="button"
-        onClick={() => setPreviewOpen(true)}
+        onClick={openPreview}
         className="relative block h-[9rem] w-full cursor-pointer overflow-hidden rounded-md border-0 bg-transparent p-0"
       >
         <ImageWithPlaceholder className="h-full" alt={t("Image not available")} imageUrl={thumbUrl} />
@@ -30,13 +33,9 @@ const PopupContentMedia: FC<PopupContentMediaProps> = ({ uuid, thumbUrl, created
       <Text color="neutral.700" textStyle="300">
         {formatPopupDate(createdAt)}
       </Text>
-      <ImagePreview
-        data={{ uuid, fullImageUrl: thumbUrl }}
-        onCLose={() => setPreviewOpen(false)}
-        WrapperClassName={previewOpen ? "" : "hidden"}
-      />
+      {previewOpen ? <ImagePreview data={{ uuid, fullImageUrl: thumbUrl }} onCLose={closePreview} /> : null}
     </Flex>
   );
 };
 
-export default PopupContentMedia;
+export default memo(PopupContentMedia);
