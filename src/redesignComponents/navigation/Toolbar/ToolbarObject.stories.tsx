@@ -33,11 +33,11 @@ const meta: Meta<typeof ToolbarObject> = {
 const renderSuffix = (slots: ToolbarSlot[]) => {
   return slots.map((slot, index) => (
     <Fragment key={`${slot.title}-${index}`}>
-      <div className="border-theme-neutral-700 bg-theme-neutral-200 flex flex-col rounded border border-dashed p-1">
-        <p className="text-10-bold text-theme-neutral-800 leading-[normal]">{slot.title}</p>
-        <p className="text-10 text-theme-neutral-700 leading-[normal]">{slot.description}</p>
+      <div className="flex flex-col rounded border border-dashed border-theme-neutral-700 bg-theme-neutral-200 p-1">
+        <p className="text-10-bold leading-[normal] text-theme-neutral-800">{slot.title}</p>
+        <p className="text-10 leading-[normal] text-theme-neutral-700">{slot.description}</p>
       </div>
-      {index < slots.length - 1 && <div className="bg-theme-neutral-300 h-3.5 w-[0.0625rem]" />}
+      {index < slots.length - 1 && <div className="h-3.5 w-[0.0625rem] bg-theme-neutral-300" />}
     </Fragment>
   ));
 };

@@ -26,7 +26,7 @@ type Story = StoryObj<typeof meta>;
 
 const ModalContent = ({ isLarge = false }: { isLarge?: boolean }) => {
   return (
-    <div className="border-theme-neutral-700 bg-theme-neutral-200 flex flex-col gap-3 rounded-lg border border-dashed p-3">
+    <div className="flex flex-col gap-3 rounded-lg border border-dashed border-theme-neutral-700 bg-theme-neutral-200 p-3">
       <div className="flex flex-col">
         <Text textStyle={isLarge ? "600-bold" : "400-bold"} color="neutral.800">
           Detach this instance
@@ -42,7 +42,7 @@ const ModalContent = ({ isLarge = false }: { isLarge?: boolean }) => {
         alt="Modal Example"
         width={100}
         height={100}
-        className="border-theme-neutral-300 h-full w-full max-w-[18.25rem] rounded-lg border object-cover"
+        className="h-full w-full max-w-[18.25rem] rounded-lg border border-theme-neutral-300 object-cover"
       />
     </div>
   );

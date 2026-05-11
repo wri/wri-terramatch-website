@@ -42,7 +42,7 @@ const AccordionHeader: FC<AccordionHeaderProps> = ({ label, title, badge, status
   return (
     <div className="flex w-full items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="text-theme-primary-900 flex items-center gap-2 text-[1.25rem] leading-[1.75rem]">
+        <div className="flex items-center gap-2 text-[1.25rem] leading-[1.75rem] text-theme-primary-900">
           {label && (
             <Text textStyle="400" color={"neutral.800"}>
               {label}:

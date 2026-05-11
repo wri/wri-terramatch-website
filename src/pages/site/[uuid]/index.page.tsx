@@ -107,7 +107,7 @@ const SiteDetailPage = () => {
                       >
                         {t("Project Profile")}
                       </Button>
-                      <span className="text-theme-neutral-300 text-sm">|</span>
+                      <span className="text-sm text-theme-neutral-300">|</span>
                       <Button
                         variant="borderless"
                         size="small"

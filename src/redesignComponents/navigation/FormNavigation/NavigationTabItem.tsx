@@ -45,7 +45,7 @@ export const NavigationTabItem: FC<NavigationTabItemProps> = ({
       className={getTabClasses(isSelected)}
     >
       <Box display="flex" alignItems="center" flexDirection="row" gap="0.3125rem" className="w-full justify-between">
-        <span className="text-theme-primary-900 flex items-center text-left">
+        <span className="flex items-center text-left text-theme-primary-900">
           <NavigationTabBadge type={type} isSelected={isSelected} index={index} />
 
           {label != null && (
