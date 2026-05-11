@@ -42,7 +42,7 @@ export const closeAllPopups = (map: MapboxMap): void => {
 
 const backgroundClickHandlers = new WeakMap<MapboxMap, (e: MapMouseEvent) => void>();
 
-/** Close popups on map click unless the event was `preventDefault`ed (layer hit). */
+// Close popups on map click unless the event was `preventDefault`ed (layer hit).
 export const enableBackgroundClickClose = (map: MapboxMap): void => {
   if (backgroundClickHandlers.has(map)) return;
   const handler = (e: MapMouseEvent): void => {
@@ -59,7 +59,7 @@ export const disableBackgroundClickClose = (map: MapboxMap): void => {
   try {
     map.off("click", handler);
   } catch {
-    /* map already removed */
+    // map already removed
   }
   backgroundClickHandlers.delete(map);
 };

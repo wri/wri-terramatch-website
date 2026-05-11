@@ -13,7 +13,7 @@ export interface MapMarkerProps {
   variant?: "cluster" | "simple-pin" | "icon";
   triggerRef?: React.RefObject<HTMLButtonElement>;
   color?: string;
-  /** Only applied to `variant="icon"`. Defaults to "md" (2.5rem). */
+  // Only applied to `variant="icon"`. Defaults to "md" (2.5rem).
   size?: "sm" | "md";
 }
 

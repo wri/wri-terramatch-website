@@ -36,7 +36,7 @@ export const removeMediaSymbolLayer = (map: MapboxMap): void => {
     try {
       map.off("click", layerName, existingHandler);
     } catch {
-      /* noop */
+      // noop
     }
     mediaClickHandlers.delete(map);
   }
