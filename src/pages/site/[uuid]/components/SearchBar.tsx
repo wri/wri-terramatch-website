@@ -1,8 +1,6 @@
-import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo, useState } from "react";
 
-import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
 import { PolygonTableRow } from "../tabs/Polygons";
@@ -52,7 +50,7 @@ const SearchBar: FC<SearchBarProps> = ({ polygonRows }) => {
   }, [polygonRows, search]);
 
   return (
-    <Flex className="items-center gap-3">
+    <>
       <ToolbarTable
         className="!px-0"
         onClickFilterButton={handleOnClickFilterButton}
@@ -68,9 +66,8 @@ const SearchBar: FC<SearchBarProps> = ({ polygonRows }) => {
           count: filteredPolygonRows.length
         }}
       />
-      <SimpleDivider variant="vertical" />
       <PolygonFilterDrawer open={isFilterDrawerOpen} onOpenChange={setIsFilterDrawerOpen} />
-    </Flex>
+    </>
   );
 };
 
