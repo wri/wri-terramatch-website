@@ -19,6 +19,8 @@ import {
 import useLoadEntityList from "./useLoadEntityList";
 import { useStatusActionsMap } from "./useStatusActionsMap";
 
+const POLYGON_HANDOFF_AUDIT_TYPE_SET = new Set<string>(PROJECT_POLYGON_HANDOFF_AUDIT_TYPES as readonly string[]);
+
 const ReverseButtonStates2: { [key: number]: string } = {
   0: "project",
   1: "site",
@@ -230,7 +232,19 @@ const useAuditLogActions = ({
   const { data: auditStatusesData, refetch: auditStatusRefetch } = auditStatusConnection;
 
   const refetch = useCallback(() => auditStatusRefetch?.(), [auditStatusRefetch]);
-  const auditLogData = auditStatusesData != null ? { data: auditStatusesData } : undefined;
+
+  const auditLogData = useMemo((): { data: AuditStatusDto[] } | undefined => {
+    if (auditStatusesData == null) {
+      return undefined;
+    }
+    if (useProjectPolygonHandoff && isProject && !isProjectHandoffAuditMode) {
+      return {
+        data: auditStatusesData.filter(row => row.type == null || !POLYGON_HANDOFF_AUDIT_TYPE_SET.has(row.type))
+      };
+    }
+    return { data: auditStatusesData };
+  }, [auditStatusesData, useProjectPolygonHandoff, isProject, isProjectHandoffAuditMode]);
+
   const isLoading = !isAuditLogLoaded;
 
   useEffect(() => {

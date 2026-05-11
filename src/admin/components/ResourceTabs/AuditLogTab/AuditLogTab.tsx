@@ -9,9 +9,11 @@ import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
 import AuditLogSiteTabSelection from "./components/AuditLogSiteTabSelection";
 import AuditLogTable from "./components/AuditLogTable";
+import PolygonHandoffPanel from "./components/PolygonHandoffPanel";
 import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "./components/SiteAuditLogEntityStatusSide";
 import SiteAuditLogProjectStatus from "./components/SiteAuditLogProjectStatus";
+import { ADMIN_SHOW_AUDIT_LOG_TAB_INDEX } from "./constants/adminShowAuditLogTabIndex";
 import { AuditLogButtonStates } from "./constants/enum";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
@@ -42,6 +44,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   // Site/nursery report pages show audit for that report only (no project-report cross-links).
   const showOpenEntity = ["disturbance-reports", "srp-reports"].includes(ReverseButtonStates2[entity!]);
   const reportsLevel = buttonToggle === AuditLogButtonStates.PROJECT_REPORT && showOpenEntity;
+  const useProjectPolygonHandoff = entity === AuditLogButtonStates.PROJECT;
+  const isProjectPolygonHandoffTab = useProjectPolygonHandoff && buttonToggle === AuditLogButtonStates.POLYGON;
 
   const {
     onStatusChange,
@@ -61,7 +65,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     record: reportsLevel ? record.project_report : record,
     buttonToggle,
     entityLevel: entity,
-    isProjectReport
+    isProjectReport,
+    useProjectPolygonHandoff
   });
 
   useEffect(() => {
@@ -73,11 +78,11 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const formatUrl = () => {
     switch (ReverseButtonStates2[buttonToggle!]) {
       case "project-reports":
-        return `/${modules.projectReport.ResourceName}/${selected?.uuid}/show/4`;
+        return `/${modules.projectReport.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
       case "site-reports":
-        return `/${modules.siteReport.ResourceName}/${selected?.uuid}/show/4`;
+        return `/${modules.siteReport.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
       case "nursery-reports":
-        return `/${modules.nurseryReport.ResourceName}/${selected?.uuid}/show/4`;
+        return `/${modules.nurseryReport.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
       default:
         return "";
     }
@@ -87,8 +92,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     isProjectReport
       ? formatUrl()
       : isNurseryToggle
-      ? `/${modules.nursery.ResourceName}/${selected?.uuid}/show/4`
-      : `/${modules.site.ResourceName}/${selected?.uuid}/show/6`
+      ? `/${modules.nursery.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.nursery}`
+      : `/${modules.site.ResourceName}/${selected?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.site}`
   }`;
 
   const title = () => selected?.title ?? selected?.name ?? record?.report_title;
@@ -113,145 +118,178 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
         return entityType;
     }
   };
+
+  const tabSelectionWhenAllowed =
+    !verifyEntity &&
+    entity != AuditLogButtonStates.SITE_REPORT &&
+    entity != AuditLogButtonStates.DISTURBANCE_REPORT &&
+    entity != AuditLogButtonStates.SRP_REPORT &&
+    entity != AuditLogButtonStates.FINANCIAL_REPORT ? (
+      <AuditLogSiteTabSelection
+        buttonToggle={buttonToggle!}
+        setButtonToggle={setButtonToggle}
+        framework={record?.framework_key ?? record?.frameworkKey}
+        isReport={isProjectReport}
+        entityLevel={entity}
+        existNurseries={(record.totalNurseries ?? record.nursery_reports_count) > 0}
+      />
+    ) : null;
+
   return isLoading ? null : (
     <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
-      <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
-        <Grid xs={8}>
-          <Stack gap={4} className="pl-8 pt-9">
-            {!verifyEntity &&
-              entity != AuditLogButtonStates.SITE_REPORT &&
-              entity != AuditLogButtonStates.DISTURBANCE_REPORT &&
-              entity != AuditLogButtonStates.SRP_REPORT &&
-              entity != AuditLogButtonStates.FINANCIAL_REPORT && (
-                <AuditLogSiteTabSelection
-                  buttonToggle={buttonToggle!}
-                  setButtonToggle={setButtonToggle}
-                  framework={record?.framework_key ?? record?.frameworkKey}
-                  isReport={isProjectReport}
-                  entityLevel={entity}
-                  existNurseries={(record.totalNurseries ?? record.nursery_reports_count) > 0}
-                />
-              )}
-            {showOpenEntity && entity != AuditLogButtonStates.FINANCIAL_REPORT && (
-              <AuditLogSiteTabSelection
-                buttonToggle={buttonToggle!}
-                setButtonToggle={setButtonToggle}
-                framework={record?.framework_key ?? record?.frameworkKey}
-                entityLevel={entity}
-                isAdmin={true}
+      {isProjectPolygonHandoffTab ? (
+        <Stack gap={4} className="max-h-[200vh] overflow-auto px-2 py-2 pl-8 pr-4 pt-9">
+          {tabSelectionWhenAllowed}
+          <PolygonHandoffPanel
+            projectUuid={record.uuid}
+            polygonDataSubmission={record.polygonDataSubmission}
+            readyForBaseline={record.readyForBaseline}
+            onSaved={() => {
+              refetch();
+              loadEntityList();
+            }}
+          />
+          <div>
+            <Text variant="text-16-bold" className="mb-6">
+              History and Discussion
+            </Text>
+            {auditLogData != null ? (
+              <AuditLogTable
+                auditLogData={auditLogData}
+                auditData={auditData}
+                refresh={refetch}
+                polygonHandoffColumnStyle
               />
-            )}
-            {buttonToggle === AuditLogButtonStates.PROJECT_REPORT && showOpenEntity ? (
-              <>
-                <Text variant="text-24-bold">Project Report Status</Text>
-                <Text variant="text-14-light" className="mb-4">
-                  Update all report statuses, view updates, and add comments.
-                </Text>
-                <Button
-                  className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] text-center !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
-                  component={Link}
-                  to={`${basename}/${modules.projectReport.ResourceName}/${record?.project_report?.uuid}/show/4`}
-                  fullWidth
-                  label="OPEN PROJECT REPORT AUDIT LOG"
-                />
-              </>
             ) : null}
-            {((buttonToggle === AuditLogButtonStates.PROJECT && record?.project != null) ||
-              (buttonToggle === AuditLogButtonStates.PROJECT && record?.projectName != null)) &&
-            !verifyEntity ? (
-              <>
-                <Text variant="text-24-bold">Project Status</Text>
-                <Text variant="text-14-light" className="mb-4">
-                  Update the site status, view updates, or add comments
-                </Text>
-                <Button
-                  className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] text-center !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
-                  component={Link}
-                  to={`${basename}/${modules.project.ResourceName}/${
-                    record?.project?.uuid || record?.projectUuid
-                  }/show/5`}
-                  fullWidth
-                  label="OPEN PROJECT AUDIT LOG"
-                />
-              </>
-            ) : null}
+          </div>
+        </Stack>
+      ) : (
+        <>
+          <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
+            <Grid xs={8}>
+              <Stack gap={4} className="pl-8 pt-9">
+                {tabSelectionWhenAllowed}
+                {showOpenEntity && entity != AuditLogButtonStates.FINANCIAL_REPORT && (
+                  <AuditLogSiteTabSelection
+                    buttonToggle={buttonToggle!}
+                    setButtonToggle={setButtonToggle}
+                    framework={record?.framework_key ?? record?.frameworkKey}
+                    entityLevel={entity}
+                    isAdmin={true}
+                  />
+                )}
+                {buttonToggle === AuditLogButtonStates.PROJECT_REPORT && showOpenEntity ? (
+                  <>
+                    <Text variant="text-24-bold">Project Report Status</Text>
+                    <Text variant="text-14-light" className="mb-4">
+                      Update all report statuses, view updates, and add comments.
+                    </Text>
+                    <Button
+                      className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] text-center !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
+                      component={Link}
+                      to={`${basename}/${modules.projectReport.ResourceName}/${record?.project_report?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`}
+                      fullWidth
+                      label="OPEN PROJECT REPORT AUDIT LOG"
+                    />
+                  </>
+                ) : null}
+                {((buttonToggle === AuditLogButtonStates.PROJECT && record?.project != null) ||
+                  (buttonToggle === AuditLogButtonStates.PROJECT && record?.projectName != null)) &&
+                !verifyEntity ? (
+                  <>
+                    <Text variant="text-24-bold">Project Status</Text>
+                    <Text variant="text-14-light" className="mb-4">
+                      Update the site status, view updates, or add comments
+                    </Text>
+                    <Button
+                      className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] text-center !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
+                      component={Link}
+                      to={`${basename}/${modules.project.ResourceName}/${
+                        record?.project?.uuid || record?.projectUuid
+                      }/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.project}`}
+                      fullWidth
+                      label="OPEN PROJECT AUDIT LOG"
+                    />
+                  </>
+                ) : null}
+                {buttonToggle === AuditLogButtonStates.PROJECT &&
+                record?.project == null &&
+                buttonToggle === AuditLogButtonStates.PROJECT &&
+                record?.projectName == null ? (
+                  <SiteAuditLogProjectStatus
+                    record={record}
+                    auditLogData={auditLogData}
+                    auditData={auditData}
+                    refresh={refetch}
+                  />
+                ) : null}
+                {(buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity) && !reportsLevel ? (
+                  <SiteAuditLogEntityStatus
+                    entityType={verifyEntityReport()}
+                    record={selected}
+                    auditLogData={auditLogData}
+                    refresh={refetch}
+                    buttonToggle={buttonToggle!}
+                    verifyEntity={verifyEntity}
+                    auditData={auditData}
+                    isProjectReport={isProjectReport}
+                  />
+                ) : null}
+              </Stack>
+            </Grid>
+            <Grid xs={4} className="pl-8 pr-4 pt-9">
+              <SiteAuditLogEntityStatusSide
+                getValueForStatus={valuesForStatus}
+                progressBarLabels={statusLabels}
+                entityType={verifyEntityReport()}
+                refresh={() => {
+                  refetch();
+                  loadEntityList();
+                }}
+                record={selected}
+                polygonList={entityListItem}
+                selectedPolygon={selected}
+                setSelectedPolygon={setSelected}
+                checkPolygonsSite={checkPolygonsSite}
+                onStatusChange={onStatusChange}
+                onChangeRequest={onChangeRequest}
+              />
+            </Grid>
+          </Grid>
+          <div className="px-2 py-2">
             {buttonToggle === AuditLogButtonStates.PROJECT &&
             record?.project == null &&
             buttonToggle === AuditLogButtonStates.PROJECT &&
             record?.projectName == null ? (
-              <SiteAuditLogProjectStatus
-                record={record}
-                auditLogData={auditLogData}
-                auditData={auditData}
-                refresh={refetch}
-              />
+              <>
+                <Text variant="text-16-bold" className="mb-6">
+                  History and Discussion for {record && record?.name}
+                </Text>
+                {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refetch} />}
+              </>
             ) : null}
             {(buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity) && !reportsLevel ? (
-              <SiteAuditLogEntityStatus
-                entityType={verifyEntityReport()}
-                record={selected}
-                auditLogData={auditLogData}
-                refresh={refetch}
-                buttonToggle={buttonToggle!}
-                verifyEntity={verifyEntity}
-                auditData={auditData}
-                isProjectReport={isProjectReport}
-              />
+              <>
+                <div className="mb-6">
+                  {!isSite && !verifyEntity && !isProjectReport && !isNurseryToggle ? (
+                    <Text variant="text-16-bold">History and Discussion for {title()}</Text>
+                  ) : (
+                    <Text variant="text-16-bold">
+                      History and Discussion for{" "}
+                      <Link className="text-16-bold !text-[#000000DD]" to={redirectTo}>
+                        {title()}
+                      </Link>
+                    </Text>
+                  )}
+                </div>
+                {auditLogData != null && (
+                  <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refetch} />
+                )}
+              </>
             ) : null}
-          </Stack>
-        </Grid>
-        <Grid xs={4} className="pl-8 pr-4 pt-9">
-          <SiteAuditLogEntityStatusSide
-            getValueForStatus={valuesForStatus}
-            progressBarLabels={statusLabels}
-            entityType={verifyEntityReport()}
-            refresh={() => {
-              refetch();
-              loadEntityList();
-            }}
-            record={selected}
-            polygonList={entityListItem}
-            selectedPolygon={selected}
-            setSelectedPolygon={setSelected}
-            checkPolygonsSite={checkPolygonsSite}
-            onStatusChange={onStatusChange}
-            onChangeRequest={onChangeRequest}
-          />
-        </Grid>
-      </Grid>
-      <div className="px-2 py-2">
-        {buttonToggle === AuditLogButtonStates.PROJECT &&
-        record?.project == null &&
-        buttonToggle === AuditLogButtonStates.PROJECT &&
-        record?.projectName == null ? (
-          <>
-            <Text variant="text-16-bold" className="mb-6">
-              History and Discussion for {record && record?.name}
-            </Text>
-            {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refetch} />}
-          </>
-        ) : null}
-        {(buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity) && !reportsLevel ? (
-          <>
-            <div className="mb-6">
-              {!isSite && !verifyEntity && !isProjectReport && !isNurseryToggle && (
-                <Text variant="text-16-bold">History and Discussion for {title()}</Text>
-              )}
-              {(isSite || verifyEntity || isProjectReport || isNurseryToggle) && (
-                <Text variant="text-16-bold">
-                  History and Discussion for{" "}
-                  <Link className="text-16-bold !text-[#000000DD]" to={redirectTo}>
-                    {title()}
-                  </Link>
-                </Text>
-              )}
-            </div>
-            {auditLogData == null ? null : (
-              <AuditLogTable auditLogData={auditLogData!} auditData={auditData} refresh={refetch} />
-            )}
-          </>
-        ) : null}
-      </div>
+          </div>
+        </>
+      )}
     </TabbedShowLayout.Tab>
   );
 };
