@@ -34,7 +34,7 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
     setIsFilterDrawerOpen(true);
   };
 
-  const handleOnSearch = (value: string) => {
+  const handleOnSearchSubmit = (value: string) => {
     onSearchChange(value);
   };
 
@@ -57,7 +57,7 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
           options: [],
           resetKey: searchResetKey,
           displayResults: "none",
-          onQueryChange: handleOnSearch,
+          onSearchSubmit: handleOnSearchSubmit,
           count: resultCount
         }}
       />

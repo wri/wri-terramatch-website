@@ -67,6 +67,7 @@ export interface SearchProps {
   label?: string;
   resetKey?: string | number;
   onQueryChange?: (query: string) => void;
+  onSearchSubmit?: (query: string) => void;
   count?: number;
 }
 

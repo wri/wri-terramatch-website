@@ -2,7 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Search } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
-import { FC } from "react";
+import { FC, useRef } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
@@ -26,6 +26,19 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   selectedFilters
 }) => {
   const t = useT();
+  const queryRef = useRef("");
+
+  const handleQueryChange = (query: string) => {
+    queryRef.current = query;
+    search?.onQueryChange?.(query);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && search?.onSearchSubmit) {
+      search.onSearchSubmit(queryRef.current);
+    }
+  };
+
   return (
     <Toolbar
       className={classNames("mobile:mb-6 mobile:flex-col mobile:!items-start", className)}
@@ -33,19 +46,21 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
         <div className="flex items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0">
           {search != null && (
             <div className="flex w-full min-w-[26rem] max-w-[26rem] items-center gap-4">
-              <Search
-                key={search.resetKey ?? "search"}
-                {...({
-                  placeholder: search.placeholder,
-                  disabled: search.disabled,
-                  options: search.options,
-                  resultsMaxHeight: search.resultsMaxHeight,
-                  isLoading: search.isLoading,
-                  displayResults: search.displayResults ?? "none",
-                  onQueryChange: search.onQueryChange,
-                  size: "default"
-                } as SearchProps)}
-              />
+              <div onKeyDown={handleKeyDown}>
+                <Search
+                  key={search.resetKey ?? "search"}
+                  {...({
+                    placeholder: search.placeholder,
+                    disabled: search.disabled,
+                    options: search.options,
+                    resultsMaxHeight: search.resultsMaxHeight,
+                    isLoading: search.isLoading,
+                    displayResults: search.displayResults ?? "none",
+                    onQueryChange: handleQueryChange,
+                    size: "default"
+                  } as SearchProps)}
+                />
+              </div>
               <div className="flex items-center gap-1">
                 <Text textStyle="400-bold" color={"primary.900"}>
                   {search.count != null ? `${search.count}` : ""}
