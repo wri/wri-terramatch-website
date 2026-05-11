@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { List as WriList } from "@worldresources/wri-design-systems";
-import { FC, ReactElement, ReactNode } from "react";
+import { FC, ReactElement } from "react";
 
 type ListItemVariant = "data" | "navigation" | "select";
 interface ListItemProps {
@@ -8,7 +8,7 @@ interface ListItemProps {
   label: string;
   caption?: string;
   icon?: ReactElement;
-  value?: ReactNode;
+  value?: string;
   variant?: ListItemVariant;
   isExpanded?: boolean;
   onItemClick?: () => void;

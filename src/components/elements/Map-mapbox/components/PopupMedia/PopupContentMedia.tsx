@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { type FC, useState } from "react";
 
@@ -20,19 +20,13 @@ const PopupContentMedia: FC<PopupContentMediaProps> = ({ uuid, thumbUrl, created
 
   return (
     <Flex padding="0.75rem" direction="column" gap={2} width="16rem">
-      <Box
-        as="button"
+      <button
         type="button"
         onClick={() => setPreviewOpen(true)}
-        position="relative"
-        h="9rem"
-        w="100%"
-        borderRadius="md"
-        overflow="hidden"
-        cursor="pointer"
+        className="relative block h-[9rem] w-full cursor-pointer overflow-hidden rounded-md border-0 bg-transparent p-0"
       >
         <ImageWithPlaceholder className="h-full" alt={t("Image not available")} imageUrl={thumbUrl} />
-      </Box>
+      </button>
       <Text color="neutral.700" textStyle="300">
         {formatPopupDate(createdAt)}
       </Text>

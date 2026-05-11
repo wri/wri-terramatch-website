@@ -10,9 +10,9 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    defaultValues: {
-      control: "object",
-      description: "Names of checkboxes checked by default (array of checkbox `name` values)"
+    defaultValue: {
+      control: "text",
+      description: "Name of the checkbox checked by default (single `name` value from `checkboxes`)"
     },
     horizontal: {
       control: "boolean",
@@ -81,7 +81,7 @@ export const WithDefaultValue: Story = {
     label: "With Default Value",
     caption: "Option 1 is pre-selected",
     checkboxes: defaultCheckboxes,
-    defaultValues: ["option-1"]
+    defaultValue: "option-1"
   }
 };
 

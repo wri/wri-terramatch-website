@@ -14,6 +14,11 @@ import { MediaCallbacks } from "./mediaTypes";
 
 const PULSING_DOT_IMAGE = "pulsing-dot";
 
+/** GeoJSON feature properties are `unknown`-valued; narrow for props and callbacks that expect strings. */
+function stringFromGeoJsonProperty(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
+
 const mediaClickHandlers = new WeakMap<MapboxMap, (e: MapMouseEvent) => void>();
 
 // Mapbox throws on style ops after `map.remove()` or during style swaps because `map.style` becomes undefined.
@@ -95,16 +100,20 @@ export const addMediaSymbolLayer = (map: MapboxMap, mediaFiles: MediaDto[], call
     const root = createRoot(popupContent);
 
     const props = feature.properties ?? {};
+    const uuid = stringFromGeoJsonProperty(props.uuid);
+    const name = stringFromGeoJsonProperty(props.name);
+    const createdDate = stringFromGeoJsonProperty(props.created_date);
+    const thumbUrl = typeof props.thumbUrl === "string" ? props.thumbUrl : "";
     root.render(
       createElement(MediaPopup, {
-        uuid: props.uuid,
-        name: props.name,
-        created_date: props.created_date,
-        thumbUrl: props.thumbUrl ?? "",
+        uuid,
+        name,
+        created_date: createdDate,
+        thumbUrl,
         onClose: () => removePopups(map, "MEDIA"),
-        handleDownload: () => callbacks.handleDownload(props.uuid, props.name),
-        coverImage: () => callbacks.setImageCover(props.uuid),
-        handleDelete: () => callbacks.handleDelete(props.uuid),
+        handleDownload: () => callbacks.handleDownload(uuid, name),
+        coverImage: () => callbacks.setImageCover(uuid),
+        handleDelete: () => callbacks.handleDelete(uuid),
         openModalImageDetail: () => callbacks.openModalImageDetail(props as unknown as MediaDto),
         isProjectPath: callbacks.isProjectPath
       })
