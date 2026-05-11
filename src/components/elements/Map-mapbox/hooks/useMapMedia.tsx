@@ -8,7 +8,10 @@ import { exportImage } from "@/generated/v3/entityService/entityServiceComponent
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Log from "@/utils/log";
 
-import { addMediaSourceAndLayer } from "../layers/mediaLayers";
+import { useChampionsMap } from "../championsMap.context";
+import { addMediaMarkers, removeMediaMarkers } from "../layers/mediaMarkers";
+import { addMediaSymbolLayer, removeMediaSymbolLayer } from "../layers/mediaSymbolLayer";
+import { MediaCallbacks } from "../layers/mediaTypes";
 
 type UseMapMediaParams = {
   map: MutableRefObject<MapboxMap | null>;
@@ -41,8 +44,11 @@ export function useMapMedia({
   setShouldRefetchMediaData,
   router
 }: UseMapMediaParams) {
+  const championsMap = useChampionsMap();
+
   useEffect(() => {
-    if (map.current == null || !styleReady || mediaFiles == null) return;
+    const mapInstance = map.current;
+    if (mapInstance == null || !styleReady || mediaFiles == null) return;
 
     const isProjectPath = router.isReady && router.asPath.includes("project");
 
@@ -93,15 +99,21 @@ export function useMapMedia({
       }
     };
 
-    addMediaSourceAndLayer(
-      map.current,
-      mediaFiles,
+    const callbacks: MediaCallbacks = {
       setImageCover,
       handleDownload,
       handleDelete,
       openModalImageDetail,
       isProjectPath
-    );
+    };
+
+    if (championsMap) {
+      addMediaMarkers(mapInstance, mediaFiles, callbacks);
+      return () => removeMediaMarkers(mapInstance);
+    }
+
+    addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
+    return () => removeMediaSymbolLayer(mapInstance);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mediaFiles, styleReady, styleVersion]);
+  }, [mediaFiles, styleReady, styleVersion, championsMap]);
 }

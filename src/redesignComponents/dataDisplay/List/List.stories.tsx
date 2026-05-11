@@ -1,7 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import MappedTag from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
 import ProfileItem from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileItem";
 
 import { TreeCircleIcon, UserIcon } from "../../foundations/Icons";
@@ -32,7 +31,7 @@ const meta: Meta<typeof List> = {
     },
     items: {
       description:
-        "Array of ListItemProps — each item supports: label, caption, icon, value, variant, disabled, isExpanded, isHighlighted, onItemClick, ariaLabel"
+        "Array of ListItemProps — each item supports: label, caption, icon, value (string), variant, disabled, isExpanded, isHighlighted, onItemClick, ariaLabel"
     }
   }
 };
@@ -68,7 +67,7 @@ export const DataListItems: Story = {
         ariaLabel: "Item 3",
         icon: <TreeCircleIcon className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 3"),
-        value: <MappedTag state="draft" />
+        value: "Draft"
       }
     ]
   }

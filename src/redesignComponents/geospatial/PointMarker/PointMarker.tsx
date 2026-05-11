@@ -13,6 +13,8 @@ export interface MapMarkerProps {
   variant?: "cluster" | "simple-pin" | "icon";
   triggerRef?: React.RefObject<HTMLButtonElement>;
   color?: string;
+  // Only applied to `variant="icon"`. Defaults to "md" (2.5rem).
+  size?: "sm" | "md";
 }
 
 const BOX_SHADOW =
@@ -28,6 +30,11 @@ const FOCUS_STATE_STYLES = (variant?: string) => ({
   "& button:hover": { scale: "1 !important" }
 });
 
+const ICON_SIZE: Record<NonNullable<MapMarkerProps["size"]>, string> = {
+  sm: "1.75rem",
+  md: "2.5rem"
+};
+
 const PointMarker: FC<MapMarkerProps> = ({
   ariaLabel,
   icon,
@@ -38,15 +45,17 @@ const PointMarker: FC<MapMarkerProps> = ({
   mode,
   variant,
   triggerRef,
-  color = "primary.500"
+  color = "primary.500",
+  size = "md"
 }) => {
+  const iconDimension = ICON_SIZE[size];
   return (
     <Box
       className="point-marker"
       css={{
         "& > div": showFocusState && FOCUS_STATE_STYLES(variant),
         "& button": {
-          ...(variant === "icon" ? { width: "2.5rem", height: "2.5rem" } : { fontWeight: "400" }),
+          ...(variant === "icon" ? { width: iconDimension, height: iconDimension } : { fontWeight: "400" }),
           transition: "all 0.1s ease-in-out",
           opacity: 0.8,
           boxShadow: BOX_SHADOW,

@@ -7,6 +7,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { useChampionsMap } from "../championsMap.context";
 import { DashboardPopup } from "../components/DashboardPopup";
 import { PolygonPopup } from "../components/PolygonPopup/PolygonPopup";
+import { disableBackgroundClickClose, enableBackgroundClickClose } from "../interactions/popupCoordinator";
 import { addPopupsToMap } from "../interactions/popups";
 import type {
   DashboardPopupContext,
@@ -30,7 +31,6 @@ type UseMapPopupsParams = {
   setEditPolygon: (v: EditPolygonState) => void;
   editPolygon: EditPolygonState;
   setMobilePopupData: (v: MobilePopupData) => void;
-  /** Full dashboard context; undefined in admin mode — drives popup component choice and filter callbacks. */
   dashboardContext?: DashboardPopupContext | null;
 };
 
@@ -65,8 +65,9 @@ export function useMapPopups({
     if (!sourcesAdded || map.current == null || draw.current == null || !showPopups) return;
 
     const PopupComponent = dashboardContext?.dashboardMode != null ? DashboardPopup : PolygonPopup;
+    const mapInstance = map.current;
 
-    addPopupsToMap(map.current, PopupComponent, draw.current, {
+    addPopupsToMap(mapInstance, PopupComponent, draw.current, {
       setPolygonFromMap: callbacksRef.current.setPolygonFromMap,
       setShouldRefetchPolygonData,
       sitePolygonData,
@@ -79,6 +80,11 @@ export function useMapPopups({
         isMobile || dashboardContext?.dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined,
       championsMap
     });
+
+    enableBackgroundClickClose(mapInstance);
+    return () => {
+      disableBackgroundClickClose(mapInstance);
+    };
   }, [
     sourcesAdded,
     sitePolygonData,
