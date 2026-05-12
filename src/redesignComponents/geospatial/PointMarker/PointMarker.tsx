@@ -22,7 +22,7 @@ const BOX_SHADOW =
 
 const FOCUS_STATE_STYLES = (variant?: string) => ({
   outline: "0.125rem solid primary.600",
-  outlineColor: variant === "simple-pin" ? "transparent" : "primary.600 !important",
+  outlineColor: "primary.600 !important",
   borderRadius: "50%",
   scale: "1.25",
   opacity: 1,
