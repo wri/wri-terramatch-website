@@ -1,7 +1,7 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { CheckApprovedIcon, WarningIcon } from "@/redesignComponents/foundations/Icons";
+import { CheckApprovedIcon, InformationRequiredIcon, WarningIcon } from "@/redesignComponents/foundations/Icons";
 
 import InlineMessage from "./InlineMessage";
 
@@ -72,7 +72,8 @@ export const Error: Story = {
     label: "Error",
     caption: "caption",
     variant: "error",
-    actionLabel: "Label"
+    actionLabel: "Label",
+    icon: <InformationRequiredIcon />
   }
 };
 
@@ -114,7 +115,6 @@ export const NoIconWithButtonIcon: Story = {
     caption: "Mark this factor as complete when you've finished reviewing the response, rationale, and strategies.",
     variant: "info-grey",
     size: "full-width",
-    icon: null,
     actionLabel: "Mark complete",
     isButtonRight: true,
     buttonLeftIcon: <CheckApprovedIcon className="h-4 w-4" />
@@ -165,7 +165,13 @@ export const AllVariants: Story = {
         caption="Please review before proceeding."
         size="large"
       />
-      <InlineMessage variant="error" label="Error" caption="An unexpected error has occurred." size="large" />
+      <InlineMessage
+        icon={<InformationRequiredIcon />}
+        variant="error"
+        label="Error"
+        caption="An unexpected error has occurred."
+        size="large"
+      />
     </SimpleGrid>
   )
 };
