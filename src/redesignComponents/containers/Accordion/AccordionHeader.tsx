@@ -6,12 +6,15 @@ import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import type { AccordionHeaderProps, AccordionStatus } from "./types";
 
-const getStatusIcon = (status: AccordionStatus, boxSize: number = 4) =>
-  status === "complete" ? (
-    <CheckApprovedIcon boxSize={boxSize} color="success.500" />
-  ) : (
-    <InformationRequiredIcon boxSize={boxSize} color="warning.500" />
-  );
+const getStatusIcon = (status: AccordionStatus, boxSize: number = 4) => {
+  if (status === "complete" || status === "success") {
+    return <CheckApprovedIcon boxSize={boxSize} color="success.500" />;
+  }
+  if (status === "error") {
+    return <InformationRequiredIcon boxSize={boxSize} color="error.500" />;
+  }
+  return <InformationRequiredIcon boxSize={boxSize} color="warning.500" />;
+};
 
 interface StatusLabelTagProps {
   label: string;
