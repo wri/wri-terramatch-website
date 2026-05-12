@@ -80,6 +80,14 @@ strong {
   outline: 2px solid #11688D !important;
 }
 
+.mapboxgl-ctrl.mapboxgl-ctrl-attrib {
+  background-color: transparent !important;
+}
+
+.mapboxgl-ctrl.mapboxgl-ctrl-attrib .mapboxgl-ctrl-attrib-inner {
+  display: none !important;
+}
+
 /* Safari / WebKit only */
 @supports (-webkit-appearance: none) {
   .outline-offset-ring:focus-visible {
