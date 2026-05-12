@@ -71,17 +71,27 @@ export const isOnlyNumTreesMissing = (extraInfo: any): boolean => {
   try {
     const infoArray: ExtraInfoItem[] = extraInfo;
 
-    const dataFields = infoArray.filter(info =>
-      ["polyName", "practice", "targetSys", "distr", "numTrees", "plantStart"].includes(info.field)
-    );
+    const DATA_COMPLETENESS_FIELDS = new Set([
+      "polyName",
+      "poly_name",
+      "practice",
+      "targetSys",
+      "target_sys",
+      "distr",
+      "numTrees",
+      "num_trees",
+      "plantStart",
+      "plantstart"
+    ]);
+
+    const dataFields = infoArray.filter(info => DATA_COMPLETENESS_FIELDS.has(info.field));
 
     if (dataFields.length === 0) return false;
 
-    // A field is invalid if it's missing (!exists) OR has an error value
     const invalidFields = dataFields.filter(info => !info.exists || info.error != null);
 
-    // Only exclude DATA_CRITERIA_ID if EXACTLY numTrees is the only invalid field
-    return invalidFields.length === 1 && invalidFields[0].field === "numTrees";
+    const isNumTreesField = (field: string) => field === "numTrees" || field === "num_trees";
+    return invalidFields.length === 1 && isNumTreesField(invalidFields[0].field);
   } catch {
     return false;
   }
