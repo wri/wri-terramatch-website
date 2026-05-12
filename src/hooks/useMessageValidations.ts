@@ -52,12 +52,17 @@ interface PlantStartDateInfo {
 
 const FIELDS_TO_VALIDATE: Record<string, string> = {
   polyName: "Polygon Name",
+  poly_name: "Polygon Name",
   plantStart: "Plant Start Date",
+  plantstart: "Plant Start Date",
   practice: "Restoration Practice",
   targetSys: "Target Land Use System",
+  target_sys: "Target Land Use System",
   distr: "Tree Distribution",
   plantingStatus: "Planting Status",
-  numTrees: "Number of Trees"
+  planting_status: "Planting Status",
+  numTrees: "Number of Trees",
+  num_trees: "Number of Trees"
 };
 
 export const useMessageValidators = () => {
