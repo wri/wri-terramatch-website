@@ -42,7 +42,7 @@ const footer = (
   </div>
 );
 
-export const Default: Story = {
+export const Icon: Story = {
   args: {
     open: false,
     onOpenChange: () => {},
@@ -113,7 +113,7 @@ export const Default: Story = {
   }
 };
 
-export const MapPopUpWithIcon: Story = {
+export const Circle: Story = {
   args: {
     open: false,
     onOpenChange: () => {},
