@@ -60,7 +60,7 @@ const SelectImage: FC<PropsWithChildren<SelectImageProps>> = props => {
     >
       <List
         as="div"
-        className="mx-auto !mt-4 flex max-w-[573px] flex-wrap justify-center gap-4"
+        className="mx-auto !mt-4 flex max-w-[573px] flex-wrap items-start justify-center gap-4"
         itemAs={Fragment}
         items={props.options}
         render={option => {
