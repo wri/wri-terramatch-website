@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { Framework } from "@/context/framework.provider";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
+import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
 import { InformationRequiredIcon } from "../../foundations/Icons";
 import DonutChart from "./DonutChart";
@@ -48,7 +49,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
       <Flex gap={2} className="items-center">
         <Flex gap={1} className="items-center">
           <Text textStyle="400-bold" color="neutral.900">
-            {progress.toLocaleString()}
+            {formatNumberLocaleString(progress)}
           </Text>
           {progressSuffix && (
             <Text textStyle="400-bold" color="neutral.900">
@@ -64,7 +65,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
                 {t("Selection:")}
               </Text>
               <Text color="neutral.900" textStyle="300-bold">
-                {selection.toLocaleString()}
+                {formatNumberLocaleString(selection)}
               </Text>
               {progressSuffix && (
                 <Text color="neutral.900" textStyle="300-bold">
@@ -105,7 +106,7 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
         <Flex gap={2} className="items-center">
           <Flex gap={1} className="items-center">
             <Text textStyle="600-bold" color="neutral.900">
-              {progress.toLocaleString()}
+              {formatNumberLocaleString(progress)}
             </Text>
             {progressSuffix && (
               <Text textStyle="600-bold" color="neutral.900">
@@ -121,7 +122,7 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
                   {t("Selection:")}
                 </Text>
                 <Text color="neutral.900" textStyle="600-bold">
-                  {selection.toLocaleString()}
+                  {formatNumberLocaleString(selection)}
                 </Text>
                 {progressSuffix && (
                   <Text color="neutral.900" textStyle="600-bold">
@@ -167,7 +168,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
         <Flex gap={1} alignItems="center">
           <Flex gap={1} className="items-center">
             <Text textStyle="400-bold" color="neutral.900">
-              {progress.toLocaleString()}
+              {formatNumberLocaleString(progress)}
             </Text>
             {progressSuffix ? (
               <Text textStyle="400-bold" color="neutral.800">
@@ -180,7 +181,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
           </Text>
           <Flex gap={1} className="items-center">
             <Text textStyle="300" color="neutral.800">
-              {goal.toLocaleString()}
+              {formatNumberLocaleString(goal)}
             </Text>
             {goalSuffix ? (
               <Text textStyle="300" color="neutral.800">
@@ -226,7 +227,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
         {frameworkKey === Framework.PPC && type === "jobsCreated" ? (
           <Flex gap={1} alignItems="center">
             <Text textStyle="600-bold" color="neutral.900">
-              {progress.toLocaleString()}
+              {formatNumberLocaleString(progress)}
             </Text>
             <Text textStyle="600-bold" color="neutral.900">
               {progressSuffix}
@@ -236,7 +237,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
           <Flex gap={1} alignItems="center">
             <Flex gap={1} className="items-center">
               <Text textStyle="600-bold" color="neutral.900">
-                {Math.round(progress).toLocaleString()}
+                {formatNumberLocaleString(Math.round(progress))}
               </Text>
               <Text textStyle="600-bold" color="neutral.900">
                 {progressSuffix}
@@ -247,7 +248,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
             </Text>
             <Flex gap={1} className="items-center">
               <Text textStyle="500" color="neutral.800">
-                {goal.toLocaleString()}
+                {formatNumberLocaleString(goal)}
               </Text>
               <Text textStyle="500" color="neutral.800">
                 {goalSuffix}
