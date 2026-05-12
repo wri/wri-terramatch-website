@@ -4,6 +4,7 @@ import { Checkbox } from "@worldresources/wri-design-systems";
 import { FC, memo, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
+import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
@@ -290,12 +291,24 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     void fetchOverlapValidations();
   }, [site.uuid, polygonIdsKey, fetchOverlapValidations]);
 
-  const polygonsWithOverlapCount = useMemo(() => {
-    const ids = new Set(
-      overlapValidations.map(v => v.polygonUuid).filter((id): id is string => id != null && id !== "")
-    );
-    return ids.size;
-  }, [overlapValidations]);
+  const overlapPolygonUuids = useMemo(
+    () => new Set(overlapValidations.map(v => v.polygonUuid).filter((id): id is string => id != null && id !== "")),
+    [overlapValidations]
+  );
+
+  const polygonsWithOverlapCount = overlapPolygonUuids.size;
+
+  const overlapPolygons = useMemo<OverlapPolygonPoint[]>(() => {
+    if (overlapPolygonUuids.size === 0) return [];
+    const points: OverlapPolygonPoint[] = [];
+    for (const polygon of polygonsData) {
+      const uuid = polygon.polygonUuid;
+      if (uuid == null || !overlapPolygonUuids.has(uuid)) continue;
+      if (polygon.lat == null || polygon.long == null) continue;
+      points.push({ polygonUuid: uuid, lat: polygon.lat, lng: polygon.long });
+    }
+    return points;
+  }, [overlapPolygonUuids, polygonsData]);
 
   const polygonRows = useMemo<PolygonTableRow[]>(
     () =>
@@ -534,6 +547,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           type="sites"
           className="max-h-full overflow-hidden !rounded-[0.25rem_0.25rem_0_0]"
           polygonTableHighlight={polygonTableHighlight}
+          overlapPolygons={overlapPolygons}
         />
       </ResizeBox>
       <Flex className="items-center justify-between gap-4">

@@ -28,7 +28,8 @@ export const LAYERS_NAMES = {
   DELETED_GEOMETRIES: "deleted_geometries",
   CENTROIDS: "centroids",
   LANDSCAPES: "landscape_geom",
-  POLYGON_CENTROIDS: "polygon_centroids"
+  POLYGON_CENTROIDS: "polygon_centroids",
+  OVERLAP_INDICATORS: "overlap_indicators"
 };
 export const layersList: LayerType[] = [
   {

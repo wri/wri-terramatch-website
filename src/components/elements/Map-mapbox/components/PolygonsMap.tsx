@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
+import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
 import { useBoundingBox } from "@/connections/BoundingBox";
@@ -37,6 +38,7 @@ interface PolygonsMapProps {
     onHoveredPolygonFromMap?: (uuid: string | null) => void;
     onPolygonClickedFromMap?: (uuid: string) => void;
   };
+  overlapPolygons?: OverlapPolygonPoint[];
 }
 
 const EMPTY_POLYGON_MAP: Record<string, string[]> = {
@@ -48,7 +50,13 @@ const EMPTY_POLYGON_MAP: Record<string, string[]> = {
 
 type PolygonGeometryFeature = Pick<GeoJSON.Feature, "geometry">;
 
-const PolygonsMap: FC<PolygonsMapProps> = ({ entityModel, type, className, polygonTableHighlight }) => {
+const PolygonsMap: FC<PolygonsMapProps> = ({
+  entityModel,
+  type,
+  className,
+  polygonTableHighlight,
+  overlapPolygons
+}) => {
   // Champions map keeps polygon panel disabled until edit/validation UX is migrated.
   const disabledPolygonPanel = true;
   const [polygonDataMap, setPolygonDataMap] = useState<Record<string, string[]>>(() => ({ ...EMPTY_POLYGON_MAP }));
@@ -182,6 +190,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({ entityModel, type, className, polyg
         sitePolygonData={sitePolygonDataV3}
         disabledPolygonPanel={disabledPolygonPanel}
         polygonTableHighlight={polygonTableHighlight}
+        overlapPolygons={overlapPolygons}
       />
     </AnrMapOverlayProvider>
   );

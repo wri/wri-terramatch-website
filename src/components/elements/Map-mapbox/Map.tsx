@@ -36,11 +36,13 @@ import { useMapDraw } from "./hooks/useMapDraw";
 import { useMapFullscreen } from "./hooks/useMapFullscreen";
 import { useMapLayers } from "./hooks/useMapLayers";
 import { useMapMedia } from "./hooks/useMapMedia";
+import { useMapOverlapIndicators } from "./hooks/useMapOverlapIndicators";
 import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
 import { useMapStyle } from "./hooks/useMapStyle";
 import { usePolygonTableHighlightFill, usePolygonTableHighlightPointer } from "./hooks/usePolygonTableHighlight";
 import { addGeojsonToDraw } from "./interactions/draw";
+import { OverlapPolygonPoint } from "./layers/overlapTypes";
 import type {
   DashboardGetProjectsData,
   DashboardPopupContext,
@@ -90,6 +92,8 @@ export interface BaseMapProps {
     onHoveredPolygonFromMap?: (uuid: string | null) => void;
     onPolygonClickedFromMap?: (uuid: string) => void;
   };
+  /** Centroids of site polygons whose OVERLAPPING validation currently fails. */
+  overlapPolygons?: OverlapPolygonPoint[];
 }
 
 export interface DashboardMapExtras {
@@ -211,7 +215,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setLoader,
     initialTileVersion,
     initialPolygonFingerprint,
-    polygonTableHighlight
+    polygonTableHighlight,
+    overlapPolygons
   } = props;
 
   const [isViewingImages, setIsViewingImages] = useState(false);
@@ -442,6 +447,13 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     closeModal,
     setShouldRefetchMediaData,
     router
+  });
+
+  useMapOverlapIndicators({
+    map,
+    styleReady,
+    styleVersion,
+    overlapPolygons
   });
 
   const { handleEditPolygon, onSaveEdit, onCancelEdit } = useMapDraw({
