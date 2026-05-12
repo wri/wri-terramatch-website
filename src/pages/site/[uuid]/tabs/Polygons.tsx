@@ -518,12 +518,12 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           mainActionOnClick: () => {},
           otherActions: [
             {
-              label: t("Save as Draft"),
+              label: t("Draw Polygon"),
               onClick: () => {},
               value: "draft"
             },
             {
-              label: t("Save and Close"),
+              label: t("Upload"),
               onClick: () => {},
               value: "save-close"
             }
