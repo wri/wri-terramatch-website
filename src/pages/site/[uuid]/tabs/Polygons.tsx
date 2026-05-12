@@ -290,8 +290,8 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     const filter: Record<string, unknown> = {};
     if (polygonFilters.polygonStatus.length > 0) filter.polygonStatus = polygonFilters.polygonStatus;
     if (polygonFilters.validationStatus.length > 0) filter.validationStatus = polygonFilters.validationStatus;
-    if (polygonFilters.plantStartFrom !== "") filter.plantStartFrom = polygonFilters.plantStartFrom;
-    if (polygonFilters.plantStartTo !== "") filter.plantStartTo = polygonFilters.plantStartTo;
+    if (polygonFilters.plantStartFrom !== "") filter.plantStartFrom = `${polygonFilters.plantStartFrom}T00:00:00.000Z`;
+    if (polygonFilters.plantStartTo !== "") filter.plantStartTo = `${polygonFilters.plantStartTo}T00:00:00.000Z`;
     if (polygonFilters.practice.length > 0) filter.practice = polygonFilters.practice;
     if (polygonFilters.targetSys.length > 0) filter.targetSys = polygonFilters.targetSys;
     if (polygonFilters.hasOverlap) filter.hasOverlap = true;
