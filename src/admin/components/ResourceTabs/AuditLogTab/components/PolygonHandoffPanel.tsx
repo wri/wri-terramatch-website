@@ -35,6 +35,7 @@ const PolygonHandoffPanel: FC<Props> = ({
   const t = useT();
   const { openNotification } = useNotificationContext();
   const [, { isUpdating, updateFailure, update }] = useFullProject({ id: projectUuid });
+  const [isPolygonHandoffNotification, setIsPolygonHandoffNotification] = useState(false);
 
   const options = useMemo(
     () =>
@@ -64,6 +65,7 @@ const PolygonHandoffPanel: FC<Props> = ({
       readyForBaseline: baseline,
       ...(trimmed !== "" ? { polygonHandoffComment: trimmed } : {})
     };
+    setIsPolygonHandoffNotification(true);
     update(attrs);
     ApiSlice.pruneCache("auditStatuses");
   }, [submission, baseline, comment, update]);
@@ -74,12 +76,15 @@ const PolygonHandoffPanel: FC<Props> = ({
     useCallback(
       failure => {
         if (failure == null) {
-          openNotification("success", t("Saved"), t("Polygon handoff updated"));
-          setComment("");
-          onSaved?.();
+          if (isPolygonHandoffNotification) {
+            setIsPolygonHandoffNotification(false);
+            openNotification("success", t("Saved"), t("Polygon handoff updated"));
+            setComment("");
+            onSaved?.();
+          }
         }
       },
-      [onSaved, openNotification, t]
+      [onSaved, openNotification, t, isPolygonHandoffNotification]
     )
   );
 
