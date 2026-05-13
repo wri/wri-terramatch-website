@@ -9,17 +9,21 @@ import { TabBarWriProps } from "../TabBar/TabBar";
 export interface ToolbarProps {
   contentLeft: React.ReactNode;
   contentRight?: React.ReactNode;
+  contentCenter?: React.ReactNode;
   className?: string;
   classNameContentRight?: string;
+  classNameContentCenter?: string;
+  classNameContentLeft?: string;
 }
 
 export interface BulkActionToolbarProps {
   primaryButtonProps?: IButtonProps;
   secondaryButtonProps?: IButtonProps;
   tertiaryButtonProps?: IButtonProps;
+  quantityButtonProps?: IButtonProps;
+  items?: string;
   ButtonCancel: IButtonProps;
   ButtonDelete: IButtonProps;
-  ButtonMenu: IMultiActionButtonProps;
 }
 
 export interface ToolbarFormProps {
