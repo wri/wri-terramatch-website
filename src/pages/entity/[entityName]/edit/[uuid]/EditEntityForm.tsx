@@ -18,7 +18,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport } from "@/helpers/entity";
-import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useOnUnmount } from "@/hooks/useOnMount";
@@ -45,6 +45,8 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const router = useRouter();
   const { openToast } = useToastContext();
   const loadFailureHandled = useRef(false);
+  /** Only navigate to /confirm after an explicit Submit, not any future entity PATCH. */
+  const pendingSubmissionConfirmationRef = useRef(false);
   const {
     model,
     formData,
@@ -80,16 +82,27 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const isReport = isEntityReport(entityName);
 
   const submitEntity = useCallback(() => {
+    pendingSubmissionConfirmationRef.current = true;
     updateEntity({ status: "awaiting-approval" });
     ApiSlice.pruneCache("actions");
   }, [updateEntity]);
-  useRequestSuccess(
+
+  useRequestComplete(
     isSubmitting,
     submissionFailure,
-    useCallback(() => {
-      router.replace(`/entity/${entityName}/edit/${entityUUID}/confirm`);
-    }, [entityName, entityUUID, router]),
-    "Submission failed"
+    useCallback(
+      failure => {
+        if (!pendingSubmissionConfirmationRef.current) return;
+        pendingSubmissionConfirmationRef.current = false;
+        if (failure == null) {
+          router.replace(`/entity/${entityName}/edit/${entityUUID}/confirm`);
+        } else {
+          Log.error("Request failed: Submission failed", failure);
+          openToast(t("Submission failed"), ToastType.ERROR);
+        }
+      },
+      [entityName, entityUUID, openToast, router, t]
+    )
   );
 
   const reportingWindow = useReportingWindow(framework, (entity as ReportFullDto)?.dueAt ?? undefined);
