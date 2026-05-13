@@ -1,7 +1,5 @@
 import classNames from "classnames";
-import { ReactNode, useEffect, useRef, useState } from "react";
-import React from "react";
-import { Else, If, Then } from "react-if";
+import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
 import { MenuItem } from "../MenuItem/MenuItem";
@@ -15,7 +13,7 @@ import {
   MENU_PLACEMENT_RIGHT_TOP
 } from "./MenuVariant";
 
-export interface MenuItemProps {
+export type MenuItemProps = {
   id: string;
   is_airtable?: boolean;
   render: () => ReactNode;
@@ -26,8 +24,9 @@ export interface MenuItemProps {
   data?: any;
   type?: "line" | "collapse";
   children?: MenuItemProps[];
-}
-export interface MenuProps {
+};
+
+type MenuProps = {
   extraData?: any;
   menu: MenuItemProps[];
   setSelected?: (id: string) => void;
@@ -42,24 +41,23 @@ export interface MenuProps {
   classNameContentMenu?: string;
   selectedOption?: string;
   disabled?: boolean;
-}
+};
 
-const Menu = (props: MenuProps) => {
-  const {
-    menu,
-    placement = MENU_PLACEMENT_BOTTOM_RIGHT,
-    menuItemVariant = MENU_ITEM_VARIANT_BLUE,
-    variant,
-    children,
-    isDefaultOpen,
-    className,
-    container,
-    setSelectedOption,
-    classNameContentMenu,
-    selectedOption,
-    extraData,
-    disabled = false
-  } = props;
+const Menu: FC<MenuProps> = ({
+  menu,
+  placement = MENU_PLACEMENT_BOTTOM_RIGHT,
+  menuItemVariant = MENU_ITEM_VARIANT_BLUE,
+  variant,
+  children,
+  isDefaultOpen,
+  className,
+  container,
+  setSelectedOption,
+  classNameContentMenu,
+  selectedOption,
+  extraData,
+  disabled = false
+}) => {
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -219,44 +217,41 @@ const Menu = (props: MenuProps) => {
           )}
           style={calculateMenuStyle()}
         >
-          {menu?.map(item => (
-            <If condition={item?.type === "line"} key={item.id}>
-              <Then>
-                <div className="mx-2 border-b border-[#d7dbdc]" />
-              </Then>
-              <Else>
-                <MenuItem
-                  MenuItemVariant={item?.MenuItemVariant ?? menuItemVariant}
-                  selected={setSelectedOption && selectedOption === (item?.country_slug ?? item?.data?.label)}
-                  key={item?.id}
-                  render={
-                    (item?.data?.icon ? (
-                      <div className="flex items-center">
-                        <img
-                          src={`${item?.data?.icon?.toLowerCase()}`}
-                          className="mr-2 h-[16.7px] w-[25px] object-cover lg:h-[21.7px] lg:w-[30px] wide:h-[26.7px] wide:w-[35px]"
-                          alt="info"
-                        />
-                        {item?.data?.label}
-                      </div>
-                    ) : (
-                      item?.data?.label
-                    )) ?? item?.render()
-                  }
-                  onClick={() => {
-                    if (item?.onClick) {
-                      if (item?.is_airtable) {
-                        item?.onClick(extraData);
-                      } else {
-                        item?.onClick();
-                      }
+          {menu.map(item =>
+            item.type === "line" ? (
+              <div key={item.id} className="mx-2 border-b border-[#d7dbdc]" />
+            ) : (
+              <MenuItem
+                key={item.id}
+                MenuItemVariant={item.MenuItemVariant ?? menuItemVariant}
+                selected={setSelectedOption && selectedOption === (item.country_slug ?? item.data?.label)}
+                render={
+                  (item.data?.icon ? (
+                    <div className="flex items-center">
+                      <img
+                        src={`${item.data?.icon?.toLowerCase()}`}
+                        className="mr-2 h-[16.7px] w-[25px] object-cover lg:h-[21.7px] lg:w-[30px] wide:h-[26.7px] wide:w-[35px]"
+                        alt="info"
+                      />
+                      {item.data?.label}
+                    </div>
+                  ) : (
+                    item.data?.label
+                  )) ?? item.render()
+                }
+                onClick={() => {
+                  if (item.onClick) {
+                    if (item?.is_airtable) {
+                      item?.onClick(extraData);
+                    } else {
+                      item?.onClick();
                     }
-                    setSelectedOption?.(item?.country_slug ?? item?.data?.label);
-                  }}
-                />
-              </Else>
-            </If>
-          ))}
+                  }
+                  setSelectedOption?.(item?.country_slug ?? item?.data?.label);
+                }}
+              />
+            )
+          )}
         </div>
       </div>
     </div>

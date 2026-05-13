@@ -44,7 +44,7 @@ const baseItemCountStyles = {
   },
 
   "& [data-scope='select'][data-part='trigger']": {
-    border: `1px solid ${getThemedColor("neutral", 400)} !important`
+    border: `0.0625rem solid ${getThemedColor("neutral", 400)} !important`
   }
 };
 

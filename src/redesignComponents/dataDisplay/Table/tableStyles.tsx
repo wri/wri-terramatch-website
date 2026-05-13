@@ -64,13 +64,13 @@ export const getTableWrapperStyles = (
 
     // Checkbox column styles - minimum width
     ...(selectable && {
-      "& table thead th:first-child": {
+      "& table thead th:first-of-type": {
         width: "1%",
         minWidth: "48px",
         maxWidth: "48px",
         padding: "0.5rem"
       },
-      "& table tbody td:first-child": {
+      "& table tbody td:first-of-type": {
         width: "1%",
         minWidth: "48px",
         maxWidth: "48px",

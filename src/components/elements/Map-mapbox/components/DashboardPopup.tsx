@@ -1,4 +1,3 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { Provider as ReduxProvider } from "react-redux";
 
@@ -11,8 +10,6 @@ import ApiSlice from "@/store/apiSlice";
 
 import type { PopupComponentProps } from "../Map.d";
 import PopupMapImage from "./PopupMapImage";
-
-const client = new QueryClient();
 
 export const DashboardPopup = (event: PopupComponentProps) => {
   const { popupType, popupData, items, label, isoCountry, itemUuid, layerName, projectFullDto } = usePopupData(event);
@@ -49,20 +46,18 @@ export const DashboardPopup = (event: PopupComponentProps) => {
   };
   return (
     <ReduxProvider store={ApiSlice.redux}>
-      <QueryClientProvider client={client}>
-        {popupType === "project" && layerName === LAYERS_NAMES.CENTROIDS ? (
-          <PopupMapImage label={popupData?.label ?? "-"} items={items} learnMore={learnMoreEvent} />
-        ) : (
-          <TooltipGridMap
-            label={label}
-            learnMore={
-              layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && dashboardMode === "dashboard" ? learnMoreEvent : null
-            }
-            isoCountry={isoCountry}
-            items={items}
-          />
-        )}
-      </QueryClientProvider>
+      {popupType === "project" && layerName === LAYERS_NAMES.CENTROIDS ? (
+        <PopupMapImage label={popupData?.label ?? "-"} items={items} learnMore={learnMoreEvent} />
+      ) : (
+        <TooltipGridMap
+          label={label}
+          learnMore={
+            layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && dashboardMode === "dashboard" ? learnMoreEvent : null
+          }
+          isoCountry={isoCountry}
+          items={items}
+        />
+      )}
     </ReduxProvider>
   );
 };

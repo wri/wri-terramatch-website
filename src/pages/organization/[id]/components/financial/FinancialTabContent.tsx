@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import _ from "lodash";
-import { useMemo } from "react";
-import { When } from "react-if";
+import { FC, useMemo } from "react";
 
 import FinancialDescriptionsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDescriptionsSection";
 import FinancialDocumentsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDocumentsSection";
@@ -49,7 +48,7 @@ type FinancialTabContentProps = {
 
 type FinancialIndicatorWithUuid = FinancialIndicatorDto & { uuid: string };
 
-const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
+const FinancialTabContent: FC<FinancialTabContentProps> = ({ organization }) => {
   const t = useT();
   const { openModal } = useModalContext();
 
@@ -264,7 +263,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
         <Text variant="text-heading-2000">{t("Financial Information")}</Text>
 
         {/* Files */}
-        <When condition={!incompleteSteps.statementFiles && budgetFiles.length > 0}>
+        {!incompleteSteps.statementFiles && budgetFiles.length > 0 && (
           <Files
             title={t("Operating Budget Documents")}
             files={budgetFiles.map(
@@ -284,9 +283,9 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
                 } as UploadedFile)
             )}
           />
-        </When>
+        )}
         {/* Build a Stronger Profile */}
-        <When condition={showIncompleteStepsSection}>
+        {showIncompleteStepsSection && (
           <BuildStrongerProfile
             steps={[
               {
@@ -304,7 +303,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
               openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />)
             }
           />
-        </When>
+        )}
       </Container>
     </Container>
   );

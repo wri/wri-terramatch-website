@@ -1,5 +1,4 @@
 import { Box, Card, Divider, Typography } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
 import { FC, useCallback, useMemo } from "react";
 import {
   ArrayField,
@@ -30,7 +29,7 @@ import FundingSourcesSection from "@/admin/components/ResourceTabs/HistoryTab/co
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { useGadmChoices } from "@/connections/Gadm";
 import {
-  updateOrganisation,
+  useOrganisation,
   useOrganisationFinancialIndicators,
   useOrganisationFundingTypes,
   useOrganisationMedia,
@@ -43,8 +42,7 @@ import {
 } from "@/constants/options/engagementStrategy";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
-import { OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 import { optionToChoices } from "@/utils/options";
 
@@ -59,18 +57,8 @@ const OrganisationShowActions: FC = () => {
   if (!record) return null;
   const { uuid, isTest } = record;
   const refresh = useRefresh();
-  const { mutate: updateOrg } = useMutation({
-    mutationFn: async (attributes: OrganisationUpdateAttributes) => {
-      if (uuid == null) throw Error("UUID is required");
-      return updateOrganisation(attributes, { id: uuid });
-    },
-    onSuccess: async () => {
-      if (uuid != null) {
-        ApiSlice.pruneCache("organisations", [uuid]);
-      }
-      refresh();
-    }
-  });
+  const [, { update: updateOrg, isUpdating, updateFailure }] = useOrganisation({ id: uuid });
+  useRequestSuccess(isUpdating, updateFailure, refresh);
 
   const toggleTestStatus = useCallback(() => {
     if (uuid == null) return;

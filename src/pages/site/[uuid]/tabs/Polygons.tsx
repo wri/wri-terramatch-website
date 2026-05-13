@@ -45,6 +45,7 @@ import {
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
+import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 import {
   mapSitePolygonStatusToMappedTagState,
   mapSitePolygonValidationStatusToValidationTagState
@@ -168,7 +169,7 @@ const getTargetLandUseConfig = (targetLandUse: targetLandUseType | null) => {
 
 const renderRestorationPractice = (restorationPractice: restorationStrategyType[]) => {
   if (restorationPractice.length === 0) {
-    return <Text>-</Text>;
+    return <Text>—</Text>;
   }
 
   return (
@@ -217,7 +218,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   }, [row.id, onHover]);
 
   const targetLandUseConfig = getTargetLandUseConfig(row.targetLandUse);
-
+  console.log(row);
   return (
     <TableRow
       {...(rowProps as Record<string, unknown>)}
@@ -231,38 +232,42 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
       <TableCell className="min-w-[17.75rem] max-w-[17.75rem]">
         <Box>
           <Text textStyle="400-bold" color="neutral.800" className="truncate">
-            {row.polygonName}
+            {row.polygonName ?? "—"}
           </Text>
         </Box>
       </TableCell>
       <TableCell className="min-w-[15.875rem]">
-        <MappedTag state={row.submission} />
+        {row.submission != null ? <MappedTag state={row.submission} /> : <Text>—</Text>}
       </TableCell>
       <TableCell className="min-w-[12.75rem]">
-        <ValidationTag className="" status={row.validation} />
+        {row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>}
       </TableCell>
       <TableCell className="min-w-[15.5rem]">
         <Flex className="items-center gap-2">{renderRestorationPractice(row.restorationPractice)}</Flex>
       </TableCell>
       <TableCell className="min-w-[16.75rem]">
-        <Flex className="items-center gap-2" color="neutral.800">
-          {targetLandUseConfig.icon}
-          <Text>{targetLandUseConfig.label}</Text>
-        </Flex>
+        {targetLandUseConfig.icon != null && targetLandUseConfig.label != null ? (
+          <Flex className="items-center gap-2" color="neutral.800">
+            {targetLandUseConfig.icon}
+            <Text>{targetLandUseConfig.label}</Text>
+          </Flex>
+        ) : (
+          <Text>—</Text>
+        )}
       </TableCell>
       <TableCell className="min-w-[11.5rem]">
         <FeedbackTag
           type="info-grey"
           className="w-fit"
-          label={row.plantingDate}
+          label={row.plantingDate != "-" ? row.plantingDate : "—"}
           icon={<CalendarIcon boxSize={2.5} />}
         />
       </TableCell>
       <TableCell className="min-w-[15.875rem]">
-        <Text>{row.treeDistribution.join(", ")}</Text>
+        <Text>{row.treeDistribution.length > 0 ? row.treeDistribution.join(", ") : "—"}</Text>
       </TableCell>
-      <TableCell className="min-w-[12.75rem]">{row.treesPlanted}</TableCell>
-      <TableCell className="min-w-[15.75rem]">{row.area}</TableCell>
+      <TableCell className="min-w-[12.75rem]">{formatNumberLocaleString(row.treesPlanted) ?? "—"}</TableCell>
+      <TableCell className="min-w-[15.75rem]">{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
     </TableRow>
   );
 };
@@ -628,12 +633,12 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           mainActionOnClick: () => {},
           otherActions: [
             {
-              label: t("Save as Draft"),
+              label: t("Draw Polygon"),
               onClick: () => {},
               value: "draft"
             },
             {
-              label: t("Save and Close"),
+              label: t("Upload"),
               onClick: () => {},
               value: "save-close"
             }

@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 import FormField from "@/components/extensive/WizardForm/FormField";
@@ -20,7 +19,6 @@ const FORM_FIELD = FormField;
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-const client = new QueryClient();
 const FIELDS: FieldDefinition[] = [
   {
     name: "text_field",
@@ -94,13 +92,11 @@ export const Default: Story = {
     const formHook = useForm();
     const fieldsProvider = useLocalStepsProvider(STEPS);
     return (
-      <QueryClientProvider client={client}>
-        <div className="flex w-full justify-center bg-background px-3">
-          <WizardFormProvider fieldsProvider={fieldsProvider}>
-            <Component {...args} formHook={formHook} />
-          </WizardFormProvider>
-        </div>
-      </QueryClientProvider>
+      <div className="flex w-full justify-center bg-background px-3">
+        <WizardFormProvider fieldsProvider={fieldsProvider}>
+          <Component {...args} formHook={formHook} />
+        </WizardFormProvider>
+      </div>
     );
   },
   args: {

@@ -21,7 +21,7 @@ const meta: Meta<ComponentType> = {
     },
     customGap: {
       control: "text",
-      description: "Custom gap between radio buttons (e.g. '20px')"
+      description: "Custom gap between radio buttons (e.g. '0.25rem')"
     },
     options: {
       control: "object",

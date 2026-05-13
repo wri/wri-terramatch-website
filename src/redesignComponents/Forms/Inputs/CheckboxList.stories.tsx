@@ -12,7 +12,7 @@ const meta = {
   argTypes: {
     defaultValues: {
       control: "object",
-      description: "Names of checkboxes checked by default (array of checkbox `name` values)"
+      description: "Names of the checkboxes to be checked by default"
     },
     horizontal: {
       control: "boolean",
@@ -34,7 +34,7 @@ const meta = {
   args: { onCheckedChange: () => {} },
   decorators: [
     (Story: React.ComponentType) => (
-      <div style={{ width: "400px" }}>
+      <div style={{ width: "25rem" }}>
         <Story />
       </div>
     )

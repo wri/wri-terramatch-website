@@ -424,7 +424,10 @@ export function isAggregateReportsEmpty(data: AggregateReportsDto | null | undef
 }
 
 export const formatNumberLocaleString = (value: number): string => {
-  return value.toLocaleString();
+  return value.toLocaleString(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  });
 };
 
 export const getPercentage = (value: number, total: number): string => {

@@ -13,11 +13,11 @@ export interface PageHeaderProps {
 const PageHeader: FC<PageHeaderProps> = ({ title, tag, label }) => {
   return (
     <Box background="secondary.neutral" paddingX={4} paddingY={3} className="flex items-center justify-between">
-      <Text fontSize="28px" lineHeight="36px" color="primary.900" fontWeight="bold">
+      <Text textStyle="800-bold" color="primary.900">
         {title}
       </Text>
       <Flex gap={2} alignItems="center">
-        <Text fontSize="14px" lineHeight="20px" fontWeight="bold" className="text-theme-neutral-900">
+        <Text textStyle="200-bold" color="neutral.900">
           {label}
         </Text>
         {tag != null && <TagSubmission {...tag} />}

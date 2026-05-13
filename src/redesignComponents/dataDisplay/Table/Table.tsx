@@ -35,7 +35,7 @@ interface TableProps<T extends BaseRow> {
   /** Ref forwarded to the wrapper Box. Useful for consumers that need to listen to scroll on the
    *  WriTable scroll container (e.g. for sticky columns). */
   containerRef?: Ref<HTMLDivElement>;
-  /** Controlled selection state. When provided, overrides the internal useTableSelection state. */
+  // Controlled selection state. When provided, overrides the internal useTableSelection state.
   selectedRows?: T[];
   /** Called when the "select all" header checkbox is toggled. Receives the checked flag and the
    *  currently visible page rows so the consumer can sync their own selectedRows state. */
@@ -192,6 +192,7 @@ const Table = <T extends BaseRow>({
       ref={containerRef}
       css={getTableWrapperStyles(selectable, dataByPage, pageSize, actualTotalItems, css)}
       className={className}
+      {...(height != null ? { height } : {})}
     >
       <WriTable
         columns={columns}
@@ -214,7 +215,6 @@ const Table = <T extends BaseRow>({
         selectedRows={selectedRows}
         selectable={selectable}
         variant={variant}
-        height={height}
         stickyHeader={stickyHeader}
         loading={loading}
       />

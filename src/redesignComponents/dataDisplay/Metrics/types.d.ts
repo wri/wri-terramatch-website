@@ -1,13 +1,12 @@
 import type { DetailedHTMLProps, HTMLAttributes, ReactNode } from "react";
 
-import { ProgressState } from "../actions/Tags/ProgressTag/ProgressTag";
-
+import type { ProgressState } from "../../actions/Tags/ProgressTag/ProgressTag";
 export interface DonutChartProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   progress: number;
   size?: number;
   color?: string;
   backgroundColor?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
   className?: string;
   type?: string;
 }
@@ -22,6 +21,7 @@ export interface ProgressBarProps extends DetailedHTMLProps<HTMLAttributes<HTMLD
 }
 
 export type MetricCardVariant = "medium" | "large" | "progressBar" | "donutChart";
+
 export interface MetricCardProps {
   title: string;
   progress: number;
@@ -39,25 +39,24 @@ export interface MetricCardProps {
   selection?: number;
 }
 
-export interface MetricCardCommonVariantProps
-  extends Pick<
-    MetricCardProps,
-    | "title"
-    | "progress"
-    | "goal"
-    | "progressSuffix"
-    | "goalSuffix"
-    | "tooltipContent"
-    | "color"
-    | "type"
-    | "frameworkKey"
-  > {
+type MetricCardFieldsForContentVariants =
+  | "title"
+  | "progress"
+  | "goal"
+  | "progressSuffix"
+  | "goalSuffix"
+  | "tooltipContent"
+  | "color"
+  | "type"
+  | "frameworkKey"
+  | "selection";
+
+export interface MetricCardCommonVariantProps extends Pick<MetricCardProps, MetricCardFieldsForContentVariants> {
   iconWithColor: ReactNode;
   classNameTitle?: string;
 }
 
-export type NoGoalMetricCardContentProps = Pick<
-  MetricCardCommonVariantProps,
+type NoGoalMetricCardContentKeys =
   | "title"
   | "progress"
   | "progressSuffix"
@@ -66,11 +65,11 @@ export type NoGoalMetricCardContentProps = Pick<
   | "type"
   | "tooltipContent"
   | "classNameTitle"
-  | "selection"
->;
+  | "selection";
 
-export type ProgressBarMetricCardContentProps = Pick<
-  MetricCardCommonVariantProps,
+export type NoGoalMetricCardContentProps = Pick<MetricCardCommonVariantProps, NoGoalMetricCardContentKeys>;
+
+type ProgressBarMetricCardContentKeys =
   | "title"
   | "progress"
   | "goal"
@@ -80,11 +79,11 @@ export type ProgressBarMetricCardContentProps = Pick<
   | "iconWithColor"
   | "type"
   | "tooltipContent"
-  | "classNameTitle"
->;
+  | "classNameTitle";
+
+export type ProgressBarMetricCardContentProps = Pick<MetricCardCommonVariantProps, ProgressBarMetricCardContentKeys>;
 
 export type DonutChartMetricCardContentProps = MetricCardCommonVariantProps;
-
 export interface MultiMetricCardProps {
   title: string;
   status?: ProgressState;

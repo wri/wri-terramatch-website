@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
-import { FC, useState } from "react";
-import { Else, If, Then, When } from "react-if";
+import { FC, useCallback, useState } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
@@ -11,14 +10,14 @@ import { Option, OptionValue } from "@/types/common";
 
 import { ModalBase, ModalProps } from "./Modal";
 
-export interface ModalConfirmProps extends ModalProps {
+export type ModalConfirmProps = ModalProps & {
   onClose: () => void;
   onConfirm: (text?: any, opt?: any) => void;
   menu?: Option[];
   menuLabel?: string;
   commentArea?: boolean;
   checkPolygonsSite?: boolean | undefined;
-}
+};
 
 const ModalConfirm: FC<ModalConfirmProps> = ({
   title,
@@ -38,9 +37,9 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
   const [selectedOption, setSelectedOption] = useState<OptionValue[] | null>(null);
   const [showError, setShowError] = useState(false);
 
-  const handleCommentChange = (e: any) => {
+  const handleCommentChange = useCallback((e: any) => {
     useData(e.target.value);
-  };
+  }, []);
 
   return (
     <ModalBase {...rest} className={tw("min-w-[30rem] p-5", className)}>
@@ -48,15 +47,14 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
         <Text variant="text-14-bold" className="text-center">
           {title}
         </Text>
-        <If condition={typeof content === "string"}>
-          <Then>
-            <Text as="div" variant="text-12-light" className="text-darkCustom" containHtml>
-              {content}
-            </Text>
-          </Then>
-          <Else>{content}</Else>
-        </If>
-        <When condition={menu?.length > 0}>
+        {typeof content === "string" ? (
+          <Text as="div" variant="text-12-light" className="text-darkCustom" containHtml>
+            {content}
+          </Text>
+        ) : (
+          content
+        )}
+        {(menu?.length ?? 0) > 0 && (
           <div className="w-fit">
             <Dropdown
               label={menuLabel}
@@ -74,24 +72,24 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
               }}
               disableOptionTitles={checkPolygonsSite ? ["Approved"] : undefined}
             />
-            <If condition={showError}>
+            {showError && (
               <Text variant="text-12-bold" className="text-red">
                 {t("Please select an option")}
               </Text>
-            </If>
+            )}
           </div>
-        </When>
-        <When condition={commentArea}>
+        )}
+        {commentArea && (
           <TextArea
             placeholder="Type comment here..."
             name=""
             value={data}
-            onChange={e => handleCommentChange(e)}
+            onChange={handleCommentChange}
             className="max-h-72 !min-h-0 resize-none rounded-lg border border-grey-750 p-4 text-xs"
             containerClassName="w-full"
             rows={4}
           />
-        </When>
+        )}
       </div>
       <div className="mt-4 flex w-full gap-4">
         <Button variant="white-page-admin" className="w-full py-3" onClick={onClose}>
@@ -102,12 +100,12 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
         <Button
           className="w-full py-3"
           onClick={() => {
-            onClose();
             if (selectedOption === null && menu?.length > 0) {
               setShowError(true);
               setTimeout(() => setShowError(false), 3000);
               return;
             }
+            onClose();
             onConfirm(data, selectedOption ?? [0]);
           }}
         >

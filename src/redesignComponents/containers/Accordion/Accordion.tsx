@@ -9,7 +9,7 @@ const variantStyles = {
   primary: {
     container: {
       background: "neutral.100",
-      borderBottom: "1px solid",
+      borderBottom: "0.0625rem solid",
       borderColor: "primary.900",
       paddingBottom: 3,
       paddingTop: 2,
@@ -85,7 +85,7 @@ const Accordion: FC<AccordionProps> = ({
             <AccordionChakra.ItemTrigger css={{ outline: "none" }}>
               <Flex flex="1" alignItems="center" justifyContent="space-between" width="100%" {...headerStyles}>
                 <Flex gap={3} flex="1" alignItems="center" justifyContent="space-between" width="100%">
-                  <Box flex="1" fontSize="20px" lineHeight="28px" color="primary.900">
+                  <Box flex="1" fontSize="1.25rem" lineHeight="1.75rem" color="primary.900">
                     {header}
                   </Box>
 

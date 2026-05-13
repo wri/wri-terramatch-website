@@ -88,7 +88,7 @@ const SiteDetailPage = () => {
                 site={site}
                 breadcrumbs={[
                   {
-                    label: t("My Projects"),
+                    label: t("Projects"),
                     link: "/my-projects",
                     icon: <ProjectIcon className="!text-theme-primary-900" />
                   },

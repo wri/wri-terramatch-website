@@ -19,7 +19,7 @@ const meta = {
   args: {
     label: "Label",
     caption: "Caption",
-    className: "!w-[334px]"
+    className: "!w-[20.875rem]"
   }
 } satisfies Meta<typeof FilterCards>;
 

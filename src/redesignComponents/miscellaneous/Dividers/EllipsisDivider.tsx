@@ -4,8 +4,8 @@ import React, { FC } from "react";
 const EllipsisDivider: FC<BoxProps> = (props = {}) => {
   const {
     color = "neutral.900",
-    width = "4px",
-    height = "4px",
+    width = "0.25rem",
+    height = "0.25rem",
     borderRadius = "50%",
     as = "span",
     display = "inline-block",

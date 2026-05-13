@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { buildStore } from "@/utils/testStore";
 
@@ -12,27 +11,14 @@ const meta: Meta<typeof Component> = {
 
 export default meta;
 type Story = StoryObj<typeof Component>;
-const client = new QueryClient();
 
 export const LoggedIn: Story = {
   parameters: {
     storeBuilder: buildStore().addLogin("fakeauthtoken")
   },
-  decorators: [
-    Story => (
-      <QueryClientProvider client={client}>
-        <Story />
-      </QueryClientProvider>
-    )
-  ]
+  decorators: [Story => <Story />]
 };
 
 export const LoggedOut: Story = {
-  decorators: [
-    Story => (
-      <QueryClientProvider client={client}>
-        <Story />
-      </QueryClientProvider>
-    )
-  ]
+  decorators: [Story => <Story />]
 };

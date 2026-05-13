@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
-import { When } from "react-if";
+import { FC, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 
@@ -31,7 +30,7 @@ export interface DashboardDataProps {
   totalValue?: number;
 }
 
-const ObjectiveSec = ({ data }: { data: DashboardDataProps }) => {
+const ObjectiveSec: FC<{ data: DashboardDataProps }> = ({ data }) => {
   const t = useT();
   const [collapseText, setCollapseText] = useState(true);
   const [objectiveText, setObjectiveText] = useState(data.objetiveText);
@@ -47,29 +46,29 @@ const ObjectiveSec = ({ data }: { data: DashboardDataProps }) => {
 
   return (
     <div className="grid gap-6">
-      <When condition={data?.objetiveText}>
+      {data?.objetiveText != null && (
         <div>
           <Text variant="text-14" className="text-darkCustom" containHtml={true}>
             {t(objectiveText)}
           </Text>
-          <When condition={(data?.objetiveText?.length ?? 0) > maxLength}>
+          {(data?.objetiveText?.length ?? 0) > maxLength && (
             <button onClick={() => setCollapseText(!collapseText)}>
               &nbsp;
               <Text variant="text-14-semibold" className="text-darkCustom">
                 {collapseText ? t("...Read More") : t("Show Less")}
               </Text>
             </button>
-          </When>
+          )}
         </div>
-      </When>
-      <When condition={data?.preferredLanguage}>
+      )}
+      {data?.preferredLanguage != null && (
         <div>
           <Text variant="text-14-semibold" className="text-darkCustom">
             {t(`Preferred Language: ${data.preferredLanguage}`)}
           </Text>
         </div>
-      </When>
-      <When condition={data?.landTenure}>
+      )}
+      {data?.landTenure != null && (
         <div>
           <Text variant="text-14-light" className="text-darkCustom">
             {t("Land Tenure")}
@@ -78,7 +77,7 @@ const ObjectiveSec = ({ data }: { data: DashboardDataProps }) => {
             {t(data.landTenure)}
           </Text>
         </div>
-      </When>
+      )}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
+import { useMemo } from "react";
 import { useShowContext } from "react-admin";
 
 import Table from "@/components/elements/Table/Table";
@@ -7,6 +8,7 @@ import { VARIANT_TABLE_FINANCIAL_METRICS } from "@/components/elements/Table/Tab
 import Text from "@/components/elements/Text/Text";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
+import { Framework, toFramework, useFrameworkContext } from "@/context/framework.provider";
 import WizardFormProvider, { FormFieldsProvider, FormModel, OrgFormDetails } from "@/context/wizardForm.provider";
 import { FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSchemas";
 import { formatFinancialAmount, getCurrencySymbolPrefix, getLocaleForIsoCurrency } from "@/utils/financialReport";
@@ -23,6 +25,18 @@ const COLLECTION_LABELS: Record<string, string> = {
   "current-ratio": "Current Ratio",
   "description-documents": "Description Documents"
 };
+
+const NON_PROFIT_ORG_TYPE = "non-profit-organization";
+
+function readStringField(obj: unknown, ...keys: string[]): string | null {
+  if (obj == null || typeof obj !== "object") return null;
+  const o = obj as Record<string, unknown>;
+  for (const key of keys) {
+    const v = o[key];
+    if (typeof v === "string") return v;
+  }
+  return null;
+}
 
 const FinancialMetrics = ({
   data,
@@ -42,10 +56,29 @@ const FinancialMetrics = ({
   orgModel?: boolean;
 }) => {
   const ctx = useShowContext();
+  const { framework: contextFramework } = useFrameworkContext();
   const t = useT();
   const fincialReportData = ctx.record;
+
+  const framework = useMemo(() => {
+    if (contextFramework !== Framework.UNDEFINED) return contextFramework;
+    return toFramework(readStringField(fincialReportData, "frameworkKey", "framework_key"));
+  }, [contextFramework, fincialReportData]);
+
+  const organisationType = useMemo(
+    () => readStringField(fincialReportData, "organisationType", "organisation_type", "type"),
+    [fincialReportData]
+  );
+
+  const showBudgetOnlyMetrics = framework === Framework.TF_LANDSCAPES && organisationType === NON_PROFIT_ORG_TYPE;
+
+  const indicatorRows = useMemo(
+    () => (showBudgetOnlyMetrics ? data.filter(f => f.collection === "budget") : data),
+    [data, showBudgetOnlyMetrics]
+  );
+
   const financialMetrics = Object?.values(
-    data?.reduce((acc, financial) => {
+    indicatorRows?.reduce((acc, financial) => {
       if (financial?.collection === "description-documents") {
         return acc;
       }

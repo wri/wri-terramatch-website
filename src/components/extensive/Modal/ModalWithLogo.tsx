@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import { FC, useMemo, useState } from "react";
-import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
 import AuditLogTable from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogTable";
@@ -21,14 +20,14 @@ import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
 import { ModalBaseWithLogo } from "./ModalsBases";
 
-export interface ModalWithLogoProps extends ModalProps {
+export type ModalWithLogoProps = ModalProps & {
   uuid: string;
   primaryButtonText?: string;
   secondaryButtonText?: string;
   toogleButton?: boolean;
   status?: StatusEnum;
   onClose?: () => void;
-}
+};
 
 const ModalWithLogo: FC<ModalWithLogoProps> = ({
   uuid,
@@ -45,7 +44,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
   ...rest
 }) => {
   const t = useT();
-  const [buttonToogle, setButtonToogle] = useState(true);
+  const [buttonToggle, setButtonToggle] = useState(true);
   const { valuesForStatus, statusLabels } = useStatusActionsMap(AuditLogButtonStates.POLYGON);
 
   const [, { data: auditStatusesData, refetch }] = useAuditStatuses({
@@ -83,34 +82,34 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
         </button>
       </header>
       <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
-        <When condition={!!iconProps}>
+        {iconProps != null && (
           <Icon
             {...iconProps!}
             width={iconProps?.width ?? 40}
             className={twMerge("mb-8", iconProps?.className)}
             style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
           />
-        </When>
+        )}
         <div className="mb-8 flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
-          <When condition={toogleButton}>
+          {toogleButton && (
             <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
               <Button
-                variant={`${buttonToogle ? "white-toggle" : "transparent-toggle"}`}
-                onClick={() => setButtonToogle(!buttonToogle)}
+                variant={`${buttonToggle ? "white-toggle" : "transparent-toggle"}`}
+                onClick={() => setButtonToggle(!buttonToggle)}
                 className="w-[111px]"
               >
                 <Text variant="text-14-semibold">{t("Comments")}</Text>
               </Button>
               <Button
-                variant={`${buttonToogle ? "transparent-toggle" : "white-toggle"}`}
-                onClick={() => setButtonToogle(!buttonToogle)}
+                variant={`${buttonToggle ? "transparent-toggle" : "white-toggle"}`}
+                onClick={() => setButtonToggle(!buttonToggle)}
                 className="w-[111px]"
               >
                 <Text variant="text-14-semibold">{t("History")}</Text>
               </Button>
             </div>
-          </When>
+          )}
         </div>
         <div>
           <div className="mb-[72px] px-20">
@@ -120,7 +119,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
               classNameLabels="min-w-[111px]"
             />
           </div>
-          <When condition={buttonToogle}>
+          {buttonToggle ? (
             <div className="flex flex-col gap-4">
               <CommentaryBox
                 name={user?.firstName!}
@@ -145,20 +144,19 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
                 />
               ))}
             </div>
-          </When>
-          <When condition={!buttonToogle}>
+          ) : (
             <AuditLogTable auditLogData={{ data: restAuditLogData }} />
-          </When>
+          )}
         </div>
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
-        <When condition={!!secondaryButtonProps}>
+        {secondaryButtonProps != null && (
           <Button {...secondaryButtonProps!} variant="white-page-admin">
             <Text variant="text-14-bold" className="capitalize">
               {secondaryButtonText}
             </Text>
           </Button>
-        </When>
+        )}
         <Button {...primaryButtonProps}>
           <Text variant="text-14-bold" className="capitalize text-white">
             {primaryButtonText}

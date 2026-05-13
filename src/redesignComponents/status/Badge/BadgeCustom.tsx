@@ -35,7 +35,7 @@ const Badge = ({
 
   const notification = getNotificationCount();
 
-  const defaultChildren = <NotificationIcon color="currentColor" height="16px" width="16px" />;
+  const defaultChildren = <NotificationIcon color="currentColor" className="h-4 w-4" />;
 
   return (
     <Flex

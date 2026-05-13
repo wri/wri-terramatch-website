@@ -39,7 +39,7 @@ const FilterControl: FC = () => {
 
   return (
     <div className="">
-      {championsMap ? (
+      {championsMap != null ? (
         <LegendPanel legendItems={legendPanelItems} title="Legend" />
       ) : (
         <>

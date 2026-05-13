@@ -1,7 +1,6 @@
 import { AccessorKeyColumnDef, ColumnDef, RowData } from "@tanstack/react-table";
 import _ from "lodash";
 import { useCallback, useMemo } from "react";
-import { When } from "react-if";
 import { v4 as uuidv4 } from "uuid";
 
 import Button from "@/components/elements/Button/Button";
@@ -43,7 +42,7 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
   orgDetails?: OrgFormDetails;
 }
 
-function DataTable<TData extends RowData & { uuid: string }>(props: DataTableProps<TData>) {
+const DataTable = <TData extends RowData & { uuid: string }>(props: DataTableProps<TData>) => {
   const { openModal, closeModal } = useModalContext();
   const {
     fieldsProvider,
@@ -144,9 +143,9 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
         header: "",
         cell: props => (
           <div className="flex items-center gap-5">
-            <When condition={!!handleUpdate}>
+            {handleUpdate != null && (
               <IconButton iconProps={{ name: IconNames.EDIT }} onClick={() => openFormUpdateModalHandler(props)} />
-            </When>
+            )}
             <IconButton
               iconProps={{ name: IconNames.TRASH_CIRCLE, className: "fill-error" }}
               onClick={() => onDeleteEntry(props.getValue() as string)}
@@ -171,7 +170,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
           {addButtonCaption}
         </Button>
 
-        <When condition={value.length > 0}>
+        {value.length > 0 && (
           <Table
             columns={headers}
             data={value.map((v, index) => ({ ...v, index }))}
@@ -179,10 +178,10 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
             hasPagination={hasPagination}
             invertSelectPagination={invertSelectPagination}
           />
-        </When>
+        )}
       </div>
     </InputWrapper>
   );
-}
+};
 
 export default DataTable;

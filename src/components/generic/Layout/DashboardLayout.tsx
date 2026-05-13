@@ -1,7 +1,6 @@
 import { useMediaQuery } from "@mui/material";
 import { useRouter } from "next/router";
-import { cloneElement, DetailedHTMLProps, HTMLAttributes, PropsWithChildren, ReactElement, useState } from "react";
-import { When } from "react-if";
+import { cloneElement, DetailedHTMLProps, FC, HTMLAttributes, PropsWithChildren, ReactElement, useState } from "react";
 
 import { useGadmChoices } from "@/connections/Gadm";
 import { DashboardProvider } from "@/context/dashboard.provider";
@@ -25,7 +24,7 @@ export interface CountriesProps {
   country_slug: string;
 }
 
-const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
+const DashboardLayout: FC<PropsWithChildren<DashboardLayoutProps>> = props => {
   const router = useRouter();
   const countryChoices = useGadmChoices({ level: 0 });
   const [selectedCountry, setSelectedCountry] = useState<CountriesProps | undefined>(undefined);
@@ -49,7 +48,7 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
         <Sidebar />
         <main className={`flex flex-[1_1_0] flex-col overflow-hidden ${props.className} mobile:bg-white`}>
           <>
-            <When condition={!isImpactStoryPage || isMobile}>
+            {(!isImpactStoryPage || isMobile) && (
               <HeaderDashboard
                 isProjectInsightsPage={isProjectInsightsPage}
                 isProjectListPage={isProjectListPage}
@@ -60,7 +59,7 @@ const DashboardLayout = (props: PropsWithChildren<DashboardLayoutProps>) => {
                 defaultSelectedCountry={selectedCountry}
                 setSelectedCountry={setSelectedCountry}
               />
-            </When>
+            )}
             {childrenWithProps}
           </>
         </main>
