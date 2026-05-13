@@ -53,6 +53,8 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const validation = stepsWithValidation[index].validation;
   const hasStepFeedback = hasFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
   const valid = (props.values == null || validation.isValidSync(props.values)) && !hasStepFeedback;
+  const validationInvalid = props.values != null && !validation.isValidSync(props.values);
+  const summaryAccordionStatus = valid ? "complete" : validationInvalid ? "error" : "warning";
   const fieldsRequiringAttention = getFieldsRequiringAttentionCount(validation, props.values);
   const entities = useFormEntities();
   const entries = useGetFormEntries({ stepId, ...props, entity: entities[0] });
@@ -69,7 +71,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
               ? t("{count} requires attention", { count: fieldsRequiringAttention + feedbackFieldsCount })
               : undefined
           }
-          status={hasStepFeedback ? "error" : valid ? "complete" : "error"}
+          status={summaryAccordionStatus}
         />
       }
       actions={
