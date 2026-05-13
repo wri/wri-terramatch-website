@@ -45,8 +45,6 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const router = useRouter();
   const { openToast } = useToastContext();
   const loadFailureHandled = useRef(false);
-  const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
-
   const {
     model,
     formData,
@@ -89,12 +87,8 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     isSubmitting,
     submissionFailure,
     useCallback(() => {
-      if (mode === "edit" || mode?.includes("provide-feedback")) {
-        router.push(getEntityDetailPageLink(entityName, entityUUID));
-      } else {
-        router.replace(`/entity/${entityName}/edit/${entityUUID}/confirm`);
-      }
-    }, [entityName, entityUUID, mode, router]),
+      router.replace(`/entity/${entityName}/edit/${entityUUID}/confirm`);
+    }, [entityName, entityUUID, router]),
     "Submission failed"
   );
 
