@@ -549,12 +549,14 @@ const PolygonReviewTab: FC<IProps> = props => {
               ? [response.data]
               : [];
             const responseAttributes = dataArray[0]?.attributes;
-
-            openFormModalHandlerIdentifiedPolygons(responseAttributes?.existingUuids ?? [], {
+            const existingUuids = responseAttributes?.existingUuids ?? [];
+            const summary = {
               featuresForVersioning: responseAttributes?.featuresForVersioning ?? 0,
               featuresForCreation: responseAttributes?.featuresForCreation ?? 0,
               totalFeatures: responseAttributes?.totalFeatures ?? 0
-            });
+            };
+
+            openFormModalHandlerIdentifiedPolygons(existingUuids, summary);
           },
           onError: (error: any) => {
             const errorMessage = extractErrorMessage(error);
@@ -807,7 +809,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       <ModalIdentified
         title={t("Polygons Identified")}
         existingUuids={existingUuids}
-        sitePolygonData={sitePolygonData}
+        siteUuid={record?.uuid ?? ""}
         summary={summary}
         setSubmitPolygonLoaded={setSubmitPolygonLoaded}
         setSaveFlags={setSaveFlags}
