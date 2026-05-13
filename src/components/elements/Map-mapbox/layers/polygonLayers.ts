@@ -26,6 +26,7 @@ export function pickPolygonGeometryIdFromProperties(
 }
 
 export type PolygonGeometryFillLayerConfig = { layerId: string; baseFillOpacity: number };
+export type PolygonGeometryLineLayerConfig = { layerId: string; baseLineWidth: number };
 
 export function getPolygonGeometryFillLayerConfigs(): PolygonGeometryFillLayerConfig[] {
   const layer = layersList.find(l => l.name === LAYERS_NAMES.POLYGON_GEOMETRY);
@@ -45,6 +46,22 @@ export function getPolygonGeometryFillLayerConfigs(): PolygonGeometryFillLayerCo
 
 export function getPolygonGeometryFillLayerIds(): string[] {
   return getPolygonGeometryFillLayerConfigs().map(c => c.layerId);
+}
+
+export function getPolygonGeometryLineLayerConfigs(): PolygonGeometryLineLayerConfig[] {
+  const layer = layersList.find(l => l.name === LAYERS_NAMES.POLYGON_GEOMETRY);
+  if (layer == null) return [];
+  return layer.styles
+    .map((style, index) => {
+      if ((style as { type?: string }).type !== "line") return null;
+      const paint = (style as LayerWithStyle & { paint?: { "line-width"?: number } }).paint;
+      const base = paint?.["line-width"];
+      return {
+        layerId: `${layer.name}-${index}`,
+        baseLineWidth: typeof base === "number" ? base : 1
+      };
+    })
+    .filter((x): x is PolygonGeometryLineLayerConfig => x != null);
 }
 
 const showPolygons = (

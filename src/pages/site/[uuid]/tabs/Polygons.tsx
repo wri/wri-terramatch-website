@@ -10,6 +10,7 @@ import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SitePolygonsIndexQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { useDate } from "@/hooks/useDate";
 import { getThemedColor } from "@/lib/theme";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
@@ -41,6 +42,7 @@ import {
   WetlandIcon,
   WoodlotIcon
 } from "@/redesignComponents/foundations/Icons";
+import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
@@ -49,7 +51,15 @@ import {
   mapSitePolygonValidationStatusToValidationTagState
 } from "@/utils/mapStatusToTagStateEntity";
 
-import SearchBar from "../components/SearchBar";
+import {
+  EMPTY_POLYGON_FILTERS,
+  PolygonFilterState,
+  RESTORATION_PRACTICE_LABELS,
+  SUBMISSION_STATUS_LABELS,
+  TARGET_LAND_USE_LABELS,
+  VALIDATION_STATUS_LABELS
+} from "../components/polygonFilter.constants";
+import PolygonToolbar from "../components/PolygonToolbar";
 
 interface SitePolygonsTabProps {
   site: SiteFullDto;
@@ -269,10 +279,39 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   const { format } = useDate();
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [isStickyActive, setIsStickyActive] = useState(false);
+  const [polygonSearch, setPolygonSearch] = useState("");
+  const [debouncedPolygonSearch, setDebouncedPolygonSearch] = useState("");
+  const [polygonFilters, setPolygonFilters] = useState<PolygonFilterState>(EMPTY_POLYGON_FILTERS);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setDebouncedPolygonSearch(polygonSearch.trim());
+    }, 300);
+
+    return () => window.clearTimeout(timeout);
+  }, [polygonSearch]);
+
+  const sitePolygonFilter = useMemo(() => {
+    const filter: Record<string, unknown> = {};
+    if (polygonFilters.polygonStatus.length > 0) filter.polygonStatus = polygonFilters.polygonStatus;
+    if (polygonFilters.validationStatus.length > 0) filter.validationStatus = polygonFilters.validationStatus;
+    if (polygonFilters.plantStartFrom !== "") filter.plantStartFrom = `${polygonFilters.plantStartFrom}T00:00:00.000Z`;
+    if (polygonFilters.plantStartTo !== "") filter.plantStartTo = `${polygonFilters.plantStartTo}T00:00:00.000Z`;
+    if (polygonFilters.practice.length > 0) filter.practice = polygonFilters.practice;
+    if (polygonFilters.targetSys.length > 0) filter.targetSys = polygonFilters.targetSys;
+    if (polygonFilters.hasOverlap) filter.hasOverlap = true;
+    if (debouncedPolygonSearch !== "") {
+      filter.search = debouncedPolygonSearch;
+      filter.searchFields = ["polyName", "polygonUuid"];
+    }
+    return filter as Partial<SitePolygonsIndexQueryParams>;
+  }, [debouncedPolygonSearch, polygonFilters]);
+
   const { data: polygonsData = [] } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: site.uuid,
-    enabled: !!site.uuid
+    enabled: site.uuid != null && site.uuid !== "",
+    filter: sitePolygonFilter
   });
 
   const { allValidations: overlapValidations, fetchAllValidationPages: fetchOverlapValidations } =
@@ -282,7 +321,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     () =>
       polygonsData
         .map(p => p.uuid)
-        .filter(Boolean)
+        .filter((uuid): uuid is string => uuid != null && uuid !== "")
         .sort()
         .join(","),
     [polygonsData]
@@ -296,11 +335,18 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [site.uuid, polygonIdsKey, fetchOverlapValidations]);
 
   const polygonsWithOverlapCount = useMemo(() => {
+    const currentPolygonUuids = new Set(
+      polygonsData
+        .map(polygon => polygon.polygonUuid ?? polygon.uuid)
+        .filter((id): id is string => id != null && id !== "")
+    );
     const ids = new Set(
-      overlapValidations.map(v => v.polygonUuid).filter((id): id is string => id != null && id !== "")
+      overlapValidations
+        .map(v => v.polygonUuid)
+        .filter((id): id is string => id != null && id !== "" && currentPolygonUuids.has(id))
     );
     return ids.size;
-  }, [overlapValidations]);
+  }, [overlapValidations, polygonsData]);
 
   const polygonRows = useMemo<PolygonTableRow[]>(
     () =>
@@ -326,6 +372,14 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const selectedPolygonUuids = useMemo(() => Array.from(selectedRowIds, id => String(id)), [selectedRowIds]);
 
+  useEffect(() => {
+    const visibleRowIds = new Set(polygonRows.map(row => row.id));
+    setSelectedRowIds(prev => {
+      const next = new Set(Array.from(prev).filter(id => visibleRowIds.has(String(id))));
+      return next.size === prev.size ? prev : next;
+    });
+  }, [polygonRows, setSelectedRowIds]);
+
   const handlePolygonClickedFromMap = useCallback(
     (uuid: string) => {
       setSelectedRowIds(prev => {
@@ -349,6 +403,67 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   );
 
   const handleClearHover = useCallback(() => setHoveredPolygonUuid(null), []);
+
+  const handleClearPolygonFilters = useCallback(() => {
+    setPolygonFilters(EMPTY_POLYGON_FILTERS);
+    setPolygonSearch("");
+    setDebouncedPolygonSearch("");
+  }, []);
+
+  const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
+    const labels: SelectedFilter[] = [];
+    if (polygonFilters.polygonStatus.length > 0) {
+      labels.push({
+        label: polygonFilters.polygonStatus.map(status => t(SUBMISSION_STATUS_LABELS[status])),
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, polygonStatus: [] }));
+        }
+      });
+    }
+    if (polygonFilters.validationStatus.length > 0) {
+      labels.push({
+        label: polygonFilters.validationStatus.map(status => t(VALIDATION_STATUS_LABELS[status])),
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, validationStatus: [] }));
+        }
+      });
+    }
+    if (polygonFilters.plantStartFrom !== "" || polygonFilters.plantStartTo !== "") {
+      const fromLabel = polygonFilters.plantStartFrom !== "" ? polygonFilters.plantStartFrom : t("Any date");
+      const toLabel = polygonFilters.plantStartTo !== "" ? polygonFilters.plantStartTo : t("Any date");
+      labels.push({
+        label: `${fromLabel} - ${toLabel}`,
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, plantStartFrom: "", plantStartTo: "" }));
+        }
+      });
+    }
+    if (polygonFilters.practice.length > 0) {
+      labels.push({
+        label: polygonFilters.practice.map(practice => t(RESTORATION_PRACTICE_LABELS[practice])),
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, practice: [] }));
+        }
+      });
+    }
+    if (polygonFilters.targetSys.length > 0) {
+      labels.push({
+        label: polygonFilters.targetSys.map(targetSys => t(TARGET_LAND_USE_LABELS[targetSys])),
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, targetSys: [] }));
+        }
+      });
+    }
+    if (polygonFilters.hasOverlap) {
+      labels.push({
+        label: t("Failed overlap validation"),
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, hasOverlap: false }));
+        }
+      });
+    }
+    return labels;
+  }, [polygonFilters, t, setPolygonFilters]);
 
   const { totalTreesPlanted, totalRestorationAreaHa } = useMemo(() => {
     let trees = 0;
@@ -531,13 +646,22 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           variant: "primary"
         }}
       >
-        <SearchBar polygonRows={polygonRows} />
+        <PolygonToolbar
+          resultCount={polygonRows.length}
+          polygonSearch={polygonSearch}
+          polygonFilters={polygonFilters}
+          activeFilterLabels={activeFilterLabels}
+          onSearchChange={setPolygonSearch}
+          onApplyFilters={setPolygonFilters}
+          onClearFilters={handleClearPolygonFilters}
+        />
       </PageItem>
       <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
         <PolygonsMap
           entityModel={site}
           type="sites"
           className="max-h-full overflow-hidden !rounded-[0.25rem_0.25rem_0_0]"
+          polygonsDataOverride={polygonsData}
           polygonTableHighlight={polygonTableHighlight}
         />
       </ResizeBox>
@@ -576,7 +700,9 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
                 ? t("1 overlap detected")
                 : t("{count} overlaps detected", { count: polygonsWithOverlapCount })
             }
-            onActionClick={function noRefCheck() {}}
+            onActionClick={() => {
+              setPolygonFilters(current => ({ ...current, hasOverlap: true }));
+            }}
             variant="error"
           />
         )}

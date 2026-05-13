@@ -4,10 +4,11 @@ import { FC, useEffect, useRef, useState } from "react";
 import IconButton from "@/redesignComponents/actions/Buttons/IconButton/IconButton";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
+import { SelectedFilter } from "../ToolBar.type";
 import FilterTagItem from "./FilterTagItem";
 
 interface FilterTagProps {
-  selectedFilters?: (string | string[])[];
+  selectedFilters?: SelectedFilter[];
 }
 
 const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
@@ -116,9 +117,11 @@ const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
         }}
       >
         <Flex gap={2}>
-          {selectedFilters.map((filter, index) => (
-            <FilterTagItem label={filter} key={index} />
-          ))}
+          {selectedFilters.map((filter, index) => {
+            const label = typeof filter === "object" && !Array.isArray(filter) ? filter.label : filter;
+            const onRemove = typeof filter === "object" && !Array.isArray(filter) ? filter.onRemove : undefined;
+            return <FilterTagItem label={label} onRemove={onRemove} key={index} />;
+          })}
         </Flex>
       </Box>
 
