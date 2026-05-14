@@ -9,21 +9,17 @@ import { TabBarWriProps } from "../TabBar/TabBar";
 export interface ToolbarProps {
   contentLeft: React.ReactNode;
   contentRight?: React.ReactNode;
-  contentCenter?: React.ReactNode;
   className?: string;
   classNameContentRight?: string;
-  classNameContentCenter?: string;
-  classNameContentLeft?: string;
 }
 
 export interface BulkActionToolbarProps {
   primaryButtonProps?: IButtonProps;
   secondaryButtonProps?: IButtonProps;
   tertiaryButtonProps?: IButtonProps;
-  quantityButtonProps?: IButtonProps;
-  items?: string;
   ButtonCancel: IButtonProps;
   ButtonDelete: IButtonProps;
+  ButtonMenu: IMultiActionButtonProps;
 }
 
 export interface ToolbarFormProps {
@@ -69,18 +65,26 @@ export interface SearchProps {
   isLoading?: boolean;
   displayResults?: "none" | "text" | "list" | "custom";
   label?: string;
+  resetKey?: string | number;
   onQueryChange?: (query: string) => void;
+  onSearchSubmit?: (query: string) => void;
   count?: number;
 }
 
+export type SelectedFilter =
+  | (string | string[])
+  | { category?: string; label: string | string[]; onRemove?: () => void };
+
 export interface ToolbarTableProps {
   search: SearchProps;
-  filters: IMultiActionButtonProps[];
+  filters?: IMultiActionButtonProps[];
   onClearFilters: () => void;
-  button: IButtonProps;
+  button?: IButtonProps;
   className?: string;
   tooltipContent?: string;
   showClearFilters?: boolean;
+  onClickFilterButton?: () => void;
+  selectedFilters?: SelectedFilter[];
 }
 
 export interface ViewToolbarProps {
