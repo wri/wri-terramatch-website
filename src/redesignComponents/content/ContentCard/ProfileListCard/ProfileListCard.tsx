@@ -11,7 +11,7 @@ import ProfileItem from "./ProfileItem";
 export interface IProfile {
   id: string;
   name: string;
-  image: string;
+  image?: string;
   email?: string;
   isProjectManager?: boolean;
   messageText?: string;
@@ -79,7 +79,7 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
                   backgroundColor="transparent"
                   color="secondary.900"
                   width="auto"
-                  className="flex items-center gap-1 px-2 py-1.5 group-hover:bg-theme-primary-500/20"
+                  className="group-hover:bg-theme-primary-500/20 flex items-center gap-1 px-2 py-1.5"
                 >
                   {t("Invite Team Member")}
                   <ChevronRightIcon color="neutral.800" className="h-2.5 w-2.5" />

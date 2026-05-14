@@ -88,7 +88,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
 
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
-  const { data: sitePolygonDataV3, refetch: refetchV3 } = useAllSitePolygons({
+  const { refetch: refetchV3 } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: site.uuid,
     enabled: !!site.uuid
@@ -205,12 +205,14 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
               ? [response.data]
               : [];
             const responseAttributes = dataArray[0]?.attributes;
-
-            openFormModalHandlerIdentifiedPolygons(responseAttributes?.existingUuids ?? [], {
+            const existingUuids = responseAttributes?.existingUuids ?? [];
+            const summary = {
               featuresForVersioning: responseAttributes?.featuresForVersioning ?? 0,
               featuresForCreation: responseAttributes?.featuresForCreation ?? 0,
               totalFeatures: responseAttributes?.totalFeatures ?? 0
-            });
+            };
+
+            openFormModalHandlerIdentifiedPolygons(existingUuids, summary);
           },
           onError: (error: any) => {
             const errorMessage =
@@ -249,7 +251,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
       <ModalIdentified
         title={t("Polygons Identified")}
         existingUuids={existingUuids}
-        sitePolygonData={sitePolygonDataV3}
+        siteUuid={site.uuid ?? ""}
         summary={summary}
         setSubmitPolygonLoaded={setSubmitPolygonLoaded}
         setSaveFlags={setSaveFlags}
@@ -450,7 +452,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
   };
 
   return (
-    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7 mobile:w-full">
+    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-7 mobile:w-full">
       <Box className="relative h-auto">
         <div className="mb-6 flex gap-11">
           <div className="w-[54%] mobile:w-full">

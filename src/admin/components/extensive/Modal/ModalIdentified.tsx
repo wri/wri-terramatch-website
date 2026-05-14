@@ -7,7 +7,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalProps } from "@/components/extensive/Modal/Modal";
 import { ModalBaseSubmit } from "@/components/extensive/Modal/ModalsBases";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
 
 type IdentifiedPolygonItem = {
   id: number | string;
@@ -20,7 +20,7 @@ type ModalApproveProps = ModalProps & {
   secondaryButtonText?: string;
   onClose?: () => void;
   existingUuids: string[];
-  sitePolygonData: SitePolygonLightDto[];
+  siteUuid: string;
   summary?: {
     featuresForVersioning: number;
     featuresForCreation: number;
@@ -40,7 +40,7 @@ const ModalIdentified: FC<ModalApproveProps> = ({
   secondaryButtonProps,
   secondaryButtonText,
   existingUuids,
-  sitePolygonData,
+  siteUuid,
   summary,
   setSubmitPolygonLoaded,
   setSaveFlags,
@@ -50,17 +50,22 @@ const ModalIdentified: FC<ModalApproveProps> = ({
 }) => {
   const t = useT();
 
+  const { data: sitePolygonData = [] } = useAllSitePolygons({
+    entityName: "sites",
+    entityUuid: siteUuid,
+    enabled: !!siteUuid
+  });
+
   const transformedPolygons = useMemo<IdentifiedPolygonItem[]>(() => {
-    return existingUuids
-      .map(uuid => {
-        const polygon = sitePolygonData.find(p => p.uuid === uuid);
-        return {
-          id: polygon?.uuid ?? uuid,
-          name: polygon?.name ?? t("Unnamed Polygon"),
-          is_present: polygon != null
-        };
-      })
-      .filter(item => item.is_present);
+    return existingUuids.map(uuid => {
+      const polygon = sitePolygonData.find(p => p.uuid === uuid);
+      const displayName = polygon != null ? polygon.name ?? polygon.versionName ?? t("Unnamed Polygon") : uuid;
+      return {
+        id: polygon?.uuid ?? uuid,
+        name: displayName,
+        is_present: polygon != null
+      };
+    });
   }, [existingUuids, sitePolygonData, t]);
 
   return (
