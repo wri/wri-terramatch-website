@@ -58,8 +58,8 @@ const ManagerType = ({ nursery }: { nursery: NurseryFullDto }) => {
 
   return (
     <Box
-      width="240px"
-      minWidth="240px"
+      width="15rem"
+      minWidth="15rem"
       height="auto"
       className="flex flex-col gap-2 pt-5 mobile:!w-full"
       css={{ "&": { alignItems: "self-end !important" } }}
@@ -68,7 +68,7 @@ const ManagerType = ({ nursery }: { nursery: NurseryFullDto }) => {
         <Text color="primary.900" textStyle="300-bold">
           {t("Management Type:")}
         </Text>
-        <Flex className="w-36 flex-col" alignItems="center" gap={2}>
+        <Flex className="w-36 flex-col mobile:w-fit" alignItems="center" gap={2}>
           {typeConfig !== null && typeConfig.icon !== null ? (
             <>
               {typeConfig.icon}

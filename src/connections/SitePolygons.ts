@@ -52,6 +52,7 @@ export const useSitePolygons = connectionHook(sitePolygonsConnection);
 export const pruneSitePolygonsCache = (): void => {
   ApiSlice.pruneCache("sitePolygons");
   ApiSlice.pruneIndex("sitePolygons", "");
+  ApiSlice.pruneCache("geojsonExports");
 };
 
 const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygons)
@@ -253,6 +254,7 @@ export const useAllSitePolygons = (
       try {
         if (clearCache) {
           ApiSlice.pruneCache("sitePolygons");
+          ApiSlice.pruneCache("geojsonExports");
 
           const currentState = ApiSlice.currentState;
           const sitePolygonsIndices = currentState.meta.indices.sitePolygons ?? {};

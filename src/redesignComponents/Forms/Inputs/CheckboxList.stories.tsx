@@ -10,6 +10,10 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
+    defaultValues: {
+      control: "object",
+      description: "Names of the checkboxes to be checked by default"
+    },
     horizontal: {
       control: "boolean",
       description: "Display checkboxes horizontally"
@@ -76,7 +80,8 @@ export const WithDefaultValue: Story = {
   args: {
     label: "With Default Value",
     caption: "Option 1 is pre-selected",
-    checkboxes: defaultCheckboxes
+    checkboxes: defaultCheckboxes,
+    defaultValues: ["option-1"]
   }
 };
 

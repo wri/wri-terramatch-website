@@ -26,8 +26,8 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
 
   return (
     <Box
-      width="240px"
-      minWidth="240px"
+      width="15rem"
+      minWidth="15rem"
       height="auto"
       className="flex flex-col gap-2 pt-11 mobile:!w-full mobile:flex-row mobile:items-center mobile:justify-between mobile:pt-0"
       css={{
@@ -69,8 +69,8 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
               <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
               <Text
                 textStyle="200-bold"
-                padding="6px 8px"
-                borderRadius="4px"
+                padding="0.375rem 0.5rem"
+                borderRadius="0.25rem"
                 backgroundColor="transparent"
                 color="secondary.900"
                 width="auto"

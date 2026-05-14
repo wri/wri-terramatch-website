@@ -24,7 +24,7 @@ export const Default: Story = {
 
 export const InContext: Story = {
   render: () => (
-    <div style={{ padding: "20px", width: "100%" }}>
+    <div style={{ padding: "1.25rem", width: "100%" }}>
       <p>Content above the divider</p>
       <SimpleDivider />
       <p>Content below the divider</p>

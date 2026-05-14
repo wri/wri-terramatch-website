@@ -1703,6 +1703,7 @@ export type NurseryFullDto = {
   nurseryReportsTotal: number | null;
   overdueNurseryReportsTotal: number | null;
   projectUuid: string | null;
+  treesSeedlingsGrownCount: number | null;
   media: MediaDto[];
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];

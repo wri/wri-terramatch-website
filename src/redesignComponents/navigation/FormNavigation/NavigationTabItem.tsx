@@ -44,7 +44,7 @@ export const NavigationTabItem: FC<NavigationTabItemProps> = ({
       aria-label={ariaLabel ?? label}
       className={getTabClasses(isSelected)}
     >
-      <Box display="flex" alignItems="center" flexDirection="row" gap="5px" className="w-full justify-between">
+      <Box display="flex" alignItems="center" flexDirection="row" gap="0.3125rem" className="w-full justify-between">
         <span className="flex items-center text-left text-theme-primary-900">
           <NavigationTabBadge type={type} isSelected={isSelected} index={index} />
 

@@ -86,15 +86,23 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   return (
     <Box gap={2} className="flex flex-col">
       <Text
-        fontSize="28px"
-        lineHeight="36px"
+        fontSize="1.75rem"
+        lineHeight="2.25rem"
         color="primary.900"
         fontWeight="bold"
         className="flex items-baseline gap-3"
       >
         {title} <ProgressTag {...tag} />
       </Text>
-      <Text textStyle="400" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
+      <Text
+        textStyle="400"
+        color="neutral.900"
+        className="-ml-[0.5rem] flex items-center gap-2 mobile:w-full mobile:max-w-full mobile:overflow-x-auto"
+        css={{
+          "&::-webkit-scrollbar": { display: "none" },
+          "&": { msOverflowStyle: "none", scrollbarWidth: "none" }
+        }}
+      >
         <Button variant="borderless" size="small" className="-mr-2" onClick={handleOrganizationNav}>
           {organization}
         </Button>
