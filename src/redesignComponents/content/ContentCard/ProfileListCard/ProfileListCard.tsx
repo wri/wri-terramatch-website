@@ -11,7 +11,7 @@ import ProfileItem from "./ProfileItem";
 export interface IProfile {
   id: string;
   name: string;
-  image: string;
+  image?: string;
   email?: string;
   isProjectManager?: boolean;
   messageText?: string;
