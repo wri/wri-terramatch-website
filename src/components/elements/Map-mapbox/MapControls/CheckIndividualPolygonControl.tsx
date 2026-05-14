@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useMemo, useState } from "react";
-import { When } from "react-if";
+import { FC, useEffect, useMemo, useState } from "react";
 
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import { clipSinglePolygon } from "@/connections/PolygonClipping";
@@ -18,13 +17,11 @@ import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygon
 
 import Button from "../../Button/Button";
 
-const CheckIndividualPolygonControl = ({
-  viewRequestSuport,
-  entityData
-}: {
-  viewRequestSuport: boolean;
-  entityData?: any;
-}) => {
+type CheckIndividualPolygonControlProps = {
+  viewRequestSupport: boolean;
+};
+
+const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({ viewRequestSupport }) => {
   const [clickedValidation, setClickedValidation] = useState(false);
   const [canBeFixed, setCanBeFixed] = useState(false);
   const [fixabilityResult, setFixabilityResult] = useState<PolygonFixabilityResult | null>(null);
@@ -47,10 +44,10 @@ const CheckIndividualPolygonControl = ({
 
   const connectionProps = useMemo(
     () => ({
-      uuid: editPolygon?.primary_uuid ?? undefined,
-      enabled: !!editPolygon?.primary_uuid
+      uuid: editPolygon?.primaryUuid ?? undefined,
+      enabled: editPolygon?.primaryUuid != null
     }),
-    [editPolygon?.primary_uuid]
+    [editPolygon?.primaryUuid]
   );
 
   const [, { data: polygonVersionsData, refetch: refetchPolygonVersionsHook }] =
@@ -122,7 +119,7 @@ const CheckIndividualPolygonControl = ({
       setEditPolygon({
         isOpen: true,
         uuid: polygonActive?.polygonUuid as string,
-        primary_uuid: polygonActive?.primaryUuid!
+        primaryUuid: polygonActive?.primaryUuid!
       });
       hideLoader();
     },
@@ -167,7 +164,7 @@ const CheckIndividualPolygonControl = ({
 
   return (
     <div className="flex gap-2">
-      <When condition={viewRequestSuport}>
+      {viewRequestSupport && (
         <Button
           variant="text"
           className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-white bg-white p-2 text-black hover:border-black"
@@ -175,7 +172,7 @@ const CheckIndividualPolygonControl = ({
         >
           {t("Request Support")}
         </Button>
-      </When>
+      )}
       <Button
         variant="text"
         className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 text-white hover:border-white"
@@ -183,7 +180,7 @@ const CheckIndividualPolygonControl = ({
       >
         {t("Check Polygon")}
       </Button>
-      <When condition={hasOverlaps}>
+      {hasOverlaps && (
         <Tooltip
           content={
             fixabilityResult != null
@@ -211,7 +208,7 @@ const CheckIndividualPolygonControl = ({
             </Button>
           </div>
         </Tooltip>
-      </When>
+      )}
     </div>
   );
 };

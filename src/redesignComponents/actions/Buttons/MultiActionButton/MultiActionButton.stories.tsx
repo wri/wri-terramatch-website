@@ -370,7 +370,7 @@ export const AllStates: Story = {
             { label: "Option 2", value: "2", onClick: () => {} }
           ]}
         />
-        <p style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}>Default</p>
+        <p style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#666" }}>Default</p>
       </div>
       <div style={{ textAlign: "center" }}>
         <MultiActionButton
@@ -383,7 +383,7 @@ export const AllStates: Story = {
             { label: "Option 2", value: "2", onClick: () => {} }
           ]}
         />
-        <p style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}>Disabled</p>
+        <p style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#666" }}>Disabled</p>
       </div>
     </div>
   )

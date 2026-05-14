@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, useBreakpointValue } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import router from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -44,6 +44,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     resetSiteMapInteractionState();
   }, [resetSiteMapInteractionState]);
   const [isSiteSetupComplete, setIsSiteSetupComplete] = useState(false);
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "sites",
@@ -142,6 +143,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             flexProps={{ width: "fit-content", overflow: "hidden" }}
             className="!w-full !max-w-full sm:!w-[30%] sm:!max-w-[30%]"
             title={t("Sites Set Up")}
+            classNameRightSectionHeader="mobile:!w-fit"
             tag={(() => {
               const tagState = mapStatusToTagStateEntity(site?.status);
               return site.updateRequestStatus === "awaiting-approval" ? (
@@ -190,7 +192,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               onClick: () => goToTab("gallery")
             }}
           >
-            <LatestImagesSectionTab entityUuid={site.uuid} entityName="sites" columns={3} />
+            <LatestImagesSectionTab entityUuid={site.uuid} entityName="sites" columns={isMobile ? 2 : 3} />
           </PageItem>
           <PageItem title={t(aboutSitesContentItem?.title!)}>
             <About

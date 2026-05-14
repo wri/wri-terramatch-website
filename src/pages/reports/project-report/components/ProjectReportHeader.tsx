@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { Else, If, Then } from "react-if";
+import { FC } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
@@ -14,14 +14,10 @@ interface ProjectReportHeaderProps {
   report: any;
 }
 
-const ProjectReportHeader = ({ title, report }: ProjectReportHeaderProps) => {
+const ProjectReportHeader: FC<ProjectReportHeaderProps> = ({ title, report }) => {
   const t = useT();
 
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
-    "project-reports",
-    report.uuid,
-    report.reportTitle
-  );
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("project-reports", report.uuid);
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "project-reports",
     entityUUID: report?.uuid,
@@ -33,22 +29,19 @@ const ProjectReportHeader = ({ title, report }: ProjectReportHeaderProps) => {
 
   return (
     <PageHeader className="h-[203px]" title={title} subtitles={subtitles} hasBackButton={false}>
-      <If condition={report?.status === "started"}>
-        <Then>
-          <Button as={Link} href={`/entity/project-reports/edit/${report?.uuid}`}>
-            {t("Continue Report")}
+      {report?.status === "started" ? (
+        <Button as={Link} href={`/entity/project-reports/edit/${report?.uuid}`}>
+          {t("Continue Report")}
+        </Button>
+      ) : (
+        <div className="flex gap-4">
+          <Button variant="secondary" onClick={handleExport}>
+            {t("Export")}
+            <InlineLoader loading={exportLoader} />
           </Button>
-        </Then>
-        <Else>
-          <div className="flex gap-4">
-            <Button variant="secondary" onClick={handleExport}>
-              {t("Export")}
-              <InlineLoader loading={exportLoader} />
-            </Button>
-            <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
-          </div>
-        </Else>
-      </If>
+          <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
+        </div>
+      )}
     </PageHeader>
   );
 };

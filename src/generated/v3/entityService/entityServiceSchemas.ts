@@ -986,6 +986,10 @@ export type AggregateReportsDto = {
    * Trees regenerating (ANR) by reporting period (when framework supports it).
    */
   treesRegenerating?: AggregateReportSeriesItemDto[];
+  /**
+   * Invasive species by reporting period (when framework supports it).
+   */
+  invasive?: AggregateReportSeriesItemDto[];
 };
 
 export type ANRDto = {
@@ -1112,6 +1116,19 @@ export type ProjectLightDto = {
    */
   updatedAt: string;
   treesPlantedCount: number | null;
+  /**
+   * Polygon data submission tracking
+   */
+  polygonDataSubmission:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received"
+    | null;
+  /**
+   * Whether the project is ready for baseline analysis
+   */
+  readyForBaseline: boolean;
 };
 
 export type SiteLightDto = {
@@ -1406,6 +1423,19 @@ export type ProjectFullDto = {
   updatedAt: string;
   treesPlantedCount: number | null;
   /**
+   * Polygon data submission tracking
+   */
+  polygonDataSubmission:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received"
+    | null;
+  /**
+   * Whether the project is ready for baseline analysis
+   */
+  readyForBaseline: boolean;
+  /**
    * True for projects that are test data and do not represent actual planting on the ground.
    */
   isTest: boolean;
@@ -1604,6 +1634,7 @@ export type SiteFullDto = {
   organisationUuid: string | null;
   treesPlantedPolygonsCount: number | null;
   hectaresRestoredPolygonsCount: number | null;
+  invasiveTreesCount: number | null;
 };
 
 export type NurseryFullDto = {
@@ -1663,6 +1694,7 @@ export type NurseryFullDto = {
   nurseryReportsTotal: number | null;
   overdueNurseryReportsTotal: number | null;
   projectUuid: string | null;
+  treesSeedlingsGrownCount: number | null;
   media: MediaDto[];
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
@@ -1994,6 +2026,7 @@ export type SiteReportFullDto = {
   publicNarrative: string | null;
   pctSurvivalToDate: number | null;
   anrPractices: string[] | null;
+  totalInvasiveTreesCount: number | null;
   socioeconomicBenefits: MediaDto[];
   media: MediaDto[];
   file: MediaDto[];
@@ -2306,6 +2339,49 @@ export type SrpReportFullDto = {
   media: MediaDto[];
 };
 
+export type DelayedJobDto = {
+  /**
+   * The unique identifier for the delayed job.
+   */
+  uuid: string;
+  /**
+   * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
+   */
+  status: "pending" | "failed" | "succeeded";
+  /**
+   * If the job is out of pending state, this is the HTTP status code for the completed process
+   */
+  statusCode: number | null;
+  /**
+   * If the job is out of pending state, this is the JSON payload for the completed process
+   */
+  payload: Record<string, any> | null;
+  /**
+   * If the job is in progress, this is the total content to process
+   */
+  totalContent: number | null;
+  /**
+   * If the job is in progress, this is the total content processed
+   */
+  processedContent: number | null;
+  /**
+   * If the job is in progress, this is the progress message
+   */
+  progressMessage: string | null;
+  /**
+   * Indicates whether the jobs have been acknowledged (cleared)
+   */
+  isAcknowledged: boolean | null;
+  /**
+   * The name of the delayedJob
+   */
+  name: string | null;
+  /**
+   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
+   */
+  entityName?: string | null;
+};
+
 export type ProjectUpdateAttributes = {
   /**
    * Specific feedback for the PD
@@ -2323,6 +2399,22 @@ export type ProjectUpdateAttributes = {
    * Update the isTest flag.
    */
   isTest?: boolean;
+  /**
+   * Polygon data submission tracking
+   */
+  polygonDataSubmission?:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received";
+  /**
+   * Whether the project is ready for baseline analysis
+   */
+  readyForBaseline?: boolean;
+  /**
+   * Optional comment recorded on polygon handoff audit entries when updating submission/baseline
+   */
+  polygonHandoffComment?: string;
 };
 
 export type ProjectUpdateData = {
@@ -3027,6 +3119,12 @@ export type Forms = {
   FORM_TYPES: string[];
 };
 
+export type FormAttachment = {
+  name: string;
+  type: "fundingProgramme" | "framework" | "entity";
+  adminId?: string | null;
+};
+
 export type FormLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -3050,6 +3148,10 @@ export type FormLightDto = {
     | "srp-report"
     | null;
   banner: MediaDto;
+  /**
+   * The funding programme, reporting framework or entity that is using this form.
+   */
+  attachedTo?: FormAttachment;
 };
 
 export type FormQuestionOptionDto = {
@@ -3183,6 +3285,10 @@ export type FormFullDto = {
     | "srp-report"
     | null;
   banner: MediaDto;
+  /**
+   * The funding programme, reporting framework or entity that is using this form.
+   */
+  attachedTo?: FormAttachment;
   /**
    * Indicates whether the text fields in this form response have been translated to the user's locale
    */
@@ -3422,6 +3528,8 @@ export type ApplicationHistoryEntryDto = {
     | "change-request-updated"
     | "updated"
     | "reminder-sent"
+    | "polygon-data-submission"
+    | "ready-for-baseline"
     | null;
   status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
   /**

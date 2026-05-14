@@ -1,33 +1,26 @@
 import { useT } from "@transifex/react";
+import { FC, useCallback } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
-import { fetchGetV2ApplicationsUUIDExport } from "@/generated/apiComponents";
+import { applicationExportGet } from "@/generated/v3/entityService/entityServiceComponents";
 import Log from "@/utils/log";
-import { downloadFileBlob } from "@/utils/network";
 
 interface ApplicationHeaderProps {
   name: string;
   uuid: string;
-  status?: string;
 }
 
-const ApplicationHeader = ({ name, status, uuid }: ApplicationHeaderProps) => {
+const ApplicationHeader: FC<ApplicationHeaderProps> = ({ name, uuid }) => {
   const t = useT();
 
-  const handleExport = async () => {
+  const handleExport = useCallback(async () => {
     try {
-      const res = await fetchGetV2ApplicationsUUIDExport({
-        pathParams: {
-          uuid: uuid
-        }
-      });
-      if (!res) return;
-      return downloadFileBlob(res, "Application.csv");
+      await applicationExportGet.downloadFile({ pathParams: { uuid } });
     } catch (err) {
       Log.error("Failed to fetch applications exports", err);
     }
-  };
+  }, [uuid]);
 
   return (
     <PageHeader className="min-h-[203px]" title={name}>

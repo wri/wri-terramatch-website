@@ -1,31 +1,20 @@
 import { FC, useState } from "react";
-import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
-import CollablesRowBulk from "@/components/extensive/Modal/components/CollapsibleRowBulk";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import CollapsibleRowBulk from "@/components/extensive/Modal/components/CollapsibleRowBulk";
+import { ModalProps } from "@/components/extensive/Modal/Modal";
+import { ModalBaseSubmit } from "@/components/extensive/Modal/ModalsBases";
 
-import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
-import { ModalProps } from "../../../../components/extensive/Modal/Modal";
-import { ModalBaseSubmit } from "../../../../components/extensive/Modal/ModalsBases";
-
-export interface ModalBulkApproveProps extends ModalProps {
+type ModalBulkApproveProps = ModalProps & {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   onClose?: () => void;
   data: any[];
   onSelectionChange?: (selectedIds: { id: string; name: string; type: string; dateSubmitted: string }[]) => void;
-}
-
-export interface DisplayedPolygonType {
-  id: string | undefined;
-  name: string | undefined;
-  checked: boolean | undefined;
-  canBeApproved: boolean | undefined;
-  failingCriterias: string[] | undefined;
-  validation_status?: string | null;
-}
+};
 
 const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
   iconProps,
@@ -70,14 +59,14 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
       </header>
       <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
-        <When condition={!!iconProps}>
+        {iconProps != null && (
           <Icon
-            {...iconProps!}
-            width={iconProps?.width ?? 40}
-            className={tw("mb-8", iconProps?.className)}
-            style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
+            {...iconProps}
+            width={iconProps.width ?? 40}
+            className={tw("mb-8", iconProps.className)}
+            style={{ minHeight: iconProps.height ?? iconProps.width ?? 40 }}
           />
-        </When>
+        )}
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
           {data?.length > 0 && (
@@ -87,11 +76,11 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
           )}
         </div>
         <div className="my-2 flex items-center">
-          <When condition={!!content}>
+          {content != null && (
             <Text as="div" variant="text-12-light" className="my-1" containHtml>
               {content}
             </Text>
-          </When>
+          )}
         </div>
 
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
@@ -111,7 +100,7 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
           </header>
           {data?.length > 0 ? (
             data.map((item: any) => (
-              <CollablesRowBulk
+              <CollapsibleRowBulk
                 key={item.id}
                 item={item}
                 selected={selectedIds.some(selected => selected.id === item.id && selected.type === item.type)}
@@ -128,20 +117,20 @@ const ModalBulkApprove: FC<ModalBulkApproveProps> = ({
         </div>
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
-        <When condition={!!secondaryButtonProps}>
-          <Button {...secondaryButtonProps!} variant="white-page-admin">
+        {secondaryButtonProps != null && (
+          <Button {...secondaryButtonProps} variant="white-page-admin">
             <Text variant="text-14-bold" className="capitalize">
               {secondaryButtonText}
             </Text>
           </Button>
-        </When>
-        <When condition={data?.length > 0}>
+        )}
+        {data?.length > 0 && (
           <Button {...primaryButtonProps}>
             <Text variant="text-14-bold" className="capitalize text-white">
               {primaryButtonText}
             </Text>
           </Button>
-        </When>
+        )}
       </div>
     </ModalBaseSubmit>
   );

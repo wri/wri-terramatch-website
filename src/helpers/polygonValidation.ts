@@ -65,23 +65,44 @@ interface ExtraInfoItem {
   error?: string;
 }
 
+/** Maps data-completeness extraInfo `field` (API snake_case or camelCase) to canonical names. */
+const DATA_COMPLETENESS_FIELD_TO_CANONICAL: Record<string, string> = {
+  poly_name: "polyName",
+  polyName: "polyName",
+  practice: "practice",
+  target_sys: "targetSys",
+  targetSys: "targetSys",
+  distr: "distr",
+  num_trees: "numTrees",
+  numTrees: "numTrees",
+  plantstart: "plantStart",
+  plantStart: "plantStart",
+  planting_status: "plantingStatus",
+  plantingStatus: "plantingStatus"
+};
+
+export const normalizeDataCompletenessFieldName = (field: string): string | undefined =>
+  DATA_COMPLETENESS_FIELD_TO_CANONICAL[field];
+
 export const isOnlyNumTreesMissing = (extraInfo: any): boolean => {
   if (extraInfo == null) return false;
 
   try {
     const infoArray: ExtraInfoItem[] = extraInfo;
 
-    const dataFields = infoArray.filter(info =>
-      ["poly_name", "practice", "target_sys", "distr", "num_trees", "plantstart"].includes(info.field)
-    );
+    const dataFields: ExtraInfoItem[] = infoArray
+      .map((info): ExtraInfoItem | null => {
+        const canonical = normalizeDataCompletenessFieldName(info.field);
+        if (canonical == null) return null;
+        return { ...info, field: canonical };
+      })
+      .filter((item): item is ExtraInfoItem => item != null);
 
     if (dataFields.length === 0) return false;
 
-    // A field is invalid if it's missing (!exists) OR has an error value
     const invalidFields = dataFields.filter(info => !info.exists || info.error != null);
 
-    // Only exclude DATA_CRITERIA_ID if EXACTLY num_trees is the only invalid field
-    return invalidFields.length === 1 && invalidFields[0].field === "num_trees";
+    return invalidFields.length === 1 && invalidFields[0].field === "numTrees";
   } catch {
     return false;
   }
@@ -153,7 +174,7 @@ export const shouldShowAsWarning = (item: ICriteriaCheckItem): boolean => {
     return true;
   }
 
-  // For Data Completed validation, only show as warning if only num_trees is missing
+  // For Data Completed validation, only show as warning if only numTrees is missing
   if (+item.id === COMPLETED_DATA_CRITERIA_ID && !item.status) {
     return isOnlyNumTreesMissing(item.extra_info);
   }

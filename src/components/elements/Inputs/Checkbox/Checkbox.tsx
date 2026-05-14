@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { forwardRef, useId } from "react";
 import { FieldError, UseFormReturn } from "react-hook-form";
-import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import Text from "@/components/elements/Text/Text";
@@ -42,31 +41,28 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
     return (
       <div
-        className={
-          (tw(
-            classNames(`relative flex items-center gap-4`, {
-              "justify-between": !className?.includes("justify")
-            })
-          ),
-          className)
-        }
+        className={tw(
+          classNames(`relative flex items-center gap-4`, {
+            "justify-between": !className?.includes("justify")
+          }),
+          className
+        )}
       >
         {label && (
           <label htmlFor={id} className="w-full">
-            <If condition={labelIsComponent}>
-              <Then>{label}</Then>
-              <Else>
-                <Text
-                  as="label"
-                  htmlFor={id}
-                  variant="text-body-600"
-                  className={`max-w-[365px] ${textClassName}`}
-                  containHtml
-                >
-                  {t(`${label} ${required ? "*" : ""}`)}
-                </Text>
-              </Else>
-            </If>
+            {labelIsComponent ? (
+              label
+            ) : (
+              <Text
+                as="label"
+                htmlFor={id}
+                variant="text-body-600"
+                className={`max-w-[365px] ${textClassName}`}
+                containHtml
+              >
+                {`${t(label)} ${required ? "*" : ""}`}
+              </Text>
+            )}
           </label>
         )}
 
@@ -94,14 +90,14 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             inputClassName
           )}
         />
-        <When condition={!!error}>
+        {error != null && (
           <Text
             variant="text-body-500"
             className={classNames("absolute right-0 -bottom-6 w-full text-right text-error", errorClassName)}
           >
-            {t(error?.message ?? "")}
+            {t(error.message ?? "")}
           </Text>
-        </When>
+        )}
       </div>
     );
   }

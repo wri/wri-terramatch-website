@@ -1,5 +1,3 @@
-import { apiBaseUrl } from "@/constants/environment";
-
 export function toDataURL(url: string): Promise<string> {
   var xhr = new XMLHttpRequest();
   return new Promise(r => {
@@ -14,12 +12,4 @@ export function toDataURL(url: string): Promise<string> {
     xhr.responseType = "blob";
     xhr.send();
   });
-}
-
-export function appendApiBaseUrl(url: string) {
-  if (!url?.includes("https")) {
-    return apiBaseUrl + url;
-  }
-
-  return url;
 }

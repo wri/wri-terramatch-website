@@ -89,6 +89,12 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     collection: "replanting"
   });
 
+  const totalCountInvasive = usePlantTotalCount({ ...aggregateProps, collection: "invasive" });
+  const { speciesCount: totalCountInvasiveSpecies } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: "invasive"
+  });
+
   return (
     <PageBody className="bg-theme-neutral-200 pt-5 text-darkCustom">
       <PageRow className="mx-0 w-full !max-w-full px-6">
@@ -481,6 +487,39 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
             </div>
             <div>
               <TreeSpeciesTable entity="projects" entityUuid={project.uuid} collection="replanting" visibleRows={5} />
+            </div>
+          </div>
+        </PageCard>
+      </PageRow>
+      <PageRow className="mx-0 w-full !max-w-full gap-8 px-6">
+        <PageCard title={t("Invasive Tree Removal Progress")}>
+          <div className="grid grid-cols-2 gap-16">
+            <div className="flex flex-col gap-4">
+              <GoalProgressCard
+                hasProgress={false}
+                classNameCard="!pl-0"
+                items={[
+                  {
+                    iconName: IconNames.TREE_CIRCLE_PD,
+                    label: t("number of trees REMOVED:"),
+                    variantLabel: "text-14" as TextVariants,
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: totalCountInvasive
+                  },
+                  {
+                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                    label: t("number of species REMOVED:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: totalCountInvasiveSpecies
+                  }
+                ]}
+              />
+            </div>
+            <div>
+              <TreeSpeciesTable entity="projects" entityUuid={project.uuid} collection="invasive" visibleRows={5} />
             </div>
           </div>
         </PageCard>

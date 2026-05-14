@@ -72,7 +72,7 @@ export const Error: Story = {
 
 const InteractionCell = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" gap={2} p={4} minH="120px" justifyContent="center">
+    <Box display="flex" flexDirection="column" alignItems="center" gap={2} p={4} minH="7.5rem" justifyContent="center">
       <Flex alignItems="center" gap={2} justifyContent="center">
         {children}
       </Flex>

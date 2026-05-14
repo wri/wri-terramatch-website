@@ -1,5 +1,4 @@
 import { CSSProperties, FC, useEffect, useState } from "react";
-import { Else, If, Then } from "react-if";
 import SVG from "react-inlinesvg";
 
 /* eslint-disable no-unused-vars */
@@ -251,14 +250,14 @@ export enum IconNames {
   WARNING_TRIANGLE = "warning-triangle"
 }
 
-export interface IconProps {
+export type IconProps = {
   name: IconNames;
   className?: string;
   width?: number;
   height?: number;
   style?: CSSProperties;
   viewBox?: string;
-}
+};
 
 const Icon: FC<IconProps> = ({ name, width = 24, height, className = "", style = {}, viewBox }) => {
   const [path, setPath] = useState<string>();
@@ -273,7 +272,6 @@ const Icon: FC<IconProps> = ({ name, width = 24, height, className = "", style =
     };
 
     importIcon();
-    // eslint-disable-next-line
   }, [name]);
 
   const svgProps = { width, height: height ?? width, className, style };
@@ -284,16 +282,7 @@ const Icon: FC<IconProps> = ({ name, width = 24, height, className = "", style =
     svgProps.viewBox = viewBox;
   }
 
-  return (
-    <If condition={!loading}>
-      <Then>
-        <SVG src={path ?? ""} {...svgProps} />
-      </Then>
-      <Else>
-        <div style={{ width, height, ...style }} />
-      </Else>
-    </If>
-  );
+  return loading ? <div style={{ width, height, ...style }} /> : <SVG src={path ?? ""} {...svgProps} />;
 };
 
 export default Icon;

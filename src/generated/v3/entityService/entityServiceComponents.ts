@@ -2035,6 +2035,13 @@ export type GetAuditStatusesPathParams = {
     | "sitePolygons";
 };
 
+export type GetAuditStatusesQueryParams = {
+  /**
+   * Filter by audit `type` values. When omitted, all audit rows are returned.
+   */
+  types?: string[];
+};
+
 export type GetAuditStatusesError = Fetcher.ErrorWrapper<
   | {
       status: 401;
@@ -2116,6 +2123,7 @@ export type GetAuditStatusesResponse = {
 
 export type GetAuditStatusesVariables = {
   pathParams: GetAuditStatusesPathParams;
+  queryParams?: GetAuditStatusesQueryParams;
 };
 
 export const getAuditStatuses = new V3ApiEndpoint<
@@ -2453,6 +2461,18 @@ export type EntityIndexQueryParams = {
    * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
    */
   taskId?: number;
+  /**
+   * Filter projects by polygon data submission status
+   */
+  polygonDataSubmission?:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received";
+  /**
+   * Filter projects where ready for baseline is true or false
+   */
+  readyForBaseline?: boolean;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -3049,6 +3069,9 @@ export type EntityExportAllPathParams = {
 };
 
 export type EntityExportAllQueryParams = {
+  /**
+   * Filter by framework. If projectUuid is provided, this is ignored.
+   */
   frameworkKey?:
     | "terrafund"
     | "terrafund-landscapes"
@@ -3059,6 +3082,10 @@ export type EntityExportAllQueryParams = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1";
+  /**
+   * Filter by project
+   */
+  projectUuid?: string;
 };
 
 export type EntityExportAllError = Fetcher.ErrorWrapper<{
@@ -3493,6 +3520,85 @@ export const entityUpdate = new V3ApiEndpoint<undefined, EntityUpdateError, Enti
   "PATCH"
 );
 
+export type EntityExportPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+};
+
+export type EntityExportError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type EntityExportVariables = {
+  pathParams: EntityExportPathParams;
+};
+
+export const entityExport = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example fileDownloads
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example fileDownloads
+         */
+        type?: string;
+        id?: string;
+        attributes?: Schemas.FileDownloadDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  EntityExportError,
+  EntityExportVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/export", "GET");
+
 export type FormDataGetPathParams = {
   /**
    * UUID of the resource.
@@ -3919,6 +4025,18 @@ export type EntityAssociationIndexQueryParams = {
    * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
    */
   taskId?: number;
+  /**
+   * Filter projects by polygon data submission status
+   */
+  polygonDataSubmission?:
+    | "no-polygons-submitted"
+    | "not-applicable"
+    | "polygons-partially-submitted"
+    | "all-polygons-received";
+  /**
+   * Filter projects where ready for baseline is true or false
+   */
+  readyForBaseline?: boolean;
   modelType?: string;
   /**
    * @default false
@@ -4807,6 +4925,7 @@ export type FormIndexQueryParams = {
     | "nursery"
     | "nursery-report"
     | "srp-report";
+  attachedTo?: string;
 };
 
 export type FormIndexError = Fetcher.ErrorWrapper<{
@@ -5629,6 +5748,53 @@ export const applicationDelete = new V3ApiEndpoint<
   ApplicationDeleteVariables,
   {}
 >("/applications/v3/applications/{uuid}", "DELETE");
+
+export type ApplicationExportGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type ApplicationExportGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ApplicationExportGetVariables = {
+  pathParams: ApplicationExportGetPathParams;
+};
+
+export const applicationExportGet = new V3ApiEndpoint<
+  undefined,
+  ApplicationExportGetError,
+  ApplicationExportGetVariables,
+  {}
+>("/applications/v3/applications/{uuid}/export", "GET");
 
 export type ApplicationHistoryGetPathParams = {
   /**
@@ -6479,7 +6645,7 @@ export const operationsByTag = {
   reminders: { sendReminder },
   auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
   aggregateReports: { getAggregateReports },
-  entities: { entityIndex, entityCreate, entityExportAll, entityGet, entityDelete, entityUpdate },
+  entities: { entityIndex, entityCreate, entityExportAll, entityGet, entityDelete, entityUpdate, entityExport },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },
   entityAssociations: { entityAssociationIndex },
@@ -6496,7 +6662,7 @@ export const operationsByTag = {
     formPullTranslations,
     formSubmissionsExportCsv
   },
-  applications: { applicationIndex, applicationGet, applicationDelete, applicationHistoryGet },
+  applications: { applicationIndex, applicationGet, applicationDelete, applicationExportGet, applicationHistoryGet },
   fundingProgrammes: {
     fundingProgrammesIndex,
     fundingProgrammeCreate,

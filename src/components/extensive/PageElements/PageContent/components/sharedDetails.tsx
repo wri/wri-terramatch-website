@@ -61,6 +61,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
 
   const isValid = step.validation.isValidSync(formValues);
   const hasStepFeedback = hasFeedbackInStep(fieldsProvider, step.id, feedbackFieldsOptions);
+  const accordionHeaderStatus = !isValid ? "error" : hasStepFeedback ? "warning" : "complete";
   const fieldsRequiringAttention = getFieldsRequiringAttentionCount(step.validation, formValues);
 
   const entries = useGetFormEntries({
@@ -84,7 +85,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
       header={
         <AccordionHeader
           title={step.title ?? ""}
-          status={hasStepFeedback ? "error" : isValid ? "complete" : "error"}
+          status={accordionHeaderStatus}
           badge={
             !isValid && fieldsRequiringAttention > 0
               ? t("{count} requires attention", { count: fieldsRequiringAttention })

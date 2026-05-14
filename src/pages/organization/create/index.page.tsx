@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
@@ -25,7 +24,6 @@ const CreateOrganisationForm = () => {
   const router = useRouter();
   const [, { organisationId }] = useMyOrg();
   const { openModal, closeModal } = useModalContext();
-  const queryClient = useQueryClient();
   const countryOptions = useGadmOptions({ level: 0 });
 
   const uuid = (organisationId || router?.query?.uuid) as string;
@@ -54,13 +52,12 @@ const CreateOrganisationForm = () => {
     if (uuid == null) return;
     try {
       await deleteOrganisation(uuid);
-      await queryClient.refetchQueries({ queryKey: ["auth", "me"] });
       router.push("/assign");
       closeModal(ModalId.WARNING);
     } catch (error) {
       Log.error("Failed to delete draft organization:", error);
     }
-  }, [uuid, queryClient, router, closeModal]);
+  }, [uuid, router, closeModal]);
 
   const formSteps = useMemo(() => getSteps(t, countryOptions ?? []), [countryOptions, t]);
   const provider = useLocalStepsProvider(formSteps);
@@ -95,11 +92,6 @@ const CreateOrganisationForm = () => {
     [update, uuid]
   );
 
-  const updateError =
-    updateFailure != null
-      ? { statusCode: updateFailure.statusCode, message: updateFailure.message, error: updateFailure.error }
-      : undefined;
-
   return (
     <BackgroundLayout>
       <LoadingContainer loading={!orgLoaded && uuid != null}>
@@ -108,7 +100,6 @@ const CreateOrganisationForm = () => {
           models={models}
           fieldsProvider={provider}
           formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
-          errors={updateError}
           defaultValues={defaultValues}
           onChange={onChange}
           onSubmit={handleSubmit}

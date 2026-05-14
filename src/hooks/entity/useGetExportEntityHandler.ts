@@ -1,55 +1,36 @@
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { startCase } from "lodash";
+import { useCallback, useState } from "react";
 
+import { SupportedEntity } from "@/connections/Entity";
 import { ToastType, useToastContext } from "@/context/toast.provider";
-import { fetchGetV2ENTITYUUIDExport } from "@/generated/apiComponents";
+import { entityExport } from "@/generated/v3/entityService/entityServiceComponents";
+import { singularEntityName, v3EntityName } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
-import { downloadFileBlob } from "@/utils/network";
+import Log from "@/utils/log";
 
 /**
  * To get entity export handler
- * @param entity EntityName
- * @param uuid string
- * @param name string
- * @param extension string = "zip"
- * @returns { handleExport }
  */
-export const useGetExportEntityHandler = (
-  entity: EntityName,
-  uuid: string,
-  name?: string | null,
-  extension: string = "zip"
-) => {
+export const useGetExportEntityHandler = (entity: EntityName, uuid: string) => {
   const t = useT();
   const { openToast } = useToastContext();
   const [loading, setLoading] = useState(false);
 
-  const onSuccess = (response: any) => {
-    downloadFileBlob(response, `${entity}-${name}.${extension}`);
-    openToast(t(`{name} successfully exported`, { name }));
-  };
+  const handleExport = useCallback(async () => {
+    setLoading(true);
 
-  const onError = () => {
-    openToast(t("Something went wrong!"), ToastType.ERROR);
-  };
+    try {
+      const entityName = v3EntityName(entity) as SupportedEntity;
+      await entityExport.downloadFile({ pathParams: { entity: entityName, uuid } });
+      openToast(t(`${startCase(singularEntityName(entity))} successfully exported`));
+    } catch (error) {
+      Log.error("Error exporting entity", error);
+      openToast(t("Something went wrong!"), ToastType.ERROR);
+    } finally {
+      setLoading(false);
+    }
+  }, [entity, openToast, t, uuid]);
 
-  return {
-    handleExport: () => {
-      setLoading(true);
-      fetchGetV2ENTITYUUIDExport({ pathParams: { entity, uuid } })
-        .then((response: any) => {
-          if (response.message) {
-            return fetchGetV2ENTITYUUIDExport({ pathParams: { entity, uuid }, queryParams: { force: true } });
-          } else {
-            return response;
-          }
-        })
-        .then(onSuccess)
-        .catch(onError)
-        .finally(() => {
-          setLoading(false);
-        });
-    },
-    loading
-  };
+  return { handleExport, loading };
 };

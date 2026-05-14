@@ -11,7 +11,7 @@ type PolygonFeature = Pick<GeoJSON.Feature, "geometry">;
 export async function storePolygon(
   geojson: PolygonFeature[],
   record: { uuid?: string },
-  setPolygonFromMap?: (value: PolygonFromMapState & { primary_uuid?: string }) => void,
+  setPolygonFromMap?: (value: PolygonFromMapState & { primaryUuid?: string }) => void,
   refetchSitePolygons?: () => void | Promise<void>
 ): Promise<void> {
   if (geojson == null || geojson.length === 0) return;
@@ -20,7 +20,7 @@ export async function storePolygon(
     geometries: [
       {
         type: "FeatureCollection",
-        features: [{ type: "Feature", geometry: geojson[0].geometry, properties: { site_id: record.uuid } }] as any
+        features: [{ type: "Feature", geometry: geojson[0].geometry, properties: { siteId: record.uuid } }] as any
       }
     ]
   };
@@ -33,9 +33,9 @@ export async function storePolygon(
       setPolygonFromMap({
         uuid: result.polygonUuid,
         isOpen: true,
-        primary_uuid: result.primaryUuid
+        primaryUuid: result.primaryUuid
       } as PolygonFromMapState & {
-        primary_uuid?: string;
+        primaryUuid?: string;
       });
     }
   } catch (error) {

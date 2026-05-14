@@ -4,7 +4,6 @@ const ENVIRONMENT_NAMES = ["local", "dev", "test", "staging", "prod"] as const;
 type EnvironmentName = (typeof ENVIRONMENT_NAMES)[number];
 
 const SERVICES = [
-  "apiBaseUrl",
   "userServiceUrl",
   "jobServiceUrl",
   "entityServiceUrl",
@@ -14,7 +13,6 @@ const SERVICES = [
 type Service = (typeof SERVICES)[number];
 
 type ServicesDefinition = {
-  apiBaseUrl: string;
   userServiceUrl: string;
   jobServiceUrl: string;
   researchServiceUrl: string;
@@ -43,7 +41,6 @@ const GATEWAYS = {
 };
 
 const LOCAL_SERVICE_URLS = {
-  apiBaseUrl: "http://localhost:8080",
   userServiceUrl: "http://localhost:4010",
   jobServiceUrl: "http://localhost:4020",
   researchServiceUrl: "http://localhost:4030",
@@ -86,7 +83,6 @@ if (!ENVIRONMENT_NAMES.includes(declaredEnv as EnvironmentName)) {
 export const DECLARED_ENV = declaredEnv;
 
 const DEFAULTS = buildDefaults(declaredEnv as EnvironmentName);
-export const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULTS.apiBaseUrl;
 export const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE_URL ?? DEFAULTS.userServiceUrl;
 export const jobServiceUrl = process.env.NEXT_PUBLIC_JOB_SERVICE_URL ?? DEFAULTS.jobServiceUrl;
 export const researchServiceUrl = process.env.NEXT_PUBLIC_RESEARCH_SERVICE_URL ?? DEFAULTS.researchServiceUrl;

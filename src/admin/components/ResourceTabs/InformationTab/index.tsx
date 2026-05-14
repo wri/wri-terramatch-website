@@ -4,8 +4,8 @@ import { camelCase } from "lodash";
 import { FC, useMemo } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
-import { MonitoringPartnersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/MonitoringPartners";
-import { ProjectManagersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/ProjectManagersTable";
+import MonitoringPartnersTable from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/MonitoringPartners";
+import ProjectManagersTable from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/ProjectManagersTable";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
@@ -76,6 +76,7 @@ const InformationTab: FC<IProps> = props => {
   const totalCountTreePlanted = usePlantTotalCount({ entity, entityUuid, collection: "tree-planted" });
   const totalCountReplanting = usePlantTotalCount({ entity, entityUuid, collection: "replanting" });
   const totalCountAnr = usePlantTotalCount({ entity, entityUuid, collection: "anr" });
+  const totalCountInvasive = usePlantTotalCount({ entity, entityUuid, collection: "invasive" });
 
   const { formData, isLoading: queryLoading } = useEntityForm(v3EntityName(props.type) as FormEntity, record?.uuid);
   const [updateRequestLoaded, { data: updateRequest }] = useUpdateRequest({
@@ -341,6 +342,19 @@ const InformationTab: FC<IProps> = props => {
                           </Text>
                         </div>
                         <TreeSpeciesTable {...{ entity, entityUuid }} collection="replanting" secondColumnWidth="45%" />
+                      </div>
+                    ) : null}
+                    {["projects", "sites", "site-reports"].includes(props.type) ? (
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1 py-1">
+                          <Text variant="text-16-bold" className="capitalize">
+                            Invasive Trees Removed:
+                          </Text>
+                          <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                            {totalCountInvasive.toLocaleString() ?? 0}
+                          </Text>
+                        </div>
+                        <TreeSpeciesTable {...{ entity, entityUuid }} collection="invasive" secondColumnWidth="45%" />
                       </div>
                     ) : null}
                   </div>

@@ -3,15 +3,16 @@ import classNames from "classnames";
 import React, {
   DetailedHTMLProps,
   Dispatch,
+  FC,
   Fragment,
   HTMLAttributes,
   SetStateAction,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState
 } from "react";
-import { When } from "react-if";
 
 import { downloadPolygonGeoJson } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
@@ -24,6 +25,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useOnMount } from "@/hooks/useOnMount";
 import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 import Log from "@/utils/log";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
@@ -34,7 +36,7 @@ import MapMenuPanelItem from "../MapPolygonPanel/MapMenuPanelItem";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "../Menu/MenuVariant";
 
-export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+type MapSidePanelProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   title: string;
   items: SitePolygonLightDto[];
   onSearch?: (query: string) => void;
@@ -51,9 +53,15 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   recallEntityData?: any;
   entityUuid?: string;
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
-}
+};
 
-const MapSidePanel = ({
+const formatStringName = (name: string) => name.replace(/ /g, "_");
+
+const downloadGeoJsonPolygon = async (polygonUuid: string, polygon_name: string) => {
+  await downloadPolygonGeoJson(polygonUuid, polygon_name, { includeExtendedData: true });
+};
+
+const MapSidePanel: FC<MapSidePanelProps> = ({
   title,
   items = [],
   className,
@@ -72,7 +80,7 @@ const MapSidePanel = ({
   entityUuid,
   setTabEditPolygon,
   ...props
-}: MapSidePanelProps) => {
+}) => {
   const t = useT();
   const { format } = useDate();
   const menuCheckboxRef = useRef<HTMLDivElement>(null);
@@ -83,7 +91,7 @@ const MapSidePanel = ({
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
 
   const filteredItems = useMemo(() => {
-    if (!checkedValues || checkedValues.length === 0) {
+    if (checkedValues == null || checkedValues.length === 0) {
       return items;
     }
     return items.filter(item => checkedValues.includes(item.status));
@@ -100,22 +108,18 @@ const MapSidePanel = ({
 
   const selectedPolygonBbox = useBoundingBox({ polygonUuid: selected?.polygonUuid ?? "" });
 
-  const flyToPolygonBounds = async () => {
-    if (!map.current || selectedPolygonBbox == null) {
+  const flyToPolygonBounds = useCallback(async () => {
+    if (map.current == null || selectedPolygonBbox == null) {
       return;
     }
     map.current.fitBounds(selectedPolygonBbox, {
       padding: 100,
       linear: false
     });
-  };
+  }, [map, selectedPolygonBbox]);
 
-  const downloadGeoJsonPolygon = async (polygonUuid: string, polygon_name: string) => {
-    await downloadPolygonGeoJson(polygonUuid, polygon_name, { includeExtendedData: true });
-  };
-
-  const deletePolygon = async (polygonUuid: string) => {
-    if (!selected?.uuid) {
+  const deletePolygon = useCallback(async () => {
+    if (selected?.uuid == null) {
       Log.error("Could not find sitePolygon UUID");
       return;
     }
@@ -126,10 +130,7 @@ const MapSidePanel = ({
     } catch (error) {
       Log.error("Failed to delete polygon:", error);
     }
-  };
-  const formatStringName = (name: string) => {
-    return name.replace(/ /g, "_");
-  };
+  }, [recallEntityData, selected?.uuid]);
 
   useEffect(() => {
     if (clickedButton === "site") {
@@ -143,11 +144,11 @@ const MapSidePanel = ({
       downloadGeoJsonPolygon(selected?.polygonUuid ?? "", selected?.name ? formatStringName(selected.name) : "polygon");
       setClickedButton("");
     } else if (clickedButton === "delete") {
-      deletePolygon(selected?.polygonUuid ?? "");
+      deletePolygon();
       setClickedButton("");
     } else if (clickedButton === "editPolygon") {
       setTabEditPolygon("Attributes");
-      setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primary_uuid: selected?.primaryUuid ?? "" });
+      setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primaryUuid: selected?.primaryUuid ?? "" });
       if (selected?.polygonUuid) {
         flyToPolygonBounds();
       }
@@ -158,7 +159,7 @@ const MapSidePanel = ({
         return;
       }
       setTabEditPolygon("ANR Monitoring Plots");
-      setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primary_uuid: selected?.primaryUuid ?? "" });
+      setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primaryUuid: selected?.primaryUuid ?? "" });
       if (selected?.polygonUuid) {
         flyToPolygonBounds();
       }
@@ -167,7 +168,7 @@ const MapSidePanel = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clickedButton, selected, selectedPolygonBbox]);
 
-  useEffect(() => {
+  useOnMount(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuCheckboxRef.current && !menuCheckboxRef.current?.contains(event.target as Node)) {
         setOpenMenu(false);
@@ -251,19 +252,19 @@ const MapSidePanel = ({
   return (
     <div {...props} className={classNames("flex h-[250px] flex-1 flex-col", className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full rounded-l-lg backdrop-blur-md" />
-      <div className="mb-4 flex items-center justify-between rounded-tl-lg">
+      <div className="mb-4 flex items-center justify-between rounded-tl-lg mobile:flex-col mobile:gap-2">
         <button className="text-white hover:text-primary-300" onClick={() => setIsUserDrawingEnabled(true)}>
           <Text variant="text-14-bold" className="flex items-center uppercase">
-            <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
+            <Icon name={IconNames.PLUS_PA} className="h-4 w-4 mobile:hidden" />
             &nbsp; {t("new Polygon")}
           </Text>
         </button>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ">
           <div className="relative" ref={menuCheckboxRef}>
             <div className="rounded bg-white p-1.5" onClick={() => setOpenMenu(!openMenu)}>
               <Icon name={IconNames.IC_FILTER} className="h-4 w-4 text-blueCustom-900 hover:text-primary-500" />
             </div>
-            <When condition={openMenu}>
+            {openMenu && (
               <div className="absolute z-10 mt-1 grid w-max gap-3 rounded-lg bg-white p-3 shadow">
                 {STATUSES.map((status, index) => (
                   <Checkbox
@@ -278,7 +279,7 @@ const MapSidePanel = ({
                   />
                 ))}
               </div>
-            </When>
+            )}
           </div>
           <div className="rounded bg-white p-1.5">
             <Menu
@@ -295,12 +296,12 @@ const MapSidePanel = ({
         </div>
       </div>
       {filteredItems.length > 0 && (
-        <div className="mb-4 flex items-center justify-between">
-          <Text variant="text-12" className="text-white">
+        <div className="mb-4 flex items-center justify-between mobile:justify-center">
+          <Text variant="text-12" className="text-white mobile:hidden">
             Showing {(startIndex + 1).toLocaleString()}-{Math.min(endIndex, filteredItems.length).toLocaleString()} of{" "}
             {filteredItems.length.toLocaleString()} polygons
           </Text>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ">
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage <= 1}
@@ -347,8 +348,8 @@ const MapSidePanel = ({
                 isSelected={selected?.uuid === item.uuid}
                 refContainer={refContainer}
                 type={type}
-                poly_id={item.polygonUuid ?? ""}
-                site_id={entityUuid}
+                polygonUuid={item.polygonUuid ?? ""}
+                siteId={entityUuid}
                 validationStatus={item.validationStatus ?? "notChecked"}
                 isAdmin={isAdmin}
                 anrMonitoringPlotsEligible={isSitePolygonEligibleForAnrMonitoringPlots(item)}

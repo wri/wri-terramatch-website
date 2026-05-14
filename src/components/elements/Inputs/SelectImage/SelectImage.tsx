@@ -1,5 +1,4 @@
-import { Fragment, PropsWithChildren, useEffect, useId } from "react";
-import { Else, If, Then } from "react-if";
+import { FC, Fragment, PropsWithChildren, useEffect, useId } from "react";
 
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
@@ -14,10 +13,8 @@ export interface SelectImageProps extends SelectProps {}
 
 /**
  * Notice: Use RHFSelectImage with React Hook Form
- * @param props PropsWithChildren<SelectImageProps>
- * @returns SelectImage component
  */
-const SelectImage = (props: PropsWithChildren<SelectImageProps>) => {
+const SelectImage: FC<PropsWithChildren<SelectImageProps>> = props => {
   const id = useId();
   const [selected, setSelected, setSelectedWithoutEffect] = useStateWithEffect<OptionValue[]>(
     props.defaultValue || props.value || [],
@@ -63,38 +60,31 @@ const SelectImage = (props: PropsWithChildren<SelectImageProps>) => {
     >
       <List
         as="div"
-        className="mx-auto !mt-4 flex max-w-[573px] flex-wrap justify-center gap-4"
+        className="mx-auto !mt-4 flex max-w-[573px] flex-wrap items-start justify-center gap-4"
         itemAs={Fragment}
         items={props.options}
         render={option => {
-          let isSelected;
-          if (typeof selected === "string" || Array.isArray(selected)) {
-            isSelected = selected?.includes(option.value);
-          } else {
-            isSelected = selected === option.value;
-          }
+          const isSelected =
+            typeof selected === "string" || Array.isArray(selected)
+              ? selected?.includes(option.value)
+              : selected === option.value;
           const imageUrl = option.meta?.image?.thumb_url ?? option.meta?.url ?? option.meta?.image_url;
 
-          return (
-            <If condition={props.multiSelect}>
-              <Then>
-                <Checkbox
-                  name=""
-                  checked={isSelected}
-                  className="flex-row-reverse justify-end gap-3"
-                  onClick={() => onChange(option.value)}
-                  label={<SelectImageLabel title={option.title} isSelected={isSelected} imageUrl={imageUrl} />}
-                />
-              </Then>
-              <Else>
-                <Radio
-                  checked={isSelected}
-                  className="flex-row-reverse justify-end gap-3"
-                  onClick={() => onChange(option.value)}
-                  label={<SelectImageLabel title={option.title} isSelected={isSelected} imageUrl={imageUrl} />}
-                />
-              </Else>
-            </If>
+          return props.multiSelect ? (
+            <Checkbox
+              name=""
+              checked={isSelected}
+              className="flex-row-reverse justify-end gap-3"
+              onClick={() => onChange(option.value)}
+              label={<SelectImageLabel title={option.title} isSelected={isSelected} imageUrl={imageUrl} />}
+            />
+          ) : (
+            <Radio
+              checked={isSelected}
+              className="flex-row-reverse justify-end gap-3"
+              onClick={() => onChange(option.value)}
+              label={<SelectImageLabel title={option.title} isSelected={isSelected} imageUrl={imageUrl} />}
+            />
           );
         }}
       />

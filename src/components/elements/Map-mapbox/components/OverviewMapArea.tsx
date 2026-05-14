@@ -176,7 +176,7 @@ const OverviewMapArea = ({
           items={(polygonsData ?? []) as SitePolygonLightDto[]}
           mapFunctions={mapFunctions}
           polygonsData={polygonDataMap}
-          className="absolute z-[19] flex h-full w-[29vw] flex-col rounded-l bg-[#ffffff12] p-6"
+          className="absolute z-[19] flex h-full w-[29vw] flex-col rounded-l bg-[#ffffff12] p-6 mobile:w-[30vw] mobile:px-1"
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
           onCheckboxChange={handleCheckboxChange}
@@ -202,7 +202,7 @@ const OverviewMapArea = ({
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}
         bbox={extentBbox}
-        tooltipType={type === "sites" ? "edit" : "goTo"}
+        tooltipType={disabledPolygonPanel ? "view" : type === "sites" ? "edit" : "goTo"}
         showPopups
         showLegend
         siteData={true}

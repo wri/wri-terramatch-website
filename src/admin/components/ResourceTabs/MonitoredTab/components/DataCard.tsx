@@ -45,7 +45,6 @@ import {
   getOrderTop3,
   replaceTextWithParams
 } from "@/utils/MonitoredIndicatorUtils";
-import { downloadFileBlob } from "@/utils/network";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
 import MonitoredCharts from "./MonitoredCharts";
@@ -81,7 +80,7 @@ export interface DataStructure extends React.HTMLAttributes<HTMLDivElement> {
 
 const COMMON_COLUMNS: ColumnDef<RowData>[] = [
   {
-    accessorKey: "poly_name",
+    accessorKey: "polygonName",
     header: "Polygon Name",
     meta: { style: { width: "13.30%" } },
     cell: (props: any) => {
@@ -94,7 +93,7 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
     header: "Size (ha)",
     meta: { style: { width: "9.01%" } }
   },
-  { accessorKey: "site_name", header: "Site Name", meta: { style: { width: "9.90%" } } },
+  { accessorKey: "siteName", header: "Site Name", meta: { style: { width: "9.90%" } } },
   {
     accessorKey: "status",
     header: "Status",
@@ -107,7 +106,7 @@ const COMMON_COLUMNS: ColumnDef<RowData>[] = [
     meta: { style: { width: "7.65%" } }
   },
   {
-    accessorKey: "plantstart",
+    accessorKey: "plantStart",
     header: "Plant Start Date",
     cell: (props: any) => {
       const value = props.getValue();
@@ -223,8 +222,8 @@ const sumValuesTreeCoverLoss = (data: any) => {
 
 const groupedBySiteUuidWithPolygons = (data: any[]) => {
   return data.reduce((acc, polygon) => {
-    acc[polygon.site_name] = acc[polygon.site_name] || [];
-    acc[polygon.site_name].push(polygon);
+    acc[polygon.siteName] = acc[polygon.siteName] || [];
+    acc[polygon.siteName].push(polygon);
     return acc;
   }, {} as Record<string, typeof data>);
 };
@@ -264,17 +263,17 @@ const DataCard = ({
 
   const filteredPolygonsIndicator =
     selectedPolygonUuid !== "0"
-      ? polygonsIndicator?.filter((polygon: any) => polygon.poly_id === selectedPolygonUuid)
+      ? polygonsIndicator?.filter((polygon: any) => polygon.polygonUuid === selectedPolygonUuid)
       : polygonsIndicator;
 
   const filteredTreeCoverLossData =
     selectedPolygonUuid !== "0"
-      ? treeCoverLossData?.filter((data: any) => data.poly_id === selectedPolygonUuid)
+      ? treeCoverLossData?.filter((data: any) => data.polygonUuid === selectedPolygonUuid)
       : treeCoverLossData;
 
   const filteredTreeCoverLossFiresData =
     selectedPolygonUuid !== "0"
-      ? treeCoverLossFiresData?.filter((data: any) => data.poly_id === selectedPolygonUuid)
+      ? treeCoverLossFiresData?.filter((data: any) => data.polygonUuid === selectedPolygonUuid)
       : treeCoverLossFiresData;
 
   const parsedData = parseTreeCoverData(filteredTreeCoverLossData, filteredTreeCoverLossFiresData);
@@ -326,7 +325,7 @@ const DataCard = ({
       header: "",
       columns: [
         {
-          accessorKey: "poly_name",
+          accessorKey: "polygonName",
           header: "Polygon Name",
           meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0", width: "11%" } }
         },
@@ -356,7 +355,7 @@ const DataCard = ({
           )
         },
         {
-          accessorKey: "plantstart",
+          accessorKey: "plantStart",
           header: () => (
             <>
               Plant
@@ -424,7 +423,7 @@ const DataCard = ({
           enableSorting: false,
           cell: props => (
             <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-              <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.site_id}/show/1`)}>
+              <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.siteId}/show/1`)}>
                 <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
               </button>
             </div>
@@ -441,7 +440,7 @@ const DataCard = ({
       header: "",
       columns: [
         {
-          accessorKey: "poly_name",
+          accessorKey: "polygonName",
           header: "Polygon Name",
           meta: { style: { top: `${topHeaderFirstTable}`, borderRadius: "0", width: "11%" } }
         },
@@ -451,7 +450,7 @@ const DataCard = ({
           meta: { style: { top: `${topHeaderFirstTable}`, width: "7%" } }
         },
         {
-          accessorKey: "site_name",
+          accessorKey: "siteName",
           header: "Site Name",
           meta: { style: { top: `${topHeaderFirstTable}`, width: "8%" } }
         },
@@ -467,7 +466,7 @@ const DataCard = ({
           )
         },
         {
-          accessorKey: "plantstart",
+          accessorKey: "plantStart",
           header: () => (
             <>
               Plant
@@ -485,7 +484,7 @@ const DataCard = ({
         ? (() => {
             try {
               return `Analysis: ${format(
-                new Date(polygonsIndicator?.[totalElemIndicator]?.created_at!),
+                new Date(polygonsIndicator?.[totalElemIndicator]?.createdAt!),
                 "MMMM d, yyyy"
               )}`;
             } catch (e) {
@@ -588,7 +587,7 @@ const DataCard = ({
           enableSorting: false,
           cell: props => (
             <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-              <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.site_id}/show/1`)}>
+              <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.siteId}/show/1`)}>
                 <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
               </button>
             </div>
@@ -646,7 +645,7 @@ const DataCard = ({
       enableSorting: false,
       cell: props => (
         <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-          <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.site_id}/show/1`)}>
+          <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.siteId}/show/1`)}>
             <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
           </button>
         </div>
@@ -699,7 +698,7 @@ const DataCard = ({
       enableSorting: false,
       cell: props => (
         <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-          <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.site_id}/show/1`)}>
+          <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.siteId}/show/1`)}>
             <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
           </button>
         </div>
@@ -743,7 +742,7 @@ const DataCard = ({
       enableSorting: false,
       cell: props => (
         <div className="flex w-full cursor-pointer items-center justify-end rounded p-1 hover:text-primary">
-          <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.site_id}/show/1`)}>
+          <button onClick={() => navigate(`${basename}/site/${(props.row.original as any)?.siteId}/show/1`)}>
             <Icon name={IconNames.EDIT_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
           </button>
         </div>
@@ -764,14 +763,16 @@ const DataCard = ({
   const handleExport = async () => {
     try {
       setExporting(true);
-      const { blob } = await exportIndicatorCsv.fetchBlob({
-        pathParams: {
-          entityType: type,
-          entityUuid: record.uuid,
-          slug: indicatorSlug as ExportIndicatorCsvPathParams["slug"]
-        }
-      });
-      downloadFileBlob(blob, `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`);
+      await exportIndicatorCsv.downloadFile(
+        {
+          pathParams: {
+            entityType: type,
+            entityUuid: record.uuid,
+            slug: indicatorSlug as ExportIndicatorCsvPathParams["slug"]
+          }
+        },
+        `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`
+      );
 
       openNotification("success", t("Success! Export completed."), t("The export has been completed successfully."));
       setExporting(false);
@@ -792,7 +793,7 @@ const DataCard = ({
   const dateRunIndicator = polygonsIndicator?.[polygonsIndicator.length - 1]
     ? (() => {
         try {
-          return format(new Date(polygonsIndicator?.[polygonsIndicator.length - 1]?.created_at!), "dd/MM/yyyy");
+          return format(new Date(polygonsIndicator?.[polygonsIndicator.length - 1]?.createdAt!), "dd/MM/yyyy");
         } catch (e) {
           return "";
         }
@@ -868,6 +869,22 @@ const DataCard = ({
             : "."
         }`
       : "";
+
+  const selectedChartHasData = selected.some(chartId => {
+    switch (chartId) {
+      case "1":
+      case "2":
+        return parsedData.length > 0;
+      case "3":
+        return (ecoRegionData?.chartData?.length ?? 0) > 0;
+      case "4":
+        return strategiesData.length > 0;
+      case "5":
+        return (landUseData?.graphicTargetLandUseTypes?.length ?? 0) > 0;
+      default:
+        return false;
+    }
+  });
 
   const monitoredDescriptionParams: Record<string, any> = {
     treeCover: {},
@@ -1000,16 +1017,18 @@ const DataCard = ({
           )}
           {tabActive === 1 && (
             <div className="relative z-auto flex w-full max-w-[calc(100vw-356px)] gap-2 px-6 pt-2 pb-6">
-              <Dropdown
-                containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-[1] !h-8", {
-                  hidden: selected.includes("6")
-                })}
-                optionsClassName="!w-max right-0"
-                className="!h-8 w-max"
-                options={polygonOptions}
-                defaultValue={["0"]}
-                onChange={option => setSelectedPolygonUuid(option[0])}
-              />
+              {selectedChartHasData && (
+                <Dropdown
+                  containerClassName={classNames("absolute left-full -translate-x-full pr-6 z-[1] !h-8", {
+                    hidden: selected.includes("6")
+                  })}
+                  optionsClassName="!w-max right-0"
+                  className="!h-8 w-max"
+                  options={polygonOptions}
+                  defaultValue={["0"]}
+                  onChange={option => setSelectedPolygonUuid(option[0])}
+                />
+              )}
               <div className="sticky top-[77px] flex h-[calc(100vh-320px)] w-1/4 min-w-[29%] max-w-[calc(29vw-356px)] flex-col gap-3">
                 <Text variant={"text-14-semibold"} className="w-fit text-blueCustom-900">
                   Indicator Description

@@ -14,7 +14,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ className, buttons = [], groups = [
     <Flex
       className={className}
       width="100%"
-      borderTop="1px solid"
+      borderTop="0.0625rem solid"
       borderColor="neutral.300"
       py={3}
       px={4}

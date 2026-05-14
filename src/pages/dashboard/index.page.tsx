@@ -92,7 +92,7 @@ const Dashboard = () => {
   const t = useT();
   const [, { user }] = useMyUser();
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(undefined);
-  const { filters, setFilters, setLastUpdatedAt } = useDashboardContext();
+  const { filters, setFilters } = useDashboardContext();
   const countryChoices = useGadmChoices({ level: 0 });
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const {
@@ -118,8 +118,7 @@ const Dashboard = () => {
     isUserAllowed,
     generalBbox,
     transformedStories,
-    isLoadingImpactStories,
-    lastUpdatedAt
+    isLoadingImpactStories
   } = useDashboardData(filters);
 
   const cohortArray = useMemo(() => {
@@ -160,11 +159,6 @@ const Dashboard = () => {
     ],
     [t]
   );
-
-  useEffect(() => {
-    setLastUpdatedAt?.(lastUpdatedAt ?? "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setLastUpdatedAt, dashboardRestorationGoalData]);
 
   useValueChanged(generalBbox, () => {
     if (generalBbox) {
@@ -365,8 +359,10 @@ const Dashboard = () => {
     [totalSectionHeader]
   );
 
+  const hasCountrySelection = filters.country?.country_slug != null && filters.country.country_slug !== "";
+
   const tooltipText = useMemo(() => {
-    if (filters.country.id === 0) {
+    if (!hasCountrySelection) {
       return t(ACTIVE_COUNTRIES_TOOLTIP);
     } else if (projectsInCountry.length > 0) {
       return t(ACTIVE_PROJECTS_TOOLTIP);
@@ -374,7 +370,7 @@ const Dashboard = () => {
       return t(IMPACT_STORIES_TOOLTIP);
     }
     return t(NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS);
-  }, [t, filters.country.id, projectsInCountry, transformedStories]);
+  }, [t, hasCountrySelection, projectsInCountry, transformedStories]);
 
   const countryData = useMemo(() => {
     if (!singleDashboardProject?.country || !countryChoices?.length) return undefined;
@@ -382,16 +378,37 @@ const Dashboard = () => {
     const gadmCountry = countryChoices.find(country => country.id === singleDashboardProject?.country);
     if (!gadmCountry) return undefined;
 
-    const countrySlug = gadmCountry.id;
+    const countrySlug = String(gadmCountry.id);
     return {
       country_slug: countrySlug,
       data: {
         label: gadmCountry.name,
         icon: `/flags/${String(countrySlug).toLowerCase()}.svg`
       },
-      id: gadmCountry.id
+      id: 1
     };
   }, [singleDashboardProject?.country, countryChoices]);
+
+  useEffect(() => {
+    if (filters.uuid == null || filters.uuid === "" || countryData == null) return;
+
+    setFilters(prevValues => {
+      const previousCountrySlug = prevValues.country?.country_slug ?? "";
+      const hasSameCountry =
+        previousCountrySlug === countryData.country_slug &&
+        prevValues.country?.id === countryData.id &&
+        prevValues.country?.data?.label === countryData.data.label;
+
+      if (hasSameCountry) {
+        return prevValues;
+      }
+
+      return {
+        ...prevValues,
+        country: countryData
+      };
+    });
+  }, [countryData, filters.uuid, setFilters]);
 
   const safeBbox = (bbox: number[] | undefined): BBox | undefined => {
     return bbox?.length === 4 ? (bbox as [number, number, number, number]) : undefined;
@@ -400,13 +417,13 @@ const Dashboard = () => {
   return (
     <div className="mt-4 mb-4 mr-2 flex flex-1 flex-wrap gap-4 overflow-y-auto overflow-x-hidden bg-neutral-70 pl-4 pr-2 small:flex-nowrap mobile:bg-white">
       <ContentDashboardtWrapper isLeftWrapper={true}>
-        {(filters.country.id !== 0 || filters.landscapes.length > 0) && !filters.uuid && (
+        {(hasCountrySelection || filters.landscapes.length > 0) && !filters.uuid && (
           <div className="flex items-center gap-2">
             <Text variant="text-14-light" className="uppercase text-black">
               {t("results for:")}
             </Text>
 
-            {filters.country.id !== 0 && filters.landscapes.length === 0 && !filters.uuid && (
+            {hasCountrySelection && filters.landscapes.length === 0 && !filters.uuid && (
               <>
                 <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
                 <Text variant="text-24-semibold" className="text-black">
@@ -424,10 +441,10 @@ const Dashboard = () => {
               </Text>
             )}
 
-            {((filters.landscapes.length > 1 && filters.country.id === 0) ||
-              (filters.landscapes.length > 0 && filters.country.id !== 0)) && (
+            {((filters.landscapes.length > 1 && !hasCountrySelection) ||
+              (filters.landscapes.length > 0 && hasCountrySelection)) && (
               <Text variant="text-24-semibold" className="text-black">
-                {filters.country.id === 0 ? t("Multiple Landscapes") : t("Multiple Countries/Landscapes")}
+                {!hasCountrySelection ? t("Multiple Landscapes") : t("Multiple Countries/Landscapes")}
               </Text>
             )}
           </div>
@@ -672,12 +689,12 @@ const Dashboard = () => {
       </ContentDashboardtWrapper>
       <ContentOverview
         dataTable={
-          filters.country.id === 0 ? DATA_ACTIVE_PROGRAMME : filters.uuid ? otherProjectsInCountry : projectsInCountry
+          !hasCountrySelection ? DATA_ACTIVE_PROGRAMME : filters.uuid ? otherProjectsInCountry : projectsInCountry
         }
         centroids={centroidsDataProjects}
-        columns={filters.country.id === 0 ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
+        columns={!hasCountrySelection ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
         titleTable={t(
-          filters.country.id === 0
+          !hasCountrySelection
             ? "ACTIVE COUNTRIES"
             : filters.uuid
             ? `OTHER PROJECTS IN ${filters?.country?.data?.label.toUpperCase()}`

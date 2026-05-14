@@ -135,10 +135,16 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
     <Box
       width="fit-content"
       height="auto"
-      className="flex flex-col gap-5 pt-5"
+      className="flex flex-col gap-5 pt-5 mobile:!w-full"
       css={{ "&": { alignItems: "self-end !important" } }}
     >
-      <Flex className="items-start gap-5">
+      <Flex
+        className="items-start gap-5 mobile:w-full mobile:max-w-full mobile:overflow-x-auto"
+        css={{
+          "&::-webkit-scrollbar": { display: "none" },
+          "&": { msOverflowStyle: "none", scrollbarWidth: "none" }
+        }}
+      >
         <div className="flex w-fit flex-col justify-center gap-2">
           <Text color="primary.900" textStyle="300" textWrap="nowrap">
             {t("Restoration Strategy:")}
@@ -180,7 +186,7 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
           <Flex className="w-auto" alignItems="center" gap={3}>
             {visibleLandUseConfigs.length > 0 ? (
               visibleLandUseConfigs.map((config, idx) => (
-                <Flex key={targetLandUseKeys[idx]} className="flex-col" minWidth={"136px"} alignItems="center" gap={1}>
+                <Flex key={targetLandUseKeys[idx]} className="flex-col" minWidth={"8.5rem"} alignItems="center" gap={1}>
                   {config.icon}
                   <Text textStyle="400-bold" color="secondary.800" className="text-center leading-5">
                     {t(config.label)}{" "}

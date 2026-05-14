@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import { getDisturbanceTableQuestions } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
@@ -16,7 +15,6 @@ const meta: Meta<typeof Component> = {
 
 export default meta;
 type Story = StoryObj<typeof Component>;
-const client = new QueryClient();
 
 // Reference early to avoid circular dependency
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,13 +25,11 @@ export const Default: Story = {
     const steps = useMemo(() => [{ id: "dataTable", fields: getDisturbanceTableQuestions(true, true) }], []);
     const fieldsProvider = useLocalStepsProvider(steps);
     return (
-      <QueryClientProvider client={client}>
-        <div className="flex items-center justify-center bg-primary-400 p-8">
-          <WizardFormProvider fieldsProvider={fieldsProvider}>
-            <Component {...args} />
-          </WizardFormProvider>
-        </div>
-      </QueryClientProvider>
+      <div className="flex items-center justify-center bg-primary-400 p-8">
+        <WizardFormProvider fieldsProvider={fieldsProvider}>
+          <Component {...args} />
+        </WizardFormProvider>
+      </div>
     );
   },
   args: {

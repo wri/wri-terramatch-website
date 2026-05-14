@@ -1,15 +1,12 @@
 import { EnabledProp, FilterProp, IdProp, SideloadsProp, v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader, creationHook } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
-import { Framework } from "@/context/framework.provider";
 import {
   entityCreate,
   EntityCreateError,
   EntityCreateResponse,
   EntityCreateVariables,
   entityDelete,
-  entityExportAll,
-  EntityExportAllQueryParams,
   entityGet,
   EntityGetPathParams,
   entityIndex,
@@ -20,10 +17,10 @@ import {
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { SupportedEntities } from "@/generated/v3/entityService/entityServiceConstants";
 import {
+  DisturbanceReportCreateData,
   DisturbanceReportFullDto,
   DisturbanceReportLightDto,
   DisturbanceReportUpdateData,
-  FileDownloadDto,
   FinancialReportFullDto,
   FinancialReportLightDto,
   FinancialReportUpdateData,
@@ -55,7 +52,6 @@ import {
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Filter, PaginatedConnectionProps } from "@/types/connection";
-import { loadConnection } from "@/utils/loadConnection";
 
 export type ReportFullDto =
   | DisturbanceReportFullDto
@@ -271,7 +267,9 @@ export const loadFullDisturbanceReport = connectionLoader(fullDisturbanceReportC
 export const useFullDisturbanceReport = connectionHook(fullDisturbanceReportConnection);
 export const useLightDisturbanceReport = connectionHook(lightDisturbanceReportConnection);
 export const deleteDisturbanceReport = createEntityDeleter("disturbanceReports");
-
+export const useCreateDisturbanceReport = creationHook(
+  createEntityCreateConnection<DisturbanceReportFullDto, DisturbanceReportCreateData>("disturbanceReports")
+);
 // SRP Reports
 export const indexSRPReportConnection = createEntityIndexConnection<SrpReportLightDto>("srpReports");
 export const loadSRPReportIndex = connectionLoader(indexSRPReportConnection);
@@ -318,25 +316,4 @@ export const useFullEntity = (entity: SupportedEntity, id: string) => {
     default:
       throw new Error(`Unsupported entity type [${entity}]`);
   }
-};
-
-type ExportAllProps = {
-  entity: SupportedEntity;
-  framework: Framework;
-};
-const exportAllConnection = v3Resource("fileDownloads", entityExportAll)
-  .singleByCustomId<FileDownloadDto, ExportAllProps>(
-    ({ entity, framework }) =>
-      entity == null || framework == null
-        ? undefined
-        : {
-            pathParams: { entity },
-            queryParams: { frameworkKey: framework as EntityExportAllQueryParams["frameworkKey"] }
-          },
-    ({ entity }) => `${entity}Export`
-  )
-  .buildConnection();
-export const downloadEntityAllCsv = async (entity: SupportedEntity, framework: Framework) => {
-  ApiSlice.pruneCache("fileDownloads", [`${entity}Export`]);
-  return await loadConnection(exportAllConnection, { entity, framework });
 };

@@ -2,8 +2,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Box, Card, Divider, Stack, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useT } from "@transifex/react";
-import { useMemo } from "react";
-import { Else, If, Then } from "react-if";
+import { FC, useMemo } from "react";
 
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
@@ -11,7 +10,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 
-export const MonitoringPartnersTable = ({ project }: { project: any }) => {
+const MonitoringPartnersTable: FC<{ project: any }> = ({ project }: { project: any }) => {
   const t = useT();
 
   const [, { data: associatedUsers }] = useUserAssociations({
@@ -66,51 +65,50 @@ export const MonitoringPartnersTable = ({ project }: { project: any }) => {
 
           <Divider />
 
-          <If condition={monitoringPartners?.length === 0}>
-            <Then>
-              <Box padding={3}>
-                <Typography>This project doesn’t have monitoring partners</Typography>
-              </Box>
-            </Then>
-            <Else>
-              <DataGrid
-                rows={monitoringPartners ?? []}
-                rowSelection={false}
-                columns={[
-                  {
-                    field: "fullName",
-                    headerName: "Name",
-                    flex: 1,
-                    sortable: false,
-                    filterable: false
+          {monitoringPartners?.length === 0 ? (
+            <Box padding={3}>
+              <Typography>This project doesn’t have monitoring partners</Typography>
+            </Box>
+          ) : (
+            <DataGrid
+              rows={monitoringPartners ?? []}
+              rowSelection={false}
+              columns={[
+                {
+                  field: "fullName",
+                  headerName: "Name",
+                  flex: 1,
+                  sortable: false,
+                  filterable: false
+                },
+                { field: "emailAddress", headerName: "Email", flex: 1, sortable: false, filterable: false },
+                { field: "status", headerName: "Status", sortable: false, filterable: false },
+                {
+                  field: "''",
+                  headerName: "",
+                  renderCell: params => {
+                    return (
+                      <div
+                        onClick={() => ModalConfirmDeletePartner(params.row.uuid, params.row.emailAddress as string)}
+                      >
+                        <DeleteOutlineIcon className="cursor-pointer" />
+                      </div>
+                    );
                   },
-                  { field: "emailAddress", headerName: "Email", flex: 1, sortable: false, filterable: false },
-                  { field: "status", headerName: "Status", sortable: false, filterable: false },
-                  {
-                    field: "''",
-                    headerName: "",
-                    renderCell: params => {
-                      return (
-                        <div
-                          onClick={() => ModalConfirmDeletePartner(params.row.uuid, params.row.emailAddress as string)}
-                        >
-                          <DeleteOutlineIcon className="cursor-pointer" />
-                        </div>
-                      );
-                    },
-                    sortable: false,
-                    filterable: false,
-                    width: 70,
-                    align: "center",
-                    disableColumnMenu: true
-                  }
-                ]}
-                getRowId={item => item.uuid || item.emailAddress || ""}
-              />
-            </Else>
-          </If>
+                  sortable: false,
+                  filterable: false,
+                  width: 70,
+                  align: "center",
+                  disableColumnMenu: true
+                }
+              ]}
+              getRowId={item => item.uuid || item.emailAddress || ""}
+            />
+          )}
         </Stack>
       </Card>
     </>
   );
 };
+
+export default MonitoringPartnersTable;

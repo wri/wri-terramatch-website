@@ -1,6 +1,5 @@
 import classNames from "classnames";
-import { DetailedHTMLProps, Dispatch, HTMLAttributes, SetStateAction } from "react";
-import { Else, If, Then } from "react-if";
+import { DetailedHTMLProps, Dispatch, FC, HTMLAttributes, SetStateAction } from "react";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -8,7 +7,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import MapSidePanel from "../MapSidePanel/MapSidePanel";
 import MapEditPolygonPanel from "./MapEditPolygonPanel";
 
-export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+export type MapPolygonPanelProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   title: string;
   items: SitePolygonLightDto[];
   onSelectItem: (item: SitePolygonLightDto) => void;
@@ -32,9 +31,9 @@ export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<H
   refreshEntity?: () => void;
   polygonsData?: Record<string, string[]>;
   entityUuid?: string;
-}
+};
 
-const MapPolygonPanel = ({
+const MapPolygonPanel: FC<MapPolygonPanelProps> = ({
   title,
   items = [],
   className,
@@ -60,45 +59,42 @@ const MapPolygonPanel = ({
   polygonsData,
   entityUuid,
   ...props
-}: MapPolygonPanelProps) => {
+}) => {
   const { editPolygon } = useMapAreaContext();
 
   return (
     <div {...props} className={classNames(className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full rounded-l-lg backdrop-blur-md" />
 
-      <If condition={!!editPolygon.isOpen}>
-        <Then>
-          <MapEditPolygonPanel
-            tabEditPolygon={tabEditPolygon}
-            setTabEditPolygon={setTabEditPolygon}
-            polygonVersionData={polygonVersionData}
-            refetchPolygonVersions={refetchPolygonVersions}
-            mapFunctions={mapFunctions}
-            polygonData={polygonsData}
-            recallEntityData={recallEntityData}
-          />
-        </Then>
-        <Else>
-          <MapSidePanel
-            title=""
-            items={items}
-            emptyText={emptyText}
-            onLoadMore={onLoadMore}
-            mapFunctions={mapFunctions}
-            checkedValues={checkedValues}
-            onCheckboxChange={onCheckboxChange}
-            setSortOrder={setSortOrder}
-            sortField={sortField}
-            sortDirection={sortDirection}
-            setSortDirection={setSortDirection}
-            type={type}
-            recallEntityData={recallEntityData}
-            entityUuid={entityUuid}
-            setTabEditPolygon={setTabEditPolygon}
-          />
-        </Else>
-      </If>
+      {editPolygon.isOpen ? (
+        <MapEditPolygonPanel
+          tabEditPolygon={tabEditPolygon}
+          setTabEditPolygon={setTabEditPolygon}
+          polygonVersionData={polygonVersionData}
+          refetchPolygonVersions={refetchPolygonVersions}
+          mapFunctions={mapFunctions}
+          polygonData={polygonsData}
+          recallEntityData={recallEntityData}
+        />
+      ) : (
+        <MapSidePanel
+          title=""
+          items={items}
+          emptyText={emptyText}
+          onLoadMore={onLoadMore}
+          mapFunctions={mapFunctions}
+          checkedValues={checkedValues}
+          onCheckboxChange={onCheckboxChange}
+          setSortOrder={setSortOrder}
+          sortField={sortField}
+          sortDirection={sortDirection}
+          setSortDirection={setSortDirection}
+          type={type}
+          recallEntityData={recallEntityData}
+          entityUuid={entityUuid}
+          setTabEditPolygon={setTabEditPolygon}
+        />
+      )}
     </div>
   );
 };

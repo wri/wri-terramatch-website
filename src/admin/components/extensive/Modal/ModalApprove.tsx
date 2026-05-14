@@ -7,14 +7,13 @@ import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import CollapsibleRow from "@/components/extensive/Modal/components/CollapsibleRow";
+import { ModalProps } from "@/components/extensive/Modal/Modal";
+import { ModalBaseSubmit } from "@/components/extensive/Modal/ModalsBases";
 import { pruneEntityCache, useFullProject } from "@/connections/Entity";
 import { SiteFullDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-
-import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
-import { ModalProps } from "../../../../components/extensive/Modal/Modal";
-import { ModalBaseSubmit } from "../../../../components/extensive/Modal/ModalsBases";
 
 export interface ModalApproveProps extends ModalProps {
   primaryButtonText?: string;
@@ -44,7 +43,7 @@ export interface DisplayedPolygonType {
   canBeApproved: boolean | undefined;
   failingCriterias: string[] | undefined;
   status: StatusEnum | undefined;
-  validation_status?: string | null;
+  validationStatus?: string | null;
 }
 
 const checkCriteriaCanBeApproved = (validationStatus: string | null, checked: boolean, canBeApproved?: boolean) => {
@@ -143,7 +142,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
           canBeApproved,
           failingCriterias: [],
           status: polygon.status as StatusEnum,
-          validation_status: polygon.validationStatus
+          validationStatus: polygon.validationStatus
         };
       })
     );

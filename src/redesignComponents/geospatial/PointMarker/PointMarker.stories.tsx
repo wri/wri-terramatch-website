@@ -92,11 +92,11 @@ export const AllVariants: Story = {
           icon={<PlaceholderIcon color="neutral.100" />}
           backgroundColor="#8ECA3FCC"
         />
-        <p style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}>Icon</p>
+        <p style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#666" }}>Icon</p>
       </div>
       <div style={{ textAlign: "center" }}>
         <PointMarker ariaLabel="Cluster" variant="cluster" count={22} backgroundColor="neutral.100" />
-        <p style={{ marginTop: "8px", fontSize: "12px", color: "#666" }}>Cluster</p>
+        <p style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#666" }}>Cluster</p>
       </div>
       <div style={{ textAlign: "center" }}>
         <PointMarker
@@ -106,7 +106,7 @@ export const AllVariants: Story = {
           showFocusState
           backgroundColor="#8ECA3FCC"
         />
-        <p style={{ marginTop: "8px", fontSize: "10px", color: "#666" }}>Focus</p>
+        <p style={{ marginTop: "0.5rem", fontSize: "0.625rem", color: "#666" }}>Focus</p>
       </div>
     </HStack>
   )

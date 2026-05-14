@@ -1,7 +1,7 @@
+import { useT } from "@transifex/react";
 import Link from "next/link";
 import { FC } from "react";
 import { Link as RaLink, useBasename } from "react-admin";
-import { When } from "react-if";
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
@@ -10,10 +10,11 @@ import { AuditStatusEntityType } from "@/connections/AuditStatus";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import CommentarySection from "../../PolygonReviewTab/components/CommentarySection/CommentarySection";
+import { ADMIN_SHOW_AUDIT_LOG_TAB_INDEX } from "../constants/adminShowAuditLogTabIndex";
 import { AuditLogButtonStates } from "../constants/enum";
 import AuditLogTable from "./AuditLogTable";
 
-export interface SiteAuditLogEntityStatusProps {
+type SiteAuditLogEntityStatusProps = {
   entityType: AuditStatusEntityType;
   record: SelectedItem | null;
   auditLogData?: { data: AuditStatusDto[] };
@@ -23,18 +24,18 @@ export interface SiteAuditLogEntityStatusProps {
   viewPD?: boolean;
   auditData?: { entity: string; entityUuid: string };
   isProjectReport?: boolean;
-}
+};
 
-interface SelectedItem {
+type SelectedItem = {
   title?: string | undefined;
   name?: string | undefined;
   uuid?: string | undefined;
   value?: string | undefined;
   meta?: string | undefined;
   status?: string | undefined;
-}
+};
 
-const reportTypesMappging: { [key: number]: string } = {
+const REPORT_TYPES_MAPPING: { [key: number]: string } = {
   4: "project-reports",
   5: "site-reports",
   6: "nursery-reports",
@@ -55,30 +56,34 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
   const isNurseryToggle = buttonToggle === AuditLogButtonStates.NURSERY;
   const basename = useBasename();
+  const t = useT();
 
   const formatUrl = () => {
-    switch (reportTypesMappging[buttonToggle]) {
+    switch (REPORT_TYPES_MAPPING[buttonToggle]) {
       case "project-reports":
-        return `/${modules.projectReport.ResourceName}/${record?.uuid}/show/4`;
+        return `/${modules.projectReport.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
       case "site-reports":
-        return `/${modules.siteReport.ResourceName}/${record?.uuid}/show/4`;
+        return `/${modules.siteReport.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
       case "nursery-reports":
-        return `/${modules.nurseryReport.ResourceName}/${record?.uuid}/show/4`;
+        return `/${modules.nurseryReport.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
       default:
         return "";
     }
   };
-  // @ts-ignore
-  const title = () => record?.title ?? record?.name ?? record?.report_title;
+  const title = record?.title ?? record?.name;
   const redirectTo = viewPD
     ? `/${
         isProjectReport
-          ? "reports/" + reportTypesMappging[buttonToggle].replace(/s$/, "")
+          ? "reports/" + REPORT_TYPES_MAPPING[buttonToggle].replace(/s$/, "")
           : isNurseryToggle
           ? "nursery"
           : "site"
       }/${record?.uuid}${isNurseryToggle ? "" : "?tab=audit-log"}`
-    : `${basename}${isProjectReport ? formatUrl() : `/${modules.site.ResourceName}/${record?.uuid}/show/6`}`;
+    : `${basename}${
+        isProjectReport
+          ? formatUrl()
+          : `/${modules.site.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.site}`
+      }`;
 
   const displayEntityName = formatAuditStatusEntityForDisplay(entityType);
 
@@ -86,37 +91,39 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
     <div className="flex flex-col gap-6">
       <div>
         <Text variant="text-24-bold" className="mb-1">
-          {displayEntityName} Status and Comments
+          {t("{displayEntityName} Status and Comments", { displayEntityName })}
         </Text>
         <Text variant="text-14-light" className="mb-4">
-          Update the {displayEntityName.toLowerCase()} status, view updates, or add comments
+          {t("Update the {displayEntityName} status, view updates, or add comments", {
+            displayEntityName: displayEntityName.toLowerCase()
+          })}
         </Text>
         <CommentarySection record={record} entity={entityType} refresh={refresh} viewCommentsList={false} />
       </div>
-      <When condition={viewPD}>
+      {viewPD && (
         <div>
           {!isSite && !verifyEntity && !isNurseryToggle && (
-            <Text variant="text-16-bold">History and Discussion for {title()}</Text>
+            <Text variant="text-16-bold">{t("History and Discussion for {title}", { title })}</Text>
           )}
           {(isSite || verifyEntity || isNurseryToggle) && (
             <Text variant="text-16-bold">
-              History and Discussion for{" "}
+              {t("History and discussions for")}{" "}
               {viewPD ? (
                 <Link className="text-16-bold !text-[#000000DD]" href={redirectTo}>
-                  {title()}
+                  {title}
                 </Link>
               ) : (
                 <RaLink className="text-16-bold !text-[#000000DD]" to={redirectTo}>
-                  {title()}
+                  {title}
                 </RaLink>
               )}
             </Text>
           )}
         </div>
-      </When>
-      <When condition={!!auditLogData && viewPD}>
+      )}
+      {auditLogData != null && viewPD && (
         <AuditLogTable auditLogData={auditLogData!} auditData={auditData} refresh={refresh} />
-      </When>
+      )}
     </div>
   );
 };

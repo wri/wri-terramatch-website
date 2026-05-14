@@ -34,7 +34,7 @@ const meta: Meta<typeof ProfileListCard> = {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        minHeight="400px"
+        minHeight="25rem"
         padding={8}
         backgroundColor="neutral.200"
       >

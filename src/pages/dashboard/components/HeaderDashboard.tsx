@@ -56,8 +56,13 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const t = useT();
   const router = useRouter();
   const { showLoader, hideLoader } = useLoading();
-  const { filters, setFilters, setSearchTerm, searchTerm, lastUpdatedAt } = useDashboardContext();
-  const { activeProjects } = useDashboardData(filters);
+  const { filters, setFilters, setSearchTerm, searchTerm, lastUpdatedAt, setLastUpdatedAt } = useDashboardContext();
+  const { activeProjects, lastUpdatedAt: lastUpdatedFromData } = useDashboardData(filters);
+
+  useEffect(() => {
+    setLastUpdatedAt?.(lastUpdatedFromData ?? "");
+  }, [setLastUpdatedAt, lastUpdatedFromData]);
+
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
@@ -183,17 +188,21 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
   useOnMount(() => {
     const { programmes, landscapes, country, organizations, cohort, uuid } = router.query;
+    const countrySlug = Array.isArray(country) ? country[0] : country;
+    const selectedCountry = gadmCountries.find(
+      c => String(c.id).toLowerCase() === String(countrySlug ?? "").toLowerCase()
+    );
 
     const newFilters = {
       programmes: programmes ? (Array.isArray(programmes) ? programmes : [programmes]) : [],
       landscapes: landscapes ? convertCodesToNames(Array.isArray(landscapes) ? landscapes : [landscapes]) : [],
-      country: country
+      country: countrySlug
         ? {
-            country_slug: country as string,
+            country_slug: String(countrySlug),
             id: 1,
             data: {
-              label: gadmCountries.find(c => c.id === country)?.name || "",
-              icon: `/flags/${country.toString().toLowerCase()}.svg`
+              label: selectedCountry?.name ?? "",
+              icon: `/flags/${String(countrySlug).toLowerCase()}.svg`
             }
           }
         : filters.country,
@@ -204,6 +213,42 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
     setFilters(newFilters);
   });
+
+  useEffect(() => {
+    if (filters.country?.country_slug == null || filters.country.country_slug === "" || gadmCountries.length === 0) {
+      return;
+    }
+
+    const selectedCountry = gadmCountries.find(
+      country => String(country.id).toLowerCase() === String(filters.country.country_slug).toLowerCase()
+    );
+
+    if (selectedCountry == null) {
+      return;
+    }
+
+    if (filters.country.data.label === selectedCountry.name && filters.country.data.icon !== "") {
+      return;
+    }
+
+    setFilters(prevValues => ({
+      ...prevValues,
+      country: {
+        ...prevValues.country,
+        id: 1,
+        data: {
+          label: selectedCountry.name,
+          icon: `/flags/${String(prevValues.country.country_slug).toLowerCase()}.svg`
+        }
+      }
+    }));
+  }, [
+    filters.country?.country_slug,
+    filters.country?.data?.icon,
+    filters.country?.data?.label,
+    gadmCountries,
+    setFilters
+  ]);
 
   const handleChange = (selectName: string, value: OptionValue[]) => {
     setFilters(prevValues => ({
@@ -240,7 +285,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   };
 
   const valueForCountry = useMemo(() => {
-    if (!filters.country?.id || filters.country.id === 0) {
+    if (filters.country?.country_slug == null || filters.country.country_slug === "") {
       return [];
     }
 

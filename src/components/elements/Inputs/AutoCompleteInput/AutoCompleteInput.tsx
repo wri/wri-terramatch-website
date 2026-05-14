@@ -2,7 +2,6 @@ import { Popover, Transition } from "@headlessui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { ChangeEvent, forwardRef, Fragment, Ref, useCallback, useState } from "react";
-import { Else, If, Then } from "react-if";
 
 import { useDebounce } from "@/hooks/useDebounce";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -18,7 +17,6 @@ export interface AutoCompleteInputProps extends InputProps {
 
 const SEARCH_RESET = { list: [], query: "" };
 
-//TODO: Bugfix: Users can enter space in this input
 const AutoCompleteInput = forwardRef(
   (
     { onSearch, disableAutoComplete, classNameMenu, ...inputProps }: AutoCompleteInputProps,
@@ -79,25 +77,22 @@ const AutoCompleteInput = forwardRef(
             as="div"
             className={classNames("border-light mt-2 max-h-[230px] overflow-auto rounded-lg", classNameMenu)}
           >
-            <If condition={loading}>
-              <Then>
-                <Text variant="text-body-600" className="p-3">
-                  {t("Loading ...")}
+            {loading ? (
+              <Text variant="text-body-600" className="p-3">
+                {t("Loading ...")}
+              </Text>
+            ) : (
+              searchResult.list.map(item => (
+                <Text
+                  key={item}
+                  variant="text-body-600"
+                  className="cursor-pointer p-3 hover:bg-neutral-100"
+                  onClick={() => onSelect(item)}
+                >
+                  {item}
                 </Text>
-              </Then>
-              <Else>
-                {searchResult.list.map(item => (
-                  <Text
-                    key={item}
-                    variant="text-body-600"
-                    className="cursor-pointer p-3 hover:bg-neutral-100"
-                    onClick={() => onSelect(item)}
-                  >
-                    {item}
-                  </Text>
-                ))}
-              </Else>
-            </If>
+              ))
+            )}
           </Popover.Panel>
         </Transition>
       </Popover>

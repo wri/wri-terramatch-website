@@ -93,17 +93,17 @@ export const TransparentVariant: Story = {
 
 export const VariantComparison: Story = {
   render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "40px", padding: "20px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem", padding: "1.25rem" }}>
       <div>
-        <p style={{ fontSize: "14px", fontWeight: "600", marginBottom: "12px" }}>Panel Variant</p>
+        <p style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "0.75rem" }}>Panel Variant</p>
         <TabBar tabs={defaultTabs} variant="panel" defaultValue="one" />
       </div>
       <div>
-        <p style={{ fontSize: "14px", fontWeight: "600", marginBottom: "12px" }}>View Variant</p>
+        <p style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "0.75rem" }}>View Variant</p>
         <TabBar tabs={defaultTabs} variant="view" defaultValue="one" />
       </div>
       <div>
-        <p style={{ fontSize: "14px", fontWeight: "600", marginBottom: "12px" }}>Transparent Variant</p>
+        <p style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "0.75rem" }}>Transparent Variant</p>
         <TabBar tabs={defaultTabs} variant="transparent" defaultValue="one" />
       </div>
     </div>

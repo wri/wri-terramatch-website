@@ -6,12 +6,15 @@ import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import type { AccordionHeaderProps, AccordionStatus } from "./types";
 
-const getStatusIcon = (status: AccordionStatus, boxSize: number = 4) =>
-  status === "complete" ? (
-    <CheckApprovedIcon boxSize={boxSize} color="success.500" />
-  ) : (
-    <InformationRequiredIcon boxSize={boxSize} color="warning.500" />
-  );
+const getStatusIcon = (status: AccordionStatus, boxSize: number = 4) => {
+  if (status === "complete" || status === "success") {
+    return <CheckApprovedIcon boxSize={boxSize} color="success.500" />;
+  }
+  if (status === "error") {
+    return <InformationRequiredIcon boxSize={boxSize} color="error.500" />;
+  }
+  return <InformationRequiredIcon boxSize={boxSize} color="warning.500" />;
+};
 
 interface StatusLabelTagProps {
   label: string;
@@ -25,9 +28,9 @@ const StatusLabelTag: FC<StatusLabelTagProps> = ({ label, status }) => {
       gap={2}
       paddingX={2}
       paddingY={1}
-      borderRadius="4px"
+      borderRadius="0.25rem"
       backgroundColor="error.100"
-      border="1px solid"
+      border="0.0625rem solid"
       borderColor="error.300"
     >
       {getStatusIcon(status, 2.5)}
@@ -42,7 +45,7 @@ const AccordionHeader: FC<AccordionHeaderProps> = ({ label, title, badge, status
   return (
     <div className="flex w-full items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="line-height-[28px] flex items-center gap-2 text-[20px] text-theme-primary-900">
+        <div className="flex items-center gap-2 text-[1.25rem] leading-[1.75rem] text-theme-primary-900">
           {label && (
             <Text textStyle="400" color={"neutral.800"}>
               {label}:

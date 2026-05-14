@@ -14,32 +14,15 @@ yarn dev
 
 ### Api Fetchers/Hooks Generation
 
-To generate Api types/queries/fetchers/hooks, this repo uses:
+To generate Api types/fetchers/hooks, this repo uses:
 
 - `@openapi-codegen/cli` (https://www.npmjs.com/package/@openapi-codegen/cli)
 - `@openapi-codegen/typescript` (https://www.npmjs.com/package/@openapi-codegen/typescript)
 
 #### Usage
 
-In order to generate from the v1/2 api (whenever there is some backend endpoint/type change) please use this command:
-
-```
-yarn generate:api
-```
-
-_Can be found in package.json scripts_
-
-This command will fill the `src/generated` folder with a couple of files.
-
-`apiFetcher.ts` will NOT change everytime we re-generate the api, and it's responsible to implement the fetch tool (it uses `fetch` by default but can be changed to something like `axios` if needed).
-We can customize the `baseUrl` of where we are fetching from by changing the `const baseUrl` at the top of the file.
-
-`apiContext.ts` will NOT change everytime we re-generate the api, and its responsible to set the global context of api requests.
-This is super useful if we want to globally set some headers for each request (such as Authorization header).
-It exposes a component hook so we can use other hooks (such as Auth hook or context) to get the logged in token for example and inject it in the global request context.
-
 ##### v3 API
-The V3 API has a different API layer, but the generation is similar: 
+In order to generate from the BE API (whenever there is some backend endpoint/type change) please use this command:
 ```
 yarn generate:services
 ```
@@ -117,4 +100,3 @@ Additionally, consider automating this step using GitHub Actions for increased e
 # License
 
 MIT License
-Developed by 3 Sided Cube

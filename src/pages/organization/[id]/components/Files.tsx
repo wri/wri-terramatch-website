@@ -1,4 +1,4 @@
-import { When } from "react-if";
+import { FC } from "react";
 
 import FilePreviewCard from "@/components/elements/FilePreviewCard/FilePreviewCard";
 import Text from "@/components/elements/Text/Text";
@@ -11,28 +11,26 @@ type FilesProps = {
   files: UploadedFile[];
 };
 
-const Files = ({ files, title }: FilesProps) => {
-  return (
-    <section className="my-10 rounded-lg bg-neutral-150 p-8">
-      <When condition={!!title}>
-        <Text variant="text-heading-300" className="mb-10">
-          {title}
-        </Text>
-      </When>
-      <List
-        className="grid w-full grid-cols-2 gap-5"
-        items={files}
-        render={file => (
-          <FilePreviewCard
-            file={file as UploadedFile}
-            onDownload={f => {
-              if (f.url != null) downloadFileUrl(f.url);
-            }}
-          />
-        )}
-      />
-    </section>
-  );
-};
+const Files: FC<FilesProps> = ({ files, title }) => (
+  <section className="my-10 rounded-lg bg-neutral-150 p-8">
+    {title != null && (
+      <Text variant="text-heading-300" className="mb-10">
+        {title}
+      </Text>
+    )}
+    <List
+      className="grid w-full grid-cols-2 gap-5"
+      items={files}
+      render={file => (
+        <FilePreviewCard
+          file={file as UploadedFile}
+          onDownload={f => {
+            if (f.url != null) downloadFileUrl(f.url);
+          }}
+        />
+      )}
+    />
+  </section>
+);
 
 export default Files;

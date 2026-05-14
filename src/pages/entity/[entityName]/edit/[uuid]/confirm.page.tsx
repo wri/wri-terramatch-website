@@ -12,6 +12,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { EntityFullDto, useFullEntity } from "@/connections/Entity";
 import { FormEntity } from "@/connections/Form";
 import {
+  DisturbanceReportFullDto,
   FinancialReportFullDto,
   NurseryFullDto,
   NurseryReportFullDto,
@@ -66,7 +67,7 @@ const getCallToAction = (
         },
         {
           children: t("Back to reporting tasks"),
-          href: `/project/{report.projectUuid}/reporting-task/${report.taskUuid}`
+          href: `/project/${report.projectUuid}/reporting-task/${report.taskUuid}`
         }
       ];
     }
@@ -101,12 +102,12 @@ const getCallToAction = (
       ];
     }
     case "disturbanceReports": {
-      const report = entity as FinancialReportFullDto;
+      const report = entity as DisturbanceReportFullDto;
       return [
         { children: t("View Report"), href: getEntityDetailPageLink("disturbance-reports", report.uuid) },
         {
-          children: t("Back to organization"),
-          href: `/organization/${report.organisationUuid}?tab=disturbance_information`
+          children: t("Back to project"),
+          href: `/project/${report.projectUuid}`
         }
       ];
     }
@@ -149,7 +150,7 @@ const ConfirmPage = () => {
             />
             <div className="mt-15 flex w-full justify-between">
               {callToActions?.map(props => (
-                <Button key={props.title} as={Link} {...props} />
+                <Button key={props.href?.toString()} as={Link} {...props} />
               ))}
             </div>
           </LoadingContainer>

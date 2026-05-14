@@ -12,7 +12,7 @@ export const ProgressSteps: FC<ProgressStepsProps> = ({ steps }) => {
           <Step {...step} />
           {index < steps.length - 1 && (
             <Flex ml={4} my={2}>
-              <Box backgroundColor="neutral.400" height="12px" width="1px" rounded="full" />
+              <Box backgroundColor="neutral.400" height={3.5} width="0.0625rem" rounded="full" />
             </Flex>
           )}
         </Box>

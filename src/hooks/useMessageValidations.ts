@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import { useMemo } from "react";
 
 import { useGadmChoices } from "@/connections/Gadm";
+import { normalizeDataCompletenessFieldName } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Log from "@/utils/log";
 
@@ -52,11 +53,16 @@ interface PlantStartDateInfo {
 
 const FIELDS_TO_VALIDATE: Record<string, string> = {
   polyName: "Polygon Name",
+  poly_name: "Polygon Name",
+  plantStart: "Plant Start Date",
   plantstart: "Plant Start Date",
   practice: "Restoration Practice",
+  targetSys: "Target Land Use System",
   target_sys: "Target Land Use System",
   distr: "Tree Distribution",
+  plantingStatus: "Planting Status",
   planting_status: "Planting Status",
+  numTrees: "Number of Trees",
   num_trees: "Number of Trees"
 };
 
@@ -102,7 +108,6 @@ export const useMessageValidators = () => {
         if (extraInfo == null) return [];
 
         try {
-          // Handle both V2 (string) and V3 (object) data formats
           const infoObject = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
           if (infoObject && typeof infoObject === "object" && "countryName" in infoObject) {
             const countryName = infoObject.countryName || "Unknown Country";
@@ -131,39 +136,43 @@ export const useMessageValidators = () => {
         const infoArray: ExtraInfoItem[] = extraInfo;
         return infoArray
           .filter(info => {
-            // Filter out deleted plantend field
-            if (info.field === "plantend") {
+            // Filter out deleted plantEnd field
+            if (info.field === "plantend" || info.field === "plantEnd") {
               return false;
             }
-            if (!isAdmin && info.field === "planting_status") {
+            const fieldKey = normalizeDataCompletenessFieldName(info.field) ?? info.field;
+            if (!isAdmin && fieldKey === "plantingStatus") {
               return false;
             }
             return true;
           })
           .map(info => {
+            const fieldKey = normalizeDataCompletenessFieldName(info.field) ?? info.field;
+            const fieldLabel = FIELDS_TO_VALIDATE[fieldKey] ?? FIELDS_TO_VALIDATE[info.field] ?? fieldKey;
+
             if (!info.exists) {
-              return t("{field} is missing", { field: FIELDS_TO_VALIDATE[info.field] });
+              return t("{field} is missing", { field: fieldLabel });
             }
-            switch (info.field) {
-              case "target_sys":
+            switch (fieldKey) {
+              case "targetSys":
                 return t(
                   "{field}: {error} is not a valid {field} because it is not one of ['agroforest', 'natural-forest', 'mangrove', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'woodlot-or-plantation', 'urban-forest']",
-                  { field: FIELDS_TO_VALIDATE[info.field], error: info.error }
+                  { field: fieldLabel, error: info.error }
                 );
               case "distr":
                 return t(
                   "{field}: {error} is not a valid {field} because it is not one of ['single-line', 'partial', 'full']",
-                  { field: FIELDS_TO_VALIDATE[info.field], error: info.error }
+                  { field: fieldLabel, error: info.error }
                 );
-              case "num_trees":
+              case "numTrees":
                 return t("{field} {error} tree count is missing", {
-                  field: FIELDS_TO_VALIDATE[info.field],
+                  field: fieldLabel,
                   error: info.error
                 });
               case "practice":
                 return t(
                   "{field}: {error} is not a valid {field} because it is not one of ['tree-planting', 'direct-seeding', 'assisted-natural-regeneration']",
-                  { field: FIELDS_TO_VALIDATE[info.field], error: info.error }
+                  { field: fieldLabel, error: info.error }
                 );
               default:
                 return null;
@@ -297,7 +306,6 @@ export const useMessageValidators = () => {
     () => (extraInfo: any) => {
       if (extraInfo == null) return [];
       try {
-        // Handle both V2 (string) and V3 (object) data formats
         const info: PlantStartDateInfo = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
 
         switch (info.errorType) {

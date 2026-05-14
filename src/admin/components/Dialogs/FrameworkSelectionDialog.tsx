@@ -1,14 +1,12 @@
 import { CheckCircle, InfoOutlined } from "@mui/icons-material";
 import { Button, Dialog, DialogActions, DialogContent, DialogProps, DialogTitle } from "@mui/material";
-import { capitalize, split } from "lodash";
 import { FC, useCallback, useState } from "react";
 import { AutocompleteInput, Form } from "react-admin";
 import { FieldValues } from "react-hook-form";
 import * as yup from "yup";
 
-import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import { validateForm } from "@/admin/utils/forms";
-import { downloadEntityAllCsv, SupportedEntity } from "@/connections/Entity";
+import { SupportedEntity } from "@/connections/Entity";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
@@ -16,7 +14,6 @@ import { entityExportAll, EntityExportAllQueryParams } from "@/generated/v3/enti
 import { v3EntityName } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
-import { downloadFileBlob, downloadFileUrl } from "@/utils/network";
 
 interface FrameworkSelectionDialogContentProps {
   onCancel: () => void;
@@ -61,49 +58,23 @@ export function useFrameworkExport(entity: EntityName, choices: any[]) {
 
   const { openToast } = useToastContext();
 
-  const { isSuperAdmin, isFrameworkAdmin } = useGetUserRole();
-
   const onExport = useCallback(
     async (framework: string) => {
       setExporting(true);
 
-      const reportError = (error?: any) => {
-        Log.error("Export failed", error);
-        openToast("Something went wrong!", ToastType.ERROR);
-      };
-
       try {
         const entityName = v3EntityName(entity) as SupportedEntity;
-        const frameworkKey = toFramework(framework);
-        if (isSuperAdmin || isFrameworkAdmin) {
-          const { data, loadFailure } = await downloadEntityAllCsv(entityName, frameworkKey);
-          if (loadFailure != null) {
-            reportError(loadFailure);
-          } else {
-            downloadFileUrl(data?.url as string);
-          }
-        } else {
-          try {
-            const { fileName, blob } = await entityExportAll.fetchBlob({
-              pathParams: { entity: entityName },
-              queryParams: { frameworkKey: frameworkKey as EntityExportAllQueryParams["frameworkKey"] }
-            });
-            await downloadFileBlob(
-              blob,
-              fileName ?? `${split(entity, "-").map(capitalize).join(" ")} - ${framework}.csv`
-            );
-          } catch {
-            reportError();
-          }
-        }
+        const frameworkKey = toFramework(framework) as EntityExportAllQueryParams["frameworkKey"];
+        await entityExportAll.downloadFile({ pathParams: { entity: entityName }, queryParams: { frameworkKey } });
       } catch (error) {
-        reportError(error);
+        Log.error("Export failed", error);
+        openToast("Something went wrong!", ToastType.ERROR);
       } finally {
         setExporting(false);
         setModalOpen(false);
       }
     },
-    [entity, isSuperAdmin, isFrameworkAdmin, openToast]
+    [entity, openToast]
   );
 
   return {

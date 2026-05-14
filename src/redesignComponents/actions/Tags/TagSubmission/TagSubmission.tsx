@@ -70,8 +70,8 @@ const TagSubmission: FC<TagSubmissionProps> = ({ state, className, size = DEFAUL
             "text-theme-error-900": state === "due",
             "text-sm": size === "default",
             "text-xs": size === "small",
-            "leading-[20px]": size === "default",
-            "leading-[16px]": size === "small"
+            "leading-[1.25rem]": size === "default",
+            "leading-[1rem]": size === "small"
           })}
         >
           {label}
