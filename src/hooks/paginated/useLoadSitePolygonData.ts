@@ -23,6 +23,7 @@ const useLoadSitePolygonsData = (
   sortField: string = "createdAt",
   sortDirection: "ASC" | "DESC" = "ASC",
   validFilter: string = "",
+  /** When false, the underlying `useAllSitePolygons` request is disabled (e.g. parent supplies `polygonsDataOverride`). */
   enabled: boolean = true
 ): LoadSitePolygonsDataHook => {
   // Validate entity type

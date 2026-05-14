@@ -81,20 +81,15 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     validFilter
   } = useMapAreaContext();
 
+  /** When parent passes `polygonsDataOverride`, skip `useAllSitePolygons` here to avoid duplicate loads. */
+  const shouldFetchPolygons = polygonsDataOverride == null;
+
   const {
     data: fetchedPolygonsData,
     refetch,
     polygonCriteriaMap,
     loading
-  } = useLoadSitePolygonsData(
-    entityModel.uuid,
-    type,
-    "",
-    "createdAt",
-    "ASC",
-    validFilter,
-    polygonsDataOverride == null
-  );
+  } = useLoadSitePolygonsData(entityModel.uuid, type, "", "createdAt", "ASC", validFilter, shouldFetchPolygons);
 
   const polygonsData = polygonsDataOverride ?? fetchedPolygonsData;
 
