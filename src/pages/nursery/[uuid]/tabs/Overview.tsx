@@ -97,8 +97,8 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
           <MetricCard
             title={t("Seedlings Grown")}
             variant="donutChart"
-            progress={nursery?.seedlingGrown ?? 0}
-            goal={totalNurserySeedlings}
+            progress={totalNurserySeedlings}
+            goal={nursery?.seedlingGrown ?? 0}
             icon={<SeedlingsIcon boxSize={6} />}
             tooltipContent={t("Number of seedlings grown for this project.")}
             color="secondary.500"
