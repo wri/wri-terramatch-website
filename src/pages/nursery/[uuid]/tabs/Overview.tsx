@@ -9,7 +9,6 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -34,11 +33,6 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
     entityUUID: nursery.uuid,
     entityStatus: nursery.status ?? "draft",
     updateRequestStatus: nursery.updateRequestStatus ?? "no-update"
-  });
-  const totalNurserySeedlings = usePlantTotalCount({
-    entity: "nurseries",
-    entityUuid: nursery?.uuid,
-    collection: "nursery-seedling"
   });
 
   const needMoreInformation =
@@ -97,7 +91,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
           <MetricCard
             title={t("Seedlings Grown")}
             variant="donutChart"
-            progress={totalNurserySeedlings}
+            progress={nursery?.treesSeedlingsGrownCount ?? 0}
             goal={nursery?.seedlingGrown ?? 0}
             icon={<SeedlingsIcon boxSize={6} />}
             tooltipContent={t("Number of seedlings grown for this project.")}
