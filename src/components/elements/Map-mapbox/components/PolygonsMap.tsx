@@ -19,7 +19,6 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 
 import { parsePolygonDataV3, storePolygon } from "../utils";
 
-/** Fields required for polygon loading, bbox, and `storePolygon` on this map. */
 export type PolygonsMapEntityModel = {
   uuid: string;
   projectCountry?: string | null;
@@ -60,7 +59,6 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   polygonTableHighlight,
   overlapPolygons
 }) => {
-  // Champions map keeps polygon panel disabled until edit/validation UX is migrated.
   const disabledPolygonPanel = true;
   const [polygonDataMap, setPolygonDataMap] = useState<Record<string, string[]>>(() => ({ ...EMPTY_POLYGON_MAP }));
   const [polygonFromMap, setPolygonFromMap] = useState<PolygonFromMapState>({ isOpen: false, uuid: "" });

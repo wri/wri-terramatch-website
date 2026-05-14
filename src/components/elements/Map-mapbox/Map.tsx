@@ -96,7 +96,6 @@ export interface BaseMapProps {
     onHoveredPolygonFromMap?: (uuid: string | null) => void;
     onPolygonClickedFromMap?: (uuid: string) => void;
   };
-  /** Centroids of site polygons whose OVERLAPPING validation currently fails. */
   overlapPolygons?: OverlapPolygonPoint[];
 }
 
