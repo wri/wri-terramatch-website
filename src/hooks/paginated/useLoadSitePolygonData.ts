@@ -23,7 +23,6 @@ const useLoadSitePolygonsData = (
   sortField: string = "createdAt",
   sortDirection: "ASC" | "DESC" = "ASC",
   validFilter: string = "",
-  /** When false, the underlying `useAllSitePolygons` request is disabled (e.g. parent supplies `polygonsDataOverride`). */
   enabled: boolean = true
 ): LoadSitePolygonsDataHook => {
   // Validate entity type
@@ -34,7 +33,6 @@ const useLoadSitePolygonsData = (
     return entityType as "sites" | "projects";
   }, [entityType]);
 
-  // Build filter object for the new API
   const filter = useMemo(() => {
     const filterObj: Record<string, unknown> = {};
 

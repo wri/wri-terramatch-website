@@ -81,7 +81,6 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     validFilter
   } = useMapAreaContext();
 
-  /** When parent passes `polygonsDataOverride`, skip `useAllSitePolygons` here to avoid duplicate loads. */
   const shouldFetchPolygons = polygonsDataOverride == null;
 
   const {
