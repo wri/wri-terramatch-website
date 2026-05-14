@@ -94,7 +94,15 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
       >
         {title} <ProgressTag {...tag} />
       </Text>
-      <Text textStyle="400" color="neutral.900" className="-ml-[0.5rem] flex items-center gap-2">
+      <Text
+        textStyle="400"
+        color="neutral.900"
+        className="-ml-[0.5rem] flex items-center gap-2 mobile:w-full mobile:max-w-full mobile:overflow-x-auto"
+        css={{
+          "&::-webkit-scrollbar": { display: "none" },
+          "&": { msOverflowStyle: "none", scrollbarWidth: "none" }
+        }}
+      >
         <Button variant="borderless" size="small" className="-mr-2" onClick={handleOrganizationNav}>
           {organization}
         </Button>

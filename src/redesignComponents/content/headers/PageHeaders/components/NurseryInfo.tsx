@@ -82,7 +82,15 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
 
   return (
     <Box gap={2} className="flex flex-col">
-      <Text textStyle="400" color="neutral.900" className="-ml-[0.5rem] flex items-center gap-2">
+      <Text
+        textStyle="400"
+        color="neutral.900"
+        className="-ml-[0.5rem] flex items-center gap-2 mobile:w-full mobile:max-w-full mobile:overflow-x-auto"
+        css={{
+          "&::-webkit-scrollbar": { display: "none" },
+          "&": { msOverflowStyle: "none", scrollbarWidth: "none" }
+        }}
+      >
         <Button
           variant="borderless"
           size="small"

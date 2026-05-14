@@ -67,7 +67,7 @@ const getCallToAction = (
         },
         {
           children: t("Back to reporting tasks"),
-          href: `/project/{report.projectUuid}/reporting-task/${report.taskUuid}`
+          href: `/project/${report.projectUuid}/reporting-task/${report.taskUuid}`
         }
       ];
     }
@@ -150,7 +150,7 @@ const ConfirmPage = () => {
             />
             <div className="mt-15 flex w-full justify-between">
               {callToActions?.map(props => (
-                <Button key={props.title} as={Link} {...props} />
+                <Button key={props.href?.toString()} as={Link} {...props} />
               ))}
             </div>
           </LoadingContainer>
