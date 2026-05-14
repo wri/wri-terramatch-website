@@ -1226,6 +1226,7 @@ export type NurseryLightDto = {
    */
   endDate: string | null;
   seedlingsGrownCount: number | null;
+  treesSeedlingsGrownCount: number | null;
   /**
    * @format date-time
    */
@@ -1686,6 +1687,7 @@ export type NurseryFullDto = {
    */
   endDate: string | null;
   seedlingsGrownCount: number | null;
+  treesSeedlingsGrownCount: number | null;
   /**
    * @format date-time
    */
@@ -1703,7 +1705,6 @@ export type NurseryFullDto = {
   nurseryReportsTotal: number | null;
   overdueNurseryReportsTotal: number | null;
   projectUuid: string | null;
-  treesSeedlingsGrownCount: number | null;
   media: MediaDto[];
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
