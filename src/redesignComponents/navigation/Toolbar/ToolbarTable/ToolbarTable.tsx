@@ -45,7 +45,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
       contentLeft={
         <div className="flex items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0">
           {search != null && (
-            <div className="flex w-full min-w-[26rem] max-w-[26rem] items-center gap-4">
+            <div className="flex w-full min-w-max max-w-max items-center gap-4">
               <div onKeyDown={handleKeyDown}>
                 <Search
                   key={search.resetKey ?? "search"}

@@ -417,7 +417,8 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
         label: polygonFilters.polygonStatus.map(status => t(SUBMISSION_STATUS_LABELS[status])),
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, polygonStatus: [] }));
-        }
+        },
+        category: t("Submission")
       });
     }
     if (polygonFilters.validationStatus.length > 0) {
@@ -425,7 +426,8 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
         label: polygonFilters.validationStatus.map(status => t(VALIDATION_STATUS_LABELS[status])),
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, validationStatus: [] }));
-        }
+        },
+        category: t("Validation")
       });
     }
     if (polygonFilters.plantStartFrom !== "" || polygonFilters.plantStartTo !== "") {
@@ -665,62 +667,71 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           polygonTableHighlight={polygonTableHighlight}
         />
       </ResizeBox>
-      <Flex className="items-center justify-between gap-4">
-        <Flex className="items-center gap-4">
-          <MetricCard
-            color="secondary.600"
-            icon={<TreeIcon />}
-            variant="medium"
-            title={t("Trees Planted")}
-            progress={totalTreesPlanted}
-            goal={Math.max(totalTreesPlanted, 1)}
-            selection={hasPolygonSelection ? selectedTreesPlanted : undefined}
-            tooltipContent={t("Trees Planted")}
-            className="min-w-[12.5rem]"
-          />
-          <MetricCard
-            color="secondary.700"
-            icon={<AreaHectaresIcon />}
-            variant="medium"
-            title={t("Restoration Area")}
-            progress={totalRestorationAreaHa}
-            goal={Math.max(totalRestorationAreaHa, 1)}
-            selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
-            tooltipContent={t("Restoration Area")}
-            className="min-w-[12.5rem]"
-          />
-        </Flex>
-        {polygonsWithOverlapCount > 0 && (
-          <InlineMessage
-            actionLabel={t("Selected Polygons")}
-            isButtonRight
-            size="small"
-            label={
-              polygonsWithOverlapCount === 1
-                ? t("1 overlap detected")
-                : t("{count} overlaps detected", { count: polygonsWithOverlapCount })
-            }
-            onActionClick={() => {
-              setPolygonFilters(current => ({ ...current, hasOverlap: true }));
-            }}
-            variant="error"
-          />
-        )}
-      </Flex>
-      <Box onMouseLeave={handleClearHover}>
-        <Table<PolygonTableRow>
-          css={getPolygonsTableStyles(isStickyActive)}
-          containerRef={tableContainerRef}
-          data={polygonRows}
-          columns={columns}
-          showPagination
-          pageSize={10}
-          selectable
-          selectedRows={selectedRows}
-          onAllItemsSelected={onAllItemsSelected}
-          renderRow={selectableRenderRow}
-        />
-      </Box>
+      {polygonRows?.length === 0 ? (
+        <Box>
+          <Text textStyle={"400-bold"}>No results found</Text>
+          <Text textStyle={"400"}>We couldn’t find any site areas matching your search. Try a different keyword.</Text>
+        </Box>
+      ) : (
+        <>
+          <Flex className="items-center justify-between gap-4">
+            <Flex className="items-center gap-4">
+              <MetricCard
+                color="secondary.600"
+                icon={<TreeIcon />}
+                variant="medium"
+                title={t("Trees Planted")}
+                progress={totalTreesPlanted}
+                goal={Math.max(totalTreesPlanted, 1)}
+                selection={hasPolygonSelection ? selectedTreesPlanted : undefined}
+                tooltipContent={t("Trees Planted")}
+                className="min-w-[12.5rem]"
+              />
+              <MetricCard
+                color="secondary.700"
+                icon={<AreaHectaresIcon />}
+                variant="medium"
+                title={t("Restoration Area")}
+                progress={totalRestorationAreaHa}
+                goal={Math.max(totalRestorationAreaHa, 1)}
+                selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
+                tooltipContent={t("Restoration Area")}
+                className="min-w-[12.5rem]"
+              />
+            </Flex>
+            {polygonsWithOverlapCount > 0 && (
+              <InlineMessage
+                actionLabel={t("Selected Polygons")}
+                isButtonRight
+                size="small"
+                label={
+                  polygonsWithOverlapCount === 1
+                    ? t("1 overlap detected")
+                    : t("{count} overlaps detected", { count: polygonsWithOverlapCount })
+                }
+                onActionClick={() => {
+                  setPolygonFilters(current => ({ ...current, hasOverlap: true }));
+                }}
+                variant="error"
+              />
+            )}
+          </Flex>
+          <Box onMouseLeave={handleClearHover}>
+            <Table<PolygonTableRow>
+              css={getPolygonsTableStyles(isStickyActive)}
+              containerRef={tableContainerRef}
+              data={polygonRows}
+              columns={columns}
+              showPagination
+              pageSize={10}
+              selectable
+              selectedRows={selectedRows}
+              onAllItemsSelected={onAllItemsSelected}
+              renderRow={selectableRenderRow}
+            />
+          </Box>
+        </>
+      )}
     </PageContent>
   );
 };

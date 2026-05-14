@@ -57,7 +57,6 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   polygonsDataOverride,
   polygonTableHighlight
 }) => {
-  // Champions map keeps polygon panel disabled until edit/validation UX is migrated.
   const disabledPolygonPanel = true;
   const [polygonDataMap, setPolygonDataMap] = useState<Record<string, string[]>>(() => ({ ...EMPTY_POLYGON_MAP }));
   const [polygonFromMap, setPolygonFromMap] = useState<PolygonFromMapState>({ isOpen: false, uuid: "" });

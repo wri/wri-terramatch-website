@@ -71,7 +71,9 @@ export interface SearchProps {
   count?: number;
 }
 
-export type SelectedFilter = (string | string[]) | { label: string | string[]; onRemove?: () => void };
+export type SelectedFilter =
+  | (string | string[])
+  | { category?: string; label: string | string[]; onRemove?: () => void };
 
 export interface ToolbarTableProps {
   search: SearchProps;
