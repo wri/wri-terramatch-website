@@ -1572,6 +1572,8 @@ export type GetSiteValidationQueryParams = {
   ["page[number]"]?: number;
   /**
    * Filter validations by criteria ID
+   *
+   * @example 3
    */
   criteriaId?: Schemas.Object;
 };

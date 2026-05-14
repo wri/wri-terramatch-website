@@ -143,6 +143,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             flexProps={{ width: "fit-content", overflow: "hidden" }}
             className="!w-full !max-w-full sm:!w-[30%] sm:!max-w-[30%]"
             title={t("Sites Set Up")}
+            classNameRightSectionHeader="mobile:!w-fit"
             tag={(() => {
               const tagState = mapStatusToTagStateEntity(site?.status);
               return site.updateRequestStatus === "awaiting-approval" ? (

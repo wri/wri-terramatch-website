@@ -68,7 +68,7 @@ const ManagerType = ({ nursery }: { nursery: NurseryFullDto }) => {
         <Text color="primary.900" textStyle="300-bold">
           {t("Management Type:")}
         </Text>
-        <Flex className="w-36 flex-col" alignItems="center" gap={2}>
+        <Flex className="w-36 flex-col mobile:w-fit" alignItems="center" gap={2}>
           {typeConfig !== null && typeConfig.icon !== null ? (
             <>
               {typeConfig.icon}

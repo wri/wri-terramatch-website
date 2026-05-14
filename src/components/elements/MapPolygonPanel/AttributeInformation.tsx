@@ -106,7 +106,7 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
     try {
       await createVersionWithAttributes(primaryUuid, "Updated polygon attributes", {
         polyName: polygonName,
-        plantstart: plantStartDate,
+        plantStart: plantStartDate,
         practice: restorationPractice,
         targetSys: targetLandUseSystem.join(", "),
         distr: treeDistribution,
