@@ -10,6 +10,7 @@ import { AuditStatusEntityType } from "@/connections/AuditStatus";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import CommentarySection from "../../PolygonReviewTab/components/CommentarySection/CommentarySection";
+import { ADMIN_SHOW_AUDIT_LOG_TAB_INDEX } from "../constants/adminShowAuditLogTabIndex";
 import { AuditLogButtonStates } from "../constants/enum";
 import AuditLogTable from "./AuditLogTable";
 
@@ -60,11 +61,11 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   const formatUrl = () => {
     switch (REPORT_TYPES_MAPPING[buttonToggle]) {
       case "project-reports":
-        return `/${modules.projectReport.ResourceName}/${record?.uuid}/show/4`;
+        return `/${modules.projectReport.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
       case "site-reports":
-        return `/${modules.siteReport.ResourceName}/${record?.uuid}/show/4`;
+        return `/${modules.siteReport.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
       case "nursery-reports":
-        return `/${modules.nurseryReport.ResourceName}/${record?.uuid}/show/4`;
+        return `/${modules.nurseryReport.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.standardReport}`;
       default:
         return "";
     }
@@ -78,7 +79,11 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
           ? "nursery"
           : "site"
       }/${record?.uuid}${isNurseryToggle ? "" : "?tab=audit-log"}`
-    : `${basename}${isProjectReport ? formatUrl() : `/${modules.site.ResourceName}/${record?.uuid}/show/6`}`;
+    : `${basename}${
+        isProjectReport
+          ? formatUrl()
+          : `/${modules.site.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.site}`
+      }`;
 
   const displayEntityName = formatAuditStatusEntityForDisplay(entityType);
 
