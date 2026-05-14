@@ -12,7 +12,7 @@ export interface AccordionProps {
   defaultOpen?: boolean;
 }
 
-export type AccordionStatus = "success" | "error" | "complete";
+export type AccordionStatus = "success" | "error" | "complete" | "warning";
 
 declare module "@chakra-ui/react/dist/types/components/accordion/accordion" {
   export interface AccordionItemProps {

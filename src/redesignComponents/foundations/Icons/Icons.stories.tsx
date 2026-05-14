@@ -92,6 +92,7 @@ import {
   VideoIcon,
   VisibilityIcon,
   VisibilityOffIcon,
+  WarningIcon,
   WetlandIcon,
   WoodlotIcon
 } from ".";
@@ -365,6 +366,9 @@ export const AllIcons: Story = {
           <IconWrapper name="Download">
             <DownloadIcon boxSize={8} />
           </IconWrapper>
+          <IconWrapper name="Warning">
+            <WarningIcon boxSize={8} />
+          </IconWrapper>
         </VStack>
       </Box>
 
@@ -625,6 +629,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Download">
           <DownloadIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Warning">
+          <WarningIcon boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>
