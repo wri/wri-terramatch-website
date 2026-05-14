@@ -24,7 +24,7 @@ const IconButton: FC<IconButtonProps> = ({
       disabled={disabled}
       onClick={onClick}
       {...props}
-      className={classNames("hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40 !h-6 !w-6 rounded-sm")}
+      className={classNames("!h-6 !w-6 rounded-sm hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40")}
       css={{
         width: "1.5rem !important",
         height: "1.5rem !important",

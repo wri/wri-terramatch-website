@@ -13,6 +13,7 @@ import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
@@ -32,6 +33,7 @@ interface PolygonsMapProps {
   entityModel: PolygonsMapEntityModel;
   type: PolygonsMapEntityType;
   className?: string;
+  polygonsDataOverride?: SitePolygonLightDto[];
   polygonTableHighlight?: {
     hoveredPolygonUuid: string | null;
     selectedPolygonUuids: string[];
@@ -54,6 +56,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   entityModel,
   type,
   className,
+  polygonsDataOverride,
   polygonTableHighlight,
   overlapPolygons
 }) => {
@@ -79,11 +82,21 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   } = useMapAreaContext();
 
   const {
-    data: polygonsData,
+    data: fetchedPolygonsData,
     refetch,
     polygonCriteriaMap,
     loading
-  } = useLoadSitePolygonsData(entityModel.uuid, type, "", "createdAt", "ASC", validFilter);
+  } = useLoadSitePolygonsData(
+    entityModel.uuid,
+    type,
+    "",
+    "createdAt",
+    "ASC",
+    validFilter,
+    polygonsDataOverride == null
+  );
+
+  const polygonsData = polygonsDataOverride ?? fetchedPolygonsData;
 
   const onSave = useCallback(
     (geojson: unknown, _record: unknown) => {
@@ -111,11 +124,17 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   );
 
   const extentBbox = useMemo((): BBox | undefined => {
+    if (polygonsDataOverride != null) {
+      return modelBbox as BBox | undefined;
+    }
     if (polygonsData.length > 0) {
       return modelBbox as BBox | undefined;
     }
+    if (loading) {
+      return modelBbox as BBox | undefined;
+    }
     return countryBbox as BBox | undefined;
-  }, [polygonsData, modelBbox, countryBbox]);
+  }, [polygonsDataOverride, polygonsData, modelBbox, countryBbox, loading]);
 
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);
@@ -123,8 +142,15 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   });
 
   useEffect(() => {
+    if (polygonsDataOverride != null) {
+      setPolygonData(polygonsDataOverride);
+    }
+  }, [polygonsDataOverride, setPolygonData]);
+
+  useEffect(() => {
+    if (polygonsDataOverride != null) return;
     void refetch();
-  }, [validFilter, refetch]);
+  }, [validFilter, refetch, polygonsDataOverride]);
 
   useEffect(() => {
     if (disabledPolygonPanel) {

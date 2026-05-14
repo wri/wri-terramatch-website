@@ -7,20 +7,22 @@ import { CheckIcon, CloseIcon } from "@/redesignComponents/foundations/Icons";
 
 interface FilterTagItemProps {
   label?: string | string[];
+  onRemove?: () => void;
 }
 
-const FilterTagItem: FC<FilterTagItemProps> = ({ label }) => {
+const FilterTagItem: FC<FilterTagItemProps> = ({ label, onRemove }) => {
   const t = useT();
 
   const isArrayLabel = Array.isArray(label);
 
   return (
     <Button
-      className="shrink-0 !border-theme-success-300 !bg-theme-success-100 !text-theme-success-900"
+      className="!border-theme-success-300 !bg-theme-success-100 !text-theme-success-900 shrink-0"
       variant="secondary"
       size="small"
       leftIcon={<CheckIcon boxSize={2.5} color="success.500" />}
       rightIcon={<CloseIcon boxSize={2.5} color="success.900" />}
+      onClick={onRemove}
     >
       {typeof label === "string" && (
         <Text textStyle="200-bold" color="success.900">

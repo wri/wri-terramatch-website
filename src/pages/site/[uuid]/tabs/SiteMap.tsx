@@ -450,7 +450,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
   };
 
   return (
-    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-7 mobile:w-full">
+    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7 mobile:w-full">
       <Box className="relative h-auto">
         <div className="mb-6 flex gap-11">
           <div className="w-[54%] mobile:w-full">

@@ -65,9 +65,13 @@ export interface SearchProps {
   isLoading?: boolean;
   displayResults?: "none" | "text" | "list" | "custom";
   label?: string;
+  resetKey?: string | number;
   onQueryChange?: (query: string) => void;
+  onSearchSubmit?: (query: string) => void;
   count?: number;
 }
+
+export type SelectedFilter = (string | string[]) | { label: string | string[]; onRemove?: () => void };
 
 export interface ToolbarTableProps {
   search: SearchProps;
@@ -78,7 +82,7 @@ export interface ToolbarTableProps {
   tooltipContent?: string;
   showClearFilters?: boolean;
   onClickFilterButton?: () => void;
-  selectedFilters?: (string | string[])[];
+  selectedFilters?: SelectedFilter[];
 }
 
 export interface ViewToolbarProps {

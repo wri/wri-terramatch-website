@@ -40,7 +40,11 @@ import { useMapOverlapIndicators } from "./hooks/useMapOverlapIndicators";
 import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
 import { useMapStyle } from "./hooks/useMapStyle";
-import { usePolygonTableHighlightFill, usePolygonTableHighlightPointer } from "./hooks/usePolygonTableHighlight";
+import {
+  usePolygonSelectionZoom,
+  usePolygonTableHighlightPointer,
+  usePolygonTableHighlightStyle
+} from "./hooks/usePolygonTableHighlight";
 import { addGeojsonToDraw } from "./interactions/draw";
 import { OverlapPolygonPoint } from "./layers/overlapTypes";
 import type {
@@ -376,12 +380,20 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     initialPolygonFingerprint
   });
 
-  usePolygonTableHighlightFill({
+  usePolygonTableHighlightStyle({
     map,
     styleReady,
     styleVersion,
     sourcesAdded,
     highlight: polygonTableHighlight
+  });
+
+  usePolygonSelectionZoom({
+    map,
+    styleReady,
+    sourcesAdded,
+    selectedPolygonUuids: polygonTableHighlight?.selectedPolygonUuids,
+    sitePolygonData
   });
 
   usePolygonTableHighlightPointer({

@@ -42,7 +42,7 @@ export const layersList: LayerType[] = [
         layout: {},
         paint: {
           "fill-color": getThemedColor("neutralActive", 3),
-          "fill-opacity": 0.5
+          "fill-opacity": 0.3
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
@@ -52,7 +52,7 @@ export const layersList: LayerType[] = [
         layout: {},
         paint: {
           "line-color": getThemedColor("neutralActive", 3),
-          "line-width": 2
+          "line-width": 1
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
@@ -72,7 +72,7 @@ export const layersList: LayerType[] = [
         layout: {},
         paint: {
           "line-color": getThemedColor("neutralActive", 1),
-          "line-width": 2
+          "line-width": 1
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
@@ -92,7 +92,7 @@ export const layersList: LayerType[] = [
         layout: {},
         paint: {
           "line-color": getThemedColor("positive", 1),
-          "line-width": 2
+          "line-width": 1
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
@@ -112,7 +112,7 @@ export const layersList: LayerType[] = [
         layout: {},
         paint: {
           "line-color": getThemedColor("attention", 1),
-          "line-width": 2
+          "line-width": 1
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
@@ -132,7 +132,7 @@ export const layersList: LayerType[] = [
         layout: {},
         paint: {
           "line-color": "#3bb2d0",
-          "line-width": 2
+          "line-width": 1
         },
         filter: ["==", ["get", "uuid"], ""]
       })
