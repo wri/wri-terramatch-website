@@ -1,6 +1,8 @@
+import type { DateValue } from "@ark-ui/react";
 import { Flex } from "@chakra-ui/react";
+import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
-import React, { ChangeEvent, FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
@@ -10,6 +12,8 @@ import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilteCards";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import Switch from "@/redesignComponents/Forms/Actions/Switch/Switch";
+import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRangeInputs/DateRangeInput";
+import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
 import {
   EMPTY_POLYGON_FILTERS,
@@ -28,14 +32,30 @@ import {
 
 type CheckboxChange = { checked?: boolean | "indeterminate" };
 
-const SELECT_CLASS_NAME = "w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900";
-const DATE_INPUT_CLASS_NAME = "w-full rounded border border-neutral-300 px-3 py-2 text-sm text-neutral-900";
+const SUBMISSION_CYCLE_OPTIONS = [1, 2, 3, 4, 5].map(value => ({
+  value: String(value),
+  label: `Option ${value}`
+}));
 
 const setArrayValue = <T extends string>(values: T[], value: T, checked: boolean): T[] => {
   if (checked) {
     return values.includes(value) ? values : [...values, value];
   }
   return values.filter(item => item !== value);
+};
+
+const isoStringToDateValue = (value: string): DateValue | undefined => {
+  if (!value) return undefined;
+  const [year, month, day] = value.split("-").map(Number);
+  if (!year || !month || !day) return undefined;
+  return new CalendarDate(year, month, day);
+};
+
+const dateValueToIsoString = (value: DateValue | undefined): string => {
+  if (!value) return "";
+  const mm = String(value.month).padStart(2, "0");
+  const dd = String(value.day).padStart(2, "0");
+  return `${value.year}-${mm}-${dd}`;
 };
 
 interface PolygonFilterDrawerProps {
@@ -130,23 +150,36 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     }));
   };
 
-  const handlePracticeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value as restorationStrategyType | "";
-    setDraftFilters(current => ({ ...current, practice: value === "" ? [] : [value] }));
+  const handlePracticeChange = (value: string[]) => {
+    const selected = value[0] as restorationStrategyType | undefined;
+    setDraftFilters(current => ({ ...current, practice: selected ? [selected] : [] }));
   };
 
-  const handleTargetLandUseChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value as targetLandUseType | "";
-    setDraftFilters(current => ({ ...current, targetSys: value === "" ? [] : [value] }));
+  const handleTargetLandUseChange = (value: string[]) => {
+    const selected = value[0] as targetLandUseType | undefined;
+    setDraftFilters(current => ({ ...current, targetSys: selected ? [selected] : [] }));
   };
 
-  const handlePlantStartDateChange = (field: "plantStartFrom" | "plantStartTo", value: string) => {
-    setDraftFilters(current => ({ ...current, [field]: value }));
+  const handlePlantStartDateChange = (value: DateValue[]) => {
+    setDraftFilters(current => ({
+      ...current,
+      plantStartFrom: dateValueToIsoString(value[0]),
+      plantStartTo: dateValueToIsoString(value[1])
+    }));
   };
 
   const handleOverlapChange = ({ checked }: CheckboxChange) => {
     setDraftFilters(current => ({ ...current, hasOverlap: checked === true }));
   };
+
+  const plantStartDateValue = useMemo<DateValue[]>(() => {
+    const dates: DateValue[] = [];
+    const from = isoStringToDateValue(draftFilters.plantStartFrom);
+    const to = isoStringToDateValue(draftFilters.plantStartTo);
+    if (from) dates.push(from);
+    if (to) dates.push(to);
+    return dates;
+  }, [draftFilters.plantStartFrom, draftFilters.plantStartTo]);
 
   return (
     <Drawer trigger={trigger} open={open} onOpenChange={onOpenChange} size="filterPanel">
@@ -200,60 +233,46 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                 ))}
               </FilterCard>
               <FilterCard label={t("Plant Start Date")}>
-                <div className="flex flex-col gap-2">
-                  <input
-                    className={DATE_INPUT_CLASS_NAME}
-                    type="date"
-                    value={draftFilters.plantStartFrom}
-                    onChange={event => handlePlantStartDateChange("plantStartFrom", event.target.value)}
-                    aria-label={t("Plant start date from")}
-                  />
-                  <input
-                    className={DATE_INPUT_CLASS_NAME}
-                    type="date"
-                    value={draftFilters.plantStartTo}
-                    onChange={event => handlePlantStartDateChange("plantStartTo", event.target.value)}
-                    aria-label={t("Plant start date to")}
-                  />
-                </div>
+                <DateRangeInput
+                  size="small"
+                  noMarginBottom
+                  value={plantStartDateValue}
+                  onValueChange={handlePlantStartDateChange}
+                />
               </FilterCard>
               <FilterCard label={t("Restoration Practice")}>
-                <select
-                  className={SELECT_CLASS_NAME}
-                  value={draftFilters.practice[0] ?? ""}
+                <SelectInput
+                  placeholder={t("Please Select")}
+                  size="small"
+                  value={draftFilters.practice}
+                  items={RESTORATION_PRACTICE_OPTIONS.map(option => ({
+                    value: option.value,
+                    label: t(option.label)
+                  }))}
                   onChange={handlePracticeChange}
-                >
-                  <option value="">{t("Please Select")}</option>
-                  {RESTORATION_PRACTICE_OPTIONS.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {t(option.label)}
-                    </option>
-                  ))}
-                </select>
+                />
               </FilterCard>
               <FilterCard label={t("Target Land Use")}>
-                <select
-                  className={SELECT_CLASS_NAME}
-                  value={draftFilters.targetSys[0] ?? ""}
+                <SelectInput
+                  placeholder={t("Please Select")}
+                  size="small"
+                  value={draftFilters.targetSys}
+                  items={TARGET_LAND_USE_OPTIONS.map(option => ({
+                    value: option.value,
+                    label: t(option.label)
+                  }))}
                   onChange={handleTargetLandUseChange}
-                >
-                  <option value="">{t("Please Select")}</option>
-                  {TARGET_LAND_USE_OPTIONS.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {t(option.label)}
-                    </option>
-                  ))}
-                </select>
+                />
               </FilterCard>
               <FilterCard label={t("Submission Cycle")}>
-                <select className={SELECT_CLASS_NAME} defaultValue="">
-                  <option value="">{t("Please Select")}</option>
-                  {[1, 2, 3, 4, 5].map(option => (
-                    <option key={option} value={option}>
-                      {t("Option {option}", { option })}
-                    </option>
-                  ))}
-                </select>
+                <SelectInput
+                  placeholder={t("Please Select")}
+                  size="small"
+                  items={SUBMISSION_CYCLE_OPTIONS.map(option => ({
+                    value: option.value,
+                    label: t("Option {option}", { option: option.value })
+                  }))}
+                />
               </FilterCard>
               <FilterCard label={t("Overlap")}>
                 <Switch name="overlap" checked={draftFilters.hasOverlap} onCheckedChange={handleOverlapChange}>
