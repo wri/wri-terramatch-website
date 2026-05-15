@@ -1,3 +1,4 @@
+import { Flex } from "@chakra-ui/react";
 import { Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl";
 import { FC, memo, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
@@ -33,12 +34,9 @@ const OverlapMarkerPortal: FC<OverlapMarkerPortalProps> = ({ map, point }) => {
   }, [map, el, point.lng, point.lat]);
 
   return createPortal(
-    <div
-      aria-hidden
-      className="pointer-events-none flex h-[1.375rem] w-[1.375rem] items-center justify-center rounded-full bg-theme-neutral-100"
-    >
+    <Flex aria-hidden justify="center" align="center" w="1.375rem" h="1.375rem" rounded="full" bg="neutral.100">
       <InformationRequiredIcon boxSize="1.125rem" color="error.500" />
-    </div>,
+    </Flex>,
     el
   );
 };
