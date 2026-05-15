@@ -7,17 +7,18 @@ import { CheckIcon, CloseIcon } from "@/redesignComponents/foundations/Icons";
 
 interface FilterTagItemProps {
   label?: string | string[];
+  category?: string;
   onRemove?: () => void;
 }
 
-const FilterTagItem: FC<FilterTagItemProps> = ({ label, onRemove }) => {
+const FilterTagItem: FC<FilterTagItemProps> = ({ label, category, onRemove }) => {
   const t = useT();
 
   const isArrayLabel = Array.isArray(label);
 
   return (
     <Button
-      className="!border-theme-success-300 !bg-theme-success-100 !text-theme-success-900 shrink-0"
+      className="shrink-0 !border-theme-success-300 !bg-theme-success-100 !text-theme-success-900"
       variant="secondary"
       size="small"
       leftIcon={<CheckIcon boxSize={2.5} color="success.500" />}
@@ -33,7 +34,7 @@ const FilterTagItem: FC<FilterTagItemProps> = ({ label, onRemove }) => {
       {isArrayLabel && (
         <Flex align="center" gap={1} wrap="nowrap">
           <Text textStyle="200" color="success.900">
-            {t("Category:")}
+            {category ? `${t(category)}:` : `${t("Category")}:`}
           </Text>
 
           <Text textStyle="200-bold" color="success.900">

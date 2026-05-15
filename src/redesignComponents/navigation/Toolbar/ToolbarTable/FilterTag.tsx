@@ -120,7 +120,8 @@ const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
           {selectedFilters.map((filter, index) => {
             const label = typeof filter === "object" && !Array.isArray(filter) ? filter.label : filter;
             const onRemove = typeof filter === "object" && !Array.isArray(filter) ? filter.onRemove : undefined;
-            return <FilterTagItem label={label} onRemove={onRemove} key={index} />;
+            const category = typeof filter === "object" && !Array.isArray(filter) ? filter.category : undefined;
+            return <FilterTagItem label={label} onRemove={onRemove} category={category} key={index} />;
           })}
         </Flex>
       </Box>
