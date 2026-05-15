@@ -2,7 +2,8 @@ import { Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl";
 import { FC, memo, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { OverlapMarkerView } from "./overlapMarkerView";
+import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
+
 import { OverlapPolygonPoint } from "./overlapTypes";
 
 const MARKER_CLASS = "overlap-indicator-marker";
@@ -25,50 +26,21 @@ const OverlapMarkerPortal: FC<OverlapMarkerPortalProps> = ({ map, point }) => {
   });
 
   useEffect(() => {
-    let marker: MapboxMarker | null = null;
-    let cancelled = false;
-    let rafId = 0;
-
-    const attach = (): boolean => {
-      if (cancelled) return true;
-      if (marker != null) return true;
-      const canvasContainer = map.getCanvasContainer?.();
-      if (canvasContainer == null) return false;
-      marker = new MapboxMarker({ element: el }).setLngLat([point.lng, point.lat]).addTo(map);
-      return true;
-    };
-
-    const retryUntilAttached = (): void => {
-      if (cancelled || attach()) return;
-      rafId = window.requestAnimationFrame(retryUntilAttached);
-    };
-
-    const onMapLoad = (): void => {
-      if (attach()) return;
-      retryUntilAttached();
-    };
-
-    if (attach()) {
-      return () => {
-        cancelled = true;
-        marker?.remove();
-      };
-    }
-
-    map.once("load", onMapLoad);
-    if (map.loaded()) {
-      queueMicrotask(onMapLoad);
-    }
-
+    const marker = new MapboxMarker({ element: el }).setLngLat([point.lng, point.lat]).addTo(map);
     return () => {
-      cancelled = true;
-      map.off("load", onMapLoad);
-      window.cancelAnimationFrame(rafId);
-      marker?.remove();
+      marker.remove();
     };
   }, [map, el, point.lng, point.lat]);
 
-  return createPortal(<OverlapMarkerView />, el);
+  return createPortal(
+    <div
+      aria-hidden
+      className="pointer-events-none flex h-[1.375rem] w-[1.375rem] items-center justify-center rounded-full bg-theme-neutral-100"
+    >
+      <InformationRequiredIcon boxSize="1.125rem" color="error.500" />
+    </div>,
+    el
+  );
 };
 
 export const MemoOverlapMarkerPortal = memo(OverlapMarkerPortal);

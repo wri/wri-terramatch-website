@@ -1,7 +1,8 @@
 import { Map as MapboxMap } from "mapbox-gl";
 import { createRoot, Root } from "react-dom/client";
 
-import { OverlapMarkersOverlay } from "./overlapMarkersOverlay";
+import PopupProviders from "../components/PopupProviders";
+import { MemoOverlapMarkersOverlay } from "./overlapMarkersOverlay";
 import { OverlapPolygonPoint } from "./overlapTypes";
 
 type OverlapOverlayMount = {
@@ -15,18 +16,35 @@ const scheduleUnmount = (root: Root): void => {
   queueMicrotask(() => root.unmount());
 };
 
+const areOverlapPointsEqual = (a: OverlapPolygonPoint[], b: OverlapPolygonPoint[]): boolean => {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i += 1) {
+    const left = a[i];
+    const right = b[i];
+    if (left.polygonUuid !== right.polygonUuid || left.lat !== right.lat || left.lng !== right.lng) {
+      return false;
+    }
+  }
+  return true;
+};
+
 const createOverlayMount = (map: MapboxMap): OverlapOverlayMount => {
   const host = document.createElement("div");
   const root = createRoot(host);
 
   let lastPoints: OverlapPolygonPoint[] = [];
   const render = (): void => {
-    root.render(<OverlapMarkersOverlay map={map} points={lastPoints} />);
+    root.render(
+      <PopupProviders>
+        <MemoOverlapMarkersOverlay map={map} points={lastPoints} />
+      </PopupProviders>
+    );
   };
 
   return {
     root,
     update: points => {
+      if (areOverlapPointsEqual(lastPoints, points)) return;
       lastPoints = points;
       render();
     }

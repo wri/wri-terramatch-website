@@ -170,7 +170,7 @@ const getTargetLandUseConfig = (targetLandUse: targetLandUseType | null) => {
 
 const renderRestorationPractice = (restorationPractice: restorationStrategyType[]) => {
   if (restorationPractice.length === 0) {
-    return <Text>-</Text>;
+    return <Text>—</Text>;
   }
 
   return (
@@ -232,15 +232,15 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
       <TableCell className="min-w-[17.75rem] max-w-[17.75rem]">
         <Box>
           <Text textStyle="400-bold" color="neutral.800" className="truncate">
-            {row.polygonName ?? "-"}
+            {row.polygonName ?? "—"}
           </Text>
         </Box>
       </TableCell>
       <TableCell className="min-w-[15.875rem]">
-        {row.submission != null ? <MappedTag state={row.submission} /> : <Text>-</Text>}
+        {row.submission != null ? <MappedTag state={row.submission} /> : <Text>—</Text>}
       </TableCell>
       <TableCell className="min-w-[12.75rem]">
-        {row.validation != null ? <ValidationTag status={row.validation} /> : <Text>-</Text>}
+        {row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>}
       </TableCell>
       <TableCell className="min-w-[15.5rem]">
         <Flex className="items-center gap-2">{renderRestorationPractice(row.restorationPractice)}</Flex>
@@ -252,22 +252,22 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
             <Text>{targetLandUseConfig.label}</Text>
           </Flex>
         ) : (
-          <Text>-</Text>
+          <Text>—</Text>
         )}
       </TableCell>
       <TableCell className="min-w-[11.5rem]">
         <FeedbackTag
           type="info-grey"
           className="w-fit"
-          label={row.plantingDate != "-" ? row.plantingDate : "-"}
+          label={row.plantingDate != "-" ? row.plantingDate : "—"}
           icon={<CalendarIcon boxSize={2.5} />}
         />
       </TableCell>
       <TableCell className="min-w-[15.875rem]">
-        <Text>{row.treeDistribution.length > 0 ? row.treeDistribution.join(", ") : "-"}</Text>
+        <Text>{row.treeDistribution.length > 0 ? row.treeDistribution.join(", ") : "—"}</Text>
       </TableCell>
-      <TableCell className="min-w-[12.75rem]">{formatNumberLocaleString(row.treesPlanted) ?? "-"}</TableCell>
-      <TableCell className="min-w-[15.75rem]">{formatNumberLocaleString(row.area) ?? "-"}</TableCell>
+      <TableCell className="min-w-[12.75rem]">{formatNumberLocaleString(row.treesPlanted) ?? "—"}</TableCell>
+      <TableCell className="min-w-[15.75rem]">{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
     </TableRow>
   );
 };
@@ -355,7 +355,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
       if (polygon.lat == null || polygon.long == null) continue;
       points.push({ polygonUuid: uuid, lat: polygon.lat, lng: polygon.long });
     }
-    return { polygonsWithOverlapCount: overlapPolygonUuids.size, overlapPolygons: points };
+    return { polygonsWithOverlapCount: points.length, overlapPolygons: points };
   }, [overlapValidations, polygonsData]);
 
   const polygonRows = useMemo<PolygonTableRow[]>(
