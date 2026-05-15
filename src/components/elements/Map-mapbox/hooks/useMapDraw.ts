@@ -38,6 +38,7 @@ type UseMapDrawParams = {
   reloadSiteData?: () => any;
   setShouldRefetchPolygonData?: (v: boolean) => void;
   setStatusSelectedPolygon?: (v: string) => void;
+  statusSelectedPolygon?: string;
   t: (key: string) => string;
   showLoader: () => void;
   hideLoader: () => void;
@@ -59,6 +60,7 @@ export function useMapDraw({
   reloadSiteData,
   setShouldRefetchPolygonData,
   setStatusSelectedPolygon,
+  statusSelectedPolygon,
   t,
   showLoader,
   hideLoader,
@@ -102,6 +104,8 @@ export function useMapDraw({
     const polygonuuid = polygonFromMap.uuid;
     const isProjectPolygon = isProjectPitchesEntityName(polygonFromMap?.entityName ?? "");
     const projectPitchUuid = polygonFromMap?.projectPitchUuid;
+    const polygonStatus =
+      sitePolygonData?.find(polygon => polygon.polygonUuid === polygonuuid)?.status ?? statusSelectedPolygon;
 
     try {
       const geometry = await fetchPolygonGeometry(polygonuuid, true, isProjectPolygon ? projectPitchUuid : undefined);
@@ -116,7 +120,9 @@ export function useMapDraw({
           () => {
             if (map.current != null) filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
           },
-          draw.current
+          draw.current,
+          undefined,
+          polygonStatus
         );
       }
     } catch (error) {
@@ -129,7 +135,9 @@ export function useMapDraw({
     polygonFromMap?.uuid,
     polygonFromMap?.entityName,
     polygonFromMap?.projectPitchUuid,
-    polygonsData
+    polygonsData,
+    sitePolygonData,
+    statusSelectedPolygon
   ]);
 
   const onSaveEdit = useCallback(async () => {

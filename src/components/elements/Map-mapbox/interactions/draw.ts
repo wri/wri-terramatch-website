@@ -4,12 +4,14 @@ import { Map as MapboxMap } from "mapbox-gl";
 
 import { loadPolygonGeoJson, loadProjectPolygonsGeoJson } from "@/connections/GeoJsonExport";
 import { updateProjectPolygonResource } from "@/connections/ProjectPolygons";
+import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { zoomToBbox } from "../adapters/camera";
 import { convertToAcceptedGEOJSON } from "../adapters/geojson";
 import { BBox } from "../GeoJSON";
+import { getPolygonStatusColor, PolygonDrawStatus } from "../mapStyle";
 
 /** Shape of a polygon version record as returned by the versions API. */
 export type PolygonVersion = {
@@ -46,11 +48,13 @@ export const addGeojsonToDraw = (
   uuid: string,
   cb: (uuid: string) => void,
   currentDraw: MapboxDraw,
-  map?: MapboxMap
+  map?: MapboxMap,
+  polygonStatus?: string
 ): void => {
   if (geojson == null) return;
 
-  const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
+  const geojsonWithStatus = applyPolygonStatusToGeojson(geojson, polygonStatus);
+  const geojsonFormatted = convertToAcceptedGEOJSON(geojsonWithStatus);
   const addToDrawAndFilter = () => {
     if (currentDraw == null) return;
     currentDraw.add(geojsonFormatted);
@@ -66,19 +70,38 @@ export const addGeojsonToDraw = (
   addToDrawAndFilter();
 };
 
-const getPolygonColor = (polygonStatus: string | undefined): string => {
-  switch (polygonStatus) {
-    case "draft":
-      return "#E468EF";
-    case "submitted":
-      return "#2398d8";
-    case "approved":
-      return "#72d961";
-    case "needs-more-information":
-      return "#ff8938";
-    default:
-      return "#000000";
+const isPolygonDrawStatus = (value: string | undefined): value is PolygonDrawStatus =>
+  value === DRAFT || value === SUBMITTED || value === APPROVED || value === NEEDS_MORE_INFORMATION;
+
+const applyPolygonStatusToGeojson = (
+  geojson: GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry,
+  polygonStatus?: string
+): GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry => {
+  if (!isPolygonDrawStatus(polygonStatus)) return geojson;
+  if (geojson.type === "Feature") {
+    return { ...geojson, properties: { ...(geojson.properties ?? {}), polygonStatus } };
   }
+  if (geojson.type === "FeatureCollection") {
+    return {
+      ...geojson,
+      features: geojson.features.map((feature: GeoJSON.Feature) =>
+        feature.type === "Feature"
+          ? { ...feature, properties: { ...(feature.properties ?? {}), polygonStatus } }
+          : feature
+      )
+    };
+  }
+  if (geojson.type === "GeometryCollection") return geojson;
+  return {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: { polygonStatus },
+        geometry: geojson
+      }
+    ]
+  };
 };
 
 export const drawTemporaryPolygon = (
@@ -97,7 +120,7 @@ export const drawTemporaryPolygon = (
       type: "fill",
       source: "temp-polygon-source",
       layout: {},
-      paint: { "fill-color": getPolygonColor(polygonVersion?.status), "fill-opacity": 0 }
+      paint: { "fill-color": getPolygonStatusColor(polygonVersion?.status), "fill-opacity": 0 }
     });
     map.addLayer({
       id: "temp-polygon-source-line",
@@ -105,7 +128,7 @@ export const drawTemporaryPolygon = (
       source: "temp-polygon-source",
       layout: {},
       paint: {
-        "line-color": getPolygonColor(polygonVersion?.status),
+        "line-color": getPolygonStatusColor(polygonVersion?.status),
         "line-width": 2,
         "line-dasharray": [4, 2]
       }

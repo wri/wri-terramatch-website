@@ -8,6 +8,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { FeatureCollection } from "../GeoJSON";
 import type { ControlType } from "../Map.d";
 import { BASEMAP_CONFIGS, MapStyle } from "../MapControls/types";
+import { createMapDrawStyles } from "../mapStyle";
 import { addFilterOfPolygonsData, convertToGeoJSON } from "../utils";
 
 const INITIAL_ZOOM = 2.4;
@@ -64,6 +65,8 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
     });
 
     draw.current = new MapboxDraw({
+      userProperties: true,
+      styles: createMapDrawStyles(),
       controls: {
         point: false,
         line_string: false,
