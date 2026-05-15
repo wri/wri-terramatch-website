@@ -2,7 +2,7 @@ import { Box, Flex, FlexProps } from "@chakra-ui/react";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
-import { resolveSizeValue } from "@/lib/sizing";
+import { resolveRemSizeValue } from "@/lib/sizing";
 import { getThemedColor } from "@/lib/theme";
 import { ArrowOutwardIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -85,9 +85,9 @@ const ResizableBox: FC<ResizableBoxProps> = ({
     <Flex
       ref={containerRef}
       className={twMerge("relative flex-col", className)}
-      h={resolveSizeValue(heightUnits)}
-      minH={resolveSizeValue(minHeight)}
-      maxH={resolveSizeValue(maxHeight)}
+      h={resolveRemSizeValue(heightUnits)}
+      minH={resolveRemSizeValue(minHeight)}
+      maxH={resolveRemSizeValue(maxHeight)}
       {...props}
     >
       {children}
@@ -106,7 +106,7 @@ const ResizableBox: FC<ResizableBoxProps> = ({
       >
         <Box
           onMouseDown={handleMouseDown}
-          className="shadow-md z-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-neutral-300 bg-theme-neutral-100 p-2.5"
+          className="shadow-md z-2 bg-theme-neutral-100 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-neutral-300 p-2.5"
           style={{
             display: isDragging || isHovered ? "block" : "none",
             cursor: isDragging ? "grabbing" : isHovered ? "grab" : "default"
