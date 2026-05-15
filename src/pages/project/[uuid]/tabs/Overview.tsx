@@ -221,7 +221,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             <OverviewMapArea
               entityModel={project}
               type="projects"
-              className="max-h-[432px]"
+              className="max-h-[27rem]"
               disabledPolygonPanel={true}
             />
             {showSiteAreasMapPlaceholder && (
@@ -290,7 +290,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
       >
         <KeyIndicatorsInsightsTab project={project} />
       </PageItem>
-      <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[570px] sm:flex-row">
+      <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[35.625rem] sm:flex-row">
         <PageItem
           flexProps={{ flex: 1 }}
           title={t("Team Members")}
