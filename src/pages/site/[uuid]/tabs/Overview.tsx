@@ -117,7 +117,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             }}
           >
             <Box className="relative h-auto">
-              <OverviewMapArea entityModel={site} type="sites" className="max-h-[432px]" disabledPolygonPanel={true} />
+              <OverviewMapArea entityModel={site} type="sites" className="max-h-[27rem]" disabledPolygonPanel={true} />
               {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
                 <MapPlaceholder
                   icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}
@@ -180,7 +180,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             <KeyIndicatorsInsightsTab site={site} />
           </Flex>
         </PageItem>
-        <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[570px] sm:flex-row">
+        <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[35.625rem] sm:flex-row">
           <PageItem
             title={t("Latest Images")}
             flexProps={{ flex: 1 }}
