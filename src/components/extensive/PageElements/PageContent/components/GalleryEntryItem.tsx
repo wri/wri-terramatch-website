@@ -25,10 +25,10 @@ const GalleryEntryItem: FC<GalleryEntryItemProps> = ({ src, name, entityName, en
   return (
     <Flex gap={0.5} alignItems="center">
       <GalleryImage
+        hideNotAvailableText
         src={src}
         alt={name}
         className="!h-12 !w-15 shrink-0"
-        size={48}
         type={type}
         classNamesVideoIcon="!h-3 !w-3"
       />

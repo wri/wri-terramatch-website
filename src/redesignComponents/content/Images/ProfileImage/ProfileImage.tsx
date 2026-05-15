@@ -1,12 +1,14 @@
 import classNames from "classnames";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
+import type { SizeValue } from "@/lib/sizing";
+
 import BaseImage from "../Image";
 
 export interface ProfileImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
   alt?: string;
-  size?: number;
+  size?: SizeValue;
   scale?: number;
   position?: { x: number; y: number };
   className?: string;

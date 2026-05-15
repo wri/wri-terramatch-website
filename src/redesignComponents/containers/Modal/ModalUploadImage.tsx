@@ -61,7 +61,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
 }) => {
   const t = useT();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  const ref = useRef<HTMLDivElement | null>(null);
   const [sliderValue, setSliderValue] = useState(0);
   const [activeImgSrc, setActiveImgSrc] = useState<string | undefined>(imgSrc);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -181,7 +181,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
       const newX = e.clientX - startRef.current.x;
       const newY = e.clientY - startRef.current.y;
 
-      const containerSize = 300;
+      const containerSize = ref.current?.getBoundingClientRect().width ?? 0;
       const scaledSize = containerSize * effectiveScale;
 
       const maxOffset = (scaledSize - containerSize) / 2;
@@ -209,7 +209,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   }, [handleMouseMove, handleMouseUp]);
 
   useEffect(() => {
-    const containerSize = 300;
+    const containerSize = ref.current?.getBoundingClientRect().width ?? 0;
     const scaledSize = containerSize * effectiveScale;
     const maxOffset = (scaledSize - containerSize) / 2;
 
@@ -265,12 +265,12 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
             <Box
               onMouseDown={handleMouseDown}
               onMouseLeave={() => setIsDragging(false)}
+              ref={ref}
               className="no-ghost-dragging relative h-[18.75rem] w-[18.75rem] cursor-grab overflow-hidden active:cursor-grabbing "
             >
               <BaseImage
                 src={activeImgSrc}
                 alt="Project Profile Image"
-                size={300}
                 className="!h-full !w-full"
                 draggable={false}
                 style={{
@@ -289,11 +289,11 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
                   WebkitMaskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)"
                 }}
               />
-              <Box className="absolute top-0 right-0 h-full w-full rounded-full border-2 border-theme-neutral-100 bg-transparent" />
+              <Box className="border-theme-neutral-100 absolute top-0 right-0 h-full w-full rounded-full border-2 bg-transparent" />
             </Box>
           ) : (
             <Box className="relative h-[18.75rem] w-[18.75rem] overflow-hidden">
-              <Flex className="h-full w-full items-center justify-center bg-theme-neutral-200">
+              <Flex className="bg-theme-neutral-200 h-full w-full items-center justify-center">
                 <PlaceholderIcon boxSize={8} color="neutral.600" />
               </Flex>
               <Box

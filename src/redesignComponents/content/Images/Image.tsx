@@ -4,6 +4,7 @@ import Image from "next/image";
 import { CSSProperties, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
+import { type SizeValue, resolveRemSizeValue } from "@/lib/sizing";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
 import { EditIcon, PhotoAddIcon, RejectedIcon, VideoIcon } from "@/redesignComponents/foundations/Icons";
@@ -12,7 +13,7 @@ export type MediaType = "video" | "image";
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
   alt?: string;
-  size?: number;
+  size?: SizeValue;
   className?: string;
   borderRadius?: "rounded-md" | "rounded-full";
   defaultAlt?: string;
@@ -31,12 +32,13 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   style?: CSSProperties;
   type?: MediaType;
   classNamesVideoIcon?: string;
+  hideNotAvailableText?: boolean;
 }
 
 const BaseImage: FC<BaseImageProps> = ({
   src,
   alt,
-  size = 164,
+  size = 41,
   className,
   borderRadius = "rounded-md",
   defaultAlt = "Image",
@@ -50,6 +52,7 @@ const BaseImage: FC<BaseImageProps> = ({
   style,
   type = "image",
   classNamesVideoIcon,
+  hideNotAvailableText = false,
   ...rest
 }) => {
   const t = useT();
@@ -64,7 +67,7 @@ const BaseImage: FC<BaseImageProps> = ({
   const hoverContentComponent = (
     <div
       className={classNames(
-        "absolute inset-[0.1875rem] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+        "bg-theme-primary-900/50 absolute inset-[0.1875rem] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
         borderRadius
       )}
       role="button"
@@ -93,7 +96,7 @@ const BaseImage: FC<BaseImageProps> = ({
         borderRadius
       )}
     >
-      {isVideo && <VideoIcon className={classNames("h-9 w-9 text-theme-neutral-100", classNamesVideoIcon)} />}
+      {isVideo && <VideoIcon className={classNames("text-theme-neutral-100 h-9 w-9", classNamesVideoIcon)} />}
     </div>
   );
   return (
@@ -107,13 +110,13 @@ const BaseImage: FC<BaseImageProps> = ({
         },
         className
       )}
-      style={{ width: size, height: size }}
+      style={{ width: resolveRemSizeValue(size), height: resolveRemSizeValue(size) }}
     >
       {showNotAvailable || isAdd ? (
         isAdd ? (
           <div
             className={classNames(
-              "flex h-[calc(100%-0.25rem)] w-[calc(100%-0.25rem)] flex-col items-center justify-center gap-1 bg-theme-neutral-200",
+              "bg-theme-neutral-200 flex h-[calc(100%-0.25rem)] w-[calc(100%-0.25rem)] flex-col items-center justify-center gap-1",
               borderRadius
             )}
           >
@@ -128,14 +131,14 @@ const BaseImage: FC<BaseImageProps> = ({
         ) : (
           <div
             className={classNames(
-              "relative flex h-full w-full items-center justify-center bg-theme-neutral-300",
+              "bg-theme-neutral-300 relative flex h-full w-full items-center justify-center",
               borderRadius
             )}
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
-              <RejectedIcon className="h-5 w-5 text-theme-neutral-500" />
-              {size >= 80 && (
-                <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
+              <RejectedIcon className="text-theme-neutral-500 h-5 w-5" />
+              {!hideNotAvailableText && (
+                <Text variant="text-12" className="text-theme-neutral-900 flex items-center gap-1">
                   {t("Image unavailable")}
                 </Text>
               )}
@@ -170,7 +173,7 @@ const BaseImage: FC<BaseImageProps> = ({
               alt={alt ?? defaultAlt}
               fill
               className="object-cover"
-              sizes={`${size}px`}
+              sizes={resolveRemSizeValue(size)}
               style={style}
               onError={() => setLoadError(true)}
             />

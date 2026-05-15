@@ -3,6 +3,8 @@ import { useT } from "@transifex/react";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
+import { type SizeValue, resolveRemSizeValue } from "@/lib/sizing";
+
 import GalleryImage from "../../Images/GalleryImage/GalleryImage";
 import { MIN_ITEMS, MIN_ROWS } from "./constants";
 
@@ -16,7 +18,7 @@ interface IImageGalleryCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDi
   images: GalleryImageType[];
   onClickAdd?: () => void;
   columns?: number;
-  imageSize?: number;
+  imageSize?: SizeValue;
   className?: string;
   onSelectImage?: (image: GalleryImageType) => void;
   classNameImage?: string;
@@ -26,7 +28,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
   images,
   onClickAdd,
   columns = 2,
-  imageSize = 164,
+  imageSize = 41,
   onSelectImage,
   onScroll,
   className,
@@ -46,7 +48,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
       gapY={5}
       gapX={5}
       onScroll={onScroll}
-      className={twMerge("rounded-md bg-theme-neutral-100 p-5", className)}
+      className={twMerge("bg-theme-neutral-100 rounded-md p-5", className)}
     >
       {images?.map(image => (
         <GridItem key={image.uuid}>
@@ -55,7 +57,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
             src={image.src}
             alt={image.alt}
             size={imageSize}
-            className={twMerge("min-w-full bg-theme-neutral-200", classNameImage)}
+            className={twMerge("bg-theme-neutral-200 min-w-full", classNameImage)}
             hoverContent={" "}
           />
         </GridItem>
@@ -68,7 +70,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
           <GridItem key={`placeholder-${index}`}>
             {showAddSlot ? (
               <GalleryImage
-                className={twMerge("min-w-full bg-theme-neutral-200", classNameImage)}
+                className={twMerge("bg-theme-neutral-200 min-w-full", classNameImage)}
                 alt={isEmpty ? t("No images available") : t("Add image")}
                 isAdd={true}
                 onClickAdd={onClickAdd}
@@ -76,8 +78,8 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
               />
             ) : (
               <div
-                className="min-w-full rounded-md bg-theme-neutral-200"
-                style={{ width: imageSize, height: imageSize }}
+                className="bg-theme-neutral-200 min-w-full rounded-md"
+                style={{ width: resolveRemSizeValue(imageSize), height: resolveRemSizeValue(imageSize) }}
               />
             )}
           </GridItem>
