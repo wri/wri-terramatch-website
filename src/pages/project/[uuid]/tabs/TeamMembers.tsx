@@ -109,7 +109,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   return (
     <Box paddingX={8} paddingY={6} minHeight="525px" width="100%" overflow="auto">
       <ToolbarTable
-        className="!px-0"
+        className="mb-7 !px-0"
         onClearFilters={() => {
           setSelectedRole(null);
           setSearchQuery("");
