@@ -11,6 +11,9 @@ export interface ToolbarProps {
   contentRight?: React.ReactNode;
   className?: string;
   classNameContentRight?: string;
+  contentCenter?: React.ReactNode;
+  classNameContentCenter?: string;
+  classNameContentLeft?: string;
 }
 
 export interface BulkActionToolbarProps {
@@ -19,7 +22,8 @@ export interface BulkActionToolbarProps {
   tertiaryButtonProps?: IButtonProps;
   ButtonCancel: IButtonProps;
   ButtonDelete: IButtonProps;
-  ButtonMenu: IMultiActionButtonProps;
+  quantityButtonProps: IButtonProps;
+  items: string;
 }
 
 export interface ToolbarFormProps {
