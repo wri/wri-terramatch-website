@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
+import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
 import { useBoundingBox } from "@/connections/BoundingBox";
@@ -13,12 +14,10 @@ import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 import { parsePolygonDataV3, storePolygon } from "../utils";
 
-/** Fields required for polygon loading, bbox, and `storePolygon` on this map. */
 export type PolygonsMapEntityModel = {
   uuid: string;
   projectCountry?: string | null;
@@ -31,14 +30,16 @@ type PolygonsMapEntityType = "sites" | "projects";
 interface PolygonsMapProps {
   entityModel: PolygonsMapEntityModel;
   type: PolygonsMapEntityType;
+  polygons: SitePolygonLightDto[];
+  onRefetchPolygons: () => void | Promise<void>;
   className?: string;
-  polygonsDataOverride?: SitePolygonLightDto[];
   polygonTableHighlight?: {
     hoveredPolygonUuid: string | null;
     selectedPolygonUuids: string[];
     onHoveredPolygonFromMap?: (uuid: string | null) => void;
     onPolygonClickedFromMap?: (uuid: string) => void;
   };
+  overlapPolygons?: OverlapPolygonPoint[];
 }
 
 const EMPTY_POLYGON_MAP: Record<string, string[]> = {
@@ -53,9 +54,11 @@ type PolygonGeometryFeature = Pick<GeoJSON.Feature, "geometry">;
 const PolygonsMap: FC<PolygonsMapProps> = ({
   entityModel,
   type,
+  polygons,
+  onRefetchPolygons,
   className,
-  polygonsDataOverride,
-  polygonTableHighlight
+  polygonTableHighlight,
+  overlapPolygons
 }) => {
   const disabledPolygonPanel = true;
   const [polygonDataMap, setPolygonDataMap] = useState<Record<string, string[]>>(() => ({ ...EMPTY_POLYGON_MAP }));
@@ -68,38 +71,19 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     editPolygon,
     shouldRefetchPolygonData,
     setSelectedPolygonsInCheckbox,
-    setPolygonCriteriaMap,
     setPolygonData,
     shouldRefetchValidation,
     setShouldRefetchValidation,
     setShouldRefetchPolygonData,
-    polygonData: sitePolygonDataV3,
-    validFilter
+    polygonData: sitePolygonDataV3
   } = useMapAreaContext();
-
-  const {
-    data: fetchedPolygonsData,
-    refetch,
-    polygonCriteriaMap,
-    loading
-  } = useLoadSitePolygonsData(
-    entityModel.uuid,
-    type,
-    "",
-    "createdAt",
-    "ASC",
-    validFilter,
-    polygonsDataOverride == null
-  );
-
-  const polygonsData = polygonsDataOverride ?? fetchedPolygonsData;
 
   const onSave = useCallback(
     (geojson: unknown, _record: unknown) => {
       if (!Array.isArray(geojson)) return;
-      void storePolygon(geojson as PolygonGeometryFeature[], entityModel, setPolygonFromMap, refetch);
+      void storePolygon(geojson as PolygonGeometryFeature[], entityModel, setPolygonFromMap, onRefetchPolygons);
     },
-    [entityModel, refetch, setPolygonFromMap]
+    [entityModel, onRefetchPolygons, setPolygonFromMap]
   );
 
   const mapFunctions = useBaseMap(onSave);
@@ -120,33 +104,15 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   );
 
   const extentBbox = useMemo((): BBox | undefined => {
-    if (polygonsDataOverride != null) {
-      return modelBbox as BBox | undefined;
-    }
-    if (polygonsData.length > 0) {
-      return modelBbox as BBox | undefined;
-    }
-    if (loading) {
+    if (polygons.length > 0) {
       return modelBbox as BBox | undefined;
     }
     return countryBbox as BBox | undefined;
-  }, [polygonsDataOverride, polygonsData, modelBbox, countryBbox, loading]);
-
-  useValueChanged(loading, () => {
-    setPolygonCriteriaMap(polygonCriteriaMap);
-    setPolygonData(polygonsData);
-  });
+  }, [polygons.length, modelBbox, countryBbox]);
 
   useEffect(() => {
-    if (polygonsDataOverride != null) {
-      setPolygonData(polygonsDataOverride);
-    }
-  }, [polygonsDataOverride, setPolygonData]);
-
-  useEffect(() => {
-    if (polygonsDataOverride != null) return;
-    void refetch();
-  }, [validFilter, refetch, polygonsDataOverride]);
+    setPolygonData(polygons);
+  }, [polygons, setPolygonData]);
 
   useEffect(() => {
     if (disabledPolygonPanel) {
@@ -162,26 +128,26 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   useValueChanged(shouldRefetchPolygonData, async () => {
     if (shouldRefetchPolygonData) {
-      await Promise.all([refetch(), reloadSiteData?.()]);
+      await Promise.all([onRefetchPolygons(), reloadSiteData?.()]);
       setShouldRefetchPolygonData(false);
     }
   });
 
   useValueChanged(shouldRefetchValidation, () => {
     if (shouldRefetchValidation) {
-      refetch();
+      void onRefetchPolygons();
       setShouldRefetchValidation(false);
     }
   });
 
   useEffect(() => {
-    if (polygonsData.length > 0) {
-      const dataMap = parsePolygonDataV3(polygonsData);
+    if (polygons.length > 0) {
+      const dataMap = parsePolygonDataV3(polygons);
       setPolygonDataMap(dataMap);
     } else {
       setPolygonDataMap({ ...EMPTY_POLYGON_MAP });
     }
-  }, [polygonsData]);
+  }, [polygons]);
 
   return (
     <AnrMapOverlayProvider>
@@ -204,7 +170,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         }
         record={entityModel}
         className={classNames("h-full w-full flex-1", className)}
-        polygonsExists={polygonsData.length > 0}
+        polygonsExists={polygons.length > 0}
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
@@ -212,6 +178,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         sitePolygonData={sitePolygonDataV3}
         disabledPolygonPanel={disabledPolygonPanel}
         polygonTableHighlight={polygonTableHighlight}
+        overlapPolygons={overlapPolygons}
       />
     </AnrMapOverlayProvider>
   );

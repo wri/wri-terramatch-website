@@ -4,6 +4,7 @@ import { Checkbox } from "@worldresources/wri-design-systems";
 import { FC, memo, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
+import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
@@ -218,7 +219,6 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   }, [row.id, onHover]);
 
   const targetLandUseConfig = getTargetLandUseConfig(row.targetLandUse);
-  console.log(row);
   return (
     <TableRow
       {...(rowProps as Record<string, unknown>)}
@@ -307,7 +307,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     return filter as Partial<SitePolygonsIndexQueryParams>;
   }, [debouncedPolygonSearch, polygonFilters]);
 
-  const { data: polygonsData = [] } = useAllSitePolygons({
+  const { data: polygonsData = [], refetch: refetchPolygons } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: site.uuid,
     enabled: site.uuid != null && site.uuid !== "",
@@ -334,18 +334,28 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     void fetchOverlapValidations();
   }, [site.uuid, polygonIdsKey, fetchOverlapValidations]);
 
-  const polygonsWithOverlapCount = useMemo(() => {
+  const { polygonsWithOverlapCount, overlapPolygons } = useMemo(() => {
     const currentPolygonUuids = new Set(
       polygonsData
         .map(polygon => polygon.polygonUuid ?? polygon.uuid)
         .filter((id): id is string => id != null && id !== "")
     );
-    const ids = new Set(
+    const overlapPolygonUuids = new Set(
       overlapValidations
         .map(v => v.polygonUuid)
         .filter((id): id is string => id != null && id !== "" && currentPolygonUuids.has(id))
     );
-    return ids.size;
+    if (overlapPolygonUuids.size === 0) {
+      return { polygonsWithOverlapCount: 0, overlapPolygons: [] as OverlapPolygonPoint[] };
+    }
+    const points: OverlapPolygonPoint[] = [];
+    for (const polygon of polygonsData) {
+      const uuid = polygon.polygonUuid ?? polygon.uuid;
+      if (uuid == null || !overlapPolygonUuids.has(uuid)) continue;
+      if (polygon.lat == null || polygon.long == null) continue;
+      points.push({ polygonUuid: uuid, lat: polygon.lat, lng: polygon.long });
+    }
+    return { polygonsWithOverlapCount: points.length, overlapPolygons: points };
   }, [overlapValidations, polygonsData]);
 
   const polygonRows = useMemo<PolygonTableRow[]>(
@@ -663,8 +673,10 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           entityModel={site}
           type="sites"
           className="max-h-full overflow-hidden !rounded-[0.25rem_0.25rem_0_0]"
-          polygonsDataOverride={polygonsData}
+          polygons={polygonsData}
+          onRefetchPolygons={refetchPolygons}
           polygonTableHighlight={polygonTableHighlight}
+          overlapPolygons={overlapPolygons}
         />
       </ResizeBox>
       {polygonRows?.length === 0 ? (
