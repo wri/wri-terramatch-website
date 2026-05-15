@@ -48,7 +48,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
       gapY={5}
       gapX={5}
       onScroll={onScroll}
-      className={twMerge("bg-theme-neutral-100 rounded-md p-5", className)}
+      className={twMerge("rounded-md bg-theme-neutral-100 p-5", className)}
     >
       {images?.map(image => (
         <GridItem key={image.uuid}>
@@ -57,7 +57,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
             src={image.src}
             alt={image.alt}
             size={imageSize}
-            className={twMerge("bg-theme-neutral-200 min-w-full", classNameImage)}
+            className={twMerge("min-w-full bg-theme-neutral-200", classNameImage)}
             hoverContent={" "}
           />
         </GridItem>
@@ -70,7 +70,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
           <GridItem key={`placeholder-${index}`}>
             {showAddSlot ? (
               <GalleryImage
-                className={twMerge("bg-theme-neutral-200 min-w-full", classNameImage)}
+                className={twMerge("min-w-full bg-theme-neutral-200", classNameImage)}
                 alt={isEmpty ? t("No images available") : t("Add image")}
                 isAdd={true}
                 onClickAdd={onClickAdd}
@@ -78,7 +78,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
               />
             ) : (
               <div
-                className="bg-theme-neutral-200 min-w-full rounded-md"
+                className="min-w-full rounded-md bg-theme-neutral-200"
                 style={{ width: resolveRemSizeValue(imageSize), height: resolveRemSizeValue(imageSize) }}
               />
             )}
