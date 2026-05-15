@@ -307,7 +307,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     return filter as Partial<SitePolygonsIndexQueryParams>;
   }, [debouncedPolygonSearch, polygonFilters]);
 
-  const { data: polygonsData = [] } = useAllSitePolygons({
+  const { data: polygonsData = [], refetch: refetchPolygons } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: site.uuid,
     enabled: site.uuid != null && site.uuid !== "",
@@ -671,7 +671,8 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           entityModel={site}
           type="sites"
           className="max-h-full overflow-hidden !rounded-[0.25rem_0.25rem_0_0]"
-          polygonsDataOverride={polygonsData}
+          polygons={polygonsData}
+          onRefetchPolygons={refetchPolygons}
           polygonTableHighlight={polygonTableHighlight}
           overlapPolygons={overlapPolygons}
         />
