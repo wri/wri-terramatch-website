@@ -4,33 +4,39 @@ import { FC, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import {
+  POLYGON_APPROVED,
+  POLYGON_DRAFT,
+  POLYGON_INFORMATION_REQUIRED,
+  POLYGON_PENDING_APPROVAL
+} from "@/constants/polygonStatuses";
+
+const POLYGON_FILTER_LEGEND = [
+  { status: POLYGON_DRAFT, color: "pinkCustom", label: "Draft" },
+  { status: POLYGON_PENDING_APPROVAL, color: "blue", label: "Pending Approval" },
+  { status: POLYGON_INFORMATION_REQUIRED, color: "tertiary-600", label: "Information Required" },
+  { status: POLYGON_APPROVED, color: "green", label: "Approved" }
+] as const;
 
 export const FilterControl: FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const t = useT();
-
-  const buttons = [
-    { color: "pinkCustom", text: "Draft" },
-    { color: "blue", text: "Submitted" },
-    { color: "tertiary-600", text: "Needs More Info" },
-    { color: "green", text: "Approved" }
-  ];
 
   return (
     <div className="">
       {showFilters && (
         <div className="relative">
           <div className="absolute bottom-1 w-max rounded-lg bg-white p-2 shadow">
-            {buttons.map((button, index) => (
+            {POLYGON_FILTER_LEGEND.map(({ status, color, label }) => (
               <Button
-                key={index}
+                key={status}
                 variant="text"
                 className="text-12-bold text-nowrap h-fit w-full !justify-start rounded-lg bg-white p-2"
                 onClick={() => {}}
               >
                 <div className="text-12-semibold flex items-center">
-                  <div className={`mr-2 h-3 w-3 rounded-sm bg-${button.color} lg:h-4 lg:w-4 wide:h-5 wide:w-5`} />
-                  {t(button.text)}
+                  <div className={`mr-2 h-3 w-3 rounded-sm bg-${color} lg:h-4 lg:w-4 wide:h-5 wide:w-5`} />
+                  {t(label)}
                 </div>
               </Button>
             ))}

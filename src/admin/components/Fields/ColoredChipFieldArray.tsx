@@ -3,17 +3,22 @@ import { ArrayField, ArrayFieldProps, ChipField, FunctionField, SingleFieldList,
 
 import { Choice } from "@/admin/types/common";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
+import {
+  POLYGON_APPROVED,
+  POLYGON_DRAFT,
+  POLYGON_INFORMATION_REQUIRED,
+  POLYGON_PENDING_APPROVAL
+} from "@/constants/polygonStatuses";
 
 interface ColoredChipFieldArrayProps extends Omit<ArrayFieldProps, "children"> {
   choices: Choice[];
 }
 
-const POLYGON_SUBMITTED_TYPE_CLASSNAME_MAP: { [key: string]: string } = {
-  Approved: "!bg-green-30 tag-approved-color",
-  Submitted: "!bg-blue-200 tag-submitted-color",
-  Draft: "!bg-grey-200 tag-draft-color",
-  "Needs info": "!bg-tertiary-50 tag-need-info-color",
-  Unknown: ""
+const POLYGON_STATUS_CLASSNAME_MAP: Record<string, string> = {
+  [POLYGON_APPROVED]: "!bg-green-30 tag-approved-color",
+  [POLYGON_PENDING_APPROVAL]: "!bg-blue-200 tag-submitted-color",
+  [POLYGON_DRAFT]: "!bg-grey-200 tag-draft-color",
+  [POLYGON_INFORMATION_REQUIRED]: "!bg-tertiary-50 tag-need-info-color"
 };
 
 function groupPolygonsByStatus(polygons: any[]) {
@@ -64,10 +69,7 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
               <ChipField
                 record={{ status: PolygonStatusLabel }}
                 source="status"
-                className={classNames(
-                  "!h-fit !rounded-[3px] capitalize",
-                  POLYGON_SUBMITTED_TYPE_CLASSNAME_MAP[choice?.name!]
-                )}
+                className={classNames("!h-fit !rounded-[3px] capitalize", POLYGON_STATUS_CLASSNAME_MAP[status])}
               />
             );
           }}

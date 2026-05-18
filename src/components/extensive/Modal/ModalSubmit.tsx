@@ -95,7 +95,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
         if (isChecked) {
           return (
             polygonsSelected[index] ||
-            (polygon.status !== StatusEnum.SUBMITTED && polygon.status !== StatusEnum.APPROVED)
+            (polygon.status !== StatusEnum.PENDING_APPROVAL && polygon.status !== StatusEnum.APPROVED)
           );
         }
         return false;
