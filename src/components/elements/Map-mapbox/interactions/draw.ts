@@ -4,14 +4,13 @@ import { Map as MapboxMap } from "mapbox-gl";
 
 import { loadPolygonGeoJson, loadProjectPolygonsGeoJson } from "@/connections/GeoJsonExport";
 import { updateProjectPolygonResource } from "@/connections/ProjectPolygons";
-import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { zoomToBbox } from "../adapters/camera";
 import { convertToAcceptedGEOJSON } from "../adapters/geojson";
 import { BBox } from "../GeoJSON";
-import { getPolygonStatusColor, PolygonDrawStatus } from "../mapStyle";
+import { applyMapDrawStatusStyles, getPolygonStatusColor, PolygonDrawStatus } from "../mapStyle";
 
 /** Shape of a polygon version record as returned by the versions API. */
 export type PolygonVersion = {
@@ -49,59 +48,25 @@ export const addGeojsonToDraw = (
   cb: (uuid: string) => void,
   currentDraw: MapboxDraw,
   map?: MapboxMap,
-  polygonStatus?: string
+  polygonStatus?: PolygonDrawStatus
 ): void => {
   if (geojson == null) return;
 
-  const geojsonWithStatus = applyPolygonStatusToGeojson(geojson, polygonStatus);
-  const geojsonFormatted = convertToAcceptedGEOJSON(geojsonWithStatus);
-  const addToDrawAndFilter = () => {
-    if (currentDraw == null) return;
-    currentDraw.add(geojsonFormatted);
-    const currentDrawFeatures = currentDraw.getAll();
-    currentDraw.set(currentDrawFeatures);
-    const featureId = currentDrawFeatures.features[0].id;
-    currentDraw.changeMode("direct_select", { featureId: featureId as string });
-    if (map != null) {
-      zoomToBbox(bbox(geojsonFormatted) as BBox, map, false);
-    }
-    cb(uuid);
-  };
-  addToDrawAndFilter();
-};
+  const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
+  if (currentDraw == null) return;
 
-const isPolygonDrawStatus = (value: string | undefined): value is PolygonDrawStatus =>
-  value === DRAFT || value === SUBMITTED || value === APPROVED || value === NEEDS_MORE_INFORMATION;
+  currentDraw.add(geojsonFormatted);
+  const currentDrawFeatures = currentDraw.getAll();
+  currentDraw.set(currentDrawFeatures);
+  const featureId = currentDrawFeatures.features[0].id;
+  currentDraw.changeMode("direct_select", { featureId: featureId as string });
 
-const applyPolygonStatusToGeojson = (
-  geojson: GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry,
-  polygonStatus?: string
-): GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry => {
-  if (!isPolygonDrawStatus(polygonStatus)) return geojson;
-  if (geojson.type === "Feature") {
-    return { ...geojson, properties: { ...(geojson.properties ?? {}), polygonStatus } };
+  if (map != null) {
+    applyMapDrawStatusStyles(map, polygonStatus);
+    zoomToBbox(bbox(geojsonFormatted) as BBox, map, false);
   }
-  if (geojson.type === "FeatureCollection") {
-    return {
-      ...geojson,
-      features: geojson.features.map((feature: GeoJSON.Feature) =>
-        feature.type === "Feature"
-          ? { ...feature, properties: { ...(feature.properties ?? {}), polygonStatus } }
-          : feature
-      )
-    };
-  }
-  if (geojson.type === "GeometryCollection") return geojson;
-  return {
-    type: "FeatureCollection",
-    features: [
-      {
-        type: "Feature",
-        properties: { polygonStatus },
-        geometry: geojson
-      }
-    ]
-  };
+
+  cb(uuid);
 };
 
 export const drawTemporaryPolygon = (

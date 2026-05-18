@@ -131,13 +131,12 @@ export function filterPolygonFromLayers(
   map: MapboxMap
 ) {
   if (polygonsData == null) return;
+
   const newPolygonData: Record<string, string[]> = JSON.parse(JSON.stringify(polygonsData));
-  const statuses = ["submitted", "approved", "need-more-info", "draft", "form-polygons"];
-  statuses.forEach(status => {
-    if (newPolygonData[status] != null) {
-      newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
-    }
+  Object.keys(newPolygonData).forEach(status => {
+    newPolygonData[status] = (newPolygonData[status] ?? []).filter(uuid => uuid !== polygonuuid);
   });
+
   const polygonLayer = layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY);
   if (polygonLayer != null) addFilterOnLayer(polygonLayer, newPolygonData, map);
 }
