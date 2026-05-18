@@ -3,7 +3,7 @@ import { List as RaList, ListProps, Pagination } from "react-admin";
 
 import { AdminPaginationActions } from "@/admin/components/list/AdminPaginationActions";
 
-const adminDefaultPagination = <Pagination actions={AdminPaginationActions} />;
+const adminDefaultPagination = <Pagination actions={AdminPaginationActions as unknown as FC} />;
 
 /**
  * react-admin's {@link Pagination} always sets `TablePagination`'s `ActionsComponent`
