@@ -89,8 +89,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
           id: member.uuid,
           roleName: member.roleName ?? "",
           //TODO: replace with actual image once it is implemented
-          status: member?.status == "active" || member?.isManager ? "Accepted" : "Pending",
-          image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+          status: member?.status == "active" || member?.isManager ? "Accepted" : "Pending"
         })) ?? [];
 
     const q = searchQuery.trim().toLowerCase();

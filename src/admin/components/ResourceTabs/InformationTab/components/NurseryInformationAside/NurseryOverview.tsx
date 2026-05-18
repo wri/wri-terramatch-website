@@ -1,5 +1,6 @@
 import { Check } from "@mui/icons-material";
 import { Button, Card, Grid, Stack, Typography } from "@mui/material";
+import { useT } from "@transifex/react";
 import { FC, useState } from "react";
 import { Labeled, TextField, useShowContext } from "react-admin";
 
@@ -7,6 +8,7 @@ import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 
 const NurseryOverview: FC = () => {
+  const t = useT();
   const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | undefined>();
   const { record } = useShowContext();
 
@@ -14,7 +16,7 @@ const NurseryOverview: FC = () => {
     <>
       <Card sx={{ padding: 3.75 }}>
         <Typography variant="h5" marginBottom={3.75}>
-          Nursery Overview
+          {t("Nursery Overview")}
         </Typography>
 
         <Stack gap={3}>

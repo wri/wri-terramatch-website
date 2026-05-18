@@ -2,7 +2,7 @@ import { Box, Flex, FlexProps } from "@chakra-ui/react";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
-import { resolveSizeValue } from "@/lib/sizing";
+import { resolveRemSizeValue } from "@/lib/sizing";
 import { getThemedColor } from "@/lib/theme";
 import { ArrowOutwardIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -85,9 +85,9 @@ const ResizableBox: FC<ResizableBoxProps> = ({
     <Flex
       ref={containerRef}
       className={twMerge("relative flex-col", className)}
-      h={resolveSizeValue(heightUnits)}
-      minH={resolveSizeValue(minHeight)}
-      maxH={resolveSizeValue(maxHeight)}
+      h={resolveRemSizeValue(heightUnits)}
+      minH={resolveRemSizeValue(minHeight)}
+      maxH={resolveRemSizeValue(maxHeight)}
       {...props}
     >
       {children}

@@ -224,11 +224,11 @@
 }
 
 .MuiTablePagination-displayedRows {
-  @apply order-3 !ml-auto !text-grey-600 !text-base !font-bold hidden
+  @apply order-3 !ml-auto !text-grey-600 !text-base !font-bold hidden;
 }
 
 .MuiTablePagination-actions {
-  @apply order-3 !ml-auto
+  @apply order-3 !ml-auto;
 }
 
 .MuiPagination-text li:first-child button{
@@ -261,11 +261,11 @@
 }
 
 .MuiPagination-text li .Mui-selected::after{
-  @apply content-['Page'] absolute right-full mr-2
+  @apply content-['Page'] absolute right-full mr-2;
 }
 
 .MuiPagination-text li .Mui-selected{
-  @apply !bg-transparent !block !text-neutral-1000 w-8 h-8 rounded-lg border border-grey-350 flex items-center justify-center !border-solid !bg-white hover:text-primary leading-[normal] !text-xs font-bold lg:!text-sm wide:!text-base;
+  @apply !bg-transparent !block !text-neutral-1000 !min-w-[min-content] h-8 w-auto max-w-none shrink-0 flex-nowrap rounded-lg border border-grey-350 flex items-center justify-center gap-0 !border-solid !bg-white px-1.5 hover:text-primary leading-[normal] !text-xs font-bold lg:!text-sm wide:!text-base overflow-visible;
 }
 
 .MuiPagination-text li button {
@@ -273,11 +273,10 @@
 }
 
 .MuiPagination-ul > li:nth-last-child(2) {
-  @apply !bg-transparent h-8 flex items-center justify-center 
-         ;
+  @apply !bg-transparent h-8 flex items-center justify-center overflow-visible;
 }
 .MuiPagination-ul > li:nth-last-child(2) button {
-  @apply !block !text-xs font-bold lg:!text-sm wide:!text-base !block before:content-['of\00a0\00a0'] !text-neutral-1000 leading-[normal]  ;
+  @apply !block !text-xs font-bold lg:!text-sm wide:!text-base flex flex-nowrap items-center justify-center gap-0 before:content-['of\00a0\00a0'] !text-neutral-1000 leading-[normal] overflow-visible min-w-[min-content] max-w-none shrink-0;
 }
 
 .MuiPaginationItem-ellipsis{

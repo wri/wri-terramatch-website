@@ -33,7 +33,6 @@ const useLoadSitePolygonsData = (
     return entityType as "sites" | "projects";
   }, [entityType]);
 
-  // Build filter object for the new API
   const filter = useMemo(() => {
     const filterObj: Record<string, unknown> = {};
 
