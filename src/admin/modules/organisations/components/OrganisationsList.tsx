@@ -5,7 +5,6 @@ import {
   Datagrid,
   DateField,
   EditButton,
-  List,
   SearchInput,
   SelectField,
   SelectInput,
@@ -16,6 +15,7 @@ import {
 
 import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ListActionsCreateFilter from "@/admin/components/Actions/ListActionsCreateFilter";
+import { List } from "@/admin/components/AdminList";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import Menu from "@/components/elements/Menu/Menu";
