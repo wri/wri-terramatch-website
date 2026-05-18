@@ -22,7 +22,6 @@ import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
 import SitePolygonsTab from "./tabs/Polygons";
-import SiteMapTab from "./tabs/SiteMap";
 
 const SiteDetailPage = () => {
   const t = useT();
@@ -47,7 +46,6 @@ const SiteDetailPage = () => {
     { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site!} refetch={refetch} /> },
     { key: "details", title: t("Site Details"), body: <SiteDetailTab site={site!} /> },
     { key: "polygons", title: t("Polygons"), body: <SitePolygonsTab site={site!} /> },
-    { key: "map", title: t("Site Map"), body: <SiteMapTab site={site!} refetch={refetch} /> },
     {
       key: "gallery",
       title: t("Gallery"),
