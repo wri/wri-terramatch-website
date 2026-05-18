@@ -18,7 +18,7 @@ const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
 }: BulkActionToolbarProps) => {
   return (
     <Toolbar
-      className="rounded-lg !bg-theme-primary-800 px-4 py-3"
+      className="rounded-lg !bg-theme-primary-800 px-4 py-3 !shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.10),0_-2px_4px_-2px_rgba(0,0,0,0.10)]"
       contentLeft={<Button className="!text-theme-neutral-100" {...ButtonCancel} variant="borderless" />}
       contentCenter={
         <Flex gap={1}>
