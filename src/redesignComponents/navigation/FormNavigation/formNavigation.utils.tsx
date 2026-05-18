@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 
 import { CheckIcon, InformationRequiredSimpleIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -66,24 +66,22 @@ export const getBadgeContent = (
   isSelected: boolean = false,
   showNumberForActive: boolean = false
 ): ReactNode => {
-  if (type === "warning") {
-    return React.createElement(InformationRequiredSimpleIcon, { className: "max-w-4 w-4" });
-  }
+  const numberBadge = <div className={getNumberClasses(type, isSelected)}>{index}</div>;
 
-  if (type === "error") {
-    return React.createElement(InformationRequiredSimpleIcon, { className: "max-w-4 w-4" });
+  if (type === "warning" || type === "error") {
+    return <InformationRequiredSimpleIcon boxSize={4} />;
   }
 
   if (showNumberForActive) {
-    return React.createElement("div", { className: getNumberClasses(type, isSelected) }, index);
+    return numberBadge;
   }
 
   if (type === "complete") {
-    return React.createElement(CheckIcon, { className: "max-w-4 w-4" });
+    return <CheckIcon boxSize={4} />;
   }
 
   if (shouldShowNumber(type, isSelected)) {
-    return React.createElement("div", { className: getNumberClasses(type, isSelected) }, index);
+    return numberBadge;
   }
 
   return null;
