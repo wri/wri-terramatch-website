@@ -29,6 +29,11 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
   const t = useT();
 
   const framework = site?.frameworkKey;
+  const treesFromReportsAnr = site.regeneratedTreesCount ?? 0;
+  const isCombinedTreesGrowingCard = framework === Framework.PPC || framework === Framework.HBF;
+  const treesGrowingCardProgress = isCombinedTreesGrowingCard
+    ? (site.treesPlantedCount ?? 0) + (site.seedsPlantedCount ?? 0) + treesFromReportsAnr
+    : site.treesPlantedCount ?? 0;
 
   const keyIndicatorsTooltipContentItem = useMemo(() => {
     return KEY_INDICATORS_TOOLTIP_CONTENT.find(content => content.frameworks.includes(site.frameworkKey!));
@@ -40,7 +45,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
     <MetricCardsRow>
       <MetricCard
         title={t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}
-        progress={site.treesPlantedCount ?? 0}
+        progress={treesGrowingCardProgress}
         goal={0}
         variant={keyIndicatorsTooltipContentItem?.treesRestored.type as MetricCardVariant}
         icon={<TreeIcon />}
@@ -78,7 +83,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
           title={t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}
           variant="large"
-          progress={site.treesRegeneratingSpeciesCount ?? 0}
+          progress={treesFromReportsAnr}
           goal={0}
           icon={<RegenerationIcon />}
           tooltipContent={

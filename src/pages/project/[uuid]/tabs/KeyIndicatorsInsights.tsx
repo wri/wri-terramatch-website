@@ -25,8 +25,11 @@ interface KeyIndicatorsInsightsProps {
 }
 
 const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) => {
-  const totalTreesRestoredCount =
-    (project.treesPlantedCount ?? 0) + (project.treesRegeneratingSpeciesCount ?? 0) + (project.seedsPlantedCount ?? 0);
+  const treesFromReportsAnr = project.regeneratedTreesCount ?? 0;
+  const isCombinedTreesGrowingCard = project.frameworkKey === Framework.PPC || project.frameworkKey === Framework.HBF;
+  const firstCardTreesProgress = isCombinedTreesGrowingCard
+    ? (project.treesPlantedCount ?? 0) + (project.seedsPlantedCount ?? 0) + treesFromReportsAnr
+    : project.treesPlantedCount ?? 0;
   const treesGrownGoal = project.treesGrownGoal ?? 0;
   const t = useT();
   const totalHectaresRestored = project.totalHectaresRestoredSum ?? 0;
@@ -46,7 +49,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
     <MetricCardsRow>
       <MetricCard
         title={t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}
-        progress={totalTreesRestoredCount}
+        progress={firstCardTreesProgress}
         goal={treesGrownGoal}
         variant="donutChart"
         icon={<ProjectIcon />}
@@ -64,7 +67,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
       <ContextCondition frameworksHide={[Framework.PPC, Framework.HBF]}>
         <MetricCard
           title={t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}
-          progress={project.treesRegeneratingSpeciesCount ?? 0}
+          progress={treesFromReportsAnr}
           goal={project.goalTreesRestoredAnr ?? 0}
           variant="donutChart"
           icon={<RegenerationIcon />}

@@ -365,10 +365,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   <div className="relative h-9 w-[218px]">
                     <div className="absolute inset-0 z-0 h-full w-full">
                       <ProgressBarChart
-                        data={getProgressData(
-                          project.goalTreesRestoredAnr ?? 0,
-                          project.treesRegeneratingSpeciesCount ?? 0
-                        )}
+                        data={getProgressData(project.goalTreesRestoredAnr ?? 0, project.regeneratedTreesCount ?? 0)}
                         className="h-full w-full"
                       />
                     </div>
@@ -380,7 +377,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     />
                   </div>
                   <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                    {(project.treesRegeneratingSpeciesCount ?? 0).toLocaleString()}
+                    {(project.regeneratedTreesCount ?? 0).toLocaleString()}
                     <Text variant="text-16-light" className="ml-1 text-darkCustom">
                       of {project.goalTreesRestoredAnr?.toLocaleString()}
                     </Text>
@@ -399,7 +396,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     variantLabel: "text-14",
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: (project.treesRegeneratingSpeciesCount ?? 0).toLocaleString()
+                    value: (project.regeneratedTreesCount ?? 0).toLocaleString()
                   }
                 ]}
               />
