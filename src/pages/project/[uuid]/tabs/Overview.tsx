@@ -63,19 +63,19 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     return associatedUsers
       ?.filter(user => user.roleName === "project-developer")
       ?.slice(0, 3)
-      .map((user, index) => ({
+      .map(user => ({
         id: user.uuid,
-        name: user.fullName,
-        image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+        name: user.fullName
+        //TODO: replace with actual image once it is implemented
       }));
   }, [associatedUsers]);
   const projectManagers = useMemo(() => {
     return associatedUsers
       ?.filter(user => user.roleName === "project-manager")
-      .map((user, index) => ({
+      .map(user => ({
         id: user.uuid,
-        name: user.fullName,
-        image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+        name: user.fullName
+        //TODO: replace with actual image once it is implemented
       }));
   }, [associatedUsers]);
   const needMoreInformation =
