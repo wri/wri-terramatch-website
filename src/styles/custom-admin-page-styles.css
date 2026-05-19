@@ -292,19 +292,19 @@
 
 /* Last page: "Page N of M" from AdminPaginationActions (button ::after Page is suppressed below). */
 .AdminPagination-currentPageWrap {
-  @apply inline-flex min-w-min shrink-0 items-center overflow-visible;
+  @apply inline-flex min-w-min shrink-0 items-center gap-2 overflow-visible;
 }
 
 .AdminPagination-pageLabel {
-  @apply mr-2 shrink-0 whitespace-nowrap text-xs font-bold text-neutral-1000 lg:!text-sm wide:!text-base leading-[normal];
+  @apply shrink-0 whitespace-nowrap text-xs font-bold text-neutral-1000 lg:!text-sm wide:!text-base leading-[normal];
 }
 
 .AdminPagination-currentPageWrap .MuiPaginationItem-page.Mui-selected::after {
-  content: none !important;
+  @apply !hidden !content-none !static !m-0;
 }
 
 .AdminPagination-ofTotal {
-  @apply shrink-0 whitespace-nowrap pl-0.5 text-xs font-bold text-neutral-1000 lg:!text-sm wide:!text-base leading-[normal];
+  @apply shrink-0 whitespace-nowrap text-xs font-bold text-neutral-1000 lg:!text-sm wide:!text-base leading-[normal];
 }
 
 /* When "next" is not rendered, the current page is the last <li>. */
