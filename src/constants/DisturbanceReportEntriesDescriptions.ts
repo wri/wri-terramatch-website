@@ -14,7 +14,7 @@ export const DISTURBANCE_INTENSITY_FIELD_DESCRIPTION = `
   <li><strong>High</strong> – A serious event that puts the project's success or stakeholders at significant risk. It requires an immediate and strong response, possibly with help from external sources like the local government, and can cause major delays, increased costs, or long-term problems for the project. Example: a major flood or landslide in a restoration area that destroys large sections of newly planted trees or seedlings, requiring a complete reevaluation of the project plan, emergency measures to prevent further damage, and extensive efforts to restore the affected area.</li>
   </ul>
 `;
-export const DISTURBANCE_SUBTYPE_FIELD_DESCRIPTION = `For more information on each subtype, please see [insert link]`;
+export const DISTURBANCE_SUBTYPE_FIELD_DESCRIPTION = `For more information on each subtype, please see <a href="https://terramatchsupport.zendesk.com/hc/en-us/articles/50591003474843-How-and-When-to-Report-on-Disturbances-in-your-TerraFund-Project" target="_blank">here</a>`;
 export const DISTURBANCE_EXTEND_FIELD_DESCRIPTION = `Estimated percentage of the project area or planted trees affected, or saplings grown in the nurseries affected by the disturbance event`;
 export const DISTURBANCE_PEOPLE_AFFECTED_FIELD_DESCRIPTION = `Provide the estimated total number of individuals impacted over the duration of the disturbance event`;
 export const DISTURBANCE_MONETARY_DAMAGE_FIELD_DESCRIPTION = `Provide an estimate of the amount of damage incurred by the disturbance event`;
