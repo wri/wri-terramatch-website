@@ -99,6 +99,12 @@ export const KEY_INDICATORS_TOOLTIP_CONTENT = [
       title: "Workdays Created",
       content: "This is the sum of all workdays reported at site level.",
       type: "large"
+    },
+    estimatedTreesRestored: {
+      title: "Estimated Trees Restored",
+      content:
+        "This represents [trees planted * projected planting survival rate] + [seeds planted * projected direct seeding survival rate] + estimated trees growing due to assisted natural regeneration interventions at this site.",
+      type: "large"
     }
   }
 ];
