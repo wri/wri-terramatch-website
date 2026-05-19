@@ -19,7 +19,7 @@ import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner/ProjectBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
-import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
+import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
 import InviteMonitoringPartnerModal from "./components/InviteMonitoringPartnerModal";
 import AuditLog from "./tabs/AuditLog";
@@ -135,7 +135,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
 
   return (
     <>
-      <ProjectResponsiveTypography />
+      <ResponsiveTypography />
       <InviteMonitoringPartnerModal
         projectUUID={project.uuid}
         open={showInviteModal}

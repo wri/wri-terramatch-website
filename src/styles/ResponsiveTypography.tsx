@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-const ProjectResponsiveTypography: FC = () => (
+const ResponsiveTypography: FC = () => (
   <style>{`
     @media (min-width: 1800px) {
       html {
@@ -22,4 +22,4 @@ const ProjectResponsiveTypography: FC = () => (
   `}</style>
 );
 
-export default ProjectResponsiveTypography;
+export default ResponsiveTypography;
