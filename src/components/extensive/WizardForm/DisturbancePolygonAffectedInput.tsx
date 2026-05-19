@@ -1,9 +1,11 @@
+import { useT } from "@transifex/react";
 import { useCallback, useMemo } from "react";
 import { ControllerRenderProps } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { useLightDisturbanceReport } from "@/connections/Entity";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { DISTURBANCE_POLYGONS_FIELD_DESCRIPTION } from "@/constants/DisturbanceReportEntriesDescriptions";
 import { useFormEntities } from "@/context/wizardForm.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { OptionValue } from "@/types/common";
@@ -27,7 +29,7 @@ export const DisturbancePolygonAffectedInput = ({
 }: DisturbancePolygonAffectedInputProps) => {
   const entityUuid = useFormEntities()[0]?.entityUUID;
   const [, { data: disturbanceReport }] = useLightDisturbanceReport({ id: entityUuid! });
-
+  const t = useT();
   const { data: polygonsData } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: siteUuid,
@@ -116,9 +118,7 @@ export const DisturbancePolygonAffectedInput = ({
       value={dropdownValue}
       onChange={_onChange}
       placeholder={siteUuid ? "Search and select polygons..." : "Please select a site first"}
-      description={
-        siteUuid ? "Select the polygons where the disturbance occurred" : "Select a site first to load polygons"
-      }
+      description={t(DISTURBANCE_POLYGONS_FIELD_DESCRIPTION)}
       className="w-full"
       multiSelect={true}
     />
