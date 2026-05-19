@@ -272,11 +272,44 @@
   @apply hidden;
 }
 
+/* Override: selected page button must stay visible (fixes empty current page on last index). */
+.MuiPagination-text li button.MuiPaginationItem-page.Mui-selected {
+  @apply !inline-flex items-center justify-center;
+}
+
 .MuiPagination-ul > li:nth-last-child(2) {
   @apply !bg-transparent h-8 flex items-center justify-center overflow-visible;
 }
-.MuiPagination-ul > li:nth-last-child(2) button {
-  @apply !block !text-xs font-bold lg:!text-sm wide:!text-base flex flex-nowrap items-center justify-center gap-0 before:content-['of\00a0\00a0'] !text-neutral-1000 leading-[normal] overflow-visible min-w-[min-content] max-w-none shrink-0;
+
+/* "of total" prefix only when this cell is not the active page; active + ::before hid the digit. */
+.MuiPagination-ul > li:nth-last-child(2) button.MuiPaginationItem-page:not(.Mui-selected) {
+  @apply !inline-flex !text-xs font-bold lg:!text-sm wide:!text-base items-center justify-center gap-0 before:content-['of\00a0\00a0'] !text-neutral-1000 leading-[normal] overflow-visible min-w-[min-content] max-w-none shrink-0;
+}
+
+.MuiPagination-ul > li:nth-last-child(2) button.MuiPaginationItem-page.Mui-selected {
+  @apply before:content-none flex flex-nowrap;
+}
+
+/* Last page: "Page N of M" from AdminPaginationActions (button ::after Page is suppressed below). */
+.AdminPagination-currentPageWrap {
+  @apply inline-flex min-w-min shrink-0 items-center overflow-visible;
+}
+
+.AdminPagination-pageLabel {
+  @apply mr-2 shrink-0 whitespace-nowrap text-xs font-bold text-neutral-1000 lg:!text-sm wide:!text-base leading-[normal];
+}
+
+.AdminPagination-currentPageWrap .MuiPaginationItem-page.Mui-selected::after {
+  content: none !important;
+}
+
+.AdminPagination-ofTotal {
+  @apply shrink-0 whitespace-nowrap pl-0.5 text-xs font-bold text-neutral-1000 lg:!text-sm wide:!text-base leading-[normal];
+}
+
+/* When "next" is not rendered, the current page is the last <li>. */
+.MuiPagination-text li:last-child button.MuiPaginationItem-page.Mui-selected {
+  @apply !inline-flex items-center justify-center before:content-none;
 }
 
 .MuiPaginationItem-ellipsis{
@@ -377,15 +410,15 @@
 
 .MuiPagination-ul {
   display: flex;
-  flex-wrap: wrap; /* Asegura que los elementos se ajusten correctamente */
+  flex-wrap: wrap;
 }
 
 .MuiPagination-ul > li:first-child {
-  order: 99; /* Mueve el primer botón al final */
+  order: 99;
 }
 
 .MuiPagination-ul > li:last-child {
-  order: 100; /* Mueve el último botón al final */
+  order: 100;
 }
 
 .impact-story-form .MuiAutocomplete-root .MuiFormHelperText-root {

@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 
 import { useAuditStatuses } from "@/connections/AuditStatus";
 import { bulkUpdateSitePolygonStatus } from "@/connections/SitePolygons";
+import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { openPolygonEditDrawer } from "@/pages/site/[uuid]/context/polygonEditDrawer.provider";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
@@ -55,7 +56,7 @@ export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, site
   }, [commentsCount, sitePolygon]);
 
   const sitePolygonStatus = sitePolygon?.status;
-  const submitDisabled = sitePolygonStatus === "submitted" || sitePolygonStatus === "approved";
+  const submitDisabled = sitePolygonStatus === POLYGON_PENDING_APPROVAL || sitePolygonStatus === POLYGON_APPROVED;
 
   const handleSubmit = async () => {
     if (submitDisabled || sitePolygon?.uuid == null || sitePolygon.uuid === "") {
@@ -63,7 +64,7 @@ export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, site
     }
     setOpen(false);
     popup?.remove();
-    await bulkUpdateSitePolygonStatus([sitePolygon.uuid], "submitted", "");
+    await bulkUpdateSitePolygonStatus([sitePolygon.uuid], POLYGON_PENDING_APPROVAL, "");
     setShouldRefetchPolygonData?.(true);
   };
 

@@ -14,17 +14,17 @@ const CHAMPIONS_LEGEND_SPECS = [
   { text: "Approved", color: "positive.1" }
 ] as const;
 
+const POLYGON_FILTER_LEGEND = [
+  { color: "pinkCustom", label: "Draft" },
+  { color: "blue", label: "Pending Approval" },
+  { color: "tertiary-600", label: "Information Required" },
+  { color: "green", label: "Approved" }
+] as const;
+
 const FilterControl: FC = () => {
   const championsMap = useChampionsMap();
   const [showFilters, setShowFilters] = useState(false);
   const t = useT();
-
-  const buttons = [
-    { color: "pinkCustom", text: "Draft" },
-    { color: "blue", text: "Submitted" },
-    { color: "tertiary-600", text: "Needs More Info" },
-    { color: "green", text: "Approved" }
-  ];
 
   const legendPanelItems = useMemo(
     () =>
@@ -46,16 +46,16 @@ const FilterControl: FC = () => {
           {showFilters ? (
             <div className="relative">
               <div className="absolute bottom-1 w-max rounded-lg bg-white p-2 shadow">
-                {buttons.map((button, index) => (
+                {POLYGON_FILTER_LEGEND.map(({ color, label }) => (
                   <Button
-                    key={index}
+                    key={label}
                     variant="text"
                     className="text-12-bold text-nowrap h-fit w-full !justify-start rounded-lg bg-white p-2"
                     onClick={() => {}}
                   >
                     <div className="text-12-semibold flex items-center">
-                      <div className={`mr-2 h-3 w-3 rounded-sm bg-${button.color} lg:h-4 lg:w-4 wide:h-5 wide:w-5`} />
-                      {t(button.text)}
+                      <div className={`mr-2 h-3 w-3 rounded-sm bg-${color} lg:h-4 lg:w-4 wide:h-5 wide:w-5`} />
+                      {t(label)}
                     </div>
                   </Button>
                 ))}

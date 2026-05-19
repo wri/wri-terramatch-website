@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { startIndicatorCalculationResource } from "@/connections/Indicators";
 import { Indicator, sitePolygonsConnection, useAllSitePolygons } from "@/connections/SitePolygons";
+import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchService/researchServiceComponents";
@@ -34,13 +35,13 @@ const dataPolygonOverview = [
     color: "bg-grey-200"
   },
   {
-    status: "Submitted",
-    status_key: "submitted",
+    status: "Pending Approval",
+    status_key: POLYGON_PENDING_APPROVAL,
     count: 42.5
   },
   {
-    status: "Needs Info",
-    status_key: "needs-more-information",
+    status: "Information Required",
+    status_key: POLYGON_INFORMATION_REQUIRED,
     count: 22.5
   },
   {
@@ -93,8 +94,8 @@ const SLUGS_INDICATORS = [
 
 type InterfaceIndicatorPolygonsStatus = {
   draft: number;
-  submitted: number;
-  "needs-more-information": number;
+  "pending-approval": number;
+  "information-required": number;
   approved: number;
 };
 
@@ -143,7 +144,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   });
 
   const [sitePolygonsApprovedData, indicatorPolygonsStatus] = useMemo(() => {
-    const polygonStatuses = ["draft", "submitted", "needs-more-information", "approved"];
+    const polygonStatuses = ["draft", POLYGON_PENDING_APPROVAL, POLYGON_INFORMATION_REQUIRED, "approved"];
     const polygonStatusCount = [0, 0, 0, 0];
     if (sitePolygonsData.length > 0 && !isLoadingSitePolygons) {
       sitePolygonsData.forEach(polygon => {

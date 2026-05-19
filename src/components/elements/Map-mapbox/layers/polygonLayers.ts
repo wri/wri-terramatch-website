@@ -454,14 +454,16 @@ export function parsePolygonDataV3(sitePolygonData: SitePolygonLightDto[] | unde
 }
 
 export const countStatusesV3 = (sitePolygonData: SitePolygonLightDto[]): DataPolygonOverview => {
-  const statusOrder = ["Draft", "Submitted", "Needs Info", "Approved"];
+  const statusOrder = ["Draft", "Pending Approval", "Information Required", "Approved"];
   const statusCountMap: Record<string, number> = {};
 
   sitePolygonData.forEach(item => {
     let statusKey = item.status?.toLowerCase();
     if (statusKey) {
-      if (statusKey === "needs-more-information") {
-        statusKey = "Needs Info";
+      if (statusKey === "information-required") {
+        statusKey = "Information Required";
+      } else if (statusKey === "pending-approval") {
+        statusKey = "Pending Approval";
       } else {
         statusKey = statusKey.replace(/\b\w/g, char => char.toUpperCase());
       }
