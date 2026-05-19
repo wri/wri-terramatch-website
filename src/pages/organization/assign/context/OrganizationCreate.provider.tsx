@@ -1,3 +1,4 @@
+// @ts-ignore
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";

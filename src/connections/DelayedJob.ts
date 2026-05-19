@@ -38,7 +38,7 @@ const delayedJobsCombinedConnection: Connection<DelayedJobCombinedConnection> = 
 
 // The polling interval needs to be truly global so that if more than one component is using
 // useDelayedJobs, we don't end up with multiple polling cycles.
-let delayedJobPollingInterval: NodeJS.Timer | undefined;
+let delayedJobPollingInterval: NodeJS.Timeout | undefined;
 // A set of the instances of useDelayedJobs that are currently requesting polling. The polling
 // interval is only cleared when this set is empty.
 const useDelayedJobInstances = new Set<string>();

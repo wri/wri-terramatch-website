@@ -5,7 +5,7 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 import { calculateTotals, GroupedBarChartData } from "@/utils/dashboardUtils";
 
 import { CustomBar } from "./CustomBarJobsCreated";
-import { CustomLegend } from "./CustomLegendJobsCreated";
+import CustomLegendJobsCreated from "./CustomLegendJobsCreated";
 import { CustomTooltip } from "./CustomTooltipJobsCreated";
 import { CustomXAxisTick } from "./CustomXAxisTickJobsCreated";
 import { CustomYAxisTick } from "./CustomYAxisTickJobsCreated";
@@ -66,7 +66,7 @@ const GroupedBarChart: React.FC<{ data: GroupedBarChartData }> = ({ data }) => {
           content={props => <CustomTooltip {...props} total={total} />}
           cursor={{ fill: "rgba(0, 0, 0, 0.05)" }}
         />
-        <Legend content={<CustomLegend totals={transformedTotals} totalJobs={total} />} />
+        <Legend content={<CustomLegendJobsCreated totals={transformedTotals} totalJobs={total} />} />
         {type === "gender" ? (
           <>
             <Bar dataKey={t("Women")} fill="#70B52B" shape={(props: any) => <CustomBar {...props} />} />

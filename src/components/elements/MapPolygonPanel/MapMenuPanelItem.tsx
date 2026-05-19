@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
+import { DetailedHTMLProps, Dispatch, FC, HTMLAttributes, RefObject, SetStateAction, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -34,8 +34,8 @@ export type MapMenuPanelItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElem
   isSelected?: boolean;
   polygonUuid?: string;
   siteId?: string;
-  setClickedButton: React.Dispatch<React.SetStateAction<string>>;
-  refContainer: React.RefObject<HTMLDivElement> | null;
+  setClickedButton: Dispatch<SetStateAction<string>>;
+  refContainer?: RefObject<HTMLDivElement | null>;
   type: string;
   polygonName?: string;
   primaryUuid?: string;

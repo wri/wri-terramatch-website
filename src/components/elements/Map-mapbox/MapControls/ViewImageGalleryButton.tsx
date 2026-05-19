@@ -9,7 +9,7 @@ import Button from "../../Button/Button";
 import Text from "../../Text/Text";
 
 type ViewGalleryButtonProps = {
-  imageGalleryRef?: React.RefObject<HTMLDivElement>;
+  imageGalleryRef?: React.RefObject<HTMLDivElement | null>;
   className?: string;
 };
 

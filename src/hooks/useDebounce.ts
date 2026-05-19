@@ -4,7 +4,7 @@ type Timer = ReturnType<typeof setTimeout>;
 
 // Note: func is a hook dependency and should be made stable (use useCallback)
 export function useDebounce<Func extends (...args: any[]) => void>(func: Func, delay = 500) {
-  const timer = useRef<Timer>();
+  const timer = useRef<Timer>(null);
 
   useEffect(() => {
     return () => {

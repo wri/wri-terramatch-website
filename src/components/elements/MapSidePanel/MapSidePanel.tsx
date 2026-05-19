@@ -268,7 +268,9 @@ const MapSidePanel: FC<MapSidePanelProps> = ({
               <div className="absolute z-10 mt-1 grid w-max gap-3 rounded-lg bg-white p-3 shadow">
                 {STATUSES.map((status, index) => (
                   <Checkbox
-                    ref={ref => ref && checkboxRefs.current.push(ref as HTMLInputElement)}
+                    ref={ref => {
+                      if (ref != null) checkboxRefs.current.push(ref as HTMLInputElement);
+                    }}
                     key={index}
                     name=""
                     label={t(status.label)}

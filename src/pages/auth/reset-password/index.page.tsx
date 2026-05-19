@@ -1,3 +1,4 @@
+// @ts-ignore
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";

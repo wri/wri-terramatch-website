@@ -1,14 +1,14 @@
-import React from "react";
-import { LegendProps } from "recharts";
+import { FC } from "react";
+import { DefaultLegendContentProps } from "recharts";
 
 import { getPercentage } from "@/utils/dashboardUtils";
 
-interface CustomLegendProps extends LegendProps {
+interface CustomLegendProps extends DefaultLegendContentProps {
   totals: { [key: string]: number };
   totalJobs: number;
 }
 
-export const CustomLegend: React.FC<CustomLegendProps> = ({ payload, totals, totalJobs }) => {
+const CustomLegendJobsCreated: FC<CustomLegendProps> = ({ payload, totals, totalJobs }) => {
   if (!payload) return null;
 
   const createLegendMatrix = () => {
@@ -68,4 +68,4 @@ export const CustomLegend: React.FC<CustomLegendProps> = ({ payload, totals, tot
   );
 };
 
-export default CustomLegend;
+export default CustomLegendJobsCreated;

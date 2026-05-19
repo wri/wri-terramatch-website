@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import clsx from "clsx";
-import { FC, useMemo } from "react";
+import { FC, RefObject, useMemo } from "react";
 
 import Menu, { MenuItemProps } from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
@@ -14,7 +14,7 @@ export type UserRoleCardProps = {
   options?: MenuItemProps[];
   titleOptions?: string;
   setSelectedOption?: any;
-  refContentCard?: React.RefObject<HTMLDivElement>;
+  refContentCard?: RefObject<HTMLDivElement | null>;
   selectedOption?: string;
   icon?: IconNames;
 };

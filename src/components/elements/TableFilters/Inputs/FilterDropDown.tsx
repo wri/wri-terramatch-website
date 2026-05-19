@@ -58,6 +58,7 @@ const FilterDropDown: FC<PropsWithChildren<FilterDropDownProps>> = props => {
               />
             </Listbox.Button>
             <Transition
+              as="div"
               className="relative z-50 bg-white"
               show={open}
               enter="transition duration-100 ease-out"

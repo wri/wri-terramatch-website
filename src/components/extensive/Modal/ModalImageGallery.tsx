@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
+// @ts-ignore
 import { Navigation } from "swiper";
 import { twMerge as tw } from "tailwind-merge";
 

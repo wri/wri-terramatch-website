@@ -22,10 +22,10 @@ export function useOnUnmount(callback: () => void) {
   // the callback that was sent into this function the first time it was called if we simply
   // reference callback in `useEffect`. We'd rather use the callback that was sent in the
   // _last_ time this was called, so we need to stuff it in a ref instead.
-  const destructorRef = useRef<() => void>();
+  const destructorRef = useRef(callback);
   destructorRef.current = callback;
   useEffect(
-    () => () => destructorRef.current?.(),
+    () => () => destructorRef.current(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );

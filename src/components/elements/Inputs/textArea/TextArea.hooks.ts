@@ -1,12 +1,12 @@
-import { useEffect, useRef } from "react";
+import { ChangeEvent, RefObject, TextareaHTMLAttributes, useEffect, useRef } from "react";
 
 export const useTextAreaAuto = (
-  handleChange: (evt: React.ChangeEvent<HTMLTextAreaElement>) => void,
+  handleChange: (evt: ChangeEvent<HTMLTextAreaElement>) => void,
   value: string = ""
 ): {
   value: string | number | readonly string[] | undefined;
-  handleChange: (evt: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  textareaProps: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { ref: React.RefObject<HTMLTextAreaElement> };
+  handleChange: (evt: ChangeEvent<HTMLTextAreaElement>) => void;
+  textareaProps: TextareaHTMLAttributes<HTMLTextAreaElement> & { ref: RefObject<HTMLTextAreaElement | null> };
 } => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -19,8 +19,8 @@ export const useTextAreaAuto = (
     }
   }, [value]);
 
-  const textareaProps: React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
-    ref: React.RefObject<HTMLTextAreaElement>;
+  const textareaProps: TextareaHTMLAttributes<HTMLTextAreaElement> & {
+    ref: RefObject<HTMLTextAreaElement | null>;
   } = {
     onChange: handleChange,
     ref: textAreaRef

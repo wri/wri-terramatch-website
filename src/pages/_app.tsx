@@ -1,3 +1,4 @@
+// @ts-ignore
 import "src/styles/globals.css";
 
 import { ChakraProvider } from "@chakra-ui/react";

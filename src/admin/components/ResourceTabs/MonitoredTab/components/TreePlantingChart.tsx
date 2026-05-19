@@ -1,5 +1,15 @@
-import React from "react";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { isString } from "lodash";
+import { FC } from "react";
+import {
+  CartesianGrid,
+  DefaultTooltipContentProps,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from "recharts";
 
 import { ChartCategory, formatNumberChart } from "@/utils/dashboardUtils";
 
@@ -29,8 +39,8 @@ const formatMonth = (month: number) => {
   return new Date(2000, month - 1).toLocaleString("default", { month: "long" });
 };
 
-const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
-  if (!active || !payload || !payload.length) return null;
+const CustomTooltip = ({ payload, label }: DefaultTooltipContentProps) => {
+  if (payload == null || payload.length === 0 || !isString(label)) return null;
 
   const [year, month] = label.split("-");
 
@@ -47,7 +57,7 @@ const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
   );
 };
 
-const CustomXAxisTick: React.FC<any> = ({ x, y, payload, previousYear }) => {
+const CustomXAxisTick: FC<any> = ({ x, y, payload, previousYear }) => {
   const year = payload.value.split("-")[0];
   const shouldDisplayYear = previousYear !== year;
   return (
@@ -59,7 +69,7 @@ const CustomXAxisTick: React.FC<any> = ({ x, y, payload, previousYear }) => {
   );
 };
 
-const CustomYAxisTick: React.FC<any> = ({ x, y, payload }) => {
+const CustomYAxisTick: FC<any> = ({ x, y, payload }) => {
   const formattedValue = formatNumberChart(payload.value);
 
   return (
@@ -70,7 +80,7 @@ const CustomYAxisTick: React.FC<any> = ({ x, y, payload }) => {
     </g>
   );
 };
-const TreePlantingChart: React.FC<ChartProps> = ({ data = [] }) => {
+const TreePlantingChart: FC<ChartProps> = ({ data = [] }) => {
   const dataMap = new Map(data.map(item => [item.name, item]));
 
   const allTimePoints = data.flatMap(series => series.values.map((v: any) => formatDate(v.time))).sort();

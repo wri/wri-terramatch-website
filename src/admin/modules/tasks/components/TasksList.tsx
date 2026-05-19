@@ -31,8 +31,8 @@ const TaskDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: TaskLightDto) => {
-          const { title } = getTaskStatusOptions().find((option: any) => option.value === status) ?? {};
+        render={(dto?: TaskLightDto) => {
+          const { title } = getTaskStatusOptions().find((option: any) => option.value === dto?.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -40,7 +40,7 @@ const TaskDataGrid: FC = () => {
       <FunctionField
         source="frameworkKey"
         label="Framework"
-        render={(record: TaskLightDto) =>
+        render={(record?: TaskLightDto) =>
           frameworkInputChoices.find((framework: any) => framework.id === record?.frameworkKey)?.name ??
           record?.frameworkKey
         }

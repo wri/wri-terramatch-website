@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { isNumber } from "lodash";
-import { forwardRef, HTMLProps, RefObject } from "react";
+import { forwardRef, HTMLProps } from "react";
 
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Text from "@/components/elements/Text/Text";
@@ -15,7 +15,7 @@ export interface InputLabelProps extends HTMLProps<HTMLLabelElement> {
   suffixLabelView?: boolean;
 }
 
-const InputLabel = forwardRef<HTMLInputElement, InputLabelProps>((props, ref) => {
+const InputLabel = forwardRef<HTMLLabelElement, InputLabelProps>((props, ref) => {
   const t = useT();
   const {
     feedbackRequired,
@@ -31,7 +31,7 @@ const InputLabel = forwardRef<HTMLInputElement, InputLabelProps>((props, ref) =>
     <>
       <Text<HTMLLabelElement>
         {...labelProps}
-        ref={ref as RefObject<HTMLLabelElement>}
+        ref={ref}
         as="label"
         variant={labelVariant ?? "text-bold-body-300"}
         className={classNames("mr-2 inline uppercase", className)}

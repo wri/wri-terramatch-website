@@ -67,7 +67,7 @@ export const IndeterminateControlled: Story = {
         checked={checked}
         indeterminate={indeterminate}
         onCheckedChange={({ checked }) => {
-          setChecked(checked);
+          setChecked(checked === true);
           setIndeterminate(false);
         }}
       />

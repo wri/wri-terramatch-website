@@ -1,3 +1,4 @@
+// @ts-ignore
 import { yupResolver } from "@hookform/resolvers/yup";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { useT } from "@transifex/react";

@@ -11,7 +11,7 @@ export interface MapMarkerProps {
   count?: number;
   mode?: "dark" | "light";
   variant?: "cluster" | "simple-pin" | "icon";
-  triggerRef?: React.RefObject<HTMLButtonElement>;
+  triggerRef?: React.RefObject<HTMLButtonElement | null>;
   color?: string;
 }
 

@@ -57,13 +57,7 @@ const ApplicationRequestMoreInfoModal = ({
 
   const feedbackFields = useMemo(
     (): Choice[] =>
-      flatten(form?.sections.map(({ questions }) => questions)).map(
-        ({ label }) =>
-          ({
-            id: label,
-            name: label
-          } ?? [])
-      ),
+      flatten(form?.sections.map(({ questions }) => questions)).map(({ label }) => ({ id: label, name: label })),
     [form?.sections]
   );
 

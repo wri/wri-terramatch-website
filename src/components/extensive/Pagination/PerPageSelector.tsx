@@ -47,6 +47,7 @@ const PerPageSelector = (props: PropsWithChildren<PerPageSelectorProps>) => {
               )}
             >
               <Transition
+                as="div"
                 show={open}
                 enter="transition duration-100 ease-out"
                 enterFrom="transform scale-95 opacity-0"

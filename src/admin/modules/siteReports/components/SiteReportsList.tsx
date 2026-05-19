@@ -56,8 +56,8 @@ const SiteReportDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: SiteReportLightDto) => {
-          const { title } = getReportStatusOptions().find((option: any) => option.value === status) ?? {};
+        render={(dto?: SiteReportLightDto) => {
+          const { title } = getReportStatusOptions().find((option: any) => option.value === dto?.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -65,9 +65,9 @@ const SiteReportDataGrid: FC = () => {
         source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
-        render={(record: SiteReportLightDto) => {
+        render={(record?: SiteReportLightDto) => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record.updateRequestStatus
+            (option: any) => option.value === record?.updateRequestStatus
           );
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
@@ -76,8 +76,8 @@ const SiteReportDataGrid: FC = () => {
       <FunctionField
         source="frameworkKey"
         label="Framework"
-        render={({ frameworkKey }: SiteReportLightDto) =>
-          frameworkInputChoices.find((framework: any) => framework.id === frameworkKey)?.name ?? frameworkKey
+        render={(dto?: SiteReportLightDto) =>
+          frameworkInputChoices.find((framework: any) => framework.id === dto?.frameworkKey)?.name ?? dto?.frameworkKey
         }
         sortable={false}
       />
@@ -88,10 +88,10 @@ const SiteReportDataGrid: FC = () => {
       <FunctionField
         source="nothingToReport"
         label="Nothing to Report"
-        render={(record: SiteReportLightDto) => {
+        render={(record?: SiteReportLightDto) => {
           return (
             <div className="flex items-center justify-center">
-              {record.nothingToReport ? <Icon name={IconNames.CROSS} className="h-6 w-6" /> : <></>}
+              {record?.nothingToReport ? <Icon name={IconNames.CROSS} className="h-6 w-6" /> : <></>}
             </div>
           );
         }}

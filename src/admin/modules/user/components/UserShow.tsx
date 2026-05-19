@@ -72,8 +72,8 @@ const MonitoringPartnerProjectsTable = ({ title }: { title: string }) => {
   );
 };
 
-const renderFrameworks = (property: "frameworks" | "directFrameworks") => (record: UserDto) => {
-  const frameworks: UserFramework[] = record[property] ?? [];
+const renderFrameworks = (property: "frameworks" | "directFrameworks") => (record?: UserDto) => {
+  const frameworks: UserFramework[] = record?.[property] ?? [];
   return frameworks.length == 0 ? "No Frameworks" : frameworks.map(framework => framework.name).join(", ");
 };
 

@@ -29,7 +29,7 @@ const SimpleChipFieldArray = (props: SimpleChipFieldArrayProps) => {
     <ArrayField {...props}>
       <SingleFieldList linkType={false}>
         <FunctionField
-          render={(record: string) => (
+          render={record => (
             <ChipField record={{ name: props.choices.find(i => i.id === record)?.name }} source="name" />
           )}
         />

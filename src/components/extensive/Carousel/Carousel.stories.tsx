@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+// @ts-ignore
 import { Navigation, Pagination } from "swiper";
 
 import Component, { CarouselProps } from "./Carousel";

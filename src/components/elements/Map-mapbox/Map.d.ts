@@ -89,7 +89,7 @@ export type MobilePopupData = Omit<PopupComponentProps, "popup"> & {
 
 export interface MapFunctions {
   map: MutableRefObject<MapboxMap | null>;
-  mapContainer: RefObject<HTMLDivElement>;
+  mapContainer: RefObject<HTMLDivElement | null>;
   draw: MutableRefObject<MapboxDraw | null>;
   onCancel: (parsedPolygonData: Record<string, string[]> | undefined) => void;
   initMap: (useDashboardStyle?: boolean, initialStyle?: MapStyle) => void;

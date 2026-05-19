@@ -26,10 +26,10 @@ const TYPE_CHOICES = Forms.FORM_TYPES.map(type => ({ id: type, name: type }));
 export const FormList: FC = () => {
   const createPath = useCreatePath();
   const renderAttachment = useCallback(
-    ({ attachedTo }: FormLightDto) => {
-      if (attachedTo == null) return null;
+    (dto?: FormLightDto) => {
+      if (dto?.attachedTo == null) return null;
 
-      const { type, name, adminId } = attachedTo;
+      const { type, name, adminId } = dto.attachedTo;
       if (type === "entity") return name;
 
       const resource =

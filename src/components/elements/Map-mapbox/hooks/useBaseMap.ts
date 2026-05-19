@@ -6,13 +6,13 @@ import { mapboxToken } from "@/constants/environment";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 
 import { FeatureCollection } from "../GeoJSON";
-import type { ControlType } from "../Map.d";
+import type { ControlType, MapFunctions } from "../Map.d";
 import { BASEMAP_CONFIGS, MapStyle } from "../MapControls/types";
 import { addFilterOfPolygonsData, convertToGeoJSON } from "../utils";
 
 const INITIAL_ZOOM = 2.4;
 
-export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void, record?: unknown) => {
+export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void, record?: unknown): MapFunctions => {
   const { setIsUserDrawingEnabled } = useMapAreaContext();
 
   const mapContainer = useRef<HTMLDivElement>(null);

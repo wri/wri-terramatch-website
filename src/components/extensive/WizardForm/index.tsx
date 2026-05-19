@@ -1,4 +1,5 @@
 import { Box } from "@chakra-ui/react";
+// @ts-ignore
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import classNames from "classnames";

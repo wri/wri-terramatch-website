@@ -22,14 +22,15 @@ export const useFormNavigation = (fieldsProvider: FormFieldsProvider) => {
   // Use a ref to store several things to prevent them from causing the useCallback below to
   // recalculate every time the URL changes so that it can be a stable function to pass around
   // in component props.
-  const context = useRef<NavigationContext>({} as NavigationContext);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentStepId = searchParams.get(STEP_QUERY_PARAM);
   const stepIds = fieldsProvider.stepIds();
   const selectedStepIndex =
     currentStepId === SUMMARY_ID ? stepIds.length : stepIds.findIndex(stepId => stepId === currentStepId);
-  context.current = { pathname, searchParams, stepIds, selectedStepIndex };
+  const navContext = { pathname, searchParams, stepIds, selectedStepIndex };
+  const context = useRef<NavigationContext>(navContext);
+  context.current = navContext;
 
   const setSelectedStepIndex = useCallback(
     (value: SetStateAction<number>) => {
@@ -38,7 +39,7 @@ export const useFormNavigation = (fieldsProvider: FormFieldsProvider) => {
       const stepIndex = isFunction(value) ? value(selectedStepIndex) : value;
       if (stepIndex === selectedStepIndex) return;
 
-      const params = new URLSearchParams(searchParams);
+      const params = new URLSearchParams(searchParams.toString());
       if (stepIndex < 0 || stepIndex > stepIds.length) {
         params.delete(STEP_QUERY_PARAM);
       } else {

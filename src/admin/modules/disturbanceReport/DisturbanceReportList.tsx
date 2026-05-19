@@ -48,8 +48,8 @@ const DisturbanceReportDataGrid: FC = () => (
       source="status"
       label="Status"
       sortable={false}
-      render={({ status }: DisturbanceReportLightDto) => {
-        const { title } = getReportStatusOptions().find((option: any) => option.value === status) ?? {};
+      render={(report?: DisturbanceReportLightDto) => {
+        const { title } = getReportStatusOptions().find((option: any) => option.value === report?.status) ?? {};
         return <CustomChipField label={title} />;
       }}
     />
@@ -68,7 +68,7 @@ const DisturbanceReportDataGrid: FC = () => (
     <FunctionField
       source="intensity"
       label="Intensity"
-      render={(record: DisturbanceReportLightDto) => (
+      render={(record?: DisturbanceReportLightDto) => (
         <Intensity intensity={record?.intensity?.toLowerCase() as IntensityEnum} />
       )}
       sortable={false}

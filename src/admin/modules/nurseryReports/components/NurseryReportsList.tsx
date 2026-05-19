@@ -56,8 +56,8 @@ const NurseryReportDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: NurseryReportLightDto) => {
-          const { title } = getReportStatusOptions().find((option: any) => option.value === status) ?? {};
+        render={(dto?: NurseryReportLightDto) => {
+          const { title } = getReportStatusOptions().find((option: any) => option.value === dto?.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -80,18 +80,18 @@ const NurseryReportDataGrid: FC = () => {
       <FunctionField
         source="frameworkKey"
         label="Framework"
-        render={({ frameworkKey }: NurseryReportLightDto) =>
-          frameworkInputChoices.find((framework: any) => framework.id === frameworkKey)?.name ?? frameworkKey
+        render={(dto?: NurseryReportLightDto) =>
+          frameworkInputChoices.find((framework: any) => framework.id === dto?.frameworkKey)?.name ?? dto?.frameworkKey
         }
         sortable={false}
       />
       <FunctionField
         source="nothingToReport"
         label="Nothing to Report"
-        render={(record: NurseryReportLightDto) => {
+        render={(record?: NurseryReportLightDto) => {
           return (
             <div className="flex items-center justify-center">
-              {record.nothingToReport ? <Icon name={IconNames.CROSS} className="h-6 w-6" /> : <></>}
+              {record?.nothingToReport ? <Icon name={IconNames.CROSS} className="h-6 w-6" /> : <></>}
             </div>
           );
         }}

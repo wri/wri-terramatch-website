@@ -476,7 +476,7 @@ const SiteReportDetailPage = () => {
                         <TextField label={t("Site name")} value={siteReport.siteName!} />
                         <TextField
                           label={t("Created by")}
-                          value={siteReport.createdByFirstName ?? "" + " " + siteReport.createdByLastName ?? ""}
+                          value={`${siteReport.createdByFirstName} ${siteReport.createdByLastName}`}
                         />
                         <TextField label={t("Updated")} value={format(siteReport.updatedAt)} />
                         <TextField label={t("Due date")} value={format(siteReport.dueAt)} />

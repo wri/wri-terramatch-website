@@ -35,7 +35,6 @@ const ImageWithChildren = ({
       </div>
       <ImageWithPlaceholder
         imageUrl={imageSrc as string}
-        placeholder={t("No Image Available")}
         alt={t("No Image Available")}
         role="presentation"
         style={{ objectFit: "cover" }}

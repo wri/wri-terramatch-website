@@ -1,6 +1,6 @@
-import React from "react";
+import { FC } from "react";
 
-export const CustomLabel: React.FC<any> = props => {
+export const CustomLabel: FC<any> = props => {
   const { x, y, width, height, value } = props;
   const textHeight = 16;
   const padding = 4;
@@ -11,7 +11,7 @@ export const CustomLabel: React.FC<any> = props => {
       y={isSmallBar ? y - 8 : y + height / 2}
       fill={isSmallBar ? "#000000" : "white"}
       textAnchor="middle"
-      dominantBaseline={isSmallBar ? "bottom" : "middle"}
+      dominantBaseline={isSmallBar ? "text-after-edge" : "middle"}
       className="text-12"
     >
       {`${Math.round(value).toLocaleString()} ha`}

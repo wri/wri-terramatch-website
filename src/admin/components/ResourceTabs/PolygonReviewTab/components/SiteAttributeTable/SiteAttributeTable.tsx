@@ -35,7 +35,7 @@ interface SiteAttributeTableProps {
   pageSize: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
   setPageSize: Dispatch<SetStateAction<number>>;
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export default function SiteAttributeTable({

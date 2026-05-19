@@ -28,7 +28,7 @@ const MyAccountDropdown = (props: PropsWithChildren<MyAccountDropdownProps>) => 
   const variantClass = props.variant ?? VARIANT_MY_ACCOUNT_DROPDOWN;
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  let buttonRef = useRef<any>();
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const OptionMyAccount = useMemo(() => {
     return props.isLoggedIn

@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 
 const MAX_LINES = 3;
 const CHECK_DELAY = 0;
 
 export interface UseClampedTextReturn {
-  descriptionRef: React.RefObject<HTMLParagraphElement>;
+  descriptionRef: RefObject<HTMLParagraphElement | null>;
   isClamped: boolean;
   isExpanded: boolean;
   toggleExpand: () => void;

@@ -7,7 +7,7 @@ import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconProps } from "../Icon/Icon";
 
-export type ModalBaseProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+export type ModalBaseProps = Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "content">;
 export type ModalProps = ModalBaseProps & {
   title: string;
   iconProps?: IconProps;

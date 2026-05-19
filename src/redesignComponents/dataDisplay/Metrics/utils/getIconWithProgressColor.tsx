@@ -15,5 +15,6 @@ export function getIconWithProgressColor(
   }
   // Grey only when no data or progress is 0. Use color when there is progress.
   const iconColor = progress === 0 ? "neutral.400" : color ?? "primary.600";
+  // @ts-ignore
   return cloneElement(iconElement as ReactElement, { color: iconColor, boxSize });
 }

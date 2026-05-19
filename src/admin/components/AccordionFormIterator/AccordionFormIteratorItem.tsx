@@ -75,6 +75,7 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
           {reOrderButtons &&
             !disableReordering &&
             cloneElement(reOrderButtons, {
+              // @ts-ignore
               index,
               max: total,
               reOrder,
@@ -102,6 +103,7 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
                     if (!isValidElement<any>(input)) {
                       return null;
                     }
+                    //@ts-ignore
                     const { source, ...inputProps } = input.props;
                     return cloneElement(input, {
                       source: source ? `${member}.${source}` : member,
@@ -118,6 +120,7 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
                   {removeButton &&
                     !disableRemoveField(record) &&
                     cloneElement(removeButton, {
+                      //@ts-ignore
                       className: clsx("button-remove", `button-remove-${source}-${index}`)
                     })}
                 </span>

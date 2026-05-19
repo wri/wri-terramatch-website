@@ -10,7 +10,7 @@ const ModalRoot = () => {
   return (
     <>
       {modals.map(modal => (
-        <Transition appear show={true} as={Fragment} key={modal.id}>
+        <Transition appear show={true} key={modal.id}>
           <Dialog
             as="div"
             className={classNames("relative", modal.coverToolbar ? "z-50" : "z-40")}

@@ -1,3 +1,4 @@
+// @ts-ignore
 import bbox from "@turf/bbox";
 import { LngLatBoundsLike } from "mapbox-gl";
 import { useEffect } from "react";

@@ -2,7 +2,7 @@ import React, { ReactNode, RefObject } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface MapCanvasProps {
-  mapContainer: RefObject<HTMLDivElement>;
+  mapContainer: RefObject<HTMLDivElement | null>;
   className?: string;
   children?: ReactNode;
 }

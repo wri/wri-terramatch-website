@@ -84,7 +84,7 @@ export const AccordionFormIterator: FC<AccordionFormIteratorProps> = props => {
     } else if (
       Children.count(children) === 1 &&
       React.isValidElement(Children.only(children)) &&
-      (Children.only(children)! as ReactElement).props.source == null
+      (Children.only(children)! as ReactElement<{ source: string }>).props.source == null
     ) {
       // ArrayInput used for an array of scalar values
       // (e.g. tags: ['foo', 'bar'])
@@ -94,8 +94,11 @@ export const AccordionFormIterator: FC<AccordionFormIteratorProps> = props => {
       // (e.g. authors: [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Doe' }])
       const defaultValue = initialDefaultValue.current ?? ({} as Record<string, unknown>);
       Children.forEach(children, input => {
-        if (React.isValidElement(input) && input.type !== FormDataConsumer && input.props.source) {
-          defaultValue[input.props.source] = input.props.defaultValue ?? "";
+        if (!React.isValidElement(input) || input.type === FormDataConsumer) return;
+
+        const props = input.props as { source: string | null | undefined; defaultValue: unknown };
+        if (props.source != null) {
+          defaultValue[props.source] = props.defaultValue ?? "";
         }
       });
       append(defaultValue);

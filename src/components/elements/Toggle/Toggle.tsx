@@ -66,7 +66,9 @@ const Toggle = (props: ToggleProps) => {
       {items.map((tab: TogglePropsItem, index) => (
         <button
           key={tab.key}
-          ref={el => (buttonRefs.current[index] = el)}
+          ref={el => {
+            buttonRefs.current[index] = el;
+          }}
           type="button"
           onClick={() => handleClick(index)}
           disabled={isDisabled(index)}

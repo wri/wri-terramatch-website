@@ -1,3 +1,4 @@
+// @ts-ignore
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useMediaQuery } from "@mui/material";
@@ -106,7 +107,7 @@ export interface AdminMapExtras {
   disabledPolygonPanel?: boolean;
   setPolygonFromMap?: SetPolygonFromMap;
   polygonFromMap?: PolygonFromMapState;
-  imageGalleryRef?: React.RefObject<HTMLDivElement>;
+  imageGalleryRef?: React.RefObject<HTMLDivElement | null>;
   showViewGallery?: boolean;
 }
 

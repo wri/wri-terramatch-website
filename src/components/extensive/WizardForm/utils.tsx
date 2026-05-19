@@ -1,4 +1,4 @@
-import { AccessorKeyColumnDef } from "@tanstack/react-table";
+import { AccessorKeyColumnDef, CellContext } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { Dictionary, isEmpty, isFunction, uniq } from "lodash";
 import { useMemo } from "react";
@@ -200,7 +200,9 @@ export const appendTableAnswers = (
       Object.values(headers).reduce(
         (row, header) => {
           const value = entry[header.accessorKey];
-          const cellValue = isFunction(header.cell) ? header.cell({ getValue: () => value }) : undefined;
+          const cellValue = isFunction(header.cell)
+            ? header.cell({ getValue: () => value } as CellContext<any, unknown>)
+            : undefined;
           return [...row, cellValue ?? value];
         },
         [""]

@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Cell, Label, Legend, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from "recharts";
+import {
+  Cell,
+  DefaultLegendContentProps,
+  Label,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Sector,
+  Tooltip
+} from "recharts";
 
 interface ChartDataItem {
   name: string;
@@ -15,20 +25,9 @@ interface EcoRegionDoughnutChartProps {
   data: EcoRegionData;
 }
 
-type LegendPayload = {
-  value: string;
-  id?: string;
-  type?: string;
-  color?: string;
-};
-
-interface CustomLegendProps {
-  payload?: LegendPayload[];
-}
-
 const COLORS = ["#FFD699", "#90EE90", "#2F4F4F", "#BDB76B", "#98FB98"];
 
-const CustomLegend = ({ payload }: CustomLegendProps) => {
+const CustomLegend = ({ payload }: DefaultLegendContentProps) => {
   if (!payload) return null;
   return (
     <ul className="flex flex-col gap-2 text-sm">
@@ -117,7 +116,6 @@ const EcoRegionDoughnutChart: React.FC<EcoRegionDoughnutChartProps> = ({ data })
             dataKey="value"
             onMouseEnter={onPieEnter}
             onMouseLeave={onPieLeave}
-            activeIndex={activeIndex}
             activeShape={renderActiveShape}
           >
             <Label position="center" className="text-20-semibold !font-semibold !text-darkCustom">
@@ -127,6 +125,7 @@ const EcoRegionDoughnutChart: React.FC<EcoRegionDoughnutChartProps> = ({ data })
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
+          <Tooltip defaultIndex={activeIndex} />
           <Legend
             content={props => <CustomLegend {...props} />}
             layout="vertical"

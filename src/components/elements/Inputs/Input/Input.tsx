@@ -12,8 +12,8 @@ import {
   useMemo
 } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { IconNames } from "src/components/extensive/Icon/Icon";
 
+import { IconNames } from "@/components/extensive/Icon/Icon";
 import { useEventListener } from "@/hooks/useEventListener";
 
 import IconButton, { IconButtonProps } from "../../IconButton/IconButton";

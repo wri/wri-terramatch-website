@@ -37,7 +37,7 @@ const LanguagesDropdown = (props: PropsWithChildren<DropdownProps>) => {
   const [selected, setSelected] = useState<Option>(languageForLocale(router.locale));
 
   const [selectedIndex, setSelectedIndex] = useState(LANGUAGES.findIndex(lang => lang.value === selected.value) || 0);
-  let buttonRef = useRef<any>();
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useValueChanged(router.locale, () => {
     setSelected(languageForLocale(router.locale));

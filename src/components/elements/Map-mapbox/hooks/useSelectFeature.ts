@@ -3,10 +3,10 @@ import { useEffect, useRef, useState } from "react";
 
 export const useSelectFeature = (map?: Map): [GeoJSONFeature | undefined, (feature?: GeoJSONFeature) => void] => {
   const [selectedFeature, _setSelectedFeature] = useState<GeoJSONFeature>();
-  const clickedFeatureRef = useRef<GeoJSONFeature>();
+  const clickedFeatureRef = useRef<GeoJSONFeature>(null);
 
   const setSelectedFeature = (feature?: GeoJSONFeature) => {
-    clickedFeatureRef.current = feature;
+    clickedFeatureRef.current = feature ?? null;
     _setSelectedFeature(feature);
   };
 

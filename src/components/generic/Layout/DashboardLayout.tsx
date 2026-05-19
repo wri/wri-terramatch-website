@@ -35,6 +35,7 @@ const DashboardLayout: FC<PropsWithChildren<DashboardLayoutProps>> = props => {
   const isProjectListPage = router.pathname === "/dashboard/project-list";
   const isProjectPage = router.pathname === "dashboard/project";
   const isHomepage = router.pathname === "/dashboard/learn-more";
+  // @ts-ignore
   const childrenWithProps = props.children ? cloneElement(props.children as ReactElement, { selectedCountry }) : null;
   const isMobile = useMediaQuery("(max-width: 1200px)");
   return (

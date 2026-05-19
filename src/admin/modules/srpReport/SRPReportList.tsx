@@ -47,8 +47,8 @@ const SRPReportDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: SrpReportLightDto) => {
-          const { title } = getReportStatusOptions().find((option: any) => option.value === status) ?? {};
+        render={(dto?: SrpReportLightDto) => {
+          const { title } = getReportStatusOptions().find((option: any) => option.value === dto?.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -56,9 +56,9 @@ const SRPReportDataGrid: FC = () => {
         source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
-        render={(record: SrpReportLightDto) => {
+        render={(record?: SrpReportLightDto) => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record.updateRequestStatus
+            (option: any) => option.value === record?.updateRequestStatus
           );
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}

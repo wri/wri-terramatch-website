@@ -9,7 +9,7 @@ const FundingProgrammeStages = () => (
       <Datagrid bulkActionButtons={false}>
         <TextField source="name" label="Stage Name" />
         <ReferenceField source="formUuid" label="Form" reference={modules.form.ResourceName}>
-          <FunctionField render={(record: FormLightDto) => `${record?.title ?? ""}`} />
+          <FunctionField render={(record?: FormLightDto) => `${record?.title ?? ""}`} />
         </ReferenceField>
       </Datagrid>
     </ArrayField>

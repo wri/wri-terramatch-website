@@ -12,7 +12,7 @@ interface TabsListPropsWithChildren {
 
 const TabsListTyped = TabsList as React.ComponentType<TabsListPropsWithChildren>;
 
-export interface NavigationRailTabProps extends Omit<Tabs.TriggerProps, "asChild"> {
+export interface NavigationRailTabProps extends Omit<Tabs.TriggerProps, "asChild" | "type"> {
   label: string;
   value: string;
   icon?: React.ReactNode;
