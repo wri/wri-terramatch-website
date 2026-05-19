@@ -2,13 +2,13 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useState } from "react";
 
+import type { PolygonEditDrawerPolygon } from "@/context/polygonEditDrawer.types";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
 import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel";
 import NotificationIndicator from "@/redesignComponents/navigation/NotificationIndicator/NotificationIndicator";
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 
-import type { PolygonEditDrawerPolygon } from "../context/polygonEditDrawer.types";
 import PolygonEditContent from "./PolygonEditContent";
 
 interface PolygonEditDrawerProps {

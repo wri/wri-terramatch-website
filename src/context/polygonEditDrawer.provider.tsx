@@ -1,6 +1,7 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-import PolygonEditDrawer from "../components/PolygonEditDrawer";
+import PolygonEditDrawer from "@/pages/site/[uuid]/components/PolygonEditDrawer";
+
 import type { PolygonEditDrawerPolygon } from "./polygonEditDrawer.types";
 
 export type { PolygonEditDrawerPolygon };

@@ -10,6 +10,7 @@ import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
+import { PolygonEditDrawerProvider, usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonsIndexQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { useDate } from "@/hooks/useDate";
@@ -61,7 +62,6 @@ import {
   VALIDATION_STATUS_LABELS
 } from "../components/polygonFilter.constants";
 import PolygonToolbar from "../components/PolygonToolbar";
-import { PolygonEditDrawerProvider, usePolygonEditDrawer } from "../context/polygonEditDrawer.provider";
 
 interface SitePolygonsTabProps {
   site: SiteFullDto;

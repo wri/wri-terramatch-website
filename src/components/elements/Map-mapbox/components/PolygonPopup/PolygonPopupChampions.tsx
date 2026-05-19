@@ -3,8 +3,8 @@ import { useMemo, useRef, useState } from "react";
 import { useAuditStatuses } from "@/connections/AuditStatus";
 import { bulkUpdateSitePolygonStatus } from "@/connections/SitePolygons";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
+import { openPolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { openPolygonEditDrawer } from "@/pages/site/[uuid]/context/polygonEditDrawer.provider";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
 
