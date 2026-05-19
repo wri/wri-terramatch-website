@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from "react";
 import { useAuditStatuses } from "@/connections/AuditStatus";
 import { bulkUpdateSitePolygonStatus } from "@/connections/SitePolygons";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { openPolygonEditDrawer } from "@/pages/site/[uuid]/context/polygonEditDrawer.provider";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
 
@@ -66,6 +67,15 @@ export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, site
     setShouldRefetchPolygonData?.(true);
   };
 
+  const handleEdit = () => {
+    openPolygonEditDrawer({
+      polygonUuid: sitePolygon?.polygonUuid ?? undefined,
+      polygonName: metrics.polygonName
+    });
+    setOpen(false);
+    popup?.remove();
+  };
+
   return (
     <>
       <PointMarker variant="simple-pin" onClick={() => setOpen(true)} triggerRef={triggerRef} showFocusState={open} />
@@ -85,6 +95,7 @@ export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, site
             polygonName={metrics.polygonName}
             submitDisabled={submitDisabled}
             onSubmit={handleSubmit}
+            onEdit={handleEdit}
           />
         }
         placement="right"

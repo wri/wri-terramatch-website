@@ -61,6 +61,7 @@ import {
   VALIDATION_STATUS_LABELS
 } from "../components/polygonFilter.constants";
 import PolygonToolbar from "../components/PolygonToolbar";
+import { PolygonEditDrawerProvider, usePolygonEditDrawer } from "../context/polygonEditDrawer.provider";
 
 interface SitePolygonsTabProps {
   site: SiteFullDto;
@@ -274,9 +275,10 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
 
 const PolygonRow = memo(PolygonRowComponent);
 
-const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
+const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
+  const { openPolygonEdit } = usePolygonEditDrawer();
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [isStickyActive, setIsStickyActive] = useState(false);
   const [polygonSearch, setPolygonSearch] = useState("");
@@ -642,16 +644,22 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           mainActionLabel: t("Add"),
           size: "small",
           leftIcon: <PlusIcon />,
-          mainActionOnClick: () => {},
+          mainActionOnClick: () => {
+            openPolygonEdit();
+          },
           otherActions: [
             {
               label: t("Draw Polygon"),
-              onClick: () => {},
+              onClick: () => {
+                openPolygonEdit();
+              },
               value: "draft"
             },
             {
               label: t("Upload"),
-              onClick: () => {},
+              onClick: () => {
+                openPolygonEdit();
+              },
               value: "save-close"
             }
           ],
@@ -747,5 +755,11 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     </PageContent>
   );
 };
+
+const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => (
+  <PolygonEditDrawerProvider>
+    <SitePolygonsTabContent site={site} />
+  </PolygonEditDrawerProvider>
+);
 
 export default SitePolygonsTab;
