@@ -40,6 +40,10 @@ export const Alert: Story = {
 };
 
 export const VariantComparison: Story = {
+  args: {
+    children: "0",
+    variant: "neutral"
+  },
   render: () => (
     <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
       <div style={{ textAlign: "center" }}>
