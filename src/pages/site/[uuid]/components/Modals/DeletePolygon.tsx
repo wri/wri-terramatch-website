@@ -6,14 +6,15 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons";
 
+import { PolygonTableRow } from "../../tabs/Polygons";
+
 export interface DeletePolygonProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  polygons: string | string[];
+  polygons: PolygonTableRow[];
 }
 const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons }) => {
   const t = useT();
-
   const handleClose = useCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
@@ -21,6 +22,7 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons })
   const handleSave = useCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
+
   useEffect(() => {
     if (!open) {
       document.body.style.pointerEvents = "";
@@ -37,19 +39,17 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons })
       size="medium"
       blocking
       header={
-        <b className="text-theme-neutral-800">
-          {typeof polygons === "string" ? t("Delete polygon?") : t("Delete polygons?")}
-        </b>
+        <b className="text-theme-neutral-800">{polygons.length === 1 ? t("Delete polygon?") : t("Delete polygons?")}</b>
       }
       content={
-        typeof polygons === "string" ? (
+        polygons.length === 1 ? (
           <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2}>
             <WarningIcon boxSize={8} color={"warning.500"} mb={2} />
             <Text textStyle="400" color="neutral.900">
               {t("Are you sure you want to delete")}
             </Text>
             <Text textStyle="600-bold" color="neutral.900">
-              {polygons}?
+              {polygons[0].polygonName}?
             </Text>
 
             <Text textStyle="400-bold" color="warning.900" mt={2}>
@@ -61,7 +61,7 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons })
             <Text textStyle="400" color="neutral.900" display={"flex"} gap={0.5} alignItems={"center"}>
               <WarningIcon boxSize={4} color={"warning.500"} mr={2} />
               {t("Are you sure you want to")}
-              <Text textStyle="400-bold" color="neutral.900" mx={0.5}>
+              <Text textStyle="400-bold" color="neutral.900" mx={0.5} as="span">
                 {t("delete")}
               </Text>
               {t("these polygons?")}
@@ -73,13 +73,13 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons })
               <List.Root as="ul" pl={4} spaceY={2} listStyleType="disc">
                 {polygons.map(item => (
                   <List.Item
-                    key={item}
+                    key={item.id}
                     _marker={{
                       color: "neutral.900"
                     }}
                   >
-                    <Text textStyle="400" color="neutral.900">
-                      {t(item)}
+                    <Text textStyle="400" color="neutral.900" as={"span"}>
+                      {item.polygonName}
                     </Text>
                   </List.Item>
                 ))}
