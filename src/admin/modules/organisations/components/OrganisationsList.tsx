@@ -141,7 +141,7 @@ export const OrganisationsList = () => {
         actions={<ListActionsCreateFilter canCreate={isSuperAdmin} onExport={handleExport} />}
         filters={filters}
         filterDefaultValues={{ status: tabs[0].id }}
-        perPage={100}
+        perPage={10}
         sort={{ field: "name", order: "ASC" }}
       >
         <AutoResetSort />

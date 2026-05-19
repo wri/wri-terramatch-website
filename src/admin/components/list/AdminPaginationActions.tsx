@@ -35,12 +35,8 @@ export const AdminPaginationActions: FC<AdminPaginationActionsProps> = memo(prop
   const translate = useTranslate();
 
   const nbPages = Math.ceil(count / rowsPerPage) || 1;
-
-  if (nbPages === 1) {
-    return <Root className={className} />;
-  }
-
-  const isLastPage = page >= nbPages - 1;
+  const safePage = Math.min(page, Math.max(0, nbPages - 1));
+  const isLastPage = safePage >= nbPages - 1;
 
   const renderItem = useCallback(
     (item: PaginationRenderItemParams) => {
@@ -51,7 +47,7 @@ export const AdminPaginationActions: FC<AdminPaginationActionsProps> = memo(prop
           <span className="AdminPagination-currentPageWrap">
             <span className="AdminPagination-pageLabel">Page</span>
             {element}
-            <span className="AdminPagination-ofTotal">{` of ${nbPages}`}</span>
+            <span className="AdminPagination-ofTotal">{`of ${nbPages}`}</span>
           </span>
         );
       }
@@ -59,6 +55,10 @@ export const AdminPaginationActions: FC<AdminPaginationActionsProps> = memo(prop
     },
     [isLastPage, nbPages]
   );
+
+  if (nbPages === 1) {
+    return <Root className={className} />;
+  }
 
   const getItemAriaLabel = (
     type: "page" | "first" | "last" | "next" | "previous",
@@ -84,7 +84,7 @@ export const AdminPaginationActions: FC<AdminPaginationActionsProps> = memo(prop
       <Pagination
         size={size}
         count={nbPages}
-        page={page + 1}
+        page={safePage + 1}
         onChange={(event, p) => onPageChange(event as React.MouseEvent<HTMLButtonElement>, p - 1)}
         {...sanitizeRestProps(rest)}
         getItemAriaLabel={getItemAriaLabel}
