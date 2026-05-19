@@ -121,7 +121,7 @@ export type SitePolygonsIndexQueryParams = {
   /**
    * Filter results by polygon status
    */
-  ["polygonStatus[]"]?: ("draft" | "submitted" | "needs-more-information" | "approved")[];
+  ["polygonStatus[]"]?: ("draft" | "pending-approval" | "information-required" | "approved")[];
   /**
    * Filter results by validation status
    */
