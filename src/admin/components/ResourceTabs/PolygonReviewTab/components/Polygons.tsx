@@ -17,6 +17,7 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { pruneBoundingBoxesCache, useBoundingBox } from "@/connections/BoundingBox";
 import { deleteSitePolygon } from "@/connections/SitePolygons";
+import { PolygonStatus } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -31,7 +32,7 @@ import PolygonItem from "./PolygonItem";
 
 export interface IPolygonItem {
   id: string;
-  status: "draft" | "submitted" | "approved" | "needs-more-information";
+  status: PolygonStatus;
   label: string;
   uuid: string;
   validationStatus?: string;

@@ -2453,7 +2453,7 @@ export type EntityIndexQueryParams = {
    * If the base entity supports it, this will load the first page of associated entities
    */
   sideloads?: Schemas.EntitySideload[];
-  polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
+  polygonStatus?: "no-polygons" | "pending-approval" | "approved" | "information-required" | "draft";
   nothingToReport?: boolean;
   shortName?: string;
   plantingStatus?: Schemas.Object;
@@ -4017,7 +4017,7 @@ export type EntityAssociationIndexQueryParams = {
    * If the base entity supports it, this will load the first page of associated entities
    */
   sideloads?: Schemas.EntitySideload[];
-  polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
+  polygonStatus?: "no-polygons" | "pending-approval" | "approved" | "information-required" | "draft";
   nothingToReport?: boolean;
   shortName?: string;
   plantingStatus?: Schemas.Object;

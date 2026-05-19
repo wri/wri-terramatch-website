@@ -124,6 +124,12 @@ export const useKeyIndicatorsTooltipContent = () => {
       jobsCreated: {
         title: t("Workdays Created"),
         content: t("This is the sum of all project- and site-level workdays reported for this project")
+      },
+      estimatedTreesRestored: {
+        title: t("Estimated Trees Restored"),
+        content: t(
+          "This represents [trees planted * projected planting survival rate] + [seeds planted * projected direct seeding survival rate] + estimated trees growing due to assisted natural regeneration interventions across this project's sites."
+        )
       }
     }
   ];

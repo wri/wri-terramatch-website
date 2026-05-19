@@ -1,7 +1,8 @@
 import { Stack } from "@mui/material";
-import { Datagrid, DateField, EditButton, List, ShowButton, TextField } from "react-admin";
+import { Datagrid, DateField, EditButton, ShowButton, TextField } from "react-admin";
 
 import ListActionsCreate from "@/admin/components/Actions/ListActionsCreate";
+import { List } from "@/admin/components/AdminList";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";

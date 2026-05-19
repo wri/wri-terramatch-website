@@ -198,7 +198,7 @@ export type SitePolygonLightDto = {
    */
   lightResource: boolean;
   name: string | null;
-  status: "draft" | "submitted" | "needs-more-information" | "approved";
+  status: "draft" | "pending-approval" | "information-required" | "approved";
   /**
    * If this ID points to a deleted site, the indicators will be empty.
    */
@@ -432,7 +432,7 @@ export type SitePolygonFullDto = {
    */
   lightResource: boolean;
   name: string | null;
-  status: "draft" | "submitted" | "needs-more-information" | "approved";
+  status: "draft" | "pending-approval" | "information-required" | "approved";
   /**
    * If this ID points to a deleted site, the indicators will be empty.
    */

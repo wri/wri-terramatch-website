@@ -9,7 +9,12 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
-import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
+import {
+  POLYGON_APPROVED,
+  POLYGON_DRAFT,
+  POLYGON_INFORMATION_REQUIRED,
+  POLYGON_PENDING_APPROVAL
+} from "@/constants/polygonStatuses";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -43,10 +48,10 @@ interface PolygonsMapProps {
 }
 
 const EMPTY_POLYGON_MAP: Record<string, string[]> = {
-  [SUBMITTED]: [],
-  [APPROVED]: [],
-  [NEEDS_MORE_INFORMATION]: [],
-  [DRAFT]: []
+  [POLYGON_PENDING_APPROVAL]: [],
+  [POLYGON_APPROVED]: [],
+  [POLYGON_INFORMATION_REQUIRED]: [],
+  [POLYGON_DRAFT]: []
 };
 
 type PolygonGeometryFeature = Pick<GeoJSON.Feature, "geometry">;
