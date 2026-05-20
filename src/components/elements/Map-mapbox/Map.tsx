@@ -255,6 +255,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setEditPolygon,
     setShouldRefetchPolygonData,
     setShouldRefetchMediaData,
+    statusSelectedPolygon,
     setStatusSelectedPolygon,
     selectedPolygonsInCheckbox
   } = contextMapArea;
@@ -481,6 +482,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setPolygonFromMap,
     reloadSiteData,
     setShouldRefetchPolygonData,
+    statusSelectedPolygon,
     setStatusSelectedPolygon,
     t,
     showLoader,
