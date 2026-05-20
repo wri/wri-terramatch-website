@@ -67,7 +67,7 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons })
               {t("these polygons?")}
             </Text>
             <Text textStyle="400-bold" color="warning.900" ml={7} mb={3}>
-              This action cannot be undone.
+              {t("This action cannot be undone.")}
             </Text>
             <Flex flexDirection="column" gap={4} bg={"neutral.200"} py={2} px={3} rounded={4}>
               <List.Root as="ul" pl={4} spaceY={2} listStyleType="disc">

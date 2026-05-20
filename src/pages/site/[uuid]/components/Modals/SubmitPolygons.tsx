@@ -47,7 +47,7 @@ const SubmitPolygons: FC<SubmitPolygonsProps> = ({ open, onOpenChange }) => {
             {t("selected polygons are eligible for submission.")}
           </Text>
           <Text textStyle="400" color="neutral.900">
-            3 polygons are already Pending Approval or Approved and won’t be submitted.
+            {t("3 polygons are already Pending Approval or Approved and won't be submitted.")}
           </Text>
         </Box>
       }

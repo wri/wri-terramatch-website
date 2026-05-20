@@ -686,7 +686,7 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           onClearFilters={handleClearPolygonFilters}
         />
       </PageItem>
-      {selectedRows !== null && selectedRows.length > 0 && (
+      {selectedRows != null && selectedRows.length > 0 && (
         <Box position={"fixed"} zIndex={"999999"} bottom={0} left={3} right={3}>
           <BulkActionToolbar
             ButtonCancel={{
