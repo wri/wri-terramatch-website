@@ -21,9 +21,15 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({ open, polygon, onOpenCh
   const t = useT();
   const [activeTab, setActiveTab] = useState<string>("edit");
 
-  console.log("polygon", polygon);
   return (
-    <Drawer open={open} closeOnInteractOutside={false} onOpenChange={onOpenChange} size="md" placement="start">
+    <Drawer
+      modal={false}
+      open={open}
+      closeOnInteractOutside={false}
+      onOpenChange={onOpenChange}
+      size="md"
+      placement="start"
+    >
       {({ onClose }) => (
         <FilterPanel
           title={polygon != null ? polygon?.polygonName ?? t("-") : t("New Polygon")}
