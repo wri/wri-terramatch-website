@@ -6,7 +6,6 @@ import {
   DateField,
   EditButton,
   FunctionField,
-  List,
   ReferenceInput,
   SearchInput,
   SelectInput,
@@ -15,6 +14,7 @@ import {
 } from "react-admin";
 
 import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
+import { List } from "@/admin/components/AdminList";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";

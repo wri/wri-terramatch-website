@@ -1,16 +1,25 @@
 import { Map as MapboxMap } from "mapbox-gl";
 
-import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
+import {
+  POLYGON_APPROVED,
+  POLYGON_DRAFT,
+  POLYGON_INFORMATION_REQUIRED,
+  POLYGON_PENDING_APPROVAL
+} from "@/constants/polygonStatuses";
 import { getThemedColor } from "@/lib/theme";
 
-export type PolygonDrawStatus = typeof DRAFT | typeof SUBMITTED | typeof APPROVED | typeof NEEDS_MORE_INFORMATION;
+export type PolygonDrawStatus =
+  | typeof POLYGON_DRAFT
+  | typeof POLYGON_PENDING_APPROVAL
+  | typeof POLYGON_APPROVED
+  | typeof POLYGON_INFORMATION_REQUIRED;
 type DrawStyle = Record<string, unknown>;
 
 const STATUS_COLOR_MAP: Record<PolygonDrawStatus, string> = {
-  [DRAFT]: getThemedColor("neutralActive", 3),
-  [SUBMITTED]: getThemedColor("neutralActive", 1),
-  [APPROVED]: getThemedColor("positive", 1),
-  [NEEDS_MORE_INFORMATION]: getThemedColor("attention", 1)
+  [POLYGON_DRAFT]: getThemedColor("neutralActive", 3),
+  [POLYGON_PENDING_APPROVAL]: getThemedColor("neutralActive", 1),
+  [POLYGON_APPROVED]: getThemedColor("positive", 1),
+  [POLYGON_INFORMATION_REQUIRED]: getThemedColor("attention", 1)
 };
 
 const DRAW_SOURCE_BUCKETS = ["cold", "hot"] as const;
@@ -30,18 +39,26 @@ const DRAW_STATUS_PAINT_LAYERS: { baseLayerId: string; paintProperty: string }[]
 ];
 
 export const getPolygonStatusColor = (status: string | null | undefined): string => {
-  if (status === DRAFT || status === SUBMITTED || status === APPROVED || status === NEEDS_MORE_INFORMATION) {
+  if (
+    status === POLYGON_DRAFT ||
+    status === POLYGON_PENDING_APPROVAL ||
+    status === POLYGON_APPROVED ||
+    status === POLYGON_INFORMATION_REQUIRED
+  ) {
     return STATUS_COLOR_MAP[status];
   }
-  return STATUS_COLOR_MAP[DRAFT];
+  return STATUS_COLOR_MAP[POLYGON_DRAFT];
 };
 
 export const isPolygonDrawStatus = (status: string | null | undefined): status is PolygonDrawStatus =>
-  status === DRAFT || status === SUBMITTED || status === APPROVED || status === NEEDS_MORE_INFORMATION;
+  status === POLYGON_DRAFT ||
+  status === POLYGON_PENDING_APPROVAL ||
+  status === POLYGON_APPROVED ||
+  status === POLYGON_INFORMATION_REQUIRED;
 
 export const applyMapDrawStatusStyles = (
   map: MapboxMap | null | undefined,
-  status: PolygonDrawStatus = DRAFT
+  status: PolygonDrawStatus = POLYGON_DRAFT
 ): void => {
   if (map == null) return;
 
@@ -56,7 +73,7 @@ export const applyMapDrawStatusStyles = (
 };
 
 export const createMapDrawStyles = (): DrawStyle[] => {
-  const draftColor = STATUS_COLOR_MAP[DRAFT];
+  const draftColor = STATUS_COLOR_MAP[POLYGON_DRAFT];
 
   return [
     {

@@ -1,9 +1,10 @@
 import { Stack } from "@mui/material";
 import { FC } from "react";
-import { Datagrid, EditButton, List, ShowButton, TextField, WrapperField } from "react-admin";
+import { Datagrid, EditButton, ShowButton, TextField, WrapperField } from "react-admin";
 
 import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ListActionsCreate from "@/admin/components/Actions/ListActionsCreate";
+import { List } from "@/admin/components/AdminList";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import Menu from "@/components/elements/Menu/Menu";

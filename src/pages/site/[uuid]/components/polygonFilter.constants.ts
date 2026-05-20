@@ -1,6 +1,13 @@
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
+import {
+  type PolygonStatus,
+  POLYGON_APPROVED,
+  POLYGON_DRAFT,
+  POLYGON_INFORMATION_REQUIRED,
+  POLYGON_PENDING_APPROVAL
+} from "@/constants/polygonStatuses";
 
-export type PolygonSubmissionStatus = "draft" | "submitted" | "needs-more-information" | "approved";
+export type PolygonSubmissionStatus = PolygonStatus;
 export type PolygonValidationStatus = "not_checked" | "failed" | "partial" | "passed";
 
 export type PolygonFilterState = {
@@ -24,10 +31,10 @@ export const EMPTY_POLYGON_FILTERS: PolygonFilterState = {
 };
 
 export const SUBMISSION_STATUS_OPTIONS: { value: PolygonSubmissionStatus; label: string }[] = [
-  { value: "draft", label: "Draft" },
-  { value: "submitted", label: "Pending Approval" },
-  { value: "needs-more-information", label: "Information Required" },
-  { value: "approved", label: "Approved" }
+  { value: POLYGON_DRAFT, label: "Draft" },
+  { value: POLYGON_PENDING_APPROVAL, label: "Pending Approval" },
+  { value: POLYGON_INFORMATION_REQUIRED, label: "Information Required" },
+  { value: POLYGON_APPROVED, label: "Approved" }
 ];
 
 export const VALIDATION_STATUS_OPTIONS: { value: PolygonValidationStatus; label: string }[] = [
@@ -58,10 +65,10 @@ export const TARGET_LAND_USE_OPTIONS: { value: targetLandUseType; label: string 
 ];
 
 export const SUBMISSION_STATUS_LABELS: Record<PolygonSubmissionStatus, string> = {
-  draft: "Draft",
-  submitted: "Pending Approval",
-  "needs-more-information": "Information Required",
-  approved: "Approved"
+  [POLYGON_DRAFT]: "Draft",
+  [POLYGON_PENDING_APPROVAL]: "Pending Approval",
+  [POLYGON_INFORMATION_REQUIRED]: "Information Required",
+  [POLYGON_APPROVED]: "Approved"
 };
 
 export const VALIDATION_STATUS_LABELS: Record<PolygonValidationStatus, string> = {

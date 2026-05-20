@@ -6,6 +6,7 @@ import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { AuditStatusEntityType, v3EntityToAuditLogEntity } from "@/connections/AuditStatus";
+import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
@@ -18,14 +19,14 @@ const menuPolygonOptions = [
     viewPd: true
   },
   {
-    title: "Submitted",
-    status: "submitted",
+    title: "Pending Approval",
+    status: POLYGON_PENDING_APPROVAL,
     value: 2,
     viewPd: true
   },
   {
-    title: "Needs More Information",
-    status: "needs-more-information",
+    title: "Information Required",
+    status: POLYGON_INFORMATION_REQUIRED,
     value: 3,
     viewPd: false
   },

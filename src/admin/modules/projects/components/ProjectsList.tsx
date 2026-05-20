@@ -5,7 +5,6 @@ import {
   Datagrid,
   EditButton,
   FunctionField,
-  List,
   NumberField,
   ReferenceInput,
   SearchInput,
@@ -16,6 +15,7 @@ import {
 } from "react-admin";
 
 import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
+import { List } from "@/admin/components/AdminList";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";

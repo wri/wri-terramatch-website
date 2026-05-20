@@ -26,9 +26,9 @@ export const mapSitePolygonStatusToMappedTagState = (status: SitePolygonLightDto
   switch (status) {
     case "approved":
       return "approved";
-    case "submitted":
+    case "pending-approval":
       return "pending-approval";
-    case "needs-more-information":
+    case "information-required":
       return "information-required";
     case "draft":
     default:

@@ -11,16 +11,16 @@ const StatusLegend = () => {
       </Text>
       <div>
         <Text variant="text-14-semibold" className="flex items-center gap-2 py-2 text-darkCustom">
-          <div className="aspect-square h-3 w-3 rounded-sm bg-pinkCustom" /> {t("Status Legend")}
+          <div className="aspect-square h-3 w-3 rounded-sm bg-pinkCustom" /> {t("Draft")}
         </Text>
         <Text variant="text-14-semibold" className="flex items-center gap-2 py-2 text-darkCustom">
-          <div className="aspect-square h-3 w-3 rounded-sm bg-blue" /> {t("Submitted")}
+          <div className="aspect-square h-3 w-3 rounded-sm bg-blue" /> {t("Pending Approval")}
         </Text>
         <Text variant="text-14-semibold" className="flex items-center gap-2 py-2 text-darkCustom">
           <div className="aspect-square h-3 w-3 rounded-sm bg-green" /> {t("Approved")}
         </Text>
         <Text variant="text-14-semibold" className="flex items-center gap-2 py-2 text-darkCustom">
-          <div className="aspect-square h-3 w-3 rounded-sm bg-tertiary-600" /> {t("Needs More Info")}
+          <div className="aspect-square h-3 w-3 rounded-sm bg-tertiary-600" /> {t("Information Required")}
         </Text>
       </div>
     </div>

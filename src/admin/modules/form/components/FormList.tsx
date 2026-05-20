@@ -5,7 +5,6 @@ import {
   FunctionField,
   ImageField,
   Link,
-  List,
   SearchInput,
   SelectInput,
   TextField,
@@ -14,6 +13,7 @@ import {
 
 import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ListActionsCreate from "@/admin/components/Actions/ListActionsCreate";
+import { List } from "@/admin/components/AdminList";
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
 import { useFundingProgrammes } from "@/connections/FundingProgramme";

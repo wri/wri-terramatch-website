@@ -1580,6 +1580,10 @@ export type SiteFullDto = {
   selfReportedWorkdayCount: number;
   regeneratedTreesCount: number;
   /**
+   * PPC estimated trees restored from approved site reports (same formula as project treesRestoredPpc, scoped to this site).
+   */
+  treesRestoredPpc: number;
+  /**
    * Sum of tree species amounts for collection 'anr' across approved site reports for this site
    */
   treesRegeneratingSpeciesCount: number;
