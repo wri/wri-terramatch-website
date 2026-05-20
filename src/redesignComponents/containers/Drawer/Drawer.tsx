@@ -17,7 +17,8 @@ const Drawer: FC<DrawerProps> = ({
   onOpenChange,
   defaultOpen = false,
   size = "xs",
-  placement
+  placement,
+  modal = true
 }) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const isControlled = openProp !== undefined;
@@ -39,6 +40,7 @@ const Drawer: FC<DrawerProps> = ({
       onOpenChange={e => setOpen(e.open)}
       size={size}
       placement={placement}
+      modal={modal}
     >
       {trigger != null ? <TypedDrawerTrigger asChild>{trigger}</TypedDrawerTrigger> : null}
       <Portal>

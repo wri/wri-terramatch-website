@@ -11,6 +11,7 @@ export interface DrawerProps {
   defaultOpen?: boolean;
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "full" | "filterPanel";
   placement?: DrawerPlacement;
+  modal?: boolean;
 }
 
 export interface DrawerTyped {
@@ -20,6 +21,7 @@ export interface DrawerTyped {
   onOpenChange: (e: { open: boolean }) => void;
   size: NonNullable<DrawerProps["size"]>;
   placement?: DrawerPlacement;
+  modal?: boolean;
 }
 
 export interface DrawerTriggerTyped {
