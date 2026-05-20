@@ -13,7 +13,7 @@ import PolygonEditContent from "./PolygonEditContent";
 
 interface PolygonEditDrawerProps {
   open?: boolean;
-  polygon?: PolygonEditDrawerPolygon;
+  polygon?: PolygonEditDrawerPolygon | null;
   onOpenChange?: (open: boolean) => void;
 }
 
@@ -21,41 +21,45 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({ open, polygon, onOpenCh
   const t = useT();
   const [activeTab, setActiveTab] = useState<string>("edit");
 
+  console.log("polygon", polygon);
   return (
     <Drawer open={open} closeOnInteractOutside={false} onOpenChange={onOpenChange} size="md" placement="start">
       {({ onClose }) => (
         <FilterPanel
-          title={polygon?.polygonName ?? "-"}
+          title={polygon != null ? polygon?.polygonName ?? t("-") : t("New Polygon")}
           variant="fixed"
           onClose={onClose}
           className="h-screen w-full"
           content={
             <Flex className="h-full flex-col gap-3">
-              <TabBar
-                onTabClick={(tabValue: string) => setActiveTab(tabValue)}
-                tabs={[
-                  {
-                    label: t("Edit"),
-                    value: "edit"
-                  },
-                  {
-                    label: t("System Validation"),
-                    value: "systemValidation"
-                  },
-                  {
-                    label: (
-                      <Text className="flex items-center gap-2">
-                        {t("Comments")}
-                        <NotificationIndicator bgColor={activeTab != "comments" ? "neutral.700" : undefined}>
-                          3
-                        </NotificationIndicator>
-                      </Text>
-                    ),
-                    value: "comments"
-                  }
-                ]}
-                variant="panel"
-              />
+              {polygon != null && (
+                <TabBar
+                  onTabClick={(tabValue: string) => setActiveTab(tabValue)}
+                  tabs={[
+                    {
+                      label: t("Edit"),
+                      value: "edit"
+                    },
+                    {
+                      label: t("System Validation"),
+                      value: "systemValidation"
+                    },
+                    {
+                      label: (
+                        <Text className="flex items-center gap-2">
+                          {t("Comments")}
+                          <NotificationIndicator bgColor={activeTab != "comments" ? "neutral.700" : undefined}>
+                            3
+                          </NotificationIndicator>
+                        </Text>
+                      ),
+                      value: "comments"
+                    }
+                  ]}
+                  variant="panel"
+                />
+              )}
+
               {activeTab === "edit" && <PolygonEditContent />}
               {activeTab === "systemValidation" && <div>System Validation</div>}
               {activeTab === "comments" && <div>Comments</div>}

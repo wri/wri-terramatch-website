@@ -10,7 +10,7 @@ import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
-import { PolygonEditDrawerProvider } from "@/context/polygonEditDrawer.provider";
+import { PolygonEditDrawerProvider, usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonsIndexQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { useDate } from "@/hooks/useDate";
@@ -286,6 +286,7 @@ const PolygonRow = memo(PolygonRowComponent);
 const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
+  const { openPolygonEdit, openPolygonDraw } = usePolygonEditDrawer();
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showMatchingPolygonsFoundModal, setMatchingPolygonsFoundModal] = useState(false);
@@ -663,7 +664,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           otherActions: [
             {
               label: t("Draw Polygon"),
-              onClick: () => {},
+              onClick: () => {
+                openPolygonDraw();
+              },
               value: "draft"
             },
             {
@@ -686,7 +689,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         />
       </PageItem>
       {selectedRows != null && selectedRows.length > 0 && (
-        <Box position={"fixed"} zIndex={"999999"} bottom={0} left={3} right={3}>
+        <Box position={"fixed"} zIndex={"100"} bottom={0} left={3} right={3}>
           <BulkActionToolbar
             ButtonCancel={{
               children: "Cancel"
@@ -698,16 +701,19 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
               }
             }}
             items={selectedRows.length + ""}
-            primaryButtonProps={{
+            quaternaryButtonProps={{
               children: "Download"
             }}
-            quantityButtonProps={{
+            tertiaryButtonProps={{
               children: "Run Validation"
             }}
             secondaryButtonProps={{
-              children: "Edit Details"
+              children: "Edit",
+              onClick: () => {
+                openPolygonEdit();
+              }
             }}
-            tertiaryButtonProps={{
+            primaryButtonProps={{
               children: "Submit",
               onClick: () => {
                 setSubmitPolygonsModal(true);

@@ -78,7 +78,15 @@ const Accordion: FC<AccordionProps> = ({
   };
 
   return (
-    <Box className={className}>
+    <Box
+      className={className}
+      css={{
+        "& [data-scope='accordion'][data-part='item-content']": {
+          margin: "0 -2rem",
+          padding: "0 2rem"
+        }
+      }}
+    >
       <AccordionChakra.Root multiple defaultValue={defaultOpen ? ["default-item"] : []}>
         <AccordionChakra.Item value="default-item">
           <Flex {...container} gap={4} className={classNameHeader}>
