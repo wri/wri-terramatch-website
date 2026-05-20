@@ -43,6 +43,7 @@ import {
   WetlandIcon,
   WoodlotIcon
 } from "@/redesignComponents/foundations/Icons";
+import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
@@ -52,6 +53,13 @@ import {
   mapSitePolygonValidationStatusToValidationTagState
 } from "@/utils/mapStatusToTagStateEntity";
 
+import DeletePolygon from "../components/Modals/DeletePolygon";
+import MatchingPolygonsFound from "../components/Modals/MatchingPolygonsFound";
+import PolygonSubmitted from "../components/Modals/PolygonSubmitted";
+import SubmitPolygons from "../components/Modals/SubmitPolygons";
+import UploadError from "../components/Modals/UploadError";
+import UploadPhotos from "../components/Modals/UploadPhotos";
+import UploadPolygons from "../components/Modals/UploadPolygons";
 import {
   EMPTY_POLYGON_FILTERS,
   PolygonFilterState,
@@ -278,6 +286,14 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
   const tableContainerRef = useRef<HTMLDivElement>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showMatchingPolygonsFoundModal, setMatchingPolygonsFoundModal] = useState(false);
+  const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
+  const [showSubmitPolygonsModal, setSubmitPolygonsModal] = useState(false);
+  const [showDeletePolygonModal, setDeletePolygonModal] = useState(false);
+  const [showUploadErrorModal, setUploadErrorModal] = useState(false);
+  const [showUploadPhotosModal, setUploadPhotosModal] = useState(false);
+
   const [isStickyActive, setIsStickyActive] = useState(false);
   const [polygonSearch, setPolygonSearch] = useState("");
   const [debouncedPolygonSearch, setDebouncedPolygonSearch] = useState("");
@@ -651,7 +667,9 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
             },
             {
               label: t("Upload"),
-              onClick: () => {},
+              onClick: () => {
+                setShowUploadModal(true);
+              },
               value: "save-close"
             }
           ],
@@ -668,6 +686,54 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           onClearFilters={handleClearPolygonFilters}
         />
       </PageItem>
+      {selectedRows != null && selectedRows.length > 0 && (
+        <Box position={"fixed"} zIndex={"999999"} bottom={0} left={3} right={3}>
+          <BulkActionToolbar
+            ButtonCancel={{
+              children: "Cancel"
+            }}
+            ButtonDelete={{
+              children: "Delete",
+              onClick: () => {
+                setDeletePolygonModal(true);
+              }
+            }}
+            items={selectedRows.length + ""}
+            primaryButtonProps={{
+              children: "Download"
+            }}
+            quantityButtonProps={{
+              children: "Run Validation"
+            }}
+            secondaryButtonProps={{
+              children: "Edit Details"
+            }}
+            tertiaryButtonProps={{
+              children: "Submit",
+              onClick: () => {
+                setSubmitPolygonsModal(true);
+              }
+            }}
+          />
+        </Box>
+      )}
+      <UploadPolygons open={showUploadModal} onOpenChange={setShowUploadModal} />
+      <MatchingPolygonsFound open={showMatchingPolygonsFoundModal} onOpenChange={setMatchingPolygonsFoundModal} />
+      <PolygonSubmitted
+        open={showPolygonSubmittedModal}
+        onOpenChange={setPolygonSubmittedModal}
+        polygons={"Polygon Name A"}
+      />
+      <PolygonSubmitted
+        open={showPolygonSubmittedModal}
+        onOpenChange={setPolygonSubmittedModal}
+        polygons={["Polygon Name A", "polygon Name B"]}
+      />
+      <SubmitPolygons open={showSubmitPolygonsModal} onOpenChange={setSubmitPolygonsModal} />
+      <DeletePolygon open={showDeletePolygonModal} onOpenChange={setDeletePolygonModal} polygons={selectedRows} />
+      <UploadError open={showUploadErrorModal} onOpenChange={setUploadErrorModal} />
+      <UploadPhotos open={showUploadPhotosModal} onOpenChange={setUploadPhotosModal} />
+
       <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
         <PolygonsMap
           entityModel={site}
