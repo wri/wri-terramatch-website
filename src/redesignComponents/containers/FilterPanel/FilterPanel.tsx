@@ -24,8 +24,8 @@ const FilterPanel: FC<FilterPanelProps> = ({ title, onClose, content, variant = 
         variant={variant}
         header={
           <Box px={4} py={4}>
-            <Flex justifyContent="space-between" alignItems="center">
-              <Text textStyle="600-bold" color="neutral.800">
+            <Flex gap={3} justifyContent="space-between" alignItems="center">
+              <Text title={t(title)} textStyle="600-bold" color="neutral.800" className="truncate">
                 {t(title)}
               </Text>
               <Flex alignItems="center" gap={2}>
@@ -37,7 +37,7 @@ const FilterPanel: FC<FilterPanelProps> = ({ title, onClose, content, variant = 
             </Flex>
           </Box>
         }
-        content={<Flex className="min-h-0 flex-col gap-3 overflow-auto p-4 pr-2">{content}</Flex>}
+        content={<Flex className="h-full min-h-0 flex-col gap-3 overflow-auto p-4 pr-2">{content}</Flex>}
         footer={footer}
       />
     </Box>
