@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import type { FC } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -17,6 +18,7 @@ import {
 } from "@/constants/polygonStatuses";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -65,9 +67,11 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   polygonTableHighlight,
   overlapPolygons
 }) => {
+  const t = useT();
   const disabledPolygonPanel = true;
   const [polygonDataMap, setPolygonDataMap] = useState<Record<string, string[]>>(() => ({ ...EMPTY_POLYGON_MAP }));
   const [polygonFromMap, setPolygonFromMap] = useState<PolygonFromMapState>({ isOpen: false, uuid: "" });
+  const { openNotification } = useNotificationContext();
 
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
@@ -84,11 +88,20 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   } = useMapAreaContext();
 
   const onSave = useCallback(
-    (geojson: unknown, _record: unknown) => {
+    async (geojson: unknown, _record: unknown) => {
       if (!Array.isArray(geojson)) return;
-      void storePolygon(geojson as PolygonGeometryFeature[], entityModel, setPolygonFromMap, onRefetchPolygons);
+      try {
+        await storePolygon(geojson as PolygonGeometryFeature[], entityModel, setPolygonFromMap, onRefetchPolygons);
+        openNotification("success", t("Success"), t("Polygon created successfully"));
+      } catch (error) {
+        const errorMessage =
+          error != null && typeof error === "object" && "message" in error
+            ? String(error.message)
+            : t("Failed to create polygon");
+        openNotification("error", t("Error"), errorMessage);
+      }
     },
-    [entityModel, onRefetchPolygons, setPolygonFromMap]
+    [entityModel, onRefetchPolygons, openNotification, setPolygonFromMap, t]
   );
 
   const mapFunctions = useBaseMap(onSave);
