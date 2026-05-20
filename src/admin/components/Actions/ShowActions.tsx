@@ -14,7 +14,6 @@ import {
 
 import { useCanUserEdit } from "@/admin/hooks/useCanUserEdit";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { SUBMITTED } from "@/constants/statuses";
 
 import ShowTitle from "../ShowTitle";
 
@@ -79,31 +78,12 @@ const ShowActions: FC<ShowActionsProps> = ({
             icon={<Icon className="h-5 w-5" name={IconNames.TRASH_PA} />}
           />
         )}
-        {canEdit &&
-          hasEdit &&
-          (resource === "financialReport" ? (
-            <EditButton
-              disabled={record?.status === SUBMITTED}
-              className="!text-sm !font-semibold !capitalize !text-blueCustom-900 lg:!text-base wide:!text-md"
-              icon={<Icon className="h-6 w-6" name={IconNames.EDIT} />}
-              sx={
-                record?.status === SUBMITTED
-                  ? {
-                      pointerEvents: "none",
-                      opacity: 0.5,
-                      color: "#bdbdbd",
-                      backgroundColor: "#f5f5f5",
-                      cursor: "not-allowed"
-                    }
-                  : {}
-              }
-            />
-          ) : (
-            <EditButton
-              className="!text-sm !font-semibold !capitalize !text-blueCustom-900 lg:!text-base wide:!text-md"
-              icon={<Icon className="h-6 w-6" name={IconNames.EDIT} />}
-            />
-          ))}
+        {canEdit && hasEdit && (
+          <EditButton
+            className="!text-sm !font-semibold !capitalize !text-blueCustom-900 lg:!text-base wide:!text-md"
+            icon={<Icon className="h-6 w-6" name={IconNames.EDIT} />}
+          />
+        )}
       </TopToolbar>
     </Box>
   );
