@@ -3,6 +3,8 @@ import { useT } from "@transifex/react";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
+import { type SizeValue, resolveRemSizeValue } from "@/lib/sizing";
+
 import GalleryImage from "../../Images/GalleryImage/GalleryImage";
 import { MIN_ITEMS, MIN_ROWS } from "./constants";
 
@@ -16,7 +18,7 @@ interface IImageGalleryCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDi
   images: GalleryImageType[];
   onClickAdd?: () => void;
   columns?: number;
-  imageSize?: number;
+  imageSize?: SizeValue;
   className?: string;
   onSelectImage?: (image: GalleryImageType) => void;
   classNameImage?: string;
@@ -26,7 +28,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
   images,
   onClickAdd,
   columns = 2,
-  imageSize = 164,
+  imageSize = 41,
   onSelectImage,
   onScroll,
   className,
@@ -77,7 +79,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
             ) : (
               <div
                 className="min-w-full rounded-md bg-theme-neutral-200"
-                style={{ width: imageSize, height: imageSize }}
+                style={{ width: resolveRemSizeValue(imageSize), height: resolveRemSizeValue(imageSize) }}
               />
             )}
           </GridItem>

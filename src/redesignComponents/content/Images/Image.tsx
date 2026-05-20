@@ -4,6 +4,7 @@ import Image from "next/image";
 import { CSSProperties, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
+import { type SizeValue, resolveRemSizeValue } from "@/lib/sizing";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
 import { EditIcon, PhotoAddIcon, RejectedIcon, VideoIcon } from "@/redesignComponents/foundations/Icons";
@@ -12,7 +13,7 @@ export type MediaType = "video" | "image";
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
   alt?: string;
-  size?: number;
+  size?: SizeValue;
   className?: string;
   borderRadius?: "rounded-md" | "rounded-full";
   defaultAlt?: string;
@@ -31,12 +32,13 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   style?: CSSProperties;
   type?: MediaType;
   classNamesVideoIcon?: string;
+  hideNotAvailableText?: boolean;
 }
 
 const BaseImage: FC<BaseImageProps> = ({
   src,
   alt,
-  size = 164,
+  size = 41,
   className,
   borderRadius = "rounded-md",
   defaultAlt = "Image",
@@ -50,6 +52,7 @@ const BaseImage: FC<BaseImageProps> = ({
   style,
   type = "image",
   classNamesVideoIcon,
+  hideNotAvailableText = false,
   ...rest
 }) => {
   const t = useT();
@@ -107,7 +110,7 @@ const BaseImage: FC<BaseImageProps> = ({
         },
         className
       )}
-      style={{ width: size, height: size }}
+      style={{ width: resolveRemSizeValue(size), height: resolveRemSizeValue(size) }}
     >
       {showNotAvailable || isAdd ? (
         isAdd ? (
@@ -134,7 +137,7 @@ const BaseImage: FC<BaseImageProps> = ({
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
               <RejectedIcon className="h-5 w-5 text-theme-neutral-500" />
-              {size >= 80 && (
+              {!hideNotAvailableText && (
                 <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
                   {t("Image unavailable")}
                 </Text>
@@ -170,7 +173,7 @@ const BaseImage: FC<BaseImageProps> = ({
               alt={alt ?? defaultAlt}
               fill
               className="object-cover"
-              sizes={`${size}px`}
+              sizes={resolveRemSizeValue(size)}
               style={style}
               onError={() => setLoadError(true)}
             />
