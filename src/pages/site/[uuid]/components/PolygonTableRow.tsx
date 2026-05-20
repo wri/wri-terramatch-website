@@ -1,16 +1,34 @@
 import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
-import { CSSProperties, FC, memo, useCallback } from "react";
+import { CSSProperties, FC, memo, ReactNode, useCallback } from "react";
 
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { getThemedColor } from "@/lib/theme";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import MappedTag, { MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
 import ValidationTag, { ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
-import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
+import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
+import {
+  AgriculturalLandIcon,
+  AgroforestyIcon,
+  AssistedNaturalRegenIcon,
+  CalendarIcon,
+  DirectSeedingIcon,
+  GrasslandIcon,
+  MangroveIcon,
+  NaturalForestIcon,
+  OpenNaturalEcosystemIcon,
+  PeatlandIcon,
+  PlusIcon,
+  SilvopastureIcon,
+  TreePlantingIcon,
+  UrbanForestIcon,
+  WetlandIcon,
+  WoodlotIcon
+} from "@/redesignComponents/foundations/Icons";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
-import { renderRestorationPractice, renderTargetLandUse } from "./polygonTable.constants";
+import { TARGET_LAND_USE_LABELS } from "./polygonFilter.constants";
 
 export type PolygonTableRow = {
   id: string;
@@ -25,9 +43,85 @@ export type PolygonTableRow = {
   area: number;
 };
 
+type SiteTypeConfig = { icon: ReactNode; label: string };
+
+const TARGET_LAND_USE_MAP: Record<targetLandUseType, SiteTypeConfig> = {
+  agroforest: { icon: <AgroforestyIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS.agroforest },
+  "agricultural-land": {
+    icon: <AgriculturalLandIcon boxSize={3.5} />,
+    label: TARGET_LAND_USE_LABELS["agricultural-land"]
+  },
+  grassland: { icon: <GrasslandIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS.grassland },
+  mangrove: { icon: <MangroveIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS.mangrove },
+  "open-natural-ecosystem": {
+    icon: <OpenNaturalEcosystemIcon boxSize={3.5} />,
+    label: TARGET_LAND_USE_LABELS["open-natural-ecosystem"]
+  },
+  "natural-forest": { icon: <NaturalForestIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS["natural-forest"] },
+  peatland: { icon: <PeatlandIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS.peatland },
+  "riparian-area-or-wetland": {
+    icon: <WetlandIcon boxSize={3.5} />,
+    label: TARGET_LAND_USE_LABELS["riparian-area-or-wetland"]
+  },
+  silvopasture: { icon: <SilvopastureIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS.silvopasture },
+  "urban-forest": { icon: <UrbanForestIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS["urban-forest"] },
+  "woodlot-or-plantation": {
+    icon: <WoodlotIcon boxSize={3.5} />,
+    label: TARGET_LAND_USE_LABELS["woodlot-or-plantation"]
+  }
+};
+
+const SITE_RESTORATION_STRATEGY_MAP: Record<restorationStrategyType, ReactNode> = {
+  "tree-planting": (
+    <Tooltip content="Tree planting">
+      <TreePlantingIcon boxSize={5} color="secondary.800" />
+    </Tooltip>
+  ),
+  "assisted-natural-regeneration": (
+    <Tooltip content="Assisted natural regeneration (ANR)">
+      <AssistedNaturalRegenIcon boxSize={5} color="secondary.800" />
+    </Tooltip>
+  ),
+  "direct-seeding": (
+    <Tooltip content="Direct seeding">
+      <DirectSeedingIcon boxSize={5} color="secondary.800" />
+    </Tooltip>
+  )
+};
+
 const HOVERED_ROW_STYLE: CSSProperties = {
   backgroundColor: getThemedColor("primary", 100),
   borderBottom: `2px solid ${getThemedColor("primary", 700)}`
+};
+
+const renderTargetLandUse = (targetLandUse: targetLandUseType | null) => {
+  if (targetLandUse == null) {
+    return <Text>—</Text>;
+  }
+  const config = TARGET_LAND_USE_MAP[targetLandUse];
+  return (
+    <Flex className="items-center gap-2" color="neutral.800">
+      {config.icon}
+      <Text>{config.label}</Text>
+    </Flex>
+  );
+};
+
+const renderRestorationPractice = (restorationPractice: restorationStrategyType[]) => {
+  if (restorationPractice.length === 0) {
+    return <Text>—</Text>;
+  }
+
+  return (
+    <Flex className="items-center gap-2">
+      {restorationPractice.map((practice, index) => (
+        <Flex key={`${practice}-${index}`} className="items-center gap-2">
+          {SITE_RESTORATION_STRATEGY_MAP[practice]}
+          {index < restorationPractice.length - 1 && <PlusIcon boxSize={2.5} color="secondary.800" />}
+        </Flex>
+      ))}
+    </Flex>
+  );
 };
 
 interface PolygonRowProps {
@@ -108,3 +202,5 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
 };
 
 export const PolygonRow = memo(PolygonRowComponent);
+
+export default PolygonRow;
