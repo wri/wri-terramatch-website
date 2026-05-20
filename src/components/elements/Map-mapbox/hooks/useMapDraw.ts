@@ -1,4 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import { useT } from "@transifex/react";
 import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useCallback } from "react";
 
@@ -9,6 +10,7 @@ import { FORM_POLYGONS } from "@/constants/statuses";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { isProjectPitchesEntityName } from "@/helpers/entity";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { TranslatedText } from "@/i18n/types";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
@@ -38,10 +40,10 @@ type UseMapDrawParams = {
   reloadSiteData?: () => any;
   setShouldRefetchPolygonData?: (v: boolean) => void;
   setStatusSelectedPolygon?: (v: string) => void;
-  t: (key: string) => string;
+  t: typeof useT;
   showLoader: () => void;
   hideLoader: () => void;
-  openNotification: (type: "success" | "error" | "warning", title: string, message?: any) => void;
+  openNotification: (type: "success" | "error" | "warning", title: TranslatedText, message?: any) => void;
 };
 
 export function useMapDraw({

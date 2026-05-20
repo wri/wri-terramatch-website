@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { useCallback, useEffect, useState } from "react";
 
 import { useDelayedJobs } from "@/connections/DelayedJob";
@@ -26,16 +27,10 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
   const { setShouldRefetchValidation } = useMapAreaContext();
   const { openNotification } = useNotificationContext();
   const [, { delayedJobs }] = useDelayedJobs();
+  const t = useT();
 
   const { allValidations: overlapValidations, fetchAllValidationPages: fetchOverlapValidations } =
     useAllSiteValidations(siteUuid ?? "", OVERLAPPING_CRITERIA_ID);
-
-  const displayNotification = useCallback(
-    (message: string, type: "success" | "error" | "warning", title: string) => {
-      openNotification(type, title, message);
-    },
-    [openNotification]
-  );
 
   const runSiteValidation = useCallback(async () => {
     if (!siteUuid) return;
@@ -51,9 +46,9 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
       setIsLoadingDelayedJob?.(false);
       setClickedValidation(false);
       setPendingSiteValidation(false);
-      displayNotification("Please try again later.", "error", "Error! TerraMatch could not review polygons");
+      openNotification("error", t("Please try again later."), t("Error! TerraMatch could not review polygons"));
     }
-  }, [siteUuid, showLoader, hideLoader, setIsLoadingDelayedJob, displayNotification]);
+  }, [siteUuid, showLoader, hideLoader, setIsLoadingDelayedJob, openNotification, t]);
 
   const handleSiteValidationComplete = useCallback(() => {
     if (!siteUuid) return;
@@ -71,10 +66,10 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
       }
     }
 
-    displayNotification(
-      "Please update and re-run if any polygons fail.",
+    openNotification(
       "success",
-      "Success! TerraMatch reviewed all polygons"
+      t("Please update and re-run if any polygons fail."),
+      t("Success! TerraMatch reviewed all polygons")
     );
 
     setIsLoadingDelayedJob?.(false);
@@ -84,8 +79,9 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
     fetchOverlapValidations,
     setShouldRefetchValidation,
     sitePolygonData,
-    displayNotification,
-    setIsLoadingDelayedJob
+    openNotification,
+    setIsLoadingDelayedJob,
+    t
   ]);
 
   useEffect(() => {

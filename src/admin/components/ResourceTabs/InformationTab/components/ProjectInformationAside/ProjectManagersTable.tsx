@@ -9,6 +9,7 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
+import { TranslatedText } from "@/i18n/types";
 
 const ProjectManagersTable: FC<{ project: any }> = ({ project }) => {
   const t = useT();
@@ -25,7 +26,7 @@ const ProjectManagersTable: FC<{ project: any }> = ({ project }) => {
       ModalId.CONFIRM_DELETE,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-        title={""}
+        title={"" as TranslatedText}
         content={t("Remove {email_address} as Project Manager for {project_name}?", {
           email_address,
           project_name: project?.name

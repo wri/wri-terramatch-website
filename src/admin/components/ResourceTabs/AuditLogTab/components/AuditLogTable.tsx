@@ -108,22 +108,22 @@ const AuditLogTable: FC<{
   const deleteAuditStatus = async (auditUuid: string) => {
     try {
       if (auditData?.entity == null || auditData?.entityUuid == null) {
-        openNotification("error", "Error!", t("Missing required information to delete audit log."));
+        openNotification("error", t("Error!"), t("Missing required information to delete audit log."));
         return;
       }
 
       const entityType = ENTITY_MAP[auditData.entity];
       if (entityType == null) {
-        openNotification("error", "Error!", t("Unknown entity type."));
+        openNotification("error", t("Error!"), t("Unknown entity type."));
         return;
       }
 
       await deleteAuditStatusAsync(auditUuid, entityType, auditData.entityUuid);
 
       refresh?.();
-      openNotification("success", "Success!", t("audit log deleted."));
+      openNotification("success", t("Success!"), t("audit log deleted."));
     } catch (error) {
-      openNotification("error", "Error!", t("An error occurred while deleting the audit log."));
+      openNotification("error", t("Error!"), t("An error occurred while deleting the audit log."));
     }
   };
   return (

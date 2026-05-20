@@ -4,6 +4,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalFixOverlaps from "@/components/extensive/Modal/ModalFixOverlaps";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import useOwnT from "@/i18n/useOwnT";
 
 import { FixPolygonButton } from "./CheckPolygonControl/components/FixPolygonButton";
 import { PolygonChecksPanel } from "./CheckPolygonControl/components/PolygonChecksPanel";
@@ -29,6 +30,7 @@ const CheckPolygonControl: FC<CheckSitePolygonProps> = ({
   isLoadingDelayedJob,
   setAlertTitle
 }) => {
+  const t = useOwnT();
   const siteUuid = siteRecord?.uuid;
   const { setSelectedPolygonsInCheckbox } = useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
@@ -51,17 +53,19 @@ const CheckPolygonControl: FC<CheckSitePolygonProps> = ({
     openModal(
       ModalId.FIX_POLYGONS,
       <ModalFixOverlaps
-        title="Fix Polygons"
+        title={t("Fix Polygons")}
         site={siteRecord}
         onClose={() => closeModal(ModalId.FIX_POLYGONS)}
-        content="The following polygons have one or more failed criteria, for which an automated solution may be applied. Click 'Fix Polygons' to correct the issue as a new version."
-        primaryButtonText="Fix Polygons"
+        content={t(
+          "The following polygons have one or more failed criteria, for which an automated solution may be applied. Click 'Fix Polygons' to correct the issue as a new version."
+        )}
+        primaryButtonText={t("Fix Polygons")}
         primaryButtonProps={{
           className: "px-8 py-3",
           variant: "primary",
           onClick: runFixPolygonOverlaps
         }}
-        secondaryButtonText="Cancel"
+        secondaryButtonText={t("Cancel")}
         secondaryButtonProps={{
           className: "px-8 py-3",
           variant: "white-page-admin",

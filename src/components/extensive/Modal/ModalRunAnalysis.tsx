@@ -12,6 +12,7 @@ import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchService/researchServiceComponents";
+import { TranslatedText } from "@/i18n/types";
 import { EntityName } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -19,10 +20,10 @@ import { ModalProps } from "./Modal";
 import { ModalBaseWithMonitored } from "./ModalsBases";
 
 type ModalRunAnalysisProps = ModalProps & {
-  secondaryButtonText?: string;
   onClose?: () => void;
-  primaryButtonText: string;
-  title: string;
+  primaryButtonText: TranslatedText;
+  secondaryButtonText?: TranslatedText;
+  title: TranslatedText;
   projectName?: string;
   entityType?: EntityName;
   entityUuid?: string;

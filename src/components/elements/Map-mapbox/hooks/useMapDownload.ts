@@ -1,7 +1,9 @@
+import { useT } from "@transifex/react";
 import _ from "lodash";
 import { useState } from "react";
 
 import { isProjectPitchesEntityName } from "@/helpers/entity";
+import { TranslatedText } from "@/i18n/types";
 
 import { downloadMultiplePolygonsGeoJson, downloadProjectPolygonsGeoJson } from "../utils";
 
@@ -9,8 +11,8 @@ type UseMapDownloadParams = {
   polygonsData?: Record<string, string[]>;
   entityData?: { entityName?: string; entityUUID?: string };
   record?: { organisation?: { name?: string } };
-  t: (key: string) => string;
-  openNotification: (type: "success" | "error" | "warning", title: string, message?: any) => void;
+  t: typeof useT;
+  openNotification: (type: "success" | "error" | "warning", title: TranslatedText, message?: any) => void;
 };
 
 type UseMapDownloadReturn = {
@@ -54,7 +56,7 @@ export function useMapDownload({
         openNotification(
           "success",
           t("Success"),
-          t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`)
+          t("Successfully downloaded {count} polygon(s).", { count: polygonsToDownload.length })
         );
       }
     } catch (error: any) {

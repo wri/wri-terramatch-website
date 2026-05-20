@@ -1,8 +1,10 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 
 import LinearProgressBar from "@/components/elements/ProgressBar/LinearProgressBar/LinearProgressBar";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
+import { TranslatedText } from "@/i18n/types";
 import Log from "@/utils/log";
 
 import Icon, { IconNames } from "../../Icon/Icon";
@@ -10,42 +12,42 @@ import Icon, { IconNames } from "../../Icon/Icon";
 export type TableType = "treeCountSite" | "treeCountGoal" | "noGoal" | "noCount";
 type ColumnDefinitionProps = { tableType: TableType; headerName: string; secondColumnWidth: string };
 
-export const getTreeSpeciesColumns = (props: ColumnDefinitionProps) => {
+export const getTreeSpeciesColumns = (props: ColumnDefinitionProps, t: typeof useT) => {
   switch (props.tableType) {
     case "treeCountSite":
-      return columnTreeCountSite(props);
+      return columnTreeCountSite(props, t);
     case "treeCountGoal":
-      return columnTreeCountGoal(props);
+      return columnTreeCountGoal(props, t);
     case "noGoal":
-      return columnNoGoal(props);
+      return columnNoGoal(props, t);
     case "noCount":
-      return columnNoCount(props);
+      return columnNoCount(props, t);
 
     default:
       Log.error("Unknown table type", props);
-      return columnNoGoal(props);
+      return columnNoGoal(props, t);
   }
 };
 
-const rowSpeciesName = (headerName: string) => ({
+const rowSpeciesName = (headerName: string, t: typeof useT) => ({
   accessorKey: "name",
   header: headerName,
   enableSorting: false,
   cell: (props: any) => {
     const value = props.getValue();
     const [speciesName, speciesTypes] = value;
-    const iconConfigs: { [key: string]: { tooltip: string; icon: IconNames } } = {
+    const iconConfigs: { [key: string]: { tooltip: TranslatedText; icon: IconNames } } = {
       "non-scientific": {
-        tooltip: "Non-scientific name",
+        tooltip: t("Non-scientific name"),
         icon: IconNames.NON_SCIENTIFIC_NAME_CUSTOM
       },
       new: {
-        tooltip: "New species added to the project",
+        tooltip: t("New species added to the project"),
         icon: IconNames.NEW_TAG_TREE_SPECIES_CUSTOM
       },
       native: {
         //TODO: add native species icon
-        tooltip: "Native species",
+        tooltip: t("Native species"),
         icon: IconNames.NATIVE_SPECIES
       }
     };
@@ -55,7 +57,6 @@ const rowSpeciesName = (headerName: string) => ({
           return config ? (
             <ToolTip
               key={type}
-              title=""
               content={config.tooltip}
               colorBackground="white"
               placement="right"
@@ -82,15 +83,15 @@ const rowSpeciesName = (headerName: string) => ({
   }
 });
 
-const columnTreeCountSite = ({ secondColumnWidth }: ColumnDefinitionProps) => [
+const columnTreeCountSite = ({ secondColumnWidth }: ColumnDefinitionProps, t: typeof useT) => [
   {
     accessorKey: "name",
-    header: "Site Name",
+    header: t("Site Name"),
     enableSorting: false
   },
   {
     accessorKey: "treeCount",
-    header: "Tree Count",
+    header: t("Tree Count"),
     enableSorting: false,
     meta: { width: secondColumnWidth },
     cell: (props: any) => {
@@ -100,11 +101,11 @@ const columnTreeCountSite = ({ secondColumnWidth }: ColumnDefinitionProps) => [
   }
 ];
 
-const columnTreeCountGoal = ({ secondColumnWidth, headerName }: ColumnDefinitionProps) => [
-  rowSpeciesName(headerName),
+const columnTreeCountGoal = ({ secondColumnWidth, headerName }: ColumnDefinitionProps, t: typeof useT) => [
+  rowSpeciesName(headerName, t),
   {
     accessorKey: "treeCountGoal",
-    header: "Tree Count / goal",
+    header: t("Tree Count / goal"),
     enableSorting: false,
     meta: { width: secondColumnWidth },
     cell: (props: any) => {
@@ -131,11 +132,11 @@ const columnTreeCountGoal = ({ secondColumnWidth, headerName }: ColumnDefinition
   }
 ];
 
-const columnNoGoal = ({ secondColumnWidth, headerName }: ColumnDefinitionProps) => [
-  rowSpeciesName(headerName),
+const columnNoGoal = ({ secondColumnWidth, headerName }: ColumnDefinitionProps, t: typeof useT) => [
+  rowSpeciesName(headerName, t),
   {
     accessorKey: "treeCount",
-    header: "COUNT",
+    header: t("COUNT"),
     enableSorting: false,
     meta: { width: secondColumnWidth },
     cell: (props: any) => {
@@ -151,4 +152,4 @@ const columnNoGoal = ({ secondColumnWidth, headerName }: ColumnDefinitionProps) 
   }
 ];
 
-const columnNoCount = ({ headerName }: ColumnDefinitionProps) => [rowSpeciesName(headerName)];
+const columnNoCount = ({ headerName }: ColumnDefinitionProps, t: typeof useT) => [rowSpeciesName(headerName, t)];

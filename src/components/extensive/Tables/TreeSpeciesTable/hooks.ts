@@ -46,11 +46,14 @@ export const useTreeTableColumns = (tableType: TableType, headerName: string, se
   const t = useT();
   return useMemo(
     () =>
-      getTreeSpeciesColumns({
-        tableType,
-        headerName: t(headerName ?? "Tree Species"),
-        secondColumnWidth
-      }),
+      getTreeSpeciesColumns(
+        {
+          tableType,
+          headerName: headerName ?? t("Tree Species"),
+          secondColumnWidth
+        },
+        t
+      ),
     [tableType, t, headerName, secondColumnWidth]
   );
 };
