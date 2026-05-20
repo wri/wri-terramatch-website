@@ -25,15 +25,10 @@ export const HECTARES_UNDER_RESTORATION_TOOLTIP =
 export const JOBS_CREATED_TOOLTIP =
   "Number of people newly employed directly by the project. Terrafund defines a job as any individual or person, aged 18 years or older, that is directly compensated by a project at any time to support their restoration activities.";
 
-const DEFAULT_COHORT: string[] = ["terrafund-cohort-1", "terrafund-cohort-2", "terrafund-3"];
+const DEFAULT_COHORT: string[] = ["terrafund-cohort-1", "terrafund-cohort-2", "terrafund-cohort-3"];
 const DEFAULT_ORGANIZATION_TYPES: ("for-profit-organization" | "non-profit-organization")[] = [
   "non-profit-organization",
   "for-profit-organization"
-];
-const DEFAULT_PROGRAMME_TYPES: ("terrafund" | "terrafund-landscapes" | "enterprises")[] = [
-  "terrafund",
-  "terrafund-landscapes",
-  "enterprises"
 ];
 
 export const useDashboardData = (filters: any) => {
@@ -74,24 +69,28 @@ export const useDashboardData = (filters: any) => {
 
   const { showLoader, hideLoader } = useLoading();
 
-  const dashboardV3Filter = useMemo<HookFilters<typeof useJobsCreated>>(
-    () => ({
-      "programmesType[]": filters.programmes,
+  const dashboardV3Filter = useMemo<HookFilters<typeof useJobsCreated>>(() => {
+    const params: HookFilters<typeof useJobsCreated> = {
       country: filters.country.country_slug,
       "organisationType[]": filters.organizations,
       landscapes: convertNamesToCodes(filters.landscapes),
       cohort: filters.cohort,
       projectUuid: filters.uuid
-    }),
-    [
-      filters.programmes,
-      filters.country.country_slug,
-      filters.organizations,
-      filters.landscapes,
-      filters.cohort,
-      filters.uuid
-    ]
-  );
+    };
+
+    if (filters.programmes?.length > 0) {
+      params["programmesType[]"] = filters.programmes;
+    }
+
+    return params;
+  }, [
+    filters.programmes,
+    filters.country.country_slug,
+    filters.organizations,
+    filters.landscapes,
+    filters.cohort,
+    filters.uuid
+  ]);
 
   const [isLoadingJobsCreated, { data: jobsCreatedData }] = useJobsCreated({
     filter: dashboardV3Filter
@@ -122,10 +121,8 @@ export const useDashboardData = (filters: any) => {
       params["organisationType[]"] = DEFAULT_ORGANIZATION_TYPES;
     }
 
-    if (filters?.frameworks?.length > 0) {
-      params["programmesType[]"] = filters.frameworks;
-    } else {
-      params["programmesType[]"] = DEFAULT_PROGRAMME_TYPES;
+    if (filters?.programmes?.length > 0) {
+      params["programmesType[]"] = filters.programmes;
     }
 
     return params;
@@ -134,7 +131,7 @@ export const useDashboardData = (filters: any) => {
     filters?.landscapes,
     filters?.cohort,
     filters?.organizations,
-    filters?.frameworks
+    filters?.programmes
   ]);
 
   const [dashboardProjectsLoaded, { data: dashboardProjectsData }] = useDashboardProjects({
@@ -148,24 +145,28 @@ export const useDashboardData = (filters: any) => {
     return groupProjectsByCountry(dashboardProjectsData as DashboardProjectsLightDto[]);
   }, [dashboardProjectsData]);
 
-  const treeRestorationGoalFilter = useMemo(
-    () => ({
-      "programmesType[]": filters.programmes,
+  const treeRestorationGoalFilter = useMemo(() => {
+    const params: HookFilters<typeof useTreeRestorationGoal> = {
       country: filters.country.country_slug,
       "organisationType[]": filters.organizations,
       landscapes: convertNamesToCodes(filters.landscapes),
       cohort: filters.cohort,
       projectUuid: filters.uuid
-    }),
-    [
-      filters.programmes,
-      filters.country.country_slug,
-      filters.organizations,
-      filters.landscapes,
-      filters.cohort,
-      filters.uuid
-    ]
-  );
+    };
+
+    if (filters.programmes?.length > 0) {
+      params["programmesType[]"] = filters.programmes;
+    }
+
+    return params;
+  }, [
+    filters.programmes,
+    filters.country.country_slug,
+    filters.organizations,
+    filters.landscapes,
+    filters.cohort,
+    filters.uuid
+  ]);
 
   const calculatedTotals = useMemo(() => {
     if (!Array.isArray(dashboardProjectsData)) {
