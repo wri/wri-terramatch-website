@@ -260,10 +260,6 @@
   @apply !text-grey-600 !text-base !font-bold lg:text-md wide:text-lg
 }
 
-.MuiPagination-text li .Mui-selected::after{
-  @apply content-['Page'] absolute right-full mr-2;
-}
-
 .MuiPagination-text li .Mui-selected{
   @apply !bg-transparent !block !text-neutral-1000 !min-w-[min-content] h-8 w-auto max-w-none shrink-0 flex-nowrap rounded-lg border border-grey-350 flex items-center justify-center gap-0 !border-solid !bg-white px-1.5 hover:text-primary leading-[normal] !text-xs font-bold lg:!text-sm wide:!text-base overflow-visible;
 }
@@ -277,39 +273,19 @@
   @apply !inline-flex items-center justify-center;
 }
 
-.MuiPagination-ul > li:nth-last-child(2) {
-  @apply !bg-transparent h-8 flex items-center justify-center overflow-visible;
-}
-
-/* "of total" prefix only when this cell is not the active page; active + ::before hid the digit. */
-.MuiPagination-ul > li:nth-last-child(2) button.MuiPaginationItem-page:not(.Mui-selected) {
-  @apply !inline-flex !text-xs font-bold lg:!text-sm wide:!text-base items-center justify-center gap-0 before:content-['of\00a0\00a0'] !text-neutral-1000 leading-[normal] overflow-visible min-w-[min-content] max-w-none shrink-0;
-}
-
-.MuiPagination-ul > li:nth-last-child(2) button.MuiPaginationItem-page.Mui-selected {
-  @apply before:content-none flex flex-nowrap;
-}
-
-/* Last page: "Page N of M" from AdminPaginationActions (button ::after Page is suppressed below). */
+/* Explicit "Page N of M" markup from AdminPaginationActions — single-space gaps, no pseudo-labels. */
 .AdminPagination-currentPageWrap {
-  @apply inline-flex min-w-min shrink-0 items-center gap-2 overflow-visible;
+  @apply inline-flex min-w-min shrink-0 items-center gap-x-1 overflow-visible;
 }
 
-.AdminPagination-pageLabel {
-  @apply shrink-0 whitespace-nowrap text-xs font-bold text-neutral-1000 lg:!text-sm wide:!text-base leading-[normal];
-}
-
-.AdminPagination-currentPageWrap .MuiPaginationItem-page.Mui-selected::after {
-  @apply !hidden !content-none !static !m-0;
-}
-
+.AdminPagination-pageLabel,
 .AdminPagination-ofTotal {
   @apply shrink-0 whitespace-nowrap text-xs font-bold text-neutral-1000 lg:!text-sm wide:!text-base leading-[normal];
 }
 
-/* When "next" is not rendered, the current page is the last <li>. */
-.MuiPagination-text li:last-child button.MuiPaginationItem-page.Mui-selected {
-  @apply !inline-flex items-center justify-center before:content-none;
+.AdminPagination-currentPageWrap .MuiPaginationItem-page.Mui-selected::after,
+.AdminPagination-currentPageWrap .MuiPaginationItem-page.Mui-selected::before {
+  @apply !hidden !content-none;
 }
 
 .MuiPaginationItem-ellipsis{
@@ -409,8 +385,7 @@
 }
 
 .MuiPagination-ul {
-  display: flex;
-  flex-wrap: wrap;
+  @apply flex flex-wrap items-center gap-x-2;
 }
 
 .MuiPagination-ul > li:first-child {

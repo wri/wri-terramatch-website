@@ -26,9 +26,8 @@ export interface AdminPaginationActionsProps extends PaginationProps {
 }
 
 /**
- * Same as ra-ui-materialui PaginationActions. On the last page, the selected item
- * shows an explicit "Page N of M" row (label + page button + suffix) so layout CSS
- * does not strip the prefix or total.
+ * Custom PaginationActions: always renders "Page N of M" via explicit markup so spacing
+ * stays consistent on every page (no CSS ::before/::after pseudo-labels).
  */
 export const AdminPaginationActions: FC<AdminPaginationActionsProps> = memo(props => {
   const { page, rowsPerPage, count, onPageChange, size = "small", className, ...rest } = props;
@@ -36,24 +35,26 @@ export const AdminPaginationActions: FC<AdminPaginationActionsProps> = memo(prop
 
   const nbPages = Math.ceil(count / rowsPerPage) || 1;
   const safePage = Math.min(page, Math.max(0, nbPages - 1));
-  const isLastPage = safePage >= nbPages - 1;
 
   const renderItem = useCallback(
     (item: PaginationRenderItemParams) => {
-      const element = <PaginationItem {...item} />;
-      if (item.type === "page" && item.selected && isLastPage) {
-        // Full "Page N of M" in one flex row: the legacy ::after "Page" on the button breaks once wrapped.
-        return (
-          <span className="AdminPagination-currentPageWrap">
-            <span className="AdminPagination-pageLabel">Page</span>
-            {element}
-            <span className="AdminPagination-ofTotal">{`of ${nbPages}`}</span>
-          </span>
-        );
+      if (item.type === "page") {
+        if (item.selected) {
+          return (
+            <span className="AdminPagination-currentPageWrap">
+              <span className="AdminPagination-pageLabel">Page</span>
+              <PaginationItem {...item} />
+              <span className="AdminPagination-ofTotal">{`of ${nbPages}`}</span>
+            </span>
+          );
+        }
+
+        return null;
       }
-      return element;
+
+      return <PaginationItem {...item} />;
     },
-    [isLastPage, nbPages]
+    [nbPages]
   );
 
   if (nbPages === 1) {
