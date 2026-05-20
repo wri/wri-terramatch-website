@@ -71,11 +71,12 @@ export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, site
   const handleEdit = useCallback(() => {
     openPolygonEditDrawer({
       polygonUuid: sitePolygon?.polygonUuid ?? undefined,
-      polygonName: metrics.polygonName
+      polygonName: metrics.polygonName,
+      sitePolygon
     });
     setOpen(false);
     popup?.remove();
-  }, [metrics.polygonName, popup, sitePolygon?.polygonUuid]);
+  }, [metrics.polygonName, popup, sitePolygon]);
 
   return (
     <>

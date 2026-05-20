@@ -645,178 +645,178 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, []);
 
   return (
-    <PageContent className="bg-theme-neutral-100">
-      <PageItem
-        title={t("Polygons")}
-        flexProps={{ width: "100%" }}
-        buttonProps={{
-          variant: "secondary",
-          size: "small",
-          children: t("Download All"),
-          leftIcon: <DownloadIcon />
-        }}
-        multiActionButtonProps={{
-          mainActionLabel: t("Add"),
-          size: "small",
-          leftIcon: <PlusIcon />,
-          mainActionOnClick: () => {},
-          otherActions: [
-            {
-              label: t("Draw Polygon"),
-              onClick: () => {},
-              value: "draft"
-            },
-            {
-              label: t("Upload"),
-              onClick: () => setShowUploadModal(true),
-              value: "save-close"
-            }
-          ],
-          variant: "primary"
-        }}
-      >
-        <PolygonToolbar
-          resultCount={polygonRows.length}
-          polygonSearch={polygonSearch}
-          polygonFilters={polygonFilters}
-          activeFilterLabels={activeFilterLabels}
-          onSearchChange={setPolygonSearch}
-          onApplyFilters={setPolygonFilters}
-          onClearFilters={handleClearPolygonFilters}
-        />
-      </PageItem>
-      {selectedRows != null && selectedRows.length > 0 && (
-        <Box position={"fixed"} zIndex={"999999"} bottom={0} left={3} right={3}>
-          <BulkActionToolbar
-            ButtonCancel={{
-              children: "Cancel"
-            }}
-            ButtonDelete={{
-              children: "Delete",
-              onClick: () => {
-                setDeletePolygonModal(true);
+    <PolygonEditDrawerProvider polygons={polygonsData} onRefetchPolygons={refetchPolygons}>
+      <PageContent className="bg-theme-neutral-100">
+        <PageItem
+          title={t("Polygons")}
+          flexProps={{ width: "100%" }}
+          buttonProps={{
+            variant: "secondary",
+            size: "small",
+            children: t("Download All"),
+            leftIcon: <DownloadIcon />
+          }}
+          multiActionButtonProps={{
+            mainActionLabel: t("Add"),
+            size: "small",
+            leftIcon: <PlusIcon />,
+            mainActionOnClick: () => {},
+            otherActions: [
+              {
+                label: t("Draw Polygon"),
+                onClick: () => {},
+                value: "draft"
+              },
+              {
+                label: t("Upload"),
+                onClick: () => setShowUploadModal(true),
+                value: "save-close"
               }
-            }}
-            items={selectedRows.length + ""}
-            primaryButtonProps={{
-              children: "Download"
-            }}
-            quantityButtonProps={{
-              children: "Run Validation"
-            }}
-            secondaryButtonProps={{
-              children: "Edit Details"
-            }}
-            tertiaryButtonProps={{
-              children: "Submit",
-              onClick: () => {
-                setSubmitPolygonsModal(true);
-              }
-            }}
+            ],
+            variant: "primary"
+          }}
+        >
+          <PolygonToolbar
+            resultCount={polygonRows.length}
+            polygonSearch={polygonSearch}
+            polygonFilters={polygonFilters}
+            activeFilterLabels={activeFilterLabels}
+            onSearchChange={setPolygonSearch}
+            onApplyFilters={setPolygonFilters}
+            onClearFilters={handleClearPolygonFilters}
           />
-        </Box>
-      )}
-      <UploadPolygons open={showUploadModal} onOpenChange={setShowUploadModal} />
-      <MatchingPolygonsFound open={showMatchingPolygonsFoundModal} onOpenChange={setMatchingPolygonsFoundModal} />
-      <PolygonSubmitted
-        open={showPolygonSubmittedModal}
-        onOpenChange={setPolygonSubmittedModal}
-        polygons={"Polygon Name A"}
-      />
-      <PolygonSubmitted
-        open={showPolygonSubmittedModal}
-        onOpenChange={setPolygonSubmittedModal}
-        polygons={["Polygon Name A", "polygon Name B"]}
-      />
-      <SubmitPolygons open={showSubmitPolygonsModal} onOpenChange={setSubmitPolygonsModal} />
-      <DeletePolygon open={showDeletePolygonModal} onOpenChange={setDeletePolygonModal} polygons={selectedRows} />
-      <UploadError open={showUploadErrorModal} onOpenChange={setUploadErrorModal} />
-      <UploadPhotos open={showUploadPhotosModal} onOpenChange={setUploadPhotosModal} />
-
-      <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
-        <PolygonsMap
-          entityModel={site}
-          type="sites"
-          className="max-h-full overflow-hidden !rounded-[0.25rem_0.25rem_0_0]"
-          polygons={polygonsData}
-          onRefetchPolygons={refetchPolygons}
-          polygonTableHighlight={polygonTableHighlight}
-          overlapPolygons={overlapPolygons}
-        />
-      </ResizeBox>
-      {polygonRows?.length === 0 ? (
-        <Box>
-          <Text textStyle={"400-bold"}>No results found</Text>
-          <Text textStyle={"400"}>We couldn’t find any site areas matching your search. Try a different keyword.</Text>
-        </Box>
-      ) : (
-        <>
-          <Flex className="items-center justify-between gap-4">
-            <Flex className="items-center gap-4">
-              <MetricCard
-                color="secondary.600"
-                icon={<TreeIcon />}
-                variant="medium"
-                title={t("Trees Planted")}
-                progress={totalTreesPlanted}
-                goal={Math.max(totalTreesPlanted, 1)}
-                selection={hasPolygonSelection ? selectedTreesPlanted : undefined}
-                tooltipContent={t("Trees Planted")}
-                className="min-w-[12.5rem]"
-              />
-              <MetricCard
-                color="secondary.700"
-                icon={<AreaHectaresIcon />}
-                variant="medium"
-                title={t("Restoration Area")}
-                progress={totalRestorationAreaHa}
-                goal={Math.max(totalRestorationAreaHa, 1)}
-                selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
-                tooltipContent={t("Restoration Area")}
-                className="min-w-[12.5rem]"
-              />
-            </Flex>
-            {polygonsWithOverlapCount > 0 && (
-              <InlineMessage
-                actionLabel={t("Selected Polygons")}
-                isButtonRight
-                size="small"
-                label={
-                  polygonsWithOverlapCount === 1
-                    ? t("1 overlap detected")
-                    : t("{count} overlaps detected", { count: polygonsWithOverlapCount })
+        </PageItem>
+        {selectedRows != null && selectedRows.length > 0 && (
+          <Box position={"fixed"} zIndex={"999999"} bottom={0} left={3} right={3}>
+            <BulkActionToolbar
+              ButtonCancel={{
+                children: "Cancel"
+              }}
+              ButtonDelete={{
+                children: "Delete",
+                onClick: () => {
+                  setDeletePolygonModal(true);
                 }
-                onActionClick={() => {
-                  setPolygonFilters(current => ({ ...current, hasOverlap: true }));
-                }}
-                variant="error"
-              />
-            )}
-          </Flex>
-          <Box onMouseLeave={handleClearHover}>
-            <Table<PolygonTableRow>
-              css={getPolygonsTableStyles(isStickyActive)}
-              containerRef={tableContainerRef}
-              data={polygonRows}
-              columns={columns}
-              showPagination
-              pageSize={10}
-              selectable
-              selectedRows={selectedRows}
-              onAllItemsSelected={onAllItemsSelected}
-              renderRow={selectableRenderRow}
+              }}
+              items={selectedRows.length + ""}
+              primaryButtonProps={{
+                children: "Download"
+              }}
+              quantityButtonProps={{
+                children: "Run Validation"
+              }}
+              secondaryButtonProps={{
+                children: "Edit Details"
+              }}
+              tertiaryButtonProps={{
+                children: "Submit",
+                onClick: () => {
+                  setSubmitPolygonsModal(true);
+                }
+              }}
             />
           </Box>
-        </>
-      )}
-    </PageContent>
+        )}
+        <UploadPolygons open={showUploadModal} onOpenChange={setShowUploadModal} />
+        <MatchingPolygonsFound open={showMatchingPolygonsFoundModal} onOpenChange={setMatchingPolygonsFoundModal} />
+        <PolygonSubmitted
+          open={showPolygonSubmittedModal}
+          onOpenChange={setPolygonSubmittedModal}
+          polygons={"Polygon Name A"}
+        />
+        <PolygonSubmitted
+          open={showPolygonSubmittedModal}
+          onOpenChange={setPolygonSubmittedModal}
+          polygons={["Polygon Name A", "polygon Name B"]}
+        />
+        <SubmitPolygons open={showSubmitPolygonsModal} onOpenChange={setSubmitPolygonsModal} />
+        <DeletePolygon open={showDeletePolygonModal} onOpenChange={setDeletePolygonModal} polygons={selectedRows} />
+        <UploadError open={showUploadErrorModal} onOpenChange={setUploadErrorModal} />
+        <UploadPhotos open={showUploadPhotosModal} onOpenChange={setUploadPhotosModal} />
+
+        <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
+          <PolygonsMap
+            entityModel={site}
+            type="sites"
+            className="max-h-full overflow-hidden !rounded-[0.25rem_0.25rem_0_0]"
+            polygons={polygonsData}
+            onRefetchPolygons={refetchPolygons}
+            polygonTableHighlight={polygonTableHighlight}
+            overlapPolygons={overlapPolygons}
+          />
+        </ResizeBox>
+        {polygonRows?.length === 0 ? (
+          <Box>
+            <Text textStyle={"400-bold"}>No results found</Text>
+            <Text textStyle={"400"}>
+              We couldn’t find any site areas matching your search. Try a different keyword.
+            </Text>
+          </Box>
+        ) : (
+          <>
+            <Flex className="items-center justify-between gap-4">
+              <Flex className="items-center gap-4">
+                <MetricCard
+                  color="secondary.600"
+                  icon={<TreeIcon />}
+                  variant="medium"
+                  title={t("Trees Planted")}
+                  progress={totalTreesPlanted}
+                  goal={Math.max(totalTreesPlanted, 1)}
+                  selection={hasPolygonSelection ? selectedTreesPlanted : undefined}
+                  tooltipContent={t("Trees Planted")}
+                  className="min-w-[12.5rem]"
+                />
+                <MetricCard
+                  color="secondary.700"
+                  icon={<AreaHectaresIcon />}
+                  variant="medium"
+                  title={t("Restoration Area")}
+                  progress={totalRestorationAreaHa}
+                  goal={Math.max(totalRestorationAreaHa, 1)}
+                  selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
+                  tooltipContent={t("Restoration Area")}
+                  className="min-w-[12.5rem]"
+                />
+              </Flex>
+              {polygonsWithOverlapCount > 0 && (
+                <InlineMessage
+                  actionLabel={t("Selected Polygons")}
+                  isButtonRight
+                  size="small"
+                  label={
+                    polygonsWithOverlapCount === 1
+                      ? t("1 overlap detected")
+                      : t("{count} overlaps detected", { count: polygonsWithOverlapCount })
+                  }
+                  onActionClick={() => {
+                    setPolygonFilters(current => ({ ...current, hasOverlap: true }));
+                  }}
+                  variant="error"
+                />
+              )}
+            </Flex>
+            <Box onMouseLeave={handleClearHover}>
+              <Table<PolygonTableRow>
+                css={getPolygonsTableStyles(isStickyActive)}
+                containerRef={tableContainerRef}
+                data={polygonRows}
+                columns={columns}
+                showPagination
+                pageSize={10}
+                selectable
+                selectedRows={selectedRows}
+                onAllItemsSelected={onAllItemsSelected}
+                renderRow={selectableRenderRow}
+              />
+            </Box>
+          </>
+        )}
+      </PageContent>
+    </PolygonEditDrawerProvider>
   );
 };
 
-const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => (
-  <PolygonEditDrawerProvider>
-    <SitePolygonsTabContent site={site} />
-  </PolygonEditDrawerProvider>
-);
+const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => <SitePolygonsTabContent site={site} />;
 
 export default SitePolygonsTab;

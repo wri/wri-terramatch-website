@@ -97,6 +97,7 @@ export interface BaseMapProps {
     onPolygonClickedFromMap?: (uuid: string) => void;
   };
   overlapPolygons?: OverlapPolygonPoint[];
+  autoEditPolygon?: boolean;
 }
 
 export interface DashboardMapExtras {
@@ -257,6 +258,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setShouldRefetchMediaData,
     statusSelectedPolygon,
     setStatusSelectedPolygon,
+    setPolygonGeometryEdit,
     selectedPolygonsInCheckbox
   } = contextMapArea;
 
@@ -484,11 +486,28 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setShouldRefetchPolygonData,
     statusSelectedPolygon,
     setStatusSelectedPolygon,
+    setPolygonGeometryEdit,
     t,
     showLoader,
     hideLoader,
     openNotification
   });
+
+  const lastAutoEditPolygonRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (props.autoEditPolygon !== true || polygonFromMap?.isOpen !== true || polygonFromMap.uuid === "") {
+      lastAutoEditPolygonRef.current = null;
+      return;
+    }
+
+    if (lastAutoEditPolygonRef.current === polygonFromMap.uuid) {
+      return;
+    }
+
+    lastAutoEditPolygonRef.current = polygonFromMap.uuid;
+    setIsEditing(true);
+    void handleEditPolygon();
+  }, [handleEditPolygon, polygonFromMap?.isOpen, polygonFromMap?.uuid, props.autoEditPolygon]);
 
   const { isFullscreen, toggleFullscreen } = useMapFullscreen({ mapContainer, map });
 

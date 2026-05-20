@@ -120,16 +120,12 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   }, [polygons, setPolygonData]);
 
   useEffect(() => {
-    if (disabledPolygonPanel) {
-      setPolygonFromMap({ isOpen: false, uuid: "" });
-      return;
-    }
     const { isOpen, uuid } = editPolygon;
     setPolygonFromMap({ isOpen, uuid });
     if (isOpen) {
       setSelectedPolygonsInCheckbox([]);
     }
-  }, [editPolygon, disabledPolygonPanel, setSelectedPolygonsInCheckbox]);
+  }, [editPolygon, setSelectedPolygonsInCheckbox]);
 
   useValueChanged(shouldRefetchPolygonData, async () => {
     if (shouldRefetchPolygonData) {
@@ -182,6 +178,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         mediaFiles={mediaFiles}
         sitePolygonData={sitePolygonDataV3}
         disabledPolygonPanel={disabledPolygonPanel}
+        autoEditPolygon={editPolygon.isOpen}
         polygonTableHighlight={polygonTableHighlight}
         overlapPolygons={overlapPolygons}
       />

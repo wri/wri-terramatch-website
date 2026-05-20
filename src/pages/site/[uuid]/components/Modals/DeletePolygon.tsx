@@ -1,27 +1,40 @@
 import { Box, Flex, List, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons";
 
-import { PolygonTableRow } from "../../tabs/Polygons";
+import type { PolygonTableRow } from "../../tabs/Polygons";
 
 export interface DeletePolygonProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   polygons: PolygonTableRow[];
+  onDelete?: () => void | Promise<void>;
 }
-const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons }) => {
+const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, onDelete }) => {
   const t = useT();
+  const [isDeleting, setIsDeleting] = useState(false);
   const handleClose = useCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
 
-  const handleSave = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
+  const handleSave = useCallback(async () => {
+    if (onDelete == null) {
+      onOpenChange(false);
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      await onDelete();
+      onOpenChange(false);
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [onDelete, onOpenChange]);
 
   useEffect(() => {
     if (!open) {
@@ -101,7 +114,8 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons })
               id: "delete",
               children: t("Delete"),
               className: "!border !w-[50%] !border-theme-error-300 !bg-theme-error-100 !text-theme-error-900",
-              onClick: handleSave
+              disabled: isDeleting,
+              onClick: () => void handleSave()
             }
           ]}
         />

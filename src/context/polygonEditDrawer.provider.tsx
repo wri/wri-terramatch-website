@@ -1,5 +1,7 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
+import { useMapAreaContext } from "@/context/mapArea.provider";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import PolygonEditDrawer from "@/pages/site/[uuid]/components/PolygonEditDrawer";
 
 import type { PolygonEditDrawerPolygon } from "./polygonEditDrawer.types";
@@ -36,23 +38,50 @@ export const usePolygonEditDrawer = (): PolygonEditDrawerContextValue => {
 
 type PolygonEditDrawerProviderProps = {
   children: ReactNode;
+  polygons?: SitePolygonLightDto[];
+  onRefetchPolygons?: () => unknown | Promise<unknown>;
 };
 
-export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({ children }) => {
+export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
+  children,
+  polygons = [],
+  onRefetchPolygons
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [polygon, setPolygon] = useState<PolygonEditDrawerPolygon>({});
+  const { setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit } = useMapAreaContext();
 
-  const openPolygonEdit = useCallback((params?: PolygonEditDrawerPolygon) => {
-    setPolygon({
-      polygonUuid: params?.polygonUuid,
-      polygonName: params?.polygonName
-    });
-    setIsOpen(true);
-  }, []);
+  const openPolygonEdit = useCallback(
+    (params?: PolygonEditDrawerPolygon) => {
+      const polygonUuid = params?.polygonUuid ?? params?.sitePolygon?.polygonUuid ?? undefined;
+      const primaryUuid = params?.sitePolygon?.primaryUuid;
+      setPolygon({
+        polygonUuid,
+        polygonName: params?.polygonName,
+        sitePolygon: params?.sitePolygon
+      });
+      if (polygonUuid != null && polygonUuid !== "") {
+        setEditPolygon({ isOpen: true, uuid: polygonUuid, primaryUuid: primaryUuid ?? undefined });
+      }
+      setIsOpen(true);
+    },
+    [setEditPolygon]
+  );
 
   const closePolygonEdit = useCallback(() => {
     setIsOpen(false);
     setPolygon({});
+    setIsUserDrawingEnabled(false);
+    setEditPolygon({ isOpen: false, uuid: "" });
+    setPolygonGeometryEdit(undefined);
+  }, [setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit]);
+
+  const setSelectedPolygon = useCallback((sitePolygon: SitePolygonLightDto) => {
+    setPolygon({
+      polygonUuid: sitePolygon.polygonUuid ?? undefined,
+      polygonName: sitePolygon.name ?? undefined,
+      sitePolygon
+    });
   }, []);
 
   const setOpen = useCallback(
@@ -84,10 +113,28 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({ 
     [closePolygonEdit, isOpen, openPolygonEdit, polygon, setOpen]
   );
 
+  const selectedPolygon = useMemo(() => {
+    if (polygon.polygonUuid == null || polygon.polygonUuid === "") {
+      return polygon.sitePolygon;
+    }
+
+    return (
+      polygons.find(item => item.polygonUuid === polygon.polygonUuid || item.uuid === polygon.sitePolygon?.uuid) ??
+      polygon.sitePolygon
+    );
+  }, [polygon, polygons]);
+
   return (
     <PolygonEditDrawerContext.Provider value={value}>
       {children}
-      <PolygonEditDrawer open={isOpen} polygon={polygon} onOpenChange={setOpen} />
+      <PolygonEditDrawer
+        open={isOpen}
+        polygon={polygon}
+        selectedPolygon={selectedPolygon}
+        onOpenChange={setOpen}
+        onSaved={onRefetchPolygons}
+        onPolygonUpdated={setSelectedPolygon}
+      />
     </PolygonEditDrawerContext.Provider>
   );
 };

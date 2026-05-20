@@ -13,6 +13,13 @@ export function isMapAreaSiteFullDto(siteData: MapAreaSiteData | undefined): sit
 
 export type SelectedPolygonVersionState = SitePolygonLightDto;
 
+export type PolygonGeometryEditState = {
+  polygonUuid: string;
+  originalGeometry?: GeoJSON.Geometry | null;
+  currentGeometry?: GeoJSON.Geometry | null;
+  isDirty: boolean;
+};
+
 type MapAreaType = {
   isUserDrawingEnabled: boolean;
   setIsUserDrawingEnabled: (arg0: boolean) => void;
@@ -44,6 +51,8 @@ type MapAreaType = {
   setPolygonCriteriaMap: (value: Record<string, unknown>) => void;
   polygonData: SitePolygonLightDto[];
   setPolygonData: (value: SitePolygonLightDto[]) => void;
+  polygonGeometryEdit: PolygonGeometryEditState | undefined;
+  setPolygonGeometryEdit: (value: PolygonGeometryEditState | undefined) => void;
   validFilter: string;
   setValidFilter: (value: string) => void;
   resetSiteMapInteractionState: () => void;
@@ -80,6 +89,8 @@ const defaultValue: MapAreaType = {
   setPolygonCriteriaMap: () => {},
   polygonData: [],
   setPolygonData: () => {},
+  polygonGeometryEdit: undefined,
+  setPolygonGeometryEdit: () => {},
   validFilter: "all",
   setValidFilter: () => {},
   resetSiteMapInteractionState: () => {}
@@ -102,6 +113,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [selectedPolygonsInCheckbox, setSelectedPolygonsInCheckbox] = useState<string[]>([]);
   const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, unknown>>({});
   const [polygonData, setPolygonData] = useState<SitePolygonLightDto[]>([]);
+  const [polygonGeometryEdit, setPolygonGeometryEdit] = useState<PolygonGeometryEditState | undefined>();
   const [validFilter, setValidFilter] = useState<string>("all");
   const [editPolygon, setEditPolygonInternal] = useState<EditPolygonState>({
     isOpen: false,
@@ -125,6 +137,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setStatusSelectedPolygon("");
     setSelectedPolygonsInCheckbox([]);
     setHasOverlaps(false);
+    setPolygonGeometryEdit(undefined);
   }, []);
 
   const contextValue: MapAreaType = {
@@ -158,6 +171,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonCriteriaMap,
     polygonData,
     setPolygonData,
+    polygonGeometryEdit,
+    setPolygonGeometryEdit,
     validFilter,
     setValidFilter,
     resetSiteMapInteractionState
