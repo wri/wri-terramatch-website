@@ -7,12 +7,12 @@ interface NotificationIndicatorProps {
   bgColor?: string;
 }
 
-const NotificationIndicator: FC<NotificationIndicatorProps> = ({ children, variant = "neutral", bgColor }) => {
-  const BG_COLOR_MAP: Record<"alert" | "neutral", string> = {
-    alert: "error.500",
-    neutral: "primary.900"
-  };
+const BG_COLOR_MAP: Record<"alert" | "neutral", string> = {
+  alert: "error.500",
+  neutral: "primary.900"
+};
 
+const NotificationIndicator: FC<NotificationIndicatorProps> = ({ children, variant = "neutral", bgColor }) => {
   return (
     <Box
       rounded="full"

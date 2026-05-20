@@ -25,7 +25,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({ open, polygon, onOpenCh
     <Drawer open={open} closeOnInteractOutside={false} onOpenChange={onOpenChange} size="md" placement="start">
       {({ onClose }) => (
         <FilterPanel
-          title={polygon?.polygonName ?? t("-")}
+          title={polygon?.polygonName ?? "-"}
           variant="fixed"
           onClose={onClose}
           className="h-screen w-full"
@@ -67,16 +67,12 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({ open, polygon, onOpenCh
                 {
                   children: t("Cancel"),
                   variant: "secondary",
-                  onClick: () => {
-                    onClose();
-                  }
+                  onClick: onClose
                 },
                 {
                   children: t("Save"),
                   variant: "primary",
-                  onClick: () => {
-                    onClose();
-                  }
+                  onClick: onClose
                 }
               ]}
             />

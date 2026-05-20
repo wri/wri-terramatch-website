@@ -11,8 +11,8 @@ const SimpleDivider: FC<SimpleDividerProps> = props => {
   return (
     <Box
       className={twMerge("shrink-0", className)}
-      width={width ? width : variant === "horizontal" ? "100%" : "0.063rem"}
-      height={height ? height : variant === "vertical" ? "100%" : "0.063rem"}
+      width={width != null ? width : variant === "horizontal" ? "100%" : "0.063rem"}
+      height={height != null ? height : variant === "vertical" ? "100%" : "0.063rem"}
       backgroundColor={backgroundColor}
       {...rest}
     />

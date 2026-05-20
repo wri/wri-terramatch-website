@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import { useAuditStatuses } from "@/connections/AuditStatus";
 import { bulkUpdateSitePolygonStatus } from "@/connections/SitePolygons";
@@ -68,14 +68,14 @@ export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, site
     setShouldRefetchPolygonData?.(true);
   };
 
-  const handleEdit = () => {
+  const handleEdit = useCallback(() => {
     openPolygonEditDrawer({
       polygonUuid: sitePolygon?.polygonUuid ?? undefined,
       polygonName: metrics.polygonName
     });
     setOpen(false);
     popup?.remove();
-  };
+  }, [metrics.polygonName, popup, sitePolygon?.polygonUuid]);
 
   return (
     <>
