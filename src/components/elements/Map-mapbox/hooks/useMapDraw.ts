@@ -21,6 +21,7 @@ import {
 import { removePopups } from "../interactions/popups";
 import { addSourcesToLayers } from "../layers/polygonLayers";
 import { DashboardGetProjectsData, PolygonFromMapState } from "../Map.d";
+import { applyMapDrawStatusStyles, isPolygonDrawStatus, PolygonDrawStatus } from "../mapStyle";
 import { filterPolygonFromLayers } from "./useMapLayers";
 
 type UseMapDrawParams = {
@@ -38,6 +39,7 @@ type UseMapDrawParams = {
   reloadSiteData?: () => any;
   setShouldRefetchPolygonData?: (v: boolean) => void;
   setStatusSelectedPolygon?: (v: string) => void;
+  statusSelectedPolygon?: string;
   t: (key: string) => string;
   showLoader: () => void;
   hideLoader: () => void;
@@ -59,6 +61,7 @@ export function useMapDraw({
   reloadSiteData,
   setShouldRefetchPolygonData,
   setStatusSelectedPolygon,
+  statusSelectedPolygon,
   t,
   showLoader,
   hideLoader,
@@ -67,6 +70,7 @@ export function useMapDraw({
   useValueChanged(isUserDrawingEnabled, () => {
     if (map.current == null || draw.current == null) return;
     if (isUserDrawingEnabled) {
+      applyMapDrawStatusStyles(map.current);
       draw.current.changeMode("draw_polygon");
       map.current.getCanvas().style.cursor = "crosshair";
       if (formMap && polygonFromMap?.uuid) {
@@ -102,6 +106,9 @@ export function useMapDraw({
     const polygonuuid = polygonFromMap.uuid;
     const isProjectPolygon = isProjectPitchesEntityName(polygonFromMap?.entityName ?? "");
     const projectPitchUuid = polygonFromMap?.projectPitchUuid;
+    const rawStatus =
+      sitePolygonData?.find(polygon => polygon.polygonUuid === polygonuuid)?.status ?? statusSelectedPolygon;
+    const polygonStatus: PolygonDrawStatus | undefined = isPolygonDrawStatus(rawStatus) ? rawStatus : undefined;
 
     try {
       const geometry = await fetchPolygonGeometry(polygonuuid, true, isProjectPolygon ? projectPitchUuid : undefined);
@@ -110,14 +117,8 @@ export function useMapDraw({
         return;
       }
       if (map.current != null && draw.current != null) {
-        addGeojsonToDraw(
-          geometry,
-          polygonuuid,
-          () => {
-            if (map.current != null) filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
-          },
-          draw.current
-        );
+        filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
+        addGeojsonToDraw(geometry, polygonuuid, () => {}, draw.current, map.current, polygonStatus);
       }
     } catch (error) {
       Log.error("Error fetching polygon geometry:", error);
@@ -129,7 +130,9 @@ export function useMapDraw({
     polygonFromMap?.uuid,
     polygonFromMap?.entityName,
     polygonFromMap?.projectPitchUuid,
-    polygonsData
+    polygonsData,
+    sitePolygonData,
+    statusSelectedPolygon
   ]);
 
   const onSaveEdit = useCallback(async () => {
