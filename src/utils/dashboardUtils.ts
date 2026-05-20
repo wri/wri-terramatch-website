@@ -51,6 +51,7 @@ const FRAMEWORK_NAME_MAP = {
   enterprises: "TerraFund Enterprises",
   "terrafund-cohort-1": "TerraFund Cohort One",
   "terrafund-cohort-2": "TerraFund Cohort Two",
+  "terrafund-cohort-3": "TerraFund Cohort Three",
   "terrafund-3": "TerraFund Cohort Three",
   "fundo-flora-cohort-1": "Fundo Flora Cohort One"
 };
@@ -207,6 +208,7 @@ export const cohortNames = {
   "terrafund-landscapes": "TerraFund Landscapes",
   "terrafund-cohort-1": "TerraFund Cohort One",
   "terrafund-cohort-2": "TerraFund Cohort Two",
+  "terrafund-cohort-3": "TerraFund Cohort Three",
   "terrafund-3": "TerraFund Cohort Three",
   hbf: "HBF",
   "epa-ghana-pilot": "EPA-Ghana Pilot",
