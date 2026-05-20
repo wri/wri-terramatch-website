@@ -17,10 +17,7 @@ import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { DownloadIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 
-interface PolygonEditContentProps {
-  // activeTab: string;
-}
-const PolygonEditContent: FC<PolygonEditContentProps> = () => {
+const PolygonEditContent: FC = () => {
   const t = useT();
   const mockedOptions = [
     {
@@ -36,6 +33,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = () => {
       value: "option-3"
     }
   ];
+
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
       <Flex className="min-h-0 flex-1 flex-col gap-2 overflow-auto pr-2">
@@ -85,16 +83,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = () => {
               disabled
               units={[
                 {
-                  label: t("kg"),
-                  value: "kg"
-                },
-                {
-                  label: t("g"),
-                  value: "g"
-                },
-                {
-                  label: t("lb"),
-                  value: "lb"
+                  label: t("ha"),
+                  value: "ha"
                 }
               ]}
             />

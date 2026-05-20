@@ -40,10 +40,6 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
     await onSubmit();
   }, [onSubmit, submitDisabled]);
 
-  const handleEdit = useCallback(() => {
-    onEdit?.();
-  }, [onEdit]);
-
   return (
     <Grid templateColumns="repeat(3, 1fr)" gap={3} width="100%">
       <Button
@@ -55,7 +51,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
       >
         {t("Download")}
       </Button>
-      <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={handleEdit}>
+      <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit}>
         {t("Edit")}
       </Button>
       <Button variant="primary" size="small" onClick={() => void handleSubmit()} disabled={submitDisabled}>

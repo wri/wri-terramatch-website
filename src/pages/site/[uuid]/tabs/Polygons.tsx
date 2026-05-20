@@ -10,7 +10,7 @@ import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
-import { PolygonEditDrawerProvider, usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
+import { PolygonEditDrawerProvider } from "@/context/polygonEditDrawer.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonsIndexQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { useDate } from "@/hooks/useDate";
@@ -286,7 +286,6 @@ const PolygonRow = memo(PolygonRowComponent);
 const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
-  const { openPolygonEdit } = usePolygonEditDrawer();
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showMatchingPolygonsFoundModal, setMatchingPolygonsFoundModal] = useState(false);
@@ -660,23 +659,16 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           mainActionLabel: t("Add"),
           size: "small",
           leftIcon: <PlusIcon />,
-          mainActionOnClick: () => {
-            openPolygonEdit();
-          },
+          mainActionOnClick: () => {},
           otherActions: [
             {
               label: t("Draw Polygon"),
-              onClick: () => {
-                openPolygonEdit();
-              },
+              onClick: () => {},
               value: "draft"
             },
             {
               label: t("Upload"),
-              onClick: () => {
-                setShowUploadModal(true);
-                openPolygonEdit();
-              },
+              onClick: () => setShowUploadModal(true),
               value: "save-close"
             }
           ],
