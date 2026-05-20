@@ -44,7 +44,6 @@ import {
   WetlandIcon,
   WoodlotIcon
 } from "@/redesignComponents/foundations/Icons";
-import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
@@ -61,6 +60,7 @@ import SubmitPolygons from "../components/Modals/SubmitPolygons";
 import UploadError from "../components/Modals/UploadError";
 import UploadPhotos from "../components/Modals/UploadPhotos";
 import UploadPolygons from "../components/Modals/UploadPolygons";
+import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import {
   EMPTY_POLYGON_FILTERS,
   PolygonFilterState,
@@ -686,37 +686,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             onClearFilters={handleClearPolygonFilters}
           />
         </PageItem>
-        {selectedRows != null && selectedRows.length > 0 && (
-          <Box position={"fixed"} zIndex={"999999"} bottom={0} left={3} right={3}>
-            <BulkActionToolbar
-              ButtonCancel={{
-                children: "Cancel"
-              }}
-              ButtonDelete={{
-                children: "Delete",
-                onClick: () => {
-                  setDeletePolygonModal(true);
-                }
-              }}
-              items={selectedRows.length + ""}
-              primaryButtonProps={{
-                children: "Download"
-              }}
-              quantityButtonProps={{
-                children: "Run Validation"
-              }}
-              secondaryButtonProps={{
-                children: "Edit Details"
-              }}
-              tertiaryButtonProps={{
-                children: "Submit",
-                onClick: () => {
-                  setSubmitPolygonsModal(true);
-                }
-              }}
-            />
-          </Box>
-        )}
+        <PolygonBulkActionToolbar
+          visible={hasPolygonSelection}
+          itemCount={selectedRows.length}
+          onDelete={() => setDeletePolygonModal(true)}
+          onSubmit={() => setSubmitPolygonsModal(true)}
+        />
         <UploadPolygons open={showUploadModal} onOpenChange={setShowUploadModal} />
         <MatchingPolygonsFound open={showMatchingPolygonsFoundModal} onOpenChange={setMatchingPolygonsFoundModal} />
         <PolygonSubmitted

@@ -559,7 +559,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             renderRow={row => (
               <TableRow key={row.uuid}>
                 <TableCell>
-                  <Text>{row.versionName ?? row.name ?? t("Unnamed Polygon")}</Text>
+                  <Text title={row.versionName ?? row.name ?? t("Unnamed Polygon")} className="max-w-[10rem] truncate">
+                    {row.versionName ?? row.name ?? t("Unnamed Polygon")}
+                  </Text>
                 </TableCell>
                 <TableCell>
                   <Text>{row.createdAt != null ? format(new Date(row.createdAt), "MM/dd/yyyy") : "-"}</Text>
