@@ -21,8 +21,8 @@
 
 .no-ghost-dragging img,
 .no-ghost-dragging div,
-.no-ghost-dragging>img,
-.no-ghost-dragging>div {
+.no-ghost-dragging > img,
+.no-ghost-dragging > div {
   -webkit-user-drag: none;
   -moz-user-drag: none;
   -ms-user-drag: none;
@@ -37,4 +37,10 @@
 
 .chakra-slider__thumb {
   z-index: 2 !important;
+}
+
+.ds-date-picker-input-container,
+.ds-select-input-container,
+.ds-text-input-container {
+  margin-bottom: 0 !important;
 }

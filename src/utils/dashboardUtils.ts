@@ -51,7 +51,8 @@ const FRAMEWORK_NAME_MAP = {
   enterprises: "TerraFund Enterprises",
   "terrafund-cohort-1": "TerraFund Cohort One",
   "terrafund-cohort-2": "TerraFund Cohort Two",
-  "terrafund-3": "TerraFund Cohort Three"
+  "terrafund-3": "TerraFund Cohort Three",
+  "fundo-flora-cohort-1": "Fundo Flora Cohort One"
 };
 
 export const parseJobCreatedByType = (
@@ -208,7 +209,8 @@ export const cohortNames = {
   "terrafund-cohort-2": "TerraFund Cohort Two",
   "terrafund-3": "TerraFund Cohort Three",
   hbf: "HBF",
-  "epa-ghana-pilot": "EPA-Ghana Pilot"
+  "epa-ghana-pilot": "EPA-Ghana Pilot",
+  "fundo-flora-cohort-1": "Fundo Flora Cohort One"
 };
 export const formatNumberUS = (value: number) =>
   value ? (value >= 1000000 ? `${(value / 1000000).toFixed(2)}M` : value.toLocaleString("en-US")) : "";

@@ -12,6 +12,7 @@ import { useAuditStatuses } from "@/connections/AuditStatus";
 import { clipSinglePolygon } from "@/connections/PolygonClipping";
 import { bulkUpdateSitePolygonStatus, PolygonStatus } from "@/connections/SitePolygons";
 import { createPolygonValidation } from "@/connections/Validation";
+import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -35,9 +36,9 @@ import VersionHistory from "./components/VersionHistory";
 
 const statusColor: Record<string, string> = {
   draft: "bg-pinkCustom",
-  submitted: "bg-blue",
+  [POLYGON_PENDING_APPROVAL]: "bg-blue",
   approved: "bg-green",
-  "needs-more-information": "bg-tertiary-600"
+  [POLYGON_INFORMATION_REQUIRED]: "bg-tertiary-600"
 };
 
 export type PolygonDrawerTopTab = "attributes" | "polygonStatus" | "anrMonitoringPlots";

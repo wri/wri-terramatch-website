@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 
+import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { Option } from "@/types/common";
 
 export const getReportStatusOptions = (t: typeof useT | Function = (t: string) => t) =>
@@ -82,12 +83,12 @@ export const getPolygonOptions = (t: typeof useT | Function = (t: string) => t) 
       title: t("Approved Polygons")
     },
     {
-      value: "submitted",
-      title: t("Submitted Polygons")
+      value: POLYGON_PENDING_APPROVAL,
+      title: t("Pending Approval Polygons")
     },
     {
-      value: "needs-more-information",
-      title: t("Needs More Information Polygons")
+      value: POLYGON_INFORMATION_REQUIRED,
+      title: t("Information Required Polygons")
     },
     {
       value: "draft",

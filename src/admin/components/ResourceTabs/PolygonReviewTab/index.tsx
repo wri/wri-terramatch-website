@@ -37,6 +37,7 @@ import {
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
 import { bulkUpdateSitePolygonStatus, deleteSitePolygon, pruneSitePolygonsCache } from "@/connections/SitePolygons";
+import { PolygonStatus } from "@/constants/polygonStatuses";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -89,7 +90,7 @@ export type PolygonTotals = {
 };
 export interface IPolygonItem {
   id: string;
-  status: "draft" | "submitted" | "approved" | "needs-more-information";
+  status: PolygonStatus;
   label: string;
   uuid: string;
 }

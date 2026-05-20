@@ -29,24 +29,36 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
   const t = useT();
 
   const framework = site?.frameworkKey;
+  const treesFromReportsAnr = site.regeneratedTreesCount ?? 0;
+  const isCombinedTreesGrowingCard = framework === Framework.PPC || framework === Framework.HBF;
+  const treesGrowingCardProgress = isCombinedTreesGrowingCard
+    ? (site.treesPlantedCount ?? 0) + (site.seedsPlantedCount ?? 0) + treesFromReportsAnr
+    : site.treesPlantedCount ?? 0;
 
   const keyIndicatorsTooltipContentItem = useMemo(() => {
     return KEY_INDICATORS_TOOLTIP_CONTENT.find(content => content.frameworks.includes(site.frameworkKey!));
   }, [site.frameworkKey]);
 
-  const MAX_CARD = 5;
+  const ppcEstimatedTreesTooltip =
+    site.frameworkKey === Framework.PPC &&
+    keyIndicatorsTooltipContentItem &&
+    "estimatedTreesRestored" in keyIndicatorsTooltipContentItem
+      ? keyIndicatorsTooltipContentItem.estimatedTreesRestored
+      : null;
+
+  const maxCardsInRow = site.frameworkKey === Framework.PPC ? 4 : 5;
 
   return (
     <MetricCardsRow>
       <MetricCard
         title={t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}
-        progress={site.treesPlantedCount ?? 0}
+        progress={treesGrowingCardProgress}
         goal={0}
         variant={keyIndicatorsTooltipContentItem?.treesRestored.type as MetricCardVariant}
         icon={<TreeIcon />}
         color="secondary.600"
         type="treesRestored"
-        className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
+        className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}</b>
@@ -58,7 +70,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
       <ContextCondition frameworksHide={[Framework.PPC, Framework.HBF]}>
         <ContextCondition frameworksHide={ALL_TF.concat(Framework.EPA_GHANA_PILOT)}>
           <MetricCard
-            className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
+            className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
             title={t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}
             variant="large"
             progress={site.seedsPlantedCount ?? 0}
@@ -75,10 +87,10 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           />
         </ContextCondition>
         <MetricCard
-          className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
+          className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
           title={t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}
           variant="large"
-          progress={site.treesRegeneratingSpeciesCount ?? 0}
+          progress={treesFromReportsAnr}
           goal={0}
           icon={<RegenerationIcon />}
           tooltipContent={
@@ -91,7 +103,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           color="secondary.600"
         />
         <MetricCard
-          className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
+          className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
           title={t("Survival Rate")}
           variant="large"
           progress={site.lastReportedSurvivalRate ?? 0}
@@ -115,7 +127,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         icon={<AreaHectaresIcon />}
         color="secondary.700"
         type="hectaresRestored"
-        className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
+        className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.hectaresRestored.title}`)}</b>
@@ -132,7 +144,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           variant={keyIndicatorsTooltipContentItem?.jobsCreated.type as MetricCardVariant}
           icon={<JobsIcon />}
           type="jobsCreated"
-          className={METRIC_CARD_CLASS_NAME(MAX_CARD) + " !h-auto"}
+          className={METRIC_CARD_CLASS_NAME(maxCardsInRow) + " !h-auto"}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>
@@ -143,6 +155,25 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           frameworkKey={framework!}
         />
       </ContextCondition>
+      {ppcEstimatedTreesTooltip != null && (
+        <MetricCard
+          title={t(`${ppcEstimatedTreesTooltip.title}`)}
+          progress={Math.round(site.treesRestoredPpc ?? 0)}
+          goal={0}
+          variant="large"
+          icon={<TreeIcon />}
+          color="secondary.600"
+          type="estimatedTreesRestored"
+          className={`${METRIC_CARD_CLASS_NAME(maxCardsInRow)} !h-auto`}
+          tooltipContent={
+            <Box fontSize="14px" lineHeight="20px">
+              <b>{t(`${ppcEstimatedTreesTooltip.title}`)}</b>
+              <br />
+              {t(`${ppcEstimatedTreesTooltip.content}`)}
+            </Box>
+          }
+        />
+      )}
     </MetricCardsRow>
   );
 };

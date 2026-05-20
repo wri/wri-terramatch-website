@@ -10,6 +10,7 @@ import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
+import { PolygonEditDrawerProvider, usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonsIndexQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { useDate } from "@/hooks/useDate";
@@ -282,9 +283,10 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
 
 const PolygonRow = memo(PolygonRowComponent);
 
-const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
+const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
+  const { openPolygonEdit } = usePolygonEditDrawer();
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showMatchingPolygonsFoundModal, setMatchingPolygonsFoundModal] = useState(false);
@@ -658,17 +660,22 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
           mainActionLabel: t("Add"),
           size: "small",
           leftIcon: <PlusIcon />,
-          mainActionOnClick: () => {},
+          mainActionOnClick: () => {
+            openPolygonEdit();
+          },
           otherActions: [
             {
               label: t("Draw Polygon"),
-              onClick: () => {},
+              onClick: () => {
+                openPolygonEdit();
+              },
               value: "draft"
             },
             {
               label: t("Upload"),
               onClick: () => {
                 setShowUploadModal(true);
+                openPolygonEdit();
               },
               value: "save-close"
             }
@@ -813,5 +820,11 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     </PageContent>
   );
 };
+
+const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => (
+  <PolygonEditDrawerProvider>
+    <SitePolygonsTabContent site={site} />
+  </PolygonEditDrawerProvider>
+);
 
 export default SitePolygonsTab;

@@ -2,6 +2,8 @@ import { useMemo, useRef, useState } from "react";
 
 import { useAuditStatuses } from "@/connections/AuditStatus";
 import { bulkUpdateSitePolygonStatus } from "@/connections/SitePolygons";
+import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
+import { openPolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
@@ -54,7 +56,7 @@ export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, site
   }, [commentsCount, sitePolygon]);
 
   const sitePolygonStatus = sitePolygon?.status;
-  const submitDisabled = sitePolygonStatus === "submitted" || sitePolygonStatus === "approved";
+  const submitDisabled = sitePolygonStatus === POLYGON_PENDING_APPROVAL || sitePolygonStatus === POLYGON_APPROVED;
 
   const handleSubmit = async () => {
     if (submitDisabled || sitePolygon?.uuid == null || sitePolygon.uuid === "") {
@@ -62,8 +64,17 @@ export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, site
     }
     setOpen(false);
     popup?.remove();
-    await bulkUpdateSitePolygonStatus([sitePolygon.uuid], "submitted", "");
+    await bulkUpdateSitePolygonStatus([sitePolygon.uuid], POLYGON_PENDING_APPROVAL, "");
     setShouldRefetchPolygonData?.(true);
+  };
+
+  const handleEdit = () => {
+    openPolygonEditDrawer({
+      polygonUuid: sitePolygon?.polygonUuid ?? undefined,
+      polygonName: metrics.polygonName
+    });
+    setOpen(false);
+    popup?.remove();
   };
 
   return (
@@ -85,6 +96,7 @@ export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, site
             polygonName={metrics.polygonName}
             submitDisabled={submitDisabled}
             onSubmit={handleSubmit}
+            onEdit={handleEdit}
           />
         }
         placement="right"
