@@ -117,6 +117,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     setSelectedRowIds(new Set<string>());
   }, [setSelectedRowIds]);
 
+  const handleBulkDraw = useCallback(() => {
+    openPolygonEditDrawerForSitePolygon();
+  }, []);
+
   const handleBulkEditDetails = useCallback(() => {
     if (selectedRows.length === 0) {
       return;
@@ -268,7 +272,14 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             leftIcon: <PlusIcon />,
             mainActionOnClick: startDrawing,
             otherActions: [
-              { label: t("Draw Polygon"), onClick: startDrawing, value: "draw-polygon" },
+              {
+                label: t("Draw Polygon"),
+                onClick: () => {
+                  handleBulkDraw();
+                  startDrawing();
+                },
+                value: "draw-polygon"
+              },
               {
                 label: t("Upload"),
                 onClick: () => {

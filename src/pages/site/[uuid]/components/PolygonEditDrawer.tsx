@@ -67,7 +67,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     >
       {({ onClose }) => (
         <FilterPanel
-          title={polygon != null ? polygon?.polygonName ?? t("-") : t("New Polygon")}
+          title={polygon?.polygonUuid ? polygon?.polygonName ?? t("-") : t("New Polygon")}
           variant="fixed"
           onClose={onClose}
           className="h-screen w-full"
