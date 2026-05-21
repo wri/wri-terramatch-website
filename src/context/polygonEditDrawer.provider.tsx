@@ -36,19 +36,65 @@ export const usePolygonEditDrawer = (): PolygonEditDrawerContextValue => {
   return useContext(PolygonEditDrawerContext);
 };
 
+type RefetchPolygonsHandler = () => unknown | Promise<unknown>;
+
 type PolygonEditDrawerProviderProps = {
   children: ReactNode;
   polygons?: SitePolygonLightDto[];
-  onRefetchPolygons?: () => unknown | Promise<unknown>;
+  onRefetchPolygons?: RefetchPolygonsHandler;
+};
+
+type PolygonEditDrawerDataSyncProps = {
+  polygons?: SitePolygonLightDto[];
+  onRefetchPolygons?: RefetchPolygonsHandler;
+};
+
+type PolygonEditDrawerDataContextValue = {
+  setPolygons: (polygons: SitePolygonLightDto[]) => void;
+  setOnRefetchPolygons: (onRefetch?: RefetchPolygonsHandler) => void;
+};
+
+const PolygonEditDrawerDataContext = createContext<PolygonEditDrawerDataContextValue | null>(null);
+
+export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({ polygons = [], onRefetchPolygons }) => {
+  const dataContext = useContext(PolygonEditDrawerDataContext);
+
+  useEffect(() => {
+    dataContext?.setPolygons(polygons);
+  }, [dataContext, polygons]);
+
+  useEffect(() => {
+    dataContext?.setOnRefetchPolygons(onRefetchPolygons);
+  }, [dataContext, onRefetchPolygons]);
+
+  return null;
 };
 
 export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   children,
-  polygons = [],
-  onRefetchPolygons
+  polygons: polygonsProp = [],
+  onRefetchPolygons: onRefetchPolygonsProp
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [polygon, setPolygon] = useState<PolygonEditDrawerPolygon>({});
+  const [polygons, setPolygons] = useState(polygonsProp);
+  const [onRefetchPolygons, setOnRefetchPolygons] = useState<RefetchPolygonsHandler | undefined>(onRefetchPolygonsProp);
+
+  useEffect(() => {
+    setPolygons(polygonsProp);
+  }, [polygonsProp]);
+
+  useEffect(() => {
+    setOnRefetchPolygons(onRefetchPolygonsProp);
+  }, [onRefetchPolygonsProp]);
+
+  const dataContextValue = useMemo(
+    () => ({
+      setPolygons,
+      setOnRefetchPolygons
+    }),
+    []
+  );
   const { setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit } = useMapAreaContext();
 
   const openPolygonEdit = useCallback(
@@ -125,16 +171,18 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   }, [polygon, polygons]);
 
   return (
-    <PolygonEditDrawerContext.Provider value={value}>
-      {children}
-      <PolygonEditDrawer
-        open={isOpen}
-        polygon={polygon}
-        selectedPolygon={selectedPolygon}
-        onOpenChange={setOpen}
-        onSaved={onRefetchPolygons}
-        onPolygonUpdated={setSelectedPolygon}
-      />
-    </PolygonEditDrawerContext.Provider>
+    <PolygonEditDrawerDataContext.Provider value={dataContextValue}>
+      <PolygonEditDrawerContext.Provider value={value}>
+        {children}
+        <PolygonEditDrawer
+          open={isOpen}
+          polygon={polygon}
+          selectedPolygon={selectedPolygon}
+          onOpenChange={setOpen}
+          onSaved={onRefetchPolygons}
+          onPolygonUpdated={setSelectedPolygon}
+        />
+      </PolygonEditDrawerContext.Provider>
+    </PolygonEditDrawerDataContext.Provider>
   );
 };
