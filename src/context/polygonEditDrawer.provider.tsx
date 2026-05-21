@@ -8,16 +8,18 @@ export type { PolygonEditDrawerPolygon };
 
 type PolygonEditDrawerContextValue = {
   isOpen: boolean;
-  polygon: PolygonEditDrawerPolygon;
+  polygon: PolygonEditDrawerPolygon | null;
   openPolygonEdit: (params?: PolygonEditDrawerPolygon) => void;
+  openPolygonDraw: () => void;
   closePolygonEdit: () => void;
   setOpen: (open: boolean) => void;
 };
 
 const defaultContextValue: PolygonEditDrawerContextValue = {
   isOpen: false,
-  polygon: {},
+  polygon: null,
   openPolygonEdit: () => {},
+  openPolygonDraw: () => {},
   closePolygonEdit: () => {},
   setOpen: () => {}
 };
@@ -40,7 +42,7 @@ type PolygonEditDrawerProviderProps = {
 
 export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [polygon, setPolygon] = useState<PolygonEditDrawerPolygon>({});
+  const [polygon, setPolygon] = useState<PolygonEditDrawerPolygon | null>(null);
 
   const openPolygonEdit = useCallback((params?: PolygonEditDrawerPolygon) => {
     setPolygon({
@@ -48,6 +50,11 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({ 
       polygonName: params?.polygonName
     });
     setIsOpen(true);
+  }, []);
+
+  const openPolygonDraw = useCallback(() => {
+    setIsOpen(true);
+    setPolygon(null);
   }, []);
 
   const closePolygonEdit = useCallback(() => {
@@ -73,15 +80,23 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({ 
     };
   }, [openPolygonEdit]);
 
+  useEffect(() => {
+    openPolygonEditExternal = openPolygonDraw;
+    return () => {
+      openPolygonEditExternal = null;
+    };
+  }, [openPolygonDraw]);
+
   const value = useMemo(
     () => ({
       isOpen,
       polygon,
       openPolygonEdit,
+      openPolygonDraw,
       closePolygonEdit,
       setOpen
     }),
-    [closePolygonEdit, isOpen, openPolygonEdit, polygon, setOpen]
+    [closePolygonEdit, isOpen, openPolygonEdit, openPolygonDraw, polygon, setOpen]
   );
 
   return (
