@@ -9,13 +9,14 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import CollapsibleRow from "@/components/extensive/Modal/components/CollapsibleRow";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { TranslatedText } from "@/i18n/types";
 
-import { ModalProps } from "./Modal";
+import { ModalTranslatedProps } from "./Modal";
 import { ModalBaseSubmit } from "./ModalsBases";
 
-type ModalDeleteBulkPolygonsProps = Omit<ModalProps, "onClick"> & {
-  primaryButtonText?: string;
-  secondaryButtonText?: string;
+type ModalDeleteBulkPolygonsProps = Omit<ModalTranslatedProps, "onClick"> & {
+  primaryButtonText?: TranslatedText;
+  secondaryButtonText?: TranslatedText;
   onClose?: () => void;
   sitePolygonData: SitePolygonLightDto[];
   selectedPolygonsInCheckbox: string[];
@@ -116,12 +117,12 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
           />
         )}
         <div className="flex items-center justify-between">
-          <Text variant="text-24-bold">{t(title)}</Text>
+          <Text variant="text-24-bold">{title}</Text>
         </div>
         <div className="mb-2 flex items-center">
           {content != null && (
             <Text as="div" variant="text-12-light" className="my-1" containHtml>
-              {t(content)}
+              {content}
             </Text>
           )}
           <Text variant="text-14-bold" className="ml-auto flex items-center justify-end gap-2">

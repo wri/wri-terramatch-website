@@ -9,16 +9,17 @@ import Text from "@/components/elements/Text/Text";
 import { sitePolygonsConnection } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { useConnection } from "@/hooks/useConnection";
+import { TranslatedText } from "@/i18n/types";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
 import Icon, { IconNames } from "../Icon/Icon";
-import { ModalProps } from "./Modal";
+import { ModalTranslatedProps } from "./Modal";
 import { ModalBaseSubmit } from "./ModalsBases";
 
-type ModalFixOverlapsProps = ModalProps & {
-  primaryButtonText?: string;
-  secondaryButtonText?: string;
+type ModalFixOverlapsProps = ModalTranslatedProps & {
+  primaryButtonText?: TranslatedText;
+  secondaryButtonText?: TranslatedText;
   toggleButton?: boolean;
   status?: StatusEnum;
   onClose?: () => void;
@@ -143,11 +144,11 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
           />
         )}
         <div className="flex items-center justify-between">
-          <Text variant="text-24-bold">{t(title)}</Text>
+          <Text variant="text-24-bold">{title}</Text>
         </div>
         {content != null && (
           <Text as="div" variant="text-12-light" className="my-1" containHtml>
-            {t(content)}
+            {content}
           </Text>
         )}
 

@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import { TranslatedText } from "@/i18n/types";
 
 import Component from "./GoalProgressCardItem";
 
@@ -15,7 +16,7 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {
   args: {
     iconName: IconNames.TRASH_CIRCLE,
-    label: "Trash Removed ",
+    label: "Trash Removed" as TranslatedText,
     value: 530000
   }
 };

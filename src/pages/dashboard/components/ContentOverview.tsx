@@ -32,10 +32,10 @@ import { useDashboardContext } from "@/context/dashboard.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useDashboardImpactStoryModal } from "@/hooks/useDashboardImpactStoryModal";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { TranslatedText } from "@/i18n/types";
 import {
   DASHBOARD_MOBILE_MEDIA_QUERY,
   IMPACT_STORIES_TOOLTIP,
-  MAP_TOOLTIP,
   MODAL_EXPAND_ID,
   MODAL_TABLE_PAGE_SIZE,
   RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP,
@@ -49,6 +49,7 @@ import { useDashboardMapViewportSync } from "@/pages/dashboard/hooks/useDashboar
 import { clampLongitudeLatitude } from "@/pages/dashboard/utils/mapViewport";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
+import { useContentOverviewTexts } from "../hooks/useContentOverviewTexts";
 import ContentDashboardtWrapper from "./ContentDashboardWrapper";
 import SecDashboard from "./SecDashboard";
 
@@ -62,8 +63,8 @@ interface RowData {
 interface ContentOverviewProps<TData> {
   dataTable: TData[];
   columns: ColumnDef<TData>[];
-  titleTable: string;
-  textTooltipTable?: string;
+  titleTable: TranslatedText;
+  textTooltipTable?: TranslatedText;
   centroids?: DashboardGetProjectsData[];
   polygonsData?: { data: Record<string, string[]>; centroids: unknown[] };
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
@@ -115,6 +116,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const landscapeNamesForBorderOverlay = useMemo(() => filters.landscapes ?? [], [filters.landscapes]);
 
   const { openStoryFromListItem } = useDashboardImpactStoryModal();
+
+  const contentOverviewTexts = useContentOverviewTexts();
 
   useValueChanged(filters.uuid, () => {
     setSelectedProjectUuid(filters.uuid);
@@ -182,7 +185,12 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
 
     openModal(
       MODAL_EXPAND_ID,
-      <ModalExpand id={MODAL_EXPAND_ID} title="MAP" closeModal={handleExpandedMapModalClose} popUpContent={MAP_TOOLTIP}>
+      <ModalExpand
+        id={MODAL_EXPAND_ID}
+        title={t("MAP")}
+        closeModal={handleExpandedMapModalClose}
+        popUpContent={contentOverviewTexts.MAP_TOOLTIP}
+      >
         <DashboardExpandedMapModalContent
           modalMapFunctions={modalMapFunctions}
           modalMapLoaded={modalMapLoaded}
@@ -225,7 +233,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     projectCounts?.totalNonProfitCount,
     selectedProjectUuid,
     setFilters,
-    t
+    t,
+    contentOverviewTexts.MAP_TOOLTIP
   ]);
 
   const openActiveTableModal = useCallback(() => {

@@ -4,19 +4,20 @@ import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { TranslatedText } from "@/i18n/types";
 import { TextVariants } from "@/types/common";
 
 import ToolTip from "../../Tooltip/Tooltip";
 
 export type GoalProgressCardItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   iconName: IconNames;
-  label: string;
+  label: TranslatedText;
   value: number | string;
   classNameLabel?: string;
   classNameLabelValue?: string;
   variantLabel?: TextVariants;
   limit?: number;
-  tooltipContent?: string;
+  tooltipContent?: TranslatedText;
 };
 
 const GoalProgressCardItem: FC<GoalProgressCardItemProps> = ({
@@ -45,7 +46,7 @@ const GoalProgressCardItem: FC<GoalProgressCardItemProps> = ({
         {tooltipContent != null && (
           <ToolTip
             content={tooltipContent}
-            title={label.replace(":", "")}
+            title={label.replace(":", "") as TranslatedText}
             width={"w-60"}
             className="whitespace-normal"
             trigger="click"

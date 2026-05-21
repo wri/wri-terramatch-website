@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Tag } from "@worldresources/wri-design-systems";
 
+import { TranslatedText } from "@/i18n/types";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 
 import Checkbox from "../../Forms/Actions/Checkbox/Checkbox";
@@ -57,7 +58,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    title: "Filters",
+    title: "Filters" as TranslatedText,
     content: <></>
   },
   render: function Render(args) {

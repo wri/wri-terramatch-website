@@ -5,15 +5,16 @@ import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
+import { TranslatedText } from "@/i18n/types";
 
 import Icon, { IconNames } from "../Icon/Icon";
+import { ModalTranslatedProps } from "./Modal";
 import { ExpandModalBase } from "./ModalsBases";
 
 export type ModalBaseProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
-type ModalExpandProps = ModalBaseProps & {
+type ModalExpandProps = ModalTranslatedProps & {
   id: string;
-  title: string;
-  popUpContent?: string;
+  popUpContent?: TranslatedText;
   closeModal: (id: string) => void;
 };
 
@@ -26,7 +27,7 @@ const ModalExpand: FC<ModalExpandProps> = ({ id, title, children, popUpContent, 
       <div className="flex w-full items-center justify-between p-6 mobile:p-4">
         <div className="flex items-center gap-1">
           <Text variant={isMobile ? "text-16-bold" : "text-28-bold"} className="text-center uppercase">
-            {t(title)}
+            {title}
           </Text>
           {popUpContent != null && (
             <Tooltip content={popUpContent} width="w-[300px] lg:w-[325px]" trigger={isMobile ? "click" : "hover"}>

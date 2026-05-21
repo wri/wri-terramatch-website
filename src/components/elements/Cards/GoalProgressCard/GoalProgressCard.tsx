@@ -5,6 +5,7 @@ import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { withFrameworkShow } from "@/context/framework.provider";
+import { TranslatedText } from "@/i18n/types";
 import { TextVariants } from "@/types/common";
 
 import LinearProgressBar from "../../ProgressBar/LinearProgressBar/LinearProgressBar";
@@ -14,7 +15,7 @@ import GoalProgressCardItem, { GoalProgressCardItemProps } from "./GoalProgressC
 type GoalProgressCardProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   value?: number;
   limit?: number;
-  label?: string;
+  label?: TranslatedText;
   items?: GoalProgressCardItemProps[];
   hasProgress?: boolean;
   progressBarValue?: number;
@@ -27,8 +28,8 @@ type GoalProgressCardProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, H
   chart?: JSX.Element;
   hectares?: boolean;
   graph?: boolean;
-  tooltipTitle?: string;
-  tootipContent?: string;
+  tooltipTitle?: TranslatedText;
+  tootipContent?: TranslatedText;
 };
 
 const GoalProgressCard: FC<GoalProgressCardProps> = ({
@@ -66,7 +67,12 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
           <Text variant={labelVariant ?? "text-16-light"} className={classNames("mb-1 w-full", classNameLabel)}>
             {label}
             {(tooltipTitle != null || tootipContent != null) && (
-              <ToolTip title={tooltipTitle} content={tootipContent ?? ""} width="w-60" trigger="click">
+              <ToolTip
+                title={tooltipTitle}
+                content={tootipContent ?? ("" as TranslatedText)}
+                width="w-60"
+                trigger="click"
+              >
                 <Icon name={IconNames.IC_INFO} className="ml-1 text-neutral-500" />
               </ToolTip>
             )}

@@ -9,6 +9,7 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
+import { TranslatedText } from "@/i18n/types";
 
 const MonitoringPartnersTable: FC<{ project: any }> = ({ project }: { project: any }) => {
   const t = useT();
@@ -35,7 +36,7 @@ const MonitoringPartnersTable: FC<{ project: any }> = ({ project }: { project: a
       ModalId.MODAL_CONFIRM_DELETE_PARTNER,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-        title={""}
+        title={"" as TranslatedText}
         content={t("Remove {email_address} as Monitoring Partner to {project_name}?", {
           email_address: emailAddress,
           project_name: project?.name

@@ -10,6 +10,7 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import { useMyUser } from "@/connections/User";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { withFrameworkShow } from "@/context/framework.provider";
+import { TranslatedText } from "@/i18n/types";
 import { TextVariants } from "@/types/common";
 
 import BlurContainer from "../../BlurContainer/BlurContainer";
@@ -90,9 +91,9 @@ const PageCard: FC<PageCardProps> = ({
                     &nbsp;
                     <ToolTip
                       className="normal-case"
-                      content={tooltip ?? ""}
+                      content={(tooltip ?? "") as TranslatedText}
                       width={widthTooltip ?? "w-44 lg:w-52"}
-                      title={title}
+                      title={title as TranslatedText}
                       trigger={tooltipTrigger}
                     >
                       <Icon
