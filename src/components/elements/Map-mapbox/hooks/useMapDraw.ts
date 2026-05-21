@@ -1,11 +1,12 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { Map as MapboxMap } from "mapbox-gl";
-import { MutableRefObject, useCallback } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 
 import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
+import type { PolygonGeometryEditState } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { isProjectPitchesEntityName } from "@/helpers/entity";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -40,6 +41,7 @@ type UseMapDrawParams = {
   setShouldRefetchPolygonData?: (v: boolean) => void;
   setStatusSelectedPolygon?: (v: string) => void;
   statusSelectedPolygon?: string;
+  setPolygonGeometryEdit?: (value: PolygonGeometryEditState | undefined) => void;
   t: (key: string) => string;
   showLoader: () => void;
   hideLoader: () => void;
@@ -62,11 +64,56 @@ export function useMapDraw({
   setShouldRefetchPolygonData,
   setStatusSelectedPolygon,
   statusSelectedPolygon,
+  setPolygonGeometryEdit,
   t,
   showLoader,
   hideLoader,
   openNotification
 }: UseMapDrawParams) {
+  const originalGeometryRef = useRef<GeoJSON.Geometry | null>(null);
+
+  const serializeGeometry = useCallback((geometry: GeoJSON.Geometry | null | undefined) => {
+    return geometry == null ? "" : JSON.stringify(geometry);
+  }, []);
+
+  useEffect(() => {
+    const currentMap = map.current;
+    if (currentMap == null || setPolygonGeometryEdit == null) return;
+
+    const updateCurrentGeometry = () => {
+      const polygonUuid = polygonFromMap?.uuid;
+      if (polygonUuid == null || polygonUuid === "") return;
+
+      const currentGeometry = draw.current?.getAll().features[0]?.geometry as GeoJSON.Geometry | undefined;
+      if (currentGeometry == null) return;
+
+      const originalGeometry = originalGeometryRef.current;
+      setPolygonGeometryEdit({
+        polygonUuid,
+        originalGeometry,
+        currentGeometry,
+        isDirty: serializeGeometry(originalGeometry) !== serializeGeometry(currentGeometry)
+      });
+    };
+
+    currentMap.on("draw.update", updateCurrentGeometry);
+    currentMap.on("draw.delete", updateCurrentGeometry);
+
+    return () => {
+      currentMap.off("draw.update", updateCurrentGeometry);
+      currentMap.off("draw.delete", updateCurrentGeometry);
+    };
+  }, [draw, map, polygonFromMap?.uuid, serializeGeometry, setPolygonGeometryEdit]);
+
+  useEffect(() => {
+    if (polygonFromMap?.isOpen === true) return;
+    if (draw.current == null) return;
+
+    onCancel(polygonsData);
+    originalGeometryRef.current = null;
+    setPolygonGeometryEdit?.(undefined);
+  }, [draw, onCancel, polygonFromMap?.isOpen, polygonsData, setPolygonGeometryEdit]);
+
   useValueChanged(isUserDrawingEnabled, () => {
     if (map.current == null || draw.current == null) return;
     if (isUserDrawingEnabled) {
@@ -117,8 +164,23 @@ export function useMapDraw({
         return;
       }
       if (map.current != null && draw.current != null) {
-        filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
-        addGeojsonToDraw(geometry, polygonuuid, () => {}, draw.current, map.current, polygonStatus);
+        originalGeometryRef.current = geometry;
+        setPolygonGeometryEdit?.({
+          polygonUuid: polygonuuid,
+          originalGeometry: geometry,
+          currentGeometry: geometry,
+          isDirty: false
+        });
+        addGeojsonToDraw(
+          geometry,
+          polygonuuid,
+          () => {
+            if (map.current != null) filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
+          },
+          draw.current,
+          map.current,
+          polygonStatus
+        );
       }
     } catch (error) {
       Log.error("Error fetching polygon geometry:", error);
@@ -199,6 +261,8 @@ export function useMapDraw({
       setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.polygonUuid as string });
       setStatusSelectedPolygon?.(polygonActive?.status as string);
       draw.current?.deleteAll();
+      originalGeometryRef.current = null;
+      setPolygonGeometryEdit?.(undefined);
 
       setShouldRefetchPolygonData?.(true);
       openNotification("success", t("Success"), t("Site polygon version created successfully."));
@@ -219,8 +283,10 @@ export function useMapDraw({
 
   const onCancelEdit = useCallback(() => {
     onCancel(polygonsData);
+    originalGeometryRef.current = null;
+    setPolygonGeometryEdit?.(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [polygonsData]);
+  }, [polygonsData, setPolygonGeometryEdit]);
 
   return { handleEditPolygon, onSaveEdit, onCancelEdit };
 }

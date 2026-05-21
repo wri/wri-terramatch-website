@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { useAuditStatuses } from "@/connections/AuditStatus";
 import { bulkUpdateSitePolygonStatus } from "@/connections/SitePolygons";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
-import { openPolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
+import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
@@ -69,13 +69,10 @@ export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, site
   };
 
   const handleEdit = useCallback(() => {
-    openPolygonEditDrawer({
-      polygonUuid: sitePolygon?.polygonUuid ?? undefined,
-      polygonName: metrics.polygonName
-    });
+    openPolygonEditDrawerForSitePolygon(sitePolygon, metrics.polygonName);
     setOpen(false);
     popup?.remove();
-  }, [metrics.polygonName, popup, sitePolygon?.polygonUuid]);
+  }, [metrics.polygonName, popup, sitePolygon]);
 
   return (
     <>
