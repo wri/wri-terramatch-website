@@ -1,42 +1,29 @@
 import { Box, Flex, List, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback } from "react";
 
+import { useModalScrollFix } from "@/hooks/useModalScrollFix";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 
-const MocketDataPolygonUUID = [
-  "Polygon UUID 1",
-  "Polygon UUID 2",
-  "Polygon UUID 3",
-  "Polygon UUID 4",
-  "Polygon UUID 5",
-  "Polygon UUID 6"
-];
-
 export interface MatchingPolygonsFoundProps {
   open: boolean;
+  existingUuids: string[];
   onOpenChange: (open: boolean) => void;
+  onConfirm: () => Promise<void>;
 }
-const MatchingPolygonsFound: FC<MatchingPolygonsFoundProps> = ({ open, onOpenChange }) => {
+
+const MatchingPolygonsFound: FC<MatchingPolygonsFoundProps> = ({ open, existingUuids, onOpenChange, onConfirm }) => {
   const t = useT();
 
-  const handleClose = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
+  useModalScrollFix(open);
 
-  const handleSave = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
+  const handleClose = useCallback(() => onOpenChange(false), [onOpenChange]);
 
-  useEffect(() => {
-    if (!open) {
-      document.body.style.pointerEvents = "";
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-      document.documentElement.removeAttribute("data-scroll-locked");
-    }
-  }, [open]);
+  const handleConfirm = useCallback(async () => {
+    await onConfirm();
+    onOpenChange(false);
+  }, [onConfirm, onOpenChange]);
 
   return (
     <Modal
@@ -50,21 +37,16 @@ const MatchingPolygonsFound: FC<MatchingPolygonsFoundProps> = ({ open, onOpenCha
           <Text textStyle="400" color="neutral.900">
             {t("These files match existing polygons.")}
           </Text>
-          <Text textStyle="400-bold" color="neutral.900" display={"flex"} mb={3} gap={0.5}>
+          <Text textStyle="400-bold" color="neutral.900" display="flex" mb={3} gap={0.5}>
             {t("New versions")}
-            <Text>{t(" will be created for:")}</Text>{" "}
+            <Text>{t(" will be created for:")}</Text>
           </Text>
-          <Flex flexDirection="column" gap={4} bg={"primary.100"} py={2} px={3} rounded={4}>
+          <Flex flexDirection="column" gap={4} bg="primary.100" py={2} px={3} rounded={4}>
             <List.Root as="ul" pl={4} spaceY={2} listStyleType="disc">
-              {MocketDataPolygonUUID.map(item => (
-                <List.Item
-                  key={item}
-                  _marker={{
-                    color: "neutral.900"
-                  }}
-                >
+              {existingUuids.map(uuid => (
+                <List.Item key={uuid} _marker={{ color: "neutral.900" }}>
                   <Text textStyle="400" color="neutral.900">
-                    {t(item)}
+                    {uuid}
                   </Text>
                 </List.Item>
               ))}
@@ -84,7 +66,7 @@ const MatchingPolygonsFound: FC<MatchingPolygonsFoundProps> = ({ open, onOpenCha
             {
               id: "create-new-versions",
               children: t("Create new versions"),
-              onClick: handleSave
+              onClick: handleConfirm
             }
           ]}
         />

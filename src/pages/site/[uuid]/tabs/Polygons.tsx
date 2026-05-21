@@ -33,6 +33,7 @@ import { useSitePolygonFilters } from "../hooks/useSitePolygonFilters";
 import { useSitePolygonOverlap } from "../hooks/useSitePolygonOverlap";
 import { useSitePolygonTableData } from "../hooks/useSitePolygonTableData";
 import { useStartSitePolygonDrawing } from "../hooks/useStartSitePolygonDrawing";
+import { UploadMode, useUploadPolygons } from "../hooks/useUploadPolygons";
 
 interface SitePolygonsTabProps {
   site: SiteFullDto;
@@ -48,6 +49,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showMatchingPolygonsFoundModal, setMatchingPolygonsFoundModal] = useState(false);
+  const [matchingPolygonUuids, setMatchingPolygonUuids] = useState<string[]>([]);
+  const [confirmVersionUpload, setConfirmVersionUpload] = useState<(() => Promise<void>) | null>(null);
   const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
   const [showSubmitPolygonsModal, setSubmitPolygonsModal] = useState(false);
   const [showDeletePolygonModal, setDeletePolygonModal] = useState(false);
@@ -115,6 +118,31 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [setSelectedRowIds]);
 
   const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
+
+  const { upload: uploadPolygons, isUploading } = useUploadPolygons({
+    siteUuid: site.uuid,
+    onUploadSuccess: () => {
+      void refetchPolygons();
+    },
+    onMatchingPolygonsFound: (existingUuids, confirmUpload) => {
+      setMatchingPolygonUuids(existingUuids);
+      setConfirmVersionUpload(() => confirmUpload);
+      setShowUploadModal(false);
+      setMatchingPolygonsFoundModal(true);
+    },
+    onError: message => {
+      setUploadErrorModal(true);
+      // TODO: surface `message` via UploadError modal props when that component gains an error prop
+      void message;
+    }
+  });
+
+  const handleUpload = useCallback(
+    (mode: UploadMode, file: File) => {
+      void uploadPolygons(mode, file);
+    },
+    [uploadPolygons]
+  );
 
   const handlePolygonClickedFromMap = useCallback(
     (uuid: string) => {
@@ -297,8 +325,19 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         </Box>
       )}
 
-      <UploadPolygons open={showUploadModal} onOpenChange={setShowUploadModal} />
-      <MatchingPolygonsFound open={showMatchingPolygonsFoundModal} onOpenChange={setMatchingPolygonsFoundModal} />
+      <UploadPolygons
+        open={showUploadModal}
+        siteUuid={site.uuid}
+        isUploading={isUploading}
+        onOpenChange={setShowUploadModal}
+        onUpload={handleUpload}
+      />
+      <MatchingPolygonsFound
+        open={showMatchingPolygonsFoundModal}
+        existingUuids={matchingPolygonUuids}
+        onOpenChange={setMatchingPolygonsFoundModal}
+        onConfirm={confirmVersionUpload ?? (() => Promise.resolve())}
+      />
       <PolygonSubmitted
         open={showPolygonSubmittedModal}
         onOpenChange={setPolygonSubmittedModal}
