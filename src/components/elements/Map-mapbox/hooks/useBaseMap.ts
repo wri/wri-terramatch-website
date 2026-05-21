@@ -22,13 +22,13 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
 
   const [, _forceRerender] = useState(false);
 
-  const onCancel = (parsedPolygonData: Record<string, string[]> | undefined) => {
+  const onCancel = useCallback((parsedPolygonData: Record<string, string[]> | undefined) => {
     if (map.current != null && draw.current != null) {
       draw.current.deleteAll();
       applyMapDrawStatusStyles(map.current);
       addFilterOfPolygonsData(map.current, parsedPolygonData);
     }
-  };
+  }, []);
 
   const handleCreateDraw = (featureCollection: FeatureCollection) => {
     const geojson = convertToGeoJSON(featureCollection);
