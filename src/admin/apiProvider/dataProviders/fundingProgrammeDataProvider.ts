@@ -1,5 +1,14 @@
 import { omit } from "lodash";
-import { CreateResult, DataProvider, DeleteParams, GetManyResult, GetOneParams, UpdateParams } from "react-admin";
+import {
+  CreateResult,
+  DataProvider,
+  DeleteParams,
+  GetListParams,
+  GetManyResult,
+  GetOneParams,
+  RaRecord,
+  UpdateParams
+} from "react-admin";
 
 import {
   createFundingProgramme,
@@ -12,24 +21,24 @@ import { StoreFundingProgrammeAttributes } from "@/generated/v3/entityService/en
 import ApiSlice from "@/store/apiSlice";
 
 import { v3ErrorForRA } from "../utils/error";
+import { sliceRaListPage } from "../utils/listing";
 import { handleUploads } from "../utils/upload";
 
 const UPLOAD_KEYS = ["cover"];
 
 export const fundingProgrammeDataProvider: Partial<DataProvider> = {
-  async getList<RecordType>() {
-    // note: we don't use any filtering, sorting or pagination on this list view
+  async getList<RecordType>(_: string, params: GetListParams) {
     const connection = await loadFundingProgrammes({ translated: false });
     if (connection.loadFailure != null) {
       throw v3ErrorForRA("Funding Programme index fetch failed", connection.loadFailure);
     }
-    return {
-      data: (connection.data?.map(fundingProgramme => ({
-        ...fundingProgramme,
-        id: fundingProgramme.uuid
-      })) ?? []) as RecordType[],
-      total: connection.data?.length ?? 0
-    };
+
+    const allData = (connection.data?.map(fundingProgramme => ({
+      ...fundingProgramme,
+      id: fundingProgramme.uuid
+    })) ?? []) as RecordType[];
+
+    return sliceRaListPage(allData as RaRecord[], params) as { data: RecordType[]; total: number };
   },
 
   async getOne<RecordType>(_: string, { id }: GetOneParams) {

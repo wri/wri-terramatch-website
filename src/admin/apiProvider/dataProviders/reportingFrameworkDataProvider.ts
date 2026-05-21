@@ -1,4 +1,4 @@
-import { DataProvider, GetListParams, GetListResult, GetOneParams } from "react-admin";
+import { DataProvider, GetListParams, GetListResult, GetOneParams, RaRecord } from "react-admin";
 
 import {
   createReportingFramework,
@@ -12,6 +12,7 @@ import { CreateReportingFrameworkAttributes } from "@/generated/v3/entityService
 import { ReportingFrameworkDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { v3ErrorForRA } from "../utils/error";
+import { sliceRaListPage } from "../utils/listing";
 
 type ReportingFrameworkRecord = ReportingFrameworkDto & { id: string };
 
@@ -54,10 +55,7 @@ export const reportingFrameworkDataProvider: DataProvider = {
         id: framework.slug ?? framework.uuid
       }));
 
-      return {
-        data,
-        total: connected.indexTotal ?? data.length
-      };
+      return sliceRaListPage(data as RaRecord[], params);
     } catch (err) {
       throw v3ErrorForRA("Reporting frameworks fetch failed", err);
     }
