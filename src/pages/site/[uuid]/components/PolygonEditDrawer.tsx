@@ -73,31 +73,33 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
           className="h-screen w-full"
           content={
             <Flex className="h-full flex-col gap-3">
-              <TabBar
-                onTabClick={(tabValue: string) => setActiveTab(tabValue)}
-                tabs={[
-                  {
-                    label: t("Edit"),
-                    value: "edit"
-                  },
-                  {
-                    label: t("System Validation"),
-                    value: "systemValidation"
-                  },
-                  {
-                    label: (
-                      <Text className="flex items-center gap-2">
-                        {t("Comments")}
-                        <NotificationIndicator bgColor={activeTab != "comments" ? "neutral.700" : undefined}>
-                          3
-                        </NotificationIndicator>
-                      </Text>
-                    ),
-                    value: "comments"
-                  }
-                ]}
-                variant="panel"
-              />
+              {polygon?.polygonUuid && (
+                <TabBar
+                  onTabClick={(tabValue: string) => setActiveTab(tabValue)}
+                  tabs={[
+                    {
+                      label: t("Edit"),
+                      value: "edit"
+                    },
+                    {
+                      label: t("System Validation"),
+                      value: "systemValidation"
+                    },
+                    {
+                      label: (
+                        <Text className="flex items-center gap-2">
+                          {t("Comments")}
+                          <NotificationIndicator bgColor={activeTab != "comments" ? "neutral.700" : undefined}>
+                            3
+                          </NotificationIndicator>
+                        </Text>
+                      ),
+                      value: "comments"
+                    }
+                  ]}
+                  variant="panel"
+                />
+              )}
               {activeTab === "edit" && (
                 <PolygonEditContent
                   polygon={selectedPolygon}
