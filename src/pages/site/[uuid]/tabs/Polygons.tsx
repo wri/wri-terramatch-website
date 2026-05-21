@@ -29,6 +29,7 @@ import UploadPhotos from "../components/Modals/UploadPhotos";
 import UploadPolygons from "../components/Modals/UploadPolygons";
 import { PolygonRow, PolygonTableRow } from "../components/PolygonTableRow";
 import PolygonToolbar from "../components/PolygonToolbar";
+import { useDownloadSitePolygons } from "../hooks/useDownloadSitePolygons";
 import { useSitePolygonFilters } from "../hooks/useSitePolygonFilters";
 import { useSitePolygonOverlap } from "../hooks/useSitePolygonOverlap";
 import { useSitePolygonTableData } from "../hooks/useSitePolygonTableData";
@@ -118,6 +119,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [setSelectedRowIds]);
 
   const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
+  const { downloadAll, isDownloading: isDownloadingAllPolygons } = useDownloadSitePolygons({
+    siteUuid: site.uuid,
+    siteName: site.name
+  });
 
   const { upload: uploadPolygons, isUploading } = useUploadPolygons({
     siteUuid: site.uuid,
@@ -270,7 +275,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           variant: "secondary",
           size: "small",
           children: t("Download All"),
-          leftIcon: <DownloadIcon />
+          leftIcon: <DownloadIcon />,
+          loading: isDownloadingAllPolygons,
+          disabled: site.uuid == null || site.uuid === "",
+          onClick: () => {
+            void downloadAll();
+          }
         }}
         multiActionButtonProps={{
           mainActionLabel: t("Add"),
