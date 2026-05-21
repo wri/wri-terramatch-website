@@ -23,6 +23,7 @@ type UseMapLayersParams = {
   selectedPolygonsInCheckbox?: string[];
   initialTileVersion?: string;
   initialPolygonFingerprint?: string;
+  polygonMapTileNonce?: number;
 };
 
 export const hashString = (value: string): number => {
@@ -71,11 +72,13 @@ export function useMapLayers({
   hasAccess,
   selectedPolygonsInCheckbox,
   initialTileVersion,
-  initialPolygonFingerprint
+  initialPolygonFingerprint,
+  polygonMapTileNonce = 0
 }: UseMapLayersParams) {
   const [sourcesAdded, setSourcesAdded] = useState(false);
 
   const prevPolygonFingerprintRef = useRef<string>(initialPolygonFingerprint ?? "");
+  const prevPolygonMapTileNonceRef = useRef<number>(polygonMapTileNonce);
   const tileVersionRef = useRef<string>(initialTileVersion ?? "0");
 
   useEffect(() => {
@@ -85,8 +88,12 @@ export function useMapLayers({
     }
 
     const fingerprint = computePolygonFingerprint(polygonsData);
-    if (fingerprint !== prevPolygonFingerprintRef.current) {
+    const fingerprintChanged = fingerprint !== prevPolygonFingerprintRef.current;
+    const tileNonceChanged = polygonMapTileNonce !== prevPolygonMapTileNonceRef.current;
+
+    if (fingerprintChanged || tileNonceChanged) {
       prevPolygonFingerprintRef.current = fingerprint;
+      prevPolygonMapTileNonceRef.current = polygonMapTileNonce;
       tileVersionRef.current = String(Date.now());
     }
 
@@ -112,7 +119,8 @@ export function useMapLayers({
     centroids,
     dashboardMode,
     projectUUID,
-    hasAccess
+    hasAccess,
+    polygonMapTileNonce
   ]);
 
   useEffect(() => {

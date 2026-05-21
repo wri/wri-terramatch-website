@@ -1580,7 +1580,7 @@ export type SiteFullDto = {
   selfReportedWorkdayCount: number;
   regeneratedTreesCount: number;
   /**
-   * PPC estimated trees restored from approved site reports (same formula as project treesRestoredPpc, scoped to this site).
+   * PPC estimated trees restored from approved site reports: tree species planted × parent project survival rate + seeds planted × parent project direct seeding survival rate + sum of ANR estimates (numTreesRegenerating) on reports.
    */
   treesRestoredPpc: number;
   /**

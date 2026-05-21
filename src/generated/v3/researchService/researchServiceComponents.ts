@@ -207,9 +207,7 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["targetSys[]"]?: (
     | "agroforest"
-    | "agricultural-land"
     | "grassland"
-    | "open-natural-ecosystem"
     | "natural-forest"
     | "mangrove"
     | "peatland"
@@ -232,12 +230,6 @@ export type SitePolygonsIndexQueryParams = {
    * @default false
    */
   includeTestProjects?: boolean;
-  /**
-   * Filter to polygons with a failed overlap validation.
-   *
-   * @default false
-   */
-  hasOverlap?: boolean;
   search?: string;
   /**
    * Select the fields used by search.

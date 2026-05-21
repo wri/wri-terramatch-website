@@ -53,10 +53,6 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
   const [, { data: polygonVersionsData, refetch: refetchPolygonVersionsHook }] =
     useListPolygonVersions(connectionProps);
 
-  const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
-    openNotification(type, title, message);
-  };
-
   const runPolygonValidation = async () => {
     try {
       showLoader();
@@ -70,15 +66,15 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
       ApiSlice.pruneCache("validations");
 
       hideLoader();
-      displayNotification(
-        t("Please update and re-run if validations fail."),
+      openNotification(
         "success",
-        t("Success! TerraMatch reviewed the polygon")
+        t("Success! TerraMatch reviewed the polygon"),
+        t("Please update and re-run if validations fail.")
       );
     } catch (error) {
       hideLoader();
       setClickedValidation(false);
-      displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
+      openNotification("error", t("Error! TerraMatch could not review polygons"), t("Please try again later."));
     }
   };
 
