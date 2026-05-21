@@ -13,7 +13,6 @@ export type UploadMode = "new-polygons" | "update-existing-polygons";
 type UseUploadPolygonsOptions = {
   siteUuid: string;
   onUploadSuccess: () => void;
-  onMatchingPolygonsFound: (existingUuids: string[], confirmUpload: () => Promise<void>) => void;
   onError: (message: string) => void;
 };
 
@@ -30,72 +29,60 @@ const extractErrorMessage = (error: unknown): string => {
   return "An unknown error occurred";
 };
 
-export const useUploadPolygons = ({
-  siteUuid,
-  onUploadSuccess,
-  onMatchingPolygonsFound,
-  onError
-}: UseUploadPolygonsOptions) => {
-  const [isUploading, setIsUploading] = useState(false);
+const runRequest = <TResponse>(
+  request: (handlers: { onSuccess: (response: TResponse) => void; onError: (error: unknown) => void }) => void
+): Promise<TResponse> =>
+  new Promise((resolve, reject) => {
+    request({ onSuccess: resolve, onError: reject });
+  });
+
+export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUploadPolygonsOptions) => {
+  const [isComparing, setIsComparing] = useState(false);
 
   const uploadGeometry = useUploadGeometry({});
   const compareGeometry = useCompareGeometry({});
   const uploadGeometryWithVersions = useUploadGeometryWithVersions({});
 
-  const uploadNewPolygons = useCallback(
-    async (file: File) => {
-      setIsUploading(true);
+  const uploadNew = useCallback(
+    (file: File) => {
       const attributes = prepareGeometryForUpload(file, siteUuid);
-      await new Promise<void>((resolve, reject) => {
-        uploadGeometry(attributes, { onSuccess: () => resolve(), onError: reject });
-      })
-        .then(onUploadSuccess)
-        .catch(err => onError(extractErrorMessage(err)))
-        .finally(() => setIsUploading(false));
+      uploadGeometry(attributes, {
+        onSuccess: () => onUploadSuccess(),
+        onError: error => onError(extractErrorMessage(error))
+      });
     },
     [siteUuid, uploadGeometry, onUploadSuccess, onError]
   );
 
+  const compareFile = useCallback(
+    async (file: File): Promise<string[]> => {
+      setIsComparing(true);
+      try {
+        const attributes = prepareGeometryForUpload(file, siteUuid);
+        const response = await runRequest<CompareGeometryFileResponse>(handlers =>
+          compareGeometry(attributes, handlers)
+        );
+        return response.data?.attributes?.existingUuids ?? [];
+      } catch (error) {
+        onError(extractErrorMessage(error));
+        throw error;
+      } finally {
+        setIsComparing(false);
+      }
+    },
+    [siteUuid, compareGeometry, onError]
+  );
+
   const uploadWithVersions = useCallback(
-    async (file: File) => {
-      setIsUploading(true);
+    (file: File) => {
       const attributes = prepareGeometryForUpload(file, siteUuid);
-      await new Promise<void>((resolve, reject) => {
-        uploadGeometryWithVersions(attributes, { onSuccess: () => resolve(), onError: reject });
-      })
-        .then(onUploadSuccess)
-        .catch(err => onError(extractErrorMessage(err)))
-        .finally(() => setIsUploading(false));
+      uploadGeometryWithVersions(attributes, {
+        onSuccess: () => onUploadSuccess(),
+        onError: error => onError(extractErrorMessage(error))
+      });
     },
     [siteUuid, uploadGeometryWithVersions, onUploadSuccess, onError]
   );
 
-  const compareAndPromptVersioning = useCallback(
-    async (file: File) => {
-      setIsUploading(true);
-      const attributes = prepareGeometryForUpload(file, siteUuid);
-
-      new Promise<CompareGeometryFileResponse>((resolve, reject) => {
-        compareGeometry(attributes, { onSuccess: resolve, onError: reject });
-      })
-        .then(response => {
-          const attrs = response.data?.attributes;
-          const existingUuids = attrs?.existingUuids ?? [];
-          onMatchingPolygonsFound(existingUuids, () => uploadWithVersions(file));
-        })
-        .catch(err => onError(extractErrorMessage(err)))
-        .finally(() => setIsUploading(false));
-    },
-    [siteUuid, compareGeometry, uploadWithVersions, onMatchingPolygonsFound, onError]
-  );
-
-  const upload = useCallback(
-    (mode: UploadMode, file: File) => {
-      if (mode === "new-polygons") return uploadNewPolygons(file);
-      return compareAndPromptVersioning(file);
-    },
-    [uploadNewPolygons, compareAndPromptVersioning]
-  );
-
-  return { upload, isUploading };
+  return { uploadNew, compareFile, uploadWithVersions, isComparing };
 };
