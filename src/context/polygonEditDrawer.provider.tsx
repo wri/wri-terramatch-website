@@ -122,13 +122,23 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     setPolygonGeometryEdit(undefined);
   }, [setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit]);
 
-  const setSelectedPolygon = useCallback((sitePolygon: SitePolygonLightDto) => {
-    setPolygon({
-      polygonUuid: sitePolygon.polygonUuid ?? undefined,
-      polygonName: sitePolygon.name ?? undefined,
-      sitePolygon
-    });
-  }, []);
+  const setSelectedPolygon = useCallback(
+    (sitePolygon: SitePolygonLightDto) => {
+      setPolygon({
+        polygonUuid: sitePolygon.polygonUuid ?? undefined,
+        polygonName: sitePolygon.name ?? undefined,
+        sitePolygon
+      });
+      if (isOpen && sitePolygon.polygonUuid != null && sitePolygon.polygonUuid !== "") {
+        setEditPolygon({
+          isOpen: true,
+          uuid: sitePolygon.polygonUuid,
+          primaryUuid: sitePolygon.primaryUuid ?? undefined
+        });
+      }
+    },
+    [isOpen, setEditPolygon]
+  );
 
   const setOpen = useCallback(
     (open: boolean) => {

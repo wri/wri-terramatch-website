@@ -34,7 +34,7 @@ import { useMapCamera } from "./hooks/useMapCamera";
 import { useMapDownload } from "./hooks/useMapDownload";
 import { useMapDraw } from "./hooks/useMapDraw";
 import { useMapFullscreen } from "./hooks/useMapFullscreen";
-import { useMapLayers } from "./hooks/useMapLayers";
+import { filterPolygonFromLayers, useMapLayers } from "./hooks/useMapLayers";
 import { useMapMedia } from "./hooks/useMapMedia";
 import { useMapOverlapIndicators } from "./hooks/useMapOverlapIndicators";
 import { useMapOverlays } from "./hooks/useMapOverlays";
@@ -259,6 +259,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     statusSelectedPolygon,
     setStatusSelectedPolygon,
     setPolygonGeometryEdit,
+    polygonMapTileNonce,
     selectedPolygonsInCheckbox
   } = contextMapArea;
 
@@ -379,7 +380,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     hasAccess,
     selectedPolygonsInCheckbox,
     initialTileVersion,
-    initialPolygonFingerprint
+    initialPolygonFingerprint,
+    polygonMapTileNonce
   });
 
   usePolygonTableHighlightStyle({
@@ -493,6 +495,13 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     openNotification
   });
 
+  useEffect(() => {
+    if (!sourcesAdded || map.current == null || polygonFromMap?.isOpen !== true || polygonFromMap.uuid === "") {
+      return;
+    }
+    filterPolygonFromLayers(polygonFromMap.uuid, polygonsData, map.current);
+  }, [map, polygonFromMap?.isOpen, polygonFromMap?.uuid, polygonsData, sourcesAdded]);
+
   const lastAutoEditPolygonRef = useRef<string | null>(null);
   useEffect(() => {
     if (props.autoEditPolygon !== true || polygonFromMap?.isOpen !== true || polygonFromMap.uuid === "") {
@@ -500,14 +509,19 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
       return;
     }
 
-    if (lastAutoEditPolygonRef.current === polygonFromMap.uuid) {
+    const previousUuid = lastAutoEditPolygonRef.current;
+    if (previousUuid === polygonFromMap.uuid) {
       return;
+    }
+
+    if (previousUuid != null) {
+      onCancelEdit();
     }
 
     lastAutoEditPolygonRef.current = polygonFromMap.uuid;
     setIsEditing(true);
     void handleEditPolygon();
-  }, [handleEditPolygon, polygonFromMap?.isOpen, polygonFromMap?.uuid, props.autoEditPolygon]);
+  }, [handleEditPolygon, onCancelEdit, polygonFromMap?.isOpen, polygonFromMap?.uuid, props.autoEditPolygon]);
 
   const { isFullscreen, toggleFullscreen } = useMapFullscreen({ mapContainer, map });
 

@@ -151,6 +151,7 @@ export function useMapDraw({
     if (!polygonFromMap?.isOpen || polygonFromMap?.uuid === "") return;
 
     const polygonuuid = polygonFromMap.uuid;
+    filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
     const isProjectPolygon = isProjectPitchesEntityName(polygonFromMap?.entityName ?? "");
     const projectPitchUuid = polygonFromMap?.projectPitchUuid;
     const rawStatus =
@@ -171,16 +172,7 @@ export function useMapDraw({
           currentGeometry: geometry,
           isDirty: false
         });
-        addGeojsonToDraw(
-          geometry,
-          polygonuuid,
-          () => {
-            if (map.current != null) filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
-          },
-          draw.current,
-          map.current,
-          polygonStatus
-        );
+        addGeojsonToDraw(geometry, polygonuuid, () => {}, draw.current, map.current, polygonStatus);
       }
     } catch (error) {
       Log.error("Error fetching polygon geometry:", error);

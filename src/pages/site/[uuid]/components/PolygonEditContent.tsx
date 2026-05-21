@@ -45,6 +45,7 @@ import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { DownloadIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
+import ApiSlice from "@/store/apiSlice";
 import {
   mapSitePolygonStatusToMappedTagState,
   mapSitePolygonValidationStatusToValidationTagState
@@ -105,7 +106,16 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 }) => {
   const t = useT();
   const { openNotification } = useNotificationContext();
-  const { polygonGeometryEdit, setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit } = useMapAreaContext();
+  const {
+    polygonGeometryEdit,
+    setIsUserDrawingEnabled,
+    setPolygonGeometryEdit,
+    setShouldRefetchPolygonData,
+    invalidatePolygonMapTiles,
+    setSelectedPolyVersion,
+    setPreviewVersion,
+    setStatusSelectedPolygon
+  } = useMapAreaContext();
   const [polygonName, setPolygonName] = useState("");
   const [plantStartDate, setPlantStartDate] = useState<DateValue[]>([]);
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
@@ -228,17 +238,21 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       });
 
       pruneSitePolygonsCache();
+      if (updatedPolygon.polygonUuid != null && updatedPolygon.polygonUuid !== "") {
+        ApiSlice.pruneCache("geojsonExports", [updatedPolygon.polygonUuid]);
+      }
       if (geometryChanged) {
         pruneBoundingBoxesCache();
+        invalidatePolygonMapTiles();
       }
       setIsUserDrawingEnabled(false);
-      setEditPolygon({ isOpen: false, uuid: "" });
       setPolygonGeometryEdit(undefined);
       onPolygonUpdated?.(updatedPolygon);
       onClose?.();
       await waitForMapEditCleanup();
       await refetchVersions?.();
       await onSaved?.();
+      setShouldRefetchPolygonData(true);
 
       openNotification(
         "success",
@@ -265,9 +279,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     polygonName,
     refetchVersions,
     restorationPractice,
-    setEditPolygon,
+    invalidatePolygonMapTiles,
     setIsUserDrawingEnabled,
     setPolygonGeometryEdit,
+    setShouldRefetchPolygonData,
     t,
     targetLandUseSystem,
     treeDistribution,
@@ -320,13 +335,36 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         return;
       }
 
+      if (version.isActive) {
+        openNotification("warning", t("Warning!"), t("Polygon version is already active"));
+        return;
+      }
+
       try {
         setIsVersionUpdating(true);
+        const previousGeometryUuid = geometryPolygonUuid;
         const updatedVersion = await updatePolygonVersionAsync(version.uuid, { isActive: true });
+
+        setPolygonGeometryEdit(undefined);
+        setSelectedPolyVersion(undefined);
+        setPreviewVersion(false);
+
         pruneSitePolygonsCache();
+        if (previousGeometryUuid !== "") {
+          ApiSlice.pruneCache("geojsonExports", [previousGeometryUuid]);
+        }
+        if (updatedVersion.polygonUuid != null && updatedVersion.polygonUuid !== "") {
+          ApiSlice.pruneCache("geojsonExports", [updatedVersion.polygonUuid]);
+        }
+        pruneBoundingBoxesCache();
+        invalidatePolygonMapTiles();
+
         await refetchVersions?.();
         await onSaved?.();
         onPolygonUpdated?.(updatedVersion);
+        setStatusSelectedPolygon(updatedVersion.status ?? "");
+        setShouldRefetchPolygonData(true);
+
         openNotification("success", t("Success!"), t("Polygon version updated successfully"));
       } catch (error) {
         openNotification("error", t("Error!"), t("Error updating polygon version"));
@@ -334,7 +372,20 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         setIsVersionUpdating(false);
       }
     },
-    [onPolygonUpdated, onSaved, openNotification, refetchVersions, t]
+    [
+      geometryPolygonUuid,
+      invalidatePolygonMapTiles,
+      onPolygonUpdated,
+      onSaved,
+      openNotification,
+      refetchVersions,
+      setPolygonGeometryEdit,
+      setPreviewVersion,
+      setSelectedPolyVersion,
+      setShouldRefetchPolygonData,
+      setStatusSelectedPolygon,
+      t
+    ]
   );
 
   const handleDownloadPolygon = useCallback(async () => {
