@@ -12,13 +12,15 @@ type PopupFooterPolygonProps = {
   polygonName?: string;
   submitDisabled?: boolean;
   onSubmit?: () => Promise<void>;
+  onEdit?: () => void;
 };
 
 const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   polygonUuid,
   polygonName,
   submitDisabled = false,
-  onSubmit
+  onSubmit,
+  onEdit
 }) => {
   const t = useT();
   const canDownload = polygonUuid != null && polygonUuid !== "";
@@ -49,7 +51,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
       >
         {t("Download")}
       </Button>
-      <Button variant="secondary" size="small" leftIcon={<EditIcon />}>
+      <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit}>
         {t("Edit")}
       </Button>
       <Button variant="primary" size="small" onClick={() => void handleSubmit()} disabled={submitDisabled}>

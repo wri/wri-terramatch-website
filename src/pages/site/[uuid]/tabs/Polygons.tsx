@@ -8,6 +8,7 @@ import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { PolygonEditDrawerProvider } from "@/context/polygonEditDrawer.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { getThemedColor } from "@/lib/theme";
@@ -39,7 +40,7 @@ interface SitePolygonsTabProps {
 
 export type { PolygonTableRow } from "../components/PolygonTableRow";
 
-const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
+const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
   const { setSiteData, resetSiteMapInteractionState } = useMapAreaContext();
@@ -410,5 +411,11 @@ const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => {
     </PageContent>
   );
 };
+
+const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => (
+  <PolygonEditDrawerProvider>
+    <SitePolygonsTabContent site={site} />
+  </PolygonEditDrawerProvider>
+);
 
 export default SitePolygonsTab;
