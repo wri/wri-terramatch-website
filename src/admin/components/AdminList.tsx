@@ -35,6 +35,18 @@ const AdminPagination: FC<AdminPaginationProps> = memo(props => {
     return total != null ? Math.ceil(total / perPage) : undefined;
   }, [perPage, total]);
 
+  const safeDisplayPage = useMemo(() => {
+    if (page < 1) {
+      return 1;
+    }
+
+    if (totalPages != null && totalPages > 0 && page > totalPages) {
+      return totalPages;
+    }
+
+    return page;
+  }, [page, totalPages]);
+
   useEffect(() => {
     if (total == null || total === 0 || totalPages == null || totalPages < 1) {
       return;
@@ -89,10 +101,10 @@ const AdminPagination: FC<AdminPaginationProps> = memo(props => {
   );
 
   if (isLoading) {
-    return <Toolbar variant="dense" />;
+    return <Toolbar variant="dense" className="MuiTablePagination-toolbar" />;
   }
 
-  if (total === 0 || page < 1 || (total != null && totalPages != null && page > totalPages)) {
+  if (total === 0) {
     return limit;
   }
 
@@ -101,7 +113,7 @@ const AdminPagination: FC<AdminPaginationProps> = memo(props => {
       <TablePagination
         count={total == null ? -1 : total}
         rowsPerPage={perPage}
-        page={page - 1}
+        page={safeDisplayPage - 1}
         onPageChange={handlePageChange}
         rowsPerPageOptions={emptyRowsPerPageOptions}
         component="span"
@@ -117,7 +129,7 @@ const AdminPagination: FC<AdminPaginationProps> = memo(props => {
     <TablePagination
       count={total == null ? -1 : total}
       rowsPerPage={perPage}
-      page={page - 1}
+      page={safeDisplayPage - 1}
       onPageChange={handlePageChange}
       onRowsPerPageChange={handlePerPageChange}
       ActionsComponent={ActionsComponent}
