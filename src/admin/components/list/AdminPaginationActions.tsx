@@ -2,6 +2,9 @@ import { styled } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import { FC, memo } from "react";
 
+import IconButton from "@/components/elements/IconButton/IconButton";
+import { IconNames } from "@/components/extensive/Icon/Icon";
+
 const PREFIX = "RaPaginationActions";
 
 const Root = styled("div", {
@@ -26,7 +29,7 @@ export interface AdminPaginationActionsProps {
 
 /**
  * Fixed-layout pagination actions: "Page N of M" plus prev/next controls.
- * Avoids MUI Pagination page items so the toolbar width stays stable while navigating.
+ * Uses shared Icon assets so the toolbar width stays stable while navigating.
  */
 export const AdminPaginationActions: FC<AdminPaginationActionsProps> = memo(props => {
   const { page, rowsPerPage, count, onPageChange, className } = props;
@@ -43,19 +46,29 @@ export const AdminPaginationActions: FC<AdminPaginationActionsProps> = memo(prop
         <span className="AdminPagination-ofTotal">{`of ${nbPages}`}</span>
       </span>
       <span className="AdminPagination-navButtons">
-        <button
+        <IconButton
           type="button"
-          className="AdminPagination-navButton AdminPagination-navButton-prev"
+          className="AdminPagination-navButton"
           disabled={currentPage <= 1}
           onClick={event => onPageChange(event, safePage - 1)}
           aria-label="Go to previous page"
+          iconProps={{
+            name: IconNames.CHEVRON_LEFT,
+            width: 12,
+            className: "h-3 w-3 fill-black"
+          }}
         />
-        <button
+        <IconButton
           type="button"
-          className="AdminPagination-navButton AdminPagination-navButton-next"
+          className="AdminPagination-navButton"
           disabled={currentPage >= nbPages}
           onClick={event => onPageChange(event, safePage + 1)}
           aria-label="Go to next page"
+          iconProps={{
+            name: IconNames.CHEVRON_RIGHT,
+            width: 12,
+            className: "h-3 w-3 fill-black"
+          }}
         />
       </span>
     </Root>
