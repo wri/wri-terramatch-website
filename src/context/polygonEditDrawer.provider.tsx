@@ -8,16 +8,18 @@ export type { PolygonEditDrawerPolygon };
 
 type PolygonEditDrawerContextValue = {
   isOpen: boolean;
-  polygon: PolygonEditDrawerPolygon;
+  polygon: PolygonEditDrawerPolygon | null;
   openPolygonEdit: (params?: PolygonEditDrawerPolygon) => void;
+  openPolygonDraw: () => void;
   closePolygonEdit: () => void;
   setOpen: (open: boolean) => void;
 };
 
 const defaultContextValue: PolygonEditDrawerContextValue = {
   isOpen: false,
-  polygon: {},
+  polygon: null,
   openPolygonEdit: () => {},
+  openPolygonDraw: () => {},
   closePolygonEdit: () => {},
   setOpen: () => {}
 };
