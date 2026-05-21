@@ -1,7 +1,9 @@
 import { Box } from "@chakra-ui/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { FC } from "react";
 
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
+import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 
 export type PolygonBulkActionToolbarProps = {
@@ -32,8 +34,16 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({ visible, 
         primaryButtonProps={{
           children: "Download"
         }}
-        quantityButtonProps={{
-          children: "Run Validation"
+        quaternaryButtonProps={{
+          children: "Run Validation",
+          onClick: () =>
+            showToast({
+              label: "Validating Polygons...",
+              type: "info",
+              placement: "bottom-end",
+              closableLabel: "Close",
+              icon: <LoadingIcon boxSize={7} color="primary.700" animation="spin 1s linear infinite" />
+            })
         }}
         secondaryButtonProps={{
           children: "Edit Details"

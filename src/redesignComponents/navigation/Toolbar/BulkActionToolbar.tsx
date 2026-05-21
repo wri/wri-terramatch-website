@@ -11,7 +11,7 @@ const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
   primaryButtonProps,
   secondaryButtonProps,
   tertiaryButtonProps,
-  quantityButtonProps,
+  quaternaryButtonProps,
   items,
   ButtonCancel,
   ButtonDelete
@@ -34,7 +34,7 @@ const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
         <Flex alignItems="center" gap={2}>
           <Button {...ButtonDelete} className="!text-theme-error-300" variant="borderless" />
           <SimpleDivider className="!h-3.5 !w-[0.0625rem]" />
-          <Button {...quantityButtonProps} variant="borderless" className="!text-theme-neutral-100" />
+          <Button {...quaternaryButtonProps} variant="borderless" className="!text-theme-neutral-100" />
           <SimpleDivider className="!h-3.5 !w-[0.0625rem]" />
           <Button {...tertiaryButtonProps} variant="borderless" className="!text-theme-neutral-100" />
           <SimpleDivider className="!h-3.5 !w-[0.0625rem]" />
