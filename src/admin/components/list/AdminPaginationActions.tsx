@@ -1,10 +1,6 @@
-import { Pagination, PaginationItem } from "@mui/material";
-import type { PaginationProps, PaginationRenderItemParams } from "@mui/material/Pagination";
 import { styled } from "@mui/material/styles";
 import PropTypes from "prop-types";
-import { useTranslate } from "ra-core";
-import * as React from "react";
-import { FC, memo, useCallback } from "react";
+import { FC, memo } from "react";
 
 const PREFIX = "RaPaginationActions";
 
@@ -13,84 +9,55 @@ const Root = styled("div", {
   overridesResolver: (props, styles) => styles.root
 })(() => ({
   flexShrink: 0,
-  ml: 4
+  marginLeft: 32,
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+  minWidth: 184
 }));
 
-const sanitizeRestProps = ({ nextIconButtonProps, backIconButtonProps, ...rest }: Record<string, unknown>) => rest;
-
-export interface AdminPaginationActionsProps extends PaginationProps {
+export interface AdminPaginationActionsProps {
   page: number;
   rowsPerPage: number;
   count: number;
   onPageChange: (event: React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent | null, page: number) => void;
+  className?: string;
 }
 
 /**
- * Custom PaginationActions: always renders "Page N of M" via explicit markup so spacing
- * stays consistent on every page (no CSS ::before/::after pseudo-labels).
+ * Fixed-layout pagination actions: "Page N of M" plus prev/next controls.
+ * Avoids MUI Pagination page items so the toolbar width stays stable while navigating.
  */
 export const AdminPaginationActions: FC<AdminPaginationActionsProps> = memo(props => {
-  const { page, rowsPerPage, count, onPageChange, size = "small", className, ...rest } = props;
-  const translate = useTranslate();
+  const { page, rowsPerPage, count, onPageChange, className } = props;
 
   const nbPages = Math.ceil(count / rowsPerPage) || 1;
   const safePage = Math.min(page, Math.max(0, nbPages - 1));
-
-  const renderItem = useCallback(
-    (item: PaginationRenderItemParams) => {
-      if (item.type === "page") {
-        if (item.selected) {
-          return (
-            <span className="AdminPagination-currentPageWrap">
-              <span className="AdminPagination-pageLabel">Page</span>
-              <PaginationItem {...item} />
-              <span className="AdminPagination-ofTotal">{`of ${nbPages}`}</span>
-            </span>
-          );
-        }
-
-        return null;
-      }
-
-      return <PaginationItem {...item} />;
-    },
-    [nbPages]
-  );
-
-  if (nbPages === 1) {
-    return <Root className={className} />;
-  }
-
-  const getItemAriaLabel = (
-    type: "page" | "first" | "last" | "next" | "previous",
-    pageNum: number,
-    selected: boolean
-  ) => {
-    if (type === "page") {
-      return selected
-        ? translate("ra.navigation.current_page", {
-            page: pageNum,
-            _: `page ${pageNum}`
-          })
-        : translate("ra.navigation.page", {
-            page: pageNum,
-            _: `Go to page ${pageNum}`
-          });
-    }
-    return translate(`ra.navigation.${type}`, { _: `Go to ${type} page` });
-  };
+  const currentPage = safePage + 1;
 
   return (
     <Root className={className}>
-      <Pagination
-        size={size}
-        count={nbPages}
-        page={safePage + 1}
-        onChange={(event, p) => onPageChange(event as React.MouseEvent<HTMLButtonElement>, p - 1)}
-        {...sanitizeRestProps(rest)}
-        getItemAriaLabel={getItemAriaLabel}
-        renderItem={renderItem}
-      />
+      <span className="AdminPagination-currentPageWrap">
+        <span className="AdminPagination-pageLabel">Page</span>
+        <span className="AdminPagination-pageNumber">{currentPage}</span>
+        <span className="AdminPagination-ofTotal">{`of ${nbPages}`}</span>
+      </span>
+      <span className="AdminPagination-navButtons">
+        <button
+          type="button"
+          className="AdminPagination-navButton AdminPagination-navButton-prev"
+          disabled={currentPage <= 1}
+          onClick={event => onPageChange(event, safePage - 1)}
+          aria-label="Go to previous page"
+        />
+        <button
+          type="button"
+          className="AdminPagination-navButton AdminPagination-navButton-next"
+          disabled={currentPage >= nbPages}
+          onClick={event => onPageChange(event, safePage + 1)}
+          aria-label="Go to next page"
+        />
+      </span>
     </Root>
   );
 });
@@ -100,6 +67,5 @@ AdminPaginationActions.propTypes = {
   onPageChange: PropTypes.func.isRequired,
   page: PropTypes.number.isRequired,
   rowsPerPage: PropTypes.number.isRequired,
-  color: PropTypes.oneOf(["primary", "secondary", "standard"]),
-  size: PropTypes.oneOf(["small", "medium", "large"])
+  className: PropTypes.string
 };

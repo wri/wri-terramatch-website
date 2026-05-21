@@ -177,7 +177,7 @@
 }
 
 .MuiTablePagination-toolbar {
-  @apply text-xs font-bold lg:text-sm wide:text-base !pl-0 after:content-['Rows\00a0per\00a0page:'] after:order-[-1] after:text-neutral-1000 after:font-bold after:lg:text-sm after:wide:text-base;
+  @apply min-h-[3rem] text-xs font-bold lg:text-sm wide:text-base !pl-0 after:content-['Rows\00a0per\00a0page:'] after:order-[-1] after:text-neutral-1000 after:font-bold after:lg:text-sm after:wide:text-base;
   letter-spacing: normal;
 }
 
@@ -228,54 +228,12 @@
 }
 
 .MuiTablePagination-actions {
-  @apply order-3 !ml-auto;
+  @apply order-3 !ml-auto shrink-0;
 }
 
-.MuiPagination-text li:first-child button{
-  @apply text-black w-8 h-8 rounded-lg border border-grey-350 flex items-center justify-center !border-solid bg-white !font-light hover:text-primary ;
-  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 12 22' fill='currentColor' xmlns='http://www.w3.org/2000/svg' class='fill-primary h-3 w-3 !fill-black hover:!fill-primary cursor-pointer'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M11.3684 19.2442C11.8251 19.7071 11.8251 20.4535 11.3684 20.9164C10.9116 21.3771 10.1693 21.3771 9.71254 20.9164L0.341979 11.4659C-0.1148 11.0052 -0.114799 10.2567 0.341979 9.79598L9.71254 0.345506C10.1693 -0.115168 10.9116 -0.115168 11.3684 0.345507C11.8251 0.806181 11.8251 1.55477 11.3684 2.01544L2.82815 10.6308L11.3684 19.2442Z'%3E%3C/path%3E%3C/svg%3E");  /* flex items-center justify-center rounded-full hover:bg-opacity-60 bg-white !w-8 !h-8 lg:!h-9 lg:!w-9 rounded-lg border border-grey-350 flex items-center justify-center */
-  background-size: 12px;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.MuiPagination-text li:first-child button svg{
-  @apply w-6 h-6 hidden
-}
-
-.MuiPagination-text li:last-child button{
-  @apply text-black w-8 h-8 rounded-lg border border-grey-350 flex items-center justify-center !border-solid bg-white !font-light hover:text-primary ;
-  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 12 22' fill='currentColor' xmlns='http://www.w3.org/2000/svg' class='fill-primary h-3 w-3 !fill-black hover:!fill-primary cursor-pointer'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.342584 2.01765C-0.114195 1.55476 -0.114195 0.808391 0.342584 0.345505C0.799362 -0.115168 1.54162 -0.115168 1.9984 0.345505L11.369 9.79598C11.8257 10.2567 11.8257 11.0052 11.369 11.4659L1.9984 20.9164C1.54162 21.3771 0.799362 21.3771 0.342584 20.9164C-0.114195 20.4557 -0.114195 19.7071 0.342584 19.2465L8.88279 10.6311L0.342584 2.01765Z'%3E%3C/path%3E%3C/svg%3E");
-  background-size: 12px;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-
-.MuiPagination-text li:last-child button svg{
-  @apply w-6 h-6 hidden
-}
-
-.MuiPaginationItem-page{
-  @apply !text-grey-600 !text-base !font-bold lg:text-md wide:text-lg
-}
-
-.MuiPagination-text li .Mui-selected{
-  @apply !bg-transparent !block !text-neutral-1000 !min-w-[min-content] h-8 w-auto max-w-none shrink-0 flex-nowrap rounded-lg border border-grey-350 flex items-center justify-center gap-0 !border-solid !bg-white px-1.5 hover:text-primary leading-[normal] !text-xs font-bold lg:!text-sm wide:!text-base overflow-visible;
-}
-
-.MuiPagination-text li button {
-  @apply hidden;
-}
-
-/* Override: selected page button must stay visible (fixes empty current page on last index). */
-.MuiPagination-text li button.MuiPaginationItem-page.Mui-selected {
-  @apply !inline-flex items-center justify-center;
-}
-
-/* Explicit "Page N of M" markup from AdminPaginationActions — single-space gaps, no pseudo-labels. */
+/* Explicit "Page N of M" markup from AdminPaginationActions — stable width, no MUI page items. */
 .AdminPagination-currentPageWrap {
-  @apply inline-flex min-w-min shrink-0 items-center gap-x-1 overflow-visible;
+  @apply inline-flex shrink-0 items-center gap-x-1 overflow-visible;
 }
 
 .AdminPagination-pageLabel,
@@ -283,9 +241,31 @@
   @apply shrink-0 whitespace-nowrap text-xs font-bold text-neutral-1000 lg:!text-sm wide:!text-base leading-[normal];
 }
 
-.AdminPagination-currentPageWrap .MuiPaginationItem-page.Mui-selected::after,
-.AdminPagination-currentPageWrap .MuiPaginationItem-page.Mui-selected::before {
-  @apply !hidden !content-none;
+.AdminPagination-pageNumber {
+  @apply inline-flex h-8 min-w-[2rem] shrink-0 items-center justify-center rounded-lg border border-grey-350 bg-white px-1.5 text-xs font-bold tabular-nums text-neutral-1000 lg:!text-sm wide:!text-base leading-[normal];
+}
+
+.AdminPagination-navButtons {
+  @apply inline-flex shrink-0 items-center gap-x-2;
+}
+
+.AdminPagination-navButton {
+  @apply inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-grey-350 bg-white font-light text-black hover:text-primary disabled:cursor-not-allowed disabled:opacity-40;
+  background-size: 12px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.AdminPagination-navButton-prev {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 12 22' fill='currentColor' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M11.3684 19.2442C11.8251 19.7071 11.8251 20.4535 11.3684 20.9164C10.9116 21.3771 10.1693 21.3771 9.71254 20.9164L0.341979 11.4659C-0.1148 11.0052 -0.114799 10.2567 0.341979 9.79598L9.71254 0.345506C10.1693 -0.115168 10.9116 -0.115168 11.3684 0.345507C11.8251 0.806181 11.8251 1.55477 11.3684 2.01544L2.82815 10.6308L11.3684 19.2442Z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.AdminPagination-navButton-next {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 12 22' fill='currentColor' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.342584 2.01765C-0.114195 1.55476 -0.114195 0.808391 0.342584 0.345505C0.799362 -0.115168 1.54162 -0.115168 1.9984 0.345505L11.369 9.79598C11.8257 10.2567 11.8257 11.0052 11.369 11.4659L1.9984 20.9164C1.54162 21.3771 0.799362 21.3771 0.342584 20.9164C-0.114195 20.4557 -0.114195 19.7071 0.342584 19.2465L8.88279 10.6311L0.342584 2.01765Z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.MuiPaginationItem-page{
+  @apply !text-grey-600 !text-base !font-bold lg:text-md wide:text-lg
 }
 
 .MuiPaginationItem-ellipsis{

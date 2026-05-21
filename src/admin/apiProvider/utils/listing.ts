@@ -1,4 +1,12 @@
-import { DataProvider, DeleteManyParams, DeleteParams, GetListParams, GetListResult, GetOneParams } from "react-admin";
+import {
+  DataProvider,
+  DeleteManyParams,
+  DeleteParams,
+  GetListParams,
+  GetListResult,
+  GetOneParams,
+  RaRecord
+} from "react-admin";
 
 import { EntityFullDto, EntityIndexConnectionProps, EntityLightDto } from "@/connections/Entity";
 import {
@@ -57,6 +65,17 @@ export const raConnectionProps = <FilterType, SideloadType>(params: GetListParam
   }
 
   return queryParams;
+};
+
+/** Client-side page slice for data providers that load the full index in one request. */
+export const sliceRaListPage = (items: RaRecord[], params: GetListParams): GetListResult => {
+  const { page, perPage } = params.pagination;
+  const start = (page - 1) * perPage;
+
+  return {
+    data: items.slice(start, start + perPage),
+    total: items.length
+  };
 };
 
 export const raListParamsToQueryParams = (
