@@ -1,8 +1,9 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import type { PolygonEditDrawerPolygon } from "@/context/polygonEditDrawer.types";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
 import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel";
@@ -14,12 +15,46 @@ import PolygonEditContent from "./PolygonEditContent";
 interface PolygonEditDrawerProps {
   open?: boolean;
   polygon?: PolygonEditDrawerPolygon;
+  selectedPolygon?: SitePolygonLightDto;
   onOpenChange?: (open: boolean) => void;
+  onSaved?: () => unknown | Promise<unknown>;
+  onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
 }
 
-const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({ open, polygon, onOpenChange }) => {
+const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
+  open,
+  polygon,
+  selectedPolygon,
+  onOpenChange,
+  onSaved,
+  onPolygonUpdated
+}) => {
   const t = useT();
   const [activeTab, setActiveTab] = useState<string>("edit");
+  const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
+
+  useEffect(() => {
+    setSaveEditContent(null);
+  }, [selectedPolygon?.uuid]);
+
+  const registerSave = useCallback((saveHandler: () => Promise<boolean>) => {
+    setSaveEditContent(() => saveHandler);
+  }, []);
+
+  const handleSave = useCallback(
+    async (onClose: () => void) => {
+      if (activeTab !== "edit" || saveEditContent == null) {
+        onClose();
+        return;
+      }
+
+      const saved = await saveEditContent();
+      if (saved) {
+        onClose();
+      }
+    },
+    [activeTab, saveEditContent]
+  );
 
   return (
     <Drawer
@@ -32,7 +67,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({ open, polygon, onOpenCh
     >
       {({ onClose }) => (
         <FilterPanel
-          title={polygon?.polygonName ?? "-"}
+          title={selectedPolygon?.name ?? polygon?.polygonName ?? "-"}
           variant="fixed"
           onClose={onClose}
           className="h-screen w-full"
@@ -63,7 +98,15 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({ open, polygon, onOpenCh
                 ]}
                 variant="panel"
               />
-              {activeTab === "edit" && <PolygonEditContent />}
+              {activeTab === "edit" && (
+                <PolygonEditContent
+                  polygon={selectedPolygon}
+                  onClose={onClose}
+                  onRegisterSave={registerSave}
+                  onSaved={onSaved}
+                  onPolygonUpdated={onPolygonUpdated}
+                />
+              )}
               {activeTab === "systemValidation" && <div>System Validation</div>}
               {activeTab === "comments" && <div>Comments</div>}
             </Flex>
@@ -79,7 +122,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({ open, polygon, onOpenCh
                 {
                   children: t("Save"),
                   variant: "primary",
-                  onClick: onClose
+                  onClick: () => void handleSave(onClose)
                 }
               ]}
             />
