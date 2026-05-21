@@ -1,6 +1,6 @@
 import { IconButton as WriIconButton } from "@worldresources/wri-design-systems";
-import classNames from "classnames";
 import { FC } from "react";
+import { twMerge } from "tailwind-merge";
 
 interface IconButtonProps {
   icon: React.ReactNode;
@@ -8,6 +8,7 @@ interface IconButtonProps {
   onClick?: () => void;
   variant?: "primary" | "secondary" | "borderless";
   size?: "default" | "small";
+  className?: string;
 }
 
 const IconButton: FC<IconButtonProps> = ({
@@ -16,6 +17,7 @@ const IconButton: FC<IconButtonProps> = ({
   onClick,
   variant = "primary",
   size = "default",
+  className,
   ...props
 }) => {
   return (
@@ -24,13 +26,10 @@ const IconButton: FC<IconButtonProps> = ({
       disabled={disabled}
       onClick={onClick}
       {...props}
-      className={classNames("!h-6 !w-6 rounded-sm hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40")}
-      css={{
-        width: "1.5rem !important",
-        height: "1.5rem !important",
-        minWidth: "1.5rem !important",
-        maxWidth: "1.5rem !important"
-      }}
+      className={twMerge(
+        "!h-6 !w-6 rounded-sm hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40",
+        className
+      )}
     />
   );
 };

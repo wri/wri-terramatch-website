@@ -9,6 +9,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { PolygonEditDrawerDataSync, PolygonEditDrawerProvider } from "@/context/polygonEditDrawer.provider";
+import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { getThemedColor } from "@/lib/theme";
@@ -27,6 +28,7 @@ import UploadError from "../components/Modals/UploadError";
 import UploadPhotos from "../components/Modals/UploadPhotos";
 import UploadPolygons from "../components/Modals/UploadPolygons";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
+import PolygonBulkEditDrawer from "../components/PolygonBulkEditDrawer";
 import { PolygonRow, PolygonTableRow } from "../components/PolygonTableRow";
 import PolygonToolbar from "../components/PolygonToolbar";
 import { useSitePolygonFilters } from "../hooks/useSitePolygonFilters";
@@ -53,6 +55,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [showDeletePolygonModal, setDeletePolygonModal] = useState(false);
   const [showUploadErrorModal, setUploadErrorModal] = useState(false);
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
+  const [showBulkEditDrawer, setShowBulkEditDrawer] = useState(false);
   const [isStickyActive, setIsStickyActive] = useState(false);
   const [hoveredPolygonUuid, setHoveredPolygonUuid] = useState<string | null>(null);
 
@@ -113,6 +116,19 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const clearTableSelection = useCallback(() => {
     setSelectedRowIds(new Set<string>());
   }, [setSelectedRowIds]);
+
+  const handleBulkEditDetails = useCallback(() => {
+    if (selectedRows.length === 0) {
+      return;
+    }
+    if (selectedRows.length === 1) {
+      const selectedRow = selectedRows[0];
+      const sitePolygon = polygonsData.find(polygon => (polygon.polygonUuid ?? polygon.uuid) === selectedRow.id);
+      openPolygonEditDrawerForSitePolygon(sitePolygon);
+      return;
+    }
+    setShowBulkEditDrawer(true);
+  }, [polygonsData, selectedRows]);
 
   const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
 
@@ -278,9 +294,13 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         <PolygonBulkActionToolbar
           visible={hasPolygonSelection}
           itemCount={selectedRows.length}
+          isBulkEditDrawerOpen={showBulkEditDrawer}
           onDelete={() => setDeletePolygonModal(true)}
+          onEdit={handleBulkEditDetails}
           onSubmit={() => setSubmitPolygonsModal(true)}
         />
+
+        <PolygonBulkEditDrawer open={showBulkEditDrawer} onOpenChange={setShowBulkEditDrawer} />
 
         <UploadPolygons open={showUploadModal} onOpenChange={setShowUploadModal} />
         <MatchingPolygonsFound open={showMatchingPolygonsFoundModal} onOpenChange={setMatchingPolygonsFoundModal} />
