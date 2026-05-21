@@ -30,6 +30,8 @@ interface DatePickerInputProps {
   disabled?: boolean;
   size?: "default" | "small";
   noMarginBottom?: boolean;
+  value?: DateValue[];
+  onValueChange?: (value: DateValue[]) => void;
 }
 
 const StyledPickerWrapper = styled.div<{ $size: "default" | "small" }>`
@@ -45,9 +47,12 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
   required,
   disabled,
   size = "default",
-  noMarginBottom = false
+  noMarginBottom = false,
+  value: valueProp,
+  onValueChange
 }) => {
-  const [date, setDate] = useState<DateValue[]>([]);
+  const [uncontrolledDate, setUncontrolledDate] = useState<DateValue[]>([]);
+  const date = valueProp ?? uncontrolledDate;
   const portalContainerRef = useRef<HTMLDivElement | null>(null);
   const browserLocale = useMemo(() => navigator.language, []);
   const dateFormat = useMemo(() => getDateFormatString(browserLocale), [browserLocale]);
@@ -67,7 +72,11 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
       return parseDateInput(value, dateFormat) as DateValue | undefined;
     },
     onValueChange({ value }) {
-      setDate(value);
+      if (valueProp !== undefined) {
+        onValueChange?.(value);
+      } else {
+        setUncontrolledDate(value);
+      }
     }
   });
 
