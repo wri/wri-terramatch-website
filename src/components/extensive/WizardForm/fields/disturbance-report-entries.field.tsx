@@ -31,6 +31,13 @@ export const DisturbanceReportEntriesField: FormFieldFactory = {
             .join("<br/>")}`;
         }
         return `${v.title}: ${t("Answer Not Provided")}`;
+      } else if (v.name == "nursery-affected") {
+        const valueArray = parsedValue;
+        if (Array.isArray(valueArray) && valueArray.length > 0) {
+          const nurseriesAffectedArray = valueArray.map((nursery: any) => `-${nursery?.nurseryName ?? ""}.`);
+          return `${v.title}:<br/> ${nurseriesAffectedArray.join("<br/>")}`;
+        }
+        return `${v.title}: ${t("Answer Not Provided")}`;
       }
 
       if (v.name === "disturbance-subtype" || v.name === "property-affected") {
