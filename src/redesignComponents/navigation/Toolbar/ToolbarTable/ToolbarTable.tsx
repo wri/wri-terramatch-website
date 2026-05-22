@@ -2,7 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Search } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
-import { FC, useRef } from "react";
+import { FC, useCallback, useRef } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
@@ -28,16 +28,25 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   const t = useT();
   const queryRef = useRef("");
 
-  const handleQueryChange = (query: string) => {
-    queryRef.current = query;
-    search?.onQueryChange?.(query);
-  };
+  const onQueryChange = search?.onQueryChange;
+  const onSearchSubmit = search?.onSearchSubmit;
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && search?.onSearchSubmit) {
-      search.onSearchSubmit(queryRef.current);
-    }
-  };
+  const handleQueryChange = useCallback(
+    (query: string) => {
+      queryRef.current = query;
+      onQueryChange?.(query);
+    },
+    [onQueryChange]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        onSearchSubmit?.(queryRef.current);
+      }
+    },
+    [onSearchSubmit]
+  );
 
   return (
     <Toolbar
@@ -61,29 +70,32 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                   } as SearchProps)}
                 />
               </div>
+
               <div className="flex items-center gap-1">
-                <Text textStyle="400-bold" color={"primary.900"}>
+                <Text textStyle="400-bold" color="primary.900">
                   {search.count != null ? `${search.count}` : ""}
                 </Text>
-                <Text textStyle="400" color={"primary.900"}>
+
+                <Text textStyle="400" color="primary.900">
                   {search.label}
                 </Text>
               </div>
             </div>
           )}
+
           {((search != null && filters != null) || selectedFilters != null) && (
             <SimpleDivider backgroundColor="neutral.500" className="!h-4 !w-[0.0625rem] mobile:hidden" />
           )}
+
           <div className="flex min-w-[0] items-center gap-4">
             {filters != null && filters.length > 0 ? (
-              <>
-                <div className="text-14 flex flex-wrap items-center gap-3 text-theme-neutral-900">
-                  {t("Filter by:")}
-                  {filters.map((filter, index) => (
-                    <MultiActionButton key={index} {...filter} size="small" />
-                  ))}
-                </div>
-              </>
+              <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-3">
+                {t("Filter by:")}
+
+                {filters.map((filter, index) => (
+                  <MultiActionButton key={index} {...filter} size="small" />
+                ))}
+              </div>
             ) : (
               <Button variant="secondary" size="small" onClick={onClickFilterButton} leftIcon={<FilterIcon />}>
                 {selectedFilters && selectedFilters.length > 0
@@ -91,7 +103,9 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                   : t("Add Filter")}
               </Button>
             )}
+
             <FilterTag selectedFilters={selectedFilters} />
+
             {showClearFilters && (
               <Button variant="borderless" size="small" leftIcon={<CloseIcon />} onClick={onClearFilters}>
                 {t("Clear All Filters")}
@@ -103,6 +117,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
       contentRight={
         <Flex gap={2} alignItems="center" justifyContent="right">
           {button != null && <Button {...button} size="small" />}
+
           {tooltipContent && (
             <Tooltip content={tooltipContent} position="top">
               <InfoIcon className="text-theme-neutral-800" />
