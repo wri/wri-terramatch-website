@@ -54,6 +54,7 @@ import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonA
 
 import type { PolygonTableRow } from "../tabs/Polygons";
 import DeletePolygon from "./Modals/DeletePolygon";
+import UploadPhotos from "./Modals/UploadPhotos";
 
 type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
@@ -125,6 +126,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [plotsVisible, setPlotsVisible] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
+  const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
 
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
@@ -446,7 +448,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
-      <Flex className="min-h-0 flex-1 flex-col gap-2 overflow-auto pr-2">
+      <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
+      <Flex className="-ml-2 min-h-0 flex-1 flex-col gap-2 overflow-auto overflow-x-hidden px-2">
         <Flex className="h-fit w-full gap-6">
           <Flex className="items-center gap-1">
             <Text textStyle="200" color="neutral.800">
@@ -574,8 +577,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         <Accordion
           header={<AccordionHeader title={t("Geotagged Photos")} />}
           actions={
-            <Button leftIcon={<UploadIcon />} onClick={function noRefCheck() {}} size="small" variant="secondary">
-              {t("Upload Geotagged Photos")}
+            <Button
+              leftIcon={<UploadIcon />}
+              onClick={() => setShowUploadPhotosModal(true)}
+              size="small"
+              variant="secondary"
+            >
+              {t("Upload")}
             </Button>
           }
         >

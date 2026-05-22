@@ -28,7 +28,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   }
 
   return (
-    <Box position={"fixed"} zIndex={"999999"} bottom={0} left={3} right={3}>
+    <Box position={"fixed"} zIndex={"100"} bottom={0} left={3} right={3}>
       <BulkActionToolbar
         ButtonCancel={{
           children: "Cancel"
@@ -41,7 +41,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
         primaryButtonProps={{
           children: "Download"
         }}
-        quantityButtonProps={{
+        quaternaryButtonProps={{
           children: "Run Validation"
         }}
         secondaryButtonProps={{
