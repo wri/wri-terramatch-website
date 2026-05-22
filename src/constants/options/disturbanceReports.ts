@@ -17,8 +17,7 @@ export const DISTURBANCE_PROPERTY_AFFECTED_OPTIONS = [
   { value: "nursery-structure", title: "Nursery Structure" },
   { value: "trees", title: "Trees" },
   { value: "nursery-saplings", title: "Nursery Saplings" },
-  { value: "animals", title: "Animals" },
-  { value: "people", title: "People" }
+  { value: "animals", title: "Animals" }
 ];
 
 export const formatOptions = (options: any) => {
