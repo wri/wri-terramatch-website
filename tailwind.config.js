@@ -311,11 +311,7 @@ module.exports = {
       "map-project-placeholder": 'url("/images/map-project-placeholder.png")'
     }
   },
-  plugins: [
-    require("@tailwindcss/line-clamp"),
-    require("@headlessui/tailwindcss")({ prefix: "ui" }),
-    require("@tailwindcss/forms")
-  ],
+  plugins: [require("@headlessui/tailwindcss")({ prefix: "ui" }), require("@tailwindcss/forms")],
   safelist: [
     {
       pattern: /(bg|text|border)-(primary|secondary|tertiary|neutral|success|error)/
