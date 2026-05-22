@@ -107,7 +107,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
 
   const reportingWindow = useReportingWindow(framework, (entity as ReportFullDto)?.dueAt ?? undefined);
   const disturbanceReportDate =
-    (entity as DisturbanceReportFullDto)?.entries?.find(({ name }) => name === "date-of-disturbance")?.value ?? null;
+    (entity as DisturbanceReportFullDto)?.entries?.find(({ name }) => name === "disturbance-start-date")?.value ?? null;
   const formTitle =
     entityName === "site-reports"
       ? t("{siteName} Site Report", { siteName: (entity as SiteReportFullDto)?.siteName })

@@ -26,7 +26,7 @@ export const Default: Story = {
           { name: "extent", value: "21-40" },
           { name: "people-affected", value: 100 },
           { name: "monetary-damage", value: 100000 },
-          { name: "date-of-disturbance", value: "2025-01-01" },
+          { name: "disturbance-start-date", value: "2025-01-01" },
           {
             name: "site-affected",
             value: '[{"siteUuid":"cf9808cf-2737-4cd9-9d19-cc2219f6fbe5","siteName":"CES Rioterra - RESEX D"}]'

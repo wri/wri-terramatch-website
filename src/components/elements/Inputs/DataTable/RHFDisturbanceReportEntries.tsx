@@ -206,7 +206,7 @@ const RHFDisturbanceReportEntries = ({
   const handleDateChange = useCallback(
     (e: any) => {
       const newValue = e.target.value;
-      updateFieldValue("date-of-disturbance", newValue);
+      updateFieldValue("disturbance-start-date", newValue);
     },
     [updateFieldValue]
   );
@@ -311,12 +311,12 @@ const RHFDisturbanceReportEntries = ({
                 <Input
                   lang="en-GB"
                   type="date"
-                  name="date-of-disturbance"
+                  name="disturbance-start-date"
                   placeholder="Select date"
-                  label={t("Date of Disturbance")}
+                  label={t("Disturbance Start Date")}
                   required
                   description={t(DISTURBANCE_START_DATE_FIELD_DESCRIPTION)}
-                  value={getFieldValue("date-of-disturbance") ?? ""}
+                  value={getFieldValue("disturbance-start-date") ?? ""}
                   onChange={handleDateChange}
                 />
               </div>
