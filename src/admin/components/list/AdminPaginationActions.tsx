@@ -1,10 +1,9 @@
-import { Pagination, PaginationItem } from "@mui/material";
-import type { PaginationProps, PaginationRenderItemParams } from "@mui/material/Pagination";
 import { styled } from "@mui/material/styles";
 import PropTypes from "prop-types";
-import { useTranslate } from "ra-core";
-import * as React from "react";
-import { FC, memo, useCallback } from "react";
+import { FC, memo } from "react";
+
+import IconButton from "@/components/elements/IconButton/IconButton";
+import { IconNames } from "@/components/extensive/Icon/Icon";
 
 const PREFIX = "RaPaginationActions";
 
@@ -13,83 +12,65 @@ const Root = styled("div", {
   overridesResolver: (props, styles) => styles.root
 })(() => ({
   flexShrink: 0,
-  ml: 4
+  marginLeft: 32,
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+  minWidth: 184
 }));
 
-const sanitizeRestProps = ({ nextIconButtonProps, backIconButtonProps, ...rest }: Record<string, unknown>) => rest;
-
-export interface AdminPaginationActionsProps extends PaginationProps {
+export interface AdminPaginationActionsProps {
   page: number;
   rowsPerPage: number;
   count: number;
   onPageChange: (event: React.MouseEvent<HTMLButtonElement> | React.SyntheticEvent | null, page: number) => void;
+  className?: string;
 }
 
 /**
- * Same as ra-ui-materialui PaginationActions. On the last page, the selected item
- * shows an explicit "Page N of M" row (label + page button + suffix) so layout CSS
- * does not strip the prefix or total.
+ * Fixed-layout pagination actions: "Page N of M" plus prev/next controls.
+ * Uses shared Icon assets so the toolbar width stays stable while navigating.
  */
 export const AdminPaginationActions: FC<AdminPaginationActionsProps> = memo(props => {
-  const { page, rowsPerPage, count, onPageChange, size = "small", className, ...rest } = props;
-  const translate = useTranslate();
+  const { page, rowsPerPage, count, onPageChange, className } = props;
 
   const nbPages = Math.ceil(count / rowsPerPage) || 1;
-
-  if (nbPages === 1) {
-    return <Root className={className} />;
-  }
-
-  const isLastPage = page >= nbPages - 1;
-
-  const renderItem = useCallback(
-    (item: PaginationRenderItemParams) => {
-      const element = <PaginationItem {...item} />;
-      if (item.type === "page" && item.selected && isLastPage) {
-        // Full "Page N of M" in one flex row: the legacy ::after "Page" on the button breaks once wrapped.
-        return (
-          <span className="AdminPagination-currentPageWrap">
-            <span className="AdminPagination-pageLabel">Page</span>
-            {element}
-            <span className="AdminPagination-ofTotal">{` of ${nbPages}`}</span>
-          </span>
-        );
-      }
-      return element;
-    },
-    [isLastPage, nbPages]
-  );
-
-  const getItemAriaLabel = (
-    type: "page" | "first" | "last" | "next" | "previous",
-    pageNum: number,
-    selected: boolean
-  ) => {
-    if (type === "page") {
-      return selected
-        ? translate("ra.navigation.current_page", {
-            page: pageNum,
-            _: `page ${pageNum}`
-          })
-        : translate("ra.navigation.page", {
-            page: pageNum,
-            _: `Go to page ${pageNum}`
-          });
-    }
-    return translate(`ra.navigation.${type}`, { _: `Go to ${type} page` });
-  };
+  const safePage = Math.min(page, Math.max(0, nbPages - 1));
+  const currentPage = safePage + 1;
 
   return (
     <Root className={className}>
-      <Pagination
-        size={size}
-        count={nbPages}
-        page={page + 1}
-        onChange={(event, p) => onPageChange(event as React.MouseEvent<HTMLButtonElement>, p - 1)}
-        {...sanitizeRestProps(rest)}
-        getItemAriaLabel={getItemAriaLabel}
-        renderItem={renderItem}
-      />
+      <span className="AdminPagination-currentPageWrap">
+        <span className="AdminPagination-pageLabel">Page</span>
+        <span className="AdminPagination-pageNumber">{currentPage}</span>
+        <span className="AdminPagination-ofTotal">{`of ${nbPages}`}</span>
+      </span>
+      <span className="AdminPagination-navButtons">
+        <IconButton
+          type="button"
+          className="AdminPagination-navButton"
+          disabled={currentPage <= 1}
+          onClick={event => onPageChange(event, safePage - 1)}
+          aria-label="Go to previous page"
+          iconProps={{
+            name: IconNames.CHEVRON_LEFT,
+            width: 12,
+            className: "h-3 w-3 fill-black"
+          }}
+        />
+        <IconButton
+          type="button"
+          className="AdminPagination-navButton"
+          disabled={currentPage >= nbPages}
+          onClick={event => onPageChange(event, safePage + 1)}
+          aria-label="Go to next page"
+          iconProps={{
+            name: IconNames.CHEVRON_RIGHT,
+            width: 12,
+            className: "h-3 w-3 fill-black"
+          }}
+        />
+      </span>
     </Root>
   );
 });
@@ -99,6 +80,5 @@ AdminPaginationActions.propTypes = {
   onPageChange: PropTypes.func.isRequired,
   page: PropTypes.number.isRequired,
   rowsPerPage: PropTypes.number.isRequired,
-  color: PropTypes.oneOf(["primary", "secondary", "standard"]),
-  size: PropTypes.oneOf(["small", "medium", "large"])
+  className: PropTypes.string
 };

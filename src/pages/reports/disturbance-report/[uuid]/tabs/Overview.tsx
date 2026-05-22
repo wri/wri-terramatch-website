@@ -25,6 +25,11 @@ interface SiteAffected {
   siteName: string;
 }
 
+interface NurseryAffected {
+  nurseryUuid: string;
+  nurseryName: string;
+}
+
 interface PolygonAffected {
   polyUuid: string;
   polyName: string;
@@ -54,16 +59,16 @@ const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabPr
     );
   }
 
-  const columns = [
+  const sitesAffectedColumns = [
     {
-      accessorKey: "sites_affected",
+      accessorKey: "sitesAffected",
       header: t("Sites Affected"),
       cell: ({ getValue, row }: any) => (
         <Text variant="text-14-light" className="flex items-center gap-2 leading-none text-blueCustom-900">
           {getValue()}
           <Link
             className="h-4 w-4 cursor-pointer text-darkCustom-300 hover:text-primary"
-            href={`/site/${row.original?.site_uuid}`}
+            href={`/site/${row.original?.siteUuid}`}
           >
             <Icon name={IconNames.LINK_PA} className="h-4 w-4" />
           </Link>
@@ -73,8 +78,28 @@ const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabPr
       meta: { width: "50%" }
     },
     {
-      accessorKey: "polygon_affected",
+      accessorKey: "polygonAffected",
       header: t("Polygons Affected"),
+      enableSorting: false,
+      meta: { width: "50%" }
+    }
+  ];
+
+  const nurseriesAffectedColumns = [
+    {
+      accessorKey: "nurseriesAffected",
+      header: t("Nurseries Affected"),
+      cell: ({ getValue, row }: any) => (
+        <Text variant="text-14-light" className="flex items-center gap-2 leading-none text-blueCustom-900">
+          {getValue()}
+          <Link
+            className="h-4 w-4 cursor-pointer text-darkCustom-300 hover:text-primary"
+            href={`/nursery/${row.original?.nurseryUuid}`}
+          >
+            <Icon name={IconNames.LINK_PA} className="h-4 w-4" />
+          </Link>
+        </Text>
+      ),
       enableSorting: false,
       meta: { width: "50%" }
     }
@@ -94,6 +119,7 @@ const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabPr
   const monetaryDamage = getFieldValue("monetary-damage");
   const sitesAffected = getFieldValue("site-affected");
   const polygonsAffected = getFieldValue("polygon-affected");
+  const nurseriesAffected = getFieldValue("nursery-affected");
 
   const disturbanceReportData = Array.isArray(sitesAffected)
     ? sitesAffected.map((site: SiteAffected) => {
@@ -101,13 +127,21 @@ const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabPr
           polygonsAffected?.flat().filter((poly: PolygonAffected) => poly?.siteUuid === site?.siteUuid) ?? [];
 
         return {
-          sites_affected: site?.siteName,
-          site_uuid: site?.siteUuid,
-          polygon_affected: sitePolygons?.map((poly: PolygonAffected) => poly?.polyName).join(", ")
+          sitesAffected: site?.siteName,
+          siteUuid: site?.siteUuid,
+          polygonAffected: sitePolygons?.map((poly: PolygonAffected) => poly?.polyName).join(", ")
         };
       })
     : [];
 
+  const nurseriesAffectedData = Array.isArray(nurseriesAffected)
+    ? nurseriesAffected.map((nursery: NurseryAffected) => {
+        return {
+          nurseriesAffected: nursery?.nurseryName,
+          nurseryUuid: nursery?.nurseryUuid
+        };
+      })
+    : [];
   return (
     <PageBody>
       <PageRow className="gap-12">
@@ -144,7 +178,16 @@ const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabPr
           <PageCard title={t("Sites Affected")} gap={8}>
             <Table
               data={disturbanceReportData}
-              columns={columns}
+              columns={sitesAffectedColumns}
+              hasPagination={false}
+              invertSelectPagination={false}
+              variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
+            />
+          </PageCard>
+          <PageCard title={t("Nurseries Affected")} gap={8}>
+            <Table
+              data={nurseriesAffectedData}
+              columns={nurseriesAffectedColumns}
               hasPagination={false}
               invertSelectPagination={false}
               variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
