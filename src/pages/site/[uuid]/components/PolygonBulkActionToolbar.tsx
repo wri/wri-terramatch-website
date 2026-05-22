@@ -9,19 +9,28 @@ import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActio
 export type PolygonBulkActionToolbarProps = {
   visible: boolean;
   itemCount: number;
+  isBulkEditDrawerOpen?: boolean;
   onDelete: () => void;
+  onEdit: () => void;
   onSubmit: () => void;
 };
 
-const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({ visible, itemCount, onDelete, onSubmit }) => {
+const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
+  visible,
+  itemCount,
+  isBulkEditDrawerOpen = false,
+  onDelete,
+  onEdit,
+  onSubmit
+}) => {
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
 
-  if (!visible || isPolygonEditDrawerOpen) {
+  if (!visible || isPolygonEditDrawerOpen || isBulkEditDrawerOpen) {
     return null;
   }
 
   return (
-    <Box position={"fixed"} zIndex={"999999"} bottom={0} left={3} right={3}>
+    <Box position={"fixed"} zIndex={"100"} bottom={0} left={3} right={3}>
       <BulkActionToolbar
         ButtonCancel={{
           children: "Cancel"
@@ -46,7 +55,8 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({ visible, 
             })
         }}
         secondaryButtonProps={{
-          children: "Edit Details"
+          children: itemCount > 1 ? "Edit Details" : "Edit",
+          onClick: onEdit
         }}
         tertiaryButtonProps={{
           children: "Submit",

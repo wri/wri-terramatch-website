@@ -4,6 +4,7 @@ import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
 import type { FC } from "react";
 import { useMemo, useRef, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 import { formatDateValue, getDateFormatString, parseDateInput } from "@/utils/date";
@@ -32,6 +33,7 @@ interface DatePickerInputProps {
   noMarginBottom?: boolean;
   value?: DateValue[];
   onValueChange?: (value: DateValue[]) => void;
+  className?: string;
 }
 
 const StyledPickerWrapper = styled.div<{ $size: "default" | "small" }>`
@@ -49,7 +51,8 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
   size = "default",
   noMarginBottom = false,
   value: valueProp,
-  onValueChange
+  onValueChange,
+  className
 }) => {
   const [uncontrolledDate, setUncontrolledDate] = useState<DateValue[]>([]);
   const date = valueProp ?? uncontrolledDate;
@@ -81,7 +84,11 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
   });
 
   return (
-    <FieldContainer $size={size} $noMarginBottom={noMarginBottom} className="ds-date-picker-input-container">
+    <FieldContainer
+      $size={size}
+      $noMarginBottom={noMarginBottom}
+      className={twMerge("ds-date-picker-input-container", className)}
+    >
       {errorMessage != null ? <FieldErrorBar /> : null}
       <div style={{ marginLeft: errorMessage != null ? "1.1875rem" : "0px" }}>
         {label != null ? (
