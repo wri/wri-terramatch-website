@@ -69,7 +69,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const optionsCohort = [
     { title: "TerraFund Cohort One", value: "terrafund-cohort-1" },
     { title: "TerraFund Cohort Two", value: "terrafund-cohort-2" },
-    { title: "TerraFund Cohort Three", value: "terrafund-3" }
+    { title: "TerraFund Cohort Three", value: "terrafund-cohort-3" }
   ];
 
   const activeCountries = useMemo(() => {
@@ -207,7 +207,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           }
         : filters.country,
       organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : [],
-      cohort: Array.isArray(cohort) ? cohort : cohort ? [cohort] : [],
+      cohort: (Array.isArray(cohort) ? cohort : cohort ? [cohort] : []).map(value =>
+        value === "terrafund-3" ? "terrafund-cohort-3" : value
+      ),
       uuid: (uuid as string) || ""
     };
 

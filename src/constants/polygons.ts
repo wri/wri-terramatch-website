@@ -11,4 +11,8 @@ export type targetLandUseType =
   | "urban-forest"
   | "woodlot-or-plantation";
 
-export type restorationStrategyType = "tree-planting" | "assisted-natural-regeneration" | "direct-seeding";
+export type restorationStrategyType =
+  | "tree-planting"
+  | "sapling-planting"
+  | "assisted-natural-regeneration"
+  | "direct-seeding";

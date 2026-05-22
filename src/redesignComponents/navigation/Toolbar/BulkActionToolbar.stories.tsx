@@ -26,6 +26,9 @@ const meta: Meta<typeof BulkActionToolbar> = {
     tertiaryButtonProps: {
       description: "Configuration for the tertiary button"
     },
+    quaternaryButtonProps: {
+      description: "Configuration for the quaternary button"
+    },
     ButtonCancel: {
       description: "Configuration for the cancel button on the left"
     },
@@ -59,7 +62,7 @@ export const Default: Story = {
       children: "Label",
       onClick: () => console.log("Tertiary action clicked")
     },
-    quantityButtonProps: {
+    quaternaryButtonProps: {
       children: "Label",
       onClick: () => console.log("Quantity action clicked")
     },

@@ -26,6 +26,8 @@ const defaultContextValue: PolygonEditDrawerContextValue = {
 
 const PolygonEditDrawerContext = createContext<PolygonEditDrawerContextValue>(defaultContextValue);
 
+const EMPTY_POLYGONS: SitePolygonLightDto[] = [];
+
 let openPolygonEditExternal: ((params?: PolygonEditDrawerPolygon) => void) | null = null;
 
 export const openPolygonEditDrawer = (params?: PolygonEditDrawerPolygon): void => {
@@ -56,7 +58,10 @@ type PolygonEditDrawerDataContextValue = {
 
 const PolygonEditDrawerDataContext = createContext<PolygonEditDrawerDataContextValue | null>(null);
 
-export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({ polygons = [], onRefetchPolygons }) => {
+export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({
+  polygons = EMPTY_POLYGONS,
+  onRefetchPolygons
+}) => {
   const dataContext = useContext(PolygonEditDrawerDataContext);
 
   useEffect(() => {
@@ -72,7 +77,7 @@ export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({ 
 
 export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   children,
-  polygons: polygonsProp = [],
+  polygons: polygonsProp = EMPTY_POLYGONS,
   onRefetchPolygons: onRefetchPolygonsProp
 }) => {
   const [isOpen, setIsOpen] = useState(false);

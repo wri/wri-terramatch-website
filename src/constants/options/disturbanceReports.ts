@@ -13,13 +13,12 @@ export const DISTURBANCE_EXTENT_OPTIONS = [
 ];
 
 export const DISTURBANCE_PROPERTY_AFFECTED_OPTIONS = [
-  { value: "seedlings", title: "Seedlings" },
+  { value: "tree-seedlings", title: "Seedlings" },
   { value: "nursery-structure", title: "Nursery Structure" },
   { value: "trees", title: "Trees" },
-  { value: "saplings", title: "Saplings" },
+  { value: "nursery-saplings", title: "Saplings" },
   { value: "animals", title: "Animals" },
-  { value: "people", title: "People" },
-  { value: "fencing", title: "Fencing" }
+  { value: "people", title: "People" }
 ];
 
 export const formatOptions = (options: any) => {

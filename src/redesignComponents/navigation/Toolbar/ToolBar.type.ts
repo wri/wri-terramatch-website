@@ -20,7 +20,7 @@ export interface BulkActionToolbarProps {
   primaryButtonProps?: IButtonProps;
   secondaryButtonProps?: IButtonProps;
   tertiaryButtonProps?: IButtonProps;
-  quantityButtonProps?: IButtonProps;
+  quaternaryButtonProps?: IButtonProps;
   items?: string;
   ButtonCancel: IButtonProps;
   ButtonDelete: IButtonProps;

@@ -11,14 +11,14 @@ const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
   primaryButtonProps,
   secondaryButtonProps,
   tertiaryButtonProps,
-  quantityButtonProps,
+  quaternaryButtonProps,
   items,
   ButtonCancel,
   ButtonDelete
 }: BulkActionToolbarProps) => {
   return (
     <Toolbar
-      className="rounded-lg !bg-theme-primary-800 px-4 py-3 !shadow-[0_-0.25rem_0.375rem_-0.0625rem_rgba(0,0,0,0.10),0_-0.125rem_0.25rem_-0.125rem_rgba(0,0,0,0.10)]"
+      className="flex-wrap rounded-lg !bg-theme-primary-800 px-4 py-3 !shadow-[0_-0.25rem_0.375rem_-0.0625rem_rgba(0,0,0,0.10),0_-0.125rem_0.25rem_-0.125rem_rgba(0,0,0,0.10)]"
       contentLeft={<Button className="!text-theme-neutral-100" {...ButtonCancel} variant="borderless" />}
       contentCenter={
         <Flex gap={1}>
@@ -30,11 +30,12 @@ const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
           </Text>
         </Flex>
       }
+      classNameContentRight="max-w-full"
       contentRight={
-        <Flex alignItems="center" gap={2}>
+        <Flex alignItems="center" gap={2} flexWrap="wrap">
           <Button {...ButtonDelete} className="!text-theme-error-300" variant="borderless" />
           <SimpleDivider className="!h-3.5 !w-[0.0625rem]" />
-          <Button {...quantityButtonProps} variant="borderless" className="!text-theme-neutral-100" />
+          <Button {...quaternaryButtonProps} variant="borderless" className="!text-theme-neutral-100" />
           <SimpleDivider className="!h-3.5 !w-[0.0625rem]" />
           <Button {...tertiaryButtonProps} variant="borderless" className="!text-theme-neutral-100" />
           <SimpleDivider className="!h-3.5 !w-[0.0625rem]" />

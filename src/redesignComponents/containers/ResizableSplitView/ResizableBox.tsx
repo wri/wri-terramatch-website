@@ -93,14 +93,12 @@ const ResizableBox: FC<ResizableBoxProps> = ({
       {children}
 
       <Box
-        className="relative h-[0.188rem] shrink-0"
-        style={{
-          background: isDragging
-            ? `url('/icons/dash-blue.svg') repeat-x center`
-            : isHovered
-            ? getThemedColor("primary", 500)
-            : getThemedColor("neutral", 500)
-        }}
+        className={twMerge("relative h-[0.188rem] shrink-0", isDragging && "bg-dash-blue bg-center bg-repeat-x")}
+        style={
+          isDragging
+            ? undefined
+            : { backgroundColor: isHovered ? getThemedColor("primary", 500) : getThemedColor("neutral", 500) }
+        }
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >

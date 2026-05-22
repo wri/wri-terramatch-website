@@ -80,6 +80,7 @@ export const VALIDATION_STATUS_LABELS: Record<PolygonValidationStatus, string> =
 
 export const RESTORATION_PRACTICE_LABELS: Record<restorationStrategyType, string> = {
   "tree-planting": "Tree Planting",
+  "sapling-planting": "Sapling Planting",
   "assisted-natural-regeneration": "Assisted Natural Regeneration",
   "direct-seeding": "Direct Seeding"
 };

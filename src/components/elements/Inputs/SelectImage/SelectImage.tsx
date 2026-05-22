@@ -9,6 +9,10 @@ import List from "@/components/extensive/List/List";
 import { useStateWithEffect } from "@/hooks/useStateWithEffect";
 import { OptionValue } from "@/types/common";
 
+const SELECT_IMAGE_FALLBACK_URL_BY_VALUE: Record<string, string> = {
+  "sapling-planting": "/images/options/restoration-strategies/tree-planting.png"
+};
+
 export interface SelectImageProps extends SelectProps {}
 
 /**
@@ -68,7 +72,11 @@ const SelectImage: FC<PropsWithChildren<SelectImageProps>> = props => {
             typeof selected === "string" || Array.isArray(selected)
               ? selected?.includes(option.value)
               : selected === option.value;
-          const imageUrl = option.meta?.image?.thumb_url ?? option.meta?.url ?? option.meta?.image_url;
+          const imageUrl =
+            option.meta?.image?.thumb_url ??
+            option.meta?.url ??
+            option.meta?.image_url ??
+            SELECT_IMAGE_FALLBACK_URL_BY_VALUE[String(option.value)];
 
           return props.multiSelect ? (
             <Checkbox
