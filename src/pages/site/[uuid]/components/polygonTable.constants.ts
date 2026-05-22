@@ -3,7 +3,12 @@ import { restorationStrategyType, targetLandUseType } from "@/constants/polygons
 import { TARGET_LAND_USE_LABELS } from "./polygonFilter.constants";
 
 export const isRestorationStrategy = (value: string): value is restorationStrategyType => {
-  return value === "tree-planting" || value === "assisted-natural-regeneration" || value === "direct-seeding";
+  return (
+    value === "tree-planting" ||
+    value === "sapling-planting" ||
+    value === "assisted-natural-regeneration" ||
+    value === "direct-seeding"
+  );
 };
 
 export const isTargetLandUseType = (value: string): value is targetLandUseType => {
