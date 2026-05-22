@@ -1,4 +1,4 @@
-export const IMAGE_SIZE = 164;
+export const IMAGE_SIZE = 41;
 
 export const IMAGE_CONTAINER_CLASSES = "!min-w-40 !min-h-40 !h-44 !w-44 mobile:hidden";
 

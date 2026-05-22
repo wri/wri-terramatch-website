@@ -1,11 +1,13 @@
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
+import type { SizeValue } from "@/lib/sizing";
+
 import BaseImage, { MediaType } from "../Image";
 
 export interface GalleryImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
   alt?: string;
-  size?: number;
+  size?: SizeValue;
   className?: string;
   isAdd?: boolean;
   onClickEdit?: () => void;
@@ -13,6 +15,7 @@ export interface GalleryImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
   hoverContent?: React.ReactNode;
   type?: MediaType;
   classNamesVideoIcon?: string;
+  hideNotAvailableText?: boolean;
 }
 
 const GalleryImage: FC<GalleryImageProps> = ({

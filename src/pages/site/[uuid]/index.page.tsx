@@ -18,6 +18,7 @@ import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
@@ -73,6 +74,7 @@ const SiteDetailPage = () => {
 
   return (
     <MapAreaProvider>
+      <ProjectResponsiveTypography />
       <FrameworkProvider frameworkKey={site?.frameworkKey}>
         {loading && (
           <div className="fixed top-0 z-50 flex h-screen w-screen items-center justify-center backdrop-brightness-50">
