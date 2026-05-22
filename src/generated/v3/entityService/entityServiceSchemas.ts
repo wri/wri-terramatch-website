@@ -887,8 +887,7 @@ export type DisturbanceDto = {
    * The entity UUID this resource is associated with.
    */
   entityUuid: string;
-  disturbanceStartDate: string | null;
-  disturbanceEndDate: string | null;
+  disturbanceDate: string | null;
   collection: string | null;
   type: string | null;
   subtype: string | null;
@@ -1348,14 +1347,6 @@ export type DisturbanceReportLightDto = {
   /**
    * @format date-time
    */
-  disturbanceStartDate: string | null;
-  /**
-   * @format date-time
-   */
-  disturbanceEndDate: string | null;
-  /**
-   * @format date-time
-   */
   createdAt: string;
   /**
    * @format date-time
@@ -1363,6 +1354,14 @@ export type DisturbanceReportLightDto = {
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
   reportId: number;
+  /**
+   * @format date-time
+   */
+  disturbanceStartDate: string | null;
+  /**
+   * @format date-time
+   */
+  disturbanceEndDate: string | null;
 };
 
 export type FileDownloadDto = {
@@ -2249,14 +2248,6 @@ export type DisturbanceReportFullDto = {
   /**
    * @format date-time
    */
-  disturbanceStartDate: string | null;
-  /**
-   * @format date-time
-   */
-  disturbanceEndDate: string | null;
-  /**
-   * @format date-time
-   */
   createdAt: string;
   /**
    * @format date-time
@@ -2264,6 +2255,14 @@ export type DisturbanceReportFullDto = {
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
   reportId: number;
+  /**
+   * @format date-time
+   */
+  disturbanceStartDate: string | null;
+  /**
+   * @format date-time
+   */
+  disturbanceEndDate: string | null;
   title: string | null;
   /**
    * @format date-time
