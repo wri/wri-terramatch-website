@@ -5,6 +5,7 @@ import {
   AgriculturalLandIcon,
   AgroforestyIcon,
   ApplicationsIcon,
+  AreaHectaresCircleIcon,
   AreaHectaresIcon,
   ArrowForwardIcon,
   AssistedNaturalRegenIcon,
@@ -17,8 +18,9 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-  CloseFullscreenIcon,
   CloseIcon,
+  CommentIcon,
+  CompressIcon,
   CorrectIcon,
   DashboardIcon,
   DeleteIcon,
@@ -31,6 +33,8 @@ import {
   DueIcon,
   EditIcon,
   ExpandIcon,
+  FilterIcon,
+  GoogleViewIcon,
   GrasslandIcon,
   IncorrectIcon,
   IndeterminateIcon,
@@ -43,6 +47,7 @@ import {
   LanguageIcon,
   LoadingIcon,
   MangroveIcon,
+  MapViewIcon,
   MessagesIcon,
   MoreVertIcon,
   NaturalForestIcon,
@@ -68,6 +73,7 @@ import {
   RegenerationIcon,
   RejectedIcon,
   ReportsIcon,
+  SatelliteViewIcon,
   SearchIcon,
   SeedlingsCircleIcon,
   SeedlingsIcon,
@@ -128,6 +134,9 @@ export const AllIcons: Story = {
         <VStack align="stretch" gap={4}>
           <IconWrapper name="Area / Hectares">
             <AreaHectaresIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Area Hectares Circle">
+            <AreaHectaresCircleIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Jobs / Workdays">
             <JobsIcon boxSize={8} />
@@ -252,11 +261,17 @@ export const AllIcons: Story = {
           <IconWrapper name="Close">
             <CloseIcon boxSize={8} />
           </IconWrapper>
-          <IconWrapper name="Close Fullscreen">
-            <CloseFullscreenIcon boxSize={8} />
+          <IconWrapper name="Compress">
+            <CompressIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Correct">
             <CorrectIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Comment">
+            <CommentIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Compress">
+            <CompressIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Disallowed">
             <DisallowedIcon boxSize={8} />
@@ -276,6 +291,12 @@ export const AllIcons: Story = {
           <IconWrapper name="Expand">
             <ExpandIcon boxSize={8} />
           </IconWrapper>
+          <IconWrapper name="Google View">
+            <GoogleViewIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Filter">
+            <FilterIcon boxSize={8} />
+          </IconWrapper>
           <IconWrapper name="Incorrect">
             <IncorrectIcon boxSize={8} />
           </IconWrapper>
@@ -287,6 +308,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Loading">
             <LoadingIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Map View">
+            <MapViewIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="More Vert">
             <MoreVertIcon boxSize={8} />
@@ -308,6 +332,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Photo Library">
             <PhotoLibraryIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Satellite View">
+            <SatelliteViewIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Search">
             <SearchIcon boxSize={8} />
@@ -425,6 +452,9 @@ export const DataVisualisation: Story = {
         <IconWrapper name="Area / Hectares">
           <AreaHectaresIcon boxSize={8} />
         </IconWrapper>
+        <IconWrapper name="Area Hectares Circle">
+          <AreaHectaresCircleIcon boxSize={8} />
+        </IconWrapper>
         <IconWrapper name="Jobs / Workdays">
           <JobsIcon boxSize={8} />
         </IconWrapper>
@@ -495,11 +525,17 @@ export const Function: Story = {
         <IconWrapper name="Close">
           <CloseIcon boxSize={8} />
         </IconWrapper>
-        <IconWrapper name="Close Fullscreen">
-          <CloseFullscreenIcon boxSize={8} />
+        <IconWrapper name="Compress">
+          <CompressIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Correct">
           <CorrectIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Comment">
+          <CommentIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Compress">
+          <CompressIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Disallowed">
           <DisallowedIcon boxSize={8} />
@@ -519,6 +555,12 @@ export const Function: Story = {
         <IconWrapper name="Expand">
           <ExpandIcon boxSize={8} />
         </IconWrapper>
+        <IconWrapper name="Google View">
+          <GoogleViewIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Filter">
+          <FilterIcon boxSize={8} />
+        </IconWrapper>
         <IconWrapper name="Incorrect">
           <IncorrectIcon boxSize={8} />
         </IconWrapper>
@@ -530,6 +572,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Loading">
           <LoadingIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Map View">
+          <MapViewIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="More Vert">
           <MoreVertIcon boxSize={8} />
@@ -551,6 +596,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Photo">
           <PhotosIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Satellite View">
+          <SatelliteViewIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Search">
           <SearchIcon boxSize={8} />

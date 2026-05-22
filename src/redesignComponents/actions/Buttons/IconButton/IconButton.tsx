@@ -6,9 +6,18 @@ interface IconButtonProps {
   icon: React.ReactNode;
   disabled?: boolean;
   onClick?: () => void;
+  variant?: "primary" | "secondary" | "borderless";
+  size?: "default" | "small";
 }
 
-const IconButton: FC<IconButtonProps> = ({ icon, disabled, onClick, ...props }) => {
+const IconButton: FC<IconButtonProps> = ({
+  icon,
+  disabled,
+  onClick,
+  variant = "primary",
+  size = "default",
+  ...props
+}) => {
   return (
     <WriIconButton
       icon={icon}

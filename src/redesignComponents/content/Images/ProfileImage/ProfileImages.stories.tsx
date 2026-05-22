@@ -14,7 +14,7 @@ export const Default: Story = {
   args: {
     src: "https://i.pravatar.cc/300?img=4",
     alt: "John Doe",
-    size: 164
+    size: 41
   }
 };
 
@@ -22,7 +22,7 @@ export const Small: Story = {
   args: {
     src: "https://i.pravatar.cc/300?img=4",
     alt: "John Doe",
-    size: 96
+    size: 24
   }
 };
 
@@ -30,13 +30,13 @@ export const Large: Story = {
   args: {
     src: "https://i.pravatar.cc/300?img=4",
     alt: "John Doe",
-    size: 384
+    size: 96
   }
 };
 
 export const NotAvailable: Story = {
   args: {
     isAdd: true,
-    size: 164
+    size: 41
   }
 };
