@@ -319,7 +319,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onSubmit={() => setSubmitPolygonsModal(true)}
         />
 
-        <PolygonBulkEditDrawer open={showBulkEditDrawer} onOpenChange={setShowBulkEditDrawer} />
+        <PolygonBulkEditDrawer
+          selectedPolygons={selectedRows}
+          open={showBulkEditDrawer}
+          onOpenChange={setShowBulkEditDrawer}
+        />
 
         <UploadPolygons
           open={showUploadModal}
