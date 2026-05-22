@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
+import { TranslatedText } from "@/i18n/types";
+
 import Component from "./PageCard";
 
 const meta: Meta<typeof Component> = {
@@ -19,7 +21,7 @@ export const Default: Story = {
     )
   ],
   args: {
-    title: "Card title",
-    subtitle: "Card subtitle"
+    title: "Card title" as TranslatedText,
+    subtitle: "Card subtitle" as TranslatedText
   }
 };

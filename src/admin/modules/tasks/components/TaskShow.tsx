@@ -253,14 +253,14 @@ function ShowReports() {
     useCallback(
       failure => {
         if (failure == null) {
-          openNotification("success", "Reports approved successfully", "");
+          openNotification("success", t("Reports approved successfully"));
           closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
           closeModal(ModalId.APPROVE_POLYGONS);
         } else {
-          openNotification("error", "Failed to approve reports", first(failure.message) ?? "An error occurred");
+          openNotification("error", t("Failed to approve reports"), first(failure.message) ?? t("An error occurred"));
         }
       },
-      [closeModal, openNotification]
+      [t, closeModal, openNotification]
     )
   );
 

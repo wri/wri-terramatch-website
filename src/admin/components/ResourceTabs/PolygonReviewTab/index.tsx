@@ -524,7 +524,8 @@ const PolygonReviewTab: FC<IProps> = props => {
       refetch();
     } catch (error) {
       const errorMessage = extractErrorMessage(error);
-      openNotification("error", t("Error uploading file"), errorMessage);
+      // TODO: review errorMessage possible values and translate them
+      openNotification("error", t("Error uploading file"), t(errorMessage));
     }
   };
 
@@ -561,7 +562,8 @@ const PolygonReviewTab: FC<IProps> = props => {
           },
           onError: (error: any) => {
             const errorMessage = extractErrorMessage(error);
-            openNotification("error", t("Error uploading file"), errorMessage);
+            // TODO: review errorMessage possible values and translate them
+            openNotification("error", t("Error uploading file"), t(errorMessage));
           }
         });
       } else {
@@ -585,7 +587,8 @@ const PolygonReviewTab: FC<IProps> = props => {
       }
     } catch (error) {
       const errorMessage = extractErrorMessage(error);
-      openNotification("error", t("Error uploading file"), errorMessage);
+      // TODO: review errorMessage possible values and translate them
+      openNotification("error", t("Error uploading file"), t(errorMessage));
     }
   };
 
@@ -657,7 +660,7 @@ const PolygonReviewTab: FC<IProps> = props => {
               "approved",
               data
             );
-            openNotification("success", "Success, Your Polygons were approved!", "");
+            openNotification("success", t("Success, Your Polygons were approved!"));
 
             const siteUuid = record?.uuid;
             const projectUuid =
@@ -862,10 +865,9 @@ const PolygonReviewTab: FC<IProps> = props => {
                       <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
                         Site Status
                         <ToolTip
-                          title={""}
-                          content={
+                          content={t(
                             "Site status indicates the current status of the site. Active sites that have been approved by project managers will have the status: Restoration in Progress."
-                          }
+                          )}
                           width="w-64 lg:w-72"
                           trigger="click"
                         >
@@ -880,8 +882,9 @@ const PolygonReviewTab: FC<IProps> = props => {
                       <Text variant="text-14" className="mb-2 flex items-center gap-1 text-darkCustom">
                         Polygon Overview
                         <ToolTip
-                          title=""
-                          content={`This graphic displays the breakdown of polygon statuses for this site. Approved Polygons are ready for monitoring, but all other statuses require polygon validation and approval. Use the 'Check Polygon' and 'Approve Polygon' features below to validate and approve the remaining polygons.`}
+                          content={t(
+                            "This graphic displays the breakdown of polygon statuses for this site. Approved Polygons are ready for monitoring, but all other statuses require polygon validation and approval. Use the 'Check Polygon' and 'Approve Polygon' features below to validate and approve the remaining polygons."
+                          )}
                           width="w-72 lg:w-80"
                           trigger="click"
                         >
