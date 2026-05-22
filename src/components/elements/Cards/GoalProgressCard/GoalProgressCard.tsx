@@ -6,6 +6,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { withFrameworkShow } from "@/context/framework.provider";
 import { TranslatedText } from "@/i18n/types";
+import { EMPTY_I18N } from "@/i18n/util";
 import { TextVariants } from "@/types/common";
 
 import LinearProgressBar from "../../ProgressBar/LinearProgressBar/LinearProgressBar";
@@ -67,12 +68,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
           <Text variant={labelVariant ?? "text-16-light"} className={classNames("mb-1 w-full", classNameLabel)}>
             {label}
             {(tooltipTitle != null || tootipContent != null) && (
-              <ToolTip
-                title={tooltipTitle}
-                content={tootipContent ?? ("" as TranslatedText)}
-                width="w-60"
-                trigger="click"
-              >
+              <ToolTip title={tooltipTitle} content={tootipContent ?? EMPTY_I18N} width="w-60" trigger="click">
                 <Icon name={IconNames.IC_INFO} className="ml-1 text-neutral-500" />
               </ToolTip>
             )}

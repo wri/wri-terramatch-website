@@ -22,7 +22,7 @@ import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
-import { TranslatedText } from "@/i18n/types";
+import { EMPTY_I18N } from "@/i18n/util";
 import { OptionValue } from "@/types/common";
 import { convertCodesToNames, convertNamesToCodes, LANDSCAPE_OPTIONS } from "@/utils/landscapeUtils";
 
@@ -349,7 +349,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           {getHeaderTitle()}
           {isProjectInsightsPage && (
             <ToolTip
-              title={"" as TranslatedText}
+              title={EMPTY_I18N}
               content={t(PROJECT_INSIGHTS_SECTION_TOOLTIP)}
               placement="top"
               width="w-64 lg:w-96"

@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useMemo, useState } from "react";
 
 import Notification from "@/components/elements/Notification/Notification";
 import { TranslatedText } from "@/i18n/types";
+import { EMPTY_I18N } from "@/i18n/util";
 
 type NotificationType = "success" | "error" | "warning" | null;
 
@@ -25,7 +26,7 @@ export const NotificationContext = React.createContext<NotificationContextType>(
   closeNotification: () => {},
   notificationProps: {
     type: null,
-    title: "" as TranslatedText,
+    title: EMPTY_I18N,
     message: undefined,
     open: false
   }
@@ -38,7 +39,7 @@ type NotificationProviderProps = {
 const NotificationProvider = ({ children }: NotificationProviderProps) => {
   const [notificationProps, setNotificationProps] = useState({
     type: null as NotificationType,
-    title: "" as TranslatedText,
+    title: EMPTY_I18N,
     message: undefined,
     open: false
   });
