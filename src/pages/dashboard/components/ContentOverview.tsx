@@ -372,7 +372,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         isUserAllowed={isUserAllowed}
         projectFrameworkKey={projectFrameworkKey}
         subtitleMore={true}
-        title={t(titleTable)}
+        title={titleTable}
         tooltip={textTooltipTable}
         tooltipTrigger="click"
         iconClassName="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5"

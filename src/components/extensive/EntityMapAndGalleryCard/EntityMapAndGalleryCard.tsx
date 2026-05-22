@@ -20,6 +20,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { TranslatedText } from "@/i18n/types";
 import { EntityName, FileType } from "@/types/common";
 import { HookFilters, HookProps } from "@/types/connection";
 import Log from "@/utils/log";
@@ -28,11 +29,11 @@ import ModalAddImages, { FileUploadEntity } from "../Modal/ModalAddImages";
 import { ModalId } from "../Modal/ModalConst";
 
 export interface EntityMapAndGalleryCardProps {
-  modelTitle: string;
+  modelTitle: TranslatedText;
   modelName: EntityName;
   modelUUID: string;
   entityData: any;
-  emptyStateContent: string;
+  emptyStateContent: TranslatedText;
 }
 
 const EntityMapAndGalleryCard = ({
@@ -187,7 +188,7 @@ const EntityMapAndGalleryCard = ({
   return (
     <>
       {modelName !== "disturbanceReports" && (
-        <PageCard title={`${modelTitle} ${t("Area")}`}>
+        <PageCard title={t("{modelTitle} Area", { modelTitle })}>
           <MapContainer
             polygonsData={polygonDataMap}
             sitePolygonData={sitePolygonData}
