@@ -98,6 +98,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
   const sitesAffected = getFieldValue("site-affected");
   const polygonsAffected = getFieldValue("polygon-affected");
   const nurseriesAffected = getFieldValue("nursery-affected");
+  const disturbanceEndDate = getFieldValue("disturbance-end-date");
 
   const formatValuesWithOptions = (values: string[], options: Array<{ value: string; title: string }>) => {
     if (!Array.isArray(values)) return values;
@@ -216,6 +217,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
             className="text-blueCustom-900"
           />
           <TextEntry value={disturbanceStartDate ?? t("Answer Not Provided")} label={t("Disturbance Start Date")} />
+          <TextEntry value={disturbanceEndDate ?? t("Answer Not Provided")} label={t("Disturbance End Date")} />
           <TextEntry
             value={monetaryDamage ? `$${Number(monetaryDamage).toLocaleString()}` : t("Answer Not Provided")}
             label={t("Monetary Damage (USD)")}

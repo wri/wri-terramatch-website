@@ -9,6 +9,7 @@ import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/In
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { DisturbanceAffectedSites } from "@/components/extensive/WizardForm/DisturbanceAffectedSites";
 import {
+  DISTURBANCE_END_DATE_FIELD_DESCRIPTION,
   DISTURBANCE_EXTEND_FIELD_DESCRIPTION,
   DISTURBANCE_INTENSITY_FIELD_DESCRIPTION,
   DISTURBANCE_MONETARY_DAMAGE_FIELD_DESCRIPTION,
@@ -203,13 +204,10 @@ const RHFDisturbanceReportEntries = ({
     [updateFieldValue]
   );
 
-  const handleDateChange = useCallback(
-    (e: any) => {
-      const newValue = e.target.value;
-      updateFieldValue("disturbance-start-date", newValue);
-    },
-    [updateFieldValue]
-  );
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: string) => {
+    const newValue = e.target.value;
+    updateFieldValue(fieldName, newValue);
+  };
 
   return (
     <InputWrapper {...props}>
@@ -317,7 +315,20 @@ const RHFDisturbanceReportEntries = ({
                   required
                   description={t(DISTURBANCE_START_DATE_FIELD_DESCRIPTION)}
                   value={getFieldValue("disturbance-start-date") ?? ""}
-                  onChange={handleDateChange}
+                  onChange={e => handleDateChange(e, "disturbance-start-date")}
+                />
+              </div>
+              <div>
+                <Input
+                  lang="en-GB"
+                  type="date"
+                  name="disturbance-end-date"
+                  placeholder="Select date"
+                  label={t("Disturbance End Date")}
+                  required
+                  description={t(DISTURBANCE_END_DATE_FIELD_DESCRIPTION)}
+                  value={getFieldValue("disturbance-end-date") ?? ""}
+                  onChange={e => handleDateChange(e, "disturbance-end-date")}
                 />
               </div>
             </div>

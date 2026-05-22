@@ -887,7 +887,8 @@ export type DisturbanceDto = {
    * The entity UUID this resource is associated with.
    */
   entityUuid: string;
-  disturbanceDate: string | null;
+  disturbanceStartDate: string | null;
+  disturbanceEndDate: string | null;
   collection: string | null;
   type: string | null;
   subtype: string | null;
@@ -1343,14 +1344,15 @@ export type DisturbanceReportLightDto = {
    * The associated organisation uuid
    */
   organisationUuid: string | null;
-  /**
-   * @format date-time
-   */
   intensity: string | null;
   /**
    * @format date-time
    */
-  dateOfDisturbance: string | null;
+  disturbanceStartDate: string | null;
+  /**
+   * @format date-time
+   */
+  disturbanceEndDate: string | null;
   /**
    * @format date-time
    */
@@ -2243,14 +2245,15 @@ export type DisturbanceReportFullDto = {
    * The associated organisation uuid
    */
   organisationUuid: string | null;
-  /**
-   * @format date-time
-   */
   intensity: string | null;
   /**
    * @format date-time
    */
-  dateOfDisturbance: string | null;
+  disturbanceStartDate: string | null;
+  /**
+   * @format date-time
+   */
+  disturbanceEndDate: string | null;
   /**
    * @format date-time
    */
