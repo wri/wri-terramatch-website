@@ -42,7 +42,6 @@ module.exports = {
         "square-pattern": "url('/icons/ic-bg.svg')",
         "back-map": "url('/icons/bg-map.svg')",
         dash: "url('/icons/dash.svg')",
-        "dash-blue": "url('/icons/dash-blue.svg')",
         tree: "url('/images/tree.png')",
         "about-us-header": "url(/images/about-us-header.png)"
       },
