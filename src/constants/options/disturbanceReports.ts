@@ -13,10 +13,10 @@ export const DISTURBANCE_EXTENT_OPTIONS = [
 ];
 
 export const DISTURBANCE_PROPERTY_AFFECTED_OPTIONS = [
-  { value: "tree-seedlings", title: "Seedlings" },
+  { value: "tree-seedlings", title: "Tree Seedlings" },
   { value: "nursery-structure", title: "Nursery Structure" },
   { value: "trees", title: "Trees" },
-  { value: "nursery-saplings", title: "Saplings" },
+  { value: "nursery-saplings", title: "Nursery Saplings" },
   { value: "animals", title: "Animals" },
   { value: "people", title: "People" }
 ];

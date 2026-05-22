@@ -159,7 +159,10 @@ const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabPr
               {monetaryDamage ? `$${Number(monetaryDamage)?.toLocaleString()}` : null}
             </LongTextField>
             <LongTextField title={t("Property Affected")}>{formatOptions(propertyAffected)?.join(", ")}</LongTextField>
-            <LongTextField title={t("Date of Disturbance")}>{format(report?.dateOfDisturbance!)}</LongTextField>
+            <LongTextField title={t("Disturbance Start Date")}>
+              {format(report?.disturbanceStartDate ?? "")}
+            </LongTextField>
+            <LongTextField title={t("Disturbance End Date")}>{format(report?.disturbanceEndDate ?? "")}</LongTextField>
             <LongTextField title={t("Intensity")}>
               {intensity ? <Intensity intensity={intensity?.toLowerCase() as IntensityEnum} className="mb-2" /> : null}
             </LongTextField>
