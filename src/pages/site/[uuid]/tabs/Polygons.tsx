@@ -306,6 +306,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           visible={hasPolygonSelection}
           itemCount={selectedRows.length}
           isBulkEditDrawerOpen={showBulkEditDrawer}
+          polygons={selectedRows}
           onDelete={() => setDeletePolygonModal(true)}
           onEdit={handleBulkEditDetails}
           onSubmit={() => setSubmitPolygonsModal(true)}
