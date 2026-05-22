@@ -21,6 +21,7 @@ import { AreaHectaresIcon, DownloadIcon, PlusIcon, TreeIcon } from "@/redesignCo
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import DeletePolygon from "../components/Modals/DeletePolygon";
+import OverlapFix from "../components/Modals/OverlapFix";
 import PolygonSubmitted from "../components/Modals/PolygonSubmitted";
 import SubmitPolygons from "../components/Modals/SubmitPolygons";
 import UploadError from "../components/Modals/UploadError";
@@ -50,6 +51,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
+  const [showOverlapFixModal, setOverlapFixModal] = useState(false);
   const [showSubmitPolygonsModal, setSubmitPolygonsModal] = useState(false);
   const [showDeletePolygonModal, setDeletePolygonModal] = useState(false);
   const [showUploadErrorModal, setUploadErrorModal] = useState(false);
@@ -179,7 +181,24 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const selectedRestorationAreaRounded = Math.round(selectedRestorationAreaHa * 100) / 100;
   const hasPolygonSelection = selectedRows.length > 0;
+  const hasSelectedFailedValidation = useMemo(
+    () => selectedRows.some(row => row.validation === "failed"),
+    [selectedRows]
+  );
+
+  const selectedFailedPolygons = useMemo(
+    () => selectedRows.filter(row => row.validation === "failed").map(row => ({ id: row.id, name: row.polygonName })),
+    [selectedRows]
+  );
   const shouldShowNoResults = !isLoadingPolygons && polygonRows.length === 0;
+
+  const handleBulkSubmit = useCallback(() => {
+    if (hasSelectedFailedValidation) {
+      setOverlapFixModal(true);
+      return;
+    }
+    setSubmitPolygonsModal(true);
+  }, [hasSelectedFailedValidation]);
 
   const selectableRenderRow = useCallback(
     (row: PolygonTableRow, rowProps?: Record<string, unknown>) => (
@@ -314,9 +333,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           visible={hasPolygonSelection}
           itemCount={selectedRows.length}
           isBulkEditDrawerOpen={showBulkEditDrawer}
+          submitLabel={hasSelectedFailedValidation ? t("Fix Overlap") : t("Submit")}
           onDelete={() => setDeletePolygonModal(true)}
           onEdit={handleBulkEditDetails}
-          onSubmit={() => setSubmitPolygonsModal(true)}
+          onSubmit={handleBulkSubmit}
         />
 
         <PolygonBulkEditDrawer
@@ -340,6 +360,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           open={showPolygonSubmittedModal}
           onOpenChange={setPolygonSubmittedModal}
           polygons={["Polygon Name A", "Polygon Name B"]}
+        />
+        <OverlapFix
+          open={showOverlapFixModal}
+          onClose={() => setOverlapFixModal(false)}
+          polygonsNotFixed={selectedFailedPolygons}
         />
         <SubmitPolygons open={showSubmitPolygonsModal} onOpenChange={setSubmitPolygonsModal} />
         <DeletePolygon open={showDeletePolygonModal} onOpenChange={setDeletePolygonModal} polygons={selectedRows} />

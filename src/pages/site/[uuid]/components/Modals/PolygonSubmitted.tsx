@@ -1,6 +1,6 @@
 import { Box, Flex, List, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback } from "react";
 
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
@@ -17,15 +17,6 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
   const handleClose = useCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
-
-  useEffect(() => {
-    if (!open) {
-      document.body.style.pointerEvents = "";
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-      document.documentElement.removeAttribute("data-scroll-locked");
-    }
-  }, [open]);
 
   return (
     <Modal

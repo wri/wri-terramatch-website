@@ -2,7 +2,6 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { ChangeEvent, DragEvent, FC, useCallback, useRef, useState } from "react";
 
-import { useModalScrollFix } from "@/hooks/useModalScrollFix";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
@@ -39,8 +38,6 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
     onUploadSuccess,
     onError: () => onUploadError()
   });
-
-  useModalScrollFix(open);
 
   const resetState = useCallback(() => {
     setStep("form");
