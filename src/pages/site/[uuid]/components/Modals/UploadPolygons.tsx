@@ -9,7 +9,7 @@ import Modal from "@/redesignComponents/containers/Modal/Modal";
 import RadioButtonGroup from "@/redesignComponents/Forms/Actions/RadioButton/Radio";
 import { UploadIcon } from "@/redesignComponents/foundations/Icons";
 
-import { UploadMode, useUploadPolygons } from "../../hooks/useUploadPolygons";
+import { GeometryUploadComparisonResult, UploadMode, useUploadPolygons } from "../../hooks/useUploadPolygons";
 import MatchingPolygonsContent from "./MatchingPolygonsContent";
 
 const ACCEPTED_FORMATS = ".geojson,.kml,.zip";
@@ -31,7 +31,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
   const [step, setStep] = useState<UploadStep>("form");
   const [mode, setMode] = useState<UploadMode>("new-polygons");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [existingUuids, setExistingUuids] = useState<string[]>([]);
+  const [comparison, setComparison] = useState<GeometryUploadComparisonResult | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
   const { uploadNew, compareFile, uploadWithVersions, isComparing } = useUploadPolygons({
@@ -46,7 +46,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
     setStep("form");
     setMode("new-polygons");
     setSelectedFile(null);
-    setExistingUuids([]);
+    setComparison(null);
     setIsDragging(false);
   }, []);
 
@@ -57,7 +57,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
 
   const handleBack = useCallback(() => {
     setStep("form");
-    setExistingUuids([]);
+    setComparison(null);
   }, []);
 
   const handleUpload = useCallback(async () => {
@@ -71,8 +71,8 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
     }
 
     try {
-      const uuids = await compareFile(selectedFile);
-      setExistingUuids(uuids);
+      const result = await compareFile(selectedFile);
+      setComparison(result);
       setStep("confirm");
     } catch {
       // Error surfaced via onUploadError.
@@ -108,8 +108,10 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
 
   const isConfirmStep = step === "confirm";
   const isUpdateMode = mode === "update-existing-polygons";
+  const hasVersioning = (comparison?.featuresForVersioning ?? 0) > 0;
 
   const formPrimaryLabel = isComparing ? t("Checking...") : isUpdateMode ? t("Next") : t("Upload");
+  const confirmPrimaryLabel = hasVersioning ? t("Create new versions") : t("Upload");
 
   return (
     <Modal
@@ -121,8 +123,8 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
         <b className="text-theme-neutral-800">{isConfirmStep ? t("Matching polygons found") : t("Upload Polygons")}</b>
       }
       content={
-        isConfirmStep ? (
-          <MatchingPolygonsContent existingUuids={existingUuids} />
+        isConfirmStep && comparison != null ? (
+          <MatchingPolygonsContent siteUuid={siteUuid} comparison={comparison} />
         ) : (
           <Box px={4}>
             <Text mb={3} textStyle="400-bold" color="neutral.900">
@@ -207,7 +209,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
                   },
                   {
                     id: "create-new-versions",
-                    children: t("Create new versions"),
+                    children: confirmPrimaryLabel,
                     onClick: handleConfirmVersions
                   }
                 ]
