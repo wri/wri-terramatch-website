@@ -56,14 +56,18 @@ const CommentaryBox: FC<CommentaryBoxProps> = props => {
           )
         );
       }
-      openNotification("success", "Success!", "Your comment was just added!");
+      openNotification("success", t("Success!"), t("Your comment was just added!"));
       setComment("");
       setError("");
       setFiles([]);
       ApiSlice.pruneCache("auditStatuses");
       props.refresh?.();
     } catch (error) {
-      openNotification("error", "Error!", "Failed to upload files. Your comment was added but files may be missing.");
+      openNotification(
+        "error",
+        t("Error!"),
+        t("Failed to upload files. Your comment was added but files may be missing.")
+      );
       Log.error("Error uploading files after comment creation", error);
     } finally {
       setLoading(false);
@@ -76,7 +80,7 @@ const CommentaryBox: FC<CommentaryBoxProps> = props => {
       uuid: props.record?.uuid ?? ""
     },
     onSuccess,
-    "Failed to add comment. Please try again."
+    t("Failed to add comment. Please try again.")
   );
 
   const [files, setFiles] = useState<File[]>([]);

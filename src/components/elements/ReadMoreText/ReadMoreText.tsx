@@ -43,7 +43,7 @@ const ReadMoreText: FC<IProps> = ({ defaultVisibleLinesNumber = 1, className, ..
       </div>
       {isClamped ? (
         <Button variant="text" onClick={() => setExpanded(prev => !prev)} className="text-primary-500 underline">
-          {t(isExpanded ? "Read Less" : "Read More")}
+          {isExpanded ? t("Read Less") : t("Read More")}
         </Button>
       ) : null}
     </div>

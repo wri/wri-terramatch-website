@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useShowContext } from "react-admin";
 
@@ -212,6 +213,7 @@ const StatusDisplay = ({
   onStatusChange,
   onChangeRequest
 }: StatusProps) => {
+  const t = useT();
   const { refetch: reloadEntity } = useShowContext();
   const { openNotification } = useNotificationContext();
   const { openModal, closeModal } = useModalContext();
@@ -276,12 +278,12 @@ const StatusDisplay = ({
             if (option?.status != null && onStatusChange != null) {
               await onStatusChange(option.status, text ?? "");
             }
-            openNotification("success", "Success!", "Your Status Update was just saved!");
+            openNotification("success", t("Success!"), t("Your Status Update was just saved!"));
           } catch (e) {
             openNotification(
               "error",
-              "Error!",
-              "The request encountered an issue, or the comment exceeds 255 characters."
+              t("Error!"),
+              t("The request encountered an issue, or the comment exceeds 255 characters.")
             );
           } finally {
             onFinallyRequest();
@@ -306,12 +308,12 @@ const StatusDisplay = ({
             if (onChangeRequest != null) {
               await onChangeRequest(text ?? "");
             }
-            openNotification("success", "Success!", "Your Change Request was just added!");
+            openNotification("success", t("Success!"), t("Your Change Request was just added!"));
           } catch (e) {
             openNotification(
               "error",
-              "Error!",
-              "The request encountered an issue, or the comment exceeds 255 characters."
+              t("Error!"),
+              t("The request encountered an issue, or the comment exceeds 255 characters.")
             );
           } finally {
             onFinallyRequest();

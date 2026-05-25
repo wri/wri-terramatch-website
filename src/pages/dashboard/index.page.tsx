@@ -693,13 +693,13 @@ const Dashboard = () => {
         }
         centroids={centroidsDataProjects}
         columns={!hasCountrySelection ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
-        titleTable={t(
+        titleTable={
           !hasCountrySelection
-            ? "ACTIVE COUNTRIES"
+            ? t("ACTIVE COUNTRIES")
             : filters.uuid
-            ? `OTHER PROJECTS IN ${filters?.country?.data?.label.toUpperCase()}`
-            : "ACTIVE PROJECTS"
-        )}
+            ? t("OTHER PROJECTS IN {countryLabel}", { countryLabel: filters?.country?.data?.label.toUpperCase() })
+            : t("ACTIVE PROJECTS")
+        }
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(
           singleDashboardProject
             ? singleDashboardProject.totalHectaresRestoredSum

@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import React from "react";
 
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
@@ -12,6 +13,7 @@ interface GoalsAndProgressTabProps {
 }
 
 const GoalsAndProgressTab = ({ nursery }: GoalsAndProgressTabProps) => {
+  const t = useT();
   const totalNurserySeedlings = usePlantTotalCount({
     entity: "nurseries",
     entityUuid: nursery?.uuid,
@@ -22,7 +24,7 @@ const GoalsAndProgressTab = ({ nursery }: GoalsAndProgressTabProps) => {
     <PageBody>
       <PageRow>
         <PageCard
-          title={"Saplings to be Grown"}
+          title={t("Saplings to be Grown")}
           headerChildren={
             <div className="flex items-center gap-2">
               <span className="text-18 font-semibold text-primary">
