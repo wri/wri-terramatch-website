@@ -49,12 +49,12 @@ export const useOrganisationUserTable = (organisationUuid: string) => {
     refetch();
     closeModal(ModalId.CONFIRM_USER);
     if (updateType === "approve") {
-      openNotification("success", "Success!", "User approved successfully");
+      openNotification("success", t("Success!"), t("User approved successfully"));
     } else if (updateType === "reject") {
-      openNotification("success", "Success!", "User rejected successfully");
+      openNotification("success", t("Success!"), t("User rejected successfully"));
     }
     clearSelection();
-  }, [clearSelection, closeModal, openNotification, refetch, updateType]);
+  }, [t, clearSelection, closeModal, openNotification, refetch, updateType]);
 
   useRequestSuccess(isCreating, createFailure, handleUpdateSuccess);
 

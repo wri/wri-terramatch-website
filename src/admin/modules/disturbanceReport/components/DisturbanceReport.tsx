@@ -30,11 +30,6 @@ interface DisturbanceReportProps {
   values?: Record<string, any>;
 }
 
-interface SiteAffected {
-  siteUuid: string;
-  siteName: string;
-}
-
 interface PolygonAffected {
   polyUuid: string;
   polyName: string;
@@ -98,10 +93,12 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
   const extent = getFieldValue("extent");
   const propertyAffected = getFieldValue("property-affected");
   const peopleAffected = getFieldValue("people-affected");
-  const dateOfDisturbance = getFieldValue("date-of-disturbance");
+  const disturbanceStartDate = getFieldValue("disturbance-start-date");
   const monetaryDamage = getFieldValue("monetary-damage");
   const sitesAffected = getFieldValue("site-affected");
   const polygonsAffected = getFieldValue("polygon-affected");
+  const nurseriesAffected = getFieldValue("nursery-affected");
+  const disturbanceEndDate = getFieldValue("disturbance-end-date");
 
   const formatValuesWithOptions = (values: string[], options: Array<{ value: string; title: string }>) => {
     if (!Array.isArray(values)) return values;
@@ -114,16 +111,16 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
   const formattedPropertyAffected = formatValuesWithOptions(propertyAffected, DISTURBANCE_PROPERTY_AFFECTED_OPTIONS);
   const formattedSubtype = formatOptions(disturbanceSubtype);
 
-  const columns = [
+  const sitesAffectedColumns = [
     {
-      accessorKey: "sites_affected",
+      accessorKey: "sitesAffected",
       header: t("Sites Affected"),
       cell: ({ getValue, row }: any) => (
         <Text variant="text-14-light" className="flex items-center gap-2 leading-none text-blueCustom-900">
           {getValue()}
           <Link
             className="h-4 w-4 cursor-pointer text-darkCustom-300 hover:text-primary"
-            to={`${basename}${`/site/${row.original?.site_uuid}/show`}`}
+            to={`${basename}${`/site/${row.original?.siteUuid}/show`}`}
           >
             <Icon name={IconNames.LINK_PA} className="h-4 w-4" />
           </Link>
@@ -133,22 +130,51 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
       meta: { width: "50%" }
     },
     {
-      accessorKey: "polygon_affected",
+      accessorKey: "polygonAffected",
       header: t("Polygons Affected"),
       enableSorting: false,
       meta: { width: "50%" }
     }
   ];
 
-  const disturbanceReportData = Array.isArray(sitesAffected)
-    ? sitesAffected.map((site: SiteAffected) => {
+  const nurseriesAffectedColumns = [
+    {
+      accessorKey: "nurseriesAffected",
+      header: t("Nurseries Affected"),
+      cell: ({ getValue, row }: any) => (
+        <Text variant="text-14-light" className="flex items-center gap-2 leading-none text-blueCustom-900">
+          {getValue()}
+          <Link
+            className="h-4 w-4 cursor-pointer text-darkCustom-300 hover:text-primary"
+            to={`${basename}${`/nursery/${row.original?.nurseryUuid}/show`}`}
+          >
+            <Icon name={IconNames.LINK_PA} className="h-4 w-4" />
+          </Link>
+        </Text>
+      ),
+      enableSorting: false,
+      meta: { width: "50%" }
+    }
+  ];
+
+  const sitesAffectedData = Array.isArray(sitesAffected)
+    ? sitesAffected.map((site: { siteUuid: string; siteName: string }) => {
         const sitePolygons =
           polygonsAffected?.flat().filter((poly: PolygonAffected) => poly?.siteUuid === site?.siteUuid) ?? [];
 
         return {
-          sites_affected: site?.siteName,
-          site_uuid: site?.siteUuid,
-          polygon_affected: sitePolygons?.map((poly: PolygonAffected) => poly?.polyName).join(", ")
+          sitesAffected: site?.siteName,
+          siteUuid: site?.siteUuid,
+          polygonAffected: sitePolygons?.map((poly: PolygonAffected) => poly?.polyName).join(", ")
+        };
+      })
+    : [];
+
+  const nurseriesAffectedData = Array.isArray(nurseriesAffected)
+    ? nurseriesAffected.map((nursery: { nurseryUuid: string; nurseryName: string }) => {
+        return {
+          nurseriesAffected: nursery?.nurseryName,
+          nurseryUuid: nursery?.nurseryUuid
         };
       })
     : [];
@@ -190,7 +216,8 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
             classNameContainer="col-span-3 flex flex-col gap-2"
             className="text-blueCustom-900"
           />
-          <TextEntry value={dateOfDisturbance ?? t("Answer Not Provided")} label={t("Date of Disturbance")} />
+          <TextEntry value={disturbanceStartDate ?? t("Answer Not Provided")} label={t("Disturbance Start Date")} />
+          <TextEntry value={disturbanceEndDate ?? t("Answer Not Provided")} label={t("Disturbance End Date")} />
           <TextEntry
             value={monetaryDamage ? `$${Number(monetaryDamage).toLocaleString()}` : t("Answer Not Provided")}
             label={t("Monetary Damage (USD)")}
@@ -199,8 +226,16 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
       </div>
 
       <Table
-        data={disturbanceReportData}
-        columns={columns}
+        data={sitesAffectedData}
+        columns={sitesAffectedColumns}
+        hasPagination={false}
+        invertSelectPagination={false}
+        variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
+      />
+
+      <Table
+        data={nurseriesAffectedData}
+        columns={nurseriesAffectedColumns}
         hasPagination={false}
         invertSelectPagination={false}
         variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}

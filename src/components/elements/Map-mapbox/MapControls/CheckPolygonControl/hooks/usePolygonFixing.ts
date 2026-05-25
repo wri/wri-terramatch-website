@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { useCallback, useEffect, useState } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -16,6 +17,7 @@ interface UsePolygonFixingProps {
 }
 
 export const usePolygonFixing = ({ siteUuid, setIsLoadingDelayedJob, setAlertTitle }: UsePolygonFixingProps) => {
+  const t = useT();
   const { closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
   const { setShouldRefetchPolygonData, setShouldRefetchValidation } = useMapAreaContext();
@@ -32,9 +34,9 @@ export const usePolygonFixing = ({ siteUuid, setIsLoadingDelayedJob, setAlertTit
       clipPolygonsForSite(siteUuid);
       setPendingClipping(true);
     } else {
-      openNotification("error", "Cannot fix polygons: Site UUID is missing.", "Error");
+      openNotification("error", t("Cannot fix polygons: Site UUID is missing."), t("Error"));
     }
-  }, [siteUuid, closeModal, setIsLoadingDelayedJob, setAlertTitle, openNotification]);
+  }, [t, siteUuid, closeModal, setIsLoadingDelayedJob, setAlertTitle, openNotification]);
 
   useEffect(() => {
     if (!(pendingClipping && delayedJobs && delayedJobs.length > 0)) {
@@ -62,9 +64,9 @@ export const usePolygonFixing = ({ siteUuid, setIsLoadingDelayedJob, setAlertTit
         }
 
         if (polygonNames) {
-          openNotification("success", "Success! The following polygons have been fixed:", polygonNames);
+          openNotification("success", t("Success! The following polygons have been fixed:"), polygonNames);
         } else {
-          openNotification("warning", "No polygon have been fixed", "Please run 'Check Polygons' again.");
+          openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
         }
 
         sitePolygonRefresh?.();
@@ -72,7 +74,7 @@ export const usePolygonFixing = ({ siteUuid, setIsLoadingDelayedJob, setAlertTit
         setShouldRefetchValidation(true);
         ApiSlice.pruneCache("validations");
       } else {
-        openNotification("error", "An error occurred while fixing polygons. Please try again.", "Error");
+        openNotification("error", t("An error occurred while fixing polygons. Please try again."), t("Error"));
       }
 
       setIsLoadingDelayedJob?.(false);
@@ -85,7 +87,8 @@ export const usePolygonFixing = ({ siteUuid, setIsLoadingDelayedJob, setAlertTit
     sitePolygonRefresh,
     setShouldRefetchPolygonData,
     setShouldRefetchValidation,
-    setIsLoadingDelayedJob
+    setIsLoadingDelayedJob,
+    t
   ]);
 
   return {

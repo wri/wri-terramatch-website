@@ -11,14 +11,14 @@ export const userCanEdit = (
     if (isSuperAdmin) {
       return true;
     }
-    if (record?.role === "admin-super") {
+    if (record?.primaryRole === "admin-super") {
       return false;
     }
-    if (record?.role === "project-developer" || record?.role === "project-manager") {
+    if (record?.primaryRole === "project-developer" || record?.primaryRole === "project-manager") {
       return true;
     }
     if (isFrameworkAdmin) {
-      return record?.role === role;
+      return record?.primaryRole === role;
     }
   }
   return record != null;

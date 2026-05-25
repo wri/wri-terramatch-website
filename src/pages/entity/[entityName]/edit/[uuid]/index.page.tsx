@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import EditEntityForm from "@/pages/entity/[entityName]/edit/[uuid]/EditEntityForm";
+import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import { EntityName } from "@/types/common";
 
 /**
@@ -15,6 +16,7 @@ const EditEntityPage = () => {
 
   return (
     <BackgroundLayout>
+      <ProjectResponsiveTypography />
       <EditEntityForm {...{ entityName, entityUUID }} />
     </BackgroundLayout>
   );

@@ -22,6 +22,7 @@ import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
+import { EMPTY_I18N } from "@/i18n/util";
 import { OptionValue } from "@/types/common";
 import { convertCodesToNames, convertNamesToCodes, LANDSCAPE_OPTIONS } from "@/utils/landscapeUtils";
 
@@ -69,7 +70,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const optionsCohort = [
     { title: "TerraFund Cohort One", value: "terrafund-cohort-1" },
     { title: "TerraFund Cohort Two", value: "terrafund-cohort-2" },
-    { title: "TerraFund Cohort Three", value: "terrafund-3" }
+    { title: "TerraFund Cohort Three", value: "terrafund-cohort-3" }
   ];
 
   const activeCountries = useMemo(() => {
@@ -207,7 +208,9 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           }
         : filters.country,
       organizations: organizations ? (Array.isArray(organizations) ? organizations : [organizations]) : [],
-      cohort: Array.isArray(cohort) ? cohort : cohort ? [cohort] : [],
+      cohort: (Array.isArray(cohort) ? cohort : cohort ? [cohort] : []).map(value =>
+        value === "terrafund-3" ? "terrafund-cohort-3" : value
+      ),
       uuid: (uuid as string) || ""
     };
 
@@ -346,7 +349,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
           {getHeaderTitle()}
           {isProjectInsightsPage && (
             <ToolTip
-              title={""}
+              title={EMPTY_I18N}
               content={t(PROJECT_INSIGHTS_SECTION_TOOLTIP)}
               placement="top"
               width="w-64 lg:w-96"

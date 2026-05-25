@@ -77,6 +77,11 @@ const SITE_RESTORATION_STRATEGY_MAP: Record<restorationStrategyType, ReactNode> 
       <TreePlantingIcon boxSize={5} color="secondary.800" />
     </Tooltip>
   ),
+  "sapling-planting": (
+    <Tooltip content="Sapling planting">
+      <TreePlantingIcon boxSize={5} color="secondary.800" />
+    </Tooltip>
+  ),
   "assisted-natural-regeneration": (
     <Tooltip content="Assisted natural regeneration (ANR)">
       <AssistedNaturalRegenIcon boxSize={5} color="secondary.800" />

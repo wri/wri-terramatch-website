@@ -1,5 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 
 import IconButton from "@/redesignComponents/actions/Buttons/IconButton/IconButton";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
@@ -17,7 +17,7 @@ const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(false);
 
-  const updateScrollButtons = () => {
+  const updateScrollButtons = useCallback(() => {
     const container = scrollRef.current;
 
     if (!container) return;
@@ -27,7 +27,21 @@ const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
     setShowLeftButton(scrollLeft > 0);
 
     setShowRightButton(scrollLeft + clientWidth < scrollWidth - 1);
-  };
+  }, []);
+
+  const scrollLeftHandler = useCallback(() => {
+    scrollRef.current?.scrollBy({
+      left: -200,
+      behavior: "smooth"
+    });
+  }, []);
+
+  const scrollRightHandler = useCallback(() => {
+    scrollRef.current?.scrollBy({
+      left: 200,
+      behavior: "smooth"
+    });
+  }, []);
 
   useEffect(() => {
     updateScrollButtons();
@@ -44,25 +58,11 @@ const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
       container.removeEventListener("scroll", updateScrollButtons);
       window.removeEventListener("resize", updateScrollButtons);
     };
-  }, [selectedFilters]);
+  }, [selectedFilters, updateScrollButtons]);
 
   if (!selectedFilters?.length) {
     return null;
   }
-
-  const scrollLeftHandler = () => {
-    scrollRef.current?.scrollBy({
-      left: -200,
-      behavior: "smooth"
-    });
-  };
-
-  const scrollRightHandler = () => {
-    scrollRef.current?.scrollBy({
-      left: 200,
-      behavior: "smooth"
-    });
-  };
 
   return (
     <Flex align="center" gap={2} minW="0" position="relative">

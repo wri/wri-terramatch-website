@@ -12,7 +12,11 @@ import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { EditIcon } from "@/redesignComponents/foundations/Icons/Function/EditIcon";
 
+import { PolygonTableRow } from "./PolygonTableRow";
+import SelectedPolygonsSummary from "./SelectedPolygonsSummary";
+
 interface PolygonBulkEditDrawerProps {
+  selectedPolygons: PolygonTableRow[];
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -56,7 +60,7 @@ const EditWrapper: FC<{ children: ReactElement<EditableInputProps> }> = ({ child
   );
 };
 
-const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({ open, onOpenChange }) => {
+const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({ selectedPolygons, open, onOpenChange }) => {
   const t = useT();
 
   return (
@@ -69,6 +73,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({ open, onOpenCha
           className="h-screen w-full"
           content={
             <Flex className="flex-1 flex-col gap-4">
+              <SelectedPolygonsSummary selectedPolygons={selectedPolygons} open={open} />
               <EditWrapper>
                 <DatePickerInput label={t("Plant Start Date")} className="w-[13.5rem]" />
               </EditWrapper>

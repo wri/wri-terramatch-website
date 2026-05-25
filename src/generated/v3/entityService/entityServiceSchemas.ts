@@ -1343,14 +1343,7 @@ export type DisturbanceReportLightDto = {
    * The associated organisation uuid
    */
   organisationUuid: string | null;
-  /**
-   * @format date-time
-   */
   intensity: string | null;
-  /**
-   * @format date-time
-   */
-  dateOfDisturbance: string | null;
   /**
    * @format date-time
    */
@@ -1361,6 +1354,14 @@ export type DisturbanceReportLightDto = {
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
   reportId: number;
+  /**
+   * @format date-time
+   */
+  disturbanceStartDate: string | null;
+  /**
+   * @format date-time
+   */
+  disturbanceEndDate: string | null;
 };
 
 export type FileDownloadDto = {
@@ -2243,14 +2244,7 @@ export type DisturbanceReportFullDto = {
    * The associated organisation uuid
    */
   organisationUuid: string | null;
-  /**
-   * @format date-time
-   */
   intensity: string | null;
-  /**
-   * @format date-time
-   */
-  dateOfDisturbance: string | null;
   /**
    * @format date-time
    */
@@ -2261,6 +2255,14 @@ export type DisturbanceReportFullDto = {
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
   reportId: number;
+  /**
+   * @format date-time
+   */
+  disturbanceStartDate: string | null;
+  /**
+   * @format date-time
+   */
+  disturbanceEndDate: string | null;
   title: string | null;
   /**
    * @format date-time

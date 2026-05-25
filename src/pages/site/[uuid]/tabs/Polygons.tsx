@@ -21,7 +21,6 @@ import { AreaHectaresIcon, DownloadIcon, PlusIcon, TreeIcon } from "@/redesignCo
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import DeletePolygon from "../components/Modals/DeletePolygon";
-import MatchingPolygonsFound from "../components/Modals/MatchingPolygonsFound";
 import PolygonSubmitted from "../components/Modals/PolygonSubmitted";
 import SubmitPolygons from "../components/Modals/SubmitPolygons";
 import UploadError from "../components/Modals/UploadError";
@@ -31,6 +30,7 @@ import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import PolygonBulkEditDrawer from "../components/PolygonBulkEditDrawer";
 import { PolygonRow, PolygonTableRow } from "../components/PolygonTableRow";
 import PolygonToolbar from "../components/PolygonToolbar";
+import { useDownloadSitePolygons } from "../hooks/useDownloadSitePolygons";
 import { useSitePolygonFilters } from "../hooks/useSitePolygonFilters";
 import { useSitePolygonOverlap } from "../hooks/useSitePolygonOverlap";
 import { useSitePolygonTableData } from "../hooks/useSitePolygonTableData";
@@ -49,7 +49,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [showMatchingPolygonsFoundModal, setMatchingPolygonsFoundModal] = useState(false);
   const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
   const [showSubmitPolygonsModal, setSubmitPolygonsModal] = useState(false);
   const [showDeletePolygonModal, setDeletePolygonModal] = useState(false);
@@ -135,6 +134,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [polygonsData, selectedRows]);
 
   const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
+  const { downloadAll, isDownloading: isDownloadingAllPolygons } = useDownloadSitePolygons({
+    siteUuid: site.uuid,
+    siteName: site.name
+  });
 
   const handlePolygonClickedFromMap = useCallback(
     (uuid: string) => {
@@ -194,27 +197,27 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const getPolygonsTableStyles = (isStickyTableActive: boolean) => ({
     "& table td": { height: "3rem" },
-    "& table th:first-child": {
+    "& table th:first-of-type": {
       position: "sticky",
       left: 0,
       zIndex: 2,
       background: getThemedColor("neutral", 200)
     },
-    "& table td:first-child": {
+    "& table td:first-of-type": {
       position: "sticky",
       left: 0,
       zIndex: 2,
       background: getThemedColor("neutral", 100),
       transition: "background-color 0.15s ease-in-out"
     },
-    "& table th:nth-child(2)": {
+    "& table th:nth-of-type(2)": {
       position: "sticky",
       left: "3rem",
       zIndex: 2,
       background: getThemedColor("neutral", 200),
       padding: 0
     },
-    "& table td:nth-child(2)": {
+    "& table td:nth-of-type(2)": {
       position: "sticky",
       left: "3rem",
       zIndex: 2,
@@ -222,11 +225,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       padding: 0,
       transition: "background-color 0.15s ease-in-out"
     },
-    "& table tbody tr:hover td:nth-child(2), & table tbody tr:hover td:first-child, & table tbody tr[aria-selected='true'] td:nth-child(2), & table tbody tr[aria-selected='true'] td:first-child":
+    "& table tbody tr:hover td:nth-of-type(2), & table tbody tr:hover td:first-of-type, & table tbody tr[aria-selected='true'] td:nth-of-type(2), & table tbody tr[aria-selected='true'] td:first-of-type":
       {
         background: getThemedColor("primary", 100)
       },
-    "& table th:nth-child(2) > div, & table td:nth-child(2) div": {
+    "& table th:nth-of-type(2) > div, & table td:nth-of-type(2) div": {
       position: "relative",
       padding: "0.75rem",
       display: "flex",
@@ -264,7 +267,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             variant: "secondary",
             size: "small",
             children: t("Download All"),
-            leftIcon: <DownloadIcon />
+            leftIcon: <DownloadIcon />,
+            loading: isDownloadingAllPolygons,
+            disabled: site.uuid == null || site.uuid === "",
+            onClick: () => {
+              void downloadAll();
+            }
           }}
           multiActionButtonProps={{
             mainActionLabel: t("Add"),
@@ -312,10 +320,23 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onSubmit={() => setSubmitPolygonsModal(true)}
         />
 
-        <PolygonBulkEditDrawer open={showBulkEditDrawer} onOpenChange={setShowBulkEditDrawer} />
+        <PolygonBulkEditDrawer
+          selectedPolygons={selectedRows}
+          open={showBulkEditDrawer}
+          onOpenChange={setShowBulkEditDrawer}
+        />
 
-        <UploadPolygons open={showUploadModal} onOpenChange={setShowUploadModal} />
-        <MatchingPolygonsFound open={showMatchingPolygonsFoundModal} onOpenChange={setMatchingPolygonsFoundModal} />
+        <UploadPolygons
+          open={showUploadModal}
+          siteUuid={site.uuid}
+          onOpenChange={setShowUploadModal}
+          onUploadSuccess={() => {
+            void refetchPolygons();
+          }}
+          onUploadError={() => {
+            setUploadErrorModal(true);
+          }}
+        />
         <PolygonSubmitted
           open={showPolygonSubmittedModal}
           onOpenChange={setPolygonSubmittedModal}
