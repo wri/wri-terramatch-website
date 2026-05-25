@@ -1,4 +1,3 @@
-import { useT } from "@transifex/react";
 import { FC, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -8,10 +7,12 @@ import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { TranslatedText } from "@/i18n/types";
+import useOwnT from "@/i18n/useOwnT";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import CollapsibleRow from "./components/CollapsibleRow";
-import { ModalProps } from "./Modal";
+import { ModalTranslatedProps } from "./Modal";
 import { ModalBaseSubmit } from "./ModalsBases";
 
 type DisplayedPolygonType = {
@@ -24,10 +25,9 @@ type DisplayedPolygonType = {
   validationStatus?: string | null;
 };
 
-export type ModalSubmitProps = ModalProps & {
-  primaryButtonText?: string;
-  secondaryButtonText?: string;
-  toogleButton?: boolean;
+export type ModalSubmitProps = ModalTranslatedProps & {
+  primaryButtonText?: TranslatedText;
+  secondaryButtonText?: TranslatedText;
   status?: StatusEnum;
   onClose?: () => void;
   site: any;
@@ -42,7 +42,6 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
   primaryButtonText,
   secondaryButtonProps,
   secondaryButtonText,
-  toogleButton,
   children,
   status,
   onClose,
@@ -50,7 +49,7 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
   polygonList,
   ...rest
 }) => {
-  const t = useT();
+  const t = useOwnT();
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
   const isAdmin = useIsAdmin();
@@ -125,16 +124,16 @@ const ModalSubmit: FC<ModalSubmitProps> = ({
           />
         )}
         <div className="flex items-center justify-between">
-          <Text variant="text-24-bold">{t(title)}</Text>
+          <Text variant="text-24-bold">{title}</Text>
         </div>
         <div className="mb-2 flex items-center">
           {content != null && (
             <Text as="div" variant="text-12-light" className="my-1" containHtml>
-              {t(content)}
+              {content}
             </Text>
           )}
           <Text variant="text-14-bold" className=" ml-auto flex items-center justify-end gap-2 pr-[76px]">
-            Select All
+            {t("Select All")}
             <Checkbox name="Select All" onClick={e => handleSelectAll((e.target as HTMLInputElement).checked)} />
           </Text>
         </div>

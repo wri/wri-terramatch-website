@@ -190,7 +190,8 @@ const VersionHistory = ({
       closeModal(ModalId.ADD_POLYGON);
     } catch (error) {
       const errorMessage = handleError(error, t("An unknown error occurred"));
-      openNotification("error", errorMessage, t("Error uploading file"));
+      // TODO: review errorMessage possible values and translate them
+      openNotification("error", t(errorMessage), t("Error uploading file"));
       setIsLoadingDropdown(false);
     }
   };
@@ -215,9 +216,9 @@ const VersionHistory = ({
 
       await updatePolygonData(newVersion);
       setIsLoadingDropdown(false);
-      openNotification("success", "Success!", "New version created successfully");
+      openNotification("success", t("Success!"), t("New version created successfully"));
     } catch (error) {
-      openNotification("error", "Error!", "Error creating new version");
+      openNotification("error", t("Error!"), t("Error creating new version"));
       setIsLoadingDropdown(false);
     }
   };
@@ -261,9 +262,9 @@ const VersionHistory = ({
       }
 
       setPolygonFromMap({ isOpen: true, uuid: polygonUuid ?? "", source: "drawer" });
-      openNotification("success", "Success!", "Polygon version made active successfully");
+      openNotification("success", t("Success!"), t("Polygon version made active successfully"));
     } catch (error) {
-      openNotification("error", "Error!", "Error making polygon version active");
+      openNotification("error", t("Error!"), t("Error making polygon version active"));
     } finally {
       setIsUpdating(false);
     }
@@ -287,12 +288,13 @@ const VersionHistory = ({
 
       await refetchVersionsList();
 
-      openNotification("success", "Success!", "Polygon version deleted successfully");
+      openNotification("success", t("Success!"), t("Polygon version deleted successfully"));
       setIsLoadingDelete(false);
       setIsLoadingDropdown(false);
     } catch (error: any) {
       const errorMessage = error?.message ?? "Error deleting polygon version";
-      openNotification("error", "Error!", errorMessage);
+      // TODO: review errorMessage possible values and translate them
+      openNotification("error", t("Error!"), t(errorMessage));
       setIsLoadingDelete(false);
       setIsLoadingDropdown(false);
     }

@@ -2,6 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 import { Tag } from "@worldresources/wri-design-systems";
 
+import { TranslatedText } from "@/i18n/types";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import CloseButton from "@/redesignComponents/actions/Buttons/CloseButton/CloseButton";
@@ -56,7 +57,7 @@ export const DrawerFilterPanel: Story = {
     trigger: <Button>Open Drawer</Button>,
     children: ({ onClose }) => (
       <FilterPanel
-        title="Filters"
+        title={"Filters" as TranslatedText}
         variant="fixed"
         onClose={onClose}
         className="h-screen"

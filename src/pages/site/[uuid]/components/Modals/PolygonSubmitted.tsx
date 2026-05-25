@@ -2,6 +2,7 @@ import { Box, Flex, List, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
+import { useModalScrollFix } from "@/hooks/useModalScrollFix";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { CheckApprovedIcon } from "@/redesignComponents/foundations/Icons";
@@ -9,14 +10,18 @@ import { CheckApprovedIcon } from "@/redesignComponents/foundations/Icons";
 export interface PolygonSubmittedProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  polygons: string | string[];
+  polygons: string[];
 }
+
 const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polygons }) => {
   const t = useT();
+  useModalScrollFix(open);
 
   const handleClose = useCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
+
+  const isSinglePolygon = polygons.length === 1;
 
   return (
     <Modal
@@ -25,18 +30,15 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
       size="medium"
       blocking
       header={
-        <b className="text-theme-neutral-800">
-          {typeof polygons === "string" ? t("Polygon submitted") : t("Polygons submitted")}
-        </b>
+        <b className="text-theme-neutral-800">{isSinglePolygon ? t("Polygon submitted") : t("Polygons submitted")}</b>
       }
       content={
-        typeof polygons === "string" ? (
-          <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2}>
+        isSinglePolygon ? (
+          <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2} px={4}>
             <CheckApprovedIcon boxSize={8} color={"success.500"} mb={2} />
             <Text textStyle="600-bold" color="neutral.900">
-              {polygons}
+              {polygons[0]}
             </Text>
-
             <Text textStyle="400" color="neutral.900">
               {t("has been submitted.")}
             </Text>
@@ -52,15 +54,15 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
             </Text>
             <Flex flexDirection="column" gap={4} bg={"neutral.200"} py={2} px={3} rounded={4}>
               <List.Root as="ul" pl={4} spaceY={2} listStyleType="disc">
-                {polygons.map(item => (
+                {polygons.map((item, index) => (
                   <List.Item
-                    key={item}
+                    key={`${item}-${index}`}
                     _marker={{
                       color: "neutral.900"
                     }}
                   >
                     <Text textStyle="400" color="neutral.900">
-                      {t(item)}
+                      {item}
                     </Text>
                   </List.Item>
                 ))}
@@ -75,8 +77,8 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
             {
               id: "close",
               variant: "secondary",
-              className: "w-fit",
               children: t("Close"),
+              autoFocus: true,
               onClick: handleClose
             }
           ]}

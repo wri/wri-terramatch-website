@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
+import { TranslatedText } from "@/i18n/types";
+
 import { ModalSubmitProps as Props } from "./ModalSubmit";
 import Component from "./ModalSubmit";
 
@@ -18,15 +20,15 @@ export const Default: Story = {
     </div>
   ),
   args: {
-    title: "Submit Polygons",
-    content: "Project Developers may submit one or all polygons for review.",
-    primaryButtonText: "Next",
+    title: "Submit Polygons" as TranslatedText,
+    content: "Project Developers may submit one or all polygons for review." as TranslatedText,
+    primaryButtonText: "Next" as TranslatedText,
     primaryButtonProps: {
       className: "px-8 py-3",
       variant: "primary",
       onClick: () => {}
     },
-    secondaryButtonText: "Cancel",
+    secondaryButtonText: "Cancel" as TranslatedText,
     secondaryButtonProps: { className: "px-8 py-3", variant: "white-page-admin", onClick: () => {} },
     site: { uuid: "" }
   }

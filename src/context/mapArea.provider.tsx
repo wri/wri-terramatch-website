@@ -1,5 +1,8 @@
-import React, { createContext, ReactNode, useCallback, useContext, useState } from "react";
+import type { Map as MapboxMap } from "mapbox-gl";
+import React, { createContext, ReactNode, useCallback, useContext, useRef, useState } from "react";
 
+import { closeAllPopups } from "@/components/elements/Map-mapbox/interactions/popupCoordinator";
+import { removePopups } from "@/components/elements/Map-mapbox/interactions/popups";
 import { EditPolygonState } from "@/components/elements/Map-mapbox/Map.d";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -57,6 +60,8 @@ type MapAreaType = {
   invalidatePolygonMapTiles: () => void;
   validFilter: string;
   setValidFilter: (value: string) => void;
+  registerMapboxMap: (map: MapboxMap | null) => void;
+  closeMapPopups: () => void;
   resetSiteMapInteractionState: () => void;
 };
 
@@ -97,6 +102,8 @@ const defaultValue: MapAreaType = {
   invalidatePolygonMapTiles: () => {},
   validFilter: "all",
   setValidFilter: () => {},
+  registerMapboxMap: () => {},
+  closeMapPopups: () => {},
   resetSiteMapInteractionState: () => {}
 };
 
@@ -133,7 +140,22 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonMapTileNonce(value => value + 1);
   }, []);
 
+  const mapboxMapRef = useRef<MapboxMap | null>(null);
+
+  const registerMapboxMap = useCallback((map: MapboxMap | null) => {
+    mapboxMapRef.current = map;
+  }, []);
+
+  const closeMapPopups = useCallback(() => {
+    const map = mapboxMapRef.current;
+    if (map == null) return;
+    closeAllPopups(map);
+    removePopups(map, "POLYGON");
+    removePopups(map, "MEDIA");
+  }, []);
+
   const resetSiteMapInteractionState = useCallback(() => {
+    closeMapPopups();
     setIsUserDrawingEnabled(false);
     setEditPolygonInternal({ isOpen: false, uuid: "" });
     setShouldRefetchPolygonData(false);
@@ -145,7 +167,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setHasOverlaps(false);
     setPolygonGeometryEdit(undefined);
     setPolygonMapTileNonce(0);
-  }, []);
+  }, [closeMapPopups]);
 
   const contextValue: MapAreaType = {
     isUserDrawingEnabled,
@@ -184,6 +206,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     invalidatePolygonMapTiles,
     validFilter,
     setValidFilter,
+    registerMapboxMap,
+    closeMapPopups,
     resetSiteMapInteractionState
   };
 

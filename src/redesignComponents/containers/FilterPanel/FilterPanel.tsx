@@ -3,12 +3,13 @@ import { useT } from "@transifex/react";
 import { FC } from "react";
 import { twMerge } from "tailwind-merge";
 
+import { TranslatedText } from "@/i18n/types";
 import CloseButton from "@/redesignComponents/actions/Buttons/CloseButton/CloseButton";
 
 import Panel from "../Panel/Panel";
 
 export interface FilterPanelProps {
-  title: string;
+  title: TranslatedText;
   onClose?: () => void;
   content: React.ReactNode;
   variant?: "fixed" | "floating";

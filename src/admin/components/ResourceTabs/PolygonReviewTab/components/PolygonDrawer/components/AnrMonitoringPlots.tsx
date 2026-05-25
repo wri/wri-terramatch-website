@@ -104,7 +104,8 @@ const AnrMonitoringPlots: FC<{
     } catch (error) {
       refreshAnrPlotGeometryAfterUpload();
       const errorMessage = getAnrPlotGeometryErrorMessage(error, t("Error uploading ANR monitoring plots"));
-      openNotification("error", t("Error!"), errorMessage);
+      // TODO: review errorMessage possible values and translate them
+      openNotification("error", t("Error!"), t(errorMessage));
       Log.error("Error uploading ANR monitoring plots", error);
     } finally {
       setIsUploading(false);
@@ -150,7 +151,8 @@ const AnrMonitoringPlots: FC<{
           } catch (error) {
             refreshAnrPlotGeometryAfterDelete();
             const errorMessage = getAnrPlotGeometryErrorMessage(error, t("Error deleting ANR monitoring plots"));
-            openNotification("error", t("Error!"), errorMessage);
+            // TODO: review errorMessage possible values and translate them
+            openNotification("error", t("Error!"), t(errorMessage));
             Log.error("Error deleting ANR monitoring plots", error);
           } finally {
             setIsDeleting(false);
