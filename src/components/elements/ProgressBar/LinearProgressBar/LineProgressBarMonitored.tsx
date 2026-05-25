@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useState } from "react";
 
@@ -36,7 +37,7 @@ const LinearProgressBarMonitored = ({ data }: LinearProgressBarMonitoredProps) =
   const [tooltipValue, setTooltipValue] = useState<string>("");
   const [isHover, setIsHover] = useState<boolean>(false);
   const [position, setPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
-
+  const t = useT();
   const totalCount = data.reduce((sum, item) => sum + item.count, 0);
 
   const openTooltip = (e: React.MouseEvent<HTMLDivElement>, item: dataProps, colorClass: string) => {
@@ -67,6 +68,7 @@ const LinearProgressBarMonitored = ({ data }: LinearProgressBarMonitoredProps) =
       {data.map((item, index) => {
         const percentage = totalCount > 0 ? (item.count / totalCount) * 100 : 0;
         const colorClass = STATUS_COLOR_BY_KEY[item.status_key] ?? DEFAULT_COLOR;
+        const status = item.status === "Information Required" ? "Info Required" : item.status;
         return (
           <div key={index} style={{ width: `${percentage}%` }}>
             <div
@@ -79,7 +81,7 @@ const LinearProgressBarMonitored = ({ data }: LinearProgressBarMonitoredProps) =
             />
             {percentage > 10 && (
               <Text variant="text-12" className="break-words pt-1 text-darkCustom-300">
-                {item.status}
+                {t(status)}
               </Text>
             )}
           </div>
