@@ -8,6 +8,8 @@ import type { PolygonEditDrawerPolygon } from "./polygonEditDrawer.types";
 
 export type { PolygonEditDrawerPolygon };
 
+export const EMPTY_POLYGONS: SitePolygonLightDto[] = [];
+
 type PolygonEditDrawerContextValue = {
   isOpen: boolean;
   polygon: PolygonEditDrawerPolygon;
@@ -25,8 +27,6 @@ const defaultContextValue: PolygonEditDrawerContextValue = {
 };
 
 const PolygonEditDrawerContext = createContext<PolygonEditDrawerContextValue>(defaultContextValue);
-
-const EMPTY_POLYGONS: SitePolygonLightDto[] = [];
 
 let openPolygonEditExternal: ((params?: PolygonEditDrawerPolygon) => void) | null = null;
 

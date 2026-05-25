@@ -112,6 +112,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setIsUserDrawingEnabled,
     setPolygonGeometryEdit,
     setShouldRefetchPolygonData,
+    closeMapPopups,
     invalidatePolygonMapTiles,
     setSelectedPolyVersion,
     setPreviewVersion,
@@ -417,12 +418,33 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     try {
       await bulkUpdateSitePolygonStatus([polygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, "");
       pruneSitePolygonsCache();
+      closeMapPopups();
+      invalidatePolygonMapTiles();
+      setIsUserDrawingEnabled(false);
+      setPolygonGeometryEdit(undefined);
+      setStatusSelectedPolygon(POLYGON_PENDING_APPROVAL);
+      setShouldRefetchPolygonData(true);
+      onClose?.();
+      await waitForMapEditCleanup();
       await onSaved?.();
       openNotification("success", t("Success!"), t("Polygon submitted successfully"));
     } catch (error) {
       openNotification("error", t("Error!"), t("Error submitting polygon"));
     }
-  }, [onSaved, openNotification, polygon?.status, polygon?.uuid, t]);
+  }, [
+    closeMapPopups,
+    invalidatePolygonMapTiles,
+    onClose,
+    onSaved,
+    openNotification,
+    polygon?.status,
+    polygon?.uuid,
+    setIsUserDrawingEnabled,
+    setPolygonGeometryEdit,
+    setShouldRefetchPolygonData,
+    setStatusSelectedPolygon,
+    t
+  ]);
 
   const handleDeletePolygon = useCallback(async () => {
     if (polygon?.uuid == null || polygon.uuid === "") {
@@ -433,6 +455,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     try {
       await deleteSitePolygon(polygon.uuid);
       pruneSitePolygonsCache();
+      closeMapPopups();
+      invalidatePolygonMapTiles();
       await onSaved?.();
       openNotification("success", t("Success!"), t("Polygon deleted successfully"));
       onClose?.();
@@ -440,7 +464,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       openNotification("error", t("Error!"), t("Error deleting polygon"));
       throw error;
     }
-  }, [onClose, onSaved, openNotification, polygon?.uuid, t]);
+  }, [closeMapPopups, invalidatePolygonMapTiles, onClose, onSaved, openNotification, polygon?.uuid, t]);
 
   useEffect(() => {
     onRegisterSave?.(savePolygonData);

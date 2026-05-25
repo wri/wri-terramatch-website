@@ -260,7 +260,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setStatusSelectedPolygon,
     setPolygonGeometryEdit,
     polygonMapTileNonce,
-    selectedPolygonsInCheckbox
+    selectedPolygonsInCheckbox,
+    registerMapboxMap
   } = contextMapArea;
 
   const anrMapOverlay = useAnrMapOverlayOptional();
@@ -426,6 +427,15 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     dashboardContext: resolvedDashboardContext
   });
 
+  useEffect(() => {
+    if (!sourcesAdded || map.current == null) {
+      registerMapboxMap(null);
+      return;
+    }
+    registerMapboxMap(map.current);
+    return () => registerMapboxMap(null);
+  }, [map, registerMapboxMap, sourcesAdded, styleReady]);
+
   useMapCamera({
     map,
     bbox,
@@ -496,7 +506,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
   });
 
   useEffect(() => {
-    if (!sourcesAdded || map.current == null || polygonFromMap?.isOpen !== true || polygonFromMap.uuid === "") {
+    if (!sourcesAdded || map.current == null || !polygonFromMap?.isOpen || polygonFromMap.uuid === "") {
       return;
     }
     filterPolygonFromLayers(polygonFromMap.uuid, polygonsData, map.current);
@@ -504,7 +514,11 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
 
   const lastAutoEditPolygonRef = useRef<string | null>(null);
   useEffect(() => {
-    if (props.autoEditPolygon !== true || polygonFromMap?.isOpen !== true || polygonFromMap.uuid === "") {
+    if (!props.autoEditPolygon || !polygonFromMap?.isOpen || polygonFromMap.uuid === "") {
+      if (lastAutoEditPolygonRef.current != null) {
+        onCancelEdit();
+        setIsEditing(false);
+      }
       lastAutoEditPolygonRef.current = null;
       return;
     }
@@ -516,6 +530,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
 
     if (previousUuid != null) {
       onCancelEdit();
+      setIsEditing(false);
     }
 
     lastAutoEditPolygonRef.current = polygonFromMap.uuid;

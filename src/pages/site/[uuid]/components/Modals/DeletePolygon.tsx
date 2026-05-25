@@ -1,7 +1,8 @@
 import { Box, Flex, List, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useState } from "react";
 
+import { useModalScrollFix } from "@/hooks/useModalScrollFix";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons";
@@ -17,6 +18,8 @@ export interface DeletePolygonProps {
 const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, onDelete }) => {
   const t = useT();
   const [isDeleting, setIsDeleting] = useState(false);
+  useModalScrollFix(open);
+
   const handleClose = useCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
@@ -35,15 +38,6 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, o
       setIsDeleting(false);
     }
   }, [onDelete, onOpenChange]);
-
-  useEffect(() => {
-    if (!open) {
-      document.body.style.pointerEvents = "";
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-      document.documentElement.removeAttribute("data-scroll-locked");
-    }
-  }, [open]);
 
   return (
     <Modal
