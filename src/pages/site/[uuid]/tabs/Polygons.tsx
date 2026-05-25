@@ -1,5 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
@@ -7,10 +8,11 @@ import { downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbo
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import type { BulkSitePolygonAttributeChanges, PolygonStatus } from "@/connections/SitePolygons";
 import {
   bulkDeleteSitePolygons,
+  bulkUpdateSitePolygonAttributes,
   bulkUpdateSitePolygonStatus,
-  PolygonStatus,
   pruneSitePolygonsCache,
   useAllSitePolygons
 } from "@/connections/SitePolygons";
@@ -54,6 +56,9 @@ interface SitePolygonsTabProps {
   site: SiteFullDto;
 }
 
+const TOAST_PLACEMENT = "top-end" as const;
+const SAVE_COMPLETE_TOAST_MS = 5000;
+
 export type { PolygonTableRow } from "../components/PolygonTableRow";
 
 const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
@@ -73,6 +78,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [showBulkEditDrawer, setShowBulkEditDrawer] = useState(false);
   const [isStickyActive, setIsStickyActive] = useState(false);
   const [isDownloadingSelectedPolygons, setIsDownloadingSelectedPolygons] = useState(false);
+  const [isBulkUpdatingPolygons, setIsBulkUpdatingPolygons] = useState(false);
   const [hoveredPolygonUuid, setHoveredPolygonUuid] = useState<string | null>(null);
   const {
     polygonSearch,
@@ -271,6 +277,46 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     setShowBulkEditDrawer(true);
   }, [polygonsData, selectedRows]);
 
+  const handleBulkEditSave = useCallback(
+    async (attributeChanges: BulkSitePolygonAttributeChanges) => {
+      if (selectedSitePolygonUuids.length === 0) {
+        openNotification("error", t("Error!"), t("Could not find selected polygons to update"));
+        return;
+      }
+
+      try {
+        setIsBulkUpdatingPolygons(true);
+        await bulkUpdateSitePolygonAttributes(selectedSitePolygonUuids, attributeChanges);
+        closeMapPopups();
+        setHoveredPolygonUuid(null);
+        clearTableSelection();
+        invalidatePolygonMapTiles();
+        setShowBulkEditDrawer(false);
+        await refetchPolygons();
+        showToast({
+          label: t("Changes Saved"),
+          type: "success",
+          placement: TOAST_PLACEMENT,
+          duration: SAVE_COMPLETE_TOAST_MS
+        });
+      } catch (error) {
+        Log.error("Failed to update selected polygon details:", error);
+        openNotification("error", t("Error!"), t("Error updating polygon details"));
+      } finally {
+        setIsBulkUpdatingPolygons(false);
+      }
+    },
+    [
+      clearTableSelection,
+      closeMapPopups,
+      invalidatePolygonMapTiles,
+      openNotification,
+      refetchPolygons,
+      selectedSitePolygonUuids,
+      t
+    ]
+  );
+
   const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
   const { downloadAll, isDownloading: isDownloadingAllPolygons } = useDownloadSitePolygons({
     siteUuid: site.uuid,
@@ -465,6 +511,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           selectedPolygons={selectedRows}
           open={showBulkEditDrawer}
           onOpenChange={setShowBulkEditDrawer}
+          isSaving={isBulkUpdatingPolygons}
+          onSave={handleBulkEditSave}
         />
 
         <UploadPolygons

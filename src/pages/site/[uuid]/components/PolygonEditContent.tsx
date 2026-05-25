@@ -2,6 +2,7 @@ import type { DateValue } from "@ark-ui/react";
 import { Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { format } from "date-fns";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -55,6 +56,9 @@ import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonA
 import type { PolygonTableRow } from "../tabs/Polygons";
 import DeletePolygon from "./Modals/DeletePolygon";
 import UploadPhotos from "./Modals/UploadPhotos";
+
+const TOAST_PLACEMENT = "top-end" as const;
+const SAVE_COMPLETE_TOAST_MS = 5000;
 
 type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
@@ -257,13 +261,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       await onSaved?.();
       setShouldRefetchPolygonData(true);
 
-      openNotification(
-        "success",
-        t("Success!"),
-        geometryChanged
-          ? t("Polygon geometry and attributes were saved successfully")
-          : t("Polygon version created successfully")
-      );
+      showToast({
+        label: t("Changes Saved"),
+        type: "success",
+        placement: TOAST_PLACEMENT,
+        duration: SAVE_COMPLETE_TOAST_MS
+      });
       return true;
     } catch (error) {
       openNotification("error", t("Error!"), t("Error creating polygon version"));
