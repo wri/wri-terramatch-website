@@ -20,7 +20,9 @@ export type PolygonBulkActionToolbarProps = {
   onDownload: () => void;
   onEdit: () => void;
   onSubmit: () => void;
+  onRunValidation: (polygonUuids: string[]) => Promise<void>;
   polygons: PolygonTableRow[];
+  selectedPolygonUuids: string[];
 };
 
 const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
@@ -33,7 +35,9 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   onDownload,
   onEdit,
   onSubmit,
-  polygons
+  onRunValidation,
+  polygons,
+  selectedPolygonUuids
 }) => {
   const t = useT();
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
@@ -66,18 +70,31 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
           onClick: onDownload
         }}
         quaternaryButtonProps={{
-          children: "Run Validation",
-          onClick: () => {
-            setTimeout(() => {
-              setIsSystemValidationCompleteModalOpen(true);
-            }, 5000);
+          children: t("Run Validation"),
+          onClick: async () => {
+            if (selectedPolygonUuids.length === 0) {
+              return;
+            }
             showToast({
-              label: "Validating Polygons...",
+              label: t("Validating Polygons..."),
               type: "info",
               placement: "bottom-end",
-              closableLabel: "Close",
+              duration: 5000,
+              closableLabel: t("Close"),
               icon: <LoadingIcon boxSize={7} color="primary.700" animation="spin 1s linear infinite" />
             });
+            try {
+              await onRunValidation(selectedPolygonUuids);
+              setIsSystemValidationCompleteModalOpen(true);
+            } catch (error) {
+              showToast({
+                label: t("Failed to validate polygons"),
+                type: "error",
+                placement: "bottom-end",
+                duration: 5000,
+                closableLabel: t("Close")
+              });
+            }
           }
         }}
         secondaryButtonProps={{

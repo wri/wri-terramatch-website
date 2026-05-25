@@ -14,6 +14,7 @@ import {
   pruneSitePolygonsCache,
   useAllSitePolygons
 } from "@/connections/SitePolygons";
+import { createPolygonValidation } from "@/connections/Validation";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -32,6 +33,7 @@ import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { AreaHectaresIcon, DownloadIcon, PlusIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import DeletePolygon from "../components/Modals/DeletePolygon";
@@ -150,12 +152,13 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [resetSiteMapInteractionState]);
 
   useEffect(() => {
+    if (isLoadingPolygons) return;
     const visibleRowIds = new Set(polygonRows.map(row => row.id));
     setSelectedRowIds(prev => {
       const next = new Set(Array.from(prev).filter(id => visibleRowIds.has(String(id))));
       return next.size === prev.size ? prev : next;
     });
-  }, [polygonRows, setSelectedRowIds]);
+  }, [polygonRows, setSelectedRowIds, isLoadingPolygons]);
 
   const clearTableSelection = useCallback(() => {
     setSelectedRowIds(new Set<string>());
@@ -200,6 +203,17 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       setSubmittedPolygonNames([]);
     }
   }, []);
+
+  const handleRunValidation = useCallback(
+    async (polygonUuids: string[]) => {
+      if (polygonUuids.length === 0) return;
+      await createPolygonValidation({ polygonUuids });
+      ApiSlice.pruneCache("validations");
+      pruneSitePolygonsCache();
+      await refetchPolygons();
+    },
+    [refetchPolygons]
+  );
 
   const handleBulkSubmit = useCallback(async () => {
     if (selectedSubmittablePolygonUuids.length === 0) {
@@ -453,12 +467,14 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           itemCount={selectedRows.length}
           isBulkEditDrawerOpen={showBulkEditDrawer}
           polygons={selectedRows}
+          selectedPolygonUuids={selectedDownloadPolygonUuids}
           isDownloading={isDownloadingSelectedPolygons}
           onCancel={clearTableSelection}
           onDelete={() => setDeletePolygonModal(true)}
           onDownload={() => void handleBulkDownload()}
           onEdit={handleBulkEditDetails}
           onSubmit={() => setSubmitPolygonsModal(true)}
+          onRunValidation={handleRunValidation}
         />
 
         <PolygonBulkEditDrawer
