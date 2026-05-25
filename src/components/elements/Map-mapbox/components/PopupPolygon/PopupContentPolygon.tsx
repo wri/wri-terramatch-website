@@ -55,21 +55,19 @@ const PopupContentPolygon: FC<PopupContentPolygonProps> = ({
           {areaHectaresDisplay}
         </Text>
       </Flex>
-      {commentsDisplay !== "0" && (
-        <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
-          <Flex alignItems="center" gap={2}>
-            <Flex h={6} w={6} alignItems="center" justifyContent="center">
-              <CommentIcon boxSize={4} color="neutral.800" />
-            </Flex>
-            <Text color="neutral.700" textStyle="400" textWrap="nowrap">
-              {t("Comments")}
-            </Text>
+      <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
+        <Flex alignItems="center" gap={2}>
+          <Flex h={6} w={6} alignItems="center" justifyContent="center">
+            <CommentIcon boxSize={4} color="neutral.800" />
           </Flex>
-          <Text color="neutral.900" textStyle="400-bold">
-            {commentsDisplay}
+          <Text color="neutral.700" textStyle="400" textWrap="nowrap">
+            {t("Comments")}
           </Text>
         </Flex>
-      )}
+        <Text color="neutral.900" textStyle="400-bold">
+          {commentsDisplay}
+        </Text>
+      </Flex>
 
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
         <Flex alignItems="center" gap={2}>

@@ -1,4 +1,5 @@
 import { Box } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useState } from "react";
 
@@ -13,7 +14,10 @@ export type PolygonBulkActionToolbarProps = {
   visible: boolean;
   itemCount: number;
   isBulkEditDrawerOpen?: boolean;
+  isDownloading?: boolean;
+  onCancel: () => void;
   onDelete: () => void;
+  onDownload: () => void;
   onEdit: () => void;
   onSubmit: () => void;
   polygons: PolygonTableRow[];
@@ -23,11 +27,15 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   visible,
   itemCount,
   isBulkEditDrawerOpen = false,
+  isDownloading = false,
+  onCancel,
   onDelete,
+  onDownload,
   onEdit,
   onSubmit,
   polygons
 }) => {
+  const t = useT();
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
   if (!visible || isPolygonEditDrawerOpen || isBulkEditDrawerOpen) {
@@ -43,15 +51,19 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
       />
       <BulkActionToolbar
         ButtonCancel={{
-          children: "Cancel"
+          children: t("Cancel"),
+          onClick: onCancel
         }}
         ButtonDelete={{
-          children: "Delete",
+          children: t("Delete"),
           onClick: onDelete
         }}
         items={String(itemCount)}
         primaryButtonProps={{
-          children: "Download"
+          children: t("Download"),
+          loading: isDownloading,
+          disabled: isDownloading,
+          onClick: onDownload
         }}
         quaternaryButtonProps={{
           children: "Run Validation",
@@ -69,11 +81,11 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
           }
         }}
         secondaryButtonProps={{
-          children: itemCount > 1 ? "Edit Details" : "Edit",
+          children: itemCount > 1 ? t("Edit Details") : t("Edit"),
           onClick: onEdit
         }}
         tertiaryButtonProps={{
-          children: "Submit",
+          children: t("Submit"),
           onClick: onSubmit
         }}
       />
