@@ -14,7 +14,7 @@ export const Default: Story = {
   args: {
     src: "https://i.pravatar.cc/300?img=4",
     alt: "Gallery Image",
-    size: 164
+    size: 41
   }
 };
 
@@ -22,7 +22,7 @@ export const Small: Story = {
   args: {
     src: "https://i.pravatar.cc/300?img=4",
     alt: "Gallery Image",
-    size: 96
+    size: 24
   }
 };
 
@@ -30,28 +30,28 @@ export const Large: Story = {
   args: {
     src: "https://i.pravatar.cc/300?img=4",
     alt: "Gallery Image",
-    size: 384
+    size: 96
   }
 };
 
 export const Unavailable: Story = {
   args: {
     src: undefined,
-    size: 164
+    size: 41
   }
 };
 
 export const Add: Story = {
   args: {
     isAdd: true,
-    size: 164
+    size: 41
   }
 };
 
 export const Video: Story = {
   args: {
     src: "https://www.w3schools.com/html/mov_bbb.mp4",
-    size: 164,
+    size: 41,
     type: "video"
   }
 };

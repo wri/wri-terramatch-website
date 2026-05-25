@@ -4,10 +4,20 @@ import { twMerge } from "tailwind-merge";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
+import { TranslatedText } from "@/i18n/types";
 
 import Icon, { IconProps } from "../Icon/Icon";
 
 export type ModalBaseProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+
+export type ModalTranslatedProps = ModalBaseProps & {
+  title: TranslatedText;
+  iconProps?: IconProps;
+  content?: ReactNode | TranslatedText;
+  primaryButtonProps?: IButtonProps;
+  secondaryButtonProps?: IButtonProps;
+};
+
 export type ModalProps = ModalBaseProps & {
   title: string;
   iconProps?: IconProps;

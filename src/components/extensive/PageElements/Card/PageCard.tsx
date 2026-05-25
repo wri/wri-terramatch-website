@@ -10,6 +10,8 @@ import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import { useMyUser } from "@/connections/User";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { withFrameworkShow } from "@/context/framework.provider";
+import { TranslatedText } from "@/i18n/types";
+import { EMPTY_I18N } from "@/i18n/util";
 import { TextVariants } from "@/types/common";
 
 import BlurContainer from "../../BlurContainer/BlurContainer";
@@ -18,13 +20,13 @@ import Icon, { IconNames } from "../../Icon/Icon";
 export interface PageCardProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     PropsWithChildren {
-  title?: string;
-  subtitle?: string;
+  title?: TranslatedText;
+  subtitle?: TranslatedText;
   headerChildren?: ReactNode;
   isEmpty?: boolean;
   emptyStateProps?: EmptyFieldProps;
   gap?: 4 | 6 | 8;
-  tooltip?: string;
+  tooltip?: TranslatedText;
   classNameSubTitle?: string;
   variantSubTitle?: TextVariants;
   subtitleMore?: boolean;
@@ -65,8 +67,10 @@ const PageCard: FC<PageCardProps> = ({
   const maxLength = 278;
 
   useEffect(() => {
-    if (collapseSubtitle && (subtitle?.length ?? 0) > maxLength) {
-      setSubtitleText(subtitle?.slice(0, maxLength));
+    if (subtitle == null) {
+      setSubtitleText(undefined);
+    } else if (collapseSubtitle && subtitle.length > maxLength) {
+      setSubtitleText(subtitle.slice(0, maxLength) as TranslatedText);
     } else {
       setSubtitleText(subtitle);
     }
@@ -90,7 +94,7 @@ const PageCard: FC<PageCardProps> = ({
                     &nbsp;
                     <ToolTip
                       className="normal-case"
-                      content={tooltip ?? ""}
+                      content={tooltip ?? EMPTY_I18N}
                       width={widthTooltip ?? "w-44 lg:w-52"}
                       title={title}
                       trigger={tooltipTrigger}

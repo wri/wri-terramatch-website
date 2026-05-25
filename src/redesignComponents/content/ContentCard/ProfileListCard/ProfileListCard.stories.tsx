@@ -1,6 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
+import { TranslatedText } from "@/i18n/types";
+
 import ProfileListCard, { IProfile } from "./ProfileListCard";
 
 const meta: Meta<typeof ProfileListCard> = {
@@ -78,7 +80,7 @@ export const Default: Story = {
     onInviteClick: () => {},
     items: [
       {
-        title: "Header Label",
+        title: "Header Label" as TranslatedText,
         profiles: sampleProfiles.map((profile, index) =>
           index === 0
             ? {
@@ -102,7 +104,7 @@ export const SingleProfile: Story = {
     onInviteClick: () => {},
     items: [
       {
-        title: "Header Label",
+        title: "Header Label" as TranslatedText,
         profiles: [
           {
             id: "1",
@@ -124,7 +126,7 @@ export const ManyProfiles: Story = {
     onInviteClick: () => {},
     items: [
       {
-        title: "Header Label",
+        title: "Header Label" as TranslatedText,
         profiles: [
           {
             id: "1",
@@ -176,7 +178,7 @@ export const ProfilesWithoutImages: Story = {
     onInviteClick: () => {},
     items: [
       {
-        title: "Header Label",
+        title: "Header Label" as TranslatedText,
         profiles: [
           {
             id: "1",
@@ -208,7 +210,7 @@ export const NoData: Story = {
     onInviteClick: () => {},
     items: [
       {
-        title: "Header Label",
+        title: "Header Label" as TranslatedText,
         profiles: [],
         onProfileClick: () => {}
       }

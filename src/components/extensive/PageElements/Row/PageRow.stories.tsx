@@ -2,6 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
+import { TranslatedText } from "@/i18n/types";
 
 import Component from "./PageRow";
 
@@ -18,10 +19,10 @@ export const Default: Story = {
     children: (
       <>
         <PageColumn>
-          <PageCard title="card title" />
+          <PageCard title={"card title" as TranslatedText} />
         </PageColumn>
         <PageColumn>
-          <PageCard title="card title" />
+          <PageCard title={"card title" as TranslatedText} />
         </PageColumn>
       </>
     )

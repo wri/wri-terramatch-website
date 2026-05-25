@@ -1,16 +1,22 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 
 import Notification from "@/components/elements/Notification/Notification";
+import { TranslatedText } from "@/i18n/types";
+import { EMPTY_I18N } from "@/i18n/util";
 
 type NotificationType = "success" | "error" | "warning" | null;
 
 type NotificationContextType = {
-  openNotification: (type: Exclude<NotificationType, null>, title: string, message?: string | any) => void;
+  openNotification: (
+    type: Exclude<NotificationType, null>,
+    title: TranslatedText,
+    message?: TranslatedText | any
+  ) => void;
   closeNotification: () => void;
   notificationProps: {
     type: NotificationType;
-    title: string;
-    message?: string | any;
+    title: TranslatedText;
+    message?: TranslatedText | any;
     open: boolean;
   };
 };
@@ -20,7 +26,7 @@ export const NotificationContext = React.createContext<NotificationContextType>(
   closeNotification: () => {},
   notificationProps: {
     type: null,
-    title: "",
+    title: EMPTY_I18N,
     message: undefined,
     open: false
   }
@@ -33,13 +39,13 @@ type NotificationProviderProps = {
 const NotificationProvider = ({ children }: NotificationProviderProps) => {
   const [notificationProps, setNotificationProps] = useState({
     type: null as NotificationType,
-    title: "",
+    title: EMPTY_I18N,
     message: undefined,
     open: false
   });
 
   const openNotification = useCallback(
-    (type: Exclude<NotificationType, null>, title: string, message?: string | any) => {
+    (type: Exclude<NotificationType, null>, title: TranslatedText, message?: TranslatedText | any) => {
       setNotificationProps({ type, title, message: message ?? undefined, open: true });
     },
     []

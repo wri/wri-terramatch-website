@@ -194,21 +194,24 @@ const toggleItems: TogglePropsItem[] = [
   }
 ];
 
-const noDataGraph = (
-  <div className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-grey-1000">
-    <Text variant={"text-32-semibold"} className="text-blueCustom">
-      No Data to Display
-    </Text>
-    <div className="flex items-center gap-1">
-      <Text variant={"text-14"} className="text-darkCustom">
-        RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA
+const NoDataGraph = () => {
+  const t = useT();
+  return (
+    <div className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-grey-1000">
+      <Text variant={"text-32-semibold"} className="text-blueCustom">
+        {t("No Data to Display")}
       </Text>
-      <Tooltip content={"Tooltip"}>
-        <Icon name={IconNames.IC_INFO} className="h-4 w-4" />
-      </Tooltip>
+      <div className="flex items-center gap-1">
+        <Text variant={"text-14"} className="text-darkCustom">
+          {t("RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA")}
+        </Text>
+        <Tooltip content={t("Tooltip")}>
+          <Icon name={IconNames.IC_INFO} className="h-4 w-4" />
+        </Tooltip>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const sumValuesTreeCoverLoss = (data: any) => {
   return data?.reduce((totalAcc: number, polygon: { data?: Record<string, number> }) => {
@@ -1052,7 +1055,7 @@ const DataCard = ({
                 record={record}
                 totalHectaresRestoredGoal={totalHectaresRestoredGoal}
               />
-              {selected.includes("6") && noDataGraph}
+              {selected.includes("6") && <NoDataGraph />}
             </div>
           )}
           {tabActive === 2 && (

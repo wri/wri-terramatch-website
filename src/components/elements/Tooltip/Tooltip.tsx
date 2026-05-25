@@ -4,17 +4,18 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
 import { useOnMount } from "@/hooks/useOnMount";
+import { TranslatedText } from "@/i18n/types";
 import { TextVariants } from "@/types/common";
 
 import Text from "../Text/Text";
 
 export interface TooltipProps {
   children: ReactNode;
-  content: string;
+  title?: TranslatedText;
+  content: TranslatedText;
   width?: string;
   placement?: "top" | "right";
   className?: string;
-  title?: string;
   trigger?: "hover" | "click";
   colorBackground?: "black" | "white";
   textVariantContent?: TextVariants;
@@ -22,11 +23,11 @@ export interface TooltipProps {
 
 const ToolTip = ({
   children,
+  title,
   content,
   width,
   placement = "top",
   className,
-  title,
   colorBackground = "black",
   textVariantContent,
   trigger = "hover"

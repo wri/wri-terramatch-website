@@ -74,7 +74,7 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
     } catch (error) {
       hideLoader();
       setClickedValidation(false);
-      openNotification("error", t("Error! TerraMatch could not review polygons"), t("Please try again later."));
+      openNotification("error", t("Please try again later."), t("Error! TerraMatch could not review polygons"));
     }
   };
 

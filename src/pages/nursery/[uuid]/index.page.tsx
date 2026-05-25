@@ -12,6 +12,7 @@ import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import NurseryBanner from "@/redesignComponents/content/Banner/NurseryBanner/NurseryBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
@@ -61,6 +62,7 @@ const NurseryDetailPage = () => {
 
   return (
     <FrameworkProvider frameworkKey={nursery?.frameworkKey}>
+      <ProjectResponsiveTypography />
       <LoadingContainer loading={!isLoaded}>
         {nursery == null ? null : (
           <>
