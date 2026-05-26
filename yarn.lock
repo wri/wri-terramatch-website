@@ -14359,7 +14359,7 @@ map-or-similar@^1.5.0:
   resolved "https://registry.yarnpkg.com/map-or-similar/-/map-or-similar-1.5.0.tgz#6de2653174adfb5d9edc33c69d3e92a1b76faf08"
   integrity sha512-0aF7ZmVon1igznGI4VS30yugpduQW3y3GkcgGJOp7d8x8QrizhigUxjI/m2UojsXXto+jLAH3KSz+xOJTiORjg==
 
-mapbox-gl@*, mapbox-gl@^3.21.0:
+mapbox-gl@*:
   version "3.21.0"
   resolved "https://registry.yarnpkg.com/mapbox-gl/-/mapbox-gl-3.21.0.tgz#690f37507cb33acd0238a6ad7a344a4d74df6af2"
   integrity sha512-0mv/LHDoW6QmxLEoNqCPuby428WTekfs38TtNXd/cxDOLdY6kFd/ztaSkcBeqNksbYSz2lXnPfBm8nN5+hxA0w==
@@ -14380,6 +14380,34 @@ mapbox-gl@*, mapbox-gl@^3.21.0:
     geojson-vt "^4.0.2"
     gl-matrix "^3.4.4"
     grid-index "^1.1.0"
+    kdbush "^4.0.2"
+    martinez-polygon-clipping "^0.8.1"
+    murmurhash-js "^1.0.0"
+    pbf "^4.0.1"
+    potpack "^2.0.0"
+    quickselect "^3.0.0"
+    supercluster "^8.0.1"
+    tinyqueue "^3.0.0"
+
+mapbox-gl@^3.24.0:
+  version "3.24.0"
+  resolved "https://registry.yarnpkg.com/mapbox-gl/-/mapbox-gl-3.24.0.tgz#84ed64980e762728276c6032c68db32b221b1041"
+  integrity sha512-R+FdFUB3DnoE5FYASV7lGSiRyMkSblcZ2UEy7b2pt7s5ZbCxFIUPXd0E6iAFd8OdvdA2VtbvZZVylzAZNaurjA==
+  dependencies:
+    "@mapbox/mapbox-gl-supported" "^3.0.0"
+    "@mapbox/point-geometry" "^1.1.0"
+    "@mapbox/tiny-sdf" "^2.0.6"
+    "@mapbox/unitbezier" "^0.0.1"
+    "@mapbox/vector-tile" "^2.0.4"
+    "@types/geojson" "^7946.0.16"
+    "@types/geojson-vt" "^3.2.5"
+    "@types/pbf" "^3.0.5"
+    "@types/supercluster" "^7.1.3"
+    cheap-ruler "^4.0.0"
+    csscolorparser "~1.0.3"
+    earcut "^3.0.1"
+    geojson-vt "^4.0.2"
+    gl-matrix "^3.4.4"
     kdbush "^4.0.2"
     martinez-polygon-clipping "^0.8.1"
     murmurhash-js "^1.0.0"
