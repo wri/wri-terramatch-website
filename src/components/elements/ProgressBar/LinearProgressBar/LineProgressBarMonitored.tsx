@@ -68,7 +68,6 @@ const LinearProgressBarMonitored = ({ data }: LinearProgressBarMonitoredProps) =
       {data.map((item, index) => {
         const percentage = totalCount > 0 ? (item.count / totalCount) * 100 : 0;
         const colorClass = STATUS_COLOR_BY_KEY[item.status_key] ?? DEFAULT_COLOR;
-        const status = item.status === "Information Required" ? "Info Required" : item.status;
         return (
           <div key={index} style={{ width: `${percentage}%` }}>
             <div
@@ -81,7 +80,7 @@ const LinearProgressBarMonitored = ({ data }: LinearProgressBarMonitoredProps) =
             />
             {percentage > 10 && (
               <Text variant="text-12" className="break-words pt-1 text-darkCustom-300">
-                {t(status)}
+                {t(item?.status)}
               </Text>
             )}
           </div>
