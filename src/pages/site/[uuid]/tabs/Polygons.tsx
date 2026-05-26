@@ -112,6 +112,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const { selectedRows, selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } =
     useTableSelection<PolygonTableRow>(true, polygonRows);
 
+  const hasSelectedFailedValidation = useMemo(
+    () => selectedRows.some(row => row.validation === "failed"),
+    [selectedRows]
+  );
   const selectedPolygonUuids = useMemo(() => Array.from(selectedRowIds, id => String(id)), [selectedRowIds]);
   const {
     selectedSitePolygons,
@@ -204,6 +208,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, []);
 
   const handleBulkSubmit = useCallback(async () => {
+    if (hasSelectedFailedValidation) {
+      setOverlapFixModal(true);
+      return;
+    }
+
     if (selectedSubmittablePolygonUuids.length === 0) {
       openNotification("error", t("Error!"), t("No selected polygons are eligible for submission"));
       return;
@@ -235,6 +244,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     refetchPolygons,
     selectedSubmittablePolygons,
     selectedSubmittablePolygonUuids,
+    hasSelectedFailedValidation,
     t
   ]);
 
@@ -319,10 +329,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const selectedRestorationAreaRounded = Math.round(selectedRestorationAreaHa * 100) / 100;
   const hasPolygonSelection = selectedRows.length > 0;
-  const hasSelectedFailedValidation = useMemo(
-    () => selectedRows.some(row => row.validation === "failed"),
-    [selectedRows]
-  );
 
   const selectedFailedPolygons = useMemo(
     () => selectedRows.filter(row => row.validation === "failed").map(row => ({ id: row.id, name: row.polygonName })),
@@ -471,6 +477,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onDownload={() => void handleBulkDownload()}
           onEdit={handleBulkEditDetails}
           onSubmit={handleBulkSubmit}
+          showTooltip={hasSelectedFailedValidation}
         />
 
         <PolygonBulkEditDrawer

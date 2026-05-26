@@ -20,10 +20,11 @@ export interface BulkActionToolbarProps {
   primaryButtonProps?: IButtonProps;
   secondaryButtonProps?: IButtonProps;
   tertiaryButtonProps?: IButtonProps;
-  quaternaryButtonProps?: IButtonProps;
+  submitButtonProps?: IButtonProps;
   items?: string;
   ButtonCancel: IButtonProps;
   ButtonDelete: IButtonProps;
+  tooltipContent?: string;
 }
 
 export interface ToolbarFormProps {

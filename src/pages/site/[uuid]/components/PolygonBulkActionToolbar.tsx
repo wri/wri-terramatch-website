@@ -21,6 +21,7 @@ export type PolygonBulkActionToolbarProps = {
   onDownload: () => void;
   onEdit: () => void;
   onSubmit: () => void;
+  showTooltip: boolean;
   polygons: PolygonTableRow[];
 };
 
@@ -35,6 +36,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   onDownload,
   onEdit,
   onSubmit,
+  showTooltip,
   polygons
 }) => {
   const t = useT();
@@ -61,13 +63,13 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
           onClick: onDelete
         }}
         items={String(itemCount)}
-        primaryButtonProps={{
+        tertiaryButtonProps={{
           children: t("Download"),
           loading: isDownloading,
           disabled: isDownloading,
           onClick: onDownload
         }}
-        quaternaryButtonProps={{
+        secondaryButtonProps={{
           children: "Run Validation",
           onClick: () => {
             setTimeout(() => {
@@ -82,14 +84,17 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
             });
           }
         }}
-        secondaryButtonProps={{
+        primaryButtonProps={{
           children: itemCount > 1 ? t("Edit Details") : t("Edit"),
           onClick: onEdit
         }}
-        tertiaryButtonProps={{
-          children: t("Submit"),
+        submitButtonProps={{
+          children: t(submitLabel),
           onClick: onSubmit
         }}
+        {...(showTooltip && {
+          tooltipContent: t("Auto-fix isn’t available for this selection. Fix the overlap manually.")
+        })}
       />
     </Box>
   );
