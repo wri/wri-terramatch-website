@@ -3,12 +3,25 @@ import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
+import { downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import {
+  bulkDeleteSitePolygons,
+  bulkUpdateSitePolygonStatus,
+  PolygonStatus,
+  pruneSitePolygonsCache,
+  useAllSitePolygons
+} from "@/connections/SitePolygons";
+import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { PolygonEditDrawerDataSync, PolygonEditDrawerProvider } from "@/context/polygonEditDrawer.provider";
+import { useNotificationContext } from "@/context/notification.provider";
+import {
+  EMPTY_POLYGONS,
+  PolygonEditDrawerDataSync,
+  PolygonEditDrawerProvider
+} from "@/context/polygonEditDrawer.provider";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
@@ -19,6 +32,7 @@ import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { AreaHectaresIcon, DownloadIcon, PlusIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import Log from "@/utils/log";
 
 import DeletePolygon from "../components/Modals/DeletePolygon";
 import OverlapFix from "../components/Modals/OverlapFix";
@@ -46,20 +60,22 @@ export type { PolygonTableRow } from "../components/PolygonTableRow";
 const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
-  const { setSiteData, resetSiteMapInteractionState } = useMapAreaContext();
+  const { setSiteData, resetSiteMapInteractionState, closeMapPopups, invalidatePolygonMapTiles } = useMapAreaContext();
+  const { openNotification } = useNotificationContext();
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
   const [showOverlapFixModal, setOverlapFixModal] = useState(false);
   const [showSubmitPolygonsModal, setSubmitPolygonsModal] = useState(false);
+  const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
+  const [submittedPolygonNames, setSubmittedPolygonNames] = useState<string[]>([]);
   const [showDeletePolygonModal, setDeletePolygonModal] = useState(false);
   const [showUploadErrorModal, setUploadErrorModal] = useState(false);
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
   const [showBulkEditDrawer, setShowBulkEditDrawer] = useState(false);
   const [isStickyActive, setIsStickyActive] = useState(false);
+  const [isDownloadingSelectedPolygons, setIsDownloadingSelectedPolygons] = useState(false);
   const [hoveredPolygonUuid, setHoveredPolygonUuid] = useState<string | null>(null);
-
   const {
     polygonSearch,
     polygonFilters,
@@ -71,7 +87,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   } = useSitePolygonFilters({ t });
 
   const {
-    data: polygonsData = [],
+    data: polygonsQueryData,
     isLoading: isLoadingPolygons,
     error: polygonLoadError,
     progress: polygonLoadProgress,
@@ -84,6 +100,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     filter: sitePolygonFilter
   });
 
+  const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
+
   const { polygonRows, columns, totalTreesPlanted, totalRestorationAreaHa } = useSitePolygonTableData({
     polygonsData,
     t,
@@ -95,6 +113,33 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     useTableSelection<PolygonTableRow>(true, polygonRows);
 
   const selectedPolygonUuids = useMemo(() => Array.from(selectedRowIds, id => String(id)), [selectedRowIds]);
+  const {
+    selectedSitePolygons,
+    selectedSitePolygonUuids,
+    selectedDownloadPolygonUuids,
+    selectedSubmittablePolygons,
+    selectedSubmittablePolygonUuids
+  } = useMemo(() => {
+    const sitePolygons = polygonsData.filter(polygon => selectedRowIds.has(polygon.polygonUuid ?? polygon.uuid ?? ""));
+    const submittablePolygons = sitePolygons.filter(
+      polygon =>
+        polygon.uuid != null && polygon.status !== POLYGON_PENDING_APPROVAL && polygon.status !== POLYGON_APPROVED
+    );
+
+    return {
+      selectedSitePolygons: sitePolygons,
+      selectedSitePolygonUuids: sitePolygons
+        .map(polygon => polygon.uuid)
+        .filter((uuid): uuid is string => uuid != null && uuid.length > 0),
+      selectedDownloadPolygonUuids: sitePolygons
+        .map(polygon => polygon.polygonUuid)
+        .filter((uuid): uuid is string => uuid != null && uuid.length > 0),
+      selectedSubmittablePolygons: submittablePolygons,
+      selectedSubmittablePolygonUuids: submittablePolygons
+        .map(polygon => polygon.uuid)
+        .filter((uuid): uuid is string => uuid != null && uuid.length > 0)
+    };
+  }, [polygonsData, selectedRowIds]);
 
   useEffect(() => {
     setSiteData(site);
@@ -121,6 +166,99 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const handleBulkDraw = useCallback(() => {
     openPolygonEditDrawerForSitePolygon();
   }, []);
+
+  const handleBulkDelete = useCallback(async () => {
+    if (selectedSitePolygonUuids.length === 0) {
+      openNotification("error", t("Error!"), t("Could not find selected polygons to delete"));
+      return;
+    }
+
+    try {
+      await bulkDeleteSitePolygons(selectedSitePolygonUuids);
+      closeMapPopups();
+      setHoveredPolygonUuid(null);
+      clearTableSelection();
+      invalidatePolygonMapTiles();
+      await refetchPolygons();
+      openNotification("success", t("Success!"), t("Polygons deleted successfully"));
+    } catch (error) {
+      Log.error("Failed to delete selected polygons:", error);
+      openNotification("error", t("Error!"), t("Error deleting polygons"));
+      throw error;
+    }
+  }, [
+    clearTableSelection,
+    closeMapPopups,
+    invalidatePolygonMapTiles,
+    openNotification,
+    refetchPolygons,
+    selectedSitePolygonUuids,
+    t
+  ]);
+
+  const handlePolygonSubmittedModalChange = useCallback((open: boolean) => {
+    setPolygonSubmittedModal(open);
+    if (!open) {
+      setSubmittedPolygonNames([]);
+    }
+  }, []);
+
+  const handleBulkSubmit = useCallback(async () => {
+    if (selectedSubmittablePolygonUuids.length === 0) {
+      openNotification("error", t("Error!"), t("No selected polygons are eligible for submission"));
+      return;
+    }
+
+    const submittedNames = selectedSubmittablePolygons.map(polygon => polygon.name ?? t("Unnamed polygon"));
+
+    try {
+      await bulkUpdateSitePolygonStatus(selectedSubmittablePolygonUuids, POLYGON_PENDING_APPROVAL as PolygonStatus, "");
+      pruneSitePolygonsCache();
+      closeMapPopups();
+      setHoveredPolygonUuid(null);
+      clearTableSelection();
+      invalidatePolygonMapTiles();
+      setSubmittedPolygonNames(submittedNames);
+      window.setTimeout(() => {
+        setPolygonSubmittedModal(true);
+      }, 0);
+      void refetchPolygons();
+    } catch (error) {
+      Log.error("Failed to submit selected polygons:", error);
+      openNotification("error", t("Error!"), t("Error submitting polygons"));
+    }
+  }, [
+    clearTableSelection,
+    closeMapPopups,
+    invalidatePolygonMapTiles,
+    openNotification,
+    refetchPolygons,
+    selectedSubmittablePolygons,
+    selectedSubmittablePolygonUuids,
+    t
+  ]);
+
+  const handleBulkDownload = useCallback(async () => {
+    if (selectedDownloadPolygonUuids.length === 0) {
+      openNotification("error", t("Error!"), t("Could not find selected polygons to download"));
+      return;
+    }
+
+    try {
+      setIsDownloadingSelectedPolygons(true);
+      const filename =
+        selectedSitePolygons.length === 1
+          ? selectedSitePolygons[0].name ?? "polygon"
+          : `${site.name ?? "polygons"}-${new Date().toISOString().slice(0, 10)}`;
+      await downloadMultiplePolygonsGeoJson(selectedDownloadPolygonUuids, filename);
+      openNotification("success", t("Success!"), t("Polygons downloaded successfully"));
+    } catch (error) {
+      Log.error("Failed to download selected polygons:", error);
+      openNotification("error", t("Error!"), t("Error downloading polygons"));
+    } finally {
+      setIsDownloadingSelectedPolygons(false);
+    }
+  }, [openNotification, selectedDownloadPolygonUuids, selectedSitePolygons, site.name, t]);
 
   const handleBulkEditDetails = useCallback(() => {
     if (selectedRows.length === 0) {
@@ -191,14 +329,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     [selectedRows]
   );
   const shouldShowNoResults = !isLoadingPolygons && polygonRows.length === 0;
-
-  const handleBulkSubmit = useCallback(() => {
-    if (hasSelectedFailedValidation) {
-      setOverlapFixModal(true);
-      return;
-    }
-    setSubmitPolygonsModal(true);
-  }, [hasSelectedFailedValidation]);
 
   const selectableRenderRow = useCallback(
     (row: PolygonTableRow, rowProps?: Record<string, unknown>) => (
@@ -335,7 +465,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           isBulkEditDrawerOpen={showBulkEditDrawer}
           polygons={selectedRows}
           submitLabel={hasSelectedFailedValidation ? t("Fix Overlap") : t("Submit")}
+          isDownloading={isDownloadingSelectedPolygons}
+          onCancel={clearTableSelection}
           onDelete={() => setDeletePolygonModal(true)}
+          onDownload={() => void handleBulkDownload()}
           onEdit={handleBulkEditDetails}
           onSubmit={handleBulkSubmit}
         />
@@ -357,17 +490,31 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             setUploadErrorModal(true);
           }}
         />
-        <PolygonSubmitted
-          open={showPolygonSubmittedModal}
-          onOpenChange={setPolygonSubmittedModal}
-          polygons={["Polygon Name A", "Polygon Name B"]}
+        <SubmitPolygons
+          open={showSubmitPolygonsModal}
+          onOpenChange={setSubmitPolygonsModal}
+          eligibleCount={selectedSubmittablePolygons.length}
+          totalCount={selectedSitePolygons.length}
+          onSubmit={handleBulkSubmit}
+        />
+        {showPolygonSubmittedModal && submittedPolygonNames.length > 0 && (
+          <PolygonSubmitted
+            open={showPolygonSubmittedModal}
+            onOpenChange={handlePolygonSubmittedModalChange}
+            polygons={submittedPolygonNames}
+          />
+        )}
+        <DeletePolygon
+          open={showDeletePolygonModal}
+          onOpenChange={setDeletePolygonModal}
+          polygons={selectedRows}
+          onDelete={handleBulkDelete}
         />
         <OverlapFix
           open={showOverlapFixModal}
           onClose={() => setOverlapFixModal(false)}
           polygonsNotFixed={selectedFailedPolygons}
         />
-        <SubmitPolygons open={showSubmitPolygonsModal} onOpenChange={setSubmitPolygonsModal} />
         <DeletePolygon open={showDeletePolygonModal} onOpenChange={setDeletePolygonModal} polygons={selectedRows} />
         <UploadError open={showUploadErrorModal} onOpenChange={setUploadErrorModal} />
         <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
