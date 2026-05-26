@@ -1,16 +1,13 @@
-// @ts-ignore
 import "swiper/css";
-// @ts-ignore
 import "swiper/css/navigation";
-// @ts-ignore
 import "swiper/css/pagination";
 
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useRef } from "react";
-// @ts-ignore
-import { Navigation, Pagination, SwiperOptions } from "swiper";
+import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
+import { SwiperOptions } from "swiper/types";
 
 import Icon, { IconNames } from "../Icon/Icon";
 

@@ -1,9 +1,7 @@
-// @ts-ignore
 import { yupResolver } from "@hookform/resolvers/yup";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { useT } from "@transifex/react";
-//@ts-ignore
-import circleToPolygon from "circle-to-polygon";
+import { circle } from "@turf/circle";
 import { GeoJSONFeature } from "mapbox-gl";
 import { FieldError, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -86,16 +84,9 @@ export const ShapePropertiesModal = ({
 
     if (feature.properties?.isCircle) {
       draw?.delete(feature.id as string);
-      draw?.add({
-        id: feature.id,
-        type: "Feature",
-        properties: {
-          id: feature.id,
-          radiusInKm: Radius,
-          center: feature.properties.center
-        },
-        geometry: circleToPolygon(feature.properties.center, Radius, 32)
-      });
+      draw?.add(
+        circle(feature.properties.center as number[], Radius as number, { steps: 32, properties: { id: feature.id } })
+      );
     }
 
     onSubmit(_values, feature);

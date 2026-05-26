@@ -2,8 +2,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
-// @ts-ignore
-import { Navigation } from "swiper";
+import { Navigation } from "swiper/modules";
 import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
@@ -53,7 +52,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
   }, [tabItems, selectedTab, selectedImage]);
 
   return ReactDOM.createPortal(
-    <div className={tw("fixed top-0 left-0 z-50 flex h-screen w-screen bg-black bg-opacity-50", WrapperClassName)}>
+    <div className={tw("fixed left-0 top-0 z-50 flex h-screen w-screen bg-black bg-opacity-50", WrapperClassName)}>
       <ModalBaseImageGallery {...rest}>
         <header className="mb-6 flex w-full items-center justify-between">
           <div className="flex items-center gap-7">
@@ -61,7 +60,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
               <Button key={item.id} variant="text" onClick={() => setSelectedTab(item.id)}>
                 <Text
                   variant="text-16-light"
-                  className={classNames("border-b-2 border-transparent pb-3 text-darkCustom", {
+                  className={classNames("text-darkCustom border-b-2 border-transparent pb-3", {
                     "!border-darkCustom !font-bold": selectedTab === item.id
                   })}
                 >
@@ -70,7 +69,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
               </Button>
             ))}
           </div>
-          <button onClick={onClose} className="ml-2 rounded p-1 hover:bg-grey-800">
+          <button onClick={onClose} className="hover:bg-grey-800 ml-2 rounded p-1">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
           </button>
         </header>
@@ -82,7 +81,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
                   key={image.id}
                   onClick={() => setSelectedImage(index)}
                   className={classNames(
-                    "h-full overflow-hidden rounded-xl border-2 border-transparent bg-primary-200",
+                    "bg-primary-200 h-full overflow-hidden rounded-xl border-2 border-transparent",
                     {
                       "col-span-2 row-span-2": (index + 1) % 3 === 0,
                       "!border-black": selectedImage === index
@@ -95,19 +94,19 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
               {currentTab.images.length === 0 && (
                 <>
                   <div
-                    className={classNames("h-full rounded-xl border-2 border-transparent !border-black bg-primary-200")}
+                    className={classNames("bg-primary-200 h-full rounded-xl border-2 !border-black border-transparent")}
                   />
-                  <div className={classNames("h-full rounded-xl border-2 border-transparent bg-primary-200")} />
+                  <div className={classNames("bg-primary-200 h-full rounded-xl border-2 border-transparent")} />
                   <div
                     className={classNames(
-                      "col-span-2 row-span-2 h-full rounded-xl border-2 border-transparent  bg-primary-200"
+                      "bg-primary-200 col-span-2 row-span-2 h-full rounded-xl border-2  border-transparent"
                     )}
                   />
-                  <div className={classNames("h-full rounded-xl border-2 border-transparent bg-primary-200")} />
-                  <div className={classNames("h-full rounded-xl border-2 border-transparent bg-primary-200")} />
+                  <div className={classNames("bg-primary-200 h-full rounded-xl border-2 border-transparent")} />
+                  <div className={classNames("bg-primary-200 h-full rounded-xl border-2 border-transparent")} />
                   <div
                     className={classNames(
-                      "col-span-2 row-span-2 h-full rounded-xl border-2 border-transparent  bg-primary-200"
+                      "bg-primary-200 col-span-2 row-span-2 h-full rounded-xl border-2  border-transparent"
                     )}
                   />
                 </>
@@ -125,7 +124,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
                 selectedImage={selectedImage}
                 carouselItem={item => (
                   <div className="relative h-full px-24">
-                    <div className="absolute left-[120px] top-[24px] z-10 flex max-w-[250px] flex-col items-start justify-center gap-[2px] rounded-xl border border-white bg-blueCustom-200 p-3 lg:max-w-[350px] wide:max-w-[500px]">
+                    <div className="bg-blueCustom-200 wide:max-w-[500px] absolute left-[120px] top-[24px] z-10 flex max-w-[250px] flex-col items-start justify-center gap-[2px] rounded-xl border border-white p-3 lg:max-w-[350px]">
                       <Text variant="text-12-bold" className="max-w-full break-words text-black">
                         {currentImage?.title}
                       </Text>
@@ -133,17 +132,17 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
                         {currentImage?.dateCreated}
                       </Text>
                     </div>
-                    <div className="absolute right-[120px] top-[24px] z-10 flex max-w-[250px] items-center justify-center rounded-xl bg-red-100 py-[2px] px-3 lg:max-w-[350px] wide:max-w-[500px]">
+                    <div className="wide:max-w-[500px] absolute right-[120px] top-[24px] z-10 flex max-w-[250px] items-center justify-center rounded-xl bg-red-100 px-3 py-[2px] lg:max-w-[350px]">
                       <Text variant="text-12-semibold" className="text-red-200">
                         {currentImage?.geoTag}
                       </Text>
                     </div>
                     <ImageWithPlaceholder
-                      className="h-full rounded-xl bg-primary-200"
+                      className="bg-primary-200 h-full rounded-xl"
                       alt={t("Image not available")}
                       imageUrl={item.src}
                     />
-                    <div className="absolute left-[calc(50%_-_32px)] bottom-[24px] z-10 flex items-center justify-center rounded-xl bg-darkCustom py-[5px] px-[8px]">
+                    <div className="bg-darkCustom absolute bottom-[24px] left-[calc(50%_-_32px)] z-10 flex items-center justify-center rounded-xl px-[8px] py-[5px]">
                       <Text variant="text-13" className="text-white">
                         {t("{selected} of {total}", {
                           selected: selectedImage + 1,
@@ -160,7 +159,7 @@ const ModalImageGallery: FC<ModalImageGalleryProps> = ({
               />
             )}
             {currentTab.images.length === 0 && (
-              <div className="flex h-full w-full items-center justify-center bg-primary-200"></div>
+              <div className="bg-primary-200 flex h-full w-full items-center justify-center"></div>
             )}
           </div>
         </div>

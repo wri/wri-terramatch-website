@@ -1,7 +1,6 @@
 import { sortBy } from "lodash";
 import { FC } from "react";
-// @ts-ignore
-import { Navigation, Pagination } from "swiper";
+import { Navigation, Pagination } from "swiper/modules";
 
 import FundingCard, { FundingCardProps } from "@/components/elements/Cards/FundingCard/FundingCard";
 import Text from "@/components/elements/Text/Text";

@@ -1,8 +1,8 @@
-/** @type {import('tailwindcss').Config} */
+import type { Config } from "tailwindcss";
 
-const { themeColors } = require("./tailwind.theme");
+import { themeColors } from "./tailwind.theme";
 
-module.exports = {
+export default {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
@@ -338,4 +338,4 @@ module.exports = {
       pattern: /text-theme-accessible-.+/
     }
   ]
-};
+} satisfies Config;

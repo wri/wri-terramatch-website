@@ -1,5 +1,4 @@
 import { Box } from "@chakra-ui/react";
-// @ts-ignore
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
@@ -244,7 +243,7 @@ function WizardForm(props: WizardFormProps) {
         })}
       >
         {index === 0 && title === "Site Overview" && (
-          <div className="w-full bg-white pt-8 pl-20">
+          <div className="w-full bg-white pl-20 pt-8">
             <InlineMessage
               size="full-width"
               label={t("Note")}
@@ -258,7 +257,7 @@ function WizardForm(props: WizardFormProps) {
         <FormStep id="step" stepId={stepId} formHook={formHook} onChange={_onChange} />
         <FormFooter
           className={classNames(
-            "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
+            "absolute left-0 right-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
             isAdmin ? "bottom-0" : "bottom-[0px]"
           )}
           cancelButtonProps={undefined}

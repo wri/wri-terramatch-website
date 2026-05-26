@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-// @ts-ignore
-import { Navigation, Pagination } from "swiper";
+import { Navigation, Pagination } from "swiper/modules";
 
 import Component, { CarouselProps } from "./Carousel";
 
@@ -22,7 +21,7 @@ export const Default: Story = {
         {...args}
         items={items}
         carouselItem={item => (
-          <div className="h-60 rounded bg-primary p-8">
+          <div className="bg-primary h-60 rounded p-8">
             <p>{item.key}</p>
           </div>
         )}

@@ -1,4 +1,3 @@
-// @ts-ignore
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { useCallback } from "react";

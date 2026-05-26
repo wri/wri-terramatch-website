@@ -1,7 +1,6 @@
 import resolveConfig from "tailwindcss/resolveConfig";
 
-// @ts-ignore
-import tailwindConfig from "@/tailwind.config";
+import tailwindConfig from "../../../../tailwind.config";
 
 const { theme } = resolveConfig(tailwindConfig);
 const colors = theme?.colors as any;

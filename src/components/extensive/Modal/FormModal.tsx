@@ -1,4 +1,3 @@
-// @ts-ignore
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
@@ -43,14 +42,14 @@ const FormModal: FC<FormModalProps> = ({ title, onSubmit, defaultValues }) => {
         />
       </div>
       <form
-        className="w-full p-15"
+        className="p-15 w-full"
         onSubmit={formHook.handleSubmit(data => {
           onSubmit(data);
           formHook.reset();
         })}
       >
         <SimpleForm fieldIds={fieldIds} formHook={formHook} />
-        <Button type="submit" className="m-auto mt-15">
+        <Button type="submit" className="mt-15 m-auto">
           {t("Save")}
         </Button>
       </form>

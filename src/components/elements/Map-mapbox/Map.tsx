@@ -1,4 +1,3 @@
-// @ts-ignore
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useMediaQuery } from "@mui/material";

@@ -1,6 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-// @ts-ignore
-import bbox from "@turf/bbox";
+import { bbox } from "@turf/bbox";
 import { Map as MapboxMap } from "mapbox-gl";
 
 import { loadPolygonGeoJson, loadProjectPolygonsGeoJson } from "@/connections/GeoJsonExport";
