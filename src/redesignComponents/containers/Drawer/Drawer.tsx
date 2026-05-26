@@ -1,5 +1,5 @@
 import { DrawerBackdrop, DrawerContent, DrawerPositioner, DrawerRoot, DrawerTrigger, Portal } from "@chakra-ui/react";
-import { FC, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 
 import { DrawerContainerTyped, DrawerProps, DrawerTriggerTyped, DrawerTyped } from "./Drawer.types";
 
@@ -23,21 +23,27 @@ const Drawer: FC<DrawerProps> = ({
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const isControlled = openProp !== undefined;
   const open = isControlled ? openProp : uncontrolledOpen;
+  const onOpenChangeRef = useRef(onOpenChange);
+  onOpenChangeRef.current = onOpenChange;
 
-  const setOpen = (nextOpen: boolean) => {
-    if (!isControlled) {
-      setUncontrolledOpen(nextOpen);
-    }
-    onOpenChange?.(nextOpen);
-  };
+  const setOpen = useCallback(
+    (nextOpen: boolean) => {
+      if (!isControlled) {
+        setUncontrolledOpen(nextOpen);
+      }
+      onOpenChangeRef.current?.(nextOpen);
+    },
+    [isControlled]
+  );
 
-  const handleClose = () => setOpen(false);
+  const handleClose = useCallback(() => setOpen(false), [setOpen]);
+  const handleRootOpenChange = useCallback((e: { open: boolean }) => setOpen(e.open), [setOpen]);
 
   return (
     <TypedDrawerRoot
       closeOnInteractOutside={closeOnInteractOutside}
       open={open}
-      onOpenChange={e => setOpen(e.open)}
+      onOpenChange={handleRootOpenChange}
       size={size}
       placement={placement}
       modal={modal}

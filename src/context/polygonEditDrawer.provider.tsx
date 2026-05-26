@@ -1,4 +1,4 @@
-import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -83,23 +83,24 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [polygon, setPolygon] = useState<PolygonEditDrawerPolygon>({});
   const [polygons, setPolygons] = useState(polygonsProp);
-  const [onRefetchPolygons, setOnRefetchPolygons] = useState<RefetchPolygonsHandler | undefined>(onRefetchPolygonsProp);
+
+  const onRefetchPolygonsRef = useRef<RefetchPolygonsHandler | undefined>(onRefetchPolygonsProp);
 
   useEffect(() => {
     setPolygons(polygonsProp);
   }, [polygonsProp]);
 
   useEffect(() => {
-    setOnRefetchPolygons(onRefetchPolygonsProp);
+    onRefetchPolygonsRef.current = onRefetchPolygonsProp;
   }, [onRefetchPolygonsProp]);
 
-  const dataContextValue = useMemo(
-    () => ({
-      setPolygons,
-      setOnRefetchPolygons
-    }),
-    []
-  );
+  const setOnRefetchPolygons = useCallback((handler?: RefetchPolygonsHandler) => {
+    onRefetchPolygonsRef.current = handler;
+  }, []);
+
+  const handleSaved = useCallback(() => onRefetchPolygonsRef.current?.(), []);
+
+  const dataContextValue = useMemo(() => ({ setPolygons, setOnRefetchPolygons }), [setOnRefetchPolygons]);
   const { setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit } = useMapAreaContext();
 
   const openPolygonEdit = useCallback(
@@ -194,7 +195,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
           polygon={polygon}
           selectedPolygon={selectedPolygon}
           onOpenChange={setOpen}
-          onSaved={onRefetchPolygons}
+          onSaved={handleSaved}
           onPolygonUpdated={setSelectedPolygon}
         />
       </PolygonEditDrawerContext.Provider>

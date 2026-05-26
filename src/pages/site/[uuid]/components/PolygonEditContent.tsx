@@ -3,7 +3,7 @@ import { Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
 import { format } from "date-fns";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   downloadGeoJsonFile,
@@ -137,6 +137,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     polygonGeometryEdit.currentGeometry != null;
   const isAnrEligible = useMemo(() => isSitePolygonEligibleForAnrMonitoringPlots(polygon), [polygon]);
   const anrMapOverlay = useAnrMapOverlayOptional();
+  // The overlay context value is rebuilt every time the provider's state changes
+  // (anrTabActive, showPlotsOnMap, ...). Putting the whole context object in effect
+  // deps would cause the effect to re-run on every overlay state update, and its
+  // cleanup would immediately undo the state we just set => infinite loop. We keep
+  // the latest reference in a ref and only depend on the primitive inputs below.
+  const anrMapOverlayRef = useRef(anrMapOverlay);
+  anrMapOverlayRef.current = anrMapOverlay;
 
   const [anrConnectionReady, { data: anrPlotGeometry, isLoading: isAnrPlotGeometryLoading }] = useAnrPlotGeometry({
     sitePolygonUuid,
@@ -293,24 +300,28 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   ]);
 
   useEffect(() => {
-    if (anrMapOverlay == null) {
-      return;
-    }
+    const overlay = anrMapOverlayRef.current;
+    if (overlay == null) return;
 
     const shouldShowPlots = isAnrEligible && hasAnrPlotGeometry && plotsVisible;
-    anrMapOverlay.setDrawerOpen(true);
-    anrMapOverlay.setAnrTabActive(shouldShowPlots);
-    anrMapOverlay.setShowPlotsOnMap(shouldShowPlots);
+    overlay.setDrawerOpen(true);
+    overlay.setAnrTabActive(shouldShowPlots);
+    overlay.setShowPlotsOnMap(shouldShowPlots);
 
     if (sitePolygonUuid !== "" && geometryPolygonUuid !== "") {
-      anrMapOverlay.syncDrawerSelection({ sitePolygonUuid, geometryPolygonUuid });
+      overlay.syncDrawerSelection({ sitePolygonUuid, geometryPolygonUuid });
     }
+  }, [geometryPolygonUuid, hasAnrPlotGeometry, isAnrEligible, plotsVisible, sitePolygonUuid]);
 
-    return () => {
-      anrMapOverlay.setAnrTabActive(false);
-      anrMapOverlay.setShowPlotsOnMap(false);
-    };
-  }, [anrMapOverlay, geometryPolygonUuid, hasAnrPlotGeometry, isAnrEligible, plotsVisible, sitePolygonUuid]);
+  useEffect(
+    () => () => {
+      const overlay = anrMapOverlayRef.current;
+      if (overlay == null) return;
+      overlay.setAnrTabActive(false);
+      overlay.setShowPlotsOnMap(false);
+    },
+    []
+  );
 
   const downloadMonitoringPlots = useCallback(async () => {
     if (sitePolygonUuid === "" || !isAnrEligible) {
