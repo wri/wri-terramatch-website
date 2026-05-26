@@ -4,6 +4,7 @@ import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useState } from "react";
 
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
+import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 
@@ -22,6 +23,7 @@ export type PolygonBulkActionToolbarProps = {
   onSubmit: () => void;
   onRunValidation: (polygonUuids: string[]) => Promise<void>;
   polygons: PolygonTableRow[];
+  polygonValidations: Map<string, ValidationDto>;
   selectedPolygonUuids: string[];
 };
 
@@ -37,6 +39,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   onSubmit,
   onRunValidation,
   polygons,
+  polygonValidations,
   selectedPolygonUuids
 }) => {
   const t = useT();
@@ -50,6 +53,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
     <Box position={"fixed"} zIndex={"100"} bottom={0} left={3} right={3}>
       <SystemValidationComplete
         polygons={polygons}
+        polygonValidations={polygonValidations}
         open={isSystemValidationCompleteModalOpen}
         onOpenChange={setIsSystemValidationCompleteModalOpen}
       />

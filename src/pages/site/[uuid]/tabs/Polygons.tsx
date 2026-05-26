@@ -14,7 +14,7 @@ import {
   pruneSitePolygonsCache,
   useAllSitePolygons
 } from "@/connections/SitePolygons";
-import { createPolygonValidation } from "@/connections/Validation";
+import { createPolygonValidation, useAllSiteValidations } from "@/connections/Validation";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -42,6 +42,7 @@ import SubmitPolygons from "../components/Modals/SubmitPolygons";
 import UploadError from "../components/Modals/UploadError";
 import UploadPhotos from "../components/Modals/UploadPhotos";
 import UploadPolygons from "../components/Modals/UploadPolygons";
+import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import PolygonBulkEditDrawer from "../components/PolygonBulkEditDrawer";
 import { PolygonRow, PolygonTableRow } from "../components/PolygonTableRow";
@@ -101,6 +102,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   });
 
   const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
+
+  const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
+  const polygonValidations = useMemo(() => buildPolygonValidationsMap(allValidations), [allValidations]);
 
   const { polygonRows, columns, totalTreesPlanted, totalRestorationAreaHa } = useSitePolygonTableData({
     polygonsData,
@@ -210,9 +214,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       await createPolygonValidation({ polygonUuids });
       ApiSlice.pruneCache("validations");
       pruneSitePolygonsCache();
-      await refetchPolygons();
+      await Promise.all([refetchPolygons(), fetchAllValidationPages(true)]);
     },
-    [refetchPolygons]
+    [refetchPolygons, fetchAllValidationPages]
   );
 
   const handleBulkSubmit = useCallback(async () => {
@@ -467,6 +471,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           itemCount={selectedRows.length}
           isBulkEditDrawerOpen={showBulkEditDrawer}
           polygons={selectedRows}
+          polygonValidations={polygonValidations}
           selectedPolygonUuids={selectedDownloadPolygonUuids}
           isDownloading={isDownloadingSelectedPolygons}
           onCancel={clearTableSelection}
