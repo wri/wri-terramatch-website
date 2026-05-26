@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { type JSX, FC, useMemo } from "react";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
@@ -150,7 +150,7 @@ const TreeSpeciesTable: FC<TreeSpeciesTableProps> = props => {
             <Text variant="text-16-bold" className="capitalize">
               {entity === "nurseryReports" ? "Saplings Grown in Nurseries:" : totalTitle}
             </Text>
-            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+            <Text variant="text-18-semibold" className="text-primary capitalize" as="span">
               {totalCountSeeds.toLocaleString() ?? 0}
             </Text>
           </div>

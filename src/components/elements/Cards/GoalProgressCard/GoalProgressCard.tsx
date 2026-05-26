@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
+import { type JSX, DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -85,7 +85,7 @@ const GoalProgressCard: FC<GoalProgressCardProps> = ({
           <LinearProgressBar
             color="primary"
             value={progressValue}
-            className={classNames("mt-2  bg-primary-200", {
+            className={classNames("bg-primary-200  mt-2", {
               "opacity-0": !limit
             })}
           />

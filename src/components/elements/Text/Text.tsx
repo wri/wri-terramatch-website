@@ -1,6 +1,6 @@
 import cn from "classnames";
 import _ from "lodash";
-import { ForwardedRef, forwardRef, HTMLProps, LegacyRef, ReactElement, ReactNode } from "react";
+import { type JSX, ForwardedRef, forwardRef, HTMLProps, ReactElement, ReactNode, Ref } from "react";
 
 import { TextVariants } from "@/types/common";
 
@@ -38,4 +38,4 @@ function Text<T>(props: TextProps<T>, ref: ForwardedRef<T>): JSX.Element {
   );
 }
 
-export default forwardRef(Text) as <T>(p: TextProps<T> & { ref?: LegacyRef<T> }) => ReactElement;
+export default forwardRef(Text) as <T>(p: TextProps<T> & { ref?: Ref<T> }) => ReactElement<any>;

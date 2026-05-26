@@ -4,7 +4,7 @@ import "swiper/css/pagination";
 
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useRef } from "react";
+import { type JSX, useEffect, useRef } from "react";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperProps, SwiperSlide } from "swiper/react";
 import { SwiperOptions } from "swiper/types";

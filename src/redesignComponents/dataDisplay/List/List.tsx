@@ -7,7 +7,7 @@ interface ListItemProps {
   id?: string;
   label: string;
   caption?: string;
-  icon?: ReactElement;
+  icon?: ReactElement<any>;
   value?: string;
   variant?: ListItemVariant;
   isExpanded?: boolean;

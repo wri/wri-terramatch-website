@@ -17,7 +17,7 @@ export interface MapSidePanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   polygonUuid?: string;
   siteId?: string;
   setClickedButton: React.Dispatch<React.SetStateAction<string>>;
-  refContainer: React.RefObject<HTMLDivElement> | null;
+  refContainer: React.RefObject<HTMLDivElement | null> | null;
   type: string;
 }
 
@@ -74,7 +74,7 @@ const MapSidePanelItem = ({
     <div>
       <div
         {...props}
-        className={classNames(className, " rounded-lg border-2 border-transparent bg-white p-2 hover:border-primary", {
+        className={classNames(className, " hover:border-primary rounded-lg border-2 border-transparent bg-white p-2", {
           "border-primary-500": isSelected,
           "border-neutral-500 hover:border-neutral-800": !isSelected
         })}
@@ -94,7 +94,7 @@ const MapSidePanelItem = ({
             <Menu container={refContainer?.current} placement={MENU_PLACEMENT_RIGHT_BOTTOM} menu={itemsPrimaryMenu}>
               <Icon
                 name={IconNames.IC_MORE_OUTLINED}
-                className="h-4 w-4 rounded-lg hover:fill-primary hover:text-primary lg:h-5 lg:w-5"
+                className="hover:fill-primary hover:text-primary h-4 w-4 rounded-lg lg:h-5 lg:w-5"
               />
             </Menu>
           </div>

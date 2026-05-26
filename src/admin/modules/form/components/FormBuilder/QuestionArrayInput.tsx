@@ -36,7 +36,7 @@ export interface QuestionArrayInputProps extends Omit<ArrayInputProps, "children
   onDeleteQuestion?: (index: number, source: string) => Promise<void>;
   isChildQuestion?: boolean;
   hideDescriptionInput?: boolean;
-  children?: ReactElement;
+  children?: ReactElement<any>;
   formTitle?: string;
 }
 

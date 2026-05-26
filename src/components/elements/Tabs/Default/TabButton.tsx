@@ -20,7 +20,7 @@ export const TabButton = forwardRef(
     // @ts-ignore
     buttonProps["ref"] = ref;
 
-    let icon: ReactElement | undefined = undefined;
+    let icon: ReactElement<any> | undefined = undefined;
     if (selected) icon = <Icon className="text-success " name={IconNames.EDIT_TA} width={20} />;
     else {
       switch (item.state) {
@@ -46,13 +46,13 @@ export const TabButton = forwardRef(
           item.state != null && "peer",
           lastItem || selected ? "border-b" : "border-b",
           selected
-            ? "border border-success  bg-white text-blueCustom-900 peer-aria-checked:shadow-t-secondary"
+            ? "border-success text-blueCustom-900  peer-aria-checked:shadow-t-secondary border bg-white"
             : item.state === "complete"
-            ? `border-white bg-primary text-white `
-            : `border-b border-white bg-grey-950 text-blueCustom-900`
+            ? `bg-primary border-white text-white `
+            : `bg-grey-950 text-blueCustom-900 border-b border-white`
         )}
       >
-        <Text variant={textVariant} className="w-full text-left line-clamp-2 md:pr-6" containHtml>
+        <Text variant={textVariant} className="line-clamp-2 w-full text-left md:pr-6" containHtml>
           {item.title}
         </Text>
         {icon}

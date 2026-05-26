@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import React from "react";
+import React, { type JSX } from "react";
 
 import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
@@ -301,7 +301,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             tooltipContent: project ? TOOLTIP_TREES_REPLANTING_PROJECT : TOOLTIP_TREES_REPLANTING_SITE
           }
         ]}
-        className="pr-[41px] lg:pr-[150px] mobile:w-[400px] mobile:!pr-0"
+        className="mobile:w-[400px] mobile:!pr-0 pr-[41px] lg:pr-[150px]"
       />
     </div>
   );

@@ -24,7 +24,7 @@ export interface SecondaryTabsProps extends DetailedHTMLProps<HTMLAttributes<HTM
 
 export interface TabItem {
   title: string;
-  body: ReactElement;
+  body: ReactElement<any>;
   disabled?: boolean;
   key?: string;
 
@@ -115,24 +115,24 @@ const SecondaryTabs = ({
       <HTab.Group selectedIndex={_defaultIndex} onChange={onTabChange}>
         {scrollable && scrollLeft > 0 && (
           <div
-            className="absolute top-0 left-0 z-50 border-b-2 border-transparent bg-tabScrollLeft bg-cover bg-left bg-no-repeat pt-0 pr-9"
+            className="bg-tabScrollLeft absolute left-0 top-0 z-50 border-b-2 border-transparent bg-cover bg-left bg-no-repeat pr-9 pt-0"
             style={{ height: `${ContentListRef.current?.clientHeight ?? 0}px` }}
           >
             <Button
               variant="secondary-blue"
               className={classNames(
-                "sticky z-[2] mt-[2px] h-full min-w-[2.5rem] rounded-none border-0 border-r border-b-2 border-neutral-200 p-3",
+                "sticky z-[2] mt-[2px] h-full min-w-[2.5rem] rounded-none border-0 border-b-2 border-r border-neutral-200 p-3",
                 "mobile:max-w-8 mobile:h-8 mobile:w-8 mobile:rounded-lg mobile:border mobile:p-0 mobile:shadow-monitored"
               )}
               onClick={handleScrollPrev}
             >
-              <Icon name={IconNames.IC_ARROW_COLLAPSE} className="min-w-3.5 h-3.5 w-3.5 -rotate-90" />
+              <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3.5 w-3.5 min-w-3.5 -rotate-90" />
             </Button>
           </div>
         )}
         <HTab.List
           {...divProps}
-          className={classNames(className, "h-max w-full  mobile:overflow-x-auto", variant.classNameContentList, {
+          className={classNames(className, "mobile:overflow-x-auto h-max  w-full", variant.classNameContentList, {
             "scroll-indicator-hide relative": scrollable
           })}
           ref={ContentListRef}
@@ -142,7 +142,7 @@ const SecondaryTabs = ({
             as="div"
             className={classNames(
               containerClassName,
-              tabItems.length <= 5 ? "justify-between lg:justify-start lg:gap-30" : "justify-between",
+              tabItems.length <= 5 ? "lg:gap-30 justify-between lg:justify-start" : "justify-between",
               "flex h-full items-center",
               variant.listClassName,
               { "scroll-indicator-hide": scrollable }
@@ -174,18 +174,18 @@ const SecondaryTabs = ({
         {scrollable &&
           scrollLeft < (ContentListRef.current?.scrollWidth ?? 0) - (ContentListRef.current?.clientWidth ?? 0) - 2 && (
             <div
-              className="absolute top-0 right-0 z-50 flex gap-2 border-b-2 border-transparent bg-tabScrollRight bg-cover bg-right bg-no-repeat pt-0 pl-9"
+              className="bg-tabScrollRight absolute right-0 top-0 z-50 flex gap-2 border-b-2 border-transparent bg-cover bg-right bg-no-repeat pl-9 pt-0"
               style={{ height: `${ContentListRef.current?.clientHeight ?? 0}px` }}
             >
               <Button
                 variant="secondary-blue"
                 className={classNames(
-                  "sticky z-[2] mt-[2px] h-full min-w-[2.5rem] rounded-none border-0 border-l border-b-2 border-neutral-200 p-3",
+                  "sticky z-[2] mt-[2px] h-full min-w-[2.5rem] rounded-none border-0 border-b-2 border-l border-neutral-200 p-3",
                   "mobile:max-w-8 mobile:h-8 mobile:w-8 mobile:rounded-lg mobile:border mobile:p-0 mobile:shadow-monitored"
                 )}
                 onClick={handleScrollNext}
               >
-                <Icon name={IconNames.IC_ARROW_COLLAPSE} className="min-w-3.5 h-3.5 w-3.5 rotate-90" />
+                <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3.5 w-3.5 min-w-3.5 rotate-90" />
               </Button>
             </div>
           )}

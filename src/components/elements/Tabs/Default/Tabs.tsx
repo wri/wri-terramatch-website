@@ -32,7 +32,7 @@ export interface TabsProps {
 
 export interface TabItem {
   title: string;
-  renderBody: () => ReactElement;
+  renderBody: () => ReactElement<any>;
   state?: "unstarted" | "complete" | "error" | "warning";
   disabled?: boolean;
   key?: string;
@@ -90,7 +90,7 @@ const Tabs: FC<TabsProps> = props => {
   return (
     <div
       className={twMerge(
-        "flex h-full min-h-0 w-full bg-theme-neutral-100 pl-6 pr-2.5 pt-2 pb-16 shadow",
+        "bg-theme-neutral-100 flex h-full min-h-0 w-full pb-16 pl-6 pr-2.5 pt-2 shadow",
         props.className
       )}
     >

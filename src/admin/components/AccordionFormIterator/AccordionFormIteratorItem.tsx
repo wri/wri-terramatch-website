@@ -64,7 +64,7 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
       <Accordion className="w-full" expanded={expandAccordion}>
         <AccordionSummary expandIcon={<ExpandMore onClick={() => setExpandAccordion(e => !e)} />}>
           <button
-            className="flex-1 line-clamp-1"
+            className="line-clamp-1 flex-1"
             title={props.summaryTitle}
             type="button"
             onClick={() => setExpandAccordion(e => !e)}
@@ -99,7 +99,7 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
               >
                 {
                   //@ts-ignore
-                  Children.map(children, (input: ReactElement, index2) => {
+                  Children.map(children, (input: ReactElement<any>, index2) => {
                     if (!isValidElement<any>(input)) {
                       return null;
                     }

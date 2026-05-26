@@ -29,7 +29,7 @@ import TeamMembersTab from "./tabs/TeamMembers";
 type TabItem = {
   key: string;
   title: string;
-  body: ReactElement;
+  body: ReactElement<any>;
 };
 
 type ProjectContentProps = {
@@ -110,7 +110,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const suffixViewContent = useMemo(() => {
     if (!activeSuffixView) return null;
 
-    const viewMap: Record<string, ReactElement> = {
+    const viewMap: Record<string, ReactElement<any>> = {
       "reporting-tasks": <ProgressReportTab projectUUID={project.uuid} />,
       sites: <ProjectSitesTab project={project} />,
       nurseries: <ProjectNurseriesTab project={project} />
@@ -166,7 +166,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           <div className="flex gap-1.5">
             {suffixButtons.map((button, index) => (
               <div key={button.key} className="flex gap-1.5">
-                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
+                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
                 <Button
                   variant="borderless"
                   size="small"

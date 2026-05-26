@@ -36,7 +36,9 @@ const DashboardLayout: FC<PropsWithChildren<DashboardLayoutProps>> = props => {
   const isProjectPage = router.pathname === "dashboard/project";
   const isHomepage = router.pathname === "/dashboard/learn-more";
   // @ts-ignore
-  const childrenWithProps = props.children ? cloneElement(props.children as ReactElement, { selectedCountry }) : null;
+  const childrenWithProps = props.children
+    ? cloneElement(props.children as ReactElement<any>, { selectedCountry })
+    : null;
   const isMobile = useMediaQuery("(max-width: 1200px)");
   return (
     <DashboardProvider>
@@ -45,7 +47,7 @@ const DashboardLayout: FC<PropsWithChildren<DashboardLayoutProps>> = props => {
           <Loader />
         </div>
       )}
-      <div className="flex max-h-screen min-h-screen w-full bg-neutral-70 mobile:h-[100dvh] mobile:max-h-[100dvh] mobile:min-h-[100dvh] mobile:w-full mobile:flex-col">
+      <div className="bg-neutral-70 mobile:h-[100dvh] mobile:max-h-[100dvh] mobile:min-h-[100dvh] mobile:w-full mobile:flex-col flex max-h-screen min-h-screen w-full">
         <Sidebar />
         <main className={`flex flex-[1_1_0] flex-col overflow-hidden ${props.className} mobile:bg-white`}>
           <>

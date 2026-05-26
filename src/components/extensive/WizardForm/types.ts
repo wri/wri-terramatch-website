@@ -93,7 +93,7 @@ export type FormFieldFactory = {
   /**
    * Renders the form field as a form input.
    */
-  renderInput: (field: FieldDefinition, sharedProps: SharedFieldProps) => ReactElement;
+  renderInput: (field: FieldDefinition, sharedProps: SharedFieldProps) => ReactElement<any>;
 
   /**
    * Return the Answer value for this field. The default is to simply return the form value at this field's id
@@ -150,7 +150,7 @@ export type FormFieldFactory = {
     fieldsProvider: FormFieldsProvider
   ) => Dictionary<any>;
 
-  formBuilderAdditionalOptions?: (props: AdditionalOptionsProps) => ReactElement;
+  formBuilderAdditionalOptions?: (props: AdditionalOptionsProps) => ReactElement<any>;
 
   formBuilderDefaults?: (linkedField: FormQuestionField) => Partial<FieldDefinition>;
 };
