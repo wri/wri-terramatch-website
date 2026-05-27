@@ -78,7 +78,7 @@ const ItemPolygon: FC<{ polygon: PolygonTableRow; onViewDetails?: (polygon: Poly
   return (
     <>
       <Flex justify="space-between" className="items-center gap-2">
-        <Text textStyle="400" color="neutral.900" as="span">
+        <Text textStyle="400" color="neutral.900" as="span" className="truncate">
           {polygon.polygonName}
         </Text>
         <Button
