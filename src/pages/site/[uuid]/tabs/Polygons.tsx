@@ -37,6 +37,7 @@ import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import DeletePolygon from "../components/Modals/DeletePolygon";
+import OverlapFix from "../components/Modals/OverlapFix";
 import PolygonSubmitted from "../components/Modals/PolygonSubmitted";
 import SubmitPolygons from "../components/Modals/SubmitPolygons";
 import UploadError from "../components/Modals/UploadError";
@@ -67,6 +68,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showOverlapFixModal, setOverlapFixModal] = useState(false);
   const [showSubmitPolygonsModal, setSubmitPolygonsModal] = useState(false);
   const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
   const [submittedPolygonNames, setSubmittedPolygonNames] = useState<string[]>([]);
@@ -145,6 +147,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     };
   }, [polygonsData, selectedRowIds]);
 
+  const hasSelectedFailedValidation = useMemo(
+    () => selectedRows.length > 1 && selectedRows.some(row => row.validation === "failed"),
+    [selectedRows]
+  );
+
   useEffect(() => {
     setSiteData(site);
   }, [setSiteData, site]);
@@ -220,6 +227,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   );
 
   const handleBulkSubmit = useCallback(async () => {
+    if (hasSelectedFailedValidation) {
+      setOverlapFixModal(true);
+      return;
+    }
+
     if (selectedSubmittablePolygonUuids.length === 0) {
       openNotification("error", t("Error!"), t("No selected polygons are eligible for submission"));
       return;
@@ -246,6 +258,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [
     clearTableSelection,
     closeMapPopups,
+    hasSelectedFailedValidation,
     invalidatePolygonMapTiles,
     openNotification,
     refetchPolygons,
@@ -335,6 +348,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const selectedRestorationAreaRounded = Math.round(selectedRestorationAreaHa * 100) / 100;
   const hasPolygonSelection = selectedRows.length > 0;
+
+  const selectedFailedPolygons = useMemo(
+    () => selectedRows.filter(row => row.validation === "failed").map(row => ({ id: row.id, name: row.polygonName })),
+    [selectedRows]
+  );
   const shouldShowNoResults = !isLoadingPolygons && polygonRows.length === 0;
 
   const selectableRenderRow = useCallback(
@@ -470,6 +488,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           visible={hasPolygonSelection}
           itemCount={selectedRows.length}
           isBulkEditDrawerOpen={showBulkEditDrawer}
+          submitLabel={hasSelectedFailedValidation ? t("Fix Overlap") : t("Submit")}
           polygons={selectedRows}
           polygonValidations={polygonValidations}
           selectedPolygonUuids={selectedDownloadPolygonUuids}
@@ -478,8 +497,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onDelete={() => setDeletePolygonModal(true)}
           onDownload={() => void handleBulkDownload()}
           onEdit={handleBulkEditDetails}
-          onSubmit={() => setSubmitPolygonsModal(true)}
           onRunValidation={handleRunValidation}
+          onSubmit={handleBulkSubmit}
         />
 
         <PolygonBulkEditDrawer
@@ -519,6 +538,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           polygons={selectedRows}
           onDelete={handleBulkDelete}
         />
+        <OverlapFix
+          open={showOverlapFixModal}
+          onClose={() => setOverlapFixModal(false)}
+          polygonsNotFixed={selectedFailedPolygons}
+        />
+        <DeletePolygon open={showDeletePolygonModal} onOpenChange={setDeletePolygonModal} polygons={selectedRows} />
         <UploadError open={showUploadErrorModal} onOpenChange={setUploadErrorModal} />
         <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
 

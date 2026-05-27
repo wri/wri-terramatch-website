@@ -2,7 +2,6 @@ import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
-import { useModalScrollFix } from "@/hooks/useModalScrollFix";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons";
@@ -17,7 +16,6 @@ export interface SubmitPolygonsProps {
 const SubmitPolygons: FC<SubmitPolygonsProps> = ({ open, onOpenChange, eligibleCount, totalCount, onSubmit }) => {
   const t = useT();
   const skippedCount = totalCount - eligibleCount;
-  useModalScrollFix(open);
 
   const handleClose = useCallback(() => {
     onOpenChange(false);
@@ -30,12 +28,7 @@ const SubmitPolygons: FC<SubmitPolygonsProps> = ({ open, onOpenChange, eligibleC
     }
 
     onOpenChange(false);
-
-    try {
-      await onSubmit();
-    } catch {
-      // The caller owns user-facing error handling.
-    }
+    await onSubmit();
   }, [eligibleCount, onOpenChange, onSubmit]);
 
   return (

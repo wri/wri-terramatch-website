@@ -15,6 +15,7 @@ export type PolygonBulkActionToolbarProps = {
   visible: boolean;
   itemCount: number;
   isBulkEditDrawerOpen?: boolean;
+  submitLabel?: string;
   isDownloading?: boolean;
   onCancel: () => void;
   onDelete: () => void;
@@ -31,6 +32,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   visible,
   itemCount,
   isBulkEditDrawerOpen = false,
+  submitLabel = "Submit",
   isDownloading = false,
   onCancel,
   onDelete,
@@ -67,7 +69,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
           onClick: onDelete
         }}
         items={String(itemCount)}
-        primaryButtonProps={{
+        tertiaryButtonProps={{
           children: t("Download"),
           loading: isDownloading,
           disabled: isDownloading,
@@ -105,8 +107,8 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
           children: itemCount > 1 ? t("Edit Details") : t("Edit"),
           onClick: onEdit
         }}
-        tertiaryButtonProps={{
-          children: t("Submit"),
+        primaryButtonProps={{
+          children: t(submitLabel),
           onClick: onSubmit
         }}
       />

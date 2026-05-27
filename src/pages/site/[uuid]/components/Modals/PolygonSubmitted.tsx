@@ -2,7 +2,6 @@ import { Box, Flex, List, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
-import { useModalScrollFix } from "@/hooks/useModalScrollFix";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { CheckApprovedIcon } from "@/redesignComponents/foundations/Icons";
@@ -15,7 +14,6 @@ export interface PolygonSubmittedProps {
 
 const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polygons }) => {
   const t = useT();
-  useModalScrollFix(open);
 
   const handleClose = useCallback(() => {
     onOpenChange(false);
