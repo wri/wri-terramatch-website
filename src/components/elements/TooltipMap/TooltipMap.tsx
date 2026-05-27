@@ -3,6 +3,7 @@ import { useMemo } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useSitePolygons } from "@/connections/SitePolygons";
+import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import type { TooltipType } from "../Map-mapbox/Map.d";
@@ -16,9 +17,9 @@ export interface TooltipMapProps {
   popup?: any;
 }
 const topBorderColorPopup: any = {
-  submitted: "border-t-primary",
+  [POLYGON_PENDING_APPROVAL]: "border-t-primary",
   approved: "border-t-[#72D961]",
-  "needs-more-information": "border-t-[#FF8938]",
+  [POLYGON_INFORMATION_REQUIRED]: "border-t-[#FF8938]",
   draft: "border-t-[#E468EF]"
 };
 

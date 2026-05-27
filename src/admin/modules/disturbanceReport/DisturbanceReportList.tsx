@@ -6,7 +6,6 @@ import {
   DateField,
   EditButton,
   FunctionField,
-  List,
   ReferenceInput,
   SearchInput,
   SelectInput,
@@ -16,6 +15,7 @@ import {
 
 import { v3ErrorForRA } from "@/admin/apiProvider/utils/error";
 import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
+import { List } from "@/admin/components/AdminList";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
@@ -64,7 +64,6 @@ const DisturbanceReportDataGrid: FC = () => (
         return <CustomChipField label={readableChangeRequestStatus?.title} />;
       }}
     />
-    <DateField source="dateOfDisturbance" label="Date of Disturbance" locales="en-GB" sortable={false} />
     <FunctionField
       source="intensity"
       label="Intensity"

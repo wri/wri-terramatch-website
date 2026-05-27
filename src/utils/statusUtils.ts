@@ -2,9 +2,9 @@ export function getValueForStatusPolygon(status: string): number {
   switch (status) {
     case "draft":
       return 0;
-    case "submitted":
+    case "pending-approval":
       return 34;
-    case "needs-more-information":
+    case "information-required":
       return 67;
     case "approved":
       return 100;

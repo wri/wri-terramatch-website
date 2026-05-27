@@ -21,6 +21,7 @@ import {
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
 import { bulkUpdateSitePolygonStatus, useAllSitePolygons } from "@/connections/SitePolygons";
+import { POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -409,7 +410,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
           try {
             await bulkUpdateSitePolygonStatus(
               (polygons as SitePolygonLightDto[]).map(polygon => polygon.uuid),
-              "submitted",
+              POLYGON_PENDING_APPROVAL,
               data
             );
             setShouldRefetchPolygonData(true);

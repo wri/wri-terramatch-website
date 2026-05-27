@@ -1,4 +1,5 @@
 import { Box, Spinner } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { FC, useEffect, useMemo } from "react";
 
 import { EntityFullDto, SupportedEntity } from "@/connections/Entity";
@@ -18,6 +19,7 @@ interface EntitySetUpSectionProps {
 }
 
 const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChange, type }) => {
+  const t = useT();
   const { defaultValues, steps, isReady } = useEntityFormSetup(type, entity.uuid);
   const { handleEdit } = useGetEditEntityHandler({
     entityName: type,
@@ -47,7 +49,7 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChang
               handleEdit(step.id);
             }}
           >
-            Edit
+            {t("Edit")}
           </Button>
         ),
         onClick: () => {
@@ -55,7 +57,7 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChang
         }
       };
     });
-  }, [steps, defaultValues, handleEdit, feedbackFields]);
+  }, [t, steps, defaultValues, handleEdit, feedbackFields]);
 
   const allStepsCompleted = useMemo(() => {
     if (!steps.length) return false;

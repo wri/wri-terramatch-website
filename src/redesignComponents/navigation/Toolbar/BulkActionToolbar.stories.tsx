@@ -32,8 +32,8 @@ const meta: Meta<typeof BulkActionToolbar> = {
     ButtonDelete: {
       description: "Configuration for the delete button, styled in error colors by default"
     },
-    ButtonMenu: {
-      description: "Configuration for the MultiActionButton menu"
+    items: {
+      description: "Number of items selected"
     }
   }
 };
@@ -59,22 +59,11 @@ export const Default: Story = {
       children: "Label",
       onClick: () => console.log("Tertiary action clicked")
     },
-    ButtonMenu: {
-      mainActionLabel: "Label",
-      mainActionOnClick: () => console.log("More options clicked"),
-      otherActions: [
-        {
-          label: "Label",
-          value: "opt1",
-          onClick: () => console.log("Option 1 clicked")
-        },
-        {
-          label: "Label",
-          value: "opt2",
-          onClick: () => console.log("Option 2 clicked")
-        }
-      ]
+    quantityButtonProps: {
+      children: "Label",
+      onClick: () => console.log("Quantity action clicked")
     },
+    items: "XXX",
     ButtonDelete: {
       children: "Delete",
       onClick: () => console.log("Delete clicked")

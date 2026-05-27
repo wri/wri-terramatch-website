@@ -1,8 +1,10 @@
+import { useT } from "@transifex/react";
 import { useCallback, useMemo } from "react";
 import { ControllerRenderProps } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { indexSiteConnection } from "@/connections/Entity";
+import { DISTURBANCE_SITE_AFFECTED_FIELD_DESCRIPTION } from "@/constants/DisturbanceReportEntriesDescriptions";
 import { APPROVED } from "@/constants/statuses";
 import { useProjectFormDetails } from "@/context/wizardForm.provider";
 import { SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -27,6 +29,7 @@ export const DisturbanceSiteAffectedInput = ({
   value: siteAffectedValue,
   field
 }: DisturbanceSiteAffectedInputProps) => {
+  const t = useT();
   const projectUuid = useProjectFormDetails()?.uuid;
   const [, sitesData] = useConnection(indexSiteConnection, {
     filter: { projectUuid: projectUuid },
@@ -157,9 +160,7 @@ export const DisturbanceSiteAffectedInput = ({
       value={dropdownValue}
       onChange={_onChange}
       placeholder={projectUuid ? "Search and select sites..." : "Please select a project first"}
-      description={
-        projectUuid ? "Select the sites where the disturbance occurred" : "Select a project first to load sites"
-      }
+      description={t(DISTURBANCE_SITE_AFFECTED_FIELD_DESCRIPTION)}
       className="w-full"
     />
   );

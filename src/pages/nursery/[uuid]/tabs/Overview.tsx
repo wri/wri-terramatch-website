@@ -83,7 +83,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
           buttonProps={{
             variant: "secondary",
             size: "small",
-            children: "View Progress & Goals",
+            children: t("View Progress & Goals"),
             rightIcon: <ChevronRightIcon />,
             onClick: () => goToTab("progress-and-goals")
           }}

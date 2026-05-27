@@ -319,7 +319,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
                     variantLabel: "text-14",
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: site.treesRegeneratingSpeciesCount ?? 0
+                    value: site.regeneratedTreesCount ?? 0
                   }
                 ]}
               />

@@ -157,7 +157,7 @@ export type ImpactStoryLightDto = {
    * Indicates if this resource has the full resource definition.
    */
   lightResource: boolean;
-  uuid: string | null;
+  uuid: string;
   title: string | null;
   status: string | null;
   /**
@@ -176,7 +176,7 @@ export type ImpactStoryFullDto = {
    * Indicates if this resource has the full resource definition.
    */
   lightResource: boolean;
-  uuid: string | null;
+  uuid: string;
   title: string | null;
   status: string | null;
   /**
@@ -444,6 +444,9 @@ export type SiteReportLightDto = {
    * @format date-time
    */
   submittedAt: string | null;
+  /**
+   * The associated task uuid
+   */
   taskUuid: string | null;
   /**
    * @format date-time
@@ -505,6 +508,9 @@ export type NurseryReportLightDto = {
    * @format date-time
    */
   submittedAt: string | null;
+  /**
+   * The associated task uuid
+   */
   taskUuid: string | null;
   /**
    * @format date-time
@@ -550,6 +556,9 @@ export type SrpReportLightDto = {
    * The associated organisation uuid
    */
   organisationUuid: string | null;
+  /**
+   * The associated task uuid
+   */
   taskUuid: string | null;
   projectStatus: string;
   year: number | null;
@@ -1217,6 +1226,7 @@ export type NurseryLightDto = {
    */
   endDate: string | null;
   seedlingsGrownCount: number | null;
+  treesSeedlingsGrownCount: number | null;
   /**
    * @format date-time
    */
@@ -1333,14 +1343,7 @@ export type DisturbanceReportLightDto = {
    * The associated organisation uuid
    */
   organisationUuid: string | null;
-  /**
-   * @format date-time
-   */
   intensity: string | null;
-  /**
-   * @format date-time
-   */
-  dateOfDisturbance: string | null;
   /**
    * @format date-time
    */
@@ -1351,6 +1354,14 @@ export type DisturbanceReportLightDto = {
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
   reportId: number;
+  /**
+   * @format date-time
+   */
+  disturbanceStartDate: string | null;
+  /**
+   * @format date-time
+   */
+  disturbanceEndDate: string | null;
 };
 
 export type FileDownloadDto = {
@@ -1570,6 +1581,10 @@ export type SiteFullDto = {
   selfReportedWorkdayCount: number;
   regeneratedTreesCount: number;
   /**
+   * PPC estimated trees restored from approved site reports: tree species planted × parent project survival rate + seeds planted × parent project direct seeding survival rate + sum of ANR estimates (numTreesRegenerating) on reports.
+   */
+  treesRestoredPpc: number;
+  /**
    * Sum of tree species amounts for collection 'anr' across approved site reports for this site
    */
   treesRegeneratingSpeciesCount: number;
@@ -1677,6 +1692,7 @@ export type NurseryFullDto = {
    */
   endDate: string | null;
   seedlingsGrownCount: number | null;
+  treesSeedlingsGrownCount: number | null;
   /**
    * @format date-time
    */
@@ -1694,7 +1710,6 @@ export type NurseryFullDto = {
   nurseryReportsTotal: number | null;
   overdueNurseryReportsTotal: number | null;
   projectUuid: string | null;
-  treesSeedlingsGrownCount: number | null;
   media: MediaDto[];
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
@@ -2229,14 +2244,7 @@ export type DisturbanceReportFullDto = {
    * The associated organisation uuid
    */
   organisationUuid: string | null;
-  /**
-   * @format date-time
-   */
   intensity: string | null;
-  /**
-   * @format date-time
-   */
-  dateOfDisturbance: string | null;
   /**
    * @format date-time
    */
@@ -2247,6 +2255,14 @@ export type DisturbanceReportFullDto = {
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
   reportId: number;
+  /**
+   * @format date-time
+   */
+  disturbanceStartDate: string | null;
+  /**
+   * @format date-time
+   */
+  disturbanceEndDate: string | null;
   title: string | null;
   /**
    * @format date-time

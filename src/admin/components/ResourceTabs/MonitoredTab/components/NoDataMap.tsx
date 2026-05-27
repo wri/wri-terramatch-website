@@ -1,8 +1,11 @@
+import { useT } from "@transifex/react";
+
 import Text from "@/components/elements/Text/Text";
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
 const NoDataMap = () => {
+  const t = useT();
   const indicatorDescription1 =
     "From the <b>23 August 2024</b> analysis, 12.2M out of 20M hectares are being restored. Of those, <b>Direct Seeding was the most prevalent strategy used with more 765,432ha</b>, followed by Tree Planting with 453,89ha and Assisted Natural Regeneration with 93,345ha.";
   const indicatorDescription2 =
@@ -37,7 +40,7 @@ const NoDataMap = () => {
             <Text variant="text-14" className="z-10 text-white">
               RUN ANALYSIS ON PROJECT POLYGONS TO SEE DATA
             </Text>
-            <Tooltip content="Tooltip">
+            <Tooltip content={t("Tooltip")}>
               <Icon name={IconNames.IC_INFO_WHITE_BLACK} className="h-4 w-4" />
             </Tooltip>
           </div>

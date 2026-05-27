@@ -6,7 +6,6 @@ import {
   DateField,
   DeleteWithConfirmButton,
   FunctionField,
-  List,
   ReferenceField,
   ReferenceInput,
   SearchInput,
@@ -16,6 +15,7 @@ import {
 } from "react-admin";
 
 import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
+import { List } from "@/admin/components/AdminList";
 import ApplicationsExportModal from "@/admin/modules/application/components/ApplicationsExportModal";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";

@@ -89,7 +89,7 @@ const CollapsibleRow: FC<UnifiedCollapsibleRowProps> = ({
               type === "modalApprove"
                 ? !canBeApproved() || item.status === StatusEnum.APPROVED
                 : type === "modalSubmit"
-                ? item.status === StatusEnum.SUBMITTED || item.status === StatusEnum.APPROVED
+                ? item.status === StatusEnum.PENDING_APPROVAL || item.status === StatusEnum.APPROVED
                 : false
             }
             onChange={e => {

@@ -8,7 +8,12 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
-import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
+import {
+  POLYGON_APPROVED,
+  POLYGON_DRAFT,
+  POLYGON_INFORMATION_REQUIRED,
+  POLYGON_PENDING_APPROVAL
+} from "@/constants/polygonStatuses";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -152,10 +157,10 @@ const OverviewMapArea = ({
       setPolygonDataMap(dataMap);
     } else {
       setPolygonDataMap({
-        [SUBMITTED]: [],
-        [APPROVED]: [],
-        [NEEDS_MORE_INFORMATION]: [],
-        [DRAFT]: []
+        [POLYGON_PENDING_APPROVAL]: [],
+        [POLYGON_APPROVED]: [],
+        [POLYGON_INFORMATION_REQUIRED]: [],
+        [POLYGON_DRAFT]: []
       });
     }
   }, [polygonsData]);

@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { Map as MapboxMap } from "mapbox-gl";
 import React, { MutableRefObject, useEffect } from "react";
 
@@ -6,6 +7,7 @@ import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { deleteMedia, updateMedia } from "@/connections/Media";
 import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { TranslatedText } from "@/i18n/types";
 import Log from "@/utils/log";
 
 import { addMediaSourceAndLayer } from "../layers/mediaLayers";
@@ -16,10 +18,10 @@ type UseMapMediaParams = {
   styleReady: boolean;
   styleVersion: number;
   entityData?: any;
-  t: (key: string) => string;
+  t: typeof useT;
   showLoader: () => void;
   hideLoader: () => void;
-  openNotification: (type: "success" | "error" | "warning", title: string, message?: any) => void;
+  openNotification: (type: "success" | "error" | "warning", title: TranslatedText, message?: any) => void;
   openModal: (id: string, content: React.ReactNode, overlay?: boolean) => void;
   closeModal: (id: string) => void;
   setShouldRefetchMediaData: (v: boolean) => void;

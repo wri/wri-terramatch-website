@@ -1,3 +1,10 @@
+import {
+  POLYGON_APPROVED,
+  POLYGON_DRAFT,
+  POLYGON_INFORMATION_REQUIRED,
+  POLYGON_PENDING_APPROVAL
+} from "@/constants/polygonStatuses";
+
 export const DRAFT = "draft";
 export const NEEDS_MORE_INFORMATION = "needs-more-information";
 export const APPROVED = "approved";
@@ -8,19 +15,19 @@ export const AWAITING_APPROVAL = "awaiting-approval";
 export const STATUSES = [
   {
     label: "Draft",
-    value: DRAFT
+    value: POLYGON_DRAFT
   },
   {
-    label: "Submitted",
-    value: SUBMITTED
+    label: "Pending Approval",
+    value: POLYGON_PENDING_APPROVAL
   },
   {
-    label: "Needs More Information",
-    value: NEEDS_MORE_INFORMATION
+    label: "Information Required",
+    value: POLYGON_INFORMATION_REQUIRED
   },
   {
     label: "Approved",
-    value: APPROVED
+    value: POLYGON_APPROVED
   },
   {
     label: "Form Polygons",

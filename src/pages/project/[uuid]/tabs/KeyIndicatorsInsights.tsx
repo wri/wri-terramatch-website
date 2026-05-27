@@ -25,8 +25,11 @@ interface KeyIndicatorsInsightsProps {
 }
 
 const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) => {
-  const totalTreesRestoredCount =
-    (project.treesPlantedCount ?? 0) + (project.treesRegeneratingSpeciesCount ?? 0) + (project.seedsPlantedCount ?? 0);
+  const treesFromReportsAnr = project.regeneratedTreesCount ?? 0;
+  const isCombinedTreesGrowingCard = project.frameworkKey === Framework.PPC || project.frameworkKey === Framework.HBF;
+  const firstCardTreesProgress = isCombinedTreesGrowingCard
+    ? (project.treesPlantedCount ?? 0) + (project.seedsPlantedCount ?? 0) + treesFromReportsAnr
+    : project.treesPlantedCount ?? 0;
   const treesGrownGoal = project.treesGrownGoal ?? 0;
   const t = useT();
   const totalHectaresRestored = project.totalHectaresRestoredSum ?? 0;
@@ -40,19 +43,25 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
     return keyIndicatorsTooltipContent.find(content => content.frameworks.includes(project.frameworkKey!));
   }, [project.frameworkKey, keyIndicatorsTooltipContent]);
 
-  const MAX_CARD = 4;
+  const maxCardsInRow = 4;
+  const ppcEstimatedTreesTooltip =
+    framework === Framework.PPC &&
+    keyIndicatorsTooltipContentItem &&
+    "estimatedTreesRestored" in keyIndicatorsTooltipContentItem
+      ? keyIndicatorsTooltipContentItem.estimatedTreesRestored
+      : null;
 
   return (
     <MetricCardsRow>
       <MetricCard
         title={t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}
-        progress={totalTreesRestoredCount}
+        progress={firstCardTreesProgress}
         goal={treesGrownGoal}
         variant="donutChart"
         icon={<ProjectIcon />}
         color="secondary.600"
         type="treesRestored"
-        className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
+        className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}</b>
@@ -64,13 +73,13 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
       <ContextCondition frameworksHide={[Framework.PPC, Framework.HBF]}>
         <MetricCard
           title={t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}
-          progress={project.treesRegeneratingSpeciesCount ?? 0}
+          progress={treesFromReportsAnr}
           goal={project.goalTreesRestoredAnr ?? 0}
           variant="donutChart"
           icon={<RegenerationIcon />}
           color="secondary.600"
           type="treesRegenerated"
-          className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
+          className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}</b>
@@ -87,7 +96,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           icon={<SeedlingsIcon />}
           color="secondary.600"
           type="saplingsRestored"
-          className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
+          className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}</b>
@@ -106,7 +115,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           icon={<TreeIcon />}
           color="secondary.600"
           type="treesToBeRestored"
-          className={`${METRIC_CARD_CLASS_NAME(MAX_CARD)} !h-auto`}
+          className={`${METRIC_CARD_CLASS_NAME(maxCardsInRow)} !h-auto`}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.treesToBeRestored.title}`)}</b>
@@ -124,7 +133,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         icon={<AreaHectaresIcon />}
         color="secondary.700"
         type="hectaresRestored"
-        className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
+        className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.hectaresRestored.title}`)}</b>
@@ -147,7 +156,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           variant="large"
           icon={<JobsIcon />}
           type="jobsCreated"
-          className={`${METRIC_CARD_CLASS_NAME(MAX_CARD)} !h-auto`}
+          className={`${METRIC_CARD_CLASS_NAME(maxCardsInRow)} !h-auto`}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>
@@ -165,7 +174,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           variant="donutChart"
           icon={<JobsIcon />}
           type="jobsCreated"
-          className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
+          className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>
@@ -174,6 +183,25 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
             </Box>
           }
           frameworkKey={framework!}
+        />
+      )}
+      {ppcEstimatedTreesTooltip != null && (
+        <MetricCard
+          title={t(`${ppcEstimatedTreesTooltip.title}`)}
+          progress={Math.round(project.treesRestoredPpc ?? 0)}
+          goal={0}
+          variant="large"
+          icon={<TreeIcon />}
+          color="secondary.600"
+          type="estimatedTreesRestored"
+          className={`${METRIC_CARD_CLASS_NAME(maxCardsInRow)} !h-auto`}
+          tooltipContent={
+            <Box fontSize="14px" lineHeight="20px">
+              <b>{t(`${ppcEstimatedTreesTooltip.title}`)}</b>
+              <br />
+              {t(`${ppcEstimatedTreesTooltip.content}`)}
+            </Box>
+          }
         />
       )}
     </MetricCardsRow>

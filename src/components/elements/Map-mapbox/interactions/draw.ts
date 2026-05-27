@@ -4,6 +4,7 @@ import { Map as MapboxMap } from "mapbox-gl";
 
 import { loadPolygonGeoJson, loadProjectPolygonsGeoJson } from "@/connections/GeoJsonExport";
 import { updateProjectPolygonResource } from "@/connections/ProjectPolygons";
+import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
@@ -70,11 +71,11 @@ const getPolygonColor = (polygonStatus: string | undefined): string => {
   switch (polygonStatus) {
     case "draft":
       return "#E468EF";
-    case "submitted":
+    case POLYGON_PENDING_APPROVAL:
       return "#2398d8";
     case "approved":
       return "#72d961";
-    case "needs-more-information":
+    case POLYGON_INFORMATION_REQUIRED:
       return "#ff8938";
     default:
       return "#000000";

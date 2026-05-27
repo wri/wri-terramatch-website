@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
@@ -13,48 +13,60 @@ import {
 
 type NurseryTypeConfig = { icon: ReactNode; label: string; tooltip: string };
 
-const NURSERY_TYPE_MAP: Record<string, NurseryTypeConfig> = {
-  expanding: {
-    icon: <NurseryExpandingIcon className="h-8 w-8 text-theme-secondary-800" />,
-    label: "Nursery Expansion",
-    tooltip:
-      "An existing nursery that increases its production capacity for the project, such as by adding infrastructure, expanding structures, or increasing seedling output."
-  },
-  building: {
-    icon: <NurseryBuildingIcon className="h-8 w-8 text-theme-secondary-800" />,
-    label: "New Nursery",
-    tooltip:
-      "A nursery that is newly established, including setting up infrastructure, sourcing materials, and starting seedling production."
-  },
-  managing: {
-    icon: <NurseryManagingIcon className="h-8 w-8 text-theme-secondary-800" />,
-    label: "Co-managed Nursery",
-    tooltip:
-      "A nursery jointly operated with a community or partner, where the organization might be supporting maintenance, production management, and quality control to build skills or economic opportunities or any other activity."
-  },
-  "new-nursery": {
-    icon: <NurseryBuildingIcon className="h-8 w-8 text-theme-secondary-800" />,
-    label: "New Nursery",
-    tooltip:
-      "A nursery that is newly established, including setting up infrastructure, sourcing materials, and starting seedling production."
-  },
-  "co-managed-nursery": {
-    icon: <NurseryManagingIcon className="h-8 w-8 text-theme-secondary-800" />,
-    label: "Co-managed Nursery",
-    tooltip:
-      "A nursery jointly operated with a community or partner, where the organization might be supporting maintenance, production management, and quality control to build skills or economic opportunities or any other activity."
-  },
-  "nursery-expansion": {
-    icon: <NurseryExpandingIcon className="h-8 w-8 text-theme-secondary-800" />,
-    label: "Nursery Expansion",
-    tooltip:
-      "An existing nursery that increases its production capacity for the project, such as by adding infrastructure, expanding structures, or increasing seedling output."
-  }
+const useNurseryTypeMap = (): Record<string, NurseryTypeConfig> => {
+  const t = useT();
+  return useMemo(() => {
+    return {
+      expanding: {
+        icon: <NurseryExpandingIcon className="h-8 w-8 text-theme-secondary-800" />,
+        label: t("Nursery Expansion"),
+        tooltip: t(
+          "An existing nursery that increases its production capacity for the project, such as by adding infrastructure, expanding structures, or increasing seedling output."
+        )
+      },
+      building: {
+        icon: <NurseryBuildingIcon className="h-8 w-8 text-theme-secondary-800" />,
+        label: t("New Nursery"),
+        tooltip: t(
+          "A nursery that is newly established, including setting up infrastructure, sourcing materials, and starting seedling production."
+        )
+      },
+      managing: {
+        icon: <NurseryManagingIcon className="h-8 w-8 text-theme-secondary-800" />,
+        label: t("Co-Managed Nursery"),
+        tooltip: t(
+          "A nursery jointly operated with a community or partner, where the organization might be supporting maintenance, production management, and quality control to build skills or economic opportunities or any other activity."
+        )
+      },
+      "new-nursery": {
+        icon: <NurseryBuildingIcon className="h-8 w-8 text-theme-secondary-800" />,
+        label: t("New Nursery"),
+        tooltip: t(
+          "A nursery that is newly established, including setting up infrastructure, sourcing materials, and starting seedling production."
+        )
+      },
+      "co-managed-nursery": {
+        icon: <NurseryManagingIcon className="h-8 w-8 text-theme-secondary-800" />,
+        label: t("Co-managed Nursery"),
+        tooltip: t(
+          "A nursery jointly operated with a community or partner, where the organization might be supporting maintenance, production management, and quality control to build skills or economic opportunities or any other activity."
+        )
+      },
+      "nursery-expansion": {
+        icon: <NurseryExpandingIcon className="h-8 w-8 text-theme-secondary-800" />,
+        label: t("Nursery Expansion"),
+        tooltip: t(
+          "An existing nursery that increases its production capacity for the project, such as by adding infrastructure, expanding structures, or increasing seedling output."
+        )
+      }
+    };
+  }, [t]);
 };
 
 const ManagerType = ({ nursery }: { nursery: NurseryFullDto }) => {
   const t = useT();
-  const typeConfig = nursery.type !== null ? NURSERY_TYPE_MAP[nursery.type] : null;
+  const nurseryTypeMap = useNurseryTypeMap();
+  const typeConfig = nursery.type !== null ? nurseryTypeMap[nursery.type] : null;
 
   return (
     <Box
@@ -73,12 +85,12 @@ const ManagerType = ({ nursery }: { nursery: NurseryFullDto }) => {
             <>
               {typeConfig.icon}
               <Text textStyle="400-bold" color="secondary.800" className="text-center leading-5">
-                {t(typeConfig.label)}{" "}
+                {typeConfig.label}{" "}
                 <Tooltip
                   content={
                     <>
-                      <span className="text-sm font-semibold">{t(typeConfig.label)}: </span>
-                      {t(typeConfig.tooltip)}
+                      <span className="text-sm font-semibold">{typeConfig.label}: </span>
+                      {typeConfig.tooltip}
                     </>
                   }
                 >
@@ -88,7 +100,7 @@ const ManagerType = ({ nursery }: { nursery: NurseryFullDto }) => {
             </>
           ) : (
             <Text textStyle="400-bold" color="neutral.600" className="text-center leading-5">
-              N/A
+              {t("N/A")}
             </Text>
           )}
         </Flex>

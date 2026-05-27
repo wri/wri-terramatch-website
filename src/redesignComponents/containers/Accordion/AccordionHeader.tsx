@@ -6,14 +6,16 @@ import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import type { AccordionHeaderProps, AccordionStatus } from "./types";
 
+const STATUS_ICON_CONFIG: Record<AccordionStatus, { Icon: typeof CheckApprovedIcon; color: string }> = {
+  complete: { Icon: CheckApprovedIcon, color: "success.500" },
+  success: { Icon: CheckApprovedIcon, color: "success.500" },
+  warning: { Icon: InformationRequiredIcon, color: "warning.500" },
+  error: { Icon: InformationRequiredIcon, color: "error.500" }
+};
+
 const getStatusIcon = (status: AccordionStatus, boxSize: number = 4) => {
-  if (status === "complete" || status === "success") {
-    return <CheckApprovedIcon boxSize={boxSize} color="success.500" />;
-  }
-  if (status === "error") {
-    return <InformationRequiredIcon boxSize={boxSize} color="error.500" />;
-  }
-  return <InformationRequiredIcon boxSize={boxSize} color="warning.500" />;
+  const { Icon, color } = STATUS_ICON_CONFIG[status];
+  return <Icon boxSize={boxSize} color={color} />;
 };
 
 interface StatusLabelTagProps {

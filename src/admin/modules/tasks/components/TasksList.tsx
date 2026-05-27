@@ -5,13 +5,13 @@ import {
   Datagrid,
   DateField,
   FunctionField,
-  List,
   ReferenceInput,
   SelectInput,
   TextField
 } from "react-admin";
 
 import { AutoResetSort } from "@/admin/components/Actions/ListActions";
+import { List } from "@/admin/components/AdminList";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";

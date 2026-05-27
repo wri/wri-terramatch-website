@@ -21,6 +21,7 @@ import {
   TEXT_TYPES
 } from "@/constants/dashboardConsts";
 import { useOnMount } from "@/hooks/useOnMount";
+import { TranslatedText } from "@/i18n/types";
 import { TextVariants } from "@/types/common";
 import { getRestorationGoalDataForChart, getRestorationGoalResumeData, isEmptyChartData } from "@/utils/dashboardUtils";
 
@@ -40,7 +41,7 @@ interface secondOptionsDataItem {
 }
 
 type SecDashboardProps = {
-  title: string;
+  title: TranslatedText;
   type?: "legend" | "toggle";
   secondOptionsData?: secondOptionsDataItem[];
   className?: string;
@@ -51,7 +52,7 @@ type SecDashboardProps = {
   variantTitle?: TextVariants;
   data: DashboardDataProps;
   isTableProject?: boolean;
-  tooltip?: string;
+  tooltip?: TranslatedText;
   dataForChart?: any;
   chartType?: string;
   isUserAllowed?: boolean;
@@ -133,10 +134,10 @@ const SecDashboard: FC<SecDashboardProps> = ({
       >
         <div className="flex items-center gap-1">
           <Text variant={variantTitle ?? "text-14"} className={classNames("uppercase text-darkCustom", classNameTitle)}>
-            {t(title)}
+            {title}
           </Text>
           {tooltip != null && (
-            <ToolTip title={t(title)} content={t(tooltip)} width="w-52 lg:w-64" trigger="click">
+            <ToolTip title={title} content={tooltip} width="w-52 lg:w-64" trigger="click">
               <Icon name={IconNames.IC_INFO} className="h-4.5 w-4.5 text-darkCustom lg:h-5 lg:w-5" />
             </ToolTip>
           )}

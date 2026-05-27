@@ -6,6 +6,7 @@ import {
 } from "mapbox-gl";
 
 import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
+import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 
 import { DELETED_POLYGONS } from "./statuses";
 
@@ -56,7 +57,7 @@ export const layersList: LayerType[] = [
         filter: ["==", ["get", "uuid"], ""]
       }),
       fillStyle({
-        metadata: { polygonStatus: "submitted" },
+        metadata: { polygonStatus: POLYGON_PENDING_APPROVAL },
         type: "fill",
         layout: {},
         paint: {
@@ -66,7 +67,7 @@ export const layersList: LayerType[] = [
         filter: ["==", ["get", "uuid"], ""]
       }),
       lineStyle({
-        metadata: { polygonStatus: "submitted" },
+        metadata: { polygonStatus: POLYGON_PENDING_APPROVAL },
         type: "line",
         layout: {},
         paint: {
@@ -98,7 +99,7 @@ export const layersList: LayerType[] = [
         filter: ["==", ["get", "uuid"], ""]
       }),
       fillStyle({
-        metadata: { polygonStatus: "needs-more-information" },
+        metadata: { polygonStatus: POLYGON_INFORMATION_REQUIRED },
         type: "fill",
         layout: {},
         paint: {
@@ -108,7 +109,7 @@ export const layersList: LayerType[] = [
         filter: ["==", ["get", "uuid"], ""]
       }),
       lineStyle({
-        metadata: { polygonStatus: "needs-more-information" },
+        metadata: { polygonStatus: POLYGON_INFORMATION_REQUIRED },
         type: "line",
         layout: {},
         paint: {

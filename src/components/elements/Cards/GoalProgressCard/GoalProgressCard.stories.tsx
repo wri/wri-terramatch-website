@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import { TranslatedText } from "@/i18n/types";
 
 import Component from "./GoalProgressCard";
 
@@ -15,31 +16,31 @@ type Story = StoryObj<typeof Component>;
 const args = {
   noProgressOrItems: {
     value: 150,
-    label: "Hectors Restored"
+    label: "Hectors Restored" as TranslatedText
   },
   progressNoItems: {
     value: 75,
     limit: 150,
-    label: "Workday (PPC)"
+    label: "Workday (PPC)" as TranslatedText
   },
   progressAndItems: {
     value: 600,
     limit: 732,
-    label: "Trees Restored",
+    label: "Trees Restored" as TranslatedText,
     items: [
       {
         iconName: IconNames.BRANCH_CIRCLE,
-        label: "Organisations Joined",
+        label: "Organisations Joined" as TranslatedText,
         value: 23
       },
       {
         iconName: IconNames.TREE_CIRCLE,
-        label: "Trees Planed",
+        label: "Trees Planed" as TranslatedText,
         value: 1332
       },
       {
         iconName: IconNames.TRASH_CIRCLE,
-        label: "Trash Removed ",
+        label: "Trash Removed " as TranslatedText,
         value: 530000
       }
     ]

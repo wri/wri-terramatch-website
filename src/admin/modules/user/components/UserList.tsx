@@ -4,7 +4,6 @@ import {
   DateField,
   EditButton,
   FunctionField,
-  List,
   SearchInput,
   SelectField,
   SelectInput,
@@ -14,6 +13,7 @@ import {
 
 import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ListActionsCreateFilter from "@/admin/components/Actions/ListActionsCreateFilter";
+import { List } from "@/admin/components/AdminList";
 import { userCanEdit } from "@/admin/hooks/useCanUserEdit";
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import Menu from "@/components/elements/Menu/Menu";

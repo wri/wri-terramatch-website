@@ -21,9 +21,9 @@ const SelectImageLabel = ({ variant = "primary", clickable = true, ...props }: S
             "border-primary-500": props.isSelected
           }
         )}
-        style={{
-          backgroundImage: `url('${props.imageUrl}')`
-        }}
+        style={
+          props.imageUrl != null && props.imageUrl !== "" ? { backgroundImage: `url('${props.imageUrl}')` } : undefined
+        }
       ></div>
       {props.title && (
         <Text variant="text-light-body-300" className="max-w-[96px] text-center leading-4">

@@ -10,11 +10,13 @@ import ModalNotes from "@/components/extensive/Modal/ModalNotes";
 import ModalRunAnalysis from "@/components/extensive/Modal/ModalRunAnalysis";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
+import useOwnT from "@/i18n/useOwnT";
 import { EntityName } from "@/types/common";
 
 import { useMonitoredData } from "../hooks/useMonitoredData";
 
 const HeaderMonitoredTab: FC<{ type?: EntityName }> = ({ type }) => {
+  const t = useOwnT();
   const { openModal, closeModal } = useModalContext();
   const { record } = useShowContext();
   const { headerBarPolygonStatus, totalPolygonsStatus, polygonMissingAnalysis, totalPolygonsForRerun } =
@@ -25,9 +27,9 @@ const HeaderMonitoredTab: FC<{ type?: EntityName }> = ({ type }) => {
     openModal(
       ModalId.MODAL_RUN_ANALYSIS,
       <ModalRunAnalysis
-        title="Update Analysis "
-        content="Project Developers may submit one or all polygons for review."
-        primaryButtonText="Run"
+        title={t("Update Analysis")}
+        content={t("Project Developers may submit one or all polygons for review.")}
+        primaryButtonText={t("Run")}
         projectName={record?.project ? record?.project?.name : record?.name}
         entityType={type}
         entityUuid={record?.uuid}
@@ -39,7 +41,7 @@ const HeaderMonitoredTab: FC<{ type?: EntityName }> = ({ type }) => {
           }
         }}
         onClose={() => closeModal(ModalId.MODAL_RUN_ANALYSIS)}
-        secondaryButtonText="Cancel"
+        secondaryButtonText={t("Cancel")}
         secondaryButtonProps={{
           className: "px-8 py-3",
           variant: "white-page-admin",
@@ -75,8 +77,8 @@ use the "Rerun existing analysis" option in the analysis modal. This will overwr
 
   return (
     <div className="flex w-full items-center justify-between rounded-xl px-6 py-3 shadow-monitored">
-      <div className="flex items-baseline gap-9">
-        <div className="w-[35vw]">
+      <div className="flex items-baseline gap-6">
+        <div className="w-[42vw]">
           <div className="flex items-center justify-between">
             <Text variant="text-14-semibold" className="flex items-center gap-1">
               Polygon Overview
@@ -88,7 +90,7 @@ use the "Rerun existing analysis" option in the analysis modal. This will overwr
               ) : null}
             </div>
           </div>
-          <div className="w-[35vw] pt-2">
+          <div className="w-[42vw] pt-2">
             <LinearProgressBarMonitored data={headerBarPolygonStatus} />
           </div>
         </div>

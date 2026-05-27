@@ -101,7 +101,11 @@ const ProcessBulkPolygonsControl: FC<ProcessBulkPolygonsControlProps> = ({
 
       setIsLoadingDelayedJob?.(false);
       if (polygonNames.length > 0) {
-        openNotification("success", t("Success!"), t(`Polygons fixed successfully. Fixed: ${polygonNames}`));
+        openNotification(
+          "success",
+          t("Success!"),
+          t("Polygons fixed successfully. Fixed: {polygonNames}", { polygonNames })
+        );
       } else {
         openNotification("warning", t("Warning"), t("No polygons were fixed."));
       }

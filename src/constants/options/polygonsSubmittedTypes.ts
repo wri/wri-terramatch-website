@@ -1,25 +1,31 @@
 import { useT } from "@transifex/react";
 
+import {
+  POLYGON_APPROVED,
+  POLYGON_DRAFT,
+  POLYGON_INFORMATION_REQUIRED,
+  POLYGON_PENDING_APPROVAL
+} from "@/constants/polygonStatuses";
 import { Option } from "@/types/common";
 
 export const getPolygonsSubmittedTypes = (t: typeof useT = (t: string) => t): Option[] => [
   {
-    value: "draft",
+    value: POLYGON_DRAFT,
     title: t("Draft"),
     meta: {}
   },
   {
-    value: "submitted",
-    title: t("Submitted"),
+    value: POLYGON_PENDING_APPROVAL,
+    title: t("Pending Approval"),
     meta: {}
   },
   {
-    value: "needs-more-information",
-    title: t("Needs info"),
+    value: POLYGON_INFORMATION_REQUIRED,
+    title: t("Information Required"),
     meta: {}
   },
   {
-    value: "approved",
+    value: POLYGON_APPROVED,
     title: t("Approved"),
     meta: {}
   }

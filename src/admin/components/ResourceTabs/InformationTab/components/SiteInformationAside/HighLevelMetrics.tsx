@@ -45,7 +45,7 @@ const HighLevelMetrics: FC = () => {
           </ContextCondition>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             <Labeled label="Estimate Number of Trees Restored via ANR" sx={inlineLabelSx} className="label-field-aside">
-              <NumberField source="approvedRegeneratedTreesCount" emptyText="0" />
+              <NumberField source="regeneratedTreesCount" emptyText="0" />
             </Labeled>
           </ContextCondition>
           <>
@@ -118,7 +118,7 @@ const HighLevelMetrics: FC = () => {
                   <Typography variant="body2" color="text.secondary">
                     Reports
                   </Typography>
-                  <NumberField source="treesRegeneratingSpeciesCount" emptyText="0" />
+                  <NumberField source="regeneratedTreesCount" emptyText="0" />
                 </Box>
               </Stack>
             </Labeled>

@@ -54,33 +54,40 @@ export type TreeSpeciesValue = {
   amount?: number;
 };
 
-const getColumnTitles = ({
+const useGetColumnTitles = ({
   collection,
   isReport,
   withNumbers
 }: Pick<TreeSpeciesInputProps, "collection" | "withNumbers"> & { isReport: boolean }) => {
-  if (collection === "nursery-seedling") {
+  const t = useT();
+  return useMemo(() => {
+    if (collection === "nursery-seedling") {
+      return {
+        totalReportedColumn: isReport ? t("NEW SEEDLINGS PRODUCED THIS REPORT:") : t("SEEDLINGS TO BE PRODUCED:"),
+        totalToDateColumn: t("TOTAL SEEDLINGS PRODUCED TO DATE:")
+      };
+    }
+    if (collection === "anr") {
+      return {
+        totalReportedColumn: isReport
+          ? t("TOTAL REGENERATING THIS REPORT:")
+          : withNumbers
+          ? t("TREES REGENERATING:")
+          : "",
+        totalToDateColumn: t("TOTAL REGENERATING TO DATE:")
+      };
+    }
+    if (collection === "invasive") {
+      return {
+        totalReportedColumn: isReport ? t("TOTAL REMOVED THIS REPORT:") : withNumbers ? t("TREES REMOVED:") : "",
+        totalToDateColumn: t("TOTAL REMOVED TO DATE:")
+      };
+    }
     return {
-      totalReportedColumn: isReport ? "NEW SEEDLINGS PRODUCED THIS REPORT:" : "SEEDLINGS TO BE PRODUCED:",
-      totalToDateColumn: "TOTAL SEEDLINGS PRODUCED TO DATE:"
+      totalReportedColumn: isReport ? t("TOTAL PLANTED THIS REPORT:") : withNumbers ? t("TREES TO BE PLANTED:") : "",
+      totalToDateColumn: t("TOTAL PLANTED TO DATE:")
     };
-  }
-  if (collection === "anr") {
-    return {
-      totalReportedColumn: isReport ? "TOTAL REGENERATING THIS REPORT:" : withNumbers ? "TREES REGENERATING:" : "",
-      totalToDateColumn: "TOTAL REGENERATING TO DATE:"
-    };
-  }
-  if (collection === "invasive") {
-    return {
-      totalReportedColumn: isReport ? "TOTAL REMOVED THIS REPORT:" : withNumbers ? "TREES REMOVED:" : "",
-      totalToDateColumn: "TOTAL REMOVED TO DATE:"
-    };
-  }
-  return {
-    totalReportedColumn: isReport ? "TOTAL PLANTED THIS REPORT:" : withNumbers ? "TREES TO BE PLANTED:" : "",
-    totalToDateColumn: "TOTAL PLANTED TO DATE:"
-  };
+  }, [t, collection, isReport, withNumbers]);
 };
 
 const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
@@ -114,7 +121,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
   const handleBaseEntityTrees =
     props.withPreviousCounts && (isReport || (isEntity && ["sites", "nurseries"].includes(props.model)));
   const displayPreviousCounts = props.withPreviousCounts && isReport;
-  const { totalReportedColumn, totalToDateColumn } = getColumnTitles({ ...props, isReport });
+  const { totalReportedColumn, totalToDateColumn } = useGetColumnTitles({ ...props, isReport });
 
   const entity = handleBaseEntityTrees ? (props.model as EstablishmentEntity) : undefined;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;

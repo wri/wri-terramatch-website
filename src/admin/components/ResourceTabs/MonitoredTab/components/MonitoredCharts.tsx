@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import React, { FC, useEffect, useState } from "react";
 import { ReactNode } from "react";
@@ -37,22 +38,26 @@ type RestorationMetricsProps = {
   strategiesData: any[];
 };
 
-const RestorationMetrics: FC<RestorationMetricsProps> = ({ record, totalHectaresRestoredGoal, strategiesData }) => (
-  <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
-    <SecDashboard
-      title="Total Hectares Under Restoration"
-      data={{
-        value: parseFloat(record.totalHectaresRestoredSum.toFixed(1)),
-        totalValue: totalHectaresRestoredGoal
-      }}
-      className="w-full place-content-center pl-8"
-      tooltip={TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP}
-      showTreesRestoredGraph={false}
-      classNameBody="!mt-1.5"
-    />
-    <SimpleBarChart data={strategiesData} total={record.totalHectaresRestoredSum} />
-  </div>
-);
+const RestorationMetrics: FC<RestorationMetricsProps> = ({ record, totalHectaresRestoredGoal, strategiesData }) => {
+  const t = useT();
+
+  return (
+    <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
+      <SecDashboard
+        title={t("Total Hectares Under Restoration")}
+        data={{
+          value: parseFloat(record.totalHectaresRestoredSum.toFixed(1)),
+          totalValue: totalHectaresRestoredGoal
+        }}
+        className="w-full place-content-center pl-8"
+        tooltip={t(TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP)}
+        showTreesRestoredGraph={false}
+        classNameBody="!mt-1.5"
+      />
+      <SimpleBarChart data={strategiesData} total={record.totalHectaresRestoredSum} />
+    </div>
+  );
+};
 
 type MonitoredChartsProps = {
   selected: React.Key[];

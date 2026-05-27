@@ -391,7 +391,16 @@ export const addPolygonCentroidsLayer = (
   }
 };
 
-type DataPolygonOverview = { status: string; count: number }[];
+type DataPolygonOverview = { status: string; status_key: string; count: number }[];
+
+const POLYGON_STATUS_LABELS: Record<string, string> = {
+  draft: "Draft",
+  "pending-approval": "Pending Approval",
+  "information-required": "Information Required",
+  approved: "Approved"
+};
+
+const POLYGON_STATUS_ORDER = Object.keys(POLYGON_STATUS_LABELS);
 
 export function parsePolygonDataV3(sitePolygonData: SitePolygonLightDto[] | undefined): Record<string, string[]> {
   return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygonLightDto) => {
@@ -404,21 +413,19 @@ export function parsePolygonDataV3(sitePolygonData: SitePolygonLightDto[] | unde
 }
 
 export const countStatusesV3 = (sitePolygonData: SitePolygonLightDto[]): DataPolygonOverview => {
-  const statusOrder = ["Draft", "Submitted", "Needs Info", "Approved"];
   const statusCountMap: Record<string, number> = {};
 
   sitePolygonData.forEach(item => {
-    let statusKey = item.status?.toLowerCase();
-    if (statusKey) {
-      if (statusKey === "needs-more-information") {
-        statusKey = "Needs Info";
-      } else {
-        statusKey = statusKey.replace(/\b\w/g, char => char.toUpperCase());
-      }
-      statusCountMap[statusKey] = (statusCountMap[statusKey] || 0) + 1;
-    }
+    const statusKey = item.status;
+    if (statusKey == null) return;
+    statusCountMap[statusKey] = (statusCountMap[statusKey] ?? 0) + 1;
   });
 
-  const unorderedData = Object.entries(statusCountMap).map(([status, count]) => ({ status, count }));
-  return unorderedData.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
+  return Object.entries(statusCountMap)
+    .map(([status_key, count]) => ({
+      status_key,
+      status: POLYGON_STATUS_LABELS[status_key] ?? status_key,
+      count
+    }))
+    .sort((a, b) => POLYGON_STATUS_ORDER.indexOf(a.status_key) - POLYGON_STATUS_ORDER.indexOf(b.status_key));
 };

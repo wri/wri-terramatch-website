@@ -2,6 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
+import { TranslatedText } from "@/i18n/types";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
@@ -18,7 +19,7 @@ export interface IProfile {
 }
 
 export interface IProfileListCardProps {
-  title: string;
+  title: TranslatedText;
   profiles?: IProfile[];
   onProfileClick: (profile: IProfile) => void;
   onInviteClick?: () => void;
@@ -38,7 +39,7 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
     <Flex direction="column" minHeight={0}>
       <Box>
         <Text textStyle="500" color="neutral.900" fontWeight="semibold">
-          {t(title)}
+          {title}
         </Text>
       </Box>
 

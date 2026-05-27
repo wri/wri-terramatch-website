@@ -10,7 +10,7 @@ const DISTURBANCE_TYPE_OPTIONS: Option[] = [
 ];
 
 const DISTURBANCE_SUBTYPE_OPTIONS = {
-  climatic: ["flooding", "landslide-erosion", "drought", "fire", "heavy-rains", "hail", "strong-winds"],
+  climatic: ["flooding", "landslide-erosion", "drought", "fire", "hail", "strong-winds"],
   ecological: ["pests-disease", "poor-soil", "invasive-species"],
   manmade: [
     "poaching",

@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
+import { TranslatedText } from "@/i18n/types";
+
 import ToolTip from "./Tooltip";
 
 const meta: Meta<typeof ToolTip> = {
@@ -16,7 +18,7 @@ type Story = StoryObj<typeof ToolTip>;
 
 export const Default: Story = {
   args: {
-    content: "This is a tooltip",
+    content: "This is a tooltip" as TranslatedText,
     width: "w-28",
     children: "Open-Hover"
   }
@@ -24,7 +26,7 @@ export const Default: Story = {
 
 export const Hover: Story = {
   args: {
-    content: "This is a tooltip",
+    content: "This is a tooltip" as TranslatedText,
     width: "w-28",
     children: "Open-Hover"
   }
@@ -32,7 +34,7 @@ export const Hover: Story = {
 
 export const Click: Story = {
   args: {
-    content: "This is a tooltip",
+    content: "This is a tooltip" as TranslatedText,
     width: "w-28",
     children: "Open-Click",
     trigger: "click"

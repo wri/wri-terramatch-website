@@ -1,7 +1,7 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { CheckApprovedIcon } from "@/redesignComponents/foundations/Icons";
+import { CheckApprovedIcon, InformationRequiredIcon, WarningIcon } from "@/redesignComponents/foundations/Icons";
 
 import InlineMessage from "./InlineMessage";
 
@@ -52,7 +52,8 @@ export const Success: Story = {
     label: "Success",
     caption: "caption",
     variant: "success",
-    actionLabel: "Label"
+    actionLabel: "Label",
+    icon: <CheckApprovedIcon />
   }
 };
 
@@ -61,7 +62,8 @@ export const Warning: Story = {
     label: "Warning",
     caption: "caption",
     variant: "warning",
-    actionLabel: "Label"
+    actionLabel: "Label",
+    icon: <WarningIcon />
   }
 };
 
@@ -70,7 +72,8 @@ export const Error: Story = {
     label: "Error",
     caption: "caption",
     variant: "error",
-    actionLabel: "Label"
+    actionLabel: "Label",
+    icon: <InformationRequiredIcon />
   }
 };
 
@@ -112,7 +115,6 @@ export const NoIconWithButtonIcon: Story = {
     caption: "Mark this factor as complete when you've finished reviewing the response, rationale, and strategies.",
     variant: "info-grey",
     size: "full-width",
-    icon: null,
     actionLabel: "Mark complete",
     isButtonRight: true,
     buttonLeftIcon: <CheckApprovedIcon className="h-4 w-4" />
@@ -123,7 +125,8 @@ export const LabelOnly: Story = {
   args: {
     variant: "success",
     label: "Profile updated",
-    size: "small"
+    size: "small",
+    icon: <CheckApprovedIcon />
   }
 };
 
@@ -148,9 +151,27 @@ export const AllVariants: Story = {
         caption="Informational message on grey background."
         size="large"
       />
-      <InlineMessage variant="success" label="Success" caption="The operation completed successfully." size="large" />
-      <InlineMessage variant="warning" label="Warning" caption="Please review before proceeding." size="large" />
-      <InlineMessage variant="error" label="Error" caption="An unexpected error has occurred." size="large" />
+      <InlineMessage
+        variant="success"
+        icon={<CheckApprovedIcon />}
+        label="Success"
+        caption="The operation completed successfully."
+        size="large"
+      />
+      <InlineMessage
+        variant="warning"
+        icon={<WarningIcon />}
+        label="Warning"
+        caption="Please review before proceeding."
+        size="large"
+      />
+      <InlineMessage
+        icon={<InformationRequiredIcon />}
+        variant="error"
+        label="Error"
+        caption="An unexpected error has occurred."
+        size="large"
+      />
     </SimpleGrid>
   )
 };

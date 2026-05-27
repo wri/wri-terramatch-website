@@ -6,7 +6,6 @@ import {
   DateField,
   EditButton,
   FunctionField,
-  List,
   ReferenceInput,
   SearchInput,
   SelectInput,
@@ -16,6 +15,7 @@ import {
 
 import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ListActionsImpactStories from "@/admin/components/Actions/ListActionsImpactStories";
+import { List } from "@/admin/components/AdminList";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import Menu from "@/components/elements/Menu/Menu";

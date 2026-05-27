@@ -4,6 +4,12 @@ import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
+import {
+  POLYGON_APPROVED,
+  POLYGON_DRAFT,
+  POLYGON_INFORMATION_REQUIRED,
+  POLYGON_PENDING_APPROVAL
+} from "@/constants/polygonStatuses";
 import { DELETED_POLYGONS } from "@/constants/statuses";
 
 import { addDeleteLayer, addFilterOnLayer, addSourcesToLayers } from "../layers/polygonLayers";
@@ -132,7 +138,13 @@ export function filterPolygonFromLayers(
 ) {
   if (polygonsData == null) return;
   const newPolygonData: Record<string, string[]> = JSON.parse(JSON.stringify(polygonsData));
-  const statuses = ["submitted", "approved", "need-more-info", "draft", "form-polygons"];
+  const statuses = [
+    POLYGON_PENDING_APPROVAL,
+    POLYGON_APPROVED,
+    POLYGON_INFORMATION_REQUIRED,
+    POLYGON_DRAFT,
+    "form-polygons"
+  ];
   statuses.forEach(status => {
     if (newPolygonData[status] != null) {
       newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);

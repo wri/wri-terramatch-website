@@ -130,7 +130,7 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
   const { create: createReminder, isCreating: isLoadingReminder } = useSendReminder(
     { entity: v3Resource as ReminderEntityType, uuid: record.uuid },
     useCallback(() => {
-      openNotification("success", "Success!", t("Reminder sent successfully."));
+      openNotification("success", t("Success!"), t("Reminder sent successfully."));
       setFeedbackValue("");
       handleClose();
     }, [openNotification, t, handleClose])

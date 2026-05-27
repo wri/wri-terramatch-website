@@ -83,7 +83,7 @@ const DisturbanceReportHeader = ({ disturbanceReport }: DisturbanceReportHeaderP
     <PageHeader
       className="h-[203px]"
       title={`Disturbance Report ${
-        disturbanceReport?.dateOfDisturbance ? formatDateForEnGb(disturbanceReport?.dateOfDisturbance) : ""
+        disturbanceReport?.disturbanceStartDate ? formatDateForEnGb(disturbanceReport?.disturbanceStartDate) : ""
       }`}
       subtitles={subtitles}
       hasBackButton={false}

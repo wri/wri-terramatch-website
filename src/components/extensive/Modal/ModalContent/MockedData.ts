@@ -1,19 +1,19 @@
 interface IDataSubmitPolygons {
   id: string;
   name: string;
-  status: "draft" | "submitted" | "approved" | "under-review" | "needs-more-information";
+  status: "draft" | "pending-approval" | "approved" | "under-review" | "information-required";
   isSubmitted: boolean;
 }
 
 export const dataSubmitPolygons: IDataSubmitPolygons[] = [
   { id: "1", name: "Aerobic-agroforestry", status: "approved", isSubmitted: true },
-  { id: "2", name: "Arcos", status: "needs-more-information", isSubmitted: false },
-  { id: "3", name: "Bccp", status: "submitted", isSubmitted: false },
+  { id: "2", name: "Arcos", status: "information-required", isSubmitted: false },
+  { id: "3", name: "Bccp", status: "pending-approval", isSubmitted: false },
   { id: "4", name: "Blue-forest", status: "approved", isSubmitted: true },
-  { id: "5", name: "Durrell", status: "submitted", isSubmitted: false },
-  { id: "6", name: "Ecofix", status: "submitted", isSubmitted: true },
-  { id: "7", name: "Env-coffee-forest-forum", status: "submitted", isSubmitted: false },
-  { id: "8", name: "Env-found-afr-sl", status: "needs-more-information", isSubmitted: true }
+  { id: "5", name: "Durrell", status: "pending-approval", isSubmitted: false },
+  { id: "6", name: "Ecofix", status: "pending-approval", isSubmitted: true },
+  { id: "7", name: "Env-coffee-forest-forum", status: "pending-approval", isSubmitted: false },
+  { id: "8", name: "Env-found-afr-sl", status: "information-required", isSubmitted: true }
 ];
 
 export const dataImageGallery = [
@@ -124,8 +124,8 @@ export const uploadImageData = [
 ];
 
 export const polygonStatusLabels = [
-  { id: "1", label: "Submitted" },
-  { id: "2", label: "Needs More Information" },
+  { id: "1", label: "Pending Approval" },
+  { id: "2", label: "Information Required" },
   { id: "3", label: "Approved" }
 ];
 
@@ -144,7 +144,7 @@ export const commentariesItems = [
     date: "Oct 6, 2022 at 1:12 AM",
     commentary: `Don't see the outline. the source code also needs to be updated.re: aligned to one source. we need to make sure whether this is appropriate. consider that we have the organization in sign-up/profile, mask, and work request boards. On Thursday will provide the the source tables requested`,
     files: commentaryFiles,
-    status: "submitted"
+    status: "pending-approval"
   },
   {
     id: "2",
