@@ -258,18 +258,24 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     }
   }, [openNotification, selectedDownloadPolygonUuids, selectedSitePolygons, site.name, t]);
 
+  const openPolygonEditDrawerForRow = useCallback(
+    (row: PolygonTableRow) => {
+      const sitePolygon = polygonsData.find(polygon => (polygon.polygonUuid ?? polygon.uuid) === row.id);
+      openPolygonEditDrawerForSitePolygon(sitePolygon, row.polygonName);
+    },
+    [polygonsData]
+  );
+
   const handleBulkEditDetails = useCallback(() => {
     if (selectedRows.length === 0) {
       return;
     }
     if (selectedRows.length === 1) {
-      const selectedRow = selectedRows[0];
-      const sitePolygon = polygonsData.find(polygon => (polygon.polygonUuid ?? polygon.uuid) === selectedRow.id);
-      openPolygonEditDrawerForSitePolygon(sitePolygon);
+      openPolygonEditDrawerForRow(selectedRows[0]);
       return;
     }
     setShowBulkEditDrawer(true);
-  }, [polygonsData, selectedRows]);
+  }, [openPolygonEditDrawerForRow, selectedRows]);
 
   const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
   const { downloadAll, isDownloading: isDownloadingAllPolygons } = useDownloadSitePolygons({
@@ -458,6 +464,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onDelete={() => setDeletePolygonModal(true)}
           onDownload={() => void handleBulkDownload()}
           onEdit={handleBulkEditDetails}
+          onViewPolygonDetails={openPolygonEditDrawerForRow}
           onSubmit={() => setSubmitPolygonsModal(true)}
         />
 

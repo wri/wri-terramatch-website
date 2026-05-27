@@ -69,7 +69,10 @@ const MockedPolygonValidationDetails = [
   }
 ];
 
-const ItemPolygon: FC<{ polygon: PolygonTableRow }> = ({ polygon }) => {
+const ItemPolygon: FC<{ polygon: PolygonTableRow; onViewDetails?: (polygon: PolygonTableRow) => void }> = ({
+  polygon,
+  onViewDetails
+}) => {
   const [isOpenViewDetails, setIsOpenViewDetails] = useState(false);
   const t = useT();
   return (
@@ -131,6 +134,11 @@ const ItemPolygon: FC<{ polygon: PolygonTableRow }> = ({ polygon }) => {
               </List.Item>
             ))}
           </List.Root>
+          <Box className="w-fit">
+            <Button variant="borderless" size="small" onClick={() => onViewDetails?.(polygon)} className="w-fit">
+              {t("View Details")}
+            </Button>
+          </Box>
         </Flex>
       )}
     </>
@@ -169,7 +177,7 @@ const ValidationSection: FC<ValidationSectionProps> = ({ polygons, color, onView
                 color: "neutral.900"
               }}
             >
-              <ItemPolygon polygon={item} />
+              <ItemPolygon polygon={item} onViewDetails={onViewDetails} />
             </List.Item>
           ))}
         </List.Root>
