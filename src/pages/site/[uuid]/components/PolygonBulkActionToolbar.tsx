@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useState } from "react";
@@ -14,6 +14,7 @@ export type PolygonBulkActionToolbarProps = {
   visible: boolean;
   itemCount: number;
   isBulkEditDrawerOpen?: boolean;
+  submitLabel?: string;
   isDownloading?: boolean;
   onCancel: () => void;
   onDelete: () => void;
@@ -21,6 +22,7 @@ export type PolygonBulkActionToolbarProps = {
   onEdit: () => void;
   onSubmit: () => void;
   onViewPolygonDetails?: (polygon: PolygonTableRow) => void;
+  showTooltip: boolean;
   polygons: PolygonTableRow[];
 };
 
@@ -28,6 +30,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   visible,
   itemCount,
   isBulkEditDrawerOpen = false,
+  submitLabel = "Submit",
   isDownloading = false,
   onCancel,
   onDelete,
@@ -35,10 +38,11 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   onEdit,
   onSubmit,
   onViewPolygonDetails,
-  polygons
+  polygons,
+  showTooltip
 }) => {
-  const t = useT();
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
+  const t = useT();
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
   if (!visible || isPolygonEditDrawerOpen || isBulkEditDrawerOpen) {
     return null;
@@ -65,35 +69,47 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
           onClick: onDelete
         }}
         items={String(itemCount)}
-        primaryButtonProps={{
+        tertiaryButtonProps={{
           children: t("Download"),
           loading: isDownloading,
           disabled: isDownloading,
           onClick: onDownload
         }}
-        quaternaryButtonProps={{
+        secondaryButtonProps={{
           children: "Run Validation",
           onClick: () => {
             setTimeout(() => {
               setIsSystemValidationCompleteModalOpen(true);
             }, 5000);
             showToast({
-              label: "Validating Polygons...",
+              label: t("Validating Polygons..."),
               type: "info",
               placement: "bottom-end",
-              closableLabel: "Close",
+              closableLabel: t("Close"),
               icon: <LoadingIcon boxSize={7} color="primary.700" animation="spin 1s linear infinite" />
             });
           }
         }}
-        secondaryButtonProps={{
+        primaryButtonProps={{
           children: itemCount > 1 ? t("Edit Details") : t("Edit"),
           onClick: onEdit
         }}
-        tertiaryButtonProps={{
-          children: t("Submit"),
+        submitButtonProps={{
+          children: t(submitLabel),
           onClick: onSubmit
         }}
+        {...(showTooltip && {
+          tooltipContent: (
+            <Box>
+              <Text color="neutral.200" textStyle={"300"} textAlign={"center"}>
+                {t("Auto-fix isn’t available for this selection.")}
+              </Text>
+              <Text color="neutral.200" textStyle={"300"} textAlign={"center"}>
+                {t("Fix the overlap manually.")}
+              </Text>
+            </Box>
+          )
+        })}
       />
     </Box>
   );

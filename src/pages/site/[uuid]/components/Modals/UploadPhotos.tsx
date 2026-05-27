@@ -2,7 +2,6 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
-import { useModalScrollFix } from "@/hooks/useModalScrollFix";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons";
@@ -13,7 +12,6 @@ export interface UploadPhotosProps {
 }
 const UploadPhotos: FC<UploadPhotosProps> = ({ open, onOpenChange }) => {
   const t = useT();
-  useModalScrollFix(open);
 
   const handleClose = useCallback(() => {
     onOpenChange(false);

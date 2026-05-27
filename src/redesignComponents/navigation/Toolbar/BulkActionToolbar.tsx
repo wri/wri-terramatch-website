@@ -1,7 +1,10 @@
 import { Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
+import { InfoIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 import Toolbar from "./Toolbar";
@@ -11,11 +14,13 @@ const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
   primaryButtonProps,
   secondaryButtonProps,
   tertiaryButtonProps,
-  quaternaryButtonProps,
+  tooltipContent,
   items,
   ButtonCancel,
-  ButtonDelete
+  ButtonDelete,
+  submitButtonProps
 }: BulkActionToolbarProps) => {
+  const t = useT();
   return (
     <Toolbar
       className="flex-wrap rounded-lg !bg-theme-primary-800 px-4 py-3 !shadow-[0_-0.25rem_0.375rem_-0.0625rem_rgba(0,0,0,0.10),0_-0.125rem_0.25rem_-0.125rem_rgba(0,0,0,0.10)]"
@@ -26,7 +31,7 @@ const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
             {items}
           </Text>
           <Text color="neutral.100" textStyle={"300"}>
-            items selected
+            {items?.length === 1 ? t("item selected") : t("items selected")}
           </Text>
         </Flex>
       }
@@ -35,12 +40,17 @@ const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
         <Flex alignItems="center" gap={2} flexWrap="wrap">
           <Button {...ButtonDelete} className="!text-theme-error-300" variant="borderless" />
           <SimpleDivider className="!h-3.5 !w-[0.0625rem]" />
-          <Button {...quaternaryButtonProps} variant="borderless" className="!text-theme-neutral-100" />
-          <SimpleDivider className="!h-3.5 !w-[0.0625rem]" />
           <Button {...tertiaryButtonProps} variant="borderless" className="!text-theme-neutral-100" />
           <SimpleDivider className="!h-3.5 !w-[0.0625rem]" />
           <Button {...secondaryButtonProps} variant="borderless" className="!text-theme-neutral-100" />
-          <Button {...primaryButtonProps} variant="primary" />
+          <SimpleDivider className="!h-3.5 !w-[0.0625rem]" />
+          <Button {...primaryButtonProps} variant="borderless" className="!text-theme-neutral-100" />
+          <Button {...submitButtonProps} variant="primary" />
+          {tooltipContent != null && (
+            <Tooltip content={tooltipContent} position="top">
+              <InfoIcon height="1rem" width="1rem" color="neutral.100" />
+            </Tooltip>
+          )}
         </Flex>
       }
     />

@@ -35,6 +35,7 @@ import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessa
 import Log from "@/utils/log";
 
 import DeletePolygon from "../components/Modals/DeletePolygon";
+import OverlapFix from "../components/Modals/OverlapFix";
 import PolygonSubmitted from "../components/Modals/PolygonSubmitted";
 import SubmitPolygons from "../components/Modals/SubmitPolygons";
 import UploadError from "../components/Modals/UploadError";
@@ -64,6 +65,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showOverlapFixModal, setOverlapFixModal] = useState(false);
   const [showSubmitPolygonsModal, setSubmitPolygonsModal] = useState(false);
   const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
   const [submittedPolygonNames, setSubmittedPolygonNames] = useState<string[]>([]);
@@ -139,6 +141,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     };
   }, [polygonsData, selectedRowIds]);
 
+  const hasSelectedFailedValidation = useMemo(
+    () => selectedRows.length > 1 && selectedRows.some(row => row.validation === "failed"),
+    [selectedRows]
+  );
+
   useEffect(() => {
     setSiteData(site);
   }, [setSiteData, site]);
@@ -202,6 +209,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, []);
 
   const handleBulkSubmit = useCallback(async () => {
+    if (hasSelectedFailedValidation) {
+      setOverlapFixModal(true);
+      return;
+    }
+
     if (selectedSubmittablePolygonUuids.length === 0) {
       openNotification("error", t("Error!"), t("No selected polygons are eligible for submission"));
       return;
@@ -228,6 +240,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [
     clearTableSelection,
     closeMapPopups,
+    hasSelectedFailedValidation,
     invalidatePolygonMapTiles,
     openNotification,
     refetchPolygons,
@@ -323,6 +336,19 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const selectedRestorationAreaRounded = Math.round(selectedRestorationAreaHa * 100) / 100;
   const hasPolygonSelection = selectedRows.length > 0;
+
+  const selectedFailedMockedPolygons = [
+    { id: "1", name: "Polygon 1" },
+    { id: "2", name: "Polygon 2" },
+    { id: "3", name: "Polygon 3" }
+  ];
+
+  const selectedSuccessMockedPolygons = [
+    { id: "4", name: "Polygon 4" },
+    { id: "5", name: "Polygon 5" },
+    { id: "6", name: "Polygon 6" }
+  ];
+
   const shouldShowNoResults = !isLoadingPolygons && polygonRows.length === 0;
 
   const selectableRenderRow = useCallback(
@@ -458,6 +484,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           visible={hasPolygonSelection}
           itemCount={selectedRows.length}
           isBulkEditDrawerOpen={showBulkEditDrawer}
+          submitLabel={hasSelectedFailedValidation ? t("Fix Overlap") : t("Submit")}
           polygons={selectedRows}
           isDownloading={isDownloadingSelectedPolygons}
           onCancel={clearTableSelection}
@@ -465,7 +492,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onDownload={() => void handleBulkDownload()}
           onEdit={handleBulkEditDetails}
           onViewPolygonDetails={openPolygonEditDrawerForRow}
-          onSubmit={() => setSubmitPolygonsModal(true)}
+          onSubmit={handleBulkSubmit}
+          showTooltip={hasSelectedFailedValidation}
         />
 
         <PolygonBulkEditDrawer
@@ -505,6 +533,13 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           polygons={selectedRows}
           onDelete={handleBulkDelete}
         />
+        <OverlapFix
+          open={showOverlapFixModal}
+          onClose={() => setOverlapFixModal(false)}
+          polygonsFixed={selectedSuccessMockedPolygons}
+          polygonsNotFixed={selectedFailedMockedPolygons}
+        />
+        <DeletePolygon open={showDeletePolygonModal} onOpenChange={setDeletePolygonModal} polygons={selectedRows} />
         <UploadError open={showUploadErrorModal} onOpenChange={setUploadErrorModal} />
         <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
 
