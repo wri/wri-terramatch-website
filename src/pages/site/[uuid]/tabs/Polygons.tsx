@@ -486,6 +486,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onDownload={() => void handleBulkDownload()}
           onEdit={handleBulkEditDetails}
           onSubmit={handleBulkSubmit}
+          showTooltip={hasSelectedFailedValidation}
         />
 
         <PolygonBulkEditDrawer

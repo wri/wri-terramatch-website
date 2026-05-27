@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useState } from "react";
@@ -21,6 +21,7 @@ export type PolygonBulkActionToolbarProps = {
   onDownload: () => void;
   onEdit: () => void;
   onSubmit: () => void;
+  showTooltip: boolean;
   polygons: PolygonTableRow[];
 };
 
@@ -35,6 +36,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   onDownload,
   onEdit,
   onSubmit,
+  showTooltip,
   polygons
 }) => {
   const t = useT();
@@ -67,8 +69,8 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
           disabled: isDownloading,
           onClick: onDownload
         }}
-        quaternaryButtonProps={{
-          children: t("Run Validation"),
+        secondaryButtonProps={{
+          children: "Run Validation",
           onClick: () => {
             setTimeout(() => {
               setIsSystemValidationCompleteModalOpen(true);
@@ -82,14 +84,26 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
             });
           }
         }}
-        secondaryButtonProps={{
+        primaryButtonProps={{
           children: itemCount > 1 ? t("Edit Details") : t("Edit"),
           onClick: onEdit
         }}
-        primaryButtonProps={{
+        submitButtonProps={{
           children: t(submitLabel),
           onClick: onSubmit
         }}
+        {...(showTooltip && {
+          tooltipContent: (
+            <Box>
+              <Text color="neutral.200" textStyle={"300"} textAlign={"center"}>
+                {t("Auto-fix isn’t available for this selection.")}
+              </Text>
+              <Text color="neutral.200" textStyle={"300"} textAlign={"center"}>
+                {t("Fix the overlap manually.")}
+              </Text>
+            </Box>
+          )
+        })}
       />
     </Box>
   );
