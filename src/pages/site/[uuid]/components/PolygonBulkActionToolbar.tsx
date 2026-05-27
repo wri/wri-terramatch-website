@@ -76,10 +76,10 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
               setIsSystemValidationCompleteModalOpen(true);
             }, 5000);
             showToast({
-              label: "Validating Polygons...",
+              label: t("Validating Polygons..."),
               type: "info",
               placement: "bottom-end",
-              closableLabel: "Close",
+              closableLabel: t("Close"),
               icon: <LoadingIcon boxSize={7} color="primary.700" animation="spin 1s linear infinite" />
             });
           }
