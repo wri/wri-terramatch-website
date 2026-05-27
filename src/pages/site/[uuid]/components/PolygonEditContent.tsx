@@ -3,7 +3,7 @@ import { Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
 import { format } from "date-fns";
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   downloadGeoJsonFile,
@@ -31,6 +31,7 @@ import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useLatestRef } from "@/hooks/useLatestRef";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import MappedTag from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
@@ -137,13 +138,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     polygonGeometryEdit.currentGeometry != null;
   const isAnrEligible = useMemo(() => isSitePolygonEligibleForAnrMonitoringPlots(polygon), [polygon]);
   const anrMapOverlay = useAnrMapOverlayOptional();
-  // The overlay context value is rebuilt every time the provider's state changes
-  // (anrTabActive, showPlotsOnMap, ...). Putting the whole context object in effect
-  // deps would cause the effect to re-run on every overlay state update, and its
-  // cleanup would immediately undo the state we just set => infinite loop. We keep
-  // the latest reference in a ref and only depend on the primitive inputs below.
-  const anrMapOverlayRef = useRef(anrMapOverlay);
-  anrMapOverlayRef.current = anrMapOverlay;
+  // Overlay context identity changes when this effect updates it; read via ref to avoid a sync loop.
+  const anrMapOverlayRef = useLatestRef(anrMapOverlay);
 
   const [anrConnectionReady, { data: anrPlotGeometry, isLoading: isAnrPlotGeometryLoading }] = useAnrPlotGeometry({
     sitePolygonUuid,
@@ -311,7 +307,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     if (sitePolygonUuid !== "" && geometryPolygonUuid !== "") {
       overlay.syncDrawerSelection({ sitePolygonUuid, geometryPolygonUuid });
     }
-  }, [geometryPolygonUuid, hasAnrPlotGeometry, isAnrEligible, plotsVisible, sitePolygonUuid]);
+  }, [anrMapOverlayRef, geometryPolygonUuid, hasAnrPlotGeometry, isAnrEligible, plotsVisible, sitePolygonUuid]);
 
   useEffect(
     () => () => {
@@ -320,7 +316,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       overlay.setAnrTabActive(false);
       overlay.setShowPlotsOnMap(false);
     },
-    []
+    [anrMapOverlayRef]
   );
 
   const downloadMonitoringPlots = useCallback(async () => {
