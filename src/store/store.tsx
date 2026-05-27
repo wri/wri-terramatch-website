@@ -17,6 +17,9 @@ export type AppStore = {
 };
 
 export const makeStore = () => {
+  // protection against strict mode local duplicate hook calling.
+  if (ApiSlice.redux != null) return ApiSlice.redux;
+
   const store = configureStore({
     reducer: {
       api: apiSlice.reducer,
