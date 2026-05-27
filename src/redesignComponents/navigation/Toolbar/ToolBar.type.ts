@@ -24,7 +24,7 @@ export interface BulkActionToolbarProps {
   items?: string;
   ButtonCancel: IButtonProps;
   ButtonDelete: IButtonProps;
-  tooltipContent?: string;
+  tooltipContent?: ReactElement;
 }
 
 export interface ToolbarFormProps {

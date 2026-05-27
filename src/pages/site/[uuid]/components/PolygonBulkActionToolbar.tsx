@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useState } from "react";
@@ -93,7 +93,16 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
           onClick: onSubmit
         }}
         {...(showTooltip && {
-          tooltipContent: t("Auto-fix isn’t available for this selection. Fix the overlap manually.")
+          tooltipContent: (
+            <Box>
+              <Text color="neutral.200" textStyle={"300"} textAlign={"center"}>
+                {t("Auto-fix isn’t available for this selection.")}
+              </Text>
+              <Text color="neutral.200" textStyle={"300"} textAlign={"center"}>
+                {t("Fix the overlap manually.")}
+              </Text>
+            </Box>
+          )
         })}
       />
     </Box>
