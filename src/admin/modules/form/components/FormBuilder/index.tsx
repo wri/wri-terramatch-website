@@ -115,7 +115,7 @@ export const FormBuilderForm = () => {
                   label="Upload Banner Images"
                   validate={[required(), maxFileSize(1)]}
                   isRequired={true}
-                  accept={["image/png", "image/svg+xml", "image/jpeg"]}
+                  accept={{ "image/png": [".png"], "image/svg+xml": [".svg"], "image/jpeg": [".jpg", ".jpeg"] }}
                   placeholder={
                     <Box paddingY={2}>
                       <UploadFile color="primary" />

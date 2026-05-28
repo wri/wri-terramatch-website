@@ -1,5 +1,13 @@
 import { omit } from "lodash";
-import { CreateResult, DataProvider, DeleteParams, GetManyResult, GetOneParams, UpdateParams } from "react-admin";
+import {
+  CreateResult,
+  DataProvider,
+  DeleteParams,
+  GetManyResult,
+  GetOneParams,
+  UpdateParams,
+  UpdateResult
+} from "react-admin";
 
 import {
   createFundingProgramme,
@@ -55,7 +63,7 @@ export const fundingProgrammeDataProvider: Partial<DataProvider> = {
     } as GetManyResult;
   },
 
-  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
+  async update(_: string, params: UpdateParams) {
     try {
       const attributes = omit(params.data, UPLOAD_KEYS) as unknown as StoreFundingProgrammeAttributes;
 
@@ -63,7 +71,7 @@ export const fundingProgrammeDataProvider: Partial<DataProvider> = {
       await handleUploads(params, UPLOAD_KEYS, { entity: "fundingProgrammes", uuid: params.id as string });
       const programme = await updateFundingProgramme(attributes, { id: params.id as string, translated: false });
 
-      return { data: { ...programme, id: programme.uuid } } as RecordType;
+      return { data: { ...programme, id: programme.uuid } } as UpdateResult;
     } catch (err) {
       throw v3ErrorForRA("Funding Programme update fetch failed", err);
     }

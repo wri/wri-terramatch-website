@@ -3,7 +3,7 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { useT } from "@transifex/react";
 import { circle } from "@turf/circle";
 import { GeoJSONFeature } from "mapbox-gl";
-import { FieldError, useForm } from "react-hook-form";
+import { Control, FieldError, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import Button from "@/components/elements/Button/Button";
@@ -66,9 +66,9 @@ export const ShapePropertiesModal = ({
 
   const defaultValues = {
     Radius: Math.round((feature.properties?.radiusInKm as number) * 1000) || 2000,
-    Poly_ID: getFeatureProperties<string>(feature.properties, "Poly_ID"),
-    Practice: getFeatureProperties<string>(feature.properties, "Practice")?.split(","),
-    Target_Sys: getFeatureProperties<string>(feature.properties, "Target_Sys"),
+    Poly_ID: getFeatureProperties<string>(feature.properties, "Poly_ID") ?? "",
+    Practice: getFeatureProperties<string>(feature.properties, "Practice")?.split(",") ?? [],
+    Target_Sys: getFeatureProperties<string>(feature.properties, "Target_Sys") ?? "",
     Distr: getFeatureProperties<string>(feature.properties, "Distr")?.split(","),
     ...additionalPolygonProperties
   };
@@ -122,7 +122,7 @@ export const ShapePropertiesModal = ({
           name="Practice"
           options={getRestorationStrategyOptions()}
           label={t("Restoration practice")}
-          control={control}
+          control={control as Control<any>}
           multiSelect
           required
           error={formState.errors.Practice as FieldError}
@@ -131,7 +131,7 @@ export const ShapePropertiesModal = ({
           name="Target_Sys"
           options={getLandUseTypeOptions()}
           label={t("Target land use system")}
-          control={control}
+          control={control as Control<any>}
           required
           error={formState.errors.Target_Sys}
         />
@@ -139,7 +139,7 @@ export const ShapePropertiesModal = ({
           name="Distr"
           options={getDistributionOptions()}
           label={t("Tree distribution")}
-          control={control}
+          control={control as Control<any>}
           multiSelect
           error={formState.errors.Distr as FieldError}
         />

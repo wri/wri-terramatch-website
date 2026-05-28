@@ -160,6 +160,13 @@ export type OptionWithBoolean = {
 };
 export type OptionValueWithBoolean = string | number | boolean;
 
+export const FileTypeAccept = {
+  Image: { "image/png": [".png"], "image/jpeg": [".jpg", ".jpeg"] },
+  ImageWithSvg: { "image/png": [".png"], "image/svg+xml": [".svg"], "image/jpeg": [".jpg", ".jpeg"] },
+  Pdf: { "application/pdf": [".pdf"] },
+  ImagesAndDocs: { "image/png": [".png"], "image/jpeg": [".jpg", ".jpeg"], "application/pdf": [".pdf"] }
+};
+
 export enum FileType {
   ImagesAndDocs = "image/png, image/jpeg, application/pdf, application/msword",
   Image = "image/png, image/jpeg",

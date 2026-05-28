@@ -135,6 +135,7 @@ export const AccordionFormIterator: FC<AccordionFormIteratorProps> = props => {
   return fields ? (
     //@ts-ignore
     <SimpleFormIteratorContext.Provider value={context}>
+      {/* @ts-ignore */}
       <Root className={clsx(className, fullWidth && "fullwidth", disabled && "disabled")} sx={sx}>
         <ul className={SimpleFormIteratorClasses.list}>
           {fields.map((member, index, array) => (
@@ -164,8 +165,10 @@ export const AccordionFormIterator: FC<AccordionFormIteratorProps> = props => {
           {!disableAdd && (
             <Accordion className={SimpleFormIteratorClasses.add} expanded={false}>
               <AccordionSummary>
-                {cloneElement(addButton, {
+                {cloneElement(addButton as ReactElement, {
+                  // @ts-ignore
                   className: clsx("button-add", `button-add-${source}`),
+                  // @ts-ignore
                   onClick: handleAddButtonClick(addButton.props.onClick)
                 })}
               </AccordionSummary>

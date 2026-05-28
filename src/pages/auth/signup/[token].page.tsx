@@ -35,6 +35,7 @@ const InviteSignupPage = () => {
   const role = "project-developer";
 
   const form = useForm<SignUpFormData>({
+    // @ts-ignore
     resolver: yupResolver(SignUpFormDataSchema(t)),
     mode: "onSubmit"
   });
@@ -96,6 +97,7 @@ const InviteSignupPage = () => {
     });
   };
 
+  // @ts-ignore
   return <SignUpForm form={form} handleSave={handleSave} loading={isCreating} role={role} />;
 };
 

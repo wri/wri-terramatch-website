@@ -37,13 +37,13 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
   const recordContext = useRecordContext();
   const { data: sitePolygons } = useAllSitePolygons({
     entityName: "sites",
-    entityUuid: recordContext.uuid,
-    enabled: recordContext.uuid != null
+    entityUuid: recordContext?.uuid,
+    enabled: recordContext?.uuid != null
   });
 
   if (!sitePolygons?.length || !Array.isArray(sitePolygons)) {
     return (
-      <div className="text-14 w-fit-content whitespace-nowrap rounded-[3px] bg-grey-200 px-2 text-grey-500">
+      <div className="text-14 w-fit-content bg-grey-200 text-grey-500 whitespace-nowrap rounded-[3px] px-2">
         {props.emptyText ?? "Not Provided"}
       </div>
     );
@@ -55,6 +55,7 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
     <ArrayField {...props} record={{ [props.source!]: groupedPolygons }}>
       <SingleFieldList linkType={false}>
         <FunctionField
+          // @ts-ignore
           render={(record?: { status: string; count: number }) => {
             if (record == null) return null;
             const status = record?.status;

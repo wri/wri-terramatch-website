@@ -31,7 +31,7 @@ export const impactStoriesDataProvider: Partial<DataProvider> = {
   },
   // @ts-ignore
   async getOne(_, params) {
-    const { loadFailure, data: impactStory } = await loadImpactStory({ id: params.id });
+    const { loadFailure, data: impactStory } = await loadImpactStory({ id: params.id as string });
     if (loadFailure != null) {
       throw v3ErrorForRA("Project Pitch get fetch failed", loadFailure);
     }

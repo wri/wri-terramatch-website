@@ -79,9 +79,9 @@ export const TreeSpeciesField: FormFieldFactory = {
     <TreeSpeciesEntryValue {...{ field, values, fieldsProvider }} />
   )),
 
-  formBuilderAdditionalOptions: ({ getSource }) => (
+  formBuilderAdditionalOptions: () => (
     <BooleanInput
-      source={getSource("additionalProps.with_numbers")}
+      source={"additionalProps.with_numbers"}
       label="Has Count"
       helperText="To allow users enter count for each tree species record."
       defaultValue={false}

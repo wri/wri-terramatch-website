@@ -62,8 +62,8 @@ const ProjectDataGrid = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={(record?: ProjectLightDto) => {
-          const { title } = getStatusOptions().find((option: any) => option.value === record?.status) ?? {};
+        render={(record: ProjectLightDto) => {
+          const { title } = getStatusOptions().find((option: any) => option.value === record.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -71,9 +71,9 @@ const ProjectDataGrid = () => {
         source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
-        render={(record?: ProjectLightDto) => {
+        render={(record: ProjectLightDto) => {
           const { title } =
-            getChangeRequestStatusOptions().find((option: any) => option.value === record?.updateRequestStatus) ?? {};
+            getChangeRequestStatusOptions().find((option: any) => option.value === record.updateRequestStatus) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -81,9 +81,9 @@ const ProjectDataGrid = () => {
         source="plantingStatus"
         label="Planting Status"
         sortable={false}
-        render={(record?: ProjectLightDto) => {
+        render={(record: ProjectLightDto) => {
           const { title } =
-            getPlantingStatusOptions().find((option: any) => option.value === record?.plantingStatus) ?? {};
+            getPlantingStatusOptions().find((option: any) => option.value === record.plantingStatus) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -92,8 +92,8 @@ const ProjectDataGrid = () => {
       <FunctionField
         source="frameworkKey"
         label="Framework"
-        render={(record?: ProjectLightDto) => {
-          const frameworkKey = record?.frameworkKey;
+        render={(record: ProjectLightDto) => {
+          const frameworkKey = record.frameworkKey;
           return frameworkInputChoices.find(({ id }) => id === frameworkKey)?.name ?? frameworkKey;
         }}
         sortable={false}

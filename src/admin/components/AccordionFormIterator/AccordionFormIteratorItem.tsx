@@ -74,7 +74,7 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
           {summaryChildren}
           {reOrderButtons &&
             !disableReordering &&
-            cloneElement(reOrderButtons, {
+            cloneElement(reOrderButtons as ReactElement, {
               // @ts-ignore
               index,
               max: total,
@@ -118,8 +118,9 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
               {!disabled && (
                 <span className={SimpleFormIteratorClasses.action}>
                   {removeButton &&
+                    record &&
                     !disableRemoveField(record) &&
-                    cloneElement(removeButton, {
+                    cloneElement(removeButton as ReactElement, {
                       //@ts-ignore
                       className: clsx("button-remove", `button-remove-${source}-${index}`)
                     })}
@@ -136,4 +137,5 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
 export interface AccordionFormIteratorItemProps extends SimpleFormIteratorItemProps, Partial<ArrayInputContextValue> {
   summaryTitle: string;
   summaryChildren?: React.ReactNode;
+  member?: string;
 }

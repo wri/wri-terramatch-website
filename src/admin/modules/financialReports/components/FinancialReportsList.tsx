@@ -58,9 +58,9 @@ const FinancialReportsDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={(record?: FinancialReportLightDto) => {
+        render={(record: FinancialReportLightDto) => {
           const { title } =
-            getFinancialReportStatusOptions().find((option: any) => option.value === record?.status) ?? {};
+            getFinancialReportStatusOptions().find((option: any) => option.value === record.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -68,9 +68,9 @@ const FinancialReportsDataGrid: FC = () => {
         source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
-        render={(record?: FinancialReportLightDto) => {
+        render={(record: FinancialReportLightDto) => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record?.updateRequestStatus
+            (option: any) => option.value === record.updateRequestStatus
           );
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
@@ -78,8 +78,8 @@ const FinancialReportsDataGrid: FC = () => {
       <FunctionField
         source="frameworkKey"
         label="Framework"
-        render={(record?: FinancialReportLightDto) => {
-          const frameworkKey = record?.frameworkKey;
+        render={(record: FinancialReportLightDto) => {
+          const frameworkKey = record.frameworkKey;
           return frameworkInputChoices.find((framework: any) => framework.id === frameworkKey)?.name ?? frameworkKey;
         }}
         sortable={false}

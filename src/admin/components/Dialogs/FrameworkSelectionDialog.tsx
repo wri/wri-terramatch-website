@@ -106,6 +106,7 @@ const FrameworkSelectionDialog: FC<FrameworkSelectionDialogProps> = ({ onExport,
 
   return (
     <Dialog {...props}>
+      {/* @ts-ignore */}
       <Form onSubmit={handleExport} validate={validateForm(validationSchema)}>
         <FrameworkSelectionDialogContent onCancel={onCancel} />
       </Form>

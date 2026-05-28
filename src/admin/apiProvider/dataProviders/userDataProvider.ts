@@ -2,6 +2,7 @@ import pick from "lodash/pick";
 import pickBy from "lodash/pickBy";
 import {
   CreateParams,
+  CreateResult,
   DataProvider,
   DeleteManyParams,
   DeleteParams,
@@ -9,7 +10,8 @@ import {
   GetManyParams,
   GetManyResult,
   GetOneParams,
-  UpdateParams
+  UpdateParams,
+  UpdateResult
 } from "react-admin";
 
 import { createUser, deleteUser, loadUser, loadUserIndex, updateUserResource } from "@/connections/User";
@@ -72,11 +74,11 @@ const buildUserPatchBody = (
 };
 
 export const userDataProvider: Partial<DataProvider> = {
-  async create<RecordType>(_: string, params: CreateParams<RecordType>) {
+  async create(_: string, params: CreateParams) {
     try {
       const user = await createUser(params.data as UserCreateBaseAttributes);
 
-      return { data: { id: user.uuid } } as RecordType;
+      return { data: { id: user.uuid } } as CreateResult;
     } catch (createFailure) {
       throw v3ErrorForRA("User creation failed", createFailure);
     }
@@ -144,7 +146,7 @@ export const userDataProvider: Partial<DataProvider> = {
     }
   },
 
-  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
+  async update(_: string, params: UpdateParams) {
     const uuid = params.id as string;
 
     const body = buildUserPatchBody(
@@ -154,7 +156,7 @@ export const userDataProvider: Partial<DataProvider> = {
 
     try {
       const resp = await updateUserResource(body, { id: uuid });
-      return { data: { ...resp, id: resp.uuid } } as RecordType;
+      return { data: { ...resp, id: resp.uuid } } as UpdateResult;
     } catch (err) {
       throw v3ErrorForRA("User update failed", err);
     }

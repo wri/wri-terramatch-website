@@ -52,8 +52,8 @@ const ProjectReportDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={(record?: ProjectReportLightDto) => {
-          const { title } = getReportStatusOptions().find((option: any) => option.value === record?.status) ?? {};
+        render={(record: ProjectReportLightDto) => {
+          const { title } = getReportStatusOptions().find((option: any) => option.value === record.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />

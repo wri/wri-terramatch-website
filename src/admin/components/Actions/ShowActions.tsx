@@ -44,7 +44,7 @@ const ShowActions: FC<ShowActionsProps> = ({
     deleteProps.confirmContent = `You are about to delete this ${resourceName}. This action will permanently remove the item from the system, and it cannot be undone. Are you sure you want to delete this item?`;
   }
 
-  const canEdit = useCanUserEdit(record, resource);
+  const canEdit = useCanUserEdit(record, resource as string);
 
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -62,7 +62,7 @@ const ShowActions: FC<ShowActionsProps> = ({
         {record && toggleTestStatus && (
           <Button
             label="Toggle Test"
-            className="!text-sm !font-semibold !capitalize  lg:!text-base wide:!text-md"
+            className="wide:!text-md !text-sm !font-semibold  !capitalize lg:!text-base"
             onClick={() => toggleTestStatus()}
           >
             <Icon
@@ -75,7 +75,7 @@ const ShowActions: FC<ShowActionsProps> = ({
           <DeleteWithConfirmButton
             {...deleteProps}
             mutationMode="undoable"
-            className="!text-sm !font-semibold !capitalize  lg:!text-base wide:!text-md"
+            className="wide:!text-md !text-sm !font-semibold  !capitalize lg:!text-base"
             icon={<Icon className="h-5 w-5" name={IconNames.TRASH_PA} />}
           />
         )}
@@ -84,7 +84,7 @@ const ShowActions: FC<ShowActionsProps> = ({
           (resource === "financialReport" ? (
             <EditButton
               disabled={record?.status === SUBMITTED}
-              className="!text-sm !font-semibold !capitalize !text-blueCustom-900 lg:!text-base wide:!text-md"
+              className="!text-blueCustom-900 wide:!text-md !text-sm !font-semibold !capitalize lg:!text-base"
               icon={<Icon className="h-6 w-6" name={IconNames.EDIT} />}
               sx={
                 record?.status === SUBMITTED
@@ -100,7 +100,7 @@ const ShowActions: FC<ShowActionsProps> = ({
             />
           ) : (
             <EditButton
-              className="!text-sm !font-semibold !capitalize !text-blueCustom-900 lg:!text-base wide:!text-md"
+              className="!text-blueCustom-900 wide:!text-md !text-sm !font-semibold !capitalize lg:!text-base"
               icon={<Icon className="h-6 w-6" name={IconNames.EDIT} />}
             />
           ))}

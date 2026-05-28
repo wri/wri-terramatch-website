@@ -186,12 +186,12 @@ export const QuestionArrayInput: FC<QuestionArrayInputProps> = ({
             defaultValue={false}
           />
           <FormDataConsumer>
-            {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
-              if (scopedFormData == null || getSource == null) return null;
+            {({ scopedFormData }: FormDataConsumerRenderParams) => {
+              if (scopedFormData == null) return null;
               const field = getLinkedFieldById(scopedFormData.linkedFieldKey);
               if (field == null) return null;
 
-              return <AdditionalOptions {...{ field, getSource, linkedFieldsData, onDeleteQuestion, selectRef }} />;
+              return <AdditionalOptions {...{ field, linkedFieldsData, onDeleteQuestion, selectRef }} />;
             }}
           </FormDataConsumer>
           {children}

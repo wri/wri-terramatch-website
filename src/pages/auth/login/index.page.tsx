@@ -19,7 +19,7 @@ export type LoginFormDataType = {
 };
 
 export const LoginFormDataSchema = (t: any) => {
-  return yup.object<LoginFormDataType>({
+  return yup.object({
     email: yup.string().email().required(),
     password: yup.string().required(t("Password is required"))
   });

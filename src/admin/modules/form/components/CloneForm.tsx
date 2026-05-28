@@ -19,7 +19,7 @@ export const CloneForm = () => {
   const notify = useNotify();
   const formHook = useForm<TitleForm>({
     defaultValues: {
-      title: record.title
+      title: record?.title
     }
   });
   const [, { create, isCreating, createFailure }] = useFormCreate({});
@@ -45,7 +45,7 @@ export const CloneForm = () => {
   );
 
   const cloneForm = useCallback<SubmitHandler<TitleForm>>(
-    ({ title }) => create(formBuilderToAttributes({ ...record, title, frameworkKey: undefined })),
+    ({ title }) => create(formBuilderToAttributes({ ...record!, title, frameworkKey: undefined })),
     [create, record]
   );
 

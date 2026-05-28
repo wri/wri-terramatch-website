@@ -26,8 +26,8 @@ const TYPE_CHOICES = Forms.FORM_TYPES.map(type => ({ id: type, name: type }));
 export const FormList: FC = () => {
   const createPath = useCreatePath();
   const renderAttachment = useCallback(
-    (dto?: FormLightDto) => {
-      if (dto?.attachedTo == null) return null;
+    (dto: FormLightDto) => {
+      if (dto.attachedTo == null) return null;
 
       const { type, name, adminId } = dto.attachedTo;
       if (type === "entity") return name;
@@ -42,7 +42,7 @@ export const FormList: FC = () => {
 
       return (
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
-        <Link to={createPath({ resource, id: adminId, type: "show" })} onClick={e => e.stopPropagation()}>
+        <Link to={createPath({ resource, id: adminId, type: "show" })} onClick={(e: any) => e.stopPropagation()}>
           {name}
         </Link>
       );

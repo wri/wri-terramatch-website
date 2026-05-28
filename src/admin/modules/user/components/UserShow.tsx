@@ -46,7 +46,7 @@ const MonitoringPartnerProjectsTable = ({ title }: { title: string }) => {
   if (projects.length === 0) return null;
 
   return (
-    <div className="px-4 pb-8 wide:pt-14">
+    <div className="wide:pt-14 px-4 pb-8">
       <Table
         columns={[
           {
@@ -72,8 +72,8 @@ const MonitoringPartnerProjectsTable = ({ title }: { title: string }) => {
   );
 };
 
-const renderFrameworks = (property: "frameworks" | "directFrameworks") => (record?: UserDto) => {
-  const frameworks: UserFramework[] = record?.[property] ?? [];
+const renderFrameworks = (property: "frameworks" | "directFrameworks") => (record: UserDto) => {
+  const frameworks: UserFramework[] = record[property] ?? [];
   return frameworks.length == 0 ? "No Frameworks" : frameworks.map(framework => framework.name).join(", ");
 };
 

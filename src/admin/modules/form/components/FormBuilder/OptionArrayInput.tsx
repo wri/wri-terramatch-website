@@ -15,6 +15,7 @@ import {
 import { FileUploadInput } from "@/admin/components/Inputs/FileUploadInput";
 import { Choice } from "@/admin/types/common";
 import { maxFileSize } from "@/admin/utils/forms";
+import { FileTypeAccept } from "@/types/common";
 
 interface OptionArrayInputProps extends Omit<ArrayInputProps, "children"> {
   dropDownOptions: Choice[];
@@ -34,9 +35,9 @@ export const OptionArrayInput = ({
     <ArrayInput {...arrayInputProps}>
       <SimpleFormIterator sx={SimpleFormIteratorStyles}>
         <FormDataConsumer>
-          {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
-            if (!scopedFormData || !getSource) return null;
-            const { field } = useInput({ source: getSource("") });
+          {({ scopedFormData }: FormDataConsumerRenderParams) => {
+            if (scopedFormData == null) return null;
+            const { field } = useInput({ source: "" });
 
             const imageSrc = scopedFormData.image?.src || scopedFormData.image?.url || scopedFormData.imageUrl;
 
@@ -46,7 +47,7 @@ export const OptionArrayInput = ({
                   <div className="relative hover:[&>button]:opacity-100">
                     <img src={imageSrc} height={100} width={100} alt="" role="presentation" />
                     <IconButton
-                      className="!absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] opacity-0"
+                      className="!absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] opacity-0"
                       onClick={() => field.onChange({ ...field.value, imageUrl: null, image: null })}
                       color="error"
                       size="large"
@@ -61,9 +62,9 @@ export const OptionArrayInput = ({
           }}
         </FormDataConsumer>
         <FormDataConsumer>
-          {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
-            if (!scopedFormData || !getSource || !!scopedFormData.label) return null;
-            const { field } = useInput({ source: getSource("") });
+          {({ scopedFormData }: FormDataConsumerRenderParams) => {
+            if (scopedFormData == null || scopedFormData.label != null) return null;
+            const { field } = useInput({ source: "" });
 
             return (
               <AutocompleteInput
@@ -84,11 +85,10 @@ export const OptionArrayInput = ({
           }}
         </FormDataConsumer>
         <FormDataConsumer>
-          {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
+          {({ scopedFormData }: FormDataConsumerRenderParams) => {
             if (
               !allowImages ||
               scopedFormData == null ||
-              getSource == null ||
               !isEmpty(scopedFormData.image) ||
               !isEmpty(scopedFormData.imageUrl)
             ) {
@@ -97,12 +97,12 @@ export const OptionArrayInput = ({
 
             return (
               <FileUploadInput
-                source={getSource("image")}
+                source={"image"}
                 label="Option Icon"
                 validate={[required(), maxFileSize(1)]}
                 isRequired
                 fullWidth
-                accept={["image/png", "image/svg+xml", "image/jpeg"]}
+                accept={FileTypeAccept.ImageWithSvg}
                 placeholder={
                   <Box paddingY={2}>
                     <UploadFile color="primary" />

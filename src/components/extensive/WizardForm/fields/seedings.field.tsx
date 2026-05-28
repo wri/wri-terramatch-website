@@ -32,9 +32,9 @@ export const SeedingsField: FormFieldFactory = {
     }
   }),
 
-  formBuilderAdditionalOptions: ({ getSource }) => (
+  formBuilderAdditionalOptions: () => (
     <BooleanInput
-      source={getSource("additionalProps.capture_count")}
+      source={"additionalProps.capture_count"}
       label="Capture Count"
       helperText="To allow users enter count instead of 'Number of seeds in sample' and 'Weight of sample(Kg)'"
       defaultValue={false}

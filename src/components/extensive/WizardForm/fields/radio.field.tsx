@@ -22,5 +22,5 @@ export const RadioField: FormFieldFactory = {
     }
   },
 
-  formBuilderAdditionalOptions: ({ field, getSource }) => <DefaultOptionsSetter {...{ field, getSource }} />
+  formBuilderAdditionalOptions: ({ field }) => <DefaultOptionsSetter field={field} />
 };

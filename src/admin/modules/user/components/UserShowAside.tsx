@@ -55,13 +55,13 @@ export const UserShowAside = () => {
             <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
               First Name
             </Typography>
-            <TextField source="firstName" className="admin-text-16 !font-medium text-darkCustom" />
+            <TextField source="firstName" className="admin-text-16 text-darkCustom !font-medium" />
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
               Last Name
             </Typography>
-            <TextField source="lastName" className="admin-text-16 !font-medium text-darkCustom" />
+            <TextField source="lastName" className="admin-text-16 text-darkCustom !font-medium" />
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
@@ -71,7 +71,7 @@ export const UserShowAside = () => {
               source="primaryRole"
               choices={userPrimaryRoleChoices}
               emptyText="Not Provided"
-              className="admin-text-16 !font-medium text-darkCustom"
+              className="admin-text-16 text-darkCustom !font-medium"
             />
           </Grid>
           <Grid item xs={6}>
@@ -82,7 +82,7 @@ export const UserShowAside = () => {
               source="locale"
               choices={localeChoices}
               emptyText="Not Provided"
-              className="admin-text-16 !font-medium text-darkCustom"
+              className="admin-text-16 text-darkCustom !font-medium"
             />
           </Grid>
           <Grid item xs={6}>
@@ -91,8 +91,8 @@ export const UserShowAside = () => {
             </Typography>
             <FunctionField
               source="emailAddressVerifiedAt"
-              render={(record?: UserDto) => (record?.emailAddressVerifiedAt != null ? "✓" : "x")}
-              className="admin-text-16 !font-medium text-darkCustom"
+              render={(record: UserDto) => (record.emailAddressVerifiedAt != null ? "✓" : "x")}
+              className="admin-text-16 text-darkCustom !font-medium"
             />
           </Grid>
         </Grid>
@@ -117,7 +117,7 @@ export const UserShowAside = () => {
             </Button>
             <Button
               variant="contained"
-              className="!rounded-lg !bg-primary"
+              className="!bg-primary !rounded-lg"
               onClick={() => {
                 if (record?.emailAddress == null) {
                   notify(`User email is not available.`, { type: "warning" });
@@ -134,18 +134,18 @@ export const UserShowAside = () => {
             </Button>
             <Button
               variant="contained"
-              className="!rounded-lg !bg-primary"
+              className="!bg-primary !rounded-lg"
               onClick={() => setShowVerifyEmailDialog(true)}
             >
               Verify Email
             </Button>
-            <Button variant="contained" className="!rounded-lg !bg-primary" onClick={handleSendPasswordResetEmail}>
+            <Button variant="contained" className="!bg-primary !rounded-lg" onClick={handleSendPasswordResetEmail}>
               Send Reset Password Email
             </Button>
             {DECLARED_ENV !== "prod" && (
               <Button
                 variant="contained"
-                className="!rounded-lg !bg-primary"
+                className="!bg-primary !rounded-lg"
                 onClick={() => setShowResetPasswordDialog(true)}
               >
                 Reset Password

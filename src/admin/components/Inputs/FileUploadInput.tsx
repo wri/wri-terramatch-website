@@ -1,5 +1,5 @@
 import { styled } from "@mui/material";
-import { FC, useMemo, useState } from "react";
+import { FC, useState } from "react";
 import { Confirm, FileField, FileInput, ImageField, ImageInputProps } from "react-admin";
 
 import { deleteMedia } from "@/connections/Media";
@@ -8,8 +8,6 @@ import { UploadedFile } from "@/types/common";
 export const FileUploadInput: FC<ImageInputProps> = ({ accept, ...props }) => {
   const [removeFile, setRemoveFile] = useState<any>(null);
   const [showModal, setShowModal] = useState<any>(false);
-
-  accept = useMemo(() => (Array.isArray(accept) ? accept.join(",") : accept), [accept]);
 
   return (
     <>
@@ -60,7 +58,7 @@ export const FileUploadInput: FC<ImageInputProps> = ({ accept, ...props }) => {
 };
 
 const StyledFileUpload = styled(FileInput, {
-  overridesResolver: (props, styles) => styles.root
+  overridesResolver: (_, styles) => styles.root
 })(({ theme }) => ({
   "& > .RaFileInput-dropZone": {
     border: `dashed 1px ${theme.palette.primary.light}`

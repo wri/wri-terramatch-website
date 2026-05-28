@@ -46,7 +46,7 @@ export const AddManagerDialog = ({ handleClose, ...props }: AddManagerDialogProp
   } = useForm<FormValues>({ resolver: yupResolver(schema) });
 
   const [, { isCreating, createFailure, create: createUserAssociation }] = useUserAssociationCreation({
-    uuid: record.id as string,
+    uuid: record?.id as string,
     model: "projects"
   });
 

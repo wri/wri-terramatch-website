@@ -232,7 +232,5 @@ export const FinancialIndicatorsField: FormFieldFactory = {
     });
   },
 
-  formBuilderAdditionalOptions: ({ selectRef, getSource }) => (
-    <FinancialIndicatorsAdditionalOptions {...{ selectRef, getSource }} />
-  )
+  formBuilderAdditionalOptions: ({ selectRef }) => <FinancialIndicatorsAdditionalOptions selectRef={selectRef} />
 };

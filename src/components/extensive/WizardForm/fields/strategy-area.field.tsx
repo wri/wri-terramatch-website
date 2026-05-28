@@ -69,7 +69,7 @@ export const StrategyAreaField: FormFieldFactory = {
       });
   },
 
-  formBuilderAdditionalOptions: ({ field, getSource }) => <SelectAdditionalOptions {...{ field, getSource }} />,
+  formBuilderAdditionalOptions: ({ field }) => <SelectAdditionalOptions field={field} />,
 
   formBuilderDefaults: ({ optionListKey, collection }) => ({ optionsList: optionListKey, collection })
 };

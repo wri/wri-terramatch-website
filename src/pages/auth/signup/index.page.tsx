@@ -42,6 +42,7 @@ const SignUpPage = ({
   const router = useRouter();
 
   const form = useForm<SignUpFormData>({
+    // @ts-ignore
     resolver: yupResolver(SignUpFormDataSchema(t)),
     mode: "onSubmit"
   });
@@ -100,6 +101,7 @@ const SignUpPage = ({
     });
   };
 
+  // @ts-ignore
   return <SignUpForm form={form} handleSave={handleSave} loading={isCreating} role={role} />;
 };
 

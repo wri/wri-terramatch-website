@@ -1,5 +1,13 @@
 import lo from "lodash";
-import { DataProvider, GetListParams, GetManyParams, GetManyResult, GetOneParams, UpdateParams } from "react-admin";
+import {
+  DataProvider,
+  GetListParams,
+  GetManyParams,
+  GetManyResult,
+  GetOneParams,
+  UpdateParams,
+  UpdateResult
+} from "react-admin";
 
 import {
   createOrg,
@@ -100,7 +108,7 @@ export const organisationDataProvider: OrganisationDataProvider = {
     }
   },
 
-  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
+  async update(_: string, params: UpdateParams) {
     const uuid = params.id as string;
     const uploadKeys = ["logo", "cover", "legal_registration", "reference", "additional"];
     const attributes = lo.omit(params.data, uploadKeys) as OrganisationUpdateAttributes;
@@ -110,7 +118,7 @@ export const organisationDataProvider: OrganisationDataProvider = {
 
       const updatedOrg = await updateOrganisation(attributes, { id: uuid });
 
-      return { data: { ...updatedOrg, id: updatedOrg.uuid } as RecordType };
+      return { data: { ...updatedOrg, id: updatedOrg.uuid } } as UpdateResult;
     } catch (err) {
       throw v3ErrorForRA("Organisation update failed", err);
     }

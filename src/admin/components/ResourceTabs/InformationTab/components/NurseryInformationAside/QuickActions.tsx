@@ -1,9 +1,14 @@
-import { Box, Button, Card, Divider, Stack, SxProps, Theme, Typography } from "@mui/material";
+import { Box, Button, Card, Divider, Stack, Typography } from "@mui/material";
 import { FC } from "react";
 import { Labeled, NumberField, useShowContext } from "react-admin";
 import { useNavigate } from "react-router";
 
 import modules from "@/admin/modules";
+
+const INLINE_LABEL_SX = {
+  flexDirection: "row",
+  justifyContent: "space-between"
+};
 
 const NuseryQuickActions: FC = () => {
   const { record } = useShowContext();
@@ -25,11 +30,6 @@ const NuseryQuickActions: FC = () => {
     navigate(`/${view}?${queryParams}`);
   };
 
-  const inlineLabelSx: SxProps<Theme> = {
-    flexDirection: "row",
-    justifyContent: "space-between"
-  };
-
   return (
     <Card>
       <Box paddingX={3.75} paddingY={2}>
@@ -40,10 +40,10 @@ const NuseryQuickActions: FC = () => {
 
       <Box paddingX={3.75} paddingTop={2} paddingBottom={3}>
         <Stack gap={3}>
-          <Labeled label="Total Nursery Reports" sx={inlineLabelSx}>
+          <Labeled label="Total Nursery Reports" sx={INLINE_LABEL_SX}>
             <NumberField source="nurseryReportsTotal" />
           </Labeled>
-          <Labeled label="Total Overdue Nursery Reports" sx={inlineLabelSx}>
+          <Labeled label="Total Overdue Nursery Reports" sx={INLINE_LABEL_SX}>
             <NumberField source="overdueNurseryReportsTotal" />
           </Labeled>
           <Button variant="outlined" onClick={() => handleNavigate("nurseryReport")}>

@@ -73,8 +73,8 @@ export const ConditionalField: FormFieldFactory = {
       .filter(isNotNull)
       .reduce((values, child) => normalizedFormFieldData(values, child, fieldsProvider), formValues),
 
-  formBuilderAdditionalOptions: ({ linkedFieldsData, getSource, onDeleteQuestion }) => (
-    <ConditionalAdditionalOptions {...{ linkedFieldsData, getSource, onDeleteQuestion }} />
+  formBuilderAdditionalOptions: ({ linkedFieldsData, onDeleteQuestion }) => (
+    <ConditionalAdditionalOptions {...{ linkedFieldsData, onDeleteQuestion }} />
   ),
 
   addFormEntries: (entries, field, formValues, props) => {

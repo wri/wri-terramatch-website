@@ -41,7 +41,7 @@ const EntityEditDisplay = () => {
     [modules.srpReport.ResourceName]: "srp-reports"
   };
 
-  const entityName = ResourceEntityMapping[resource] as EntityName;
+  const entityName = ResourceEntityMapping[resource!] as EntityName;
   const entityUUID = id as string;
 
   const formEntity = v3EntityName(entityName) as FormEntity;

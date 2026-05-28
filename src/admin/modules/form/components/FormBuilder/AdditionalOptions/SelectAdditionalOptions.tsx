@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import { FC, Fragment, useMemo, useState } from "react";
-import { BooleanInput, FormDataConsumerRenderParams, minLength } from "react-admin";
+import { BooleanInput, minLength } from "react-admin";
 
 import { DefaultOptionsSetter } from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/DefaultOptionsSetter";
 import { OptionArrayInput } from "@/admin/modules/form/components/FormBuilder/OptionArrayInput";
@@ -11,10 +11,9 @@ import { useOptionList } from "@/connections/Form";
 
 type SelectAdditionalOptionsProps = {
   field: FormQuestionField;
-  getSource: NonNullable<FormDataConsumerRenderParams["getSource"]>;
 };
 
-const SelectAdditionalOptions: FC<SelectAdditionalOptionsProps> = ({ field, getSource }) => {
+const SelectAdditionalOptions: FC<SelectAdditionalOptionsProps> = ({ field }) => {
   const allowCreate = useMemo(() => {
     if (field.id === "org-type") return false;
     if (field.optionListKey != null && ["countries", "months"].includes(field.optionListKey)) return false;
@@ -33,7 +32,7 @@ const SelectAdditionalOptions: FC<SelectAdditionalOptionsProps> = ({ field, getS
 
   return optionsLoaded ? (
     <>
-      <DefaultOptionsSetter field={field} getSource={getSource} />
+      <DefaultOptionsSetter field={field} />
       {!editOptions ? (
         allowEditOptions && (
           <Button onClick={() => setEditOptions(true)} variant="contained" sx={{ marginX: "auto", marginY: 2 }}>
@@ -43,7 +42,7 @@ const SelectAdditionalOptions: FC<SelectAdditionalOptionsProps> = ({ field, getS
       ) : (
         <OptionArrayInput
           label="Options"
-          source={getSource("options")}
+          source="options"
           defaultValue={defaultOptions}
           dropDownOptions={
             defaultOptions?.map(option => ({
@@ -59,7 +58,7 @@ const SelectAdditionalOptions: FC<SelectAdditionalOptionsProps> = ({ field, getS
       )}
       {allowCreate && field.inputType === "select" && (
         <BooleanInput
-          source={getSource("optionsOther")}
+          source="optionsOther"
           label="Has Other"
           helperText="Enable this option to let users provide a response when they choose 'Other' as an option."
           defaultValue={false}

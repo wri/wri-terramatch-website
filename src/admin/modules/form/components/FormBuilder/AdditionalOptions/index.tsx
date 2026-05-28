@@ -1,5 +1,4 @@
 import { FC, MutableRefObject } from "react";
-import { FormDataConsumerRenderParams } from "react-admin";
 
 import {
   FormQuestionField,
@@ -10,7 +9,6 @@ import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
 export type AdditionalOptionsProps = {
   field: FormQuestionField;
   linkedFieldsData: FormQuestionField[];
-  getSource: NonNullable<FormDataConsumerRenderParams["getSource"]>;
   onDeleteQuestion: QuestionArrayInputProps["onDeleteQuestion"];
   selectRef: MutableRefObject<HTMLDivElement | null>;
 };

@@ -37,7 +37,10 @@ const schema = yup
       .matches(/^(?=.*[A-Z])/, "Must Contain One Uppercase Character")
       .matches(/^(?=.*[0-9])/, "Must Contain One Number Character")
       .required(),
-    passwordConfirmation: yup.string().oneOf([yup.ref("password")], "Passwords must match.")
+    passwordConfirmation: yup
+      .string()
+      .oneOf([yup.ref("password")], "Passwords must match.")
+      .required()
   })
   .required();
 

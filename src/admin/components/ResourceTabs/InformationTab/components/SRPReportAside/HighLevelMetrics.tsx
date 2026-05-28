@@ -1,14 +1,14 @@
-import { Box, Card, Divider, Stack, SxProps, Theme, Typography } from "@mui/material";
+import { Box, Card, Divider, Stack, Typography } from "@mui/material";
 import { FC } from "react";
 import { Labeled, NumberField, useShowContext } from "react-admin";
 
+const INLINE_LABEL_SX = {
+  flexDirection: "row",
+  justifyContent: "space-between"
+};
+
 const HighLevelMetrics: FC = () => {
   const { record } = useShowContext();
-
-  const inlineLabelSx: SxProps<Theme> = {
-    flexDirection: "row",
-    justifyContent: "space-between"
-  };
 
   return (
     <Card>
@@ -20,13 +20,13 @@ const HighLevelMetrics: FC = () => {
 
       <Box paddingX={3.75} paddingY={2}>
         <Stack gap={3}>
-          <Labeled label="Total Restoration Partners Engaged (with Double-Counting)" sx={inlineLabelSx}>
+          <Labeled label="Total Restoration Partners Engaged (with Double-Counting)" sx={INLINE_LABEL_SX}>
             <NumberField
               source={record.totalRestorationPartnersCount ? "totalRestorationPartnersCount" : "totalTreesPlantedCount"}
               emptyText="0"
             />
           </Labeled>
-          <Labeled label="Total Unique Restoration Partners" sx={inlineLabelSx}>
+          <Labeled label="Total Unique Restoration Partners" sx={INLINE_LABEL_SX}>
             <NumberField
               source={
                 record.totalUniqueRestorationPartners ? "totalUniqueRestorationPartners" : "totalTreesPlantedCount"

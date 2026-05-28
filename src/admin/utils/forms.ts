@@ -1,22 +1,24 @@
 import c from "case";
 import { get, memoize, uniqBy } from "lodash";
+import { FormValidateResult } from "react-hook-form";
 import { AnyObjectSchema } from "yup";
 
 export const validateForm = (schema: AnyObjectSchema) => (values: any) => {
-  let errors: { [index: string]: string } = {};
+  const errors: FormValidateResult<any> = {};
 
   try {
     schema.validateSync(values, { abortEarly: false });
-    //@ts-ignore
   } catch (e: any) {
-    const FEEDBACK_FIELDS_MESSAGE = "Feedback fields must have at least 1 item";
     e.inner.forEach((item: any) => {
-      let message: string = item.message;
       const isFeedbackFieldsPath = item.path === "feedback_fields" || item.path === "feedbackFields";
-      if (isFeedbackFieldsPath && (message.includes("1 items") || message.includes("item is required"))) {
-        message = FEEDBACK_FIELDS_MESSAGE;
+      if (isFeedbackFieldsPath && (item.message.includes("1 items") || item.message.includes("item is required"))) {
+        errors[item.path] = {
+          message: "Feedback fields must have at least 1 item",
+          type: "minLength"
+        };
+      } else {
+        errors[item.path] = { message: item.message, type: item.type };
       }
-      errors[item.path] = message;
     });
   }
 

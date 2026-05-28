@@ -69,7 +69,7 @@ const UserDataGrid = () => {
       <FunctionField
         source="emailAddressVerifiedAt"
         label="Verified"
-        render={(record?: UserDto) => (record?.emailAddressVerifiedAt != null ? "✓" : "x")}
+        render={(record: UserDto) => (record.emailAddressVerifiedAt != null ? "✓" : "x")}
         sortBy="emailAddressVerifiedAt"
       />
       <SelectField source="primaryRole" label="Type" choices={userPrimaryRoleChoices} sortable={false} />

@@ -32,16 +32,16 @@ export const LongTextField: FormFieldFactory = {
     <TextArea {...sharedProps} minLength={minCharacterLimit ?? undefined} maxLength={maxCharacterLimit ?? undefined} />
   ),
 
-  formBuilderAdditionalOptions: ({ getSource }) => (
+  formBuilderAdditionalOptions: () => (
     <>
       <NumberInput
-        source={getSource("minCharacterLimit")}
+        source={"minCharacterLimit"}
         label="Minimum Character Limit"
         defaultValue={0}
         validate={[minValue(0)]}
       />
       <NumberInput
-        source={getSource("maxCharacterLimit")}
+        source={"maxCharacterLimit"}
         label="Maximum Character Limit"
         defaultValue={90000}
         validate={[maxValue(90000)]}

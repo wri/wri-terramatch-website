@@ -61,8 +61,8 @@ export const TableInputField: FormFieldFactory = {
     return { ...rest, ...tableValues };
   },
 
-  formBuilderAdditionalOptions: ({ linkedFieldsData, getSource }) => (
-    <TableAdditionalOptions {...{ linkedFieldsData, getSource }} />
+  formBuilderAdditionalOptions: ({ linkedFieldsData }) => (
+    <TableAdditionalOptions linkedFieldsData={linkedFieldsData} />
   ),
 
   formBuilderDefaults: () => ({

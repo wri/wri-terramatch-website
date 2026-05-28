@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Confirm, ImageField, ImageInput, ImageInputProps } from "react-admin";
 
 import { deleteMedia } from "@/connections/Media";
-import { FileType, UploadedFile } from "@/types/common";
+import { UploadedFile } from "@/types/common";
 
 export const ImageUploadInput = (props: ImageInputProps) => {
   const [removeImage, setRemoveImage] = useState<any>(null);
@@ -12,7 +12,7 @@ export const ImageUploadInput = (props: ImageInputProps) => {
     <>
       <ImageInput
         {...props}
-        accept={FileType.Image}
+        accept={{ "image/png": [".png"], "image/jpeg": [".jpg", ".jpeg"] }}
         maxSize={10 * 1024 * 1024}
         validateFileRemoval={async (file: UploadedFile) => {
           if (file.uuid) {

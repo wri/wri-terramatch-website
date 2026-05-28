@@ -59,9 +59,9 @@ export const FileField: FormFieldFactory = {
     }
   },
 
-  formBuilderAdditionalOptions: ({ getSource }) => (
+  formBuilderAdditionalOptions: () => (
     <BooleanInput
-      source={getSource("additionalProps.with_private_checkbox")}
+      source={"additionalProps.with_private_checkbox"}
       label="Private or public checkbox"
       helperText="Enable this option to allow project developers to set this file as either private or public."
       defaultValue={false}

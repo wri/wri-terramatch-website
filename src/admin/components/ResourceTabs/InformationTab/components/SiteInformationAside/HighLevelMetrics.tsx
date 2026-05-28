@@ -1,4 +1,4 @@
-import { Box, Card, Stack, SxProps, Theme, Typography } from "@mui/material";
+import { Box, Card, Stack, Typography } from "@mui/material";
 import { FC } from "react";
 import { Labeled, NumberField, useShowContext } from "react-admin";
 
@@ -7,12 +7,12 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 
-const HighLevelMetrics: FC = () => {
-  const inlineLabelSx: SxProps<Theme> = {
-    flexDirection: "row",
-    justifyContent: "space-between"
-  };
+const INLINE_LABEL_SX = {
+  flexDirection: "row",
+  justifyContent: "space-between"
+};
 
+const HighLevelMetrics: FC = () => {
   const { record } = useShowContext();
 
   return (
@@ -23,28 +23,32 @@ const HighLevelMetrics: FC = () => {
             High Level Metrics
           </Text>
           <ContextCondition frameworksShow={[Framework.PPC]}>
-            <Labeled label="Workdays Created (Old Calculation)" sx={inlineLabelSx}>
+            <Labeled label="Workdays Created (Old Calculation)" sx={INLINE_LABEL_SX}>
               <NumberField source="selfReportedWorkdayCount" emptyText="0" />
             </Labeled>
-            <Labeled label="Workdays Created (New Calculation)" sx={inlineLabelSx}>
+            <Labeled label="Workdays Created (New Calculation)" sx={INLINE_LABEL_SX}>
               <NumberField source="workdayCount" emptyText="0" />
             </Labeled>
-            <Labeled label="Workdays Created (Combined - PD View)" sx={inlineLabelSx}>
+            <Labeled label="Workdays Created (Combined - PD View)" sx={INLINE_LABEL_SX}>
               <NumberField source="combinedWorkdayCount" emptyText="0" />
             </Labeled>
           </ContextCondition>
           <div className="hidden">
-            <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx} className="label-field-aside">
+            <Labeled label="Total Number Of Trees Planted" sx={INLINE_LABEL_SX} className="label-field-aside">
               <NumberField source="treesPlantedCount" emptyText="0" />
             </Labeled>
           </div>
           <ContextCondition frameworksShow={[Framework.PPC]}>
-            <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx} className="label-field-aside">
+            <Labeled label="Total Number Of Seeds Planted" sx={INLINE_LABEL_SX} className="label-field-aside">
               <NumberField source="seedsPlantedCount" emptyText="0" />
             </Labeled>
           </ContextCondition>
           <ContextCondition frameworksShow={[Framework.PPC]}>
-            <Labeled label="Estimate Number of Trees Restored via ANR" sx={inlineLabelSx} className="label-field-aside">
+            <Labeled
+              label="Estimate Number of Trees Restored via ANR"
+              sx={INLINE_LABEL_SX}
+              className="label-field-aside"
+            >
               <NumberField source="approvedRegeneratedTreesCount" emptyText="0" />
             </Labeled>
           </ContextCondition>
@@ -125,12 +129,12 @@ const HighLevelMetrics: FC = () => {
           </>
           <div className="hidden">
             <ContextCondition frameworksShow={[Framework.TF]}>
-              <Labeled label="Hectares Restored Goal" sx={inlineLabelSx} className="label-field-aside">
+              <Labeled label="Hectares Restored Goal" sx={INLINE_LABEL_SX} className="label-field-aside">
                 <NumberField source="hectaresToRestoreGoal" emptyText="0" />
               </Labeled>
             </ContextCondition>
 
-            <Labeled label="Hectares Under Restoration" sx={inlineLabelSx} className="label-field-aside">
+            <Labeled label="Hectares Under Restoration" sx={INLINE_LABEL_SX} className="label-field-aside">
               <NumberField source="totalHectaresRestoredSum" emptyText="0" />
             </Labeled>
           </div>

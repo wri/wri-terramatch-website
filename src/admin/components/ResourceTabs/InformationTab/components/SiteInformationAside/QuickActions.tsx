@@ -1,9 +1,14 @@
-import { Box, Card, Stack, SxProps, Theme } from "@mui/material";
+import { Box, Card, Stack } from "@mui/material";
 import { FC } from "react";
 import { Button, Labeled, Link, NumberField, useCreatePath, useShowContext } from "react-admin";
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
+
+const INLINE_LABEL_SX = {
+  flexDirection: "row",
+  justifyContent: "space-between"
+};
 
 const SiteQuickActions: FC = () => {
   const { record } = useShowContext();
@@ -22,11 +27,6 @@ const SiteQuickActions: FC = () => {
     }).toString();
 
     return `/${view}?${queryParams}`;
-  };
-
-  const inlineLabelSx: SxProps<Theme> = {
-    flexDirection: "row",
-    justifyContent: "space-between"
   };
 
   return (
@@ -53,10 +53,10 @@ const SiteQuickActions: FC = () => {
 
       <Box paddingX={3.75} paddingTop={2} paddingBottom={3}>
         <Stack gap={3}>
-          <Labeled label="Total Site Reports" sx={inlineLabelSx} className="label-field-aside">
+          <Labeled label="Total Site Reports" sx={INLINE_LABEL_SX} className="label-field-aside">
             <NumberField source="totalSiteReports" />
           </Labeled>
-          <Labeled label="Total Overdue Site Reports" sx={inlineLabelSx} className="label-field-aside">
+          <Labeled label="Total Overdue Site Reports" sx={INLINE_LABEL_SX} className="label-field-aside">
             <NumberField source="overdueSiteReportsTotal" />
           </Labeled>
           <Button

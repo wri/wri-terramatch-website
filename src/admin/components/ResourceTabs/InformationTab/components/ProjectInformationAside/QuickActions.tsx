@@ -1,4 +1,4 @@
-import { Button, Card, Divider, Stack, SxProps, Theme, Typography } from "@mui/material";
+import { Button, Card, Divider, Stack, Typography } from "@mui/material";
 import { FC, useState } from "react";
 import { Labeled, NumberField, useShowContext } from "react-admin";
 import { useNavigate } from "react-router";
@@ -13,6 +13,11 @@ import { Framework } from "@/context/framework.provider";
 import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
 import { v3EntityName } from "@/helpers/entity";
 import Log from "@/utils/log";
+
+const INLINE_LABEL_SX = {
+  flexDirection: "row",
+  justifyContent: "space-between"
+};
 
 const QuickActions: FC = () => {
   const { record } = useShowContext();
@@ -57,11 +62,6 @@ const QuickActions: FC = () => {
     navigate(`/${view}?${queryParams}`);
   };
 
-  const inlineLabelSx: SxProps<Theme> = {
-    flexDirection: "row",
-    justifyContent: "space-between"
-  };
-
   return (
     <Card sx={{ padding: 3.75 }}>
       <Typography variant="h5" marginBottom={2}>
@@ -71,7 +71,7 @@ const QuickActions: FC = () => {
       <Divider sx={{ marginBottom: 2 }} />
 
       <Stack gap={3}>
-        <Labeled label="Total Sites" sx={inlineLabelSx}>
+        <Labeled label="Total Sites" sx={INLINE_LABEL_SX}>
           <NumberField source="totalSites" />
         </Labeled>
         <Button
@@ -96,7 +96,7 @@ const QuickActions: FC = () => {
 
       <ContextCondition frameworksHide={[Framework.PPC]}>
         <Stack gap={3}>
-          <Labeled label="Total Nurseries" sx={inlineLabelSx}>
+          <Labeled label="Total Nurseries" sx={INLINE_LABEL_SX}>
             <NumberField source="totalNurseries" />
           </Labeled>
           <Button
@@ -118,10 +118,10 @@ const QuickActions: FC = () => {
       </ContextCondition>
 
       <Stack gap={3}>
-        <Labeled label="Total Project Reports" sx={inlineLabelSx}>
+        <Labeled label="Total Project Reports" sx={INLINE_LABEL_SX}>
           <NumberField source="totalProjectReports" />
         </Labeled>
-        <Labeled label="Total Overdue Reports" sx={inlineLabelSx}>
+        <Labeled label="Total Overdue Reports" sx={INLINE_LABEL_SX}>
           <NumberField source="totalOverdueReports" />
         </Labeled>
         <Button

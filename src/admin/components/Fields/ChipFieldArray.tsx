@@ -10,7 +10,7 @@ interface ChipFieldArrayProps extends Omit<ArrayFieldProps, "children"> {
 const ChipFieldArray: React.FC<ChipFieldArrayProps> = ({ data, emptyText, ...props }) => {
   if (!data.length) {
     return (
-      <div className="text-14 w-fit-content whitespace-nowrap rounded-[3px] bg-grey-200 px-2 text-grey-500">
+      <div className="text-14 w-fit-content bg-grey-200 text-grey-500 whitespace-nowrap rounded-[3px] px-2">
         {emptyText ?? "Not Provided"}
       </div>
     );
@@ -20,12 +20,13 @@ const ChipFieldArray: React.FC<ChipFieldArrayProps> = ({ data, emptyText, ...pro
     <ArrayField {...props} record={{ [props.source!]: data }}>
       <SingleFieldList linkType={false}>
         <FunctionField
+          // @ts-ignore
           render={(record?: { id: string; label: string; className?: string }) =>
             record ? (
               <ChipField
                 record={{ label: record.label }}
                 source="label"
-                className={classNames("!h-fit !rounded-[3px] text-grey-500", record.className)}
+                className={classNames("text-grey-500 !h-fit !rounded-[3px]", record.className)}
               />
             ) : null
           }

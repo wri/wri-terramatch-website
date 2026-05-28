@@ -16,7 +16,7 @@ import { SelectCountryInput } from "@/admin/components/Inputs/SelectCountryInput
 import { validateForm } from "@/admin/utils/forms";
 import { useOrganisationMedia } from "@/connections/Organisation";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
-import { FileType } from "@/types/common";
+import { FileTypeAccept } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
 
 const validationSchema = yup.object({
@@ -123,18 +123,18 @@ const EnrichedOrganisationEditContent = () => {
           <ImageUploadInput source="logo" label="Logo" fullWidth />
           <ImageUploadInput source="cover" label="Cover" fullWidth />
 
-          <FileUploadInput source="reference" label="Reference Letters" multiple accept={FileType.Pdf} />
+          <FileUploadInput source="reference" label="Reference Letters" multiple accept={FileTypeAccept.Pdf} />
           <FileUploadInput
             source="additional"
             label="Other additional documents"
             multiple
-            accept={FileType.ImagesAndDocs}
+            accept={FileTypeAccept.ImagesAndDocs}
           />
           <FileUploadInput
             source="legal_registration"
             label="Proof of legal registrations"
             multiple
-            accept={FileType.ImagesAndDocs}
+            accept={FileTypeAccept.ImagesAndDocs}
           />
         </TabbedForm.Tab>
 

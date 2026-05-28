@@ -14,7 +14,7 @@ const getValueByPath = (obj: any, path: string) => {
 
 const SimpleChipFieldArray = (props: SimpleChipFieldArrayProps) => {
   const recordContext = useRecordContext();
-  const sourceValue = props.valueByPath ? getValueByPath(recordContext, props.source!) : recordContext[props.source!];
+  const sourceValue = props.valueByPath ? getValueByPath(recordContext, props.source!) : recordContext?.[props.source!];
 
   //fix: RA crashes when null or undefined passed to an arrayField
   if (!Array.isArray(sourceValue)) {

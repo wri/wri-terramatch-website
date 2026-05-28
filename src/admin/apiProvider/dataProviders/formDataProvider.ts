@@ -6,7 +6,8 @@ import {
   GetListParams,
   GetManyResult,
   GetOneParams,
-  UpdateParams
+  UpdateParams,
+  UpdateResult
 } from "react-admin";
 
 import { handleUploads, upload } from "@/admin/apiProvider/utils/upload";
@@ -77,7 +78,7 @@ export const formDataProvider: Partial<DataProvider> = {
     }
   },
 
-  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
+  async update(_: string, params: UpdateParams) {
     try {
       const body = omitBy(omit(params.data, UPLOAD_KEYS), isUndefined) as FormBuilderData;
 
@@ -87,7 +88,7 @@ export const formDataProvider: Partial<DataProvider> = {
 
       await handleOptionFilesUpload(form, body);
 
-      return { data: formDtoToBuilder(form) } as RecordType;
+      return { data: formDtoToBuilder(form) } as UpdateResult;
     } catch (updateFailure) {
       throw v3ErrorForRA("Form get fetch failed", updateFailure);
     }

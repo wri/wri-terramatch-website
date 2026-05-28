@@ -27,6 +27,7 @@ const FormModal: FC<FormModalProps> = ({ title, onSubmit, defaultValues }) => {
 
   const fieldsProvider = useFieldsProvider();
   const resolver = useMemo(() => yupResolver(getSchema(fieldsProvider, t)), [fieldsProvider, t]);
+  // @ts-ignore
   const formHook = useForm({ resolver, mode: "onTouched", defaultValues });
   const fieldIds = useMemo(() => fieldsProvider.fieldNames(fieldsProvider.stepIds()[0]), [fieldsProvider]);
 

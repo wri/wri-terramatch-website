@@ -102,6 +102,7 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
     <Dialog {...dialogProps} fullWidth>
       <Form
         onSubmit={handleSave}
+        // @ts-ignore
         validate={validateForm(
           status === "needs-more-information" ? moreInfoValidationSchema : genericValidationSchema
         )}

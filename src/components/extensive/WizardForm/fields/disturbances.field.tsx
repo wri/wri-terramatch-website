@@ -37,16 +37,16 @@ export const DisturbancesField: FormFieldFactory = {
     )
   ),
 
-  formBuilderAdditionalOptions: ({ getSource }) => (
+  formBuilderAdditionalOptions: () => (
     <>
       <BooleanInput
-        source={getSource("additionalProps.with_intensity")}
+        source={"additionalProps.with_intensity"}
         label="Has intensity"
         helperText="When enabled, this will prompt users to specify the intensity of the disturbance, which can be categorized as low, medium, or high."
         defaultValue={false}
       />
       <BooleanInput
-        source={getSource("additionalProps.with_extent")}
+        source={"additionalProps.with_extent"}
         label="Has extent (% of site affected)"
         helperText="When enabled, this will prompt users to indicate the extent of the disturbance. Users can choose from the following ranges: 0 - 20%, 21 - 40%, 41 - 60%, 61 - 80%, or 81 - 100%."
         defaultValue={false}

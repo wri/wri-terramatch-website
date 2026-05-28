@@ -18,7 +18,6 @@ const FilterClearMenuItem: FC<{ resourceName: string }> = ({ resourceName }) => 
   }
 
   return (
-    // @ts-expect-error react-admin types fix
     <Menu.Item
       to={`/${resourceName}?filter=%7B%7D`}
       primaryText={getResourceLabel(resourceName, 2)}

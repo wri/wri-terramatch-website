@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { BooleanInput, FormDataConsumerRenderParams, minLength } from "react-admin";
+import { BooleanInput, minLength } from "react-admin";
 
 import {
   FormQuestionField,
@@ -10,17 +10,15 @@ import { AdditionalInputTypes } from "@/admin/types/common";
 
 type ConditionalAdditionalOptionsProps = {
   linkedFieldsData: FormQuestionField[];
-  getSource: NonNullable<FormDataConsumerRenderParams["getSource"]>;
   onDeleteQuestion: QuestionArrayInputProps["onDeleteQuestion"];
 };
 
 const ConditionalAdditionalOptions: FC<ConditionalAdditionalOptionsProps> = ({
   linkedFieldsData,
-  getSource,
   onDeleteQuestion
 }) => (
   <QuestionArrayInput
-    source={getSource("children")}
+    source="children"
     label="Follow-up questions"
     title="Child Question"
     linkedFieldsData={linkedFieldsData.filter(field => field.inputType !== AdditionalInputTypes.ConditionalInput)}

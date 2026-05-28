@@ -91,6 +91,7 @@ const ApplicationRequestMoreInfoModal = ({
     <Dialog {...dialogProps} fullWidth>
       <Form
         onSubmit={handleSave}
+        // @ts-ignore
         validate={validateForm(
           status === "requires-more-information" && !isAllSelected ? moreInfoValidationSchema : genericValidationSchema
         )}
