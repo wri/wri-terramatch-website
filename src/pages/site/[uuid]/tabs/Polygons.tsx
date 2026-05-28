@@ -349,10 +349,18 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const selectedRestorationAreaRounded = Math.round(selectedRestorationAreaHa * 100) / 100;
   const hasPolygonSelection = selectedRows.length > 0;
 
-  const selectedFailedPolygons = useMemo(
-    () => selectedRows.filter(row => row.validation === "failed").map(row => ({ id: row.id, name: row.polygonName })),
-    [selectedRows]
-  );
+  const selectedFailedMockedPolygons = [
+    { id: "1", name: "Polygon 1" },
+    { id: "2", name: "Polygon 2" },
+    { id: "3", name: "Polygon 3" }
+  ];
+
+  const selectedSuccessMockedPolygons = [
+    { id: "4", name: "Polygon 4" },
+    { id: "5", name: "Polygon 5" },
+    { id: "6", name: "Polygon 6" }
+  ];
+
   const shouldShowNoResults = !isLoadingPolygons && polygonRows.length === 0;
 
   const selectableRenderRow = useCallback(
@@ -499,6 +507,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onEdit={handleBulkEditDetails}
           onRunValidation={handleRunValidation}
           onSubmit={handleBulkSubmit}
+          showTooltip={hasSelectedFailedValidation}
         />
 
         <PolygonBulkEditDrawer
@@ -541,7 +550,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         <OverlapFix
           open={showOverlapFixModal}
           onClose={() => setOverlapFixModal(false)}
-          polygonsNotFixed={selectedFailedPolygons}
+          polygonsFixed={selectedSuccessMockedPolygons}
+          polygonsNotFixed={selectedFailedMockedPolygons}
         />
         <DeletePolygon open={showDeletePolygonModal} onOpenChange={setDeletePolygonModal} polygons={selectedRows} />
         <UploadError open={showUploadErrorModal} onOpenChange={setUploadErrorModal} />

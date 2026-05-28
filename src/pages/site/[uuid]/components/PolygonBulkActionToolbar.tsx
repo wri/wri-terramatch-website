@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useState } from "react";
@@ -23,6 +23,7 @@ export type PolygonBulkActionToolbarProps = {
   onEdit: () => void;
   onSubmit: () => void;
   onRunValidation: (polygonUuids: string[]) => Promise<void>;
+  showTooltip: boolean;
   polygons: PolygonTableRow[];
   polygonValidations: Map<string, ValidationDto>;
   selectedPolygonUuids: string[];
@@ -42,7 +43,8 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   onRunValidation,
   polygons,
   polygonValidations,
-  selectedPolygonUuids
+  selectedPolygonUuids,
+  showTooltip
 }) => {
   const t = useT();
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
@@ -75,7 +77,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
           disabled: isDownloading,
           onClick: onDownload
         }}
-        quaternaryButtonProps={{
+        secondaryButtonProps={{
           children: t("Run Validation"),
           onClick: async () => {
             if (selectedPolygonUuids.length === 0) {
@@ -103,14 +105,26 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
             }
           }
         }}
-        secondaryButtonProps={{
+        primaryButtonProps={{
           children: itemCount > 1 ? t("Edit Details") : t("Edit"),
           onClick: onEdit
         }}
-        primaryButtonProps={{
+        submitButtonProps={{
           children: t(submitLabel),
           onClick: onSubmit
         }}
+        {...(showTooltip && {
+          tooltipContent: (
+            <Box>
+              <Text color="neutral.200" textStyle={"300"} textAlign={"center"}>
+                {t("Auto-fix isn’t available for this selection.")}
+              </Text>
+              <Text color="neutral.200" textStyle={"300"} textAlign={"center"}>
+                {t("Fix the overlap manually.")}
+              </Text>
+            </Box>
+          )
+        })}
       />
     </Box>
   );
