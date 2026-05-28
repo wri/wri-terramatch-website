@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-/** Ignore sub-pixel differences from line-clamp / font rendering. */
 const CLAMP_THRESHOLD_PX = 1;
 
 export interface UseClampedTextReturn {
@@ -22,8 +21,6 @@ export const useClampedText = (description: string | undefined): UseClampedTextR
       return;
     }
 
-    // With -webkit-line-clamp, compare visible box height to content height instead of
-    // lineHeight * maxLines (unreliable: rem values, sub-pixel rounding, box model).
     const overflowPx = element.scrollHeight - element.clientHeight;
     setIsClamped(overflowPx > CLAMP_THRESHOLD_PX);
   }, [isExpanded]);
