@@ -26,17 +26,21 @@ const meta: Meta<typeof BulkActionToolbar> = {
     tertiaryButtonProps: {
       description: "Configuration for the tertiary button"
     },
-    quaternaryButtonProps: {
-      description: "Configuration for the quaternary button"
-    },
     ButtonCancel: {
       description: "Configuration for the cancel button on the left"
     },
     ButtonDelete: {
       description: "Configuration for the delete button, styled in error colors by default"
     },
+    submitButtonProps: {
+      description: "Configuration for the submit button"
+    },
     items: {
       description: "Number of items selected"
+    },
+    tooltipContent: {
+      description: "Tooltip content for the submit button",
+      type: "string"
     }
   }
 };
@@ -62,7 +66,7 @@ export const Default: Story = {
       children: "Label",
       onClick: () => console.log("Tertiary action clicked")
     },
-    quaternaryButtonProps: {
+    submitButtonProps: {
       children: "Label",
       onClick: () => console.log("Quantity action clicked")
     },

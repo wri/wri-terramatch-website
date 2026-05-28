@@ -16,6 +16,7 @@ import {
   pruneSitePolygonsCache,
   useAllSitePolygons
 } from "@/connections/SitePolygons";
+import { createPolygonValidation, useAllSiteValidations } from "@/connections/Validation";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -34,6 +35,7 @@ import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { AreaHectaresIcon, DownloadIcon, PlusIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import DeletePolygon from "../components/Modals/DeletePolygon";
@@ -43,6 +45,7 @@ import SubmitPolygons from "../components/Modals/SubmitPolygons";
 import UploadError from "../components/Modals/UploadError";
 import UploadPhotos from "../components/Modals/UploadPhotos";
 import UploadPolygons from "../components/Modals/UploadPolygons";
+import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import PolygonBulkEditDrawer from "../components/PolygonBulkEditDrawer";
 import { PolygonRow, PolygonTableRow } from "../components/PolygonTableRow";
@@ -108,6 +111,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
 
+  const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
+  const polygonValidations = useMemo(() => buildPolygonValidationsMap(allValidations), [allValidations]);
+
   const { polygonRows, columns, totalTreesPlanted, totalRestorationAreaHa } = useSitePolygonTableData({
     polygonsData,
     t,
@@ -163,12 +169,13 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [resetSiteMapInteractionState]);
 
   useEffect(() => {
+    if (isLoadingPolygons) return;
     const visibleRowIds = new Set(polygonRows.map(row => row.id));
     setSelectedRowIds(prev => {
       const next = new Set(Array.from(prev).filter(id => visibleRowIds.has(String(id))));
       return next.size === prev.size ? prev : next;
     });
-  }, [polygonRows, setSelectedRowIds]);
+  }, [polygonRows, setSelectedRowIds, isLoadingPolygons]);
 
   const clearTableSelection = useCallback(() => {
     setSelectedRowIds(new Set<string>());
@@ -213,6 +220,17 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       setSubmittedPolygonNames([]);
     }
   }, []);
+
+  const handleRunValidation = useCallback(
+    async (polygonUuids: string[]) => {
+      if (polygonUuids.length === 0) return;
+      await createPolygonValidation({ polygonUuids });
+      ApiSlice.pruneCache("validations");
+      pruneSitePolygonsCache();
+      await Promise.all([refetchPolygons(), fetchAllValidationPages(true)]);
+    },
+    [refetchPolygons, fetchAllValidationPages]
+  );
 
   const handleBulkSubmit = useCallback(async () => {
     if (hasSelectedFailedValidation) {
@@ -377,10 +395,18 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const selectedRestorationAreaRounded = Math.round(selectedRestorationAreaHa * 100) / 100;
   const hasPolygonSelection = selectedRows.length > 0;
 
-  const selectedFailedPolygons = useMemo(
-    () => selectedRows.filter(row => row.validation === "failed").map(row => ({ id: row.id, name: row.polygonName })),
-    [selectedRows]
-  );
+  const selectedFailedMockedPolygons = [
+    { id: "1", name: "Polygon 1" },
+    { id: "2", name: "Polygon 2" },
+    { id: "3", name: "Polygon 3" }
+  ];
+
+  const selectedSuccessMockedPolygons = [
+    { id: "4", name: "Polygon 4" },
+    { id: "5", name: "Polygon 5" },
+    { id: "6", name: "Polygon 6" }
+  ];
+
   const shouldShowNoResults = !isLoadingPolygons && polygonRows.length === 0;
 
   const selectableRenderRow = useCallback(
@@ -518,12 +544,16 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           isBulkEditDrawerOpen={showBulkEditDrawer}
           submitLabel={hasSelectedFailedValidation ? t("Fix Overlap") : t("Submit")}
           polygons={selectedRows}
+          polygonValidations={polygonValidations}
+          selectedPolygonUuids={selectedDownloadPolygonUuids}
           isDownloading={isDownloadingSelectedPolygons}
           onCancel={clearTableSelection}
           onDelete={() => setDeletePolygonModal(true)}
           onDownload={() => void handleBulkDownload()}
           onEdit={handleBulkEditDetails}
+          onRunValidation={handleRunValidation}
           onSubmit={handleBulkSubmit}
+          showTooltip={hasSelectedFailedValidation}
         />
 
         <PolygonBulkEditDrawer
@@ -568,7 +598,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         <OverlapFix
           open={showOverlapFixModal}
           onClose={() => setOverlapFixModal(false)}
-          polygonsNotFixed={selectedFailedPolygons}
+          polygonsFixed={selectedSuccessMockedPolygons}
+          polygonsNotFixed={selectedFailedMockedPolygons}
         />
         <DeletePolygon open={showDeletePolygonModal} onOpenChange={setDeletePolygonModal} polygons={selectedRows} />
         <UploadError open={showUploadErrorModal} onOpenChange={setUploadErrorModal} />
