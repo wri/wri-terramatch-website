@@ -273,9 +273,15 @@ export const transformSitePolygonsToIndicators = (
   return polygons
     .filter(sitePolygon => sitePolygon.status === "approved")
     .map(sitePolygon => {
-      const indicator = sitePolygon?.indicators?.find(
-        (ind: { indicatorSlug: string }) => ind.indicatorSlug === indicatorSlug
+      const currentYear = new Date().getFullYear();
+      const indicatorsBySlug = sitePolygon?.indicators?.filter(
+        (ind: { indicatorSlug: string; yearOfAnalysis?: number }) => ind.indicatorSlug === indicatorSlug
       );
+
+      const indicator =
+        indicatorsBySlug?.find(
+          (ind: { indicatorSlug: string; yearOfAnalysis?: number }) => ind.yearOfAnalysis === currentYear
+        ) ?? indicatorsBySlug?.[0];
 
       if (indicator == null) return null;
 

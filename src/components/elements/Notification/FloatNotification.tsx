@@ -3,13 +3,17 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 
+import Button from "@/components/elements/Button/Button";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
+import { startIndicatorCalculationResource } from "@/connections/Indicators";
 import { pruneSitePolygonsCache } from "@/connections/SitePolygons";
 import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
+import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { getErrorMessageFromPayload } from "@/utils/errors";
+import Log from "@/utils/log";
 
 import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBar";
 import Text from "../Text/Text";
@@ -34,6 +38,39 @@ const listOfPolygonsFixed = (data: Record<string, any> | null) => {
   } else {
     return "No polygons were fixed";
   }
+};
+
+const getIndicatorCalculationValues = (data: Record<string, any> | null) => {
+  if (!data?.data) return null;
+
+  let indicatorCalculationValues = "";
+
+  if (typeof data.data === "object") {
+    indicatorCalculationValues = `
+    Total Polygons Processed: ${data.data?.totalPolygons} <br />
+    Successful (Data Found): ${data.data?.dataFound} <br />
+    No Data Available (Coverage Gap): ${data.data?.noData} <br />
+    Failed: ${
+      data.data?.failureMessage
+        ? `<strong style="font-weight: 600; color: red;">${data.data?.failureMessage}</strong>`
+        : "-"
+    } <br />`;
+  }
+  return indicatorCalculationValues;
+};
+
+const getFailedPolygonUuidsFromIndicatorPayload = (data: Record<string, any> | null): string[] => {
+  const failedPolygonUuids = data?.data?.failedPolygonUuids;
+  if (!Array.isArray(failedPolygonUuids)) return [];
+  return failedPolygonUuids.filter((uuid): uuid is string => typeof uuid === "string" && uuid.length > 0);
+};
+
+const getIndicatorSlugFromPayload = (
+  data: Record<string, any> | null
+): StartIndicatorCalculationPathParams["slug"] | null => {
+  const slug = data?.data?.slug;
+  if (typeof slug !== "string" || slug.length === 0) return null;
+  return slug as StartIndicatorCalculationPathParams["slug"];
 };
 
 const getValidationMessages = (data: Record<string, any> | null): string[] => {
@@ -101,6 +138,7 @@ const FloatNotification: FC = () => {
   const [cachedSiteNames, setCachedSiteNames] = useState<Record<string, string>>({});
   const [processedIndicatorJobs, setProcessedIndicatorJobs] = useState<Set<string>>(new Set());
   const [processedValidationJobs, setProcessedValidationJobs] = useState<Set<string>>(new Set());
+  const [rerunningFailedJobs, setRerunningFailedJobs] = useState<Set<string>>(new Set());
 
   const clearJobs = useCallback(() => {
     if (delayedJobs == null) return;
@@ -178,6 +216,33 @@ const FloatNotification: FC = () => {
     });
   }, [delayedJobs, processedValidationJobs]);
 
+  const handleRerunFailed = useCallback(async (job: DelayedJobDto) => {
+    const slug = getIndicatorSlugFromPayload(job.payload);
+    const failedPolygonUuids = getFailedPolygonUuidsFromIndicatorPayload(job.payload);
+
+    if (slug == null || failedPolygonUuids.length === 0) return;
+
+    setRerunningFailedJobs(prev => new Set(prev).add(job.uuid));
+    try {
+      await startIndicatorCalculationResource({
+        slug,
+        body: {
+          polygonUuids: failedPolygonUuids,
+          forceRecalculation: false,
+          updateExisting: true
+        }
+      });
+    } catch (error) {
+      Log.error("Failed to rerun indicator calculation for failed polygons:", error);
+    } finally {
+      setRerunningFailedJobs(prev => {
+        const updated = new Set(prev);
+        updated.delete(job.uuid);
+        return updated;
+      });
+    }
+  }, []);
+
   return (
     <div className="fixed bottom-[3.5rem] right-6 z-50 mobile:bottom-2.5">
       <div className="relative">
@@ -210,92 +275,128 @@ const FloatNotification: FC = () => {
             <div className="-mr-2 flex flex-1 flex-col gap-3 overflow-auto pr-2">
               {isLoaded &&
                 notAcknowledgedJobs &&
-                notAcknowledgedJobs.map((item, index) => (
-                  <div key={index} className="rounded-lg border border-grey-350 bg-white p-3 hover:border-primary">
-                    <div className="relative mb-1 flex items-center gap-1">
-                      <div className="h-2 w-2 rounded-full bg-primary" />
-                      <Text variant="text-14-light" className="leading-[normal] text-darkCustom " as={"span"}>
-                        {item.name}
-                      </Text>
-                      {
-                        <button className="absolute right-0 hover:text-primary" onClick={() => clearJob(item)}>
-                          <ToolTip content={t("Cancel")}>
-                            <Icon name={IconNames.CLEAR} className="h-3 w-3" />
-                          </ToolTip>
-                        </button>
-                      }
-                    </div>
-                    <Text variant="text-14-light" className="text-darkCustom">
-                      {item?.name?.includes("Project") ? t("Project: ") : t("Site: ")}
-                      <b>{getSiteNameForJob(item, cachedSiteNames)}</b>
-                    </Text>
-                    <div className="mt-1">
-                      {item.status === "failed" ? (
-                        <Text variant="text-12-semibold" className="text-error-600">
-                          {item.payload?.message != null
-                            ? t(item.payload.message)
-                            : item.payload != null
-                            ? t(getErrorMessageFromPayload(item.payload))
-                            : t("Failed to complete")}
-                        </Text>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          {item.name === "Polygon Upload" &&
-                          (item.processedContent === null || item.totalContent === null) &&
-                          item.status === "pending" ? (
-                            <div style={{ width: "100%" }}>
-                              <LinearProgress
-                                sx={{
-                                  height: 9,
-                                  borderRadius: 99,
-                                  backgroundColor: "#a9e7d6",
-                                  "& .MuiLinearProgress-bar": { backgroundColor: "#29c499" }
-                                }}
-                              />
-                            </div>
-                          ) : (
-                            <LinearProgressBar
-                              value={
-                                item.status === "succeeded"
-                                  ? 100
-                                  : ((item.processedContent ?? 0) / (item.totalContent ?? 1)) * 100
-                              }
-                              className="h-2 bg-success-40"
-                              color="success-600"
-                            />
-                          )}
-                          <Text variant="text-12-semibold" className="text-black">
-                            {item.name === "Polygon Upload"
-                              ? item.status === "succeeded"
-                                ? t("Done!")
-                                : ""
-                              : item.status === "succeeded"
-                              ? t("Done!")
-                              : `${Math.round(((item.processedContent ?? 0) / (item.totalContent ?? 1)) * 100)}%`}
-                          </Text>
-                        </div>
-                      )}
+                notAcknowledgedJobs.map((item, index) => {
+                  const indicatorCalculationHtml =
+                    item.name === "Indicator Calculation" ? getIndicatorCalculationValues(item.payload) : null;
+                  const failedPolygonUuids =
+                    item.name === "Indicator Calculation"
+                      ? getFailedPolygonUuidsFromIndicatorPayload(item.payload)
+                      : [];
+                  const canRerunFailed = item.name === "Indicator Calculation" && failedPolygonUuids.length > 0;
+                  const isRerunFailedLoading = rerunningFailedJobs.has(item.uuid);
 
-                      {item.status === "succeeded" &&
-                        item.name === "Polygon Clipping" &&
-                        listOfPolygonsFixed(item.payload) && (
-                          <Text variant="text-12-light" className="mt-2 text-blueCustom-250 text-opacity-60">
-                            {listOfPolygonsFixed(item.payload)}
+                  return (
+                    <div key={index} className="rounded-lg border border-grey-350 bg-white p-3 hover:border-primary">
+                      <div className="relative mb-1 flex items-center gap-1">
+                        <div className="h-2 w-2 rounded-full bg-primary" />
+                        <Text variant="text-14-light" className="leading-[normal] text-darkCustom " as={"span"}>
+                          {item.name}
+                        </Text>
+                        {
+                          <button className="absolute right-0 hover:text-primary" onClick={() => clearJob(item)}>
+                            <ToolTip content={t("Cancel")}>
+                              <Icon name={IconNames.CLEAR} className="h-3 w-3" />
+                            </ToolTip>
+                          </button>
+                        }
+                      </div>
+                      <Text variant="text-14-light" className="text-darkCustom">
+                        {item?.name?.includes("Project") ? t("Project: ") : t("Site: ")}
+                        <b>{getSiteNameForJob(item, cachedSiteNames)}</b>
+                      </Text>
+                      <div className="mt-1">
+                        {item.status === "failed" ? (
+                          <Text variant="text-12-semibold" className="text-error-600">
+                            {item.payload?.message != null
+                              ? t(item.payload.message)
+                              : item.payload != null
+                              ? t(getErrorMessageFromPayload(item.payload))
+                              : t("Failed to complete")}
                           </Text>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            {item.name === "Polygon Upload" &&
+                            (item.processedContent === null || item.totalContent === null) &&
+                            item.status === "pending" ? (
+                              <div style={{ width: "100%" }}>
+                                <LinearProgress
+                                  sx={{
+                                    height: 9,
+                                    borderRadius: 99,
+                                    backgroundColor: "#a9e7d6",
+                                    "& .MuiLinearProgress-bar": { backgroundColor: "#29c499" }
+                                  }}
+                                />
+                              </div>
+                            ) : (
+                              <LinearProgressBar
+                                value={
+                                  item.status === "succeeded"
+                                    ? 100
+                                    : ((item.processedContent ?? 0) / (item.totalContent ?? 1)) * 100
+                                }
+                                className="h-2 bg-success-40"
+                                color="success-600"
+                              />
+                            )}
+                            <Text variant="text-12-semibold" className="text-black">
+                              {item.name === "Polygon Upload"
+                                ? item.status === "succeeded"
+                                  ? t("Done!")
+                                  : ""
+                                : item.status === "succeeded"
+                                ? t("Done!")
+                                : `${Math.round(((item.processedContent ?? 0) / (item.totalContent ?? 1)) * 100)}%`}
+                            </Text>
+                          </div>
                         )}
 
-                      {item.status === "succeeded" && getValidationMessages(item.payload).length > 0 && (
-                        <div className="mt-2 flex flex-col gap-1">
-                          {getValidationMessages(item.payload).map((message, msgIndex) => (
-                            <Text key={msgIndex} variant="text-12-light" className="text-warning-600">
-                              {message}
+                        {item.status === "succeeded" &&
+                          item.name === "Polygon Clipping" &&
+                          listOfPolygonsFixed(item.payload) && (
+                            <Text variant="text-12-light" className="mt-2 text-blueCustom-250 text-opacity-60">
+                              {listOfPolygonsFixed(item.payload)}
                             </Text>
-                          ))}
-                        </div>
-                      )}
+                          )}
+
+                        {indicatorCalculationHtml && (
+                          <Text
+                            variant="text-12-light"
+                            className="mt-2 text-blueCustom-250 text-opacity-60"
+                            dangerouslySetInnerHTML={{ __html: indicatorCalculationHtml }}
+                          />
+                        )}
+
+                        {canRerunFailed && (
+                          <div className="mt-2">
+                            <Button
+                              variant="white-page-admin"
+                              className="!min-h-8 !h-8 !rounded-md !px-3"
+                              disabled={isRerunFailedLoading}
+                              onClick={() => {
+                                handleRerunFailed(item);
+                              }}
+                            >
+                              <Text variant="text-12-semibold" className="text-primary">
+                                {isRerunFailedLoading ? t("Re-running...") : t("Re-run Failed")}
+                              </Text>
+                            </Button>
+                          </div>
+                        )}
+
+                        {item.status === "succeeded" && getValidationMessages(item.payload).length > 0 && (
+                          <div className="mt-2 flex flex-col gap-1">
+                            {getValidationMessages(item.payload).map((message, msgIndex) => (
+                              <Text key={msgIndex} variant="text-12-light" className="text-warning-600">
+                                {message}
+                              </Text>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
             </div>
           </div>
         </div>
