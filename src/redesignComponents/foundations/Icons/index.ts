@@ -86,6 +86,7 @@ export { TreePlantingIcon } from "./RestorationAndLand/TreePlantingIcon";
 export { TreeCircleIcon } from "./DataVisualisation/TreeCircleIcon";
 export { UrbanForestIcon } from "./RestorationAndLand/UrbanForestIcon";
 export { UploadIcon } from "./Function/UploadIcon";
+export { UndoIcon } from "./Function/UndoIcon";
 export { UserIcon } from "./Function/UserIcon";
 export { UserAddIcon } from "./Function/UserAddIcon";
 export { VisibilityIcon } from "./Function/VisibilityIcon";
