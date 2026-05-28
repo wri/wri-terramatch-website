@@ -15,6 +15,12 @@ import Loader from "@/components/generic/Loading/Loader";
 import { useAggregateReports } from "@/connections/AggregateReports";
 import { SupportedEntity } from "@/connections/EntityAssociation";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
+import {
+  SUMMARY_ANR_ROLLUP_HIDE,
+  SUMMARY_INVASIVE_ROLLUP_HIDE,
+  SUMMARY_REPLANTING_ROLLUP_HIDE
+} from "@/constants/summaryRollupVisibility";
+import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TextVariants } from "@/types/common";
@@ -305,97 +311,103 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
           </div>
         </PageCard>
       </PageRow>
-      <PageRow>
-        <PageCard title={t("Assisted Natural Regeneration Progress")}>
-          <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
-            <div className="flex flex-col gap-4">
-              <GoalProgressCard
-                hasProgress={false}
-                classNameCard="!pl-0"
-                items={[
-                  {
-                    iconName: IconNames.REFRESH_CIRCLE_PD,
-                    label: t("Trees Regenerating:"),
-                    variantLabel: "text-14",
-                    classNameLabel: " text-neutral-650 uppercase !w-auto",
-                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: site.regeneratedTreesCount ?? 0
-                  }
-                ]}
-              />
+      <ContextCondition frameworksHide={SUMMARY_ANR_ROLLUP_HIDE}>
+        <PageRow>
+          <PageCard title={t("Assisted Natural Regeneration Progress")}>
+            <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
+              <div className="flex flex-col gap-4">
+                <GoalProgressCard
+                  hasProgress={false}
+                  classNameCard="!pl-0"
+                  items={[
+                    {
+                      iconName: IconNames.REFRESH_CIRCLE_PD,
+                      label: t("Trees Regenerating:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: site.regeneratedTreesCount ?? 0
+                    }
+                  ]}
+                />
+              </div>
+              <div>
+                <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="anr" visibleRows={5} />
+              </div>
             </div>
-            <div>
-              <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="anr" visibleRows={5} />
+          </PageCard>
+        </PageRow>
+      </ContextCondition>
+      <ContextCondition frameworksHide={SUMMARY_REPLANTING_ROLLUP_HIDE}>
+        <PageRow>
+          <PageCard title={t("Trees Replanting Progress")}>
+            <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
+              <div className="flex flex-col gap-4">
+                <GoalProgressCard
+                  hasProgress={false}
+                  classNameCard="!pl-0"
+                  items={[
+                    {
+                      iconName: IconNames.TREE_CIRCLE_PD,
+                      label: t("number of trees REPLANTED:"),
+                      variantLabel: "text-14" as TextVariants,
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: totalCountReplanting
+                    },
+                    {
+                      iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                      label: t("number of species REPLANTED:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: totalCountReplantingSpecies
+                    }
+                  ]}
+                />
+              </div>
+              <div>
+                <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="replanting" visibleRows={5} />
+              </div>
             </div>
-          </div>
-        </PageCard>
-      </PageRow>
-      <PageRow>
-        <PageCard title={t("Trees Replanting Progress")}>
-          <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
-            <div className="flex flex-col gap-4">
-              <GoalProgressCard
-                hasProgress={false}
-                classNameCard="!pl-0"
-                items={[
-                  {
-                    iconName: IconNames.TREE_CIRCLE_PD,
-                    label: t("number of trees REPLANTED:"),
-                    variantLabel: "text-14" as TextVariants,
-                    classNameLabel: " text-neutral-650 uppercase !w-auto",
-                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: totalCountReplanting
-                  },
-                  {
-                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
-                    label: t("number of species REPLANTED:"),
-                    variantLabel: "text-14",
-                    classNameLabel: " text-neutral-650 uppercase !w-auto",
-                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: totalCountReplantingSpecies
-                  }
-                ]}
-              />
+          </PageCard>
+        </PageRow>
+      </ContextCondition>
+      <ContextCondition frameworksHide={SUMMARY_INVASIVE_ROLLUP_HIDE}>
+        <PageRow>
+          <PageCard title={t("Invasive Tree Removal Progress")}>
+            <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
+              <div className="flex flex-col gap-4">
+                <GoalProgressCard
+                  hasProgress={false}
+                  classNameCard="!pl-0"
+                  items={[
+                    {
+                      iconName: IconNames.TREE_CIRCLE_PD,
+                      label: t("number of trees REMOVED:"),
+                      variantLabel: "text-14" as TextVariants,
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: totalCountInvasive
+                    },
+                    {
+                      iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                      label: t("number of species REMOVED:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: totalCountInvasiveSpecies
+                    }
+                  ]}
+                />
+              </div>
+              <div>
+                <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="invasive" visibleRows={5} />
+              </div>
             </div>
-            <div>
-              <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="replanting" visibleRows={5} />
-            </div>
-          </div>
-        </PageCard>
-      </PageRow>
-      <PageRow>
-        <PageCard title={t("Invasive Tree Removal Progress")}>
-          <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
-            <div className="flex flex-col gap-4">
-              <GoalProgressCard
-                hasProgress={false}
-                classNameCard="!pl-0"
-                items={[
-                  {
-                    iconName: IconNames.TREE_CIRCLE_PD,
-                    label: t("number of trees REMOVED:"),
-                    variantLabel: "text-14" as TextVariants,
-                    classNameLabel: " text-neutral-650 uppercase !w-auto",
-                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: totalCountInvasive
-                  },
-                  {
-                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
-                    label: t("number of species REMOVED:"),
-                    variantLabel: "text-14",
-                    classNameLabel: " text-neutral-650 uppercase !w-auto",
-                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: totalCountInvasiveSpecies
-                  }
-                ]}
-              />
-            </div>
-            <div>
-              <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="invasive" visibleRows={5} />
-            </div>
-          </div>
-        </PageCard>
-      </PageRow>
+          </PageCard>
+        </PageRow>
+      </ContextCondition>
       <br />
       <br />
     </PageBody>

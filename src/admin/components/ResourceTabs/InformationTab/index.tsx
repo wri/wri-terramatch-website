@@ -13,6 +13,11 @@ import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { SupportedEntity } from "@/connections/EntityAssociation";
 import { FormEntity, FormModelType, useUpdateRequest } from "@/connections/Form";
+import {
+  SUMMARY_ANR_ROLLUP_HIDE,
+  SUMMARY_INVASIVE_ROLLUP_HIDE,
+  SUMMARY_REPLANTING_ROLLUP_HIDE
+} from "@/constants/summaryRollupVisibility";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
 import WizardFormProvider, { FormModel, useApiFieldsProvider, useOrgFormDetails } from "@/context/wizardForm.provider";
@@ -215,10 +220,8 @@ const InformationTab: FC<IProps> = props => {
                         </div>
                       </ContextCondition>
                     ) : null}
-                    {(["projects", "project-reports"].includes(props.type) && framework === Framework.PPC) ||
-                    (props.type !== "nursery-reports" &&
-                      props.type !== "site-reports" &&
-                      ALL_TF.includes(framework)) ? (
+                    {["projects", "project-reports"].includes(props.type) &&
+                    (framework === Framework.PPC || ALL_TF.includes(framework)) ? (
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-1 py-1">
                           <Text variant="text-16-bold" className="capitalize">
@@ -290,10 +293,44 @@ const InformationTab: FC<IProps> = props => {
                     ) : null}
                     {props.type === "site-reports" ? (
                       <>
+                        <ContextCondition frameworksHide={SUMMARY_ANR_ROLLUP_HIDE}>
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1 py-1">
+                              <Text variant="text-16-bold" className="capitalize">
+                                Trees Regenerating By Species:
+                              </Text>
+                              <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                {totalCountAnr.toLocaleString() ?? 0}
+                              </Text>
+                            </div>
+                            <TreeSpeciesTable {...{ entity, entityUuid }} collection="anr" secondColumnWidth="45%" />
+                          </div>
+                        </ContextCondition>
+                        <ContextCondition frameworksHide={SUMMARY_REPLANTING_ROLLUP_HIDE}>
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1 py-1">
+                              <Text variant="text-16-bold" className="capitalize">
+                                Trees Replanted:
+                              </Text>
+                              <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                {totalCountReplanting.toLocaleString() ?? 0}
+                              </Text>
+                            </div>
+                            <TreeSpeciesTable
+                              {...{ entity, entityUuid }}
+                              collection="replanting"
+                              secondColumnWidth="45%"
+                            />
+                          </div>
+                        </ContextCondition>
+                      </>
+                    ) : null}
+                    {["projects", "sites"].includes(props.type) ? (
+                      <ContextCondition frameworksHide={SUMMARY_ANR_ROLLUP_HIDE}>
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-1 py-1">
                             <Text variant="text-16-bold" className="capitalize">
-                              Trees Regenerating By Species:
+                              {props.type === "projects" ? "Tree Regenerating:" : "Trees Regenerating:"}
                             </Text>
                             <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
                               {totalCountAnr.toLocaleString() ?? 0}
@@ -301,6 +338,10 @@ const InformationTab: FC<IProps> = props => {
                           </div>
                           <TreeSpeciesTable {...{ entity, entityUuid }} collection="anr" secondColumnWidth="45%" />
                         </div>
+                      </ContextCondition>
+                    ) : null}
+                    {["projects", "sites"].includes(props.type) ? (
+                      <ContextCondition frameworksHide={SUMMARY_REPLANTING_ROLLUP_HIDE}>
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-1 py-1">
                             <Text variant="text-16-bold" className="capitalize">
@@ -316,46 +357,22 @@ const InformationTab: FC<IProps> = props => {
                             secondColumnWidth="45%"
                           />
                         </div>
-                      </>
-                    ) : null}
-                    {["projects", "sites"].includes(props.type) ? (
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1 py-1">
-                          <Text variant="text-16-bold" className="capitalize">
-                            {props.type === "projects" ? "Tree Regenerating:" : "Trees Regenerating:"}
-                          </Text>
-                          <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                            {totalCountAnr.toLocaleString() ?? 0}
-                          </Text>
-                        </div>
-                        <TreeSpeciesTable {...{ entity, entityUuid }} collection="anr" secondColumnWidth="45%" />
-                      </div>
-                    ) : null}
-                    {["projects", "sites"].includes(props.type) ? (
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1 py-1">
-                          <Text variant="text-16-bold" className="capitalize">
-                            Trees Replanted:
-                          </Text>
-                          <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                            {totalCountReplanting.toLocaleString() ?? 0}
-                          </Text>
-                        </div>
-                        <TreeSpeciesTable {...{ entity, entityUuid }} collection="replanting" secondColumnWidth="45%" />
-                      </div>
+                      </ContextCondition>
                     ) : null}
                     {["projects", "sites", "site-reports"].includes(props.type) ? (
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1 py-1">
-                          <Text variant="text-16-bold" className="capitalize">
-                            Invasive Trees Removed:
-                          </Text>
-                          <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                            {totalCountInvasive.toLocaleString() ?? 0}
-                          </Text>
+                      <ContextCondition frameworksHide={SUMMARY_INVASIVE_ROLLUP_HIDE}>
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1 py-1">
+                            <Text variant="text-16-bold" className="capitalize">
+                              Invasive Trees Removed:
+                            </Text>
+                            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                              {totalCountInvasive.toLocaleString() ?? 0}
+                            </Text>
+                          </div>
+                          <TreeSpeciesTable {...{ entity, entityUuid }} collection="invasive" secondColumnWidth="45%" />
                         </div>
-                        <TreeSpeciesTable {...{ entity, entityUuid }} collection="invasive" secondColumnWidth="45%" />
-                      </div>
+                      </ContextCondition>
                     ) : null}
                   </div>
                 ) : null}

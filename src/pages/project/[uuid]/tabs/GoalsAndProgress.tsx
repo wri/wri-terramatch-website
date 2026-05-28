@@ -17,6 +17,11 @@ import Loader from "@/components/generic/Loading/Loader";
 import { useAggregateReports } from "@/connections/AggregateReports";
 import { SupportedEntity } from "@/connections/EntityAssociation";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
+import {
+  SUMMARY_ANR_ROLLUP_HIDE,
+  SUMMARY_INVASIVE_ROLLUP_HIDE,
+  SUMMARY_REPLANTING_ROLLUP_HIDE
+} from "@/constants/summaryRollupVisibility";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -355,57 +360,59 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
         </PageColumn>
 
         <PageColumn>
-          <PageCard title={t("Assisted Natural Regeneration Progress")} className="h-full">
-            <ContextCondition frameworksShow={[Framework.HBF]}>
-              <div>
-                <Text variant="text-14" className="mb-2 uppercase text-neutral-650">
-                  {t("Estimated Number of trees regenerating")}
-                </Text>
-                <div className="mb-2 flex items-center">
-                  <div className="relative h-9 w-[218px]">
-                    <div className="absolute inset-0 z-0 h-full w-full">
-                      <ProgressBarChart
-                        data={getProgressData(project.goalTreesRestoredAnr ?? 0, project.regeneratedTreesCount ?? 0)}
-                        className="h-full w-full"
+          <ContextCondition frameworksHide={SUMMARY_ANR_ROLLUP_HIDE}>
+            <PageCard title={t("Assisted Natural Regeneration Progress")} className="h-full">
+              <ContextCondition frameworksShow={[Framework.HBF]}>
+                <div>
+                  <Text variant="text-14" className="mb-2 uppercase text-neutral-650">
+                    {t("Estimated Number of trees regenerating")}
+                  </Text>
+                  <div className="mb-2 flex items-center">
+                    <div className="relative h-9 w-[218px]">
+                      <div className="absolute inset-0 z-0 h-full w-full">
+                        <ProgressBarChart
+                          data={getProgressData(project.goalTreesRestoredAnr ?? 0, project.regeneratedTreesCount ?? 0)}
+                          className="h-full w-full"
+                        />
+                      </div>
+                      <img
+                        src="/images/regenerationBackground.svg"
+                        id="regenerationBackground"
+                        alt="secondValue"
+                        className="z-1 absolute right-0 h-9 w-[219px]"
                       />
                     </div>
-                    <img
-                      src="/images/regenerationBackground.svg"
-                      id="regenerationBackground"
-                      alt="secondValue"
-                      className="z-1 absolute right-0 h-9 w-[219px]"
-                    />
-                  </div>
-                  <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                    {(project.regeneratedTreesCount ?? 0).toLocaleString()}
-                    <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                      of {project.goalTreesRestoredAnr?.toLocaleString()}
+                    <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
+                      {(project.regeneratedTreesCount ?? 0).toLocaleString()}
+                      <Text variant="text-16-light" className="ml-1 text-darkCustom">
+                        of {project.goalTreesRestoredAnr?.toLocaleString()}
+                      </Text>
                     </Text>
-                  </Text>
+                  </div>
                 </div>
-              </div>
-            </ContextCondition>
-            <ContextCondition frameworksHide={[Framework.HBF]}>
-              <GoalProgressCard
-                hasProgress={false}
-                classNameCard="!pl-0"
-                items={[
-                  {
-                    iconName: IconNames.REFRESH_CIRCLE_PD,
-                    label: t("Estimated Number of trees regenerating:"),
-                    variantLabel: "text-14",
-                    classNameLabel: " text-neutral-650 uppercase !w-auto",
-                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: (project.regeneratedTreesCount ?? 0).toLocaleString()
-                  }
-                ]}
-              />
-            </ContextCondition>
+              </ContextCondition>
+              <ContextCondition frameworksHide={[Framework.HBF]}>
+                <GoalProgressCard
+                  hasProgress={false}
+                  classNameCard="!pl-0"
+                  items={[
+                    {
+                      iconName: IconNames.REFRESH_CIRCLE_PD,
+                      label: t("Estimated Number of trees regenerating:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: (project.regeneratedTreesCount ?? 0).toLocaleString()
+                    }
+                  ]}
+                />
+              </ContextCondition>
 
-            <div className="mt-2">
-              <TreeSpeciesTable entity="projects" entityUuid={project.uuid} collection="anr" visibleRows={5} />
-            </div>
-          </PageCard>
+              <div className="mt-2">
+                <TreeSpeciesTable entity="projects" entityUuid={project.uuid} collection="anr" visibleRows={5} />
+              </div>
+            </PageCard>
+          </ContextCondition>
         </PageColumn>
       </PageRow>
       <ContextCondition frameworksShow={[Framework.HBF]}>
@@ -455,72 +462,76 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
           </PageCard>
         </PageRow>
       </ContextCondition>
-      <PageRow className="mx-0 w-full !max-w-full gap-8 px-6">
-        <PageCard title={t("Trees Replanting Progress")}>
-          <div className="grid grid-cols-2 gap-16">
-            <div className="flex flex-col gap-4">
-              <GoalProgressCard
-                hasProgress={false}
-                classNameCard="!pl-0"
-                items={[
-                  {
-                    iconName: IconNames.TREE_CIRCLE_PD,
-                    label: t("number of trees REPLANTED:"),
-                    variantLabel: "text-14" as TextVariants,
-                    classNameLabel: " text-neutral-650 uppercase !w-auto",
-                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: totalCountReplanting
-                  },
-                  {
-                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
-                    label: t("number of species REPLANTED:"),
-                    variantLabel: "text-14",
-                    classNameLabel: " text-neutral-650 uppercase !w-auto",
-                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: totalCountReplantingSpecies
-                  }
-                ]}
-              />
+      <ContextCondition frameworksHide={SUMMARY_REPLANTING_ROLLUP_HIDE}>
+        <PageRow className="mx-0 w-full !max-w-full gap-8 px-6">
+          <PageCard title={t("Trees Replanting Progress")}>
+            <div className="grid grid-cols-2 gap-16">
+              <div className="flex flex-col gap-4">
+                <GoalProgressCard
+                  hasProgress={false}
+                  classNameCard="!pl-0"
+                  items={[
+                    {
+                      iconName: IconNames.TREE_CIRCLE_PD,
+                      label: t("number of trees REPLANTED:"),
+                      variantLabel: "text-14" as TextVariants,
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: totalCountReplanting
+                    },
+                    {
+                      iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                      label: t("number of species REPLANTED:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: totalCountReplantingSpecies
+                    }
+                  ]}
+                />
+              </div>
+              <div>
+                <TreeSpeciesTable entity="projects" entityUuid={project.uuid} collection="replanting" visibleRows={5} />
+              </div>
             </div>
-            <div>
-              <TreeSpeciesTable entity="projects" entityUuid={project.uuid} collection="replanting" visibleRows={5} />
+          </PageCard>
+        </PageRow>
+      </ContextCondition>
+      <ContextCondition frameworksHide={SUMMARY_INVASIVE_ROLLUP_HIDE}>
+        <PageRow className="mx-0 w-full !max-w-full gap-8 px-6">
+          <PageCard title={t("Invasive Tree Removal Progress")}>
+            <div className="grid grid-cols-2 gap-16">
+              <div className="flex flex-col gap-4">
+                <GoalProgressCard
+                  hasProgress={false}
+                  classNameCard="!pl-0"
+                  items={[
+                    {
+                      iconName: IconNames.TREE_CIRCLE_PD,
+                      label: t("number of trees REMOVED:"),
+                      variantLabel: "text-14" as TextVariants,
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: totalCountInvasive
+                    },
+                    {
+                      iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                      label: t("number of species REMOVED:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: totalCountInvasiveSpecies
+                    }
+                  ]}
+                />
+              </div>
+              <div>
+                <TreeSpeciesTable entity="projects" entityUuid={project.uuid} collection="invasive" visibleRows={5} />
+              </div>
             </div>
-          </div>
-        </PageCard>
-      </PageRow>
-      <PageRow className="mx-0 w-full !max-w-full gap-8 px-6">
-        <PageCard title={t("Invasive Tree Removal Progress")}>
-          <div className="grid grid-cols-2 gap-16">
-            <div className="flex flex-col gap-4">
-              <GoalProgressCard
-                hasProgress={false}
-                classNameCard="!pl-0"
-                items={[
-                  {
-                    iconName: IconNames.TREE_CIRCLE_PD,
-                    label: t("number of trees REMOVED:"),
-                    variantLabel: "text-14" as TextVariants,
-                    classNameLabel: " text-neutral-650 uppercase !w-auto",
-                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: totalCountInvasive
-                  },
-                  {
-                    iconName: IconNames.LEAF_PLANTED_CIRCLE,
-                    label: t("number of species REMOVED:"),
-                    variantLabel: "text-14",
-                    classNameLabel: " text-neutral-650 uppercase !w-auto",
-                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: totalCountInvasiveSpecies
-                  }
-                ]}
-              />
-            </div>
-            <div>
-              <TreeSpeciesTable entity="projects" entityUuid={project.uuid} collection="invasive" visibleRows={5} />
-            </div>
-          </div>
-        </PageCard>
-      </PageRow>
+          </PageCard>
+        </PageRow>
+      </ContextCondition>
       <br />
       <br />
     </PageBody>
