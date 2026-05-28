@@ -19,7 +19,8 @@ import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
-import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import type { ButtonGroupButtonProps } from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
@@ -135,9 +136,10 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const hasNurseries = (project.totalNurseries ?? 0) > 0;
   const shouldHideNurseries = framework === Framework.PPC;
 
-  const addSitesAndNurseriesButtons = useMemo<IButtonProps[]>(() => {
-    const buttons: IButtonProps[] = [
+  const addSitesAndNurseriesButtons = useMemo<ButtonGroupButtonProps[]>(() => {
+    const buttons: ButtonGroupButtonProps[] = [
       {
+        id: "add-sites",
         variant: "borderless",
         size: "small",
         rightIcon: <ChevronRightIcon boxSize={4} />,
@@ -149,6 +151,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
 
     if (!shouldHideNurseries) {
       buttons.push({
+        id: "add-nurseries",
         variant: "borderless",
         size: "small",
         rightIcon: <ChevronRightIcon boxSize={4} />,
@@ -234,6 +237,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
                     ? {
                         buttons: [
                           {
+                            id: "finish-project-setup",
                             variant: "borderless",
                             size: "small",
                             className: "!text-theme-neutral-100",

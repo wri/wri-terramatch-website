@@ -14,6 +14,7 @@ import {
   pruneSitePolygonsCache,
   useAllSitePolygons
 } from "@/connections/SitePolygons";
+import { createPolygonValidation, useAllSiteValidations } from "@/connections/Validation";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -32,6 +33,7 @@ import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { AreaHectaresIcon, DownloadIcon, PlusIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import DeletePolygon from "../components/Modals/DeletePolygon";
@@ -41,6 +43,7 @@ import SubmitPolygons from "../components/Modals/SubmitPolygons";
 import UploadError from "../components/Modals/UploadError";
 import UploadPhotos from "../components/Modals/UploadPhotos";
 import UploadPolygons from "../components/Modals/UploadPolygons";
+import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import PolygonBulkEditDrawer from "../components/PolygonBulkEditDrawer";
 import { PolygonRow, PolygonTableRow } from "../components/PolygonTableRow";
@@ -102,6 +105,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
 
+  const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
+  const polygonValidations = useMemo(() => buildPolygonValidationsMap(allValidations), [allValidations]);
+
   const { polygonRows, columns, totalTreesPlanted, totalRestorationAreaHa } = useSitePolygonTableData({
     polygonsData,
     t,
@@ -157,12 +163,13 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [resetSiteMapInteractionState]);
 
   useEffect(() => {
+    if (isLoadingPolygons) return;
     const visibleRowIds = new Set(polygonRows.map(row => row.id));
     setSelectedRowIds(prev => {
       const next = new Set(Array.from(prev).filter(id => visibleRowIds.has(String(id))));
       return next.size === prev.size ? prev : next;
     });
-  }, [polygonRows, setSelectedRowIds]);
+  }, [polygonRows, setSelectedRowIds, isLoadingPolygons]);
 
   const clearTableSelection = useCallback(() => {
     setSelectedRowIds(new Set<string>());
@@ -207,6 +214,17 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       setSubmittedPolygonNames([]);
     }
   }, []);
+
+  const handleRunValidation = useCallback(
+    async (polygonUuids: string[]) => {
+      if (polygonUuids.length === 0) return;
+      await createPolygonValidation({ polygonUuids });
+      ApiSlice.pruneCache("validations");
+      pruneSitePolygonsCache();
+      await Promise.all([refetchPolygons(), fetchAllValidationPages(true)]);
+    },
+    [refetchPolygons, fetchAllValidationPages]
+  );
 
   const handleBulkSubmit = useCallback(async () => {
     if (hasSelectedFailedValidation) {
@@ -486,12 +504,15 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           isBulkEditDrawerOpen={showBulkEditDrawer}
           submitLabel={hasSelectedFailedValidation ? t("Fix Overlap") : t("Submit")}
           polygons={selectedRows}
+          polygonValidations={polygonValidations}
+          selectedPolygonUuids={selectedDownloadPolygonUuids}
           isDownloading={isDownloadingSelectedPolygons}
           onCancel={clearTableSelection}
           onDelete={() => setDeletePolygonModal(true)}
           onDownload={() => void handleBulkDownload()}
           onEdit={handleBulkEditDetails}
           onViewPolygonDetails={openPolygonEditDrawerForRow}
+          onRunValidation={handleRunValidation}
           onSubmit={handleBulkSubmit}
           showTooltip={hasSelectedFailedValidation}
         />
@@ -594,7 +615,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                   progress={totalTreesPlanted}
                   goal={Math.max(totalTreesPlanted, 1)}
                   selection={hasPolygonSelection ? selectedTreesPlanted : undefined}
-                  tooltipContent={t("Trees Planted")}
+                  tooltipContent={t("This is the sum of trees planted as reported in the polygon attributes")}
                   className="min-w-[12.5rem]"
                 />
                 <MetricCard
@@ -605,7 +626,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                   progress={totalRestorationAreaHa}
                   goal={Math.max(totalRestorationAreaHa, 1)}
                   selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
-                  tooltipContent={t("Restoration Area")}
+                  tooltipContent={t("This is the sum of hectares from the selected polygons")}
                   className="min-w-[12.5rem]"
                 />
               </Flex>

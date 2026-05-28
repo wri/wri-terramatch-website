@@ -3,7 +3,7 @@ import { DatePicker, Portal, useDatePicker } from "@ark-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
 import type { FC } from "react";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
@@ -56,7 +56,6 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
 }) => {
   const [uncontrolledDate, setUncontrolledDate] = useState<DateValue[]>([]);
   const date = valueProp ?? uncontrolledDate;
-  const portalContainerRef = useRef<HTMLDivElement | null>(null);
   const browserLocale = useMemo(() => navigator.language, []);
   const dateFormat = useMemo(() => getDateFormatString(browserLocale), [browserLocale]);
 
@@ -113,7 +112,6 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
           </FieldErrorMessage>
         ) : null}
         <StyledPickerWrapper
-          ref={portalContainerRef}
           $size={size}
           data-invalid={errorMessage != null ? "" : undefined}
           data-open={picker.open ? "" : undefined}
@@ -127,7 +125,7 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
               <CalendarIcon />
               <DatePicker.Input index={0} placeholder={dateFormat} />
             </DatePicker.Control>
-            <Portal container={portalContainerRef}>
+            <Portal>
               <DatePicker.Positioner>
                 <DatePicker.Content className="!min-h-[20.3125rem]">
                   <DayView />
