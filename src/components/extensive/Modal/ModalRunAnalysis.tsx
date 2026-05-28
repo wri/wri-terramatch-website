@@ -105,15 +105,9 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
       });
     }
 
-    void analysisRequest
-      .catch(error => {
-        const errorMessage =
-          error instanceof Error ? error.message : t("There was an error running the analysis. Please try again.");
-        openNotification("error", t("Error"), errorMessage);
-      })
-      .finally(() => {
-        setLoadingAnalysis?.(false);
-      });
+    void analysisRequest.finally(() => {
+      setLoadingAnalysis?.(false);
+    });
 
     setIndicatorSlugAnalysis?.("treeCoverLoss");
     onClose?.();
