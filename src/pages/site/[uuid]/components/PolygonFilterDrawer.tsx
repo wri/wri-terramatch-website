@@ -285,6 +285,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
             <ButtonGroup
               buttons={[
                 {
+                  id: "clear-all",
                   children: t("Clear all"),
                   variant: "secondary",
                   onClick: () => {
@@ -294,6 +295,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   }
                 },
                 {
+                  id: "apply",
                   children: t("Apply"),
                   variant: "primary",
                   onClick: () => {

@@ -62,6 +62,8 @@ const AccordionIcon: FC<{ variant: AccordionVariant }> = ({ variant }) => (
   </AccordionChakra.ItemIndicator>
 );
 
+const ACCORDION_ITEM_VALUE = "default-item";
+
 const Accordion: FC<AccordionProps> = ({
   children,
   header,
@@ -69,12 +71,19 @@ const Accordion: FC<AccordionProps> = ({
   variant = "primary",
   className,
   classNameHeader,
-  defaultOpen = false
+  defaultOpen = false,
+  open,
+  onOpenChange
 }) => {
   const { container, header: headerStyles } = variantStyles[variant];
+  const isControlled = open !== undefined;
 
   const handleActionsClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+  };
+
+  const handleValueChange = (details: { value: string[] }) => {
+    onOpenChange?.(details.value.includes(ACCORDION_ITEM_VALUE));
   };
 
   return (
@@ -90,8 +99,13 @@ const Accordion: FC<AccordionProps> = ({
         }
       }}
     >
-      <AccordionChakra.Root multiple defaultValue={defaultOpen ? ["default-item"] : []}>
-        <AccordionChakra.Item value="default-item">
+      <AccordionChakra.Root
+        multiple
+        {...(isControlled
+          ? { value: open ? [ACCORDION_ITEM_VALUE] : [], onValueChange: handleValueChange }
+          : { defaultValue: defaultOpen ? [ACCORDION_ITEM_VALUE] : [] })}
+      >
+        <AccordionChakra.Item value={ACCORDION_ITEM_VALUE}>
           <Flex {...container} gap={4} className={classNameHeader}>
             <AccordionChakra.ItemTrigger css={{ outline: "none" }}>
               <Flex flex="1" alignItems="center" justifyContent="space-between" width="100%" {...headerStyles}>

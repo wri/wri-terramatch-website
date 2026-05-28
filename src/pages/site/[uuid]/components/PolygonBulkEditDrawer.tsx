@@ -95,11 +95,13 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({ selectedPolygon
             <ButtonGroup
               buttons={[
                 {
+                  id: "cancel",
                   children: t("Cancel"),
                   variant: "secondary",
                   onClick: onClose
                 },
                 {
+                  id: "save",
                   children: t("Save"),
                   variant: "primary",
                   onClick: onClose

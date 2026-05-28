@@ -10,6 +10,8 @@ export interface AccordionProps {
   className?: string;
   classNameHeader?: string;
   defaultOpen?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export type AccordionStatus = "success" | "error" | "complete" | "warning";

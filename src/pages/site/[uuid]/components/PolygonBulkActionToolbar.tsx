@@ -54,7 +54,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   }
 
   return (
-    <Box position={"fixed"} zIndex={"100"} bottom={0} left={3} right={3}>
+    <Box position={"fixed"} zIndex={"100"} bottom={3} left={3} right={3}>
       <SystemValidationComplete
         polygons={polygons}
         polygonValidations={polygonValidations}

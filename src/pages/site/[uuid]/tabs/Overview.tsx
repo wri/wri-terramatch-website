@@ -125,6 +125,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                   buttonGroupProps={{
                     buttons: [
                       {
+                        id: "add-polygons",
                         variant: "borderless",
                         size: "small",
                         rightIcon: <ChevronRightIcon boxSize={4} />,
