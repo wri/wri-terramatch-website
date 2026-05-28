@@ -17,7 +17,7 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"],
-      "@chakra-ui/react/theme": ["./node_modules/@chakra-ui/react/dist/esm/theme/index.js"]
+      "@chakra-ui/react/theme": ["./node_modules/@chakra-ui/react/dist/types/theme/index.d.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
