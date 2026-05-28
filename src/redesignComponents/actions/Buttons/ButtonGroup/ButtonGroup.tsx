@@ -30,13 +30,13 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ className, buttons = [], groups = [
       gap={3}
       justifyContent={buttons.length > 0 ? "flex-start" : "space-between"}
     >
-      {buttons.map((button, index) => (
-        <Button key={button.id ?? `button-${index}`} className={twMerge(button.className, "flex-1")} {...button} />
+      {buttons.map(button => (
+        <Button key={button.id} className={twMerge(button.className, "flex-1")} {...button} />
       ))}
-      {groups.map((group, groupIndex) => (
-        <Flex key={group.id ?? `group-${groupIndex}`} gap={3}>
-          {group.buttons.map((button, index) => (
-            <Button key={button.id ?? `${group.id ?? groupIndex}-button-${index}`} {...button} />
+      {groups.map(group => (
+        <Flex key={group.id} gap={3}>
+          {group.buttons.map(button => (
+            <Button key={button.id} {...button} />
           ))}
         </Flex>
       ))}
