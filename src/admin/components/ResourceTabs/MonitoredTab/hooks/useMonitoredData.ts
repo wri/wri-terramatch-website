@@ -2,18 +2,15 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { startIndicatorCalculationResource } from "@/connections/Indicators";
-import { Indicator, sitePolygonsConnection, useAllSitePolygons } from "@/connections/SitePolygons";
+import { Indicator, loadAllSitePolygons, useAllSitePolygons } from "@/connections/SitePolygons";
 import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { IndicatorsAttributes, SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { EntityName } from "@/types/common";
-import { loadConnection } from "@/utils/loadConnection";
 import Log from "@/utils/log";
 import { transformSitePolygonsToIndicators } from "@/utils/MonitoredIndicatorUtils";
-
-const ALL_POLYGONS_PAGE_SIZE = 100;
 
 export type MonitoredIndicator = {
   polygonName?: string;
@@ -113,9 +110,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const [treeCoverLossData, setTreeCoverLossData] = useState<MonitoredIndicator[]>([]);
   const [polygonOptions, setPolygonOptions] = useState<PolygonOption[]>([{ title: "All Polygons", value: "0" }]);
   const [treeCoverLossFiresData, setTreeCoverLossFiresData] = useState<MonitoredIndicator[]>([]);
-  const [analysisToSlug, setAnalysisToSlug] = useState<
-    Record<string, string[] | Record<string, string> | { message?: string }>
-  >({
+  const [analysisToSlug, setAnalysisToSlug] = useState<Record<string, string[] | { message?: string }>>({
     treeCoverLoss: {},
     treeCoverLossFires: {},
     restorationByEcoRegion: {},
@@ -288,19 +283,20 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
 
         for (const slug of SLUGS_INDICATORS) {
           try {
-            const { indexTotal } = await loadConnection(sitePolygonsConnection, {
+            const missingPolygons = await loadAllSitePolygons({
               entityName: entity as "sites" | "projects",
               entityUuid: entity_uuid,
               filter: {
                 "polygonStatus[]": ["approved"],
                 "missingIndicator[]": [slug as Indicator]
-              },
-              pageSize: ALL_POLYGONS_PAGE_SIZE,
-              pageNumber: 1
+              }
             });
 
-            const missingCount = indexTotal ?? 0;
-            slugToAnalysis[slug] = missingCount > 0 ? { count: missingCount } : { message: "No missing polygons" };
+            const missingPolygonUuids = missingPolygons
+              .map(polygon => polygon.polygonUuid)
+              .filter((uuid): uuid is string => typeof uuid === "string" && uuid.length > 0);
+            slugToAnalysis[slug] =
+              missingPolygonUuids.length > 0 ? missingPolygonUuids : { message: "No missing polygons" };
           } catch (error) {
             Log.error(`Error fetching missing polygons for indicator ${slug}:`, error);
             slugToAnalysis[slug] = { message: "Error fetching data" };
@@ -321,7 +317,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
             }
             return {
               ...option,
-              title: `${option.title} (${slugData.count ?? 0} polygons not run)`
+              title: `${option.title} (${Array.isArray(slugData) ? slugData.length : 0} polygons not run)`
             };
           });
         };

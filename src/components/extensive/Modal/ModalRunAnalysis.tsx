@@ -48,6 +48,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
   const {
     runAnalysisIndicator,
     dropdownAnalysisOptions,
+    analysisToSlug,
     loadingVerify,
     rerunDropdownOptions,
     rerunAnalysisToSlug,
@@ -83,21 +84,16 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         }
       });
     } else {
-      const analysisData = rerunAnalysisToSlug[`${indicatorSlugSelected}`];
+      const analysisData = analysisToSlug[`${indicatorSlugSelected}`];
 
       if (analysisData && typeof analysisData === "object" && "message" in analysisData && analysisData.message) {
         setLoadingAnalysis?.(false);
         return openNotification("warning", t("Warning"), analysisData.message);
       }
 
-      let polygonUuids: string[] = [];
-      if (Array.isArray(analysisData)) {
-        polygonUuids = analysisData.filter((v: string) => typeof v === "string");
-      } else if (typeof analysisData === "object" && analysisData !== null && !("message" in analysisData)) {
-        polygonUuids = Object.values(analysisData as Record<string, string>).filter(
-          (v): v is string => typeof v === "string"
-        );
-      }
+      const polygonUuids = Array.isArray(analysisData)
+        ? analysisData.filter((v): v is string => typeof v === "string")
+        : [];
 
       analysisRequest = runAnalysisIndicator({
         slug: indicatorSlugSelected as StartIndicatorCalculationPathParams["slug"],
