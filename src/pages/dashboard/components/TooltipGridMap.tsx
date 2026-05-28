@@ -31,7 +31,7 @@ const TooltipGridMap = (props: TooltipGridProps) => {
             <img
               src={`/flags/${isoCountry?.toLowerCase()}.svg`}
               alt="flag"
-              className="h-4 w-6 min-w-[24px] object-cover"
+              className="h-4 w-6 min-w-[24px] object-contain"
             />
           )}
           <Text className="text-start text-darkCustom" variant="text-12-bold">
