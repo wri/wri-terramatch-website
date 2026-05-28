@@ -101,7 +101,8 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const handleSaved = useCallback(() => onRefetchPolygonsRef.current?.(), []);
 
   const dataContextValue = useMemo(() => ({ setPolygons, setOnRefetchPolygons }), [setOnRefetchPolygons]);
-  const { setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit } = useMapAreaContext();
+  const { setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit, setDraftPolygonGeometry } =
+    useMapAreaContext();
 
   const openPolygonEdit = useCallback(
     (params?: PolygonEditDrawerPolygon) => {
@@ -126,7 +127,8 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     setIsUserDrawingEnabled(false);
     setEditPolygon({ isOpen: false, uuid: "" });
     setPolygonGeometryEdit(undefined);
-  }, [setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit]);
+    setDraftPolygonGeometry(undefined);
+  }, [setDraftPolygonGeometry, setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit]);
 
   const setSelectedPolygon = useCallback(
     (sitePolygon: SitePolygonLightDto) => {

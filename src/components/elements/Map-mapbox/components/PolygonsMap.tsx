@@ -104,7 +104,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     [entityModel, onRefetchPolygons, openNotification, setPolygonFromMap, t]
   );
 
-  const mapFunctions = useBaseMap(onSave);
+  const mapFunctions = useBaseMap(onSave, undefined, { deferDrawCreateSave: true });
 
   const [, { data: mediaFiles }] = useMedias({
     entity: type as SupportedEntity,

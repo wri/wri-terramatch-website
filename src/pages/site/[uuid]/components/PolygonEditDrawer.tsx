@@ -2,6 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useState } from "react";
 
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import type { PolygonEditDrawerPolygon } from "@/context/polygonEditDrawer.types";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
@@ -30,8 +31,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onPolygonUpdated
 }) => {
   const t = useT();
+  const { draftPolygonGeometry } = useMapAreaContext();
   const [activeTab, setActiveTab] = useState<string>("edit");
   const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
+  const isCreateMode = selectedPolygon?.primaryUuid == null || selectedPolygon.primaryUuid === "";
+  const isSaveDisabled = activeTab === "edit" && isCreateMode && draftPolygonGeometry == null;
 
   useEffect(() => {
     setSaveEditContent(null);
@@ -124,6 +128,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                 {
                   children: t("Save"),
                   variant: "primary",
+                  disabled: isSaveDisabled,
                   onClick: () => void handleSave(onClose)
                 }
               ]}

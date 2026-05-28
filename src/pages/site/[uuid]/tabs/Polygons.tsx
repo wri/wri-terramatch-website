@@ -303,6 +303,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [polygonsData, selectedRows]);
 
   const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
+  const startNewPolygonFlow = useCallback(() => {
+    handleBulkDraw();
+    startDrawing();
+  }, [handleBulkDraw, startDrawing]);
   const { downloadAll, isDownloading: isDownloadingAllPolygons } = useDownloadSitePolygons({
     siteUuid: site.uuid,
     siteName: site.name
@@ -460,14 +464,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             mainActionLabel: t("Add"),
             size: "small",
             leftIcon: <PlusIcon />,
-            mainActionOnClick: startDrawing,
+            mainActionOnClick: startNewPolygonFlow,
             otherActions: [
               {
                 label: t("Draw Polygon"),
-                onClick: () => {
-                  handleBulkDraw();
-                  startDrawing();
-                },
+                onClick: startNewPolygonFlow,
                 value: "draw-polygon"
               },
               {

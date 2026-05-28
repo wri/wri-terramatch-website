@@ -13,8 +13,17 @@ import { addFilterOfPolygonsData, convertToGeoJSON } from "../utils";
 
 const INITIAL_ZOOM = 2.4;
 
-export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void, record?: unknown) => {
-  const { setIsUserDrawingEnabled } = useMapAreaContext();
+type UseBaseMapOptions = {
+  deferDrawCreateSave?: boolean;
+};
+
+export const useBaseMap = (
+  onSave?: (geojson: unknown, record: unknown) => void,
+  record?: unknown,
+  options?: UseBaseMapOptions
+) => {
+  const { setIsUserDrawingEnabled, setDraftPolygonGeometry } = useMapAreaContext();
+  const deferDrawCreateSave = options?.deferDrawCreateSave === true;
 
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<MapboxMap | null>(null);
@@ -22,13 +31,17 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
 
   const [, _forceRerender] = useState(false);
 
-  const onCancel = useCallback((parsedPolygonData: Record<string, string[]> | undefined) => {
-    if (map.current != null && draw.current != null) {
-      draw.current.deleteAll();
-      applyMapDrawStatusStyles(map.current);
-      addFilterOfPolygonsData(map.current, parsedPolygonData);
-    }
-  }, []);
+  const onCancel = useCallback(
+    (parsedPolygonData: Record<string, string[]> | undefined) => {
+      if (map.current != null && draw.current != null) {
+        draw.current.deleteAll();
+        applyMapDrawStatusStyles(map.current);
+        addFilterOfPolygonsData(map.current, parsedPolygonData);
+        setDraftPolygonGeometry(undefined);
+      }
+    },
+    [setDraftPolygonGeometry]
+  );
 
   const handleCreateDraw = (featureCollection: FeatureCollection) => {
     const geojson = convertToGeoJSON(featureCollection);
@@ -102,8 +115,20 @@ export const useBaseMap = (onSave?: (geojson: unknown, record: unknown) => void,
         }
       });
       map.current.on("draw.create", (feature: FeatureCollection) => {
+        if (deferDrawCreateSave) {
+          const geojson = convertToGeoJSON(feature);
+          const geometry = geojson[0]?.geometry;
+          setDraftPolygonGeometry(geometry as GeoJSON.Geometry | undefined);
+          return;
+        }
+
         handleCreateDraw(feature);
         draw.current?.deleteAll();
+      });
+      map.current.on("draw.delete", () => {
+        if (deferDrawCreateSave) {
+          setDraftPolygonGeometry(undefined);
+        }
       });
     }
   };
