@@ -3,6 +3,7 @@ import React from "react";
 
 import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
+import { GoalProgressCardItemProps } from "@/components/elements/Cards/GoalProgressCard/GoalProgressCardItem";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { SUMMARY_ANR_ROLLUP_HIDE, SUMMARY_REPLANTING_ROLLUP_HIDE } from "@/constants/summaryRollupVisibility";
@@ -248,6 +249,52 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
     collection: "replanting"
   });
 
+  const treesRestoredItems: GoalProgressCardItemProps[] = [
+    {
+      iconName: IconNames.TREE_CIRCLE_PD,
+      label: t("Trees Planted:"),
+      variantLabel: "text-14",
+      classNameLabel: " text-neutral-650 uppercase",
+      value: entity.treesPlantedCount,
+      tooltipContent: project ? tooltips.TOOLTIP_TREES_PLANTED_PROJECT : tooltips.TOOLTIP_TREES_PLANTED_SITE,
+      classNameLabelValue: "flex items-center gap-2"
+    },
+    {
+      iconName: IconNames.LEAF_CIRCLE_PD,
+      label: t("Seeds Planted:"),
+      variantLabel: "text-14",
+      classNameLabel: " text-neutral-650 uppercase",
+      value: entity.seedsPlantedCount,
+      tooltipContent: project ? tooltips.TOOLTIP_SEEDS_PLANTED_PROJECT : tooltips.TOOLTIP_SEEDS_PLANTED_SITE
+    },
+    ...(hideAnrRollup
+      ? []
+      : ([
+          {
+            iconName: IconNames.REFRESH_CIRCLE_PD,
+            label: t("Trees Regenerating:"),
+            variantLabel: "text-14",
+            classNameLabel: " text-neutral-650 uppercase",
+            value: treesFromReportsAnr,
+            tooltipContent: project
+              ? tooltips.TOOLTIP_TREES_REGENERATING_PROJECT
+              : tooltips.TOOLTIP_TREES_REGENERATING_SITE
+          }
+        ] as GoalProgressCardItemProps[])),
+    ...(hideReplantingRollup
+      ? []
+      : ([
+          {
+            iconName: IconNames.TREE_CIRCLE_PD,
+            label: t("Trees Replanted:"),
+            variantLabel: "text-14",
+            classNameLabel: " text-neutral-650 uppercase",
+            value: totalCountReplanting,
+            tooltipContent: project ? tooltips.TOOLTIP_TREES_REPLANTING_PROJECT : tooltips.TOOLTIP_TREES_REPLANTING_SITE
+          }
+        ] as GoalProgressCardItemProps[]))
+  ];
+
   return (
     <div className="flex w-full flex-wrap items-start justify-between gap-4">
       {chartsDataMapping[chartFramework as keyof ChartsData]?.map((chart, index) => (
@@ -258,43 +305,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
         value={totalTreesRestoredCount}
         limit={entity.treesGrownGoal}
         hasProgress={false}
-        items={[
-          {
-            iconName: IconNames.TREE_CIRCLE_PD,
-            label: t("Trees Planted:"),
-            variantLabel: "text-14",
-            classNameLabel: " text-neutral-650 uppercase",
-            value: entity.treesPlantedCount,
-            tooltipContent: project ? tooltips.TOOLTIP_TREES_PLANTED_PROJECT : tooltips.TOOLTIP_TREES_PLANTED_SITE,
-            classNameLabelValue: "flex items-center gap-2"
-          },
-          {
-            iconName: IconNames.LEAF_CIRCLE_PD,
-            label: t("Seeds Planted:"),
-            variantLabel: "text-14",
-            classNameLabel: " text-neutral-650 uppercase",
-            value: entity.seedsPlantedCount,
-            tooltipContent: project ? tooltips.TOOLTIP_SEEDS_PLANTED_PROJECT : tooltips.TOOLTIP_SEEDS_PLANTED_SITE
-          },
-          !hideAnrRollup && {
-            iconName: IconNames.REFRESH_CIRCLE_PD,
-            label: t("Trees Regenerating:"),
-            variantLabel: "text-14",
-            classNameLabel: " text-neutral-650 uppercase",
-            value: treesFromReportsAnr,
-            tooltipContent: project
-              ? tooltips.TOOLTIP_TREES_REGENERATING_PROJECT
-              : tooltips.TOOLTIP_TREES_REGENERATING_SITE
-          },
-          !hideReplantingRollup && {
-            iconName: IconNames.TREE_CIRCLE_PD,
-            label: t("Trees Replanted:"),
-            variantLabel: "text-14",
-            classNameLabel: " text-neutral-650 uppercase",
-            value: totalCountReplanting,
-            tooltipContent: project ? tooltips.TOOLTIP_TREES_REPLANTING_PROJECT : tooltips.TOOLTIP_TREES_REPLANTING_SITE
-          }
-        ].filter(item => item !== false)}
+        items={treesRestoredItems}
         className="pr-[41px] lg:pr-[150px] mobile:w-[400px] mobile:!pr-0"
       />
     </div>
