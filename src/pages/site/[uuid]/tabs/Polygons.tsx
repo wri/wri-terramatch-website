@@ -608,7 +608,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                   progress={totalTreesPlanted}
                   goal={Math.max(totalTreesPlanted, 1)}
                   selection={hasPolygonSelection ? selectedTreesPlanted : undefined}
-                  tooltipContent={t("Trees Planted")}
+                  tooltipContent={t("This is the sum of trees planted as reported in the polygon attributes")}
                   className="min-w-[12.5rem]"
                 />
                 <MetricCard
@@ -619,7 +619,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                   progress={totalRestorationAreaHa}
                   goal={Math.max(totalRestorationAreaHa, 1)}
                   selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
-                  tooltipContent={t("Restoration Area")}
+                  tooltipContent={t("This is the sum of hectares from the selected polygons")}
                   className="min-w-[12.5rem]"
                 />
               </Flex>
