@@ -136,7 +136,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const hasNurseries = (project.totalNurseries ?? 0) > 0;
   const shouldHideNurseries = framework === Framework.PPC;
 
-  const addSitesAndNurseriesButtons = useMemo<IButtonProps[]>(() => {
+  const addSitesAndNurseriesButtons = useMemo<ButtonGroupButtonProps[]>(() => {
     const buttons: ButtonGroupButtonProps[] = [
       {
         id: "add-sites",
