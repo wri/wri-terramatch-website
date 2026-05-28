@@ -72,7 +72,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
           onClose={onClose}
           className="h-screen w-full"
           content={
-            <Flex className="h-full flex-col gap-3">
+            <Flex className="h-full flex-col">
               {polygon?.polygonUuid && (
                 <TabBar
                   onTabClick={(tabValue: string) => setActiveTab(tabValue)}
@@ -117,11 +117,13 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
             <ButtonGroup
               buttons={[
                 {
+                  id: "cancel",
                   children: t("Cancel"),
                   variant: "secondary",
                   onClick: onClose
                 },
                 {
+                  id: "save",
                   children: t("Save"),
                   variant: "primary",
                   onClick: () => void handleSave(onClose)

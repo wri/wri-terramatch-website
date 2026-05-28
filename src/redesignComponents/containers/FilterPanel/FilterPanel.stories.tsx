@@ -177,10 +177,12 @@ export const Default: Story = {
             className=""
             buttons={[
               {
+                id: "clear-all",
                 children: "Clear All",
                 variant: "secondary"
               },
               {
+                id: "apply",
                 children: "Apply",
                 variant: "primary"
               }

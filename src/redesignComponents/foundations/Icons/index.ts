@@ -68,6 +68,7 @@ export { PlaceholderIcon } from "./Function/PlaceholderIcon";
 export { PlusIcon } from "./Function/PlusIcon";
 export { ProgrammeIcon } from "./NavigationSections/ProgrammeIcon";
 export { ProjectIcon } from "./NavigationSections/ProjectIcon";
+export { RefreshIcon } from "./Function/RefreshIcon";
 export { RegenerationIcon } from "./DataVisualisation/RegenerationIcon";
 export { RejectedIcon } from "./Status/RejectedIcon";
 export { ReportsIcon } from "./NavigationSections/ReportsIcon";
