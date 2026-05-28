@@ -263,13 +263,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         setDraftPolygonGeometry(undefined);
         setPolygonGeometryEdit(undefined);
         onPolygonUpdated?.(createdPolygon);
+        setShouldRefetchPolygonData(true);
+        await onSaved?.();
         onClose?.();
         openNotification("success", t("Success!"), t("Polygon created successfully"));
-
-        void (async () => {
-          await waitForMapEditCleanup();
-          await onSaved?.();
-        })();
 
         return true;
       } catch (error) {

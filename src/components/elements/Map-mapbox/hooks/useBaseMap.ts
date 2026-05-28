@@ -1,11 +1,13 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { Map as MapboxMap } from "mapbox-gl";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { mapboxToken } from "@/constants/environment";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 
+import { drawPolygonWithUndoMode } from "../drawModes/drawPolygonWithUndoMode";
 import { FeatureCollection } from "../GeoJSON";
+import { CLEAR_DRAFT_DRAW_EVENT } from "../interactions/draftDrawEvents";
 import type { ControlType } from "../Map.d";
 import { BASEMAP_CONFIGS, MapStyle } from "../MapControls/types";
 import { applyMapDrawStatusStyles, createMapDrawStyles } from "../mapStyle";
@@ -61,6 +63,20 @@ export const useBaseMap = (
     _forceRerender(v => !v);
   }, []);
 
+  useEffect(() => {
+    if (deferDrawCreateSave !== true) return;
+
+    const handleClearDraftDraw = () => {
+      draw.current?.deleteAll();
+      setDraftPolygonGeometry(undefined);
+    };
+
+    window.addEventListener(CLEAR_DRAFT_DRAW_EVENT, handleClearDraftDraw);
+    return () => {
+      window.removeEventListener(CLEAR_DRAFT_DRAW_EVENT, handleClearDraftDraw);
+    };
+  }, [deferDrawCreateSave, setDraftPolygonGeometry]);
+
   const initMap = (useDashboardStyle?: boolean, initialStyle?: MapStyle) => {
     if (map.current != null) return;
 
@@ -79,6 +95,14 @@ export const useBaseMap = (
     });
 
     draw.current = new MapboxDraw({
+      ...(deferDrawCreateSave === true
+        ? {
+            modes: {
+              ...MapboxDraw.modes,
+              draw_polygon: drawPolygonWithUndoMode
+            }
+          }
+        : {}),
       styles: createMapDrawStyles(),
       controls: {
         point: false,

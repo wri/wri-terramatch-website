@@ -1,5 +1,6 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
+import { dispatchClearDraftDrawEvent } from "@/components/elements/Map-mapbox/interactions/draftDrawEvents";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import PolygonEditDrawer from "@/pages/site/[uuid]/components/PolygonEditDrawer";
@@ -127,6 +128,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const closePolygonEdit = useCallback(() => {
     setIsOpen(false);
     setPolygon({});
+    dispatchClearDraftDrawEvent();
     setIsUserDrawingEnabled(false);
     setEditPolygon({ isOpen: false, uuid: "" });
     setPolygonGeometryEdit(undefined);
