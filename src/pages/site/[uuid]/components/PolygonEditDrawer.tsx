@@ -34,6 +34,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const { draftPolygonGeometry } = useMapAreaContext();
   const [activeTab, setActiveTab] = useState<string>("edit");
   const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const isCreateMode = selectedPolygon?.primaryUuid == null || selectedPolygon.primaryUuid === "";
   const isSaveDisabled = activeTab === "edit" && isCreateMode && draftPolygonGeometry == null;
 
@@ -52,9 +53,14 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         return;
       }
 
-      const saved = await saveEditContent();
-      if (saved) {
-        onClose();
+      setIsSaving(true);
+      try {
+        const saved = await saveEditContent();
+        if (saved) {
+          onClose();
+        }
+      } finally {
+        setIsSaving(false);
       }
     },
     [activeTab, saveEditContent]
@@ -121,14 +127,18 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
             <ButtonGroup
               buttons={[
                 {
+                  id: "polygon-edit-cancel",
                   children: t("Cancel"),
                   variant: "secondary",
+                  disabled: isSaving,
                   onClick: onClose
                 },
                 {
+                  id: "polygon-edit-save",
                   children: t("Save"),
                   variant: "primary",
-                  disabled: isSaveDisabled,
+                  loading: isSaving,
+                  disabled: isSaveDisabled || isSaving,
                   onClick: () => void handleSave(onClose)
                 }
               ]}

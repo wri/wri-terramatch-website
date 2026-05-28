@@ -264,11 +264,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         setPolygonGeometryEdit(undefined);
         onPolygonUpdated?.(createdPolygon);
         onClose?.();
-        await waitForMapEditCleanup();
-        await onSaved?.();
-        setShouldRefetchPolygonData(true);
-
         openNotification("success", t("Success!"), t("Polygon created successfully"));
+
+        void (async () => {
+          await waitForMapEditCleanup();
+          await onSaved?.();
+        })();
+
         return true;
       } catch (error) {
         openNotification("error", t("Error!"), t("Error creating polygon"));
@@ -325,11 +327,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setPolygonGeometryEdit(undefined);
       onPolygonUpdated?.(updatedPolygon);
       onClose?.();
-      await waitForMapEditCleanup();
-      await refetchVersions?.();
-      await onSaved?.();
-      setShouldRefetchPolygonData(true);
-
       openNotification(
         "success",
         t("Success!"),
@@ -337,6 +334,14 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           ? t("Polygon geometry and attributes were saved successfully")
           : t("Polygon version created successfully")
       );
+
+      void (async () => {
+        await waitForMapEditCleanup();
+        await refetchVersions?.();
+        await onSaved?.();
+        setShouldRefetchPolygonData(true);
+      })();
+
       return true;
     } catch (error) {
       openNotification("error", t("Error!"), t("Error creating polygon version"));

@@ -108,6 +108,9 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     (params?: PolygonEditDrawerPolygon) => {
       const polygonUuid = params?.polygonUuid ?? params?.sitePolygon?.polygonUuid ?? undefined;
       const primaryUuid = params?.sitePolygon?.primaryUuid;
+      if (polygonUuid == null || polygonUuid === "") {
+        setDraftPolygonGeometry(undefined);
+      }
       setPolygon({
         polygonUuid,
         polygonName: params?.polygonName,
@@ -118,7 +121,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
       }
       setIsOpen(true);
     },
-    [setEditPolygon]
+    [setDraftPolygonGeometry, setEditPolygon]
   );
 
   const closePolygonEdit = useCallback(() => {
