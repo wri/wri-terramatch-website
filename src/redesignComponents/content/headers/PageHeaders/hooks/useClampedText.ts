@@ -46,12 +46,12 @@ export const useClampedText = (description: string | undefined): UseClampedTextR
       return;
     }
 
-    let rafId = 0;
+    let reqAnimationFrameId = 0;
 
     const scheduleCheck = () => {
-      cancelAnimationFrame(rafId);
+      cancelAnimationFrame(reqAnimationFrameId);
 
-      rafId = requestAnimationFrame(() => {
+      reqAnimationFrameId = requestAnimationFrame(() => {
         if (!isMountedRef.current) {
           return;
         }
@@ -79,7 +79,7 @@ export const useClampedText = (description: string | undefined): UseClampedTextR
     return () => {
       isMountedRef.current = false;
 
-      cancelAnimationFrame(rafId);
+      cancelAnimationFrame(reqAnimationFrameId);
 
       resizeObserver.disconnect();
 

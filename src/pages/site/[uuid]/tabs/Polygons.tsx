@@ -576,7 +576,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             className={classNames(
               "h-full w-full  ",
               isEditPolygonOpen
-                ? "fixed top-[70px] bottom-0 left-0 right-0 z-[37] !h-[calc(100vh-66px)] w-screen rounded-none"
+                ? // TODO: Update `top-[70px]` when the navbar is redesigned so this offset matches the new header height.
+                  "fixed top-[70px] bottom-0 left-0 right-0 z-[37] !h-[calc(100vh-66px)] w-screen rounded-none"
                 : "!rounded-[0.25rem_0.25rem_0_0]"
             )}
             polygons={polygonsData}
