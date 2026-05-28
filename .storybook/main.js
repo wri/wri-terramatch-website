@@ -26,9 +26,13 @@ module.exports = {
   webpackFinal: config => {
     config.resolve.modules = [path.resolve(__dirname, ".."), "node_modules"];
     config.resolve.alias = {
-      ...config.resolve.alias
+      ...config.resolve.alias,
+      "@": path.resolve(__dirname, "../src"),
+      "@chakra-ui/react/theme": path.resolve(
+        __dirname,
+        "../node_modules/@chakra-ui/react/dist/esm/theme/index.js"
+      )
     };
-    config.resolve.alias["@"] = path.resolve(__dirname, "../src");
 
     config.resolve.fallback = {
       ...config.resolve.fallback,
