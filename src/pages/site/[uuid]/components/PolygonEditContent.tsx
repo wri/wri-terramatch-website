@@ -31,6 +31,7 @@ import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useLatestRef } from "@/hooks/useLatestRef";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import MappedTag from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
@@ -137,6 +138,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     polygonGeometryEdit.currentGeometry != null;
   const isAnrEligible = useMemo(() => isSitePolygonEligibleForAnrMonitoringPlots(polygon), [polygon]);
   const anrMapOverlay = useAnrMapOverlayOptional();
+  // Overlay context identity changes when this effect updates it; read via ref to avoid a sync loop.
+  const anrMapOverlayRef = useLatestRef(anrMapOverlay);
 
   const [anrConnectionReady, { data: anrPlotGeometry, isLoading: isAnrPlotGeometryLoading }] = useAnrPlotGeometry({
     sitePolygonUuid,
@@ -293,24 +296,28 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   ]);
 
   useEffect(() => {
-    if (anrMapOverlay == null) {
-      return;
-    }
+    const overlay = anrMapOverlayRef.current;
+    if (overlay == null) return;
 
     const shouldShowPlots = isAnrEligible && hasAnrPlotGeometry && plotsVisible;
-    anrMapOverlay.setDrawerOpen(true);
-    anrMapOverlay.setAnrTabActive(shouldShowPlots);
-    anrMapOverlay.setShowPlotsOnMap(shouldShowPlots);
+    overlay.setDrawerOpen(true);
+    overlay.setAnrTabActive(shouldShowPlots);
+    overlay.setShowPlotsOnMap(shouldShowPlots);
 
     if (sitePolygonUuid !== "" && geometryPolygonUuid !== "") {
-      anrMapOverlay.syncDrawerSelection({ sitePolygonUuid, geometryPolygonUuid });
+      overlay.syncDrawerSelection({ sitePolygonUuid, geometryPolygonUuid });
     }
+  }, [anrMapOverlayRef, geometryPolygonUuid, hasAnrPlotGeometry, isAnrEligible, plotsVisible, sitePolygonUuid]);
 
-    return () => {
-      anrMapOverlay.setAnrTabActive(false);
-      anrMapOverlay.setShowPlotsOnMap(false);
-    };
-  }, [anrMapOverlay, geometryPolygonUuid, hasAnrPlotGeometry, isAnrEligible, plotsVisible, sitePolygonUuid]);
+  useEffect(
+    () => () => {
+      const overlay = anrMapOverlayRef.current;
+      if (overlay == null) return;
+      overlay.setAnrTabActive(false);
+      overlay.setShowPlotsOnMap(false);
+    },
+    [anrMapOverlayRef]
+  );
 
   const downloadMonitoringPlots = useCallback(async () => {
     if (sitePolygonUuid === "" || !isAnrEligible) {

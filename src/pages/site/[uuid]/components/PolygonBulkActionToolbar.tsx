@@ -4,6 +4,7 @@ import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useState } from "react";
 
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
+import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 
@@ -21,8 +22,11 @@ export type PolygonBulkActionToolbarProps = {
   onDownload: () => void;
   onEdit: () => void;
   onSubmit: () => void;
+  onRunValidation: (polygonUuids: string[]) => Promise<void>;
   showTooltip: boolean;
   polygons: PolygonTableRow[];
+  polygonValidations: Map<string, ValidationDto>;
+  selectedPolygonUuids: string[];
 };
 
 const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
@@ -36,8 +40,11 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   onDownload,
   onEdit,
   onSubmit,
-  showTooltip,
-  polygons
+  onRunValidation,
+  polygons,
+  polygonValidations,
+  selectedPolygonUuids,
+  showTooltip
 }) => {
   const t = useT();
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
@@ -50,6 +57,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
     <Box position={"fixed"} zIndex={"100"} bottom={0} left={3} right={3}>
       <SystemValidationComplete
         polygons={polygons}
+        polygonValidations={polygonValidations}
         open={isSystemValidationCompleteModalOpen}
         onOpenChange={setIsSystemValidationCompleteModalOpen}
       />
@@ -70,18 +78,31 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
           onClick: onDownload
         }}
         secondaryButtonProps={{
-          children: "Run Validation",
-          onClick: () => {
-            setTimeout(() => {
-              setIsSystemValidationCompleteModalOpen(true);
-            }, 5000);
+          children: t("Run Validation"),
+          onClick: async () => {
+            if (selectedPolygonUuids.length === 0) {
+              return;
+            }
             showToast({
               label: t("Validating Polygons..."),
               type: "info",
               placement: "bottom-end",
+              duration: 5000,
               closableLabel: t("Close"),
               icon: <LoadingIcon boxSize={7} color="primary.700" animation="spin 1s linear infinite" />
             });
+            try {
+              await onRunValidation(selectedPolygonUuids);
+              setIsSystemValidationCompleteModalOpen(true);
+            } catch (error) {
+              showToast({
+                label: t("Failed to validate polygons"),
+                type: "error",
+                placement: "bottom-end",
+                duration: 5000,
+                closableLabel: t("Close")
+              });
+            }
           }
         }}
         primaryButtonProps={{
