@@ -95,6 +95,8 @@ export interface BaseMapProps {
     selectedPolygonUuids: string[];
     onHoveredPolygonFromMap?: (uuid: string | null) => void;
     onPolygonClickedFromMap?: (uuid: string) => void;
+    focusPolygonUuid?: string | null;
+    onFocusPolygonConsumed?: () => void;
   };
   overlapPolygons?: OverlapPolygonPoint[];
   autoEditPolygon?: boolean;
@@ -398,6 +400,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     styleReady,
     sourcesAdded,
     selectedPolygonUuids: polygonTableHighlight?.selectedPolygonUuids,
+    focusPolygonUuid: polygonTableHighlight?.focusPolygonUuid,
+    onFocusPolygonConsumed: polygonTableHighlight?.onFocusPolygonConsumed,
     sitePolygonData
   });
 

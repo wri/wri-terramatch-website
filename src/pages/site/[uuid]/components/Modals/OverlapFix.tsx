@@ -19,9 +19,13 @@ interface OverlapFixProps {
   onClose: () => void;
   polygonsFixed?: OverlapFixPolygon[];
   polygonsNotFixed?: OverlapFixPolygon[];
+  onViewPolygon?: (polygonUuid: string) => void;
 }
 
-const PolygonNameList: FC<{ polygons: OverlapFixPolygon[] }> = ({ polygons }) => {
+const PolygonNameList: FC<{ polygons: OverlapFixPolygon[]; onViewPolygon?: (polygonUuid: string) => void }> = ({
+  polygons,
+  onViewPolygon
+}) => {
   const t = useT();
 
   if (polygons.length === 0) {
@@ -36,7 +40,12 @@ const PolygonNameList: FC<{ polygons: OverlapFixPolygon[] }> = ({ polygons }) =>
             <Text textStyle="400" color="neutral.900">
               {polygon.name}
             </Text>
-            <Button size="small" variant="secondary" onClick={() => {}} rightIcon={<ChevronRightIcon />}>
+            <Button
+              size="small"
+              variant="secondary"
+              onClick={() => onViewPolygon?.(polygon.id)}
+              rightIcon={<ChevronRightIcon />}
+            >
               {t("View Polygon")}
             </Button>
           </Flex>
@@ -46,7 +55,13 @@ const PolygonNameList: FC<{ polygons: OverlapFixPolygon[] }> = ({ polygons }) =>
   );
 };
 
-const OverlapFix: FC<OverlapFixProps> = ({ open, onClose, polygonsFixed = [], polygonsNotFixed = [] }) => {
+const OverlapFix: FC<OverlapFixProps> = ({
+  open,
+  onClose,
+  polygonsFixed = [],
+  polygonsNotFixed = [],
+  onViewPolygon
+}) => {
   const t = useT();
 
   const handleClose = useCallback(() => {
@@ -102,7 +117,7 @@ const OverlapFix: FC<OverlapFixProps> = ({ open, onClose, polygonsFixed = [], po
                     {t("Updated Polygons:")}
                   </Text>
                 </Flex>
-                <PolygonNameList polygons={polygonsFixed} />
+                <PolygonNameList polygons={polygonsFixed} onViewPolygon={onViewPolygon} />
               </Flex>
             )}
 
@@ -121,7 +136,7 @@ const OverlapFix: FC<OverlapFixProps> = ({ open, onClose, polygonsFixed = [], po
                   <Text textStyle="200-bold" color="neutral.700">
                     {t("Polygons affected:")}
                   </Text>
-                  <PolygonNameList polygons={polygonsNotFixed} />
+                  <PolygonNameList polygons={polygonsNotFixed} onViewPolygon={onViewPolygon} />
                 </Flex>
 
                 <Flex className="flex-col gap-2">
@@ -144,7 +159,7 @@ const OverlapFix: FC<OverlapFixProps> = ({ open, onClose, polygonsFixed = [], po
                       </List.Item>
                       <List.Item _marker={{ color: "neutral.900" }}>
                         <Text textStyle="300" color="neutral.900">
-                          {t("Area of overlap (absolute size) ≤ 0.1 hectares")}
+                          {t("Area of overlap (absolute size) ≤ 0.118 hectares")}
                         </Text>
                       </List.Item>
                     </List.Root>
@@ -202,6 +217,7 @@ const OverlapFix: FC<OverlapFixProps> = ({ open, onClose, polygonsFixed = [], po
               variant: "secondary",
               className: "w-fit",
               children: t("Close"),
+              autoFocus: true,
               onClick: handleClose
             }
           ]}
