@@ -2,6 +2,7 @@ import type { DateValue } from "@ark-ui/react";
 import { Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { format } from "date-fns";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -28,7 +29,6 @@ import {
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -41,7 +41,7 @@ import DatePickerInput from "@/redesignComponents/Forms/Inputs/DateInputs/DatePi
 import InputWithUnits from "@/redesignComponents/Forms/Inputs/InputWithUnits";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
-import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
+import { DownloadIcon, LoadingIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
 import {
@@ -53,7 +53,6 @@ import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonA
 import type { PolygonTableRow } from "../tabs/Polygons";
 import DeletePolygon from "./Modals/DeletePolygon";
 import UploadPhotos from "./Modals/UploadPhotos";
-import SubmissionValidationTags from "./SubmissionValidationTags";
 import type { PolygonSaveCallback } from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
@@ -61,6 +60,7 @@ import {
   saveExistingPolygonVersion,
   saveNewSitePolygon
 } from "./polygonEditSave";
+import SubmissionValidationTags from "./SubmissionValidationTags";
 
 type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
@@ -114,7 +114,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onPolygonUpdated
 }) => {
   const t = useT();
-  const { openNotification } = useNotificationContext();
+  const showStatusToast = useCallback((type: "success" | "error" | "warning", label: string) => {
+    showToast({ label, type, placement: "bottom-end", duration: 5000 });
+  }, []);
   const {
     polygonGeometryEdit,
     draftPolygonGeometry,
@@ -281,11 +283,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   const saveNewPolygonFlow = useCallback(async (): Promise<boolean> => {
     if (draftPolygonGeometry == null) {
-      openNotification("error", t("Error!"), t("Draw a polygon before saving"));
+      showStatusToast("error", t("Draw a polygon before saving"));
       return false;
     }
     if (resolvedSiteUuid == null || resolvedSiteUuid === "") {
-      openNotification("error", t("Error!"), t("Missing site information"));
+      showStatusToast("error", t("Missing site information"));
       return false;
     }
 
@@ -297,21 +299,21 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         dateValueToIso: dateValueToIsoString
       });
       await finalizeSuccessfulSave(createdPolygon, { geometryChanged: true, refetchVersionsList: false });
-      openNotification("success", t("Success!"), t("Polygon created successfully"));
+      showStatusToast("success", t("Polygon created successfully"));
       return true;
     } catch {
-      openNotification("error", t("Error!"), t("Error creating polygon"));
+      showStatusToast("error", t("Error creating polygon"));
       return false;
     }
-  }, [draftPolygonGeometry, finalizeSuccessfulSave, getFormValues, openNotification, resolvedSiteUuid, t]);
+  }, [draftPolygonGeometry, finalizeSuccessfulSave, getFormValues, resolvedSiteUuid, showStatusToast, t]);
 
   const saveExistingPolygonFlow = useCallback(async (): Promise<boolean> => {
     if (polygon?.primaryUuid == null || polygon.primaryUuid === "") {
-      openNotification("error", t("Error!"), t("Missing polygon information"));
+      showStatusToast("error", t("Missing polygon information"));
       return false;
     }
     if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
-      openNotification("error", t("Error!"), t("Missing site information"));
+      showStatusToast("error", t("Missing site information"));
       return false;
     }
 
@@ -325,23 +327,22 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         dateValueToIso: dateValueToIsoString
       });
       await finalizeSuccessfulSave(updatedPolygon, { geometryChanged, refetchVersionsList: true });
-      openNotification(
+      showStatusToast(
         "success",
-        t("Success!"),
         geometryChanged
           ? t("Polygon geometry and attributes were saved successfully")
           : t("Polygon version created successfully")
       );
       return true;
     } catch {
-      openNotification("error", t("Error!"), t("Error creating polygon version"));
+      showStatusToast("error", t("Error creating polygon version"));
       return false;
     }
   }, [
     finalizeSuccessfulSave,
     geometryChanged,
     getFormValues,
-    openNotification,
+    showStatusToast,
     polygon?.primaryUuid,
     polygon?.siteId,
     polygonGeometryEdit?.currentGeometry,
@@ -379,7 +380,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   const downloadMonitoringPlots = useCallback(async () => {
     if (sitePolygonUuid === "" || !isAnrEligible) {
-      openNotification("error", t("Error!"), t("ANR monitoring plots are not available for this polygon"));
+      showStatusToast("error", t("ANR monitoring plots are not available for this polygon"));
       return;
     }
 
@@ -392,19 +393,19 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       const filename = formatFileName(`${polygon?.name ?? "polygon"}_anr_monitoring_plots`);
       downloadGeoJsonFile(geojson, filename);
     } catch (error) {
-      openNotification("error", t("Error!"), t("Error downloading ANR monitoring plots"));
+      showStatusToast("error", t("Error downloading ANR monitoring plots"));
     }
-  }, [isAnrEligible, openNotification, polygon?.name, sitePolygonUuid, t]);
+  }, [isAnrEligible, polygon?.name, showStatusToast, sitePolygonUuid, t]);
 
   const makeVersionActive = useCallback(
     async (version: SitePolygonLightDto) => {
       if (version.uuid == null || version.uuid === "") {
-        openNotification("error", t("Error!"), t("Missing polygon version information"));
+        showStatusToast("error", t("Missing polygon version information"));
         return;
       }
 
       if (version.isActive) {
-        openNotification("warning", t("Warning!"), t("Polygon version is already active"));
+        showStatusToast("warning", t("Polygon version is already active"));
         return;
       }
 
@@ -433,9 +434,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         setStatusSelectedPolygon(updatedVersion.status ?? "");
         setShouldRefetchPolygonData(true);
 
-        openNotification("success", t("Success!"), t("Polygon version updated successfully"));
+        showStatusToast("success", t("Polygon version updated successfully"));
       } catch (error) {
-        openNotification("error", t("Error!"), t("Error updating polygon version"));
+        showStatusToast("error", t("Error updating polygon version"));
       } finally {
         setIsVersionUpdating(false);
       }
@@ -445,7 +446,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       invalidatePolygonMapTiles,
       onPolygonUpdated,
       onSaved,
-      openNotification,
+      showStatusToast,
       refetchVersions,
       setPolygonGeometryEdit,
       setPreviewVersion,
@@ -458,25 +459,25 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   const handleDownloadPolygon = useCallback(async () => {
     if (geometryPolygonUuid === "") {
-      openNotification("error", t("Error!"), t("Missing polygon information"));
+      showStatusToast("error", t("Missing polygon information"));
       return;
     }
 
     try {
       await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon", { includeExtendedData: true });
     } catch (error) {
-      openNotification("error", t("Error!"), t("Error downloading polygon"));
+      showStatusToast("error", t("Error downloading polygon"));
     }
-  }, [geometryPolygonUuid, openNotification, polygon?.name, t]);
+  }, [geometryPolygonUuid, polygon?.name, showStatusToast, t]);
 
   const handleSubmitPolygon = useCallback(async () => {
     if (polygon?.uuid == null || polygon.uuid === "") {
-      openNotification("error", t("Error!"), t("Missing polygon information"));
+      showStatusToast("error", t("Missing polygon information"));
       return;
     }
 
     if (polygon.status === POLYGON_PENDING_APPROVAL || polygon.status === POLYGON_APPROVED) {
-      openNotification("error", t("Error!"), t("This polygon has already been submitted"));
+      showStatusToast("error", t("This polygon has already been submitted"));
       return;
     }
 
@@ -492,16 +493,16 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       onClose?.();
       await waitForMapEditCleanup();
       await onSaved?.();
-      openNotification("success", t("Success!"), t("Polygon submitted successfully"));
+      showStatusToast("success", t("Polygon submitted successfully"));
     } catch (error) {
-      openNotification("error", t("Error!"), t("Error submitting polygon"));
+      showStatusToast("error", t("Error submitting polygon"));
     }
   }, [
     closeMapPopups,
     invalidatePolygonMapTiles,
     onClose,
     onSaved,
-    openNotification,
+    showStatusToast,
     polygon?.status,
     polygon?.uuid,
     setIsUserDrawingEnabled,
@@ -513,7 +514,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   const handleDeletePolygon = useCallback(async () => {
     if (polygon?.uuid == null || polygon.uuid === "") {
-      openNotification("error", t("Error!"), t("Missing polygon information"));
+      showStatusToast("error", t("Missing polygon information"));
       return;
     }
 
@@ -523,13 +524,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       closeMapPopups();
       invalidatePolygonMapTiles();
       await onSaved?.();
-      openNotification("success", t("Success!"), t("Polygon deleted successfully"));
+      showStatusToast("success", t("Polygon deleted successfully"));
       onClose?.();
     } catch (error) {
-      openNotification("error", t("Error!"), t("Error deleting polygon"));
+      showStatusToast("error", t("Error deleting polygon"));
       throw error;
     }
-  }, [closeMapPopups, invalidatePolygonMapTiles, onClose, onSaved, openNotification, polygon?.uuid, t]);
+  }, [closeMapPopups, invalidatePolygonMapTiles, onClose, onSaved, polygon?.uuid, showStatusToast, t]);
 
   useEffect(() => {
     onRegisterSave?.(savePolygonData);
@@ -538,7 +539,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
       <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
-      <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-auto py-5 px-2 pl-6 pr-7">
+      <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden py-5 px-2 pl-6 pr-7">
         <SubmissionValidationTags polygon={polygon} />
         <Accordion
           header={<AccordionHeader title={t("Details")} />}
@@ -755,7 +756,14 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               </TableRow>
             )}
           />
-          {isLoadingVersions ? <Text>{t("Loading versions...")}</Text> : null}
+          {isLoadingVersions ? (
+            <Flex alignItems="center" justifyContent="center" gap={2} pt={12} height="100%">
+              <LoadingIcon boxSize={7} color="primary.700" animation="spin 1s linear infinite" />
+              <Text textStyle="500" color="neutral.800">
+                {t("Loading")}
+              </Text>
+            </Flex>
+          ) : null}
         </Accordion>
       </Flex>
       {!isCreateMode && (

@@ -1,5 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -276,7 +277,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const handleBulkDownload = useCallback(async () => {
     if (selectedDownloadPolygonUuids.length === 0) {
-      openNotification("error", t("Error!"), t("Could not find selected polygons to download"));
+      showToast({
+        label: t("Could not find selected polygons to download"),
+        type: "error",
+        placement: "bottom-end",
+        duration: 5000
+      });
       return;
     }
 
@@ -287,14 +293,24 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           ? selectedSitePolygons[0].name ?? "polygon"
           : `${site.name ?? "polygons"}-${new Date().toISOString().slice(0, 10)}`;
       await downloadMultiplePolygonsGeoJson(selectedDownloadPolygonUuids, filename);
-      openNotification("success", t("Success!"), t("Polygons downloaded successfully"));
+      showToast({
+        label: t("Polygon successfully downloaded"),
+        type: "success",
+        placement: "bottom-end",
+        duration: 5000
+      });
     } catch (error) {
       Log.error("Failed to download selected polygons:", error);
-      openNotification("error", t("Error!"), t("Error downloading polygons"));
+      showToast({
+        label: t("Error downloading polygon"),
+        type: "error",
+        placement: "bottom-end",
+        duration: 5000
+      });
     } finally {
       setIsDownloadingSelectedPolygons(false);
     }
-  }, [openNotification, selectedDownloadPolygonUuids, selectedSitePolygons, site.name, t]);
+  }, [selectedDownloadPolygonUuids, selectedSitePolygons, site.name, t]);
 
   const openPolygonEditDrawerForRow = useCallback(
     (row: PolygonTableRow) => {
@@ -592,7 +608,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
               isEditPolygonOpen
                 ? // TODO: Update `top-[70px]` when the navbar is redesigned so this offset matches the new header height.
                   "fixed top-[70px] bottom-0 left-0 right-0 z-[37] !h-[calc(100vh-66px)] w-screen rounded-none"
-                : "!rounded-[0.25rem_0.25rem_0_0]"
+                : "h-full w-full !rounded-[0.25rem_0.25rem_0_0]"
             )}
             polygons={polygonsData}
             onRefetchPolygons={refetchPolygons}
