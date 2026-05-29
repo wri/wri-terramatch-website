@@ -4,11 +4,19 @@ import { twMerge } from "tailwind-merge";
 
 import Button, { IButtonProps } from "../Button/Button";
 
+export type ButtonGroupButtonProps = IButtonProps & { id: string };
+
+export type ButtonGroupItem = {
+  id: string;
+  buttons: ButtonGroupButtonProps[];
+};
+
 export interface ButtonGroupProps {
   className?: string;
-  buttons?: IButtonProps[];
-  groups?: { id: string; buttons: IButtonProps[] }[];
+  buttons?: ButtonGroupButtonProps[];
+  groups?: ButtonGroupItem[];
 }
+
 const ButtonGroup: FC<ButtonGroupProps> = ({ className, buttons = [], groups = [] }) => {
   return (
     <Flex
@@ -22,13 +30,13 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ className, buttons = [], groups = [
       gap={3}
       justifyContent={buttons.length > 0 ? "flex-start" : "space-between"}
     >
-      {buttons.map(button => (
-        <Button key={button.id} className={twMerge(button.className, "flex-1")} {...button} />
+      {buttons.map((button, index) => (
+        <Button key={button.id ?? `button-${index}`} className={twMerge(button.className, "flex-1")} {...button} />
       ))}
       {groups.map(group => (
         <Flex key={group.id} gap={3}>
-          {group.buttons.map(button => (
-            <Button key={button.id} {...button} />
+          {group.buttons.map((button, index) => (
+            <Button key={button.id ?? `${group.id}-button-${index}`} {...button} />
           ))}
         </Flex>
       ))}

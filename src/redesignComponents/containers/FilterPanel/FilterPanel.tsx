@@ -38,7 +38,7 @@ const FilterPanel: FC<FilterPanelProps> = ({ title, onClose, content, variant = 
             </Flex>
           </Box>
         }
-        content={<Flex className="h-full min-h-0 flex-col gap-3 overflow-auto p-4 pr-2">{content}</Flex>}
+        content={<Flex className="h-full min-h-0 flex-col gap-3 overflow-auto">{content}</Flex>}
         footer={footer}
       />
     </Box>

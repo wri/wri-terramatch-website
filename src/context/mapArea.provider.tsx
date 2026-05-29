@@ -56,6 +56,8 @@ type MapAreaType = {
   setPolygonData: (value: SitePolygonLightDto[]) => void;
   polygonGeometryEdit: PolygonGeometryEditState | undefined;
   setPolygonGeometryEdit: (value: PolygonGeometryEditState | undefined) => void;
+  draftPolygonGeometry: GeoJSON.Geometry | undefined;
+  setDraftPolygonGeometry: (value: GeoJSON.Geometry | undefined) => void;
   polygonMapTileNonce: number;
   invalidatePolygonMapTiles: () => void;
   validFilter: string;
@@ -98,6 +100,8 @@ const defaultValue: MapAreaType = {
   setPolygonData: () => {},
   polygonGeometryEdit: undefined,
   setPolygonGeometryEdit: () => {},
+  draftPolygonGeometry: undefined,
+  setDraftPolygonGeometry: () => {},
   polygonMapTileNonce: 0,
   invalidatePolygonMapTiles: () => {},
   validFilter: "all",
@@ -125,6 +129,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, unknown>>({});
   const [polygonData, setPolygonData] = useState<SitePolygonLightDto[]>([]);
   const [polygonGeometryEdit, setPolygonGeometryEdit] = useState<PolygonGeometryEditState | undefined>();
+  const [draftPolygonGeometry, setDraftPolygonGeometry] = useState<GeoJSON.Geometry | undefined>();
   const [polygonMapTileNonce, setPolygonMapTileNonce] = useState(0);
   const [validFilter, setValidFilter] = useState<string>("all");
   const [editPolygon, setEditPolygonInternal] = useState<EditPolygonState>({
@@ -166,6 +171,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setSelectedPolygonsInCheckbox([]);
     setHasOverlaps(false);
     setPolygonGeometryEdit(undefined);
+    setDraftPolygonGeometry(undefined);
     setPolygonMapTileNonce(0);
   }, [closeMapPopups]);
 
@@ -202,6 +208,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonData,
     polygonGeometryEdit,
     setPolygonGeometryEdit,
+    draftPolygonGeometry,
+    setDraftPolygonGeometry,
     polygonMapTileNonce,
     invalidatePolygonMapTiles,
     validFilter,

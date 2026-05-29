@@ -17,7 +17,6 @@ import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { updatePolygonVersionAsync, useListPolygonVersions } from "@/connections/PolygonVersion";
 import {
   bulkUpdateSitePolygonStatus,
-  createPolygonVersion,
   deleteSitePolygon,
   PolygonStatus,
   pruneSitePolygonsCache
@@ -45,7 +44,7 @@ import DatePickerInput from "@/redesignComponents/Forms/Inputs/DateInputs/DatePi
 import InputWithUnits from "@/redesignComponents/Forms/Inputs/InputWithUnits";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
-import { DownloadIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
+import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
 import {
@@ -57,6 +56,13 @@ import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonA
 import type { PolygonTableRow } from "../tabs/Polygons";
 import DeletePolygon from "./Modals/DeletePolygon";
 import UploadPhotos from "./Modals/UploadPhotos";
+import type { PolygonSaveCallback } from "./polygonEdit.types";
+import {
+  type PolygonEditFormValues,
+  runPolygonCacheCleanup,
+  saveExistingPolygonVersion,
+  saveNewSitePolygon
+} from "./polygonEditSave";
 
 const TOAST_PLACEMENT = "top-end" as const;
 const SAVE_COMPLETE_TOAST_MS = 5000;
@@ -65,11 +71,13 @@ type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
   onClose?: () => void;
   onRegisterSave?: (saveHandler: () => Promise<boolean>) => void;
-  onSaved?: () => unknown | Promise<unknown>;
+  onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
 };
 
 type PolygonVersionRow = SitePolygonLightDto & { id: string };
+
+type PolygonEditAccordionSection = "details" | "monitoring-plots" | "geotagged-photos" | "versions";
 
 const optionToSelectItem = (option: { title: string; value: string }) => ({
   label: option.title,
@@ -114,7 +122,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const { openNotification } = useNotificationContext();
   const {
     polygonGeometryEdit,
+    draftPolygonGeometry,
+    siteData,
     setIsUserDrawingEnabled,
+    setDraftPolygonGeometry,
     setPolygonGeometryEdit,
     setShouldRefetchPolygonData,
     closeMapPopups,
@@ -129,14 +140,29 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState("");
-  const [plotsVisible, setPlotsVisible] = useState(true);
+  const [plotsVisible, setPlotsVisible] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
+  const [openAccordionSection, setOpenAccordionSection] = useState<PolygonEditAccordionSection | null>("details");
+
+  const handleAccordionOpenChange = useCallback(
+    (section: PolygonEditAccordionSection) => (open: boolean) => {
+      if (open) {
+        setOpenAccordionSection(section);
+        return;
+      }
+      setOpenAccordionSection(current => (current === section ? null : current));
+    },
+    []
+  );
 
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
+  const isCreateMode = polygon?.primaryUuid == null || polygon.primaryUuid === "";
+  const resolvedSiteUuid = polygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : "");
   const geometryChanged =
+    !isCreateMode &&
     polygonGeometryEdit?.polygonUuid === geometryPolygonUuid &&
     polygonGeometryEdit.isDirty &&
     polygonGeometryEdit.currentGeometry != null;
@@ -206,97 +232,138 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setRestorationPractice(polygon?.practice ?? []);
     setTargetLandUseSystem(normalizeTargetSystem(polygon?.targetSys));
     setTreeDistribution(polygon?.distr ?? []);
-    setTreesPlanted(String(polygon?.numTrees ?? 0));
+    setTreesPlanted(polygon?.numTrees != null ? String(polygon.numTrees) : "");
   }, [polygon]);
 
-  const savePolygonData = useCallback(async () => {
-    if (polygon?.primaryUuid == null || polygon.primaryUuid === "") {
-      openNotification("error", t("Error!"), t("Missing polygon information"));
+  const onSavedRef = useLatestRef(onSaved);
+  const onCloseRef = useLatestRef(onClose);
+  const onPolygonUpdatedRef = useLatestRef(onPolygonUpdated);
+  const refetchVersionsRef = useLatestRef(refetchVersions);
+
+  const getFormValues = useCallback(
+    (): PolygonEditFormValues => ({
+      polygonName,
+      plantStartDate,
+      restorationPractice,
+      targetLandUseSystem,
+      treeDistribution,
+      treesPlanted
+    }),
+    [polygonName, plantStartDate, restorationPractice, targetLandUseSystem, treeDistribution, treesPlanted]
+  );
+
+  const finalizeSuccessfulSave = useCallback(
+    async (savedPolygon: SitePolygonLightDto, options: { geometryChanged: boolean; refetchVersionsList: boolean }) => {
+      runPolygonCacheCleanup({
+        polygonUuid: savedPolygon.polygonUuid,
+        geometryChanged: options.geometryChanged,
+        invalidatePolygonMapTiles
+      });
+      setIsUserDrawingEnabled(false);
+      setDraftPolygonGeometry(undefined);
+      setPolygonGeometryEdit(undefined);
+      onPolygonUpdatedRef.current?.(savedPolygon);
+      setShouldRefetchPolygonData(true);
+      await waitForMapEditCleanup();
+      if (options.refetchVersionsList) {
+        await refetchVersionsRef.current?.();
+      }
+      await onSavedRef.current?.();
+      onCloseRef.current?.();
+    },
+    [
+      invalidatePolygonMapTiles,
+      onCloseRef,
+      onPolygonUpdatedRef,
+      onSavedRef,
+      refetchVersionsRef,
+      setDraftPolygonGeometry,
+      setIsUserDrawingEnabled,
+      setPolygonGeometryEdit,
+      setShouldRefetchPolygonData
+    ]
+  );
+
+  const saveNewPolygonFlow = useCallback(async (): Promise<boolean> => {
+    if (draftPolygonGeometry == null) {
+      openNotification("error", t("Error!"), t("Draw a polygon before saving"));
+      return false;
+    }
+    if (resolvedSiteUuid == null || resolvedSiteUuid === "") {
+      openNotification("error", t("Error!"), t("Missing site information"));
       return false;
     }
 
     try {
-      const attributeChanges = {
-        polyName: polygonName,
-        plantStart: dateValueToIsoString(plantStartDate[0]),
-        practice: restorationPractice,
-        targetSys: targetLandUseSystem.join(", "),
-        distr: treeDistribution,
-        numTrees: Number(treesPlanted || 0)
-      };
-
-      if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
-        openNotification("error", t("Error!"), t("Missing site information"));
-        return false;
-      }
-
-      const updatedPolygon = await createPolygonVersion({
-        primaryUuid: polygon.primaryUuid,
-        changeReason: geometryChanged
-          ? "Updated polygon geometry and attributes from edit drawer"
-          : "Updated polygon attributes from edit drawer",
-        attributeChanges,
-        ...(geometryChanged
-          ? {
-              geometry: {
-                type: "Feature" as const,
-                geometry: polygonGeometryEdit.currentGeometry,
-                properties: { siteId: polygon.siteId as string }
-              }
-            }
-          : {})
+      const createdPolygon = await saveNewSitePolygon({
+        siteId: resolvedSiteUuid,
+        geometry: draftPolygonGeometry,
+        form: getFormValues(),
+        dateValueToIso: dateValueToIsoString
       });
-
-      pruneSitePolygonsCache();
-      if (updatedPolygon.polygonUuid != null && updatedPolygon.polygonUuid !== "") {
-        ApiSlice.pruneCache("geojsonExports", [updatedPolygon.polygonUuid]);
-      }
-      if (geometryChanged) {
-        pruneBoundingBoxesCache();
-        invalidatePolygonMapTiles();
-      }
-      setIsUserDrawingEnabled(false);
-      setPolygonGeometryEdit(undefined);
-      onPolygonUpdated?.(updatedPolygon);
-      onClose?.();
-      await waitForMapEditCleanup();
-      await refetchVersions?.();
-      await onSaved?.();
-      setShouldRefetchPolygonData(true);
-
-      showToast({
-        label: t("Changes Saved"),
-        type: "success",
-        placement: TOAST_PLACEMENT,
-        duration: SAVE_COMPLETE_TOAST_MS
-      });
+      await finalizeSuccessfulSave(createdPolygon, { geometryChanged: true, refetchVersionsList: false });
+      openNotification("success", t("Success!"), t("Polygon created successfully"));
       return true;
-    } catch (error) {
+    } catch {
+      openNotification("error", t("Error!"), t("Error creating polygon"));
+      return false;
+    }
+  }, [draftPolygonGeometry, finalizeSuccessfulSave, getFormValues, openNotification, resolvedSiteUuid, t]);
+
+  const saveExistingPolygonFlow = useCallback(async (): Promise<boolean> => {
+    if (polygon?.primaryUuid == null || polygon.primaryUuid === "") {
+      openNotification("error", t("Error!"), t("Missing polygon information"));
+      return false;
+    }
+    if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
+      openNotification("error", t("Error!"), t("Missing site information"));
+      return false;
+    }
+
+    showToast({
+      label: t("Changes Saved"),
+      type: "success",
+      placement: TOAST_PLACEMENT,
+      duration: SAVE_COMPLETE_TOAST_MS
+    });
+
+    try {
+      const updatedPolygon = await saveExistingPolygonVersion({
+        primaryUuid: polygon.primaryUuid,
+        siteId: polygon.siteId as string,
+        form: getFormValues(),
+        geometryChanged,
+        currentGeometry: polygonGeometryEdit?.currentGeometry,
+        dateValueToIso: dateValueToIsoString
+      });
+      await finalizeSuccessfulSave(updatedPolygon, { geometryChanged, refetchVersionsList: true });
+      openNotification(
+        "success",
+        t("Success!"),
+        geometryChanged
+          ? t("Polygon geometry and attributes were saved successfully")
+          : t("Polygon version created successfully")
+      );
+      return true;
+    } catch {
       openNotification("error", t("Error!"), t("Error creating polygon version"));
       return false;
     }
   }, [
-    onSaved,
-    onPolygonUpdated,
-    onClose,
-    openNotification,
-    plantStartDate,
+    finalizeSuccessfulSave,
     geometryChanged,
-    polygon?.siteId,
+    getFormValues,
+    openNotification,
     polygon?.primaryUuid,
+    polygon?.siteId,
     polygonGeometryEdit?.currentGeometry,
-    polygonName,
-    refetchVersions,
-    restorationPractice,
-    invalidatePolygonMapTiles,
-    setIsUserDrawingEnabled,
-    setPolygonGeometryEdit,
-    setShouldRefetchPolygonData,
-    t,
-    targetLandUseSystem,
-    treeDistribution,
-    treesPlanted
+    t
   ]);
+
+  const savePolygonData = useCallback(async () => {
+    if (isCreateMode) return saveNewPolygonFlow();
+    return saveExistingPolygonFlow();
+  }, [isCreateMode, saveExistingPolygonFlow, saveNewPolygonFlow]);
 
   useEffect(() => {
     const overlay = anrMapOverlayRef.current;
@@ -483,7 +550,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
       <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
-      <Flex className="-ml-2 min-h-0 flex-1 flex-col gap-2 overflow-auto overflow-x-hidden px-2">
+      <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-auto py-5 px-2 pl-6 pr-7">
         <Flex className="h-fit w-full gap-6">
           <Flex className="items-center gap-1">
             <Text textStyle="200" color="neutral.800">
@@ -500,7 +567,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             />
           </Flex>
         </Flex>
-        <Accordion header={<AccordionHeader title={t("Details")} />} defaultOpen>
+        <Accordion
+          header={<AccordionHeader title={t("Details")} />}
+          open={openAccordionSection === "details"}
+          onOpenChange={handleAccordionOpenChange("details")}
+        >
           <Flex className="flex-1 flex-col gap-4">
             <TextInput
               label={t("Polygon Name")}
@@ -508,9 +579,20 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               placeholder={t("Full Polygon Name")}
               value={polygonName}
               onChange={event => setPolygonName(event.target.value)}
+              required={!isCreateMode}
+            />
+            <DatePickerInput
+              label={t("Label")}
+              value={plantStartDate}
+              onValueChange={setPlantStartDate}
+              required={!isCreateMode}
+            />
+            <DatePickerInput
+              label={t("Plant Start Date")}
+              value={plantStartDate}
+              onValueChange={setPlantStartDate}
               required
             />
-            <DatePickerInput label={t("Label")} value={plantStartDate} onValueChange={setPlantStartDate} required />
             <SelectInput
               items={restorationOptions}
               label={t("Restoration Practice")}
@@ -518,7 +600,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               onChange={setRestorationPractice}
               placeholder={t("Select...")}
               multiple
-              required
+              required={!isCreateMode}
             />
             <SelectInput
               items={targetOptions}
@@ -526,7 +608,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               value={targetLandUseSystem}
               onChange={value => setTargetLandUseSystem(value.slice(0, 1))}
               placeholder={t("Select...")}
-              required
+              required={!isCreateMode}
             />
             <SelectInput
               items={treeOptions}
@@ -535,7 +617,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               onChange={setTreeDistribution}
               placeholder={t("Select...")}
               multiple
-              required
+              required={!isCreateMode}
             />
             <TextInput
               label={t("Trees Planted")}
@@ -543,7 +625,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               placeholder={t("Enter Trees Planted")}
               value={treesPlanted}
               onChange={event => setTreesPlanted(event.target.value.replace(/\D/g, ""))}
-              required
+              required={!isCreateMode}
             />
             <InputWithUnits
               key={polygon?.uuid}
@@ -563,16 +645,29 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         </Accordion>
         <Accordion
           header={<AccordionHeader title={t("Monitoring Plots")} />}
+          open={openAccordionSection === "monitoring-plots"}
+          onOpenChange={handleAccordionOpenChange("monitoring-plots")}
           actions={
-            <Button
-              leftIcon={<DownloadIcon />}
-              onClick={() => void downloadMonitoringPlots()}
-              size="small"
-              variant="secondary"
-              disabled={!isAnrEligible || !hasAnrPlotGeometry}
-            >
-              {t("Download Monitoring Plots")}
-            </Button>
+            <Flex>
+              <Button
+                leftIcon={<DownloadIcon />}
+                onClick={() => void downloadMonitoringPlots()}
+                size="small"
+                variant="secondary"
+                disabled={!isAnrEligible || !hasAnrPlotGeometry}
+              >
+                {t("Download")}
+              </Button>
+              <Button
+                leftIcon={<RefreshIcon />}
+                onClick={() => void downloadMonitoringPlots()}
+                size="small"
+                variant="secondary"
+                disabled={!isAnrEligible || !hasAnrPlotGeometry}
+              >
+                {t("Update")}
+              </Button>
+            </Flex>
           }
         >
           <Flex className="flex-1 flex-col gap-4">
@@ -610,6 +705,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         </Accordion>
         <Accordion
           header={<AccordionHeader title={t("Geotagged Photos")} />}
+          open={openAccordionSection === "geotagged-photos"}
+          onOpenChange={handleAccordionOpenChange("geotagged-photos")}
           actions={
             <Button
               leftIcon={<UploadIcon />}
@@ -625,14 +722,17 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             <Flex className="items-center gap-1">
               <Text textStyle="400-bold" color="neutral.900">{`X ${t("Photos")}`}</Text>
               <Text color="neutral.900">{t("available")}</Text>
-              <ValidationTag status="failed" />
             </Flex>
             <Switch name="showPhotosOnMap" onChange={function noRefCheck() {}}>
               {t("Show Photos on Map")}
             </Switch>
           </Flex>
         </Accordion>
-        <Accordion header={t("Versions")}>
+        <Accordion
+          header={t("Versions")}
+          open={openAccordionSection === "versions"}
+          onOpenChange={handleAccordionOpenChange("versions")}
+        >
           <Table<PolygonVersionRow>
             columns={[
               {
@@ -685,22 +785,26 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           {isLoadingVersions ? <Text>{t("Loading versions...")}</Text> : null}
         </Accordion>
       </Flex>
-      <Flex className="w-full justify-center">
-        <FloatingActionToolbar
-          className="bg-theme-neutral-200"
-          items={[
-            { label: t("Delete"), onClick: () => setShowDeleteModal(true), labelColor: "error.500" },
-            { label: t("Download"), onClick: () => void handleDownloadPolygon() },
-            { label: t("Submit"), onClick: () => void handleSubmitPolygon() }
-          ]}
-        />
-      </Flex>
-      <DeletePolygon
-        open={showDeleteModal}
-        onOpenChange={setShowDeleteModal}
-        polygons={polygonTableRow}
-        onDelete={handleDeletePolygon}
-      />
+      {!isCreateMode && (
+        <>
+          <Flex className="w-full justify-center">
+            <FloatingActionToolbar
+              className="bg-theme-neutral-200"
+              items={[
+                { label: t("Delete"), onClick: () => setShowDeleteModal(true), labelColor: "error.500" },
+                { label: t("Download"), onClick: () => void handleDownloadPolygon() },
+                { label: t("Submit"), onClick: () => void handleSubmitPolygon() }
+              ]}
+            />
+          </Flex>
+          <DeletePolygon
+            open={showDeleteModal}
+            onOpenChange={setShowDeleteModal}
+            polygons={polygonTableRow}
+            onDelete={handleDeletePolygon}
+          />
+        </>
+      )}
     </Flex>
   );
 };
