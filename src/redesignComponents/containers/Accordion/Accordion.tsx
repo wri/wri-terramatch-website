@@ -91,7 +91,7 @@ const Accordion: FC<AccordionProps> = ({
           padding: "0 2rem"
         },
         "& [data-scope='accordion'][data-part='item']": {
-          overflow: "hidden"
+          overflow: "visible"
         }
       }}
     >
