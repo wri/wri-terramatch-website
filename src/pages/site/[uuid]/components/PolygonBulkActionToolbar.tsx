@@ -22,6 +22,7 @@ export type PolygonBulkActionToolbarProps = {
   onDownload: () => void;
   onEdit: () => void;
   onSubmit: () => void;
+  onViewPolygonDetails?: (polygon: PolygonTableRow) => void;
   onRunValidation: (polygonUuids: string[]) => Promise<void>;
   showTooltip: boolean;
   polygons: PolygonTableRow[];
@@ -40,14 +41,15 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   onDownload,
   onEdit,
   onSubmit,
-  onRunValidation,
+  onViewPolygonDetails,
   polygons,
+  onRunValidation,
   polygonValidations,
   selectedPolygonUuids,
   showTooltip
 }) => {
-  const t = useT();
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
+  const t = useT();
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
   if (!visible || isPolygonEditDrawerOpen || isBulkEditDrawerOpen) {
     return null;
@@ -60,6 +62,10 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
         polygonValidations={polygonValidations}
         open={isSystemValidationCompleteModalOpen}
         onOpenChange={setIsSystemValidationCompleteModalOpen}
+        onViewDetails={polygon => {
+          setIsSystemValidationCompleteModalOpen(false);
+          onViewPolygonDetails?.(polygon);
+        }}
       />
       <BulkActionToolbar
         ButtonCancel={{
