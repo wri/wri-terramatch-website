@@ -16,7 +16,6 @@ import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { updatePolygonVersionAsync, useListPolygonVersions } from "@/connections/PolygonVersion";
 import {
   bulkUpdateSitePolygonStatus,
-  createPolygonVersion,
   deleteSitePolygon,
   PolygonStatus,
   pruneSitePolygonsCache
@@ -56,12 +55,19 @@ import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonA
 import type { PolygonTableRow } from "../tabs/Polygons";
 import DeletePolygon from "./Modals/DeletePolygon";
 import UploadPhotos from "./Modals/UploadPhotos";
+import type { PolygonSaveCallback } from "./polygonEdit.types";
+import {
+  type PolygonEditFormValues,
+  runPolygonCacheCleanup,
+  saveExistingPolygonVersion,
+  saveNewSitePolygon
+} from "./polygonEditSave";
 
 type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
   onClose?: () => void;
   onRegisterSave?: (saveHandler: () => Promise<boolean>) => void;
-  onSaved?: () => unknown | Promise<unknown>;
+  onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
 };
 
@@ -112,7 +118,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const { openNotification } = useNotificationContext();
   const {
     polygonGeometryEdit,
+    draftPolygonGeometry,
+    siteData,
     setIsUserDrawingEnabled,
+    setDraftPolygonGeometry,
     setPolygonGeometryEdit,
     setShouldRefetchPolygonData,
     closeMapPopups,
@@ -146,7 +155,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
+  const isCreateMode = polygon?.primaryUuid == null || polygon.primaryUuid === "";
+  const resolvedSiteUuid = polygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : "");
   const geometryChanged =
+    !isCreateMode &&
     polygonGeometryEdit?.polygonUuid === geometryPolygonUuid &&
     polygonGeometryEdit.isDirty &&
     polygonGeometryEdit.currentGeometry != null;
@@ -216,64 +228,104 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setRestorationPractice(polygon?.practice ?? []);
     setTargetLandUseSystem(normalizeTargetSystem(polygon?.targetSys));
     setTreeDistribution(polygon?.distr ?? []);
-    setTreesPlanted(String(polygon?.numTrees ?? 0));
+    setTreesPlanted(polygon?.numTrees != null ? String(polygon.numTrees) : "");
   }, [polygon]);
 
-  const savePolygonData = useCallback(async () => {
-    if (polygon?.primaryUuid == null || polygon.primaryUuid === "") {
-      openNotification("error", t("Error!"), t("Missing polygon information"));
+  const onSavedRef = useLatestRef(onSaved);
+  const onCloseRef = useLatestRef(onClose);
+  const onPolygonUpdatedRef = useLatestRef(onPolygonUpdated);
+  const refetchVersionsRef = useLatestRef(refetchVersions);
+
+  const getFormValues = useCallback(
+    (): PolygonEditFormValues => ({
+      polygonName,
+      plantStartDate,
+      restorationPractice,
+      targetLandUseSystem,
+      treeDistribution,
+      treesPlanted
+    }),
+    [polygonName, plantStartDate, restorationPractice, targetLandUseSystem, treeDistribution, treesPlanted]
+  );
+
+  const finalizeSuccessfulSave = useCallback(
+    async (savedPolygon: SitePolygonLightDto, options: { geometryChanged: boolean; refetchVersionsList: boolean }) => {
+      runPolygonCacheCleanup({
+        polygonUuid: savedPolygon.polygonUuid,
+        geometryChanged: options.geometryChanged,
+        invalidatePolygonMapTiles
+      });
+      setIsUserDrawingEnabled(false);
+      setDraftPolygonGeometry(undefined);
+      setPolygonGeometryEdit(undefined);
+      onPolygonUpdatedRef.current?.(savedPolygon);
+      setShouldRefetchPolygonData(true);
+      await waitForMapEditCleanup();
+      if (options.refetchVersionsList) {
+        await refetchVersionsRef.current?.();
+      }
+      await onSavedRef.current?.();
+      onCloseRef.current?.();
+    },
+    [
+      invalidatePolygonMapTiles,
+      onCloseRef,
+      onPolygonUpdatedRef,
+      onSavedRef,
+      refetchVersionsRef,
+      setDraftPolygonGeometry,
+      setIsUserDrawingEnabled,
+      setPolygonGeometryEdit,
+      setShouldRefetchPolygonData
+    ]
+  );
+
+  const saveNewPolygonFlow = useCallback(async (): Promise<boolean> => {
+    if (draftPolygonGeometry == null) {
+      openNotification("error", t("Error!"), t("Draw a polygon before saving"));
+      return false;
+    }
+    if (resolvedSiteUuid == null || resolvedSiteUuid === "") {
+      openNotification("error", t("Error!"), t("Missing site information"));
       return false;
     }
 
     try {
-      const attributeChanges = {
-        polyName: polygonName,
-        plantStart: dateValueToIsoString(plantStartDate[0]),
-        practice: restorationPractice,
-        targetSys: targetLandUseSystem.join(", "),
-        distr: treeDistribution,
-        numTrees: Number(treesPlanted || 0)
-      };
-
-      if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
-        openNotification("error", t("Error!"), t("Missing site information"));
-        return false;
-      }
-
-      const updatedPolygon = await createPolygonVersion({
-        primaryUuid: polygon.primaryUuid,
-        changeReason: geometryChanged
-          ? "Updated polygon geometry and attributes from edit drawer"
-          : "Updated polygon attributes from edit drawer",
-        attributeChanges,
-        ...(geometryChanged
-          ? {
-              geometry: {
-                type: "Feature" as const,
-                geometry: polygonGeometryEdit.currentGeometry,
-                properties: { siteId: polygon.siteId as string }
-              }
-            }
-          : {})
+      const createdPolygon = await saveNewSitePolygon({
+        siteId: resolvedSiteUuid,
+        geometry: draftPolygonGeometry,
+        form: getFormValues(),
+        dateValueToIso: dateValueToIsoString
       });
+      await finalizeSuccessfulSave(createdPolygon, { geometryChanged: true, refetchVersionsList: false });
+      openNotification("success", t("Success!"), t("Polygon created successfully"));
+      return true;
+    } catch {
+      openNotification("error", t("Error!"), t("Error creating polygon"));
+      return false;
+    }
+  }, [draftPolygonGeometry, finalizeSuccessfulSave, getFormValues, openNotification, resolvedSiteUuid, t]);
 
-      pruneSitePolygonsCache();
-      if (updatedPolygon.polygonUuid != null && updatedPolygon.polygonUuid !== "") {
-        ApiSlice.pruneCache("geojsonExports", [updatedPolygon.polygonUuid]);
-      }
-      if (geometryChanged) {
-        pruneBoundingBoxesCache();
-        invalidatePolygonMapTiles();
-      }
-      setIsUserDrawingEnabled(false);
-      setPolygonGeometryEdit(undefined);
-      onPolygonUpdated?.(updatedPolygon);
-      onClose?.();
-      await waitForMapEditCleanup();
-      await refetchVersions?.();
-      await onSaved?.();
-      setShouldRefetchPolygonData(true);
+  const saveExistingPolygonFlow = useCallback(async (): Promise<boolean> => {
+    if (polygon?.primaryUuid == null || polygon.primaryUuid === "") {
+      openNotification("error", t("Error!"), t("Missing polygon information"));
+      return false;
+    }
+    if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
+      openNotification("error", t("Error!"), t("Missing site information"));
+      return false;
+    }
 
+    try {
+      const updatedPolygon = await saveExistingPolygonVersion({
+        primaryUuid: polygon.primaryUuid,
+        siteId: polygon.siteId as string,
+        form: getFormValues(),
+        geometryChanged,
+        currentGeometry: polygonGeometryEdit?.currentGeometry,
+        dateValueToIso: dateValueToIsoString
+      });
+      await finalizeSuccessfulSave(updatedPolygon, { geometryChanged, refetchVersionsList: true });
       openNotification(
         "success",
         t("Success!"),
@@ -282,32 +334,25 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           : t("Polygon version created successfully")
       );
       return true;
-    } catch (error) {
+    } catch {
       openNotification("error", t("Error!"), t("Error creating polygon version"));
       return false;
     }
   }, [
-    onSaved,
-    onPolygonUpdated,
-    onClose,
-    openNotification,
-    plantStartDate,
+    finalizeSuccessfulSave,
     geometryChanged,
-    polygon?.siteId,
+    getFormValues,
+    openNotification,
     polygon?.primaryUuid,
+    polygon?.siteId,
     polygonGeometryEdit?.currentGeometry,
-    polygonName,
-    refetchVersions,
-    restorationPractice,
-    invalidatePolygonMapTiles,
-    setIsUserDrawingEnabled,
-    setPolygonGeometryEdit,
-    setShouldRefetchPolygonData,
-    t,
-    targetLandUseSystem,
-    treeDistribution,
-    treesPlanted
+    t
   ]);
+
+  const savePolygonData = useCallback(async () => {
+    if (isCreateMode) return saveNewPolygonFlow();
+    return saveExistingPolygonFlow();
+  }, [isCreateMode, saveExistingPolygonFlow, saveNewPolygonFlow]);
 
   useEffect(() => {
     const overlay = anrMapOverlayRef.current;
@@ -523,7 +568,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               placeholder={t("Full Polygon Name")}
               value={polygonName}
               onChange={event => setPolygonName(event.target.value)}
-              required
+              required={!isCreateMode}
+            />
+            <DatePickerInput
+              label={t("Label")}
+              value={plantStartDate}
+              onValueChange={setPlantStartDate}
+              required={!isCreateMode}
             />
             <DatePickerInput
               label={t("Plant Start Date")}
@@ -538,7 +589,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               onChange={setRestorationPractice}
               placeholder={t("Select...")}
               multiple
-              required
+              required={!isCreateMode}
             />
             <SelectInput
               items={targetOptions}
@@ -546,7 +597,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               value={targetLandUseSystem}
               onChange={value => setTargetLandUseSystem(value.slice(0, 1))}
               placeholder={t("Select...")}
-              required
+              required={!isCreateMode}
             />
             <SelectInput
               items={treeOptions}
@@ -555,7 +606,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               onChange={setTreeDistribution}
               placeholder={t("Select...")}
               multiple
-              required
+              required={!isCreateMode}
             />
             <TextInput
               label={t("Trees Planted")}
@@ -563,7 +614,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               placeholder={t("Enter Trees Planted")}
               value={treesPlanted}
               onChange={event => setTreesPlanted(event.target.value.replace(/\D/g, ""))}
-              required
+              required={!isCreateMode}
             />
             <InputWithUnits
               key={polygon?.uuid}
@@ -723,22 +774,26 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           {isLoadingVersions ? <Text>{t("Loading versions...")}</Text> : null}
         </Accordion>
       </Flex>
-      <Flex className="w-full justify-center">
-        <FloatingActionToolbar
-          className="bg-theme-neutral-200"
-          items={[
-            { label: t("Delete"), onClick: () => setShowDeleteModal(true), labelColor: "error.500" },
-            { label: t("Download"), onClick: () => void handleDownloadPolygon() },
-            { label: t("Submit"), onClick: () => void handleSubmitPolygon() }
-          ]}
-        />
-      </Flex>
-      <DeletePolygon
-        open={showDeleteModal}
-        onOpenChange={setShowDeleteModal}
-        polygons={polygonTableRow}
-        onDelete={handleDeletePolygon}
-      />
+      {!isCreateMode && (
+        <>
+          <Flex className="w-full justify-center">
+            <FloatingActionToolbar
+              className="bg-theme-neutral-200"
+              items={[
+                { label: t("Delete"), onClick: () => setShowDeleteModal(true), labelColor: "error.500" },
+                { label: t("Download"), onClick: () => void handleDownloadPolygon() },
+                { label: t("Submit"), onClick: () => void handleSubmitPolygon() }
+              ]}
+            />
+          </Flex>
+          <DeletePolygon
+            open={showDeleteModal}
+            onOpenChange={setShowDeleteModal}
+            polygons={polygonTableRow}
+            onDelete={handleDeletePolygon}
+          />
+        </>
+      )}
     </Flex>
   );
 };

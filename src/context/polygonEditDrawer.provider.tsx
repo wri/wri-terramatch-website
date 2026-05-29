@@ -1,7 +1,9 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
+import { dispatchClearDraftDrawEvent } from "@/components/elements/Map-mapbox/interactions/draftDrawEvents";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import type { PolygonSaveCallback } from "@/pages/site/[uuid]/components/polygonEdit.types";
 import PolygonEditDrawer from "@/pages/site/[uuid]/components/PolygonEditDrawer";
 
 import type { PolygonEditDrawerPolygon } from "./polygonEditDrawer.types";
@@ -38,22 +40,20 @@ export const usePolygonEditDrawer = (): PolygonEditDrawerContextValue => {
   return useContext(PolygonEditDrawerContext);
 };
 
-type RefetchPolygonsHandler = () => unknown | Promise<unknown>;
-
 type PolygonEditDrawerProviderProps = {
   children: ReactNode;
   polygons?: SitePolygonLightDto[];
-  onRefetchPolygons?: RefetchPolygonsHandler;
+  onRefetchPolygons?: PolygonSaveCallback;
 };
 
 type PolygonEditDrawerDataSyncProps = {
   polygons?: SitePolygonLightDto[];
-  onRefetchPolygons?: RefetchPolygonsHandler;
+  onRefetchPolygons?: PolygonSaveCallback;
 };
 
 type PolygonEditDrawerDataContextValue = {
   setPolygons: (polygons: SitePolygonLightDto[]) => void;
-  setOnRefetchPolygons: (onRefetch?: RefetchPolygonsHandler) => void;
+  setOnRefetchPolygons: (onRefetch?: PolygonSaveCallback) => void;
 };
 
 const PolygonEditDrawerDataContext = createContext<PolygonEditDrawerDataContextValue | null>(null);
@@ -84,7 +84,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const [polygon, setPolygon] = useState<PolygonEditDrawerPolygon>({});
   const [polygons, setPolygons] = useState(polygonsProp);
 
-  const onRefetchPolygonsRef = useRef<RefetchPolygonsHandler | undefined>(onRefetchPolygonsProp);
+  const onRefetchPolygonsRef = useRef<PolygonSaveCallback | undefined>(onRefetchPolygonsProp);
 
   useEffect(() => {
     setPolygons(polygonsProp);
@@ -94,19 +94,23 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     onRefetchPolygonsRef.current = onRefetchPolygonsProp;
   }, [onRefetchPolygonsProp]);
 
-  const setOnRefetchPolygons = useCallback((handler?: RefetchPolygonsHandler) => {
+  const setOnRefetchPolygons = useCallback((handler?: PolygonSaveCallback) => {
     onRefetchPolygonsRef.current = handler;
   }, []);
 
   const handleSaved = useCallback(() => onRefetchPolygonsRef.current?.(), []);
 
   const dataContextValue = useMemo(() => ({ setPolygons, setOnRefetchPolygons }), [setOnRefetchPolygons]);
-  const { setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit } = useMapAreaContext();
+  const { setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit, setDraftPolygonGeometry } =
+    useMapAreaContext();
 
   const openPolygonEdit = useCallback(
     (params?: PolygonEditDrawerPolygon) => {
       const polygonUuid = params?.polygonUuid ?? params?.sitePolygon?.polygonUuid ?? undefined;
       const primaryUuid = params?.sitePolygon?.primaryUuid;
+      if (polygonUuid == null || polygonUuid === "") {
+        setDraftPolygonGeometry(undefined);
+      }
       setPolygon({
         polygonUuid,
         polygonName: params?.polygonName,
@@ -117,16 +121,18 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
       }
       setIsOpen(true);
     },
-    [setEditPolygon]
+    [setDraftPolygonGeometry, setEditPolygon]
   );
 
   const closePolygonEdit = useCallback(() => {
     setIsOpen(false);
     setPolygon({});
+    dispatchClearDraftDrawEvent();
     setIsUserDrawingEnabled(false);
     setEditPolygon({ isOpen: false, uuid: "" });
     setPolygonGeometryEdit(undefined);
-  }, [setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit]);
+    setDraftPolygonGeometry(undefined);
+  }, [setDraftPolygonGeometry, setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit]);
 
   const setSelectedPolygon = useCallback(
     (sitePolygon: SitePolygonLightDto) => {
