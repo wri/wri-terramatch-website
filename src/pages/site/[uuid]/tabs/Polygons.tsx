@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
+import { dispatchUndoPolygonDrawEvent } from "@/components/elements/Map-mapbox/interactions/draftDrawEvents";
 import { downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -68,7 +69,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
   const { isOpen: isEditPolygonOpen } = usePolygonEditDrawer();
-  const { setSiteData, resetSiteMapInteractionState, closeMapPopups, invalidatePolygonMapTiles } = useMapAreaContext();
+  const { isUserDrawingEnabled, setSiteData, resetSiteMapInteractionState, closeMapPopups, invalidatePolygonMapTiles } =
+    useMapAreaContext();
   const { openNotification } = useNotificationContext();
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -314,6 +316,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [openPolygonEditDrawerForRow, selectedRows]);
 
   const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
+
+  const handleUndoPolygonDraw = useCallback(() => {
+    dispatchUndoPolygonDrawEvent();
+  }, []);
   const startNewPolygonFlow = useCallback(() => {
     handleBulkDraw();
     startDrawing();
@@ -593,11 +599,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             polygonTableHighlight={polygonTableHighlight}
             overlapPolygons={overlapPolygons}
           />
-          {isEditPolygonOpen && (
+          {isEditPolygonOpen && isUserDrawingEnabled && (
             <Button
               variant="secondary"
               leftIcon={<UndoIcon />}
               className="fixed bottom-2 left-[calc(32rem+(100vw-32rem)/2)] z-[38] -translate-x-1/2"
+              onClick={handleUndoPolygonDraw}
             >
               {t("Undo")}
             </Button>

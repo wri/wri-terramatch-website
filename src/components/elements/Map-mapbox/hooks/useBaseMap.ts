@@ -5,9 +5,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { mapboxToken } from "@/constants/environment";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 
-import { drawPolygonWithUndoMode } from "../drawModes/drawPolygonWithUndoMode";
+import { drawPolygonWithUndoMode, performPolygonDrawUndo } from "../drawModes/drawPolygonWithUndoMode";
 import { FeatureCollection } from "../GeoJSON";
-import { CLEAR_DRAFT_DRAW_EVENT } from "../interactions/draftDrawEvents";
+import { CLEAR_DRAFT_DRAW_EVENT, UNDO_POLYGON_DRAW_EVENT } from "../interactions/draftDrawEvents";
 import type { ControlType } from "../Map.d";
 import { BASEMAP_CONFIGS, MapStyle } from "../MapControls/types";
 import { applyMapDrawStatusStyles, createMapDrawStyles } from "../mapStyle";
@@ -71,9 +71,16 @@ export const useBaseMap = (
       setDraftPolygonGeometry(undefined);
     };
 
+    const handleUndoPolygonDraw = () => {
+      if (draw.current?.getMode() !== "draw_polygon") return;
+      performPolygonDrawUndo();
+    };
+
     window.addEventListener(CLEAR_DRAFT_DRAW_EVENT, handleClearDraftDraw);
+    window.addEventListener(UNDO_POLYGON_DRAW_EVENT, handleUndoPolygonDraw);
     return () => {
       window.removeEventListener(CLEAR_DRAFT_DRAW_EVENT, handleClearDraftDraw);
+      window.removeEventListener(UNDO_POLYGON_DRAW_EVENT, handleUndoPolygonDraw);
     };
   }, [deferDrawCreateSave, setDraftPolygonGeometry]);
 
