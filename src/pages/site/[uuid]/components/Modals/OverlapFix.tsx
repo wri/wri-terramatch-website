@@ -33,7 +33,7 @@ const PolygonNameList: FC<{ polygons: OverlapFixPolygon[] }> = ({ polygons }) =>
       {polygons.map(polygon => (
         <List.Item key={polygon.id} _marker={{ color: "neutral.900" }}>
           <Flex className="w-full flex-row items-center justify-between gap-4">
-            <Text textStyle="400" color="neutral.900">
+            <Text textStyle="400" color="neutral.900" className="truncate" title={polygon.name}>
               {polygon.name}
             </Text>
             <Button size="small" variant="secondary" onClick={() => {}} rightIcon={<ChevronRightIcon />}>

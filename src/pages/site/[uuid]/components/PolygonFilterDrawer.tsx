@@ -32,11 +32,6 @@ import {
 
 type CheckboxChange = { checked?: boolean | "indeterminate" };
 
-const SUBMISSION_CYCLE_OPTIONS = [1, 2, 3, 4, 5].map(value => ({
-  value: String(value),
-  label: `Option ${value}`
-}));
-
 const setArrayValue = <T extends string>(values: T[], value: T, checked: boolean): T[] => {
   if (checked) {
     return values.includes(value) ? values : [...values, value];
@@ -190,9 +185,9 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           onClose={onClose}
           className="h-screen w-full"
           content={
-            <Flex className="h-full flex-col gap-3 overflow-auto">
+            <Flex className="h-full flex-col gap-3 overflow-auto p-4">
               {activeFilters.length > 0 && (
-                <Flex className="flex-wrap gap-2">
+                <Flex className="mb-2 flex-wrap gap-2">
                   {activeFilters.map(filter => (
                     <FeedbackTag
                       key={filter.id}
@@ -264,16 +259,17 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   onChange={handleTargetLandUseChange}
                 />
               </FilterCard>
-              <FilterCard label={t("Submission Cycle")}>
+              {/* TODO: Add submission cycle filter when it is implemented */}
+              {/* <FilterCard label={t("Submission Cycle")}>
                 <SelectInput
                   placeholder={t("Please Select")}
                   size="small"
-                  items={SUBMISSION_CYCLE_OPTIONS.map(option => ({
+                  items={SUBMISSION_CYCLE_MOCKED_OPTIONS.map(option => ({
                     value: option.value,
                     label: t("Option {option}", { option: option.value })
                   }))}
                 />
-              </FilterCard>
+              </FilterCard> */}
               <FilterCard label={t("Overlap")}>
                 <Switch name="overlap" checked={draftFilters.hasOverlap} onCheckedChange={handleOverlapChange}>
                   {t("Show Polygon Overlaps")}

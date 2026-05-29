@@ -41,7 +41,7 @@ import DatePickerInput from "@/redesignComponents/Forms/Inputs/DateInputs/DatePi
 import InputWithUnits from "@/redesignComponents/Forms/Inputs/InputWithUnits";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
-import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
+import { DownloadIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
 import {
@@ -53,7 +53,6 @@ import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonA
 import type { PolygonTableRow } from "../tabs/Polygons";
 import DeletePolygon from "./Modals/DeletePolygon";
 import UploadPhotos from "./Modals/UploadPhotos";
-import SubmissionValidationTags from "./SubmissionValidationTags";
 import type { PolygonSaveCallback } from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
@@ -61,6 +60,7 @@ import {
   saveExistingPolygonVersion,
   saveNewSitePolygon
 } from "./polygonEditSave";
+import SubmissionValidationTags from "./SubmissionValidationTags";
 
 type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
@@ -621,26 +621,15 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           open={openAccordionSection === "monitoring-plots"}
           onOpenChange={handleAccordionOpenChange("monitoring-plots")}
           actions={
-            <Flex>
-              <Button
-                leftIcon={<DownloadIcon />}
-                onClick={() => void downloadMonitoringPlots()}
-                size="small"
-                variant="secondary"
-                disabled={!isAnrEligible || !hasAnrPlotGeometry}
-              >
-                {t("Download")}
-              </Button>
-              <Button
-                leftIcon={<RefreshIcon />}
-                onClick={() => void downloadMonitoringPlots()}
-                size="small"
-                variant="secondary"
-                disabled={!isAnrEligible || !hasAnrPlotGeometry}
-              >
-                {t("Update")}
-              </Button>
-            </Flex>
+            <Button
+              leftIcon={<DownloadIcon />}
+              onClick={() => void downloadMonitoringPlots()}
+              size="small"
+              variant="secondary"
+              disabled={!isAnrEligible || !hasAnrPlotGeometry}
+            >
+              {t("Download")}
+            </Button>
           }
         >
           <Flex className="flex-1 flex-col gap-4">
@@ -671,7 +660,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                   </Text>
                 </>
               ) : (
-                <Text>{t("Monitoring plots are not available for this polygon.")}</Text>
+                <Text>
+                  {t(
+                    "The monitoring plots are not available yet. They will appear here once they are updated by the project team and ready for download."
+                  )}
+                </Text>
               )}
             </Flex>
           </Flex>
