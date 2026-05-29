@@ -2,6 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useState } from "react";
 
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import type { PolygonEditDrawerPolygon } from "@/context/polygonEditDrawer.types";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
@@ -10,6 +11,7 @@ import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel
 import NotificationIndicator from "@/redesignComponents/navigation/NotificationIndicator/NotificationIndicator";
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 
+import type { PolygonSaveCallback } from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
 import PolygonSystemValidationContent from "./PolygonSystemValidationContent";
 
@@ -18,7 +20,7 @@ interface PolygonEditDrawerProps {
   polygon?: PolygonEditDrawerPolygon | null;
   selectedPolygon?: SitePolygonLightDto;
   onOpenChange?: (open: boolean) => void;
-  onSaved?: () => unknown | Promise<unknown>;
+  onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
 }
 
@@ -31,8 +33,12 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onPolygonUpdated
 }) => {
   const t = useT();
+  const { draftPolygonGeometry } = useMapAreaContext();
   const [activeTab, setActiveTab] = useState<string>("edit");
   const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const isCreateMode = selectedPolygon?.primaryUuid == null || selectedPolygon.primaryUuid === "";
+  const isSaveDisabled = activeTab === "edit" && isCreateMode && draftPolygonGeometry == null;
 
   useEffect(() => {
     setSaveEditContent(null);
@@ -49,9 +55,14 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         return;
       }
 
-      const saved = await saveEditContent();
-      if (saved) {
-        onClose();
+      setIsSaving(true);
+      try {
+        const saved = await saveEditContent();
+        if (saved) {
+          onClose();
+        }
+      } finally {
+        setIsSaving(false);
       }
     },
     [activeTab, saveEditContent]
@@ -118,15 +129,18 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
             <ButtonGroup
               buttons={[
                 {
-                  id: "cancel",
+                  id: "polygon-edit-cancel",
                   children: t("Cancel"),
                   variant: "secondary",
+                  disabled: isSaving,
                   onClick: onClose
                 },
                 {
-                  id: "save",
+                  id: "polygon-edit-save",
                   children: t("Save"),
                   variant: "primary",
+                  loading: isSaving,
+                  disabled: isSaveDisabled || isSaving,
                   onClick: () => void handleSave(onClose)
                 }
               ]}
