@@ -170,7 +170,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
                       {(project.treesPlantedCount ?? 0).toLocaleString()}
                       <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                        of {(project.treesGrownGoal ?? 0).toLocaleString()}
+                        {t("of")} {(project.treesGrownGoal ?? 0).toLocaleString()}
                       </Text>
                     </Text>
                   </div>
@@ -385,7 +385,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
                       {(project.regeneratedTreesCount ?? 0).toLocaleString()}
                       <Text variant="text-16-light" className="ml-1 text-darkCustom">
-                        of {project.goalTreesRestoredAnr?.toLocaleString()}
+                        {t("of")} {project.goalTreesRestoredAnr?.toLocaleString()}
                       </Text>
                     </Text>
                   </div>
