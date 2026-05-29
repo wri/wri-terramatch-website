@@ -7,7 +7,7 @@ import MappedTag from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
 import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import {
   mapSitePolygonStatusToMappedTagState,
-  mapSitePolygonValidationStatusToValidationTagState
+  mapSiteValidationStatusToTagState
 } from "@/utils/mapStatusToTagStateEntity";
 
 export type SubmissionValidationTagsProps = {
@@ -28,7 +28,7 @@ const SubmissionValidationTags: FC<SubmissionValidationTagsProps> = ({ polygon }
         <Text textStyle="200" color="neutral.800">
           {t("Validation:")}
         </Text>
-        <ValidationTag status={mapSitePolygonValidationStatusToValidationTagState(polygon?.validationStatus ?? null)} />
+        <ValidationTag status={mapSiteValidationStatusToTagState(polygon?.validationStatus ?? null)} />
       </Flex>
     </Flex>
   );

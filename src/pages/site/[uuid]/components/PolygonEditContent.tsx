@@ -47,7 +47,7 @@ import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/Float
 import ApiSlice from "@/store/apiSlice";
 import {
   mapSitePolygonStatusToMappedTagState,
-  mapSitePolygonValidationStatusToValidationTagState
+  mapSiteValidationStatusToTagState
 } from "@/utils/mapStatusToTagStateEntity";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
@@ -197,7 +197,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               id: polygon.polygonUuid ?? polygon.uuid ?? "",
               polygonName: polygon.name ?? t("Unnamed Polygon"),
               submission: mapSitePolygonStatusToMappedTagState(polygon.status ?? "draft"),
-              validation: mapSitePolygonValidationStatusToValidationTagState(polygon.validationStatus ?? null),
+              validation: mapSiteValidationStatusToTagState(polygon.validationStatus ?? null),
               restorationPractice: [],
               targetLandUse: null,
               plantingDate: polygon.plantStart ?? "-",
