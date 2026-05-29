@@ -168,9 +168,9 @@ const ProjectList = () => {
               label: countryChoices.find(country => country.id === item.country)?.name,
               image: `/flags/${item.country?.toLowerCase()}.svg`
             },
-            treesPlanted: item.treesPlantedCount || 0,
-            restorationHectares: item.totalHectaresRestoredSum || 0,
-            jobsCreated: item.totalJobsCreated || 0
+            treesPlanted: item.treesPlantedCount ?? 0,
+            restorationHectares: item.totalHectaresRestoredSum ?? 0,
+            jobsCreated: item.totalJobsCreated ?? 0
           };
         })
         .sort(
