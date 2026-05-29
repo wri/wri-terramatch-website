@@ -171,9 +171,21 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
               </Flex>
 
               {selectedFile != null && (
-                <Text textStyle="300-bold" color="primary.700">
-                  {selectedFile.name}
-                </Text>
+                <Flex
+                  justifyContent="center"
+                  alignItems="center"
+                  flexDirection="column"
+                  gap={0}
+                  bg="neutral.300"
+                  px={5}
+                  py={2}
+                  rounded={2}
+                  mt={-2}
+                >
+                  <Text textStyle="300-bold" color="primary.700">
+                    {selectedFile.name}
+                  </Text>
+                </Flex>
               )}
 
               <Flex justifyContent="center" alignItems="center" flexDirection="column" gap={0}>

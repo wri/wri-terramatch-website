@@ -14,16 +14,17 @@ export interface SystemValidationCompleteProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   polygons: PolygonTableRow[];
+  onViewDetails?: (polygon: PolygonTableRow) => void;
   polygonValidations: Map<string, ValidationDto>;
 }
 const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
   open,
   onOpenChange,
   polygons,
+  onViewDetails,
   polygonValidations
 }) => {
   const t = useT();
-
   const handleClose = useCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
@@ -47,7 +48,7 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
     <Modal
       open={open}
       onClose={handleClose}
-      size="medium"
+      size="large"
       blocking
       header={<b className="text-theme-neutral-800">{t("System validation complete")}</b>}
       content={
@@ -56,15 +57,22 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
             polygons={approvalValidations}
             polygonValidations={polygonValidations}
             color="success.500"
+            onViewDetails={onViewDetails}
           />
           {approvalValidations.length > 0 && partiallyPassedValidations.length > 0 && <SimpleDivider />}
           <ValidationSection
             polygons={partiallyPassedValidations}
             polygonValidations={polygonValidations}
             color="warning.500"
+            onViewDetails={onViewDetails}
           />
           {partiallyPassedValidations.length > 0 && failedValidations.length > 0 && <SimpleDivider />}
-          <ValidationSection polygons={failedValidations} polygonValidations={polygonValidations} color="error.500" />
+          <ValidationSection
+            polygons={failedValidations}
+            polygonValidations={polygonValidations}
+            color="error.500"
+            onViewDetails={onViewDetails}
+          />
         </Flex>
       }
       footer={

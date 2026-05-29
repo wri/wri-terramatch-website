@@ -275,12 +275,14 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
               <ButtonGroup
                 buttons={[
                   {
+                    id: "cancel",
                     children: t("Cancel"),
                     variant: "secondary",
                     disabled: isSaving,
                     onClick: onClose
                   },
                   {
+                    id: "save",
                     children: t("Save"),
                     variant: "primary",
                     disabled: !canSave,

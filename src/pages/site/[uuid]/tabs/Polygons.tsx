@@ -1,6 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
+import classNames from "classnames";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
@@ -23,17 +24,20 @@ import { useNotificationContext } from "@/context/notification.provider";
 import {
   EMPTY_POLYGONS,
   PolygonEditDrawerDataSync,
-  PolygonEditDrawerProvider
+  PolygonEditDrawerProvider,
+  usePolygonEditDrawer
 } from "@/context/polygonEditDrawer.provider";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { getThemedColor } from "@/lib/theme";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { AreaHectaresIcon, DownloadIcon, PlusIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
+import UndoIcon from "@/redesignComponents/foundations/Icons/Function/UndoIcon";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
@@ -68,6 +72,7 @@ export type { PolygonTableRow } from "../components/PolygonTableRow";
 const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
+  const { isOpen: isEditPolygonOpen } = usePolygonEditDrawer();
   const { setSiteData, resetSiteMapInteractionState, closeMapPopups, invalidatePolygonMapTiles } = useMapAreaContext();
   const { openNotification } = useNotificationContext();
 
@@ -295,18 +300,24 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     }
   }, [openNotification, selectedDownloadPolygonUuids, selectedSitePolygons, site.name, t]);
 
+  const openPolygonEditDrawerForRow = useCallback(
+    (row: PolygonTableRow) => {
+      const sitePolygon = polygonsData.find(polygon => (polygon.polygonUuid ?? polygon.uuid) === row.id);
+      openPolygonEditDrawerForSitePolygon(sitePolygon, row.polygonName);
+    },
+    [polygonsData]
+  );
+
   const handleBulkEditDetails = useCallback(() => {
     if (selectedRows.length === 0) {
       return;
     }
     if (selectedRows.length === 1) {
-      const selectedRow = selectedRows[0];
-      const sitePolygon = polygonsData.find(polygon => (polygon.polygonUuid ?? polygon.uuid) === selectedRow.id);
-      openPolygonEditDrawerForSitePolygon(sitePolygon);
+      openPolygonEditDrawerForRow(selectedRows[0]);
       return;
     }
     setShowBulkEditDrawer(true);
-  }, [polygonsData, selectedRows]);
+  }, [openPolygonEditDrawerForRow, selectedRows]);
 
   const handleBulkEditSave = useCallback(
     async (attributeChanges: BulkSitePolygonAttributeChanges) => {
@@ -551,6 +562,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onDelete={() => setDeletePolygonModal(true)}
           onDownload={() => void handleBulkDownload()}
           onEdit={handleBulkEditDetails}
+          onViewPolygonDetails={openPolygonEditDrawerForRow}
           onRunValidation={handleRunValidation}
           onSubmit={handleBulkSubmit}
           showTooltip={hasSelectedFailedValidation}
@@ -605,16 +617,38 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         <UploadError open={showUploadErrorModal} onOpenChange={setUploadErrorModal} />
         <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
 
-        <ResizeBox initialHeight={100} minHeight={100} maxHeight={600}>
+        <ResizeBox
+          initialHeight={100}
+          minHeight={100}
+          maxHeight={600}
+          className={classNames({
+            "!h-[calc(100vh-66px)] w-screen": isEditPolygonOpen
+          })}
+        >
           <PolygonsMap
             entityModel={site}
             type="sites"
-            className="max-h-full overflow-hidden !rounded-[0.25rem_0.25rem_0_0]"
+            className={classNames(
+              "h-full w-full  ",
+              isEditPolygonOpen
+                ? // TODO: Update `top-[70px]` when the navbar is redesigned so this offset matches the new header height.
+                  "fixed top-[70px] bottom-0 left-0 right-0 z-[37] !h-[calc(100vh-66px)] w-screen rounded-none"
+                : "!rounded-[0.25rem_0.25rem_0_0]"
+            )}
             polygons={polygonsData}
             onRefetchPolygons={refetchPolygons}
             polygonTableHighlight={polygonTableHighlight}
             overlapPolygons={overlapPolygons}
           />
+          {isEditPolygonOpen && (
+            <Button
+              variant="secondary"
+              leftIcon={<UndoIcon />}
+              className="fixed bottom-2 left-[calc(32rem+(100vw-32rem)/2)] z-[38] -translate-x-1/2"
+            >
+              {t("Undo")}
+            </Button>
+          )}
         </ResizeBox>
 
         {polygonLoadError != null && (
@@ -656,7 +690,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                   progress={totalTreesPlanted}
                   goal={Math.max(totalTreesPlanted, 1)}
                   selection={hasPolygonSelection ? selectedTreesPlanted : undefined}
-                  tooltipContent={t("Trees Planted")}
+                  tooltipContent={t("This is the sum of trees planted as reported in the polygon attributes")}
                   className="min-w-[12.5rem]"
                 />
                 <MetricCard
@@ -667,7 +701,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                   progress={totalRestorationAreaHa}
                   goal={Math.max(totalRestorationAreaHa, 1)}
                   selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
-                  tooltipContent={t("Restoration Area")}
+                  tooltipContent={t("This is the sum of hectares from the selected polygons")}
                   className="min-w-[12.5rem]"
                 />
               </Flex>
