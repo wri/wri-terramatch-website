@@ -11,6 +11,7 @@ import NotificationIndicator from "@/redesignComponents/navigation/NotificationI
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 
 import PolygonEditContent from "./PolygonEditContent";
+import PolygonSystemValidationContent from "./PolygonSystemValidationContent";
 
 interface PolygonEditDrawerProps {
   open?: boolean;
@@ -109,7 +110,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                   onPolygonUpdated={onPolygonUpdated}
                 />
               )}
-              {activeTab === "systemValidation" && <div>System Validation</div>}
+              {activeTab === "systemValidation" && <PolygonSystemValidationContent polygon={selectedPolygon} />}
               {activeTab === "comments" && <div>Comments</div>}
             </Flex>
           }

@@ -34,8 +34,6 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { useLatestRef } from "@/hooks/useLatestRef";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
-import MappedTag from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
-import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
@@ -56,6 +54,7 @@ import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonA
 import type { PolygonTableRow } from "../tabs/Polygons";
 import DeletePolygon from "./Modals/DeletePolygon";
 import UploadPhotos from "./Modals/UploadPhotos";
+import SubmissionValidationTags from "./SubmissionValidationTags";
 
 type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
@@ -495,22 +494,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     <Flex className="min-h-0 flex-1 flex-col gap-2">
       <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
       <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-auto py-5 px-2 pl-6 pr-7">
-        <Flex className="h-fit w-full gap-6">
-          <Flex className="items-center gap-1">
-            <Text textStyle="200" color="neutral.800">
-              {t("Submission:")}
-            </Text>
-            <MappedTag state={mapSitePolygonStatusToMappedTagState(polygon?.status ?? "draft")} />
-          </Flex>
-          <Flex className="items-center gap-1">
-            <Text textStyle="200" color="neutral.800">
-              {t("Validation:")}
-            </Text>
-            <ValidationTag
-              status={mapSitePolygonValidationStatusToValidationTagState(polygon?.validationStatus ?? null)}
-            />
-          </Flex>
-        </Flex>
+        <SubmissionValidationTags polygon={polygon} />
         <Accordion
           header={<AccordionHeader title={t("Details")} />}
           open={openAccordionSection === "details"}
