@@ -72,7 +72,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({ selectedPolygon
           onClose={onClose}
           className="h-screen w-full"
           content={
-            <Flex className="flex-1 flex-col gap-4">
+            <Flex className="mr-1 min-h-0 flex-1 flex-col gap-4 overflow-auto py-5 pr-5 pl-4">
               <SelectedPolygonsSummary selectedPolygons={selectedPolygons} open={open} />
               <EditWrapper>
                 <DatePickerInput label={t("Plant Start Date")} className="w-[13.5rem]" />

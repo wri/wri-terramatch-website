@@ -1,5 +1,5 @@
 import { Accordion as AccordionChakra, Box, Flex } from "@chakra-ui/react";
-import type { FC, SyntheticEvent } from "react";
+import type { FC } from "react";
 
 import { ChevronDownIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -78,10 +78,6 @@ const Accordion: FC<AccordionProps> = ({
   const { container, header: headerStyles } = variantStyles[variant];
   const isControlled = open !== undefined;
 
-  const stopTriggerActivation = (e: SyntheticEvent) => {
-    e.stopPropagation();
-  };
-
   const handleValueChange = (details: { value: string[] }) => {
     onOpenChange?.(details.value.includes(ACCORDION_ITEM_VALUE));
   };
@@ -118,21 +114,18 @@ const Accordion: FC<AccordionProps> = ({
                 <Box flex="1" fontSize="1.25rem" lineHeight="1.75rem" color="primary.900">
                   {header}
                 </Box>
-                <AccordionIcon variant={variant} />
               </Flex>
             </AccordionChakra.ItemTrigger>
             {actions != null ? (
-              <Box
-                display="flex"
-                gap={3}
-                alignItems="center"
-                flexShrink={0}
-                onClick={stopTriggerActivation}
-                onPointerDown={stopTriggerActivation}
-              >
+              <Box display="flex" gap={3} alignItems="center" flexShrink={0}>
                 {actions}
               </Box>
             ) : null}
+            <AccordionChakra.ItemTrigger
+              css={{ outline: "none", flexShrink: 0, cursor: "pointer", width: "fit-content" }}
+            >
+              <AccordionIcon variant={variant} />
+            </AccordionChakra.ItemTrigger>
           </Flex>
 
           <AccordionChakra.ItemContent>{children}</AccordionChakra.ItemContent>

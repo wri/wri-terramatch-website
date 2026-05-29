@@ -8,7 +8,7 @@ import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
-import { InformationRequiredIcon } from "../../foundations/Icons";
+import { InfoIcon } from "../../foundations/Icons";
 import DonutChart from "./DonutChart";
 import ProgressBar from "./ProgressBar";
 import {
@@ -43,7 +43,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
           {title}
         </Text>
         <Tooltip content={tooltipContent} position="top">
-          <InformationRequiredIcon color="neutral.800" boxSize="14px" />
+          <InfoIcon color="neutral.800" boxSize="14px" />
         </Tooltip>
       </Flex>
       <Flex gap={2} className="items-center">
@@ -100,7 +100,7 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
             {title}
           </Text>
           <Tooltip content={tooltipContent} position="top">
-            <InformationRequiredIcon color="neutral.800" boxSize="14px" />
+            <InfoIcon color="neutral.800" boxSize="14px" />
           </Tooltip>
         </Flex>
         <Flex gap={2} className="items-center">
@@ -160,7 +160,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
           {title}
         </Text>
         <Tooltip content={tooltipContent} position="top">
-          <InformationRequiredIcon color="neutral.800" boxSize="14px" />
+          <InfoIcon color="neutral.800" boxSize="14px" />
         </Tooltip>
       </Flex>
       <Flex gap={2} alignItems="center">
@@ -221,7 +221,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
             {title}
           </Text>
           <Tooltip content={tooltipContent} position="top">
-            <InformationRequiredIcon color="neutral.800" boxSize="14px" />
+            <InfoIcon color="neutral.800" boxSize="14px" />
           </Tooltip>
         </Flex>
         {frameworkKey === Framework.PPC && type === "jobsCreated" ? (
