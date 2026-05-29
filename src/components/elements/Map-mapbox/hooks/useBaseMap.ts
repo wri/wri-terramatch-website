@@ -19,11 +19,18 @@ type UseBaseMapOptions = {
   deferDrawCreateSave?: boolean;
 };
 
-export const useBaseMap = (
-  onSave?: (geojson: unknown, record: unknown) => void,
-  record?: unknown,
-  options?: UseBaseMapOptions
-) => {
+export type PolygonGeometryFeature = Pick<GeoJSON.Feature<GeoJSON.Geometry>, "geometry">;
+
+export type MapDrawSaveRecord = {
+  uuid?: string;
+};
+
+export type MapDrawSaveHandler = (
+  geojson: PolygonGeometryFeature[],
+  record?: MapDrawSaveRecord
+) => void | Promise<void>;
+
+export const useBaseMap = (onSave?: MapDrawSaveHandler, record?: MapDrawSaveRecord, options?: UseBaseMapOptions) => {
   const { setIsUserDrawingEnabled, setDraftPolygonGeometry } = useMapAreaContext();
   const deferDrawCreateSave = options?.deferDrawCreateSave === true;
 

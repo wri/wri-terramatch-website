@@ -367,27 +367,31 @@ export const createSitePolygonsResource = async (
   return response.data?.attributes!;
 };
 
+export type PolygonVersionGeometryFeature = {
+  type: "Feature";
+  geometry: GeoJSON.Geometry;
+  properties: {
+    siteId: string;
+  };
+};
+
 export type CreateVersionOptions = {
   primaryUuid: string;
   changeReason: string;
-  geometry?: {
-    type: "Feature";
-    geometry: any;
-    properties: {
-      siteId: string;
-    };
-  };
+  geometry?: PolygonVersionGeometryFeature;
   attributeChanges?: AttributeChangesDto;
 };
 
 export const createPolygonVersion = async (options: CreateVersionOptions): Promise<SitePolygonLightDto> => {
   const { primaryUuid, changeReason, geometry, attributeChanges } = options;
 
-  const geometries = geometry
+  const geometries: CreateSitePolygonAttributesDto["geometries"] = geometry
     ? [
         {
           type: "FeatureCollection",
-          features: [geometry] as any
+          features: [geometry] as unknown as NonNullable<
+            CreateSitePolygonAttributesDto["geometries"]
+          >[number]["features"]
         }
       ]
     : undefined;

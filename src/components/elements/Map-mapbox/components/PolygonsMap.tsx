@@ -4,7 +4,7 @@ import type { FC } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
-import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
+import { type MapDrawSaveHandler, useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
@@ -56,8 +56,6 @@ const EMPTY_POLYGON_MAP: Record<string, string[]> = {
   [POLYGON_DRAFT]: []
 };
 
-type PolygonGeometryFeature = Pick<GeoJSON.Feature, "geometry">;
-
 const PolygonsMap: FC<PolygonsMapProps> = ({
   entityModel,
   type,
@@ -87,11 +85,10 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     polygonData: sitePolygonDataV3
   } = useMapAreaContext();
 
-  const onSave = useCallback(
-    async (geojson: unknown, _record: unknown) => {
-      if (!Array.isArray(geojson)) return;
+  const onSave = useCallback<MapDrawSaveHandler>(
+    async geojson => {
       try {
-        await storePolygon(geojson as PolygonGeometryFeature[], entityModel, setPolygonFromMap, onRefetchPolygons);
+        await storePolygon(geojson, entityModel, setPolygonFromMap, onRefetchPolygons);
         openNotification("success", t("Success"), t("Polygon created successfully"));
       } catch (error) {
         const errorMessage =

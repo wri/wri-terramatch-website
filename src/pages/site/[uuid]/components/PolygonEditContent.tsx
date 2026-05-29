@@ -16,8 +16,6 @@ import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { updatePolygonVersionAsync, useListPolygonVersions } from "@/connections/PolygonVersion";
 import {
   bulkUpdateSitePolygonStatus,
-  createPolygonVersion,
-  createSitePolygonsResource,
   deleteSitePolygon,
   PolygonStatus,
   pruneSitePolygonsCache
@@ -57,12 +55,19 @@ import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonA
 import type { PolygonTableRow } from "../tabs/Polygons";
 import DeletePolygon from "./Modals/DeletePolygon";
 import UploadPhotos from "./Modals/UploadPhotos";
+import type { PolygonSaveCallback } from "./polygonEdit.types";
+import {
+  type PolygonEditFormValues,
+  runPolygonCacheCleanup,
+  saveExistingPolygonVersion,
+  saveNewSitePolygon
+} from "./polygonEditSave";
 
 type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
   onClose?: () => void;
   onRegisterSave?: (saveHandler: () => Promise<boolean>) => void;
-  onSaved?: () => unknown | Promise<unknown>;
+  onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
 };
 
@@ -226,118 +231,101 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setTreesPlanted(polygon?.numTrees != null ? String(polygon.numTrees) : "");
   }, [polygon]);
 
-  const savePolygonData = useCallback(async () => {
-    if (isCreateMode) {
-      if (draftPolygonGeometry == null) {
-        openNotification("error", t("Error!"), t("Draw a polygon before saving"));
-        return false;
+  const onSavedRef = useLatestRef(onSaved);
+  const onCloseRef = useLatestRef(onClose);
+  const onPolygonUpdatedRef = useLatestRef(onPolygonUpdated);
+  const refetchVersionsRef = useLatestRef(refetchVersions);
+
+  const getFormValues = useCallback(
+    (): PolygonEditFormValues => ({
+      polygonName,
+      plantStartDate,
+      restorationPractice,
+      targetLandUseSystem,
+      treeDistribution,
+      treesPlanted
+    }),
+    [polygonName, plantStartDate, restorationPractice, targetLandUseSystem, treeDistribution, treesPlanted]
+  );
+
+  const finalizeSuccessfulSave = useCallback(
+    async (savedPolygon: SitePolygonLightDto, options: { geometryChanged: boolean; refetchVersionsList: boolean }) => {
+      runPolygonCacheCleanup({
+        polygonUuid: savedPolygon.polygonUuid,
+        geometryChanged: options.geometryChanged,
+        invalidatePolygonMapTiles
+      });
+      setIsUserDrawingEnabled(false);
+      setDraftPolygonGeometry(undefined);
+      setPolygonGeometryEdit(undefined);
+      onPolygonUpdatedRef.current?.(savedPolygon);
+      setShouldRefetchPolygonData(true);
+      await waitForMapEditCleanup();
+      if (options.refetchVersionsList) {
+        await refetchVersionsRef.current?.();
       }
+      await onSavedRef.current?.();
+      onCloseRef.current?.();
+    },
+    [
+      invalidatePolygonMapTiles,
+      onCloseRef,
+      onPolygonUpdatedRef,
+      onSavedRef,
+      refetchVersionsRef,
+      setDraftPolygonGeometry,
+      setIsUserDrawingEnabled,
+      setPolygonGeometryEdit,
+      setShouldRefetchPolygonData
+    ]
+  );
 
-      if (resolvedSiteUuid == null || resolvedSiteUuid === "") {
-        openNotification("error", t("Error!"), t("Missing site information"));
-        return false;
-      }
-
-      try {
-        const properties: Record<string, unknown> = {
-          siteId: resolvedSiteUuid
-        };
-        const polygonNameValue = polygonName.trim();
-        const plantStartValue = dateValueToIsoString(plantStartDate[0]);
-
-        if (polygonNameValue.length > 0) properties.polyName = polygonNameValue;
-        if (plantStartValue != null && plantStartValue !== "") properties.plantStart = plantStartValue;
-        if (restorationPractice.length > 0) properties.practice = restorationPractice;
-        if (targetLandUseSystem.length > 0) properties.targetSys = targetLandUseSystem.join(", ");
-        if (treeDistribution.length > 0) properties.distr = treeDistribution;
-        if (treesPlanted.trim() !== "") properties.numTrees = Number(treesPlanted);
-
-        const createdPolygon = await createSitePolygonsResource({
-          geometries: [
-            {
-              type: "FeatureCollection",
-              features: [
-                {
-                  type: "Feature",
-                  geometry: draftPolygonGeometry,
-                  properties
-                }
-              ] as any
-            }
-          ]
-        });
-
-        pruneSitePolygonsCache();
-        if (createdPolygon.polygonUuid != null && createdPolygon.polygonUuid !== "") {
-          ApiSlice.pruneCache("geojsonExports", [createdPolygon.polygonUuid]);
-        }
-        pruneBoundingBoxesCache();
-        invalidatePolygonMapTiles();
-        setIsUserDrawingEnabled(false);
-        setDraftPolygonGeometry(undefined);
-        setPolygonGeometryEdit(undefined);
-        onPolygonUpdated?.(createdPolygon);
-        setShouldRefetchPolygonData(true);
-        await onSaved?.();
-        onClose?.();
-        openNotification("success", t("Success!"), t("Polygon created successfully"));
-
-        return true;
-      } catch (error) {
-        openNotification("error", t("Error!"), t("Error creating polygon"));
-        return false;
-      }
+  const saveNewPolygonFlow = useCallback(async (): Promise<boolean> => {
+    if (draftPolygonGeometry == null) {
+      openNotification("error", t("Error!"), t("Draw a polygon before saving"));
+      return false;
     }
-
-    if (polygon?.primaryUuid == null || polygon.primaryUuid === "") {
-      openNotification("error", t("Error!"), t("Missing polygon information"));
+    if (resolvedSiteUuid == null || resolvedSiteUuid === "") {
+      openNotification("error", t("Error!"), t("Missing site information"));
       return false;
     }
 
     try {
-      const attributeChanges = {
-        polyName: polygonName,
-        plantStart: dateValueToIsoString(plantStartDate[0]),
-        practice: restorationPractice,
-        targetSys: targetLandUseSystem.join(", "),
-        distr: treeDistribution,
-        numTrees: Number(treesPlanted || 0)
-      };
-
-      if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
-        openNotification("error", t("Error!"), t("Missing site information"));
-        return false;
-      }
-
-      const updatedPolygon = await createPolygonVersion({
-        primaryUuid: polygon.primaryUuid,
-        changeReason: geometryChanged
-          ? "Updated polygon geometry and attributes from edit drawer"
-          : "Updated polygon attributes from edit drawer",
-        attributeChanges,
-        ...(geometryChanged
-          ? {
-              geometry: {
-                type: "Feature" as const,
-                geometry: polygonGeometryEdit.currentGeometry,
-                properties: { siteId: polygon.siteId as string }
-              }
-            }
-          : {})
+      const createdPolygon = await saveNewSitePolygon({
+        siteId: resolvedSiteUuid,
+        geometry: draftPolygonGeometry,
+        form: getFormValues(),
+        dateValueToIso: dateValueToIsoString
       });
+      await finalizeSuccessfulSave(createdPolygon, { geometryChanged: true, refetchVersionsList: false });
+      openNotification("success", t("Success!"), t("Polygon created successfully"));
+      return true;
+    } catch {
+      openNotification("error", t("Error!"), t("Error creating polygon"));
+      return false;
+    }
+  }, [draftPolygonGeometry, finalizeSuccessfulSave, getFormValues, openNotification, resolvedSiteUuid, t]);
 
-      pruneSitePolygonsCache();
-      if (updatedPolygon.polygonUuid != null && updatedPolygon.polygonUuid !== "") {
-        ApiSlice.pruneCache("geojsonExports", [updatedPolygon.polygonUuid]);
-      }
-      if (geometryChanged) {
-        pruneBoundingBoxesCache();
-        invalidatePolygonMapTiles();
-      }
-      setIsUserDrawingEnabled(false);
-      setPolygonGeometryEdit(undefined);
-      onPolygonUpdated?.(updatedPolygon);
-      onClose?.();
+  const saveExistingPolygonFlow = useCallback(async (): Promise<boolean> => {
+    if (polygon?.primaryUuid == null || polygon.primaryUuid === "") {
+      openNotification("error", t("Error!"), t("Missing polygon information"));
+      return false;
+    }
+    if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
+      openNotification("error", t("Error!"), t("Missing site information"));
+      return false;
+    }
+
+    try {
+      const updatedPolygon = await saveExistingPolygonVersion({
+        primaryUuid: polygon.primaryUuid,
+        siteId: polygon.siteId as string,
+        form: getFormValues(),
+        geometryChanged,
+        currentGeometry: polygonGeometryEdit?.currentGeometry,
+        dateValueToIso: dateValueToIsoString
+      });
+      await finalizeSuccessfulSave(updatedPolygon, { geometryChanged, refetchVersionsList: true });
       openNotification(
         "success",
         t("Success!"),
@@ -345,45 +333,26 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           ? t("Polygon geometry and attributes were saved successfully")
           : t("Polygon version created successfully")
       );
-
-      void (async () => {
-        await waitForMapEditCleanup();
-        await refetchVersions?.();
-        await onSaved?.();
-        setShouldRefetchPolygonData(true);
-      })();
-
       return true;
-    } catch (error) {
+    } catch {
       openNotification("error", t("Error!"), t("Error creating polygon version"));
       return false;
     }
   }, [
-    onSaved,
-    onPolygonUpdated,
-    onClose,
-    openNotification,
-    plantStartDate,
+    finalizeSuccessfulSave,
     geometryChanged,
-    polygon?.siteId,
+    getFormValues,
+    openNotification,
     polygon?.primaryUuid,
+    polygon?.siteId,
     polygonGeometryEdit?.currentGeometry,
-    polygonName,
-    refetchVersions,
-    restorationPractice,
-    invalidatePolygonMapTiles,
-    setIsUserDrawingEnabled,
-    setPolygonGeometryEdit,
-    setShouldRefetchPolygonData,
-    setDraftPolygonGeometry,
-    t,
-    resolvedSiteUuid,
-    isCreateMode,
-    draftPolygonGeometry,
-    targetLandUseSystem,
-    treeDistribution,
-    treesPlanted
+    t
   ]);
+
+  const savePolygonData = useCallback(async () => {
+    if (isCreateMode) return saveNewPolygonFlow();
+    return saveExistingPolygonFlow();
+  }, [isCreateMode, saveExistingPolygonFlow, saveNewPolygonFlow]);
 
   useEffect(() => {
     const overlay = anrMapOverlayRef.current;

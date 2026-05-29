@@ -11,6 +11,7 @@ import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel
 import NotificationIndicator from "@/redesignComponents/navigation/NotificationIndicator/NotificationIndicator";
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 
+import type { PolygonSaveCallback } from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
 
 interface PolygonEditDrawerProps {
@@ -18,7 +19,7 @@ interface PolygonEditDrawerProps {
   polygon?: PolygonEditDrawerPolygon | null;
   selectedPolygon?: SitePolygonLightDto;
   onOpenChange?: (open: boolean) => void;
-  onSaved?: () => unknown | Promise<unknown>;
+  onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
 }
 
