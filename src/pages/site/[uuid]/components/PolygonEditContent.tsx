@@ -45,7 +45,7 @@ import DatePickerInput from "@/redesignComponents/Forms/Inputs/DateInputs/DatePi
 import InputWithUnits from "@/redesignComponents/Forms/Inputs/InputWithUnits";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
-import { DownloadIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
+import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
 import {
@@ -67,6 +67,8 @@ type PolygonEditContentProps = {
 };
 
 type PolygonVersionRow = SitePolygonLightDto & { id: string };
+
+type PolygonEditAccordionSection = "details" | "monitoring-plots" | "geotagged-photos" | "versions";
 
 const optionToSelectItem = (option: { title: string; value: string }) => ({
   label: option.title,
@@ -129,10 +131,22 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState("");
-  const [plotsVisible, setPlotsVisible] = useState(true);
+  const [plotsVisible, setPlotsVisible] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
+  const [openAccordionSection, setOpenAccordionSection] = useState<PolygonEditAccordionSection | null>("details");
+
+  const handleAccordionOpenChange = useCallback(
+    (section: PolygonEditAccordionSection) => (open: boolean) => {
+      if (open) {
+        setOpenAccordionSection(section);
+        return;
+      }
+      setOpenAccordionSection(current => (current === section ? null : current));
+    },
+    []
+  );
 
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
@@ -556,7 +570,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
       <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
-      <Flex className="-ml-2 min-h-0 flex-1 flex-col gap-2 overflow-auto overflow-x-hidden px-2">
+      <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-auto py-5 px-2 pl-6 pr-7">
         <Flex className="h-fit w-full gap-6">
           <Flex className="items-center gap-1">
             <Text textStyle="200" color="neutral.800">
@@ -573,7 +587,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             />
           </Flex>
         </Flex>
-        <Accordion header={<AccordionHeader title={t("Details")} />} defaultOpen>
+        <Accordion
+          header={<AccordionHeader title={t("Details")} />}
+          open={openAccordionSection === "details"}
+          onOpenChange={handleAccordionOpenChange("details")}
+        >
           <Flex className="flex-1 flex-col gap-4">
             <TextInput
               label={t("Polygon Name")}
@@ -588,6 +606,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               value={plantStartDate}
               onValueChange={setPlantStartDate}
               required={!isCreateMode}
+            />
+            <DatePickerInput
+              label={t("Plant Start Date")}
+              value={plantStartDate}
+              onValueChange={setPlantStartDate}
+              required
             />
             <SelectInput
               items={restorationOptions}
@@ -641,16 +665,29 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         </Accordion>
         <Accordion
           header={<AccordionHeader title={t("Monitoring Plots")} />}
+          open={openAccordionSection === "monitoring-plots"}
+          onOpenChange={handleAccordionOpenChange("monitoring-plots")}
           actions={
-            <Button
-              leftIcon={<DownloadIcon />}
-              onClick={() => void downloadMonitoringPlots()}
-              size="small"
-              variant="secondary"
-              disabled={!isAnrEligible || !hasAnrPlotGeometry}
-            >
-              {t("Download Monitoring Plots")}
-            </Button>
+            <Flex>
+              <Button
+                leftIcon={<DownloadIcon />}
+                onClick={() => void downloadMonitoringPlots()}
+                size="small"
+                variant="secondary"
+                disabled={!isAnrEligible || !hasAnrPlotGeometry}
+              >
+                {t("Download")}
+              </Button>
+              <Button
+                leftIcon={<RefreshIcon />}
+                onClick={() => void downloadMonitoringPlots()}
+                size="small"
+                variant="secondary"
+                disabled={!isAnrEligible || !hasAnrPlotGeometry}
+              >
+                {t("Update")}
+              </Button>
+            </Flex>
           }
         >
           <Flex className="flex-1 flex-col gap-4">
@@ -688,6 +725,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         </Accordion>
         <Accordion
           header={<AccordionHeader title={t("Geotagged Photos")} />}
+          open={openAccordionSection === "geotagged-photos"}
+          onOpenChange={handleAccordionOpenChange("geotagged-photos")}
           actions={
             <Button
               leftIcon={<UploadIcon />}
@@ -703,14 +742,17 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             <Flex className="items-center gap-1">
               <Text textStyle="400-bold" color="neutral.900">{`X ${t("Photos")}`}</Text>
               <Text color="neutral.900">{t("available")}</Text>
-              <ValidationTag status="failed" />
             </Flex>
             <Switch name="showPhotosOnMap" onChange={function noRefCheck() {}}>
               {t("Show Photos on Map")}
             </Switch>
           </Flex>
         </Accordion>
-        <Accordion header={t("Versions")}>
+        <Accordion
+          header={t("Versions")}
+          open={openAccordionSection === "versions"}
+          onOpenChange={handleAccordionOpenChange("versions")}
+        >
           <Table<PolygonVersionRow>
             columns={[
               {

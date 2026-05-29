@@ -22,12 +22,14 @@ export interface ValidationSectionProps {
   polygons: PolygonTableRow[];
   color: string;
   polygonValidations: Map<string, ValidationDto>;
+  onViewDetails?: (polygon: PolygonTableRow) => void;
 }
 
-const ItemPolygon: FC<{ polygon: PolygonTableRow; validation: ValidationDto | undefined }> = ({
-  polygon,
-  validation
-}) => {
+const ItemPolygon: FC<{
+  polygon: PolygonTableRow;
+  validation: ValidationDto | undefined;
+  onViewDetails?: (polygon: PolygonTableRow) => void;
+}> = ({ polygon, validation, onViewDetails }) => {
   const [isOpen, setIsOpen] = useState(false);
   const t = useT();
   const { getFormatedExtraInfo } = useMessageValidators();
@@ -40,7 +42,7 @@ const ItemPolygon: FC<{ polygon: PolygonTableRow; validation: ValidationDto | un
   return (
     <>
       <Flex justify="space-between" className="items-center gap-2">
-        <Text textStyle="400" color="neutral.900" as="span">
+        <Text textStyle="400" color="neutral.900" as="span" className="truncate">
           {polygon.polygonName}
         </Text>
         <Button
@@ -97,13 +99,18 @@ const ItemPolygon: FC<{ polygon: PolygonTableRow; validation: ValidationDto | un
               );
             })}
           </List.Root>
+          <Box className="w-fit">
+            <Button variant="borderless" size="small" onClick={() => onViewDetails?.(polygon)} className="w-fit">
+              {t("View Details")}
+            </Button>
+          </Box>
         </Flex>
       )}
     </>
   );
 };
 
-const ValidationSection: FC<ValidationSectionProps> = ({ polygons, color, polygonValidations }) => {
+const ValidationSection: FC<ValidationSectionProps> = ({ polygons, color, polygonValidations, onViewDetails }) => {
   const t = useT();
 
   if (polygons.length === 0) return null;
@@ -130,7 +137,7 @@ const ValidationSection: FC<ValidationSectionProps> = ({ polygons, color, polygo
         <List.Root as="ul" pl={4} spaceY={1} ml={2} listStyleType="disc">
           {polygons.map(item => (
             <List.Item key={item.id} _marker={{ color: "neutral.900" }}>
-              <ItemPolygon polygon={item} validation={polygonValidations.get(item.id)} />
+              <ItemPolygon polygon={item} validation={polygonValidations.get(item.id)} onViewDetails={onViewDetails} />
             </List.Item>
           ))}
         </List.Root>

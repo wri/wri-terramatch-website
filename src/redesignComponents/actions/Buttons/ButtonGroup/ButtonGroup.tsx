@@ -4,11 +4,19 @@ import { twMerge } from "tailwind-merge";
 
 import Button, { IButtonProps } from "../Button/Button";
 
+export type ButtonGroupButtonProps = IButtonProps & { id: string };
+
+export type ButtonGroupItem = {
+  id: string;
+  buttons: ButtonGroupButtonProps[];
+};
+
 export interface ButtonGroupProps {
   className?: string;
-  buttons?: IButtonProps[];
-  groups?: { id: string; buttons: IButtonProps[] }[];
+  buttons?: ButtonGroupButtonProps[];
+  groups?: ButtonGroupItem[];
 }
+
 const ButtonGroup: FC<ButtonGroupProps> = ({ className, buttons = [], groups = [] }) => {
   return (
     <Flex
