@@ -20,6 +20,14 @@ export type OverlapFixSelectionSummary = {
   notFixableCandidates: OverlapFixCandidate[];
 };
 
+/** True when any selected polygon with an overlap failure can be auto-fixed. */
+export const canAutoFixOverlapSelection = (summary: OverlapFixSelectionSummary): boolean =>
+  summary.fixableCandidates.length > 0;
+
+/** True when at least one selected polygon has a failed overlap validation. */
+export const hasOverlapFailureInSelection = (summary: OverlapFixSelectionSummary): boolean =>
+  summary.overlapCandidates.length > 0;
+
 type ClippedVersionSummary = {
   uuid: string | null;
   polyName: string | null;
@@ -48,31 +56,11 @@ const getOverlapCriteria = (validation: ValidationDto | undefined): ValidationCr
 
 const hasOverlapError = (validation: ValidationDto | undefined): boolean => getOverlapCriteria(validation) != null;
 
-const buildUnselectedPartnerReasons = (
-  result: PolygonFixabilityResult,
-  selectedPolygonUuidSet: Set<string>
-): string[] => {
-  const unselectedPartnerNames = result.overlapDetails
-    .filter(overlap => overlap.polyUuid !== "" && !selectedPolygonUuidSet.has(overlap.polyUuid))
-    .map(overlap => (overlap.polyName !== "" ? overlap.polyName : overlap.polyUuid));
-
-  if (unselectedPartnerNames.length === 0) {
-    return [];
-  }
-
-  return [
-    `Select all polygons involved in the overlap before using the automatic fix: ${Array.from(
-      new Set(unselectedPartnerNames)
-    ).join(", ")}`
-  ];
-};
-
 export const getSelectedOverlapFixSummary = (
   selectedRows: PolygonTableRow[],
   polygonValidations: Map<string, ValidationDto>,
   polygonsData: SitePolygonLightDto[]
 ): OverlapFixSelectionSummary => {
-  const selectedPolygonUuidSet = new Set(selectedRows.map(row => row.id));
   const polygonByUuid = new Map(
     polygonsData
       .map(polygon => {
@@ -94,18 +82,16 @@ export const getSelectedOverlapFixSummary = (
     }
 
     const fixabilityResult = checkPolygonFixability(overlapCriteria.extraInfo);
-    const unselectedPartnerReasons = buildUnselectedPartnerReasons(fixabilityResult, selectedPolygonUuidSet);
-    const reasons = [...fixabilityResult.reasons, ...unselectedPartnerReasons];
     const candidate: OverlapFixCandidate = {
       id: row.id,
       name: getPolygonDisplayName(polygonByUuid.get(row.id), row),
       fixabilityResult,
-      reasons
+      reasons: fixabilityResult.reasons
     };
 
     overlapCandidates.push(candidate);
 
-    if (fixabilityResult.canBeFixed && unselectedPartnerReasons.length === 0) {
+    if (fixabilityResult.canBeFixed) {
       fixableCandidates.push(candidate);
     } else {
       notFixableCandidates.push(candidate);

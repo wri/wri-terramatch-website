@@ -72,19 +72,29 @@ export const checkPolygonFixability = (
     .map(overlap => normalizeOverlapInfo(overlap))
     .filter((overlap): overlap is OverlapExtraInfo => overlap != null);
 
-  const reasons: string[] = [];
-  let canBeFixed = overlapDetails.length > 0;
-
   if (overlapDetails.length === 0) {
-    reasons.push("No overlap data available");
+    return {
+      canBeFixed: false,
+      reasons: ["No overlap data available"],
+      overlapDetails: []
+    };
   }
+
+  const reasons: string[] = [];
+  let canBeFixed = false;
 
   for (const overlap of overlapDetails) {
     const percentageValid = overlap.percentage <= MAX_OVERLAP_PERCENTAGE;
     const areaValid = overlap.intersectionArea <= MAX_OVERLAP_AREA_HECTARES;
+    const hasPartner = overlap.polyUuid !== "";
+    const overlapIsFixable = percentageValid && areaValid && hasPartner;
+
+    if (overlapIsFixable) {
+      canBeFixed = true;
+      continue;
+    }
 
     if (!percentageValid) {
-      canBeFixed = false;
       reasons.push(
         `Overlap percentage (${overlap.percentage.toFixed(2)}%) exceeds ${MAX_OVERLAP_PERCENTAGE}% limit for polygon "${
           overlap.polyName
@@ -93,13 +103,16 @@ export const checkPolygonFixability = (
     }
 
     if (!areaValid) {
-      canBeFixed = false;
       reasons.push(
         `Overlap area (${overlap.intersectionArea.toFixed(
           4
         )} ha) exceeds ${MAX_OVERLAP_AREA_HECTARES} ha limit for polygon "${overlap.polyName}"`
       );
     }
+  }
+
+  if (!canBeFixed && reasons.length === 0) {
+    reasons.push("No fixable overlaps found for this polygon");
   }
 
   return {

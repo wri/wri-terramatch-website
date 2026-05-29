@@ -65,8 +65,10 @@ import { PolygonRow, PolygonTableRow } from "../components/PolygonTableRow";
 import PolygonToolbar from "../components/PolygonToolbar";
 import {
   buildOverlapFixResultPolygons,
+  canAutoFixOverlapSelection,
   extractClippedVersions,
-  getSelectedOverlapFixSummary
+  getSelectedOverlapFixSummary,
+  hasOverlapFailureInSelection
 } from "../hooks/overlapFix.utils";
 import { useDownloadSitePolygons } from "../hooks/useDownloadSitePolygons";
 import { useSitePolygonFilters } from "../hooks/useSitePolygonFilters";
@@ -145,8 +147,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     t,
     format
   });
-  const { polygonsWithOverlapCount, overlapPolygons, overlapValidations, fetchOverlapValidations } =
-    useSitePolygonOverlap({ siteUuid: site.uuid, polygonsData });
+  const { polygonsWithOverlapCount, overlapPolygons, fetchOverlapValidations } = useSitePolygonOverlap({
+    siteUuid: site.uuid,
+    polygonsData
+  });
 
   const { selectedRows, selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } =
     useTableSelection<PolygonTableRow>(true, polygonRows);
@@ -181,12 +185,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [polygonsData, selectedRowIds]);
 
   const selectedOverlapFixSummary = useMemo(
-    () => getSelectedOverlapFixSummary(selectedRows, buildPolygonValidationsMap(overlapValidations), polygonsData),
-    [selectedRows, overlapValidations, polygonsData]
+    () => getSelectedOverlapFixSummary(selectedRows, polygonValidations, polygonsData),
+    [selectedRows, polygonValidations, polygonsData]
   );
-  const hasSelectedOverlapFailure = selectedOverlapFixSummary.overlapCandidates.length > 0;
-  const hasFixableSelectedOverlap = selectedOverlapFixSummary.fixableCandidates.length > 0;
-  const showOverlapFixTooltip = hasSelectedOverlapFailure && !hasFixableSelectedOverlap;
+  const hasSelectedOverlapFailure = hasOverlapFailureInSelection(selectedOverlapFixSummary);
+  const hasFixableSelectedOverlap = canAutoFixOverlapSelection(selectedOverlapFixSummary);
 
   const handleFocusPolygonConsumed = useCallback(() => {
     setFocusPolygonUuid(null);
@@ -717,7 +720,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onViewPolygonDetails={openPolygonEditDrawerForRow}
           onRunValidation={handleRunValidation}
           onSubmit={handleBulkSubmit}
-          showTooltip={showOverlapFixTooltip}
+          isOverlapFixAction={hasSelectedOverlapFailure}
+          canAutoFixOverlap={hasFixableSelectedOverlap}
         />
 
         <PolygonBulkEditDrawer

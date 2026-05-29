@@ -159,7 +159,7 @@ const OverlapFix: FC<OverlapFixProps> = ({
                       </List.Item>
                       <List.Item _marker={{ color: "neutral.900" }}>
                         <Text textStyle="300" color="neutral.900">
-                          {t("Area of overlap (absolute size) ≤ 0.118 hectares")}
+                          {t("Area of overlap (absolute size) ≤ 0.1 hectares")}
                         </Text>
                       </List.Item>
                     </List.Root>
