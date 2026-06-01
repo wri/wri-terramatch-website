@@ -99,6 +99,11 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     ...aggregateProps,
     collection: "invasive"
   });
+  const totalCountNurserySeedling = usePlantTotalCount({ ...aggregateProps, collection: "nursery-seedling" });
+  const { speciesCount: nurserySeedlingSpeciesCount } = usePlantSpeciesCount({
+    ...aggregateProps,
+    collection: "nursery-seedling"
+  });
 
   return (
     <PageBody className="bg-theme-neutral-200 pt-5 text-darkCustom">
@@ -250,6 +255,45 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
           </div>
         </PageCard>
       </PageRow>
+      <ContextCondition frameworksShow={[Framework.PPC, ...ALL_TF]}>
+        <PageRow className="mx-0 w-full !max-w-full px-6">
+          <PageCard title={t("Seedling Growth Progress")}>
+            <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
+              <div className="flex flex-col gap-4">
+                <GoalProgressCard
+                  hasProgress={false}
+                  classNameCard="!pl-0"
+                  items={[
+                    {
+                      iconName: IconNames.NURSERY_CIRCLE,
+                      label: t("Number of Seedlings Growing:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: totalCountNurserySeedling
+                    },
+                    {
+                      iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                      label: t("number of species GROWING:"),
+                      variantLabel: "text-14",
+                      classNameLabel: " text-neutral-650 uppercase !w-auto",
+                      classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                      value: nurserySeedlingSpeciesCount
+                    }
+                  ]}
+                />
+              </div>
+              <TreeSpeciesTable
+                entity="projects"
+                entityUuid={project.uuid}
+                collection="nursery-seedling"
+                visibleRows={8}
+                galleryType="treeSpeciesPD"
+              />
+            </div>
+          </PageCard>
+        </PageRow>
+      </ContextCondition>
       <PageRow className="mx-0 w-full !max-w-full gap-8 px-6">
         <PageColumn>
           <PageCard

@@ -148,7 +148,7 @@ const TreeSpeciesTable: FC<TreeSpeciesTableProps> = props => {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1 py-1">
             <Text variant="text-16-bold" className="capitalize">
-              {entity === "nurseryReports" ? "Saplings Grown in Nurseries:" : totalTitle}
+              {entity === "nurseryReports" ? "Seedlings Grown:" : totalTitle}
             </Text>
             <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
               {totalCountSeeds.toLocaleString() ?? 0}
