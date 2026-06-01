@@ -556,12 +556,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               required={!isCreateMode}
             />
             <DatePickerInput
-              label={t("Label")}
-              value={plantStartDate}
-              onValueChange={setPlantStartDate}
-              required={!isCreateMode}
-            />
-            <DatePickerInput
               label={t("Plant Start Date")}
               value={plantStartDate}
               onValueChange={setPlantStartDate}
