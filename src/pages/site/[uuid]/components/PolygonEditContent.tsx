@@ -365,25 +365,35 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [isCreateMode, saveExistingPolygonFlow, saveNewPolygonFlow]);
 
   useEffect(() => {
+    setPlotsVisible(false);
+  }, [sitePolygonUuid]);
+
+  useEffect(() => {
     const overlay = anrMapOverlayRef.current;
     if (overlay == null) return;
 
-    const shouldShowPlots = isAnrEligible && hasAnrPlotGeometry && plotsVisible;
+    const isMonitoringPlotsSectionActive = openAccordionSection === "monitoring-plots" || plotsVisible;
+    const canShowAnrPlots = isAnrEligible && hasAnrPlotGeometry;
     overlay.setDrawerOpen(true);
-    overlay.setAnrTabActive(shouldShowPlots);
-    overlay.setShowPlotsOnMap(shouldShowPlots);
+    overlay.setAnrTabActive(canShowAnrPlots && isMonitoringPlotsSectionActive);
+    overlay.setShowPlotsOnMap(canShowAnrPlots && plotsVisible);
 
     if (sitePolygonUuid !== "" && geometryPolygonUuid !== "") {
       overlay.syncDrawerSelection({ sitePolygonUuid, geometryPolygonUuid });
     }
-  }, [anrMapOverlayRef, geometryPolygonUuid, hasAnrPlotGeometry, isAnrEligible, plotsVisible, sitePolygonUuid]);
+  }, [
+    anrMapOverlayRef,
+    geometryPolygonUuid,
+    hasAnrPlotGeometry,
+    isAnrEligible,
+    openAccordionSection,
+    plotsVisible,
+    sitePolygonUuid
+  ]);
 
   useEffect(
     () => () => {
-      const overlay = anrMapOverlayRef.current;
-      if (overlay == null) return;
-      overlay.setAnrTabActive(false);
-      overlay.setShowPlotsOnMap(false);
+      anrMapOverlayRef.current?.resetAnrMapOverlay();
     },
     [anrMapOverlayRef]
   );
@@ -563,12 +573,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               placeholder={t("Full Polygon Name")}
               value={polygonName}
               onChange={event => setPolygonName(event.target.value)}
-              required={!isCreateMode}
-            />
-            <DatePickerInput
-              label={t("Label")}
-              value={plantStartDate}
-              onValueChange={setPlantStartDate}
               required={!isCreateMode}
             />
             <DatePickerInput

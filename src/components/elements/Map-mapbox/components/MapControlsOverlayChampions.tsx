@@ -2,6 +2,7 @@ import type { FC } from "react";
 
 import ControlGroup from "@/components/elements/Map-mapbox/components/ControlGroup";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 
 import CheckIndividualPolygonControl from "../MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "../MapControls/CheckPolygonControl";
@@ -47,6 +48,8 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
   const { isEditing, handleEditPolygon, onSaveEdit, onCancelEdit, handleTrashDelete } = draw;
   const { toggleFullscreen } = fullscreen;
   const { currentStyle, handleStyleChange, styleReady } = style;
+  const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
+  const showTrashButton = isEditing && !isPolygonEditDrawerOpen;
 
   return (
     <>
@@ -150,7 +153,7 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
             <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"} />
           ) : null}
 
-          {isEditing ? (
+          {showTrashButton ? (
             <ControlGroup position="top-right" className="top-[272px]">
               <TrashButton onClick={handleTrashDelete} />
             </ControlGroup>

@@ -22,6 +22,7 @@ import {
 } from "@/connections/SitePolygons";
 import { createPolygonValidation, useAllSiteValidations } from "@/connections/Validation";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
+import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
@@ -923,9 +924,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 };
 
 const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => (
-  <PolygonEditDrawerProvider>
-    <SitePolygonsTabContent site={site} />
-  </PolygonEditDrawerProvider>
+  <AnrMapOverlayProvider>
+    <PolygonEditDrawerProvider>
+      <SitePolygonsTabContent site={site} />
+    </PolygonEditDrawerProvider>
+  </AnrMapOverlayProvider>
 );
 
 export default SitePolygonsTab;

@@ -1,6 +1,7 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { dispatchClearDraftDrawEvent } from "@/components/elements/Map-mapbox/interactions/draftDrawEvents";
+import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import type { PolygonSaveCallback } from "@/pages/site/[uuid]/components/polygonEdit.types";
@@ -103,6 +104,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const dataContextValue = useMemo(() => ({ setPolygons, setOnRefetchPolygons }), [setOnRefetchPolygons]);
   const { setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit, setDraftPolygonGeometry } =
     useMapAreaContext();
+  const anrMapOverlay = useAnrMapOverlayOptional();
 
   const openPolygonEdit = useCallback(
     (params?: PolygonEditDrawerPolygon) => {
@@ -132,7 +134,8 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     setEditPolygon({ isOpen: false, uuid: "" });
     setPolygonGeometryEdit(undefined);
     setDraftPolygonGeometry(undefined);
-  }, [setDraftPolygonGeometry, setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit]);
+    anrMapOverlay?.resetAnrMapOverlay();
+  }, [anrMapOverlay, setDraftPolygonGeometry, setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit]);
 
   const setSelectedPolygon = useCallback(
     (sitePolygon: SitePolygonLightDto) => {
