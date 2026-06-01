@@ -127,6 +127,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setIsUserDrawingEnabled,
     setDraftPolygonGeometry,
     setPolygonGeometryEdit,
+    setEditPolygon,
     setShouldRefetchPolygonData,
     closeMapPopups,
     invalidatePolygonMapTiles,
@@ -160,6 +161,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
   const isCreateMode = polygon?.primaryUuid == null || polygon.primaryUuid === "";
+  const shouldMapEditPolygon =
+    openAccordionSection !== "monitoring-plots" && openAccordionSection !== "geotagged-photos";
   const resolvedSiteUuid = polygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : "");
   const geometryChanged =
     !isCreateMode &&
@@ -367,6 +370,29 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   useEffect(() => {
     setPlotsVisible(false);
   }, [sitePolygonUuid]);
+
+  useEffect(() => {
+    if (isCreateMode || geometryPolygonUuid === "") return;
+
+    setEditPolygon({
+      isOpen: shouldMapEditPolygon,
+      uuid: shouldMapEditPolygon ? geometryPolygonUuid : "",
+      primaryUuid: shouldMapEditPolygon ? primaryUuid : undefined
+    });
+
+    if (!shouldMapEditPolygon) {
+      setIsUserDrawingEnabled(false);
+      setPolygonGeometryEdit(undefined);
+    }
+  }, [
+    geometryPolygonUuid,
+    isCreateMode,
+    primaryUuid,
+    setEditPolygon,
+    setIsUserDrawingEnabled,
+    setPolygonGeometryEdit,
+    shouldMapEditPolygon
+  ]);
 
   useEffect(() => {
     const overlay = anrMapOverlayRef.current;
