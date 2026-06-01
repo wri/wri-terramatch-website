@@ -9,7 +9,7 @@ import { FormEntry, GetFormEntriesProps } from "@/components/extensive/WizardFor
 import { GetEntryValueProps } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer, loadExternalAnswerSources } from "@/components/extensive/WizardForm/utils";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { useProjectPolygonByPitch } from "@/connections/ProjectPolygons";
+import { useProjectPolygonsByPitch } from "@/connections/ProjectPolygons";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import {
@@ -38,8 +38,8 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
     enabled: entityType === "sites" && uuid != null
   });
 
-  const [, { data: projectPolygonData }] = useProjectPolygonByPitch({
-    filter: { projectPitchUuid: uuid },
+  const [, { data: projectPolygonsData }] = useProjectPolygonsByPitch({
+    projectPitchUuid: uuid,
     enabled: (entityType === "projects" || entityType === "project-pitches") && uuid != null
   });
 
@@ -54,7 +54,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
 
   const bbox = useBoundingBox(bboxParams);
 
-  const entityPolygonData = getEntityPolygonData(record, type, entity, sitePolygonData, projectPolygonData);
+  const entityPolygonData = getEntityPolygonData(record, type, entity, sitePolygonData, projectPolygonsData);
 
   const mapFunctions = useBaseMap();
 
@@ -123,7 +123,7 @@ const getEntityPolygonData = (
   type?: EntityName,
   entity?: Entity,
   sitePolygonData?: SitePolygonLightDto[],
-  projectPolygonData?: any
+  projectPolygonsData?: any
 ) => {
   if (!record && !entity) {
     return null;
@@ -134,8 +134,8 @@ const getEntityPolygonData = (
   if (entityType === "sites") {
     return sitePolygonData ? parsePolygonDataV3(sitePolygonData) : null;
   } else if (entityType === "projects" || entityType === "project-pitches") {
-    if (projectPolygonData == null) return null;
-    const polygonUuid = projectPolygonData.polygonUuid;
+    if (projectPolygonsData == null) return null;
+    const polygonUuid = projectPolygonsData.polygonUuid;
     return polygonUuid ? { [FORM_POLYGONS]: [polygonUuid] } : null;
   }
 

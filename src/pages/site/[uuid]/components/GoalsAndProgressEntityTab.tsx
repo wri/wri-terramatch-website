@@ -3,9 +3,11 @@ import React from "react";
 
 import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
+import { GoalProgressCardItemProps } from "@/components/elements/Cards/GoalProgressCard/GoalProgressCardItem";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
-import { Framework, isTerrafund } from "@/context/framework.provider";
+import { SUMMARY_ANR_ROLLUP_HIDE, SUMMARY_REPLANTING_ROLLUP_HIDE } from "@/constants/summaryRollupVisibility";
+import { Framework, isTerrafund, toFramework } from "@/context/framework.provider";
 import { TranslatedText } from "@/i18n/types";
 
 import useTooltipsGoalsAndProgress from "./useTooltipsGoalsAndProgress";
@@ -55,7 +57,10 @@ const ProgressDataCard = (values: ProgressDataCardItem) => {
 const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgressEntityTabProps) => {
   const t = useT();
   const tooltips = useTooltipsGoalsAndProgress();
-  const treesFromReportsAnr = entity?.regeneratedTreesCount ?? 0;
+  const framework = toFramework(entity?.frameworkKey);
+  const hideAnrRollup = SUMMARY_ANR_ROLLUP_HIDE.includes(framework);
+  const hideReplantingRollup = SUMMARY_REPLANTING_ROLLUP_HIDE.includes(framework);
+  const treesFromReportsAnr = hideAnrRollup ? 0 : entity?.regeneratedTreesCount ?? 0;
   const totalTreesRestoredCount =
     (entity?.treesPlantedCount ?? 0) + (entity?.seedsPlantedCount ?? 0) + treesFromReportsAnr;
   const keyAttribute = project ? "project" : "site";
@@ -237,41 +242,34 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
     ]
   };
   const frameworkKey = entity.frameworkKey as Framework;
-  const framework = isTerrafund(frameworkKey) ? Framework.TF : frameworkKey;
+  const chartFramework = isTerrafund(frameworkKey) ? Framework.TF : frameworkKey;
   const totalCountReplanting = usePlantTotalCount({
     entity: project ? "projects" : "sites",
     entityUuid: entity?.uuid,
     collection: "replanting"
   });
 
-  return (
-    <div className="flex w-full flex-wrap items-start justify-between gap-4">
-      {chartsDataMapping[framework as keyof ChartsData]?.map((chart, index) => (
-        <React.Fragment key={index}>{chart}</React.Fragment>
-      ))}
-      <GoalProgressCard
-        label={t("Trees restored")}
-        value={totalTreesRestoredCount}
-        limit={entity.treesGrownGoal}
-        hasProgress={false}
-        items={[
-          {
-            iconName: IconNames.TREE_CIRCLE_PD,
-            label: t("Trees Planted:"),
-            variantLabel: "text-14",
-            classNameLabel: " text-neutral-650 uppercase",
-            value: entity.treesPlantedCount,
-            tooltipContent: project ? tooltips.TOOLTIP_TREES_PLANTED_PROJECT : tooltips.TOOLTIP_TREES_PLANTED_SITE,
-            classNameLabelValue: "flex items-center gap-2"
-          },
-          {
-            iconName: IconNames.LEAF_CIRCLE_PD,
-            label: t("Seeds Planted:"),
-            variantLabel: "text-14",
-            classNameLabel: " text-neutral-650 uppercase",
-            value: entity.seedsPlantedCount,
-            tooltipContent: project ? tooltips.TOOLTIP_SEEDS_PLANTED_PROJECT : tooltips.TOOLTIP_SEEDS_PLANTED_SITE
-          },
+  const treesRestoredItems: GoalProgressCardItemProps[] = [
+    {
+      iconName: IconNames.TREE_CIRCLE_PD,
+      label: t("Trees Planted:"),
+      variantLabel: "text-14",
+      classNameLabel: " text-neutral-650 uppercase",
+      value: entity.treesPlantedCount,
+      tooltipContent: project ? tooltips.TOOLTIP_TREES_PLANTED_PROJECT : tooltips.TOOLTIP_TREES_PLANTED_SITE,
+      classNameLabelValue: "flex items-center gap-2"
+    },
+    {
+      iconName: IconNames.LEAF_CIRCLE_PD,
+      label: t("Seeds Planted:"),
+      variantLabel: "text-14",
+      classNameLabel: " text-neutral-650 uppercase",
+      value: entity.seedsPlantedCount,
+      tooltipContent: project ? tooltips.TOOLTIP_SEEDS_PLANTED_PROJECT : tooltips.TOOLTIP_SEEDS_PLANTED_SITE
+    },
+    ...(hideAnrRollup
+      ? []
+      : ([
           {
             iconName: IconNames.REFRESH_CIRCLE_PD,
             label: t("Trees Regenerating:"),
@@ -281,7 +279,11 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             tooltipContent: project
               ? tooltips.TOOLTIP_TREES_REGENERATING_PROJECT
               : tooltips.TOOLTIP_TREES_REGENERATING_SITE
-          },
+          }
+        ] as GoalProgressCardItemProps[])),
+    ...(hideReplantingRollup
+      ? []
+      : ([
           {
             iconName: IconNames.TREE_CIRCLE_PD,
             label: t("Trees Replanted:"),
@@ -290,7 +292,20 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             value: totalCountReplanting,
             tooltipContent: project ? tooltips.TOOLTIP_TREES_REPLANTING_PROJECT : tooltips.TOOLTIP_TREES_REPLANTING_SITE
           }
-        ]}
+        ] as GoalProgressCardItemProps[]))
+  ];
+
+  return (
+    <div className="flex w-full flex-wrap items-start justify-between gap-4">
+      {chartsDataMapping[chartFramework as keyof ChartsData]?.map((chart, index) => (
+        <React.Fragment key={index}>{chart}</React.Fragment>
+      ))}
+      <GoalProgressCard
+        label={t("Trees restored")}
+        value={totalTreesRestoredCount}
+        limit={entity.treesGrownGoal}
+        hasProgress={false}
+        items={treesRestoredItems}
         className="pr-[41px] lg:pr-[150px] mobile:w-[400px] mobile:!pr-0"
       />
     </div>

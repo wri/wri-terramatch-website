@@ -7,11 +7,11 @@ import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
 import ReadablePlantingStatusField from "@/admin/components/Fields/ReadablePlantingStatusField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
-import PolygonHandoffPanel from "@/admin/components/ResourceTabs/AuditLogTab/components/PolygonHandoffPanel";
+import PolygonHandoffSummary from "@/admin/components/ResourceTabs/AuditLogTab/components/PolygonHandoffSummary";
 
 const ProjectOverview: FC = () => {
   const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | undefined>();
-  const { record, refetch } = useShowContext();
+  const { record } = useShowContext();
 
   return (
     <>
@@ -73,12 +73,9 @@ const ProjectOverview: FC = () => {
                 Approve
               </Button>
             </Stack>
-            <PolygonHandoffPanel
-              variant="compact"
-              projectUuid={record.uuid}
+            <PolygonHandoffSummary
               polygonDataSubmission={record.polygonDataSubmission}
               readyForBaseline={record.readyForBaseline}
-              onSaved={() => refetch()}
             />
           </Stack>
         </Box>

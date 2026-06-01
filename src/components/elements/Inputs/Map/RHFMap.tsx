@@ -7,7 +7,7 @@ import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/In
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { FormModelType } from "@/connections/Form";
-import { useProjectPolygonByPitch } from "@/connections/ProjectPolygons";
+import { useProjectPolygonsByPitch } from "@/connections/ProjectPolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
@@ -67,10 +67,11 @@ const RHFMap = ({
   };
 
   const enabled = entityName != null && entityUUID != null;
-  const [, { data: projectPolygon, isLoading: isFetching }] = useProjectPolygonByPitch({
-    filter: { projectPitchUuid: entityUUID },
+  const [, { data: projectPolygons, isLoading: isFetching }] = useProjectPolygonsByPitch({
+    projectPitchUuid: entityUUID,
     enabled
   });
+  console.log("console.log", projectPolygons);
 
   const bbox = useBoundingBox(
     entityName == "project-pitch" ? { projectPitchUuid: entityUUID } : { polygonUuid: polygonFromMap?.uuid }
@@ -82,26 +83,26 @@ const RHFMap = ({
 
   useEffect(() => {
     const getDataProjectPolygon = async () => {
-      if (!projectPolygon?.polygonUuid) {
+      if (projectPolygons == null || projectPolygons.length === 0) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });
         setPolygonFromMap({ isOpen: false, uuid: "" });
         setSelectPolygonFromMap?.({ uuid: "", isOpen: false });
       } else {
-        setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon.polygonUuid] });
+        setPolygonDataMap({ [FORM_POLYGONS]: [...projectPolygons.map(polygon => polygon.polygonUuid)] });
         setPolygonFromMap({
           isOpen: true,
-          uuid: projectPolygon.polygonUuid,
+          uuid: projectPolygons[0].polygonUuid,
           entityName: "project-pitches",
-          projectPitchUuid: projectPolygon.projectPitchUuid ?? entityUUID ?? undefined
+          projectPitchUuid: projectPolygons[0].projectPitchUuid ?? entityUUID ?? undefined
         });
       }
     };
 
     getDataProjectPolygon();
-  }, [projectPolygon, isFetching, setSelectPolygonFromMap, entityUUID]);
+  }, [projectPolygons, isFetching, setSelectPolygonFromMap, entityUUID]);
 
   useEffect(() => {
-    const apiPolygonUuid = projectPolygon?.polygonUuid;
+    const apiPolygonUuid = projectPolygons?.[0]?.polygonUuid;
     const fieldName = inputWrapperProps.name;
 
     if (apiPolygonUuid != null) {
@@ -122,7 +123,7 @@ const RHFMap = ({
         onChangeCapture?.();
       }
     }
-  }, [enabled, formHook, inputWrapperProps.name, isFetching, onChangeCapture, projectPolygon, value]);
+  }, [enabled, formHook, inputWrapperProps.name, isFetching, onChangeCapture, projectPolygons, value]);
 
   useEffect(() => {
     if (entityName != null && entityUUID != null) {
@@ -146,6 +147,10 @@ const RHFMap = ({
     <SitePolygonDataProvider sitePolygonData={undefined} reloadSiteData={reloadSiteDataWithBoundingBox}>
       <InputWrapper {...inputWrapperProps}>
         <MapContainer
+          entityData={{
+            entityName,
+            entityUUID
+          }}
           polygonsData={polygonDataMap}
           bbox={validBbox}
           polygonFromMap={polygonFromMap}

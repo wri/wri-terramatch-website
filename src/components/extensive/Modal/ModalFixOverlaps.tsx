@@ -3,7 +3,6 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
-import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import { sitePolygonsConnection } from "@/connections/SitePolygons";
@@ -30,9 +29,6 @@ type ModalFixOverlapsProps = ModalTranslatedProps & {
 type DisplayedPolygonType = {
   id: string | undefined;
   name: string | undefined;
-  checked: boolean | undefined;
-  canBeApproved: boolean | undefined;
-  failingCriterias: string[] | undefined;
   fixabilityResult?: PolygonFixabilityResult;
 };
 
@@ -116,10 +112,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
 
       polygons.push({
         id: polygon.uuid,
-        checked: true,
         name: polygon.name ?? t("Unnamed Polygon"),
-        canBeApproved: false,
-        failingCriterias: [`${OVERLAPPING_CRITERIA_ID}`],
         fixabilityResult
       });
     }
@@ -152,37 +145,23 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
           </Text>
         )}
 
-        <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
-          <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">
-            <Text variant="text-12" className="flex-[2]">
-              {t("Name")}
-            </Text>
-            <Text variant="text-12" className="flex flex-1 items-center justify-start">
-              {t("Polygon Check")}
-            </Text>
-            <Text variant="text-12" className="flex flex-1 items-center justify-start">
-              {t("Fixable Status")}
-            </Text>
+        <div className="mb-6 flex flex-col overflow-hidden rounded-lg border border-grey-750">
+          <header className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] border-b border-grey-750 bg-neutral-150 px-4 py-2">
+            <Text variant="text-12">{t("Name")}</Text>
+            <Text variant="text-12">{t("Fixable Status")}</Text>
           </header>
           {displayedPolygons?.map((item, index) => (
-            <div key={item.id ?? index} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
-              <Text variant="text-12" className="flex-[2]">
+            <div
+              key={item.id ?? index}
+              className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start border-b border-grey-750 px-4 py-2 last:border-0"
+            >
+              <Text variant="text-12" className="font-mono min-w-0 break-words">
                 {item.name}
               </Text>
-              <div className="flex flex-1 items-center justify-center">
-                <div className="flex w-full items-center justify-start gap-2">
-                  <div className="h-4 w-4">
-                    <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-red-500" />
-                  </div>
-                  <Text variant="text-10-light">
-                    {item.failingCriterias?.map(fc => validationLabels[fc]).join(", ") ?? ""}
-                  </Text>
-                </div>
-              </div>
-              <div className="flex flex-1 items-center justify-start">
+              <div className="min-w-0">
                 <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <div className="h-4 w-4">
+                  <div className="flex items-start gap-2">
+                    <div className="mt-0.5 h-4 w-4 shrink-0">
                       <Icon
                         name={
                           item.fixabilityResult?.canBeFixed ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS
@@ -194,19 +173,20 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
                     </div>
                     <Text
                       variant="text-10-light"
-                      className={item.fixabilityResult?.canBeFixed ? "text-green-700" : "text-red-700"}
+                      className={tw(
+                        "font-mono min-w-0 break-words",
+                        item.fixabilityResult?.canBeFixed ? "text-green-700" : "text-red-700"
+                      )}
                     >
                       {item.fixabilityResult?.canBeFixed ? t("Can be fixed") : t("Cannot be fixed")}
                     </Text>
                   </div>
                   {item.fixabilityResult != null && (item.fixabilityResult.reasons?.length ?? 0) > 0 && (
-                    <div className="pl-6">
-                      <Text variant="text-8-light" className="text-gray-600">
-                        {item.fixabilityResult.canBeFixed
-                          ? t("Meets all fixable criteria (≤3.5% overlap, ≤0.1 ha area)")
-                          : item.fixabilityResult.reasons.join(". ")}
-                      </Text>
-                    </div>
+                    <Text variant="text-8-light" className="font-mono text-gray-600 min-w-0 break-words pl-6">
+                      {item.fixabilityResult.canBeFixed
+                        ? t("Meets all fixable criteria (≤3.5% overlap, ≤0.1 ha area)")
+                        : item.fixabilityResult.reasons.join(". ")}
+                    </Text>
                   )}
                 </div>
               </div>
