@@ -159,7 +159,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const {
     selectedSitePolygons,
     selectedSitePolygonUuids,
-    selectedDownloadPolygonUuids,
+    selectedGeometryPolygonUuids,
     selectedSubmittablePolygons,
     selectedSubmittablePolygonUuids
   } = useMemo(() => {
@@ -174,7 +174,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       selectedSitePolygonUuids: sitePolygons
         .map(polygon => polygon.uuid)
         .filter((uuid): uuid is string => uuid != null && uuid.length > 0),
-      selectedDownloadPolygonUuids: sitePolygons
+      selectedGeometryPolygonUuids: sitePolygons
         .map(polygon => polygon.polygonUuid)
         .filter((uuid): uuid is string => uuid != null && uuid.length > 0),
       selectedSubmittablePolygons: submittablePolygons,
@@ -433,7 +433,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   ]);
 
   const handleBulkDownload = useCallback(async () => {
-    if (selectedDownloadPolygonUuids.length === 0) {
+    if (selectedGeometryPolygonUuids.length === 0) {
       showToast({
         label: t("Could not find selected polygons to download"),
         type: "error",
@@ -449,7 +449,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         selectedSitePolygons.length === 1
           ? selectedSitePolygons[0].name ?? "polygon"
           : `${site.name ?? "polygons"}-${new Date().toISOString().slice(0, 10)}`;
-      await downloadMultiplePolygonsGeoJson(selectedDownloadPolygonUuids, filename);
+      await downloadMultiplePolygonsGeoJson(selectedGeometryPolygonUuids, filename);
       showToast({
         label: t("Polygon successfully downloaded"),
         type: "success",
@@ -467,7 +467,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     } finally {
       setIsDownloadingSelectedPolygons(false);
     }
-  }, [selectedDownloadPolygonUuids, selectedSitePolygons, site.name, t]);
+  }, [selectedGeometryPolygonUuids, selectedSitePolygons, site.name, t]);
 
   const openPolygonEditDrawerForRow = useCallback(
     (row: PolygonTableRow) => {
@@ -730,7 +730,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           submitLabel={hasSelectedOverlapFailure ? t("Fix Overlap") : t("Submit")}
           polygons={selectedRows}
           polygonValidations={polygonValidations}
-          selectedPolygonUuids={selectedDownloadPolygonUuids}
+          selectedGeometryPolygonUuids={selectedGeometryPolygonUuids}
           isDownloading={isDownloadingSelectedPolygons}
           onCancel={clearTableSelection}
           onDelete={() => setDeletePolygonModal(true)}
