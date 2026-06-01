@@ -141,7 +141,6 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
               </RequiredIndicator>
             ) : null}
             {label}
-            {!required ? <span className="optional-text">{" (Optional)"}</span> : ""}
           </FieldLabel>
         ) : null}
         {caption != null ? (

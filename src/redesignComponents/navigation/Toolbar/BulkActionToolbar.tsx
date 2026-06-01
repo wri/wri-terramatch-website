@@ -31,7 +31,7 @@ const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
             {items}
           </Text>
           <Text color="neutral.100" textStyle={"300"}>
-            {items?.length === 1 ? t("item selected") : t("items selected")}
+            {items && Number(items) > 1 ? t("items selected") : t("item selected")}
           </Text>
         </Flex>
       }

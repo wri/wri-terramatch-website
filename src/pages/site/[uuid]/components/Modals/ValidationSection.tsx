@@ -4,19 +4,13 @@ import { FC, useMemo, useState } from "react";
 
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { parseV3ValidationData } from "@/helpers/polygonValidation";
-import { useMessageValidators } from "@/hooks/useMessageValidations";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import ProgressBar from "@/redesignComponents/dataDisplay/Metrics/ProgressBar";
-import {
-  CheckApprovedIcon,
-  ChevronDownIcon,
-  InformationRequiredIcon,
-  RejectedIcon
-} from "@/redesignComponents/foundations/Icons";
+import { ChevronDownIcon } from "@/redesignComponents/foundations/Icons";
 
 import type { PolygonTableRow } from "../PolygonTableRow";
-import { getItemSeverity, severityToColor } from "./validationCriteria";
+import ValidationDetail from "../ValidationDetail";
 
 export interface ValidationSectionProps {
   polygons: PolygonTableRow[];
@@ -32,7 +26,6 @@ const ItemPolygon: FC<{
 }> = ({ polygon, validation, onViewDetails }) => {
   const [isOpen, setIsOpen] = useState(false);
   const t = useT();
-  const { getFormatedExtraInfo } = useMessageValidators();
 
   const items = useMemo(() => (validation == null ? [] : parseV3ValidationData(validation)), [validation]);
   const totalItems = items.length;
@@ -57,48 +50,7 @@ const ItemPolygon: FC<{
       </Flex>
       {isOpen && hasDetails && (
         <Flex direction="column" ml={-6} gap={3} py={3} px={4} bg="neutral.200" mt={2.5} rounded={2.5}>
-          <Box>
-            <Text textStyle="300-bold" color="neutral.900" as="span">
-              {t("{failed} out of {total}", { failed: failedCount, total: totalItems })}
-            </Text>
-            &nbsp;
-            <Text textStyle="300" color="neutral.900" as="span">
-              {t("Validation criteria are not met")}
-            </Text>
-          </Box>
-          <List.Root gap="0" variant="plain" alignItems="baseline">
-            {items.map(item => {
-              const severity = getItemSeverity(item);
-              const messages = getFormatedExtraInfo(item.extra_info, item.id);
-              return (
-                <List.Item key={item.id}>
-                  <List.Indicator asChild color={severityToColor(severity)} boxSize={3}>
-                    {severity === "success" ? (
-                      <CheckApprovedIcon />
-                    ) : severity === "warning" ? (
-                      <InformationRequiredIcon />
-                    ) : (
-                      <RejectedIcon />
-                    )}
-                  </List.Indicator>
-                  <Box>
-                    <Text textStyle="300" color="neutral.900">
-                      {t(item.label)}
-                    </Text>
-                    {messages.length > 0 && (
-                      <Box mb={3}>
-                        {messages.map((msg, idx) => (
-                          <Text textStyle="200" color="neutral.800" key={`${item.id}-${idx}`}>
-                            {msg}
-                          </Text>
-                        ))}
-                      </Box>
-                    )}
-                  </Box>
-                </List.Item>
-              );
-            })}
-          </List.Root>
+          <ValidationDetail failedCount={failedCount} totalItems={totalItems} items={items} />
           <Box className="w-fit">
             <Button variant="borderless" size="small" onClick={() => onViewDetails?.(polygon)} className="w-fit">
               {t("View Details")}

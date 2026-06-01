@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import {
   mapSitePolygonStatusToMappedTagState,
-  mapSitePolygonValidationStatusToValidationTagState
+  mapSiteValidationStatusToTagState
 } from "@/utils/mapStatusToTagStateEntity";
 
 import {
@@ -26,7 +26,7 @@ export const useSitePolygonTableData = ({ polygonsData, t, format }: UseSitePoly
         id: polygon.polygonUuid ?? polygon.uuid,
         polygonName: polygon.name ?? t("Unnamed Polygon"),
         submission: mapSitePolygonStatusToMappedTagState(polygon.status),
-        validation: mapSitePolygonValidationStatusToValidationTagState(polygon.validationStatus),
+        validation: mapSiteValidationStatusToTagState(polygon.validationStatus),
         restorationPractice: (polygon.practice ?? []).filter(isRestorationStrategy),
         targetLandUse: polygon.targetSys != null && isTargetLandUseType(polygon.targetSys) ? polygon.targetSys : null,
         plantingDate: polygon.plantStart != null ? format(polygon.plantStart, "yyyy-MM-dd") : "-",

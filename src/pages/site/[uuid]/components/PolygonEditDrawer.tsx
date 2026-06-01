@@ -1,5 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useCallback, useEffect, useState } from "react";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -13,6 +14,7 @@ import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 
 import type { PolygonSaveCallback } from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
+import PolygonSystemValidationContent from "./PolygonSystemValidationContent";
 
 interface PolygonEditDrawerProps {
   open?: boolean;
@@ -59,12 +61,18 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         const saved = await saveEditContent();
         if (saved) {
           onClose();
+          showToast({
+            label: t("Polygon version created successfully"),
+            type: "success",
+            placement: "bottom-end",
+            duration: 5000
+          });
         }
       } finally {
         setIsSaving(false);
       }
     },
-    [activeTab, saveEditContent]
+    [activeTab, saveEditContent, t]
   );
 
   return (
@@ -120,7 +128,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                   onPolygonUpdated={onPolygonUpdated}
                 />
               )}
-              {activeTab === "systemValidation" && <div>System Validation</div>}
+              {activeTab === "systemValidation" && <PolygonSystemValidationContent polygon={selectedPolygon} />}
               {activeTab === "comments" && <div>Comments</div>}
             </Flex>
           }

@@ -36,7 +36,7 @@ export const mapSitePolygonStatusToMappedTagState = (status: SitePolygonLightDto
   }
 };
 
-export const mapSitePolygonValidationStatusToValidationTagState = (
+export const mapSiteValidationStatusToTagState = (
   status: SitePolygonLightDto["validationStatus"]
 ): ValidationTagState => {
   switch (status) {
