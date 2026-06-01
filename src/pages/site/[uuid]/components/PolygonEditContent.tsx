@@ -71,6 +71,7 @@ type PolygonEditContentProps = {
   onRegisterSave?: (saveHandler: () => Promise<boolean>) => void;
   onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
+  onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
 };
 
 type PolygonVersionRow = SitePolygonLightDto & { id: string };
@@ -114,7 +115,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onClose,
   onRegisterSave,
   onSaved,
-  onPolygonUpdated
+  onPolygonUpdated,
+  onSuppressMapSelectionHighlightChange
 }) => {
   const t = useT();
   const showStatusToast = useCallback((type: "success" | "error" | "warning", label: string) => {
@@ -372,8 +374,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [sitePolygonUuid]);
 
   useEffect(() => {
-    if (isCreateMode || geometryPolygonUuid === "") return;
+    if (isCreateMode || geometryPolygonUuid === "") {
+      onSuppressMapSelectionHighlightChange?.(false);
+      return;
+    }
 
+    onSuppressMapSelectionHighlightChange?.(!shouldMapEditPolygon);
     setEditPolygon({
       isOpen: shouldMapEditPolygon,
       uuid: shouldMapEditPolygon ? geometryPolygonUuid : "",
@@ -387,12 +393,20 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [
     geometryPolygonUuid,
     isCreateMode,
+    onSuppressMapSelectionHighlightChange,
     primaryUuid,
     setEditPolygon,
     setIsUserDrawingEnabled,
     setPolygonGeometryEdit,
     shouldMapEditPolygon
   ]);
+
+  useEffect(
+    () => () => {
+      onSuppressMapSelectionHighlightChange?.(false);
+    },
+    [onSuppressMapSelectionHighlightChange]
+  );
 
   useEffect(() => {
     const overlay = anrMapOverlayRef.current;

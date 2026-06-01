@@ -23,6 +23,7 @@ interface PolygonEditDrawerProps {
   onOpenChange?: (open: boolean) => void;
   onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
+  onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
 }
 
 const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
@@ -31,7 +32,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   selectedPolygon,
   onOpenChange,
   onSaved,
-  onPolygonUpdated
+  onPolygonUpdated,
+  onSuppressMapSelectionHighlightChange
 }) => {
   const t = useT();
   const { draftPolygonGeometry } = useMapAreaContext();
@@ -126,6 +128,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                   onRegisterSave={registerSave}
                   onSaved={onSaved}
                   onPolygonUpdated={onPolygonUpdated}
+                  onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
                 />
               )}
               {activeTab === "systemValidation" && <PolygonSystemValidationContent polygon={selectedPolygon} />}

@@ -89,7 +89,7 @@ export type { PolygonTableRow } from "../components/PolygonTableRow";
 const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
-  const { isOpen: isEditPolygonOpen } = usePolygonEditDrawer();
+  const { isOpen: isEditPolygonOpen, suppressMapSelectionHighlight } = usePolygonEditDrawer();
   const { isUserDrawingEnabled, setSiteData, resetSiteMapInteractionState, closeMapPopups, invalidatePolygonMapTiles } =
     useMapAreaContext();
   const { openNotification } = useNotificationContext();
@@ -558,7 +558,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const polygonTableHighlight = useMemo(
     () => ({
       hoveredPolygonUuid,
-      selectedPolygonUuids,
+      selectedPolygonUuids: suppressMapSelectionHighlight ? [] : selectedPolygonUuids,
       onHoveredPolygonFromMap: setHoveredPolygonUuid,
       onPolygonClickedFromMap: handlePolygonClickedFromMap,
       focusPolygonUuid,
@@ -567,6 +567,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     [
       hoveredPolygonUuid,
       selectedPolygonUuids,
+      suppressMapSelectionHighlight,
       handlePolygonClickedFromMap,
       focusPolygonUuid,
       handleFocusPolygonConsumed
