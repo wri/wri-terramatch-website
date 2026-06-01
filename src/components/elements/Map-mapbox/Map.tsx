@@ -277,7 +277,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     sitePolygonUuid: anrMapOverlay?.sitePolygonUuidForApi ?? "",
     enabled: anrPlotGeometryFetchEnabled
   });
-
+  console.log("console.log polygonFromMap", entityData);
   const polygonBbox = useBoundingBox(
     entityData?.entityName === "project-pitch"
       ? { projectPitchUuid: entityData?.entityUUID }

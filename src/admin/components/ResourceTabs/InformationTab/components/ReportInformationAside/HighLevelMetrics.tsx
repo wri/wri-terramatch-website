@@ -4,6 +4,7 @@ import { FunctionField, Labeled, NumberField, useShowContext } from "react-admin
 
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingEntity, TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
+import { SUMMARY_ANR_ROLLUP_HIDE } from "@/constants/summaryRollupVisibility";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
@@ -144,16 +145,18 @@ const HighLevelMetrics: FC = () => {
               emptyText="0"
             />
           </Labeled>
-          {resource === "siteReport" && (
-            <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>
-              <NumberField source="totalTreesRegeneratingSpeciesCount" emptyText="0" />
-            </Labeled>
-          )}
-          {resource === "projectReport" && (
-            <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>
-              <NumberField source="treesRegeneratingSpeciesCount" emptyText="0" />
-            </Labeled>
-          )}
+          <ContextCondition frameworksHide={SUMMARY_ANR_ROLLUP_HIDE}>
+            {resource === "siteReport" && (
+              <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>
+                <NumberField source="totalTreesRegeneratingSpeciesCount" emptyText="0" />
+              </Labeled>
+            )}
+            {resource === "projectReport" && (
+              <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>
+                <NumberField source="treesRegeneratingSpeciesCount" emptyText="0" />
+              </Labeled>
+            )}
+          </ContextCondition>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             {(resource === "projectReport" || resource === "siteReport") && (
               <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx}>
@@ -176,7 +179,7 @@ const HighLevelMetrics: FC = () => {
           </ContextCondition>
           <ContextCondition frameworksShow={ALL_TF}>
             {resource !== "siteReport" && (
-              <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
+              <Labeled label="Seedlings Grown" sx={inlineLabelSx}>
                 <NumberField source="seedlingsGrown" emptyText="0" />
               </Labeled>
             )}
