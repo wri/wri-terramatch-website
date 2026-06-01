@@ -179,7 +179,7 @@ const HighLevelMetrics: FC = () => {
           </ContextCondition>
           <ContextCondition frameworksShow={ALL_TF}>
             {resource !== "siteReport" && (
-              <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
+              <Labeled label="Seedlings Grown" sx={inlineLabelSx}>
                 <NumberField source="seedlingsGrown" emptyText="0" />
               </Labeled>
             )}
