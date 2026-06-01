@@ -24,6 +24,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 import { parsePolygonDataV3, storePolygon } from "../utils";
+import LoadingMap from "./LoadingMap";
 
 export type PolygonsMapEntityModel = {
   uuid: string;
@@ -162,6 +163,8 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   return (
     <AnrMapOverlayProvider>
+      {/* TODO: Add loading state for polygons */}
+      <LoadingMap text="Loading Polygons" loading={true} />
       <MapContainer
         championsMap={true}
         mapFunctions={mapFunctions}

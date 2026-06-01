@@ -35,13 +35,14 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
+import LoadingTable from "@/redesignComponents/dataDisplay/Table/components/LoadingTable";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import Switch from "@/redesignComponents/Forms/Actions/Switch/Switch";
 import DatePickerInput from "@/redesignComponents/Forms/Inputs/DateInputs/DatePickerInput/DatePickerInput";
 import InputWithUnits from "@/redesignComponents/Forms/Inputs/InputWithUnits";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
-import { DownloadIcon, LoadingIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
+import { DownloadIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
 import {
@@ -749,14 +750,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               </TableRow>
             )}
           />
-          {isLoadingVersions ? (
-            <Flex alignItems="center" justifyContent="center" gap={2} pt={12} height="100%">
-              <LoadingIcon boxSize={7} color="primary.700" animation="spin 1s linear infinite" />
-              <Text textStyle="500" color="neutral.800">
-                {t("Loading")}
-              </Text>
-            </Flex>
-          ) : null}
+          {isLoadingVersions ? <LoadingTable text="Loading Versions" /> : null}
         </Accordion>
       </Flex>
       {!isCreateMode && (

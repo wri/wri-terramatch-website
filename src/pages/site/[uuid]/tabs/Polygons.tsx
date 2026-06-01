@@ -9,7 +9,6 @@ import { dispatchUndoPolygonDrawEvent } from "@/components/elements/Map-mapbox/i
 import { downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import {
   bulkDeleteSitePolygons,
   bulkUpdateSitePolygonStatus,
@@ -34,6 +33,7 @@ import { getThemedColor } from "@/lib/theme";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
+import LoadingTable from "@/redesignComponents/dataDisplay/Table/components/LoadingTable";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { AreaHectaresIcon, DownloadIcon, PlusIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
@@ -644,14 +644,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           />
         )}
 
-        {isLoadingPolygons ? (
-          <Box className="py-4">
-            <LoadingContainer loading />
-            <Text textStyle="400" color="neutral.700" className="mt-2">
-              {loadingLabel}
-            </Text>
-          </Box>
-        ) : shouldShowNoResults ? (
+        {shouldShowNoResults ? (
           <Box>
             <Text textStyle="400-bold">{t("No results found")}</Text>
             <Text textStyle="400">
@@ -702,11 +695,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                 />
               )}
             </Flex>
-            <Box onMouseLeave={handleClearHover}>
+            <Box onMouseLeave={handleClearHover} position="relative">
               <Table<PolygonTableRow>
                 css={getPolygonsTableStyles(isStickyActive)}
                 containerRef={tableContainerRef}
-                data={polygonRows}
+                data={isLoadingPolygons ? [] : polygonRows}
                 columns={columns}
                 showPagination
                 pageSize={10}
@@ -715,6 +708,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                 onAllItemsSelected={onAllItemsSelected}
                 renderRow={selectableRenderRow}
               />
+              {/* TODO: Update state to show loading table when polygons are loading */}
+              {isLoadingPolygons && (
+                <Box py={20}>
+                  <LoadingTable text={loadingLabel} />
+                </Box>
+              )}
             </Box>
           </>
         )}
