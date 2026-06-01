@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
+import { DetailedHTMLProps, FC, HTMLAttributes, ReactNode } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -10,7 +10,8 @@ import { TextVariants } from "@/types/common";
 import ToolTip from "../../Tooltip/Tooltip";
 
 export type GoalProgressCardItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
-  iconName: IconNames;
+  iconName?: IconNames;
+  icon?: ReactNode;
   label: TranslatedText;
   value: number | string;
   classNameLabel?: string;
@@ -22,6 +23,7 @@ export type GoalProgressCardItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDiv
 
 const GoalProgressCardItem: FC<GoalProgressCardItemProps> = ({
   iconName,
+  icon,
   label,
   value: _val,
   className,
@@ -36,7 +38,7 @@ const GoalProgressCardItem: FC<GoalProgressCardItemProps> = ({
   const value = _val || 0;
   return (
     <div {...rest} className={classNames("flex w-full items-center", className)}>
-      <Icon name={iconName} className="mr-4 h-10 w-10 min-w-[40px]" />
+      {icon ?? (iconName != null ? <Icon name={iconName} className="mr-4 h-10 w-10 min-w-[40px]" /> : null)}
 
       <Text
         variant={variantLabel ?? "text-16-light"}

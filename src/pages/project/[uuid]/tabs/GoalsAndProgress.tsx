@@ -26,6 +26,7 @@ import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
+import { SeedlingsCircleIcon } from "@/redesignComponents/foundations/Icons";
 import { TextVariants } from "@/types/common";
 import { getNewRestorationGoalDataForChart, isAggregateReportsEmpty } from "@/utils/dashboardUtils";
 
@@ -265,7 +266,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   classNameCard="!pl-0"
                   items={[
                     {
-                      iconName: IconNames.NURSERY_CIRCLE,
+                      icon: <SeedlingsCircleIcon boxSize="40px" className="mr-4 min-w-[40px] shrink-0" />,
                       label: t("Number of Seedlings Growing:"),
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
