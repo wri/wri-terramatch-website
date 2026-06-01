@@ -8,6 +8,7 @@ import Menu from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { AuditStatusEntityType, deleteAuditStatusAsync } from "@/connections/AuditStatus";
+import { getPolygonSubmissionStatusLabel } from "@/constants/polygonHandoff";
 import { useNotificationContext } from "@/context/notification.provider";
 import { AuditStatusDto, MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
@@ -25,9 +26,7 @@ const getTextForActionTable = (item: { type: string; status: string }, entity?: 
     }
     return text;
   } else if (item.type === "polygon-data-submission") {
-    return item.status != null
-      ? `Polygon data submission: ${formattedTextStatus(item.status)}`
-      : "Polygon Data Submission";
+    return item.status != null ? getPolygonSubmissionStatusLabel(item.status) : "Polygon Submission Status";
   } else if (item.type === "ready-for-baseline") {
     return item.status === "yes" ? "Ready for baseline: Yes" : "Ready for baseline: No";
   } else if (item.type === "change-request-updated") {
