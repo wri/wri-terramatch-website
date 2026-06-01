@@ -10,11 +10,13 @@ import { downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbo
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { clipPolygonListAsync } from "@/connections/PolygonClipping";
 import type { BulkSitePolygonAttributeChanges, PolygonStatus } from "@/connections/SitePolygons";
 import {
   bulkDeleteSitePolygons,
   bulkUpdateSitePolygonAttributes,
   bulkUpdateSitePolygonStatus,
+  loadAllSitePolygons,
   pruneSitePolygonsCache,
   useAllSitePolygons
 } from "@/connections/SitePolygons";
@@ -37,14 +39,20 @@ import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/Resiza
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
-import { AreaHectaresIcon, DownloadIcon, PlusIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
+import {
+  AreaHectaresIcon,
+  DownloadIcon,
+  LoadingIcon,
+  PlusIcon,
+  TreeIcon
+} from "@/redesignComponents/foundations/Icons";
 import UndoIcon from "@/redesignComponents/foundations/Icons/Function/UndoIcon";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import DeletePolygon from "../components/Modals/DeletePolygon";
-import OverlapFix from "../components/Modals/OverlapFix";
+import OverlapFix, { OverlapFixPolygon } from "../components/Modals/OverlapFix";
 import PolygonSubmitted from "../components/Modals/PolygonSubmitted";
 import SubmitPolygons from "../components/Modals/SubmitPolygons";
 import UploadError from "../components/Modals/UploadError";
@@ -55,6 +63,13 @@ import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import PolygonBulkEditDrawer from "../components/PolygonBulkEditDrawer";
 import { PolygonRow, PolygonTableRow } from "../components/PolygonTableRow";
 import PolygonToolbar from "../components/PolygonToolbar";
+import {
+  buildOverlapFixResultPolygons,
+  canAutoFixOverlapSelection,
+  extractClippedVersions,
+  getSelectedOverlapFixSummary,
+  hasOverlapFailureInSelection
+} from "../hooks/overlapFix.utils";
 import { useDownloadSitePolygons } from "../hooks/useDownloadSitePolygons";
 import { useSitePolygonFilters } from "../hooks/useSitePolygonFilters";
 import { useSitePolygonOverlap } from "../hooks/useSitePolygonOverlap";
@@ -79,8 +94,14 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const { openNotification } = useNotificationContext();
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
+  const pendingOverlapFixFocusUuidRef = useRef<string | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showOverlapFixModal, setOverlapFixModal] = useState(false);
+  const [overlapFixResults, setOverlapFixResults] = useState<{
+    polygonsFixed: OverlapFixPolygon[];
+    polygonsNotFixed: OverlapFixPolygon[];
+  }>({ polygonsFixed: [], polygonsNotFixed: [] });
+  const [focusPolygonUuid, setFocusPolygonUuid] = useState<string | null>(null);
   const [showSubmitPolygonsModal, setSubmitPolygonsModal] = useState(false);
   const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
   const [submittedPolygonNames, setSubmittedPolygonNames] = useState<string[]>([]);
@@ -126,7 +147,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     t,
     format
   });
-  const { polygonsWithOverlapCount, overlapPolygons } = useSitePolygonOverlap({ siteUuid: site.uuid, polygonsData });
+  const { polygonsWithOverlapCount, overlapPolygons, fetchOverlapValidations } = useSitePolygonOverlap({
+    siteUuid: site.uuid,
+    polygonsData
+  });
 
   const { selectedRows, selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } =
     useTableSelection<PolygonTableRow>(true, polygonRows);
@@ -160,9 +184,61 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     };
   }, [polygonsData, selectedRowIds]);
 
-  const hasSelectedFailedValidation = useMemo(
-    () => selectedRows.length > 1 && selectedRows.some(row => row.validation === "failed"),
-    [selectedRows]
+  const selectedOverlapFixSummary = useMemo(
+    () => getSelectedOverlapFixSummary(selectedRows, polygonValidations, polygonsData),
+    [selectedRows, polygonValidations, polygonsData]
+  );
+  const hasSelectedOverlapFailure = hasOverlapFailureInSelection(selectedOverlapFixSummary);
+  const hasFixableSelectedOverlap = canAutoFixOverlapSelection(selectedOverlapFixSummary);
+
+  const handleFocusPolygonConsumed = useCallback(() => {
+    setFocusPolygonUuid(null);
+  }, []);
+
+  const handleViewOverlapFixPolygon = useCallback(
+    (polygonUuid: string) => {
+      setOverlapFixModal(false);
+
+      if (polygonFilters.hasOverlap) {
+        pendingOverlapFixFocusUuidRef.current = polygonUuid;
+        setPolygonFilters(current => ({ ...current, hasOverlap: false }));
+        return;
+      }
+
+      setFocusPolygonUuid(polygonUuid);
+    },
+    [polygonFilters.hasOverlap, setPolygonFilters]
+  );
+
+  useEffect(() => {
+    const pendingUuid = pendingOverlapFixFocusUuidRef.current;
+    if (pendingUuid == null || polygonFilters.hasOverlap || isLoadingPolygons) {
+      return;
+    }
+
+    pendingOverlapFixFocusUuidRef.current = null;
+    setFocusPolygonUuid(pendingUuid);
+  }, [polygonFilters.hasOverlap, isLoadingPolygons, polygonsData]);
+
+  const handleOverlapFixModalClose = useCallback(() => {
+    setOverlapFixModal(false);
+    window.setTimeout(() => {
+      setOverlapFixResults({ polygonsFixed: [], polygonsNotFixed: [] });
+    }, 0);
+  }, []);
+
+  const openOverlapFixResultsModal = useCallback(
+    (results: { polygonsFixed: OverlapFixPolygon[]; polygonsNotFixed: OverlapFixPolygon[] }) => {
+      if (results.polygonsFixed.length === 0 && results.polygonsNotFixed.length === 0) {
+        return;
+      }
+
+      setOverlapFixResults(results);
+      window.setTimeout(() => {
+        setOverlapFixModal(true);
+      }, 0);
+    },
+    []
   );
 
   useEffect(() => {
@@ -234,14 +310,89 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       await createPolygonValidation({ polygonUuids });
       ApiSlice.pruneCache("validations");
       pruneSitePolygonsCache();
-      await Promise.all([refetchPolygons(), fetchAllValidationPages(true)]);
+      await Promise.all([refetchPolygons(), fetchAllValidationPages(true), fetchOverlapValidations(true)]);
     },
-    [refetchPolygons, fetchAllValidationPages]
+    [refetchPolygons, fetchAllValidationPages, fetchOverlapValidations]
   );
 
+  const handleOverlapFix = useCallback(async () => {
+    const { fixableCandidates, notFixableCandidates } = selectedOverlapFixSummary;
+
+    if (fixableCandidates.length === 0) {
+      openOverlapFixResultsModal({
+        polygonsFixed: [],
+        polygonsNotFixed: notFixableCandidates.map(({ id, name }) => ({ id, name }))
+      });
+      return;
+    }
+
+    showToast({
+      label: t("Fixing overlaps..."),
+      type: "info",
+      placement: TOAST_PLACEMENT,
+      duration: SAVE_COMPLETE_TOAST_MS,
+      closableLabel: t("Close"),
+      icon: <LoadingIcon boxSize={7} color="primary.700" animation="spin 1s linear infinite" />
+    });
+
+    try {
+      const response = await clipPolygonListAsync(fixableCandidates.map(candidate => candidate.id));
+      const fixedVersions = extractClippedVersions(response);
+
+      pruneSitePolygonsCache();
+      ApiSlice.pruneCache("validations");
+      invalidatePolygonMapTiles();
+
+      const refreshedPolygons = await loadAllSitePolygons({
+        entityName: "sites",
+        entityUuid: site.uuid,
+        enabled: site.uuid != null && site.uuid !== ""
+      });
+
+      const [, , refreshedOverlapValidations] = await Promise.all([
+        refetchPolygons(),
+        fetchAllValidationPages(true),
+        fetchOverlapValidations(true)
+      ]);
+
+      openOverlapFixResultsModal(
+        buildOverlapFixResultPolygons(
+          fixedVersions,
+          fixableCandidates,
+          notFixableCandidates,
+          refreshedPolygons,
+          refreshedOverlapValidations
+        )
+      );
+      clearTableSelection();
+      closeMapPopups();
+      setHoveredPolygonUuid(null);
+    } catch (error) {
+      Log.error("Failed to fix selected polygon overlaps:", error);
+      showToast({
+        label: t("Failed to fix selected polygon overlaps"),
+        type: "error",
+        placement: TOAST_PLACEMENT,
+        duration: SAVE_COMPLETE_TOAST_MS,
+        closableLabel: t("Close")
+      });
+    }
+  }, [
+    clearTableSelection,
+    closeMapPopups,
+    fetchAllValidationPages,
+    fetchOverlapValidations,
+    invalidatePolygonMapTiles,
+    openOverlapFixResultsModal,
+    refetchPolygons,
+    selectedOverlapFixSummary,
+    site.uuid,
+    t
+  ]);
+
   const handleBulkSubmit = useCallback(async () => {
-    if (hasSelectedFailedValidation) {
-      setOverlapFixModal(true);
+    if (hasSelectedOverlapFailure) {
+      await handleOverlapFix();
       return;
     }
 
@@ -271,7 +422,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [
     clearTableSelection,
     closeMapPopups,
-    hasSelectedFailedValidation,
+    handleOverlapFix,
+    hasSelectedOverlapFailure,
     invalidatePolygonMapTiles,
     openNotification,
     refetchPolygons,
@@ -407,9 +559,17 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       hoveredPolygonUuid,
       selectedPolygonUuids,
       onHoveredPolygonFromMap: setHoveredPolygonUuid,
-      onPolygonClickedFromMap: handlePolygonClickedFromMap
+      onPolygonClickedFromMap: handlePolygonClickedFromMap,
+      focusPolygonUuid,
+      onFocusPolygonConsumed: handleFocusPolygonConsumed
     }),
-    [hoveredPolygonUuid, selectedPolygonUuids, handlePolygonClickedFromMap]
+    [
+      hoveredPolygonUuid,
+      selectedPolygonUuids,
+      handlePolygonClickedFromMap,
+      focusPolygonUuid,
+      handleFocusPolygonConsumed
+    ]
   );
 
   const handleClearHover = useCallback(() => {
@@ -430,18 +590,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const selectedRestorationAreaRounded = Math.round(selectedRestorationAreaHa * 100) / 100;
   const hasPolygonSelection = selectedRows.length > 0;
-
-  const selectedFailedMockedPolygons = [
-    { id: "1", name: "Polygon 1" },
-    { id: "2", name: "Polygon 2" },
-    { id: "3", name: "Polygon 3" }
-  ];
-
-  const selectedSuccessMockedPolygons = [
-    { id: "4", name: "Polygon 4" },
-    { id: "5", name: "Polygon 5" },
-    { id: "6", name: "Polygon 6" }
-  ];
 
   const shouldShowNoResults = !isLoadingPolygons && polygonRows.length === 0;
 
@@ -579,7 +727,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           visible={hasPolygonSelection}
           itemCount={selectedRows.length}
           isBulkEditDrawerOpen={showBulkEditDrawer}
-          submitLabel={hasSelectedFailedValidation ? t("Fix Overlap") : t("Submit")}
+          submitLabel={hasSelectedOverlapFailure ? t("Fix Overlap") : t("Submit")}
           polygons={selectedRows}
           polygonValidations={polygonValidations}
           selectedPolygonUuids={selectedDownloadPolygonUuids}
@@ -591,7 +739,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onViewPolygonDetails={openPolygonEditDrawerForRow}
           onRunValidation={handleRunValidation}
           onSubmit={handleBulkSubmit}
-          showTooltip={hasSelectedFailedValidation}
+          isOverlapFixAction={hasSelectedOverlapFailure}
+          canAutoFixOverlap={hasFixableSelectedOverlap}
         />
 
         <PolygonBulkEditDrawer
@@ -633,13 +782,16 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           polygons={selectedRows}
           onDelete={handleBulkDelete}
         />
-        <OverlapFix
-          open={showOverlapFixModal}
-          onClose={() => setOverlapFixModal(false)}
-          polygonsFixed={selectedSuccessMockedPolygons}
-          polygonsNotFixed={selectedFailedMockedPolygons}
-        />
-        <DeletePolygon open={showDeletePolygonModal} onOpenChange={setDeletePolygonModal} polygons={selectedRows} />
+        {showOverlapFixModal &&
+          (overlapFixResults.polygonsFixed.length > 0 || overlapFixResults.polygonsNotFixed.length > 0) && (
+            <OverlapFix
+              open={showOverlapFixModal}
+              onClose={handleOverlapFixModalClose}
+              polygonsFixed={overlapFixResults.polygonsFixed}
+              polygonsNotFixed={overlapFixResults.polygonsNotFixed}
+              onViewPolygon={handleViewOverlapFixPolygon}
+            />
+          )}
         <UploadError open={showUploadErrorModal} onOpenChange={setUploadErrorModal} />
         <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
 

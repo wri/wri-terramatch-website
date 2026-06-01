@@ -1,7 +1,7 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import type { DataDrivenPropertyValueSpecification, MapMouseEvent } from "mapbox-gl";
 import { Map as MapboxMap } from "mapbox-gl";
-import { MutableRefObject, useEffect, useRef } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 
 import {
   getPolygonGeometryFillLayerConfigs,
@@ -87,6 +87,8 @@ type PolygonTableHighlight = {
   selectedPolygonUuids: string[];
   onHoveredPolygonFromMap?: (uuid: string | null) => void;
   onPolygonClickedFromMap?: (uuid: string) => void;
+  focusPolygonUuid?: string | null;
+  onFocusPolygonConsumed?: () => void;
 };
 
 type UsePolygonTableHighlightStyleParams = {
@@ -167,6 +169,8 @@ type UsePolygonSelectionZoomParams = {
   styleReady: boolean;
   sourcesAdded: boolean;
   selectedPolygonUuids: string[] | undefined;
+  focusPolygonUuid?: string | null;
+  onFocusPolygonConsumed?: () => void;
   sitePolygonData: SitePolygonLightDto[] | undefined;
 };
 
@@ -291,6 +295,8 @@ export function usePolygonSelectionZoom({
   styleReady,
   sourcesAdded,
   selectedPolygonUuids,
+  focusPolygonUuid,
+  onFocusPolygonConsumed,
   sitePolygonData
 }: UsePolygonSelectionZoomParams): void {
   const lastZoomedSelectionRef = useRef<string>("");
@@ -301,6 +307,54 @@ export function usePolygonSelectionZoom({
     polygonBBoxCacheRef.current.clear();
     lastZoomedSelectionRef.current = "";
   }, [sitePolygonData]);
+
+  const zoomToUuids = useCallback(
+    async (uuids: string[], m: MapboxMap, isStale: () => boolean): Promise<boolean> => {
+      if (isStale()) return false;
+
+      const missingUuids = uuids.filter(uuid => !polygonBBoxCacheRef.current.has(uuid));
+      if (missingUuids.length > 0) {
+        try {
+          const geojson = await fetchMultiplePolygonsGeoJson(missingUuids, false);
+          if (isStale()) return false;
+
+          const missingSet = new Set(missingUuids);
+          const featuresByUuid = new Map<string, GeoJSON.Feature[]>();
+          for (const uuid of missingUuids) featuresByUuid.set(uuid, []);
+
+          for (const feature of geojson.features) {
+            const uuid = pickPolygonGeometryIdFromProperties(feature.properties);
+            if (uuid == null || !missingSet.has(uuid)) continue;
+            featuresByUuid.get(uuid)?.push(feature);
+          }
+
+          for (const uuid of missingUuids) {
+            polygonBBoxCacheRef.current.set(uuid, computeBBoxFromFeatures(featuresByUuid.get(uuid) ?? []));
+          }
+        } catch (error) {
+          if (isStale()) return false;
+          Log.warn("usePolygonSelectionZoom: failed to fetch selected polygon geometries", error);
+        }
+      }
+
+      let bbox = mergeBBoxes(
+        uuids.flatMap(uuid => {
+          const cached = polygonBBoxCacheRef.current.get(uuid);
+          return cached == null ? [] : [cached];
+        })
+      );
+
+      if (bbox == null) {
+        bbox = computeBBoxFromCentroids(uuids, sitePolygonData);
+      }
+
+      if (isStale() || bbox == null) return false;
+
+      fitMapToBBox(m, bbox);
+      return true;
+    },
+    [sitePolygonData]
+  );
 
   useEffect(() => {
     const uuids = Array.from(new Set(selectedPolygonUuids ?? []));
@@ -325,52 +379,10 @@ export function usePolygonSelectionZoom({
       cancelled || requestSequence !== requestSequenceRef.current || map.current == null || map.current !== m;
 
     const attemptZoom = async () => {
-      if (isStale()) return;
-
-      const missingUuids = uuids.filter(uuid => !polygonBBoxCacheRef.current.has(uuid));
-      if (missingUuids.length > 0) {
-        try {
-          const geojson = await fetchMultiplePolygonsGeoJson(missingUuids, false);
-          if (isStale()) return;
-
-          const missingSet = new Set(missingUuids);
-          const featuresByUuid = new Map<string, GeoJSON.Feature[]>();
-          for (const uuid of missingUuids) featuresByUuid.set(uuid, []);
-
-          for (const feature of geojson.features) {
-            const uuid = pickPolygonGeometryIdFromProperties(feature.properties);
-            if (uuid == null || !missingSet.has(uuid)) continue;
-            featuresByUuid.get(uuid)?.push(feature);
-          }
-
-          for (const uuid of missingUuids) {
-            polygonBBoxCacheRef.current.set(uuid, computeBBoxFromFeatures(featuresByUuid.get(uuid) ?? []));
-          }
-        } catch (error) {
-          if (isStale()) return;
-          Log.warn("usePolygonSelectionZoom: failed to fetch selected polygon geometries", error);
-        }
+      const zoomed = await zoomToUuids(uuids, m, isStale);
+      if (zoomed) {
+        lastZoomedSelectionRef.current = selectionKey;
       }
-
-      let bbox = mergeBBoxes(
-        uuids.flatMap(uuid => {
-          const cached = polygonBBoxCacheRef.current.get(uuid);
-          return cached == null ? [] : [cached];
-        })
-      );
-
-      if (bbox == null) {
-        bbox = computeBBoxFromCentroids(uuids, sitePolygonData);
-      }
-
-      if (isStale()) return;
-
-      if (bbox == null) {
-        return;
-      }
-
-      fitMapToBBox(m, bbox);
-      lastZoomedSelectionRef.current = selectionKey;
     };
 
     if (m.loaded()) {
@@ -384,7 +396,40 @@ export function usePolygonSelectionZoom({
       m.off("idle", attemptZoom);
       requestSequenceRef.current += 1;
     };
-  }, [map, styleReady, sourcesAdded, selectedPolygonUuids, sitePolygonData]);
+  }, [map, styleReady, sourcesAdded, selectedPolygonUuids, zoomToUuids]);
+
+  useEffect(() => {
+    if (focusPolygonUuid == null || focusPolygonUuid === "") return;
+
+    if (!styleReady || !sourcesAdded || map.current == null) return;
+
+    const m = map.current;
+    const requestSequence = requestSequenceRef.current + 1;
+    requestSequenceRef.current = requestSequence;
+    let cancelled = false;
+
+    const isStale = () =>
+      cancelled || requestSequence !== requestSequenceRef.current || map.current == null || map.current !== m;
+
+    const attemptZoom = async () => {
+      await zoomToUuids([focusPolygonUuid], m, isStale);
+      if (!isStale()) {
+        onFocusPolygonConsumed?.();
+      }
+    };
+
+    if (m.loaded()) {
+      void attemptZoom();
+    } else {
+      m.once("idle", attemptZoom);
+    }
+
+    return () => {
+      cancelled = true;
+      m.off("idle", attemptZoom);
+      requestSequenceRef.current += 1;
+    };
+  }, [map, styleReady, sourcesAdded, focusPolygonUuid, onFocusPolygonConsumed, zoomToUuids]);
 }
 
 type UsePolygonTableHighlightPointerParams = {

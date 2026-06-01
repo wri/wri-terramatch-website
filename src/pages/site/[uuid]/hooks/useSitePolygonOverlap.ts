@@ -43,7 +43,12 @@ export const useSitePolygonOverlap = ({ siteUuid, polygonsData }: UseSitePolygon
         .filter((id): id is string => id != null && id !== "" && currentPolygonUuids.has(id))
     );
     if (overlapPolygonUuids.size === 0) {
-      return { polygonsWithOverlapCount: 0, overlapPolygons: [] as OverlapPolygonPoint[] };
+      return {
+        polygonsWithOverlapCount: 0,
+        overlapPolygons: [] as OverlapPolygonPoint[],
+        overlapValidations,
+        fetchOverlapValidations
+      };
     }
 
     const overlapPolygons: OverlapPolygonPoint[] = [];
@@ -54,6 +59,11 @@ export const useSitePolygonOverlap = ({ siteUuid, polygonsData }: UseSitePolygon
       overlapPolygons.push({ polygonUuid: uuid, lat: polygon.lat, lng: polygon.long });
     }
 
-    return { polygonsWithOverlapCount: overlapPolygons.length, overlapPolygons };
-  }, [overlapValidations, polygonsData]);
+    return {
+      polygonsWithOverlapCount: overlapPolygons.length,
+      overlapPolygons,
+      overlapValidations,
+      fetchOverlapValidations
+    };
+  }, [overlapValidations, polygonsData, fetchOverlapValidations]);
 };

@@ -24,7 +24,8 @@ export type PolygonBulkActionToolbarProps = {
   onSubmit: () => void;
   onViewPolygonDetails?: (polygon: PolygonTableRow) => void;
   onRunValidation: (polygonUuids: string[]) => Promise<void>;
-  showTooltip: boolean;
+  isOverlapFixAction?: boolean;
+  canAutoFixOverlap?: boolean;
   polygons: PolygonTableRow[];
   polygonValidations: Map<string, ValidationDto>;
   selectedPolygonUuids: string[];
@@ -46,11 +47,14 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   onRunValidation,
   polygonValidations,
   selectedPolygonUuids,
-  showTooltip
+  isOverlapFixAction = false,
+  canAutoFixOverlap = false
 }) => {
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
   const t = useT();
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
+  const isOverlapAutoFixUnavailable = isOverlapFixAction && !canAutoFixOverlap;
+
   if (!visible || isPolygonEditDrawerOpen || isBulkEditDrawerOpen) {
     return null;
   }
@@ -117,9 +121,10 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
         }}
         submitButtonProps={{
           children: t(submitLabel),
+          disabled: isOverlapAutoFixUnavailable,
           onClick: onSubmit
         }}
-        {...(showTooltip && {
+        {...(isOverlapAutoFixUnavailable && {
           tooltipContent: (
             <Box>
               <Text color="neutral.200" textStyle={"300"} textAlign={"center"}>

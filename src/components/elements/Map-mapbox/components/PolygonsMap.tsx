@@ -45,6 +45,8 @@ interface PolygonsMapProps {
     selectedPolygonUuids: string[];
     onHoveredPolygonFromMap?: (uuid: string | null) => void;
     onPolygonClickedFromMap?: (uuid: string) => void;
+    focusPolygonUuid?: string | null;
+    onFocusPolygonConsumed?: () => void;
   };
   overlapPolygons?: OverlapPolygonPoint[];
 }
