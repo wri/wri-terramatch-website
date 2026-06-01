@@ -198,7 +198,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
             onClose={onClose}
             className="h-screen w-full"
             content={
-              <Flex className="flex-1 flex-col gap-4">
+              <Flex className="mr-1 min-h-0 flex-1 flex-col gap-4 overflow-auto py-5 pr-5 pl-4">
                 <SelectedPolygonsSummary selectedPolygons={selectedPolygons} open={open} />
                 <Text textStyle="300" color="neutral.700">
                   {t("Use the edit icon to select only the attributes you want to apply to all selected polygons.")}

@@ -23,7 +23,8 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   tooltipContent,
   showClearFilters = true,
   onClickFilterButton,
-  selectedFilters
+  selectedFilters,
+  classNameContentLeft
 }) => {
   const t = useT();
   const queryRef = useRef("");
@@ -51,6 +52,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   return (
     <Toolbar
       className={classNames("mobile:mb-6 mobile:flex-col mobile:!items-start", className)}
+      classNameContentLeft={classNameContentLeft}
       contentLeft={
         <div className="flex items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0">
           {search != null && (

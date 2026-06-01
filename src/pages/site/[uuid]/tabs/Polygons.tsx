@@ -282,7 +282,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const handleBulkDownload = useCallback(async () => {
     if (selectedDownloadPolygonUuids.length === 0) {
-      openNotification("error", t("Error!"), t("Could not find selected polygons to download"));
+      showToast({
+        label: t("Could not find selected polygons to download"),
+        type: "error",
+        placement: "bottom-end",
+        duration: 5000
+      });
       return;
     }
 
@@ -293,14 +298,24 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           ? selectedSitePolygons[0].name ?? "polygon"
           : `${site.name ?? "polygons"}-${new Date().toISOString().slice(0, 10)}`;
       await downloadMultiplePolygonsGeoJson(selectedDownloadPolygonUuids, filename);
-      openNotification("success", t("Success!"), t("Polygons downloaded successfully"));
+      showToast({
+        label: t("Polygon successfully downloaded"),
+        type: "success",
+        placement: "bottom-end",
+        duration: 5000
+      });
     } catch (error) {
       Log.error("Failed to download selected polygons:", error);
-      openNotification("error", t("Error!"), t("Error downloading polygons"));
+      showToast({
+        label: t("Error downloading polygon"),
+        type: "error",
+        placement: "bottom-end",
+        duration: 5000
+      });
     } finally {
       setIsDownloadingSelectedPolygons(false);
     }
-  }, [openNotification, selectedDownloadPolygonUuids, selectedSitePolygons, site.name, t]);
+  }, [selectedDownloadPolygonUuids, selectedSitePolygons, site.name, t]);
 
   const openPolygonEditDrawerForRow = useCallback(
     (row: PolygonTableRow) => {
@@ -483,11 +498,13 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       padding: "0.75rem",
       display: "flex",
       alignItems: "center",
-      height: "100%",
-      ...(isStickyTableActive && {
-        borderRight: `1px solid ${getThemedColor("neutral", 400)}`
-      })
-    }
+      height: "100%"
+    },
+    ...(isStickyTableActive && {
+      "& table th:nth-of-type(2), & table td:nth-of-type(2)": {
+        boxShadow: `inset -0.063rem 0 0 0 ${getThemedColor("neutral", 400)}`
+      }
+    })
   });
 
   useEffect(() => {
@@ -496,9 +513,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     const handleScroll = () => {
       setIsStickyActive(container.scrollLeft > 0);
     };
+
+    handleScroll();
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isLoadingPolygons, shouldShowNoResults]);
 
   const loadingLabel =
     polygonLoadTotal > 0
@@ -640,7 +659,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
               isEditPolygonOpen
                 ? // TODO: Update `top-[70px]` when the navbar is redesigned so this offset matches the new header height.
                   "fixed top-[70px] bottom-0 left-0 right-0 z-[37] !h-[calc(100vh-66px)] w-screen rounded-none"
-                : "!rounded-[0.25rem_0.25rem_0_0]"
+                : "h-full w-full !rounded-[0.25rem_0.25rem_0_0]"
             )}
             polygons={polygonsData}
             onRefetchPolygons={refetchPolygons}
@@ -688,8 +707,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           </Box>
         ) : (
           <>
-            <Flex className="items-center justify-between gap-4">
-              <Flex className="items-center gap-4">
+            <Flex className="items-center justify-between gap-4 mobile:flex-col">
+              <Flex className="items-center gap-4 mobile:w-full mobile:flex-col">
                 <MetricCard
                   color="secondary.600"
                   icon={<TreeIcon />}
@@ -699,7 +718,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                   goal={Math.max(totalTreesPlanted, 1)}
                   selection={hasPolygonSelection ? selectedTreesPlanted : undefined}
                   tooltipContent={t("This is the sum of trees planted as reported in the polygon attributes")}
-                  className="min-w-[12.5rem]"
+                  className="min-w-[12.5rem] mobile:w-full mobile:min-w-full"
                 />
                 <MetricCard
                   color="secondary.700"
@@ -710,7 +729,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                   goal={Math.max(totalRestorationAreaHa, 1)}
                   selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
                   tooltipContent={t("This is the sum of hectares from the selected polygons")}
-                  className="min-w-[12.5rem]"
+                  className="min-w-[12.5rem] mobile:w-full mobile:min-w-full"
                 />
               </Flex>
               {polygonsWithOverlapCount > 0 && (

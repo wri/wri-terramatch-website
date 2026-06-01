@@ -90,6 +90,7 @@ export interface ToolbarTableProps {
   showClearFilters?: boolean;
   onClickFilterButton?: () => void;
   selectedFilters?: SelectedFilter[];
+  classNameContentLeft?: string;
 }
 
 export interface ViewToolbarProps {
