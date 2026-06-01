@@ -7,7 +7,7 @@ import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { buildReadOnlyMapProps } from "@/components/elements/Map-mapbox/mapProps.builders";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { useProjectPolygonByPitch } from "@/connections/ProjectPolygons";
+import { useProjectPolygonsByPitch } from "@/connections/ProjectPolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
 
 interface MapFieldProps {
@@ -22,8 +22,8 @@ const MapField = ({ source, emptyText = "Not Provided" }: MapFieldProps) => {
   const [polygonBbox, setPolygonBbox] = useState<any>(null);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
 
-  const [, { data: projectPolygon }] = useProjectPolygonByPitch({
-    filter: { projectPitchUuid: record?.uuid },
+  const [, { data: projectPolygons }] = useProjectPolygonsByPitch({
+    projectPitchUuid: record?.uuid,
     enabled: !!record
   });
 
@@ -31,15 +31,15 @@ const MapField = ({ source, emptyText = "Not Provided" }: MapFieldProps) => {
 
   useEffect(() => {
     const getDataProjectPolygon = async () => {
-      if (!projectPolygon?.polygonUuid) {
+      if (!projectPolygons?.[0]?.polygonUuid) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });
       } else {
         setPolygonBbox(bbox);
-        setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon.polygonUuid] });
+        setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygons[0].polygonUuid] });
       }
     };
     getDataProjectPolygon();
-  }, [projectPolygon, bbox]);
+  }, [projectPolygons, bbox]);
 
   let projectBoundary: any;
   if (record) {
