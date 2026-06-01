@@ -62,6 +62,9 @@ import {
 } from "./polygonEditSave";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 
+const TOAST_PLACEMENT = "top-end" as const;
+const SAVE_COMPLETE_TOAST_MS = 5000;
+
 type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
   onClose?: () => void;
@@ -316,6 +319,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       showStatusToast("error", t("Missing site information"));
       return false;
     }
+
+    showToast({
+      label: t("Changes Saved"),
+      type: "success",
+      placement: TOAST_PLACEMENT,
+      duration: SAVE_COMPLETE_TOAST_MS
+    });
 
     try {
       const updatedPolygon = await saveExistingPolygonVersion({

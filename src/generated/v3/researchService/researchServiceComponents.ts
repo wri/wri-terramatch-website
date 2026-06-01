@@ -207,7 +207,9 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["targetSys[]"]?: (
     | "agroforest"
+    | "agricultural-land"
     | "grassland"
+    | "open-natural-ecosystem"
     | "natural-forest"
     | "mangrove"
     | "peatland"
@@ -230,6 +232,12 @@ export type SitePolygonsIndexQueryParams = {
    * @default false
    */
   includeTestProjects?: boolean;
+  /**
+   * Filter to polygons with a failed overlap validation.
+   *
+   * @default false
+   */
+  hasOverlap?: boolean;
   search?: string;
   /**
    * Select the fields used by search.
@@ -635,6 +643,115 @@ export const getSitePolygonsGeoJson = new V3ApiEndpoint<
   GetSitePolygonsGeoJsonVariables,
   {}
 >("/research/v3/sitePolygons/geojson", "GET");
+
+export type BulkUpdateSitePolygonAttributesError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type BulkUpdateSitePolygonAttributesResponse = {
+  meta?: {
+    /**
+     * @example sitePolygons
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example sitePolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SitePolygonLightDto;
+  }[];
+};
+
+export type BulkUpdateSitePolygonAttributesVariables = {
+  body: Schemas.SitePolygonBulkAttributeUpdateBodyDto;
+};
+
+/**
+ * Creates a new version for each site polygon with the same attribute changes applied.
+ *     Supported fields: plantStart, practice, targetSys, distr, numTrees.
+ *     At least one attribute field must be provided. Empty string or empty array explicitly clears a field.
+ *     Omitted fields inherit values from each polygon's active version.
+ */
+export const bulkUpdateSitePolygonAttributes = new V3ApiEndpoint<
+  BulkUpdateSitePolygonAttributesResponse,
+  BulkUpdateSitePolygonAttributesError,
+  BulkUpdateSitePolygonAttributesVariables,
+  {}
+>("/research/v3/sitePolygons/attributes", "PATCH");
 
 export type UpdateSitePolygonStatusPathParams = {
   status: string;
@@ -2970,6 +3087,7 @@ export const operationsByTag = {
     bulkUpdateSitePolygons,
     bulkDeleteSitePolygons,
     getSitePolygonsGeoJson,
+    bulkUpdateSitePolygonAttributes,
     updateSitePolygonStatus,
     listSitePolygonVersions,
     updateSitePolygonVersion,

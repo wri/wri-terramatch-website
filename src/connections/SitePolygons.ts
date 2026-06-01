@@ -10,15 +10,18 @@ import { POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import {
   bulkDeleteSitePolygons as bulkDeleteSitePolygonsEndpoint,
+  bulkUpdateSitePolygonAttributes as bulkUpdateSitePolygonAttributesEndpoint,
   createSitePolygons,
   deleteSitePolygon as deleteSitePolygonEndpoint,
   sitePolygonsIndex,
   SitePolygonsIndexQueryParams,
   updateSitePolygonStatus
 } from "@/generated/v3/researchService/researchServiceComponents";
-import {
+import type {
   AttributeChangesDto,
   CreateSitePolygonAttributesDto,
+  SitePolygonBulkAttributeChangesDto,
+  SitePolygonBulkAttributeUpdateBodyDto,
   SitePolygonBulkDeleteBodyDto,
   SitePolygonLightDto,
   SitePolygonStatusBulkUpdateBodyDto
@@ -84,6 +87,64 @@ const createBulkDeleteBody = (resources: SitePolygonResourceIdentifier[]): SiteP
   return {
     data: resources
   };
+};
+
+export type BulkSitePolygonAttributeChanges = SitePolygonBulkAttributeChangesDto;
+
+export const bulkUpdateSitePolygonAttributes = async (
+  uuids: string[],
+  attributeChanges: BulkSitePolygonAttributeChanges
+): Promise<void> => {
+  const body: SitePolygonBulkAttributeUpdateBodyDto = {
+    data: uuids.map(uuid => ({
+      type: "sitePolygons" as const,
+      id: uuid
+    })),
+    attributeChanges
+  };
+
+  const variables = { body };
+  const fullUrl = resolveUrl(bulkUpdateSitePolygonAttributesEndpoint.url, {});
+  const failureSelector = bulkUpdateSitePolygonAttributesEndpoint.fetchFailedSelector({});
+  const previousFailure = failureSelector(ApiSlice.currentState);
+
+  if (previousFailure != null) {
+    ApiSlice.clearPending(fullUrl, bulkUpdateSitePolygonAttributesEndpoint.method);
+  }
+
+  bulkUpdateSitePolygonAttributesEndpoint.fetch(variables);
+
+  const initialPending = ApiSlice.currentState.meta.pending[bulkUpdateSitePolygonAttributesEndpoint.method][fullUrl];
+  const initialFailure = failureSelector(ApiSlice.currentState);
+
+  if (initialPending == null && initialFailure == null) {
+    pruneSitePolygonsCache();
+    pruneBoundingBoxesCache();
+    return;
+  }
+
+  if (initialFailure != null) {
+    throw initialFailure;
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const unsubscribe = ApiSlice.redux.subscribe(() => {
+      const currentState = ApiSlice.currentState;
+      const pending = currentState.meta.pending[bulkUpdateSitePolygonAttributesEndpoint.method][fullUrl];
+      const failure = failureSelector(currentState);
+
+      if (pending == null && failure == null) {
+        unsubscribe();
+        resolve();
+      } else if (failure != null) {
+        unsubscribe();
+        reject(failure);
+      }
+    });
+  });
+
+  pruneSitePolygonsCache();
+  pruneBoundingBoxesCache();
 };
 
 export const bulkUpdateSitePolygonStatus = async (
