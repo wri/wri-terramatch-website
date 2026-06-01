@@ -515,6 +515,61 @@ export type SitePolygonFullDto = {
   reportingPeriods: ReportingPeriodDto[];
 };
 
+export type SitePolygonBulkAttributeUpdateData = {
+  type: "sitePolygons";
+  /**
+   * @format uuid
+   */
+  id: string;
+};
+
+export type SitePolygonBulkAttributeChangesDto = {
+  /**
+   * Planting start date (ISO 8601). Empty string clears the field.
+   *
+   * @example 2023-01-15T00:00:00Z
+   */
+  plantStart?: string;
+  /**
+   * Restoration practice slug(s). Empty array clears the field.
+   *
+   * @example tree-planting
+   */
+  practice?: string[];
+  /**
+   * Target land use system slug. Empty string clears the field.
+   *
+   * @example natural-forest
+   */
+  targetSys?: string;
+  /**
+   * Tree distribution slug(s). Empty array clears the field.
+   *
+   * @example full
+   */
+  distr?: string[];
+  /**
+   * Number of trees planted
+   *
+   * @example 150
+   */
+  numTrees?: number;
+};
+
+export type SitePolygonBulkAttributeUpdateBodyDto = {
+  /**
+   * Array of site polygon resource identifiers to update
+   *
+   * @example {"type":"sitePolygons","id":"123e4567-e89b-12d3-a456-426614174000"}
+   * @example {"type":"sitePolygons","id":"123e4567-e89b-12d3-a456-426614174001"}
+   */
+  data: SitePolygonBulkAttributeUpdateData[];
+  /**
+   * Attribute values applied to every site polygon in data. At least one field must be provided. Omitted fields are inherited from each polygon's active version.
+   */
+  attributeChanges: SitePolygonBulkAttributeChangesDto;
+};
+
 export type SitePolygonStatusUpdate = {
   type: "sitePolygons";
   /**
