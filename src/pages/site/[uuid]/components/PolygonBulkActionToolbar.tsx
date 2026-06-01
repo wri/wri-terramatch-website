@@ -1,7 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
-import { FC, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -33,7 +33,7 @@ export type PolygonBulkActionToolbarProps = {
   selectedGeometryPolygonUuids: string[];
 };
 
-const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
+const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   visible,
   itemCount,
   isBulkEditDrawerOpen = false,
@@ -51,7 +51,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
   selectedGeometryPolygonUuids,
   isOverlapFixAction = false,
   canAutoFixOverlap = false
-}) => {
+}: PolygonBulkActionToolbarProps) {
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
   const t = useT();
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
@@ -85,6 +85,14 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
     }
   }, [onRunValidation, selectedGeometryPolygonUuids, t]);
 
+  const handleViewValidationDetails = useCallback(
+    (polygon: PolygonTableRow) => {
+      setIsSystemValidationCompleteModalOpen(false);
+      onViewPolygonDetails?.(polygon);
+    },
+    [onViewPolygonDetails]
+  );
+
   const toolbarActions = useMemo<BulkToolbarAction[]>(
     () => [
       {
@@ -110,6 +118,33 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
     [handleRunValidation, isDownloading, itemCount, onDownload, onEdit, t]
   );
 
+  const cancelAction = useMemo(
+    () => ({
+      children: t("Cancel"),
+      onClick: onCancel
+    }),
+    [onCancel, t]
+  );
+
+  const deleteAction = useMemo<BulkToolbarAction>(
+    () => ({
+      id: "delete",
+      tone: "danger",
+      children: t("Delete"),
+      onClick: onDelete
+    }),
+    [onDelete, t]
+  );
+
+  const primaryAction = useMemo(
+    () => ({
+      children: submitLabel,
+      disabled: isOverlapAutoFixUnavailable,
+      onClick: onSubmit
+    }),
+    [isOverlapAutoFixUnavailable, onSubmit, submitLabel]
+  );
+
   const overlapTooltip = useMemo(
     () =>
       isOverlapAutoFixUnavailable ? (
@@ -125,44 +160,33 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
     [isOverlapAutoFixUnavailable, t]
   );
 
-  if (!visible || isPolygonEditDrawerOpen || isBulkEditDrawerOpen) {
-    return null;
-  }
+  const isToolbarVisible = visible && !isPolygonEditDrawerOpen && !isBulkEditDrawerOpen;
 
   return (
-    <Box position="fixed" zIndex="100" bottom={3} left={3} right={3}>
-      <SystemValidationComplete
-        polygons={polygons}
-        polygonValidations={polygonValidations}
-        open={isSystemValidationCompleteModalOpen}
-        onOpenChange={setIsSystemValidationCompleteModalOpen}
-        onViewDetails={polygon => {
-          setIsSystemValidationCompleteModalOpen(false);
-          onViewPolygonDetails?.(polygon);
-        }}
-      />
-      <BulkActionToolbar
-        selectedCount={itemCount}
-        cancelAction={{
-          children: t("Cancel"),
-          onClick: onCancel
-        }}
-        deleteAction={{
-          id: "delete",
-          tone: "danger",
-          children: t("Delete"),
-          onClick: onDelete
-        }}
-        actions={toolbarActions}
-        primaryAction={{
-          children: submitLabel,
-          disabled: isOverlapAutoFixUnavailable,
-          onClick: onSubmit
-        }}
-        infoTooltip={overlapTooltip}
-      />
-    </Box>
+    <>
+      {isSystemValidationCompleteModalOpen && (
+        <SystemValidationComplete
+          polygons={polygons}
+          polygonValidations={polygonValidations}
+          open
+          onOpenChange={setIsSystemValidationCompleteModalOpen}
+          onViewDetails={handleViewValidationDetails}
+        />
+      )}
+      {isToolbarVisible && (
+        <Box position="fixed" zIndex="100" bottom={3} left={3} right={3}>
+          <BulkActionToolbar
+            selectedCount={itemCount}
+            cancelAction={cancelAction}
+            deleteAction={deleteAction}
+            actions={toolbarActions}
+            primaryAction={primaryAction}
+            infoTooltip={overlapTooltip}
+          />
+        </Box>
+      )}
+    </>
   );
-};
+});
 
 export default PolygonBulkActionToolbar;

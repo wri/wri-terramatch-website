@@ -1,12 +1,12 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC } from "react";
+import { memo } from "react";
 
 type SelectionCountLabelProps = {
   count: number;
 };
 
-const SelectionCountLabel: FC<SelectionCountLabelProps> = ({ count }) => {
+const SelectionCountLabel = memo(function SelectionCountLabel({ count }: SelectionCountLabelProps) {
   const t = useT();
 
   return (
@@ -19,6 +19,6 @@ const SelectionCountLabel: FC<SelectionCountLabelProps> = ({ count }) => {
       </Text>
     </Flex>
   );
-};
+});
 
 export default SelectionCountLabel;

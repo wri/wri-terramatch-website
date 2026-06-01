@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useMemo } from "react";
 
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
@@ -38,11 +38,27 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
     }
   }, [open]);
 
-  const approvalValidations = polygons.filter(item => item.validation === "passed");
+  const { approvalValidations, partiallyPassedValidations, failedValidations } = useMemo(() => {
+    const approval: PolygonTableRow[] = [];
+    const partial: PolygonTableRow[] = [];
+    const failed: PolygonTableRow[] = [];
 
-  const failedValidations = polygons.filter(item => item.validation === "failed");
+    for (const item of polygons) {
+      if (item.validation === "passed") {
+        approval.push(item);
+      } else if (item.validation === "partially-passed") {
+        partial.push(item);
+      } else if (item.validation === "failed") {
+        failed.push(item);
+      }
+    }
 
-  const partiallyPassedValidations = polygons.filter(item => item.validation === "partially-passed");
+    return {
+      approvalValidations: approval,
+      partiallyPassedValidations: partial,
+      failedValidations: failed
+    };
+  }, [polygons]);
 
   return (
     <Modal

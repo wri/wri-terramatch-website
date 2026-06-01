@@ -1,5 +1,5 @@
 import { Flex } from "@chakra-ui/react";
-import { FC } from "react";
+import { memo } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
@@ -13,14 +13,14 @@ import { BulkActionToolbarProps } from "./ToolBar.type";
 const TOOLBAR_CLASS =
   "flex-wrap rounded-lg !bg-theme-primary-800 px-4 py-3 !shadow-[0_-0.25rem_0.375rem_-0.0625rem_rgba(0,0,0,0.10),0_-0.125rem_0.25rem_-0.125rem_rgba(0,0,0,0.10)]";
 
-const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
+const BulkActionToolbar = memo(function BulkActionToolbar({
   selectedCount,
   cancelAction,
   deleteAction,
   actions = [],
   primaryAction,
   infoTooltip
-}) => {
+}: BulkActionToolbarProps) {
   return (
     <Toolbar
       className={TOOLBAR_CLASS}
@@ -40,6 +40,6 @@ const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
       }
     />
   );
-};
+});
 
 export default BulkActionToolbar;

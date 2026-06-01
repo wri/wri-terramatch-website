@@ -1,5 +1,5 @@
 import { Flex } from "@chakra-ui/react";
-import { FC, Fragment } from "react";
+import { Fragment, memo } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
@@ -14,7 +14,10 @@ type BulkActionToolbarActionsProps = {
   actions: BulkToolbarAction[];
 };
 
-const BulkActionToolbarActions: FC<BulkActionToolbarActionsProps> = ({ deleteAction, actions }) => {
+const BulkActionToolbarActions = memo(function BulkActionToolbarActions({
+  deleteAction,
+  actions
+}: BulkActionToolbarActionsProps) {
   const { tone: deleteTone, ...deleteButtonProps } = deleteAction;
 
   return (
@@ -40,6 +43,6 @@ const BulkActionToolbarActions: FC<BulkActionToolbarActionsProps> = ({ deleteAct
       })}
     </Flex>
   );
-};
+});
 
 export default BulkActionToolbarActions;
