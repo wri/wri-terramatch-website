@@ -157,6 +157,13 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     useTableSelection<PolygonTableRow>(true, polygonRows);
 
   const selectedPolygonUuids = useMemo(() => Array.from(selectedRowIds, id => String(id)), [selectedRowIds]);
+  const overlapPolygonsForMap = useMemo(() => {
+    if (selectedPolygonUuids.length === 0) {
+      return [];
+    }
+    const selectedIds = new Set(selectedPolygonUuids);
+    return overlapPolygons.filter(point => selectedIds.has(point.polygonUuid));
+  }, [overlapPolygons, selectedPolygonUuids]);
   const {
     selectedSitePolygons,
     selectedSitePolygonUuids,
@@ -818,7 +825,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             polygons={polygonsData}
             onRefetchPolygons={refetchPolygons}
             polygonTableHighlight={polygonTableHighlight}
-            overlapPolygons={overlapPolygons}
+            overlapPolygons={overlapPolygonsForMap}
           />
           {isEditPolygonOpen && isUserDrawingEnabled && (
             <Button
