@@ -349,30 +349,32 @@ const SiteReportDetailPage = () => {
                             />
                           </div>
                         </ContextCondition>
-                        <div>
-                          <Text variant="text-20-bold">{t("Assisted Natural Regeneration")}</Text>
-                          <GoalProgressCard
-                            hasProgress={false}
-                            classNameCard="!pl-0"
-                            items={[
-                              {
-                                iconName: IconNames.REFRESH_CIRCLE_PD,
-                                label: t("ESTIMATED NUMBER OF TREES REGENERATING (ON REPORT):"),
-                                variantLabel: "text-14",
-                                classNameLabel: " text-neutral-650 uppercase !w-auto",
-                                classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                                value: siteReport.numTreesRegenerating!
-                              }
-                            ]}
-                            className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
-                          />
-                          <Text variant="text-14" className="uppercase text-neutral-650">
-                            {t("Description of ANR Activities:")}
-                          </Text>
-                          <Text variant="text-16" className="mt-2 text-blueCustom-700">
-                            {t(siteReport.regenerationDescription ?? "No description")}
-                          </Text>
-                        </div>
+                        <ContextCondition frameworksHide={[Framework.HBF]}>
+                          <div>
+                            <Text variant="text-20-bold">{t("Assisted Natural Regeneration")}</Text>
+                            <GoalProgressCard
+                              hasProgress={false}
+                              classNameCard="!pl-0"
+                              items={[
+                                {
+                                  iconName: IconNames.REFRESH_CIRCLE_PD,
+                                  label: t("ESTIMATED NUMBER OF TREES REGENERATING (ON REPORT):"),
+                                  variantLabel: "text-14",
+                                  classNameLabel: " text-neutral-650 uppercase !w-auto",
+                                  classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                                  value: siteReport.numTreesRegenerating!
+                                }
+                              ]}
+                              className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
+                            />
+                            <Text variant="text-14" className="uppercase text-neutral-650">
+                              {t("Description of ANR Activities:")}
+                            </Text>
+                            <Text variant="text-16" className="mt-2 text-blueCustom-700">
+                              {t(siteReport.regenerationDescription ?? "No description")}
+                            </Text>
+                          </div>
+                        </ContextCondition>
                         <ContextCondition frameworksHide={SUMMARY_ANR_ROLLUP_HIDE}>
                           <div>
                             <Text variant="text-20-bold">{t("Trees Regenerating")}</Text>
