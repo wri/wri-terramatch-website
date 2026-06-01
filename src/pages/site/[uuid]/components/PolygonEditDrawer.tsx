@@ -42,6 +42,10 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const isSaveDisabled = activeTab === "edit" && isCreateMode && draftPolygonGeometry == null;
 
   useEffect(() => {
+    setActiveTab("edit");
+  }, [polygon?.polygonUuid]);
+
+  useEffect(() => {
     setSaveEditContent(null);
   }, [selectedPolygon?.uuid]);
 
@@ -116,6 +120,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                       value: "comments"
                     }
                   ]}
+                  defaultValue={activeTab}
                   variant="panel"
                 />
               )}
