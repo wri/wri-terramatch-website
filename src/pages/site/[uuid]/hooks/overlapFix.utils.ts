@@ -20,11 +20,9 @@ export type OverlapFixSelectionSummary = {
   notFixableCandidates: OverlapFixCandidate[];
 };
 
-/** True when any selected polygon with an overlap failure can be auto-fixed. */
 export const canAutoFixOverlapSelection = (summary: OverlapFixSelectionSummary): boolean =>
   summary.fixableCandidates.length > 0;
 
-/** True when at least one selected polygon has a failed overlap validation. */
 export const hasOverlapFailureInSelection = (summary: OverlapFixSelectionSummary): boolean =>
   summary.overlapCandidates.length > 0;
 
