@@ -52,7 +52,8 @@ const getOverlapCriteria = (validation: ValidationDto | undefined): ValidationCr
     criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID && criteria.valid === false
   );
 
-const hasOverlapError = (validation: ValidationDto | undefined): boolean => getOverlapCriteria(validation) != null;
+export const hasOverlapValidationFailure = (validation: ValidationDto | undefined): boolean =>
+  getOverlapCriteria(validation) != null;
 
 export const getSelectedOverlapFixSummary = (
   selectedRows: PolygonTableRow[],
@@ -185,7 +186,7 @@ export const buildOverlapFixResultPolygons = (
     const id = refreshedPolygon?.polygonUuid ?? refreshedPolygon?.uuid ?? fixedVersion?.id ?? candidate.id;
     const name = refreshedPolygon?.name ?? fixedVersion?.name ?? candidate.name;
 
-    if (hasOverlapError(refreshedOverlapValidationByUuid.get(id))) {
+    if (hasOverlapValidationFailure(refreshedOverlapValidationByUuid.get(id))) {
       return [];
     }
 

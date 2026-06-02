@@ -71,6 +71,7 @@ type PolygonEditContentProps = {
   onRegisterSave?: (saveHandler: () => Promise<boolean>) => void;
   onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
+  onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
 };
 
 type PolygonVersionRow = SitePolygonLightDto & { id: string };
@@ -114,7 +115,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onClose,
   onRegisterSave,
   onSaved,
-  onPolygonUpdated
+  onPolygonUpdated,
+  onSuppressMapSelectionHighlightChange
 }) => {
   const t = useT();
   const showStatusToast = useCallback((type: "success" | "error" | "warning", label: string) => {
@@ -127,6 +129,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setIsUserDrawingEnabled,
     setDraftPolygonGeometry,
     setPolygonGeometryEdit,
+    setEditPolygon,
     setShouldRefetchPolygonData,
     closeMapPopups,
     invalidatePolygonMapTiles,
@@ -160,6 +163,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
   const isCreateMode = polygon?.primaryUuid == null || polygon.primaryUuid === "";
+  const shouldMapEditPolygon =
+    openAccordionSection !== "monitoring-plots" && openAccordionSection !== "geotagged-photos";
   const resolvedSiteUuid = polygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : "");
   const geometryChanged =
     !isCreateMode &&
@@ -365,25 +370,70 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [isCreateMode, saveExistingPolygonFlow, saveNewPolygonFlow]);
 
   useEffect(() => {
+    setPlotsVisible(false);
+  }, [sitePolygonUuid]);
+
+  useEffect(() => {
+    if (isCreateMode || geometryPolygonUuid === "") {
+      onSuppressMapSelectionHighlightChange?.(false);
+      return;
+    }
+
+    onSuppressMapSelectionHighlightChange?.(!shouldMapEditPolygon);
+    setEditPolygon({
+      isOpen: shouldMapEditPolygon,
+      uuid: shouldMapEditPolygon ? geometryPolygonUuid : "",
+      primaryUuid: shouldMapEditPolygon ? primaryUuid : undefined
+    });
+
+    if (!shouldMapEditPolygon) {
+      setIsUserDrawingEnabled(false);
+      setPolygonGeometryEdit(undefined);
+    }
+  }, [
+    geometryPolygonUuid,
+    isCreateMode,
+    onSuppressMapSelectionHighlightChange,
+    primaryUuid,
+    setEditPolygon,
+    setIsUserDrawingEnabled,
+    setPolygonGeometryEdit,
+    shouldMapEditPolygon
+  ]);
+
+  useEffect(
+    () => () => {
+      onSuppressMapSelectionHighlightChange?.(false);
+    },
+    [onSuppressMapSelectionHighlightChange]
+  );
+
+  useEffect(() => {
     const overlay = anrMapOverlayRef.current;
     if (overlay == null) return;
 
-    const shouldShowPlots = isAnrEligible && hasAnrPlotGeometry && plotsVisible;
+    const isMonitoringPlotsSectionActive = openAccordionSection === "monitoring-plots" || plotsVisible;
+    const canShowAnrPlots = isAnrEligible && hasAnrPlotGeometry;
     overlay.setDrawerOpen(true);
-    overlay.setAnrTabActive(shouldShowPlots);
-    overlay.setShowPlotsOnMap(shouldShowPlots);
+    overlay.setAnrTabActive(canShowAnrPlots && isMonitoringPlotsSectionActive);
+    overlay.setShowPlotsOnMap(canShowAnrPlots && plotsVisible);
 
     if (sitePolygonUuid !== "" && geometryPolygonUuid !== "") {
       overlay.syncDrawerSelection({ sitePolygonUuid, geometryPolygonUuid });
     }
-  }, [anrMapOverlayRef, geometryPolygonUuid, hasAnrPlotGeometry, isAnrEligible, plotsVisible, sitePolygonUuid]);
+  }, [
+    anrMapOverlayRef,
+    geometryPolygonUuid,
+    hasAnrPlotGeometry,
+    isAnrEligible,
+    openAccordionSection,
+    plotsVisible,
+    sitePolygonUuid
+  ]);
 
   useEffect(
     () => () => {
-      const overlay = anrMapOverlayRef.current;
-      if (overlay == null) return;
-      overlay.setAnrTabActive(false);
-      overlay.setShowPlotsOnMap(false);
+      anrMapOverlayRef.current?.resetAnrMapOverlay();
     },
     [anrMapOverlayRef]
   );

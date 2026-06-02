@@ -22,6 +22,7 @@ import {
 } from "@/connections/SitePolygons";
 import { createPolygonValidation, useAllSiteValidations } from "@/connections/Validation";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
+import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
@@ -106,7 +107,7 @@ export type { PolygonTableRow } from "../components/PolygonTableRow";
 const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const { format } = useDate();
-  const { isOpen: isEditPolygonOpen } = usePolygonEditDrawer();
+  const { isOpen: isEditPolygonOpen, suppressMapSelectionHighlight } = usePolygonEditDrawer();
   const { isUserDrawingEnabled, setSiteData, resetSiteMapInteractionState, closeMapPopups, invalidatePolygonMapTiles } =
     useMapAreaContext();
   const { openNotification } = useNotificationContext();
@@ -174,6 +175,13 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     useTableSelection<PolygonTableRow>(true, polygonRows);
 
   const selectedPolygonUuids = useMemo(() => Array.from(selectedRowIds, id => String(id)), [selectedRowIds]);
+  const overlapPolygonsForMap = useMemo(() => {
+    if (selectedPolygonUuids.length === 0) {
+      return [];
+    }
+    const selectedIds = new Set(selectedPolygonUuids);
+    return overlapPolygons.filter(point => selectedIds.has(point.polygonUuid));
+  }, [overlapPolygons, selectedPolygonUuids]);
   const {
     selectedSitePolygons,
     selectedSitePolygonUuids,
@@ -566,7 +574,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const polygonTableHighlight = useMemo(
     () => ({
       hoveredPolygonUuid,
-      selectedPolygonUuids,
+      selectedPolygonUuids: suppressMapSelectionHighlight ? [] : selectedPolygonUuids,
       onHoveredPolygonFromMap: setHoveredPolygonUuid,
       onPolygonClickedFromMap: handlePolygonClickedFromMap,
       focusPolygonUuid,
@@ -575,6 +583,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     [
       hoveredPolygonUuid,
       selectedPolygonUuids,
+      suppressMapSelectionHighlight,
       handlePolygonClickedFromMap,
       focusPolygonUuid,
       handleFocusPolygonConsumed
@@ -825,7 +834,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             polygons={polygonsData}
             onRefetchPolygons={refetchPolygons}
             polygonTableHighlight={polygonTableHighlight}
-            overlapPolygons={overlapPolygons}
+            overlapPolygons={overlapPolygonsForMap}
           />
           {isEditPolygonOpen && isUserDrawingEnabled && (
             <Button
@@ -932,9 +941,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 };
 
 const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => (
-  <PolygonEditDrawerProvider>
-    <SitePolygonsTabContent site={site} />
-  </PolygonEditDrawerProvider>
+  <AnrMapOverlayProvider>
+    <PolygonEditDrawerProvider>
+      <SitePolygonsTabContent site={site} />
+    </PolygonEditDrawerProvider>
+  </AnrMapOverlayProvider>
 );
 
 export default SitePolygonsTab;
