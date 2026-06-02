@@ -63,7 +63,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     }
 
     showToast({
-      label: t("Validating Polygons..."),
+      label: t(selectedGeometryPolygonUuids.length > 1 ? "Validating Polygons..." : "Validating Polygon..."),
       type: "info",
       placement: "bottom-end",
       duration: 5000,

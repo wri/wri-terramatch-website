@@ -7,7 +7,7 @@ import { parseV3ValidationData } from "@/helpers/polygonValidation";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import ProgressBar from "@/redesignComponents/dataDisplay/Metrics/ProgressBar";
-import { ChevronDownIcon } from "@/redesignComponents/foundations/Icons";
+import { ChevronDownIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
 import type { PolygonTableRow } from "../PolygonTableRow";
 import ValidationDetail from "../ValidationDetail";
@@ -35,9 +35,12 @@ const ItemPolygon: FC<{
   return (
     <>
       <Flex justify="space-between" className="items-center gap-2">
-        <Text textStyle="400" color="neutral.900" as="span" className="truncate">
-          {polygon.polygonName}
-        </Text>
+        <Flex align="center" gap={2} className="min-w-0">
+          <Box as="span" boxSize="6px" rounded="full" bg="neutral.900" flexShrink={0} aria-hidden="true" />
+          <Text textStyle="400" color="neutral.900" as="span" className="truncate">
+            {polygon.polygonName}
+          </Text>
+        </Flex>
         <Button
           variant={"borderless"}
           size="small"
@@ -49,11 +52,17 @@ const ItemPolygon: FC<{
         </Button>
       </Flex>
       {isOpen && hasDetails && (
-        <Flex direction="column" ml={-6} gap={3} py={3} px={4} bg="neutral.200" mt={2.5} rounded={2.5}>
+        <Flex direction="column" ml={-4} gap={3} py={3} px={4} bg="neutral.200" mt={2.5} rounded={2.5}>
           <ValidationDetail failedCount={failedCount} totalItems={totalItems} items={items} />
           <Box className="w-fit">
-            <Button variant="borderless" size="small" onClick={() => onViewDetails?.(polygon)} className="w-fit">
-              {t("View Details")}
+            <Button
+              variant="secondary"
+              rightIcon={<ChevronRightIcon />}
+              size="small"
+              onClick={() => onViewDetails?.(polygon)}
+              className="w-fit"
+            >
+              {t("View Polygon")}
             </Button>
           </Box>
         </Flex>
@@ -83,12 +92,12 @@ const ValidationSection: FC<ValidationSectionProps> = ({ polygons, color, polygo
         <ValidationTag status={polygons[0].validation} />
       </Flex>
       <Box>
-        <Text textStyle="200-bold" color="neutral.700">
+        <Text textStyle="200-bold" color="neutral.700" mb={2.5}>
           {t("Polygon Analysed:")}
         </Text>
-        <List.Root as="ul" pl={4} spaceY={1} ml={2} listStyleType="disc">
+        <List.Root as="ul" pl={2} spaceY={1} ml={2} listStyleType="none">
           {polygons.map(item => (
-            <List.Item key={item.id} _marker={{ color: "neutral.900" }}>
+            <List.Item key={item.id}>
               <ItemPolygon polygon={item} validation={polygonValidations.get(item.id)} onViewDetails={onViewDetails} />
             </List.Item>
           ))}
