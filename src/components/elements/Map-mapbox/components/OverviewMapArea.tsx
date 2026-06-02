@@ -204,6 +204,7 @@ const OverviewMapArea = ({
         />
       )}
       <MapContainer
+        championsMap={true}
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}
         bbox={extentBbox}
