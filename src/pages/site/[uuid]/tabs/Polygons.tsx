@@ -134,6 +134,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [isStickyActive, setIsStickyActive] = useState(false);
   const [isDownloadingSelectedPolygons, setIsDownloadingSelectedPolygons] = useState(false);
   const [isBulkUpdatingPolygons, setIsBulkUpdatingPolygons] = useState(false);
+  const [isValidatingPolygons, setIsValidatingPolygons] = useState(false);
   const {
     polygonSearch,
     polygonFilters,
@@ -159,6 +160,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   });
 
   const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
+  const isSitePolygonsLoading = isLoadingPolygons || isValidatingPolygons;
 
   const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
   const polygonValidations = useMemo(() => buildPolygonValidationsMap(allValidations), [allValidations]);
@@ -354,14 +356,21 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const handleRunValidation = useCallback(
     async (polygonUuids: string[]) => {
       if (polygonUuids.length === 0) return;
-      showProgressToast(t, t("Validating Polygon..."));
-      await createPolygonValidation({ polygonUuids });
-      ApiSlice.pruneCache("validations");
-      pruneSitePolygonsCache();
-      await Promise.all([refetchPolygons(), fetchAllValidationPages(true), fetchOverlapValidations(true)]);
-      showCompleteToast(t("System Validation Complete"));
+      try {
+        setIsValidatingPolygons(true);
+        await createPolygonValidation({ polygonUuids });
+        ApiSlice.pruneCache("validations");
+        pruneSitePolygonsCache();
+        await Promise.all([refetchPolygons(), fetchAllValidationPages(true), fetchOverlapValidations(true)]);
+      } catch (error) {
+        Log.error("Failed to validate selected polygons:", error);
+        openNotification("error", t("Error!"), t("Failed to validate polygons"));
+        throw error;
+      } finally {
+        setIsValidatingPolygons(false);
+      }
     },
-    [refetchPolygons, fetchAllValidationPages, fetchOverlapValidations, t]
+    [fetchAllValidationPages, fetchOverlapValidations, openNotification, refetchPolygons, t]
   );
 
   const handleOverlapFix = useCallback(async () => {
@@ -630,7 +639,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const selectedRestorationAreaRounded = Math.round(selectedRestorationAreaHa * 100) / 100;
   const hasPolygonSelection = selectedRows.length > 0;
 
-  const shouldShowNoResults = !isLoadingPolygons && polygonRows.length === 0;
+  const shouldShowNoResults = !isSitePolygonsLoading && polygonRows.length === 0;
 
   useSyncPolygonTableSelectionStore(selectedRowIds);
 
@@ -651,7 +660,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     handleScroll();
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [isLoadingPolygons, shouldShowNoResults]);
+  }, [isSitePolygonsLoading, shouldShowNoResults]);
 
   const loadingLabel =
     polygonLoadTotal > 0
@@ -718,6 +727,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           polygonValidations={polygonValidations}
           selectedGeometryPolygonUuids={selectedGeometryPolygonUuids}
           isDownloading={isDownloadingSelectedPolygons}
+          isValidating={isValidatingPolygons}
           onCancel={clearTableSelection}
           onDelete={handleOpenDeletePolygonModal}
           onDownload={handleBulkDownloadClick}
@@ -807,6 +817,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             )}
             polygons={polygonsData}
             onRefetchPolygons={refetchPolygons}
+            isLoadingPolygons={isSitePolygonsLoading}
             polygonTableHighlight={polygonTableHighlight}
             overlapPolygons={overlapPolygonsForMap}
           />
@@ -891,7 +902,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                 <Table<PolygonTableRow>
                   css={polygonsTableStyles}
                   containerRef={tableContainerRef}
-                  data={isLoadingPolygons ? [] : polygonRows}
+                  data={isSitePolygonsLoading ? [] : polygonRows}
                   columns={columns}
                   showPagination
                   pageSize={10}
@@ -900,7 +911,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                   onAllItemsSelected={onAllItemsSelected}
                   renderRow={renderPolygonTableRow}
                 />
-                {isLoadingPolygons && (
+                {isSitePolygonsLoading && (
                   <Box py={20}>
                     <LoadingTable text={loadingLabel} />
                   </Box>

@@ -1,11 +1,9 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import { memo, useCallback, useMemo, useState } from "react";
 
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 
@@ -18,6 +16,7 @@ export type PolygonBulkActionToolbarProps = {
   isBulkEditDrawerOpen?: boolean;
   submitLabel: string;
   isDownloading?: boolean;
+  isValidating?: boolean;
   onCancel: () => void;
   onDelete: () => void;
   onDownload: () => void;
@@ -38,6 +37,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   isBulkEditDrawerOpen = false,
   submitLabel,
   isDownloading = false,
+  isValidating = false,
   onCancel,
   onDelete,
   onDownload,
@@ -61,28 +61,13 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
       return;
     }
 
-    showToast({
-      label: t(selectedGeometryPolygonUuids.length > 1 ? "Validating Polygons..." : "Validating Polygon..."),
-      type: "info",
-      placement: "bottom-end",
-      duration: 5000,
-      closableLabel: t("Close"),
-      icon: <LoadingIcon boxSize={7} color="primary.700" animation="spin 1s linear infinite" />
-    });
-
     try {
       await onRunValidation(selectedGeometryPolygonUuids);
       setIsSystemValidationCompleteModalOpen(true);
     } catch {
-      showToast({
-        label: t("Failed to validate polygons"),
-        type: "error",
-        placement: "bottom-end",
-        duration: 5000,
-        closableLabel: t("Close")
-      });
+      // Error feedback is handled in the parent.
     }
-  }, [onRunValidation, selectedGeometryPolygonUuids, t]);
+  }, [onRunValidation, selectedGeometryPolygonUuids]);
 
   const handleViewValidationDetails = useCallback(
     (polygon: PolygonTableRow) => {
@@ -104,6 +89,8 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
       {
         id: "validate",
         children: t("Run Validation"),
+        loading: isValidating,
+        disabled: isValidating,
         onClick: () => {
           void handleRunValidation();
         }
@@ -114,7 +101,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
         onClick: onEdit
       }
     ],
-    [handleRunValidation, isDownloading, itemCount, onDownload, onEdit, t]
+    [handleRunValidation, isDownloading, isValidating, itemCount, onDownload, onEdit, t]
   );
 
   const cancelAction = useMemo(
