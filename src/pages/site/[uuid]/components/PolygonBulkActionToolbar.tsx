@@ -29,7 +29,6 @@ export type PolygonBulkActionToolbarProps = {
   canAutoFixOverlap?: boolean;
   polygons: PolygonTableRow[];
   polygonValidations: Map<string, ValidationDto>;
-  /** Geometry polygon UUIDs (`polygonUuid`), used for validation and GeoJSON download. */
   selectedGeometryPolygonUuids: string[];
 };
 

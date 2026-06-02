@@ -1,7 +1,8 @@
 import { memo } from "react";
 
+import { usePolygonRowHovered, usePolygonRowSelected } from "@/context/polygonTableInteraction.store";
+
 import { usePolygonTableInteractionActions } from "./polygonTableInteractionContext";
-import { usePolygonRowHovered, usePolygonRowSelected } from "./polygonTableInteractionStore";
 import { type PolygonTableRow, PolygonRow } from "./PolygonTableRow";
 
 type PolygonTableRowConnectedProps = {

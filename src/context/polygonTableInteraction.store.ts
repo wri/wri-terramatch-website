@@ -124,7 +124,6 @@ export const usePolygonRowHovered = (rowId: RowId) =>
     () => getPolygonRowIsHovered(rowId)
   );
 
-/** Subscribes to table/map hover changes without re-rendering the polygons tab parent. */
 export const usePolygonTableHoveredUuid = (enabled = true) =>
   useSyncExternalStore(
     enabled ? subscribeGlobalHover : () => noopUnsubscribe,
