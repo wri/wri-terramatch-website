@@ -12,7 +12,7 @@ import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel
 import NotificationIndicator from "@/redesignComponents/navigation/NotificationIndicator/NotificationIndicator";
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 
-import type { PolygonSaveCallback } from "./polygonEdit.types";
+import type { PolygonOverlapFixCallback, PolygonSaveCallback } from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
 import PolygonSystemValidationContent from "./PolygonSystemValidationContent";
 
@@ -22,6 +22,7 @@ interface PolygonEditDrawerProps {
   selectedPolygon?: SitePolygonLightDto;
   onOpenChange?: (open: boolean) => void;
   onSaved?: PolygonSaveCallback;
+  onOverlapFixed?: PolygonOverlapFixCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
 }
@@ -32,6 +33,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   selectedPolygon,
   onOpenChange,
   onSaved,
+  onOverlapFixed,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange
 }) => {
@@ -136,7 +138,9 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                   onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
                 />
               )}
-              {activeTab === "systemValidation" && <PolygonSystemValidationContent polygon={selectedPolygon} />}
+              {activeTab === "systemValidation" && (
+                <PolygonSystemValidationContent polygon={selectedPolygon} onOverlapFixed={onOverlapFixed} />
+              )}
               {activeTab === "comments" && <div>Comments</div>}
             </Flex>
           }

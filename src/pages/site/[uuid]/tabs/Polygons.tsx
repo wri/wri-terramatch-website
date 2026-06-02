@@ -62,6 +62,8 @@ import UploadPolygons from "../components/Modals/UploadPolygons";
 import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import PolygonBulkEditDrawer from "../components/PolygonBulkEditDrawer";
+import type { PolygonOverlapFixParams } from "../components/polygonEdit.types";
+import { prunePolygonValidationCache } from "../components/polygonEditSave";
 import { PolygonTableInteractionActionsProvider } from "../components/polygonTableInteractionContext";
 import { PolygonTableRow } from "../components/PolygonTableRow";
 import { renderPolygonTableRow } from "../components/PolygonTableRowConnected";
@@ -72,7 +74,8 @@ import {
   canAutoFixOverlapSelection,
   extractClippedVersions,
   getSelectedOverlapFixSummary,
-  hasOverlapFailureInSelection
+  hasOverlapFailureInSelection,
+  resolveActivePolygonAfterOverlapFix
 } from "../hooks/overlapFix.utils";
 import { useDownloadSitePolygons } from "../hooks/useDownloadSitePolygons";
 import { useSitePolygonFilters } from "../hooks/useSitePolygonFilters";
@@ -362,6 +365,40 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       showCompleteToast(t("System Validation Complete"));
     },
     [refetchPolygons, fetchAllValidationPages, fetchOverlapValidations, t]
+  );
+
+  const handleDrawerOverlapFixed = useCallback(
+    async (params: PolygonOverlapFixParams) => {
+      pruneSitePolygonsCache();
+      prunePolygonValidationCache(params.previousPolygonUuid);
+
+      invalidatePolygonMapTiles();
+
+      const refreshedPolygons = await loadAllSitePolygons({
+        entityName: "sites",
+        entityUuid: site.uuid,
+        enabled: site.uuid != null && site.uuid !== ""
+      });
+
+      await Promise.all([refetchPolygons(), fetchAllValidationPages(true), fetchOverlapValidations(true)]);
+
+      const updatedPolygon = resolveActivePolygonAfterOverlapFix(
+        refreshedPolygons,
+        {
+          previousPolygonUuid: params.previousPolygonUuid,
+          primaryUuid: params.primaryUuid,
+          sitePolygonUuid: params.sitePolygonUuid
+        },
+        params.clippedVersions ?? []
+      );
+
+      if (updatedPolygon?.polygonUuid != null && updatedPolygon.polygonUuid !== "") {
+        prunePolygonValidationCache(params.previousPolygonUuid, updatedPolygon.polygonUuid);
+      }
+
+      return updatedPolygon;
+    },
+    [fetchAllValidationPages, fetchOverlapValidations, invalidatePolygonMapTiles, refetchPolygons, site.uuid]
   );
 
   const handleOverlapFix = useCallback(async () => {
@@ -660,7 +697,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   return (
     <>
-      <PolygonEditDrawerDataSync polygons={polygonsData} onRefetchPolygons={refetchPolygons} />
+      <PolygonEditDrawerDataSync
+        polygons={polygonsData}
+        onRefetchPolygons={refetchPolygons}
+        onOverlapFixed={handleDrawerOverlapFixed}
+      />
       <PageContent className="bg-theme-neutral-100">
         <PageItem
           title={t("Polygons")}

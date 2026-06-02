@@ -93,19 +93,36 @@ export const buildCreateSitePolygonAttributes = (
 
 export type PolygonCacheCleanupOptions = {
   polygonUuid?: string | null;
+  previousPolygonUuid?: string | null;
   geometryChanged: boolean;
   invalidatePolygonMapTiles: () => void;
 };
 
+export const prunePolygonValidationCache = (...polygonUuids: Array<string | null | undefined>): void => {
+  const uuids = [...new Set(polygonUuids.filter((uuid): uuid is string => uuid != null && uuid !== ""))];
+
+  if (uuids.length > 0) {
+    ApiSlice.pruneCache("validations", uuids);
+  }
+
+  ApiSlice.pruneIndex("validations", "");
+};
+
 export const runPolygonCacheCleanup = ({
   polygonUuid,
+  previousPolygonUuid,
   geometryChanged,
   invalidatePolygonMapTiles
 }: PolygonCacheCleanupOptions): void => {
   pruneSitePolygonsCache();
+  prunePolygonValidationCache(polygonUuid, previousPolygonUuid);
 
-  if (polygonUuid != null && polygonUuid !== "") {
-    ApiSlice.pruneCache("geojsonExports", [polygonUuid]);
+  const geometryUuids = [polygonUuid, previousPolygonUuid].filter(
+    (uuid): uuid is string => uuid != null && uuid !== ""
+  );
+
+  if (geometryUuids.length > 0) {
+    ApiSlice.pruneCache("geojsonExports", geometryUuids);
   }
 
   if (geometryChanged) {
