@@ -7,7 +7,7 @@ import { downloadPolygonGeoJson, formatFileName } from "@/components/elements/Ma
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
-import { TooltipType } from "../../Map";
+import type { TooltipType } from "../../Map.d";
 
 type PopupFooterPolygonProps = {
   polygonUuid?: string;
