@@ -44,7 +44,6 @@ const BulkEditPolygonAttributes: FC<BulkEditPolygonAttributesProps> = ({
       open={open}
       onClose={handleClose}
       size="medium"
-      blocking
       header={<b className="text-theme-neutral-800">{t("Edit Details")}</b>}
       content={
         <Box px={4}>

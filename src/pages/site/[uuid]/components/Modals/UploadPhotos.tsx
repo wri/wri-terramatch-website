@@ -26,7 +26,6 @@ const UploadPhotos: FC<UploadPhotosProps> = ({ open, onOpenChange }) => {
       open={open}
       onClose={handleClose}
       size="medium"
-      blocking
       header={<b className="text-theme-neutral-800">{t("Upload photos?")}</b>}
       content={
         <Flex px={4} gap={2} alignItems={"baseline"}>
