@@ -4,13 +4,14 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
-import { useForm, UseFormProps, UseFormReturn } from "react-hook-form";
+import { FieldErrors, useForm, UseFormProps, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
 import AdminLinkWrapper from "@/components/elements/AdminLinkWrapper/AdminLinkWrapper";
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
+import { useFormSectionAnalytics } from "@/components/extensive/WizardForm/useFormSectionAnalytics";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import FrameworkProvider, { Framework, toFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -27,7 +28,6 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
-import { useValueChanged } from "@/hooks/useValueChanged";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
@@ -120,7 +120,6 @@ function WizardForm(props: WizardFormProps) {
   const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
   const fieldsProvider = useFieldsProvider();
 
-  const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
   const formHook: UseFormReturn = useForm(
     useMemo(
       (): UseFormProps => ({
@@ -131,11 +130,14 @@ function WizardForm(props: WizardFormProps) {
       [props.defaultValues, selectedSection?.validation]
     )
   );
-
-  useValueChanged(selectedStepIndex, () => {
-    // Force validation on all fields when the step changes
-    if (selectedStepIndex >= 0) formHook.trigger();
+  const { trackSectionCompleted, trackSectionError } = useFormSectionAnalytics({
+    models: props.models,
+    steps,
+    selectedStepIndex,
+    formHook
   });
+
+  const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
 
   const formHasError = useRef(false);
   formHasError.current = Object.values(formHook.formState.errors ?? {}).length > 0;
@@ -156,6 +158,8 @@ function WizardForm(props: WizardFormProps) {
 
   const onSubmitStep = useCallback(
     (data: any) => {
+      trackSectionCompleted(selectedStepIndex);
+
       if (selectedStepIndex < lastIndex) {
         // Step changes through 0 - last step
         if (!props.disableAutoProgress) {
@@ -174,7 +178,14 @@ function WizardForm(props: WizardFormProps) {
         props.onSubmit(data);
       }
     },
-    [formHook, lastIndex, props, selectedStepIndex, setSelectedStepIndex]
+    [formHook, lastIndex, props, selectedStepIndex, setSelectedStepIndex, trackSectionCompleted]
+  );
+
+  const onSubmitStepError = useCallback(
+    (errors: FieldErrors) => {
+      trackSectionError(selectedStepIndex, errors);
+    },
+    [selectedStepIndex, trackSectionError]
   );
 
   const onClickSaveAndClose = useCallback(() => {
@@ -264,7 +275,7 @@ function WizardForm(props: WizardFormProps) {
           primaryButtonProps={{
             children: t(`${selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
             disabled: hasErrorInAnyStep && selectedStepIndex === lastIndex,
-            onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep)
+            onClick: formHook.handleSubmit(onSubmitStep, onSubmitStepError)
           }}
           secondaryButtonProps={
             formModel?.model != "organisations"
@@ -272,7 +283,7 @@ function WizardForm(props: WizardFormProps) {
                   children: t("Save and Exit"),
                   onClick: () => {
                     if (isAdmin) {
-                      formHook.handleSubmit(onSubmitStep, onSubmitStep);
+                      formHook.handleSubmit(onSubmitStep, onSubmitStepError);
                       props.onSubmit?.(formHook.getValues());
                     } else {
                       onClickSaveAndClose();
@@ -303,6 +314,7 @@ function WizardForm(props: WizardFormProps) {
       onClickSaveAndClose,
       props,
       onSubmitStep,
+      onSubmitStepError,
       hasErrorInAnyStep,
       formModel?.model,
       fieldsProvider

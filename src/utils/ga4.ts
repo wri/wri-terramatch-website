@@ -1,0 +1,92 @@
+type PolygonEventName =
+  | "polygon_drawn"
+  | "polygon_shape_edited"
+  | "polygon_attributes_edited"
+  | "polygon_viewed"
+  | "polygon_commented"
+  | "polygon_validation_run"
+  | "polygon_overlap_fix_clicked"
+  | "polygon_downloaded"
+  | "polygon_uploaded"
+  | "polygon_submitted"
+  | "polygon_image_edited"
+  | "polygon_gallery_viewed";
+
+export type FormSectionEventName = "section_started" | "section_completed" | "section_error_triggered";
+
+export type Ga4EntityType = "project" | "site" | "nursery" | "unknown";
+
+type Ga4EventParams = Record<string, string | number | boolean | null | undefined>;
+
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
+const toSnakeEntityType = (entityName?: string | null): Ga4EntityType => {
+  if (entityName == null) return "unknown";
+  const normalized = entityName.toLowerCase();
+  if (normalized.includes("project")) return "project";
+  if (normalized.includes("site")) return "site";
+  if (normalized.includes("nurser")) return "nursery";
+  return "unknown";
+};
+
+const sanitizeParams = (params: Ga4EventParams): Record<string, string | number | boolean> => {
+  const entries = Object.entries(params).map(([key, value]) => [key, value ?? "unknown"]);
+  return Object.fromEntries(entries) as Record<string, string | number | boolean>;
+};
+
+const trackGa4Event = (eventName: string, params: Ga4EventParams): void => {
+  if (typeof window === "undefined") return;
+  const safeParams = sanitizeParams(params);
+
+  window.dataLayer = window.dataLayer ?? [];
+  window.dataLayer.push({
+    event: eventName,
+    ...safeParams
+  });
+
+  window.gtag?.("event", eventName, safeParams);
+};
+
+export const getPolygonAnalyticsContext = ({
+  entityType,
+  entityId
+}: {
+  entityType?: string | null;
+  entityId?: string | null;
+}) => ({
+  entity_type: toSnakeEntityType(entityType),
+  entity_id: entityId ?? "unknown"
+});
+
+export const getFormSectionAnalyticsContext = ({
+  entityType,
+  entityId,
+  sectionName,
+  formStepId,
+  errorType
+}: {
+  entityType: Exclude<Ga4EntityType, "unknown">;
+  entityId?: string | null;
+  sectionName: string;
+  formStepId: string;
+  errorType?: string | null;
+}) => ({
+  entity_type: entityType,
+  entity_id: entityId ?? "unknown",
+  section_name: sectionName,
+  form_step_id: formStepId,
+  ...(errorType != null && errorType !== "" ? { error_type: errorType } : {})
+});
+
+export const trackPolygonEvent = (eventName: PolygonEventName, params: Ga4EventParams): void => {
+  trackGa4Event(eventName, params);
+};
+
+export const trackFormSectionEvent = (eventName: FormSectionEventName, params: Ga4EventParams): void => {
+  trackGa4Event(eventName, params);
+};
