@@ -41,7 +41,9 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    projectCountry: null,
+    ppcExternalId: null
   },
   {
     uuid: "2",
@@ -69,7 +71,9 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    projectCountry: null,
+    ppcExternalId: null
   },
   {
     uuid: "3",
@@ -97,7 +101,9 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    projectCountry: null,
+    ppcExternalId: null
   },
   {
     uuid: "4",
@@ -125,7 +131,9 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    projectCountry: null,
+    ppcExternalId: null
   },
   {
     uuid: "5",
@@ -153,7 +161,9 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    projectCountry: null,
+    ppcExternalId: null
   },
   {
     uuid: "6",
@@ -181,12 +191,14 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    projectCountry: null,
+    ppcExternalId: null
   }
 ];
 
 export const Default: Story = {
-  render: args => {
+  render: (args: any) => {
     const [query] = useState<string>();
     const [checkedValues, setCheckedValues] = useState<string[]>([]);
     const [sortField, setSortField] = useState<string>("name");
@@ -233,7 +245,7 @@ export const Default: Story = {
 };
 
 export const OpenPolygonCheck: Story = {
-  render: args => {
+  render: (args: any) => {
     const [query] = useState<string>();
     const [checkedValues, setCheckedValues] = useState<string[]>([]);
     const [sortField, setSortField] = useState<string>("name");
