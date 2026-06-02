@@ -2462,7 +2462,7 @@ export type EntityIndexQueryParams = {
    */
   taskId?: number;
   /**
-   * Filter projects by polygon data submission status
+   * Filter projects by polygon submission status
    */
   polygonDataSubmission?:
     | "no-polygons-submitted"
@@ -4026,7 +4026,7 @@ export type EntityAssociationIndexQueryParams = {
    */
   taskId?: number;
   /**
-   * Filter projects by polygon data submission status
+   * Filter projects by polygon submission status
    */
   polygonDataSubmission?:
     | "no-polygons-submitted"
