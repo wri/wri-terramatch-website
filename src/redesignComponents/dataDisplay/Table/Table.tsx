@@ -1,6 +1,6 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
-import React, { Ref, useCallback, useEffect } from "react";
+import React, { Ref, useCallback, useEffect, useRef } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
@@ -169,17 +169,21 @@ const Table = <T extends BaseRow>({
     [columns, renderDataCell, selectedRows, handleRowSelected]
   );
 
+  const customRenderRowRef = useRef(customRenderRow);
+  customRenderRowRef.current = customRenderRow;
+
   const finalRenderRow = useCallback(
     (rowData: T, rowProps?: Record<string, unknown>) => {
-      if (customRenderRow != null) {
-        return customRenderRow(rowData, rowProps);
+      const renderRow = customRenderRowRef.current;
+      if (renderRow != null) {
+        return renderRow(rowData, rowProps);
       }
       if (selectable) {
         return defaultSelectableRenderRow(rowData);
       }
       return defaultRenderRow(rowData);
     },
-    [customRenderRow, selectable, defaultSelectableRenderRow, defaultRenderRow]
+    [selectable, defaultSelectableRenderRow, defaultRenderRow]
   );
 
   const displayStart = actualTotalItems === 0 ? 0 : startRange + 1;

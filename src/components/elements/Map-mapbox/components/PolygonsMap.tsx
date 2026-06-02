@@ -41,9 +41,7 @@ interface PolygonsMapProps {
   onRefetchPolygons: () => void | Promise<void>;
   className?: string;
   polygonTableHighlight?: {
-    hoveredPolygonUuid: string | null;
     selectedPolygonUuids: string[];
-    onHoveredPolygonFromMap?: (uuid: string | null) => void;
     onPolygonClickedFromMap?: (uuid: string) => void;
     focusPolygonUuid?: string | null;
     onFocusPolygonConsumed?: () => void;

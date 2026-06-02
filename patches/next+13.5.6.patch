@@ -1,0 +1,54 @@
+diff --git a/node_modules/next/dist/client/image-component.js b/node_modules/next/dist/client/image-component.js
+index a2f35e8..6810786 100644
+--- a/node_modules/next/dist/client/image-component.js
++++ b/node_modules/next/dist/client/image-component.js
+@@ -112,19 +112,13 @@ function handleLoading(img, placeholder, onLoadRef, onLoadingCompleteRef, setBlu
+     });
+ }
+ function getDynamicProps(fetchPriority) {
+-    const [majorStr, minorStr] = _react.version.split(".");
+-    const major = parseInt(majorStr, 10);
+-    const minor = parseInt(minorStr, 10);
+-    if (major > 18 || major === 18 && minor >= 3) {
+-        // In React 18.3.0 or newer, we must use camelCase
+-        // prop to avoid "Warning: Invalid DOM property".
+-        // See https://github.com/facebook/react/pull/25927
++    if (Boolean(_react.use)) {
++        // React 19+ recognizes camelCase fetchPriority on DOM elements.
+         return {
+             fetchPriority
+         };
+     }
+-    // In React 18.2.0 or older, we must use lowercase prop
+-    // to avoid "Warning: Invalid DOM property".
++    // React 18.x expects lowercase fetchpriority on DOM elements.
+     return {
+         fetchpriority: fetchPriority
+     };
+diff --git a/node_modules/next/dist/esm/client/image-component.js b/node_modules/next/dist/esm/client/image-component.js
+index 6b293c4..8468cb1 100644
+--- a/node_modules/next/dist/esm/client/image-component.js
++++ b/node_modules/next/dist/esm/client/image-component.js
+@@ -101,19 +101,13 @@ function handleLoading(img, placeholder, onLoadRef, onLoadingCompleteRef, setBlu
+     });
+ }
+ function getDynamicProps(fetchPriority) {
+-    const [majorStr, minorStr] = version.split(".");
+-    const major = parseInt(majorStr, 10);
+-    const minor = parseInt(minorStr, 10);
+-    if (major > 18 || major === 18 && minor >= 3) {
+-        // In React 18.3.0 or newer, we must use camelCase
+-        // prop to avoid "Warning: Invalid DOM property".
+-        // See https://github.com/facebook/react/pull/25927
++    if (Boolean(use)) {
++        // React 19+ recognizes camelCase fetchPriority on DOM elements.
+         return {
+             fetchPriority
+         };
+     }
+-    // In React 18.2.0 or older, we must use lowercase prop
+-    // to avoid "Warning: Invalid DOM property".
++    // React 18.x expects lowercase fetchpriority on DOM elements.
+     return {
+         fetchpriority: fetchPriority
+     };
