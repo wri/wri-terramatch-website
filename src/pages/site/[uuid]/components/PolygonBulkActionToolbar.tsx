@@ -94,7 +94,7 @@ const PolygonBulkActionToolbar: FC<PolygonBulkActionToolbarProps> = ({
               return;
             }
             showToast({
-              label: t("Validating Polygons..."),
+              label: t(selectedPolygonUuids.length > 1 ? "Validating Polygons..." : "Validating Polygon..."),
               type: "info",
               placement: "bottom-end",
               duration: 5000,

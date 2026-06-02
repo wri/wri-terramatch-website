@@ -1126,7 +1126,7 @@ export type ProjectLightDto = {
   updatedAt: string;
   treesPlantedCount: number | null;
   /**
-   * Polygon data submission tracking
+   * Polygon submission status tracking
    */
   polygonDataSubmission:
     | "no-polygons-submitted"
@@ -1176,6 +1176,7 @@ export type SiteLightDto = {
   treesPlantedCount: number;
   hectaresToRestoreGoal: number | null;
   totalHectaresRestoredSum: number;
+  totalSiteReports: number;
   /**
    * @format date-time
    */
@@ -1227,6 +1228,7 @@ export type NurseryLightDto = {
   endDate: string | null;
   seedlingsGrownCount: number | null;
   treesSeedlingsGrownCount: number | null;
+  nurseryReportsTotal: number | null;
   /**
    * @format date-time
    */
@@ -1434,7 +1436,7 @@ export type ProjectFullDto = {
   updatedAt: string;
   treesPlantedCount: number | null;
   /**
-   * Polygon data submission tracking
+   * Polygon submission status tracking
    */
   polygonDataSubmission:
     | "no-polygons-submitted"
@@ -1567,6 +1569,7 @@ export type SiteFullDto = {
   treesPlantedCount: number;
   hectaresToRestoreGoal: number | null;
   totalHectaresRestoredSum: number;
+  totalSiteReports: number;
   /**
    * @format date-time
    */
@@ -1575,7 +1578,6 @@ export type SiteFullDto = {
    * @format date-time
    */
   updatedAt: string;
-  totalSiteReports: number;
   seedsPlantedCount: number;
   overdueSiteReportsTotal: number;
   selfReportedWorkdayCount: number;
@@ -1693,6 +1695,7 @@ export type NurseryFullDto = {
   endDate: string | null;
   seedlingsGrownCount: number | null;
   treesSeedlingsGrownCount: number | null;
+  nurseryReportsTotal: number | null;
   /**
    * @format date-time
    */
@@ -1707,7 +1710,6 @@ export type NurseryFullDto = {
   seedlingGrown: number | null;
   plantingContribution: string | null;
   oldModel: string | null;
-  nurseryReportsTotal: number | null;
   overdueNurseryReportsTotal: number | null;
   projectUuid: string | null;
   media: MediaDto[];
@@ -2416,7 +2418,7 @@ export type ProjectUpdateAttributes = {
    */
   isTest?: boolean;
   /**
-   * Polygon data submission tracking
+   * Polygon submission status tracking
    */
   polygonDataSubmission?:
     | "no-polygons-submitted"

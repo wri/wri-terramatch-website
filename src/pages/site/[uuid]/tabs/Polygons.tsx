@@ -81,8 +81,26 @@ interface SitePolygonsTabProps {
   site: SiteFullDto;
 }
 
-const TOAST_PLACEMENT = "top-end" as const;
+const TOAST_PLACEMENT = "bottom-end" as const;
 const SAVE_COMPLETE_TOAST_MS = 5000;
+
+const showProgressToast = (t: (key: string) => string, label: string) =>
+  showToast({
+    label,
+    type: "info",
+    placement: TOAST_PLACEMENT,
+    duration: SAVE_COMPLETE_TOAST_MS,
+    closableLabel: t("Close"),
+    icon: <LoadingIcon boxSize={7} color="primary.700" animation="spin 1s linear infinite" />
+  });
+
+const showCompleteToast = (label: string) =>
+  showToast({
+    label,
+    type: "success",
+    placement: TOAST_PLACEMENT,
+    duration: SAVE_COMPLETE_TOAST_MS
+  });
 
 export type { PolygonTableRow } from "../components/PolygonTableRow";
 
@@ -283,13 +301,14 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     }
 
     try {
+      showProgressToast(t, t("Deleting Polygons..."));
       await bulkDeleteSitePolygons(selectedSitePolygonUuids);
       closeMapPopups();
       setHoveredPolygonUuid(null);
       clearTableSelection();
       invalidatePolygonMapTiles();
       await refetchPolygons();
-      openNotification("success", t("Success!"), t("Polygons deleted successfully"));
+      showCompleteToast(t("Deletion Complete"));
     } catch (error) {
       Log.error("Failed to delete selected polygons:", error);
       openNotification("error", t("Error!"), t("Error deleting polygons"));
@@ -315,12 +334,14 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const handleRunValidation = useCallback(
     async (polygonUuids: string[]) => {
       if (polygonUuids.length === 0) return;
+      showProgressToast(t, t("Validating Polygon..."));
       await createPolygonValidation({ polygonUuids });
       ApiSlice.pruneCache("validations");
       pruneSitePolygonsCache();
       await Promise.all([refetchPolygons(), fetchAllValidationPages(true), fetchOverlapValidations(true)]);
+      showCompleteToast(t("System Validation Complete"));
     },
-    [refetchPolygons, fetchAllValidationPages, fetchOverlapValidations]
+    [refetchPolygons, fetchAllValidationPages, fetchOverlapValidations, t]
   );
 
   const handleOverlapFix = useCallback(async () => {
@@ -334,14 +355,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       return;
     }
 
-    showToast({
-      label: t("Fixing overlaps..."),
-      type: "info",
-      placement: TOAST_PLACEMENT,
-      duration: SAVE_COMPLETE_TOAST_MS,
-      closableLabel: t("Close"),
-      icon: <LoadingIcon boxSize={7} color="primary.700" animation="spin 1s linear infinite" />
-    });
+    showProgressToast(t, t("Fixing Polygon Overlaps..."));
 
     try {
       const response = await clipPolygonListAsync(fixableCandidates.map(candidate => candidate.id));
@@ -375,6 +389,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       clearTableSelection();
       closeMapPopups();
       setHoveredPolygonUuid(null);
+      showCompleteToast(t("Overlap Fix Complete"));
     } catch (error) {
       Log.error("Failed to fix selected polygon overlaps:", error);
       showToast({
@@ -412,6 +427,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     const submittedNames = selectedSubmittablePolygons.map(polygon => polygon.name ?? t("Unnamed polygon"));
 
     try {
+      showProgressToast(t, t("Submitting Polygons..."));
       await bulkUpdateSitePolygonStatus(selectedSubmittablePolygonUuids, POLYGON_PENDING_APPROVAL as PolygonStatus, "");
       pruneSitePolygonsCache();
       closeMapPopups();
@@ -419,6 +435,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       clearTableSelection();
       invalidatePolygonMapTiles();
       setSubmittedPolygonNames(submittedNames);
+      showCompleteToast(t("Submission Complete"));
       window.setTimeout(() => {
         setPolygonSubmittedModal(true);
       }, 0);
@@ -453,17 +470,13 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
     try {
       setIsDownloadingSelectedPolygons(true);
+      showProgressToast(t, t("Downloading Polygons..."));
       const filename =
         selectedSitePolygons.length === 1
           ? selectedSitePolygons[0].name ?? "polygon"
           : `${site.name ?? "polygons"}-${new Date().toISOString().slice(0, 10)}`;
       await downloadMultiplePolygonsGeoJson(selectedDownloadPolygonUuids, filename);
-      showToast({
-        label: t("Polygon successfully downloaded"),
-        type: "success",
-        placement: "bottom-end",
-        duration: 5000
-      });
+      showCompleteToast(t("Download Complete"));
     } catch (error) {
       Log.error("Failed to download selected polygons:", error);
       showToast({
@@ -505,6 +518,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
       try {
         setIsBulkUpdatingPolygons(true);
+        showProgressToast(t, t("Saving Changes..."));
         await bulkUpdateSitePolygonAttributes(selectedSitePolygonUuids, attributeChanges);
         closeMapPopups();
         setHoveredPolygonUuid(null);
@@ -512,12 +526,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         invalidatePolygonMapTiles();
         setShowBulkEditDrawer(false);
         await refetchPolygons();
-        showToast({
-          label: t("Changes Saved"),
-          type: "success",
-          placement: TOAST_PLACEMENT,
-          duration: SAVE_COMPLETE_TOAST_MS
-        });
+        showCompleteToast(t("Changes Saved"));
       } catch (error) {
         Log.error("Failed to update selected polygon details:", error);
         openNotification("error", t("Error!"), t("Error updating polygon details"));

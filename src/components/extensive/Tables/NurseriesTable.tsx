@@ -111,7 +111,7 @@ const NurseriesTable = ({
           header: "",
           enableSorting: false,
           cell: props => {
-            const record = props.row.original as any;
+            const record = props.row.original;
 
             return (
               <ActionTableCell

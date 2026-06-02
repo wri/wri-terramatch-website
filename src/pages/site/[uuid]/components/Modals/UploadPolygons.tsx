@@ -115,7 +115,6 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
       open={open}
       onClose={handleClose}
       size="medium"
-      blocking
       header={
         <b className="text-theme-neutral-800">{isConfirmStep ? t("Matching polygons found") : t("Upload Polygons")}</b>
       }

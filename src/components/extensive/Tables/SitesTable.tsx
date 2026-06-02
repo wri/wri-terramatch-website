@@ -128,7 +128,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
           header: "",
           enableSorting: false,
           cell: props => {
-            const record = props.row.original as SiteLightDto & { site_reports_total?: number };
+            const record = props.row.original;
 
             return (
               <ActionTableCell
@@ -137,7 +137,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
                   href: getEntityDetailPageLink("sites", props.getValue() as string),
                   children: t("View site")
                 }}
-                hasDeleteButton={record.site_reports_total === 0}
+                hasDeleteButton={record.totalSiteReports === 0}
                 onDelete={() => handleDeleteSite(props.getValue() as string)}
               />
             );

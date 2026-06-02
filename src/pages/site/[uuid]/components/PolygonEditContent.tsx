@@ -62,7 +62,7 @@ import {
 } from "./polygonEditSave";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 
-const TOAST_PLACEMENT = "top-end" as const;
+const TOAST_PLACEMENT = "bottom-end" as const;
 const SAVE_COMPLETE_TOAST_MS = 5000;
 
 type PolygonEditContentProps = {
