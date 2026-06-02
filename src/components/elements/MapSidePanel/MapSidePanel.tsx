@@ -27,6 +27,7 @@ import { useDate } from "@/hooks/useDate";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useOnMount } from "@/hooks/useOnMount";
 import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
@@ -142,6 +143,16 @@ const MapSidePanel: FC<MapSidePanelProps> = ({
       setClickedButton("");
     } else if (clickedButton === "download") {
       downloadGeoJsonPolygon(selected?.polygonUuid ?? "", selected?.name ? formatStringName(selected.name) : "polygon");
+      trackPolygonEvent("polygon_downloaded", {
+        ...getPolygonAnalyticsContext({
+          entityType: "site",
+          entityId: entityUuid
+        }),
+        polygon_count: 1,
+        polygon_id: selected?.polygonUuid,
+        file_format: "geojson",
+        download_type: "standard"
+      });
       setClickedButton("");
     } else if (clickedButton === "delete") {
       deletePolygon();
@@ -149,6 +160,13 @@ const MapSidePanel: FC<MapSidePanelProps> = ({
     } else if (clickedButton === "editPolygon") {
       setTabEditPolygon("Attributes");
       setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primaryUuid: selected?.primaryUuid ?? "" });
+      trackPolygonEvent("polygon_viewed", {
+        ...getPolygonAnalyticsContext({
+          entityType: "site",
+          entityId: entityUuid
+        }),
+        polygon_id: selected?.polygonUuid
+      });
       if (selected?.polygonUuid) {
         flyToPolygonBounds();
       }

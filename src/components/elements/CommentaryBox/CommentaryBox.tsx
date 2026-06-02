@@ -13,6 +13,7 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
 export type CommentaryBoxProps = {
@@ -62,6 +63,15 @@ const CommentaryBox: FC<CommentaryBoxProps> = props => {
       setFiles([]);
       ApiSlice.pruneCache("auditStatuses");
       props.refresh?.();
+      if (props.entity === "sitePolygons") {
+        trackPolygonEvent("polygon_commented", {
+          ...getPolygonAnalyticsContext({
+            entityType: "site",
+            entityId: props.record?.siteUuid
+          }),
+          polygon_id: props.record?.uuid
+        });
+      }
     } catch (error) {
       openNotification(
         "error",

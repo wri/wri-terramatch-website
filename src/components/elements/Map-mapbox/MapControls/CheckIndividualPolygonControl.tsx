@@ -13,6 +13,7 @@ import { usePolygonClippingCompletion } from "@/hooks/usePolygonClippingCompleti
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
 import Button from "../../Button/Button";
@@ -57,6 +58,12 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
     try {
       showLoader();
       const polygonUuid = editPolygon?.uuid ?? "";
+      trackPolygonEvent("polygon_validation_run", {
+        ...getPolygonAnalyticsContext({ entityType: "site" }),
+        entity_id: "unknown",
+        polygon_id: polygonUuid,
+        validation_result: "pending"
+      });
       await createPolygonValidation({
         polygonUuids: [polygonUuid]
       });
@@ -71,10 +78,22 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
         t("Please update and re-run if validations fail."),
         t("Success! TerraMatch reviewed the polygon")
       );
+      trackPolygonEvent("polygon_validation_run", {
+        ...getPolygonAnalyticsContext({ entityType: "site" }),
+        entity_id: "unknown",
+        polygon_id: polygonUuid,
+        validation_result: "pass"
+      });
     } catch (error) {
       hideLoader();
       setClickedValidation(false);
       openNotification("error", t("Please try again later."), t("Error! TerraMatch could not review polygons"));
+      trackPolygonEvent("polygon_validation_run", {
+        ...getPolygonAnalyticsContext({ entityType: "site" }),
+        entity_id: "unknown",
+        polygon_id: editPolygon?.uuid ?? "unknown",
+        validation_result: "fail"
+      });
     }
   };
 
@@ -195,6 +214,11 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
               className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-black disabled:cursor-not-allowed disabled:opacity-60"
               onClick={() => {
                 showLoader();
+                trackPolygonEvent("polygon_overlap_fix_clicked", {
+                  ...getPolygonAnalyticsContext({ entityType: "site" }),
+                  entity_id: "unknown",
+                  polygon_id: editPolygon?.uuid ?? "unknown"
+                });
                 clipSinglePolygon(editPolygon.uuid);
                 setPendingClipping(true);
               }}
