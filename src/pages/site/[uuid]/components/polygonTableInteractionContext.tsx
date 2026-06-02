@@ -40,3 +40,5 @@ export const usePolygonTableInteractionActions = () => {
   }
   return context;
 };
+
+export default PolygonTableInteractionActionsProvider;

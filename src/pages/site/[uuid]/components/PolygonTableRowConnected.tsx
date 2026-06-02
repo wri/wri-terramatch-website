@@ -33,3 +33,5 @@ export const PolygonTableRowConnected = memo(function PolygonTableRowConnected({
 export const renderPolygonTableRow = (row: PolygonTableRow, rowProps?: Record<string, unknown>) => (
   <PolygonTableRowConnected row={row} rowProps={rowProps} />
 );
+
+export default PolygonTableRowConnected;
