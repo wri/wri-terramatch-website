@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
-import { useCallback, useState } from "react";
+import { createElement, useCallback, useState } from "react";
 
 import {
   prepareGeometryForUpload,
@@ -9,6 +9,7 @@ import {
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
 import { CompareGeometryFileResponse } from "@/generated/v3/researchService/researchServiceComponents";
+import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
 export type UploadMode = "new-polygons" | "update-existing-polygons";
 
@@ -19,7 +20,7 @@ export type GeometryUploadComparisonResult = {
   featuresForCreation: number;
 };
 
-const TOAST_PLACEMENT = "top-end" as const;
+const TOAST_PLACEMENT = "bottom-end" as const;
 const UPLOADING_TOAST_DURATION_MS = 4000;
 const UPLOAD_COMPLETE_TOAST_DURATION_MS = 5000;
 
@@ -67,28 +68,28 @@ export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUpl
   const compareGeometry = useCompareGeometry({});
   const uploadGeometryWithVersions = useUploadGeometryWithVersions({});
 
-  const showUploadingToast = useCallback(() => {
+  const showProgressToast = useCallback((label: string) => {
     showToast({
-      label: t("Uploading Polygons…"),
+      label,
       type: "info",
       placement: TOAST_PLACEMENT,
-      duration: UPLOADING_TOAST_DURATION_MS
+      duration: UPLOADING_TOAST_DURATION_MS,
+      icon: createElement(LoadingIcon, {
+        boxSize: 7,
+        color: "primary.700",
+        animation: "spin 1s linear infinite"
+      })
     });
-  }, [t]);
+  }, []);
 
-  const showUploadCompleteToast = useCallback(() => {
+  const showCompleteToast = useCallback((label: string) => {
     showToast({
-      label: t("Upload Complete"),
+      label,
       type: "success",
       placement: TOAST_PLACEMENT,
       duration: UPLOAD_COMPLETE_TOAST_DURATION_MS
     });
-  }, [t]);
-
-  const handleUploadSuccess = useCallback(() => {
-    showUploadCompleteToast();
-    onUploadSuccess();
-  }, [showUploadCompleteToast, onUploadSuccess]);
+  }, []);
 
   const startUpload = useCallback(
     (
@@ -96,19 +97,30 @@ export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUpl
       upload: (
         attributes: ReturnType<typeof prepareGeometryForUpload>,
         handlers: { onSuccess: () => void; onError: (error: unknown) => void }
-      ) => void
+      ) => void,
+      toastLabels: { progress: string; complete: string }
     ) => {
-      showUploadingToast();
+      showProgressToast(toastLabels.progress);
       const attributes = prepareGeometryForUpload(file, siteUuid);
       upload(attributes, {
-        onSuccess: handleUploadSuccess,
+        onSuccess: () => {
+          showCompleteToast(toastLabels.complete);
+          onUploadSuccess();
+        },
         onError: error => onError(extractErrorMessage(error))
       });
     },
-    [siteUuid, showUploadingToast, handleUploadSuccess, onError]
+    [siteUuid, showProgressToast, showCompleteToast, onUploadSuccess, onError]
   );
 
-  const uploadNew = useCallback((file: File) => startUpload(file, uploadGeometry), [startUpload, uploadGeometry]);
+  const uploadNew = useCallback(
+    (file: File) =>
+      startUpload(file, uploadGeometry, {
+        progress: t("Uploading Polygons..."),
+        complete: t("Upload Complete")
+      }),
+    [startUpload, uploadGeometry, t]
+  );
 
   const compareFile = useCallback(
     async (file: File): Promise<GeometryUploadComparisonResult> => {
@@ -130,8 +142,12 @@ export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUpl
   );
 
   const uploadWithVersions = useCallback(
-    (file: File) => startUpload(file, uploadGeometryWithVersions),
-    [startUpload, uploadGeometryWithVersions]
+    (file: File) =>
+      startUpload(file, uploadGeometryWithVersions, {
+        progress: t("Updating Polygons..."),
+        complete: t("Update Complete")
+      }),
+    [startUpload, uploadGeometryWithVersions, t]
   );
 
   return { uploadNew, compareFile, uploadWithVersions, isComparing };

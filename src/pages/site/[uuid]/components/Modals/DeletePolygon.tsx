@@ -42,7 +42,6 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, o
       open={open}
       onClose={handleClose}
       size="medium"
-      blocking
       header={
         <b className="text-theme-neutral-800">{polygons.length === 1 ? t("Delete polygon?") : t("Delete polygons?")}</b>
       }

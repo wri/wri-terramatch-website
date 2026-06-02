@@ -16,7 +16,6 @@ import {
   POLYGON_INFORMATION_REQUIRED,
   POLYGON_PENDING_APPROVAL
 } from "@/constants/polygonStatuses";
-import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -161,38 +160,36 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   }, [polygons]);
 
   return (
-    <AnrMapOverlayProvider>
-      <MapContainer
-        championsMap={true}
-        mapFunctions={mapFunctions}
-        polygonsData={polygonDataMap}
-        bbox={extentBbox}
-        tooltipType={type === "sites" ? "edit" : "goTo"}
-        showPopups
-        showLegend
-        siteData={true}
-        status={type === "sites" && !disabledPolygonPanel && editPolygon.isOpen}
-        validationType={
-          type === "sites" && !disabledPolygonPanel
-            ? editPolygon.isOpen
-              ? "individualValidation"
-              : "bulkValidation"
-            : ""
-        }
-        record={entityModel}
-        className={classNames("h-full w-full flex-1", className)}
-        polygonsExists={polygons.length > 0}
-        setPolygonFromMap={setPolygonFromMap}
-        polygonFromMap={polygonFromMap}
-        shouldBboxZoom={!shouldRefetchPolygonData}
-        mediaFiles={mediaFiles}
-        sitePolygonData={sitePolygonDataV3}
-        disabledPolygonPanel={disabledPolygonPanel}
-        autoEditPolygon={editPolygon.isOpen}
-        polygonTableHighlight={polygonTableHighlight}
-        overlapPolygons={overlapPolygons}
-      />
-    </AnrMapOverlayProvider>
+    <MapContainer
+      championsMap={true}
+      mapFunctions={mapFunctions}
+      polygonsData={polygonDataMap}
+      bbox={extentBbox}
+      tooltipType={type === "sites" ? "edit" : "goTo"}
+      showPopups
+      showLegend
+      siteData={true}
+      status={type === "sites" && !disabledPolygonPanel && editPolygon.isOpen}
+      validationType={
+        type === "sites" && !disabledPolygonPanel
+          ? editPolygon.isOpen
+            ? "individualValidation"
+            : "bulkValidation"
+          : ""
+      }
+      record={entityModel}
+      className={classNames("h-full w-full flex-1", className)}
+      polygonsExists={polygons.length > 0}
+      setPolygonFromMap={setPolygonFromMap}
+      polygonFromMap={polygonFromMap}
+      shouldBboxZoom={!shouldRefetchPolygonData}
+      mediaFiles={mediaFiles}
+      sitePolygonData={sitePolygonDataV3}
+      disabledPolygonPanel={disabledPolygonPanel}
+      autoEditPolygon={editPolygon.isOpen}
+      polygonTableHighlight={polygonTableHighlight}
+      overlapPolygons={overlapPolygons}
+    />
   );
 };
 

@@ -5,6 +5,8 @@ import { useAllSiteValidations } from "@/connections/Validation";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 
+import { hasOverlapValidationFailure } from "./overlapFix.utils";
+
 type UseSitePolygonOverlapParams = {
   siteUuid: string;
   polygonsData: SitePolygonLightDto[];
@@ -39,6 +41,7 @@ export const useSitePolygonOverlap = ({ siteUuid, polygonsData }: UseSitePolygon
     );
     const overlapPolygonUuids = new Set(
       overlapValidations
+        .filter(hasOverlapValidationFailure)
         .map(validation => validation.polygonUuid)
         .filter((id): id is string => id != null && id !== "" && currentPolygonUuids.has(id))
     );

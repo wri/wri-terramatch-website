@@ -65,7 +65,6 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
       open={open}
       onClose={handleClose}
       size="large"
-      blocking
       header={<b className="text-theme-neutral-800">{t("System validation complete")}</b>}
       content={
         <Flex px={4} direction="column" gap={3}>

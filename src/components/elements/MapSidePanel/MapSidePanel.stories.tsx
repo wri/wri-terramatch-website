@@ -42,6 +42,8 @@ const items: SitePolygonLightDto[] = [
     projectId: null,
     projectShortName: null,
     projectName: null,
+    projectCountry: null,
+    ppcExternalId: null,
     plantStart: "2021-03-12T00:00:00Z",
     calcArea: null,
     lat: null,
@@ -58,9 +60,7 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null,
-    projectCountry: null,
-    ppcExternalId: null
+    createdAt: null
   },
   {
     uuid: "2",
@@ -72,6 +72,8 @@ const items: SitePolygonLightDto[] = [
     projectId: null,
     projectShortName: null,
     projectName: null,
+    projectCountry: null,
+    ppcExternalId: null,
     plantStart: "2021-03-12T00:00:00Z",
     calcArea: null,
     lat: null,
@@ -88,9 +90,7 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null,
-    projectCountry: null,
-    ppcExternalId: null
+    createdAt: null
   },
   {
     uuid: "3",
@@ -102,6 +102,8 @@ const items: SitePolygonLightDto[] = [
     projectId: null,
     projectShortName: null,
     projectName: null,
+    projectCountry: null,
+    ppcExternalId: null,
     plantStart: "2021-03-12T00:00:00Z",
     calcArea: null,
     lat: null,
@@ -118,8 +120,6 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null,
-    projectCountry: null,
-    ppcExternalId: null
+    createdAt: null
   }
 ];

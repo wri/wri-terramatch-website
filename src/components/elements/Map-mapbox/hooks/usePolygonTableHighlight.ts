@@ -269,7 +269,6 @@ const fetchSelectionBoundingBox = async (uuids: string[]): Promise<BBox | null> 
     return null;
   }
 
-  // Preferred path: one request for the whole selection.
   try {
     const result = await loadBoundingBox({
       filter: { polygonUuids: uuids },

@@ -1,6 +1,7 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { dispatchClearDraftDrawEvent } from "@/components/elements/Map-mapbox/interactions/draftDrawEvents";
+import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import type { PolygonSaveCallback } from "@/pages/site/[uuid]/components/polygonEdit.types";
@@ -15,17 +16,21 @@ export const EMPTY_POLYGONS: SitePolygonLightDto[] = [];
 type PolygonEditDrawerContextValue = {
   isOpen: boolean;
   polygon: PolygonEditDrawerPolygon;
+  suppressMapSelectionHighlight: boolean;
   openPolygonEdit: (params?: PolygonEditDrawerPolygon) => void;
   closePolygonEdit: () => void;
   setOpen: (open: boolean) => void;
+  setSuppressMapSelectionHighlight: (value: boolean) => void;
 };
 
 const defaultContextValue: PolygonEditDrawerContextValue = {
   isOpen: false,
   polygon: {},
+  suppressMapSelectionHighlight: false,
   openPolygonEdit: () => {},
   closePolygonEdit: () => {},
-  setOpen: () => {}
+  setOpen: () => {},
+  setSuppressMapSelectionHighlight: () => {}
 };
 
 const PolygonEditDrawerContext = createContext<PolygonEditDrawerContextValue>(defaultContextValue);
@@ -83,6 +88,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [polygon, setPolygon] = useState<PolygonEditDrawerPolygon>({});
   const [polygons, setPolygons] = useState(polygonsProp);
+  const [suppressMapSelectionHighlight, setSuppressMapSelectionHighlight] = useState(false);
 
   const onRefetchPolygonsRef = useRef<PolygonSaveCallback | undefined>(onRefetchPolygonsProp);
 
@@ -103,6 +109,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const dataContextValue = useMemo(() => ({ setPolygons, setOnRefetchPolygons }), [setOnRefetchPolygons]);
   const { setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit, setDraftPolygonGeometry } =
     useMapAreaContext();
+  const anrMapOverlay = useAnrMapOverlayOptional();
 
   const openPolygonEdit = useCallback(
     (params?: PolygonEditDrawerPolygon) => {
@@ -127,12 +134,14 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const closePolygonEdit = useCallback(() => {
     setIsOpen(false);
     setPolygon({});
+    setSuppressMapSelectionHighlight(false);
     dispatchClearDraftDrawEvent();
     setIsUserDrawingEnabled(false);
     setEditPolygon({ isOpen: false, uuid: "" });
     setPolygonGeometryEdit(undefined);
     setDraftPolygonGeometry(undefined);
-  }, [setDraftPolygonGeometry, setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit]);
+    anrMapOverlay?.resetAnrMapOverlay();
+  }, [anrMapOverlay, setDraftPolygonGeometry, setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit]);
 
   const setSelectedPolygon = useCallback(
     (sitePolygon: SitePolygonLightDto) => {
@@ -174,11 +183,13 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     () => ({
       isOpen,
       polygon,
+      suppressMapSelectionHighlight,
       openPolygonEdit,
       closePolygonEdit,
-      setOpen
+      setOpen,
+      setSuppressMapSelectionHighlight
     }),
-    [closePolygonEdit, isOpen, openPolygonEdit, polygon, setOpen]
+    [closePolygonEdit, isOpen, openPolygonEdit, polygon, setOpen, suppressMapSelectionHighlight]
   );
 
   const selectedPolygon = useMemo(() => {
@@ -203,6 +214,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
           onOpenChange={setOpen}
           onSaved={handleSaved}
           onPolygonUpdated={setSelectedPolygon}
+          onSuppressMapSelectionHighlightChange={setSuppressMapSelectionHighlight}
         />
       </PolygonEditDrawerContext.Provider>
     </PolygonEditDrawerDataContext.Provider>
