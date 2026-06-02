@@ -1,18 +1,20 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import type { DataDrivenPropertyValueSpecification, MapMouseEvent } from "mapbox-gl";
 import { Map as MapboxMap } from "mapbox-gl";
-import { MutableRefObject, useEffect, useRef } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 
 import {
   getPolygonGeometryFillLayerConfigs,
   getPolygonGeometryLineLayerConfigs,
   pickPolygonGeometryIdFromProperties
 } from "@/components/elements/Map-mapbox/layers/polygonLayers";
+import { loadBoundingBox, normalizeBoundingBoxDto } from "@/connections/BoundingBox";
+import { setPolygonTableHoveredUuid, usePolygonTableHoveredUuid } from "@/context/polygonTableInteraction.store";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { BBox } from "../GeoJSON";
-import { fetchMultiplePolygonsGeoJson } from "../utils";
+import { polygonSelectionZoomBboxCache } from "../polygonSelectionZoomBboxCache";
 
 const POLYGON_FILL_LAYER_IDS = getPolygonGeometryFillLayerConfigs().map(c => c.layerId);
 const EMPTY_SELECTION: string[] = [];
@@ -83,10 +85,10 @@ function buildLineWidthExpression(
 }
 
 type PolygonTableHighlight = {
-  hoveredPolygonUuid: string | null;
   selectedPolygonUuids: string[];
-  onHoveredPolygonFromMap?: (uuid: string | null) => void;
   onPolygonClickedFromMap?: (uuid: string) => void;
+  focusPolygonUuid?: string | null;
+  onFocusPolygonConsumed?: () => void;
 };
 
 type UsePolygonTableHighlightStyleParams = {
@@ -105,15 +107,16 @@ export function usePolygonTableHighlightStyle({
   highlight
 }: UsePolygonTableHighlightStyleParams): void {
   const lastAppliedRef = useRef<Map<string, string>>(new Map());
+  const isHighlightActive = highlight != null;
+  const hoveredUuid = usePolygonTableHoveredUuid(isHighlightActive);
+  const selectedUuids = highlight?.selectedPolygonUuids ?? EMPTY_SELECTION;
 
   useEffect(() => {
-    if (!styleReady || !sourcesAdded || map.current == null) return;
+    if (!isHighlightActive || !styleReady || !sourcesAdded || map.current == null) return;
 
     const m = map.current;
     const fillConfigs = getPolygonGeometryFillLayerConfigs();
     const lineConfigs = getPolygonGeometryLineLayerConfigs();
-    const hoveredUuid = highlight?.hoveredPolygonUuid ?? null;
-    const selectedUuids = highlight?.selectedPolygonUuids ?? EMPTY_SELECTION;
     const fingerprint = `${hoveredUuid ?? ""}|${selectedUuids.join(",")}`;
 
     for (const { layerId, baseFillOpacity } of fillConfigs) {
@@ -155,7 +158,7 @@ export function usePolygonTableHighlightStyle({
         }
       }
     }
-  }, [map, styleReady, styleVersion, sourcesAdded, highlight]);
+  }, [map, styleReady, styleVersion, sourcesAdded, isHighlightActive, hoveredUuid, selectedUuids]);
 
   useEffect(() => {
     lastAppliedRef.current = new Map();
@@ -167,59 +170,10 @@ type UsePolygonSelectionZoomParams = {
   styleReady: boolean;
   sourcesAdded: boolean;
   selectedPolygonUuids: string[] | undefined;
+  focusPolygonUuid?: string | null;
+  onFocusPolygonConsumed?: () => void;
   sitePolygonData: SitePolygonLightDto[] | undefined;
 };
-
-function computeBBoxFromFeatures(features: GeoJSON.Feature[]): BBox | null {
-  let minLng = Infinity;
-  let minLat = Infinity;
-  let maxLng = -Infinity;
-  let maxLat = -Infinity;
-
-  const processCoord = (coord: number[]) => {
-    const [lng, lat] = coord;
-    if (lng < minLng) minLng = lng;
-    if (lng > maxLng) maxLng = lng;
-    if (lat < minLat) minLat = lat;
-    if (lat > maxLat) maxLat = lat;
-  };
-
-  const processCoords = (coords: number[][]) => {
-    for (const coord of coords) processCoord(coord);
-  };
-
-  for (const feature of features) {
-    const geom = feature.geometry;
-    if (geom == null) continue;
-    switch (geom.type) {
-      case "Polygon":
-        for (const ring of geom.coordinates) processCoords(ring);
-        break;
-      case "MultiPolygon":
-        for (const polygon of geom.coordinates) {
-          for (const ring of polygon) processCoords(ring);
-        }
-        break;
-      case "Point":
-        processCoord(geom.coordinates);
-        break;
-      case "LineString":
-        processCoords(geom.coordinates);
-        break;
-    }
-  }
-
-  if (!isFinite(minLng) || !isFinite(minLat) || !isFinite(maxLng) || !isFinite(maxLat)) {
-    return null;
-  }
-
-  if (minLng === maxLng && minLat === maxLat) {
-    const BUFFER = 0.002;
-    return [minLng - BUFFER, minLat - BUFFER, maxLng + BUFFER, maxLat + BUFFER] as BBox;
-  }
-
-  return [minLng, minLat, maxLng, maxLat] as BBox;
-}
 
 function computeBBoxFromCentroids(
   selectedUuids: string[],
@@ -286,21 +240,99 @@ function fitMapToBBox(map: MapboxMap, bbox: BBox): void {
   });
 }
 
+const buildSitePolygonIdsFingerprint = (sitePolygonData: SitePolygonLightDto[] | undefined): string => {
+  if (sitePolygonData == null || sitePolygonData.length === 0) {
+    return "";
+  }
+
+  return sitePolygonData
+    .map(polygon => polygon.polygonUuid ?? polygon.uuid ?? "")
+    .filter(id => id.length > 0)
+    .sort()
+    .join(",");
+};
+
+const getSortedSelectionKey = (uuids: string[]): string => uuids.slice().sort().join(",");
+
+const fetchSinglePolygonBoundingBox = async (uuid: string): Promise<BBox | null> => {
+  try {
+    const result = await loadBoundingBox({ filter: { polygonUuid: uuid }, enabled: true });
+    return normalizeBoundingBoxDto(result?.data?.bbox);
+  } catch (error) {
+    Log.warn("usePolygonSelectionZoom: failed to load single polygon bounding box", { uuid, error });
+    return null;
+  }
+};
+
+const fetchSelectionBoundingBox = async (uuids: string[]): Promise<BBox | null> => {
+  if (uuids.length === 0) {
+    return null;
+  }
+
+  try {
+    const result = await loadBoundingBox({
+      filter: { polygonUuids: uuids },
+      enabled: true
+    });
+    const bbox = normalizeBoundingBoxDto(result?.data?.bbox);
+    if (bbox != null) {
+      return bbox;
+    }
+  } catch (error) {
+    Log.warn("usePolygonSelectionZoom: combined polygonUuids bbox request failed, falling back", { error });
+  }
+
+  if (uuids.length === 1) {
+    return fetchSinglePolygonBoundingBox(uuids[0]);
+  }
+
+  const perPolygonBboxes = await Promise.all(uuids.map(uuid => fetchSinglePolygonBoundingBox(uuid)));
+  return mergeBBoxes(perPolygonBboxes.flatMap(bbox => (bbox == null ? [] : [bbox])));
+};
+
 export function usePolygonSelectionZoom({
   map,
   styleReady,
   sourcesAdded,
   selectedPolygonUuids,
+  focusPolygonUuid,
+  onFocusPolygonConsumed,
   sitePolygonData
 }: UsePolygonSelectionZoomParams): void {
   const lastZoomedSelectionRef = useRef<string>("");
-  const polygonBBoxCacheRef = useRef<Map<string, BBox | null>>(new Map());
   const requestSequenceRef = useRef(0);
+  const sitePolygonIdsFingerprint = buildSitePolygonIdsFingerprint(sitePolygonData);
 
   useEffect(() => {
-    polygonBBoxCacheRef.current.clear();
-    lastZoomedSelectionRef.current = "";
-  }, [sitePolygonData]);
+    polygonSelectionZoomBboxCache.clear();
+  }, [sitePolygonIdsFingerprint]);
+
+  const zoomToUuids = useCallback(
+    async (uuids: string[], m: MapboxMap, isStale: () => boolean): Promise<boolean> => {
+      if (isStale()) return false;
+
+      const selectionKey = getSortedSelectionKey(uuids);
+      if (!polygonSelectionZoomBboxCache.has(selectionKey)) {
+        const selectionBbox = await fetchSelectionBoundingBox(uuids);
+        if (isStale()) return false;
+        polygonSelectionZoomBboxCache.set(selectionKey, selectionBbox);
+      }
+
+      let bbox = polygonSelectionZoomBboxCache.get(selectionKey) ?? null;
+      if (bbox == null) {
+        bbox = computeBBoxFromCentroids(uuids, sitePolygonData);
+        if (bbox != null) {
+          polygonSelectionZoomBboxCache.set(selectionKey, bbox);
+        }
+      }
+
+      if (isStale() || bbox == null) return false;
+
+      fitMapToBBox(m, bbox);
+      return true;
+    },
+    [sitePolygonData]
+  );
 
   useEffect(() => {
     const uuids = Array.from(new Set(selectedPolygonUuids ?? []));
@@ -325,52 +357,10 @@ export function usePolygonSelectionZoom({
       cancelled || requestSequence !== requestSequenceRef.current || map.current == null || map.current !== m;
 
     const attemptZoom = async () => {
-      if (isStale()) return;
-
-      const missingUuids = uuids.filter(uuid => !polygonBBoxCacheRef.current.has(uuid));
-      if (missingUuids.length > 0) {
-        try {
-          const geojson = await fetchMultiplePolygonsGeoJson(missingUuids, false);
-          if (isStale()) return;
-
-          const missingSet = new Set(missingUuids);
-          const featuresByUuid = new Map<string, GeoJSON.Feature[]>();
-          for (const uuid of missingUuids) featuresByUuid.set(uuid, []);
-
-          for (const feature of geojson.features) {
-            const uuid = pickPolygonGeometryIdFromProperties(feature.properties);
-            if (uuid == null || !missingSet.has(uuid)) continue;
-            featuresByUuid.get(uuid)?.push(feature);
-          }
-
-          for (const uuid of missingUuids) {
-            polygonBBoxCacheRef.current.set(uuid, computeBBoxFromFeatures(featuresByUuid.get(uuid) ?? []));
-          }
-        } catch (error) {
-          if (isStale()) return;
-          Log.warn("usePolygonSelectionZoom: failed to fetch selected polygon geometries", error);
-        }
+      const zoomed = await zoomToUuids(uuids, m, isStale);
+      if (zoomed) {
+        lastZoomedSelectionRef.current = selectionKey;
       }
-
-      let bbox = mergeBBoxes(
-        uuids.flatMap(uuid => {
-          const cached = polygonBBoxCacheRef.current.get(uuid);
-          return cached == null ? [] : [cached];
-        })
-      );
-
-      if (bbox == null) {
-        bbox = computeBBoxFromCentroids(uuids, sitePolygonData);
-      }
-
-      if (isStale()) return;
-
-      if (bbox == null) {
-        return;
-      }
-
-      fitMapToBBox(m, bbox);
-      lastZoomedSelectionRef.current = selectionKey;
     };
 
     if (m.loaded()) {
@@ -384,7 +374,40 @@ export function usePolygonSelectionZoom({
       m.off("idle", attemptZoom);
       requestSequenceRef.current += 1;
     };
-  }, [map, styleReady, sourcesAdded, selectedPolygonUuids, sitePolygonData]);
+  }, [map, styleReady, sourcesAdded, selectedPolygonUuids, zoomToUuids]);
+
+  useEffect(() => {
+    if (focusPolygonUuid == null || focusPolygonUuid === "") return;
+
+    if (!styleReady || !sourcesAdded || map.current == null) return;
+
+    const m = map.current;
+    const requestSequence = requestSequenceRef.current + 1;
+    requestSequenceRef.current = requestSequence;
+    let cancelled = false;
+
+    const isStale = () =>
+      cancelled || requestSequence !== requestSequenceRef.current || map.current == null || map.current !== m;
+
+    const attemptZoom = async () => {
+      await zoomToUuids([focusPolygonUuid], m, isStale);
+      if (!isStale()) {
+        onFocusPolygonConsumed?.();
+      }
+    };
+
+    if (m.loaded()) {
+      void attemptZoom();
+    } else {
+      m.once("idle", attemptZoom);
+    }
+
+    return () => {
+      cancelled = true;
+      m.off("idle", attemptZoom);
+      requestSequenceRef.current += 1;
+    };
+  }, [map, styleReady, sourcesAdded, focusPolygonUuid, onFocusPolygonConsumed, zoomToUuids]);
 }
 
 type UsePolygonTableHighlightPointerParams = {
@@ -404,14 +427,14 @@ export function usePolygonTableHighlightPointer({
   sourcesAdded,
   highlight
 }: UsePolygonTableHighlightPointerParams): void {
-  const onHoveredPolygonFromMap = highlight?.onHoveredPolygonFromMap;
+  const isHighlightActive = highlight != null;
   const onPolygonClickedFromMap = highlight?.onPolygonClickedFromMap;
   const lastReportedRef = useRef<string | null>(null);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (
-      onHoveredPolygonFromMap == null ||
+      !isHighlightActive ||
       !styleReady ||
       !sourcesAdded ||
       map.current == null ||
@@ -442,7 +465,7 @@ export function usePolygonTableHighlightPointer({
     const flushHover = (uuid: string | null) => {
       if (lastReportedRef.current === uuid) return;
       lastReportedRef.current = uuid;
-      onHoveredPolygonFromMap(uuid);
+      setPolygonTableHoveredUuid(uuid);
     };
 
     const onMove = (e: MapMouseEvent) => {
@@ -483,8 +506,8 @@ export function usePolygonTableHighlightPointer({
       }
       if (lastReportedRef.current != null) {
         lastReportedRef.current = null;
-        onHoveredPolygonFromMap(null);
+        setPolygonTableHoveredUuid(null);
       }
     };
-  }, [map, draw, styleReady, styleVersion, sourcesAdded, onHoveredPolygonFromMap, onPolygonClickedFromMap]);
+  }, [map, draw, styleReady, styleVersion, sourcesAdded, isHighlightActive, onPolygonClickedFromMap]);
 }

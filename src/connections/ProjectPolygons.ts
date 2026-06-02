@@ -4,7 +4,8 @@ import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
   createProjectPolygon,
   deleteProjectPolygon as deleteProjectPolygonEndpoint,
-  getProjectPolygon,
+  getProjectPolygons,
+  GetProjectPolygonsQueryParams,
   updateProjectPolygon,
   uploadProjectPolygonFile
 } from "@/generated/v3/researchService/researchServiceComponents";
@@ -29,9 +30,9 @@ const createProjectPolygonConnection = v3Resource("projectPolygons", createProje
 export const useCreateProjectPolygon = connectionHook(createProjectPolygonConnection);
 export const loadCreateProjectPolygon = connectionLoader(createProjectPolygonConnection);
 
-const getProjectPolygonConnection = v3Resource("projectPolygons", getProjectPolygon)
-  .singleByFilter<ProjectPolygonDto, { projectPitchUuid?: string }>(props => ({
-    queryParams: props.filter
+const getProjectPolygonsConnection = v3Resource("projectPolygons", getProjectPolygons)
+  .index<ProjectPolygonDto, GetProjectPolygonsQueryParams>(({ projectPitchUuid }) => ({
+    queryParams: { projectPitchUuid }
   }))
   .enabledProp()
   .isLoading()
@@ -43,8 +44,8 @@ const getProjectPolygonConnection = v3Resource("projectPolygons", getProjectPoly
   })
   .buildConnection();
 
-export const useProjectPolygonByPitch = connectionHook(getProjectPolygonConnection);
-export const loadProjectPolygonByPitch = connectionLoader(getProjectPolygonConnection);
+export const useProjectPolygonsByPitch = connectionHook(getProjectPolygonsConnection);
+export const loadProjectPolygonsByPitch = connectionLoader(getProjectPolygonsConnection);
 
 const deleteProjectPolygonBase = deleterAsync("projectPolygons", deleteProjectPolygonEndpoint, (polyUuid: string) => ({
   pathParams: { polyUuid }
@@ -53,7 +54,7 @@ const deleteProjectPolygonBase = deleterAsync("projectPolygons", deleteProjectPo
 const clearProjectPolygonGetPending = (projectPitchUuid: string | null | undefined): void => {
   if (projectPitchUuid == null) return;
 
-  const getUrl = resolveUrl(getProjectPolygon.url, {
+  const getUrl = resolveUrl(getProjectPolygons.url, {
     queryParams: { projectPitchUuid }
   });
   ApiSlice.clearPending(getUrl, "GET");
@@ -99,13 +100,13 @@ export const createProjectPolygonWithReplace = async (
   attributes: CreateProjectPolygonAttributesDto,
   projectPitchUuid: string
 ): Promise<ProjectPolygonDto> => {
-  const existingPolygon = await loadProjectPolygonByPitch({
-    filter: { projectPitchUuid },
+  const existingPolygon = await loadProjectPolygonsByPitch({
+    projectPitchUuid,
     enabled: true
   });
 
-  if (existingPolygon.data?.polygonUuid) {
-    await deleteProjectPolygonBase(existingPolygon.data.polygonUuid);
+  if (existingPolygon.data?.[0]?.polygonUuid) {
+    await deleteProjectPolygonBase(existingPolygon.data?.[0]?.polygonUuid);
   }
 
   const result = await createProjectPolygonResource(attributes);

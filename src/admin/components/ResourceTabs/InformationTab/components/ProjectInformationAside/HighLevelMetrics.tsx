@@ -2,6 +2,7 @@ import { Card, Divider, Stack, SxProps, Theme, Typography } from "@mui/material"
 import { FC } from "react";
 import { Labeled, NumberField } from "react-admin";
 
+import { SUMMARY_ANR_ROLLUP_HIDE } from "@/constants/summaryRollupVisibility";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 
@@ -39,7 +40,7 @@ const HighLevelMetics: FC = () => {
         <Labeled label="Trees Planted" sx={inlineLabelSx}>
           <NumberField source="treesPlantedCount" emptyText="0" />
         </Labeled>
-        <ContextCondition frameworksHide={[Framework.PPC]}>
+        <ContextCondition frameworksHide={SUMMARY_ANR_ROLLUP_HIDE}>
           <Labeled label="Tree Regenerating" sx={inlineLabelSx}>
             <NumberField source="treesRegeneratingSpeciesCount" emptyText="0" />
           </Labeled>

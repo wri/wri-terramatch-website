@@ -16,7 +16,6 @@ import {
   POLYGON_INFORMATION_REQUIRED,
   POLYGON_PENDING_APPROVAL
 } from "@/constants/polygonStatuses";
-import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -24,7 +23,6 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 import { parsePolygonDataV3, storePolygon } from "../utils";
-import LoadingMap from "./LoadingMap";
 
 export type PolygonsMapEntityModel = {
   uuid: string;
@@ -42,10 +40,10 @@ interface PolygonsMapProps {
   onRefetchPolygons: () => void | Promise<void>;
   className?: string;
   polygonTableHighlight?: {
-    hoveredPolygonUuid: string | null;
     selectedPolygonUuids: string[];
-    onHoveredPolygonFromMap?: (uuid: string | null) => void;
     onPolygonClickedFromMap?: (uuid: string) => void;
+    focusPolygonUuid?: string | null;
+    onFocusPolygonConsumed?: () => void;
   };
   overlapPolygons?: OverlapPolygonPoint[];
 }
@@ -162,40 +160,36 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   }, [polygons]);
 
   return (
-    <AnrMapOverlayProvider>
-      {/* TODO: Add loading state for polygons */}
-      <LoadingMap text="Loading Polygons" loading={true} />
-      <MapContainer
-        championsMap={true}
-        mapFunctions={mapFunctions}
-        polygonsData={polygonDataMap}
-        bbox={extentBbox}
-        tooltipType={type === "sites" ? "edit" : "goTo"}
-        showPopups
-        showLegend
-        siteData={true}
-        status={type === "sites" && !disabledPolygonPanel && editPolygon.isOpen}
-        validationType={
-          type === "sites" && !disabledPolygonPanel
-            ? editPolygon.isOpen
-              ? "individualValidation"
-              : "bulkValidation"
-            : ""
-        }
-        record={entityModel}
-        className={classNames("h-full w-full flex-1", className)}
-        polygonsExists={polygons.length > 0}
-        setPolygonFromMap={setPolygonFromMap}
-        polygonFromMap={polygonFromMap}
-        shouldBboxZoom={!shouldRefetchPolygonData}
-        mediaFiles={mediaFiles}
-        sitePolygonData={sitePolygonDataV3}
-        disabledPolygonPanel={disabledPolygonPanel}
-        autoEditPolygon={editPolygon.isOpen}
-        polygonTableHighlight={polygonTableHighlight}
-        overlapPolygons={overlapPolygons}
-      />
-    </AnrMapOverlayProvider>
+    <MapContainer
+      championsMap={true}
+      mapFunctions={mapFunctions}
+      polygonsData={polygonDataMap}
+      bbox={extentBbox}
+      tooltipType={type === "sites" ? "edit" : "goTo"}
+      showPopups
+      showLegend
+      siteData={true}
+      status={type === "sites" && !disabledPolygonPanel && editPolygon.isOpen}
+      validationType={
+        type === "sites" && !disabledPolygonPanel
+          ? editPolygon.isOpen
+            ? "individualValidation"
+            : "bulkValidation"
+          : ""
+      }
+      record={entityModel}
+      className={classNames("h-full w-full flex-1", className)}
+      polygonsExists={polygons.length > 0}
+      setPolygonFromMap={setPolygonFromMap}
+      polygonFromMap={polygonFromMap}
+      shouldBboxZoom={!shouldRefetchPolygonData}
+      mediaFiles={mediaFiles}
+      sitePolygonData={sitePolygonDataV3}
+      disabledPolygonPanel={disabledPolygonPanel}
+      autoEditPolygon={editPolygon.isOpen}
+      polygonTableHighlight={polygonTableHighlight}
+      overlapPolygons={overlapPolygons}
+    />
   );
 };
 

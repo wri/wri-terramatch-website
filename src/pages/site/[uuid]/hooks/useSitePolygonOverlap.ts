@@ -5,6 +5,8 @@ import { useAllSiteValidations } from "@/connections/Validation";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 
+import { hasOverlapValidationFailure } from "./overlapFix.utils";
+
 type UseSitePolygonOverlapParams = {
   siteUuid: string;
   polygonsData: SitePolygonLightDto[];
@@ -39,11 +41,17 @@ export const useSitePolygonOverlap = ({ siteUuid, polygonsData }: UseSitePolygon
     );
     const overlapPolygonUuids = new Set(
       overlapValidations
+        .filter(hasOverlapValidationFailure)
         .map(validation => validation.polygonUuid)
         .filter((id): id is string => id != null && id !== "" && currentPolygonUuids.has(id))
     );
     if (overlapPolygonUuids.size === 0) {
-      return { polygonsWithOverlapCount: 0, overlapPolygons: [] as OverlapPolygonPoint[] };
+      return {
+        polygonsWithOverlapCount: 0,
+        overlapPolygons: [] as OverlapPolygonPoint[],
+        overlapValidations,
+        fetchOverlapValidations
+      };
     }
 
     const overlapPolygons: OverlapPolygonPoint[] = [];
@@ -54,6 +62,11 @@ export const useSitePolygonOverlap = ({ siteUuid, polygonsData }: UseSitePolygon
       overlapPolygons.push({ polygonUuid: uuid, lat: polygon.lat, lng: polygon.long });
     }
 
-    return { polygonsWithOverlapCount: overlapPolygons.length, overlapPolygons };
-  }, [overlapValidations, polygonsData]);
+    return {
+      polygonsWithOverlapCount: overlapPolygons.length,
+      overlapPolygons,
+      overlapValidations,
+      fetchOverlapValidations
+    };
+  }, [overlapValidations, polygonsData, fetchOverlapValidations]);
 };

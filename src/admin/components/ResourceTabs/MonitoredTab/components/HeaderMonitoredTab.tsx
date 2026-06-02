@@ -77,8 +77,8 @@ use the "Rerun existing analysis" option in the analysis modal. This will overwr
 
   return (
     <div className="flex w-full items-center justify-between rounded-xl px-6 py-3 shadow-monitored">
-      <div className="flex items-baseline gap-9">
-        <div className="w-[35vw]">
+      <div className="flex items-baseline gap-6">
+        <div className="w-[42vw]">
           <div className="flex items-center justify-between">
             <Text variant="text-14-semibold" className="flex items-center gap-1">
               Polygon Overview
@@ -90,7 +90,7 @@ use the "Rerun existing analysis" option in the analysis modal. This will overwr
               ) : null}
             </div>
           </div>
-          <div className="w-[35vw] pt-2">
+          <div className="w-[42vw] pt-2">
             <LinearProgressBarMonitored data={headerBarPolygonStatus} />
           </div>
         </div>
