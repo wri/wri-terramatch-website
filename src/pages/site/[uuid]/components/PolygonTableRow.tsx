@@ -206,6 +206,14 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   );
 };
 
-export const PolygonRow = memo(PolygonRowComponent);
+const polygonRowPropsAreEqual = (prev: PolygonRowProps, next: PolygonRowProps) =>
+  prev.row === next.row &&
+  prev.isSelected === next.isSelected &&
+  prev.isHovered === next.isHovered &&
+  prev.rowProps === next.rowProps &&
+  prev.onHover === next.onHover &&
+  prev.onSelectChange === next.onSelectChange;
+
+export const PolygonRow = memo(PolygonRowComponent, polygonRowPropsAreEqual);
 
 export default PolygonRow;

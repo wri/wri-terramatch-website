@@ -32,9 +32,9 @@ import {
   usePolygonEditDrawer
 } from "@/context/polygonEditDrawer.provider";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
+import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
-import { getThemedColor } from "@/lib/theme";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
@@ -62,7 +62,10 @@ import UploadPolygons from "../components/Modals/UploadPolygons";
 import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import PolygonBulkEditDrawer from "../components/PolygonBulkEditDrawer";
-import { PolygonRow, PolygonTableRow } from "../components/PolygonTableRow";
+import { PolygonTableInteractionActionsProvider } from "../components/polygonTableInteractionContext";
+import { PolygonTableRow } from "../components/PolygonTableRow";
+import { renderPolygonTableRow } from "../components/PolygonTableRowConnected";
+import { getPolygonsTableStyles } from "../components/polygonTableStyles";
 import PolygonToolbar from "../components/PolygonToolbar";
 import {
   buildOverlapFixResultPolygons,
@@ -131,7 +134,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [isStickyActive, setIsStickyActive] = useState(false);
   const [isDownloadingSelectedPolygons, setIsDownloadingSelectedPolygons] = useState(false);
   const [isBulkUpdatingPolygons, setIsBulkUpdatingPolygons] = useState(false);
-  const [hoveredPolygonUuid, setHoveredPolygonUuid] = useState<string | null>(null);
   const {
     polygonSearch,
     polygonFilters,
@@ -185,24 +187,38 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const {
     selectedSitePolygons,
     selectedSitePolygonUuids,
-    selectedDownloadPolygonUuids,
+    selectedGeometryPolygonUuids,
     selectedSubmittablePolygons,
     selectedSubmittablePolygonUuids
   } = useMemo(() => {
-    const sitePolygons = polygonsData.filter(polygon => selectedRowIds.has(polygon.polygonUuid ?? polygon.uuid ?? ""));
-    const submittablePolygons = sitePolygons.filter(
-      polygon =>
-        polygon.uuid != null && polygon.status !== POLYGON_PENDING_APPROVAL && polygon.status !== POLYGON_APPROVED
-    );
+    const sitePolygons: typeof polygonsData = [];
+    const selectedSitePolygonUuids: string[] = [];
+    const selectedGeometryPolygonUuids: string[] = [];
+    const submittablePolygons: typeof polygonsData = [];
+
+    for (const polygon of polygonsData) {
+      const rowId = polygon.polygonUuid ?? polygon.uuid ?? "";
+      if (!selectedRowIds.has(rowId)) {
+        continue;
+      }
+
+      sitePolygons.push(polygon);
+
+      if (polygon.uuid != null && polygon.uuid.length > 0) {
+        selectedSitePolygonUuids.push(polygon.uuid);
+      }
+      if (polygon.polygonUuid != null && polygon.polygonUuid.length > 0) {
+        selectedGeometryPolygonUuids.push(polygon.polygonUuid);
+      }
+      if (polygon.uuid != null && polygon.status !== POLYGON_PENDING_APPROVAL && polygon.status !== POLYGON_APPROVED) {
+        submittablePolygons.push(polygon);
+      }
+    }
 
     return {
       selectedSitePolygons: sitePolygons,
-      selectedSitePolygonUuids: sitePolygons
-        .map(polygon => polygon.uuid)
-        .filter((uuid): uuid is string => uuid != null && uuid.length > 0),
-      selectedDownloadPolygonUuids: sitePolygons
-        .map(polygon => polygon.polygonUuid)
-        .filter((uuid): uuid is string => uuid != null && uuid.length > 0),
+      selectedSitePolygonUuids,
+      selectedGeometryPolygonUuids,
       selectedSubmittablePolygons: submittablePolygons,
       selectedSubmittablePolygonUuids: submittablePolygons
         .map(polygon => polygon.uuid)
@@ -290,6 +306,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     setSelectedRowIds(new Set<string>());
   }, [setSelectedRowIds]);
 
+  const handleOpenDeletePolygonModal = useCallback(() => {
+    setDeletePolygonModal(true);
+  }, []);
+
   const handleBulkDraw = useCallback(() => {
     openPolygonEditDrawerForSitePolygon();
   }, []);
@@ -304,7 +324,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       showProgressToast(t, t("Deleting Polygons..."));
       await bulkDeleteSitePolygons(selectedSitePolygonUuids);
       closeMapPopups();
-      setHoveredPolygonUuid(null);
+      setPolygonTableHoveredUuid(null);
       clearTableSelection();
       invalidatePolygonMapTiles();
       await refetchPolygons();
@@ -388,7 +408,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       );
       clearTableSelection();
       closeMapPopups();
-      setHoveredPolygonUuid(null);
+      setPolygonTableHoveredUuid(null);
       showCompleteToast(t("Overlap Fix Complete"));
     } catch (error) {
       Log.error("Failed to fix selected polygon overlaps:", error);
@@ -431,7 +451,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       await bulkUpdateSitePolygonStatus(selectedSubmittablePolygonUuids, POLYGON_PENDING_APPROVAL as PolygonStatus, "");
       pruneSitePolygonsCache();
       closeMapPopups();
-      setHoveredPolygonUuid(null);
+      setPolygonTableHoveredUuid(null);
       clearTableSelection();
       invalidatePolygonMapTiles();
       setSubmittedPolygonNames(submittedNames);
@@ -458,7 +478,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   ]);
 
   const handleBulkDownload = useCallback(async () => {
-    if (selectedDownloadPolygonUuids.length === 0) {
+    if (selectedGeometryPolygonUuids.length === 0) {
       showToast({
         label: t("Could not find selected polygons to download"),
         type: "error",
@@ -475,7 +495,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         selectedSitePolygons.length === 1
           ? selectedSitePolygons[0].name ?? "polygon"
           : `${site.name ?? "polygons"}-${new Date().toISOString().slice(0, 10)}`;
-      await downloadMultiplePolygonsGeoJson(selectedDownloadPolygonUuids, filename);
+      await downloadMultiplePolygonsGeoJson(selectedGeometryPolygonUuids, filename);
       showCompleteToast(t("Download Complete"));
     } catch (error) {
       Log.error("Failed to download selected polygons:", error);
@@ -488,7 +508,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     } finally {
       setIsDownloadingSelectedPolygons(false);
     }
-  }, [selectedDownloadPolygonUuids, selectedSitePolygons, site.name, t]);
+  }, [selectedGeometryPolygonUuids, selectedSitePolygons, site.name, t]);
+
+  const handleBulkDownloadClick = useCallback(() => {
+    void handleBulkDownload();
+  }, [handleBulkDownload]);
 
   const openPolygonEditDrawerForRow = useCallback(
     (row: PolygonTableRow) => {
@@ -521,7 +545,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         showProgressToast(t, t("Saving Changes..."));
         await bulkUpdateSitePolygonAttributes(selectedSitePolygonUuids, attributeChanges);
         closeMapPopups();
-        setHoveredPolygonUuid(null);
+        setPolygonTableHoveredUuid(null);
         clearTableSelection();
         invalidatePolygonMapTiles();
         setShowBulkEditDrawer(false);
@@ -573,15 +597,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const polygonTableHighlight = useMemo(
     () => ({
-      hoveredPolygonUuid,
       selectedPolygonUuids: suppressMapSelectionHighlight ? [] : selectedPolygonUuids,
-      onHoveredPolygonFromMap: setHoveredPolygonUuid,
       onPolygonClickedFromMap: handlePolygonClickedFromMap,
       focusPolygonUuid,
       onFocusPolygonConsumed: handleFocusPolygonConsumed
     }),
     [
-      hoveredPolygonUuid,
       selectedPolygonUuids,
       suppressMapSelectionHighlight,
       handlePolygonClickedFromMap,
@@ -591,7 +612,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   );
 
   const handleClearHover = useCallback(() => {
-    setHoveredPolygonUuid(null);
+    setPolygonTableHoveredUuid(null);
   }, []);
 
   const { selectedTreesPlanted, selectedRestorationAreaHa } = useMemo(
@@ -611,67 +632,14 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const shouldShowNoResults = !isLoadingPolygons && polygonRows.length === 0;
 
-  const selectableRenderRow = useCallback(
-    (row: PolygonTableRow, rowProps?: Record<string, unknown>) => (
-      <PolygonRow
-        row={row}
-        rowProps={rowProps}
-        isSelected={selectedRowIds.has(row.id)}
-        isHovered={hoveredPolygonUuid === row.id}
-        onHover={setHoveredPolygonUuid}
-        onSelectChange={handleRowSelected}
-      />
-    ),
-    [handleRowSelected, hoveredPolygonUuid, selectedRowIds]
-  );
+  useSyncPolygonTableSelectionStore(selectedRowIds);
 
-  const getPolygonsTableStyles = (isStickyTableActive: boolean) => ({
-    "& table td": { height: "3rem" },
-    "& table th:first-of-type": {
-      position: "sticky",
-      left: 0,
-      zIndex: 2,
-      background: getThemedColor("neutral", 200)
-    },
-    "& table td:first-of-type": {
-      position: "sticky",
-      left: 0,
-      zIndex: 2,
-      background: getThemedColor("neutral", 100),
-      transition: "background-color 0.15s ease-in-out"
-    },
-    "& table th:nth-of-type(2)": {
-      position: "sticky",
-      left: "3rem",
-      zIndex: 2,
-      background: getThemedColor("neutral", 200),
-      padding: 0
-    },
-    "& table td:nth-of-type(2)": {
-      position: "sticky",
-      left: "3rem",
-      zIndex: 2,
-      background: getThemedColor("neutral", 100),
-      padding: 0,
-      transition: "background-color 0.15s ease-in-out"
-    },
-    "& table tbody tr:hover td:nth-of-type(2), & table tbody tr:hover td:first-of-type, & table tbody tr[aria-selected='true'] td:nth-of-type(2), & table tbody tr[aria-selected='true'] td:first-of-type":
-      {
-        background: getThemedColor("primary", 100)
-      },
-    "& table th:nth-of-type(2) > div, & table td:nth-of-type(2) div": {
-      position: "relative",
-      padding: "0.75rem",
-      display: "flex",
-      alignItems: "center",
-      height: "100%"
-    },
-    ...(isStickyTableActive && {
-      "& table th:nth-of-type(2), & table td:nth-of-type(2)": {
-        boxShadow: `inset -0.063rem 0 0 0 ${getThemedColor("neutral", 400)}`
-      }
-    })
-  });
+  const polygonsTableStyles = useMemo(() => getPolygonsTableStyles(isStickyActive), [isStickyActive]);
+
+  const bulkToolbarSubmitLabel = useMemo(
+    () => (hasSelectedOverlapFailure ? t("Fix Overlap") : t("Submit")),
+    [hasSelectedOverlapFailure, t]
+  );
 
   useEffect(() => {
     const container = tableContainerRef.current?.children[0]?.children[0];
@@ -745,14 +713,14 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           visible={hasPolygonSelection}
           itemCount={selectedRows.length}
           isBulkEditDrawerOpen={showBulkEditDrawer}
-          submitLabel={hasSelectedOverlapFailure ? t("Fix Overlap") : t("Submit")}
+          submitLabel={bulkToolbarSubmitLabel}
           polygons={selectedRows}
           polygonValidations={polygonValidations}
-          selectedPolygonUuids={selectedDownloadPolygonUuids}
+          selectedGeometryPolygonUuids={selectedGeometryPolygonUuids}
           isDownloading={isDownloadingSelectedPolygons}
           onCancel={clearTableSelection}
-          onDelete={() => setDeletePolygonModal(true)}
-          onDownload={() => void handleBulkDownload()}
+          onDelete={handleOpenDeletePolygonModal}
+          onDownload={handleBulkDownloadClick}
           onEdit={handleBulkEditDetails}
           onViewPolygonDetails={openPolygonEditDrawerForRow}
           onRunValidation={handleRunValidation}
@@ -761,13 +729,15 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           canAutoFixOverlap={hasFixableSelectedOverlap}
         />
 
-        <PolygonBulkEditDrawer
-          selectedPolygons={selectedRows}
-          open={showBulkEditDrawer}
-          onOpenChange={setShowBulkEditDrawer}
-          isSaving={isBulkUpdatingPolygons}
-          onSave={handleBulkEditSave}
-        />
+        {showBulkEditDrawer && (
+          <PolygonBulkEditDrawer
+            selectedPolygons={selectedRows}
+            open
+            onOpenChange={setShowBulkEditDrawer}
+            isSaving={isBulkUpdatingPolygons}
+            onSave={handleBulkEditSave}
+          />
+        )}
 
         <UploadPolygons
           open={showUploadModal}
@@ -780,13 +750,15 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             setUploadErrorModal(true);
           }}
         />
-        <SubmitPolygons
-          open={showSubmitPolygonsModal}
-          onOpenChange={setSubmitPolygonsModal}
-          eligibleCount={selectedSubmittablePolygons.length}
-          totalCount={selectedSitePolygons.length}
-          onSubmit={handleBulkSubmit}
-        />
+        {showSubmitPolygonsModal && (
+          <SubmitPolygons
+            open
+            onOpenChange={setSubmitPolygonsModal}
+            eligibleCount={selectedSubmittablePolygons.length}
+            totalCount={selectedSitePolygons.length}
+            onSubmit={handleBulkSubmit}
+          />
+        )}
         {showPolygonSubmittedModal && submittedPolygonNames.length > 0 && (
           <PolygonSubmitted
             open={showPolygonSubmittedModal}
@@ -794,12 +766,14 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             polygons={submittedPolygonNames}
           />
         )}
-        <DeletePolygon
-          open={showDeletePolygonModal}
-          onOpenChange={setDeletePolygonModal}
-          polygons={selectedRows}
-          onDelete={handleBulkDelete}
-        />
+        {showDeletePolygonModal && (
+          <DeletePolygon
+            open
+            onOpenChange={setDeletePolygonModal}
+            polygons={selectedRows}
+            onDelete={handleBulkDelete}
+          />
+        )}
         {showOverlapFixModal &&
           (overlapFixResults.polygonsFixed.length > 0 || overlapFixResults.polygonsNotFixed.length > 0) && (
             <OverlapFix
@@ -919,20 +893,22 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                 />
               )}
             </Flex>
-            <Box onMouseLeave={handleClearHover}>
-              <Table<PolygonTableRow>
-                css={getPolygonsTableStyles(isStickyActive)}
-                containerRef={tableContainerRef}
-                data={polygonRows}
-                columns={columns}
-                showPagination
-                pageSize={10}
-                selectable
-                selectedRows={selectedRows}
-                onAllItemsSelected={onAllItemsSelected}
-                renderRow={selectableRenderRow}
-              />
-            </Box>
+            <PolygonTableInteractionActionsProvider onSelectChange={handleRowSelected}>
+              <Box onMouseLeave={handleClearHover}>
+                <Table<PolygonTableRow>
+                  css={polygonsTableStyles}
+                  containerRef={tableContainerRef}
+                  data={polygonRows}
+                  columns={columns}
+                  showPagination
+                  pageSize={10}
+                  selectable
+                  selectedRows={selectedRows}
+                  onAllItemsSelected={onAllItemsSelected}
+                  renderRow={renderPolygonTableRow}
+                />
+              </Box>
+            </PolygonTableInteractionActionsProvider>
           </>
         )}
       </PageContent>

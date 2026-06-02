@@ -91,9 +91,7 @@ export interface BaseMapProps {
   /** Champions (non-admin) map layout and controls; omit or false for the default map. */
   championsMap?: boolean;
   polygonTableHighlight?: {
-    hoveredPolygonUuid: string | null;
     selectedPolygonUuids: string[];
-    onHoveredPolygonFromMap?: (uuid: string | null) => void;
     onPolygonClickedFromMap?: (uuid: string) => void;
     focusPolygonUuid?: string | null;
     onFocusPolygonConsumed?: () => void;
@@ -279,7 +277,6 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     sitePolygonUuid: anrMapOverlay?.sitePolygonUuidForApi ?? "",
     enabled: anrPlotGeometryFetchEnabled
   });
-  console.log("console.log polygonFromMap", entityData);
   const polygonBbox = useBoundingBox(
     entityData?.entityName === "project-pitch"
       ? { projectPitchUuid: entityData?.entityUUID }

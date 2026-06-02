@@ -1,18 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import type { BaseRow } from "./tableUtils";
 
 export const useTableSelection = <T extends BaseRow>(initialSelectable: boolean = false, sortedData?: T[]) => {
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string | number>>(new Set());
-  const [selectedRows, setSelectedRows] = useState<T[]>([]);
 
-  useEffect(() => {
-    if (sortedData != null && sortedData.length > 0) {
-      const syncedRows = sortedData.filter(row => selectedRowIds.has(row.id));
-      setSelectedRows(syncedRows);
-    } else {
-      setSelectedRows([]);
+  const selectedRows = useMemo(() => {
+    if (sortedData == null || sortedData.length === 0) {
+      return [];
     }
+    return sortedData.filter(row => selectedRowIds.has(row.id));
   }, [sortedData, selectedRowIds]);
 
   const handleRowSelected = useCallback((rowData: T, checked: boolean) => {
@@ -38,7 +35,6 @@ export const useTableSelection = <T extends BaseRow>(initialSelectable: boolean 
   return {
     selectedRows,
     selectedRowIds,
-    setSelectedRows,
     setSelectedRowIds,
     handleRowSelected,
     onAllItemsSelected,
