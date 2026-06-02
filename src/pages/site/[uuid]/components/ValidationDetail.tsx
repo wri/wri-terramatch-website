@@ -35,13 +35,13 @@ const ValidationDetail: FC<ValidationDetailProps> = ({ failedCount, totalItems, 
           const messages = getFormatedExtraInfo(item.extra_info, item.id);
           return (
             <List.Item key={item.id}>
-              <List.Indicator asChild color={severityToColor(severity)} boxSize={3}>
+              <List.Indicator asChild color={severityToColor(severity)} boxSize={"max-content"}>
                 {severity === "success" ? (
-                  <CheckApprovedIcon />
+                  <CheckApprovedIcon maxWidth={3} maxHeight={3} />
                 ) : severity === "warning" ? (
-                  <InformationRequiredIcon />
+                  <InformationRequiredIcon maxWidth={3} maxHeight={3} />
                 ) : (
-                  <RejectedIcon />
+                  <RejectedIcon maxWidth={3} maxHeight={3} />
                 )}
               </List.Indicator>
               <Box>
