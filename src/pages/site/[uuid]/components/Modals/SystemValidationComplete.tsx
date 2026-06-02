@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
@@ -28,15 +28,6 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
   const handleClose = useCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
-
-  useEffect(() => {
-    if (!open) {
-      document.body.style.pointerEvents = "";
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-      document.documentElement.removeAttribute("data-scroll-locked");
-    }
-  }, [open]);
 
   const { approvalValidations, partiallyPassedValidations, failedValidations } = useMemo(() => {
     const approval: PolygonTableRow[] = [];

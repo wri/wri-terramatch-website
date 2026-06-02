@@ -762,14 +762,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             polygons={submittedPolygonNames}
           />
         )}
-        {showDeletePolygonModal && (
-          <DeletePolygon
-            open
-            onOpenChange={setDeletePolygonModal}
-            polygons={selectedRows}
-            onDelete={handleBulkDelete}
-          />
-        )}
+        <DeletePolygon
+          open={showDeletePolygonModal}
+          onOpenChange={setDeletePolygonModal}
+          polygons={selectedRows}
+          onDelete={handleBulkDelete}
+        />
         {showOverlapFixModal &&
           (overlapFixResults.polygonsFixed.length > 0 || overlapFixResults.polygonsNotFixed.length > 0) && (
             <OverlapFix
