@@ -71,7 +71,6 @@ const RHFMap = ({
     projectPitchUuid: entityUUID,
     enabled
   });
-  console.log("console.log", projectPolygons);
 
   const bbox = useBoundingBox(
     entityName == "project-pitch" ? { projectPitchUuid: entityUUID } : { polygonUuid: polygonFromMap?.uuid }

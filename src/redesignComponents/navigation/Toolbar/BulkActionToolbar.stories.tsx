@@ -17,30 +17,23 @@ const meta: Meta<typeof BulkActionToolbar> = {
     )
   ],
   argTypes: {
-    primaryButtonProps: {
-      description: "Configuration for the primary button"
-    },
-    secondaryButtonProps: {
-      description: "Configuration for the secondary button"
-    },
-    tertiaryButtonProps: {
-      description: "Configuration for the tertiary button"
-    },
-    ButtonCancel: {
-      description: "Configuration for the cancel button on the left"
-    },
-    ButtonDelete: {
-      description: "Configuration for the delete button, styled in error colors by default"
-    },
-    submitButtonProps: {
-      description: "Configuration for the submit button"
-    },
-    items: {
+    selectedCount: {
       description: "Number of items selected"
     },
-    tooltipContent: {
-      description: "Tooltip content for the submit button",
-      type: "string"
+    cancelAction: {
+      description: "Configuration for the cancel button on the left"
+    },
+    deleteAction: {
+      description: "Configuration for the delete button"
+    },
+    actions: {
+      description: "Ordered secondary actions rendered between delete and the primary action"
+    },
+    primaryAction: {
+      description: "Filled primary action (e.g. submit)"
+    },
+    infoTooltip: {
+      description: "Optional tooltip beside the primary action"
     }
   }
 };
@@ -50,30 +43,37 @@ type Story = StoryObj<typeof BulkActionToolbar>;
 
 export const Default: Story = {
   args: {
-    ButtonCancel: {
+    selectedCount: 3,
+    cancelAction: {
       children: "Cancel",
       onClick: () => console.log("Cancel clicked")
     },
-    primaryButtonProps: {
-      children: "Label",
-      onClick: () => console.log("Primary action clicked")
-    },
-    secondaryButtonProps: {
-      children: "Label",
-      onClick: () => console.log("Secondary action clicked")
-    },
-    tertiaryButtonProps: {
-      children: "Label",
-      onClick: () => console.log("Tertiary action clicked")
-    },
-    submitButtonProps: {
-      children: "Label",
-      onClick: () => console.log("Quantity action clicked")
-    },
-    items: "XXX",
-    ButtonDelete: {
+    deleteAction: {
+      id: "delete",
+      tone: "danger",
       children: "Delete",
       onClick: () => console.log("Delete clicked")
+    },
+    actions: [
+      {
+        id: "download",
+        children: "Download",
+        onClick: () => console.log("Download clicked")
+      },
+      {
+        id: "validate",
+        children: "Run Validation",
+        onClick: () => console.log("Validate clicked")
+      },
+      {
+        id: "edit",
+        children: "Edit",
+        onClick: () => console.log("Edit clicked")
+      }
+    ],
+    primaryAction: {
+      children: "Submit",
+      onClick: () => console.log("Submit clicked")
     }
   }
 };
