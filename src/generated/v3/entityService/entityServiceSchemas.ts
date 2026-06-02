@@ -1126,7 +1126,7 @@ export type ProjectLightDto = {
   updatedAt: string;
   treesPlantedCount: number | null;
   /**
-   * Polygon data submission tracking
+   * Polygon submission status tracking
    */
   polygonDataSubmission:
     | "no-polygons-submitted"
@@ -1436,7 +1436,7 @@ export type ProjectFullDto = {
   updatedAt: string;
   treesPlantedCount: number | null;
   /**
-   * Polygon data submission tracking
+   * Polygon submission status tracking
    */
   polygonDataSubmission:
     | "no-polygons-submitted"
@@ -2418,7 +2418,7 @@ export type ProjectUpdateAttributes = {
    */
   isTest?: boolean;
   /**
-   * Polygon data submission tracking
+   * Polygon submission status tracking
    */
   polygonDataSubmission?:
     | "no-polygons-submitted"
