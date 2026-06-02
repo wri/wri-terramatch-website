@@ -84,7 +84,6 @@ const OverlapFix: FC<OverlapFixProps> = ({
     <Modal
       open={open}
       onClose={handleClose}
-      blocking
       size="large"
       header={
         <Flex className="w-full items-center justify-between">
