@@ -26,7 +26,6 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
       open={open}
       onClose={handleClose}
       size="medium"
-      blocking
       header={
         <b className="text-theme-neutral-800">{isSinglePolygon ? t("Polygon submitted") : t("Polygons submitted")}</b>
       }
@@ -74,6 +73,7 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
           buttons={[
             {
               id: "close",
+              className: "!w-fit",
               variant: "secondary",
               children: t("Close"),
               autoFocus: true,

@@ -36,7 +36,6 @@ const SubmitPolygons: FC<SubmitPolygonsProps> = ({ open, onOpenChange, eligibleC
       open={open}
       onClose={handleClose}
       size="medium"
-      blocking
       header={<b className="text-theme-neutral-800">{t("Submit polygons?")}</b>}
       content={
         <Box px={4}>
