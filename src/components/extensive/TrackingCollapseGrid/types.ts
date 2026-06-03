@@ -75,101 +75,109 @@ type TrackingLabelProperties = {
   summaryTotalPlural?: string;
 };
 
-const TRACKING_LABELS: { [k in TrackingType]: TrackingLabelProperties } = {
-  workdays: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Workday",
-    rowLabelPlural: "Workdays"
-  },
-  restorationPartners: {
-    sectionLabel: "Total Restoration",
-    rowLabelSingular: "Partner",
-    rowLabelPlural: "Partners"
-  },
-  jobs: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Job",
-    rowLabelPlural: "Jobs"
-  },
-  employees: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Employee",
-    rowLabelPlural: "Employees"
-  },
-  volunteers: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Volunteer",
-    rowLabelPlural: "Volunteers"
-  },
-  allBeneficiaries: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Beneficiary",
-    rowLabelPlural: "Beneficiaries"
-  },
-  trainingBeneficiaries: {
-    sectionLabel: "Total Training",
-    rowLabelSingular: "Beneficiary",
-    rowLabelPlural: "Beneficiaries"
-  },
-  indirectBeneficiaries: {
-    sectionLabel: "Total Indirect",
-    rowLabelSingular: "Beneficiary",
-    rowLabelPlural: "Beneficiaries"
-  },
-  associates: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Associate",
-    rowLabelPlural: "Associates"
-  },
-  elpBeneficiaries: {
-    sectionLabel: "Total ELP",
-    rowLabelSingular: "Beneficiary",
-    rowLabelPlural: "Beneficiaries"
-  },
-  livelihoodActivities: {
-    sectionLabel: "Total Livelihood Activity",
-    rowLabelSingular: "Beneficiary",
-    rowLabelPlural: "Beneficiaries"
-  },
-  treesHistorical: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Tree",
-    rowLabelPlural: "Trees"
-  },
-  treesGoal: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Tree",
-    rowLabelPlural: "Trees",
-    summaryTotalSingular: "Total Tree",
-    summaryTotalPlural: "Total Trees"
-  },
-  hectaresHistorical: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Hectare",
-    rowLabelPlural: "Hectares"
-  },
-  hectaresGoal: {
-    sectionLabel: "Total",
-    rowLabelSingular: "Hectare",
-    rowLabelPlural: "Hectares",
-    summaryTotalSingular: "Total Hectare",
-    summaryTotalPlural: "Total Hectares"
-  }
+const useTrackingLabelsTypes = (): { [k in TrackingType]: TrackingLabelProperties } => {
+  const t = useT();
+
+  return useMemo(
+    () => ({
+      workdays: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Workday"),
+        rowLabelPlural: t("Workdays")
+      },
+      restorationPartners: {
+        sectionLabel: t("Total Restoration"),
+        rowLabelSingular: t("Partner"),
+        rowLabelPlural: t("Partners")
+      },
+      jobs: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Job"),
+        rowLabelPlural: t("Jobs")
+      },
+      employees: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Employee"),
+        rowLabelPlural: t("Employees")
+      },
+      volunteers: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Volunteer"),
+        rowLabelPlural: t("Volunteers")
+      },
+      allBeneficiaries: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Beneficiary"),
+        rowLabelPlural: t("Beneficiaries")
+      },
+      trainingBeneficiaries: {
+        sectionLabel: t("Total Training"),
+        rowLabelSingular: t("Beneficiary"),
+        rowLabelPlural: t("Beneficiaries")
+      },
+      indirectBeneficiaries: {
+        sectionLabel: t("Total Indirect"),
+        rowLabelSingular: t("Beneficiary"),
+        rowLabelPlural: t("Beneficiaries")
+      },
+      associates: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Associate"),
+        rowLabelPlural: t("Associates")
+      },
+      elpBeneficiaries: {
+        sectionLabel: t("Total ELP"),
+        rowLabelSingular: t("Beneficiary"),
+        rowLabelPlural: t("Beneficiaries")
+      },
+      livelihoodActivities: {
+        sectionLabel: t("Total Livelihood Activity"),
+        rowLabelSingular: t("Beneficiary"),
+        rowLabelPlural: t("Beneficiaries")
+      },
+      treesHistorical: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Tree"),
+        rowLabelPlural: t("Trees")
+      },
+      treesGoal: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Tree"),
+        rowLabelPlural: t("Trees"),
+        summaryTotalSingular: "Total Tree",
+        summaryTotalPlural: t("Total Trees")
+      },
+      hectaresHistorical: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Hectare"),
+        rowLabelPlural: t("Hectares")
+      },
+      hectaresGoal: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Hectare"),
+        rowLabelPlural: t("Hectares"),
+        summaryTotalSingular: t("Total Hectare"),
+        summaryTotalPlural: t("Total Hectares")
+      }
+    }),
+    [t]
+  );
 };
 
 export const useTrackingLabels = (type: TrackingType) => {
   const t = useT();
+  const trackingLabelsType = useTrackingLabelsTypes();
 
   const { framework } = useFrameworkContext();
   return useMemo(() => {
     const { sectionLabel, rowLabelSingular, rowLabelPlural, summaryTotalSingular, summaryTotalPlural } =
-      TRACKING_LABELS[type];
+      trackingLabelsType[type];
     const props: TrackingLabelProperties = {
-      sectionLabel: t(sectionLabel),
-      rowLabelSingular: t(rowLabelSingular),
-      rowLabelPlural: t(rowLabelPlural),
-      summaryTotalSingular: summaryTotalSingular == null ? undefined : t(summaryTotalSingular),
-      summaryTotalPlural: summaryTotalPlural == null ? undefined : t(summaryTotalPlural)
+      sectionLabel: sectionLabel,
+      rowLabelSingular: rowLabelSingular,
+      rowLabelPlural: rowLabelPlural,
+      summaryTotalSingular: summaryTotalSingular == null ? undefined : summaryTotalSingular,
+      summaryTotalPlural: summaryTotalPlural == null ? undefined : summaryTotalPlural
     };
     if (type.endsWith("Beneficiaries") && framework === Framework.HBF) {
       return {
@@ -180,7 +188,7 @@ export const useTrackingLabels = (type: TrackingType) => {
     }
 
     return props;
-  }, [framework, type, t]);
+  }, [framework, type, trackingLabelsType, t]);
 };
 
 export interface TrackingCollapseGridProps {
