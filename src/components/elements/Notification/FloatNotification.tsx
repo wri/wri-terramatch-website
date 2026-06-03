@@ -5,10 +5,10 @@ import { FC, useCallback, useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
+import { acknowledgeJobs, useDelayedJobs } from "@/connections/DelayedJob";
 import { startIndicatorCalculationResource } from "@/connections/Indicators";
 import { pruneSitePolygonsCache } from "@/connections/SitePolygons";
-import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
+import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -107,15 +107,7 @@ const getValidationMessages = (data: Record<string, any> | null): string[] => {
 };
 
 const clearJob = (item: DelayedJobDto) => {
-  triggerBulkUpdate([
-    {
-      id: item.uuid,
-      type: "delayedJobs",
-      attributes: {
-        isAcknowledged: true
-      }
-    }
-  ]);
+  acknowledgeJobs([item.uuid]);
 };
 
 const entityName = (job: DelayedJobDto, cachedSiteNames: Record<string, string>): string => {
@@ -155,16 +147,10 @@ const FloatNotification: FC = () => {
 
   const clearJobs = useCallback(() => {
     if (delayedJobs == null) return;
-    const newJobsData: DelayedJobData[] = delayedJobs
+    const acknowledgeIds = delayedJobs
       .filter((job: DelayedJobDto) => job.status !== "pending")
-      .map((job: DelayedJobDto) => ({
-        id: job.uuid,
-        type: "delayedJobs" as const,
-        attributes: {
-          isAcknowledged: true
-        }
-      }));
-    triggerBulkUpdate(newJobsData);
+      .map(({ uuid }: DelayedJobDto) => uuid);
+    if (acknowledgeIds.length > 0) acknowledgeJobs(acknowledgeIds);
   }, [delayedJobs]);
 
   useValueChanged(delayedJobs, () => {

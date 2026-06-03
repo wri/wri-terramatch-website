@@ -215,16 +215,8 @@ export class V3ApiEndpoint<
           responsePayload = await processDelayedJob<JsonApiResponse>(delayedJobId);
         } finally {
           if (acknowledgeDelayedJob !== false && isAcknowledged !== true) {
-            const { triggerBulkUpdate } = await import("@/connections/DelayedJob");
-            triggerBulkUpdate([
-              {
-                id: delayedJobId,
-                type: "delayedJobs",
-                attributes: {
-                  isAcknowledged: true
-                }
-              }
-            ]);
+            const { acknowledgeJobs } = await import("@/connections/DelayedJob");
+            acknowledgeJobs([delayedJobId]);
           }
         }
       }
