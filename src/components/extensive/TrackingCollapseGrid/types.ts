@@ -144,7 +144,7 @@ const useTrackingLabelsTypes = (): { [k in TrackingType]: TrackingLabelPropertie
         sectionLabel: t("Total"),
         rowLabelSingular: t("Tree"),
         rowLabelPlural: t("Trees"),
-        summaryTotalSingular: "Total Tree",
+        summaryTotalSingular: t("Total Tree"),
         summaryTotalPlural: t("Total Trees")
       },
       hectaresHistorical: {
