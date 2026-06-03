@@ -919,7 +919,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
               </Flex>
               {polygonsWithOverlapCount > 0 && (
                 <InlineMessage
-                  actionLabel={t("Selected Polygons")}
+                  actionLabel={t("Select Polygons")}
                   isButtonRight
                   size="small"
                   label={
