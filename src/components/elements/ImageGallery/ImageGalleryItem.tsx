@@ -87,7 +87,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
   const handleDownload = useCallback(async (): Promise<void> => {
     showLoader();
     try {
-      await exportImage.downloadFile({ pathParams: { uuid: data.uuid } }, data?.fileName);
+      await exportImage.downloadFile({ pathParams: { uuid: data.uuid } }, { defaultFileName: data?.fileName });
       hideLoader();
       openNotification("success", t("Success!"), t("Image downloaded successfully"));
     } catch (error) {
