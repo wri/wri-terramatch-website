@@ -121,6 +121,8 @@ const Dashboard = () => {
     isLoadingImpactStories
   } = useDashboardData(filters);
 
+  const objectiveData = useParseDataToObjetive(singleDashboardProject);
+
   const cohortArray = useMemo(() => {
     const cohort = singleDashboardProject?.cohort;
     if (!cohort) return null;
@@ -535,7 +537,7 @@ const Dashboard = () => {
               title={t("Objective")}
               classNameTitle="capitalize"
               type="legend"
-              data={useParseDataToObjetive(singleDashboardProject)}
+              data={objectiveData}
               variantTitle="text-18-semibold"
             />
           </PageCard>

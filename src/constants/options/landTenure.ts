@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import { useMemo } from "react";
 
-const useLandTenureProjectAreaLabel = () => {
+export const useLandTenureProjectAreaLabels = () => {
   const t = useT();
 
   return useMemo(
@@ -25,13 +25,16 @@ const useLandTenureProjectAreaLabel = () => {
 };
 
 export const useFormatLandTenureProjectAreaDisplay = (slugs: string[] | null | undefined): string => {
-  if (slugs == null || slugs.length === 0) {
-    return "Under Review";
-  }
+  const t = useT();
+  const landTenureProjectAreaLabel = useLandTenureProjectAreaLabels();
 
-  const landTenureProjectAreaLabel = useLandTenureProjectAreaLabel();
+  return useMemo(() => {
+    if (slugs == null || slugs.length === 0) {
+      return t("Under Review");
+    }
 
-  return slugs
-    .map(slug => landTenureProjectAreaLabel[slug as keyof typeof landTenureProjectAreaLabel] ?? slug)
-    .join(", ");
+    return slugs
+      .map(slug => landTenureProjectAreaLabel[slug as keyof typeof landTenureProjectAreaLabel] ?? slug)
+      .join(", ");
+  }, [landTenureProjectAreaLabel, slugs, t]);
 };
