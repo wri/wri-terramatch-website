@@ -260,12 +260,9 @@ const FloatNotification: FC = () => {
           </Text>
           <div className="flex flex-col overflow-hidden p-4">
             <div className="mb-2 flex items-center justify-between">
-              <Text variant="text-14-light" className="text-blueCustom-250 text-opacity-60">
-                {t("Uploads")}
-              </Text>
               <Text
                 variant="text-12-semibold"
-                className="cursor-pointer text-primary hover:opacity-80"
+                className="ml-auto cursor-pointer text-primary hover:opacity-80"
                 onClick={clearJobs}
               >
                 {t("Clear completed")}
