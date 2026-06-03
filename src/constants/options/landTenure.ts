@@ -16,15 +16,10 @@ const LAND_TENURE_PROJECT_AREA_LABELS: Record<string, string> = {
 
 export const getLandTenureProjectAreaLabel = (slug: string): string => LAND_TENURE_PROJECT_AREA_LABELS[slug] ?? slug;
 
-export const formatLandTenureProjectAreaDisplay = (
-  slugs: string[] | null | undefined,
-  t?: (source: string) => string
-): string => {
+export const formatLandTenureProjectAreaDisplay = (slugs: string[] | null | undefined): string => {
   if (slugs == null || slugs.length === 0) {
-    return t == null ? "Under Review" : t("Under Review");
+    return "Under Review";
   }
 
-  return slugs
-    .map(slug => (t == null ? getLandTenureProjectAreaLabel(slug) : t(getLandTenureProjectAreaLabel(slug))))
-    .join(", ");
+  return slugs.map(getLandTenureProjectAreaLabel).join(", ");
 };

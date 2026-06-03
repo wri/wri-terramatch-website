@@ -63,13 +63,6 @@ export const toFormOptions = (options?: FormQuestionOptionDto[] | Option[] | nul
       : option
   );
 
-/** Form option labels from the API are English source strings registered in Transifex. */
-export const useTranslatedFormOptions = (options?: FormQuestionOptionDto[] | Option[] | null): Option[] => {
-  const t = useT();
-
-  return useMemo(() => toFormOptions(options).map(option => ({ ...option, title: t(option.title) })), [options, t]);
-};
-
 export const getHardcodedOptions = (optionsList: string, t?: typeof useT) => {
   // We currently only support "months" for this feature
   if (optionsList === "months") return getMonthOptions(t);

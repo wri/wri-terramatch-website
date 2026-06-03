@@ -1,7 +1,7 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import { useController } from "react-hook-form";
 
-import { useTranslatedFormOptions } from "@/components/extensive/WizardForm/utils";
+import { toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { OptionValue } from "@/types/common";
 
 import { RHFSelectProps } from "../Select/RHFSelect";
@@ -14,7 +14,7 @@ const RHFSelectImage = ({ onChangeCapture, options, ...props }: PropsWithChildre
     field: { value, onChange }
   } = useController(props);
 
-  const propsOptions = useTranslatedFormOptions(options);
+  const propsOptions = useMemo(() => toFormOptions(options), [options]);
 
   const _onChange = (value: OptionValue[]) => {
     if (props.multiSelect) onChange(value);
