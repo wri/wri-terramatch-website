@@ -1,6 +1,8 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import type { Map as MapboxMap } from "mapbox-gl";
 
+import { dispatchPolygonDrawCanUndoChanged } from "../interactions/draftDrawEvents";
+
 type DrawPolygonModeState = {
   polygon: MapboxDraw.DrawPolygon;
   currentVertexPosition: number;
@@ -22,6 +24,10 @@ let activeDrawModeContext: DrawModeRuntimeContext | null = null;
 
 export const canPerformPolygonDrawUndo = (): boolean => (activeDrawModeState?.currentVertexPosition ?? 0) > 0;
 
+const syncPolygonDrawCanUndo = (): void => {
+  dispatchPolygonDrawCanUndoChanged(canPerformPolygonDrawUndo());
+};
+
 const refreshActiveDrawDisplay = (featureId: string): void => {
   if (activeDrawModeContext == null) return;
 
@@ -42,6 +48,7 @@ export const performPolygonDrawUndo = (): boolean => {
     });
   }
 
+  syncPolygonDrawCanUndo();
   return didUndo;
 };
 
@@ -78,12 +85,29 @@ export const drawPolygonWithUndoMode: MapboxDraw.DrawCustomMode<DrawPolygonModeS
     const state = baseDrawPolygonMode.onSetup!.call(this, options);
     activeDrawModeState = state;
     activeDrawModeContext = this as unknown as DrawModeRuntimeContext;
+    syncPolygonDrawCanUndo();
     return state;
   },
   onStop(state) {
+    const result = baseDrawPolygonMode.onStop?.call(this, state);
     activeDrawModeState = null;
     activeDrawModeContext = null;
-    return baseDrawPolygonMode.onStop?.call(this, state);
+    dispatchPolygonDrawCanUndoChanged(false);
+    return result;
+  },
+  onClick(state, event) {
+    activeDrawModeState = state;
+    activeDrawModeContext = this as unknown as DrawModeRuntimeContext;
+    const result = baseDrawPolygonMode.onClick?.call(this, state, event);
+    syncPolygonDrawCanUndo();
+    return result;
+  },
+  onTap(state, event) {
+    activeDrawModeState = state;
+    activeDrawModeContext = this as unknown as DrawModeRuntimeContext;
+    const result = baseDrawPolygonMode.onTap?.call(this, state, event);
+    syncPolygonDrawCanUndo();
+    return result;
   },
   onKeyDown(state, event) {
     activeDrawModeState = state;
