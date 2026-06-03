@@ -19,10 +19,10 @@ import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import {
   formatCohortDisplay,
-  parseDataToObjetive,
   parseHectaresUnderRestorationData,
   parseJobCreatedByType,
-  parseVolunteersByType
+  parseVolunteersByType,
+  useParseDataToObjetive
 } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./components/ContentDashboardWrapper";
@@ -535,7 +535,7 @@ const Dashboard = () => {
               title={t("Objective")}
               classNameTitle="capitalize"
               type="legend"
-              data={parseDataToObjetive(singleDashboardProject)}
+              data={useParseDataToObjetive(singleDashboardProject)}
               variantTitle="text-18-semibold"
             />
           </PageCard>
