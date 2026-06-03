@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { useAuditStatuses } from "@/connections/AuditStatus";
-import { bulkUpdateSitePolygonStatus } from "@/connections/SitePolygons";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
+import { closeMapPopupsFromMapPopup, openPolygonSubmitConfirmationFromMapPopup } from "@/context/mapArea.utils";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
@@ -25,12 +25,7 @@ type PolygonPopupChampionsProps = {
   tooltipType?: TooltipType;
 };
 
-export function PolygonPopupChampions({
-  popup,
-  setShouldRefetchPolygonData,
-  sitePolygon,
-  tooltipType
-}: PolygonPopupChampionsProps) {
+export function PolygonPopupChampions({ popup, sitePolygon, tooltipType }: PolygonPopupChampionsProps) {
   const [open, setOpen] = useState(true);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -64,21 +59,28 @@ export function PolygonPopupChampions({
   const sitePolygonStatus = sitePolygon?.status;
   const submitDisabled = sitePolygonStatus === POLYGON_PENDING_APPROVAL || sitePolygonStatus === POLYGON_APPROVED;
 
-  const handleSubmit = async () => {
+  const closeMapPopup = useCallback(() => {
+    setOpen(false);
+    popup?.remove();
+  }, [popup]);
+
+  const handleRequestSubmit = useCallback(async () => {
     if (submitDisabled || sitePolygon?.uuid == null || sitePolygon.uuid === "") {
       return;
     }
-    setOpen(false);
-    popup?.remove();
-    await bulkUpdateSitePolygonStatus([sitePolygon.uuid], POLYGON_PENDING_APPROVAL, "");
-    setShouldRefetchPolygonData?.(true);
-  };
+
+    openPolygonSubmitConfirmationFromMapPopup({
+      sitePolygonUuid: sitePolygon.uuid,
+      eligibleCount: 1,
+      totalCount: 1
+    });
+    closeMapPopupsFromMapPopup();
+  }, [sitePolygon?.uuid, submitDisabled]);
 
   const handleEdit = useCallback(() => {
     openPolygonEditDrawerForSitePolygon(sitePolygon, metrics.polygonName);
-    setOpen(false);
-    popup?.remove();
-  }, [metrics.polygonName, popup, sitePolygon]);
+    closeMapPopup();
+  }, [closeMapPopup, metrics.polygonName, sitePolygon]);
 
   return (
     <>
@@ -98,7 +100,7 @@ export function PolygonPopupChampions({
             polygonUuid={sitePolygon?.polygonUuid ?? undefined}
             polygonName={metrics.polygonName}
             submitDisabled={submitDisabled}
-            onSubmit={handleSubmit}
+            onSubmit={handleRequestSubmit}
             onEdit={handleEdit}
             tooltipType={tooltipType}
           />
