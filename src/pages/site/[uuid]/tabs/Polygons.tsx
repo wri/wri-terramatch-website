@@ -5,7 +5,11 @@ import classNames from "classnames";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
-import { dispatchUndoPolygonDrawEvent } from "@/components/elements/Map-mapbox/interactions/draftDrawEvents";
+import {
+  type PolygonDrawCanUndoChangedDetail,
+  dispatchUndoPolygonDrawEvent,
+  POLYGON_DRAW_CAN_UNDO_CHANGED_EVENT
+} from "@/components/elements/Map-mapbox/interactions/draftDrawEvents";
 import { downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -137,6 +141,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [isDownloadingSelectedPolygons, setIsDownloadingSelectedPolygons] = useState(false);
   const [isBulkUpdatingPolygons, setIsBulkUpdatingPolygons] = useState(false);
   const [isValidatingPolygons, setIsValidatingPolygons] = useState(false);
+  const [canUndoPolygonDraw, setCanUndoPolygonDraw] = useState(false);
   const {
     polygonSearch,
     polygonFilters,
@@ -626,6 +631,25 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const handleUndoPolygonDraw = useCallback(() => {
     dispatchUndoPolygonDrawEvent();
   }, []);
+
+  useEffect(() => {
+    const handleCanUndoChanged = (event: Event) => {
+      const { canUndo } = (event as CustomEvent<PolygonDrawCanUndoChangedDetail>).detail ?? {};
+      setCanUndoPolygonDraw(canUndo === true);
+    };
+
+    window.addEventListener(POLYGON_DRAW_CAN_UNDO_CHANGED_EVENT, handleCanUndoChanged);
+    return () => {
+      window.removeEventListener(POLYGON_DRAW_CAN_UNDO_CHANGED_EVENT, handleCanUndoChanged);
+      setCanUndoPolygonDraw(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isUserDrawingEnabled) {
+      setCanUndoPolygonDraw(false);
+    }
+  }, [isUserDrawingEnabled]);
   const startNewPolygonFlow = useCallback(() => {
     handleBulkDraw();
     startDrawing();
@@ -846,10 +870,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             entityModel={site}
             type="sites"
             className={classNames(
-              "h-full w-full  ",
               isEditPolygonOpen
                 ? // TODO: Update `top-[70px]` when the navbar is redesigned so this offset matches the new header height.
-                  "fixed top-[70px] bottom-0 left-0 right-0 z-[37] !h-[calc(100vh-66px)] w-screen rounded-none"
+                  "!fixed top-[70px] bottom-0 left-0 right-0 z-[37] !h-[calc(100vh-66px)] w-screen rounded-none"
                 : "h-full w-full !rounded-[0.25rem_0.25rem_0_0]"
             )}
             polygons={polygonsData}
@@ -858,7 +881,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             polygonTableHighlight={polygonTableHighlight}
             overlapPolygons={overlapPolygonsForMap}
           />
-          {isEditPolygonOpen && isUserDrawingEnabled && (
+          {isEditPolygonOpen && isUserDrawingEnabled && canUndoPolygonDraw && (
             <Button
               variant="secondary"
               leftIcon={<UndoIcon />}
@@ -919,7 +942,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
               </Flex>
               {polygonsWithOverlapCount > 0 && (
                 <InlineMessage
-                  actionLabel={t("Selected Polygons")}
+                  actionLabel={t("Select Polygons")}
                   isButtonRight
                   size="small"
                   label={

@@ -150,15 +150,13 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
 
   return (
     <>
-      {isSystemValidationCompleteModalOpen && (
-        <SystemValidationComplete
-          polygons={polygons}
-          polygonValidations={polygonValidations}
-          open
-          onOpenChange={setIsSystemValidationCompleteModalOpen}
-          onViewDetails={handleViewValidationDetails}
-        />
-      )}
+      <SystemValidationComplete
+        polygons={polygons}
+        polygonValidations={polygonValidations}
+        open={isSystemValidationCompleteModalOpen}
+        onOpenChange={setIsSystemValidationCompleteModalOpen}
+        onViewDetails={handleViewValidationDetails}
+      />
       {isToolbarVisible && (
         <Box position="fixed" zIndex="100" bottom={3} left={3} right={3}>
           <BulkActionToolbar
