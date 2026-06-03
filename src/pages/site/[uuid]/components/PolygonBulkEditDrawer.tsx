@@ -33,13 +33,12 @@ interface PolygonBulkEditDrawerProps {
 
 type BulkEditField = "plantStart" | "practice" | "targetSys" | "distr" | "numTrees";
 
-const EMPTY_ENABLED_FIELDS: Record<BulkEditField, boolean> = {
-  plantStart: false,
-  practice: false,
-  targetSys: false,
-  distr: false,
-  numTrees: false
-};
+type FieldValueSnapshot =
+  | { field: "plantStart"; value: DateValue[] }
+  | { field: "practice"; value: string[] }
+  | { field: "targetSys"; value: string[] }
+  | { field: "distr"; value: string[] }
+  | { field: "numTrees"; value: string };
 
 type EditableInputProps = { disabled?: boolean };
 
@@ -47,8 +46,9 @@ const EditWrapper: FC<{
   enabled: boolean;
   onEnable: () => void;
   onCancel: () => void;
+  onSave: () => void;
   children: ReactElement<EditableInputProps>;
-}> = ({ enabled, onEnable, onCancel, children }) => {
+}> = ({ enabled, onEnable, onCancel, onSave, children }) => {
   const t = useT();
 
   const input = isValidElement(children)
@@ -64,6 +64,9 @@ const EditWrapper: FC<{
         <Flex className="mt-auto h-[2.5rem] items-center gap-2">
           <Button variant="borderless" size="small" onClick={onCancel}>
             {t("Cancel")}
+          </Button>
+          <Button variant="secondary" size="small" onClick={onSave}>
+            {t("Save")}
           </Button>
         </Flex>
       ) : (
@@ -95,7 +98,9 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
   onSave
 }) => {
   const t = useT();
-  const [enabledFields, setEnabledFields] = useState<Record<BulkEditField, boolean>>(EMPTY_ENABLED_FIELDS);
+  const [editingField, setEditingField] = useState<BulkEditField | null>(null);
+  const [committedFields, setCommittedFields] = useState<Set<BulkEditField>>(() => new Set());
+  const [fieldSnapshots, setFieldSnapshots] = useState<Partial<Record<BulkEditField, FieldValueSnapshot>>>({});
   const [plantStartDate, setPlantStartDate] = useState<DateValue[]>([]);
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
@@ -116,20 +121,37 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
     [t]
   );
 
-  const fieldLabels = useMemo(
-    () =>
-      [
-        enabledFields.plantStart ? t("Plant Start Date") : null,
-        enabledFields.practice ? t("Restoration Practice") : null,
-        enabledFields.targetSys ? t("Target Land Use") : null,
-        enabledFields.distr ? t("Tree Distribution") : null,
-        enabledFields.numTrees ? t("Trees Planted") : null
-      ].filter((label): label is string => label != null),
-    [enabledFields, t]
+  const captureFieldSnapshot = useCallback(
+    (field: BulkEditField): FieldValueSnapshot => {
+      if (field === "plantStart") return { field, value: [...plantStartDate] };
+      if (field === "practice") return { field, value: [...restorationPractice] };
+      if (field === "targetSys") return { field, value: [...targetLandUseSystem] };
+      if (field === "distr") return { field, value: [...treeDistribution] };
+      return { field, value: treesPlanted };
+    },
+    [plantStartDate, restorationPractice, targetLandUseSystem, treeDistribution, treesPlanted]
   );
 
+  const applyFieldSnapshot = useCallback((snapshot: FieldValueSnapshot) => {
+    if (snapshot.field === "plantStart") setPlantStartDate(snapshot.value);
+    if (snapshot.field === "practice") setRestorationPractice(snapshot.value);
+    if (snapshot.field === "targetSys") setTargetLandUseSystem(snapshot.value);
+    if (snapshot.field === "distr") setTreeDistribution(snapshot.value);
+    if (snapshot.field === "numTrees") setTreesPlanted(snapshot.value);
+  }, []);
+
+  const clearFieldValues = useCallback((field: BulkEditField) => {
+    if (field === "plantStart") setPlantStartDate([]);
+    if (field === "practice") setRestorationPractice([]);
+    if (field === "targetSys") setTargetLandUseSystem([]);
+    if (field === "distr") setTreeDistribution([]);
+    if (field === "numTrees") setTreesPlanted("");
+  }, []);
+
   const resetForm = useCallback(() => {
-    setEnabledFields(EMPTY_ENABLED_FIELDS);
+    setEditingField(null);
+    setCommittedFields(new Set());
+    setFieldSnapshots({});
     setPlantStartDate([]);
     setRestorationPractice([]);
     setTargetLandUseSystem([]);
@@ -144,33 +166,82 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
     }
   }, [open, resetForm]);
 
-  const enableField = useCallback((field: BulkEditField) => {
-    setEnabledFields(current => ({ ...current, [field]: true }));
-  }, []);
+  const commitFieldLocally = useCallback(
+    (field: BulkEditField) => {
+      const snapshot = captureFieldSnapshot(field);
+      setFieldSnapshots(current => ({ ...current, [field]: snapshot }));
+      setCommittedFields(current => {
+        const next = new Set(current);
+        next.add(field);
+        return next;
+      });
+    },
+    [captureFieldSnapshot]
+  );
 
-  const cancelField = useCallback((field: BulkEditField) => {
-    setEnabledFields(current => ({ ...current, [field]: false }));
-    if (field === "plantStart") setPlantStartDate([]);
-    if (field === "practice") setRestorationPractice([]);
-    if (field === "targetSys") setTargetLandUseSystem([]);
-    if (field === "distr") setTreeDistribution([]);
-    if (field === "numTrees") setTreesPlanted("");
-  }, []);
+  const fieldsIncludedInSave = useMemo(() => {
+    const fields = new Set(committedFields);
+    if (editingField != null) {
+      fields.add(editingField);
+    }
+    return fields;
+  }, [committedFields, editingField]);
+
+  const buildChangesForField = useCallback(
+    (field: BulkEditField, changes: BulkSitePolygonAttributeChanges) => {
+      if (field === "plantStart") changes.plantStart = dateValueToIsoString(plantStartDate[0]) ?? "";
+      if (field === "practice") changes.practice = restorationPractice;
+      if (field === "targetSys") changes.targetSys = targetLandUseSystem[0] ?? "";
+      if (field === "distr") changes.distr = treeDistribution;
+      if (field === "numTrees") changes.numTrees = Number(treesPlanted || 0);
+    },
+    [plantStartDate, restorationPractice, targetLandUseSystem, treeDistribution, treesPlanted]
+  );
 
   const attributeChanges = useMemo<BulkSitePolygonAttributeChanges>(() => {
     const changes: BulkSitePolygonAttributeChanges = {};
-    if (enabledFields.plantStart) changes.plantStart = dateValueToIsoString(plantStartDate[0]) ?? "";
-    if (enabledFields.practice) changes.practice = restorationPractice;
-    if (enabledFields.targetSys) changes.targetSys = targetLandUseSystem[0] ?? "";
-    if (enabledFields.distr) changes.distr = treeDistribution;
-    if (enabledFields.numTrees) changes.numTrees = Number(treesPlanted || 0);
+    fieldsIncludedInSave.forEach(field => buildChangesForField(field, changes));
     return changes;
-  }, [enabledFields, plantStartDate, restorationPractice, targetLandUseSystem, treeDistribution, treesPlanted]);
+  }, [buildChangesForField, fieldsIncludedInSave]);
 
-  const hasEnabledField = fieldLabels.length > 0;
   const hasValidTreesPlanted =
-    !enabledFields.numTrees || (treesPlanted.trim() !== "" && Number.isInteger(Number(treesPlanted)));
-  const canSave = hasEnabledField && hasValidTreesPlanted && !isSaving;
+    !fieldsIncludedInSave.has("numTrees") || (treesPlanted.trim() !== "" && Number.isInteger(Number(treesPlanted)));
+
+  const canSave = fieldsIncludedInSave.size > 0 && hasValidTreesPlanted && !isSaving;
+
+  const enableField = useCallback(
+    (field: BulkEditField) => {
+      if (editingField === field) return;
+
+      if (editingField != null) {
+        commitFieldLocally(editingField);
+      }
+
+      setEditingField(field);
+    },
+    [commitFieldLocally, editingField]
+  );
+
+  const saveField = useCallback(
+    (field: BulkEditField) => {
+      commitFieldLocally(field);
+      setEditingField(current => (current === field ? null : current));
+    },
+    [commitFieldLocally]
+  );
+
+  const cancelField = useCallback(
+    (field: BulkEditField) => {
+      const snapshot = fieldSnapshots[field];
+      if (committedFields.has(field) && snapshot != null) {
+        applyFieldSnapshot(snapshot);
+      } else {
+        clearFieldValues(field);
+      }
+      setEditingField(current => (current === field ? null : current));
+    },
+    [applyFieldSnapshot, clearFieldValues, committedFields, fieldSnapshots]
+  );
 
   const handleConfirmSave = useCallback(async () => {
     if (onSave == null || !canSave) return;
@@ -188,6 +259,14 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
     [onOpenChange, resetForm]
   );
 
+  const handleFooterCancel = useCallback(
+    (onClose: () => void) => {
+      resetForm();
+      onClose();
+    },
+    [resetForm]
+  );
+
   return (
     <Drawer placement="start" defaultOpen={false} open={open} onOpenChange={handleOpenChange} size="md">
       {({ onClose }) => (
@@ -195,7 +274,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
           <FilterPanel
             title={t("Edit Details")}
             variant="fixed"
-            onClose={onClose}
+            onClose={() => handleFooterCancel(onClose)}
             className="h-screen w-full"
             content={
               <Flex className="mr-1 min-h-0 flex-1 flex-col gap-4 overflow-auto py-5 pr-5 pl-4">
@@ -204,21 +283,24 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                   {t("Use the edit icon to select only the attributes you want to apply to all selected polygons.")}
                 </Text>
                 <EditWrapper
-                  enabled={enabledFields.plantStart}
+                  enabled={editingField === "plantStart"}
                   onEnable={() => enableField("plantStart")}
                   onCancel={() => cancelField("plantStart")}
+                  onSave={() => saveField("plantStart")}
                 >
                   <DatePickerInput
                     label={t("Plant Start Date")}
                     className="w-[13.5rem]"
                     value={plantStartDate}
                     onValueChange={setPlantStartDate}
+                    disabled={editingField !== "plantStart"}
                   />
                 </EditWrapper>
                 <EditWrapper
-                  enabled={enabledFields.practice}
+                  enabled={editingField === "practice"}
                   onEnable={() => enableField("practice")}
                   onCancel={() => cancelField("practice")}
+                  onSave={() => saveField("practice")}
                 >
                   <SelectInput
                     items={restorationOptions}
@@ -227,12 +309,14 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                     value={restorationPractice}
                     onChange={setRestorationPractice}
                     multiple
+                    disabled={editingField !== "practice"}
                   />
                 </EditWrapper>
                 <EditWrapper
-                  enabled={enabledFields.targetSys}
+                  enabled={editingField === "targetSys"}
                   onEnable={() => enableField("targetSys")}
                   onCancel={() => cancelField("targetSys")}
+                  onSave={() => saveField("targetSys")}
                 >
                   <SelectInput
                     items={targetOptions}
@@ -240,12 +324,14 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                     placeholder={t("Multiple")}
                     value={targetLandUseSystem}
                     onChange={value => setTargetLandUseSystem(value.slice(0, 1))}
+                    disabled={editingField !== "targetSys"}
                   />
                 </EditWrapper>
                 <EditWrapper
-                  enabled={enabledFields.distr}
+                  enabled={editingField === "distr"}
                   onEnable={() => enableField("distr")}
                   onCancel={() => cancelField("distr")}
+                  onSave={() => saveField("distr")}
                 >
                   <SelectInput
                     items={treeOptions}
@@ -254,12 +340,14 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                     value={treeDistribution}
                     onChange={setTreeDistribution}
                     multiple
+                    disabled={editingField !== "distr"}
                   />
                 </EditWrapper>
                 <EditWrapper
-                  enabled={enabledFields.numTrees}
+                  enabled={editingField === "numTrees"}
                   onEnable={() => enableField("numTrees")}
                   onCancel={() => cancelField("numTrees")}
+                  onSave={() => saveField("numTrees")}
                 >
                   <TextInput
                     width="12.75rem"
@@ -267,6 +355,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                     value={treesPlanted}
                     onChange={event => setTreesPlanted(event.target.value.replace(/\D/g, ""))}
                     errorMessage={!hasValidTreesPlanted ? t("Enter a whole number") : undefined}
+                    disabled={editingField !== "numTrees"}
                   />
                 </EditWrapper>
               </Flex>
@@ -279,7 +368,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                     children: t("Cancel"),
                     variant: "secondary",
                     disabled: isSaving,
-                    onClick: onClose
+                    onClick: () => handleFooterCancel(onClose)
                   },
                   {
                     id: "save",
@@ -297,7 +386,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
             open={showConfirmModal}
             onOpenChange={setShowConfirmModal}
             polygonNames={selectedPolygons.map(polygon => polygon.polygonName)}
-            canConfirm={hasEnabledField}
+            canConfirm={fieldsIncludedInSave.size > 0}
             isSaving={isSaving}
             onConfirm={handleConfirmSave}
           />
