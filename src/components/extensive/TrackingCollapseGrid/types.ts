@@ -70,6 +70,9 @@ type TrackingLabelProperties = {
   sectionLabel: string;
   rowLabelSingular: string;
   rowLabelPlural: string;
+  /** When set, used for accordion totals (single Transifex source strings). */
+  summaryTotalSingular?: string;
+  summaryTotalPlural?: string;
 };
 
 const TRACKING_LABELS: { [k in TrackingType]: TrackingLabelProperties } = {
@@ -136,7 +139,9 @@ const TRACKING_LABELS: { [k in TrackingType]: TrackingLabelProperties } = {
   treesGoal: {
     sectionLabel: "Total",
     rowLabelSingular: "Tree",
-    rowLabelPlural: "Trees"
+    rowLabelPlural: "Trees",
+    summaryTotalSingular: "Total Tree",
+    summaryTotalPlural: "Total Trees"
   },
   hectaresHistorical: {
     sectionLabel: "Total",
@@ -146,7 +151,9 @@ const TRACKING_LABELS: { [k in TrackingType]: TrackingLabelProperties } = {
   hectaresGoal: {
     sectionLabel: "Total",
     rowLabelSingular: "Hectare",
-    rowLabelPlural: "Hectares"
+    rowLabelPlural: "Hectares",
+    summaryTotalSingular: "Total Hectare",
+    summaryTotalPlural: "Total Hectares"
   }
 };
 
@@ -155,11 +162,14 @@ export const useTrackingLabels = (type: TrackingType) => {
 
   const { framework } = useFrameworkContext();
   return useMemo(() => {
-    const { sectionLabel, rowLabelSingular, rowLabelPlural } = TRACKING_LABELS[type];
-    const props = {
+    const { sectionLabel, rowLabelSingular, rowLabelPlural, summaryTotalSingular, summaryTotalPlural } =
+      TRACKING_LABELS[type];
+    const props: TrackingLabelProperties = {
       sectionLabel: t(sectionLabel),
       rowLabelSingular: t(rowLabelSingular),
-      rowLabelPlural: t(rowLabelPlural)
+      rowLabelPlural: t(rowLabelPlural),
+      summaryTotalSingular: summaryTotalSingular == null ? undefined : t(summaryTotalSingular),
+      summaryTotalPlural: summaryTotalPlural == null ? undefined : t(summaryTotalPlural)
     };
     if (type.endsWith("Beneficiaries") && framework === Framework.HBF) {
       return {

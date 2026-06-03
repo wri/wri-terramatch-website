@@ -3,7 +3,11 @@ import { difference, isEqual } from "lodash";
 import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import { getHardcodedOptions, toFormOptions, useFilterFieldName } from "@/components/extensive/WizardForm/utils";
+import {
+  getHardcodedOptions,
+  useFilterFieldName,
+  useTranslatedFormOptions
+} from "@/components/extensive/WizardForm/utils";
 import Loader from "@/components/generic/Loading/Loader";
 import { useOptionLabels } from "@/connections/Form";
 import { useGadmOptions } from "@/connections/Gadm";
@@ -86,11 +90,12 @@ const WithHardcodedOptions: FC<WithOptionsList> = ({ optionsList, ...displayProp
 };
 
 const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = ({ options, enableAdditionalOptions, ...displayProps }) => {
+  const t = useT();
   const {
     field: { value }
   } = useController(displayProps);
 
-  const propsOptions = useMemo(() => toFormOptions(options), [options]);
+  const propsOptions = useTranslatedFormOptions(options);
 
   const additionalOptionValue = useMemo(
     () =>
@@ -108,11 +113,11 @@ const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = ({ options, enableAdditi
   const additionalOptions = useMemo(
     () =>
       Object.values(optionsData ?? {}).map(option => ({
-        title: option.label,
+        title: t(option.label),
         value: option.slug,
         meta: { image_url: option.imageUrl }
       })) as Option[],
-    [optionsData]
+    [optionsData, t]
   );
 
   const notFoundOptions = useMemo(

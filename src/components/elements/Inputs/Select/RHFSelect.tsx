@@ -1,7 +1,7 @@
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import { toFormOptions, useFilterFieldName } from "@/components/extensive/WizardForm/utils";
+import { useFilterFieldName, useTranslatedFormOptions } from "@/components/extensive/WizardForm/utils";
 import { FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Option, OptionValue } from "@/types/common";
 
@@ -27,7 +27,7 @@ const RHFSelect = ({
     field: { value, onChange }
   } = useController(props);
 
-  const propsOptions = useMemo(() => toFormOptions(options), [options]);
+  const propsOptions = useTranslatedFormOptions(options);
   const filterFieldName = useFilterFieldName(linkedFieldKey);
 
   const _onChange = (value: OptionValue[]) => {
