@@ -210,6 +210,8 @@ export type SitePolygonLightDto = {
   projectId: string | null;
   projectShortName: string | null;
   projectName: string | null;
+  projectCountry: string[] | null;
+  ppcExternalId: number | null;
   /**
    * @format date-time
    */
@@ -444,6 +446,8 @@ export type SitePolygonFullDto = {
   projectId: string | null;
   projectShortName: string | null;
   projectName: string | null;
+  projectCountry: string[] | null;
+  ppcExternalId: number | null;
   /**
    * @format date-time
    */
