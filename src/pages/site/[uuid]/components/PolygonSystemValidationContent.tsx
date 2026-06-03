@@ -1,107 +1,161 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC } from "react";
+import { showToast } from "@worldresources/wri-design-systems";
+import { FC, useCallback, useState } from "react";
 
-import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
+import { clipSinglePolygon } from "@/connections/PolygonClipping";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { usePolygonClippingCompletion } from "@/hooks/usePolygonClippingCompletion";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
-import { ICriteriaCheckItem } from "@/types/validation";
+import Log from "@/utils/log";
 
+import { extractClippedVersions } from "../hooks/overlapFix.utils";
+import { usePolygonValidationCriteria } from "../hooks/usePolygonValidationCriteria";
+import type { PolygonOverlapFixCallback } from "./polygonEdit.types";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 import ValidationDetail from "./ValidationDetail";
 
 export type PolygonSystemValidationContentProps = {
   polygon?: SitePolygonLightDto;
+  onOverlapFixed?: PolygonOverlapFixCallback;
 };
 
-// TODO: Replace with real validation data from API
-const MOCK_VALIDATION_ITEMS: ICriteriaCheckItem[] = [
-  { id: 3, status: true, label: validationLabels[3], extra_info: null },
-  { id: 4, status: true, label: validationLabels[4], extra_info: null },
-  { id: 5, status: true, label: validationLabels[5], extra_info: null },
-  { id: 6, status: false, label: validationLabels[6], extra_info: null },
-  {
-    id: 7,
-    status: true,
-    label: validationLabels[7],
-    extra_info: { countryName: "Malawi" }
-  },
-  { id: 8, status: false, label: validationLabels[8], extra_info: null },
-  { id: 10, status: true, label: validationLabels[10], extra_info: null },
-  {
-    id: 12,
-    status: true,
-    label: validationLabels[12],
-    extra_info: {
-      totalAreaSite: null,
-      totalAreaProject: 1500,
-      sumAreaProjectApproved: 2669.92,
-      percentageProjectApproved: 177.99,
-      isPolygonApproved: true
-    }
-  },
-  { id: 14, status: true, label: validationLabels[14], extra_info: null },
-  { id: 15, status: true, label: validationLabels[15], extra_info: null }
-];
+const TOAST_PLACEMENT = "bottom-end" as const;
 
-// TODO: Replace with real validation data from API
-const MOCK_VALIDATION_ITEMS_OVERLAPPING: ICriteriaCheckItem[] = [
-  { id: 3, status: false, label: "Overlapping Polygon", extra_info: null },
-  { id: 4, status: true, label: validationLabels[4], extra_info: null },
-  { id: 5, status: true, label: validationLabels[5], extra_info: null },
-  { id: 6, status: false, label: validationLabels[6], extra_info: null },
-  {
-    id: 7,
-    status: true,
-    label: validationLabels[7],
-    extra_info: { countryName: "Malawi" }
-  },
-  { id: 8, status: false, label: validationLabels[8], extra_info: null },
-  { id: 10, status: true, label: validationLabels[10], extra_info: null },
-  {
-    id: 12,
-    status: true,
-    label: validationLabels[12],
-    extra_info: {
-      totalAreaSite: null,
-      totalAreaProject: 1500,
-      sumAreaProjectApproved: 2669.92,
-      percentageProjectApproved: 177.99,
-      isPolygonApproved: true
-    }
-  },
-  { id: 14, status: true, label: validationLabels[14], extra_info: null },
-  { id: 15, status: true, label: validationLabels[15], extra_info: null }
-];
+const formatValidationCheckedAt = (date: Date): string => {
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return `${localDate.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit"
+  })} on ${localDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric"
+  })}`;
+};
 
-const MOCK_FAILED_COUNT = MOCK_VALIDATION_ITEMS.filter(item => !item.status).length;
-const MOCK_TOTAL_ITEMS = MOCK_VALIDATION_ITEMS.length;
-const MOCK_FAILED_COUNT_OVERLAPPING = MOCK_VALIDATION_ITEMS_OVERLAPPING.filter(item => !item.status).length;
-const MOCK_TOTAL_ITEMS_OVERLAPPING = MOCK_VALIDATION_ITEMS_OVERLAPPING.length;
-
-const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = ({ polygon }) => {
-  const overlapping = polygon?.validationStatus === "failed";
+const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = ({ polygon, onOverlapFixed }) => {
   const t = useT();
+  const polygonUuid = polygon?.polygonUuid ?? undefined;
+  const { items, hasValidation, failedCount, totalItems, lastValidationDate, hasOverlaps, fixabilityResult } =
+    usePolygonValidationCriteria(polygonUuid, polygon?.validationStatus);
+  const [pendingClipping, setPendingClipping] = useState(false);
+
+  usePolygonClippingCompletion({
+    pendingClipping,
+    setPendingClipping,
+    onSuccess: async completedClippingJob => {
+      if (polygonUuid == null || polygonUuid === "" || onOverlapFixed == null) {
+        return;
+      }
+
+      const clippedVersions = extractClippedVersions({ data: completedClippingJob.payload?.data });
+
+      try {
+        const updatedPolygon = await onOverlapFixed({
+          previousPolygonUuid: polygonUuid,
+          primaryUuid: polygon?.primaryUuid,
+          sitePolygonUuid: polygon?.uuid,
+          clippedVersions
+        });
+
+        if (updatedPolygon != null) {
+          showToast({
+            label: t("Overlap fix complete"),
+            type: "success",
+            placement: TOAST_PLACEMENT,
+            duration: 5000
+          });
+          return;
+        }
+
+        showToast({
+          label: t("No polygon have been fixed"),
+          type: "warning",
+          placement: TOAST_PLACEMENT,
+          duration: 5000
+        });
+      } catch (error) {
+        Log.error("Failed to refresh polygon after overlap fix:", error);
+        showToast({
+          label: t("Overlap was fixed but the polygon could not be refreshed. Please close and reopen the drawer."),
+          type: "warning",
+          placement: TOAST_PLACEMENT,
+          duration: 7000
+        });
+      }
+    },
+    onFailure: () => {
+      Log.error("Polygon overlap fix failed");
+      showToast({
+        label: t("Failed to fix polygon overlaps"),
+        type: "error",
+        placement: TOAST_PLACEMENT,
+        duration: 5000
+      });
+    }
+  });
+
+  const handleFixOverlap = useCallback(() => {
+    if (pendingClipping) {
+      return;
+    }
+
+    if (polygonUuid == null || polygonUuid === "") {
+      Log.error("Cannot fix polygon overlaps: geometry polygon UUID is missing");
+      return;
+    }
+
+    if (fixabilityResult != null && !fixabilityResult.canBeFixed) {
+      return;
+    }
+
+    clipSinglePolygon(polygonUuid);
+    setPendingClipping(true);
+  }, [fixabilityResult, pendingClipping, polygonUuid]);
+
+  const canFixOverlap =
+    hasOverlaps &&
+    (fixabilityResult == null || fixabilityResult.canBeFixed) &&
+    polygonUuid != null &&
+    polygonUuid !== "";
+
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
       <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-auto py-5 px-2 pl-6 pr-7">
         <SubmissionValidationTags polygon={polygon} />
         <Flex direction="column" gap={3} className="mt-4">
-          <ValidationDetail
-            failedCount={overlapping ? MOCK_FAILED_COUNT_OVERLAPPING : MOCK_FAILED_COUNT}
-            totalItems={overlapping ? MOCK_TOTAL_ITEMS_OVERLAPPING : MOCK_TOTAL_ITEMS}
-            items={overlapping ? MOCK_VALIDATION_ITEMS_OVERLAPPING : MOCK_VALIDATION_ITEMS}
-          />
+          {hasValidation ? (
+            <>
+              <ValidationDetail failedCount={failedCount} totalItems={totalItems} items={items} />
+              {lastValidationDate != null && (
+                <Text textStyle="200" color="neutral.700">
+                  {t("Last check at {date}", { date: formatValidationCheckedAt(lastValidationDate) })}
+                </Text>
+              )}
+              {hasOverlaps && fixabilityResult != null && fixabilityResult.reasons.length > 0 && (
+                <Text textStyle="200" color="neutral.800">
+                  {fixabilityResult.canBeFixed
+                    ? t("This polygon can be fixed automatically (≤3.5% overlap, ≤0.1 ha area).")
+                    : fixabilityResult.reasons.join(". ")}
+                </Text>
+              )}
+            </>
+          ) : (
+            <Text textStyle="300" color="neutral.800">
+              {t("No criteria checked yet")}
+            </Text>
+          )}
         </Flex>
       </Flex>
-      {overlapping && (
+      {canFixOverlap && (
         <Flex className="w-full justify-center">
           <FloatingActionToolbar
             className="bg-theme-neutral-200"
             items={[
               {
-                onClick: () => {},
-                label: t("Fix Overlap")
+                onClick: handleFixOverlap,
+                label: pendingClipping ? t("Fixing overlap...") : t("Fix Overlap")
               }
             ]}
           />

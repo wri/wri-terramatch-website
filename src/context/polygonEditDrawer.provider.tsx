@@ -4,7 +4,7 @@ import { dispatchClearDraftDrawEvent } from "@/components/elements/Map-mapbox/in
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import type { PolygonSaveCallback } from "@/pages/site/[uuid]/components/polygonEdit.types";
+import type { PolygonOverlapFixCallback, PolygonSaveCallback } from "@/pages/site/[uuid]/components/polygonEdit.types";
 import PolygonEditDrawer from "@/pages/site/[uuid]/components/PolygonEditDrawer";
 
 import type { PolygonEditDrawerPolygon } from "./polygonEditDrawer.types";
@@ -54,18 +54,21 @@ type PolygonEditDrawerProviderProps = {
 type PolygonEditDrawerDataSyncProps = {
   polygons?: SitePolygonLightDto[];
   onRefetchPolygons?: PolygonSaveCallback;
+  onOverlapFixed?: PolygonOverlapFixCallback;
 };
 
 type PolygonEditDrawerDataContextValue = {
   setPolygons: (polygons: SitePolygonLightDto[]) => void;
   setOnRefetchPolygons: (onRefetch?: PolygonSaveCallback) => void;
+  setOnOverlapFixed: (onOverlapFixed?: PolygonOverlapFixCallback) => void;
 };
 
 const PolygonEditDrawerDataContext = createContext<PolygonEditDrawerDataContextValue | null>(null);
 
 export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({
   polygons = EMPTY_POLYGONS,
-  onRefetchPolygons
+  onRefetchPolygons,
+  onOverlapFixed
 }) => {
   const dataContext = useContext(PolygonEditDrawerDataContext);
 
@@ -76,6 +79,10 @@ export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({
   useEffect(() => {
     dataContext?.setOnRefetchPolygons(onRefetchPolygons);
   }, [dataContext, onRefetchPolygons]);
+
+  useEffect(() => {
+    dataContext?.setOnOverlapFixed(onOverlapFixed);
+  }, [dataContext, onOverlapFixed]);
 
   return null;
 };
@@ -91,6 +98,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const [suppressMapSelectionHighlight, setSuppressMapSelectionHighlight] = useState(false);
 
   const onRefetchPolygonsRef = useRef<PolygonSaveCallback | undefined>(onRefetchPolygonsProp);
+  const onOverlapFixedRef = useRef<PolygonOverlapFixCallback | undefined>(undefined);
 
   useEffect(() => {
     setPolygons(polygonsProp);
@@ -104,11 +112,23 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     onRefetchPolygonsRef.current = handler;
   }, []);
 
+  const setOnOverlapFixed = useCallback((handler?: PolygonOverlapFixCallback) => {
+    onOverlapFixedRef.current = handler;
+  }, []);
+
   const handleSaved = useCallback(() => onRefetchPolygonsRef.current?.(), []);
 
-  const dataContextValue = useMemo(() => ({ setPolygons, setOnRefetchPolygons }), [setOnRefetchPolygons]);
-  const { setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit, setDraftPolygonGeometry } =
-    useMapAreaContext();
+  const dataContextValue = useMemo(
+    () => ({ setPolygons, setOnRefetchPolygons, setOnOverlapFixed }),
+    [setOnRefetchPolygons, setOnOverlapFixed]
+  );
+  const {
+    setEditPolygon,
+    setIsUserDrawingEnabled,
+    setPolygonGeometryEdit,
+    setDraftPolygonGeometry,
+    setShouldRefetchPolygonData
+  } = useMapAreaContext();
   const anrMapOverlay = useAnrMapOverlayOptional();
 
   const openPolygonEdit = useCallback(
@@ -159,6 +179,20 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
       }
     },
     [isOpen, setEditPolygon]
+  );
+
+  const handleOverlapFixed = useCallback(
+    async (params: Parameters<PolygonOverlapFixCallback>[0]) => {
+      const updatedPolygon = await onOverlapFixedRef.current?.(params);
+      if (updatedPolygon == null) {
+        return undefined;
+      }
+
+      setSelectedPolygon(updatedPolygon);
+      setShouldRefetchPolygonData(true);
+      return updatedPolygon;
+    },
+    [setSelectedPolygon, setShouldRefetchPolygonData]
   );
 
   const setOpen = useCallback(
@@ -213,6 +247,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
           selectedPolygon={selectedPolygon}
           onOpenChange={setOpen}
           onSaved={handleSaved}
+          onOverlapFixed={handleOverlapFixed}
           onPolygonUpdated={setSelectedPolygon}
           onSuppressMapSelectionHighlightChange={setSuppressMapSelectionHighlight}
         />
