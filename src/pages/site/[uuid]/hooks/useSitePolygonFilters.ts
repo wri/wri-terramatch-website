@@ -99,7 +99,7 @@ export const useSitePolygonFilters = ({ t }: UseSitePolygonFiltersParams) => {
     }
     if (polygonFilters.hasOverlap) {
       labels.push({
-        label: t("Failed overlap validation"),
+        label: t("Overlaps"),
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, hasOverlap: false }));
         }
