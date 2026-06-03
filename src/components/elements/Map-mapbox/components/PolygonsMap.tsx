@@ -28,6 +28,7 @@ import LoadingMap from "./LoadingMap";
 
 export type PolygonsMapEntityModel = {
   uuid: string;
+  projectUuid?: string | null;
   projectCountry?: string | null;
   country?: string | null;
   organisation?: { name?: string };
@@ -115,6 +116,13 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
   );
 
+  const projectUuid =
+    type === "sites" && polygons.length === 0 && entityModel.projectUuid != null && entityModel.projectUuid !== ""
+      ? entityModel.projectUuid
+      : undefined;
+
+  const projectBbox = useBoundingBox(projectUuid != null ? { projectUuid } : {});
+
   const countryBbox = useBoundingBox(
     type === "sites"
       ? { country: entityModel.projectCountry ?? undefined }
@@ -125,8 +133,11 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     if (polygons.length > 0) {
       return modelBbox as BBox | undefined;
     }
+    if (projectBbox != null) {
+      return projectBbox as BBox;
+    }
     return countryBbox as BBox | undefined;
-  }, [polygons.length, modelBbox, countryBbox]);
+  }, [polygons.length, modelBbox, projectBbox, countryBbox]);
 
   useEffect(() => {
     setPolygonData(polygons);
