@@ -3,6 +3,8 @@ import { showToast } from "@worldresources/wri-design-systems";
 import { createElement, useCallback, useState } from "react";
 
 import {
+  type UploadGeometryResponse,
+  type UploadGeometryWithVersionsResponse,
   prepareGeometryForUpload,
   useCompareGeometry,
   useUploadGeometry,
@@ -26,8 +28,12 @@ const UPLOAD_COMPLETE_TOAST_DURATION_MS = 5000;
 
 type UseUploadPolygonsOptions = {
   siteUuid: string;
-  onUploadSuccess: () => void;
+  onUploadSuccess: (result: UploadPolygonsSuccessResult) => void;
   onError: (message: string) => void;
+};
+
+export type UploadPolygonsSuccessResult = {
+  createdSitePolygonUuid: string | null;
 };
 
 const extractErrorMessage = (error: unknown): string => {
@@ -59,6 +65,18 @@ const runRequest = <TResponse>(
   new Promise((resolve, reject) => {
     request({ onSuccess: resolve, onError: reject });
   });
+
+const getCreatedSitePolygonUuid = (
+  response: UploadGeometryResponse | UploadGeometryWithVersionsResponse
+): string | null => {
+  const responseResourceType = response.meta?.resourceType ?? response.data?.type;
+  if (responseResourceType !== "sitePolygons") {
+    return null;
+  }
+
+  const createdSitePolygonUuid = response.data?.id;
+  return createdSitePolygonUuid != null && createdSitePolygonUuid.length > 0 ? createdSitePolygonUuid : null;
+};
 
 export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUploadPolygonsOptions) => {
   const t = useT();
@@ -96,16 +114,19 @@ export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUpl
       file: File,
       upload: (
         attributes: ReturnType<typeof prepareGeometryForUpload>,
-        handlers: { onSuccess: () => void; onError: (error: unknown) => void }
+        handlers: {
+          onSuccess: (response: UploadGeometryResponse | UploadGeometryWithVersionsResponse) => void;
+          onError: (error: unknown) => void;
+        }
       ) => void,
       toastLabels: { progress: string; complete: string }
     ) => {
       showProgressToast(toastLabels.progress);
       const attributes = prepareGeometryForUpload(file, siteUuid);
       upload(attributes, {
-        onSuccess: () => {
+        onSuccess: response => {
           showCompleteToast(toastLabels.complete);
-          onUploadSuccess();
+          onUploadSuccess({ createdSitePolygonUuid: getCreatedSitePolygonUuid(response) });
         },
         onError: error => onError(extractErrorMessage(error))
       });
