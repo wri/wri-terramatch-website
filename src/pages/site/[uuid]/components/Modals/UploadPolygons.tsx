@@ -10,6 +10,7 @@ import { UploadIcon } from "@/redesignComponents/foundations/Icons";
 
 import {
   type UploadPolygonsSuccessResult,
+  collectAcceptedUploadFiles,
   GeometryUploadComparisonResult,
   UploadMode,
   useUploadPolygons
@@ -29,16 +30,31 @@ export interface UploadPolygonsProps {
   onUploadError: () => void;
 }
 
+const mergeSelectedFiles = (currentFiles: File[], incomingFiles: File[]): File[] => {
+  const existingNames = new Set(currentFiles.map(file => file.name));
+  const mergedFiles = [...currentFiles];
+
+  for (const file of incomingFiles) {
+    if (existingNames.has(file.name)) {
+      continue;
+    }
+    existingNames.add(file.name);
+    mergedFiles.push(file);
+  }
+
+  return mergedFiles;
+};
+
 const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange, onUploadSuccess, onUploadError }) => {
   const t = useT();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<UploadStep>("form");
   const [mode, setMode] = useState<UploadMode>("new-polygons");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [comparison, setComparison] = useState<GeometryUploadComparisonResult | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  const { uploadNew, compareFile, uploadWithVersions, isComparing } = useUploadPolygons({
+  const { uploadNewFiles, compareFiles, uploadWithVersionsFiles, isComparing } = useUploadPolygons({
     siteUuid,
     onUploadSuccess,
     onError: () => onUploadError()
@@ -47,7 +63,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
   const resetState = useCallback(() => {
     setStep("form");
     setMode("new-polygons");
-    setSelectedFile(null);
+    setSelectedFiles([]);
     setComparison(null);
     setIsDragging(false);
   }, []);
@@ -63,42 +79,46 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
   }, []);
 
   const handleUpload = useCallback(async () => {
-    if (selectedFile == null) return;
+    if (selectedFiles.length === 0) return;
 
     if (mode === "new-polygons") {
-      const file = selectedFile;
+      const files = selectedFiles;
       handleClose();
-      uploadNew(file);
+      uploadNewFiles(files);
       return;
     }
 
     try {
-      const result = await compareFile(selectedFile);
+      const result = await compareFiles(selectedFiles);
       setComparison(result);
       setStep("confirm");
     } catch {
       // Error surfaced via onUploadError.
     }
-  }, [selectedFile, mode, uploadNew, compareFile, handleClose]);
+  }, [selectedFiles, mode, uploadNewFiles, compareFiles, handleClose]);
 
   const handleConfirmVersions = useCallback(() => {
-    if (selectedFile == null) return;
-    const file = selectedFile;
+    if (selectedFiles.length === 0) return;
+    const files = selectedFiles;
     handleClose();
-    uploadWithVersions(file);
-  }, [selectedFile, uploadWithVersions, handleClose]);
+    uploadWithVersionsFiles(files);
+  }, [selectedFiles, uploadWithVersionsFiles, handleClose]);
 
   const handleFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-    setSelectedFile(file);
+    const files = collectAcceptedUploadFiles(e.target.files);
+    setSelectedFiles(currentFiles => mergeSelectedFiles(currentFiles, files));
     e.target.value = "";
   }, []);
 
   const handleDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    const file = e.dataTransfer.files?.[0] ?? null;
-    setSelectedFile(file);
+    const files = collectAcceptedUploadFiles(e.dataTransfer.files);
+    setSelectedFiles(currentFiles => mergeSelectedFiles(currentFiles, files));
+  }, []);
+
+  const handleRemoveFile = useCallback((fileName: string) => {
+    setSelectedFiles(currentFiles => currentFiles.filter(file => file.name !== fileName));
   }, []);
 
   const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
@@ -111,6 +131,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
   const isConfirmStep = step === "confirm";
   const isUpdateMode = mode === "update-existing-polygons";
   const hasVersioning = (comparison?.featuresForVersioning ?? 0) > 0;
+  const hasSelectedFiles = selectedFiles.length > 0;
 
   const formPrimaryLabel = isComparing ? t("Checking...") : isUpdateMode ? t("Next") : t("Upload");
   const confirmPrimaryLabel = hasVersioning ? t("Create new versions") : t("Upload");
@@ -148,6 +169,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
               ref={fileInputRef}
               type="file"
               accept={ACCEPTED_FORMATS}
+              multiple
               style={{ display: "none" }}
               onChange={handleFileChange}
             />
@@ -174,21 +196,30 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
                 </Button>
               </Flex>
 
-              {selectedFile != null && (
+              {hasSelectedFiles && (
                 <Flex
                   justifyContent="center"
-                  alignItems="center"
+                  alignItems="stretch"
                   flexDirection="column"
-                  gap={0}
+                  gap={2}
                   bg="neutral.300"
                   px={5}
                   py={2}
                   rounded={2}
                   mt={-2}
+                  w="full"
+                  maxW="24rem"
                 >
-                  <Text textStyle="300-bold" color="primary.700">
-                    {selectedFile.name}
-                  </Text>
+                  {selectedFiles.map(file => (
+                    <Flex key={file.name} justifyContent="space-between" alignItems="center" gap={2}>
+                      <Text textStyle="300-bold" color="primary.700" lineClamp={1}>
+                        {file.name}
+                      </Text>
+                      <Button variant="borderless" size="small" onClick={() => handleRemoveFile(file.name)}>
+                        {t("Remove")}
+                      </Button>
+                    </Flex>
+                  ))}
                 </Flex>
               )}
 
@@ -237,7 +268,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
                   {
                     id: "upload",
                     children: formPrimaryLabel,
-                    disabled: selectedFile == null || isComparing,
+                    disabled: !hasSelectedFiles || isComparing,
                     onClick: handleUpload
                   }
                 ]

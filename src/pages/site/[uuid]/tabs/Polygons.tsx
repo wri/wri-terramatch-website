@@ -852,8 +852,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           open={showUploadModal}
           siteUuid={site.uuid}
           onOpenChange={setShowUploadModal}
-          onUploadSuccess={({ createdSitePolygonUuid }) => {
-            if (createdSitePolygonUuid != null) {
+          onUploadSuccess={({ createdSitePolygonUuid, uploadedFileCount }) => {
+            if (createdSitePolygonUuid != null && uploadedFileCount === 1) {
               setUploadedPolygonUuidToOpen(createdSitePolygonUuid);
             }
             void refetchPolygons();
