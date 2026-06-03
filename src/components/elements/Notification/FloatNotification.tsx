@@ -107,7 +107,7 @@ const getValidationMessages = (data: Record<string, any> | null): string[] => {
 };
 
 const clearJob = (item: DelayedJobDto) => {
-  const newJobsData: DelayedJobData[] = [
+  triggerBulkUpdate([
     {
       id: item.uuid,
       type: "delayedJobs",
@@ -115,18 +115,31 @@ const clearJob = (item: DelayedJobDto) => {
         isAcknowledged: true
       }
     }
-  ];
-  triggerBulkUpdate(newJobsData);
+  ]);
 };
 
-const getSiteNameForJob = (job: DelayedJobDto, cachedSiteNames: Record<string, string>): string => {
-  if (job.entityName) {
+const entityName = (job: DelayedJobDto, cachedSiteNames: Record<string, string>): string => {
+  if (job.entityName != null) {
     return job.entityName;
   }
-  if (cachedSiteNames[job.uuid]) {
+  if (cachedSiteNames[job.uuid] != null) {
     return cachedSiteNames[job.uuid];
   }
   return "Unknown";
+};
+
+const entityType = (job: DelayedJobDto, t: typeof useT) => {
+  if (job.entityType != null) {
+    // only three types expected
+    return job.entityType === "projects"
+      ? t("Project: ")
+      : job.entityType === "sites"
+      ? t("Site: ")
+      : job.entityType === "nurseries"
+      ? t("Nursery: ")
+      : null;
+  }
+  return job?.name?.includes("Project") ? t("Project: ") : t("Site: ");
 };
 
 const FloatNotification: FC = () => {
@@ -294,15 +307,15 @@ const FloatNotification: FC = () => {
                         </Text>
                         {
                           <button className="absolute right-0 hover:text-primary" onClick={() => clearJob(item)}>
-                            <ToolTip content={t("Cancel")}>
+                            <ToolTip content={t("Clear")}>
                               <Icon name={IconNames.CLEAR} className="h-3 w-3" />
                             </ToolTip>
                           </button>
                         }
                       </div>
                       <Text variant="text-14-light" className="text-darkCustom">
-                        {item?.name?.includes("Project") ? t("Project: ") : t("Site: ")}
-                        <b>{getSiteNameForJob(item, cachedSiteNames)}</b>
+                        {entityType(item, t)}
+                        <b>{entityName(item, cachedSiteNames)}</b>
                       </Text>
                       <div className="mt-1">
                         {item.status === "failed" ? (
