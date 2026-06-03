@@ -1,3 +1,4 @@
+import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import type { FC } from "react";
@@ -23,6 +24,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 import { parsePolygonDataV3, storePolygon } from "../utils";
+import LoadingMap from "./LoadingMap";
 
 export type PolygonsMapEntityModel = {
   uuid: string;
@@ -38,6 +40,7 @@ interface PolygonsMapProps {
   type: PolygonsMapEntityType;
   polygons: SitePolygonLightDto[];
   onRefetchPolygons: () => void | Promise<void>;
+  isLoadingPolygons?: boolean;
   className?: string;
   polygonTableHighlight?: {
     selectedPolygonUuids: string[];
@@ -60,6 +63,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   type,
   polygons,
   onRefetchPolygons,
+  isLoadingPolygons = false,
   className,
   polygonTableHighlight,
   overlapPolygons
@@ -160,36 +164,39 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   }, [polygons]);
 
   return (
-    <MapContainer
-      championsMap={true}
-      mapFunctions={mapFunctions}
-      polygonsData={polygonDataMap}
-      bbox={extentBbox}
-      tooltipType={type === "sites" ? "edit" : "goTo"}
-      showPopups
-      showLegend
-      siteData={true}
-      status={type === "sites" && !disabledPolygonPanel && editPolygon.isOpen}
-      validationType={
-        type === "sites" && !disabledPolygonPanel
-          ? editPolygon.isOpen
-            ? "individualValidation"
-            : "bulkValidation"
-          : ""
-      }
-      record={entityModel}
-      className={classNames("h-full w-full flex-1", className)}
-      polygonsExists={polygons.length > 0}
-      setPolygonFromMap={setPolygonFromMap}
-      polygonFromMap={polygonFromMap}
-      shouldBboxZoom={!shouldRefetchPolygonData}
-      mediaFiles={mediaFiles}
-      sitePolygonData={sitePolygonDataV3}
-      disabledPolygonPanel={disabledPolygonPanel}
-      autoEditPolygon={editPolygon.isOpen}
-      polygonTableHighlight={polygonTableHighlight}
-      overlapPolygons={overlapPolygons}
-    />
+    <Box position="relative" className={classNames("h-full w-full flex-1", className)}>
+      <LoadingMap text={t("Loading polygons")} loading={isLoadingPolygons} />
+      <MapContainer
+        championsMap={true}
+        mapFunctions={mapFunctions}
+        polygonsData={polygonDataMap}
+        bbox={extentBbox}
+        tooltipType={type === "sites" ? "edit" : "goTo"}
+        showPopups
+        showLegend
+        siteData={true}
+        status={type === "sites" && !disabledPolygonPanel && editPolygon.isOpen}
+        validationType={
+          type === "sites" && !disabledPolygonPanel
+            ? editPolygon.isOpen
+              ? "individualValidation"
+              : "bulkValidation"
+            : ""
+        }
+        record={entityModel}
+        className="h-full w-full flex-1"
+        polygonsExists={polygons.length > 0}
+        setPolygonFromMap={setPolygonFromMap}
+        polygonFromMap={polygonFromMap}
+        shouldBboxZoom={!shouldRefetchPolygonData}
+        mediaFiles={mediaFiles}
+        sitePolygonData={sitePolygonDataV3}
+        disabledPolygonPanel={disabledPolygonPanel}
+        autoEditPolygon={editPolygon.isOpen}
+        polygonTableHighlight={polygonTableHighlight}
+        overlapPolygons={overlapPolygons}
+      />
+    </Box>
   );
 };
 
