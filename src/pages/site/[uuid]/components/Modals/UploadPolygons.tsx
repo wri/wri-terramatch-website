@@ -8,7 +8,12 @@ import Modal from "@/redesignComponents/containers/Modal/Modal";
 import RadioButtonGroup from "@/redesignComponents/Forms/Actions/RadioButton/Radio";
 import { UploadIcon } from "@/redesignComponents/foundations/Icons";
 
-import { GeometryUploadComparisonResult, UploadMode, useUploadPolygons } from "../../hooks/useUploadPolygons";
+import {
+  type UploadPolygonsSuccessResult,
+  GeometryUploadComparisonResult,
+  UploadMode,
+  useUploadPolygons
+} from "../../hooks/useUploadPolygons";
 import MatchingPolygonsContent from "./MatchingPolygonsContent";
 
 const ACCEPTED_FORMATS = ".geojson,.kml,.zip";
@@ -20,7 +25,7 @@ export interface UploadPolygonsProps {
   open: boolean;
   siteUuid: string;
   onOpenChange: (open: boolean) => void;
-  onUploadSuccess: () => void;
+  onUploadSuccess: (result: UploadPolygonsSuccessResult) => void;
   onUploadError: () => void;
 }
 
