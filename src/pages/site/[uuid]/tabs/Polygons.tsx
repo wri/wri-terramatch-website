@@ -137,6 +137,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [showUploadErrorModal, setUploadErrorModal] = useState(false);
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
   const [showBulkEditDrawer, setShowBulkEditDrawer] = useState(false);
+  const [uploadedPolygonUuidToOpen, setUploadedPolygonUuidToOpen] = useState<string | null>(null);
   const [isStickyActive, setIsStickyActive] = useState(false);
   const [isDownloadingSelectedPolygons, setIsDownloadingSelectedPolygons] = useState(false);
   const [isBulkUpdatingPolygons, setIsBulkUpdatingPolygons] = useState(false);
@@ -276,6 +277,41 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     pendingOverlapFixPolygonIdRef.current = null;
     openPolygonEditDrawerByPolygonId(pendingPolygonId);
   }, [openPolygonEditDrawerByPolygonId, polygonFilters.hasOverlap, isLoadingPolygons, polygonsData]);
+
+  useEffect(() => {
+    if (uploadedPolygonUuidToOpen == null || isLoadingPolygons) {
+      return;
+    }
+
+    const uploadedPolygonExistsInTableData = polygonsData.some(
+      polygon => polygon.uuid === uploadedPolygonUuidToOpen || polygon.polygonUuid === uploadedPolygonUuidToOpen
+    );
+    if (!uploadedPolygonExistsInTableData) {
+      void loadAllSitePolygons({
+        entityName: "sites",
+        entityUuid: site.uuid,
+        enabled: site.uuid != null && site.uuid !== ""
+      })
+        .then(allSitePolygons => {
+          const uploadedPolygon = allSitePolygons.find(
+            polygon => polygon.uuid === uploadedPolygonUuidToOpen || polygon.polygonUuid === uploadedPolygonUuidToOpen
+          );
+          if (uploadedPolygon == null) {
+            return;
+          }
+
+          openPolygonEditDrawerForSitePolygon(uploadedPolygon, uploadedPolygon.name ?? undefined);
+          setUploadedPolygonUuidToOpen(null);
+        })
+        .catch(error => {
+          Log.error("Failed to auto-open uploaded polygon in edit drawer:", error);
+        });
+      return;
+    }
+
+    openPolygonEditDrawerByPolygonId(uploadedPolygonUuidToOpen);
+    setUploadedPolygonUuidToOpen(null);
+  }, [isLoadingPolygons, openPolygonEditDrawerByPolygonId, polygonsData, site.uuid, uploadedPolygonUuidToOpen]);
 
   const handleOverlapFixModalClose = useCallback(() => {
     setOverlapFixModal(false);
@@ -816,7 +852,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           open={showUploadModal}
           siteUuid={site.uuid}
           onOpenChange={setShowUploadModal}
-          onUploadSuccess={() => {
+          onUploadSuccess={({ createdSitePolygonUuid }) => {
+            if (createdSitePolygonUuid != null) {
+              setUploadedPolygonUuidToOpen(createdSitePolygonUuid);
+            }
             void refetchPolygons();
           }}
           onUploadError={() => {
