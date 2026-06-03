@@ -182,7 +182,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
             <SavePolygon
               open
               onOpenChange={setShowSaveConfirmationModal}
-              polygon={{ polygonName: polygon.polygonName ?? t("-") } as unknown as PolygonTableRow}
+              polygon={{ polygonName: polygon.polygonName ?? "-" } as unknown as PolygonTableRow}
               onSave={() => void handleSave(pendingOnCloseRef.current ?? onClose)}
             />
           )}
