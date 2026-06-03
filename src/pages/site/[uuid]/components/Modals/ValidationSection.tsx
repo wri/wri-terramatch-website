@@ -3,7 +3,6 @@ import { useT } from "@transifex/react";
 import { FC, useMemo, useState } from "react";
 
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { parseV3ValidationData } from "@/helpers/polygonValidation";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import ProgressBar from "@/redesignComponents/dataDisplay/Metrics/ProgressBar";
@@ -11,6 +10,7 @@ import { ChevronDownIcon, ChevronRightIcon } from "@/redesignComponents/foundati
 
 import type { PolygonTableRow } from "../PolygonTableRow";
 import ValidationDetail from "../ValidationDetail";
+import { getValidationCriteriaItemsForTag } from "./validationCriteria";
 
 export interface ValidationSectionProps {
   polygons: PolygonTableRow[];
@@ -27,7 +27,10 @@ const ItemPolygon: FC<{
   const [isOpen, setIsOpen] = useState(false);
   const t = useT();
 
-  const items = useMemo(() => (validation == null ? [] : parseV3ValidationData(validation)), [validation]);
+  const items = useMemo(
+    () => getValidationCriteriaItemsForTag(validation, polygon.validation),
+    [polygon.validation, validation]
+  );
   const totalItems = items.length;
   const failedCount = items.filter(i => !i.status).length;
   const hasDetails = totalItems > 0;

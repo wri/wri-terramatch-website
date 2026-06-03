@@ -3,6 +3,7 @@ import type {
   ValidationCriteriaDto,
   ValidationDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
+import { isPolygonValidationChecked } from "@/helpers/polygonValidation";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
@@ -26,7 +27,7 @@ export const canAutoFixOverlapSelection = (summary: OverlapFixSelectionSummary):
 export const hasOverlapFailureInSelection = (summary: OverlapFixSelectionSummary): boolean =>
   summary.overlapCandidates.length > 0;
 
-type ClippedVersionSummary = {
+export type ClippedVersionSummary = {
   uuid: string | null;
   polyName: string | null;
 };
@@ -74,6 +75,11 @@ export const getSelectedOverlapFixSummary = (
   const notFixableCandidates: OverlapFixCandidate[] = [];
 
   for (const row of selectedRows) {
+    const polygon = polygonByUuid.get(row.id);
+    if (polygon != null && !isPolygonValidationChecked(polygon.validationStatus)) {
+      continue;
+    }
+
     const overlapCriteria = getOverlapCriteria(polygonValidations.get(row.id));
 
     if (overlapCriteria == null) {
@@ -102,6 +108,53 @@ export const getSelectedOverlapFixSummary = (
     fixableCandidates,
     notFixableCandidates
   };
+};
+
+export const resolveActivePolygonAfterOverlapFix = (
+  refreshedPolygons: SitePolygonLightDto[],
+  context: {
+    previousPolygonUuid: string;
+    primaryUuid?: string | null;
+    sitePolygonUuid?: string | null;
+  },
+  clippedVersions: ClippedVersionSummary[] = []
+): SitePolygonLightDto | undefined => {
+  const refreshedByGeometryUuid = new Map(
+    refreshedPolygons
+      .map(polygon =>
+        polygon.polygonUuid != null && polygon.polygonUuid !== "" ? ([polygon.polygonUuid, polygon] as const) : null
+      )
+      .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
+  );
+
+  for (const version of clippedVersions) {
+    if (version.uuid == null) {
+      continue;
+    }
+
+    const clippedPolygon = refreshedByGeometryUuid.get(version.uuid);
+    if (clippedPolygon != null) {
+      return clippedPolygon;
+    }
+  }
+
+  if (context.primaryUuid != null && context.primaryUuid !== "") {
+    const activeVersion = refreshedPolygons.find(
+      polygon => polygon.primaryUuid === context.primaryUuid && polygon.isActive
+    );
+    if (activeVersion != null) {
+      return activeVersion;
+    }
+  }
+
+  if (context.sitePolygonUuid != null && context.sitePolygonUuid !== "") {
+    const bySitePolygonUuid = refreshedPolygons.find(polygon => polygon.uuid === context.sitePolygonUuid);
+    if (bySitePolygonUuid != null) {
+      return bySitePolygonUuid;
+    }
+  }
+
+  return refreshedPolygons.find(polygon => polygon.polygonUuid === context.previousPolygonUuid);
 };
 
 export const extractClippedVersions = (response: unknown): ClippedVersionSummary[] => {

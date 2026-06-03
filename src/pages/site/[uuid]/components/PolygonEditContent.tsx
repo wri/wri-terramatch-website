@@ -51,16 +51,18 @@ import {
 } from "@/utils/mapStatusToTagStateEntity";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
-import type { PolygonTableRow } from "../tabs/Polygons";
 import DeletePolygon from "./Modals/DeletePolygon";
 import UploadPhotos from "./Modals/UploadPhotos";
 import type { PolygonSaveCallback } from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
+  prunePolygonValidationCache,
   runPolygonCacheCleanup,
   saveExistingPolygonVersion,
   saveNewSitePolygon
 } from "./polygonEditSave";
+import { formatDistributionValue, isRestorationStrategy, isTargetLandUseType } from "./polygonTable.constants";
+import type { PolygonTableRow } from "./PolygonTableRow";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 
 const TOAST_PLACEMENT = "bottom-end" as const;
@@ -221,10 +223,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               polygonName: polygon.name ?? t("Unnamed Polygon"),
               submission: mapSitePolygonStatusToMappedTagState(polygon.status ?? "draft"),
               validation: mapSiteValidationStatusToTagState(polygon.validationStatus ?? null),
-              restorationPractice: [],
-              targetLandUse: null,
+              restorationPractice: (polygon.practice ?? []).filter(isRestorationStrategy),
+              targetLandUse:
+                polygon.targetSys != null && isTargetLandUseType(polygon.targetSys) ? polygon.targetSys : null,
               plantingDate: polygon.plantStart ?? "-",
-              treeDistribution: [],
+              treeDistribution: (polygon.distr ?? []).map(formatDistributionValue),
               treesPlanted: polygon.numTrees ?? 0,
               area: polygon.calcArea ?? 0
             }
@@ -259,9 +262,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   );
 
   const finalizeSuccessfulSave = useCallback(
-    async (savedPolygon: SitePolygonLightDto, options: { geometryChanged: boolean; refetchVersionsList: boolean }) => {
+    async (
+      savedPolygon: SitePolygonLightDto,
+      options: { geometryChanged: boolean; refetchVersionsList: boolean; previousPolygonUuid?: string | null }
+    ) => {
       runPolygonCacheCleanup({
         polygonUuid: savedPolygon.polygonUuid,
+        previousPolygonUuid: options.previousPolygonUuid,
         geometryChanged: options.geometryChanged,
         invalidatePolygonMapTiles
       });
@@ -334,6 +341,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     });
 
     try {
+      const previousPolygonUuid = geometryPolygonUuid !== "" ? geometryPolygonUuid : undefined;
       const updatedPolygon = await saveExistingPolygonVersion({
         primaryUuid: polygon.primaryUuid,
         siteId: polygon.siteId as string,
@@ -342,7 +350,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         currentGeometry: polygonGeometryEdit?.currentGeometry,
         dateValueToIso: dateValueToIsoString
       });
-      await finalizeSuccessfulSave(updatedPolygon, { geometryChanged, refetchVersionsList: true });
+      await finalizeSuccessfulSave(updatedPolygon, {
+        geometryChanged,
+        refetchVersionsList: true,
+        previousPolygonUuid
+      });
       showStatusToast(
         "success",
         geometryChanged
@@ -357,6 +369,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [
     finalizeSuccessfulSave,
     geometryChanged,
+    geometryPolygonUuid,
     getFormValues,
     showStatusToast,
     polygon?.primaryUuid,
@@ -480,6 +493,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         setPreviewVersion(false);
 
         pruneSitePolygonsCache();
+        prunePolygonValidationCache(previousGeometryUuid, updatedVersion.polygonUuid);
         if (previousGeometryUuid !== "") {
           ApiSlice.pruneCache("geojsonExports", [previousGeometryUuid]);
         }
