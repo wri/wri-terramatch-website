@@ -30,6 +30,7 @@ export function PolygonPopup(event: PopupComponentProps) {
         popup={popup}
         setShouldRefetchPolygonData={setShouldRefetchPolygonData}
         sitePolygon={selectedSitePolygon}
+        tooltipType={type}
       />
     );
   }

@@ -8,7 +8,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
 
-import type { PopupComponentProps } from "../../Map.d";
+import type { PopupComponentProps, TooltipType } from "../../Map.d";
 import {
   formatAreaHectaresForPopup,
   formatTreesPlantedForPopup,
@@ -22,9 +22,15 @@ type PolygonPopupChampionsProps = {
   popup: PopupComponentProps["popup"];
   setShouldRefetchPolygonData?: PopupComponentProps["setShouldRefetchPolygonData"];
   sitePolygon?: SitePolygonLightDto;
+  tooltipType?: TooltipType;
 };
 
-export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, sitePolygon }: PolygonPopupChampionsProps) {
+export function PolygonPopupChampions({
+  popup,
+  setShouldRefetchPolygonData,
+  sitePolygon,
+  tooltipType
+}: PolygonPopupChampionsProps) {
   const [open, setOpen] = useState(true);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -94,6 +100,7 @@ export function PolygonPopupChampions({ popup, setShouldRefetchPolygonData, site
             submitDisabled={submitDisabled}
             onSubmit={handleSubmit}
             onEdit={handleEdit}
+            tooltipType={tooltipType}
           />
         }
         placement="right"
