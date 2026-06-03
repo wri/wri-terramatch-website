@@ -187,7 +187,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
                 classNameCard="!pl-0"
                 items={[
                   {
-                    iconName: IconNames.LEAF_CIRCLE_PD,
+                    iconName: IconNames.NURSERY_CIRCLE,
                     label: t("number of seeds PLANTED:"),
                     variantLabel: "text-14" as TextVariants,
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
@@ -241,7 +241,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
                 classNameCard="!pl-0"
                 items={[
                   {
-                    iconName: IconNames.LEAF_CIRCLE_PD,
+                    iconName: IconNames.NURSERY_CIRCLE,
                     label: t("number of seeds PLANTED:"),
                     variantLabel: "text-14",
                     classNameLabel: " text-neutral-650 uppercase !w-auto",

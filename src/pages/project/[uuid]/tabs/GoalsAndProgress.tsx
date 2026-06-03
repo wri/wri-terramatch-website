@@ -265,7 +265,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   classNameCard="!pl-0"
                   items={[
                     {
-                      iconName: IconNames.LEAF_PLANTED_CIRCLE,
+                      iconName: IconNames.NURSERY_CIRCLE,
                       label: t("Number of Seedlings Growing:"),
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
@@ -307,7 +307,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   classNameCard="!pl-0"
                   items={[
                     {
-                      iconName: IconNames.LEAF_CIRCLE_PD,
+                      iconName: IconNames.NURSERY_CIRCLE,
                       label: t("Number of Seeds Planted:"),
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
