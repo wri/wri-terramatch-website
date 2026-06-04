@@ -15,6 +15,7 @@ import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import DashboardLayout from "@/components/generic/Layout/DashboardLayout";
 import MainLayout from "@/components/generic/Layout/MainLayout";
 import * as environment from "@/constants/environment";
+import EntityScopeFromRouter from "@/context/EntityScopeFromRouter";
 import FloatNotificationProvider from "@/context/floatNotification.provider";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
 import ModalProvider from "@/context/modal.provider";
@@ -95,19 +96,21 @@ const _App = ({ Component, pageProps }: AppProps) => {
             <LoadingProvider>
               <NotificationProvider>
                 <ModalProvider>
-                  {isOnDashboards ? (
-                    <DashboardStack>
-                      <Component {...pageProps} />
-                    </DashboardStack>
-                  ) : isAdmin ? (
-                    <AdminStack>
-                      <Component {...pageProps} />
-                    </AdminStack>
-                  ) : (
-                    <PDStack>
-                      <Component {...pageProps} />
-                    </PDStack>
-                  )}
+                  <EntityScopeFromRouter>
+                    {isOnDashboards ? (
+                      <DashboardStack>
+                        <Component {...pageProps} />
+                      </DashboardStack>
+                    ) : isAdmin ? (
+                      <AdminStack>
+                        <Component {...pageProps} />
+                      </AdminStack>
+                    ) : (
+                      <PDStack>
+                        <Component {...pageProps} />
+                      </PDStack>
+                    )}
+                  </EntityScopeFromRouter>
                 </ModalProvider>
               </NotificationProvider>
             </LoadingProvider>

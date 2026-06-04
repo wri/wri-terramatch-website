@@ -91,7 +91,6 @@ export enum IconNames {
   MAP_THUMBNAIL = "map-thumbnail",
   LEAF_CIRCLE = "leaf-circle",
   LEAF_CIRCLE_PD = "leaf-circle_pd",
-  SEEDLINGS_CIRCLE_PD = "seedlings-circle-pd",
   REFRESH_CIRCLE = "refresh-circle",
   REFRESH_CIRCLE_PD = "refresh-circle_pd",
   SITE_CIRCLE = "site-circle",

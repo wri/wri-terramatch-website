@@ -25,13 +25,12 @@ declare global {
   }
 }
 
-const toSnakeEntityType = (entityName?: string | null): Ga4EntityType => {
-  if (entityName == null) return "unknown";
-  const normalized = entityName.toLowerCase();
+const toPolygonEntityType = (entityType?: string | null): string => {
+  const normalized = entityType?.toLowerCase() ?? "";
   if (normalized.includes("project")) return "project";
   if (normalized.includes("site")) return "site";
   if (normalized.includes("nurser")) return "nursery";
-  return "unknown";
+  return "";
 };
 
 const sanitizeParams = (params: Ga4EventParams): Record<string, string | number | boolean> => {
@@ -59,8 +58,8 @@ export const getPolygonAnalyticsContext = ({
   entityType?: string | null;
   entityId?: string | null;
 }) => ({
-  entity_type: toSnakeEntityType(entityType),
-  entity_id: entityId ?? "unknown"
+  entity_type: toPolygonEntityType(entityType),
+  entity_id: entityId ?? ""
 });
 
 export const getFormSectionAnalyticsContext = ({
@@ -84,7 +83,16 @@ export const getFormSectionAnalyticsContext = ({
 });
 
 export const trackPolygonEvent = (eventName: PolygonEventName, params: Ga4EventParams): void => {
-  trackGa4Event(eventName, params);
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const payload = Object.fromEntries(
+    Object.entries({ event: eventName, ...params }).filter(([, value]) => value != null)
+  );
+
+  window.dataLayer = window.dataLayer ?? [];
+  window.dataLayer.push(payload);
 };
 
 export const trackFormSectionEvent = (eventName: FormSectionEventName, params: Ga4EventParams): void => {

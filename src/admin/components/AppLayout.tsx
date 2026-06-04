@@ -3,6 +3,7 @@ import { FC } from "react";
 import { Layout, LayoutProps } from "react-admin";
 
 import { BackButton } from "@/admin/components/BackButton";
+import AdminEntityScopeBridge from "@/admin/components/EntityScope/AdminEntityScopeBridge";
 import ExportProvider from "@/admin/modules/application/context/export.provider";
 import Loader from "@/components/generic/Loading/Loader";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -24,12 +25,14 @@ const AppLayout: FC<LayoutProps> = props => {
         </div>
       )}
       <Layout {...props} appBar={AppBar} menu={AppMenu}>
-        {isDetailPage && (
-          <Box marginTop={2}>
-            <BackButton />
-          </Box>
-        )}
-        {props.children}
+        <AdminEntityScopeBridge>
+          {isDetailPage && (
+            <Box marginTop={2}>
+              <BackButton />
+            </Box>
+          )}
+          {props.children}
+        </AdminEntityScopeBridge>
       </Layout>
     </ExportProvider>
   );
