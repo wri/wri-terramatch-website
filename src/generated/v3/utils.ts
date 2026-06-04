@@ -62,6 +62,16 @@ const getBaseUrl = (url: string) => {
 
 export type FetchParamValue = number | string | boolean | null | undefined | FetchParamValue[];
 export type FetchParams = Dictionary<FetchParamValue | FetchParams | FetchParams[]>;
+export type DownloadFileOptions = {
+  // A default file name may be provided, but in most cases it should not be necessary. In the case
+  // of a FileDownloadDto, the file's name at its URL is used, and in the case of a blob download,
+  // the file name is typically provided by the server in the Content-Disposition header.
+  defaultFileName?: string;
+
+  // If true (or not provided), the delayed job that may have been used as part of the download
+  // process will be acknowledged automatically when the delayed job is complete.
+  acknowledgeDelayedJob?: boolean;
+};
 
 export const getStableQuery = (queryParams?: FetchParams, replaceEmptyBrackets = true) => {
   if (queryParams == null) return "";
@@ -176,12 +186,8 @@ export class V3ApiEndpoint<
    * A utility to get a file from a backend endpoint. These endpoints are expected to generate
    * either a non-JSON content type that will be downloaded as a blob or a single FileDownloadDto in
    * eventual response. Supports delayed job handling.
-   *
-   * A default file name may be provided, but in most cases it should not be necessary. In the case
-   * of a FileDownloadDto, the file's name at its URL is used, and in the case of a blob download, the
-   * file name is typically provided by the server in the Content-Disposition header.
    */
-  async downloadFile(variables: TVariables, defaultFileName?: string) {
+  async downloadFile(variables: TVariables, { defaultFileName, acknowledgeDelayedJob }: DownloadFileOptions = {}) {
     const { url, body, requestHeaders } = this.prepareRequest(variables);
     const response = await fetch(url, { method: this.method, body, headers: requestHeaders });
 
@@ -203,7 +209,16 @@ export class V3ApiEndpoint<
         responsePayload?.data?.attributes?.uuid != null &&
         responsePayload?.data?.type == "delayedJobs"
       ) {
-        responsePayload = await processDelayedJob<JsonApiResponse>(responsePayload.data.attributes.uuid);
+        const delayedJobId = responsePayload.data.attributes.uuid as string;
+        const isAcknowledged = responsePayload.data.attributes.isAcknowledged as boolean | null;
+        try {
+          responsePayload = await processDelayedJob<JsonApiResponse>(delayedJobId);
+        } finally {
+          if (acknowledgeDelayedJob !== false && isAcknowledged !== true) {
+            const { acknowledgeJobs } = await import("@/connections/DelayedJob");
+            acknowledgeJobs([delayedJobId]);
+          }
+        }
       }
 
       const { data } = responsePayload as JsonApiResponse;

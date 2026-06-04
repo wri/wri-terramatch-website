@@ -3520,6 +3520,85 @@ export const entityUpdate = new V3ApiEndpoint<undefined, EntityUpdateError, Enti
   "PATCH"
 );
 
+export type EntityAssetGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+};
+
+export type EntityAssetGetError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type EntityAssetGetVariables = {
+  pathParams: EntityAssetGetPathParams;
+};
+
+export const entityAssetGet = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example fileDownloads
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example fileDownloads
+         */
+        type?: string;
+        id?: string;
+        attributes?: Schemas.FileDownloadDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  EntityAssetGetError,
+  EntityAssetGetVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/exportAssets", "GET");
+
 export type EntityExportPathParams = {
   /**
    * UUID of the resource.
@@ -6645,7 +6724,16 @@ export const operationsByTag = {
   reminders: { sendReminder },
   auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
   aggregateReports: { getAggregateReports },
-  entities: { entityIndex, entityCreate, entityExportAll, entityGet, entityDelete, entityUpdate, entityExport },
+  entities: {
+    entityIndex,
+    entityCreate,
+    entityExportAll,
+    entityGet,
+    entityDelete,
+    entityUpdate,
+    entityAssetGet,
+    entityExport
+  },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },
   entityAssociations: { entityAssociationIndex },
