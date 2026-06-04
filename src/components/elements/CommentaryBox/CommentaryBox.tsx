@@ -9,6 +9,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { AuditStatusEntityType, useCreateAuditStatus } from "@/connections/AuditStatus";
 import { prepareFileForUpload } from "@/connections/Media";
+import { useEntityScope } from "@/context/entityScope.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -43,7 +44,7 @@ const MAX_FILES = 5;
 const CommentaryBox: FC<CommentaryBoxProps> = props => {
   const { name, lastName, buttonSendOnBox, buttonProps } = props;
   const t = useT();
-
+  const { entityType: entityTypeFromScope, entityUuid: entityUuidFromScope } = useEntityScope();
   const onSuccess = async (createdAuditStatus: AuditStatusDto) => {
     try {
       const uuid = createdAuditStatus.uuid;
@@ -66,8 +67,8 @@ const CommentaryBox: FC<CommentaryBoxProps> = props => {
       if (props.entity === "sitePolygons") {
         trackPolygonEvent("polygon_commented", {
           ...getPolygonAnalyticsContext({
-            entityType: "site",
-            entityId: props.record?.siteUuid
+            entityType: entityTypeFromScope,
+            entityId: entityUuidFromScope
           }),
           polygon_id: props.record?.uuid
         });
