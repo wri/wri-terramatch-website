@@ -414,16 +414,30 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     }
   }, []);
 
+  const runPolygonValidation = useCallback(
+    async (polygonUuids: string[]) => {
+      if (polygonUuids.length === 0) {
+        return;
+      }
+
+      showPolygonProgressToast(t, getValidatingProgressLabel(t, polygonUuids.length));
+      await createPolygonValidation({ polygonUuids });
+      ApiSlice.pruneCache("validations");
+      pruneSitePolygonsCache();
+      await Promise.all([refetchPolygons(), fetchAllValidationPages(true), fetchOverlapValidations(true)]);
+    },
+    [fetchAllValidationPages, fetchOverlapValidations, refetchPolygons, t]
+  );
+
   const handleRunValidation = useCallback(
     async (polygonUuids: string[]) => {
-      if (polygonUuids.length === 0) return;
+      if (polygonUuids.length === 0) {
+        return;
+      }
+
       try {
         setIsValidatingPolygons(true);
-        showPolygonProgressToast(t, getValidatingProgressLabel(t, polygonUuids.length));
-        await createPolygonValidation({ polygonUuids });
-        ApiSlice.pruneCache("validations");
-        pruneSitePolygonsCache();
-        await Promise.all([refetchPolygons(), fetchAllValidationPages(true), fetchOverlapValidations(true)]);
+        await runPolygonValidation(polygonUuids);
       } catch (error) {
         Log.error("Failed to validate selected polygons:", error);
         openNotification("error", t("Error!"), t("Failed to validate polygons"));
@@ -432,7 +446,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         setIsValidatingPolygons(false);
       }
     },
-    [fetchAllValidationPages, fetchOverlapValidations, openNotification, refetchPolygons, t]
+    [openNotification, runPolygonValidation, t]
   );
 
   const handleDrawerOverlapFixed = useCallback(
@@ -836,6 +850,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         polygons={polygonsData}
         onRefetchPolygons={refetchPolygons}
         onOverlapFixed={handleDrawerOverlapFixed}
+        onRunValidation={runPolygonValidation}
       />
       <PageContent className="bg-theme-neutral-100">
         <PageItem
