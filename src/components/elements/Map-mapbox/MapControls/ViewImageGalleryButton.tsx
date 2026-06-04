@@ -3,7 +3,9 @@ import classNames from "classnames";
 import { FC } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useEntityScope } from "@/context/entityScope.provider";
 import { useOnMount } from "@/hooks/useOnMount";
+import { trackPolygonEvent } from "@/utils/ga4";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -15,6 +17,7 @@ type ViewGalleryButtonProps = {
 
 const ViewImageGalleryButton: FC<ViewGalleryButtonProps> = ({ imageGalleryRef, className }) => {
   const t = useT();
+  const { entityType: entityTypeFromScope, entityUuid: entityUuidFromScope } = useEntityScope();
 
   const scrollToGalleryElement = () => {
     if (imageGalleryRef?.current) {
@@ -65,7 +68,13 @@ const ViewImageGalleryButton: FC<ViewGalleryButtonProps> = ({ imageGalleryRef, c
       <Button
         variant="white-button-map"
         className={classNames("flex items-center gap-2", className)}
-        onClick={() => scrollToElement()}
+        onClick={() => {
+          trackPolygonEvent("polygon_gallery_viewed", {
+            entity_type: entityTypeFromScope,
+            entity_id: entityUuidFromScope
+          });
+          scrollToElement();
+        }}
       >
         <Icon name={IconNames.IMAGE_ICON} className="h-4 w-4" />
         <Text variant="text-12-bold"> {t("View Gallery")}</Text>
