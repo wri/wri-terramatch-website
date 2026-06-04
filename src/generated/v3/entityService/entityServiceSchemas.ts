@@ -3083,6 +3083,7 @@ export type SubmissionDto = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
+    | "wcb"
     | null;
   formUuid: string;
   status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
@@ -3337,6 +3338,7 @@ export type FormFullDto = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
+    | "wcb"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3470,6 +3472,7 @@ export type StoreFormAttributes = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
+    | "wcb"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3610,6 +3613,7 @@ export type FundingProgrammeDto = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
+    | "wcb"
     | null;
   name: string;
   description: string;
@@ -3642,6 +3646,7 @@ export type StoreFundingProgrammeAttributes = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
+    | "wcb"
     | null;
   name: string;
   description: string;
