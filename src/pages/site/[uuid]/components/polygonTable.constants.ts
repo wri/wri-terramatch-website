@@ -21,3 +21,17 @@ export const formatDistributionValue = (value: string): string => {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 };
+
+/** Stable sort key for multi-value polygon attributes (sorted before join). */
+export const toSortableJoinedList = (values: string[]): string =>
+  [...values].sort((a, b) => a.localeCompare(b)).join(", ");
+
+export const formatPolygonSource = (source: string | null | undefined): string => {
+  if (source == null || source === "") {
+    return "—";
+  }
+  if (source === "terramatch") {
+    return "TerraMatch";
+  }
+  return source;
+};
