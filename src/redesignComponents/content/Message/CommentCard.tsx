@@ -1,5 +1,6 @@
 import { Flex, Image, Text } from "@chakra-ui/react";
 import { FC, useCallback, useMemo, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 import IconButton from "@/redesignComponents/actions/Buttons/IconButton/IconButton";
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
@@ -38,6 +39,7 @@ interface CommentCardProps {
   onMarkRead?: () => void;
   onCancelEditing?: () => void;
   onSaveEditing?: () => void;
+  className?: string;
 }
 
 const CommentCard: FC<CommentCardProps> = ({
@@ -60,7 +62,8 @@ const CommentCard: FC<CommentCardProps> = ({
   onDelete,
   onMarkRead,
   onCancelEditing,
-  onSaveEditing
+  onSaveEditing,
+  className
 }) => {
   const [internalValue, setInternalValue] = useState(defaultValue);
   const isValueControlled = value !== undefined;
@@ -109,7 +112,11 @@ const CommentCard: FC<CommentCardProps> = ({
 
   return (
     <Flex
-      className={`flex-col gap-2 px-6 py-5 ${isCurrentUser ? "bg-theme-primary-100" : "bg-theme-neutral-100"}`}
+      className={twMerge(
+        "flex-col gap-2 bg-theme-neutral-100 px-6 py-5",
+        state === "edit" && "bg-theme-primary-100",
+        className
+      )}
       position="relative"
     >
       {state === "view" && (
