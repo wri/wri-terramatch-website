@@ -25,6 +25,7 @@ interface PolygonEditDrawerProps {
   onOpenChange?: (open: boolean) => void;
   onSaved?: PolygonSaveCallback;
   onOverlapFixed?: PolygonOverlapFixCallback;
+  onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
 }
@@ -36,6 +37,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onOpenChange,
   onSaved,
   onOverlapFixed,
+  onRunValidation,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange
 }) => {
