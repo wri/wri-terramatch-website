@@ -76,6 +76,7 @@ type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
   onClose?: () => void;
   onRegisterSave?: (saveHandler: () => Promise<boolean>) => void;
+  onRegisterPolygonName?: (getPolygonName: () => string) => void;
   onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
@@ -117,10 +118,17 @@ const waitForMapEditCleanup = async (): Promise<void> => {
   });
 };
 
+const getPolygonNameForDisplay = (formName: string, polygon?: SitePolygonLightDto): string => {
+  const trimmed = formName.trim();
+  if (trimmed.length > 0) return trimmed;
+  return polygon?.name?.trim() ?? "";
+};
+
 const PolygonEditContent: FC<PolygonEditContentProps> = ({
   polygon,
   onClose,
   onRegisterSave,
+  onRegisterPolygonName,
   onSaved,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange
@@ -636,6 +644,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   useEffect(() => {
     onRegisterSave?.(savePolygonData);
   }, [onRegisterSave, savePolygonData]);
+
+  useEffect(() => {
+    onRegisterPolygonName?.(() => getPolygonNameForDisplay(polygonName, polygon));
+  }, [onRegisterPolygonName, polygon, polygonName]);
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
