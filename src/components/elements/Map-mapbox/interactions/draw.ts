@@ -12,6 +12,20 @@ import { convertToAcceptedGEOJSON } from "../adapters/geojson";
 import { BBox } from "../GeoJSON";
 import { applyMapDrawStatusStyles, getPolygonStatusColor, PolygonDrawStatus } from "../mapStyle";
 
+const DRAWING_CURSOR_PEN_ICON_URL = "/images/pen_icon.png";
+const DRAWING_CURSOR_HOTSPOT_X = 11;
+const DRAWING_CURSOR_HOTSPOT_Y = 2;
+
+export const MAP_DRAWING_CURSOR = `url("${DRAWING_CURSOR_PEN_ICON_URL}") ${DRAWING_CURSOR_HOTSPOT_X} ${DRAWING_CURSOR_HOTSPOT_Y}, crosshair`;
+
+export const applyMapDrawingCursor = (map: MapboxMap): void => {
+  map.getCanvas().style.cursor = MAP_DRAWING_CURSOR;
+};
+
+export const resetMapDrawingCursor = (map: MapboxMap): void => {
+  map.getCanvas().style.cursor = "auto";
+};
+
 /** Shape of a polygon version record as returned by the versions API. */
 export type PolygonVersion = {
   polygonUuid?: string | null;
@@ -34,12 +48,12 @@ const extractGeoJsonFromResponse = (
 
 export const startDrawing = (draw: MapboxDraw, map: MapboxMap): void => {
   draw.changeMode("draw_polygon");
-  map.getCanvas().style.cursor = "crosshair";
+  applyMapDrawingCursor(map);
 };
 
 export const stopDrawing = (draw: MapboxDraw, map: MapboxMap): void => {
   draw.changeMode("simple_select");
-  map.getCanvas().style.cursor = "auto";
+  resetMapDrawingCursor(map);
 };
 
 export const addGeojsonToDraw = (

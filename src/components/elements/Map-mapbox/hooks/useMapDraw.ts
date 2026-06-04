@@ -23,8 +23,10 @@ import {
 } from "../interactions/draftDrawEvents";
 import {
   addGeojsonToDraw,
+  applyMapDrawingCursor,
   drawTemporaryPolygon,
   fetchPolygonGeometry,
+  resetMapDrawingCursor,
   updatePolygonProjectGeometry
 } from "../interactions/draw";
 import { removePopups } from "../interactions/popups";
@@ -242,13 +244,13 @@ export function useMapDraw({
     if (isUserDrawingEnabled) {
       applyMapDrawStatusStyles(map.current);
       draw.current.changeMode("draw_polygon");
-      map.current.getCanvas().style.cursor = "crosshair";
+      applyMapDrawingCursor(map.current);
       if (formMap && polygonFromMap?.uuid) {
         filterPolygonFromLayers(polygonFromMap.uuid, polygonsData, map.current);
       }
     } else {
       draw.current.changeMode("simple_select");
-      map.current.getCanvas().style.cursor = "auto";
+      resetMapDrawingCursor(map.current);
     }
   });
 
