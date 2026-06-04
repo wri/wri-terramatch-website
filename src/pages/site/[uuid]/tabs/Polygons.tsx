@@ -386,6 +386,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     try {
       showPolygonProgressToast(t, getDeletingProgressLabel(t, selectedSitePolygonUuids.length));
       await bulkDeleteSitePolygons(selectedSitePolygonUuids);
+      setDeletePolygonModal(false);
       closeMapPopups();
       setPolygonTableHoveredUuid(null);
       clearTableSelection();
@@ -404,6 +405,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     openNotification,
     refetchPolygons,
     selectedSitePolygonUuids,
+    setDeletePolygonModal,
     t,
     toastLabels
   ]);
