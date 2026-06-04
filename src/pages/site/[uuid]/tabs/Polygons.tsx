@@ -73,6 +73,7 @@ import {
   extractClippedVersions,
   getSelectedOverlapFixSummary,
   hasOverlapFailureInSelection,
+  hasOverlapValidationFailure,
   resolveActivePolygonAfterOverlapFix
 } from "../hooks/overlapFix.utils";
 import { useDownloadSitePolygons } from "../hooks/useDownloadSitePolygons";
@@ -348,6 +349,19 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const clearTableSelection = useCallback(() => {
     setSelectedRowIds(new Set<string>());
   }, [setSelectedRowIds]);
+
+  const handleSelectOverlapPolygons = useCallback(() => {
+    const visiblePolygonIds = new Set(
+      polygonsData
+        .map(polygon => polygon.polygonUuid ?? polygon.uuid)
+        .filter((id): id is string => id != null && id !== "")
+    );
+    const overlapRowIds = overlapValidations
+      .filter(hasOverlapValidationFailure)
+      .map(validation => validation.polygonUuid)
+      .filter((id): id is string => id != null && id !== "" && visiblePolygonIds.has(id));
+    setSelectedRowIds(new Set(overlapRowIds));
+  }, [overlapValidations, polygonsData, setSelectedRowIds]);
 
   const handleOpenDeletePolygonModal = useCallback(() => {
     setDeletePolygonModal(true);
@@ -761,24 +775,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     siteName: site.name
   });
 
-  const handlePolygonClickedFromMap = useCallback(
-    (uuid: string) => {
-      setSelectedRowIds(prev => {
-        if (prev.has(uuid)) return prev;
-        const next = new Set(prev);
-        next.add(uuid);
-        return next;
-      });
-    },
-    [setSelectedRowIds]
-  );
-
   const polygonTableHighlight = useMemo(
     () => ({
-      selectedPolygonUuids: suppressMapSelectionHighlight ? [] : selectedPolygonUuids,
-      onPolygonClickedFromMap: handlePolygonClickedFromMap
+      selectedPolygonUuids: suppressMapSelectionHighlight ? [] : selectedPolygonUuids
     }),
-    [selectedPolygonUuids, suppressMapSelectionHighlight, handlePolygonClickedFromMap]
+    [selectedPolygonUuids, suppressMapSelectionHighlight]
   );
 
   const handleClearHover = useCallback(() => {
@@ -1062,9 +1063,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                       ? t("1 overlap detected")
                       : t("{count} overlaps detected", { count: polygonsWithOverlapCount })
                   }
-                  onActionClick={() => {
-                    setPolygonFilters(current => ({ ...current, hasOverlap: true }));
-                  }}
+                  onActionClick={handleSelectOverlapPolygons}
                   variant="error"
                 />
               )}
