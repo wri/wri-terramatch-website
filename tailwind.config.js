@@ -15,7 +15,8 @@ module.exports = {
         wide: "2500px",
         lg: "1900px",
         sm: "1200px",
-        mobile: { max: "1200px" }
+        mobile: { max: "1200px" },
+        wriDrawer: "1800px"
       },
       width: {
         "fit-content": "fit-content"
