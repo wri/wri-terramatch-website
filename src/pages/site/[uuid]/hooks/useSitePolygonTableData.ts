@@ -16,10 +16,9 @@ import { PolygonTableRow } from "../components/PolygonTableRow";
 type UseSitePolygonTableDataParams = {
   polygonsData: SitePolygonLightDto[];
   t: (key: string, params?: Record<string, unknown>) => string;
-  format: (date: Date | string, outputFormat: string) => string;
 };
 
-export const useSitePolygonTableData = ({ polygonsData, t, format }: UseSitePolygonTableDataParams) => {
+export const useSitePolygonTableData = ({ polygonsData, t }: UseSitePolygonTableDataParams) => {
   const polygonRows = useMemo<PolygonTableRow[]>(
     () =>
       polygonsData.map(polygon => ({
@@ -29,12 +28,12 @@ export const useSitePolygonTableData = ({ polygonsData, t, format }: UseSitePoly
         validation: mapSiteValidationStatusToTagState(polygon.validationStatus),
         restorationPractice: (polygon.practice ?? []).filter(isRestorationStrategy),
         targetLandUse: polygon.targetSys != null && isTargetLandUseType(polygon.targetSys) ? polygon.targetSys : null,
-        plantingDate: polygon.plantStart != null ? format(polygon.plantStart, "yyyy-MM-dd") : "-",
+        plantingDate: polygon.plantStart != null && polygon.plantStart !== "" ? polygon.plantStart.split("T")[0] : "-",
         treeDistribution: (polygon.distr ?? []).map(formatDistributionValue),
         treesPlanted: polygon.numTrees ?? 0,
         area: polygon.calcArea ?? 0
       })),
-    [format, polygonsData, t]
+    [polygonsData, t]
   );
 
   const { totalTreesPlanted, totalRestorationAreaHa } = useMemo(() => {
