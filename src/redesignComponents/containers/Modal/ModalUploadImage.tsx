@@ -266,7 +266,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               onMouseDown={handleMouseDown}
               onMouseLeave={() => setIsDragging(false)}
               ref={ref}
-              className="no-ghost-dragging relative h-[18.75rem] w-[18.75rem] cursor-grab overflow-hidden active:cursor-grabbing "
+              className="no-ghost-dragging dotty relative h-[18.75rem] w-[18.75rem] overflow-hidden active:cursor-grabbing "
             >
               <BaseImage
                 src={activeImgSrc}

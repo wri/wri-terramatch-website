@@ -8,6 +8,7 @@ import { deleteMedia, updateMedia } from "@/connections/Media";
 import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TranslatedText } from "@/i18n/types";
+import EditPhotoDetails from "@/pages/site/[uuid]/components/Modals/GeotaggedPhotos/EditPhotoDetails";
 import Log from "@/utils/log";
 
 import { useChampionsMap } from "../championsMap.context";
@@ -67,14 +68,18 @@ export function useMapMedia({
     const openModalImageDetail = (data: MediaDto) => {
       openModal(
         ModalId.MODAL_IMAGE_DETAIL,
-        <ModalImageDetails
-          title="IMAGE DETAILS"
-          data={data}
-          entityData={entityData}
-          onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
-          reloadGalleryImages={() => setShouldRefetchMediaData(true)}
-          handleDelete={handleDelete}
-        />,
+        championsMap ? (
+          <EditPhotoDetails open={true} onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)} />
+        ) : (
+          <ModalImageDetails
+            title="IMAGE DETAILS"
+            data={data}
+            entityData={entityData}
+            onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
+            reloadGalleryImages={() => setShouldRefetchMediaData(true)}
+            handleDelete={handleDelete}
+          />
+        ),
         true
       );
     };

@@ -52,7 +52,7 @@ import {
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import DeletePolygon from "./Modals/DeletePolygon";
-import UploadPhotos from "./Modals/UploadPhotos";
+import UploadGeotaggedPhotos from "./Modals/GeotaggedPhotos/UploadGeotaggedPhotos";
 import type { PolygonSaveCallback } from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
@@ -613,7 +613,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
-      <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
+      <UploadGeotaggedPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
+      {/* <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} /> */}
       <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden py-5 px-2 pl-6 pr-7">
         <SubmissionValidationTags polygon={polygon} />
         <Accordion
