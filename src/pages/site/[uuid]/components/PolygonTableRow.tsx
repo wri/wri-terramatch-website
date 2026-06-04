@@ -36,11 +36,14 @@ export type PolygonTableRow = {
   submission: MappedTagState;
   validation: ValidationTagState;
   restorationPractice: restorationStrategyType[];
+  restorationPracticeSort: string;
   targetLandUse: targetLandUseType | null;
+  targetLandUseSort: string;
+  treeDistribution: string;
   plantingDate: string;
-  treeDistribution: string[];
   treesPlanted: number;
   area: number;
+  source: string;
 };
 
 type SiteTypeConfig = { icon: ReactNode; label: string };
@@ -189,6 +192,9 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
         <Flex className="items-center gap-2">{renderRestorationPractice(row.restorationPractice)}</Flex>
       </TableCell>
       <TableCell className="min-w-[16.75rem]">{renderTargetLandUse(row.targetLandUse)}</TableCell>
+      <TableCell className="min-w-[15.875rem]">
+        <Text>{row.treeDistribution}</Text>
+      </TableCell>
       <TableCell className="min-w-[11.5rem]">
         <FeedbackTag
           type="info-grey"
@@ -197,11 +203,11 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
           icon={<CalendarIcon boxSize={2.5} />}
         />
       </TableCell>
-      <TableCell className="min-w-[15.875rem]">
-        <Text>{row.treeDistribution.length > 0 ? row.treeDistribution.join(", ") : "—"}</Text>
-      </TableCell>
       <TableCell className="min-w-[12.75rem]">{formatNumberLocaleString(row.treesPlanted) ?? "—"}</TableCell>
       <TableCell className="min-w-[15.75rem]">{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
+      <TableCell className="min-w-[12rem]">
+        <Text>{row.source}</Text>
+      </TableCell>
     </TableRow>
   );
 };

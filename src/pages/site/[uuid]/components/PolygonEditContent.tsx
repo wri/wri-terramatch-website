@@ -45,10 +45,6 @@ import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { DownloadIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
-import {
-  mapSitePolygonStatusToMappedTagState,
-  mapSiteValidationStatusToTagState
-} from "@/utils/mapStatusToTagStateEntity";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import {
@@ -71,8 +67,8 @@ import {
   saveExistingPolygonVersion,
   saveNewSitePolygon
 } from "./polygonEditSave";
-import { formatDistributionValue, isRestorationStrategy, isTargetLandUseType } from "./polygonTable.constants";
 import type { PolygonTableRow } from "./PolygonTableRow";
+import { mapSitePolygonToTableRow } from "./polygonTableRow.utils";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 
 type PolygonEditContentProps = {
@@ -240,24 +236,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     [versionsData]
   );
   const polygonTableRow = useMemo<PolygonTableRow[]>(
-    () =>
-      polygon == null
-        ? []
-        : [
-            {
-              id: polygon.polygonUuid ?? polygon.uuid ?? "",
-              polygonName: polygon.name ?? t("Unnamed Polygon"),
-              submission: mapSitePolygonStatusToMappedTagState(polygon.status ?? "draft"),
-              validation: mapSiteValidationStatusToTagState(polygon.validationStatus ?? null),
-              restorationPractice: (polygon.practice ?? []).filter(isRestorationStrategy),
-              targetLandUse:
-                polygon.targetSys != null && isTargetLandUseType(polygon.targetSys) ? polygon.targetSys : null,
-              plantingDate: polygon.plantStart ?? "-",
-              treeDistribution: (polygon.distr ?? []).map(formatDistributionValue),
-              treesPlanted: polygon.numTrees ?? 0,
-              area: polygon.calcArea ?? 0
-            }
-          ],
+    () => (polygon == null ? [] : [mapSitePolygonToTableRow(polygon, t)]),
     [polygon, t]
   );
 
