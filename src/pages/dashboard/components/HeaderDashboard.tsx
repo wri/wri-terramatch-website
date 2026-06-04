@@ -426,7 +426,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   <Icon name={IconNames.CLEAR} className="absolute right-0 mr-2 h-4 w-4 text-black" />
                 </button>
               </div>
-              <div className="flex max-w-[90%] flex-wrap items-center gap-3 small:flex-nowrap mobile:w-full mobile:max-w-full mobile:flex-col">
+              <div className="flex max-w-[90%] flex-wrap items-center gap-3 overflow-visible small:flex-nowrap mobile:w-full mobile:max-w-full mobile:flex-col">
                 <ResponsiveDropdownContainer
                   className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]"
                   disabled={isProjectPage}
@@ -457,7 +457,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 />
                 <ResponsiveDropdownContainer
                   key={`country-${filters.country?.id || "empty"}-${valueForCountry.join("-")}`}
-                  className="min-w-[175px] lg:min-w-[195px] wide:min-w-[215px]"
+                  className="z-[3] min-w-[175px] lg:min-w-[195px] wide:min-w-[215px] [&:has([aria-expanded=true])]:z-[60]"
                   disabled={isProjectPage}
                   isMobile={isMobile}
                   showClear
@@ -492,11 +492,15 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                     title: country.data.label,
                     value: country.id,
                     prefix: (
-                      <img src={country.data.icon} alt="flag" className="h-4 w-[26.5px] min-w-[26.5px] object-cover" />
+                      <img
+                        src={country.data.icon}
+                        alt="flag"
+                        className="h-4 w-[26.5px] min-w-[26.5px] object-contain"
+                      />
                     )
                   }))}
                   optionClassName="hover:bg-grey-200"
-                  containerClassName="z-[3] w-full"
+                  containerClassName="w-full"
                 />
                 <ResponsiveDropdownContainer
                   className="min-w-[242px] lg:min-w-[272px] wide:min-w-[292px]"
@@ -528,7 +532,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 />
                 <ResponsiveDropdownContainer
                   key={`cohort-${filters.cohort.join("-") || "empty"}`}
-                  className="min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]"
+                  className="z-[1] min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]"
                   disabled={isProjectPage}
                   isMobile={isMobile}
                   showSelectAll
@@ -553,7 +557,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   }}
                   options={optionsCohort}
                   optionClassName="hover:bg-grey-200"
-                  containerClassName="z-[5] w-full"
+                  containerClassName="w-full"
                 />
               </div>
               <div className="flex h-full w-auto flex-col items-start justify-between gap-3 lg:min-w-[287px] small:w-[-webkit-fill-available] small:flex-row small:items-center mobile:w-full mobile:justify-end mobile:p-4">

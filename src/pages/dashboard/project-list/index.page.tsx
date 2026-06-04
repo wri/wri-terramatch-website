@@ -1,9 +1,11 @@
 import { useMediaQuery } from "@mui/material";
+import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 
 import Table from "@/components/elements/Table/Table";
+import { formatTableNumber, numericSortingFn } from "@/components/elements/Table/tableUtils";
 import { VARIANT_TABLE_DASHBOARD_LIST } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -39,11 +41,22 @@ export interface DashboardDataProps {
   landTenure?: string;
 }
 
+export interface ProjectListTableRow {
+  uuid: string;
+  project: string;
+  organization: string;
+  programme: string;
+  country: { country_slug: string; label: string | undefined; image: string };
+  treesPlanted: number;
+  restorationHectares: number;
+  jobsCreated: number;
+}
+
 const ProjectList = () => {
   const t = useT();
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
-  const columns = [
+  const columns: ColumnDef<ProjectListTableRow>[] = [
     {
       header: t("Project"),
       accessorKey: "project",
@@ -53,7 +66,7 @@ const ProjectList = () => {
         if (isMobile) {
           return (
             <div className="flex items-start gap-2">
-              <img src={country.image} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
+              <img src={country.image} alt="flag" className="h-6 w-10 min-w-[40px] object-contain" />
               <div>
                 <Text variant="text-14-light">{project}</Text>
                 <Text variant="text-14-light" className=" text-neutral-650">
@@ -82,11 +95,11 @@ const ProjectList = () => {
           {
             header: t("Country"),
             accessorKey: "country",
-            cell: (props: any) => {
+            cell: (props: CellContext<ProjectListTableRow, ProjectListTableRow["country"]>) => {
               const { label, image } = props.getValue();
               return (
                 <div className="flex items-center gap-2">
-                  <img src={image} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
+                  <img src={image} alt="flag" className="h-6 w-10 min-w-[40px] object-contain" />
                   <Text variant="text-14-light">{label}</Text>
                 </div>
               );
@@ -95,15 +108,27 @@ const ProjectList = () => {
           },
           {
             header: t("Trees Planted"),
-            accessorKey: "treesPlanted"
+            accessorKey: "treesPlanted",
+            sortingFn: numericSortingFn,
+            cell: (props: CellContext<ProjectListTableRow, number>) => (
+              <span>{formatTableNumber(props.getValue())}</span>
+            )
           },
           {
             header: t("Restoration Hectares"),
-            accessorKey: "restorationHectares"
+            accessorKey: "restorationHectares",
+            sortingFn: numericSortingFn,
+            cell: (props: CellContext<ProjectListTableRow, number>) => (
+              <span>{formatTableNumber(props.getValue())}</span>
+            )
           },
           {
             header: t("Jobs Created"),
-            accessorKey: "jobsCreated"
+            accessorKey: "jobsCreated",
+            sortingFn: numericSortingFn,
+            cell: (props: CellContext<ProjectListTableRow, number>) => (
+              <span>{formatTableNumber(props.getValue())}</span>
+            )
           }
         ]),
 
@@ -130,7 +155,7 @@ const ProjectList = () => {
   const { activeProjects } = useDashboardData(filters);
   const countryChoices = useGadmChoices({ level: 0 });
 
-  const DATA_TABLE_PROJECT_LIST = activeProjects
+  const DATA_TABLE_PROJECT_LIST: ProjectListTableRow[] = activeProjects
     ? activeProjects
         .map((item: any) => {
           return {
@@ -143,9 +168,9 @@ const ProjectList = () => {
               label: countryChoices.find(country => country.id === item.country)?.name,
               image: `/flags/${item.country?.toLowerCase()}.svg`
             },
-            treesPlanted: (item.treesPlantedCount || 0).toLocaleString(),
-            restorationHectares: (item.totalHectaresRestoredSum || 0).toLocaleString(),
-            jobsCreated: (item.totalJobsCreated || 0).toLocaleString()
+            treesPlanted: item.treesPlantedCount ?? 0,
+            restorationHectares: item.totalHectaresRestoredSum ?? 0,
+            jobsCreated: item.totalJobsCreated ?? 0
           };
         })
         .sort(

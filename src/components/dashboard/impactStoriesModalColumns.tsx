@@ -36,7 +36,7 @@ export function buildImpactStoriesModalColumns(
           <div className="flex flex-wrap items-center gap-2">
             {countries.map((country: { icon?: string; label?: string }, index: number) => (
               <div key={index} className="flex items-center gap-2">
-                <img src={country.icon} alt={`${country.label} flag`} className="h-3 w-5 min-w-[20px] object-cover" />
+                <img src={country.icon} alt={`${country.label} flag`} className="h-3 w-5 min-w-[20px] object-contain" />
                 <Text variant="text-14">{country.label}</Text>
               </div>
             ))}
