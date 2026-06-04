@@ -1,6 +1,6 @@
 import { CloseButton as WriCloseButton } from "@worldresources/wri-design-systems";
-import classNames from "classnames";
 import { FC } from "react";
+import { twMerge } from "tailwind-merge";
 
 import { focusOutlineClass } from "../Button/Button.styles";
 
@@ -15,7 +15,7 @@ const CloseButton: FC<ICloseButtonProps> = ({ disabled, onClick, className, ...p
     <WriCloseButton
       disabled={disabled}
       {...props}
-      className={classNames(className, focusOutlineClass)}
+      className={twMerge(focusOutlineClass, className)}
       onClick={onClick}
     />
   );

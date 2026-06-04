@@ -70,10 +70,14 @@ export const sortData = <T extends BaseRow>(data: T[], sortColumn: SortColumn | 
     const aVal = (a as Record<string, unknown>)[key];
     const bVal = (b as Record<string, unknown>)[key];
 
-    if (typeof aVal === "string" && typeof bVal === "string") {
-      return isDesc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+    if (typeof aVal === "string" || typeof bVal === "string") {
+      const aStr = aVal == null ? "" : String(aVal);
+      const bStr = bVal == null ? "" : String(bVal);
+      return isDesc ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
     }
 
-    return isDesc ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
+    const aNum = typeof aVal === "number" ? aVal : 0;
+    const bNum = typeof bVal === "number" ? bVal : 0;
+    return isDesc ? aNum - bNum : bNum - aNum;
   });
 };

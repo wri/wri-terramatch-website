@@ -37,7 +37,6 @@ import {
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useDate } from "@/hooks/useDate";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
@@ -102,7 +101,6 @@ export type { PolygonTableRow } from "../components/PolygonTableRow";
 const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
-  const { format } = useDate();
   const { isOpen: isEditPolygonOpen, suppressMapSelectionHighlight } = usePolygonEditDrawer();
   const {
     isUserDrawingEnabled,
@@ -171,8 +169,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const { polygonRows, columns, totalTreesPlanted, totalRestorationAreaHa } = useSitePolygonTableData({
     polygonsData,
-    t,
-    format
+    t
   });
   const { polygonsWithOverlapCount, overlapPolygons, overlapValidations, fetchOverlapValidations } =
     useSitePolygonOverlap({
