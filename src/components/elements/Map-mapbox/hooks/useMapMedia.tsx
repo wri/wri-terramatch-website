@@ -89,10 +89,10 @@ export function useMapMedia({
       }
     };
 
-    const handleDownload = async (uuid: string, fileName: string): Promise<void> => {
+    const handleDownload = async (uuid: string, defaultFileName: string): Promise<void> => {
       showLoader();
       try {
-        await exportImage.downloadFile({ pathParams: { uuid } }, fileName);
+        await exportImage.downloadFile({ pathParams: { uuid } }, { defaultFileName });
         openNotification("success", t("Success!"), t("Image downloaded successfully"));
       } catch (error) {
         Log.error("Download error:", error);
