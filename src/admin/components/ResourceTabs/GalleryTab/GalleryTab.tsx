@@ -7,6 +7,10 @@ import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
 import ImageGalleryItem from "@/components/elements/ImageGallery/ImageGalleryItem";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Text from "@/components/elements/Text/Text";
+import AssetDownloadButton, {
+  ASSET_DOWNLOAD_ENTITIES,
+  AssetDownloadEntity
+} from "@/components/extensive/AssetDownloadButton";
 import ModalAddImages, { FileUploadEntity } from "@/components/extensive/Modal/ModalAddImages";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
@@ -114,6 +118,13 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
       <div className="flex flex-col gap-8">
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{t("All Images")}</Text>
+          {ASSET_DOWNLOAD_ENTITIES.includes(entity as AssetDownloadEntity) && ctx?.record?.uuid != null && (
+            <AssetDownloadButton
+              className="ml-auto mr-4"
+              entity={entity as AssetDownloadEntity}
+              uuid={ctx.record.uuid}
+            />
+          )}
           <Button variant="primary" onClick={openFormModalHandlerUploadImages}>
             {t("UPLOAD IMAGES")}
           </Button>
