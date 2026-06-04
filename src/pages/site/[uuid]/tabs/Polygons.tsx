@@ -73,6 +73,7 @@ import {
   extractClippedVersions,
   getSelectedOverlapFixSummary,
   hasOverlapFailureInSelection,
+  hasOverlapValidationFailure,
   resolveActivePolygonAfterOverlapFix
 } from "../hooks/overlapFix.utils";
 import { useDownloadSitePolygons } from "../hooks/useDownloadSitePolygons";
@@ -81,7 +82,12 @@ import { useSitePolygonOverlap } from "../hooks/useSitePolygonOverlap";
 import { useSitePolygonTableData } from "../hooks/useSitePolygonTableData";
 import { useStartSitePolygonDrawing } from "../hooks/useStartSitePolygonDrawing";
 import {
+  getDeletingProgressLabel,
+  getDownloadingPolygonsProgressLabel,
+  getFixingOverlapsProgressLabel,
   getPolygonOperationToastLabels,
+  getSubmittingProgressLabel,
+  getValidatingProgressLabel,
   showPolygonCompleteToast,
   showPolygonErrorToast,
   showPolygonProgressToast
@@ -100,6 +106,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const { isOpen: isEditPolygonOpen, suppressMapSelectionHighlight } = usePolygonEditDrawer();
   const {
     isUserDrawingEnabled,
+    editPolygon,
     setSiteData,
     resetSiteMapInteractionState,
     closeMapPopups,
@@ -349,6 +356,19 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     setSelectedRowIds(new Set<string>());
   }, [setSelectedRowIds]);
 
+  const handleSelectOverlapPolygons = useCallback(() => {
+    const visiblePolygonIds = new Set(
+      polygonsData
+        .map(polygon => polygon.polygonUuid ?? polygon.uuid)
+        .filter((id): id is string => id != null && id !== "")
+    );
+    const overlapRowIds = overlapValidations
+      .filter(hasOverlapValidationFailure)
+      .map(validation => validation.polygonUuid)
+      .filter((id): id is string => id != null && id !== "" && visiblePolygonIds.has(id));
+    setSelectedRowIds(new Set(overlapRowIds));
+  }, [overlapValidations, polygonsData, setSelectedRowIds]);
+
   const handleOpenDeletePolygonModal = useCallback(() => {
     setDeletePolygonModal(true);
   }, []);
@@ -364,7 +384,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     }
 
     try {
-      showPolygonProgressToast(t, toastLabels.deletingProgress);
+      showPolygonProgressToast(t, getDeletingProgressLabel(t, selectedSitePolygonUuids.length));
       await bulkDeleteSitePolygons(selectedSitePolygonUuids);
       closeMapPopups();
       setPolygonTableHoveredUuid(null);
@@ -400,7 +420,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       if (polygonUuids.length === 0) return;
       try {
         setIsValidatingPolygons(true);
-        showPolygonProgressToast(t, toastLabels.validatingProgress);
+        showPolygonProgressToast(t, getValidatingProgressLabel(t, polygonUuids.length));
         await createPolygonValidation({ polygonUuids });
         ApiSlice.pruneCache("validations");
         pruneSitePolygonsCache();
@@ -413,14 +433,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         setIsValidatingPolygons(false);
       }
     },
-    [
-      fetchAllValidationPages,
-      fetchOverlapValidations,
-      openNotification,
-      refetchPolygons,
-      t,
-      toastLabels.validatingProgress
-    ]
+    [fetchAllValidationPages, fetchOverlapValidations, openNotification, refetchPolygons, t]
   );
 
   const handleDrawerOverlapFixed = useCallback(
@@ -468,7 +481,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       return;
     }
 
-    showPolygonProgressToast(t, toastLabels.fixingOverlapsProgress);
+    showPolygonProgressToast(t, getFixingOverlapsProgressLabel(t, fixableCandidates.length));
 
     try {
       const response = await clipPolygonListAsync(fixableCandidates.map(candidate => candidate.id));
@@ -570,7 +583,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     const polygonName = polygon?.name ?? t("Unnamed polygon");
 
     try {
-      showPolygonProgressToast(t, toastLabels.submittingProgress);
+      showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1));
       await bulkUpdateSitePolygonStatus([sitePolygonUuid], POLYGON_PENDING_APPROVAL as PolygonStatus, "");
       pruneSitePolygonsCache();
       closeMapPopups();
@@ -606,7 +619,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     const submittedNames = selectedSubmittablePolygons.map(polygon => polygon.name ?? t("Unnamed polygon"));
 
     try {
-      showPolygonProgressToast(t, toastLabels.submittingProgress);
+      showPolygonProgressToast(t, getSubmittingProgressLabel(t, selectedSubmittablePolygonUuids.length));
       await bulkUpdateSitePolygonStatus(selectedSubmittablePolygonUuids, POLYGON_PENDING_APPROVAL as PolygonStatus, "");
       pruneSitePolygonsCache();
       closeMapPopups();
@@ -647,7 +660,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
     try {
       setIsDownloadingSelectedPolygons(true);
-      showPolygonProgressToast(t, toastLabels.downloadingPolygonsProgress);
+      showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, selectedGeometryPolygonUuids.length));
       const filename =
         selectedSitePolygons.length === 1
           ? selectedSitePolygons[0].name ?? "polygon"
@@ -747,11 +760,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (!isUserDrawingEnabled) {
-      setCanUndoPolygonDraw(false);
-    }
-  }, [isUserDrawingEnabled]);
+  const showPolygonUndoButton =
+    isEditPolygonOpen &&
+    canUndoPolygonDraw &&
+    (isUserDrawingEnabled || (editPolygon.isOpen && editPolygon.uuid !== ""));
+
   const startNewPolygonFlow = useCallback(() => {
     handleBulkDraw();
     startDrawing();
@@ -761,24 +774,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     siteName: site.name
   });
 
-  const handlePolygonClickedFromMap = useCallback(
-    (uuid: string) => {
-      setSelectedRowIds(prev => {
-        if (prev.has(uuid)) return prev;
-        const next = new Set(prev);
-        next.add(uuid);
-        return next;
-      });
-    },
-    [setSelectedRowIds]
-  );
-
   const polygonTableHighlight = useMemo(
     () => ({
-      selectedPolygonUuids: suppressMapSelectionHighlight ? [] : selectedPolygonUuids,
-      onPolygonClickedFromMap: handlePolygonClickedFromMap
+      selectedPolygonUuids: suppressMapSelectionHighlight ? [] : selectedPolygonUuids
     }),
-    [selectedPolygonUuids, suppressMapSelectionHighlight, handlePolygonClickedFromMap]
+    [selectedPolygonUuids, suppressMapSelectionHighlight]
   );
 
   const handleClearHover = useCallback(() => {
@@ -994,7 +994,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             polygonTableHighlight={polygonTableHighlight}
             overlapPolygons={overlapPolygonsForMap}
           />
-          {isEditPolygonOpen && isUserDrawingEnabled && canUndoPolygonDraw && (
+          {showPolygonUndoButton && (
             <Button
               variant="secondary"
               leftIcon={<UndoIcon />}
@@ -1063,9 +1063,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                       ? t("1 overlap detected")
                       : t("{count} overlaps detected", { count: polygonsWithOverlapCount })
                   }
-                  onActionClick={() => {
-                    setPolygonFilters(current => ({ ...current, hasOverlap: true }));
-                  }}
+                  onActionClick={handleSelectOverlapPolygons}
                   variant="error"
                 />
               )}

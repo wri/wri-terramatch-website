@@ -12,6 +12,7 @@ import Log from "@/utils/log";
 import { extractClippedVersions } from "../hooks/overlapFix.utils";
 import { usePolygonValidationCriteria } from "../hooks/usePolygonValidationCriteria";
 import {
+  getFixingOverlapsProgressLabel,
   getPolygonOperationToastLabels,
   showPolygonCompleteToast,
   showPolygonErrorToast,
@@ -107,10 +108,10 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
       return;
     }
 
-    showPolygonProgressToast(t, toastLabels.fixingOverlapsProgress);
+    showPolygonProgressToast(t, getFixingOverlapsProgressLabel(t, 1));
     clipSinglePolygon(polygonUuid);
     setPendingClipping(true);
-  }, [fixabilityResult, pendingClipping, polygonUuid, t, toastLabels.fixingOverlapsProgress]);
+  }, [fixabilityResult, pendingClipping, polygonUuid, t]);
 
   const canFixOverlap =
     hasOverlaps &&

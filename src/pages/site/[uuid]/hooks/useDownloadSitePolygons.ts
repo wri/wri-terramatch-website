@@ -5,6 +5,7 @@ import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/ut
 import Log from "@/utils/log";
 
 import {
+  getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
   showPolygonCompleteToast,
   showPolygonErrorToast,
@@ -26,7 +27,7 @@ export const useDownloadSitePolygons = ({ siteUuid, siteName }: UseDownloadSiteP
 
     setIsDownloading(true);
     try {
-      showPolygonProgressToast(t, toastLabels.downloadingPolygonsProgress);
+      showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t));
       await downloadSiteGeoJsonPolygons(siteUuid, siteName ?? "");
       showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
     } catch (error) {

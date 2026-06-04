@@ -45,6 +45,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
   const pendingOnCloseRef = useRef<(() => void) | null>(null);
+  const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
   const isCreateMode = selectedPolygon?.primaryUuid == null || selectedPolygon.primaryUuid === "";
   const isSaveDisabled = activeTab === "edit" && isCreateMode && draftPolygonGeometry == null;
 
@@ -54,11 +55,18 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
 
   useEffect(() => {
     setSaveEditContent(null);
-  }, [selectedPolygon?.uuid]);
+    getPolygonNameForSaveRef.current = () => polygon?.polygonName?.trim() ?? "";
+  }, [polygon?.polygonName, selectedPolygon?.uuid]);
 
   const registerSave = useCallback((saveHandler: () => Promise<boolean>) => {
     setSaveEditContent(() => saveHandler);
   }, []);
+
+  const registerPolygonName = useCallback((getPolygonName: () => string) => {
+    getPolygonNameForSaveRef.current = getPolygonName;
+  }, []);
+
+  const saveConfirmationPolygonName = getPolygonNameForSaveRef.current() || polygon?.polygonName?.trim() || "-";
 
   const handleSave = useCallback(
     async (onClose: () => void) => {
@@ -131,6 +139,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     polygon={selectedPolygon}
                     onClose={onClose}
                     onRegisterSave={registerSave}
+                    onRegisterPolygonName={registerPolygonName}
                     onSaved={onSaved}
                     onPolygonUpdated={onPolygonUpdated}
                     onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
@@ -175,7 +184,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
             <SavePolygon
               open
               onOpenChange={setShowSaveConfirmationModal}
-              polygon={{ polygonName: polygon.polygonName ?? "-" } as unknown as PolygonTableRow}
+              polygon={{ polygonName: saveConfirmationPolygonName } as unknown as PolygonTableRow}
               onSave={() => void handleSave(pendingOnCloseRef.current ?? onClose)}
             />
           )}

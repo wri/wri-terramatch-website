@@ -36,42 +36,54 @@ export const showPolygonErrorToast = (label: string) =>
     duration: POLYGON_TOAST_DURATION_MS
   });
 
+type TranslateFn = (key: string) => string;
+
+const polygonCountLabel = (t: TranslateFn, count: number | undefined, singular: string, plural: string) =>
+  count === 1 ? t(singular) : t(plural);
+
+export const getUploadingPolygonsProgressLabel = (t: TranslateFn, count: number) =>
+  polygonCountLabel(t, count, "Uploading Polygon...", "Uploading Polygons...");
+
+export const getSubmittingProgressLabel = (t: TranslateFn, count: number) =>
+  polygonCountLabel(t, count, "Submitting Polygon...", "Submitting Polygons...");
+
+export const getDownloadingPolygonsProgressLabel = (t: TranslateFn, count?: number) =>
+  polygonCountLabel(t, count, "Downloading Polygon...", "Downloading Polygons...");
+
+export const getUpdatingPolygonsProgressLabel = (t: TranslateFn, count: number) =>
+  polygonCountLabel(t, count, "Updating Polygon...", "Updating Polygons...");
+
+export const getDeletingProgressLabel = (t: TranslateFn, count: number) =>
+  polygonCountLabel(t, count, "Deleting Polygon...", "Deleting Polygons...");
+
+export const getValidatingProgressLabel = (t: TranslateFn, count: number) =>
+  polygonCountLabel(t, count, "Validating Polygon...", "Validating Polygons...");
+
+export const getFixingOverlapsProgressLabel = (t: TranslateFn, count: number) =>
+  polygonCountLabel(t, count, "Fixing Polygon Overlaps...", "Fixing Polygons' Overlaps...");
+
 export type PolygonOperationToastLabels = {
-  uploadingPolygonsProgress: string;
   uploadingPolygonsComplete: string;
-  submittingProgress: string;
   submittingComplete: string;
   savingChangesProgress: string;
   savingChangesComplete: string;
-  downloadingPolygonsProgress: string;
   downloadingPolygonsComplete: string;
-  updatingPolygonsProgress: string;
   updatingPolygonsComplete: string;
-  deletingProgress: string;
   deletingComplete: string;
-  fixingOverlapsProgress: string;
   fixingOverlapsComplete: string;
-  validatingProgress: string;
   downloadingSamplePlotsProgress: string;
   downloadingSamplePlotsComplete: string;
 };
 
-export const getPolygonOperationToastLabels = (t: (key: string) => string): PolygonOperationToastLabels => ({
-  uploadingPolygonsProgress: t("Uploading Polygons..."),
+export const getPolygonOperationToastLabels = (t: TranslateFn): PolygonOperationToastLabels => ({
   uploadingPolygonsComplete: t("Upload Complete"),
-  submittingProgress: t("Submitting Polygons..."),
   submittingComplete: t("Submission Complete"),
   savingChangesProgress: t("Saving Changes..."),
   savingChangesComplete: t("Changes Saved"),
-  downloadingPolygonsProgress: t("Downloading Polygons..."),
   downloadingPolygonsComplete: t("Download Complete"),
-  updatingPolygonsProgress: t("Updating Polygons..."),
   updatingPolygonsComplete: t("Update Complete"),
-  deletingProgress: t("Deleting Polygons..."),
   deletingComplete: t("Deletion Complete"),
-  fixingOverlapsProgress: t("Fixing Polygon Overlaps..."),
   fixingOverlapsComplete: t("Overlap Fix Complete"),
-  validatingProgress: t("Validating Polygon..."),
   downloadingSamplePlotsProgress: t("Downloading Sample Plots..."),
   downloadingSamplePlotsComplete: t("Download Complete")
 });

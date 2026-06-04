@@ -52,7 +52,10 @@ import {
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import {
+  getDeletingProgressLabel,
+  getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
+  getSubmittingProgressLabel,
   showPolygonCompleteToast,
   showPolygonErrorToast,
   showPolygonProgressToast
@@ -76,6 +79,7 @@ type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
   onClose?: () => void;
   onRegisterSave?: (saveHandler: () => Promise<boolean>) => void;
+  onRegisterPolygonName?: (getPolygonName: () => string) => void;
   onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
@@ -117,10 +121,17 @@ const waitForMapEditCleanup = async (): Promise<void> => {
   });
 };
 
+const getPolygonNameForDisplay = (formName: string, polygon?: SitePolygonLightDto): string => {
+  const trimmed = formName.trim();
+  if (trimmed.length > 0) return trimmed;
+  return polygon?.name?.trim() ?? "";
+};
+
 const PolygonEditContent: FC<PolygonEditContentProps> = ({
   polygon,
   onClose,
   onRegisterSave,
+  onRegisterPolygonName,
   onSaved,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange
@@ -396,6 +407,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [sitePolygonUuid]);
 
   useEffect(() => {
+    if (!isAnrEligible) {
+      setPlotsVisible(false);
+      setOpenAccordionSection(current => (current === "monitoring-plots" ? "details" : current));
+    }
+  }, [isAnrEligible]);
+
+  useEffect(() => {
     if (isCreateMode || geometryPolygonUuid === "") {
       onSuppressMapSelectionHighlightChange?.(false);
       return;
@@ -549,7 +567,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
-    showPolygonProgressToast(t, toastLabels.downloadingPolygonsProgress);
+    showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, 1));
 
     try {
       await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon", { includeExtendedData: true });
@@ -570,7 +588,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
-    showPolygonProgressToast(t, toastLabels.submittingProgress);
+    showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1));
 
     try {
       await bulkUpdateSitePolygonStatus([polygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, "");
@@ -610,7 +628,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
-    showPolygonProgressToast(t, toastLabels.deletingProgress);
+    showPolygonProgressToast(t, getDeletingProgressLabel(t, 1));
 
     try {
       await deleteSitePolygon(polygon.uuid);
@@ -629,6 +647,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   useEffect(() => {
     onRegisterSave?.(savePolygonData);
   }, [onRegisterSave, savePolygonData]);
+
+  useEffect(() => {
+    onRegisterPolygonName?.(() => getPolygonNameForDisplay(polygonName, polygon));
+  }, [onRegisterPolygonName, polygon, polygonName]);
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
@@ -656,9 +678,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               required
             />
             <SelectInput
+              key={`restoration-practice-${sitePolygonUuid}-${(polygon?.practice ?? []).join("|")}`}
               items={restorationOptions}
               label={t("Restoration Practice")}
-              value={restorationPractice}
+              defaultValue={polygon?.practice ?? []}
               onChange={setRestorationPractice}
               placeholder={t("Select...")}
               multiple
@@ -673,9 +696,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               required={!isCreateMode}
             />
             <SelectInput
+              key={`tree-distribution-${sitePolygonUuid}-${(polygon?.distr ?? []).join("|")}`}
               items={treeOptions}
               label={t("Tree Distribution")}
-              value={treeDistribution}
+              defaultValue={polygon?.distr ?? []}
               onChange={setTreeDistribution}
               placeholder={t("Select...")}
               multiple
@@ -705,59 +729,61 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             />
           </Flex>
         </Accordion>
-        <Accordion
-          header={<AccordionHeader title={t("Monitoring Plots")} />}
-          open={openAccordionSection === "monitoring-plots"}
-          onOpenChange={handleAccordionOpenChange("monitoring-plots")}
-          actions={
-            <Button
-              leftIcon={<DownloadIcon />}
-              onClick={() => void downloadMonitoringPlots()}
-              size="small"
-              variant="secondary"
-              disabled={!isAnrEligible || !hasAnrPlotGeometry}
-            >
-              {t("Download")}
-            </Button>
-          }
-        >
-          <Flex className="flex-1 flex-col gap-4">
-            <Switch
-              name="showPlotsOnMap"
-              checked={plotsVisible}
-              disabled={!isAnrEligible || !hasAnrPlotGeometry}
-              onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
-                setPlotsVisible(checked === true)
-              }
-            >
-              {t("Show Plots on Map")}
-            </Switch>
-            <Flex className="flex-col gap-7">
-              {isAnrLoading ? (
-                <Text>{t("Loading ANR monitoring plots...")}</Text>
-              ) : isAnrEligible && hasAnrPlotGeometry ? (
-                <>
+        {isAnrEligible ? (
+          <Accordion
+            header={<AccordionHeader title={t("Monitoring Plots")} />}
+            open={openAccordionSection === "monitoring-plots"}
+            onOpenChange={handleAccordionOpenChange("monitoring-plots")}
+            actions={
+              <Button
+                leftIcon={<DownloadIcon />}
+                onClick={() => void downloadMonitoringPlots()}
+                size="small"
+                variant="secondary"
+                disabled={!hasAnrPlotGeometry}
+              >
+                {t("Download")}
+              </Button>
+            }
+          >
+            <Flex className="flex-1 flex-col gap-4">
+              <Switch
+                name="showPlotsOnMap"
+                checked={plotsVisible}
+                disabled={!hasAnrPlotGeometry}
+                onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
+                  setPlotsVisible(checked === true)
+                }
+              >
+                {t("Show Plots on Map")}
+              </Switch>
+              <Flex className="flex-col gap-7">
+                {isAnrLoading ? (
+                  <Text>{t("Loading ANR monitoring plots...")}</Text>
+                ) : hasAnrPlotGeometry ? (
+                  <>
+                    <Text>
+                      {t(
+                        "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time."
+                      )}
+                    </Text>
+                    <Text>
+                      {t(
+                        "Download the monitoring plots to help your team locate and monitor the areas during field visits."
+                      )}
+                    </Text>
+                  </>
+                ) : (
                   <Text>
                     {t(
-                      "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time."
+                      "The monitoring plots are not available yet. They will appear here once they are updated by the project team and ready for download."
                     )}
                   </Text>
-                  <Text>
-                    {t(
-                      "Download the monitoring plots to help your team locate and monitor the areas during field visits."
-                    )}
-                  </Text>
-                </>
-              ) : (
-                <Text>
-                  {t(
-                    "The monitoring plots are not available yet. They will appear here once they are updated by the project team and ready for download."
-                  )}
-                </Text>
-              )}
+                )}
+              </Flex>
             </Flex>
-          </Flex>
-        </Accordion>
+          </Accordion>
+        ) : null}
         <Accordion
           header={<AccordionHeader title={t("Geotagged Photos")} />}
           open={openAccordionSection === "geotagged-photos"}

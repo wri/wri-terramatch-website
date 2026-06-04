@@ -16,6 +16,12 @@ import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import {
+  dispatchPolygonDrawCanUndoChanged,
+  isPolygonDrawUndoShortcut,
+  shouldIgnorePolygonDrawUndoShortcut,
+  UNDO_POLYGON_DRAW_EVENT
+} from "../interactions/draftDrawEvents";
+import {
   addGeojsonToDraw,
   drawTemporaryPolygon,
   fetchPolygonGeometry,
@@ -73,10 +79,98 @@ export function useMapDraw({
   openNotification
 }: UseMapDrawParams) {
   const originalGeometryRef = useRef<GeoJSON.Geometry | null>(null);
+  const geometryHistoryRef = useRef<GeoJSON.Geometry[]>([]);
+  const isApplyingGeometryUndoRef = useRef(false);
 
   const serializeGeometry = useCallback((geometry: GeoJSON.Geometry | null | undefined) => {
     return geometry == null ? "" : JSON.stringify(geometry);
   }, []);
+
+  const cloneGeometry = useCallback(
+    (geometry: GeoJSON.Geometry): GeoJSON.Geometry => {
+      return JSON.parse(serializeGeometry(geometry)) as GeoJSON.Geometry;
+    },
+    [serializeGeometry]
+  );
+
+  const syncGeometryEditCanUndo = useCallback(() => {
+    dispatchPolygonDrawCanUndoChanged(geometryHistoryRef.current.length > 1);
+  }, []);
+
+  const clearGeometryHistory = useCallback(() => {
+    geometryHistoryRef.current = [];
+    dispatchPolygonDrawCanUndoChanged(false);
+  }, []);
+
+  const resetGeometryHistory = useCallback(
+    (geometry: GeoJSON.Geometry) => {
+      geometryHistoryRef.current = [cloneGeometry(geometry)];
+      syncGeometryEditCanUndo();
+    },
+    [cloneGeometry, syncGeometryEditCanUndo]
+  );
+
+  const pushGeometryHistory = useCallback(
+    (geometry: GeoJSON.Geometry) => {
+      if (isApplyingGeometryUndoRef.current) return;
+
+      const history = geometryHistoryRef.current;
+      const serialized = serializeGeometry(geometry);
+      if (history.length > 0 && serializeGeometry(history[history.length - 1]) === serialized) {
+        return;
+      }
+
+      history.push(cloneGeometry(geometry));
+      syncGeometryEditCanUndo();
+    },
+    [cloneGeometry, serializeGeometry, syncGeometryEditCanUndo]
+  );
+
+  const applyGeometryToDraw = useCallback(
+    (geometry: GeoJSON.Geometry) => {
+      if (draw.current == null) return;
+
+      const feature = draw.current.getAll().features[0];
+      if (feature?.id == null) return;
+
+      draw.current.set({
+        type: "FeatureCollection",
+        features: [{ ...feature, geometry }]
+      });
+    },
+    [draw]
+  );
+
+  const updatePolygonGeometryEditState = useCallback(
+    (currentGeometry: GeoJSON.Geometry) => {
+      const polygonUuid = polygonFromMap?.uuid;
+      if (polygonUuid == null || polygonUuid === "" || setPolygonGeometryEdit == null) return;
+
+      const originalGeometry = originalGeometryRef.current;
+      setPolygonGeometryEdit({
+        polygonUuid,
+        originalGeometry,
+        currentGeometry,
+        isDirty: serializeGeometry(originalGeometry) !== serializeGeometry(currentGeometry)
+      });
+    },
+    [polygonFromMap?.uuid, serializeGeometry, setPolygonGeometryEdit]
+  );
+
+  const performGeometryEditUndo = useCallback((): boolean => {
+    const history = geometryHistoryRef.current;
+    if (history.length <= 1 || draw.current == null) return false;
+
+    history.pop();
+    const previousGeometry = history[history.length - 1];
+
+    isApplyingGeometryUndoRef.current = true;
+    applyGeometryToDraw(previousGeometry);
+    updatePolygonGeometryEditState(previousGeometry);
+    isApplyingGeometryUndoRef.current = false;
+    syncGeometryEditCanUndo();
+    return true;
+  }, [applyGeometryToDraw, draw, syncGeometryEditCanUndo, updatePolygonGeometryEditState]);
 
   useEffect(() => {
     const currentMap = map.current;
@@ -89,13 +183,8 @@ export function useMapDraw({
       const currentGeometry = draw.current?.getAll().features[0]?.geometry as GeoJSON.Geometry | undefined;
       if (currentGeometry == null) return;
 
-      const originalGeometry = originalGeometryRef.current;
-      setPolygonGeometryEdit({
-        polygonUuid,
-        originalGeometry,
-        currentGeometry,
-        isDirty: serializeGeometry(originalGeometry) !== serializeGeometry(currentGeometry)
-      });
+      pushGeometryHistory(currentGeometry);
+      updatePolygonGeometryEditState(currentGeometry);
     };
 
     currentMap.on("draw.update", updateCurrentGeometry);
@@ -105,7 +194,38 @@ export function useMapDraw({
       currentMap.off("draw.update", updateCurrentGeometry);
       currentMap.off("draw.delete", updateCurrentGeometry);
     };
-  }, [draw, map, polygonFromMap?.uuid, serializeGeometry, setPolygonGeometryEdit]);
+  }, [draw, map, polygonFromMap?.uuid, pushGeometryHistory, setPolygonGeometryEdit, updatePolygonGeometryEditState]);
+
+  useEffect(() => {
+    const handleUndoPolygonDraw = () => {
+      if (draw.current?.getMode() === "draw_polygon") return;
+      performGeometryEditUndo();
+    };
+
+    window.addEventListener(UNDO_POLYGON_DRAW_EVENT, handleUndoPolygonDraw);
+    return () => {
+      window.removeEventListener(UNDO_POLYGON_DRAW_EVENT, handleUndoPolygonDraw);
+    };
+  }, [draw, performGeometryEditUndo]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isPolygonDrawUndoShortcut(event) || shouldIgnorePolygonDrawUndoShortcut(event.target)) {
+        return;
+      }
+      if (draw.current?.getMode() === "draw_polygon") return;
+      if (polygonFromMap?.uuid == null || polygonFromMap.uuid === "") return;
+      if (geometryHistoryRef.current.length <= 1) return;
+
+      event.preventDefault();
+      performGeometryEditUndo();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [draw, performGeometryEditUndo, polygonFromMap?.uuid]);
 
   useEffect(() => {
     if (polygonFromMap?.isOpen === true) return;
@@ -113,8 +233,9 @@ export function useMapDraw({
 
     onCancel(polygonsData);
     originalGeometryRef.current = null;
+    clearGeometryHistory();
     setPolygonGeometryEdit?.(undefined);
-  }, [draw, onCancel, polygonFromMap?.isOpen, polygonsData, setPolygonGeometryEdit]);
+  }, [clearGeometryHistory, draw, onCancel, polygonFromMap?.isOpen, polygonsData, setPolygonGeometryEdit]);
 
   useValueChanged(isUserDrawingEnabled, () => {
     if (map.current == null || draw.current == null) return;
@@ -168,6 +289,7 @@ export function useMapDraw({
       }
       if (map.current != null && draw.current != null) {
         originalGeometryRef.current = geometry;
+        resetGeometryHistory(geometry);
         setPolygonGeometryEdit?.({
           polygonUuid: polygonuuid,
           originalGeometry: geometry,
@@ -256,6 +378,7 @@ export function useMapDraw({
       setStatusSelectedPolygon?.(polygonActive?.status as string);
       draw.current?.deleteAll();
       originalGeometryRef.current = null;
+      clearGeometryHistory();
       setPolygonGeometryEdit?.(undefined);
 
       setShouldRefetchPolygonData?.(true);
@@ -278,9 +401,10 @@ export function useMapDraw({
   const onCancelEdit = useCallback(() => {
     onCancel(polygonsData);
     originalGeometryRef.current = null;
+    clearGeometryHistory();
     setPolygonGeometryEdit?.(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [polygonsData, setPolygonGeometryEdit]);
+  }, [clearGeometryHistory, polygonsData, setPolygonGeometryEdit]);
 
   return { handleEditPolygon, onSaveEdit, onCancelEdit };
 }
