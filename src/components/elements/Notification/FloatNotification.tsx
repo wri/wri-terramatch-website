@@ -5,10 +5,10 @@ import { FC, useCallback, useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
+import { acknowledgeJobs, useDelayedJobs } from "@/connections/DelayedJob";
 import { startIndicatorCalculationResource } from "@/connections/Indicators";
 import { pruneSitePolygonsCache } from "@/connections/SitePolygons";
-import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
+import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -107,26 +107,31 @@ const getValidationMessages = (data: Record<string, any> | null): string[] => {
 };
 
 const clearJob = (item: DelayedJobDto) => {
-  const newJobsData: DelayedJobData[] = [
-    {
-      id: item.uuid,
-      type: "delayedJobs",
-      attributes: {
-        isAcknowledged: true
-      }
-    }
-  ];
-  triggerBulkUpdate(newJobsData);
+  acknowledgeJobs([item.uuid]);
 };
 
-const getSiteNameForJob = (job: DelayedJobDto, cachedSiteNames: Record<string, string>): string => {
-  if (job.entityName) {
+const entityName = (job: DelayedJobDto, cachedSiteNames: Record<string, string>): string => {
+  if (job.entityName != null) {
     return job.entityName;
   }
-  if (cachedSiteNames[job.uuid]) {
+  if (cachedSiteNames[job.uuid] != null) {
     return cachedSiteNames[job.uuid];
   }
   return "Unknown";
+};
+
+const entityType = (job: DelayedJobDto, t: typeof useT) => {
+  if (job.entityType != null) {
+    // only three types expected
+    return job.entityType === "projects"
+      ? t("Project: ")
+      : job.entityType === "sites"
+      ? t("Site: ")
+      : job.entityType === "nurseries"
+      ? t("Nursery: ")
+      : null;
+  }
+  return job?.name?.includes("Project") ? t("Project: ") : t("Site: ");
 };
 
 const FloatNotification: FC = () => {
@@ -142,16 +147,10 @@ const FloatNotification: FC = () => {
 
   const clearJobs = useCallback(() => {
     if (delayedJobs == null) return;
-    const newJobsData: DelayedJobData[] = delayedJobs
+    const acknowledgeIds = delayedJobs
       .filter((job: DelayedJobDto) => job.status !== "pending")
-      .map((job: DelayedJobDto) => ({
-        id: job.uuid,
-        type: "delayedJobs" as const,
-        attributes: {
-          isAcknowledged: true
-        }
-      }));
-    triggerBulkUpdate(newJobsData);
+      .map(({ uuid }: DelayedJobDto) => uuid);
+    if (acknowledgeIds.length > 0) acknowledgeJobs(acknowledgeIds);
   }, [delayedJobs]);
 
   useValueChanged(delayedJobs, () => {
@@ -261,12 +260,9 @@ const FloatNotification: FC = () => {
           </Text>
           <div className="flex flex-col overflow-hidden p-4">
             <div className="mb-2 flex items-center justify-between">
-              <Text variant="text-14-light" className="text-blueCustom-250 text-opacity-60">
-                {t("Uploads")}
-              </Text>
               <Text
                 variant="text-12-semibold"
-                className="cursor-pointer text-primary hover:opacity-80"
+                className="ml-auto cursor-pointer text-primary hover:opacity-80"
                 onClick={clearJobs}
               >
                 {t("Clear completed")}
@@ -294,15 +290,15 @@ const FloatNotification: FC = () => {
                         </Text>
                         {
                           <button className="absolute right-0 hover:text-primary" onClick={() => clearJob(item)}>
-                            <ToolTip content={t("Cancel")}>
+                            <ToolTip content={t("Clear")}>
                               <Icon name={IconNames.CLEAR} className="h-3 w-3" />
                             </ToolTip>
                           </button>
                         }
                       </div>
                       <Text variant="text-14-light" className="text-darkCustom">
-                        {item?.name?.includes("Project") ? t("Project: ") : t("Site: ")}
-                        <b>{getSiteNameForJob(item, cachedSiteNames)}</b>
+                        {entityType(item, t)}
+                        <b>{entityName(item, cachedSiteNames)}</b>
                       </Text>
                       <div className="mt-1">
                         {item.status === "failed" ? (
