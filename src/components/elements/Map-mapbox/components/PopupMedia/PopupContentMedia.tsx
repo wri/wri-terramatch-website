@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { type FC, memo, useCallback, useState } from "react";
 
 import ImagePreview from "@/components/elements/ImageGallery/ImagePreview";
-import ImageWithPlaceholder from "@/components/elements/ImageWithPlaceholder/ImageWithPlaceholder";
+import GalleryImage from "@/redesignComponents/content/Images/GalleryImage/GalleryImage";
 
 type PopupContentMediaProps = {
   uuid: string;
@@ -22,16 +22,16 @@ const PopupContentMedia: FC<PopupContentMediaProps> = ({ uuid, thumbUrl, created
   const closePreview = useCallback(() => setPreviewOpen(false), []);
 
   return (
-    <Flex padding="0.75rem" direction="column" gap={2} width="16rem">
-      <button
-        type="button"
-        onClick={openPreview}
-        className="relative block h-[9rem] w-full cursor-pointer overflow-hidden rounded-md border-0 bg-transparent p-0"
-      >
-        <ImageWithPlaceholder className="h-full" alt={t("Image not available")} imageUrl={thumbUrl} />
-      </button>
-      <Text color="neutral.700" textStyle="300">
-        {formatPopupDate(createdAt)}
+    <Flex padding="0.75rem" direction="column" gap={2} width="17rem" cursor="default">
+      <GalleryImage
+        alt="Image popup media"
+        onClickEdit={openPreview}
+        className="h-[11.8125rem] w-full"
+        size={"full"}
+        src={thumbUrl}
+      />
+      <Text color="neutral.700" textStyle="200">
+        {t("Date uploaded")}: {formatPopupDate(createdAt)}
       </Text>
       {previewOpen ? <ImagePreview data={{ uuid, fullImageUrl: thumbUrl }} onCLose={closePreview} /> : null}
     </Flex>
