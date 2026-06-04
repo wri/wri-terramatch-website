@@ -117,7 +117,12 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             }}
           >
             <Box className="relative h-auto">
-              <OverviewMapArea entityModel={site} type="sites" className="max-h-[27rem]" disabledPolygonPanel={true} />
+              <OverviewMapArea
+                entityModel={site}
+                type="sites"
+                className="max-h-[27rem] !rounded-[0.25rem_0.25rem_0.25rem_0.25rem]"
+                disabledPolygonPanel={true}
+              />
               {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
                 <MapPlaceholder
                   icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}

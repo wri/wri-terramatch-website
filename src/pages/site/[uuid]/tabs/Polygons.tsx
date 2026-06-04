@@ -982,6 +982,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             entityModel={site}
             type="sites"
             className={classNames(
+              "overflow-hidden",
               isEditPolygonOpen
                 ? // TODO: Update `top-[70px]` when the navbar is redesigned so this offset matches the new header height.
                   "!fixed top-[70px] bottom-0 left-0 right-0 z-[37] !h-[calc(100vh-66px)] w-screen rounded-none"
