@@ -35,10 +35,19 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
 
   const entryTypes = useEntryTypes(domain, type);
   const entryTypeMap = useEntryTypeMap(domain, type);
-  const { sectionLabel, rowLabelSingular, rowLabelPlural } = useTrackingLabels(type);
+  const { sectionLabel, rowLabelSingular, rowLabelPlural, summaryTotalSingular, summaryTotalPlural } =
+    useTrackingLabels(type);
   const rowLabel = total === 1 ? rowLabelSingular : rowLabelPlural;
   const user = useIsAdmin();
-  const prefix = title == null ? `${t(sectionLabel)} ${t(rowLabel)}` : `${title} - ${t(sectionLabel)} ${t(rowLabel)}`;
+  const summaryTotalLabel =
+    summaryTotalSingular != null && summaryTotalPlural != null
+      ? total === 1
+        ? summaryTotalSingular
+        : summaryTotalPlural
+      : null;
+  const composedTotalLabel = `${sectionLabel} ${rowLabel}`;
+  const prefix =
+    title == null ? summaryTotalLabel ?? composedTotalLabel : `${title} - ${summaryTotalLabel ?? composedTotalLabel}`;
 
   const boldNumber = (
     <Text as="span" textStyle="600" color="primary.900">
