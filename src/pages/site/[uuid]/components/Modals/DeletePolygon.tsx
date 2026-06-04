@@ -47,16 +47,16 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, o
       }
       content={
         polygons.length === 1 ? (
-          <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2}>
+          <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2} width="100%">
             <WarningIcon boxSize={8} color={"warning.500"} mb={2} />
-            <Text textStyle="400" color="neutral.900">
+            <Text textStyle="400" color="neutral.900" textAlign="center">
               {t("Are you sure you want to delete")}
             </Text>
-            <Text textStyle="600-bold" color="neutral.900">
+            <Text textStyle="600-bold" color="neutral.900" textAlign="center">
               {polygons[0].polygonName}?
             </Text>
 
-            <Text textStyle="400-bold" color="warning.900" mt={2}>
+            <Text textStyle="400-bold" color="warning.900" mt={2} textAlign="center">
               {t("This action cannot be undone.")}
             </Text>
           </Flex>
