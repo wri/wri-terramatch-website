@@ -14,25 +14,14 @@ type PolygonEventName =
 
 type PolygonEventParams = Record<string, string | number | boolean | null | undefined>;
 
-declare global {
-  interface Window {
-    dataLayer?: unknown[];
-    gtag?: (...args: unknown[]) => void;
-  }
-}
+type WindowWithDataLayer = Window & { dataLayer?: Array<Record<string, unknown>> };
 
-const toSnakeEntityType = (entityName?: string | null): "project" | "site" | "nursery" | "unknown" => {
-  if (entityName == null) return "unknown";
-  const normalized = entityName.toLowerCase();
+const toSnakeEntityType = (entityType?: string | null) => {
+  const normalized = entityType?.toLowerCase() ?? "";
   if (normalized.includes("project")) return "project";
   if (normalized.includes("site")) return "site";
   if (normalized.includes("nurser")) return "nursery";
-  return "unknown";
-};
-
-const sanitizeParams = (params: PolygonEventParams): Record<string, string | number | boolean> => {
-  const entries = Object.entries(params).map(([key, value]) => [key, value ?? "unknown"]);
-  return Object.fromEntries(entries) as Record<string, string | number | boolean>;
+  return "";
 };
 
 export const getPolygonAnalyticsContext = ({
@@ -43,18 +32,20 @@ export const getPolygonAnalyticsContext = ({
   entityId?: string | null;
 }) => ({
   entity_type: toSnakeEntityType(entityType),
-  entity_id: entityId ?? "unknown"
+  entity_id: entityId ?? ""
 });
 
 export const trackPolygonEvent = (eventName: PolygonEventName, params: PolygonEventParams): void => {
-  if (typeof window === "undefined") return;
-  const safeParams = sanitizeParams(params);
+  if (typeof window === "undefined") {
+    return;
+  }
 
-  window.dataLayer = window.dataLayer ?? [];
-  window.dataLayer.push({
-    event: eventName,
-    ...safeParams
-  });
+  const payload = Object.fromEntries(
+    Object.entries({ event: eventName, ...params }).filter(([, value]) => value != null)
+  );
 
-  window.gtag?.("event", eventName, safeParams);
+  const { dataLayer } = window as WindowWithDataLayer;
+  const layer = dataLayer ?? [];
+  layer.push(payload);
+  (window as WindowWithDataLayer).dataLayer = layer;
 };
