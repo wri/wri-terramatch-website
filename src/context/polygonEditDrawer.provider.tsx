@@ -51,16 +51,20 @@ type PolygonEditDrawerProviderProps = {
   onRefetchPolygons?: PolygonSaveCallback;
 };
 
+type PolygonRunValidationCallback = (geometryPolygonUuids: string[]) => Promise<void>;
+
 type PolygonEditDrawerDataSyncProps = {
   polygons?: SitePolygonLightDto[];
   onRefetchPolygons?: PolygonSaveCallback;
   onOverlapFixed?: PolygonOverlapFixCallback;
+  onRunValidation?: PolygonRunValidationCallback;
 };
 
 type PolygonEditDrawerDataContextValue = {
   setPolygons: (polygons: SitePolygonLightDto[]) => void;
   setOnRefetchPolygons: (onRefetch?: PolygonSaveCallback) => void;
   setOnOverlapFixed: (onOverlapFixed?: PolygonOverlapFixCallback) => void;
+  setOnRunValidation: (onRunValidation?: PolygonRunValidationCallback) => void;
 };
 
 const PolygonEditDrawerDataContext = createContext<PolygonEditDrawerDataContextValue | null>(null);
@@ -68,7 +72,8 @@ const PolygonEditDrawerDataContext = createContext<PolygonEditDrawerDataContextV
 export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({
   polygons = EMPTY_POLYGONS,
   onRefetchPolygons,
-  onOverlapFixed
+  onOverlapFixed,
+  onRunValidation
 }) => {
   const dataContext = useContext(PolygonEditDrawerDataContext);
 
@@ -83,6 +88,10 @@ export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({
   useEffect(() => {
     dataContext?.setOnOverlapFixed(onOverlapFixed);
   }, [dataContext, onOverlapFixed]);
+
+  useEffect(() => {
+    dataContext?.setOnRunValidation(onRunValidation);
+  }, [dataContext, onRunValidation]);
 
   return null;
 };
@@ -99,6 +108,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
 
   const onRefetchPolygonsRef = useRef<PolygonSaveCallback | undefined>(onRefetchPolygonsProp);
   const onOverlapFixedRef = useRef<PolygonOverlapFixCallback | undefined>(undefined);
+  const onRunValidationRef = useRef<PolygonRunValidationCallback | undefined>(undefined);
 
   useEffect(() => {
     setPolygons(polygonsProp);
@@ -116,11 +126,19 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     onOverlapFixedRef.current = handler;
   }, []);
 
+  const setOnRunValidation = useCallback((handler?: PolygonRunValidationCallback) => {
+    onRunValidationRef.current = handler;
+  }, []);
+
+  const handleRunValidation = useCallback(async (geometryPolygonUuids: string[]) => {
+    await onRunValidationRef.current?.(geometryPolygonUuids);
+  }, []);
+
   const handleSaved = useCallback(() => onRefetchPolygonsRef.current?.(), []);
 
   const dataContextValue = useMemo(
-    () => ({ setPolygons, setOnRefetchPolygons, setOnOverlapFixed }),
-    [setOnRefetchPolygons, setOnOverlapFixed]
+    () => ({ setPolygons, setOnRefetchPolygons, setOnOverlapFixed, setOnRunValidation }),
+    [setOnRefetchPolygons, setOnOverlapFixed, setOnRunValidation]
   );
   const {
     setEditPolygon,
@@ -248,6 +266,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
           onOpenChange={setOpen}
           onSaved={handleSaved}
           onOverlapFixed={handleOverlapFixed}
+          onRunValidation={handleRunValidation}
           onPolygonUpdated={setSelectedPolygon}
           onSuppressMapSelectionHighlightChange={setSuppressMapSelectionHighlight}
         />
