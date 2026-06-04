@@ -24,3 +24,15 @@ export const dispatchUndoPolygonDrawEvent = (): void => {
   if (typeof window === "undefined") return;
   window.dispatchEvent(new Event(UNDO_POLYGON_DRAW_EVENT));
 };
+
+export const isPolygonDrawUndoShortcut = (event: KeyboardEvent): boolean => {
+  const key = event.key.toLowerCase();
+  return (event.ctrlKey || event.metaKey) && key === "z" && event.shiftKey !== true;
+};
+
+const EDITABLE_UNDO_TARGET_SELECTOR = "input, textarea, select, [contenteditable=''], [contenteditable='true']";
+
+export const shouldIgnorePolygonDrawUndoShortcut = (target: EventTarget | null): boolean => {
+  if (target == null || !(target instanceof HTMLElement)) return false;
+  return target.closest(EDITABLE_UNDO_TARGET_SELECTOR) != null;
+};

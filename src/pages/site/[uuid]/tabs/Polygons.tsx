@@ -101,6 +101,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const { isOpen: isEditPolygonOpen, suppressMapSelectionHighlight } = usePolygonEditDrawer();
   const {
     isUserDrawingEnabled,
+    editPolygon,
     setSiteData,
     resetSiteMapInteractionState,
     closeMapPopups,
@@ -761,11 +762,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (!isUserDrawingEnabled) {
-      setCanUndoPolygonDraw(false);
-    }
-  }, [isUserDrawingEnabled]);
+  const showPolygonUndoButton =
+    isEditPolygonOpen &&
+    canUndoPolygonDraw &&
+    (isUserDrawingEnabled || (editPolygon.isOpen && editPolygon.uuid !== ""));
+
   const startNewPolygonFlow = useCallback(() => {
     handleBulkDraw();
     startDrawing();
@@ -994,7 +995,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             polygonTableHighlight={polygonTableHighlight}
             overlapPolygons={overlapPolygonsForMap}
           />
-          {isEditPolygonOpen && isUserDrawingEnabled && canUndoPolygonDraw && (
+          {showPolygonUndoButton && (
             <Button
               variant="secondary"
               leftIcon={<UndoIcon />}
