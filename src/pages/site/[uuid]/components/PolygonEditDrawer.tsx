@@ -12,6 +12,7 @@ import NotificationIndicator from "@/redesignComponents/navigation/NotificationI
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 
 import SavePolygon from "./Modals/SavePolygon";
+import PolygonCommentContent from "./PolygonCommentContent";
 import type { PolygonOverlapFixCallback, PolygonSaveCallback } from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
 import PolygonSystemValidationContent from "./PolygonSystemValidationContent";
@@ -148,7 +149,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                 {activeTab === "systemValidation" && (
                   <PolygonSystemValidationContent polygon={selectedPolygon} onOverlapFixed={onOverlapFixed} />
                 )}
-                {activeTab === "comments" && <div>Comments</div>}
+                {activeTab === "comments" && <PolygonCommentContent />}
               </Flex>
             }
             footer={

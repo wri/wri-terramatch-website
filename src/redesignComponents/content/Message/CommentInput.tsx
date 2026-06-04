@@ -80,7 +80,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   const isTextareaExpanded = currentIsEditing || isFocused;
 
   return (
-    <Flex className="flex-col gap-2">
+    <Flex className="w-full flex-col gap-2">
       <Flex className="items-start gap-3">
         <Avatar size="small" name={name} src={src} className="mt-2" />
         <div className="relative w-full">
