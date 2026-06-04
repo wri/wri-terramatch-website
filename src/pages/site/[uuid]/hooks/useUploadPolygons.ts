@@ -13,6 +13,8 @@ import { CompareGeometryFileResponse } from "@/generated/v3/researchService/rese
 
 import {
   getPolygonOperationToastLabels,
+  getUpdatingPolygonsProgressLabel,
+  getUploadingPolygonsProgressLabel,
   showPolygonCompleteToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
@@ -183,21 +185,21 @@ export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUpl
   const uploadNewFiles = useCallback(
     (files: File[]) => {
       void uploadFiles(files, uploadGeometry, {
-        progress: toastLabels.uploadingPolygonsProgress,
+        progress: getUploadingPolygonsProgressLabel(t, files.length),
         complete: toastLabels.uploadingPolygonsComplete
       });
     },
-    [toastLabels, uploadFiles, uploadGeometry]
+    [t, toastLabels.uploadingPolygonsComplete, uploadFiles, uploadGeometry]
   );
 
   const uploadWithVersionsFiles = useCallback(
     (files: File[]) => {
       void uploadFiles(files, uploadGeometryWithVersions, {
-        progress: toastLabels.updatingPolygonsProgress,
+        progress: getUpdatingPolygonsProgressLabel(t, files.length),
         complete: toastLabels.updatingPolygonsComplete
       });
     },
-    [toastLabels, uploadFiles, uploadGeometryWithVersions]
+    [t, toastLabels.updatingPolygonsComplete, uploadFiles, uploadGeometryWithVersions]
   );
 
   const compareFiles = useCallback(

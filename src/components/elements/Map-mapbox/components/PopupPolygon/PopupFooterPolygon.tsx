@@ -5,6 +5,7 @@ import { useCallback, useMemo } from "react";
 
 import { downloadPolygonGeoJson, formatFileName } from "@/components/elements/Map-mapbox/utils";
 import {
+  getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
   showPolygonCompleteToast,
   showPolygonErrorToast,
@@ -43,7 +44,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
 
     const filename = polygonName != null && polygonName !== "" ? formatFileName(polygonName) : "polygon";
 
-    showPolygonProgressToast(t, toastLabels.downloadingPolygonsProgress);
+    showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, 1));
 
     try {
       await downloadPolygonGeoJson(polygonUuid, filename, { includeExtendedData: true });
