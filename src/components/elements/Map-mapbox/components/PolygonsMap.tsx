@@ -93,7 +93,6 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     async geojson => {
       try {
         await storePolygon(geojson, entityModel, setPolygonFromMap, onRefetchPolygons);
-        openNotification("success", t("Success"), t("Polygon created successfully"));
       } catch (error) {
         const errorMessage =
           error != null && typeof error === "object" && "message" in error

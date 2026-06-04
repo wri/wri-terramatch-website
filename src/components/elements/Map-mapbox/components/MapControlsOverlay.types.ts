@@ -77,4 +77,5 @@ export interface MapControlsOverlayProps {
   gallery: GalleryProps;
   download: DownloadProps;
   fullscreen: FullscreenProps;
+  showBaseMapControl: boolean;
 }

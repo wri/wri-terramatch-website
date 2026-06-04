@@ -1,6 +1,5 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 
@@ -47,6 +46,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
   const pendingOnCloseRef = useRef<(() => void) | null>(null);
+  const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
   const isCreateMode = selectedPolygon?.primaryUuid == null || selectedPolygon.primaryUuid === "";
   const isSaveDisabled = activeTab === "edit" && isCreateMode && draftPolygonGeometry == null;
 
@@ -56,11 +56,18 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
 
   useEffect(() => {
     setSaveEditContent(null);
-  }, [selectedPolygon?.uuid]);
+    getPolygonNameForSaveRef.current = () => polygon?.polygonName?.trim() ?? "";
+  }, [polygon?.polygonName, selectedPolygon?.uuid]);
 
   const registerSave = useCallback((saveHandler: () => Promise<boolean>) => {
     setSaveEditContent(() => saveHandler);
   }, []);
+
+  const registerPolygonName = useCallback((getPolygonName: () => string) => {
+    getPolygonNameForSaveRef.current = getPolygonName;
+  }, []);
+
+  const saveConfirmationPolygonName = getPolygonNameForSaveRef.current() || polygon?.polygonName?.trim() || "-";
 
   const handleSave = useCallback(
     async (onClose: () => void) => {
@@ -74,18 +81,12 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         const saved = await saveEditContent();
         if (saved) {
           onClose();
-          showToast({
-            label: t("Polygon version created successfully"),
-            type: "success",
-            placement: "bottom-end",
-            duration: 5000
-          });
         }
       } finally {
         setIsSaving(false);
       }
     },
-    [activeTab, saveEditContent, t]
+    [activeTab, saveEditContent]
   );
 
   return (
@@ -140,6 +141,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                       polygon={selectedPolygon}
                       onClose={onClose}
                       onRegisterSave={registerSave}
+                      onRegisterPolygonName={registerPolygonName}
                       onSaved={onSaved}
                       onPolygonUpdated={onPolygonUpdated}
                       onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
@@ -184,7 +186,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
               <SavePolygon
                 open
                 onOpenChange={setShowSaveConfirmationModal}
-                polygon={{ polygonName: polygon.polygonName ?? "-" } as unknown as PolygonTableRow}
+                polygon={{ polygonName: saveConfirmationPolygonName ?? "-" } as unknown as PolygonTableRow}
                 onSave={() => void handleSave(pendingOnCloseRef.current ?? onClose)}
               />
             )}

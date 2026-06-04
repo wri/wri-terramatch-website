@@ -74,7 +74,7 @@ const ObjectiveSec: FC<{ data: DashboardDataProps }> = ({ data }) => {
             {t("Land Tenure")}
           </Text>
           <Text variant="text-14-semibold" as={"span"} className="rounded bg-grey-950 px-2 py-1 text-darkCustom">
-            {t(data.landTenure)}
+            {data.landTenure}
           </Text>
         </div>
       )}

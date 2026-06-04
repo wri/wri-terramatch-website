@@ -27,8 +27,8 @@ const SubmitPolygons: FC<SubmitPolygonsProps> = ({ open, onOpenChange, eligibleC
       return;
     }
 
-    onOpenChange(false);
     await onSubmit();
+    onOpenChange(false);
   }, [eligibleCount, onOpenChange, onSubmit]);
 
   return (
@@ -62,6 +62,7 @@ const SubmitPolygons: FC<SubmitPolygonsProps> = ({ open, onOpenChange, eligibleC
               id: "cancel",
               variant: "secondary",
               children: t("Cancel"),
+              autoFocus: true,
               onClick: handleClose
             },
             {

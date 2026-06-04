@@ -1,7 +1,7 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import type { Map as MapboxMap } from "mapbox-gl";
 
-import { dispatchPolygonDrawCanUndoChanged } from "../interactions/draftDrawEvents";
+import { dispatchPolygonDrawCanUndoChanged, isPolygonDrawUndoShortcut } from "../interactions/draftDrawEvents";
 
 type DrawPolygonModeState = {
   polygon: MapboxDraw.DrawPolygon;
@@ -50,11 +50,6 @@ export const performPolygonDrawUndo = (): boolean => {
 
   syncPolygonDrawCanUndo();
   return didUndo;
-};
-
-const isUndoShortcut = (event: KeyboardEvent): boolean => {
-  const key = event.key.toLowerCase();
-  return (event.ctrlKey || event.metaKey) && key === "z" && event.shiftKey !== true;
 };
 
 export const undoLastPolygonPoint = (state: DrawPolygonModeState): boolean => {
@@ -113,7 +108,7 @@ export const drawPolygonWithUndoMode: MapboxDraw.DrawCustomMode<DrawPolygonModeS
     activeDrawModeState = state;
     activeDrawModeContext = this as unknown as DrawModeRuntimeContext;
 
-    if (!isUndoShortcut(event)) {
+    if (!isPolygonDrawUndoShortcut(event)) {
       baseDrawPolygonMode.onKeyDown?.call(this, state, event);
       return;
     }

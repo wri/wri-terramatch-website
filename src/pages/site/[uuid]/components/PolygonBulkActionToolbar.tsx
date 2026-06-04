@@ -26,6 +26,7 @@ export type PolygonBulkActionToolbarProps = {
   onRunValidation: (geometryPolygonUuids: string[]) => Promise<void>;
   isOverlapFixAction?: boolean;
   canAutoFixOverlap?: boolean;
+  isSubmitDisabled?: boolean;
   polygons: PolygonTableRow[];
   polygonValidations: Map<string, ValidationDto>;
   selectedGeometryPolygonUuids: string[];
@@ -49,7 +50,8 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   polygonValidations,
   selectedGeometryPolygonUuids,
   isOverlapFixAction = false,
-  canAutoFixOverlap = false
+  canAutoFixOverlap = false,
+  isSubmitDisabled = false
 }: PolygonBulkActionToolbarProps) {
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
   const t = useT();
@@ -125,10 +127,10 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const primaryAction = useMemo(
     () => ({
       children: submitLabel,
-      disabled: isOverlapAutoFixUnavailable,
+      disabled: isOverlapAutoFixUnavailable || isSubmitDisabled,
       onClick: onSubmit
     }),
-    [isOverlapAutoFixUnavailable, onSubmit, submitLabel]
+    [isOverlapAutoFixUnavailable, isSubmitDisabled, onSubmit, submitLabel]
   );
 
   const overlapTooltip = useMemo(

@@ -3,7 +3,6 @@ import type {
   ValidationCriteriaDto,
   ValidationDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
-import { isPolygonValidationChecked } from "@/helpers/polygonValidation";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
@@ -75,11 +74,6 @@ export const getSelectedOverlapFixSummary = (
   const notFixableCandidates: OverlapFixCandidate[] = [];
 
   for (const row of selectedRows) {
-    const polygon = polygonByUuid.get(row.id);
-    if (polygon != null && !isPolygonValidationChecked(polygon.validationStatus)) {
-      continue;
-    }
-
     const overlapCriteria = getOverlapCriteria(polygonValidations.get(row.id));
 
     if (overlapCriteria == null) {
