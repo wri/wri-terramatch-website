@@ -45,6 +45,7 @@
   margin-bottom: 0 !important;
 }
 
-.chakra-textarea {
+/* TODO: This is a temporary fix to remove the margin-top when wri team fix margin on inputs. */
+/* .chakra-textarea {
   margin-top: 0 !important;
-}
+} */
