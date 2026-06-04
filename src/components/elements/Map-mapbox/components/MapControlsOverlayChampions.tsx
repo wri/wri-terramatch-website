@@ -27,7 +27,8 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
   camera,
   gallery,
   download,
-  fullscreen
+  fullscreen,
+  showBaseMapControl = true
 }: MapControlsOverlayProps) => {
   const {
     record,
@@ -90,7 +91,11 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
             </ControlGroup>
           ) : null}
 
-          {dashboardMode !== "dashboard" && dashboardMode !== "modal" && styleReady && map != null ? (
+          {dashboardMode !== "dashboard" &&
+          dashboardMode !== "modal" &&
+          styleReady &&
+          map != null &&
+          showBaseMapControl ? (
             <ControlGroup position="top-right">
               <StyleControl map={map} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
             </ControlGroup>
