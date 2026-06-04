@@ -145,13 +145,15 @@ export interface ReadOnlyMapExtras {
   location?: { lat: number; lng: number } | null;
 }
 
-interface MapProps
+export interface MapProps
   extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onError">,
     BaseMapProps,
     Partial<DashboardMapExtras>,
     AdminMapExtras,
     FormMapExtras,
-    ReadOnlyMapExtras {}
+    ReadOnlyMapExtras {
+  showBaseMapControl?: boolean;
+}
 
 export const MapEditingContext = createContext({
   isEditing: false,
@@ -160,6 +162,7 @@ export const MapEditingContext = createContext({
 
 type MapContainerInnerProps = Omit<MapProps, "championsMap"> & {
   mapFunctions: NonNullable<MapProps["mapFunctions"]>;
+  showBaseMapControl?: boolean;
 };
 
 const MapContainerInner: FC<MapContainerInnerProps> = ({
@@ -198,6 +201,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
   hasAccess,
   dashboardContext,
   disabledPolygonPanel = false,
+  showBaseMapControl = true,
   ...props
 }) => {
   const resizeDebounceTimeoutRef = useRef<number | null>(null);
@@ -560,6 +564,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
       <MapCanvas mapContainer={mapContainer} className={className}>
         <MapControlsOverlay
+          showBaseMapControl={showBaseMapControl}
           hasControls={hasControls}
           draw={{
             handleEditPolygon,
