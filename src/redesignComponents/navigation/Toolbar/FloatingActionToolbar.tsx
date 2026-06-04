@@ -11,15 +11,16 @@ interface FloatingActionToolbarProps {
     label: string;
     onClick: () => void;
     labelColor?: string;
+    disabled?: boolean;
   }[];
 }
 
 const FloatingActionToolbar: FC<FloatingActionToolbarProps> = ({ items, className }) => {
   return (
     <Flex className={twMerge("w-fit items-center gap-2 rounded-full px-6 py-2.5", className)}>
-      {items.map(({ label, onClick, labelColor = "neutral.900" }, index) => (
+      {items.map(({ label, onClick, labelColor = "neutral.900", disabled = false }, index) => (
         <Fragment key={label}>
-          <Button variant="borderless" onClick={onClick}>
+          <Button variant="borderless" onClick={onClick} disabled={disabled}>
             <Text textStyle="400-bold" color={labelColor}>
               {label}
             </Text>

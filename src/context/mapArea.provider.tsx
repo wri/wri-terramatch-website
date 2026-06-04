@@ -1,5 +1,5 @@
 import type { Map as MapboxMap } from "mapbox-gl";
-import React, { createContext, ReactNode, useCallback, useContext, useRef, useState } from "react";
+import React, { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import { closeAllPopups } from "@/components/elements/Map-mapbox/interactions/popupCoordinator";
 import { removePopups } from "@/components/elements/Map-mapbox/interactions/popups";
@@ -7,6 +7,12 @@ import { EditPolygonState } from "@/components/elements/Map-mapbox/Map.d";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { Entity } from "@/types/common";
+
+import {
+  type PolygonSubmitConfirmationRequest,
+  registerMapAreaPopupActions,
+  unregisterMapAreaPopupActions
+} from "./mapArea.utils";
 
 export type MapAreaSiteData = Entity | SiteFullDto;
 
@@ -22,6 +28,8 @@ export type PolygonGeometryEditState = {
   currentGeometry?: GeoJSON.Geometry | null;
   isDirty: boolean;
 };
+
+export type PolygonSubmitConfirmationState = PolygonSubmitConfirmationRequest | null;
 
 type MapAreaType = {
   isUserDrawingEnabled: boolean;
@@ -64,6 +72,8 @@ type MapAreaType = {
   setValidFilter: (value: string) => void;
   registerMapboxMap: (map: MapboxMap | null) => void;
   closeMapPopups: () => void;
+  polygonSubmitConfirmation: PolygonSubmitConfirmationState;
+  setPolygonSubmitConfirmation: (value: PolygonSubmitConfirmationState) => void;
   resetSiteMapInteractionState: () => void;
 };
 
@@ -108,6 +118,8 @@ const defaultValue: MapAreaType = {
   setValidFilter: () => {},
   registerMapboxMap: () => {},
   closeMapPopups: () => {},
+  polygonSubmitConfirmation: null,
+  setPolygonSubmitConfirmation: () => {},
   resetSiteMapInteractionState: () => {}
 };
 
@@ -136,6 +148,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     isOpen: false,
     uuid: ""
   });
+  const [polygonSubmitConfirmation, setPolygonSubmitConfirmation] = useState<PolygonSubmitConfirmationState>(null);
 
   const setEditPolygon = useCallback((value: EditPolygonState) => {
     setEditPolygonInternal(value);
@@ -159,6 +172,14 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     removePopups(map, "MEDIA");
   }, []);
 
+  useEffect(() => {
+    registerMapAreaPopupActions({
+      openPolygonSubmitConfirmation: setPolygonSubmitConfirmation,
+      closeMapPopups
+    });
+    return unregisterMapAreaPopupActions;
+  }, [closeMapPopups]);
+
   const resetSiteMapInteractionState = useCallback(() => {
     closeMapPopups();
     setIsUserDrawingEnabled(false);
@@ -173,6 +194,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonGeometryEdit(undefined);
     setDraftPolygonGeometry(undefined);
     setPolygonMapTileNonce(0);
+    setPolygonSubmitConfirmation(null);
   }, [closeMapPopups]);
 
   const contextValue: MapAreaType = {
@@ -216,6 +238,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setValidFilter,
     registerMapboxMap,
     closeMapPopups,
+    polygonSubmitConfirmation,
+    setPolygonSubmitConfirmation,
     resetSiteMapInteractionState
   };
 

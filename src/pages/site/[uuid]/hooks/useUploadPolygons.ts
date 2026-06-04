@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
-import { createElement, useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import {
   type UploadGeometryResponse,
@@ -11,7 +10,12 @@ import {
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
 import { CompareGeometryFileResponse } from "@/generated/v3/researchService/researchServiceComponents";
-import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
+
+import {
+  getPolygonOperationToastLabels,
+  showPolygonCompleteToast,
+  showPolygonProgressToast
+} from "../utils/polygonOperationToasts";
 
 export type UploadMode = "new-polygons" | "update-existing-polygons";
 
@@ -21,10 +25,6 @@ export type GeometryUploadComparisonResult = {
   featuresForVersioning: number;
   featuresForCreation: number;
 };
-
-const TOAST_PLACEMENT = "bottom-end" as const;
-const UPLOADING_TOAST_DURATION_MS = 4000;
-const UPLOAD_COMPLETE_TOAST_DURATION_MS = 5000;
 
 const ACCEPTED_UPLOAD_EXTENSIONS = [".geojson", ".kml", ".zip"] as const;
 
@@ -150,76 +150,54 @@ const runGeometryUpload = (
 
 export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUploadPolygonsOptions) => {
   const t = useT();
+  const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const [isComparing, setIsComparing] = useState(false);
 
   const uploadGeometry = useUploadGeometry({});
   const compareGeometry = useCompareGeometry({});
   const uploadGeometryWithVersions = useUploadGeometryWithVersions({});
 
-  const showProgressToast = useCallback((label: string) => {
-    showToast({
-      label,
-      type: "info",
-      placement: TOAST_PLACEMENT,
-      duration: UPLOADING_TOAST_DURATION_MS,
-      icon: createElement(LoadingIcon, {
-        boxSize: 7,
-        color: "primary.700",
-        animation: "spin 1s linear infinite"
-      })
-    });
-  }, []);
-
-  const showCompleteToast = useCallback((label: string) => {
-    showToast({
-      label,
-      type: "success",
-      placement: TOAST_PLACEMENT,
-      duration: UPLOAD_COMPLETE_TOAST_DURATION_MS
-    });
-  }, []);
-
   const uploadFiles = useCallback(
     async (
       files: File[],
       upload: GeometryUploadHandler,
-      toastLabels: { progress: string; complete: string }
+      labels: { progress: string; complete: string }
     ): Promise<void> => {
       if (files.length === 0) {
         return;
       }
 
-      showProgressToast(toastLabels.progress);
+      showPolygonProgressToast(t, labels.progress);
 
       try {
         const responses = await Promise.all(files.map(file => runGeometryUpload(file, siteUuid, upload)));
-        showCompleteToast(toastLabels.complete);
+        showPolygonCompleteToast(labels.complete);
         onUploadSuccess(buildUploadSuccessResult(files, responses));
       } catch (error) {
         onError(extractErrorMessage(error));
       }
     },
-    [onError, onUploadSuccess, showCompleteToast, showProgressToast, siteUuid]
+    [onError, onUploadSuccess, siteUuid, t]
   );
 
   const uploadNewFiles = useCallback(
     (files: File[]) => {
       void uploadFiles(files, uploadGeometry, {
-        progress: t("Uploading Polygons..."),
-        complete: t("Upload Complete")
+        progress: toastLabels.uploadingPolygonsProgress,
+        complete: toastLabels.uploadingPolygonsComplete
       });
     },
-    [t, uploadFiles, uploadGeometry]
+    [toastLabels, uploadFiles, uploadGeometry]
   );
 
   const uploadWithVersionsFiles = useCallback(
     (files: File[]) => {
       void uploadFiles(files, uploadGeometryWithVersions, {
-        progress: t("Updating Polygons..."),
-        complete: t("Update Complete")
+        progress: toastLabels.updatingPolygonsProgress,
+        complete: toastLabels.updatingPolygonsComplete
       });
     },
-    [t, uploadFiles, uploadGeometryWithVersions]
+    [toastLabels, uploadFiles, uploadGeometryWithVersions]
   );
 
   const compareFiles = useCallback(
