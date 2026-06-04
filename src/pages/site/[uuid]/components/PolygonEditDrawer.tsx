@@ -149,7 +149,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                   />
                 )}
                 {activeTab === "systemValidation" && (
-                  <PolygonSystemValidationContent polygon={selectedPolygon} onOverlapFixed={onOverlapFixed} />
+                  <PolygonSystemValidationContent
+                    polygon={selectedPolygon}
+                    onOverlapFixed={onOverlapFixed}
+                    onRunValidation={onRunValidation}
+                  />
                 )}
                 {activeTab === "comments" && <PolygonCommentContent />}
               </Flex>
