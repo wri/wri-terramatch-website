@@ -100,7 +100,7 @@ const PolygonHandoffPanel: FC<Props> = ({ projectUuid, polygonDataSubmission, re
       />
       <FormControlLabel
         control={<Switch checked={baseline} onChange={(_, checked) => setBaseline(checked)} color="primary" />}
-        label={<Text variant="text-14-semibold">{t("Project ready for baseline")}</Text>}
+        label={<Text variant="text-14-semibold">{t("Project Ready for Baseline")}</Text>}
       />
       <TextField
         label={t("Comment (optional)")}
