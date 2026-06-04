@@ -51,7 +51,17 @@ import {
 } from "@/utils/mapStatusToTagStateEntity";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
+import {
+  getDeletingProgressLabel,
+  getDownloadingPolygonsProgressLabel,
+  getPolygonOperationToastLabels,
+  getSubmittingProgressLabel,
+  showPolygonCompleteToast,
+  showPolygonErrorToast,
+  showPolygonProgressToast
+} from "../utils/polygonOperationToasts";
 import DeletePolygon from "./Modals/DeletePolygon";
+import SubmitPolygons from "./Modals/SubmitPolygons";
 import UploadPhotos from "./Modals/UploadPhotos";
 import type { PolygonSaveCallback } from "./polygonEdit.types";
 import {
@@ -65,13 +75,11 @@ import { formatDistributionValue, isRestorationStrategy, isTargetLandUseType } f
 import type { PolygonTableRow } from "./PolygonTableRow";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 
-const TOAST_PLACEMENT = "bottom-end" as const;
-const SAVE_COMPLETE_TOAST_MS = 5000;
-
 type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
   onClose?: () => void;
   onRegisterSave?: (saveHandler: () => Promise<boolean>) => void;
+  onRegisterPolygonName?: (getPolygonName: () => string) => void;
   onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
@@ -113,17 +121,33 @@ const waitForMapEditCleanup = async (): Promise<void> => {
   });
 };
 
+const getPolygonNameForDisplay = (formName: string, polygon?: SitePolygonLightDto): string => {
+  const trimmed = formName.trim();
+  if (trimmed.length > 0) return trimmed;
+  return polygon?.name?.trim() ?? "";
+};
+
 const PolygonEditContent: FC<PolygonEditContentProps> = ({
   polygon,
   onClose,
   onRegisterSave,
+  onRegisterPolygonName,
   onSaved,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange
 }) => {
   const t = useT();
+  const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const showStatusToast = useCallback((type: "success" | "error" | "warning", label: string) => {
-    showToast({ label, type, placement: "bottom-end", duration: 5000 });
+    if (type === "error") {
+      showPolygonErrorToast(label);
+      return;
+    }
+    if (type === "success") {
+      showPolygonCompleteToast(label);
+      return;
+    }
+    showToast({ label, type: "warning", placement: "bottom-end", duration: 5000 });
   }, []);
   const {
     polygonGeometryEdit,
@@ -148,6 +172,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [treesPlanted, setTreesPlanted] = useState("");
   const [plotsVisible, setPlotsVisible] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
   const [openAccordionSection, setOpenAccordionSection] = useState<PolygonEditAccordionSection | null>("details");
@@ -166,6 +191,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
   const isCreateMode = polygon?.primaryUuid == null || polygon.primaryUuid === "";
+  const isPolygonSubmittable = polygon?.status !== POLYGON_PENDING_APPROVAL && polygon?.status !== POLYGON_APPROVED;
   const shouldMapEditPolygon =
     openAccordionSection !== "monitoring-plots" && openAccordionSection !== "geotagged-photos";
   const resolvedSiteUuid = polygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : "");
@@ -307,6 +333,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return false;
     }
 
+    showPolygonProgressToast(t, toastLabels.savingChangesProgress);
+
     try {
       const createdPolygon = await saveNewSitePolygon({
         siteId: resolvedSiteUuid,
@@ -315,13 +343,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         dateValueToIso: dateValueToIsoString
       });
       await finalizeSuccessfulSave(createdPolygon, { geometryChanged: true, refetchVersionsList: false });
-      showStatusToast("success", t("Polygon created successfully"));
+      showPolygonCompleteToast(toastLabels.savingChangesComplete);
       return true;
     } catch {
-      showStatusToast("error", t("Error creating polygon"));
+      showPolygonErrorToast(t("Error creating polygon"));
       return false;
     }
-  }, [draftPolygonGeometry, finalizeSuccessfulSave, getFormValues, resolvedSiteUuid, showStatusToast, t]);
+  }, [draftPolygonGeometry, finalizeSuccessfulSave, getFormValues, resolvedSiteUuid, showStatusToast, t, toastLabels]);
 
   const saveExistingPolygonFlow = useCallback(async (): Promise<boolean> => {
     if (polygon?.primaryUuid == null || polygon.primaryUuid === "") {
@@ -333,12 +361,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return false;
     }
 
-    showToast({
-      label: t("Changes Saved"),
-      type: "success",
-      placement: TOAST_PLACEMENT,
-      duration: SAVE_COMPLETE_TOAST_MS
-    });
+    showPolygonProgressToast(t, toastLabels.savingChangesProgress);
 
     try {
       const previousPolygonUuid = geometryPolygonUuid !== "" ? geometryPolygonUuid : undefined;
@@ -355,15 +378,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         refetchVersionsList: true,
         previousPolygonUuid
       });
-      showStatusToast(
-        "success",
-        geometryChanged
-          ? t("Polygon geometry and attributes were saved successfully")
-          : t("Polygon version created successfully")
-      );
+      showPolygonCompleteToast(toastLabels.savingChangesComplete);
       return true;
     } catch {
-      showStatusToast("error", t("Error creating polygon version"));
+      showPolygonErrorToast(t("Error creating polygon version"));
       return false;
     }
   }, [
@@ -371,11 +389,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     geometryChanged,
     geometryPolygonUuid,
     getFormValues,
-    showStatusToast,
     polygon?.primaryUuid,
     polygon?.siteId,
     polygonGeometryEdit?.currentGeometry,
-    t
+    showStatusToast,
+    t,
+    toastLabels
   ]);
 
   const savePolygonData = useCallback(async () => {
@@ -386,6 +405,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   useEffect(() => {
     setPlotsVisible(false);
   }, [sitePolygonUuid]);
+
+  useEffect(() => {
+    if (!isAnrEligible) {
+      setPlotsVisible(false);
+      setOpenAccordionSection(current => (current === "monitoring-plots" ? "details" : current));
+    }
+  }, [isAnrEligible]);
 
   useEffect(() => {
     if (isCreateMode || geometryPolygonUuid === "") {
@@ -458,6 +484,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
+    showPolygonProgressToast(t, toastLabels.downloadingSamplePlotsProgress);
+
     try {
       const response = await loadAnrPlotGeometryGeoJson({ sitePolygonUuid });
       const geojson = extractGeoJsonFromResponse(response.data);
@@ -466,10 +494,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       }
       const filename = formatFileName(`${polygon?.name ?? "polygon"}_anr_monitoring_plots`);
       downloadGeoJsonFile(geojson, filename);
+      showPolygonCompleteToast(toastLabels.downloadingSamplePlotsComplete);
     } catch (error) {
-      showStatusToast("error", t("Error downloading ANR monitoring plots"));
+      showPolygonErrorToast(t("Error downloading ANR monitoring plots"));
     }
-  }, [isAnrEligible, polygon?.name, showStatusToast, sitePolygonUuid, t]);
+  }, [isAnrEligible, polygon?.name, showStatusToast, sitePolygonUuid, t, toastLabels]);
 
   const makeVersionActive = useCallback(
     async (version: SitePolygonLightDto) => {
@@ -538,12 +567,15 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
+    showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, 1));
+
     try {
       await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon", { includeExtendedData: true });
+      showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
     } catch (error) {
-      showStatusToast("error", t("Error downloading polygon"));
+      showPolygonErrorToast(t("Error downloading polygon"));
     }
-  }, [geometryPolygonUuid, polygon?.name, showStatusToast, t]);
+  }, [geometryPolygonUuid, polygon?.name, showStatusToast, t, toastLabels]);
 
   const handleSubmitPolygon = useCallback(async () => {
     if (polygon?.uuid == null || polygon.uuid === "") {
@@ -555,6 +587,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       showStatusToast("error", t("This polygon has already been submitted"));
       return;
     }
+
+    showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1));
 
     try {
       await bulkUpdateSitePolygonStatus([polygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, "");
@@ -568,23 +602,24 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       onClose?.();
       await waitForMapEditCleanup();
       await onSaved?.();
-      showStatusToast("success", t("Polygon submitted successfully"));
+      showPolygonCompleteToast(toastLabels.submittingComplete);
     } catch (error) {
-      showStatusToast("error", t("Error submitting polygon"));
+      showPolygonErrorToast(t("Error submitting polygon"));
     }
   }, [
     closeMapPopups,
     invalidatePolygonMapTiles,
     onClose,
     onSaved,
-    showStatusToast,
     polygon?.status,
     polygon?.uuid,
     setIsUserDrawingEnabled,
     setPolygonGeometryEdit,
     setShouldRefetchPolygonData,
     setStatusSelectedPolygon,
-    t
+    showStatusToast,
+    t,
+    toastLabels
   ]);
 
   const handleDeletePolygon = useCallback(async () => {
@@ -593,23 +628,29 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
+    showPolygonProgressToast(t, getDeletingProgressLabel(t, 1));
+
     try {
       await deleteSitePolygon(polygon.uuid);
       pruneSitePolygonsCache();
       closeMapPopups();
       invalidatePolygonMapTiles();
       await onSaved?.();
-      showStatusToast("success", t("Polygon deleted successfully"));
+      showPolygonCompleteToast(toastLabels.deletingComplete);
       onClose?.();
     } catch (error) {
-      showStatusToast("error", t("Error deleting polygon"));
+      showPolygonErrorToast(t("Error deleting polygon"));
       throw error;
     }
-  }, [closeMapPopups, invalidatePolygonMapTiles, onClose, onSaved, polygon?.uuid, showStatusToast, t]);
+  }, [closeMapPopups, invalidatePolygonMapTiles, onClose, onSaved, polygon?.uuid, showStatusToast, t, toastLabels]);
 
   useEffect(() => {
     onRegisterSave?.(savePolygonData);
   }, [onRegisterSave, savePolygonData]);
+
+  useEffect(() => {
+    onRegisterPolygonName?.(() => getPolygonNameForDisplay(polygonName, polygon));
+  }, [onRegisterPolygonName, polygon, polygonName]);
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
@@ -637,9 +678,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               required
             />
             <SelectInput
+              key={`restoration-practice-${sitePolygonUuid}-${(polygon?.practice ?? []).join("|")}`}
               items={restorationOptions}
               label={t("Restoration Practice")}
-              value={restorationPractice}
+              defaultValue={polygon?.practice ?? []}
               onChange={setRestorationPractice}
               placeholder={t("Select...")}
               multiple
@@ -654,9 +696,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               required={!isCreateMode}
             />
             <SelectInput
+              key={`tree-distribution-${sitePolygonUuid}-${(polygon?.distr ?? []).join("|")}`}
               items={treeOptions}
               label={t("Tree Distribution")}
-              value={treeDistribution}
+              defaultValue={polygon?.distr ?? []}
               onChange={setTreeDistribution}
               placeholder={t("Select...")}
               multiple
@@ -686,59 +729,61 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             />
           </Flex>
         </Accordion>
-        <Accordion
-          header={<AccordionHeader title={t("Monitoring Plots")} />}
-          open={openAccordionSection === "monitoring-plots"}
-          onOpenChange={handleAccordionOpenChange("monitoring-plots")}
-          actions={
-            <Button
-              leftIcon={<DownloadIcon />}
-              onClick={() => void downloadMonitoringPlots()}
-              size="small"
-              variant="secondary"
-              disabled={!isAnrEligible || !hasAnrPlotGeometry}
-            >
-              {t("Download")}
-            </Button>
-          }
-        >
-          <Flex className="flex-1 flex-col gap-4">
-            <Switch
-              name="showPlotsOnMap"
-              checked={plotsVisible}
-              disabled={!isAnrEligible || !hasAnrPlotGeometry}
-              onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
-                setPlotsVisible(checked === true)
-              }
-            >
-              {t("Show Plots on Map")}
-            </Switch>
-            <Flex className="flex-col gap-7">
-              {isAnrLoading ? (
-                <Text>{t("Loading ANR monitoring plots...")}</Text>
-              ) : isAnrEligible && hasAnrPlotGeometry ? (
-                <>
+        {isAnrEligible ? (
+          <Accordion
+            header={<AccordionHeader title={t("Monitoring Plots")} />}
+            open={openAccordionSection === "monitoring-plots"}
+            onOpenChange={handleAccordionOpenChange("monitoring-plots")}
+            actions={
+              <Button
+                leftIcon={<DownloadIcon />}
+                onClick={() => void downloadMonitoringPlots()}
+                size="small"
+                variant="secondary"
+                disabled={!hasAnrPlotGeometry}
+              >
+                {t("Download")}
+              </Button>
+            }
+          >
+            <Flex className="flex-1 flex-col gap-4">
+              <Switch
+                name="showPlotsOnMap"
+                checked={plotsVisible}
+                disabled={!hasAnrPlotGeometry}
+                onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
+                  setPlotsVisible(checked === true)
+                }
+              >
+                {t("Show Plots on Map")}
+              </Switch>
+              <Flex className="flex-col gap-7">
+                {isAnrLoading ? (
+                  <Text>{t("Loading ANR monitoring plots...")}</Text>
+                ) : hasAnrPlotGeometry ? (
+                  <>
+                    <Text>
+                      {t(
+                        "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time."
+                      )}
+                    </Text>
+                    <Text>
+                      {t(
+                        "Download the monitoring plots to help your team locate and monitor the areas during field visits."
+                      )}
+                    </Text>
+                  </>
+                ) : (
                   <Text>
                     {t(
-                      "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time."
+                      "The monitoring plots are not available yet. They will appear here once they are updated by the project team and ready for download."
                     )}
                   </Text>
-                  <Text>
-                    {t(
-                      "Download the monitoring plots to help your team locate and monitor the areas during field visits."
-                    )}
-                  </Text>
-                </>
-              ) : (
-                <Text>
-                  {t(
-                    "The monitoring plots are not available yet. They will appear here once they are updated by the project team and ready for download."
-                  )}
-                </Text>
-              )}
+                )}
+              </Flex>
             </Flex>
-          </Flex>
-        </Accordion>
+          </Accordion>
+        ) : null}
         <Accordion
           header={<AccordionHeader title={t("Geotagged Photos")} />}
           open={openAccordionSection === "geotagged-photos"}
@@ -823,16 +868,27 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       </Flex>
       {!isCreateMode && (
         <>
-          <Flex className="w-full justify-center pb-2">
+          <Flex className="w-full justify-center pb-2 wriDrawer:pb-0">
             <FloatingActionToolbar
               className="bg-theme-neutral-200"
               items={[
                 { label: t("Delete"), onClick: () => setShowDeleteModal(true), labelColor: "error.500" },
                 { label: t("Download"), onClick: () => void handleDownloadPolygon() },
-                { label: t("Submit"), onClick: () => void handleSubmitPolygon() }
+                {
+                  label: t("Submit"),
+                  disabled: !isPolygonSubmittable,
+                  onClick: () => setShowSubmitModal(true)
+                }
               ]}
             />
           </Flex>
+          <SubmitPolygons
+            open={showSubmitModal}
+            onOpenChange={setShowSubmitModal}
+            eligibleCount={isPolygonSubmittable ? 1 : 0}
+            totalCount={1}
+            onSubmit={handleSubmitPolygon}
+          />
           <DeletePolygon
             open={showDeleteModal}
             onOpenChange={setShowDeleteModal}

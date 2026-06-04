@@ -1,20 +1,25 @@
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
 import Log from "@/utils/log";
+
+import {
+  getDownloadingPolygonsProgressLabel,
+  getPolygonOperationToastLabels,
+  showPolygonCompleteToast,
+  showPolygonErrorToast,
+  showPolygonProgressToast
+} from "../utils/polygonOperationToasts";
 
 type UseDownloadSitePolygonsParams = {
   siteUuid: string | null | undefined;
   siteName: string | null | undefined;
 };
 
-const TOAST_PLACEMENT = "bottom-end" as const;
-const TOAST_DURATION_MS = 5000;
-
 export const useDownloadSitePolygons = ({ siteUuid, siteName }: UseDownloadSitePolygonsParams) => {
   const t = useT();
+  const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const [isDownloading, setIsDownloading] = useState(false);
 
   const downloadAll = useCallback(async () => {
@@ -22,32 +27,16 @@ export const useDownloadSitePolygons = ({ siteUuid, siteName }: UseDownloadSiteP
 
     setIsDownloading(true);
     try {
-      showToast({
-        label: t("Downloading Polygons..."),
-        type: "info",
-        placement: TOAST_PLACEMENT,
-        duration: TOAST_DURATION_MS,
-        closableLabel: t("Close")
-      });
+      showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t));
       await downloadSiteGeoJsonPolygons(siteUuid, siteName ?? "");
-      showToast({
-        label: t("Download Complete"),
-        type: "success",
-        placement: TOAST_PLACEMENT,
-        duration: TOAST_DURATION_MS
-      });
+      showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
     } catch (error) {
       Log.error("Failed to download site polygons:", error);
-      showToast({
-        label: t("Error downloading polygons"),
-        type: "error",
-        placement: TOAST_PLACEMENT,
-        duration: TOAST_DURATION_MS
-      });
+      showPolygonErrorToast(t("Error downloading polygons"));
     } finally {
       setIsDownloading(false);
     }
-  }, [siteUuid, siteName, t]);
+  }, [siteUuid, siteName, t, toastLabels]);
 
   return { downloadAll, isDownloading };
 };

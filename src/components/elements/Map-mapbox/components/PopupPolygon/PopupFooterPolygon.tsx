@@ -1,9 +1,16 @@
 import { Grid } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import type { FC } from "react";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { downloadPolygonGeoJson, formatFileName } from "@/components/elements/Map-mapbox/utils";
+import {
+  getDownloadingPolygonsProgressLabel,
+  getPolygonOperationToastLabels,
+  showPolygonCompleteToast,
+  showPolygonErrorToast,
+  showPolygonProgressToast
+} from "@/pages/site/[uuid]/utils/polygonOperationToasts";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -27,15 +34,25 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   tooltipType
 }) => {
   const t = useT();
+  const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const canDownload = polygonUuid != null && polygonUuid !== "";
 
   const handleDownload = useCallback(async () => {
     if (!canDownload) {
       return;
     }
+
     const filename = polygonName != null && polygonName !== "" ? formatFileName(polygonName) : "polygon";
-    await downloadPolygonGeoJson(polygonUuid, filename, { includeExtendedData: true });
-  }, [canDownload, polygonName, polygonUuid]);
+
+    showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, 1));
+
+    try {
+      await downloadPolygonGeoJson(polygonUuid, filename, { includeExtendedData: true });
+      showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
+    } catch {
+      showPolygonErrorToast(t("Error downloading polygon"));
+    }
+  }, [canDownload, polygonName, polygonUuid, t, toastLabels]);
 
   const handleSubmit = useCallback(async () => {
     if (submitDisabled || onSubmit == null) {
