@@ -22,7 +22,6 @@ export const formatDistributionValue = (value: string): string => {
     .join(" ");
 };
 
-/** Stable sort key for multi-value polygon attributes (sorted before join). */
 export const toSortableJoinedList = (values: string[]): string =>
   [...values].sort((a, b) => a.localeCompare(b)).join(", ");
 

@@ -36,10 +36,8 @@ export type PolygonTableRow = {
   submission: MappedTagState;
   validation: ValidationTagState;
   restorationPractice: restorationStrategyType[];
-  /** Lexicographic sort key aligned with displayed restoration practice labels. */
   restorationPracticeSort: string;
   targetLandUse: targetLandUseType | null;
-  /** Display label used for Target Land Use column sorting. */
   targetLandUseSort: string;
   treeDistribution: string;
   plantingDate: string;
