@@ -632,17 +632,39 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
     try {
       await deleteSitePolygon(polygon.uuid);
+      setShowDeleteModal(false);
       pruneSitePolygonsCache();
+      if (geometryPolygonUuid !== "") {
+        prunePolygonValidationCache(geometryPolygonUuid);
+        ApiSlice.pruneCache("geojsonExports", [geometryPolygonUuid]);
+      }
       closeMapPopups();
+      setIsUserDrawingEnabled(false);
+      setPolygonGeometryEdit(undefined);
       invalidatePolygonMapTiles();
+      setShouldRefetchPolygonData(true);
+      onClose?.();
+      await waitForMapEditCleanup();
       await onSaved?.();
       showPolygonCompleteToast(toastLabels.deletingComplete);
-      onClose?.();
     } catch (error) {
       showPolygonErrorToast(t("Error deleting polygon"));
       throw error;
     }
-  }, [closeMapPopups, invalidatePolygonMapTiles, onClose, onSaved, polygon?.uuid, showStatusToast, t, toastLabels]);
+  }, [
+    closeMapPopups,
+    geometryPolygonUuid,
+    invalidatePolygonMapTiles,
+    onClose,
+    onSaved,
+    polygon?.uuid,
+    setIsUserDrawingEnabled,
+    setPolygonGeometryEdit,
+    setShouldRefetchPolygonData,
+    showStatusToast,
+    t,
+    toastLabels
+  ]);
 
   useEffect(() => {
     onRegisterSave?.(savePolygonData);
