@@ -19,6 +19,7 @@ type ReportingFrameworkRecord = ReportingFrameworkDto & { id: string };
 function formDataToCreateAttributes(data: ReportingFrameworkRecord): CreateReportingFrameworkAttributes {
   return {
     name: data.name ?? "",
+    slug: data.slug ?? "",
     projectFormUuid: data.projectFormUuid ?? null,
     projectReportFormUuid: data.projectReportFormUuid ?? null,
     siteFormUuid: data.siteFormUuid ?? null,

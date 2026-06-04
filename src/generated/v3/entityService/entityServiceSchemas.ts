@@ -3695,10 +3695,6 @@ export type ReportingFrameworkDto = {
 
 export type CreateReportingFrameworkAttributes = {
   /**
-   * Stored in DB only; not returned in API (FE uses slug)
-   */
-  accessCode?: string | null;
-  /**
    * @format uuid
    */
   projectFormUuid?: string | null;
@@ -3730,6 +3726,7 @@ export type CreateReportingFrameworkAttributes = {
    * Framework name; used to generate slug
    */
   name: string;
+  slug: string;
 };
 
 export type CreateReportingFrameworkData = {
@@ -3742,10 +3739,6 @@ export type CreateReportingFrameworkBody = {
 };
 
 export type UpdateReportingFrameworkAttributes = {
-  /**
-   * Stored in DB only; not returned in API (FE uses slug)
-   */
-  accessCode?: string | null;
   /**
    * @format uuid
    */
@@ -3775,6 +3768,7 @@ export type UpdateReportingFrameworkAttributes = {
    */
   financialReportFormUuid?: string | null;
   name?: string | null;
+  slug?: string | null;
 };
 
 export type UpdateReportingFrameworkData = {
