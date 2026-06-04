@@ -82,7 +82,12 @@ import { useSitePolygonOverlap } from "../hooks/useSitePolygonOverlap";
 import { useSitePolygonTableData } from "../hooks/useSitePolygonTableData";
 import { useStartSitePolygonDrawing } from "../hooks/useStartSitePolygonDrawing";
 import {
+  getDeletingProgressLabel,
+  getDownloadingPolygonsProgressLabel,
+  getFixingOverlapsProgressLabel,
   getPolygonOperationToastLabels,
+  getSubmittingProgressLabel,
+  getValidatingProgressLabel,
   showPolygonCompleteToast,
   showPolygonErrorToast,
   showPolygonProgressToast
@@ -379,7 +384,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     }
 
     try {
-      showPolygonProgressToast(t, toastLabels.deletingProgress);
+      showPolygonProgressToast(t, getDeletingProgressLabel(t, selectedSitePolygonUuids.length));
       await bulkDeleteSitePolygons(selectedSitePolygonUuids);
       closeMapPopups();
       setPolygonTableHoveredUuid(null);
@@ -415,7 +420,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       if (polygonUuids.length === 0) return;
       try {
         setIsValidatingPolygons(true);
-        showPolygonProgressToast(t, toastLabels.validatingProgress);
+        showPolygonProgressToast(t, getValidatingProgressLabel(t, polygonUuids.length));
         await createPolygonValidation({ polygonUuids });
         ApiSlice.pruneCache("validations");
         pruneSitePolygonsCache();
@@ -428,14 +433,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         setIsValidatingPolygons(false);
       }
     },
-    [
-      fetchAllValidationPages,
-      fetchOverlapValidations,
-      openNotification,
-      refetchPolygons,
-      t,
-      toastLabels.validatingProgress
-    ]
+    [fetchAllValidationPages, fetchOverlapValidations, openNotification, refetchPolygons, t]
   );
 
   const handleDrawerOverlapFixed = useCallback(
@@ -483,7 +481,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       return;
     }
 
-    showPolygonProgressToast(t, toastLabels.fixingOverlapsProgress);
+    showPolygonProgressToast(t, getFixingOverlapsProgressLabel(t, fixableCandidates.length));
 
     try {
       const response = await clipPolygonListAsync(fixableCandidates.map(candidate => candidate.id));
@@ -585,7 +583,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     const polygonName = polygon?.name ?? t("Unnamed polygon");
 
     try {
-      showPolygonProgressToast(t, toastLabels.submittingProgress);
+      showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1));
       await bulkUpdateSitePolygonStatus([sitePolygonUuid], POLYGON_PENDING_APPROVAL as PolygonStatus, "");
       pruneSitePolygonsCache();
       closeMapPopups();
@@ -621,7 +619,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     const submittedNames = selectedSubmittablePolygons.map(polygon => polygon.name ?? t("Unnamed polygon"));
 
     try {
-      showPolygonProgressToast(t, toastLabels.submittingProgress);
+      showPolygonProgressToast(t, getSubmittingProgressLabel(t, selectedSubmittablePolygonUuids.length));
       await bulkUpdateSitePolygonStatus(selectedSubmittablePolygonUuids, POLYGON_PENDING_APPROVAL as PolygonStatus, "");
       pruneSitePolygonsCache();
       closeMapPopups();
@@ -662,7 +660,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
     try {
       setIsDownloadingSelectedPolygons(true);
-      showPolygonProgressToast(t, toastLabels.downloadingPolygonsProgress);
+      showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, selectedGeometryPolygonUuids.length));
       const filename =
         selectedSitePolygons.length === 1
           ? selectedSitePolygons[0].name ?? "polygon"

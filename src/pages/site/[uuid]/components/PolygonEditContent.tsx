@@ -52,7 +52,10 @@ import {
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import {
+  getDeletingProgressLabel,
+  getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
+  getSubmittingProgressLabel,
   showPolygonCompleteToast,
   showPolygonErrorToast,
   showPolygonProgressToast
@@ -564,7 +567,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
-    showPolygonProgressToast(t, toastLabels.downloadingPolygonsProgress);
+    showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, 1));
 
     try {
       await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon", { includeExtendedData: true });
@@ -585,7 +588,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
-    showPolygonProgressToast(t, toastLabels.submittingProgress);
+    showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1));
 
     try {
       await bulkUpdateSitePolygonStatus([polygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, "");
@@ -625,7 +628,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
-    showPolygonProgressToast(t, toastLabels.deletingProgress);
+    showPolygonProgressToast(t, getDeletingProgressLabel(t, 1));
 
     try {
       await deleteSitePolygon(polygon.uuid);
