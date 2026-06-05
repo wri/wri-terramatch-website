@@ -1,5 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import { Map as MapboxMap } from "mapbox-gl";
+import { AttributionControl, Map as MapboxMap } from "mapbox-gl";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { mapboxToken } from "@/constants/environment";
@@ -92,7 +92,7 @@ export const useBaseMap = (onSave?: MapDrawSaveHandler, record?: MapDrawSaveReco
     };
   }, [deferDrawCreateSave, setDraftPolygonGeometry]);
 
-  const initMap = (useDashboardStyle?: boolean, initialStyle?: MapStyle) => {
+  const initMap = (useDashboardStyle?: boolean, initialStyle?: MapStyle, compactAttribution?: boolean) => {
     if (map.current != null) return;
 
     const requestedStyle =
@@ -106,8 +106,13 @@ export const useBaseMap = (onSave?: MapDrawSaveHandler, record?: MapDrawSaveReco
       zoom: INITIAL_ZOOM,
       minZoom: 2.0,
       accessToken: mapboxToken,
-      center: [21.496, 5.456]
+      center: [21.496, 5.456],
+      ...(compactAttribution === true ? { attributionControl: false } : {})
     });
+
+    if (compactAttribution === true) {
+      map.current.addControl(new AttributionControl({ compact: true }));
+    }
 
     draw.current = new MapboxDraw({
       ...(deferDrawCreateSave === true
