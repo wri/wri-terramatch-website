@@ -13,6 +13,7 @@ import { isProjectPitchesEntityName } from "@/helpers/entity";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { TranslatedText } from "@/i18n/types";
 import ApiSlice from "@/store/apiSlice";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
 import {
@@ -346,6 +347,13 @@ export function useMapDraw({
         }
         pruneBoundingBoxesCache();
         openNotification("success", t("Success"), t("Project polygon updated successfully."));
+        trackPolygonEvent("polygon_shape_edited", {
+          ...getPolygonAnalyticsContext({
+            entityType: polygonFromMap?.entityName,
+            entityId: polygonFromMap?.projectPitchUuid ?? polygonFromMap?.uuid
+          }),
+          polygon_id: polygonFromMap.uuid
+        });
       } catch (e: any) {
         openNotification("error", t("Error"), e?.message ?? t("Please try again later."));
       } finally {
@@ -389,6 +397,13 @@ export function useMapDraw({
 
       setShouldRefetchPolygonData?.(true);
       openNotification("success", t("Success"), t("Site polygon version created successfully."));
+      trackPolygonEvent("polygon_shape_edited", {
+        ...getPolygonAnalyticsContext({
+          entityType: "site",
+          entityId: selectedPolygon.siteId
+        }),
+        polygon_id: polygonFromMap.uuid
+      });
     } catch (e: any) {
       openNotification("error", t("Error"), e?.message ?? t("Please try again later."));
     } finally {

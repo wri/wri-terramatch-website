@@ -1,15 +1,19 @@
-import { v3Resource } from "@/connections/util/apiConnectionFactory";
+import { IdProp, v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader, creationHook } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
+import { resourceUpdater } from "@/connections/util/resourceMutator";
 import {
   createAuditStatus,
   CreateAuditStatusPathParams,
   deleteAuditStatus,
   getAuditStatuses,
   GetAuditStatusesPathParams,
-  GetAuditStatusesVariables
+  GetAuditStatusesVariables,
+  updateAuditStatus,
+  UpdateAuditStatusPathParams,
+  UpdateAuditStatusVariables
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { AuditStatusDto, UpdateAuditStatusAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 
 export type AuditStatusEntityType = GetAuditStatusesPathParams["entity"];
@@ -35,6 +39,38 @@ const auditStatusCreateConnection = v3Resource("auditStatuses", createAuditStatu
   .buildConnection();
 
 export const useCreateAuditStatus = creationHook(auditStatusCreateConnection);
+
+export type AuditStatusUpdateProps = Pick<UpdateAuditStatusPathParams, "entity" | "uuid">;
+
+type UpdateAuditStatusConnectionVariables = UpdateAuditStatusVariables & {
+  body: { data: { type: "auditStatuses"; id: string; attributes: UpdateAuditStatusAttributes } };
+};
+
+const auditStatusUpdateConnection = v3Resource("auditStatuses", updateAuditStatus)
+  .singleResource<AuditStatusDto>(({ id, ...rest }: IdProp) => {
+    const { entity, uuid } = rest as AuditStatusUpdateProps;
+    return id == null || entity == null || uuid == null
+      ? undefined
+      : ({ pathParams: { entity, uuid, auditUuid: id } } as UpdateAuditStatusVariables);
+  })
+  .addProps<AuditStatusUpdateProps>()
+  .update<UpdateAuditStatusAttributes, UpdateAuditStatusConnectionVariables>(updateAuditStatus)
+  .buildConnection();
+
+const updateAuditStatusUpdater = resourceUpdater(auditStatusUpdateConnection);
+
+export const useUpdateAuditStatus = connectionHook(auditStatusUpdateConnection);
+
+export const updateAuditStatusAsync = async (
+  auditUuid: string,
+  entity: AuditStatusEntityType,
+  uuid: string,
+  attributes: UpdateAuditStatusAttributes
+): Promise<AuditStatusDto> => {
+  const result = await updateAuditStatusUpdater(attributes, { id: auditUuid, entity, uuid });
+  ApiSlice.pruneIndex("auditStatuses", "");
+  return result;
+};
 
 export const createAuditStatusDeleter = (entity: AuditStatusEntityType, uuid: string) => {
   const baseDeleter = deleterAsync("auditStatuses", deleteAuditStatus, (auditUuid: string) => ({

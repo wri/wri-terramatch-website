@@ -18,6 +18,7 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 import { checkPolygonsFixability, getFixabilitySummaryMessage } from "@/utils/polygonFixValidation";
 
@@ -231,13 +232,17 @@ const ProcessBulkPolygonsControl: FC<ProcessBulkPolygonsControlProps> = ({
   }, [openModal, closeModal, t, handleDeletePolygons, sitePolygonData, selectedPolygonsInCheckbox]);
   const handleFixPolygons = useCallback(
     (selectedUUIDs: string[]) => {
+      trackPolygonEvent("polygon_overlap_fix_clicked", {
+        ...getPolygonAnalyticsContext({ entityType: "site", entityId: entityData?.uuid }),
+        polygon_id: selectedUUIDs.join(",")
+      });
       closeModal(ModalId.FIX_POLYGONS);
       setIsLoadingDelayedJob?.(true);
       setAlertTitle?.("Fix Polygons");
       clipPolygonList(selectedUUIDs);
       setPendingClipping(true);
     },
-    [closeModal, setIsLoadingDelayedJob, setAlertTitle]
+    [closeModal, setIsLoadingDelayedJob, setAlertTitle, entityData?.uuid]
   );
 
   const openFormModalHandlerSubmitPolygon = useCallback(

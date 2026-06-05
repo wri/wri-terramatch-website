@@ -174,7 +174,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     error: polygonLoadError,
     progress: polygonLoadProgress,
     total: polygonLoadTotal,
-    refetch: refetchPolygons
+    refetch: refetchFilteredPolygons
   } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: site.uuid,
@@ -182,7 +182,22 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     filter: sitePolygonFilter
   });
 
+  const {
+    data: mapPolygonsQueryData,
+    isLoading: isLoadingMapPolygons,
+    refetch: refetchMapPolygons
+  } = useAllSitePolygons({
+    entityName: "sites",
+    entityUuid: site.uuid,
+    enabled: site.uuid != null && site.uuid !== ""
+  });
+
+  const refetchPolygons = useCallback(async () => {
+    await Promise.all([refetchFilteredPolygons(), refetchMapPolygons()]);
+  }, [refetchFilteredPolygons, refetchMapPolygons]);
+
   const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
+  const mapPolygonsData = mapPolygonsQueryData ?? EMPTY_POLYGONS;
   const isSitePolygonsLoading = isLoadingPolygons || isValidatingPolygons || isFixingOverlaps;
 
   const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
@@ -929,7 +944,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             mainActionLabel: t("Add"),
             size: "small",
             leftIcon: <PlusIcon />,
-            mainActionOnClick: startNewPolygonFlow,
+            mainActionOnClick: () => {},
             otherActions: [
               {
                 label: t("Draw Polygon"),
@@ -1077,9 +1092,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                   "!fixed top-[70px] bottom-0 left-0 right-0 z-[37] !h-[calc(100vh-66px)] w-screen rounded-none"
                 : "h-full w-full !rounded-[0.25rem_0.25rem_0_0]"
             )}
-            polygons={polygonsData}
+            polygons={mapPolygonsData}
             onRefetchPolygons={refetchPolygons}
-            isLoadingPolygons={isSitePolygonsLoading}
+            isLoadingPolygons={isLoadingMapPolygons}
+            freezeCameraZoom={isSitePolygonsLoading}
             polygonTableHighlight={polygonTableHighlight}
             overlapPolygons={overlapPolygonsForMap}
           />

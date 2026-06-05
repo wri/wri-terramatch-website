@@ -175,45 +175,6 @@ type UsePolygonSelectionZoomParams = {
   sitePolygonData: SitePolygonLightDto[] | undefined;
 };
 
-function computeBBoxFromCentroids(
-  selectedUuids: string[],
-  sitePolygonData: SitePolygonLightDto[] | undefined
-): BBox | null {
-  if (sitePolygonData == null || sitePolygonData.length === 0) return null;
-
-  const selectedSet = new Set(selectedUuids);
-  let minLng = Infinity;
-  let minLat = Infinity;
-  let maxLng = -Infinity;
-  let maxLat = -Infinity;
-  let count = 0;
-
-  for (const polygon of sitePolygonData) {
-    const uuid = polygon.polygonUuid ?? polygon.uuid;
-    if (uuid == null || !selectedSet.has(uuid)) continue;
-    const lng = polygon.long;
-    const lat = polygon.lat;
-    if (lng == null || lat == null || isNaN(lng) || isNaN(lat)) continue;
-
-    if (lng < minLng) minLng = lng;
-    if (lng > maxLng) maxLng = lng;
-    if (lat < minLat) minLat = lat;
-    if (lat > maxLat) maxLat = lat;
-    count++;
-  }
-
-  if (count === 0) return null;
-
-  if (minLng === maxLng && minLat === maxLat) {
-    const BUFFER = 0.005;
-    return [minLng - BUFFER, minLat - BUFFER, maxLng + BUFFER, maxLat + BUFFER] as BBox;
-  }
-
-  const lngPad = (maxLng - minLng) * 0.1;
-  const latPad = (maxLat - minLat) * 0.1;
-  return [minLng - lngPad, minLat - latPad, maxLng + lngPad, maxLat + latPad] as BBox;
-}
-
 function mergeBBoxes(bboxes: BBox[]): BBox | null {
   if (bboxes.length === 0) return null;
 
@@ -307,32 +268,23 @@ export function usePolygonSelectionZoom({
     polygonSelectionZoomBboxCache.clear();
   }, [sitePolygonIdsFingerprint]);
 
-  const zoomToUuids = useCallback(
-    async (uuids: string[], m: MapboxMap, isStale: () => boolean): Promise<boolean> => {
+  const zoomToUuids = useCallback(async (uuids: string[], m: MapboxMap, isStale: () => boolean): Promise<boolean> => {
+    if (isStale()) return false;
+
+    const selectionKey = getSortedSelectionKey(uuids);
+    if (!polygonSelectionZoomBboxCache.has(selectionKey)) {
+      const selectionBbox = await fetchSelectionBoundingBox(uuids);
       if (isStale()) return false;
+      polygonSelectionZoomBboxCache.set(selectionKey, selectionBbox);
+    }
 
-      const selectionKey = getSortedSelectionKey(uuids);
-      if (!polygonSelectionZoomBboxCache.has(selectionKey)) {
-        const selectionBbox = await fetchSelectionBoundingBox(uuids);
-        if (isStale()) return false;
-        polygonSelectionZoomBboxCache.set(selectionKey, selectionBbox);
-      }
+    let bbox = polygonSelectionZoomBboxCache.get(selectionKey) ?? null;
 
-      let bbox = polygonSelectionZoomBboxCache.get(selectionKey) ?? null;
-      if (bbox == null) {
-        bbox = computeBBoxFromCentroids(uuids, sitePolygonData);
-        if (bbox != null) {
-          polygonSelectionZoomBboxCache.set(selectionKey, bbox);
-        }
-      }
+    if (isStale() || bbox == null) return false;
 
-      if (isStale() || bbox == null) return false;
-
-      fitMapToBBox(m, bbox);
-      return true;
-    },
-    [sitePolygonData]
-  );
+    fitMapToBBox(m, bbox);
+    return true;
+  }, []);
 
   useEffect(() => {
     const uuids = Array.from(new Set(selectedPolygonUuids ?? []));
