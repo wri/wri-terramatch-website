@@ -15,7 +15,6 @@ import Log from "@/utils/log";
 
 import { BBox } from "../GeoJSON";
 import { polygonSelectionZoomBboxCache } from "../polygonSelectionZoomBboxCache";
-import { computeBBoxFromCentroids } from "../utils/mapExtent";
 
 const POLYGON_FILL_LAYER_IDS = getPolygonGeometryFillLayerConfigs().map(c => c.layerId);
 const EMPTY_SELECTION: string[] = [];
@@ -174,7 +173,6 @@ type UsePolygonSelectionZoomParams = {
   focusPolygonUuid?: string | null;
   onFocusPolygonConsumed?: () => void;
   sitePolygonData: SitePolygonLightDto[] | undefined;
-  disableSelectionZoom?: boolean;
 };
 
 function mergeBBoxes(bboxes: BBox[]): BBox | null {
@@ -260,8 +258,7 @@ export function usePolygonSelectionZoom({
   selectedPolygonUuids,
   focusPolygonUuid,
   onFocusPolygonConsumed,
-  sitePolygonData,
-  disableSelectionZoom = false
+  sitePolygonData
 }: UsePolygonSelectionZoomParams): void {
   const lastZoomedSelectionRef = useRef<string>("");
   const requestSequenceRef = useRef(0);
@@ -271,39 +268,25 @@ export function usePolygonSelectionZoom({
     polygonSelectionZoomBboxCache.clear();
   }, [sitePolygonIdsFingerprint]);
 
-  const zoomToUuids = useCallback(
-    async (uuids: string[], m: MapboxMap, isStale: () => boolean): Promise<boolean> => {
+  const zoomToUuids = useCallback(async (uuids: string[], m: MapboxMap, isStale: () => boolean): Promise<boolean> => {
+    if (isStale()) return false;
+
+    const selectionKey = getSortedSelectionKey(uuids);
+    if (!polygonSelectionZoomBboxCache.has(selectionKey)) {
+      const selectionBbox = await fetchSelectionBoundingBox(uuids);
       if (isStale()) return false;
-
-      const selectionKey = getSortedSelectionKey(uuids);
-      if (!polygonSelectionZoomBboxCache.has(selectionKey)) {
-        const selectionBbox = await fetchSelectionBoundingBox(uuids);
-        if (isStale()) return false;
-        polygonSelectionZoomBboxCache.set(selectionKey, selectionBbox);
-      }
-
-      let bbox = polygonSelectionZoomBboxCache.get(selectionKey) ?? null;
-      if (bbox == null) {
-        bbox = computeBBoxFromCentroids(uuids, sitePolygonData);
-        if (bbox != null) {
-          polygonSelectionZoomBboxCache.set(selectionKey, bbox);
-        }
-      }
-
-      if (isStale() || bbox == null) return false;
-
-      fitMapToBBox(m, bbox);
-      return true;
-    },
-    [sitePolygonData]
-  );
-
-  useEffect(() => {
-    if (disableSelectionZoom) {
-      lastZoomedSelectionRef.current = "";
-      return;
+      polygonSelectionZoomBboxCache.set(selectionKey, selectionBbox);
     }
 
+    let bbox = polygonSelectionZoomBboxCache.get(selectionKey) ?? null;
+
+    if (isStale() || bbox == null) return false;
+
+    fitMapToBBox(m, bbox);
+    return true;
+  }, []);
+
+  useEffect(() => {
     const uuids = Array.from(new Set(selectedPolygonUuids ?? []));
     const selectionKey = uuids.length > 0 ? uuids.slice().sort().join(",") : "";
 
@@ -343,7 +326,7 @@ export function usePolygonSelectionZoom({
       m.off("idle", attemptZoom);
       requestSequenceRef.current += 1;
     };
-  }, [map, styleReady, sourcesAdded, selectedPolygonUuids, zoomToUuids, disableSelectionZoom]);
+  }, [map, styleReady, sourcesAdded, selectedPolygonUuids, zoomToUuids]);
 
   useEffect(() => {
     if (focusPolygonUuid == null || focusPolygonUuid === "") return;

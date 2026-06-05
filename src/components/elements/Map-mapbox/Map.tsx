@@ -99,7 +99,6 @@ export interface BaseMapProps {
   };
   overlapPolygons?: OverlapPolygonPoint[];
   autoEditPolygon?: boolean;
-  disableSelectionZoom?: boolean;
   onPolygonTilesLoadingChange?: (value: boolean) => void;
 }
 
@@ -229,7 +228,6 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     initialPolygonFingerprint,
     polygonTableHighlight,
     overlapPolygons,
-    disableSelectionZoom,
     onPolygonTilesLoadingChange
   } = props;
 
@@ -409,8 +407,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     selectedPolygonUuids: polygonTableHighlight?.selectedPolygonUuids,
     focusPolygonUuid: polygonTableHighlight?.focusPolygonUuid,
     onFocusPolygonConsumed: polygonTableHighlight?.onFocusPolygonConsumed,
-    sitePolygonData,
-    disableSelectionZoom
+    sitePolygonData
   });
 
   usePolygonTableHighlightPointer({
