@@ -28,6 +28,7 @@ import MapCanvas from "./components/MapCanvas";
 import MapControlsOverlay from "./components/MapControlsOverlay";
 import { PopupMobile } from "./components/PopupMobile";
 import { useMapReadiness } from "./core/useMapReadiness";
+import { usePolygonTilesLoading } from "./core/usePolygonTilesLoading";
 import { BBox } from "./GeoJSON";
 import { useGoogleSatellite } from "./hooks/useGoogleSatellite";
 import { useMapCamera } from "./hooks/useMapCamera";
@@ -99,6 +100,7 @@ export interface BaseMapProps {
   overlapPolygons?: OverlapPolygonPoint[];
   autoEditPolygon?: boolean;
   disableSelectionZoom?: boolean;
+  onPolygonTilesLoadingChange?: (value: boolean) => void;
 }
 
 export interface DashboardMapExtras {
@@ -227,7 +229,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     initialPolygonFingerprint,
     polygonTableHighlight,
     overlapPolygons,
-    disableSelectionZoom
+    disableSelectionZoom,
+    onPolygonTilesLoadingChange
   } = props;
 
   const [isViewingImages, setIsViewingImages] = useState(false);
@@ -374,7 +377,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     onStyleChange
   });
 
-  const { sourcesAdded } = useMapLayers({
+  const { sourcesAdded, tileLoadRequestId } = useMapLayers({
     map,
     draw,
     styleReady,
@@ -444,6 +447,17 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     registerMapboxMap(map.current);
     return () => registerMapboxMap(null);
   }, [map, registerMapboxMap, sourcesAdded, styleReady]);
+
+  usePolygonTilesLoading({
+    map,
+    enabled: siteData === true && onPolygonTilesLoadingChange != null,
+    sourcesAdded,
+    tileLoadRequestId,
+    polygonsData,
+    bbox,
+    shouldBboxZoom,
+    onLoadingChange: onPolygonTilesLoadingChange
+  });
 
   useMapCamera({
     map,
