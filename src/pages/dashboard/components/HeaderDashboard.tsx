@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { Choice } from "@/admin/types/common";
+import CountryFlag from "@/components/dashboard/CountryFlag";
 import Button from "@/components/elements/Button/Button";
 import {
   VARIANT_DROPDOWN_COLLAPSE,
@@ -491,13 +492,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   options={activeCountries.map((country: CountriesProps) => ({
                     title: country.data.label,
                     value: country.id,
-                    prefix: (
-                      <img
-                        src={country.data.icon}
-                        alt="flag"
-                        className="h-4 w-[26.5px] min-w-[26.5px] object-contain"
-                      />
-                    )
+                    prefix: <CountryFlag src={country.data.icon} size="sm" />
                   }))}
                   optionClassName="hover:bg-grey-200"
                   containerClassName="w-full"

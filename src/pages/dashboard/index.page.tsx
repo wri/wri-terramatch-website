@@ -4,6 +4,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useMemo, useState } from "react";
 
+import CountryFlag from "@/components/dashboard/CountryFlag";
 import type { ImpactStoryModalRow } from "@/components/dashboard/impactStoriesModalColumns";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { formatTableNumber, numericSortingFn } from "@/components/elements/Table/tableUtils";
@@ -178,7 +179,7 @@ const Dashboard = () => {
           const value = props.getValue().split("_");
           return (
             <div className="flex items-center gap-2">
-              <img src={value[1]} alt="flag" className="h-3 w-5 min-w-[20px] object-contain" />
+              <CountryFlag src={value[1]} size="xs" />
               <Text variant="text-14">{value[0]}</Text>
             </div>
           );
@@ -431,7 +432,7 @@ const Dashboard = () => {
 
             {hasCountrySelection && filters.landscapes.length === 0 && !filters.uuid && (
               <>
-                <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 min-w-[40px] object-contain" />
+                {filters.country?.data.icon ? <CountryFlag src={filters.country.data.icon} size="md" /> : null}
                 <Text variant="text-24-semibold" className="text-black">
                   {t(
                     countryChoices.find(country => country.id === filters.country?.country_slug)?.name ||
