@@ -15,6 +15,7 @@ import Log from "@/utils/log";
 
 import { BBox } from "../GeoJSON";
 import { polygonSelectionZoomBboxCache } from "../polygonSelectionZoomBboxCache";
+import { computeBBoxFromCentroids } from "../utils/mapExtent";
 
 const POLYGON_FILL_LAYER_IDS = getPolygonGeometryFillLayerConfigs().map(c => c.layerId);
 const EMPTY_SELECTION: string[] = [];
@@ -173,46 +174,9 @@ type UsePolygonSelectionZoomParams = {
   focusPolygonUuid?: string | null;
   onFocusPolygonConsumed?: () => void;
   sitePolygonData: SitePolygonLightDto[] | undefined;
+  /** When true, selection zoom is handled by the map extent bbox instead. */
+  disableSelectionZoom?: boolean;
 };
-
-function computeBBoxFromCentroids(
-  selectedUuids: string[],
-  sitePolygonData: SitePolygonLightDto[] | undefined
-): BBox | null {
-  if (sitePolygonData == null || sitePolygonData.length === 0) return null;
-
-  const selectedSet = new Set(selectedUuids);
-  let minLng = Infinity;
-  let minLat = Infinity;
-  let maxLng = -Infinity;
-  let maxLat = -Infinity;
-  let count = 0;
-
-  for (const polygon of sitePolygonData) {
-    const uuid = polygon.polygonUuid ?? polygon.uuid;
-    if (uuid == null || !selectedSet.has(uuid)) continue;
-    const lng = polygon.long;
-    const lat = polygon.lat;
-    if (lng == null || lat == null || isNaN(lng) || isNaN(lat)) continue;
-
-    if (lng < minLng) minLng = lng;
-    if (lng > maxLng) maxLng = lng;
-    if (lat < minLat) minLat = lat;
-    if (lat > maxLat) maxLat = lat;
-    count++;
-  }
-
-  if (count === 0) return null;
-
-  if (minLng === maxLng && minLat === maxLat) {
-    const BUFFER = 0.005;
-    return [minLng - BUFFER, minLat - BUFFER, maxLng + BUFFER, maxLat + BUFFER] as BBox;
-  }
-
-  const lngPad = (maxLng - minLng) * 0.1;
-  const latPad = (maxLat - minLat) * 0.1;
-  return [minLng - lngPad, minLat - latPad, maxLng + lngPad, maxLat + latPad] as BBox;
-}
 
 function mergeBBoxes(bboxes: BBox[]): BBox | null {
   if (bboxes.length === 0) return null;
@@ -297,7 +261,8 @@ export function usePolygonSelectionZoom({
   selectedPolygonUuids,
   focusPolygonUuid,
   onFocusPolygonConsumed,
-  sitePolygonData
+  sitePolygonData,
+  disableSelectionZoom = false
 }: UsePolygonSelectionZoomParams): void {
   const lastZoomedSelectionRef = useRef<string>("");
   const requestSequenceRef = useRef(0);
@@ -335,6 +300,11 @@ export function usePolygonSelectionZoom({
   );
 
   useEffect(() => {
+    if (disableSelectionZoom) {
+      lastZoomedSelectionRef.current = "";
+      return;
+    }
+
     const uuids = Array.from(new Set(selectedPolygonUuids ?? []));
     const selectionKey = uuids.length > 0 ? uuids.slice().sort().join(",") : "";
 
@@ -374,7 +344,7 @@ export function usePolygonSelectionZoom({
       m.off("idle", attemptZoom);
       requestSequenceRef.current += 1;
     };
-  }, [map, styleReady, sourcesAdded, selectedPolygonUuids, zoomToUuids]);
+  }, [map, styleReady, sourcesAdded, selectedPolygonUuids, zoomToUuids, disableSelectionZoom]);
 
   useEffect(() => {
     if (focusPolygonUuid == null || focusPolygonUuid === "") return;

@@ -24,6 +24,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 import { parsePolygonDataV3, storePolygon } from "../utils";
+import { resolveMapExtentBbox } from "../utils/mapExtent";
 import LoadingMap from "./LoadingMap";
 
 export type PolygonsMapEntityModel = {
@@ -42,6 +43,8 @@ interface PolygonsMapProps {
   polygons: SitePolygonLightDto[];
   onRefetchPolygons: () => void | Promise<void>;
   isLoadingPolygons?: boolean;
+  /** Prevents camera moves while the table is loading filtered results. */
+  freezeCameraZoom?: boolean;
   className?: string;
   polygonTableHighlight?: {
     selectedPolygonUuids: string[];
@@ -65,6 +68,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   polygons,
   onRefetchPolygons,
   isLoadingPolygons = false,
+  freezeCameraZoom = false,
   className,
   polygonTableHighlight,
   overlapPolygons
@@ -115,12 +119,11 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
   );
 
-  const projectUuid =
-    type === "sites" && polygons.length === 0 && entityModel.projectUuid != null && entityModel.projectUuid !== ""
-      ? entityModel.projectUuid
-      : undefined;
-
-  const projectBbox = useBoundingBox(projectUuid != null ? { projectUuid } : {});
+  const projectBbox = useBoundingBox(
+    type === "sites" && entityModel.projectUuid != null && entityModel.projectUuid !== ""
+      ? { projectUuid: entityModel.projectUuid }
+      : {}
+  );
 
   const countryBbox = useBoundingBox(
     type === "sites"
@@ -128,15 +131,17 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
       : { country: entityModel.country ?? undefined }
   );
 
-  const extentBbox = useMemo((): BBox | undefined => {
-    if (polygons.length > 0) {
-      return modelBbox as BBox | undefined;
-    }
-    if (projectBbox != null) {
-      return projectBbox as BBox;
-    }
-    return countryBbox as BBox | undefined;
-  }, [polygons.length, modelBbox, projectBbox, countryBbox]);
+  const extentBbox = useMemo(
+    (): BBox | undefined =>
+      resolveMapExtentBbox({
+        selectedPolygonUuids: polygonTableHighlight?.selectedPolygonUuids,
+        polygons,
+        siteBbox: modelBbox as BBox | undefined,
+        projectBbox: projectBbox as BBox | undefined,
+        countryBbox: countryBbox as BBox | undefined
+      }),
+    [countryBbox, modelBbox, polygonTableHighlight?.selectedPolygonUuids, polygons, projectBbox]
+  );
 
   useEffect(() => {
     setPolygonData(polygons);
@@ -198,7 +203,8 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         polygonsExists={polygons.length > 0}
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
-        shouldBboxZoom={!shouldRefetchPolygonData}
+        shouldBboxZoom={!shouldRefetchPolygonData && !freezeCameraZoom}
+        disableSelectionZoom
         mediaFiles={mediaFiles}
         sitePolygonData={sitePolygonDataV3}
         disabledPolygonPanel={disabledPolygonPanel}

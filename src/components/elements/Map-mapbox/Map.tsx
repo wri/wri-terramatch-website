@@ -98,6 +98,8 @@ export interface BaseMapProps {
   };
   overlapPolygons?: OverlapPolygonPoint[];
   autoEditPolygon?: boolean;
+  /** When true, multi-selection zoom is handled via the bbox prop instead. */
+  disableSelectionZoom?: boolean;
 }
 
 export interface DashboardMapExtras {
@@ -225,7 +227,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     initialTileVersion,
     initialPolygonFingerprint,
     polygonTableHighlight,
-    overlapPolygons
+    overlapPolygons,
+    disableSelectionZoom
   } = props;
 
   const [isViewingImages, setIsViewingImages] = useState(false);
@@ -404,7 +407,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     selectedPolygonUuids: polygonTableHighlight?.selectedPolygonUuids,
     focusPolygonUuid: polygonTableHighlight?.focusPolygonUuid,
     onFocusPolygonConsumed: polygonTableHighlight?.onFocusPolygonConsumed,
-    sitePolygonData
+    sitePolygonData,
+    disableSelectionZoom
   });
 
   usePolygonTableHighlightPointer({
