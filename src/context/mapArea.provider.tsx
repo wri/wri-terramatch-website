@@ -4,7 +4,7 @@ import React, { createContext, ReactNode, useCallback, useContext, useEffect, us
 import { closeAllPopups } from "@/components/elements/Map-mapbox/interactions/popupCoordinator";
 import { removePopups } from "@/components/elements/Map-mapbox/interactions/popups";
 import { EditPolygonState } from "@/components/elements/Map-mapbox/Map.d";
-import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { MediaDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { Entity } from "@/types/common";
 
@@ -74,6 +74,8 @@ type MapAreaType = {
   closeMapPopups: () => void;
   polygonSubmitConfirmation: PolygonSubmitConfirmationState;
   setPolygonSubmitConfirmation: (value: PolygonSubmitConfirmationState) => void;
+  editPhotoDetailsMedia: MediaDto | null;
+  setEditPhotoDetailsMedia: (value: MediaDto | null) => void;
   resetSiteMapInteractionState: () => void;
 };
 
@@ -120,6 +122,8 @@ const defaultValue: MapAreaType = {
   closeMapPopups: () => {},
   polygonSubmitConfirmation: null,
   setPolygonSubmitConfirmation: () => {},
+  editPhotoDetailsMedia: null,
+  setEditPhotoDetailsMedia: () => {},
   resetSiteMapInteractionState: () => {}
 };
 
@@ -149,6 +153,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     uuid: ""
   });
   const [polygonSubmitConfirmation, setPolygonSubmitConfirmation] = useState<PolygonSubmitConfirmationState>(null);
+  const [editPhotoDetailsMedia, setEditPhotoDetailsMedia] = useState<MediaDto | null>(null);
 
   const setEditPolygon = useCallback((value: EditPolygonState) => {
     setEditPolygonInternal(value);
@@ -172,13 +177,22 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     removePopups(map, "MEDIA");
   }, []);
 
+  const openEditPhotoDetails = useCallback(
+    (media: MediaDto) => {
+      closeMapPopups();
+      setEditPhotoDetailsMedia(media);
+    },
+    [closeMapPopups]
+  );
+
   useEffect(() => {
     registerMapAreaPopupActions({
       openPolygonSubmitConfirmation: setPolygonSubmitConfirmation,
+      openEditPhotoDetails,
       closeMapPopups
     });
     return unregisterMapAreaPopupActions;
-  }, [closeMapPopups]);
+  }, [closeMapPopups, openEditPhotoDetails]);
 
   const resetSiteMapInteractionState = useCallback(() => {
     closeMapPopups();
@@ -195,6 +209,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setDraftPolygonGeometry(undefined);
     setPolygonMapTileNonce(0);
     setPolygonSubmitConfirmation(null);
+    setEditPhotoDetailsMedia(null);
   }, [closeMapPopups]);
 
   const contextValue: MapAreaType = {
@@ -240,6 +255,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     closeMapPopups,
     polygonSubmitConfirmation,
     setPolygonSubmitConfirmation,
+    editPhotoDetailsMedia,
+    setEditPhotoDetailsMedia,
     resetSiteMapInteractionState
   };
 
