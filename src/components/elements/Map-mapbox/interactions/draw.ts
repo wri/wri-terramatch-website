@@ -12,7 +12,9 @@ import { convertToAcceptedGEOJSON } from "../adapters/geojson";
 import { BBox } from "../GeoJSON";
 import { applyMapDrawStatusStyles, getPolygonStatusColor, PolygonDrawStatus } from "../mapStyle";
 
-/** Shape of a polygon version record as returned by the versions API. */
+export { applyMapDrawingCursor, preloadMapDrawingCursor, resetMapDrawingCursor } from "./mapDrawingCursor";
+import { applyMapDrawingCursor, resetMapDrawingCursor } from "./mapDrawingCursor";
+
 export type PolygonVersion = {
   polygonUuid?: string | null;
   isActive?: boolean;
@@ -33,13 +35,14 @@ const extractGeoJsonFromResponse = (
 };
 
 export const startDrawing = (draw: MapboxDraw, map: MapboxMap): void => {
+  applyMapDrawingCursor(map);
   draw.changeMode("draw_polygon");
-  map.getCanvas().style.cursor = "crosshair";
+  applyMapDrawingCursor(map);
 };
 
 export const stopDrawing = (draw: MapboxDraw, map: MapboxMap): void => {
   draw.changeMode("simple_select");
-  map.getCanvas().style.cursor = "auto";
+  resetMapDrawingCursor(map);
 };
 
 export const addGeojsonToDraw = (
@@ -58,8 +61,10 @@ export const addGeojsonToDraw = (
   currentDraw.add(geojsonFormatted);
   const currentDrawFeatures = currentDraw.getAll();
   currentDraw.set(currentDrawFeatures);
-  const featureId = currentDrawFeatures.features[0].id;
-  currentDraw.changeMode("direct_select", { featureId: featureId as string });
+  const featureId = currentDrawFeatures.features[0]?.id;
+  if (featureId != null) {
+    currentDraw.changeMode("direct_select", { featureId: String(featureId) });
+  }
 
   if (map != null) {
     applyMapDrawStatusStyles(map, polygonStatus);
