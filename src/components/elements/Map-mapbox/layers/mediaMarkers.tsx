@@ -39,7 +39,7 @@ type CallbacksRef = MutableRefObject<MediaCallbacks>;
 
 type MediaOverlayMount = {
   root: Root;
-  update: (files: MediaDto[], callbacks: MediaCallbacks) => void;
+  update: (files: MediaDto[], callbacks: MediaCallbacks, visible: boolean) => void;
 };
 
 const MEDIA_MARKER_BG = "#2A698D";
@@ -257,21 +257,29 @@ const createOverlayMount = (map: MapboxMap): MediaOverlayMount => {
 
   return {
     root,
-    update: (files, callbacks) => {
-      lastFiles = files.filter(isGeolocated);
+    update: (files, callbacks, visible) => {
+      lastFiles = visible ? files.filter(isGeolocated) : [];
       callbacksRef.current = callbacks;
       render();
     }
   };
 };
 
-export const addMediaMarkers = (map: MapboxMap, mediaFiles: MediaDto[], callbacks: MediaCallbacks): void => {
+export const addMediaMarkers = (
+  map: MapboxMap,
+  mediaFiles: MediaDto[],
+  callbacks: MediaCallbacks,
+  visible = true
+): void => {
+  if (!visible) {
+    getSelectionStore(map).set(null);
+  }
   let mount = overlayMounts.get(map);
   if (mount == null) {
     mount = createOverlayMount(map);
     overlayMounts.set(map, mount);
   }
-  mount.update(mediaFiles, callbacks);
+  mount.update(mediaFiles, callbacks, visible);
 };
 
 export const removeMediaMarkers = (map: MapboxMap): void => {

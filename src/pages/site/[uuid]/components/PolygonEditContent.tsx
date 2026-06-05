@@ -158,7 +158,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     invalidatePolygonMapTiles,
     setSelectedPolyVersion,
     setPreviewVersion,
-    setStatusSelectedPolygon
+    setStatusSelectedPolygon,
+    showPhotosOnMap,
+    setShowPhotosOnMap
   } = useMapAreaContext();
   const [polygonName, setPolygonName] = useState("");
   const [plantStartDate, setPlantStartDate] = useState<DateValue[]>([]);
@@ -455,6 +457,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       anrMapOverlayRef.current?.resetAnrMapOverlay();
     },
     [anrMapOverlayRef]
+  );
+
+  useEffect(
+    () => () => {
+      setShowPhotosOnMap(true);
+    },
+    [setShowPhotosOnMap]
   );
 
   const downloadMonitoringPlots = useCallback(async () => {
@@ -807,7 +816,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               <Text textStyle="400-bold" color="neutral.900">{`X ${t("Photos")}`}</Text>
               <Text color="neutral.900">{t("available")}</Text>
             </Flex>
-            <Switch name="showPhotosOnMap" onChange={function noRefCheck() {}}>
+            <Switch
+              name="showPhotosOnMap"
+              checked={showPhotosOnMap}
+              onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
+                setShowPhotosOnMap(checked === true)
+              }
+            >
               {t("Show Photos on Map")}
             </Switch>
           </Flex>
