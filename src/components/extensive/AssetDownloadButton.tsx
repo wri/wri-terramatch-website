@@ -36,7 +36,7 @@ const AssetDownloadButton: FC<AssetDownloadButtonProps> = ({ entity, uuid, class
   return (
     <Button className={className} disabled={isGenerating} variant="secondary-blue" onClick={downloadAssets}>
       {isGenerating && <Icon className="mr-2 inline" name={IconNames.SPINNER} width={14} height={14} />}
-      {t("Download Asset .zip")}
+      {t("Download Media & Documents")}
     </Button>
   );
 };
