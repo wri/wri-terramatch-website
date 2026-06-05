@@ -181,7 +181,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     error: polygonLoadError,
     progress: polygonLoadProgress,
     total: polygonLoadTotal,
-    refetch: refetchFilteredPolygons
+    refetch: refetchPolygons
   } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: site.uuid,
@@ -189,22 +189,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     filter: sitePolygonFilter
   });
 
-  const {
-    data: mapPolygonsQueryData,
-    isLoading: isLoadingMapPolygons,
-    refetch: refetchMapPolygons
-  } = useAllSitePolygons({
-    entityName: "sites",
-    entityUuid: site.uuid,
-    enabled: site.uuid != null && site.uuid !== ""
-  });
-
-  const refetchPolygons = useCallback(async () => {
-    await Promise.all([refetchFilteredPolygons(), refetchMapPolygons()]);
-  }, [refetchFilteredPolygons, refetchMapPolygons]);
-
   const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
-  const mapPolygonsData = mapPolygonsQueryData ?? EMPTY_POLYGONS;
   const isSitePolygonsLoading = isLoadingPolygons || isValidatingPolygons || isFixingOverlaps;
 
   const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
@@ -353,7 +338,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   }, [isLoadingPolygons, openPolygonEditDrawerByPolygonId, polygonsData, site.uuid, uploadedPolygonUuidToOpen]);
 
   useEffect(() => {
-    if (isLoadingMapPolygons) {
+    if (isLoadingPolygons) {
       return;
     }
 
@@ -362,14 +347,14 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       return;
     }
 
-    const rowId = resolvePolygonTableRowId(mapPolygonsData, pendingFocusUuid);
+    const rowId = resolvePolygonTableRowId(polygonsData, pendingFocusUuid);
     if (rowId == null) {
       return;
     }
 
     setPolygonTableHoveredUuid(rowId);
     setFocusPolygonUuid(pendingFocusUuid);
-  }, [isLoadingMapPolygons, mapPolygonsData]);
+  }, [isLoadingPolygons, polygonsData]);
 
   const handleFocusPolygonConsumed = useCallback(() => {
     const focusedUuid = focusPolygonUuid;
@@ -1128,9 +1113,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
                   "!fixed top-[70px] bottom-0 left-0 right-0 z-[37] !h-[calc(100vh-66px)] w-screen rounded-none"
                 : "h-full w-full !rounded-[0.25rem_0.25rem_0_0]"
             )}
-            polygons={mapPolygonsData}
+            polygons={polygonsData}
             onRefetchPolygons={refetchPolygons}
-            isLoadingPolygons={isLoadingMapPolygons}
+            isLoadingPolygons={isSitePolygonsLoading}
             freezeCameraZoom={isSitePolygonsLoading}
             polygonTableHighlight={polygonTableHighlight}
             overlapPolygons={overlapPolygonsForMap}
