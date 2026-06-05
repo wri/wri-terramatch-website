@@ -25,9 +25,11 @@ import ValidationDetail from "./ValidationDetail";
 export type PolygonSystemValidationContentProps = {
   polygon?: SitePolygonLightDto;
   onOverlapFixed?: PolygonOverlapFixCallback;
+  onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
 };
 
-const TOAST_PLACEMENT = "bottom-end" as const;
+const TOAST_PLACEMENT = "bottom" as const;
+const POLYGON_TOAST_DURATION_MS = 5000;
 
 const formatValidationCheckedAt = (date: Date): string => {
   const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
@@ -41,13 +43,18 @@ const formatValidationCheckedAt = (date: Date): string => {
   })}`;
 };
 
-const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = ({ polygon, onOverlapFixed }) => {
+const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = ({
+  polygon,
+  onOverlapFixed,
+  onRunValidation
+}) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const polygonUuid = polygon?.polygonUuid ?? undefined;
   const { items, hasValidation, failedCount, totalItems, lastValidationDate, hasOverlaps, fixabilityResult } =
     usePolygonValidationCriteria(polygonUuid, polygon?.validationStatus);
   const [pendingClipping, setPendingClipping] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
 
   usePolygonClippingCompletion({
     pendingClipping,
@@ -76,7 +83,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
           label: t("No polygon have been fixed"),
           type: "warning",
           placement: TOAST_PLACEMENT,
-          duration: 5000
+          duration: POLYGON_TOAST_DURATION_MS
         });
       } catch (error) {
         Log.error("Failed to refresh polygon after overlap fix:", error);
@@ -84,7 +91,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
           label: t("Overlap was fixed but the polygon could not be refreshed. Please close and reopen the drawer."),
           type: "warning",
           placement: TOAST_PLACEMENT,
-          duration: 7000
+          duration: POLYGON_TOAST_DURATION_MS
         });
       }
     },
@@ -119,6 +126,24 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     polygonUuid != null &&
     polygonUuid !== "";
 
+  const canRunValidation = !hasValidation && polygonUuid != null && polygonUuid !== "" && onRunValidation != null;
+
+  const handleRunValidation = useCallback(async () => {
+    if (isValidating || !canRunValidation || polygonUuid == null || polygonUuid === "") {
+      return;
+    }
+
+    setIsValidating(true);
+    try {
+      await onRunValidation([polygonUuid]);
+    } catch (error) {
+      Log.error("Failed to validate polygon:", error);
+      showPolygonErrorToast(t("Failed to validate polygons"));
+    } finally {
+      setIsValidating(false);
+    }
+  }, [canRunValidation, isValidating, onRunValidation, polygonUuid, t]);
+
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
       <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-auto py-5 px-2 pl-6 pr-7">
@@ -141,22 +166,35 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
               )}
             </>
           ) : (
-            <Text textStyle="300" color="neutral.800">
-              {t("No criteria checked yet")}
+            <Text textStyle="600-bold" color="neutral.900">
+              {t("Validation not started.")}
             </Text>
           )}
         </Flex>
       </Flex>
-      {canFixOverlap && (
+      {(canRunValidation || canFixOverlap) && (
         <Flex className="w-full justify-center pb-2 wriDrawer:pb-0">
           <FloatingActionToolbar
             className="bg-theme-neutral-200"
-            items={[
-              {
-                onClick: handleFixOverlap,
-                label: pendingClipping ? t("Fixing overlap...") : t("Fix Overlap")
-              }
-            ]}
+            items={
+              canRunValidation
+                ? [
+                    {
+                      onClick: () => {
+                        void handleRunValidation();
+                      },
+                      label: isValidating ? t("Validating Polygon...") : t("Run Validation"),
+                      disabled: isValidating
+                    }
+                  ]
+                : [
+                    {
+                      onClick: handleFixOverlap,
+                      label: pendingClipping ? t("Fixing overlap...") : t("Fix Overlap"),
+                      disabled: pendingClipping
+                    }
+                  ]
+            }
           />
         </Flex>
       )}

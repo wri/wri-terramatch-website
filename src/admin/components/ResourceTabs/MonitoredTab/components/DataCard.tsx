@@ -774,7 +774,7 @@ const DataCard = ({
             slug: indicatorSlug as ExportIndicatorCsvPathParams["slug"]
           }
         },
-        `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`
+        { defaultFileName: `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv` }
       );
 
       openNotification("success", t("Success! Export completed."), t("The export has been completed successfully."));

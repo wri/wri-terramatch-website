@@ -18,6 +18,7 @@ export type PolygonBulkActionToolbarProps = {
   isDownloading?: boolean;
   isValidating?: boolean;
   onCancel: () => void;
+  onClearSelection?: () => void;
   onDelete: () => void;
   onDownload: () => void;
   onEdit: () => void;
@@ -40,6 +41,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   isDownloading = false,
   isValidating = false,
   onCancel,
+  onClearSelection,
   onDelete,
   onDownload,
   onEdit,
@@ -56,27 +58,39 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
   const t = useT();
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
+  const [validatedPolygons, setValidatedPolygons] = useState<PolygonTableRow[]>([]);
   const isOverlapAutoFixUnavailable = isOverlapFixAction && !canAutoFixOverlap;
+
+  const handleSystemValidationCompleteModalChange = useCallback((open: boolean) => {
+    setIsSystemValidationCompleteModalOpen(open);
+    if (!open) {
+      setValidatedPolygons([]);
+    }
+  }, []);
 
   const handleRunValidation = useCallback(async () => {
     if (selectedGeometryPolygonUuids.length === 0) {
       return;
     }
 
+    const polygonUuids = selectedGeometryPolygonUuids;
+    setValidatedPolygons(polygons);
+    onClearSelection?.();
+
     try {
-      await onRunValidation(selectedGeometryPolygonUuids);
+      await onRunValidation(polygonUuids);
       setIsSystemValidationCompleteModalOpen(true);
     } catch {
       // Error feedback is handled in the parent.
     }
-  }, [onRunValidation, selectedGeometryPolygonUuids]);
+  }, [onClearSelection, onRunValidation, polygons, selectedGeometryPolygonUuids]);
 
   const handleViewValidationDetails = useCallback(
     (polygon: PolygonTableRow) => {
-      setIsSystemValidationCompleteModalOpen(false);
+      handleSystemValidationCompleteModalChange(false);
       onViewPolygonDetails?.(polygon);
     },
-    [onViewPolygonDetails]
+    [handleSystemValidationCompleteModalChange, onViewPolygonDetails]
   );
 
   const toolbarActions = useMemo<BulkToolbarAction[]>(
@@ -153,10 +167,10 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   return (
     <>
       <SystemValidationComplete
-        polygons={polygons}
+        polygons={validatedPolygons}
         polygonValidations={polygonValidations}
         open={isSystemValidationCompleteModalOpen}
-        onOpenChange={setIsSystemValidationCompleteModalOpen}
+        onOpenChange={handleSystemValidationCompleteModalChange}
         onViewDetails={handleViewValidationDetails}
       />
       {isToolbarVisible && (
