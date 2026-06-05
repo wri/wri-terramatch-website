@@ -49,7 +49,7 @@ const buildPopupFeature = (polygonUuid: string): GeoJSONFeature =>
     }
   } as unknown as GeoJSONFeature);
 
-const getLngLatFromBbox = (bbox: BBox) => ({
+const getBboxCenter = (bbox: BBox) => ({
   lng: (bbox[0] + bbox[2]) / 2,
   lat: (bbox[1] + bbox[3]) / 2
 });
@@ -125,7 +125,7 @@ export function useMapPopups({
           PopupComponent,
           {
             feature: buildPopupFeature(polygonUuid),
-            lngLat: getLngLatFromBbox(bbox),
+            lngLat: getBboxCenter(bbox),
             layerName: LAYERS_NAMES.CENTROIDS
           },
           {
