@@ -143,7 +143,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       showPolygonCompleteToast(label);
       return;
     }
-    showToast({ label, type: "warning", placement: "bottom-end", duration: 5000 });
+    showToast({ label, type: "warning", placement: "bottom", duration: 5000 });
   }, []);
   const {
     polygonGeometryEdit,

@@ -24,7 +24,9 @@ const PopupFooterMedia: FC<PopupFooterMediaProps> = ({ isProjectPath, onDownload
         size="small"
         leftIcon={<DeleteIcon color="error.500" />}
         onClick={onDelete}
-        className="w-fit !border-theme-error-300 !bg-theme-error-100 !text-theme-error-900"
+        classNameContainer="w-fit"
+        typeVariant="negative"
+        className="!border-theme-error-300 !bg-theme-error-100 !text-theme-error-900"
       >
         {t("Delete")}
       </Button>

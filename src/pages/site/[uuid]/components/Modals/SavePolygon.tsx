@@ -49,7 +49,7 @@ const SavePolygon: FC<SavePolygonProps> = ({ open, onOpenChange, polygon, onSave
           <Text textStyle="400" color="neutral.900" textAlign="center">
             {t("Are you sure you want to save changes to ")}
           </Text>
-          <Text textStyle="600-bold" color="neutral.900" textAlign="center">
+          <Text textStyle="500-bold" color="neutral.900" textAlign="center">
             {polygon.polygonName}?
           </Text>
         </Flex>

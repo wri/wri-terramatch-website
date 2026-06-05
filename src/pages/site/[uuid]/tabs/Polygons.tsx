@@ -711,7 +711,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         showToast({
           label: t("Could not find selected polygons to download"),
           type: "error",
-          placement: "bottom-end",
+          placement: "bottom",
           duration: 5000
         });
         return;
@@ -731,7 +731,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         showToast({
           label: t("Error downloading polygon"),
           type: "error",
-          placement: "bottom-end",
+          placement: "bottom",
           duration: 5000
         });
       } finally {

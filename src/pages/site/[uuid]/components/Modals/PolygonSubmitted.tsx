@@ -33,7 +33,7 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
         isSinglePolygon ? (
           <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2} px={4}>
             <CheckApprovedIcon boxSize={8} color={"success.500"} mb={2} />
-            <Text textStyle="600-bold" color="neutral.900">
+            <Text textStyle="500-bold" color="neutral.900" textAlign="center">
               {polygons[0]}
             </Text>
             <Text textStyle="400" color="neutral.900">
