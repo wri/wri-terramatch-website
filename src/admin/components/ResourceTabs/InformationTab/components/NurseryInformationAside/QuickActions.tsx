@@ -1,12 +1,13 @@
 import { Box, Button, Card, Divider, Stack, SxProps, Theme, Typography } from "@mui/material";
 import { FC } from "react";
-import { Labeled, NumberField, useShowContext } from "react-admin";
+import { Labeled, Link, NumberField, useCreatePath, useShowContext } from "react-admin";
 import { useNavigate } from "react-router";
 
 import modules from "@/admin/modules";
 
 const NuseryQuickActions: FC = () => {
   const { record } = useShowContext();
+  const createPath = useCreatePath();
 
   const navigate = useNavigate();
 
@@ -37,6 +38,21 @@ const NuseryQuickActions: FC = () => {
       </Box>
 
       <Divider />
+
+      <Box paddingX={3.75} paddingY={2}>
+        <Button
+          variant="outlined"
+          component={Link}
+          to={createPath({
+            resource: modules.project.ResourceName,
+            type: "show",
+            id: record?.projectUuid
+          })}
+          fullWidth
+        >
+          Back To Project
+        </Button>
+      </Box>
 
       <Box paddingX={3.75} paddingTop={2} paddingBottom={3}>
         <Stack gap={3}>
