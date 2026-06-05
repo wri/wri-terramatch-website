@@ -10,6 +10,7 @@ import {
   dispatchUndoPolygonDrawEvent,
   POLYGON_DRAW_CAN_UNDO_CHANGED_EVENT
 } from "@/components/elements/Map-mapbox/interactions/draftDrawEvents";
+import { resolvePolygonTableRowId } from "@/components/elements/Map-mapbox/sitePolygonPopupUtils";
 import { downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -27,6 +28,7 @@ import { createPolygonValidation, useAllSiteValidations } from "@/connections/Va
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { openPolygonPopupFromMapArea } from "@/context/mapArea.utils";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   EMPTY_POLYGONS,
@@ -35,7 +37,11 @@ import {
   usePolygonEditDrawer
 } from "@/context/polygonEditDrawer.provider";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
-import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
+import {
+  consumePendingPolygonFocusUuid,
+  setPolygonTableHoveredUuid,
+  useSyncPolygonTableSelectionStore
+} from "@/context/polygonTableInteraction.store";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
@@ -150,6 +156,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
   const [showBulkEditDrawer, setShowBulkEditDrawer] = useState(false);
   const [uploadedPolygonUuidToOpen, setUploadedPolygonUuidToOpen] = useState<string | null>(null);
+  const [focusPolygonUuid, setFocusPolygonUuid] = useState<string | null>(null);
   const [isStickyActive, setIsStickyActive] = useState(false);
   const [isDownloadingSelectedPolygons, setIsDownloadingSelectedPolygons] = useState(false);
   const [isBulkUpdatingPolygons, setIsBulkUpdatingPolygons] = useState(false);
@@ -344,6 +351,33 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     openPolygonEditDrawerByPolygonId(uploadedPolygonUuidToOpen);
     setUploadedPolygonUuidToOpen(null);
   }, [isLoadingPolygons, openPolygonEditDrawerByPolygonId, polygonsData, site.uuid, uploadedPolygonUuidToOpen]);
+
+  useEffect(() => {
+    if (isLoadingMapPolygons) {
+      return;
+    }
+
+    const pendingFocusUuid = consumePendingPolygonFocusUuid();
+    if (pendingFocusUuid == null || pendingFocusUuid === "") {
+      return;
+    }
+
+    const rowId = resolvePolygonTableRowId(mapPolygonsData, pendingFocusUuid);
+    if (rowId == null) {
+      return;
+    }
+
+    setPolygonTableHoveredUuid(rowId);
+    setFocusPolygonUuid(pendingFocusUuid);
+  }, [isLoadingMapPolygons, mapPolygonsData]);
+
+  const handleFocusPolygonConsumed = useCallback(() => {
+    const focusedUuid = focusPolygonUuid;
+    setFocusPolygonUuid(null);
+    if (focusedUuid != null && focusedUuid !== "") {
+      openPolygonPopupFromMapArea(focusedUuid);
+    }
+  }, [focusPolygonUuid]);
 
   const handleOverlapFixModalClose = useCallback(() => {
     setOverlapFixModal(false);
@@ -848,9 +882,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const polygonTableHighlight = useMemo(
     () => ({
-      selectedPolygonUuids: suppressMapSelectionHighlight ? [] : selectedPolygonUuids
+      selectedPolygonUuids: suppressMapSelectionHighlight ? [] : selectedPolygonUuids,
+      focusPolygonUuid,
+      onFocusPolygonConsumed: handleFocusPolygonConsumed
     }),
-    [selectedPolygonUuids, suppressMapSelectionHighlight]
+    [selectedPolygonUuids, suppressMapSelectionHighlight, focusPolygonUuid, handleFocusPolygonConsumed]
   );
 
   const handleClearHover = useCallback(() => {

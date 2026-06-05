@@ -5,6 +5,7 @@ type Listener = () => void;
 
 let selectedRowIds = new Set<RowId>();
 let hoveredPolygonUuid: string | null = null;
+let pendingPolygonFocusUuid: string | null = null;
 
 const selectedListeners = new Map<RowId, Set<Listener>>();
 const hoverListeners = new Map<RowId, Set<Listener>>();
@@ -79,6 +80,16 @@ const applyHoveredPolygonUuid = (next: string | null) => {
 
 export const setPolygonTableHoveredUuid = (uuid: string | null) => {
   applyHoveredPolygonUuid(uuid);
+};
+
+export const setPendingPolygonFocusUuid = (uuid: string) => {
+  pendingPolygonFocusUuid = uuid;
+};
+
+export const consumePendingPolygonFocusUuid = (): string | null => {
+  const uuid = pendingPolygonFocusUuid;
+  pendingPolygonFocusUuid = null;
+  return uuid;
 };
 
 export const getPolygonTableHoveredUuid = () => hoveredPolygonUuid;

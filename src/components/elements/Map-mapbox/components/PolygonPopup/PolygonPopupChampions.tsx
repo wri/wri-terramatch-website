@@ -1,9 +1,11 @@
+import router from "next/router";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { useAuditStatuses } from "@/connections/AuditStatus";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { closeMapPopupsFromMapPopup, openPolygonSubmitConfirmationFromMapPopup } from "@/context/mapArea.utils";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
+import { setPendingPolygonFocusUuid } from "@/context/polygonTableInteraction.store";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
@@ -12,6 +14,7 @@ import type { PopupComponentProps, TooltipType } from "../../Map.d";
 import {
   formatAreaHectaresForPopup,
   formatTreesPlantedForPopup,
+  getSitePolygonGeometryUuid,
   normalizePolygonValidationStatus
 } from "../../sitePolygonPopupUtils";
 import PopupContentPolygon from "../PopupPolygon/PopupContentPolygon";
@@ -82,6 +85,20 @@ export function PolygonPopupChampions({ popup, sitePolygon, tooltipType }: Polyg
     closeMapPopup();
   }, [closeMapPopup, metrics.polygonName, sitePolygon]);
 
+  const geometryUuid = getSitePolygonGeometryUuid(sitePolygon);
+
+  const handleViewDetails = useCallback(() => {
+    if (geometryUuid == null) {
+      return;
+    }
+
+    setPendingPolygonFocusUuid(geometryUuid);
+    closeMapPopup();
+    void router.push({ pathname: router.pathname, query: { ...router.query, tab: "polygons" } }, undefined, {
+      shallow: true
+    });
+  }, [closeMapPopup, geometryUuid]);
+
   return (
     <>
       <PointMarker variant="simple-pin" onClick={() => setOpen(true)} triggerRef={triggerRef} showFocusState={open} />
@@ -102,6 +119,9 @@ export function PolygonPopupChampions({ popup, sitePolygon, tooltipType }: Polyg
             submitDisabled={submitDisabled}
             onSubmit={handleRequestSubmit}
             onEdit={handleEdit}
+            onClose={closeMapPopup}
+            onViewDetails={handleViewDetails}
+            viewDetailsDisabled={geometryUuid == null}
             tooltipType={tooltipType}
           />
         }

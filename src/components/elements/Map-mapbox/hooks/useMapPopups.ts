@@ -1,14 +1,19 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import { Map as MapboxMap } from "mapbox-gl";
+import { GeoJSONFeature, Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect, useRef } from "react";
 
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
+import { loadBoundingBox, normalizeBoundingBoxDto } from "@/connections/BoundingBox";
+import { LAYERS_NAMES } from "@/constants/layers";
+import { registerOpenPolygonPopupHandler, unregisterOpenPolygonPopupHandler } from "@/context/mapArea.utils";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import Log from "@/utils/log";
 
 import { useChampionsMap } from "../championsMap.context";
 import { DashboardPopup } from "../components/DashboardPopup";
 import { PolygonPopup } from "../components/PolygonPopup/PolygonPopup";
 import { disableBackgroundClickClose, enableBackgroundClickClose } from "../interactions/popupCoordinator";
-import { addPopupsToMap } from "../interactions/popups";
+import { addPopupsToMap, openPolygonPopup, PopupHandlerOptions } from "../interactions/popups";
 import type {
   DashboardPopupContext,
   EditPolygonState,
@@ -33,6 +38,21 @@ type UseMapPopupsParams = {
   setMobilePopupData: (v: MobilePopupData) => void;
   dashboardContext?: DashboardPopupContext | null;
 };
+
+const buildPopupFeature = (polygonUuid: string): GeoJSONFeature =>
+  ({
+    type: "Feature",
+    properties: { uuid: polygonUuid },
+    geometry: {
+      type: "Point",
+      coordinates: [0, 0]
+    }
+  } as unknown as GeoJSONFeature);
+
+const getLngLatFromBbox = (bbox: BBox) => ({
+  lng: (bbox[0] + bbox[2]) / 2,
+  lat: (bbox[1] + bbox[3]) / 2
+});
 
 export function useMapPopups({
   map,
@@ -61,13 +81,15 @@ export function useMapPopups({
     editPolygonRef.current = editPolygon;
   });
 
+  const popupOptionsRef = useRef<PopupHandlerOptions | null>(null);
+
   useEffect(() => {
     if (!sourcesAdded || map.current == null || draw.current == null || !showPopups) return;
 
     const PopupComponent = dashboardContext?.dashboardMode != null ? DashboardPopup : PolygonPopup;
     const mapInstance = map.current;
 
-    addPopupsToMap(mapInstance, PopupComponent, draw.current, {
+    const popupOptions: PopupHandlerOptions = {
       setPolygonFromMap: callbacksRef.current.setPolygonFromMap,
       setShouldRefetchPolygonData,
       sitePolygonData,
@@ -79,10 +101,51 @@ export function useMapPopups({
       setMobilePopupData:
         isMobile || dashboardContext?.dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined,
       championsMap
-    });
+    };
+    popupOptionsRef.current = popupOptions;
 
+    addPopupsToMap(mapInstance, PopupComponent, draw.current, popupOptions);
+
+    const openPopupForUuid = async (polygonUuid: string) => {
+      const activeMap = map.current;
+      const activeOptions = popupOptionsRef.current;
+      if (activeMap == null || activeOptions == null || polygonUuid === "") {
+        return;
+      }
+
+      try {
+        const result = await loadBoundingBox({ filter: { polygonUuid }, enabled: true });
+        const bbox = normalizeBoundingBoxDto(result?.data?.bbox);
+        if (bbox == null || map.current == null) {
+          return;
+        }
+
+        openPolygonPopup(
+          map.current,
+          PopupComponent,
+          {
+            feature: buildPopupFeature(polygonUuid),
+            lngLat: getLngLatFromBbox(bbox),
+            layerName: LAYERS_NAMES.CENTROIDS
+          },
+          {
+            ...activeOptions,
+            editPolygon: editPolygonRef.current,
+            setPolygonFromMap: callbacksRef.current.setPolygonFromMap,
+            setEditPolygon: callbacksRef.current.setEditPolygon,
+            sitePolygonData
+          }
+        );
+      } catch (error) {
+        Log.warn("useMapPopups: failed to open polygon popup programmatically", { polygonUuid, error });
+      }
+    };
+
+    registerOpenPolygonPopupHandler(openPopupForUuid);
     enableBackgroundClickClose(mapInstance);
+
     return () => {
+      unregisterOpenPolygonPopupHandler();
       disableBackgroundClickClose(mapInstance);
     };
   }, [

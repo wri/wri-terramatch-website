@@ -22,6 +22,9 @@ type PopupFooterPolygonProps = {
   submitDisabled?: boolean;
   onSubmit?: () => Promise<void>;
   onEdit?: () => void;
+  onClose?: () => void;
+  onViewDetails?: () => void;
+  viewDetailsDisabled?: boolean;
   tooltipType?: TooltipType;
 };
 
@@ -31,6 +34,9 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   submitDisabled = false,
   onSubmit,
   onEdit,
+  onClose,
+  onViewDetails,
+  viewDetailsDisabled = false,
   tooltipType
 }) => {
   const t = useT();
@@ -65,10 +71,15 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
     <Grid templateColumns={tooltipType === "view" ? "repeat(2, 1fr)" : "repeat(3, 1fr)"} gap={3} width="100%">
       {tooltipType === "view" ? (
         <>
-          <Button variant="secondary" size="small">
+          <Button variant="secondary" size="small" onClick={onClose}>
             {t("Close")}
           </Button>
-          <Button variant="primary" size="small">
+          <Button
+            variant="primary"
+            size="small"
+            onClick={onViewDetails}
+            disabled={viewDetailsDisabled || onViewDetails == null}
+          >
             {t("View details")}
           </Button>
         </>
