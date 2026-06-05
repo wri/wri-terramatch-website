@@ -1,6 +1,6 @@
 import { Box, Flex, List, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback } from "react";
 
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
@@ -16,25 +16,18 @@ export interface DeletePolygonProps {
 }
 const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, onDelete }) => {
   const t = useT();
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleClose = useCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
 
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(() => {
     if (onDelete == null) {
       onOpenChange(false);
       return;
     }
-
-    try {
-      setIsDeleting(true);
-      await onDelete();
-      onOpenChange(false);
-    } finally {
-      setIsDeleting(false);
-    }
+    void onDelete();
+    onOpenChange(false);
   }, [onDelete, onOpenChange]);
 
   return (
@@ -52,7 +45,7 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, o
             <Text textStyle="400" color="neutral.900" textAlign="center">
               {t("Are you sure you want to delete")}
             </Text>
-            <Text textStyle="600-bold" color="neutral.900" textAlign="center">
+            <Text textStyle="500-bold" color="neutral.900" textAlign="center">
               {polygons[0].polygonName}?
             </Text>
 
@@ -104,8 +97,10 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, o
             {
               id: "delete",
               children: t("Delete"),
-              className: "!border !w-[50%] !border-theme-error-300 !bg-theme-error-100 !text-theme-error-900",
-              disabled: isDeleting,
+              variant: "secondary",
+              typeVariant: "negative",
+              classNameContainer: "!w-[50%]",
+              className: "!w-full",
               onClick: () => void handleSave()
             }
           ]}

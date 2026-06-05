@@ -53,7 +53,7 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({ open, o
             <Text textStyle="400" color="neutral.900" mb={3}>
               {t("Are you sure you want to submit")}
             </Text>
-            <Text textStyle="600-bold" color="neutral.900">
+            <Text textStyle="500-bold" color="neutral.900" textAlign="center">
               {polygons[0].polygonName}?
             </Text>
           </Flex>

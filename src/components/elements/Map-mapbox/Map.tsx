@@ -23,7 +23,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { useOnMount } from "@/hooks/useOnMount";
 
 import { addOrUpdateMarkerAndZoom } from "./adapters/camera";
-import { ChampionsMapProvider } from "./championsMap.context";
+import { ChampionsMapProvider, useChampionsMap } from "./championsMap.context";
 import MapCanvas from "./components/MapCanvas";
 import MapControlsOverlay from "./components/MapControlsOverlay";
 import { PopupMobile } from "./components/PopupMobile";
@@ -206,6 +206,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
 }) => {
   const resizeDebounceTimeoutRef = useRef<number | null>(null);
   const { map, mapContainer, draw, onCancel, initMap } = mapFunctions;
+  const championsMap = useChampionsMap();
 
   const {
     polygonsData,
@@ -290,7 +291,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
   useOnMount(() => {
     const initialStyle =
       mapStyleProp !== undefined ? mapStyleProp : dashboardMode ? MapStyle.Street : MapStyle.Satellite;
-    initMap(!!dashboardMode, initialStyle);
+    initMap(!!dashboardMode, initialStyle, championsMap);
     return () => {
       if (mapMarkerRef.current != null) {
         mapMarkerRef.current.remove();

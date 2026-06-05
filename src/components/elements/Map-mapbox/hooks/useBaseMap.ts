@@ -1,5 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import { Map as MapboxMap } from "mapbox-gl";
+import { AttributionControl, Map as MapboxMap } from "mapbox-gl";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { mapboxToken } from "@/constants/environment";
@@ -8,6 +8,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { drawPolygonWithUndoMode, performPolygonDrawUndo } from "../drawModes/drawPolygonWithUndoMode";
 import { FeatureCollection } from "../GeoJSON";
 import { CLEAR_DRAFT_DRAW_EVENT, UNDO_POLYGON_DRAW_EVENT } from "../interactions/draftDrawEvents";
+import { applyMapDrawingCursor, preloadMapDrawingCursor } from "../interactions/mapDrawingCursor";
 import type { ControlType } from "../Map.d";
 import { BASEMAP_CONFIGS, MapStyle } from "../MapControls/types";
 import { applyMapDrawStatusStyles, createMapDrawStyles } from "../mapStyle";
@@ -91,7 +92,7 @@ export const useBaseMap = (onSave?: MapDrawSaveHandler, record?: MapDrawSaveReco
     };
   }, [deferDrawCreateSave, setDraftPolygonGeometry]);
 
-  const initMap = (useDashboardStyle?: boolean, initialStyle?: MapStyle) => {
+  const initMap = (useDashboardStyle?: boolean, initialStyle?: MapStyle, compactAttribution?: boolean) => {
     if (map.current != null) return;
 
     const requestedStyle =
@@ -105,8 +106,13 @@ export const useBaseMap = (onSave?: MapDrawSaveHandler, record?: MapDrawSaveReco
       zoom: INITIAL_ZOOM,
       minZoom: 2.0,
       accessToken: mapboxToken,
-      center: [21.496, 5.456]
+      center: [21.496, 5.456],
+      ...(compactAttribution === true ? { attributionControl: false } : {})
     });
+
+    if (compactAttribution === true) {
+      map.current.addControl(new AttributionControl({ compact: true }));
+    }
 
     draw.current = new MapboxDraw({
       ...(deferDrawCreateSave === true
@@ -147,7 +153,12 @@ export const useBaseMap = (onSave?: MapDrawSaveHandler, record?: MapDrawSaveReco
         addControlToMap();
       }
 
+      void preloadMapDrawingCursor();
+
       map.current.on("draw.modechange", (event: { mode: string }) => {
+        if (event.mode === "draw_polygon" && map.current != null) {
+          applyMapDrawingCursor(map.current);
+        }
         if (event.mode === "simple_select") {
           setIsUserDrawingEnabled(false);
         }
@@ -164,9 +175,22 @@ export const useBaseMap = (onSave?: MapDrawSaveHandler, record?: MapDrawSaveReco
         draw.current?.deleteAll();
       });
       map.current.on("draw.delete", () => {
-        if (deferDrawCreateSave) {
-          setDraftPolygonGeometry(undefined);
+        if (deferDrawCreateSave !== true) return;
+        setDraftPolygonGeometry(undefined);
+
+        if (draw.current == null || map.current == null) return;
+        if (draw.current.getAll().features.length > 0) return;
+        if (draw.current.getMode() === "draw_polygon") {
+          applyMapDrawingCursor(map.current);
+          return;
         }
+
+        setIsUserDrawingEnabled(true);
+        draw.current.changeMode("draw_polygon");
+        applyMapDrawingCursor(map.current);
+        requestAnimationFrame(() => {
+          if (map.current != null) applyMapDrawingCursor(map.current);
+        });
       });
     }
   };
