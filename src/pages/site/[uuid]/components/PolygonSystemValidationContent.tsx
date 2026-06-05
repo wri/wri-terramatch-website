@@ -28,7 +28,8 @@ export type PolygonSystemValidationContentProps = {
   onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
 };
 
-const TOAST_PLACEMENT = "bottom-end" as const;
+const TOAST_PLACEMENT = "bottom" as const;
+const POLYGON_TOAST_DURATION_MS = 5000;
 
 const formatValidationCheckedAt = (date: Date): string => {
   const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
@@ -82,7 +83,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
           label: t("No polygon have been fixed"),
           type: "warning",
           placement: TOAST_PLACEMENT,
-          duration: 5000
+          duration: POLYGON_TOAST_DURATION_MS
         });
       } catch (error) {
         Log.error("Failed to refresh polygon after overlap fix:", error);
@@ -90,7 +91,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
           label: t("Overlap was fixed but the polygon could not be refreshed. Please close and reopen the drawer."),
           type: "warning",
           placement: TOAST_PLACEMENT,
-          duration: 7000
+          duration: POLYGON_TOAST_DURATION_MS
         });
       }
     },

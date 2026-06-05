@@ -89,7 +89,8 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ open, onClose }) => {
               id: "delete",
               variant: "secondary",
               children: t("Delete"),
-              className: "!border w-[32%] !border-theme-error-300 !bg-theme-error-100 !text-theme-error-900",
+              typeVariant: "negative",
+              classNameContainer: "w-[32%]",
               onClick: () => {}
             },
             {
