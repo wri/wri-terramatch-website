@@ -2,6 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 
+import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import type { PolygonEditDrawerPolygon } from "@/context/polygonEditDrawer.types";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -11,12 +12,15 @@ import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel
 import NotificationIndicator from "@/redesignComponents/navigation/NotificationIndicator/NotificationIndicator";
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 
+import DeletePolygon from "./Modals/DeletePolygon";
 import SavePolygon from "./Modals/SavePolygon";
+import SubmitPolygons from "./Modals/SubmitPolygons";
 import PolygonCommentContent from "./PolygonCommentContent";
 import type { PolygonOverlapFixCallback, PolygonSaveCallback } from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
 import PolygonSystemValidationContent from "./PolygonSystemValidationContent";
 import type { PolygonTableRow } from "./PolygonTableRow";
+import { mapSitePolygonToTableRow } from "./polygonTableRow.utils";
 
 interface PolygonEditDrawerProps {
   open?: boolean;
@@ -45,9 +49,13 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const { draftPolygonGeometry } = useMapAreaContext();
   const [activeTab, setActiveTab] = useState<string>("edit");
   const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
+  const deletePolygonRef = useRef<(() => Promise<void>) | null>(null);
+  const submitPolygonRef = useRef<(() => Promise<void>) | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
-  const pendingOnCloseRef = useRef<(() => void) | null>(null);
+  const [deletePayload, setDeletePayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
+  const [submitPayload, setSubmitPayload] = useState<{ eligibleCount: number; totalCount: number } | null>(null);
+  const deleteConfirmedRef = useRef(false);
   const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
   const isCreateMode = selectedPolygon?.primaryUuid == null || selectedPolygon.primaryUuid === "";
   const isSaveDisabled = activeTab === "edit" && isCreateMode && draftPolygonGeometry == null;
@@ -65,11 +73,21 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     setSaveEditContent(() => saveHandler);
   }, []);
 
+  const registerDelete = useCallback((deleteHandler: () => Promise<void>) => {
+    deletePolygonRef.current = deleteHandler;
+  }, []);
+
+  const registerSubmit = useCallback((submitHandler: () => Promise<void>) => {
+    submitPolygonRef.current = submitHandler;
+  }, []);
+
   const registerPolygonName = useCallback((getPolygonName: () => string) => {
     getPolygonNameForSaveRef.current = getPolygonName;
   }, []);
 
-  const saveConfirmationPolygonName = getPolygonNameForSaveRef.current() || polygon?.polygonName?.trim() || "-";
+  const saveConfirmationPolygonName = getPolygonNameForSaveRef.current() || polygon?.polygonName?.trim() || "";
+  const isAnyConfirmationModalOpen = showSaveConfirmationModal || deletePayload != null || submitPayload != null;
+  const isDrawerVisible = (open ?? false) && !isAnyConfirmationModalOpen;
 
   const handleSave = useCallback(
     async (onClose: () => void) => {
@@ -91,17 +109,67 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     [activeTab, saveEditContent]
   );
 
+  const closeDrawer = useCallback(() => {
+    onOpenChange?.(false);
+  }, [onOpenChange]);
+
+  const handleSaveConfirmationModalChange = useCallback(
+    (nextOpen: boolean) => {
+      setShowSaveConfirmationModal(nextOpen);
+      if (!nextOpen && isCreateMode) {
+        closeDrawer();
+      }
+    },
+    [closeDrawer, isCreateMode]
+  );
+
+  const handleRequestDeleteModal = useCallback(() => {
+    if (selectedPolygon == null) {
+      return;
+    }
+
+    deleteConfirmedRef.current = false;
+    setDeletePayload({ polygons: [mapSitePolygonToTableRow(selectedPolygon, t)] });
+  }, [selectedPolygon, t]);
+
+  const handleRequestSubmitModal = useCallback(() => {
+    if (selectedPolygon == null) {
+      return;
+    }
+
+    const isPolygonSubmittable =
+      selectedPolygon.status !== POLYGON_PENDING_APPROVAL && selectedPolygon.status !== POLYGON_APPROVED;
+
+    setSubmitPayload({ eligibleCount: isPolygonSubmittable ? 1 : 0, totalCount: 1 });
+  }, [selectedPolygon]);
+
+  const handleDeleteConfirmationModalChange = useCallback(
+    (nextOpen: boolean) => {
+      if (nextOpen) {
+        return;
+      }
+
+      const shouldCloseDrawer = deleteConfirmedRef.current;
+      deleteConfirmedRef.current = false;
+      setDeletePayload(null);
+      if (shouldCloseDrawer) {
+        closeDrawer();
+      }
+    },
+    [closeDrawer]
+  );
+
   return (
-    <Drawer
-      modal={false}
-      open={open}
-      closeOnInteractOutside={false}
-      onOpenChange={onOpenChange}
-      size="md"
-      placement="start"
-    >
-      {({ onClose }) => (
-        <>
+    <>
+      <Drawer
+        modal={false}
+        open={isDrawerVisible}
+        closeOnInteractOutside={false}
+        onOpenChange={onOpenChange}
+        size="md"
+        placement="start"
+      >
+        {({ onClose }) => (
           <FilterPanel
             title={polygon?.polygonUuid ? polygon?.polygonName ?? t("-") : t("New Polygon")}
             variant="fixed"
@@ -142,7 +210,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     polygon={selectedPolygon}
                     onClose={onClose}
                     onRegisterSave={registerSave}
+                    onRegisterDelete={registerDelete}
+                    onRegisterSubmit={registerSubmit}
                     onRegisterPolygonName={registerPolygonName}
+                    onRequestDeleteModal={handleRequestDeleteModal}
+                    onRequestSubmitModal={handleRequestSubmitModal}
                     onSaved={onSaved}
                     onPolygonUpdated={onPolygonUpdated}
                     onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
@@ -179,7 +251,6 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                         void handleSave(onClose);
                         return;
                       }
-                      pendingOnCloseRef.current = onClose;
                       setShowSaveConfirmationModal(true);
                     }
                   }
@@ -187,17 +258,38 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
               />
             }
           />
-          {showSaveConfirmationModal && polygon != null && (
-            <SavePolygon
-              open
-              onOpenChange={setShowSaveConfirmationModal}
-              polygon={{ polygonName: saveConfirmationPolygonName ?? "-" } as unknown as PolygonTableRow}
-              onSave={() => void handleSave(pendingOnCloseRef.current ?? onClose)}
-            />
-          )}
-        </>
-      )}
-    </Drawer>
+        )}
+      </Drawer>
+
+      <SavePolygon
+        open={showSaveConfirmationModal}
+        onOpenChange={handleSaveConfirmationModalChange}
+        polygon={{ polygonName: saveConfirmationPolygonName } as unknown as PolygonTableRow}
+        onSave={() => void handleSave(closeDrawer)}
+      />
+
+      <DeletePolygon
+        open={deletePayload != null}
+        onOpenChange={handleDeleteConfirmationModalChange}
+        polygons={deletePayload?.polygons ?? []}
+        onDelete={() => {
+          deleteConfirmedRef.current = true;
+          return deletePolygonRef.current?.();
+        }}
+      />
+
+      <SubmitPolygons
+        open={submitPayload != null}
+        onOpenChange={open => {
+          if (!open) {
+            setSubmitPayload(null);
+          }
+        }}
+        eligibleCount={submitPayload?.eligibleCount ?? 0}
+        totalCount={submitPayload?.totalCount ?? 0}
+        onSubmit={() => submitPolygonRef.current?.()}
+      />
+    </>
   );
 };
 
