@@ -12,8 +12,16 @@ export interface SubmitPolygonsProps {
   eligibleCount: number;
   totalCount: number;
   onSubmit?: () => void | Promise<void>;
+  finalFocusEl?: () => HTMLElement | null;
 }
-const SubmitPolygons: FC<SubmitPolygonsProps> = ({ open, onOpenChange, eligibleCount, totalCount, onSubmit }) => {
+const SubmitPolygons: FC<SubmitPolygonsProps> = ({
+  open,
+  onOpenChange,
+  eligibleCount,
+  totalCount,
+  onSubmit,
+  finalFocusEl
+}) => {
   const t = useT();
   const skippedCount = totalCount - eligibleCount;
 
@@ -35,6 +43,7 @@ const SubmitPolygons: FC<SubmitPolygonsProps> = ({ open, onOpenChange, eligibleC
     <Modal
       open={open}
       onClose={handleClose}
+      finalFocusEl={finalFocusEl}
       size="medium"
       header={<b className="text-theme-neutral-800">{t("Submit polygons?")}</b>}
       content={

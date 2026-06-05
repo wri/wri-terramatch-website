@@ -11,9 +11,10 @@ export interface SavePolygonProps {
   onOpenChange: (open: boolean) => void;
   polygon: PolygonTableRow;
   onSave?: () => void | Promise<void>;
+  restoreFocus?: boolean;
 }
 
-const SavePolygon: FC<SavePolygonProps> = ({ open, onOpenChange, polygon, onSave }) => {
+const SavePolygon: FC<SavePolygonProps> = ({ open, onOpenChange, polygon, onSave, restoreFocus = true }) => {
   const t = useT();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -40,6 +41,7 @@ const SavePolygon: FC<SavePolygonProps> = ({ open, onOpenChange, polygon, onSave
     <Modal
       open={open}
       onClose={handleClose}
+      restoreFocus={restoreFocus}
       size="medium"
       header={<b className="text-theme-neutral-800">{t("Save Changes?")}</b>}
       content={

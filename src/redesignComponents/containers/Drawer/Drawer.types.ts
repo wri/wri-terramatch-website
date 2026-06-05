@@ -12,6 +12,10 @@ export interface DrawerProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "full" | "filterPanel";
   placement?: DrawerPlacement;
   modal?: boolean;
+  lazyMount?: boolean;
+  unmountOnExit?: boolean;
+  restoreFocus?: boolean;
+  finalFocusEl?: () => HTMLElement | null;
 }
 
 export interface DrawerTyped {
@@ -22,6 +26,10 @@ export interface DrawerTyped {
   size: NonNullable<DrawerProps["size"]>;
   placement?: DrawerPlacement;
   modal?: boolean;
+  lazyMount?: boolean;
+  unmountOnExit?: boolean;
+  restoreFocus?: boolean;
+  finalFocusEl?: () => HTMLElement | null;
 }
 
 export interface DrawerTriggerTyped {

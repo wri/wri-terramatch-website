@@ -117,6 +117,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const { openNotification } = useNotificationContext();
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
+  const stableOverlayFinalFocusRef = useRef<HTMLDivElement>(null);
   const pendingOverlapFixPolygonIdRef = useRef<string | null>(null);
   const pendingPolygonSubmittedModalRef = useRef(false);
   const [deletePayload, setDeletePayload] = useState<{
@@ -377,6 +378,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     setPolygonTableHoveredUuid(null);
   }, [clearTableSelection, closeMapPopups]);
 
+  const getStableOverlayFinalFocusEl = useCallback(() => stableOverlayFinalFocusRef.current, []);
+
   const handleSelectOverlapPolygons = useCallback(() => {
     const visiblePolygonIds = new Set(
       polygonsData
@@ -395,8 +398,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       polygons: selectedRows,
       sitePolygonUuids: selectedSitePolygonUuids
     });
-    clearBulkTableSelection();
     setDeletePolygonModal(true);
+    window.requestAnimationFrame(() => {
+      clearBulkTableSelection();
+    });
   }, [clearBulkTableSelection, selectedRows, selectedSitePolygonUuids]);
 
   const handleBulkDraw = useCallback(() => {
@@ -586,8 +591,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       eligibleCount: selectedSubmittablePolygons.length,
       totalCount: selectedSitePolygons.length
     });
-    clearBulkTableSelection();
     setSubmitPolygonsModal(true);
+    window.requestAnimationFrame(() => {
+      clearBulkTableSelection();
+    });
   }, [
     clearBulkTableSelection,
     handleOverlapFix,
@@ -755,15 +762,19 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     }
     if (selectedRows.length === 1) {
       openPolygonEditDrawerForRow(selectedRows[0]);
-      clearBulkTableSelection();
+      window.requestAnimationFrame(() => {
+        clearBulkTableSelection();
+      });
       return;
     }
     setBulkEditPayload({
       polygons: selectedRows,
       sitePolygonUuids: selectedSitePolygonUuids
     });
-    clearBulkTableSelection();
     setShowBulkEditDrawer(true);
+    window.requestAnimationFrame(() => {
+      clearBulkTableSelection();
+    });
   }, [clearBulkTableSelection, openPolygonEditDrawerForRow, selectedRows, selectedSitePolygonUuids]);
 
   const handleBulkEditSave = useCallback(
@@ -976,6 +987,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           isOverlapFixAction={hasSelectedOverlapFailure}
           canAutoFixOverlap={hasFixableSelectedOverlap}
           isSubmitDisabled={isBulkSubmitDisabled}
+          finalFocusEl={getStableOverlayFinalFocusEl}
         />
 
         <PolygonBulkEditDrawer
@@ -1011,6 +1023,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           eligibleCount={submitPayload?.eligibleCount ?? 0}
           totalCount={submitPayload?.totalCount ?? 0}
           onSubmit={handleConfirmBulkSubmit}
+          finalFocusEl={getStableOverlayFinalFocusEl}
         />
         <SubmitPolygons
           open={polygonSubmitConfirmation != null}
@@ -1018,6 +1031,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           eligibleCount={polygonSubmitConfirmation?.eligibleCount ?? 0}
           totalCount={polygonSubmitConfirmation?.totalCount ?? 0}
           onSubmit={handleConfirmMapPopupSubmit}
+          finalFocusEl={getStableOverlayFinalFocusEl}
         />
         <PolygonSubmitted
           open={showPolygonSubmittedModal && submittedPolygonNames.length > 0}
@@ -1034,6 +1048,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           }}
           polygons={deletePayload?.polygons ?? []}
           onDelete={handleBulkDelete}
+          finalFocusEl={getStableOverlayFinalFocusEl}
         />
         <OverlapFix
           open={
@@ -1147,7 +1162,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
               )}
             </Flex>
             <PolygonTableInteractionActionsProvider onSelectChange={handleRowSelected}>
-              <Box onMouseLeave={handleClearHover} position="relative">
+              <Box ref={stableOverlayFinalFocusRef} tabIndex={-1} onMouseLeave={handleClearHover} position="relative">
                 <Table<PolygonTableRow>
                   css={polygonsTableStyles}
                   containerRef={tableContainerRef}

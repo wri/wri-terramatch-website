@@ -18,7 +18,11 @@ const Drawer: FC<DrawerProps> = ({
   defaultOpen = false,
   size = "xs",
   placement,
-  modal = true
+  modal = true,
+  lazyMount = true,
+  unmountOnExit = true,
+  restoreFocus,
+  finalFocusEl
 }) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const isControlled = openProp !== undefined;
@@ -47,6 +51,10 @@ const Drawer: FC<DrawerProps> = ({
       size={size}
       placement={placement}
       modal={modal}
+      lazyMount={lazyMount}
+      unmountOnExit={unmountOnExit}
+      restoreFocus={restoreFocus}
+      finalFocusEl={finalFocusEl}
     >
       {trigger != null ? <TypedDrawerTrigger asChild>{trigger}</TypedDrawerTrigger> : null}
       <Portal>

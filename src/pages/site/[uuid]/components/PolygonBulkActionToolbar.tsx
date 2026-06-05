@@ -31,6 +31,7 @@ export type PolygonBulkActionToolbarProps = {
   polygons: PolygonTableRow[];
   polygonValidations: Map<string, ValidationDto>;
   selectedGeometryPolygonUuids: string[];
+  finalFocusEl?: () => HTMLElement | null;
 };
 
 const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
@@ -51,6 +52,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   onRunValidation,
   polygonValidations,
   selectedGeometryPolygonUuids,
+  finalFocusEl,
   isOverlapFixAction = false,
   canAutoFixOverlap = false,
   isSubmitDisabled = false
@@ -75,11 +77,13 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
 
     const polygonUuids = selectedGeometryPolygonUuids;
     setValidatedPolygons(polygons);
-    onClearSelection?.();
 
     try {
       await onRunValidation(polygonUuids);
       setIsSystemValidationCompleteModalOpen(true);
+      window.requestAnimationFrame(() => {
+        onClearSelection?.();
+      });
     } catch {
       // Error feedback is handled in the parent.
     }
@@ -88,7 +92,9 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const handleViewValidationDetails = useCallback(
     (polygon: PolygonTableRow) => {
       handleSystemValidationCompleteModalChange(false);
-      onViewPolygonDetails?.(polygon);
+      window.requestAnimationFrame(() => {
+        onViewPolygonDetails?.(polygon);
+      });
     },
     [handleSystemValidationCompleteModalChange, onViewPolygonDetails]
   );
@@ -172,6 +178,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
         open={isSystemValidationCompleteModalOpen}
         onOpenChange={handleSystemValidationCompleteModalChange}
         onViewDetails={handleViewValidationDetails}
+        finalFocusEl={finalFocusEl}
       />
       {isToolbarVisible && (
         <Box position="fixed" zIndex="100" bottom={3} left={3} right={3}>

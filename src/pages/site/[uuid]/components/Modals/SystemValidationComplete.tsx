@@ -16,13 +16,15 @@ export interface SystemValidationCompleteProps {
   polygons: PolygonTableRow[];
   onViewDetails?: (polygon: PolygonTableRow) => void;
   polygonValidations: Map<string, ValidationDto>;
+  finalFocusEl?: () => HTMLElement | null;
 }
 const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
   open,
   onOpenChange,
   polygons,
   onViewDetails,
-  polygonValidations
+  polygonValidations,
+  finalFocusEl
 }) => {
   const t = useT();
   const handleClose = useCallback(() => {
@@ -55,6 +57,8 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
     <Modal
       open={open}
       onClose={handleClose}
+      restoreFocus={false}
+      finalFocusEl={finalFocusEl}
       size="large"
       header={<b className="text-theme-neutral-800">{t("System Validation Complete")}</b>}
       content={

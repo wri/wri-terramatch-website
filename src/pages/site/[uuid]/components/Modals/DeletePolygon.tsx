@@ -13,8 +13,9 @@ export interface DeletePolygonProps {
   onOpenChange: (open: boolean) => void;
   polygons: PolygonTableRow[];
   onDelete?: () => void | Promise<void>;
+  finalFocusEl?: () => HTMLElement | null;
 }
-const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, onDelete }) => {
+const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, onDelete, finalFocusEl }) => {
   const t = useT();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -41,6 +42,7 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, o
     <Modal
       open={open}
       onClose={handleClose}
+      finalFocusEl={finalFocusEl}
       size="medium"
       header={
         <b className="text-theme-neutral-800">{polygons.length === 1 ? t("Delete polygon?") : t("Delete polygons?")}</b>

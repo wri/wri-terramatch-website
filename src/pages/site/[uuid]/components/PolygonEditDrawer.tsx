@@ -70,6 +70,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   }, []);
 
   const saveConfirmationPolygonName = getPolygonNameForSaveRef.current() || polygon?.polygonName?.trim() || "-";
+  const isSaveConfirmationOpen = showSaveConfirmationModal && polygon != null;
 
   const handleSave = useCallback(
     async (onClose: () => void) => {
@@ -187,14 +188,13 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
               />
             }
           />
-          {showSaveConfirmationModal && polygon != null && (
-            <SavePolygon
-              open
-              onOpenChange={setShowSaveConfirmationModal}
-              polygon={{ polygonName: saveConfirmationPolygonName ?? "-" } as unknown as PolygonTableRow}
-              onSave={() => void handleSave(pendingOnCloseRef.current ?? onClose)}
-            />
-          )}
+          <SavePolygon
+            open={isSaveConfirmationOpen}
+            restoreFocus={false}
+            onOpenChange={setShowSaveConfirmationModal}
+            polygon={{ polygonName: saveConfirmationPolygonName ?? "-" } as unknown as PolygonTableRow}
+            onSave={() => void handleSave(pendingOnCloseRef.current ?? onClose)}
+          />
         </>
       )}
     </Drawer>

@@ -177,7 +177,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   }, [draftFilters.plantStartFrom, draftFilters.plantStartTo]);
 
   return (
-    <Drawer trigger={trigger} open={open} onOpenChange={onOpenChange} size="filterPanel">
+    <Drawer trigger={trigger} open={open} onOpenChange={onOpenChange} size="filterPanel" modal={false}>
       {({ onClose }) => (
         <FilterPanel
           title={t("Filters")}

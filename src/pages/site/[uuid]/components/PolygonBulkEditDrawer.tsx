@@ -268,7 +268,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
   );
 
   return (
-    <Drawer placement="start" defaultOpen={false} open={open} onOpenChange={handleOpenChange} size="md">
+    <Drawer placement="start" defaultOpen={false} open={open} onOpenChange={handleOpenChange} size="md" modal={false}>
       {({ onClose }) => (
         <>
           <FilterPanel
