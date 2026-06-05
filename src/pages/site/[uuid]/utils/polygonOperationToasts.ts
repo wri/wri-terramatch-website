@@ -3,7 +3,7 @@ import { createElement } from "react";
 
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
-export const POLYGON_TOAST_PLACEMENT = "bottom-end" as const;
+export const POLYGON_TOAST_PLACEMENT = "bottom" as const;
 export const POLYGON_TOAST_DURATION_MS = 5000;
 
 export const showPolygonProgressToast = (t: (key: string) => string, label: string) =>
