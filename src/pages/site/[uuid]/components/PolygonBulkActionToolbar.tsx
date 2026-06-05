@@ -80,9 +80,9 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
 
     try {
       await onRunValidation(polygonUuids);
-      setIsSystemValidationCompleteModalOpen(true);
+      onClearSelection?.();
       window.requestAnimationFrame(() => {
-        onClearSelection?.();
+        setIsSystemValidationCompleteModalOpen(true);
       });
     } catch {
       // Error feedback is handled in the parent.

@@ -398,9 +398,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       polygons: selectedRows,
       sitePolygonUuids: selectedSitePolygonUuids
     });
-    setDeletePolygonModal(true);
+    clearBulkTableSelection();
     window.requestAnimationFrame(() => {
-      clearBulkTableSelection();
+      setDeletePolygonModal(true);
     });
   }, [clearBulkTableSelection, selectedRows, selectedSitePolygonUuids]);
 
@@ -591,9 +591,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       eligibleCount: selectedSubmittablePolygons.length,
       totalCount: selectedSitePolygons.length
     });
-    setSubmitPolygonsModal(true);
+    clearBulkTableSelection();
     window.requestAnimationFrame(() => {
-      clearBulkTableSelection();
+      setSubmitPolygonsModal(true);
     });
   }, [
     clearBulkTableSelection,
@@ -761,9 +761,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       return;
     }
     if (selectedRows.length === 1) {
-      openPolygonEditDrawerForRow(selectedRows[0]);
+      const selectedRow = selectedRows[0];
+      clearBulkTableSelection();
       window.requestAnimationFrame(() => {
-        clearBulkTableSelection();
+        openPolygonEditDrawerForRow(selectedRow);
       });
       return;
     }
@@ -771,9 +772,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       polygons: selectedRows,
       sitePolygonUuids: selectedSitePolygonUuids
     });
-    setShowBulkEditDrawer(true);
+    clearBulkTableSelection();
     window.requestAnimationFrame(() => {
-      clearBulkTableSelection();
+      setShowBulkEditDrawer(true);
     });
   }, [clearBulkTableSelection, openPolygonEditDrawerForRow, selectedRows, selectedSitePolygonUuids]);
 
