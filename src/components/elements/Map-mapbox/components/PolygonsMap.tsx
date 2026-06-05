@@ -43,7 +43,6 @@ interface PolygonsMapProps {
   polygons: SitePolygonLightDto[];
   onRefetchPolygons: () => void | Promise<void>;
   isLoadingPolygons?: boolean;
-  /** Prevents camera moves while the table is loading filtered results. */
   freezeCameraZoom?: boolean;
   className?: string;
   polygonTableHighlight?: {

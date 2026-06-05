@@ -174,7 +174,6 @@ type UsePolygonSelectionZoomParams = {
   focusPolygonUuid?: string | null;
   onFocusPolygonConsumed?: () => void;
   sitePolygonData: SitePolygonLightDto[] | undefined;
-  /** When true, selection zoom is handled by the map extent bbox instead. */
   disableSelectionZoom?: boolean;
 };
 

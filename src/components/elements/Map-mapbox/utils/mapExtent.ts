@@ -48,10 +48,6 @@ type ResolveMapExtentBboxParams = {
   countryBbox?: BBox;
 };
 
-/**
- * Resolves the map camera extent using a fixed priority:
- * selected polygons → site → project → country.
- */
 export function resolveMapExtentBbox({
   selectedPolygonUuids,
   polygons,

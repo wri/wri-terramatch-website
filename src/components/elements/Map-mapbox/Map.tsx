@@ -98,7 +98,6 @@ export interface BaseMapProps {
   };
   overlapPolygons?: OverlapPolygonPoint[];
   autoEditPolygon?: boolean;
-  /** When true, multi-selection zoom is handled via the bbox prop instead. */
   disableSelectionZoom?: boolean;
 }
 
