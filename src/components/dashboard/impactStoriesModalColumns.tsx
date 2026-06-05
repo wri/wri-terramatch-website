@@ -1,5 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 
+import CountryFlag from "@/components/dashboard/CountryFlag";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
@@ -36,7 +37,7 @@ export function buildImpactStoriesModalColumns(
           <div className="flex flex-wrap items-center gap-2">
             {countries.map((country: { icon?: string; label?: string }, index: number) => (
               <div key={index} className="flex items-center gap-2">
-                <img src={country.icon} alt={`${country.label} flag`} className="h-3 w-5 min-w-[20px] object-contain" />
+                <CountryFlag src={country.icon ?? ""} alt={`${country.label} flag`} size="xs" />
                 <Text variant="text-14">{country.label}</Text>
               </div>
             ))}

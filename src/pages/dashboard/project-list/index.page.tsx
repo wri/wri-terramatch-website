@@ -4,6 +4,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 
+import CountryFlag from "@/components/dashboard/CountryFlag";
 import Table from "@/components/elements/Table/Table";
 import { formatTableNumber, numericSortingFn } from "@/components/elements/Table/tableUtils";
 import { VARIANT_TABLE_DASHBOARD_LIST } from "@/components/elements/Table/TableVariants";
@@ -66,7 +67,7 @@ const ProjectList = () => {
         if (isMobile) {
           return (
             <div className="flex items-start gap-2">
-              <img src={country.image} alt="flag" className="h-6 w-10 min-w-[40px] object-contain" />
+              <CountryFlag src={country.image} size="md" />
               <div>
                 <Text variant="text-14-light">{project}</Text>
                 <Text variant="text-14-light" className=" text-neutral-650">
@@ -99,7 +100,7 @@ const ProjectList = () => {
               const { label, image } = props.getValue();
               return (
                 <div className="flex items-center gap-2">
-                  <img src={image} alt="flag" className="h-6 w-10 min-w-[40px] object-contain" />
+                  <CountryFlag src={image} size="md" />
                   <Text variant="text-14-light">{label}</Text>
                 </div>
               );
