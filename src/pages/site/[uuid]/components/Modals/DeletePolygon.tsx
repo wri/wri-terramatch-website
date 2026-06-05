@@ -52,7 +52,7 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, o
             <Text textStyle="400" color="neutral.900" textAlign="center">
               {t("Are you sure you want to delete")}
             </Text>
-            <Text textStyle="600-bold" color="neutral.900" textAlign="center">
+            <Text textStyle="500-bold" color="neutral.900" textAlign="center">
               {polygons[0].polygonName}?
             </Text>
 
@@ -104,7 +104,10 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, o
             {
               id: "delete",
               children: t("Delete"),
-              className: "!border !w-[50%] !border-theme-error-300 !bg-theme-error-100 !text-theme-error-900",
+              variant: "secondary",
+              typeVariant: "negative",
+              classNameContainer: "!w-[50%]",
+              className: "!w-full",
               disabled: isDeleting,
               onClick: () => void handleSave()
             }
