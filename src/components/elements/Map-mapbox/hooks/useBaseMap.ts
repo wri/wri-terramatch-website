@@ -170,9 +170,22 @@ export const useBaseMap = (onSave?: MapDrawSaveHandler, record?: MapDrawSaveReco
         draw.current?.deleteAll();
       });
       map.current.on("draw.delete", () => {
-        if (deferDrawCreateSave) {
-          setDraftPolygonGeometry(undefined);
+        if (deferDrawCreateSave !== true) return;
+        setDraftPolygonGeometry(undefined);
+
+        if (draw.current == null || map.current == null) return;
+        if (draw.current.getAll().features.length > 0) return;
+        if (draw.current.getMode() === "draw_polygon") {
+          applyMapDrawingCursor(map.current);
+          return;
         }
+
+        setIsUserDrawingEnabled(true);
+        draw.current.changeMode("draw_polygon");
+        applyMapDrawingCursor(map.current);
+        requestAnimationFrame(() => {
+          if (map.current != null) applyMapDrawingCursor(map.current);
+        });
       });
     }
   };

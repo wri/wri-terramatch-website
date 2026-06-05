@@ -23,6 +23,10 @@ const baseDrawPolygonMode = MapboxDraw.modes.draw_polygon as MapboxDraw.DrawCust
 let activeDrawModeState: DrawPolygonModeState | null = null;
 let activeDrawModeContext: DrawModeRuntimeContext | null = null;
 
+const MIN_POLYGON_POINTS = 3;
+
+const canCompletePolygon = (state: DrawPolygonModeState): boolean => state.currentVertexPosition >= MIN_POLYGON_POINTS;
+
 export const canPerformPolygonDrawUndo = (): boolean => (activeDrawModeState?.currentVertexPosition ?? 0) > 0;
 
 const syncPolygonDrawCanUndo = (): void => {
@@ -95,6 +99,11 @@ export const drawPolygonWithUndoMode: MapboxDraw.DrawCustomMode<DrawPolygonModeS
   onClick(state, event) {
     activeDrawModeState = state;
     activeDrawModeContext = this as unknown as DrawModeRuntimeContext;
+    const isVertexClick = event.featureTarget?.properties?.meta === "vertex";
+    if (isVertexClick && !canCompletePolygon(state)) {
+      syncPolygonDrawCanUndo();
+      return;
+    }
     const result = baseDrawPolygonMode.onClick?.call(this, state, event);
     syncPolygonDrawCanUndo();
     return result;
@@ -102,7 +111,23 @@ export const drawPolygonWithUndoMode: MapboxDraw.DrawCustomMode<DrawPolygonModeS
   onTap(state, event) {
     activeDrawModeState = state;
     activeDrawModeContext = this as unknown as DrawModeRuntimeContext;
+    const isVertexTap = event.featureTarget?.properties?.meta === "vertex";
+    if (isVertexTap && !canCompletePolygon(state)) {
+      syncPolygonDrawCanUndo();
+      return;
+    }
     const result = baseDrawPolygonMode.onTap?.call(this, state, event);
+    syncPolygonDrawCanUndo();
+    return result;
+  },
+  onKeyUp(state, event) {
+    activeDrawModeState = state;
+    activeDrawModeContext = this as unknown as DrawModeRuntimeContext;
+    if (event.key === "Enter" && !canCompletePolygon(state)) {
+      syncPolygonDrawCanUndo();
+      return;
+    }
+    const result = baseDrawPolygonMode.onKeyUp?.call(this, state, event);
     syncPolygonDrawCanUndo();
     return result;
   },

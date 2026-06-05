@@ -61,8 +61,10 @@ export const addGeojsonToDraw = (
   currentDraw.add(geojsonFormatted);
   const currentDrawFeatures = currentDraw.getAll();
   currentDraw.set(currentDrawFeatures);
-  const featureId = currentDrawFeatures.features[0].id;
-  currentDraw.changeMode("direct_select", { featureId: featureId as string });
+  const featureId = currentDrawFeatures.features[0]?.id;
+  if (featureId != null) {
+    currentDraw.changeMode("direct_select", { featureId: String(featureId) });
+  }
 
   if (map != null) {
     applyMapDrawStatusStyles(map, polygonStatus);
