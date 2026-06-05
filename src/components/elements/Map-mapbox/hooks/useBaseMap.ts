@@ -8,6 +8,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { drawPolygonWithUndoMode, performPolygonDrawUndo } from "../drawModes/drawPolygonWithUndoMode";
 import { FeatureCollection } from "../GeoJSON";
 import { CLEAR_DRAFT_DRAW_EVENT, UNDO_POLYGON_DRAW_EVENT } from "../interactions/draftDrawEvents";
+import { applyMapDrawingCursor, preloadMapDrawingCursor } from "../interactions/mapDrawingCursor";
 import type { ControlType } from "../Map.d";
 import { BASEMAP_CONFIGS, MapStyle } from "../MapControls/types";
 import { applyMapDrawStatusStyles, createMapDrawStyles } from "../mapStyle";
@@ -147,7 +148,12 @@ export const useBaseMap = (onSave?: MapDrawSaveHandler, record?: MapDrawSaveReco
         addControlToMap();
       }
 
+      void preloadMapDrawingCursor();
+
       map.current.on("draw.modechange", (event: { mode: string }) => {
+        if (event.mode === "draw_polygon" && map.current != null) {
+          applyMapDrawingCursor(map.current);
+        }
         if (event.mode === "simple_select") {
           setIsUserDrawingEnabled(false);
         }

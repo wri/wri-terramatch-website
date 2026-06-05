@@ -243,8 +243,12 @@ export function useMapDraw({
     if (map.current == null || draw.current == null) return;
     if (isUserDrawingEnabled) {
       applyMapDrawStatusStyles(map.current);
+      applyMapDrawingCursor(map.current);
       draw.current.changeMode("draw_polygon");
       applyMapDrawingCursor(map.current);
+      requestAnimationFrame(() => {
+        if (map.current != null) applyMapDrawingCursor(map.current);
+      });
       if (formMap && polygonFromMap?.uuid) {
         filterPolygonFromLayers(polygonFromMap.uuid, polygonsData, map.current);
       }
