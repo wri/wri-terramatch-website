@@ -23,7 +23,8 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   tooltipContent,
   showClearFilters = true,
   onClickFilterButton,
-  selectedFilters
+  selectedFilters,
+  classNameContentLeft
 }) => {
   const t = useT();
   const queryRef = useRef("");
@@ -50,9 +51,10 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
 
   return (
     <Toolbar
-      className={classNames("mobile:mb-6 mobile:flex-col mobile:!items-start", className)}
+      className={classNames("mobile:mb-6 mobile:flex-col mobile:!items-start mobile:gap-4", className)}
+      classNameContentLeft={classNameContentLeft}
       contentLeft={
-        <div className="flex items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0">
+        <div className="flex items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4">
           {search != null && (
             <div className="flex w-full min-w-max max-w-max items-center gap-4">
               <div onKeyDown={handleKeyDown}>
@@ -87,9 +89,9 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
             <SimpleDivider backgroundColor="neutral.500" className="!h-4 !w-[0.0625rem] mobile:hidden" />
           )}
 
-          <div className="flex min-w-[0] items-center gap-4">
+          <div className="flex min-w-[0] items-center gap-4 mobile:w-full">
             {filters != null && filters.length > 0 ? (
-              <div className="text-14 flex flex-wrap items-center gap-3 text-theme-neutral-900">
+              <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-3">
                 {t("Filter by:")}
 
                 {filters.map((filter, index) => (
@@ -103,7 +105,6 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                   : t("Add Filter")}
               </Button>
             )}
-
             <FilterTag selectedFilters={selectedFilters} />
 
             {showClearFilters && (
