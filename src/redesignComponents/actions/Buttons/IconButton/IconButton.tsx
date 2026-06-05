@@ -26,7 +26,7 @@ const IconButton: FC<IconButtonProps> = ({
       disabled={disabled}
       onClick={onClick}
       {...props}
-      className={twMerge("hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40 h-6 w-6 rounded-sm", className)}
+      className={twMerge("h-6 w-6 rounded-sm hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40", className)}
     />
   );
 };
