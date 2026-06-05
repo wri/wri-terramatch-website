@@ -11,6 +11,7 @@ export enum Framework {
   EPA_GHANA_PILOT = "epa-ghana-pilot",
   FF = "fundo-flora",
   FF_1 = "fundo-flora-1",
+  WCB = "wcb",
 
   UNDEFINED = "undefined"
 }
