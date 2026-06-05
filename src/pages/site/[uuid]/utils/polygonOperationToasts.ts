@@ -1,61 +1,40 @@
-import { createToaster } from "@chakra-ui/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import { createElement } from "react";
 
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
 export const POLYGON_TOAST_PLACEMENT = "bottom" as const;
-export const POLYGON_TOAST_DURATION_MS = 2000;
+export const POLYGON_TOAST_DURATION_MS = 5000;
 
-const PROGRESS_TOAST_ID = "polygon-progress-toast";
-
-export const polygonProgressToaster = createToaster({
-  placement: POLYGON_TOAST_PLACEMENT,
-  pauseOnPageIdle: true,
-  offsets: "1.5rem"
-});
-
-export const dismissPolygonProgressToast = () => {
-  polygonProgressToaster.dismiss(PROGRESS_TOAST_ID);
-};
-
-export const showPolygonProgressToast = (t: (key: string) => string, label: string) => {
-  polygonProgressToaster.dismiss(PROGRESS_TOAST_ID);
-  polygonProgressToaster.create({
-    id: PROGRESS_TOAST_ID,
-    title: label,
+export const showPolygonProgressToast = (t: (key: string) => string, label: string) =>
+  showToast({
+    label,
     type: "info",
-    duration: Infinity,
-    meta: {
-      icon: createElement(LoadingIcon, {
-        boxSize: 7,
-        color: "primary.700",
-        animation: "spin 1s linear infinite"
-      }),
-      closableLabel: t("Close")
-    }
+    placement: POLYGON_TOAST_PLACEMENT,
+    duration: POLYGON_TOAST_DURATION_MS,
+    closableLabel: t("Close"),
+    icon: createElement(LoadingIcon, {
+      boxSize: 7,
+      color: "primary.700",
+      animation: "spin 1s linear infinite"
+    })
   });
-};
 
-export const showPolygonCompleteToast = (label: string) => {
-  dismissPolygonProgressToast();
+export const showPolygonCompleteToast = (label: string) =>
   showToast({
     label,
     type: "success",
     placement: POLYGON_TOAST_PLACEMENT,
     duration: POLYGON_TOAST_DURATION_MS
   });
-};
 
-export const showPolygonErrorToast = (label: string) => {
-  dismissPolygonProgressToast();
+export const showPolygonErrorToast = (label: string) =>
   showToast({
     label,
     type: "error",
     placement: POLYGON_TOAST_PLACEMENT,
     duration: POLYGON_TOAST_DURATION_MS
   });
-};
 
 type TranslateFn = (key: string) => string;
 

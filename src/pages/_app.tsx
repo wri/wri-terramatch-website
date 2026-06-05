@@ -24,7 +24,6 @@ import NotificationProvider from "@/context/notification.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
 import { system } from "@/lib/theme";
-import PolygonProgressToaster from "@/pages/site/[uuid]/utils/PolygonProgressToaster";
 import { WrappedReduxProvider } from "@/store/store";
 import Bootstrap from "@/utils/Bootstrap";
 import setupYup from "@/yup.locale";
@@ -46,7 +45,6 @@ const DashboardStack = ({ children }: PropsWithChildren) => (
       <ModalRoot />
       <Toast />
       <WRIToast />
-      <PolygonProgressToaster />
       <DashboardAnalyticsWrapper>
         <DashboardLayout>{children}</DashboardLayout>
       </DashboardAnalyticsWrapper>
@@ -72,7 +70,6 @@ const PDStack = ({ children }: PropsWithChildren) => (
         <ModalRoot />
         <Toast />
         <WRIToast />
-        <PolygonProgressToaster />
         <MainLayout>
           {children}
           <CookieBanner />
