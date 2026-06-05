@@ -42,6 +42,7 @@ interface PolygonsMapProps {
   polygons: SitePolygonLightDto[];
   onRefetchPolygons: () => void | Promise<void>;
   isLoadingPolygons?: boolean;
+  freezeCameraZoom?: boolean;
   className?: string;
   polygonTableHighlight?: {
     selectedPolygonUuids: string[];
@@ -65,6 +66,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   polygons,
   onRefetchPolygons,
   isLoadingPolygons = false,
+  freezeCameraZoom = false,
   className,
   polygonTableHighlight,
   overlapPolygons
@@ -199,7 +201,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         polygonsExists={polygons.length > 0}
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
-        shouldBboxZoom={!shouldRefetchPolygonData}
+        shouldBboxZoom={!shouldRefetchPolygonData && !freezeCameraZoom}
         mediaFiles={mediaFiles}
         sitePolygonData={sitePolygonDataV3}
         disabledPolygonPanel={disabledPolygonPanel}
