@@ -929,7 +929,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             mainActionLabel: t("Add"),
             size: "small",
             leftIcon: <PlusIcon />,
-            mainActionOnClick: startNewPolygonFlow,
+            mainActionOnClick: () => {},
             otherActions: [
               {
                 label: t("Draw Polygon"),
