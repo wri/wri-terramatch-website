@@ -45,10 +45,6 @@ import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { DownloadIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
-import {
-  mapSitePolygonStatusToMappedTagState,
-  mapSiteValidationStatusToTagState
-} from "@/utils/mapStatusToTagStateEntity";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import {
@@ -60,9 +56,7 @@ import {
   showPolygonErrorToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
-import DeletePolygon from "./Modals/DeletePolygon";
-import SubmitPolygons from "./Modals/SubmitPolygons";
-import UploadPhotos from "./Modals/UploadPhotos";
+import UploadGeotaggedPhotos from "./Modals/GeotaggedPhotos/UploadGeotaggedPhotos";
 import type { PolygonSaveCallback } from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
@@ -71,15 +65,17 @@ import {
   saveExistingPolygonVersion,
   saveNewSitePolygon
 } from "./polygonEditSave";
-import { formatDistributionValue, isRestorationStrategy, isTargetLandUseType } from "./polygonTable.constants";
-import type { PolygonTableRow } from "./PolygonTableRow";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 
 type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
   onClose?: () => void;
   onRegisterSave?: (saveHandler: () => Promise<boolean>) => void;
+  onRegisterDelete: (deleteHandler: () => Promise<void>) => void;
+  onRegisterSubmit: (submitHandler: () => Promise<void>) => void;
   onRegisterPolygonName?: (getPolygonName: () => string) => void;
+  onRequestDeleteModal: () => void;
+  onRequestSubmitModal: () => void;
   onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
@@ -131,7 +127,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   polygon,
   onClose,
   onRegisterSave,
+  onRegisterDelete,
+  onRegisterSubmit,
   onRegisterPolygonName,
+  onRequestDeleteModal,
+  onRequestSubmitModal,
   onSaved,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange
@@ -147,7 +147,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       showPolygonCompleteToast(label);
       return;
     }
-    showToast({ label, type: "warning", placement: "bottom-end", duration: 5000 });
+    showToast({ label, type: "warning", placement: "bottom", duration: 5000 });
   }, []);
   const {
     polygonGeometryEdit,
@@ -162,7 +162,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     invalidatePolygonMapTiles,
     setSelectedPolyVersion,
     setPreviewVersion,
-    setStatusSelectedPolygon
+    setStatusSelectedPolygon,
+    showPhotosOnMap,
+    setShowPhotosOnMap
   } = useMapAreaContext();
   const [polygonName, setPolygonName] = useState("");
   const [plantStartDate, setPlantStartDate] = useState<DateValue[]>([]);
@@ -171,8 +173,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState("");
   const [plotsVisible, setPlotsVisible] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
   const [openAccordionSection, setOpenAccordionSection] = useState<PolygonEditAccordionSection | null>("details");
@@ -239,28 +239,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     () => (versionsData ?? []).map(version => ({ ...version, id: version.uuid ?? version.polygonUuid ?? "" })),
     [versionsData]
   );
-  const polygonTableRow = useMemo<PolygonTableRow[]>(
-    () =>
-      polygon == null
-        ? []
-        : [
-            {
-              id: polygon.polygonUuid ?? polygon.uuid ?? "",
-              polygonName: polygon.name ?? t("Unnamed Polygon"),
-              submission: mapSitePolygonStatusToMappedTagState(polygon.status ?? "draft"),
-              validation: mapSiteValidationStatusToTagState(polygon.validationStatus ?? null),
-              restorationPractice: (polygon.practice ?? []).filter(isRestorationStrategy),
-              targetLandUse:
-                polygon.targetSys != null && isTargetLandUseType(polygon.targetSys) ? polygon.targetSys : null,
-              plantingDate: polygon.plantStart ?? "-",
-              treeDistribution: (polygon.distr ?? []).map(formatDistributionValue),
-              treesPlanted: polygon.numTrees ?? 0,
-              area: polygon.calcArea ?? 0
-            }
-          ],
-    [polygon, t]
-  );
-
   useEffect(() => {
     setPolygonName(polygon?.name ?? "");
     setPlantStartDate(isoStringToDateValue(polygon?.plantStart));
@@ -478,6 +456,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     [anrMapOverlayRef]
   );
 
+  useEffect(
+    () => () => {
+      setShowPhotosOnMap(true);
+    },
+    [setShowPhotosOnMap]
+  );
+
   const downloadMonitoringPlots = useCallback(async () => {
     if (sitePolygonUuid === "" || !isAnrEligible) {
       showStatusToast("error", t("ANR monitoring plots are not available for this polygon"));
@@ -571,11 +556,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
     try {
       await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon", { includeExtendedData: true });
+      onClose?.();
       showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
     } catch (error) {
       showPolygonErrorToast(t("Error downloading polygon"));
     }
-  }, [geometryPolygonUuid, polygon?.name, showStatusToast, t, toastLabels]);
+  }, [geometryPolygonUuid, onClose, polygon?.name, showStatusToast, t, toastLabels]);
 
   const handleSubmitPolygon = useCallback(async () => {
     if (polygon?.uuid == null || polygon.uuid === "") {
@@ -632,7 +618,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
     try {
       await deleteSitePolygon(polygon.uuid);
-      setShowDeleteModal(false);
       pruneSitePolygonsCache();
       if (geometryPolygonUuid !== "") {
         prunePolygonValidationCache(geometryPolygonUuid);
@@ -671,12 +656,26 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [onRegisterSave, savePolygonData]);
 
   useEffect(() => {
+    onRegisterDelete(handleDeletePolygon);
+  }, [handleDeletePolygon, onRegisterDelete]);
+
+  useEffect(() => {
+    onRegisterSubmit(handleSubmitPolygon);
+  }, [handleSubmitPolygon, onRegisterSubmit]);
+
+  useEffect(() => {
     onRegisterPolygonName?.(() => getPolygonNameForDisplay(polygonName, polygon));
   }, [onRegisterPolygonName, polygon, polygonName]);
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
-      <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
+      <UploadGeotaggedPhotos
+        open={showUploadPhotosModal}
+        siteUuid={resolvedSiteUuid}
+        onOpenChange={setShowUploadPhotosModal}
+      />
+      {/* TODO: Uncomment this to display the warning modal when an uploaded image does not contain location data. */}
+      {/* <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} /> */}
       <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden py-5 px-2 pl-6 pr-7">
         <SubmissionValidationTags polygon={polygon} />
         <Accordion
@@ -826,7 +825,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               <Text textStyle="400-bold" color="neutral.900">{`X ${t("Photos")}`}</Text>
               <Text color="neutral.900">{t("available")}</Text>
             </Flex>
-            <Switch name="showPhotosOnMap" onChange={function noRefCheck() {}}>
+            <Switch
+              name="showPhotosOnMap"
+              checked={showPhotosOnMap}
+              onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
+                setShowPhotosOnMap(checked === true)
+              }
+            >
               {t("Show Photos on Map")}
             </Switch>
           </Flex>
@@ -894,29 +899,16 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             <FloatingActionToolbar
               className="bg-theme-neutral-200"
               items={[
-                { label: t("Delete"), onClick: () => setShowDeleteModal(true), labelColor: "error.500" },
+                { label: t("Delete"), onClick: onRequestDeleteModal, labelColor: "error.500" },
                 { label: t("Download"), onClick: () => void handleDownloadPolygon() },
                 {
                   label: t("Submit"),
                   disabled: !isPolygonSubmittable,
-                  onClick: () => setShowSubmitModal(true)
+                  onClick: onRequestSubmitModal
                 }
               ]}
             />
           </Flex>
-          <SubmitPolygons
-            open={showSubmitModal}
-            onOpenChange={setShowSubmitModal}
-            eligibleCount={isPolygonSubmittable ? 1 : 0}
-            totalCount={1}
-            onSubmit={handleSubmitPolygon}
-          />
-          <DeletePolygon
-            open={showDeleteModal}
-            onOpenChange={setShowDeleteModal}
-            polygons={polygonTableRow}
-            onDelete={handleDeletePolygon}
-          />
         </>
       )}
     </Flex>

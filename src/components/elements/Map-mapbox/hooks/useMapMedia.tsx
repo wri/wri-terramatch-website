@@ -5,6 +5,8 @@ import React, { MutableRefObject, useEffect } from "react";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { deleteMedia, updateMedia } from "@/connections/Media";
+import { useMapAreaContext } from "@/context/mapArea.provider";
+import { openEditPhotoDetailsFromMapPopup } from "@/context/mapArea.utils";
 import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TranslatedText } from "@/i18n/types";
@@ -47,6 +49,7 @@ export function useMapMedia({
   router
 }: UseMapMediaParams) {
   const championsMap = useChampionsMap();
+  const { showPhotosOnMap } = useMapAreaContext();
 
   useEffect(() => {
     const mapInstance = map.current;
@@ -65,6 +68,11 @@ export function useMapMedia({
     };
 
     const openModalImageDetail = (data: MediaDto) => {
+      if (championsMap) {
+        openEditPhotoDetailsFromMapPopup(data);
+        return;
+      }
+
       openModal(
         ModalId.MODAL_IMAGE_DETAIL,
         <ModalImageDetails
@@ -89,10 +97,10 @@ export function useMapMedia({
       }
     };
 
-    const handleDownload = async (uuid: string, fileName: string): Promise<void> => {
+    const handleDownload = async (uuid: string, defaultFileName: string): Promise<void> => {
       showLoader();
       try {
-        await exportImage.downloadFile({ pathParams: { uuid } }, fileName);
+        await exportImage.downloadFile({ pathParams: { uuid } }, { defaultFileName });
         openNotification("success", t("Success!"), t("Image downloaded successfully"));
       } catch (error) {
         Log.error("Download error:", error);
@@ -110,12 +118,12 @@ export function useMapMedia({
     };
 
     if (championsMap) {
-      addMediaMarkers(mapInstance, mediaFiles, callbacks);
+      addMediaMarkers(mapInstance, mediaFiles, callbacks, showPhotosOnMap);
       return () => removeMediaMarkers(mapInstance);
     }
 
     addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
     return () => removeMediaSymbolLayer(mapInstance);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mediaFiles, styleReady, styleVersion, championsMap]);
+  }, [mediaFiles, styleReady, styleVersion, championsMap, showPhotosOnMap]);
 }

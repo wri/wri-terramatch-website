@@ -726,6 +726,20 @@ export type DelayedJobDto = {
    * The name of the related entity (e.g., Kerrawarra, New Site, etc).
    */
   entityName?: string | null;
+  /**
+   * The type of the related entity (e.g., projects, sites, etc).
+   */
+  entityType?:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | null;
 };
 
 export type BoundingBoxDto = {

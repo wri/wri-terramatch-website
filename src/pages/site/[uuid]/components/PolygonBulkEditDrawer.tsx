@@ -290,7 +290,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                 >
                   <DatePickerInput
                     label={t("Plant Start Date")}
-                    className="w-[13.5rem]"
+                    className="!w-[13.5rem]"
                     value={plantStartDate}
                     onValueChange={setPlantStartDate}
                     disabled={editingField !== "plantStart"}

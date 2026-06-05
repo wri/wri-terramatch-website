@@ -9,6 +9,9 @@ type TextInputProps = ComponentProps<typeof WriTextInput> & {
 };
 
 const StyledWrapper = styled.div<{ css?: SerializedStyles }>`
+  & input:is(: disabled, [disabled], [data-disabled], [aria-disabled="true"]) {
+    opacity: 1;
+  }
   ${props => props.css}
 `;
 

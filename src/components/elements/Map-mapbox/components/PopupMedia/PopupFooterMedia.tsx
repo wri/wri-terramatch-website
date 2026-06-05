@@ -1,4 +1,4 @@
-import { Grid } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { type FC, memo } from "react";
 
@@ -16,25 +16,32 @@ type PopupFooterMediaProps = {
 const PopupFooterMedia: FC<PopupFooterMediaProps> = ({ isProjectPath, onDownload, onEdit, onMakeCover, onDelete }) => {
   const t = useT();
   const showCover = isProjectPath;
-  const cols = showCover ? 4 : 3;
 
   return (
-    <Grid templateColumns={`repeat(${cols}, 1fr)`} gap={2} width="100%" padding="0.75rem">
-      <Button variant="secondary" size="small" leftIcon={<DownloadIcon />} onClick={onDownload}>
+    <Flex justifyContent="space-between" gap={0} width="100%" wrap="wrap">
+      <Button
+        variant="secondary"
+        size="small"
+        leftIcon={<DeleteIcon color="error.500" />}
+        onClick={onDelete}
+        classNameContainer="w-fit"
+        typeVariant="negative"
+        className="!border-theme-error-300 !bg-theme-error-100 !text-theme-error-900"
+      >
+        {t("Delete")}
+      </Button>
+      <Button variant="secondary" size="small" leftIcon={<DownloadIcon />} onClick={onDownload} className="w-fit">
         {t("Download")}
       </Button>
-      <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit}>
+      <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit} className="w-fit">
         {t("Edit")}
       </Button>
       {showCover ? (
-        <Button variant="secondary" size="small" leftIcon={<PhotosIcon />} onClick={onMakeCover}>
+        <Button variant="secondary" size="small" leftIcon={<PhotosIcon />} onClick={onMakeCover} className="w-fit">
           {t("Cover")}
         </Button>
       ) : null}
-      <Button variant="secondary" size="small" leftIcon={<DeleteIcon />} onClick={onDelete}>
-        {t("Delete")}
-      </Button>
-    </Grid>
+    </Flex>
   );
 };
 
