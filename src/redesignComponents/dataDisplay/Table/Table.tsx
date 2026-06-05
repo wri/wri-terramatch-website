@@ -227,7 +227,7 @@ const Table = <T extends BaseRow>({
           textStyle="500"
           fontWeight="400"
           color={getThemedColor("neutral", 700)}
-          className="absolute bottom-0 left-1/2 w-fit -translate-x-1/2 text-center mobile:hidden"
+          className="absolute bottom-[1.875rem] left-1/2 w-fit -translate-x-1/2 text-center mobile:hidden"
         >
           Showing {`${displayStart} - ${displayEnd} of ${actualTotalItems}`}
         </Text>
