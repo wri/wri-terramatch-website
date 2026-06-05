@@ -82,7 +82,7 @@ export const getPolygonOperationToastLabels = (t: TranslateFn): PolygonOperation
   savingChangesComplete: t("Changes Saved"),
   downloadingPolygonsComplete: t("Download Complete"),
   updatingPolygonsComplete: t("Update Complete"),
-  deletingComplete: t("Deletion Complete"),
+  deletingComplete: t("Polygon deleted"),
   fixingOverlapsComplete: t("Overlap Fix Complete"),
   downloadingSamplePlotsProgress: t("Downloading Sample Plots..."),
   downloadingSamplePlotsComplete: t("Download Complete")
