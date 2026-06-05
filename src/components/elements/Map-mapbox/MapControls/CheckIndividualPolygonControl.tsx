@@ -5,6 +5,7 @@ import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import { clipSinglePolygon } from "@/connections/PolygonClipping";
 import { useListPolygonVersions } from "@/connections/PolygonVersion";
 import { createPolygonValidation, usePolygonValidation } from "@/connections/Validation";
+import { useEntityScope } from "@/context/entityScope.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -13,6 +14,7 @@ import { usePolygonClippingCompletion } from "@/hooks/usePolygonClippingCompleti
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
 import Button from "../../Button/Button";
@@ -53,10 +55,18 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
   const [, { data: polygonVersionsData, refetch: refetchPolygonVersionsHook }] =
     useListPolygonVersions(connectionProps);
 
+  const { entityType: entityTypeFromScope, entityUuid: entityUuidFromScope } = useEntityScope();
+
   const runPolygonValidation = async () => {
     try {
       showLoader();
       const polygonUuid = editPolygon?.uuid ?? "";
+      trackPolygonEvent("polygon_validation_run", {
+        ...getPolygonAnalyticsContext({ entityType: entityTypeFromScope }),
+        entity_id: entityUuidFromScope,
+        polygon_id: polygonUuid,
+        validation_result: "pending"
+      });
       await createPolygonValidation({
         polygonUuids: [polygonUuid]
       });
@@ -71,10 +81,22 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
         t("Success! TerraMatch reviewed the polygon"),
         t("Please update and re-run if validations fail.")
       );
+      trackPolygonEvent("polygon_validation_run", {
+        ...getPolygonAnalyticsContext({ entityType: entityTypeFromScope }),
+        entity_id: entityUuidFromScope,
+        polygon_id: polygonUuid,
+        validation_result: "pass"
+      });
     } catch (error) {
       hideLoader();
       setClickedValidation(false);
       openNotification("error", t("Please try again later."), t("Error! TerraMatch could not review polygons"));
+      trackPolygonEvent("polygon_validation_run", {
+        ...getPolygonAnalyticsContext({ entityType: entityTypeFromScope }),
+        entity_id: entityUuidFromScope,
+        polygon_id: editPolygon?.uuid,
+        validation_result: "fail"
+      });
     }
   };
 
@@ -195,6 +217,11 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
               className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-black disabled:cursor-not-allowed disabled:opacity-60"
               onClick={() => {
                 showLoader();
+                trackPolygonEvent("polygon_overlap_fix_clicked", {
+                  ...getPolygonAnalyticsContext({ entityType: entityTypeFromScope }),
+                  entity_id: entityUuidFromScope,
+                  polygon_id: editPolygon?.uuid
+                });
                 clipSinglePolygon(editPolygon.uuid);
                 setPendingClipping(true);
               }}

@@ -9,6 +9,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import ApiSlice from "@/store/apiSlice";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 
 interface UsePolygonFixingProps {
   siteUuid?: string;
@@ -28,6 +29,10 @@ export const usePolygonFixing = ({ siteUuid, setIsLoadingDelayedJob, setAlertTit
 
   const runFixPolygonOverlaps = useCallback(() => {
     if (siteUuid) {
+      trackPolygonEvent("polygon_overlap_fix_clicked", {
+        ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+        polygon_id: "bulk"
+      });
       closeModal(ModalId.FIX_POLYGONS);
       setIsLoadingDelayedJob?.(true);
       setAlertTitle?.("Fix Polygons");

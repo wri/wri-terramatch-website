@@ -12,7 +12,7 @@ const BlurContainer: FC<BlurContainerProps> = ({ children, className, disabled }
   <div
     className={tw(
       classNames(
-        "relative max-h-fit w-fit min-w-[196px] flex-[1_1_45%] rounded-lg border border-[#989E97] small:flex-auto"
+        "relative max-h-fit w-fit min-w-[196px] flex-[1_1_45%] overflow-visible rounded-lg border border-[#989E97] small:flex-auto"
       ),
       className
     )}

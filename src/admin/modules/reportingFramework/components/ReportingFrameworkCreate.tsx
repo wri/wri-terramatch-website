@@ -8,7 +8,7 @@ export const ReportingFrameworkCreate: FC = () => {
     <Create>
       <SimpleForm>
         <TextInput source="name" label="Name" fullWidth validate={required()} />
-        <TextInput source="accessCode" label="Access Code" fullWidth validate={required()} />
+        <TextInput source="slug" label="Slug" fullWidth validate={required()} />
         <ReferenceInput source="projectFormUuid" reference={modules.form.ResourceName} filter={{ type: "project" }}>
           <AutocompleteInput optionText="title" label="Project Establishment Form" fullWidth validate={required()} />
         </ReferenceInput>
