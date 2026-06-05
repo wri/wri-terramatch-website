@@ -139,12 +139,14 @@ const HighLevelMetrics: FC = () => {
           <ContextCondition frameworksShow={ALL_TF}>
             <DemographicsTotalField label="Total Number of Jobs Created" sx={inlineLabelSx} totalsType="jobs" />
           </ContextCondition>
-          <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx}>
-            <NumberField
-              source={record.treesPlantedCount ? "treesPlantedCount" : "totalTreesPlantedCount"}
-              emptyText="0"
-            />
-          </Labeled>
+          {resource !== "nurseryReport" && (
+            <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx}>
+              <NumberField
+                source={record.treesPlantedCount ? "treesPlantedCount" : "totalTreesPlantedCount"}
+                emptyText="0"
+              />
+            </Labeled>
+          )}
           <ContextCondition frameworksHide={SUMMARY_ANR_ROLLUP_HIDE}>
             {resource === "siteReport" && (
               <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>

@@ -8,7 +8,6 @@ import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import DisturbanceReport from "@/admin/modules/disturbanceReport/components/DisturbanceReport";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
-import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { FormSummaryRowProps } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { SupportedEntity } from "@/connections/EntityAssociation";
@@ -20,12 +19,8 @@ type InformationTabRowProps = Omit<FormSummaryRowProps, "index" | "type">;
 const InformationTabRow: FC<InformationTabRowProps> = props => {
   const entity = useFormEntities()[0];
   const entityName = camelCase(entity?.entityName ?? "projects") as SupportedEntity;
-  const entityUuid = entity?.entityUUID ?? "";
   const entries = useGetFormEntries({ ...props, entity });
   const { record } = useShowContext();
-  // usePlantTotalCount already combines plants and reportCounts, filtering duplicates for nurseries
-  const nurseryTotalFallback = usePlantTotalCount({ entity: entityName, entityUuid, collection: "nursery-seedling" });
-  const totalTreePlanted = usePlantTotalCount({ entity: entityName, entityUuid, collection: "tree-planted" });
   const fieldsProvider = useFieldsProvider();
   const { framework } = useFrameworkContext();
   const title = fieldsProvider.step(props.stepId)?.title;
@@ -57,17 +52,6 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
                       {entry.title}
                     </Text>
                   ) : null}
-                  <Typography className={LabeledClasses.label}>
-                    <div className="flex items-center gap-2 py-1">
-                      <Text as="span" variant="text-16-bold" className="capitalize text-darkCustom">
-                        {"Saplings to be Grown"}
-                      </Text>
-                      <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                        {(entityName === "nurseries" ? nurseryTotalFallback : totalTreePlanted)?.toLocaleString?.() ??
-                          0}
-                      </Text>
-                    </div>
-                  </Typography>
                   {formatEntryValue(entry.value)}
                 </>
               ) : entityName != "financialReports" ? (
