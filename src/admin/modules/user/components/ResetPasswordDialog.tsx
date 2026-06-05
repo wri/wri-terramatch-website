@@ -17,6 +17,7 @@ import * as yup from "yup";
 import { useUser } from "@/connections/User";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { first } from "@/utils/array";
+import Log from "@/utils/log";
 
 interface ResetPasswordDialogProps extends DialogProps {
   userUUID: string;
@@ -73,7 +74,7 @@ const ResetPasswordDialog: FC<ResetPasswordDialogProps> = ({ userUUID, onHide, .
           notify("Password changed successfully.", { type: "success", undoable: false });
           hideModal();
         } else {
-          console.log("failure", updateFailure);
+          Log.error("failure", updateFailure);
           notify(first(failure.message) ?? "Password update failed", { type: "error" });
         }
       },
