@@ -48,7 +48,6 @@ import ApiSlice from "@/store/apiSlice";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import {
-  getDeletingProgressLabel,
   getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
   getSubmittingProgressLabel,
@@ -79,6 +78,7 @@ type PolygonEditContentProps = {
   onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
+  onDeletingChange?: (isDeleting: boolean, count?: number) => void;
 };
 
 type PolygonVersionRow = SitePolygonLightDto & { id: string };
@@ -134,7 +134,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRequestSubmitModal,
   onSaved,
   onPolygonUpdated,
-  onSuppressMapSelectionHighlightChange
+  onSuppressMapSelectionHighlightChange,
+  onDeletingChange
 }) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
@@ -614,7 +615,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
-    showPolygonProgressToast(t, getDeletingProgressLabel(t, 1));
+    onDeletingChange?.(true, 1);
 
     try {
       await deleteSitePolygon(polygon.uuid);
@@ -635,12 +636,15 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     } catch (error) {
       showPolygonErrorToast(t("Error deleting polygon"));
       throw error;
+    } finally {
+      onDeletingChange?.(false);
     }
   }, [
     closeMapPopups,
     geometryPolygonUuid,
     invalidatePolygonMapTiles,
     onClose,
+    onDeletingChange,
     onSaved,
     polygon?.uuid,
     setIsUserDrawingEnabled,
