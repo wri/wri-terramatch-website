@@ -5,10 +5,11 @@ import React, { MutableRefObject, useEffect } from "react";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { deleteMedia, updateMedia } from "@/connections/Media";
+import { useMapAreaContext } from "@/context/mapArea.provider";
+import { openEditPhotoDetailsFromMapPopup } from "@/context/mapArea.utils";
 import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TranslatedText } from "@/i18n/types";
-import EditPhotoDetails from "@/pages/site/[uuid]/components/Modals/GeotaggedPhotos/EditPhotoDetails";
 import Log from "@/utils/log";
 
 import { useChampionsMap } from "../championsMap.context";
@@ -48,6 +49,7 @@ export function useMapMedia({
   router
 }: UseMapMediaParams) {
   const championsMap = useChampionsMap();
+  const { showPhotosOnMap } = useMapAreaContext();
 
   useEffect(() => {
     const mapInstance = map.current;
@@ -66,20 +68,21 @@ export function useMapMedia({
     };
 
     const openModalImageDetail = (data: MediaDto) => {
+      if (championsMap) {
+        openEditPhotoDetailsFromMapPopup(data);
+        return;
+      }
+
       openModal(
         ModalId.MODAL_IMAGE_DETAIL,
-        championsMap ? (
-          <EditPhotoDetails open={true} onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)} />
-        ) : (
-          <ModalImageDetails
-            title="IMAGE DETAILS"
-            data={data}
-            entityData={entityData}
-            onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
-            reloadGalleryImages={() => setShouldRefetchMediaData(true)}
-            handleDelete={handleDelete}
-          />
-        ),
+        <ModalImageDetails
+          title="IMAGE DETAILS"
+          data={data}
+          entityData={entityData}
+          onClose={() => closeModal(ModalId.MODAL_IMAGE_DETAIL)}
+          reloadGalleryImages={() => setShouldRefetchMediaData(true)}
+          handleDelete={handleDelete}
+        />,
         true
       );
     };
@@ -115,12 +118,12 @@ export function useMapMedia({
     };
 
     if (championsMap) {
-      addMediaMarkers(mapInstance, mediaFiles, callbacks);
+      addMediaMarkers(mapInstance, mediaFiles, callbacks, showPhotosOnMap);
       return () => removeMediaMarkers(mapInstance);
     }
 
     addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
     return () => removeMediaSymbolLayer(mapInstance);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mediaFiles, styleReady, styleVersion, championsMap]);
+  }, [mediaFiles, styleReady, styleVersion, championsMap, showPhotosOnMap]);
 }

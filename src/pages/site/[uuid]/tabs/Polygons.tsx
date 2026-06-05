@@ -50,6 +50,7 @@ import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import DeletePolygon from "../components/Modals/DeletePolygon";
+import EditPhotoDetails from "../components/Modals/GeotaggedPhotos/EditPhotoDetails";
 import OverlapFix, { OverlapFixPolygon } from "../components/Modals/OverlapFix";
 import PolygonSubmitted from "../components/Modals/PolygonSubmitted";
 import SubmitPolygons from "../components/Modals/SubmitPolygons";
@@ -112,6 +113,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     invalidatePolygonMapTiles,
     polygonSubmitConfirmation,
     setPolygonSubmitConfirmation,
+    editPhotoDetailsMedia,
+    setEditPhotoDetailsMedia,
     setShouldRefetchPolygonData
   } = useMapAreaContext();
   const { openNotification } = useNotificationContext();
@@ -1047,6 +1050,14 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         />
         <UploadError open={showUploadErrorModal} onOpenChange={setUploadErrorModal} />
         <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
+        {editPhotoDetailsMedia != null && (
+          <EditPhotoDetails
+            key={editPhotoDetailsMedia.uuid}
+            open
+            data={editPhotoDetailsMedia}
+            onClose={() => setEditPhotoDetailsMedia(null)}
+          />
+        )}
 
         <ResizeBox
           initialHeight={100}

@@ -162,7 +162,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     invalidatePolygonMapTiles,
     setSelectedPolyVersion,
     setPreviewVersion,
-    setStatusSelectedPolygon
+    setStatusSelectedPolygon,
+    showPhotosOnMap,
+    setShowPhotosOnMap
   } = useMapAreaContext();
   const [polygonName, setPolygonName] = useState("");
   const [plantStartDate, setPlantStartDate] = useState<DateValue[]>([]);
@@ -454,6 +456,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     [anrMapOverlayRef]
   );
 
+  useEffect(
+    () => () => {
+      setShowPhotosOnMap(true);
+    },
+    [setShowPhotosOnMap]
+  );
+
   const downloadMonitoringPlots = useCallback(async () => {
     if (sitePolygonUuid === "" || !isAnrEligible) {
       showStatusToast("error", t("ANR monitoring plots are not available for this polygon"));
@@ -660,7 +669,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
-      <UploadGeotaggedPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
+      <UploadGeotaggedPhotos
+        open={showUploadPhotosModal}
+        siteUuid={resolvedSiteUuid}
+        onOpenChange={setShowUploadPhotosModal}
+      />
       {/* TODO: Uncomment this to display the warning modal when an uploaded image does not contain location data. */}
       {/* <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} /> */}
       <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden py-5 px-2 pl-6 pr-7">
@@ -812,7 +825,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               <Text textStyle="400-bold" color="neutral.900">{`X ${t("Photos")}`}</Text>
               <Text color="neutral.900">{t("available")}</Text>
             </Flex>
-            <Switch name="showPhotosOnMap" onChange={function noRefCheck() {}}>
+            <Switch
+              name="showPhotosOnMap"
+              checked={showPhotosOnMap}
+              onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
+                setShowPhotosOnMap(checked === true)
+              }
+            >
               {t("Show Photos on Map")}
             </Switch>
           </Flex>

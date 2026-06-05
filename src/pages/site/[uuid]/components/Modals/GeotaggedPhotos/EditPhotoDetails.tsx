@@ -1,21 +1,126 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { TextInput } from "@worldresources/wri-design-systems";
-import { FC } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 
+import { deleteMedia, updateMedia } from "@/connections/Media";
+import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useNotificationContext } from "@/context/notification.provider";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useFileSize } from "@/hooks/useFileSize";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import GalleryImage from "@/redesignComponents/content/Images/GalleryImage/GalleryImage";
 import Switch from "@/redesignComponents/Forms/Actions/Switch/Switch";
 import Textarea from "@/redesignComponents/Forms/Inputs/Textarea";
+import Log from "@/utils/log";
 
 export interface EditPhotoDetailsProps {
+  data: MediaDto;
   open: boolean;
   onClose: () => void;
 }
 
-const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ open, onClose }) => {
+const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) => {
   const t = useT();
+  const { format: formatFileSize } = useFileSize();
+  const [description, setDescription] = useState(data.description ?? "");
+  const [photographer, setPhotographer] = useState(data.photographer ?? "");
+  const [isPublic, setIsPublic] = useState(data.isPublic);
+  const [isCover, setIsCover] = useState(data.isCover);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const initialValues = useRef({
+    description: data.description ?? "",
+    photographer: data.photographer ?? "",
+    isPublic: data.isPublic,
+    isCover: data.isCover
+  });
+  const { openNotification } = useNotificationContext();
+  const { setShouldRefetchMediaData } = useMapAreaContext();
+
+  const hasChanges = useCallback(() => {
+    const initial = initialValues.current;
+    return (
+      description !== initial.description ||
+      photographer !== initial.photographer ||
+      isPublic !== initial.isPublic ||
+      isCover !== initial.isCover
+    );
+  }, [description, photographer, isPublic, isCover]);
+
+  const handleSave = useCallback(async () => {
+    if (!hasChanges()) {
+      openNotification("warning", t("No changes"), t("No changes were made to the image details"));
+      return;
+    }
+
+    const initial = initialValues.current;
+    const updatePromises: Promise<unknown>[] = [];
+
+    if (
+      description !== initial.description ||
+      photographer !== initial.photographer ||
+      isPublic !== initial.isPublic ||
+      (isCover !== initial.isCover && !isCover)
+    ) {
+      updatePromises.push(
+        updateMedia(
+          {
+            name: data.name,
+            title: data.name,
+            photographer,
+            description: description || undefined,
+            isPublic,
+            isCover,
+            profileImageScale: data.profileImageScale,
+            profileImagePosition: data.profileImagePosition
+          },
+          { id: data.uuid }
+        )
+      );
+    }
+
+    if (isCover !== initial.isCover && isCover) {
+      updatePromises.push(
+        updateMedia(
+          {
+            isCover: true,
+            profileImageScale: data.profileImageScale,
+            profileImagePosition: data.profileImagePosition
+          },
+          { id: data.uuid }
+        )
+      );
+    }
+
+    setIsUpdating(true);
+    try {
+      await Promise.all(updatePromises);
+      openNotification("success", t("Success!"), t("Image updated successfully"));
+      setShouldRefetchMediaData(true);
+      onClose();
+    } catch (error) {
+      openNotification("error", t("Error"), t("Failed to update image details"));
+      Log.error("Failed to update image details:", error);
+    } finally {
+      setIsUpdating(false);
+    }
+  }, [
+    data.name,
+    data.profileImagePosition,
+    data.profileImageScale,
+    data.uuid,
+    description,
+    hasChanges,
+    isCover,
+    isPublic,
+    onClose,
+    openNotification,
+    photographer,
+    setShouldRefetchMediaData,
+    t
+  ]);
+
   return (
     <Modal
       open={open}
@@ -25,15 +130,25 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ open, onClose }) => {
       content={
         <Flex direction="column" gap={4} p={3}>
           <Flex gap={4} alignItems="flex-start" alignSelf="stretch">
-            <GalleryImage alt="Image popup media" className="h-[11.8125rem] w-[14.375rem]" size={"full"} />
+            <GalleryImage
+              src={data.thumbUrl ?? undefined}
+              alt="Image popup media"
+              className="h-[11.8125rem] w-[14.375rem]"
+              size={"full"}
+            />
             <Flex direction="column" flex="1 0 0" gap={4}>
-              <TextInput label="Image Name" name="imageName" required />
-              <TextInput label="Photographer" placeholder="Name Surname" />
+              <TextInput label="Image Name" name="imageName" required value={data.name} />
+              <TextInput
+                label="Photographer"
+                placeholder="Name Surname"
+                value={photographer ?? ""}
+                onChange={e => setPhotographer(e.target.value)}
+              />
             </Flex>
           </Flex>
           <Box>
-            <Textarea label="Description" />
-            <Text textStyle="200" color="neutral.600" mt={-2}>
+            <Textarea label="Description" value={description ?? ""} onChange={e => setDescription(e.target.value)} />
+            <Text textStyle="200" color="neutral.600">
               {t("You have 200 characters remaining")}
             </Text>
           </Box>
@@ -43,7 +158,7 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ open, onClose }) => {
                 {t("Uploaded by:")}
               </Text>
               <Text textStyle="400" color="neutral.900" as="span">
-                {t("Name Surname")}
+                {data.createdByUserName}
               </Text>
             </Flex>
             <Flex alignItems="center" gap={2}>
@@ -51,7 +166,7 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ open, onClose }) => {
                 {t("Date:")}
               </Text>
               <Text textStyle="400" color="neutral.900" as="span">
-                {t("dd/mm/yyyy")}
+                {new Date(data.createdAt).toLocaleDateString()}
               </Text>
             </Flex>
             <Flex alignItems="center" gap={2}>
@@ -59,7 +174,7 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ open, onClose }) => {
                 {t("Coordinates:")}
               </Text>
               <Text textStyle="400" color="neutral.900" as="span">
-                {t("XXXXXXXX")}
+                {data.lat && data.lng ? `${data.lat.toFixed(4)}, ${data.lng?.toFixed(4)}` : "-"}
               </Text>
             </Flex>
             <Flex alignItems="center" gap={2}>
@@ -67,12 +182,15 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ open, onClose }) => {
                 {t("File size:")}
               </Text>
               <Text textStyle="400" color="neutral.900" as="span">
-                {t("X MB")}
+                {data.size ? formatFileSize(data.size) : "-"}
               </Text>
             </Flex>
           </Flex>
-          <Switch name="makePublic" onChange={() => {}}>
+          <Switch name="makePublic" onChange={() => setIsPublic(!isPublic)} checked={isPublic}>
             {t("Make public")}
+          </Switch>
+          <Switch name="makeCover" onChange={() => setIsCover(!isCover)} checked={isCover}>
+            {t("Make cover")}
           </Switch>
         </Flex>
       }
@@ -91,13 +209,20 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ open, onClose }) => {
               children: t("Delete"),
               typeVariant: "negative",
               classNameContainer: "w-[32%]",
-              onClick: () => {}
+              onClick: () => {
+                deleteMedia(data.uuid);
+                openNotification("success", t("Success!"), t("Image deleted successfully"));
+                setShouldRefetchMediaData(true);
+                onClose();
+              }
             },
             {
               id: "save",
               variant: "primary",
-              children: t("Save"),
-              onClick: () => {}
+              children: isUpdating ? t("Saving...") : t("Save"),
+              loading: isUpdating,
+              disabled: isUpdating || !hasChanges(),
+              onClick: handleSave
             }
           ]}
         />
