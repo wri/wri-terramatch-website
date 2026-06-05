@@ -12,7 +12,6 @@ import Log from "@/utils/log";
 import { extractClippedVersions } from "../hooks/overlapFix.utils";
 import { usePolygonValidationCriteria } from "../hooks/usePolygonValidationCriteria";
 import {
-  dismissPolygonProgressToast,
   getFixingOverlapsProgressLabel,
   getPolygonOperationToastLabels,
   showPolygonCompleteToast,
@@ -80,7 +79,6 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
           return;
         }
 
-        dismissPolygonProgressToast();
         showToast({
           label: t("No polygon have been fixed"),
           type: "warning",
@@ -89,7 +87,6 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
         });
       } catch (error) {
         Log.error("Failed to refresh polygon after overlap fix:", error);
-        dismissPolygonProgressToast();
         showToast({
           label: t("Overlap was fixed but the polygon could not be refreshed. Please close and reopen the drawer."),
           type: "warning",

@@ -81,7 +81,6 @@ import { useSitePolygonOverlap } from "../hooks/useSitePolygonOverlap";
 import { useSitePolygonTableData } from "../hooks/useSitePolygonTableData";
 import { useStartSitePolygonDrawing } from "../hooks/useStartSitePolygonDrawing";
 import {
-  dismissPolygonProgressToast,
   getDeletingProgressLabel,
   getDownloadingPolygonsProgressLabel,
   getFixingOverlapsProgressLabel,
@@ -393,7 +392,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       showPolygonCompleteToast(toastLabels.deletingComplete);
     } catch (error) {
       Log.error("Failed to delete selected polygons:", error);
-      dismissPolygonProgressToast();
       openNotification("error", t("Error!"), t("Error deleting polygons"));
       throw error;
     }
@@ -427,7 +425,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       ApiSlice.pruneCache("validations");
       pruneSitePolygonsCache();
       await Promise.all([refetchPolygons(), fetchAllValidationPages(true), fetchOverlapValidations(true)]);
-      dismissPolygonProgressToast();
     },
     [fetchAllValidationPages, fetchOverlapValidations, refetchPolygons, t]
   );
@@ -443,7 +440,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         await runPolygonValidation(polygonUuids);
       } catch (error) {
         Log.error("Failed to validate selected polygons:", error);
-        dismissPolygonProgressToast();
         openNotification("error", t("Error!"), t("Failed to validate polygons"));
         throw error;
       } finally {
@@ -612,7 +608,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       void refetchPolygons();
     } catch (error) {
       Log.error("Failed to submit polygon from map popup:", error);
-      dismissPolygonProgressToast();
       openNotification("error", t("Error!"), t("Error submitting polygon"));
       throw error;
     }
@@ -650,7 +645,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       void refetchPolygons();
     } catch (error) {
       Log.error("Failed to submit selected polygons:", error);
-      dismissPolygonProgressToast();
       openNotification("error", t("Error!"), t("Error submitting polygons"));
       throw error;
     }
@@ -688,7 +682,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
     } catch (error) {
       Log.error("Failed to download selected polygons:", error);
-      dismissPolygonProgressToast();
       showToast({
         label: t("Error downloading polygon"),
         type: "error",
@@ -744,7 +737,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         showPolygonCompleteToast(toastLabels.savingChangesComplete);
       } catch (error) {
         Log.error("Failed to update selected polygon details:", error);
-        dismissPolygonProgressToast();
         openNotification("error", t("Error!"), t("Error updating polygon details"));
       } finally {
         setIsBulkUpdatingPolygons(false);
