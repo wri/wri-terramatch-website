@@ -227,35 +227,39 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     onRunValidation={onRunValidation}
                   />
                 )}
-                {activeTab === "comments" && <PolygonCommentContent />}
+                {activeTab === "comments" && (
+                  <PolygonCommentContent polygonUuid={selectedPolygon?.uuid} polygonStatus={selectedPolygon?.status} />
+                )}
               </Flex>
             }
             footer={
-              <ButtonGroup
-                buttons={[
-                  {
-                    id: "polygon-edit-cancel",
-                    children: t("Cancel"),
-                    variant: "secondary",
-                    disabled: isSaving,
-                    onClick: onClose
-                  },
-                  {
-                    id: "polygon-edit-save",
-                    children: t("Save"),
-                    variant: "primary",
-                    loading: isSaving,
-                    disabled: isSaveDisabled || isSaving,
-                    onClick: () => {
-                      if (activeTab !== "edit" || saveEditContent == null) {
-                        void handleSave(onClose);
-                        return;
+              activeTab !== "comments" && (
+                <ButtonGroup
+                  buttons={[
+                    {
+                      id: "polygon-edit-cancel",
+                      children: t("Cancel"),
+                      variant: "secondary",
+                      disabled: isSaving,
+                      onClick: onClose
+                    },
+                    {
+                      id: "polygon-edit-save",
+                      children: t("Save"),
+                      variant: "primary",
+                      loading: isSaving,
+                      disabled: isSaveDisabled || isSaving,
+                      onClick: () => {
+                        if (activeTab !== "edit" || saveEditContent == null) {
+                          void handleSave(onClose);
+                          return;
+                        }
+                        setShowSaveConfirmationModal(true);
                       }
-                      setShowSaveConfirmationModal(true);
                     }
-                  }
-                ]}
-              />
+                  ]}
+                />
+              )
             }
           />
         )}
