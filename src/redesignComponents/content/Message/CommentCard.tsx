@@ -98,7 +98,7 @@ const CommentCard: FC<CommentCardProps> = ({
 
   if (isEmpty) {
     return (
-      <Flex className="bg-theme-neutral-100 items-center gap-3 px-6 py-5">
+      <Flex className="items-center gap-3 bg-theme-neutral-100 px-6 py-5">
         <CommentIcon color="neutral.600" boxSize={5} />
         <Text textStyle="600-bold" color="neutral.900">
           No comments yet.
@@ -132,7 +132,7 @@ const CommentCard: FC<CommentCardProps> = ({
                 customTrigger={
                   <IconButton
                     variant="borderless"
-                    className="!h-6 !w-6"
+                    className="!h-6 !w-6 !bg-transparent hover:!bg-theme-primary-500/20"
                     icon={<MoreVertIcon color="primary.800" boxSize={4} />}
                   />
                 }
@@ -154,7 +154,7 @@ const CommentCard: FC<CommentCardProps> = ({
                   key={file.name}
                   src={file.url}
                   alt={file.name}
-                  className="border-theme-neutral-300 h-[8.75rem] w-[10.625rem] rounded border object-cover"
+                  className="h-[8.75rem] w-[10.625rem] rounded border border-theme-neutral-300 object-cover"
                 />
               ))}
             </Flex>
