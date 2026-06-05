@@ -1,10 +1,10 @@
 import { Box, Flex, Grid, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { ChangeEvent, DragEvent, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { prepareFileForUpload } from "@/connections/Media";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useNotificationContext } from "@/context/notification.provider";
 import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 import { useFileSize } from "@/hooks/useFileSize";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -57,7 +57,6 @@ export interface UploadGeotaggedPhotosProps {
 const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid, onOpenChange }) => {
   const t = useT();
   const { format: formatFileSize } = useFileSize();
-  const { openNotification } = useNotificationContext();
   const { setShouldRefetchMediaData } = useMapAreaContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -136,33 +135,50 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
       const successCount = results.length - failedCount;
 
       if (successCount === 0) {
-        openNotification("error", t("Error"), t("Failed to upload photos. Please try again."));
+        showToast({
+          label: t("Upload Failed"),
+          type: "error",
+          placement: "bottom",
+          duration: 5000
+        });
         return;
       }
 
       setShouldRefetchMediaData(true);
 
       if (failedCount > 0) {
-        openNotification(
-          "warning",
-          t("Partial upload"),
-          t("{count} of {total} photos uploaded successfully.", {
+        showToast({
+          label: t("Partial upload"),
+          caption: t("{count} of {total} photos uploaded successfully.", {
             count: successCount,
             total: results.length
-          })
-        );
+          }),
+          type: "warning",
+          placement: "bottom",
+          duration: 5000
+        });
       } else {
-        openNotification("success", t("Success!"), t("Photos uploaded successfully"));
+        showToast({
+          label: t("Upload Complete"),
+          type: "success",
+          placement: "bottom",
+          duration: 5000
+        });
       }
 
       handleClose();
     } catch (error) {
       Log.error("Failed to upload geotagged photos:", error);
-      openNotification("error", t("Error"), t("Failed to upload photos. Please try again."));
+      showToast({
+        label: t("Upload Failed"),
+        type: "error",
+        placement: "bottom",
+        duration: 5000
+      });
     } finally {
       setIsUploading(false);
     }
-  }, [handleClose, openNotification, selectedFiles, setShouldRefetchMediaData, siteUuid, t]);
+  }, [handleClose, selectedFiles, setShouldRefetchMediaData, siteUuid, t]);
 
   const hasSelectedFiles = selectedFiles.length > 0;
   const canSave = hasSelectedFiles && siteUuid !== "" && !isUploading;
@@ -171,7 +187,7 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
     <Modal
       open={open}
       onClose={handleClose}
-      size="medium"
+      size="large"
       header={<b className="text-theme-neutral-800">{t("Upload geotagged photos")}</b>}
       content={
         <Box pl={4} w="full">
@@ -197,26 +213,27 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
                 <Text textStyle="300-bold" color="neutral.900" display="flex" gap={0.5}>
                   {selectedFiles.length}
                   <Text textStyle="300" color="neutral.700" as="span">
-                    {t("Photos")}
+                    {selectedFiles.length === 1 ? t("Photo") : t("Photos")}
                   </Text>
                 </Text>
                 <Button variant="borderless" size="small" leftIcon={<UploadIcon />} onClick={handleUploadClick}>
                   {t("Click to Upload")}
                 </Button>
               </Flex>
-              <Box overflow="auto" maxW="100%" h="30.5rem" mr={-4} pr={4}>
+              <Box overflow="auto" maxW="100%" h="24.5rem" mr={-4} pr={4}>
                 <Grid templateColumns="repeat(3, 1fr)" gap={4} w="full">
                   {selectedFiles.map(file => (
-                    <Box key={file.name} maxH={"fit-content"} w="full">
+                    <Box key={file.name} w="full" maxW="11.5rem">
                       <GalleryImage
                         alt={file.name}
-                        size={"100%"}
-                        className="!h-[8.75rem] w-full"
+                        className="!h-[8.75rem] !w-[11.5rem] object-cover"
                         src={filePreviewUrls.get(file.name) ?? ""}
                       />
-                      <Text textStyle="300" color="neutral.800" lineClamp={1} mt={1}>
+
+                      <Text textStyle="300" color="neutral.800" mt={1} w="11.5rem" truncate>
                         {file.name}
                       </Text>
+
                       <Text textStyle="200" color="neutral.700">
                         {formatFileSize(file.size)}
                       </Text>
