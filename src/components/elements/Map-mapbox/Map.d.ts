@@ -95,7 +95,7 @@ export interface MapFunctions {
   mapContainer: RefObject<HTMLDivElement>;
   draw: MutableRefObject<MapboxDraw | null>;
   onCancel: (parsedPolygonData: Record<string, string[]> | undefined) => void;
-  initMap: (useDashboardStyle?: boolean, initialStyle?: MapStyle) => void;
+  initMap: (useDashboardStyle?: boolean, initialStyle?: MapStyle, compactAttribution?: boolean) => void;
   /** @deprecated */
   setStyleLoaded: (value: boolean) => void;
   handleTrashDelete: () => void;

@@ -3,6 +3,10 @@
 @layer components {
 }
 
+#map-container.champions-map .mapboxgl-ctrl-attrib.mapboxgl-compact {
+  margin-right: 70px;
+}
+
 .mouse-tooltip > .mapboxgl-popup-content {
   padding: 4px;
   background-color: rgba(100, 100, 100, 0.75);
@@ -133,7 +137,7 @@
 }
 
 .table-financial-metrics-header td {
-  background-color: #fAfAfA !important;
+  background-color: #fafafa !important;
   font-weight: 700 !important;
 }
 
@@ -143,4 +147,3 @@
   width: 100% !important;
   max-width: none !important;
 }
-
