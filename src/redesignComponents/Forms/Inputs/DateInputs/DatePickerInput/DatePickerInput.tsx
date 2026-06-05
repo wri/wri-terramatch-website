@@ -6,6 +6,7 @@ import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
+import { getThemedColor } from "@/lib/theme";
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 import { formatDateValue, getDateFormatString, parseDateInput } from "@/utils/date";
 
@@ -120,7 +121,10 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
           <DatePicker.RootProvider value={picker}>
             <DatePicker.Control
               onClick={() => !disabled && picker.setOpen(true)}
-              style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+              style={{
+                cursor: disabled ? "not-allowed" : "pointer",
+                backgroundColor: disabled ? getThemedColor("neutral", 200) : "transparent"
+              }}
             >
               <CalendarIcon />
               <DatePicker.Input index={0} placeholder={dateFormat} />
