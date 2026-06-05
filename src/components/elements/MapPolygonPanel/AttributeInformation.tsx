@@ -22,6 +22,7 @@ import {
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
 import Text from "../Text/Text";
@@ -47,7 +48,8 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
   setAttributePlotsVisible
 }) => {
   const t = useT();
-  const { editPolygon, setShouldRefetchPolygonData, polygonData: polygonDataContext } = useMapAreaContext();
+  const { editPolygon, setShouldRefetchPolygonData, polygonData: polygonDataContext, siteData } = useMapAreaContext();
+  const contextEntityId = siteData != null && "entityUUID" in siteData ? siteData.entityUUID : siteData?.uuid;
   const [polygonData, setPolygonData] = useState<SitePolygonLightDto>();
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -118,6 +120,14 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
       setShouldRefetchPolygonData(true);
 
       openNotification("success", t("Success!"), t("Polygon version created successfully"));
+      trackPolygonEvent("polygon_attributes_edited", {
+        ...getPolygonAnalyticsContext({
+          entityType: "site",
+          entityId: contextEntityId
+        }),
+        polygon_id: editPolygon.uuid,
+        entry_point: "map"
+      });
     } catch (error) {
       Log.error("Error creating polygon version:", error);
       openNotification("error", t("Error!"), t("Error creating polygon version"));
@@ -136,11 +146,29 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
       }
       const filename = formatFileName(`${polygonNameForFile ?? "polygon"}_anr_monitoring_plots`);
       downloadGeoJsonFile(geojson, filename);
+      trackPolygonEvent("polygon_downloaded", {
+        ...getPolygonAnalyticsContext({
+          entityType: "site",
+          entityId: contextEntityId
+        }),
+        polygon_count: 1,
+        polygon_id: editPolygon.uuid,
+        file_format: "geojson",
+        download_type: "monitoring_plot"
+      });
     } catch (error) {
       Log.error("Error downloading ANR monitoring plots:", error);
       openNotification("error", t("Error!"), t("Error downloading ANR monitoring plots"));
     }
-  }, [anrMonitoringPlotsEligible, openNotification, polygonNameForFile, sitePolygonUuid, t]);
+  }, [
+    anrMonitoringPlotsEligible,
+    openNotification,
+    polygonNameForFile,
+    sitePolygonUuid,
+    t,
+    contextEntityId,
+    editPolygon.uuid
+  ]);
 
   return (
     <div className="flex flex-col gap-4">

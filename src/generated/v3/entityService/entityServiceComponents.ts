@@ -3081,7 +3081,8 @@ export type EntityExportAllQueryParams = {
     | "ppc"
     | "hbf"
     | "fundo-flora"
-    | "fundo-flora-1";
+    | "fundo-flora-1"
+    | "wcb";
   /**
    * Filter by project
    */
