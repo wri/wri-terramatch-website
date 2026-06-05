@@ -76,6 +76,7 @@ export function useMapLayers({
   polygonMapTileNonce = 0
 }: UseMapLayersParams) {
   const [sourcesAdded, setSourcesAdded] = useState(false);
+  const [tileLoadRequestId, setTileLoadRequestId] = useState(0);
 
   const prevPolygonFingerprintRef = useRef<string>(initialPolygonFingerprint ?? "");
   const prevPolygonMapTileNonceRef = useRef<number>(polygonMapTileNonce);
@@ -109,6 +110,7 @@ export function useMapLayers({
       polygonsCentroids,
       tileVersionRef.current
     );
+    setTileLoadRequestId(prev => prev + 1);
     setSourcesAdded(true);
   }, [
     map,
@@ -130,7 +132,7 @@ export function useMapLayers({
     addDeleteLayer(deleteLayer, map.current, { [DELETED_POLYGONS]: selectedPolygonsInCheckbox });
   }, [map, selectedPolygonsInCheckbox, styleReady, styleVersion]);
 
-  return { sourcesAdded };
+  return { sourcesAdded, tileLoadRequestId };
 }
 
 export function filterPolygonFromLayers(
