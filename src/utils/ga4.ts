@@ -12,16 +12,43 @@ type PolygonEventName =
   | "polygon_image_edited"
   | "polygon_gallery_viewed";
 
-type PolygonEventParams = Record<string, string | number | boolean | null | undefined>;
+export type FormSectionEventName = "section_started" | "section_completed" | "section_error_triggered";
 
-type WindowWithDataLayer = Window & { dataLayer?: Array<Record<string, unknown>> };
+export type Ga4EntityType = "project" | "site" | "nursery" | "unknown";
 
-const toSnakeEntityType = (entityType?: string | null) => {
+type Ga4EventParams = Record<string, string | number | boolean | null | undefined>;
+
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
+const toPolygonEntityType = (entityType?: string | null): string => {
   const normalized = entityType?.toLowerCase() ?? "";
   if (normalized.includes("project")) return "project";
   if (normalized.includes("site")) return "site";
   if (normalized.includes("nurser")) return "nursery";
   return "";
+};
+
+const sanitizeParams = (params: Ga4EventParams): Record<string, string | number | boolean> => {
+  const entries = Object.entries(params).map(([key, value]) => [key, value ?? "unknown"]);
+  return Object.fromEntries(entries) as Record<string, string | number | boolean>;
+};
+
+const trackGa4Event = (eventName: string, params: Ga4EventParams): void => {
+  if (typeof window === "undefined") return;
+  const safeParams = sanitizeParams(params);
+
+  window.dataLayer = window.dataLayer ?? [];
+  window.dataLayer.push({
+    event: eventName,
+    ...safeParams
+  });
+
+  window.gtag?.("event", eventName, safeParams);
 };
 
 export const getPolygonAnalyticsContext = ({
@@ -31,11 +58,31 @@ export const getPolygonAnalyticsContext = ({
   entityType?: string | null;
   entityId?: string | null;
 }) => ({
-  entity_type: toSnakeEntityType(entityType),
+  entity_type: toPolygonEntityType(entityType),
   entity_id: entityId ?? ""
 });
 
-export const trackPolygonEvent = (eventName: PolygonEventName, params: PolygonEventParams): void => {
+export const getFormSectionAnalyticsContext = ({
+  entityType,
+  entityId,
+  sectionName,
+  formStepId,
+  errorType
+}: {
+  entityType: Exclude<Ga4EntityType, "unknown">;
+  entityId?: string | null;
+  sectionName: string;
+  formStepId: string;
+  errorType?: string | null;
+}) => ({
+  entity_type: entityType,
+  entity_id: entityId ?? "unknown",
+  section_name: sectionName,
+  form_step_id: formStepId,
+  ...(errorType != null && errorType !== "" ? { error_type: errorType } : {})
+});
+
+export const trackPolygonEvent = (eventName: PolygonEventName, params: Ga4EventParams): void => {
   if (typeof window === "undefined") {
     return;
   }
@@ -44,8 +91,10 @@ export const trackPolygonEvent = (eventName: PolygonEventName, params: PolygonEv
     Object.entries({ event: eventName, ...params }).filter(([, value]) => value != null)
   );
 
-  const { dataLayer } = window as WindowWithDataLayer;
-  const layer = dataLayer ?? [];
-  layer.push(payload);
-  (window as WindowWithDataLayer).dataLayer = layer;
+  window.dataLayer = window.dataLayer ?? [];
+  window.dataLayer.push(payload);
+};
+
+export const trackFormSectionEvent = (eventName: FormSectionEventName, params: Ga4EventParams): void => {
+  trackGa4Event(eventName, params);
 };
