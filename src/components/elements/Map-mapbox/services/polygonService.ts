@@ -2,6 +2,7 @@ import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { createProjectPolygonWithReplace } from "@/connections/ProjectPolygons";
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { CreateSitePolygonAttributesDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
 import type { PolygonFromMapState } from "../Map.d";
@@ -10,7 +11,7 @@ type PolygonFeature = Pick<GeoJSON.Feature, "geometry">;
 
 export async function storePolygon(
   geojson: PolygonFeature[],
-  record: { uuid?: string },
+  record: { uuid?: string; entityName?: string },
   setPolygonFromMap?: (value: PolygonFromMapState & { primaryUuid?: string }) => void,
   refetchSitePolygons?: () => void | Promise<void>
 ): Promise<void> {
@@ -27,6 +28,15 @@ export async function storePolygon(
 
   try {
     const result = await createSitePolygonsResource(attributes);
+    const analyticsContext = getPolygonAnalyticsContext({
+      entityType: record.entityName,
+      entityId: record.uuid
+    });
+    trackPolygonEvent("polygon_drawn", {
+      ...analyticsContext,
+      polygon_id: result.polygonUuid,
+      source: "direct"
+    });
     pruneBoundingBoxesCache();
     if (refetchSitePolygons != null) await refetchSitePolygons();
     if (setPolygonFromMap != null) {
@@ -67,6 +77,15 @@ export async function storePolygonProject(
   const response = await createProjectPolygonWithReplace({ geometries }, entityUuid);
   const polygonUuid = response.polygonUuid;
   if (polygonUuid != null) {
+    const analyticsContext = getPolygonAnalyticsContext({
+      entityType,
+      entityId: entityUuid
+    });
+    trackPolygonEvent("polygon_drawn", {
+      ...analyticsContext,
+      polygon_id: polygonUuid,
+      source: "direct"
+    });
     refetch?.();
     setPolygonFromMap?.({
       uuid: polygonUuid,

@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { isProjectPitchesEntityName } from "@/helpers/entity";
 import { TranslatedText } from "@/i18n/types";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 
 import { downloadMultiplePolygonsGeoJson, downloadProjectPolygonsGeoJson } from "../utils";
 
@@ -39,6 +40,16 @@ export function useMapDownload({
         const projectName = record?.organisation?.name ?? "project";
         const filename = `${_.replace(projectName, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}`;
         await downloadProjectPolygonsGeoJson(projectPitchUuid, filename);
+        const polygonCount = polygonsData ? Object.values(polygonsData).flat().length : 0;
+        trackPolygonEvent("polygon_downloaded", {
+          ...getPolygonAnalyticsContext({
+            entityType: entityData?.entityName,
+            entityId: projectPitchUuid
+          }),
+          polygon_count: polygonCount,
+          file_format: "geojson",
+          download_type: "standard"
+        });
         openNotification("success", t("Success"), t("Successfully downloaded project polygons."));
       } else {
         const polygonsToDownload: string[] = polygonsData
@@ -53,6 +64,15 @@ export function useMapDownload({
         const nameFile = record?.organisation?.name ?? "polygons";
         const filename = `${_.replace(nameFile, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}`;
         await downloadMultiplePolygonsGeoJson(polygonsToDownload, filename);
+        trackPolygonEvent("polygon_downloaded", {
+          ...getPolygonAnalyticsContext({
+            entityType: entityData?.entityName,
+            entityId: entityData?.entityUUID
+          }),
+          polygon_count: polygonsToDownload.length,
+          file_format: "geojson",
+          download_type: "standard"
+        });
         openNotification(
           "success",
           t("Success"),

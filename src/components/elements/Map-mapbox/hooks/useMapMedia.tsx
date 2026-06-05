@@ -10,6 +10,7 @@ import { openEditPhotoDetailsFromMapPopup } from "@/context/mapArea.utils";
 import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TranslatedText } from "@/i18n/types";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
 import { useChampionsMap } from "../championsMap.context";
@@ -60,6 +61,13 @@ export function useMapMedia({
     const handleDelete = async (id: string) => {
       try {
         await deleteMedia(id);
+        trackPolygonEvent("polygon_image_edited", {
+          ...getPolygonAnalyticsContext({
+            entityType: entityData?.entityName,
+            entityId: entityData?.entityUUID
+          }),
+          polygon_id: "unknown"
+        });
         closeModal(ModalId.DELETE_IMAGE);
       } catch (error) {
         Log.error(error);
@@ -91,6 +99,13 @@ export function useMapMedia({
       const result = await updateMedia({ isCover: true, profileImageScale: 0, profileImagePosition: {} }, { id: uuid });
       if (result) {
         openNotification("success", t("Success!"), t("Image set as cover successfully"));
+        trackPolygonEvent("polygon_image_edited", {
+          ...getPolygonAnalyticsContext({
+            entityType: entityData?.entityName ?? "site",
+            entityId: entityData?.entityUUID
+          }),
+          polygon_id: "unknown"
+        });
         setShouldRefetchMediaData(true);
       } else {
         openNotification("error", t("Error!"), t("Failed to set image as cover"));

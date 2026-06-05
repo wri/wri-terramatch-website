@@ -1,8 +1,8 @@
-import { Grid } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 import { useT } from "@transifex/react";
 import { FC } from "react";
-import { Labeled } from "react-admin";
 
+import Text from "@/components/elements/Text/Text";
 import { getPolygonSubmissionStatusLabel, PolygonDataSubmissionOption } from "@/constants/polygonHandoff";
 
 type Props = {
@@ -16,14 +16,24 @@ const PolygonHandoffSummary: FC<Props> = ({ polygonDataSubmission, readyForBasel
   return (
     <Grid spacing={2} container>
       <Grid xs={4} item>
-        <Labeled label={t("Polygon Submission Status")}>
-          <span>{t(getPolygonSubmissionStatusLabel(polygonDataSubmission))}</span>
-        </Labeled>
+        <Stack gap={0.5}>
+          <Text variant="text-16-bold" className="text-darkCustom">
+            {t("Polygon Submission Status")}
+          </Text>
+          <Text variant="text-14-semibold" className="text-darkCustom">
+            {t(getPolygonSubmissionStatusLabel(polygonDataSubmission))}
+          </Text>
+        </Stack>
       </Grid>
       <Grid xs={4} item>
-        <Labeled label={t("Project ready for baseline")}>
-          <span>{readyForBaseline === true ? t("Yes") : t("No")}</span>
-        </Labeled>
+        <Stack gap={0.5}>
+          <Text variant="text-16-bold" className="text-darkCustom">
+            {t("Project Ready for Baseline")}
+          </Text>
+          <Text variant="text-14-semibold" className="text-darkCustom">
+            {readyForBaseline === true ? t("Yes") : t("No")}
+          </Text>
+        </Stack>
       </Grid>
     </Grid>
   );

@@ -18,6 +18,7 @@ import { isMapAreaSiteFullDto, useMapAreaContext } from "@/context/mapArea.provi
 import { SitePolygonLightDto, ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnUnmount } from "@/hooks/useOnMount";
 import ApiSlice from "@/store/apiSlice";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import Button from "../Button/Button";
@@ -81,6 +82,18 @@ const MapEditPolygonPanel: FC<MapEditPolygonPanelProps> = ({
     }
   }, [shouldRefetchValidation, editPolygon?.uuid]);
 
+  useEffect(() => {
+    if (editPolygon?.isOpen && editPolygon?.uuid) {
+      trackPolygonEvent("polygon_viewed", {
+        ...getPolygonAnalyticsContext({
+          entityType: "site",
+          entityId: siteFull?.uuid
+        }),
+        polygon_id: editPolygon.uuid
+      });
+    }
+  }, [editPolygon?.isOpen, editPolygon?.uuid, siteFull?.uuid]);
+
   const polygonValidationData = usePolygonValidation({ polygonUuid: editPolygon?.uuid || "" });
   const selectedSitePolygon = useMemo(() => {
     if (!Array.isArray(polygonData) || editPolygon?.uuid == null || editPolygon.uuid === "") {
@@ -123,13 +136,35 @@ const MapEditPolygonPanel: FC<MapEditPolygonPanelProps> = ({
     const polygonName = selectedSitePolygon?.name ?? "polygon";
     const filename = formatFileName(`${polygonName}_anr_monitoring_plots`);
     downloadGeoJsonFile(geojson, filename);
-  }, [anrPlotsEligible, selectedSitePolygon?.name, sitePolygonUuidForAnr]);
+    trackPolygonEvent("polygon_downloaded", {
+      ...getPolygonAnalyticsContext({
+        entityType: "site",
+        entityId: siteFull?.uuid
+      }),
+      polygon_count: 1,
+      polygon_id: editPolygon?.uuid,
+      file_format: "geojson",
+      download_type: "monitoring_plot"
+    });
+  }, [anrPlotsEligible, selectedSitePolygon?.name, sitePolygonUuidForAnr, siteFull?.uuid, editPolygon?.uuid]);
 
   useEffect(() => {
     if (!anrPlotsEligible && tabEditPolygon === "ANR Monitoring Plots") {
       setTabEditPolygon("Attributes");
     }
   }, [anrPlotsEligible, setTabEditPolygon, tabEditPolygon]);
+
+  useEffect(() => {
+    if (tabEditPolygon === "ANR Monitoring Plots" && editPolygon?.uuid) {
+      trackPolygonEvent("polygon_gallery_viewed", {
+        ...getPolygonAnalyticsContext({
+          entityType: "site",
+          entityId: siteFull?.uuid
+        }),
+        polygon_id: editPolygon.uuid
+      });
+    }
+  }, [tabEditPolygon, editPolygon?.uuid, siteFull?.uuid]);
 
   useEffect(() => {
     if (polygonValidationData) {
