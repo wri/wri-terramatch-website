@@ -664,7 +664,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
-      <UploadGeotaggedPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} />
+      <UploadGeotaggedPhotos
+        open={showUploadPhotosModal}
+        siteUuid={resolvedSiteUuid}
+        onOpenChange={setShowUploadPhotosModal}
+      />
       {/* TODO: Uncomment this to display the warning modal when an uploaded image does not contain location data. */}
       {/* <UploadPhotos open={showUploadPhotosModal} onOpenChange={setShowUploadPhotosModal} /> */}
       <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden py-5 px-2 pl-6 pr-7">
