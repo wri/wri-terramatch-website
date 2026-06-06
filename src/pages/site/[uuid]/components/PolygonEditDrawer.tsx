@@ -32,6 +32,7 @@ interface PolygonEditDrawerProps {
   onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
+  onDeletingChange?: (isDeleting: boolean, count?: number) => void;
 }
 
 const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
@@ -43,7 +44,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onOverlapFixed,
   onRunValidation,
   onPolygonUpdated,
-  onSuppressMapSelectionHighlightChange
+  onSuppressMapSelectionHighlightChange,
+  onDeletingChange
 }) => {
   const t = useT();
   const { draftPolygonGeometry } = useMapAreaContext();
@@ -218,6 +220,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     onSaved={onSaved}
                     onPolygonUpdated={onPolygonUpdated}
                     onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
+                    onDeletingChange={onDeletingChange}
                   />
                 )}
                 {activeTab === "systemValidation" && (

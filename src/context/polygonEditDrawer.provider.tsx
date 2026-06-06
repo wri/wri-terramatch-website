@@ -53,11 +53,14 @@ type PolygonEditDrawerProviderProps = {
 
 type PolygonRunValidationCallback = (geometryPolygonUuids: string[]) => Promise<void>;
 
+type PolygonDeletingChangeCallback = (isDeleting: boolean, count?: number) => void;
+
 type PolygonEditDrawerDataSyncProps = {
   polygons?: SitePolygonLightDto[];
   onRefetchPolygons?: PolygonSaveCallback;
   onOverlapFixed?: PolygonOverlapFixCallback;
   onRunValidation?: PolygonRunValidationCallback;
+  onPolygonDeletingChange?: PolygonDeletingChangeCallback;
 };
 
 type PolygonEditDrawerDataContextValue = {
@@ -65,6 +68,7 @@ type PolygonEditDrawerDataContextValue = {
   setOnRefetchPolygons: (onRefetch?: PolygonSaveCallback) => void;
   setOnOverlapFixed: (onOverlapFixed?: PolygonOverlapFixCallback) => void;
   setOnRunValidation: (onRunValidation?: PolygonRunValidationCallback) => void;
+  setOnPolygonDeletingChange: (onPolygonDeletingChange?: PolygonDeletingChangeCallback) => void;
 };
 
 const PolygonEditDrawerDataContext = createContext<PolygonEditDrawerDataContextValue | null>(null);
@@ -73,7 +77,8 @@ export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({
   polygons = EMPTY_POLYGONS,
   onRefetchPolygons,
   onOverlapFixed,
-  onRunValidation
+  onRunValidation,
+  onPolygonDeletingChange
 }) => {
   const dataContext = useContext(PolygonEditDrawerDataContext);
 
@@ -93,6 +98,10 @@ export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({
     dataContext?.setOnRunValidation(onRunValidation);
   }, [dataContext, onRunValidation]);
 
+  useEffect(() => {
+    dataContext?.setOnPolygonDeletingChange(onPolygonDeletingChange);
+  }, [dataContext, onPolygonDeletingChange]);
+
   return null;
 };
 
@@ -109,6 +118,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const onRefetchPolygonsRef = useRef<PolygonSaveCallback | undefined>(onRefetchPolygonsProp);
   const onOverlapFixedRef = useRef<PolygonOverlapFixCallback | undefined>(undefined);
   const onRunValidationRef = useRef<PolygonRunValidationCallback | undefined>(undefined);
+  const onPolygonDeletingChangeRef = useRef<PolygonDeletingChangeCallback | undefined>(undefined);
 
   useEffect(() => {
     setPolygons(polygonsProp);
@@ -130,6 +140,14 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     onRunValidationRef.current = handler;
   }, []);
 
+  const setOnPolygonDeletingChange = useCallback((handler?: PolygonDeletingChangeCallback) => {
+    onPolygonDeletingChangeRef.current = handler;
+  }, []);
+
+  const handlePolygonDeletingChange = useCallback((isDeleting: boolean, count?: number) => {
+    onPolygonDeletingChangeRef.current?.(isDeleting, count);
+  }, []);
+
   const handleRunValidation = useCallback(async (geometryPolygonUuids: string[]) => {
     await onRunValidationRef.current?.(geometryPolygonUuids);
   }, []);
@@ -137,8 +155,8 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const handleSaved = useCallback(() => onRefetchPolygonsRef.current?.(), []);
 
   const dataContextValue = useMemo(
-    () => ({ setPolygons, setOnRefetchPolygons, setOnOverlapFixed, setOnRunValidation }),
-    [setOnRefetchPolygons, setOnOverlapFixed, setOnRunValidation]
+    () => ({ setPolygons, setOnRefetchPolygons, setOnOverlapFixed, setOnRunValidation, setOnPolygonDeletingChange }),
+    [setOnRefetchPolygons, setOnOverlapFixed, setOnRunValidation, setOnPolygonDeletingChange]
   );
   const {
     setEditPolygon,
@@ -269,6 +287,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
           onRunValidation={handleRunValidation}
           onPolygonUpdated={setSelectedPolygon}
           onSuppressMapSelectionHighlightChange={setSuppressMapSelectionHighlight}
+          onDeletingChange={handlePolygonDeletingChange}
         />
       </PolygonEditDrawerContext.Provider>
     </PolygonEditDrawerDataContext.Provider>

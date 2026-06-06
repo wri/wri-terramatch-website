@@ -164,6 +164,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [validatingPolygonCount, setValidatingPolygonCount] = useState(0);
   const [isFixingOverlaps, setIsFixingOverlaps] = useState(false);
   const [fixingOverlapsCount, setFixingOverlapsCount] = useState(0);
+  const [isDeletingPolygons, setIsDeletingPolygons] = useState(false);
+  const [deletingPolygonCount, setDeletingPolygonCount] = useState(0);
   const [canUndoPolygonDraw, setCanUndoPolygonDraw] = useState(false);
   const {
     polygonSearch,
@@ -190,7 +192,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   });
 
   const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
-  const isSitePolygonsLoading = isLoadingPolygons || isValidatingPolygons || isFixingOverlaps;
+  const isSitePolygonsLoading = isLoadingPolygons || isValidatingPolygons || isFixingOverlaps || isDeletingPolygons;
 
   const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
   const polygonValidations = useMemo(() => buildPolygonValidationsMap(allValidations), [allValidations]);
@@ -447,8 +449,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       return;
     }
 
+    setIsDeletingPolygons(true);
+    setDeletingPolygonCount(sitePolygonUuids.length);
+
     try {
-      showPolygonProgressToast(t, getDeletingProgressLabel(t, sitePolygonUuids.length));
       await bulkDeleteSitePolygons(sitePolygonUuids);
       setDeletePolygonModal(false);
       setDeletePayload(null);
@@ -461,6 +465,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       Log.error("Failed to delete selected polygons:", error);
       openNotification("error", t("Error!"), t("Error deleting polygons"));
       throw error;
+    } finally {
+      setIsDeletingPolygons(false);
+      setDeletingPolygonCount(0);
     }
   }, [closeMapPopups, deletePayload, invalidatePolygonMapTiles, openNotification, refetchPolygons, t, toastLabels]);
 
@@ -506,6 +513,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     },
     [openNotification, runPolygonValidation, t]
   );
+
+  const handlePolygonDeletingChange = useCallback((isDeleting: boolean, count = 0) => {
+    setIsDeletingPolygons(isDeleting);
+    setDeletingPolygonCount(count);
+  }, []);
 
   const handleDrawerOverlapFixed = useCallback(
     async (params: PolygonOverlapFixParams) => {
@@ -922,6 +934,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const loadingLabels = {
     fixingOverlaps: getFixingOverlapsProgressLabel(t, fixingOverlapsCount),
     validating: getValidatingProgressLabel(t, validatingPolygonCount),
+    deleting: getDeletingProgressLabel(t, deletingPolygonCount),
     withProgress: t("Loading polygons ({loaded}/{total})", { loaded: polygonLoadProgress, total: polygonLoadTotal }),
     default: t("Loading polygons")
   };
@@ -932,6 +945,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     loadingLabelKey = "fixingOverlaps";
   } else if (isValidatingPolygons) {
     loadingLabelKey = "validating";
+  } else if (isDeletingPolygons) {
+    loadingLabelKey = "deleting";
   } else if (polygonLoadTotal > 0) {
     loadingLabelKey = "withProgress";
   }
@@ -945,6 +960,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         onRefetchPolygons={refetchPolygons}
         onOverlapFixed={handleDrawerOverlapFixed}
         onRunValidation={runPolygonValidation}
+        onPolygonDeletingChange={handlePolygonDeletingChange}
       />
       <PageContent className="bg-theme-neutral-100">
         <PageItem
