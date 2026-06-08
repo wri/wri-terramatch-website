@@ -10,6 +10,7 @@ import {
   dispatchUndoPolygonDrawEvent,
   POLYGON_DRAW_CAN_UNDO_CHANGED_EVENT
 } from "@/components/elements/Map-mapbox/interactions/draftDrawEvents";
+import { resolvePolygonTableRowId } from "@/components/elements/Map-mapbox/sitePolygonPopupUtils";
 import { downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -27,6 +28,7 @@ import { createPolygonValidation, useAllSiteValidations } from "@/connections/Va
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { openPolygonPopupFromMapArea } from "@/context/mapArea.utils";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   EMPTY_POLYGONS,
@@ -35,7 +37,11 @@ import {
   usePolygonEditDrawer
 } from "@/context/polygonEditDrawer.provider";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
-import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
+import {
+  consumePendingPolygonFocusUuid,
+  setPolygonTableHoveredUuid,
+  useSyncPolygonTableSelectionStore
+} from "@/context/polygonTableInteraction.store";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
@@ -150,6 +156,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
   const [showBulkEditDrawer, setShowBulkEditDrawer] = useState(false);
   const [uploadedPolygonUuidToOpen, setUploadedPolygonUuidToOpen] = useState<string | null>(null);
+  const [focusPolygonUuid, setFocusPolygonUuid] = useState<string | null>(null);
   const [isStickyActive, setIsStickyActive] = useState(false);
   const [isDownloadingSelectedPolygons, setIsDownloadingSelectedPolygons] = useState(false);
   const [isBulkUpdatingPolygons, setIsBulkUpdatingPolygons] = useState(false);
@@ -157,6 +164,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [validatingPolygonCount, setValidatingPolygonCount] = useState(0);
   const [isFixingOverlaps, setIsFixingOverlaps] = useState(false);
   const [fixingOverlapsCount, setFixingOverlapsCount] = useState(0);
+  const [isDeletingPolygons, setIsDeletingPolygons] = useState(false);
+  const [deletingPolygonCount, setDeletingPolygonCount] = useState(0);
   const [canUndoPolygonDraw, setCanUndoPolygonDraw] = useState(false);
   const {
     polygonSearch,
@@ -183,7 +192,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   });
 
   const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
-  const isSitePolygonsLoading = isLoadingPolygons || isValidatingPolygons || isFixingOverlaps;
+  const isSitePolygonsLoading = isLoadingPolygons || isValidatingPolygons || isFixingOverlaps || isDeletingPolygons;
 
   const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
   const polygonValidations = useMemo(() => buildPolygonValidationsMap(allValidations), [allValidations]);
@@ -330,6 +339,33 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     setUploadedPolygonUuidToOpen(null);
   }, [isLoadingPolygons, openPolygonEditDrawerByPolygonId, polygonsData, site.uuid, uploadedPolygonUuidToOpen]);
 
+  useEffect(() => {
+    if (isLoadingPolygons) {
+      return;
+    }
+
+    const pendingFocusUuid = consumePendingPolygonFocusUuid();
+    if (pendingFocusUuid == null || pendingFocusUuid === "") {
+      return;
+    }
+
+    const rowId = resolvePolygonTableRowId(polygonsData, pendingFocusUuid);
+    if (rowId == null) {
+      return;
+    }
+
+    setPolygonTableHoveredUuid(rowId);
+    setFocusPolygonUuid(pendingFocusUuid);
+  }, [isLoadingPolygons, polygonsData]);
+
+  const handleFocusPolygonConsumed = useCallback(() => {
+    const focusedUuid = focusPolygonUuid;
+    setFocusPolygonUuid(null);
+    if (focusedUuid != null && focusedUuid !== "") {
+      openPolygonPopupFromMapArea(focusedUuid);
+    }
+  }, [focusPolygonUuid]);
+
   const handleOverlapFixModalClose = useCallback(() => {
     setOverlapFixModal(false);
     window.setTimeout(() => {
@@ -413,8 +449,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       return;
     }
 
+    setIsDeletingPolygons(true);
+    setDeletingPolygonCount(sitePolygonUuids.length);
+
     try {
-      showPolygonProgressToast(t, getDeletingProgressLabel(t, sitePolygonUuids.length));
       await bulkDeleteSitePolygons(sitePolygonUuids);
       setDeletePolygonModal(false);
       setDeletePayload(null);
@@ -427,6 +465,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       Log.error("Failed to delete selected polygons:", error);
       openNotification("error", t("Error!"), t("Error deleting polygons"));
       throw error;
+    } finally {
+      setIsDeletingPolygons(false);
+      setDeletingPolygonCount(0);
     }
   }, [closeMapPopups, deletePayload, invalidatePolygonMapTiles, openNotification, refetchPolygons, t, toastLabels]);
 
@@ -472,6 +513,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     },
     [openNotification, runPolygonValidation, t]
   );
+
+  const handlePolygonDeletingChange = useCallback((isDeleting: boolean, count = 0) => {
+    setIsDeletingPolygons(isDeleting);
+    setDeletingPolygonCount(count);
+  }, []);
 
   const handleDrawerOverlapFixed = useCallback(
     async (params: PolygonOverlapFixParams) => {
@@ -833,9 +879,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const polygonTableHighlight = useMemo(
     () => ({
-      selectedPolygonUuids: suppressMapSelectionHighlight ? [] : selectedPolygonUuids
+      selectedPolygonUuids: suppressMapSelectionHighlight ? [] : selectedPolygonUuids,
+      focusPolygonUuid,
+      onFocusPolygonConsumed: handleFocusPolygonConsumed
     }),
-    [selectedPolygonUuids, suppressMapSelectionHighlight]
+    [selectedPolygonUuids, suppressMapSelectionHighlight, focusPolygonUuid, handleFocusPolygonConsumed]
   );
 
   const handleClearHover = useCallback(() => {
@@ -886,6 +934,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const loadingLabels = {
     fixingOverlaps: getFixingOverlapsProgressLabel(t, fixingOverlapsCount),
     validating: getValidatingProgressLabel(t, validatingPolygonCount),
+    deleting: getDeletingProgressLabel(t, deletingPolygonCount),
     withProgress: t("Loading polygons ({loaded}/{total})", { loaded: polygonLoadProgress, total: polygonLoadTotal }),
     default: t("Loading polygons")
   };
@@ -896,6 +945,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     loadingLabelKey = "fixingOverlaps";
   } else if (isValidatingPolygons) {
     loadingLabelKey = "validating";
+  } else if (isDeletingPolygons) {
+    loadingLabelKey = "deleting";
   } else if (polygonLoadTotal > 0) {
     loadingLabelKey = "withProgress";
   }
@@ -909,6 +960,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         onRefetchPolygons={refetchPolygons}
         onOverlapFixed={handleDrawerOverlapFixed}
         onRunValidation={runPolygonValidation}
+        onPolygonDeletingChange={handlePolygonDeletingChange}
       />
       <PageContent className="bg-theme-neutral-100">
         <PageItem
@@ -929,7 +981,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             mainActionLabel: t("Add"),
             size: "small",
             leftIcon: <PlusIcon />,
-            mainActionOnClick: startNewPolygonFlow,
+            mainActionOnClick: () => {},
             otherActions: [
               {
                 label: t("Draw Polygon"),
@@ -1080,6 +1132,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             polygons={polygonsData}
             onRefetchPolygons={refetchPolygons}
             isLoadingPolygons={isSitePolygonsLoading}
+            freezeCameraZoom={isSitePolygonsLoading}
             polygonTableHighlight={polygonTableHighlight}
             overlapPolygons={overlapPolygonsForMap}
           />

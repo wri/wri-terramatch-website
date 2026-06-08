@@ -55,6 +55,7 @@ import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
 import ModalIdentified from "../../extensive/Modal/ModalIdentified";
@@ -521,6 +522,11 @@ const PolygonReviewTab: FC<IProps> = props => {
       await Promise.all(uploadPromises);
       pruneBoundingBoxesCache();
       openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
+      trackPolygonEvent("polygon_uploaded", {
+        ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+        polygon_id: "bulk_upload",
+        source: "direct"
+      });
       refetch();
     } catch (error) {
       const errorMessage = extractErrorMessage(error);
@@ -583,6 +589,11 @@ const PolygonReviewTab: FC<IProps> = props => {
         await Promise.all(uploadPromises);
         pruneBoundingBoxesCache();
         openNotification("success", t("Success!"), t("Polygons versioned successfully"));
+        trackPolygonEvent("polygon_uploaded", {
+          ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+          polygon_id: "bulk_upload",
+          source: "direct"
+        });
         refetch();
       }
     } catch (error) {
@@ -660,6 +671,12 @@ const PolygonReviewTab: FC<IProps> = props => {
               "approved",
               data
             );
+            polygonsForApprovals.forEach(polygon => {
+              trackPolygonEvent("polygon_submitted", {
+                ...getPolygonAnalyticsContext({ entityType: "site", entityId: record?.uuid }),
+                polygon_id: polygon.polygonUuid ?? polygon.uuid ?? "unknown"
+              });
+            });
             openNotification("success", t("Success, Your Polygons were approved!"));
 
             const siteUuid = record?.uuid;
@@ -770,6 +787,12 @@ const PolygonReviewTab: FC<IProps> = props => {
         btnDownloadProps={{
           onClick: () => {
             downloadSiteGeoJsonPolygons(record?.uuid ?? "", record?.name ?? "sitePolygons");
+            trackPolygonEvent("polygon_downloaded", {
+              ...getPolygonAnalyticsContext({ entityType: "site", entityId: record?.uuid }),
+              polygon_count: sitePolygonData?.length ?? 0,
+              file_format: "geojson",
+              download_type: "standard"
+            });
           }
         }}
       />
@@ -929,6 +952,12 @@ const PolygonReviewTab: FC<IProps> = props => {
                         onClick={() => {
                           setSelectedPolygonsInCheckbox([]);
                           downloadSiteGeoJsonPolygons(record?.uuid ?? "", record?.name ?? "sitePolygons");
+                          trackPolygonEvent("polygon_downloaded", {
+                            ...getPolygonAnalyticsContext({ entityType: "site", entityId: record?.uuid }),
+                            polygon_count: sitePolygonData?.length ?? 0,
+                            file_format: "geojson",
+                            download_type: "standard"
+                          });
                         }}
                       >
                         Download

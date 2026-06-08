@@ -10,6 +10,7 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 
 interface UseSiteValidationProps {
   siteUuid?: string;
@@ -36,6 +37,11 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
     if (!siteUuid) return;
 
     try {
+      trackPolygonEvent("polygon_validation_run", {
+        ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+        polygon_id: "bulk",
+        validation_result: "pending"
+      });
       showLoader();
       await triggerSiteValidation(siteUuid);
       setPendingSiteValidation(true);
@@ -50,39 +56,47 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
     }
   }, [siteUuid, showLoader, hideLoader, setIsLoadingDelayedJob, openNotification, t]);
 
-  const handleSiteValidationComplete = useCallback(() => {
-    if (!siteUuid) return;
+  const handleSiteValidationComplete = useCallback(
+    (result: "pass" | "fail") => {
+      if (!siteUuid) return;
 
-    fetchOverlapValidations(true);
-    setShouldRefetchValidation(true);
-    ApiSlice.pruneCache("sitePolygons");
+      fetchOverlapValidations(true);
+      setShouldRefetchValidation(true);
+      ApiSlice.pruneCache("sitePolygons");
 
-    if (Array.isArray(sitePolygonData)) {
-      const polygonUuids = sitePolygonData
-        .map(polygon => polygon.polygonUuid)
-        .filter((uuid): uuid is string => Boolean(uuid));
-      if (polygonUuids.length > 0) {
-        ApiSlice.pruneCache("validations", polygonUuids);
+      if (Array.isArray(sitePolygonData)) {
+        const polygonUuids = sitePolygonData
+          .map(polygon => polygon.polygonUuid)
+          .filter((uuid): uuid is string => Boolean(uuid));
+        if (polygonUuids.length > 0) {
+          ApiSlice.pruneCache("validations", polygonUuids);
+        }
       }
-    }
 
-    openNotification(
-      "success",
-      t("Please update and re-run if any polygons fail."),
-      t("Success! TerraMatch reviewed all polygons")
-    );
+      openNotification(
+        "success",
+        t("Please update and re-run if any polygons fail."),
+        t("Success! TerraMatch reviewed all polygons")
+      );
+      trackPolygonEvent("polygon_validation_run", {
+        ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+        polygon_id: "bulk",
+        validation_result: result
+      });
 
-    setIsLoadingDelayedJob?.(false);
-    setPendingSiteValidation(false);
-  }, [
-    siteUuid,
-    fetchOverlapValidations,
-    setShouldRefetchValidation,
-    sitePolygonData,
-    openNotification,
-    setIsLoadingDelayedJob,
-    t
-  ]);
+      setIsLoadingDelayedJob?.(false);
+      setPendingSiteValidation(false);
+    },
+    [
+      siteUuid,
+      fetchOverlapValidations,
+      setShouldRefetchValidation,
+      sitePolygonData,
+      openNotification,
+      setIsLoadingDelayedJob,
+      t
+    ]
+  );
 
   useEffect(() => {
     if (!(pendingSiteValidation && delayedJobs && delayedJobs.length > 0)) {
@@ -98,7 +112,7 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
     });
 
     if (completedValidationJob) {
-      handleSiteValidationComplete();
+      handleSiteValidationComplete(completedValidationJob.status === "succeeded" ? "pass" : "fail");
     }
   }, [delayedJobs, pendingSiteValidation, handleSiteValidationComplete, siteUuid]);
 

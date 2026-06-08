@@ -279,3 +279,150 @@ export const ControlsOnNeutralDarks: Story = {
     />
   )
 };
+
+type SemanticVariant = "negative" | "attention" | "positive" | "neutralActive" | "neutralPassive";
+
+type SemanticHue = {
+  label: string;
+  shade: 100 | 200 | 300;
+  accessibleOnlyWithBorder?: boolean;
+};
+
+type SemanticCategory = {
+  title: string;
+  description: string;
+  variant: SemanticVariant;
+  hues: SemanticHue[];
+};
+
+const semanticCategories: SemanticCategory[] = [
+  {
+    title: "Negative",
+    description: "Semantic data vis colors to be used for error, alert, rejected, failed, and other adjacent states.",
+    variant: "negative",
+    hues: [
+      { label: "Hue one", shade: 100, accessibleOnlyWithBorder: true },
+      { label: "Hue two", shade: 200 }
+    ]
+  },
+  {
+    title: "Attention",
+    description:
+      "Semantic data vis colors to be used for marking something as cautionary, or warning of need for review.",
+    variant: "attention",
+    hues: [
+      { label: "Hue one", shade: 100, accessibleOnlyWithBorder: true },
+      { label: "Hue two", shade: 200 }
+    ]
+  },
+  {
+    title: "Positive",
+    description:
+      "Semantic data vis colors to be used for declaring something as complete, successful, or otherwise positive.",
+    variant: "positive",
+    hues: [
+      { label: "Hue one", shade: 100, accessibleOnlyWithBorder: true },
+      { label: "Hue two", shade: 200 }
+    ]
+  },
+  {
+    title: "Neutral active",
+    description:
+      "Semantic data vis colors to be used for declaring something is in progress, currently active, or live.",
+    variant: "neutralActive",
+    hues: [
+      { label: "Hue one", shade: 100, accessibleOnlyWithBorder: true },
+      { label: "Hue two", shade: 200 },
+      { label: "Hue three", shade: 300 }
+    ]
+  },
+  {
+    title: "Neutral passive",
+    description: "Semantic data vis colors to be used for declaring something is inactive, in draft state, or passive.",
+    variant: "neutralPassive",
+    hues: [
+      { label: "Hue one", shade: 100, accessibleOnlyWithBorder: true },
+      { label: "Hue two", shade: 200 }
+    ]
+  }
+];
+
+const SemanticHueSwatch = ({ variant, hue }: { variant: SemanticVariant; hue: SemanticHue }) => (
+  <Flex direction="column" align="center" gap={2} width="120px">
+    <Box
+      bg={`${variant}.${hue.shade}`}
+      width="80px"
+      height="80px"
+      borderRadius="4px"
+      borderWidth={hue.accessibleOnlyWithBorder ? "2px" : undefined}
+      borderColor={hue.accessibleOnlyWithBorder ? "rgba(0, 0, 0, 0.3)" : undefined}
+      borderStyle="solid"
+    />
+    <Box textAlign="center" minH="78px">
+      <Text fontSize="300" lineHeight="500" color="neutral.800">
+        {hue.label}
+      </Text>
+      {hue.accessibleOnlyWithBorder && (
+        <Text fontSize="200" lineHeight="400" color="neutral.800" fontStyle="italic">
+          (Accessible only with border)
+        </Text>
+      )}
+    </Box>
+  </Flex>
+);
+
+const SemanticCategoryRow = ({ category }: { category: SemanticCategory }) => (
+  <Flex gap={8} align="flex-start" flexWrap="wrap">
+    <VStack align="stretch" gap={2} flex="1" minW="280px" maxW="486px">
+      <VStack align="stretch" gap={0}>
+        <Text textStyle="400-bold" color="neutral.900">
+          {category.title}
+        </Text>
+        <Text fontSize="300" color="neutral.700">
+          {category.description}
+        </Text>
+      </VStack>
+    </VStack>
+
+    <Box
+      bg="neutral.200"
+      borderWidth="1px"
+      borderColor="neutral.300"
+      borderRadius="16px"
+      px={8}
+      py={8}
+      flex="2"
+      minW="320px"
+    >
+      <Flex gap={5} align="center" justify="center" flexWrap="wrap">
+        {category.hues.map(hue => (
+          <SemanticHueSwatch key={hue.label} variant={category.variant} hue={hue} />
+        ))}
+      </Flex>
+    </Box>
+  </Flex>
+);
+
+export const Semantic: Story = {
+  render: () => (
+    <Box bg="neutral.100" borderWidth="1px" borderColor="neutral.300" borderRadius="16px" p={8} boxShadow="200">
+      <VStack align="stretch" gap={5}>
+        <Box borderBottomWidth="1px" borderColor="neutral.300" pb={4}>
+          <VStack align="stretch" gap={2}>
+            <Text textStyle="600-bold" color="neutral.900">
+              Semantic
+            </Text>
+            <Text fontSize="300" color="neutral.700">
+              A set of semantic data Visualization colours to be used for Visualizations with semantic intent, such as
+              status.
+            </Text>
+          </VStack>
+        </Box>
+
+        {semanticCategories.map(category => (
+          <SemanticCategoryRow key={category.title} category={category} />
+        ))}
+      </VStack>
+    </Box>
+  )
+};
