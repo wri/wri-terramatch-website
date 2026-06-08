@@ -4,7 +4,6 @@ import { MutableRefObject, useEffect, useRef } from "react";
 import { LAYERS_NAMES } from "@/constants/layers";
 
 import { BBox } from "../GeoJSON";
-import { computePolygonFingerprint } from "../hooks/useMapLayers";
 import { getPolygonGeometryFillLayerIds } from "../layers/polygonLayers";
 
 type UsePolygonTilesLoadingParams = {
@@ -17,6 +16,9 @@ type UsePolygonTilesLoadingParams = {
   shouldBboxZoom?: boolean;
   onLoadingChange?: (value: boolean) => void;
 };
+
+const hasPolygonUuids = (polygonsData?: Record<string, string[]>): boolean =>
+  Object.values(polygonsData ?? {}).some(uuids => uuids.length > 0);
 
 export function usePolygonTilesLoading({
   map,
@@ -41,8 +43,13 @@ export function usePolygonTilesLoading({
     const sessionId = sessionRef.current + 1;
     sessionRef.current = sessionId;
 
-    const hasPolygonUuids = computePolygonFingerprint(polygonsData) !== "0:0:0";
-    const expectsCameraMove = shouldBboxZoom === true && bbox != null && hasPolygonUuids;
+    const hasPolygons = hasPolygonUuids(polygonsData);
+    if (!hasPolygons) {
+      onLoadingChange(false);
+      return;
+    }
+
+    const expectsCameraMove = shouldBboxZoom === true && bbox != null;
 
     let cancelled = false;
     let cameraSettled = !expectsCameraMove;
@@ -70,10 +77,6 @@ export function usePolygonTilesLoading({
     };
 
     const hasRenderedPolygonFeatures = () => {
-      if (!hasPolygonUuids) {
-        return true;
-      }
-
       const layerIds = getPolygonGeometryFillLayerIds().filter(layerId => currentMap.getLayer(layerId) != null);
       if (layerIds.length === 0) {
         return false;

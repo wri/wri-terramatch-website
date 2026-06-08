@@ -118,12 +118,11 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
   );
 
-  const projectUuid =
-    type === "sites" && polygons.length === 0 && entityModel.projectUuid != null && entityModel.projectUuid !== ""
-      ? entityModel.projectUuid
-      : undefined;
-
-  const projectBbox = useBoundingBox(projectUuid != null ? { projectUuid } : {});
+  const projectBbox = useBoundingBox(
+    type === "sites" && entityModel.projectUuid != null && entityModel.projectUuid !== ""
+      ? { projectUuid: entityModel.projectUuid }
+      : {}
+  );
 
   const countryBbox = useBoundingBox(
     type === "sites"
@@ -132,14 +131,17 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   );
 
   const extentBbox = useMemo((): BBox | undefined => {
-    if (polygons.length > 0) {
-      return modelBbox as BBox | undefined;
+    if (modelBbox != null) {
+      return modelBbox as BBox;
     }
     if (projectBbox != null) {
       return projectBbox as BBox;
     }
+    if (type === "sites" && entityModel.projectUuid != null && entityModel.projectUuid !== "") {
+      return undefined;
+    }
     return countryBbox as BBox | undefined;
-  }, [polygons.length, modelBbox, projectBbox, countryBbox]);
+  }, [countryBbox, entityModel.projectUuid, modelBbox, projectBbox, type]);
 
   useEffect(() => {
     setPolygonData(polygons);
@@ -178,7 +180,10 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   return (
     <Box position="relative" className={classNames("h-full w-full flex-1", className)}>
-      <LoadingMap text={t("Loading polygons")} loading={isLoadingPolygons || isPolygonTilesLoading} />
+      <LoadingMap
+        text={t("Loading polygons")}
+        loading={isLoadingPolygons || (polygons.length > 0 && isPolygonTilesLoading)}
+      />
       <MapContainer
         championsMap={true}
         mapFunctions={mapFunctions}
