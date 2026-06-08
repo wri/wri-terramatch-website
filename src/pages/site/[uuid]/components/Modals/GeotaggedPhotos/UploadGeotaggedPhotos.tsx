@@ -139,7 +139,8 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
           label: t("Upload Failed"),
           type: "error",
           placement: "bottom",
-          duration: 5000
+          duration: 5000,
+          maxWidth: "auto"
         });
         return;
       }
@@ -155,14 +156,16 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
           }),
           type: "warning",
           placement: "bottom",
-          duration: 5000
+          duration: 5000,
+          maxWidth: "auto"
         });
       } else {
         showToast({
           label: t("Upload Complete"),
           type: "success",
           placement: "bottom",
-          duration: 5000
+          duration: 5000,
+          maxWidth: "auto"
         });
       }
 
@@ -173,7 +176,8 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
         label: t("Upload Failed"),
         type: "error",
         placement: "bottom",
-        duration: 5000
+        duration: 5000,
+        maxWidth: "auto"
       });
     } finally {
       setIsUploading(false);
