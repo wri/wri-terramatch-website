@@ -111,7 +111,12 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
             position="bottom-right"
             className={dashboardMode === "modal" ? "bottom-2 z-[19]" : "-bottom-2 z-[19]"}
           >
-            <ZoomControl map={map} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />
+            <ZoomControl
+              map={map}
+              isFullscreen={isFullscreen}
+              toggleFullscreen={toggleFullscreen}
+              showFullscreenControl={!disabledPolygonPanel}
+            />
           </ControlGroup>
 
           {record?.uuid != null && validationType === "bulkValidation" && !disabledPolygonPanel ? (
