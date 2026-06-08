@@ -12,9 +12,12 @@ import {
 import { CompareGeometryFileResponse } from "@/generated/v3/researchService/researchServiceComponents";
 
 import {
+  type PolygonToastId,
+  closePolygonProgressToast,
   getPolygonOperationToastLabels,
   getUpdatingPolygonsProgressLabel,
   getUploadingPolygonsProgressLabel,
+  POLYGON_TOAST_IDS,
   showPolygonCompleteToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
@@ -163,19 +166,22 @@ export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUpl
     async (
       files: File[],
       upload: GeometryUploadHandler,
-      labels: { progress: string; complete: string }
+      labels: { progress: string; complete: string },
+      toastId: PolygonToastId
     ): Promise<void> => {
       if (files.length === 0) {
         return;
       }
 
-      showPolygonProgressToast(t, labels.progress);
+      showPolygonProgressToast(t, labels.progress, toastId);
 
       try {
         const responses = await Promise.all(files.map(file => runGeometryUpload(file, siteUuid, upload)));
+        closePolygonProgressToast(toastId);
         showPolygonCompleteToast(labels.complete);
         onUploadSuccess(buildUploadSuccessResult(files, responses));
       } catch (error) {
+        closePolygonProgressToast(toastId);
         onError(extractErrorMessage(error));
       }
     },
@@ -184,20 +190,27 @@ export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUpl
 
   const uploadNewFiles = useCallback(
     (files: File[]) => {
-      void uploadFiles(files, uploadGeometry, {
-        progress: getUploadingPolygonsProgressLabel(t, files.length),
-        complete: toastLabels.uploadingPolygonsComplete
-      });
+      void uploadFiles(
+        files,
+        uploadGeometry,
+        {
+          progress: getUploadingPolygonsProgressLabel(t, files.length),
+          complete: toastLabels.uploadingPolygonsComplete
+        },
+        POLYGON_TOAST_IDS.uploading
+      );
     },
     [t, toastLabels.uploadingPolygonsComplete, uploadFiles, uploadGeometry]
   );
 
   const uploadWithVersionsFiles = useCallback(
     (files: File[]) => {
-      void uploadFiles(files, uploadGeometryWithVersions, {
-        progress: getUpdatingPolygonsProgressLabel(t, files.length),
-        complete: toastLabels.updatingPolygonsComplete
-      });
+      void uploadFiles(
+        files,
+        uploadGeometryWithVersions,
+        { progress: getUpdatingPolygonsProgressLabel(t, files.length), complete: toastLabels.updatingPolygonsComplete },
+        POLYGON_TOAST_IDS.updating
+      );
     },
     [t, toastLabels.updatingPolygonsComplete, uploadFiles, uploadGeometryWithVersions]
   );
