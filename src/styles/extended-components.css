@@ -24,9 +24,6 @@
 #map-container.champions-map .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl-attrib.mapboxgl-compact {
   order: 1;
   margin: 0 !important;
-  padding: 0 !important;
-  min-height: 24px;
-  background-color: transparent !important;
 }
 
 #map-container.champions-map .mapboxgl-ctrl-bottom-right > .mapboxgl-ctrl:has(> .mapboxgl-ctrl-logo) {
