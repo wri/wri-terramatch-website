@@ -48,9 +48,12 @@ import ApiSlice from "@/store/apiSlice";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import {
+  closePolygonProgressToast,
+  getDeletingProgressLabel,
   getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
   getSubmittingProgressLabel,
+  POLYGON_TOAST_IDS,
   showPolygonCompleteToast,
   showPolygonErrorToast,
   showPolygonProgressToast
@@ -148,7 +151,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       showPolygonCompleteToast(label);
       return;
     }
-    showToast({ label, type: "warning", placement: "bottom", duration: 5000 });
+    showToast({ label, type: "warning", placement: "bottom", duration: 5000, maxWidth: "auto" });
   }, []);
   const {
     polygonGeometryEdit,
@@ -312,7 +315,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return false;
     }
 
-    showPolygonProgressToast(t, toastLabels.savingChangesProgress);
+    showPolygonProgressToast(t, toastLabels.savingChangesProgress, POLYGON_TOAST_IDS.savingChanges);
 
     try {
       const createdPolygon = await saveNewSitePolygon({
@@ -322,9 +325,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         dateValueToIso: dateValueToIsoString
       });
       await finalizeSuccessfulSave(createdPolygon, { geometryChanged: true, refetchVersionsList: false });
+      closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
       showPolygonCompleteToast(toastLabels.savingChangesComplete);
       return true;
     } catch {
+      closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
       showPolygonErrorToast(t("Error creating polygon"));
       return false;
     }
@@ -340,7 +345,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return false;
     }
 
-    showPolygonProgressToast(t, toastLabels.savingChangesProgress);
+    showPolygonProgressToast(t, toastLabels.savingChangesProgress, POLYGON_TOAST_IDS.savingChanges);
 
     try {
       const previousPolygonUuid = geometryPolygonUuid !== "" ? geometryPolygonUuid : undefined;
@@ -357,9 +362,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         refetchVersionsList: true,
         previousPolygonUuid
       });
+      closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
       showPolygonCompleteToast(toastLabels.savingChangesComplete);
       return true;
     } catch {
+      closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
       showPolygonErrorToast(t("Error creating polygon version"));
       return false;
     }
@@ -470,7 +477,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
-    showPolygonProgressToast(t, toastLabels.downloadingSamplePlotsProgress);
+    showPolygonProgressToast(t, toastLabels.downloadingSamplePlotsProgress, POLYGON_TOAST_IDS.downloadingSamplePlots);
 
     try {
       const response = await loadAnrPlotGeometryGeoJson({ sitePolygonUuid });
@@ -480,8 +487,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       }
       const filename = formatFileName(`${polygon?.name ?? "polygon"}_anr_monitoring_plots`);
       downloadGeoJsonFile(geojson, filename);
+      closePolygonProgressToast(POLYGON_TOAST_IDS.downloadingSamplePlots);
       showPolygonCompleteToast(toastLabels.downloadingSamplePlotsComplete);
     } catch (error) {
+      closePolygonProgressToast(POLYGON_TOAST_IDS.downloadingSamplePlots);
       showPolygonErrorToast(t("Error downloading ANR monitoring plots"));
     }
   }, [isAnrEligible, polygon?.name, showStatusToast, sitePolygonUuid, t, toastLabels]);
@@ -553,13 +562,15 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
-    showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, 1));
+    showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, 1), POLYGON_TOAST_IDS.downloading);
 
     try {
       await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon", { includeExtendedData: true });
       onClose?.();
+      closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
       showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
     } catch (error) {
+      closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
       showPolygonErrorToast(t("Error downloading polygon"));
     }
   }, [geometryPolygonUuid, onClose, polygon?.name, showStatusToast, t, toastLabels]);
@@ -575,7 +586,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return;
     }
 
-    showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1));
+    showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1), POLYGON_TOAST_IDS.submitting);
 
     try {
       await bulkUpdateSitePolygonStatus([polygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, "");
@@ -589,8 +600,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       onClose?.();
       await waitForMapEditCleanup();
       await onSaved?.();
+      closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
       showPolygonCompleteToast(toastLabels.submittingComplete);
     } catch (error) {
+      closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
       showPolygonErrorToast(t("Error submitting polygon"));
     }
   }, [
@@ -616,6 +629,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     }
 
     onDeletingChange?.(true, 1);
+    showPolygonProgressToast(t, getDeletingProgressLabel(t, 1), POLYGON_TOAST_IDS.deleting);
 
     try {
       await deleteSitePolygon(polygon.uuid);
@@ -632,8 +646,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       onClose?.();
       await waitForMapEditCleanup();
       await onSaved?.();
+      closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
       showPolygonCompleteToast(toastLabels.deletingComplete);
     } catch (error) {
+      closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
       showPolygonErrorToast(t("Error deleting polygon"));
       throw error;
     } finally {

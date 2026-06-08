@@ -1,4 +1,4 @@
-import { showToast } from "@worldresources/wri-design-systems";
+import { closeToast, showToast } from "@worldresources/wri-design-systems";
 import { createElement } from "react";
 
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
@@ -6,9 +6,24 @@ import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 export const POLYGON_TOAST_PLACEMENT = "bottom" as const;
 export const POLYGON_TOAST_DURATION_MS = 5000;
 
-export const showPolygonProgressToast = (t: (key: string) => string, label: string) =>
+export const POLYGON_TOAST_IDS = {
+  uploading: "polygon-uploading-toast",
+  updating: "polygon-updating-toast",
+  submitting: "polygon-submitting-toast",
+  downloading: "polygon-downloading-toast",
+  downloadingSamplePlots: "polygon-downloading-sample-plots-toast",
+  savingChanges: "polygon-saving-changes-toast",
+  fixingOverlaps: "polygon-fixing-overlaps-toast",
+  deleting: "polygon-deleting-toast",
+  validating: "polygon-validating-toast"
+} as const;
+
+export type PolygonToastId = (typeof POLYGON_TOAST_IDS)[keyof typeof POLYGON_TOAST_IDS];
+
+export const showPolygonProgressToast = (t: (key: string) => string, label: string, id: PolygonToastId) =>
   showToast({
     label,
+    id,
     type: "info",
     placement: POLYGON_TOAST_PLACEMENT,
     duration: POLYGON_TOAST_DURATION_MS,
@@ -17,15 +32,19 @@ export const showPolygonProgressToast = (t: (key: string) => string, label: stri
       boxSize: 7,
       color: "primary.700",
       animation: "spin 1s linear infinite"
-    })
+    }),
+    maxWidth: "auto"
   });
+
+export const closePolygonProgressToast = (id: PolygonToastId) => closeToast(id);
 
 export const showPolygonCompleteToast = (label: string) =>
   showToast({
     label,
     type: "success",
     placement: POLYGON_TOAST_PLACEMENT,
-    duration: POLYGON_TOAST_DURATION_MS
+    duration: POLYGON_TOAST_DURATION_MS,
+    maxWidth: "auto"
   });
 
 export const showPolygonErrorToast = (label: string) =>
@@ -33,7 +52,8 @@ export const showPolygonErrorToast = (label: string) =>
     label,
     type: "error",
     placement: POLYGON_TOAST_PLACEMENT,
-    duration: POLYGON_TOAST_DURATION_MS
+    duration: POLYGON_TOAST_DURATION_MS,
+    maxWidth: "auto"
   });
 
 type TranslateFn = (key: string) => string;
@@ -73,6 +93,7 @@ export type PolygonOperationToastLabels = {
   fixingOverlapsComplete: string;
   downloadingSamplePlotsProgress: string;
   downloadingSamplePlotsComplete: string;
+  validatingComplete: string;
 };
 
 export const getPolygonOperationToastLabels = (t: TranslateFn): PolygonOperationToastLabels => ({
@@ -82,8 +103,9 @@ export const getPolygonOperationToastLabels = (t: TranslateFn): PolygonOperation
   savingChangesComplete: t("Changes Saved"),
   downloadingPolygonsComplete: t("Download Complete"),
   updatingPolygonsComplete: t("Update Complete"),
-  deletingComplete: t("Polygon deleted"),
+  deletingComplete: t("Polygon Deleted"),
   fixingOverlapsComplete: t("Overlap Fix Complete"),
   downloadingSamplePlotsProgress: t("Downloading Sample Plots..."),
-  downloadingSamplePlotsComplete: t("Download Complete")
+  downloadingSamplePlotsComplete: t("Download Complete"),
+  validatingComplete: t("Validation Complete")
 });
