@@ -59,6 +59,7 @@ export const Default: Story = {
     search: { ...baseSearch, count: 0 },
     className: "w-full",
     classNameContentLeft: "w-full",
+    showClearFilters: false,
     onClearFilters: () => console.log("clear filters"),
     onClickFilterButton: () => console.log("open filter panel")
   }
@@ -74,9 +75,9 @@ export const WithSelectedFilters: Story = {
     onClearFilters: () => console.log("clear filters"),
     onClickFilterButton: () => console.log("open filter panel"),
     selectedFilters: [
-      { category: "Status", label: "Approved", onRemove: () => console.log("remove status") },
-      { category: "Country", label: "Kenya", onRemove: () => console.log("remove country") },
-      { category: "Organisation", label: "WRI", onRemove: () => console.log("remove org") }
+      { category: "Category", label: ["Filter A", "Filter B"], onRemove: () => console.log("remove status") },
+      { category: "Country", label: "mm/yyyy - mm/yyyy", onRemove: () => console.log("remove country") },
+      { category: "Organisation", label: "Label", onRemove: () => console.log("remove org") }
     ]
   }
 };
@@ -91,12 +92,11 @@ export const WithManySelectedFilters: Story = {
     onClearFilters: () => console.log("clear filters"),
     onClickFilterButton: () => console.log("open filter panel"),
     selectedFilters: [
-      { category: "Status", label: "Approved", onRemove: () => console.log("remove") },
-      { category: "Country", label: "Kenya", onRemove: () => console.log("remove") },
-      { category: "Cohort", label: "2023", onRemove: () => console.log("remove") },
-      { category: "Type", label: "Agroforestry", onRemove: () => console.log("remove") },
-      { category: "Organisation", label: "WRI Africa", onRemove: () => console.log("remove") },
-      { category: "Programme", label: "TerraFund", onRemove: () => console.log("remove") }
+      { category: "Category", label: ["Filter A", "Filter B"], onRemove: () => console.log("remove status") },
+      { category: "Category", label: ["Filter A", "Filter B"], onRemove: () => console.log("remove status") },
+      { category: "Country", label: "mm/yyyy - mm/yyyy", onRemove: () => console.log("remove country") },
+      { category: "Organisation", label: "Label", onRemove: () => console.log("remove org") },
+      { category: "Organisation", label: "Label", onRemove: () => console.log("remove org") }
     ]
   }
 };
