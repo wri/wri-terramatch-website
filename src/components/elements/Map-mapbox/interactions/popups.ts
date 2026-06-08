@@ -1,5 +1,13 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import { LayerSpecification, Map as MapboxMap, MapMouseEvent, MapTouchEvent, Popup } from "mapbox-gl";
+import {
+  GeoJSONFeature,
+  LayerSpecification,
+  LngLatLike,
+  Map as MapboxMap,
+  MapMouseEvent,
+  MapTouchEvent,
+  Popup
+} from "mapbox-gl";
 import React, { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -55,21 +63,18 @@ export type PopupHandlerOptions = {
   championsMap?: boolean;
 };
 
-const handleLayerClick = (
-  e: MapLayerInteractionEvent,
-  PopupComponent: React.ComponentType<PopupComponentProps>,
+type OpenPolygonPopupParams = {
+  feature: GeoJSONFeature;
+  lngLat: LngLatLike;
+  layerName?: string;
+};
+
+export const openPolygonPopup = (
   map: MapboxMap,
-  layerName: string | undefined,
+  PopupComponent: React.ComponentType<PopupComponentProps>,
+  { feature, lngLat, layerName }: OpenPolygonPopupParams,
   options: PopupHandlerOptions
 ): void => {
-  const { lngLat, features } = e;
-  const feature = features?.[0];
-  if (feature == null) {
-    Log.warn("No feature found in click event");
-    return;
-  }
-  e.preventDefault();
-
   const {
     setPolygonFromMap,
     setShouldRefetchPolygonData,
@@ -78,33 +83,8 @@ const handleLayerClick = (
     editPolygon,
     setEditPolygon,
     dashboard,
-    setLoader,
-    setMobilePopupData,
     championsMap
   } = options;
-
-  if (setMobilePopupData != null && dashboard?.dashboardMode != null) {
-    setMobilePopupData({
-      feature,
-      layerName,
-      type,
-      setPolygonFromMap,
-      setShouldRefetchPolygonData,
-      sitePolygonData,
-      editPolygon,
-      setEditPolygon,
-      setLoader,
-      setFilters: dashboard.setFilters,
-      dashboardCountries: dashboard.dashboardCountries,
-      dashboardMode: dashboard.dashboardMode
-    });
-    return;
-  }
-
-  if (layerName === LAYERS_NAMES.POLYGON_GEOMETRY && map.getLayer(ANR_PLOT_FILL_LAYER_ID) != null) {
-    const anrHits = map.queryRenderedFeatures(e.point, { layers: [ANR_PLOT_FILL_LAYER_ID] });
-    if (anrHits.length > 0) return;
-  }
 
   removePopups(map, "POLYGON");
 
@@ -160,6 +140,49 @@ const handleLayerClick = (
       })
     )
   );
+};
+
+const handleLayerClick = (
+  e: MapLayerInteractionEvent,
+  PopupComponent: React.ComponentType<PopupComponentProps>,
+  map: MapboxMap,
+  layerName: string | undefined,
+  options: PopupHandlerOptions
+): void => {
+  const { lngLat, features } = e;
+  const feature = features?.[0];
+  if (feature == null) {
+    Log.warn("No feature found in click event");
+    return;
+  }
+  e.preventDefault();
+
+  const { dashboard, setLoader, setMobilePopupData } = options;
+
+  if (setMobilePopupData != null && dashboard?.dashboardMode != null) {
+    setMobilePopupData({
+      feature,
+      layerName,
+      type: options.type,
+      setPolygonFromMap: options.setPolygonFromMap,
+      setShouldRefetchPolygonData: options.setShouldRefetchPolygonData,
+      sitePolygonData: options.sitePolygonData,
+      editPolygon: options.editPolygon,
+      setEditPolygon: options.setEditPolygon,
+      setLoader,
+      setFilters: dashboard.setFilters,
+      dashboardCountries: dashboard.dashboardCountries,
+      dashboardMode: dashboard.dashboardMode
+    });
+    return;
+  }
+
+  if (layerName === LAYERS_NAMES.POLYGON_GEOMETRY && map.getLayer(ANR_PLOT_FILL_LAYER_ID) != null) {
+    const anrHits = map.queryRenderedFeatures(e.point, { layers: [ANR_PLOT_FILL_LAYER_ID] });
+    if (anrHits.length > 0) return;
+  }
+
+  openPolygonPopup(map, PopupComponent, { feature, lngLat, layerName }, options);
 };
 
 export const registerPopup = (map: MapboxMap, key: "POLYGON" | "MEDIA", popup: MapboxPopup): void => {

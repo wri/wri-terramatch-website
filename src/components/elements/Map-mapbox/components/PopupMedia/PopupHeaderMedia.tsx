@@ -11,7 +11,7 @@ const PopupHeaderMedia: FC<PopupHeaderMediaProps> = ({ name }) => {
   const resolvedName = name !== "" ? name : t("Untitled photo");
 
   return (
-    <Text textStyle="400-bold" color="neutral.900" lineClamp={1} title={resolvedName}>
+    <Text textStyle="400-bold" color="neutral.900" maxW="14rem" lineClamp={1} title={resolvedName}>
       {resolvedName}
     </Text>
   );

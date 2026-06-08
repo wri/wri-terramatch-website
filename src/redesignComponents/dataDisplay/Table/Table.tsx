@@ -32,13 +32,8 @@ interface TableProps<T extends BaseRow> {
   pageSize?: number;
   className?: string;
   showPagination?: boolean;
-  /** Ref forwarded to the wrapper Box. Useful for consumers that need to listen to scroll on the
-   *  WriTable scroll container (e.g. for sticky columns). */
   containerRef?: Ref<HTMLDivElement>;
-  // Controlled selection state. When provided, overrides the internal useTableSelection state.
   selectedRows?: T[];
-  /** Called when the "select all" header checkbox is toggled. Receives the checked flag and the
-   *  currently visible page rows so the consumer can sync their own selectedRows state. */
   onAllItemsSelected?: (checked: boolean, visibleRows: T[]) => void;
 }
 
@@ -227,7 +222,7 @@ const Table = <T extends BaseRow>({
           textStyle="500"
           fontWeight="400"
           color={getThemedColor("neutral", 700)}
-          className="absolute bottom-[1.875rem] left-1/2 w-fit -translate-x-1/2 text-center mobile:hidden"
+          className="absolute bottom-0 left-1/2 w-fit -translate-x-1/2 text-center mobile:hidden"
         >
           Showing {`${displayStart} - ${displayEnd} of ${actualTotalItems}`}
         </Text>

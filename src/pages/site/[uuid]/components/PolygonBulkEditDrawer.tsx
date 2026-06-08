@@ -354,7 +354,6 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                     label={t("Trees Planted")}
                     value={treesPlanted}
                     onChange={event => setTreesPlanted(event.target.value.replace(/\D/g, ""))}
-                    errorMessage={!hasValidTreesPlanted ? t("Enter a whole number") : undefined}
                     disabled={editingField !== "numTrees"}
                   />
                 </EditWrapper>

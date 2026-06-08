@@ -3,6 +3,8 @@ import { Select as WriSelect } from "@worldresources/wri-design-systems";
 import type { ComponentProps } from "react";
 import { FC } from "react";
 
+import { getThemedColor } from "@/lib/theme";
+
 const StyledWrapper = styled.div`
   & {
     width: 100%;
@@ -12,6 +14,9 @@ const StyledWrapper = styled.div`
   }
   & button:is(: disabled, [disabled], [data-disabled], [aria-disabled="true"]) {
     opacity: 1;
+  }
+  & button:is(: disabled, [disabled], [data-disabled], [aria-disabled="true"]) span {
+    color: ${getThemedColor("neutral", 600)} !important;
   }
 `;
 
