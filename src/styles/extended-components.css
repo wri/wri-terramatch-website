@@ -3,8 +3,44 @@
 @layer components {
 }
 
-#map-container.champions-map .mapboxgl-ctrl-attrib.mapboxgl-compact {
-  margin-right: 70px;
+#map-container.champions-map .mapboxgl-ctrl-bottom-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  bottom: 8px !important;
+  right: 72px !important;
+  margin: 0 !important;
+  pointer-events: none;
+}
+
+#map-container.champions-map .mapboxgl-ctrl-bottom-right > .mapboxgl-ctrl,
+#map-container.champions-map .mapboxgl-ctrl-bottom-right > .mapboxgl-ctrl-attrib {
+  float: none !important;
+  margin: 0 !important;
+  pointer-events: auto;
+}
+
+#map-container.champions-map .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl-attrib.mapboxgl-compact {
+  order: 1;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 24px;
+  background-color: transparent !important;
+}
+
+#map-container.champions-map .mapboxgl-ctrl-bottom-right > .mapboxgl-ctrl:has(> .mapboxgl-ctrl-logo) {
+  display: block !important;
+  order: 2;
+}
+
+#map-container.champions-map .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl-logo {
+  margin: 0 !important;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.85));
+}
+
+#map-container:not(.champions-map) .mapboxgl-ctrl-bottom-left > .mapboxgl-ctrl:has(> .mapboxgl-ctrl-logo) {
+  display: block !important;
 }
 
 .mouse-tooltip > .mapboxgl-popup-content {
