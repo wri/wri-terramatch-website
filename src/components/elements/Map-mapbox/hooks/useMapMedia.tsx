@@ -137,6 +137,11 @@ export function useMapMedia({
       return () => removeMediaMarkers(mapInstance);
     }
 
+    if (!showPhotosOnMap) {
+      removeMediaSymbolLayer(mapInstance);
+      return;
+    }
+
     addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
     return () => removeMediaSymbolLayer(mapInstance);
     // eslint-disable-next-line react-hooks/exhaustive-deps
