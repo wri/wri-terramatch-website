@@ -1,30 +1,23 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Link from "next/link";
-import { DetailedHTMLProps, FC, HTMLAttributes, PropsWithChildren, useCallback, useState } from "react";
+import { DetailedHTMLProps, FC, HTMLAttributes, PropsWithChildren, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import ExpandedCard from "@/components/elements/Cards/ExpandedCard/ExpandedCard";
-import IconButton from "@/components/elements/IconButton/IconButton";
 import Paper from "@/components/elements/Paper/Paper";
 import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import Modal from "@/components/extensive/Modal/Modal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import NurseriesTable from "@/components/extensive/Tables/NurseriesTable";
 import SitesTable from "@/components/extensive/Tables/SitesTable";
-import { deleteProject } from "@/connections/Entity";
 import { useReportingFramework } from "@/connections/ReportingFramework";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
-import { useModalContext } from "@/context/modal.provider";
-import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityCombinedStatus } from "@/helpers/entity";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
 import { Status } from "@/types/common";
-import Log from "@/utils/log";
 
 import { StatusEnum } from "../../Status/constants/statusMap";
 
@@ -47,42 +40,10 @@ const FrameworkName: FC<{ frameworkKey?: string | null }> = ({ frameworkKey }) =
 
 const ProjectCard: FC<ProjectCardProps> = ({ project, title, children, className, ...rest }) => {
   const t = useT();
-  const { openModal, closeModal } = useModalContext();
-  const { openToast } = useToastContext();
   const status = getEntityCombinedStatus(project);
   const statusProps = project.status ? getActionCardStatusMapper(t)[status] : undefined;
   const [nurseriesCount, setNurseriesCount] = useState<number | undefined>();
   const [siteCount, setSiteCount] = useState<number | undefined>();
-
-  const onDeleteProject = useCallback(() => {
-    openModal(
-      ModalId.CONFIRM_PROJECT_DRAFT_DELETION,
-      <Modal
-        iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-        title={t("Confirm Project Draft Deletion")}
-        content={t(
-          "All data and content will be irreversibly removed and this action cannot be undone. Are you sure you want to permanently delete this project draft? "
-        )}
-        primaryButtonProps={{
-          children: t("Yes"),
-          onClick: async () => {
-            closeModal(ModalId.CONFIRM_PROJECT_DRAFT_DELETION);
-            try {
-              await deleteProject(project.uuid);
-              openToast(t("The project has been successfully deleted"));
-            } catch (failure) {
-              Log.error("Project delete failed", failure);
-              openToast(t("Something went wrong!"), ToastType.ERROR);
-            }
-          }
-        }}
-        secondaryButtonProps={{
-          children: t("No"),
-          onClick: () => closeModal(ModalId.CONFIRM_PROJECT_DRAFT_DELETION)
-        }}
-      />
-    );
-  }, [closeModal, openModal, openToast, project.uuid, t]);
 
   return (
     <FrameworkProvider frameworkKey={project.frameworkKey}>
@@ -113,10 +74,6 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, title, children, className
                 <Button as={Link} href={`/entity/projects/edit/${project.uuid}`}>
                   {t("Continue Project")}
                 </Button>
-                <IconButton
-                  iconProps={{ name: IconNames.TRASH_CIRCLE, className: "fill-error", width: 32 }}
-                  onClick={onDeleteProject}
-                />
               </>
             ) : (
               <>

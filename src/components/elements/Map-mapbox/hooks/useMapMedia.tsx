@@ -63,8 +63,8 @@ export function useMapMedia({
         await deleteMedia(id);
         trackPolygonEvent("polygon_image_edited", {
           ...getPolygonAnalyticsContext({
-            entityType: entityData?.entityName,
-            entityId: entityData?.entityUUID
+            entityType: entityData?.entityName ?? entityData?.entityType ?? "site",
+            entityId: entityData?.entityUUID ?? entityData?.uuid
           }),
           polygon_id: "unknown"
         });
@@ -101,8 +101,8 @@ export function useMapMedia({
         openNotification("success", t("Success!"), t("Image set as cover successfully"));
         trackPolygonEvent("polygon_image_edited", {
           ...getPolygonAnalyticsContext({
-            entityType: entityData?.entityName ?? "site",
-            entityId: entityData?.entityUUID
+            entityType: entityData?.entityName ?? entityData?.entityType ?? "site",
+            entityId: entityData?.entityUUID ?? entityData?.uuid
           }),
           polygon_id: "unknown"
         });

@@ -16,6 +16,7 @@ import { exportImage } from "@/generated/v3/entityService/entityServiceComponent
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { EntityName } from "@/types/common";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
 import ImageWithChildren from "../ImageWithChildren/ImageWithChildren";
@@ -54,9 +55,22 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
   const { openNotification } = useNotificationContext();
   const { getReadableEntityName } = useGetReadableEntityName();
   const t = useT();
+  const getMediaAnalyticsContext = useCallback(
+    () =>
+      getPolygonAnalyticsContext({
+        entityType: data.entityType ?? entityData?.entityName ?? "site",
+        entityId: data.entityUuid ?? entityData?.uuid ?? entityData?.entityUUID
+      }),
+    [data.entityType, data.entityUuid, entityData?.entityName, entityData?.uuid, entityData?.entityUUID]
+  );
+
   const handleDelete = useCallback(() => {
+    trackPolygonEvent("polygon_image_edited", {
+      ...getMediaAnalyticsContext(),
+      polygon_id: "unknown"
+    });
     onDelete?.(data.uuid);
-  }, [data.uuid, onDelete]);
+  }, [data.uuid, getMediaAnalyticsContext, onDelete]);
   const setImageCover = useCallback(async () => {
     const result = await updateMedia(
       { isCover: true, profileImageScale: data.profileImageScale, profileImagePosition: data.profileImagePosition },
@@ -64,11 +78,23 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
     );
     if (result) {
       openNotification("success", t("Success!"), t("Image set as cover successfully"));
+      trackPolygonEvent("polygon_image_edited", {
+        ...getMediaAnalyticsContext(),
+        polygon_id: "unknown"
+      });
       reloadGalleryImages?.();
     } else {
       openNotification("error", t("Error!"), t("Failed to set image as cover"));
     }
-  }, [data.profileImageScale, data.profileImagePosition, data.uuid, openNotification, reloadGalleryImages, t]);
+  }, [
+    data.profileImageScale,
+    data.profileImagePosition,
+    data.uuid,
+    getMediaAnalyticsContext,
+    openNotification,
+    reloadGalleryImages,
+    t
+  ]);
   const openModalImageDetail = useCallback(() => {
     openModal(
       ModalId.MODAL_IMAGE_DETAIL,

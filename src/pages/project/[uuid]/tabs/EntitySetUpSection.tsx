@@ -37,7 +37,7 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChang
       const valid = defaultValues == null || step.validation.isValidSync(defaultValues);
       return {
         index: index + 1,
-        status: isFeedbackField ? "warning" : stepStatusToBadge(valid),
+        status: isFeedbackField ? "error" : stepStatusToBadge(valid),
         label: step.title ?? "",
         actions: (
           <Button

@@ -25,7 +25,7 @@ import { EntityName, FileType } from "@/types/common";
 import { HookFilters, HookProps } from "@/types/connection";
 import Log from "@/utils/log";
 
-import AssetDownloadButton from "../AssetDownloadButton";
+import AssetDownloadButton, { ASSET_DOWNLOAD_ENTITIES, AssetDownloadEntity } from "../AssetDownloadButton";
 import ModalAddImages, { FileUploadEntity } from "../Modal/ModalAddImages";
 import { ModalId } from "../Modal/ModalConst";
 
@@ -36,8 +36,6 @@ export interface EntityMapAndGalleryCardProps {
   entityData: any;
   emptyStateContent: TranslatedText;
 }
-
-const ASSET_DOWNLOAD_ENTITIES: EntityName[] = ["projects", "sites", "nurseries"];
 
 const EntityMapAndGalleryCard = ({
   modelTitle,
@@ -188,7 +186,7 @@ const EntityMapAndGalleryCard = ({
     );
   };
 
-  const showAssetDownload = !isSiteReport && ASSET_DOWNLOAD_ENTITIES.includes(modelName);
+  const showAssetDownload = !isSiteReport && ASSET_DOWNLOAD_ENTITIES.includes(modelName as AssetDownloadEntity);
 
   return (
     <>
@@ -232,7 +230,7 @@ const EntityMapAndGalleryCard = ({
             headerChildren={
               <div className="flex items-center gap-4">
                 {showAssetDownload && (
-                  <AssetDownloadButton entity={modelName as "projects" | "sites" | "nurseries"} uuid={modelUUID} />
+                  <AssetDownloadButton entity={modelName as AssetDownloadEntity} uuid={modelUUID} />
                 )}
                 <Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>
               </div>
