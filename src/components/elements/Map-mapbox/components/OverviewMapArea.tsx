@@ -70,7 +70,13 @@ const OverviewMapArea = ({
   } = useMapAreaContext();
 
   const [, { delayedJobs }] = useDelayedJobs();
-  const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refetch);
+  const onSave = (geojson: any) =>
+    storePolygon(
+      geojson,
+      { uuid: entityModel.uuid, entityName: type === "sites" ? "site" : type },
+      setEditPolygon,
+      refetch
+    );
 
   const mapFunctions = useBaseMap(onSave);
 
