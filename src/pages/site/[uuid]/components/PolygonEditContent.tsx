@@ -464,9 +464,15 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     [anrMapOverlayRef]
   );
 
+  useEffect(() => {
+    if (openAccordionSection !== "geotagged-photos") {
+      setShowPhotosOnMap(false);
+    }
+  }, [openAccordionSection, setShowPhotosOnMap]);
+
   useEffect(
     () => () => {
-      setShowPhotosOnMap(true);
+      setShowPhotosOnMap(false);
     },
     [setShowPhotosOnMap]
   );
