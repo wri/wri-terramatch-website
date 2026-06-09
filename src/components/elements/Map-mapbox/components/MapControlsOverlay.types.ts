@@ -30,6 +30,7 @@ export type AdminControlsProps = {
   isLoadingDelayedJob?: boolean;
   setAlertTitle?: (value: string) => void;
   disabledPolygonPanel?: boolean;
+  hideFullscreenControl?: boolean;
   selectedPolygonsInCheckbox: string[];
 };
 
