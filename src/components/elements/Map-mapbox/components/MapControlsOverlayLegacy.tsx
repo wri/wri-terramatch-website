@@ -42,6 +42,7 @@ const MapControlsOverlayLegacy: FC<MapControlsOverlayProps> = ({
     isLoadingDelayedJob,
     setAlertTitle,
     disabledPolygonPanel,
+    hideFullscreenControl,
     selectedPolygonsInCheckbox
   } = admin;
   const { formMap: isFormMap, editable, polygonFromMap, viewImages: isViewingImages, setViewImages } = form;
@@ -107,7 +108,12 @@ const MapControlsOverlayLegacy: FC<MapControlsOverlayProps> = ({
             position="top-right"
             className={dashboardMode === "modal" ? "top-[8.25rem] z-[19]" : "top-[4.5rem] z-[19]"}
           >
-            <ZoomControl map={map} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />
+            <ZoomControl
+              map={map}
+              isFullscreen={isFullscreen}
+              toggleFullscreen={toggleFullscreen}
+              showFullscreenControl={!hideFullscreenControl}
+            />
           </ControlGroup>
 
           {record?.uuid != null && validationType === "bulkValidation" && !disabledPolygonPanel ? (
@@ -173,7 +179,7 @@ const MapControlsOverlayLegacy: FC<MapControlsOverlayProps> = ({
             </button>
           </ControlGroup>
 
-          {dashboardMode == null ? (
+          {dashboardMode == null && !hideFullscreenControl ? (
             <ControlGroup position="top-right" className="top-[13.75rem]">
               <button
                 type="button"

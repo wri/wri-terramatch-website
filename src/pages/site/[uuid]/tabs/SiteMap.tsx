@@ -31,6 +31,7 @@ import { CompareGeometryFileResponse } from "@/generated/v3/researchService/rese
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { FileType, UploadedFile } from "@/types/common";
 import { getErrorMessageFromPayload } from "@/utils/errors";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
 import SiteArea from "../components/SiteArea";
@@ -130,6 +131,11 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
       try {
         await Promise.all(uploadPromises);
         openNotification("success", t("Success!"), t("Polygons versioned successfully"));
+        trackPolygonEvent("polygon_uploaded", {
+          ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+          polygon_id: "bulk_upload",
+          source: "direct"
+        });
         setShouldRefetchPolygonData(true);
         refetchV3();
       } catch (error) {
@@ -170,6 +176,11 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
         await Promise.all(uploadPromises);
         setShouldRefetchPolygonData(true);
         openNotification("success", t("Success!"), t("File uploaded successfully"));
+        trackPolygonEvent("polygon_uploaded", {
+          ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+          polygon_id: "bulk_upload",
+          source: "direct"
+        });
         closeModal(ModalId.UPLOAD_IMAGES);
       } catch (error) {
         const errorMessage =
@@ -413,6 +424,12 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
               POLYGON_PENDING_APPROVAL,
               data
             );
+            (polygons as SitePolygonLightDto[]).forEach(polygon => {
+              trackPolygonEvent("polygon_submitted", {
+                ...getPolygonAnalyticsContext({ entityType: "site", entityId: site.uuid }),
+                polygon_id: polygon.polygonUuid ?? polygon.uuid ?? "unknown"
+              });
+            });
             setShouldRefetchPolygonData(true);
             openNotification("success", t("Success! Your polygons were submitted."));
           } catch (error) {

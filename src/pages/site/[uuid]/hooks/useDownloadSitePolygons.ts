@@ -5,8 +5,10 @@ import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/ut
 import Log from "@/utils/log";
 
 import {
+  closePolygonProgressToast,
   getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
+  POLYGON_TOAST_IDS,
   showPolygonCompleteToast,
   showPolygonErrorToast,
   showPolygonProgressToast
@@ -27,11 +29,13 @@ export const useDownloadSitePolygons = ({ siteUuid, siteName }: UseDownloadSiteP
 
     setIsDownloading(true);
     try {
-      showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t));
+      showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t), POLYGON_TOAST_IDS.downloading);
       await downloadSiteGeoJsonPolygons(siteUuid, siteName ?? "");
+      closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
       showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
     } catch (error) {
       Log.error("Failed to download site polygons:", error);
+      closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
       showPolygonErrorToast(t("Error downloading polygons"));
     } finally {
       setIsDownloading(false);

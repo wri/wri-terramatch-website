@@ -1,9 +1,10 @@
 import { useMediaQuery } from "@mui/material";
-import { CellContext, ColumnDef } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 
+import CountryFlag from "@/components/dashboard/CountryFlag";
 import Table from "@/components/elements/Table/Table";
 import { formatTableNumber, numericSortingFn } from "@/components/elements/Table/tableUtils";
 import { VARIANT_TABLE_DASHBOARD_LIST } from "@/components/elements/Table/TableVariants";
@@ -56,6 +57,51 @@ const ProjectList = () => {
   const t = useT();
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
+  const desktopColumns = [
+    {
+      header: t("Organization"),
+      accessorKey: "organization",
+      meta: { width: "19%" }
+    },
+    {
+      header: t("Programme"),
+      accessorKey: "programme",
+      meta: { width: "13%" }
+    },
+    {
+      header: t("Country"),
+      accessorKey: "country",
+      cell: ({ getValue }) => {
+        const { label, image } = getValue() as ProjectListTableRow["country"];
+        return (
+          <div className="flex items-center gap-2">
+            <CountryFlag src={image} size="md" />
+            <Text variant="text-14-light">{label}</Text>
+          </div>
+        );
+      },
+      meta: { width: "13%" }
+    },
+    {
+      header: t("Trees Planted"),
+      accessorKey: "treesPlanted",
+      sortingFn: numericSortingFn,
+      cell: ({ getValue }) => <span>{formatTableNumber(getValue() as number)}</span>
+    },
+    {
+      header: t("Restoration Hectares"),
+      accessorKey: "restorationHectares",
+      sortingFn: numericSortingFn,
+      cell: ({ getValue }) => <span>{formatTableNumber(getValue() as number)}</span>
+    },
+    {
+      header: t("Jobs Created"),
+      accessorKey: "jobsCreated",
+      sortingFn: numericSortingFn,
+      cell: ({ getValue }) => <span>{formatTableNumber(getValue() as number)}</span>
+    }
+  ] as ColumnDef<ProjectListTableRow>[];
+
   const columns: ColumnDef<ProjectListTableRow>[] = [
     {
       header: t("Project"),
@@ -66,7 +112,7 @@ const ProjectList = () => {
         if (isMobile) {
           return (
             <div className="flex items-start gap-2">
-              <img src={country.image} alt="flag" className="h-6 w-10 min-w-[40px] object-contain" />
+              <CountryFlag src={country.image} size="md" />
               <div>
                 <Text variant="text-14-light">{project}</Text>
                 <Text variant="text-14-light" className=" text-neutral-650">
@@ -79,58 +125,7 @@ const ProjectList = () => {
         return project;
       }
     },
-    ...(isMobile
-      ? []
-      : [
-          {
-            header: t("Organization"),
-            accessorKey: "organization",
-            meta: { width: "19%" }
-          },
-          {
-            header: t("Programme"),
-            accessorKey: "programme",
-            meta: { width: "13%" }
-          },
-          {
-            header: t("Country"),
-            accessorKey: "country",
-            cell: (props: CellContext<ProjectListTableRow, ProjectListTableRow["country"]>) => {
-              const { label, image } = props.getValue();
-              return (
-                <div className="flex items-center gap-2">
-                  <img src={image} alt="flag" className="h-6 w-10 min-w-[40px] object-contain" />
-                  <Text variant="text-14-light">{label}</Text>
-                </div>
-              );
-            },
-            meta: { width: "13%" }
-          },
-          {
-            header: t("Trees Planted"),
-            accessorKey: "treesPlanted",
-            sortingFn: numericSortingFn,
-            cell: (props: CellContext<ProjectListTableRow, number>) => (
-              <span>{formatTableNumber(props.getValue())}</span>
-            )
-          },
-          {
-            header: t("Restoration Hectares"),
-            accessorKey: "restorationHectares",
-            sortingFn: numericSortingFn,
-            cell: (props: CellContext<ProjectListTableRow, number>) => (
-              <span>{formatTableNumber(props.getValue())}</span>
-            )
-          },
-          {
-            header: t("Jobs Created"),
-            accessorKey: "jobsCreated",
-            sortingFn: numericSortingFn,
-            cell: (props: CellContext<ProjectListTableRow, number>) => (
-              <span>{formatTableNumber(props.getValue())}</span>
-            )
-          }
-        ]),
+    ...(isMobile ? [] : desktopColumns),
 
     {
       header: "",

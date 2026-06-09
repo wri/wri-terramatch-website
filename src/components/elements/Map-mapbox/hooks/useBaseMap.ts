@@ -107,7 +107,7 @@ export const useBaseMap = (onSave?: MapDrawSaveHandler, record?: MapDrawSaveReco
       minZoom: 2.0,
       accessToken: mapboxToken,
       center: [21.496, 5.456],
-      ...(compactAttribution === true ? { attributionControl: false } : {})
+      ...(compactAttribution === true ? { attributionControl: false, logoPosition: "bottom-right" } : {})
     });
 
     if (compactAttribution === true) {

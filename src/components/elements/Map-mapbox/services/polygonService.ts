@@ -29,7 +29,7 @@ export async function storePolygon(
   try {
     const result = await createSitePolygonsResource(attributes);
     const analyticsContext = getPolygonAnalyticsContext({
-      entityType: record.entityName,
+      entityType: record.entityName ?? "site",
       entityId: record.uuid
     });
     trackPolygonEvent("polygon_drawn", {

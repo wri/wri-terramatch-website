@@ -13,37 +13,48 @@ type ZoomControlProps = {
   map: MapboxMap | null;
   isFullscreen?: boolean;
   toggleFullscreen: () => void;
+  showFullscreenControl?: boolean;
 };
 
-export const ZoomControl: FC<ZoomControlProps> = ({ map, isFullscreen, toggleFullscreen }) => {
+export const ZoomControl: FC<ZoomControlProps> = ({
+  map,
+  isFullscreen,
+  toggleFullscreen,
+  showFullscreenControl = true
+}) => {
   if (useChampionsMap()) {
-    return (
-      <MapControls
-        defaultGaps
-        items={[
-          {
-            ariaLabel: "zoom in",
-            gap: false,
-            icon: <PlusIcon />,
-            label: "zoom in",
-            onClick: () => map?.zoomIn()
-          },
-          {
-            ariaLabel: "zoom out",
-            icon: <CheckIndeterminateIcon />,
-            label: "zoom out",
-            onClick: () => map?.zoomOut()
-          },
-          {
-            ariaLabel: isFullscreen ? "Shrink" : "Expand",
-            icon: isFullscreen ? <CompressIcon /> : <ExpandIcon />,
-            onClick: toggleFullscreen,
-            label: isFullscreen ? "Shrink" : "Expand"
-          }
-        ]}
-        vertical
-      />
-    );
+    const items = [
+      {
+        ariaLabel: "zoom in",
+        gap: false,
+        icon: <PlusIcon />,
+        label: "zoom in",
+        onClick: () => {
+          map?.zoomIn();
+        }
+      },
+      {
+        ariaLabel: "zoom out",
+        icon: <CheckIndeterminateIcon />,
+        label: "zoom out",
+        onClick: () => {
+          map?.zoomOut();
+        }
+      }
+    ];
+
+    if (showFullscreenControl) {
+      items.push({
+        ariaLabel: isFullscreen ? "Shrink" : "Expand",
+        icon: isFullscreen ? <CompressIcon /> : <ExpandIcon />,
+        onClick: () => {
+          toggleFullscreen();
+        },
+        label: isFullscreen ? "Shrink" : "Expand"
+      });
+    }
+
+    return <MapControls defaultGaps items={items} vertical />;
   }
   return (
     <ControlButtonsGroup direction="col" className="z-10 w-auto">

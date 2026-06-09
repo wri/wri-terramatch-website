@@ -30,7 +30,13 @@ const BulkActionToolbar = memo(function BulkActionToolbar({
       contentRight={
         <Flex alignItems="center" gap={2} flexWrap="wrap">
           <BulkActionToolbarActions deleteAction={deleteAction} actions={actions} />
-          {primaryAction != null && <Button {...primaryAction} variant="primary" />}
+          {primaryAction != null && (
+            <Button
+              {...primaryAction}
+              variant="primary"
+              className="disabled:!border-theme-neutral-400 disabled:!bg-theme-neutral-300 disabled:!text-theme-neutral-500 disabled:!opacity-100"
+            />
+          )}
           {infoTooltip != null && (
             <Tooltip content={infoTooltip} position="top">
               <InfoIcon height="1rem" width="1rem" color="neutral.100" />

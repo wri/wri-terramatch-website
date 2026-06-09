@@ -26,11 +26,14 @@ const validationConnection = v3Resource("validations", getPolygonValidation)
   .enabledProp()
   .buildConnection();
 
-export const usePolygonValidation = (pathParams: GetPolygonValidationPathParams) => {
-  const [, { data }] = useConnection(validationConnection, {
+export const usePolygonValidationConnection = (pathParams: GetPolygonValidationPathParams) =>
+  useConnection(validationConnection, {
     id: pathParams.polygonUuid,
     enabled: hasValidParams(pathParams)
   });
+
+export const usePolygonValidation = (pathParams: GetPolygonValidationPathParams) => {
+  const [, { data }] = usePolygonValidationConnection(pathParams);
   return data;
 };
 
