@@ -1,6 +1,7 @@
+import { isEmpty } from "lodash";
 import { useMemo } from "react";
 
-import { usePolygonValidation } from "@/connections/Validation";
+import { usePolygonValidationConnection } from "@/connections/Validation";
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { parseV3ValidationData, shouldDisplayValidationCriteria } from "@/helpers/polygonValidation";
 import { ICriteriaCheckItem, OVERLAPPING_CRITERIA_ID } from "@/types/validation";
@@ -10,6 +11,7 @@ export type PolygonValidationCriteriaState = {
   validation: ValidationDto | undefined;
   items: ICriteriaCheckItem[];
   hasValidation: boolean;
+  isLoadingValidation: boolean;
   failedCount: number;
   totalItems: number;
   lastValidationDate: Date | null;
@@ -17,7 +19,7 @@ export type PolygonValidationCriteriaState = {
   fixabilityResult: PolygonFixabilityResult | null;
 };
 
-const EMPTY_STATE: PolygonValidationCriteriaState = {
+const EMPTY_CRITERIA_STATE = {
   validation: undefined,
   items: [],
   hasValidation: false,
@@ -26,19 +28,24 @@ const EMPTY_STATE: PolygonValidationCriteriaState = {
   lastValidationDate: null,
   hasOverlaps: false,
   fixabilityResult: null
-};
+} satisfies Omit<PolygonValidationCriteriaState, "isLoadingValidation">;
+
+const hasValidPolygonUuid = (polygonUuid: string | null | undefined): boolean =>
+  !isEmpty(polygonUuid) && polygonUuid !== "undefined";
 
 export const usePolygonValidationCriteria = (
   polygonUuid: string | null | undefined,
   validationStatus?: string | null
 ): PolygonValidationCriteriaState => {
-  const validation = usePolygonValidation({
+  const [isLoaded, { data: validation }] = usePolygonValidationConnection({
     polygonUuid: polygonUuid ?? ""
   });
 
+  const isLoadingValidation = !isLoaded && hasValidPolygonUuid(polygonUuid);
+
   return useMemo(() => {
     if (!shouldDisplayValidationCriteria(validation, validationStatus)) {
-      return EMPTY_STATE;
+      return { ...EMPTY_CRITERIA_STATE, isLoadingValidation };
     }
 
     const items = parseV3ValidationData(validation);
@@ -71,11 +78,12 @@ export const usePolygonValidationCriteria = (
       validation,
       items,
       hasValidation: true,
+      isLoadingValidation: false,
       failedCount,
       totalItems: items.length,
       lastValidationDate,
       hasOverlaps,
       fixabilityResult
     };
-  }, [validation, validationStatus]);
+  }, [isLoadingValidation, validation, validationStatus]);
 };
