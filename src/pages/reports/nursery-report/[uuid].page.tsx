@@ -3,11 +3,13 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ButtonField from "@/components/elements/Field/ButtonField";
 import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
+import Text from "@/components/elements/Text/Text";
 import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
 import EntityStatusBar from "@/components/extensive/EntityStatusBar";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -16,6 +18,7 @@ import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/Pag
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullNurseryReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
@@ -136,9 +139,28 @@ const NurseryReportDetailPage = () => {
                         <TextField label={t("Submitted date")} value={format(nurseryReport.submittedAt)} />
                       </PageCard>
                       <PageCard title={t("Overview")}>
-                        <TextField
-                          label={t("Seedling or Young Trees")}
-                          value={nurseryReport.seedlingsYoungTrees?.toString() ?? ""}
+                        <Text variant="text-20-bold">{t("Seedlings Grown")}</Text>
+                        <GoalProgressCard
+                          hasProgress={false}
+                          classNameCard="!pl-0"
+                          items={[
+                            {
+                              iconName: IconNames.LEAF_CIRCLE_PD,
+                              label: t("TOTAL SEEDLINGS GROWN (on report):"),
+                              variantLabel: "text-14",
+                              classNameLabel: " text-neutral-650 uppercase !w-auto",
+                              classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                              value: nurseryReport.seedlingsYoungTrees!
+                            }
+                          ]}
+                          className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
+                          title={t("Seedlings Grown")}
+                        />
+                        <TreeSpeciesTable
+                          {...{ entity: "nurseryReports", entityUuid: nurseryReportUUID }}
+                          collection="nursery-seedling"
+                          visibleRows={8}
+                          galleryType={"treeSpeciesPD"}
                         />
                       </PageCard>
                       <Paper>
