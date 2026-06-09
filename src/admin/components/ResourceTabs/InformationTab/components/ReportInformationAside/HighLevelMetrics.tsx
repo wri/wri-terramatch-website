@@ -2,8 +2,10 @@ import { Box, Card, Divider, Stack, SxProps, Theme, Typography } from "@mui/mate
 import { ComponentType, FC } from "react";
 import { FunctionField, Labeled, NumberField, useShowContext } from "react-admin";
 
+import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingEntity, TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
+import { SupportedEntity } from "@/connections/EntityAssociation";
 import { SUMMARY_ANR_ROLLUP_HIDE } from "@/constants/summaryRollupVisibility";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework } from "@/context/framework.provider";
@@ -96,6 +98,18 @@ const DemographicsTotalField: FC<Omit<DemographicsTotalFieldProps, keyof Collect
 const HighLevelMetrics: FC = () => {
   const { record, resource } = useShowContext();
 
+  const seedlingsEntity: SupportedEntity =
+    resource === "nurseryReport"
+      ? "nurseryReports"
+      : resource === "projectReport"
+      ? "projectReports"
+      : (resource as SupportedEntity);
+  const totalCountNurserySeedling = usePlantTotalCount({
+    entity: seedlingsEntity,
+    entityUuid: record?.uuid ?? "",
+    collection: "nursery-seedling"
+  });
+
   const inlineLabelSx: SxProps<Theme> = {
     flexDirection: "row",
     justifyContent: "space-between"
@@ -182,7 +196,7 @@ const HighLevelMetrics: FC = () => {
           <ContextCondition frameworksShow={ALL_TF}>
             {resource !== "siteReport" && (
               <Labeled label="Seedlings Grown" sx={inlineLabelSx}>
-                <NumberField source="seedlingsGrown" emptyText="0" />
+                <FunctionField render={() => totalCountNurserySeedling ?? 0} />
               </Labeled>
             )}
           </ContextCondition>
