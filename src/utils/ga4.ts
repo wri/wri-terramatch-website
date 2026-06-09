@@ -30,7 +30,7 @@ const toPolygonEntityType = (entityType?: string | null): string => {
   if (normalized.includes("project")) return "project";
   if (normalized.includes("site")) return "site";
   if (normalized.includes("nurser")) return "nursery";
-  return "";
+  return normalized.length > 0 ? normalized : "unknown";
 };
 
 const sanitizeParams = (params: Ga4EventParams): Record<string, string | number | boolean> => {
