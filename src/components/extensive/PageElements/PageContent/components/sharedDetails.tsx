@@ -61,7 +61,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
 
   const isValid = step.validation.isValidSync(formValues);
   const hasStepFeedback = hasFeedbackInStep(fieldsProvider, step.id, feedbackFieldsOptions);
-  const accordionHeaderStatus = !isValid ? "error" : hasStepFeedback ? "warning" : "complete";
+  const accordionHeaderStatus = !isValid || hasStepFeedback ? "error" : "complete";
   const fieldsRequiringAttention = getFieldsRequiringAttentionCount(step.validation, formValues);
 
   const entries = useGetFormEntries({
