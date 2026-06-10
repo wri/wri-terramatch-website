@@ -1,11 +1,45 @@
-import { Box, Flex, Image, Textarea } from "@chakra-ui/react";
-import React, { FC, useCallback, useLayoutEffect, useRef, useState } from "react";
+import { Box, Flex, Image, Text, Textarea } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
+import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
+import { AuditStatusEntityType, useCreateAuditStatus } from "@/connections/AuditStatus";
+import { prepareFileForUpload } from "@/connections/Media";
+import { useNotificationContext } from "@/context/notification.provider";
+import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
+import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import CloseButton from "@/redesignComponents/actions/Buttons/CloseButton/CloseButton";
 import IconButton from "@/redesignComponents/actions/Buttons/IconButton/IconButton";
 import { AttachFileIcon, SendIcon } from "@/redesignComponents/foundations/Icons";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
+import ApiSlice from "@/store/apiSlice";
+import Log from "@/utils/log";
+
+const VALID_FILE_TYPES = [
+  "application/pdf",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "image/jpeg",
+  "image/png",
+  "image/tiff"
+];
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_FILES = 5;
+const TEXTAREA_LINE_HEIGHT_REM = 1.5;
+const TEXTAREA_MIN_ROWS = 1;
+const TEXTAREA_MAX_ROWS = 3;
+const TEXTAREA_MIN_HEIGHT = `${TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MIN_ROWS}rem`;
+const TEXTAREA_MAX_HEIGHT = `${TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MAX_ROWS}rem`;
+
+const getRootFontSize = () => parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+interface CommentInputFile {
+  name: string;
+  url: string;
+  onRemoveFile: () => void;
+}
 
 interface CommentInputProps {
   name: string;
@@ -14,7 +48,7 @@ interface CommentInputProps {
   isEditing?: boolean;
   defaultIsEditing?: boolean;
   onEditingChange?: (isEditing: boolean) => void;
-  files?: { name: string; url: string; onRemoveFile: () => void }[];
+  files?: CommentInputFile[];
   onCancel?: () => void;
   onCancelEditing?: () => void;
   onSaveEditing?: () => void;
@@ -24,15 +58,11 @@ interface CommentInputProps {
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onAttachFile?: () => void;
   onSend?: () => void;
+  auditEntity?: AuditStatusEntityType;
+  auditEntityUuid?: string;
+  auditEntityStatus?: string | null;
+  onCommentCreated?: () => void;
 }
-
-const TEXTAREA_LINE_HEIGHT_REM = 1.5;
-const TEXTAREA_MIN_ROWS = 1;
-const TEXTAREA_MAX_ROWS = 3;
-const TEXTAREA_MIN_HEIGHT = `${TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MIN_ROWS}rem`;
-const TEXTAREA_MAX_HEIGHT = `${TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MAX_ROWS}rem`;
-
-const getRootFontSize = () => parseFloat(getComputedStyle(document.documentElement).fontSize);
 
 const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   const {
@@ -50,16 +80,134 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
     onAttachFile,
     onSend,
     onCancelEditing,
-    onSaveEditing
+    onSaveEditing,
+    auditEntity,
+    auditEntityUuid,
+    auditEntityStatus,
+    onCommentCreated
   } = props;
+
+  const t = useT();
+  const { openNotification } = useNotificationContext();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [internalIsEditing, setInternalIsEditing] = useState(defaultIsEditing);
   const [internalValue, setInternalValue] = useState(defaultValue);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const [error, setError] = useState("");
+  const [isUploadingFiles, setIsUploadingFiles] = useState(false);
+
+  const isAuditMode = auditEntity != null && auditEntityUuid != null && auditEntityUuid !== "";
 
   const isEditingControlled = isEditing !== undefined;
   const currentIsEditing = isEditingControlled ? isEditing : internalIsEditing;
   const isValueControlled = value !== undefined;
   const currentValue = isValueControlled ? value : internalValue;
+
+  const pendingFileUrlsRef = useRef<Map<File, string>>(new Map());
+
+  const getPendingFileUrl = useCallback((file: File): string => {
+    const existingUrl = pendingFileUrlsRef.current.get(file);
+    if (existingUrl != null) {
+      return existingUrl;
+    }
+
+    const nextUrl = URL.createObjectURL(file);
+    pendingFileUrlsRef.current.set(file, nextUrl);
+    return nextUrl;
+  }, []);
+
+  const revokePendingFileUrl = useCallback((file: File) => {
+    const fileUrl = pendingFileUrlsRef.current.get(file);
+    if (fileUrl != null) {
+      URL.revokeObjectURL(fileUrl);
+      pendingFileUrlsRef.current.delete(file);
+    }
+  }, []);
+
+  useEffect(() => {
+    const pendingFileUrls = pendingFileUrlsRef.current;
+    return () => {
+      pendingFileUrls.forEach(fileUrl => URL.revokeObjectURL(fileUrl));
+      pendingFileUrls.clear();
+    };
+  }, []);
+
+  const removePendingFile = useCallback(
+    (file: File) => {
+      revokePendingFileUrl(file);
+      setPendingFiles(currentFiles => currentFiles.filter(currentFile => currentFile !== file));
+    },
+    [revokePendingFileUrl]
+  );
+
+  const pendingFileDisplay = useMemo<CommentInputFile[]>(
+    () =>
+      pendingFiles.map(file => ({
+        name: file.name,
+        url: getPendingFileUrl(file),
+        onRemoveFile: () => removePendingFile(file)
+      })),
+    [getPendingFileUrl, pendingFiles, removePendingFile]
+  );
+
+  const resetAuditInput = useCallback(() => {
+    if (!isValueControlled) {
+      setInternalValue("");
+    }
+    onValueChange?.("");
+    pendingFiles.forEach(revokePendingFileUrl);
+    setPendingFiles([]);
+    setError("");
+    if (fileInputRef.current != null) {
+      fileInputRef.current.value = "";
+    }
+  }, [isValueControlled, onValueChange, pendingFiles, revokePendingFileUrl]);
+
+  const onAuditCommentSuccess = useCallback(
+    async (createdAuditStatus: AuditStatusDto) => {
+      try {
+        if (pendingFiles.length > 0) {
+          setIsUploadingFiles(true);
+          await Promise.all(
+            pendingFiles.map(async file =>
+              uploadFile.fetchParallel({
+                pathParams: { entity: "auditStatuses", collection: "attachments", uuid: createdAuditStatus.uuid },
+                body: { data: { type: "media", attributes: await prepareFileForUpload(file) } }
+              })
+            )
+          );
+        }
+
+        openNotification("success", t("Success!"), t("Your comment was just added!"));
+        resetAuditInput();
+        ApiSlice.pruneCache("auditStatuses");
+        onCommentCreated?.();
+      } catch (uploadError) {
+        openNotification(
+          "error",
+          t("Error!"),
+          t("Failed to upload files. Your comment was added but files may be missing.")
+        );
+        Log.error("Error uploading files after comment creation", uploadError);
+        resetAuditInput();
+        ApiSlice.pruneCache("auditStatuses");
+        onCommentCreated?.();
+      } finally {
+        setIsUploadingFiles(false);
+      }
+    },
+    [onCommentCreated, openNotification, pendingFiles, resetAuditInput, t]
+  );
+
+  const { create: sendAuditComment, isCreating } = useCreateAuditStatus(
+    {
+      entity: auditEntity ?? "sitePolygons",
+      uuid: auditEntityUuid ?? ""
+    },
+    onAuditCommentSuccess,
+    t("Failed to add comment. Please try again.")
+  );
 
   const setEditingState = useCallback(
     (nextIsEditing: boolean) => {
@@ -81,8 +229,86 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
     setEditingState(false);
   }, [onSaveEditing, setEditingState]);
 
-  const hasFiles = (files?.length ?? 0) > 0;
-  const shouldShowSendIcon = !currentIsEditing;
+  const handleFileChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file == null) {
+        return;
+      }
+
+      if (pendingFiles.length >= MAX_FILES) {
+        setError(t("You can upload a maximum of 5 files."));
+        return;
+      }
+
+      if (!VALID_FILE_TYPES.includes(file.type)) {
+        setError(t("Invalid file type. Only PDF, XLS, DOC, XLSX, DOCX, JPG, PNG, and TIFF are allowed."));
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        setError(t("File size must be less than 10MB."));
+        return;
+      }
+
+      setPendingFiles(currentFiles => [...currentFiles, file]);
+      setError("");
+      event.target.value = "";
+    },
+    [pendingFiles.length, t]
+  );
+
+  const handleAttachFile = useCallback(() => {
+    if (currentIsEditing) {
+      onAttachFile?.();
+      return;
+    }
+
+    if (isAuditMode) {
+      fileInputRef.current?.click();
+      return;
+    }
+
+    onAttachFile?.();
+  }, [currentIsEditing, isAuditMode, onAttachFile]);
+
+  const submitAuditComment = useCallback(() => {
+    if (!isAuditMode) {
+      return;
+    }
+
+    const trimmedComment = currentValue.trim();
+    if (trimmedComment === "" && pendingFiles.length === 0) {
+      setError(t("Please enter a message or attach a file."));
+      return;
+    }
+
+    setError("");
+    sendAuditComment({
+      type: "comment",
+      comment: trimmedComment,
+      status: auditEntityStatus ?? null
+    });
+  }, [auditEntityStatus, currentValue, isAuditMode, pendingFiles.length, sendAuditComment, t]);
+
+  const handleSend = useCallback(() => {
+    if (currentIsEditing) {
+      return;
+    }
+
+    if (isAuditMode) {
+      submitAuditComment();
+      return;
+    }
+
+    onSend?.();
+  }, [currentIsEditing, isAuditMode, onSend, submitAuditComment]);
+
+  const effectiveFiles = files ?? (isAuditMode ? pendingFileDisplay : undefined);
+  const hasFiles = (effectiveFiles?.length ?? 0) > 0;
+  const hasContent = currentValue.trim().length > 0;
+  const isSubmitting = isCreating || isUploadingFiles;
+  const shouldShowSendIcon = !currentIsEditing && (isAuditMode ? hasContent || hasFiles : !hasFiles);
 
   const adjustTextareaHeight = useCallback(() => {
     const textarea = textareaRef.current;
@@ -105,7 +331,8 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   }, [currentValue, adjustTextareaHeight]);
 
   return (
-    <Flex className="flex-col gap-2">
+    <Flex className="w-full flex-col gap-2">
+      <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
       <Flex className="items-center gap-3">
         <Avatar size="small" name={name} src={src} />
         <Box
@@ -138,6 +365,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
               }}
               placeholder={placeholder}
               resize="none"
+              disabled={isSubmitting}
               flex={1}
               minW={0}
               minH={TEXTAREA_MIN_HEIGHT}
@@ -154,15 +382,16 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
               _placeholder={{ color: "neutral.800" }}
               _focus={{ border: "none", boxShadow: "none", outline: "none" }}
               _focusVisible={{ border: "none", boxShadow: "none", outline: "none" }}
+              _disabled={{ opacity: 0.6, cursor: "not-allowed" }}
             />
             <Flex className="mt-auto shrink-0 items-center gap-1">
-              <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={onAttachFile} />
-              {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={onSend} />}
+              <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
+              {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={handleSend} />}
             </Flex>
           </Flex>
           {hasFiles && (
             <Flex className="flex-wrap gap-3">
-              {files?.map(file => (
+              {effectiveFiles?.map(file => (
                 <Box key={file.name} position="relative" h="4.6875rem" w="5.625rem">
                   <Image
                     border="0.063rem solid"
@@ -172,7 +401,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
                     alt={file.name}
                     className="h-full w-full object-cover"
                   />
-                  {currentIsEditing && (
+                  {(currentIsEditing || isAuditMode) && (
                     <CloseButton
                       className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 !rounded-full"
                       onClick={file.onRemoveFile}
@@ -184,6 +413,11 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
           )}
         </Box>
       </Flex>
+      {error && (
+        <Text textStyle="200" color="red.500">
+          {error}
+        </Text>
+      )}
       {currentIsEditing && (
         <Flex className="items-center justify-end gap-2">
           <Button variant="secondary" size="small" className="w-fit" onClick={handleCancelEditing}>

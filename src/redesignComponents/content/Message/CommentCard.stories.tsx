@@ -77,9 +77,10 @@ export const CurrentUserView: Story = {
   }
 };
 
-export const EditMode: Story = {
+export const EditView: Story = {
   args: {
     participantType: "current-user",
+    state: "edit",
     authorName: "Name Surname",
     createdAt: "11/02/2026",
     message:
@@ -90,21 +91,34 @@ export const EditMode: Story = {
     const initialMessage =
       args.message ??
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eget odio sapien. Integer euismod sagittis erat.";
+    const [isEditing, setIsEditing] = useState(true);
+    const [savedMessage, setSavedMessage] = useState(initialMessage);
     const [draftMessage, setDraftMessage] = useState(initialMessage);
     const [attachments, setAttachments] = useState(args.attachments ?? defaultAttachments);
 
     return (
       <CommentCard
         {...args}
-        state="edit"
+        state={isEditing ? "edit" : "view"}
+        message={savedMessage}
         value={draftMessage}
         attachments={attachments.map(file => ({
           ...file,
-          onRemoveFile: () => setAttachments(prev => prev.filter(item => item.name !== file.name))
+          onRemoveFile: () => setAttachments(current => current.filter(item => item.name !== file.name))
         }))}
+        onEdit={() => {
+          setDraftMessage(savedMessage);
+          setIsEditing(true);
+        }}
         onValueChange={setDraftMessage}
-        onCancelEditing={() => setDraftMessage(initialMessage)}
-        onSaveEditing={() => {}}
+        onCancelEditing={() => {
+          setDraftMessage(savedMessage);
+          setIsEditing(false);
+        }}
+        onSaveEditing={() => {
+          setSavedMessage(draftMessage);
+          setIsEditing(false);
+        }}
       />
     );
   }
