@@ -97,7 +97,7 @@ const NurseriesTable = ({
           }
         },
         {
-          accessorKey: "seedlingsGrownCount",
+          accessorKey: "treesSeedlingsGrownCount",
           enableSorting: false,
           header: t("No. seedlings")
         },

@@ -18,7 +18,7 @@ import {
   useFieldsProvider,
   useWizardOrgFormDetails
 } from "@/context/wizardForm.provider";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { ProjectPolygonDto, SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { Entity, EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
 
@@ -123,7 +123,7 @@ const getEntityPolygonData = (
   type?: EntityName,
   entity?: Entity,
   sitePolygonData?: SitePolygonLightDto[],
-  projectPolygonsData?: any
+  projectPolygonsData?: ProjectPolygonDto[]
 ) => {
   if (!record && !entity) {
     return null;
@@ -135,8 +135,8 @@ const getEntityPolygonData = (
     return sitePolygonData ? parsePolygonDataV3(sitePolygonData) : null;
   } else if (entityType === "projects" || entityType === "project-pitches") {
     if (projectPolygonsData == null) return null;
-    const polygonUuid = projectPolygonsData.polygonUuid;
-    return polygonUuid ? { [FORM_POLYGONS]: [polygonUuid] } : null;
+    const polygonUuids = projectPolygonsData.map(polygon => polygon.polygonUuid);
+    return polygonUuids ? { [FORM_POLYGONS]: polygonUuids } : null;
   }
 
   return null;

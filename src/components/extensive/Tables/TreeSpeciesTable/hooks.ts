@@ -78,7 +78,6 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
 
   return useMemo(() => {
     if (
-      (entity === "nurseries" && collection === "nursery-seedling") ||
       (entity === "projectReports" && collection === "nursery-seedling") ||
       (entity === "projectReports" && collection === "non-tree") ||
       (entity.endsWith("Reports") && collection === "tree-planted")
