@@ -126,7 +126,7 @@ const defaultValue: MapAreaType = {
   setPolygonSubmitConfirmation: () => {},
   editPhotoDetailsMedia: null,
   setEditPhotoDetailsMedia: () => {},
-  showPhotosOnMap: true,
+  showPhotosOnMap: false,
   setShowPhotosOnMap: () => {},
   resetSiteMapInteractionState: () => {}
 };
@@ -158,7 +158,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   });
   const [polygonSubmitConfirmation, setPolygonSubmitConfirmation] = useState<PolygonSubmitConfirmationState>(null);
   const [editPhotoDetailsMedia, setEditPhotoDetailsMedia] = useState<MediaDto | null>(null);
-  const [showPhotosOnMap, setShowPhotosOnMap] = useState(true);
+  const [showPhotosOnMap, setShowPhotosOnMap] = useState(false);
 
   const setEditPolygon = useCallback((value: EditPolygonState) => {
     setEditPolygonInternal(value);
@@ -215,7 +215,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonMapTileNonce(0);
     setPolygonSubmitConfirmation(null);
     setEditPhotoDetailsMedia(null);
-    setShowPhotosOnMap(true);
+    setShowPhotosOnMap(false);
   }, [closeMapPopups]);
 
   const contextValue: MapAreaType = {

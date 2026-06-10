@@ -80,11 +80,26 @@ const PDStack = ({ children }: PropsWithChildren) => (
   </RouteHistoryProvider>
 );
 
+const SiteStack = ({ children }: PropsWithChildren) => (
+  <RouteHistoryProvider>
+    <NavbarProvider>
+      <ModalRoot />
+      <Toast />
+      <WRIToast />
+      <MainLayout>
+        {children}
+        <CookieBanner />
+      </MainLayout>
+    </NavbarProvider>
+  </RouteHistoryProvider>
+);
+
 const _App = ({ Component, pageProps }: AppProps) => {
   const t = useT();
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
+  const isOnSite = router.asPath.includes("/site");
 
   setupYup(t);
 
@@ -105,6 +120,10 @@ const _App = ({ Component, pageProps }: AppProps) => {
                       <AdminStack>
                         <Component {...pageProps} />
                       </AdminStack>
+                    ) : isOnSite ? (
+                      <SiteStack>
+                        <Component {...pageProps} />
+                      </SiteStack>
                     ) : (
                       <PDStack>
                         <Component {...pageProps} />

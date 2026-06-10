@@ -4,8 +4,9 @@ import { FC } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useEntityScope } from "@/context/entityScope.provider";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useOnMount } from "@/hooks/useOnMount";
-import { trackPolygonEvent } from "@/utils/ga4";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -18,6 +19,7 @@ type ViewGalleryButtonProps = {
 const ViewImageGalleryButton: FC<ViewGalleryButtonProps> = ({ imageGalleryRef, className }) => {
   const t = useT();
   const { entityType: entityTypeFromScope, entityUuid: entityUuidFromScope } = useEntityScope();
+  const { editPolygon } = useMapAreaContext();
 
   const scrollToGalleryElement = () => {
     if (imageGalleryRef?.current) {
@@ -70,8 +72,11 @@ const ViewImageGalleryButton: FC<ViewGalleryButtonProps> = ({ imageGalleryRef, c
         className={classNames("flex items-center gap-2", className)}
         onClick={() => {
           trackPolygonEvent("polygon_gallery_viewed", {
-            entity_type: entityTypeFromScope,
-            entity_id: entityUuidFromScope
+            ...getPolygonAnalyticsContext({
+              entityType: entityTypeFromScope,
+              entityId: entityUuidFromScope
+            }),
+            polygon_id: editPolygon?.uuid ?? "unknown"
           });
           scrollToElement();
         }}

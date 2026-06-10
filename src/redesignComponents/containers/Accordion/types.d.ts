@@ -14,7 +14,7 @@ export interface AccordionProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-export type AccordionStatus = "success" | "error" | "complete" | "warning";
+export type AccordionStatus = "success" | "error" | "complete";
 
 declare module "@chakra-ui/react/dist/types/components/accordion/accordion" {
   export interface AccordionItemProps {

@@ -334,15 +334,14 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
               "max-h-[9.375rem]": isTextareaExpanded
             })}
           />
-          <Flex className="absolute top-0 right-0 -translate-x-[0.5rem] translate-y-[1rem] items-center gap-1">
-            <IconButton
-              icon={<AttachFileIcon color="neutral.500" />}
-              disabled={isSubmitting}
-              onClick={handleAttachFile}
-            />
-            {shouldShowSendIcon && (
-              <IconButton icon={<SendIcon color="neutral.500" />} disabled={isSubmitting} onClick={handleSend} />
-            )}
+          <Flex
+            className={classNames("absolute bottom-0 right-0 -translate-x-[0.5rem] items-center gap-1", {
+              "-translate-y-[0.5rem]": currentIsEditing || isFocused,
+              "-translate-y-[1rem]": !currentIsEditing && !isFocused
+            })}
+          >
+            <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
+            {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={handleSend} />}
           </Flex>
         </div>
       </Flex>
