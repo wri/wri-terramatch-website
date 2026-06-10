@@ -77,6 +77,39 @@ export const CurrentUserView: Story = {
   }
 };
 
+export const EditMode: Story = {
+  args: {
+    participantType: "current-user",
+    authorName: "Name Surname",
+    createdAt: "11/02/2026",
+    message:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eget odio sapien. Integer euismod sagittis erat.",
+    attachments: defaultAttachments
+  },
+  render: args => {
+    const initialMessage =
+      args.message ??
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eget odio sapien. Integer euismod sagittis erat.";
+    const [draftMessage, setDraftMessage] = useState(initialMessage);
+    const [attachments, setAttachments] = useState(args.attachments ?? defaultAttachments);
+
+    return (
+      <CommentCard
+        {...args}
+        state="edit"
+        value={draftMessage}
+        attachments={attachments.map(file => ({
+          ...file,
+          onRemoveFile: () => setAttachments(prev => prev.filter(item => item.name !== file.name))
+        }))}
+        onValueChange={setDraftMessage}
+        onCancelEditing={() => setDraftMessage(initialMessage)}
+        onSaveEditing={() => {}}
+      />
+    );
+  }
+};
+
 export const EmptyState: Story = {
   args: {
     participantType: "empty",
