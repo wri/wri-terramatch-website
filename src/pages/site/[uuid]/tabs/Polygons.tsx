@@ -1045,7 +1045,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           itemCount={selectedRows.length}
           isBulkEditDrawerOpen={showBulkEditDrawer}
           submitLabel={bulkToolbarSubmitLabel}
-          polygons={selectedRows}
+          allPolygons={polygonRows}
           polygonValidations={polygonValidations}
           selectedGeometryPolygonUuids={selectedGeometryPolygonUuids}
           isDownloading={isDownloadingSelectedPolygons}

@@ -28,7 +28,7 @@ export type PolygonBulkActionToolbarProps = {
   isOverlapFixAction?: boolean;
   canAutoFixOverlap?: boolean;
   isSubmitDisabled?: boolean;
-  polygons: PolygonTableRow[];
+  allPolygons: PolygonTableRow[];
   polygonValidations: Map<string, ValidationDto>;
   selectedGeometryPolygonUuids: string[];
 };
@@ -47,7 +47,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   onEdit,
   onSubmit,
   onViewPolygonDetails,
-  polygons,
+  allPolygons,
   onRunValidation,
   polygonValidations,
   selectedGeometryPolygonUuids,
@@ -58,13 +58,24 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
   const t = useT();
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
-  const [validatedPolygons, setValidatedPolygons] = useState<PolygonTableRow[]>([]);
+  const [validatedPolygonUuids, setValidatedPolygonUuids] = useState<string[]>([]);
   const isOverlapAutoFixUnavailable = isOverlapFixAction && !canAutoFixOverlap;
+
+  const validatedPolygons = useMemo(() => {
+    if (validatedPolygonUuids.length === 0) {
+      return [];
+    }
+
+    const polygonsById = new Map(allPolygons.map(polygon => [polygon.id, polygon]));
+    return validatedPolygonUuids
+      .map(polygonUuid => polygonsById.get(polygonUuid))
+      .filter((polygon): polygon is PolygonTableRow => polygon != null);
+  }, [allPolygons, validatedPolygonUuids]);
 
   const handleSystemValidationCompleteModalChange = useCallback((open: boolean) => {
     setIsSystemValidationCompleteModalOpen(open);
     if (!open) {
-      setValidatedPolygons([]);
+      setValidatedPolygonUuids([]);
     }
   }, []);
 
@@ -74,7 +85,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     }
 
     const polygonUuids = selectedGeometryPolygonUuids;
-    setValidatedPolygons(polygons);
+    setValidatedPolygonUuids(polygonUuids);
     onClearSelection?.();
 
     try {
@@ -83,7 +94,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     } catch {
       // Error feedback is handled in the parent.
     }
-  }, [onClearSelection, onRunValidation, polygons, selectedGeometryPolygonUuids]);
+  }, [onClearSelection, onRunValidation, selectedGeometryPolygonUuids]);
 
   const handleViewValidationDetails = useCallback(
     (polygon: PolygonTableRow) => {

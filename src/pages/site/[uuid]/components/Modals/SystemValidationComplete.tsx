@@ -1,8 +1,9 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useMemo } from "react";
 
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
@@ -51,6 +52,9 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
     };
   }, [polygons]);
 
+  const hasValidationResults =
+    approvalValidations.length > 0 || partiallyPassedValidations.length > 0 || failedValidations.length > 0;
+
   return (
     <Modal
       open={open}
@@ -59,26 +63,42 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
       header={<b className="text-theme-neutral-800">{t("System Validation Complete")}</b>}
       content={
         <Flex px={4} direction="column" gap={3}>
-          <ValidationSection
-            polygons={approvalValidations}
-            polygonValidations={polygonValidations}
-            color="success.500"
-            onViewDetails={onViewDetails}
-          />
-          {approvalValidations.length > 0 && partiallyPassedValidations.length > 0 && <SimpleDivider />}
-          <ValidationSection
-            polygons={partiallyPassedValidations}
-            polygonValidations={polygonValidations}
-            color="warning.500"
-            onViewDetails={onViewDetails}
-          />
-          {partiallyPassedValidations.length > 0 && failedValidations.length > 0 && <SimpleDivider />}
-          <ValidationSection
-            polygons={failedValidations}
-            polygonValidations={polygonValidations}
-            color="error.500"
-            onViewDetails={onViewDetails}
-          />
+          <button type="button" onClick={handleClose} className="sr-only">
+            {t("Close")}
+          </button>
+          {hasValidationResults ? (
+            <>
+              <ValidationSection
+                polygons={approvalValidations}
+                polygonValidations={polygonValidations}
+                color="success.500"
+                onViewDetails={onViewDetails}
+              />
+              {approvalValidations.length > 0 && partiallyPassedValidations.length > 0 && <SimpleDivider />}
+              <ValidationSection
+                polygons={partiallyPassedValidations}
+                polygonValidations={polygonValidations}
+                color="warning.500"
+                onViewDetails={onViewDetails}
+              />
+              {partiallyPassedValidations.length > 0 && failedValidations.length > 0 && <SimpleDivider />}
+              <ValidationSection
+                polygons={failedValidations}
+                polygonValidations={polygonValidations}
+                color="error.500"
+                onViewDetails={onViewDetails}
+              />
+            </>
+          ) : (
+            <>
+              <Text textStyle="400" color="neutral.700">
+                {t("Validation results are being prepared. Please try again in a moment.")}
+              </Text>
+              <Button variant="secondary" className="w-fit" onClick={handleClose}>
+                {t("Close")}
+              </Button>
+            </>
+          )}
         </Flex>
       }
       footer={
