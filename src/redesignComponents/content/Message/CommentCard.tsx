@@ -131,7 +131,15 @@ const CommentCard: FC<CommentCardProps> = ({
             </Text>
           </Flex>
           <Flex className="items-center gap-2">
-            {!isCurrentUser && showUnreadIcon && <UnreadIcon color="neutral.900" boxSize={4} />}
+            {!isCurrentUser && showUnreadIcon && (
+              <IconButton
+                variant="borderless"
+                className="!h-6 !w-6 !bg-transparent hover:!bg-theme-primary-500/20"
+                icon={<UnreadIcon color="neutral.900" boxSize={4} />}
+                onClick={onMarkRead}
+                aria-label="Mark as read"
+              />
+            )}
             {showContextOptions && (
               <MenuCustom
                 label="Comment options"

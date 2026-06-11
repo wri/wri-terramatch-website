@@ -1,7 +1,9 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { getUnreadCommentCount, useAuditStatuses } from "@/connections/AuditStatus";
+import { useMyUser } from "@/connections/User";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import type { PolygonEditDrawerPolygon } from "@/context/polygonEditDrawer.types";
@@ -48,6 +50,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onDeletingChange
 }) => {
   const t = useT();
+  const [, { user }] = useMyUser();
   const { draftPolygonGeometry } = useMapAreaContext();
   const [activeTab, setActiveTab] = useState<string>("edit");
   const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
@@ -61,6 +64,15 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
   const isCreateMode = selectedPolygon?.primaryUuid == null || selectedPolygon.primaryUuid === "";
   const isSaveDisabled = activeTab === "edit" && isCreateMode && draftPolygonGeometry == null;
+  const hasValidPolygonUuid = polygon?.polygonUuid != null;
+
+  const [, { data: auditStatusesData }] = useAuditStatuses({
+    entity: "sitePolygons",
+    uuid: selectedPolygon?.uuid ?? "",
+    enabled: hasValidPolygonUuid
+  });
+
+  const unreadCommentCount = useMemo(() => getUnreadCommentCount(auditStatusesData, user), [auditStatusesData, user]);
 
   useEffect(() => {
     setActiveTab("edit");
@@ -195,9 +207,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                         label: (
                           <Text className="flex items-center gap-2">
                             {t("Comments")}
-                            <NotificationIndicator bgColor={activeTab != "comments" ? "neutral.700" : undefined}>
-                              3
-                            </NotificationIndicator>
+                            {unreadCommentCount > 0 && (
+                              <NotificationIndicator bgColor={activeTab != "comments" ? "neutral.700" : undefined}>
+                                {unreadCommentCount}
+                              </NotificationIndicator>
+                            )}
                           </Text>
                         ),
                         value: "comments"

@@ -92,6 +92,20 @@ export const deleteAuditStatusAsync = async (
   await deleter(auditUuid);
 };
 
+type AuditStatusUser = { firstName?: string | null; lastName?: string | null };
+
+const isCommentByUser = (comment: AuditStatusDto, user?: AuditStatusUser): boolean => {
+  if (user == null) {
+    return false;
+  }
+
+  return comment.firstName === user.firstName && comment.lastName === user.lastName;
+};
+
+export const getUnreadCommentCount = (auditStatuses?: AuditStatusDto[], currentUser?: AuditStatusUser): number =>
+  auditStatuses?.filter(a => a.type === "comment" && a.isRead === false && !isCommentByUser(a, currentUser)).length ??
+  0;
+
 export const formatAuditStatusEntityForDisplay = (entityType: AuditStatusEntityType): string => {
   if (entityType === "sitePolygons") {
     return "Polygon";
