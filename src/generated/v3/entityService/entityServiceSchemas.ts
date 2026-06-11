@@ -948,6 +948,7 @@ export type AuditStatusDto = {
    */
   dateCreated: string | null;
   attachments: MediaDto[];
+  isRead?: boolean | null;
 };
 
 export type CreateAuditStatusAttributes = {
@@ -973,6 +974,7 @@ export type UpdateAuditStatusAttributes = {
   status?: string | null;
   isActive?: boolean | null;
   requestRemoved?: boolean | null;
+  isRead?: boolean | null;
 };
 
 export type UpdateAuditStatusData = {

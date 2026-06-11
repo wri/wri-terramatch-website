@@ -293,6 +293,26 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
     ]
   );
 
+  const handleMarkCommentRead = useCallback(
+    async (commentUuid: string) => {
+      if (!hasValidPolygonUuid) {
+        return;
+      }
+
+      try {
+        await updateAuditStatusAsync(commentUuid, "sitePolygons", polygonUuid, {
+          type: "comment",
+          isRead: true
+        });
+        refetch?.();
+      } catch (error) {
+        Log.error("Failed to mark comment as read", error);
+        openNotification("error", t("Error!"), t("Failed to mark comment as read. Please try again."));
+      }
+    },
+    [hasValidPolygonUuid, openNotification, polygonUuid, refetch, t]
+  );
+
   const handleDeleteComment = useCallback(
     async (auditUuid: string) => {
       if (!hasValidPolygonUuid) {
@@ -352,7 +372,8 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
                         url: attachment.url
                       }))
                 }
-                showUnreadIcon={false}
+                showUnreadIcon={!comment.isRead}
+                onMarkRead={() => void handleMarkCommentRead(comment.uuid)}
                 onEdit={isCurrentUser ? () => handleStartEditing(comment) : undefined}
                 onCancelEditing={isEditing ? resetEditingState : undefined}
                 onSaveEditing={isEditing ? () => void handleSaveEditing(comment.uuid) : undefined}
