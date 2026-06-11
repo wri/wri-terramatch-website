@@ -16,12 +16,14 @@ export interface DrawerProps {
 
 export interface DrawerTyped {
   closeOnInteractOutside?: boolean;
-  children: ReactNode;
   open: boolean;
   onOpenChange: (e: { open: boolean }) => void;
-  size: NonNullable<DrawerProps["size"]>;
+  size?: NonNullable<DrawerProps["size"]>;
   placement?: DrawerPlacement;
   modal?: boolean;
+  restoreFocus?: boolean;
+  lazyMount?: boolean;
+  children: ReactNode;
 }
 
 export interface DrawerTriggerTyped {

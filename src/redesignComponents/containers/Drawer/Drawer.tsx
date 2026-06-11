@@ -47,6 +47,8 @@ const Drawer: FC<DrawerProps> = ({
       size={size}
       placement={placement}
       modal={modal}
+      restoreFocus={true}
+      lazyMount={true}
     >
       {trigger != null ? <TypedDrawerTrigger asChild>{trigger}</TypedDrawerTrigger> : null}
       <Portal>
