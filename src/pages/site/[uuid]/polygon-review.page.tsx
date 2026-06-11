@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-import AdminSitePolygonReviewShell from "@/admin/sitePolygonReview/AdminSitePolygonReviewShell";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSite } from "@/connections/Entity";
@@ -15,7 +14,8 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
-import SitePolygonsReviewTab from "./tabs/SitePolygonsReviewTab";
+import AdminSitePolygonReviewShell from "./sitePolygonReview/AdminSitePolygonReviewShell";
+import SitePolygonsWorkspace from "./sitePolygonReview/SitePolygonsWorkspace";
 
 const SitePolygonReviewPage = () => {
   const t = useT();
@@ -55,7 +55,7 @@ const SitePolygonReviewPage = () => {
         <LoadingContainer loading={!isLoaded}>
           {site == null ? null : (
             <AdminSitePolygonReviewShell site={site}>
-              <SitePolygonsReviewTab site={site} variant="adminReview" />
+              <SitePolygonsWorkspace site={site} variant="adminReview" />
             </AdminSitePolygonReviewShell>
           )}
         </LoadingContainer>

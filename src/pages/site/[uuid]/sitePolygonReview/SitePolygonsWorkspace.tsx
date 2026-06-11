@@ -54,16 +54,14 @@ import { useSitePolygonTableData } from "../hooks/useSitePolygonTableData";
 import { useStartSitePolygonDrawing } from "../hooks/useStartSitePolygonDrawing";
 import { getPolygonTableLoadingLabel } from "../utils/polygonTableLoadingLabel";
 
-export type SitePolygonReviewVariant = "champions" | "adminReview";
+export type SitePolygonsWorkspaceVariant = "champions" | "adminReview";
 
-export interface SitePolygonsReviewTabProps {
+export interface SitePolygonsWorkspaceProps {
   site: SiteFullDto;
-  variant?: SitePolygonReviewVariant;
+  variant?: SitePolygonsWorkspaceVariant;
 }
 
-export type { PolygonTableRow } from "../components/PolygonTableRow";
-
-const SitePolygonsReviewTabContent: FC<SitePolygonsReviewTabProps> = ({ site, variant = "champions" }) => {
+const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, variant = "champions" }) => {
   const t = useT();
   const isAdminReview = variant === "adminReview";
   const { isOpen: isEditPolygonOpen, suppressMapSelectionHighlight } = usePolygonEditDrawer();
@@ -639,12 +637,12 @@ const SitePolygonsReviewTabContent: FC<SitePolygonsReviewTabProps> = ({ site, va
   );
 };
 
-const SitePolygonsReviewTab: FC<SitePolygonsReviewTabProps> = ({ site, variant = "champions" }) => (
+const SitePolygonsWorkspace: FC<SitePolygonsWorkspaceProps> = ({ site, variant = "champions" }) => (
   <AnrMapOverlayProvider>
     <PolygonEditDrawerProvider>
-      <SitePolygonsReviewTabContent site={site} variant={variant} />
+      <SitePolygonsWorkspaceContent site={site} variant={variant} />
     </PolygonEditDrawerProvider>
   </AnrMapOverlayProvider>
 );
 
-export default SitePolygonsReviewTab;
+export default SitePolygonsWorkspace;
