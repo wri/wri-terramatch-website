@@ -345,8 +345,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return false;
     }
 
-    showPolygonProgressToast(t, toastLabels.savingChangesProgress, POLYGON_TOAST_IDS.savingChanges);
-
     try {
       const previousPolygonUuid = geometryPolygonUuid !== "" ? geometryPolygonUuid : undefined;
       const updatedPolygon = await saveExistingPolygonVersion({
