@@ -6,7 +6,7 @@ import type * as yup from "yup";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
-import { Framework, toFramework, useFramework } from "@/context/framework.provider";
+import { useFrameworkContext } from "@/context/framework.provider";
 import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -47,8 +47,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const fieldsProvider = useFieldsProvider();
   const { title } = fieldsProvider.step(stepId) ?? {};
-  const frameworkKey = useFramework();
-  const framework = toFramework(frameworkKey) as Framework;
+  const { framework } = useFrameworkContext();
   const stepsWithValidation = useFormStepsWithValidation(fieldsProvider, framework);
   const validation = stepsWithValidation[index].validation;
   const hasStepFeedback = hasFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
