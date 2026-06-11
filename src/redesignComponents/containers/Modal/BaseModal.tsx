@@ -1,3 +1,4 @@
+// Delete this component when the modal from wri dont crash with the trap focus error.
 import { Dialog, Portal } from "@chakra-ui/react";
 import { FC } from "react";
 
