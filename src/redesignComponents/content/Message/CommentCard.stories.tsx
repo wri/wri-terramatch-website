@@ -77,6 +77,53 @@ export const CurrentUserView: Story = {
   }
 };
 
+export const EditView: Story = {
+  args: {
+    participantType: "current-user",
+    state: "edit",
+    authorName: "Name Surname",
+    createdAt: "11/02/2026",
+    message:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eget odio sapien. Integer euismod sagittis erat.",
+    attachments: defaultAttachments
+  },
+  render: args => {
+    const initialMessage =
+      args.message ??
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eget odio sapien. Integer euismod sagittis erat.";
+    const [isEditing, setIsEditing] = useState(true);
+    const [savedMessage, setSavedMessage] = useState(initialMessage);
+    const [draftMessage, setDraftMessage] = useState(initialMessage);
+    const [attachments, setAttachments] = useState(args.attachments ?? defaultAttachments);
+
+    return (
+      <CommentCard
+        {...args}
+        state={isEditing ? "edit" : "view"}
+        message={savedMessage}
+        value={draftMessage}
+        attachments={attachments.map(file => ({
+          ...file,
+          onRemoveFile: () => setAttachments(current => current.filter(item => item.name !== file.name))
+        }))}
+        onEdit={() => {
+          setDraftMessage(savedMessage);
+          setIsEditing(true);
+        }}
+        onValueChange={setDraftMessage}
+        onCancelEditing={() => {
+          setDraftMessage(savedMessage);
+          setIsEditing(false);
+        }}
+        onSaveEditing={() => {
+          setSavedMessage(draftMessage);
+          setIsEditing(false);
+        }}
+      />
+    );
+  }
+};
+
 export const EmptyState: Story = {
   args: {
     participantType: "empty",

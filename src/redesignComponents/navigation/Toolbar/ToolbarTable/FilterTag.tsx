@@ -70,10 +70,10 @@ const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
         <>
           <Box
             position="absolute"
-            left="32px"
+            left="1rem"
             top="0"
             bottom="0"
-            w="24px"
+            w="1.5rem"
             zIndex={1}
             pointerEvents="none"
             css={{
@@ -85,8 +85,8 @@ const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
         rgba(255,255,255,0) 100%
       )
     `,
-              backdropFilter: "blur(2px)",
-              WebkitBackdropFilter: "blur(2px)"
+              backdropFilter: "blur(0.125rem)",
+              WebkitBackdropFilter: "blur(0.125rem)"
             }}
           />
 
@@ -130,10 +130,10 @@ const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
         <>
           <Box
             position="absolute"
-            right="32px"
+            right="1rem"
             top="0"
             bottom="0"
-            w="24px"
+            w="1.5rem"
             zIndex={1}
             pointerEvents="none"
             css={{
@@ -145,8 +145,8 @@ const FilterTag: FC<FilterTagProps> = ({ selectedFilters }) => {
         rgba(255,255,255,0) 100%
       )
     `,
-              backdropFilter: "blur(2px)",
-              WebkitBackdropFilter: "blur(2px)"
+              backdropFilter: "blur(0.125rem)",
+              WebkitBackdropFilter: "blur(0.125rem)"
             }}
           />
 

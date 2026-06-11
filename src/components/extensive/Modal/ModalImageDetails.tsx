@@ -18,6 +18,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -84,6 +85,12 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     return JSON.stringify(formData) !== JSON.stringify(initialFormData);
   };
 
+  const getMediaAnalyticsContext = () =>
+    getPolygonAnalyticsContext({
+      entityType: data.entityType ?? entityData?.entityName ?? "site",
+      entityId: data.entityUuid ?? entityData?.uuid ?? entityData?.entityUUID
+    });
+
   const handleSave = async () => {
     if (!hasChanges()) {
       openNotification("warning", t("No changes"), t("No changes were made to the image details"));
@@ -127,6 +134,10 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     try {
       await Promise.all(updatePromises);
       openNotification("success", t("Success!"), t("Image updated successfully"));
+      trackPolygonEvent("polygon_image_edited", {
+        ...getMediaAnalyticsContext(),
+        polygon_id: "unknown"
+      });
       reloadGalleryImages?.();
 
       const updatedData = {
