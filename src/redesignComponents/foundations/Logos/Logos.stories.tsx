@@ -109,7 +109,7 @@ export const AllLogos: Story = {
             PPC (Priceless Planet + Mastercard)
           </Text>
           <Text fontSize="300" color="neutral.600">
-            White-background horizontal lockup — project banner
+            Transparent endorsed lockup — PPC project banner
           </Text>
         </Box>
         <Box flex="0 0 auto">

@@ -9,6 +9,7 @@ import { useFullProject } from "@/connections/Entity";
 import {
   isPolygonDataSubmissionOption,
   POLYGON_DATA_SUBMISSION_OPTION_VALUES,
+  POLYGON_SUBMISSION_STATUS_LABELS,
   PolygonDataSubmissionOption
 } from "@/constants/polygonHandoff";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -21,17 +22,9 @@ type Props = {
   polygonDataSubmission: PolygonDataSubmissionOption | string | null | undefined;
   readyForBaseline: boolean | undefined;
   onSaved?: () => void;
-  /** Sidebar on Project Overview: hide hero title copy. */
-  variant?: "default" | "compact";
 };
 
-const PolygonHandoffPanel: FC<Props> = ({
-  projectUuid,
-  polygonDataSubmission,
-  readyForBaseline,
-  onSaved,
-  variant = "default"
-}) => {
+const PolygonHandoffPanel: FC<Props> = ({ projectUuid, polygonDataSubmission, readyForBaseline, onSaved }) => {
   const t = useT();
   const { openNotification } = useNotificationContext();
   const [, { isUpdating, updateFailure, update }] = useFullProject({ id: projectUuid });
@@ -39,8 +32,8 @@ const PolygonHandoffPanel: FC<Props> = ({
 
   const options = useMemo(
     () =>
-      [...POLYGON_DATA_SUBMISSION_OPTION_VALUES].map(value => ({
-        title: t(`Polygon submission: ${value.replace(/-/g, " ")}`),
+      POLYGON_DATA_SUBMISSION_OPTION_VALUES.map(value => ({
+        title: t(POLYGON_SUBMISSION_STATUS_LABELS[value]),
         value
       })),
     [t]
@@ -89,27 +82,25 @@ const PolygonHandoffPanel: FC<Props> = ({
   );
 
   return (
-    <Stack gap={3} className={variant === "compact" ? "max-w-full" : "max-w-xl"}>
-      {variant === "default" ? (
-        <div>
-          <Text variant="text-24-bold" className="mb-1">
-            {t("Polygon Handoff")}
-          </Text>
-          <Text variant="text-14-light" className="mb-4">
-            {t("Update polygon data submission and baseline readiness. Changes are recorded in the history below.")}
-          </Text>
-        </div>
-      ) : null}
+    <Stack gap={3} className="max-w-xl">
+      <div>
+        <Text variant="text-24-bold" className="mb-1">
+          {t("Polygon Handoff")}
+        </Text>
+        <Text variant="text-14-light" className="mb-4">
+          {t("Update polygon submission status and baseline readiness. Changes are recorded in the history below.")}
+        </Text>
+      </div>
       <Dropdown
         labelVariant="text-16-bold"
-        label={t("Polygon Data Submission")}
+        label={t("Polygon Submission Status")}
         options={options}
         value={[submission]}
         onChange={v => setSubmission(String(v[0] ?? "no-polygons-submitted"))}
       />
       <FormControlLabel
         control={<Switch checked={baseline} onChange={(_, checked) => setBaseline(checked)} color="primary" />}
-        label={<Text variant="text-14-semibold">{t("Project ready for baseline")}</Text>}
+        label={<Text variant="text-14-semibold">{t("Project Ready for Baseline")}</Text>}
       />
       <TextField
         label={t("Comment (optional)")}

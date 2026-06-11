@@ -1,10 +1,13 @@
 import { useMediaQuery } from "@mui/material";
+import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useMemo, useState } from "react";
 
+import CountryFlag from "@/components/dashboard/CountryFlag";
 import type { ImpactStoryModalRow } from "@/components/dashboard/impactStoriesModalColumns";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
+import { formatTableNumber, numericSortingFn } from "@/components/elements/Table/tableUtils";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import BlurContainer from "@/components/extensive/BlurContainer/BlurContainer";
@@ -19,10 +22,10 @@ import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import {
   formatCohortDisplay,
-  parseDataToObjetive,
   parseHectaresUnderRestorationData,
   parseJobCreatedByType,
-  parseVolunteersByType
+  parseVolunteersByType,
+  useParseDataToObjetive
 } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./components/ContentDashboardWrapper";
@@ -121,6 +124,8 @@ const Dashboard = () => {
     isLoadingImpactStories
   } = useDashboardData(filters);
 
+  const objectiveData = useParseDataToObjetive(singleDashboardProject);
+
   const cohortArray = useMemo(() => {
     const cohort = singleDashboardProject?.cohort;
     if (!cohort) return null;
@@ -174,7 +179,7 @@ const Dashboard = () => {
           const value = props.getValue().split("_");
           return (
             <div className="flex items-center gap-2">
-              <img src={value[1]} alt="flag" className="h-3 w-5 min-w-[20px] object-cover" />
+              <CountryFlag src={value[1]} size="xs" />
               <Text variant="text-14">{value[0]}</Text>
             </div>
           );
@@ -185,22 +190,30 @@ const Dashboard = () => {
       {
         header: t("Projects"),
         accessorKey: "project",
-        enableSorting: false
+        enableSorting: false,
+        sortingFn: numericSortingFn,
+        cell: (props: { getValue: () => number }) => <span>{formatTableNumber(props.getValue())}</span>
       },
       {
         header: t("Trees Planted"),
         accessorKey: "treesPlanted",
-        enableSorting: false
+        enableSorting: false,
+        sortingFn: numericSortingFn,
+        cell: (props: { getValue: () => number }) => <span>{formatTableNumber(props.getValue())}</span>
       },
       {
         header: t("Hectares"),
         accessorKey: "restorationHectares",
-        enableSorting: false
+        enableSorting: false,
+        sortingFn: numericSortingFn,
+        cell: (props: { getValue: () => number }) => <span>{formatTableNumber(props.getValue())}</span>
       },
       {
         header: t("Jobs Created"),
         accessorKey: "jobsCreated",
-        enableSorting: false
+        enableSorting: false,
+        sortingFn: numericSortingFn,
+        cell: (props: { getValue: () => number }) => <span>{formatTableNumber(props.getValue())}</span>
       },
       ...(!isMobile
         ? []
@@ -256,28 +269,22 @@ const Dashboard = () => {
         header: "Trees Planted",
         accessorKey: "treesPlantedCount",
         enableSorting: false,
-        cell: (props: any) => {
-          const value = props.getValue();
-          return <span>{Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>;
-        }
+        sortingFn: numericSortingFn,
+        cell: (props: { getValue: () => number }) => <span>{formatTableNumber(props.getValue())}</span>
       },
       {
         header: "Hectares",
         accessorKey: "totalHectaresRestoredSum",
         enableSorting: false,
-        cell: (props: any) => {
-          const value = props.getValue();
-          return <span>{Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>;
-        }
+        sortingFn: numericSortingFn,
+        cell: (props: { getValue: () => number }) => <span>{formatTableNumber(props.getValue())}</span>
       },
       {
         header: "Jobs Created",
         accessorKey: "totalJobsCreated",
         enableSorting: false,
-        cell: (props: any) => {
-          const value = props.getValue();
-          return <span>{Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>;
-        }
+        sortingFn: numericSortingFn,
+        cell: (props: { getValue: () => number }) => <span>{formatTableNumber(props.getValue())}</span>
       },
       {
         header: "",
@@ -320,10 +327,10 @@ const Dashboard = () => {
         country: `${
           countryChoices?.find(choice => choice.id === item.country)?.name ?? item.country
         }_/flags/${item.country.toLowerCase()}.svg`,
-        project: item.numberOfProjects.toLocaleString(),
-        treesPlanted: item.totalTreesPlanted.toLocaleString(),
-        restorationHectares: item.hectaresRestored.toLocaleString("en-US", { maximumFractionDigits: 0 }),
-        jobsCreated: item.totalJobsCreated.toLocaleString()
+        project: item.numberOfProjects,
+        treesPlanted: item.totalTreesPlanted,
+        restorationHectares: item.hectaresRestored,
+        jobsCreated: item.totalJobsCreated
       })
     );
     return data.sort((a, b) => a.country.localeCompare(b.country));
@@ -425,7 +432,7 @@ const Dashboard = () => {
 
             {hasCountrySelection && filters.landscapes.length === 0 && !filters.uuid && (
               <>
-                <img src={filters.country?.data.icon} alt="flag" className="h-6 w-10 min-w-[40px] object-cover" />
+                {filters.country?.data.icon ? <CountryFlag src={filters.country.data.icon} size="md" /> : null}
                 <Text variant="text-24-semibold" className="text-black">
                   {t(
                     countryChoices.find(country => country.id === filters.country?.country_slug)?.name ||
@@ -535,7 +542,7 @@ const Dashboard = () => {
               title={t("Objective")}
               classNameTitle="capitalize"
               type="legend"
-              data={parseDataToObjetive(singleDashboardProject)}
+              data={objectiveData}
               variantTitle="text-18-semibold"
             />
           </PageCard>
@@ -692,7 +699,12 @@ const Dashboard = () => {
           !hasCountrySelection ? DATA_ACTIVE_PROGRAMME : filters.uuid ? otherProjectsInCountry : projectsInCountry
         }
         centroids={centroidsDataProjects}
-        columns={!hasCountrySelection ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY}
+        columns={
+          (!hasCountrySelection ? COLUMN_ACTIVE_PROGRAMME : COLUMN_ACTIVE_COUNTRY) as ColumnDef<{
+            country: string | null;
+            uuid: string;
+          }>[]
+        }
         titleTable={
           !hasCountrySelection
             ? t("ACTIVE COUNTRIES")

@@ -967,6 +967,23 @@ export type CreateAuditStatusBody = {
   data: CreateAuditStatusData;
 };
 
+export type UpdateAuditStatusAttributes = {
+  type?: string | null;
+  comment?: string | null;
+  status?: string | null;
+  isActive?: boolean | null;
+  requestRemoved?: boolean | null;
+};
+
+export type UpdateAuditStatusData = {
+  type: "auditStatuses";
+  attributes: UpdateAuditStatusAttributes;
+};
+
+export type UpdateAuditStatusBody = {
+  data: UpdateAuditStatusData;
+};
+
 export type AggregateReportSeriesItemDto = {
   /**
    * Reporting task due date (ISO 8601), or null when the report has no due date.
@@ -1126,7 +1143,7 @@ export type ProjectLightDto = {
   updatedAt: string;
   treesPlantedCount: number | null;
   /**
-   * Polygon data submission tracking
+   * Polygon submission status tracking
    */
   polygonDataSubmission:
     | "no-polygons-submitted"
@@ -1176,6 +1193,7 @@ export type SiteLightDto = {
   treesPlantedCount: number;
   hectaresToRestoreGoal: number | null;
   totalHectaresRestoredSum: number;
+  totalSiteReports: number;
   /**
    * @format date-time
    */
@@ -1227,6 +1245,7 @@ export type NurseryLightDto = {
   endDate: string | null;
   seedlingsGrownCount: number | null;
   treesSeedlingsGrownCount: number | null;
+  nurseryReportsTotal: number | null;
   /**
    * @format date-time
    */
@@ -1434,7 +1453,7 @@ export type ProjectFullDto = {
   updatedAt: string;
   treesPlantedCount: number | null;
   /**
-   * Polygon data submission tracking
+   * Polygon submission status tracking
    */
   polygonDataSubmission:
     | "no-polygons-submitted"
@@ -1452,7 +1471,7 @@ export type ProjectFullDto = {
   isTest: boolean;
   feedback: string | null;
   feedbackFields: string[] | null;
-  cohort: string[] | null;
+  cohort: string | null;
   continent: string | null;
   states: string[] | null;
   projectCountyDistrict: string | null;
@@ -1567,6 +1586,7 @@ export type SiteFullDto = {
   treesPlantedCount: number;
   hectaresToRestoreGoal: number | null;
   totalHectaresRestoredSum: number;
+  totalSiteReports: number;
   /**
    * @format date-time
    */
@@ -1575,7 +1595,6 @@ export type SiteFullDto = {
    * @format date-time
    */
   updatedAt: string;
-  totalSiteReports: number;
   seedsPlantedCount: number;
   overdueSiteReportsTotal: number;
   selfReportedWorkdayCount: number;
@@ -1693,6 +1712,7 @@ export type NurseryFullDto = {
   endDate: string | null;
   seedlingsGrownCount: number | null;
   treesSeedlingsGrownCount: number | null;
+  nurseryReportsTotal: number | null;
   /**
    * @format date-time
    */
@@ -1707,7 +1727,6 @@ export type NurseryFullDto = {
   seedlingGrown: number | null;
   plantingContribution: string | null;
   oldModel: string | null;
-  nurseryReportsTotal: number | null;
   overdueNurseryReportsTotal: number | null;
   projectUuid: string | null;
   media: MediaDto[];
@@ -2396,6 +2415,20 @@ export type DelayedJobDto = {
    * The name of the related entity (e.g., Kerrawarra, New Site, etc).
    */
   entityName?: string | null;
+  /**
+   * The type of the related entity (e.g., projects, sites, etc).
+   */
+  entityType?:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | null;
 };
 
 export type ProjectUpdateAttributes = {
@@ -2416,7 +2449,7 @@ export type ProjectUpdateAttributes = {
    */
   isTest?: boolean;
   /**
-   * Polygon data submission tracking
+   * Polygon submission status tracking
    */
   polygonDataSubmission?:
     | "no-polygons-submitted"
@@ -3067,6 +3100,7 @@ export type SubmissionDto = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
+    | "wcb"
     | null;
   formUuid: string;
   status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
@@ -3321,6 +3355,7 @@ export type FormFullDto = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
+    | "wcb"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3454,6 +3489,7 @@ export type StoreFormAttributes = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
+    | "wcb"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3594,6 +3630,7 @@ export type FundingProgrammeDto = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
+    | "wcb"
     | null;
   name: string;
   description: string;
@@ -3626,6 +3663,7 @@ export type StoreFundingProgrammeAttributes = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
+    | "wcb"
     | null;
   name: string;
   description: string;
@@ -3674,10 +3712,6 @@ export type ReportingFrameworkDto = {
 
 export type CreateReportingFrameworkAttributes = {
   /**
-   * Stored in DB only; not returned in API (FE uses slug)
-   */
-  accessCode?: string | null;
-  /**
    * @format uuid
    */
   projectFormUuid?: string | null;
@@ -3709,6 +3743,7 @@ export type CreateReportingFrameworkAttributes = {
    * Framework name; used to generate slug
    */
   name: string;
+  slug: string;
 };
 
 export type CreateReportingFrameworkData = {
@@ -3721,10 +3756,6 @@ export type CreateReportingFrameworkBody = {
 };
 
 export type UpdateReportingFrameworkAttributes = {
-  /**
-   * Stored in DB only; not returned in API (FE uses slug)
-   */
-  accessCode?: string | null;
   /**
    * @format uuid
    */
@@ -3754,6 +3785,7 @@ export type UpdateReportingFrameworkAttributes = {
    */
   financialReportFormUuid?: string | null;
   name?: string | null;
+  slug?: string | null;
 };
 
 export type UpdateReportingFrameworkData = {

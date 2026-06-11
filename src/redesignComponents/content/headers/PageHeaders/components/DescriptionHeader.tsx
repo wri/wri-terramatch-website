@@ -28,8 +28,7 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
   id
 }) => {
   const t = useT();
-  const { descriptionRef, isClamped, isExpanded, toggleExpand } = useClampedText(description, maxLines);
-
+  const { descriptionRef, isClamped, isExpanded, toggleExpand } = useClampedText(description);
   return (
     <>
       <Box position="relative" display="inline-block" width="100%">

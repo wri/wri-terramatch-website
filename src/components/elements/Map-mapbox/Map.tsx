@@ -250,7 +250,6 @@ export const MapContainer = ({
     sitePolygonUuid: anrMapOverlay?.sitePolygonUuidForApi ?? "",
     enabled: anrPlotGeometryFetchEnabled
   });
-
   const polygonBbox = useBoundingBox(
     entityData?.entityName === "project-pitch"
       ? { projectPitchUuid: entityData?.entityUUID }

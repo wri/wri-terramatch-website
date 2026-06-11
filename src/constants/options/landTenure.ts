@@ -1,22 +1,40 @@
-const LAND_TENURE_PROJECT_AREA_LABELS: Record<string, string> = {
-  "indigenous-land": "Indigenous Land",
-  "extractive-reserve-resex": "Extractive Reserve (RESEX)",
-  "sustainable-development-reserve-rds": "Sustainable Development Reserve (RDS)",
-  "national-forest-flona": "National Forest (FLONA)",
-  "environmental-protection-area-apa": "Environmental Protection Area (APA)",
-  "rural-settlements-pae-paex-or-pds": "Rural Settlements (PAE, PAEX, or PDS)",
-  "quilombola-land": "Quilombola Land",
-  "public-land": "Public Land",
-  "private-land": "Private Land",
-  "other-land": "Other Land"
+import { useT } from "@transifex/react";
+import { useMemo } from "react";
+
+export const useLandTenureProjectAreaLabels = () => {
+  const t = useT();
+
+  return useMemo(
+    () => ({
+      "public-land": t("Public Land"),
+      "private-land": t("Private Land"),
+      "indigenous-land": t("Indigenous Land"),
+      "communal-land": t("Communal Land"),
+      "national-protected-area": t("National Protected Area"),
+      "state-land": t("State Land"),
+      "extractive-reserve-resex": t("Extractive Reserve (RESEX)"),
+      "sustainable-development-reserve-rds": t("Sustainable Development Reserve (RDS)"),
+      "national-forest-flona": t("National Forest (FLONA)"),
+      "environmental-protection-area-apa": t("Environmental Protection Area (APA)"),
+      "rural-settlements-pae-paex-or-pds": t("Rural Settlements (PAE, PAEX, or PDS)"),
+      "quilombola-land": t("Quilombola Land"),
+      "other-land": t("Other Land")
+    }),
+    [t]
+  );
 };
 
-export const getLandTenureProjectAreaLabel = (slug: string): string => LAND_TENURE_PROJECT_AREA_LABELS[slug] ?? slug;
+export const useFormatLandTenureProjectAreaDisplay = (slugs: string[] | null | undefined): string => {
+  const t = useT();
+  const landTenureProjectAreaLabel = useLandTenureProjectAreaLabels();
 
-export const formatLandTenureProjectAreaDisplay = (slugs: string[] | null | undefined): string => {
-  if (slugs == null || slugs.length === 0) {
-    return "Under Review";
-  }
+  return useMemo(() => {
+    if (slugs == null || slugs.length === 0) {
+      return t("Under Review");
+    }
 
-  return slugs.map(getLandTenureProjectAreaLabel).join(", ");
+    return slugs
+      .map(slug => landTenureProjectAreaLabel[slug as keyof typeof landTenureProjectAreaLabel] ?? slug)
+      .join(", ");
+  }, [landTenureProjectAreaLabel, slugs, t]);
 };

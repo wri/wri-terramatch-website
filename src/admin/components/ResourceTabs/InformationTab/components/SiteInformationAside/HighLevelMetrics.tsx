@@ -4,6 +4,7 @@ import { Labeled, NumberField, useShowContext } from "react-admin";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { SUMMARY_ANR_ROLLUP_HIDE } from "@/constants/summaryRollupVisibility";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 
@@ -112,16 +113,18 @@ const HighLevelMetrics: FC = () => {
                 </Box>
               </Stack>
             </Labeled>
-            <Labeled label="Total Number of Trees Regenerating">
-              <Stack direction="row" spacing={6} alignItems="center">
-                <Box>
-                  <Typography variant="body2" color="text.secondary">
-                    Reports
-                  </Typography>
-                  <NumberField source="regeneratedTreesCount" emptyText="0" />
-                </Box>
-              </Stack>
-            </Labeled>
+            <ContextCondition frameworksHide={SUMMARY_ANR_ROLLUP_HIDE}>
+              <Labeled label="Total Number of Trees Regenerating">
+                <Stack direction="row" spacing={6} alignItems="center">
+                  <Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Reports
+                    </Typography>
+                    <NumberField source="regeneratedTreesCount" emptyText="0" />
+                  </Box>
+                </Stack>
+              </Labeled>
+            </ContextCondition>
           </>
           <div className="hidden">
             <ContextCondition frameworksShow={[Framework.TF]}>

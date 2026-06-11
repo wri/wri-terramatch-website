@@ -2,8 +2,11 @@ import { Box, Card, Divider, Stack, SxProps, Theme, Typography } from "@mui/mate
 import { ComponentType, FC } from "react";
 import { FunctionField, Labeled, NumberField, useShowContext } from "react-admin";
 
+import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingEntity, TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
+import { SupportedEntity } from "@/connections/EntityAssociation";
+import { SUMMARY_ANR_ROLLUP_HIDE } from "@/constants/summaryRollupVisibility";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
@@ -95,6 +98,18 @@ const DemographicsTotalField: FC<Omit<DemographicsTotalFieldProps, keyof Collect
 const HighLevelMetrics: FC = () => {
   const { record, resource } = useShowContext();
 
+  const seedlingsEntity: SupportedEntity =
+    resource === "nurseryReport"
+      ? "nurseryReports"
+      : resource === "projectReport"
+      ? "projectReports"
+      : (resource as SupportedEntity);
+  const totalCountNurserySeedling = usePlantTotalCount({
+    entity: seedlingsEntity,
+    entityUuid: record?.uuid ?? "",
+    collection: "nursery-seedling"
+  });
+
   const inlineLabelSx: SxProps<Theme> = {
     flexDirection: "row",
     justifyContent: "space-between"
@@ -138,22 +153,26 @@ const HighLevelMetrics: FC = () => {
           <ContextCondition frameworksShow={ALL_TF}>
             <DemographicsTotalField label="Total Number of Jobs Created" sx={inlineLabelSx} totalsType="jobs" />
           </ContextCondition>
-          <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx}>
-            <NumberField
-              source={record.treesPlantedCount ? "treesPlantedCount" : "totalTreesPlantedCount"}
-              emptyText="0"
-            />
-          </Labeled>
-          {resource === "siteReport" && (
-            <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>
-              <NumberField source="totalTreesRegeneratingSpeciesCount" emptyText="0" />
+          {resource !== "nurseryReport" && (
+            <Labeled label="Total Number Of Trees Planted" sx={inlineLabelSx}>
+              <NumberField
+                source={record.treesPlantedCount ? "treesPlantedCount" : "totalTreesPlantedCount"}
+                emptyText="0"
+              />
             </Labeled>
           )}
-          {resource === "projectReport" && (
-            <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>
-              <NumberField source="treesRegeneratingSpeciesCount" emptyText="0" />
-            </Labeled>
-          )}
+          <ContextCondition frameworksHide={SUMMARY_ANR_ROLLUP_HIDE}>
+            {resource === "siteReport" && (
+              <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>
+                <NumberField source="totalTreesRegeneratingSpeciesCount" emptyText="0" />
+              </Labeled>
+            )}
+            {resource === "projectReport" && (
+              <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>
+                <NumberField source="treesRegeneratingSpeciesCount" emptyText="0" />
+              </Labeled>
+            )}
+          </ContextCondition>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             {(resource === "projectReport" || resource === "siteReport") && (
               <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx}>
@@ -176,8 +195,8 @@ const HighLevelMetrics: FC = () => {
           </ContextCondition>
           <ContextCondition frameworksShow={ALL_TF}>
             {resource !== "siteReport" && (
-              <Labeled label="Total Number Of Seedlings" sx={inlineLabelSx}>
-                <NumberField source="seedlingsGrown" emptyText="0" />
+              <Labeled label="Seedlings Grown" sx={inlineLabelSx}>
+                <FunctionField render={() => totalCountNurserySeedling ?? 0} />
               </Labeled>
             )}
           </ContextCondition>

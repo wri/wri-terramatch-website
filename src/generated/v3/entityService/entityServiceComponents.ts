@@ -2228,6 +2228,105 @@ export const createAuditStatus = new V3ApiEndpoint<
   {}
 >("/entities/v3/auditStatuses/{entity}/{uuid}", "POST");
 
+export type UpdateAuditStatusPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve audit statuses for
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "sitePolygons";
+  /**
+   * UUID of the audit status to update
+   */
+  auditUuid: string;
+};
+
+export type UpdateAuditStatusError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UpdateAuditStatusResponse = {
+  meta?: {
+    /**
+     * @example auditStatuses
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example auditStatuses
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.AuditStatusDto;
+  };
+};
+
+export type UpdateAuditStatusVariables = {
+  body: Schemas.UpdateAuditStatusBody;
+  pathParams: UpdateAuditStatusPathParams;
+};
+
+export const updateAuditStatus = new V3ApiEndpoint<
+  UpdateAuditStatusResponse,
+  UpdateAuditStatusError,
+  UpdateAuditStatusVariables,
+  {}
+>("/entities/v3/auditStatuses/{entity}/{uuid}/{auditUuid}", "PUT");
+
 export type DeleteAuditStatusPathParams = {
   /**
    * UUID of the resource.
@@ -2462,7 +2561,7 @@ export type EntityIndexQueryParams = {
    */
   taskId?: number;
   /**
-   * Filter projects by polygon data submission status
+   * Filter projects by polygon submission status
    */
   polygonDataSubmission?:
     | "no-polygons-submitted"
@@ -3081,7 +3180,8 @@ export type EntityExportAllQueryParams = {
     | "ppc"
     | "hbf"
     | "fundo-flora"
-    | "fundo-flora-1";
+    | "fundo-flora-1"
+    | "wcb";
   /**
    * Filter by project
    */
@@ -3519,6 +3619,85 @@ export const entityUpdate = new V3ApiEndpoint<undefined, EntityUpdateError, Enti
   "/entities/v3/{entity}/{uuid}",
   "PATCH"
 );
+
+export type EntityAssetGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+};
+
+export type EntityAssetGetError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type EntityAssetGetVariables = {
+  pathParams: EntityAssetGetPathParams;
+};
+
+export const entityAssetGet = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example fileDownloads
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example fileDownloads
+         */
+        type?: string;
+        id?: string;
+        attributes?: Schemas.FileDownloadDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  EntityAssetGetError,
+  EntityAssetGetVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/exportAssets", "GET");
 
 export type EntityExportPathParams = {
   /**
@@ -4026,7 +4205,7 @@ export type EntityAssociationIndexQueryParams = {
    */
   taskId?: number;
   /**
-   * Filter projects by polygon data submission status
+   * Filter projects by polygon submission status
    */
   polygonDataSubmission?:
     | "no-polygons-submitted"
@@ -6643,9 +6822,18 @@ export const operationsByTag = {
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   disturbances: { disturbanceIndex },
   reminders: { sendReminder },
-  auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
+  auditStatus: { getAuditStatuses, createAuditStatus, updateAuditStatus, deleteAuditStatus },
   aggregateReports: { getAggregateReports },
-  entities: { entityIndex, entityCreate, entityExportAll, entityGet, entityDelete, entityUpdate, entityExport },
+  entities: {
+    entityIndex,
+    entityCreate,
+    entityExportAll,
+    entityGet,
+    entityDelete,
+    entityUpdate,
+    entityAssetGet,
+    entityExport
+  },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },
   entityAssociations: { entityAssociationIndex },
