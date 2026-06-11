@@ -32,6 +32,7 @@ interface EntityAreaProps {
   refetchPolygonVersions?: () => void;
   className?: string;
   disabledPolygonPanel?: boolean;
+  hideFullscreenControl?: boolean;
 }
 
 const OverviewMapArea = ({
@@ -41,7 +42,8 @@ const OverviewMapArea = ({
   polygonVersionData,
   refetchPolygonVersions,
   className,
-  disabledPolygonPanel
+  disabledPolygonPanel,
+  hideFullscreenControl = false
 }: EntityAreaProps) => {
   const t = useT();
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
@@ -70,7 +72,13 @@ const OverviewMapArea = ({
   } = useMapAreaContext();
 
   const [, { delayedJobs }] = useDelayedJobs();
-  const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refetch);
+  const onSave = (geojson: any) =>
+    storePolygon(
+      geojson,
+      { uuid: entityModel.uuid, entityName: type === "sites" ? "site" : type },
+      setEditPolygon,
+      refetch
+    );
 
   const mapFunctions = useBaseMap(onSave);
 
@@ -230,6 +238,7 @@ const OverviewMapArea = ({
         mediaFiles={mediaFiles}
         sitePolygonData={sitePolygonDataV3}
         disabledPolygonPanel={disabledPolygonPanel}
+        hideFullscreenControl={hideFullscreenControl}
       />
     </AnrMapOverlayProvider>
   );

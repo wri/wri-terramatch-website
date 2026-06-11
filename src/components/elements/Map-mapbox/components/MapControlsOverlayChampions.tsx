@@ -40,6 +40,7 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
     isLoadingDelayedJob,
     setAlertTitle,
     disabledPolygonPanel,
+    hideFullscreenControl,
     selectedPolygonsInCheckbox
   } = admin;
   const { formMap: isFormMap, editable, polygonFromMap, viewImages: isViewingImages, setViewImages } = form;
@@ -115,7 +116,7 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
               map={map}
               isFullscreen={isFullscreen}
               toggleFullscreen={toggleFullscreen}
-              showFullscreenControl={!disabledPolygonPanel}
+              showFullscreenControl={!hideFullscreenControl}
             />
           </ControlGroup>
 

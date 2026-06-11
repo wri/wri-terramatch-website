@@ -209,6 +209,7 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
               children: t("Delete"),
               typeVariant: "negative",
               classNameContainer: "w-[32%]",
+              className: "!w-full",
               onClick: () => {
                 deleteMedia(data.uuid);
                 openNotification("success", t("Success!"), t("Image deleted successfully"));

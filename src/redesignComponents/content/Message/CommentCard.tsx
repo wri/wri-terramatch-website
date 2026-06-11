@@ -114,7 +114,7 @@ const CommentCard: FC<CommentCardProps> = ({
     <Flex
       className={twMerge(
         "flex-col gap-2 bg-theme-neutral-100 px-6 py-5",
-        state === "edit" && "bg-theme-primary-100",
+        isCurrentUser && "bg-theme-primary-100",
         className
       )}
       position="relative"
@@ -139,7 +139,7 @@ const CommentCard: FC<CommentCardProps> = ({
                 customTrigger={
                   <IconButton
                     variant="borderless"
-                    className="!h-6 !w-6"
+                    className="!h-6 !w-6 !bg-transparent hover:!bg-theme-primary-500/20"
                     icon={<MoreVertIcon color="primary.800" boxSize={4} />}
                   />
                 }

@@ -226,6 +226,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
               type="projects"
               className="max-h-[27rem]"
               disabledPolygonPanel={true}
+              hideFullscreenControl={true}
             />
             {showSiteAreasMapPlaceholder && (
               <MapPlaceholder

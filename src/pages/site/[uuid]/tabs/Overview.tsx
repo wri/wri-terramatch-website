@@ -122,6 +122,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 type="sites"
                 className="max-h-[27rem] !rounded-[0.25rem_0.25rem_0.25rem_0.25rem]"
                 disabledPolygonPanel={true}
+                hideFullscreenControl={true}
               />
               {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
                 <MapPlaceholder

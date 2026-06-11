@@ -8,12 +8,16 @@ import Log from "@/utils/log";
 
 import Icon, { IconNames } from "./Icon/Icon";
 
+export const ASSET_DOWNLOAD_ENTITIES = ["projects", "sites", "nurseries"] as const;
+export type AssetDownloadEntity = (typeof ASSET_DOWNLOAD_ENTITIES)[number];
+
 type AssetDownloadButtonProps = {
-  entity: "projects" | "sites" | "nurseries";
+  entity: AssetDownloadEntity;
   uuid: string;
+  className?: string;
 };
 
-const AssetDownloadButton: FC<AssetDownloadButtonProps> = ({ entity, uuid }) => {
+const AssetDownloadButton: FC<AssetDownloadButtonProps> = ({ entity, uuid, className }) => {
   const t = useT();
   const [isGenerating, setIsGenerating] = useState(false);
   const { openToast } = useToastContext();
@@ -30,9 +34,9 @@ const AssetDownloadButton: FC<AssetDownloadButtonProps> = ({ entity, uuid }) => 
   }, [entity, openToast, uuid]);
 
   return (
-    <Button disabled={isGenerating} variant="secondary-blue" onClick={downloadAssets}>
+    <Button className={className} disabled={isGenerating} variant="secondary-blue" onClick={downloadAssets}>
       {isGenerating && <Icon className="mr-2 inline" name={IconNames.SPINNER} width={14} height={14} />}
-      {t("Download Asset .zip")}
+      {t("Download Media & Documents")}
     </Button>
   );
 };

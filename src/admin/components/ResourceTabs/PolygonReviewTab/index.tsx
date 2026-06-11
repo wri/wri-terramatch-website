@@ -227,7 +227,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, "createdAt", "ASC", validFilter);
 
   const onSave = (geojson: any, record: any) => {
-    storePolygon(geojson, record, setSelectPolygonFromMap, refetch);
+    storePolygon(geojson, { ...record, entityName: record?.entityName ?? "site" }, setSelectPolygonFromMap, refetch);
   };
   const mapFunctions = useMap(onSave);
 

@@ -269,7 +269,7 @@ export const addMediaMarkers = (
   map: MapboxMap,
   mediaFiles: MediaDto[],
   callbacks: MediaCallbacks,
-  visible = true
+  visible = false
 ): void => {
   if (!visible) {
     getSelectionStore(map).set(null);

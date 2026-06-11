@@ -1,6 +1,7 @@
 import { Box, Flex, Grid, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
+import exifr from "exifr";
 import { ChangeEvent, DragEvent, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { prepareFileForUpload } from "@/connections/Media";
@@ -13,6 +14,16 @@ import Modal from "@/redesignComponents/containers/Modal/Modal";
 import GalleryImage from "@/redesignComponents/content/Images/GalleryImage/GalleryImage";
 import { UploadIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
+
+import { UploadPhotosWarningContent } from "../UploadPhotos";
+
+const getFileGps = async (file: File) => {
+  try {
+    return await exifr.gps(file);
+  } catch {
+    return undefined;
+  }
+};
 
 const ACCEPTED_FORMATS = ".jpg,.jpeg,.png";
 const ACCEPTED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png"] as const;
@@ -62,6 +73,9 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isCheckingGps, setIsCheckingGps] = useState(false);
+  const [showNonGeotaggedWarning, setShowNonGeotaggedWarning] = useState(false);
+  const [nonGeotaggedCount, setNonGeotaggedCount] = useState(0);
 
   const filePreviewUrls = useMemo(
     () => new Map(selectedFiles.map(file => [file.name, URL.createObjectURL(file)])),
@@ -85,6 +99,8 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
     onOpenChange(false);
     setSelectedFiles([]);
     setIsDragging(false);
+    setShowNonGeotaggedWarning(false);
+    setNonGeotaggedCount(0);
   }, [onOpenChange]);
 
   const handleFileChange = useCallback(
@@ -184,127 +200,191 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
     }
   }, [handleClose, selectedFiles, setShouldRefetchMediaData, siteUuid, t]);
 
+  const handleSaveClick = useCallback(async () => {
+    if (selectedFiles.length === 0 || siteUuid === "") {
+      return;
+    }
+
+    setIsCheckingGps(true);
+    try {
+      const gpsResults = await Promise.all(selectedFiles.map(getFileGps));
+      const missingGpsCount = gpsResults.filter(gps => gps == null).length;
+
+      if (missingGpsCount > 0) {
+        setNonGeotaggedCount(missingGpsCount);
+        setShowNonGeotaggedWarning(true);
+        return;
+      }
+
+      await handleSave();
+    } finally {
+      setIsCheckingGps(false);
+    }
+  }, [handleSave, selectedFiles, siteUuid]);
+
+  const handleWarningCancel = useCallback(() => {
+    setShowNonGeotaggedWarning(false);
+  }, []);
+
+  const handleConfirmUpload = useCallback(() => {
+    setShowNonGeotaggedWarning(false);
+    void handleSave();
+  }, [handleSave]);
+
+  const handleModalClose = useCallback(() => {
+    if (showNonGeotaggedWarning) {
+      handleWarningCancel();
+      return;
+    }
+    handleClose();
+  }, [handleClose, handleWarningCancel, showNonGeotaggedWarning]);
+
   const hasSelectedFiles = selectedFiles.length > 0;
-  const canSave = hasSelectedFiles && siteUuid !== "" && !isUploading;
+  const canSave = hasSelectedFiles && siteUuid !== "" && !isUploading && !isCheckingGps;
 
   return (
     <Modal
       open={open}
-      onClose={handleClose}
-      size="large"
-      header={<b className="text-theme-neutral-800">{t("Upload geotagged photos")}</b>}
+      onClose={handleModalClose}
+      size={showNonGeotaggedWarning ? "medium" : "large"}
+      header={
+        <b className="text-theme-neutral-800">
+          {showNonGeotaggedWarning ? t("Upload photos?") : t("Upload geotagged photos")}
+        </b>
+      }
       content={
-        <Box pl={4} w="full">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept={ACCEPTED_FORMATS}
-            multiple
-            style={{ display: "none" }}
-            onChange={handleFileChange}
-          />
+        showNonGeotaggedWarning ? (
+          <UploadPhotosWarningContent nonGeotaggedCount={nonGeotaggedCount} />
+        ) : (
+          <Box pl={4} w="full">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={ACCEPTED_FORMATS}
+              multiple
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
 
-          {hasSelectedFiles ? (
-            <Flex
-              flexDirection="column"
-              gap={3}
-              w="full"
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-            >
-              <Flex justifyContent="space-between" alignItems="center" gap={2} w="full" pr={4}>
-                <Text textStyle="300-bold" color="neutral.900" display="flex" gap={0.5}>
-                  {selectedFiles.length}
-                  <Text textStyle="300" color="neutral.700" as="span">
-                    {selectedFiles.length === 1 ? t("Photo") : t("Photos")}
-                  </Text>
-                </Text>
-                <Button variant="borderless" size="small" leftIcon={<UploadIcon />} onClick={handleUploadClick}>
-                  {t("Click to Upload")}
-                </Button>
-              </Flex>
-              <Box overflow="auto" maxW="100%" h="24.5rem" mr={-4} pr={4}>
-                <Grid templateColumns="repeat(3, 1fr)" gap={4} w="full">
-                  {selectedFiles.map(file => (
-                    <Box key={file.name} w="full" maxW="11.5rem">
-                      <GalleryImage
-                        alt={file.name}
-                        className="!h-[8.75rem] !w-[11.5rem] object-cover"
-                        src={filePreviewUrls.get(file.name) ?? ""}
-                      />
-
-                      <Text textStyle="300" color="neutral.800" mt={1} w="11.5rem" truncate>
-                        {file.name}
-                      </Text>
-
-                      <Text textStyle="200" color="neutral.700">
-                        {formatFileSize(file.size)}
-                      </Text>
-                    </Box>
-                  ))}
-                </Grid>
-              </Box>
-            </Flex>
-          ) : (
-            <Box pr={4} w="full">
+            {hasSelectedFiles ? (
               <Flex
                 flexDirection="column"
-                gap={4}
-                bg={isDragging ? "primary.100" : "neutral.200"}
-                justifyContent="center"
-                alignItems="center"
-                py={4}
-                rounded={2}
-                transition="background-color 0.15s ease-in-out"
+                gap={3}
+                w="full"
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
               >
-                <Flex justifyContent="center" alignItems="center" flexDirection="column" gap={0}>
-                  <Text color="neutral.900" textStyle="400">
-                    {t("Drag and drop your files here or")}
+                <Flex justifyContent="space-between" alignItems="center" gap={2} w="full" pr={4}>
+                  <Text textStyle="300-bold" color="neutral.900" display="flex" gap={0.5}>
+                    {selectedFiles.length}
+                    <Text textStyle="300" color="neutral.700" as="span">
+                      {selectedFiles.length === 1 ? t("Photo") : t("Photos")}
+                    </Text>
                   </Text>
-                  <Button leftIcon={<UploadIcon />} variant="borderless" onClick={handleUploadClick}>
-                    {t("Click to upload")}
+                  <Button variant="borderless" size="small" leftIcon={<UploadIcon />} onClick={handleUploadClick}>
+                    {t("Click to Upload")}
                   </Button>
                 </Flex>
+                <Box overflow="auto" maxW="100%" h="24.5rem" mr={-4} pr={4}>
+                  <Grid templateColumns="repeat(3, 1fr)" gap={4} w="full">
+                    {selectedFiles.map(file => (
+                      <Box key={file.name} w="full" maxW="11.5rem">
+                        <GalleryImage
+                          alt={file.name}
+                          className="!h-[8.75rem] !w-[11.5rem] object-cover"
+                          src={filePreviewUrls.get(file.name) ?? ""}
+                        />
 
-                <Flex justifyContent="center" alignItems="center" flexDirection="column" gap={0}>
-                  <Text textStyle="300" color="neutral.700" display="flex" gap={0.5}>
-                    {t("Upload JPG or PNG images")}
-                    <Text as="span" textStyle="300-bold" color="neutral.700">
-                      {t("with location only")}
-                    </Text>
-                    {t(" (max ")}
-                    <Text as="span" textStyle="300-bold" color="neutral.700">
-                      {t("XX MB")}
-                    </Text>
-                    {t(")")}
-                  </Text>
-                </Flex>
+                        <Text textStyle="300" color="neutral.800" mt={1} w="11.5rem" truncate>
+                          {file.name}
+                        </Text>
+
+                        <Text textStyle="200" color="neutral.700">
+                          {formatFileSize(file.size)}
+                        </Text>
+                      </Box>
+                    ))}
+                  </Grid>
+                </Box>
               </Flex>
-            </Box>
-          )}
-        </Box>
+            ) : (
+              <Box pr={4} w="full">
+                <Flex
+                  flexDirection="column"
+                  gap={4}
+                  bg={isDragging ? "primary.100" : "neutral.200"}
+                  justifyContent="center"
+                  alignItems="center"
+                  py={4}
+                  rounded={2}
+                  transition="background-color 0.15s ease-in-out"
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                >
+                  <Flex justifyContent="center" alignItems="center" flexDirection="column" gap={0}>
+                    <Text color="neutral.900" textStyle="400">
+                      {t("Drag and drop your files here or")}
+                    </Text>
+                    <Button leftIcon={<UploadIcon />} variant="borderless" onClick={handleUploadClick}>
+                      {t("Click to upload")}
+                    </Button>
+                  </Flex>
+
+                  <Flex justifyContent="center" alignItems="center" flexDirection="column" gap={0}>
+                    <Text textStyle="300" color="neutral.700" display="flex" gap={0.5}>
+                      {t("Upload JPG or PNG images")}
+                      <Text as="span" textStyle="300-bold" color="neutral.700">
+                        {t("with location only")}
+                      </Text>
+                      {t(" (max ")}
+                      <Text as="span" textStyle="300-bold" color="neutral.700">
+                        {t("10 MB")}
+                      </Text>
+                      {t(")")}
+                    </Text>
+                  </Flex>
+                </Flex>
+              </Box>
+            )}
+          </Box>
+        )
       }
       footer={
         <ButtonGroup
-          buttons={[
-            {
-              id: "cancel",
-              variant: "secondary",
-              children: t("Cancel"),
-              onClick: handleClose
-            },
-            {
-              id: "save",
-              children: isUploading ? t("Saving...") : t("Save"),
-              loading: isUploading,
-              disabled: !canSave,
-              onClick: () => void handleSave()
-            }
-          ]}
+          buttons={
+            showNonGeotaggedWarning
+              ? [
+                  {
+                    id: "cancel",
+                    variant: "secondary",
+                    children: t("Cancel"),
+                    autoFocus: true,
+                    onClick: handleWarningCancel
+                  },
+                  {
+                    id: "submit",
+                    children: t("Upload photos"),
+                    onClick: handleConfirmUpload
+                  }
+                ]
+              : [
+                  {
+                    id: "cancel",
+                    variant: "secondary",
+                    children: t("Cancel"),
+                    onClick: handleClose
+                  },
+                  {
+                    id: "save",
+                    children: isCheckingGps ? t("Checking...") : isUploading ? t("Saving...") : t("Save"),
+                    loading: isCheckingGps || isUploading,
+                    disabled: !canSave,
+                    onClick: () => void handleSaveClick()
+                  }
+                ]
+          }
         />
       }
     />

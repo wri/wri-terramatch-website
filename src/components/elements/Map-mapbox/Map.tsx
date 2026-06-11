@@ -124,6 +124,7 @@ export interface AdminMapExtras {
   isLoadingDelayedJob?: boolean;
   setAlertTitle?: (value: string) => void;
   disabledPolygonPanel?: boolean;
+  hideFullscreenControl?: boolean;
   setPolygonFromMap?: SetPolygonFromMap;
   polygonFromMap?: PolygonFromMapState;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
@@ -203,6 +204,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
   hasAccess,
   dashboardContext,
   disabledPolygonPanel = false,
+  hideFullscreenControl = false,
   showBaseMapControl = true,
   ...props
 }) => {
@@ -599,6 +601,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
             isLoadingDelayedJob,
             setAlertTitle,
             disabledPolygonPanel,
+            hideFullscreenControl,
             selectedPolygonsInCheckbox
           }}
           form={{

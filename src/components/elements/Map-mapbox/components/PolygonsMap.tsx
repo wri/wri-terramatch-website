@@ -181,7 +181,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   return (
     <Box position="relative" className={classNames("h-full w-full flex-1", className)}>
       <LoadingMap
-        text={t("Loading polygons")}
+        text={t("Loading...")}
         loading={isLoadingPolygons || (polygons.length > 0 && isPolygonTilesLoading)}
       />
       <MapContainer

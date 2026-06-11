@@ -69,7 +69,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
               ? t("{count} requires attention", { count: fieldsRequiringAttention + feedbackFieldsCount })
               : undefined
           }
-          status={hasStepFeedback ? "warning" : valid ? "complete" : "error"}
+          status={!valid || hasStepFeedback ? "error" : "complete"}
         />
       }
       actions={
