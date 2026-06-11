@@ -39,7 +39,7 @@ type CallbacksRef = MutableRefObject<MediaCallbacks>;
 
 type MediaOverlayMount = {
   root: Root;
-  update: (files: MediaDto[], callbacks: MediaCallbacks, visible: boolean) => void;
+  update: (files: MediaDto[], callbacks: MediaCallbacks, visible: boolean, readOnly?: boolean) => void;
 };
 
 const MEDIA_MARKER_BG = "#2A698D";
@@ -120,9 +120,10 @@ type MediaMarkerViewProps = {
   store: SelectionStore;
   callbacksRef: CallbacksRef;
   isOpen: boolean;
+  readOnly: boolean;
 };
 
-const MediaMarkerView: FC<MediaMarkerViewProps> = ({ file, store, callbacksRef, isOpen }) => {
+const MediaMarkerView: FC<MediaMarkerViewProps> = ({ file, store, callbacksRef, isOpen, readOnly }) => {
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   const handleSelect = useCallback(() => store.set(file.uuid), [store, file.uuid]);
@@ -139,16 +140,17 @@ const MediaMarkerView: FC<MediaMarkerViewProps> = ({ file, store, callbacksRef, 
     [file.uuid, file.thumbUrl, file.createdAt]
   );
   const popupFooter = useMemo(
-    () => (
-      <PopupFooterMedia
-        isProjectPath={callbacksRef.current.isProjectPath}
-        onDownload={() => callbacksRef.current.handleDownload(file.uuid, file.name)}
-        onEdit={() => callbacksRef.current.openModalImageDetail(file)}
-        onMakeCover={() => callbacksRef.current.setImageCover(file.uuid)}
-        onDelete={() => callbacksRef.current.handleDelete(file.uuid)}
-      />
-    ),
-    [callbacksRef, file]
+    () =>
+      readOnly ? null : (
+        <PopupFooterMedia
+          isProjectPath={callbacksRef.current.isProjectPath}
+          onDownload={() => callbacksRef.current.handleDownload(file.uuid, file.name)}
+          onEdit={() => callbacksRef.current.openModalImageDetail(file)}
+          onMakeCover={() => callbacksRef.current.setImageCover(file.uuid)}
+          onDelete={() => callbacksRef.current.handleDelete(file.uuid)}
+        />
+      ),
+    [callbacksRef, file, readOnly]
   );
 
   return (
@@ -185,9 +187,10 @@ type MediaMarkerPortalProps = {
   file: GeolocatedMedia;
   store: SelectionStore;
   callbacksRef: CallbacksRef;
+  readOnly: boolean;
 };
 
-const MediaMarkerPortal: FC<MediaMarkerPortalProps> = ({ map, file, store, callbacksRef }) => {
+const MediaMarkerPortal: FC<MediaMarkerPortalProps> = ({ map, file, store, callbacksRef, readOnly }) => {
   const [el] = useState<HTMLDivElement>(() => {
     const div = document.createElement("div");
     div.className = MARKER_CLASS;
@@ -216,7 +219,7 @@ const MediaMarkerPortal: FC<MediaMarkerPortalProps> = ({ map, file, store, callb
   }, [el, isOpen]);
 
   return createPortal(
-    <MemoMediaMarkerView file={file} store={store} callbacksRef={callbacksRef} isOpen={isOpen} />,
+    <MemoMediaMarkerView file={file} store={store} callbacksRef={callbacksRef} isOpen={isOpen} readOnly={readOnly} />,
     el
   );
 };
@@ -228,12 +231,20 @@ type MediaMarkersOverlayProps = {
   files: GeolocatedMedia[];
   callbacksRef: CallbacksRef;
   store: SelectionStore;
+  readOnly: boolean;
 };
 
-const MediaMarkersOverlay: FC<MediaMarkersOverlayProps> = ({ map, files, callbacksRef, store }) => (
+const MediaMarkersOverlay: FC<MediaMarkersOverlayProps> = ({ map, files, callbacksRef, store, readOnly }) => (
   <>
     {files.map(file => (
-      <MemoMediaMarkerPortal key={file.uuid} map={map} file={file} store={store} callbacksRef={callbacksRef} />
+      <MemoMediaMarkerPortal
+        key={file.uuid}
+        map={map}
+        file={file}
+        store={store}
+        callbacksRef={callbacksRef}
+        readOnly={readOnly}
+      />
     ))}
   </>
 );
@@ -246,19 +257,27 @@ const createOverlayMount = (map: MapboxMap): MediaOverlayMount => {
   const callbacksRef: CallbacksRef = { current: null as unknown as MediaCallbacks };
 
   let lastFiles: GeolocatedMedia[] = [];
+  let lastReadOnly = false;
   const render = (): void => {
     if (callbacksRef.current == null) return;
     root.render(
       <PopupProviders>
-        <MediaMarkersOverlay map={map} files={lastFiles} callbacksRef={callbacksRef} store={store} />
+        <MediaMarkersOverlay
+          map={map}
+          files={lastFiles}
+          callbacksRef={callbacksRef}
+          store={store}
+          readOnly={lastReadOnly}
+        />
       </PopupProviders>
     );
   };
 
   return {
     root,
-    update: (files, callbacks, visible) => {
+    update: (files, callbacks, visible, readOnly = false) => {
       lastFiles = visible ? files.filter(isGeolocated) : [];
+      lastReadOnly = readOnly;
       callbacksRef.current = callbacks;
       render();
     }
@@ -269,7 +288,8 @@ export const addMediaMarkers = (
   map: MapboxMap,
   mediaFiles: MediaDto[],
   callbacks: MediaCallbacks,
-  visible = false
+  visible = false,
+  readOnly = false
 ): void => {
   if (!visible) {
     getSelectionStore(map).set(null);
@@ -279,7 +299,7 @@ export const addMediaMarkers = (
     mount = createOverlayMount(map);
     overlayMounts.set(map, mount);
   }
-  mount.update(mediaFiles, callbacks, visible);
+  mount.update(mediaFiles, callbacks, visible, readOnly);
 };
 
 export const removeMediaMarkers = (map: MapboxMap): void => {

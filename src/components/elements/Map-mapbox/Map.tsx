@@ -100,6 +100,9 @@ export interface BaseMapProps {
   overlapPolygons?: OverlapPolygonPoint[];
   autoEditPolygon?: boolean;
   onPolygonTilesLoadingChange?: (value: boolean) => void;
+  alwaysShowPhotosOnMap?: boolean;
+  hideMediaPopupActions?: boolean;
+  isPolygonGeometryLoading?: boolean;
 }
 
 export interface DashboardMapExtras {
@@ -230,7 +233,10 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     initialPolygonFingerprint,
     polygonTableHighlight,
     overlapPolygons,
-    onPolygonTilesLoadingChange
+    onPolygonTilesLoadingChange,
+    alwaysShowPhotosOnMap,
+    hideMediaPopupActions,
+    isPolygonGeometryLoading = false
   } = props;
 
   const [isViewingImages, setIsViewingImages] = useState(false);
@@ -494,7 +500,10 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     openModal,
     closeModal,
     setShouldRefetchMediaData,
-    router
+    router,
+    alwaysShowPhotosOnMap,
+    hideMediaPopupActions,
+    isPolygonGeometryLoading
   });
 
   useMapOverlapIndicators({

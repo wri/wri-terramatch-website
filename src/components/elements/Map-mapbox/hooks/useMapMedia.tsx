@@ -32,6 +32,9 @@ type UseMapMediaParams = {
   closeModal: (id: string) => void;
   setShouldRefetchMediaData: (v: boolean) => void;
   router: { isReady: boolean; asPath: string };
+  alwaysShowPhotosOnMap?: boolean;
+  hideMediaPopupActions?: boolean;
+  isPolygonGeometryLoading?: boolean;
 };
 
 export function useMapMedia({
@@ -47,10 +50,14 @@ export function useMapMedia({
   openModal,
   closeModal,
   setShouldRefetchMediaData,
-  router
+  router,
+  alwaysShowPhotosOnMap = false,
+  hideMediaPopupActions = false,
+  isPolygonGeometryLoading = false
 }: UseMapMediaParams) {
   const championsMap = useChampionsMap();
   const { showPhotosOnMap } = useMapAreaContext();
+  const shouldShowPhotosOnMap = (alwaysShowPhotosOnMap || showPhotosOnMap) && !isPolygonGeometryLoading;
 
   useEffect(() => {
     const mapInstance = map.current;
@@ -133,11 +140,11 @@ export function useMapMedia({
     };
 
     if (championsMap) {
-      addMediaMarkers(mapInstance, mediaFiles, callbacks, showPhotosOnMap);
+      addMediaMarkers(mapInstance, mediaFiles, callbacks, shouldShowPhotosOnMap, hideMediaPopupActions);
       return () => removeMediaMarkers(mapInstance);
     }
 
-    if (!showPhotosOnMap) {
+    if (!shouldShowPhotosOnMap) {
       removeMediaSymbolLayer(mapInstance);
       return;
     }
@@ -145,5 +152,13 @@ export function useMapMedia({
     addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
     return () => removeMediaSymbolLayer(mapInstance);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mediaFiles, styleReady, styleVersion, championsMap, showPhotosOnMap]);
+  }, [
+    mediaFiles,
+    styleReady,
+    styleVersion,
+    championsMap,
+    shouldShowPhotosOnMap,
+    hideMediaPopupActions,
+    isPolygonGeometryLoading
+  ]);
 }
