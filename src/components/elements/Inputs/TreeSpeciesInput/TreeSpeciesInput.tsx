@@ -163,14 +163,18 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
     }
   });
 
-  const totalWithPrevious = useMemo(
-    () =>
-      props.value.reduce(
-        (total, { name, amount }) => total + (amount ?? 0) + (previousPlantingCounts?.[name ?? ""]?.amount ?? 0),
-        0
-      ),
-    [previousPlantingCounts, props.value]
-  );
+  const totalWithPrevious = useMemo(() => {
+    const valueNames = new Set(props.value.map(({ name }) => name ?? ""));
+    const fromCurrentRows = props.value.reduce(
+      (total, { name, amount }) => total + (amount ?? 0) + (previousPlantingCounts?.[name ?? ""]?.amount ?? 0),
+      0
+    );
+    const fromUnlistedPrevious = Object.entries(previousPlantingCounts ?? {}).reduce(
+      (total, [name, { amount }]) => (valueNames.has(name) ? total : total + (amount ?? 0)),
+      0
+    );
+    return fromCurrentRows + fromUnlistedPrevious;
+  }, [previousPlantingCounts, props.value]);
 
   const handleCreate = useDebounce(
     useCallback(
@@ -364,7 +368,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
           </div>
           <div className={classNames({ "border-r pr-6": displayPreviousCounts })} ref={refPlanted}>
             <Text variant="text-14-bold" className="uppercase text-black">
-              {t(totalReportedColumn)}
+              {totalReportedColumn}
             </Text>
             <Text variant="text-20-bold" className="text-primary">
               {props.withNumbers
@@ -377,7 +381,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
           {displayPreviousCounts && (
             <div>
               <Text variant="text-14-bold" className="uppercase text-black">
-                {t(totalToDateColumn)}
+                {totalToDateColumn}
               </Text>
               <Text variant="text-20-bold" className="text-primary">
                 {totalWithPrevious.toLocaleString()}
