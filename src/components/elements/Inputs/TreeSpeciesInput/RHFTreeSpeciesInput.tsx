@@ -32,8 +32,12 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
 
   const value = formHook.watch(props.name);
   const defaultValues = formHook.formState.defaultValues;
+  const defaultFieldValue = defaultValues?.[props.name];
   const formDefaultIncludesFieldKey =
-    defaultValues != null && Object.prototype.hasOwnProperty.call(defaultValues, props.name);
+    defaultValues != null &&
+    Object.prototype.hasOwnProperty.call(defaultValues, props.name) &&
+    Array.isArray(defaultFieldValue) &&
+    defaultFieldValue.length > 0;
 
   const clearErrors = useCallback(() => {
     formHook.clearErrors(props.name);
