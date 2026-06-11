@@ -527,7 +527,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                 />
                 <ResponsiveDropdownContainer
                   key={`cohort-${filters.cohort.join("-") || "empty"}`}
-                  className="z-[1] min-w-[200px] lg:min-w-[220px] wide:min-w-[240px]"
+                  className="z-[1] min-w-[200px] lg:min-w-[220px] wide:min-w-[240px] [&:has([aria-expanded=true])]:z-[60]"
                   disabled={isProjectPage}
                   isMobile={isMobile}
                   showSelectAll
