@@ -185,9 +185,29 @@ const OverviewMapArea = ({
     }
   };
 
-  const isMapLoading = loading || (polygonsData.length > 0 && isPolygonTilesLoading);
-  const polygonCount = polygonLoadTotal > 0 ? polygonLoadTotal : polygonsData.length;
-  const loadingText = getPolygonMapLoadingLabel(t, polygonCount);
+  const isSitesPolygonPanelEnabled = type === "sites" && !disabledPolygonPanel;
+
+  const isMapLoading = useMemo(
+    () => loading || (polygonsData.length > 0 && isPolygonTilesLoading),
+    [loading, polygonsData.length, isPolygonTilesLoading]
+  );
+
+  const polygonCount = useMemo(
+    () => (polygonLoadTotal > 0 ? polygonLoadTotal : polygonsData.length),
+    [polygonLoadTotal, polygonsData.length]
+  );
+
+  const loadingText = useMemo(() => getPolygonMapLoadingLabel(t, polygonCount), [t, polygonCount]);
+
+  const validationType = useMemo(() => {
+    if (!isSitesPolygonPanelEnabled) return "";
+    return editPolygon.isOpen ? "individualValidation" : "bulkValidation";
+  }, [isSitesPolygonPanelEnabled, editPolygon.isOpen]);
+
+  const validationStatus = useMemo(
+    () => isSitesPolygonPanelEnabled && (stateViewPanel || editPolygon.isOpen),
+    [isSitesPolygonPanelEnabled, stateViewPanel, editPolygon.isOpen]
+  );
 
   return (
     <AnrMapOverlayProvider>
@@ -231,14 +251,8 @@ const OverviewMapArea = ({
           showPopups
           showLegend
           siteData={true}
-          status={type === "sites" && !disabledPolygonPanel && (stateViewPanel || editPolygon.isOpen)}
-          validationType={
-            type === "sites" && !disabledPolygonPanel
-              ? editPolygon.isOpen
-                ? "individualValidation"
-                : "bulkValidation"
-              : ""
-          }
+          status={validationStatus}
+          validationType={validationType}
           record={entityModel}
           className="h-[650px] flex-1 rounded-r-lg wide:h-[1225px]"
           polygonsExists={polygonsData.length > 0}
