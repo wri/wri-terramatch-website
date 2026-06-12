@@ -112,7 +112,12 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
                 onClick: () => goToTab("gallery")
               }}
             >
-              <LatestImagesSectionTab entityUuid={projectReport.uuid} entityName="projectReports" />
+              <LatestImagesSectionTab
+                entityUuid={projectReport.uuid}
+                entityName="projectReports"
+                columns={4}
+                minRows={1}
+              />
             </PageItem>
           </Flex>
           <PageItem
