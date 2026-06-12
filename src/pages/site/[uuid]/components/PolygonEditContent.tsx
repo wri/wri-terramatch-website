@@ -62,6 +62,7 @@ import UploadGeotaggedPhotos from "./Modals/GeotaggedPhotos/UploadGeotaggedPhoto
 import type { PolygonSaveCallback } from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
+  isValidPolygonName,
   prunePolygonValidationCache,
   runPolygonCacheCleanup,
   saveExistingPolygonVersion,
@@ -310,6 +311,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       showStatusToast("error", t("Draw a polygon before saving"));
       return false;
     }
+    if (!isValidPolygonName(polygonName)) {
+      showStatusToast("error", t("Polygon name is required"));
+      return false;
+    }
     if (resolvedSiteUuid == null || resolvedSiteUuid === "") {
       showStatusToast("error", t("Missing site information"));
       return false;
@@ -333,11 +338,24 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       showPolygonErrorToast(t("Error creating polygon"));
       return false;
     }
-  }, [draftPolygonGeometry, finalizeSuccessfulSave, getFormValues, resolvedSiteUuid, showStatusToast, t, toastLabels]);
+  }, [
+    draftPolygonGeometry,
+    finalizeSuccessfulSave,
+    getFormValues,
+    polygonName,
+    resolvedSiteUuid,
+    showStatusToast,
+    t,
+    toastLabels
+  ]);
 
   const saveExistingPolygonFlow = useCallback(async (): Promise<boolean> => {
     if (polygon?.primaryUuid == null || polygon.primaryUuid === "") {
       showStatusToast("error", t("Missing polygon information"));
+      return false;
+    }
+    if (!isValidPolygonName(polygonName)) {
+      showStatusToast("error", t("Polygon name is required"));
       return false;
     }
     if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
@@ -376,6 +394,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     polygon?.primaryUuid,
     polygon?.siteId,
     polygonGeometryEdit?.currentGeometry,
+    polygonName,
     showStatusToast,
     t,
     toastLabels
@@ -712,14 +731,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               placeholder={t("Full Polygon Name")}
               value={polygonName}
               onChange={event => setPolygonName(event.target.value)}
-              required={!isCreateMode}
-            />
-            <DatePickerInput
-              label={t("Plant Start Date")}
-              value={plantStartDate}
-              onValueChange={setPlantStartDate}
               required
             />
+            <DatePickerInput label={t("Plant Start Date")} value={plantStartDate} onValueChange={setPlantStartDate} />
             <SelectInput
               key={`restoration-practice-${sitePolygonUuid}-${(polygon?.practice ?? []).join("|")}`}
               items={restorationOptions}
@@ -728,7 +742,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               onChange={setRestorationPractice}
               placeholder={t("Select...")}
               multiple
-              required={!isCreateMode}
             />
             <SelectInput
               items={targetOptions}
@@ -736,7 +749,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               value={targetLandUseSystem}
               onChange={value => setTargetLandUseSystem(value.slice(0, 1))}
               placeholder={t("Select...")}
-              required={!isCreateMode}
             />
             <SelectInput
               key={`tree-distribution-${sitePolygonUuid}-${(polygon?.distr ?? []).join("|")}`}
@@ -746,7 +758,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               onChange={setTreeDistribution}
               placeholder={t("Select...")}
               multiple
-              required={!isCreateMode}
             />
             <TextInput
               label={t("Trees Planted")}
@@ -754,7 +765,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               placeholder={t("Enter Trees Planted")}
               value={treesPlanted}
               onChange={event => setTreesPlanted(event.target.value.replace(/\D/g, ""))}
-              required={!isCreateMode}
             />
             <InputWithUnits
               key={polygon?.uuid}
