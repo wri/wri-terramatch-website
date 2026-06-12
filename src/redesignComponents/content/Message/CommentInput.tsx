@@ -342,32 +342,37 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
       if (resolvedTextarea == null) return;
 
       const computedStyles = getComputedStyle(resolvedTextarea);
+      const rootFontSizePx =
+        parseFloat(getComputedStyle(document.documentElement).fontSize) || FALLBACK_ROOT_FONT_SIZE_PX;
       const lineHeightPx =
         parseFloat(computedStyles.lineHeight) || TEXTAREA_LINE_HEIGHT_REM * FALLBACK_ROOT_FONT_SIZE_PX;
       const paddingTopPx = parseFloat(computedStyles.paddingTop) || 0;
       const paddingBottomPx = parseFloat(computedStyles.paddingBottom) || 0;
       const borderTopPx = parseFloat(computedStyles.borderTopWidth) || 0;
       const borderBottomPx = parseFloat(computedStyles.borderBottomWidth) || 0;
-      const chromeHeightPx = paddingTopPx + paddingBottomPx + borderTopPx + borderBottomPx;
-      const minHeightPx = lineHeightPx * TEXTAREA_MIN_ROWS + chromeHeightPx;
-      const maxHeightPx = lineHeightPx * TEXTAREA_MAX_ROWS + chromeHeightPx;
+
+      const lineHeightRem = lineHeightPx / rootFontSizePx;
+      const chromeHeightRem = (paddingTopPx + paddingBottomPx + borderTopPx + borderBottomPx) / rootFontSizePx;
+      const minHeightRem = lineHeightRem * TEXTAREA_MIN_ROWS + chromeHeightRem;
+      const maxHeightRem = lineHeightRem * TEXTAREA_MAX_ROWS + chromeHeightRem;
 
       logTextareaMetrics("before-adjust", resolvedTextarea, {
-        minHeightPx,
-        maxHeightPx,
+        minHeightRem,
+        maxHeightRem,
         lineHeightPx,
-        chromeHeightPx
+        lineHeightRem,
+        chromeHeightRem
       });
 
       resolvedTextarea.style.height = "auto";
-      const nextScrollHeightPx = resolvedTextarea.scrollHeight;
-      const nextHeightPx = Math.min(Math.max(nextScrollHeightPx, minHeightPx), maxHeightPx);
+      const nextScrollHeightRem = resolvedTextarea.scrollHeight / rootFontSizePx;
+      const nextHeightRem = Math.min(Math.max(nextScrollHeightRem, minHeightRem), maxHeightRem);
 
-      resolvedTextarea.style.height = `${nextHeightPx}px`;
-      resolvedTextarea.style.overflowY = nextScrollHeightPx > maxHeightPx ? "auto" : "hidden";
+      resolvedTextarea.style.height = `${nextHeightRem}rem`;
+      resolvedTextarea.style.overflowY = nextScrollHeightRem > maxHeightRem ? "auto" : "hidden";
       logTextareaMetrics("after-adjust", resolvedTextarea, {
-        nextScrollHeightPx,
-        nextHeightPx,
+        nextScrollHeightRem,
+        nextHeightRem,
         overflowY: resolvedTextarea.style.overflowY
       });
     },
@@ -463,7 +468,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
                 ))}
               </Flex>
             )}
-            <Flex className="ml-auto shrink-0 items-center gap-1">
+            <Flex className="ml-auto mt-auto shrink-0 items-center gap-1">
               <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
               {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={handleSend} />}
             </Flex>
