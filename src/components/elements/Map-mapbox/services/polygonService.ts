@@ -35,7 +35,7 @@ export async function storePolygon(
     trackPolygonEvent("polygon_drawn", {
       ...analyticsContext,
       polygon_id: result.polygonUuid,
-      source: "direct"
+      polygon_source: "direct"
     });
     pruneBoundingBoxesCache();
     if (refetchSitePolygons != null) await refetchSitePolygons();
@@ -84,7 +84,7 @@ export async function storePolygonProject(
     trackPolygonEvent("polygon_drawn", {
       ...analyticsContext,
       polygon_id: polygonUuid,
-      source: "direct"
+      polygon_source: "direct"
     });
     refetch?.();
     setPolygonFromMap?.({

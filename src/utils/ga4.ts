@@ -87,8 +87,11 @@ export const trackPolygonEvent = (eventName: PolygonEventName, params: Ga4EventP
     return;
   }
 
+  const { source, ...rest } = params;
+  const normalizedParams = source != null ? { ...rest, polygon_source: source } : rest;
+
   const payload = Object.fromEntries(
-    Object.entries({ event: eventName, ...params }).filter(([, value]) => value != null)
+    Object.entries({ event: eventName, ...normalizedParams }).filter(([, value]) => value != null)
   );
 
   window.dataLayer = window.dataLayer ?? [];
