@@ -30,6 +30,7 @@ import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
+import ReportsIcon from "@/redesignComponents/foundations/Icons/NavigationSections/ReportsIcon";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import Log from "@/utils/log";
@@ -423,7 +424,12 @@ function WizardForm(props: WizardFormProps) {
         redirectEntityPage: props.redirectEntityPage,
         adminListPath: props.adminListPath,
         entity: entity,
-        firstLinkIcon: <ProjectIcon className="!text-theme-primary-900" />,
+        firstLinkIcon:
+          formModel.model == "projectReports" ? (
+            <ReportsIcon className="!text-theme-primary-900" />
+          ) : (
+            <ProjectIcon className="!text-theme-primary-900" />
+          ),
         t,
         taskTitle
       })[formModel.model];
