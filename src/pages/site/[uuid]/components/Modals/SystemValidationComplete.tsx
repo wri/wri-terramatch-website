@@ -8,6 +8,7 @@ import Modal from "@/redesignComponents/containers/Modal/Modal";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 import { PolygonTableRow } from "../PolygonTableRow";
+import { mapValidationDtoToTagState } from "./validationCriteria";
 import ValidationSection from "./ValidationSection";
 
 export interface SystemValidationCompleteProps {
@@ -29,12 +30,26 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
     onOpenChange(false);
   }, [onOpenChange]);
 
+  const polygonsWithResolvedValidation = useMemo(
+    () =>
+      polygons.map(polygon => {
+        const resolvedValidation = mapValidationDtoToTagState(polygonValidations.get(polygon.id)) ?? polygon.validation;
+
+        if (resolvedValidation === polygon.validation) {
+          return polygon;
+        }
+
+        return { ...polygon, validation: resolvedValidation };
+      }),
+    [polygons, polygonValidations]
+  );
+
   const { approvalValidations, partiallyPassedValidations, failedValidations } = useMemo(() => {
     const approval: PolygonTableRow[] = [];
     const partial: PolygonTableRow[] = [];
     const failed: PolygonTableRow[] = [];
 
-    for (const item of polygons) {
+    for (const item of polygonsWithResolvedValidation) {
       if (item.validation === "passed") {
         approval.push(item);
       } else if (item.validation === "partially-passed") {
@@ -49,7 +64,7 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
       partiallyPassedValidations: partial,
       failedValidations: failed
     };
-  }, [polygons]);
+  }, [polygonsWithResolvedValidation]);
 
   return (
     <Modal
