@@ -23,7 +23,7 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
-import { parsePolygonDataV3, storePolygon } from "../utils";
+import { getPolygonMapLoadingLabel, parsePolygonDataV3, storePolygon } from "../utils";
 import LoadingMap from "./LoadingMap";
 
 export type PolygonsMapEntityModel = {
@@ -178,12 +178,11 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     }
   }, [polygons]);
 
+  const isPolygonGeometryLoading = isLoadingPolygons || (polygons.length > 0 && isPolygonTilesLoading);
+
   return (
     <Box position="relative" className={classNames("h-full w-full flex-1", className)}>
-      <LoadingMap
-        text={t("Loading...")}
-        loading={isLoadingPolygons || (polygons.length > 0 && isPolygonTilesLoading)}
-      />
+      <LoadingMap text={getPolygonMapLoadingLabel(t, polygons.length)} loading={isPolygonGeometryLoading} />
       <MapContainer
         championsMap={true}
         mapFunctions={mapFunctions}
@@ -213,6 +212,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         autoEditPolygon={editPolygon.isOpen}
         polygonTableHighlight={polygonTableHighlight}
         overlapPolygons={overlapPolygons}
+        isPolygonGeometryLoading={isPolygonGeometryLoading}
         onPolygonTilesLoadingChange={setIsPolygonTilesLoading}
       />
     </Box>
