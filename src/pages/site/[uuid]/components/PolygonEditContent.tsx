@@ -49,6 +49,7 @@ import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonA
 
 import {
   closePolygonProgressToast,
+  getDeletingCompleteLabel,
   getDeletingProgressLabel,
   getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
@@ -651,7 +652,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       await waitForMapEditCleanup();
       await onSaved?.();
       closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
-      showPolygonCompleteToast(toastLabels.deletingComplete);
+      showPolygonCompleteToast(getDeletingCompleteLabel(t, 1));
     } catch (error) {
       closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
       showPolygonErrorToast(t("Error deleting polygon"));
@@ -671,8 +672,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setPolygonGeometryEdit,
     setShouldRefetchPolygonData,
     showStatusToast,
-    t,
-    toastLabels
+    t
   ]);
 
   useEffect(() => {

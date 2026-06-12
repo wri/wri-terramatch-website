@@ -15,6 +15,11 @@ import GalleryImage from "@/redesignComponents/content/Images/GalleryImage/Galle
 import { UploadIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 
+import {
+  closePolygonProgressToast,
+  POLYGON_TOAST_IDS,
+  showPolygonProgressToast
+} from "../../../utils/polygonOperationToasts";
 import { UploadPhotosWarningContent } from "../UploadPhotos";
 
 const getFileGps = async (file: File) => {
@@ -137,6 +142,7 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
     }
 
     setIsUploading(true);
+    showPolygonProgressToast(t, t("Uploading Photos with Location..."), POLYGON_TOAST_IDS.uploadingPhotos);
     try {
       const results = await Promise.allSettled(
         selectedFiles.map(async file =>
@@ -149,6 +155,8 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
 
       const failedCount = results.filter(result => result.status === "rejected").length;
       const successCount = results.length - failedCount;
+
+      closePolygonProgressToast(POLYGON_TOAST_IDS.uploadingPhotos);
 
       if (successCount === 0) {
         showToast({
@@ -187,6 +195,7 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
 
       handleClose();
     } catch (error) {
+      closePolygonProgressToast(POLYGON_TOAST_IDS.uploadingPhotos);
       Log.error("Failed to upload geotagged photos:", error);
       showToast({
         label: t("Upload Failed"),

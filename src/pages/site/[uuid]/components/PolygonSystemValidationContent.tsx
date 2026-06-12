@@ -22,6 +22,7 @@ import {
   showPolygonErrorToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
+import type { OverlapFixPolygon } from "./Modals/OverlapFix";
 import type { PolygonOverlapFixCallback } from "./polygonEdit.types";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 import ValidationDetail from "./ValidationDetail";
@@ -30,6 +31,12 @@ export type PolygonSystemValidationContentProps = {
   polygon?: SitePolygonLightDto;
   onOverlapFixed?: PolygonOverlapFixCallback;
   onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
+  onValidationComplete?: () => void;
+  onFixingOverlapChange?: (isFixing: boolean) => void;
+  onOverlapFixComplete?: (results: {
+    polygonsFixed: OverlapFixPolygon[];
+    polygonsNotFixed: OverlapFixPolygon[];
+  }) => void;
 };
 
 const TOAST_PLACEMENT = "bottom" as const;
@@ -50,7 +57,10 @@ const formatValidationCheckedAt = (date: Date): string => {
 const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = ({
   polygon,
   onOverlapFixed,
-  onRunValidation
+  onRunValidation,
+  onValidationComplete,
+  onFixingOverlapChange,
+  onOverlapFixComplete
 }) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
@@ -72,6 +82,8 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     pendingClipping,
     setPendingClipping,
     onSuccess: async completedClippingJob => {
+      onFixingOverlapChange?.(false);
+
       if (polygonUuid == null || polygonUuid === "" || onOverlapFixed == null) {
         return;
       }
@@ -88,18 +100,29 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
 
         closePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps);
 
+        const polygonId = polygon?.uuid ?? polygonUuid ?? "";
+        const polygonName = polygon?.name ?? "";
+
         if (updatedPolygon != null) {
-          showPolygonCompleteToast(toastLabels.fixingOverlapsComplete);
+          if (onOverlapFixComplete != null) {
+            onOverlapFixComplete({ polygonsFixed: [{ id: polygonId, name: polygonName }], polygonsNotFixed: [] });
+          } else {
+            showPolygonCompleteToast(toastLabels.fixingOverlapsComplete);
+          }
           return;
         }
 
-        showToast({
-          label: t("No polygon have been fixed"),
-          type: "warning",
-          placement: TOAST_PLACEMENT,
-          duration: POLYGON_TOAST_DURATION_MS,
-          maxWidth: "auto"
-        });
+        if (onOverlapFixComplete != null) {
+          onOverlapFixComplete({ polygonsFixed: [], polygonsNotFixed: [{ id: polygonId, name: polygonName }] });
+        } else {
+          showToast({
+            label: t("No polygon have been fixed"),
+            type: "warning",
+            placement: TOAST_PLACEMENT,
+            duration: POLYGON_TOAST_DURATION_MS,
+            maxWidth: "auto"
+          });
+        }
       } catch (error) {
         Log.error("Failed to refresh polygon after overlap fix:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps);
@@ -113,6 +136,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
       }
     },
     onFailure: () => {
+      onFixingOverlapChange?.(false);
       Log.error("Polygon overlap fix failed");
       closePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps);
       showPolygonErrorToast(t("Failed to fix polygon overlaps"));
@@ -136,7 +160,8 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     showPolygonProgressToast(t, getFixingOverlapsProgressLabel(t, 1), POLYGON_TOAST_IDS.fixingOverlaps);
     clipSinglePolygon(polygonUuid);
     setPendingClipping(true);
-  }, [fixabilityResult, pendingClipping, polygonUuid, t]);
+    onFixingOverlapChange?.(true);
+  }, [fixabilityResult, pendingClipping, polygonUuid, t, onFixingOverlapChange]);
 
   const canFixOverlap =
     hasOverlaps &&
@@ -157,7 +182,11 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     try {
       await onRunValidation([polygonUuid]);
       closePolygonProgressToast(POLYGON_TOAST_IDS.validating);
-      showPolygonCompleteToast(toastLabels.validatingComplete);
+      if (onValidationComplete != null) {
+        onValidationComplete();
+      } else {
+        showPolygonCompleteToast(toastLabels.validatingComplete);
+      }
     } catch (error) {
       Log.error("Failed to validate polygon:", error);
       closePolygonProgressToast(POLYGON_TOAST_IDS.validating);
@@ -165,7 +194,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     } finally {
       setIsValidating(false);
     }
-  }, [canRunValidation, isValidating, onRunValidation, polygonUuid, t, toastLabels]);
+  }, [canRunValidation, isValidating, onRunValidation, polygonUuid, t, toastLabels, onValidationComplete]);
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">

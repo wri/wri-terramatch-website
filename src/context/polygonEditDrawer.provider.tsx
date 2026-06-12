@@ -4,6 +4,7 @@ import { dispatchClearDraftDrawEvent } from "@/components/elements/Map-mapbox/in
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import type { OverlapFixPolygon } from "@/pages/site/[uuid]/components/Modals/OverlapFix";
 import type { PolygonOverlapFixCallback, PolygonSaveCallback } from "@/pages/site/[uuid]/components/polygonEdit.types";
 import PolygonEditDrawer from "@/pages/site/[uuid]/components/PolygonEditDrawer";
 
@@ -52,8 +53,14 @@ type PolygonEditDrawerProviderProps = {
 };
 
 type PolygonRunValidationCallback = (geometryPolygonUuids: string[]) => Promise<void>;
-
 type PolygonDeletingChangeCallback = (isDeleting: boolean, count?: number) => void;
+type PolygonFixingOverlapChangeCallback = (isFixing: boolean) => void;
+type PolygonSubmitCompleteCallback = (submittedNames: string[]) => void;
+type PolygonValidationCompleteCallback = () => void;
+type PolygonOverlapFixCompleteCallback = (results: {
+  polygonsFixed: OverlapFixPolygon[];
+  polygonsNotFixed: OverlapFixPolygon[];
+}) => void;
 
 type PolygonEditDrawerDataSyncProps = {
   polygons?: SitePolygonLightDto[];
@@ -61,6 +68,10 @@ type PolygonEditDrawerDataSyncProps = {
   onOverlapFixed?: PolygonOverlapFixCallback;
   onRunValidation?: PolygonRunValidationCallback;
   onPolygonDeletingChange?: PolygonDeletingChangeCallback;
+  onPolygonFixingOverlapChange?: PolygonFixingOverlapChangeCallback;
+  onSubmitComplete?: PolygonSubmitCompleteCallback;
+  onValidationComplete?: PolygonValidationCompleteCallback;
+  onOverlapFixComplete?: PolygonOverlapFixCompleteCallback;
 };
 
 type PolygonEditDrawerDataContextValue = {
@@ -69,6 +80,10 @@ type PolygonEditDrawerDataContextValue = {
   setOnOverlapFixed: (onOverlapFixed?: PolygonOverlapFixCallback) => void;
   setOnRunValidation: (onRunValidation?: PolygonRunValidationCallback) => void;
   setOnPolygonDeletingChange: (onPolygonDeletingChange?: PolygonDeletingChangeCallback) => void;
+  setOnPolygonFixingOverlapChange: (cb?: PolygonFixingOverlapChangeCallback) => void;
+  setOnSubmitComplete: (cb?: PolygonSubmitCompleteCallback) => void;
+  setOnValidationComplete: (cb?: PolygonValidationCompleteCallback) => void;
+  setOnOverlapFixComplete: (cb?: PolygonOverlapFixCompleteCallback) => void;
 };
 
 const PolygonEditDrawerDataContext = createContext<PolygonEditDrawerDataContextValue | null>(null);
@@ -78,7 +93,11 @@ export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({
   onRefetchPolygons,
   onOverlapFixed,
   onRunValidation,
-  onPolygonDeletingChange
+  onPolygonDeletingChange,
+  onPolygonFixingOverlapChange,
+  onSubmitComplete,
+  onValidationComplete,
+  onOverlapFixComplete
 }) => {
   const dataContext = useContext(PolygonEditDrawerDataContext);
 
@@ -102,6 +121,22 @@ export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({
     dataContext?.setOnPolygonDeletingChange(onPolygonDeletingChange);
   }, [dataContext, onPolygonDeletingChange]);
 
+  useEffect(() => {
+    dataContext?.setOnPolygonFixingOverlapChange(onPolygonFixingOverlapChange);
+  }, [dataContext, onPolygonFixingOverlapChange]);
+
+  useEffect(() => {
+    dataContext?.setOnSubmitComplete(onSubmitComplete);
+  }, [dataContext, onSubmitComplete]);
+
+  useEffect(() => {
+    dataContext?.setOnValidationComplete(onValidationComplete);
+  }, [dataContext, onValidationComplete]);
+
+  useEffect(() => {
+    dataContext?.setOnOverlapFixComplete(onOverlapFixComplete);
+  }, [dataContext, onOverlapFixComplete]);
+
   return null;
 };
 
@@ -119,6 +154,10 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const onOverlapFixedRef = useRef<PolygonOverlapFixCallback | undefined>(undefined);
   const onRunValidationRef = useRef<PolygonRunValidationCallback | undefined>(undefined);
   const onPolygonDeletingChangeRef = useRef<PolygonDeletingChangeCallback | undefined>(undefined);
+  const onPolygonFixingOverlapChangeRef = useRef<PolygonFixingOverlapChangeCallback | undefined>(undefined);
+  const onSubmitCompleteRef = useRef<PolygonSubmitCompleteCallback | undefined>(undefined);
+  const onValidationCompleteRef = useRef<PolygonValidationCompleteCallback | undefined>(undefined);
+  const onOverlapFixCompleteRef = useRef<PolygonOverlapFixCompleteCallback | undefined>(undefined);
 
   useEffect(() => {
     setPolygons(polygonsProp);
@@ -144,9 +183,44 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     onPolygonDeletingChangeRef.current = handler;
   }, []);
 
+  const setOnPolygonFixingOverlapChange = useCallback((handler?: PolygonFixingOverlapChangeCallback) => {
+    onPolygonFixingOverlapChangeRef.current = handler;
+  }, []);
+
+  const setOnSubmitComplete = useCallback((handler?: PolygonSubmitCompleteCallback) => {
+    onSubmitCompleteRef.current = handler;
+  }, []);
+
+  const setOnValidationComplete = useCallback((handler?: PolygonValidationCompleteCallback) => {
+    onValidationCompleteRef.current = handler;
+  }, []);
+
+  const setOnOverlapFixComplete = useCallback((handler?: PolygonOverlapFixCompleteCallback) => {
+    onOverlapFixCompleteRef.current = handler;
+  }, []);
+
   const handlePolygonDeletingChange = useCallback((isDeleting: boolean, count?: number) => {
     onPolygonDeletingChangeRef.current?.(isDeleting, count);
   }, []);
+
+  const handlePolygonFixingOverlapChange = useCallback((isFixing: boolean) => {
+    onPolygonFixingOverlapChangeRef.current?.(isFixing);
+  }, []);
+
+  const handleSubmitComplete = useCallback((submittedNames: string[]) => {
+    onSubmitCompleteRef.current?.(submittedNames);
+  }, []);
+
+  const handleValidationComplete = useCallback(() => {
+    onValidationCompleteRef.current?.();
+  }, []);
+
+  const handleOverlapFixComplete = useCallback(
+    (results: { polygonsFixed: OverlapFixPolygon[]; polygonsNotFixed: OverlapFixPolygon[] }) => {
+      onOverlapFixCompleteRef.current?.(results);
+    },
+    []
+  );
 
   const handleRunValidation = useCallback(async (geometryPolygonUuids: string[]) => {
     await onRunValidationRef.current?.(geometryPolygonUuids);
@@ -155,8 +229,27 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const handleSaved = useCallback(() => onRefetchPolygonsRef.current?.(), []);
 
   const dataContextValue = useMemo(
-    () => ({ setPolygons, setOnRefetchPolygons, setOnOverlapFixed, setOnRunValidation, setOnPolygonDeletingChange }),
-    [setOnRefetchPolygons, setOnOverlapFixed, setOnRunValidation, setOnPolygonDeletingChange]
+    () => ({
+      setPolygons,
+      setOnRefetchPolygons,
+      setOnOverlapFixed,
+      setOnRunValidation,
+      setOnPolygonDeletingChange,
+      setOnPolygonFixingOverlapChange,
+      setOnSubmitComplete,
+      setOnValidationComplete,
+      setOnOverlapFixComplete
+    }),
+    [
+      setOnRefetchPolygons,
+      setOnOverlapFixed,
+      setOnRunValidation,
+      setOnPolygonDeletingChange,
+      setOnPolygonFixingOverlapChange,
+      setOnSubmitComplete,
+      setOnValidationComplete,
+      setOnOverlapFixComplete
+    ]
   );
   const {
     setEditPolygon,
@@ -288,6 +381,10 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
           onPolygonUpdated={setSelectedPolygon}
           onSuppressMapSelectionHighlightChange={setSuppressMapSelectionHighlight}
           onDeletingChange={handlePolygonDeletingChange}
+          onFixingOverlapChange={handlePolygonFixingOverlapChange}
+          onSubmitComplete={handleSubmitComplete}
+          onValidationComplete={handleValidationComplete}
+          onOverlapFixComplete={handleOverlapFixComplete}
         />
       </PolygonEditDrawerContext.Provider>
     </PolygonEditDrawerDataContext.Provider>

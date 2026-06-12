@@ -13,6 +13,7 @@ import NotificationIndicator from "@/redesignComponents/navigation/NotificationI
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 
 import DeletePolygon from "./Modals/DeletePolygon";
+import type { OverlapFixPolygon } from "./Modals/OverlapFix";
 import SavePolygon from "./Modals/SavePolygon";
 import SubmitPolygons from "./Modals/SubmitPolygons";
 import PolygonCommentContent from "./PolygonCommentContent";
@@ -33,6 +34,13 @@ interface PolygonEditDrawerProps {
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
+  onFixingOverlapChange?: (isFixing: boolean) => void;
+  onSubmitComplete?: (submittedNames: string[]) => void;
+  onValidationComplete?: () => void;
+  onOverlapFixComplete?: (results: {
+    polygonsFixed: OverlapFixPolygon[];
+    polygonsNotFixed: OverlapFixPolygon[];
+  }) => void;
 }
 
 const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
@@ -45,7 +53,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onRunValidation,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
-  onDeletingChange
+  onDeletingChange,
+  onFixingOverlapChange,
+  onSubmitComplete,
+  onValidationComplete,
+  onOverlapFixComplete
 }) => {
   const t = useT();
   const { draftPolygonGeometry } = useMapAreaContext();
@@ -228,6 +240,9 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     polygon={selectedPolygon}
                     onOverlapFixed={onOverlapFixed}
                     onRunValidation={onRunValidation}
+                    onValidationComplete={onValidationComplete}
+                    onFixingOverlapChange={onFixingOverlapChange}
+                    onOverlapFixComplete={onOverlapFixComplete}
                   />
                 )}
                 {activeTab === "comments" && (
@@ -294,7 +309,13 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         }}
         eligibleCount={submitPayload?.eligibleCount ?? 0}
         totalCount={submitPayload?.totalCount ?? 0}
-        onSubmit={() => submitPolygonRef.current?.()}
+        onSubmit={async () => {
+          await submitPolygonRef.current?.();
+          const name = getPolygonNameForSaveRef.current() || polygon?.polygonName?.trim() || "";
+          if (name !== "") {
+            onSubmitComplete?.([name]);
+          }
+        }}
       />
     </>
   );

@@ -15,6 +15,14 @@ import Switch from "@/redesignComponents/Forms/Actions/Switch/Switch";
 import Textarea from "@/redesignComponents/Forms/Inputs/Textarea";
 import Log from "@/utils/log";
 
+import {
+  closePolygonProgressToast,
+  POLYGON_TOAST_IDS,
+  showPolygonCompleteToast,
+  showPolygonErrorToast,
+  showPolygonProgressToast
+} from "../../../utils/polygonOperationToasts";
+
 export interface EditPhotoDetailsProps {
   data: MediaDto;
   open: boolean;
@@ -29,6 +37,7 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
   const [isPublic, setIsPublic] = useState(data.isPublic);
   const [isCover, setIsCover] = useState(data.isCover);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const initialValues = useRef({
     description: data.description ?? "",
     photographer: data.photographer ?? "",
@@ -94,13 +103,16 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
     }
 
     setIsUpdating(true);
+    showPolygonProgressToast(t, t("Saving Photo..."), POLYGON_TOAST_IDS.savingPhoto);
     try {
       await Promise.all(updatePromises);
-      openNotification("success", t("Success!"), t("Image updated successfully"));
+      closePolygonProgressToast(POLYGON_TOAST_IDS.savingPhoto);
+      showPolygonCompleteToast(t("Photo Saved"));
       setShouldRefetchMediaData(true);
       onClose();
     } catch (error) {
-      openNotification("error", t("Error"), t("Failed to update image details"));
+      closePolygonProgressToast(POLYGON_TOAST_IDS.savingPhoto);
+      showPolygonErrorToast(t("Error saving photo"));
       Log.error("Failed to update image details:", error);
     } finally {
       setIsUpdating(false);
@@ -120,6 +132,24 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
     setShouldRefetchMediaData,
     t
   ]);
+
+  const handleDelete = useCallback(async () => {
+    setIsDeleting(true);
+    showPolygonProgressToast(t, t("Deleting Photo..."), POLYGON_TOAST_IDS.deletingPhoto);
+    try {
+      await deleteMedia(data.uuid);
+      closePolygonProgressToast(POLYGON_TOAST_IDS.deletingPhoto);
+      showPolygonCompleteToast(t("Photo Deleted"));
+      setShouldRefetchMediaData(true);
+      onClose();
+    } catch (error) {
+      closePolygonProgressToast(POLYGON_TOAST_IDS.deletingPhoto);
+      showPolygonErrorToast(t("Error deleting photo"));
+      Log.error("Failed to delete photo:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [data.uuid, onClose, setShouldRefetchMediaData, t]);
 
   return (
     <Modal
@@ -210,19 +240,16 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
               typeVariant: "negative",
               classNameContainer: "w-[32%]",
               className: "!w-full",
-              onClick: () => {
-                deleteMedia(data.uuid);
-                openNotification("success", t("Success!"), t("Image deleted successfully"));
-                setShouldRefetchMediaData(true);
-                onClose();
-              }
+              loading: isDeleting,
+              disabled: isUpdating || isDeleting,
+              onClick: () => void handleDelete()
             },
             {
               id: "save",
               variant: "primary",
               children: isUpdating ? t("Saving...") : t("Save"),
               loading: isUpdating,
-              disabled: isUpdating || !hasChanges(),
+              disabled: isUpdating || isDeleting || !hasChanges(),
               onClick: handleSave
             }
           ]}

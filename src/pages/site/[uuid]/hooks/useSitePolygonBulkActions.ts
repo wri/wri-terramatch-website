@@ -29,7 +29,7 @@ import { prunePolygonValidationCache } from "../components/polygonEditSave";
 import type { PolygonTableRow } from "../components/PolygonTableRow";
 import {
   closePolygonProgressToast,
-  getDeletingProgressLabel,
+  getDeletingCompleteLabel,
   getDownloadingPolygonsProgressLabel,
   getFixingOverlapsProgressLabel,
   getPolygonOperationToastLabels,
@@ -227,7 +227,7 @@ export const useSitePolygonBulkActions = ({
 
     setIsDeletingPolygons(true);
     setDeletingPolygonCount(sitePolygonUuids.length);
-    showPolygonProgressToast(t, getDeletingProgressLabel(t, sitePolygonUuids.length), POLYGON_TOAST_IDS.deleting);
+    // showPolygonProgressToast(t, getDeletingProgressLabel(t, sitePolygonUuids.length), POLYGON_TOAST_IDS.deleting);
 
     try {
       await bulkDeleteSitePolygons(sitePolygonUuids);
@@ -238,7 +238,7 @@ export const useSitePolygonBulkActions = ({
       invalidatePolygonMapTiles();
       await refreshPolygonData();
       closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
-      showPolygonCompleteToast(toastLabels.deletingComplete);
+      showPolygonCompleteToast(getDeletingCompleteLabel(t, sitePolygonUuids.length));
     } catch (error) {
       Log.error("Failed to delete selected polygons:", error);
       closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
@@ -248,7 +248,7 @@ export const useSitePolygonBulkActions = ({
       setIsDeletingPolygons(false);
       setDeletingPolygonCount(0);
     }
-  }, [closeMapPopups, deletePayload, invalidatePolygonMapTiles, openNotification, refreshPolygonData, t, toastLabels]);
+  }, [closeMapPopups, deletePayload, invalidatePolygonMapTiles, openNotification, refreshPolygonData, t]);
 
   const runPolygonValidation = useCallback(
     async (polygonUuids: string[]) => {
@@ -289,6 +289,19 @@ export const useSitePolygonBulkActions = ({
     setIsDeletingPolygons(isDeleting);
     setDeletingPolygonCount(count);
   }, []);
+
+  const handlePolygonFixingOverlapChange = useCallback((isFixing: boolean, count = 0) => {
+    setIsFixingOverlaps(isFixing);
+    setFixingOverlapsCount(count);
+  }, []);
+
+  const scheduleDrawerSubmitComplete = useCallback(
+    (submittedNames: string[]) => {
+      setSubmittedPolygonNames(submittedNames);
+      schedulePolygonSubmittedModal();
+    },
+    [schedulePolygonSubmittedModal]
+  );
 
   const handleDrawerOverlapFixed = useCallback(
     async (params: PolygonOverlapFixParams) => {
@@ -620,10 +633,12 @@ export const useSitePolygonBulkActions = ({
     handleOpenDeletePolygonModal,
     handleOpenSubmitPolygonsModal,
     handlePolygonDeletingChange,
+    handlePolygonFixingOverlapChange,
     handlePolygonSubmittedModalChange,
     handleRunValidation,
     handleSubmitPolygonsModalChange,
     openPolygonEditDrawerForRow,
-    runPolygonValidation
+    runPolygonValidation,
+    scheduleDrawerSubmitComplete
   };
 };

@@ -15,7 +15,10 @@ export const POLYGON_TOAST_IDS = {
   savingChanges: "polygon-saving-changes-toast",
   fixingOverlaps: "polygon-fixing-overlaps-toast",
   deleting: "polygon-deleting-toast",
-  validating: "polygon-validating-toast"
+  validating: "polygon-validating-toast",
+  deletingPhoto: "photo-deleting-toast",
+  savingPhoto: "photo-saving-toast",
+  uploadingPhotos: "photos-uploading-toast"
 } as const;
 
 export type PolygonToastId = (typeof POLYGON_TOAST_IDS)[keyof typeof POLYGON_TOAST_IDS];
@@ -76,11 +79,14 @@ export const getUpdatingPolygonsProgressLabel = (t: TranslateFn, count: number) 
 export const getDeletingProgressLabel = (t: TranslateFn, count: number) =>
   polygonCountLabel(t, count, "Deleting Polygon...", "Deleting Polygons...");
 
+export const getDeletingCompleteLabel = (t: TranslateFn, count: number) =>
+  polygonCountLabel(t, count, "Polygon Deleted", "Polygons Deleted");
+
 export const getValidatingProgressLabel = (t: TranslateFn, count: number) =>
   polygonCountLabel(t, count, "Validating Polygon...", "Validating Polygons...");
 
 export const getFixingOverlapsProgressLabel = (t: TranslateFn, count: number) =>
-  polygonCountLabel(t, count, "Fixing Polygon Overlaps...", "Fixing Polygons' Overlaps...");
+  polygonCountLabel(t, count, "Fixing Polygon Overlaps...", "Fixing Polygon Overlaps...");
 
 export type PolygonOperationToastLabels = {
   uploadingPolygonsComplete: string;
@@ -89,7 +95,6 @@ export type PolygonOperationToastLabels = {
   savingChangesComplete: string;
   downloadingPolygonsComplete: string;
   updatingPolygonsComplete: string;
-  deletingComplete: string;
   fixingOverlapsComplete: string;
   downloadingSamplePlotsProgress: string;
   downloadingSamplePlotsComplete: string;
@@ -103,7 +108,6 @@ export const getPolygonOperationToastLabels = (t: TranslateFn): PolygonOperation
   savingChangesComplete: t("Changes Saved"),
   downloadingPolygonsComplete: t("Download Complete"),
   updatingPolygonsComplete: t("Update Complete"),
-  deletingComplete: t("Polygon Deleted"),
   fixingOverlapsComplete: t("Overlap Fix Complete"),
   downloadingSamplePlotsProgress: t("Downloading Sample Plots..."),
   downloadingSamplePlotsComplete: t("Download Complete"),

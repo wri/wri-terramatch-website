@@ -29,6 +29,7 @@ import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessa
 import Log from "@/utils/log";
 
 import { type OverlapFixPolygon } from "../components/Modals/OverlapFix";
+import SystemValidationComplete from "../components/Modals/SystemValidationComplete";
 import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import { PolygonTableRow } from "../components/PolygonTableRow";
@@ -87,6 +88,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [uploadedPolygonUuidToOpen, setUploadedPolygonUuidToOpen] = useState<string | null>(null);
   const [focusPolygonUuid, setFocusPolygonUuid] = useState<string | null>(null);
   const [isStickyActive, setIsStickyActive] = useState(false);
+  const [drawerValidatedPolygonUuids, setDrawerValidatedPolygonUuids] = useState<string[]>([]);
+  const [showDrawerValidationModal, setShowDrawerValidationModal] = useState(false);
 
   const {
     polygonSearch,
@@ -343,11 +346,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     handleOpenDeletePolygonModal,
     handleOpenSubmitPolygonsModal,
     handlePolygonDeletingChange,
+    handlePolygonFixingOverlapChange,
     handlePolygonSubmittedModalChange,
     handleRunValidation,
     handleSubmitPolygonsModalChange,
     openPolygonEditDrawerForRow,
-    runPolygonValidation
+    scheduleDrawerSubmitComplete
   } = useSitePolygonBulkActions({
     site,
     polygonsData,
@@ -367,6 +371,40 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   });
 
   const isSitePolygonsLoading = isLoadingPolygons || isValidatingPolygons || isFixingOverlaps || isDeletingPolygons;
+
+  const drawerValidatedRows = useMemo(
+    () => polygonRows.filter(row => drawerValidatedPolygonUuids.includes(row.id)),
+    [polygonRows, drawerValidatedPolygonUuids]
+  );
+
+  const handleDrawerRunValidation = useCallback(
+    async (polygonUuids: string[]) => {
+      setDrawerValidatedPolygonUuids(polygonUuids);
+      await handleRunValidation(polygonUuids);
+    },
+    [handleRunValidation]
+  );
+
+  const handleDrawerValidationModalChange = useCallback((open: boolean) => {
+    setShowDrawerValidationModal(open);
+    if (!open) {
+      setDrawerValidatedPolygonUuids([]);
+    }
+  }, []);
+
+  const handleDrawerSubmitComplete = useCallback(
+    (submittedNames: string[]) => {
+      scheduleDrawerSubmitComplete(submittedNames);
+    },
+    [scheduleDrawerSubmitComplete]
+  );
+
+  const handleDrawerOverlapFixComplete = useCallback(
+    (results: { polygonsFixed: OverlapFixPolygon[]; polygonsNotFixed: OverlapFixPolygon[] }) => {
+      openOverlapFixResultsModal(results);
+    },
+    [openOverlapFixResultsModal]
+  );
   const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
   const { showPolygonUndoButton, handleUndoPolygonDraw } = usePolygonDrawUndo({
     isEditPolygonOpen,
@@ -440,8 +478,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         polygons={polygonsData}
         onRefetchPolygons={refetchPolygons}
         onOverlapFixed={handleDrawerOverlapFixed}
-        onRunValidation={runPolygonValidation}
+        onRunValidation={handleDrawerRunValidation}
         onPolygonDeletingChange={handlePolygonDeletingChange}
+        onPolygonFixingOverlapChange={handlePolygonFixingOverlapChange}
+        onSubmitComplete={handleDrawerSubmitComplete}
+        onValidationComplete={() => setShowDrawerValidationModal(true)}
+        onOverlapFixComplete={handleDrawerOverlapFixComplete}
       />
       <PageContent className="bg-theme-neutral-100">
         <PageItem
@@ -512,6 +554,14 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           isOverlapFixAction={hasSelectedOverlapFailure}
           canAutoFixOverlap={hasFixableSelectedOverlap}
           isSubmitDisabled={isBulkSubmitDisabled}
+        />
+
+        <SystemValidationComplete
+          open={showDrawerValidationModal}
+          onOpenChange={handleDrawerValidationModalChange}
+          polygons={drawerValidatedRows}
+          polygonValidations={polygonValidations}
+          onViewDetails={openPolygonEditDrawerForRow}
         />
 
         <SitePolygonModals
