@@ -32,8 +32,8 @@ const TEXTAREA_MIN_ROWS = 1;
 const TEXTAREA_MAX_ROWS = 3;
 const TEXTAREA_MIN_HEIGHT = `${TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MIN_ROWS}rem`;
 const TEXTAREA_MAX_HEIGHT = `${TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MAX_ROWS}rem`;
-
-const getRootFontSize = () => parseFloat(getComputedStyle(document.documentElement).fontSize);
+const FALLBACK_ROOT_FONT_SIZE_PX = 16;
+const ENABLE_TEXTAREA_DEBUG_LOGS = false;
 
 interface CommentInputFile {
   name: string;
@@ -310,25 +310,73 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   const isSubmitting = isCreating || isUploadingFiles;
   const shouldShowSendIcon = !currentIsEditing && (isAuditMode ? hasContent || hasFiles : !hasFiles);
 
-  const adjustTextareaHeight = useCallback(() => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
+  const logTextareaMetrics = useCallback(
+    (stage: string, textarea: HTMLTextAreaElement, payload: Record<string, unknown> = {}) => {
+      if (!ENABLE_TEXTAREA_DEBUG_LOGS) return;
 
-    const rootFontSize = getRootFontSize();
-    const minHeightRem = TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MIN_ROWS;
-    const maxHeightRem = TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MAX_ROWS;
+      const styles = getComputedStyle(textarea);
+      console.debug("[CommentInput][textarea]", stage, {
+        valueLength: textarea.value.length,
+        valuePreview: textarea.value.slice(-40),
+        clientWidth: textarea.clientWidth,
+        scrollWidth: textarea.scrollWidth,
+        clientHeight: textarea.clientHeight,
+        scrollHeight: textarea.scrollHeight,
+        renderedHeight: styles.height,
+        renderedMaxHeight: styles.maxHeight,
+        renderedLineHeight: styles.lineHeight,
+        renderedWhiteSpace: styles.whiteSpace,
+        renderedWordBreak: styles.wordBreak,
+        renderedOverflowWrap: styles.overflowWrap,
+        renderedOverflowX: styles.overflowX,
+        renderedOverflowY: styles.overflowY,
+        ...payload
+      });
+    },
+    []
+  );
 
-    textarea.style.height = "auto";
-    const scrollHeightRem = textarea.scrollHeight / rootFontSize;
-    const nextHeightRem = Math.min(Math.max(scrollHeightRem, minHeightRem), maxHeightRem);
+  const adjustTextareaHeight = useCallback(
+    (textarea?: HTMLTextAreaElement | null) => {
+      const resolvedTextarea = textarea ?? textareaRef.current;
+      if (resolvedTextarea == null) return;
 
-    textarea.style.height = `${nextHeightRem}rem`;
-    textarea.style.overflowY = scrollHeightRem > maxHeightRem ? "auto" : "hidden";
-  }, []);
+      const computedStyles = getComputedStyle(resolvedTextarea);
+      const lineHeightPx =
+        parseFloat(computedStyles.lineHeight) || TEXTAREA_LINE_HEIGHT_REM * FALLBACK_ROOT_FONT_SIZE_PX;
+      const paddingTopPx = parseFloat(computedStyles.paddingTop) || 0;
+      const paddingBottomPx = parseFloat(computedStyles.paddingBottom) || 0;
+      const borderTopPx = parseFloat(computedStyles.borderTopWidth) || 0;
+      const borderBottomPx = parseFloat(computedStyles.borderBottomWidth) || 0;
+      const chromeHeightPx = paddingTopPx + paddingBottomPx + borderTopPx + borderBottomPx;
+      const minHeightPx = lineHeightPx * TEXTAREA_MIN_ROWS + chromeHeightPx;
+      const maxHeightPx = lineHeightPx * TEXTAREA_MAX_ROWS + chromeHeightPx;
+
+      logTextareaMetrics("before-adjust", resolvedTextarea, {
+        minHeightPx,
+        maxHeightPx,
+        lineHeightPx,
+        chromeHeightPx
+      });
+
+      resolvedTextarea.style.height = "auto";
+      const nextScrollHeightPx = resolvedTextarea.scrollHeight;
+      const nextHeightPx = Math.min(Math.max(nextScrollHeightPx, minHeightPx), maxHeightPx);
+
+      resolvedTextarea.style.height = `${nextHeightPx}px`;
+      resolvedTextarea.style.overflowY = nextScrollHeightPx > maxHeightPx ? "auto" : "hidden";
+      logTextareaMetrics("after-adjust", resolvedTextarea, {
+        nextScrollHeightPx,
+        nextHeightPx,
+        overflowY: resolvedTextarea.style.overflowY
+      });
+    },
+    [logTextareaMetrics]
+  );
 
   useLayoutEffect(() => {
     adjustTextareaHeight();
-  }, [currentValue, adjustTextareaHeight]);
+  }, [adjustTextareaHeight, currentValue]);
 
   return (
     <Flex className="w-full flex-col gap-2">
@@ -347,70 +395,79 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
           flexDirection="column"
           gap={3}
         >
+          <Textarea
+            ref={textareaRef}
+            value={currentValue}
+            wrap="soft"
+            rows={TEXTAREA_MIN_ROWS}
+            onChange={event => {
+              const nextValue = event.target.value;
+              logTextareaMetrics("on-change", event.currentTarget, {
+                nextValueLength: nextValue.length
+              });
+
+              if (!isValueControlled) {
+                setInternalValue(nextValue);
+              }
+
+              onValueChange?.(nextValue);
+              onChange?.(event);
+              adjustTextareaHeight(event.currentTarget);
+            }}
+            placeholder={placeholder}
+            resize="none"
+            disabled={isSubmitting}
+            w="100%"
+            maxW="100%"
+            minW={0}
+            minH={TEXTAREA_MIN_HEIGHT}
+            maxH={TEXTAREA_MAX_HEIGHT}
+            p={0}
+            border="none"
+            outline="none"
+            boxShadow="none"
+            bg="transparent"
+            color="neutral.800"
+            fontSize="400"
+            lineHeight="600"
+            whiteSpace="pre-wrap"
+            overflowWrap="anywhere"
+            wordBreak="break-word"
+            overflowX="hidden"
+            _placeholder={{ color: "neutral.800" }}
+            _focus={{ border: "none", boxShadow: "none", outline: "none" }}
+            _focusVisible={{ border: "none", boxShadow: "none", outline: "none" }}
+            _disabled={{ opacity: 0.6, cursor: "not-allowed" }}
+          />
+
           <Flex className="items-start justify-between gap-2">
-            <Textarea
-              ref={textareaRef}
-              value={currentValue}
-              rows={TEXTAREA_MIN_ROWS}
-              onChange={event => {
-                const nextValue = event.target.value;
-
-                if (!isValueControlled) {
-                  setInternalValue(nextValue);
-                }
-
-                onValueChange?.(nextValue);
-                onChange?.(event);
-                adjustTextareaHeight();
-              }}
-              placeholder={placeholder}
-              resize="none"
-              disabled={isSubmitting}
-              flex={1}
-              minW={0}
-              minH={TEXTAREA_MIN_HEIGHT}
-              maxH={TEXTAREA_MAX_HEIGHT}
-              p={0}
-              border="none"
-              outline="none"
-              boxShadow="none"
-              bg="transparent"
-              color="neutral.800"
-              fontSize="400"
-              lineHeight="600"
-              overflowY="hidden"
-              _placeholder={{ color: "neutral.800" }}
-              _focus={{ border: "none", boxShadow: "none", outline: "none" }}
-              _focusVisible={{ border: "none", boxShadow: "none", outline: "none" }}
-              _disabled={{ opacity: 0.6, cursor: "not-allowed" }}
-            />
-            <Flex className="mt-auto shrink-0 items-center gap-1">
+            {hasFiles && (
+              <Flex className="flex-wrap gap-3">
+                {effectiveFiles?.map(file => (
+                  <Box key={file.name} position="relative" h="4.6875rem" w="5.625rem">
+                    <Image
+                      border="0.063rem solid"
+                      borderColor="neutral.300"
+                      borderRadius="0.25rem"
+                      src={file.url}
+                      alt={file.name}
+                      className="h-full w-full object-cover"
+                    />
+                    {(currentIsEditing || isAuditMode) && (
+                      <CloseButton
+                        className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 !rounded-full"
+                        onClick={file.onRemoveFile}
+                      />
+                    )}
+                  </Box>
+                ))}
+              </Flex>
+            )}
+            <Flex className="ml-auto shrink-0 items-center gap-1">
               <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
               {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={handleSend} />}
             </Flex>
           </Flex>
-          {hasFiles && (
-            <Flex className="flex-wrap gap-3">
-              {effectiveFiles?.map(file => (
-                <Box key={file.name} position="relative" h="4.6875rem" w="5.625rem">
-                  <Image
-                    border="0.063rem solid"
-                    borderColor="neutral.300"
-                    borderRadius="0.25rem"
-                    src={file.url}
-                    alt={file.name}
-                    className="h-full w-full object-cover"
-                  />
-                  {(currentIsEditing || isAuditMode) && (
-                    <CloseButton
-                      className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 !rounded-full"
-                      onClick={file.onRemoveFile}
-                    />
-                  )}
-                </Box>
-              ))}
-            </Flex>
-          )}
         </Box>
       </Flex>
       {error && (
