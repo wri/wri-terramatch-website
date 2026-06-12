@@ -6,6 +6,7 @@ import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
+import { getMultipleSitePolygonsSubmitTooltip } from "@/utils/sitePolygonSubmit";
 
 import SystemValidationComplete from "./Modals/SystemValidationComplete";
 import { PolygonTableRow } from "./PolygonTableRow";
@@ -60,6 +61,16 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
   const [validatedPolygons, setValidatedPolygons] = useState<PolygonTableRow[]>([]);
   const isOverlapAutoFixUnavailable = isOverlapFixAction && !canAutoFixOverlap;
+  const submitDisabledTooltip = useMemo(
+    () =>
+      isOverlapFixAction
+        ? undefined
+        : getMultipleSitePolygonsSubmitTooltip(
+            polygons.map(polygon => ({ status: polygon.submission, validationStatus: polygon.validation })),
+            t
+          ),
+    [isOverlapFixAction, polygons, t]
+  );
 
   const handleSystemValidationCompleteModalChange = useCallback((open: boolean) => {
     setIsSystemValidationCompleteModalOpen(open);
@@ -141,10 +152,10 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const primaryAction = useMemo(
     () => ({
       children: submitLabel,
-      disabled: isOverlapAutoFixUnavailable || isSubmitDisabled,
+      disabled: isOverlapAutoFixUnavailable || isSubmitDisabled || submitDisabledTooltip != null,
       onClick: onSubmit
     }),
-    [isOverlapAutoFixUnavailable, isSubmitDisabled, onSubmit, submitLabel]
+    [isOverlapAutoFixUnavailable, isSubmitDisabled, onSubmit, submitDisabledTooltip, submitLabel]
   );
 
   const overlapTooltip = useMemo(
@@ -181,7 +192,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
             deleteAction={deleteAction}
             actions={toolbarActions}
             primaryAction={primaryAction}
-            infoTooltip={overlapTooltip}
+            infoTooltip={overlapTooltip ?? submitDisabledTooltip}
           />
         </Box>
       )}

@@ -1,14 +1,15 @@
+import { useT } from "@transifex/react";
 import router from "next/router";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { useAuditStatuses } from "@/connections/AuditStatus";
-import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { closeMapPopupsFromMapPopup, openPolygonSubmitConfirmationFromMapPopup } from "@/context/mapArea.utils";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { setPendingPolygonFocusUuid } from "@/context/polygonTableInteraction.store";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
+import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
 import type { PopupComponentProps, TooltipType } from "../../Map.d";
 import {
@@ -29,6 +30,7 @@ type PolygonPopupChampionsProps = {
 };
 
 export function PolygonPopupChampions({ popup, sitePolygon, tooltipType }: PolygonPopupChampionsProps) {
+  const t = useT();
   const [open, setOpen] = useState(true);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -59,8 +61,8 @@ export function PolygonPopupChampions({ popup, sitePolygon, tooltipType }: Polyg
     };
   }, [commentsCount, sitePolygon]);
 
-  const sitePolygonStatus = sitePolygon?.status;
-  const submitDisabled = sitePolygonStatus === POLYGON_PENDING_APPROVAL || sitePolygonStatus === POLYGON_APPROVED;
+  const submitDisabled = !isSitePolygonSubmittable(sitePolygon);
+  const submitDisabledTooltip = getSingleSitePolygonSubmitTooltip(sitePolygon, t);
 
   const closeMapPopup = useCallback(() => {
     setOpen(false);
@@ -117,6 +119,7 @@ export function PolygonPopupChampions({ popup, sitePolygon, tooltipType }: Polyg
             polygonUuid={sitePolygon?.polygonUuid ?? undefined}
             polygonName={metrics.polygonName}
             submitDisabled={submitDisabled}
+            submitDisabledTooltip={submitDisabledTooltip}
             onSubmit={handleRequestSubmit}
             onEdit={handleEdit}
             onClose={closeMapPopup}

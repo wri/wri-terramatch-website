@@ -1,4 +1,4 @@
-import { Grid } from "@chakra-ui/react";
+import { Flex, Grid } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import type { FC } from "react";
 import { useCallback, useMemo } from "react";
@@ -14,7 +14,8 @@ import {
   showPolygonProgressToast
 } from "@/pages/site/[uuid]/utils/polygonOperationToasts";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
+import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
+import { DownloadIcon, EditIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
 
 import type { TooltipType } from "../../Map.d";
 
@@ -27,6 +28,7 @@ type PopupFooterPolygonProps = {
   onClose?: () => void;
   onViewDetails?: () => void;
   viewDetailsDisabled?: boolean;
+  submitDisabledTooltip?: string;
   tooltipType?: TooltipType;
 };
 
@@ -39,6 +41,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   onClose,
   onViewDetails,
   viewDetailsDisabled = false,
+  submitDisabledTooltip,
   tooltipType
 }) => {
   const t = useT();
@@ -101,9 +104,22 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
           <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit}>
             {t("Edit")}
           </Button>
-          <Button variant="primary" size="small" onClick={() => void handleSubmit()} disabled={submitDisabled}>
-            {t("Submit")}
-          </Button>
+          <Flex alignItems="center" gap={1.5} minWidth={0}>
+            <Button
+              variant="primary"
+              size="small"
+              onClick={() => void handleSubmit()}
+              disabled={submitDisabled}
+              className="min-w-0 flex-1"
+            >
+              {t("Submit")}
+            </Button>
+            {submitDisabled && submitDisabledTooltip != null && (
+              <Tooltip content={submitDisabledTooltip} position="top">
+                <InfoIcon height="1rem" width="1rem" color="neutral.800" />
+              </Tooltip>
+            )}
+          </Flex>
         </>
       )}
     </Grid>
