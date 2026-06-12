@@ -107,20 +107,46 @@ export const parseVolunteersByType = (
 
   if (type === "gender") {
     const chartData: ChartDataItem[] = [
-      { name: t("Women"), value: (data as any).volunteerWomen ?? 0 },
-      { name: t("Men"), value: (data as any).volunteerMen ?? 0 },
-      { name: t("Unknown"), value: (data as any).volunteerOthers ?? 0 },
-      { name: t("Non-Binary"), value: (data as any).volunteerNonBinary ?? 0 }
+      { name: t("Women"), value: data.volunteerWomen ?? 0 },
+      { name: t("Men"), value: data.volunteerMen ?? 0 },
+      { name: t("Unknown"), value: data.volunteerOthers ?? 0 },
+      { name: t("Non-Binary"), value: data.volunteerNonBinary ?? 0 }
     ];
-    const total = (data as any).totalVolunteers ?? chartData.reduce((s, i: any) => s + (i.value ?? 0), 0);
+    const total = data.totalVolunteers ?? chartData.reduce((s, i) => s + (i.value ?? 0), 0);
     return { type, chartData, total };
   }
   const chartData: ChartDataItem[] = [
-    { name: t("Youth"), value: (data as any).volunteerYouth ?? 0 },
-    { name: t("Non-Youth"), value: (data as any).volunteerNonYouth ?? 0 },
-    { name: t("Unknown"), value: (data as any).volunteerAgeOthers ?? 0 }
+    { name: t("Youth"), value: data.volunteerYouth ?? 0 },
+    { name: t("Non-Youth"), value: data.volunteerNonYouth ?? 0 },
+    { name: t("Unknown"), value: data.volunteerAgeOthers ?? 0 }
   ];
-  const total = (data as any).totalVolunteers ?? chartData.reduce((s, i: any) => s + (i.value ?? 0), 0);
+  const total = data.totalVolunteers ?? chartData.reduce((s, i) => s + (i.value ?? 0), 0);
+  return { type, chartData, total };
+};
+
+export const parseBeneficiariesByType = (
+  data: TotalJobsCreatedDto | undefined,
+  type: "gender" | "age",
+  t: typeof useT
+): ChartDataVolunteers => {
+  if (!data) return { chartData: [], type, total: 0 };
+
+  if (type === "gender") {
+    const chartData: ChartDataItem[] = [
+      { name: t("Women"), value: data.beneficiaryWomen ?? 0 },
+      { name: t("Men"), value: data.beneficiaryMen ?? 0 },
+      { name: t("Unknown"), value: data.beneficiaryOthers ?? 0 },
+      { name: t("Non-Binary"), value: data.beneficiaryNonBinary ?? 0 }
+    ];
+    const total = data.totalBeneficiaries ?? chartData.reduce((s, i) => s + (i.value ?? 0), 0);
+    return { type, chartData, total };
+  }
+  const chartData: ChartDataItem[] = [
+    { name: t("Youth"), value: data.beneficiaryYouth ?? 0 },
+    { name: t("Non-Youth"), value: data.beneficiaryNonYouth ?? 0 },
+    { name: t("Unknown"), value: data.beneficiaryAgeOthers ?? 0 }
+  ];
+  const total = data.totalBeneficiaries ?? chartData.reduce((s, i) => s + (i.value ?? 0), 0);
   return { type, chartData, total };
 };
 
