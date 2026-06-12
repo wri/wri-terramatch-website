@@ -62,8 +62,10 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const [submitPayload, setSubmitPayload] = useState<{ eligibleCount: number; totalCount: number } | null>(null);
   const deleteConfirmedRef = useRef(false);
   const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
+  const [savePolygonName, setSavePolygonName] = useState("");
   const isCreateMode = selectedPolygon?.primaryUuid == null || selectedPolygon.primaryUuid === "";
-  const isSaveDisabled = activeTab === "edit" && isCreateMode && draftPolygonGeometry == null;
+  const isPolygonNameMissing = savePolygonName.trim() === "";
+  const isSaveDisabled = (activeTab === "edit" && isCreateMode && draftPolygonGeometry == null) || isPolygonNameMissing;
   const hasValidPolygonUuid = polygon?.polygonUuid != null;
 
   const [, { data: auditStatusesData }] = useAuditStatuses({
@@ -80,7 +82,9 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
 
   useEffect(() => {
     setSaveEditContent(null);
+    const initialName = polygon?.polygonName?.trim() ?? "";
     getPolygonNameForSaveRef.current = () => polygon?.polygonName?.trim() ?? "";
+    setSavePolygonName(initialName);
   }, [polygon?.polygonName, selectedPolygon?.uuid]);
 
   const registerSave = useCallback((saveHandler: () => Promise<boolean>) => {
@@ -97,9 +101,10 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
 
   const registerPolygonName = useCallback((getPolygonName: () => string) => {
     getPolygonNameForSaveRef.current = getPolygonName;
+    setSavePolygonName(getPolygonName());
   }, []);
 
-  const saveConfirmationPolygonName = getPolygonNameForSaveRef.current() || polygon?.polygonName?.trim() || "";
+  const saveConfirmationPolygonName = getPolygonNameForSaveRef.current().trim();
   const isAnyConfirmationModalOpen = showSaveConfirmationModal || deletePayload != null || submitPayload != null;
   const isDrawerVisible = (open ?? false) && !isAnyConfirmationModalOpen;
 

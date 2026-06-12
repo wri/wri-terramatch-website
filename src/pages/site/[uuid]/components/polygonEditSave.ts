@@ -29,6 +29,8 @@ export type PolygonEditFormValues = {
   treesPlanted: string;
 };
 
+export const isValidPolygonName = (polygonName: string): boolean => polygonName.trim().length > 0;
+
 export type DateValueToIsoString = (value: DateValue | undefined) => string | undefined;
 
 type SitePolygonCreateFeature = GeoJSON.Feature<GeoJSON.Geometry, CreatePolygonFeatureProperties>;
