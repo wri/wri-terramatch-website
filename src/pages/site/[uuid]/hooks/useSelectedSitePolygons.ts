@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
 import type { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
-import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
 import type { PolygonTableRow } from "../components/PolygonTableRow";
 
@@ -52,7 +52,7 @@ export const useSelectedSitePolygons = ({
         selectedGeometryPolygonUuids.push(polygon.polygonUuid);
       }
 
-      if (polygon.uuid != null && polygon.status !== POLYGON_PENDING_APPROVAL && polygon.status !== POLYGON_APPROVED) {
+      if (polygon.uuid != null && isSitePolygonSubmittable(polygon)) {
         submittablePolygons.push(polygon);
       }
     }

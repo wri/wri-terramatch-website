@@ -46,6 +46,7 @@ import { DownloadIcon, UploadIcon } from "@/redesignComponents/foundations/Icons
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
+import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
 import {
   closePolygonProgressToast,
@@ -196,7 +197,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
   const isCreateMode = polygon?.primaryUuid == null || polygon.primaryUuid === "";
-  const isPolygonSubmittable = polygon?.status !== POLYGON_PENDING_APPROVAL && polygon?.status !== POLYGON_APPROVED;
+  const isPolygonSubmittable = isSitePolygonSubmittable(polygon);
+  const submitTooltip = getSingleSitePolygonSubmitTooltip(polygon, t);
   const shouldMapEditPolygon =
     openAccordionSection !== "monitoring-plots" && openAccordionSection !== "geotagged-photos";
   const resolvedSiteUuid = polygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : "");
@@ -936,6 +938,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                 {
                   label: t("Submit"),
                   disabled: !isPolygonSubmittable,
+                  infoTooltip: !isPolygonSubmittable ? submitTooltip : undefined,
                   onClick: onRequestSubmitModal
                 }
               ]}
