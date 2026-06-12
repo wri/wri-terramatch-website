@@ -14,8 +14,8 @@ import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/
 import { useValueChanged } from "@/hooks/useValueChanged";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import ProjectReportBanner from "@/redesignComponents/content/Banner/ProjectReportBanner/ProjectReportBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
+import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -129,23 +129,14 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
       <Head>
         <title>{reportTitle}</title>
       </Head>
-      <ProjectReportBanner
+      <ReportBanner
         report={projectReport}
         title={reportTitle}
-        task={task}
         breadcrumbs={[
           {
-            label: t("Projects"),
-            link: "/my-projects",
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: projectReport.projectName ?? "",
-            link: `/project/${projectReport.projectUuid}`
-          },
-          {
             label: t("Reports"),
-            link: `/project/${projectReport.projectUuid}?tab=reporting-tasks`
+            link: `/project/${projectReport.projectUuid}?tab=reporting-tasks`,
+            icon: <ReportsIcon className="!text-theme-primary-900" />
           },
           { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` }
         ]}
@@ -159,6 +150,24 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
                 onClick={() => router.push(`/project/${projectReport.projectUuid}`)}
               >
                 {t("Project Profile")}
+              </Button>
+              <span className="text-sm text-theme-neutral-300">|</span>
+              <Button
+                variant="borderless"
+                size="small"
+                className="underline underline-offset-2"
+                onClick={() => router.push(`/project/${projectReport.projectUuid}`)}
+              >
+                {t("Site Reports")}
+              </Button>
+              <span className="text-sm text-theme-neutral-300">|</span>
+              <Button
+                variant="borderless"
+                size="small"
+                className="underline underline-offset-2"
+                onClick={() => router.push(`/project/${projectReport.projectUuid}`)}
+              >
+                {t("Nursery Reports")}
               </Button>
             </div>
           </div>

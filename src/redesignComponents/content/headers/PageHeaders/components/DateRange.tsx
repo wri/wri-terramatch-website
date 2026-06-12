@@ -9,17 +9,19 @@ import SeparatorDot from "./SeparatorDot";
 export interface DateRangeProps {
   startDate: string;
   endDate: string;
+  startDateLabel?: string;
+  endDateLabel?: string;
 }
 
-const DateRange: FC<DateRangeProps> = ({ startDate, endDate }) => {
+const DateRange: FC<DateRangeProps> = ({ startDate, endDate, startDateLabel = "Start:", endDateLabel = "End:" }) => {
   const t = useT();
 
   return (
     <Flex gap={2} className="items-center">
       <Flex gap={1} className="items-center">
-        <CalendarIcon />
-        <Text textStyle="300" color="neutral.900">
-          {t("Start:")}
+        <CalendarIcon boxSize={"0.875rem"} color="neutral.700" />
+        <Text textStyle="300" color="neutral.900" lineHeight="normal">
+          {t(startDateLabel)}
         </Text>
         <Text textStyle="300-bold" color="neutral.900">
           {startDate}
@@ -27,9 +29,9 @@ const DateRange: FC<DateRangeProps> = ({ startDate, endDate }) => {
       </Flex>
       <SeparatorDot />
       <Flex gap={1} className="items-center">
-        <CalendarIcon />
-        <Text textStyle="300" color="neutral.900">
-          {t("End:")}
+        <CalendarIcon boxSize={"0.875rem"} color="neutral.700" />
+        <Text textStyle="300" color="neutral.900" lineHeight="normal">
+          {t(endDateLabel)}
         </Text>
         <Text textStyle="300-bold" color="neutral.900">
           {endDate}
