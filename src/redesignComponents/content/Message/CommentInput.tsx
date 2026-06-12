@@ -33,7 +33,9 @@ const TEXTAREA_MAX_ROWS = 3;
 const TEXTAREA_MIN_HEIGHT = `${TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MIN_ROWS}rem`;
 const TEXTAREA_MAX_HEIGHT = `${TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MAX_ROWS}rem`;
 
-const getRootFontSize = () => parseFloat(getComputedStyle(document.documentElement).fontSize);
+const FALLBACK_ROOT_FONT_SIZE_PX = 16;
+const getRootFontSize = () =>
+  parseFloat(getComputedStyle(document.documentElement).fontSize) || FALLBACK_ROOT_FONT_SIZE_PX;
 
 interface CommentInputFile {
   name: string;
@@ -310,13 +312,22 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   const isSubmitting = isCreating || isUploadingFiles;
   const shouldShowSendIcon = !currentIsEditing && (isAuditMode ? hasContent || hasFiles : !hasFiles);
 
-  const adjustTextareaHeight = useCallback(() => {
-    const textarea = textareaRef.current;
+  const adjustTextareaHeight = useCallback((target?: HTMLTextAreaElement | null) => {
+    const textarea = target ?? textareaRef.current;
     if (!textarea) return;
 
     const rootFontSize = getRootFontSize();
-    const minHeightRem = TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MIN_ROWS;
-    const maxHeightRem = TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MAX_ROWS;
+    const computedStyles = getComputedStyle(textarea);
+    const lineHeightPx = parseFloat(computedStyles.lineHeight) || TEXTAREA_LINE_HEIGHT_REM * rootFontSize;
+    const lineHeightRem = lineHeightPx / rootFontSize;
+    const chromeHeightRem =
+      (parseFloat(computedStyles.paddingTop) +
+        parseFloat(computedStyles.paddingBottom) +
+        parseFloat(computedStyles.borderTopWidth) +
+        parseFloat(computedStyles.borderBottomWidth)) /
+      rootFontSize;
+    const minHeightRem = lineHeightRem * TEXTAREA_MIN_ROWS + chromeHeightRem;
+    const maxHeightRem = lineHeightRem * TEXTAREA_MAX_ROWS + chromeHeightRem;
 
     textarea.style.height = "auto";
     const scrollHeightRem = textarea.scrollHeight / rootFontSize;
@@ -347,70 +358,76 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
           flexDirection="column"
           gap={3}
         >
+          <Textarea
+            ref={textareaRef}
+            value={currentValue}
+            wrap="soft"
+            rows={TEXTAREA_MIN_ROWS}
+            onChange={event => {
+              const nextValue = event.target.value;
+
+              if (!isValueControlled) {
+                setInternalValue(nextValue);
+              }
+
+              onValueChange?.(nextValue);
+              onChange?.(event);
+              adjustTextareaHeight(event.currentTarget);
+            }}
+            placeholder={placeholder}
+            resize="none"
+            disabled={isSubmitting}
+            w="100%"
+            maxW="100%"
+            minW={0}
+            minH={TEXTAREA_MIN_HEIGHT}
+            maxH={TEXTAREA_MAX_HEIGHT}
+            p={0}
+            border="none"
+            outline="none"
+            boxShadow="none"
+            bg="transparent"
+            color="neutral.800"
+            fontSize="400"
+            lineHeight="600"
+            whiteSpace="pre-wrap"
+            overflowWrap="anywhere"
+            wordBreak="break-word"
+            overflowX="hidden"
+            _placeholder={{ color: "neutral.800" }}
+            _focus={{ border: "none", boxShadow: "none", outline: "none" }}
+            _focusVisible={{ border: "none", boxShadow: "none", outline: "none" }}
+            _disabled={{ opacity: 0.6, cursor: "not-allowed" }}
+          />
+
           <Flex className="items-start justify-between gap-2">
-            <Textarea
-              ref={textareaRef}
-              value={currentValue}
-              rows={TEXTAREA_MIN_ROWS}
-              onChange={event => {
-                const nextValue = event.target.value;
-
-                if (!isValueControlled) {
-                  setInternalValue(nextValue);
-                }
-
-                onValueChange?.(nextValue);
-                onChange?.(event);
-                adjustTextareaHeight();
-              }}
-              placeholder={placeholder}
-              resize="none"
-              disabled={isSubmitting}
-              flex={1}
-              minW={0}
-              minH={TEXTAREA_MIN_HEIGHT}
-              maxH={TEXTAREA_MAX_HEIGHT}
-              p={0}
-              border="none"
-              outline="none"
-              boxShadow="none"
-              bg="transparent"
-              color="neutral.800"
-              fontSize="400"
-              lineHeight="600"
-              overflowY="hidden"
-              _placeholder={{ color: "neutral.800" }}
-              _focus={{ border: "none", boxShadow: "none", outline: "none" }}
-              _focusVisible={{ border: "none", boxShadow: "none", outline: "none" }}
-              _disabled={{ opacity: 0.6, cursor: "not-allowed" }}
-            />
-            <Flex className="mt-auto shrink-0 items-center gap-1">
+            {hasFiles && (
+              <Flex className="flex-wrap gap-3">
+                {effectiveFiles?.map(file => (
+                  <Box key={file.name} position="relative" h="4.6875rem" w="5.625rem">
+                    <Image
+                      border="0.063rem solid"
+                      borderColor="neutral.300"
+                      borderRadius="0.25rem"
+                      src={file.url}
+                      alt={file.name}
+                      className="h-full w-full object-cover"
+                    />
+                    {(currentIsEditing || isAuditMode) && (
+                      <CloseButton
+                        className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 !rounded-full"
+                        onClick={file.onRemoveFile}
+                      />
+                    )}
+                  </Box>
+                ))}
+              </Flex>
+            )}
+            <Flex className="mt-auto ml-auto shrink-0 items-center gap-1">
               <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
               {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={handleSend} />}
             </Flex>
           </Flex>
-          {hasFiles && (
-            <Flex className="flex-wrap gap-3">
-              {effectiveFiles?.map(file => (
-                <Box key={file.name} position="relative" h="4.6875rem" w="5.625rem">
-                  <Image
-                    border="0.063rem solid"
-                    borderColor="neutral.300"
-                    borderRadius="0.25rem"
-                    src={file.url}
-                    alt={file.name}
-                    className="h-full w-full object-cover"
-                  />
-                  {(currentIsEditing || isAuditMode) && (
-                    <CloseButton
-                      className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 !rounded-full"
-                      onClick={file.onRemoveFile}
-                    />
-                  )}
-                </Box>
-              ))}
-            </Flex>
-          )}
         </Box>
       </Flex>
       {error && (
