@@ -29,6 +29,7 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
+import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
@@ -423,7 +424,11 @@ function WizardForm(props: WizardFormProps) {
         redirectEntityPage: props.redirectEntityPage,
         adminListPath: props.adminListPath,
         entity: entity,
-        firstLinkIcon: <ProjectIcon className="!text-theme-primary-900" />,
+        firstLinkIcon: formModel.model.includes("Reports") ? (
+          <ReportsIcon className="!text-theme-primary-900" />
+        ) : (
+          <ProjectIcon className="!text-theme-primary-900" />
+        ),
         t,
         taskTitle
       })[formModel.model];
