@@ -424,12 +424,11 @@ function WizardForm(props: WizardFormProps) {
         redirectEntityPage: props.redirectEntityPage,
         adminListPath: props.adminListPath,
         entity: entity,
-        firstLinkIcon:
-          formModel.model == "projectReports" ? (
-            <ReportsIcon className="!text-theme-primary-900" />
-          ) : (
-            <ProjectIcon className="!text-theme-primary-900" />
-          ),
+        firstLinkIcon: formModel.model.includes("Reports") ? (
+          <ReportsIcon className="!text-theme-primary-900" />
+        ) : (
+          <ProjectIcon className="!text-theme-primary-900" />
+        ),
         t,
         taskTitle
       })[formModel.model];
