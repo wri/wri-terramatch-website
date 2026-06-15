@@ -59,11 +59,11 @@ export const VOLUNTEERS_CREATED_BY_AGE_TOOLTIP =
 export const VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP =
   "Total number of volunteers broken down by gender. 'Unknown' refers to number of people whose gender has not been specified.";
 export const TOTAL_DIRECT_BENEFICIARIES_TOOLTIP =
-  "Number of individuals in communities receiving direct benefits from the project. A direct beneficiary is an individual who receives tangible benefits from project activities, such as increased income, improved market access, or enhanced skills and knowledge.";
+  "Number of local community members who have directly received benefits from TerraFund projects. TerraFund defines a direct benefit as an immediate and tangible value a project provides to target groups and local communities.";
 export const DIRECT_BENEFICIARIES_BY_AGE_TOOLTIP =
-  "Total number of individuals in communities receiving direct benefits broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old. 'Unknown' refers to number of people whose age has not been specified.";
+  "Total number of individuals in communities receiving direct benefits broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old.";
 export const DIRECT_BENEFICIARIES_BY_GENDER_TOOLTIP =
-  "Total number of individuals in communities receiving direct benefits broken down by gender. 'Unknown' refers to number of people whose gender has not been specified.";
+  "Total number of individuals in communities receiving direct benefits broken down by gender.";
 
 export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
 
@@ -721,7 +721,7 @@ const Dashboard = () => {
           widthTooltip="w-80 lg:w-96"
           iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
           subtitle={t(
-            `The numbers and reports below display data related to Indicator 4: Livelihood Benefits described in ${TERRAFUND_MRV_LINK}. Individuals in communities receiving direct benefits are people who receive tangible benefits from project activities, such as increased income, improved market access, or enhanced skills and knowledge. All indicators in the Livelihood Benefits category are disaggregated by number of women, number of men, and number of youths. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
+            `This section displays data related to <em>Indicator 4: Livelihood Benefits</em> described in ${TERRAFUND_MRV_LINK}. Please refer to the linked framework for additional details on how these numbers are sourced and verified.`
           )}
           collapseChildren={isMobile ? true : false}
         >
