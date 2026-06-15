@@ -1,5 +1,9 @@
+import { TERRAFUND_MONITORING_LINK, TERRAFUND_MRV_LINK } from "@/constants/dashboardConsts";
+
 /** Mobile layout breakpoint aligned with existing dashboard map usage. */
 export const DASHBOARD_MOBILE_MEDIA_QUERY = "(max-width: 1200px)";
+
+export { TERRAFUND_MRV_LINK, TERRAFUND_MONITORING_LINK };
 
 /** Longitude bounds for syncing map center state (Web Mercator safe clamp). */
 export const MAP_MIN_LONGITUDE = -180;
@@ -29,10 +33,6 @@ export const TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP =
 
 export const RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP =
   "Hectares under restoration broken down by restoration strategy. Please note that multiple restoration strategies can occur within a single hectare. Please refer to the link in the description above for detailed definitions.";
-
-export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
-
-export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's Monitoring, Reporting, and Verification framework</a>`;
 
 export const IMPACT_STORIES_TOOLTIP =
   "Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at <a href='mailto:info@terramatch.org' class='underline !text-primary'>info@terramatch.org</a>.";
