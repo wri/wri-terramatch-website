@@ -1,3 +1,4 @@
+import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -127,9 +128,9 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
           { label: reportTitle, link: `/reports/site-report/${siteReportUUID}` }
         ]}
         suffix={
-          <div className="flex gap-1.5">
+          <Flex gap={1.5} alignItems="center">
             {suffixButtons.map((button, index) => (
-              <div key={button.key} className="flex gap-1.5">
+              <Flex key={button.key} gap={1.5} alignItems="center">
                 {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
                 <Button
                   variant="borderless"
@@ -141,9 +142,9 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
                 >
                   {t(button.labelKey)}
                 </Button>
-              </div>
+              </Flex>
             ))}
-          </div>
+          </Flex>
         }
         toolbar={{
           tabBar: {
