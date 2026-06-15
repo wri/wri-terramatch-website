@@ -7,6 +7,7 @@ import { ProjectReportFullDto } from "@/generated/v3/entityService/entityService
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import { formatMonthYear } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
 
@@ -17,9 +18,10 @@ import PageHeader from "../PageHeader";
 export interface ReportHeaderProps {
   report: ProjectReportFullDto;
   title: string;
+  dueAt?: string | null;
 }
 
-const ReportHeader: FC<ReportHeaderProps> = ({ report, title }) => {
+const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt }) => {
   const t = useT();
   const router = useRouter();
 
@@ -59,7 +61,12 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title }) => {
               {report.organisationName ?? "—"}
             </Button>
           </Text>
-          <DateRange startDate="mm/yyyy" endDate="mm/yyyy" startDateLabel="Due:" endDateLabel="Last updated:" />
+          <DateRange
+            startDate={formatMonthYear(dueAt ?? report.dueAt)}
+            endDate={formatMonthYear(report.updatedAt)}
+            startDateLabel="Due:"
+            endDateLabel="Last updated:"
+          />
           <Flex gap={2} className="items-center" mb={2.5}>
             <Text textStyle="300" color="neutral.800" lineHeight="normal">
               {t("Submitted by:")}
