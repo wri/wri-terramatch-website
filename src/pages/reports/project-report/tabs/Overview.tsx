@@ -104,16 +104,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
       <Flex gap={7} className="flex-col">
         <Flex gap={7}>
           <Flex gap={5} className="flex-[2] flex-col">
-            <PageItem
-              title={t("Key Indicators & Insights")}
-              buttonProps={{
-                variant: "secondary",
-                size: "small",
-                children: t("View Progress & Goals"),
-                rightIcon: <ChevronRightIcon />,
-                onClick: () => {}
-              }}
-            >
+            <PageItem title={t("Key Indicators & Insights")}>
               <KeyIndicatorsInsights projectReport={projectReport} project={project} />
             </PageItem>
             <PageItem
