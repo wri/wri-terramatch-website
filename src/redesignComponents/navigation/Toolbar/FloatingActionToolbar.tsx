@@ -7,6 +7,8 @@ import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { InfoIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
+import { wrapToolbarInfoTooltipContent } from "./ToolbarInfoTooltipContent";
+
 interface FloatingActionToolbarProps {
   className?: string;
   items: {
@@ -30,7 +32,7 @@ const FloatingActionToolbar: FC<FloatingActionToolbarProps> = ({ items, classNam
               </Text>
             </Button>
             {infoTooltip != null && (
-              <Tooltip content={infoTooltip} position="top">
+              <Tooltip content={wrapToolbarInfoTooltipContent(infoTooltip)} position="top">
                 <InfoIcon height="1rem" width="1rem" color="neutral.800" />
               </Tooltip>
             )}

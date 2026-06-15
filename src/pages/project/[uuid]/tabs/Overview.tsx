@@ -200,10 +200,11 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         open={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
-      <Flex gap={7} className="flex-col sm:flex-row">
+      <Flex gap={7} className="flex-col sm:flex-row sm:items-stretch">
         <PageItem
           title={t("Project Map")}
           flexProps={{ flex: 1 }}
+          className="min-h-0"
           buttonProps={{
             variant: "secondary",
             size: "small",
@@ -220,11 +221,11 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             loading: isDownloading
           }}
         >
-          <Box className="relative h-auto">
+          <Box className="relative min-h-[27rem] flex-1 overflow-hidden rounded sm:min-h-0">
             <OverviewMapArea
               entityModel={project}
               type="projects"
-              className="max-h-[27rem]"
+              className="h-full min-h-0 rounded"
               disabledPolygonPanel={true}
               hideFullscreenControl={true}
             />

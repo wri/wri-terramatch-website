@@ -239,7 +239,15 @@ const OverviewMapArea = ({
           entityUuid={entityModel?.uuid}
         />
       )}
-      <Box position="relative" className={classNames("h-full w-full flex-1", className)}>
+      <Box
+        position="relative"
+        className={classNames(
+          "w-full",
+          disabledPolygonPanel && "overflow-hidden",
+          !disabledPolygonPanel && "h-full flex-1",
+          className
+        )}
+      >
         <LoadingMap loading={isMapLoading} text={loadingText} />
         <MapContainer
           showBaseMapControl={false}
@@ -254,7 +262,10 @@ const OverviewMapArea = ({
           status={validationStatus}
           validationType={validationType}
           record={entityModel}
-          className="h-[650px] flex-1 rounded-r-lg wide:h-[1225px]"
+          className={classNames(
+            "flex-1",
+            disabledPolygonPanel ? "h-full rounded" : "h-[650px] rounded-r-lg wide:h-[1225px]"
+          )}
           polygonsExists={polygonsData.length > 0}
           setPolygonFromMap={setPolygonFromMap}
           polygonFromMap={polygonFromMap}

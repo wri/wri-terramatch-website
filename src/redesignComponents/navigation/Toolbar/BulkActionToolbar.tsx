@@ -9,6 +9,7 @@ import BulkActionToolbarActions from "./BulkActionToolbarActions";
 import SelectionCountLabel from "./SelectionCountLabel";
 import Toolbar from "./Toolbar";
 import { BulkActionToolbarProps } from "./ToolBar.type";
+import { wrapToolbarInfoTooltipContent } from "./ToolbarInfoTooltipContent";
 
 const TOOLBAR_CLASS =
   "flex-wrap rounded-lg !bg-theme-primary-800 px-4 py-3 !shadow-[0_-0.25rem_0.375rem_-0.0625rem_rgba(0,0,0,0.10),0_-0.125rem_0.25rem_-0.125rem_rgba(0,0,0,0.10)]";
@@ -38,7 +39,7 @@ const BulkActionToolbar = memo(function BulkActionToolbar({
             />
           )}
           {infoTooltip != null && (
-            <Tooltip content={infoTooltip} position="top">
+            <Tooltip content={wrapToolbarInfoTooltipContent(infoTooltip)} position="top">
               <InfoIcon height="1rem" width="1rem" color="neutral.100" />
             </Tooltip>
           )}
