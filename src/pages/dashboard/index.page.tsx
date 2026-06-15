@@ -22,6 +22,7 @@ import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import {
   formatCohortDisplay,
+  parseBeneficiariesByType,
   parseHectaresUnderRestorationData,
   parseJobCreatedByType,
   parseVolunteersByType,
@@ -57,6 +58,12 @@ export const VOLUNTEERS_CREATED_BY_AGE_TOOLTIP =
   "Total number of volunteers broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old. 'Unknown' refers to number of people whose age has not been specified.";
 export const VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP =
   "Total number of volunteers broken down by gender. 'Unknown' refers to number of people whose gender has not been specified.";
+export const TOTAL_DIRECT_BENEFICIARIES_TOOLTIP =
+  "Number of individuals in communities receiving direct benefits from the project. A direct beneficiary is an individual who receives tangible benefits from project activities, such as increased income, improved market access, or enhanced skills and knowledge.";
+export const DIRECT_BENEFICIARIES_BY_AGE_TOOLTIP =
+  "Total number of individuals in communities receiving direct benefits broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old. 'Unknown' refers to number of people whose age has not been specified.";
+export const DIRECT_BENEFICIARIES_BY_GENDER_TOOLTIP =
+  "Total number of individuals in communities receiving direct benefits broken down by gender. 'Unknown' refers to number of people whose gender has not been specified.";
 
 export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
 
@@ -357,6 +364,14 @@ const Dashboard = () => {
     [jobsCreatedData, t]
   );
   const volunteersByAgeData = useMemo(() => parseVolunteersByType(jobsCreatedData, "age", t), [jobsCreatedData, t]);
+  const beneficiariesByGenderData = useMemo(
+    () => parseBeneficiariesByType(jobsCreatedData, "gender", t),
+    [jobsCreatedData, t]
+  );
+  const beneficiariesByAgeData = useMemo(
+    () => parseBeneficiariesByType(jobsCreatedData, "age", t),
+    [jobsCreatedData, t]
+  );
 
   const projectCounts = useMemo(
     () => ({
@@ -690,6 +705,54 @@ const Dashboard = () => {
               tooltip={t(VOLUNTEERS_CREATED_BY_AGE_TOOLTIP)}
               isUserAllowed={isUserAllowed?.allowed}
               isLoading={false}
+            />
+          </div>
+        </PageCard>
+        <PageCard
+          className="border-0 px-4 py-6 mobile:order-4 mobile:px-0 mobile:py-4"
+          classNameSubTitle="mt-4"
+          gap={8}
+          isUserAllowed={isUserAllowed?.allowed}
+          projectFrameworkKey={singleDashboardProject?.frameworkKey}
+          title={t("LIVELIHOOD BENEFITS")}
+          variantSubTitle="text-14-light"
+          subtitleMore={true}
+          tooltipTrigger="click"
+          widthTooltip="w-80 lg:w-96"
+          iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
+          subtitle={t(
+            `The numbers and reports below display data related to Indicator 4: Livelihood Benefits described in ${TERRAFUND_MRV_LINK}. Individuals in communities receiving direct benefits are people who receive tangible benefits from project activities, such as increased income, improved market access, or enhanced skills and knowledge. All indicators in the Livelihood Benefits category are disaggregated by number of women, number of men, and number of youths. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
+          )}
+          collapseChildren={isMobile ? true : false}
+        >
+          <SecDashboard
+            title={t("Individuals in Communities Receiving Direct Benefits")}
+            data={{ value: jobsCreatedData?.totalBeneficiaries }}
+            tooltip={t(TOTAL_DIRECT_BENEFICIARIES_TOOLTIP)}
+            isUserAllowed={isUserAllowed?.allowed}
+          />
+          <div className="grid w-full grid-cols-2 gap-12 mobile:grid-cols-1 mobile:gap-10">
+            <SecDashboard
+              title={t("Individuals in Communities Receiving Direct Benefits by Gender")}
+              data={{}}
+              chartType={CHART_TYPES.doughnutChart}
+              dataForChart={beneficiariesByGenderData}
+              classNameHeader="!justify-center"
+              classNameBody="w-full place-content-center !justify-center flex-col gap-5"
+              tooltip={t(DIRECT_BENEFICIARIES_BY_GENDER_TOOLTIP)}
+              isUserAllowed={isUserAllowed?.allowed}
+              isLoading={isLoadingJobsCreated}
+            />
+            <SecDashboard
+              title={t("Individuals in Communities Receiving Direct Benefits by Age")}
+              data={{}}
+              chartType={CHART_TYPES.doughnutChart}
+              dataForChart={beneficiariesByAgeData}
+              classNameHeader="!justify-center"
+              classNameBody="w-full place-content-center !justify-center flex-col gap-5"
+              tooltip={t(DIRECT_BENEFICIARIES_BY_AGE_TOOLTIP)}
+              isUserAllowed={isUserAllowed?.allowed}
+              isLoading={isLoadingJobsCreated}
             />
           </div>
         </PageCard>
