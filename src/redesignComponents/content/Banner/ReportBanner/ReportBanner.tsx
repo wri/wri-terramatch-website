@@ -7,11 +7,12 @@ import ReportHeader from "@/redesignComponents/content/headers/PageHeaders/Repor
 export interface ReportBannerProps extends Omit<BannerProps, "children"> {
   report: ProjectReportFullDto;
   title: string;
+  dueAt?: string | null;
 }
 
-const ReportBanner: FC<ReportBannerProps> = ({ report, title, ...bannerProps }) => (
+const ReportBanner: FC<ReportBannerProps> = ({ report, title, dueAt, ...bannerProps }) => (
   <Banner {...bannerProps}>
-    <ReportHeader report={report} title={title} />
+    <ReportHeader report={report} title={title} dueAt={dueAt} />
   </Banner>
 );
 

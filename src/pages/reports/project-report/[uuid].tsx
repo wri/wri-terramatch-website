@@ -132,6 +132,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
       <ReportBanner
         report={projectReport}
         title={reportTitle}
+        dueAt={task?.dueAt ?? projectReport.dueAt}
         breadcrumbs={[
           {
             label: t("Reports"),
