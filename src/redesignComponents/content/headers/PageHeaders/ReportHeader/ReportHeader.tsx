@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import { FC } from "react";
 
 import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -20,6 +20,7 @@ export interface ReportHeaderProps {
 
 const ReportHeader: FC<ReportHeaderProps> = ({ report, title }) => {
   const t = useT();
+  const router = useRouter();
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("project-reports", report.uuid);
   const { handleEdit } = useGetEditEntityHandler({
@@ -39,12 +40,22 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title }) => {
             color="neutral.900"
             className="-ml-[0.5rem] flex items-center gap-2 mobile:w-full mobile:max-w-full mobile:overflow-x-auto"
           >
-            <Button variant="borderless" size="small" className="-mr-2" as={Link} href={`#`}>
-              {t("Project Name")}
+            <Button
+              variant="borderless"
+              size="small"
+              className="-mr-2"
+              onClick={() => report.projectUuid != null && router.push(`/project/${report.projectUuid}`)}
+            >
+              {report.projectName ?? "—"}
             </Button>
             <SeparatorDot />
-            <Button variant="borderless" size="small" className="-ml-2" as={Link} href={`#`}>
-              {t("Organisation Name")}
+            <Button
+              variant="borderless"
+              size="small"
+              className="-ml-2"
+              onClick={() => report.organisationUuid != null && router.push(`/organization/${report.organisationUuid}`)}
+            >
+              {report.organisationName ?? "—"}
             </Button>
           </Text>
           <Flex gap={2} className="items-center" mb={2.5}>
