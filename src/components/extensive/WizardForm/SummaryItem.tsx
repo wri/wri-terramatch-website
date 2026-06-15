@@ -84,7 +84,6 @@ const SummaryItem: FC<SummaryItemProps> = ({
           "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
           user ? "bottom-0" : "bottom-[0px]"
         )}
-        cancelButtonProps={undefined}
         primaryButtonProps={{
           children: t("Submit"),
           onClick: handleSubmitClick,
