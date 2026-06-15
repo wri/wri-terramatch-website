@@ -20,6 +20,7 @@ import ProjectReportHeader from "@/pages/reports/project-report/components/Proje
 import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
+import ProjectReportDetailsTab from "./tabs/Details";
 import NurseryReportsTab from "./tabs/NurseryReports";
 import PPCSocioeconomicTab from "./tabs/PPCSocioeconomic";
 import ReportDataTab from "./tabs/ReportData";
@@ -64,6 +65,11 @@ const ProjectReportDetailPage = () => {
                     key: "report-data",
                     title: t("Report Data"),
                     body: <ReportDataTab report={report} dueAt={task?.dueAt} />
+                  },
+                  {
+                    key: "details",
+                    title: t("Report Details"),
+                    body: <ProjectReportDetailsTab report={report} />
                   },
                   {
                     key: "gallery",
