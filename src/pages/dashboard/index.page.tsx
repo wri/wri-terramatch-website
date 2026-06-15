@@ -15,7 +15,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { useGadmChoices } from "@/connections/Gadm";
 import { useMyUser } from "@/connections/User";
-import { CHART_TYPES, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
+import { CHART_TYPES, ORGANIZATIONS_TYPES, TERRAFUND_MRV_LINK, TEXT_TYPES } from "@/constants/dashboardConsts";
 import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { logout } from "@/generated/v3/utils";
@@ -64,10 +64,6 @@ export const DIRECT_BENEFICIARIES_BY_AGE_TOOLTIP =
   "Total number of individuals in communities receiving direct benefits broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old.";
 export const DIRECT_BENEFICIARIES_BY_GENDER_TOOLTIP =
   "Total number of individuals in communities receiving direct benefits broken down by gender.";
-
-export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
-
-export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's Monitoring, Reporting, and Verification framework</a>`;
 
 export const NUMBER_OF_TREES_PLANTED_TOOLTIP =
   "The total self-reported number of trees planted by TerraFund organizations, over the duration of the entire project and displayed as progress towards goal.";
