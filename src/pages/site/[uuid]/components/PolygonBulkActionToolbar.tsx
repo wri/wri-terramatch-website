@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { memo, useCallback, useMemo, useState } from "react";
 
@@ -6,7 +6,8 @@ import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
-import { getMultipleSitePolygonsSubmitTooltip } from "@/utils/sitePolygonSubmit";
+import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
+import { getSitePolygonsSubmitTooltip } from "@/utils/sitePolygonSubmit";
 
 import SystemValidationComplete from "./Modals/SystemValidationComplete";
 import { PolygonTableRow } from "./PolygonTableRow";
@@ -65,7 +66,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     () =>
       isOverlapFixAction
         ? undefined
-        : getMultipleSitePolygonsSubmitTooltip(
+        : getSitePolygonsSubmitTooltip(
             polygons.map(polygon => ({ status: polygon.submission, validationStatus: polygon.validation })),
             t
           ),
@@ -161,14 +162,9 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const overlapTooltip = useMemo(
     () =>
       isOverlapAutoFixUnavailable ? (
-        <Box>
-          <Text color="neutral.200" textStyle="300" textAlign="center">
-            {t("Auto-fix isn’t available for this selection.")}
-          </Text>
-          <Text color="neutral.200" textStyle="300" textAlign="center">
-            {t("Fix the overlap manually.")}
-          </Text>
-        </Box>
+        <ToolbarInfoTooltipContent
+          lines={[t("Auto-fix isn’t available for this selection."), t("Fix the overlap manually.")]}
+        />
       ) : undefined,
     [isOverlapAutoFixUnavailable, t]
   );

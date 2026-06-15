@@ -44,6 +44,16 @@ export const getSingleSitePolygonSubmitTooltip = (
   }
 };
 
+export const getSitePolygonsSubmitTooltip = (
+  polygons: SubmitAvailabilityPolygon[],
+  t: Translate
+): string | undefined => {
+  if (polygons.length === 1) {
+    return getSingleSitePolygonSubmitTooltip(polygons[0], t);
+  }
+  return getMultipleSitePolygonsSubmitTooltip(polygons, t);
+};
+
 export const getMultipleSitePolygonsSubmitTooltip = (
   polygons: SubmitAvailabilityPolygon[],
   t: Translate

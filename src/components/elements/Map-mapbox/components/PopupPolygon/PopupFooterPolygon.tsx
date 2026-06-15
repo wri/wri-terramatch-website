@@ -16,6 +16,7 @@ import {
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { DownloadIcon, EditIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
+import { wrapToolbarInfoTooltipContent } from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
 
 import type { TooltipType } from "../../Map.d";
 
@@ -115,7 +116,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
               {t("Submit")}
             </Button>
             {submitDisabled && submitDisabledTooltip != null && (
-              <Tooltip content={submitDisabledTooltip} position="top">
+              <Tooltip content={wrapToolbarInfoTooltipContent(submitDisabledTooltip)} position="top">
                 <InfoIcon height="1rem" width="1rem" color="neutral.800" />
               </Tooltip>
             )}

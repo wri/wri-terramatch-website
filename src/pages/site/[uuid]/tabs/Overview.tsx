@@ -104,10 +104,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
       <PageContent>
-        <Flex gap={7} className="flex-col sm:flex-row">
+        <Flex gap={7} className="flex-col sm:flex-row sm:items-stretch">
           <PageItem
             title={t("Site Map")}
             flexProps={{ flex: 1 }}
+            className="min-h-0"
             buttonProps={{
               variant: "secondary",
               size: "small",
@@ -116,11 +117,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               onClick: () => goToTab("polygons")
             }}
           >
-            <Box className="relative h-auto">
+            <Box className="relative min-h-[27rem] flex-1 overflow-hidden rounded sm:min-h-0">
               <OverviewMapArea
                 entityModel={site}
                 type="sites"
-                className="max-h-[27rem] !rounded-[0.25rem_0.25rem_0.25rem_0.25rem]"
+                className="h-full min-h-0 rounded"
                 disabledPolygonPanel={true}
                 hideFullscreenControl={true}
               />
