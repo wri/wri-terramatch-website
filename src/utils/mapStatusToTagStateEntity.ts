@@ -14,6 +14,8 @@ export const mapStatusToTagStateEntity = (
       return { type: "information-required" };
     case "approved":
       return { type: "approved" };
+    case "due":
+      return { type: "due" };
     default:
       return undefined;
   }

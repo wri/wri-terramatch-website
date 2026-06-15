@@ -54,7 +54,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
       {
         key: "overview",
         title: t("Overview"),
-        body: <Overview projectReport={projectReport} />
+        body: <Overview projectReport={projectReport} project={project} />
       },
       {
         key: "report-data",

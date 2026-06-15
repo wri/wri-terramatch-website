@@ -11,21 +11,23 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
-import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
 import { useProjectReportAboutContent } from "@/pages/reports/project-report/constants/projectReportAboutContent";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
+import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import KeyIndicatorsInsights from "../components/KeyIndicatorsInsights";
 
 interface ProjectReportOverviewTabProps {
   projectReport: ProjectReportFullDto;
+  project?: ProjectFullDto | null;
 }
 
-const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectReport }) => {
+const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectReport, project }) => {
   const router = useRouter();
   const t = useT();
   const { openModal } = useModalContext();
@@ -85,6 +87,17 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
 
   const editButtonLabel = projectReport.status === "approved" && isReportSetupComplete ? t("Edit") : t("Continue");
 
+  const statusTag = useMemo(() => {
+    if (projectReport.updateRequestStatus === AWAITING_APPROVAL) {
+      return <TagSubmission size="small" state="pending-approval" />;
+    }
+
+    const tagState = mapStatusToTagStateEntity(projectReport.status);
+    if (projectReport.status == null || tagState == null) return null;
+
+    return <TagSubmission size="small" state={tagState.type} />;
+  }, [projectReport.status, projectReport.updateRequestStatus]);
+
   return (
     <PageContent>
       <Flex gap={7} className="flex-col">
@@ -100,7 +113,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
                 onClick: () => {}
               }}
             >
-              <KeyIndicatorsInsights projectReport={projectReport} />
+              <KeyIndicatorsInsights projectReport={projectReport} project={project} />
             </PageItem>
             <PageItem
               title={t("Featured Images")}
@@ -130,7 +143,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
               rightIcon: <ChevronRightIcon />,
               onClick: handleEditClick
             }}
-            tag={<TagSubmission size="small" state="pending-approval" />}
+            tag={statusTag}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
               <EntitySetUpSection

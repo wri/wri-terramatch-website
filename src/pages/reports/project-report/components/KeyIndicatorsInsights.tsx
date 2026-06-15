@@ -8,13 +8,15 @@ import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hoo
 import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
 import { ALL_TF, Framework, toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
-import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useProjectReportKeyIndicatorsContent } from "@/pages/reports/project-report/constants/projectReportKeyIndicatorsContent";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
+import { MetricCardProps } from "@/redesignComponents/dataDisplay/Metrics/types";
 import { JobsIcon, RegenerationIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 
 interface KeyIndicatorsInsightsProps {
   projectReport: ProjectReportFullDto;
+  project?: ProjectFullDto | null;
 }
 
 const TERRAFUND_FRAMEWORKS = [...ALL_TF, Framework.EPA_GHANA_PILOT];
@@ -27,15 +29,20 @@ const MetricTooltip = ({ title, tooltip }: { title: string; tooltip: string }) =
   </Box>
 );
 
-const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport }) => {
+const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport, project }) => {
   const framework = toFramework(projectReport.frameworkKey);
   const content = useProjectReportKeyIndicatorsContent();
+  const hasProjectGoals = project != null;
+  const cardVariant: MetricCardProps["variant"] = hasProjectGoals ? "donutChart" : "large";
 
   const treesPlantedTotal =
     (projectReport.treesPlantedCount ?? 0) +
     (projectReport.seedsPlantedCount ?? 0) +
     (projectReport.regeneratedTreesCount ?? 0);
   const treesRegenerated = projectReport.regeneratedTreesCount ?? 0;
+  const treesGrownGoal = project?.treesGrownGoal ?? 0;
+  const treesRegeneratedGoal = project?.goalTreesRestoredAnr ?? 0;
+  const jobsCreatedGoal = project?.jobsCreatedGoal ?? 0;
 
   const jobsCreated =
     useCollectionsTotal({
@@ -69,8 +76,8 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport }
       <MetricCard
         title={content.terrafund.treesPlanted.title}
         progress={treesPlantedTotal}
-        goal={0}
-        variant="large"
+        goal={treesGrownGoal}
+        variant={cardVariant}
         icon={<TreeIcon />}
         color="secondary.600"
         type="treesPlanted"
@@ -85,8 +92,8 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport }
       <MetricCard
         title={content.terrafund.treesRegenerated.title}
         progress={treesRegenerated}
-        goal={0}
-        variant="large"
+        goal={treesRegeneratedGoal}
+        variant={cardVariant}
         icon={<RegenerationIcon />}
         color="secondary.600"
         type="treesRegenerated"
@@ -101,8 +108,8 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport }
       <MetricCard
         title={content.terrafund.jobsCreated.title}
         progress={jobsCreated}
-        goal={0}
-        variant="large"
+        goal={jobsCreatedGoal}
+        variant={cardVariant}
         icon={<JobsIcon />}
         color="secondary.600"
         type="jobsCreated"
@@ -119,8 +126,8 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport }
       <MetricCard
         title={content.ppc.treesGrowing.title}
         progress={treesPlantedTotal}
-        goal={0}
-        variant="large"
+        goal={treesGrownGoal}
+        variant={cardVariant}
         icon={<TreeIcon />}
         color="secondary.600"
         type="treesGrowing"
@@ -132,8 +139,8 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport }
       <MetricCard
         title={content.ppc.workdaysCreated.title}
         progress={workdaysCreated}
-        goal={0}
-        variant="large"
+        goal={jobsCreatedGoal}
+        variant={hasProjectGoals ? "large" : cardVariant}
         icon={<JobsIcon />}
         color="secondary.600"
         type="workdaysCreated"
@@ -141,6 +148,7 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport }
         tooltipContent={
           <MetricTooltip title={content.ppc.workdaysCreated.title} tooltip={content.ppc.workdaysCreated.tooltip} />
         }
+        frameworkKey={framework}
       />
     </>
   );
@@ -150,8 +158,8 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport }
       <MetricCard
         title={content.hbf.saplingsGrowing.title}
         progress={treesPlantedTotal}
-        goal={0}
-        variant="large"
+        goal={treesGrownGoal}
+        variant={cardVariant}
         icon={<TreeIcon />}
         color="secondary.600"
         type="saplingsGrowing"
@@ -163,8 +171,8 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport }
       <MetricCard
         title={content.hbf.workdaysCreated.title}
         progress={directWorkdaysCreated}
-        goal={0}
-        variant="large"
+        goal={jobsCreatedGoal}
+        variant={hasProjectGoals ? "large" : cardVariant}
         icon={<JobsIcon />}
         color="secondary.600"
         type="workdaysCreated"
@@ -172,6 +180,7 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport }
         tooltipContent={
           <MetricTooltip title={content.hbf.workdaysCreated.title} tooltip={content.hbf.workdaysCreated.tooltip} />
         }
+        frameworkKey={framework}
       />
     </>
   );
