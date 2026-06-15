@@ -10,6 +10,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
 
+import DateRange from "../components/DateRange";
 import SeparatorDot from "../components/SeparatorDot";
 import PageHeader from "../PageHeader";
 
@@ -47,6 +48,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title }) => {
               {t("Organisation Name")}
             </Button>
           </Text>
+          <DateRange startDate="mm/yyyy" endDate="mm/yyyy" startDateLabel="Due:" endDateLabel="Last updated:" />
           <Flex gap={2} className="items-center" mb={2.5}>
             <Text textStyle="300" color="neutral.800" lineHeight="normal">
               {t("Submitted by:")}
