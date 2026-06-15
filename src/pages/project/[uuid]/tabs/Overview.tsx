@@ -19,6 +19,7 @@ import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import type { ButtonGroupButtonProps } from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -221,7 +222,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             loading: isDownloading
           }}
         >
-          <Box className="relative min-h-[27rem] flex-1 overflow-hidden rounded sm:min-h-0">
+          <Box className="relative flex-1 overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
             <OverviewMapArea
               entityModel={project}
               type="projects"

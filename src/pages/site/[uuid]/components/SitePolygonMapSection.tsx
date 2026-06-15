@@ -10,6 +10,8 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 import UndoIcon from "@/redesignComponents/foundations/Icons/Function/UndoIcon";
 
+import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../constants/sitePolygonMapSizing";
+
 type SitePolygonMapSectionProps = {
   site: SiteFullDto;
   polygons: SitePolygonLightDto[];
@@ -37,8 +39,8 @@ const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
 
   return (
     <ResizeBox
-      initialHeight={100}
-      minHeight={100}
+      initialHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
+      minHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
       maxHeight={600}
       className={classNames({
         "!h-[calc(100vh-66px)] w-screen": isEditPolygonOpen

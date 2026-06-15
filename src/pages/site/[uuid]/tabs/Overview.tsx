@@ -27,6 +27,7 @@ import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmiss
 import { AreaHectaresIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
+import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "../constants/sitePolygonMapSizing";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 interface SiteOverviewTabProps {
   site: SiteFullDto;
@@ -117,7 +118,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               onClick: () => goToTab("polygons")
             }}
           >
-            <Box className="relative min-h-[27rem] flex-1 overflow-hidden rounded sm:min-h-0">
+            <Box className="relative flex-1 overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
               <OverviewMapArea
                 entityModel={site}
                 type="sites"
