@@ -10,7 +10,7 @@ import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/ove
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import { SupportedEntity, useAllMedias } from "@/connections/EntityAssociation";
 import {
   POLYGON_APPROVED,
   POLYGON_DRAFT,
@@ -84,11 +84,14 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   const {
     editPolygon,
     shouldRefetchPolygonData,
+    shouldRefetchMediaData,
     setSelectedPolygonsInCheckbox,
     setPolygonData,
+    setMediaFiles,
     shouldRefetchValidation,
     setShouldRefetchValidation,
     setShouldRefetchPolygonData,
+    setShouldRefetchMediaData,
     polygonData: sitePolygonDataV3
   } = useMapAreaContext();
 
@@ -109,9 +112,23 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   const mapFunctions = useBaseMap(onSave, undefined, { deferDrawCreateSave: true });
 
-  const [, { data: mediaFiles }] = useMedias({
+  const [, { data: mediaFiles, refetch: refetchMediaFiles }] = useAllMedias({
     entity: type as SupportedEntity,
-    uuid: entityModel.uuid
+    uuid: entityModel.uuid,
+    filter: {
+      isGeotagged: true
+    }
+  });
+
+  useEffect(() => {
+    setMediaFiles(mediaFiles ?? []);
+  }, [mediaFiles, setMediaFiles]);
+
+  useValueChanged(shouldRefetchMediaData, () => {
+    if (shouldRefetchMediaData) {
+      refetchMediaFiles?.();
+      setShouldRefetchMediaData(false);
+    }
   });
 
   const modelBbox = useBoundingBox(

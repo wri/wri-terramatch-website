@@ -170,7 +170,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setPreviewVersion,
     setStatusSelectedPolygon,
     showPhotosOnMap,
-    setShowPhotosOnMap
+    setShowPhotosOnMap,
+    mediaFiles
   } = useMapAreaContext();
   const [polygonName, setPolygonName] = useState("");
   const [plantStartDate, setPlantStartDate] = useState<DateValue[]>([]);
@@ -202,6 +203,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const shouldMapEditPolygon =
     openAccordionSection !== "monitoring-plots" && openAccordionSection !== "geotagged-photos";
   const resolvedSiteUuid = polygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : "");
+  const geotaggedPhotosCount = useMemo(
+    () => mediaFiles.filter(file => file.lat != null && file.lng != null).length,
+    [mediaFiles]
+  );
   const geometryChanged =
     !isCreateMode &&
     polygonGeometryEdit?.polygonUuid === geometryPolygonUuid &&
@@ -856,7 +861,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         >
           <Flex className="flex-1 flex-col gap-4">
             <Flex className="items-center gap-1">
-              <Text textStyle="400-bold" color="neutral.900">{`X ${t("Photos")}`}</Text>
+              <Text textStyle="400-bold" color="neutral.900">{`${geotaggedPhotosCount} ${t("Photos")}`}</Text>
               <Text color="neutral.900">{t("available")}</Text>
             </Flex>
             <Switch
