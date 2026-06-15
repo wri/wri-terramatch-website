@@ -44,16 +44,16 @@ export const JOBS_CREATED_BY_AGE_TOOLTIP =
 export const JOBS_CREATED_BY_GENDER_TOOLTIP =
   "Total number of employees broken down by gender. 'Unknown' refers to number of people whose gender has not been specified.";
 export const NEW_FULL_TIME_JOBS_TOOLTIP =
-  "Number of full-time jobs created to date. TerraFund defines a full-time employee as people that are regularly paid for their work on the project and are working more than 35 hours per week throughout the year.";
+  "The number of people working 35 or more hours per week on projects funded by TerraFund. Full-time employees are people regularly paid for their work on the project and working 35 or more hours per week throughout the year, with a consistent role that involves daily or almost daily engagement for at least three months of the reporting period.";
 export const NEW_PART_TIME_JOBS_TOOLTIP =
-  "Number of people working part-time jobs to date. Terrafund defines a part-time job as a person working regularly, paid for work on the project but working under 35 hours per work week. Part-time includes all employees engaged on a temporary, casual, or seasonal basis.";
+  "The number of part-time employees working on projects funded by TerraFund. The definition of part-time employees includes two categories: part-time employees and short-term, seasonal, and casual employees. Part-time employees are people regularly paid for their work on the project and working less than 35 hours per week with a consistent role that involves frequent engagement for at least three months of the six-month reporting period. Short-term, seasonal, and casual workers are people working periodically on the project, typically involved in tasks that take a few days, or during high-engagement seasons such as planting seasons. These include jobs that involve recurring engagement at the same time in different months but for a short duration ranging from a few days to a few weeks.";
 export const NO_DATA_PRESENT_ACTIVE_PROJECT_TOOLTIPS =
   "Data is still being collected and checked. This visual will remain empty until data is properly quality assured.";
 export const NUMBER_OF_TREES_PLANTED_BY_YEAR_TOOLTIP = "Number of trees planted in each year.";
 export const TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP =
   "The 5 projects that have planted the most trees and the corresponding number of trees planted per project. Please note that organization names are listed instead of project names for ease of reference.";
 export const TOTAL_VOLUNTEERS_TOOLTIP =
-  "Number of unpaid volunteers contributing to the project. A volunteer is an individual that freely dedicates their time to the project because they see value in doing so but does not receive payment for their work.";
+  "A volunteer is an individual who freely dedicates their time to the project because they see value in doing so but who does not receive payment for their work.";
 export const VOLUNTEERS_CREATED_BY_AGE_TOOLTIP =
   "Total number of volunteers broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old. 'Unknown' refers to number of people whose age has not been specified.";
 export const VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP =
@@ -67,10 +67,10 @@ export const DIRECT_BENEFICIARIES_BY_GENDER_TOOLTIP =
 
 export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
 
-export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's MRV framework</a>`;
+export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's Monitoring, Reporting, and Verification framework</a>`;
 
 export const NUMBER_OF_TREES_PLANTED_TOOLTIP =
-  "Total number of trees that funded projects have planted to date, as reported through 6-month progress reports and displayed as progress towards goal.";
+  "The total self-reported number of trees planted by TerraFund organizations, over the duration of the entire project and displayed as progress towards goal.";
 
 export interface DashboardTableDataProps {
   label: string;
@@ -569,17 +569,17 @@ const Dashboard = () => {
           subtitleMore={true}
           isUserAllowed={isUserAllowed?.allowed}
           projectFrameworkKey={singleDashboardProject?.frameworkKey}
-          title={t("TREES RESTORED")}
+          title={t("TREE RESTORATION")}
           widthTooltip="w-52 lg:w-64"
           iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
           variantSubTitle="text-14-light"
           subtitle={t(
-            `The numbers and reports below display data related to Indicator 1: Trees Restored described in ${TERRAFUND_MRV_LINK}. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
+            `This section displays data related to <em>Indicator 1: Tree Restoration</em> described in ${TERRAFUND_MRV_LINK}. Please refer to the linked framework for details on how these numbers are sourced and verified.`
           )}
           collapseChildren={isMobile ? true : false}
         >
           <SecDashboard
-            title={t("Number of Trees Planted")}
+            title={t("Trees Planted")}
             type="legend"
             secondOptionsData={labelLegend}
             tooltip={t(NUMBER_OF_TREES_PLANTED_TOOLTIP)}
@@ -589,7 +589,7 @@ const Dashboard = () => {
             isUserAllowed={isUserAllowed?.allowed}
           />
           <SecDashboard
-            title={t("Number of Trees Planted by Year")}
+            title={t("Trees Planted by Year")}
             type="toggle"
             secondOptionsData={dataToggle}
             shouldShowOnlyOneLine={!!filters.uuid || filters.organizations.length === 1}
@@ -626,7 +626,7 @@ const Dashboard = () => {
           widthTooltip="w-80 lg:w-96"
           iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
           subtitle={t(
-            `The numbers and reports below display data related to Indicator 3: Jobs Created described in ${TERRAFUND_MRV_LINK}. TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. All indicators in the Jobs Created category are disaggregated by number of women, number of men, and number of youths. Restoration Champions are required to report on jobs and volunteers every 6 months and provide additional documentation to verify employment. Please refer to the linked MRV framework for additional details on how these numbers are sourced and verified.`
+            `This section displays data related to <em>Indicator 3: Jobs Created</em> described in ${TERRAFUND_MRV_LINK}. Please refer to the linked framework for additional details on how these numbers are sourced and verified.`
           )}
           collapseChildren={isMobile ? true : false}
         >
@@ -637,14 +637,14 @@ const Dashboard = () => {
             )}
           >
             <SecDashboard
-              title={t("Part-Time Jobs Created")}
+              title={t("Part-Time Employees")}
               data={{ value: jobsCreatedData?.totalPt }}
               classNameBody="w-full place-content-center"
               tooltip={t(NEW_PART_TIME_JOBS_TOOLTIP)}
               isUserAllowed={isUserAllowed?.allowed}
             />
             <SecDashboard
-              title={t("Full-Time Jobs Created")}
+              title={t("Full-Time Employees")}
               data={{ value: jobsCreatedData?.totalFt }}
               className="pl-12 mobile:pl-0 mobile:pt-4"
               classNameBody="w-full place-content-center"
@@ -678,14 +678,14 @@ const Dashboard = () => {
           </div>
 
           <SecDashboard
-            title={t("Total Volunteers")}
+            title={t("Volunteers")}
             data={{ value: jobsCreatedData?.totalVolunteers }}
             tooltip={t(TOTAL_VOLUNTEERS_TOOLTIP)}
             isUserAllowed={isUserAllowed?.allowed}
           />
           <div className="grid w-full grid-cols-2 gap-12">
             <SecDashboard
-              title={t("Volunteers Engaged by Gender")}
+              title={t("Volunteers by Gender")}
               data={{}}
               chartType={CHART_TYPES.doughnutChart}
               dataForChart={volunteersByGenderData}
@@ -696,7 +696,7 @@ const Dashboard = () => {
               isLoading={false}
             />
             <SecDashboard
-              title={t("Volunteers Engaged by Age")}
+              title={t("Volunteers by Age")}
               data={{}}
               chartType={CHART_TYPES.doughnutChart}
               dataForChart={volunteersByAgeData}
