@@ -1,4 +1,4 @@
-import { Box, Flex, Link, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC, useCallback, useMemo, useState } from "react";
@@ -7,6 +7,7 @@ import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
+import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
@@ -159,26 +160,26 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
             className="flex-row gap-12"
             description={
               <Flex direction="column" gap={5}>
-                {aboutContentItem?.paragraphs.map((paragraph, index) => (
-                  <Text key={index} color="neutral.900" textStyle="300">
-                    {index === 0 && <strong>{t("Project Report")} </strong>}
-                    {paragraph}
-                    {index === (aboutContentItem.paragraphs.length ?? 0) - 1 && (
-                      <>
-                        {" "}
-                        <Link
-                          href="mailto:info@terramatch.org?subject=Support%20Request%20for%20Project%20Report"
-                          fontWeight="bold"
-                          target="_blank"
-                        >
-                          <Text as="span" textStyle="200-bold">
-                            info@terramatch.org
-                          </Text>
-                        </Link>
-                      </>
-                    )}
-                  </Text>
-                ))}
+                {aboutContentItem?.paragraphs.map((paragraph, index) => {
+                  const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
+
+                  if (isLastParagraph) {
+                    return (
+                      <ContactSupport
+                        key={index}
+                        message={paragraph}
+                        subject={t("Support Request for Project Report")}
+                      />
+                    );
+                  }
+
+                  return (
+                    <Text key={index} color="neutral.900" textStyle="300">
+                      {index === 0 && <strong>{t("Project Report")} </strong>}
+                      {paragraph}
+                    </Text>
+                  );
+                })}
               </Flex>
             }
             links={

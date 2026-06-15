@@ -14,8 +14,9 @@ export const useProjectReportAboutContent = () => {
           "are how you share your project's overall progress with WRI and your funders every six months. Accurate and detailed reporting is essential, it ensures your work is fairly represented, supports transparency and accountability, and helps TerraFund track progress across the portfolio towards restoration goals, community engagement, and socioeconomic impacts."
         ),
         t(
-          "To support your reporting efforts, TerraFund team has created guidance articles to help you report clearly, thoroughly. If you have challenges or need assistance, contact your project manager or"
-        )
+          "To support your reporting efforts, TerraFund team has created guidance articles to help you report clearly, thoroughly."
+        ),
+        t("If you have challenges or need assistance, contact your project manager or")
       ],
       links: [
         {
@@ -42,9 +43,8 @@ export const useProjectReportAboutContent = () => {
         t(
           "are how you share your project's overall progress with your Project Manager/Global Lead each quarter. Accurate and detailed reporting is essential. It ensures your work is fairly represented, supports transparency and accountability, and helps the PPC team track progress across the portfolio."
         ),
-        t(
-          "Below you can find guidance to help you with reporting. If you encounter challenges or need assistance, contact your Project Manager/Global Lead or"
-        )
+        t("Beside you can find guidance to help you with reporting."),
+        t("If you encounter challenges or need assistance, contact your Project Manager/Global Lead or")
       ],
       links: [
         {

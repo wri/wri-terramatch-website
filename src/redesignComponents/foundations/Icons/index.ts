@@ -17,6 +17,7 @@ export { ChevronRightIcon } from "./Function/ChevronRightIcon";
 export { ChevronUpIcon } from "./Function/ChevronUpIcon";
 export { CloseIcon } from "./Function/CloseIcon";
 export { CommentIcon } from "./Function/CommentIcon";
+export { ContactSupportIcon } from "./Function/ContactSupportIcon";
 export { CorrectIcon } from "./Function/CorrectIcon";
 export { CompressIcon } from "./Function/CompressIcon";
 export { DisallowedIcon } from "./Function/DisallowedIcon";
