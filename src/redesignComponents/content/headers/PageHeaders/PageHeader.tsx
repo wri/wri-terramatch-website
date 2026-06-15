@@ -12,7 +12,7 @@ export interface PageHeaderProps {
 
 const PageHeader: FC<PageHeaderProps> = ({ title, tag, label }) => {
   return (
-    <Box background="secondary.neutral" paddingX={4} paddingY={3} className="flex items-center justify-between">
+    <Box background="secondary.neutral" paddingX={6} paddingY={4} className="flex items-center justify-between">
       <Text textStyle="800-bold" color="primary.900">
         {title}
       </Text>
