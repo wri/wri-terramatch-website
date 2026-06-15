@@ -21,6 +21,7 @@ import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
 import NurseryReportsTab from "./tabs/NurseryReports";
+import Overview from "./tabs/Overview";
 import PPCSocioeconomicTab from "./tabs/PPCSocioeconomic";
 import ReportDataTab from "./tabs/ReportData";
 import SiteReportsTab from "./tabs/SiteReports";
@@ -50,6 +51,11 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
 
   const tabItems = useMemo<TabItem[]>(
     () => [
+      {
+        key: "overview",
+        title: t("Overview"),
+        body: <Overview projectReport={projectReport} project={project} />
+      },
       {
         key: "report-data",
         title: t("Report Data"),
