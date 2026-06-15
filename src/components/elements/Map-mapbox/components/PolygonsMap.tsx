@@ -4,12 +4,11 @@ import classNames from "classnames";
 import type { FC } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { type MapDrawSaveHandler, useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
-import { useBoundingBox } from "@/connections/BoundingBox";
+import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useAllMedias } from "@/connections/EntityAssociation";
 import {
   POLYGON_APPROVED,
@@ -131,34 +130,38 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     }
   });
 
+  const hasPolygons = polygons.length > 0;
+
   const modelBbox = useBoundingBox(
     type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
   );
 
   const projectBbox = useBoundingBox(
-    type === "sites" && entityModel.projectUuid != null && entityModel.projectUuid !== ""
+    type === "sites" && !hasPolygons && entityModel.projectUuid != null && entityModel.projectUuid !== ""
       ? { projectUuid: entityModel.projectUuid }
       : {}
   );
 
   const countryBbox = useBoundingBox(
-    type === "sites"
+    hasPolygons
+      ? {}
+      : type === "sites"
       ? { country: entityModel.projectCountry ?? undefined }
       : { country: entityModel.country ?? undefined }
   );
 
-  const extentBbox = useMemo((): BBox | undefined => {
-    if (modelBbox != null) {
-      return modelBbox as BBox;
-    }
-    if (projectBbox != null) {
-      return projectBbox as BBox;
-    }
-    if (type === "sites" && entityModel.projectUuid != null && entityModel.projectUuid !== "") {
-      return undefined;
-    }
-    return countryBbox as BBox | undefined;
-  }, [countryBbox, entityModel.projectUuid, modelBbox, projectBbox, type]);
+  const extentBbox = useMemo(
+    () =>
+      resolveMapExtentBbox({
+        entityType: type,
+        hasPolygons,
+        modelBbox,
+        projectBbox,
+        projectUuid: entityModel.projectUuid,
+        countryBbox
+      }),
+    [countryBbox, entityModel.projectUuid, hasPolygons, modelBbox, projectBbox, type]
+  );
 
   useEffect(() => {
     setPolygonData(polygons);

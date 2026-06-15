@@ -42,7 +42,46 @@ export const loadBoundingBox = connectionLoader(boundingBoxConnection);
 export const useBoundingBox = (filter: BoundingBoxGetQueryParams) => {
   const result = useConnection(boundingBoxConnection, { filter, enabled: hasValidParams(filter) });
   const { bbox } = result[1].data ?? {};
-  return bbox as BBox | undefined;
+  return normalizeBoundingBoxDto(bbox) ?? undefined;
+};
+
+export type MapExtentEntityType = "sites" | "projects";
+
+export type ResolveMapExtentBboxParams = {
+  entityType: MapExtentEntityType;
+  hasPolygons: boolean;
+  modelBbox?: BBox | null;
+  projectBbox?: BBox | null;
+  projectUuid?: string | null;
+  countryBbox?: BBox | null;
+};
+
+export const resolveMapExtentBbox = ({
+  entityType,
+  hasPolygons,
+  modelBbox,
+  projectBbox,
+  projectUuid,
+  countryBbox
+}: ResolveMapExtentBboxParams): BBox | undefined => {
+  if (hasPolygons) {
+    return modelBbox ?? undefined;
+  }
+
+  if (modelBbox != null) {
+    return modelBbox;
+  }
+
+  if (entityType === "sites") {
+    if (projectBbox != null) {
+      return projectBbox;
+    }
+    if (projectUuid != null && projectUuid !== "") {
+      return undefined;
+    }
+  }
+
+  return countryBbox ?? undefined;
 };
 
 export const normalizeBoundingBoxDto = (bbox: number[] | undefined): BBox | null => {
@@ -56,4 +95,19 @@ export const normalizeBoundingBoxDto = (bbox: number[] | undefined): BBox | null
   }
 
   return [west, south, east, north];
+};
+
+const LARGE_EXTENT_LNG_SPAN_DEG = 15;
+const LARGE_EXTENT_LAT_SPAN_DEG = 15;
+
+export const isLargeExtentBbox = (bbox: BBox | undefined | null): boolean => {
+  if (bbox == null || bbox.length < 4) {
+    return false;
+  }
+
+  const [west, south, east, north] = bbox;
+  const lngSpan = east - west;
+  const latSpan = north - south;
+
+  return lngSpan > LARGE_EXTENT_LNG_SPAN_DEG || latSpan > LARGE_EXTENT_LAT_SPAN_DEG;
 };
