@@ -9,6 +9,7 @@ import ButtonField from "@/components/elements/Field/ButtonField";
 import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
+import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import Text from "@/components/elements/Text/Text";
 import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
 import EntityStatusBar from "@/components/extensive/EntityStatusBar";
@@ -28,6 +29,7 @@ import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportHeader from "@/pages/reports/nursery-report/components/NurseryReportHeader";
+import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
 import Log from "@/utils/log";
 
 const NurseryReportDetailPage = () => {
@@ -76,113 +78,131 @@ const NurseryReportDetailPage = () => {
             />
             <NurseryReportHeader report={nurseryReport!} title={headerReportTitle} />
             <EntityStatusBar entityName="nurseryReports" entity={nurseryReport} />
-            <PageBody>
-              {nurseryReport.nothingToReport ? (
-                <PageRow>
-                  <PageColumn>
-                    <EmptyState
-                      iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
-                      title={t("Nothing to report")}
-                      subtitle={t(
-                        "You've marked this report as 'Nothing to Report,' indicating there are no updates for this nursery report. If you wish to add information to this report, please use the edit button."
-                      )}
-                    />
-                  </PageColumn>
-                </PageRow>
-              ) : (
-                <>
-                  <PageRow>
-                    <PageColumn>
-                      <EntityMapAndGalleryCard
-                        modelName="nurseryReports"
-                        modelUUID={nurseryReport.uuid}
-                        entityData={nursery}
-                        modelTitle={t("Nursery Report")}
-                        emptyStateContent={t(
-                          "Your gallery is currently empty. Add images by using the 'Edit' button on this nursery report."
-                        )}
-                      />
-                      {nurseryReport.sharedDriveLink != null ? (
-                        <Paper>
-                          <ButtonField
-                            label={t("Shared Drive link")}
-                            buttonProps={{
-                              as: Link,
-                              children: t("View"),
-                              href: nurseryReport.sharedDriveLink ?? "",
-                              target: "_blank"
-                            }}
+            <PageBody className="pt-0">
+              <SecondaryTabs
+                tabItems={[
+                  {
+                    key: "report-data",
+                    title: t("Report Data"),
+                    body: nurseryReport.nothingToReport ? (
+                      <PageRow>
+                        <PageColumn>
+                          <EmptyState
+                            iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
+                            title={t("Nothing to report")}
+                            subtitle={t(
+                              "You've marked this report as 'Nothing to Report,' indicating there are no updates for this nursery report. If you wish to add information to this report, please use the edit button."
+                            )}
                           />
-                        </Paper>
-                      ) : null}
-                    </PageColumn>
-                  </PageRow>
-                  <PageRow>
-                    <PageColumn>
-                      <PageCard title={t("Reported Data")} gap={4}>
-                        <LongTextField title={t("Interesting Facts")}>{nurseryReport.interestingFacts}</LongTextField>
-                        <LongTextField title={t("Site Preparation")}>{nurseryReport?.sitePrep}</LongTextField>
-                      </PageCard>
-                    </PageColumn>
-                    <PageColumn>
-                      <PageCard title={t("Nursery Report Details")}>
-                        <TextField label={t("Nursery Report name")} value={nurseryReport.title!} />
-                        <TextField label={t("Nursery name")} value={nursery?.name!} />
-                        <TextField
-                          label={t("Created by")}
-                          value={
-                            (nurseryReport.createdByFirstName ?? "") + " " + (nurseryReport.createdByLastName ?? "")
-                          }
-                        />
-                        <TextField label={t("Updated")} value={format(nurseryReport.updatedAt)} />
-                        <TextField label={t("Due date")} value={format(nurseryReport.dueAt)} />
-                        <TextField label={t("Submitted date")} value={format(nurseryReport.submittedAt)} />
-                      </PageCard>
-                      <PageCard title={t("Overview")}>
-                        <Text variant="text-20-bold">{t("Seedlings Grown")}</Text>
-                        <GoalProgressCard
-                          hasProgress={false}
-                          classNameCard="!pl-0"
-                          items={[
-                            {
-                              iconName: IconNames.LEAF_CIRCLE_PD,
-                              label: t("TOTAL SEEDLINGS GROWN (on report):"),
-                              variantLabel: "text-14",
-                              classNameLabel: " text-neutral-650 uppercase !w-auto",
-                              classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                              value: nurseryReport.seedlingsYoungTrees!
-                            }
-                          ]}
-                          className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
-                          title={t("Seedlings Grown")}
-                        />
-                        <TreeSpeciesTable
-                          {...{ entity: "nurseryReports", entityUuid: nurseryReportUUID }}
-                          collection="nursery-seedling"
-                          visibleRows={8}
-                          galleryType={"treeSpeciesPD"}
-                        />
-                      </PageCard>
-                      <Paper>
-                        {nurseryReport.treeSeedlingContributions?.[0]?.url != null ? (
-                          <ButtonField
-                            label={t("Tree Seedling Contributions")}
-                            subtitle={t(nurseryReport.treeSeedlingContributions?.[0]?.fileName ?? "")}
-                            buttonProps={{
-                              as: Link,
-                              children: t("Download"),
-                              href: nurseryReport.treeSeedlingContributions?.[0]?.url ?? "",
-                              download: true
-                            }}
-                          />
-                        ) : (
-                          <TextField label={t("Tree Seedling Contributions")} value={t("No file uploaded")} />
-                        )}
-                      </Paper>
-                    </PageColumn>
-                  </PageRow>
-                </>
-              )}
+                        </PageColumn>
+                      </PageRow>
+                    ) : (
+                      <>
+                        <PageRow>
+                          <PageColumn>
+                            <EntityMapAndGalleryCard
+                              modelName="nurseryReports"
+                              modelUUID={nurseryReport.uuid}
+                              entityData={nursery}
+                              modelTitle={t("Nursery Report")}
+                              emptyStateContent={t(
+                                "Your gallery is currently empty. Add images by using the 'Edit' button on this nursery report."
+                              )}
+                            />
+                            {nurseryReport.sharedDriveLink != null ? (
+                              <Paper>
+                                <ButtonField
+                                  label={t("Shared Drive link")}
+                                  buttonProps={{
+                                    as: Link,
+                                    children: t("View"),
+                                    href: nurseryReport.sharedDriveLink ?? "",
+                                    target: "_blank"
+                                  }}
+                                />
+                              </Paper>
+                            ) : null}
+                          </PageColumn>
+                        </PageRow>
+                        <PageRow>
+                          <PageColumn>
+                            <PageCard title={t("Reported Data")} gap={4}>
+                              <LongTextField title={t("Interesting Facts")}>
+                                {nurseryReport.interestingFacts}
+                              </LongTextField>
+                              <LongTextField title={t("Site Preparation")}>{nurseryReport?.sitePrep}</LongTextField>
+                            </PageCard>
+                          </PageColumn>
+                          <PageColumn>
+                            <PageCard title={t("Nursery Report Details")}>
+                              <TextField label={t("Nursery Report name")} value={nurseryReport.title!} />
+                              <TextField label={t("Nursery name")} value={nursery?.name!} />
+                              <TextField
+                                label={t("Created by")}
+                                value={
+                                  (nurseryReport.createdByFirstName ?? "") +
+                                  " " +
+                                  (nurseryReport.createdByLastName ?? "")
+                                }
+                              />
+                              <TextField label={t("Updated")} value={format(nurseryReport.updatedAt)} />
+                              <TextField label={t("Due date")} value={format(nurseryReport.dueAt)} />
+                              <TextField label={t("Submitted date")} value={format(nurseryReport.submittedAt)} />
+                            </PageCard>
+                            <PageCard title={t("Overview")}>
+                              <Text variant="text-20-bold">{t("Seedlings Grown")}</Text>
+                              <GoalProgressCard
+                                hasProgress={false}
+                                classNameCard="!pl-0"
+                                items={[
+                                  {
+                                    iconName: IconNames.LEAF_CIRCLE_PD,
+                                    label: t("TOTAL SEEDLINGS GROWN (on report):"),
+                                    variantLabel: "text-14",
+                                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                                    classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                                    value: nurseryReport.seedlingsYoungTrees!
+                                  }
+                                ]}
+                                className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
+                                title={t("Seedlings Grown")}
+                              />
+                              <TreeSpeciesTable
+                                {...{ entity: "nurseryReports", entityUuid: nurseryReportUUID }}
+                                collection="nursery-seedling"
+                                visibleRows={8}
+                                galleryType={"treeSpeciesPD"}
+                              />
+                            </PageCard>
+                            <Paper>
+                              {nurseryReport.treeSeedlingContributions?.[0]?.url != null ? (
+                                <ButtonField
+                                  label={t("Tree Seedling Contributions")}
+                                  subtitle={t(nurseryReport.treeSeedlingContributions?.[0]?.fileName ?? "")}
+                                  buttonProps={{
+                                    as: Link,
+                                    children: t("Download"),
+                                    href: nurseryReport.treeSeedlingContributions?.[0]?.url ?? "",
+                                    download: true
+                                  }}
+                                />
+                              ) : (
+                                <TextField label={t("Tree Seedling Contributions")} value={t("No file uploaded")} />
+                              )}
+                            </Paper>
+                          </PageColumn>
+                        </PageRow>
+                      </>
+                    )
+                  },
+                  {
+                    key: "details",
+                    title: t("Report Details"),
+                    body: <NurseryReportDetailsTab report={nurseryReport} />
+                  }
+                ]}
+                containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
+              />
             </PageBody>
           </>
         )}
