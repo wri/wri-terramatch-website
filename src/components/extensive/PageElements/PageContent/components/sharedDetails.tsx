@@ -10,8 +10,8 @@ import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummary
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
-import { ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
+import { ProjectFullDto, SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { isEntityAwaitingApproval, pluralEntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { getPlantingStatus } from "@/pages/project/[uuid]/tabs/constants/Detail.constants";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -35,12 +35,12 @@ const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }
 export type SharedDetailsProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<unknown>;
-  entityName: "projects" | "sites";
+  entityName: "projects" | "sites" | "site-reports";
   entityUUID: string;
   entityStatus?: string | null;
   updateRequestStatus?: string | null;
   stepIndex: number;
-  entity: ProjectFullDto | SiteFullDto;
+  entity: ProjectFullDto | SiteFullDto | SiteReportFullDto;
   feedbackFieldsOptions?: string[] | null;
 };
 
@@ -100,7 +100,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
               handleEdit();
             } else {
               router.push(
-                `/entity/${v3EntityName(entityName)}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
+                `/entity/${pluralEntityName(entityName)}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
                   step.id
                 )}`
               );
