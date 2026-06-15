@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
@@ -28,9 +28,10 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
+import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
-import ReportsIcon from "@/redesignComponents/foundations/Icons/NavigationSections/ReportsIcon";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import Log from "@/utils/log";
@@ -424,11 +425,7 @@ function WizardForm(props: WizardFormProps) {
         redirectEntityPage: props.redirectEntityPage,
         adminListPath: props.adminListPath,
         entity: entity,
-        firstLinkIcon: formModel.model.includes("Reports") ? (
-          <ReportsIcon className="!text-theme-primary-900" />
-        ) : (
-          <ProjectIcon className="!text-theme-primary-900" />
-        ),
+        firstLinkIcon: <ProjectIcon className="!text-theme-primary-900" />,
         t,
         taskTitle
       })[formModel.model];
@@ -446,6 +443,25 @@ function WizardForm(props: WizardFormProps) {
     }
   }, [formModel?.model, t, entity, isSubmissionModel]);
 
+  const suffixButtons: SuffixButtonConfig[] = useMemo(() => {
+    if (formModel?.model === "siteReports") {
+      return [
+        { key: "site-profile", labelKey: "Site Profile" },
+        { key: "project-report", labelKey: "Project Report" }
+      ];
+    }
+    if (formModel?.model === "nurseryReports") {
+      return [
+        { key: "nursery-profile", labelKey: "Nursery Profile" },
+        { key: "project-report", labelKey: "Project Report" }
+      ];
+    }
+    return [
+      { key: "project-profile", labelKey: "Project Profile" },
+      { key: "site-reports", labelKey: "Site Reports" },
+      ...(props.framework === Framework.TF ? [{ key: "nurseries-reports", labelKey: "Nursery Reports" }] : [])
+    ];
+  }, [formModel?.model, props.framework]);
   return selectedStepIndex < 0 ? null : (
     <div className={classNames("relative", { "h-full": !isAdmin })}>
       <FrameworkProvider frameworkKey={props.framework}>
@@ -458,7 +474,25 @@ function WizardForm(props: WizardFormProps) {
           <div className={twMerge("flex h-full w-full flex-col", props.className)}>
             {entity != null && (
               <Box background={"neutral.200"} className={classNames("sticky top-0 z-20 pb-1")}>
-                {!isAdmin && <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }} />}
+                {!isAdmin && (
+                  <ToolbarObject
+                    breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }}
+                    suffix={
+                      formModel.model.includes("Reports") && (
+                        <Flex gap={1.5} alignItems="center">
+                          {suffixButtons.map((button, index) => (
+                            <Flex key={button.key} alignItems="center" gap={1.5}>
+                              {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
+                              <Button variant="borderless" size="small" className="underline underline-offset-2">
+                                {t(button.labelKey)}
+                              </Button>
+                            </Flex>
+                          ))}
+                        </Flex>
+                      )
+                    }
+                  />
+                )}
                 <div className="bg-theme-neutral-300 pt-[1px]">
                   <PageHeader
                     title={pageHeaderTitle}

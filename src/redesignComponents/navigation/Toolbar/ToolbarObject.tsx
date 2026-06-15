@@ -6,7 +6,6 @@ import Toolbar from "./Toolbar";
 import { ToolbarObjectProps } from "./ToolBar.type";
 
 const ToolbarObject: FC<ToolbarObjectProps> = ({ breadcrumbs, suffix, className, classNameSuffix }) => {
-  console.log("breadcrumbs", breadcrumbs);
   return (
     <Toolbar
       className={classNames("px-5 py-2", className)}
