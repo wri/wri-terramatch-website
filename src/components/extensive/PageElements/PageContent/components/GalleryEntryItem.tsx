@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC } from "react";
 
+import { getEntityDetailPageLink, pluralEntityName } from "@/helpers/entity";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import GalleryImage from "@/redesignComponents/content/Images/GalleryImage/GalleryImage";
 import { MediaType } from "@/redesignComponents/content/Images/Image";
@@ -42,7 +43,7 @@ const GalleryEntryItem: FC<GalleryEntryItemProps> = ({ src, name, entityName, en
           rightIcon={<ChevronRightIcon boxSize={2.5} />}
           onClick={() => {
             if (entityName && entityUUID) {
-              router.push(`/${entityName === "projects" ? "project" : "site"}/${entityUUID}?tab=gallery`);
+              router.push(getEntityDetailPageLink(pluralEntityName(entityName), entityUUID, "gallery"));
             } else {
               window.open(url ?? "", "_blank");
             }
