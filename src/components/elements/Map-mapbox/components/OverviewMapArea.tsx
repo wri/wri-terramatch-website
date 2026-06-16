@@ -3,10 +3,9 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useEffect, useMemo, useState } from "react";
 
-import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { useBoundingBox } from "@/connections/BoundingBox";
+import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import {
@@ -98,20 +97,39 @@ const OverviewMapArea = ({
     total: polygonLoadTotal
   } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortField, sortDirection, validFilter);
 
+  const hasPolygons = polygonsData.length > 0;
+  const entityType = type === "sites" ? "sites" : "projects";
+
   const modelBbox = useBoundingBox(
-    type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
+    entityType === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
+  );
+
+  const projectBbox = useBoundingBox(
+    entityType === "sites" && !hasPolygons && entityModel?.projectUuid != null && entityModel.projectUuid !== ""
+      ? { projectUuid: entityModel.projectUuid }
+      : {}
   );
 
   const countryBbox = useBoundingBox(
-    type === "sites" ? { country: entityModel?.projectCountry } : { country: entityModel?.country }
+    hasPolygons
+      ? {}
+      : entityType === "sites"
+      ? { country: entityModel?.projectCountry }
+      : { country: entityModel?.country }
   );
 
-  const extentBbox = useMemo((): BBox | undefined => {
-    if (polygonsData.length > 0) {
-      return modelBbox as BBox | undefined;
-    }
-    return countryBbox as BBox | undefined;
-  }, [polygonsData.length, modelBbox, countryBbox]);
+  const extentBbox = useMemo(
+    () =>
+      resolveMapExtentBbox({
+        entityType,
+        hasPolygons,
+        modelBbox,
+        projectBbox,
+        projectUuid: entityModel?.projectUuid,
+        countryBbox
+      }),
+    [countryBbox, entityModel?.projectUuid, entityType, hasPolygons, modelBbox, projectBbox]
+  );
 
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);

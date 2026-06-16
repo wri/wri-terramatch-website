@@ -1,10 +1,13 @@
 import { Map as MapboxMap, MapSourceDataEvent } from "mapbox-gl";
 import { MutableRefObject, useEffect, useRef } from "react";
 
+import { isLargeExtentBbox } from "@/components/elements/Map-mapbox/adapters/bbox";
 import { LAYERS_NAMES } from "@/constants/layers";
 
 import { BBox } from "../GeoJSON";
 import { getPolygonGeometryFillLayerIds } from "../layers/polygonLayers";
+
+const MIN_ZOOM_FOR_RENDERED_POLYGON_CHECK = 8;
 
 type UsePolygonTilesLoadingParams = {
   map: MutableRefObject<MapboxMap | null>;
@@ -76,6 +79,13 @@ export function usePolygonTilesLoading({
       cameraSettled = true;
     };
 
+    const shouldRequireRenderedPolygonFeatures = (): boolean => {
+      if (isLargeExtentBbox(bbox)) {
+        return false;
+      }
+      return currentMap.getZoom() >= MIN_ZOOM_FOR_RENDERED_POLYGON_CHECK;
+    };
+
     const hasRenderedPolygonFeatures = () => {
       const layerIds = getPolygonGeometryFillLayerIds().filter(layerId => currentMap.getLayer(layerId) != null);
       if (layerIds.length === 0) {
@@ -101,7 +111,7 @@ export function usePolygonTilesLoading({
       if (!currentMap.areTilesLoaded()) {
         return false;
       }
-      if (!hasRenderedPolygonFeatures()) {
+      if (shouldRequireRenderedPolygonFeatures() && !hasRenderedPolygonFeatures()) {
         return false;
       }
       return true;
