@@ -181,6 +181,7 @@ export function usePolygonTilesLoading({
     return () => {
       cancelled = true;
       cleanup();
+      onLoadingChange?.(false);
     };
   }, [map, enabled, sourcesAdded, tileLoadRequestId, polygonsData, bbox, shouldBboxZoom, onLoadingChange]);
 }

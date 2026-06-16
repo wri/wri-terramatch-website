@@ -1,4 +1,5 @@
 import { isEmpty } from "lodash";
+import { useMemo } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { clearPolygonSelectionZoomBboxCache } from "@/components/elements/Map-mapbox/polygonSelectionZoomBboxCache";
@@ -42,7 +43,7 @@ export const loadBoundingBox = connectionLoader(boundingBoxConnection);
 export const useBoundingBox = (filter: BoundingBoxGetQueryParams) => {
   const result = useConnection(boundingBoxConnection, { filter, enabled: hasValidParams(filter) });
   const { bbox } = result[1].data ?? {};
-  return normalizeBoundingBoxDto(bbox) ?? undefined;
+  return useMemo(() => normalizeBoundingBoxDto(bbox) ?? undefined, [bbox]);
 };
 
 export type MapExtentEntityType = "sites" | "projects";

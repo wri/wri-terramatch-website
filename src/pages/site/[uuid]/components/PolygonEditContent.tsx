@@ -862,7 +862,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           <Flex className="flex-1 flex-col gap-4">
             <Flex className="items-center gap-1">
               <Text textStyle="400-bold" color="neutral.900">{`${geotaggedPhotosCount} ${t("Photos")}`}</Text>
-              <Text color="neutral.900">{t("available")}</Text>
+              <Text textStyle="400" color="neutral.900">
+                {t("available")}
+              </Text>
             </Flex>
             <Switch
               name="showPhotosOnMap"
