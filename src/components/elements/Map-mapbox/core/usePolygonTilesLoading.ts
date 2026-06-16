@@ -1,13 +1,12 @@
 import { Map as MapboxMap, MapSourceDataEvent } from "mapbox-gl";
 import { MutableRefObject, useEffect, useRef } from "react";
 
-import { isLargeExtentBbox } from "@/connections/BoundingBox";
+import { isLargeExtentBbox } from "@/components/elements/Map-mapbox/adapters/bbox";
 import { LAYERS_NAMES } from "@/constants/layers";
 
 import { BBox } from "../GeoJSON";
 import { getPolygonGeometryFillLayerIds } from "../layers/polygonLayers";
 
-/** Below this zoom, site polygon fills are usually not queryable in the viewport. */
 const MIN_ZOOM_FOR_RENDERED_POLYGON_CHECK = 8;
 
 type UsePolygonTilesLoadingParams = {
