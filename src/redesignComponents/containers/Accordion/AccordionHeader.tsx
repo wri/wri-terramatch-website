@@ -9,7 +9,6 @@ import type { AccordionHeaderProps, AccordionStatus } from "./types";
 const STATUS_ICON_CONFIG: Record<AccordionStatus, { Icon: typeof CheckApprovedIcon; color: string }> = {
   complete: { Icon: CheckApprovedIcon, color: "success.500" },
   success: { Icon: CheckApprovedIcon, color: "success.500" },
-  warning: { Icon: InformationRequiredIcon, color: "warning.500" },
   error: { Icon: InformationRequiredIcon, color: "error.500" }
 };
 

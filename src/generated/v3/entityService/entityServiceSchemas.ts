@@ -967,6 +967,23 @@ export type CreateAuditStatusBody = {
   data: CreateAuditStatusData;
 };
 
+export type UpdateAuditStatusAttributes = {
+  type?: string | null;
+  comment?: string | null;
+  status?: string | null;
+  isActive?: boolean | null;
+  requestRemoved?: boolean | null;
+};
+
+export type UpdateAuditStatusData = {
+  type: "auditStatuses";
+  attributes: UpdateAuditStatusAttributes;
+};
+
+export type UpdateAuditStatusBody = {
+  data: UpdateAuditStatusData;
+};
+
 export type AggregateReportSeriesItemDto = {
   /**
    * Reporting task due date (ISO 8601), or null when the report has no due date.

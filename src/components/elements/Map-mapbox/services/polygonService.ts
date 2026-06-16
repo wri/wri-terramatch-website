@@ -29,13 +29,13 @@ export async function storePolygon(
   try {
     const result = await createSitePolygonsResource(attributes);
     const analyticsContext = getPolygonAnalyticsContext({
-      entityType: record.entityName,
+      entityType: record.entityName ?? "site",
       entityId: record.uuid
     });
     trackPolygonEvent("polygon_drawn", {
       ...analyticsContext,
       polygon_id: result.polygonUuid,
-      source: "direct"
+      polygon_source: "direct"
     });
     pruneBoundingBoxesCache();
     if (refetchSitePolygons != null) await refetchSitePolygons();
@@ -84,7 +84,7 @@ export async function storePolygonProject(
     trackPolygonEvent("polygon_drawn", {
       ...analyticsContext,
       polygon_id: polygonUuid,
-      source: "direct"
+      polygon_source: "direct"
     });
     refetch?.();
     setPolygonFromMap?.({

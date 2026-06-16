@@ -1,12 +1,15 @@
 import classNames from "classnames";
+import { useEffect, useState } from "react";
+
+import { resolveRectangularFlagSrc } from "@/components/dashboard/countryFlag.utils";
 
 export type CountryFlagSize = "xs" | "sm" | "md" | "lg";
 
-const HEIGHT_BY_SIZE: Record<CountryFlagSize, string> = {
-  xs: "h-3",
-  sm: "h-4",
-  md: "h-6",
-  lg: "h-8"
+const SIZE_CLASSES: Record<CountryFlagSize, string> = {
+  xs: "h-3 w-[18px]",
+  sm: "h-4 w-6",
+  md: "h-6 w-9",
+  lg: "h-8 w-12"
 };
 
 interface CountryFlagProps {
@@ -16,17 +19,32 @@ interface CountryFlagProps {
   className?: string;
 }
 
-const CountryFlag = ({ src, alt = "flag", size = "sm", className }: CountryFlagProps) => (
-  <span
-    className={classNames(
-      "inline-flex shrink-0 items-center justify-center overflow-visible",
-      HEIGHT_BY_SIZE[size],
-      "aspect-[3/2] w-auto",
-      className
-    )}
-  >
-    <img src={src} alt={alt} className="block h-full max-h-full w-full max-w-full object-contain object-center" />
-  </span>
-);
+const CountryFlag = ({ src, alt = "flag", size = "sm", className }: CountryFlagProps) => {
+  const [resolvedSrc, setResolvedSrc] = useState(src);
+
+  useEffect(() => {
+    let isActive = true;
+
+    void resolveRectangularFlagSrc(src).then(nextSrc => {
+      if (isActive) {
+        setResolvedSrc(nextSrc);
+      }
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, [src]);
+
+  return (
+    <span className={classNames("inline-flex shrink-0 items-center justify-center overflow-visible", className)}>
+      <img
+        src={resolvedSrc}
+        alt={alt}
+        className={classNames("block object-contain object-center", SIZE_CLASSES[size])}
+      />
+    </span>
+  );
+};
 
 export default CountryFlag;

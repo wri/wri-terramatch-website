@@ -332,7 +332,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                           />
                         ) : (
                           <div className="flex items-center gap-2">
-                            {option.prefix}
+                            {option.prefix != null ? <span className="shrink-0">{option.prefix}</span> : null}
                             <Text
                               variant={`${props.optionVariant ?? "text-14-light"}`}
                               className={tw(

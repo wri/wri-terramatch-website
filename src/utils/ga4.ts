@@ -30,7 +30,7 @@ const toPolygonEntityType = (entityType?: string | null): string => {
   if (normalized.includes("project")) return "project";
   if (normalized.includes("site")) return "site";
   if (normalized.includes("nurser")) return "nursery";
-  return "";
+  return normalized.length > 0 ? normalized : "unknown";
 };
 
 const sanitizeParams = (params: Ga4EventParams): Record<string, string | number | boolean> => {
@@ -87,8 +87,11 @@ export const trackPolygonEvent = (eventName: PolygonEventName, params: Ga4EventP
     return;
   }
 
+  const { source, ...rest } = params;
+  const normalizedParams = source != null ? { ...rest, polygon_source: source } : rest;
+
   const payload = Object.fromEntries(
-    Object.entries({ event: eventName, ...params }).filter(([, value]) => value != null)
+    Object.entries({ event: eventName, ...normalizedParams }).filter(([, value]) => value != null)
   );
 
   window.dataLayer = window.dataLayer ?? [];

@@ -271,7 +271,6 @@ function WizardForm(props: WizardFormProps) {
             "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
             isAdmin ? "bottom-0" : "bottom-[0px]"
           )}
-          cancelButtonProps={undefined}
           primaryButtonProps={{
             children: t(`${selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
             disabled: hasErrorInAnyStep && selectedStepIndex === lastIndex,
@@ -328,7 +327,7 @@ function WizardForm(props: WizardFormProps) {
         const hasFeedback = hasFeedbackInStep(props.fieldsProvider, id, entity?.feedbackFields);
 
         const state: TabItem["state"] = hasFeedback
-          ? "warning"
+          ? "error"
           : validation.isValidSync(formHook.getValues())
           ? stepsVisited.current.includes(index)
             ? "complete"

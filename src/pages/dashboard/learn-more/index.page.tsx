@@ -87,7 +87,7 @@ const Homepage = () => {
                   </a>
                 </Text>
                 <Text variant="text-14-light" as="p" className="text-darkCustom-150">
-                  At launch, the dashboard contains progress data for the nearly 200 projects financed by{" "}
+                  The dashboard contains progress data for the 251 projects financed by{" "}
                   <a
                     href="https://www.africa.terramatch.org/"
                     target="_blank"
@@ -96,8 +96,8 @@ const Homepage = () => {
                   >
                     TerraFund for AFR100
                   </a>
-                  . These projects are broken down by the two TerraFund programmes – the Top 100 programme of 2022 and
-                  Landscapes programme of 2024.
+                  . These projects are broken down by the three TerraFund programmes – Cohort One of 2022, Cohort Two of
+                  2024, and Cohort Three of 2026.
                 </Text>
                 <Text variant="text-14-light" as="p" className="text-darkCustom-150">
                   Each project reports 12 times over six years.
@@ -195,7 +195,7 @@ const Homepage = () => {
               >
                 Lake Kivu & Rusizi River Basin
               </a>
-              . These pages show relevant projects from both programmes, Top 100 and Landscapes.
+              . These pages show relevant projects from all three TerraFund programmes.
             </Text>
           </div>
           <div className="flex flex-1 flex-col gap-4">
