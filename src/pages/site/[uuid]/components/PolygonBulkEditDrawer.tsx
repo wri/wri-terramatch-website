@@ -290,6 +290,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                 >
                   <DatePickerInput
                     label={t("Plant Start Date")}
+                    showOptionalLabel={false}
                     className="!w-[13.5rem]"
                     value={plantStartDate}
                     onValueChange={setPlantStartDate}
@@ -352,6 +353,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                   <TextInput
                     width="12.75rem"
                     label={t("Trees Planted")}
+                    showOptionalLabel={false}
                     value={treesPlanted}
                     onChange={event => setTreesPlanted(event.target.value.replace(/\D/g, ""))}
                     disabled={editingField !== "numTrees"}
