@@ -525,7 +525,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       trackPolygonEvent("polygon_uploaded", {
         ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
         polygon_id: "bulk_upload",
-        source: "direct"
+        polygon_source: "direct"
       });
       refetch();
     } catch (error) {
@@ -592,7 +592,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         trackPolygonEvent("polygon_uploaded", {
           ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
           polygon_id: "bulk_upload",
-          source: "direct"
+          polygon_source: "direct"
         });
         refetch();
       }

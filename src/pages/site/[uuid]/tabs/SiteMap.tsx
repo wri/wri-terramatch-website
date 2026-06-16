@@ -134,7 +134,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
         trackPolygonEvent("polygon_uploaded", {
           ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
           polygon_id: "bulk_upload",
-          source: "direct"
+          polygon_source: "direct"
         });
         setShouldRefetchPolygonData(true);
         refetchV3();
@@ -179,7 +179,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
         trackPolygonEvent("polygon_uploaded", {
           ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
           polygon_id: "bulk_upload",
-          source: "direct"
+          polygon_source: "direct"
         });
         closeModal(ModalId.UPLOAD_IMAGES);
       } catch (error) {
