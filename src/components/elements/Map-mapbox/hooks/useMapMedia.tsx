@@ -1,12 +1,13 @@
 import { useT } from "@transifex/react";
 import { Map as MapboxMap } from "mapbox-gl";
-import React, { MutableRefObject, useEffect } from "react";
+import React, { MutableRefObject, useEffect, useRef } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { deleteMedia, updateMedia } from "@/connections/Media";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { openEditPhotoDetailsFromMapPopup } from "@/context/mapArea.utils";
+import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TranslatedText } from "@/i18n/types";
@@ -57,7 +58,11 @@ export function useMapMedia({
 }: UseMapMediaParams) {
   const championsMap = useChampionsMap();
   const { showPhotosOnMap } = useMapAreaContext();
-  const shouldShowPhotosOnMap = (alwaysShowPhotosOnMap || showPhotosOnMap) && !isPolygonGeometryLoading;
+  const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
+  const showPhotosWhileDrawerClosed = championsMap && !alwaysShowPhotosOnMap && !isPolygonEditDrawerOpen;
+  const wantsPhotosOnMap = alwaysShowPhotosOnMap || showPhotosWhileDrawerClosed || showPhotosOnMap;
+  const photosVisible = wantsPhotosOnMap && !isPolygonGeometryLoading;
+  const callbacksRef = useRef<MediaCallbacks | null>(null);
 
   useEffect(() => {
     const mapInstance = map.current;
@@ -138,27 +143,43 @@ export function useMapMedia({
       openModalImageDetail,
       isProjectPath
     };
+    callbacksRef.current = callbacks;
 
     if (championsMap) {
-      addMediaMarkers(mapInstance, mediaFiles, callbacks, shouldShowPhotosOnMap, hideMediaPopupActions);
-      return () => removeMediaMarkers(mapInstance);
+      addMediaMarkers(mapInstance, mediaFiles, callbacks, false, hideMediaPopupActions);
+      return () => {
+        removeMediaMarkers(mapInstance);
+        callbacksRef.current = null;
+      };
     }
 
-    if (!shouldShowPhotosOnMap) {
+    removeMediaSymbolLayer(mapInstance);
+
+    return () => {
+      removeMediaSymbolLayer(mapInstance);
+      callbacksRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mediaFiles, styleReady, styleVersion, championsMap, hideMediaPopupActions]);
+
+  useEffect(() => {
+    const mapInstance = map.current;
+    if (mapInstance == null || !styleReady || mediaFiles == null) return;
+
+    const callbacks = callbacksRef.current;
+    if (callbacks == null) return;
+
+    if (championsMap) {
+      addMediaMarkers(mapInstance, mediaFiles, callbacks, photosVisible, hideMediaPopupActions);
+      return;
+    }
+
+    if (!photosVisible) {
       removeMediaSymbolLayer(mapInstance);
       return;
     }
 
     addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
-    return () => removeMediaSymbolLayer(mapInstance);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    mediaFiles,
-    styleReady,
-    styleVersion,
-    championsMap,
-    shouldShowPhotosOnMap,
-    hideMediaPopupActions,
-    isPolygonGeometryLoading
-  ]);
+  }, [photosVisible, championsMap, styleReady, mediaFiles, hideMediaPopupActions]);
 }
