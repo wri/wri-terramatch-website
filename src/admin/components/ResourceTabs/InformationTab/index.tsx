@@ -240,7 +240,7 @@ const InformationTab: FC<IProps> = props => {
                         />
                       </div>
                     ) : null}
-                    {props.type !== "nursery-reports" && props.type !== "site-reports" && props.type !== "nurseries" ? (
+                    {props.type !== "nursery-reports" && props.type !== "nurseries" ? (
                       <>
                         <ContextCondition frameworksShow={[Framework.PPC]}>
                           <div className="flex flex-col gap-1">

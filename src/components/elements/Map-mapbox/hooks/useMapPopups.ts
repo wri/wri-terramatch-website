@@ -6,7 +6,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 
 import { AdminPopup } from "../components/AdminPopup";
 import { DashboardPopup } from "../components/DashboardPopup";
-import { addPopupsToMap } from "../interactions/popups";
+import { addPopupsToMap, removePopups } from "../interactions/popups";
 import type {
   DashboardPopupContext,
   EditPolygonState,
@@ -57,6 +57,11 @@ export function useMapPopups({
     editPolygonRef.current = editPolygon;
   });
 
+  const activePopupPolygonUuidRef = useRef<string | null>(null);
+  const setActivePopupPolygonUuid = (uuid: string | null) => {
+    activePopupPolygonUuidRef.current = uuid;
+  };
+
   useEffect(() => {
     if (!sourcesAdded || map.current == null || draw.current == null || !showPopups) return;
 
@@ -71,7 +76,21 @@ export function useMapPopups({
       dashboard: dashboardContext ?? undefined,
       setLoader,
       setMobilePopupData:
-        isMobile || dashboardContext?.dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined
+        isMobile || dashboardContext?.dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined,
+      setActivePopupPolygonUuid
     });
   }, [sourcesAdded, sitePolygonData, tooltipType, isMobile, showPopups, setLoader, dashboardContext, map, draw]);
+
+  useEffect(() => {
+    const activeUuid = activePopupPolygonUuidRef.current;
+    if (activeUuid == null || map.current == null || sitePolygonData == null) return;
+
+    const polygonStillExists = sitePolygonData.some(polygon => polygon.polygonUuid === activeUuid);
+    if (!polygonStillExists) {
+      removePopups(map.current, "POLYGON");
+      activePopupPolygonUuidRef.current = null;
+      callbacksRef.current.setPolygonFromMap?.({ isOpen: false, uuid: "" });
+      callbacksRef.current.setEditPolygon?.({ isOpen: false, uuid: "" });
+    }
+  }, [sitePolygonData, map]);
 }
