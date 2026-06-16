@@ -165,19 +165,31 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
                 variant="borderless"
                 size="small"
                 className="underline underline-offset-2"
-                onClick={() => router.push(`/project/${projectReport.projectUuid}`)}
+                onClick={() =>
+                  router.push(`/reports/project-report/${projectReport.uuid}?tab=site-reports`, undefined, {
+                    shallow: true
+                  })
+                }
               >
                 {t("Site Reports")}
               </Button>
-              <span className="text-sm text-theme-neutral-300">|</span>
-              <Button
-                variant="borderless"
-                size="small"
-                className="underline underline-offset-2"
-                onClick={() => router.push(`/project/${projectReport.projectUuid}`)}
-              >
-                {t("Nursery Reports")}
-              </Button>
+              {!shouldHideNurseries && (
+                <>
+                  <span className="text-sm text-theme-neutral-300">|</span>
+                  <Button
+                    variant="borderless"
+                    size="small"
+                    className="underline underline-offset-2"
+                    onClick={() =>
+                      router.push(`/reports/project-report/${projectReport.uuid}?tab=nursery-reports`, undefined, {
+                        shallow: true
+                      })
+                    }
+                  >
+                    {t("Nursery Reports")}
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         }
