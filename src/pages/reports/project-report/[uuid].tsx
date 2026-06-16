@@ -47,7 +47,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const shouldHideNurseries = framework === Framework.PPC;
 
   const reportTitle = projectReport.reportTitle ?? t("Project Report");
-  const currentTab = (router.query.tab as string) ?? "report-data";
+  const currentTab = (router.query.tab as string) ?? "overview";
 
   const tabItems = useMemo<TabItem[]>(
     () => [
@@ -160,7 +160,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
               >
                 {t("Project Profile")}
               </Button>
-              <span className="text-theme-neutral-300 text-sm">|</span>
+              <span className="text-sm text-theme-neutral-300">|</span>
               <Button
                 variant="borderless"
                 size="small"
@@ -169,7 +169,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
               >
                 {t("Site Reports")}
               </Button>
-              <span className="text-theme-neutral-300 text-sm">|</span>
+              <span className="text-sm text-theme-neutral-300">|</span>
               <Button
                 variant="borderless"
                 size="small"
