@@ -16,6 +16,7 @@ import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/ent
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
+import Details from "@/pages/reports/site-report/tabs/Details";
 import Overview from "@/pages/reports/site-report/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
@@ -72,6 +73,11 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
         key: "overview",
         title: t("Overview"),
         body: <Overview siteReport={siteReport} site={site} />
+      },
+      {
+        key: "details",
+        title: t("Details"),
+        body: <Details report={siteReport} />
       }
     ],
     [siteReport, site, t]
@@ -130,7 +136,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
           <Flex gap={1.5} alignItems="center">
             {suffixButtons.map((button, index) => (
               <Flex key={button.key} gap={1.5} alignItems="center">
-                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
+                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
                 <Button
                   variant="borderless"
                   size="small"
@@ -164,13 +170,14 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
 const SiteReportDetailPage = () => {
   const router = useRouter();
   const siteReportUUID = router.query.uuid as string;
+  const t = useT();
 
   const [reportLoaded, { data: siteReport, loadFailure }] = useFullSiteReport({ id: siteReportUUID });
   const { openToast } = useToastContext();
   useValueChanged(reportLoaded, () => {
     if (reportLoaded && siteReport == null) {
       Log.error("Site report not found", { siteReportUUID, loadFailure });
-      openToast("Site report not found", ToastType.ERROR);
+      openToast(t("Site report not found"), ToastType.ERROR);
     }
   });
 

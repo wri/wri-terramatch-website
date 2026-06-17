@@ -2,7 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { ContactSupportIcon } from "@/redesignComponents/foundations/Icons/Function/ContactSupportIcon";
+import { ContactSupportIcon } from "@/redesignComponents/foundations/Icons";
 
 const DEFAULT_EMAIL = "info@terramatch.org";
 
@@ -10,12 +10,14 @@ export interface ContactSupportProps {
   message: string;
   email?: string;
   subject?: string;
+  suffix?: string;
 }
 
 const ContactSupport: FC<ContactSupportProps> = ({
   message,
   email = DEFAULT_EMAIL,
-  subject = "Support Request for Site Report"
+  subject = "Support Request for Project Report",
+  suffix
 }) => {
   const mailtoHref = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
 
@@ -37,6 +39,7 @@ const ContactSupport: FC<ContactSupportProps> = ({
             {email}
           </Text>
         </Button>
+        {suffix}
       </Text>
     </Flex>
   );

@@ -11,6 +11,7 @@ export interface FormSummaryProps {
   onEdit?: (stepIndex: number) => void;
   feedback?: string | null;
   feedbackFieldsOptions?: string[] | null;
+  initialValues?: Record<string, unknown>;
 }
 
 export type FormSummaryOptions = {

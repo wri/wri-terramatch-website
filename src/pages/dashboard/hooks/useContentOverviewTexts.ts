@@ -1,6 +1,8 @@
 import { useT } from "@transifex/react";
 import { useMemo } from "react";
 
+import { TERRAFUND_MRV_LINK } from "@/constants/dashboardConsts";
+
 export const useContentOverviewTexts = () => {
   const t = useT();
 
@@ -21,9 +23,7 @@ export const useContentOverviewTexts = () => {
       RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP: t(
         "Hectares under restoration broken down by restoration strategy. Please note that multiple restoration strategies can occur within a single hectare. Please refer to the link in the description above for detailed definitions."
       ),
-      TERRAFUND_MRV_LINK: t(
-        `<a href="https://www.wri.org/update/land-degradation-project-recipe-for-restoration" class="underline !text-black" target="_blank">TerraFund's Monitoring, Reporting, and Verification framework</a>`
-      ),
+      TERRAFUND_MRV_LINK: t(TERRAFUND_MRV_LINK),
       IMPACT_STORIES_TOOLTIP: t(
         "Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at <a href='mailto:info@terramatch.org' class='underline !text-primary'>info@terramatch.org</a>."
       )

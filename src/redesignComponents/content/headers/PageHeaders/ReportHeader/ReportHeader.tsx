@@ -1,8 +1,13 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useCallback, useMemo } from "react";
 
+import { getStatusProps } from "@/components/extensive/EntityStatusBar";
+import EntityStatusModal from "@/components/extensive/EntityStatusModal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { useModalContext } from "@/context/modal.provider";
 import { ProjectReportFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -26,6 +31,7 @@ export interface ReportHeaderProps {
 const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName }) => {
   const t = useT();
   const router = useRouter();
+  const { openModal } = useModalContext();
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler(entityName, report.uuid);
   const { handleEdit } = useGetEditEntityHandler({
@@ -34,6 +40,28 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
     entityStatus: report.status,
     updateRequestStatus: report.updateRequestStatus
   });
+
+  const needMoreInformation =
+    report.updateRequestStatus === NEEDS_MORE_INFORMATION || report.status === NEEDS_MORE_INFORMATION;
+  const awaitingApproval = report.updateRequestStatus === AWAITING_APPROVAL || report.status === AWAITING_APPROVAL;
+  const statusProps = useMemo(() => getStatusProps(t, report, report.status), [t, report]);
+
+  const handleEditClick = useCallback(() => {
+    if (needMoreInformation && !awaitingApproval && statusProps != null) {
+      openModal(
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps}
+          feedback={report.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="projectReports"
+          entityUuid={report.uuid}
+        />
+      );
+    } else {
+      handleEdit();
+    }
+  }, [awaitingApproval, handleEdit, needMoreInformation, openModal, report.feedback, report.uuid, statusProps]);
 
   return (
     <>
@@ -91,7 +119,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
             )}
           </Flex>
           <Flex gap={2} alignItems="flex-start" className="mobile:w-full">
-            <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={() => handleEdit()}>
+            <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={handleEditClick}>
               {t("Edit")}
             </Button>
             <Button
