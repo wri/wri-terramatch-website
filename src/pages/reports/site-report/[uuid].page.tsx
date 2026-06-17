@@ -16,12 +16,11 @@ import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/ent
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
-import OverviewTab from "@/pages/reports/site-report/tabs/OverviewTab";
+import Overview from "@/pages/reports/site-report/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
-import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 
 type TabItem = {
@@ -72,10 +71,10 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
       {
         key: "overview",
         title: t("Overview"),
-        body: <OverviewTab report={siteReport} entityName={"siteReports" as EntityName} />
+        body: <Overview siteReport={siteReport} site={site} />
       }
     ],
-    [siteReport, t]
+    [siteReport, site, t]
   );
 
   const visibleTabItems = useMemo(() => {
