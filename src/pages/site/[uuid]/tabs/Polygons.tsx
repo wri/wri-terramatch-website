@@ -400,6 +400,13 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const hasPolygonSelection = selectedRows.length > 0;
   const shouldShowNoResults = !isSitePolygonsLoading && polygonRows.length === 0;
 
+  const mapPopupSubmitPolygons = useMemo(() => {
+    const sitePolygonUuid = polygonSubmitConfirmation?.sitePolygonUuid;
+    if (sitePolygonUuid == null) return [];
+    const found = polygonRows.find(row => row.id === sitePolygonUuid);
+    return found != null ? [found] : [];
+  }, [polygonSubmitConfirmation?.sitePolygonUuid, polygonRows]);
+
   useSyncPolygonTableSelectionStore(selectedRowIds);
 
   const polygonsTableStyles = useMemo(() => getPolygonsTableStyles(isStickyActive), [isStickyActive]);
@@ -532,6 +539,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           openMapPopupSubmitModal={polygonSubmitConfirmation != null}
           mapPopupSubmitEligibleCount={polygonSubmitConfirmation?.eligibleCount ?? 0}
           mapPopupSubmitTotalCount={polygonSubmitConfirmation?.totalCount ?? 0}
+          mapPopupSubmitPolygons={mapPopupSubmitPolygons}
           submittedPolygonNames={submittedPolygonNames}
           isBulkUpdatingPolygons={isBulkUpdatingPolygons}
           onBulkEditDrawerOpenChange={handleBulkEditDrawerOpenChange}

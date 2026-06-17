@@ -4,7 +4,6 @@ import { FC, useCallback, useState } from "react";
 
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
-import { WarningIcon } from "@/redesignComponents/foundations/Icons";
 
 import type { PolygonTableRow } from "../../tabs/Polygons";
 
@@ -49,7 +48,6 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({ open, o
       content={
         polygons.length === 1 ? (
           <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2}>
-            <WarningIcon boxSize={8} color={"warning.500"} mb={2} />
             <Text textStyle="400" color="neutral.900" mb={3}>
               {t("Are you sure you want to submit")}
             </Text>
@@ -59,7 +57,7 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({ open, o
           </Flex>
         ) : (
           <Box px={4}>
-            <Text textStyle="400" color="neutral.900" display={"flex"} gap={0.5} alignItems={"center"}>
+            <Text textStyle="400" color="neutral.900" display={"flex"} gap={0.5} mb={2} alignItems={"center"}>
               {t("Are you sure you want to submit these polygons?")}
             </Text>
             <Flex flexDirection="column" gap={4} bg={"neutral.200"} py={2} px={3} rounded={4}>

@@ -50,7 +50,6 @@ import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/u
 
 import {
   closePolygonProgressToast,
-  getDeletingProgressLabel,
   getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
   getSubmittingProgressLabel,
@@ -678,7 +677,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     }
 
     onDeletingChange?.(true, 1);
-    showPolygonProgressToast(t, getDeletingProgressLabel(t, 1), POLYGON_TOAST_IDS.deleting);
 
     try {
       await deleteSitePolygon(polygon.uuid);

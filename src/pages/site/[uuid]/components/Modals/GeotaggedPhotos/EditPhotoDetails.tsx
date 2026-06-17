@@ -1,11 +1,10 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { TextInput } from "@worldresources/wri-design-systems";
+import { showToast, TextInput } from "@worldresources/wri-design-systems";
 import { FC, useCallback, useRef, useState } from "react";
 
 import { deleteMedia, updateMedia } from "@/connections/Media";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useNotificationContext } from "@/context/notification.provider";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useFileSize } from "@/hooks/useFileSize";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
@@ -35,7 +34,6 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
     isPublic: data.isPublic,
     isCover: data.isCover
   });
-  const { openNotification } = useNotificationContext();
   const { setShouldRefetchMediaData } = useMapAreaContext();
 
   const hasChanges = useCallback(() => {
@@ -50,8 +48,13 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
 
   const handleSave = useCallback(async () => {
     if (!hasChanges()) {
-      openNotification("warning", t("No changes"), t("No changes were made to the image details"));
-      return;
+      showToast({
+        label: t("No changes"),
+        type: "warning",
+        placement: "bottom",
+        duration: 5000,
+        maxWidth: "auto"
+      });
     }
 
     const initial = initialValues.current;
@@ -96,11 +99,23 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
     setIsUpdating(true);
     try {
       await Promise.all(updatePromises);
-      openNotification("success", t("Success!"), t("Image updated successfully"));
+      showToast({
+        label: t("Image updated successfully"),
+        type: "success",
+        placement: "bottom",
+        duration: 5000,
+        maxWidth: "auto"
+      });
       setShouldRefetchMediaData(true);
       onClose();
     } catch (error) {
-      openNotification("error", t("Error"), t("Failed to update image details"));
+      showToast({
+        label: t("Failed to update image details"),
+        type: "error",
+        placement: "bottom",
+        duration: 5000,
+        maxWidth: "auto"
+      });
       Log.error("Failed to update image details:", error);
     } finally {
       setIsUpdating(false);
@@ -115,7 +130,6 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
     isCover,
     isPublic,
     onClose,
-    openNotification,
     photographer,
     setShouldRefetchMediaData,
     t
@@ -212,7 +226,13 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
               className: "!w-full",
               onClick: () => {
                 deleteMedia(data.uuid);
-                openNotification("success", t("Success!"), t("Image deleted successfully"));
+                showToast({
+                  label: t("Image deleted successfully"),
+                  type: "success",
+                  placement: "bottom",
+                  duration: 5000,
+                  maxWidth: "auto"
+                });
                 setShouldRefetchMediaData(true);
                 onClose();
               }
