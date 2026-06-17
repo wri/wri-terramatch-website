@@ -25,7 +25,10 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
 
   const commentContent = (
     <>
-      <b className="text-theme-neutral-800">{t("Comment")}</b>
+      <SimpleDivider className="my-2 -ml-3 !w-[calc(100%_+_1.25rem)]" />
+      <Text textStyle="400-bold" color="primary.900">
+        {t("Comment")}
+      </Text>
       <Flex>
         <CommentCard
           authorName="John Doe"
@@ -84,7 +87,6 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
               </Flex>
             </Box>
           )}
-          <SimpleDivider className="my-4" />
           {commentContent}
         </>
       }

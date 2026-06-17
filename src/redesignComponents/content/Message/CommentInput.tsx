@@ -44,6 +44,8 @@ interface CommentInputFile {
 }
 
 interface CommentInputProps {
+  label?: string;
+  caption?: string;
   name: string;
   src?: string;
   placeholder?: string;
@@ -64,10 +66,13 @@ interface CommentInputProps {
   auditEntityUuid?: string;
   auditEntityStatus?: string | null;
   onCommentCreated?: () => void;
+  showOptionalLabel?: boolean;
 }
 
 const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   const {
+    label,
+    caption,
     name,
     src,
     placeholder,
@@ -86,7 +91,8 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
     auditEntity,
     auditEntityUuid,
     auditEntityStatus,
-    onCommentCreated
+    onCommentCreated,
+    showOptionalLabel = false
   } = props;
 
   const t = useT();
@@ -344,6 +350,22 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   return (
     <Flex className="w-full flex-col gap-2">
       <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
+      {label && (
+        <Text textStyle="400-bold" color="primary.900">
+          {label}
+          {showOptionalLabel && (
+            <Text as="span" textStyle="300" color="neutral.700">
+              {" "}
+              {"(optional)"}
+            </Text>
+          )}
+        </Text>
+      )}
+      {caption && (
+        <Text textStyle="400" color="neutral.900">
+          {caption}
+        </Text>
+      )}
       <Flex className="items-center gap-3">
         <Avatar size="small" name={name} src={src} />
         <Box
