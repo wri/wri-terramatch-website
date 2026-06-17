@@ -22,7 +22,7 @@ const ShowTitle: FC<ShowTitleProps> = props => {
     </>
   );
 
-  if (isLoading) return <>`Loading ${props.moduleName}`</>;
+  if (isLoading) return <>Loading {props.moduleName}</>;
 
   const hasResourceLink =
     resource === "site" ||

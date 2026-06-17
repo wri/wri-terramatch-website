@@ -27,6 +27,7 @@ type SummaryItemProps = {
   saveChanges: () => void;
   feedback?: string | null;
   feedbackFields?: string[] | null;
+  initialValues?: Record<string, unknown>;
 };
 
 const SummaryItem: FC<SummaryItemProps> = ({
@@ -42,7 +43,8 @@ const SummaryItem: FC<SummaryItemProps> = ({
   enableSaveChangesButton,
   saveChanges,
   feedback,
-  feedbackFields
+  feedbackFields,
+  initialValues
 }) => {
   const t = useT();
   const user = useIsAdmin();
@@ -77,6 +79,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
           onEdit={setSelectedStepIndex}
           feedback={feedback}
           feedbackFieldsOptions={feedbackFields}
+          initialValues={initialValues}
         />
       </FormStepHeader>
       <FormFooter
@@ -84,7 +87,6 @@ const SummaryItem: FC<SummaryItemProps> = ({
           "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
           user ? "bottom-0" : "bottom-[0px]"
         )}
-        cancelButtonProps={undefined}
         primaryButtonProps={{
           children: t("Submit"),
           onClick: handleSubmitClick,

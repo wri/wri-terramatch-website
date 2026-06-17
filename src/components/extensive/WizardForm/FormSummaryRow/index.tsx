@@ -6,7 +6,7 @@ import type * as yup from "yup";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
-import { Framework, toFramework, useFramework } from "@/context/framework.provider";
+import { useFrameworkContext } from "@/context/framework.provider";
 import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -19,7 +19,12 @@ import SpecialEntryRenderer, {
   SPECIAL_ENTRY_TITLES
 } from "../../PageElements/PageContent/components/SpecialEntryRenderer";
 import { isTrackingType } from "../../TrackingCollapseGrid/types";
-import { countFeedbackInStep, hasFeedbackInStep } from "../feedbackUtils";
+import {
+  countFeedbackInStep,
+  countUnresolvedFeedbackInStep,
+  hasFeedbackInStep,
+  hasUnresolvedFeedbackInStep
+} from "../feedbackUtils";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
 
 const getFieldsRequiringAttentionCount = (
@@ -47,16 +52,33 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const fieldsProvider = useFieldsProvider();
   const { title } = fieldsProvider.step(stepId) ?? {};
-  const frameworkKey = useFramework();
-  const framework = toFramework(frameworkKey) as Framework;
+  const { framework } = useFrameworkContext();
   const stepsWithValidation = useFormStepsWithValidation(fieldsProvider, framework);
   const validation = stepsWithValidation[index].validation;
-  const hasStepFeedback = hasFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
+  const hasStepFeedback =
+    props.initialValues != null
+      ? hasUnresolvedFeedbackInStep(
+          fieldsProvider,
+          stepId,
+          props.feedbackFieldsOptions,
+          props.values ?? {},
+          props.initialValues
+        )
+      : hasFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
   const valid = (props.values == null || validation.isValidSync(props.values)) && !hasStepFeedback;
   const fieldsRequiringAttention = getFieldsRequiringAttentionCount(validation, props.values);
   const entities = useFormEntities();
   const entries = useGetFormEntries({ stepId, ...props, entity: entities[0] });
-  const feedbackFieldsCount = countFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
+  const feedbackFieldsCount =
+    props.initialValues != null
+      ? countUnresolvedFeedbackInStep(
+          fieldsProvider,
+          stepId,
+          props.feedbackFieldsOptions,
+          props.values ?? {},
+          props.initialValues
+        )
+      : countFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
 
   return (
     <Accordion
@@ -69,7 +91,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
               ? t("{count} requires attention", { count: fieldsRequiringAttention + feedbackFieldsCount })
               : undefined
           }
-          status={hasStepFeedback ? "warning" : valid ? "complete" : "error"}
+          status={!valid || hasStepFeedback ? "error" : "complete"}
         />
       }
       actions={

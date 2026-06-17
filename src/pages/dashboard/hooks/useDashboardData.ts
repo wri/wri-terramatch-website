@@ -17,13 +17,13 @@ import { convertNamesToCodes } from "@/utils/landscapeUtils";
 import Log from "@/utils/log";
 
 export const TREES_PLANTED_TOOLTIP =
-  "Total number of trees planted by funded projects to date, as reported through six-month progress reports.";
+  "The total self-reported number of trees planted by TerraFund organizations, over the duration of the entire project.";
 
 export const HECTARES_UNDER_RESTORATION_TOOLTIP =
-  "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects and approved by data quality analysts.";
+  "The total area where active restoration interventions are being implemented, tallied by the total area of polygons submitted by projects and approved by GIS Associates.";
 
 export const JOBS_CREATED_TOOLTIP =
-  "Number of people newly employed directly by the project. Terrafund defines a job as any individual or person, aged 18 years or older, that is directly compensated by a project at any time to support their restoration activities.";
+  "TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. Individuals counted toward indicators part-time employees and full-time employees must be directly employed by the project, as reflected on employment records.";
 
 const DEFAULT_COHORT: string[] = ["terrafund-cohort-1", "terrafund-cohort-2", "terrafund-cohort-3"];
 const DEFAULT_ORGANIZATION_TYPES: ("for-profit-organization" | "non-profit-organization")[] = [

@@ -947,6 +947,7 @@ export type AuditStatusDto = {
    * @format date-time
    */
   dateCreated: string | null;
+  isRead: boolean;
   attachments: MediaDto[];
 };
 
@@ -965,6 +966,24 @@ export type CreateAuditStatusData = {
 
 export type CreateAuditStatusBody = {
   data: CreateAuditStatusData;
+};
+
+export type UpdateAuditStatusAttributes = {
+  type?: string | null;
+  comment?: string | null;
+  status?: string | null;
+  isActive?: boolean | null;
+  requestRemoved?: boolean | null;
+  isRead?: boolean;
+};
+
+export type UpdateAuditStatusData = {
+  type: "auditStatuses";
+  attributes: UpdateAuditStatusAttributes;
+};
+
+export type UpdateAuditStatusBody = {
+  data: UpdateAuditStatusData;
 };
 
 export type AggregateReportSeriesItemDto = {
@@ -1466,6 +1485,10 @@ export type ProjectFullDto = {
   budget: number | null;
   history: string | null;
   objectives: string | null;
+  /**
+   * Long-form project summary for dashboard display
+   */
+  projectSummary: string | null;
   environmentalGoals: string | null;
   socioeconomicGoals: string | null;
   sdgsImpacted: string | null;

@@ -33,7 +33,7 @@ export interface TabsProps {
 export interface TabItem {
   title: string;
   renderBody: () => ReactElement;
-  state?: "unstarted" | "complete" | "error" | "warning";
+  state?: "unstarted" | "complete" | "error";
   disabled?: boolean;
   key?: string;
 }
@@ -44,8 +44,6 @@ function mapStateToType(state?: TabItem["state"]): TabType {
       return "complete";
     case "error":
       return "error";
-    case "warning":
-      return "warning";
     case "unstarted":
     default:
       return "available";

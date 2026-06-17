@@ -274,11 +274,15 @@ export default function SiteAttributeTable({
             enableSorting: false,
             meta: {
               sticky: true,
-              style: { position: "sticky", right: 0 },
-              cellStyles: {
-                className: " pr-6 sticky right-0 relative"
+              style: {
+                position: "sticky",
+                right: 0,
+                zIndex: 9999
               },
-              className: "whitespace-nowrap pr-6 sticky right-0 z-20 relative"
+              cellStyles: {
+                className: "pr-6 sticky right-0 relative z-[9999]"
+              },
+              className: "whitespace-nowrap pr-6 sticky right-0 relative z-[9999]"
             },
             cell: (props: { row: { original: SitePolygonRow } }) => {
               const rowData = props.row.original;

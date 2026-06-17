@@ -78,7 +78,6 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
 
   return useMemo(() => {
     if (
-      (entity === "nurseries" && collection === "nursery-seedling") ||
       (entity === "projectReports" && collection === "nursery-seedling") ||
       (entity === "projectReports" && collection === "non-tree") ||
       (entity.endsWith("Reports") && collection === "tree-planted")
@@ -157,6 +156,9 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
     const getReportAmount = (name?: string | null) =>
       reportCountEntries.find(([reportName]) => reportName?.toLowerCase() === name?.toLowerCase())?.[1].amount ?? 0;
 
+    const usesReportCounts =
+      !entity.endsWith("Reports") || (entity === "projectReports" && collection === "replanting");
+
     const entityPlants: TreeSpeciesTableRowData[] = (plants ?? []).map(({ name, taxonId, amount }) => {
       const speciesTypes = [];
       if (taxonId == null && collection !== "seeds") speciesTypes.push("non-scientific");
@@ -179,14 +181,13 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
           treeCountGoal: [reportAmount, amount ?? 0]
         };
       }
-      if (entity === "projects" && collection === "tree-planted" && tableType === "noGoal") {
+      if (entity.endsWith("Reports") && !usesReportCounts) {
+        return { ...tableRowData, treeCount: amount };
+      }
+      if (usesReportCounts && tableType === "noGoal") {
         const reportAmount = getReportAmount(name);
         return { ...tableRowData, treeCount: reportAmount, goalCount: reportAmount };
       }
-      if (entity.endsWith("Reports")) {
-        return { ...tableRowData, treeCount: amount };
-      }
-      // The getReportAmount(name) function was looking for data in reportCounts, which is only populated for report entities, not applications
       return { ...tableRowData, treeCount: amount ?? 0 };
     });
     const reportPlants: TreeSpeciesTableRowData[] = reportCountEntries

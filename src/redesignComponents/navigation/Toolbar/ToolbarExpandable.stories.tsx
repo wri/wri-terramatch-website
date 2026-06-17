@@ -90,23 +90,3 @@ export const Horizontal: Story = {
     vertical: false
   }
 };
-
-export const AutoCollapsed: Story = {
-  args: {
-    items: Default.args?.items,
-    vertical: false,
-    autoCollapse: true,
-    showExpandedToggle: false,
-    expanded: false,
-    defaultGaps: false
-  },
-  decorators: [
-    Story => (
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <div style={{ maxWidth: "300px" }}>
-          <Story />
-        </div>
-      </div>
-    )
-  ]
-};
