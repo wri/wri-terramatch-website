@@ -238,3 +238,14 @@ export const dataTableEntryValue = (headers: AccessorKeyColumnDef<any>[], field:
 
   return stringValues.join("<br/>");
 };
+
+export const getShortPeriodLabel = (taskTitle: string) => {
+  if (taskTitle == null || taskTitle === "") return "";
+  const match = taskTitle.match(/(\S+)\s+-\s+(\S+)\s+(\d{4})$/);
+  return match ? `${match[2]} ${match[3]}` : taskTitle;
+};
+
+export const getFormHeaderLabel = (entityName: string, taskTitle: string) => {
+  if (taskTitle == null || taskTitle === "") return entityName;
+  return `${entityName} - ${getShortPeriodLabel(taskTitle)}`;
+};

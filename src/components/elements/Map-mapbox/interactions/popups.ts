@@ -52,6 +52,8 @@ export type PopupHandlerOptions = {
   dashboard?: DashboardPopupContext;
   setLoader?: (value: boolean) => void;
   setMobilePopupData?: (value: MobilePopupData) => void;
+  /** Tracks the polygonUuid shown in the currently open popup so it can be closed when deleted. */
+  setActivePopupPolygonUuid?: (uuid: string | null) => void;
 };
 
 const handleLayerClick = (
@@ -121,12 +123,16 @@ const handleLayerClick = (
       : 0
   };
 
+  const polygonUuid = (feature.properties?.uuid ?? "") as string;
+  options.setActivePopupPolygonUuid?.(polygonUuid !== "" ? polygonUuid : null);
+
   const popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
   const newPopup = new Popup(popupOptions).setLngLat(lngLat).setDOMContent(popupContent);
   newPopup.on("close", () => {
     root.unmount();
+    options.setActivePopupPolygonUuid?.(null);
   });
 
   newPopup.addTo(map);
