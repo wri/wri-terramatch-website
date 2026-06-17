@@ -20,6 +20,7 @@ import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
+import ProjectReportDetailsTab from "./tabs/Details";
 import NurseryReportsTab from "./tabs/NurseryReports";
 import Overview from "./tabs/Overview";
 import PPCSocioeconomicTab from "./tabs/PPCSocioeconomic";
@@ -31,7 +32,7 @@ import UploadedFilesTab from "./tabs/UploadedFiles";
 type TabItem = {
   key: string;
   title: string;
-  body: ReactElement;
+  renderBody: () => ReactElement;
 };
 
 type ProjectReportContentProps = {
@@ -54,17 +55,22 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
       {
         key: "overview",
         title: t("Overview"),
-        body: <Overview projectReport={projectReport} project={project} />
+        renderBody: () => <Overview projectReport={projectReport} project={project} />
       },
       {
         key: "report-data",
         title: t("Report Data"),
-        body: <ReportDataTab report={projectReport} dueAt={task?.dueAt} />
+        renderBody: () => <ReportDataTab report={projectReport} dueAt={task?.dueAt} />
+      },
+      {
+        key: "details",
+        title: t("Report Details"),
+        renderBody: () => <ProjectReportDetailsTab report={projectReport} />
       },
       {
         key: "gallery",
         title: t("Gallery"),
-        body: (
+        renderBody: () => (
           <GalleryTab
             modelName="projectReports"
             modelUUID={projectReport.uuid}
@@ -80,7 +86,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
       {
         key: "socioeconomic",
         title: t("Socioeconomic Data"),
-        body: (
+        renderBody: () => (
           <>
             <ContextCondition frameworksShow={[Framework.PPC]}>
               <PPCSocioeconomicTab report={projectReport} />
@@ -94,22 +100,22 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
       {
         key: "site-reports",
         title: t("Site reports"),
-        body: <SiteReportsTab taskUuid={projectReport.taskUuid!} />
+        renderBody: () => <SiteReportsTab taskUuid={projectReport.taskUuid!} />
       },
       {
         key: "nursery-reports",
         title: t("Nursery reports"),
-        body: <NurseryReportsTab taskUuid={projectReport.taskUuid!} />
+        renderBody: () => <NurseryReportsTab taskUuid={projectReport.taskUuid!} />
       },
       {
         key: "uploaded-files",
         title: t("Uploaded Files"),
-        body: <UploadedFilesTab report={projectReport} />
+        renderBody: () => <UploadedFilesTab report={projectReport} />
       },
       {
         key: "audit-log",
         title: t("Audit Log"),
-        body: <AuditLog projectReport={projectReport} />
+        renderBody: () => <AuditLog projectReport={projectReport} />
       }
     ],
     [projectReport, task, project, t]
@@ -122,6 +128,8 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         .map(item => ({ value: item.key, label: item.title })),
     [tabItems, shouldHideNurseries]
   );
+
+  const activeTabItem = tabItems.find(item => item.key === currentTab) ?? tabItems[0];
 
   return (
     <>
@@ -205,7 +213,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
           }
         }}
       />
-      <div className="flex flex-1">{tabItems.find(item => item.key === currentTab)?.body ?? tabItems[0].body}</div>
+      <div className="flex flex-1">{activeTabItem.renderBody()}</div>
       <PageFooter />
     </>
   );
