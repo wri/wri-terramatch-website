@@ -5,11 +5,12 @@ import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import ImageGalleryCard from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
 import { HookProps } from "@/types/connection";
 
-const LatestImagesSectionTab: FC<{ entityUuid: string; entityName: SupportedEntity; columns?: number }> = ({
-  entityUuid,
-  entityName,
-  columns
-}) => {
+const LatestImagesSectionTab: FC<{
+  entityUuid: string;
+  entityName: SupportedEntity;
+  columns?: number;
+  minRows?: number;
+}> = ({ entityUuid, entityName, columns, minRows }) => {
   const router = useRouter();
   const goToTab = (tab: string) => {
     router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
@@ -42,6 +43,7 @@ const LatestImagesSectionTab: FC<{ entityUuid: string; entityName: SupportedEnti
       images={images}
       onClickAdd={() => goToTab("gallery")}
       columns={columns}
+      minRows={minRows}
     />
   );
 };
