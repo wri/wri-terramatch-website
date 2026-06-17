@@ -63,9 +63,14 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const deleteConfirmedRef = useRef(false);
   const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
   const [savePolygonName, setSavePolygonName] = useState("");
+  const [hasPlantStartDate, setHasPlantStartDate] = useState(false);
   const isCreateMode = selectedPolygon?.primaryUuid == null || selectedPolygon.primaryUuid === "";
   const isPolygonNameMissing = savePolygonName.trim() === "";
-  const isSaveDisabled = (activeTab === "edit" && isCreateMode && draftPolygonGeometry == null) || isPolygonNameMissing;
+  const isPlantStartDateMissing = !hasPlantStartDate;
+  const isSaveDisabled =
+    (activeTab === "edit" && isCreateMode && draftPolygonGeometry == null) ||
+    isPolygonNameMissing ||
+    isPlantStartDateMissing;
   const hasValidPolygonUuid = polygon?.polygonUuid != null;
 
   const [, { data: auditStatusesData }] = useAuditStatuses({
@@ -85,7 +90,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     const initialName = polygon?.polygonName?.trim() ?? "";
     getPolygonNameForSaveRef.current = () => polygon?.polygonName?.trim() ?? "";
     setSavePolygonName(initialName);
-  }, [polygon?.polygonName, selectedPolygon?.uuid]);
+    setHasPlantStartDate(selectedPolygon?.plantStart != null && selectedPolygon.plantStart !== "");
+  }, [polygon?.polygonName, selectedPolygon?.plantStart, selectedPolygon?.uuid]);
 
   const registerSave = useCallback((saveHandler: () => Promise<boolean>) => {
     setSaveEditContent(() => saveHandler);
@@ -102,6 +108,10 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const registerPolygonName = useCallback((getPolygonName: () => string) => {
     getPolygonNameForSaveRef.current = getPolygonName;
     setSavePolygonName(getPolygonName());
+  }, []);
+
+  const registerPlantStartDate = useCallback((getHasPlantStartDate: () => boolean) => {
+    setHasPlantStartDate(getHasPlantStartDate());
   }, []);
 
   const saveConfirmationPolygonName = getPolygonNameForSaveRef.current().trim();
@@ -234,6 +244,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     onRegisterDelete={registerDelete}
                     onRegisterSubmit={registerSubmit}
                     onRegisterPolygonName={registerPolygonName}
+                    onRegisterPlantStartDate={registerPlantStartDate}
                     onRequestDeleteModal={handleRequestDeleteModal}
                     onRequestSubmitModal={handleRequestSubmitModal}
                     onSaved={onSaved}
