@@ -4,7 +4,8 @@ import { FC } from "react";
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
-import { ALL_TF, Framework, toFramework } from "@/context/framework.provider";
+import Loader from "@/components/generic/Loading/Loader";
+import { Framework, toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useProjectReportKeyIndicatorsContent } from "@/pages/reports/project-report/constants/projectReportKeyIndicatorsContent";
@@ -16,7 +17,32 @@ interface KeyIndicatorsInsightsProps {
   project?: ProjectFullDto | null;
 }
 
-const TERRAFUND_FRAMEWORKS = [...ALL_TF, Framework.EPA_GHANA_PILOT];
+type FrameworkKeyIndicatorsProps = {
+  projectReport: ProjectReportFullDto;
+  project?: ProjectFullDto | null;
+};
+
+type KeyIndicatorsMetrics = {
+  treesPlantedTotal: number;
+  treesRegenerated: number;
+  treesGrownGoal: number;
+  treesRegeneratedGoal: number;
+  jobsCreatedGoal: number;
+};
+
+const getKeyIndicatorsMetrics = (
+  projectReport: ProjectReportFullDto,
+  project?: ProjectFullDto | null
+): KeyIndicatorsMetrics => ({
+  treesPlantedTotal:
+    (projectReport.treesPlantedCount ?? 0) +
+    (projectReport.seedsPlantedCount ?? 0) +
+    (projectReport.regeneratedTreesCount ?? 0),
+  treesRegenerated: projectReport.regeneratedTreesCount ?? 0,
+  treesGrownGoal: project?.treesGrownGoal ?? 0,
+  treesRegeneratedGoal: project?.goalTreesRestoredAnr ?? 0,
+  jobsCreatedGoal: project?.jobsCreatedGoal ?? 0
+});
 
 const MetricTooltip = ({ title, tooltip }: { title: string; tooltip: string }) => (
   <Box fontSize="14px" lineHeight="20px">
@@ -26,52 +52,28 @@ const MetricTooltip = ({ title, tooltip }: { title: string; tooltip: string }) =
   </Box>
 );
 
-const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport, project }) => {
-  const framework = toFramework(projectReport.frameworkKey);
+const DemographicsLoader = () => <Loader className="h-32 w-full flex-1" />;
+
+const TerrafundKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, project }) => {
   const content = useProjectReportKeyIndicatorsContent();
+  const metrics = getKeyIndicatorsMetrics(projectReport, project);
 
-  const treesPlantedTotal =
-    (projectReport.treesPlantedCount ?? 0) +
-    (projectReport.seedsPlantedCount ?? 0) +
-    (projectReport.regeneratedTreesCount ?? 0);
-  const treesRegenerated = projectReport.regeneratedTreesCount ?? 0;
-  const treesGrownGoal = project?.treesGrownGoal ?? 0;
-  const treesRegeneratedGoal = project?.goalTreesRestoredAnr ?? 0;
-  const jobsCreatedGoal = project?.jobsCreatedGoal ?? 0;
+  const jobsCreated = useCollectionsTotal({
+    entity: "projectReports",
+    uuid: projectReport.uuid,
+    domain: "demographics",
+    trackingType: "jobs" as TrackingType,
+    collections: DemographicCollections.JOBS_PROJECT
+  });
 
-  const jobsCreated =
-    useCollectionsTotal({
-      entity: "projectReports",
-      uuid: projectReport.uuid,
-      domain: "demographics",
-      trackingType: "jobs" as TrackingType,
-      collections: DemographicCollections.JOBS_PROJECT
-    }) ?? 0;
+  if (jobsCreated == null) return <DemographicsLoader />;
 
-  const workdaysCreated =
-    useCollectionsTotal({
-      entity: "projectReports",
-      uuid: projectReport.uuid,
-      domain: "demographics",
-      trackingType: "workdays" as TrackingType,
-      collections: DemographicCollections.WORKDAYS_PROJECT
-    }) ?? 0;
-
-  const directWorkdaysCreated =
-    useCollectionsTotal({
-      entity: "projectReports",
-      uuid: projectReport.uuid,
-      domain: "demographics",
-      trackingType: "workdays" as TrackingType,
-      collections: ["direct"]
-    }) ?? 0;
-
-  const renderTerrafundCards = () => (
+  return (
     <>
       <MetricCard
         title={content.terrafund.treesPlanted.title}
-        progress={treesPlantedTotal}
-        goal={treesGrownGoal}
+        progress={metrics.treesPlantedTotal}
+        goal={metrics.treesGrownGoal}
         variant="large"
         icon={<TreeIcon />}
         color="secondary.600"
@@ -86,8 +88,8 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport, 
       />
       <MetricCard
         title={content.terrafund.treesRegenerated.title}
-        progress={treesRegenerated}
-        goal={treesRegeneratedGoal}
+        progress={metrics.treesRegenerated}
+        goal={metrics.treesRegeneratedGoal}
         variant="large"
         icon={<RegenerationIcon />}
         color="secondary.600"
@@ -103,7 +105,7 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport, 
       <MetricCard
         title={content.terrafund.jobsCreated.title}
         progress={jobsCreated}
-        goal={jobsCreatedGoal}
+        goal={metrics.jobsCreatedGoal}
         variant="large"
         icon={<JobsIcon />}
         color="secondary.600"
@@ -115,13 +117,28 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport, 
       />
     </>
   );
+};
 
-  const renderPpcCards = () => (
+const PpcKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, project }) => {
+  const content = useProjectReportKeyIndicatorsContent();
+  const metrics = getKeyIndicatorsMetrics(projectReport, project);
+
+  const workdaysCreated = useCollectionsTotal({
+    entity: "projectReports",
+    uuid: projectReport.uuid,
+    domain: "demographics",
+    trackingType: "workdays" as TrackingType,
+    collections: DemographicCollections.WORKDAYS_PROJECT
+  });
+
+  if (workdaysCreated == null) return <DemographicsLoader />;
+
+  return (
     <>
       <MetricCard
         title={content.ppc.treesGrowing.title}
-        progress={treesPlantedTotal}
-        goal={treesGrownGoal}
+        progress={metrics.treesPlantedTotal}
+        goal={metrics.treesGrownGoal}
         variant="large"
         icon={<TreeIcon />}
         color="secondary.600"
@@ -134,7 +151,7 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport, 
       <MetricCard
         title={content.ppc.workdaysCreated.title}
         progress={workdaysCreated}
-        goal={jobsCreatedGoal}
+        goal={metrics.jobsCreatedGoal}
         variant="large"
         icon={<JobsIcon />}
         color="secondary.600"
@@ -143,17 +160,32 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport, 
         tooltipContent={
           <MetricTooltip title={content.ppc.workdaysCreated.title} tooltip={content.ppc.workdaysCreated.tooltip} />
         }
-        frameworkKey={framework}
+        frameworkKey={projectReport.frameworkKey ?? undefined}
       />
     </>
   );
+};
 
-  const renderHbfCards = () => (
+const HbfKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, project }) => {
+  const content = useProjectReportKeyIndicatorsContent();
+  const metrics = getKeyIndicatorsMetrics(projectReport, project);
+
+  const directWorkdaysCreated = useCollectionsTotal({
+    entity: "projectReports",
+    uuid: projectReport.uuid,
+    domain: "demographics",
+    trackingType: "workdays" as TrackingType,
+    collections: ["direct"]
+  });
+
+  if (directWorkdaysCreated == null) return <DemographicsLoader />;
+
+  return (
     <>
       <MetricCard
         title={content.hbf.saplingsGrowing.title}
-        progress={treesPlantedTotal}
-        goal={treesGrownGoal}
+        progress={metrics.treesPlantedTotal}
+        goal={metrics.treesGrownGoal}
         variant="large"
         icon={<TreeIcon />}
         color="secondary.600"
@@ -166,7 +198,7 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport, 
       <MetricCard
         title={content.hbf.workdaysCreated.title}
         progress={directWorkdaysCreated}
-        goal={jobsCreatedGoal}
+        goal={metrics.jobsCreatedGoal}
         variant="large"
         icon={<JobsIcon />}
         color="secondary.600"
@@ -175,19 +207,26 @@ const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport, 
         tooltipContent={
           <MetricTooltip title={content.hbf.workdaysCreated.title} tooltip={content.hbf.workdaysCreated.tooltip} />
         }
-        frameworkKey={framework}
+        frameworkKey={projectReport.frameworkKey ?? undefined}
       />
     </>
   );
+};
 
-  const renderCards = () => {
-    if (framework === Framework.PPC) return renderPpcCards();
-    if (framework === Framework.HBF) return renderHbfCards();
-    if (TERRAFUND_FRAMEWORKS.includes(framework)) return renderTerrafundCards();
-    return renderTerrafundCards();
-  };
+const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport, project }) => {
+  const framework = toFramework(projectReport.frameworkKey);
 
-  return <MetricCardsRow>{renderCards()}</MetricCardsRow>;
+  return (
+    <MetricCardsRow>
+      {framework === Framework.PPC ? (
+        <PpcKeyIndicators projectReport={projectReport} project={project} />
+      ) : framework === Framework.HBF ? (
+        <HbfKeyIndicators projectReport={projectReport} project={project} />
+      ) : (
+        <TerrafundKeyIndicators projectReport={projectReport} project={project} />
+      )}
+    </MetricCardsRow>
+  );
 };
 
 export default KeyIndicatorsInsights;
