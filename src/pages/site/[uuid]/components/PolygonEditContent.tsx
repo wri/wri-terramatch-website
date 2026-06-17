@@ -63,6 +63,7 @@ import UploadGeotaggedPhotos from "./Modals/GeotaggedPhotos/UploadGeotaggedPhoto
 import type { PolygonSaveCallback } from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
+  isValidPlantStartDate,
   isValidPolygonName,
   prunePolygonValidationCache,
   runPolygonCacheCleanup,
@@ -78,6 +79,7 @@ type PolygonEditContentProps = {
   onRegisterDelete: (deleteHandler: () => Promise<void>) => void;
   onRegisterSubmit: (submitHandler: () => Promise<void>) => void;
   onRegisterPolygonName?: (getPolygonName: () => string) => void;
+  onRegisterPlantStartDate?: (hasPlantStartDate: () => boolean) => void;
   onRequestDeleteModal: () => void;
   onRequestSubmitModal: () => void;
   onSaved?: PolygonSaveCallback;
@@ -128,6 +130,12 @@ const getPolygonNameForDisplay = (formName: string, polygon?: SitePolygonLightDt
   return polygon?.name?.trim() ?? "";
 };
 
+const hasPlantStartDateForDisplay = (formDate: DateValue[], polygon?: SitePolygonLightDto): boolean => {
+  if (formDate.length > 0) return true;
+  const plantStart = polygon?.plantStart;
+  return plantStart != null && plantStart !== "";
+};
+
 const PolygonEditContent: FC<PolygonEditContentProps> = ({
   polygon,
   onClose,
@@ -135,6 +143,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRegisterDelete,
   onRegisterSubmit,
   onRegisterPolygonName,
+  onRegisterPlantStartDate,
   onRequestDeleteModal,
   onRequestSubmitModal,
   onSaved,
@@ -322,6 +331,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       showStatusToast("error", t("Polygon name is required"));
       return false;
     }
+    if (!isValidPlantStartDate(plantStartDate)) {
+      showStatusToast("error", t("Plant start date is required"));
+      return false;
+    }
     if (resolvedSiteUuid == null || resolvedSiteUuid === "") {
       showStatusToast("error", t("Missing site information"));
       return false;
@@ -349,6 +362,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     draftPolygonGeometry,
     finalizeSuccessfulSave,
     getFormValues,
+    plantStartDate,
     polygonName,
     resolvedSiteUuid,
     showStatusToast,
@@ -363,6 +377,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     }
     if (!isValidPolygonName(polygonName)) {
       showStatusToast("error", t("Polygon name is required"));
+      return false;
+    }
+    if (!isValidPlantStartDate(plantStartDate)) {
+      showStatusToast("error", t("Plant start date is required"));
       return false;
     }
     if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
@@ -401,6 +419,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     polygon?.primaryUuid,
     polygon?.siteId,
     polygonGeometryEdit?.currentGeometry,
+    plantStartDate,
     polygonName,
     showStatusToast,
     t,
@@ -717,6 +736,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     onRegisterPolygonName?.(() => getPolygonNameForDisplay(polygonName, polygon));
   }, [onRegisterPolygonName, polygon, polygonName]);
 
+  useEffect(() => {
+    onRegisterPlantStartDate?.(() => hasPlantStartDateForDisplay(plantStartDate, polygon));
+  }, [onRegisterPlantStartDate, plantStartDate, polygon]);
+
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
       <UploadGeotaggedPhotos
@@ -740,7 +763,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               onChange={event => setPolygonName(event.target.value)}
               required
             />
-            <DatePickerInput label={t("Plant Start Date")} value={plantStartDate} onValueChange={setPlantStartDate} />
+            <DatePickerInput
+              required
+              showOptionalLabel={false}
+              label={t("Plant Start Date")}
+              value={plantStartDate}
+              onValueChange={setPlantStartDate}
+            />
             <SelectInput
               key={`restoration-practice-${sitePolygonUuid}-${(polygon?.practice ?? []).join("|")}`}
               items={restorationOptions}
