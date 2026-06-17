@@ -494,7 +494,9 @@ const SiteReportDetailPage = () => {
                               <TextField label={t("Site name")} value={siteReport.siteName!} />
                               <TextField
                                 label={t("Created by")}
-                                value={siteReport.createdByFirstName ?? "" + " " + siteReport.createdByLastName ?? ""}
+                                value={
+                                  (siteReport.createdByFirstName ?? "") + " " + (siteReport.createdByLastName ?? "")
+                                }
                               />
                               <TextField label={t("Updated")} value={format(siteReport.updatedAt)} />
                               <TextField label={t("Due date")} value={format(siteReport.dueAt)} />
@@ -555,7 +557,7 @@ const SiteReportDetailPage = () => {
                   {
                     key: "details",
                     title: t("Report Details"),
-                    body: <SiteReportDetailsTab report={siteReport} />
+                    renderBody: () => <SiteReportDetailsTab report={siteReport} />
                   }
                 ]}
                 containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"

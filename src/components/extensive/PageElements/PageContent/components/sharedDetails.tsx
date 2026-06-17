@@ -10,8 +10,13 @@ import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummary
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
-import { ProjectFullDto, SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { isEntityAwaitingApproval, pluralEntityName } from "@/helpers/entity";
+import {
+  ProjectFullDto,
+  ProjectReportFullDto,
+  SiteFullDto,
+  SiteReportFullDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
+import { isEntityAwaitingApproval, isEntityReport, pluralEntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { getPlantingStatus } from "@/pages/project/[uuid]/tabs/constants/Detail.constants";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -19,6 +24,7 @@ import { ProgressTag } from "@/redesignComponents/actions/Tags/ProgressTag/Progr
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import { ArrowForwardIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
+import { EntityName } from "@/types/common";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
 import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
@@ -35,12 +41,12 @@ const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }
 export type SharedDetailsProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<unknown>;
-  entityName: "projects" | "sites" | "site-reports";
+  entityName: "projects" | "sites" | "project-reports" | "site-reports";
   entityUUID: string;
   entityStatus?: string | null;
   updateRequestStatus?: string | null;
   stepIndex: number;
-  entity: ProjectFullDto | SiteFullDto | SiteReportFullDto;
+  entity: ProjectFullDto | SiteFullDto | ProjectReportFullDto | SiteReportFullDto;
   feedbackFieldsOptions?: string[] | null;
 };
 
@@ -100,7 +106,10 @@ const SharedDetails: FC<SharedDetailsProps> = ({
       actions={
         <EditButton
           onClick={() => {
-            if (entityName === "site-reports" || isEntityAwaitingApproval(entityStatus, updateRequestStatus)) {
+            if (
+              isEntityReport(entityName as EntityName) ||
+              isEntityAwaitingApproval(entityStatus, updateRequestStatus)
+            ) {
               handleEdit(step.id);
             } else {
               router.push(
@@ -121,7 +130,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
               <Text textStyle="300-bold" color="primary.900">
                 {t("Project Stage")}:
               </Text>
-              {entity.plantingStatus !== null ? (
+              {"plantingStatus" in entity && entity.plantingStatus !== null ? (
                 <>
                   <div className="flex items-center gap-2">
                     <ProgressTag state={getPlantingStatus(entity.plantingStatus)} />

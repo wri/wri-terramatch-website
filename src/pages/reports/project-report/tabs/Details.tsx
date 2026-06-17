@@ -1,26 +1,23 @@
-import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
 import { FC } from "react";
 
-import EmptyState from "@/components/elements/EmptyState/EmptyState";
-import { IconNames } from "@/components/extensive/Icon/Icon";
 import SharedDetails from "@/components/extensive/PageElements/PageContent/components/sharedDetails";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import Loader from "@/components/generic/Loading/Loader";
 import WizardFormProvider from "@/context/wizardForm.provider";
-import { SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 
-interface SiteReportDetailsTabProps {
-  report: SiteReportFullDto;
+interface ProjectReportDetailsTabProps {
+  report: ProjectReportFullDto;
 }
 
 type SharedDetailsStepProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<unknown>;
-  report: SiteReportFullDto;
+  report: ProjectReportFullDto;
   stepIndex: number;
 };
 
@@ -28,7 +25,7 @@ const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, repor
   <SharedDetails
     step={step}
     formValues={formValues}
-    entityName="site-reports"
+    entityName="project-reports"
     entityUUID={report.uuid}
     entityStatus={report.status}
     updateRequestStatus={report.updateRequestStatus}
@@ -38,29 +35,14 @@ const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, repor
   />
 );
 
-const SiteReportDetailsTab: FC<SiteReportDetailsTabProps> = ({ report }) => {
-  const t = useT();
+const ProjectReportDetailsTab: FC<ProjectReportDetailsTabProps> = ({ report }) => {
   const { steps, defaultValues, fieldsProvider, isFormLoading, providerLoaded } = useEntityFormSetup(
-    "site-reports",
+    "project-reports",
     report.uuid
   );
-  const { orgDetails, isLoading: orgLoading } = useProjectOrgFormData("site-reports", report);
+  const { orgDetails, isLoading: orgLoading } = useProjectOrgFormData("project-reports", report);
 
   const formValues = defaultValues ?? {};
-
-  if (report.nothingToReport) {
-    return (
-      <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
-        <EmptyState
-          iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
-          title={t("Nothing to report")}
-          subtitle={t(
-            "You've marked this report as 'Nothing to Report,' indicating there are no updates for this site report. If you wish to add information to this report, please use the edit button."
-          )}
-        />
-      </PageContent>
-    );
-  }
 
   if (isFormLoading || !providerLoaded || orgLoading) {
     return (
@@ -81,4 +63,4 @@ const SiteReportDetailsTab: FC<SiteReportDetailsTabProps> = ({ report }) => {
   );
 };
 
-export default SiteReportDetailsTab;
+export default ProjectReportDetailsTab;

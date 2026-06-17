@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import { startCase } from "lodash";
 import { ReactNode } from "react";
 
+import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import { ProgressState } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
 import { EntityName, SingularEntityName } from "@/types/common";
@@ -83,6 +84,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
 
   const editLink = uuid ? `/entity/${singularEntityName(model as EntityName | SingularEntityName)}/edit/${uuid}` : "#";
   const entityTitle = mapEntityTitle(entity?.title ?? entity?.name ?? null, model, t);
+  const projectTitle = mapEntityTitle(entity?.projectName ?? null, "project", t);
 
   const withFirstIcon = (
     items: Array<{ label: string; link: string }>
@@ -119,10 +121,20 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
     ]),
     projectReports: withFirstIcon([
       {
-        label: isAdmin ? linkLabel : taskTitle,
-        link: isAdmin
-          ? adminListPath!
-          : `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
+        label: "Projects",
+        link: isAdmin ? adminListPath! : "/my-projects"
+      },
+      {
+        label: projectTitle,
+        link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
+      },
+      {
+        label: "Reports",
+        link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}?tab=reporting-tasks`
+      },
+      {
+        label: getShortPeriodLabel(taskTitle),
+        link: `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
       },
       { label: entityTitle, link: entityPageLink },
       { label: t("Edit"), link: editLink }

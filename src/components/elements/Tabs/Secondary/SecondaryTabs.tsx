@@ -20,11 +20,13 @@ export interface SecondaryTabsProps extends DetailedHTMLProps<HTMLAttributes<HTM
   variant?: SecundaryTabsVariants;
   selectedIndex?: number;
   scrollable?: boolean;
+  lazyMount?: boolean;
 }
 
 export interface TabItem {
   title: string;
-  body: ReactElement;
+  body?: ReactElement;
+  renderBody?: () => ReactElement;
   disabled?: boolean;
   key?: string;
 
@@ -35,6 +37,8 @@ export interface TabItem {
   hide?: Framework[];
 }
 
+const renderTabBody = (item: TabItem) => (item.renderBody != null ? item.renderBody() : item.body ?? null);
+
 const SecondaryTabs = ({
   tabItems: _tabItems,
   className,
@@ -42,6 +46,7 @@ const SecondaryTabs = ({
   setSelectedIndex,
   selectedIndex,
   scrollable = false,
+  lazyMount = true,
   variant = VARIANT_TABS_PRIMARY,
   ...divProps
 }: SecondaryTabsProps) => {
@@ -49,7 +54,6 @@ const SecondaryTabs = ({
   const { framework } = useFrameworkContext();
   const ContentListRef = useRef<HTMLDivElement>(null);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const [selectedIndexTab, setSelectedIndexTab] = useState(0);
   const isMobile = useMediaQuery("(max-width: 1200px)");
   const tabItems = _tabItems.filter(item => {
     if (item.show != null) {
@@ -60,20 +64,24 @@ const SecondaryTabs = ({
 
     return true;
   });
-  //Default to zero
-  const _defaultIndex = Math.max(
+  const defaultIndex = Math.max(
     tabItems.findIndex(item => item.key === router.query.tab),
     0
   );
+  const [activeIndex, setActiveIndex] = useState(defaultIndex);
+
+  useValueChanged(defaultIndex, () => {
+    setActiveIndex(defaultIndex);
+  });
 
   const onTabChange = (index: number) => {
     const key = tabItems[index].key;
-    setSelectedIndexTab(index);
+    setActiveIndex(index);
     if (key) {
       router.query.tab = key;
       router.push(router, undefined, { shallow: true });
     }
-    setSelectedIndex && setSelectedIndex(index);
+    setSelectedIndex != null && setSelectedIndex(index);
   };
 
   useValueChanged(selectedIndex, () => {
@@ -87,7 +95,7 @@ const SecondaryTabs = ({
       if (isMobile) {
         const scrollWidth = ContentListRef.current.scrollWidth;
         ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft + scrollWidth / tabItems.length;
-        onTabChange(selectedIndexTab + 1);
+        onTabChange(activeIndex + 1);
       } else {
         ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft + 75;
       }
@@ -99,7 +107,7 @@ const SecondaryTabs = ({
       if (isMobile) {
         const scrollWidth = ContentListRef.current.scrollWidth;
         ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft - scrollWidth / tabItems.length;
-        onTabChange(selectedIndexTab - 1);
+        onTabChange(activeIndex - 1);
       } else {
         ContentListRef.current.scrollLeft = ContentListRef.current.scrollLeft - 75;
       }
@@ -112,7 +120,7 @@ const SecondaryTabs = ({
 
   return (
     <div className="relative">
-      <HTab.Group selectedIndex={_defaultIndex} onChange={onTabChange}>
+      <HTab.Group selectedIndex={activeIndex} onChange={onTabChange}>
         {scrollable && scrollLeft > 0 && (
           <div
             className="absolute top-0 left-0 z-50 border-b-2 border-transparent bg-tabScrollLeft bg-cover bg-left bg-no-repeat pt-0 pr-9"
@@ -189,7 +197,13 @@ const SecondaryTabs = ({
               </Button>
             </div>
           )}
-        <List as={HTab.Panels} itemAs={HTab.Panel} items={tabItems} render={item => item.body} />
+        <HTab.Panels>
+          {tabItems.map((item, index) => (
+            <HTab.Panel key={item.key ?? item.title}>
+              {!lazyMount || index === activeIndex ? renderTabBody(item) : null}
+            </HTab.Panel>
+          ))}
+        </HTab.Panels>
       </HTab.Group>
     </div>
   );
