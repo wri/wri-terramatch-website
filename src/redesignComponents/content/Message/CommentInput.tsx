@@ -1,6 +1,7 @@
 import { Box, Flex, Image, Text, Textarea } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 import { AuditStatusEntityType, useCreateAuditStatus } from "@/connections/AuditStatus";
 import { prepareFileForUpload } from "@/connections/Media";
@@ -67,6 +68,7 @@ interface CommentInputProps {
   auditEntityStatus?: string | null;
   onCommentCreated?: () => void;
   showOptionalLabel?: boolean;
+  className?: string;
 }
 
 const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
@@ -92,7 +94,8 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
     auditEntityUuid,
     auditEntityStatus,
     onCommentCreated,
-    showOptionalLabel = false
+    showOptionalLabel = false,
+    className
   } = props;
 
   const t = useT();
@@ -348,7 +351,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   }, [currentValue, adjustTextareaHeight]);
 
   return (
-    <Flex className="w-full flex-col gap-2">
+    <Flex className={twMerge("w-full flex-col gap-2", className)}>
       <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
       {label && (
         <Text textStyle="400-bold" color="primary.900">

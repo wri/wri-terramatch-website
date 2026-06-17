@@ -49,7 +49,7 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({ open, o
         <b className="text-theme-neutral-800">{polygons.length === 1 ? t("Submit Polygon?") : t("Submit Polygons?")}</b>
       }
       content={
-        <Flex className="flex-col">
+        <Flex className="flex-col gap-4">
           {polygons.length === 1 ? (
             <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2}>
               <WarningIcon boxSize={8} color={"warning.500"} mb={2} />
@@ -83,13 +83,14 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({ open, o
               </Flex>
             </Box>
           )}
-          <SimpleDivider />
+          <SimpleDivider className="my-3" />
           <CommentInput
             label={t("Comment")}
             showOptionalLabel={true}
             caption={t("Add a comment about this submission.")}
             name="submit-polygon-confirmation"
             onChange={() => {}}
+            className="bg-theme-neutral-300"
           />
         </Flex>
       }
