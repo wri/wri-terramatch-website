@@ -29,7 +29,6 @@ import { prunePolygonValidationCache } from "../components/polygonEditSave";
 import type { PolygonTableRow } from "../components/PolygonTableRow";
 import {
   closePolygonProgressToast,
-  getDeletingProgressLabel,
   getDownloadingPolygonsProgressLabel,
   getFixingOverlapsProgressLabel,
   getPolygonOperationToastLabels,
@@ -108,6 +107,7 @@ export const useSitePolygonBulkActions = ({
     submittedNames: string[];
     eligibleCount: number;
     totalCount: number;
+    polygons: PolygonTableRow[];
   } | null>(null);
   const [bulkEditPayload, setBulkEditPayload] = useState<{
     polygons: PolygonTableRow[];
@@ -227,7 +227,6 @@ export const useSitePolygonBulkActions = ({
 
     setIsDeletingPolygons(true);
     setDeletingPolygonCount(sitePolygonUuids.length);
-    showPolygonProgressToast(t, getDeletingProgressLabel(t, sitePolygonUuids.length), POLYGON_TOAST_IDS.deleting);
 
     try {
       await bulkDeleteSitePolygons(sitePolygonUuids);
@@ -398,11 +397,17 @@ export const useSitePolygonBulkActions = ({
       return;
     }
 
+    const submittableRowIdsSet = new Set(
+      selectedSubmittablePolygons
+        .map(p => p.polygonUuid ?? p.uuid)
+        .filter((id): id is string => id != null && id.length > 0)
+    );
     setSubmitPayload({
       submittablePolygonUuids: selectedSubmittablePolygonUuids,
       submittedNames: selectedSubmittablePolygons.map(polygon => polygon.name ?? t("Unnamed polygon")),
       eligibleCount: selectedSubmittablePolygons.length,
-      totalCount: selectedSitePolygons.length
+      totalCount: selectedSitePolygons.length,
+      polygons: selectedRows.filter(row => submittableRowIdsSet.has(row.id))
     });
     clearBulkTableSelection();
     setSubmitPolygonsModal(true);
@@ -411,6 +416,7 @@ export const useSitePolygonBulkActions = ({
     handleOverlapFix,
     hasSelectedOverlapFailure,
     selectedOverlapFixSummary,
+    selectedRows,
     selectedSitePolygons.length,
     selectedSubmittablePolygonUuids,
     selectedSubmittablePolygons,

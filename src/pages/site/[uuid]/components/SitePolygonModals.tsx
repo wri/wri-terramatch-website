@@ -7,7 +7,7 @@ import DeletePolygon from "./Modals/DeletePolygon";
 import EditPhotoDetails from "./Modals/GeotaggedPhotos/EditPhotoDetails";
 import OverlapFix, { type OverlapFixPolygon } from "./Modals/OverlapFix";
 import PolygonSubmitted from "./Modals/PolygonSubmitted";
-import SubmitPolygons from "./Modals/SubmitPolygons";
+import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import UploadError from "./Modals/UploadError";
 import UploadPhotos from "./Modals/UploadPhotos";
 import UploadPolygons from "./Modals/UploadPolygons";
@@ -18,7 +18,7 @@ type SitePolygonModalsProps = {
   siteUuid: string;
   bulkEditPayload: { polygons: PolygonTableRow[] } | null;
   deletePayload: { polygons: PolygonTableRow[] } | null;
-  submitPayload: { eligibleCount: number; totalCount: number } | null;
+  submitPayload: { eligibleCount: number; totalCount: number; polygons: PolygonTableRow[] } | null;
   overlapFixResults: {
     polygonsFixed: OverlapFixPolygon[];
     polygonsNotFixed: OverlapFixPolygon[];
@@ -35,6 +35,7 @@ type SitePolygonModalsProps = {
   openMapPopupSubmitModal: boolean;
   mapPopupSubmitEligibleCount: number;
   mapPopupSubmitTotalCount: number;
+  mapPopupSubmitPolygons: PolygonTableRow[];
   submittedPolygonNames: string[];
   isBulkUpdatingPolygons: boolean;
   onBulkEditDrawerOpenChange: (open: boolean) => void;
@@ -72,8 +73,7 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   openUploadModal,
   openUploadPhotosModal,
   openMapPopupSubmitModal,
-  mapPopupSubmitEligibleCount,
-  mapPopupSubmitTotalCount,
+  mapPopupSubmitPolygons,
   submittedPolygonNames,
   isBulkUpdatingPolygons,
   onBulkEditDrawerOpenChange,
@@ -109,7 +109,8 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
       onUploadSuccess={onUploadSuccess}
       onUploadError={onUploadError}
     />
-    <SubmitPolygons
+    {/* TODO: Uncomment this when validation is enabled for polygon errors and the SubmitPolygons component is ready. */}
+    {/* <SubmitPolygons
       open={openSubmitPolygonsModal}
       onOpenChange={onSubmitPolygonsModalOpenChange}
       eligibleCount={submitPayload?.eligibleCount ?? 0}
@@ -121,6 +122,19 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
       onOpenChange={onMapPopupSubmitModalOpenChange}
       eligibleCount={mapPopupSubmitEligibleCount}
       totalCount={mapPopupSubmitTotalCount}
+      onSubmit={onMapPopupSubmit}
+    /> */}
+
+    <SubmitPolygonConfirmation
+      open={openSubmitPolygonsModal}
+      onOpenChange={onSubmitPolygonsModalOpenChange}
+      polygons={submitPayload?.polygons ?? []}
+      onSubmit={onSubmitPolygons}
+    />
+    <SubmitPolygonConfirmation
+      open={openMapPopupSubmitModal}
+      onOpenChange={onMapPopupSubmitModalOpenChange}
+      polygons={mapPopupSubmitPolygons}
       onSubmit={onMapPopupSubmit}
     />
     <PolygonSubmitted

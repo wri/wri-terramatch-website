@@ -5,7 +5,6 @@ import { FC, useCallback, useState } from "react";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import CommentInput from "@/redesignComponents/content/Message/CommentInput";
-import { WarningIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 import type { PolygonTableRow } from "../../tabs/Polygons";
@@ -52,7 +51,6 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({ open, o
         <Flex className="flex-col gap-4">
           {polygons.length === 1 ? (
             <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2}>
-              <WarningIcon boxSize={8} color={"warning.500"} mb={2} />
               <Text textStyle="400" color="neutral.900" mb={3}>
                 {t("Are you sure you want to submit")}
               </Text>
