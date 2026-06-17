@@ -425,8 +425,6 @@ function WizardForm(props: WizardFormProps) {
   const isSubmissionModel = Array.isArray(props?.models) && props?.models?.length > 1;
 
   const linkHeaderMap = useMemo(() => {
-    console.log("formModel.model", formModel.model);
-    console.log("formModel.model.includes('report')", formModel.model.includes("report"));
     if (isSubmissionModel) {
       return [
         ...(entity
