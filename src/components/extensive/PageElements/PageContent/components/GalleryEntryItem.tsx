@@ -42,7 +42,7 @@ const GalleryEntryItem: FC<GalleryEntryItemProps> = ({ src, name, entityName, en
           size="small"
           rightIcon={<ChevronRightIcon boxSize={2.5} />}
           onClick={() => {
-            if (entityName && entityUUID) {
+            if (entityName != null && entityUUID != null) {
               router.push(getEntityDetailPageLink(pluralEntityName(entityName), entityUUID, "gallery"));
             } else {
               window.open(url ?? "", "_blank");
