@@ -6,19 +6,18 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import Loader from "@/components/generic/Loading/Loader";
 import WizardFormProvider from "@/context/wizardForm.provider";
-import { NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
-import NothingToReportEmptyState from "@/pages/reports/nursery-report/components/NothingToReportEmptyState";
 
-interface NurseryReportDetailsTabProps {
-  report: NurseryReportFullDto;
+interface ProjectReportDetailsTabProps {
+  report: ProjectReportFullDto;
 }
 
 type SharedDetailsStepProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<unknown>;
-  report: NurseryReportFullDto;
+  report: ProjectReportFullDto;
   stepIndex: number;
 };
 
@@ -26,7 +25,7 @@ const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, repor
   <SharedDetails
     step={step}
     formValues={formValues}
-    entityName="nursery-reports"
+    entityName="project-reports"
     entityUUID={report.uuid}
     entityStatus={report.status}
     updateRequestStatus={report.updateRequestStatus}
@@ -36,22 +35,14 @@ const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, repor
   />
 );
 
-const NurseryReportDetailsTab: FC<NurseryReportDetailsTabProps> = ({ report }) => {
+const ProjectReportDetailsTab: FC<ProjectReportDetailsTabProps> = ({ report }) => {
   const { steps, defaultValues, fieldsProvider, isFormLoading, providerLoaded } = useEntityFormSetup(
-    "nursery-reports",
+    "project-reports",
     report.uuid
   );
-  const { orgDetails, isLoading: orgLoading } = useProjectOrgFormData("nursery-reports", report);
+  const { orgDetails, isLoading: orgLoading } = useProjectOrgFormData("project-reports", report);
 
   const formValues = defaultValues ?? {};
-
-  if (report.nothingToReport) {
-    return (
-      <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
-        <NothingToReportEmptyState />
-      </PageContent>
-    );
-  }
 
   if (isFormLoading || !providerLoaded || orgLoading) {
     return (
@@ -72,4 +63,4 @@ const NurseryReportDetailsTab: FC<NurseryReportDetailsTabProps> = ({ report }) =
   );
 };
 
-export default NurseryReportDetailsTab;
+export default ProjectReportDetailsTab;

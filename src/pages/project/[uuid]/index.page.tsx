@@ -38,7 +38,7 @@ type ProjectContentProps = {
   refetch: () => void;
 };
 
-type SuffixButtonConfig = {
+export type SuffixButtonConfig = {
   key: string;
   labelKey: string;
 };

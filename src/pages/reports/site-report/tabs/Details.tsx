@@ -6,19 +6,19 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import Loader from "@/components/generic/Loading/Loader";
 import WizardFormProvider from "@/context/wizardForm.provider";
-import { NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
-import NothingToReportEmptyState from "@/pages/reports/nursery-report/components/NothingToReportEmptyState";
+import NothingToReportEmptyState from "@/pages/reports/site-report/components/NothingToReportEmptyState";
 
-interface NurseryReportDetailsTabProps {
-  report: NurseryReportFullDto;
+interface SiteReportDetailsTabProps {
+  report: SiteReportFullDto;
 }
 
 type SharedDetailsStepProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<unknown>;
-  report: NurseryReportFullDto;
+  report: SiteReportFullDto;
   stepIndex: number;
 };
 
@@ -26,7 +26,7 @@ const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, repor
   <SharedDetails
     step={step}
     formValues={formValues}
-    entityName="nursery-reports"
+    entityName="site-reports"
     entityUUID={report.uuid}
     entityStatus={report.status}
     updateRequestStatus={report.updateRequestStatus}
@@ -36,12 +36,12 @@ const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, repor
   />
 );
 
-const NurseryReportDetailsTab: FC<NurseryReportDetailsTabProps> = ({ report }) => {
+const SiteReportDetailsTab: FC<SiteReportDetailsTabProps> = ({ report }) => {
   const { steps, defaultValues, fieldsProvider, isFormLoading, providerLoaded } = useEntityFormSetup(
-    "nursery-reports",
+    "site-reports",
     report.uuid
   );
-  const { orgDetails, isLoading: orgLoading } = useProjectOrgFormData("nursery-reports", report);
+  const { orgDetails, isLoading: orgLoading } = useProjectOrgFormData("site-reports", report);
 
   const formValues = defaultValues ?? {};
 
@@ -72,4 +72,4 @@ const NurseryReportDetailsTab: FC<NurseryReportDetailsTabProps> = ({ report }) =
   );
 };
 
-export default NurseryReportDetailsTab;
+export default SiteReportDetailsTab;

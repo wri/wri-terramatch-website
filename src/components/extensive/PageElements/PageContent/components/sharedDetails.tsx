@@ -5,13 +5,19 @@ import { useRouter } from "next/router";
 import { FC, Fragment } from "react";
 
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
-import { hasFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
+import { countFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
-import { NurseryReportFullDto, ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { isEntityAwaitingApproval, pluralEntityName } from "@/helpers/entity";
+import {
+  NurseryReportFullDto,
+  ProjectFullDto,
+  ProjectReportFullDto,
+  SiteFullDto,
+  SiteReportFullDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
+import { isEntityAwaitingApproval, isEntityReport, pluralEntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { getPlantingStatus } from "@/pages/project/[uuid]/tabs/constants/Detail.constants";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -19,6 +25,7 @@ import { ProgressTag } from "@/redesignComponents/actions/Tags/ProgressTag/Progr
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import { ArrowForwardIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
+import { EntityName } from "@/types/common";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
 import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
@@ -35,12 +42,12 @@ const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }
 export type SharedDetailsProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<unknown>;
-  entityName: "projects" | "sites" | "nursery-reports";
+  entityName: "projects" | "sites" | "project-reports" | "site-reports" | "nursery-reports";
   entityUUID: string;
   entityStatus?: string | null;
   updateRequestStatus?: string | null;
   stepIndex: number;
-  entity: ProjectFullDto | SiteFullDto | NurseryReportFullDto;
+  entity: ProjectFullDto | SiteFullDto | ProjectReportFullDto | SiteReportFullDto | NurseryReportFullDto;
   feedbackFieldsOptions?: string[] | null;
 };
 
@@ -60,9 +67,13 @@ const SharedDetails: FC<SharedDetailsProps> = ({
   const fieldsProvider = useFieldsProvider();
 
   const isValid = step.validation.isValidSync(formValues);
-  const hasStepFeedback = hasFeedbackInStep(fieldsProvider, step.id, feedbackFieldsOptions);
+  const feedbackFieldsRequiringAttention = countFeedbackInStep(fieldsProvider, step.id, feedbackFieldsOptions);
+  const hasStepFeedback = feedbackFieldsRequiringAttention > 0;
   const accordionHeaderStatus = !isValid || hasStepFeedback ? "error" : "complete";
-  const fieldsRequiringAttention = getFieldsRequiringAttentionCount(step.validation, formValues);
+  const validationFieldsRequiringAttention = getFieldsRequiringAttentionCount(step.validation, formValues);
+  const fieldsRequiringAttention = hasStepFeedback
+    ? Math.max(validationFieldsRequiringAttention, feedbackFieldsRequiringAttention)
+    : validationFieldsRequiringAttention;
 
   const entries = useGetFormEntries({
     stepId: step.id,
@@ -87,7 +98,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
           title={step.title ?? ""}
           status={accordionHeaderStatus}
           badge={
-            !isValid && fieldsRequiringAttention > 0
+            fieldsRequiringAttention > 0
               ? t("{count} requires attention", { count: fieldsRequiringAttention })
               : undefined
           }
@@ -96,8 +107,11 @@ const SharedDetails: FC<SharedDetailsProps> = ({
       actions={
         <EditButton
           onClick={() => {
-            if (isEntityAwaitingApproval(entityStatus, updateRequestStatus)) {
-              handleEdit();
+            if (
+              isEntityReport(entityName as EntityName) ||
+              isEntityAwaitingApproval(entityStatus, updateRequestStatus)
+            ) {
+              handleEdit(step.id);
             } else {
               router.push(
                 `/entity/${pluralEntityName(entityName)}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
