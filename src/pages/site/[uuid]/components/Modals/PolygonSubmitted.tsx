@@ -8,13 +8,16 @@ import CommentCard from "@/redesignComponents/content/Message/CommentCard";
 import { CheckApprovedIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
+import type { SubmittedPolygonComment } from "../../hooks/useSitePolygonBulkActions";
+
 export interface PolygonSubmittedProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   polygons: string[];
+  submittedComment?: SubmittedPolygonComment | null;
 }
 
-const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polygons }) => {
+const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polygons, submittedComment }) => {
   const t = useT();
 
   const handleClose = useCallback(() => {
@@ -22,8 +25,9 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
   }, [onOpenChange]);
 
   const isSinglePolygon = polygons.length === 1;
+  const hasSubmittedComment = submittedComment != null && submittedComment.message.trim() !== "";
 
-  const commentContent = (
+  const commentContent = hasSubmittedComment ? (
     <>
       <SimpleDivider className="my-2 -ml-3 !w-[calc(100%_+_1.25rem)]" />
       <Text textStyle="400-bold" color="primary.900">
@@ -31,14 +35,16 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
       </Text>
       <Flex>
         <CommentCard
-          authorName="John Doe"
-          message="This is a test comment"
+          participantType="current-user"
+          authorName={submittedComment.authorName}
+          createdAt={submittedComment.createdAt}
+          message={submittedComment.message}
           showUnreadIcon={false}
           showContextOptions={false}
         />
       </Flex>
     </>
-  );
+  ) : null;
 
   return (
     <Modal

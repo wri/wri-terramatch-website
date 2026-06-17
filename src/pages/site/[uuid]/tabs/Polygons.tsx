@@ -322,6 +322,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     showPolygonSubmittedModal,
     showSubmitPolygonsModal,
     submittedPolygonNames,
+    submittedPolygonComment,
     isBulkUpdatingPolygons,
     isDeletingPolygons,
     isDownloadingSelectedPolygons,
@@ -541,6 +542,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           mapPopupSubmitTotalCount={polygonSubmitConfirmation?.totalCount ?? 0}
           mapPopupSubmitPolygons={mapPopupSubmitPolygons}
           submittedPolygonNames={submittedPolygonNames}
+          submittedPolygonComment={submittedPolygonComment}
           isBulkUpdatingPolygons={isBulkUpdatingPolygons}
           onBulkEditDrawerOpenChange={handleBulkEditDrawerOpenChange}
           onBulkEditSave={handleBulkEditSave}

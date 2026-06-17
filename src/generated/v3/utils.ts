@@ -162,6 +162,17 @@ export class V3ApiEndpoint<
     );
   }
 
+  async fetchAwait(variables: TVariables, headers?: THeaders): Promise<TResponse> {
+    const fullUrl = resolveUrl(this.url, variables);
+    const failure = this.fetchFailedSelector(variables)(ApiSlice.currentState);
+
+    if (failure != null) {
+      ApiSlice.clearPending(fullUrl, this.method);
+    }
+
+    return await this.executeRequest(variables, headers);
+  }
+
   /**
    * Provides a way to execute create requests in parallel. Important things to note:
    *  - This method ignores the pending store when dispatching the request. This means that the

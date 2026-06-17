@@ -3,6 +3,7 @@ import type { FC } from "react";
 import type { BulkSitePolygonAttributeChanges } from "@/connections/SitePolygons";
 import type { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
+import type { SubmittedPolygonComment } from "../hooks/useSitePolygonBulkActions";
 import DeletePolygon from "./Modals/DeletePolygon";
 import EditPhotoDetails from "./Modals/GeotaggedPhotos/EditPhotoDetails";
 import OverlapFix, { type OverlapFixPolygon } from "./Modals/OverlapFix";
@@ -37,6 +38,7 @@ type SitePolygonModalsProps = {
   mapPopupSubmitTotalCount: number;
   mapPopupSubmitPolygons: PolygonTableRow[];
   submittedPolygonNames: string[];
+  submittedPolygonComment: SubmittedPolygonComment | null;
   isBulkUpdatingPolygons: boolean;
   onBulkEditDrawerOpenChange: (open: boolean) => void;
   onBulkEditSave: (attributeChanges: BulkSitePolygonAttributeChanges) => void | Promise<void>;
@@ -44,11 +46,11 @@ type SitePolygonModalsProps = {
   onDeletePolygonModalOpenChange: (open: boolean) => void;
   onEditPhotoDetailsClose: () => void;
   onMapPopupSubmitModalOpenChange: (open: boolean) => void;
-  onMapPopupSubmit: () => void | Promise<void>;
+  onMapPopupSubmit: (comment: string) => void | Promise<void>;
   onOverlapFixClose: () => void;
   onPolygonSubmittedModalOpenChange: (open: boolean) => void;
   onSubmitPolygonsModalOpenChange: (open: boolean) => void;
-  onSubmitPolygons: () => void | Promise<void>;
+  onSubmitPolygons: (comment: string) => void | Promise<void>;
   onUploadError: () => void;
   onUploadErrorModalOpenChange: (open: boolean) => void;
   onUploadModalOpenChange: (open: boolean) => void;
@@ -75,6 +77,7 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   openMapPopupSubmitModal,
   mapPopupSubmitPolygons,
   submittedPolygonNames,
+  submittedPolygonComment,
   isBulkUpdatingPolygons,
   onBulkEditDrawerOpenChange,
   onBulkEditSave,
@@ -141,6 +144,7 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
       open={openPolygonSubmittedModal && submittedPolygonNames.length > 0}
       onOpenChange={onPolygonSubmittedModalOpenChange}
       polygons={submittedPolygonNames}
+      submittedComment={submittedPolygonComment}
     />
     <DeletePolygon
       open={openDeletePolygonModal}

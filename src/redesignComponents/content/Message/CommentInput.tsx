@@ -68,6 +68,7 @@ interface CommentInputProps {
   auditEntityStatus?: string | null;
   onCommentCreated?: () => void;
   showOptionalLabel?: boolean;
+  showSendIcon?: boolean;
   className?: string;
 }
 
@@ -95,6 +96,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
     auditEntityStatus,
     onCommentCreated,
     showOptionalLabel = false,
+    showSendIcon = true,
     className
   } = props;
 
@@ -319,7 +321,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   const hasFiles = (effectiveFiles?.length ?? 0) > 0;
   const hasContent = currentValue.trim().length > 0;
   const isSubmitting = isCreating || isUploadingFiles;
-  const shouldShowSendIcon = !currentIsEditing && (isAuditMode ? hasContent || hasFiles : !hasFiles);
+  const shouldShowSendIcon = showSendIcon && !currentIsEditing && (isAuditMode ? hasContent || hasFiles : !hasFiles);
 
   const adjustTextareaHeight = useCallback((target?: HTMLTextAreaElement | null) => {
     const textarea = target ?? textareaRef.current;
