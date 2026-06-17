@@ -4,6 +4,7 @@ import { FC } from "react";
 import SharedDetails from "@/components/extensive/PageElements/PageContent/components/sharedDetails";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
+import Loader from "@/components/generic/Loading/Loader";
 import WizardFormProvider from "@/context/wizardForm.provider";
 import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
@@ -44,7 +45,11 @@ const ProjectReportDetailsTab: FC<ProjectReportDetailsTabProps> = ({ report }) =
   const formValues = defaultValues ?? {};
 
   if (isFormLoading || !providerLoaded || orgLoading) {
-    return null;
+    return (
+      <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
+        <Loader className="h-32 w-full" />
+      </PageContent>
+    );
   }
 
   return (
