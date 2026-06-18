@@ -33,6 +33,7 @@ export type PolygonBulkActionToolbarProps = {
   polygons: PolygonTableRow[];
   polygonValidations: Map<string, ValidationDto>;
   selectedGeometryPolygonUuids: string[];
+  isAwaitingValidationResults?: boolean;
 };
 
 const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
@@ -53,6 +54,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   onRunValidation,
   polygonValidations,
   selectedGeometryPolygonUuids,
+  isAwaitingValidationResults = false,
   isOverlapFixAction = false,
   canAutoFixOverlap = false,
   isSubmitDisabled = false
@@ -61,6 +63,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const t = useT();
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
   const [validatedPolygons, setValidatedPolygons] = useState<PolygonTableRow[]>([]);
+  const [validatedGeometryPolygonUuids, setValidatedGeometryPolygonUuids] = useState<string[]>([]);
   const isOverlapAutoFixUnavailable = isOverlapFixAction && !canAutoFixOverlap;
   const submitDisabledTooltip = useMemo(
     () =>
@@ -77,6 +80,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     setIsSystemValidationCompleteModalOpen(open);
     if (!open) {
       setValidatedPolygons([]);
+      setValidatedGeometryPolygonUuids([]);
     }
   }, []);
 
@@ -86,7 +90,13 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     }
 
     const polygonUuids = selectedGeometryPolygonUuids;
-    setValidatedPolygons(polygons);
+    setValidatedPolygons(
+      polygons.map((polygon, index) => ({
+        ...polygon,
+        id: polygonUuids[index] ?? polygon.id
+      }))
+    );
+    setValidatedGeometryPolygonUuids(polygonUuids);
     onClearSelection?.();
 
     try {
@@ -175,10 +185,12 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     <>
       <SystemValidationComplete
         polygons={validatedPolygons}
+        geometryPolygonUuids={validatedGeometryPolygonUuids}
         polygonValidations={polygonValidations}
         open={isSystemValidationCompleteModalOpen}
         onOpenChange={handleSystemValidationCompleteModalChange}
         onViewDetails={handleViewValidationDetails}
+        isLoadingResults={isAwaitingValidationResults}
       />
       {isToolbarVisible && (
         <Box position="fixed" zIndex="100" bottom={3} left={3} right={3}>

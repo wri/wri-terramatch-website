@@ -4,7 +4,6 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { getUnreadCommentCount, useAuditStatuses } from "@/connections/AuditStatus";
 import { useMyUser } from "@/connections/User";
-import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import type { PolygonEditDrawerPolygon } from "@/context/polygonEditDrawer.types";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -16,7 +15,7 @@ import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 
 import DeletePolygon from "./Modals/DeletePolygon";
 import SavePolygon from "./Modals/SavePolygon";
-import SubmitPolygons from "./Modals/SubmitPolygons";
+import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import PolygonCommentContent from "./PolygonCommentContent";
 import type { PolygonOverlapFixCallback, PolygonSaveCallback } from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
@@ -55,11 +54,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const [activeTab, setActiveTab] = useState<string>("edit");
   const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
   const deletePolygonRef = useRef<(() => Promise<void>) | null>(null);
-  const submitPolygonRef = useRef<(() => Promise<void>) | null>(null);
+  const submitPolygonRef = useRef<((comment: string) => Promise<void>) | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
   const [deletePayload, setDeletePayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
-  const [submitPayload, setSubmitPayload] = useState<{ eligibleCount: number; totalCount: number } | null>(null);
+  const [submitPayload, setSubmitPayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
   const deleteConfirmedRef = useRef(false);
   const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
   const [savePolygonName, setSavePolygonName] = useState("");
@@ -101,7 +100,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     deletePolygonRef.current = deleteHandler;
   }, []);
 
-  const registerSubmit = useCallback((submitHandler: () => Promise<void>) => {
+  const registerSubmit = useCallback((submitHandler: (comment: string) => Promise<void>) => {
     submitPolygonRef.current = submitHandler;
   }, []);
 
@@ -166,11 +165,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
       return;
     }
 
-    const isPolygonSubmittable =
-      selectedPolygon.status !== POLYGON_PENDING_APPROVAL && selectedPolygon.status !== POLYGON_APPROVED;
-
-    setSubmitPayload({ eligibleCount: isPolygonSubmittable ? 1 : 0, totalCount: 1 });
-  }, [selectedPolygon]);
+    setSubmitPayload({ polygons: [mapSitePolygonToTableRow(selectedPolygon, t)] });
+  }, [selectedPolygon, t]);
 
   const handleDeleteConfirmationModalChange = useCallback(
     (nextOpen: boolean) => {
@@ -315,16 +311,15 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         }}
       />
 
-      <SubmitPolygons
+      <SubmitPolygonConfirmation
         open={submitPayload != null}
         onOpenChange={open => {
           if (!open) {
             setSubmitPayload(null);
           }
         }}
-        eligibleCount={submitPayload?.eligibleCount ?? 0}
-        totalCount={submitPayload?.totalCount ?? 0}
-        onSubmit={() => submitPolygonRef.current?.()}
+        polygons={submitPayload?.polygons ?? []}
+        onSubmit={comment => submitPolygonRef.current?.(comment)}
       />
     </>
   );

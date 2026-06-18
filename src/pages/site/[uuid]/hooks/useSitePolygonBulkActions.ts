@@ -78,6 +78,7 @@ type UseSitePolygonBulkActionsParams = {
     polygonsFixed: OverlapFixPolygon[];
     polygonsNotFixed: OverlapFixPolygon[];
   }) => void;
+  onValidationJobsStarted?: (polygonUuids: string[]) => void;
 };
 
 export const useSitePolygonBulkActions = ({
@@ -95,7 +96,8 @@ export const useSitePolygonBulkActions = ({
   refetchPolygons,
   fetchAllValidationPages,
   fetchOverlapValidations,
-  onOverlapFixResultsOpen
+  onOverlapFixResultsOpen,
+  onValidationJobsStarted
 }: UseSitePolygonBulkActionsParams) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
@@ -264,15 +266,19 @@ export const useSitePolygonBulkActions = ({
     }
   }, [closeMapPopups, deletePayload, invalidatePolygonMapTiles, openNotification, refreshPolygonData, t, toastLabels]);
 
-  const runPolygonValidation = useCallback(async (polygonUuids: string[]) => {
-    if (polygonUuids.length === 0) {
-      return;
-    }
+  const runPolygonValidation = useCallback(
+    async (polygonUuids: string[]) => {
+      if (polygonUuids.length === 0) {
+        return;
+      }
 
-    await createPolygonValidation({ polygonUuids });
-    ApiSlice.pruneCache("validations");
-    await listDelayedJobs.fetch({});
-  }, []);
+      await createPolygonValidation({ polygonUuids });
+      ApiSlice.pruneCache("validations");
+      await listDelayedJobs.fetch({});
+      onValidationJobsStarted?.(polygonUuids);
+    },
+    [onValidationJobsStarted]
+  );
 
   const handleRunValidation = useCallback(
     async (polygonUuids: string[]) => {
@@ -453,6 +459,7 @@ export const useSitePolygonBulkActions = ({
           POLYGON_PENDING_APPROVAL as PolygonStatus,
           comment
         );
+
         const trimmedComment = comment.trim();
         setSubmittedPolygonComment(
           trimmedComment === ""
@@ -472,6 +479,7 @@ export const useSitePolygonBulkActions = ({
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
         showPolygonCompleteToast(toastLabels.submittingComplete);
         pendingPolygonSubmittedModalRef.current = true;
+        ApiSlice.pruneCache("auditStatuses");
       } catch (error) {
         Log.error("Failed to submit selected polygons:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);

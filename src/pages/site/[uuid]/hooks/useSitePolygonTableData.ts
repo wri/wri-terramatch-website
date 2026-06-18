@@ -1,19 +1,29 @@
 import { useMemo } from "react";
 
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
+import { mapValidationDtoToTagState } from "../components/Modals/validationCriteria";
 import { PolygonTableRow } from "../components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
 
 type UseSitePolygonTableDataParams = {
   polygonsData: SitePolygonLightDto[];
+  polygonValidations: Map<string, ValidationDto>;
   t: (key: string, params?: Record<string, unknown>) => string;
 };
 
-export const useSitePolygonTableData = ({ polygonsData, t }: UseSitePolygonTableDataParams) => {
+export const useSitePolygonTableData = ({ polygonsData, polygonValidations, t }: UseSitePolygonTableDataParams) => {
   const polygonRows = useMemo<PolygonTableRow[]>(
-    () => polygonsData.map(polygon => mapSitePolygonToTableRow(polygon, t)),
-    [polygonsData, t]
+    () =>
+      polygonsData.map(polygon => {
+        const row = mapSitePolygonToTableRow(polygon, t);
+        const polygonUuid = polygon.polygonUuid ?? polygon.uuid;
+        const validationFromDto =
+          polygonUuid != null ? mapValidationDtoToTagState(polygonValidations.get(polygonUuid)) : null;
+
+        return validationFromDto != null ? { ...row, validation: validationFromDto } : row;
+      }),
+    [polygonsData, polygonValidations, t]
   );
 
   const { totalTreesPlanted, totalRestorationAreaHa } = useMemo(() => {
