@@ -41,6 +41,13 @@ const filters = [
         name: "Not Verified"
       }
     ]}
+  />,
+  <SelectInput
+    key="t"
+    label="User Type"
+    source="primaryRole"
+    className="select-page-admin"
+    choices={userPrimaryRoleChoices}
   />
 ];
 
