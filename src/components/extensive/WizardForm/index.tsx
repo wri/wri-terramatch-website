@@ -8,7 +8,6 @@ import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 import { FieldErrors, useForm, UseFormProps, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
-import AdminLinkWrapper from "@/components/elements/AdminLinkWrapper/AdminLinkWrapper";
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
@@ -34,7 +33,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
-import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
+import ResponsiveBreadcrumbToolbar from "@/redesignComponents/navigation/Toolbar/ResponsiveBreadcrumbToolbar";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import Log from "@/utils/log";
 
@@ -533,8 +532,8 @@ function WizardForm(props: WizardFormProps) {
             {entity != null && (
               <Box background={"neutral.200"} className={classNames("sticky top-0 z-20 pb-1")}>
                 {!isAdmin && (
-                  <ToolbarObject
-                    breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }}
+                  <ResponsiveBreadcrumbToolbar
+                    breadcrumbs={linkHeaderMap}
                     suffix={
                       formModel.model.includes("Reports") && (
                         <Flex gap={1.5} alignItems="center">
