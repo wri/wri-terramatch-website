@@ -175,7 +175,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         link: isAdmin ? adminListPath! : "/my-projects"
       },
       {
-        label: projectTitle,
+        label: projectTitle?.slice(0, 20) + "...",
         link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
       },
       {
