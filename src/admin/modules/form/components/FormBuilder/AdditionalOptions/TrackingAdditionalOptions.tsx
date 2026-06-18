@@ -2,11 +2,12 @@ import { Delete as DeleteIcon } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { get } from "lodash";
 import { FC, useCallback, useState } from "react";
-import { ArrayInput, BooleanInput, FormDataConsumerRenderParams, required, TextInput } from "react-admin";
+import { ArrayInput, BooleanInput, FormDataConsumerRenderParams, minLength, required, TextInput } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
 import { AccordionFormIterator } from "@/admin/components/AccordionFormIterator/AccordionFormIterator";
 import { AddItemButton, RemoveItemButton } from "@/admin/components/AccordionFormIterator/AccordionFormIteratorButtons";
+import { noDuplication } from "@/admin/utils/forms";
 import { getEntryConfigs, TrackingDomain, TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
 import { useFrameworkContext } from "@/context/framework.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -48,7 +49,11 @@ const TrackingAdditionalOptions: FC<TrackingAdditionalOptionsProps> = ({ type, d
           <Button variant="contained" onClick={resetToDefault}>
             Reset Tracking Entries to Platform Default
           </Button>
-          <ArrayInput source={source} label="Tracking Entry Configurations">
+          <ArrayInput
+            source={source}
+            label="Tracking Entry Configurations"
+            validate={[noDuplication("type"), minLength(1, "At least one entry is required")]}
+          >
             <AccordionFormIterator
               accordionSummaryTitle={(index, entries) =>
                 `Entry ${index + 1} of ${entries.length} (${entries[index].type})`
@@ -75,7 +80,11 @@ const TrackingAdditionalOptions: FC<TrackingAdditionalOptionsProps> = ({ type, d
                   'e.g. "Add Ethnic Group". If left blank, "name" support is left off of this entry configuration.'
                 }
               />
-              <ArrayInput source="subTypes" label="Subtypes">
+              <ArrayInput
+                source="subTypes"
+                label="Subtypes"
+                validate={[noDuplication("subtype"), minLength(1, "At least one subtype is required")]}
+              >
                 <AccordionFormIterator
                   accordionSummaryTitle={(index, entries) =>
                     `Subtype ${index + 1} of ${entries.length} (${entries[index].subtype})`
