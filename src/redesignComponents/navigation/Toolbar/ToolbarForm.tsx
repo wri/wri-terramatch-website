@@ -15,9 +15,11 @@ const ToolbarForm: FC<ToolbarFormProps> = ({
     <Toolbar
       className="px-6 py-3"
       contentLeft={
-        <div>
-          <Button {...cancelButtonProps} variant="borderless" />
-        </div>
+        cancelButtonProps != null ? (
+          <div>
+            <Button {...cancelButtonProps} variant="borderless" />
+          </div>
+        ) : undefined
       }
       contentRight={
         <div className="flex flex-row-reverse items-center gap-4">

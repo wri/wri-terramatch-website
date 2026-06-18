@@ -152,6 +152,14 @@ export type TotalJobsCreatedDto = {
   volunteerYouth: number;
   volunteerNonYouth: number;
   volunteerAgeOthers: number;
+  totalBeneficiaries: number;
+  beneficiaryMen: number;
+  beneficiaryWomen: number;
+  beneficiaryNonBinary: number;
+  beneficiaryOthers: number;
+  beneficiaryYouth: number;
+  beneficiaryNonYouth: number;
+  beneficiaryAgeOthers: number;
 };
 
 export type HectareRestorationDto = {

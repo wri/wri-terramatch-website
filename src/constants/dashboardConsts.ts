@@ -23,7 +23,10 @@ export const ORGANIZATIONS_TYPES = {
   "for-profit-organization": "Enterprise"
 };
 
-export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
+export const TERRAFUND_MONITORING_LINK =
+  "https://www.wri.org/research/land-restoration-planting-proof-guide-monitoring-reporting-and-verification";
+
+export const TERRAFUND_MRV_LINK = `<a href=${TERRAFUND_MONITORING_LINK} class="underline !text-black" target="_blank">TerraFund's Monitoring, Reporting, and Verification framework</a>`;
 
 export const TEXT_TYPES = {
   LOGGED_USER: "textForLoggedUser",

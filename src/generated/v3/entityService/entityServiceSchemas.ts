@@ -410,6 +410,10 @@ export type SiteReportLightDto = {
    * The associated site uuid
    */
   siteUuid: string | null;
+  /**
+   * The associated project report uuid
+   */
+  projectReportUuid: string | null;
   frameworkKey: string | null;
   /**
    * Report status for this site report
@@ -947,6 +951,7 @@ export type AuditStatusDto = {
    * @format date-time
    */
   dateCreated: string | null;
+  isRead: boolean;
   attachments: MediaDto[];
 };
 
@@ -973,6 +978,7 @@ export type UpdateAuditStatusAttributes = {
   status?: string | null;
   isActive?: boolean | null;
   requestRemoved?: boolean | null;
+  isRead?: boolean;
 };
 
 export type UpdateAuditStatusData = {
@@ -1483,6 +1489,10 @@ export type ProjectFullDto = {
   budget: number | null;
   history: string | null;
   objectives: string | null;
+  /**
+   * Long-form project summary for dashboard display
+   */
+  projectSummary: string | null;
   environmentalGoals: string | null;
   socioeconomicGoals: string | null;
   sdgsImpacted: string | null;
@@ -1976,6 +1986,10 @@ export type SiteReportFullDto = {
    * The associated site uuid
    */
   siteUuid: string | null;
+  /**
+   * The associated project report uuid
+   */
+  projectReportUuid: string | null;
   frameworkKey: string | null;
   /**
    * Report status for this site report

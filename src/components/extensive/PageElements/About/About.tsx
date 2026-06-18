@@ -1,6 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, ReactNode } from "react";
+import { twMerge } from "tailwind-merge";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ChevronRightIcon from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
@@ -13,19 +14,20 @@ interface AboutProps {
     title: string;
     link: string;
   }[];
+  className?: string;
 }
-const About: FC<AboutProps> = ({ title, description, links }) => {
+const About: FC<AboutProps> = ({ title, description, links, className }) => {
   const t = useT();
 
   return (
-    <Flex direction="column" gap={2} padding={5} backgroundColor="neutral.100" borderRadius={1} minHeight={0}>
+    <Flex className={twMerge("rounded-1 min-h-0 flex-col gap-2 bg-theme-neutral-100 p-5", className)}>
       {title && (
         <Text color="neutral.900" textStyle="400-bold">
           {title}
         </Text>
       )}
       {description}
-      <Flex direction="column" gap={2} minHeight={0}>
+      <Flex className="min-h-0 shrink-0 flex-col gap-2">
         <Text color="neutral.900" textStyle="500-bold">
           {t("Helpful Links")}
         </Text>

@@ -432,18 +432,18 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         isUserAllowed={isUserAllowed}
         projectFrameworkKey={projectFrameworkKey}
         subtitleMore={true}
-        title={t("HECTARES UNDER RESTORATION")}
+        title={t("LAND RESTORATION")}
         variantSubTitle="text-14-light"
         iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
         subtitle={t(
-          `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in ${TERRAFUND_MRV_LINK}. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
+          `This section displays data related to <em>Indicator 2: Land Restoration</em> described in ${TERRAFUND_MRV_LINK}. Please refer to the linked framework for details on how these numbers are sourced and verified.`
         )}
         widthTooltip="w-52 lg:w-64"
         collapseChildren={isMobile}
       >
         <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000 mobile:divide-x-0">
           <SecDashboard
-            title={t("Total Hectares Under Restoration")}
+            title={t("Hectares Under Restoration")}
             data={{ value: dataHectaresUnderRestoration?.totalSection.totalHectaresRestored }}
             classNameBody="w-full place-content-center"
             tooltip={t(TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP)}
