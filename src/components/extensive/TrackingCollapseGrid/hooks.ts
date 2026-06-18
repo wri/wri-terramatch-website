@@ -6,7 +6,14 @@ import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isNotNull } from "@/utils/array";
 
-import { getEntryConfigs, Status, TrackingDomain, TrackingEntity, TrackingType } from "./types";
+import {
+  getEntryConfigs,
+  Status,
+  TrackingDomain,
+  TrackingEntity,
+  TrackingEntrySubtypeConfig,
+  TrackingType
+} from "./types";
 
 type Position = "first" | "last" | undefined;
 
@@ -71,7 +78,7 @@ export function useTableStatus(
 
 function mapRows(
   usesName: boolean,
-  typeMap: Dictionary<string>,
+  subTypes: TrackingEntrySubtypeConfig[],
   entries: TrackingEntryDto[],
   onlyIfPresent?: string[]
 ) {
@@ -80,23 +87,23 @@ function mapRows(
       ({ subtype, name, amount }, index): SectionRow => ({
         entryIndex: index,
         typeName: name ?? "unknown",
-        label: typeMap[subtype!],
+        label: subTypes.find(config => config.subtype === subtype)?.label ?? "unknown",
         userLabel: name ?? undefined,
         amount
       })
     );
   }
 
-  return Object.keys(typeMap)
-    .map((typeName): SectionRow | undefined => {
+  return subTypes
+    .map(({ subtype, label }): SectionRow | undefined => {
       // Using findLastIndex to deal with a bug that should now be resolved, but there is some existing
       // data in update requests that is still affected. TM-1098
-      const entryIndex = findLastIndex(entries, ({ subtype }) => subtype === typeName);
-      if (entryIndex < 0 && onlyIfPresent != null && onlyIfPresent.includes(typeName)) return undefined;
+      const entryIndex = findLastIndex(entries, entry => entry.subtype === subtype);
+      if (entryIndex < 0 && onlyIfPresent != null && onlyIfPresent.includes(subtype)) return undefined;
       return {
         entryIndex,
-        typeName,
-        label: typeMap[typeName],
+        typeName: subtype,
+        label,
         amount: entryIndex >= 0 ? entries[entryIndex].amount : 0
       };
     })
@@ -135,8 +142,8 @@ export function useSectionData(
       throw new Error(`Entry type ${entryType} not found for domain ${domain} and type ${type}`);
     }
 
-    const { title, addNameLabel, typeMap, onlyIfPresent, displayTrackingType } = entryConfig;
-    const rows = mapRows(addNameLabel != null, typeMap, entries, onlyIfPresent);
+    const { title, addNameLabel, subTypes, onlyIfPresent, displayTrackingType } = entryConfig;
+    const rows = mapRows(addNameLabel != null, subTypes, entries, onlyIfPresent);
     const total = rows.reduce((total, { amount }) => total + amount, 0);
     const entryTypes = Object.keys(entryConfigs);
     const index = entryTypes.indexOf(entryType);

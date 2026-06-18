@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { Dictionary } from "lodash";
 import { useMemo } from "react";
 
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
@@ -191,93 +190,20 @@ export const useTrackingLabels = (type: TrackingType) => {
   }, [framework, type, trackingLabelsType, t]);
 };
 
-export interface TrackingCollapseGridProps {
+export type TrackingCollapseGridProps = {
   title?: string;
   domain: TrackingDomain;
   type: TrackingType;
   entries: TrackingEntryDto[];
   variant: TrackingGridVariantProps;
   onChange?: (entries: TrackingEntryDto[]) => void;
-}
-
-const GENDERS: Dictionary<string> = {
-  male: "Male",
-  female: "Female",
-  "non-binary": "Non-binary",
-  unknown: "Unknown"
-};
-
-const CASTES: Dictionary<string> = {
-  marginalized: "Marginalized"
-};
-
-const AGES: Dictionary<string> = {
-  youth: "Youth (15-24)",
-  adult: "Adult (24-64)",
-  elder: "Elder (65+)",
-  unknown: "Unknown"
-};
-
-const HBF_AGES: Dictionary<string> = {
-  youth: "Youth (15-29)",
-  "non-youth": "Non Youth (over 29)",
-  unknown: "Unknown"
-};
-
-const JOBS_AGES: Dictionary<string> = {
-  youth: "Youth (18-35)",
-  "non-youth": "Non Youth (over 35)",
-  unknown: "Unknown"
-};
-
-const ETHNICITIES: Dictionary<string> = {
-  indigenous: "Indigenous",
-  other: "Other",
-  unknown: "Unknown"
-};
-
-const FARMERS: Dictionary<string> = {
-  smallholder: "Smallholder",
-  "large-scale": "Large scale"
-};
-
-const HBF_FARMERS: Dictionary<string> = {
-  ...FARMERS,
-  marginalized: "Marginalized"
-};
-
-const RACES: Dictionary<string> = {
-  "black-or-pardo": "Black or Pardo",
-  "white-or-amarelo": "White or Amarelo",
-  indigenous: "Indigenous",
-  unknown: "Unknown"
-};
-
-const TRADITIONAL_COMMUNITIES: Dictionary<string> = {
-  member: "Member",
-  "non-member": "Non-member",
-  unknown: "Unknown"
-};
-
-const LIVELIHOODS: Dictionary<string> = {
-  "oil-processing": "Oil Processing from Tree Crops",
-  "soil-water-conservation": "Soil and Water Conservation Practices",
-  "small-animals": "Small Animal Farming",
-  "farmer-field-schools": "Farmer Field Schools",
-  "home-gardens": "Home Gardens",
-  cookstoves: "Energy-saving Cookstoves",
-  "fruits-vegetables": "Non-tree Fruit and Vegetable Farming",
-  "cover-crops": "Cover Crops, Fodder Crops & Intercropping",
-  "savings-loans": "Village Savings & Loans Associations or Local Cooperatives",
-  beekeeping: "Beekeeping & Apiary Management",
-  other: "Other"
 };
 
 export type TrackingEntryConfig = {
   type: string;
   title: string;
   displayTrackingType?: string;
-  typeMap: Dictionary<string>;
+  subTypes: TrackingEntrySubtypeConfig[];
   // If true, this field is required to balance with other "balanced" fields for a tracking
   // input to be considered complete.
   balanced: boolean;
@@ -287,17 +213,90 @@ export type TrackingEntryConfig = {
   onlyIfPresent?: string[];
 };
 
+export type TrackingEntrySubtypeConfig = {
+  subtype: string;
+  label: string;
+};
+
+const GENDERS: TrackingEntrySubtypeConfig[] = [
+  { subtype: "male", label: "Male" },
+  { subtype: "female", label: "Female" },
+  { subtype: "non-binary", label: "Non-binary" },
+  { subtype: "unknown", label: "Unknown" }
+];
+
+const CASTES: TrackingEntrySubtypeConfig[] = [{ subtype: "marginalized", label: "Marginalized" }];
+
+const AGES: TrackingEntrySubtypeConfig[] = [
+  { subtype: "youth", label: "Youth (15-24)" },
+  { subtype: "adult", label: "Adult (24-64)" },
+  { subtype: "elder", label: "Elder (65+)" },
+  { subtype: "unknown", label: "Unknown" }
+];
+
+const HBF_AGES: TrackingEntrySubtypeConfig[] = [
+  { subtype: "youth", label: "Youth (15-29)" },
+  { subtype: "non-youth", label: "Non Youth (over 29)" },
+  { subtype: "unknown", label: "Unknown" }
+];
+
+const JOBS_AGES: TrackingEntrySubtypeConfig[] = [
+  { subtype: "youth", label: "Youth (18-35)" },
+  { subtype: "non-youth", label: "Non Youth (over 35)" },
+  { subtype: "unknown", label: "Unknown" }
+];
+
+const ETHNICITIES: TrackingEntrySubtypeConfig[] = [
+  { subtype: "indigenous", label: "Indigenous" },
+  { subtype: "other", label: "Other" },
+  { subtype: "unknown", label: "Unknown" }
+];
+
+const FARMERS: TrackingEntrySubtypeConfig[] = [
+  { subtype: "smallholder", label: "Smallholder" },
+  { subtype: "large-scale", label: "Large scale" }
+];
+
+const HBF_FARMERS: TrackingEntrySubtypeConfig[] = [...FARMERS, { subtype: "marginalized", label: "Marginalized" }];
+
+const RACES: TrackingEntrySubtypeConfig[] = [
+  { subtype: "black-or-pardo", label: "Black or Pardo" },
+  { subtype: "white-or-amarelo", label: "White or Amarelo" },
+  { subtype: "indigenous", label: "Indigenous" },
+  { subtype: "unknown", label: "Unknown" }
+];
+
+const TRADITIONAL_COMMUNITIES: TrackingEntrySubtypeConfig[] = [
+  { subtype: "member", label: "Member" },
+  { subtype: "non-member", label: "Non-member" },
+  { subtype: "unknown", label: "Unknown" }
+];
+
+const LIVELIHOODS: TrackingEntrySubtypeConfig[] = [
+  { subtype: "oil-processing", label: "Oil Processing from Tree Crops" },
+  { subtype: "soil-water-conservation", label: "Soil and Water Conservation Practices" },
+  { subtype: "small-animals", label: "Small Animal Farming" },
+  { subtype: "farmer-field-schools", label: "Farmer Field Schools" },
+  { subtype: "home-gardens", label: "Home Gardens" },
+  { subtype: "cookstoves", label: "Energy-saving Cookstoves" },
+  { subtype: "fruits-vegetables", label: "Non-tree Fruit and Vegetable Farming" },
+  { subtype: "cover-crops", label: "Cover Crops, Fodder Crops & Intercropping" },
+  { subtype: "savings-loans", label: "Village Savings & Loans Associations or Local Cooperatives" },
+  { subtype: "beekeeping", label: "Beekeeping & Apiary Management" },
+  { subtype: "other", label: "Other" }
+];
+
 const BASE_DEMOGRAPHIC_TYPE_MAP: TrackingEntryConfig[] = [
   {
     type: "gender",
     title: "Gender",
-    typeMap: GENDERS,
+    subTypes: GENDERS,
     balanced: true
   },
   {
     type: "age",
     title: "Age",
-    typeMap: AGES,
+    subTypes: AGES,
     balanced: true
   }
 ];
@@ -307,7 +306,7 @@ const DEMOGRAPHIC_TYPE_MAP: TrackingEntryConfig[] = [
   {
     type: "ethnicity",
     title: "Ethnicity",
-    typeMap: ETHNICITIES,
+    subTypes: ETHNICITIES,
     addNameLabel: "Add Ethnic Group",
     balanced: true
   }
@@ -317,19 +316,19 @@ const HBF_DEMOGRAPHIC_TYPE_MAP: TrackingEntryConfig[] = [
   {
     type: "gender",
     title: "Gender",
-    typeMap: GENDERS,
+    subTypes: GENDERS,
     balanced: true
   },
   {
     type: "age",
     title: "Age",
-    typeMap: HBF_AGES,
+    subTypes: HBF_AGES,
     balanced: false
   },
   {
     type: "caste",
     title: "Caste",
-    typeMap: CASTES,
+    subTypes: CASTES,
     balanced: false
   }
 ];
@@ -338,13 +337,13 @@ const JOBS_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   {
     type: "gender",
     title: "Gender",
-    typeMap: GENDERS,
+    subTypes: GENDERS,
     balanced: true
   },
   {
     type: "age",
     title: "Age",
-    typeMap: JOBS_AGES,
+    subTypes: JOBS_AGES,
     balanced: true
   }
 ];
@@ -353,19 +352,19 @@ const HBF_JOBS_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   {
     type: "gender",
     title: "Gender",
-    typeMap: GENDERS,
+    subTypes: GENDERS,
     balanced: true
   },
   {
     type: "age",
     title: "Age",
-    typeMap: HBF_AGES,
+    subTypes: HBF_AGES,
     balanced: false
   },
   {
     type: "caste",
     title: "Caste",
-    typeMap: CASTES,
+    subTypes: CASTES,
     balanced: false
   }
 ];
@@ -375,7 +374,7 @@ const FF_VOLUNTEERS_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   {
     type: "traditional-community",
     title: "Traditional Community",
-    typeMap: TRADITIONAL_COMMUNITIES,
+    subTypes: TRADITIONAL_COMMUNITIES,
     balanced: true
   }
 ];
@@ -385,13 +384,13 @@ const FF_JOBS_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   {
     type: "race",
     title: "Race",
-    typeMap: RACES,
+    subTypes: RACES,
     balanced: true
   },
   {
     type: "traditional-community",
     title: "Traditional Community",
-    typeMap: TRADITIONAL_COMMUNITIES,
+    subTypes: TRADITIONAL_COMMUNITIES,
     balanced: true
   }
 ];
@@ -400,13 +399,13 @@ const BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   {
     type: "gender",
     title: "Gender",
-    typeMap: GENDERS,
+    subTypes: GENDERS,
     balanced: true
   },
   {
     type: "age",
     title: "Age",
-    typeMap: JOBS_AGES,
+    subTypes: JOBS_AGES,
     balanced: true
   }
 ];
@@ -416,7 +415,7 @@ const BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   {
     type: "farmer",
     title: "Farmer",
-    typeMap: FARMERS,
+    subTypes: FARMERS,
     balanced: false
   }
 ];
@@ -425,13 +424,13 @@ const HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = 
   {
     type: "gender",
     title: "Gender",
-    typeMap: GENDERS,
+    subTypes: GENDERS,
     balanced: true
   },
   {
     type: "age",
     title: "Age",
-    typeMap: HBF_AGES,
+    subTypes: HBF_AGES,
     balanced: false
   }
 ];
@@ -441,13 +440,13 @@ const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   {
     type: "farmer",
     title: "Farmer",
-    typeMap: HBF_FARMERS,
+    subTypes: HBF_FARMERS,
     balanced: false
   },
   {
     type: "caste",
     title: "Caste",
-    typeMap: CASTES,
+    subTypes: CASTES,
     balanced: false
   }
 ];
@@ -457,7 +456,7 @@ const FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   {
     type: "traditional-community",
     title: "Traditional Community",
-    typeMap: TRADITIONAL_COMMUNITIES,
+    subTypes: TRADITIONAL_COMMUNITIES,
     balanced: true
   }
 ];
@@ -467,7 +466,7 @@ const LIVELIHOODS_TYPE_MAP: TrackingEntryConfig[] = [
     type: "livelihoods",
     title: "Livelihood Activity",
     displayTrackingType: "Beneficiaries",
-    typeMap: LIVELIHOODS,
+    subTypes: LIVELIHOODS,
     balanced: true
   }
 ];
@@ -519,53 +518,53 @@ const getDemographicsEntryConfigs = (type: TrackingType, framework: Framework) =
   }
 };
 
-const HISTORICAL_YEARS: Dictionary<string> = {
-  "3-year": "Last 3 Years",
-  older: "More than 3 Years Ago",
-  unknown: "Unknown"
-};
+const HISTORICAL_YEARS: TrackingEntrySubtypeConfig[] = [
+  { subtype: "3-year", label: "Last 3 Years" },
+  { subtype: "older", label: "More than 3 Years Ago" },
+  { subtype: "unknown", label: "Unknown" }
+];
 
-const GOAL_YEARS: Dictionary<string> = {
-  "1-year": "First Year",
-  "2-year": "Second Year",
-  unknown: "Unknown"
-};
+const GOAL_YEARS: TrackingEntrySubtypeConfig[] = [
+  { subtype: "1-year", label: "First Year" },
+  { subtype: "2-year", label: "Second Year" },
+  { subtype: "unknown", label: "Unknown" }
+];
 
-const GOAL_STRATEGY: Dictionary<string> = {
-  anr: "Assisted Natural Regeneration",
-  "direct-seeding": "Direct Seeding",
-  "tree-planting": "Tree Planting",
-  unknown: "Unknown"
-};
+const GOAL_STRATEGY: TrackingEntrySubtypeConfig[] = [
+  { subtype: "anr", label: "Assisted Natural Regeneration" },
+  { subtype: "direct-seeding", label: "Direct Seeding" },
+  { subtype: "tree-planting", label: "Tree Planting" },
+  { subtype: "unknown", label: "Unknown" }
+];
 
-const FF_LAND_USE: Dictionary<string> = {
-  agroforest: "Agroforest",
-  "natural-forest": "Natural Forest",
-  "riparian-area-or-wetland": "Riparian Area or Wetland",
-  silvopasture: "Silvopasture",
-  "urban-forest": "Urban Forest",
-  "woodlot-or-plantation": "Woodlot or Plantation",
-  unknown: "Unknown"
-};
+const FF_LAND_USE: TrackingEntrySubtypeConfig[] = [
+  { subtype: "agroforest", label: "Agroforest" },
+  { subtype: "natural-forest", label: "Natural Forest" },
+  { subtype: "riparian-area-or-wetland", label: "Riparian Area or Wetland" },
+  { subtype: "silvopasture", label: "Silvopasture" },
+  { subtype: "urban-forest", label: "Urban Forest" },
+  { subtype: "woodlot-or-plantation", label: "Woodlot or Plantation" },
+  { subtype: "unknown", label: "Unknown" }
+];
 
-const LAND_USE: Dictionary<string> = {
-  agroforest: "Agroforest",
-  "natural-forest": "Natural Forest",
-  "riparian-area-or-wetland": "Riparian Area or Wetland",
-  silvopasture: "Silvopasture",
-  "urban-forest": "Urban Forest",
-  "woodlot-or-plantation": "Woodlot or Plantation",
-  mangrove: "Mangrove",
-  peatland: "Peatland",
-  "open-natural-ecosystem": "Open Natural Ecosystem",
-  unknown: "Unknown"
-};
+const LAND_USE: TrackingEntrySubtypeConfig[] = [
+  { subtype: "agroforest", label: "Agroforest" },
+  { subtype: "natural-forest", label: "Natural Forest" },
+  { subtype: "riparian-area-or-wetland", label: "Riparian Area or Wetland" },
+  { subtype: "silvopasture", label: "Silvopasture" },
+  { subtype: "urban-forest", label: "Urban Forest" },
+  { subtype: "woodlot-or-plantation", label: "Woodlot or Plantation" },
+  { subtype: "mangrove", label: "Mangrove" },
+  { subtype: "peatland", label: "Peatland" },
+  { subtype: "open-natural-ecosystem", label: "Open Natural Ecosystem" },
+  { subtype: "unknown", label: "Unknown" }
+];
 
 const HISTORICAL: TrackingEntryConfig[] = [
   {
     type: "years",
     title: "Years",
-    typeMap: HISTORICAL_YEARS,
+    subTypes: HISTORICAL_YEARS,
     balanced: true,
     onlyIfPresent: ["unknown"]
   }
@@ -575,13 +574,13 @@ const TREES_GOAL: TrackingEntryConfig[] = [
   {
     type: "years",
     title: "Years",
-    typeMap: GOAL_YEARS,
+    subTypes: GOAL_YEARS,
     balanced: true
   },
   {
     type: "strategy",
     title: "Strategy",
-    typeMap: GOAL_STRATEGY,
+    subTypes: GOAL_STRATEGY,
     balanced: false
   }
 ];
@@ -590,19 +589,19 @@ const HECTARES_GOAL: TrackingEntryConfig[] = [
   {
     type: "years",
     title: "Years",
-    typeMap: GOAL_YEARS,
+    subTypes: GOAL_YEARS,
     balanced: true
   },
   {
     type: "strategy",
     title: "Strategy",
-    typeMap: GOAL_STRATEGY,
+    subTypes: GOAL_STRATEGY,
     balanced: true
   },
   {
     type: "land-use",
     title: "Land Use",
-    typeMap: LAND_USE,
+    subTypes: LAND_USE,
     balanced: true
   }
 ];
@@ -611,19 +610,19 @@ const FF_HECTARES_GOAL: TrackingEntryConfig[] = [
   {
     type: "years",
     title: "Years",
-    typeMap: GOAL_YEARS,
+    subTypes: GOAL_YEARS,
     balanced: true
   },
   {
     type: "strategy",
     title: "Strategy",
-    typeMap: GOAL_STRATEGY,
+    subTypes: GOAL_STRATEGY,
     balanced: true
   },
   {
     type: "land-use",
     title: "Land Use",
-    typeMap: FF_LAND_USE,
+    subTypes: FF_LAND_USE,
     balanced: true
   }
 ];

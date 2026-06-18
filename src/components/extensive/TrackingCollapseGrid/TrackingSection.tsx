@@ -2,14 +2,14 @@ import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { sortBy } from "lodash";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import TrackingRow from "@/components/extensive/TrackingCollapseGrid/TrackingRow";
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 
 import { useEntryConfig, useSectionData } from "./hooks";
-import { Status, TrackingDomain, TrackingType } from "./types";
+import { Status, TrackingDomain, TrackingEntryConfig, TrackingType } from "./types";
 
 export interface TrackingSectionProps {
   domain: TrackingDomain;
@@ -32,7 +32,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
 }) => {
   const t = useT();
   const { title, rows, total, displayTrackingType } = useSectionData(domain, trackingType, entryType, entries);
-  const { addNameLabel, typeMap } = useEntryConfig(domain, trackingType, entryType);
+  const { addNameLabel, subTypes } = useEntryConfig(domain, trackingType, entryType) as TrackingEntryConfig;
 
   const onRowChange = useCallback(
     (index: number, subtype: string, amount: number, userLabel?: string) => {
@@ -68,6 +68,26 @@ const TrackingSection: FC<TrackingSectionProps> = ({
     },
     [entries, entryType, onChange]
   );
+
+  const addNameButton = useMemo(() => {
+    if (addNameLabel == null || onChange == null) return null;
+
+    return (
+      <div className={classNames("flex items-center py-3", "col-span-2 border-b border-neutral-200 bg-white")}>
+        <MultiActionButton
+          mainActionLabel={t(addNameLabel)}
+          mainActionOnClick={() => {}}
+          otherActions={...sortBy(subTypes, ({ label }) => t(label)).map(({ subtype, label }) => ({
+            label: t(label),
+            onClick: () => addRow(subtype),
+            value: subtype
+          }))}
+          size="small"
+          variant="secondary"
+        />
+      </div>
+    );
+  }, [addNameLabel, addRow, onChange, subTypes, t]);
 
   const removeRow = useCallback(
     (index: number): void => {
@@ -113,23 +133,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
           {...{ entryType, label, userLabel, amount }}
         />
       ))}
-      {addNameLabel != null && onChange != null && (
-        <div className={classNames("flex items-center py-3", "col-span-2 border-b border-neutral-200 bg-white")}>
-          <MultiActionButton
-            mainActionLabel="Add Ethnic Group"
-            mainActionOnClick={() => {}}
-            otherActions={[
-              ...sortBy(Object.keys(typeMap), subtype => t(typeMap[subtype])).map(subtype => ({
-                label: t(typeMap[subtype]),
-                onClick: () => addRow(subtype),
-                value: subtype
-              }))
-            ]}
-            size="small"
-            variant="secondary"
-          />
-        </div>
-      )}
+      {addNameButton}
       <>
         <div className={classNames("col-span-1 flex items-center justify-between bg-theme-neutral-100 px-3 py-2.5")}>
           <Text color="primary.900" textStyle="300-bold">
