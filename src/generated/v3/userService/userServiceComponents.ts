@@ -996,6 +996,10 @@ export type UserIndexQueryParams = {
    * Filter users by email address verification status
    */
   isVerified?: boolean;
+  /**
+   * Filter users by primary role name
+   */
+  primaryRole?: string;
 };
 
 export type UserIndexError = Fetcher.ErrorWrapper<{
