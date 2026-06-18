@@ -10,7 +10,8 @@ const LatestImagesSectionTab: FC<{
   entityName: SupportedEntity;
   columns?: number;
   rows?: number;
-}> = ({ entityUuid, entityName, columns, rows }) => {
+  minItems?: number;
+}> = ({ entityUuid, entityName, columns, rows, minItems }) => {
   const router = useRouter();
   const goToTab = (tab: string) => {
     router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
@@ -23,11 +24,11 @@ const LatestImagesSectionTab: FC<{
         entity: entityName,
         uuid: entityUuid,
         pageNumber: 1,
-        pageSize: 4,
+        pageSize: minItems,
         sortDirection: "DESC",
         sortField: "createdAt"
       };
-    }, [entityUuid, entityName])
+    }, [entityUuid, entityName, minItems])
   );
 
   const images =
@@ -44,6 +45,7 @@ const LatestImagesSectionTab: FC<{
       onClickAdd={() => goToTab("gallery")}
       columns={columns}
       rows={rows}
+      minItems={minItems}
     />
   );
 };

@@ -1,24 +1,157 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { FC, ReactElement, useCallback, useMemo } from "react";
 
-import SecondaryTabs, { TabItem } from "@/components/elements/Tabs/Secondary/SecondaryTabs";
-import EntityStatusBar from "@/components/extensive/EntityStatusBar";
-import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullNurseryReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
+import { NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import NurseryReportHeader from "@/pages/reports/nursery-report/components/NurseryReportHeader";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
-import NurseryReportDataTab from "@/pages/reports/nursery-report/tabs/ReportData";
+import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
+import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
+
+type TabItem = {
+  key: string;
+  title: string;
+  body: ReactElement;
+};
+
+type NurseryReportContentProps = {
+  nurseryReport: NurseryReportFullDto;
+  nurseryName?: string | null;
+  taskDueAt?: string;
+};
+
+const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nurseryName, taskDueAt }) => {
+  const t = useT();
+  const router = useRouter();
+  const nurseryReportUUID = nurseryReport.uuid;
+  const currentTab = (router.query.tab as string) ?? "overview";
+
+  const reportTitle = nurseryReport.reportTitle ?? nurseryReport.title ?? t("Nursery Report");
+  const headerReportTitle = nurseryName != null ? `${nurseryName} ${reportTitle}` : reportTitle;
+
+  const window = useReportingWindow(toFramework(nurseryReport.frameworkKey), taskDueAt);
+  const taskTitle = t("Reporting Task {window}", { window });
+
+  const navigateToTab = useCallback(
+    (tab: string) => {
+      router.push(`/reports/nursery-report/${nurseryReportUUID}?tab=${tab}`, undefined, { shallow: true });
+    },
+    [router, nurseryReportUUID]
+  );
+
+  const tabItems = useMemo<TabItem[]>(
+    () => [
+      {
+        key: "overview",
+        title: t("Overview"),
+        body: <NurseryReportOverview report={nurseryReport} />
+      },
+      {
+        key: "details",
+        title: t("Report Details"),
+        body: <NurseryReportDetailsTab report={nurseryReport} />
+      }
+    ],
+    [nurseryReport, t]
+  );
+
+  const visibleTabItems = useMemo(() => {
+    if (nurseryReport.nothingToReport) {
+      return tabItems.filter(item => item.key === "overview");
+    }
+
+    return tabItems;
+  }, [nurseryReport.nothingToReport, tabItems]);
+
+  const tabBarTabs = useMemo(
+    () =>
+      visibleTabItems.map(item => ({
+        value: item.key,
+        label: item.title
+      })),
+    [visibleTabItems]
+  );
+
+  const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
+
+  return (
+    <>
+      <ResponsiveTypography />
+      <Head>
+        <title>{reportTitle}</title>
+      </Head>
+      <ReportBanner
+        report={nurseryReport}
+        title={headerReportTitle}
+        dueAt={taskDueAt ?? nurseryReport.dueAt}
+        entityName="nursery-report"
+        breadcrumbs={[
+          {
+            label: t("Projects"),
+            link: "/my-projects",
+            icon: <ProjectIcon className="!text-theme-primary-900" />
+          },
+          { label: nurseryReport.projectName ?? t("Project"), link: `/project/${nurseryReport.projectUuid}` },
+          {
+            label: taskTitle,
+            link: `/project/${nurseryReport.projectUuid}/reporting-task/${nurseryReport.taskUuid}`
+          },
+          { label: reportTitle, link: `/reports/nursery-report/${nurseryReportUUID}` }
+        ]}
+        suffix={
+          <div className="flex items-center gap-1.5">
+            {nurseryReport.nurseryUuid != null && (
+              <Button
+                variant="borderless"
+                size="small"
+                className="underline underline-offset-2"
+                onClick={() => router.push(`/nursery/${nurseryReport.nurseryUuid}`)}
+              >
+                {t("Nursery Profile")}
+              </Button>
+            )}
+            {nurseryReport.nurseryUuid != null && nurseryReport.projectReportUuid != null && (
+              <span className="text-sm text-theme-neutral-300">|</span>
+            )}
+            {nurseryReport.projectReportUuid != null && (
+              <Button
+                variant="borderless"
+                size="small"
+                className="underline underline-offset-2"
+                onClick={() => router.push(`/reports/project-report/${nurseryReport.projectReportUuid}`)}
+              >
+                {t("Project Report")}
+              </Button>
+            )}
+          </div>
+        }
+        toolbar={{
+          tabBar: {
+            tabs: tabBarTabs,
+            defaultValue: activeTab,
+            onTabClick: (tabValue: string) => {
+              navigateToTab(tabValue);
+            }
+          }
+        }}
+      />
+      <div className="flex flex-1">{visibleTabItems.find(item => item.key === activeTab)?.body}</div>
+      <PageFooter />
+    </>
+  );
+};
 
 const NurseryReportDetailPage = () => {
   const t = useT();
@@ -29,70 +162,20 @@ const NurseryReportDetailPage = () => {
   const { openToast } = useToastContext();
   useValueChanged(reportLoaded, () => {
     if (reportLoaded && nurseryReport == null) {
-      Log.error("Nursery report not found", { nurseryReportUUID, loadFailure });
+      Log.error(t("Nursery report not found"), { nurseryReportUUID, loadFailure });
       openToast(t("Nursery report not found"), ToastType.ERROR);
     }
   });
 
   const [nurseryLoaded, { data: nursery }] = useFullNursery({ id: nurseryReport?.nurseryUuid! });
   const [taskLoaded, { data: task }] = useTask({ id: nurseryReport?.taskUuid ?? undefined });
-
-  const reportTitle = nurseryReport?.reportTitle ?? nurseryReport?.title ?? t("Nursery Report");
-  const headerReportTitle = nursery?.name != null ? `${nursery.name} ${reportTitle}` : "";
-
-  const window = useReportingWindow(toFramework(nurseryReport?.frameworkKey), task?.dueAt);
-  const taskTitle = t("Reporting Task {window}", { window });
-
-  const tabItems = useMemo<TabItem[]>(
-    () =>
-      nurseryReport == null
-        ? []
-        : [
-            {
-              key: "report-data",
-              title: t("Report Data"),
-              renderBody: () => <NurseryReportDataTab report={nurseryReport} nursery={nursery} />
-            },
-            {
-              key: "details",
-              title: t("Report Details"),
-              renderBody: () => <NurseryReportDetailsTab report={nurseryReport} />
-            }
-          ],
-    [nurseryReport, nursery, t]
-  );
-
   const isLoaded = reportLoaded && nurseryLoaded && taskLoaded;
 
   return (
     <FrameworkProvider frameworkKey={nurseryReport?.frameworkKey}>
       <LoadingContainer loading={!isLoaded}>
         {nurseryReport == null ? null : (
-          <>
-            <Head>
-              <title>{reportTitle}</title>
-            </Head>
-            <PageBreadcrumbs
-              links={[
-                { title: t("My Projects"), path: "/my-projects" },
-                { title: nurseryReport.projectName ?? t("Project"), path: `/project/${nurseryReport.projectUuid}` },
-                {
-                  title: taskTitle,
-                  path: `/project/${nurseryReport.projectUuid}/reporting-task/${nurseryReport.taskUuid}`
-                },
-                { title: reportTitle }
-              ]}
-            />
-            <NurseryReportHeader report={nurseryReport} title={headerReportTitle} />
-            <EntityStatusBar entityName="nurseryReports" entity={nurseryReport} />
-            <PageBody className="pt-0">
-              <SecondaryTabs tabItems={tabItems} containerClassName="max-w-[82vw] px-10 xl:px-0 w-full" lazyMount />
-              <br />
-              <br />
-              <br />
-            </PageBody>
-            <PageFooter />
-          </>
+          <NurseryReportContent nurseryReport={nurseryReport} nurseryName={nursery?.name} taskDueAt={task?.dueAt} />
         )}
       </LoadingContainer>
     </FrameworkProvider>

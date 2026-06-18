@@ -9,7 +9,11 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { FormEntity } from "@/connections/Form";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
-import { ProjectReportFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  NurseryReportFullDto,
+  ProjectReportFullDto,
+  SiteReportFullDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
 import { v3EntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -24,7 +28,7 @@ import SeparatorDot from "../components/SeparatorDot";
 import PageHeader from "../PageHeader";
 
 export interface ReportHeaderProps {
-  report: ProjectReportFullDto | SiteReportFullDto;
+  report: ProjectReportFullDto | SiteReportFullDto | NurseryReportFullDto;
   title: string;
   dueAt?: string | null;
   entityName: EntityName | SingularEntityName;

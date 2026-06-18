@@ -143,7 +143,6 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
       </PageContent>
     );
   }
-
   const isHBFFramework = siteReport.frameworkKey === Framework.HBF;
 
   return (
