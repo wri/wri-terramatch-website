@@ -273,7 +273,8 @@ const LIVELIHOODS: Dictionary<string> = {
   other: "Other"
 };
 
-type TypeMapValue = {
+export type TrackingEntryConfig = {
+  type: string;
   title: string;
   displayTrackingType?: string;
   typeMap: Dictionary<string>;
@@ -286,160 +287,192 @@ type TypeMapValue = {
   onlyIfPresent?: string[];
 };
 
-const BASE_DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
-  gender: {
+const BASE_DEMOGRAPHIC_TYPE_MAP: TrackingEntryConfig[] = [
+  {
+    type: "gender",
     title: "Gender",
     typeMap: GENDERS,
     balanced: true
   },
-  age: {
+  {
+    type: "age",
     title: "Age",
     typeMap: AGES,
     balanced: true
   }
-};
+];
 
-const DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
+const DEMOGRAPHIC_TYPE_MAP: TrackingEntryConfig[] = [
   ...BASE_DEMOGRAPHIC_TYPE_MAP,
-  ethnicity: {
+  {
+    type: "ethnicity",
     title: "Ethnicity",
     typeMap: ETHNICITIES,
     addNameLabel: "Add Ethnic Group",
     balanced: true
   }
-};
+];
 
-const HBF_DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
-  gender: {
+const HBF_DEMOGRAPHIC_TYPE_MAP: TrackingEntryConfig[] = [
+  {
+    type: "gender",
     title: "Gender",
     typeMap: GENDERS,
     balanced: true
   },
-  age: {
+  {
+    type: "age",
     title: "Age",
     typeMap: HBF_AGES,
     balanced: false
   },
-  caste: {
+  {
+    type: "caste",
     title: "Caste",
     typeMap: CASTES,
     balanced: false
   }
-};
+];
 
-const JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
-  gender: {
+const JOBS_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
+  {
+    type: "gender",
     title: "Gender",
     typeMap: GENDERS,
     balanced: true
   },
-  age: {
+  {
+    type: "age",
     title: "Age",
     typeMap: JOBS_AGES,
     balanced: true
   }
-};
+];
 
-const HBF_JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
-  ...HBF_DEMOGRAPHIC_TYPE_MAP,
-  age: {
+const HBF_JOBS_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
+  {
+    type: "gender",
+    title: "Gender",
+    typeMap: GENDERS,
+    balanced: true
+  },
+  {
+    type: "age",
     title: "Age",
     typeMap: HBF_AGES,
     balanced: false
+  },
+  {
+    type: "caste",
+    title: "Caste",
+    typeMap: CASTES,
+    balanced: false
   }
-};
+];
 
-const FF_VOLUNTEERS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+const FF_VOLUNTEERS_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   ...BASE_DEMOGRAPHIC_TYPE_MAP,
-  "traditional-community": {
+  {
+    type: "traditional-community",
     title: "Traditional Community",
     typeMap: TRADITIONAL_COMMUNITIES,
     balanced: true
   }
-};
+];
 
-const FF_JOBS_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+const FF_JOBS_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   ...BASE_DEMOGRAPHIC_TYPE_MAP,
-  race: {
+  {
+    type: "race",
     title: "Race",
     typeMap: RACES,
     balanced: true
   },
-  "traditional-community": {
+  {
+    type: "traditional-community",
     title: "Traditional Community",
     typeMap: TRADITIONAL_COMMUNITIES,
     balanced: true
   }
-};
+];
 
-const BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
-  gender: {
+const BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
+  {
+    type: "gender",
     title: "Gender",
     typeMap: GENDERS,
     balanced: true
   },
-  age: {
+  {
+    type: "age",
     title: "Age",
     typeMap: JOBS_AGES,
     balanced: true
   }
-};
+];
 
-const BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+const BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   ...BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP,
-  farmer: {
+  {
+    type: "farmer",
     title: "Farmer",
     typeMap: FARMERS,
     balanced: false
   }
-};
+];
 
-const HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
-  gender: {
+const HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
+  {
+    type: "gender",
     title: "Gender",
     typeMap: GENDERS,
     balanced: true
   },
-  age: {
+  {
+    type: "age",
     title: "Age",
     typeMap: HBF_AGES,
     balanced: false
   }
-};
+];
 
-const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+const HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   ...HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP,
-  farmer: {
+  {
+    type: "farmer",
     title: "Farmer",
     typeMap: HBF_FARMERS,
     balanced: false
   },
-  caste: {
+  {
+    type: "caste",
     title: "Caste",
     typeMap: CASTES,
     balanced: false
   }
-};
+];
 
-const FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
+const FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: TrackingEntryConfig[] = [
   ...BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP,
-  "traditional-community": {
+  {
+    type: "traditional-community",
     title: "Traditional Community",
     typeMap: TRADITIONAL_COMMUNITIES,
     balanced: true
   }
-};
+];
 
-const LIVELIHOODS_TYPE_MAP: Dictionary<TypeMapValue> = {
-  livelihoods: {
+const LIVELIHOODS_TYPE_MAP: TrackingEntryConfig[] = [
+  {
+    type: "livelihoods",
     title: "Livelihood Activity",
     displayTrackingType: "Beneficiaries",
     typeMap: LIVELIHOODS,
     balanced: true
   }
-};
+];
 
-const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
+const getDemographicsEntryConfigs = (type: TrackingType, framework: Framework) => {
   if (["jobs", "volunteers", "employees", "associates"].includes(type)) {
     switch (framework) {
       case Framework.HBF:
@@ -528,51 +561,74 @@ const LAND_USE: Dictionary<string> = {
   unknown: "Unknown"
 };
 
-const HISTORICAL: Dictionary<TypeMapValue> = {
-  years: {
+const HISTORICAL: TrackingEntryConfig[] = [
+  {
+    type: "years",
     title: "Years",
     typeMap: HISTORICAL_YEARS,
     balanced: true,
     onlyIfPresent: ["unknown"]
   }
-};
+];
 
-const TREES_GOAL: Dictionary<TypeMapValue> = {
-  years: {
+const TREES_GOAL: TrackingEntryConfig[] = [
+  {
+    type: "years",
     title: "Years",
     typeMap: GOAL_YEARS,
     balanced: true
   },
-  strategy: {
+  {
+    type: "strategy",
     title: "Strategy",
     typeMap: GOAL_STRATEGY,
     balanced: false
   }
-};
+];
 
-const HECTARES_GOAL: Dictionary<TypeMapValue> = {
-  ...TREES_GOAL,
-  strategy: {
-    ...TREES_GOAL.strategy,
+const HECTARES_GOAL: TrackingEntryConfig[] = [
+  {
+    type: "years",
+    title: "Years",
+    typeMap: GOAL_YEARS,
     balanced: true
   },
-  "land-use": {
+  {
+    type: "strategy",
+    title: "Strategy",
+    typeMap: GOAL_STRATEGY,
+    balanced: true
+  },
+  {
+    type: "land-use",
     title: "Land Use",
     typeMap: LAND_USE,
     balanced: true
   }
-};
+];
 
-const FF_HECTARES_GOAL: Dictionary<TypeMapValue> = {
-  ...HECTARES_GOAL,
-  "land-use": {
+const FF_HECTARES_GOAL: TrackingEntryConfig[] = [
+  {
+    type: "years",
+    title: "Years",
+    typeMap: GOAL_YEARS,
+    balanced: true
+  },
+  {
+    type: "strategy",
+    title: "Strategy",
+    typeMap: GOAL_STRATEGY,
+    balanced: true
+  },
+  {
+    type: "land-use",
     title: "Land Use",
     typeMap: FF_LAND_USE,
     balanced: true
   }
-};
+];
 
-const getRestorationTypeMap = (type: TrackingType, framework: Framework) => {
+const getRestorationEntryConfigs = (type: TrackingType, framework: Framework) => {
   if (type === "treesGoal") {
     return TREES_GOAL;
   } else if (type === "hectaresGoal") {
@@ -580,16 +636,12 @@ const getRestorationTypeMap = (type: TrackingType, framework: Framework) => {
   } else return HISTORICAL;
 };
 
-export const getTypeMap = (
-  domain: TrackingDomain,
-  type: TrackingType,
-  framework: Framework
-): Dictionary<TypeMapValue> => {
+export const getEntryConfigs = (domain: TrackingDomain, type: TrackingType, framework: Framework) => {
   switch (domain) {
     case "demographics":
-      return getDemographicsTypeMap(type, framework);
+      return getDemographicsEntryConfigs(type, framework);
     case "restoration":
-      return getRestorationTypeMap(type, framework);
+      return getRestorationEntryConfigs(type, framework);
 
     default:
       throw new Error(`Unsupported domain: ${domain}`);

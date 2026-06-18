@@ -8,7 +8,7 @@ import TrackingRow from "@/components/extensive/TrackingCollapseGrid/TrackingRow
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 
-import { useEntryTypeDefinition, useSectionData } from "./hooks";
+import { useEntryConfig, useSectionData } from "./hooks";
 import { Status, TrackingDomain, TrackingType } from "./types";
 
 export interface TrackingSectionProps {
@@ -32,7 +32,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
 }) => {
   const t = useT();
   const { title, rows, total, displayTrackingType } = useSectionData(domain, trackingType, entryType, entries);
-  const { addNameLabel, typeMap } = useEntryTypeDefinition(domain, trackingType, entryType);
+  const { addNameLabel, typeMap } = useEntryConfig(domain, trackingType, entryType);
 
   const onRowChange = useCallback(
     (index: number, subtype: string, amount: number, userLabel?: string) => {

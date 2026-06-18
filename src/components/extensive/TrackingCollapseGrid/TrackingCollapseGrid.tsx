@@ -11,7 +11,7 @@ import AccordionHeader from "@/redesignComponents/containers/Accordion/Accordion
 import { AccordionStatus } from "@/redesignComponents/containers/Accordion/types";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
-import { useEntryTypeMap, useEntryTypes, useTableStatus } from "./hooks";
+import { useEntryConfigs, useEntryTypes, useTableStatus } from "./hooks";
 import TrackingSection from "./TrackingSection";
 import { Status, TrackingCollapseGridProps, useTrackingLabels } from "./types";
 
@@ -34,7 +34,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
   );
 
   const entryTypes = useEntryTypes(domain, type);
-  const entryTypeMap = useEntryTypeMap(domain, type);
+  const entryTypeMap = useEntryConfigs(domain, type);
   const { sectionLabel, rowLabelSingular, rowLabelPlural, summaryTotalSingular, summaryTotalPlural } =
     useTrackingLabels(type);
   const rowLabel = total === 1 ? rowLabelSingular : rowLabelPlural;
@@ -78,7 +78,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
 
         <div className={classNames("flex flex-wrap gap-x-16 gap-y-6", { "justify-between": user })}>
           {entryTypes.map(entryType => {
-            const typeDefinition = entryTypeMap[entryType];
+            const typeDefinition = entryTypeMap.find(({ type }) => type === entryType);
             const sectionTotal = counts?.[entryType] ?? 0;
 
             let sectionStatus: Status = "not-started";
