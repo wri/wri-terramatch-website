@@ -14,11 +14,15 @@ export const useSiteReportAboutContent = () => {
       frameworks: ["terrafund", "terrafund-landscapes", "enterprises", "epa-ghana-pilot", "terrafund-3"],
       paragraphs: [
         t(
-          "Site reports are how you document restoration progress across each of your active sites every six months. You will need to submit a separate report for every active site profile on TerraMatch each reporting period. Accurate and detailed site reporting is essential, it ensures your restoration work is fully and fairly represented, supports transparency and accountability, and helps TerraFund verify progress across the portfolio towards restoration goals."
+          "are how you document restoration progress across each of your active sites every six months. You will need to submit a separate report for every active site profile on TerraMatch each reporting period."
         ),
         t(
-          "To support your reporting efforts, TerraFund team has created guidance articles to help you report clearly, thoroughly. If you have challenges or need assistance, contact your project manager or"
-        )
+          "Accurate and detailed site reporting is essential, it ensures your restoration work is fully and fairly represented, supports transparency and accountability, and helps TerraFund verify progress across the portfolio towards restoration goals."
+        ),
+        t(
+          "To support your reporting efforts, TerraFund team has created guidance articles to help you report clearly, thoroughly."
+        ),
+        t("If you have challenges or need assistance, contact your project manager or")
       ],
       links: [
         {
@@ -42,8 +46,9 @@ export const useSiteReportAboutContent = () => {
     {
       frameworks: ["ppc"],
       paragraphs: [
+        t("are how you document restoration progress across each of your sites each quarter."),
         t(
-          "Site reports are how you document restoration progress across each of your sites each quarter. Accurate and detailed site reporting is essential. It ensures your restoration work is fully and fairly represented, supports transparency and accountability, and helps the PPC team verify progress across the portfolio."
+          "Accurate and detailed site reporting is essential. It ensures your restoration work is fully and fairly represented, supports transparency and accountability, and helps the PPC team verify progress across the portfolio."
         ),
         t("If you have challenges or need assistance, contact your Project Manager/Global Lead or")
       ],
@@ -62,7 +67,7 @@ export const useSiteReportAboutContent = () => {
       frameworks: ["hbf"],
       paragraphs: [
         t(
-          "Site reports are how you document restoration progress across each of your active sites every six months. You will need to submit a separate report for every active site profile on TerraMatch each reporting period. Accurate and detailed site reporting is essential, it ensures your restoration work is fully and fairly represented, supports transparency and accountability, and helps HBF verify progress across the portfolio towards restoration goals."
+          "are how you document restoration progress across each of your active sites every six months. You will need to submit a separate report for every active site profile on TerraMatch each reporting period. Accurate and detailed site reporting is essential, it ensures your restoration work is fully and fairly represented, supports transparency and accountability, and helps HBF verify progress across the portfolio towards restoration goals."
         ),
         t("If you have challenges or need assistance, contact your project manager or")
       ],

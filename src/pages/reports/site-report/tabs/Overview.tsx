@@ -190,80 +190,81 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
               </Box>
             </PageItem>
           </Flex>
-          {site != null && (
-            <PageItem
-              title={t("Site Map")}
-              flexProps={{ flex: 1 }}
-              buttonProps={{
-                variant: "secondary",
-                size: "small",
-                children: t("View site map"),
-                rightIcon: <ChevronRightIcon />,
-                onClick: goToSiteMap
-              }}
-            >
-              <Box className="relative h-auto">
-                <OverviewMapArea
-                  entityModel={site}
-                  type="sites"
-                  className="max-h-[27rem]"
-                  disabledPolygonPanel={true}
-                />
-                {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
-                  <MapPlaceholder
-                    icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}
-                    title={t("Site Areas not defined yet.")}
-                    buttonGroupProps={{
-                      buttons: [
-                        {
-                          variant: "borderless",
-                          size: "small",
-                          rightIcon: <ChevronRightIcon boxSize={4} />,
-                          className: "!text-theme-neutral-100",
-                          children: t("Add Polygons"),
-                          onClick: goToSiteMap
-                        }
-                      ]
-                    }}
-                    className="z-10"
+          <Flex gap={7}>
+            {site != null && (
+              <PageItem title={t("Site Map")} flexProps={{ flex: 1 }}>
+                <Box className="relative h-auto">
+                  <OverviewMapArea
+                    entityModel={site}
+                    type="sites"
+                    className="max-h-[27rem]"
+                    disabledPolygonPanel={true}
                   />
-                )}
-              </Box>
-            </PageItem>
-          )}
-          <PageItem title={t("About Site Report")} flexProps={{ flex: 1 }}>
-            <About
-              description={
-                <Flex direction="column" gap={5}>
-                  {aboutContentItem?.paragraphs.map((paragraph, index) => {
-                    const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
+                  {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
+                    <MapPlaceholder
+                      icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}
+                      title={t("Site Areas not defined yet.")}
+                      buttonGroupProps={{
+                        buttons: [
+                          {
+                            variant: "borderless",
+                            size: "small",
+                            rightIcon: <ChevronRightIcon boxSize={4} />,
+                            className: "!text-theme-neutral-100",
+                            children: t("Add Polygons"),
+                            onClick: goToSiteMap
+                          }
+                        ]
+                      }}
+                      className="z-10"
+                    />
+                  )}
+                </Box>
+              </PageItem>
+            )}
+            <PageItem title={t("About Site Report")} flexProps={{ flex: 1 }}>
+              <About
+                description={
+                  <Flex direction="column" gap={5}>
+                    {aboutContentItem?.paragraphs.map((paragraph, index) => {
+                      const isFirstParagraph = index === 0;
+                      const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
 
-                    if (isLastParagraph) {
+                      if (isFirstParagraph) {
+                        return (
+                          <Text key={index} color="neutral.900" textStyle="300-bold" as="span">
+                            {t("Site Report")} {paragraph}
+                          </Text>
+                        );
+                      }
+
+                      if (isLastParagraph) {
+                        return (
+                          <ContactSupport
+                            key={index}
+                            message={paragraph}
+                            subject={t("Support Request for Site Report")}
+                          />
+                        );
+                      }
+
                       return (
-                        <ContactSupport
-                          key={index}
-                          message={paragraph}
-                          subject={t("Support Request for Site Report")}
-                        />
+                        <Text key={index} color="neutral.900" textStyle="300">
+                          {paragraph}
+                        </Text>
                       );
-                    }
-
-                    return (
-                      <Text key={index} color="neutral.900" textStyle="300">
-                        {paragraph}
-                      </Text>
-                    );
-                  })}
-                </Flex>
-              }
-              links={
-                aboutContentItem?.links.map(link => ({
-                  title: t(link.title),
-                  link: link.link
-                })) ?? []
-              }
-            />
-          </PageItem>
+                    })}
+                  </Flex>
+                }
+                links={
+                  aboutContentItem?.links.map(link => ({
+                    title: t(link.title),
+                    link: link.link
+                  })) ?? []
+                }
+              />
+            </PageItem>
+          </Flex>
         </Flex>
       </PageContent>
     </SitePolygonDataProvider>
