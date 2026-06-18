@@ -478,6 +478,10 @@ export type NurseryReportLightDto = {
    * The associated nursery uuid
    */
   nurseryUuid: string | null;
+  /**
+   * The associated project report uuid
+   */
+  projectReportUuid: string | null;
   frameworkKey: string | null;
   /**
    * Report status for this nursery report
@@ -1905,6 +1909,10 @@ export type NurseryReportFullDto = {
    * The associated nursery uuid
    */
   nurseryUuid: string | null;
+  /**
+   * The associated project report uuid
+   */
+  projectReportUuid: string | null;
   frameworkKey: string | null;
   /**
    * Report status for this nursery report
