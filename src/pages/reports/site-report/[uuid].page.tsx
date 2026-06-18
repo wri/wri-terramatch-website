@@ -76,7 +76,7 @@ const SiteReportDetailPage = () => {
                 { title: t("Projects"), path: "/my-projects" },
                 { title: siteReport.projectName ?? t("Project"), path: `/project/${siteReport.projectUuid}` },
                 {
-                  title: "Sites",
+                  title: t("Sites"),
                   path: `/project/${siteReport.projectUuid ?? ""}?tab=sites`
                 },
                 {
@@ -84,10 +84,10 @@ const SiteReportDetailPage = () => {
                   path: `/site/${siteReport.siteUuid ?? ""}`
                 },
                 {
-                  title: "Reports",
+                  title: t("Reports"),
                   path: `/site/${siteReport.siteUuid ?? ""}?tab=completed-tasks`
                 },
-                { title: "Site Report - " + getShortPeriodLabel(taskTitle ?? "") }
+                { title: t("Site Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "") }) }
               ]}
             />
             <SiteReportHeader report={siteReport} reportTitle={headerReportTitle} />
