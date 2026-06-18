@@ -337,6 +337,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             return Array.from(byPolygonUuid.values());
           });
 
+          void refetchPolygons();
           void fetchOverlapValidations(true);
           setPendingValidationPolygonUuids([]);
           return;
@@ -355,7 +356,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     return () => {
       cancelled = true;
     };
-  }, [fetchAllValidationPages, fetchOverlapValidations, pendingValidationPolygonUuids]);
+  }, [fetchAllValidationPages, fetchOverlapValidations, pendingValidationPolygonUuids, refetchPolygons]);
 
   useEffect(() => {
     setSiteData(site);
@@ -407,6 +408,9 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     showDeletePolygonModal,
     showPolygonSubmittedModal,
     showSubmitPolygonsModal,
+    showSubmitPolygonConfirmationModal,
+    showMapPopupSubmitPolygonsModal,
+    showMapPopupSubmitConfirmationModal,
     submittedPolygonNames,
     submittedPolygonComment,
     isBulkUpdatingPolygons,
@@ -427,11 +431,15 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     handleDeletePolygonModalChange,
     handleDrawerOverlapFixed,
     handleMapPopupSubmitModalChange,
+    handleMapPopupSubmitConfirmationModalChange,
     handleOpenDeletePolygonModal,
     handleOpenSubmitPolygonsModal,
     handlePolygonDeletingChange,
     handlePolygonSubmittedModalChange,
+    handleProceedToBulkSubmitConfirmation,
+    handleProceedToMapPopupSubmitConfirmation,
     handleRunValidation,
+    handleSubmitPolygonConfirmationModalChange,
     handleSubmitPolygonsModalChange,
     openPolygonEditDrawerForRow,
     runPolygonValidation
@@ -622,10 +630,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           openOverlapFixModal={showOverlapFixModal}
           openPolygonSubmittedModal={showPolygonSubmittedModal}
           openSubmitPolygonsModal={showSubmitPolygonsModal}
+          openSubmitPolygonConfirmationModal={showSubmitPolygonConfirmationModal}
           openUploadErrorModal={showUploadErrorModal}
           openUploadModal={showUploadModal}
           openUploadPhotosModal={showUploadPhotosModal}
-          openMapPopupSubmitModal={polygonSubmitConfirmation != null}
+          openMapPopupSubmitModal={showMapPopupSubmitPolygonsModal}
+          openMapPopupSubmitConfirmationModal={showMapPopupSubmitConfirmationModal}
           mapPopupSubmitEligibleCount={polygonSubmitConfirmation?.eligibleCount ?? 0}
           mapPopupSubmitTotalCount={polygonSubmitConfirmation?.totalCount ?? 0}
           mapPopupSubmitPolygons={mapPopupSubmitPolygons}
@@ -638,9 +648,13 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onDeletePolygonModalOpenChange={handleDeletePolygonModalChange}
           onEditPhotoDetailsClose={() => setEditPhotoDetailsMedia(null)}
           onMapPopupSubmitModalOpenChange={handleMapPopupSubmitModalChange}
+          onMapPopupSubmitConfirmationModalOpenChange={handleMapPopupSubmitConfirmationModalChange}
           onMapPopupSubmit={handleConfirmMapPopupSubmit}
           onOverlapFixClose={handleOverlapFixModalClose}
           onPolygonSubmittedModalOpenChange={handlePolygonSubmittedModalChange}
+          onProceedToBulkSubmitConfirmation={handleProceedToBulkSubmitConfirmation}
+          onProceedToMapPopupSubmitConfirmation={handleProceedToMapPopupSubmitConfirmation}
+          onSubmitPolygonConfirmationModalOpenChange={handleSubmitPolygonConfirmationModalChange}
           onSubmitPolygonsModalOpenChange={handleSubmitPolygonsModalChange}
           onSubmitPolygons={handleConfirmBulkSubmit}
           onUploadError={() => setUploadErrorModal(true)}

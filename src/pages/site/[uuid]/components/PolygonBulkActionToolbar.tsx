@@ -7,7 +7,7 @@ import type { ValidationDto } from "@/generated/v3/researchService/researchServi
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
-import { getSitePolygonsSubmitTooltip } from "@/utils/sitePolygonSubmit";
+import { getSitePolygonsSubmitTooltipIfNoneEligible } from "@/utils/sitePolygonSubmit";
 
 import SystemValidationComplete from "./Modals/SystemValidationComplete";
 import { PolygonTableRow } from "./PolygonTableRow";
@@ -69,7 +69,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     () =>
       isOverlapFixAction
         ? undefined
-        : getSitePolygonsSubmitTooltip(
+        : getSitePolygonsSubmitTooltipIfNoneEligible(
             polygons.map(polygon => ({ status: polygon.submission, validationStatus: polygon.validation })),
             t
           ),
