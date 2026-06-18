@@ -8,9 +8,9 @@ import EntityStatusBar from "@/components/extensive/EntityStatusBar";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
+import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullNurseryReport } from "@/connections/Entity";
-import { useTask } from "@/connections/Task";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -35,13 +35,12 @@ const NurseryReportDetailPage = () => {
   });
 
   const [nurseryLoaded, { data: nursery }] = useFullNursery({ id: nurseryReport?.nurseryUuid! });
-  const [taskLoaded, { data: task }] = useTask({ id: nurseryReport?.taskUuid ?? undefined });
 
   const reportTitle = nurseryReport?.reportTitle ?? nurseryReport?.title ?? t("Nursery Report");
   const headerReportTitle = nursery?.name != null ? `${nursery.name} ${reportTitle}` : "";
 
-  const window = useReportingWindow(toFramework(nurseryReport?.frameworkKey), task?.dueAt);
-  const taskTitle = t("Reporting Task {window}", { window });
+  const reportingWindow = useReportingWindow(toFramework(nurseryReport?.frameworkKey), nurseryReport?.dueAt!);
+  const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
 
   const tabItems = useMemo<TabItem[]>(
     () =>
@@ -62,7 +61,7 @@ const NurseryReportDetailPage = () => {
     [nurseryReport, nursery, t]
   );
 
-  const isLoaded = reportLoaded && nurseryLoaded && taskLoaded;
+  const isLoaded = reportLoaded && nurseryLoaded;
 
   return (
     <FrameworkProvider frameworkKey={nurseryReport?.frameworkKey}>
@@ -74,13 +73,12 @@ const NurseryReportDetailPage = () => {
             </Head>
             <PageBreadcrumbs
               links={[
-                { title: t("My Projects"), path: "/my-projects" },
+                { title: t("Projects"), path: "/my-projects" },
                 { title: nurseryReport.projectName ?? t("Project"), path: `/project/${nurseryReport.projectUuid}` },
-                {
-                  title: taskTitle,
-                  path: `/project/${nurseryReport.projectUuid}/reporting-task/${nurseryReport.taskUuid}`
-                },
-                { title: reportTitle }
+                { title: t("Nurseries"), path: `/project/${nurseryReport.projectUuid}?tab=nurseries` },
+                { title: nurseryReport.nurseryName ?? t("Nursery"), path: `/nursery/${nurseryReport.nurseryUuid}` },
+                { title: t("Reports"), path: `/nursery/${nurseryReport.nurseryUuid}?tab=completed-tasks` },
+                { title: t("Nursery Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "") }) }
               ]}
             />
             <NurseryReportHeader report={nurseryReport} title={headerReportTitle} />

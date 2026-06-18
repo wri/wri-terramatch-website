@@ -6,6 +6,7 @@ import { FC, ReactElement, useCallback, useMemo } from "react";
 
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/TrackingCollapseGrid/hooks";
+import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSite, useFullSiteReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
@@ -132,12 +133,26 @@ const SiteReportContent: FC<SiteReportContentProps> = ({ siteReport, site, taskD
             link: "/my-projects",
             icon: <ProjectIcon className="!text-theme-primary-900" />
           },
-          { label: siteReport.projectName ?? "", link: `/project/${siteReport.projectUuid}` },
           {
-            label: taskTitle,
-            link: `/project/${siteReport.projectUuid}/reporting-task/${siteReport.taskUuid}`
+            label: siteReport.projectName ?? t("Project"),
+            link: `/project/${siteReport.projectUuid}`
           },
-          { label: reportTitle, link: `/reports/site-report/${siteReportUUID}` }
+          {
+            label: t("Sites"),
+            link: `/project/${siteReport.projectUuid ?? ""}?tab=sites`
+          },
+          {
+            label: siteReport.siteName ?? t("Site"),
+            link: `/site/${siteReport.siteUuid ?? ""}`
+          },
+          {
+            label: t("Reports"),
+            link: `/site/${siteReport.siteUuid ?? ""}?tab=completed-tasks`
+          },
+          {
+            label: t("Site Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "") }),
+            link: `/reports/site-report/${siteReportUUID}`
+          }
         ]}
         suffix={
           <Flex gap={1.5} alignItems="center">
