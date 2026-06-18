@@ -19,6 +19,8 @@ type EntityForLinkHeader = {
   organisationUuid?: string | null;
   siteName?: string | null;
   siteUuid?: string | null;
+  nurseryName?: string | null;
+  nurseryUuid?: string | null;
 };
 
 export type EntityLinkHeaderParams = {
@@ -88,6 +90,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
   const entityTitle = mapEntityTitle(entity?.title ?? entity?.name ?? null, model, t);
   const projectTitle = mapEntityTitle(entity?.projectName ?? null, "project", t);
   const siteTitle = mapEntityTitle(entity?.siteName ?? null, "site", t);
+  const nurseryTitle = mapEntityTitle(entity?.nurseryName ?? null, "nursery", t);
 
   const withFirstIcon = (
     items: Array<{ label: string; link: string }>
@@ -168,12 +171,26 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
     ]),
     nurseryReports: withFirstIcon([
       {
-        label: isAdmin ? linkLabel : taskTitle,
-        link: isAdmin
-          ? adminListPath!
-          : `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
+        label: "Projects",
+        link: isAdmin ? adminListPath! : "/my-projects"
       },
-      { label: entityTitle, link: entityPageLink },
+      {
+        label: projectTitle,
+        link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
+      },
+      {
+        label: "Nurseries",
+        link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}?tab=nurseries`
+      },
+      {
+        label: nurseryTitle,
+        link: isAdmin ? adminListPath! : `/nursery/${entity?.nurseryUuid ?? ""}`
+      },
+      {
+        label: "Reports",
+        link: isAdmin ? adminListPath! : `/nursery/${entity?.nurseryUuid ?? ""}?tab=completed-tasks`
+      },
+      { label: entityTitle + " - " + getShortPeriodLabel(taskTitle), link: entityPageLink },
       { label: t("Edit"), link: editLink }
     ]),
     financialReports: withFirstIcon([

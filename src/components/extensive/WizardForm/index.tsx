@@ -62,6 +62,8 @@ export type WizardFormEntity = {
   projectReportUuid?: string | null;
   taskUuid?: string | null;
   siteName?: string | null;
+  nurseryName?: string | null;
+  nurseryUuid?: string | null;
   feedback?: string | null;
   feedbackFields?: string[] | null;
 };
@@ -468,6 +470,8 @@ function WizardForm(props: WizardFormProps) {
       return getFormHeaderLabel(entity?.projectName ?? "", taskTitle);
     } else if (formModel?.model === "siteReports") {
       return getFormHeaderLabel(entity?.siteName ?? "", taskTitle);
+    } else if (formModel?.model === "nurseryReports") {
+      return getFormHeaderLabel(entity?.nurseryName ?? "", taskTitle);
     } else {
       return mapEntityTitle(entity?.title ?? entity?.name ?? null, formModel?.model ?? "", t);
     }
@@ -505,13 +509,15 @@ function WizardForm(props: WizardFormProps) {
         router.push(`/project/${entity?.projectUuid}`, undefined, { shallow: true });
       } else if (tab == "site-profile") {
         router.push(`/site/${entity?.siteUuid}`, undefined, { shallow: true });
+      } else if (tab == "nursery-profile") {
+        router.push(`/nursery/${entity?.nurseryUuid}`, undefined, { shallow: true });
       } else if (tab == "project-report") {
         router.push(`/reports/project-report/${entity?.projectReportUuid}`, undefined, { shallow: true });
       } else {
         router.push(`/project/${entity?.projectUuid}/reporting-task/${entity?.taskUuid}`, undefined, { shallow: true });
       }
     },
-    [router, entity?.projectUuid, entity?.taskUuid, entity?.siteUuid, entity?.projectReportUuid]
+    [router, entity?.projectUuid, entity?.taskUuid, entity?.siteUuid, entity?.projectReportUuid, entity?.nurseryUuid]
   );
 
   return selectedStepIndex < 0 ? null : (
