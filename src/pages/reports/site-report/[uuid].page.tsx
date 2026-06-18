@@ -8,9 +8,9 @@ import EntityStatusBar from "@/components/extensive/EntityStatusBar";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
+import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSite, useFullSiteReport } from "@/connections/Entity";
-import { useTask } from "@/connections/Task";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -35,13 +35,12 @@ const SiteReportDetailPage = () => {
   });
 
   const [siteLoaded, { data: site }] = useFullSite({ id: siteReport?.siteUuid! });
-  const [taskLoaded, { data: task }] = useTask({ id: siteReport?.taskUuid ?? undefined });
 
   const reportTitle = siteReport?.reportTitle ?? siteReport?.title ?? t("Site Report");
   const headerReportTitle = site?.name != null ? `${site.name} ${reportTitle}` : "";
 
-  const window = useReportingWindow(toFramework(siteReport?.frameworkKey), task?.dueAt);
-  const taskTitle = t("Reporting Task {window}", { window });
+  const reportingWindow = useReportingWindow(toFramework(siteReport?.frameworkKey), siteReport?.dueAt!);
+  const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
 
   const tabItems = useMemo<TabItem[]>(
     () =>
@@ -62,7 +61,7 @@ const SiteReportDetailPage = () => {
     [siteReport, site, t]
   );
 
-  const isLoaded = reportLoaded && siteLoaded && taskLoaded;
+  const isLoaded = reportLoaded && siteLoaded;
 
   return (
     <FrameworkProvider frameworkKey={siteReport?.frameworkKey}>
@@ -74,13 +73,21 @@ const SiteReportDetailPage = () => {
             </Head>
             <PageBreadcrumbs
               links={[
-                { title: t("My Projects"), path: "/my-projects" },
+                { title: t("Projects"), path: "/my-projects" },
                 { title: siteReport.projectName ?? t("Project"), path: `/project/${siteReport.projectUuid}` },
                 {
-                  title: taskTitle,
-                  path: `/project/${siteReport.projectUuid}/reporting-task/${siteReport.taskUuid}`
+                  title: "Sites",
+                  path: `/project/${siteReport.projectUuid ?? ""}?tab=sites`
                 },
-                { title: reportTitle }
+                {
+                  title: siteReport.siteName ?? t("Site"),
+                  path: `/site/${siteReport.siteUuid ?? ""}`
+                },
+                {
+                  title: "Reports",
+                  path: `/site/${siteReport.siteUuid ?? ""}?tab=completed-tasks`
+                },
+                { title: "Site Report - " + getShortPeriodLabel(taskTitle ?? "") }
               ]}
             />
             <SiteReportHeader report={siteReport} reportTitle={headerReportTitle} />
