@@ -1,5 +1,6 @@
 import * as yup from "yup";
 
+import TrackingAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/TrackingAdditionalOptions";
 import RHFTrackingTable from "@/components/elements/Inputs/TrackingInput/RHFTrackingTable";
 import { calculateTotals } from "@/components/extensive/TrackingCollapseGrid/hooks";
 import TrackingCollapseGrid from "@/components/extensive/TrackingCollapseGrid/TrackingCollapseGrid";
@@ -94,6 +95,12 @@ export const TrackingField: FormFieldFactory = {
       />
     );
   }),
+
+  formBuilderAdditionalOptions: ({ field, getSource }) => {
+    const type = field.inputType as TrackingType;
+    const domain = getDomain(type);
+    return <TrackingAdditionalOptions {...{ type, domain, getSource }} />;
+  },
 
   formBuilderDefaults: ({ collection }) => ({ collection })
 };
