@@ -410,6 +410,10 @@ export type SiteReportLightDto = {
    * The associated site uuid
    */
   siteUuid: string | null;
+  /**
+   * The associated project report uuid
+   */
+  projectReportUuid: string | null;
   frameworkKey: string | null;
   /**
    * Report status for this site report
@@ -1982,6 +1986,10 @@ export type SiteReportFullDto = {
    * The associated site uuid
    */
   siteUuid: string | null;
+  /**
+   * The associated project report uuid
+   */
+  projectReportUuid: string | null;
   frameworkKey: string | null;
   /**
    * Report status for this site report
