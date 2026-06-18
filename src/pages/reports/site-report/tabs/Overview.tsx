@@ -232,8 +232,8 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
 
                       if (isFirstParagraph) {
                         return (
-                          <Text key={index} color="neutral.900" textStyle="300-bold" as="span">
-                            {t("Site Report")} {paragraph}
+                          <Text key={index} color="neutral.900" textStyle="300">
+                            <strong>{t("Site Report")} </strong> {paragraph}
                           </Text>
                         );
                       }
