@@ -23,6 +23,7 @@ import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/typ
 import { maxFileSize } from "@/admin/utils/forms";
 import { StepDefinition } from "@/components/extensive/WizardForm/types";
 import { FormModelType, useLinkedFields } from "@/connections/Form";
+import FrameworkProvider from "@/context/framework.provider";
 import { LocalStep } from "@/context/wizardForm.provider";
 import { Forms } from "@/generated/v3/entityService/entityServiceConstants";
 
@@ -89,7 +90,7 @@ export const FormBuilderForm = () => {
         sx={{ marginBottom: 6 }}
       />
       {modelTypeValue == null ? null : (
-        <>
+        <FrameworkProvider frameworkKey={getValues()?.frameworkKey}>
           <div>
             <Accordion className="w-full">
               <AccordionSummary expandIcon={<ExpandMore />}>
@@ -219,7 +220,7 @@ export const FormBuilderForm = () => {
             stepId={previewSectionId}
             onClose={() => setPreviewSectionId(undefined)}
           />
-        </>
+        </FrameworkProvider>
       )}
     </>
   );
