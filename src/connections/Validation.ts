@@ -37,6 +37,25 @@ export const usePolygonValidation = (pathParams: GetPolygonValidationPathParams)
   return data;
 };
 
+export const fetchPolygonValidation = async (polygonUuid: string): Promise<ValidationDto | undefined> => {
+  if (!hasValidParams({ polygonUuid })) {
+    return undefined;
+  }
+
+  ApiSlice.pruneCache("validations", [polygonUuid]);
+
+  const response = await loadConnection(validationConnection, {
+    id: polygonUuid,
+    enabled: true
+  });
+
+  if (response.loadFailure != null) {
+    return undefined;
+  }
+
+  return response.data;
+};
+
 const siteValidationConnection = v3Resource("validations", getSiteValidation)
   .index<ValidationDto, { siteUuid: string; criteriaId?: number }>(({ siteUuid, criteriaId }) => ({
     pathParams: { siteUuid },

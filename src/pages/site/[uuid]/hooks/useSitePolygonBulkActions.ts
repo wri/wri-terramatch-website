@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { downloadMultiplePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { clipPolygonListAsync } from "@/connections/PolygonClipping";
@@ -78,6 +78,7 @@ type UseSitePolygonBulkActionsParams = {
     polygonsFixed: OverlapFixPolygon[];
     polygonsNotFixed: OverlapFixPolygon[];
   }) => void;
+  onValidationJobsStarted?: (polygonUuids: string[]) => void;
 };
 
 export const useSitePolygonBulkActions = ({
@@ -95,7 +96,8 @@ export const useSitePolygonBulkActions = ({
   refetchPolygons,
   fetchAllValidationPages,
   fetchOverlapValidations,
-  onOverlapFixResultsOpen
+  onOverlapFixResultsOpen,
+  onValidationJobsStarted
 }: UseSitePolygonBulkActionsParams) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
@@ -110,6 +112,8 @@ export const useSitePolygonBulkActions = ({
   const [, { user }] = useMyUser();
 
   const pendingPolygonSubmittedModalRef = useRef(false);
+  const proceedingToBulkSubmitConfirmationRef = useRef(false);
+  const proceedingToMapPopupSubmitConfirmationRef = useRef(false);
 
   const [deletePayload, setDeletePayload] = useState<{
     polygons: PolygonTableRow[];
@@ -127,6 +131,9 @@ export const useSitePolygonBulkActions = ({
     sitePolygonUuids: string[];
   } | null>(null);
   const [showSubmitPolygonsModal, setSubmitPolygonsModal] = useState(false);
+  const [showSubmitPolygonConfirmationModal, setSubmitPolygonConfirmationModal] = useState(false);
+  const [showMapPopupSubmitPolygonsModal, setMapPopupSubmitPolygonsModal] = useState(false);
+  const [showMapPopupSubmitConfirmationModal, setMapPopupSubmitConfirmationModal] = useState(false);
   const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
   const [submittedPolygonNames, setSubmittedPolygonNames] = useState<string[]>([]);
   const [submittedPolygonComment, setSubmittedPolygonComment] = useState<SubmittedPolygonComment | null>(null);
@@ -189,15 +196,32 @@ export const useSitePolygonBulkActions = ({
     }, 200);
   }, []);
 
-  const handleSubmitPolygonsModalChange = useCallback(
+  const handleSubmitPolygonsModalChange = useCallback((open: boolean) => {
+    setSubmitPolygonsModal(open);
+    if (!open) {
+      if (proceedingToBulkSubmitConfirmationRef.current) {
+        proceedingToBulkSubmitConfirmationRef.current = false;
+        return;
+      }
+      setSubmitPayload(null);
+    }
+  }, []);
+
+  const handleProceedToBulkSubmitConfirmation = useCallback(() => {
+    proceedingToBulkSubmitConfirmationRef.current = true;
+    setSubmitPolygonsModal(false);
+    setSubmitPolygonConfirmationModal(true);
+  }, []);
+
+  const handleSubmitPolygonConfirmationModalChange = useCallback(
     (open: boolean) => {
-      setSubmitPolygonsModal(open);
+      setSubmitPolygonConfirmationModal(open);
       if (!open) {
         setSubmitPayload(null);
-      }
-      if (!open && pendingPolygonSubmittedModalRef.current) {
-        pendingPolygonSubmittedModalRef.current = false;
-        schedulePolygonSubmittedModal();
+        if (pendingPolygonSubmittedModalRef.current) {
+          pendingPolygonSubmittedModalRef.current = false;
+          schedulePolygonSubmittedModal();
+        }
       }
     },
     [schedulePolygonSubmittedModal]
@@ -208,14 +232,54 @@ export const useSitePolygonBulkActions = ({
       if (open) {
         return;
       }
+      setMapPopupSubmitPolygonsModal(false);
+      if (proceedingToMapPopupSubmitConfirmationRef.current) {
+        proceedingToMapPopupSubmitConfirmationRef.current = false;
+        return;
+      }
       setPolygonSubmitConfirmation(null);
-      if (pendingPolygonSubmittedModalRef.current) {
-        pendingPolygonSubmittedModalRef.current = false;
-        schedulePolygonSubmittedModal();
+    },
+    [setPolygonSubmitConfirmation]
+  );
+
+  const handleProceedToMapPopupSubmitConfirmation = useCallback(() => {
+    proceedingToMapPopupSubmitConfirmationRef.current = true;
+    setMapPopupSubmitPolygonsModal(false);
+    setMapPopupSubmitConfirmationModal(true);
+  }, []);
+
+  const handleMapPopupSubmitConfirmationModalChange = useCallback(
+    (open: boolean) => {
+      setMapPopupSubmitConfirmationModal(open);
+      if (!open) {
+        setPolygonSubmitConfirmation(null);
+        if (pendingPolygonSubmittedModalRef.current) {
+          pendingPolygonSubmittedModalRef.current = false;
+          schedulePolygonSubmittedModal();
+        }
       }
     },
     [schedulePolygonSubmittedModal, setPolygonSubmitConfirmation]
   );
+
+  useEffect(() => {
+    if (polygonSubmitConfirmation == null) {
+      setMapPopupSubmitPolygonsModal(false);
+      setMapPopupSubmitConfirmationModal(false);
+      return;
+    }
+
+    const hasNonSubmittableSelection = polygonSubmitConfirmation.eligibleCount < polygonSubmitConfirmation.totalCount;
+
+    if (hasNonSubmittableSelection) {
+      setMapPopupSubmitPolygonsModal(true);
+      setMapPopupSubmitConfirmationModal(false);
+      return;
+    }
+
+    setMapPopupSubmitPolygonsModal(false);
+    setMapPopupSubmitConfirmationModal(true);
+  }, [polygonSubmitConfirmation]);
 
   const handleOpenDeletePolygonModal = useCallback(() => {
     setDeletePayload({
@@ -264,15 +328,19 @@ export const useSitePolygonBulkActions = ({
     }
   }, [closeMapPopups, deletePayload, invalidatePolygonMapTiles, openNotification, refreshPolygonData, t, toastLabels]);
 
-  const runPolygonValidation = useCallback(async (polygonUuids: string[]) => {
-    if (polygonUuids.length === 0) {
-      return;
-    }
+  const runPolygonValidation = useCallback(
+    async (polygonUuids: string[]) => {
+      if (polygonUuids.length === 0) {
+        return;
+      }
 
-    await createPolygonValidation({ polygonUuids });
-    ApiSlice.pruneCache("validations");
-    await listDelayedJobs.fetch({});
-  }, []);
+      await createPolygonValidation({ polygonUuids });
+      ApiSlice.pruneCache("validations");
+      await listDelayedJobs.fetch({});
+      onValidationJobsStarted?.(polygonUuids);
+    },
+    [onValidationJobsStarted]
+  );
 
   const handleRunValidation = useCallback(
     async (polygonUuids: string[]) => {
@@ -414,15 +482,25 @@ export const useSitePolygonBulkActions = ({
         .map(p => p.polygonUuid ?? p.uuid)
         .filter((id): id is string => id != null && id.length > 0)
     );
+    const eligibleCount = selectedSubmittablePolygons.length;
+    const totalCount = selectedSitePolygons.length;
+    const hasNonSubmittableSelection = eligibleCount < totalCount;
+
     setSubmitPayload({
       submittablePolygonUuids: selectedSubmittablePolygonUuids,
       submittedNames: selectedSubmittablePolygons.map(polygon => polygon.name ?? t("Unnamed polygon")),
-      eligibleCount: selectedSubmittablePolygons.length,
-      totalCount: selectedSitePolygons.length,
+      eligibleCount,
+      totalCount,
       polygons: selectedRows.filter(row => submittableRowIdsSet.has(row.id))
     });
     clearBulkTableSelection();
-    setSubmitPolygonsModal(true);
+
+    if (hasNonSubmittableSelection) {
+      setSubmitPolygonsModal(true);
+      return;
+    }
+
+    setSubmitPolygonConfirmationModal(true);
   }, [
     clearBulkTableSelection,
     handleOverlapFix,
@@ -453,6 +531,7 @@ export const useSitePolygonBulkActions = ({
           POLYGON_PENDING_APPROVAL as PolygonStatus,
           comment
         );
+
         const trimmedComment = comment.trim();
         setSubmittedPolygonComment(
           trimmedComment === ""
@@ -472,6 +551,16 @@ export const useSitePolygonBulkActions = ({
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
         showPolygonCompleteToast(toastLabels.submittingComplete);
         pendingPolygonSubmittedModalRef.current = true;
+        ApiSlice.pruneCache("auditStatuses");
+
+        const geometryPolygonUuids = sitePolygonUuids
+          .map(sitePolygonUuid => polygonsData.find(polygon => polygon.uuid === sitePolygonUuid))
+          .map(polygon => polygon?.polygonUuid)
+          .filter((uuid): uuid is string => uuid != null && uuid !== "");
+
+        if (geometryPolygonUuids.length > 0) {
+          onValidationJobsStarted?.(geometryPolygonUuids);
+        }
       } catch (error) {
         Log.error("Failed to submit selected polygons:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
@@ -482,7 +571,9 @@ export const useSitePolygonBulkActions = ({
     [
       closeMapPopups,
       invalidatePolygonMapTiles,
+      onValidationJobsStarted,
       openNotification,
+      polygonsData,
       refreshPolygonData,
       setShouldRefetchPolygonData,
       t,
@@ -503,7 +594,6 @@ export const useSitePolygonBulkActions = ({
         t("No selected polygons are eligible for submission"),
         comment
       );
-      setSubmitPayload(null);
     },
     [submitPayload, submitPolygons, t]
   );
@@ -640,6 +730,9 @@ export const useSitePolygonBulkActions = ({
     showDeletePolygonModal,
     showPolygonSubmittedModal,
     showSubmitPolygonsModal,
+    showSubmitPolygonConfirmationModal,
+    showMapPopupSubmitPolygonsModal,
+    showMapPopupSubmitConfirmationModal,
     submittedPolygonNames,
     submittedPolygonComment,
     isBulkUpdatingPolygons,
@@ -659,12 +752,16 @@ export const useSitePolygonBulkActions = ({
     handleConfirmMapPopupSubmit,
     handleDeletePolygonModalChange,
     handleDrawerOverlapFixed,
+    handleMapPopupSubmitConfirmationModalChange,
     handleMapPopupSubmitModalChange,
     handleOpenDeletePolygonModal,
     handleOpenSubmitPolygonsModal,
     handlePolygonDeletingChange,
     handlePolygonSubmittedModalChange,
+    handleProceedToBulkSubmitConfirmation,
+    handleProceedToMapPopupSubmitConfirmation,
     handleRunValidation,
+    handleSubmitPolygonConfirmationModalChange,
     handleSubmitPolygonsModalChange,
     openPolygonEditDrawerForRow,
     runPolygonValidation

@@ -76,7 +76,7 @@ type PolygonEditContentProps = {
   onClose?: () => void;
   onRegisterSave?: (saveHandler: () => Promise<boolean>) => void;
   onRegisterDelete: (deleteHandler: () => Promise<void>) => void;
-  onRegisterSubmit: (submitHandler: () => Promise<void>) => void;
+  onRegisterSubmit: (submitHandler: (comment: string) => Promise<void>) => void;
   onRegisterPolygonName?: (getPolygonName: () => string) => void;
   onRegisterPlantStartDate?: (hasPlantStartDate: () => boolean) => void;
   onRequestDeleteModal: () => void;
@@ -623,52 +623,55 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     }
   }, [geometryPolygonUuid, onClose, polygon?.name, showStatusToast, t, toastLabels]);
 
-  const handleSubmitPolygon = useCallback(async () => {
-    if (polygon?.uuid == null || polygon.uuid === "") {
-      showStatusToast("error", t("Missing polygon information"));
-      return;
-    }
+  const handleSubmitPolygon = useCallback(
+    async (comment: string) => {
+      if (polygon?.uuid == null || polygon.uuid === "") {
+        showStatusToast("error", t("Missing polygon information"));
+        return;
+      }
 
-    if (polygon.status === POLYGON_PENDING_APPROVAL || polygon.status === POLYGON_APPROVED) {
-      showStatusToast("error", t("This polygon has already been submitted"));
-      return;
-    }
+      if (polygon.status === POLYGON_PENDING_APPROVAL || polygon.status === POLYGON_APPROVED) {
+        showStatusToast("error", t("This polygon has already been submitted"));
+        return;
+      }
 
-    showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1), POLYGON_TOAST_IDS.submitting);
+      showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1), POLYGON_TOAST_IDS.submitting);
 
-    try {
-      await bulkUpdateSitePolygonStatus([polygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, "");
-      pruneSitePolygonsCache();
-      closeMapPopups();
-      invalidatePolygonMapTiles();
-      setIsUserDrawingEnabled(false);
-      setPolygonGeometryEdit(undefined);
-      setStatusSelectedPolygon(POLYGON_PENDING_APPROVAL);
-      setShouldRefetchPolygonData(true);
-      onClose?.();
-      await waitForMapEditCleanup();
-      await onSaved?.();
-      closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
-      showPolygonCompleteToast(toastLabels.submittingComplete);
-    } catch (error) {
-      closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
-      showPolygonErrorToast(t("Error submitting polygon"));
-    }
-  }, [
-    closeMapPopups,
-    invalidatePolygonMapTiles,
-    onClose,
-    onSaved,
-    polygon?.status,
-    polygon?.uuid,
-    setIsUserDrawingEnabled,
-    setPolygonGeometryEdit,
-    setShouldRefetchPolygonData,
-    setStatusSelectedPolygon,
-    showStatusToast,
-    t,
-    toastLabels
-  ]);
+      try {
+        await bulkUpdateSitePolygonStatus([polygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, comment);
+        pruneSitePolygonsCache();
+        closeMapPopups();
+        invalidatePolygonMapTiles();
+        setIsUserDrawingEnabled(false);
+        setPolygonGeometryEdit(undefined);
+        setStatusSelectedPolygon(POLYGON_PENDING_APPROVAL);
+        setShouldRefetchPolygonData(true);
+        onClose?.();
+        await waitForMapEditCleanup();
+        await onSaved?.();
+        closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
+        showPolygonCompleteToast(toastLabels.submittingComplete);
+      } catch (error) {
+        closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
+        showPolygonErrorToast(t("Error submitting polygon"));
+      }
+    },
+    [
+      closeMapPopups,
+      invalidatePolygonMapTiles,
+      onClose,
+      onSaved,
+      polygon?.status,
+      polygon?.uuid,
+      setIsUserDrawingEnabled,
+      setPolygonGeometryEdit,
+      setShouldRefetchPolygonData,
+      setStatusSelectedPolygon,
+      showStatusToast,
+      t,
+      toastLabels
+    ]
+  );
 
   const handleDeletePolygon = useCallback(async () => {
     if (polygon?.uuid == null || polygon.uuid === "") {

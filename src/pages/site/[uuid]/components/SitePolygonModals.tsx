@@ -9,6 +9,7 @@ import EditPhotoDetails from "./Modals/GeotaggedPhotos/EditPhotoDetails";
 import OverlapFix, { type OverlapFixPolygon } from "./Modals/OverlapFix";
 import PolygonSubmitted from "./Modals/PolygonSubmitted";
 import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
+import SubmitPolygons from "./Modals/SubmitPolygons";
 import UploadError from "./Modals/UploadError";
 import UploadPhotos from "./Modals/UploadPhotos";
 import UploadPolygons from "./Modals/UploadPolygons";
@@ -30,10 +31,9 @@ type SitePolygonModalsProps = {
   openOverlapFixModal: boolean;
   openPolygonSubmittedModal: boolean;
   openSubmitPolygonsModal: boolean;
-  openUploadErrorModal: boolean;
-  openUploadModal: boolean;
-  openUploadPhotosModal: boolean;
+  openSubmitPolygonConfirmationModal: boolean;
   openMapPopupSubmitModal: boolean;
+  openMapPopupSubmitConfirmationModal: boolean;
   mapPopupSubmitEligibleCount: number;
   mapPopupSubmitTotalCount: number;
   mapPopupSubmitPolygons: PolygonTableRow[];
@@ -46,12 +46,19 @@ type SitePolygonModalsProps = {
   onDeletePolygonModalOpenChange: (open: boolean) => void;
   onEditPhotoDetailsClose: () => void;
   onMapPopupSubmitModalOpenChange: (open: boolean) => void;
+  onMapPopupSubmitConfirmationModalOpenChange: (open: boolean) => void;
   onMapPopupSubmit: (comment: string) => void | Promise<void>;
+  onProceedToBulkSubmitConfirmation: () => void | Promise<void>;
+  onProceedToMapPopupSubmitConfirmation: () => void | Promise<void>;
   onOverlapFixClose: () => void;
   onPolygonSubmittedModalOpenChange: (open: boolean) => void;
+  onSubmitPolygonConfirmationModalOpenChange: (open: boolean) => void;
   onSubmitPolygonsModalOpenChange: (open: boolean) => void;
   onSubmitPolygons: (comment: string) => void | Promise<void>;
   onUploadError: () => void;
+  openUploadErrorModal: boolean;
+  openUploadModal: boolean;
+  openUploadPhotosModal: boolean;
   onUploadErrorModalOpenChange: (open: boolean) => void;
   onUploadModalOpenChange: (open: boolean) => void;
   onUploadPhotosModalOpenChange: (open: boolean) => void;
@@ -71,10 +78,14 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   openOverlapFixModal,
   openPolygonSubmittedModal,
   openSubmitPolygonsModal,
+  openSubmitPolygonConfirmationModal,
   openUploadErrorModal,
   openUploadModal,
   openUploadPhotosModal,
   openMapPopupSubmitModal,
+  openMapPopupSubmitConfirmationModal,
+  mapPopupSubmitEligibleCount,
+  mapPopupSubmitTotalCount,
   mapPopupSubmitPolygons,
   submittedPolygonNames,
   submittedPolygonComment,
@@ -85,9 +96,13 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   onDeletePolygonModalOpenChange,
   onEditPhotoDetailsClose,
   onMapPopupSubmitModalOpenChange,
+  onMapPopupSubmitConfirmationModalOpenChange,
   onMapPopupSubmit,
   onOverlapFixClose,
   onPolygonSubmittedModalOpenChange,
+  onProceedToBulkSubmitConfirmation,
+  onProceedToMapPopupSubmitConfirmation,
+  onSubmitPolygonConfirmationModalOpenChange,
   onSubmitPolygonsModalOpenChange,
   onSubmitPolygons,
   onUploadError,
@@ -112,31 +127,30 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
       onUploadSuccess={onUploadSuccess}
       onUploadError={onUploadError}
     />
-    {/* TODO: Uncomment this when validation is enabled for polygon errors and the SubmitPolygons component is ready. */}
-    {/* <SubmitPolygons
+    <SubmitPolygons
       open={openSubmitPolygonsModal}
       onOpenChange={onSubmitPolygonsModalOpenChange}
       eligibleCount={submitPayload?.eligibleCount ?? 0}
       totalCount={submitPayload?.totalCount ?? 0}
-      onSubmit={onSubmitPolygons}
+      onSubmit={onProceedToBulkSubmitConfirmation}
     />
     <SubmitPolygons
       open={openMapPopupSubmitModal}
       onOpenChange={onMapPopupSubmitModalOpenChange}
       eligibleCount={mapPopupSubmitEligibleCount}
       totalCount={mapPopupSubmitTotalCount}
-      onSubmit={onMapPopupSubmit}
-    /> */}
+      onSubmit={onProceedToMapPopupSubmitConfirmation}
+    />
 
     <SubmitPolygonConfirmation
-      open={openSubmitPolygonsModal}
-      onOpenChange={onSubmitPolygonsModalOpenChange}
+      open={openSubmitPolygonConfirmationModal}
+      onOpenChange={onSubmitPolygonConfirmationModalOpenChange}
       polygons={submitPayload?.polygons ?? []}
       onSubmit={onSubmitPolygons}
     />
     <SubmitPolygonConfirmation
-      open={openMapPopupSubmitModal}
-      onOpenChange={onMapPopupSubmitModalOpenChange}
+      open={openMapPopupSubmitConfirmationModal}
+      onOpenChange={onMapPopupSubmitConfirmationModalOpenChange}
       polygons={mapPopupSubmitPolygons}
       onSubmit={onMapPopupSubmit}
     />
