@@ -121,7 +121,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
                 entityUuid={projectReport.uuid}
                 entityName="projectReports"
                 columns={4}
-                minRows={1}
+                rows={1}
               />
             </PageItem>
           </Flex>
