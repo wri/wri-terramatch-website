@@ -9,9 +9,11 @@ import {
   bulkDeleteSitePolygons,
   bulkUpdateSitePolygonAttributes,
   bulkUpdateSitePolygonStatus,
+  getStatusUpdateCommentCreatedAt,
   loadAllSitePolygons,
   pruneSitePolygonsCache
 } from "@/connections/SitePolygons";
+import { useMyUser } from "@/connections/User";
 import { createPolygonValidation } from "@/connections/Validation";
 import { POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -45,6 +47,15 @@ import {
   extractClippedVersions,
   resolveActivePolygonAfterOverlapFix
 } from "./overlapFix.utils";
+
+const formatAuthorName = (firstName?: string | null, lastName?: string | null): string =>
+  firstName == null && lastName == null ? "Unknown User" : `${firstName ?? ""} ${lastName ?? ""}`.trim();
+
+export type SubmittedPolygonComment = {
+  authorName: string;
+  message: string;
+  createdAt: string;
+};
 
 type FetchValidations = (clearCache?: boolean) => Promise<ValidationDto[] | undefined>;
 
@@ -96,6 +107,7 @@ export const useSitePolygonBulkActions = ({
     setShouldRefetchPolygonData
   } = useMapAreaContext();
   const { openNotification } = useNotificationContext();
+  const [, { user }] = useMyUser();
 
   const pendingPolygonSubmittedModalRef = useRef(false);
 
@@ -117,6 +129,7 @@ export const useSitePolygonBulkActions = ({
   const [showSubmitPolygonsModal, setSubmitPolygonsModal] = useState(false);
   const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
   const [submittedPolygonNames, setSubmittedPolygonNames] = useState<string[]>([]);
+  const [submittedPolygonComment, setSubmittedPolygonComment] = useState<SubmittedPolygonComment | null>(null);
   const [showDeletePolygonModal, setDeletePolygonModal] = useState(false);
   const [showBulkEditDrawer, setShowBulkEditDrawer] = useState(false);
   const [isDownloadingSelectedPolygons, setIsDownloadingSelectedPolygons] = useState(false);
@@ -166,6 +179,7 @@ export const useSitePolygonBulkActions = ({
     setPolygonSubmittedModal(open);
     if (!open) {
       setSubmittedPolygonNames([]);
+      setSubmittedPolygonComment(null);
     }
   }, []);
 
@@ -422,7 +436,7 @@ export const useSitePolygonBulkActions = ({
   ]);
 
   const submitPolygons = useCallback(
-    async (sitePolygonUuids: string[], submittedNames: string[], emptySelectionMessage: string) => {
+    async (sitePolygonUuids: string[], submittedNames: string[], emptySelectionMessage: string, comment: string) => {
       if (sitePolygonUuids.length === 0) {
         openNotification("error", t("Error!"), emptySelectionMessage);
         return;
@@ -434,7 +448,21 @@ export const useSitePolygonBulkActions = ({
           getSubmittingProgressLabel(t, sitePolygonUuids.length),
           POLYGON_TOAST_IDS.submitting
         );
-        await bulkUpdateSitePolygonStatus(sitePolygonUuids, POLYGON_PENDING_APPROVAL as PolygonStatus, "");
+        const response = await bulkUpdateSitePolygonStatus(
+          sitePolygonUuids,
+          POLYGON_PENDING_APPROVAL as PolygonStatus,
+          comment
+        );
+        const trimmedComment = comment.trim();
+        setSubmittedPolygonComment(
+          trimmedComment === ""
+            ? null
+            : {
+                authorName: formatAuthorName(user?.firstName, user?.lastName),
+                message: trimmedComment,
+                createdAt: getStatusUpdateCommentCreatedAt(response) ?? ""
+              }
+        );
         closeMapPopups();
         setPolygonTableHoveredUuid(null);
         invalidatePolygonMapTiles();
@@ -458,35 +486,45 @@ export const useSitePolygonBulkActions = ({
       refreshPolygonData,
       setShouldRefetchPolygonData,
       t,
-      toastLabels
+      toastLabels,
+      user?.firstName,
+      user?.lastName
     ]
   );
 
-  const handleConfirmBulkSubmit = useCallback(async () => {
-    const submittablePolygonUuids = submitPayload?.submittablePolygonUuids ?? [];
-    const submittedNames = submitPayload?.submittedNames ?? [];
+  const handleConfirmBulkSubmit = useCallback(
+    async (comment: string) => {
+      const submittablePolygonUuids = submitPayload?.submittablePolygonUuids ?? [];
+      const submittedNames = submitPayload?.submittedNames ?? [];
 
-    await submitPolygons(
-      submittablePolygonUuids,
-      submittedNames,
-      t("No selected polygons are eligible for submission")
-    );
-    setSubmitPayload(null);
-  }, [submitPayload, submitPolygons, t]);
+      await submitPolygons(
+        submittablePolygonUuids,
+        submittedNames,
+        t("No selected polygons are eligible for submission"),
+        comment
+      );
+      setSubmitPayload(null);
+    },
+    [submitPayload, submitPolygons, t]
+  );
 
-  const handleConfirmMapPopupSubmit = useCallback(async () => {
-    const sitePolygonUuid = polygonSubmitConfirmation?.sitePolygonUuid;
-    if (sitePolygonUuid == null || sitePolygonUuid === "") {
-      return;
-    }
+  const handleConfirmMapPopupSubmit = useCallback(
+    async (comment: string) => {
+      const sitePolygonUuid = polygonSubmitConfirmation?.sitePolygonUuid;
+      if (sitePolygonUuid == null || sitePolygonUuid === "") {
+        return;
+      }
 
-    const polygon = polygonsData.find(item => item.uuid === sitePolygonUuid);
-    await submitPolygons(
-      [sitePolygonUuid],
-      [polygon?.name ?? t("Unnamed polygon")],
-      t("No polygon is eligible for submission")
-    );
-  }, [polygonSubmitConfirmation?.sitePolygonUuid, polygonsData, submitPolygons, t]);
+      const polygon = polygonsData.find(item => item.uuid === sitePolygonUuid);
+      await submitPolygons(
+        [sitePolygonUuid],
+        [polygon?.name ?? t("Unnamed polygon")],
+        t("No polygon is eligible for submission"),
+        comment
+      );
+    },
+    [polygonSubmitConfirmation?.sitePolygonUuid, polygonsData, submitPolygons, t]
+  );
 
   const handleBulkDownload = useCallback(
     async (geometryPolygonUuids: string[], downloadSitePolygons: SitePolygonLightDto[]) => {
@@ -603,6 +641,7 @@ export const useSitePolygonBulkActions = ({
     showPolygonSubmittedModal,
     showSubmitPolygonsModal,
     submittedPolygonNames,
+    submittedPolygonComment,
     isBulkUpdatingPolygons,
     isDeletingPolygons,
     isDownloadingSelectedPolygons,

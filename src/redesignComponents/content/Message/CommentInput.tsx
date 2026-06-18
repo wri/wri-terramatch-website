@@ -1,6 +1,7 @@
 import { Box, Flex, Image, Text, Textarea } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 import { AuditStatusEntityType, useCreateAuditStatus } from "@/connections/AuditStatus";
 import { prepareFileForUpload } from "@/connections/Media";
@@ -44,6 +45,8 @@ interface CommentInputFile {
 }
 
 interface CommentInputProps {
+  label?: string;
+  caption?: string;
   name: string;
   src?: string;
   placeholder?: string;
@@ -64,10 +67,16 @@ interface CommentInputProps {
   auditEntityUuid?: string;
   auditEntityStatus?: string | null;
   onCommentCreated?: () => void;
+  showOptionalLabel?: boolean;
+  showSendIcon?: boolean;
+  showAttachFileIcon?: boolean;
+  className?: string;
 }
 
 const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   const {
+    label,
+    caption,
     name,
     src,
     placeholder,
@@ -86,7 +95,11 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
     auditEntity,
     auditEntityUuid,
     auditEntityStatus,
-    onCommentCreated
+    onCommentCreated,
+    showOptionalLabel = false,
+    showSendIcon = true,
+    showAttachFileIcon = true,
+    className
   } = props;
 
   const t = useT();
@@ -310,7 +323,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   const hasFiles = (effectiveFiles?.length ?? 0) > 0;
   const hasContent = currentValue.trim().length > 0;
   const isSubmitting = isCreating || isUploadingFiles;
-  const shouldShowSendIcon = !currentIsEditing && (isAuditMode ? hasContent || hasFiles : !hasFiles);
+  const shouldShowSendIcon = showSendIcon && !currentIsEditing && (isAuditMode ? hasContent || hasFiles : !hasFiles);
 
   const adjustTextareaHeight = useCallback((target?: HTMLTextAreaElement | null) => {
     const textarea = target ?? textareaRef.current;
@@ -342,21 +355,36 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   }, [currentValue, adjustTextareaHeight]);
 
   return (
-    <Flex className="w-full flex-col gap-2">
+    <Flex className={twMerge("w-full flex-col gap-2", className)}>
       <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
+      {label && (
+        <Text textStyle="400-bold" color="primary.900">
+          {label}
+          {showOptionalLabel && (
+            <Text as="span" textStyle="300" color="neutral.700">
+              {" "}
+              {"(optional)"}
+            </Text>
+          )}
+        </Text>
+      )}
+      {caption && (
+        <Text textStyle="400" color="neutral.900">
+          {caption}
+        </Text>
+      )}
       <Flex className="items-center gap-3">
         <Avatar size="small" name={name} src={src} />
         <Box
           className="w-full"
           bg="neutral.100"
           border="0.063rem solid"
-          borderColor="neutral.700"
+          borderColor="neutral.400"
           borderRadius="0.25rem"
           boxShadow="0 0.063rem 0.063rem 0 rgba(0, 0, 0, 0.05)"
           p={3}
           display="flex"
           flexDirection="column"
-          gap={3}
         >
           <Textarea
             ref={textareaRef}
@@ -402,7 +430,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
 
           <Flex className="items-start justify-between gap-2">
             {hasFiles && (
-              <Flex className="flex-wrap gap-3">
+              <Flex className="mt-3 flex-wrap gap-3">
                 {effectiveFiles?.map(file => (
                   <Box key={file.name} position="relative" h="4.6875rem" w="5.625rem">
                     <Image
@@ -424,7 +452,9 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
               </Flex>
             )}
             <Flex className="mt-auto ml-auto shrink-0 items-center gap-1">
-              <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
+              {showAttachFileIcon && (
+                <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
+              )}
               {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={handleSend} />}
             </Flex>
           </Flex>
