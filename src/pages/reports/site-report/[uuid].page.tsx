@@ -37,10 +37,17 @@ type SiteReportContentProps = {
   siteReport: SiteReportFullDto;
   site?: SiteFullDto;
   taskDueAt?: string;
+  projectReportUuid?: string | null;
   workdaysTotal?: number | null;
 };
 
-const SiteReportContent: FC<SiteReportContentProps> = ({ siteReport, site, taskDueAt, workdaysTotal }) => {
+const SiteReportContent: FC<SiteReportContentProps> = ({
+  siteReport,
+  site,
+  taskDueAt,
+  projectReportUuid,
+  workdaysTotal
+}) => {
   const t = useT();
   const router = useRouter();
   const { framework } = useFrameworkContext();
@@ -67,11 +74,11 @@ const SiteReportContent: FC<SiteReportContentProps> = ({ siteReport, site, taskD
         return;
       }
 
-      if (key === "project-report" && siteReport.projectReportUuid != null) {
-        router.push(`/reports/project-report/${siteReport.projectReportUuid}`);
+      if (key === "project-report" && projectReportUuid != null) {
+        router.push(`/reports/project-report/${projectReportUuid}`);
       }
     },
-    [router, siteReport.projectReportUuid, siteReport.siteUuid]
+    [router, projectReportUuid, siteReport.siteUuid]
   );
 
   const tabItems = useMemo<TabItem[]>(
@@ -204,7 +211,7 @@ const SiteReportDetailPage = () => {
   });
 
   const [siteLoaded, { data: site }] = useFullSite({ id: siteReport?.siteUuid! });
-  const [taskLoaded, { data: task }] = useTask({ id: siteReport?.taskUuid ?? undefined });
+  const [taskLoaded, { data: task, projectReportUuid }] = useTask({ id: siteReport?.taskUuid ?? undefined });
 
   const totalProps: Omit<CollectionsTotalProps, "collections"> = {
     entity: "siteReports",
@@ -225,6 +232,7 @@ const SiteReportDetailPage = () => {
               siteReport={siteReport}
               site={site}
               taskDueAt={task?.dueAt}
+              projectReportUuid={projectReportUuid}
               workdaysTotal={workdaysTotal}
             />
           )}
