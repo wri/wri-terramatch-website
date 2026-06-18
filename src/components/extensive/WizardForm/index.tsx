@@ -32,6 +32,7 @@ import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
+import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
@@ -46,6 +47,7 @@ import SummaryItem from "./SummaryItem";
 import { downloadAnswersCSV, getFormHeaderLabel } from "./utils";
 
 export type WizardFormEntity = {
+  siteUuid?: string | null;
   uuid?: string | null;
   frameworkKey?: string | null;
   dueAt?: string | null;
@@ -57,7 +59,9 @@ export type WizardFormEntity = {
   fundingProgrammeName?: string | null;
   projectName?: string | null;
   projectUuid?: string | null;
+  projectReportUuid?: string | null;
   taskUuid?: string | null;
+  siteName?: string | null;
   feedback?: string | null;
   feedbackFields?: string[] | null;
 };
@@ -443,7 +447,11 @@ function WizardForm(props: WizardFormProps) {
         redirectEntityPage: props.redirectEntityPage,
         adminListPath: props.adminListPath,
         entity: entity,
-        firstLinkIcon: <ProjectIcon className="!text-theme-primary-900" />,
+        firstLinkIcon: formModel.model.includes("Reports") ? (
+          <ReportsIcon className="!text-theme-primary-900" />
+        ) : (
+          <ProjectIcon className="!text-theme-primary-900" />
+        ),
         t,
         taskTitle
       })[formModel.model];
@@ -458,6 +466,8 @@ function WizardForm(props: WizardFormProps) {
         : t("Unnamed Application");
     } else if (formModel?.model === "projectReports") {
       return getFormHeaderLabel(entity?.projectName ?? "", taskTitle);
+    } else if (formModel?.model === "siteReports") {
+      return getFormHeaderLabel(entity?.siteName ?? "", taskTitle);
     } else {
       return mapEntityTitle(entity?.title ?? entity?.name ?? null, formModel?.model ?? "", t);
     }
@@ -493,11 +503,15 @@ function WizardForm(props: WizardFormProps) {
     (tab: string) => {
       if (tab === "project-profile") {
         router.push(`/project/${entity?.projectUuid}`, undefined, { shallow: true });
+      } else if (tab == "site-profile") {
+        router.push(`/site/${entity?.siteUuid}`, undefined, { shallow: true });
+      } else if (tab == "project-report") {
+        router.push(`/reports/project-report/${entity?.projectReportUuid}`, undefined, { shallow: true });
       } else {
         router.push(`/project/${entity?.projectUuid}/reporting-task/${entity?.taskUuid}`, undefined, { shallow: true });
       }
     },
-    [router, entity?.projectUuid, entity?.taskUuid]
+    [router, entity?.projectUuid, entity?.taskUuid, entity?.siteUuid, entity?.projectReportUuid]
   );
 
   return selectedStepIndex < 0 ? null : (
