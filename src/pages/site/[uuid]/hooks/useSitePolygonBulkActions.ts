@@ -19,6 +19,7 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { setPolygonTableHoveredUuid } from "@/context/polygonTableInteraction.store";
 import type { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import type { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
@@ -249,18 +250,15 @@ export const useSitePolygonBulkActions = ({
     }
   }, [closeMapPopups, deletePayload, invalidatePolygonMapTiles, openNotification, refreshPolygonData, t, toastLabels]);
 
-  const runPolygonValidation = useCallback(
-    async (polygonUuids: string[]) => {
-      if (polygonUuids.length === 0) {
-        return;
-      }
+  const runPolygonValidation = useCallback(async (polygonUuids: string[]) => {
+    if (polygonUuids.length === 0) {
+      return;
+    }
 
-      await createPolygonValidation({ polygonUuids });
-      ApiSlice.pruneCache("validations");
-      await refreshPolygonData({ refreshValidations: true });
-    },
-    [refreshPolygonData]
-  );
+    await createPolygonValidation({ polygonUuids });
+    ApiSlice.pruneCache("validations");
+    await listDelayedJobs.fetch({});
+  }, []);
 
   const handleRunValidation = useCallback(
     async (polygonUuids: string[]) => {

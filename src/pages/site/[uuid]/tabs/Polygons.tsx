@@ -5,7 +5,9 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { resolvePolygonTableRowId } from "@/components/elements/Map-mapbox/sitePolygonPopupUtils";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import { loadAllSitePolygons, useAllSitePolygons } from "@/connections/SitePolygons";
+import { useDelayedJobs } from "@/connections/DelayedJob";
+import { pruneEntityCache } from "@/connections/Entity";
+import { loadAllSitePolygons, pruneSitePolygonsCache, useAllSitePolygons } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -23,9 +25,11 @@ import {
   useSyncPolygonTableSelectionStore
 } from "@/context/polygonTableInteraction.store";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { DownloadIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import { type OverlapFixPolygon } from "../components/Modals/OverlapFix";
@@ -87,6 +91,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [uploadedPolygonUuidToOpen, setUploadedPolygonUuidToOpen] = useState<string | null>(null);
   const [focusPolygonUuid, setFocusPolygonUuid] = useState<string | null>(null);
   const [isStickyActive, setIsStickyActive] = useState(false);
+  const [pendingValidationRefresh, setPendingValidationRefresh] = useState(false);
+  const [pendingJobUuids, setPendingJobUuids] = useState<Set<string>>(new Set());
+  const [processedValidationJobs, setProcessedValidationJobs] = useState<Set<string>>(new Set());
+
+  const [, { delayedJobs }] = useDelayedJobs();
 
   const {
     polygonSearch,
@@ -113,6 +122,15 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   });
 
   const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
+  const polygonIdsKey = useMemo(
+    () =>
+      polygonsData
+        .map(polygon => polygon.uuid)
+        .filter((uuid): uuid is string => uuid != null && uuid !== "")
+        .sort()
+        .join(","),
+    [polygonsData]
+  );
   const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
   const polygonValidations = useMemo(() => buildPolygonValidationsMap(allValidations), [allValidations]);
 
@@ -270,6 +288,115 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     },
     []
   );
+
+  useEffect(() => {
+    if (site.uuid == null || site.uuid === "") {
+      return;
+    }
+    void fetchAllValidationPages();
+  }, [site.uuid, polygonIdsKey, fetchAllValidationPages]);
+
+  useEffect(() => {
+    if (pendingValidationRefresh && delayedJobs && delayedJobs.length > 0) {
+      const pendingUuids = new Set(delayedJobs.filter(job => job.status === "pending").map(job => job.uuid));
+      if (pendingUuids.size > 0) {
+        setPendingJobUuids(pendingUuids);
+      }
+    }
+  }, [pendingValidationRefresh, delayedJobs]);
+
+  useEffect(() => {
+    if (delayedJobs == null || site.uuid == null || site.uuid === "" || pendingValidationRefresh) {
+      return;
+    }
+
+    const hasActiveValidationJob = delayedJobs.some(
+      job => job.name === "Polygon Validation" && job.status === "pending"
+    );
+
+    if (hasActiveValidationJob) {
+      setPendingValidationRefresh(true);
+      listDelayedJobs.fetch({});
+    }
+  }, [delayedJobs, pendingValidationRefresh, site.uuid]);
+
+  useEffect(() => {
+    if (
+      !pendingValidationRefresh ||
+      !delayedJobs ||
+      delayedJobs.length === 0 ||
+      site.uuid == null ||
+      site.uuid === ""
+    ) {
+      return;
+    }
+
+    const siteUuid = site.uuid;
+    const projectUuid = site.projectUuid;
+
+    const completedJobs = delayedJobs.filter(job => {
+      if (processedValidationJobs.has(job.uuid)) {
+        return false;
+      }
+
+      const isCompleted = job.status === "succeeded" || job.status === "failed";
+      if (!isCompleted) {
+        return false;
+      }
+
+      const wasTracked = pendingJobUuids.has(job.uuid);
+      const matchesSite = job.payload?.data?.attributes?.siteUuid === siteUuid;
+      const matchesProject = projectUuid != null && job.payload?.data?.attributes?.projectUuid === projectUuid;
+
+      return wasTracked || matchesSite || matchesProject;
+    });
+
+    if (completedJobs.length > 0) {
+      if (projectUuid != null) {
+        pruneEntityCache("projects", projectUuid);
+        ApiSlice.pruneIndex("projects", "");
+      }
+
+      pruneEntityCache("sites", siteUuid);
+      ApiSlice.pruneIndex("sites", "");
+
+      pruneSitePolygonsCache();
+
+      ApiSlice.pruneCache("validations");
+      ApiSlice.pruneIndex("validations", "");
+
+      const polygonUuids = polygonsData
+        .map(polygon => polygon.polygonUuid)
+        .filter((uuid): uuid is string => Boolean(uuid));
+      if (polygonUuids.length > 0) {
+        ApiSlice.pruneCache("validations", polygonUuids);
+      }
+
+      setProcessedValidationJobs(prev => {
+        const next = new Set(prev);
+        completedJobs.forEach(job => next.add(job.uuid));
+        return next;
+      });
+
+      void refetchPolygons();
+      void fetchAllValidationPages(true);
+      void fetchOverlapValidations(true);
+
+      setPendingValidationRefresh(false);
+      setPendingJobUuids(new Set());
+    }
+  }, [
+    delayedJobs,
+    fetchAllValidationPages,
+    fetchOverlapValidations,
+    pendingJobUuids,
+    pendingValidationRefresh,
+    polygonsData,
+    processedValidationJobs,
+    refetchPolygons,
+    site.projectUuid,
+    site.uuid
+  ]);
 
   useEffect(() => {
     setSiteData(site);
