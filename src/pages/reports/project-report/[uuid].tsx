@@ -26,8 +26,6 @@ import ProjectReportDetailsTab from "./tabs/Details";
 import NurseryReportsTab from "./tabs/NurseryReports";
 import Overview from "./tabs/Overview";
 import PPCSocioeconomicTab from "./tabs/PPCSocioeconomic";
-import ReportDataTab from "./tabs/ReportData";
-import SiteReportsTab from "./tabs/SiteReports";
 import TFSocioeconomicTab from "./tabs/TFSocioeconomic";
 import UploadedFilesTab from "./tabs/UploadedFiles";
 
@@ -60,11 +58,6 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         key: "overview",
         title: t("Overview"),
         renderBody: () => <Overview projectReport={projectReport} project={project} />
-      },
-      {
-        key: "report-data",
-        title: t("Report Data"),
-        renderBody: () => <ReportDataTab report={projectReport} dueAt={task?.dueAt} />
       },
       {
         key: "details",
@@ -102,11 +95,6 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         )
       },
       {
-        key: "site-reports",
-        title: t("Site reports"),
-        renderBody: () => <SiteReportsTab taskUuid={projectReport.taskUuid!} />
-      },
-      {
         key: "nursery-reports",
         title: t("Nursery reports"),
         renderBody: () => <NurseryReportsTab taskUuid={projectReport.taskUuid!} />
@@ -122,7 +110,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         renderBody: () => <AuditLog projectReport={projectReport} />
       }
     ],
-    [projectReport, task, project, t]
+    [projectReport, project, t]
   );
 
   const tabBarTabs = useMemo(
