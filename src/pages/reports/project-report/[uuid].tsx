@@ -4,13 +4,15 @@ import { useRouter } from "next/router";
 import { FC, ReactElement, useMemo } from "react";
 
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
+import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject, useFullProjectReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import { ContextCondition } from "@/context/ContextCondition";
-import FrameworkProvider, { Framework, useFrameworkContext } from "@/context/framework.provider";
+import FrameworkProvider, { Framework, toFramework, useFrameworkContext } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -46,6 +48,8 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const { framework } = useFrameworkContext();
   const [, { data: project }] = useFullProject({ id: projectReport.projectUuid! });
   const shouldHideNurseries = framework === Framework.PPC;
+  const reportingWindow = useReportingWindow(toFramework(projectReport?.frameworkKey), projectReport?.dueAt!);
+  const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
 
   const reportTitle = projectReport.reportTitle ?? t("Project Report");
   const currentTab = (router.query.tab as string) ?? "overview";
@@ -155,6 +159,10 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
           {
             label: t("Reports"),
             link: `/project/${projectReport.projectUuid}?tab=reporting-tasks`
+          },
+          {
+            label: getShortPeriodLabel(taskTitle ?? ""),
+            link: `/project/${projectReport.projectUuid ?? ""}/reporting-task/${projectReport.taskUuid ?? ""}`
           },
           { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` }
         ]}

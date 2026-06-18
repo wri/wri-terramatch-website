@@ -8,7 +8,6 @@ import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 import { FieldErrors, useForm, UseFormProps, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
-import AdminLinkWrapper from "@/components/elements/AdminLinkWrapper/AdminLinkWrapper";
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
@@ -34,7 +33,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
-import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
+import ResponsiveBreadcrumbToolbar from "@/redesignComponents/navigation/Toolbar/ResponsiveBreadcrumbToolbar";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import Log from "@/utils/log";
 
@@ -62,6 +61,8 @@ export type WizardFormEntity = {
   projectReportUuid?: string | null;
   taskUuid?: string | null;
   siteName?: string | null;
+  nurseryName?: string | null;
+  nurseryUuid?: string | null;
   feedback?: string | null;
   feedbackFields?: string[] | null;
 };
@@ -468,6 +469,8 @@ function WizardForm(props: WizardFormProps) {
       return getFormHeaderLabel(entity?.projectName ?? "", taskTitle);
     } else if (formModel?.model === "siteReports") {
       return getFormHeaderLabel(entity?.siteName ?? "", taskTitle);
+    } else if (formModel?.model === "nurseryReports") {
+      return getFormHeaderLabel(entity?.nurseryName ?? "", taskTitle);
     } else {
       return mapEntityTitle(entity?.title ?? entity?.name ?? null, formModel?.model ?? "", t);
     }
@@ -505,13 +508,15 @@ function WizardForm(props: WizardFormProps) {
         router.push(`/project/${entity?.projectUuid}`, undefined, { shallow: true });
       } else if (tab == "site-profile") {
         router.push(`/site/${entity?.siteUuid}`, undefined, { shallow: true });
+      } else if (tab == "nursery-profile") {
+        router.push(`/nursery/${entity?.nurseryUuid}`, undefined, { shallow: true });
       } else if (tab == "project-report") {
         router.push(`/reports/project-report/${entity?.projectReportUuid}`, undefined, { shallow: true });
       } else {
         router.push(`/project/${entity?.projectUuid}/reporting-task/${entity?.taskUuid}`, undefined, { shallow: true });
       }
     },
-    [router, entity?.projectUuid, entity?.taskUuid, entity?.siteUuid, entity?.projectReportUuid]
+    [router, entity?.projectUuid, entity?.taskUuid, entity?.siteUuid, entity?.projectReportUuid, entity?.nurseryUuid]
   );
 
   return selectedStepIndex < 0 ? null : (
@@ -527,8 +532,8 @@ function WizardForm(props: WizardFormProps) {
             {entity != null && (
               <Box background={"neutral.200"} className={classNames("sticky top-0 z-20 pb-1")}>
                 {!isAdmin && (
-                  <ToolbarObject
-                    breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }}
+                  <ResponsiveBreadcrumbToolbar
+                    breadcrumbs={linkHeaderMap}
                     suffix={
                       formModel.model.includes("Reports") && (
                         <Flex gap={1.5} alignItems="center">

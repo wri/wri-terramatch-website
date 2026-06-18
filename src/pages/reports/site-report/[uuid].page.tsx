@@ -114,6 +114,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({ siteReport, site, taskD
     ],
     []
   );
+
   return (
     <>
       <ResponsiveTypography />
