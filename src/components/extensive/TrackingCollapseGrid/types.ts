@@ -192,6 +192,7 @@ export const useTrackingLabels = (type: TrackingType) => {
 
 export type TrackingCollapseGridProps = {
   title?: string;
+  entryConfigs?: TrackingEntryConfig[] | null;
   domain: TrackingDomain;
   type: TrackingType;
   entries: TrackingEntryDto[];
@@ -635,7 +636,7 @@ const getRestorationEntryConfigs = (type: TrackingType, framework: Framework) =>
   } else return HISTORICAL;
 };
 
-export const getEntryConfigs = (domain: TrackingDomain, type: TrackingType, framework: Framework) => {
+export const getDefaultEntryConfigs = (domain: TrackingDomain, type: TrackingType, framework: Framework) => {
   switch (domain) {
     case "demographics":
       return getDemographicsEntryConfigs(type, framework);

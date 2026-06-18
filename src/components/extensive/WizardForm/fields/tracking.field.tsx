@@ -1,3 +1,4 @@
+import { Dictionary } from "lodash";
 import * as yup from "yup";
 
 import TrackingAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/TrackingAdditionalOptions";
@@ -6,9 +7,11 @@ import { calculateTotals } from "@/components/extensive/TrackingCollapseGrid/hoo
 import TrackingCollapseGrid from "@/components/extensive/TrackingCollapseGrid/TrackingCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/TrackingCollapseGrid/TrackingVariant";
 import {
+  getDefaultEntryConfigs,
   isDemographicType,
   isRestorationType,
   TrackingDomain,
+  TrackingEntryConfig,
   TrackingType
 } from "@/components/extensive/TrackingCollapseGrid/types";
 import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
@@ -32,8 +35,18 @@ const getDomain = (inputType: FieldInputType): TrackingDomain => {
   return domain;
 };
 
+const getEntryConfigs = (
+  additionalProps: Dictionary<any> | null | undefined,
+  domain: TrackingDomain,
+  type: TrackingType,
+  framework: Framework
+) =>
+  Array.isArray(additionalProps?.entryConfigs) && (additionalProps?.entryConfigs as TrackingEntryConfig[]).length > 0
+    ? (additionalProps?.entryConfigs as TrackingEntryConfig[])
+    : getDefaultEntryConfigs(domain, type, framework);
+
 export const TrackingField: FormFieldFactory = {
-  addValidation: addValidationWith(({ inputType }, t, framework) => {
+  addValidation: addValidationWith(({ inputType, additionalProps }, t, framework) => {
     const domain = getDomain(inputType);
     const type = inputType as TrackingType;
     return yup
@@ -64,15 +77,19 @@ export const TrackingField: FormFieldFactory = {
           const { entries } = value != null && value.length > 0 ? value[0] : ({} as NonNullable<typeof value>[number]);
           if (entries == null) return true;
 
-          return calculateTotals(entries as TrackingEntryDto[], framework, domain, type).complete;
+          return calculateTotals(
+            getEntryConfigs(additionalProps, domain, type, framework),
+            entries as TrackingEntryDto[]
+          ).complete;
         }
       );
   }),
 
-  renderInput: ({ inputType, collection }, sharedProps) => {
+  renderInput: ({ inputType, collection, additionalProps }, sharedProps) => {
     return (
       <RHFTrackingTable
         {...sharedProps}
+        entryConfigs={additionalProps?.entryConfigs}
         domain={getDomain(inputType)}
         trackingType={inputType as TrackingType}
         collection={collection ?? ""}
@@ -84,10 +101,11 @@ export const TrackingField: FormFieldFactory = {
 
   appendAnswers: () => undefined,
 
-  addFormEntries: addEntryWith(({ name, inputType }, formValues) => {
+  addFormEntries: addEntryWith(({ name, inputType, additionalProps }, formValues) => {
     const entries = ((formValues[name]?.[0] ?? {}).entries ?? []) as TrackingEntryDto[];
     return (
       <TrackingCollapseGrid
+        entryConfigs={additionalProps?.entryConfigs}
         domain={getDomain(inputType)}
         type={inputType as TrackingType}
         entries={entries}

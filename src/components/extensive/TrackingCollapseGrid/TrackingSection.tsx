@@ -8,10 +8,11 @@ import TrackingRow from "@/components/extensive/TrackingCollapseGrid/TrackingRow
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 
-import { useEntryConfig, useSectionData } from "./hooks";
+import { useSectionData } from "./hooks";
 import { Status, TrackingDomain, TrackingEntryConfig, TrackingType } from "./types";
 
 export interface TrackingSectionProps {
+  entryConfigs: TrackingEntryConfig[];
   domain: TrackingDomain;
   trackingType: TrackingType;
   entryType: string;
@@ -22,6 +23,7 @@ export interface TrackingSectionProps {
 }
 
 const TrackingSection: FC<TrackingSectionProps> = ({
+  entryConfigs,
   domain,
   trackingType,
   entryType,
@@ -31,8 +33,12 @@ const TrackingSection: FC<TrackingSectionProps> = ({
   status
 }) => {
   const t = useT();
-  const { title, rows, total, displayTrackingType } = useSectionData(domain, trackingType, entryType, entries);
-  const { addNameLabel, subTypes } = useEntryConfig(domain, trackingType, entryType) as TrackingEntryConfig;
+  const { title, rows, total, displayTrackingType } = useSectionData(entryConfigs, trackingType, entryType, entries);
+  const { addNameLabel, subTypes } = useMemo(() => {
+    const entryConfig = entryConfigs.find(({ type }) => type === entryType);
+    if (entryConfig == null) throw new Error(`Entry config for section not found [${entryType}]`);
+    return entryConfig;
+  }, [entryConfigs, entryType]);
 
   const onRowChange = useCallback(
     (index: number, subtype: string, amount: number, userLabel?: string) => {

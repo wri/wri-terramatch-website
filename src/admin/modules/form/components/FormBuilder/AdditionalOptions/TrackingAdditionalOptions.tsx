@@ -8,7 +8,11 @@ import { useFormContext } from "react-hook-form";
 import { AccordionFormIterator } from "@/admin/components/AccordionFormIterator/AccordionFormIterator";
 import { AddItemButton, RemoveItemButton } from "@/admin/components/AccordionFormIterator/AccordionFormIteratorButtons";
 import { noDuplication } from "@/admin/utils/forms";
-import { getEntryConfigs, TrackingDomain, TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
+import {
+  getDefaultEntryConfigs,
+  TrackingDomain,
+  TrackingType
+} from "@/components/extensive/TrackingCollapseGrid/types";
 import { useFrameworkContext } from "@/context/framework.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
@@ -29,7 +33,7 @@ const TrackingAdditionalOptions: FC<TrackingAdditionalOptionsProps> = ({ type, d
 
   useValueChanged(editEntries, () => {
     if (editEntries && !currentValueSet) {
-      form.setValue(source, getEntryConfigs(domain, type, framework), { shouldDirty: true });
+      form.setValue(source, getDefaultEntryConfigs(domain, type, framework), { shouldDirty: true });
     }
   });
 

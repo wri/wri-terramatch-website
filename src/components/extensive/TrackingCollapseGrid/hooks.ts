@@ -2,15 +2,16 @@ import { Dictionary, findLastIndex, kebabCase, startCase, uniq } from "lodash";
 import { useMemo } from "react";
 
 import { useTrackings } from "@/connections/EntityAssociation";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { useFrameworkContext } from "@/context/framework.provider";
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isNotNull } from "@/utils/array";
 
 import {
-  getEntryConfigs,
+  getDefaultEntryConfigs,
   Status,
   TrackingDomain,
   TrackingEntity,
+  TrackingEntryConfig,
   TrackingEntrySubtypeConfig,
   TrackingType
 } from "./types";
@@ -25,12 +26,8 @@ export type SectionRow = {
   amount: number;
 };
 
-const getInitialCounts = (
-  framework: Framework,
-  domain: TrackingDomain,
-  trackingType: TrackingType
-): Dictionary<number> =>
-  getEntryConfigs(domain, trackingType, framework)
+const getInitialCounts = (entryConfigs: TrackingEntryConfig[]): Dictionary<number> =>
+  entryConfigs
     .map(({ type }) => type)
     .reduce(
       (counts, type) => ({
@@ -43,14 +40,8 @@ const getInitialCounts = (
 const addToCounts = (counts: Dictionary<number>, { type, amount }: TrackingEntryDto) =>
   Object.keys(counts).includes(type) ? { ...counts, [type]: counts[type] + amount } : counts;
 
-export function calculateTotals(
-  entries: TrackingEntryDto[],
-  framework: Framework,
-  domain: TrackingDomain,
-  type: TrackingType
-) {
-  const counts = entries.reduce(addToCounts, getInitialCounts(framework, domain, type));
-  const entryConfigs = getEntryConfigs(domain, type, framework);
+export function calculateTotals(entryConfigs: TrackingEntryConfig[], entries: TrackingEntryDto[]) {
+  const counts = entries.reduce(addToCounts, getInitialCounts(entryConfigs));
   const balancedCounts = Object.entries(counts)
     .filter(([type]) => entryConfigs.find(entryConfig => entryConfig.type === type)?.balanced)
     .map(([, count]) => count);
@@ -61,19 +52,17 @@ export function calculateTotals(
 }
 
 export function useTableStatus(
-  domain: TrackingDomain,
-  type: TrackingType,
+  entryConfigs: TrackingEntryConfig[],
   entries: TrackingEntryDto[]
 ): { total: number; status: Status; counts: Dictionary<number> } {
-  const { framework } = useFrameworkContext();
   return useMemo(() => {
-    const { total, complete, counts } = calculateTotals(entries, framework, domain, type);
+    const { total, complete, counts } = calculateTotals(entryConfigs, entries);
     return {
       total,
       status: total === 0 ? "not-started" : complete ? "complete" : "in-progress",
       counts
     };
-  }, [entries, framework, domain, type]);
+  }, [entryConfigs, entries]);
 }
 
 function mapRows(
@@ -110,44 +99,23 @@ function mapRows(
     .filter(isNotNull);
 }
 
-export const useEntryConfigs = (domain: TrackingDomain, type: TrackingType) => {
-  const { framework } = useFrameworkContext();
-  return useMemo(() => getEntryConfigs(domain, type, framework), [domain, type, framework]);
-};
-
-export const useEntryTypes = (domain: TrackingDomain, type: TrackingType) => {
-  const { framework } = useFrameworkContext();
-  return useMemo(() => getEntryConfigs(domain, type, framework).map(({ type }) => type), [framework, domain, type]);
-};
-
-export const useEntryConfig = (domain: TrackingDomain, type: TrackingType, entryType: string) => {
-  const { framework } = useFrameworkContext();
-  return useMemo(
-    () => getEntryConfigs(domain, type, framework).find(({ type }) => type === entryType),
-    [entryType, framework, domain, type]
-  );
-};
-
-export function useSectionData(
-  domain: TrackingDomain,
+export const useSectionData = (
+  entryConfigs: TrackingEntryConfig[],
   type: TrackingType,
   entryType: string,
   entries: TrackingEntryDto[]
-) {
-  const entryConfigs = useEntryConfigs(domain, type);
-
-  return useMemo(() => {
+) =>
+  useMemo(() => {
     const entryConfig = entryConfigs.find(({ type }) => type === entryType);
     if (entryConfig == null) {
-      throw new Error(`Entry type ${entryType} not found for domain ${domain} and type ${type}`);
+      throw new Error(`Entry type ${entryType} not found`);
     }
 
     const { title, addNameLabel, subTypes, onlyIfPresent, displayTrackingType } = entryConfig;
     const rows = mapRows(addNameLabel != null, subTypes, entries, onlyIfPresent);
     const total = rows.reduce((total, { amount }) => total + amount, 0);
-    const entryTypes = Object.keys(entryConfigs);
-    const index = entryTypes.indexOf(entryType);
-    const position: Position = index == 0 ? "first" : index == entryTypes.length - 1 ? "last" : undefined;
+    const index = entryConfigs.findIndex(({ type }) => type === entryType);
+    const position: Position = index == 0 ? "first" : index == entryConfigs.length - 1 ? "last" : undefined;
     return {
       title,
       rows,
@@ -155,8 +123,7 @@ export function useSectionData(
       position,
       displayTrackingType: displayTrackingType ?? type.includes("Beneficiaries") ? "Beneficiaries" : startCase(type)
     };
-  }, [domain, entries, entryType, entryConfigs, type]);
-}
+  }, [entries, entryType, entryConfigs, type]);
 
 export type CollectionsTotalProps = {
   entity: TrackingEntity;
@@ -165,6 +132,7 @@ export type CollectionsTotalProps = {
   trackingType: TrackingType;
   collections: readonly string[];
 };
+
 export default function useCollectionsTotal({
   entity,
   uuid,
@@ -184,7 +152,8 @@ export default function useCollectionsTotal({
               domain === trackingDomain && type === apiType && collections.includes(collection)
           )
           .reduce(
-            (total, { entries }) => total + calculateTotals(entries, framework, trackingDomain, trackingType).total,
+            (total, { entries }) =>
+              total + calculateTotals(getDefaultEntryConfigs(trackingDomain, trackingType, framework), entries).total,
             0
           );
   }, [trackingType, trackings, trackingDomain, collections, framework]);
