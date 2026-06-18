@@ -10,6 +10,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSite, useFullSiteReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import FrameworkProvider, { Framework, toFramework, useFrameworkContext } from "@/context/framework.provider";
+import { MapAreaProvider } from "@/context/mapArea.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -35,19 +36,10 @@ type SiteReportContentProps = {
   siteReport: SiteReportFullDto;
   site?: SiteFullDto;
   taskDueAt?: string;
-  workdaysPaid: number | null | undefined;
-  workdaysVolunteer: number | null | undefined;
-  workdaysTotal: number | null | undefined;
+  workdaysTotal?: number | null;
 };
 
-const SiteReportContent: FC<SiteReportContentProps> = ({
-  siteReport,
-  site,
-  taskDueAt,
-  workdaysPaid,
-  workdaysVolunteer,
-  workdaysTotal
-}) => {
+const SiteReportContent: FC<SiteReportContentProps> = ({ siteReport, site, taskDueAt, workdaysTotal }) => {
   const t = useT();
   const router = useRouter();
   const { framework } = useFrameworkContext();
@@ -67,12 +59,26 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
     [router, siteReportUUID]
   );
 
+  const navigateToSuffix = useCallback(
+    (key: string) => {
+      if (key === "site-profile" && siteReport.siteUuid != null) {
+        router.push(`/site/${siteReport.siteUuid}`);
+        return;
+      }
+
+      if (key === "project-report" && siteReport.projectReportUuid != null) {
+        router.push(`/reports/project-report/${siteReport.projectReportUuid}`);
+      }
+    },
+    [router, siteReport.projectReportUuid, siteReport.siteUuid]
+  );
+
   const tabItems = useMemo<TabItem[]>(
     () => [
       {
         key: "overview",
         title: t("Overview"),
-        body: <Overview siteReport={siteReport} site={site} />
+        body: <Overview siteReport={siteReport} site={site} workdaysTotal={workdaysTotal} />
       },
       {
         key: "details",
@@ -80,7 +86,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
         body: <Details report={siteReport} />
       }
     ],
-    [siteReport, site, t]
+    [siteReport, site, workdaysTotal, t]
   );
 
   const visibleTabItems = useMemo(() => {
@@ -142,7 +148,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
                   size="small"
                   className="underline underline-offset-2"
                   onClick={() => {
-                    navigateToTab(button.key);
+                    navigateToSuffix(button.key);
                   }}
                 >
                   {t(button.labelKey)}
@@ -191,32 +197,24 @@ const SiteReportDetailPage = () => {
     trackingType: "workdays"
   };
   const workdaysTotal = useCollectionsTotal({ ...totalProps, collections: DemographicCollections.WORKDAYS_SITE });
-  const workdaysPaid = useCollectionsTotal({
-    ...totalProps,
-    collections: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("paid-"))
-  });
-  const workdaysVolunteer = useCollectionsTotal({
-    ...totalProps,
-    collections: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("volunteer-"))
-  });
 
   const isLoaded = reportLoaded && siteLoaded && taskLoaded;
 
   return (
-    <FrameworkProvider frameworkKey={siteReport?.frameworkKey}>
-      <LoadingContainer loading={!isLoaded}>
-        {siteReport == null ? null : (
-          <SiteReportContent
-            siteReport={siteReport}
-            site={site}
-            taskDueAt={task?.dueAt}
-            workdaysPaid={workdaysPaid}
-            workdaysVolunteer={workdaysVolunteer}
-            workdaysTotal={workdaysTotal}
-          />
-        )}
-      </LoadingContainer>
-    </FrameworkProvider>
+    <MapAreaProvider>
+      <FrameworkProvider frameworkKey={siteReport?.frameworkKey}>
+        <LoadingContainer loading={!isLoaded}>
+          {siteReport == null ? null : (
+            <SiteReportContent
+              siteReport={siteReport}
+              site={site}
+              taskDueAt={task?.dueAt}
+              workdaysTotal={workdaysTotal}
+            />
+          )}
+        </LoadingContainer>
+      </FrameworkProvider>
+    </MapAreaProvider>
   );
 };
 

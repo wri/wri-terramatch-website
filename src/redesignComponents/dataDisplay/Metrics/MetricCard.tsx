@@ -20,6 +20,7 @@ import { getIconWithProgressColor } from "./utils/getIconWithProgressColor";
 const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   title,
   progress,
+  progressLabel,
   color,
   iconWithColor,
   tooltipContent,
@@ -41,7 +42,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
       </Tooltip>
     </Flex>
     <Text textStyle="400-bold" color="neutral.900">
-      {progress.toLocaleString()}
+      {progressLabel ?? progress.toLocaleString()}
     </Text>
   </Flex>
 );
@@ -49,6 +50,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
 const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   title,
   progress,
+  progressLabel,
   color,
   iconWithColor,
   tooltipContent,
@@ -66,7 +68,7 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
         </Tooltip>
       </Flex>
       <Text textStyle="600-bold" color="neutral.900">
-        {progress.toLocaleString()}
+        {progressLabel ?? progress.toLocaleString()}
       </Text>
     </Flex>
   </Flex>
@@ -75,6 +77,7 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
 const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   title,
   progress,
+  progressLabel,
   goal,
   color,
   iconWithColor,
@@ -99,7 +102,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
         <ProgressBar progress={progressValue} color={color} />
         <Flex gap={1} alignItems="center">
           <Text textStyle="400-bold" color="neutral.900">
-            {progress.toLocaleString()}
+            {progressLabel ?? progress.toLocaleString()}
           </Text>
           <Text textStyle="300" color="neutral.800">
             {t("of")}
@@ -116,6 +119,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
 const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
   title,
   progress,
+  progressLabel,
   goal,
   color,
   iconWithColor,
@@ -143,13 +147,13 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
         {frameworkKey === Framework.PPC && type === "jobsCreated" ? (
           <Flex gap={1} alignItems="center">
             <Text textStyle="600-bold" color="neutral.900">
-              {progress.toLocaleString()}
+              {progressLabel ?? progress.toLocaleString()}
             </Text>
           </Flex>
         ) : goal > 0 || progress > 0 ? (
           <Flex gap={1} alignItems="center">
             <Text textStyle="600-bold" color="neutral.900">
-              {Math.round(progress).toLocaleString()}
+              {progressLabel ?? Math.round(progress).toLocaleString()}
             </Text>
             <Text textStyle="500" color="neutral.800">
               {t("of")}
@@ -172,6 +176,7 @@ const MetricCard: FC<MetricCardProps> = props => {
   const {
     title,
     progress,
+    progressLabel,
     goal,
     tooltipContent,
     variant = "medium",
@@ -194,6 +199,7 @@ const MetricCard: FC<MetricCardProps> = props => {
         <ProgressBarMetricCardContent
           title={title}
           progress={progress}
+          progressLabel={progressLabel}
           goal={goal}
           color={color}
           iconWithColor={iconWithColor14}
@@ -207,6 +213,7 @@ const MetricCard: FC<MetricCardProps> = props => {
         <DonutChartMetricCardContent
           title={title}
           progress={progress}
+          progressLabel={progressLabel}
           goal={goal}
           tooltipContent={tooltipContent}
           color={color}
@@ -222,6 +229,7 @@ const MetricCard: FC<MetricCardProps> = props => {
         <NoGoalMediumMetricCardContent
           title={title}
           progress={progress}
+          progressLabel={progressLabel}
           color={color}
           iconWithColor={iconWithColor14}
           tooltipContent={tooltipContent}
@@ -234,6 +242,7 @@ const MetricCard: FC<MetricCardProps> = props => {
         <NoGoalLargeMetricCardContent
           title={title}
           progress={progress}
+          progressLabel={progressLabel}
           color={color}
           iconWithColor={iconWithColor50}
           tooltipContent={tooltipContent}

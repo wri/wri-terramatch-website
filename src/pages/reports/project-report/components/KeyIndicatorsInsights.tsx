@@ -1,13 +1,15 @@
-import { Box } from "@chakra-ui/react";
 import { FC } from "react";
 
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
-import Loader from "@/components/generic/Loading/Loader";
-import { Framework, toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  DemographicsLoader,
+  getReportKeyIndicatorFramework,
+  getTooltipContent
+} from "@/pages/reports/components/KeyIndicators/reportKeyIndicatorPrimitives";
 import { useProjectReportKeyIndicatorsContent } from "@/pages/reports/project-report/constants/projectReportKeyIndicatorsContent";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { JobsIcon, RegenerationIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
@@ -20,6 +22,20 @@ interface KeyIndicatorsInsightsProps {
 type FrameworkKeyIndicatorsProps = {
   projectReport: ProjectReportFullDto;
   project?: ProjectFullDto | null;
+};
+
+type ProjectReportKeyIndicatorsContent = ReturnType<typeof useProjectReportKeyIndicatorsContent>;
+
+type TerrafundKeyIndicatorsProps = FrameworkKeyIndicatorsProps & {
+  content: ProjectReportKeyIndicatorsContent["terrafund"];
+};
+
+type PpcKeyIndicatorsProps = FrameworkKeyIndicatorsProps & {
+  content: ProjectReportKeyIndicatorsContent["ppc"];
+};
+
+type HbfKeyIndicatorsProps = FrameworkKeyIndicatorsProps & {
+  content: ProjectReportKeyIndicatorsContent["hbf"];
 };
 
 type KeyIndicatorsMetrics = {
@@ -44,18 +60,7 @@ const getKeyIndicatorsMetrics = (
   jobsCreatedGoal: project?.jobsCreatedGoal ?? 0
 });
 
-const MetricTooltip = ({ title, tooltip }: { title: string; tooltip: string }) => (
-  <Box fontSize="14px" lineHeight="20px">
-    <b>{title}</b>
-    <br />
-    {tooltip}
-  </Box>
-);
-
-const DemographicsLoader = () => <Loader className="h-32 w-full flex-1" />;
-
-const TerrafundKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, project }) => {
-  const content = useProjectReportKeyIndicatorsContent();
+const TerrafundKeyIndicators: FC<TerrafundKeyIndicatorsProps> = ({ projectReport, project, content }) => {
   const metrics = getKeyIndicatorsMetrics(projectReport, project);
 
   const jobsCreated = useCollectionsTotal({
@@ -71,7 +76,7 @@ const TerrafundKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport
   return (
     <>
       <MetricCard
-        title={content.terrafund.treesPlanted.title}
+        title={content.treesPlanted.title}
         progress={metrics.treesPlantedTotal}
         goal={metrics.treesGrownGoal}
         variant="large"
@@ -79,15 +84,10 @@ const TerrafundKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport
         color="secondary.600"
         type="treesPlanted"
         className="flex-1"
-        tooltipContent={
-          <MetricTooltip
-            title={content.terrafund.treesPlanted.title}
-            tooltip={content.terrafund.treesPlanted.tooltip}
-          />
-        }
+        tooltipContent={getTooltipContent(content.treesPlanted)}
       />
       <MetricCard
-        title={content.terrafund.treesRegenerated.title}
+        title={content.treesRegenerated.title}
         progress={metrics.treesRegenerated}
         goal={metrics.treesRegeneratedGoal}
         variant="large"
@@ -95,15 +95,10 @@ const TerrafundKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport
         color="secondary.600"
         type="treesRegenerated"
         className="flex-1"
-        tooltipContent={
-          <MetricTooltip
-            title={content.terrafund.treesRegenerated.title}
-            tooltip={content.terrafund.treesRegenerated.tooltip}
-          />
-        }
+        tooltipContent={getTooltipContent(content.treesRegenerated)}
       />
       <MetricCard
-        title={content.terrafund.jobsCreated.title}
+        title={content.jobsCreated.title}
         progress={jobsCreated}
         goal={metrics.jobsCreatedGoal}
         variant="large"
@@ -111,16 +106,13 @@ const TerrafundKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport
         color="secondary.600"
         type="jobsCreated"
         className="flex-1"
-        tooltipContent={
-          <MetricTooltip title={content.terrafund.jobsCreated.title} tooltip={content.terrafund.jobsCreated.tooltip} />
-        }
+        tooltipContent={getTooltipContent(content.jobsCreated)}
       />
     </>
   );
 };
 
-const PpcKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, project }) => {
-  const content = useProjectReportKeyIndicatorsContent();
+const PpcKeyIndicators: FC<PpcKeyIndicatorsProps> = ({ projectReport, project, content }) => {
   const metrics = getKeyIndicatorsMetrics(projectReport, project);
 
   const workdaysCreated = useCollectionsTotal({
@@ -136,7 +128,7 @@ const PpcKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, proj
   return (
     <>
       <MetricCard
-        title={content.ppc.treesGrowing.title}
+        title={content.treesGrowing.title}
         progress={metrics.treesPlantedTotal}
         goal={metrics.treesGrownGoal}
         variant="large"
@@ -144,12 +136,10 @@ const PpcKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, proj
         color="secondary.600"
         type="treesGrowing"
         className="flex-1"
-        tooltipContent={
-          <MetricTooltip title={content.ppc.treesGrowing.title} tooltip={content.ppc.treesGrowing.tooltip} />
-        }
+        tooltipContent={getTooltipContent(content.treesGrowing)}
       />
       <MetricCard
-        title={content.ppc.workdaysCreated.title}
+        title={content.workdaysCreated.title}
         progress={workdaysCreated}
         goal={metrics.jobsCreatedGoal}
         variant="large"
@@ -157,17 +147,14 @@ const PpcKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, proj
         color="secondary.600"
         type="workdaysCreated"
         className="flex-1"
-        tooltipContent={
-          <MetricTooltip title={content.ppc.workdaysCreated.title} tooltip={content.ppc.workdaysCreated.tooltip} />
-        }
+        tooltipContent={getTooltipContent(content.workdaysCreated)}
         frameworkKey={projectReport.frameworkKey ?? undefined}
       />
     </>
   );
 };
 
-const HbfKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, project }) => {
-  const content = useProjectReportKeyIndicatorsContent();
+const HbfKeyIndicators: FC<HbfKeyIndicatorsProps> = ({ projectReport, project, content }) => {
   const metrics = getKeyIndicatorsMetrics(projectReport, project);
 
   const directWorkdaysCreated = useCollectionsTotal({
@@ -183,7 +170,7 @@ const HbfKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, proj
   return (
     <>
       <MetricCard
-        title={content.hbf.saplingsGrowing.title}
+        title={content.saplingsGrowing.title}
         progress={metrics.treesPlantedTotal}
         goal={metrics.treesGrownGoal}
         variant="large"
@@ -191,12 +178,10 @@ const HbfKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, proj
         color="secondary.600"
         type="saplingsGrowing"
         className="flex-1"
-        tooltipContent={
-          <MetricTooltip title={content.hbf.saplingsGrowing.title} tooltip={content.hbf.saplingsGrowing.tooltip} />
-        }
+        tooltipContent={getTooltipContent(content.saplingsGrowing)}
       />
       <MetricCard
-        title={content.hbf.workdaysCreated.title}
+        title={content.workdaysCreated.title}
         progress={directWorkdaysCreated}
         goal={metrics.jobsCreatedGoal}
         variant="large"
@@ -204,9 +189,7 @@ const HbfKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, proj
         color="secondary.600"
         type="workdaysCreated"
         className="flex-1"
-        tooltipContent={
-          <MetricTooltip title={content.hbf.workdaysCreated.title} tooltip={content.hbf.workdaysCreated.tooltip} />
-        }
+        tooltipContent={getTooltipContent(content.workdaysCreated)}
         frameworkKey={projectReport.frameworkKey ?? undefined}
       />
     </>
@@ -214,16 +197,17 @@ const HbfKeyIndicators: FC<FrameworkKeyIndicatorsProps> = ({ projectReport, proj
 };
 
 const KeyIndicatorsInsights: FC<KeyIndicatorsInsightsProps> = ({ projectReport, project }) => {
-  const framework = toFramework(projectReport.frameworkKey);
+  const content = useProjectReportKeyIndicatorsContent();
+  const framework = getReportKeyIndicatorFramework(projectReport.frameworkKey);
 
   return (
     <MetricCardsRow>
-      {framework === Framework.PPC ? (
-        <PpcKeyIndicators projectReport={projectReport} project={project} />
-      ) : framework === Framework.HBF ? (
-        <HbfKeyIndicators projectReport={projectReport} project={project} />
+      {framework === "ppc" ? (
+        <PpcKeyIndicators projectReport={projectReport} project={project} content={content.ppc} />
+      ) : framework === "hbf" ? (
+        <HbfKeyIndicators projectReport={projectReport} project={project} content={content.hbf} />
       ) : (
-        <TerrafundKeyIndicators projectReport={projectReport} project={project} />
+        <TerrafundKeyIndicators projectReport={projectReport} project={project} content={content.terrafund} />
       )}
     </MetricCardsRow>
   );

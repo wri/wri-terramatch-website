@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { kebabCase } from "lodash";
 import Link from "next/link";
 import { FC } from "react";
 
@@ -8,6 +7,7 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { FormEntity } from "@/connections/Form";
 import { useModalContext } from "@/context/modal.provider";
+import { getEntityEditPageLink } from "@/helpers/entity";
 
 export type StatusProps = { title: string; icon: IconNames; className: string };
 
@@ -40,7 +40,7 @@ const EntityStatusModal: FC<EntityStatusModalProps> = ({
           ? {
               as: Link,
               children: t("Provide Feedback"),
-              href: `/entity/${kebabCase(entityName)}/edit/${entityUuid}?formStepId=summary`,
+              href: getEntityEditPageLink(entityName, entityUuid),
               onClick: () => {
                 closeModal(ModalId.STATUS);
               }

@@ -2,20 +2,25 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
+import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
+import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { Framework } from "@/context/framework.provider";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
@@ -23,20 +28,45 @@ import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSect
 import SiteReportKeyIndicatorsInsights from "@/pages/reports/site-report/components/KeyIndicatorsInsights";
 import { useSiteReportAboutContent } from "@/pages/reports/site-report/constants/siteReportAboutContent";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import { AreaHectaresIcon } from "@/redesignComponents/foundations/Icons";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 interface OverviewProps {
   siteReport: SiteReportFullDto;
   site?: SiteFullDto | null;
+  workdaysTotal?: number | null;
 }
 
-const Overview: FC<OverviewProps> = ({ siteReport, site }) => {
+const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const router = useRouter();
   const t = useT();
   const { openModal } = useModalContext();
+  const { setSiteData, resetSiteMapInteractionState } = useMapAreaContext();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const siteReportAboutContent = useSiteReportAboutContent();
+
+  const {
+    data: sitePolygonDataV3,
+    isLoading: isLoadingSitePolygons,
+    refetch: refetchSitePolygons
+  } = useAllSitePolygons({
+    entityName: "sites",
+    entityUuid: site?.uuid ?? "",
+    enabled: site?.uuid != null
+  });
+
+  useEffect(() => {
+    resetSiteMapInteractionState();
+  }, [resetSiteMapInteractionState]);
+
+  useEffect(() => {
+    setSiteData(site ?? undefined);
+  }, [setSiteData, site]);
+
+  const reloadSiteData = useCallback(() => {
+    refetchSitePolygons();
+  }, [refetchSitePolygons]);
 
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "site-reports",
@@ -77,6 +107,12 @@ const Overview: FC<OverviewProps> = ({ siteReport, site }) => {
     [router]
   );
 
+  const goToSiteMap = useCallback(() => {
+    if (site?.uuid == null) return;
+
+    router.push(`/site/${site.uuid}?tab=map`);
+  }, [router, site?.uuid]);
+
   const aboutContentItem = useMemo(() => {
     return siteReportAboutContent.find(content => content.frameworks.includes(siteReport.frameworkKey!));
   }, [siteReport.frameworkKey, siteReportAboutContent]);
@@ -111,79 +147,126 @@ const Overview: FC<OverviewProps> = ({ siteReport, site }) => {
   const isHBFFramework = siteReport.frameworkKey === Framework.HBF;
 
   return (
-    <PageContent>
-      <Flex gap={7} className="flex-col">
-        <Flex gap={7}>
-          <Flex gap={5} className={classNames(isHBFFramework ? "flex-row" : "flex-col", "flex-[2]")}>
-            <PageItem title={t("Key Indicators & Insights")}>
-              <SiteReportKeyIndicatorsInsights siteReport={siteReport} />
-            </PageItem>
+    <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reloadSiteData}>
+      <PageContent>
+        <Flex gap={7} className="flex-col">
+          <Flex gap={7}>
+            <Flex gap={5} className={classNames(isHBFFramework ? "flex-row" : "flex-col", "flex-[2]")}>
+              <PageItem title={t("Key Indicators & Insights")}>
+                <SiteReportKeyIndicatorsInsights siteReport={siteReport} workdaysTotal={workdaysTotal} />
+              </PageItem>
+              <PageItem
+                title={t("Featured Images")}
+                buttonProps={{
+                  variant: "secondary",
+                  size: "small",
+                  children: t("View Gallery"),
+                  rightIcon: <ChevronRightIcon />,
+                  onClick: () => goToTab("gallery")
+                }}
+              >
+                <LatestImagesSectionTab
+                  entityUuid={siteReport.uuid}
+                  entityName="siteReports"
+                  columns={isHBFFramework ? 2 : 4}
+                  rows={1}
+                />
+              </PageItem>
+            </Flex>
             <PageItem
-              title={t("Featured Images")}
+              title={t("Site Report")}
+              flexProps={{ flex: 1 }}
+              buttonProps={{
+                variant: "primary",
+                size: "small",
+                children: editButtonLabel,
+                rightIcon: <ChevronRightIcon />,
+                onClick: handleEditClick
+              }}
+              tag={statusTag}
+            >
+              <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+                <EntitySetUpSection onStatusChange={setIsReportSetupComplete} entity={siteReport} type="siteReports" />
+              </Box>
+            </PageItem>
+          </Flex>
+          {site != null && (
+            <PageItem
+              title={t("Site Map")}
+              flexProps={{ flex: 1 }}
               buttonProps={{
                 variant: "secondary",
                 size: "small",
-                children: t("View Gallery"),
+                children: t("View site map"),
                 rightIcon: <ChevronRightIcon />,
-                onClick: () => goToTab("gallery")
+                onClick: goToSiteMap
               }}
             >
-              <LatestImagesSectionTab
-                entityUuid={siteReport.uuid}
-                entityName="siteReports"
-                columns={isHBFFramework ? 2 : 4}
-                rows={1}
-              />
+              <Box className="relative h-auto">
+                <OverviewMapArea
+                  entityModel={site}
+                  type="sites"
+                  className="max-h-[27rem]"
+                  disabledPolygonPanel={true}
+                />
+                {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
+                  <MapPlaceholder
+                    icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}
+                    title={t("Site Areas not defined yet.")}
+                    buttonGroupProps={{
+                      buttons: [
+                        {
+                          variant: "borderless",
+                          size: "small",
+                          rightIcon: <ChevronRightIcon boxSize={4} />,
+                          className: "!text-theme-neutral-100",
+                          children: t("Add Polygons"),
+                          onClick: goToSiteMap
+                        }
+                      ]
+                    }}
+                    className="z-10"
+                  />
+                )}
+              </Box>
             </PageItem>
-          </Flex>
-          <PageItem
-            title={t("Site Report")}
-            flexProps={{ flex: 1 }}
-            buttonProps={{
-              variant: "primary",
-              size: "small",
-              children: editButtonLabel,
-              rightIcon: <ChevronRightIcon />,
-              onClick: handleEditClick
-            }}
-            tag={statusTag}
-          >
-            <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <EntitySetUpSection onStatusChange={setIsReportSetupComplete} entity={siteReport} type="siteReports" />
-            </Box>
+          )}
+          <PageItem title={t("About Site Report")} flexProps={{ flex: 1 }}>
+            <About
+              description={
+                <Flex direction="column" gap={5}>
+                  {aboutContentItem?.paragraphs.map((paragraph, index) => {
+                    const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
+
+                    if (isLastParagraph) {
+                      return (
+                        <ContactSupport
+                          key={index}
+                          message={paragraph}
+                          subject={t("Support Request for Site Report")}
+                        />
+                      );
+                    }
+
+                    return (
+                      <Text key={index} color="neutral.900" textStyle="300">
+                        {paragraph}
+                      </Text>
+                    );
+                  })}
+                </Flex>
+              }
+              links={
+                aboutContentItem?.links.map(link => ({
+                  title: t(link.title),
+                  link: link.link
+                })) ?? []
+              }
+            />
           </PageItem>
         </Flex>
-        <PageItem title={t("About Site Report")} flexProps={{ flex: 1 }}>
-          <About
-            description={
-              <Flex direction="column" gap={5}>
-                {aboutContentItem?.paragraphs.map((paragraph, index) => {
-                  const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
-
-                  if (isLastParagraph) {
-                    return (
-                      <ContactSupport key={index} message={paragraph} subject={t("Support Request for Site Report")} />
-                    );
-                  }
-
-                  return (
-                    <Text key={index} color="neutral.900" textStyle="300">
-                      {paragraph}
-                    </Text>
-                  );
-                })}
-              </Flex>
-            }
-            links={
-              aboutContentItem?.links.map(link => ({
-                title: t(link.title),
-                link: link.link
-              })) ?? []
-            }
-          />
-        </PageItem>
-      </Flex>
-    </PageContent>
+      </PageContent>
+    </SitePolygonDataProvider>
   );
 };
 

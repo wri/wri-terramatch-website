@@ -6,16 +6,18 @@ import { FC, useCallback, useMemo } from "react";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { FormEntity } from "@/connections/Form";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectReportFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { v3EntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { formatMonthYear } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
-import { EntityName } from "@/types/common";
+import { EntityName, SingularEntityName } from "@/types/common";
 
 import DateRange from "../components/DateRange";
 import SeparatorDot from "../components/SeparatorDot";
@@ -25,17 +27,18 @@ export interface ReportHeaderProps {
   report: ProjectReportFullDto | SiteReportFullDto;
   title: string;
   dueAt?: string | null;
-  entityName: EntityName;
+  entityName: EntityName | SingularEntityName;
 }
 
 const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName }) => {
   const t = useT();
   const router = useRouter();
   const { openModal } = useModalContext();
+  const formEntityName = v3EntityName(entityName) as FormEntity;
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler(entityName, report.uuid);
   const { handleEdit } = useGetEditEntityHandler({
-    entityName: entityName as EntityName,
+    entityName,
     entityUUID: report.uuid,
     entityStatus: report.status,
     updateRequestStatus: report.updateRequestStatus
@@ -54,14 +57,23 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
           statusProps={statusProps}
           feedback={report.feedback}
           needMoreInformation={needMoreInformation}
-          entityName="projectReports"
+          entityName={formEntityName}
           entityUuid={report.uuid}
         />
       );
     } else {
       handleEdit();
     }
-  }, [awaitingApproval, handleEdit, needMoreInformation, openModal, report.feedback, report.uuid, statusProps]);
+  }, [
+    awaitingApproval,
+    formEntityName,
+    handleEdit,
+    needMoreInformation,
+    openModal,
+    report.feedback,
+    report.uuid,
+    statusProps
+  ]);
 
   return (
     <>
