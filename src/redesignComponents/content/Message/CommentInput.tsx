@@ -69,6 +69,7 @@ interface CommentInputProps {
   onCommentCreated?: () => void;
   showOptionalLabel?: boolean;
   showSendIcon?: boolean;
+  showAttachFileIcon?: boolean;
   className?: string;
 }
 
@@ -97,6 +98,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
     onCommentCreated,
     showOptionalLabel = false,
     showSendIcon = true,
+    showAttachFileIcon = true,
     className
   } = props;
 
@@ -377,13 +379,12 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
           className="w-full"
           bg="neutral.100"
           border="0.063rem solid"
-          borderColor="neutral.700"
+          borderColor="neutral.400"
           borderRadius="0.25rem"
           boxShadow="0 0.063rem 0.063rem 0 rgba(0, 0, 0, 0.05)"
           p={3}
           display="flex"
           flexDirection="column"
-          gap={3}
         >
           <Textarea
             ref={textareaRef}
@@ -429,7 +430,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
 
           <Flex className="items-start justify-between gap-2">
             {hasFiles && (
-              <Flex className="flex-wrap gap-3">
+              <Flex className="mt-3 flex-wrap gap-3">
                 {effectiveFiles?.map(file => (
                   <Box key={file.name} position="relative" h="4.6875rem" w="5.625rem">
                     <Image
@@ -451,7 +452,9 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
               </Flex>
             )}
             <Flex className="mt-auto ml-auto shrink-0 items-center gap-1">
-              <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
+              {showAttachFileIcon && (
+                <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
+              )}
               {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={handleSend} />}
             </Flex>
           </Flex>

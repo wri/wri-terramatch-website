@@ -29,20 +29,24 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
 
   const commentContent = hasSubmittedComment ? (
     <>
-      <SimpleDivider className="my-2 -ml-3 !w-[calc(100%_+_1.25rem)]" />
-      <Text textStyle="400-bold" color="primary.900">
-        {t("Comment")}
-      </Text>
-      <Flex>
-        <CommentCard
-          participantType="current-user"
-          authorName={submittedComment.authorName}
-          createdAt={submittedComment.createdAt}
-          message={submittedComment.message}
-          showUnreadIcon={false}
-          showContextOptions={false}
-        />
-      </Flex>
+      <Box mb={-0.5}>
+        <SimpleDivider className="my-2 -ml-3 !w-[calc(100%_+_1.25rem)]" />
+
+        <Box>
+          <Text textStyle="400-bold" color="primary.900" pl={2} pt={1}>
+            {t("Comment")}
+          </Text>
+          <CommentCard
+            participantType="current-user"
+            authorName={submittedComment.authorName}
+            createdAt={submittedComment.createdAt}
+            message={submittedComment.message}
+            showUnreadIcon={false}
+            showContextOptions={false}
+            className="bg-theme-neutral-100 px-2 pt-2 pb-4"
+          />
+        </Box>
+      </Box>
     </>
   ) : null;
 

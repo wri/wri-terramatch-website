@@ -62,10 +62,10 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({ open, o
         <b className="text-theme-neutral-800">{polygons.length === 1 ? t("Submit Polygon?") : t("Submit Polygons?")}</b>
       }
       content={
-        <Flex className="flex-col gap-4">
+        <Flex className="-m-2.5 flex-col gap-4">
           {polygons.length === 1 ? (
-            <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2}>
-              <Text textStyle="400" color="neutral.900" mb={3}>
+            <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={4}>
+              <Text textStyle="400" color="neutral.900">
                 {t("Are you sure you want to submit")}
               </Text>
               <Text textStyle="500-bold" color="neutral.900" textAlign="center">
@@ -95,17 +95,21 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({ open, o
               </Flex>
             </Box>
           )}
-          <SimpleDivider className="my-3" />
-          <CommentInput
-            label={t("Comment")}
-            showOptionalLabel={true}
-            caption={t("Add a comment about this submission.")}
-            name={currentUserName}
-            value={comment}
-            onValueChange={setComment}
-            showSendIcon={false}
-            className="bg-theme-neutral-300"
-          />
+          <Box bg="neutral.200" mb={-0.5}>
+            <SimpleDivider />
+            <CommentInput
+              label={t("Comment")}
+              showOptionalLabel={true}
+              caption={t("Add a comment about this submission.")}
+              name={currentUserName}
+              placeholder={t("Write a message...")}
+              value={comment}
+              onValueChange={setComment}
+              showSendIcon={false}
+              showAttachFileIcon={false}
+              className="px-4 pt-2 pb-4"
+            />
+          </Box>
         </Flex>
       }
       footer={
