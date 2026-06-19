@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
@@ -29,35 +29,45 @@ const EntityStatusModal: FC<EntityStatusModalProps> = ({
   const t = useT();
   const { closeModal } = useModalContext();
 
+  const editPageHref = useMemo(() => getEntityEditPageLink(entityName, entityUuid), [entityName, entityUuid]);
+
+  const primaryButtonProps = useMemo(
+    () =>
+      needMoreInformation
+        ? {
+            as: Link,
+            children: t("Provide Feedback"),
+            href: editPageHref,
+            onClick: () => {
+              closeModal(ModalId.STATUS);
+            }
+          }
+        : {
+            children: t("Close"),
+            onClick: () => closeModal(ModalId.STATUS)
+          },
+    [closeModal, editPageHref, needMoreInformation, t]
+  );
+
+  const secondaryButtonProps = useMemo(
+    () =>
+      needMoreInformation
+        ? {
+            children: t("Close"),
+            onClick: () => closeModal(ModalId.STATUS)
+          }
+        : undefined,
+    [closeModal, needMoreInformation, t]
+  );
+
   return (
     <Modal
       className="min-w-[500px]"
       iconProps={{ name: statusProps.icon, width: 60, height: 60, className: statusProps.className }}
       title={statusProps.title}
       content={feedback ?? t("No feedback provided")}
-      primaryButtonProps={
-        needMoreInformation
-          ? {
-              as: Link,
-              children: t("Provide Feedback"),
-              href: getEntityEditPageLink(entityName, entityUuid),
-              onClick: () => {
-                closeModal(ModalId.STATUS);
-              }
-            }
-          : {
-              children: t("Close"),
-              onClick: () => closeModal(ModalId.STATUS)
-            }
-      }
-      secondaryButtonProps={
-        needMoreInformation
-          ? {
-              children: t("Close"),
-              onClick: () => closeModal(ModalId.STATUS)
-            }
-          : undefined
-      }
+      primaryButtonProps={primaryButtonProps}
+      secondaryButtonProps={secondaryButtonProps}
     />
   );
 };

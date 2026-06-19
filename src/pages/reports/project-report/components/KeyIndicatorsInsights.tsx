@@ -3,13 +3,13 @@ import { FC } from "react";
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
-import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
-import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   DemographicsLoader,
   getReportKeyIndicatorFramework,
   getTooltipContent
-} from "@/pages/reports/components/KeyIndicators/reportKeyIndicatorPrimitives";
+} from "@/components/reports/KeyIndicators/reportKeyIndicatorPrimitives";
+import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
+import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useProjectReportKeyIndicatorsContent } from "@/pages/reports/project-report/constants/projectReportKeyIndicatorsContent";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { JobsIcon, RegenerationIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";

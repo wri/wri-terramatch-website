@@ -6,6 +6,7 @@ import { FC, ReactElement, useCallback, useMemo } from "react";
 
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/TrackingCollapseGrid/hooks";
+import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSite, useFullSiteReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
@@ -28,7 +29,7 @@ import Log from "@/utils/log";
 type TabItem = {
   key: string;
   title: string;
-  body: ReactElement;
+  renderBody: () => ReactElement;
   hideForFrameworks?: Framework[];
 };
 
@@ -36,10 +37,17 @@ type SiteReportContentProps = {
   siteReport: SiteReportFullDto;
   site?: SiteFullDto;
   taskDueAt?: string;
+  projectReportUuid?: string | null;
   workdaysTotal?: number | null;
 };
 
-const SiteReportContent: FC<SiteReportContentProps> = ({ siteReport, site, taskDueAt, workdaysTotal }) => {
+const SiteReportContent: FC<SiteReportContentProps> = ({
+  siteReport,
+  site,
+  taskDueAt,
+  projectReportUuid,
+  workdaysTotal
+}) => {
   const t = useT();
   const router = useRouter();
   const { framework } = useFrameworkContext();
@@ -47,7 +55,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({ siteReport, site, taskD
 
   const currentTab = (router.query.tab as string) ?? "overview";
   const reportTitle = siteReport.reportTitle ?? siteReport.title ?? t("Site Report");
-  const headerReportTitle = site?.name ? `${site.name} ${reportTitle}` : reportTitle;
+  const headerReportTitle = site?.name != null ? `${site.name} ${reportTitle}` : reportTitle;
 
   const window = useReportingWindow(toFramework(siteReport.frameworkKey), taskDueAt);
   const taskTitle = t("Reporting Task {window}", { window });
@@ -66,11 +74,11 @@ const SiteReportContent: FC<SiteReportContentProps> = ({ siteReport, site, taskD
         return;
       }
 
-      if (key === "project-report" && siteReport.projectReportUuid != null) {
-        router.push(`/reports/project-report/${siteReport.projectReportUuid}`);
+      if (key === "project-report" && projectReportUuid != null) {
+        router.push(`/reports/project-report/${projectReportUuid}`);
       }
     },
-    [router, siteReport.projectReportUuid, siteReport.siteUuid]
+    [router, projectReportUuid, siteReport.siteUuid]
   );
 
   const tabItems = useMemo<TabItem[]>(
@@ -78,12 +86,12 @@ const SiteReportContent: FC<SiteReportContentProps> = ({ siteReport, site, taskD
       {
         key: "overview",
         title: t("Overview"),
-        body: <Overview siteReport={siteReport} site={site} workdaysTotal={workdaysTotal} />
+        renderBody: () => <Overview siteReport={siteReport} site={site} workdaysTotal={workdaysTotal} />
       },
       {
         key: "details",
         title: t("Details"),
-        body: <Details report={siteReport} />
+        renderBody: () => <Details report={siteReport} />
       }
     ],
     [siteReport, site, workdaysTotal, t]
@@ -107,6 +115,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({ siteReport, site, taskD
   );
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
+  const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
   const suffixButtons: SuffixButtonConfig[] = useMemo(
     () => [
       { key: "site-profile", labelKey: "Site Profile" },
@@ -132,12 +141,26 @@ const SiteReportContent: FC<SiteReportContentProps> = ({ siteReport, site, taskD
             link: "/my-projects",
             icon: <ProjectIcon className="!text-theme-primary-900" />
           },
-          { label: siteReport.projectName ?? "", link: `/project/${siteReport.projectUuid}` },
           {
-            label: taskTitle,
-            link: `/project/${siteReport.projectUuid}/reporting-task/${siteReport.taskUuid}`
+            label: siteReport.projectName ?? t("Project"),
+            link: `/project/${siteReport.projectUuid}`
           },
-          { label: reportTitle, link: `/reports/site-report/${siteReportUUID}` }
+          {
+            label: t("Sites"),
+            link: `/project/${siteReport.projectUuid ?? ""}?tab=sites`
+          },
+          {
+            label: siteReport.siteName ?? t("Site"),
+            link: `/site/${siteReport.siteUuid ?? ""}`
+          },
+          {
+            label: t("Reports"),
+            link: `/site/${siteReport.siteUuid ?? ""}?tab=completed-tasks`
+          },
+          {
+            label: t("Site Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "") }),
+            link: `/reports/site-report/${siteReportUUID}`
+          }
         ]}
         suffix={
           <Flex gap={1.5} alignItems="center">
@@ -168,7 +191,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({ siteReport, site, taskD
           }
         }}
       />
-      <div className="flex flex-1">{visibleTabItems.find(item => item.key === activeTab)?.body}</div>
+      <div className="flex flex-1">{activeTabItem.renderBody()}</div>
       <PageFooter />
     </>
   );
@@ -189,7 +212,7 @@ const SiteReportDetailPage = () => {
   });
 
   const [siteLoaded, { data: site }] = useFullSite({ id: siteReport?.siteUuid! });
-  const [taskLoaded, { data: task }] = useTask({ id: siteReport?.taskUuid ?? undefined });
+  const [taskLoaded, { data: task, projectReportUuid }] = useTask({ id: siteReport?.taskUuid ?? undefined });
 
   const totalProps: Omit<CollectionsTotalProps, "collections"> = {
     entity: "siteReports",
@@ -210,6 +233,7 @@ const SiteReportDetailPage = () => {
               siteReport={siteReport}
               site={site}
               taskDueAt={task?.dueAt}
+              projectReportUuid={projectReportUuid}
               workdaysTotal={workdaysTotal}
             />
           )}

@@ -1,13 +1,13 @@
 import { FC } from "react";
 
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
-import { SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   DemographicsLoader,
   getReportKeyIndicatorFramework,
   getTooltipContent,
   REPORT_METRIC_CARD_CLASS
-} from "@/pages/reports/components/KeyIndicators/reportKeyIndicatorPrimitives";
+} from "@/components/reports/KeyIndicators/reportKeyIndicatorPrimitives";
+import { SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useSiteReportKeyIndicatorsContent } from "@/pages/reports/site-report/constants/siteReportKeyIndicatorsContent";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import {

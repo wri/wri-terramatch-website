@@ -4,16 +4,18 @@ import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
+import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullNurseryReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
-import { NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { NurseryFullDto, NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
+import NurseryReportDataTab from "@/pages/reports/nursery-report/tabs/ReportData";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -23,23 +25,23 @@ import Log from "@/utils/log";
 type TabItem = {
   key: string;
   title: string;
-  body: ReactElement;
+  renderBody: () => ReactElement;
 };
 
 type NurseryReportContentProps = {
   nurseryReport: NurseryReportFullDto;
-  nurseryName?: string | null;
+  nursery?: NurseryFullDto | null;
   taskDueAt?: string;
 };
 
-const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nurseryName, taskDueAt }) => {
+const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nursery, taskDueAt }) => {
   const t = useT();
   const router = useRouter();
   const nurseryReportUUID = nurseryReport.uuid;
   const currentTab = (router.query.tab as string) ?? "overview";
 
   const reportTitle = nurseryReport.reportTitle ?? nurseryReport.title ?? t("Nursery Report");
-  const headerReportTitle = nurseryName != null ? `${nurseryName} ${reportTitle}` : reportTitle;
+  const headerReportTitle = nursery?.name != null ? `${nursery.name} ${reportTitle}` : reportTitle;
 
   const window = useReportingWindow(toFramework(nurseryReport.frameworkKey), taskDueAt);
   const taskTitle = t("Reporting Task {window}", { window });
@@ -56,15 +58,20 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
       {
         key: "overview",
         title: t("Overview"),
-        body: <NurseryReportOverview report={nurseryReport} />
+        renderBody: () => <NurseryReportOverview report={nurseryReport} />
+      },
+      {
+        key: "report-data",
+        title: t("Report Data"),
+        renderBody: () => <NurseryReportDataTab report={nurseryReport} nursery={nursery} />
       },
       {
         key: "details",
         title: t("Report Details"),
-        body: <NurseryReportDetailsTab report={nurseryReport} />
+        renderBody: () => <NurseryReportDetailsTab report={nurseryReport} />
       }
     ],
-    [nurseryReport, t]
+    [nurseryReport, nursery, t]
   );
 
   const visibleTabItems = useMemo(() => {
@@ -85,6 +92,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
   );
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
+  const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
 
   return (
     <>
@@ -103,12 +111,26 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
             link: "/my-projects",
             icon: <ProjectIcon className="!text-theme-primary-900" />
           },
-          { label: nurseryReport.projectName ?? t("Project"), link: `/project/${nurseryReport.projectUuid}` },
           {
-            label: taskTitle,
-            link: `/project/${nurseryReport.projectUuid}/reporting-task/${nurseryReport.taskUuid}`
+            label: nurseryReport.projectName ?? t("Project"),
+            link: `/project/${nurseryReport.projectUuid}`
           },
-          { label: reportTitle, link: `/reports/nursery-report/${nurseryReportUUID}` }
+          {
+            label: t("Nurseries"),
+            link: `/project/${nurseryReport.projectUuid}?tab=nurseries`
+          },
+          {
+            label: nurseryReport.nurseryName ?? t("Nursery"),
+            link: `/nursery/${nurseryReport.nurseryUuid}`
+          },
+          {
+            label: t("Reports"),
+            link: `/nursery/${nurseryReport.nurseryUuid}?tab=completed-tasks`
+          },
+          {
+            label: t("Nursery Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "") }),
+            link: `/reports/nursery-report/${nurseryReportUUID}`
+          }
         ]}
         suffix={
           <div className="flex items-center gap-1.5">
@@ -147,7 +169,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
           }
         }}
       />
-      <div className="flex flex-1">{visibleTabItems.find(item => item.key === activeTab)?.body}</div>
+      <div className="flex flex-1">{activeTabItem.renderBody()}</div>
       <PageFooter />
     </>
   );
@@ -162,7 +184,7 @@ const NurseryReportDetailPage = () => {
   const { openToast } = useToastContext();
   useValueChanged(reportLoaded, () => {
     if (reportLoaded && nurseryReport == null) {
-      Log.error(t("Nursery report not found"), { nurseryReportUUID, loadFailure });
+      Log.error("Nursery report not found", { nurseryReportUUID, loadFailure });
       openToast(t("Nursery report not found"), ToastType.ERROR);
     }
   });
@@ -175,7 +197,7 @@ const NurseryReportDetailPage = () => {
     <FrameworkProvider frameworkKey={nurseryReport?.frameworkKey}>
       <LoadingContainer loading={!isLoaded}>
         {nurseryReport == null ? null : (
-          <NurseryReportContent nurseryReport={nurseryReport} nurseryName={nursery?.name} taskDueAt={task?.dueAt} />
+          <NurseryReportContent nurseryReport={nurseryReport} nursery={nursery} taskDueAt={task?.dueAt} />
         )}
       </LoadingContainer>
     </FrameworkProvider>
