@@ -15,6 +15,7 @@ import ContactSupport from "@/components/extensive/PageElements/ContactSupport/C
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { Framework } from "@/context/framework.provider";
@@ -153,7 +154,9 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
           <Flex gap={7}>
             <Flex gap={5} className={classNames(isHBFFramework ? "flex-row" : "flex-col", "flex-[2]")}>
               <PageItem title={t("Key Indicators & Insights")}>
-                <SiteReportKeyIndicatorsInsights siteReport={siteReport} workdaysTotal={workdaysTotal} />
+                <HighLevelMetricsCard entityType="site-report" entityId={siteReport.uuid}>
+                  <SiteReportKeyIndicatorsInsights siteReport={siteReport} workdaysTotal={workdaysTotal} />
+                </HighLevelMetricsCard>
               </PageItem>
               <PageItem
                 title={t("Featured Images")}

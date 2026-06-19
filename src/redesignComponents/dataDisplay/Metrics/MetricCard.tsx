@@ -1,10 +1,12 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, ReactNode } from "react";
+import { FC, MouseEvent, ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
+import { useMetricsCardAnalyticsContext } from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { Framework } from "@/context/framework.provider";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
+import { toMetricLabel } from "@/utils/analytics/metricsCardAnalytics";
 
 import { InformationRequiredIcon } from "../../foundations/Icons";
 import DonutChart from "./DonutChart";
@@ -17,6 +19,33 @@ import {
 } from "./types";
 import { getIconWithProgressColor } from "./utils/getIconWithProgressColor";
 
+type MetricTooltipTriggerProps = {
+  tooltipContent: ReactNode;
+  metricLabel?: string;
+  type?: string;
+};
+
+const MetricTooltipTrigger: FC<MetricTooltipTriggerProps> = ({ tooltipContent, metricLabel, type }) => {
+  const analytics = useMetricsCardAnalyticsContext();
+
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+
+    const label = toMetricLabel(metricLabel, type);
+    if (label !== "") {
+      analytics?.onTooltipEngaged(label);
+    }
+  };
+
+  return (
+    <Tooltip content={tooltipContent} position="top">
+      <button type="button" className="inline-flex items-center" onClick={handleClick} aria-label="Metric information">
+        <InformationRequiredIcon color="neutral.800" boxSize="14px" />
+      </button>
+    </Tooltip>
+  );
+};
+
 const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   title,
   progress,
@@ -24,7 +53,9 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   color,
   iconWithColor,
   tooltipContent,
-  classNameTitle
+  classNameTitle,
+  metricLabel,
+  type
 }) => (
   <Flex direction="column" gap={2}>
     <Flex gap={1} color={color} alignItems="center">
@@ -37,9 +68,9 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
       >
         {title}
       </Text>
-      <Tooltip content={tooltipContent} position="top">
-        <InformationRequiredIcon color="neutral.800" boxSize="14px" />
-      </Tooltip>
+      {tooltipContent != null && (
+        <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
+      )}
     </Flex>
     <Text textStyle="400-bold" color="neutral.900">
       {progressLabel ?? progress.toLocaleString()}
@@ -54,7 +85,9 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   color,
   iconWithColor,
   tooltipContent,
-  classNameTitle
+  classNameTitle,
+  metricLabel,
+  type
 }) => (
   <Flex gap={3} color={color} alignItems="center">
     {iconWithColor}
@@ -63,9 +96,9 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
         <Text textStyle="400" color="neutral.800" className={twMerge("whitespace-nowrap", classNameTitle)}>
           {title}
         </Text>
-        <Tooltip content={tooltipContent} position="top">
-          <InformationRequiredIcon color="neutral.800" boxSize="14px" />
-        </Tooltip>
+        {tooltipContent != null && (
+          <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
+        )}
       </Flex>
       <Text textStyle="600-bold" color="neutral.900">
         {progressLabel ?? progress.toLocaleString()}
@@ -82,7 +115,9 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   color,
   iconWithColor,
   tooltipContent,
-  classNameTitle
+  classNameTitle,
+  metricLabel,
+  type
 }) => {
   const t = useT();
   const progressValue = goal > 0 ? (progress / goal) * 100 : 0;
@@ -94,9 +129,9 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
         <Text textStyle="300" color="neutral.800" className={twMerge("whitespace-nowrap", classNameTitle)}>
           {title}
         </Text>
-        <Tooltip content={tooltipContent} position="top">
-          <InformationRequiredIcon color="neutral.800" boxSize="14px" />
-        </Tooltip>
+        {tooltipContent != null && (
+          <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
+        )}
       </Flex>
       <Flex gap={2} alignItems="center">
         <ProgressBar progress={progressValue} color={color} />
@@ -126,7 +161,8 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
   type,
   tooltipContent,
   classNameTitle,
-  frameworkKey
+  frameworkKey,
+  metricLabel
 }) => {
   const t = useT();
   const progressValue = goal > 0 ? (progress / goal) * 100 : progress;
@@ -140,9 +176,9 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
           <Text textStyle="400" color="neutral.900" className={twMerge("whitespace-nowrap", classNameTitle)}>
             {title}
           </Text>
-          <Tooltip content={tooltipContent} position="top">
-            <InformationRequiredIcon color="neutral.800" boxSize="14px" />
-          </Tooltip>
+          {tooltipContent != null && (
+            <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
+          )}
         </Flex>
         {frameworkKey === Framework.PPC && type === "jobsCreated" ? (
           <Flex gap={1} alignItems="center">
@@ -185,7 +221,8 @@ const MetricCard: FC<MetricCardProps> = props => {
     type,
     className,
     classNameTitle,
-    frameworkKey
+    frameworkKey,
+    metricLabel
   } = props;
   const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "14px", color, variant);
   const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "24px", color, variant);
@@ -205,6 +242,8 @@ const MetricCard: FC<MetricCardProps> = props => {
           iconWithColor={iconWithColor14}
           tooltipContent={tooltipContent}
           classNameTitle={classNameTitle}
+          metricLabel={metricLabel}
+          type={type}
         />
       );
       break;
@@ -221,6 +260,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           type={type}
           classNameTitle={classNameTitle}
           frameworkKey={frameworkKey}
+          metricLabel={metricLabel}
         />
       );
       break;
@@ -234,6 +274,8 @@ const MetricCard: FC<MetricCardProps> = props => {
           iconWithColor={iconWithColor14}
           tooltipContent={tooltipContent}
           classNameTitle={classNameTitle}
+          metricLabel={metricLabel}
+          type={type}
         />
       );
       break;
@@ -247,6 +289,8 @@ const MetricCard: FC<MetricCardProps> = props => {
           iconWithColor={iconWithColor50}
           tooltipContent={tooltipContent}
           classNameTitle={classNameTitle}
+          metricLabel={metricLabel}
+          type={type}
         />
       );
       break;

@@ -12,6 +12,7 @@ import ContactSupport from "@/components/extensive/PageElements/ContactSupport/C
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { isTerrafund, toFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -24,6 +25,7 @@ import { useNurseryReportAboutContent } from "@/pages/reports/nursery-report/con
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { ChevronRightIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
+import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
 import Log from "@/utils/log";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
@@ -163,23 +165,28 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
                 size: "small",
                 children: t("View Progress & Goals"),
                 rightIcon: <ChevronRightIcon />,
-                onClick: () => goToTab("report-data")
+                onClick: createMetricsCardCtaHandler({ entityType: "nursery-report", entityId: report.uuid }, () =>
+                  goToTab("report-data")
+                )
               }}
             >
-              <MetricCardsRow>
-                <MetricCard
-                  title={t("Seedlings Grown")}
-                  progress={seedlingsGrown}
-                  goal={0}
-                  variant="large"
-                  icon={<SeedlingsIcon />}
-                  color="secondary.600"
-                  tooltipContent={t(
-                    "This is the total number of seedlings produced in this nursery during this reporting period."
-                  )}
-                  className="flex-1"
-                />
-              </MetricCardsRow>
+              <HighLevelMetricsCard entityType="nursery-report" entityId={report.uuid}>
+                <MetricCardsRow>
+                  <MetricCard
+                    title={t("Seedlings Grown")}
+                    progress={seedlingsGrown}
+                    goal={0}
+                    variant="large"
+                    icon={<SeedlingsIcon />}
+                    color="secondary.600"
+                    metricLabel="seedlings_grown"
+                    tooltipContent={t(
+                      "This is the total number of seedlings produced in this nursery during this reporting period."
+                    )}
+                    className="flex-1"
+                  />
+                </MetricCardsRow>
+              </HighLevelMetricsCard>
             </PageItem>
             <PageItem
               title={t("Featured Images")}

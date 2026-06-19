@@ -10,6 +10,7 @@ import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -105,7 +106,9 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
         <Flex gap={7}>
           <Flex gap={5} className="flex-[2] flex-col">
             <PageItem title={t("Key Indicators & Insights")}>
-              <KeyIndicatorsInsights projectReport={projectReport} project={project} />
+              <HighLevelMetricsCard entityType="project-report" entityId={projectReport.uuid}>
+                <KeyIndicatorsInsights projectReport={projectReport} project={project} />
+              </HighLevelMetricsCard>
             </PageItem>
             <PageItem
               title={t("Featured Images")}

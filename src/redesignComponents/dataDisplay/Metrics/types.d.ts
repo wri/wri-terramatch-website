@@ -35,12 +35,21 @@ export interface MetricCardProps {
   className?: string;
   classNameTitle?: string;
   frameworkKey?: string;
+  metricLabel?: string;
 }
 
 export interface MetricCardCommonVariantProps
   extends Pick<
     MetricCardProps,
-    "title" | "progress" | "progressLabel" | "goal" | "tooltipContent" | "color" | "type" | "frameworkKey"
+    | "title"
+    | "progress"
+    | "progressLabel"
+    | "goal"
+    | "tooltipContent"
+    | "color"
+    | "type"
+    | "frameworkKey"
+    | "metricLabel"
   > {
   iconWithColor: ReactNode;
   classNameTitle?: string;
@@ -48,7 +57,15 @@ export interface MetricCardCommonVariantProps
 
 export type NoGoalMetricCardContentProps = Pick<
   MetricCardCommonVariantProps,
-  "title" | "progress" | "progressLabel" | "color" | "iconWithColor" | "type" | "tooltipContent" | "classNameTitle"
+  | "title"
+  | "progress"
+  | "progressLabel"
+  | "color"
+  | "iconWithColor"
+  | "type"
+  | "tooltipContent"
+  | "classNameTitle"
+  | "metricLabel"
 >;
 
 export type ProgressBarMetricCardContentProps = Pick<
@@ -62,6 +79,7 @@ export type ProgressBarMetricCardContentProps = Pick<
   | "type"
   | "tooltipContent"
   | "classNameTitle"
+  | "metricLabel"
 >;
 
 export type DonutChartMetricCardContentProps = MetricCardCommonVariantProps;
