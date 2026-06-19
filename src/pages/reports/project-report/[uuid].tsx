@@ -133,6 +133,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         report={projectReport}
         title={reportTitle}
         dueAt={task?.dueAt ?? projectReport.dueAt}
+        entityName="project-report"
         breadcrumbs={[
           {
             label: t("Projects"),
