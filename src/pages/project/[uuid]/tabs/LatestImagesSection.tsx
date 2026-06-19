@@ -9,8 +9,8 @@ const LatestImagesSectionTab: FC<{
   entityUuid: string;
   entityName: SupportedEntity;
   columns?: number;
-  minRows?: number;
-}> = ({ entityUuid, entityName, columns, minRows }) => {
+  rows?: number;
+}> = ({ entityUuid, entityName, columns, rows }) => {
   const router = useRouter();
   const goToTab = (tab: string) => {
     router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
@@ -43,7 +43,7 @@ const LatestImagesSectionTab: FC<{
       images={images}
       onClickAdd={() => goToTab("gallery")}
       columns={columns}
-      minRows={minRows}
+      rows={rows}
     />
   );
 };

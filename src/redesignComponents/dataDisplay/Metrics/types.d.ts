@@ -25,6 +25,7 @@ export type MetricCardVariant = "medium" | "large" | "progressBar" | "donutChart
 export interface MetricCardProps {
   title: string;
   progress: number;
+  progressLabel?: string;
   goal: number;
   tooltipContent?: ReactNode;
   variant?: MetricCardVariant;
@@ -37,19 +38,30 @@ export interface MetricCardProps {
 }
 
 export interface MetricCardCommonVariantProps
-  extends Pick<MetricCardProps, "title" | "progress" | "goal" | "tooltipContent" | "color" | "type" | "frameworkKey"> {
+  extends Pick<
+    MetricCardProps,
+    "title" | "progress" | "progressLabel" | "goal" | "tooltipContent" | "color" | "type" | "frameworkKey"
+  > {
   iconWithColor: ReactNode;
   classNameTitle?: string;
 }
 
 export type NoGoalMetricCardContentProps = Pick<
   MetricCardCommonVariantProps,
-  "title" | "progress" | "color" | "iconWithColor" | "type" | "tooltipContent" | "classNameTitle"
+  "title" | "progress" | "progressLabel" | "color" | "iconWithColor" | "type" | "tooltipContent" | "classNameTitle"
 >;
 
 export type ProgressBarMetricCardContentProps = Pick<
   MetricCardCommonVariantProps,
-  "title" | "progress" | "goal" | "color" | "iconWithColor" | "type" | "tooltipContent" | "classNameTitle"
+  | "title"
+  | "progress"
+  | "progressLabel"
+  | "goal"
+  | "color"
+  | "iconWithColor"
+  | "type"
+  | "tooltipContent"
+  | "classNameTitle"
 >;
 
 export type DonutChartMetricCardContentProps = MetricCardCommonVariantProps;

@@ -6,13 +6,13 @@ import { SupportedEntity } from "@/connections/Entity";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { entityExport } from "@/generated/v3/entityService/entityServiceComponents";
 import { singularEntityName, v3EntityName } from "@/helpers/entity";
-import { EntityName } from "@/types/common";
+import { EntityName, SingularEntityName } from "@/types/common";
 import Log from "@/utils/log";
 
 /**
  * To get entity export handler
  */
-export const useGetExportEntityHandler = (entity: EntityName, uuid: string) => {
+export const useGetExportEntityHandler = (entity: EntityName | SingularEntityName | string, uuid: string) => {
   const t = useT();
   const { openToast } = useToastContext();
   const [loading, setLoading] = useState(false);
@@ -21,9 +21,9 @@ export const useGetExportEntityHandler = (entity: EntityName, uuid: string) => {
     setLoading(true);
 
     try {
-      const entityName = v3EntityName(entity) as SupportedEntity;
+      const entityName = v3EntityName(entity as EntityName | SingularEntityName) as SupportedEntity;
       await entityExport.downloadFile({ pathParams: { entity: entityName, uuid } });
-      openToast(t(`${startCase(singularEntityName(entity))} successfully exported`));
+      openToast(t(`${startCase(singularEntityName(entity as EntityName | SingularEntityName))} successfully exported`));
     } catch (error) {
       Log.error("Error exporting entity", error);
       openToast(t("Something went wrong!"), ToastType.ERROR);

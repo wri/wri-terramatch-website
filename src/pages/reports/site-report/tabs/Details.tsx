@@ -36,7 +36,7 @@ const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, repor
   />
 );
 
-const SiteReportDetailsTab: FC<SiteReportDetailsTabProps> = ({ report }) => {
+const Details: FC<SiteReportDetailsTabProps> = ({ report }) => {
   const { steps, defaultValues, fieldsProvider, isFormLoading, providerLoaded } = useEntityFormSetup(
     "site-reports",
     report.uuid
@@ -72,4 +72,4 @@ const SiteReportDetailsTab: FC<SiteReportDetailsTabProps> = ({ report }) => {
   );
 };
 
-export default SiteReportDetailsTab;
+export default Details;
