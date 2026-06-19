@@ -19,6 +19,7 @@ import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
 import Details from "@/pages/reports/site-report/tabs/Details";
+import GalleryTab from "@/pages/reports/site-report/tabs/Gallery";
 import Overview from "@/pages/reports/site-report/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
@@ -90,8 +91,13 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
       },
       {
         key: "details",
-        title: t("Details"),
+        title: t("Report Details"),
         body: <Details report={siteReport} />
+      },
+      {
+        key: "gallery",
+        title: t("Gallery"),
+        body: <GalleryTab report={siteReport} site={site} />
       }
     ],
     [siteReport, site, workdaysTotal, t]
@@ -165,7 +171,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
           <Flex gap={1.5} alignItems="center">
             {suffixButtons.map((button, index) => (
               <Flex key={button.key} gap={1.5} alignItems="center">
-                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
+                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
                 <Button
                   variant="borderless"
                   size="small"
