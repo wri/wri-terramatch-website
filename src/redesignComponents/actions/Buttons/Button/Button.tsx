@@ -16,7 +16,6 @@ export interface IButtonProps extends Omit<ButtonProps, "size" | "variant" | "co
 }
 
 const Button = ({ children, className, variant = "primary", ...props }: IButtonProps) => {
-  console.log("className", className);
   return (
     <WriButton variant={variant} {...props} className={classNames("shadow-monitored", className)}>
       {children}
