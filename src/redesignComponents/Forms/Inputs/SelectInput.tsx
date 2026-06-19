@@ -18,6 +18,12 @@ const StyledWrapper = styled.div`
   & button:is(: disabled, [disabled], [data-disabled], [aria-disabled="true"]) span {
     color: ${getThemedColor("neutral", 600)} !important;
   }
+  & button[data-part="trigger"] {
+    border-color: ${getThemedColor("neutral", 300)};
+  }
+  & button[data-part="trigger"]:not([data-placeholder-shown]) {
+    border-color: ${getThemedColor("neutral", 700)};
+  }
 `;
 
 const SelectInput: FC<ComponentProps<typeof WriSelect>> = props => (
