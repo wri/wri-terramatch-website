@@ -239,10 +239,27 @@ export const dataTableEntryValue = (headers: AccessorKeyColumnDef<any>[], field:
   return stringValues.join("<br/>");
 };
 
+const SHORT_MONTHS: Record<string, string> = {
+  January: "Jan",
+  February: "Feb",
+  March: "Mar",
+  April: "Apr",
+  May: "May",
+  June: "Jun",
+  July: "Jul",
+  August: "Aug",
+  September: "Sept",
+  October: "Oct",
+  November: "Nov",
+  December: "Dec"
+};
+
 export const getShortPeriodLabel = (taskTitle: string) => {
   if (taskTitle == null || taskTitle === "") return "";
   const match = taskTitle.match(/(\S+)\s+-\s+(\S+)\s+(\d{4})$/);
-  return match ? `${match[2]} ${match[3]}` : taskTitle;
+  if (!match) return taskTitle;
+  const month = SHORT_MONTHS[match[2]] ?? match[2];
+  return `${month} ${match[3]}`;
 };
 
 export const getFormHeaderLabel = (entityName: string, taskTitle: string) => {
