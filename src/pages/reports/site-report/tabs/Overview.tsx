@@ -152,7 +152,16 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
         <Flex gap={7} className="flex-col">
           <Flex gap={7}>
             <Flex gap={5} className={classNames(isHBFFramework ? "flex-row" : "flex-col", "flex-[2]")}>
-              <PageItem title={t("Key Indicators & Insights")}>
+              <PageItem
+                title={t("Key Indicators & Insights")}
+                buttonProps={{
+                  variant: "secondary",
+                  size: "small",
+                  children: t("View Progress & Goals"),
+                  rightIcon: <ChevronRightIcon />,
+                  onClick: () => goToTab("goals")
+                }}
+              >
                 <SiteReportKeyIndicatorsInsights siteReport={siteReport} workdaysTotal={workdaysTotal} />
               </PageItem>
               <PageItem
