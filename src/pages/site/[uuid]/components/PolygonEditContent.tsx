@@ -755,7 +755,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           open={openAccordionSection === "details"}
           onOpenChange={handleAccordionOpenChange("details")}
         >
-          <Flex className="flex-1 flex-col gap-4">
+          <Flex className="mb-4 flex-1 flex-col gap-4">
             <TextInput
               label={t("Polygon Name")}
               name="polygonName"
@@ -836,7 +836,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               </Button>
             }
           >
-            <Flex className="flex-1 flex-col gap-4">
+            <Flex className="mb-4 flex-1 flex-col gap-4">
               <Switch
                 name="showPlotsOnMap"
                 checked={plotsVisible}
@@ -889,7 +889,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             </Button>
           }
         >
-          <Flex className="flex-1 flex-col gap-4">
+          <Flex className="mb-4 flex-1 flex-col gap-4">
             <Flex className="items-center gap-1">
               <Text textStyle="400-bold" color="neutral.900">{`${geotaggedPhotosCount} ${t("Photos")}`}</Text>
               <Text textStyle="400" color="neutral.900">
