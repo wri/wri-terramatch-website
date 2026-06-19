@@ -19,6 +19,7 @@ import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
 import Details from "@/pages/reports/site-report/tabs/Details";
+import GoalsAndProgress from "@/pages/reports/site-report/tabs/GoalsAndProgress";
 import Overview from "@/pages/reports/site-report/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
@@ -87,6 +88,11 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
         key: "overview",
         title: t("Overview"),
         body: <Overview siteReport={siteReport} site={site} workdaysTotal={workdaysTotal} />
+      },
+      {
+        key: "goals",
+        title: t("Progress & Goals"),
+        body: <GoalsAndProgress siteReport={siteReport} site={site} />
       },
       {
         key: "details",
