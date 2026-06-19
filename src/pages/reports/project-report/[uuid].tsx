@@ -9,7 +9,6 @@ import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject, useFullProjectReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
-import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { Framework, toFramework, useFrameworkContext } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -23,11 +22,7 @@ import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
 import ProjectReportDetailsTab from "./tabs/Details";
-import NurseryReportsTab from "./tabs/NurseryReports";
 import Overview from "./tabs/Overview";
-import PPCSocioeconomicTab from "./tabs/PPCSocioeconomic";
-import TFSocioeconomicTab from "./tabs/TFSocioeconomic";
-import UploadedFilesTab from "./tabs/UploadedFiles";
 
 type TabItem = {
   key: string;
@@ -79,30 +74,6 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
             sharedDriveLink={projectReport.sharedDriveLink!}
           />
         )
-      },
-      {
-        key: "socioeconomic",
-        title: t("Socioeconomic Data"),
-        renderBody: () => (
-          <>
-            <ContextCondition frameworksShow={[Framework.PPC]}>
-              <PPCSocioeconomicTab report={projectReport} />
-            </ContextCondition>
-            <ContextCondition frameworksHide={[Framework.PPC]}>
-              <TFSocioeconomicTab report={projectReport} />
-            </ContextCondition>
-          </>
-        )
-      },
-      {
-        key: "nursery-reports",
-        title: t("Nursery reports"),
-        renderBody: () => <NurseryReportsTab taskUuid={projectReport.taskUuid!} />
-      },
-      {
-        key: "uploaded-files",
-        title: t("Uploaded Files"),
-        renderBody: () => <UploadedFilesTab report={projectReport} />
       },
       {
         key: "audit-log",
