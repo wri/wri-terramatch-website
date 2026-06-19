@@ -7,9 +7,10 @@ import Button, { IButtonProps } from "../Button/Button";
 export interface ButtonGroupProps {
   className?: string;
   buttons?: IButtonProps[];
+  classNameGroup?: string;
   groups?: { id: string; buttons: IButtonProps[] }[];
 }
-const ButtonGroup: FC<ButtonGroupProps> = ({ className, buttons = [], groups = [] }) => {
+const ButtonGroup: FC<ButtonGroupProps> = ({ className, buttons = [], groups = [], classNameGroup }) => {
   return (
     <Flex
       className={className}
@@ -26,7 +27,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ className, buttons = [], groups = [
         <Button key={button.id} className={twMerge(button.className, "flex-1")} {...button} />
       ))}
       {groups.map(group => (
-        <Flex key={group.id} gap={3}>
+        <Flex key={group.id} gap={3} className={classNameGroup}>
           {group.buttons.map(button => (
             <Button key={button.id} {...button} />
           ))}

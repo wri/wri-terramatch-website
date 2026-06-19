@@ -32,7 +32,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt }) => {
   const { openModal } = useModalContext();
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("project-reports", report.uuid);
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "project-reports",
     entityUUID: report.uuid,
     entityStatus: report.status,
@@ -63,6 +63,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt }) => {
 
   return (
     <>
+      {EditModals}
       <PageHeader title={title} />
       <Box gapX={4} px={6} py={5} justifyContent="space-between" className="mobile:flex-col">
         <Flex gap={2} direction="column">

@@ -35,7 +35,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const projectReportAboutContent = useProjectReportAboutContent();
 
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "project-reports",
     entityUUID: projectReport.uuid,
     entityStatus: projectReport.status,
@@ -101,6 +101,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
 
   return (
     <PageContent>
+      {EditModals}
       <Flex gap={7} className="flex-col">
         <Flex gap={7}>
           <Flex gap={5} className="flex-[2] flex-col">

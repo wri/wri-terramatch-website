@@ -23,7 +23,7 @@ export const useGetExportEntityHandler = (entity: EntityName, uuid: string) => {
 
     showToast({
       id: "exportToast",
-      label: t(`Exporting ${startCase(singularEntityName(entity))}...`),
+      label: t(`Downloading ${startCase(singularEntityName(entity))}...`),
       type: "loading",
       placement: "bottom",
       maxWidth: "auto"
@@ -34,7 +34,7 @@ export const useGetExportEntityHandler = (entity: EntityName, uuid: string) => {
       await entityExport.downloadFile({ pathParams: { entity: entityName, uuid } });
       closeToast("exportToast");
       showToast({
-        label: t(`${startCase(singularEntityName(entity))} successfully exported`),
+        label: t(`${startCase(singularEntityName(entity))} Download Complete`),
         type: "success",
         placement: "bottom",
         duration: 5000,

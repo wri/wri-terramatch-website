@@ -29,6 +29,7 @@ const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
         {
           id: "close",
           children: t("Close and continue later"),
+          variant: "primary",
           onClick: () => {
             props.onConfirm?.();
             closeModal(ModalId.SAVE_AND_CLOSE_MODAL);
@@ -39,6 +40,8 @@ const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
         {
           id: "cancel",
           children: t("Cancel"),
+          className: "!w-full",
+          variant: "secondary",
           onClick: () => closeModal(ModalId.SAVE_AND_CLOSE_MODAL)
         }
       ]}

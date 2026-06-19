@@ -1,16 +1,16 @@
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
-import { Flex, Text } from "@chakra-ui/react";
 
-import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
+import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 
 export interface ModalConfirmationProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  content: string;
+  content: React.ReactNode;
   buttonsCancel?: IButtonProps[];
   buttonsPrimary?: IButtonProps[];
   buttonsSecondary?: IButtonProps[];
@@ -33,12 +33,39 @@ const ModalConfirmation: FC<ModalConfirmationProps> = ({
     onOpenChange(false);
   }, [onOpenChange]);
 
+  const groups = [
+    buttonsCancel?.length && {
+      id: "cancel",
+      buttons: buttonsCancel.map(button => ({
+        ...button
+      }))
+    },
+    buttonsSecondary?.length && {
+      id: "secondary",
+      buttons: buttonsSecondary.map(button => ({
+        ...button
+      }))
+    },
+    buttonsPrimary?.length && {
+      id: "primary",
+      buttons: buttonsPrimary.map(button => ({
+        ...button
+      }))
+    }
+  ].filter(Boolean);
+
   return (
     <Modal
       open={open}
       onClose={handleClose}
       size={size}
-      header={<b className="text-theme-neutral-800">{t(title)}</b>}
+      lazyMount
+      unmountOnExit
+      header={
+        <Text textStyle="400-bold" className="text-theme-neutral-800">
+          {t(title)}
+        </Text>
+      }
       content={
         <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2} width="100%">
           <Text textStyle="400" color="neutral.900" textAlign="center">
@@ -48,17 +75,9 @@ const ModalConfirmation: FC<ModalConfirmationProps> = ({
       }
       footer={
         <ButtonGroup
-          buttons={buttonsCancel?.map(button => ({ ...button, size: "small", variant: "secondary" })) ?? []}
-          groups={[
-            {
-              id: "secondary",
-              buttons: buttonsSecondary?.map(button => ({ ...button, size: "small", variant: "secondary" })) ?? []
-            },
-            {
-              id: "primary",
-              buttons: buttonsPrimary?.map(button => ({ ...button, size: "small", variant: "primary" })) ?? []
-            }
-          ]}
+          // buttons={buttonsCancel?.map(button => ({ ...button, size: "small", variant: "secondary" })) ?? []}
+          groups={groups as { id: string; buttons: IButtonProps[] }[]}
+          classNameGroup="!w-full"
         />
       }
     />
