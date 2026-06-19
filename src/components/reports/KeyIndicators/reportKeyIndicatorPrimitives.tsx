@@ -13,13 +13,14 @@ export type MetricTooltipContent = {
 
 export const REPORT_METRIC_CARD_CLASS = "flex-[0_0_calc((100%_-_0.75rem)_/_2)] lg:flex-[0_0_calc((100%_-_1.5rem)_/_2)]";
 
+const REPORT_KEY_INDICATOR_BY_FRAMEWORK: Partial<Record<Framework, ReportKeyIndicatorFramework>> = {
+  [Framework.PPC]: "ppc",
+  [Framework.HBF]: "hbf"
+};
+
 export const getReportKeyIndicatorFramework = (frameworkKey?: string | null): ReportKeyIndicatorFramework => {
   const framework = toFramework(frameworkKey);
-
-  if (framework === Framework.PPC) return "ppc";
-  if (framework === Framework.HBF) return "hbf";
-
-  return "terrafund";
+  return REPORT_KEY_INDICATOR_BY_FRAMEWORK[framework] ?? "terrafund";
 };
 
 export const MetricTooltip = ({ title, tooltip }: MetricTooltipContent) => (
