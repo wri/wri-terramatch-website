@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo, useState } from "react";
 
+import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -12,7 +13,6 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
-import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
@@ -75,7 +75,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         key: "gallery",
         title: t("Gallery"),
         body: (
-          <GalleryTab
+          <EntityGalleryTab
             modelName="projects"
             modelUUID={project.uuid}
             modelTitle={t("Project")}

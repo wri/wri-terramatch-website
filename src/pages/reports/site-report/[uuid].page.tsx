@@ -4,6 +4,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
+import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
@@ -29,7 +30,7 @@ import Log from "@/utils/log";
 type TabItem = {
   key: string;
   title: string;
-  body: ReactElement;
+  renderBody: () => ReactElement;
   hideForFrameworks?: Framework[];
 };
 
@@ -55,7 +56,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
 
   const currentTab = (router.query.tab as string) ?? "overview";
   const reportTitle = siteReport.reportTitle ?? siteReport.title ?? t("Site Report");
-  const headerReportTitle = site?.name ? `${site.name} ${reportTitle}` : reportTitle;
+  const headerReportTitle = site?.name != null ? `${site.name} ${reportTitle}` : reportTitle;
 
   const window = useReportingWindow(toFramework(siteReport.frameworkKey), taskDueAt);
   const taskTitle = t("Reporting Task {window}", { window });
@@ -86,12 +87,28 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
       {
         key: "overview",
         title: t("Overview"),
-        body: <Overview siteReport={siteReport} site={site} workdaysTotal={workdaysTotal} />
+        renderBody: () => <Overview siteReport={siteReport} site={site} workdaysTotal={workdaysTotal} />
       },
       {
         key: "details",
         title: t("Details"),
-        body: <Details report={siteReport} />
+        renderBody: () => <Details report={siteReport} />
+      },
+      {
+        key: "gallery",
+        title: t("Gallery"),
+        renderBody: () => (
+          <EntityGalleryTab
+            modelName="sites"
+            modelUUID={siteReport.siteUuid!}
+            entityData={site}
+            modelTitle={t("Site Report")}
+            emptyStateContent={t(
+              "Your gallery is currently empty. Add images by using the 'Edit' button on this site report."
+            )}
+            sharedDriveLink={siteReport.sharedDriveLink ?? undefined}
+          />
+        )
       }
     ],
     [siteReport, site, workdaysTotal, t]
@@ -115,6 +132,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
   );
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
+  const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
   const suffixButtons: SuffixButtonConfig[] = useMemo(
     () => [
       { key: "site-profile", labelKey: "Site Profile" },
@@ -190,7 +208,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
           }
         }}
       />
-      <div className="flex flex-1">{visibleTabItems.find(item => item.key === activeTab)?.body}</div>
+      <div className="flex flex-1">{activeTabItem.renderBody()}</div>
       <PageFooter />
     </>
   );

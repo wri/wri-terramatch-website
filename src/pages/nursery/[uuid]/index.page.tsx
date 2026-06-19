@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 
+import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery } from "@/connections/Entity";
@@ -8,7 +9,6 @@ import FrameworkProvider from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryOverviewTab from "@/pages/nursery/[uuid]/tabs/Overview";
-import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import NurseryBanner from "@/redesignComponents/content/Banner/NurseryBanner/NurseryBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -43,7 +43,7 @@ const NurseryDetailPage = () => {
       key: "gallery",
       title: t("Gallery"),
       body: (
-        <GalleryTab
+        <EntityGalleryTab
           modelName="nurseries"
           modelUUID={nursery?.uuid ?? ""}
           modelTitle={t("Nursery")}

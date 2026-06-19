@@ -11,7 +11,7 @@ import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
-import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
+import EntityGalleryCard from "@/components/extensive/EntityGallery/EntityGalleryCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -109,7 +109,7 @@ const OverviewTab: FC<OverviewTabProps> = ({ report, entityName }) => {
               <>
                 <PageRow>
                   <PageColumn>
-                    <EntityMapAndGalleryCard
+                    <EntityGalleryCard
                       modelName="sites"
                       modelUUID={siteReport.siteUuid!}
                       modelTitle={t("Site Report")}
