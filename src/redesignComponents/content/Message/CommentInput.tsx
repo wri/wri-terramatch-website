@@ -373,8 +373,8 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
           {caption}
         </Text>
       )}
-      <Flex className="items-center gap-3">
-        <Avatar size="small" name={name} src={src} />
+      <Flex className="items-start gap-3">
+        <Avatar size="small" className="mt-3" name={name} src={src} />
         <Box
           className="w-full"
           bg="neutral.100"
@@ -385,6 +385,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
           p={3}
           display="flex"
           flexDirection="column"
+          position="relative"
         >
           <Textarea
             ref={textareaRef}
@@ -451,12 +452,12 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
                 ))}
               </Flex>
             )}
-            <Flex className="mt-auto ml-auto shrink-0 items-center gap-1">
-              {showAttachFileIcon && (
-                <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
-              )}
-              {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={handleSend} />}
-            </Flex>
+          </Flex>
+          <Flex className="absolute bottom-0 right-0 mt-auto mb-3.5 mr-3 ml-auto shrink-0 items-center gap-1">
+            {showAttachFileIcon && (
+              <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
+            )}
+            {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={handleSend} />}
           </Flex>
         </Box>
       </Flex>
