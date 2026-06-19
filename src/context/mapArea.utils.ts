@@ -1,18 +1,14 @@
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-export type PolygonSubmitConfirmationRequest = {
-  sitePolygonUuid: string;
-  eligibleCount: number;
-  totalCount: number;
-};
+export type PolygonSubmitConfirmationRequest = string;
 
-let openPolygonSubmitConfirmationExternal: ((request: PolygonSubmitConfirmationRequest) => void) | null = null;
+let openPolygonSubmitConfirmationExternal: ((sitePolygonUuid: PolygonSubmitConfirmationRequest) => void) | null = null;
 let openEditPhotoDetailsExternal: ((media: MediaDto) => void) | null = null;
 let closeMapPopupsExternal: (() => void) | null = null;
 let openPolygonPopupExternal: ((polygonUuid: string) => void | Promise<void>) | null = null;
 
 export const registerMapAreaPopupActions = (actions: {
-  openPolygonSubmitConfirmation: (request: PolygonSubmitConfirmationRequest) => void;
+  openPolygonSubmitConfirmation: (sitePolygonUuid: PolygonSubmitConfirmationRequest) => void;
   openEditPhotoDetails: (media: MediaDto) => void;
   closeMapPopups: () => void;
 }): void => {
@@ -35,8 +31,8 @@ export const unregisterOpenPolygonPopupHandler = (): void => {
   openPolygonPopupExternal = null;
 };
 
-export const openPolygonSubmitConfirmationFromMapPopup = (request: PolygonSubmitConfirmationRequest): void => {
-  openPolygonSubmitConfirmationExternal?.(request);
+export const openPolygonSubmitConfirmationFromMapPopup = (sitePolygonUuid: PolygonSubmitConfirmationRequest): void => {
+  openPolygonSubmitConfirmationExternal?.(sitePolygonUuid);
 };
 
 export const closeMapPopupsFromMapPopup = (): void => {

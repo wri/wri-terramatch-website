@@ -113,7 +113,6 @@ export const useSitePolygonBulkActions = ({
 
   const pendingPolygonSubmittedModalRef = useRef(false);
   const proceedingToBulkSubmitConfirmationRef = useRef(false);
-  const proceedingToMapPopupSubmitConfirmationRef = useRef(false);
 
   const [deletePayload, setDeletePayload] = useState<{
     polygons: PolygonTableRow[];
@@ -132,7 +131,6 @@ export const useSitePolygonBulkActions = ({
   } | null>(null);
   const [showSubmitPolygonsModal, setSubmitPolygonsModal] = useState(false);
   const [showSubmitPolygonConfirmationModal, setSubmitPolygonConfirmationModal] = useState(false);
-  const [showMapPopupSubmitPolygonsModal, setMapPopupSubmitPolygonsModal] = useState(false);
   const [showMapPopupSubmitConfirmationModal, setMapPopupSubmitConfirmationModal] = useState(false);
   const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
   const [submittedPolygonNames, setSubmittedPolygonNames] = useState<string[]>([]);
@@ -227,27 +225,6 @@ export const useSitePolygonBulkActions = ({
     [schedulePolygonSubmittedModal]
   );
 
-  const handleMapPopupSubmitModalChange = useCallback(
-    (open: boolean) => {
-      if (open) {
-        return;
-      }
-      setMapPopupSubmitPolygonsModal(false);
-      if (proceedingToMapPopupSubmitConfirmationRef.current) {
-        proceedingToMapPopupSubmitConfirmationRef.current = false;
-        return;
-      }
-      setPolygonSubmitConfirmation(null);
-    },
-    [setPolygonSubmitConfirmation]
-  );
-
-  const handleProceedToMapPopupSubmitConfirmation = useCallback(() => {
-    proceedingToMapPopupSubmitConfirmationRef.current = true;
-    setMapPopupSubmitPolygonsModal(false);
-    setMapPopupSubmitConfirmationModal(true);
-  }, []);
-
   const handleMapPopupSubmitConfirmationModalChange = useCallback(
     (open: boolean) => {
       setMapPopupSubmitConfirmationModal(open);
@@ -264,20 +241,10 @@ export const useSitePolygonBulkActions = ({
 
   useEffect(() => {
     if (polygonSubmitConfirmation == null) {
-      setMapPopupSubmitPolygonsModal(false);
       setMapPopupSubmitConfirmationModal(false);
       return;
     }
 
-    const hasNonSubmittableSelection = polygonSubmitConfirmation.eligibleCount < polygonSubmitConfirmation.totalCount;
-
-    if (hasNonSubmittableSelection) {
-      setMapPopupSubmitPolygonsModal(true);
-      setMapPopupSubmitConfirmationModal(false);
-      return;
-    }
-
-    setMapPopupSubmitPolygonsModal(false);
     setMapPopupSubmitConfirmationModal(true);
   }, [polygonSubmitConfirmation]);
 
@@ -600,7 +567,7 @@ export const useSitePolygonBulkActions = ({
 
   const handleConfirmMapPopupSubmit = useCallback(
     async (comment: string) => {
-      const sitePolygonUuid = polygonSubmitConfirmation?.sitePolygonUuid;
+      const sitePolygonUuid = polygonSubmitConfirmation;
       if (sitePolygonUuid == null || sitePolygonUuid === "") {
         return;
       }
@@ -613,7 +580,7 @@ export const useSitePolygonBulkActions = ({
         comment
       );
     },
-    [polygonSubmitConfirmation?.sitePolygonUuid, polygonsData, submitPolygons, t]
+    [polygonSubmitConfirmation, polygonsData, submitPolygons, t]
   );
 
   const handleBulkDownload = useCallback(
@@ -731,7 +698,6 @@ export const useSitePolygonBulkActions = ({
     showPolygonSubmittedModal,
     showSubmitPolygonsModal,
     showSubmitPolygonConfirmationModal,
-    showMapPopupSubmitPolygonsModal,
     showMapPopupSubmitConfirmationModal,
     submittedPolygonNames,
     submittedPolygonComment,
@@ -753,13 +719,11 @@ export const useSitePolygonBulkActions = ({
     handleDeletePolygonModalChange,
     handleDrawerOverlapFixed,
     handleMapPopupSubmitConfirmationModalChange,
-    handleMapPopupSubmitModalChange,
     handleOpenDeletePolygonModal,
     handleOpenSubmitPolygonsModal,
     handlePolygonDeletingChange,
     handlePolygonSubmittedModalChange,
     handleProceedToBulkSubmitConfirmation,
-    handleProceedToMapPopupSubmitConfirmation,
     handleRunValidation,
     handleSubmitPolygonConfirmationModalChange,
     handleSubmitPolygonsModalChange,
