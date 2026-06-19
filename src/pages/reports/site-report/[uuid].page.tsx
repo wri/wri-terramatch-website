@@ -27,6 +27,8 @@ import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
+import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
+
 type TabItem = {
   key: string;
   title: string;
@@ -109,7 +111,8 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
             sharedDriveLink={siteReport.sharedDriveLink ?? undefined}
           />
         )
-      }
+      },
+      { key: "goals", title: t("Progress & Goals"), renderBody: () => <GoalsAndProgressTab siteReport={siteReport} /> }
     ],
     [siteReport, site, workdaysTotal, t]
   );
