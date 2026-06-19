@@ -29,7 +29,7 @@ import AssetDownloadButton, { ASSET_DOWNLOAD_ENTITIES, AssetDownloadEntity } fro
 import ModalAddImages, { FileUploadEntity } from "../Modal/ModalAddImages";
 import { ModalId } from "../Modal/ModalConst";
 
-export interface EntityMapAndGalleryCardProps {
+export interface EntityGalleryCardProps {
   modelTitle: TranslatedText;
   modelName: EntityName;
   modelUUID: string;
@@ -37,13 +37,13 @@ export interface EntityMapAndGalleryCardProps {
   emptyStateContent: TranslatedText;
 }
 
-const EntityMapAndGalleryCard = ({
+const EntityGalleryCard = ({
   modelTitle,
   modelName,
   modelUUID,
   entityData,
   emptyStateContent
-}: EntityMapAndGalleryCardProps) => {
+}: EntityGalleryCardProps) => {
   const { openModal, closeModal } = useModalContext();
   const contextMapArea = useMapAreaContext();
   const { shouldRefetchMediaData, setShouldRefetchMediaData } = contextMapArea;
@@ -269,4 +269,4 @@ const EntityMapAndGalleryCard = ({
   );
 };
 
-export default EntityMapAndGalleryCard;
+export default EntityGalleryCard;

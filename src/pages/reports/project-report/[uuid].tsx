@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useMemo } from "react";
 
+import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -14,7 +15,6 @@ import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -68,7 +68,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         key: "gallery",
         title: t("Gallery"),
         renderBody: () => (
-          <GalleryTab
+          <EntityGalleryTab
             modelName="projectReports"
             modelUUID={projectReport.uuid}
             modelTitle={t("Report")}

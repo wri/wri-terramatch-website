@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
+import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -14,7 +15,6 @@ import { NurseryFullDto, NurseryReportFullDto } from "@/generated/v3/entityServi
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
-import NurseryReportGalleryTab from "@/pages/reports/nursery-report/tabs/Gallery";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
 import NurseryReportDataTab from "@/pages/reports/nursery-report/tabs/ReportData";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -74,7 +74,18 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
       {
         key: "gallery",
         title: t("Gallery"),
-        renderBody: () => <NurseryReportGalleryTab report={nurseryReport} />
+        renderBody: () => (
+          <EntityGalleryTab
+            modelName="nurseryReports"
+            modelUUID={nurseryReport.uuid}
+            entityData={nurseryReport}
+            modelTitle={t("Nursery Report")}
+            emptyStateContent={t(
+              "Your gallery is currently empty. Add images by using the 'Edit' button on this nursery report."
+            )}
+            sharedDriveLink={nurseryReport.sharedDriveLink ?? undefined}
+          />
+        )
       }
     ],
     [nurseryReport, nursery, t]

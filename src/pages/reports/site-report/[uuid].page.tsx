@@ -4,6 +4,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
+import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
@@ -92,6 +93,22 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
         key: "details",
         title: t("Details"),
         renderBody: () => <Details report={siteReport} />
+      },
+      {
+        key: "gallery",
+        title: t("Gallery"),
+        renderBody: () => (
+          <EntityGalleryTab
+            modelName="sites"
+            modelUUID={siteReport.siteUuid!}
+            entityData={site}
+            modelTitle={t("Site Report")}
+            emptyStateContent={t(
+              "Your gallery is currently empty. Add images by using the 'Edit' button on this site report."
+            )}
+            sharedDriveLink={siteReport.sharedDriveLink ?? undefined}
+          />
+        )
       }
     ],
     [siteReport, site, workdaysTotal, t]
