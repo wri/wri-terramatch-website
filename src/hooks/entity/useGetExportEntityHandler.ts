@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { closeToast, showToast } from "@worldresources/wri-design-systems";
 import { startCase } from "lodash";
 import { useCallback, useState } from "react";
 
@@ -20,12 +21,28 @@ export const useGetExportEntityHandler = (entity: EntityName, uuid: string) => {
   const handleExport = useCallback(async () => {
     setLoading(true);
 
+    showToast({
+      id: "exportToast",
+      label: t(`Exporting ${startCase(singularEntityName(entity))}...`),
+      type: "loading",
+      placement: "bottom",
+      maxWidth: "auto"
+    });
+
     try {
       const entityName = v3EntityName(entity) as SupportedEntity;
       await entityExport.downloadFile({ pathParams: { entity: entityName, uuid } });
-      openToast(t(`${startCase(singularEntityName(entity))} successfully exported`));
+      closeToast("exportToast");
+      showToast({
+        label: t(`${startCase(singularEntityName(entity))} successfully exported`),
+        type: "success",
+        placement: "bottom",
+        duration: 5000,
+        maxWidth: "auto"
+      });
     } catch (error) {
       Log.error("Error exporting entity", error);
+      closeToast("exportToast");
       openToast(t("Something went wrong!"), ToastType.ERROR);
     } finally {
       setLoading(false);

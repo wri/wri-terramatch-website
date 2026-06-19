@@ -1,12 +1,13 @@
+import { Button, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { Modal } from "@worldresources/wri-design-systems";
 import { useRouter } from "next/router";
 
-import { IconNames } from "@/components/extensive/Icon/Icon";
-import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useModalContext } from "@/context/modal.provider";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
+import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { EntityName } from "@/types/common";
 
 interface GetEditEntityHandlerArgs {
@@ -55,42 +56,47 @@ export const useGetEditEntityHandler = ({
       openModal(
         ModalId.REVIEW_IN_PROGRESS,
         <Modal
-          iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-          title={t("Review in Progress")}
-          content={t(
-            "While we're reviewing your {entityName}, you can't make changes for now. This ensures a thorough review. After it's done, you can make any needed adjustments.</br></br>If you have any questions or concerns, contact our support team through the help center.",
-            { entityName: getReadableEntityName(entityName) }
-          )}
-          primaryButtonProps={{
-            children: t("Close"),
-            onClick: () => closeModal(ModalId.REVIEW_IN_PROGRESS)
+          open={true}
+          header={t("Review in Progress")}
+          content={
+            <Text>
+              {t(
+                "While we're reviewing your {entityName}, you can't make changes for now. This ensures a thorough review. After it's done, you can make any needed adjustments.</br></br>If you have any questions or concerns, contact our support team through the help center.",
+                { entityName: getReadableEntityName(entityName) }
+              )}
+            </Text>
+          }
+          footer={<Button onClick={() => closeModal(ModalId.REVIEW_IN_PROGRESS)}>{t("Close")}</Button>}
+          onClose={() => {
+            closeModal(ModalId.REVIEW_IN_PROGRESS);
           }}
         />
       );
     } else {
       openModal(
         ModalId.CONFIRM_EDIT,
-        <Modal
-          iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
+        <ModalConfirmation
           title={editTitle}
           content={editContent}
-          primaryButtonProps={{
-            children: t("Edit"),
-            onClick: () => {
-              if (stepId != null) {
-                router.push(
-                  `/entity/${entityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`
-                );
-              } else {
-                router.push(`/entity/${entityName}/edit/${entityUUID}?mode=edit`);
+          open={true}
+          onOpenChange={() => closeModal(ModalId.CONFIRM_EDIT)}
+          buttonsCancel={[{ id: "cancel", children: t("Cancel"), onClick: () => closeModal(ModalId.CONFIRM_EDIT) }]}
+          buttonsPrimary={[
+            {
+              id: "edit",
+              children: t("Edit"),
+              onClick: () => {
+                if (stepId != null) {
+                  router.push(
+                    `/entity/${entityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`
+                  );
+                } else {
+                  router.push(`/entity/${entityName}/edit/${entityUUID}?mode=edit`);
+                }
+                closeModal(ModalId.CONFIRM_EDIT);
               }
-              closeModal(ModalId.CONFIRM_EDIT);
             }
-          }}
-          secondaryButtonProps={{
-            children: t("Cancel"),
-            onClick: () => closeModal(ModalId.CONFIRM_EDIT)
-          }}
+          ]}
         />
       );
     }
