@@ -12,6 +12,7 @@ import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
 import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel";
 import NotificationIndicator from "@/redesignComponents/navigation/NotificationIndicator/NotificationIndicator";
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
+import ApiSlice from "@/store/apiSlice";
 
 import DeletePolygon from "./Modals/DeletePolygon";
 import SavePolygon from "./Modals/SavePolygon";
@@ -204,7 +205,12 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
               <Flex className="h-full flex-col">
                 {polygon?.polygonUuid && (
                   <TabBar
-                    onTabClick={(tabValue: string) => setActiveTab(tabValue)}
+                    onTabClick={(tabValue: string) => {
+                      setActiveTab(tabValue);
+                      if (tabValue === "comments") {
+                        ApiSlice.pruneCache("auditStatuses");
+                      }
+                    }}
                     tabs={[
                       {
                         label: t("Edit"),
