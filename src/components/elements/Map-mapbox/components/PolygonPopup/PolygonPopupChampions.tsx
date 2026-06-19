@@ -74,11 +74,7 @@ export function PolygonPopupChampions({ popup, sitePolygon, tooltipType }: Polyg
       return;
     }
 
-    openPolygonSubmitConfirmationFromMapPopup({
-      sitePolygonUuid: sitePolygon.uuid,
-      eligibleCount: 1,
-      totalCount: 1
-    });
+    openPolygonSubmitConfirmationFromMapPopup(sitePolygon.uuid);
     closeMapPopupsFromMapPopup();
   }, [sitePolygon?.uuid, submitDisabled]);
 

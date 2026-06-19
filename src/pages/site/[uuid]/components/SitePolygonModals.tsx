@@ -32,10 +32,7 @@ type SitePolygonModalsProps = {
   openPolygonSubmittedModal: boolean;
   openSubmitPolygonsModal: boolean;
   openSubmitPolygonConfirmationModal: boolean;
-  openMapPopupSubmitModal: boolean;
   openMapPopupSubmitConfirmationModal: boolean;
-  mapPopupSubmitEligibleCount: number;
-  mapPopupSubmitTotalCount: number;
   mapPopupSubmitPolygons: PolygonTableRow[];
   submittedPolygonNames: string[];
   submittedPolygonComment: SubmittedPolygonComment | null;
@@ -45,11 +42,9 @@ type SitePolygonModalsProps = {
   onDelete: () => void | Promise<void>;
   onDeletePolygonModalOpenChange: (open: boolean) => void;
   onEditPhotoDetailsClose: () => void;
-  onMapPopupSubmitModalOpenChange: (open: boolean) => void;
   onMapPopupSubmitConfirmationModalOpenChange: (open: boolean) => void;
   onMapPopupSubmit: (comment: string) => void | Promise<void>;
   onProceedToBulkSubmitConfirmation: () => void | Promise<void>;
-  onProceedToMapPopupSubmitConfirmation: () => void | Promise<void>;
   onOverlapFixClose: () => void;
   onPolygonSubmittedModalOpenChange: (open: boolean) => void;
   onSubmitPolygonConfirmationModalOpenChange: (open: boolean) => void;
@@ -82,10 +77,7 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   openUploadErrorModal,
   openUploadModal,
   openUploadPhotosModal,
-  openMapPopupSubmitModal,
   openMapPopupSubmitConfirmationModal,
-  mapPopupSubmitEligibleCount,
-  mapPopupSubmitTotalCount,
   mapPopupSubmitPolygons,
   submittedPolygonNames,
   submittedPolygonComment,
@@ -95,13 +87,11 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   onDelete,
   onDeletePolygonModalOpenChange,
   onEditPhotoDetailsClose,
-  onMapPopupSubmitModalOpenChange,
   onMapPopupSubmitConfirmationModalOpenChange,
   onMapPopupSubmit,
   onOverlapFixClose,
   onPolygonSubmittedModalOpenChange,
   onProceedToBulkSubmitConfirmation,
-  onProceedToMapPopupSubmitConfirmation,
   onSubmitPolygonConfirmationModalOpenChange,
   onSubmitPolygonsModalOpenChange,
   onSubmitPolygons,
@@ -133,13 +123,6 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
       eligibleCount={submitPayload?.eligibleCount ?? 0}
       totalCount={submitPayload?.totalCount ?? 0}
       onSubmit={onProceedToBulkSubmitConfirmation}
-    />
-    <SubmitPolygons
-      open={openMapPopupSubmitModal}
-      onOpenChange={onMapPopupSubmitModalOpenChange}
-      eligibleCount={mapPopupSubmitEligibleCount}
-      totalCount={mapPopupSubmitTotalCount}
-      onSubmit={onProceedToMapPopupSubmitConfirmation}
     />
 
     <SubmitPolygonConfirmation
