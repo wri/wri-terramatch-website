@@ -1,3 +1,4 @@
+// This file is going to be deleted after the new Overview tab is tested and working
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
