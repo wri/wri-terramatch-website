@@ -91,7 +91,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
       },
       {
         key: "details",
-        title: t("Details"),
+        title: t("Report Details"),
         renderBody: () => <Details report={siteReport} />
       },
       {
