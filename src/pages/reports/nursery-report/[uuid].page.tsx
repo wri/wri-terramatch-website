@@ -13,6 +13,7 @@ import { NurseryReportFullDto } from "@/generated/v3/entityService/entityService
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
+import NurseryReportGalleryTab from "@/pages/reports/nursery-report/tabs/Gallery";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
@@ -62,6 +63,11 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
         key: "details",
         title: t("Report Details"),
         body: <NurseryReportDetailsTab report={nurseryReport} />
+      },
+      {
+        key: "gallery",
+        title: t("Gallery"),
+        body: <NurseryReportGalleryTab report={nurseryReport} />
       }
     ],
     [nurseryReport, t]
@@ -123,7 +129,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
               </Button>
             )}
             {nurseryReport.nurseryUuid != null && nurseryReport.projectReportUuid != null && (
-              <span className="text-sm text-theme-neutral-300">|</span>
+              <span className="text-theme-neutral-300 text-sm">|</span>
             )}
             {nurseryReport.projectReportUuid != null && (
               <Button
