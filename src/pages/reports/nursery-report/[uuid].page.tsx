@@ -14,6 +14,7 @@ import { NurseryFullDto, NurseryReportFullDto } from "@/generated/v3/entityServi
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
+import NurseryReportGalleryTab from "@/pages/reports/nursery-report/tabs/Gallery";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
 import NurseryReportDataTab from "@/pages/reports/nursery-report/tabs/ReportData";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -69,6 +70,11 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
         key: "details",
         title: t("Report Details"),
         renderBody: () => <NurseryReportDetailsTab report={nurseryReport} />
+      },
+      {
+        key: "gallery",
+        title: t("Gallery"),
+        renderBody: () => <NurseryReportGalleryTab report={nurseryReport} />
       }
     ],
     [nurseryReport, nursery, t]
@@ -189,7 +195,7 @@ const NurseryReportDetailPage = () => {
     }
   });
 
-  const [nurseryLoaded, { data: nursery }] = useFullNursery({ id: nurseryReport?.nurseryUuid! });
+  const [nurseryLoaded, { data: nursery }] = useFullNursery({ id: nurseryReport?.nurseryUuid ?? undefined });
   const [taskLoaded, { data: task }] = useTask({ id: nurseryReport?.taskUuid ?? undefined });
   const isLoaded = reportLoaded && nurseryLoaded && taskLoaded;
 

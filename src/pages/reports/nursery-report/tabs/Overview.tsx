@@ -1,7 +1,8 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { FC, useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/router";
+import { Component, ErrorInfo, FC, ReactNode, useCallback, useMemo, useState } from "react";
 
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
@@ -23,14 +24,58 @@ import { useNurseryReportAboutContent } from "@/pages/reports/nursery-report/con
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { ChevronRightIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
+import Log from "@/utils/log";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 interface NurseryReportOverviewProps {
   report: NurseryReportFullDto;
 }
 
-const NurseryReportOverview: FC<NurseryReportOverviewProps> = ({ report }) => {
+type NurseryReportOverviewErrorBoundaryProps = {
+  fallback: ReactNode;
+  children: ReactNode;
+};
+
+type NurseryReportOverviewErrorBoundaryState = {
+  hasError: boolean;
+};
+
+class NurseryReportOverviewErrorBoundary extends Component<
+  NurseryReportOverviewErrorBoundaryProps,
+  NurseryReportOverviewErrorBoundaryState
+> {
+  state: NurseryReportOverviewErrorBoundaryState = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    Log.error("Nursery report overview failed to render", { error, errorInfo });
+  }
+
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+
+    return this.props.children;
+  }
+}
+
+const NurseryReportOverviewFallback: FC = () => {
   const t = useT();
+
+  return (
+    <PageContent>
+      <Box className="rounded-md bg-theme-neutral-100 p-6 text-center text-sm text-theme-neutral-600">
+        {t("Unable to display this nursery report overview.")}
+      </Box>
+    </PageContent>
+  );
+};
+
+const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }) => {
+  const t = useT();
+  const router = useRouter();
   const { openModal } = useModalContext();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const nurseryReportAboutContent = useNurseryReportAboutContent();
@@ -65,8 +110,22 @@ const NurseryReportOverview: FC<NurseryReportOverviewProps> = ({ report }) => {
   }, [awaitingApproval, handleEdit, needMoreInformation, openModal, report.feedback, report.uuid, statusProps]);
 
   const aboutContentItem = useMemo(() => {
-    return nurseryReportAboutContent.find(content => content.frameworks.includes(report.frameworkKey!));
+    if (report.frameworkKey == null) return nurseryReportAboutContent[0];
+
+    return (
+      nurseryReportAboutContent.find(content => content.frameworks.includes(report.frameworkKey ?? "")) ??
+      nurseryReportAboutContent[0]
+    );
   }, [report.frameworkKey, nurseryReportAboutContent]);
+
+  const goToTab = useCallback(
+    (tab: string) => {
+      router.push({ pathname: router.pathname, query: { ...router.query, tab } }, undefined, {
+        shallow: true
+      });
+    },
+    [router]
+  );
 
   const editButtonLabel = report.status === "approved" && isReportSetupComplete ? t("Edit") : t("Continue");
 
@@ -90,18 +149,27 @@ const NurseryReportOverview: FC<NurseryReportOverviewProps> = ({ report }) => {
   }
 
   const isTerrafundFramework = isTerrafund(toFramework(report.frameworkKey));
-  console.log(report.frameworkKey);
+  const seedlingsGrown = report.seedlingsYoungTrees ?? 0;
 
   return (
     <PageContent>
       <Flex gap={7} className="flex-col">
         <Flex gap={7}>
           <Flex gap={5} className={classNames(isTerrafundFramework ? "flex-row" : "flex-col", "flex-[2]")}>
-            <PageItem title={t("Key Indicators & Insights")}>
+            <PageItem
+              title={t("Key Indicators & Insights")}
+              buttonProps={{
+                variant: "secondary",
+                size: "small",
+                children: t("View Progress & Goals"),
+                rightIcon: <ChevronRightIcon />,
+                onClick: () => goToTab("report-data")
+              }}
+            >
               <MetricCardsRow>
                 <MetricCard
                   title={t("Seedlings Grown")}
-                  progress={0}
+                  progress={seedlingsGrown}
                   goal={0}
                   variant="large"
                   icon={<SeedlingsIcon />}
@@ -113,13 +181,23 @@ const NurseryReportOverview: FC<NurseryReportOverviewProps> = ({ report }) => {
                 />
               </MetricCardsRow>
             </PageItem>
-            <PageItem title={t("Featured Images")}>
+            <PageItem
+              title={t("Featured Images")}
+              buttonProps={{
+                variant: "secondary",
+                size: "small",
+                children: t("View Gallery"),
+                rightIcon: <ChevronRightIcon />,
+                onClick: () => goToTab("gallery")
+              }}
+            >
               <LatestImagesSectionTab
                 entityUuid={report.uuid}
                 entityName="nurseryReports"
                 columns={isTerrafundFramework ? 2 : 4}
                 rows={1}
                 minItems={2}
+                onClickAdd={() => goToTab("gallery")}
               />
             </PageItem>
           </Flex>
@@ -187,5 +265,11 @@ const NurseryReportOverview: FC<NurseryReportOverviewProps> = ({ report }) => {
     </PageContent>
   );
 };
+
+const NurseryReportOverview: FC<NurseryReportOverviewProps> = props => (
+  <NurseryReportOverviewErrorBoundary fallback={<NurseryReportOverviewFallback />}>
+    <NurseryReportOverviewContent {...props} />
+  </NurseryReportOverviewErrorBoundary>
+);
 
 export default NurseryReportOverview;
