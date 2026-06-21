@@ -23,6 +23,8 @@ import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
+import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
+
 type TabItem = {
   key: string;
   title: string;
@@ -86,6 +88,11 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
             sharedDriveLink={nurseryReport.sharedDriveLink ?? undefined}
           />
         )
+      },
+      {
+        key: "goals",
+        title: t("Progress & Goals"),
+        renderBody: () => <GoalsAndProgressTab nurseryReport={nurseryReport} />
       }
     ],
     [nurseryReport, nursery, t]
