@@ -66,7 +66,7 @@ const NurseryReportOverviewFallback: FC = () => {
 
   return (
     <PageContent>
-      <Box className="bg-theme-neutral-100 text-theme-neutral-600 rounded-md p-6 text-center text-sm">
+      <Box className="rounded-md bg-theme-neutral-100 p-6 text-center text-sm text-theme-neutral-600">
         {t("Unable to display this nursery report overview.")}
       </Box>
     </PageContent>
@@ -220,9 +220,9 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
         </Flex>
         <PageItem title={t("About Nursery Report")}>
           <About
-            className="flex-row gap-12"
+            className="flex-row gap-14"
             description={
-              <Flex direction="column" gap={5}>
+              <Flex direction="column" gap={5} maxWidth="65%">
                 {aboutContentItem?.paragraphs.map((paragraph, index) => {
                   const isFirstParagraph = index === 0;
                   const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
