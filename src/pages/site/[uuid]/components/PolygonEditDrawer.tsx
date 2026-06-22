@@ -72,6 +72,10 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     isPolygonNameMissing ||
     isPlantStartDateMissing;
   const hasValidPolygonUuid = polygon?.polygonUuid != null;
+  const resolvedSiteUuid = useMemo(
+    () => selectedPolygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : ""),
+    [selectedPolygon?.siteId, siteData]
+  );
 
   const [, { data: auditStatusesData }] = useAuditStatuses({
     entity: "sitePolygons",
@@ -257,7 +261,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                 )}
                 {activeTab === "systemValidation" && (
                   <PolygonSystemValidationContent
-                    siteUuid={siteData?.uuid ?? ""}
+                    siteUuid={resolvedSiteUuid}
                     polygon={selectedPolygon}
                     onOverlapFixed={onOverlapFixed}
                     onRunValidation={onRunValidation}
