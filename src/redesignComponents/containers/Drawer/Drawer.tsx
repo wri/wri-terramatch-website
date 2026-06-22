@@ -18,7 +18,8 @@ const Drawer: FC<DrawerProps> = ({
   defaultOpen = false,
   size = "xs",
   placement,
-  modal = true
+  modal = true,
+  maxW
 }) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const isControlled = openProp !== undefined;
@@ -52,7 +53,7 @@ const Drawer: FC<DrawerProps> = ({
       <Portal>
         {closeOnInteractOutside && <TypedDrawerBackdrop />}
         <TypedDrawerPositioner>
-          <TypedDrawerContent>
+          <TypedDrawerContent maxW={maxW}>
             {typeof children === "function" ? children({ onClose: handleClose }) : children}
           </TypedDrawerContent>
         </TypedDrawerPositioner>

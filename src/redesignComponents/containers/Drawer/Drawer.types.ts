@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { SizeValue } from "@/lib/sizing";
+
 export type DrawerPlacement = "start" | "end" | "top" | "bottom";
 
 export interface DrawerProps {
@@ -12,6 +14,7 @@ export interface DrawerProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "full" | "filterPanel";
   placement?: DrawerPlacement;
   modal?: boolean;
+  maxW?: SizeValue;
 }
 
 export interface DrawerTyped {
@@ -31,4 +34,5 @@ export interface DrawerTriggerTyped {
 
 export interface DrawerContainerTyped {
   children: ReactNode;
+  maxW?: SizeValue;
 }
