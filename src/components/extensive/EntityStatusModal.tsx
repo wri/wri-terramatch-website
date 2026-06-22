@@ -1,14 +1,15 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { kebabCase } from "lodash";
 import { useRouter } from "next/router";
 import { FC } from "react";
 
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { FormEntity } from "@/connections/Form";
 import { useModalContext } from "@/context/modal.provider";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
+import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 
 export type StatusProps = { title: string; icon: IconNames; className: string };
 
@@ -40,8 +41,10 @@ const EntityStatusModal: FC<EntityStatusModalProps> = ({
       title={statusProps.title}
       content={
         <Flex direction="column" align="center" gap={3}>
-          <Icon name={statusProps.icon} width={60} height={60} className={statusProps.className} />
-          {feedback ?? t("No feedback provided")}
+          <InformationRequiredIcon boxSize={10} color="warning.500" />
+          <Text textStyle="400" color="neutral.900">
+            {feedback ?? t("No feedback provided")}
+          </Text>
         </Flex>
       }
       buttonsPrimary={

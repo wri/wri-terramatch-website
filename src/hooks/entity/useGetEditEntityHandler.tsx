@@ -91,6 +91,7 @@ export const useGetEditEntityHandler = ({
           {
             id: "cancel",
             className: "w-fit",
+            variant: "secondary",
             children: t("Cancel"),
             onClick: () => setOpenReviewInProgressModal(false)
           }
@@ -101,10 +102,22 @@ export const useGetEditEntityHandler = ({
         onOpenChange={open => setOpenConfirmEditModal(open)}
         title={editTitle}
         content={editContent}
-        buttonsCancel={[{ id: "cancel", children: t("Cancel"), onClick: () => setOpenConfirmEditModal(false) }]}
+        classNameGroup="!w-full"
+        buttonsCancel={[
+          {
+            id: "cancel",
+            className: "!w-full",
+            variant: "secondary",
+            children: t("Cancel"),
+
+            onClick: () => setOpenConfirmEditModal(false)
+          }
+        ]}
         buttonsPrimary={[
           {
             id: "edit",
+            className: "!w-full",
+            variant: "primary",
             children: t("Edit"),
             onClick: () => {
               setOpenConfirmEditModal(false);

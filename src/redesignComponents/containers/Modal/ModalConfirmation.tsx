@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useEffect } from "react";
 
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
@@ -15,6 +15,7 @@ export interface ModalConfirmationProps {
   buttonsPrimary?: IButtonProps[];
   buttonsSecondary?: IButtonProps[];
   size?: "small" | "medium" | "large";
+  classNameGroup?: string;
 }
 
 const ModalConfirmation: FC<ModalConfirmationProps> = ({
@@ -25,7 +26,8 @@ const ModalConfirmation: FC<ModalConfirmationProps> = ({
   buttonsCancel,
   buttonsPrimary,
   buttonsSecondary,
-  size = "medium"
+  size = "medium",
+  classNameGroup
 }) => {
   const t = useT();
 
@@ -54,6 +56,17 @@ const ModalConfirmation: FC<ModalConfirmationProps> = ({
     }
   ].filter(Boolean);
 
+  useEffect(() => {
+    if (!open) {
+      document.body.style.removeProperty("overflow");
+      document.body.style.removeProperty("pointer-events");
+    }
+    return () => {
+      document.body.style.removeProperty("overflow");
+      document.body.style.removeProperty("pointer-events");
+    };
+  }, [open]);
+
   return (
     <Modal
       open={open}
@@ -73,7 +86,12 @@ const ModalConfirmation: FC<ModalConfirmationProps> = ({
           </Text>
         </Flex>
       }
-      footer={<ButtonGroup groups={groups as { id: string; buttons: IButtonProps[] }[]} classNameGroup="!w-full" />}
+      footer={
+        <ButtonGroup
+          groups={groups as { id: string; buttons: IButtonProps[] }[]}
+          classNameGroup={classNameGroup ?? "!w-full"}
+        />
+      }
     />
   );
 };
