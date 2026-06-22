@@ -31,7 +31,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ siteReport, site, w
   };
 
   return (
-    <PageBody className="bg-theme-neutral-200 pt-5 text-darkCustom">
+    <PageBody className="bg-theme-neutral-200 !space-y-10 pt-5 text-darkCustom">
       <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageCard title={t("Progress & Goals")}>
           <GoalsAndProgressReportEntityTab
