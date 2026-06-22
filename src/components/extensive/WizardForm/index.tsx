@@ -25,6 +25,7 @@ import WizardFormProvider, {
 } from "@/context/wizardForm.provider";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useDownloadFormAnswers } from "@/hooks/useDownloadFormAnswers";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -35,7 +36,6 @@ import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
 import ResponsiveBreadcrumbToolbar from "@/redesignComponents/navigation/Toolbar/ResponsiveBreadcrumbToolbar";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
-import { runWithDownloadToast } from "@/utils/downloadToast";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
@@ -44,7 +44,7 @@ import { FormFooter } from "./FormFooter";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
-import { downloadAnswersCSV, getFormHeaderLabel } from "./utils";
+import { getFormHeaderLabel } from "./utils";
 
 export type WizardFormEntity = {
   siteUuid?: string | null;
@@ -261,17 +261,11 @@ function WizardForm(props: WizardFormProps) {
     onClickSaveAndClose();
   }, [onClickSaveAndClose, isAdmin, formHook, onSubmitStep]);
 
-  const handleDownloadAnswers = useCallback(() => {
-    runWithDownloadToast(
-      {
-        downloading: t("Downloading Answers..."),
-        complete: t("Download Complete"),
-        error: t("Something went wrong!")
-      },
-      () => downloadAnswersCSV(fieldsProvider, formHook.getValues()),
-      "wizardFormDownloadToast"
-    );
-  }, [fieldsProvider, formHook, t]);
+  const handleDownloadAnswers = useDownloadFormAnswers({
+    fieldsProvider,
+    formHook,
+    formModel: (props.models as FormModel | undefined)?.model
+  });
 
   useOnMount(() => {
     // We linked directly to a step; stay on that step.
@@ -368,25 +362,23 @@ function WizardForm(props: WizardFormProps) {
     ]
   );
 
-  const stepsVisited = useRef<number[]>([]);
+  const getStepTabState = useCallback(
+    (stepId: string, validation: (typeof steps)[number]["validation"]): TabItem["state"] => {
+      if (stepHasIssues(stepId, validation)) return "error";
+      if (validation.isValidSync(formValues)) return "complete";
+      return "unstarted";
+    },
+    [formValues, stepHasIssues]
+  );
+
   const stepTabItems = useMemo(
     (): TabItem[] =>
-      steps.map(({ id, title, validation }, index) => {
-        const state: TabItem["state"] = stepHasIssues(id, validation)
-          ? "error"
-          : stepsVisited.current.includes(index)
-          ? "complete"
-          : "unstarted";
-        return {
-          title: t(`{title}`, { title }),
-          state,
-          renderBody: () => {
-            if (!stepsVisited.current.includes(index)) stepsVisited.current.push(index);
-            return renderStep(id, title ?? null, index);
-          }
-        };
-      }),
-    [renderStep, stepHasIssues, steps, t]
+      steps.map(({ id, title, validation }, index) => ({
+        title: t(`{title}`, { title }),
+        state: getStepTabState(id, validation),
+        renderBody: () => renderStep(id, title ?? null, index)
+      })),
+    [getStepTabState, renderStep, steps, t]
   );
 
   const summaryItem = useMemo(

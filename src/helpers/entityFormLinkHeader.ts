@@ -139,7 +139,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}?tab=reporting-tasks`
       },
       {
-        label: getShortPeriodLabel(taskTitle),
+        label: getShortPeriodLabel(taskTitle, true),
         link: `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
       },
       { label: entityTitle, link: entityPageLink },
@@ -243,7 +243,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}?tab=reporting-tasks`
       },
       {
-        label: getShortPeriodLabel(taskTitle),
+        label: getShortPeriodLabel(taskTitle, true),
         link: `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
       },
       { label: entityTitle, link: entityPageLink },
