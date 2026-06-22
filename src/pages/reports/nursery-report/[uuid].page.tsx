@@ -15,6 +15,7 @@ import { NurseryFullDto, NurseryReportFullDto } from "@/generated/v3/entityServi
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
+import NurseryReportGoalsAndProgressTab from "@/pages/reports/nursery-report/tabs/GoalsAndProgress";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
 import NurseryReportDataTab from "@/pages/reports/nursery-report/tabs/ReportData";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -65,6 +66,11 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
         key: "report-data",
         title: t("Report Data"),
         renderBody: () => <NurseryReportDataTab report={nurseryReport} nursery={nursery} />
+      },
+      {
+        key: "goals",
+        title: t("Progress & Goals"),
+        renderBody: () => <NurseryReportGoalsAndProgressTab nurseryReport={nurseryReport} />
       },
       {
         key: "details",
@@ -145,7 +151,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
             link: `/nursery/${nurseryReport.nurseryUuid}?tab=completed-tasks`
           },
           {
-            label: t("Nursery Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "") }),
+            label: t("Nursery Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),
             link: `/reports/nursery-report/${nurseryReportUUID}`
           }
         ]}
@@ -162,7 +168,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
               </Button>
             )}
             {nurseryReport.nurseryUuid != null && nurseryReport.projectReportUuid != null && (
-              <span className="text-sm text-theme-neutral-300">|</span>
+              <span className="text-theme-neutral-300 text-sm">|</span>
             )}
             {nurseryReport.projectReportUuid != null && (
               <Button

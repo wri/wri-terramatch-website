@@ -112,7 +112,11 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
           />
         )
       },
-      { key: "goals", title: t("Progress & Goals"), renderBody: () => <GoalsAndProgressTab siteReport={siteReport} /> }
+      {
+        key: "goals",
+        title: t("Progress & Goals"),
+        renderBody: () => <GoalsAndProgressTab siteReport={siteReport} site={site} workdaysTotal={workdaysTotal} />
+      }
     ],
     [siteReport, site, workdaysTotal, t]
   );
@@ -178,7 +182,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
             link: `/site/${siteReport.siteUuid ?? ""}?tab=completed-tasks`
           },
           {
-            label: t("Site Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "") }),
+            label: t("Site Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),
             link: `/reports/site-report/${siteReportUUID}`
           }
         ]}
@@ -186,7 +190,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
           <Flex gap={1.5} alignItems="center">
             {suffixButtons.map((button, index) => (
               <Flex key={button.key} gap={1.5} alignItems="center">
-                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
+                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
                 <Button
                   variant="borderless"
                   size="small"

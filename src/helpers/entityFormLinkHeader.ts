@@ -195,15 +195,33 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
     ]),
     financialReports: withFirstIcon([
       {
-        label: isAdmin ? linkLabel : entity?.organisationName ?? "",
+        label: isAdmin
+          ? linkLabel
+          : t("Organisation - {organisationName}", { organisationName: entity?.organisationName ?? "" }),
         link: isAdmin ? adminListPath! : `/organization/${entity?.organisationUuid ?? ""}?tab=financial_information`
       },
-      { label: entityTitle, link: entityPageLink },
+      {
+        label: t("Financial Reports"),
+        link: isAdmin ? adminListPath! : `/organization/${entity?.organisationUuid ?? ""}?tab=financial_information`
+      },
+      { label: entityTitle + " - " + getShortPeriodLabel(taskTitle ?? "", true), link: entityPageLink },
       { label: t("Edit"), link: editLink }
     ]),
     disturbanceReports: withFirstIcon([
       {
-        label: isAdmin ? linkLabel : entity?.projectName ?? "",
+        label: t("Projects"),
+        link: isAdmin ? adminListPath! : "/my-projects"
+      },
+      {
+        label: projectTitle,
+        link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
+      },
+      {
+        label: t("Reports"),
+        link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}?tab=reporting-tasks`
+      },
+      {
+        label: t("Disturbance Reports"),
         link: isAdmin
           ? adminListPath!
           : `/project/${entity?.projectUuid ?? ""}?tab=reporting-tasks&subTab=disturbance-reports`
@@ -213,10 +231,20 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
     ]),
     srpReports: withFirstIcon([
       {
-        label: isAdmin ? linkLabel : taskTitle,
-        link: isAdmin
-          ? adminListPath!
-          : `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
+        label: "Projects",
+        link: isAdmin ? adminListPath! : "/my-projects"
+      },
+      {
+        label: projectTitle,
+        link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}`
+      },
+      {
+        label: "Reports",
+        link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}?tab=reporting-tasks`
+      },
+      {
+        label: getShortPeriodLabel(taskTitle),
+        link: `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
       },
       { label: entityTitle, link: entityPageLink },
       { label: t("Edit"), link: editLink }

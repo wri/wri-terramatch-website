@@ -35,6 +35,7 @@ import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
 import ResponsiveBreadcrumbToolbar from "@/redesignComponents/navigation/Toolbar/ResponsiveBreadcrumbToolbar";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import { runWithDownloadToast } from "@/utils/downloadToast";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
@@ -260,6 +261,18 @@ function WizardForm(props: WizardFormProps) {
     onClickSaveAndClose();
   }, [onClickSaveAndClose, isAdmin, formHook, onSubmitStep]);
 
+  const handleDownloadAnswers = useCallback(() => {
+    runWithDownloadToast(
+      {
+        downloading: t("Downloading Answers..."),
+        complete: t("Download Complete"),
+        error: t("Something went wrong!")
+      },
+      () => downloadAnswersCSV(fieldsProvider, formHook.getValues()),
+      "wizardFormDownloadToast"
+    );
+  }, [fieldsProvider, formHook, t]);
+
   useOnMount(() => {
     // We linked directly to a step; stay on that step.
     if (selectedStepIndex >= 0) return;
@@ -333,7 +346,7 @@ function WizardForm(props: WizardFormProps) {
           }
           tertiaryButtonProps={{
             children: t("Download"),
-            onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
+            onClick: handleDownloadAnswers
           }}
         />
       </div>
@@ -351,7 +364,7 @@ function WizardForm(props: WizardFormProps) {
       onSubmitStepError,
       hasErrorInAnyStep,
       formModel?.model,
-      fieldsProvider
+      handleDownloadAnswers
     ]
   );
 
@@ -471,12 +484,16 @@ function WizardForm(props: WizardFormProps) {
       return entity?.organisationName != null || entity?.fundingProgrammeName != null
         ? `${entity?.organisationName ?? ""} - ${entity?.fundingProgrammeName ?? ""}`
         : t("Unnamed Application");
-    } else if (formModel?.model === "projectReports") {
+    } else if (formModel?.model === "projectReports" || formModel?.model === "srpReports") {
       return getFormHeaderLabel(entity?.projectName ?? "", taskTitle);
     } else if (formModel?.model === "siteReports") {
       return getFormHeaderLabel(entity?.siteName ?? "", taskTitle);
     } else if (formModel?.model === "nurseryReports") {
       return getFormHeaderLabel(entity?.nurseryName ?? "", taskTitle);
+    } else if (formModel?.model === "disturbanceReports") {
+      return entity?.projectName + " - " + entity?.title;
+    } else if (formModel?.model === "financialReports") {
+      return getFormHeaderLabel(entity?.organisationName ?? "", taskTitle);
     } else {
       return mapEntityTitle(entity?.title ?? entity?.name ?? null, formModel?.model ?? "", t);
     }
@@ -546,7 +563,7 @@ function WizardForm(props: WizardFormProps) {
                         <Flex gap={1.5} alignItems="center">
                           {suffixButtons.map((button, index) => (
                             <Flex key={button.key} alignItems="center" gap={1.5}>
-                              {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
+                              {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
                               <Button
                                 variant="borderless"
                                 size="small"

@@ -22,6 +22,7 @@ import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
 import ProjectReportDetailsTab from "./tabs/Details";
+import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 import Overview from "./tabs/Overview";
 
 type TabItem = {
@@ -76,6 +77,11 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         )
       },
       {
+        key: "goals",
+        title: t("Progress & Goals"),
+        renderBody: () => <GoalsAndProgressTab projectReport={projectReport} project={project} />
+      },
+      {
         key: "audit-log",
         title: t("Audit Log"),
         renderBody: () => <AuditLog projectReport={projectReport} />
@@ -120,7 +126,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
             link: `/project/${projectReport.projectUuid}?tab=reporting-tasks`
           },
           {
-            label: getShortPeriodLabel(taskTitle ?? ""),
+            label: getShortPeriodLabel(taskTitle ?? "", true),
             link: `/project/${projectReport.projectUuid ?? ""}/reporting-task/${projectReport.taskUuid ?? ""}`
           },
           { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` }
@@ -136,7 +142,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
               >
                 {t("Project Profile")}
               </Button>
-              <span className="text-sm text-theme-neutral-300">|</span>
+              <span className="text-theme-neutral-300 text-sm">|</span>
               <Button
                 variant="borderless"
                 size="small"
@@ -151,7 +157,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
               </Button>
               {!shouldHideNurseries && (
                 <>
-                  <span className="text-sm text-theme-neutral-300">|</span>
+                  <span className="text-theme-neutral-300 text-sm">|</span>
                   <Button
                     variant="borderless"
                     size="small"

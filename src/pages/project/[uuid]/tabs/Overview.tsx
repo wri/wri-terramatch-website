@@ -47,7 +47,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
   const mrvOnboardingContent = useMrvOnboardingContent();
   const { openModal } = useModalContext();
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
     entityStatus: project.status ?? "started",
@@ -192,6 +192,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
 
   return (
     <PageContent>
+      {EditModals}
       <InviteMonitoringPartnerModal
         projectUUID={project.uuid}
         open={showInviteModal}

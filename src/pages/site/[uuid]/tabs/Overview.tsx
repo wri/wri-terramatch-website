@@ -46,7 +46,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const [isSiteSetupComplete, setIsSiteSetupComplete] = useState(false);
   const isMobile = useBreakpointValue({ base: true, md: false });
 
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "sites",
     entityUUID: site.uuid,
     entityStatus: site.status ?? "started",
@@ -104,6 +104,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
       <PageContent>
+        {EditModals}
         <Flex gap={7} className="flex-col sm:flex-row">
           <PageItem
             title={t("Site Map")}

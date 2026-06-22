@@ -66,7 +66,7 @@ const NurseryReportOverviewFallback: FC = () => {
 
   return (
     <PageContent>
-      <Box className="rounded-md bg-theme-neutral-100 p-6 text-center text-sm text-theme-neutral-600">
+      <Box className="bg-theme-neutral-100 text-theme-neutral-600 rounded-md p-6 text-center text-sm">
         {t("Unable to display this nursery report overview.")}
       </Box>
     </PageContent>
@@ -163,7 +163,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
                 size: "small",
                 children: t("View Progress & Goals"),
                 rightIcon: <ChevronRightIcon />,
-                onClick: () => goToTab("report-data")
+                onClick: () => goToTab("goals")
               }}
             >
               <MetricCardsRow>
