@@ -163,7 +163,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
                 size: "small",
                 children: t("View Progress & Goals"),
                 rightIcon: <ChevronRightIcon />,
-                onClick: () => goToTab("report-data")
+                onClick: () => goToTab("goals")
               }}
             >
               <MetricCardsRow>

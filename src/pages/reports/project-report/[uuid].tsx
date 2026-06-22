@@ -22,6 +22,7 @@ import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
 import ProjectReportDetailsTab from "./tabs/Details";
+import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 import Overview from "./tabs/Overview";
 
 type TabItem = {
@@ -74,6 +75,11 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
             sharedDriveLink={projectReport.sharedDriveLink!}
           />
         )
+      },
+      {
+        key: "goals",
+        title: t("Progress & Goals"),
+        renderBody: () => <GoalsAndProgressTab projectReport={projectReport} project={project} />
       },
       {
         key: "audit-log",
