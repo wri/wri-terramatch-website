@@ -24,7 +24,14 @@ import type { SiteFullDto } from "@/generated/v3/entityService/entityServiceSche
 import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import type { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
+import {
+  formatPolygonTargetId,
+  trackBulkActionCompleted,
+  trackPolygonDownloaded,
+  trackPolygonStatusChanged
+} from "@/utils/polygonAnalytics";
 
 import type { OverlapFixPolygon } from "../components/Modals/OverlapFix";
 import type { PolygonOverlapFixParams } from "../components/polygonEdit.types";
@@ -78,7 +85,7 @@ type UseSitePolygonBulkActionsParams = {
     polygonsFixed: OverlapFixPolygon[];
     polygonsNotFixed: OverlapFixPolygon[];
   }) => void;
-  onValidationJobsStarted?: (polygonUuids: string[]) => void;
+  onValidationJobsStarted?: (polygonUuids: string[], options?: { trackBulkCompletion?: boolean }) => void;
 };
 
 export const useSitePolygonBulkActions = ({
@@ -410,6 +417,11 @@ export const useSitePolygonBulkActions = ({
             refreshedOverlapValidations
           )
         );
+        trackBulkActionCompleted({
+          siteUuid: site.uuid,
+          actionType: "fix_overlap",
+          polygonCount: fixableCandidates.length
+        });
         closeMapPopups();
         setPolygonTableHoveredUuid(null);
         closePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps);
@@ -439,6 +451,10 @@ export const useSitePolygonBulkActions = ({
   const handleOpenSubmitPolygonsModal = useCallback(() => {
     if (hasSelectedOverlapFailure) {
       const overlapSummary = selectedOverlapFixSummary;
+      trackPolygonEvent("polygon_overlap_fix_clicked", {
+        ...getPolygonAnalyticsContext({ entityType: "site", entityId: site.uuid }),
+        polygon_id: formatPolygonTargetId(overlapSummary.fixableCandidates.map(candidate => candidate.id))
+      });
       clearBulkTableSelection();
       void handleOverlapFix(overlapSummary);
       return;
@@ -477,6 +493,7 @@ export const useSitePolygonBulkActions = ({
     selectedSitePolygons.length,
     selectedSubmittablePolygonUuids,
     selectedSubmittablePolygons,
+    site.uuid,
     t
   ]);
 
@@ -526,8 +543,29 @@ export const useSitePolygonBulkActions = ({
           .filter((uuid): uuid is string => uuid != null && uuid !== "");
 
         if (geometryPolygonUuids.length > 0) {
-          onValidationJobsStarted?.(geometryPolygonUuids);
+          onValidationJobsStarted?.(geometryPolygonUuids, { trackBulkCompletion: false });
         }
+
+        for (const sitePolygonUuid of sitePolygonUuids) {
+          const sitePolygon = polygonsData.find(polygon => polygon.uuid === sitePolygonUuid);
+          const geometryPolygonUuid = sitePolygon?.polygonUuid;
+          if (geometryPolygonUuid == null || geometryPolygonUuid === "") {
+            continue;
+          }
+
+          trackPolygonStatusChanged({
+            siteUuid: site.uuid,
+            polygonId: geometryPolygonUuid,
+            fromStatus: sitePolygon?.status ?? "draft",
+            toStatus: POLYGON_PENDING_APPROVAL
+          });
+        }
+
+        trackBulkActionCompleted({
+          siteUuid: site.uuid,
+          actionType: "submit",
+          polygonCount: sitePolygonUuids.length
+        });
       } catch (error) {
         Log.error("Failed to submit selected polygons:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
@@ -543,6 +581,7 @@ export const useSitePolygonBulkActions = ({
       polygonsData,
       refreshPolygonData,
       setShouldRefetchPolygonData,
+      site.uuid,
       t,
       toastLabels,
       user?.firstName,
@@ -608,6 +647,17 @@ export const useSitePolygonBulkActions = ({
             ? downloadSitePolygons[0].name ?? "polygon"
             : `${site.name ?? "polygons"}-${new Date().toISOString().slice(0, 10)}`;
         await downloadMultiplePolygonsGeoJson(geometryPolygonUuids, filename);
+        trackPolygonDownloaded({
+          siteUuid: site.uuid,
+          polygonType: "standard",
+          polygonId: formatPolygonTargetId(geometryPolygonUuids),
+          polygonCount: geometryPolygonUuids.length
+        });
+        trackBulkActionCompleted({
+          siteUuid: site.uuid,
+          actionType: "download",
+          polygonCount: geometryPolygonUuids.length
+        });
         closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
         showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
       } catch (error) {
@@ -624,7 +674,7 @@ export const useSitePolygonBulkActions = ({
         setIsDownloadingSelectedPolygons(false);
       }
     },
-    [site.name, t, toastLabels]
+    [site.name, site.uuid, t, toastLabels]
   );
 
   const handleBulkDownloadClick = useCallback(() => {
@@ -670,6 +720,13 @@ export const useSitePolygonBulkActions = ({
         setIsBulkUpdatingPolygons(true);
         showPolygonProgressToast(t, toastLabels.savingChangesProgress, POLYGON_TOAST_IDS.savingChanges);
         await bulkUpdateSitePolygonAttributes(sitePolygonUuids, attributeChanges);
+        for (const row of bulkEditPayload?.polygons ?? []) {
+          trackPolygonEvent("polygon_attributes_edited", {
+            ...getPolygonAnalyticsContext({ entityType: "site", entityId: site.uuid }),
+            polygon_id: row.id,
+            entry_point: "bulk_actions"
+          });
+        }
         closeMapPopups();
         setPolygonTableHoveredUuid(null);
         invalidatePolygonMapTiles();
@@ -686,7 +743,16 @@ export const useSitePolygonBulkActions = ({
         setIsBulkUpdatingPolygons(false);
       }
     },
-    [bulkEditPayload, closeMapPopups, invalidatePolygonMapTiles, openNotification, refreshPolygonData, t, toastLabels]
+    [
+      bulkEditPayload,
+      closeMapPopups,
+      invalidatePolygonMapTiles,
+      openNotification,
+      refreshPolygonData,
+      site.uuid,
+      t,
+      toastLabels
+    ]
   );
 
   return {

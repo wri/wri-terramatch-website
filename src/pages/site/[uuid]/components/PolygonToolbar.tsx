@@ -3,11 +3,17 @@ import { FC, useState } from "react";
 
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
+import {
+  resolveActivePolygonFilterTypes,
+  trackPolygonFilterApplied,
+  trackPolygonSearchUsed
+} from "@/utils/polygonAnalytics";
 
 import { PolygonFilterState } from "./polygonFilter.constants";
 import PolygonFilterDrawer from "./PolygonFilterDrawer";
 
 interface PolygonToolbarProps {
+  siteUuid: string;
   resultCount: number;
   polygonSearch: string;
   polygonFilters: PolygonFilterState;
@@ -18,6 +24,7 @@ interface PolygonToolbarProps {
 }
 
 const PolygonToolbar: FC<PolygonToolbarProps> = ({
+  siteUuid,
   resultCount,
   polygonSearch,
   polygonFilters,
@@ -35,7 +42,20 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
   };
 
   const handleOnSearchSubmit = (value: string) => {
-    onSearchChange(value);
+    const trimmedValue = value.trim();
+    if (trimmedValue === "") {
+      return;
+    }
+    trackPolygonSearchUsed({ siteUuid });
+    onSearchChange(trimmedValue);
+  };
+
+  const handleApplyFilters = (filters: PolygonFilterState) => {
+    trackPolygonFilterApplied({
+      siteUuid,
+      filterTypes: resolveActivePolygonFilterTypes(filters)
+    });
+    onApplyFilters(filters);
   };
 
   const handleOnClearFilters = () => {
@@ -65,7 +85,7 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
       <PolygonFilterDrawer
         open={isFilterDrawerOpen}
         filters={polygonFilters}
-        onApplyFilters={onApplyFilters}
+        onApplyFilters={handleApplyFilters}
         onClearFilters={handleOnClearFilters}
         onOpenChange={setIsFilterDrawerOpen}
       />

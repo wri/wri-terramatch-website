@@ -30,6 +30,7 @@ import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTab
 import { DownloadIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import Log from "@/utils/log";
+import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils/polygonAnalytics";
 
 import { type OverlapFixPolygon } from "../components/Modals/OverlapFix";
 import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
@@ -93,6 +94,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [isStickyActive, setIsStickyActive] = useState(false);
   const [pendingValidationPolygonUuids, setPendingValidationPolygonUuids] = useState<string[]>([]);
   const [supplementalValidations, setSupplementalValidations] = useState<ValidationDto[]>([]);
+  const priorValidationStatusRef = useRef<Map<string, string | null | undefined>>(new Map());
+  const pendingValidationTrackBulkRef = useRef(true);
 
   const {
     polygonSearch,
@@ -102,7 +105,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     setPolygonSearch,
     setPolygonFilters,
     handleClearPolygonFilters
-  } = useSitePolygonFilters({ t });
+  } = useSitePolygonFilters({ siteUuid: site.uuid, t });
 
   const {
     data: polygonsQueryData,
@@ -297,10 +300,20 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     void fetchAllValidationPages();
   }, [site.uuid, polygonIdsKey, fetchAllValidationPages]);
 
-  const handleValidationJobsStarted = useCallback((polygonUuids: string[]) => {
-    setPendingValidationPolygonUuids(polygonUuids);
-    void listDelayedJobs.fetch({});
-  }, []);
+  const handleValidationJobsStarted = useCallback(
+    (polygonUuids: string[], options?: { trackBulkCompletion?: boolean }) => {
+      const priorStatuses = new Map<string, string | null | undefined>();
+      polygonUuids.forEach(polygonUuid => {
+        const sitePolygon = polygonsData.find(item => item.polygonUuid === polygonUuid);
+        priorStatuses.set(polygonUuid, sitePolygon?.validationStatus);
+      });
+      priorValidationStatusRef.current = priorStatuses;
+      pendingValidationTrackBulkRef.current = options?.trackBulkCompletion ?? true;
+      setPendingValidationPolygonUuids(polygonUuids);
+      void listDelayedJobs.fetch({});
+    },
+    [polygonsData]
+  );
 
   useEffect(() => {
     if (pendingValidationPolygonUuids.length === 0) {
@@ -338,6 +351,28 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             return Array.from(byPolygonUuid.values());
           });
 
+          fetchedValidations.forEach(validation => {
+            const polygonUuid = validation.polygonUuid;
+            if (polygonUuid == null || polygonUuid === "") {
+              return;
+            }
+
+            trackPolygonValidationResults({
+              siteUuid: site.uuid,
+              polygonId: polygonUuid,
+              validation,
+              priorValidationStatus: priorValidationStatusRef.current.get(polygonUuid)
+            });
+          });
+
+          if (pendingValidationTrackBulkRef.current) {
+            trackBulkActionCompleted({
+              siteUuid: site.uuid,
+              actionType: "run_validation",
+              polygonCount: polygonUuids.length
+            });
+          }
+
           void refetchPolygons();
           void fetchOverlapValidations(true);
           setPendingValidationPolygonUuids([]);
@@ -357,7 +392,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     return () => {
       cancelled = true;
     };
-  }, [fetchAllValidationPages, fetchOverlapValidations, pendingValidationPolygonUuids, refetchPolygons]);
+  }, [fetchAllValidationPages, fetchOverlapValidations, pendingValidationPolygonUuids, refetchPolygons, site.uuid]);
 
   useEffect(() => {
     setSiteData(site);
@@ -585,6 +620,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           }}
         >
           <PolygonToolbar
+            siteUuid={site.uuid}
             resultCount={polygonRows.length}
             polygonSearch={polygonSearch}
             polygonFilters={polygonFilters}
@@ -596,6 +632,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         </PageItem>
 
         <PolygonBulkActionToolbar
+          siteUuid={site.uuid}
           visible={hasPolygonSelection}
           itemCount={selectedRows.length}
           isBulkEditDrawerOpen={showBulkEditDrawer}
@@ -621,6 +658,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
         <SitePolygonModals
           siteUuid={site.uuid}
+          siteHasExistingPolygons={polygonsData.length > 0}
           bulkEditPayload={bulkEditPayload}
           deletePayload={deletePayload}
           submitPayload={submitPayload}

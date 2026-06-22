@@ -7,12 +7,14 @@ import type { ValidationDto } from "@/generated/v3/researchService/researchServi
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
+import { trackPolygonRunValidationClicked } from "@/utils/polygonAnalytics";
 import { getSitePolygonsSubmitTooltipIfNoneEligible } from "@/utils/sitePolygonSubmit";
 
 import SystemValidationComplete from "./Modals/SystemValidationComplete";
 import { PolygonTableRow } from "./PolygonTableRow";
 
 export type PolygonBulkActionToolbarProps = {
+  siteUuid: string;
   visible: boolean;
   itemCount: number;
   isBulkEditDrawerOpen?: boolean;
@@ -37,6 +39,7 @@ export type PolygonBulkActionToolbarProps = {
 };
 
 const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
+  siteUuid,
   visible,
   itemCount,
   isBulkEditDrawerOpen = false,
@@ -90,6 +93,11 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     }
 
     const polygonUuids = selectedGeometryPolygonUuids;
+    trackPolygonRunValidationClicked({
+      siteUuid,
+      polygonIds: polygonUuids
+    });
+
     setValidatedPolygons(
       polygons.map((polygon, index) => ({
         ...polygon,
@@ -105,7 +113,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     } catch {
       // Error feedback is handled in the parent.
     }
-  }, [onClearSelection, onRunValidation, polygons, selectedGeometryPolygonUuids]);
+  }, [onClearSelection, onRunValidation, polygons, selectedGeometryPolygonUuids, siteUuid]);
 
   const handleViewValidationDetails = useCallback(
     (polygon: PolygonTableRow) => {
