@@ -14,6 +14,16 @@ type PolygonEventName =
 
 export type FormSectionEventName = "section_started" | "section_completed" | "section_error_triggered";
 
+export type ReportEventName =
+  | "report_opened"
+  | "report_submitted"
+  | "form_nav_clicked"
+  | "review_page_viewed"
+  | "feedback_banner_displayed"
+  | "accordion_expanded"
+  | "report_save_exited"
+  | "report_reopened";
+
 export type Ga4EntityType = "project" | "site" | "nursery" | "unknown";
 
 type Ga4EventParams = Record<string, string | number | boolean | null | undefined>;
@@ -99,5 +109,9 @@ export const trackPolygonEvent = (eventName: PolygonEventName, params: Ga4EventP
 };
 
 export const trackFormSectionEvent = (eventName: FormSectionEventName, params: Ga4EventParams): void => {
+  trackGa4Event(eventName, params);
+};
+
+export const trackReportEvent = (eventName: ReportEventName, params: Ga4EventParams): void => {
   trackGa4Event(eventName, params);
 };

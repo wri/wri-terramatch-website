@@ -1,5 +1,5 @@
 import { Dictionary } from "lodash";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Edit, useCreatePath, useEditContext, useResourceContext } from "react-admin";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -18,6 +18,12 @@ import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useOnUnmount } from "@/hooks/useOnMount";
 import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 import { EntityName } from "@/types/common";
+import {
+  getAnalyticsUserRole,
+  isReportReopenedStatus,
+  resolveReportEntityTypeFromEntityName,
+  trackReportAnalyticsEvent
+} from "@/utils/analytics/reportAnalytics";
 import Log from "@/utils/log";
 
 const EntityEditDisplay = () => {
@@ -63,6 +69,27 @@ const EntityEditDisplay = () => {
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(form?.uuid);
   const framework = toFramework(form?.frameworkKey);
   const defaultValues = useDefaultValues(formData, fieldsProvider);
+  const reportOpenTracked = useRef(false);
+
+  const reportEntityType = useMemo(() => resolveReportEntityTypeFromEntityName(entityName), [entityName]);
+  const isTrackedReport = reportEntityType != null;
+
+  useEffect(() => {
+    if (!entityLoading || entity == null || !isTrackedReport || reportOpenTracked.current) return;
+
+    reportOpenTracked.current = true;
+    const analyticsContext = {
+      entityType: reportEntityType,
+      entityId: entityUUID,
+      userRole: getAnalyticsUserRole()
+    };
+
+    trackReportAnalyticsEvent("report_opened", analyticsContext);
+
+    if (isReportReopenedStatus(entity.status)) {
+      trackReportAnalyticsEvent("report_reopened", analyticsContext);
+    }
+  }, [entity, entityLoading, entityUUID, isTrackedReport, reportEntityType]);
 
   const bannerTitle = useMemo(() => {
     if (entityName === "site-reports") {
