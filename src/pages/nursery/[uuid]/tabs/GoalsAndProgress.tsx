@@ -29,8 +29,8 @@ const GoalsAndProgressTab = ({ nursery }: GoalsAndProgressTabProps) => {
   });
 
   return (
-    <PageBody>
-      <PageRow>
+    <PageBody className="bg-theme-neutral-200 !space-y-10 pt-5 text-darkCustom">
+      <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageCard title={t("Seedling Growth Progress")}>
           <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
             <div className="flex flex-col gap-4">
