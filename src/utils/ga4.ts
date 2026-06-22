@@ -32,6 +32,16 @@ export type MetricsCardEventName = "metrics_card_viewed" | "metrics_card_cta_cli
 
 export type MetricsCardEntityType = "project-report" | "site-report" | "nursery-report" | "financial-report";
 
+export type ReportEventName =
+  | "report_opened"
+  | "report_submitted"
+  | "form_nav_clicked"
+  | "review_page_viewed"
+  | "feedback_banner_displayed"
+  | "accordion_expanded"
+  | "report_save_exited"
+  | "report_reopened";
+
 export type OnboardingCardEventName = "onboarding_card_viewed" | "onboarding_card_link_clicked";
 
 export type Ga4EntityType = "project" | "site" | "nursery" | "unknown";
@@ -137,6 +147,10 @@ export const getMetricsCardAnalyticsContext = ({
 });
 
 export const trackMetricsCardEvent = (eventName: MetricsCardEventName, params: Ga4EventParams): void => {
+  trackGa4Event(eventName, params);
+};
+
+export const trackReportEvent = (eventName: ReportEventName, params: Ga4EventParams): void => {
   trackGa4Event(eventName, params);
 };
 

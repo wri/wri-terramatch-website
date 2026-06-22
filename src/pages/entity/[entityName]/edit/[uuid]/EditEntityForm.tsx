@@ -27,6 +27,12 @@ import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
+import {
+  getAnalyticsUserRole,
+  isReportReopenedStatus,
+  resolveReportEntityTypeFromEntityName,
+  trackReportAnalyticsEvent
+} from "@/utils/analytics/reportAnalytics";
 import Log from "@/utils/log";
 
 interface EditEntityFormProps {
@@ -46,6 +52,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const router = useRouter();
   const { openToast } = useToastContext();
   const loadFailureHandled = useRef(false);
+  const reportOpenTracked = useRef(false);
   /** Only navigate to /confirm after an explicit Submit, not any future entity PATCH. */
   const pendingSubmissionConfirmationRef = useRef(false);
   const {
@@ -158,6 +165,26 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   );
 
   const hasLoadFailure = loadFailure != null || formLoadFailure != null;
+
+  useEffect(() => {
+    if (!entityLoaded || entity == null || !isReport || reportOpenTracked.current) return;
+
+    const reportEntityType = resolveReportEntityTypeFromEntityName(entityName);
+    if (reportEntityType == null) return;
+
+    reportOpenTracked.current = true;
+    const analyticsContext = {
+      entityType: reportEntityType,
+      entityId: entityUUID,
+      userRole: getAnalyticsUserRole()
+    };
+
+    trackReportAnalyticsEvent("report_opened", analyticsContext);
+
+    if (isReportReopenedStatus(entity.status)) {
+      trackReportAnalyticsEvent("report_reopened", analyticsContext);
+    }
+  }, [entity, entityLoaded, entityName, entityUUID, isReport]);
 
   useEffect(() => {
     if (!hasLoadFailure || loadFailureHandled.current) return;

@@ -29,6 +29,7 @@ import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import { ArrowForwardIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 import { EntityName } from "@/types/common";
+import { resolveReportEntityTypeFromEntityName, trackReportAnalyticsEvent } from "@/utils/analytics/reportAnalytics";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
 import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
@@ -109,11 +110,25 @@ const SharedDetails: FC<SharedDetailsProps> = ({
     updateRequestStatus: updateRequestStatus ?? "no-update"
   });
 
+  const reportEntityType = resolveReportEntityTypeFromEntityName(entityName as EntityName);
+  const accordionLabel = step.title?.trim() ?? "";
+
+  const handleAccordionOpenChange = (open: boolean) => {
+    if (!open || reportEntityType == null || accordionLabel === "") return;
+
+    trackReportAnalyticsEvent("accordion_expanded", {
+      entityType: reportEntityType,
+      entityId: entityUUID,
+      accordion_label: accordionLabel
+    });
+  };
+
   return entries.length === 0 ? null : (
     <>
       {EditModals}
       <Accordion
         key={step.id}
+        onOpenChange={handleAccordionOpenChange}
         header={
           <AccordionHeader
             title={step.title ?? ""}
