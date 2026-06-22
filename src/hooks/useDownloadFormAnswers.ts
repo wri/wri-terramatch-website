@@ -41,15 +41,15 @@ export const useDownloadFormAnswers = ({ fieldsProvider, formHook, formModel }: 
       return;
     }
 
-    const entityLabel = getReportModelLabel(formModel, t);
-    const { title, content } = getReportFormAnswersConfirmationCopy(entityLabel, t);
+    const entityLabel = getReportModelLabel(formModel);
+    const { title, content } = getReportFormAnswersConfirmationCopy(entityLabel);
 
     openDownloadConfirmation({
       title,
       content,
       onConfirm: downloadAnswers
     });
-  }, [downloadAnswers, formModel, openDownloadConfirmation, t]);
+  }, [downloadAnswers, formModel, openDownloadConfirmation]);
 
   return requestDownloadAnswers;
 };
