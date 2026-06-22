@@ -1,13 +1,15 @@
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import Link from "next/link";
-import { FC, useMemo } from "react";
+import { kebabCase } from "lodash";
+import { useRouter } from "next/router";
+import { FC } from "react";
 
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { FormEntity } from "@/connections/Form";
 import { useModalContext } from "@/context/modal.provider";
-import { getEntityEditPageLink } from "@/helpers/entity";
+import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
+import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 
 export type StatusProps = { title: string; icon: IconNames; className: string };
 
@@ -27,47 +29,43 @@ const EntityStatusModal: FC<EntityStatusModalProps> = ({
   entityUuid
 }) => {
   const t = useT();
-  const { closeModal } = useModalContext();
+  const router = useRouter();
+  const { closeModal, modalOpened } = useModalContext();
 
-  const editPageHref = useMemo(() => getEntityEditPageLink(entityName, entityUuid), [entityName, entityUuid]);
-
-  const primaryButtonProps = useMemo(
-    () =>
-      needMoreInformation
-        ? {
-            as: Link,
-            children: t("Provide Feedback"),
-            href: editPageHref,
-            onClick: () => {
-              closeModal(ModalId.STATUS);
-            }
-          }
-        : {
-            children: t("Close"),
-            onClick: () => closeModal(ModalId.STATUS)
-          },
-    [closeModal, editPageHref, needMoreInformation, t]
-  );
-
-  const secondaryButtonProps = useMemo(
-    () =>
-      needMoreInformation
-        ? {
-            children: t("Close"),
-            onClick: () => closeModal(ModalId.STATUS)
-          }
-        : undefined,
-    [closeModal, needMoreInformation, t]
-  );
+  const handleClose = () => closeModal(ModalId.STATUS);
 
   return (
-    <Modal
-      className="min-w-[500px]"
-      iconProps={{ name: statusProps.icon, width: 60, height: 60, className: statusProps.className }}
+    <ModalConfirmation
+      open={modalOpened(ModalId.STATUS)}
+      onOpenChange={open => !open && handleClose()}
       title={statusProps.title}
-      content={feedback ?? t("No feedback provided")}
-      primaryButtonProps={primaryButtonProps}
-      secondaryButtonProps={secondaryButtonProps}
+      content={
+        <Flex direction="column" align="center" gap={3}>
+          <InformationRequiredIcon boxSize={10} color="warning.500" />
+          <Text textStyle="400" color="neutral.900">
+            {feedback ?? t("No feedback provided")}
+          </Text>
+        </Flex>
+      }
+      buttonsPrimary={
+        needMoreInformation
+          ? [
+              {
+                id: "provide-feedback",
+                children: t("Provide Feedback"),
+                className: "!w-full",
+                variant: "primary",
+                onClick: () => {
+                  handleClose();
+                  router.push(`/entity/${kebabCase(entityName)}/edit/${entityUuid}?formStepId=summary`);
+                }
+              }
+            ]
+          : undefined
+      }
+      buttonsCancel={[
+        { id: "close", children: t("Close"), onClick: handleClose, className: "!w-full", variant: "secondary" }
+      ]}
     />
   );
 };
