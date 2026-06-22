@@ -61,6 +61,7 @@ export interface MetricCardCommonVariantProps extends Pick<MetricCardProps, Metr
 type NoGoalMetricCardContentKeys =
   | "title"
   | "progress"
+  | "progressLabel"
   | "progressSuffix"
   | "color"
   | "iconWithColor"
@@ -77,7 +78,6 @@ type ProgressBarMetricCardContentKeys =
   | "progressLabel"
   | "goal"
   | "progressSuffix"
-  | "progressLabel"
   | "goalSuffix"
   | "color"
   | "iconWithColor"

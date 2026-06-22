@@ -19,9 +19,13 @@ import {
 } from "./types";
 import { getIconWithProgressColor } from "./utils/getIconWithProgressColor";
 
+const shouldRenderSuffix = (progressLabel?: string, suffix?: string): boolean =>
+  progressLabel == null && suffix != null && suffix !== "";
+
 const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   title,
   progress,
+  progressLabel,
   selection,
   progressSuffix,
   color,
@@ -49,13 +53,13 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
       <Flex gap={2} className="items-center">
         <Flex gap={1} className="items-center">
           <Text textStyle="400-bold" color="neutral.900">
-            {formatNumberLocaleString(progress)}
+            {progressLabel ?? formatNumberLocaleString(progress)}
           </Text>
-          {progressSuffix && (
+          {shouldRenderSuffix(progressLabel, progressSuffix) ? (
             <Text textStyle="400-bold" color="neutral.900">
               {progressSuffix}
             </Text>
-          )}
+          ) : null}
         </Flex>
         {selection != null ? (
           <>
@@ -67,11 +71,11 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
               <Text color="neutral.900" textStyle="300-bold">
                 {formatNumberLocaleString(selection)}
               </Text>
-              {progressSuffix && (
+              {progressSuffix != null && progressSuffix !== "" ? (
                 <Text color="neutral.900" textStyle="300-bold">
                   {progressSuffix}
                 </Text>
-              )}
+              ) : null}
             </Flex>
           </>
         ) : null}
@@ -83,6 +87,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
 const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   title,
   progress,
+  progressLabel,
   progressSuffix,
   color,
   iconWithColor,
@@ -106,13 +111,13 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
         <Flex gap={2} className="items-center">
           <Flex gap={1} className="items-center">
             <Text textStyle="600-bold" color="neutral.900">
-              {formatNumberLocaleString(progress)}
+              {progressLabel ?? formatNumberLocaleString(progress)}
             </Text>
-            {progressSuffix && (
+            {shouldRenderSuffix(progressLabel, progressSuffix) ? (
               <Text textStyle="600-bold" color="neutral.900">
                 {progressSuffix}
               </Text>
-            )}
+            ) : null}
           </Flex>
           {selection != null ? (
             <>
@@ -124,11 +129,11 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
                 <Text color="neutral.900" textStyle="600-bold">
                   {formatNumberLocaleString(selection)}
                 </Text>
-                {progressSuffix && (
+                {progressSuffix != null && progressSuffix !== "" ? (
                   <Text color="neutral.900" textStyle="600-bold">
                     {progressSuffix}
                   </Text>
-                )}
+                ) : null}
               </Flex>
             </>
           ) : null}
@@ -169,9 +174,9 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
         <Flex gap={1} alignItems="center">
           <Flex gap={1} className="items-center">
             <Text textStyle="400-bold" color="neutral.900">
-              {formatNumberLocaleString(progress)}
+              {progressLabel ?? formatNumberLocaleString(progress)}
             </Text>
-            {progressSuffix ? (
+            {shouldRenderSuffix(progressLabel, progressSuffix) ? (
               <Text textStyle="400-bold" color="neutral.800">
                 {progressSuffix}
               </Text>
@@ -184,7 +189,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
             <Text textStyle="300" color="neutral.800">
               {formatNumberLocaleString(goal)}
             </Text>
-            {goalSuffix ? (
+            {goalSuffix != null && goalSuffix !== "" ? (
               <Text textStyle="300" color="neutral.800">
                 {goalSuffix}
               </Text>
@@ -229,21 +234,25 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
         {frameworkKey === Framework.PPC && type === "jobsCreated" ? (
           <Flex gap={1} alignItems="center">
             <Text textStyle="600-bold" color="neutral.900">
-              {formatNumberLocaleString(progress)}
+              {progressLabel ?? formatNumberLocaleString(progress)}
             </Text>
-            <Text textStyle="600-bold" color="neutral.900">
-              {progressSuffix}
-            </Text>
+            {shouldRenderSuffix(progressLabel, progressSuffix) ? (
+              <Text textStyle="600-bold" color="neutral.900">
+                {progressSuffix}
+              </Text>
+            ) : null}
           </Flex>
         ) : goal > 0 || progress > 0 ? (
           <Flex gap={1} alignItems="center">
             <Flex gap={1} className="items-center">
               <Text textStyle="600-bold" color="neutral.900">
-                {formatNumberLocaleString(Math.round(progress))}
+                {progressLabel ?? formatNumberLocaleString(Math.round(progress))}
               </Text>
-              <Text textStyle="600-bold" color="neutral.900">
-                {progressSuffix}
-              </Text>
+              {shouldRenderSuffix(progressLabel, progressSuffix) ? (
+                <Text textStyle="600-bold" color="neutral.900">
+                  {progressSuffix}
+                </Text>
+              ) : null}
             </Flex>
             <Text textStyle="500" color="neutral.800">
               {t("of")}
@@ -252,9 +261,11 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
               <Text textStyle="500" color="neutral.800">
                 {formatNumberLocaleString(goal)}
               </Text>
-              <Text textStyle="500" color="neutral.800">
-                {goalSuffix}
-              </Text>
+              {goalSuffix != null && goalSuffix !== "" ? (
+                <Text textStyle="500" color="neutral.800">
+                  {goalSuffix}
+                </Text>
+              ) : null}
             </Flex>
           </Flex>
         ) : (
@@ -331,6 +342,7 @@ const MetricCard: FC<MetricCardProps> = props => {
         <NoGoalMediumMetricCardContent
           title={title}
           progress={progress}
+          progressLabel={progressLabel}
           progressSuffix={progressSuffix}
           color={color}
           iconWithColor={iconWithColor14}
@@ -345,6 +357,7 @@ const MetricCard: FC<MetricCardProps> = props => {
         <NoGoalLargeMetricCardContent
           title={title}
           progress={progress}
+          progressLabel={progressLabel}
           progressSuffix={progressSuffix}
           color={color}
           iconWithColor={iconWithColor50}
