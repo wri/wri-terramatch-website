@@ -38,6 +38,7 @@ export interface MetricCardProps {
   classNameTitle?: string;
   frameworkKey?: string;
   selection?: number;
+  metricLabel?: string;
 }
 
 type MetricCardFieldsForContentVariants =
@@ -51,7 +52,8 @@ type MetricCardFieldsForContentVariants =
   | "color"
   | "type"
   | "frameworkKey"
-  | "selection";
+  | "selection"
+  | "metricLabel";
 
 export interface MetricCardCommonVariantProps extends Pick<MetricCardProps, MetricCardFieldsForContentVariants> {
   iconWithColor: ReactNode;
@@ -68,7 +70,8 @@ type NoGoalMetricCardContentKeys =
   | "type"
   | "tooltipContent"
   | "classNameTitle"
-  | "selection";
+  | "selection"
+  | "metricLabel";
 
 export type NoGoalMetricCardContentProps = Pick<MetricCardCommonVariantProps, NoGoalMetricCardContentKeys>;
 

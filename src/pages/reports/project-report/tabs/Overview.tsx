@@ -10,6 +10,7 @@ import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -19,6 +20,7 @@ import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSect
 import { useProjectReportAboutContent } from "@/pages/reports/project-report/constants/projectReportAboutContent";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
+import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import KeyIndicatorsInsights from "../components/KeyIndicatorsInsights";
@@ -112,10 +114,15 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
                 size: "small",
                 children: t("View Progress & Goals"),
                 rightIcon: <ChevronRightIcon />,
-                onClick: () => goToTab("goals")
+                onClick: createMetricsCardCtaHandler(
+                  { entityType: "project-report", entityId: projectReport.uuid },
+                  () => goToTab("goals")
+                )
               }}
             >
-              <KeyIndicatorsInsights projectReport={projectReport} project={project} />
+              <HighLevelMetricsCard entityType="project-report" entityId={projectReport.uuid}>
+                <KeyIndicatorsInsights projectReport={projectReport} project={project} />
+              </HighLevelMetricsCard>
             </PageItem>
             <PageItem
               title={t("Featured Images")}
