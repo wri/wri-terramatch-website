@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { groupBy } from "lodash";
 import { FC, useCallback, useMemo } from "react";
 
+import { useFrameworkContext } from "@/context/framework.provider";
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -11,9 +12,9 @@ import AccordionHeader from "@/redesignComponents/containers/Accordion/Accordion
 import { AccordionStatus } from "@/redesignComponents/containers/Accordion/types";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
-import { useEntryTypeMap, useEntryTypes, useTableStatus } from "./hooks";
+import { useTableStatus } from "./hooks";
 import TrackingSection from "./TrackingSection";
-import { Status, TrackingCollapseGridProps, useTrackingLabels } from "./types";
+import { getDefaultEntryConfigs, Status, TrackingCollapseGridProps, useTrackingLabels } from "./types";
 
 const STATUS_MAP: Record<Status, AccordionStatus | undefined> = {
   complete: "complete",
@@ -21,9 +22,25 @@ const STATUS_MAP: Record<Status, AccordionStatus | undefined> = {
   "in-progress": "error"
 };
 
-const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, type, entries, variant, onChange }) => {
+const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({
+  title,
+  entryConfigs: optionalEntryConfigs,
+  domain,
+  type,
+  entries,
+  variant,
+  onChange
+}) => {
   const t = useT();
-  const { total, status, counts } = useTableStatus(domain, type, entries);
+  const { framework } = useFrameworkContext();
+  const entryConfigs = useMemo(
+    () =>
+      Array.isArray(optionalEntryConfigs) && optionalEntryConfigs.length > 0
+        ? optionalEntryConfigs
+        : getDefaultEntryConfigs(domain, type, framework),
+    [domain, optionalEntryConfigs, framework, type]
+  );
+  const { total, status, counts } = useTableStatus(entryConfigs, entries);
   const byType = useMemo(() => groupBy(entries, "type"), [entries]);
 
   const onSectionChange = useCallback(
@@ -33,8 +50,6 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
     [onChange, entries]
   );
 
-  const entryTypes = useEntryTypes(domain, type);
-  const entryTypeMap = useEntryTypeMap(domain, type);
   const { sectionLabel, rowLabelSingular, rowLabelPlural, summaryTotalSingular, summaryTotalPlural } =
     useTrackingLabels(type);
   const rowLabel = total === 1 ? rowLabelSingular : rowLabelPlural;
@@ -77,8 +92,8 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
         )}
 
         <div className={classNames("flex flex-wrap gap-x-16 gap-y-6", { "justify-between": user })}>
-          {entryTypes.map(entryType => {
-            const typeDefinition = entryTypeMap[entryType];
+          {entryConfigs.map(({ type: entryType }) => {
+            const typeDefinition = entryConfigs.find(({ type }) => type === entryType);
             const sectionTotal = counts?.[entryType] ?? 0;
 
             let sectionStatus: Status = "not-started";
@@ -108,6 +123,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
                   })}
                 >
                   <TrackingSection
+                    entryConfigs={entryConfigs}
                     domain={domain}
                     trackingType={type}
                     onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
