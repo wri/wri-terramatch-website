@@ -14,6 +14,10 @@ type PolygonEventName =
 
 export type FormSectionEventName = "section_started" | "section_completed" | "section_error_triggered";
 
+export type MetricsCardEventName = "metrics_card_viewed" | "metrics_card_cta_clicked" | "metrics_card_tooltip_engaged";
+
+export type MetricsCardEntityType = "project-report" | "site-report" | "nursery-report" | "financial-report";
+
 export type OnboardingCardEventName = "onboarding_card_viewed" | "onboarding_card_link_clicked";
 
 export type Ga4EntityType = "project" | "site" | "nursery" | "unknown";
@@ -101,6 +105,24 @@ export const trackPolygonEvent = (eventName: PolygonEventName, params: Ga4EventP
 };
 
 export const trackFormSectionEvent = (eventName: FormSectionEventName, params: Ga4EventParams): void => {
+  trackGa4Event(eventName, params);
+};
+
+export const getMetricsCardAnalyticsContext = ({
+  entityType,
+  entityId,
+  metricLabel
+}: {
+  entityType: MetricsCardEntityType;
+  entityId?: string | null;
+  metricLabel?: string | null;
+}) => ({
+  entity_type: entityType,
+  entity_id: entityId ?? "",
+  ...(metricLabel != null && metricLabel !== "" ? { metric_label: metricLabel } : {})
+});
+
+export const trackMetricsCardEvent = (eventName: MetricsCardEventName, params: Ga4EventParams): void => {
   trackGa4Event(eventName, params);
 };
 

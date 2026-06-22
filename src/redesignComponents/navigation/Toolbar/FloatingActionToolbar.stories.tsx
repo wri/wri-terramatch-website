@@ -12,7 +12,7 @@ const defaultItems = [
 const itemsWithInfoTooltip = [
   { label: "Delete", onClick: () => {}, labelColor: "error.500" },
   { label: "Label", onClick: () => {} },
-  { label: "Label", onClick: () => {}, infoTooltip: "This is a tooltip" }
+  { label: "Label", disabled: true, onClick: () => {}, infoTooltip: "This is a tooltip" }
 ];
 
 const meta = {
