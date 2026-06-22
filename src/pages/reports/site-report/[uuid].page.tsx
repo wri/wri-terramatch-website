@@ -112,7 +112,11 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
           />
         )
       },
-      { key: "goals", title: t("Progress & Goals"), renderBody: () => <GoalsAndProgressTab siteReport={siteReport} /> }
+      {
+        key: "goals",
+        title: t("Progress & Goals"),
+        renderBody: () => <GoalsAndProgressTab siteReport={siteReport} site={site} workdaysTotal={workdaysTotal} />
+      }
     ],
     [siteReport, site, workdaysTotal, t]
   );

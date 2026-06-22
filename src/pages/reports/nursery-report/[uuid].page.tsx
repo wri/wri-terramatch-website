@@ -15,6 +15,7 @@ import { NurseryFullDto, NurseryReportFullDto } from "@/generated/v3/entityServi
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
+import NurseryReportGoalsAndProgressTab from "@/pages/reports/nursery-report/tabs/GoalsAndProgress";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
 import NurseryReportDataTab from "@/pages/reports/nursery-report/tabs/ReportData";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -65,6 +66,11 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
         key: "report-data",
         title: t("Report Data"),
         renderBody: () => <NurseryReportDataTab report={nurseryReport} nursery={nursery} />
+      },
+      {
+        key: "goals",
+        title: t("Progress & Goals"),
+        renderBody: () => <NurseryReportGoalsAndProgressTab nurseryReport={nurseryReport} />
       },
       {
         key: "details",
