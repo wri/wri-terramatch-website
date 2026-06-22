@@ -220,9 +220,9 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
         </Flex>
         <PageItem title={t("About Nursery Report")}>
           <About
-            className="flex-row gap-12"
+            className="flex-row gap-14"
             description={
-              <Flex direction="column" gap={5}>
+              <Flex direction="column" gap={5} maxWidth="65%">
                 {aboutContentItem?.paragraphs.map((paragraph, index) => {
                   const isFirstParagraph = index === 0;
                   const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
