@@ -109,6 +109,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
               "Your gallery is currently empty. Add images by using the 'Edit' button on this site report."
             )}
             sharedDriveLink={siteReport.sharedDriveLink ?? undefined}
+            assetDownload={siteReport.siteUuid != null ? { entity: "sites", uuid: siteReport.siteUuid } : undefined}
           />
         )
       },
