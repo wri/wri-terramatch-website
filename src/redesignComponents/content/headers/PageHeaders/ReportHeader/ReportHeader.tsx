@@ -49,7 +49,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
   const { openModal } = useModalContext();
   const formEntityName = v3EntityName(entityName) as FormEntity;
 
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("project-reports", report.uuid);
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler(entityName, report.uuid);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName,
     entityUUID: report.uuid,
