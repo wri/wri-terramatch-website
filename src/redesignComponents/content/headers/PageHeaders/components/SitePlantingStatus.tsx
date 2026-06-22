@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import router from "next/router";
 import { FC, ReactNode } from "react";
 
+import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
@@ -30,7 +31,7 @@ type SiteTypeConfig = { icon: ReactNode; label: string; tooltip?: string };
 const TREE_PLANTING_STRATEGY_TOOLTIP =
   "Tree planting is defined as the planting of seedlings or saplings over an area to meet specific goals. This includes all planting, including areas with no forest canopy and in areas with partial canopy coverage.";
 
-const SITE_RESTORATION_STRATEGY_MAP: Record<string, SiteTypeConfig> = {
+const SITE_RESTORATION_STRATEGY_MAP: Record<restorationStrategyType, SiteTypeConfig> = {
   "tree-planting": {
     icon: <TreePlantingIcon className="h-8 w-8 text-theme-secondary-800" />,
     label: "Tree Planting",
@@ -55,7 +56,7 @@ const SITE_RESTORATION_STRATEGY_MAP: Record<string, SiteTypeConfig> = {
   }
 };
 
-const SITE_TARGET_LAND_USE_MAP: Record<string, SiteTypeConfig> = {
+const SITE_TARGET_LAND_USE_MAP: Record<targetLandUseType, SiteTypeConfig> = {
   agroforest: {
     icon: <AgroforestyIcon className="h-8 w-8 text-theme-secondary-800" />,
     label: "Agroforesty",
@@ -118,6 +119,9 @@ const SITE_TARGET_LAND_USE_MAP: Record<string, SiteTypeConfig> = {
   }
 };
 
+const isKnownRestorationStrategy = (slug: string): slug is restorationStrategyType =>
+  slug in SITE_RESTORATION_STRATEGY_MAP;
+
 const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
   const t = useT();
   const restorationStrategyKeys: string[] =
@@ -128,16 +132,16 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
       : [];
 
   const restorationStrategyKey =
-    restorationStrategyKeys.find(slug => SITE_RESTORATION_STRATEGY_MAP[slug] != null) ??
-    restorationStrategyKeys[0] ??
-    null;
+    restorationStrategyKeys.find(isKnownRestorationStrategy) ?? restorationStrategyKeys[0] ?? null;
   const restorationStrategyConfig =
-    restorationStrategyKey != null ? SITE_RESTORATION_STRATEGY_MAP[restorationStrategyKey] ?? null : null;
+    restorationStrategyKey != null && isKnownRestorationStrategy(restorationStrategyKey)
+      ? SITE_RESTORATION_STRATEGY_MAP[restorationStrategyKey]
+      : null;
 
   const targetLandUseKeys: string[] =
     site.landUseTypes != null ? (Array.isArray(site.landUseTypes) ? site.landUseTypes : [site.landUseTypes]) : [];
   const targetLandUseConfigs = targetLandUseKeys
-    .map(key => SITE_TARGET_LAND_USE_MAP[key])
+    .map(key => SITE_TARGET_LAND_USE_MAP[key as targetLandUseType])
     .filter((c): c is SiteTypeConfig => c != null);
 
   const MAX_VISIBLE_LAND_USE = 2;

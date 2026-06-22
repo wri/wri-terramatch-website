@@ -10,9 +10,59 @@ import type { LayerType, LayerWithStyle } from "../Map.d";
 import { DashboardGetProjectsData } from "../Map.d";
 import { getPulsingDot } from "../pulsing.dot";
 
-export const getFeatureProperties = <T>(properties: GeoJSON.GeoJsonProperties, key: string): T | undefined => {
+export const getFeatureProperties = <T>(
+  properties: GeoJSON.GeoJsonProperties | null | undefined,
+  key: string
+): T | undefined => {
   return (properties?.[key] ?? properties?.[`user_${key}`]) as T | undefined;
 };
+
+export function pickPolygonGeometryIdFromProperties(
+  properties: GeoJSON.GeoJsonProperties | null | undefined
+): string | null {
+  const u = getFeatureProperties<string>(properties, "uuid") ?? getFeatureProperties<string>(properties, "polygonUuid");
+  if (u == null || u === "") return null;
+  return String(u);
+}
+
+export type PolygonGeometryFillLayerConfig = { layerId: string; baseFillOpacity: number };
+export type PolygonGeometryLineLayerConfig = { layerId: string; baseLineWidth: number };
+
+export function getPolygonGeometryFillLayerConfigs(): PolygonGeometryFillLayerConfig[] {
+  const layer = layersList.find(l => l.name === LAYERS_NAMES.POLYGON_GEOMETRY);
+  if (layer == null) return [];
+  return layer.styles
+    .map((style, index) => {
+      if ((style as { type?: string }).type !== "fill") return null;
+      const paint = (style as LayerWithStyle & { paint?: { "fill-opacity"?: number } }).paint;
+      const base = paint?.["fill-opacity"];
+      return {
+        layerId: `${layer.name}-${index}`,
+        baseFillOpacity: typeof base === "number" ? base : 0.3
+      };
+    })
+    .filter((x): x is PolygonGeometryFillLayerConfig => x != null);
+}
+
+export function getPolygonGeometryFillLayerIds(): string[] {
+  return getPolygonGeometryFillLayerConfigs().map(c => c.layerId);
+}
+
+export function getPolygonGeometryLineLayerConfigs(): PolygonGeometryLineLayerConfig[] {
+  const layer = layersList.find(l => l.name === LAYERS_NAMES.POLYGON_GEOMETRY);
+  if (layer == null) return [];
+  return layer.styles
+    .map((style, index) => {
+      if ((style as { type?: string }).type !== "line") return null;
+      const paint = (style as LayerWithStyle & { paint?: { "line-width"?: number } }).paint;
+      const base = paint?.["line-width"];
+      return {
+        layerId: `${layer.name}-${index}`,
+        baseLineWidth: typeof base === "number" ? base : 1
+      };
+    })
+    .filter((x): x is PolygonGeometryLineLayerConfig => x != null);
+}
 
 const showPolygons = (
   styles: LayerWithStyle[],

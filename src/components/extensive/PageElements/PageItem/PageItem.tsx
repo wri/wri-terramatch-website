@@ -4,6 +4,10 @@ import { FC, ReactNode } from "react";
 
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import MultiActionButton, {
+  IMultiActionButtonProps
+} from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
+import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 export interface PageItemProps {
   title: string;
@@ -13,6 +17,7 @@ export interface PageItemProps {
   flexProps?: FlexProps;
   tag?: ReactNode;
   className?: string;
+  multiActionButtonProps?: IMultiActionButtonProps;
   classNameHeader?: string;
   classNameRightSectionHeader?: string;
 }
@@ -25,6 +30,7 @@ const PageItem: FC<PageItemProps> = ({
   flexProps,
   tag,
   className,
+  multiActionButtonProps = null,
   classNameHeader,
   classNameRightSectionHeader
 }) => (
@@ -43,6 +49,12 @@ const PageItem: FC<PageItemProps> = ({
       <Flex gap={4} className={classNames("mobile:justify-end", classNameRightSectionHeader)}>
         {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
         {buttonProps !== null && <Button {...buttonProps} />}
+        {multiActionButtonProps !== null && (
+          <>
+            <SimpleDivider className="!h-7 !w-[0.063rem]" />
+            <MultiActionButton {...multiActionButtonProps} />
+          </>
+        )}
       </Flex>
     </Flex>
     {children}

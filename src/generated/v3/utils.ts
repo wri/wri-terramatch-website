@@ -85,10 +85,12 @@ export const getStableQuery = (queryParams?: FetchParams, replaceEmptyBrackets =
   for (const key of keys) {
     if (queryParams[key] == null) delete queryParams[key];
   }
-  // guarantee order of array query params.
   for (const [key, value] of Object.entries(queryParams)) {
     // Copy the array in case the original is read only.
     if (Array.isArray(value)) queryParams[key] = [...value].sort() as FetchParamValue[] | FetchParams[];
+    if (value instanceof Date) {
+      (queryParams as Record<string, unknown>)[key] = value.toISOString();
+    }
   }
 
   const query = qs.stringify(queryParams, { arrayFormat: "indices", sort: (a, b) => a.localeCompare(b) });
@@ -158,6 +160,17 @@ export class V3ApiEndpoint<
       () => undefined,
       () => undefined
     );
+  }
+
+  async fetchAwait(variables: TVariables, headers?: THeaders): Promise<TResponse> {
+    const fullUrl = resolveUrl(this.url, variables);
+    const failure = this.fetchFailedSelector(variables)(ApiSlice.currentState);
+
+    if (failure != null) {
+      ApiSlice.clearPending(fullUrl, this.method);
+    }
+
+    return await this.executeRequest(variables, headers);
   }
 
   /**

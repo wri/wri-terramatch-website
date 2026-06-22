@@ -1,24 +1,30 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
-import React, { FC, useCallback, useEffect } from "react";
+import React, { Ref, useCallback, useEffect, useRef } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
 import { getTableWrapperStyles } from "./tableStyles";
-import { type RowData, DEFAULT_CURRENT_PAGE } from "./tableUtils";
+import { type BaseRow, DEFAULT_CURRENT_PAGE } from "./tableUtils";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
 import { useTableSelection } from "./useTableSelection";
 import { useTableSorting } from "./useTableSorting";
 
-interface TableProps {
-  data: any[];
-  columns: any[];
+export type TableColumn = {
+  key: string;
+  label: string;
+  sortable?: boolean;
+};
+
+interface TableProps<T extends BaseRow> {
+  data: T[];
+  columns: TableColumn[];
   selectable?: boolean;
-  isScrollable?: boolean;
-  scrollableWidth?: string;
-  scrollableHeight?: string;
-  renderRow?: (rowData: RowData) => React.ReactNode;
-  renderDataCell?: (rowData: RowData, columnKey: string) => React.ReactNode;
+  height?: string;
+  stickyHeader?: boolean;
+  loading?: boolean;
+  renderRow?: (rowData: T, rowProps?: Record<string, unknown>) => React.ReactNode;
+  renderDataCell?: (rowData: T, columnKey: string) => React.ReactNode;
   totalItems?: number;
   showItemCount?: boolean;
   variant?: "default" | "full-width";
@@ -26,17 +32,26 @@ interface TableProps {
   pageSize?: number;
   className?: string;
   showPagination?: boolean;
+  containerRef?: Ref<HTMLDivElement>;
+  selectedRows?: T[];
+  onAllItemsSelected?: (checked: boolean, visibleRows: T[]) => void;
 }
 
-interface SelectableRowProps {
-  rowData: RowData;
-  columns: any[];
-  renderDataCell: (rowData: RowData, columnKey: string) => React.ReactNode;
-  selectedRows: RowData[];
-  onRowSelected: (rowData: RowData, checked: boolean) => void;
+interface SelectableRowProps<T extends BaseRow> {
+  rowData: T;
+  columns: TableColumn[];
+  renderDataCell: (rowData: T, columnKey: string) => React.ReactNode;
+  selectedRows: T[];
+  onRowSelected: (rowData: T, checked: boolean) => void;
 }
 
-const SelectableRow: FC<SelectableRowProps> = ({ rowData, columns, renderDataCell, selectedRows, onRowSelected }) => {
+const SelectableRow = <T extends BaseRow>({
+  rowData,
+  columns,
+  renderDataCell,
+  selectedRows,
+  onRowSelected
+}: SelectableRowProps<T>) => {
   const handleOnRowSelected = useCallback(
     ({ checked }: any) => {
       onRowSelected(rowData, checked);
@@ -58,13 +73,13 @@ const SelectableRow: FC<SelectableRowProps> = ({ rowData, columns, renderDataCel
   );
 };
 
-const Table: FC<TableProps> = ({
+const Table = <T extends BaseRow>({
   data,
   columns,
   selectable = false,
-  isScrollable = false,
-  scrollableWidth = "100%",
-  scrollableHeight = "100%",
+  height,
+  stickyHeader,
+  loading,
   renderRow: customRenderRow,
   renderDataCell: customRenderDataCell,
   totalItems,
@@ -73,15 +88,25 @@ const Table: FC<TableProps> = ({
   css,
   pageSize: initialPageSize,
   className,
-  showPagination = true
-}) => {
+  showPagination = true,
+  containerRef,
+  selectedRows: controlledSelectedRows,
+  onAllItemsSelected: controlledOnAllItemsSelected
+}: TableProps<T>) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
     DEFAULT_CURRENT_PAGE,
     initialPageSize
   );
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
-  const { sortColumn, setSortColumn, sortedData } = useTableSorting(data);
-  const { selectedRows, handleRowSelected, onAllItemsSelected } = useTableSelection(selectable, sortedData);
+  const { setSortColumn, sortedData } = useTableSorting(data);
+  const {
+    selectedRows: internalSelectedRows,
+    handleRowSelected,
+    onAllItemsSelected: internalOnAllItemsSelected
+  } = useTableSelection(selectable, sortedData);
+
+  // When a consumer passes controlled selectedRows, use those; otherwise fall back to internal state.
+  const selectedRows = controlledSelectedRows ?? internalSelectedRows;
 
   const actualTotalItems = totalItems ?? data.length;
   const totalPages = Math.ceil(actualTotalItems / pageSize);
@@ -92,16 +117,16 @@ const Table: FC<TableProps> = ({
     }
   }, [currentPage, totalPages, setCurrentPage]);
 
-  const dataByPage = sortedData.slice(startRange, endRange) as RowData[];
+  const dataByPage = sortedData.slice(startRange, endRange);
 
-  const defaultRenderDataCell = useCallback((rowData: RowData, columnKey: string) => {
-    return (rowData as any)[columnKey];
+  const defaultRenderDataCell = useCallback((rowData: T, columnKey: string) => {
+    return (rowData as Record<string, unknown>)[columnKey] as React.ReactNode;
   }, []);
 
   const renderDataCell = customRenderDataCell ?? defaultRenderDataCell;
 
   const defaultRenderRow = useCallback(
-    (rowData: RowData) => {
+    (rowData: T) => {
       return (
         <TableRow className="group">
           {columns.map(column => (
@@ -115,13 +140,17 @@ const Table: FC<TableProps> = ({
 
   const handleAllItemsSelected = useCallback(
     (checked: boolean) => {
-      onAllItemsSelected(checked, dataByPage);
+      if (controlledOnAllItemsSelected != null) {
+        controlledOnAllItemsSelected(checked, dataByPage);
+      } else {
+        internalOnAllItemsSelected(checked, dataByPage);
+      }
     },
-    [onAllItemsSelected, dataByPage]
+    [controlledOnAllItemsSelected, internalOnAllItemsSelected, dataByPage]
   );
 
   const defaultSelectableRenderRow = useCallback(
-    (rowData: RowData) => {
+    (rowData: T) => {
       return (
         <SelectableRow
           rowData={rowData}
@@ -135,19 +164,21 @@ const Table: FC<TableProps> = ({
     [columns, renderDataCell, selectedRows, handleRowSelected]
   );
 
-  const finalRenderRow = useCallback(
-    (rowData: RowData) => {
-      if (customRenderRow != null) {
-        return customRenderRow(rowData);
-      }
+  const customRenderRowRef = useRef(customRenderRow);
+  customRenderRowRef.current = customRenderRow;
 
+  const finalRenderRow = useCallback(
+    (rowData: T, rowProps?: Record<string, unknown>) => {
+      const renderRow = customRenderRowRef.current;
+      if (renderRow != null) {
+        return renderRow(rowData, rowProps);
+      }
       if (selectable) {
         return defaultSelectableRenderRow(rowData);
       }
-
       return defaultRenderRow(rowData);
     },
-    [customRenderRow, selectable, defaultSelectableRenderRow, defaultRenderRow]
+    [selectable, defaultSelectableRenderRow, defaultRenderRow]
   );
 
   const displayStart = actualTotalItems === 0 ? 0 : startRange + 1;
@@ -157,24 +188,15 @@ const Table: FC<TableProps> = ({
 
   return (
     <Box
-      css={getTableWrapperStyles(
-        sortColumn,
-        columns,
-        selectable,
-        isScrollable,
-        scrollableWidth,
-        scrollableHeight,
-        dataByPage,
-        pageSize,
-        actualTotalItems,
-        css
-      )}
+      ref={containerRef}
+      css={getTableWrapperStyles(selectable, dataByPage, pageSize, actualTotalItems, css)}
       className={className}
+      {...(height != null ? { height } : {})}
     >
       <WriTable
         columns={columns}
         data={dataByPage}
-        renderRow={finalRenderRow}
+        renderRow={finalRenderRow as (rowData: BaseRow, rowProps?: Record<string, unknown>) => React.ReactNode}
         onSortColumn={setSortColumn}
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}
@@ -192,13 +214,15 @@ const Table: FC<TableProps> = ({
         selectedRows={selectedRows}
         selectable={selectable}
         variant={variant}
+        stickyHeader={stickyHeader}
+        loading={loading}
       />
       {showItemCount && shouldShowPagination && (
         <Text
           textStyle="500"
           fontWeight="400"
           color={getThemedColor("neutral", 700)}
-          className="absolute bottom-[1.875rem] left-1/2 w-fit -translate-x-1/2 text-center mobile:hidden"
+          className="absolute bottom-0 left-1/2 w-fit -translate-x-1/2 text-center mobile:hidden"
         >
           Showing {`${displayStart} - ${displayEnd} of ${actualTotalItems}`}
         </Text>

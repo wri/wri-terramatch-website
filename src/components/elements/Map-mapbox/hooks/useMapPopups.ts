@@ -1,12 +1,19 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import { Map as MapboxMap } from "mapbox-gl";
+import { GeoJSONFeature, Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect, useRef } from "react";
 
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
+import { loadBoundingBox, normalizeBoundingBoxDto } from "@/connections/BoundingBox";
+import { LAYERS_NAMES } from "@/constants/layers";
+import { registerOpenPolygonPopupHandler, unregisterOpenPolygonPopupHandler } from "@/context/mapArea.utils";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import Log from "@/utils/log";
 
-import { AdminPopup } from "../components/AdminPopup";
+import { useChampionsMap } from "../championsMap.context";
 import { DashboardPopup } from "../components/DashboardPopup";
-import { addPopupsToMap, removePopups } from "../interactions/popups";
+import { PolygonPopup } from "../components/PolygonPopup/PolygonPopup";
+import { disableBackgroundClickClose, enableBackgroundClickClose } from "../interactions/popupCoordinator";
+import { addPopupsToMap, openPolygonPopup, PopupHandlerOptions } from "../interactions/popups";
 import type {
   DashboardPopupContext,
   EditPolygonState,
@@ -25,12 +32,27 @@ type UseMapPopupsParams = {
   isMobile: boolean;
   setLoader?: (v: boolean) => void;
   setPolygonFromMap?: SetPolygonFromMap;
+  setShouldRefetchPolygonData?: (v: boolean) => void;
   setEditPolygon: (v: EditPolygonState) => void;
   editPolygon: EditPolygonState;
   setMobilePopupData: (v: MobilePopupData) => void;
-  /** Full dashboard context; undefined in admin mode — drives popup component choice and filter callbacks. */
   dashboardContext?: DashboardPopupContext | null;
 };
+
+const buildPopupFeature = (polygonUuid: string): GeoJSONFeature =>
+  ({
+    type: "Feature",
+    properties: { uuid: polygonUuid },
+    geometry: {
+      type: "Point",
+      coordinates: [0, 0]
+    }
+  } as unknown as GeoJSONFeature);
+
+const getBboxCenter = (bbox: BBox) => ({
+  lng: (bbox[0] + bbox[2]) / 2,
+  lat: (bbox[1] + bbox[3]) / 2
+});
 
 export function useMapPopups({
   map,
@@ -42,11 +64,13 @@ export function useMapPopups({
   isMobile,
   setLoader,
   setPolygonFromMap,
+  setShouldRefetchPolygonData,
   setEditPolygon,
   editPolygon,
   setMobilePopupData,
   dashboardContext
 }: UseMapPopupsParams) {
+  const championsMap = useChampionsMap();
   const callbacksRef = useRef({ setPolygonFromMap, setEditPolygon, setMobilePopupData });
   useEffect(() => {
     callbacksRef.current = { setPolygonFromMap, setEditPolygon, setMobilePopupData };
@@ -57,18 +81,17 @@ export function useMapPopups({
     editPolygonRef.current = editPolygon;
   });
 
-  const activePopupPolygonUuidRef = useRef<string | null>(null);
-  const setActivePopupPolygonUuid = (uuid: string | null) => {
-    activePopupPolygonUuidRef.current = uuid;
-  };
+  const popupOptionsRef = useRef<PopupHandlerOptions | null>(null);
 
   useEffect(() => {
     if (!sourcesAdded || map.current == null || draw.current == null || !showPopups) return;
 
-    const PopupComponent = dashboardContext?.dashboardMode != null ? DashboardPopup : AdminPopup;
+    const PopupComponent = dashboardContext?.dashboardMode != null ? DashboardPopup : PolygonPopup;
+    const mapInstance = map.current;
 
-    addPopupsToMap(map.current, PopupComponent, draw.current, {
+    const popupOptions: PopupHandlerOptions = {
       setPolygonFromMap: callbacksRef.current.setPolygonFromMap,
+      setShouldRefetchPolygonData,
       sitePolygonData,
       type: tooltipType ?? "goTo",
       editPolygon: editPolygonRef.current,
@@ -77,20 +100,65 @@ export function useMapPopups({
       setLoader,
       setMobilePopupData:
         isMobile || dashboardContext?.dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined,
-      setActivePopupPolygonUuid
-    });
-  }, [sourcesAdded, sitePolygonData, tooltipType, isMobile, showPopups, setLoader, dashboardContext, map, draw]);
+      championsMap
+    };
+    popupOptionsRef.current = popupOptions;
 
-  useEffect(() => {
-    const activeUuid = activePopupPolygonUuidRef.current;
-    if (activeUuid == null || map.current == null || sitePolygonData == null) return;
+    addPopupsToMap(mapInstance, PopupComponent, draw.current, popupOptions);
 
-    const polygonStillExists = sitePolygonData.some(polygon => polygon.polygonUuid === activeUuid);
-    if (!polygonStillExists) {
-      removePopups(map.current, "POLYGON");
-      activePopupPolygonUuidRef.current = null;
-      callbacksRef.current.setPolygonFromMap?.({ isOpen: false, uuid: "" });
-      callbacksRef.current.setEditPolygon?.({ isOpen: false, uuid: "" });
-    }
-  }, [sitePolygonData, map]);
+    const openPopupForUuid = async (polygonUuid: string) => {
+      const activeMap = map.current;
+      const activeOptions = popupOptionsRef.current;
+      if (activeMap == null || activeOptions == null || polygonUuid === "") {
+        return;
+      }
+
+      try {
+        const result = await loadBoundingBox({ filter: { polygonUuid }, enabled: true });
+        const bbox = normalizeBoundingBoxDto(result?.data?.bbox);
+        if (bbox == null || map.current == null) {
+          return;
+        }
+
+        openPolygonPopup(
+          map.current,
+          PopupComponent,
+          {
+            feature: buildPopupFeature(polygonUuid),
+            lngLat: getBboxCenter(bbox),
+            layerName: LAYERS_NAMES.CENTROIDS
+          },
+          {
+            ...activeOptions,
+            editPolygon: editPolygonRef.current,
+            setPolygonFromMap: callbacksRef.current.setPolygonFromMap,
+            setEditPolygon: callbacksRef.current.setEditPolygon,
+            sitePolygonData
+          }
+        );
+      } catch (error) {
+        Log.warn("useMapPopups: failed to open polygon popup programmatically", { polygonUuid, error });
+      }
+    };
+
+    registerOpenPolygonPopupHandler(openPopupForUuid);
+    enableBackgroundClickClose(mapInstance);
+
+    return () => {
+      unregisterOpenPolygonPopupHandler();
+      disableBackgroundClickClose(mapInstance);
+    };
+  }, [
+    sourcesAdded,
+    sitePolygonData,
+    tooltipType,
+    isMobile,
+    showPopups,
+    setLoader,
+    setShouldRefetchPolygonData,
+    dashboardContext,
+    map,
+    draw,
+    championsMap
+  ]);
 }

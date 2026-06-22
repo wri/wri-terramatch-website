@@ -23,6 +23,14 @@ const meta: Meta<typeof MetricCard> = {
       control: "select",
       options: ["medium", "large", "progressBar", "donutChart"],
       description: "Card variant type"
+    },
+    progressSuffix: {
+      control: "text",
+      description: "Suffix displayed next to progress value"
+    },
+    goalSuffix: {
+      control: "text",
+      description: "Suffix displayed next to goal value"
     }
   }
 };
@@ -39,6 +47,20 @@ export const Medium: Story = {
     icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
     className: "w-fit"
+  }
+};
+
+export const MediumWithSelection: Story = {
+  args: {
+    title: "Stat label",
+    progress: 1234,
+    goal: 10000,
+    progressSuffix: "ha",
+    variant: "medium",
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit",
+    selection: 1000
   }
 };
 
@@ -62,7 +84,7 @@ export const ProgressBar: Story = {
     variant: "progressBar",
     icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
-    className: "w-fit"
+    className: "w-[30rem]"
   }
 };
 
@@ -80,7 +102,7 @@ export const DonutChart: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <SimpleGrid columns={3} gap={4} width="100%">
+    <SimpleGrid columns={2} gap={4} width="100%">
       <MetricCard
         title="Stat label"
         progress={1234}
@@ -105,6 +127,7 @@ export const AllVariants: Story = {
         icon={<PlaceholderIcon />}
         tooltipContent="This is a tooltip"
         color="secondary.600"
+        className="col-span-2"
       />
       <MetricCard
         title="Stat label"
@@ -139,7 +162,7 @@ export const LowProgress: Story = {
     variant: "progressBar",
     icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
-    className: "w-fit"
+    className: "w-[30rem]"
   }
 };
 

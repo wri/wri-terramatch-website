@@ -26,12 +26,34 @@ const validationConnection = v3Resource("validations", getPolygonValidation)
   .enabledProp()
   .buildConnection();
 
-export const usePolygonValidation = (pathParams: GetPolygonValidationPathParams) => {
-  const [, { data }] = useConnection(validationConnection, {
+export const usePolygonValidationConnection = (pathParams: GetPolygonValidationPathParams) =>
+  useConnection(validationConnection, {
     id: pathParams.polygonUuid,
     enabled: hasValidParams(pathParams)
   });
+
+export const usePolygonValidation = (pathParams: GetPolygonValidationPathParams) => {
+  const [, { data }] = usePolygonValidationConnection(pathParams);
   return data;
+};
+
+export const fetchPolygonValidation = async (polygonUuid: string): Promise<ValidationDto | undefined> => {
+  if (!hasValidParams({ polygonUuid })) {
+    return undefined;
+  }
+
+  ApiSlice.pruneCache("validations", [polygonUuid]);
+
+  const response = await loadConnection(validationConnection, {
+    id: polygonUuid,
+    enabled: true
+  });
+
+  if (response.loadFailure != null) {
+    return undefined;
+  }
+
+  return response.data;
 };
 
 const siteValidationConnection = v3Resource("validations", getSiteValidation)

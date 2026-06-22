@@ -1298,6 +1298,8 @@ export type FinancialReportLightDto = {
    * @format date-time
    */
   submittedAt: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
   /**
    * @format date-time
    */
@@ -2225,6 +2227,8 @@ export type FinancialReportFullDto = {
    * @format date-time
    */
   submittedAt: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
   /**
    * @format date-time
    */
@@ -2254,9 +2258,6 @@ export type FinancialReportFullDto = {
    * The associated organisation status
    */
   organisationStatus: string | null;
-  reportTitle: string | null;
-  createdByFirstName: string | null;
-  createdByLastName: string | null;
   fundingTypes: FundingTypeDto[] | null;
 };
 
@@ -2402,7 +2403,6 @@ export type SrpReportFullDto = {
   totalUniqueRestorationPartners: number;
   createdByFirstName: string | null;
   createdByLastName: string | null;
-  reportTitle: string | null;
   media: MediaDto[];
 };
 

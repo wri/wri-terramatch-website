@@ -1,21 +1,18 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import type { RowData } from "./tableUtils";
+import type { BaseRow } from "./tableUtils";
 
-export const useTableSelection = (initialSelectable: boolean = false, sortedData?: RowData[]) => {
+export const useTableSelection = <T extends BaseRow>(initialSelectable: boolean = false, sortedData?: T[]) => {
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string | number>>(new Set());
-  const [selectedRows, setSelectedRows] = useState<RowData[]>([]);
 
-  useEffect(() => {
-    if (sortedData != null && sortedData.length > 0) {
-      const syncedRows = sortedData.filter(row => selectedRowIds.has(row.id));
-      setSelectedRows(syncedRows);
-    } else {
-      setSelectedRows([]);
+  const selectedRows = useMemo(() => {
+    if (sortedData == null || sortedData.length === 0) {
+      return [];
     }
+    return sortedData.filter(row => selectedRowIds.has(row.id));
   }, [sortedData, selectedRowIds]);
 
-  const handleRowSelected = useCallback((rowData: RowData, checked: boolean) => {
+  const handleRowSelected = useCallback((rowData: T, checked: boolean) => {
     setSelectedRowIds(current => {
       const newSet = new Set(current);
       if (checked) {
@@ -27,7 +24,7 @@ export const useTableSelection = (initialSelectable: boolean = false, sortedData
     });
   }, []);
 
-  const onAllItemsSelected = useCallback((checked: boolean, dataByPage: RowData[]) => {
+  const onAllItemsSelected = useCallback((checked: boolean, dataByPage: T[]) => {
     if (checked) {
       setSelectedRowIds(new Set(dataByPage.map(row => row.id)));
     } else {
@@ -37,7 +34,8 @@ export const useTableSelection = (initialSelectable: boolean = false, sortedData
 
   return {
     selectedRows,
-    setSelectedRows,
+    selectedRowIds,
+    setSelectedRowIds,
     handleRowSelected,
     onAllItemsSelected,
     initialSelectable

@@ -17,6 +17,10 @@ export const prepareGeometryForUpload = (file: File, siteId: string): WithFormDa
 export const useUploadGeometry = parallelRequestHook("sitePolygons", uploadGeometryFile);
 export const useCompareGeometry = parallelRequestHook("sitePolygons", compareGeometryFile);
 export const useUploadGeometryWithVersions = parallelRequestHook("sitePolygons", uploadGeometryFileWithVersions);
+export type UploadGeometryResponse = Awaited<ReturnType<typeof uploadGeometryFile.fetchParallel>>;
+export type UploadGeometryWithVersionsResponse = Awaited<
+  ReturnType<typeof uploadGeometryFileWithVersions.fetchParallel>
+>;
 
 export const uploadVersionForPolygon = async (polygonUuid: string, file: File, siteId: string): Promise<void> => {
   const attributes = prepareGeometryForUpload(file, siteId);

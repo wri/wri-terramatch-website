@@ -4,12 +4,6 @@ import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
-import {
-  POLYGON_APPROVED,
-  POLYGON_DRAFT,
-  POLYGON_INFORMATION_REQUIRED,
-  POLYGON_PENDING_APPROVAL
-} from "@/constants/polygonStatuses";
 import { DELETED_POLYGONS } from "@/constants/statuses";
 
 import { addDeleteLayer, addFilterOnLayer, addSourcesToLayers } from "../layers/polygonLayers";
@@ -29,6 +23,7 @@ type UseMapLayersParams = {
   selectedPolygonsInCheckbox?: string[];
   initialTileVersion?: string;
   initialPolygonFingerprint?: string;
+  polygonMapTileNonce?: number;
 };
 
 export const hashString = (value: string): number => {
@@ -77,11 +72,14 @@ export function useMapLayers({
   hasAccess,
   selectedPolygonsInCheckbox,
   initialTileVersion,
-  initialPolygonFingerprint
+  initialPolygonFingerprint,
+  polygonMapTileNonce = 0
 }: UseMapLayersParams) {
   const [sourcesAdded, setSourcesAdded] = useState(false);
+  const [tileLoadRequestId, setTileLoadRequestId] = useState(0);
 
   const prevPolygonFingerprintRef = useRef<string>(initialPolygonFingerprint ?? "");
+  const prevPolygonMapTileNonceRef = useRef<number>(polygonMapTileNonce);
   const tileVersionRef = useRef<string>(initialTileVersion ?? "0");
 
   useEffect(() => {
@@ -91,8 +89,12 @@ export function useMapLayers({
     }
 
     const fingerprint = computePolygonFingerprint(polygonsData);
-    if (fingerprint !== prevPolygonFingerprintRef.current) {
+    const fingerprintChanged = fingerprint !== prevPolygonFingerprintRef.current;
+    const tileNonceChanged = polygonMapTileNonce !== prevPolygonMapTileNonceRef.current;
+
+    if (fingerprintChanged || tileNonceChanged) {
       prevPolygonFingerprintRef.current = fingerprint;
+      prevPolygonMapTileNonceRef.current = polygonMapTileNonce;
       tileVersionRef.current = String(Date.now());
     }
 
@@ -108,6 +110,7 @@ export function useMapLayers({
       polygonsCentroids,
       tileVersionRef.current
     );
+    setTileLoadRequestId(prev => prev + 1);
     setSourcesAdded(true);
   }, [
     map,
@@ -118,7 +121,8 @@ export function useMapLayers({
     centroids,
     dashboardMode,
     projectUUID,
-    hasAccess
+    hasAccess,
+    polygonMapTileNonce
   ]);
 
   useEffect(() => {
@@ -128,7 +132,7 @@ export function useMapLayers({
     addDeleteLayer(deleteLayer, map.current, { [DELETED_POLYGONS]: selectedPolygonsInCheckbox });
   }, [map, selectedPolygonsInCheckbox, styleReady, styleVersion]);
 
-  return { sourcesAdded };
+  return { sourcesAdded, tileLoadRequestId };
 }
 
 export function filterPolygonFromLayers(
@@ -137,19 +141,12 @@ export function filterPolygonFromLayers(
   map: MapboxMap
 ) {
   if (polygonsData == null) return;
+
   const newPolygonData: Record<string, string[]> = JSON.parse(JSON.stringify(polygonsData));
-  const statuses = [
-    POLYGON_PENDING_APPROVAL,
-    POLYGON_APPROVED,
-    POLYGON_INFORMATION_REQUIRED,
-    POLYGON_DRAFT,
-    "form-polygons"
-  ];
-  statuses.forEach(status => {
-    if (newPolygonData[status] != null) {
-      newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
-    }
+  Object.keys(newPolygonData).forEach(status => {
+    newPolygonData[status] = (newPolygonData[status] ?? []).filter(uuid => uuid !== polygonuuid);
   });
+
   const polygonLayer = layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY);
   if (polygonLayer != null) addFilterOnLayer(polygonLayer, newPolygonData, map);
 }
