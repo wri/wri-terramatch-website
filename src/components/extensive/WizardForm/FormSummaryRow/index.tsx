@@ -7,7 +7,7 @@ import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { useFrameworkContext } from "@/context/framework.provider";
-import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
+import { useFieldsProvider, useFormEntities, useShowValidationErrors } from "@/context/wizardForm.provider";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
@@ -51,6 +51,7 @@ export interface FormSummaryRowProps extends FormSummaryProps {
 const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const fieldsProvider = useFieldsProvider();
+  const showValidationErrors = useShowValidationErrors();
   const { title } = fieldsProvider.step(stepId) ?? {};
   const { framework } = useFrameworkContext();
   const stepsWithValidation = useFormStepsWithValidation(fieldsProvider, framework);
@@ -65,8 +66,11 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
           props.initialValues
         )
       : hasFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
-  const valid = (props.values == null || validation.isValidSync(props.values)) && !hasStepFeedback;
-  const fieldsRequiringAttention = getFieldsRequiringAttentionCount(validation, props.values);
+  const valid =
+    (props.values == null || !showValidationErrors || validation.isValidSync(props.values)) && !hasStepFeedback;
+  const fieldsRequiringAttention = showValidationErrors
+    ? getFieldsRequiringAttentionCount(validation, props.values)
+    : 0;
   const entities = useFormEntities();
   const entries = useGetFormEntries({ stepId, ...props, entity: entities[0] });
   const feedbackFieldsCount =

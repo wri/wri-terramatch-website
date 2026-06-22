@@ -3,18 +3,17 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useMemo } from "react";
 
+import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject, useFullProjectReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
-import { ContextCondition } from "@/context/ContextCondition";
 import FrameworkProvider, { Framework, toFramework, useFrameworkContext } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -23,13 +22,7 @@ import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
 import ProjectReportDetailsTab from "./tabs/Details";
-import NurseryReportsTab from "./tabs/NurseryReports";
 import Overview from "./tabs/Overview";
-import PPCSocioeconomicTab from "./tabs/PPCSocioeconomic";
-import ReportDataTab from "./tabs/ReportData";
-import SiteReportsTab from "./tabs/SiteReports";
-import TFSocioeconomicTab from "./tabs/TFSocioeconomic";
-import UploadedFilesTab from "./tabs/UploadedFiles";
 
 type TabItem = {
   key: string;
@@ -62,11 +55,6 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         renderBody: () => <Overview projectReport={projectReport} project={project} />
       },
       {
-        key: "report-data",
-        title: t("Report Data"),
-        renderBody: () => <ReportDataTab report={projectReport} dueAt={task?.dueAt} />
-      },
-      {
         key: "details",
         title: t("Report Details"),
         renderBody: () => <ProjectReportDetailsTab report={projectReport} />
@@ -75,7 +63,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         key: "gallery",
         title: t("Gallery"),
         renderBody: () => (
-          <GalleryTab
+          <EntityGalleryTab
             modelName="projectReports"
             modelUUID={projectReport.uuid}
             modelTitle={t("Report")}
@@ -88,41 +76,12 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         )
       },
       {
-        key: "socioeconomic",
-        title: t("Socioeconomic Data"),
-        renderBody: () => (
-          <>
-            <ContextCondition frameworksShow={[Framework.PPC]}>
-              <PPCSocioeconomicTab report={projectReport} />
-            </ContextCondition>
-            <ContextCondition frameworksHide={[Framework.PPC]}>
-              <TFSocioeconomicTab report={projectReport} />
-            </ContextCondition>
-          </>
-        )
-      },
-      {
-        key: "site-reports",
-        title: t("Site reports"),
-        renderBody: () => <SiteReportsTab taskUuid={projectReport.taskUuid!} />
-      },
-      {
-        key: "nursery-reports",
-        title: t("Nursery reports"),
-        renderBody: () => <NurseryReportsTab taskUuid={projectReport.taskUuid!} />
-      },
-      {
-        key: "uploaded-files",
-        title: t("Uploaded Files"),
-        renderBody: () => <UploadedFilesTab report={projectReport} />
-      },
-      {
         key: "audit-log",
         title: t("Audit Log"),
         renderBody: () => <AuditLog projectReport={projectReport} />
       }
     ],
-    [projectReport, task, project, t]
+    [projectReport, project, t]
   );
 
   const tabBarTabs = useMemo(
@@ -145,6 +104,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         report={projectReport}
         title={reportTitle}
         dueAt={task?.dueAt ?? projectReport.dueAt}
+        entityName="project-report"
         breadcrumbs={[
           {
             label: t("Projects"),

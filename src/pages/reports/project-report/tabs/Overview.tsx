@@ -122,7 +122,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
                 entityUuid={projectReport.uuid}
                 entityName="projectReports"
                 columns={4}
-                minRows={1}
+                rows={1}
               />
             </PageItem>
           </Flex>
@@ -149,9 +149,9 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
         </Flex>
         <PageItem title={t("About Project Report")} flexProps={{ flex: 1 }}>
           <About
-            className="flex-row gap-12"
+            className="flex-row gap-14"
             description={
-              <Flex direction="column" gap={5}>
+              <Flex direction="column" gap={5} maxWidth="65%">
                 {aboutContentItem?.paragraphs.map((paragraph, index) => {
                   const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
 

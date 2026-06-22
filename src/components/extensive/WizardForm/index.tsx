@@ -4,7 +4,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FieldErrors, useForm, UseFormProps, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
@@ -114,6 +114,9 @@ export interface WizardFormProps {
 
   adminListPath?: string;
   entity?: WizardFormEntity;
+
+  /** When true, step errors and field validation messages are hidden until the user submits a step or reopens the form. */
+  deferValidation?: boolean;
 }
 
 function WizardForm(props: WizardFormProps) {
@@ -129,14 +132,16 @@ function WizardForm(props: WizardFormProps) {
   const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
   const fieldsProvider = useFieldsProvider();
 
+  const [showValidationErrors, setShowValidationErrors] = useState(!(props.deferValidation ?? false));
+
   const formHook: UseFormReturn = useForm(
     useMemo(
       (): UseFormProps => ({
         defaultValues: props.defaultValues,
-        mode: "onTouched",
+        mode: props.deferValidation ? "onSubmit" : "onTouched",
         resolver: selectedSection?.validation == null ? undefined : yupResolver(selectedSection.validation)
       }),
-      [props.defaultValues, selectedSection?.validation]
+      [props.defaultValues, props.deferValidation, selectedSection?.validation]
     )
   );
   const { trackSectionCompleted, trackSectionError } = useFormSectionAnalytics({
@@ -156,11 +161,11 @@ function WizardForm(props: WizardFormProps) {
   const formValues = formHook.watch();
 
   const formHasError = useRef(false);
-  formHasError.current = Object.values(formHook.formState.errors ?? {}).length > 0;
+  formHasError.current = showValidationErrors && Object.values(formHook.formState.errors ?? {}).length > 0;
 
   const stepHasIssues = useCallback(
     (stepId: string, validation: (typeof steps)[number]["validation"]) =>
-      !validation.isValidSync(formValues) ||
+      (showValidationErrors && !validation.isValidSync(formValues)) ||
       hasUnresolvedFeedbackInStep(
         props.fieldsProvider,
         stepId,
@@ -168,7 +173,7 @@ function WizardForm(props: WizardFormProps) {
         formValues,
         initialFormValues.current
       ),
-    [entity?.feedbackFields, formValues, props.fieldsProvider]
+    [entity?.feedbackFields, formValues, props.fieldsProvider, showValidationErrors]
   );
 
   const hasErrorInAnyStep = steps.some(({ id, validation }) => stepHasIssues(id, validation));
@@ -212,6 +217,7 @@ function WizardForm(props: WizardFormProps) {
 
   const onSubmitStepError = useCallback(
     (errors: FieldErrors) => {
+      setShowValidationErrors(true);
       trackSectionError(selectedStepIndex, errors);
     },
     [selectedStepIndex, trackSectionError]
@@ -258,7 +264,7 @@ function WizardForm(props: WizardFormProps) {
     // We linked directly to a step; stay on that step.
     if (selectedStepIndex >= 0) return;
 
-    if (props.disableAutoProgress || props.disableInitialAutoProgress) {
+    if (!showValidationErrors || props.disableAutoProgress || props.disableInitialAutoProgress) {
       // We don't auto progress, so either use the initial step or default to 0;
       setSelectedStepIndex(props.initialStepIndex ?? 0);
       return;
@@ -527,6 +533,7 @@ function WizardForm(props: WizardFormProps) {
           fieldsProvider={props.fieldsProvider}
           orgDetails={orgDetails}
           projectDetails={props.projectDetails}
+          showValidationErrors={showValidationErrors}
         >
           <div className={twMerge("flex h-full w-full flex-col", props.className)}>
             {entity != null && (

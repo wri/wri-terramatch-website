@@ -8,7 +8,7 @@ import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
-import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
+import EntityGalleryCard from "@/components/extensive/EntityGallery/EntityGalleryCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
@@ -77,7 +77,7 @@ const SiteReportDataTab: FC<SiteReportDataTabProps> = ({ report, site }) => {
     <>
       <PageRow>
         <PageColumn>
-          <EntityMapAndGalleryCard
+          <EntityGalleryCard
             modelName="sites"
             modelUUID={report.siteUuid!}
             modelTitle={t("Site Report")}

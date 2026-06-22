@@ -33,8 +33,8 @@ const GalleryEntryItem: FC<GalleryEntryItemProps> = ({ src, name, entityName, en
         type={type}
         classNamesVideoIcon="!h-3 !w-3"
       />
-      <Flex direction="column" alignItems="start">
-        <Text textStyle="300" color="neutral.800" pl={2} className="truncate" title={name}>
+      <Flex direction="column" alignItems="start" minW={0}>
+        <Text textStyle="300" color="neutral.800" pl={2} className="w-full truncate" title={name}>
           {name}
         </Text>
         <Button

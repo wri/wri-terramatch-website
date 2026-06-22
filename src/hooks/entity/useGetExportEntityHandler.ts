@@ -7,13 +7,13 @@ import { SupportedEntity } from "@/connections/Entity";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { entityExport } from "@/generated/v3/entityService/entityServiceComponents";
 import { singularEntityName, v3EntityName } from "@/helpers/entity";
-import { EntityName } from "@/types/common";
+import { EntityName, SingularEntityName } from "@/types/common";
 import Log from "@/utils/log";
 
 /**
  * To get entity export handler
  */
-export const useGetExportEntityHandler = (entity: EntityName, uuid: string) => {
+export const useGetExportEntityHandler = (entity: EntityName | SingularEntityName | string, uuid: string) => {
   const t = useT();
   const { openToast } = useToastContext();
   const [loading, setLoading] = useState(false);
@@ -23,18 +23,26 @@ export const useGetExportEntityHandler = (entity: EntityName, uuid: string) => {
 
     showToast({
       id: "exportToast",
-      label: t(`Downloading ${startCase(singularEntityName(entity))}...`),
+      label: t(`Downloading ${startCase(singularEntityName(entity as EntityName | SingularEntityName))}...`),
+      type: "loading",
+      placement: "bottom",
+      maxWidth: "auto"
+    });
+
+    showToast({
+      id: "exportToast",
+      label: t(`Downloading ${startCase(singularEntityName(entity as EntityName | SingularEntityName))}...`),
       type: "loading",
       placement: "bottom",
       maxWidth: "auto"
     });
 
     try {
-      const entityName = v3EntityName(entity) as SupportedEntity;
+      const entityName = v3EntityName(entity as EntityName | SingularEntityName) as SupportedEntity;
       await entityExport.downloadFile({ pathParams: { entity: entityName, uuid } });
       closeToast("exportToast");
       showToast({
-        label: t(`${startCase(singularEntityName(entity))} Download Complete`),
+        label: t(`${startCase(singularEntityName(entity as EntityName | SingularEntityName))} Download Complete`),
         type: "success",
         placement: "bottom",
         duration: 5000,

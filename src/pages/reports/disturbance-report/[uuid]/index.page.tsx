@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
+import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import EntityStatusBar from "@/components/extensive/EntityStatusBar";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
@@ -15,7 +16,6 @@ import Log from "@/utils/log";
 
 import DisturbanceReportHeader from "./components/DisturbanceReportHeader";
 import AuditLog from "./tabs/AuditLog";
-import GalleryTab from "./tabs/Gallery";
 import FinancialReportOverviewTab from "./tabs/Overview";
 import UploadedFilesTab from "./tabs/UploadedFiles";
 
@@ -70,7 +70,7 @@ const DisturbanceReportDetailPage = () => {
                   key: "gallery",
                   title: t("Gallery"),
                   body: (
-                    <GalleryTab
+                    <EntityGalleryTab
                       modelName="disturbanceReports"
                       modelUUID={disturbanceReport.uuid}
                       modelTitle={t("Disturbance Report")}
@@ -78,6 +78,8 @@ const DisturbanceReportDetailPage = () => {
                       emptyStateContent={t(
                         "Your gallery is currently empty. Add images by using the 'Edit' button on this disturbance report."
                       )}
+                      pageBodyClassName=""
+                      pageRowClassName=""
                     />
                   )
                 },

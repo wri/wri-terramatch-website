@@ -27,7 +27,7 @@ const About: FC<AboutProps> = ({ title, description, links, className }) => {
         </Text>
       )}
       {description}
-      <Flex className="min-h-0 shrink-0 flex-col gap-2">
+      <Flex className="min-h-0 flex-[1] shrink-0 flex-col gap-2">
         <Text color="neutral.900" textStyle="500-bold">
           {t("Helpful Links")}
         </Text>

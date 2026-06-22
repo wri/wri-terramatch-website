@@ -4,14 +4,15 @@ import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
+import { getEntityEditPathSegment } from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons/Function/WarningIcon";
-import { EntityName } from "@/types/common";
+import { EntityName, SingularEntityName } from "@/types/common";
 
 interface GetEditEntityHandlerArgs {
   entityUUID: string;
-  entityName: EntityName;
+  entityName: EntityName | SingularEntityName | string;
   entityStatus: string;
   updateRequestStatus: string | null;
 }
@@ -32,14 +33,17 @@ export const useGetEditEntityHandler = ({
   const [openConfirmEditModal, setOpenConfirmEditModal] = useState(false);
   const pendingStepId = useRef<string | null | undefined>(undefined);
   const { getReadableEntityName } = useGetReadableEntityName();
-  const readableEntityNameSingular = (getReadableEntityName(entityName, true) ?? t("Entity")).toLowerCase();
+  const editEntityName = getEntityEditPathSegment(entityName as EntityName | SingularEntityName);
+  const readableEntityNameSingular = (
+    getReadableEntityName(entityName as EntityName | SingularEntityName, true) ?? t("Entity")
+  ).toLowerCase();
 
   let editTitle = t("Are you sure you want to edit your {entityName}?", {
-    entityName: getReadableEntityName(entityName)
+    entityName: getReadableEntityName(entityName as EntityName | SingularEntityName)
   });
   let editContent: string = t(
     "Are you sure you want to edit this {entityName}? Please note that these changes will need to be approved.",
-    { entityName: getReadableEntityName(entityName) }
+    { entityName: getReadableEntityName(entityName as EntityName | SingularEntityName) }
   );
 
   if (entityStatus === "started") {
@@ -74,7 +78,7 @@ export const useGetEditEntityHandler = ({
               {t(
                 "While we're reviewing your {entityName}, you can't make changes for now. This ensures a thorough review. After it's done, you can make any needed adjustments.",
                 {
-                  entityName: getReadableEntityName(entityName)
+                  entityName: getReadableEntityName(entityName as EntityName | SingularEntityName)
                 }
               )}
             </Text>
@@ -107,10 +111,10 @@ export const useGetEditEntityHandler = ({
               const stepId = pendingStepId.current;
               if (stepId != null) {
                 router.push(
-                  `/entity/${entityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`
+                  `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`
                 );
               } else {
-                router.push(`/entity/${entityName}/edit/${entityUUID}?mode=edit`);
+                router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
               }
             }
           }

@@ -18,6 +18,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport } from "@/helpers/entity";
+import { shouldDeferReportValidation } from "@/helpers/formValidation";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
@@ -75,6 +76,8 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     }
     ApiSlice.pruneCache("treeSpecies");
     ApiSlice.pruneCache("seedings");
+    ApiSlice.pruneCache("trackings");
+    ApiSlice.pruneCache("media");
     ApiSlice.pruneCache("treeReportCounts");
     ApiSlice.pruneCache("invasives");
   });
@@ -204,6 +207,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
             cancelEditForm={() => router.push(getEntityDetailPageLink(entityName, entityUUID))}
             redirectEntityPage={getEntityDetailPageLink(entityName, entityUUID)}
             entity={entity}
+            deferValidation={shouldDeferReportValidation(entityName, entity?.status)}
           />
         )}
       </CurrencyProvider>

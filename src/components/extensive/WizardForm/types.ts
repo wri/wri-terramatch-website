@@ -54,7 +54,7 @@ export type FieldDefinition = {
 };
 
 export type SharedFieldProps = {
-  error: FieldError;
+  error?: FieldError;
   name: string;
   label: string;
   required: boolean;
