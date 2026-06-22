@@ -20,6 +20,7 @@ import ApiSlice from "@/store/apiSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
+import { formatPolygonTargetId, trackPolygonRunValidationClicked } from "@/utils/polygonAnalytics";
 import { checkPolygonsFixability, getFixabilitySummaryMessage } from "@/utils/polygonFixValidation";
 
 type ProcessBulkPolygonsControlProps = {
@@ -234,7 +235,7 @@ const ProcessBulkPolygonsControl: FC<ProcessBulkPolygonsControlProps> = ({
     (selectedUUIDs: string[]) => {
       trackPolygonEvent("polygon_overlap_fix_clicked", {
         ...getPolygonAnalyticsContext({ entityType: "site", entityId: entityData?.uuid }),
-        polygon_id: selectedUUIDs.join(",")
+        polygon_id: formatPolygonTargetId(selectedUUIDs)
       });
       closeModal(ModalId.FIX_POLYGONS);
       setIsLoadingDelayedJob?.(true);
@@ -317,6 +318,10 @@ const ProcessBulkPolygonsControl: FC<ProcessBulkPolygonsControlProps> = ({
         if (selectedUUIDs.length === 0) {
           return;
         }
+        trackPolygonRunValidationClicked({
+          siteUuid: entityData?.uuid ?? "",
+          polygonIds: selectedUUIDs
+        });
         setIsLoadingDelayedJob?.(true);
         setAlertTitle?.("Check Polygons");
         runCheckPolygonsSelected(selectedUUIDs);
@@ -331,12 +336,13 @@ const ProcessBulkPolygonsControl: FC<ProcessBulkPolygonsControlProps> = ({
       }
     },
     [
+      entityData,
       getSelectedPolygonUuids,
-      setIsLoadingDelayedJob,
-      setAlertTitle,
-      runCheckPolygonsSelected,
+      openFormModalHandlerProcessBulkPolygons,
       openFormModalHandlerSubmitPolygon,
-      openFormModalHandlerProcessBulkPolygons
+      runCheckPolygonsSelected,
+      setAlertTitle,
+      setIsLoadingDelayedJob
     ]
   );
 

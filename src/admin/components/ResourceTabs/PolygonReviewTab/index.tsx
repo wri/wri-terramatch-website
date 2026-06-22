@@ -791,7 +791,8 @@ const PolygonReviewTab: FC<IProps> = props => {
               ...getPolygonAnalyticsContext({ entityType: "site", entityId: record?.uuid }),
               polygon_count: sitePolygonData?.length ?? 0,
               file_format: "geojson",
-              download_type: "standard"
+              download_type: "standard",
+              polygon_type: "standard"
             });
           }
         }}
@@ -956,7 +957,8 @@ const PolygonReviewTab: FC<IProps> = props => {
                             ...getPolygonAnalyticsContext({ entityType: "site", entityId: record?.uuid }),
                             polygon_count: sitePolygonData?.length ?? 0,
                             file_format: "geojson",
-                            download_type: "standard"
+                            download_type: "standard",
+                            polygon_type: "standard"
                           });
                         }}
                       >

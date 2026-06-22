@@ -7,7 +7,9 @@ import { clipPolygonListAsync } from "@/connections/PolygonClipping";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
+import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
+import { trackPolygonRunValidationClicked } from "@/utils/polygonAnalytics";
 
 import { extractClippedVersions } from "../hooks/overlapFix.utils";
 import { usePolygonValidationCriteria } from "../hooks/usePolygonValidationCriteria";
@@ -26,6 +28,7 @@ import SubmissionValidationTags from "./SubmissionValidationTags";
 import ValidationDetail from "./ValidationDetail";
 
 export type PolygonSystemValidationContentProps = {
+  siteUuid: string;
   polygon?: SitePolygonLightDto;
   onOverlapFixed?: PolygonOverlapFixCallback;
   onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
@@ -47,6 +50,7 @@ const formatValidationCheckedAt = (date: Date): string => {
 };
 
 const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = ({
+  siteUuid,
   polygon,
   onOverlapFixed,
   onRunValidation
@@ -86,6 +90,10 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     }
 
     setPendingClipping(true);
+    trackPolygonEvent("polygon_overlap_fix_clicked", {
+      ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
+      polygon_id: polygonUuid
+    });
     showPolygonProgressToast(t, getFixingOverlapsProgressLabel(t, 1), POLYGON_TOAST_IDS.fixingOverlaps);
 
     try {
@@ -126,6 +134,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     polygon?.primaryUuid,
     polygon?.uuid,
     polygonUuid,
+    siteUuid,
     t,
     toastLabels
   ]);
@@ -145,6 +154,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     }
 
     setIsValidating(true);
+    trackPolygonRunValidationClicked({ siteUuid, polygonIds: [polygonUuid] });
     showPolygonProgressToast(t, getValidatingProgressLabel(t, 1), POLYGON_TOAST_IDS.validating);
     try {
       await onRunValidation([polygonUuid]);
@@ -157,7 +167,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     } finally {
       setIsValidating(false);
     }
-  }, [canRunValidation, isValidating, onRunValidation, polygonUuid, t, toastLabels]);
+  }, [canRunValidation, isValidating, onRunValidation, polygonUuid, siteUuid, t, toastLabels]);
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">

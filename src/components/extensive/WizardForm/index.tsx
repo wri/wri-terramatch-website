@@ -10,9 +10,11 @@ import { twMerge } from "tailwind-merge";
 
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
+import SectionFeedbackBanner from "@/components/extensive/WizardForm/SectionFeedbackBanner";
 import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormSectionAnalytics } from "@/components/extensive/WizardForm/useFormSectionAnalytics";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
+import { useReportAnalytics } from "@/components/extensive/WizardForm/useReportAnalytics";
 import FrameworkProvider, { ALL_TF, Framework, toFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, {
@@ -177,6 +179,18 @@ function WizardForm(props: WizardFormProps) {
     [entity?.feedbackFields, formValues, props.fieldsProvider, showValidationErrors]
   );
 
+  const reportAnalytics = useReportAnalytics({
+    models: props.models,
+    steps,
+    selectedStepIndex,
+    fieldsProvider: props.fieldsProvider,
+    entityId: (props.models as FormModel)?.uuid ?? entity?.uuid,
+    feedbackFields: entity?.feedbackFields,
+    initialValues: initialFormValues.current,
+    summaryTitle: props.summaryOptions?.title,
+    stepHasIssues
+  });
+
   const hasErrorInAnyStep = steps.some(({ id, validation }) => stepHasIssues(id, validation));
 
   Log.debug("Form Values", formValues);
@@ -210,10 +224,11 @@ function WizardForm(props: WizardFormProps) {
       } else {
         // Step changes on last step
         if (props.onSubmit == null) return props.onStepChange?.(data);
+        reportAnalytics.trackReportSubmitted();
         props.onSubmit(data);
       }
     },
-    [formHook, lastIndex, props, selectedStepIndex, setSelectedStepIndex, trackSectionCompleted]
+    [formHook, lastIndex, props, reportAnalytics, selectedStepIndex, setSelectedStepIndex, trackSectionCompleted]
   );
 
   const onSubmitStepError = useCallback(
@@ -225,6 +240,8 @@ function WizardForm(props: WizardFormProps) {
   );
 
   const onClickSaveAndClose = useCallback(() => {
+    reportAnalytics.trackReportSaveExited();
+
     let values = formHook.getValues();
     values = { ...values };
 
@@ -237,10 +254,12 @@ function WizardForm(props: WizardFormProps) {
         onConfirm={props.saveAndCloseModal?.onConfirm || props.onCloseForm || props.onBackFirstStep}
       />
     );
-  }, [formHook, modal, props]);
+  }, [formHook, modal, props, reportAnalytics]);
 
   const onClickSaveAndExit = useCallback(() => {
     if (isAdmin) {
+      reportAnalytics.trackReportSaveExited();
+
       let values = formHook.getValues();
       values = { ...values };
 
@@ -251,15 +270,16 @@ function WizardForm(props: WizardFormProps) {
     }
 
     onClickSaveAndClose();
-  }, [formHook, isAdmin, onClickSaveAndClose, props]);
+  }, [formHook, isAdmin, onClickSaveAndClose, props, reportAnalytics]);
 
   const onClickSaveChanges = useCallback(() => {
     if (isAdmin) {
+      reportAnalytics.trackReportSaveExited();
       formHook.handleSubmit(onSubmitStep)();
       return;
     }
     onClickSaveAndClose();
-  }, [onClickSaveAndClose, isAdmin, formHook, onSubmitStep]);
+  }, [onClickSaveAndClose, isAdmin, formHook, onSubmitStep, reportAnalytics]);
 
   const handleDownloadAnswers = useDownloadFormAnswers({
     fieldsProvider,
@@ -307,6 +327,14 @@ function WizardForm(props: WizardFormProps) {
             />
           </div>
         )}
+        {reportAnalytics.isTrackingEnabled && (
+          <SectionFeedbackBanner
+            sectionName={reportAnalytics.getSectionNameForIndex(index)}
+            feedback={entity?.feedback}
+            isVisible={reportAnalytics.hasUnresolvedFeedbackInCurrentStep(stepId, formValues)}
+            onDisplayed={reportAnalytics.trackFeedbackBannerDisplayed}
+          />
+        )}
         <FormStep id="step" stepId={stepId} formHook={formHook} onChange={_onChange} />
         <FormFooter
           className={classNames(
@@ -324,6 +352,7 @@ function WizardForm(props: WizardFormProps) {
                   children: t("Save and Exit"),
                   onClick: () => {
                     if (isAdmin) {
+                      reportAnalytics.trackReportSaveExited();
                       formHook.handleSubmit(onSubmitStep, onSubmitStepError);
                       props.onSubmit?.(formHook.getValues());
                     } else {
@@ -358,7 +387,10 @@ function WizardForm(props: WizardFormProps) {
       onSubmitStepError,
       hasErrorInAnyStep,
       formModel?.model,
-      handleDownloadAnswers
+      handleDownloadAnswers,
+      reportAnalytics,
+      formValues,
+      entity?.feedback
     ]
   );
 
@@ -534,6 +566,16 @@ function WizardForm(props: WizardFormProps) {
     [router, entity?.projectUuid, entity?.taskUuid, entity?.siteUuid, entity?.projectReportUuid, entity?.nurseryUuid]
   );
 
+  const handleStepSelected = useCallback(
+    (targetIndex: number) => {
+      if (targetIndex !== selectedStepIndex) {
+        reportAnalytics.trackFormNavClicked(targetIndex, selectedStepIndex);
+      }
+      setSelectedStepIndex(targetIndex);
+    },
+    [reportAnalytics, selectedStepIndex, setSelectedStepIndex]
+  );
+
   return selectedStepIndex < 0 ? null : (
     <div className={classNames("relative", { "h-full": !isAdmin })}>
       <FrameworkProvider frameworkKey={props.framework}>
@@ -585,7 +627,7 @@ function WizardForm(props: WizardFormProps) {
               </Box>
             )}
             <Tabs
-              onChangeSelected={setSelectedStepIndex}
+              onChangeSelected={handleStepSelected}
               selectedIndex={selectedStepIndex}
               tabItems={tabItems}
               itemOption={{}}

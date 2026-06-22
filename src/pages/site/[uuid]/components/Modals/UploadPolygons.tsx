@@ -25,6 +25,7 @@ type UploadStep = "form" | "confirm";
 export interface UploadPolygonsProps {
   open: boolean;
   siteUuid: string;
+  siteHasExistingPolygons?: boolean;
   onOpenChange: (open: boolean) => void;
   onUploadSuccess: (result: UploadPolygonsSuccessResult) => void;
   onUploadError: () => void;
@@ -45,7 +46,14 @@ const mergeSelectedFiles = (currentFiles: File[], incomingFiles: File[]): File[]
   return mergedFiles;
 };
 
-const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange, onUploadSuccess, onUploadError }) => {
+const UploadPolygons: FC<UploadPolygonsProps> = ({
+  open,
+  siteUuid,
+  siteHasExistingPolygons = false,
+  onOpenChange,
+  onUploadSuccess,
+  onUploadError
+}) => {
   const t = useT();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<UploadStep>("form");
@@ -56,6 +64,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
 
   const { uploadNewFiles, compareFiles, uploadWithVersionsFiles, isComparing } = useUploadPolygons({
     siteUuid,
+    siteHasExistingPolygons,
     onUploadSuccess,
     onError: () => onUploadError()
   });

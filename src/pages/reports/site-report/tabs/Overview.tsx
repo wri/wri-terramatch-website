@@ -15,6 +15,7 @@ import ContactSupport from "@/components/extensive/PageElements/ContactSupport/C
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { Framework } from "@/context/framework.provider";
@@ -27,9 +28,11 @@ import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
 import SiteReportKeyIndicatorsInsights from "@/pages/reports/site-report/components/KeyIndicatorsInsights";
 import { useSiteReportAboutContent } from "@/pages/reports/site-report/constants/siteReportAboutContent";
+import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { AreaHectaresIcon } from "@/redesignComponents/foundations/Icons";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
+import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 interface OverviewProps {
@@ -110,7 +113,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const goToSiteMap = useCallback(() => {
     if (site?.uuid == null) return;
 
-    router.push(`/site/${site.uuid}?tab=map`);
+    router.push(`/site/${site.uuid}?tab=polygons`);
   }, [router, site?.uuid]);
 
   const aboutContentItem = useMemo(() => {
@@ -159,10 +162,14 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                   size: "small",
                   children: t("View Progress & Goals"),
                   rightIcon: <ChevronRightIcon />,
-                  onClick: () => goToTab("goals")
+                  onClick: createMetricsCardCtaHandler({ entityType: "site-report", entityId: siteReport.uuid }, () =>
+                    goToTab("goals")
+                  )
                 }}
               >
-                <SiteReportKeyIndicatorsInsights siteReport={siteReport} workdaysTotal={workdaysTotal} />
+                <HighLevelMetricsCard entityType="site-report" entityId={siteReport.uuid}>
+                  <SiteReportKeyIndicatorsInsights siteReport={siteReport} workdaysTotal={workdaysTotal} />
+                </HighLevelMetricsCard>
               </PageItem>
               <PageItem
                 title={t("Featured Images")}
@@ -201,13 +208,14 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
           </Flex>
           <Flex gap={7}>
             {site != null && (
-              <PageItem title={t("Site Map")} flexProps={{ flex: 1 }}>
-                <Box className="relative h-auto">
+              <PageItem title={t("Site Map")} flexProps={{ flex: 1 }} className="min-h-0">
+                <Box className="relative overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
                   <OverviewMapArea
                     entityModel={site}
                     type="sites"
-                    className="max-h-[27rem]"
+                    className="h-full min-h-0 rounded"
                     disabledPolygonPanel={true}
+                    hideFullscreenControl={true}
                   />
                   {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
                     <MapPlaceholder
