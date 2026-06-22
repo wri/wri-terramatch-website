@@ -15,7 +15,7 @@ export interface IButtonProps extends Omit<ButtonProps, "size" | "variant" | "co
   rightIcon?: React.ReactNode;
   as?: React.ElementType;
   href?: string;
-  typeVariant?: "neutral" | "negative";
+  typeVariant?: "neutral" | "negative" | "dark";
   classNameContainer?: string;
 }
 
@@ -38,6 +38,22 @@ const Button = ({
           },
           "& button:active": {
             backgroundColor: `${getThemedColor("error", 400)} !important`
+          }
+        }}
+        className={classNameContainer}
+      >
+        <WriButton variant={variant} {...props} className={classNames("shadow-monitored", className)}>
+          {children}
+        </WriButton>
+      </Box>
+    );
+  }
+  if (typeVariant === "dark") {
+    return (
+      <Box
+        css={{
+          "& button": {
+            color: `${getThemedColor("neutral", 100)} !important`
           }
         }}
         className={classNameContainer}

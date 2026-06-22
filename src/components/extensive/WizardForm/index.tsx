@@ -563,7 +563,7 @@ function WizardForm(props: WizardFormProps) {
                         <Flex gap={1.5} alignItems="center">
                           {suffixButtons.map((button, index) => (
                             <Flex key={button.key} alignItems="center" gap={1.5}>
-                              {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
+                              {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
                               <Button
                                 variant="borderless"
                                 size="small"

@@ -132,7 +132,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
                 {t("Project Profile")}
               </Button>
             )}
-            {srpReport.projectUuid != null && <span className="text-sm text-theme-neutral-300">|</span>}
+            {srpReport.projectUuid != null && <span className="text-theme-neutral-300 text-sm">|</span>}
           </div>
         }
         toolbar={{
