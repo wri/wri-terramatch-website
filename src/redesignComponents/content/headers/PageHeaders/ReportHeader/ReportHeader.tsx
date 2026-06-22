@@ -78,14 +78,14 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
     }
 
     const entityLabel = startCase(singularEntityName(entityName));
-    const { title, content } = getReportExportConfirmationCopy(entityLabel, t);
+    const { title, content } = getReportExportConfirmationCopy(entityLabel);
 
     openDownloadConfirmation({
       title,
       content,
       onConfirm: handleExport
     });
-  }, [entityName, handleExport, openDownloadConfirmation, t]);
+  }, [entityName, handleExport, openDownloadConfirmation]);
 
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval && statusProps != null) {
