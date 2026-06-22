@@ -1,9 +1,14 @@
-import { Modal as WriModal } from "@worldresources/wri-design-systems";
 import type { ComponentProps } from "react";
 import { FC } from "react";
 
-const Modal: FC<ComponentProps<typeof WriModal>> = props => {
-  return <WriModal {...props} />;
+import { useModalScrollFix } from "@/hooks/useModalScrollFix";
+
+import BaseModal from "./BaseModal";
+
+const Modal: FC<ComponentProps<typeof BaseModal>> = ({ open = false, ...props }) => {
+  useModalScrollFix(open);
+
+  return <BaseModal open={open} {...props} />;
 };
 
 export default Modal;

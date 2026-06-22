@@ -56,18 +56,17 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
       }, 0),
     [plants]
   );
+  type NoGoalRow = { id: string; name?: string; amount?: number | string };
+
   const noGoalTableData = useMemo(
     () =>
-      plants.reduce<Array<{ name?: string; amount?: number | string }>>((rows, plant, index) => {
-        rows.push(plant as { name?: string; amount?: number | string });
+      plants.reduce<NoGoalRow[]>((rows, plant, index) => {
+        rows.push({ id: `plant-${index}`, ...(plant as { name?: string; amount?: number | string }) });
 
         const isChunkEnd = (index + 1) % NO_GOAL_PLANTS_PER_PAGE === 0;
         const isLastPlant = index === plants.length - 1;
         if (isChunkEnd || isLastPlant) {
-          rows.push({
-            name: totalRowName,
-            amount: totalAmount
-          });
+          rows.push({ id: `total-${index}`, name: totalRowName, amount: totalAmount });
         }
 
         return rows;
@@ -89,8 +88,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
           "mt-[0.125rem] !w-full max-w-[45.3125rem]",
           plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
         )}
-        renderRow={rowData => {
-          const row = rowData as { name?: string; amount?: number | string };
+        renderRow={row => {
           const isTotalRow = row.name === totalRowName;
           const totalRowStyle = isTotalRow
             ? {
@@ -132,8 +130,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
         pageSize={NO_COUNT_TABLE_SPECIES_PER_PAGE}
         showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
         className={classNames("mt-[0.125rem]", dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3")}
-        renderRow={rowData => {
-          const row = rowData as Record<number, string> & { id: number };
+        renderRow={row => {
           return (
             <TableRow>
               {noCountTableColumns.map((col, idx) => (

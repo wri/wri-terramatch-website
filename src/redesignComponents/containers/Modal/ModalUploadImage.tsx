@@ -337,7 +337,8 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
             <Button
               size="small"
               leftIcon={<DeleteIcon />}
-              className="!border-theme-error-300 !bg-theme-error-100 !text-theme-error-900"
+              classNameContainer="w-fit"
+              typeVariant="negative"
               onClick={handleRemove}
             >
               {t("Remove Image")}

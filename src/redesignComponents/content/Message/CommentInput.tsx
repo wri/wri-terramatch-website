@@ -452,12 +452,12 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
                 ))}
               </Flex>
             )}
-          </Flex>
-          <Flex className="absolute bottom-0 right-0 mt-auto mb-3.5 mr-3 ml-auto shrink-0 items-center gap-1">
-            {showAttachFileIcon && (
-              <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
-            )}
-            {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={handleSend} />}
+            <Flex className="mt-auto ml-auto shrink-0 items-center gap-1">
+              {showAttachFileIcon && (
+                <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
+              )}
+              {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={handleSend} />}
+            </Flex>
           </Flex>
         </Box>
       </Flex>

@@ -1,4 +1,4 @@
-* {
+html {
   @apply font-primary text-base font-light;
 }
 
@@ -74,22 +74,20 @@ strong {
   outline-style: solid !important;
 }
 
-
 .outline-offset-ring:focus-visible {
   outline-offset: 4px;
-  outline: 2px solid #11688D !important;
+  outline: 2px solid #11688d !important;
 }
 
 /* Safari / WebKit only */
 @supports (-webkit-appearance: none) {
   .outline-offset-ring:focus-visible {
     outline-offset: 2px;
-    outline: 2px solid #11688D !important;
+    outline: 2px solid #11688d !important;
   }
 }
 
 @media (max-width: 1200px) {
-
   html,
   body {
     height: 100%;
@@ -100,7 +98,6 @@ strong {
 }
 
 @media (max-width: 1200px) {
-
   iframe,
   html,
   body {

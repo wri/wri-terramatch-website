@@ -92,8 +92,8 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
     align-items: center;
     gap: 0.25rem;
     height: ${size === "small" ? "1.75rem" : "2.5rem"};
-    border: 0.0625rem solid ${getThemedColor("neutral", 400)};
-    border-radius: ${size === "small" ? "0.25rem" : "0.5rem"};
+    border: 0.0625rem solid ${getThemedColor("neutral", 300)};
+    border-radius: 0.25rem;
     padding: ${size === "small" ? "0.25rem 0.5rem" : "0.75rem"};
     background: ${getThemedColor("neutral", 100)};
     box-shadow: 0 0.0625rem 0.125rem 0 #0000000d;
@@ -154,7 +154,6 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
 
   [data-part="control"][data-disabled] {
     cursor: not-allowed;
-    opacity: 0.6;
   }
 
   [data-part="control"][data-disabled] > .chakra-icon {
@@ -168,7 +167,7 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
 
 export const calendarBaseGlobalStyles = css`
   [data-scope="date-picker"][data-part="positioner"] {
-    z-index: 50;
+    z-index: 1600 !important;
   }
 
   [data-scope="date-picker"][data-part="content"] {

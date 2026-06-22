@@ -78,8 +78,8 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
       hideLoader();
       openNotification(
         "success",
-        t("Please update and re-run if validations fail."),
-        t("Success! TerraMatch reviewed the polygon")
+        t("Success! TerraMatch reviewed the polygon"),
+        t("Please update and re-run if validations fail.")
       );
       trackPolygonEvent("polygon_validation_run", {
         ...getPolygonAnalyticsContext({ entityType: entityTypeFromScope }),

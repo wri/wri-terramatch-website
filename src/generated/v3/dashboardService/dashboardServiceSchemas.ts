@@ -235,6 +235,10 @@ export type DashboardProjectsFullDto = {
   hasAccess: boolean;
   cohort: string[] | null;
   objectives: string | null;
+  /**
+   * Long-form project summary for dashboard display
+   */
+  projectSummary: string | null;
   landTenureProjectArea: string[] | null;
 };
 

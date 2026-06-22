@@ -22,7 +22,8 @@ const useLoadSitePolygonsData = (
   statuses: string | null = null,
   sortField: string = "createdAt",
   sortDirection: "ASC" | "DESC" = "ASC",
-  validFilter: string = ""
+  validFilter: string = "",
+  enabled: boolean = true
 ): LoadSitePolygonsDataHook => {
   // Validate entity type
   const entityName = useMemo(() => {
@@ -32,7 +33,6 @@ const useLoadSitePolygonsData = (
     return entityType as "sites" | "projects";
   }, [entityType]);
 
-  // Build filter object for the new API
   const filter = useMemo(() => {
     const filterObj: Record<string, unknown> = {};
 
@@ -59,7 +59,7 @@ const useLoadSitePolygonsData = (
   } = useAllSitePolygons({
     entityName,
     entityUuid,
-    enabled: entityUuid != null,
+    enabled: entityUuid != null && enabled,
     filter,
     sortField,
     sortDirection

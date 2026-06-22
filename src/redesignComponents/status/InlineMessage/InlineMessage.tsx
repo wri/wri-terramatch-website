@@ -32,6 +32,10 @@ const BASE_CSS: Record<string, any> = {
   },
   "& [aria-roledescription] > div > p": {
     maxWidth: "100%"
+  },
+  "& > div": {
+    maxWidth: "100%",
+    padding: "0.5rem 0.75rem"
   }
 };
 

@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, ReactNode } from "react";
 
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import { IMultiActionButtonProps } from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
@@ -16,14 +16,20 @@ export interface ToolbarProps {
   classNameContentLeft?: string;
 }
 
+export type BulkToolbarActionTone = "default" | "danger";
+
+export type BulkToolbarAction = IButtonProps & {
+  id: string;
+  tone?: BulkToolbarActionTone;
+};
+
 export interface BulkActionToolbarProps {
-  primaryButtonProps?: IButtonProps;
-  secondaryButtonProps?: IButtonProps;
-  tertiaryButtonProps?: IButtonProps;
-  quantityButtonProps?: IButtonProps;
-  items?: string;
-  ButtonCancel: IButtonProps;
-  ButtonDelete: IButtonProps;
+  selectedCount: number;
+  cancelAction: IButtonProps;
+  deleteAction: BulkToolbarAction;
+  actions?: BulkToolbarAction[];
+  primaryAction?: IButtonProps;
+  infoTooltip?: ReactNode;
 }
 
 export interface ToolbarFormProps {
