@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ChevronRightIcon from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
+import { useOnboardingCardAnalyticsContext } from "@/utils/analytics/onboardingCardAnalytics.context";
 
 interface AboutProps {
   title?: string;
@@ -15,9 +16,11 @@ interface AboutProps {
     link: string;
   }[];
   className?: string;
+  onLinkClick?: (link: { title: string; link: string }) => void;
 }
-const About: FC<AboutProps> = ({ title, description, links, className }) => {
+const About: FC<AboutProps> = ({ title, description, links, className, onLinkClick }) => {
   const t = useT();
+  const onboardingAnalytics = useOnboardingCardAnalyticsContext();
 
   return (
     <Flex className={twMerge("rounded-1 min-h-0 flex-col gap-2 bg-theme-neutral-100 p-5", className)}>
@@ -40,7 +43,11 @@ const About: FC<AboutProps> = ({ title, description, links, className }) => {
               rightIcon={<ChevronRightIcon />}
               key={link.title}
               className="mobile:max-w-full mobile:[text-wrap:auto]"
-              onClick={() => window.open(link.link, "_blank")}
+              onClick={() => {
+                onLinkClick?.({ title: link.title, link: link.link });
+                onboardingAnalytics?.trackLinkClick(link.title, link.link);
+                window.open(link.link, "_blank");
+              }}
             >
               {t(link.title)}
             </Button>
