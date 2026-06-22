@@ -86,7 +86,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
   });
   const dataAggregated = aggregateState != null ? aggregateState.data : undefined;
   return (
-    <PageBody className="bg-theme-neutral-200 !space-y-10 pt-5 text-darkCustom">
+    <PageBody className="!space-y-10 bg-theme-neutral-200 pt-5 text-darkCustom">
       <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageCard title={t("Progress & Goals")}>
           <GoalsAndProgressEntityTab entity={site} />
