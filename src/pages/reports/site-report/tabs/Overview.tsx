@@ -15,6 +15,7 @@ import ContactSupport from "@/components/extensive/PageElements/ContactSupport/C
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { Framework } from "@/context/framework.provider";
@@ -30,6 +31,7 @@ import { useSiteReportAboutContent } from "@/pages/reports/site-report/constants
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { AreaHectaresIcon } from "@/redesignComponents/foundations/Icons";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
+import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 interface OverviewProps {
@@ -159,10 +161,14 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                   size: "small",
                   children: t("View Progress & Goals"),
                   rightIcon: <ChevronRightIcon />,
-                  onClick: () => goToTab("goals")
+                  onClick: createMetricsCardCtaHandler({ entityType: "site-report", entityId: siteReport.uuid }, () =>
+                    goToTab("goals")
+                  )
                 }}
               >
-                <SiteReportKeyIndicatorsInsights siteReport={siteReport} workdaysTotal={workdaysTotal} />
+                <HighLevelMetricsCard entityType="site-report" entityId={siteReport.uuid}>
+                  <SiteReportKeyIndicatorsInsights siteReport={siteReport} workdaysTotal={workdaysTotal} />
+                </HighLevelMetricsCard>
               </PageItem>
               <PageItem
                 title={t("Featured Images")}

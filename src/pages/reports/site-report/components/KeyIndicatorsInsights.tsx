@@ -66,6 +66,7 @@ const TerrafundSiteReportKeyIndicators: FC<TerrafundSiteReportKeyIndicatorsProps
         icon={<TreeIcon />}
         color="secondary.600"
         className={REPORT_METRIC_CARD_CLASS}
+        metricLabel="trees_planted"
         tooltipContent={getTooltipContent(content.treesPlanted)}
       />
       <MetricCard
@@ -77,6 +78,7 @@ const TerrafundSiteReportKeyIndicators: FC<TerrafundSiteReportKeyIndicatorsProps
         icon={<SurvivalRateIcon />}
         color="secondary.600"
         className={REPORT_METRIC_CARD_CLASS}
+        metricLabel="survival_rate"
         tooltipContent={getTooltipContent(content.survivalRate)}
       />
       <MetricCard
@@ -87,6 +89,7 @@ const TerrafundSiteReportKeyIndicators: FC<TerrafundSiteReportKeyIndicatorsProps
         icon={<RegenerationIcon />}
         color="secondary.600"
         className={REPORT_METRIC_CARD_CLASS}
+        metricLabel="trees_regenerated"
         tooltipContent={getTooltipContent(content.treesRegenerated)}
       />
     </>
@@ -106,6 +109,7 @@ const PpcSiteReportKeyIndicators: FC<PpcSiteReportKeyIndicatorsProps> = ({ siteR
         icon={<TreeIcon />}
         color="secondary.600"
         className={REPORT_METRIC_CARD_CLASS}
+        metricLabel="trees_planted"
         tooltipContent={getTooltipContent(content.treesPlanted)}
       />
       <MetricCard
@@ -116,6 +120,7 @@ const PpcSiteReportKeyIndicators: FC<PpcSiteReportKeyIndicatorsProps> = ({ siteR
         icon={<DirectSeedingIcon />}
         color="secondary.600"
         className={REPORT_METRIC_CARD_CLASS}
+        metricLabel="direct_seeding"
         tooltipContent={getTooltipContent(content.directSeeding)}
       />
       <MetricCard
@@ -126,6 +131,7 @@ const PpcSiteReportKeyIndicators: FC<PpcSiteReportKeyIndicatorsProps> = ({ siteR
         icon={<RegenerationIcon />}
         color="secondary.600"
         className={REPORT_METRIC_CARD_CLASS}
+        metricLabel="trees_regenerating"
         tooltipContent={getTooltipContent(content.treesRegenerating)}
       />
       {workdaysTotal == null ? (
@@ -139,6 +145,7 @@ const PpcSiteReportKeyIndicators: FC<PpcSiteReportKeyIndicatorsProps> = ({ siteR
           icon={<JobsIcon />}
           color="secondary.600"
           className={REPORT_METRIC_CARD_CLASS}
+          metricLabel="workdays"
           tooltipContent={getTooltipContent(content.workdays)}
         />
       )}
@@ -156,6 +163,7 @@ const HbfSiteReportKeyIndicators: FC<HbfSiteReportKeyIndicatorsProps> = ({ siteR
       icon={<TreeIcon />}
       color="secondary.600"
       className="flex-[1]"
+      metricLabel="trees_planted"
       tooltipContent={getTooltipContent(content.treesPlanted)}
     />
   );
