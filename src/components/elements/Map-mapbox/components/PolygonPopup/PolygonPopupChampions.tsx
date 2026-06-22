@@ -1,17 +1,20 @@
 import { useT } from "@transifex/react";
-import router from "next/router";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { useAuditStatuses } from "@/connections/AuditStatus";
 import { closeMapPopupsFromMapPopup, openPolygonSubmitConfirmationFromMapPopup } from "@/context/mapArea.utils";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
-import { setPendingPolygonFocusUuid } from "@/context/polygonTableInteraction.store";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
 import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
 import type { PopupComponentProps, TooltipType } from "../../Map.d";
+import {
+  canNavigateToSitePolygonViewDetails,
+  navigateToSitePolygonViewDetails,
+  resolveViewDetailsSiteUuid
+} from "../../sitePolygonNavigation";
 import {
   formatAreaHectaresForPopup,
   formatTreesPlantedForPopup,
@@ -27,10 +30,20 @@ type PolygonPopupChampionsProps = {
   setShouldRefetchPolygonData?: PopupComponentProps["setShouldRefetchPolygonData"];
   sitePolygon?: SitePolygonLightDto;
   tooltipType?: TooltipType;
+  viewDetailsSiteUuid?: string | null;
 };
 
-export function PolygonPopupChampions({ popup, sitePolygon, tooltipType }: PolygonPopupChampionsProps) {
+export function PolygonPopupChampions({
+  popup,
+  sitePolygon,
+  tooltipType,
+  viewDetailsSiteUuid
+}: PolygonPopupChampionsProps) {
   const t = useT();
+  const siteUuid = useMemo(
+    () => resolveViewDetailsSiteUuid(viewDetailsSiteUuid, sitePolygon),
+    [viewDetailsSiteUuid, sitePolygon]
+  );
   const [open, setOpen] = useState(true);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -90,12 +103,9 @@ export function PolygonPopupChampions({ popup, sitePolygon, tooltipType }: Polyg
       return;
     }
 
-    setPendingPolygonFocusUuid(geometryUuid);
     closeMapPopup();
-    void router.push({ pathname: router.pathname, query: { ...router.query, tab: "polygons" } }, undefined, {
-      shallow: true
-    });
-  }, [closeMapPopup, geometryUuid]);
+    navigateToSitePolygonViewDetails(geometryUuid, siteUuid);
+  }, [closeMapPopup, geometryUuid, siteUuid]);
 
   return (
     <>
@@ -120,7 +130,7 @@ export function PolygonPopupChampions({ popup, sitePolygon, tooltipType }: Polyg
             onEdit={handleEdit}
             onClose={closeMapPopup}
             onViewDetails={handleViewDetails}
-            viewDetailsDisabled={geometryUuid == null}
+            viewDetailsDisabled={!canNavigateToSitePolygonViewDetails(geometryUuid, siteUuid)}
             tooltipType={tooltipType}
           />
         }

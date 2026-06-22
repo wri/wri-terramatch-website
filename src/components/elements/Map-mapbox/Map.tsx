@@ -441,7 +441,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setEditPolygon,
     editPolygon,
     setMobilePopupData,
-    dashboardContext: resolvedDashboardContext
+    dashboardContext: resolvedDashboardContext,
+    viewDetailsSiteUuid: record?.uuid
   });
 
   useEffect(() => {

@@ -37,6 +37,7 @@ type UseMapPopupsParams = {
   editPolygon: EditPolygonState;
   setMobilePopupData: (v: MobilePopupData) => void;
   dashboardContext?: DashboardPopupContext | null;
+  viewDetailsSiteUuid?: string | null;
 };
 
 const buildPopupFeature = (polygonUuid: string): GeoJSONFeature =>
@@ -68,7 +69,8 @@ export function useMapPopups({
   setEditPolygon,
   editPolygon,
   setMobilePopupData,
-  dashboardContext
+  dashboardContext,
+  viewDetailsSiteUuid
 }: UseMapPopupsParams) {
   const championsMap = useChampionsMap();
   const callbacksRef = useRef({ setPolygonFromMap, setEditPolygon, setMobilePopupData });
@@ -100,7 +102,8 @@ export function useMapPopups({
       setLoader,
       setMobilePopupData:
         isMobile || dashboardContext?.dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined,
-      championsMap
+      championsMap,
+      viewDetailsSiteUuid
     };
     popupOptionsRef.current = popupOptions;
 
@@ -133,7 +136,8 @@ export function useMapPopups({
             editPolygon: editPolygonRef.current,
             setPolygonFromMap: callbacksRef.current.setPolygonFromMap,
             setEditPolygon: callbacksRef.current.setEditPolygon,
-            sitePolygonData
+            sitePolygonData,
+            viewDetailsSiteUuid
           }
         );
       } catch (error) {
@@ -159,6 +163,7 @@ export function useMapPopups({
     dashboardContext,
     map,
     draw,
-    championsMap
+    championsMap,
+    viewDetailsSiteUuid
   ]);
 }

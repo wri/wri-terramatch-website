@@ -63,6 +63,7 @@ export type PopupHandlerOptions = {
   /** Tracks the polygonUuid shown in the currently open popup so it can be closed when deleted. */
   setActivePopupPolygonUuid?: (uuid: string | null) => void;
   championsMap?: boolean;
+  viewDetailsSiteUuid?: string | null;
 };
 
 type OpenPolygonPopupParams = {
@@ -85,7 +86,8 @@ export const openPolygonPopup = (
     editPolygon,
     setEditPolygon,
     dashboard,
-    championsMap
+    championsMap,
+    viewDetailsSiteUuid
   } = options;
 
   removePopups(map, "POLYGON");
@@ -142,7 +144,8 @@ export const openPolygonPopup = (
         type,
         editPolygon,
         setEditPolygon,
-        championsMap
+        championsMap,
+        viewDetailsSiteUuid
       })
     )
   );

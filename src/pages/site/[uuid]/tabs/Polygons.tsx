@@ -2,6 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { scrollToSitePolygonTabHeader } from "@/components/elements/Map-mapbox/sitePolygonNavigation";
 import { resolvePolygonTableRowId } from "@/components/elements/Map-mapbox/sitePolygonPopupUtils";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -26,6 +27,7 @@ import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { hasValidationCriteria } from "@/helpers/polygonValidation";
+import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { DownloadIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
@@ -259,6 +261,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
     setPolygonTableHoveredUuid(rowId);
     setFocusPolygonUuid(pendingFocusUuid);
+
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0 });
+      scrollToSitePolygonTabHeader();
+    });
   }, [isLoadingPolygons, polygonsData]);
 
   const handleFocusPolygonConsumed = useCallback(() => {
@@ -550,7 +557,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       <PageContent className="bg-theme-neutral-100">
         <PageItem
           title={t("Polygons")}
-          flexProps={{ width: "100%" }}
+          className="scroll-mt-[5.5rem]"
+          flexProps={{ width: "100%", id: SITE_POLYGON_TAB_HEADER_ID }}
           buttonProps={{
             variant: "secondary",
             size: "small",
