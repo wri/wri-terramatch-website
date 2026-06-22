@@ -2,7 +2,6 @@ import { FormModelType } from "@/connections/Form";
 import { EntityName } from "@/types/common";
 import { OnboardingCardEventName, trackOnboardingCardEvent } from "@/utils/ga4";
 
-/** Agreed card_type values — extend when new onboarding cards are introduced. */
 export const ONBOARDING_CARD_TYPES = {
   MRV_GUIDANCE: "mrv_guidance",
   FINANCIAL_REPORTING: "financial_reporting"
