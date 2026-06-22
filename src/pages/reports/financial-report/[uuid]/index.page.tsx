@@ -1,24 +1,156 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { FC, ReactElement, useCallback, useEffect, useMemo } from "react";
 
-import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
-import EntityStatusBar from "@/components/extensive/EntityStatusBar";
-import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
+import { getFormHeaderLabel, getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullFinancialReport } from "@/connections/Entity";
+import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
+import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
+import { OrganizationIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
+import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
-import FinancialReportHeader from "./components/FinancialReportHeader";
 import AuditLog from "./tabs/AuditLog";
+import FinancialReportDetailsTab from "./tabs/Details";
 import FinancialReportOverviewTab from "./tabs/Overview";
 
-const FinancialReportDetailPage = () => {
+type TabItem = {
+  key: string;
+  title: string;
+  renderBody: () => ReactElement;
+};
+
+type FinancialReportContentProps = {
+  financialReport: FinancialReportFullDto;
+  taskDueAt?: string;
+};
+
+const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialReport, taskDueAt }) => {
   const t = useT();
+  const router = useRouter();
+  const financialReportUUID = financialReport.uuid;
+  const currentTab = (router.query.tab as string) ?? "report-data";
+
+  const window = useReportingWindow(toFramework(financialReport.frameworkKey), financialReport?.dueAt!);
+  const taskTitle = t("Reporting Task {window}", { window });
+
+  const headerReportTitle = getFormHeaderLabel(financialReport.organisationName ?? "", taskTitle);
+
+  const navigateToTab = useCallback(
+    (tab: string) => {
+      router.push(`/reports/financial-report/${financialReportUUID}?tab=${tab}`, undefined, { shallow: true });
+    },
+    [router, financialReportUUID]
+  );
+
+  const tabItems = useMemo<TabItem[]>(
+    () => [
+      {
+        key: "report-data",
+        title: t("Report Data"),
+        renderBody: () => <FinancialReportOverviewTab report={financialReport} />
+      },
+      {
+        key: "details",
+        title: t("Report Details"),
+        renderBody: () => <FinancialReportDetailsTab report={financialReport} />
+      },
+      {
+        key: "audit-log",
+        title: t("Audit Log"),
+        renderBody: () => <AuditLog financialReport={financialReport} />
+      }
+    ],
+    [financialReport, t]
+  );
+
+  const visibleTabItems = useMemo(() => {
+    if (financialReport.nothingToReport) {
+      return tabItems.filter(item => item.key === "report-data");
+    }
+
+    return tabItems;
+  }, [financialReport.nothingToReport, tabItems]);
+
+  const tabBarTabs = useMemo(
+    () =>
+      visibleTabItems.map(item => ({
+        value: item.key,
+        label: item.title
+      })),
+    [visibleTabItems]
+  );
+
+  const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "report-data";
+  const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+
+  return (
+    <>
+      <ResponsiveTypography />
+      <Head>
+        <title>{headerReportTitle}</title>
+      </Head>
+      <ReportBanner
+        report={financialReport}
+        title={headerReportTitle}
+        dueAt={taskDueAt ?? financialReport.dueAt}
+        entityName="financial-report"
+        breadcrumbs={[
+          {
+            label: t("Organization - {organisationName}", { organisationName: financialReport.organisationName }),
+            link: `/organization/${financialReport.organisationUuid}?tab=financial_information`,
+            icon: <OrganizationIcon className="!text-theme-primary-900" />
+          },
+          {
+            label: t("Financial Reports"),
+            link: `/organization/${financialReport.organisationUuid}?tab=financial_information`
+          },
+          {
+            label: t("Financial Report - {period}", { period: getShortPeriodLabel(taskTitle ?? "", true) }),
+            link: `/reports/financial-report/${financialReportUUID}`
+          }
+        ]}
+        suffix={
+          <div className="flex items-center gap-1.5">
+            {financialReport.organisationUuid != null && (
+              <Button
+                variant="borderless"
+                size="small"
+                className="underline underline-offset-2"
+                onClick={() => router.push(`/organization/${financialReport.organisationUuid}`)}
+              >
+                {t("Organisation Profile")}
+              </Button>
+            )}
+            {financialReport.organisationUuid != null && <span className="text-sm text-theme-neutral-300">|</span>}
+          </div>
+        }
+        toolbar={{
+          tabBar: {
+            tabs: tabBarTabs,
+            defaultValue: activeTab,
+            onTabClick: (tabValue: string) => {
+              navigateToTab(tabValue);
+            }
+          }
+        }}
+      />
+      <div className="flex flex-1">{activeTabItem.renderBody()}</div>
+      <PageFooter />
+    </>
+  );
+};
+
+const FinancialReportDetailPage = () => {
   const router = useRouter();
   const financialReportUUID = router.query.uuid as string;
 
@@ -39,37 +171,13 @@ const FinancialReportDetailPage = () => {
   });
 
   return (
-    <LoadingContainer loading={!isLoaded}>
-      {financialReport == null ? null : (
-        <>
-          <Head>
-            <title>{`${t("Financial Report")}`}</title>
-          </Head>
-          <PageBreadcrumbs
-            links={[
-              {
-                title: financialReport.organisationName ?? "",
-                path: `/organization/${financialReport.organisationUuid}`
-              },
-              {
-                title: `Financial Report ${
-                  financialReport.createdAt != null ? new Date(financialReport.createdAt).toLocaleDateString() : ""
-                }`
-              }
-            ]}
-          />
-          <FinancialReportHeader financialReport={financialReport} />
-          <EntityStatusBar entityName="financialReports" entity={financialReport} />
-          <SecondaryTabs
-            tabItems={[
-              { key: "overview", title: t("Overview"), body: <FinancialReportOverviewTab report={financialReport} /> },
-              { key: "audit-log", title: t("Audit Log"), body: <AuditLog financialReport={financialReport} /> }
-            ]}
-            containerClassName="max-w-[82vw] px-10 xl:px-0 w-full  overflow-y-hidden"
-          />
-        </>
-      )}
-    </LoadingContainer>
+    <FrameworkProvider frameworkKey={financialReport?.frameworkKey}>
+      <LoadingContainer loading={!isLoaded}>
+        {financialReport == null ? null : (
+          <FinancialReportContent financialReport={financialReport} taskDueAt={financialReport.dueAt!} />
+        )}
+      </LoadingContainer>
+    </FrameworkProvider>
   );
 };
 

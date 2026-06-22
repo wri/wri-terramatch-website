@@ -120,7 +120,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
             link: `/project/${projectReport.projectUuid}?tab=reporting-tasks`
           },
           {
-            label: getShortPeriodLabel(taskTitle ?? ""),
+            label: getShortPeriodLabel(taskTitle ?? "", true),
             link: `/project/${projectReport.projectUuid ?? ""}/reporting-task/${projectReport.taskUuid ?? ""}`
           },
           { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` }

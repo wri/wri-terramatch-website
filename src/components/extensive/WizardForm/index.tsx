@@ -471,12 +471,16 @@ function WizardForm(props: WizardFormProps) {
       return entity?.organisationName != null || entity?.fundingProgrammeName != null
         ? `${entity?.organisationName ?? ""} - ${entity?.fundingProgrammeName ?? ""}`
         : t("Unnamed Application");
-    } else if (formModel?.model === "projectReports") {
+    } else if (formModel?.model === "projectReports" || formModel?.model === "srpReports") {
       return getFormHeaderLabel(entity?.projectName ?? "", taskTitle);
     } else if (formModel?.model === "siteReports") {
       return getFormHeaderLabel(entity?.siteName ?? "", taskTitle);
     } else if (formModel?.model === "nurseryReports") {
       return getFormHeaderLabel(entity?.nurseryName ?? "", taskTitle);
+    } else if (formModel?.model === "disturbanceReports") {
+      return entity?.projectName + " - " + entity?.title;
+    } else if (formModel?.model === "financialReports") {
+      return getFormHeaderLabel(entity?.organisationName ?? "", taskTitle);
     } else {
       return mapEntityTitle(entity?.title ?? entity?.name ?? null, formModel?.model ?? "", t);
     }

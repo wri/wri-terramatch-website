@@ -254,15 +254,15 @@ const SHORT_MONTHS: Record<string, string> = {
   December: "Dec"
 };
 
-export const getShortPeriodLabel = (taskTitle: string) => {
+export const getShortPeriodLabel = (taskTitle: string, shortMonths: boolean = false) => {
   if (taskTitle == null || taskTitle === "") return "";
   const match = taskTitle.match(/(\S+)\s+-\s+(\S+)\s+(\d{4})$/);
   if (!match) return taskTitle;
-  const month = SHORT_MONTHS[match[2]] ?? match[2];
+  const month = shortMonths ? SHORT_MONTHS[match[2]] ?? match[2] : match[2];
   return `${month} ${match[3]}`;
 };
 
-export const getFormHeaderLabel = (entityName: string, taskTitle: string) => {
+export const getFormHeaderLabel = (entityName: string, taskTitle: string, shortMonths: boolean = false) => {
   if (taskTitle == null || taskTitle === "") return entityName;
-  return `${entityName} - ${getShortPeriodLabel(taskTitle)}`;
+  return `${entityName} - ${getShortPeriodLabel(taskTitle, shortMonths)}`;
 };

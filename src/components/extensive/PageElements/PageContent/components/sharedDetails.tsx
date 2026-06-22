@@ -11,11 +11,14 @@ import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavig
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
 import {
+  DisturbanceReportFullDto,
+  FinancialReportFullDto,
   NurseryReportFullDto,
   ProjectFullDto,
   ProjectReportFullDto,
   SiteFullDto,
-  SiteReportFullDto
+  SiteReportFullDto,
+  SrpReportFullDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isEntityAwaitingApproval, isEntityReport, pluralEntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -42,12 +45,28 @@ const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }
 export type SharedDetailsProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<unknown>;
-  entityName: "projects" | "sites" | "project-reports" | "site-reports" | "nursery-reports";
+  entityName:
+    | "projects"
+    | "sites"
+    | "project-reports"
+    | "site-reports"
+    | "nursery-reports"
+    | "srp-reports"
+    | "disturbance-reports"
+    | "financial-reports";
   entityUUID: string;
   entityStatus?: string | null;
   updateRequestStatus?: string | null;
   stepIndex: number;
-  entity: ProjectFullDto | SiteFullDto | ProjectReportFullDto | SiteReportFullDto | NurseryReportFullDto;
+  entity:
+    | ProjectFullDto
+    | SiteFullDto
+    | ProjectReportFullDto
+    | SiteReportFullDto
+    | NurseryReportFullDto
+    | SrpReportFullDto
+    | DisturbanceReportFullDto
+    | FinancialReportFullDto;
   feedbackFieldsOptions?: string[] | null;
 };
 
