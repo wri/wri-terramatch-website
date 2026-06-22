@@ -1,6 +1,6 @@
-import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useRef } from "react";
+import { createContext, FC, ReactNode, useCallback, useContext, useEffect } from "react";
 
-import { trackMetricsCardAnalyticsEvent } from "@/utils/analytics/metricsCardAnalytics";
+import { trackMetricsCardAnalyticsEvent, trackMetricsCardViewedOnce } from "@/utils/analytics/metricsCardAnalytics";
 import { MetricsCardEntityType } from "@/utils/ga4";
 
 type MetricsCardAnalyticsContextValue = {
@@ -19,13 +19,8 @@ export type HighLevelMetricsCardProps = {
 };
 
 const HighLevelMetricsCard: FC<HighLevelMetricsCardProps> = ({ entityType, entityId, children }) => {
-  const hasTrackedView = useRef(false);
-
   useEffect(() => {
-    if (hasTrackedView.current || entityId.trim() === "") return;
-
-    hasTrackedView.current = true;
-    trackMetricsCardAnalyticsEvent("metrics_card_viewed", { entityType, entityId });
+    trackMetricsCardViewedOnce({ entityType, entityId });
   }, [entityId, entityType]);
 
   const onTooltipEngaged = useCallback(

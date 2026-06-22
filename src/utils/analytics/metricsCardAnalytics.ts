@@ -63,6 +63,11 @@ const isValidMetricsCardPayload = (
   return true;
 };
 
+const viewedMetricsCards = new Set<string>();
+
+const getMetricsCardViewKey = (entityType: MetricsCardEntityType, entityId: string): string =>
+  `${entityType}:${entityId}`;
+
 export const trackMetricsCardAnalyticsEvent = (
   eventName: MetricsCardEventName,
   payload: MetricsCardAnalyticsPayload
@@ -77,6 +82,17 @@ export const trackMetricsCardAnalyticsEvent = (
       metricLabel: payload.metricLabel
     })
   );
+};
+
+export const trackMetricsCardViewedOnce = (payload: Omit<MetricsCardAnalyticsPayload, "metricLabel">): void => {
+  const entityId = payload.entityId?.trim() ?? "";
+  if (entityId === "") return;
+
+  const viewKey = getMetricsCardViewKey(payload.entityType, entityId);
+  if (viewedMetricsCards.has(viewKey)) return;
+
+  viewedMetricsCards.add(viewKey);
+  trackMetricsCardAnalyticsEvent("metrics_card_viewed", { ...payload, entityId });
 };
 
 export const createMetricsCardCtaHandler = (

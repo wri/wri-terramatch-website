@@ -86,7 +86,8 @@ type ProgressBarMetricCardContentKeys =
   | "iconWithColor"
   | "type"
   | "tooltipContent"
-  | "classNameTitle";
+  | "classNameTitle"
+  | "metricLabel";
 
 export type ProgressBarMetricCardContentProps = Pick<MetricCardCommonVariantProps, ProgressBarMetricCardContentKeys>;
 
