@@ -83,7 +83,6 @@ export type PopupComponentProps = {
   dashboardMode?: string;
   /** When true, map uses the champions (non-admin) layout and controls. */
   championsMap?: boolean;
-  viewDetailsSiteUuid?: string | null;
 };
 
 /** Data shape passed to setMobilePopupData; mirrors PopupComponentProps minus the live Popup instance. */

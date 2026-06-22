@@ -8,20 +8,19 @@ const SITE_DETAIL_PATH = "/site/[uuid]";
 
 export { SITE_DETAIL_PATH };
 
-export const resolveViewDetailsSiteUuid = (
-  explicitSiteUuid?: string | null,
-  sitePolygon?: SitePolygonLightDto
-): string | null => {
-  if (explicitSiteUuid != null && explicitSiteUuid !== "") {
-    return explicitSiteUuid;
-  }
+let viewDetailsSiteUuid: string | null = null;
 
+export const setViewDetailsSiteUuid = (siteUuid?: string | null): void => {
+  viewDetailsSiteUuid = siteUuid != null && siteUuid !== "" ? siteUuid : null;
+};
+
+export const resolveViewDetailsSiteUuid = (sitePolygon?: SitePolygonLightDto): string | null => {
   const siteId = sitePolygon?.siteId;
   if (siteId != null && siteId !== "") {
     return siteId;
   }
 
-  return null;
+  return viewDetailsSiteUuid;
 };
 
 export const canNavigateToSitePolygonViewDetails = (

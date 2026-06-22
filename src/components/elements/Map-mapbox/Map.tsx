@@ -63,6 +63,7 @@ import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
 import FilterControl from "./MapControls/FilterControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import { MapStyle } from "./MapControls/types";
+import { setViewDetailsSiteUuid } from "./sitePolygonNavigation";
 
 export type { DashboardGetProjectsData, PolygonCentroid };
 
@@ -121,7 +122,7 @@ export interface AdminMapExtras {
   validationType?: string;
   polygonChecks?: boolean;
   siteData?: boolean;
-  record?: { uuid?: string; organisation?: { name?: string } };
+  record?: { uuid?: string; projectUuid?: string | null; organisation?: { name?: string } };
   showDownloadPolygons?: boolean;
   setIsLoadingDelayedJob?: (value: boolean) => void;
   isLoadingDelayedJob?: boolean;
@@ -427,6 +428,12 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     highlight: polygonTableHighlight
   });
 
+  useEffect(() => {
+    const siteUuid = record?.projectUuid != null ? record.uuid : null;
+    setViewDetailsSiteUuid(siteUuid);
+    return () => setViewDetailsSiteUuid(null);
+  }, [record?.projectUuid, record?.uuid]);
+
   useMapPopups({
     map,
     draw,
@@ -441,8 +448,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setEditPolygon,
     editPolygon,
     setMobilePopupData,
-    dashboardContext: resolvedDashboardContext,
-    viewDetailsSiteUuid: record?.uuid
+    dashboardContext: resolvedDashboardContext
   });
 
   useEffect(() => {

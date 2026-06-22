@@ -30,20 +30,11 @@ type PolygonPopupChampionsProps = {
   setShouldRefetchPolygonData?: PopupComponentProps["setShouldRefetchPolygonData"];
   sitePolygon?: SitePolygonLightDto;
   tooltipType?: TooltipType;
-  viewDetailsSiteUuid?: string | null;
 };
 
-export function PolygonPopupChampions({
-  popup,
-  sitePolygon,
-  tooltipType,
-  viewDetailsSiteUuid
-}: PolygonPopupChampionsProps) {
+export function PolygonPopupChampions({ popup, sitePolygon, tooltipType }: PolygonPopupChampionsProps) {
   const t = useT();
-  const siteUuid = useMemo(
-    () => resolveViewDetailsSiteUuid(viewDetailsSiteUuid, sitePolygon),
-    [viewDetailsSiteUuid, sitePolygon]
-  );
+  const siteUuid = useMemo(() => resolveViewDetailsSiteUuid(sitePolygon), [sitePolygon]);
   const [open, setOpen] = useState(true);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
