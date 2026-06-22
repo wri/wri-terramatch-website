@@ -18,6 +18,7 @@ import type { PolygonTableRow } from "./PolygonTableRow";
 
 type SitePolygonModalsProps = {
   siteUuid: string;
+  siteHasExistingPolygons?: boolean;
   bulkEditPayload: { polygons: PolygonTableRow[] } | null;
   deletePayload: { polygons: PolygonTableRow[] } | null;
   submitPayload: { eligibleCount: number; totalCount: number; polygons: PolygonTableRow[] } | null;
@@ -63,6 +64,7 @@ type SitePolygonModalsProps = {
 
 const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   siteUuid,
+  siteHasExistingPolygons = false,
   bulkEditPayload,
   deletePayload,
   submitPayload,
@@ -113,6 +115,7 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
     <UploadPolygons
       open={openUploadModal}
       siteUuid={siteUuid}
+      siteHasExistingPolygons={siteHasExistingPolygons}
       onOpenChange={onUploadModalOpenChange}
       onUploadSuccess={onUploadSuccess}
       onUploadError={onUploadError}

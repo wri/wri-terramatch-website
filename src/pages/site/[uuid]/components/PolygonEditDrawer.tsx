@@ -51,7 +51,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
 }) => {
   const t = useT();
   const [, { user }] = useMyUser();
-  const { draftPolygonGeometry } = useMapAreaContext();
+  const { draftPolygonGeometry, siteData } = useMapAreaContext();
   const [activeTab, setActiveTab] = useState<string>("edit");
   const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
   const deletePolygonRef = useRef<(() => Promise<void>) | null>(null);
@@ -257,6 +257,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                 )}
                 {activeTab === "systemValidation" && (
                   <PolygonSystemValidationContent
+                    siteUuid={siteData?.uuid ?? ""}
                     polygon={selectedPolygon}
                     onOverlapFixed={onOverlapFixed}
                     onRunValidation={onRunValidation}

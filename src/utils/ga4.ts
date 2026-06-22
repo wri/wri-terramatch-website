@@ -5,12 +5,26 @@ type PolygonEventName =
   | "polygon_viewed"
   | "polygon_commented"
   | "polygon_validation_run"
+  | "polygon_validation_error"
   | "polygon_overlap_fix_clicked"
+  | "polygon_run_validation_clicked"
   | "polygon_downloaded"
   | "polygon_uploaded"
+  | "polygon_upload_attempted"
+  | "polygon_upload_succeeded"
+  | "polygon_upload_failed"
+  | "polygon_upload_error"
+  | "polygon_reuploaded"
   | "polygon_submitted"
   | "polygon_image_edited"
-  | "polygon_gallery_viewed";
+  | "polygon_gallery_viewed"
+  | "polygon_search_used"
+  | "polygon_filter_applied"
+  | "polygon_filter_cleared"
+  | "first_pass_validation_passed"
+  | "polygon_status_changed"
+  | "polygon_information_required"
+  | "bulk_action_completed";
 
 export type FormSectionEventName = "section_started" | "section_completed" | "section_error_triggered";
 

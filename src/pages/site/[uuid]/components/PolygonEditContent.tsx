@@ -45,8 +45,8 @@ import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { DownloadIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
+import { trackPolygonDownloaded, trackPolygonStatusChanged } from "@/utils/polygonAnalytics";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
-import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
 import {
   closePolygonProgressToast,
@@ -535,13 +535,30 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       }
       const filename = formatFileName(`${polygon?.name ?? "polygon"}_anr_monitoring_plots`);
       downloadGeoJsonFile(geojson, filename);
+      if (resolvedSiteUuid !== "" && geometryPolygonUuid !== "") {
+        trackPolygonDownloaded({
+          siteUuid: resolvedSiteUuid,
+          polygonType: "monitoring_plot",
+          polygonId: geometryPolygonUuid,
+          polygonCount: 1
+        });
+      }
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloadingSamplePlots);
       showPolygonCompleteToast(toastLabels.downloadingSamplePlotsComplete);
     } catch (error) {
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloadingSamplePlots);
       showPolygonErrorToast(t("Error downloading ANR monitoring plots"));
     }
-  }, [isAnrEligible, polygon?.name, showStatusToast, sitePolygonUuid, t, toastLabels]);
+  }, [
+    geometryPolygonUuid,
+    isAnrEligible,
+    polygon?.name,
+    resolvedSiteUuid,
+    showStatusToast,
+    sitePolygonUuid,
+    t,
+    toastLabels
+  ]);
 
   const makeVersionActive = useCallback(
     async (version: SitePolygonLightDto) => {
@@ -614,6 +631,14 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
     try {
       await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon", { includeExtendedData: true });
+      if (resolvedSiteUuid !== "") {
+        trackPolygonDownloaded({
+          siteUuid: resolvedSiteUuid,
+          polygonType: "standard",
+          polygonId: geometryPolygonUuid,
+          polygonCount: 1
+        });
+      }
       onClose?.();
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
       showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
@@ -621,7 +646,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
       showPolygonErrorToast(t("Error downloading polygon"));
     }
-  }, [geometryPolygonUuid, onClose, polygon?.name, showStatusToast, t, toastLabels]);
+  }, [geometryPolygonUuid, onClose, polygon?.name, resolvedSiteUuid, showStatusToast, t, toastLabels]);
 
   const handleSubmitPolygon = useCallback(
     async (comment: string) => {
@@ -639,6 +664,14 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
       try {
         await bulkUpdateSitePolygonStatus([polygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, comment);
+        if (resolvedSiteUuid !== "" && geometryPolygonUuid !== "") {
+          trackPolygonStatusChanged({
+            siteUuid: resolvedSiteUuid,
+            polygonId: geometryPolygonUuid,
+            fromStatus: polygon.status ?? "draft",
+            toStatus: POLYGON_PENDING_APPROVAL
+          });
+        }
         pruneSitePolygonsCache();
         closeMapPopups();
         invalidatePolygonMapTiles();
@@ -661,8 +694,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       invalidatePolygonMapTiles,
       onClose,
       onSaved,
+      geometryPolygonUuid,
       polygon?.status,
       polygon?.uuid,
+      resolvedSiteUuid,
       setIsUserDrawingEnabled,
       setPolygonGeometryEdit,
       setShouldRefetchPolygonData,

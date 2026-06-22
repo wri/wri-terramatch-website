@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { SitePolygonsIndexQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
+import { trackPolygonFilterCleared } from "@/utils/polygonAnalytics";
 
 import {
   EMPTY_POLYGON_FILTERS,
@@ -13,10 +14,11 @@ import {
 } from "../components/polygonFilter.constants";
 
 type UseSitePolygonFiltersParams = {
+  siteUuid: string;
   t: (key: string, params?: Record<string, unknown>) => string;
 };
 
-export const useSitePolygonFilters = ({ t }: UseSitePolygonFiltersParams) => {
+export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersParams) => {
   const [polygonSearch, setPolygonSearch] = useState("");
   const [debouncedPolygonSearch, setDebouncedPolygonSearch] = useState("");
   const [polygonFilters, setPolygonFilters] = useState<PolygonFilterState>(EMPTY_POLYGON_FILTERS);
@@ -46,10 +48,11 @@ export const useSitePolygonFilters = ({ t }: UseSitePolygonFiltersParams) => {
   }, [debouncedPolygonSearch, polygonFilters]);
 
   const handleClearPolygonFilters = useCallback(() => {
+    trackPolygonFilterCleared({ siteUuid });
     setPolygonFilters(EMPTY_POLYGON_FILTERS);
     setPolygonSearch("");
     setDebouncedPolygonSearch("");
-  }, []);
+  }, [siteUuid]);
 
   const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
