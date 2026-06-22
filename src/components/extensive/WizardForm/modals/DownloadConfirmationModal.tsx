@@ -28,6 +28,7 @@ const DownloadConfirmationModal: FC<DownloadConfirmationModalProps> = ({ title, 
           id: "download",
           children: confirmLabel ?? t("Download"),
           variant: "primary",
+          className: "!w-full",
           onClick: async () => {
             handleClose();
             await onConfirm();
