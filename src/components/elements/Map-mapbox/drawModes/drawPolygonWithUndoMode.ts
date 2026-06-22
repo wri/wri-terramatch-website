@@ -1,5 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import type { Map as MapboxMap } from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 
 import { dispatchPolygonDrawCanUndoChanged, isPolygonDrawUndoShortcut } from "../interactions/draftDrawEvents";
 import { applyMapDrawingCursor } from "../interactions/mapDrawingCursor";
