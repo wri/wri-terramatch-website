@@ -67,7 +67,7 @@ export const trackReportAnalyticsEvent = (
   params: ReportAnalyticsContext & Record<string, string | number | boolean | null | undefined>
 ): void => {
   const { entityType, entityId, userRole, ...rest } = params;
-  if (entityType == null || entityType === "" || entityId == null || entityId === "") return;
+  if (entityId == null || entityId === "") return;
 
   trackReportEvent(eventName, {
     ...getReportAnalyticsContext({ entityType, entityId, userRole }),
