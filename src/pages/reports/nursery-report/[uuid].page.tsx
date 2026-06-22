@@ -90,6 +90,9 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
               "Your gallery is currently empty. Add images by using the 'Edit' button on this nursery report."
             )}
             sharedDriveLink={nurseryReport.sharedDriveLink ?? undefined}
+            assetDownload={
+              nurseryReport.nurseryUuid != null ? { entity: "nurseries", uuid: nurseryReport.nurseryUuid } : undefined
+            }
           />
         )
       }
@@ -168,7 +171,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
               </Button>
             )}
             {nurseryReport.nurseryUuid != null && nurseryReport.projectReportUuid != null && (
-              <span className="text-theme-neutral-300 text-sm">|</span>
+              <span className="text-sm text-theme-neutral-300">|</span>
             )}
             {nurseryReport.projectReportUuid != null && (
               <Button

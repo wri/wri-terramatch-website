@@ -109,6 +109,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
               "Your gallery is currently empty. Add images by using the 'Edit' button on this site report."
             )}
             sharedDriveLink={siteReport.sharedDriveLink ?? undefined}
+            assetDownload={siteReport.siteUuid != null ? { entity: "sites", uuid: siteReport.siteUuid } : undefined}
           />
         )
       },
@@ -190,7 +191,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
           <Flex gap={1.5} alignItems="center">
             {suffixButtons.map((button, index) => (
               <Flex key={button.key} gap={1.5} alignItems="center">
-                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
+                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
                 <Button
                   variant="borderless"
                   size="small"
