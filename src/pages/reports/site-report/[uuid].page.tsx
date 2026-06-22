@@ -178,7 +178,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
             link: `/site/${siteReport.siteUuid ?? ""}?tab=completed-tasks`
           },
           {
-            label: t("Site Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "") }),
+            label: t("Site Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),
             link: `/reports/site-report/${siteReportUUID}`
           }
         ]}

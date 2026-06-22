@@ -145,7 +145,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
             link: `/nursery/${nurseryReport.nurseryUuid}?tab=completed-tasks`
           },
           {
-            label: t("Nursery Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "") }),
+            label: t("Nursery Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),
             link: `/reports/nursery-report/${nurseryReportUUID}`
           }
         ]}

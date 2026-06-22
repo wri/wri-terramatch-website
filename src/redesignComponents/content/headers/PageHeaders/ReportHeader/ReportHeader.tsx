@@ -10,9 +10,12 @@ import { FormEntity } from "@/connections/Form";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import {
+  DisturbanceReportFullDto,
+  FinancialReportFullDto,
   NurseryReportFullDto,
   ProjectReportFullDto,
-  SiteReportFullDto
+  SiteReportFullDto,
+  SrpReportFullDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { v3EntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -28,7 +31,13 @@ import SeparatorDot from "../components/SeparatorDot";
 import PageHeader from "../PageHeader";
 
 export interface ReportHeaderProps {
-  report: ProjectReportFullDto | SiteReportFullDto | NurseryReportFullDto;
+  report:
+    | ProjectReportFullDto
+    | SiteReportFullDto
+    | NurseryReportFullDto
+    | SrpReportFullDto
+    | DisturbanceReportFullDto
+    | FinancialReportFullDto;
   title: string;
   dueAt?: string | null;
   entityName: EntityName | SingularEntityName;
@@ -89,15 +98,19 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
             color="neutral.900"
             className="-ml-[0.5rem] flex items-center gap-2 mobile:w-full mobile:max-w-full mobile:overflow-x-auto"
           >
-            <Button
-              variant="borderless"
-              size="small"
-              className="-mr-2"
-              onClick={() => report.projectUuid != null && router.push(`/project/${report.projectUuid}`)}
-            >
-              {report.projectName ?? "—"}
-            </Button>
-            <SeparatorDot />
+            {formEntityName !== "financialReports" && "projectUuid" in report && (
+              <>
+                <Button
+                  variant="borderless"
+                  size="small"
+                  className="-mr-2"
+                  onClick={() => report.projectUuid != null && router.push(`/project/${report.projectUuid}`)}
+                >
+                  {report.projectName ?? "—"}
+                </Button>
+                <SeparatorDot />
+              </>
+            )}
             <Button
               variant="borderless"
               size="small"

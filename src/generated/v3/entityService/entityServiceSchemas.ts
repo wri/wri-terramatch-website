@@ -1373,6 +1373,8 @@ export type DisturbanceReportLightDto = {
    */
   organisationUuid: string | null;
   intensity: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
   /**
    * @format date-time
    */
@@ -2252,6 +2254,9 @@ export type FinancialReportFullDto = {
    * The associated organisation status
    */
   organisationStatus: string | null;
+  reportTitle: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
   fundingTypes: FundingTypeDto[] | null;
 };
 
@@ -2286,6 +2291,8 @@ export type DisturbanceReportFullDto = {
    */
   organisationUuid: string | null;
   intensity: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
   /**
    * @format date-time
    */
@@ -2393,6 +2400,9 @@ export type SrpReportFullDto = {
   answers: string | null;
   restorationPartnersDescription: string | null;
   totalUniqueRestorationPartners: number;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
+  reportTitle: string | null;
   media: MediaDto[];
 };
 
@@ -3604,6 +3614,7 @@ export type ApplicationHistoryEntryDto = {
     | "reminder-sent"
     | "polygon-data-submission"
     | "ready-for-baseline"
+    | "polygon-validation"
     | null;
   status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
   /**
