@@ -73,13 +73,7 @@ const ModalConfirmation: FC<ModalConfirmationProps> = ({
           </Text>
         </Flex>
       }
-      footer={
-        <ButtonGroup
-          // buttons={buttonsCancel?.map(button => ({ ...button, size: "small", variant: "secondary" })) ?? []}
-          groups={groups as { id: string; buttons: IButtonProps[] }[]}
-          classNameGroup="!w-full"
-        />
-      }
+      footer={<ButtonGroup groups={groups as { id: string; buttons: IButtonProps[] }[]} classNameGroup="!w-full" />}
     />
   );
 };
