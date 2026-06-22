@@ -29,12 +29,18 @@ import AssetDownloadButton, { ASSET_DOWNLOAD_ENTITIES, AssetDownloadEntity } fro
 import ModalAddImages, { FileUploadEntity } from "../Modal/ModalAddImages";
 import { ModalId } from "../Modal/ModalConst";
 
+export type EntityGalleryAssetDownload = {
+  entity: AssetDownloadEntity;
+  uuid: string;
+};
+
 export interface EntityGalleryCardProps {
   modelTitle: TranslatedText;
   modelName: EntityName;
   modelUUID: string;
   entityData: any;
   emptyStateContent: TranslatedText;
+  assetDownload?: EntityGalleryAssetDownload;
 }
 
 const EntityGalleryCard = ({
@@ -42,7 +48,8 @@ const EntityGalleryCard = ({
   modelName,
   modelUUID,
   entityData,
-  emptyStateContent
+  emptyStateContent,
+  assetDownload
 }: EntityGalleryCardProps) => {
   const { openModal, closeModal } = useModalContext();
   const contextMapArea = useMapAreaContext();
@@ -186,7 +193,11 @@ const EntityGalleryCard = ({
     );
   };
 
-  const showAssetDownload = !isSiteReport && ASSET_DOWNLOAD_ENTITIES.includes(modelName as AssetDownloadEntity);
+  const assetDownloadConfig =
+    assetDownload ??
+    (!isSiteReport && ASSET_DOWNLOAD_ENTITIES.includes(modelName as AssetDownloadEntity)
+      ? { entity: modelName as AssetDownloadEntity, uuid: modelUUID }
+      : undefined);
 
   return (
     <>
@@ -229,8 +240,8 @@ const EntityGalleryCard = ({
             title={t("All Images")}
             headerChildren={
               <div className="flex items-center gap-4">
-                {showAssetDownload && (
-                  <AssetDownloadButton entity={modelName as AssetDownloadEntity} uuid={modelUUID} />
+                {assetDownloadConfig != null && (
+                  <AssetDownloadButton entity={assetDownloadConfig.entity} uuid={assetDownloadConfig.uuid} />
                 )}
                 <Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>
               </div>
