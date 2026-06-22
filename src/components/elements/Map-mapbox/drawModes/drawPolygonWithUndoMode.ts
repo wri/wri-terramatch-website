@@ -85,7 +85,7 @@ export const drawPolygonWithUndoMode: MapboxDraw.DrawCustomMode<DrawPolygonModeS
     const state = baseDrawPolygonMode.onSetup!.call(this, options);
     activeDrawModeState = state;
     activeDrawModeContext = this as unknown as DrawModeRuntimeContext;
-    applyMapDrawingCursor(this.map as MapboxMap);
+    applyMapDrawingCursor(this.map as unknown as MapboxMap);
     syncPolygonDrawCanUndo();
     return state;
   },
