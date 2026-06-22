@@ -28,6 +28,7 @@ import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
 import SiteReportKeyIndicatorsInsights from "@/pages/reports/site-report/components/KeyIndicatorsInsights";
 import { useSiteReportAboutContent } from "@/pages/reports/site-report/constants/siteReportAboutContent";
+import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { AreaHectaresIcon } from "@/redesignComponents/foundations/Icons";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
@@ -112,7 +113,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const goToSiteMap = useCallback(() => {
     if (site?.uuid == null) return;
 
-    router.push(`/site/${site.uuid}?tab=map`);
+    router.push(`/site/${site.uuid}?tab=polygons`);
   }, [router, site?.uuid]);
 
   const aboutContentItem = useMemo(() => {
@@ -207,13 +208,14 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
           </Flex>
           <Flex gap={7}>
             {site != null && (
-              <PageItem title={t("Site Map")} flexProps={{ flex: 1 }}>
-                <Box className="relative h-auto">
+              <PageItem title={t("Site Map")} flexProps={{ flex: 1 }} className="min-h-0">
+                <Box className="relative overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
                   <OverviewMapArea
                     entityModel={site}
                     type="sites"
-                    className="max-h-[27rem]"
+                    className="h-full min-h-0 rounded"
                     disabledPolygonPanel={true}
+                    hideFullscreenControl={true}
                   />
                   {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
                     <MapPlaceholder
