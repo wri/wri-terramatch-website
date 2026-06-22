@@ -21,7 +21,7 @@ interface EntitySetUpSectionProps {
 const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChange, type }) => {
   const t = useT();
   const { defaultValues, steps, isReady } = useEntityFormSetup(type, entity.uuid);
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: type,
     entityUUID: entity.uuid,
     entityStatus: entity.status ?? "started",
@@ -82,7 +82,12 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChang
     );
   }
 
-  return <ProgressSteps steps={tabItemsStep} />;
+  return (
+    <>
+      {EditModals}
+      <ProgressSteps steps={tabItemsStep} />
+    </>
+  );
 };
 
 export default EntitySetUpSection;

@@ -19,31 +19,34 @@ const FinancialReportHeader: FC<FinancialReportHeaderProps> = ({ financialReport
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("financial-reports", financialReport.uuid);
 
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "financial-reports",
     entityUUID: financialReport.uuid,
     entityStatus: financialReport.status,
     updateRequestStatus: financialReport.updateRequestStatus
   });
   return (
-    <PageHeader
-      className="h-[203px]"
-      title={t("Financial Report {createdAt}", {
-        createdAt: financialReport.createdAt == null ? "" : new Date(financialReport.createdAt).toLocaleDateString()
-      })}
-      subtitles={[t("Organisation: {name}", { name: financialReport.organisationName })]}
-      hasBackButton={false}
-    >
-      <div className="flex gap-4">
-        {!financialReport.nothingToReport && (
-          <Button variant="secondary" onClick={handleExport}>
-            {t("Export")}
-            <InlineLoader loading={exportLoader} />
-          </Button>
-        )}
-        <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
-      </div>
-    </PageHeader>
+    <>
+      {EditModals}
+      <PageHeader
+        className="h-[203px]"
+        title={t("Financial Report {createdAt}", {
+          createdAt: financialReport.createdAt == null ? "" : new Date(financialReport.createdAt).toLocaleDateString()
+        })}
+        subtitles={[t("Organisation: {name}", { name: financialReport.organisationName })]}
+        hasBackButton={false}
+      >
+        <div className="flex gap-4">
+          {!financialReport.nothingToReport && (
+            <Button variant="secondary" onClick={handleExport}>
+              {t("Export")}
+              <InlineLoader loading={exportLoader} />
+            </Button>
+          )}
+          <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
+        </div>
+      </PageHeader>
+    </>
   );
 };
 

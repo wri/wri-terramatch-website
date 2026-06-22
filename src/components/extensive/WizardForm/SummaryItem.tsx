@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { FC, SetStateAction, useMemo } from "react";
+import { FC, SetStateAction, useCallback, useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
@@ -10,6 +10,7 @@ import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import ApiSlice from "@/store/apiSlice";
+import { runWithDownloadToast } from "@/utils/downloadToast";
 
 import { FormFooter } from "./FormFooter";
 
@@ -67,6 +68,18 @@ const SummaryItem: FC<SummaryItemProps> = ({
     }
   };
 
+  const handleDownloadAnswers = useCallback(() => {
+    runWithDownloadToast(
+      {
+        downloading: t("Downloading Answers..."),
+        complete: t("Download Complete"),
+        error: t("Something went wrong!")
+      },
+      () => downloadAnswersCSV(fieldsProvider, formHook.getValues()),
+      "wizardFormDownloadToast"
+    );
+  }, [fieldsProvider, formHook, t]);
+
   return (
     <div
       className={classNames("h-full overflow-auto pr-[12px]", {
@@ -102,7 +115,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
         }
         tertiaryButtonProps={{
           children: t("Download"),
-          onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
+          onClick: handleDownloadAnswers
         }}
       />
     </div>

@@ -35,6 +35,7 @@ import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
 import ResponsiveBreadcrumbToolbar from "@/redesignComponents/navigation/Toolbar/ResponsiveBreadcrumbToolbar";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import { runWithDownloadToast } from "@/utils/downloadToast";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
@@ -260,6 +261,18 @@ function WizardForm(props: WizardFormProps) {
     onClickSaveAndClose();
   }, [onClickSaveAndClose, isAdmin, formHook, onSubmitStep]);
 
+  const handleDownloadAnswers = useCallback(() => {
+    runWithDownloadToast(
+      {
+        downloading: t("Downloading Answers..."),
+        complete: t("Download Complete"),
+        error: t("Something went wrong!")
+      },
+      () => downloadAnswersCSV(fieldsProvider, formHook.getValues()),
+      "wizardFormDownloadToast"
+    );
+  }, [fieldsProvider, formHook, t]);
+
   useOnMount(() => {
     // We linked directly to a step; stay on that step.
     if (selectedStepIndex >= 0) return;
@@ -333,7 +346,7 @@ function WizardForm(props: WizardFormProps) {
           }
           tertiaryButtonProps={{
             children: t("Download"),
-            onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
+            onClick: handleDownloadAnswers
           }}
         />
       </div>
@@ -351,7 +364,7 @@ function WizardForm(props: WizardFormProps) {
       onSubmitStepError,
       hasErrorInAnyStep,
       formModel?.model,
-      fieldsProvider
+      handleDownloadAnswers
     ]
   );
 

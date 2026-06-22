@@ -40,7 +40,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
   const t = useT();
   const router = useRouter();
   const { openModal } = useModalContext();
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "nurseries",
     entityUUID: nursery.uuid,
     entityStatus: nursery.status ?? "started",
@@ -82,6 +82,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
 
   return (
     <Box gap={2} className="flex flex-col">
+      {EditModals}
       <Text
         textStyle="400"
         color="neutral.900"
