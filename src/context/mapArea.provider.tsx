@@ -1,9 +1,18 @@
-import React, { createContext, ReactNode, useCallback, useContext, useState } from "react";
+import type { Map as MapboxMap } from "mapbox-gl";
+import React, { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 
+import { closeAllPopups } from "@/components/elements/Map-mapbox/interactions/popupCoordinator";
+import { removePopups } from "@/components/elements/Map-mapbox/interactions/popups";
 import { EditPolygonState } from "@/components/elements/Map-mapbox/Map.d";
-import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { MediaDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { Entity } from "@/types/common";
+
+import {
+  type PolygonSubmitConfirmationRequest,
+  registerMapAreaPopupActions,
+  unregisterMapAreaPopupActions
+} from "./mapArea.utils";
 
 export type MapAreaSiteData = Entity | SiteFullDto;
 
@@ -12,6 +21,15 @@ export function isMapAreaSiteFullDto(siteData: MapAreaSiteData | undefined): sit
 }
 
 export type SelectedPolygonVersionState = SitePolygonLightDto;
+
+export type PolygonGeometryEditState = {
+  polygonUuid: string;
+  originalGeometry?: GeoJSON.Geometry | null;
+  currentGeometry?: GeoJSON.Geometry | null;
+  isDirty: boolean;
+};
+
+export type PolygonSubmitConfirmationState = PolygonSubmitConfirmationRequest | null;
 
 type MapAreaType = {
   isUserDrawingEnabled: boolean;
@@ -44,8 +62,24 @@ type MapAreaType = {
   setPolygonCriteriaMap: (value: Record<string, unknown>) => void;
   polygonData: SitePolygonLightDto[];
   setPolygonData: (value: SitePolygonLightDto[]) => void;
+  polygonGeometryEdit: PolygonGeometryEditState | undefined;
+  setPolygonGeometryEdit: (value: PolygonGeometryEditState | undefined) => void;
+  draftPolygonGeometry: GeoJSON.Geometry | undefined;
+  setDraftPolygonGeometry: (value: GeoJSON.Geometry | undefined) => void;
+  polygonMapTileNonce: number;
+  invalidatePolygonMapTiles: () => void;
   validFilter: string;
   setValidFilter: (value: string) => void;
+  registerMapboxMap: (map: MapboxMap | null) => void;
+  closeMapPopups: () => void;
+  polygonSubmitConfirmation: PolygonSubmitConfirmationState;
+  setPolygonSubmitConfirmation: (value: PolygonSubmitConfirmationState) => void;
+  editPhotoDetailsMedia: MediaDto | null;
+  setEditPhotoDetailsMedia: (value: MediaDto | null) => void;
+  showPhotosOnMap: boolean;
+  setShowPhotosOnMap: (value: boolean) => void;
+  mediaFiles: MediaDto[];
+  setMediaFiles: (value: MediaDto[]) => void;
   resetSiteMapInteractionState: () => void;
 };
 
@@ -80,8 +114,24 @@ const defaultValue: MapAreaType = {
   setPolygonCriteriaMap: () => {},
   polygonData: [],
   setPolygonData: () => {},
+  polygonGeometryEdit: undefined,
+  setPolygonGeometryEdit: () => {},
+  draftPolygonGeometry: undefined,
+  setDraftPolygonGeometry: () => {},
+  polygonMapTileNonce: 0,
+  invalidatePolygonMapTiles: () => {},
   validFilter: "all",
   setValidFilter: () => {},
+  registerMapboxMap: () => {},
+  closeMapPopups: () => {},
+  polygonSubmitConfirmation: null,
+  setPolygonSubmitConfirmation: () => {},
+  editPhotoDetailsMedia: null,
+  setEditPhotoDetailsMedia: () => {},
+  showPhotosOnMap: false,
+  setShowPhotosOnMap: () => {},
+  mediaFiles: [],
+  setMediaFiles: () => {},
   resetSiteMapInteractionState: () => {}
 };
 
@@ -102,20 +152,60 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [selectedPolygonsInCheckbox, setSelectedPolygonsInCheckbox] = useState<string[]>([]);
   const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, unknown>>({});
   const [polygonData, setPolygonData] = useState<SitePolygonLightDto[]>([]);
+  const [polygonGeometryEdit, setPolygonGeometryEdit] = useState<PolygonGeometryEditState | undefined>();
+  const [draftPolygonGeometry, setDraftPolygonGeometry] = useState<GeoJSON.Geometry | undefined>();
+  const [polygonMapTileNonce, setPolygonMapTileNonce] = useState(0);
   const [validFilter, setValidFilter] = useState<string>("all");
   const [editPolygon, setEditPolygonInternal] = useState<EditPolygonState>({
     isOpen: false,
     uuid: ""
   });
+  const [polygonSubmitConfirmation, setPolygonSubmitConfirmation] = useState<PolygonSubmitConfirmationState>(null);
+  const [editPhotoDetailsMedia, setEditPhotoDetailsMedia] = useState<MediaDto | null>(null);
+  const [showPhotosOnMap, setShowPhotosOnMap] = useState(false);
+  const [mediaFiles, setMediaFiles] = useState<MediaDto[]>([]);
 
   const setEditPolygon = useCallback((value: EditPolygonState) => {
     setEditPolygonInternal(value);
-    if (!value.isOpen) {
-      setShouldRefetchPolygonData(false);
-    }
   }, []);
 
+  const invalidatePolygonMapTiles = useCallback(() => {
+    setPolygonMapTileNonce(value => value + 1);
+  }, []);
+
+  const mapboxMapRef = useRef<MapboxMap | null>(null);
+
+  const registerMapboxMap = useCallback((map: MapboxMap | null) => {
+    mapboxMapRef.current = map;
+  }, []);
+
+  const closeMapPopups = useCallback(() => {
+    const map = mapboxMapRef.current;
+    if (map == null) return;
+    closeAllPopups(map);
+    removePopups(map, "POLYGON");
+    removePopups(map, "MEDIA");
+  }, []);
+
+  const openEditPhotoDetails = useCallback(
+    (media: MediaDto) => {
+      closeMapPopups();
+      setEditPhotoDetailsMedia(media);
+    },
+    [closeMapPopups]
+  );
+
+  useEffect(() => {
+    registerMapAreaPopupActions({
+      openPolygonSubmitConfirmation: setPolygonSubmitConfirmation,
+      openEditPhotoDetails,
+      closeMapPopups
+    });
+    return unregisterMapAreaPopupActions;
+  }, [closeMapPopups, openEditPhotoDetails]);
+
   const resetSiteMapInteractionState = useCallback(() => {
+    closeMapPopups();
     setIsUserDrawingEnabled(false);
     setEditPolygonInternal({ isOpen: false, uuid: "" });
     setShouldRefetchPolygonData(false);
@@ -125,7 +215,14 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setStatusSelectedPolygon("");
     setSelectedPolygonsInCheckbox([]);
     setHasOverlaps(false);
-  }, []);
+    setPolygonGeometryEdit(undefined);
+    setDraftPolygonGeometry(undefined);
+    setPolygonMapTileNonce(0);
+    setPolygonSubmitConfirmation(null);
+    setEditPhotoDetailsMedia(null);
+    setShowPhotosOnMap(false);
+    setMediaFiles([]);
+  }, [closeMapPopups]);
 
   const contextValue: MapAreaType = {
     isUserDrawingEnabled,
@@ -158,8 +255,24 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonCriteriaMap,
     polygonData,
     setPolygonData,
+    polygonGeometryEdit,
+    setPolygonGeometryEdit,
+    draftPolygonGeometry,
+    setDraftPolygonGeometry,
+    polygonMapTileNonce,
+    invalidatePolygonMapTiles,
     validFilter,
     setValidFilter,
+    registerMapboxMap,
+    closeMapPopups,
+    polygonSubmitConfirmation,
+    setPolygonSubmitConfirmation,
+    editPhotoDetailsMedia,
+    setEditPhotoDetailsMedia,
+    showPhotosOnMap,
+    setShowPhotosOnMap,
+    mediaFiles,
+    setMediaFiles,
     resetSiteMapInteractionState
   };
 

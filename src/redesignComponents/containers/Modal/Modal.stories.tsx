@@ -261,32 +261,33 @@ export const WithActions: Story = {
   }
 };
 
-export const Draggable: Story = {
-  args: {
-    header: (
-      <p
-        style={{
-          fontWeight: "bold",
-          color: getThemedColor("neutral", 800)
-        }}
-      >
-        Title
-      </p>
-    ),
-    content: <ModalContent />,
-    open: false
-  },
-  render: args => {
-    const [showModal, setShowModal] = useState(false);
+// Uncomment this when the modal from wri dont crash with the trap focus error.
+// export const Draggable: Story = {
+//   args: {
+//     header: (
+//       <p
+//         style={{
+//           fontWeight: "bold",
+//           color: getThemedColor("neutral", 800)
+//         }}
+//       >
+//         Title
+//       </p>
+//     ),
+//     content: <ModalContent />,
+//     open: false
+//   },
+//   render: args => {
+//     const [showModal, setShowModal] = useState(false);
 
-    return (
-      <>
-        <Button onClick={() => setShowModal(true)}>Show Modal</Button>
-        <ModalStory {...args} open={showModal} onClose={() => setShowModal(false)} draggable />
-      </>
-    );
-  }
-};
+//     return (
+//       <>
+//         <Button onClick={() => setShowModal(true)}>Show Modal</Button>
+//         <ModalStory {...args} open={showModal} onClose={() => setShowModal(false)} draggable />
+//       </>
+//     );
+//   }
+// };
 
 export const Blocking: Story = {
   args: {

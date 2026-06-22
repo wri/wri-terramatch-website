@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { connectionHook, connectionSelector } from "@/connections/util/connectionShortcuts";
 import {
@@ -17,6 +17,8 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getStableIndexPath } from "@/generated/v3/utils";
 import { useConnection } from "@/hooks/useConnection";
+import { useStableProps } from "@/hooks/useStableProps";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { Connected, Connection, Filter, PaginatedConnectionProps } from "@/types/connection";
 import Log from "@/utils/log";
@@ -136,6 +138,81 @@ export const selectTrackings = connectionSelector(trackingConnection);
 export const useMedia = collectionTypeHook(mediaConnection);
 /** Returns all media for the given entity */
 export const useMedias = connectionHook(mediaConnection);
+
+const ALL_MEDIAS_PAGE_SIZE = 100;
+
+type EntityMediasConnectionState = IndexConnection<MediaDto> & LoadFailureConnection & RefetchConnection;
+
+export type EntityMediasConnectionProps = Omit<EntityAssociationIndexConnectionProps, "pageNumber" | "pageSize">;
+
+/**
+ * Loads all pages of entity media (not just the first page). Use this when the full media list is
+ * needed, e.g. rendering all geotagged photos on a map.
+ */
+export const useAllMedias = (
+  props: EntityMediasConnectionProps
+): Connected<EntityMediasConnectionState> | readonly [false, Partial<EntityMediasConnectionState>] => {
+  const stableProps = useStableProps(props);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pagesByNumber, setPagesByNumber] = useState<Record<number, MediaDto[]>>({});
+  const advancedFromPageRef = useRef<number | null>(null);
+
+  const resetPagination = useCallback(() => {
+    setPageNumber(1);
+    setPagesByNumber({});
+    advancedFromPageRef.current = null;
+  }, []);
+
+  const [pageLoaded, { data: pageData, indexTotal, refetch: connectionRefetch, loadFailure }] = useConnection(
+    mediaConnection,
+    {
+      ...stableProps,
+      pageNumber,
+      pageSize: ALL_MEDIAS_PAGE_SIZE
+    }
+  );
+
+  useValueChanged(stableProps, resetPagination);
+
+  useEffect(() => {
+    if (pageData == null) return;
+    setPagesByNumber(current => (pageNumber === 1 ? { 1: pageData } : { ...current, [pageNumber]: pageData }));
+  }, [pageData, pageNumber]);
+
+  useEffect(() => {
+    if (!pageLoaded || indexTotal == null || pageData == null) return;
+
+    const maxPage = Math.ceil(indexTotal / ALL_MEDIAS_PAGE_SIZE);
+    if (pageNumber >= maxPage || advancedFromPageRef.current === pageNumber) return;
+
+    advancedFromPageRef.current = pageNumber;
+    setPageNumber(currentPage => currentPage + 1);
+  }, [pageLoaded, indexTotal, pageNumber, pageData]);
+
+  const refetch = useCallback(() => {
+    resetPagination();
+    connectionRefetch?.();
+  }, [connectionRefetch, resetPagination]);
+
+  const data = useMemo(
+    () =>
+      Object.keys(pagesByNumber)
+        .map(Number)
+        .sort((a, b) => a - b)
+        .flatMap(page => pagesByNumber[page] ?? []),
+    [pagesByNumber]
+  );
+
+  const result = { data, refetch, indexTotal, loadFailure };
+
+  if (indexTotal == null || !pageLoaded) {
+    return data.length > 0 ? [false, result] : [false, {}];
+  }
+  if (pageNumber === 1 && indexTotal === 0) return [true, result];
+
+  const allPagesLoaded = pageNumber === Math.ceil(indexTotal / ALL_MEDIAS_PAGE_SIZE);
+  return allPagesLoaded ? [true, result] : data.length > 0 ? [false, result] : [false, {}];
+};
 
 const disturbanceConnection = createAssociationIndexConnection<DisturbanceDto>("disturbances");
 export const useDisturbances = connectionHook(disturbanceConnection);

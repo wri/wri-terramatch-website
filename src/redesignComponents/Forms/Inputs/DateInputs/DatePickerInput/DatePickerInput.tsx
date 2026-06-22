@@ -4,7 +4,9 @@ import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
 import type { FC } from "react";
 import { useMemo, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
+import { getThemedColor } from "@/lib/theme";
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 import { formatDateValue, getDateFormatString, parseDateInput } from "@/utils/date";
 
@@ -21,6 +23,7 @@ import {
 } from "../styled";
 
 interface DatePickerInputProps {
+  showOptionalLabel?: boolean;
   min?: DatePickerRootProps["min"];
   max?: DatePickerRootProps["max"];
   label?: string;
@@ -30,6 +33,9 @@ interface DatePickerInputProps {
   disabled?: boolean;
   size?: "default" | "small";
   noMarginBottom?: boolean;
+  value?: DateValue[];
+  onValueChange?: (value: DateValue[]) => void;
+  className?: string;
 }
 
 const StyledPickerWrapper = styled.div<{ $size: "default" | "small" }>`
@@ -37,6 +43,7 @@ const StyledPickerWrapper = styled.div<{ $size: "default" | "small" }>`
 `;
 
 export const DatePickerInput: FC<DatePickerInputProps> = ({
+  showOptionalLabel = true,
   min,
   max,
   label,
@@ -45,9 +52,13 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
   required,
   disabled,
   size = "default",
-  noMarginBottom = false
+  noMarginBottom = false,
+  value: valueProp,
+  onValueChange,
+  className
 }) => {
-  const [date, setDate] = useState<DateValue[]>([]);
+  const [uncontrolledDate, setUncontrolledDate] = useState<DateValue[]>([]);
+  const date = valueProp ?? uncontrolledDate;
   const browserLocale = useMemo(() => navigator.language, []);
   const dateFormat = useMemo(() => getDateFormatString(browserLocale), [browserLocale]);
 
@@ -66,12 +77,20 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
       return parseDateInput(value, dateFormat) as DateValue | undefined;
     },
     onValueChange({ value }) {
-      setDate(value);
+      if (valueProp !== undefined) {
+        onValueChange?.(value);
+      } else {
+        setUncontrolledDate(value);
+      }
     }
   });
 
   return (
-    <FieldContainer $size={size} $noMarginBottom={noMarginBottom} className="ds-date-picker-input-container">
+    <FieldContainer
+      $size={size}
+      $noMarginBottom={noMarginBottom}
+      className={twMerge("ds-date-picker-input-container", className)}
+    >
       {errorMessage != null ? <FieldErrorBar /> : null}
       <div style={{ marginLeft: errorMessage != null ? "1.1875rem" : "0px" }}>
         {label != null ? (
@@ -82,7 +101,7 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
               </RequiredIndicator>
             ) : null}
             {label}
-            {!required ? <span className="optional-text">{" (Optional)"}</span> : ""}
+            {showOptionalLabel && !required ? <span className="optional-text">{" (Optional)"}</span> : ""}
           </FieldLabel>
         ) : null}
         {caption != null ? (
@@ -104,7 +123,10 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
           <DatePicker.RootProvider value={picker}>
             <DatePicker.Control
               onClick={() => !disabled && picker.setOpen(true)}
-              style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+              style={{
+                cursor: disabled ? "not-allowed" : "pointer",
+                backgroundColor: disabled ? getThemedColor("neutral", 200) : "transparent"
+              }}
             >
               <CalendarIcon />
               <DatePicker.Input index={0} placeholder={dateFormat} />

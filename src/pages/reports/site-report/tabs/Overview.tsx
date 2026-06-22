@@ -216,6 +216,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                       buttonGroupProps={{
                         buttons: [
                           {
+                            id: "add-polygons",
                             variant: "borderless",
                             size: "small",
                             rightIcon: <ChevronRightIcon boxSize={4} />,

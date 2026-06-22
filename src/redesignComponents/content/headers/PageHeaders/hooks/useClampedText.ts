@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const MAX_LINES = 3;
-const CHECK_DELAY = 0;
+const CLAMP_THRESHOLD_PX = 1;
 
 export interface UseClampedTextReturn {
   descriptionRef: React.RefObject<HTMLParagraphElement>;
@@ -10,30 +9,82 @@ export interface UseClampedTextReturn {
   toggleExpand: () => void;
 }
 
-export const useClampedText = (description: string | undefined, maxLines: number = MAX_LINES): UseClampedTextReturn => {
+export const useClampedText = (description: string | undefined): UseClampedTextReturn => {
   const descriptionRef = useRef<HTMLParagraphElement>(null);
+  const isMountedRef = useRef(true);
+
   const [isClamped, setIsClamped] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const checkClamped = useCallback(() => {
-    if (descriptionRef.current != null) {
-      const element = descriptionRef.current;
-      const lineHeight = parseInt(window.getComputedStyle(element).lineHeight, 10);
-      const maxHeight = lineHeight * maxLines;
-      const isCurrentlyClamped = element.scrollHeight > maxHeight;
-      setIsClamped(isCurrentlyClamped);
+    const element = descriptionRef.current;
+
+    if (element == null) {
+      return;
     }
-  }, [maxLines]);
+
+    if (isExpanded) {
+      setIsClamped(false);
+      return;
+    }
+
+    const overflowPx = element.scrollHeight - element.clientHeight;
+
+    setIsClamped(overflowPx > CLAMP_THRESHOLD_PX);
+  }, [isExpanded]);
 
   useEffect(() => {
-    if (description != null) {
-      const timeoutId = setTimeout(checkClamped, CHECK_DELAY);
-      window.addEventListener("resize", checkClamped);
-      return () => {
-        clearTimeout(timeoutId);
-        window.removeEventListener("resize", checkClamped);
-      };
+    isMountedRef.current = true;
+
+    if (description == null) {
+      return;
     }
+
+    const element = descriptionRef.current;
+
+    if (element == null) {
+      return;
+    }
+
+    let reqAnimationFrameId = 0;
+
+    const scheduleCheck = () => {
+      cancelAnimationFrame(reqAnimationFrameId);
+
+      reqAnimationFrameId = requestAnimationFrame(() => {
+        if (!isMountedRef.current) {
+          return;
+        }
+
+        checkClamped();
+      });
+    };
+
+    scheduleCheck();
+
+    const resizeObserver = new ResizeObserver(scheduleCheck);
+
+    resizeObserver.observe(element);
+
+    window.addEventListener("resize", scheduleCheck);
+
+    document.fonts?.ready
+      .then(() => {
+        if (isMountedRef.current) {
+          scheduleCheck();
+        }
+      })
+      .catch(() => undefined);
+
+    return () => {
+      isMountedRef.current = false;
+
+      cancelAnimationFrame(reqAnimationFrameId);
+
+      resizeObserver.disconnect();
+
+      window.removeEventListener("resize", scheduleCheck);
+    };
   }, [description, isExpanded, checkClamped]);
 
   const toggleExpand = useCallback(() => {

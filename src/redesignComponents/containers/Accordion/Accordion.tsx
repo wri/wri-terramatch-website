@@ -62,6 +62,8 @@ const AccordionIcon: FC<{ variant: AccordionVariant }> = ({ variant }) => (
   </AccordionChakra.ItemIndicator>
 );
 
+const ACCORDION_ITEM_VALUE = "default-item";
+
 const Accordion: FC<AccordionProps> = ({
   children,
   header,
@@ -69,35 +71,60 @@ const Accordion: FC<AccordionProps> = ({
   variant = "primary",
   className,
   classNameHeader,
-  defaultOpen = false
+  defaultOpen = false,
+  open,
+  onOpenChange
 }) => {
   const { container, header: headerStyles } = variantStyles[variant];
+  const isControlled = open !== undefined;
 
-  const handleActionsClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleValueChange = (details: { value: string[] }) => {
+    onOpenChange?.(details.value.includes(ACCORDION_ITEM_VALUE));
   };
 
   return (
-    <Box className={className}>
-      <AccordionChakra.Root multiple defaultValue={defaultOpen ? ["default-item"] : []}>
-        <AccordionChakra.Item value="default-item">
-          <Flex {...container} gap={4} className={classNameHeader}>
-            <AccordionChakra.ItemTrigger css={{ outline: "none" }}>
-              <Flex flex="1" alignItems="center" justifyContent="space-between" width="100%" {...headerStyles}>
-                <Flex gap={3} flex="1" alignItems="center" justifyContent="space-between" width="100%">
-                  <Box flex="1" fontSize="1.25rem" lineHeight="1.75rem" color="primary.900">
-                    {header}
-                  </Box>
-
-                  {actions && (
-                    <Box display="flex" gap={3} alignItems="center" onClick={handleActionsClick} flexShrink={0}>
-                      {actions}
-                    </Box>
-                  )}
-                </Flex>
-
-                <AccordionIcon variant={variant} />
+    <Box
+      className={className}
+      css={{
+        "& [data-scope='accordion'][data-part='item-content']": {
+          margin: "0 -2rem",
+          padding: "0 2rem"
+        },
+        "& [data-scope='accordion'][data-part='item']": {
+          overflow: "visible"
+        }
+      }}
+    >
+      <AccordionChakra.Root
+        multiple
+        {...(isControlled
+          ? { value: open ? [ACCORDION_ITEM_VALUE] : [], onValueChange: handleValueChange }
+          : { defaultValue: defaultOpen ? [ACCORDION_ITEM_VALUE] : [] })}
+      >
+        <AccordionChakra.Item value={ACCORDION_ITEM_VALUE}>
+          <Flex {...container} gap={4} className={classNameHeader} alignItems="center">
+            <AccordionChakra.ItemTrigger
+              css={{
+                outline: "none",
+                flex: 1,
+                minWidth: 0
+              }}
+            >
+              <Flex flex="1" alignItems="center" width="100%" {...headerStyles}>
+                <Box flex="1" fontSize="1.25rem" lineHeight="1.75rem" color="primary.900">
+                  {header}
+                </Box>
               </Flex>
+            </AccordionChakra.ItemTrigger>
+            {actions != null ? (
+              <Box display="flex" gap={3} alignItems="center" flexShrink={0}>
+                {actions}
+              </Box>
+            ) : null}
+            <AccordionChakra.ItemTrigger
+              css={{ outline: "none", flexShrink: 0, cursor: "pointer", width: "fit-content" }}
+            >
+              <AccordionIcon variant={variant} />
             </AccordionChakra.ItemTrigger>
           </Flex>
 

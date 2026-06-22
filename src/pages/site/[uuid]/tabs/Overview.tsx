@@ -23,10 +23,11 @@ import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
+import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { AreaHectaresIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
+import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "../constants/sitePolygonMapSizing";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 interface SiteOverviewTabProps {
   site: SiteFullDto;
@@ -104,20 +105,27 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
       <PageContent>
-        <Flex gap={7} className="flex-col sm:flex-row">
+        <Flex gap={7} className="flex-col sm:flex-row sm:items-stretch">
           <PageItem
             title={t("Site Map")}
             flexProps={{ flex: 1 }}
+            className="min-h-0"
             buttonProps={{
               variant: "secondary",
               size: "small",
               children: t("View site map"),
               rightIcon: <ChevronRightIcon />,
-              onClick: () => goToTab("map")
+              onClick: () => goToTab("polygons")
             }}
           >
-            <Box className="relative h-auto">
-              <OverviewMapArea entityModel={site} type="sites" className="max-h-[27rem]" disabledPolygonPanel={true} />
+            <Box className="relative flex-1 overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
+              <OverviewMapArea
+                entityModel={site}
+                type="sites"
+                className="h-full min-h-0 rounded"
+                disabledPolygonPanel={true}
+                hideFullscreenControl={true}
+              />
               {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
                 <MapPlaceholder
                   icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}
@@ -125,12 +133,13 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                   buttonGroupProps={{
                     buttons: [
                       {
+                        id: "add-polygons",
                         variant: "borderless",
                         size: "small",
                         rightIcon: <ChevronRightIcon boxSize={4} />,
                         className: "!text-theme-neutral-100",
                         children: t("Add Polygons"),
-                        onClick: () => goToTab("map")
+                        onClick: () => goToTab("polygons")
                       }
                     ]
                   }}

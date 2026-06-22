@@ -5,7 +5,7 @@ import { getThemedColor } from "@/lib/theme";
 
 export interface FilterCardsProps {
   label: string;
-  caption: string;
+  caption?: string;
   children: React.ReactNode;
   className?: string;
 }
@@ -28,9 +28,11 @@ const FilterCard: FC<FilterCardsProps> = ({ label, caption, children, className 
         <Text textStyle="500-bold" color="neutral.900">
           {label}
         </Text>
-        <Text textStyle="300" color="neutral.700">
-          {caption}
-        </Text>
+        {caption && (
+          <Text textStyle="300" color="neutral.700">
+            {caption}
+          </Text>
+        )}
       </Box>
       {children}
     </Flex>

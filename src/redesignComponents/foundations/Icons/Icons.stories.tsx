@@ -1,5 +1,6 @@
 import { Box, Flex, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
+import type { ElementType } from "react";
 
 import {
   AgriculturalLandIcon,
@@ -31,6 +32,7 @@ import {
   DownloadIcon,
   DraftIcon,
   DragIcon,
+  DrawingToolIcon,
   DueIcon,
   EditIcon,
   ExpandIcon,
@@ -71,6 +73,7 @@ import {
   PlusIcon,
   ProgrammeIcon,
   ProjectIcon,
+  RefreshIcon,
   RegenerationIcon,
   RejectedIcon,
   ReportsIcon,
@@ -86,6 +89,7 @@ import {
   TreeCircleIcon,
   TreeIcon,
   TreePlantingIcon,
+  UndoIcon,
   UploadIcon,
   UrbanForestIcon,
   UserAddIcon,
@@ -108,6 +112,136 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
+type IconEntry = {
+  name: string;
+  Icon: ElementType;
+};
+
+type IconCategory = {
+  title: string;
+  icons: IconEntry[];
+};
+
+const DATA_VISUALISATION_ICONS: IconEntry[] = [
+  { name: "Area / Hectares", Icon: AreaHectaresIcon },
+  { name: "Area Hectares Circle", Icon: AreaHectaresCircleIcon },
+  { name: "Jobs / Workdays", Icon: JobsIcon },
+  { name: "Jobs Circle", Icon: JobsCircleIcon },
+  { name: "Landscape", Icon: LandscapeIcon },
+  { name: "Regeneration", Icon: RegenerationIcon },
+  { name: "Seedlings", Icon: SeedlingsIcon },
+  { name: "Seedlings Circle", Icon: SeedlingsCircleIcon },
+  { name: "Species", Icon: SpeciesIcon },
+  { name: "Species Native", Icon: SpeciesNativeIcon },
+  { name: "Survival Rate", Icon: SurvivalRateIcon },
+  { name: "Tree", Icon: TreeIcon },
+  { name: "Tree Circle", Icon: TreeCircleIcon }
+];
+
+const RESTORATION_AND_LAND_ICONS: IconEntry[] = [
+  { name: "Agroforesty", Icon: AgroforestyIcon },
+  { name: "Agricultural Land", Icon: AgriculturalLandIcon },
+  { name: "Assisted Natural Regen", Icon: AssistedNaturalRegenIcon },
+  { name: "Direct Seeding", Icon: DirectSeedingIcon },
+  { name: "Grassland", Icon: GrasslandIcon },
+  { name: "Mangrove", Icon: MangroveIcon },
+  { name: "Natural Forest", Icon: NaturalForestIcon },
+  { name: "Nursery Building", Icon: NurseryBuildingIcon },
+  { name: "Nursery Expanding", Icon: NurseryExpandingIcon },
+  { name: "Nursery Managing", Icon: NurseryManagingIcon },
+  { name: "Open Natural Ecosystem", Icon: OpenNaturalEcosystemIcon },
+  { name: "Peatland", Icon: PeatlandIcon },
+  { name: "Silvopasture", Icon: SilvopastureIcon },
+  { name: "Tree Planting", Icon: TreePlantingIcon },
+  { name: "Urban Forest", Icon: UrbanForestIcon },
+  { name: "Wetland", Icon: WetlandIcon },
+  { name: "Woodlot", Icon: WoodlotIcon }
+];
+
+const FUNCTION_ICONS: IconEntry[] = [
+  { name: "Arrow Forward", Icon: ArrowForwardIcon },
+  { name: "Attach File", Icon: AttachFileIcon },
+  { name: "Check", Icon: CheckIcon },
+  { name: "Check Indeterminate", Icon: CheckIndeterminateIcon },
+  { name: "Chevron Down Alt", Icon: ChevronDownAltIcon },
+  { name: "Chevron Down", Icon: ChevronDownIcon },
+  { name: "Chevron Right", Icon: ChevronRightIcon },
+  { name: "Chevron Up", Icon: ChevronUpIcon },
+  { name: "Close", Icon: CloseIcon },
+  { name: "Compress", Icon: CompressIcon },
+  { name: "Contact Support", Icon: ContactSupportIcon },
+  { name: "Correct", Icon: CorrectIcon },
+  { name: "Comment", Icon: CommentIcon },
+  { name: "Disallowed", Icon: DisallowedIcon },
+  { name: "Delete", Icon: DeleteIcon },
+  { name: "Document", Icon: DocumentIcon },
+  { name: "Drag", Icon: DragIcon },
+  { name: "Drawing Tool", Icon: DrawingToolIcon },
+  { name: "Edit", Icon: EditIcon },
+  { name: "Expand", Icon: ExpandIcon },
+  { name: "Google View", Icon: GoogleViewIcon },
+  { name: "Filter", Icon: FilterIcon },
+  { name: "Incorrect", Icon: IncorrectIcon },
+  { name: "Indeterminate", Icon: IndeterminateIcon },
+  { name: "Information", Icon: InfoIcon },
+  { name: "Loading", Icon: LoadingIcon },
+  { name: "Map View", Icon: MapViewIcon },
+  { name: "More Vert", Icon: MoreVertIcon },
+  { name: "New Tab", Icon: NewTabIcon },
+  { name: "Placeholder", Icon: PlaceholderIcon },
+  { name: "Plus", Icon: PlusIcon },
+  { name: "Refresh", Icon: RefreshIcon },
+  { name: "Photo Add", Icon: PhotoAddIcon },
+  { name: "Photo Library", Icon: PhotoLibraryIcon },
+  { name: "Photo", Icon: PhotosIcon },
+  { name: "Satellite View", Icon: SatelliteViewIcon },
+  { name: "Search", Icon: SearchIcon },
+  { name: "Upload", Icon: UploadIcon },
+  { name: "Undo", Icon: UndoIcon },
+  { name: "User Add", Icon: UserAddIcon },
+  { name: "User", Icon: UserIcon },
+  { name: "Video", Icon: VideoIcon },
+  { name: "Visibility", Icon: VisibilityIcon },
+  { name: "Visibility Off", Icon: VisibilityOffIcon },
+  { name: "Information Required Simple", Icon: InformationRequiredSimpleIcon },
+  { name: "Calendar", Icon: CalendarIcon },
+  { name: "Download", Icon: DownloadIcon },
+  { name: "Warning", Icon: WarningIcon }
+];
+
+const NAVIGATION_SECTIONS_ICONS: IconEntry[] = [
+  { name: "Applications", Icon: ApplicationsIcon },
+  { name: "Dashboard", Icon: DashboardIcon },
+  { name: "Language", Icon: LanguageIcon },
+  { name: "Messages", Icon: MessagesIcon },
+  { name: "Notification", Icon: NotificationIcon },
+  { name: "Nursery", Icon: NurseryIcon },
+  { name: "Opportunities", Icon: OpportunitiesIcon },
+  { name: "Organization", Icon: OrganizationIcon },
+  { name: "Programme", Icon: ProgrammeIcon },
+  { name: "Project", Icon: ProjectIcon },
+  { name: "Report", Icon: ReportsIcon },
+  { name: "Site", Icon: SiteIcon }
+];
+
+const STATUS_ICONS: IconEntry[] = [
+  { name: "Check / Approved", Icon: CheckApprovedIcon },
+  { name: "Draft", Icon: DraftIcon },
+  { name: "Due", Icon: DueIcon },
+  { name: "Information Required", Icon: InformationRequiredIcon },
+  { name: "Nothing Reported", Icon: NothingReportedIcon },
+  { name: "Pending", Icon: PendingIcon },
+  { name: "Rejected", Icon: RejectedIcon }
+];
+
+const ICON_CATEGORIES: IconCategory[] = [
+  { title: "Data Visualisation", icons: DATA_VISUALISATION_ICONS },
+  { title: "Restoration & Land", icons: RESTORATION_AND_LAND_ICONS },
+  { title: "Function", icons: FUNCTION_ICONS },
+  { title: "Navigation / Sections", icons: NAVIGATION_SECTIONS_ICONS },
+  { title: "Status", icons: STATUS_ICONS }
+];
+
 const IconWrapper = ({ children, name }: { children: React.ReactNode; name: string }) => (
   <Flex alignItems="center" justifyContent="center" p={4} flexDirection="column">
     <Box mb={2}>{children}</Box>
@@ -127,658 +261,60 @@ const CategoryHeader = ({ title }: { title: string }) => (
   </Box>
 );
 
+const IconGrid = ({ icons }: { icons: IconEntry[] }) => (
+  <>
+    {icons.map(({ name, Icon }) => (
+      <IconWrapper key={name} name={name}>
+        <Icon boxSize={8} />
+      </IconWrapper>
+    ))}
+  </>
+);
+
+const CategoryColumn = ({ title, icons }: IconCategory) => (
+  <Box>
+    <CategoryHeader title={title} />
+    <VStack align="stretch" gap={4}>
+      <IconGrid icons={icons} />
+    </VStack>
+  </Box>
+);
+
+const CategoryStory = ({ title, icons }: IconCategory) => (
+  <VStack align="stretch" gap={6}>
+    <CategoryHeader title={title} />
+    <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
+      <IconGrid icons={icons} />
+    </SimpleGrid>
+  </VStack>
+);
+
 export const AllIcons: Story = {
   render: () => (
     <SimpleGrid columns={5} gap={6}>
-      <Box>
-        <CategoryHeader title="Data Visualisation" />
-        <VStack align="stretch" gap={4}>
-          <IconWrapper name="Area / Hectares">
-            <AreaHectaresIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Area Hectares Circle">
-            <AreaHectaresCircleIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Jobs / Workdays">
-            <JobsIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Jobs Circle">
-            <JobsCircleIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Landscape">
-            <LandscapeIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Regeneration">
-            <RegenerationIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Seedlings">
-            <SeedlingsIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Seedlings Circle">
-            <SeedlingsCircleIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Species">
-            <SpeciesIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Species Native">
-            <SpeciesNativeIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Survival Rate">
-            <SurvivalRateIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Tree">
-            <TreeIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Tree Circle">
-            <TreeCircleIcon boxSize={8} />
-          </IconWrapper>
-        </VStack>
-      </Box>
-
-      <Box>
-        <CategoryHeader title="Restoration & Land" />
-        <VStack align="stretch" gap={4}>
-          <IconWrapper name="Agroforesty">
-            <AgroforestyIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Agricultural Land">
-            <AgriculturalLandIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Assisted Natural Regen">
-            <AssistedNaturalRegenIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Direct Seeding">
-            <DirectSeedingIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Grassland">
-            <GrasslandIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Mangrove">
-            <MangroveIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Natural Forest">
-            <NaturalForestIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Nursery Building">
-            <NurseryBuildingIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Nursery Expanding">
-            <NurseryExpandingIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Nursery Managing">
-            <NurseryManagingIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Open Natural Ecosystem">
-            <OpenNaturalEcosystemIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Peatland">
-            <PeatlandIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Silvopasture">
-            <SilvopastureIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Tree Planting">
-            <TreePlantingIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Urban Forest">
-            <UrbanForestIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Wetland">
-            <WetlandIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Woodlot">
-            <WoodlotIcon boxSize={8} />
-          </IconWrapper>
-        </VStack>
-      </Box>
-
-      <Box>
-        <CategoryHeader title="Function" />
-        <VStack align="stretch" gap={4}>
-          <IconWrapper name="Arrow Forward">
-            <ArrowForwardIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Attach File">
-            <AttachFileIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Check">
-            <CheckIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Check Indeterminate">
-            <CheckIndeterminateIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Chevron Down Alt">
-            <ChevronDownAltIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Chevron Down">
-            <ChevronDownIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Chevron Right">
-            <ChevronRightIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Chevron Up">
-            <ChevronUpIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Close">
-            <CloseIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Compress">
-            <CompressIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Correct">
-            <CorrectIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Comment">
-            <CommentIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Contact Support">
-            <ContactSupportIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Compress">
-            <CompressIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Disallowed">
-            <DisallowedIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Delete">
-            <DeleteIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Document">
-            <DocumentIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Drag">
-            <DragIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Edit">
-            <EditIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Expand">
-            <ExpandIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Google View">
-            <GoogleViewIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Filter">
-            <FilterIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Incorrect">
-            <IncorrectIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Indeterminate">
-            <IndeterminateIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Information">
-            <InfoIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Loading">
-            <LoadingIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Map View">
-            <MapViewIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="More Vert">
-            <MoreVertIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="New Tab">
-            <NewTabIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Placeholder">
-            <PlaceholderIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Plus">
-            <PlusIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Photo">
-            <PhotosIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Photo Add">
-            <PhotoAddIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Photo Library">
-            <PhotoLibraryIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Satellite View">
-            <SatelliteViewIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Search">
-            <SearchIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Upload">
-            <UploadIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="User">
-            <UserIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="User Add">
-            <UserAddIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Video">
-            <VideoIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Visibility">
-            <VisibilityIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Visibility Off">
-            <VisibilityOffIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Information Required Simple">
-            <InformationRequiredSimpleIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Calendar">
-            <CalendarIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Download">
-            <DownloadIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Warning">
-            <WarningIcon boxSize={8} />
-          </IconWrapper>
-        </VStack>
-      </Box>
-
-      <Box>
-        <CategoryHeader title="Navigation / Sections" />
-        <VStack align="stretch" gap={4}>
-          <IconWrapper name="Applications">
-            <ApplicationsIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Dashboard">
-            <DashboardIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Language">
-            <LanguageIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Messages">
-            <MessagesIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Notification">
-            <NotificationIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Nursery">
-            <NurseryIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Opportunities">
-            <OpportunitiesIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Organisation">
-            <OrganizationIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Programme">
-            <ProgrammeIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Project">
-            <ProjectIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Report">
-            <ReportsIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Site">
-            <SiteIcon boxSize={8} />
-          </IconWrapper>
-        </VStack>
-      </Box>
-
-      <Box>
-        <CategoryHeader title="Status" />
-        <VStack align="stretch" gap={4}>
-          <IconWrapper name="Check / Approved">
-            <CheckApprovedIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Draft">
-            <DraftIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Due">
-            <DueIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Information Required">
-            <InformationRequiredIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Nothing Reported">
-            <NothingReportedIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Pending">
-            <PendingIcon boxSize={8} />
-          </IconWrapper>
-          <IconWrapper name="Rejected">
-            <RejectedIcon boxSize={8} />
-          </IconWrapper>
-        </VStack>
-      </Box>
+      {ICON_CATEGORIES.map(category => (
+        <CategoryColumn key={category.title} {...category} />
+      ))}
     </SimpleGrid>
   )
 };
 
 export const DataVisualisation: Story = {
-  render: () => (
-    <VStack align="stretch" gap={6}>
-      <CategoryHeader title="Data Visualisation" />
-      <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
-        <IconWrapper name="Area / Hectares">
-          <AreaHectaresIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Area Hectares Circle">
-          <AreaHectaresCircleIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Jobs / Workdays">
-          <JobsIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Jobs Circle">
-          <JobsCircleIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Landscape">
-          <LandscapeIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Regeneration">
-          <RegenerationIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Seedlings">
-          <SeedlingsIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Seedlings Circle">
-          <SeedlingsCircleIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Species">
-          <SpeciesIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Species Native">
-          <SpeciesNativeIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Survival Rate">
-          <SurvivalRateIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Tree">
-          <TreeIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Tree Circle">
-          <TreeCircleIcon boxSize={8} />
-        </IconWrapper>
-      </SimpleGrid>
-    </VStack>
-  )
+  render: () => <CategoryStory title="Data Visualisation" icons={DATA_VISUALISATION_ICONS} />
 };
 
 export const Function: Story = {
-  render: () => (
-    <VStack align="stretch" gap={6}>
-      <CategoryHeader title="Function" />
-      <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
-        <IconWrapper name="Arrow Forward">
-          <ArrowForwardIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Attach File">
-          <AttachFileIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Check">
-          <CheckIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Check Indeterminate">
-          <CheckIndeterminateIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Chevron Down Alt">
-          <ChevronDownAltIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Chevron Down">
-          <ChevronDownIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Chevron Right">
-          <ChevronRightIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Chevron Up">
-          <ChevronUpIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Close">
-          <CloseIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Compress">
-          <CompressIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Correct">
-          <CorrectIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Comment">
-          <CommentIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Contact Support">
-          <ContactSupportIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Compress">
-          <CompressIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Disallowed">
-          <DisallowedIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Delete">
-          <DeleteIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Document">
-          <DocumentIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Drag">
-          <DragIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Edit">
-          <EditIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Expand">
-          <ExpandIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Google View">
-          <GoogleViewIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Filter">
-          <FilterIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Incorrect">
-          <IncorrectIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Indeterminate">
-          <IndeterminateIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Information">
-          <InfoIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Loading">
-          <LoadingIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Map View">
-          <MapViewIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="More Vert">
-          <MoreVertIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="New Tab">
-          <NewTabIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Placeholder">
-          <PlaceholderIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Plus">
-          <PlusIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Photo Add">
-          <PhotoAddIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Photo Library">
-          <PhotoLibraryIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Photo">
-          <PhotosIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Satellite View">
-          <SatelliteViewIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Search">
-          <SearchIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Upload">
-          <UploadIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="User Add">
-          <UserAddIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="User">
-          <UserIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Video">
-          <VideoIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Visibility">
-          <VisibilityIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Visibility Off">
-          <VisibilityOffIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Information Required Simple">
-          <InformationRequiredSimpleIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Calendar">
-          <CalendarIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Download">
-          <DownloadIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Warning">
-          <WarningIcon boxSize={8} />
-        </IconWrapper>
-      </SimpleGrid>
-    </VStack>
-  )
+  render: () => <CategoryStory title="Function" icons={FUNCTION_ICONS} />
 };
 
 export const RestorationAndLand: Story = {
-  render: () => (
-    <VStack align="stretch" gap={6}>
-      <CategoryHeader title="Restoration & Land" />
-      <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
-        <IconWrapper name="Agroforesty">
-          <AgroforestyIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Agricultural Land">
-          <AgriculturalLandIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Assisted Natural Regen">
-          <AssistedNaturalRegenIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Direct Seeding">
-          <DirectSeedingIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Grassland">
-          <GrasslandIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Mangrove">
-          <MangroveIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Natural Forest">
-          <NaturalForestIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Nursery Building">
-          <NurseryBuildingIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Nursery Expanding">
-          <NurseryExpandingIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Nursery Managing">
-          <NurseryManagingIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Open Natural Ecosystem">
-          <OpenNaturalEcosystemIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Peatland">
-          <PeatlandIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Silvopasture">
-          <SilvopastureIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Tree Planting">
-          <TreePlantingIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Urban Forest">
-          <UrbanForestIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Wetland">
-          <WetlandIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Woodlot">
-          <WoodlotIcon boxSize={8} />
-        </IconWrapper>
-      </SimpleGrid>
-    </VStack>
-  )
+  render: () => <CategoryStory title="Restoration & Land" icons={RESTORATION_AND_LAND_ICONS} />
 };
 
 export const NavigationSections: Story = {
-  render: () => (
-    <VStack align="stretch" gap={6}>
-      <CategoryHeader title="Navigation / Sections" />
-      <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
-        <IconWrapper name="Applications">
-          <ApplicationsIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Dashboard">
-          <DashboardIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Language">
-          <LanguageIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Messages">
-          <MessagesIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Notification">
-          <NotificationIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Nursery">
-          <NurseryIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Opportunities">
-          <OpportunitiesIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Organization">
-          <OrganizationIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Programme">
-          <ProgrammeIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Project">
-          <ProjectIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Report">
-          <ReportsIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Site">
-          <SiteIcon boxSize={8} />
-        </IconWrapper>
-      </SimpleGrid>
-    </VStack>
-  )
+  render: () => <CategoryStory title="Navigation / Sections" icons={NAVIGATION_SECTIONS_ICONS} />
 };
 
 export const Status: Story = {
-  render: () => (
-    <VStack align="stretch" gap={6}>
-      <CategoryHeader title="Status" />
-      <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
-        <IconWrapper name="Check / Approved">
-          <CheckApprovedIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Draft">
-          <DraftIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Due">
-          <DueIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Information Required">
-          <InformationRequiredIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Nothing Reported">
-          <NothingReportedIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Pending">
-          <PendingIcon boxSize={8} />
-        </IconWrapper>
-        <IconWrapper name="Rejected">
-          <RejectedIcon boxSize={8} />
-        </IconWrapper>
-      </SimpleGrid>
-    </VStack>
-  )
+  render: () => <CategoryStory title="Status" icons={STATUS_ICONS} />
 };
