@@ -1,5 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { startCase } from "lodash";
 import { useRouter } from "next/router";
 import { FC, useCallback, useMemo } from "react";
 
@@ -17,9 +18,14 @@ import {
   SiteReportFullDto,
   SrpReportFullDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { v3EntityName } from "@/helpers/entity";
+import { singularEntityName, v3EntityName } from "@/helpers/entity";
+import {
+  getReportExportConfirmationCopy,
+  isReportDownloadConfirmationModel
+} from "@/helpers/reportDownloadConfirmation";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
+import { useOpenDownloadConfirmation } from "@/hooks/useOpenDownloadConfirmation";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { formatMonthYear } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
@@ -50,6 +56,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
   const formEntityName = v3EntityName(entityName) as FormEntity;
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler(entityName, report.uuid);
+  const openDownloadConfirmation = useOpenDownloadConfirmation();
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName,
     entityUUID: report.uuid,
@@ -61,6 +68,24 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
     report.updateRequestStatus === NEEDS_MORE_INFORMATION || report.status === NEEDS_MORE_INFORMATION;
   const awaitingApproval = report.updateRequestStatus === AWAITING_APPROVAL || report.status === AWAITING_APPROVAL;
   const statusProps = useMemo(() => getStatusProps(t, report, report.status), [t, report]);
+
+  const handleDownloadClick = useCallback(() => {
+    const entityModel = v3EntityName(entityName);
+
+    if (!isReportDownloadConfirmationModel(entityModel)) {
+      void handleExport();
+      return;
+    }
+
+    const entityLabel = startCase(singularEntityName(entityName));
+    const { title, content } = getReportExportConfirmationCopy(entityLabel);
+
+    openDownloadConfirmation({
+      title,
+      content,
+      onConfirm: handleExport
+    });
+  }, [entityName, handleExport, openDownloadConfirmation]);
 
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval && statusProps != null) {
@@ -156,7 +181,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
               variant="secondary"
               size="small"
               leftIcon={<DownloadIcon />}
-              onClick={handleExport}
+              onClick={handleDownloadClick}
               loading={exportLoader}
             >
               {t("Download")}
