@@ -199,6 +199,15 @@ const EntityGalleryCard = ({
       ? { entity: modelName as AssetDownloadEntity, uuid: modelUUID }
       : undefined);
 
+  const hasActiveFilters =
+    isGeotagged !== null ||
+    searchString !== "" ||
+    filters.isPublic !== undefined ||
+    filters.modelType !== undefined ||
+    filter != null;
+
+  const showGalleryEmptyState = indexTotal === 0 && !hasActiveFilters;
+
   return (
     <>
       {modelName !== "disturbanceReports" && (
@@ -226,7 +235,7 @@ const EntityGalleryCard = ({
           />
         </PageCard>
       )}
-      {indexTotal === 0 ? (
+      {showGalleryEmptyState ? (
         <div ref={imageGalleryRef}>
           <EmptyState
             title={t("Image Gallery is Empty")}
