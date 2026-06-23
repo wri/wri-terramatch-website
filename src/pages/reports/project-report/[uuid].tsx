@@ -23,7 +23,9 @@ import Log from "@/utils/log";
 import AuditLog from "./tabs/AuditLog";
 import ProjectReportDetailsTab from "./tabs/Details";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
+import NurseryReportsTab from "./tabs/NurseryReports";
 import Overview from "./tabs/Overview";
+import SiteReportsTab from "./tabs/SiteReports";
 
 type TabItem = {
   key: string;
@@ -82,6 +84,16 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         renderBody: () => <GoalsAndProgressTab projectReport={projectReport} project={project} />
       },
       {
+        key: "site-reports",
+        title: t("Site Reports"),
+        renderBody: () => <SiteReportsTab taskUuid={projectReport.taskUuid!} />
+      },
+      {
+        key: "nursery-reports",
+        title: t("Nursery Reports"),
+        renderBody: () => <NurseryReportsTab taskUuid={projectReport.taskUuid!} />
+      },
+      {
         key: "audit-log",
         title: t("Audit Log"),
         renderBody: () => <AuditLog projectReport={projectReport} />
@@ -93,9 +105,9 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const tabBarTabs = useMemo(
     () =>
       tabItems
-        .filter(item => !(item.key === "nursery-reports" && shouldHideNurseries))
+        .filter(item => !["site-reports", "nursery-reports"].includes(item.key))
         .map(item => ({ value: item.key, label: item.title })),
-    [tabItems, shouldHideNurseries]
+    [tabItems]
   );
 
   const activeTabItem = tabItems.find(item => item.key === currentTab) ?? tabItems[0];
