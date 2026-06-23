@@ -111,7 +111,14 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
         items={entries}
         render={entry => {
           if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "file") {
-            return <SpecialEntryRenderer entry={entry} entityName={entities[0]?.entityName} />;
+            return (
+              <SpecialEntryRenderer
+                entry={entry}
+                entityName={entities[0]?.entityName}
+                entityUUID={entities[0]?.entityUUID}
+                stepId={stepId}
+              />
+            );
           }
           return (
             <>
