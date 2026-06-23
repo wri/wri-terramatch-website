@@ -4,10 +4,10 @@ import { ControllerRenderProps } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { indexSiteConnection } from "@/connections/Entity";
-import { DISTURBANCE_SITE_AFFECTED_FIELD_DESCRIPTION } from "@/constants/DisturbanceReportEntriesDescriptions";
 import { APPROVED } from "@/constants/statuses";
 import { useProjectFormDetails } from "@/context/wizardForm.provider";
 import { SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import useDisturbanceReportDescriptions from "@/hooks/translation/useDisturbanceReportDescriptions";
 import { useConnection } from "@/hooks/useConnection";
 import { OptionValue } from "@/types/common";
 
@@ -31,6 +31,7 @@ export const DisturbanceSiteAffectedInput = ({
 }: DisturbanceSiteAffectedInputProps) => {
   const t = useT();
   const projectUuid = useProjectFormDetails()?.uuid;
+  const { DISTURBANCE_SITE_AFFECTED_FIELD_DESCRIPTION } = useDisturbanceReportDescriptions();
   const [, sitesData] = useConnection(indexSiteConnection, {
     filter: { projectUuid: projectUuid },
     pageSize: 100,
@@ -155,12 +156,12 @@ export const DisturbanceSiteAffectedInput = ({
 
   return (
     <Dropdown
-      label={`Site ${fieldIndex != null ? parseInt(fieldIndex) + 1 : 1} Affected`}
+      label={t(`Site {index} Affected`, { index: fieldIndex != null ? parseInt(fieldIndex) + 1 : 1 })}
       options={optionsForDropdown}
       value={dropdownValue}
       onChange={_onChange}
-      placeholder={projectUuid ? "Search and select sites..." : "Please select a project first"}
-      description={t(DISTURBANCE_SITE_AFFECTED_FIELD_DESCRIPTION)}
+      placeholder={projectUuid ? t("Search and select sites...") : t("Please select a project first")}
+      description={DISTURBANCE_SITE_AFFECTED_FIELD_DESCRIPTION}
       className="w-full"
     />
   );
