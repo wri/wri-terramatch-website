@@ -18,13 +18,14 @@ type SpecialEntryRendererProps = {
   entry: FormEntry;
   entityName?: EntityName | SingularEntityName;
   entityUUID?: string;
+  stepId?: string;
 };
 
-const SpecialEntryRenderer: FC<SpecialEntryRendererProps> = ({ entry, entityName, entityUUID }) => {
+const SpecialEntryRenderer: FC<SpecialEntryRendererProps> = ({ entry, entityName, entityUUID, stepId }) => {
   const value = typeof entry.value === "string" ? entry.value : "";
 
   if (entry.title === "Photos and videos") {
-    return <PhotosAndVideosSection value={value} entityName={entityName} entityUUID={entityUUID} />;
+    return <PhotosAndVideosSection value={value} entityName={entityName} entityUUID={entityUUID} stepId={stepId} />;
   }
 
   if (entry.title === "Additional Information" || entry.title === "Tree Species - Additional Information") {
