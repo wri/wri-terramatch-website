@@ -4,10 +4,10 @@ import { ControllerRenderProps } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { indexNurseryConnection } from "@/connections/Entity";
-import { DISTURBANCE_NURSERY_AFFECTED_FIELD_DESCRIPTION } from "@/constants/DisturbanceReportEntriesDescriptions";
 import { APPROVED } from "@/constants/statuses";
 import { useProjectFormDetails } from "@/context/wizardForm.provider";
 import { NurseryLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import useDisturbanceReportDescriptions from "@/hooks/translation/useDisturbanceReportDescriptions";
 import { useConnection } from "@/hooks/useConnection";
 import { OptionValue } from "@/types/common";
 
@@ -31,6 +31,7 @@ export const DisturbanceNurseryAffectedInput = ({
 }: DisturbanceNurseryAffectedInputProps) => {
   const t = useT();
   const projectUuid = useProjectFormDetails()?.uuid;
+  const { DISTURBANCE_NURSERY_AFFECTED_FIELD_DESCRIPTION } = useDisturbanceReportDescriptions();
   const [, nurseriesData] = useConnection(indexNurseryConnection, {
     filter: { projectUuid: projectUuid },
     pageSize: 100,
@@ -144,8 +145,8 @@ export const DisturbanceNurseryAffectedInput = ({
       options={optionsForDropdown}
       value={dropdownValue}
       onChange={_onChange}
-      placeholder={projectUuid ? "Search and select nurseries..." : "Please select a project first"}
-      description={t(DISTURBANCE_NURSERY_AFFECTED_FIELD_DESCRIPTION)}
+      placeholder={projectUuid ? t("Search and select nurseries...") : t("Please select a project first")}
+      description={DISTURBANCE_NURSERY_AFFECTED_FIELD_DESCRIPTION}
       className="w-full"
     />
   );
