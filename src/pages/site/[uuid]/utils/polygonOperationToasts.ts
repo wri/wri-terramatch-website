@@ -40,7 +40,6 @@ export const showPolygonProgressToast = (t: (key: string) => string, label: stri
 
 export const closePolygonProgressToast = (id: PolygonToastId) => closeToast(id);
 
-/** Replaces the in-progress toast with a success toast using the same id to avoid a visual gap. */
 export const completePolygonProgressToast = (id: PolygonToastId, label: string) =>
   showToast({
     id,
