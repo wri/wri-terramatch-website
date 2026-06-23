@@ -34,6 +34,7 @@ interface EntityAreaProps {
   className?: string;
   disabledPolygonPanel?: boolean;
   hideFullscreenControl?: boolean;
+  siteReportPolygonPopup?: boolean;
 }
 
 const OverviewMapArea = ({
@@ -44,7 +45,8 @@ const OverviewMapArea = ({
   refetchPolygonVersions,
   className,
   disabledPolygonPanel,
-  hideFullscreenControl = false
+  hideFullscreenControl = false,
+  siteReportPolygonPopup = false
 }: EntityAreaProps) => {
   const t = useT();
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
@@ -86,7 +88,8 @@ const OverviewMapArea = ({
 
   const [, { data: mediaFiles }] = useMedias({
     entity: type as SupportedEntity,
-    uuid: entityModel?.uuid
+    uuid: entityModel?.uuid,
+    enabled: !disabledPolygonPanel && entityModel?.uuid != null
   });
 
   const {
@@ -288,14 +291,15 @@ const OverviewMapArea = ({
           setPolygonFromMap={setPolygonFromMap}
           polygonFromMap={polygonFromMap}
           shouldBboxZoom={!shouldRefetchPolygonData}
-          mediaFiles={mediaFiles}
+          mediaFiles={disabledPolygonPanel ? undefined : mediaFiles}
           sitePolygonData={sitePolygonDataV3}
           disabledPolygonPanel={disabledPolygonPanel}
           hideFullscreenControl={hideFullscreenControl}
-          alwaysShowPhotosOnMap={disabledPolygonPanel}
+          hideMediaOnMap={disabledPolygonPanel}
           hideMediaPopupActions={disabledPolygonPanel}
           isPolygonGeometryLoading={isMapLoading}
           onPolygonTilesLoadingChange={setIsPolygonTilesLoading}
+          siteReportPolygonPopup={siteReportPolygonPopup}
         />
       </Box>
     </AnrMapOverlayProvider>

@@ -8,7 +8,14 @@ import Log from "@/utils/log";
 
 import Icon, { IconNames } from "./Icon/Icon";
 
-export const ASSET_DOWNLOAD_ENTITIES = ["projects", "sites", "nurseries"] as const;
+export const ASSET_DOWNLOAD_ENTITIES = [
+  "projects",
+  "sites",
+  "nurseries",
+  "projectReports",
+  "siteReports",
+  "nurseryReports"
+] as const;
 export type AssetDownloadEntity = (typeof ASSET_DOWNLOAD_ENTITIES)[number];
 
 type AssetDownloadButtonProps = {

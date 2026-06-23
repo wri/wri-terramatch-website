@@ -92,6 +92,7 @@ export interface BaseMapProps {
   initialPolygonFingerprint?: string;
   /** Champions (non-admin) map layout and controls; omit or false for the default map. */
   championsMap?: boolean;
+  siteReportPolygonPopup?: boolean;
   polygonTableHighlight?: {
     selectedPolygonUuids: string[];
     onPolygonClickedFromMap?: (uuid: string) => void;
@@ -103,6 +104,7 @@ export interface BaseMapProps {
   onPolygonTilesLoadingChange?: (value: boolean) => void;
   alwaysShowPhotosOnMap?: boolean;
   hideMediaPopupActions?: boolean;
+  hideMediaOnMap?: boolean;
   isPolygonGeometryLoading?: boolean;
 }
 
@@ -237,7 +239,9 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     onPolygonTilesLoadingChange,
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
-    isPolygonGeometryLoading = false
+    hideMediaOnMap,
+    isPolygonGeometryLoading = false,
+    siteReportPolygonPopup = false
   } = props;
 
   const [isViewingImages, setIsViewingImages] = useState(false);
@@ -448,7 +452,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setEditPolygon,
     editPolygon,
     setMobilePopupData,
-    dashboardContext: resolvedDashboardContext
+    dashboardContext: resolvedDashboardContext,
+    siteReportPolygonPopup
   });
 
   useEffect(() => {
@@ -510,6 +515,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     router,
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
+    hideMediaOnMap,
     isPolygonGeometryLoading
   });
 
