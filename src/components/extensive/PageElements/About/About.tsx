@@ -23,7 +23,7 @@ const About: FC<AboutProps> = ({ title, description, links, className, onLinkCli
   const onboardingAnalytics = useOnboardingCardAnalyticsContext();
 
   return (
-    <Flex className={twMerge("rounded-1 bg-theme-neutral-100 min-h-0 flex-col gap-2 p-5", className)}>
+    <Flex className={twMerge("rounded-1 min-h-0 flex-col gap-2 bg-theme-neutral-100 p-5", className)}>
       {title && (
         <Text color="neutral.900" textStyle="400-bold">
           {title}
