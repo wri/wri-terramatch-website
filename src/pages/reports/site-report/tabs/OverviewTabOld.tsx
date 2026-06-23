@@ -112,6 +112,8 @@ const OverviewTab: FC<OverviewTabProps> = ({ report, entityName }) => {
                     <EntityGalleryCard
                       modelName="sites"
                       modelUUID={siteReport.siteUuid!}
+                      galleryEntity="siteReports"
+                      galleryUuid={siteReport.uuid}
                       modelTitle={t("Site Report")}
                       entityData={site}
                       emptyStateContent={t(

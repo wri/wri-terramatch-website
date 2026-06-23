@@ -79,9 +79,6 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
               "Your gallery is currently empty. Add images by using the 'Edit' button on this nursery report."
             )}
             sharedDriveLink={nurseryReport.sharedDriveLink ?? undefined}
-            assetDownload={
-              nurseryReport.nurseryUuid != null ? { entity: "nurseries", uuid: nurseryReport.nurseryUuid } : undefined
-            }
           />
         )
       },
