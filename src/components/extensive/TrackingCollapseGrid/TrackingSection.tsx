@@ -83,7 +83,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
         <MultiActionButton
           mainActionLabel={t(addNameLabel)}
           mainActionOnClick={() => {}}
-          otherActions={...sortBy(subTypes, ({ label }) => t(label)).map(({ subtype, label }) => ({
+          otherActions={sortBy(subTypes, ({ label }) => t(label)).map(({ subtype, label }) => ({
             label: t(label),
             onClick: () => addRow(subtype),
             value: subtype
@@ -110,18 +110,18 @@ const TrackingSection: FC<TrackingSectionProps> = ({
   return (
     <>
       <>
-        <div className="col-span-2 border-b border-theme-primary-200 bg-theme-primary-900 px-3 py-2.5">
+        <div className="border-theme-primary-200 bg-theme-primary-900 col-span-2 border-b px-3 py-2.5">
           <Text textStyle="400-bold" color="neutral.100">
             {t(`By: ${title}`)}
           </Text>
         </div>
         {/* Column headers */}
-        <div className="col-span-1 flex items-center bg-theme-neutral-200 px-3 py-2">
+        <div className="bg-theme-neutral-200 col-span-1 flex items-center px-3 py-2">
           <Text textStyle="300-bold" color="neutral.800">
             {t(`${title} Definition`)}
           </Text>
         </div>
-        <div className="col-span-1 flex items-center justify-center bg-theme-neutral-200 px-3 py-2 text-center">
+        <div className="bg-theme-neutral-200 col-span-1 flex items-center justify-center px-3 py-2 text-center">
           <Text color="neutral.800" textStyle="300-bold">
             {t(`Number of ${displayTrackingType}`)}
           </Text>
@@ -141,7 +141,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
       ))}
       {addNameButton}
       <>
-        <div className={classNames("col-span-1 flex items-center justify-between bg-theme-neutral-100 px-3 py-2.5")}>
+        <div className={classNames("bg-theme-neutral-100 col-span-1 flex items-center justify-between px-3 py-2.5")}>
           <Text color="primary.900" textStyle="300-bold">
             {domain === "demographics" ? t("Total Created:") : t("Total:")}
           </Text>
