@@ -73,7 +73,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
     refetchSitePolygons();
   }, [refetchSitePolygons]);
 
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "site-reports",
     entityUUID: siteReport.uuid,
     entityStatus: siteReport.status,
@@ -154,6 +154,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reloadSiteData}>
       <PageContent>
+        {EditModals}
         <Flex gap={7} className="flex-col">
           <Flex gap={7}>
             <Flex gap={5} className={classNames(isHBFFramework ? "flex-row" : "flex-col", "flex-[2]")}>
