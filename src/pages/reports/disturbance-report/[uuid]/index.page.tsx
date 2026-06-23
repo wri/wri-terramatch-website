@@ -148,7 +148,6 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
                 {t("Project Profile")}
               </Button>
             )}
-            {disturbanceReport.projectUuid != null && <span className="text-sm text-theme-neutral-300">|</span>}
           </div>
         }
         toolbar={{
