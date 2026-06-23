@@ -177,15 +177,17 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
             <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={handleEditClick}>
               {t("Edit")}
             </Button>
-            <Button
-              variant="secondary"
-              size="small"
-              leftIcon={<DownloadIcon />}
-              onClick={handleDownloadClick}
-              loading={exportLoader}
-            >
-              {t("Download")}
-            </Button>
+            {entityName !== "disturbance-report" && (
+              <Button
+                variant="secondary"
+                size="small"
+                leftIcon={<DownloadIcon />}
+                onClick={handleDownloadClick}
+                loading={exportLoader}
+              >
+                {t("Download")}
+              </Button>
+            )}
           </Flex>
         </Flex>
       </Box>
