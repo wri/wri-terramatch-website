@@ -83,7 +83,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
         <MultiActionButton
           mainActionLabel={t(addNameLabel)}
           mainActionOnClick={() => {}}
-          otherActions={...sortBy(subTypes, ({ label }) => t(label)).map(({ subtype, label }) => ({
+          otherActions={sortBy(subTypes, ({ label }) => t(label)).map(({ subtype, label }) => ({
             label: t(label),
             onClick: () => addRow(subtype),
             value: subtype
