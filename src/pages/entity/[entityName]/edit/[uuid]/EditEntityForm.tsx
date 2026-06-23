@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -154,8 +155,12 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
       }
     }
 
+    if (entity?.status === "approved") {
+      return { initialStepIndex: fieldsProvider.stepIds().length, disableInitialAutoProgress: true };
+    }
+
     return { initialStepIndex: 0, disableInitialAutoProgress: false };
-  }, [feedbackFields, fieldsProvider, providerLoaded]);
+  }, [entity?.status, feedbackFields, fieldsProvider, providerLoaded]);
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
@@ -227,6 +232,13 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
                   "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the reporting tasks section under your project page. Would you like to close this form and continue later?"
                 ),
               onConfirm() {
+                showToast({
+                  label: t("Draft saved"),
+                  type: "success",
+                  placement: "bottom",
+                  duration: 5000,
+                  maxWidth: "auto"
+                });
                 router.push(getEntityDetailPageLink(entityName, entityUUID));
               }
             }}

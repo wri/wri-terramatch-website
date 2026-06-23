@@ -84,7 +84,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const nurseryReportAboutContent = useNurseryReportAboutContent();
 
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "nursery-reports",
     entityUUID: report.uuid,
     entityStatus: report.status,
@@ -157,6 +157,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
 
   return (
     <PageContent>
+      {EditModals}
       <Flex gap={7} className="flex-col">
         <Flex gap={7}>
           <Flex gap={5} className={classNames(isTerrafundFramework ? "flex-row" : "flex-col", "flex-[2]")}>

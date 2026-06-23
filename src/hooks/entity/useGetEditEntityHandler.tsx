@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
-import { getEntityEditPathSegment } from "@/helpers/entity";
+import { getEntityEditPageLink, getEntityEditPathSegment } from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons/Function/WarningIcon";
@@ -126,6 +126,8 @@ export const useGetEditEntityHandler = ({
                 router.push(
                   `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`
                 );
+              } else if (entityStatus === "approved") {
+                router.push(getEntityEditPageLink(entityName, entityUUID));
               } else {
                 router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
               }
