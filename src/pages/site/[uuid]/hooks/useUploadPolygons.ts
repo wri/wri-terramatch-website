@@ -232,11 +232,14 @@ export const useUploadPolygons = ({
   );
 
   const uploadWithVersionsFiles = useCallback(
-    (files: File[]) => {
+    (files: File[], polygonCount?: number) => {
       void uploadFiles(
         files,
         uploadGeometryWithVersions,
-        { progress: getUpdatingPolygonsProgressLabel(t, files.length), complete: toastLabels.updatingPolygonsComplete },
+        {
+          progress: getUpdatingPolygonsProgressLabel(t, polygonCount ?? files.length),
+          complete: toastLabels.updatingPolygonsComplete
+        },
         POLYGON_TOAST_IDS.updating
       );
     },
