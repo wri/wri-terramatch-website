@@ -103,6 +103,7 @@ export interface BaseMapProps {
   onPolygonTilesLoadingChange?: (value: boolean) => void;
   alwaysShowPhotosOnMap?: boolean;
   hideMediaPopupActions?: boolean;
+  hideMediaOnMap?: boolean;
   isPolygonGeometryLoading?: boolean;
 }
 
@@ -237,6 +238,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     onPolygonTilesLoadingChange,
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
+    hideMediaOnMap,
     isPolygonGeometryLoading = false
   } = props;
 
@@ -510,6 +512,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     router,
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
+    hideMediaOnMap,
     isPolygonGeometryLoading
   });
 

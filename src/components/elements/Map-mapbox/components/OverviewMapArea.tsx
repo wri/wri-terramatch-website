@@ -86,7 +86,8 @@ const OverviewMapArea = ({
 
   const [, { data: mediaFiles }] = useMedias({
     entity: type as SupportedEntity,
-    uuid: entityModel?.uuid
+    uuid: entityModel?.uuid,
+    enabled: !disabledPolygonPanel && entityModel?.uuid != null
   });
 
   const {
@@ -288,11 +289,11 @@ const OverviewMapArea = ({
           setPolygonFromMap={setPolygonFromMap}
           polygonFromMap={polygonFromMap}
           shouldBboxZoom={!shouldRefetchPolygonData}
-          mediaFiles={mediaFiles}
+          mediaFiles={disabledPolygonPanel ? undefined : mediaFiles}
           sitePolygonData={sitePolygonDataV3}
           disabledPolygonPanel={disabledPolygonPanel}
           hideFullscreenControl={hideFullscreenControl}
-          alwaysShowPhotosOnMap={disabledPolygonPanel}
+          hideMediaOnMap={disabledPolygonPanel}
           hideMediaPopupActions={disabledPolygonPanel}
           isPolygonGeometryLoading={isMapLoading}
           onPolygonTilesLoadingChange={setIsPolygonTilesLoading}
