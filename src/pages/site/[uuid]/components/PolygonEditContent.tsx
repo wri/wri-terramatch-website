@@ -54,7 +54,6 @@ import {
   completePolygonProgressToast,
   getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
-  getSubmittingProgressLabel,
   POLYGON_TOAST_IDS,
   showPolygonCompleteToast,
   showPolygonErrorToast,
@@ -663,8 +662,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         return;
       }
 
-      showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1), POLYGON_TOAST_IDS.submitting);
-
       try {
         await bulkUpdateSitePolygonStatus([polygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, comment);
         if (resolvedSiteUuid !== "" && geometryPolygonUuid !== "") {
@@ -685,7 +682,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         onClose?.();
         await waitForMapEditCleanup();
         await onSaved?.();
-        completePolygonProgressToast(POLYGON_TOAST_IDS.submitting, toastLabels.submittingComplete);
       } catch (error) {
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
         showPolygonErrorToast(t("Error submitting polygon"));
@@ -705,8 +701,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setShouldRefetchPolygonData,
       setStatusSelectedPolygon,
       showStatusToast,
-      t,
-      toastLabels
+      t
     ]
   );
 

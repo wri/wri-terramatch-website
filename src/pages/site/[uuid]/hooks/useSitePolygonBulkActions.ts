@@ -43,7 +43,6 @@ import {
   getDownloadingPolygonsProgressLabel,
   getFixingOverlapsProgressLabel,
   getPolygonOperationToastLabels,
-  getSubmittingProgressLabel,
   POLYGON_TOAST_IDS,
   showPolygonErrorToast,
   showPolygonProgressToast
@@ -503,11 +502,6 @@ export const useSitePolygonBulkActions = ({
       }
 
       try {
-        showPolygonProgressToast(
-          t,
-          getSubmittingProgressLabel(t, sitePolygonUuids.length),
-          POLYGON_TOAST_IDS.submitting
-        );
         const response = await bulkUpdateSitePolygonStatus(
           sitePolygonUuids,
           POLYGON_PENDING_APPROVAL as PolygonStatus,
@@ -530,7 +524,6 @@ export const useSitePolygonBulkActions = ({
         setSubmittedPolygonNames(submittedNames);
         setShouldRefetchPolygonData(true);
         await refreshPolygonData();
-        completePolygonProgressToast(POLYGON_TOAST_IDS.submitting, toastLabels.submittingComplete);
         pendingPolygonSubmittedModalRef.current = true;
         ApiSlice.pruneCache("auditStatuses");
 
@@ -580,7 +573,6 @@ export const useSitePolygonBulkActions = ({
       setShouldRefetchPolygonData,
       site.uuid,
       t,
-      toastLabels,
       user?.firstName,
       user?.lastName
     ]

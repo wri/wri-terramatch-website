@@ -1,11 +1,11 @@
 import { Flex, Spinner } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { deleteAuditStatusAsync, updateAuditStatusAsync, useAuditStatuses } from "@/connections/AuditStatus";
 import { deleteMedia, prepareFileForUpload } from "@/connections/Media";
 import { useMyUser } from "@/connections/User";
-import { useNotificationContext } from "@/context/notification.provider";
 import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import CommentCard, { CommentCardAttachment } from "@/redesignComponents/content/Message/CommentCard";
@@ -75,7 +75,6 @@ const mapCommentAttachments = (comment: AuditStatusDto): ExistingDraftAttachment
 
 const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "", polygonStatus }) => {
   const t = useT();
-  const { openNotification } = useNotificationContext();
   const [, { user }] = useMyUser();
   const editFileInputRef = useRef<HTMLInputElement>(null);
 
@@ -164,28 +163,42 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
 
       const totalFiles = draftAttachments.length + pendingEditFiles.length;
       if (totalFiles >= MAX_FILES) {
-        openNotification("error", t("Error!"), t("You can upload a maximum of 5 files."));
+        showToast({
+          label: t("You can upload a maximum of 5 files."),
+          type: "error",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
         return;
       }
 
       if (!VALID_FILE_TYPES.includes(file.type)) {
-        openNotification(
-          "error",
-          t("Error!"),
-          t("Invalid file type. Only PDF, XLS, DOC, XLSX, DOCX, JPG, PNG, and TIFF are allowed.")
-        );
+        showToast({
+          label: t("Invalid file type. Only PDF, XLS, DOC, XLSX, DOCX, JPG, PNG, and TIFF are allowed."),
+          type: "error",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
         return;
       }
 
       if (file.size > MAX_FILE_SIZE) {
-        openNotification("error", t("Error!"), t("File size must be less than 10MB."));
+        showToast({
+          label: t("File size must be less than 10MB."),
+          type: "error",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
         return;
       }
 
       setPendingEditFiles(currentFiles => [...currentFiles, file]);
       event.target.value = "";
     },
-    [draftAttachments.length, openNotification, pendingEditFiles.length, t]
+    [draftAttachments.length, pendingEditFiles.length, t]
   );
 
   const handleRemoveDraftAttachment = useCallback((attachmentUrl: string) => {
@@ -246,7 +259,13 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
 
       const trimmedMessage = draftMessage.trim();
       if (trimmedMessage === "" && draftAttachments.length === 0 && pendingEditFiles.length === 0) {
-        openNotification("error", t("Error!"), t("Please enter a message or attach a file."));
+        showToast({
+          label: t("Please enter a message or attach a file."),
+          type: "error",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
         return;
       }
 
@@ -268,10 +287,22 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
 
         refetch?.();
         resetEditingState();
-        openNotification("success", t("Success!"), t("Your comment was updated."));
+        showToast({
+          label: t("Your comment was updated."),
+          type: "success",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
       } catch (error) {
         Log.error("Failed to update comment", error);
-        openNotification("error", t("Error!"), t("Failed to update comment. Please try again."));
+        showToast({
+          label: t("Failed to update comment. Please try again."),
+          type: "error",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
       } finally {
         setIsSavingEdit(false);
       }
@@ -281,7 +312,6 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
       draftMessage,
       hasValidPolygonUuid,
       isSavingEdit,
-      openNotification,
       originalAttachments,
       pendingEditFiles,
       polygonStatus,
@@ -307,10 +337,16 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
         refetch?.();
       } catch (error) {
         Log.error("Failed to mark comment as read", error);
-        openNotification("error", t("Error!"), t("Failed to mark comment as read. Please try again."));
+        showToast({
+          label: t("Failed to mark comment as read. Please try again."),
+          type: "error",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
       }
     },
-    [hasValidPolygonUuid, openNotification, polygonUuid, refetch, t]
+    [hasValidPolygonUuid, polygonUuid, refetch, t]
   );
 
   const handleDeleteComment = useCallback(
@@ -327,12 +363,24 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
         await deleteAuditStatusAsync(auditUuid, "sitePolygons", polygonUuid);
         ApiSlice.pruneCache("auditStatuses");
         refetch?.();
-        openNotification("success", t("Success!"), t("Comment deleted successfully."));
+        showToast({
+          label: t("Comment deleted successfully."),
+          type: "success",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
       } catch {
-        openNotification("error", t("Error!"), t("Failed to delete comment. Please try again."));
+        showToast({
+          label: t("Failed to delete comment. Please try again."),
+          type: "error",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
       }
     },
-    [editingCommentUuid, hasValidPolygonUuid, openNotification, polygonUuid, refetch, resetEditingState, t]
+    [editingCommentUuid, hasValidPolygonUuid, polygonUuid, refetch, resetEditingState, t]
   );
 
   const currentUserName = formatAuthorName(user?.firstName, user?.lastName);
