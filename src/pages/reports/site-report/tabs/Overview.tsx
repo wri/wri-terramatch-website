@@ -10,6 +10,7 @@ import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
@@ -33,6 +34,7 @@ import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSu
 import { AreaHectaresIcon } from "@/redesignComponents/foundations/Icons";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
+import { ONBOARDING_CARD_TYPES } from "@/utils/analytics/onboardingCardAnalytics";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 interface OverviewProps {
@@ -241,46 +243,52 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
               </PageItem>
             )}
             <PageItem title={t("About Site Report")} flexProps={{ flex: 1 }}>
-              <About
-                description={
-                  <Flex direction="column" gap={5}>
-                    {aboutContentItem?.paragraphs.map((paragraph, index) => {
-                      const isFirstParagraph = index === 0;
-                      const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
+              <OnboardingCard
+                cardType={ONBOARDING_CARD_TYPES.MRV_GUIDANCE}
+                entityType="site-report"
+                entityId={siteReport.uuid}
+              >
+                <About
+                  description={
+                    <Flex direction="column" gap={5}>
+                      {aboutContentItem?.paragraphs.map((paragraph, index) => {
+                        const isFirstParagraph = index === 0;
+                        const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
 
-                      if (isFirstParagraph) {
+                        if (isFirstParagraph) {
+                          return (
+                            <Text key={index} color="neutral.900" textStyle="300">
+                              <strong>{t("Site Report")} </strong> {paragraph}
+                            </Text>
+                          );
+                        }
+
+                        if (isLastParagraph) {
+                          return (
+                            <ContactSupport
+                              key={index}
+                              message={paragraph}
+                              subject={t("Support Request for Site Report")}
+                            />
+                          );
+                        }
+
                         return (
                           <Text key={index} color="neutral.900" textStyle="300">
-                            <strong>{t("Site Report")} </strong> {paragraph}
+                            {paragraph}
                           </Text>
                         );
-                      }
-
-                      if (isLastParagraph) {
-                        return (
-                          <ContactSupport
-                            key={index}
-                            message={paragraph}
-                            subject={t("Support Request for Site Report")}
-                          />
-                        );
-                      }
-
-                      return (
-                        <Text key={index} color="neutral.900" textStyle="300">
-                          {paragraph}
-                        </Text>
-                      );
-                    })}
-                  </Flex>
-                }
-                links={
-                  aboutContentItem?.links.map(link => ({
-                    title: t(link.title),
-                    link: link.link
-                  })) ?? []
-                }
-              />
+                      })}
+                    </Flex>
+                  }
+                  links={
+                    aboutContentItem?.links.map(link => ({
+                      title: t(link.title),
+                      link: link.link
+                    })) ?? []
+                  }
+                />
+              </OnboardingCard>
             </PageItem>
           </Flex>
         </Flex>

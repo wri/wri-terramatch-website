@@ -72,14 +72,33 @@ export const trackOnboardingCardAnalyticsEvent = (
   });
 };
 
-export const trackOnboardingCardViewed = (params: {
+const viewedOnboardingCards = new Set<string>();
+
+const getOnboardingCardViewKey = (
+  cardType: OnboardingCardType,
+  entityType: OnboardingCardEntityType,
+  entityId: string
+): string => `${cardType}|${entityType}|${entityId}`;
+
+export const trackOnboardingCardViewedOnce = (params: {
   cardType?: OnboardingCardType | null;
   entityType?: OnboardingCardEntityType | null;
   entityId?: string | null;
 }): void => {
   const context = getOnboardingCardContext(params);
   if (context == null) return;
+
+  const viewKey = getOnboardingCardViewKey(context.cardType, context.entityType, context.entityId);
+  if (viewedOnboardingCards.has(viewKey)) return;
+
+  viewedOnboardingCards.add(viewKey);
   trackOnboardingCardAnalyticsEvent("onboarding_card_viewed", context);
+};
+
+export const trackOnboardingCardViewed = trackOnboardingCardViewedOnce;
+
+export const resetOnboardingCardViewedTracking = (): void => {
+  viewedOnboardingCards.clear();
 };
 
 export const trackOnboardingCardLinkClicked = (params: {
@@ -91,6 +110,8 @@ export const trackOnboardingCardLinkClicked = (params: {
 }): void => {
   const context = getOnboardingCardContext(params);
   if (context == null) return;
+  if (params.linkLabel.trim() === "" || params.linkUrl.trim() === "") return;
+
   trackOnboardingCardAnalyticsEvent("onboarding_card_link_clicked", {
     ...context,
     link_label: params.linkLabel,
