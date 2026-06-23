@@ -331,7 +331,7 @@ function WizardForm(props: WizardFormProps) {
           <SectionFeedbackBanner
             sectionName={reportAnalytics.getSectionNameForIndex(index)}
             feedback={entity?.feedback}
-            isVisible={reportAnalytics.hasUnresolvedFeedbackInCurrentStep(stepId, formValues)}
+            isVisible={reportAnalytics.hasFeedbackBannerInCurrentStep(stepId)}
             onDisplayed={reportAnalytics.trackFeedbackBannerDisplayed}
           />
         )}
@@ -389,7 +389,6 @@ function WizardForm(props: WizardFormProps) {
       formModel?.model,
       handleDownloadAnswers,
       reportAnalytics,
-      formValues,
       entity?.feedback
     ]
   );

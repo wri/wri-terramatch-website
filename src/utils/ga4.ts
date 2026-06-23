@@ -40,7 +40,9 @@ export type ReportEventName =
   | "feedback_banner_displayed"
   | "accordion_expanded"
   | "report_save_exited"
-  | "report_reopened";
+  | "report_reopened"
+  | "report_approved"
+  | "report_needs_more_info";
 
 export type OnboardingCardEventName = "onboarding_card_viewed" | "onboarding_card_link_clicked";
 
@@ -99,7 +101,7 @@ export const getFormSectionAnalyticsContext = ({
   formStepId,
   errorType
 }: {
-  entityType: Exclude<Ga4EntityType, "unknown">;
+  entityType: Exclude<Ga4EntityType, "unknown"> | MetricsCardEntityType;
   entityId?: string | null;
   sectionName: string;
   formStepId: string;

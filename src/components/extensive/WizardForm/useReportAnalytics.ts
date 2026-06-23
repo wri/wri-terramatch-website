@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import { hasFeedbackInStep, hasUnresolvedFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
+import { hasFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { FormFieldsProvider, FormModelsDefinition } from "@/context/wizardForm.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -130,11 +130,9 @@ export const useReportAnalytics = ({
     });
   });
 
-  const hasUnresolvedFeedbackInCurrentStep = useCallback(
-    (stepId: string, currentValues: Record<string, unknown>) =>
-      initialValues != null &&
-      hasUnresolvedFeedbackInStep(fieldsProvider, stepId, feedbackFields, currentValues, initialValues),
-    [feedbackFields, fieldsProvider, initialValues]
+  const hasFeedbackBannerInCurrentStep = useCallback(
+    (stepId: string) => hasFeedbackInStep(fieldsProvider, stepId, feedbackFields),
+    [feedbackFields, fieldsProvider]
   );
 
   return {
@@ -144,6 +142,6 @@ export const useReportAnalytics = ({
     trackReportSaveExited,
     trackReportSubmitted,
     trackFeedbackBannerDisplayed,
-    hasUnresolvedFeedbackInCurrentStep
+    hasFeedbackBannerInCurrentStep
   };
 };
