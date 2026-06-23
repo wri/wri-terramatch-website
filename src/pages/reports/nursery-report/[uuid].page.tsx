@@ -17,7 +17,6 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
 import NurseryReportGoalsAndProgressTab from "@/pages/reports/nursery-report/tabs/GoalsAndProgress";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
-import NurseryReportDataTab from "@/pages/reports/nursery-report/tabs/ReportData";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -63,16 +62,6 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
         renderBody: () => <NurseryReportOverview report={nurseryReport} />
       },
       {
-        key: "report-data",
-        title: t("Report Data"),
-        renderBody: () => <NurseryReportDataTab report={nurseryReport} nursery={nursery} />
-      },
-      {
-        key: "goals",
-        title: t("Progress & Goals"),
-        renderBody: () => <NurseryReportGoalsAndProgressTab nurseryReport={nurseryReport} />
-      },
-      {
         key: "details",
         title: t("Report Details"),
         renderBody: () => <NurseryReportDetailsTab report={nurseryReport} />
@@ -95,9 +84,14 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
             }
           />
         )
+      },
+      {
+        key: "goals",
+        title: t("Progress & Goals"),
+        renderBody: () => <NurseryReportGoalsAndProgressTab nurseryReport={nurseryReport} />
       }
     ],
-    [nurseryReport, nursery, t]
+    [nurseryReport, t]
   );
 
   const visibleTabItems = useMemo(() => {
@@ -171,7 +165,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
               </Button>
             )}
             {nurseryReport.nurseryUuid != null && nurseryReport.projectReportUuid != null && (
-              <span className="text-sm text-theme-neutral-300">|</span>
+              <span className="text-theme-neutral-300 text-sm">|</span>
             )}
             {nurseryReport.projectReportUuid != null && (
               <Button
