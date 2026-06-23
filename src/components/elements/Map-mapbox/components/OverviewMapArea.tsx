@@ -34,6 +34,7 @@ interface EntityAreaProps {
   className?: string;
   disabledPolygonPanel?: boolean;
   hideFullscreenControl?: boolean;
+  siteReportPolygonPopup?: boolean;
 }
 
 const OverviewMapArea = ({
@@ -44,7 +45,8 @@ const OverviewMapArea = ({
   refetchPolygonVersions,
   className,
   disabledPolygonPanel,
-  hideFullscreenControl = false
+  hideFullscreenControl = false,
+  siteReportPolygonPopup = false
 }: EntityAreaProps) => {
   const t = useT();
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
@@ -297,6 +299,7 @@ const OverviewMapArea = ({
           hideMediaPopupActions={disabledPolygonPanel}
           isPolygonGeometryLoading={isMapLoading}
           onPolygonTilesLoadingChange={setIsPolygonTilesLoading}
+          siteReportPolygonPopup={siteReportPolygonPopup}
         />
       </Box>
     </AnrMapOverlayProvider>
