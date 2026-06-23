@@ -18,7 +18,6 @@ import {
   completePolygonProgressToast,
   getFixingOverlapsProgressLabel,
   getPolygonOperationToastLabels,
-  getValidatingProgressLabel,
   POLYGON_TOAST_IDS,
   showPolygonErrorToast,
   showPolygonProgressToast
@@ -154,7 +153,6 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
 
     setIsValidating(true);
     trackPolygonRunValidationClicked({ siteUuid, polygonIds: [polygonUuid] });
-    showPolygonProgressToast(t, getValidatingProgressLabel(t, 1), POLYGON_TOAST_IDS.validating);
     try {
       await onRunValidation([polygonUuid]);
       completePolygonProgressToast(POLYGON_TOAST_IDS.validating, toastLabels.validatingComplete);

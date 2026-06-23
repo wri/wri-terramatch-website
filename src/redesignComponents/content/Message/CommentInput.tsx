@@ -1,11 +1,11 @@
 import { Box, Flex, Image, Text, Textarea } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import { AuditStatusEntityType, useCreateAuditStatus } from "@/connections/AuditStatus";
 import { prepareFileForUpload } from "@/connections/Media";
-import { useNotificationContext } from "@/context/notification.provider";
 import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -103,7 +103,6 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   } = props;
 
   const t = useT();
-  const { openNotification } = useNotificationContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [internalIsEditing, setInternalIsEditing] = useState(defaultIsEditing);
@@ -194,16 +193,24 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
           );
         }
 
-        openNotification("success", t("Success!"), t("Your comment was just added!"));
+        showToast({
+          label: t("Your comment was just added!"),
+          type: "success",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
         resetAuditInput();
         ApiSlice.pruneCache("auditStatuses");
         onCommentCreated?.();
       } catch (uploadError) {
-        openNotification(
-          "error",
-          t("Error!"),
-          t("Failed to upload files. Your comment was added but files may be missing.")
-        );
+        showToast({
+          label: t("Failed to upload files. Your comment was added but files may be missing."),
+          type: "error",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
         Log.error("Error uploading files after comment creation", uploadError);
         resetAuditInput();
         ApiSlice.pruneCache("auditStatuses");
@@ -212,7 +219,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
         setIsUploadingFiles(false);
       }
     },
-    [onCommentCreated, openNotification, pendingFiles, resetAuditInput, t]
+    [onCommentCreated, pendingFiles, resetAuditInput, t]
   );
 
   const { create: sendAuditComment, isCreating } = useCreateAuditStatus(
