@@ -7,10 +7,10 @@ import { trackPolygonDownloaded } from "@/utils/polygonAnalytics";
 
 import {
   closePolygonProgressToast,
+  completePolygonProgressToast,
   getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
   POLYGON_TOAST_IDS,
-  showPolygonCompleteToast,
   showPolygonErrorToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
@@ -37,8 +37,7 @@ export const useDownloadSitePolygons = ({ siteUuid, siteName }: UseDownloadSiteP
         polygonType: "standard",
         polygonCount: 1
       });
-      closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
-      showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
+      completePolygonProgressToast(POLYGON_TOAST_IDS.downloading, toastLabels.downloadingPolygonsComplete);
     } catch (error) {
       Log.error("Failed to download site polygons:", error);
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);

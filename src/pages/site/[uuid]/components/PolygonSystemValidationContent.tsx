@@ -15,11 +15,11 @@ import { extractClippedVersions } from "../hooks/overlapFix.utils";
 import { usePolygonValidationCriteria } from "../hooks/usePolygonValidationCriteria";
 import {
   closePolygonProgressToast,
+  completePolygonProgressToast,
   getFixingOverlapsProgressLabel,
   getPolygonOperationToastLabels,
   getValidatingProgressLabel,
   POLYGON_TOAST_IDS,
-  showPolygonCompleteToast,
   showPolygonErrorToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
@@ -106,13 +106,12 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
         clippedVersions
       });
 
-      closePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps);
-
       if (updatedPolygon != null) {
-        showPolygonCompleteToast(toastLabels.fixingOverlapsComplete);
+        completePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps, toastLabels.fixingOverlapsComplete);
         return;
       }
 
+      closePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps);
       showToast({
         label: t("No polygon have been fixed"),
         type: "warning",
@@ -158,8 +157,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     showPolygonProgressToast(t, getValidatingProgressLabel(t, 1), POLYGON_TOAST_IDS.validating);
     try {
       await onRunValidation([polygonUuid]);
-      closePolygonProgressToast(POLYGON_TOAST_IDS.validating);
-      showPolygonCompleteToast(toastLabels.validatingComplete);
+      completePolygonProgressToast(POLYGON_TOAST_IDS.validating, toastLabels.validatingComplete);
     } catch (error) {
       Log.error("Failed to validate polygon:", error);
       closePolygonProgressToast(POLYGON_TOAST_IDS.validating);

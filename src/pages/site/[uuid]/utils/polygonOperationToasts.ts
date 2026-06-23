@@ -5,6 +5,8 @@ import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
 export const POLYGON_TOAST_PLACEMENT = "bottom" as const;
 export const POLYGON_TOAST_DURATION_MS = 5000;
+/** Progress toasts must persist until the async task finishes; design system defaults to 5s when omitted. */
+export const POLYGON_PROGRESS_TOAST_DURATION_MS = Number.POSITIVE_INFINITY;
 
 export const POLYGON_TOAST_IDS = {
   uploading: "polygon-uploading-toast",
@@ -26,7 +28,7 @@ export const showPolygonProgressToast = (t: (key: string) => string, label: stri
     id,
     type: "info",
     placement: POLYGON_TOAST_PLACEMENT,
-    duration: POLYGON_TOAST_DURATION_MS,
+    duration: POLYGON_PROGRESS_TOAST_DURATION_MS,
     closableLabel: t("Close"),
     icon: createElement(LoadingIcon, {
       boxSize: 7,
@@ -37,6 +39,17 @@ export const showPolygonProgressToast = (t: (key: string) => string, label: stri
   });
 
 export const closePolygonProgressToast = (id: PolygonToastId) => closeToast(id);
+
+/** Replaces the in-progress toast with a success toast using the same id to avoid a visual gap. */
+export const completePolygonProgressToast = (id: PolygonToastId, label: string) =>
+  showToast({
+    id,
+    label,
+    type: "success",
+    placement: POLYGON_TOAST_PLACEMENT,
+    duration: POLYGON_TOAST_DURATION_MS,
+    maxWidth: "auto"
+  });
 
 export const showPolygonCompleteToast = (label: string) =>
   showToast({
