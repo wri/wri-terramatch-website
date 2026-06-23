@@ -69,8 +69,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
 
   const handleDownloadAnswers = useDownloadFormAnswers({
     fieldsProvider,
-    formHook,
-    formModel: entity.model
+    formHook
   });
 
   return (
