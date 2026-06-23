@@ -331,7 +331,7 @@ function WizardForm(props: WizardFormProps) {
           <SectionFeedbackBanner
             sectionName={reportAnalytics.getSectionNameForIndex(index)}
             feedback={entity?.feedback}
-            isVisible={reportAnalytics.hasUnresolvedFeedbackInCurrentStep(stepId, formValues)}
+            isVisible={reportAnalytics.hasFeedbackBannerInCurrentStep(stepId)}
             onDisplayed={reportAnalytics.trackFeedbackBannerDisplayed}
           />
         )}
@@ -389,7 +389,6 @@ function WizardForm(props: WizardFormProps) {
       formModel?.model,
       handleDownloadAnswers,
       reportAnalytics,
-      formValues,
       entity?.feedback
     ]
   );
@@ -541,6 +540,11 @@ function WizardForm(props: WizardFormProps) {
         { key: "site-reports", labelKey: "Site Reports" },
         ...(ALL_TF.includes(props.framework) ? [{ key: "nursery-reports", labelKey: "Nursery Reports" }] : [])
       ];
+    } else if (formModel?.model === "srpReports") {
+      return [
+        { key: "project-profile", labelKey: "Project Profile" },
+        { key: "project-report", labelKey: "Project Report" }
+      ];
     }
     return [
       { key: "project-profile", labelKey: "Project Profile" },
@@ -563,7 +567,7 @@ function WizardForm(props: WizardFormProps) {
         router.push(`/project/${entity?.projectUuid}/reporting-task/${entity?.taskUuid}`, undefined, { shallow: true });
       }
     },
-    [router, entity?.projectUuid, entity?.taskUuid, entity?.siteUuid, entity?.projectReportUuid, entity?.nurseryUuid]
+    [router, entity]
   );
 
   const handleStepSelected = useCallback(

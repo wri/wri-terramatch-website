@@ -131,7 +131,6 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
                 {t("Organisation Profile")}
               </Button>
             )}
-            {financialReport.organisationUuid != null && <span className="text-sm text-theme-neutral-300">|</span>}
           </div>
         }
         toolbar={{

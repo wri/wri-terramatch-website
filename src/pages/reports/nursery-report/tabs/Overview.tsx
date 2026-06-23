@@ -7,6 +7,7 @@ import { Component, ErrorInfo, FC, ReactNode, useCallback, useMemo, useState } f
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
@@ -26,6 +27,7 @@ import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSu
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { ChevronRightIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
+import { ONBOARDING_CARD_TYPES } from "@/utils/analytics/onboardingCardAnalytics";
 import Log from "@/utils/log";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
@@ -82,7 +84,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const nurseryReportAboutContent = useNurseryReportAboutContent();
 
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "nursery-reports",
     entityUUID: report.uuid,
     entityStatus: report.status,
@@ -155,6 +157,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
 
   return (
     <PageContent>
+      {EditModals}
       <Flex gap={7} className="flex-col">
         <Flex gap={7}>
           <Flex gap={5} className={classNames(isTerrafundFramework ? "flex-row" : "flex-col", "flex-[2]")}>
@@ -163,7 +166,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
               buttonProps={{
                 variant: "secondary",
                 size: "small",
-                children: t("View Progress & Goals"),
+                children: t("View Key Indicators & Insights"),
                 rightIcon: <ChevronRightIcon />,
                 onClick: createMetricsCardCtaHandler({ entityType: "nursery-report", entityId: report.uuid }, () =>
                   goToTab("goals")
@@ -226,47 +229,53 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
           </PageItem>
         </Flex>
         <PageItem title={t("About Nursery Report")}>
-          <About
-            className="flex-row gap-14"
-            description={
-              <Flex direction="column" gap={5} maxWidth="65%">
-                {aboutContentItem?.paragraphs.map((paragraph, index) => {
-                  const isFirstParagraph = index === 0;
-                  const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
+          <OnboardingCard
+            cardType={ONBOARDING_CARD_TYPES.MRV_GUIDANCE}
+            entityType="nursery-report"
+            entityId={report.uuid}
+          >
+            <About
+              className="flex-row gap-14"
+              description={
+                <Flex direction="column" gap={5} maxWidth="65%">
+                  {aboutContentItem?.paragraphs.map((paragraph, index) => {
+                    const isFirstParagraph = index === 0;
+                    const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
 
-                  if (isFirstParagraph) {
+                    if (isFirstParagraph) {
+                      return (
+                        <Text key={index} color="neutral.900" textStyle="300">
+                          <strong>{t("Nursery Report")} </strong> {paragraph}
+                        </Text>
+                      );
+                    }
+
+                    if (isLastParagraph) {
+                      return (
+                        <ContactSupport
+                          key={index}
+                          message={paragraph}
+                          subject={t("Support Request for Nursery Report")}
+                        />
+                      );
+                    }
+
                     return (
                       <Text key={index} color="neutral.900" textStyle="300">
-                        <strong>{t("Nursery Report")} </strong> {paragraph}
+                        {paragraph}
                       </Text>
                     );
-                  }
-
-                  if (isLastParagraph) {
-                    return (
-                      <ContactSupport
-                        key={index}
-                        message={paragraph}
-                        subject={t("Support Request for Nursery Report")}
-                      />
-                    );
-                  }
-
-                  return (
-                    <Text key={index} color="neutral.900" textStyle="300">
-                      {paragraph}
-                    </Text>
-                  );
-                })}
-              </Flex>
-            }
-            links={
-              aboutContentItem?.links.map(link => ({
-                title: t(link.title),
-                link: link.link
-              })) ?? []
-            }
-          />
+                  })}
+                </Flex>
+              }
+              links={
+                aboutContentItem?.links.map(link => ({
+                  title: t(link.title),
+                  link: link.link
+                })) ?? []
+              }
+            />
+          </OnboardingCard>
         </PageItem>
       </Flex>
     </PageContent>

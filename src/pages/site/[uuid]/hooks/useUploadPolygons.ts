@@ -22,11 +22,11 @@ import {
 import {
   type PolygonToastId,
   closePolygonProgressToast,
+  completePolygonProgressToast,
   getPolygonOperationToastLabels,
   getUpdatingPolygonsProgressLabel,
   getUploadingPolygonsProgressLabel,
   POLYGON_TOAST_IDS,
-  showPolygonCompleteToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
 
@@ -196,8 +196,7 @@ export const useUploadPolygons = ({
         const responses = await Promise.all(files.map(file => runGeometryUpload(file, siteUuid, upload)));
         const polygonCount = responses.length;
 
-        closePolygonProgressToast(toastId);
-        showPolygonCompleteToast(labels.complete);
+        completePolygonProgressToast(toastId, labels.complete);
         trackPolygonUploadSucceeded({
           siteUuid,
           polygonCount,
@@ -233,11 +232,14 @@ export const useUploadPolygons = ({
   );
 
   const uploadWithVersionsFiles = useCallback(
-    (files: File[]) => {
+    (files: File[], polygonCount?: number) => {
       void uploadFiles(
         files,
         uploadGeometryWithVersions,
-        { progress: getUpdatingPolygonsProgressLabel(t, files.length), complete: toastLabels.updatingPolygonsComplete },
+        {
+          progress: getUpdatingPolygonsProgressLabel(t, polygonCount ?? files.length),
+          complete: toastLabels.updatingPolygonsComplete
+        },
         POLYGON_TOAST_IDS.updating
       );
     },

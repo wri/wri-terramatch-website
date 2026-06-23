@@ -99,7 +99,10 @@ const Accordion: FC<AccordionProps> = ({
         multiple
         {...(isControlled
           ? { value: open ? [ACCORDION_ITEM_VALUE] : [], onValueChange: handleValueChange }
-          : { defaultValue: defaultOpen ? [ACCORDION_ITEM_VALUE] : [] })}
+          : {
+              defaultValue: defaultOpen ? [ACCORDION_ITEM_VALUE] : [],
+              onValueChange: handleValueChange
+            })}
       >
         <AccordionChakra.Item value={ACCORDION_ITEM_VALUE}>
           <Flex {...container} gap={4} className={classNameHeader} alignItems="center">

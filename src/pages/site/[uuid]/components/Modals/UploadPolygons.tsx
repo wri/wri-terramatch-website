@@ -109,9 +109,13 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({
   const handleConfirmVersions = useCallback(() => {
     if (selectedFiles.length === 0) return;
     const files = selectedFiles;
+    const polygonCount =
+      comparison != null && comparison.featuresForVersioning > 0
+        ? comparison.featuresForVersioning
+        : comparison?.totalFeatures ?? files.length;
     handleClose();
-    uploadWithVersionsFiles(files);
-  }, [selectedFiles, uploadWithVersionsFiles, handleClose]);
+    uploadWithVersionsFiles(files, polygonCount);
+  }, [selectedFiles, comparison, uploadWithVersionsFiles, handleClose]);
 
   const handleFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const files = collectAcceptedUploadFiles(e.target.files);

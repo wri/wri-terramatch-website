@@ -39,12 +39,12 @@ import { prunePolygonValidationCache } from "../components/polygonEditSave";
 import type { PolygonTableRow } from "../components/PolygonTableRow";
 import {
   closePolygonProgressToast,
+  completePolygonProgressToast,
   getDownloadingPolygonsProgressLabel,
   getFixingOverlapsProgressLabel,
   getPolygonOperationToastLabels,
   getSubmittingProgressLabel,
   POLYGON_TOAST_IDS,
-  showPolygonCompleteToast,
   showPolygonErrorToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
@@ -289,8 +289,7 @@ export const useSitePolygonBulkActions = ({
       setPolygonTableHoveredUuid(null);
       invalidatePolygonMapTiles();
       await refreshPolygonData();
-      closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
-      showPolygonCompleteToast(toastLabels.deletingComplete);
+      completePolygonProgressToast(POLYGON_TOAST_IDS.deleting, toastLabels.deletingComplete);
     } catch (error) {
       Log.error("Failed to delete selected polygons:", error);
       closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
@@ -424,8 +423,7 @@ export const useSitePolygonBulkActions = ({
         });
         closeMapPopups();
         setPolygonTableHoveredUuid(null);
-        closePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps);
-        showPolygonCompleteToast(toastLabels.fixingOverlapsComplete);
+        completePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps, toastLabels.fixingOverlapsComplete);
       } catch (error) {
         Log.error("Failed to fix selected polygon overlaps:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps);
@@ -532,8 +530,7 @@ export const useSitePolygonBulkActions = ({
         setSubmittedPolygonNames(submittedNames);
         setShouldRefetchPolygonData(true);
         await refreshPolygonData();
-        closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
-        showPolygonCompleteToast(toastLabels.submittingComplete);
+        completePolygonProgressToast(POLYGON_TOAST_IDS.submitting, toastLabels.submittingComplete);
         pendingPolygonSubmittedModalRef.current = true;
         ApiSlice.pruneCache("auditStatuses");
 
@@ -658,8 +655,7 @@ export const useSitePolygonBulkActions = ({
           actionType: "download",
           polygonCount: geometryPolygonUuids.length
         });
-        closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
-        showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
+        completePolygonProgressToast(POLYGON_TOAST_IDS.downloading, toastLabels.downloadingPolygonsComplete);
       } catch (error) {
         Log.error("Failed to download selected polygons:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
@@ -733,8 +729,7 @@ export const useSitePolygonBulkActions = ({
         setShowBulkEditDrawer(false);
         setBulkEditPayload(null);
         await refreshPolygonData();
-        closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
-        showPolygonCompleteToast(toastLabels.savingChangesComplete);
+        completePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges, toastLabels.savingChangesComplete);
       } catch (error) {
         Log.error("Failed to update selected polygon details:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);

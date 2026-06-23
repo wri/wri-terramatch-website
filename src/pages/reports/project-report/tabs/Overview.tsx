@@ -6,6 +6,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -21,6 +22,7 @@ import { useProjectReportAboutContent } from "@/pages/reports/project-report/con
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
+import { ONBOARDING_CARD_TYPES } from "@/utils/analytics/onboardingCardAnalytics";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import KeyIndicatorsInsights from "../components/KeyIndicatorsInsights";
@@ -112,7 +114,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
               buttonProps={{
                 variant: "secondary",
                 size: "small",
-                children: t("View Progress & Goals"),
+                children: t("View Key Indicators & Insights"),
                 rightIcon: <ChevronRightIcon />,
                 onClick: createMetricsCardCtaHandler(
                   { entityType: "project-report", entityId: projectReport.uuid },
@@ -164,39 +166,45 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
           </PageItem>
         </Flex>
         <PageItem title={t("About Project Report")} flexProps={{ flex: 1 }}>
-          <About
-            className="flex-row gap-14"
-            description={
-              <Flex direction="column" gap={5} maxWidth="65%">
-                {aboutContentItem?.paragraphs.map((paragraph, index) => {
-                  const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
+          <OnboardingCard
+            cardType={ONBOARDING_CARD_TYPES.MRV_GUIDANCE}
+            entityType="project-report"
+            entityId={projectReport.uuid}
+          >
+            <About
+              className="flex-row gap-14"
+              description={
+                <Flex direction="column" gap={5} maxWidth="65%">
+                  {aboutContentItem?.paragraphs.map((paragraph, index) => {
+                    const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
 
-                  if (isLastParagraph) {
+                    if (isLastParagraph) {
+                      return (
+                        <ContactSupport
+                          key={index}
+                          message={paragraph}
+                          subject={t("Support Request for Project Report")}
+                        />
+                      );
+                    }
+
                     return (
-                      <ContactSupport
-                        key={index}
-                        message={paragraph}
-                        subject={t("Support Request for Project Report")}
-                      />
+                      <Text key={index} color="neutral.900" textStyle="300">
+                        {index === 0 && <strong>{t("Project Report")} </strong>}
+                        {paragraph}
+                      </Text>
                     );
-                  }
-
-                  return (
-                    <Text key={index} color="neutral.900" textStyle="300">
-                      {index === 0 && <strong>{t("Project Report")} </strong>}
-                      {paragraph}
-                    </Text>
-                  );
-                })}
-              </Flex>
-            }
-            links={
-              aboutContentItem?.links.map(link => ({
-                title: t(link.title),
-                link: link.link
-              })) ?? []
-            }
-          />
+                  })}
+                </Flex>
+              }
+              links={
+                aboutContentItem?.links.map(link => ({
+                  title: t(link.title),
+                  link: link.link
+                })) ?? []
+              }
+            />
+          </OnboardingCard>
         </PageItem>
       </Flex>
     </PageContent>
