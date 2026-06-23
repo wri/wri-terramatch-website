@@ -163,7 +163,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
               buttonProps={{
                 variant: "secondary",
                 size: "small",
-                children: t("View Progress & Goals"),
+                children: t("View Key Indicators & Insights"),
                 rightIcon: <ChevronRightIcon />,
                 onClick: createMetricsCardCtaHandler({ entityType: "nursery-report", entityId: report.uuid }, () =>
                   goToTab("goals")

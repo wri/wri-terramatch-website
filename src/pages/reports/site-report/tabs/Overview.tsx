@@ -160,7 +160,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                 buttonProps={{
                   variant: "secondary",
                   size: "small",
-                  children: t("View Progress & Goals"),
+                  children: t("View Key Indicators & Insights"),
                   rightIcon: <ChevronRightIcon />,
                   onClick: createMetricsCardCtaHandler({ entityType: "site-report", entityId: siteReport.uuid }, () =>
                     goToTab("goals")
