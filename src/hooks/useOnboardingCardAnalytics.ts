@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 
 import {
   OnboardingCardEntityType,
   OnboardingCardType,
   trackOnboardingCardLinkClicked,
-  trackOnboardingCardViewed
+  trackOnboardingCardViewedOnce
 } from "@/utils/analytics/onboardingCardAnalytics";
 
 type UseOnboardingCardAnalyticsProps = {
@@ -14,16 +14,8 @@ type UseOnboardingCardAnalyticsProps = {
 };
 
 export const useOnboardingCardAnalytics = ({ cardType, entityType, entityId }: UseOnboardingCardAnalyticsProps) => {
-  const viewedKeyRef = useRef<string | null>(null);
-
   useEffect(() => {
-    if (entityType == null || entityId == null || entityId.trim() === "") return;
-
-    const viewedKey = `${cardType}|${entityType}|${entityId}`;
-    if (viewedKeyRef.current === viewedKey) return;
-
-    viewedKeyRef.current = viewedKey;
-    trackOnboardingCardViewed({ cardType, entityType, entityId });
+    trackOnboardingCardViewedOnce({ cardType, entityType, entityId });
   }, [cardType, entityType, entityId]);
 
   const trackLinkClick = useCallback(
