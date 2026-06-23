@@ -112,7 +112,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
               buttonProps={{
                 variant: "secondary",
                 size: "small",
-                children: t("View Progress & Goals"),
+                children: t("View Key Indicators & Insights"),
                 rightIcon: <ChevronRightIcon />,
                 onClick: createMetricsCardCtaHandler(
                   { entityType: "project-report", entityId: projectReport.uuid },
