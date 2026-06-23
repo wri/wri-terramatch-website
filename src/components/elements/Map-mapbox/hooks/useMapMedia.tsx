@@ -35,6 +35,7 @@ type UseMapMediaParams = {
   router: { isReady: boolean; asPath: string };
   alwaysShowPhotosOnMap?: boolean;
   hideMediaPopupActions?: boolean;
+  hideMediaOnMap?: boolean;
   isPolygonGeometryLoading?: boolean;
 };
 
@@ -54,19 +55,21 @@ export function useMapMedia({
   router,
   alwaysShowPhotosOnMap = false,
   hideMediaPopupActions = false,
+  hideMediaOnMap = false,
   isPolygonGeometryLoading = false
 }: UseMapMediaParams) {
   const championsMap = useChampionsMap();
   const { showPhotosOnMap } = useMapAreaContext();
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
-  const showPhotosWhileDrawerClosed = championsMap && !alwaysShowPhotosOnMap && !isPolygonEditDrawerOpen;
-  const wantsPhotosOnMap = alwaysShowPhotosOnMap || showPhotosWhileDrawerClosed || showPhotosOnMap;
+  const showPhotosWhileDrawerClosed =
+    !hideMediaOnMap && championsMap && !alwaysShowPhotosOnMap && !isPolygonEditDrawerOpen;
+  const wantsPhotosOnMap = !hideMediaOnMap && (alwaysShowPhotosOnMap || showPhotosWhileDrawerClosed || showPhotosOnMap);
   const photosVisible = wantsPhotosOnMap && !isPolygonGeometryLoading;
   const callbacksRef = useRef<MediaCallbacks | null>(null);
 
   useEffect(() => {
     const mapInstance = map.current;
-    if (mapInstance == null || !styleReady || mediaFiles == null) return;
+    if (mapInstance == null || !styleReady || hideMediaOnMap || mediaFiles == null) return;
 
     const isProjectPath = router.isReady && router.asPath.includes("project");
 
@@ -160,11 +163,20 @@ export function useMapMedia({
       callbacksRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mediaFiles, styleReady, styleVersion, championsMap, hideMediaPopupActions]);
+  }, [mediaFiles, styleReady, styleVersion, championsMap, hideMediaPopupActions, hideMediaOnMap]);
 
   useEffect(() => {
     const mapInstance = map.current;
-    if (mapInstance == null || !styleReady || mediaFiles == null) return;
+    if (mapInstance == null || !styleReady) return;
+
+    if (hideMediaOnMap || mediaFiles == null) {
+      if (championsMap) {
+        removeMediaMarkers(mapInstance);
+      } else {
+        removeMediaSymbolLayer(mapInstance);
+      }
+      return;
+    }
 
     const callbacks = callbacksRef.current;
     if (callbacks == null) return;
@@ -181,5 +193,5 @@ export function useMapMedia({
 
     addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [photosVisible, championsMap, styleReady, mediaFiles, hideMediaPopupActions]);
+  }, [photosVisible, championsMap, styleReady, mediaFiles, hideMediaPopupActions, hideMediaOnMap]);
 }
