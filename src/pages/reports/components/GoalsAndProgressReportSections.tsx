@@ -268,11 +268,23 @@ const GoalsAndProgressReportSections = ({
                     hasProgress={false}
                     classNameCard="!pl-0"
                     items={[
+                      ...(isTerrafund
+                        ? [
+                            {
+                              iconName: IconNames.SURVIVAL_RATE,
+                              label: t("Survival Rate:"),
+                              variantLabel: "text-14" as TextVariants,
+                              classNameLabel: "text-neutral-650 uppercase !w-auto",
+                              classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                              value: pctSurvivalToDate != null ? `${pctSurvivalToDate}%` : "N/A"
+                            }
+                          ]
+                        : []),
                       {
                         iconName: IconNames.LEAF_PLANTED_CIRCLE,
                         label: t("number of species PLANTED:"),
                         variantLabel: "text-14",
-                        classNameLabel: " text-neutral-650 uppercase !w-auto",
+                        classNameLabel: "text-neutral-650 uppercase !w-auto",
                         classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
                         value: treePlantedSpeciesCount,
                         limit: treePlantedSpeciesGoal
