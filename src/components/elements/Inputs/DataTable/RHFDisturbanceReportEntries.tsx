@@ -8,23 +8,11 @@ import Input from "@/components/elements/Inputs/Input/Input";
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { DisturbanceAffectedSites } from "@/components/extensive/WizardForm/DisturbanceAffectedSites";
-import {
-  DISTURBANCE_END_DATE_FIELD_DESCRIPTION,
-  DISTURBANCE_EXTEND_FIELD_DESCRIPTION,
-  DISTURBANCE_INTENSITY_FIELD_DESCRIPTION,
-  DISTURBANCE_MONETARY_DAMAGE_FIELD_DESCRIPTION,
-  DISTURBANCE_PEOPLE_AFFECTED_FIELD_DESCRIPTION,
-  DISTURBANCE_PROPERTY_AFFECTED_FIELD_DESCRIPTION,
-  DISTURBANCE_START_DATE_FIELD_DESCRIPTION,
-  DISTURBANCE_SUBTYPE_FIELD_DESCRIPTION,
-  DISTURBANCE_TYPE_FIELD_DESCRIPTION
-} from "@/constants/DisturbanceReportEntriesDescriptions";
-import {
-  DISTURBANCE_EXTENT_OPTIONS,
-  DISTURBANCE_INTENSITY_OPTIONS,
-  DISTURBANCE_PROPERTY_AFFECTED_OPTIONS
-} from "@/constants/options/disturbanceReports";
-import { useDisturbanceOptions } from "@/hooks/useDisturbanceOptions";
+import { useDisturbanceExtentOption } from "@/hooks/translation/useDisturbanceExtentOptions";
+import { useDisturbanceOptions } from "@/hooks/translation/useDisturbanceOptions";
+import { useDisturbancePropertyAffectedOptions } from "@/hooks/translation/useDisturbancePropertyAffectedOptions";
+import useDisturbanceReportDescriptions from "@/hooks/translation/useDisturbanceReportDescriptions";
+import { useIntensityOptions } from "@/hooks/translation/useIntensityOptions";
 import { Option, OptionValue } from "@/types/common";
 
 const parseJsonValue = (val: any, fieldName?: string) => {
@@ -78,6 +66,22 @@ const RHFDisturbanceReportEntries = ({
   const { field } = useController(props);
   const { value } = field;
   const t = useT();
+
+  const {
+    DISTURBANCE_END_DATE_FIELD_DESCRIPTION,
+    DISTURBANCE_EXTEND_FIELD_DESCRIPTION,
+    DISTURBANCE_INTENSITY_FIELD_DESCRIPTION,
+    DISTURBANCE_MONETARY_DAMAGE_FIELD_DESCRIPTION,
+    DISTURBANCE_PEOPLE_AFFECTED_FIELD_DESCRIPTION,
+    DISTURBANCE_PROPERTY_AFFECTED_FIELD_DESCRIPTION,
+    DISTURBANCE_START_DATE_FIELD_DESCRIPTION,
+    DISTURBANCE_SUBTYPE_FIELD_DESCRIPTION,
+    DISTURBANCE_TYPE_FIELD_DESCRIPTION
+  } = useDisturbanceReportDescriptions();
+
+  const DISTURBANCE_INTENSITY_OPTIONS = useIntensityOptions();
+  const DISTURBANCE_EXTENT_OPTIONS = useDisturbanceExtentOption();
+  const DISTURBANCE_PROPERTY_AFFECTED_OPTIONS = useDisturbancePropertyAffectedOptions();
 
   const updateFieldValue = useCallback(
     (fieldName: string, newValue: any) => {
@@ -211,24 +215,24 @@ const RHFDisturbanceReportEntries = ({
 
   return (
     <InputWrapper {...props}>
-      <Accordion title="Add Disturbance" variant="tertiary" defaultOpen>
+      <Accordion title={t("Add Disturbance")} variant="tertiary" defaultOpen>
         <div className="border-light rounded-b-xl p-4">
           <div className="space-y-6">
             <Dropdown
-              placeholder="Select here"
+              placeholder={t("Select here")}
               label={t("Disturbance Type")}
               required
-              description={t(DISTURBANCE_TYPE_FIELD_DESCRIPTION)}
+              description={DISTURBANCE_TYPE_FIELD_DESCRIPTION}
               options={disturbanceTypeOptions}
               value={getFieldValue("disturbance-type") != null ? [getFieldValue("disturbance-type")] : []}
               onChange={handleDisturbanceTypeChange}
             />
 
             <Dropdown
-              placeholder="Select here"
+              placeholder={t("Select here")}
               label={t("Disturbance Subtype")}
               required
-              description={t(DISTURBANCE_SUBTYPE_FIELD_DESCRIPTION)}
+              description={DISTURBANCE_SUBTYPE_FIELD_DESCRIPTION}
               options={disturbanceSubtypeOptions}
               multiSelect
               value={convertToOptionValues(getFieldValue("disturbance-subtype") ?? [], disturbanceSubtypeOptions)}
@@ -237,10 +241,10 @@ const RHFDisturbanceReportEntries = ({
               titleClassname="!whitespace-normal !break-words"
             />
             <Dropdown
-              placeholder="Select here"
+              placeholder={t("Select here")}
               label={t("Intensity")}
               required
-              description={t(DISTURBANCE_INTENSITY_FIELD_DESCRIPTION)}
+              description={DISTURBANCE_INTENSITY_FIELD_DESCRIPTION}
               options={DISTURBANCE_INTENSITY_OPTIONS}
               value={getFieldValue("intensity") != null ? [getFieldValue("intensity")] : []}
               onChange={handleIntensityChange}
@@ -248,10 +252,10 @@ const RHFDisturbanceReportEntries = ({
             <div className="grid grid-cols-2 gap-x-10 gap-y-10">
               <div>
                 <Dropdown
-                  placeholder="Select here"
+                  placeholder={t("Select here")}
                   label={t("Extent")}
                   required
-                  description={t(DISTURBANCE_EXTEND_FIELD_DESCRIPTION)}
+                  description={DISTURBANCE_EXTEND_FIELD_DESCRIPTION}
                   options={DISTURBANCE_EXTENT_OPTIONS}
                   value={getFieldValue("extent") != null ? [getFieldValue("extent")] : []}
                   onChange={handleExtentChange}
@@ -261,10 +265,10 @@ const RHFDisturbanceReportEntries = ({
                 <Input
                   type="number"
                   name="people-affected"
-                  placeholder="Enter number"
+                  placeholder={t("Enter number")}
                   label={t("People Affected")}
                   required
-                  description={t(DISTURBANCE_PEOPLE_AFFECTED_FIELD_DESCRIPTION)}
+                  description={DISTURBANCE_PEOPLE_AFFECTED_FIELD_DESCRIPTION}
                   value={getFieldValue("people-affected") ?? ""}
                   onChange={handlePeopleAffectedChange}
                 />
@@ -273,10 +277,10 @@ const RHFDisturbanceReportEntries = ({
                 <Input
                   type="number"
                   name="monetary-damage"
-                  placeholder="Enter amount"
+                  placeholder={t("Enter amount")}
                   label={t("Monetary Damage (USD)")}
                   required
-                  description={t(DISTURBANCE_MONETARY_DAMAGE_FIELD_DESCRIPTION)}
+                  description={DISTURBANCE_MONETARY_DAMAGE_FIELD_DESCRIPTION}
                   value={getFieldValue("monetary-damage") ?? ""}
                   onChange={handleMonetaryDamageChange}
                   className="pl-8"
@@ -290,10 +294,10 @@ const RHFDisturbanceReportEntries = ({
               </div>
               <div>
                 <Dropdown
-                  placeholder="Select here"
+                  placeholder={t("Select here")}
                   label={t("Property Affected")}
                   required
-                  description={t(DISTURBANCE_PROPERTY_AFFECTED_FIELD_DESCRIPTION)}
+                  description={DISTURBANCE_PROPERTY_AFFECTED_FIELD_DESCRIPTION}
                   options={DISTURBANCE_PROPERTY_AFFECTED_OPTIONS}
                   multiSelect
                   value={convertToOptionValues(
@@ -310,10 +314,10 @@ const RHFDisturbanceReportEntries = ({
                   lang="en-GB"
                   type="date"
                   name="disturbance-start-date"
-                  placeholder="Select date"
+                  placeholder={t("Select date")}
                   label={t("Disturbance Start Date")}
                   required
-                  description={t(DISTURBANCE_START_DATE_FIELD_DESCRIPTION)}
+                  description={DISTURBANCE_START_DATE_FIELD_DESCRIPTION}
                   value={getFieldValue("disturbance-start-date") ?? ""}
                   onChange={e => handleDateChange(e, "disturbance-start-date")}
                 />
@@ -323,10 +327,10 @@ const RHFDisturbanceReportEntries = ({
                   lang="en-GB"
                   type="date"
                   name="disturbance-end-date"
-                  placeholder="Select date"
+                  placeholder={t("Select date")}
                   label={t("Disturbance End Date")}
                   required
-                  description={t(DISTURBANCE_END_DATE_FIELD_DESCRIPTION)}
+                  description={DISTURBANCE_END_DATE_FIELD_DESCRIPTION}
                   value={getFieldValue("disturbance-end-date") ?? ""}
                   onChange={e => handleDateChange(e, "disturbance-end-date")}
                 />

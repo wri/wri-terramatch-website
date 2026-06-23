@@ -7,8 +7,9 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_AIRTABLE_DASHBOARD } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { DISTURBANCE_PROPERTY_AFFECTED_OPTIONS, formatOptions } from "@/constants/options/disturbanceReports";
+import { formatOptions } from "@/constants/options/disturbanceReports";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
+import { useDisturbancePropertyAffectedOptions } from "@/hooks/translation/useDisturbancePropertyAffectedOptions";
 import { TextVariants } from "@/types/common";
 
 import Intensity from "./Intensity";
@@ -99,6 +100,8 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
   const polygonsAffected = getFieldValue("polygon-affected");
   const nurseriesAffected = getFieldValue("nursery-affected");
   const disturbanceEndDate = getFieldValue("disturbance-end-date");
+
+  const DISTURBANCE_PROPERTY_AFFECTED_OPTIONS = useDisturbancePropertyAffectedOptions();
 
   const formatValuesWithOptions = (values: string[], options: Array<{ value: string; title: string }>) => {
     if (!Array.isArray(values)) return values;
