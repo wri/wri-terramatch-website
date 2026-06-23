@@ -6,7 +6,7 @@ import { SupportedEntity } from "@/connections/Entity";
 import { entityExport } from "@/generated/v3/entityService/entityServiceComponents";
 import { singularEntityName, v3EntityName } from "@/helpers/entity";
 import { EntityName, SingularEntityName } from "@/types/common";
-import { runWithDownloadToast } from "@/utils/downloadToast";
+import { DOWNLOAD_COMPLETE_MESSAGE, DOWNLOAD_ERROR_MESSAGE, runWithDownloadToast } from "@/utils/downloadToast";
 import Log from "@/utils/log";
 
 /**
@@ -25,8 +25,8 @@ export const useGetExportEntityHandler = (entity: EntityName | SingularEntityNam
       await runWithDownloadToast(
         {
           downloading: t(`Downloading ${entityLabel}...`),
-          complete: t(`${entityLabel} Download Complete`),
-          error: t("Something went wrong!")
+          complete: t(DOWNLOAD_COMPLETE_MESSAGE),
+          error: t(DOWNLOAD_ERROR_MESSAGE)
         },
         async () => {
           const entityName = v3EntityName(entity as EntityName | SingularEntityName) as SupportedEntity;

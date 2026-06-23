@@ -283,8 +283,7 @@ function WizardForm(props: WizardFormProps) {
 
   const handleDownloadAnswers = useDownloadFormAnswers({
     fieldsProvider,
-    formHook,
-    formModel: (props.models as FormModel | undefined)?.model
+    formHook
   });
 
   useOnMount(() => {
