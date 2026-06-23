@@ -1,4 +1,4 @@
-import { Dictionary, findLastIndex, kebabCase, startCase, uniq } from "lodash";
+import { Dictionary, findLastIndex, isEmpty, kebabCase, startCase, uniq } from "lodash";
 import { useMemo } from "react";
 
 import { useTrackings } from "@/connections/EntityAssociation";
@@ -112,7 +112,8 @@ export const useSectionData = (
     }
 
     const { title, addNameLabel, subTypes, onlyIfPresent, displayTrackingType } = entryConfig;
-    const rows = mapRows(addNameLabel != null, subTypes, entries, onlyIfPresent);
+    const usesName = !isEmpty(addNameLabel);
+    const rows = mapRows(usesName, subTypes, entries, onlyIfPresent);
     const total = rows.reduce((total, { amount }) => total + amount, 0);
     const index = entryConfigs.findIndex(({ type }) => type === entryType);
     const position: Position = index == 0 ? "first" : index == entryConfigs.length - 1 ? "last" : undefined;
