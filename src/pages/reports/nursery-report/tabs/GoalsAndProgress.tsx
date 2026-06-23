@@ -25,7 +25,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ nurseryReport }) =>
   return (
     <PageBody className="!space-y-10 bg-theme-neutral-200 pt-5 text-darkCustom">
       <PageRow className="mx-0 w-full !max-w-full px-6">
-        <PageCard title={t("Progress & Goals")}>
+        <PageCard title={t("Key Indicators & Insights")}>
           <GoalsAndProgressReportEntityTab
             entity="nurseryReports"
             entityUuid={nurseryReport.uuid}
