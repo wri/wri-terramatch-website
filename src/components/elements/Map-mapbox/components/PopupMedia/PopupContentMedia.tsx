@@ -18,18 +18,11 @@ const PopupContentMedia: FC<PopupContentMediaProps> = ({ uuid, thumbUrl, created
   const t = useT();
   const [previewOpen, setPreviewOpen] = useState(false);
 
-  const openPreview = useCallback(() => setPreviewOpen(true), []);
   const closePreview = useCallback(() => setPreviewOpen(false), []);
 
   return (
     <Flex padding="0.75rem" direction="column" gap={2} width="17rem" cursor="default">
-      <GalleryImage
-        alt="Image popup media"
-        onClickEdit={openPreview}
-        className="h-[11.8125rem] w-full"
-        size={"full"}
-        src={thumbUrl}
-      />
+      <GalleryImage alt="Image popup media" className="h-[11.8125rem] w-full" size={"full"} src={thumbUrl} />
       <Text color="neutral.700" textStyle="200">
         {t("Date uploaded")}: {formatPopupDate(createdAt)}
       </Text>
