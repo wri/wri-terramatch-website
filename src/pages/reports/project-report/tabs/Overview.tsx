@@ -11,6 +11,7 @@ import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { AWAITING_APPROVAL } from "@/constants/statuses";
 import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getEntitySetupButtonLabel } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
@@ -56,7 +57,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
     return projectReportAboutContent.find(content => content.frameworks.includes(projectReport.frameworkKey!));
   }, [projectReport.frameworkKey, projectReportAboutContent]);
 
-  const editButtonLabel = projectReport.status === "approved" && isReportSetupComplete ? t("Edit") : t("Continue");
+  const editButtonLabel = getEntitySetupButtonLabel(t, projectReport.status, isReportSetupComplete);
 
   const statusTag = useMemo(() => {
     if (projectReport.updateRequestStatus === AWAITING_APPROVAL) {
