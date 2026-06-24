@@ -22,7 +22,9 @@ const SiteReportHeader: FC<SiteReportHeaderProps> = ({ report, reportTitle }) =>
     entityName: "site-reports",
     entityUUID: report.uuid,
     entityStatus: report.status,
-    updateRequestStatus: report.updateRequestStatus
+    updateRequestStatus: report.updateRequestStatus,
+    feedback: report.feedback,
+    useStatusModal: true
   });
 
   const frameworkTitle = useFrameworkTitle();

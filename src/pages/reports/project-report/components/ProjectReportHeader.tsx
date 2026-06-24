@@ -22,7 +22,9 @@ const ProjectReportHeader: FC<ProjectReportHeaderProps> = ({ title, report }) =>
     entityName: "project-reports",
     entityUUID: report?.uuid,
     entityStatus: report?.status,
-    updateRequestStatus: report?.updateRequestStatus
+    updateRequestStatus: report?.updateRequestStatus,
+    feedback: report?.feedback,
+    useStatusModal: true
   });
 
   const subtitles = [report?.projectName, useFrameworkTitle()];
