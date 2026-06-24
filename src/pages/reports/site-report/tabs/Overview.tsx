@@ -21,6 +21,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
 import SiteReportKeyIndicatorsInsights from "@/pages/reports/site-report/components/KeyIndicatorsInsights";
@@ -98,16 +99,18 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
 
   const editButtonLabel = siteReport.status === "approved" && isReportSetupComplete ? t("Edit") : t("Continue");
 
+  const isAdmin = useIsAdmin();
+
   const statusTag = useMemo(() => {
     if (siteReport.updateRequestStatus === AWAITING_APPROVAL) {
-      return <TagSubmission size="small" state="pending-approval" />;
+      return <TagSubmission size="small" state={isAdmin ? "pending-approval" : "pending-approval-neutral"} />;
     }
 
     const tagState = mapStatusToTagStateEntity(siteReport.status);
     if (siteReport.status == null || tagState == null) return null;
 
     return <TagSubmission size="small" state={tagState.type} />;
-  }, [siteReport.status, siteReport.updateRequestStatus]);
+  }, [siteReport.status, siteReport.updateRequestStatus, isAdmin]);
 
   if (siteReport.nothingToReport) {
     return (
