@@ -40,6 +40,8 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
     entityUUID: projectReport.uuid,
     entityStatus: projectReport.status,
     updateRequestStatus: projectReport.updateRequestStatus,
+    entityTitle: projectReport.projectName ?? "",
+    reportTitle: projectReport.reportTitle ?? "",
     feedback: projectReport.feedback,
     useStatusModal: true
   });
@@ -129,6 +131,8 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
                 onEditStep={handleEdit}
                 entity={projectReport}
                 type="projectReports"
+                entityTitle={projectReport.projectName ?? ""}
+                reportTitle={projectReport.reportTitle ?? ""}
               />
             </Box>
           </PageItem>

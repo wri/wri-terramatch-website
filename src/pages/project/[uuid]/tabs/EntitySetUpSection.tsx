@@ -17,9 +17,18 @@ interface EntitySetUpSectionProps {
   onStatusChange?: (allCompleted: boolean) => void;
   onEditStep?: (stepId?: string | null) => void;
   type: SupportedEntity;
+  entityTitle?: string;
+  reportTitle?: string;
 }
 
-const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChange, onEditStep, type }) => {
+const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
+  entity,
+  onStatusChange,
+  onEditStep,
+  type,
+  entityTitle,
+  reportTitle
+}) => {
   const t = useT();
   const { defaultValues, steps, isReady } = useEntityFormSetup(type, entity.uuid);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
@@ -27,7 +36,9 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChang
     entityUUID: entity.uuid,
     entityStatus: entity.status ?? "started",
     updateRequestStatus: entity.updateRequestStatus ?? "no-update",
-    feedback: entity.feedback
+    feedback: entity.feedback,
+    entityTitle: entityTitle ?? "",
+    reportTitle: reportTitle ?? ""
   });
   const handleStepEdit = onEditStep ?? handleEdit;
 

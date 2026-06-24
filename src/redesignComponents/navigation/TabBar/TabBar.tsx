@@ -12,7 +12,8 @@ const TabBar: FC<TabBarWriProps> = props => {
           textWrap: "nowrap !important"
         },
         "& > div:first-of-type": {
-          width: "max-content"
+          minWidth: "max-content",
+          width: "100%"
         }
       }}
       className="w-max-content"

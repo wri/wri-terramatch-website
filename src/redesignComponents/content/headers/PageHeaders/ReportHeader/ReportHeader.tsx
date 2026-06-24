@@ -49,12 +49,31 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
   const { openModal } = useModalContext();
   const formEntityName = v3EntityName(entityName) as FormEntity;
 
+  const entityTitle = useMemo(() => {
+    if (entityName === "site-report") return (report as SiteReportFullDto)?.siteName ?? "";
+    if (entityName === "nursery-report") return (report as NurseryReportFullDto)?.nurseryName ?? "";
+    if (entityName === "project-report") return (report as ProjectReportFullDto)?.projectName ?? "";
+    if (entityName === "disturbance-report") return (report as DisturbanceReportFullDto)?.projectName ?? "";
+    if (entityName === "financial-report") return (report as FinancialReportFullDto)?.organisationName ?? "";
+    if (entityName === "srp-report") return (report as SrpReportFullDto)?.projectName ?? "";
+  }, [entityName, report]);
+
+  const reportTitle = useMemo(() => {
+    if (entityName === "site-report") return (report as SiteReportFullDto)?.reportTitle ?? "";
+    if (entityName === "nursery-report") return (report as NurseryReportFullDto)?.reportTitle ?? "";
+    if (entityName === "project-report") return (report as ProjectReportFullDto)?.reportTitle ?? "";
+    if (entityName === "financial-report") return (report as FinancialReportFullDto)?.reportTitle ?? "";
+    if (entityName === "srp-report") return (report as SrpReportFullDto)?.reportTitle ?? "";
+  }, [entityName, report]);
+
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler(entityName, report.uuid);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName,
     entityUUID: report.uuid,
     entityStatus: report.status,
-    updateRequestStatus: report.updateRequestStatus
+    updateRequestStatus: report.updateRequestStatus,
+    entityTitle: entityTitle ?? "",
+    reportTitle: reportTitle ?? ""
   });
 
   const needMoreInformation =
