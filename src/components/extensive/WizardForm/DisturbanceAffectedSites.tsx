@@ -4,6 +4,7 @@ import { ControllerRenderProps } from "react-hook-form";
 
 import Button from "@/components/elements/Button/Button";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 
 import { DisturbanceNurseryAffectedInput } from "./DisturbanceNurseryAffectedInput";
 import { DisturbancePolygonAffectedInput } from "./DisturbancePolygonAffectedInput";
@@ -19,6 +20,8 @@ export const DisturbanceAffectedSites = ({ onChange, value, field }: Disturbance
   const [affectedSites, setAffectedSites] = useState<number[]>([]);
   const [affectedNurseries, setAffectedNurseries] = useState<number[]>([]);
   const t = useT();
+  const { framework } = useFrameworkContext();
+  const hideNurseries = shouldHideNurseries(framework);
 
   const siteField = value?.find(f => f.name === "site-affected");
   const polygonField = value?.find(f => f.name === "polygon-affected");
@@ -205,37 +208,40 @@ export const DisturbanceAffectedSites = ({ onChange, value, field }: Disturbance
         </Button>
       </div>
 
-      {affectedNurseries.map((_, index) => (
-        <div key={index} className="grid grid-cols-2 gap-x-10 gap-y-4 rounded-lg p-4">
-          {nurseryField == null ? null : (
-            <DisturbanceNurseryAffectedInput
-              value={value}
-              field={field}
-              onChangeCapture={onChange}
-              fieldUuid={`${nurseryField?.name}[${index}]`}
-            />
-          )}
-          <div className="col-span-2 flex justify-end">
-            <button
-              onClick={() => removeAffectedNursery(index)}
-              className="px-0 font-semibold text-black/40 hover:text-red"
-            >
-              {t("Remove")}
-            </button>
-          </div>
-        </div>
-      ))}
-
-      <div className="flex justify-end">
-        <Button variant="secondary-blue" onClick={addAffectedNursery} className="border-none">
-          <p className="text-14-bold flex items-center gap-1 normal-case">
-            <div className="flex h-4 w-4 items-center justify-center rounded bg-primary">
-              <Icon name={IconNames.PLUS} className="h-2.5 w-2.5 text-white" />
+      {!hideNurseries &&
+        affectedNurseries.map((_, index) => (
+          <div key={index} className="grid grid-cols-2 gap-x-10 gap-y-4 rounded-lg p-4">
+            {nurseryField == null ? null : (
+              <DisturbanceNurseryAffectedInput
+                value={value}
+                field={field}
+                onChangeCapture={onChange}
+                fieldUuid={`${nurseryField?.name}[${index}]`}
+              />
+            )}
+            <div className="col-span-2 flex justify-end">
+              <button
+                onClick={() => removeAffectedNursery(index)}
+                className="px-0 font-semibold text-black/40 hover:text-red"
+              >
+                {t("Remove")}
+              </button>
             </div>
-            {t("Add Nursery Affected")}
-          </p>
-        </Button>
-      </div>
+          </div>
+        ))}
+
+      {!hideNurseries && (
+        <div className="flex justify-end">
+          <Button variant="secondary-blue" onClick={addAffectedNursery} className="border-none">
+            <p className="text-14-bold flex items-center gap-1 normal-case">
+              <div className="flex h-4 w-4 items-center justify-center rounded bg-primary">
+                <Icon name={IconNames.PLUS} className="h-2.5 w-2.5 text-white" />
+              </div>
+              {t("Add Nursery Affected")}
+            </p>
+          </Button>
+        </div>
+      )}
     </>
   );
 };
