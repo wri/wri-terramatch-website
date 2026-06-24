@@ -33,7 +33,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ siteReport, site, w
   return (
     <PageBody className="!space-y-10 bg-theme-neutral-200 pt-5 text-darkCustom">
       <PageRow className="mx-0 w-full !max-w-full px-6">
-        <PageCard title={t("Key Indicators & Insights")}>
+        <PageCard title={t("Indicators & Insights")}>
           <GoalsAndProgressReportEntityTab
             entity="siteReports"
             entityUuid={siteReport.uuid}
