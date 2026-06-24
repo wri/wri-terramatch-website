@@ -1,3 +1,4 @@
+import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import { Dictionary } from "lodash";
@@ -226,11 +227,20 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
             }}
             roundedCorners
             saveAndCloseModal={{
-              content:
-                saveAndCloseModalMapping[entityName] ??
-                t(
-                  "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the reporting tasks section under your project page. Would you like to close this form and continue later?"
-                ),
+              content: saveAndCloseModalMapping[entityName] ?? (
+                <Box>
+                  <Text as="span" textStyle="400">
+                    {t("Your progress will be saved as a draft. You can access this form again from the ")}
+                  </Text>
+                  {/* TODO: Add Entity name section */}
+                  <Text as="span" textStyle="400-bold">
+                    {t("Reporting Tasks")}
+                  </Text>
+                  <Text as="span" textStyle="400">
+                    {t(" section on your project page.")}
+                  </Text>
+                </Box>
+              ),
               onConfirm() {
                 showToast({
                   label: t("Draft saved"),
