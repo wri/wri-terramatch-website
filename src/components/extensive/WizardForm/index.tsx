@@ -433,6 +433,15 @@ function WizardForm(props: WizardFormProps) {
             feedback={entity?.feedback}
             feedbackFields={entity?.feedbackFields}
             initialValues={initialFormValues.current}
+            reportSummaryAnalytics={
+              reportAnalytics.isTrackingEnabled
+                ? {
+                    reviewSectionName: props.summaryOptions?.title?.trim() ?? t("Review Details"),
+                    onFeedbackBannerDisplayed: reportAnalytics.trackFeedbackBannerDisplayed,
+                    onAccordionExpanded: reportAnalytics.trackAccordionExpanded
+                  }
+                : undefined
+            }
           />
         );
       }
@@ -453,7 +462,8 @@ function WizardForm(props: WizardFormProps) {
       onClickSaveAndExit,
       entity?.feedback,
       entity?.feedbackFields,
-      stepHasIssues
+      stepHasIssues,
+      reportAnalytics
     ]
   );
 
@@ -605,7 +615,7 @@ function WizardForm(props: WizardFormProps) {
                         <Flex gap={1.5} alignItems="center">
                           {suffixButtons.map((button, index) => (
                             <Flex key={button.key} alignItems="center" gap={1.5}>
-                              {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
+                              {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
                               <Button
                                 variant="borderless"
                                 size="small"
