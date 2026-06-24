@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 import {
   DisturbanceReportFullDto,
@@ -40,6 +40,23 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
   const t = useT();
   const router = useRouter();
 
+  const entityTitle = useMemo(() => {
+    if (entityName === "site-report") return (report as SiteReportFullDto)?.siteName ?? "";
+    if (entityName === "nursery-report") return (report as NurseryReportFullDto)?.nurseryName ?? "";
+    if (entityName === "project-report") return (report as ProjectReportFullDto)?.projectName ?? "";
+    if (entityName === "disturbance-report") return (report as DisturbanceReportFullDto)?.projectName ?? "";
+    if (entityName === "financial-report") return (report as FinancialReportFullDto)?.organisationName ?? "";
+    if (entityName === "srp-report") return (report as SrpReportFullDto)?.projectName ?? "";
+  }, [entityName, report]);
+
+  const reportTitle = useMemo(() => {
+    if (entityName === "site-report") return (report as SiteReportFullDto)?.reportTitle ?? "";
+    if (entityName === "nursery-report") return (report as NurseryReportFullDto)?.reportTitle ?? "";
+    if (entityName === "project-report") return (report as ProjectReportFullDto)?.reportTitle ?? "";
+    if (entityName === "financial-report") return (report as FinancialReportFullDto)?.reportTitle ?? "";
+    if (entityName === "srp-report") return (report as SrpReportFullDto)?.reportTitle ?? "";
+  }, [entityName, report]);
+
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler(entityName, report.uuid);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName,
@@ -47,7 +64,9 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
     entityStatus: report.status,
     updateRequestStatus: report.updateRequestStatus,
     feedback: report.feedback,
-    useStatusModal: true
+    useStatusModal: true,
+    entityTitle: entityTitle ?? "",
+    reportTitle: reportTitle ?? ""
   });
 
   return (

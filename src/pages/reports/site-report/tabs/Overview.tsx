@@ -75,6 +75,8 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
     entityUUID: siteReport.uuid,
     entityStatus: siteReport.status,
     updateRequestStatus: siteReport.updateRequestStatus,
+    entityTitle: siteReport.siteName ?? "",
+    reportTitle: siteReport.reportTitle ?? "",
     feedback: siteReport.feedback,
     useStatusModal: true
   });
@@ -188,6 +190,8 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                   onEditStep={handleEdit}
                   entity={siteReport}
                   type="siteReports"
+                  entityTitle={siteReport.siteName ?? ""}
+                  reportTitle={siteReport.reportTitle ?? ""}
                 />
               </Box>
             </PageItem>

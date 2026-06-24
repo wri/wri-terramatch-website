@@ -85,6 +85,8 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
     entityUUID: report.uuid,
     entityStatus: report.status,
     updateRequestStatus: report.updateRequestStatus,
+    entityTitle: report.nurseryName ?? "",
+    reportTitle: report.reportTitle ?? "",
     feedback: report.feedback,
     useStatusModal: true
   });
@@ -205,6 +207,8 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
                 onEditStep={handleEdit}
                 entity={report}
                 type="nurseryReports"
+                entityTitle={report.nurseryName ?? ""}
+                reportTitle={report.reportTitle ?? ""}
               />
             </Box>
           </PageItem>

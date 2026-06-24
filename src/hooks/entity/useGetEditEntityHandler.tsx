@@ -21,6 +21,8 @@ interface GetEditEntityHandlerArgs {
   entityName: EntityName | SingularEntityName | string;
   entityStatus: string;
   updateRequestStatus: string | null;
+  entityTitle?: string;
+  reportTitle?: string;
   feedback?: string | null;
   useStatusModal?: boolean;
 }
@@ -35,7 +37,9 @@ export const useGetEditEntityHandler = ({
   entityStatus,
   updateRequestStatus,
   feedback,
-  useStatusModal = false
+  useStatusModal = false,
+  entityTitle,
+  reportTitle
 }: GetEditEntityHandlerArgs) => {
   const t = useT();
   const router = useRouter();
@@ -62,12 +66,17 @@ export const useGetEditEntityHandler = ({
     effectiveStatus
   );
 
-  let editTitle = t("Are you sure you want to edit your {entityName}?", {
-    entityName: getReadableEntityName(entityName as EntityName | SingularEntityName)
+  let editTitle = t("Edit {entityName}?", {
+    entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true)
   });
+
   let editContent: string = t(
-    "Are you sure you want to edit this {entityName}? Please note that these changes will need to be approved.",
-    { entityName: getReadableEntityName(entityName as EntityName | SingularEntityName) }
+    "Are you sure you want to edit {entityTitle} {reportTitle}? Editing this report will require it to be resubmitted for approval.",
+    {
+      entityTitle: entityTitle ?? "",
+      reportTitle: reportTitle ?? getReadableEntityName(entityName as EntityName | SingularEntityName, true),
+      entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true)
+    }
   );
 
   if (entityStatus === "started") {
