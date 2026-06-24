@@ -159,11 +159,11 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
           <Flex gap={7} className="mobile:flex-col">
             <Flex gap={5} className={classNames(isHBFFramework ? "flex-row" : "flex-col", "flex-[2]")}>
               <PageItem
-                title={t("Key Indicators & Insights")}
+                title={t("Indicators & Insights")}
                 buttonProps={{
                   variant: "secondary",
                   size: "small",
-                  children: t("View Key Indicators & Insights"),
+                  children: t("View Indicators & Insights"),
                   rightIcon: <ChevronRightIcon />,
                   onClick: createMetricsCardCtaHandler({ entityType: "site-report", entityId: siteReport.uuid }, () =>
                     goToTab("goals")

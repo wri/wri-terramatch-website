@@ -80,7 +80,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
       },
       {
         key: "goals",
-        title: t("Key Indicators & Insights"),
+        title: t("Indicators & Insights"),
         renderBody: () => <GoalsAndProgressTab projectReport={projectReport} project={project} />
       },
       {
