@@ -162,7 +162,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
               </Button>
             )}
             {nurseryReport.nurseryUuid != null && nurseryReport.projectReportUuid != null && (
-              <span className="text-theme-neutral-300 text-sm">|</span>
+              <span className="text-sm text-theme-neutral-300">|</span>
             )}
             {nurseryReport.projectReportUuid != null && (
               <Button
