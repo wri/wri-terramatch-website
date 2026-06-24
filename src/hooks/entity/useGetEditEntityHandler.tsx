@@ -3,8 +3,14 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 
+import { type StatusBarStatus, getStatusProps } from "@/components/extensive/EntityStatusBar";
+import EntityStatusModal from "@/components/extensive/EntityStatusModal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
-import { getEntityEditPageLink, getEntityEditPathSegment } from "@/helpers/entity";
+import { FormEntity } from "@/connections/Form";
+import { APPROVED, AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { useModalContext } from "@/context/modal.provider";
+import { getEntityEditPageLink, getEntityEditPathSegment, v3EntityName } from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons/Function/WarningIcon";
@@ -15,6 +21,8 @@ interface GetEditEntityHandlerArgs {
   entityName: EntityName | SingularEntityName | string;
   entityStatus: string;
   updateRequestStatus: string | null;
+  feedback?: string | null;
+  useStatusModal?: boolean;
 }
 
 /**
@@ -25,18 +33,33 @@ export const useGetEditEntityHandler = ({
   entityName,
   entityUUID,
   entityStatus,
-  updateRequestStatus
+  updateRequestStatus,
+  feedback,
+  useStatusModal = false
 }: GetEditEntityHandlerArgs) => {
   const t = useT();
   const router = useRouter();
+  const { openModal } = useModalContext();
   const [openReviewInProgressModal, setOpenReviewInProgressModal] = useState(false);
   const [openConfirmEditModal, setOpenConfirmEditModal] = useState(false);
   const pendingStepId = useRef<string | null | undefined>(undefined);
   const { getReadableEntityName } = useGetReadableEntityName();
   const editEntityName = getEntityEditPathSegment(entityName as EntityName | SingularEntityName);
+  const formEntityName = v3EntityName(entityName as EntityName | SingularEntityName) as FormEntity;
   const readableEntityNameSingular = (
     getReadableEntityName(entityName as EntityName | SingularEntityName, true) ?? t("Entity")
   ).toLowerCase();
+  const hasUpdateRequest = updateRequestStatus != null && updateRequestStatus !== "no-update";
+  const effectiveStatus = hasUpdateRequest ? updateRequestStatus : entityStatus;
+  const awaitingApproval = entityStatus === AWAITING_APPROVAL || updateRequestStatus === AWAITING_APPROVAL;
+  const shouldProvideFeedback =
+    useStatusModal &&
+    (effectiveStatus === NEEDS_MORE_INFORMATION || entityStatus === APPROVED || updateRequestStatus === APPROVED);
+  const statusProps = getStatusProps(
+    t,
+    { status: entityStatus, updateRequestStatus } as Parameters<typeof getStatusProps>[1],
+    effectiveStatus as StatusBarStatus
+  );
 
   let editTitle = t("Are you sure you want to edit your {entityName}?", {
     entityName: getReadableEntityName(entityName as EntityName | SingularEntityName)
@@ -57,8 +80,20 @@ export const useGetEditEntityHandler = ({
   }
 
   const handleEdit = (stepId?: string | null) => {
-    if (entityStatus === "awaiting-approval" || updateRequestStatus === "awaiting-approval") {
+    if (awaitingApproval) {
       setOpenReviewInProgressModal(true);
+    } else if (shouldProvideFeedback && statusProps != null) {
+      openModal(
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps}
+          feedback={feedback}
+          showProvideFeedback={shouldProvideFeedback}
+          entityName={formEntityName}
+          entityUuid={entityUUID}
+          formStepId={stepId}
+        />
+      );
     } else {
       pendingStepId.current = stepId;
       setOpenConfirmEditModal(true);

@@ -3,17 +3,13 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC, useCallback, useMemo, useState } from "react";
 
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
-import { useModalContext } from "@/context/modal.provider";
+import { AWAITING_APPROVAL } from "@/constants/statuses";
 import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
@@ -35,7 +31,6 @@ interface ProjectReportOverviewTabProps {
 const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectReport, project }) => {
   const router = useRouter();
   const t = useT();
-  const { openModal } = useModalContext();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const projectReportAboutContent = useProjectReportAboutContent();
 
@@ -43,39 +38,10 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
     entityName: "project-reports",
     entityUUID: projectReport.uuid,
     entityStatus: projectReport.status,
-    updateRequestStatus: projectReport.updateRequestStatus
+    updateRequestStatus: projectReport.updateRequestStatus,
+    feedback: projectReport.feedback,
+    useStatusModal: true
   });
-
-  const needMoreInformation =
-    projectReport.updateRequestStatus === NEEDS_MORE_INFORMATION || projectReport.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval =
-    projectReport.updateRequestStatus === AWAITING_APPROVAL || projectReport.status === AWAITING_APPROVAL;
-  const statusProps = useMemo(() => getStatusProps(t, projectReport, projectReport.status), [t, projectReport]);
-
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval && statusProps != null) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={projectReport.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="projectReports"
-          entityUuid={projectReport.uuid}
-        />
-      );
-    } else {
-      handleEdit();
-    }
-  }, [
-    awaitingApproval,
-    handleEdit,
-    needMoreInformation,
-    openModal,
-    projectReport.feedback,
-    projectReport.uuid,
-    statusProps
-  ]);
 
   const goToTab = useCallback(
     (tab: string) => {
@@ -152,13 +118,14 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
               size: "small",
               children: editButtonLabel,
               rightIcon: <ChevronRightIcon />,
-              onClick: handleEditClick
+              onClick: () => handleEdit()
             }}
             tag={statusTag}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
               <EntitySetUpSection
                 onStatusChange={setIsReportSetupComplete}
+                onEditStep={handleEdit}
                 entity={projectReport}
                 type="projectReports"
               />
