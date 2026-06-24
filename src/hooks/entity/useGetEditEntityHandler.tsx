@@ -45,11 +45,11 @@ export const useGetEditEntityHandler = ({
   let editTitle = t("Edit {entityName}?", {
     entityName: getReadableEntityName(entityName as EntityName | SingularEntityName)
   });
-  /* TODO: Add name entity section */
+
   let editContent: string = t(
     "Are you sure you want to edit {entityTitle} {reportTitle}? Editing this report will require it to be resubmitted for approval.",
     {
-      entityTitle,
+      entityTitle: entityTitle ?? "",
       reportTitle: reportTitle ?? entityName,
       entityName: getReadableEntityName(entityName as EntityName | SingularEntityName)
     }

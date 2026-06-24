@@ -232,7 +232,6 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
                   <Text as="span" textStyle="400">
                     {t("Your progress will be saved as a draft. You can access this form again from the ")}
                   </Text>
-                  {/* TODO: Add Entity name section */}
                   <Text as="span" textStyle="400-bold">
                     {t("Reporting Tasks")}
                   </Text>
