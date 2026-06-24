@@ -4,7 +4,7 @@ import { FC, SetStateAction, useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
-import FormSummary from "@/components/extensive/WizardForm/FormSummary";
+import FormSummary, { ReportSummaryAnalyticsProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
 import { useDownloadFormAnswers } from "@/hooks/useDownloadFormAnswers";
@@ -28,6 +28,7 @@ type SummaryItemProps = {
   feedback?: string | null;
   feedbackFields?: string[] | null;
   initialValues?: Record<string, unknown>;
+  reportSummaryAnalytics?: ReportSummaryAnalyticsProps;
 };
 
 const SummaryItem: FC<SummaryItemProps> = ({
@@ -44,7 +45,8 @@ const SummaryItem: FC<SummaryItemProps> = ({
   saveChanges,
   feedback,
   feedbackFields,
-  initialValues
+  initialValues,
+  reportSummaryAnalytics
 }) => {
   const t = useT();
   const user = useIsAdmin();
@@ -85,6 +87,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
           feedback={feedback}
           feedbackFieldsOptions={feedbackFields}
           initialValues={initialValues}
+          reportSummaryAnalytics={reportSummaryAnalytics}
         />
       </FormStepHeader>
       <FormFooter

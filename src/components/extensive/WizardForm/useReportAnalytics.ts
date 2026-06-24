@@ -114,6 +114,20 @@ export const useReportAnalytics = ({
     [getReportContext]
   );
 
+  const trackAccordionExpanded = useCallback(
+    (accordionLabel: string) => {
+      const context = getReportContext();
+      if (context == null || accordionLabel === "") return;
+
+      trackReportAnalyticsEvent("accordion_expanded", {
+        entityType: context.entityType,
+        entityId: context.entityId,
+        accordion_label: accordionLabel
+      });
+    },
+    [getReportContext]
+  );
+
   useValueChanged(selectedStepIndex, () => {
     if (!isTrackingEnabled || selectedStepIndex !== summaryStepIndex) return;
 
@@ -142,6 +156,7 @@ export const useReportAnalytics = ({
     trackReportSaveExited,
     trackReportSubmitted,
     trackFeedbackBannerDisplayed,
+    trackAccordionExpanded,
     hasFeedbackBannerInCurrentStep
   };
 };

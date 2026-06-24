@@ -1,6 +1,8 @@
 import { Flex, Text } from "@chakra-ui/react";
-import { FC } from "react";
+import { useT } from "@transifex/react";
+import { FC, useEffect, useRef } from "react";
 
+import { ReportSummaryAnalyticsProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
@@ -11,10 +13,19 @@ interface FeedbackReviewerProps {
   feedback?: string | null;
   feedbackFieldsOptions: string[] | null;
   values: any;
+  reportSummaryAnalytics?: ReportSummaryAnalyticsProps;
 }
 
-const FeedbackReviewer: FC<FeedbackReviewerProps> = ({ feedback, feedbackFieldsOptions, values }) => {
+const FeedbackReviewer: FC<FeedbackReviewerProps> = ({
+  feedback,
+  feedbackFieldsOptions,
+  values,
+  reportSummaryAnalytics
+}) => {
+  const t = useT();
   const fieldsProvider = useFieldsProvider();
+  const feedbackBannerTracked = useRef(false);
+  const accordionLabel = t("Feedback from Reviewer");
   const entries =
     feedbackFieldsOptions?.reduce<FormEntry[]>((acc, fieldId) => {
       const field = fieldsProvider.fieldByName(fieldId) ?? fieldsProvider.fieldByKey(fieldId);
@@ -28,15 +39,29 @@ const FeedbackReviewer: FC<FeedbackReviewerProps> = ({ feedback, feedbackFieldsO
       return acc;
     }, []) ?? [];
 
+  useEffect(() => {
+    if (reportSummaryAnalytics == null || entries.length === 0 || feedbackBannerTracked.current) return;
+
+    feedbackBannerTracked.current = true;
+    reportSummaryAnalytics.onFeedbackBannerDisplayed(reportSummaryAnalytics.reviewSectionName);
+  }, [entries.length, reportSummaryAnalytics]);
+
   if (entries.length === 0) return null;
+
+  const handleAccordionOpenChange = (open: boolean) => {
+    if (open) {
+      reportSummaryAnalytics?.onAccordionExpanded(accordionLabel);
+    }
+  };
 
   return (
     <div className="mt-6">
       <Accordion
         defaultOpen={true}
         variant="primary"
-        header={<AccordionHeader title={"Feedback from Reviewer"} />}
+        header={<AccordionHeader title={accordionLabel} />}
         classNameHeader="!mb-0"
+        onOpenChange={handleAccordionOpenChange}
       >
         <Flex className="flex-col gap-4 bg-theme-warning-100 p-4">
           {feedback != null && feedback.trim().length > 0 && (
