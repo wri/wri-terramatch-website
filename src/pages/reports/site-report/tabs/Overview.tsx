@@ -6,10 +6,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
@@ -18,10 +15,9 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { AWAITING_APPROVAL } from "@/constants/statuses";
 import { Framework } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -46,7 +42,6 @@ interface OverviewProps {
 const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const router = useRouter();
   const t = useT();
-  const { openModal } = useModalContext();
   const { setSiteData, resetSiteMapInteractionState } = useMapAreaContext();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const siteReportAboutContent = useSiteReportAboutContent();
@@ -77,31 +72,10 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
     entityName: "site-reports",
     entityUUID: siteReport.uuid,
     entityStatus: siteReport.status,
-    updateRequestStatus: siteReport.updateRequestStatus
+    updateRequestStatus: siteReport.updateRequestStatus,
+    feedback: siteReport.feedback,
+    useStatusModal: true
   });
-
-  const needMoreInformation =
-    siteReport.updateRequestStatus === NEEDS_MORE_INFORMATION || siteReport.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval =
-    siteReport.updateRequestStatus === AWAITING_APPROVAL || siteReport.status === AWAITING_APPROVAL;
-  const statusProps = useMemo(() => getStatusProps(t, siteReport, siteReport.status), [t, siteReport]);
-
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval && statusProps != null) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={siteReport.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="siteReports"
-          entityUuid={siteReport.uuid}
-        />
-      );
-    } else {
-      handleEdit();
-    }
-  }, [awaitingApproval, handleEdit, needMoreInformation, openModal, siteReport.feedback, siteReport.uuid, statusProps]);
 
   const goToTab = useCallback(
     (tab: string) => {
@@ -200,12 +174,17 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                 size: "small",
                 children: editButtonLabel,
                 rightIcon: <ChevronRightIcon />,
-                onClick: handleEditClick
+                onClick: () => handleEdit()
               }}
               tag={statusTag}
             >
               <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-                <EntitySetUpSection onStatusChange={setIsReportSetupComplete} entity={siteReport} type="siteReports" />
+                <EntitySetUpSection
+                  onStatusChange={setIsReportSetupComplete}
+                  onEditStep={handleEdit}
+                  entity={siteReport}
+                  type="siteReports"
+                />
               </Box>
             </PageItem>
           </Flex>

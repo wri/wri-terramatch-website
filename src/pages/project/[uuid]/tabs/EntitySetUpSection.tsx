@@ -15,18 +15,21 @@ const stepStatusToBadge = (valid: boolean): StepProps["status"] => (valid ? "com
 interface EntitySetUpSectionProps {
   entity: EntityFullDto;
   onStatusChange?: (allCompleted: boolean) => void;
+  onEditStep?: (stepId?: string | null) => void;
   type: SupportedEntity;
 }
 
-const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChange, type }) => {
+const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChange, onEditStep, type }) => {
   const t = useT();
   const { defaultValues, steps, isReady } = useEntityFormSetup(type, entity.uuid);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: type,
     entityUUID: entity.uuid,
     entityStatus: entity.status ?? "started",
-    updateRequestStatus: entity.updateRequestStatus ?? "no-update"
+    updateRequestStatus: entity.updateRequestStatus ?? "no-update",
+    feedback: entity.feedback
   });
+  const handleStepEdit = onEditStep ?? handleEdit;
 
   const feedbackFields = useMemo(() => entity.feedbackFields ?? [], [entity.feedbackFields]);
 
@@ -46,18 +49,18 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChang
             size="small"
             leftIcon={<EditIcon boxSize={3} />}
             onClick={() => {
-              handleEdit(step.id);
+              handleStepEdit(step.id);
             }}
           >
             {t("Edit")}
           </Button>
         ),
         onClick: () => {
-          handleEdit(step.id);
+          handleStepEdit(step.id);
         }
       };
     });
-  }, [t, steps, defaultValues, handleEdit, feedbackFields]);
+  }, [t, steps, defaultValues, handleStepEdit, feedbackFields]);
 
   const allStepsCompleted = useMemo(() => {
     if (!steps.length) return false;
@@ -84,7 +87,7 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChang
 
   return (
     <>
-      {EditModals}
+      {onEditStep == null ? EditModals : null}
       <ProgressSteps steps={tabItemsStep} />
     </>
   );

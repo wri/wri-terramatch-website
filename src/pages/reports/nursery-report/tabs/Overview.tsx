@@ -4,9 +4,6 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import { Component, ErrorInfo, FC, ReactNode, useCallback, useMemo, useState } from "react";
 
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
@@ -14,9 +11,8 @@ import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/M
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { AWAITING_APPROVAL } from "@/constants/statuses";
 import { isTerrafund, toFramework } from "@/context/framework.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
@@ -80,7 +76,6 @@ const NurseryReportOverviewFallback: FC = () => {
 const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }) => {
   const t = useT();
   const router = useRouter();
-  const { openModal } = useModalContext();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const nurseryReportAboutContent = useNurseryReportAboutContent();
 
@@ -88,30 +83,10 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
     entityName: "nursery-reports",
     entityUUID: report.uuid,
     entityStatus: report.status,
-    updateRequestStatus: report.updateRequestStatus
+    updateRequestStatus: report.updateRequestStatus,
+    feedback: report.feedback,
+    useStatusModal: true
   });
-
-  const needMoreInformation =
-    report.updateRequestStatus === NEEDS_MORE_INFORMATION || report.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval = report.updateRequestStatus === AWAITING_APPROVAL || report.status === AWAITING_APPROVAL;
-  const statusProps = useMemo(() => getStatusProps(t, report, report.status), [t, report]);
-
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval && statusProps != null) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={report.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="nurseryReports"
-          entityUuid={report.uuid}
-        />
-      );
-    } else {
-      handleEdit();
-    }
-  }, [awaitingApproval, handleEdit, needMoreInformation, openModal, report.feedback, report.uuid, statusProps]);
 
   const aboutContentItem = useMemo(() => {
     if (report.frameworkKey == null) return nurseryReportAboutContent[0];
@@ -219,12 +194,17 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
               size: "small",
               children: editButtonLabel,
               rightIcon: <ChevronRightIcon />,
-              onClick: handleEditClick
+              onClick: () => handleEdit()
             }}
             tag={statusTag}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <EntitySetUpSection onStatusChange={setIsReportSetupComplete} entity={report} type="nurseryReports" />
+              <EntitySetUpSection
+                onStatusChange={setIsReportSetupComplete}
+                onEditStep={handleEdit}
+                entity={report}
+                type="nurseryReports"
+              />
             </Box>
           </PageItem>
         </Flex>
