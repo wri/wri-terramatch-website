@@ -45,14 +45,14 @@ const ViewToolbar: FC<ViewToolbarProps> = ({ tabBar }: ViewToolbarProps) => {
   };
 
   const tabBarContent = (
-    <div className="flex w-full items-center gap-1">
+    <div className="flex w-full max-w-full items-center gap-1">
       {showLeft && (
         <IconButton onClick={() => scroll("left")} icon={<ChevronRightIcon className="rotate-180" boxSize={3} />} />
       )}
 
       <div
         ref={scrollRef}
-        className="min-w-0 flex-1 overflow-x-auto [&::-webkit-scrollbar]:hidden [&_[role='tablist']]:!flex-nowrap"
+        className="w-full min-w-0 max-w-full flex-1 overflow-x-auto [&::-webkit-scrollbar]:hidden [&_[role='tablist']]:!flex-nowrap"
         style={{ scrollbarWidth: "none" }}
       >
         <TabBar key={tabBar.defaultValue} {...tabBar} variant="transparent" />
@@ -62,7 +62,7 @@ const ViewToolbar: FC<ViewToolbarProps> = ({ tabBar }: ViewToolbarProps) => {
     </div>
   );
 
-  return <Toolbar className="!px-2" contentLeft={tabBarContent} />;
+  return <Toolbar className="!px-2" contentLeft={tabBarContent} classNameContentLeft="w-full max-w-full" />;
 };
 
 export default ViewToolbar;

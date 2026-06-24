@@ -10,8 +10,12 @@ const TabBar: FC<TabBarWriProps> = props => {
       css={{
         "& button": {
           textWrap: "nowrap !important"
+        },
+        "& > div:first-of-type": {
+          width: "max-content"
         }
       }}
+      className="w-max-content"
     >
       <TabBarWri {...props} />
     </Box>

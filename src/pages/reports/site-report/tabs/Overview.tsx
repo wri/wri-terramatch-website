@@ -156,7 +156,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
       <PageContent>
         {EditModals}
         <Flex gap={7} className="flex-col">
-          <Flex gap={7}>
+          <Flex gap={7} className="mobile:flex-col">
             <Flex gap={5} className={classNames(isHBFFramework ? "flex-row" : "flex-col", "flex-[2]")}>
               <PageItem
                 title={t("Key Indicators & Insights")}
@@ -209,7 +209,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
               </Box>
             </PageItem>
           </Flex>
-          <Flex gap={7}>
+          <Flex gap={7} className="mobile:flex-col">
             {site != null && (
               <PageItem title={t("Site Map")} flexProps={{ flex: 1 }} className="min-h-0">
                 <Box className="relative overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
