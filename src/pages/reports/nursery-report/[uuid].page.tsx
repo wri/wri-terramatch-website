@@ -84,7 +84,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
       },
       {
         key: "goals",
-        title: t("Progress & Goals"),
+        title: t("Indicators & Insights"),
         renderBody: () => <NurseryReportGoalsAndProgressTab nurseryReport={nurseryReport} />
       }
     ],

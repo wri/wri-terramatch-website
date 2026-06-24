@@ -9,7 +9,7 @@ import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject, useFullProjectReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
-import FrameworkProvider, { Framework, toFramework, useFrameworkContext } from "@/context/framework.provider";
+import FrameworkProvider, { shouldHideNurseries, toFramework, useFrameworkContext } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -43,7 +43,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const router = useRouter();
   const { framework } = useFrameworkContext();
   const [, { data: project }] = useFullProject({ id: projectReport.projectUuid! });
-  const shouldHideNurseries = framework === Framework.PPC;
+  const hideNurseries = shouldHideNurseries(framework);
   const reportingWindow = useReportingWindow(toFramework(projectReport?.frameworkKey), projectReport?.dueAt!);
   const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
 
@@ -80,7 +80,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
       },
       {
         key: "goals",
-        title: t("Key Indicators & Insights"),
+        title: t("Indicators & Insights"),
         renderBody: () => <GoalsAndProgressTab projectReport={projectReport} project={project} />
       },
       {
@@ -167,7 +167,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
               >
                 {t("Site Reports")}
               </Button>
-              {!shouldHideNurseries && (
+              {!hideNurseries && (
                 <>
                   <span className="text-sm text-theme-neutral-300">|</span>
                   <Button

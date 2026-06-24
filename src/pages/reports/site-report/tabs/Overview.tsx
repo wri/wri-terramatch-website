@@ -6,10 +6,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
@@ -18,10 +15,9 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { AWAITING_APPROVAL } from "@/constants/statuses";
 import { Framework } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -46,7 +42,6 @@ interface OverviewProps {
 const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const router = useRouter();
   const t = useT();
-  const { openModal } = useModalContext();
   const { setSiteData, resetSiteMapInteractionState } = useMapAreaContext();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const siteReportAboutContent = useSiteReportAboutContent();
@@ -79,31 +74,10 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
     entityStatus: siteReport.status,
     updateRequestStatus: siteReport.updateRequestStatus,
     entityTitle: siteReport.siteName ?? "",
-    reportTitle: siteReport.reportTitle ?? ""
+    reportTitle: siteReport.reportTitle ?? "",
+    feedback: siteReport.feedback,
+    useStatusModal: true
   });
-
-  const needMoreInformation =
-    siteReport.updateRequestStatus === NEEDS_MORE_INFORMATION || siteReport.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval =
-    siteReport.updateRequestStatus === AWAITING_APPROVAL || siteReport.status === AWAITING_APPROVAL;
-  const statusProps = useMemo(() => getStatusProps(t, siteReport, siteReport.status), [t, siteReport]);
-
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval && statusProps != null) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={siteReport.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="siteReports"
-          entityUuid={siteReport.uuid}
-        />
-      );
-    } else {
-      handleEdit();
-    }
-  }, [awaitingApproval, handleEdit, needMoreInformation, openModal, siteReport.feedback, siteReport.uuid, statusProps]);
 
   const goToTab = useCallback(
     (tab: string) => {
@@ -161,11 +135,11 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
           <Flex gap={7} className="mobile:flex-col">
             <Flex gap={5} className={classNames(isHBFFramework ? "flex-row" : "flex-col", "flex-[2]")}>
               <PageItem
-                title={t("Key Indicators & Insights")}
+                title={t("Indicators & Insights")}
                 buttonProps={{
                   variant: "secondary",
                   size: "small",
-                  children: t("View Key Indicators & Insights"),
+                  children: t("View Indicators & Insights"),
                   rightIcon: <ChevronRightIcon />,
                   onClick: createMetricsCardCtaHandler({ entityType: "site-report", entityId: siteReport.uuid }, () =>
                     goToTab("goals")
@@ -202,13 +176,14 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                 size: "small",
                 children: editButtonLabel,
                 rightIcon: <ChevronRightIcon />,
-                onClick: handleEditClick
+                onClick: () => handleEdit()
               }}
               tag={statusTag}
             >
               <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
                 <EntitySetUpSection
                   onStatusChange={setIsReportSetupComplete}
+                  onEditStep={handleEdit}
                   entity={siteReport}
                   type="siteReports"
                   entityTitle={siteReport.siteName ?? ""}

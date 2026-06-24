@@ -15,6 +15,7 @@ const stepStatusToBadge = (valid: boolean): StepProps["status"] => (valid ? "com
 interface EntitySetUpSectionProps {
   entity: EntityFullDto;
   onStatusChange?: (allCompleted: boolean) => void;
+  onEditStep?: (stepId?: string | null) => void;
   type: SupportedEntity;
   entityTitle?: string;
   reportTitle?: string;
@@ -23,6 +24,7 @@ interface EntitySetUpSectionProps {
 const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
   entity,
   onStatusChange,
+  onEditStep,
   type,
   entityTitle,
   reportTitle
@@ -34,9 +36,11 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
     entityUUID: entity.uuid,
     entityStatus: entity.status ?? "started",
     updateRequestStatus: entity.updateRequestStatus ?? "no-update",
+    feedback: entity.feedback,
     entityTitle: entityTitle ?? "",
     reportTitle: reportTitle ?? ""
   });
+  const handleStepEdit = onEditStep ?? handleEdit;
 
   const feedbackFields = useMemo(() => entity.feedbackFields ?? [], [entity.feedbackFields]);
 
@@ -56,18 +60,18 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
             size="small"
             leftIcon={<EditIcon boxSize={3} />}
             onClick={() => {
-              handleEdit(step.id);
+              handleStepEdit(step.id);
             }}
           >
             {t("Edit")}
           </Button>
         ),
         onClick: () => {
-          handleEdit(step.id);
+          handleStepEdit(step.id);
         }
       };
     });
-  }, [t, steps, defaultValues, handleEdit, feedbackFields]);
+  }, [t, steps, defaultValues, handleStepEdit, feedbackFields]);
 
   const allStepsCompleted = useMemo(() => {
     if (!steps.length) return false;
@@ -94,7 +98,7 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
 
   return (
     <>
-      {EditModals}
+      {onEditStep == null ? EditModals : null}
       <ProgressSteps steps={tabItemsStep} />
     </>
   );
