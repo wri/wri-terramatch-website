@@ -20,6 +20,7 @@ import { Framework } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getEntitySetupButtonLabel } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
@@ -96,7 +97,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
     return siteReportAboutContent.find(content => content.frameworks.includes(siteReport.frameworkKey!));
   }, [siteReport.frameworkKey, siteReportAboutContent]);
 
-  const editButtonLabel = siteReport.status === "approved" && isReportSetupComplete ? t("Edit") : t("Continue");
+  const editButtonLabel = getEntitySetupButtonLabel(t, siteReport.status, isReportSetupComplete);
 
   const statusTag = useMemo(() => {
     if (siteReport.updateRequestStatus === AWAITING_APPROVAL) {

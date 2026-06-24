@@ -14,6 +14,7 @@ import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLeve
 import { AWAITING_APPROVAL } from "@/constants/statuses";
 import { isTerrafund, toFramework } from "@/context/framework.provider";
 import { NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getEntitySetupButtonLabel } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
@@ -106,7 +107,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
     [router]
   );
 
-  const editButtonLabel = report.status === "approved" && isReportSetupComplete ? t("Edit") : t("Continue");
+  const editButtonLabel = getEntitySetupButtonLabel(t, report.status, isReportSetupComplete);
 
   const statusTag = useMemo(() => {
     if (report.updateRequestStatus === AWAITING_APPROVAL) {
