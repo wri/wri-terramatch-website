@@ -43,7 +43,9 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
     entityName: "project-reports",
     entityUUID: projectReport.uuid,
     entityStatus: projectReport.status,
-    updateRequestStatus: projectReport.updateRequestStatus
+    updateRequestStatus: projectReport.updateRequestStatus,
+    entityTitle: projectReport.projectName ?? "",
+    reportTitle: projectReport.reportTitle ?? ""
   });
 
   const needMoreInformation =
@@ -161,6 +163,8 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
                 onStatusChange={setIsReportSetupComplete}
                 entity={projectReport}
                 type="projectReports"
+                entityTitle={projectReport.projectName ?? ""}
+                reportTitle={projectReport.reportTitle ?? ""}
               />
             </Box>
           </PageItem>

@@ -16,16 +16,26 @@ interface EntitySetUpSectionProps {
   entity: EntityFullDto;
   onStatusChange?: (allCompleted: boolean) => void;
   type: SupportedEntity;
+  entityTitle?: string;
+  reportTitle?: string;
 }
 
-const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChange, type }) => {
+const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
+  entity,
+  onStatusChange,
+  type,
+  entityTitle,
+  reportTitle
+}) => {
   const t = useT();
   const { defaultValues, steps, isReady } = useEntityFormSetup(type, entity.uuid);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: type,
     entityUUID: entity.uuid,
     entityStatus: entity.status ?? "started",
-    updateRequestStatus: entity.updateRequestStatus ?? "no-update"
+    updateRequestStatus: entity.updateRequestStatus ?? "no-update",
+    entityTitle: entityTitle ?? "",
+    reportTitle: reportTitle ?? ""
   });
 
   const feedbackFields = useMemo(() => entity.feedbackFields ?? [], [entity.feedbackFields]);

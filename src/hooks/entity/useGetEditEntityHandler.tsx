@@ -15,6 +15,8 @@ interface GetEditEntityHandlerArgs {
   entityName: EntityName | SingularEntityName | string;
   entityStatus: string;
   updateRequestStatus: string | null;
+  entityTitle?: string;
+  reportTitle?: string;
 }
 
 /**
@@ -25,7 +27,9 @@ export const useGetEditEntityHandler = ({
   entityName,
   entityUUID,
   entityStatus,
-  updateRequestStatus
+  updateRequestStatus,
+  entityTitle,
+  reportTitle
 }: GetEditEntityHandlerArgs) => {
   const t = useT();
   const router = useRouter();
@@ -43,8 +47,12 @@ export const useGetEditEntityHandler = ({
   });
   /* TODO: Add name entity section */
   let editContent: string = t(
-    "Are you sure you want to edit {entityName}? Editing this report will require it to be resubmitted for approval.",
-    { entityName: getReadableEntityName(entityName as EntityName | SingularEntityName) }
+    "Are you sure you want to edit {entityTitle} {reportTitle}? Editing this report will require it to be resubmitted for approval.",
+    {
+      entityTitle,
+      reportTitle: reportTitle ?? entityName,
+      entityName: getReadableEntityName(entityName as EntityName | SingularEntityName)
+    }
   );
 
   if (entityStatus === "started") {

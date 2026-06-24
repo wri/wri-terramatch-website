@@ -88,7 +88,9 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
     entityName: "nursery-reports",
     entityUUID: report.uuid,
     entityStatus: report.status,
-    updateRequestStatus: report.updateRequestStatus
+    updateRequestStatus: report.updateRequestStatus,
+    entityTitle: report.nurseryName ?? "",
+    reportTitle: report.reportTitle ?? ""
   });
 
   const needMoreInformation =
@@ -224,7 +226,13 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
             tag={statusTag}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <EntitySetUpSection onStatusChange={setIsReportSetupComplete} entity={report} type="nurseryReports" />
+              <EntitySetUpSection
+                onStatusChange={setIsReportSetupComplete}
+                entity={report}
+                type="nurseryReports"
+                entityTitle={report.nurseryName ?? ""}
+                reportTitle={report.reportTitle ?? ""}
+              />
             </Box>
           </PageItem>
         </Flex>

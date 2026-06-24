@@ -77,7 +77,9 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
     entityName: "site-reports",
     entityUUID: siteReport.uuid,
     entityStatus: siteReport.status,
-    updateRequestStatus: siteReport.updateRequestStatus
+    updateRequestStatus: siteReport.updateRequestStatus,
+    entityTitle: siteReport.siteName ?? "",
+    reportTitle: siteReport.reportTitle ?? ""
   });
 
   const needMoreInformation =
@@ -205,7 +207,13 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
               tag={statusTag}
             >
               <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-                <EntitySetUpSection onStatusChange={setIsReportSetupComplete} entity={siteReport} type="siteReports" />
+                <EntitySetUpSection
+                  onStatusChange={setIsReportSetupComplete}
+                  entity={siteReport}
+                  type="siteReports"
+                  entityTitle={siteReport.siteName ?? ""}
+                  reportTitle={siteReport.reportTitle ?? ""}
+                />
               </Box>
             </PageItem>
           </Flex>
