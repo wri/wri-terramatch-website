@@ -15,7 +15,7 @@ import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -135,7 +135,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
 
   const hasSites = (project.totalSites ?? 0) > 0;
   const hasNurseries = (project.totalNurseries ?? 0) > 0;
-  const shouldHideNurseries = framework === Framework.PPC;
+  const hideNurseries = shouldHideNurseries(framework);
 
   const addSitesAndNurseriesButtons = useMemo<ButtonGroupButtonProps[]>(() => {
     const buttons: ButtonGroupButtonProps[] = [
@@ -150,7 +150,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
       }
     ];
 
-    if (!shouldHideNurseries) {
+    if (!hideNurseries) {
       buttons.push({
         id: "add-nurseries",
         variant: "borderless",
@@ -163,7 +163,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     }
 
     return buttons;
-  }, [goToTab, shouldHideNurseries, t]);
+  }, [goToTab, hideNurseries, t]);
 
   const { data: projectPolygonDataV3, isLoading: isLoadingProjectPolygons } = useAllSitePolygons({
     entityName: "projects",

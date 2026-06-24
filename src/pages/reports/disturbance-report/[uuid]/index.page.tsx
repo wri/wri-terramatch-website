@@ -7,7 +7,7 @@ import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGallery
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullDisturbanceReport } from "@/connections/Entity";
-import FrameworkProvider, { Framework } from "@/context/framework.provider";
+import FrameworkProvider, { shouldHideNurseries, toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -101,6 +101,7 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "report-data";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const hideNurseries = shouldHideNurseries(toFramework(disturbanceReport.frameworkKey));
 
   return (
     <>
@@ -157,7 +158,7 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
                 >
                   {t("Sites")}
                 </Button>
-                {disturbanceReport?.frameworkKey != Framework.PPC && (
+                {!hideNurseries && (
                   <>
                     <span className="text-sm text-theme-neutral-300">|</span>
                     <Button
