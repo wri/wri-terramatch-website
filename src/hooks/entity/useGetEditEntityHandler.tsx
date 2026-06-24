@@ -43,15 +43,15 @@ export const useGetEditEntityHandler = ({
   ).toLowerCase();
 
   let editTitle = t("Edit {entityName}?", {
-    entityName: getReadableEntityName(entityName as EntityName | SingularEntityName)
+    entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true)
   });
 
   let editContent: string = t(
     "Are you sure you want to edit {entityTitle} {reportTitle}? Editing this report will require it to be resubmitted for approval.",
     {
       entityTitle: entityTitle ?? "",
-      reportTitle: reportTitle ?? entityName,
-      entityName: getReadableEntityName(entityName as EntityName | SingularEntityName)
+      reportTitle: reportTitle ?? getReadableEntityName(entityName as EntityName | SingularEntityName, true),
+      entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true)
     }
   );
 
