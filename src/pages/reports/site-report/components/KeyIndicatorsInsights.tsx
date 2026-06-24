@@ -65,7 +65,7 @@ const TerrafundSiteReportKeyIndicators: FC<TerrafundSiteReportKeyIndicatorsProps
         variant="large"
         icon={<TreeIcon />}
         color="secondary.600"
-        className={REPORT_METRIC_CARD_CLASS}
+        className={"flex-1"}
         metricLabel="trees_planted"
         tooltipContent={getTooltipContent(content.treesPlanted)}
       />
@@ -77,7 +77,7 @@ const TerrafundSiteReportKeyIndicators: FC<TerrafundSiteReportKeyIndicatorsProps
         variant="large"
         icon={<SurvivalRateIcon />}
         color="secondary.600"
-        className={REPORT_METRIC_CARD_CLASS}
+        className={"flex-1"}
         metricLabel="survival_rate"
         tooltipContent={getTooltipContent(content.survivalRate)}
       />
@@ -88,7 +88,7 @@ const TerrafundSiteReportKeyIndicators: FC<TerrafundSiteReportKeyIndicatorsProps
         variant="large"
         icon={<RegenerationIcon />}
         color="secondary.600"
-        className={REPORT_METRIC_CARD_CLASS}
+        className={"flex-1"}
         metricLabel="trees_regenerated"
         tooltipContent={getTooltipContent(content.treesRegenerated)}
       />
