@@ -8,7 +8,7 @@ import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormEntity } from "@/connections/Form";
-import { APPROVED, AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { getEntityEditPageLink, getEntityEditPathSegment, v3EntityName } from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
@@ -53,16 +53,17 @@ export const useGetEditEntityHandler = ({
   const readableEntityNameSingular = (
     getReadableEntityName(entityName as EntityName | SingularEntityName, true) ?? t("Entity")
   ).toLowerCase();
-  const hasUpdateRequest = updateRequestStatus != null && updateRequestStatus !== "no-update";
-  const effectiveStatus = hasUpdateRequest ? updateRequestStatus : entityStatus;
+  const hasRelevantUpdateRequest =
+    updateRequestStatus === AWAITING_APPROVAL || updateRequestStatus === NEEDS_MORE_INFORMATION;
+  const effectiveStatus = (hasRelevantUpdateRequest ? updateRequestStatus : entityStatus) as StatusBarStatus;
   const awaitingApproval = entityStatus === AWAITING_APPROVAL || updateRequestStatus === AWAITING_APPROVAL;
-  const shouldProvideFeedback =
-    useStatusModal &&
-    (effectiveStatus === NEEDS_MORE_INFORMATION || entityStatus === APPROVED || updateRequestStatus === APPROVED);
+  const needsMoreInformation =
+    entityStatus === NEEDS_MORE_INFORMATION || updateRequestStatus === NEEDS_MORE_INFORMATION;
+  const shouldShowStatusFeedbackModal = useStatusModal && needsMoreInformation && !awaitingApproval;
   const statusProps = getStatusProps(
     t,
     { status: entityStatus, updateRequestStatus } as Parameters<typeof getStatusProps>[1],
-    effectiveStatus as StatusBarStatus
+    effectiveStatus
   );
 
   let editTitle = t("Edit {entityName}?", {
@@ -91,13 +92,13 @@ export const useGetEditEntityHandler = ({
   const handleEdit = (stepId?: string | null) => {
     if (awaitingApproval) {
       setOpenReviewInProgressModal(true);
-    } else if (shouldProvideFeedback && statusProps != null) {
+    } else if (shouldShowStatusFeedbackModal && statusProps != null) {
       openModal(
         ModalId.STATUS,
         <EntityStatusModal
           statusProps={statusProps}
           feedback={feedback}
-          showProvideFeedback={shouldProvideFeedback}
+          showProvideFeedback={shouldShowStatusFeedbackModal}
           entityName={formEntityName}
           entityUuid={entityUUID}
           formStepId={stepId}

@@ -1,14 +1,8 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useMemo } from "react";
 
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { FormEntity } from "@/connections/Form";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
-import { useModalContext } from "@/context/modal.provider";
 import {
   DisturbanceReportFullDto,
   FinancialReportFullDto,
@@ -17,7 +11,6 @@ import {
   SiteReportFullDto,
   SrpReportFullDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { v3EntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -46,8 +39,6 @@ export interface ReportHeaderProps {
 const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName }) => {
   const t = useT();
   const router = useRouter();
-  const { openModal } = useModalContext();
-  const formEntityName = v3EntityName(entityName) as FormEntity;
 
   const entityTitle = useMemo(() => {
     if (entityName === "site-report") return (report as SiteReportFullDto)?.siteName ?? "";
@@ -72,40 +63,11 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
     entityUUID: report.uuid,
     entityStatus: report.status,
     updateRequestStatus: report.updateRequestStatus,
+    feedback: report.feedback,
+    useStatusModal: true,
     entityTitle: entityTitle ?? "",
     reportTitle: reportTitle ?? ""
   });
-
-  const needMoreInformation =
-    report.updateRequestStatus === NEEDS_MORE_INFORMATION || report.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval = report.updateRequestStatus === AWAITING_APPROVAL || report.status === AWAITING_APPROVAL;
-  const statusProps = useMemo(() => getStatusProps(t, report, report.status), [t, report]);
-
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval && statusProps != null) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={report.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName={formEntityName}
-          entityUuid={report.uuid}
-        />
-      );
-    } else {
-      handleEdit();
-    }
-  }, [
-    awaitingApproval,
-    formEntityName,
-    handleEdit,
-    needMoreInformation,
-    openModal,
-    report.feedback,
-    report.uuid,
-    statusProps
-  ]);
 
   return (
     <>
@@ -118,7 +80,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
             color="neutral.900"
             className="-ml-[0.5rem] flex items-center gap-2 mobile:w-full mobile:max-w-full mobile:overflow-x-auto"
           >
-            {formEntityName !== "financialReports" && "projectUuid" in report && (
+            {entityName !== "financial-report" && "projectUuid" in report && (
               <>
                 <Button
                   variant="borderless"
@@ -168,7 +130,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
             )}
           </Flex>
           <Flex gap={2} alignItems="flex-start" className="mobile:w-full">
-            <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={handleEditClick}>
+            <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={() => handleEdit()}>
               {t("Edit")}
             </Button>
             <Button
