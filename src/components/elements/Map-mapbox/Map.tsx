@@ -453,7 +453,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     editPolygon,
     setMobilePopupData,
     dashboardContext: resolvedDashboardContext,
-    siteReportPolygonPopup
+    siteReportPolygonPopup,
+    polygonFromMap
   });
 
   useEffect(() => {
