@@ -22,7 +22,7 @@ import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
-import SitePolygonsTab from "./tabs/Polygons";
+import SitePolygonsTab from "./tabs/SitePolygonsTab";
 
 const SiteDetailPage = () => {
   const t = useT();
