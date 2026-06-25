@@ -50,9 +50,6 @@ export const useGetEditEntityHandler = ({
   const { getReadableEntityName } = useGetReadableEntityName();
   const editEntityName = getEntityEditPathSegment(entityName as EntityName | SingularEntityName);
   const formEntityName = v3EntityName(entityName as EntityName | SingularEntityName) as FormEntity;
-  const readableEntityNameSingular = (
-    getReadableEntityName(entityName as EntityName | SingularEntityName, true) ?? t("Entity")
-  ).toLowerCase();
   const hasRelevantUpdateRequest =
     updateRequestStatus === AWAITING_APPROVAL || updateRequestStatus === NEEDS_MORE_INFORMATION;
   const effectiveStatus = (hasRelevantUpdateRequest ? updateRequestStatus : entityStatus) as StatusBarStatus;
@@ -90,16 +87,6 @@ export const useGetEditEntityHandler = ({
       entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true)
     }
   );
-
-  if (entityStatus === "started") {
-    editTitle = t("Continue working on draft {entityName}?", {
-      entityName: readableEntityNameSingular
-    });
-    editContent = t(
-      'By clicking "Edit," you\'ll access your draft {entityName}. You can edit the {entityName} contents and either save it as a draft again, or click to the end and press "Submit" to send it to your project manager for review.',
-      { entityName: readableEntityNameSingular }
-    );
-  }
 
   const handleEdit = (stepId?: string | null) => {
     if (awaitingApproval) {
