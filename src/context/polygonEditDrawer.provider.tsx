@@ -159,6 +159,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     [setOnRefetchPolygons, setOnOverlapFixed, setOnRunValidation, setOnPolygonDeletingChange]
   );
   const {
+    closeMapPopups,
     setEditPolygon,
     setIsUserDrawingEnabled,
     setPolygonGeometryEdit,
@@ -169,6 +170,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
 
   const openPolygonEdit = useCallback(
     (params?: PolygonEditDrawerPolygon) => {
+      closeMapPopups();
       const polygonUuid = params?.polygonUuid ?? params?.sitePolygon?.polygonUuid ?? undefined;
       const primaryUuid = params?.sitePolygon?.primaryUuid;
       if (polygonUuid == null || polygonUuid === "") {
@@ -184,7 +186,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
       }
       setIsOpen(true);
     },
-    [setDraftPolygonGeometry, setEditPolygon]
+    [closeMapPopups, setDraftPolygonGeometry, setEditPolygon]
   );
 
   const closePolygonEdit = useCallback(() => {

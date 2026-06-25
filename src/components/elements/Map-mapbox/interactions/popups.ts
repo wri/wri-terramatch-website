@@ -216,6 +216,16 @@ export const addPopupsToMap = (
   });
 };
 
+export const teardownPopupsFromMap = (map: MapboxMap): void => {
+  const handlers = getClickHandlers(map);
+  Object.entries(handlers).forEach(([layerId, handler]) => {
+    map.off("click", layerId, handler);
+    map.off("touchend", layerId, handler);
+    delete handlers[layerId];
+  });
+  removePopups(map, "POLYGON");
+};
+
 export const addPopupToLayer = (
   map: MapboxMap,
   popupComponent: React.ComponentType<PopupComponentProps>,

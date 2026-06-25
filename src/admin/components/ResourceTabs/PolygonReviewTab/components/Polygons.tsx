@@ -81,6 +81,7 @@ const Polygons = (props: IPolygonProps) => {
   const { openModal, closeModal } = useModalContext();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
+  const { closeMapPopups } = contextMapArea;
   const reloadSiteData = context?.reloadSiteData;
   const sitePolygonData = context?.sitePolygonData;
 
@@ -114,6 +115,7 @@ const Polygons = (props: IPolygonProps) => {
 
   useEffect(() => {
     if (polygonFromMap?.isOpen) {
+      closeMapPopups();
       const newSelectedPolygon = polygonMenu.find(polygon => polygon.uuid === polygonFromMap.uuid);
       const source = polygonFromMap?.source ?? "map";
       if (source === "map") {
@@ -130,7 +132,7 @@ const Polygons = (props: IPolygonProps) => {
       setIsOpenPolygonDrawer(false);
       setSelectedPolygon(undefined);
     }
-  }, [polygonFromMap, polygonMenu]);
+  }, [closeMapPopups, polygonFromMap, polygonMenu]);
 
   useEffect(() => {
     if (bbox != null && map.current) {
