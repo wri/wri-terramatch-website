@@ -71,10 +71,22 @@ export const useGetEditEntityHandler = ({
   });
 
   let editContent: string = t(
-    "Are you sure you want to edit {entityTitle} {reportTitle}? Editing this report will require it to be resubmitted for approval.",
+    "Are you sure you want to edit {entityTitle} {reportTitle} Editing this report will require it to be resubmitted for approval.",
     {
-      entityTitle: entityTitle ?? "",
-      reportTitle: reportTitle ?? getReadableEntityName(entityName as EntityName | SingularEntityName, true),
+      entityTitle: (
+        <Text as="span" textStyle="400-bold">
+          {entityTitle ?? ""}
+        </Text>
+      ),
+      reportTitle: (
+        <>
+          <Text as="span" textStyle="400-bold">
+            {reportTitle ?? getReadableEntityName(entityName as EntityName | SingularEntityName, true)}
+          </Text>
+          ?<br />
+          <br />
+        </>
+      ),
       entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true)
     }
   );
