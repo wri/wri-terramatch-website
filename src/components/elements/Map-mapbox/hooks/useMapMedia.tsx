@@ -11,6 +11,7 @@ import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TranslatedText } from "@/i18n/types";
+import { runWithDownloadToast } from "@/utils/downloadToast";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
@@ -75,18 +76,27 @@ export function useMapMedia({
 
     const handleDelete = async (id: string) => {
       try {
-        await deleteMedia(id);
-        trackPolygonEvent("polygon_image_edited", {
-          ...getPolygonAnalyticsContext({
-            entityType: entityData?.entityName ?? entityData?.entityType ?? "site",
-            entityId: entityData?.entityUUID ?? entityData?.uuid
-          }),
-          polygon_id: "unknown"
-        });
-        closeModal(ModalId.DELETE_IMAGE);
+        await runWithDownloadToast(
+          {
+            downloading: t("Deleting a geotagged photo…"),
+            complete: t("Photo Deleted"),
+            error: t("Failed to delete image.")
+          },
+          async () => {
+            await deleteMedia(id);
+            trackPolygonEvent("polygon_image_edited", {
+              ...getPolygonAnalyticsContext({
+                entityType: entityData?.entityName ?? entityData?.entityType ?? "site",
+                entityId: entityData?.entityUUID ?? entityData?.uuid
+              }),
+              polygon_id: "unknown"
+            });
+            closeModal(ModalId.DELETE_IMAGE);
+          },
+          `media-delete-${id}`
+        );
       } catch (error) {
         Log.error(error);
-        openNotification("error", t("Error"), t("Failed to delete image."));
       }
     };
 
@@ -130,8 +140,15 @@ export function useMapMedia({
     const handleDownload = async (uuid: string, defaultFileName: string): Promise<void> => {
       showLoader();
       try {
-        await exportImage.downloadFile({ pathParams: { uuid } }, { defaultFileName });
-        openNotification("success", t("Success!"), t("Image downloaded successfully"));
+        await runWithDownloadToast(
+          {
+            downloading: t("Downloading a geotagged photo…"),
+            complete: t("Download Complete"),
+            error: t("Download Failed")
+          },
+          () => exportImage.downloadFile({ pathParams: { uuid } }, { defaultFileName }),
+          `media-download-${uuid}`
+        );
       } catch (error) {
         Log.error("Download error:", error);
       } finally {
