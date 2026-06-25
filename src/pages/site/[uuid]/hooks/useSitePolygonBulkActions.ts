@@ -41,7 +41,6 @@ import {
   closePolygonProgressToast,
   completePolygonProgressToast,
   getDownloadingPolygonsProgressLabel,
-  getFixingOverlapsProgressLabel,
   getPolygonOperationToastLabels,
   POLYGON_TOAST_IDS,
   showPolygonErrorToast,
@@ -362,9 +361,21 @@ export const useSitePolygonBulkActions = ({
         prunePolygonValidationCache(params.previousPolygonUuid, updatedPolygon.polygonUuid);
       }
 
+      const fixedId = updatedPolygon?.polygonUuid ?? updatedPolygon?.uuid;
+      const fixedName = updatedPolygon?.name ?? null;
+      if (fixedId != null && fixedId !== "" && fixedName != null && fixedName !== "") {
+        onOverlapFixResultsOpen({ polygonsFixed: [{ id: fixedId, name: fixedName }], polygonsNotFixed: [] });
+      } else {
+        const originalPolygon = polygonsData.find(
+          p => p.polygonUuid === params.previousPolygonUuid || p.uuid === params.sitePolygonUuid
+        );
+        const name = originalPolygon?.name ?? params.previousPolygonUuid;
+        onOverlapFixResultsOpen({ polygonsFixed: [], polygonsNotFixed: [{ id: params.previousPolygonUuid, name }] });
+      }
+
       return updatedPolygon;
     },
-    [invalidatePolygonMapTiles, refreshPolygonData]
+    [invalidatePolygonMapTiles, onOverlapFixResultsOpen, polygonsData, refreshPolygonData]
   );
 
   const handleOverlapFix = useCallback(
@@ -381,11 +392,6 @@ export const useSitePolygonBulkActions = ({
 
       setFixingOverlapsCount(fixableCandidates.length);
       setIsFixingOverlaps(true);
-      showPolygonProgressToast(
-        t,
-        getFixingOverlapsProgressLabel(t, fixableCandidates.length),
-        POLYGON_TOAST_IDS.fixingOverlaps
-      );
 
       try {
         const response = await clipPolygonListAsync(fixableCandidates.map(candidate => candidate.id));
@@ -422,10 +428,8 @@ export const useSitePolygonBulkActions = ({
         });
         closeMapPopups();
         setPolygonTableHoveredUuid(null);
-        completePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps, toastLabels.fixingOverlapsComplete);
       } catch (error) {
         Log.error("Failed to fix selected polygon overlaps:", error);
-        closePolygonProgressToast(POLYGON_TOAST_IDS.fixingOverlaps);
         showPolygonErrorToast(t("Failed to fix selected polygon overlaps"));
       } finally {
         setIsFixingOverlaps(false);
@@ -440,8 +444,7 @@ export const useSitePolygonBulkActions = ({
       onOverlapFixResultsOpen,
       refreshPolygonData,
       site.uuid,
-      t,
-      toastLabels
+      t
     ]
   );
 
