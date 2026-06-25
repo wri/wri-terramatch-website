@@ -55,12 +55,12 @@ const LatestImagesSectionTab: FC<LatestImagesSectionTabProps> = ({
     })) ?? [];
 
   if (!loaded) {
-    return <Loader className="w-full rounded-md bg-theme-neutral-100" />;
+    return <Loader className="bg-theme-neutral-100 w-full rounded-md" />;
   }
 
   if (loadFailure != null) {
     return (
-      <div className="flex h-32 w-full items-center justify-center rounded-md bg-theme-neutral-100 px-5 text-center text-sm text-theme-neutral-600">
+      <div className="bg-theme-neutral-100 text-theme-neutral-600 flex h-32 w-full items-center justify-center rounded-md px-5 text-center text-sm">
         {t("Unable to load images.")}
       </div>
     );
@@ -68,7 +68,7 @@ const LatestImagesSectionTab: FC<LatestImagesSectionTabProps> = ({
 
   return (
     <ImageGalleryCard
-      classNameImage="!w-auto mobile:!w-full"
+      classNameImage="!w-auto mobile:!aspect-[2/1] mobile:!h-auto mobile:!object-cover"
       className="w-full mobile:!grid-cols-2"
       images={images}
       onClickAdd={onClickAdd ?? goToGallery}
