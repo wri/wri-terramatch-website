@@ -81,7 +81,7 @@ const ModalConfirmation: FC<ModalConfirmationProps> = ({
       }
       content={
         <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2} width="100%">
-          <Text textStyle="400" color="neutral.900" textAlign="center">
+          <Text textStyle="400" color="neutral.900" textAlign="left">
             {content}
           </Text>
         </Flex>
