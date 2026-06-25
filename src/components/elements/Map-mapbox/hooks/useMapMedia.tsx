@@ -78,9 +78,9 @@ export function useMapMedia({
       try {
         await runWithDownloadToast(
           {
-            downloading: t("Deleting a geotagged photo…"),
+            downloading: t("Deleting Geotagged Photo…"),
             complete: t("Photo Deleted"),
-            error: t("Failed to delete image.")
+            error: t("Failed to delete photo.")
           },
           async () => {
             await deleteMedia(id);
@@ -142,7 +142,7 @@ export function useMapMedia({
       try {
         await runWithDownloadToast(
           {
-            downloading: t("Downloading a geotagged photo…"),
+            downloading: t("Downloading Geotagged Photo…"),
             complete: t("Download Complete"),
             error: t("Download Failed")
           },
