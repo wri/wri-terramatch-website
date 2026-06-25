@@ -79,11 +79,11 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
         <Flex gap={7}>
           <Flex gap={5} className="flex-[2] flex-col">
             <PageItem
-              title={t("Indicators & Insights")}
+              title={t("Key Indicators and Insights")}
               buttonProps={{
                 variant: "secondary",
                 size: "small",
-                children: t("View Indicators & Insights"),
+                children: t("View Indicator & Insights"),
                 rightIcon: <ChevronRightIcon />,
                 onClick: createMetricsCardCtaHandler(
                   { entityType: "project-report", entityId: projectReport.uuid },

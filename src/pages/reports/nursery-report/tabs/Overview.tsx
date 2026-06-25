@@ -140,11 +140,11 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
         <Flex gap={7}>
           <Flex gap={5} className={classNames(isTerrafundFramework ? "flex-row" : "flex-col", "flex-[2]")}>
             <PageItem
-              title={t("Indicators & Insights")}
+              title={t("Key Indicators and Insights")}
               buttonProps={{
                 variant: "secondary",
                 size: "small",
-                children: t("View Indicators & Insights"),
+                children: t("View Indicator & Insights"),
                 rightIcon: <ChevronRightIcon />,
                 onClick: createMetricsCardCtaHandler({ entityType: "nursery-report", entityId: report.uuid }, () =>
                   goToTab("goals")
