@@ -6,18 +6,30 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { loadBoundingBox, normalizeBoundingBoxDto } from "@/connections/BoundingBox";
 import { LAYERS_NAMES } from "@/constants/layers";
 import { registerOpenPolygonPopupHandler, unregisterOpenPolygonPopupHandler } from "@/context/mapArea.utils";
+import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { useChampionsMap } from "../championsMap.context";
 import { DashboardPopup } from "../components/DashboardPopup";
 import { PolygonPopup } from "../components/PolygonPopup/PolygonPopup";
-import { disableBackgroundClickClose, enableBackgroundClickClose } from "../interactions/popupCoordinator";
-import { addPopupsToMap, openPolygonPopup, PopupHandlerOptions } from "../interactions/popups";
+import {
+  closeAllPopups,
+  disableBackgroundClickClose,
+  enableBackgroundClickClose
+} from "../interactions/popupCoordinator";
+import {
+  addPopupsToMap,
+  openPolygonPopup,
+  PopupHandlerOptions,
+  removePopups,
+  teardownPopupsFromMap
+} from "../interactions/popups";
 import type {
   DashboardPopupContext,
   EditPolygonState,
   MobilePopupData,
+  PolygonFromMapState,
   SetPolygonFromMap,
   TooltipType
 } from "../Map.d";
@@ -38,6 +50,7 @@ type UseMapPopupsParams = {
   setMobilePopupData: (v: MobilePopupData) => void;
   dashboardContext?: DashboardPopupContext | null;
   siteReportPolygonPopup?: boolean;
+  polygonFromMap?: Pick<PolygonFromMapState, "isOpen"> | null;
 };
 
 const buildPopupFeature = (polygonUuid: string): GeoJSONFeature =>
@@ -70,9 +83,13 @@ export function useMapPopups({
   editPolygon,
   setMobilePopupData,
   dashboardContext,
-  siteReportPolygonPopup
+  siteReportPolygonPopup,
+  polygonFromMap
 }: UseMapPopupsParams) {
   const championsMap = useChampionsMap();
+  const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
+  const isEditPanelActive = isPolygonEditDrawerOpen || (!championsMap && polygonFromMap?.isOpen === true);
+  const effectiveShowPopups = showPopups === true && !isEditPanelActive;
   const callbacksRef = useRef({ setPolygonFromMap, setEditPolygon, setMobilePopupData });
   useEffect(() => {
     callbacksRef.current = { setPolygonFromMap, setEditPolygon, setMobilePopupData };
@@ -86,7 +103,13 @@ export function useMapPopups({
   const popupOptionsRef = useRef<PopupHandlerOptions | null>(null);
 
   useEffect(() => {
-    if (!sourcesAdded || map.current == null || draw.current == null || !showPopups) return;
+    if (!isEditPanelActive || map.current == null) return;
+    closeAllPopups(map.current);
+    removePopups(map.current, "POLYGON");
+  }, [isEditPanelActive, map]);
+
+  useEffect(() => {
+    if (!sourcesAdded || map.current == null || draw.current == null || !effectiveShowPopups) return;
 
     const PopupComponent = dashboardContext?.dashboardMode != null ? DashboardPopup : PolygonPopup;
     const mapInstance = map.current;
@@ -148,6 +171,7 @@ export function useMapPopups({
     enableBackgroundClickClose(mapInstance);
 
     return () => {
+      teardownPopupsFromMap(mapInstance);
       unregisterOpenPolygonPopupHandler();
       disableBackgroundClickClose(mapInstance);
     };
@@ -156,7 +180,7 @@ export function useMapPopups({
     sitePolygonData,
     tooltipType,
     isMobile,
-    showPopups,
+    effectiveShowPopups,
     setLoader,
     setShouldRefetchPolygonData,
     dashboardContext,
