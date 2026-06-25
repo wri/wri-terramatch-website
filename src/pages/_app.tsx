@@ -94,11 +94,25 @@ const SiteStack = ({ children }: PropsWithChildren) => (
   </RouteHistoryProvider>
 );
 
+// Standalone admin polygon review: same app-level providers as SiteStack, but without
+// MainLayout because the page owns its temporary admin header/sidebar shell.
+const SitePolygonReviewStack = ({ children }: PropsWithChildren) => (
+  <RouteHistoryProvider>
+    <NavbarProvider>
+      <ModalRoot />
+      <Toast />
+      <WRIToast />
+      {children}
+    </NavbarProvider>
+  </RouteHistoryProvider>
+);
+
 const _App = ({ Component, pageProps }: AppProps) => {
   const t = useT();
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
+  const isOnSitePolygonReview = /^\/site\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath);
   const isOnSite = router.asPath.includes("/site");
 
   setupYup(t);
@@ -120,6 +134,10 @@ const _App = ({ Component, pageProps }: AppProps) => {
                       <AdminStack>
                         <Component {...pageProps} />
                       </AdminStack>
+                    ) : isOnSitePolygonReview ? (
+                      <SitePolygonReviewStack>
+                        <Component {...pageProps} />
+                      </SitePolygonReviewStack>
                     ) : isOnSite ? (
                       <SiteStack>
                         <Component {...pageProps} />

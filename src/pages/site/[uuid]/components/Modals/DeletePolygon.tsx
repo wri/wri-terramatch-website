@@ -6,7 +6,7 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons";
 
-import type { PolygonTableRow } from "../../tabs/Polygons";
+import type { PolygonTableRow } from "../PolygonTableRow";
 
 export interface DeletePolygonProps {
   open: boolean;
