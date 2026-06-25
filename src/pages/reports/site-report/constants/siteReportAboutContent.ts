@@ -6,6 +6,12 @@ const REPORT_PREPARE_SUBMIT_LINK =
 const SITE_REPORT_CHECKLIST_LINK =
   "https://terramatchsupport.zendesk.com/hc/en-us/articles/26920946851227-Checklists-for-your-TerraFund-Project-Nursery-and-Site-Reports";
 
+const HIGH_QUALITY_PHOTOS_LINK =
+  "https://terramatchsupport.zendesk.com/hc/en-us/articles/29388895801115-Submitting-High-Quality-Photos-on-TerraMatch";
+
+const TREE_SURVIVAL_COUNT_GUIDELINES_LINK =
+  "https://terramatchsupport.zendesk.com/hc/en-us/articles/23261734402203-Tree-Survival-Count-Guidelines-for-TerraFund-Projects";
+
 export const useSiteReportAboutContent = () => {
   const t = useT();
 
@@ -35,11 +41,11 @@ export const useSiteReportAboutContent = () => {
         },
         {
           title: t("Submitting High-Quality Photos"),
-          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/26920946851227-Checklists-for-your-TerraFund-Project-Nursery-and-Site-Reports"
+          link: HIGH_QUALITY_PHOTOS_LINK
         },
         {
           title: t("Tree Survival Count Guidelines for TerraFund Projects"),
-          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/26920946851227-Checklists-for-your-TerraFund-Project-Nursery-and-Site-Reports"
+          link: TREE_SURVIVAL_COUNT_GUIDELINES_LINK
         }
       ]
     },
