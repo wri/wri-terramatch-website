@@ -1,12 +1,13 @@
 import { useT } from "@transifex/react";
 import { Map as MapboxMap } from "mapbox-gl";
-import React, { MutableRefObject, useEffect } from "react";
+import React, { MutableRefObject, useEffect, useRef } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { deleteMedia, updateMedia } from "@/connections/Media";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { openEditPhotoDetailsFromMapPopup } from "@/context/mapArea.utils";
+import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TranslatedText } from "@/i18n/types";
@@ -32,6 +33,10 @@ type UseMapMediaParams = {
   closeModal: (id: string) => void;
   setShouldRefetchMediaData: (v: boolean) => void;
   router: { isReady: boolean; asPath: string };
+  alwaysShowPhotosOnMap?: boolean;
+  hideMediaPopupActions?: boolean;
+  hideMediaOnMap?: boolean;
+  isPolygonGeometryLoading?: boolean;
 };
 
 export function useMapMedia({
@@ -47,14 +52,24 @@ export function useMapMedia({
   openModal,
   closeModal,
   setShouldRefetchMediaData,
-  router
+  router,
+  alwaysShowPhotosOnMap = false,
+  hideMediaPopupActions = false,
+  hideMediaOnMap = false,
+  isPolygonGeometryLoading = false
 }: UseMapMediaParams) {
   const championsMap = useChampionsMap();
   const { showPhotosOnMap } = useMapAreaContext();
+  const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
+  const showPhotosWhileDrawerClosed =
+    !hideMediaOnMap && championsMap && !alwaysShowPhotosOnMap && !isPolygonEditDrawerOpen;
+  const wantsPhotosOnMap = !hideMediaOnMap && (alwaysShowPhotosOnMap || showPhotosWhileDrawerClosed || showPhotosOnMap);
+  const photosVisible = wantsPhotosOnMap && !isPolygonGeometryLoading;
+  const callbacksRef = useRef<MediaCallbacks | null>(null);
 
   useEffect(() => {
     const mapInstance = map.current;
-    if (mapInstance == null || !styleReady || mediaFiles == null) return;
+    if (mapInstance == null || !styleReady || hideMediaOnMap || mediaFiles == null) return;
 
     const isProjectPath = router.isReady && router.asPath.includes("project");
 
@@ -131,19 +146,52 @@ export function useMapMedia({
       openModalImageDetail,
       isProjectPath
     };
+    callbacksRef.current = callbacks;
 
     if (championsMap) {
-      addMediaMarkers(mapInstance, mediaFiles, callbacks, showPhotosOnMap);
-      return () => removeMediaMarkers(mapInstance);
+      addMediaMarkers(mapInstance, mediaFiles, callbacks, false, hideMediaPopupActions);
+      return () => {
+        removeMediaMarkers(mapInstance);
+        callbacksRef.current = null;
+      };
     }
 
-    if (!showPhotosOnMap) {
+    removeMediaSymbolLayer(mapInstance);
+
+    return () => {
+      removeMediaSymbolLayer(mapInstance);
+      callbacksRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mediaFiles, styleReady, styleVersion, championsMap, hideMediaPopupActions, hideMediaOnMap]);
+
+  useEffect(() => {
+    const mapInstance = map.current;
+    if (mapInstance == null || !styleReady) return;
+
+    if (hideMediaOnMap || mediaFiles == null) {
+      if (championsMap) {
+        removeMediaMarkers(mapInstance);
+      } else {
+        removeMediaSymbolLayer(mapInstance);
+      }
+      return;
+    }
+
+    const callbacks = callbacksRef.current;
+    if (callbacks == null) return;
+
+    if (championsMap) {
+      addMediaMarkers(mapInstance, mediaFiles, callbacks, photosVisible, hideMediaPopupActions);
+      return;
+    }
+
+    if (!photosVisible) {
       removeMediaSymbolLayer(mapInstance);
       return;
     }
 
     addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
-    return () => removeMediaSymbolLayer(mapInstance);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mediaFiles, styleReady, styleVersion, championsMap, showPhotosOnMap]);
+  }, [photosVisible, championsMap, styleReady, mediaFiles, hideMediaPopupActions, hideMediaOnMap]);
 }

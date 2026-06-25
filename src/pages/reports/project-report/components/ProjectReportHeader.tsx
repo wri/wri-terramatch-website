@@ -18,31 +18,36 @@ const ProjectReportHeader: FC<ProjectReportHeaderProps> = ({ title, report }) =>
   const t = useT();
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("project-reports", report.uuid);
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "project-reports",
     entityUUID: report?.uuid,
     entityStatus: report?.status,
-    updateRequestStatus: report?.updateRequestStatus
+    updateRequestStatus: report?.updateRequestStatus,
+    feedback: report?.feedback,
+    useStatusModal: true
   });
 
   const subtitles = [report?.projectName, useFrameworkTitle()];
 
   return (
-    <PageHeader className="h-[203px]" title={title} subtitles={subtitles} hasBackButton={false}>
-      {report?.status === "started" ? (
-        <Button as={Link} href={`/entity/project-reports/edit/${report?.uuid}`}>
-          {t("Continue Report")}
-        </Button>
-      ) : (
-        <div className="flex gap-4">
-          <Button variant="secondary" onClick={handleExport}>
-            {t("Export")}
-            <InlineLoader loading={exportLoader} />
+    <>
+      {EditModals}
+      <PageHeader className="h-[203px]" title={title} subtitles={subtitles} hasBackButton={false}>
+        {report?.status === "started" ? (
+          <Button as={Link} href={`/entity/project-reports/edit/${report?.uuid}`}>
+            {t("Continue Report")}
           </Button>
-          <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
-        </div>
-      )}
-    </PageHeader>
+        ) : (
+          <div className="flex gap-4">
+            <Button variant="secondary" onClick={handleExport}>
+              {t("Export")}
+              <InlineLoader loading={exportLoader} />
+            </Button>
+            <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
+          </div>
+        )}
+      </PageHeader>
+    </>
   );
 };
 

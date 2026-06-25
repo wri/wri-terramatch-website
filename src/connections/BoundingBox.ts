@@ -1,4 +1,5 @@
 import { isEmpty } from "lodash";
+import { useMemo } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { clearPolygonSelectionZoomBboxCache } from "@/components/elements/Map-mapbox/polygonSelectionZoomBboxCache";
@@ -42,7 +43,46 @@ export const loadBoundingBox = connectionLoader(boundingBoxConnection);
 export const useBoundingBox = (filter: BoundingBoxGetQueryParams) => {
   const result = useConnection(boundingBoxConnection, { filter, enabled: hasValidParams(filter) });
   const { bbox } = result[1].data ?? {};
-  return bbox as BBox | undefined;
+  return useMemo(() => normalizeBoundingBoxDto(bbox) ?? undefined, [bbox]);
+};
+
+export type MapExtentEntityType = "sites" | "projects";
+
+export type ResolveMapExtentBboxParams = {
+  entityType: MapExtentEntityType;
+  hasPolygons: boolean;
+  modelBbox?: BBox | null;
+  projectBbox?: BBox | null;
+  projectUuid?: string | null;
+  countryBbox?: BBox | null;
+};
+
+export const resolveMapExtentBbox = ({
+  entityType,
+  hasPolygons,
+  modelBbox,
+  projectBbox,
+  projectUuid,
+  countryBbox
+}: ResolveMapExtentBboxParams): BBox | undefined => {
+  if (hasPolygons) {
+    return modelBbox ?? undefined;
+  }
+
+  if (modelBbox != null) {
+    return modelBbox;
+  }
+
+  if (entityType === "sites") {
+    if (projectBbox != null) {
+      return projectBbox;
+    }
+    if (projectUuid != null && projectUuid !== "") {
+      return undefined;
+    }
+  }
+
+  return countryBbox ?? undefined;
 };
 
 export const normalizeBoundingBoxDto = (bbox: number[] | undefined): BBox | null => {

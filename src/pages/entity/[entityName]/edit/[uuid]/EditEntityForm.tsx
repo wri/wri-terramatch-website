@@ -1,4 +1,6 @@
+import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -18,6 +20,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport } from "@/helpers/entity";
+import { shouldDeferReportValidation } from "@/helpers/formValidation";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
@@ -26,6 +29,12 @@ import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
+import {
+  getAnalyticsUserRole,
+  isReportReopenedStatus,
+  resolveReportEntityTypeFromEntityName,
+  trackReportAnalyticsEvent
+} from "@/utils/analytics/reportAnalytics";
 import Log from "@/utils/log";
 
 interface EditEntityFormProps {
@@ -45,6 +54,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const router = useRouter();
   const { openToast } = useToastContext();
   const loadFailureHandled = useRef(false);
+  const reportOpenTracked = useRef(false);
   /** Only navigate to /confirm after an explicit Submit, not any future entity PATCH. */
   const pendingSubmissionConfirmationRef = useRef(false);
   const {
@@ -75,6 +85,8 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     }
     ApiSlice.pruneCache("treeSpecies");
     ApiSlice.pruneCache("seedings");
+    ApiSlice.pruneCache("trackings");
+    ApiSlice.pruneCache("media");
     ApiSlice.pruneCache("treeReportCounts");
     ApiSlice.pruneCache("invasives");
   });
@@ -144,8 +156,12 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
       }
     }
 
+    if (entity?.status === "approved") {
+      return { initialStepIndex: fieldsProvider.stepIds().length, disableInitialAutoProgress: true };
+    }
+
     return { initialStepIndex: 0, disableInitialAutoProgress: false };
-  }, [feedbackFields, fieldsProvider, providerLoaded]);
+  }, [entity?.status, feedbackFields, fieldsProvider, providerLoaded]);
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
@@ -155,6 +171,26 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   );
 
   const hasLoadFailure = loadFailure != null || formLoadFailure != null;
+
+  useEffect(() => {
+    if (!entityLoaded || entity == null || !isReport || reportOpenTracked.current) return;
+
+    const reportEntityType = resolveReportEntityTypeFromEntityName(entityName);
+    if (reportEntityType == null) return;
+
+    reportOpenTracked.current = true;
+    const analyticsContext = {
+      entityType: reportEntityType,
+      entityId: entityUUID,
+      userRole: getAnalyticsUserRole()
+    };
+
+    trackReportAnalyticsEvent("report_opened", analyticsContext);
+
+    if (isReportReopenedStatus(entity.status)) {
+      trackReportAnalyticsEvent("report_reopened", analyticsContext);
+    }
+  }, [entity, entityLoaded, entityName, entityUUID, isReport]);
 
   useEffect(() => {
     if (!hasLoadFailure || loadFailureHandled.current) return;
@@ -191,12 +227,27 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
             }}
             roundedCorners
             saveAndCloseModal={{
-              content:
-                saveAndCloseModalMapping[entityName] ??
-                t(
-                  "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the reporting tasks section under your project page. Would you like to close this form and continue later?"
-                ),
+              content: saveAndCloseModalMapping[entityName] ?? (
+                <Box>
+                  <Text as="span" textStyle="400">
+                    {t("Your progress will be saved as a draft. You can access this form again from the ")}
+                  </Text>
+                  <Text as="span" textStyle="400-bold">
+                    {t("Reporting Tasks")}
+                  </Text>
+                  <Text as="span" textStyle="400">
+                    {t(" section on your project page.")}
+                  </Text>
+                </Box>
+              ),
               onConfirm() {
+                showToast({
+                  label: t("Draft saved"),
+                  type: "success",
+                  placement: "bottom",
+                  duration: 5000,
+                  maxWidth: "auto"
+                });
                 router.push(getEntityDetailPageLink(entityName, entityUUID));
               }
             }}
@@ -204,6 +255,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
             cancelEditForm={() => router.push(getEntityDetailPageLink(entityName, entityUUID))}
             redirectEntityPage={getEntityDetailPageLink(entityName, entityUUID)}
             entity={entity}
+            deferValidation={shouldDeferReportValidation(entityName, entity?.status)}
           />
         )}
       </CurrencyProvider>

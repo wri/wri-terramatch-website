@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
+import React from "react";
 
 import { EditIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -12,6 +13,10 @@ const meta: Meta<typeof Button> = {
     variant: {
       control: "select",
       options: ["primary", "secondary", "borderless", "outline"]
+    },
+    typeVariant: {
+      control: "select",
+      options: ["neutral", "negative", "dark"]
     },
     size: {
       control: "select",
@@ -106,6 +111,49 @@ export const SecondarySmall: Story = {
   }
 };
 
+// Secondary Negative Variant Stories
+export const SecondaryNegative: Story = {
+  args: {
+    children: "Label",
+    variant: "secondary",
+    typeVariant: "negative"
+  }
+};
+
+export const SecondaryNegativeDisabled: Story = {
+  args: {
+    children: "Label",
+    variant: "secondary",
+    typeVariant: "negative",
+    disabled: true
+  }
+};
+
+export const SecondaryNegativeSmall: Story = {
+  args: {
+    children: "Label",
+    variant: "secondary",
+    typeVariant: "negative",
+    size: "small"
+  }
+};
+
+export const SecondaryNegativeWithLeftIcon: Story = {
+  render: () => (
+    <Button variant="secondary" typeVariant="negative" leftIcon={<EditIcon className="h-4 w-4" />}>
+      Label
+    </Button>
+  )
+};
+
+export const SecondaryNegativeWithRightIcon: Story = {
+  render: () => (
+    <Button variant="secondary" typeVariant="negative" rightIcon={<EditIcon className="h-4 w-4" />}>
+      Label
+    </Button>
+  )
+};
+
 // Borderless Variant Stories
 export const Borderless: Story = {
   args: {
@@ -143,6 +191,53 @@ export const BorderlessSmall: Story = {
     children: "Borderless Small",
     variant: "borderless",
     size: "small"
+  }
+};
+
+// Borderless Dark Variant Stories
+export const BorderlessDark: Story = {
+  args: {
+    children: "Label",
+    variant: "borderless",
+    typeVariant: "dark"
+  },
+  parameters: {
+    backgrounds: { default: "dark" }
+  }
+};
+
+export const BorderlessDarkDisabled: Story = {
+  args: {
+    children: "Label",
+    variant: "borderless",
+    typeVariant: "dark",
+    disabled: true
+  },
+  parameters: {
+    backgrounds: { default: "dark" }
+  }
+};
+
+export const BorderlessDarkSmall: Story = {
+  args: {
+    children: "Label",
+    variant: "borderless",
+    typeVariant: "dark",
+    size: "small"
+  },
+  parameters: {
+    backgrounds: { default: "dark" }
+  }
+};
+
+export const BorderlessDarkWithLeftIcon: Story = {
+  render: () => (
+    <Button variant="borderless" typeVariant="dark" leftIcon={<EditIcon className="h-4 w-4" />}>
+      Label
+    </Button>
+  ),
+  parameters: {
+    backgrounds: { default: "dark" }
   }
 };
 
@@ -217,6 +312,9 @@ export const AllVariants: Story = {
     <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
       <Button variant="primary">Primary</Button>
       <Button variant="secondary">Secondary</Button>
+      <Button variant="secondary" typeVariant="negative">
+        Secondary Negative
+      </Button>
       <Button variant="borderless">Borderless</Button>
       <Button variant="outline">Outline</Button>
     </div>

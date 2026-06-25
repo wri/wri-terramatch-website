@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { memo, useCallback, useMemo, useState } from "react";
 
@@ -6,11 +6,15 @@ import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
+import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
+import { trackPolygonRunValidationClicked } from "@/utils/polygonAnalytics";
+import { getSitePolygonsSubmitTooltipIfNoneEligible } from "@/utils/sitePolygonSubmit";
 
 import SystemValidationComplete from "./Modals/SystemValidationComplete";
 import { PolygonTableRow } from "./PolygonTableRow";
 
 export type PolygonBulkActionToolbarProps = {
+  siteUuid: string;
   visible: boolean;
   itemCount: number;
   isBulkEditDrawerOpen?: boolean;
@@ -31,9 +35,11 @@ export type PolygonBulkActionToolbarProps = {
   polygons: PolygonTableRow[];
   polygonValidations: Map<string, ValidationDto>;
   selectedGeometryPolygonUuids: string[];
+  isAwaitingValidationResults?: boolean;
 };
 
 const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
+  siteUuid,
   visible,
   itemCount,
   isBulkEditDrawerOpen = false,
@@ -51,6 +57,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   onRunValidation,
   polygonValidations,
   selectedGeometryPolygonUuids,
+  isAwaitingValidationResults = false,
   isOverlapFixAction = false,
   canAutoFixOverlap = false,
   isSubmitDisabled = false
@@ -59,12 +66,24 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const t = useT();
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
   const [validatedPolygons, setValidatedPolygons] = useState<PolygonTableRow[]>([]);
+  const [validatedGeometryPolygonUuids, setValidatedGeometryPolygonUuids] = useState<string[]>([]);
   const isOverlapAutoFixUnavailable = isOverlapFixAction && !canAutoFixOverlap;
+  const submitDisabledTooltip = useMemo(
+    () =>
+      isOverlapFixAction
+        ? undefined
+        : getSitePolygonsSubmitTooltipIfNoneEligible(
+            polygons.map(polygon => ({ status: polygon.submission, validationStatus: polygon.validation })),
+            t
+          ),
+    [isOverlapFixAction, polygons, t]
+  );
 
   const handleSystemValidationCompleteModalChange = useCallback((open: boolean) => {
     setIsSystemValidationCompleteModalOpen(open);
     if (!open) {
       setValidatedPolygons([]);
+      setValidatedGeometryPolygonUuids([]);
     }
   }, []);
 
@@ -74,7 +93,18 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     }
 
     const polygonUuids = selectedGeometryPolygonUuids;
-    setValidatedPolygons(polygons);
+    trackPolygonRunValidationClicked({
+      siteUuid,
+      polygonIds: polygonUuids
+    });
+
+    setValidatedPolygons(
+      polygons.map((polygon, index) => ({
+        ...polygon,
+        id: polygonUuids[index] ?? polygon.id
+      }))
+    );
+    setValidatedGeometryPolygonUuids(polygonUuids);
     onClearSelection?.();
 
     try {
@@ -83,7 +113,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     } catch {
       // Error feedback is handled in the parent.
     }
-  }, [onClearSelection, onRunValidation, polygons, selectedGeometryPolygonUuids]);
+  }, [onClearSelection, onRunValidation, polygons, selectedGeometryPolygonUuids, siteUuid]);
 
   const handleViewValidationDetails = useCallback(
     (polygon: PolygonTableRow) => {
@@ -141,23 +171,18 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const primaryAction = useMemo(
     () => ({
       children: submitLabel,
-      disabled: isOverlapAutoFixUnavailable || isSubmitDisabled,
+      disabled: isOverlapAutoFixUnavailable || isSubmitDisabled || submitDisabledTooltip != null,
       onClick: onSubmit
     }),
-    [isOverlapAutoFixUnavailable, isSubmitDisabled, onSubmit, submitLabel]
+    [isOverlapAutoFixUnavailable, isSubmitDisabled, onSubmit, submitDisabledTooltip, submitLabel]
   );
 
   const overlapTooltip = useMemo(
     () =>
       isOverlapAutoFixUnavailable ? (
-        <Box>
-          <Text color="neutral.200" textStyle="300" textAlign="center">
-            {t("Auto-fix isn’t available for this selection.")}
-          </Text>
-          <Text color="neutral.200" textStyle="300" textAlign="center">
-            {t("Fix the overlap manually.")}
-          </Text>
-        </Box>
+        <ToolbarInfoTooltipContent
+          lines={[t("Auto-fix isn’t available for this selection."), t("Fix the overlap manually.")]}
+        />
       ) : undefined,
     [isOverlapAutoFixUnavailable, t]
   );
@@ -168,10 +193,12 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     <>
       <SystemValidationComplete
         polygons={validatedPolygons}
+        geometryPolygonUuids={validatedGeometryPolygonUuids}
         polygonValidations={polygonValidations}
         open={isSystemValidationCompleteModalOpen}
         onOpenChange={handleSystemValidationCompleteModalChange}
         onViewDetails={handleViewValidationDetails}
+        isLoadingResults={isAwaitingValidationResults}
       />
       {isToolbarVisible && (
         <Box position="fixed" zIndex="100" bottom={3} left={3} right={3}>
@@ -181,7 +208,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
             deleteAction={deleteAction}
             actions={toolbarActions}
             primaryAction={primaryAction}
-            infoTooltip={overlapTooltip}
+            infoTooltip={overlapTooltip ?? submitDisabledTooltip}
           />
         </Box>
       )}

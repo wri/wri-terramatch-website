@@ -5,9 +5,9 @@ import { ControllerRenderProps } from "react-hook-form";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { useLightDisturbanceReport } from "@/connections/Entity";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { DISTURBANCE_POLYGONS_FIELD_DESCRIPTION } from "@/constants/DisturbanceReportEntriesDescriptions";
 import { useFormEntities } from "@/context/wizardForm.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import useDisturbanceReportDescriptions from "@/hooks/translation/useDisturbanceReportDescriptions";
 import { OptionValue } from "@/types/common";
 
 export interface DisturbancePolygonAffectedInputProps {
@@ -37,6 +37,7 @@ export const DisturbancePolygonAffectedInput = ({
     sortField: "name",
     sortDirection: "ASC"
   });
+  const { DISTURBANCE_POLYGONS_FIELD_DESCRIPTION } = useDisturbanceReportDescriptions();
 
   const polygonChoices = useMemo(() => {
     if (polygonsData == null || siteUuid == null) return [];
@@ -117,8 +118,8 @@ export const DisturbancePolygonAffectedInput = ({
       options={polygonChoices}
       value={dropdownValue}
       onChange={_onChange}
-      placeholder={siteUuid ? "Search and select polygons..." : "Please select a site first"}
-      description={t(DISTURBANCE_POLYGONS_FIELD_DESCRIPTION)}
+      placeholder={siteUuid ? t("Search and select polygons...") : t("Please select a site first")}
+      description={DISTURBANCE_POLYGONS_FIELD_DESCRIPTION}
       className="w-full"
       multiSelect={true}
     />

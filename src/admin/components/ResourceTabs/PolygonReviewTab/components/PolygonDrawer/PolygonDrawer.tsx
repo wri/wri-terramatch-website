@@ -24,6 +24,7 @@ import { usePolygonClippingCompletion } from "@/hooks/usePolygonClippingCompleti
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
+import { trackPolygonStatusChanged } from "@/utils/polygonAnalytics";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import AuditLogTable from "../../../AuditLogTab/components/AuditLogTable";
@@ -121,10 +122,32 @@ const PolygonDrawer = ({
         Log.error("Cannot update polygon status: site polygon UUID is missing");
         return;
       }
+
+      const previousStatus = selectedPolygonData?.status ?? statusSelectedPolygon ?? "draft";
+      const siteUuid = selectedPolygonData?.siteId ?? "";
+      const geometryPolygonUuid = polygonSelected ?? selectedPolygon?.polygonUuid ?? "";
+
       await bulkUpdateSitePolygonStatus([selectedPolygon.uuid], status as PolygonStatus, comment);
+
+      if (siteUuid !== "" && geometryPolygonUuid !== "") {
+        trackPolygonStatusChanged({
+          siteUuid,
+          polygonId: geometryPolygonUuid,
+          fromStatus: previousStatus,
+          toStatus: status
+        });
+      }
+
       ApiSlice.pruneCache("auditStatuses");
     },
-    [selectedPolygon?.uuid]
+    [
+      polygonSelected,
+      selectedPolygon?.polygonUuid,
+      selectedPolygon?.uuid,
+      selectedPolygonData?.siteId,
+      selectedPolygonData?.status,
+      statusSelectedPolygon
+    ]
   );
 
   useEffect(() => {

@@ -28,7 +28,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { openModal } = useModalContext();
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "nurseries",
     entityUUID: nursery.uuid,
     entityStatus: nursery.status ?? "draft",
@@ -75,6 +75,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
 
   return (
     <PageContent>
+      {EditModals}
       <Flex gap={7} className="flex-col sm:flex-row">
         <PageItem
           title={t("Key Indicators")}

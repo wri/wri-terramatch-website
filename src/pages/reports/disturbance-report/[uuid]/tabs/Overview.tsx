@@ -13,6 +13,7 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import Container from "@/components/generic/Layout/Container";
 import { formatOptions } from "@/constants/options/disturbanceReports";
+import { shouldHideNurseries, toFramework } from "@/context/framework.provider";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 
@@ -58,6 +59,8 @@ const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabPr
       </Container>
     );
   }
+
+  const hideNurseries = shouldHideNurseries(toFramework(report.frameworkKey));
 
   const sitesAffectedColumns = [
     {
@@ -187,15 +190,17 @@ const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabPr
               variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
             />
           </PageCard>
-          <PageCard title={t("Nurseries Affected")} gap={8}>
-            <Table
-              data={nurseriesAffectedData}
-              columns={nurseriesAffectedColumns}
-              hasPagination={false}
-              invertSelectPagination={false}
-              variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
-            />
-          </PageCard>
+          {!hideNurseries && (
+            <PageCard title={t("Nurseries Affected")} gap={8}>
+              <Table
+                data={nurseriesAffectedData}
+                columns={nurseriesAffectedColumns}
+                hasPagination={false}
+                invertSelectPagination={false}
+                variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
+              />
+            </PageCard>
+          )}
         </PageColumn>
       </PageRow>
       <br />

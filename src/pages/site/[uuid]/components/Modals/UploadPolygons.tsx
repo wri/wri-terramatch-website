@@ -25,6 +25,7 @@ type UploadStep = "form" | "confirm";
 export interface UploadPolygonsProps {
   open: boolean;
   siteUuid: string;
+  siteHasExistingPolygons?: boolean;
   onOpenChange: (open: boolean) => void;
   onUploadSuccess: (result: UploadPolygonsSuccessResult) => void;
   onUploadError: () => void;
@@ -45,7 +46,14 @@ const mergeSelectedFiles = (currentFiles: File[], incomingFiles: File[]): File[]
   return mergedFiles;
 };
 
-const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange, onUploadSuccess, onUploadError }) => {
+const UploadPolygons: FC<UploadPolygonsProps> = ({
+  open,
+  siteUuid,
+  siteHasExistingPolygons = false,
+  onOpenChange,
+  onUploadSuccess,
+  onUploadError
+}) => {
   const t = useT();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<UploadStep>("form");
@@ -56,6 +64,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
 
   const { uploadNewFiles, compareFiles, uploadWithVersionsFiles, isComparing } = useUploadPolygons({
     siteUuid,
+    siteHasExistingPolygons,
     onUploadSuccess,
     onError: () => onUploadError()
   });
@@ -100,9 +109,13 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({ open, siteUuid, onOpenChange,
   const handleConfirmVersions = useCallback(() => {
     if (selectedFiles.length === 0) return;
     const files = selectedFiles;
+    const polygonCount =
+      comparison != null && comparison.featuresForVersioning > 0
+        ? comparison.featuresForVersioning
+        : comparison?.totalFeatures ?? files.length;
     handleClose();
-    uploadWithVersionsFiles(files);
-  }, [selectedFiles, uploadWithVersionsFiles, handleClose]);
+    uploadWithVersionsFiles(files, polygonCount);
+  }, [selectedFiles, comparison, uploadWithVersionsFiles, handleClose]);
 
   const handleFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const files = collectAcceptedUploadFiles(e.target.files);

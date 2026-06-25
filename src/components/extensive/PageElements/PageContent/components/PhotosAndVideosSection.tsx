@@ -16,9 +16,10 @@ type PhotosAndVideosSectionProps = {
   value: string;
   entityName?: EntityName | SingularEntityName;
   entityUUID?: string;
+  stepId?: string;
 };
 
-const PhotosAndVideosSection: FC<PhotosAndVideosSectionProps> = ({ value, entityName, entityUUID }) => {
+const PhotosAndVideosSection: FC<PhotosAndVideosSectionProps> = ({ value, entityName, entityUUID, stepId }) => {
   const files = parseFilesFromHtml(value);
   const photos = files.filter(f => IMAGE_EXTENSIONS.has(f.fileType.toLowerCase()));
   const videos = files.filter(f => VIDEO_EXTENSIONS.has(f.fileType.toLowerCase()));
@@ -30,7 +31,7 @@ const PhotosAndVideosSection: FC<PhotosAndVideosSectionProps> = ({ value, entity
   return (
     <Flex direction="column" gap={6}>
       {photos.length > 0 && (
-        <MediaSection label="Photos" files={photos} entityName={entityName} entityUUID={entityUUID} />
+        <MediaSection label="Photos" files={photos} entityName={entityName} entityUUID={entityUUID} stepId={stepId} />
       )}
       {photos.length > 0 && videos.length > 0 && <SimpleDivider />}
       {videos.length > 0 && (
@@ -41,6 +42,7 @@ const PhotosAndVideosSection: FC<PhotosAndVideosSectionProps> = ({ value, entity
           entityUUID={entityUUID}
           type="video"
           icon={<VideoIcon boxSize={3.5} color="primary.900" />}
+          stepId={stepId}
         />
       )}
     </Flex>

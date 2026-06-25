@@ -3,13 +3,14 @@ import { useCallback, useMemo, useState } from "react";
 
 import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
 import Log from "@/utils/log";
+import { trackPolygonDownloaded } from "@/utils/polygonAnalytics";
 
 import {
   closePolygonProgressToast,
+  completePolygonProgressToast,
   getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
   POLYGON_TOAST_IDS,
-  showPolygonCompleteToast,
   showPolygonErrorToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
@@ -31,8 +32,12 @@ export const useDownloadSitePolygons = ({ siteUuid, siteName }: UseDownloadSiteP
     try {
       showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t), POLYGON_TOAST_IDS.downloading);
       await downloadSiteGeoJsonPolygons(siteUuid, siteName ?? "");
-      closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
-      showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
+      trackPolygonDownloaded({
+        siteUuid,
+        polygonType: "standard",
+        polygonCount: 1
+      });
+      completePolygonProgressToast(POLYGON_TOAST_IDS.downloading, toastLabels.downloadingPolygonsComplete);
     } catch (error) {
       Log.error("Failed to download site polygons:", error);
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);

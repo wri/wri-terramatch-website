@@ -1,42 +1,93 @@
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { useRef, useState } from "react";
 
-import { IconNames } from "@/components/extensive/Icon/Icon";
-import Modal from "@/components/extensive/Modal/Modal";
+import { type StatusBarStatus, getStatusProps } from "@/components/extensive/EntityStatusBar";
+import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
+import { FormEntity } from "@/connections/Form";
+import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
+import { getEntityEditPageLink, getEntityEditPathSegment, v3EntityName } from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
-import { EntityName } from "@/types/common";
+import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
+import { WarningIcon } from "@/redesignComponents/foundations/Icons/Function/WarningIcon";
+import { EntityName, SingularEntityName } from "@/types/common";
 
 interface GetEditEntityHandlerArgs {
   entityUUID: string;
-  entityName: EntityName;
+  entityName: EntityName | SingularEntityName | string;
   entityStatus: string;
   updateRequestStatus: string | null;
+  entityTitle?: string;
+  reportTitle?: string;
+  feedback?: string | null;
+  useStatusModal?: boolean;
 }
 
 /**
  * To get edit entity handler, this will apply the shared logic to all entities.
+ * Returns `handleEdit` to trigger the appropriate modal and `EditModals` to render in the component tree.
  */
 export const useGetEditEntityHandler = ({
   entityName,
   entityUUID,
   entityStatus,
-  updateRequestStatus
+  updateRequestStatus,
+  feedback,
+  useStatusModal = false,
+  entityTitle,
+  reportTitle
 }: GetEditEntityHandlerArgs) => {
   const t = useT();
   const router = useRouter();
-  const { openModal, closeModal } = useModalContext();
+  const { openModal } = useModalContext();
+  const [openReviewInProgressModal, setOpenReviewInProgressModal] = useState(false);
+  const [openConfirmEditModal, setOpenConfirmEditModal] = useState(false);
+  const pendingStepId = useRef<string | null | undefined>(undefined);
   const { getReadableEntityName } = useGetReadableEntityName();
-  const readableEntityNameSingular = (getReadableEntityName(entityName, true) ?? t("Entity")).toLowerCase();
-  let editTitle = t("Are you sure you want to edit your {entityName}?", {
-    entityName: getReadableEntityName(entityName)
+  const editEntityName = getEntityEditPathSegment(entityName as EntityName | SingularEntityName);
+  const formEntityName = v3EntityName(entityName as EntityName | SingularEntityName) as FormEntity;
+  const readableEntityNameSingular = (
+    getReadableEntityName(entityName as EntityName | SingularEntityName, true) ?? t("Entity")
+  ).toLowerCase();
+  const hasRelevantUpdateRequest =
+    updateRequestStatus === AWAITING_APPROVAL || updateRequestStatus === NEEDS_MORE_INFORMATION;
+  const effectiveStatus = (hasRelevantUpdateRequest ? updateRequestStatus : entityStatus) as StatusBarStatus;
+  const awaitingApproval = entityStatus === AWAITING_APPROVAL || updateRequestStatus === AWAITING_APPROVAL;
+  const needsMoreInformation =
+    entityStatus === NEEDS_MORE_INFORMATION || updateRequestStatus === NEEDS_MORE_INFORMATION;
+  const shouldShowStatusFeedbackModal = useStatusModal && needsMoreInformation && !awaitingApproval;
+  const statusProps = getStatusProps(
+    t,
+    { status: entityStatus, updateRequestStatus } as Parameters<typeof getStatusProps>[1],
+    effectiveStatus
+  );
+
+  let editTitle = t("Edit {entityName}?", {
+    entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true)
   });
-  let editContent = t(
-    "Are you sure you want to edit this {entityName}? Please note that these changes will need to be approved.",
+
+  let editContent: string = t(
+    "Are you sure you want to edit {entityTitle} {reportTitle} Editing this report will require it to be resubmitted for approval.",
     {
-      entityName: getReadableEntityName(entityName)
+      entityTitle: (
+        <Text as="span" textStyle="400-bold">
+          {entityTitle ?? ""}
+        </Text>
+      ),
+      reportTitle: (
+        <>
+          <Text as="span" textStyle="400-bold">
+            {reportTitle ?? getReadableEntityName(entityName as EntityName | SingularEntityName, true)}
+          </Text>
+          ?<br />
+          <br />
+        </>
+      ),
+      entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true)
     }
   );
 
@@ -51,50 +102,98 @@ export const useGetEditEntityHandler = ({
   }
 
   const handleEdit = (stepId?: string | null) => {
-    if (entityStatus === "awaiting-approval" || updateRequestStatus === "awaiting-approval") {
+    if (awaitingApproval) {
+      setOpenReviewInProgressModal(true);
+    } else if (shouldShowStatusFeedbackModal && statusProps != null) {
       openModal(
-        ModalId.REVIEW_IN_PROGRESS,
-        <Modal
-          iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-          title={t("Review in Progress")}
-          content={t(
-            "While we're reviewing your {entityName}, you can't make changes for now. This ensures a thorough review. After it's done, you can make any needed adjustments.</br></br>If you have any questions or concerns, contact our support team through the help center.",
-            { entityName: getReadableEntityName(entityName) }
-          )}
-          primaryButtonProps={{
-            children: t("Close"),
-            onClick: () => closeModal(ModalId.REVIEW_IN_PROGRESS)
-          }}
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps}
+          feedback={feedback}
+          showProvideFeedback={shouldShowStatusFeedbackModal}
+          entityName={formEntityName}
+          entityUuid={entityUUID}
+          formStepId={stepId}
         />
       );
     } else {
-      openModal(
-        ModalId.CONFIRM_EDIT,
-        <Modal
-          iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-          title={editTitle}
-          content={editContent}
-          primaryButtonProps={{
-            children: t("Edit"),
-            onClick: () => {
-              if (stepId != null) {
-                router.push(
-                  `/entity/${entityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`
-                );
-              } else {
-                router.push(`/entity/${entityName}/edit/${entityUUID}?mode=edit`);
-              }
-              closeModal(ModalId.CONFIRM_EDIT);
-            }
-          }}
-          secondaryButtonProps={{
-            children: t("Cancel"),
-            onClick: () => closeModal(ModalId.CONFIRM_EDIT)
-          }}
-        />
-      );
+      pendingStepId.current = stepId;
+      setOpenConfirmEditModal(true);
     }
   };
 
-  return { handleEdit };
+  const EditModals = (
+    <>
+      <ModalConfirmation
+        open={openReviewInProgressModal}
+        onOpenChange={open => setOpenReviewInProgressModal(open)}
+        title={t("Review in Progress")}
+        content={
+          <Flex flexDirection="column" gap={2} alignItems="center">
+            <WarningIcon boxSize={10} color="warning.500" />
+            <Text textStyle="400" color="neutral.900">
+              {t(
+                "While we're reviewing your {entityName}, you can't make changes for now. This ensures a thorough review. After it's done, you can make any needed adjustments.",
+                {
+                  entityName: getReadableEntityName(entityName as EntityName | SingularEntityName)
+                }
+              )}
+            </Text>
+            <Text textStyle="400" color="neutral.900">
+              {t("If you have any questions or concerns, contact our support team through the help center.")}
+            </Text>
+          </Flex>
+        }
+        buttonsCancel={[
+          {
+            id: "cancel",
+            className: "w-fit",
+            variant: "secondary",
+            children: t("Cancel"),
+            onClick: () => setOpenReviewInProgressModal(false)
+          }
+        ]}
+      />
+      <ModalConfirmation
+        open={openConfirmEditModal}
+        onOpenChange={open => setOpenConfirmEditModal(open)}
+        title={editTitle}
+        content={editContent}
+        classNameGroup="!w-full"
+        buttonsCancel={[
+          {
+            id: "cancel",
+            className: "!w-full",
+            variant: "secondary",
+            children: t("Cancel"),
+
+            onClick: () => setOpenConfirmEditModal(false)
+          }
+        ]}
+        buttonsPrimary={[
+          {
+            id: "edit",
+            className: "!w-full",
+            variant: "primary",
+            children: t("Edit"),
+            onClick: () => {
+              setOpenConfirmEditModal(false);
+              const stepId = pendingStepId.current;
+              if (stepId != null) {
+                router.push(
+                  `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`
+                );
+              } else if (entityStatus === "approved") {
+                router.push(getEntityEditPageLink(entityName, entityUUID));
+              } else {
+                router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
+              }
+            }
+          }
+        ]}
+      />
+    </>
+  );
+
+  return { handleEdit, EditModals };
 };

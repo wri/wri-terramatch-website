@@ -1,5 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import type { Map as MapboxMap } from "mapbox-gl";
+import { Map as MapboxMap } from "mapbox-gl";
 
 import { dispatchPolygonDrawCanUndoChanged, isPolygonDrawUndoShortcut } from "../interactions/draftDrawEvents";
 import { applyMapDrawingCursor } from "../interactions/mapDrawingCursor";
@@ -85,7 +85,7 @@ export const drawPolygonWithUndoMode: MapboxDraw.DrawCustomMode<DrawPolygonModeS
     const state = baseDrawPolygonMode.onSetup!.call(this, options);
     activeDrawModeState = state;
     activeDrawModeContext = this as unknown as DrawModeRuntimeContext;
-    applyMapDrawingCursor(this.map);
+    applyMapDrawingCursor(this.map as unknown as MapboxMap);
     syncPolygonDrawCanUndo();
     return state;
   },

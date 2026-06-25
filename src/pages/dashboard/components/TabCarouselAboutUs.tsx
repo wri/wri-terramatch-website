@@ -18,7 +18,7 @@ const TabCarouselAboutUs = () => {
       id: "1",
       title: t("High-Level Metrics"),
       description: t(
-        "When accessing the dashboard, you can see a high-level overview of select key performance indicators. Each indicator (trees, hectares, and jobs) is further broken down in the sections below."
+        "When accessing the dashboard, you can see a high-level overview of select key performance indicators. Each indicator is further broken down in the sections below."
       ),
       url: "/images/about-us-1.png"
     },
@@ -48,10 +48,9 @@ const TabCarouselAboutUs = () => {
     },
     {
       id: "5",
-      title: t("Coming Soon"),
+      title: t("Impact Stories"),
       description: t(
-        `In early 2025, more features will come. Impact stories, taken from narrative reports, will give color and context to the numerical data on project profiles. And the Project Insights section will contain additional analyses showing trends and insights across the portfolio, tapping into the rich data housed on TerraMatch.
-        <div style="margin-top: 8px">If you have questions or would like to provide feedback, please email our support team at <a href="mailto:info@terramatch.org" target="_blank" style="font-size: inherit" rel="noreferrer">info@terramatch.org</a>.</div>`
+        `Impact stories, drawn from narrative reports, site visits, and updates from project managers, give color to the numerical data on the TerraMatch Dashboard. If you are a TerraFund champion and would like to share an impact story, please email our support team at <a href="mailto:info@terramatch.org" target="_blank" style="font-size: inherit" rel="noreferrer">info@terramatch.org</a>.`
       ),
       url: "/images/about-us-5.png"
     }
@@ -92,7 +91,7 @@ const TabCarouselAboutUs = () => {
           },
           {
             key: "4",
-            title: t("Coming Soon"),
+            title: t("Impact Stories"),
             body: <div className="h-12 w-full mobile:h-8"></div>
           }
         ]}

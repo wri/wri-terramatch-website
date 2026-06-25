@@ -60,7 +60,10 @@ export type PopupHandlerOptions = {
   dashboard?: DashboardPopupContext;
   setLoader?: (value: boolean) => void;
   setMobilePopupData?: (value: MobilePopupData) => void;
+  /** Tracks the polygonUuid shown in the currently open popup so it can be closed when deleted. */
+  setActivePopupPolygonUuid?: (uuid: string | null) => void;
   championsMap?: boolean;
+  siteReportPolygonPopup?: boolean;
 };
 
 type OpenPolygonPopupParams = {
@@ -106,12 +109,16 @@ export const openPolygonPopup = (
       : 0
   };
 
+  const polygonUuid = (feature.properties?.uuid ?? "") as string;
+  options.setActivePopupPolygonUuid?.(polygonUuid !== "" ? polygonUuid : null);
+
   const popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
   const newPopup = new Popup(popupOptions).setLngLat(lngLat).setDOMContent(popupContent);
   newPopup.on("close", () => {
     root.unmount();
+    options.setActivePopupPolygonUuid?.(null);
     clearActivePopup(map, "POLYGON");
   });
 
@@ -136,7 +143,8 @@ export const openPolygonPopup = (
         type,
         editPolygon,
         setEditPolygon,
-        championsMap
+        championsMap,
+        siteReportPolygonPopup: options.siteReportPolygonPopup
       })
     )
   );
@@ -206,6 +214,16 @@ export const addPopupsToMap = (
   layersList.forEach((layer: LayerType) => {
     addPopupToLayer(map, popupComponent, layer, draw, options);
   });
+};
+
+export const teardownPopupsFromMap = (map: MapboxMap): void => {
+  const handlers = getClickHandlers(map);
+  Object.entries(handlers).forEach(([layerId, handler]) => {
+    map.off("click", layerId, handler);
+    map.off("touchend", layerId, handler);
+    delete handlers[layerId];
+  });
+  removePopups(map, "POLYGON");
 };
 
 export const addPopupToLayer = (

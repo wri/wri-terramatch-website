@@ -48,7 +48,8 @@ export function useMapDownload({
           }),
           polygon_count: polygonCount,
           file_format: "geojson",
-          download_type: "standard"
+          download_type: "standard",
+          polygon_type: "standard"
         });
         openNotification("success", t("Success"), t("Successfully downloaded project polygons."));
       } else {
@@ -71,7 +72,8 @@ export function useMapDownload({
           }),
           polygon_count: polygonsToDownload.length,
           file_format: "geojson",
-          download_type: "standard"
+          download_type: "standard",
+          polygon_type: "standard"
         });
         openNotification(
           "success",

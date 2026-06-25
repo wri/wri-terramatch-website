@@ -3,16 +3,16 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo, useState } from "react";
 
+import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject } from "@/connections/Entity";
-import FrameworkProvider, { Framework, useFrameworkContext } from "@/context/framework.provider";
+import FrameworkProvider, { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
-import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
@@ -38,7 +38,7 @@ type ProjectContentProps = {
   refetch: () => void;
 };
 
-type SuffixButtonConfig = {
+export type SuffixButtonConfig = {
   key: string;
   labelKey: string;
 };
@@ -75,7 +75,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         key: "gallery",
         title: t("Gallery"),
         body: (
-          <GalleryTab
+          <EntityGalleryTab
             modelName="projects"
             modelUUID={project.uuid}
             modelTitle={t("Project")}
@@ -106,7 +106,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [tabItems]
   );
 
-  const shouldHideNurseries = framework === Framework.PPC;
+  const hideNurseries = shouldHideNurseries(framework);
 
   const suffixViewContent = useMemo(() => {
     if (!activeSuffixView) return null;
@@ -124,9 +124,9 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     () => [
       { key: "reporting-tasks", labelKey: "Reports" },
       { key: "sites", labelKey: "Sites" },
-      ...(shouldHideNurseries ? [] : [{ key: "nurseries", labelKey: "Nurseries" }])
+      ...(hideNurseries ? [] : [{ key: "nurseries", labelKey: "Nurseries" }])
     ],
-    [shouldHideNurseries]
+    [hideNurseries]
   );
 
   const tabBarDefaultValue = activeSuffixView != null ? "__none__" : activeTab;

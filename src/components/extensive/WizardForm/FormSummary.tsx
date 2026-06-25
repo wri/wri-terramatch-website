@@ -11,6 +11,8 @@ export interface FormSummaryProps {
   onEdit?: (stepIndex: number) => void;
   feedback?: string | null;
   feedbackFieldsOptions?: string[] | null;
+  initialValues?: Record<string, unknown>;
+  reportSummaryAnalytics?: ReportSummaryAnalyticsProps;
 }
 
 export type FormSummaryOptions = {
@@ -19,20 +21,33 @@ export type FormSummaryOptions = {
   feedbackFieldsOptions?: string[];
 };
 
+export type ReportSummaryAnalyticsProps = {
+  reviewSectionName: string;
+  onFeedbackBannerDisplayed: (sectionName: string) => void;
+  onAccordionExpanded: (accordionLabel: string) => void;
+};
+
 const FormSummary = (props: FormSummaryProps) => {
-  const { feedback, feedbackFieldsOptions } = props;
+  const { feedback, feedbackFieldsOptions, reportSummaryAnalytics } = props;
   const stepIds = useFieldsProvider().stepIds();
   const hasFeedback = Array.isArray(feedbackFieldsOptions) && feedbackFieldsOptions.length > 0;
 
   return (
     <div className="space-y-6">
       {hasFeedback && (
-        <FeedbackReviewer feedback={feedback} feedbackFieldsOptions={feedbackFieldsOptions} values={props.values} />
+        <FeedbackReviewer
+          feedback={feedback}
+          feedbackFieldsOptions={feedbackFieldsOptions}
+          values={props.values}
+          reportSummaryAnalytics={reportSummaryAnalytics}
+        />
       )}
       <List
         className={classNames("space-y-6", { "space-y-4": hasFeedback })}
         items={stepIds}
-        render={(stepId, index) => <FormSummaryRow index={index} stepId={stepId} {...props} />}
+        render={(stepId, index) => (
+          <FormSummaryRow index={index} stepId={stepId} reportSummaryAnalytics={reportSummaryAnalytics} {...props} />
+        )}
       />
     </div>
   );

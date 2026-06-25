@@ -2,11 +2,12 @@ import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { scrollToSitePolygonTabHeader } from "@/components/elements/Map-mapbox/sitePolygonNavigation";
 import { resolvePolygonTableRowId } from "@/components/elements/Map-mapbox/sitePolygonPopupUtils";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { loadAllSitePolygons, useAllSitePolygons } from "@/connections/SitePolygons";
-import { useAllSiteValidations } from "@/connections/Validation";
+import { fetchPolygonValidation, useAllSiteValidations } from "@/connections/Validation";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { openPolygonPopupFromMapArea } from "@/context/mapArea.utils";
@@ -23,15 +24,21 @@ import {
   useSyncPolygonTableSelectionStore
 } from "@/context/polygonTableInteraction.store";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
+import { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { hasValidationCriteria } from "@/helpers/polygonValidation";
+import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { DownloadIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import Log from "@/utils/log";
+import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils/polygonAnalytics";
 
 import { type OverlapFixPolygon } from "../components/Modals/OverlapFix";
 import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import { PolygonTableRow } from "../components/PolygonTableRow";
+import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
 import { getPolygonsTableStyles } from "../components/polygonTableStyles";
 import PolygonToolbar from "../components/PolygonToolbar";
 import SitePolygonMapSection from "../components/SitePolygonMapSection";
@@ -87,6 +94,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   const [uploadedPolygonUuidToOpen, setUploadedPolygonUuidToOpen] = useState<string | null>(null);
   const [focusPolygonUuid, setFocusPolygonUuid] = useState<string | null>(null);
   const [isStickyActive, setIsStickyActive] = useState(false);
+  const [pendingValidationPolygonUuids, setPendingValidationPolygonUuids] = useState<string[]>([]);
+  const [supplementalValidations, setSupplementalValidations] = useState<ValidationDto[]>([]);
+  const priorValidationStatusRef = useRef<Map<string, string | null | undefined>>(new Map());
+  const pendingValidationTrackBulkRef = useRef(true);
 
   const {
     polygonSearch,
@@ -96,7 +107,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     setPolygonSearch,
     setPolygonFilters,
     handleClearPolygonFilters
-  } = useSitePolygonFilters({ t });
+  } = useSitePolygonFilters({ siteUuid: site.uuid, t });
 
   const {
     data: polygonsQueryData,
@@ -113,11 +124,24 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   });
 
   const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
+  const polygonIdsKey = useMemo(
+    () =>
+      polygonsData
+        .map(polygon => polygon.uuid)
+        .filter((uuid): uuid is string => uuid != null && uuid !== "")
+        .sort()
+        .join(","),
+    [polygonsData]
+  );
   const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
-  const polygonValidations = useMemo(() => buildPolygonValidationsMap(allValidations), [allValidations]);
+  const polygonValidations = useMemo(
+    () => buildPolygonValidationsMap([...allValidations, ...supplementalValidations]),
+    [allValidations, supplementalValidations]
+  );
 
   const { polygonRows, columns, totalTreesPlanted, totalRestorationAreaHa } = useSitePolygonTableData({
     polygonsData,
+    polygonValidations,
     t
   });
   const { polygonsWithOverlapCount, overlapPolygons, overlapValidations, fetchOverlapValidations } =
@@ -240,6 +264,11 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
     setPolygonTableHoveredUuid(rowId);
     setFocusPolygonUuid(pendingFocusUuid);
+
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0 });
+      scrollToSitePolygonTabHeader();
+    });
   }, [isLoadingPolygons, polygonsData]);
 
   const handleFocusPolygonConsumed = useCallback(() => {
@@ -270,6 +299,107 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     },
     []
   );
+
+  useEffect(() => {
+    if (site.uuid == null || site.uuid === "") {
+      return;
+    }
+    void fetchAllValidationPages();
+  }, [site.uuid, polygonIdsKey, fetchAllValidationPages]);
+
+  const handleValidationJobsStarted = useCallback(
+    (polygonUuids: string[], options?: { trackBulkCompletion?: boolean }) => {
+      const priorStatuses = new Map<string, string | null | undefined>();
+      polygonUuids.forEach(polygonUuid => {
+        const sitePolygon = polygonsData.find(item => item.polygonUuid === polygonUuid);
+        priorStatuses.set(polygonUuid, sitePolygon?.validationStatus);
+      });
+      priorValidationStatusRef.current = priorStatuses;
+      pendingValidationTrackBulkRef.current = options?.trackBulkCompletion ?? true;
+      setPendingValidationPolygonUuids(polygonUuids);
+      void listDelayedJobs.fetch({});
+    },
+    [polygonsData]
+  );
+
+  useEffect(() => {
+    if (pendingValidationPolygonUuids.length === 0) {
+      return;
+    }
+
+    let cancelled = false;
+    const polygonUuids = pendingValidationPolygonUuids;
+
+    const resolveValidationForPolygons = async () => {
+      for (let attempt = 0; attempt < 20 && !cancelled; attempt++) {
+        const [siteValidations, ...individualValidations] = await Promise.all([
+          fetchAllValidationPages(attempt === 0),
+          ...polygonUuids.map(uuid => fetchPolygonValidation(uuid))
+        ]);
+
+        const resolvedValidations = polygonUuids.map(
+          (uuid, index) => siteValidations?.find(item => item.polygonUuid === uuid) ?? individualValidations[index]
+        );
+
+        const allResolved = resolvedValidations.every(
+          validation => validation != null && hasValidationCriteria(validation)
+        );
+
+        if (allResolved) {
+          const fetchedValidations = resolvedValidations.filter(
+            (validation): validation is ValidationDto => validation != null
+          );
+
+          setSupplementalValidations(prev => {
+            const byPolygonUuid = new Map(prev.map(validation => [validation.polygonUuid, validation]));
+            fetchedValidations.forEach(validation => {
+              byPolygonUuid.set(validation.polygonUuid, validation);
+            });
+            return Array.from(byPolygonUuid.values());
+          });
+
+          fetchedValidations.forEach(validation => {
+            const polygonUuid = validation.polygonUuid;
+            if (polygonUuid == null || polygonUuid === "") {
+              return;
+            }
+
+            trackPolygonValidationResults({
+              siteUuid: site.uuid,
+              polygonId: polygonUuid,
+              validation,
+              priorValidationStatus: priorValidationStatusRef.current.get(polygonUuid)
+            });
+          });
+
+          if (pendingValidationTrackBulkRef.current) {
+            trackBulkActionCompleted({
+              siteUuid: site.uuid,
+              actionType: "run_validation",
+              polygonCount: polygonUuids.length
+            });
+          }
+
+          void refetchPolygons();
+          void fetchOverlapValidations(true);
+          setPendingValidationPolygonUuids([]);
+          return;
+        }
+
+        await new Promise(resolve => window.setTimeout(resolve, 1500));
+      }
+
+      if (!cancelled) {
+        setPendingValidationPolygonUuids([]);
+      }
+    };
+
+    void resolveValidationForPolygons();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchAllValidationPages, fetchOverlapValidations, pendingValidationPolygonUuids, refetchPolygons, site.uuid]);
 
   useEffect(() => {
     setSiteData(site);
@@ -321,7 +451,10 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     showDeletePolygonModal,
     showPolygonSubmittedModal,
     showSubmitPolygonsModal,
+    showSubmitPolygonConfirmationModal,
+    showMapPopupSubmitConfirmationModal,
     submittedPolygonNames,
+    submittedPolygonComment,
     isBulkUpdatingPolygons,
     isDeletingPolygons,
     isDownloadingSelectedPolygons,
@@ -339,12 +472,14 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     handleConfirmMapPopupSubmit,
     handleDeletePolygonModalChange,
     handleDrawerOverlapFixed,
-    handleMapPopupSubmitModalChange,
+    handleMapPopupSubmitConfirmationModalChange,
     handleOpenDeletePolygonModal,
     handleOpenSubmitPolygonsModal,
     handlePolygonDeletingChange,
     handlePolygonSubmittedModalChange,
+    handleProceedToBulkSubmitConfirmation,
     handleRunValidation,
+    handleSubmitPolygonConfirmationModalChange,
     handleSubmitPolygonsModalChange,
     openPolygonEditDrawerForRow,
     runPolygonValidation
@@ -363,7 +498,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     refetchPolygons,
     fetchAllValidationPages,
     fetchOverlapValidations,
-    onOverlapFixResultsOpen: openOverlapFixResultsModal
+    onOverlapFixResultsOpen: openOverlapFixResultsModal,
+    onValidationJobsStarted: handleValidationJobsStarted
   });
 
   const isSitePolygonsLoading = isLoadingPolygons || isValidatingPolygons || isFixingOverlaps || isDeletingPolygons;
@@ -399,6 +535,16 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
   const hasPolygonSelection = selectedRows.length > 0;
   const shouldShowNoResults = !isSitePolygonsLoading && polygonRows.length === 0;
+
+  const mapPopupSubmitPolygons = useMemo(() => {
+    const sitePolygonUuid = polygonSubmitConfirmation;
+    if (sitePolygonUuid == null || sitePolygonUuid === "") {
+      return [];
+    }
+
+    const sitePolygon = polygonsData.find(polygon => polygon.uuid === sitePolygonUuid);
+    return sitePolygon != null ? [mapSitePolygonToTableRow(sitePolygon, t)] : [];
+  }, [polygonSubmitConfirmation, polygonsData, t]);
 
   useSyncPolygonTableSelectionStore(selectedRowIds);
 
@@ -446,7 +592,8 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
       <PageContent className="bg-theme-neutral-100">
         <PageItem
           title={t("Polygons")}
-          flexProps={{ width: "100%" }}
+          className="scroll-mt-[5.5rem]"
+          flexProps={{ width: "100%", id: SITE_POLYGON_TAB_HEADER_ID }}
           buttonProps={{
             variant: "secondary",
             size: "small",
@@ -481,6 +628,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           }}
         >
           <PolygonToolbar
+            siteUuid={site.uuid}
             resultCount={polygonRows.length}
             polygonSearch={polygonSearch}
             polygonFilters={polygonFilters}
@@ -492,6 +640,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         </PageItem>
 
         <PolygonBulkActionToolbar
+          siteUuid={site.uuid}
           visible={hasPolygonSelection}
           itemCount={selectedRows.length}
           isBulkEditDrawerOpen={showBulkEditDrawer}
@@ -501,6 +650,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           selectedGeometryPolygonUuids={selectedGeometryPolygonUuids}
           isDownloading={isDownloadingSelectedPolygons}
           isValidating={isValidatingPolygons}
+          isAwaitingValidationResults={pendingValidationPolygonUuids.length > 0}
           onCancel={clearBulkTableSelection}
           onClearSelection={clearBulkTableSelection}
           onDelete={handleOpenDeletePolygonModal}
@@ -516,6 +666,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
 
         <SitePolygonModals
           siteUuid={site.uuid}
+          siteHasExistingPolygons={polygonsData.length > 0}
           bulkEditPayload={bulkEditPayload}
           deletePayload={deletePayload}
           submitPayload={submitPayload}
@@ -526,23 +677,26 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           openOverlapFixModal={showOverlapFixModal}
           openPolygonSubmittedModal={showPolygonSubmittedModal}
           openSubmitPolygonsModal={showSubmitPolygonsModal}
+          openSubmitPolygonConfirmationModal={showSubmitPolygonConfirmationModal}
           openUploadErrorModal={showUploadErrorModal}
           openUploadModal={showUploadModal}
           openUploadPhotosModal={showUploadPhotosModal}
-          openMapPopupSubmitModal={polygonSubmitConfirmation != null}
-          mapPopupSubmitEligibleCount={polygonSubmitConfirmation?.eligibleCount ?? 0}
-          mapPopupSubmitTotalCount={polygonSubmitConfirmation?.totalCount ?? 0}
+          openMapPopupSubmitConfirmationModal={showMapPopupSubmitConfirmationModal}
+          mapPopupSubmitPolygons={mapPopupSubmitPolygons}
           submittedPolygonNames={submittedPolygonNames}
+          submittedPolygonComment={submittedPolygonComment}
           isBulkUpdatingPolygons={isBulkUpdatingPolygons}
           onBulkEditDrawerOpenChange={handleBulkEditDrawerOpenChange}
           onBulkEditSave={handleBulkEditSave}
           onDelete={handleBulkDelete}
           onDeletePolygonModalOpenChange={handleDeletePolygonModalChange}
           onEditPhotoDetailsClose={() => setEditPhotoDetailsMedia(null)}
-          onMapPopupSubmitModalOpenChange={handleMapPopupSubmitModalChange}
+          onMapPopupSubmitConfirmationModalOpenChange={handleMapPopupSubmitConfirmationModalChange}
           onMapPopupSubmit={handleConfirmMapPopupSubmit}
           onOverlapFixClose={handleOverlapFixModalClose}
           onPolygonSubmittedModalOpenChange={handlePolygonSubmittedModalChange}
+          onProceedToBulkSubmitConfirmation={handleProceedToBulkSubmitConfirmation}
+          onSubmitPolygonConfirmationModalOpenChange={handleSubmitPolygonConfirmationModalChange}
           onSubmitPolygonsModalOpenChange={handleSubmitPolygonsModalChange}
           onSubmitPolygons={handleConfirmBulkSubmit}
           onUploadError={() => setUploadErrorModal(true)}

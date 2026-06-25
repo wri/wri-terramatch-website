@@ -29,6 +29,10 @@ export const TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS: readonly Framework[] = [
 
 export const ALL_FF = [Framework.FF, Framework.FF_1];
 
+export const FRAMEWORKS_WITHOUT_NURSERIES: readonly Framework[] = [Framework.PPC, Framework.HBF];
+
+export const shouldHideNurseries = (framework: Framework) => FRAMEWORKS_WITHOUT_NURSERIES.includes(framework);
+
 export const toFramework = (frameworkKey?: string | null) =>
   Object.values(Framework).includes(frameworkKey as unknown as Framework)
     ? (frameworkKey as Framework)

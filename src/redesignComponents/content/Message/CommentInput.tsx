@@ -1,10 +1,11 @@
 import { Box, Flex, Image, Text, Textarea } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 import { AuditStatusEntityType, useCreateAuditStatus } from "@/connections/AuditStatus";
 import { prepareFileForUpload } from "@/connections/Media";
-import { useNotificationContext } from "@/context/notification.provider";
 import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -32,8 +33,10 @@ const TEXTAREA_MIN_ROWS = 1;
 const TEXTAREA_MAX_ROWS = 3;
 const TEXTAREA_MIN_HEIGHT = `${TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MIN_ROWS}rem`;
 const TEXTAREA_MAX_HEIGHT = `${TEXTAREA_LINE_HEIGHT_REM * TEXTAREA_MAX_ROWS}rem`;
+
 const FALLBACK_ROOT_FONT_SIZE_PX = 16;
-const ENABLE_TEXTAREA_DEBUG_LOGS = false;
+const getRootFontSize = () =>
+  parseFloat(getComputedStyle(document.documentElement).fontSize) || FALLBACK_ROOT_FONT_SIZE_PX;
 
 interface CommentInputFile {
   name: string;
@@ -42,6 +45,8 @@ interface CommentInputFile {
 }
 
 interface CommentInputProps {
+  label?: string;
+  caption?: string;
   name: string;
   src?: string;
   placeholder?: string;
@@ -62,10 +67,16 @@ interface CommentInputProps {
   auditEntityUuid?: string;
   auditEntityStatus?: string | null;
   onCommentCreated?: () => void;
+  showOptionalLabel?: boolean;
+  showSendIcon?: boolean;
+  showAttachFileIcon?: boolean;
+  className?: string;
 }
 
 const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   const {
+    label,
+    caption,
     name,
     src,
     placeholder,
@@ -84,11 +95,14 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
     auditEntity,
     auditEntityUuid,
     auditEntityStatus,
-    onCommentCreated
+    onCommentCreated,
+    showOptionalLabel = false,
+    showSendIcon = true,
+    showAttachFileIcon = true,
+    className
   } = props;
 
   const t = useT();
-  const { openNotification } = useNotificationContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [internalIsEditing, setInternalIsEditing] = useState(defaultIsEditing);
@@ -179,16 +193,24 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
           );
         }
 
-        openNotification("success", t("Success!"), t("Your comment was just added!"));
+        showToast({
+          label: t("Your comment was just added!"),
+          type: "success",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
         resetAuditInput();
         ApiSlice.pruneCache("auditStatuses");
         onCommentCreated?.();
       } catch (uploadError) {
-        openNotification(
-          "error",
-          t("Error!"),
-          t("Failed to upload files. Your comment was added but files may be missing.")
-        );
+        showToast({
+          label: t("Failed to upload files. Your comment was added but files may be missing."),
+          type: "error",
+          placement: "bottom",
+          duration: 5000,
+          maxWidth: "auto"
+        });
         Log.error("Error uploading files after comment creation", uploadError);
         resetAuditInput();
         ApiSlice.pruneCache("auditStatuses");
@@ -197,7 +219,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
         setIsUploadingFiles(false);
       }
     },
-    [onCommentCreated, openNotification, pendingFiles, resetAuditInput, t]
+    [onCommentCreated, pendingFiles, resetAuditInput, t]
   );
 
   const { create: sendAuditComment, isCreating } = useCreateAuditStatus(
@@ -308,97 +330,69 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
   const hasFiles = (effectiveFiles?.length ?? 0) > 0;
   const hasContent = currentValue.trim().length > 0;
   const isSubmitting = isCreating || isUploadingFiles;
-  const shouldShowSendIcon = !currentIsEditing && (isAuditMode ? hasContent || hasFiles : !hasFiles);
+  const shouldShowSendIcon = showSendIcon && !currentIsEditing && (isAuditMode ? hasContent || hasFiles : !hasFiles);
 
-  const logTextareaMetrics = useCallback(
-    (stage: string, textarea: HTMLTextAreaElement, payload: Record<string, unknown> = {}) => {
-      if (!ENABLE_TEXTAREA_DEBUG_LOGS) return;
+  const adjustTextareaHeight = useCallback((target?: HTMLTextAreaElement | null) => {
+    const textarea = target ?? textareaRef.current;
+    if (!textarea) return;
 
-      const styles = getComputedStyle(textarea);
-      console.debug("[CommentInput][textarea]", stage, {
-        valueLength: textarea.value.length,
-        valuePreview: textarea.value.slice(-40),
-        clientWidth: textarea.clientWidth,
-        scrollWidth: textarea.scrollWidth,
-        clientHeight: textarea.clientHeight,
-        scrollHeight: textarea.scrollHeight,
-        renderedHeight: styles.height,
-        renderedMaxHeight: styles.maxHeight,
-        renderedLineHeight: styles.lineHeight,
-        renderedWhiteSpace: styles.whiteSpace,
-        renderedWordBreak: styles.wordBreak,
-        renderedOverflowWrap: styles.overflowWrap,
-        renderedOverflowX: styles.overflowX,
-        renderedOverflowY: styles.overflowY,
-        ...payload
-      });
-    },
-    []
-  );
+    const rootFontSize = getRootFontSize();
+    const computedStyles = getComputedStyle(textarea);
+    const lineHeightPx = parseFloat(computedStyles.lineHeight) || TEXTAREA_LINE_HEIGHT_REM * rootFontSize;
+    const lineHeightRem = lineHeightPx / rootFontSize;
+    const chromeHeightRem =
+      (parseFloat(computedStyles.paddingTop) +
+        parseFloat(computedStyles.paddingBottom) +
+        parseFloat(computedStyles.borderTopWidth) +
+        parseFloat(computedStyles.borderBottomWidth)) /
+      rootFontSize;
+    const minHeightRem = lineHeightRem * TEXTAREA_MIN_ROWS + chromeHeightRem;
+    const maxHeightRem = lineHeightRem * TEXTAREA_MAX_ROWS + chromeHeightRem;
 
-  const adjustTextareaHeight = useCallback(
-    (textarea?: HTMLTextAreaElement | null) => {
-      const resolvedTextarea = textarea ?? textareaRef.current;
-      if (resolvedTextarea == null) return;
+    textarea.style.height = "auto";
+    const scrollHeightRem = textarea.scrollHeight / rootFontSize;
+    const nextHeightRem = Math.min(Math.max(scrollHeightRem, minHeightRem), maxHeightRem);
 
-      const computedStyles = getComputedStyle(resolvedTextarea);
-      const rootFontSizePx =
-        parseFloat(getComputedStyle(document.documentElement).fontSize) || FALLBACK_ROOT_FONT_SIZE_PX;
-      const lineHeightPx =
-        parseFloat(computedStyles.lineHeight) || TEXTAREA_LINE_HEIGHT_REM * FALLBACK_ROOT_FONT_SIZE_PX;
-      const paddingTopPx = parseFloat(computedStyles.paddingTop) || 0;
-      const paddingBottomPx = parseFloat(computedStyles.paddingBottom) || 0;
-      const borderTopPx = parseFloat(computedStyles.borderTopWidth) || 0;
-      const borderBottomPx = parseFloat(computedStyles.borderBottomWidth) || 0;
-
-      const lineHeightRem = lineHeightPx / rootFontSizePx;
-      const chromeHeightRem = (paddingTopPx + paddingBottomPx + borderTopPx + borderBottomPx) / rootFontSizePx;
-      const minHeightRem = lineHeightRem * TEXTAREA_MIN_ROWS + chromeHeightRem;
-      const maxHeightRem = lineHeightRem * TEXTAREA_MAX_ROWS + chromeHeightRem;
-
-      logTextareaMetrics("before-adjust", resolvedTextarea, {
-        minHeightRem,
-        maxHeightRem,
-        lineHeightPx,
-        lineHeightRem,
-        chromeHeightRem
-      });
-
-      resolvedTextarea.style.height = "auto";
-      const nextScrollHeightRem = resolvedTextarea.scrollHeight / rootFontSizePx;
-      const nextHeightRem = Math.min(Math.max(nextScrollHeightRem, minHeightRem), maxHeightRem);
-
-      resolvedTextarea.style.height = `${nextHeightRem}rem`;
-      resolvedTextarea.style.overflowY = nextScrollHeightRem > maxHeightRem ? "auto" : "hidden";
-      logTextareaMetrics("after-adjust", resolvedTextarea, {
-        nextScrollHeightRem,
-        nextHeightRem,
-        overflowY: resolvedTextarea.style.overflowY
-      });
-    },
-    [logTextareaMetrics]
-  );
+    textarea.style.height = `${nextHeightRem}rem`;
+    textarea.style.overflowY = scrollHeightRem > maxHeightRem ? "auto" : "hidden";
+  }, []);
 
   useLayoutEffect(() => {
     adjustTextareaHeight();
-  }, [adjustTextareaHeight, currentValue]);
+  }, [currentValue, adjustTextareaHeight]);
 
   return (
-    <Flex className="w-full flex-col gap-2">
+    <Flex className={twMerge("w-full flex-col gap-2", className)}>
       <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
-      <Flex className="items-center gap-3">
-        <Avatar size="small" name={name} src={src} />
+      {label && (
+        <Text textStyle="400-bold" color="primary.900">
+          {label}
+          {showOptionalLabel && (
+            <Text as="span" textStyle="300" color="neutral.700">
+              {" "}
+              {"(optional)"}
+            </Text>
+          )}
+        </Text>
+      )}
+      {caption && (
+        <Text textStyle="400" color="neutral.900">
+          {caption}
+        </Text>
+      )}
+      <Flex className="items-start gap-3">
+        <Avatar size="small" className="mt-3" name={name} src={src} />
         <Box
           className="w-full"
           bg="neutral.100"
           border="0.063rem solid"
-          borderColor="neutral.700"
+          borderColor="neutral.400"
           borderRadius="0.25rem"
           boxShadow="0 0.063rem 0.063rem 0 rgba(0, 0, 0, 0.05)"
           p={3}
           display="flex"
           flexDirection="column"
-          gap={3}
+          position="relative"
         >
           <Textarea
             ref={textareaRef}
@@ -407,9 +401,6 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
             rows={TEXTAREA_MIN_ROWS}
             onChange={event => {
               const nextValue = event.target.value;
-              logTextareaMetrics("on-change", event.currentTarget, {
-                nextValueLength: nextValue.length
-              });
 
               if (!isValueControlled) {
                 setInternalValue(nextValue);
@@ -447,7 +438,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
 
           <Flex className="items-start justify-between gap-2">
             {hasFiles && (
-              <Flex className="flex-wrap gap-3">
+              <Flex className="mt-3 flex-wrap gap-3">
                 {effectiveFiles?.map(file => (
                   <Box key={file.name} position="relative" h="4.6875rem" w="5.625rem">
                     <Image
@@ -468,8 +459,10 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
                 ))}
               </Flex>
             )}
-            <Flex className="ml-auto mt-auto shrink-0 items-center gap-1">
-              <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
+            <Flex className="mt-auto ml-auto shrink-0 items-center gap-1">
+              {showAttachFileIcon && (
+                <IconButton icon={<AttachFileIcon color="neutral.500" />} onClick={handleAttachFile} />
+              )}
               {shouldShowSendIcon && <IconButton icon={<SendIcon color="neutral.500" />} onClick={handleSend} />}
             </Flex>
           </Flex>

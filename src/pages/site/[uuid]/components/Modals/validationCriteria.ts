@@ -1,5 +1,6 @@
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import {
+  getExcludedCriteriaIds,
   hasValidationCriteria,
   parseV3ValidationData,
   shouldDisplayValidationCriteria,
@@ -12,6 +13,26 @@ export type CriteriaSeverity = "success" | "warning" | "error";
 
 export const buildPolygonValidationsMap = (validations: ValidationDto[]): Map<string, ValidationDto> =>
   new Map(validations.map(v => [v.polygonUuid, v]));
+
+export const mapValidationDtoToTagState = (validation: ValidationDto | undefined): ValidationTagState | null => {
+  if (!hasValidationCriteria(validation)) {
+    return null;
+  }
+
+  const criteriaList = validation.criteriaList;
+  const hasAnyFailing = criteriaList.some(criteria => !criteria.valid);
+
+  if (!hasAnyFailing) {
+    return "passed";
+  }
+
+  const excludedCriteriaIds = new Set(getExcludedCriteriaIds(validation));
+  const hasFailingNonExcluded = criteriaList.some(
+    criteria => !criteria.valid && !excludedCriteriaIds.has(criteria.criteriaId)
+  );
+
+  return hasFailingNonExcluded ? "failed" : "partially-passed";
+};
 
 export const isValidationTagChecked = (validationTag: ValidationTagState): boolean => validationTag !== "not-started";
 

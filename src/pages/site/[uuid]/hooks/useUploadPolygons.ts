@@ -10,15 +10,23 @@ import {
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
 import { CompareGeometryFileResponse } from "@/generated/v3/researchService/researchServiceComponents";
+import {
+  classifyUploadFailureErrorType,
+  inferUploadFileFormat,
+  trackPolygonUploadAttempted,
+  trackPolygonUploadError,
+  trackPolygonUploadFailed,
+  trackPolygonUploadSucceeded
+} from "@/utils/polygonAnalytics";
 
 import {
   type PolygonToastId,
   closePolygonProgressToast,
+  completePolygonProgressToast,
   getPolygonOperationToastLabels,
   getUpdatingPolygonsProgressLabel,
   getUploadingPolygonsProgressLabel,
   POLYGON_TOAST_IDS,
-  showPolygonCompleteToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
 
@@ -35,6 +43,7 @@ const ACCEPTED_UPLOAD_EXTENSIONS = [".geojson", ".kml", ".zip"] as const;
 
 type UseUploadPolygonsOptions = {
   siteUuid: string;
+  siteHasExistingPolygons?: boolean;
   onUploadSuccess: (result: UploadPolygonsSuccessResult) => void;
   onError: (message: string) => void;
 };
@@ -153,7 +162,12 @@ const runGeometryUpload = (
   return runRequest(handlers => upload(attributes, handlers));
 };
 
-export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUploadPolygonsOptions) => {
+export const useUploadPolygons = ({
+  siteUuid,
+  siteHasExistingPolygons = false,
+  onUploadSuccess,
+  onError
+}: UseUploadPolygonsOptions) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const [isComparing, setIsComparing] = useState(false);
@@ -173,19 +187,33 @@ export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUpl
         return;
       }
 
+      const fileFormats = files.map(file => inferUploadFileFormat(file.name)).join(",");
+      trackPolygonUploadAttempted({ siteUuid, fileFormat: fileFormats });
+
       showPolygonProgressToast(t, labels.progress, toastId);
 
       try {
         const responses = await Promise.all(files.map(file => runGeometryUpload(file, siteUuid, upload)));
-        closePolygonProgressToast(toastId);
-        showPolygonCompleteToast(labels.complete);
+        const polygonCount = responses.length;
+
+        completePolygonProgressToast(toastId, labels.complete);
+        trackPolygonUploadSucceeded({
+          siteUuid,
+          polygonCount,
+          isReupload: siteHasExistingPolygons
+        });
         onUploadSuccess(buildUploadSuccessResult(files, responses));
       } catch (error) {
         closePolygonProgressToast(toastId);
-        onError(extractErrorMessage(error));
+        const errorMessage = extractErrorMessage(error);
+        trackPolygonUploadFailed({
+          siteUuid,
+          errorType: classifyUploadFailureErrorType(errorMessage)
+        });
+        onError(errorMessage);
       }
     },
-    [onError, onUploadSuccess, siteUuid, t]
+    [onError, onUploadSuccess, siteHasExistingPolygons, siteUuid, t]
   );
 
   const uploadNewFiles = useCallback(
@@ -204,11 +232,14 @@ export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUpl
   );
 
   const uploadWithVersionsFiles = useCallback(
-    (files: File[]) => {
+    (files: File[], polygonCount?: number) => {
       void uploadFiles(
         files,
         uploadGeometryWithVersions,
-        { progress: getUpdatingPolygonsProgressLabel(t, files.length), complete: toastLabels.updatingPolygonsComplete },
+        {
+          progress: getUpdatingPolygonsProgressLabel(t, polygonCount ?? files.length),
+          complete: toastLabels.updatingPolygonsComplete
+        },
         POLYGON_TOAST_IDS.updating
       );
     },
@@ -238,7 +269,12 @@ export const useUploadPolygons = ({ siteUuid, onUploadSuccess, onError }: UseUpl
         );
         return mergeComparisonResults(comparisons);
       } catch (error) {
-        onError(extractErrorMessage(error));
+        const errorMessage = extractErrorMessage(error);
+        trackPolygonUploadError({
+          siteUuid,
+          errorType: classifyUploadFailureErrorType(errorMessage)
+        });
+        onError(errorMessage);
         throw error;
       } finally {
         setIsComparing(false);

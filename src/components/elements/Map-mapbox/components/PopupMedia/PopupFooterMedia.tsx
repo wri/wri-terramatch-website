@@ -33,7 +33,7 @@ const PopupFooterMedia: FC<PopupFooterMediaProps> = ({ isProjectPath, onDownload
       <Button variant="secondary" size="small" leftIcon={<DownloadIcon />} onClick={onDownload} className="w-fit">
         {t("Download")}
       </Button>
-      <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit} className="w-fit">
+      <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit} className="!w-[4.5rem]">
         {t("Edit")}
       </Button>
       {showCover ? (

@@ -144,7 +144,8 @@ const MapEditPolygonPanel: FC<MapEditPolygonPanelProps> = ({
       polygon_count: 1,
       polygon_id: editPolygon?.uuid,
       file_format: "geojson",
-      download_type: "monitoring_plot"
+      download_type: "monitoring_plot",
+      polygon_type: "monitoring_plot"
     });
   }, [anrPlotsEligible, selectedSitePolygon?.name, sitePolygonUuidForAnr, siteFull?.uuid, editPolygon?.uuid]);
 

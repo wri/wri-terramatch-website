@@ -3,10 +3,12 @@ import type { FC } from "react";
 import type { BulkSitePolygonAttributeChanges } from "@/connections/SitePolygons";
 import type { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
+import type { SubmittedPolygonComment } from "../hooks/useSitePolygonBulkActions";
 import DeletePolygon from "./Modals/DeletePolygon";
 import EditPhotoDetails from "./Modals/GeotaggedPhotos/EditPhotoDetails";
 import OverlapFix, { type OverlapFixPolygon } from "./Modals/OverlapFix";
 import PolygonSubmitted from "./Modals/PolygonSubmitted";
+import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import SubmitPolygons from "./Modals/SubmitPolygons";
 import UploadError from "./Modals/UploadError";
 import UploadPhotos from "./Modals/UploadPhotos";
@@ -16,9 +18,10 @@ import type { PolygonTableRow } from "./PolygonTableRow";
 
 type SitePolygonModalsProps = {
   siteUuid: string;
+  siteHasExistingPolygons?: boolean;
   bulkEditPayload: { polygons: PolygonTableRow[] } | null;
   deletePayload: { polygons: PolygonTableRow[] } | null;
-  submitPayload: { eligibleCount: number; totalCount: number } | null;
+  submitPayload: { eligibleCount: number; totalCount: number; polygons: PolygonTableRow[] } | null;
   overlapFixResults: {
     polygonsFixed: OverlapFixPolygon[];
     polygonsNotFixed: OverlapFixPolygon[];
@@ -29,26 +32,29 @@ type SitePolygonModalsProps = {
   openOverlapFixModal: boolean;
   openPolygonSubmittedModal: boolean;
   openSubmitPolygonsModal: boolean;
-  openUploadErrorModal: boolean;
-  openUploadModal: boolean;
-  openUploadPhotosModal: boolean;
-  openMapPopupSubmitModal: boolean;
-  mapPopupSubmitEligibleCount: number;
-  mapPopupSubmitTotalCount: number;
+  openSubmitPolygonConfirmationModal: boolean;
+  openMapPopupSubmitConfirmationModal: boolean;
+  mapPopupSubmitPolygons: PolygonTableRow[];
   submittedPolygonNames: string[];
+  submittedPolygonComment: SubmittedPolygonComment | null;
   isBulkUpdatingPolygons: boolean;
   onBulkEditDrawerOpenChange: (open: boolean) => void;
   onBulkEditSave: (attributeChanges: BulkSitePolygonAttributeChanges) => void | Promise<void>;
   onDelete: () => void | Promise<void>;
   onDeletePolygonModalOpenChange: (open: boolean) => void;
   onEditPhotoDetailsClose: () => void;
-  onMapPopupSubmitModalOpenChange: (open: boolean) => void;
-  onMapPopupSubmit: () => void | Promise<void>;
+  onMapPopupSubmitConfirmationModalOpenChange: (open: boolean) => void;
+  onMapPopupSubmit: (comment: string) => void | Promise<void>;
+  onProceedToBulkSubmitConfirmation: () => void | Promise<void>;
   onOverlapFixClose: () => void;
   onPolygonSubmittedModalOpenChange: (open: boolean) => void;
+  onSubmitPolygonConfirmationModalOpenChange: (open: boolean) => void;
   onSubmitPolygonsModalOpenChange: (open: boolean) => void;
-  onSubmitPolygons: () => void | Promise<void>;
+  onSubmitPolygons: (comment: string) => void | Promise<void>;
   onUploadError: () => void;
+  openUploadErrorModal: boolean;
+  openUploadModal: boolean;
+  openUploadPhotosModal: boolean;
   onUploadErrorModalOpenChange: (open: boolean) => void;
   onUploadModalOpenChange: (open: boolean) => void;
   onUploadPhotosModalOpenChange: (open: boolean) => void;
@@ -58,6 +64,7 @@ type SitePolygonModalsProps = {
 
 const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   siteUuid,
+  siteHasExistingPolygons = false,
   bulkEditPayload,
   deletePayload,
   submitPayload,
@@ -68,23 +75,26 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   openOverlapFixModal,
   openPolygonSubmittedModal,
   openSubmitPolygonsModal,
+  openSubmitPolygonConfirmationModal,
   openUploadErrorModal,
   openUploadModal,
   openUploadPhotosModal,
-  openMapPopupSubmitModal,
-  mapPopupSubmitEligibleCount,
-  mapPopupSubmitTotalCount,
+  openMapPopupSubmitConfirmationModal,
+  mapPopupSubmitPolygons,
   submittedPolygonNames,
+  submittedPolygonComment,
   isBulkUpdatingPolygons,
   onBulkEditDrawerOpenChange,
   onBulkEditSave,
   onDelete,
   onDeletePolygonModalOpenChange,
   onEditPhotoDetailsClose,
-  onMapPopupSubmitModalOpenChange,
+  onMapPopupSubmitConfirmationModalOpenChange,
   onMapPopupSubmit,
   onOverlapFixClose,
   onPolygonSubmittedModalOpenChange,
+  onProceedToBulkSubmitConfirmation,
+  onSubmitPolygonConfirmationModalOpenChange,
   onSubmitPolygonsModalOpenChange,
   onSubmitPolygons,
   onUploadError,
@@ -105,6 +115,7 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
     <UploadPolygons
       open={openUploadModal}
       siteUuid={siteUuid}
+      siteHasExistingPolygons={siteHasExistingPolygons}
       onOpenChange={onUploadModalOpenChange}
       onUploadSuccess={onUploadSuccess}
       onUploadError={onUploadError}
@@ -114,19 +125,26 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
       onOpenChange={onSubmitPolygonsModalOpenChange}
       eligibleCount={submitPayload?.eligibleCount ?? 0}
       totalCount={submitPayload?.totalCount ?? 0}
+      onSubmit={onProceedToBulkSubmitConfirmation}
+    />
+
+    <SubmitPolygonConfirmation
+      open={openSubmitPolygonConfirmationModal}
+      onOpenChange={onSubmitPolygonConfirmationModalOpenChange}
+      polygons={submitPayload?.polygons ?? []}
       onSubmit={onSubmitPolygons}
     />
-    <SubmitPolygons
-      open={openMapPopupSubmitModal}
-      onOpenChange={onMapPopupSubmitModalOpenChange}
-      eligibleCount={mapPopupSubmitEligibleCount}
-      totalCount={mapPopupSubmitTotalCount}
+    <SubmitPolygonConfirmation
+      open={openMapPopupSubmitConfirmationModal}
+      onOpenChange={onMapPopupSubmitConfirmationModalOpenChange}
+      polygons={mapPopupSubmitPolygons}
       onSubmit={onMapPopupSubmit}
     />
     <PolygonSubmitted
       open={openPolygonSubmittedModal && submittedPolygonNames.length > 0}
       onOpenChange={onPolygonSubmittedModalOpenChange}
       polygons={submittedPolygonNames}
+      submittedComment={submittedPolygonComment}
     />
     <DeletePolygon
       open={openDeletePolygonModal}

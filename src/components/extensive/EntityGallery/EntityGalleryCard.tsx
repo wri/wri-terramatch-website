@@ -29,21 +29,40 @@ import AssetDownloadButton, { ASSET_DOWNLOAD_ENTITIES, AssetDownloadEntity } fro
 import ModalAddImages, { FileUploadEntity } from "../Modal/ModalAddImages";
 import { ModalId } from "../Modal/ModalConst";
 
-export interface EntityMapAndGalleryCardProps {
+export type EntityGalleryAssetDownload = {
+  entity: AssetDownloadEntity;
+  uuid: string;
+};
+
+const REPORT_GALLERY_ENTITIES = ["siteReports", "projectReports", "nurseryReports", "disturbanceReports"] as const;
+
+type ReportGalleryEntity = (typeof REPORT_GALLERY_ENTITIES)[number];
+
+const isReportGalleryEntity = (entity: string): entity is ReportGalleryEntity =>
+  (REPORT_GALLERY_ENTITIES as readonly string[]).includes(entity);
+
+export interface EntityGalleryCardProps {
   modelTitle: TranslatedText;
   modelName: EntityName;
   modelUUID: string;
   entityData: any;
   emptyStateContent: TranslatedText;
+  assetDownload?: EntityGalleryAssetDownload;
+  /** Media/upload/download entity when it differs from modelName (e.g. site report gallery on a site map). */
+  galleryEntity?: SupportedEntity;
+  galleryUuid?: string;
 }
 
-const EntityMapAndGalleryCard = ({
+const EntityGalleryCard = ({
   modelTitle,
   modelName,
   modelUUID,
   entityData,
-  emptyStateContent
-}: EntityMapAndGalleryCardProps) => {
+  emptyStateContent,
+  assetDownload,
+  galleryEntity,
+  galleryUuid
+}: EntityGalleryCardProps) => {
   const { openModal, closeModal } = useModalContext();
   const contextMapArea = useMapAreaContext();
   const { shouldRefetchMediaData, setShouldRefetchMediaData } = contextMapArea;
@@ -61,9 +80,16 @@ const EntityMapAndGalleryCard = ({
   const imageGalleryRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const queryUuid = router.query.uuid as string;
-  const isSiteReport = modelTitle === "Site Report";
-  const isSiteRelated = isSiteReport || modelTitle === "Site";
+  const isLegacySiteReportGallery = modelTitle === "Site Report";
+  const isSiteRelated = isLegacySiteReportGallery || modelTitle === "Site";
   const entityUUID = isSiteRelated ? modelUUID : queryUuid;
+
+  const isReportGalleryContext = galleryEntity != null || isLegacySiteReportGallery || isReportGalleryEntity(modelName);
+
+  const resolvedGalleryEntity: SupportedEntity =
+    galleryEntity ?? (isLegacySiteReportGallery ? "siteReports" : (modelName as SupportedEntity));
+
+  const resolvedGalleryUuid = galleryUuid ?? (isReportGalleryContext ? queryUuid : entityUUID);
   const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
     useMemo<HookProps<typeof useMedias>>(() => {
       const queryFilter: HookFilters<typeof useMedias> = {};
@@ -85,8 +111,8 @@ const EntityMapAndGalleryCard = ({
       }
 
       return {
-        entity: isSiteReport ? "siteReports" : (modelName as SupportedEntity),
-        uuid: isSiteReport ? queryUuid : entityUUID,
+        entity: resolvedGalleryEntity,
+        uuid: resolvedGalleryUuid,
         pageNumber: pagination.page,
         pageSize: pagination.pageSize,
         sortField: "createdAt",
@@ -94,16 +120,14 @@ const EntityMapAndGalleryCard = ({
         filter: queryFilter
       };
     }, [
-      entityUUID,
       filter,
       filters.isPublic,
       filters.modelType,
       isGeotagged,
-      isSiteReport,
-      modelName,
       pagination.page,
       pagination.pageSize,
-      queryUuid,
+      resolvedGalleryEntity,
+      resolvedGalleryUuid,
       searchString,
       sortOrder
     ])
@@ -176,9 +200,9 @@ const EntityMapAndGalleryCard = ({
             closeModal(ModalId.UPLOAD_IMAGES);
           }
         }}
-        entity={modelName as FileUploadEntity}
+        entity={resolvedGalleryEntity as FileUploadEntity}
         collection="media"
-        entityData={entityData}
+        entityData={{ ...entityData, uuid: resolvedGalleryUuid }}
         setErrorMessage={message => {
           Log.error(message);
         }}
@@ -186,7 +210,20 @@ const EntityMapAndGalleryCard = ({
     );
   };
 
-  const showAssetDownload = !isSiteReport && ASSET_DOWNLOAD_ENTITIES.includes(modelName as AssetDownloadEntity);
+  const assetDownloadConfig =
+    assetDownload ??
+    (ASSET_DOWNLOAD_ENTITIES.includes(resolvedGalleryEntity as AssetDownloadEntity)
+      ? { entity: resolvedGalleryEntity as AssetDownloadEntity, uuid: resolvedGalleryUuid }
+      : undefined);
+
+  const hasActiveFilters =
+    isGeotagged !== null ||
+    searchString !== "" ||
+    filters.isPublic !== undefined ||
+    filters.modelType !== undefined ||
+    filter != null;
+
+  const showGalleryEmptyState = indexTotal === 0 && !hasActiveFilters;
 
   return (
     <>
@@ -215,7 +252,7 @@ const EntityMapAndGalleryCard = ({
           />
         </PageCard>
       )}
-      {indexTotal === 0 ? (
+      {showGalleryEmptyState ? (
         <div ref={imageGalleryRef}>
           <EmptyState
             title={t("Image Gallery is Empty")}
@@ -229,8 +266,8 @@ const EntityMapAndGalleryCard = ({
             title={t("All Images")}
             headerChildren={
               <div className="flex items-center gap-4">
-                {showAssetDownload && (
-                  <AssetDownloadButton entity={modelName as AssetDownloadEntity} uuid={modelUUID} />
+                {assetDownloadConfig != null && (
+                  <AssetDownloadButton entity={assetDownloadConfig.entity} uuid={assetDownloadConfig.uuid} />
                 )}
                 <Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>
               </div>
@@ -269,4 +306,4 @@ const EntityMapAndGalleryCard = ({
   );
 };
 
-export default EntityMapAndGalleryCard;
+export default EntityGalleryCard;

@@ -152,6 +152,14 @@ export type TotalJobsCreatedDto = {
   volunteerYouth: number;
   volunteerNonYouth: number;
   volunteerAgeOthers: number;
+  totalBeneficiaries: number;
+  beneficiaryMen: number;
+  beneficiaryWomen: number;
+  beneficiaryNonBinary: number;
+  beneficiaryOthers: number;
+  beneficiaryYouth: number;
+  beneficiaryNonYouth: number;
+  beneficiaryAgeOthers: number;
 };
 
 export type HectareRestorationDto = {
@@ -227,6 +235,10 @@ export type DashboardProjectsFullDto = {
   hasAccess: boolean;
   cohort: string[] | null;
   objectives: string | null;
+  /**
+   * Long-form project summary for dashboard display
+   */
+  projectSummary: string | null;
   landTenureProjectArea: string[] | null;
 };
 

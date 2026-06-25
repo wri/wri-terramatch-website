@@ -21,6 +21,7 @@ import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/Custom
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
 import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
+import CountryFlag from "@/components/dashboard/CountryFlag";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
@@ -105,11 +106,7 @@ const ProjectDataGrid = () => {
           return (
             props?.country && (
               <div className="flex items-center gap-2">
-                <img
-                  src={`/flags/${props?.country?.toLowerCase()}.svg`}
-                  alt="flas"
-                  className="h-6 w-10 min-w-[40px] object-cover"
-                />
+                <CountryFlag src={`/flags/${props.country.toLowerCase()}.svg`} size="md" alt="" />
                 <Text variant="text-14-light">{formatOptionsList(countryOptions ?? [], props?.country ?? [])}</Text>
               </div>
             )

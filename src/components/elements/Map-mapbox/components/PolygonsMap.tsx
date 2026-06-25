@@ -4,13 +4,12 @@ import classNames from "classnames";
 import type { FC } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { type MapDrawSaveHandler, useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
-import { useBoundingBox } from "@/connections/BoundingBox";
-import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
+import { SupportedEntity, useAllMedias } from "@/connections/EntityAssociation";
 import {
   POLYGON_APPROVED,
   POLYGON_DRAFT,
@@ -23,7 +22,7 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
-import { parsePolygonDataV3, storePolygon } from "../utils";
+import { getPolygonMapLoadingLabel, parsePolygonDataV3, storePolygon } from "../utils";
 import LoadingMap from "./LoadingMap";
 
 export type PolygonsMapEntityModel = {
@@ -84,11 +83,14 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   const {
     editPolygon,
     shouldRefetchPolygonData,
+    shouldRefetchMediaData,
     setSelectedPolygonsInCheckbox,
     setPolygonData,
+    setMediaFiles,
     shouldRefetchValidation,
     setShouldRefetchValidation,
     setShouldRefetchPolygonData,
+    setShouldRefetchMediaData,
     polygonData: sitePolygonDataV3
   } = useMapAreaContext();
 
@@ -109,39 +111,57 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   const mapFunctions = useBaseMap(onSave, undefined, { deferDrawCreateSave: true });
 
-  const [, { data: mediaFiles }] = useMedias({
+  const [, { data: mediaFiles, refetch: refetchMediaFiles }] = useAllMedias({
     entity: type as SupportedEntity,
-    uuid: entityModel.uuid
+    uuid: entityModel.uuid,
+    filter: {
+      isGeotagged: true
+    }
   });
+
+  useEffect(() => {
+    setMediaFiles(mediaFiles ?? []);
+  }, [mediaFiles, setMediaFiles]);
+
+  useValueChanged(shouldRefetchMediaData, () => {
+    if (shouldRefetchMediaData) {
+      refetchMediaFiles?.();
+      setShouldRefetchMediaData(false);
+    }
+  });
+
+  const hasPolygons = polygons.length > 0;
 
   const modelBbox = useBoundingBox(
     type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
   );
 
   const projectBbox = useBoundingBox(
-    type === "sites" && entityModel.projectUuid != null && entityModel.projectUuid !== ""
+    type === "sites" && !hasPolygons && entityModel.projectUuid != null && entityModel.projectUuid !== ""
       ? { projectUuid: entityModel.projectUuid }
       : {}
   );
 
   const countryBbox = useBoundingBox(
-    type === "sites"
+    hasPolygons
+      ? {}
+      : type === "sites"
       ? { country: entityModel.projectCountry ?? undefined }
       : { country: entityModel.country ?? undefined }
   );
 
-  const extentBbox = useMemo((): BBox | undefined => {
-    if (modelBbox != null) {
-      return modelBbox as BBox;
-    }
-    if (projectBbox != null) {
-      return projectBbox as BBox;
-    }
-    if (type === "sites" && entityModel.projectUuid != null && entityModel.projectUuid !== "") {
-      return undefined;
-    }
-    return countryBbox as BBox | undefined;
-  }, [countryBbox, entityModel.projectUuid, modelBbox, projectBbox, type]);
+  const extentBbox = useMemo(
+    () =>
+      resolveMapExtentBbox({
+        entityType: type,
+        hasPolygons,
+        modelBbox,
+        projectBbox,
+        projectUuid: entityModel.projectUuid,
+        countryBbox
+      }),
+    [countryBbox, entityModel.projectUuid, hasPolygons, modelBbox, projectBbox, type]
+  );
 
   useEffect(() => {
     setPolygonData(polygons);
@@ -178,12 +198,11 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     }
   }, [polygons]);
 
+  const isPolygonGeometryLoading = isLoadingPolygons || (polygons.length > 0 && isPolygonTilesLoading);
+
   return (
     <Box position="relative" className={classNames("h-full w-full flex-1", className)}>
-      <LoadingMap
-        text={t("Loading...")}
-        loading={isLoadingPolygons || (polygons.length > 0 && isPolygonTilesLoading)}
-      />
+      <LoadingMap text={getPolygonMapLoadingLabel(t, polygons.length)} loading={isPolygonGeometryLoading} />
       <MapContainer
         championsMap={true}
         mapFunctions={mapFunctions}
@@ -213,6 +232,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         autoEditPolygon={editPolygon.isOpen}
         polygonTableHighlight={polygonTableHighlight}
         overlapPolygons={overlapPolygons}
+        isPolygonGeometryLoading={isPolygonGeometryLoading}
         onPolygonTilesLoadingChange={setIsPolygonTilesLoading}
       />
     </Box>

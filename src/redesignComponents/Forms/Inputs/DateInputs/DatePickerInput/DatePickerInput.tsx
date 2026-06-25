@@ -23,6 +23,7 @@ import {
 } from "../styled";
 
 interface DatePickerInputProps {
+  showOptionalLabel?: boolean;
   min?: DatePickerRootProps["min"];
   max?: DatePickerRootProps["max"];
   label?: string;
@@ -42,6 +43,7 @@ const StyledPickerWrapper = styled.div<{ $size: "default" | "small" }>`
 `;
 
 export const DatePickerInput: FC<DatePickerInputProps> = ({
+  showOptionalLabel = true,
   min,
   max,
   label,
@@ -99,7 +101,7 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
               </RequiredIndicator>
             ) : null}
             {label}
-            {!required ? <span className="optional-text">{" (Optional)"}</span> : ""}
+            {showOptionalLabel && !required ? <span className="optional-text">{" (Optional)"}</span> : ""}
           </FieldLabel>
         ) : null}
         {caption != null ? (

@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import Image from "next/image";
 import { CSSProperties, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -168,12 +167,11 @@ const BaseImage: FC<BaseImageProps> = ({
               borderRadius
             )}
           >
-            <Image
-              src={src!}
+            {/* Native img avoids Next/React fetchPriority SSR warning for gallery thumbnails */}
+            <img
+              src={src}
               alt={alt ?? defaultAlt}
-              fill
-              className="object-cover"
-              sizes={resolveRemSizeValue(size)}
+              className="h-full w-full object-cover"
               style={style}
               onError={() => setLoadError(true)}
             />

@@ -4,26 +4,35 @@ import { FC } from "react";
 
 import ButtonField from "@/components/elements/Field/ButtonField";
 import Paper from "@/components/elements/Paper/Paper";
-import EntityMapAndGalleryCard, {
-  EntityMapAndGalleryCardProps
-} from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 
-type GalleryTabProps = EntityMapAndGalleryCardProps & {
+import EntityGalleryCard, { EntityGalleryAssetDownload, EntityGalleryCardProps } from "./EntityGalleryCard";
+
+export type { EntityGalleryAssetDownload };
+
+export type EntityGalleryTabProps = EntityGalleryCardProps & {
   sharedDriveLink?: string;
+  pageBodyClassName?: string;
+  pageRowClassName?: string;
 };
 
-const GalleryTab: FC<GalleryTabProps> = ({ sharedDriveLink, ...props }) => {
+const EntityGalleryTab: FC<EntityGalleryTabProps> = ({
+  sharedDriveLink,
+  pageBodyClassName = "bg-theme-neutral-200 pt-5",
+  pageRowClassName = "mx-0 w-full !max-w-full px-6",
+  ...props
+}) => {
   const t = useT();
-  return (
-    <PageBody className="bg-theme-neutral-200 pt-5">
-      <PageRow className="mx-0 w-full !max-w-full px-6">
-        <PageColumn>
-          <EntityMapAndGalleryCard {...props} />
 
-          {props.modelName === "project-reports" && sharedDriveLink != null && (
+  return (
+    <PageBody className={pageBodyClassName}>
+      <PageRow className={pageRowClassName}>
+        <PageColumn>
+          <EntityGalleryCard {...props} />
+
+          {sharedDriveLink != null && (
             <Paper>
               <ButtonField
                 label={t("Shared Drive link")}
@@ -44,4 +53,4 @@ const GalleryTab: FC<GalleryTabProps> = ({ sharedDriveLink, ...props }) => {
   );
 };
 
-export default GalleryTab;
+export default EntityGalleryTab;

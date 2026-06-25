@@ -1,9 +1,9 @@
+import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 
 import { useModalContext } from "@/context/modal.provider";
+import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 
-import { IconNames } from "../../Icon/Icon";
-import Modal from "../../Modal/Modal";
 import { ModalId } from "../../Modal/ModalConst";
 
 export interface SaveAndCloseModalProps {
@@ -17,30 +17,46 @@ const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
   const t = useT();
 
   return (
-    <Modal
-      title={props.title || t("Your Progress Will Be Saved")}
+    <ModalConfirmation
+      open={true}
+      title={props.title ?? t("Save and exit?")}
       content={
-        props.content ||
-        t(
-          "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the 'My Applications' section.Would you like to close this form and continue later?"
+        props.content ?? (
+          <Box>
+            <Text as="span" textStyle="400">
+              {t("Your progress will be saved as a draft. You can access this form again from the ")}
+            </Text>
+            <Text as="span" textStyle="400-bold">
+              {t("Reporting Tasks")}
+            </Text>
+            <Text as="span" textStyle="400">
+              {t(" section on your project page.")}
+            </Text>
+          </Box>
         )
       }
-      iconProps={{
-        name: IconNames.CHECK_CIRCLE,
-        className: "stroke-secondary",
-        width: 60
-      }}
-      primaryButtonProps={{
-        children: t("Close and continue later"),
-        onClick: () => {
-          props.onConfirm?.();
-          closeModal(ModalId.SAVE_AND_CLOSE_MODAL);
+      buttonsPrimary={[
+        {
+          id: "close",
+          children: t("Save and exit"),
+          variant: "primary",
+          className: "!w-full",
+          onClick: () => {
+            props.onConfirm?.();
+            closeModal(ModalId.SAVE_AND_CLOSE_MODAL);
+          }
         }
-      }}
-      secondaryButtonProps={{
-        children: t("Cancel"),
-        onClick: () => closeModal(ModalId.SAVE_AND_CLOSE_MODAL)
-      }}
+      ]}
+      buttonsCancel={[
+        {
+          id: "cancel",
+          children: t("Cancel"),
+          className: "!w-full",
+          variant: "secondary",
+          onClick: () => closeModal(ModalId.SAVE_AND_CLOSE_MODAL)
+        }
+      ]}
+      onOpenChange={() => closeModal(ModalId.SAVE_AND_CLOSE_MODAL)}
     />
   );
 };

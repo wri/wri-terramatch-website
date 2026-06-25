@@ -27,6 +27,7 @@ import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmiss
 import { AreaHectaresIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
+import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "../constants/sitePolygonMapSizing";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 interface SiteOverviewTabProps {
   site: SiteFullDto;
@@ -46,7 +47,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const [isSiteSetupComplete, setIsSiteSetupComplete] = useState(false);
   const isMobile = useBreakpointValue({ base: true, md: false });
 
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "sites",
     entityUUID: site.uuid,
     entityStatus: site.status ?? "started",
@@ -104,10 +105,12 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
       <PageContent>
+        {EditModals}
         <Flex gap={7} className="flex-col sm:flex-row">
           <PageItem
             title={t("Site Map")}
             flexProps={{ flex: 1 }}
+            className="min-h-0"
             buttonProps={{
               variant: "secondary",
               size: "small",
@@ -116,11 +119,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               onClick: () => goToTab("polygons")
             }}
           >
-            <Box className="relative h-auto">
+            <Box className="relative flex-1 overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
               <OverviewMapArea
                 entityModel={site}
                 type="sites"
-                className="max-h-[27rem] !rounded-[0.25rem_0.25rem_0.25rem_0.25rem]"
+                className="h-full min-h-0 rounded"
                 disabledPolygonPanel={true}
                 hideFullscreenControl={true}
               />

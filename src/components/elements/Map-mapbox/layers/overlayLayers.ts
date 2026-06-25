@@ -1,4 +1,10 @@
-import { LayerSpecification, Map as MapboxMap, MapMouseEvent, Popup, VectorTileSource } from "mapbox-gl";
+import {
+  LayerSpecification,
+  Map as MapboxMap,
+  MapMouseEvent,
+  Marker as MapboxMarker,
+  VectorTileSource
+} from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot, Root } from "react-dom/client";
 
@@ -14,6 +20,7 @@ import {
   getGeoserverURL
 } from "../adapters/geoserver";
 import { AnrPlotMapPopup } from "../components/AnrPlotMapPopup";
+import PopupProviders from "../components/PopupProviders";
 import {
   BASEMAP_CONFIGS,
   MapStyle,
@@ -291,8 +298,8 @@ type AnrPlotOverlayState = {
   clickHandler: ((e: MapMouseEvent) => void) | null;
   mouseEnterHandler: (() => void) | null;
   mouseLeaveHandler: (() => void) | null;
-  popup: InstanceType<typeof Popup> | null;
-  popupRoot: Root | null;
+  marker: InstanceType<typeof MapboxMarker> | null;
+  markerRoot: Root | null;
   pendingIdleRetry: { fn: () => void } | null;
 };
 
@@ -305,8 +312,8 @@ function getAnrPlotOverlayState(map: MapboxMap): AnrPlotOverlayState {
     clickHandler: null,
     mouseEnterHandler: null,
     mouseLeaveHandler: null,
-    popup: null,
-    popupRoot: null,
+    marker: null,
+    markerRoot: null,
     pendingIdleRetry: null
   };
   anrPlotOverlayStateByMap.set(map, created);
@@ -326,13 +333,13 @@ export function removeAnrPlotGeometryOverlay(map: MapboxMap | null | undefined):
   cancelAnrPendingRetry(map);
   const state = getAnrPlotOverlayState(map);
   try {
-    if (state.popup != null) {
-      state.popup.remove();
-      state.popup = null;
+    if (state.marker != null) {
+      state.marker.remove();
+      state.marker = null;
     }
-    if (state.popupRoot != null) {
-      state.popupRoot.unmount();
-      state.popupRoot = null;
+    if (state.markerRoot != null) {
+      state.markerRoot.unmount();
+      state.markerRoot = null;
     }
     if (state.clickHandler != null) {
       map.off("click", ANR_PLOT_FILL_LAYER_ID, state.clickHandler);
@@ -413,46 +420,45 @@ export function upsertAnrPlotGeometryOverlay(map: MapboxMap, geojson: unknown, o
     state.clickHandler = (e: MapMouseEvent) => {
       const feature = e.features?.[0];
       if (feature == null) return;
-      if (state.popup != null) {
-        state.popup.remove();
-        state.popup = null;
+      if (state.marker != null) {
+        state.marker.remove();
+        state.marker = null;
       }
-      if (state.popupRoot != null) {
-        state.popupRoot.unmount();
-        state.popupRoot = null;
+      if (state.markerRoot != null) {
+        state.markerRoot.unmount();
+        state.markerRoot = null;
       }
 
       const props = feature.properties ?? {};
-      const popupContent = document.createElement("div");
-      popupContent.className = "popup-content-map";
-      const root = createRoot(popupContent);
-      state.popupRoot = root;
+      const markerEl = document.createElement("div");
+      markerEl.className = "anr-plot-marker";
+      const root = createRoot(markerEl);
+      state.markerRoot = root;
       const rawPlotId = props.plotId;
-      const rawArea = props.areaM2;
       const toNum = (v: unknown) =>
         typeof v === "number" ? v : v != null && !Number.isNaN(Number(v)) ? Number(v) : undefined;
 
+      const handleClose = () => {
+        state.marker?.remove();
+        state.marker = null;
+        state.markerRoot?.unmount();
+        state.markerRoot = null;
+      };
+
       root.render(
-        createElement(AnrPlotMapPopup, {
-          plotId: toNum(rawPlotId),
-          areaM2: toNum(rawArea),
-          select: props.select != null ? String(props.select) : null,
-          onClose: () => {
-            state.popup?.remove();
-            state.popup = null;
-          }
-        })
+        createElement(
+          PopupProviders,
+          null,
+          createElement(AnrPlotMapPopup, {
+            plotId: toNum(rawPlotId),
+            polygonName: props.name != null ? String(props.name) : "ANR monitoring plot",
+            onClose: handleClose
+          })
+        )
       );
-      const popup = new Popup({ className: "popup-map", closeButton: false })
-        .setLngLat(e.lngLat)
-        .setDOMContent(popupContent)
-        .addTo(map);
-      state.popup = popup;
-      popup.on("close", () => {
-        state.popupRoot?.unmount();
-        state.popupRoot = null;
-        state.popup = null;
-      });
+
+      const marker = new MapboxMarker({ element: markerEl, anchor: "bottom" }).setLngLat(e.lngLat).addTo(map);
+      state.marker = marker;
     };
 
     map.on("click", ANR_PLOT_FILL_LAYER_ID, state.clickHandler);

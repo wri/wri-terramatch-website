@@ -5,13 +5,22 @@ import { useRouter } from "next/router";
 import { FC, Fragment } from "react";
 
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
-import { hasFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
+import { countFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
-import { ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
+import {
+  DisturbanceReportFullDto,
+  FinancialReportFullDto,
+  NurseryReportFullDto,
+  ProjectFullDto,
+  ProjectReportFullDto,
+  SiteFullDto,
+  SiteReportFullDto,
+  SrpReportFullDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
+import { isEntityAwaitingApproval, isEntityReport, pluralEntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { getPlantingStatus } from "@/pages/project/[uuid]/tabs/constants/Detail.constants";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -19,6 +28,8 @@ import { ProgressTag } from "@/redesignComponents/actions/Tags/ProgressTag/Progr
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import { ArrowForwardIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
+import { EntityName } from "@/types/common";
+import { resolveReportEntityTypeFromEntityName, trackReportAnalyticsEvent } from "@/utils/analytics/reportAnalytics";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
 import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
@@ -35,12 +46,28 @@ const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }
 export type SharedDetailsProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<unknown>;
-  entityName: "projects" | "sites";
+  entityName:
+    | "projects"
+    | "sites"
+    | "project-reports"
+    | "site-reports"
+    | "nursery-reports"
+    | "srp-reports"
+    | "disturbance-reports"
+    | "financial-reports";
   entityUUID: string;
   entityStatus?: string | null;
   updateRequestStatus?: string | null;
   stepIndex: number;
-  entity: ProjectFullDto | SiteFullDto;
+  entity:
+    | ProjectFullDto
+    | SiteFullDto
+    | ProjectReportFullDto
+    | SiteReportFullDto
+    | NurseryReportFullDto
+    | SrpReportFullDto
+    | DisturbanceReportFullDto
+    | FinancialReportFullDto;
   feedbackFieldsOptions?: string[] | null;
 };
 
@@ -60,9 +87,13 @@ const SharedDetails: FC<SharedDetailsProps> = ({
   const fieldsProvider = useFieldsProvider();
 
   const isValid = step.validation.isValidSync(formValues);
-  const hasStepFeedback = hasFeedbackInStep(fieldsProvider, step.id, feedbackFieldsOptions);
+  const feedbackFieldsRequiringAttention = countFeedbackInStep(fieldsProvider, step.id, feedbackFieldsOptions);
+  const hasStepFeedback = feedbackFieldsRequiringAttention > 0;
   const accordionHeaderStatus = !isValid || hasStepFeedback ? "error" : "complete";
-  const fieldsRequiringAttention = getFieldsRequiringAttentionCount(step.validation, formValues);
+  const validationFieldsRequiringAttention = getFieldsRequiringAttentionCount(step.validation, formValues);
+  const fieldsRequiringAttention = hasStepFeedback
+    ? Math.max(validationFieldsRequiringAttention, feedbackFieldsRequiringAttention)
+    : validationFieldsRequiringAttention;
 
   const entries = useGetFormEntries({
     stepId: step.id,
@@ -72,95 +103,115 @@ const SharedDetails: FC<SharedDetailsProps> = ({
     type: entityName
   });
 
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName,
     entityUUID,
     entityStatus: entityStatus ?? "started",
     updateRequestStatus: updateRequestStatus ?? "no-update"
   });
 
+  const reportEntityType = resolveReportEntityTypeFromEntityName(entityName as EntityName);
+  const accordionLabel = step.title?.trim() ?? "";
+
+  const handleAccordionOpenChange = (open: boolean) => {
+    if (!open || reportEntityType == null || accordionLabel === "") return;
+
+    trackReportAnalyticsEvent("accordion_expanded", {
+      entityType: reportEntityType,
+      entityId: entityUUID,
+      accordion_label: accordionLabel
+    });
+  };
+
   return entries.length === 0 ? null : (
-    <Accordion
-      key={step.id}
-      header={
-        <AccordionHeader
-          title={step.title ?? ""}
-          status={accordionHeaderStatus}
-          badge={
-            !isValid && fieldsRequiringAttention > 0
-              ? t("{count} requires attention", { count: fieldsRequiringAttention })
-              : undefined
-          }
-        />
-      }
-      actions={
-        <EditButton
-          onClick={() => {
-            if (isEntityAwaitingApproval(entityStatus, updateRequestStatus)) {
-              handleEdit();
-            } else {
-              router.push(
-                `/entity/${v3EntityName(entityName)}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
-                  step.id
-                )}`
+    <>
+      {EditModals}
+      <Accordion
+        key={step.id}
+        onOpenChange={handleAccordionOpenChange}
+        header={
+          <AccordionHeader
+            title={step.title ?? ""}
+            status={accordionHeaderStatus}
+            badge={
+              fieldsRequiringAttention > 0
+                ? t("{count} requires attention", { count: fieldsRequiringAttention })
+                : undefined
+            }
+          />
+        }
+        actions={
+          <EditButton
+            onClick={() => {
+              if (
+                isEntityReport(entityName as EntityName) ||
+                isEntityAwaitingApproval(entityStatus, updateRequestStatus)
+              ) {
+                handleEdit(step.id);
+              } else {
+                router.push(
+                  `/entity/${pluralEntityName(entityName)}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
+                    step.id
+                  )}`
+                );
+              }
+            }}
+            text={t("Edit")}
+          />
+        }
+      >
+        <Flex flexDirection="column" gap={3}>
+          {entries.map((entry, index) => {
+            const projectStageSection = stepIndex === 0 && index === 0 && entityName === "projects" && (
+              <Flex direction="column" gap={1}>
+                <Text textStyle="300-bold" color="primary.900">
+                  {t("Project Stage")}:
+                </Text>
+                {"plantingStatus" in entity && entity.plantingStatus !== null ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <ProgressTag state={getPlantingStatus(entity.plantingStatus)} />
+                      {(entity.plantingStatus === "replacement-planting" ||
+                        entity.plantingStatus === "no-restoration-expected") && (
+                        <>
+                          <ArrowForwardIcon boxSize={4} color="neutral.900" />
+                          <Text textStyle="400" color="neutral.900">
+                            {t(PLANTING_STATUS_MAP[entity.plantingStatus!])}
+                          </Text>
+                        </>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  "-"
+                )}
+              </Flex>
+            );
+
+            if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "file") {
+              return (
+                <Fragment key={`${step.id}-${entry.title}-${index}`}>
+                  <SpecialEntryRenderer entry={entry} entityName={entityName} entityUUID={entityUUID} />
+                  {projectStageSection}
+                </Fragment>
               );
             }
-          }}
-          text={t("Edit")}
-        />
-      }
-    >
-      <Flex flexDirection="column" gap={3}>
-        {entries.map((entry, index) => {
-          const projectStageSection = stepIndex === 0 && index === 0 && entityName === "projects" && (
-            <Flex direction="column" gap={1}>
-              <Text textStyle="300-bold" color="primary.900">
-                {t("Project Stage")}:
-              </Text>
-              {entity.plantingStatus !== null ? (
-                <>
-                  <div className="flex items-center gap-2">
-                    <ProgressTag state={getPlantingStatus(entity.plantingStatus)} />
-                    {(entity.plantingStatus === "replacement-planting" ||
-                      entity.plantingStatus === "no-restoration-expected") && (
-                      <>
-                        <ArrowForwardIcon boxSize={4} color="neutral.900" />
-                        <Text textStyle="400" color="neutral.900">
-                          {t(PLANTING_STATUS_MAP[entity.plantingStatus!])}
-                        </Text>
-                      </>
-                    )}
-                  </div>
-                </>
-              ) : (
-                "-"
-              )}
-            </Flex>
-          );
 
-          if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "file") {
             return (
               <Fragment key={`${step.id}-${entry.title}-${index}`}>
-                <SpecialEntryRenderer entry={entry} entityName={entityName} entityUUID={entityUUID} />
+                <Flex direction="column" gap={1}>
+                  <Text className="flex items-center gap-1 leading-normal" textStyle="300-bold" color="primary.900">
+                    {entry.title}:
+                  </Text>
+                  <EntryDefaultValueRenderer entry={entry} />
+                </Flex>
                 {projectStageSection}
               </Fragment>
             );
-          }
-
-          return (
-            <Fragment key={`${step.id}-${entry.title}-${index}`}>
-              <Flex direction="column" gap={1}>
-                <Text className="flex items-center gap-1 leading-normal" textStyle="300-bold" color="primary.900">
-                  {entry.title}:
-                </Text>
-                <EntryDefaultValueRenderer entry={entry} />
-              </Flex>
-              {projectStageSection}
-            </Fragment>
-          );
-        })}
-      </Flex>
-    </Accordion>
+          })}
+        </Flex>
+      </Accordion>
+    </>
   );
 };
 

@@ -7,8 +7,10 @@ import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import { POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
+import type { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import {
+  type UpdateSitePolygonStatusResponse,
   bulkDeleteSitePolygons as bulkDeleteSitePolygonsEndpoint,
   bulkUpdateSitePolygonAttributes as bulkUpdateSitePolygonAttributesEndpoint,
   createSitePolygons,
@@ -28,7 +30,7 @@ import type {
 } from "@/generated/v3/researchService/researchServiceSchemas";
 import { resolveUrl } from "@/generated/v3/utils";
 import { useStableProps } from "@/hooks/useStableProps";
-import ApiSlice, { PendingError } from "@/store/apiSlice";
+import ApiSlice, { type JsonApiResource, PendingError } from "@/store/apiSlice";
 import { ConnectionProps, Filter } from "@/types/connection";
 import { loadConnection } from "@/utils/loadConnection";
 
@@ -91,6 +93,47 @@ const createBulkDeleteBody = (resources: SitePolygonResourceIdentifier[]): SiteP
 
 export type BulkSitePolygonAttributeChanges = SitePolygonBulkAttributeChangesDto;
 
+export type SitePolygonStatusUpdateResponse = UpdateSitePolygonStatusResponse & {
+  included?: JsonApiResource[];
+};
+
+export const formatSubmissionCommentDate = (isoDate: string | null | undefined): string => {
+  if (isoDate == null || isoDate === "") {
+    return "";
+  }
+
+  const date = new Date(isoDate);
+  const day = date.getUTCDate().toString().padStart(2, "0");
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+  const year = date.getUTCFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
+export const getStatusUpdateCommentCreatedAt = (response: SitePolygonStatusUpdateResponse): string | null => {
+  const includedAuditComment = response.included?.find(resource => {
+    if (resource.type !== "auditStatuses") {
+      return false;
+    }
+
+    const attributes = resource.attributes as Partial<AuditStatusDto>;
+    return attributes.type === "comment";
+  });
+
+  const auditAttributes = includedAuditComment?.attributes as Partial<AuditStatusDto> | undefined;
+  const auditCreatedAt = auditAttributes?.dateCreated ?? (auditAttributes as { createdAt?: string | null })?.createdAt;
+  if (auditCreatedAt != null) {
+    return formatSubmissionCommentDate(auditCreatedAt);
+  }
+
+  const responseCreatedAt = response.data?.[0]?.attributes?.createdAt;
+  if (responseCreatedAt != null) {
+    return formatSubmissionCommentDate(responseCreatedAt);
+  }
+
+  return null;
+};
+
 export const bulkUpdateSitePolygonAttributes = async (
   uuids: string[],
   attributeChanges: BulkSitePolygonAttributeChanges
@@ -151,7 +194,7 @@ export const bulkUpdateSitePolygonStatus = async (
   uuids: string[],
   status: PolygonStatus,
   comment: string
-): Promise<void> => {
+): Promise<SitePolygonStatusUpdateResponse> => {
   const updateResources: SitePolygonResourceIdentifier[] = uuids.map(uuid => ({
     type: "sitePolygons",
     id: uuid
@@ -166,46 +209,13 @@ export const bulkUpdateSitePolygonStatus = async (
   };
 
   const variables = { body, pathParams: { status } };
-  const fullUrl = resolveUrl(updateSitePolygonStatus.url, variables);
-
-  const failureSelector = updateSitePolygonStatus.fetchFailedSelector(variables);
-  const previousFailure = failureSelector(ApiSlice.currentState);
-  if (previousFailure != null) {
-    ApiSlice.clearPending(fullUrl, updateSitePolygonStatus.method);
-  }
-
-  updateSitePolygonStatus.fetch(variables);
-
-  const initialPending = ApiSlice.currentState.meta.pending[updateSitePolygonStatus.method][fullUrl];
-  const initialFailure = failureSelector(ApiSlice.currentState);
-
-  if (initialPending == null && !initialFailure) {
-    return;
-  }
-
-  if (initialFailure != null) {
-    throw initialFailure;
-  }
-
-  await new Promise<void>((resolve, reject) => {
-    const unsubscribe = ApiSlice.redux.subscribe(() => {
-      const currentState = ApiSlice.currentState;
-      const pending = currentState.meta.pending[updateSitePolygonStatus.method][fullUrl];
-      const failure = failureSelector(currentState);
-
-      if (pending == null && !failure) {
-        unsubscribe();
-        resolve();
-      } else if (failure != null) {
-        unsubscribe();
-        reject(failure);
-      }
-    });
-  });
+  const response = await updateSitePolygonStatus.fetchAwait(variables);
 
   if (status === POLYGON_PENDING_APPROVAL) {
     listDelayedJobs.fetch({});
   }
+
+  return response;
 };
 
 export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {

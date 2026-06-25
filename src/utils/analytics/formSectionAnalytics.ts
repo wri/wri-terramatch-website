@@ -1,17 +1,23 @@
 import { FieldErrors } from "react-hook-form";
 
 import { FormModelType } from "@/connections/Form";
-import { FormSectionEventName, getFormSectionAnalyticsContext, trackFormSectionEvent } from "@/utils/ga4";
+import {
+  FormSectionEventName,
+  getFormSectionAnalyticsContext,
+  MetricsCardEntityType,
+  trackFormSectionEvent
+} from "@/utils/ga4";
 
-export type FormSectionEntityType = "project" | "site" | "nursery";
+export type FormSectionEntityType = "project" | "site" | "nursery" | MetricsCardEntityType;
 
 const TRACKED_ENTITY_TYPES: Partial<Record<FormModelType, FormSectionEntityType>> = {
   projects: "project",
   sites: "site",
   nurseries: "nursery",
-  projectReports: "project",
-  siteReports: "site",
-  nurseryReports: "nursery"
+  projectReports: "project-report",
+  siteReports: "site-report",
+  nurseryReports: "nursery-report",
+  financialReports: "financial-report"
 };
 
 export const resolveFormSectionEntityType = (model?: FormModelType | null): FormSectionEntityType | null => {

@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 
+import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -10,7 +11,6 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
@@ -51,7 +51,7 @@ const SiteDetailPage = () => {
       key: "gallery",
       title: t("Gallery"),
       body: (
-        <GalleryTab
+        <EntityGalleryTab
           modelName="sites"
           modelUUID={site?.uuid ?? ""}
           modelTitle={t("Site")}

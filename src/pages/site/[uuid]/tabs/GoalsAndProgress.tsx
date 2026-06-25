@@ -86,14 +86,14 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
   });
   const dataAggregated = aggregateState != null ? aggregateState.data : undefined;
   return (
-    <PageBody>
-      <PageRow>
+    <PageBody className="!space-y-10 bg-theme-neutral-200 pt-5 text-darkCustom">
+      <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageCard title={t("Progress & Goals")}>
           <GoalsAndProgressEntityTab entity={site} />
         </PageCard>
       </PageRow>
 
-      <PageRow>
+      <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageCard
           title={t(site.frameworkKey === Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
         >
@@ -177,7 +177,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
           </div>
         </PageCard>
       </PageRow>
-      <PageRow>
+      <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageCard title={t(isTerrafund ? "Non-Tree Planting Progress" : "Seed Planting Progress")}>
           <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
             <div className="flex flex-col gap-4">
@@ -278,7 +278,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
           </div>
         </PageCard>
       </PageRow>
-      <PageRow frameworksShow={[Framework.HBF]}>
+      <PageRow frameworksShow={[Framework.HBF]} className="mx-0 w-full !max-w-full px-6">
         <PageCard title={t("Non-Tree Planting Progress")}>
           <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
             <div className="flex flex-col gap-4">
@@ -312,7 +312,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
         </PageCard>
       </PageRow>
       <ContextCondition frameworksHide={SUMMARY_ANR_ROLLUP_HIDE}>
-        <PageRow>
+        <PageRow className="mx-0 w-full !max-w-full px-6">
           <PageCard title={t("Assisted Natural Regeneration Progress")}>
             <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
               <div className="flex flex-col gap-4">
@@ -339,7 +339,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
         </PageRow>
       </ContextCondition>
       <ContextCondition frameworksHide={SUMMARY_REPLANTING_ROLLUP_HIDE}>
-        <PageRow>
+        <PageRow className="mx-0 w-full !max-w-full px-6">
           <PageCard title={t("Trees Replanting Progress")}>
             <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
               <div className="flex flex-col gap-4">
@@ -374,7 +374,7 @@ const GoalsAndProgressTab: FC<GoalsAndProgressTabProps> = ({ site }) => {
         </PageRow>
       </ContextCondition>
       <ContextCondition frameworksHide={SUMMARY_INVASIVE_ROLLUP_HIDE}>
-        <PageRow>
+        <PageRow className="mx-0 w-full !max-w-full px-6">
           <PageCard title={t("Invasive Tree Removal Progress")}>
             <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
               <div className="flex flex-col gap-4">

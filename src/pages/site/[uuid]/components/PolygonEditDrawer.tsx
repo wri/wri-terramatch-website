@@ -1,8 +1,9 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
+import { getUnreadCommentCount, useAuditStatuses } from "@/connections/AuditStatus";
+import { useMyUser } from "@/connections/User";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import type { PolygonEditDrawerPolygon } from "@/context/polygonEditDrawer.types";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -11,10 +12,11 @@ import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
 import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel";
 import NotificationIndicator from "@/redesignComponents/navigation/NotificationIndicator/NotificationIndicator";
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
+import ApiSlice from "@/store/apiSlice";
 
 import DeletePolygon from "./Modals/DeletePolygon";
 import SavePolygon from "./Modals/SavePolygon";
-import SubmitPolygons from "./Modals/SubmitPolygons";
+import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import PolygonCommentContent from "./PolygonCommentContent";
 import type { PolygonOverlapFixCallback, PolygonSaveCallback } from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
@@ -48,19 +50,40 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onDeletingChange
 }) => {
   const t = useT();
-  const { draftPolygonGeometry } = useMapAreaContext();
+  const [, { user }] = useMyUser();
+  const { draftPolygonGeometry, siteData } = useMapAreaContext();
   const [activeTab, setActiveTab] = useState<string>("edit");
   const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
   const deletePolygonRef = useRef<(() => Promise<void>) | null>(null);
-  const submitPolygonRef = useRef<(() => Promise<void>) | null>(null);
+  const submitPolygonRef = useRef<((comment: string) => Promise<void>) | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
   const [deletePayload, setDeletePayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
-  const [submitPayload, setSubmitPayload] = useState<{ eligibleCount: number; totalCount: number } | null>(null);
+  const [submitPayload, setSubmitPayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
   const deleteConfirmedRef = useRef(false);
   const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
+  const [savePolygonName, setSavePolygonName] = useState("");
+  const [hasPlantStartDate, setHasPlantStartDate] = useState(false);
   const isCreateMode = selectedPolygon?.primaryUuid == null || selectedPolygon.primaryUuid === "";
-  const isSaveDisabled = activeTab === "edit" && isCreateMode && draftPolygonGeometry == null;
+  const isPolygonNameMissing = savePolygonName.trim() === "";
+  const isPlantStartDateMissing = !hasPlantStartDate;
+  const isSaveDisabled =
+    (activeTab === "edit" && isCreateMode && draftPolygonGeometry == null) ||
+    isPolygonNameMissing ||
+    isPlantStartDateMissing;
+  const hasValidPolygonUuid = polygon?.polygonUuid != null;
+  const resolvedSiteUuid = useMemo(
+    () => selectedPolygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : ""),
+    [selectedPolygon?.siteId, siteData]
+  );
+
+  const [, { data: auditStatusesData }] = useAuditStatuses({
+    entity: "sitePolygons",
+    uuid: selectedPolygon?.uuid ?? "",
+    enabled: hasValidPolygonUuid
+  });
+
+  const unreadCommentCount = useMemo(() => getUnreadCommentCount(auditStatusesData, user), [auditStatusesData, user]);
 
   useEffect(() => {
     setActiveTab("edit");
@@ -68,8 +91,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
 
   useEffect(() => {
     setSaveEditContent(null);
+    const initialName = polygon?.polygonName?.trim() ?? "";
     getPolygonNameForSaveRef.current = () => polygon?.polygonName?.trim() ?? "";
-  }, [polygon?.polygonName, selectedPolygon?.uuid]);
+    setSavePolygonName(initialName);
+    setHasPlantStartDate(selectedPolygon?.plantStart != null && selectedPolygon.plantStart !== "");
+  }, [polygon?.polygonName, selectedPolygon?.plantStart, selectedPolygon?.uuid]);
 
   const registerSave = useCallback((saveHandler: () => Promise<boolean>) => {
     setSaveEditContent(() => saveHandler);
@@ -79,15 +105,20 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     deletePolygonRef.current = deleteHandler;
   }, []);
 
-  const registerSubmit = useCallback((submitHandler: () => Promise<void>) => {
+  const registerSubmit = useCallback((submitHandler: (comment: string) => Promise<void>) => {
     submitPolygonRef.current = submitHandler;
   }, []);
 
   const registerPolygonName = useCallback((getPolygonName: () => string) => {
     getPolygonNameForSaveRef.current = getPolygonName;
+    setSavePolygonName(getPolygonName());
   }, []);
 
-  const saveConfirmationPolygonName = getPolygonNameForSaveRef.current() || polygon?.polygonName?.trim() || "";
+  const registerPlantStartDate = useCallback((getHasPlantStartDate: () => boolean) => {
+    setHasPlantStartDate(getHasPlantStartDate());
+  }, []);
+
+  const saveConfirmationPolygonName = getPolygonNameForSaveRef.current().trim();
   const isAnyConfirmationModalOpen = showSaveConfirmationModal || deletePayload != null || submitPayload != null;
   const isDrawerVisible = (open ?? false) && !isAnyConfirmationModalOpen;
 
@@ -139,11 +170,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
       return;
     }
 
-    const isPolygonSubmittable =
-      selectedPolygon.status !== POLYGON_PENDING_APPROVAL && selectedPolygon.status !== POLYGON_APPROVED;
-
-    setSubmitPayload({ eligibleCount: isPolygonSubmittable ? 1 : 0, totalCount: 1 });
-  }, [selectedPolygon]);
+    setSubmitPayload({ polygons: [mapSitePolygonToTableRow(selectedPolygon, t)] });
+  }, [selectedPolygon, t]);
 
   const handleDeleteConfirmationModalChange = useCallback(
     (nextOpen: boolean) => {
@@ -181,7 +209,12 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
               <Flex className="h-full flex-col">
                 {polygon?.polygonUuid && (
                   <TabBar
-                    onTabClick={(tabValue: string) => setActiveTab(tabValue)}
+                    onTabClick={(tabValue: string) => {
+                      setActiveTab(tabValue);
+                      if (tabValue === "comments") {
+                        ApiSlice.pruneCache("auditStatuses");
+                      }
+                    }}
                     tabs={[
                       {
                         label: t("Edit"),
@@ -195,9 +228,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                         label: (
                           <Text className="flex items-center gap-2">
                             {t("Comments")}
-                            <NotificationIndicator bgColor={activeTab != "comments" ? "neutral.700" : undefined}>
-                              3
-                            </NotificationIndicator>
+                            {unreadCommentCount > 0 && (
+                              <NotificationIndicator bgColor={activeTab != "comments" ? "neutral.700" : undefined}>
+                                {unreadCommentCount}
+                              </NotificationIndicator>
+                            )}
                           </Text>
                         ),
                         value: "comments"
@@ -215,6 +250,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     onRegisterDelete={registerDelete}
                     onRegisterSubmit={registerSubmit}
                     onRegisterPolygonName={registerPolygonName}
+                    onRegisterPlantStartDate={registerPlantStartDate}
                     onRequestDeleteModal={handleRequestDeleteModal}
                     onRequestSubmitModal={handleRequestSubmitModal}
                     onSaved={onSaved}
@@ -225,6 +261,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                 )}
                 {activeTab === "systemValidation" && (
                   <PolygonSystemValidationContent
+                    siteUuid={resolvedSiteUuid}
                     polygon={selectedPolygon}
                     onOverlapFixed={onOverlapFixed}
                     onRunValidation={onRunValidation}
@@ -285,16 +322,15 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         }}
       />
 
-      <SubmitPolygons
+      <SubmitPolygonConfirmation
         open={submitPayload != null}
         onOpenChange={open => {
           if (!open) {
             setSubmitPayload(null);
           }
         }}
-        eligibleCount={submitPayload?.eligibleCount ?? 0}
-        totalCount={submitPayload?.totalCount ?? 0}
-        onSubmit={() => submitPolygonRef.current?.()}
+        polygons={submitPayload?.polygons ?? []}
+        onSubmit={comment => submitPolygonRef.current?.(comment)}
       />
     </>
   );
