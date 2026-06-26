@@ -79,6 +79,7 @@ const MonitoredDataMap = ({
           bbox={entityBbox}
           setLoader={setLoading}
           mediaFiles={mediaFiles}
+          alwaysShowPhotosOnMap
           showPopups={true}
           tooltipType="view"
           entityData={transformedEntityData}
