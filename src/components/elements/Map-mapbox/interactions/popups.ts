@@ -50,6 +50,50 @@ function getClickHandlers(map: MapboxMap): Record<string, (e: MapLayerInteractio
   return clickHandlerRegistries.get(map)!;
 }
 
+type CursorHandlers = { enter: () => void; leave: () => void };
+
+const cursorHandlerRegistries = new WeakMap<MapboxMap, Record<string, CursorHandlers>>();
+
+function getCursorHandlers(map: MapboxMap): Record<string, CursorHandlers> {
+  if (!cursorHandlerRegistries.has(map)) {
+    cursorHandlerRegistries.set(map, {});
+  }
+  return cursorHandlerRegistries.get(map)!;
+}
+
+const setMapPointerCursor = (map: MapboxMap): void => {
+  map.getCanvas().style.cursor = "pointer";
+};
+
+const resetMapCursor = (map: MapboxMap): void => {
+  map.getCanvas().style.cursor = "";
+};
+
+const registerPointerCursorHandlers = (map: MapboxMap, layerIds: string[]): void => {
+  const handlers = getCursorHandlers(map);
+  layerIds.forEach(layerId => {
+    if (handlers[layerId] != null) {
+      map.off("mouseenter", layerId, handlers[layerId].enter);
+      map.off("mouseleave", layerId, handlers[layerId].leave);
+    }
+    const enter = () => setMapPointerCursor(map);
+    const leave = () => resetMapCursor(map);
+    handlers[layerId] = { enter, leave };
+    map.on("mouseenter", layerId, enter);
+    map.on("mouseleave", layerId, leave);
+  });
+};
+
+const teardownPointerCursorHandlers = (map: MapboxMap): void => {
+  const handlers = getCursorHandlers(map);
+  Object.entries(handlers).forEach(([layerId, { enter, leave }]) => {
+    map.off("mouseenter", layerId, enter);
+    map.off("mouseleave", layerId, leave);
+    delete handlers[layerId];
+  });
+  resetMapCursor(map);
+};
+
 export type PopupHandlerOptions = {
   setPolygonFromMap?: SetPolygonFromMap;
   setShouldRefetchPolygonData?: (value: boolean) => void;
@@ -223,6 +267,7 @@ export const teardownPopupsFromMap = (map: MapboxMap): void => {
     map.off("touchend", layerId, handler);
     delete handlers[layerId];
   });
+  teardownPointerCursorHandlers(map);
   removePopups(map, "POLYGON");
 };
 
@@ -244,10 +289,15 @@ export const addPopupToLayer = (
   }
   if (style == null) return;
   const layers = style.layers ?? [];
-  let targetLayers = layers.filter(l => l.id.startsWith(name));
+  const matchingLayers = layers.filter(l => l.id.startsWith(name));
+  let targetLayers = matchingLayers;
 
-  if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
-    targetLayers = targetLayers.filter(
+  if (name === LAYERS_NAMES.CENTROIDS && matchingLayers.length > 0) {
+    registerPointerCursorHandlers(
+      map,
+      matchingLayers.map(layer => layer.id)
+    );
+    targetLayers = matchingLayers.filter(
       l => (l as LayerSpecification & { metadata?: { type?: string } })?.metadata?.type === "big-circle"
     );
   }
