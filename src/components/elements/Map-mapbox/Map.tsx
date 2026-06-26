@@ -35,7 +35,7 @@ import { useMapCamera } from "./hooks/useMapCamera";
 import { useMapDownload } from "./hooks/useMapDownload";
 import { useMapDraw } from "./hooks/useMapDraw";
 import { useMapFullscreen } from "./hooks/useMapFullscreen";
-import { filterPolygonFromLayers, useMapLayers } from "./hooks/useMapLayers";
+import { useMapLayers } from "./hooks/useMapLayers";
 import { useMapMedia } from "./hooks/useMapMedia";
 import { useMapOverlapIndicators } from "./hooks/useMapOverlapIndicators";
 import { useMapOverlays } from "./hooks/useMapOverlays";
@@ -549,13 +549,6 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     hideLoader,
     openNotification
   });
-
-  useEffect(() => {
-    if (!sourcesAdded || map.current == null || !polygonFromMap?.isOpen || polygonFromMap.uuid === "") {
-      return;
-    }
-    filterPolygonFromLayers(polygonFromMap.uuid, polygonsData, map.current);
-  }, [map, polygonFromMap?.isOpen, polygonFromMap?.uuid, polygonsData, sourcesAdded]);
 
   const lastAutoEditPolygonRef = useRef<string | null>(null);
   useEffect(() => {
