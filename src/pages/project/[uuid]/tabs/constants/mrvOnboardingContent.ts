@@ -29,10 +29,6 @@ export const useMrvOnboardingContent = () => {
             link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21972136717979-Glossary-TerraFund-Monitoring-Reporting-Verification"
           },
           {
-            title: t("Project Establishment Checklist"),
-            link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/45890074377755-Checklists-Tips-for-TerraFund-Project-Nursery-and-Site-Establishment"
-          },
-          {
             title: t("How to Complete Your Project Profile"),
             link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21995497152027-How-to-Create-Your-TerraMatch-Project-Profile"
           },
