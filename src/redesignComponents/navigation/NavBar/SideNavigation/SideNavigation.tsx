@@ -34,10 +34,11 @@ interface SideNavigationGroup {
 interface SideNavigationProps {
   title: string;
   groups: SideNavigationGroup[];
+  collapsed?: boolean;
 }
 
-const SideNavigation: FC<SideNavigationProps> = ({ title, groups }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = false }) => {
+  const [isCollapsed, setIsCollapsed] = useState(collapsed);
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -48,7 +49,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups }) => {
   return (
     <Flex
       className={classNames(
-        "flex-col bg-theme-primary-800",
+        "bg-theme-primary-800 flex-col",
         shellTransition,
         isCollapsed ? COLLAPSED_WIDTH_CLASS : EXPANDED_WIDTH_CLASS
       )}
