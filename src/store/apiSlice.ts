@@ -196,7 +196,7 @@ export const INITIAL_STATE = {
 
 const cachedAccessToken = typeof window === "undefined" ? null : getAccessToken();
 if (cachedAccessToken != null) {
-  // There can only ever be one login in the store, so if there is a cached auth token set it local
+  // There can only ever be one login in the store, so if there is a cached auth token set in local
   // storage, fake up a logins response and meta creation complete so the connection gets what it
   // expects for an already logged in user.
   INITIAL_STATE.logins["1"] = { attributes: { token: cachedAccessToken } };
