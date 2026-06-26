@@ -62,11 +62,11 @@ function getCursorHandlers(map: MapboxMap): Record<string, CursorHandlers> {
 }
 
 const setMapPointerCursor = (map: MapboxMap): void => {
-  map.getCanvas().style.cursor = "pointer";
+  map.getCanvas()?.style.setProperty("cursor", "pointer");
 };
 
 const resetMapCursor = (map: MapboxMap): void => {
-  map.getCanvas().style.cursor = "";
+  map.getCanvas()?.style.removeProperty("cursor");
 };
 
 const registerPointerCursorHandlers = (map: MapboxMap, layerIds: string[]): void => {
