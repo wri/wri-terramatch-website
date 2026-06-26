@@ -1,61 +1,120 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, ReactNode } from "react";
+import { useRouter } from "next/router";
 
-import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
+import Loader from "@/components/generic/Loading/Loader";
+import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useFullSite } from "@/connections/Entity";
+import FrameworkProvider from "@/context/framework.provider";
+import { useLoading } from "@/context/loaderAdmin.provider";
+import { MapAreaProvider } from "@/context/mapArea.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
+import { useValueChanged } from "@/hooks/useValueChanged";
+import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
+import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import Layout from "@/redesignComponents/Loayout/Layout";
+import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
+import Log from "@/utils/log";
 
-const MOCK_TAB_KEYS = ["Overview", "Site Details", "Polygons", "Gallery", "Progress & Goals", "History"] as const;
-const ACTIVE_TAB = "Polygons";
+import SitePolygonsTab from "../tabs/SitePolygonsTab";
 
-interface AdminSitePolygonReviewShellProps {
-  site: SiteFullDto;
-  children: ReactNode;
-}
-
-const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ site, children }) => {
+const SiteDetailPage = () => {
   const t = useT();
+  const router = useRouter();
+  const { loading } = useLoading();
+  const siteUUID = router.query.uuid as string;
+
+  const [isLoaded, { data: site, loadFailure }] = useFullSite({ id: siteUUID });
+  const { openToast } = useToastContext();
+  useValueChanged(isLoaded, () => {
+    if (isLoaded && site == null) {
+      Log.error("Site not found", { siteUUID, loadFailure });
+      openToast("Site not found", ToastType.ERROR);
+    }
+  });
+
+  const currentTab = (router.query.tab as string) ?? "polygons";
+  const isSuffixView = currentTab === "completed-tasks";
+  const activeTab = isSuffixView ? "polygons" : currentTab;
+
+  const TabItems = [{ key: "polygons", title: t("Polygons"), body: <SitePolygonsTab site={site!} /> }];
+
+  const suffixContent = isSuffixView ? <SiteCompletedReportsTab site={site!} /> : null;
 
   return (
-    <Flex minHeight="100vh" width="100%" alignItems="stretch">
-      <Box as="aside" flexShrink={0} width="64px" className="bg-theme-primary-900" aria-hidden />
-
-      <Flex direction="column" flex={1} minWidth={0}>
-        <Box as="header" className="border-b border-theme-neutral-200 bg-white px-6 pt-4">
-          <Flex alignItems="center" justifyContent="space-between" gap={4}>
-            <Box minWidth={0}>
-              <Text textStyle="300" color="neutral.700" truncate>
-                {site.projectName ?? ""}
-              </Text>
-              <Text textStyle="600" color="primary.900" truncate>
-                {site.name ?? t("Site")}
-              </Text>
-            </Box>
-            <Text textStyle="300" color="neutral.700" flexShrink={0}>
-              {t("Admin Polygon Review")}
-            </Text>
-          </Flex>
-
-          <Flex gap={6} marginTop={3}>
-            {MOCK_TAB_KEYS.map(tab => (
-              <Box
-                key={tab}
-                paddingBottom={2}
-                className={tab === ACTIVE_TAB ? "border-b-2 border-theme-primary-500" : "cursor-default opacity-60"}
-              >
-                <Text textStyle="400" color={tab === ACTIVE_TAB ? "primary.900" : "neutral.700"}>
-                  {t(tab)}
-                </Text>
-              </Box>
-            ))}
-          </Flex>
-        </Box>
-
-        <Box as="main" flex={1} minWidth={0}>
-          {children}
-        </Box>
-      </Flex>
-    </Flex>
+    <Layout>
+      <MapAreaProvider>
+        <ProjectResponsiveTypography />
+        <FrameworkProvider frameworkKey={site?.frameworkKey}>
+          {loading && (
+            <div className="fixed top-0 z-50 flex h-screen w-screen items-center justify-center backdrop-brightness-50">
+              <Loader />
+            </div>
+          )}
+          <LoadingContainer loading={!isLoaded}>
+            {site == null ? null : (
+              <>
+                <SiteBanner
+                  site={site}
+                  breadcrumbs={[
+                    {
+                      label: t("Projects"),
+                      link: "/my-projects",
+                      icon: <ProjectIcon className="!text-theme-primary-900" />
+                    },
+                    { label: site.projectName ?? "", link: `/project/${site.projectUuid}` },
+                    { label: site.name ?? "", link: `/site/${site.uuid}` },
+                    ...(isSuffixView ? [{ label: t("Reports"), link: `/site/${site.uuid}?tab=completed-tasks` }] : [])
+                  ]}
+                  suffix={
+                    <div className="flex gap-1.5">
+                      <div className="flex gap-1.5">
+                        <Button
+                          variant="borderless"
+                          size="small"
+                          className="underline underline-offset-2"
+                          onClick={() => router.push(`/project/${site.projectUuid}`)}
+                        >
+                          {t("Project Profile")}
+                        </Button>
+                        <span className="text-theme-neutral-300 text-sm">|</span>
+                        <Button
+                          variant="borderless"
+                          size="small"
+                          className="underline underline-offset-2"
+                          onClick={() => router.push(`/site/${site.uuid}?tab=completed-tasks`)}
+                        >
+                          {t("Site Reports")}
+                        </Button>
+                      </div>
+                    </div>
+                  }
+                  toolbar={{
+                    tabBar: {
+                      tabs: TabItems.map(item => ({
+                        value: item.key,
+                        label: item.title
+                      })),
+                      defaultValue: isSuffixView ? "__none__" : activeTab,
+                      onTabClick: (tabValue: string) => {
+                        router.push(`/site/${siteUUID}?tab=${tabValue}`, undefined, { shallow: true });
+                      }
+                    }
+                  }}
+                />
+                <div className="flex flex-1">
+                  {suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}
+                </div>
+              </>
+            )}
+            <PageFooter />
+          </LoadingContainer>
+        </FrameworkProvider>
+      </MapAreaProvider>
+    </Layout>
   );
 };
 
-export default AdminSitePolygonReviewShell;
+export default SiteDetailPage;
