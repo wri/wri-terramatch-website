@@ -616,13 +616,17 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
                 }
               : undefined
           }
-          buttonProps={{
-            variant: "secondary",
-            size: "small",
-            children: t("Upload Monitoring Plots"),
-            leftIcon: <UploadIcon />,
-            disabled: true
-          }}
+          buttonProps={
+            isAdmin
+              ? {
+                  variant: "secondary",
+                  size: "small",
+                  children: t("Upload Monitoring Plots"),
+                  leftIcon: <UploadIcon />,
+                  disabled: true
+                }
+              : undefined
+          }
           multiActionButtonProps={{
             mainActionLabel: t("Add"),
             size: "small",
