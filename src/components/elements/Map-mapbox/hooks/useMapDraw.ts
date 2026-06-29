@@ -6,7 +6,6 @@ import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
-import { FORM_POLYGONS } from "@/constants/statuses";
 import type { PolygonGeometryEditState } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { isProjectPitchesEntityName } from "@/helpers/entity";
@@ -250,9 +249,6 @@ export function useMapDraw({
       requestAnimationFrame(() => {
         if (map.current != null) applyMapDrawingCursor(map.current);
       });
-      if (formMap && polygonFromMap?.uuid) {
-        filterPolygonFromLayers(polygonFromMap.uuid, polygonsData, map.current);
-      }
     } else {
       draw.current.changeMode("simple_select");
       resetMapDrawingCursor(map.current);
@@ -342,8 +338,8 @@ export function useMapDraw({
           true,
           isProjectPolygon ? projectPitchUuid : undefined
         );
-        if (updatedGeometry != null && map.current != null) {
-          addSourcesToLayers(map.current, { [FORM_POLYGONS]: [polygonFromMap.uuid] }, centroids);
+        if (updatedGeometry != null && map.current != null && polygonsData != null) {
+          addSourcesToLayers(map.current, polygonsData, centroids);
         }
         pruneBoundingBoxesCache();
         openNotification("success", t("Success"), t("Project polygon updated successfully."));
