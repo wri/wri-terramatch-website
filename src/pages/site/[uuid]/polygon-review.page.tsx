@@ -51,7 +51,9 @@ const SitePolygonReviewPage = () => {
             <Loader />
           </div>
         )}
-        <LoadingContainer loading={!isLoaded}>{site == null ? null : <AdminSitePolygonReviewShell />}</LoadingContainer>
+        <LoadingContainer loading={!isLoaded}>
+          {site == null ? null : <AdminSitePolygonReviewShell site={site} />}
+        </LoadingContainer>
       </FrameworkProvider>
     </MapAreaProvider>
   );
