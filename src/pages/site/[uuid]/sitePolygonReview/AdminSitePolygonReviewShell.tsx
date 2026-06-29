@@ -9,6 +9,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
 import { SiteIcon } from "@/redesignComponents/foundations/Icons";
 import Layout from "@/redesignComponents/Loayout/Layout";
+import { getSitePolygonReviewPath } from "@/utils/sitePolygonReviewPath";
 
 import SitePolygonsWorkspace from "./SitePolygonsWorkspace";
 
@@ -20,7 +21,7 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
   const t = useT();
   const router = useRouter();
   const siteUUID = router.query.uuid as string;
-  const polygonReviewPath = `/site/${siteUUID}/polygon-review`;
+  const polygonReviewPath = getSitePolygonReviewPath(siteUUID);
 
   const currentTab = (router.query.tab as string) ?? "polygons";
   const isSuffixView = currentTab === "completed-tasks";

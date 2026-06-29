@@ -27,6 +27,7 @@ import ToastProvider from "@/context/toast.provider";
 import { system } from "@/lib/theme";
 import { WrappedReduxProvider } from "@/store/store";
 import Bootstrap from "@/utils/Bootstrap";
+import { isSitePolygonReviewPath } from "@/utils/sitePolygonReviewPath";
 import setupYup from "@/yup.locale";
 
 import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
@@ -80,31 +81,29 @@ const PDStack = ({ children }: PropsWithChildren) => (
   </RouteHistoryProvider>
 );
 
-const SiteStack = ({ children }: PropsWithChildren) => (
+const SiteRouteStack = ({ children, withMainLayout = true }: PropsWithChildren<{ withMainLayout?: boolean }>) => (
   <RouteHistoryProvider>
     <NavbarProvider>
       <ModalRoot />
       <Toast />
       <WRIToast />
-      <MainLayout>
-        {children}
-        <CookieBanner />
-      </MainLayout>
+      {withMainLayout ? (
+        <MainLayout>
+          {children}
+          <CookieBanner />
+        </MainLayout>
+      ) : (
+        children
+      )}
     </NavbarProvider>
   </RouteHistoryProvider>
 );
 
-// Standalone admin polygon review: same app-level providers as SiteStack, but without
-// MainLayout because the page owns its temporary admin header/sidebar shell.
+const SiteStack = ({ children }: PropsWithChildren) => <SiteRouteStack>{children}</SiteRouteStack>;
+
+// Polygon review owns its layout shell, so skip MainLayout here.
 const SitePolygonReviewStack = ({ children }: PropsWithChildren) => (
-  <RouteHistoryProvider>
-    <NavbarProvider>
-      <ModalRoot />
-      <Toast />
-      <WRIToast />
-      {children}
-    </NavbarProvider>
-  </RouteHistoryProvider>
+  <SiteRouteStack withMainLayout={false}>{children}</SiteRouteStack>
 );
 
 const _App = ({ Component, pageProps }: AppProps) => {
@@ -112,7 +111,7 @@ const _App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
-  const isOnSitePolygonReview = /^\/site\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath);
+  const isOnSitePolygonReview = isSitePolygonReviewPath(router.asPath);
   const isOnSite = router.asPath.includes("/site");
 
   setupYup(t);
