@@ -4,7 +4,6 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
 
-import { removeAccessToken } from "@/admin/apiProvider/utils/token";
 import LanguagesDropdown from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdown";
 import { VARIANT_LANGUAGES_DROPDOWN_SECONDARY } from "@/components/elements/Inputs/LanguageDropdown/LanguagesDropdownVariant";
 import MyAccountDropdown from "@/components/elements/Inputs/MyAccountDropdown/MyAccountDropdown";
@@ -14,6 +13,7 @@ import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useLogin } from "@/connections/Login";
 import { useMyUser, ValidLocale } from "@/connections/User";
+import { logout } from "@/generated/v3/utils";
 
 type NavItem = {
   path: string;
@@ -174,8 +174,7 @@ const Sidebar: FC = () => {
                 }
               )}
               onClick={() => {
-                removeAccessToken();
-                router.push("/auth/login");
+                logout(router);
               }}
             >
               <div className="flex items-center gap-2">
