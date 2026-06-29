@@ -68,8 +68,8 @@ const LatestImagesSectionTab: FC<LatestImagesSectionTabProps> = ({
 
   return (
     <ImageGalleryCard
-      classNameImage="!w-auto"
-      className="w-full"
+      classNameImage="!w-auto mobile:!aspect-[2/1] mobile:!h-auto mobile:!object-cover"
+      className="w-full mobile:!grid-cols-2"
       images={images}
       onClickAdd={onClickAdd ?? goToGallery}
       columns={columns}

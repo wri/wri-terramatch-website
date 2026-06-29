@@ -22,6 +22,18 @@ const REPORT_ENTITY_NAMES: Partial<Record<EntityName, ReportEntityType>> = {
   "financial-reports": "financial-report"
 };
 
+const ADMIN_REPORT_RESOURCES: Record<string, ReportEntityType> = {
+  projectReport: "project-report",
+  siteReport: "site-report",
+  nurseryReport: "nursery-report",
+  financialReport: "financial-report"
+};
+
+export const resolveReportEntityTypeFromAdminResource = (resource?: string | null): ReportEntityType | null => {
+  if (resource == null) return null;
+  return ADMIN_REPORT_RESOURCES[resource] ?? null;
+};
+
 export const resolveReportEntityType = (model?: FormModelType | null): ReportEntityType | null => {
   if (model == null) return null;
   return REPORT_MODEL_TYPES[model] ?? null;

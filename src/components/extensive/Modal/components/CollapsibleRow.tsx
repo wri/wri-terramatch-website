@@ -24,13 +24,17 @@ const CollapsibleRow: FC<UnifiedCollapsibleRowProps> = ({
   setPolygonsSelected
 }) => {
   const [openCollapse, setOpenCollapse] = useState(false);
-  const [showWarning, setShowWarning] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [showWarning, setShowWarning] = useState(item.validationStatus === "partial");
+
+  const isValidated =
+    item.checked === true ||
+    item.validationStatus === "passed" ||
+    item.validationStatus === "partial" ||
+    item.validationStatus === "failed";
 
   useEffect(() => {
     setShowWarning(item.validationStatus === "partial");
-    setIsChecked(item.checked || ["passed", "partial", "failed"].includes(item.validationStatus));
-  }, [item]);
+  }, [item.validationStatus]);
 
   const canBeApproved = () => {
     if (!item.checked) return false;
@@ -49,7 +53,7 @@ const CollapsibleRow: FC<UnifiedCollapsibleRowProps> = ({
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="flex w-full items-center justify-start gap-2">
-            {canBeApproved() && isChecked ? (
+            {canBeApproved() && isValidated ? (
               <>
                 <div className="h-4 w-4">
                   <Icon
@@ -66,10 +70,10 @@ const CollapsibleRow: FC<UnifiedCollapsibleRowProps> = ({
                 <div className="h-4 w-4">
                   <Icon name={IconNames.IC_ERROR_PANEL} width={16} height={16} className="text-red-500" />
                 </div>
-                <Text variant="text-12"> {isChecked ? "Failed" : "Run Validation Check"}</Text>
+                <Text variant="text-12"> {isValidated ? "Failed" : "Run Validation Check"}</Text>
               </>
             )}
-            {isChecked && (
+            {isValidated && (
               <button className="min-h-3 min-w-3" onClick={() => setOpenCollapse(!openCollapse)}>
                 <Icon
                   name={IconNames.CHEVRON_DOWN_PA}

@@ -19,13 +19,14 @@ describe("formSectionAnalytics", () => {
   });
 
   describe("resolveFormSectionEntityType", () => {
-    it("maps establishment and report models to singular entity types", () => {
+    it("maps establishment and report models to GA4 entity types", () => {
       expect(resolveFormSectionEntityType("projects")).toBe("project");
       expect(resolveFormSectionEntityType("sites")).toBe("site");
       expect(resolveFormSectionEntityType("nurseries")).toBe("nursery");
-      expect(resolveFormSectionEntityType("projectReports")).toBe("project");
-      expect(resolveFormSectionEntityType("siteReports")).toBe("site");
-      expect(resolveFormSectionEntityType("nurseryReports")).toBe("nursery");
+      expect(resolveFormSectionEntityType("projectReports")).toBe("project-report");
+      expect(resolveFormSectionEntityType("siteReports")).toBe("site-report");
+      expect(resolveFormSectionEntityType("nurseryReports")).toBe("nursery-report");
+      expect(resolveFormSectionEntityType("financialReports")).toBe("financial-report");
     });
 
     it("returns null for untracked models", () => {

@@ -35,7 +35,7 @@ import { useMapCamera } from "./hooks/useMapCamera";
 import { useMapDownload } from "./hooks/useMapDownload";
 import { useMapDraw } from "./hooks/useMapDraw";
 import { useMapFullscreen } from "./hooks/useMapFullscreen";
-import { filterPolygonFromLayers, useMapLayers } from "./hooks/useMapLayers";
+import { useMapLayers } from "./hooks/useMapLayers";
 import { useMapMedia } from "./hooks/useMapMedia";
 import { useMapOverlapIndicators } from "./hooks/useMapOverlapIndicators";
 import { useMapOverlays } from "./hooks/useMapOverlays";
@@ -92,6 +92,7 @@ export interface BaseMapProps {
   initialPolygonFingerprint?: string;
   /** Champions (non-admin) map layout and controls; omit or false for the default map. */
   championsMap?: boolean;
+  siteReportPolygonPopup?: boolean;
   polygonTableHighlight?: {
     selectedPolygonUuids: string[];
     onPolygonClickedFromMap?: (uuid: string) => void;
@@ -103,6 +104,7 @@ export interface BaseMapProps {
   onPolygonTilesLoadingChange?: (value: boolean) => void;
   alwaysShowPhotosOnMap?: boolean;
   hideMediaPopupActions?: boolean;
+  hideMediaOnMap?: boolean;
   isPolygonGeometryLoading?: boolean;
 }
 
@@ -237,7 +239,9 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     onPolygonTilesLoadingChange,
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
-    isPolygonGeometryLoading = false
+    hideMediaOnMap,
+    isPolygonGeometryLoading = false,
+    siteReportPolygonPopup = false
   } = props;
 
   const [isViewingImages, setIsViewingImages] = useState(false);
@@ -448,7 +452,9 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setEditPolygon,
     editPolygon,
     setMobilePopupData,
-    dashboardContext: resolvedDashboardContext
+    dashboardContext: resolvedDashboardContext,
+    siteReportPolygonPopup,
+    polygonFromMap
   });
 
   useEffect(() => {
@@ -510,6 +516,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     router,
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
+    hideMediaOnMap,
     isPolygonGeometryLoading
   });
 
@@ -542,13 +549,6 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     hideLoader,
     openNotification
   });
-
-  useEffect(() => {
-    if (!sourcesAdded || map.current == null || !polygonFromMap?.isOpen || polygonFromMap.uuid === "") {
-      return;
-    }
-    filterPolygonFromLayers(polygonFromMap.uuid, polygonsData, map.current);
-  }, [map, polygonFromMap?.isOpen, polygonFromMap?.uuid, polygonsData, sourcesAdded]);
 
   const lastAutoEditPolygonRef = useRef<string | null>(null);
   useEffect(() => {

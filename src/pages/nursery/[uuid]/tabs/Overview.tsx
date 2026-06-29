@@ -124,10 +124,6 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             }
             links={[
               {
-                title: t("Use the TerraFund Profile Creation Checklists"),
-                link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/45890074377755-Checklists-Tips-for-TerraFund-Project-Nursery-and-Site-Establishment"
-              },
-              {
                 title: t("Create a Nursery Profile"),
                 link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/12512665359899-How-to-Create-a-Nursery-Profile"
               }

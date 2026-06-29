@@ -103,19 +103,20 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
           <EntityGalleryTab
             modelName="sites"
             modelUUID={siteReport.siteUuid!}
+            galleryEntity="siteReports"
+            galleryUuid={siteReport.uuid}
             entityData={site}
             modelTitle={t("Site Report")}
             emptyStateContent={t(
               "Your gallery is currently empty. Add images by using the 'Edit' button on this site report."
             )}
             sharedDriveLink={siteReport.sharedDriveLink ?? undefined}
-            assetDownload={siteReport.siteUuid != null ? { entity: "sites", uuid: siteReport.siteUuid } : undefined}
           />
         )
       },
       {
         key: "goals",
-        title: t("Progress & Goals"),
+        title: t("Indicators & Insights"),
         renderBody: () => <GoalsAndProgressTab siteReport={siteReport} site={site} workdaysTotal={workdaysTotal} />
       }
     ],

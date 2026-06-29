@@ -6,10 +6,8 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
@@ -17,13 +15,14 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { AWAITING_APPROVAL } from "@/constants/statuses";
 import { Framework } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getEntitySetupButtonLabel } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
 import SiteReportKeyIndicatorsInsights from "@/pages/reports/site-report/components/KeyIndicatorsInsights";
@@ -33,6 +32,7 @@ import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSu
 import { AreaHectaresIcon } from "@/redesignComponents/foundations/Icons";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
+import { ONBOARDING_CARD_TYPES } from "@/utils/analytics/onboardingCardAnalytics";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 interface OverviewProps {
@@ -44,7 +44,6 @@ interface OverviewProps {
 const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const router = useRouter();
   const t = useT();
-  const { openModal } = useModalContext();
   const { setSiteData, resetSiteMapInteractionState } = useMapAreaContext();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const siteReportAboutContent = useSiteReportAboutContent();
@@ -71,35 +70,16 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
     refetchSitePolygons();
   }, [refetchSitePolygons]);
 
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "site-reports",
     entityUUID: siteReport.uuid,
     entityStatus: siteReport.status,
-    updateRequestStatus: siteReport.updateRequestStatus
+    updateRequestStatus: siteReport.updateRequestStatus,
+    entityTitle: siteReport.siteName ?? "",
+    reportTitle: siteReport.reportTitle ?? "",
+    feedback: siteReport.feedback,
+    useStatusModal: true
   });
-
-  const needMoreInformation =
-    siteReport.updateRequestStatus === NEEDS_MORE_INFORMATION || siteReport.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval =
-    siteReport.updateRequestStatus === AWAITING_APPROVAL || siteReport.status === AWAITING_APPROVAL;
-  const statusProps = useMemo(() => getStatusProps(t, siteReport, siteReport.status), [t, siteReport]);
-
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval && statusProps != null) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={siteReport.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="siteReports"
-          entityUuid={siteReport.uuid}
-        />
-      );
-    } else {
-      handleEdit();
-    }
-  }, [awaitingApproval, handleEdit, needMoreInformation, openModal, siteReport.feedback, siteReport.uuid, statusProps]);
 
   const goToTab = useCallback(
     (tab: string) => {
@@ -120,18 +100,20 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
     return siteReportAboutContent.find(content => content.frameworks.includes(siteReport.frameworkKey!));
   }, [siteReport.frameworkKey, siteReportAboutContent]);
 
-  const editButtonLabel = siteReport.status === "approved" && isReportSetupComplete ? t("Edit") : t("Continue");
+  const editButtonLabel = getEntitySetupButtonLabel(t, siteReport.status, isReportSetupComplete);
+
+  const isAdmin = useIsAdmin();
 
   const statusTag = useMemo(() => {
     if (siteReport.updateRequestStatus === AWAITING_APPROVAL) {
-      return <TagSubmission size="small" state="pending-approval" />;
+      return <TagSubmission size="small" state={isAdmin ? "pending-approval" : "pending-approval-neutral"} />;
     }
 
     const tagState = mapStatusToTagStateEntity(siteReport.status);
     if (siteReport.status == null || tagState == null) return null;
 
     return <TagSubmission size="small" state={tagState.type} />;
-  }, [siteReport.status, siteReport.updateRequestStatus]);
+  }, [siteReport.status, siteReport.updateRequestStatus, isAdmin]);
 
   if (siteReport.nothingToReport) {
     return (
@@ -152,15 +134,16 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reloadSiteData}>
       <PageContent>
+        {EditModals}
         <Flex gap={7} className="flex-col">
-          <Flex gap={7}>
+          <Flex gap={7} className="mobile:flex-col">
             <Flex gap={5} className={classNames(isHBFFramework ? "flex-row" : "flex-col", "flex-[2]")}>
               <PageItem
-                title={t("Key Indicators & Insights")}
+                title={t("Key Indicators and Insights")}
                 buttonProps={{
                   variant: "secondary",
                   size: "small",
-                  children: t("View Progress & Goals"),
+                  children: t("View Indicator & Insights"),
                   rightIcon: <ChevronRightIcon />,
                   onClick: createMetricsCardCtaHandler({ entityType: "site-report", entityId: siteReport.uuid }, () =>
                     goToTab("goals")
@@ -197,16 +180,23 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                 size: "small",
                 children: editButtonLabel,
                 rightIcon: <ChevronRightIcon />,
-                onClick: handleEditClick
+                onClick: () => handleEdit()
               }}
               tag={statusTag}
             >
               <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-                <EntitySetUpSection onStatusChange={setIsReportSetupComplete} entity={siteReport} type="siteReports" />
+                <EntitySetUpSection
+                  onStatusChange={setIsReportSetupComplete}
+                  onEditStep={handleEdit}
+                  entity={siteReport}
+                  type="siteReports"
+                  entityTitle={siteReport.siteName ?? ""}
+                  reportTitle={siteReport.reportTitle ?? ""}
+                />
               </Box>
             </PageItem>
           </Flex>
-          <Flex gap={7}>
+          <Flex gap={7} className="mobile:flex-col">
             {site != null && (
               <PageItem title={t("Site Map")} flexProps={{ flex: 1 }} className="min-h-0">
                 <Box className="relative overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
@@ -216,6 +206,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                     className="h-full min-h-0 rounded"
                     disabledPolygonPanel={true}
                     hideFullscreenControl={true}
+                    siteReportPolygonPopup={true}
                   />
                   {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
                     <MapPlaceholder
@@ -241,46 +232,52 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
               </PageItem>
             )}
             <PageItem title={t("About Site Report")} flexProps={{ flex: 1 }}>
-              <About
-                description={
-                  <Flex direction="column" gap={5}>
-                    {aboutContentItem?.paragraphs.map((paragraph, index) => {
-                      const isFirstParagraph = index === 0;
-                      const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
+              <OnboardingCard
+                cardType={ONBOARDING_CARD_TYPES.MRV_GUIDANCE}
+                entityType="site-report"
+                entityId={siteReport.uuid}
+              >
+                <About
+                  description={
+                    <Flex direction="column" gap={5}>
+                      {aboutContentItem?.paragraphs.map((paragraph, index) => {
+                        const isFirstParagraph = index === 0;
+                        const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
 
-                      if (isFirstParagraph) {
+                        if (isFirstParagraph) {
+                          return (
+                            <Text key={index} color="neutral.900" textStyle="300">
+                              <strong>{t("Site Report")} </strong> {paragraph}
+                            </Text>
+                          );
+                        }
+
+                        if (isLastParagraph) {
+                          return (
+                            <ContactSupport
+                              key={index}
+                              message={paragraph}
+                              subject={t("Support Request for Site Report")}
+                            />
+                          );
+                        }
+
                         return (
                           <Text key={index} color="neutral.900" textStyle="300">
-                            <strong>{t("Site Report")} </strong> {paragraph}
+                            {paragraph}
                           </Text>
                         );
-                      }
-
-                      if (isLastParagraph) {
-                        return (
-                          <ContactSupport
-                            key={index}
-                            message={paragraph}
-                            subject={t("Support Request for Site Report")}
-                          />
-                        );
-                      }
-
-                      return (
-                        <Text key={index} color="neutral.900" textStyle="300">
-                          {paragraph}
-                        </Text>
-                      );
-                    })}
-                  </Flex>
-                }
-                links={
-                  aboutContentItem?.links.map(link => ({
-                    title: t(link.title),
-                    link: link.link
-                  })) ?? []
-                }
-              />
+                      })}
+                    </Flex>
+                  }
+                  links={
+                    aboutContentItem?.links.map(link => ({
+                      title: t(link.title),
+                      link: link.link
+                    })) ?? []
+                  }
+                />
+              </OnboardingCard>
             </PageItem>
           </Flex>
         </Flex>

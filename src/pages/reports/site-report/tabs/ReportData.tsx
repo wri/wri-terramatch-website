@@ -80,6 +80,8 @@ const SiteReportDataTab: FC<SiteReportDataTabProps> = ({ report, site }) => {
           <EntityGalleryCard
             modelName="sites"
             modelUUID={report.siteUuid!}
+            galleryEntity="siteReports"
+            galleryUuid={report.uuid}
             modelTitle={t("Site Report")}
             entityData={site}
             emptyStateContent={t(

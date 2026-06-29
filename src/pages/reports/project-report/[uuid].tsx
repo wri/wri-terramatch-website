@@ -9,7 +9,7 @@ import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject, useFullProjectReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
-import FrameworkProvider, { Framework, toFramework, useFrameworkContext } from "@/context/framework.provider";
+import FrameworkProvider, { shouldHideNurseries, toFramework, useFrameworkContext } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -23,7 +23,9 @@ import Log from "@/utils/log";
 import AuditLog from "./tabs/AuditLog";
 import ProjectReportDetailsTab from "./tabs/Details";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
+import NurseryReportsTab from "./tabs/NurseryReports";
 import Overview from "./tabs/Overview";
+import SiteReportsTab from "./tabs/SiteReports";
 
 type TabItem = {
   key: string;
@@ -41,7 +43,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const router = useRouter();
   const { framework } = useFrameworkContext();
   const [, { data: project }] = useFullProject({ id: projectReport.projectUuid! });
-  const shouldHideNurseries = framework === Framework.PPC;
+  const hideNurseries = shouldHideNurseries(framework);
   const reportingWindow = useReportingWindow(toFramework(projectReport?.frameworkKey), projectReport?.dueAt!);
   const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
 
@@ -78,8 +80,18 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
       },
       {
         key: "goals",
-        title: t("Progress & Goals"),
+        title: t("Indicators & Insights"),
         renderBody: () => <GoalsAndProgressTab projectReport={projectReport} project={project} />
+      },
+      {
+        key: "site-reports",
+        title: t("Site Reports"),
+        renderBody: () => <SiteReportsTab taskUuid={projectReport.taskUuid!} />
+      },
+      {
+        key: "nursery-reports",
+        title: t("Nursery Reports"),
+        renderBody: () => <NurseryReportsTab taskUuid={projectReport.taskUuid!} />
       },
       {
         key: "audit-log",
@@ -93,9 +105,9 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const tabBarTabs = useMemo(
     () =>
       tabItems
-        .filter(item => !(item.key === "nursery-reports" && shouldHideNurseries))
+        .filter(item => !["site-reports", "nursery-reports"].includes(item.key))
         .map(item => ({ value: item.key, label: item.title })),
-    [tabItems, shouldHideNurseries]
+    [tabItems]
   );
 
   const activeTabItem = tabItems.find(item => item.key === currentTab) ?? tabItems[0];
@@ -155,7 +167,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
               >
                 {t("Site Reports")}
               </Button>
-              {!shouldHideNurseries && (
+              {!hideNurseries && (
                 <>
                   <span className="text-sm text-theme-neutral-300">|</span>
                   <Button

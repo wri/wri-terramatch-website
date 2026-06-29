@@ -1,7 +1,7 @@
 import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { sortBy } from "lodash";
+import { isEmpty, sortBy } from "lodash";
 import { FC, useCallback, useMemo } from "react";
 
 import TrackingRow from "@/components/extensive/TrackingCollapseGrid/TrackingRow";
@@ -75,15 +75,16 @@ const TrackingSection: FC<TrackingSectionProps> = ({
     [entries, entryType, onChange]
   );
 
+  const usesName = !isEmpty(addNameLabel);
   const addNameButton = useMemo(() => {
-    if (addNameLabel == null || onChange == null) return null;
+    if (!usesName || onChange == null) return null;
 
     return (
       <div className={classNames("flex items-center py-3", "col-span-2 border-b border-neutral-200 bg-white")}>
         <MultiActionButton
           mainActionLabel={t(addNameLabel)}
           mainActionOnClick={() => {}}
-          otherActions={...sortBy(subTypes, ({ label }) => t(label)).map(({ subtype, label }) => ({
+          otherActions={sortBy(subTypes, ({ label }) => t(label)).map(({ subtype, label }) => ({
             label: t(label),
             onClick: () => addRow(subtype),
             value: subtype
@@ -93,7 +94,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
         />
       </div>
     );
-  }, [addNameLabel, addRow, onChange, subTypes, t]);
+  }, [addNameLabel, addRow, onChange, subTypes, t, usesName]);
 
   const removeRow = useCallback(
     (index: number): void => {
@@ -135,7 +136,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
           }
           onBlur={onBlur}
           onDelete={onChange == null ? undefined : () => removeRow(entryIndex)}
-          usesName={addNameLabel != null}
+          usesName={usesName}
           {...{ entryType, label, userLabel, amount }}
         />
       ))}

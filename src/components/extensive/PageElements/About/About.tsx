@@ -42,7 +42,7 @@ const About: FC<AboutProps> = ({ title, description, links, className, onLinkCli
               size="small"
               rightIcon={<ChevronRightIcon />}
               key={link.title}
-              className="mobile:max-w-full mobile:[text-wrap:auto]"
+              className="justify-start truncate !whitespace-nowrap mobile:max-w-full mobile:[text-wrap:auto]"
               onClick={() => {
                 onLinkClick?.({ title: link.title, link: link.link });
                 onboardingAnalytics?.trackLinkClick(link.title, link.link);

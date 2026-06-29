@@ -51,9 +51,9 @@ import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/u
 
 import {
   closePolygonProgressToast,
+  completePolygonProgressToast,
   getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
-  getSubmittingProgressLabel,
   POLYGON_TOAST_IDS,
   showPolygonCompleteToast,
   showPolygonErrorToast,
@@ -350,8 +350,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         dateValueToIso: dateValueToIsoString
       });
       await finalizeSuccessfulSave(createdPolygon, { geometryChanged: true, refetchVersionsList: false });
-      closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
-      showPolygonCompleteToast(toastLabels.savingChangesComplete);
+      completePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges, toastLabels.savingChangesComplete);
       return true;
     } catch {
       closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
@@ -388,6 +387,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       return false;
     }
 
+    showPolygonProgressToast(t, toastLabels.savingChangesProgress, POLYGON_TOAST_IDS.savingChanges);
+
     try {
       const previousPolygonUuid = geometryPolygonUuid !== "" ? geometryPolygonUuid : undefined;
       const updatedPolygon = await saveExistingPolygonVersion({
@@ -403,8 +404,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         refetchVersionsList: true,
         previousPolygonUuid
       });
-      closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
-      showPolygonCompleteToast(toastLabels.savingChangesComplete);
+      completePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges, toastLabels.savingChangesComplete);
       return true;
     } catch {
       closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
@@ -544,8 +544,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           polygonCount: 1
         });
       }
-      closePolygonProgressToast(POLYGON_TOAST_IDS.downloadingSamplePlots);
-      showPolygonCompleteToast(toastLabels.downloadingSamplePlotsComplete);
+      completePolygonProgressToast(
+        POLYGON_TOAST_IDS.downloadingSamplePlots,
+        toastLabels.downloadingSamplePlotsComplete
+      );
     } catch (error) {
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloadingSamplePlots);
       showPolygonErrorToast(t("Error downloading ANR monitoring plots"));
@@ -641,8 +643,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         });
       }
       onClose?.();
-      closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
-      showPolygonCompleteToast(toastLabels.downloadingPolygonsComplete);
+      completePolygonProgressToast(POLYGON_TOAST_IDS.downloading, toastLabels.downloadingPolygonsComplete);
     } catch (error) {
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
       showPolygonErrorToast(t("Error downloading polygon"));
@@ -660,8 +661,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         showStatusToast("error", t("This polygon has already been submitted"));
         return;
       }
-
-      showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1), POLYGON_TOAST_IDS.submitting);
 
       try {
         await bulkUpdateSitePolygonStatus([polygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, comment);
@@ -683,8 +682,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         onClose?.();
         await waitForMapEditCleanup();
         await onSaved?.();
-        closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
-        showPolygonCompleteToast(toastLabels.submittingComplete);
       } catch (error) {
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
         showPolygonErrorToast(t("Error submitting polygon"));
@@ -704,8 +701,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setShouldRefetchPolygonData,
       setStatusSelectedPolygon,
       showStatusToast,
-      t,
-      toastLabels
+      t
     ]
   );
 
@@ -732,8 +728,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       onClose?.();
       await waitForMapEditCleanup();
       await onSaved?.();
-      closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
-      showPolygonCompleteToast(toastLabels.deletingComplete);
+      completePolygonProgressToast(POLYGON_TOAST_IDS.deleting, toastLabels.deletingComplete);
     } catch (error) {
       closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
       showPolygonErrorToast(t("Error deleting polygon"));

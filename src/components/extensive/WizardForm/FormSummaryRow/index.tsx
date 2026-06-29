@@ -48,7 +48,7 @@ export interface FormSummaryRowProps extends FormSummaryProps {
   nullText?: string;
 }
 
-const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
+const FormSummaryRow = ({ stepId, index, reportSummaryAnalytics, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const fieldsProvider = useFieldsProvider();
   const showValidationErrors = useShowValidationErrors();
@@ -87,6 +87,12 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   return (
     <Accordion
       variant="primary"
+      onOpenChange={open => {
+        const accordionLabel = title?.trim() ?? "";
+        if (open && accordionLabel !== "") {
+          reportSummaryAnalytics?.onAccordionExpanded(accordionLabel);
+        }
+      }}
       header={
         <AccordionHeader
           title={title ?? ""}
@@ -111,7 +117,14 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
         items={entries}
         render={entry => {
           if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "file") {
-            return <SpecialEntryRenderer entry={entry} entityName={entities[0]?.entityName} />;
+            return (
+              <SpecialEntryRenderer
+                entry={entry}
+                entityName={entities[0]?.entityName}
+                entityUUID={entities[0]?.entityUUID}
+                stepId={stepId}
+              />
+            );
           }
           return (
             <>

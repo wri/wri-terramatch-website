@@ -67,3 +67,14 @@ export const getCurrentPathEntity = () => {
 export const isEntityAwaitingApproval = (status?: string | null, updateRequestStatus?: string | null): boolean => {
   return status === "awaiting-approval" || updateRequestStatus === "awaiting-approval";
 };
+
+const ENTITY_DRAFT_STATUSES = new Set(["draft", "started", "due"]);
+
+export const isEntityDraftInProgress = (status: string | null | undefined, isSetupComplete: boolean) =>
+  status != null && ENTITY_DRAFT_STATUSES.has(status) && !isSetupComplete;
+
+export const getEntitySetupButtonLabel = (
+  translate: (message: string) => string,
+  status: string | null | undefined,
+  isSetupComplete: boolean
+) => (isEntityDraftInProgress(status, isSetupComplete) ? translate("Continue") : translate("Edit"));

@@ -137,19 +137,16 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
           }
         ]}
         suffix={
-          <div className="flex items-center gap-1.5">
-            {disturbanceReport.projectUuid != null && (
-              <Button
-                variant="borderless"
-                size="small"
-                className="underline underline-offset-2"
-                onClick={() => router.push(`/project/${disturbanceReport.projectUuid}`)}
-              >
-                {t("Project Profile")}
-              </Button>
-            )}
-            {disturbanceReport.projectUuid != null && <span className="text-sm text-theme-neutral-300">|</span>}
-          </div>
+          disturbanceReport.projectUuid != null ? (
+            <Button
+              variant="borderless"
+              size="small"
+              className="underline underline-offset-2"
+              onClick={() => router.push(`/project/${disturbanceReport.projectUuid}?tab=sites`)}
+            >
+              {t("Sites")}
+            </Button>
+          ) : null
         }
         toolbar={{
           tabBar: {

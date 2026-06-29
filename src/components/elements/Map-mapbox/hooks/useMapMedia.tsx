@@ -11,6 +11,7 @@ import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TranslatedText } from "@/i18n/types";
+import { runWithDownloadToast } from "@/utils/downloadToast";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
@@ -35,6 +36,7 @@ type UseMapMediaParams = {
   router: { isReady: boolean; asPath: string };
   alwaysShowPhotosOnMap?: boolean;
   hideMediaPopupActions?: boolean;
+  hideMediaOnMap?: boolean;
   isPolygonGeometryLoading?: boolean;
 };
 
@@ -54,36 +56,47 @@ export function useMapMedia({
   router,
   alwaysShowPhotosOnMap = false,
   hideMediaPopupActions = false,
+  hideMediaOnMap = false,
   isPolygonGeometryLoading = false
 }: UseMapMediaParams) {
   const championsMap = useChampionsMap();
   const { showPhotosOnMap } = useMapAreaContext();
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
-  const showPhotosWhileDrawerClosed = championsMap && !alwaysShowPhotosOnMap && !isPolygonEditDrawerOpen;
-  const wantsPhotosOnMap = alwaysShowPhotosOnMap || showPhotosWhileDrawerClosed || showPhotosOnMap;
+  const showPhotosWhileDrawerClosed =
+    !hideMediaOnMap && championsMap && !alwaysShowPhotosOnMap && !isPolygonEditDrawerOpen;
+  const wantsPhotosOnMap = !hideMediaOnMap && (alwaysShowPhotosOnMap || showPhotosWhileDrawerClosed || showPhotosOnMap);
   const photosVisible = wantsPhotosOnMap && !isPolygonGeometryLoading;
   const callbacksRef = useRef<MediaCallbacks | null>(null);
 
   useEffect(() => {
     const mapInstance = map.current;
-    if (mapInstance == null || !styleReady || mediaFiles == null) return;
+    if (mapInstance == null || !styleReady || hideMediaOnMap || mediaFiles == null) return;
 
     const isProjectPath = router.isReady && router.asPath.includes("project");
 
     const handleDelete = async (id: string) => {
       try {
-        await deleteMedia(id);
-        trackPolygonEvent("polygon_image_edited", {
-          ...getPolygonAnalyticsContext({
-            entityType: entityData?.entityName ?? entityData?.entityType ?? "site",
-            entityId: entityData?.entityUUID ?? entityData?.uuid
-          }),
-          polygon_id: "unknown"
-        });
-        closeModal(ModalId.DELETE_IMAGE);
+        await runWithDownloadToast(
+          {
+            downloading: t("Deleting Geotagged Photo…"),
+            complete: t("Photo Deleted"),
+            error: t("Failed to delete photo.")
+          },
+          async () => {
+            await deleteMedia(id);
+            trackPolygonEvent("polygon_image_edited", {
+              ...getPolygonAnalyticsContext({
+                entityType: entityData?.entityName ?? entityData?.entityType ?? "site",
+                entityId: entityData?.entityUUID ?? entityData?.uuid
+              }),
+              polygon_id: "unknown"
+            });
+            closeModal(ModalId.DELETE_IMAGE);
+          },
+          `media-delete-${id}`
+        );
       } catch (error) {
         Log.error(error);
-        openNotification("error", t("Error"), t("Failed to delete image."));
       }
     };
 
@@ -127,8 +140,15 @@ export function useMapMedia({
     const handleDownload = async (uuid: string, defaultFileName: string): Promise<void> => {
       showLoader();
       try {
-        await exportImage.downloadFile({ pathParams: { uuid } }, { defaultFileName });
-        openNotification("success", t("Success!"), t("Image downloaded successfully"));
+        await runWithDownloadToast(
+          {
+            downloading: t("Downloading Geotagged Photo…"),
+            complete: t("Download Complete"),
+            error: t("Download Failed")
+          },
+          () => exportImage.downloadFile({ pathParams: { uuid } }, { defaultFileName }),
+          `media-download-${uuid}`
+        );
       } catch (error) {
         Log.error("Download error:", error);
       } finally {
@@ -160,11 +180,20 @@ export function useMapMedia({
       callbacksRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mediaFiles, styleReady, styleVersion, championsMap, hideMediaPopupActions]);
+  }, [mediaFiles, styleReady, styleVersion, championsMap, hideMediaPopupActions, hideMediaOnMap]);
 
   useEffect(() => {
     const mapInstance = map.current;
-    if (mapInstance == null || !styleReady || mediaFiles == null) return;
+    if (mapInstance == null || !styleReady) return;
+
+    if (hideMediaOnMap || mediaFiles == null) {
+      if (championsMap) {
+        removeMediaMarkers(mapInstance);
+      } else {
+        removeMediaSymbolLayer(mapInstance);
+      }
+      return;
+    }
 
     const callbacks = callbacksRef.current;
     if (callbacks == null) return;
@@ -181,5 +210,5 @@ export function useMapMedia({
 
     addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [photosVisible, championsMap, styleReady, mediaFiles, hideMediaPopupActions]);
+  }, [photosVisible, championsMap, styleReady, mediaFiles, hideMediaPopupActions, hideMediaOnMap]);
 }

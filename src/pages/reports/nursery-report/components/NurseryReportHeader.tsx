@@ -22,7 +22,9 @@ const NurseryReportHeader: FC<NurseryReportHeaderProps> = ({ report, title }) =>
     entityName: "nursery-reports",
     entityUUID: report?.uuid,
     entityStatus: report?.status,
-    updateRequestStatus: report?.updateRequestStatus
+    updateRequestStatus: report?.updateRequestStatus,
+    feedback: report?.feedback,
+    useStatusModal: true
   });
 
   const frameworkSubtitle = useFrameworkTitle();

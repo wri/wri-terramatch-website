@@ -38,6 +38,11 @@ const Button = ({
           },
           "& button:active": {
             backgroundColor: `${getThemedColor("error", 400)} !important`
+          },
+          "& button:disabled": {
+            backgroundColor: `${getThemedColor("neutral", 200)} !important`,
+            borderColor: `${getThemedColor("neutral", 300)} !important`,
+            color: `${getThemedColor("neutral", 500)} !important`
           }
         }}
         className={classNameContainer}

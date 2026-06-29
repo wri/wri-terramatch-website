@@ -15,9 +15,10 @@ export type MediaSectionProps = {
   entityUUID?: string;
   type?: MediaType;
   icon?: React.ReactNode;
+  stepId?: string;
 };
 
-const MediaSection: FC<MediaSectionProps> = ({ label, files, entityName, entityUUID, type, icon }) => (
+const MediaSection: FC<MediaSectionProps> = ({ label, files, entityName, entityUUID, type, icon, stepId }) => (
   <Flex direction="column" gap={3}>
     <Text display="flex" alignItems="center" gap={1} lineHeight="normal" textStyle="300-bold" color="primary.900">
       {icon ?? <PhotosIcon boxSize={3.5} color="primary.900" />}
@@ -42,6 +43,7 @@ const MediaSection: FC<MediaSectionProps> = ({ label, files, entityName, entityU
                 entityUUID={entityUUID}
                 type={type}
                 url={file.fileUrl}
+                stepId={stepId}
               />
             </GridItem>
           );

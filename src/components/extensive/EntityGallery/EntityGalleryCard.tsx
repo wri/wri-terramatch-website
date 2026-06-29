@@ -34,6 +34,13 @@ export type EntityGalleryAssetDownload = {
   uuid: string;
 };
 
+const REPORT_GALLERY_ENTITIES = ["siteReports", "projectReports", "nurseryReports", "disturbanceReports"] as const;
+
+type ReportGalleryEntity = (typeof REPORT_GALLERY_ENTITIES)[number];
+
+const isReportGalleryEntity = (entity: string): entity is ReportGalleryEntity =>
+  (REPORT_GALLERY_ENTITIES as readonly string[]).includes(entity);
+
 export interface EntityGalleryCardProps {
   modelTitle: TranslatedText;
   modelName: EntityName;
@@ -41,6 +48,9 @@ export interface EntityGalleryCardProps {
   entityData: any;
   emptyStateContent: TranslatedText;
   assetDownload?: EntityGalleryAssetDownload;
+  /** Media/upload/download entity when it differs from modelName (e.g. site report gallery on a site map). */
+  galleryEntity?: SupportedEntity;
+  galleryUuid?: string;
 }
 
 const EntityGalleryCard = ({
@@ -49,7 +59,9 @@ const EntityGalleryCard = ({
   modelUUID,
   entityData,
   emptyStateContent,
-  assetDownload
+  assetDownload,
+  galleryEntity,
+  galleryUuid
 }: EntityGalleryCardProps) => {
   const { openModal, closeModal } = useModalContext();
   const contextMapArea = useMapAreaContext();
@@ -68,9 +80,16 @@ const EntityGalleryCard = ({
   const imageGalleryRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const queryUuid = router.query.uuid as string;
-  const isSiteReport = modelTitle === "Site Report";
-  const isSiteRelated = isSiteReport || modelTitle === "Site";
+  const isLegacySiteReportGallery = modelTitle === "Site Report";
+  const isSiteRelated = isLegacySiteReportGallery || modelTitle === "Site";
   const entityUUID = isSiteRelated ? modelUUID : queryUuid;
+
+  const isReportGalleryContext = galleryEntity != null || isLegacySiteReportGallery || isReportGalleryEntity(modelName);
+
+  const resolvedGalleryEntity: SupportedEntity =
+    galleryEntity ?? (isLegacySiteReportGallery ? "siteReports" : (modelName as SupportedEntity));
+
+  const resolvedGalleryUuid = galleryUuid ?? (isReportGalleryContext ? queryUuid : entityUUID);
   const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
     useMemo<HookProps<typeof useMedias>>(() => {
       const queryFilter: HookFilters<typeof useMedias> = {};
@@ -92,8 +111,8 @@ const EntityGalleryCard = ({
       }
 
       return {
-        entity: isSiteReport ? "siteReports" : (modelName as SupportedEntity),
-        uuid: isSiteReport ? queryUuid : entityUUID,
+        entity: resolvedGalleryEntity,
+        uuid: resolvedGalleryUuid,
         pageNumber: pagination.page,
         pageSize: pagination.pageSize,
         sortField: "createdAt",
@@ -101,16 +120,14 @@ const EntityGalleryCard = ({
         filter: queryFilter
       };
     }, [
-      entityUUID,
       filter,
       filters.isPublic,
       filters.modelType,
       isGeotagged,
-      isSiteReport,
-      modelName,
       pagination.page,
       pagination.pageSize,
-      queryUuid,
+      resolvedGalleryEntity,
+      resolvedGalleryUuid,
       searchString,
       sortOrder
     ])
@@ -183,9 +200,9 @@ const EntityGalleryCard = ({
             closeModal(ModalId.UPLOAD_IMAGES);
           }
         }}
-        entity={modelName as FileUploadEntity}
+        entity={resolvedGalleryEntity as FileUploadEntity}
         collection="media"
-        entityData={entityData}
+        entityData={{ ...entityData, uuid: resolvedGalleryUuid }}
         setErrorMessage={message => {
           Log.error(message);
         }}
@@ -195,9 +212,18 @@ const EntityGalleryCard = ({
 
   const assetDownloadConfig =
     assetDownload ??
-    (!isSiteReport && ASSET_DOWNLOAD_ENTITIES.includes(modelName as AssetDownloadEntity)
-      ? { entity: modelName as AssetDownloadEntity, uuid: modelUUID }
+    (ASSET_DOWNLOAD_ENTITIES.includes(resolvedGalleryEntity as AssetDownloadEntity)
+      ? { entity: resolvedGalleryEntity as AssetDownloadEntity, uuid: resolvedGalleryUuid }
       : undefined);
+
+  const hasActiveFilters =
+    isGeotagged !== null ||
+    searchString !== "" ||
+    filters.isPublic !== undefined ||
+    filters.modelType !== undefined ||
+    filter != null;
+
+  const showGalleryEmptyState = indexTotal === 0 && !hasActiveFilters;
 
   return (
     <>
@@ -226,7 +252,7 @@ const EntityGalleryCard = ({
           />
         </PageCard>
       )}
-      {indexTotal === 0 ? (
+      {showGalleryEmptyState ? (
         <div ref={imageGalleryRef}>
           <EmptyState
             title={t("Image Gallery is Empty")}

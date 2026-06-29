@@ -1,15 +1,8 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { startCase } from "lodash";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useMemo } from "react";
 
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { FormEntity } from "@/connections/Form";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
-import { useModalContext } from "@/context/modal.provider";
 import {
   DisturbanceReportFullDto,
   FinancialReportFullDto,
@@ -18,14 +11,8 @@ import {
   SiteReportFullDto,
   SrpReportFullDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { singularEntityName, v3EntityName } from "@/helpers/entity";
-import {
-  getReportExportConfirmationCopy,
-  isReportDownloadConfirmationModel
-} from "@/helpers/reportDownloadConfirmation";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
-import { useOpenDownloadConfirmation } from "@/hooks/useOpenDownloadConfirmation";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { formatMonthYear } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
@@ -52,66 +39,35 @@ export interface ReportHeaderProps {
 const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName }) => {
   const t = useT();
   const router = useRouter();
-  const { openModal } = useModalContext();
-  const formEntityName = v3EntityName(entityName) as FormEntity;
+
+  const entityTitle = useMemo(() => {
+    if (entityName === "site-report") return (report as SiteReportFullDto)?.siteName ?? "";
+    if (entityName === "nursery-report") return (report as NurseryReportFullDto)?.nurseryName ?? "";
+    if (entityName === "project-report") return (report as ProjectReportFullDto)?.projectName ?? "";
+    if (entityName === "disturbance-report") return (report as DisturbanceReportFullDto)?.projectName ?? "";
+    if (entityName === "financial-report") return (report as FinancialReportFullDto)?.organisationName ?? "";
+    if (entityName === "srp-report") return (report as SrpReportFullDto)?.projectName ?? "";
+  }, [entityName, report]);
+
+  const reportTitle = useMemo(() => {
+    if (entityName === "site-report") return (report as SiteReportFullDto)?.reportTitle ?? "";
+    if (entityName === "nursery-report") return (report as NurseryReportFullDto)?.reportTitle ?? "";
+    if (entityName === "project-report") return (report as ProjectReportFullDto)?.reportTitle ?? "";
+    if (entityName === "financial-report") return (report as FinancialReportFullDto)?.reportTitle ?? "";
+    if (entityName === "srp-report") return (report as SrpReportFullDto)?.reportTitle ?? "";
+  }, [entityName, report]);
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler(entityName, report.uuid);
-  const openDownloadConfirmation = useOpenDownloadConfirmation();
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName,
     entityUUID: report.uuid,
     entityStatus: report.status,
-    updateRequestStatus: report.updateRequestStatus
+    updateRequestStatus: report.updateRequestStatus,
+    feedback: report.feedback,
+    useStatusModal: true,
+    entityTitle: entityTitle ?? "",
+    reportTitle: reportTitle ?? ""
   });
-
-  const needMoreInformation =
-    report.updateRequestStatus === NEEDS_MORE_INFORMATION || report.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval = report.updateRequestStatus === AWAITING_APPROVAL || report.status === AWAITING_APPROVAL;
-  const statusProps = useMemo(() => getStatusProps(t, report, report.status), [t, report]);
-
-  const handleDownloadClick = useCallback(() => {
-    const entityModel = v3EntityName(entityName);
-
-    if (!isReportDownloadConfirmationModel(entityModel)) {
-      void handleExport();
-      return;
-    }
-
-    const entityLabel = startCase(singularEntityName(entityName));
-    const { title, content } = getReportExportConfirmationCopy(entityLabel);
-
-    openDownloadConfirmation({
-      title,
-      content,
-      onConfirm: handleExport
-    });
-  }, [entityName, handleExport, openDownloadConfirmation]);
-
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval && statusProps != null) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={report.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName={formEntityName}
-          entityUuid={report.uuid}
-        />
-      );
-    } else {
-      handleEdit();
-    }
-  }, [
-    awaitingApproval,
-    formEntityName,
-    handleEdit,
-    needMoreInformation,
-    openModal,
-    report.feedback,
-    report.uuid,
-    statusProps
-  ]);
 
   return (
     <>
@@ -124,7 +80,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
             color="neutral.900"
             className="-ml-[0.5rem] flex items-center gap-2 mobile:w-full mobile:max-w-full mobile:overflow-x-auto"
           >
-            {formEntityName !== "financialReports" && "projectUuid" in report && (
+            {entityName !== "financial-report" && "projectUuid" in report && (
               <>
                 <Button
                   variant="borderless"
@@ -174,14 +130,14 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
             )}
           </Flex>
           <Flex gap={2} alignItems="flex-start" className="mobile:w-full">
-            <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={handleEditClick}>
+            <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={() => handleEdit()}>
               {t("Edit")}
             </Button>
             <Button
               variant="secondary"
               size="small"
               leftIcon={<DownloadIcon />}
-              onClick={handleDownloadClick}
+              onClick={() => void handleExport()}
               loading={exportLoader}
             >
               {t("Download")}

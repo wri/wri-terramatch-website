@@ -4,19 +4,17 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import { Component, ErrorInfo, FC, ReactNode, useCallback, useMemo, useState } from "react";
 
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { AWAITING_APPROVAL } from "@/constants/statuses";
 import { isTerrafund, toFramework } from "@/context/framework.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getEntitySetupButtonLabel } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
@@ -26,6 +24,7 @@ import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSu
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { ChevronRightIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
+import { ONBOARDING_CARD_TYPES } from "@/utils/analytics/onboardingCardAnalytics";
 import Log from "@/utils/log";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
@@ -78,38 +77,19 @@ const NurseryReportOverviewFallback: FC = () => {
 const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }) => {
   const t = useT();
   const router = useRouter();
-  const { openModal } = useModalContext();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
   const nurseryReportAboutContent = useNurseryReportAboutContent();
 
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "nursery-reports",
     entityUUID: report.uuid,
     entityStatus: report.status,
-    updateRequestStatus: report.updateRequestStatus
+    updateRequestStatus: report.updateRequestStatus,
+    entityTitle: report.nurseryName ?? "",
+    reportTitle: report.reportTitle ?? "",
+    feedback: report.feedback,
+    useStatusModal: true
   });
-
-  const needMoreInformation =
-    report.updateRequestStatus === NEEDS_MORE_INFORMATION || report.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval = report.updateRequestStatus === AWAITING_APPROVAL || report.status === AWAITING_APPROVAL;
-  const statusProps = useMemo(() => getStatusProps(t, report, report.status), [t, report]);
-
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval && statusProps != null) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={report.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="nurseryReports"
-          entityUuid={report.uuid}
-        />
-      );
-    } else {
-      handleEdit();
-    }
-  }, [awaitingApproval, handleEdit, needMoreInformation, openModal, report.feedback, report.uuid, statusProps]);
 
   const aboutContentItem = useMemo(() => {
     if (report.frameworkKey == null) return nurseryReportAboutContent[0];
@@ -129,7 +109,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
     [router]
   );
 
-  const editButtonLabel = report.status === "approved" && isReportSetupComplete ? t("Edit") : t("Continue");
+  const editButtonLabel = getEntitySetupButtonLabel(t, report.status, isReportSetupComplete);
 
   const statusTag = useMemo(() => {
     if (report.updateRequestStatus === AWAITING_APPROVAL) {
@@ -155,15 +135,16 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
 
   return (
     <PageContent>
+      {EditModals}
       <Flex gap={7} className="flex-col">
         <Flex gap={7}>
           <Flex gap={5} className={classNames(isTerrafundFramework ? "flex-row" : "flex-col", "flex-[2]")}>
             <PageItem
-              title={t("Key Indicators & Insights")}
+              title={t("Key Indicators and Insights")}
               buttonProps={{
                 variant: "secondary",
                 size: "small",
-                children: t("View Progress & Goals"),
+                children: t("View Indicator & Insights"),
                 rightIcon: <ChevronRightIcon />,
                 onClick: createMetricsCardCtaHandler({ entityType: "nursery-report", entityId: report.uuid }, () =>
                   goToTab("goals")
@@ -216,57 +197,70 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
               size: "small",
               children: editButtonLabel,
               rightIcon: <ChevronRightIcon />,
-              onClick: handleEditClick
+              onClick: () => handleEdit()
             }}
             tag={statusTag}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <EntitySetUpSection onStatusChange={setIsReportSetupComplete} entity={report} type="nurseryReports" />
+              <EntitySetUpSection
+                onStatusChange={setIsReportSetupComplete}
+                onEditStep={handleEdit}
+                entity={report}
+                type="nurseryReports"
+                entityTitle={report.nurseryName ?? ""}
+                reportTitle={report.reportTitle ?? ""}
+              />
             </Box>
           </PageItem>
         </Flex>
         <PageItem title={t("About Nursery Report")}>
-          <About
-            className="flex-row gap-14"
-            description={
-              <Flex direction="column" gap={5} maxWidth="65%">
-                {aboutContentItem?.paragraphs.map((paragraph, index) => {
-                  const isFirstParagraph = index === 0;
-                  const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
+          <OnboardingCard
+            cardType={ONBOARDING_CARD_TYPES.MRV_GUIDANCE}
+            entityType="nursery-report"
+            entityId={report.uuid}
+          >
+            <About
+              className="flex-row gap-14"
+              description={
+                <Flex direction="column" gap={5} maxWidth="65%">
+                  {aboutContentItem?.paragraphs.map((paragraph, index) => {
+                    const isFirstParagraph = index === 0;
+                    const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
 
-                  if (isFirstParagraph) {
+                    if (isFirstParagraph) {
+                      return (
+                        <Text key={index} color="neutral.900" textStyle="300">
+                          <strong>{t("Nursery Report")} </strong> {paragraph}
+                        </Text>
+                      );
+                    }
+
+                    if (isLastParagraph) {
+                      return (
+                        <ContactSupport
+                          key={index}
+                          message={paragraph}
+                          subject={t("Support Request for Nursery Report")}
+                        />
+                      );
+                    }
+
                     return (
                       <Text key={index} color="neutral.900" textStyle="300">
-                        <strong>{t("Nursery Report")} </strong> {paragraph}
+                        {paragraph}
                       </Text>
                     );
-                  }
-
-                  if (isLastParagraph) {
-                    return (
-                      <ContactSupport
-                        key={index}
-                        message={paragraph}
-                        subject={t("Support Request for Nursery Report")}
-                      />
-                    );
-                  }
-
-                  return (
-                    <Text key={index} color="neutral.900" textStyle="300">
-                      {paragraph}
-                    </Text>
-                  );
-                })}
-              </Flex>
-            }
-            links={
-              aboutContentItem?.links.map(link => ({
-                title: t(link.title),
-                link: link.link
-              })) ?? []
-            }
-          />
+                  })}
+                </Flex>
+              }
+              links={
+                aboutContentItem?.links.map(link => ({
+                  title: t(link.title),
+                  link: link.link
+                })) ?? []
+              }
+            />
+          </OnboardingCard>
         </PageItem>
       </Flex>
     </PageContent>

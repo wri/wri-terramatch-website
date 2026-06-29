@@ -14,8 +14,8 @@ export const getReportModelLabel = (model: ReportDownloadConfirmationModel) => {
   return labels[model];
 };
 
-export const getReportExportConfirmationCopy = (entityLabel: string) => ({
-  title: `Download ${entityLabel}`,
+export const getReportExportConfirmationCopy = () => ({
+  title: `Download complete`,
   content:
     "Click the button below to download this report. All available attributes - including the report identifier (UUID) - are included."
 });

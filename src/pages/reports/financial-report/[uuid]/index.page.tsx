@@ -121,17 +121,27 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
         ]}
         suffix={
           <div className="flex items-center gap-1.5">
+            <Button
+              variant="borderless"
+              size="small"
+              className="underline underline-offset-2"
+              onClick={() => router.push("/my-projects")}
+            >
+              {t("Projects")}
+            </Button>
             {financialReport.organisationUuid != null && (
-              <Button
-                variant="borderless"
-                size="small"
-                className="underline underline-offset-2"
-                onClick={() => router.push(`/organization/${financialReport.organisationUuid}`)}
-              >
-                {t("Organisation Profile")}
-              </Button>
+              <>
+                <span className="text-sm text-theme-neutral-300">|</span>
+                <Button
+                  variant="borderless"
+                  size="small"
+                  className="underline underline-offset-2"
+                  onClick={() => router.push(`/organization/${financialReport.organisationUuid}`)}
+                >
+                  {t("Organisation Profile")}
+                </Button>
+              </>
             )}
-            {financialReport.organisationUuid != null && <span className="text-sm text-theme-neutral-300">|</span>}
           </div>
         }
         toolbar={{
