@@ -13,10 +13,53 @@ export interface PolygonFixabilityResult {
   overlapDetails: OverlapExtraInfo[];
 }
 
+const MAX_OVERLAP_PERCENTAGE = 3.5;
+const MAX_OVERLAP_AREA_HECTARES = 0.118;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  value != null && typeof value === "object" && !Array.isArray(value);
+
+const toNumber = (value: unknown): number | null => {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
+};
+
+const toStringValue = (value: unknown): string => (typeof value === "string" ? value : "");
+
+const normalizeOverlapInfo = (value: unknown): OverlapExtraInfo | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const percentage = toNumber(value.percentage);
+  const intersectionArea = toNumber(value.intersectionArea);
+
+  if (percentage == null || intersectionArea == null) {
+    return null;
+  }
+
+  return {
+    polyUuid: toStringValue(value.polyUuid),
+    polyName: toStringValue(value.polyName),
+    percentage,
+    intersectionArea,
+    intersectSmaller: value.intersectSmaller === true,
+    siteName: toStringValue(value.siteName)
+  };
+};
+
 export const checkPolygonFixability = (
-  extraInfo: any[] | Record<string, any> | null | undefined
+  extraInfo: unknown[] | Record<string, unknown> | null | undefined
 ): PolygonFixabilityResult => {
-  if (!extraInfo) {
+  if (extraInfo == null) {
     return {
       canBeFixed: false,
       reasons: ["No overlap data available"],
@@ -25,30 +68,51 @@ export const checkPolygonFixability = (
   }
 
   const overlapData = Array.isArray(extraInfo) ? extraInfo : [extraInfo];
+  const overlapDetails = overlapData
+    .map(overlap => normalizeOverlapInfo(overlap))
+    .filter((overlap): overlap is OverlapExtraInfo => overlap != null);
 
-  const overlapDetails: OverlapExtraInfo[] = overlapData;
+  if (overlapDetails.length === 0) {
+    return {
+      canBeFixed: false,
+      reasons: ["No overlap data available"],
+      overlapDetails: []
+    };
+  }
+
   const reasons: string[] = [];
-  let canBeFixed = true;
+  let canBeFixed = false;
 
   for (const overlap of overlapDetails) {
-    const percentageValid = overlap.percentage <= 3.5;
-    const areaValid = overlap.intersectionArea ? overlap.intersectionArea <= 0.1 : true;
+    const percentageValid = overlap.percentage <= MAX_OVERLAP_PERCENTAGE;
+    const areaValid = overlap.intersectionArea <= MAX_OVERLAP_AREA_HECTARES;
+    const hasPartner = overlap.polyUuid !== "";
+    const overlapIsFixable = percentageValid && areaValid && hasPartner;
 
-    if (!percentageValid) {
-      canBeFixed = false;
-      reasons.push(
-        `Overlap percentage (${overlap.percentage.toFixed(2)}%) exceeds 3.5% limit for polygon "${overlap.polyName}"`
-      );
+    if (overlapIsFixable) {
+      canBeFixed = true;
+      continue;
     }
 
-    if (overlap.intersectionArea && !areaValid) {
-      canBeFixed = false;
+    if (!percentageValid) {
       reasons.push(
-        `Overlap area (${overlap.intersectionArea.toFixed(4)} ha) exceeds 0.1 ha limit for polygon "${
+        `Overlap percentage (${overlap.percentage.toFixed(2)}%) exceeds ${MAX_OVERLAP_PERCENTAGE}% limit for polygon "${
           overlap.polyName
         }"`
       );
     }
+
+    if (!areaValid) {
+      reasons.push(
+        `Overlap area (${overlap.intersectionArea.toFixed(
+          4
+        )} ha) exceeds ${MAX_OVERLAP_AREA_HECTARES} ha limit for polygon "${overlap.polyName}"`
+      );
+    }
+  }
+
+  if (!canBeFixed && reasons.length === 0) {
+    reasons.push("No fixable overlaps found for this polygon");
   }
 
   return {
@@ -59,15 +123,27 @@ export const checkPolygonFixability = (
 };
 
 export const checkPolygonsFixability = (
-  polygons: Array<{ extra_info?: any[] | Record<string, any> | null }>
+  polygons: Array<{ extra_info?: unknown[] | Record<string, unknown> | null }>
 ): {
   fixableCount: number;
   totalCount: number;
-  fixablePolygons: Array<{ polygon: any; result: PolygonFixabilityResult }>;
-  unfixablePolygons: Array<{ polygon: any; result: PolygonFixabilityResult }>;
+  fixablePolygons: Array<{
+    polygon: { extra_info?: unknown[] | Record<string, unknown> | null };
+    result: PolygonFixabilityResult;
+  }>;
+  unfixablePolygons: Array<{
+    polygon: { extra_info?: unknown[] | Record<string, unknown> | null };
+    result: PolygonFixabilityResult;
+  }>;
 } => {
-  const fixablePolygons: Array<{ polygon: any; result: PolygonFixabilityResult }> = [];
-  const unfixablePolygons: Array<{ polygon: any; result: PolygonFixabilityResult }> = [];
+  const fixablePolygons: Array<{
+    polygon: { extra_info?: unknown[] | Record<string, unknown> | null };
+    result: PolygonFixabilityResult;
+  }> = [];
+  const unfixablePolygons: Array<{
+    polygon: { extra_info?: unknown[] | Record<string, unknown> | null };
+    result: PolygonFixabilityResult;
+  }> = [];
 
   for (const polygon of polygons) {
     const result = checkPolygonFixability(polygon.extra_info ?? null);
@@ -90,7 +166,7 @@ export const checkPolygonsFixability = (
 export const getFixabilitySummaryMessage = (
   fixableCount: number,
   totalCount: number,
-  t: (key: string, options?: any) => string
+  t: (key: string, options?: Record<string, unknown>) => string
 ): string => {
   if (fixableCount === 0) {
     return t("No polygons can be fixed. All overlaps exceed the fixable limits.");

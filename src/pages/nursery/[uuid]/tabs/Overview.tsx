@@ -15,7 +15,7 @@ import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
+import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 import ChevronRightIcon from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
@@ -28,7 +28,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { openModal } = useModalContext();
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "nurseries",
     entityUUID: nursery.uuid,
     entityStatus: nursery.status ?? "draft",
@@ -75,6 +75,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
 
   return (
     <PageContent>
+      {EditModals}
       <Flex gap={7} className="flex-col sm:flex-row">
         <PageItem
           title={t("Key Indicators")}
@@ -122,10 +123,6 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
               </Text>
             }
             links={[
-              {
-                title: t("Use the TerraFund Profile Creation Checklists"),
-                link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/45890074377755-Checklists-Tips-for-TerraFund-Project-Nursery-and-Site-Establishment"
-              },
               {
                 title: t("Create a Nursery Profile"),
                 link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/12512665359899-How-to-Create-a-Nursery-Profile"

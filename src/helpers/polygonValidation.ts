@@ -7,6 +7,22 @@ import {
   WITHIN_COUNTRY_CRITERIA_ID
 } from "@/types/validation";
 
+export const isPolygonValidationChecked = (validationStatus: string | null | undefined): boolean => {
+  if (validationStatus == null || validationStatus === "") {
+    return false;
+  }
+
+  return validationStatus !== "notChecked" && validationStatus !== "not_checked";
+};
+
+export const hasValidationCriteria = (validation: ValidationDto | undefined): validation is ValidationDto =>
+  validation != null && (validation.criteriaList?.length ?? 0) > 0;
+
+export const shouldDisplayValidationCriteria = (
+  validation: ValidationDto | undefined,
+  validationStatus: string | null | undefined
+): validation is ValidationDto => isPolygonValidationChecked(validationStatus) && hasValidationCriteria(validation);
+
 export const parseV3ValidationData = (criteriaData: ValidationDto): ICriteriaCheckItem[] => {
   const existingValidations = new Map<number, ICriteriaCheckItem>(
     criteriaData.criteriaList.map((criteria: ValidationCriteriaDto) => [

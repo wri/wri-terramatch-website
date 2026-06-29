@@ -31,7 +31,7 @@ const meta: Meta<typeof List> = {
     },
     items: {
       description:
-        "Array of ListItemProps — each item supports: label, caption, icon, value, variant, disabled, isExpanded, isHighlighted, onItemClick, ariaLabel"
+        "Array of ListItemProps — each item supports: label, caption, icon, value (string), variant, disabled, isExpanded, isHighlighted, onItemClick, ariaLabel"
     }
   }
 };
@@ -67,7 +67,7 @@ export const DataListItems: Story = {
         ariaLabel: "Item 3",
         icon: <TreeCircleIcon className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 3"),
-        value: "XXX,XXX"
+        value: "Draft"
       }
     ]
   }

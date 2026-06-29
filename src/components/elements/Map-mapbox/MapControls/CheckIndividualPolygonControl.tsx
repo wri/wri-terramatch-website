@@ -15,6 +15,7 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
+import { trackPolygonRunValidationClicked } from "@/utils/polygonAnalytics";
 import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
 import Button from "../../Button/Button";
@@ -78,8 +79,8 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
       hideLoader();
       openNotification(
         "success",
-        t("Please update and re-run if validations fail."),
-        t("Success! TerraMatch reviewed the polygon")
+        t("Success! TerraMatch reviewed the polygon"),
+        t("Please update and re-run if validations fail.")
       );
       trackPolygonEvent("polygon_validation_run", {
         ...getPolygonAnalyticsContext({ entityType: entityTypeFromScope }),
@@ -194,7 +195,14 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
       <Button
         variant="text"
         className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-tertiary-600 bg-tertiary-600 p-2 text-white hover:border-white"
-        onClick={() => setClickedValidation(true)}
+        onClick={() => {
+          const polygonUuid = editPolygon?.uuid ?? "";
+          trackPolygonRunValidationClicked({
+            siteUuid: entityUuidFromScope ?? "",
+            polygonIds: polygonUuid !== "" ? [polygonUuid] : []
+          });
+          setClickedValidation(true);
+        }}
       >
         {t("Check Polygon")}
       </Button>

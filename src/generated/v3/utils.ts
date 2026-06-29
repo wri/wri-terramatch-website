@@ -20,6 +20,7 @@ import { Dictionary, isObject } from "lodash";
 import qs, { ParsedQs } from "qs";
 import { getAccessToken, removeAccessToken } from "@/admin/apiProvider/utils/token";
 import { downloadFileBlob, downloadFileUrl } from "@/utils/network";
+import { NextRouter } from "next/router";
 
 export type ErrorPayload = { statusCode: number; message: string };
 export type ErrorWrapper<TError extends undefined | { payload: ErrorPayload }> =
@@ -85,10 +86,12 @@ export const getStableQuery = (queryParams?: FetchParams, replaceEmptyBrackets =
   for (const key of keys) {
     if (queryParams[key] == null) delete queryParams[key];
   }
-  // guarantee order of array query params.
   for (const [key, value] of Object.entries(queryParams)) {
     // Copy the array in case the original is read only.
     if (Array.isArray(value)) queryParams[key] = [...value].sort() as FetchParamValue[] | FetchParams[];
+    if (value instanceof Date) {
+      (queryParams as Record<string, unknown>)[key] = value.toISOString();
+    }
   }
 
   const query = qs.stringify(queryParams, { arrayFormat: "indices", sort: (a, b) => a.localeCompare(b) });
@@ -158,6 +161,17 @@ export class V3ApiEndpoint<
       () => undefined,
       () => undefined
     );
+  }
+
+  async fetchAwait(variables: TVariables, headers?: THeaders): Promise<TResponse> {
+    const fullUrl = resolveUrl(this.url, variables);
+    const failure = this.fetchFailedSelector(variables)(ApiSlice.currentState);
+
+    if (failure != null) {
+      ApiSlice.clearPending(fullUrl, this.method);
+    }
+
+    return await this.executeRequest(variables, headers);
   }
 
   /**
@@ -327,11 +341,17 @@ const isPendingError = (error: any): error is PendingError => {
 // in order to avoid importing anything from connections in this file, which can cause a circular
 // dependency resolution problem.
 
-export const logout = () => {
+export const logout = (router?: NextRouter) => {
   removeAccessToken();
   // When we log out, remove all cached API resources so that when we log in again, these resources
   // are freshly fetched from the BE.
-  ApiSlice.clearApiCache();
+  if (router == null) {
+    ApiSlice.clearApiCache();
+  } else {
+    router.push("/auth/login").then(() => {
+      ApiSlice.clearApiCache();
+    });
+  }
 };
 
 async function dispatchRequest<TResponse>(url: string, requestInit: RequestInit) {

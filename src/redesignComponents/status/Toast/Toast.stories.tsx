@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button, showToast } from "@worldresources/wri-design-systems";
+import { Button, closeToast, showToast } from "@worldresources/wri-design-systems";
 
 const meta: Meta = {
   title: "Redesign Components/Status/Toast",
@@ -138,6 +138,52 @@ export const WithAction: Story = {
   )
 };
 
+export const ManualClose: Story = {
+  decorators: [
+    () => (
+      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+        <Button
+          variant="primary"
+          onClick={() =>
+            showToast({
+              id: "show-toast-id",
+              label: "Label",
+              caption: "Caption",
+              type: "loading",
+              placement: "bottom"
+            })
+          }
+        >
+          Show
+        </Button>
+        <Button variant="secondary" onClick={() => closeToast("show-toast-id")}>
+          Close
+        </Button>
+      </div>
+    )
+  ]
+};
+
+export const CustomWidth: Story = {
+  decorators: [
+    () => (
+      <Button
+        variant="primary"
+        onClick={() =>
+          showToast({
+            label: "Custom Width",
+            type: "info",
+            placement: "bottom",
+            maxWidth: "auto"
+          })
+        }
+      >
+        Show
+      </Button>
+    )
+  ]
+};
+
 export const AllPlacements: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
@@ -160,6 +206,14 @@ export const AllPlacements: Story = {
       <Button
         variant="primary"
         onClick={() =>
+          showToast({ label: "Label", caption: "Caption", type: "info", placement: "top", duration: 3000 })
+        }
+      >
+        Top Center
+      </Button>
+      <Button
+        variant="primary"
+        onClick={() =>
           showToast({ label: "Label", caption: "Caption", type: "info", placement: "bottom-start", duration: 3000 })
         }
       >
@@ -172,6 +226,14 @@ export const AllPlacements: Story = {
         }
       >
         Bottom End
+      </Button>
+      <Button
+        variant="primary"
+        onClick={() =>
+          showToast({ label: "Label", caption: "Caption", type: "info", placement: "bottom", duration: 3000 })
+        }
+      >
+        Bottom Center
       </Button>
     </div>
   )

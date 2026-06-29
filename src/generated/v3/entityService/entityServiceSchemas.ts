@@ -410,6 +410,10 @@ export type SiteReportLightDto = {
    * The associated site uuid
    */
   siteUuid: string | null;
+  /**
+   * The associated project report uuid
+   */
+  projectReportUuid: string | null;
   frameworkKey: string | null;
   /**
    * Report status for this site report
@@ -474,6 +478,10 @@ export type NurseryReportLightDto = {
    * The associated nursery uuid
    */
   nurseryUuid: string | null;
+  /**
+   * The associated project report uuid
+   */
+  projectReportUuid: string | null;
   frameworkKey: string | null;
   /**
    * Report status for this nursery report
@@ -947,6 +955,7 @@ export type AuditStatusDto = {
    * @format date-time
    */
   dateCreated: string | null;
+  isRead: boolean;
   attachments: MediaDto[];
 };
 
@@ -973,6 +982,7 @@ export type UpdateAuditStatusAttributes = {
   status?: string | null;
   isActive?: boolean | null;
   requestRemoved?: boolean | null;
+  isRead?: boolean;
 };
 
 export type UpdateAuditStatusData = {
@@ -1363,6 +1373,8 @@ export type DisturbanceReportLightDto = {
    */
   organisationUuid: string | null;
   intensity: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
   /**
    * @format date-time
    */
@@ -1483,6 +1495,10 @@ export type ProjectFullDto = {
   budget: number | null;
   history: string | null;
   objectives: string | null;
+  /**
+   * Long-form project summary for dashboard display
+   */
+  projectSummary: string | null;
   environmentalGoals: string | null;
   socioeconomicGoals: string | null;
   sdgsImpacted: string | null;
@@ -1895,6 +1911,10 @@ export type NurseryReportFullDto = {
    * The associated nursery uuid
    */
   nurseryUuid: string | null;
+  /**
+   * The associated project report uuid
+   */
+  projectReportUuid: string | null;
   frameworkKey: string | null;
   /**
    * Report status for this nursery report
@@ -1976,6 +1996,10 @@ export type SiteReportFullDto = {
    * The associated site uuid
    */
   siteUuid: string | null;
+  /**
+   * The associated project report uuid
+   */
+  projectReportUuid: string | null;
   frameworkKey: string | null;
   /**
    * Report status for this site report
@@ -2230,6 +2254,9 @@ export type FinancialReportFullDto = {
    * The associated organisation status
    */
   organisationStatus: string | null;
+  reportTitle: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
   fundingTypes: FundingTypeDto[] | null;
 };
 
@@ -2264,6 +2291,8 @@ export type DisturbanceReportFullDto = {
    */
   organisationUuid: string | null;
   intensity: string | null;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
   /**
    * @format date-time
    */
@@ -2371,6 +2400,13 @@ export type SrpReportFullDto = {
   answers: string | null;
   restorationPartnersDescription: string | null;
   totalUniqueRestorationPartners: number;
+  createdByFirstName: string | null;
+  createdByLastName: string | null;
+  reportTitle: string | null;
+  /**
+   * The associated project report uuid
+   */
+  projectReportUuid: string | null;
   media: MediaDto[];
 };
 
@@ -3582,6 +3618,7 @@ export type ApplicationHistoryEntryDto = {
     | "reminder-sent"
     | "polygon-data-submission"
     | "ready-for-baseline"
+    | "polygon-validation"
     | null;
   status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
   /**

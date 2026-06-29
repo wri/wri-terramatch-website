@@ -20,7 +20,7 @@ const SocioEconomicReportHeader = ({ socioEconomicReport }: SocioEconomicReportH
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("srp-reports", socioEconomicReport.uuid);
 
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "srp-reports",
     entityUUID: socioEconomicReport?.uuid,
     entityStatus: socioEconomicReport?.status,
@@ -36,22 +36,25 @@ const SocioEconomicReportHeader = ({ socioEconomicReport }: SocioEconomicReportH
   ];
 
   return (
-    <PageHeader className="h-[203px]" title={title} subtitles={subtitles} hasBackButton={false}>
-      {socioEconomicReport?.status === "started" && (
-        <Button as={Link} href={`/entity/srp-reports/edit/${socioEconomicReport?.uuid}`}>
-          {t("Continue Report")}
-        </Button>
-      )}
-      {socioEconomicReport?.status !== "started" && (
-        <div className="flex gap-4">
-          <Button variant="secondary" onClick={handleExport}>
-            {t("Export")}
-            <InlineLoader loading={exportLoader} />
+    <>
+      {EditModals}
+      <PageHeader className="h-[203px]" title={title} subtitles={subtitles} hasBackButton={false}>
+        {socioEconomicReport?.status === "started" && (
+          <Button as={Link} href={`/entity/srp-reports/edit/${socioEconomicReport?.uuid}`}>
+            {t("Continue Report")}
           </Button>
-          <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
-        </div>
-      )}
-    </PageHeader>
+        )}
+        {socioEconomicReport?.status !== "started" && (
+          <div className="flex gap-4">
+            <Button variant="secondary" onClick={handleExport}>
+              {t("Export")}
+              <InlineLoader loading={exportLoader} />
+            </Button>
+            <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
+          </div>
+        )}
+      </PageHeader>
+    </>
   );
 };
 

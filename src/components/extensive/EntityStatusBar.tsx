@@ -23,7 +23,7 @@ const StatusMapping = {
   "awaiting-approval": "awaiting",
   "needs-more-information": "warning"
 } as const;
-type StatusBarStatus = keyof typeof StatusMapping;
+export type StatusBarStatus = keyof typeof StatusMapping;
 
 const hasUpdateRequest = ({ updateRequestStatus }: EntityFullDto) =>
   updateRequestStatus === "awaiting-approval" || updateRequestStatus === "needs-more-information";

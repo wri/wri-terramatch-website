@@ -4,7 +4,7 @@ import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { Map as MapboxMap, Marker } from "mapbox-gl";
 import { useRouter } from "next/router";
-import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useRef, useState } from "react";
+import React, { createContext, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { ValidationError } from "yup";
 
 import ControlGroup, { ControlMapPosition } from "@/components/elements/Map-mapbox/components/ControlGroup";
@@ -23,10 +23,12 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { useOnMount } from "@/hooks/useOnMount";
 
 import { addOrUpdateMarkerAndZoom } from "./adapters/camera";
+import { ChampionsMapProvider, useChampionsMap } from "./championsMap.context";
 import MapCanvas from "./components/MapCanvas";
 import MapControlsOverlay from "./components/MapControlsOverlay";
 import { PopupMobile } from "./components/PopupMobile";
 import { useMapReadiness } from "./core/useMapReadiness";
+import { usePolygonTilesLoading } from "./core/usePolygonTilesLoading";
 import { BBox } from "./GeoJSON";
 import { useGoogleSatellite } from "./hooks/useGoogleSatellite";
 import { useMapCamera } from "./hooks/useMapCamera";
@@ -35,10 +37,17 @@ import { useMapDraw } from "./hooks/useMapDraw";
 import { useMapFullscreen } from "./hooks/useMapFullscreen";
 import { useMapLayers } from "./hooks/useMapLayers";
 import { useMapMedia } from "./hooks/useMapMedia";
+import { useMapOverlapIndicators } from "./hooks/useMapOverlapIndicators";
 import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
 import { useMapStyle } from "./hooks/useMapStyle";
+import {
+  usePolygonSelectionZoom,
+  usePolygonTableHighlightPointer,
+  usePolygonTableHighlightStyle
+} from "./hooks/usePolygonTableHighlight";
 import { addGeojsonToDraw } from "./interactions/draw";
+import { OverlapPolygonPoint } from "./layers/overlapTypes";
 import type {
   DashboardGetProjectsData,
   DashboardPopupContext,
@@ -51,9 +60,10 @@ import type {
   TooltipType
 } from "./Map.d";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
-import { FilterControl } from "./MapControls/FilterControl";
+import FilterControl from "./MapControls/FilterControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import { MapStyle } from "./MapControls/types";
+import { setViewDetailsSiteUuid } from "./sitePolygonNavigation";
 
 export type { DashboardGetProjectsData, PolygonCentroid };
 
@@ -80,6 +90,22 @@ export interface BaseMapProps {
   initialTileVersion?: string;
   /** When it matches current polygon data, skip bumping the tile cache on mount. */
   initialPolygonFingerprint?: string;
+  /** Champions (non-admin) map layout and controls; omit or false for the default map. */
+  championsMap?: boolean;
+  siteReportPolygonPopup?: boolean;
+  polygonTableHighlight?: {
+    selectedPolygonUuids: string[];
+    onPolygonClickedFromMap?: (uuid: string) => void;
+    focusPolygonUuid?: string | null;
+    onFocusPolygonConsumed?: () => void;
+  };
+  overlapPolygons?: OverlapPolygonPoint[];
+  autoEditPolygon?: boolean;
+  onPolygonTilesLoadingChange?: (value: boolean) => void;
+  alwaysShowPhotosOnMap?: boolean;
+  hideMediaPopupActions?: boolean;
+  hideMediaOnMap?: boolean;
+  isPolygonGeometryLoading?: boolean;
 }
 
 export interface DashboardMapExtras {
@@ -98,12 +124,13 @@ export interface AdminMapExtras {
   validationType?: string;
   polygonChecks?: boolean;
   siteData?: boolean;
-  record?: { uuid?: string; organisation?: { name?: string } };
+  record?: { uuid?: string; projectUuid?: string | null; organisation?: { name?: string } };
   showDownloadPolygons?: boolean;
   setIsLoadingDelayedJob?: (value: boolean) => void;
   isLoadingDelayedJob?: boolean;
   setAlertTitle?: (value: string) => void;
   disabledPolygonPanel?: boolean;
+  hideFullscreenControl?: boolean;
   setPolygonFromMap?: SetPolygonFromMap;
   polygonFromMap?: PolygonFromMapState;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
@@ -127,20 +154,27 @@ export interface ReadOnlyMapExtras {
   location?: { lat: number; lng: number } | null;
 }
 
-interface MapProps
+export interface MapProps
   extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onError">,
     BaseMapProps,
     Partial<DashboardMapExtras>,
     AdminMapExtras,
     FormMapExtras,
-    ReadOnlyMapExtras {}
+    ReadOnlyMapExtras {
+  showBaseMapControl?: boolean;
+}
 
 export const MapEditingContext = createContext({
   isEditing: false,
   setIsEditing: (_value: boolean) => {}
 });
 
-export const MapContainer = ({
+type MapContainerInnerProps = Omit<MapProps, "championsMap"> & {
+  mapFunctions: NonNullable<MapProps["mapFunctions"]>;
+  showBaseMapControl?: boolean;
+};
+
+const MapContainerInner: FC<MapContainerInnerProps> = ({
   onError: _onError,
   editable,
   geojson,
@@ -163,7 +197,7 @@ export const MapContainer = ({
   polygonsExists = true,
   shouldBboxZoom = true,
   dashboardMode = undefined,
-  formMap,
+  formMap: isFormMap,
   location,
   entityData,
   imageGalleryRef,
@@ -176,11 +210,13 @@ export const MapContainer = ({
   hasAccess,
   dashboardContext,
   disabledPolygonPanel = false,
+  hideFullscreenControl = false,
+  showBaseMapControl = true,
   ...props
-}: MapProps) => {
-  if (mapFunctions == null) return null;
-
+}) => {
+  const resizeDebounceTimeoutRef = useRef<number | null>(null);
   const { map, mapContainer, draw, onCancel, initMap } = mapFunctions;
+  const championsMap = useChampionsMap();
 
   const {
     polygonsData,
@@ -197,10 +233,18 @@ export const MapContainer = ({
     projectUUID,
     setLoader,
     initialTileVersion,
-    initialPolygonFingerprint
+    initialPolygonFingerprint,
+    polygonTableHighlight,
+    overlapPolygons,
+    onPolygonTilesLoadingChange,
+    alwaysShowPhotosOnMap,
+    hideMediaPopupActions,
+    hideMediaOnMap,
+    isPolygonGeometryLoading = false,
+    siteReportPolygonPopup = false
   } = props;
 
-  const [viewImages, setViewImages] = useState(false);
+  const [isViewingImages, setIsViewingImages] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [mobilePopupData, setMobilePopupData] = useState<MobilePopupData | null>(null);
   const mapMarkerRef = useRef<Marker | null>(null);
@@ -233,8 +277,12 @@ export const MapContainer = ({
     setEditPolygon,
     setShouldRefetchPolygonData,
     setShouldRefetchMediaData,
+    statusSelectedPolygon,
     setStatusSelectedPolygon,
-    selectedPolygonsInCheckbox
+    setPolygonGeometryEdit,
+    polygonMapTileNonce,
+    selectedPolygonsInCheckbox,
+    registerMapboxMap
   } = contextMapArea;
 
   const anrMapOverlay = useAnrMapOverlayOptional();
@@ -259,7 +307,7 @@ export const MapContainer = ({
   useOnMount(() => {
     const initialStyle =
       mapStyleProp !== undefined ? mapStyleProp : dashboardMode ? MapStyle.Street : MapStyle.Satellite;
-    initMap(!!dashboardMode, initialStyle);
+    initMap(!!dashboardMode, initialStyle, championsMap);
     return () => {
       if (mapMarkerRef.current != null) {
         mapMarkerRef.current.remove();
@@ -281,9 +329,38 @@ export const MapContainer = ({
   useOnMount(() => {
     const el = mapContainer.current;
     if (el == null) return;
-    const ro = new ResizeObserver(() => map.current?.resize());
+    const resizeNow = () => {
+      map.current?.resize();
+    };
+    const scheduleResize = () => {
+      if (resizeDebounceTimeoutRef.current != null) {
+        clearTimeout(resizeDebounceTimeoutRef.current);
+      }
+      resizeDebounceTimeoutRef.current = window.setTimeout(() => {
+        resizeDebounceTimeoutRef.current = null;
+        resizeNow();
+      }, 22);
+    };
+    const handleMouseUp = () => {
+      if (resizeDebounceTimeoutRef.current != null) {
+        clearTimeout(resizeDebounceTimeoutRef.current);
+        resizeDebounceTimeoutRef.current = null;
+      }
+      resizeNow();
+    };
+    const ro = new ResizeObserver(() => {
+      scheduleResize();
+    });
     ro.observe(el);
-    return () => ro.disconnect();
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("mouseup", handleMouseUp);
+      if (resizeDebounceTimeoutRef.current != null) {
+        clearTimeout(resizeDebounceTimeoutRef.current);
+        resizeDebounceTimeoutRef.current = null;
+      }
+    };
   });
 
   const [mapInstanceForReadiness, setMapInstanceForReadiness] = useState<MapboxMap | null>(null);
@@ -311,7 +388,7 @@ export const MapContainer = ({
     onStyleChange
   });
 
-  const { sourcesAdded } = useMapLayers({
+  const { sourcesAdded, tileLoadRequestId } = useMapLayers({
     map,
     draw,
     styleReady,
@@ -324,8 +401,42 @@ export const MapContainer = ({
     hasAccess,
     selectedPolygonsInCheckbox,
     initialTileVersion,
-    initialPolygonFingerprint
+    initialPolygonFingerprint,
+    polygonMapTileNonce
   });
+
+  usePolygonTableHighlightStyle({
+    map,
+    styleReady,
+    styleVersion,
+    sourcesAdded,
+    highlight: polygonTableHighlight
+  });
+
+  usePolygonSelectionZoom({
+    map,
+    styleReady,
+    sourcesAdded,
+    selectedPolygonUuids: polygonTableHighlight?.selectedPolygonUuids,
+    focusPolygonUuid: polygonTableHighlight?.focusPolygonUuid,
+    onFocusPolygonConsumed: polygonTableHighlight?.onFocusPolygonConsumed,
+    sitePolygonData
+  });
+
+  usePolygonTableHighlightPointer({
+    map,
+    draw,
+    styleReady,
+    styleVersion,
+    sourcesAdded,
+    highlight: polygonTableHighlight
+  });
+
+  useEffect(() => {
+    const siteUuid = record?.projectUuid != null ? record.uuid : null;
+    setViewDetailsSiteUuid(siteUuid);
+    return () => setViewDetailsSiteUuid(null);
+  }, [record?.projectUuid, record?.uuid]);
 
   useMapPopups({
     map,
@@ -337,10 +448,33 @@ export const MapContainer = ({
     isMobile,
     setLoader,
     setPolygonFromMap,
+    setShouldRefetchPolygonData,
     setEditPolygon,
     editPolygon,
     setMobilePopupData,
-    dashboardContext: resolvedDashboardContext
+    dashboardContext: resolvedDashboardContext,
+    siteReportPolygonPopup,
+    polygonFromMap
+  });
+
+  useEffect(() => {
+    if (!sourcesAdded || map.current == null) {
+      registerMapboxMap(null);
+      return;
+    }
+    registerMapboxMap(map.current);
+    return () => registerMapboxMap(null);
+  }, [map, registerMapboxMap, sourcesAdded, styleReady]);
+
+  usePolygonTilesLoading({
+    map,
+    enabled: siteData === true && onPolygonTilesLoadingChange != null,
+    sourcesAdded,
+    tileLoadRequestId,
+    polygonsData,
+    bbox,
+    shouldBboxZoom,
+    onLoadingChange: onPolygonTilesLoadingChange
   });
 
   useMapCamera({
@@ -379,14 +513,25 @@ export const MapContainer = ({
     openModal,
     closeModal,
     setShouldRefetchMediaData,
-    router
+    router,
+    alwaysShowPhotosOnMap,
+    hideMediaPopupActions,
+    hideMediaOnMap,
+    isPolygonGeometryLoading
+  });
+
+  useMapOverlapIndicators({
+    map,
+    styleReady,
+    styleVersion,
+    overlapPolygons
   });
 
   const { handleEditPolygon, onSaveEdit, onCancelEdit } = useMapDraw({
     map,
     draw,
     isUserDrawingEnabled,
-    formMap,
+    formMap: isFormMap,
     polygonFromMap,
     polygonsData,
     centroids,
@@ -396,12 +541,40 @@ export const MapContainer = ({
     setPolygonFromMap,
     reloadSiteData,
     setShouldRefetchPolygonData,
+    statusSelectedPolygon,
     setStatusSelectedPolygon,
+    setPolygonGeometryEdit,
     t,
     showLoader,
     hideLoader,
     openNotification
   });
+
+  const lastAutoEditPolygonRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!props.autoEditPolygon || !polygonFromMap?.isOpen || polygonFromMap.uuid === "") {
+      if (lastAutoEditPolygonRef.current != null) {
+        onCancelEdit();
+        setIsEditing(false);
+      }
+      lastAutoEditPolygonRef.current = null;
+      return;
+    }
+
+    const previousUuid = lastAutoEditPolygonRef.current;
+    if (previousUuid === polygonFromMap.uuid) {
+      return;
+    }
+
+    if (previousUuid != null) {
+      onCancelEdit();
+      setIsEditing(false);
+    }
+
+    lastAutoEditPolygonRef.current = polygonFromMap.uuid;
+    setIsEditing(true);
+    void handleEditPolygon();
+  }, [handleEditPolygon, onCancelEdit, polygonFromMap?.isOpen, polygonFromMap?.uuid, props.autoEditPolygon]);
 
   const { isFullscreen, toggleFullscreen } = useMapFullscreen({ mapContainer, map });
 
@@ -424,6 +597,7 @@ export const MapContainer = ({
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
       <MapCanvas mapContainer={mapContainer} className={className}>
         <MapControlsOverlay
+          showBaseMapControl={showBaseMapControl}
           hasControls={hasControls}
           draw={{
             handleEditPolygon,
@@ -443,9 +617,16 @@ export const MapContainer = ({
             isLoadingDelayedJob,
             setAlertTitle,
             disabledPolygonPanel,
+            hideFullscreenControl,
             selectedPolygonsInCheckbox
           }}
-          form={{ formMap, editable, polygonFromMap, viewImages, setViewImages }}
+          form={{
+            formMap: isFormMap,
+            editable,
+            polygonFromMap,
+            viewImages: isViewingImages,
+            setViewImages: setIsViewingImages
+          }}
           camera={{ map: map.current, center, zoom, bbox, hasControls }}
           gallery={{ dashboardMode, showViewGallery, imageGalleryRef }}
           download={{ showDownloadPolygons, isDownloadingPolygons, downloadGeoJsonPolygon }}
@@ -480,6 +661,15 @@ export const MapContainer = ({
         ) : null}
       </MapCanvas>
     </MapEditingContext.Provider>
+  );
+};
+
+export const MapContainer: FC<MapProps> = ({ mapFunctions, championsMap = false, ...rest }) => {
+  if (mapFunctions == null) return null;
+  return (
+    <ChampionsMapProvider championsMap={championsMap}>
+      <MapContainerInner mapFunctions={mapFunctions} {...rest} />
+    </ChampionsMapProvider>
   );
 };
 

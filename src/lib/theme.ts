@@ -57,29 +57,30 @@ const themeConfig = {
         150: { value: "#FFE3DF" },
         200: { value: "#EDA1A9" },
         300: { value: "#F6C5C1" },
+        400: { value: "#F9D6D4" },
         500: { value: "#C11101" },
         900: { value: "#8D0D01" }
       },
       negative: {
-        100: { value: "#E72828" },
-        200: { value: "#D40909" }
+        1: { value: "#E72828" },
+        2: { value: "#D40909" }
       },
       attention: {
-        100: { value: "#FFC506" },
-        200: { value: "#CE8303" }
+        1: { value: "#FFC506" },
+        2: { value: "#CE8303" }
       },
       positive: {
-        100: { value: "#18CD49" },
-        200: { value: "#2AA04A" }
+        1: { value: "#18CD49" },
+        2: { value: "#2AA04A" }
       },
       neutralActive: {
-        100: { value: "#0096FA" },
-        200: { value: "#298ED2" },
-        300: { value: "#7485F7" }
+        1: { value: "#0096FA" },
+        2: { value: "#298ED2" },
+        3: { value: "#7485F7" }
       },
       neutralPassive: {
-        100: { value: "#C9C9C9" },
-        200: { value: "#8D8D8D" }
+        1: { value: "#C9C9C9" },
+        2: { value: "#8D8D8D" }
       },
       accessible: {
         "text-on-primary-mids": { value: "#032230" },
@@ -316,8 +317,23 @@ export const getThemedLineHeight = (token: LineHeightToken): string => {
 };
 
 export const getThemedColor = (
-  variant: "neutral" | "primary" | "secondary" | "success" | "warning" | "error" | "accessible",
+  variant:
+    | "neutral"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "error"
+    | "accessible"
+    | "neutralActive"
+    | "neutralPassive"
+    | "negative"
+    | "attention"
+    | "positive",
   index:
+    | 1
+    | 2
+    | 3
     | 100
     | 200
     | 300

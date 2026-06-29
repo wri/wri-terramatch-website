@@ -41,6 +41,8 @@ export const maxFileSize = memoize((maxSize: number) =>
  */
 export const noDuplication = memoize((key: string) =>
   Object.assign((value: any, values: any, props: any) => {
+    if (value == null) return null;
+
     if (uniqBy(value, v => get(v, key)).length !== value.length) {
       return "Duplicated options are not allowed.";
     }

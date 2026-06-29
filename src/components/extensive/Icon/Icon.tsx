@@ -265,13 +265,22 @@ const Icon: FC<IconProps> = ({ name, width = 24, height, className = "", style =
 
   // Imports the SVG
   useEffect(() => {
+    let cancelled = false;
+
     const importIcon = async () => {
       setLoading(true);
-      setPath((await import(`../../../assets/icons/${name}.svg`)).default);
-      setLoading(false);
+      const iconPath = (await import(`../../../assets/icons/${name}.svg`)).default;
+      if (!cancelled) {
+        setPath(iconPath);
+        setLoading(false);
+      }
     };
 
     importIcon();
+
+    return () => {
+      cancelled = true;
+    };
   }, [name]);
 
   const svgProps = { width, height: height ?? width, className, style };

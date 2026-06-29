@@ -12,10 +12,6 @@ export const ABOUT_SITES_CONTENT = [
         link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/25201750730907-TerraFund-Siting-Guide"
       },
       {
-        title: "Use the TerraFund Profile Creation Checklist",
-        link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/45890074377755-Checklists-Tips-for-TerraFund-Project-Nursery-and-Site-Establishment"
-      },
-      {
         title: "Create a Site Profile",
         link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/12512561941915-How-to-Create-a-Site-Profile"
       },

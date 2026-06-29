@@ -22,6 +22,8 @@ interface IImageGalleryCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDi
   className?: string;
   onSelectImage?: (image: GalleryImageType) => void;
   classNameImage?: string;
+  rows?: number;
+  minItems?: number;
 }
 
 const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
@@ -32,10 +34,12 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
   onSelectImage,
   onScroll,
   className,
-  classNameImage
+  classNameImage,
+  rows = MIN_ROWS,
+  minItems = MIN_ITEMS
 }) => {
   const imageCount = images?.length ?? 0;
-  const minimumCapacity = Math.max(MIN_ITEMS, columns * MIN_ROWS);
+  const minimumCapacity = Math.max(minItems, columns * rows);
   const roundedCapacity = Math.ceil(Math.max(imageCount, 1) / columns) * columns;
   const itemsToShow = Math.max(minimumCapacity, roundedCapacity);
   const placeholderCount = itemsToShow - imageCount;

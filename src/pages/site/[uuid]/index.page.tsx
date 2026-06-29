@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 
+import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -10,7 +11,6 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
@@ -22,7 +22,7 @@ import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
-import SiteMapTab from "./tabs/SiteMap";
+import SitePolygonsTab from "./tabs/Polygons";
 
 const SiteDetailPage = () => {
   const t = useT();
@@ -46,12 +46,12 @@ const SiteDetailPage = () => {
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site!} refetch={refetch} /> },
     { key: "details", title: t("Site Details"), body: <SiteDetailTab site={site!} /> },
-    { key: "map", title: t("Site Map"), body: <SiteMapTab site={site!} refetch={refetch} /> },
+    { key: "polygons", title: t("Polygons"), body: <SitePolygonsTab site={site!} /> },
     {
       key: "gallery",
       title: t("Gallery"),
       body: (
-        <GalleryTab
+        <EntityGalleryTab
           modelName="sites"
           modelUUID={site?.uuid ?? ""}
           modelTitle={t("Site")}

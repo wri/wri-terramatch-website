@@ -1,23 +1,24 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { useRouter } from "next/router";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FieldErrors, useForm, UseFormProps, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
-import AdminLinkWrapper from "@/components/elements/AdminLinkWrapper/AdminLinkWrapper";
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
+import SectionFeedbackBanner from "@/components/extensive/WizardForm/SectionFeedbackBanner";
 import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormSectionAnalytics } from "@/components/extensive/WizardForm/useFormSectionAnalytics";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
-import FrameworkProvider, { Framework, toFramework } from "@/context/framework.provider";
+import { useReportAnalytics } from "@/components/extensive/WizardForm/useReportAnalytics";
+import FrameworkProvider, { ALL_TF, Framework, toFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, {
   FormFieldsProvider,
-  FormModel,
   FormModelsDefinition,
   OrgFormDetails,
   ProjectFormDetails,
@@ -25,24 +26,30 @@ import WizardFormProvider, {
 } from "@/context/wizardForm.provider";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useDownloadFormAnswers } from "@/hooks/useDownloadFormAnswers";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
+import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
+import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
-import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
+import ResponsiveBreadcrumbToolbar from "@/redesignComponents/navigation/Toolbar/ResponsiveBreadcrumbToolbar";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import { toArray } from "@/utils/array";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
-import { hasFeedbackInStep } from "./feedbackUtils";
+import { hasUnresolvedFeedbackInStep } from "./feedbackUtils";
 import { FormFooter } from "./FormFooter";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
-import { downloadAnswersCSV } from "./utils";
+import { getFormHeaderLabel } from "./utils";
 
 export type WizardFormEntity = {
+  siteUuid?: string | null;
   uuid?: string | null;
   frameworkKey?: string | null;
   dueAt?: string | null;
@@ -54,7 +61,11 @@ export type WizardFormEntity = {
   fundingProgrammeName?: string | null;
   projectName?: string | null;
   projectUuid?: string | null;
+  projectReportUuid?: string | null;
   taskUuid?: string | null;
+  siteName?: string | null;
+  nurseryName?: string | null;
+  nurseryUuid?: string | null;
   feedback?: string | null;
   feedbackFields?: string[] | null;
 };
@@ -106,6 +117,9 @@ export interface WizardFormProps {
 
   adminListPath?: string;
   entity?: WizardFormEntity;
+
+  /** When true, step errors and field validation messages are hidden until the user submits a step or reopens the form. */
+  deferValidation?: boolean;
 }
 
 function WizardForm(props: WizardFormProps) {
@@ -116,22 +130,28 @@ function WizardForm(props: WizardFormProps) {
   const steps = useFormStepsWithValidation(props.fieldsProvider, props.framework);
   const selectedSection = selectedStepIndex < 0 ? undefined : steps[selectedStepIndex];
   const isAdmin = useIsAdmin();
+  const router = useRouter();
   const reportingWindow = useReportingWindow(toFramework(entity?.frameworkKey), entity?.dueAt!);
   const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
   const fieldsProvider = useFieldsProvider();
+
+  const [showValidationErrors, setShowValidationErrors] = useState(!(props.deferValidation ?? false));
+
+  const models = useMemo(() => toArray(props.models), [props.models]);
+  const isSubmissionModel = models.length > 1;
 
   const formHook: UseFormReturn = useForm(
     useMemo(
       (): UseFormProps => ({
         defaultValues: props.defaultValues,
-        mode: "onTouched",
+        mode: props.deferValidation ? "onSubmit" : "onTouched",
         resolver: selectedSection?.validation == null ? undefined : yupResolver(selectedSection.validation)
       }),
-      [props.defaultValues, selectedSection?.validation]
+      [props.defaultValues, props.deferValidation, selectedSection?.validation]
     )
   );
   const { trackSectionCompleted, trackSectionError } = useFormSectionAnalytics({
-    models: props.models,
+    models,
     steps,
     selectedStepIndex,
     formHook
@@ -139,12 +159,44 @@ function WizardForm(props: WizardFormProps) {
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
 
+  const initialFormValues = useRef(props.defaultValues);
+  if (initialFormValues.current == null && props.defaultValues != null) {
+    initialFormValues.current = props.defaultValues;
+  }
+
+  const formValues = formHook.watch();
+
   const formHasError = useRef(false);
-  formHasError.current = Object.values(formHook.formState.errors ?? {}).length > 0;
+  formHasError.current = showValidationErrors && Object.values(formHook.formState.errors ?? {}).length > 0;
 
-  const hasErrorInAnyStep = steps.some(({ validation }) => !validation.isValidSync(formHook.getValues()));
+  const stepHasIssues = useCallback(
+    (stepId: string, validation: (typeof steps)[number]["validation"]) =>
+      (showValidationErrors && !validation.isValidSync(formValues)) ||
+      hasUnresolvedFeedbackInStep(
+        props.fieldsProvider,
+        stepId,
+        entity?.feedbackFields,
+        formValues,
+        initialFormValues.current
+      ),
+    [entity?.feedbackFields, formValues, props.fieldsProvider, showValidationErrors]
+  );
 
-  Log.debug("Form Values", formHook.watch());
+  const reportAnalytics = useReportAnalytics({
+    models: models,
+    steps,
+    selectedStepIndex,
+    fieldsProvider: props.fieldsProvider,
+    entityId: models[0]?.uuid ?? entity?.uuid,
+    feedbackFields: entity?.feedbackFields,
+    initialValues: initialFormValues.current,
+    summaryTitle: props.summaryOptions?.title,
+    stepHasIssues
+  });
+
+  const hasErrorInAnyStep = steps.some(({ id, validation }) => stepHasIssues(id, validation));
+
+  Log.debug("Form Values", formValues);
   Log.debug("Form Errors", formHook.formState.errors);
 
   const { onChange } = props;
@@ -175,20 +227,24 @@ function WizardForm(props: WizardFormProps) {
       } else {
         // Step changes on last step
         if (props.onSubmit == null) return props.onStepChange?.(data);
+        reportAnalytics.trackReportSubmitted();
         props.onSubmit(data);
       }
     },
-    [formHook, lastIndex, props, selectedStepIndex, setSelectedStepIndex, trackSectionCompleted]
+    [formHook, lastIndex, props, reportAnalytics, selectedStepIndex, setSelectedStepIndex, trackSectionCompleted]
   );
 
   const onSubmitStepError = useCallback(
     (errors: FieldErrors) => {
+      setShowValidationErrors(true);
       trackSectionError(selectedStepIndex, errors);
     },
     [selectedStepIndex, trackSectionError]
   );
 
   const onClickSaveAndClose = useCallback(() => {
+    reportAnalytics.trackReportSaveExited();
+
     let values = formHook.getValues();
     values = { ...values };
 
@@ -199,12 +255,15 @@ function WizardForm(props: WizardFormProps) {
       <SaveAndCloseModal
         {...props.saveAndCloseModal}
         onConfirm={props.saveAndCloseModal?.onConfirm || props.onCloseForm || props.onBackFirstStep}
+        models={models}
       />
     );
-  }, [formHook, modal, props]);
+  }, [formHook, modal, props, reportAnalytics, models]);
 
   const onClickSaveAndExit = useCallback(() => {
     if (isAdmin) {
+      reportAnalytics.trackReportSaveExited();
+
       let values = formHook.getValues();
       values = { ...values };
 
@@ -215,21 +274,27 @@ function WizardForm(props: WizardFormProps) {
     }
 
     onClickSaveAndClose();
-  }, [formHook, isAdmin, onClickSaveAndClose, props]);
+  }, [formHook, isAdmin, onClickSaveAndClose, props, reportAnalytics]);
 
   const onClickSaveChanges = useCallback(() => {
     if (isAdmin) {
+      reportAnalytics.trackReportSaveExited();
       formHook.handleSubmit(onSubmitStep)();
       return;
     }
     onClickSaveAndClose();
-  }, [onClickSaveAndClose, isAdmin, formHook, onSubmitStep]);
+  }, [onClickSaveAndClose, isAdmin, formHook, onSubmitStep, reportAnalytics]);
+
+  const handleDownloadAnswers = useDownloadFormAnswers({
+    fieldsProvider,
+    formHook
+  });
 
   useOnMount(() => {
     // We linked directly to a step; stay on that step.
     if (selectedStepIndex >= 0) return;
 
-    if (props.disableAutoProgress || props.disableInitialAutoProgress) {
+    if (!showValidationErrors || props.disableAutoProgress || props.disableInitialAutoProgress) {
       // We don't auto progress, so either use the initial step or default to 0;
       setSelectedStepIndex(props.initialStepIndex ?? 0);
       return;
@@ -245,7 +310,6 @@ function WizardForm(props: WizardFormProps) {
   }, [selectedStepIndex]);
 
   const isEntityApproved = entity?.status == "approved";
-  const formModel = props?.models as FormModel;
   const renderStep = useCallback(
     (stepId: string, title: string | null, index: number) => (
       <div
@@ -265,24 +329,32 @@ function WizardForm(props: WizardFormProps) {
             />
           </div>
         )}
+        {reportAnalytics.isTrackingEnabled && (
+          <SectionFeedbackBanner
+            sectionName={reportAnalytics.getSectionNameForIndex(index)}
+            feedback={entity?.feedback}
+            isVisible={reportAnalytics.hasFeedbackBannerInCurrentStep(stepId)}
+            onDisplayed={reportAnalytics.trackFeedbackBannerDisplayed}
+          />
+        )}
         <FormStep id="step" stepId={stepId} formHook={formHook} onChange={_onChange} />
         <FormFooter
           className={classNames(
             "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
             isAdmin ? "bottom-0" : "bottom-[0px]"
           )}
-          cancelButtonProps={undefined}
           primaryButtonProps={{
             children: t(`${selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
             disabled: hasErrorInAnyStep && selectedStepIndex === lastIndex,
             onClick: formHook.handleSubmit(onSubmitStep, onSubmitStepError)
           }}
           secondaryButtonProps={
-            formModel?.model != "organisations"
+            !isSubmissionModel
               ? {
                   children: t("Save and Exit"),
                   onClick: () => {
                     if (isAdmin) {
+                      reportAnalytics.trackReportSaveExited();
                       formHook.handleSubmit(onSubmitStep, onSubmitStepError);
                       props.onSubmit?.(formHook.getValues());
                     } else {
@@ -292,58 +364,52 @@ function WizardForm(props: WizardFormProps) {
                 }
               : {
                   children: t("Save and Exit"),
-                  onClick: () => {
-                    props.onSubmit?.(formHook.getValues());
-                  }
+                  onClick: onClickSaveAndClose
                 }
           }
           tertiaryButtonProps={{
             children: t("Download"),
-            onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
+            onClick: handleDownloadAnswers
           }}
         />
       </div>
     ),
     [
+      isAdmin,
       t,
+      reportAnalytics,
+      entity?.feedback,
       formHook,
       _onChange,
       selectedStepIndex,
       lastIndex,
-      isAdmin,
-      onClickSaveAndClose,
-      props,
+      hasErrorInAnyStep,
       onSubmitStep,
       onSubmitStepError,
-      hasErrorInAnyStep,
-      formModel?.model,
-      fieldsProvider
+      isSubmissionModel,
+      handleDownloadAnswers,
+      props,
+      onClickSaveAndClose
     ]
   );
 
-  const stepsVisited = useRef<number[]>([]);
+  const getStepTabState = useCallback(
+    (stepId: string, validation: (typeof steps)[number]["validation"]): TabItem["state"] => {
+      if (stepHasIssues(stepId, validation)) return "error";
+      if (validation.isValidSync(formValues)) return "complete";
+      return "unstarted";
+    },
+    [formValues, stepHasIssues]
+  );
+
   const stepTabItems = useMemo(
     (): TabItem[] =>
-      steps.map(({ id, title, validation }, index) => {
-        const hasFeedback = hasFeedbackInStep(props.fieldsProvider, id, entity?.feedbackFields);
-
-        const state: TabItem["state"] = hasFeedback
-          ? "error"
-          : validation.isValidSync(formHook.getValues())
-          ? stepsVisited.current.includes(index)
-            ? "complete"
-            : "unstarted"
-          : "error";
-        return {
-          title: t(`{title}`, { title }),
-          state,
-          renderBody: () => {
-            if (!stepsVisited.current.includes(index)) stepsVisited.current.push(index);
-            return renderStep(id, title ?? null, index);
-          }
-        };
-      }),
-    [entity?.feedbackFields, formHook, props.fieldsProvider, renderStep, steps, t]
+      steps.map(({ id, title, validation }, index) => ({
+        title: t(`{title}`, { title }),
+        state: getStepTabState(id, validation),
+        renderBody: () => renderStep(id, title ?? null, index)
+      })),
+    [getStepTabState, renderStep, steps, t]
   );
 
   const summaryItem = useMemo(
@@ -351,8 +417,7 @@ function WizardForm(props: WizardFormProps) {
       title: t(`{title}`, { title: props.summaryOptions?.title }),
       renderBody: () => {
         const submitButtonDisable =
-          props.submitButtonDisable ||
-          steps.find(({ validation }) => !validation.isValidSync(formHook.getValues())) != null;
+          props.submitButtonDisable || steps.some(({ id, validation }) => stepHasIssues(id, validation));
         return (
           <SummaryItem
             title={props.summaryOptions?.title!}
@@ -362,12 +427,22 @@ function WizardForm(props: WizardFormProps) {
             setSelectedStepIndex={setSelectedStepIndex}
             onSubmitStep={onSubmitStep}
             submitButtonDisable={submitButtonDisable}
-            models={props.models}
+            models={models}
             enableSaveChangesButton={isEntityApproved}
             saveChanges={() => onClickSaveChanges()}
             onSaveAndExit={onClickSaveAndExit}
             feedback={entity?.feedback}
             feedbackFields={entity?.feedbackFields}
+            initialValues={initialFormValues.current}
+            reportSummaryAnalytics={
+              reportAnalytics.isTrackingEnabled
+                ? {
+                    reviewSectionName: props.summaryOptions?.title?.trim() ?? t("Review Details"),
+                    onFeedbackBannerDisplayed: reportAnalytics.trackFeedbackBannerDisplayed,
+                    onAccordionExpanded: reportAnalytics.trackAccordionExpanded
+                  }
+                : undefined
+            }
           />
         );
       }
@@ -378,7 +453,7 @@ function WizardForm(props: WizardFormProps) {
       props.summaryOptions?.subtitle,
       props.summaryOptions?.downloadButtonText,
       props.submitButtonDisable,
-      props.models,
+      models,
       steps,
       formHook,
       setSelectedStepIndex,
@@ -387,7 +462,9 @@ function WizardForm(props: WizardFormProps) {
       onClickSaveChanges,
       onClickSaveAndExit,
       entity?.feedback,
-      entity?.feedbackFields
+      entity?.feedbackFields,
+      stepHasIssues,
+      reportAnalytics
     ]
   );
 
@@ -397,8 +474,6 @@ function WizardForm(props: WizardFormProps) {
     (): OrgFormDetails => ({ title: props.title, ...props.orgDetails }),
     [props.orgDetails, props.title]
   );
-
-  const isSubmissionModel = Array.isArray(props?.models) && props?.models?.length > 1;
 
   const linkHeaderMap = useMemo(() => {
     if (isSubmissionModel) {
@@ -413,51 +488,176 @@ function WizardForm(props: WizardFormProps) {
           : []),
         { label: t("Edit"), link: `/form/submission/${entity?.uuid ?? ""}` }
       ];
-    } else if (formModel?.model == "organisations") {
+    } else if (models[0]?.model === "organisations") {
       return [{ label: t("Edit"), link: `/organization/create?uuid=${entity?.uuid ?? ""}` }];
-    } else if (formModel?.model) {
+    } else if (models.length > 0) {
       return entityLinkHeaderMap({
         isAdmin,
-        model: formModel.model,
-        uuid: formModel.uuid ?? props?.entity?.uuid,
+        model: models[0].model,
+        uuid: models[0].uuid ?? props?.entity?.uuid,
         redirectEntityPage: props.redirectEntityPage,
         adminListPath: props.adminListPath,
         entity: entity,
-        firstLinkIcon: <ProjectIcon className="!text-theme-primary-900" />,
+        firstLinkIcon: models[0].model.includes("Reports") ? (
+          <ReportsIcon className="!text-theme-primary-900" />
+        ) : (
+          <ProjectIcon className="!text-theme-primary-900" />
+        ),
         t,
         taskTitle
-      })[formModel.model];
+      })[models[0].model];
     }
     return [];
-  }, [props, t, entity, isSubmissionModel, taskTitle, isAdmin, formModel?.model, formModel?.uuid]);
+  }, [
+    isSubmissionModel,
+    models,
+    entity,
+    props.redirectEntityPage,
+    props?.entity?.uuid,
+    props.adminListPath,
+    t,
+    isAdmin,
+    taskTitle
+  ]);
 
   const pageHeaderTitle = useMemo(() => {
     if (isSubmissionModel) {
       return entity?.organisationName != null || entity?.fundingProgrammeName != null
         ? `${entity?.organisationName ?? ""} - ${entity?.fundingProgrammeName ?? ""}`
         : t("Unnamed Application");
+    } else if (models[0]?.model === "projectReports" || models[0]?.model === "srpReports") {
+      return getFormHeaderLabel(entity?.projectName ?? "", taskTitle);
+    } else if (models[0]?.model === "siteReports") {
+      return getFormHeaderLabel(entity?.siteName ?? "", taskTitle);
+    } else if (models[0]?.model === "nurseryReports") {
+      return getFormHeaderLabel(entity?.nurseryName ?? "", taskTitle);
+    } else if (models[0]?.model === "disturbanceReports") {
+      return entity?.projectName + " - " + entity?.title;
+    } else if (models[0]?.model === "financialReports") {
+      return getFormHeaderLabel(entity?.organisationName ?? "", taskTitle);
     } else {
-      return mapEntityTitle(entity?.title ?? entity?.name ?? null, formModel?.model ?? "", t);
+      return mapEntityTitle(entity?.title ?? entity?.name ?? null, models[0]?.model ?? "", t);
     }
-  }, [formModel?.model, t, entity, isSubmissionModel]);
+  }, [
+    isSubmissionModel,
+    models,
+    entity?.organisationName,
+    entity?.fundingProgrammeName,
+    entity?.projectName,
+    entity?.siteName,
+    entity?.nurseryName,
+    entity?.title,
+    entity?.name,
+    t,
+    taskTitle
+  ]);
+
+  const suffixButtons: SuffixButtonConfig[] = useMemo(() => {
+    if (models[0]?.model === "siteReports") {
+      return [
+        { key: "site-profile", labelKey: "Site Profile" },
+        { key: "project-report", labelKey: "Project Report" }
+      ];
+    }
+    if (models[0]?.model === "nurseryReports") {
+      return [
+        { key: "nursery-profile", labelKey: "Nursery Profile" },
+        { key: "project-report", labelKey: "Project Report" }
+      ];
+    } else if (models[0]?.model === "projectReports") {
+      return [
+        { key: "project-profile", labelKey: "Project Profile" },
+        { key: "site-reports", labelKey: "Site Reports" },
+        ...(ALL_TF.includes(props.framework) ? [{ key: "nursery-reports", labelKey: "Nursery Reports" }] : [])
+      ];
+    } else if (models[0]?.model === "srpReports") {
+      return [
+        { key: "project-profile", labelKey: "Project Profile" },
+        { key: "project-report", labelKey: "Project Report" }
+      ];
+    } else if (models[0]?.model === "financialReports") {
+      return [
+        { key: "organisation-profile", labelKey: "Organisation Profile" },
+        { key: "my-projects", labelKey: "Projects" }
+      ];
+    }
+    return [
+      { key: "project-profile", labelKey: "Project Profile" },
+      { key: "site-reports", labelKey: "Site Reports" },
+      ...(props.framework === Framework.TF ? [{ key: "nurseries-reports", labelKey: "Nursery Reports" }] : [])
+    ];
+  }, [models, props.framework]);
+
+  const navigateToTab = useCallback(
+    (tab: string) => {
+      if (tab === "project-profile") {
+        router.push(`/project/${entity?.projectUuid}`, undefined, { shallow: true });
+      } else if (tab == "site-profile") {
+        router.push(`/site/${entity?.siteUuid}`, undefined, { shallow: true });
+      } else if (tab == "nursery-profile") {
+        router.push(`/nursery/${entity?.nurseryUuid}`, undefined, { shallow: true });
+      } else if (tab == "project-report") {
+        router.push(`/reports/project-report/${entity?.projectReportUuid}`, undefined, { shallow: true });
+      } else {
+        router.push(`/project/${entity?.projectUuid}/reporting-task/${entity?.taskUuid}`, undefined, { shallow: true });
+      }
+    },
+    [router, entity]
+  );
+
+  const handleStepSelected = useCallback(
+    (targetIndex: number) => {
+      if (targetIndex !== selectedStepIndex) {
+        reportAnalytics.trackFormNavClicked(targetIndex, selectedStepIndex);
+      }
+      setSelectedStepIndex(targetIndex);
+    },
+    [reportAnalytics, selectedStepIndex, setSelectedStepIndex]
+  );
 
   return selectedStepIndex < 0 ? null : (
     <div className={classNames("relative", { "h-full": !isAdmin })}>
       <FrameworkProvider frameworkKey={props.framework}>
         <WizardFormProvider
-          models={props.models}
+          models={models}
           fieldsProvider={props.fieldsProvider}
           orgDetails={orgDetails}
           projectDetails={props.projectDetails}
+          showValidationErrors={showValidationErrors}
         >
           <div className={twMerge("flex h-full w-full flex-col", props.className)}>
             {entity != null && (
               <Box background={"neutral.200"} className={classNames("sticky top-0 z-20 pb-1")}>
-                {!isAdmin && <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }} />}
+                {!isAdmin && (
+                  <ResponsiveBreadcrumbToolbar
+                    breadcrumbs={linkHeaderMap}
+                    suffix={
+                      models[0]?.model.includes("Reports") && (
+                        <Flex gap={1.5} alignItems="center">
+                          {suffixButtons.map((button, index) => (
+                            <Flex key={button.key} alignItems="center" gap={1.5}>
+                              {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
+                              <Button
+                                variant="borderless"
+                                size="small"
+                                className="underline underline-offset-2"
+                                onClick={() => {
+                                  navigateToTab(button.key);
+                                }}
+                              >
+                                {t(button.labelKey)}
+                              </Button>
+                            </Flex>
+                          ))}
+                        </Flex>
+                      )
+                    }
+                  />
+                )}
                 <div className="bg-theme-neutral-300 pt-[1px]">
                   <PageHeader
                     title={pageHeaderTitle}
-                    label={t("Set Up Status:")}
+                    label={models[0]?.model.includes("Reports") ? t("Report Status:") : t("Set Up Status:")}
                     tag={
                       mapStatusToTagState(entity?.status) ? { state: mapStatusToTagState(entity?.status)! } : undefined
                     }
@@ -466,7 +666,7 @@ function WizardForm(props: WizardFormProps) {
               </Box>
             )}
             <Tabs
-              onChangeSelected={setSelectedStepIndex}
+              onChangeSelected={handleStepSelected}
               selectedIndex={selectedStepIndex}
               tabItems={tabItems}
               itemOption={{}}

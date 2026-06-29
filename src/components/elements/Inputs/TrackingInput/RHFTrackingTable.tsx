@@ -1,5 +1,5 @@
 import { findLastIndex } from "lodash";
-import { PropsWithChildren, useCallback, useMemo } from "react";
+import { FC, PropsWithChildren, useCallback, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
@@ -39,13 +39,14 @@ const ensureCorrectSubtypes = (entries: TrackingEntryDto[]) => {
   return entries;
 };
 
-const RHFTrackingTable = ({
+const RHFTrackingTable: FC<PropsWithChildren<RHFTrackingTableProps>> = ({
+  entryConfigs,
   domain,
   trackingType,
   onChangeCapture,
   collection,
   ...props
-}: PropsWithChildren<RHFTrackingTableProps>) => {
+}) => {
   const {
     field: { value, onChange }
   } = useController(props);
@@ -78,6 +79,7 @@ const RHFTrackingTable = ({
   return (
     <InputWrapper {...props}>
       <TrackingCollapseGrid
+        entryConfigs={entryConfigs}
         domain={domain}
         type={trackingType}
         entries={entries}

@@ -66,7 +66,7 @@ export type DashboardPopupContext = {
   dashboardMode?: string;
 };
 
-/** Props received by every popup component (AdminPopup, DashboardPopup). */
+/** Props received by every popup component (PolygonPopup, DashboardPopup). */
 export type PopupComponentProps = {
   feature: GeoJSONFeature;
   popup: Popup;
@@ -74,12 +74,17 @@ export type PopupComponentProps = {
   setPolygonFromMap?: SetPolygonFromMap;
   sitePolygonData?: SitePolygonLightDto[];
   type: TooltipType;
+  setShouldRefetchPolygonData?: (value: boolean) => void;
   editPolygon: EditPolygonState;
   setEditPolygon: (value: EditPolygonState) => void;
   // Dashboard-specific (undefined in admin mode)
   setFilters?: DashboardFilters;
   dashboardCountries?: CountriesProps[];
   dashboardMode?: string;
+  /** When true, map uses the champions (non-admin) layout and controls. */
+  championsMap?: boolean;
+  /** Site report overview map: polygon popup shows restoration practice and target land use. */
+  siteReportPolygonPopup?: boolean;
 };
 
 /** Data shape passed to setMobilePopupData; mirrors PopupComponentProps minus the live Popup instance. */
@@ -92,7 +97,7 @@ export interface MapFunctions {
   mapContainer: RefObject<HTMLDivElement>;
   draw: MutableRefObject<MapboxDraw | null>;
   onCancel: (parsedPolygonData: Record<string, string[]> | undefined) => void;
-  initMap: (useDashboardStyle?: boolean, initialStyle?: MapStyle) => void;
+  initMap: (useDashboardStyle?: boolean, initialStyle?: MapStyle, compactAttribution?: boolean) => void;
   /** @deprecated */
   setStyleLoaded: (value: boolean) => void;
   handleTrashDelete: () => void;

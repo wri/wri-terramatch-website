@@ -1,4 +1,4 @@
-import { camelCase } from "lodash";
+import { camelCase, kebabCase } from "lodash";
 import pluralize from "pluralize";
 
 import { BaseModelNames, Entity, EntityName, ReportsModelNames, SingularEntityName } from "@/types/common";
@@ -10,6 +10,8 @@ export const singularEntityName = (name: EntityName | SingularEntityName): Singu
 
 export const v3Entity = (entity?: Entity) => (entity == null ? undefined : v3EntityName(entity.entityName));
 export const v3EntityName = (name: EntityName | SingularEntityName) => camelCase(pluralEntityName(name)) as EntityName;
+export const getEntityEditPathSegment = (name: EntityName | SingularEntityName | string) =>
+  kebabCase(v3EntityName(name as EntityName | SingularEntityName));
 export const isProjectPitchesEntityName = (name?: string | null): boolean => {
   if (name == null || name === "") return false;
   const normalizedName = v3EntityName(name as EntityName | SingularEntityName) as string;
@@ -36,8 +38,8 @@ export const getEntityDetailPageLink = (entityName: EntityName, uuid: string, ta
     tab ? `?tab=${tab}` : ""
   }`;
 
-export const getEntityEditPageLink = (entityName: EntityName, uuid: string) =>
-  `/entity/${singularEntityName(entityName)}/edit/${uuid}?mode=edit&formStepId=summary`;
+export const getEntityEditPageLink = (entityName: EntityName | SingularEntityName | string, uuid: string) =>
+  `/entity/${getEntityEditPathSegment(entityName)}/edit/${uuid}?mode=edit&formStepId=summary`;
 
 export const isEntityReport = (entityName: EntityName) => {
   return entityName.includes("report");
@@ -65,3 +67,14 @@ export const getCurrentPathEntity = () => {
 export const isEntityAwaitingApproval = (status?: string | null, updateRequestStatus?: string | null): boolean => {
   return status === "awaiting-approval" || updateRequestStatus === "awaiting-approval";
 };
+
+const ENTITY_DRAFT_STATUSES = new Set(["draft", "started", "due"]);
+
+export const isEntityDraftInProgress = (status: string | null | undefined, isSetupComplete: boolean) =>
+  status != null && ENTITY_DRAFT_STATUSES.has(status) && !isSetupComplete;
+
+export const getEntitySetupButtonLabel = (
+  translate: (message: string) => string,
+  status: string | null | undefined,
+  isSetupComplete: boolean
+) => (isEntityDraftInProgress(status, isSetupComplete) ? translate("Continue") : translate("Edit"));

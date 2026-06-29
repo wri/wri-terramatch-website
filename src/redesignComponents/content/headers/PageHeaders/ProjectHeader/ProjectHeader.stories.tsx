@@ -50,7 +50,7 @@ if (typeof (globalThis as any).fetch !== "function" || !(globalThis as any).__pr
 
 // Helper function to create a minimal mock project
 const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFullDto => {
-  const baseProject: ProjectFullDto = {
+  const baseProject = {
     lightResource: false,
     uuid: "550e8400-e29b-41d4-a716-446655440000",
     frameworkKey: "terrafund",
@@ -162,10 +162,14 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
     consortiumPartnershipAgreements: [],
     treesRegeneratingSpeciesCount: 0,
     polygonDataSubmission: "no-polygons-submitted",
-    readyForBaseline: false
+    readyForBaseline: false,
+    projectSummary: null
   };
 
-  return { ...baseProject, ...overrides };
+  return {
+    ...baseProject,
+    ...overrides
+  } as ProjectFullDto;
 };
 
 const meta: Meta<typeof ProjectHeader> = {

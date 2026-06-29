@@ -47,6 +47,7 @@ export const ModalId = {
   STATUS_CHANGE: "StatusChange",
   SUBMIT_POLYGONS: "Submit Polygons",
   SAVE_AND_CLOSE_MODAL: "SaveAndCloseModal",
+  DOWNLOAD_CONFIRMATION: "DownloadConfirmation",
   IMAGE_GALLERY_PREVIEWER: "ImageGalleryPreviewer",
   SHAPE_PROPERTIES_MODAL: "ShapePropertiesModal",
   WELCOME_MODAL: "WelcomeModal",

@@ -27,6 +27,11 @@ import { v3EntityName } from "@/helpers/entity";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { SingularEntityName } from "@/types/common";
+import {
+  getAnalyticsUserRole,
+  resolveReportEntityTypeFromAdminResource,
+  trackReportAnalyticsEvent
+} from "@/utils/analytics/reportAnalytics";
 import { isNotNull } from "@/utils/array";
 
 type StatusFormValues = {
@@ -62,7 +67,25 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
   useRequestComplete(
     isUpdating,
     updateFailure,
-    useCallback(failure => (failure == null ? refetch() : undefined), [refetch])
+    useCallback(
+      failure => {
+        if (failure != null) return;
+
+        if (status === "approved" || status === "needs-more-information") {
+          const reportEntityType = resolveReportEntityTypeFromAdminResource(resource);
+          if (reportEntityType != null) {
+            trackReportAnalyticsEvent(status === "approved" ? "report_approved" : "report_needs_more_info", {
+              entityType: reportEntityType,
+              entityId: record.uuid,
+              userRole: getAnalyticsUserRole()
+            });
+          }
+        }
+
+        refetch();
+      },
+      [record.uuid, refetch, resource, status]
+    )
   );
 
   const dialogTitle = useMemo(() => {

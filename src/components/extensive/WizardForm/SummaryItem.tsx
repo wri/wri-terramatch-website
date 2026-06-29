@@ -4,10 +4,10 @@ import { FC, SetStateAction, useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
-import FormSummary from "@/components/extensive/WizardForm/FormSummary";
-import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
+import FormSummary, { ReportSummaryAnalyticsProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
+import { useDownloadFormAnswers } from "@/hooks/useDownloadFormAnswers";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import ApiSlice from "@/store/apiSlice";
 
@@ -27,6 +27,8 @@ type SummaryItemProps = {
   saveChanges: () => void;
   feedback?: string | null;
   feedbackFields?: string[] | null;
+  initialValues?: Record<string, unknown>;
+  reportSummaryAnalytics?: ReportSummaryAnalyticsProps;
 };
 
 const SummaryItem: FC<SummaryItemProps> = ({
@@ -42,7 +44,9 @@ const SummaryItem: FC<SummaryItemProps> = ({
   enableSaveChangesButton,
   saveChanges,
   feedback,
-  feedbackFields
+  feedbackFields,
+  initialValues,
+  reportSummaryAnalytics
 }) => {
   const t = useT();
   const user = useIsAdmin();
@@ -65,6 +69,11 @@ const SummaryItem: FC<SummaryItemProps> = ({
     }
   };
 
+  const handleDownloadAnswers = useDownloadFormAnswers({
+    fieldsProvider,
+    formHook
+  });
+
   return (
     <div
       className={classNames("h-full overflow-auto pr-[12px]", {
@@ -77,6 +86,8 @@ const SummaryItem: FC<SummaryItemProps> = ({
           onEdit={setSelectedStepIndex}
           feedback={feedback}
           feedbackFieldsOptions={feedbackFields}
+          initialValues={initialValues}
+          reportSummaryAnalytics={reportSummaryAnalytics}
         />
       </FormStepHeader>
       <FormFooter
@@ -84,7 +95,6 @@ const SummaryItem: FC<SummaryItemProps> = ({
           "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
           user ? "bottom-0" : "bottom-[0px]"
         )}
-        cancelButtonProps={undefined}
         primaryButtonProps={{
           children: t("Submit"),
           onClick: handleSubmitClick,
@@ -100,7 +110,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
         }
         tertiaryButtonProps={{
           children: t("Download"),
-          onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
+          onClick: handleDownloadAnswers
         }}
       />
     </div>

@@ -1,0 +1,309 @@
+import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
+import { useMemo, useRef, useState } from "react";
+
+import Button from "@/components/elements/Button/Button";
+import EmptyState from "@/components/elements/EmptyState/EmptyState";
+import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
+import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
+import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
+import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { parsePolygonDataV3 } from "@/components/elements/Map-mapbox/utils";
+import { IconNames } from "@/components/extensive/Icon/Icon";
+import PageCard from "@/components/extensive/PageElements/Card/PageCard";
+import { useBoundingBox } from "@/connections/BoundingBox";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import { deleteMedia } from "@/connections/Media";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { getEntitiesOptions } from "@/constants/options/entities";
+import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useModalContext } from "@/context/modal.provider";
+import { getCurrentPathEntity } from "@/helpers/entity";
+import { useValueChanged } from "@/hooks/useValueChanged";
+import { TranslatedText } from "@/i18n/types";
+import { EntityName, FileType } from "@/types/common";
+import { HookFilters, HookProps } from "@/types/connection";
+import Log from "@/utils/log";
+
+import AssetDownloadButton, { ASSET_DOWNLOAD_ENTITIES, AssetDownloadEntity } from "../AssetDownloadButton";
+import ModalAddImages, { FileUploadEntity } from "../Modal/ModalAddImages";
+import { ModalId } from "../Modal/ModalConst";
+
+export type EntityGalleryAssetDownload = {
+  entity: AssetDownloadEntity;
+  uuid: string;
+};
+
+const REPORT_GALLERY_ENTITIES = ["siteReports", "projectReports", "nurseryReports", "disturbanceReports"] as const;
+
+type ReportGalleryEntity = (typeof REPORT_GALLERY_ENTITIES)[number];
+
+const isReportGalleryEntity = (entity: string): entity is ReportGalleryEntity =>
+  (REPORT_GALLERY_ENTITIES as readonly string[]).includes(entity);
+
+export interface EntityGalleryCardProps {
+  modelTitle: TranslatedText;
+  modelName: EntityName;
+  modelUUID: string;
+  entityData: any;
+  emptyStateContent: TranslatedText;
+  assetDownload?: EntityGalleryAssetDownload;
+  /** Media/upload/download entity when it differs from modelName (e.g. site report gallery on a site map). */
+  galleryEntity?: SupportedEntity;
+  galleryUuid?: string;
+}
+
+const EntityGalleryCard = ({
+  modelTitle,
+  modelName,
+  modelUUID,
+  entityData,
+  emptyStateContent,
+  assetDownload,
+  galleryEntity,
+  galleryUuid
+}: EntityGalleryCardProps) => {
+  const { openModal, closeModal } = useModalContext();
+  const contextMapArea = useMapAreaContext();
+  const { shouldRefetchMediaData, setShouldRefetchMediaData } = contextMapArea;
+  const t = useT();
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
+  const [filter, setFilter] = useState<{ key: string; value: string }>();
+  const [searchString, setSearchString] = useState<string>("");
+  const [isGeotagged, setIsGeotagged] = useState<boolean | null>(null);
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
+  const [filters, setFilters] = useState<{ isPublic: boolean | undefined; modelType: string | undefined }>({
+    isPublic: undefined,
+    modelType: undefined
+  });
+  const mapFunctions = useBaseMap();
+  const imageGalleryRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
+  const queryUuid = router.query.uuid as string;
+  const isLegacySiteReportGallery = modelTitle === "Site Report";
+  const isSiteRelated = isLegacySiteReportGallery || modelTitle === "Site";
+  const entityUUID = isSiteRelated ? modelUUID : queryUuid;
+
+  const isReportGalleryContext = galleryEntity != null || isLegacySiteReportGallery || isReportGalleryEntity(modelName);
+
+  const resolvedGalleryEntity: SupportedEntity =
+    galleryEntity ?? (isLegacySiteReportGallery ? "siteReports" : (modelName as SupportedEntity));
+
+  const resolvedGalleryUuid = galleryUuid ?? (isReportGalleryContext ? queryUuid : entityUUID);
+  const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
+    useMemo<HookProps<typeof useMedias>>(() => {
+      const queryFilter: HookFilters<typeof useMedias> = {};
+
+      if (filters.isPublic !== undefined) {
+        queryFilter.isPublic = filters.isPublic;
+      }
+      if (filters.modelType) {
+        queryFilter.modelType = filters.modelType;
+      }
+      queryFilter.search = searchString;
+
+      if (isGeotagged !== null) {
+        queryFilter.isGeotagged = isGeotagged;
+      }
+
+      if (filter) {
+        queryFilter.modelType = filter.value;
+      }
+
+      return {
+        entity: resolvedGalleryEntity,
+        uuid: resolvedGalleryUuid,
+        pageNumber: pagination.page,
+        pageSize: pagination.pageSize,
+        sortField: "createdAt",
+        sortDirection: sortOrder,
+        filter: queryFilter
+      };
+    }, [
+      filter,
+      filters.isPublic,
+      filters.modelType,
+      isGeotagged,
+      pagination.page,
+      pagination.pageSize,
+      resolvedGalleryEntity,
+      resolvedGalleryUuid,
+      searchString,
+      sortOrder
+    ])
+  );
+
+  // Fetch site polygons using V3 endpoint
+  const { data: sitePolygonData } = useAllSitePolygons({
+    entityName: modelName as "projects" | "sites",
+    entityUuid: entityUUID,
+    enabled: !!entityUUID && (modelName === "projects" || modelName === "sites")
+  });
+
+  const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
+  const polygonDataMap = parsePolygonDataV3(sitePolygonData);
+
+  const filterOptions = useMemo(() => {
+    const mapping: any = {
+      projects: getEntitiesOptions(t),
+      sites: [
+        {
+          value: "sites",
+          title: t("Site")
+        },
+        {
+          value: "site-reports",
+          title: t("Site Reports")
+        }
+      ],
+      nurseries: [
+        {
+          value: "nurseries",
+          title: t("Nursery")
+        },
+        {
+          value: "nursery-reports",
+          title: t("Nursery Reports")
+        }
+      ]
+    };
+
+    return mapping?.[modelName] || [];
+  }, [modelName, t]);
+
+  useValueChanged(shouldRefetchMediaData, () => {
+    if (shouldRefetchMediaData) {
+      refetch?.();
+      setShouldRefetchMediaData(false);
+    }
+  });
+
+  const openFormModalHandlerUploadImages = () => {
+    openModal(
+      ModalId.UPLOAD_IMAGES,
+      <ModalAddImages
+        title={t("Upload Media")}
+        variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
+        previewAsTable
+        descriptionInput={t("drag and drop or browse your device")}
+        onClose={() => closeModal(ModalId.UPLOAD_IMAGES)}
+        content={t(
+          `if operations have begun, please upload images or videos of this specific ${getCurrentPathEntity()}`
+        )}
+        acceptedTypes={FileType.Image.split(",") as FileType[]}
+        primaryButtonText={t("Save")}
+        primaryButtonProps={{
+          className: "px-8 py-3",
+          variant: "primary",
+          onClick: () => {
+            refetch?.();
+            closeModal(ModalId.UPLOAD_IMAGES);
+          }
+        }}
+        entity={resolvedGalleryEntity as FileUploadEntity}
+        collection="media"
+        entityData={{ ...entityData, uuid: resolvedGalleryUuid }}
+        setErrorMessage={message => {
+          Log.error(message);
+        }}
+      />
+    );
+  };
+
+  const assetDownloadConfig =
+    assetDownload ??
+    (ASSET_DOWNLOAD_ENTITIES.includes(resolvedGalleryEntity as AssetDownloadEntity)
+      ? { entity: resolvedGalleryEntity as AssetDownloadEntity, uuid: resolvedGalleryUuid }
+      : undefined);
+
+  const hasActiveFilters =
+    isGeotagged !== null ||
+    searchString !== "" ||
+    filters.isPublic !== undefined ||
+    filters.modelType !== undefined ||
+    filter != null;
+
+  const showGalleryEmptyState = indexTotal === 0 && !hasActiveFilters;
+
+  return (
+    <>
+      {modelName !== "disturbanceReports" && (
+        <PageCard title={t("{modelTitle} Area", { modelTitle })}>
+          <MapContainer
+            polygonsData={polygonDataMap}
+            sitePolygonData={sitePolygonData}
+            bbox={mapBbox}
+            className="rounded-lg"
+            onDeleteImage={async uuid => {
+              try {
+                await deleteMedia(uuid);
+                refetch?.();
+              } catch (error) {
+                Log.error(error);
+              }
+            }}
+            mapFunctions={mapFunctions}
+            showLegend
+            hasControls
+            showPopups
+            mediaFiles={mediaList}
+            entityData={entityData}
+            imageGalleryRef={imageGalleryRef}
+          />
+        </PageCard>
+      )}
+      {showGalleryEmptyState ? (
+        <div ref={imageGalleryRef}>
+          <EmptyState
+            title={t("Image Gallery is Empty")}
+            subtitle={emptyStateContent}
+            iconProps={{ name: IconNames.LIGHT_BULB_CIRCLE, className: "fill-success" }}
+          />
+        </div>
+      ) : (
+        <div ref={imageGalleryRef}>
+          <PageCard
+            title={t("All Images")}
+            headerChildren={
+              <div className="flex items-center gap-4">
+                {assetDownloadConfig != null && (
+                  <AssetDownloadButton entity={assetDownloadConfig.entity} uuid={assetDownloadConfig.uuid} />
+                )}
+                <Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>
+              </div>
+            }
+          >
+            <ImageGallery
+              data={mediaList ?? []}
+              entity={modelName}
+              entityData={entityData}
+              pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}
+              onDeleteConfirm={async uuid => {
+                try {
+                  await deleteMedia(uuid);
+                  refetch?.();
+                } catch (error) {
+                  Log.error(error);
+                }
+              }}
+              onGalleryStateChange={(pagination, filter) => {
+                setPagination(pagination);
+                setFilter(filter);
+              }}
+              filterOptions={filterOptions}
+              onChangeSearch={setSearchString}
+              onChangeGeotagged={setIsGeotagged}
+              reloadGalleryImages={refetch}
+              sortOrder={sortOrder}
+              setSortOrder={setSortOrder}
+              setFilters={setFilters}
+              isLoading={!isLoaded}
+            />
+          </PageCard>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default EntityGalleryCard;

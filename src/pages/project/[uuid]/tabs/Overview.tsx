@@ -15,13 +15,15 @@ import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
-import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
+import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import type { ButtonGroupButtonProps } from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
+import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
 import { ChevronRightIcon, DownloadIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
@@ -47,7 +49,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
   const mrvOnboardingContent = useMrvOnboardingContent();
   const { openModal } = useModalContext();
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
     entityStatus: project.status ?? "started",
@@ -133,11 +135,12 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
 
   const hasSites = (project.totalSites ?? 0) > 0;
   const hasNurseries = (project.totalNurseries ?? 0) > 0;
-  const shouldHideNurseries = framework === Framework.PPC;
+  const hideNurseries = shouldHideNurseries(framework);
 
-  const addSitesAndNurseriesButtons = useMemo<IButtonProps[]>(() => {
-    const buttons: IButtonProps[] = [
+  const addSitesAndNurseriesButtons = useMemo<ButtonGroupButtonProps[]>(() => {
+    const buttons: ButtonGroupButtonProps[] = [
       {
+        id: "add-sites",
         variant: "borderless",
         size: "small",
         rightIcon: <ChevronRightIcon boxSize={4} />,
@@ -147,8 +150,9 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
       }
     ];
 
-    if (!shouldHideNurseries) {
+    if (!hideNurseries) {
       buttons.push({
+        id: "add-nurseries",
         variant: "borderless",
         size: "small",
         rightIcon: <ChevronRightIcon boxSize={4} />,
@@ -159,7 +163,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     }
 
     return buttons;
-  }, [goToTab, shouldHideNurseries, t]);
+  }, [goToTab, hideNurseries, t]);
 
   const { data: projectPolygonDataV3, isLoading: isLoadingProjectPolygons } = useAllSitePolygons({
     entityName: "projects",
@@ -192,15 +196,17 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
 
   return (
     <PageContent>
+      {EditModals}
       <InviteMonitoringPartnerModal
         projectUUID={project.uuid}
         open={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
-      <Flex gap={7} className="flex-col sm:flex-row">
+      <Flex gap={7} className="flex-col sm:flex-row sm:items-stretch">
         <PageItem
           title={t("Project Map")}
           flexProps={{ flex: 1 }}
+          className="min-h-0"
           buttonProps={{
             variant: "secondary",
             size: "small",
@@ -217,12 +223,13 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             loading: isDownloading
           }}
         >
-          <Box className="relative h-auto">
+          <Box className="relative flex-1 overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
             <OverviewMapArea
               entityModel={project}
               type="projects"
-              className="max-h-[27rem]"
+              className="h-full min-h-0 rounded"
               disabledPolygonPanel={true}
+              hideFullscreenControl={true}
             />
             {showSiteAreasMapPlaceholder && (
               <MapPlaceholder
@@ -234,6 +241,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
                     ? {
                         buttons: [
                           {
+                            id: "finish-project-setup",
                             variant: "borderless",
                             size: "small",
                             className: "!text-theme-neutral-100",

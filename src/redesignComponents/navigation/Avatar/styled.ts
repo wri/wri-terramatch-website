@@ -23,7 +23,7 @@ export const StyledAvatarWrapper = styled.div`
     background-color: ${getThemedColor("neutral", 200)} !important;
   }
 
-  > div:first-child {
+  > div:first-of-type {
     border-radius: 50%;
     border: 0.0625rem solid ${getThemedColor("neutral", 100)};
     background-color: ${getThemedColor("primary", 300)};

@@ -4,15 +4,17 @@ import { Map as MapboxMap } from "mapbox-gl";
 
 import { loadPolygonGeoJson, loadProjectPolygonsGeoJson } from "@/connections/GeoJsonExport";
 import { updateProjectPolygonResource } from "@/connections/ProjectPolygons";
-import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { zoomToBbox } from "../adapters/camera";
 import { convertToAcceptedGEOJSON } from "../adapters/geojson";
 import { BBox } from "../GeoJSON";
+import { applyMapDrawStatusStyles, getPolygonStatusColor, PolygonDrawStatus } from "../mapStyle";
 
-/** Shape of a polygon version record as returned by the versions API. */
+export { applyMapDrawingCursor, preloadMapDrawingCursor, resetMapDrawingCursor } from "./mapDrawingCursor";
+import { applyMapDrawingCursor, resetMapDrawingCursor } from "./mapDrawingCursor";
+
 export type PolygonVersion = {
   polygonUuid?: string | null;
   isActive?: boolean;
@@ -33,13 +35,14 @@ const extractGeoJsonFromResponse = (
 };
 
 export const startDrawing = (draw: MapboxDraw, map: MapboxMap): void => {
+  applyMapDrawingCursor(map);
   draw.changeMode("draw_polygon");
-  map.getCanvas().style.cursor = "crosshair";
+  applyMapDrawingCursor(map);
 };
 
 export const stopDrawing = (draw: MapboxDraw, map: MapboxMap): void => {
   draw.changeMode("simple_select");
-  map.getCanvas().style.cursor = "auto";
+  resetMapDrawingCursor(map);
 };
 
 export const addGeojsonToDraw = (
@@ -47,39 +50,28 @@ export const addGeojsonToDraw = (
   uuid: string,
   cb: (uuid: string) => void,
   currentDraw: MapboxDraw,
-  map?: MapboxMap
+  map?: MapboxMap,
+  polygonStatus?: PolygonDrawStatus
 ): void => {
   if (geojson == null) return;
 
   const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
-  const addToDrawAndFilter = () => {
-    if (currentDraw == null) return;
-    currentDraw.add(geojsonFormatted);
-    const currentDrawFeatures = currentDraw.getAll();
-    currentDraw.set(currentDrawFeatures);
-    const featureId = currentDrawFeatures.features[0].id;
-    currentDraw.changeMode("direct_select", { featureId: featureId as string });
-    if (map != null) {
-      zoomToBbox(bbox(geojsonFormatted) as BBox, map, false);
-    }
-    cb(uuid);
-  };
-  addToDrawAndFilter();
-};
+  if (currentDraw == null) return;
 
-const getPolygonColor = (polygonStatus: string | undefined): string => {
-  switch (polygonStatus) {
-    case "draft":
-      return "#E468EF";
-    case POLYGON_PENDING_APPROVAL:
-      return "#2398d8";
-    case "approved":
-      return "#72d961";
-    case POLYGON_INFORMATION_REQUIRED:
-      return "#ff8938";
-    default:
-      return "#000000";
+  currentDraw.add(geojsonFormatted);
+  const currentDrawFeatures = currentDraw.getAll();
+  currentDraw.set(currentDrawFeatures);
+  const featureId = currentDrawFeatures.features[0]?.id;
+  if (featureId != null) {
+    currentDraw.changeMode("direct_select", { featureId: String(featureId) });
   }
+
+  if (map != null) {
+    applyMapDrawStatusStyles(map, polygonStatus);
+    zoomToBbox(bbox(geojsonFormatted) as BBox, map, false);
+  }
+
+  cb(uuid);
 };
 
 export const drawTemporaryPolygon = (
@@ -98,7 +90,7 @@ export const drawTemporaryPolygon = (
       type: "fill",
       source: "temp-polygon-source",
       layout: {},
-      paint: { "fill-color": getPolygonColor(polygonVersion?.status), "fill-opacity": 0 }
+      paint: { "fill-color": getPolygonStatusColor(polygonVersion?.status), "fill-opacity": 0 }
     });
     map.addLayer({
       id: "temp-polygon-source-line",
@@ -106,7 +98,7 @@ export const drawTemporaryPolygon = (
       source: "temp-polygon-source",
       layout: {},
       paint: {
-        "line-color": getPolygonColor(polygonVersion?.status),
+        "line-color": getPolygonStatusColor(polygonVersion?.status),
         "line-width": 2,
         "line-dasharray": [4, 2]
       }

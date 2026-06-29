@@ -1,39 +1,200 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
+import { FC, ReactElement, useCallback, useMemo } from "react";
 
-import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
-import EmptyState from "@/components/elements/EmptyState/EmptyState";
-import ButtonField from "@/components/elements/Field/ButtonField";
-import LongTextField from "@/components/elements/Field/LongTextField";
-import TextField from "@/components/elements/Field/TextField";
-import Paper from "@/components/elements/Paper/Paper";
-import Text from "@/components/elements/Text/Text";
-import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
-import EntityStatusBar from "@/components/extensive/EntityStatusBar";
-import { IconNames } from "@/components/extensive/Icon/Icon";
-import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
-import PageCard from "@/components/extensive/PageElements/Card/PageCard";
-import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
-import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
+import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullNurseryReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
-import { useDate } from "@/hooks/useDate";
+import { NurseryFullDto, NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import NurseryReportHeader from "@/pages/reports/nursery-report/components/NurseryReportHeader";
+import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
+import NurseryReportGoalsAndProgressTab from "@/pages/reports/nursery-report/tabs/GoalsAndProgress";
+import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
+import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
+
+type TabItem = {
+  key: string;
+  title: string;
+  renderBody: () => ReactElement;
+};
+
+type NurseryReportContentProps = {
+  nurseryReport: NurseryReportFullDto;
+  nursery?: NurseryFullDto | null;
+  taskDueAt?: string;
+};
+
+const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nursery, taskDueAt }) => {
+  const t = useT();
+  const router = useRouter();
+  const nurseryReportUUID = nurseryReport.uuid;
+  const currentTab = (router.query.tab as string) ?? "overview";
+
+  const reportTitle = nurseryReport.reportTitle ?? nurseryReport.title ?? t("Nursery Report");
+  const headerReportTitle = nursery?.name != null ? `${nursery.name} ${reportTitle}` : reportTitle;
+
+  const window = useReportingWindow(toFramework(nurseryReport.frameworkKey), taskDueAt);
+  const taskTitle = t("Reporting Task {window}", { window });
+
+  const navigateToTab = useCallback(
+    (tab: string) => {
+      router.push(`/reports/nursery-report/${nurseryReportUUID}?tab=${tab}`, undefined, { shallow: true });
+    },
+    [router, nurseryReportUUID]
+  );
+
+  const tabItems = useMemo<TabItem[]>(
+    () => [
+      {
+        key: "overview",
+        title: t("Overview"),
+        renderBody: () => <NurseryReportOverview report={nurseryReport} />
+      },
+      {
+        key: "details",
+        title: t("Report Details"),
+        renderBody: () => <NurseryReportDetailsTab report={nurseryReport} />
+      },
+      {
+        key: "gallery",
+        title: t("Gallery"),
+        renderBody: () => (
+          <EntityGalleryTab
+            modelName="nurseryReports"
+            modelUUID={nurseryReport.uuid}
+            entityData={nurseryReport}
+            modelTitle={t("Nursery Report")}
+            emptyStateContent={t(
+              "Your gallery is currently empty. Add images by using the 'Edit' button on this nursery report."
+            )}
+            sharedDriveLink={nurseryReport.sharedDriveLink ?? undefined}
+          />
+        )
+      },
+      {
+        key: "goals",
+        title: t("Indicators & Insights"),
+        renderBody: () => <NurseryReportGoalsAndProgressTab nurseryReport={nurseryReport} />
+      }
+    ],
+    [nurseryReport, t]
+  );
+
+  const visibleTabItems = useMemo(() => {
+    if (nurseryReport.nothingToReport) {
+      return tabItems.filter(item => item.key === "overview");
+    }
+
+    return tabItems;
+  }, [nurseryReport.nothingToReport, tabItems]);
+
+  const tabBarTabs = useMemo(
+    () =>
+      visibleTabItems.map(item => ({
+        value: item.key,
+        label: item.title
+      })),
+    [visibleTabItems]
+  );
+
+  const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
+  const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+
+  return (
+    <>
+      <ResponsiveTypography />
+      <Head>
+        <title>{reportTitle}</title>
+      </Head>
+      <ReportBanner
+        report={nurseryReport}
+        title={headerReportTitle}
+        dueAt={taskDueAt ?? nurseryReport.dueAt}
+        entityName="nursery-report"
+        breadcrumbs={[
+          {
+            label: t("Projects"),
+            link: "/my-projects",
+            icon: <ProjectIcon className="!text-theme-primary-900" />
+          },
+          {
+            label: nurseryReport.projectName ?? t("Project"),
+            link: `/project/${nurseryReport.projectUuid}`
+          },
+          {
+            label: t("Nurseries"),
+            link: `/project/${nurseryReport.projectUuid}?tab=nurseries`
+          },
+          {
+            label: nurseryReport.nurseryName ?? t("Nursery"),
+            link: `/nursery/${nurseryReport.nurseryUuid}`
+          },
+          {
+            label: t("Reports"),
+            link: `/nursery/${nurseryReport.nurseryUuid}?tab=completed-tasks`
+          },
+          {
+            label: t("Nursery Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),
+            link: `/reports/nursery-report/${nurseryReportUUID}`
+          }
+        ]}
+        suffix={
+          <div className="flex items-center gap-1.5">
+            {nurseryReport.nurseryUuid != null && (
+              <Button
+                variant="borderless"
+                size="small"
+                className="underline underline-offset-2"
+                onClick={() => router.push(`/nursery/${nurseryReport.nurseryUuid}`)}
+              >
+                {t("Nursery Profile")}
+              </Button>
+            )}
+            {nurseryReport.nurseryUuid != null && nurseryReport.projectReportUuid != null && (
+              <span className="text-sm text-theme-neutral-300">|</span>
+            )}
+            {nurseryReport.projectReportUuid != null && (
+              <Button
+                variant="borderless"
+                size="small"
+                className="underline underline-offset-2"
+                onClick={() => router.push(`/reports/project-report/${nurseryReport.projectReportUuid}`)}
+              >
+                {t("Project Report")}
+              </Button>
+            )}
+          </div>
+        }
+        toolbar={{
+          tabBar: {
+            tabs: tabBarTabs,
+            defaultValue: activeTab,
+            onTabClick: (tabValue: string) => {
+              navigateToTab(tabValue);
+            }
+          }
+        }}
+      />
+      <div className="flex flex-1">{activeTabItem.renderBody()}</div>
+      <PageFooter />
+    </>
+  );
+};
 
 const NurseryReportDetailPage = () => {
   const t = useT();
   const router = useRouter();
-  const { format } = useDate();
   const nurseryReportUUID = router.query.uuid as string;
 
   const [reportLoaded, { data: nurseryReport, loadFailure }] = useFullNurseryReport({ id: nurseryReportUUID });
@@ -41,150 +202,19 @@ const NurseryReportDetailPage = () => {
   useValueChanged(reportLoaded, () => {
     if (reportLoaded && nurseryReport == null) {
       Log.error("Nursery report not found", { nurseryReportUUID, loadFailure });
-      openToast("Nursery report not found", ToastType.ERROR);
+      openToast(t("Nursery report not found"), ToastType.ERROR);
     }
   });
 
-  const [nurseryLoaded, { data: nursery }] = useFullNursery({ id: nurseryReport?.nurseryUuid! });
+  const [nurseryLoaded, { data: nursery }] = useFullNursery({ id: nurseryReport?.nurseryUuid ?? undefined });
   const [taskLoaded, { data: task }] = useTask({ id: nurseryReport?.taskUuid ?? undefined });
-
-  const reportTitle = nurseryReport?.reportTitle ?? nurseryReport?.title ?? t("Nursery Report");
-  const headerReportTitle = nursery?.name ? `${nursery?.name} ${reportTitle}` : "";
-
-  const window = useReportingWindow(toFramework(nurseryReport?.frameworkKey), task?.dueAt);
-  const taskTitle = t("Reporting Task {window}", { window });
-
   const isLoaded = reportLoaded && nurseryLoaded && taskLoaded;
+
   return (
     <FrameworkProvider frameworkKey={nurseryReport?.frameworkKey}>
       <LoadingContainer loading={!isLoaded}>
         {nurseryReport == null ? null : (
-          <>
-            <Head>
-              <title>{reportTitle}</title>
-            </Head>
-            <PageBreadcrumbs
-              links={[
-                { title: t("My Projects"), path: "/my-projects" },
-                { title: nurseryReport.projectName ?? t("Project"), path: `/project/${nurseryReport.projectUuid}` },
-                {
-                  title: taskTitle,
-                  path: `/project/${nurseryReport.projectUuid}/reporting-task/${nurseryReport.taskUuid}`
-                },
-                { title: reportTitle }
-              ]}
-            />
-            <NurseryReportHeader report={nurseryReport!} title={headerReportTitle} />
-            <EntityStatusBar entityName="nurseryReports" entity={nurseryReport} />
-            <PageBody>
-              {nurseryReport.nothingToReport ? (
-                <PageRow>
-                  <PageColumn>
-                    <EmptyState
-                      iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
-                      title={t("Nothing to report")}
-                      subtitle={t(
-                        "You've marked this report as 'Nothing to Report,' indicating there are no updates for this nursery report. If you wish to add information to this report, please use the edit button."
-                      )}
-                    />
-                  </PageColumn>
-                </PageRow>
-              ) : (
-                <>
-                  <PageRow>
-                    <PageColumn>
-                      <EntityMapAndGalleryCard
-                        modelName="nurseryReports"
-                        modelUUID={nurseryReport.uuid}
-                        entityData={nursery}
-                        modelTitle={t("Nursery Report")}
-                        emptyStateContent={t(
-                          "Your gallery is currently empty. Add images by using the 'Edit' button on this nursery report."
-                        )}
-                      />
-                      {nurseryReport.sharedDriveLink != null ? (
-                        <Paper>
-                          <ButtonField
-                            label={t("Shared Drive link")}
-                            buttonProps={{
-                              as: Link,
-                              children: t("View"),
-                              href: nurseryReport.sharedDriveLink ?? "",
-                              target: "_blank"
-                            }}
-                          />
-                        </Paper>
-                      ) : null}
-                    </PageColumn>
-                  </PageRow>
-                  <PageRow>
-                    <PageColumn>
-                      <PageCard title={t("Reported Data")} gap={4}>
-                        <LongTextField title={t("Interesting Facts")}>{nurseryReport.interestingFacts}</LongTextField>
-                        <LongTextField title={t("Site Preparation")}>{nurseryReport?.sitePrep}</LongTextField>
-                      </PageCard>
-                    </PageColumn>
-                    <PageColumn>
-                      <PageCard title={t("Nursery Report Details")}>
-                        <TextField label={t("Nursery Report name")} value={nurseryReport.title!} />
-                        <TextField label={t("Nursery name")} value={nursery?.name!} />
-                        <TextField
-                          label={t("Created by")}
-                          value={
-                            (nurseryReport.createdByFirstName ?? "") + " " + (nurseryReport.createdByLastName ?? "")
-                          }
-                        />
-                        <TextField label={t("Updated")} value={format(nurseryReport.updatedAt)} />
-                        <TextField label={t("Due date")} value={format(nurseryReport.dueAt)} />
-                        <TextField label={t("Submitted date")} value={format(nurseryReport.submittedAt)} />
-                      </PageCard>
-                      <PageCard title={t("Overview")}>
-                        <Text variant="text-20-bold">{t("Seedlings Grown")}</Text>
-                        <GoalProgressCard
-                          hasProgress={false}
-                          classNameCard="!pl-0"
-                          items={[
-                            {
-                              iconName: IconNames.LEAF_CIRCLE_PD,
-                              label: t("TOTAL SEEDLINGS GROWN (on report):"),
-                              variantLabel: "text-14",
-                              classNameLabel: " text-neutral-650 uppercase !w-auto",
-                              classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
-                              value: nurseryReport.seedlingsYoungTrees!
-                            }
-                          ]}
-                          className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
-                          title={t("Seedlings Grown")}
-                        />
-                        <TreeSpeciesTable
-                          {...{ entity: "nurseryReports", entityUuid: nurseryReportUUID }}
-                          collection="nursery-seedling"
-                          visibleRows={8}
-                          galleryType={"treeSpeciesPD"}
-                        />
-                      </PageCard>
-                      <Paper>
-                        {nurseryReport.treeSeedlingContributions?.[0]?.url != null ? (
-                          <ButtonField
-                            label={t("Tree Seedling Contributions")}
-                            subtitle={t(nurseryReport.treeSeedlingContributions?.[0]?.fileName ?? "")}
-                            buttonProps={{
-                              as: Link,
-                              children: t("Download"),
-                              href: nurseryReport.treeSeedlingContributions?.[0]?.url ?? "",
-                              download: true
-                            }}
-                          />
-                        ) : (
-                          <TextField label={t("Tree Seedling Contributions")} value={t("No file uploaded")} />
-                        )}
-                      </Paper>
-                    </PageColumn>
-                  </PageRow>
-                </>
-              )}
-            </PageBody>
-          </>
+          <NurseryReportContent nurseryReport={nurseryReport} nursery={nursery} taskDueAt={task?.dueAt} />
         )}
       </LoadingContainer>
     </FrameworkProvider>

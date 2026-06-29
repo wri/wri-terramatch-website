@@ -3,9 +3,6 @@
 
 const { register } = require("esbuild-register/dist/node");
 
-/**
- * Register esbuild once to support importing TypeScript files.
- */
 function registerTypeScript() {
   if (!process.env.__ESBUILD_REGISTERED__) {
     register({ target: "node14" });

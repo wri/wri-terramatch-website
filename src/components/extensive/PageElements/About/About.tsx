@@ -1,10 +1,12 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, ReactNode } from "react";
+import { twMerge } from "tailwind-merge";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ChevronRightIcon from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
+import { useOnboardingCardAnalyticsContext } from "@/utils/analytics/onboardingCardAnalytics.context";
 
 interface AboutProps {
   title?: string;
@@ -13,19 +15,22 @@ interface AboutProps {
     title: string;
     link: string;
   }[];
+  className?: string;
+  onLinkClick?: (link: { title: string; link: string }) => void;
 }
-const About: FC<AboutProps> = ({ title, description, links }) => {
+const About: FC<AboutProps> = ({ title, description, links, className, onLinkClick }) => {
   const t = useT();
+  const onboardingAnalytics = useOnboardingCardAnalyticsContext();
 
   return (
-    <Flex direction="column" gap={2} padding={5} backgroundColor="neutral.100" borderRadius={1} minHeight={0}>
+    <Flex className={twMerge("rounded-1 min-h-0 flex-col gap-2 bg-theme-neutral-100 p-5", className)}>
       {title && (
         <Text color="neutral.900" textStyle="400-bold">
           {title}
         </Text>
       )}
       {description}
-      <Flex direction="column" gap={2} minHeight={0}>
+      <Flex className="min-h-0 flex-[1] shrink-0 flex-col gap-2">
         <Text color="neutral.900" textStyle="500-bold">
           {t("Helpful Links")}
         </Text>
@@ -37,8 +42,12 @@ const About: FC<AboutProps> = ({ title, description, links }) => {
               size="small"
               rightIcon={<ChevronRightIcon />}
               key={link.title}
-              className="mobile:max-w-full mobile:[text-wrap:auto]"
-              onClick={() => window.open(link.link, "_blank")}
+              className="justify-start truncate !whitespace-nowrap mobile:max-w-full mobile:[text-wrap:auto]"
+              onClick={() => {
+                onLinkClick?.({ title: link.title, link: link.link });
+                onboardingAnalytics?.trackLinkClick(link.title, link.link);
+                window.open(link.link, "_blank");
+              }}
             >
               {t(link.title)}
             </Button>

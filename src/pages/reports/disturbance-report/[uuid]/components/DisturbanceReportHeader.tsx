@@ -34,7 +34,7 @@ const DisturbanceReportHeader = ({ disturbanceReport }: DisturbanceReportHeaderP
     disturbanceReport?.uuid ?? ""
   );
 
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "disturbance-reports",
     entityUUID: disturbanceReport?.uuid ?? "",
     entityStatus: disturbanceReport?.status ?? "",
@@ -80,35 +80,38 @@ const DisturbanceReportHeader = ({ disturbanceReport }: DisturbanceReportHeaderP
   };
 
   return (
-    <PageHeader
-      className="h-[203px]"
-      title={`Disturbance Report ${
-        disturbanceReport?.disturbanceStartDate ? formatDateForEnGb(disturbanceReport?.disturbanceStartDate) : ""
-      }`}
-      subtitles={subtitles}
-      hasBackButton={false}
-    >
-      <div className="flex gap-4">
-        <Button variant="secondary" onClick={onDeleteDisturbanceReport}>
-          {t("Delete")}
-        </Button>
-
-        {disturbanceReportStatus === "edit" && (
-          <Button as={Link} href={`/entity/disturbance-reports/edit/${disturbanceReport.uuid}`}>
-            {t("Edit")}
+    <>
+      {EditModals}
+      <PageHeader
+        className="h-[203px]"
+        title={`Disturbance Report ${
+          disturbanceReport?.disturbanceStartDate ? formatDateForEnGb(disturbanceReport?.disturbanceStartDate) : ""
+        }`}
+        subtitles={subtitles}
+        hasBackButton={false}
+      >
+        <div className="flex gap-4">
+          <Button variant="secondary" onClick={onDeleteDisturbanceReport}>
+            {t("Delete")}
           </Button>
-        )}
-        {disturbanceReportStatus !== "edit" && (
-          <>
-            <Button variant="secondary" onClick={handleExport}>
-              {t("Export")}
-              <InlineLoader loading={exportLoader} />
+
+          {disturbanceReportStatus === "edit" && (
+            <Button as={Link} href={`/entity/disturbance-reports/edit/${disturbanceReport.uuid}`}>
+              {t("Edit")}
             </Button>
-            <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
-          </>
-        )}
-      </div>
-    </PageHeader>
+          )}
+          {disturbanceReportStatus !== "edit" && (
+            <>
+              <Button variant="secondary" onClick={handleExport}>
+                {t("Export")}
+                <InlineLoader loading={exportLoader} />
+              </Button>
+              <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
+            </>
+          )}
+        </div>
+      </PageHeader>
+    </>
   );
 };
 

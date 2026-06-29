@@ -525,7 +525,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       trackPolygonEvent("polygon_uploaded", {
         ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
         polygon_id: "bulk_upload",
-        source: "direct"
+        polygon_source: "direct"
       });
       refetch();
     } catch (error) {
@@ -592,7 +592,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         trackPolygonEvent("polygon_uploaded", {
           ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
           polygon_id: "bulk_upload",
-          source: "direct"
+          polygon_source: "direct"
         });
         refetch();
       }
@@ -791,7 +791,8 @@ const PolygonReviewTab: FC<IProps> = props => {
               ...getPolygonAnalyticsContext({ entityType: "site", entityId: record?.uuid }),
               polygon_count: sitePolygonData?.length ?? 0,
               file_format: "geojson",
-              download_type: "standard"
+              download_type: "standard",
+              polygon_type: "standard"
             });
           }
         }}
@@ -956,7 +957,8 @@ const PolygonReviewTab: FC<IProps> = props => {
                             ...getPolygonAnalyticsContext({ entityType: "site", entityId: record?.uuid }),
                             polygon_count: sitePolygonData?.length ?? 0,
                             file_format: "geojson",
-                            download_type: "standard"
+                            download_type: "standard",
+                            polygon_type: "standard"
                           });
                         }}
                       >
@@ -994,6 +996,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                   tooltipType="edit"
                   sitePolygonData={sitePolygonData}
                   mediaFiles={mediaFiles}
+                  alwaysShowPhotosOnMap
                   setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
                   isLoadingDelayedJob={props.isLoadingDelayedJob}
                   setAlertTitle={props.setAlertTitle}

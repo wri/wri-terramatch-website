@@ -1,8 +1,8 @@
 import { useShowContext } from "react-admin";
 
-import { useBaseMap } from "./useBaseMap";
+import { type MapDrawSaveHandler, type MapDrawSaveRecord, useBaseMap } from "./useBaseMap";
 
-export const useMap = (onSave?: (geojson: unknown, record: unknown) => void) => {
+export const useMap = (onSave?: MapDrawSaveHandler) => {
   const { record } = useShowContext();
-  return useBaseMap(onSave, record);
+  return useBaseMap(onSave, record as MapDrawSaveRecord | undefined);
 };

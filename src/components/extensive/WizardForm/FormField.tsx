@@ -3,7 +3,7 @@ import { FieldError, UseFormReturn } from "react-hook-form";
 
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
 import { SharedFieldProps } from "@/components/extensive/WizardForm/types";
-import { useFieldsProvider } from "@/context/wizardForm.provider";
+import { useFieldsProvider, useShowValidationErrors } from "@/context/wizardForm.provider";
 
 type FormQuestionProps = {
   fieldId: string;
@@ -13,11 +13,13 @@ type FormQuestionProps = {
 
 const FormField: FC<FormQuestionProps> = ({ fieldId, formHook, onChange }) => {
   const { feedbackRequired, fieldByName } = useFieldsProvider();
+  const showValidationErrors = useShowValidationErrors();
   const field = fieldByName(fieldId);
   if (field == null) return null;
 
   const { control, formState } = formHook;
-  const error = formState.errors?.[field.name] as FieldError;
+  const fieldError = formState.errors?.[field.name] as FieldError | undefined;
+  const error = showValidationErrors ? fieldError : undefined;
   const sharedProps = useMemo(
     (): SharedFieldProps => ({
       error,

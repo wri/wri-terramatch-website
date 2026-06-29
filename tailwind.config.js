@@ -15,7 +15,8 @@ module.exports = {
         wide: "2500px",
         lg: "1900px",
         sm: "1200px",
-        mobile: { max: "1200px" }
+        mobile: { max: "1200px" },
+        wriDrawer: "1800px"
       },
       width: {
         "fit-content": "fit-content"
@@ -336,7 +337,7 @@ module.exports = {
     // Chakra UI Design System theme colors
     {
       pattern:
-        /(bg|text|border)-theme-(neutral|primary|secondary|success|warning|error)-(100|200|300|400|500|600|700|800|900)/
+        /(bg|text|border)-theme-(neutral|primary|secondary|success|warning|error)-(100|150|200|300|400|500|600|700|800|900)/
     },
     {
       pattern: /text-theme-accessible-.+/

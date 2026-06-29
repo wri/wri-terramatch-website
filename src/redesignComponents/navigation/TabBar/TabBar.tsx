@@ -8,11 +8,15 @@ const TabBar: FC<TabBarWriProps> = props => {
   return (
     <Box
       css={{
-        "& [role='tablist']": { width: "max-content" },
         "& button": {
           textWrap: "nowrap !important"
+        },
+        "& > div:first-of-type": {
+          minWidth: "max-content",
+          width: "100%"
         }
       }}
+      className="w-max-content"
     >
       <TabBarWri {...props} />
     </Box>

@@ -46,7 +46,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
 }) => {
   const t = useT();
   const { openModal } = useModalContext();
-  const { handleEdit } = useGetEditEntityHandler({
+  const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
     entityStatus: project.status ?? "started",
@@ -85,6 +85,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
 
   return (
     <Box gap={2} className="flex flex-col">
+      {EditModals}
       <Text
         fontSize="1.75rem"
         lineHeight="2.25rem"
@@ -143,7 +144,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
             size="small"
             leftIcon={<DownloadIcon />}
             onClick={handleExport}
-            loading={exportLoader}
+            disabled={exportLoader}
             className="mobile:mt-2"
           >
             {t("Download Project Files")}

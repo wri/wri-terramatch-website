@@ -1,0 +1,121 @@
+import { Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
+import type { FC, ReactNode } from "react";
+
+import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
+import ValidationTag, { type ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
+import { AreaHectaresIcon, CommentIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
+import { renderRestorationPracticeIcons, renderTargetLandUseLabel } from "@/utils/polygonAttributeDisplay";
+
+type PopupContentPolygonProps = {
+  treesPlantedDisplay?: string;
+  areaHectaresDisplay?: string;
+  commentsDisplay?: string;
+  validationStatus?: ValidationTagState;
+  siteReportPolygonPopup?: boolean;
+  restorationPractice?: restorationStrategyType[];
+  targetLandUse?: targetLandUseType | null;
+};
+
+const PopupAttributeRow: FC<{ label: string; value: ReactNode }> = ({ label, value }) => (
+  <Flex alignItems="center" justifyContent="space-between" gap={4}>
+    <Text color="neutral.700" textStyle="400" textWrap="nowrap">
+      {label}
+    </Text>
+    {value}
+  </Flex>
+);
+
+const PopupContentPolygon: FC<PopupContentPolygonProps> = ({
+  treesPlantedDisplay = "\u2014",
+  areaHectaresDisplay = "\u2014",
+  commentsDisplay = "\u2014",
+  validationStatus = "not-started",
+  siteReportPolygonPopup = false,
+  restorationPractice = [],
+  targetLandUse = null
+}) => {
+  const t = useT();
+
+  if (siteReportPolygonPopup) {
+    return (
+      <Flex padding="0.75rem" direction="column" gap={4} width="20rem">
+        <PopupAttributeRow
+          label={t("Area (ha)")}
+          value={
+            <Text color="neutral.900" textStyle="400-bold">
+              {areaHectaresDisplay}
+            </Text>
+          }
+        />
+        <PopupAttributeRow
+          label={t("Restoration Practice")}
+          value={renderRestorationPracticeIcons(restorationPractice)}
+        />
+        <PopupAttributeRow label={t("Target Land Use")} value={renderTargetLandUseLabel(targetLandUse)} />
+      </Flex>
+    );
+  }
+
+  return (
+    <Flex padding="0.75rem" direction="column" gap={4} width="20rem">
+      <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
+        <Flex alignItems="center" gap={2}>
+          <TreeCircleIcon boxSize={6} />
+          <Text color="neutral.700" textStyle="400" textWrap="nowrap">
+            {t("Trees Planted")}
+          </Text>
+        </Flex>
+        <Text color="neutral.900" textStyle="400-bold">
+          {treesPlantedDisplay}
+        </Text>
+      </Flex>
+      <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
+        <Flex alignItems="center" gap={2}>
+          <Flex
+            h={6}
+            w={6}
+            alignItems="center"
+            justifyContent="center"
+            borderColor={"secondary.500"}
+            borderWidth={"1px"}
+            backgroundColor="secondary.300"
+            borderRadius={"full"}
+          >
+            <AreaHectaresIcon boxSize={3.5} color="secondary.800" />
+          </Flex>
+          <Text color="neutral.700" textStyle="400" textWrap="nowrap">
+            {t("Area (ha)")}
+          </Text>
+        </Flex>
+        <Text color="neutral.900" textStyle="400-bold">
+          {areaHectaresDisplay}
+        </Text>
+      </Flex>
+      {commentsDisplay !== "0" && (
+        <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
+          <Flex alignItems="center" gap={2}>
+            <Flex h={6} w={6} alignItems="center" justifyContent="center">
+              <CommentIcon boxSize={4} color="neutral.800" />
+            </Flex>
+            <Text color="neutral.700" textStyle="400" textWrap="nowrap">
+              {t("Comments")}
+            </Text>
+          </Flex>
+          <Text color="neutral.900" textStyle="400-bold">
+            {commentsDisplay}
+          </Text>
+        </Flex>
+      )}
+      <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
+        <Flex alignItems="center" gap={2}>
+          <Text color="neutral.700" textStyle="400" textWrap="nowrap">
+            {t("Validation")}
+          </Text>
+        </Flex>
+        <ValidationTag status={validationStatus} />
+      </Flex>
+    </Flex>
+  );
+};
+export default PopupContentPolygon;

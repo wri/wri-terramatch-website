@@ -1,5 +1,13 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import { LayerSpecification, Map as MapboxMap, MapMouseEvent, MapTouchEvent, Popup } from "mapbox-gl";
+import {
+  GeoJSONFeature,
+  LayerSpecification,
+  LngLatLike,
+  Map as MapboxMap,
+  MapMouseEvent,
+  MapTouchEvent,
+  Popup
+} from "mapbox-gl";
 import React, { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -8,6 +16,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import Log from "@/utils/log";
 
 import { ANR_PLOT_FILL_LAYER_ID } from "../adapters/geoserver";
+import PopupProviders from "../components/PopupProviders";
 import type {
   DashboardPopupContext,
   EditPolygonState,
@@ -17,6 +26,7 @@ import type {
   SetPolygonFromMap,
   TooltipType
 } from "../Map.d";
+import { clearActivePopup, setActivePopup } from "./popupCoordinator";
 
 type MapboxPopup = InstanceType<typeof Popup>;
 
@@ -29,7 +39,6 @@ function getPopupRegistry(map: MapboxMap): Record<"POLYGON" | "MEDIA", MapboxPop
   return popupRegistries.get(map)!;
 }
 
-// Mapbox click and touchend layer events share the same data shape (lngLat, features, point).
 type MapLayerInteractionEvent = MapMouseEvent | MapTouchEvent;
 
 const clickHandlerRegistries = new WeakMap<MapboxMap, Record<string, (e: MapLayerInteractionEvent) => void>>();
@@ -41,65 +50,88 @@ function getClickHandlers(map: MapboxMap): Record<string, (e: MapLayerInteractio
   return clickHandlerRegistries.get(map)!;
 }
 
-/** Options forwarded from useMapPopups down to every layer click handler. */
+type CursorHandlers = { enter: () => void; leave: () => void };
+
+const cursorHandlerRegistries = new WeakMap<MapboxMap, Record<string, CursorHandlers>>();
+
+function getCursorHandlers(map: MapboxMap): Record<string, CursorHandlers> {
+  if (!cursorHandlerRegistries.has(map)) {
+    cursorHandlerRegistries.set(map, {});
+  }
+  return cursorHandlerRegistries.get(map)!;
+}
+
+const setMapPointerCursor = (map: MapboxMap): void => {
+  map.getCanvas()?.style.setProperty("cursor", "pointer");
+};
+
+const resetMapCursor = (map: MapboxMap): void => {
+  map.getCanvas()?.style.removeProperty("cursor");
+};
+
+const registerPointerCursorHandlers = (map: MapboxMap, layerIds: string[]): void => {
+  const handlers = getCursorHandlers(map);
+  layerIds.forEach(layerId => {
+    if (handlers[layerId] != null) {
+      map.off("mouseenter", layerId, handlers[layerId].enter);
+      map.off("mouseleave", layerId, handlers[layerId].leave);
+    }
+    const enter = () => setMapPointerCursor(map);
+    const leave = () => resetMapCursor(map);
+    handlers[layerId] = { enter, leave };
+    map.on("mouseenter", layerId, enter);
+    map.on("mouseleave", layerId, leave);
+  });
+};
+
+const teardownPointerCursorHandlers = (map: MapboxMap): void => {
+  const handlers = getCursorHandlers(map);
+  Object.entries(handlers).forEach(([layerId, { enter, leave }]) => {
+    map.off("mouseenter", layerId, enter);
+    map.off("mouseleave", layerId, leave);
+    delete handlers[layerId];
+  });
+  resetMapCursor(map);
+};
+
 export type PopupHandlerOptions = {
   setPolygonFromMap?: SetPolygonFromMap;
+  setShouldRefetchPolygonData?: (value: boolean) => void;
   sitePolygonData?: SitePolygonLightDto[];
   type: TooltipType;
   editPolygon: EditPolygonState;
   setEditPolygon: (value: EditPolygonState) => void;
-  /** Present only in dashboard mode; drives popup content and filter callbacks. */
   dashboard?: DashboardPopupContext;
   setLoader?: (value: boolean) => void;
   setMobilePopupData?: (value: MobilePopupData) => void;
+  /** Tracks the polygonUuid shown in the currently open popup so it can be closed when deleted. */
+  setActivePopupPolygonUuid?: (uuid: string | null) => void;
+  championsMap?: boolean;
+  siteReportPolygonPopup?: boolean;
 };
 
-const handleLayerClick = (
-  e: MapLayerInteractionEvent,
-  PopupComponent: React.ComponentType<PopupComponentProps>,
+type OpenPolygonPopupParams = {
+  feature: GeoJSONFeature;
+  lngLat: LngLatLike;
+  layerName?: string;
+};
+
+export const openPolygonPopup = (
   map: MapboxMap,
-  layerName: string | undefined,
+  PopupComponent: React.ComponentType<PopupComponentProps>,
+  { feature, lngLat, layerName }: OpenPolygonPopupParams,
   options: PopupHandlerOptions
 ): void => {
-  const { lngLat, features } = e;
-  const feature = features?.[0];
-  if (feature == null) {
-    Log.warn("No feature found in click event");
-    return;
-  }
-
   const {
     setPolygonFromMap,
+    setShouldRefetchPolygonData,
     sitePolygonData,
     type,
     editPolygon,
     setEditPolygon,
     dashboard,
-    setLoader,
-    setMobilePopupData
+    championsMap
   } = options;
-
-  if (setMobilePopupData != null && dashboard?.dashboardMode != null) {
-    setMobilePopupData({
-      feature,
-      layerName,
-      type,
-      setPolygonFromMap,
-      sitePolygonData,
-      editPolygon,
-      setEditPolygon,
-      setLoader,
-      setFilters: dashboard.setFilters,
-      dashboardCountries: dashboard.dashboardCountries,
-      dashboardMode: dashboard.dashboardMode
-    });
-    return;
-  }
-
-  if (layerName === LAYERS_NAMES.POLYGON_GEOMETRY && map.getLayer(ANR_PLOT_FILL_LAYER_ID) != null) {
-    const anrHits = map.queryRenderedFeatures(e.point, { layers: [ANR_PLOT_FILL_LAYER_ID] });
-    if (anrHits.length > 0) return;
-  }
 
   removePopups(map, "POLYGON");
 
@@ -121,32 +153,88 @@ const handleLayerClick = (
       : 0
   };
 
+  const polygonUuid = (feature.properties?.uuid ?? "") as string;
+  options.setActivePopupPolygonUuid?.(polygonUuid !== "" ? polygonUuid : null);
+
   const popupContent = document.createElement("div");
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
   const newPopup = new Popup(popupOptions).setLngLat(lngLat).setDOMContent(popupContent);
   newPopup.on("close", () => {
     root.unmount();
+    options.setActivePopupPolygonUuid?.(null);
+    clearActivePopup(map, "POLYGON");
   });
 
   newPopup.addTo(map);
   getPopupRegistry(map)["POLYGON"].push(newPopup);
+  setActivePopup(map, "POLYGON", () => removePopups(map, "POLYGON"));
 
   root.render(
-    createElement(PopupComponent, {
-      feature,
-      popup: newPopup,
-      layerName,
-      setFilters: dashboard?.setFilters,
-      dashboardCountries: dashboard?.dashboardCountries,
-      dashboardMode: dashboard?.dashboardMode,
-      setPolygonFromMap,
-      sitePolygonData,
-      type,
-      editPolygon,
-      setEditPolygon
-    })
+    createElement(
+      PopupProviders,
+      null,
+      createElement(PopupComponent, {
+        feature,
+        popup: newPopup,
+        layerName,
+        setFilters: dashboard?.setFilters,
+        dashboardCountries: dashboard?.dashboardCountries,
+        dashboardMode: dashboard?.dashboardMode,
+        setPolygonFromMap,
+        setShouldRefetchPolygonData,
+        sitePolygonData,
+        type,
+        editPolygon,
+        setEditPolygon,
+        championsMap,
+        siteReportPolygonPopup: options.siteReportPolygonPopup
+      })
+    )
   );
+};
+
+const handleLayerClick = (
+  e: MapLayerInteractionEvent,
+  PopupComponent: React.ComponentType<PopupComponentProps>,
+  map: MapboxMap,
+  layerName: string | undefined,
+  options: PopupHandlerOptions
+): void => {
+  const { lngLat, features } = e;
+  const feature = features?.[0];
+  if (feature == null) {
+    Log.warn("No feature found in click event");
+    return;
+  }
+  e.preventDefault();
+
+  const { dashboard, setLoader, setMobilePopupData } = options;
+
+  if (setMobilePopupData != null && dashboard?.dashboardMode != null) {
+    setMobilePopupData({
+      feature,
+      layerName,
+      type: options.type,
+      setPolygonFromMap: options.setPolygonFromMap,
+      setShouldRefetchPolygonData: options.setShouldRefetchPolygonData,
+      sitePolygonData: options.sitePolygonData,
+      editPolygon: options.editPolygon,
+      setEditPolygon: options.setEditPolygon,
+      setLoader,
+      setFilters: dashboard.setFilters,
+      dashboardCountries: dashboard.dashboardCountries,
+      dashboardMode: dashboard.dashboardMode
+    });
+    return;
+  }
+
+  if (layerName === LAYERS_NAMES.POLYGON_GEOMETRY && map.getLayer(ANR_PLOT_FILL_LAYER_ID) != null) {
+    const anrHits = map.queryRenderedFeatures(e.point, { layers: [ANR_PLOT_FILL_LAYER_ID] });
+    if (anrHits.length > 0) return;
+  }
+
+  openPolygonPopup(map, PopupComponent, { feature, lngLat, layerName }, options);
 };
 
 export const registerPopup = (map: MapboxMap, key: "POLYGON" | "MEDIA", popup: MapboxPopup): void => {
@@ -172,6 +260,17 @@ export const addPopupsToMap = (
   });
 };
 
+export const teardownPopupsFromMap = (map: MapboxMap): void => {
+  const handlers = getClickHandlers(map);
+  Object.entries(handlers).forEach(([layerId, handler]) => {
+    map.off("click", layerId, handler);
+    map.off("touchend", layerId, handler);
+    delete handlers[layerId];
+  });
+  teardownPointerCursorHandlers(map);
+  removePopups(map, "POLYGON");
+};
+
 export const addPopupToLayer = (
   map: MapboxMap,
   popupComponent: React.ComponentType<PopupComponentProps>,
@@ -190,10 +289,15 @@ export const addPopupToLayer = (
   }
   if (style == null) return;
   const layers = style.layers ?? [];
-  let targetLayers = layers.filter(l => l.id.startsWith(name));
+  const matchingLayers = layers.filter(l => l.id.startsWith(name));
+  let targetLayers = matchingLayers;
 
-  if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
-    targetLayers = targetLayers.filter(
+  if (name === LAYERS_NAMES.CENTROIDS && matchingLayers.length > 0) {
+    registerPointerCursorHandlers(
+      map,
+      matchingLayers.map(layer => layer.id)
+    );
+    targetLayers = matchingLayers.filter(
       l => (l as LayerSpecification & { metadata?: { type?: string } })?.metadata?.type === "big-circle"
     );
   }
