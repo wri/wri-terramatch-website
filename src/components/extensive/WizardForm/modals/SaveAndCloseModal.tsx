@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { useModalContext } from "@/context/modal.provider";
 import { FormModelsDefinition } from "@/context/wizardForm.provider";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
+import { EntityName, isReportModelName } from "@/types/common";
 import { toArray } from "@/utils/array";
 
 import { ModalId } from "../../Modal/ModalConst";
@@ -20,26 +21,14 @@ const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
   const { closeModal } = useModalContext();
   const t = useT();
   const models = useMemo(() => toArray(props.models), [props.models]);
-  const isSubmissionModel = models.length > 1;
+  const isReportModel = isReportModelName(models[0].model as EntityName);
 
   return (
     <ModalConfirmation
       open={true}
       title={props.title ?? t("Save and exit?")}
       content={
-        props.content ?? isSubmissionModel ? (
-          <Box>
-            <Text as="span" textStyle="400">
-              {t("Your progress will be saved as a draft. You can access this form again from the ")}
-            </Text>
-            <Text as="span" textStyle="400-bold">
-              {t("Opportunities ")}
-            </Text>
-            <Text as="span" textStyle="400">
-              {t(" section.")}
-            </Text>
-          </Box>
-        ) : (
+        props.content ?? isReportModel ? (
           <Box>
             <Text as="span" textStyle="400">
               {t("Your progress will be saved as a draft. You can access this form again from the ")}
@@ -49,6 +38,18 @@ const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
             </Text>
             <Text as="span" textStyle="400">
               {t(" section on your project page.")}
+            </Text>
+          </Box>
+        ) : (
+          <Box>
+            <Text as="span" textStyle="400">
+              {t("Your progress will be saved as a draft. You can access this form again from the ")}
+            </Text>
+            <Text as="span" textStyle="400-bold">
+              {t("Opportunities ")}
+            </Text>
+            <Text as="span" textStyle="400">
+              {t(" section.")}
             </Text>
           </Box>
         )
