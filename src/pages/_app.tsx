@@ -27,7 +27,6 @@ import ToastProvider from "@/context/toast.provider";
 import { system } from "@/lib/theme";
 import { WrappedReduxProvider } from "@/store/store";
 import Bootstrap from "@/utils/Bootstrap";
-import { isSitePolygonReviewPath } from "@/utils/sitePolygonReviewPath";
 import setupYup from "@/yup.locale";
 
 import DashboardAnalyticsWrapper from "./dashboard/DashboardAnalyticsWrapper";
@@ -111,7 +110,7 @@ const _App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
-  const isOnSitePolygonReview = isSitePolygonReviewPath(router.asPath);
+  const isOnSitePolygonReview = /^\/site\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath);
   const isOnSite = router.asPath.includes("/site");
 
   setupYup(t);

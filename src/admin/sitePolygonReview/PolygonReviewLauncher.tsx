@@ -5,7 +5,6 @@ import { useShowContext } from "react-admin";
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { getSitePolygonReviewPath } from "@/utils/sitePolygonReviewPath";
 
 /**
  * Temporary react-admin bridge: opens the standalone polygon review page from the RA site show tab.
@@ -28,7 +27,7 @@ const PolygonReviewLauncher: FC = () => {
       <Button
         iconProps={{ name: IconNames.LINK, className: "h-4 w-4" }}
         onClick={() => {
-          window.open(getSitePolygonReviewPath(record.uuid), "_blank", "noopener,noreferrer");
+          window.open(`/site/${record.uuid}/polygon-review`, "_blank", "noopener,noreferrer");
         }}
       >
         <Text variant="text-14-bold" className="text-white">
