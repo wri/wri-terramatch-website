@@ -13,7 +13,7 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { SiteIcon } from "@/redesignComponents/foundations/Icons";
 import Layout from "@/redesignComponents/Loayout/Layout";
 import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
@@ -60,12 +60,11 @@ const SiteDetailPage = () => {
                   site={site}
                   breadcrumbs={[
                     {
-                      label: t("Projects"),
-                      link: "/my-projects",
-                      icon: <ProjectIcon className="!text-theme-primary-900" />
+                      label: t("Sites"),
+                      link: "/admin#/site?filter=%7B%7D&order=ASC&page=1&perPage=10&sort=",
+                      icon: <SiteIcon className="!text-theme-primary-900" />
                     },
-                    { label: site.projectName ?? "", link: `/project/${site.projectUuid}` },
-                    { label: site.name ?? "", link: `/site/${site.uuid}` },
+                    { label: site.name ?? "", link: `/admin#/site/${site.uuid}/show` },
                     ...(isSuffixView ? [{ label: t("Reports"), link: `/site/${site.uuid}?tab=completed-tasks` }] : [])
                   ]}
                   suffix={
@@ -75,7 +74,7 @@ const SiteDetailPage = () => {
                           variant="borderless"
                           size="small"
                           className="underline underline-offset-2"
-                          onClick={() => router.push(`/project/${site.projectUuid}`)}
+                          onClick={() => router.push(`/admin#/project/${site.projectUuid}/show`)}
                         >
                           {t("Project Profile")}
                         </Button>
@@ -84,7 +83,7 @@ const SiteDetailPage = () => {
                           variant="borderless"
                           size="small"
                           className="underline underline-offset-2"
-                          onClick={() => router.push(`/site/${site.uuid}?tab=completed-tasks`)}
+                          onClick={() => router.push(`/admin#/site/${site.uuid}/show?tab=completed-tasks`)}
                         >
                           {t("Site Reports")}
                         </Button>
