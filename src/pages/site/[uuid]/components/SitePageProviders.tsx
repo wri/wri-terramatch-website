@@ -8,7 +8,7 @@ import { MapAreaProvider } from "@/context/mapArea.provider";
 import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 
 interface SitePageProvidersProps {
-  frameworkKey?: string;
+  frameworkKey?: string | null;
   isLoaded: boolean;
   children: ReactNode;
 }
