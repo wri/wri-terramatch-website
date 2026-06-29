@@ -19,7 +19,6 @@ import FrameworkProvider, { ALL_TF, Framework, toFramework } from "@/context/fra
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, {
   FormFieldsProvider,
-  FormModel,
   FormModelsDefinition,
   OrgFormDetails,
   ProjectFormDetails,
@@ -38,6 +37,7 @@ import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
 import ResponsiveBreadcrumbToolbar from "@/redesignComponents/navigation/Toolbar/ResponsiveBreadcrumbToolbar";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
+import { toArray } from "@/utils/array";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
@@ -137,6 +137,9 @@ function WizardForm(props: WizardFormProps) {
 
   const [showValidationErrors, setShowValidationErrors] = useState(!(props.deferValidation ?? false));
 
+  const models = useMemo(() => toArray(props.models), [props.models]);
+  const isSubmissionModel = models.length > 1;
+
   const formHook: UseFormReturn = useForm(
     useMemo(
       (): UseFormProps => ({
@@ -148,7 +151,7 @@ function WizardForm(props: WizardFormProps) {
     )
   );
   const { trackSectionCompleted, trackSectionError } = useFormSectionAnalytics({
-    models: props.models,
+    models,
     steps,
     selectedStepIndex,
     formHook
@@ -180,11 +183,11 @@ function WizardForm(props: WizardFormProps) {
   );
 
   const reportAnalytics = useReportAnalytics({
-    models: props.models,
+    models: models,
     steps,
     selectedStepIndex,
     fieldsProvider: props.fieldsProvider,
-    entityId: (props.models as FormModel)?.uuid ?? entity?.uuid,
+    entityId: models[0]?.uuid ?? entity?.uuid,
     feedbackFields: entity?.feedbackFields,
     initialValues: initialFormValues.current,
     summaryTitle: props.summaryOptions?.title,
@@ -252,9 +255,10 @@ function WizardForm(props: WizardFormProps) {
       <SaveAndCloseModal
         {...props.saveAndCloseModal}
         onConfirm={props.saveAndCloseModal?.onConfirm || props.onCloseForm || props.onBackFirstStep}
+        models={models}
       />
     );
-  }, [formHook, modal, props, reportAnalytics]);
+  }, [formHook, modal, props, reportAnalytics, models]);
 
   const onClickSaveAndExit = useCallback(() => {
     if (isAdmin) {
@@ -306,7 +310,6 @@ function WizardForm(props: WizardFormProps) {
   }, [selectedStepIndex]);
 
   const isEntityApproved = entity?.status == "approved";
-  const formModel = props?.models as FormModel;
   const renderStep = useCallback(
     (stepId: string, title: string | null, index: number) => (
       <div
@@ -346,7 +349,7 @@ function WizardForm(props: WizardFormProps) {
             onClick: formHook.handleSubmit(onSubmitStep, onSubmitStepError)
           }}
           secondaryButtonProps={
-            formModel?.model != "organisations"
+            !isSubmissionModel
               ? {
                   children: t("Save and Exit"),
                   onClick: () => {
@@ -361,9 +364,7 @@ function WizardForm(props: WizardFormProps) {
                 }
               : {
                   children: t("Save and Exit"),
-                  onClick: () => {
-                    props.onSubmit?.(formHook.getValues());
-                  }
+                  onClick: onClickSaveAndClose
                 }
           }
           tertiaryButtonProps={{
@@ -374,21 +375,21 @@ function WizardForm(props: WizardFormProps) {
       </div>
     ),
     [
+      isAdmin,
       t,
+      reportAnalytics,
+      entity?.feedback,
       formHook,
       _onChange,
       selectedStepIndex,
       lastIndex,
-      isAdmin,
-      onClickSaveAndClose,
-      props,
+      hasErrorInAnyStep,
       onSubmitStep,
       onSubmitStepError,
-      hasErrorInAnyStep,
-      formModel?.model,
+      isSubmissionModel,
       handleDownloadAnswers,
-      reportAnalytics,
-      entity?.feedback
+      props,
+      onClickSaveAndClose
     ]
   );
 
@@ -426,7 +427,7 @@ function WizardForm(props: WizardFormProps) {
             setSelectedStepIndex={setSelectedStepIndex}
             onSubmitStep={onSubmitStep}
             submitButtonDisable={submitButtonDisable}
-            models={props.models}
+            models={models}
             enableSaveChangesButton={isEntityApproved}
             saveChanges={() => onClickSaveChanges()}
             onSaveAndExit={onClickSaveAndExit}
@@ -452,7 +453,7 @@ function WizardForm(props: WizardFormProps) {
       props.summaryOptions?.subtitle,
       props.summaryOptions?.downloadButtonText,
       props.submitButtonDisable,
-      props.models,
+      models,
       steps,
       formHook,
       setSelectedStepIndex,
@@ -474,8 +475,6 @@ function WizardForm(props: WizardFormProps) {
     [props.orgDetails, props.title]
   );
 
-  const isSubmissionModel = Array.isArray(props?.models) && props?.models?.length > 1;
-
   const linkHeaderMap = useMemo(() => {
     if (isSubmissionModel) {
       return [
@@ -489,72 +488,94 @@ function WizardForm(props: WizardFormProps) {
           : []),
         { label: t("Edit"), link: `/form/submission/${entity?.uuid ?? ""}` }
       ];
-    } else if (formModel?.model == "organisations") {
+    } else if (models[0]?.model === "organisations") {
       return [{ label: t("Edit"), link: `/organization/create?uuid=${entity?.uuid ?? ""}` }];
-    } else if (formModel?.model) {
+    } else if (models.length > 0) {
       return entityLinkHeaderMap({
         isAdmin,
-        model: formModel.model,
-        uuid: formModel.uuid ?? props?.entity?.uuid,
+        model: models[0].model,
+        uuid: models[0].uuid ?? props?.entity?.uuid,
         redirectEntityPage: props.redirectEntityPage,
         adminListPath: props.adminListPath,
         entity: entity,
-        firstLinkIcon: formModel.model.includes("Reports") ? (
+        firstLinkIcon: models[0].model.includes("Reports") ? (
           <ReportsIcon className="!text-theme-primary-900" />
         ) : (
           <ProjectIcon className="!text-theme-primary-900" />
         ),
         t,
         taskTitle
-      })[formModel.model];
+      })[models[0].model];
     }
     return [];
-  }, [props, t, entity, isSubmissionModel, taskTitle, isAdmin, formModel?.model, formModel?.uuid]);
+  }, [
+    isSubmissionModel,
+    models,
+    entity,
+    props.redirectEntityPage,
+    props?.entity?.uuid,
+    props.adminListPath,
+    t,
+    isAdmin,
+    taskTitle
+  ]);
 
   const pageHeaderTitle = useMemo(() => {
     if (isSubmissionModel) {
       return entity?.organisationName != null || entity?.fundingProgrammeName != null
         ? `${entity?.organisationName ?? ""} - ${entity?.fundingProgrammeName ?? ""}`
         : t("Unnamed Application");
-    } else if (formModel?.model === "projectReports" || formModel?.model === "srpReports") {
+    } else if (models[0]?.model === "projectReports" || models[0]?.model === "srpReports") {
       return getFormHeaderLabel(entity?.projectName ?? "", taskTitle);
-    } else if (formModel?.model === "siteReports") {
+    } else if (models[0]?.model === "siteReports") {
       return getFormHeaderLabel(entity?.siteName ?? "", taskTitle);
-    } else if (formModel?.model === "nurseryReports") {
+    } else if (models[0]?.model === "nurseryReports") {
       return getFormHeaderLabel(entity?.nurseryName ?? "", taskTitle);
-    } else if (formModel?.model === "disturbanceReports") {
+    } else if (models[0]?.model === "disturbanceReports") {
       return entity?.projectName + " - " + entity?.title;
-    } else if (formModel?.model === "financialReports") {
+    } else if (models[0]?.model === "financialReports") {
       return getFormHeaderLabel(entity?.organisationName ?? "", taskTitle);
     } else {
-      return mapEntityTitle(entity?.title ?? entity?.name ?? null, formModel?.model ?? "", t);
+      return mapEntityTitle(entity?.title ?? entity?.name ?? null, models[0]?.model ?? "", t);
     }
-  }, [formModel?.model, entity, isSubmissionModel, t, taskTitle]);
+  }, [
+    isSubmissionModel,
+    models,
+    entity?.organisationName,
+    entity?.fundingProgrammeName,
+    entity?.projectName,
+    entity?.siteName,
+    entity?.nurseryName,
+    entity?.title,
+    entity?.name,
+    t,
+    taskTitle
+  ]);
 
   const suffixButtons: SuffixButtonConfig[] = useMemo(() => {
-    if (formModel?.model === "siteReports") {
+    if (models[0]?.model === "siteReports") {
       return [
         { key: "site-profile", labelKey: "Site Profile" },
         { key: "project-report", labelKey: "Project Report" }
       ];
     }
-    if (formModel?.model === "nurseryReports") {
+    if (models[0]?.model === "nurseryReports") {
       return [
         { key: "nursery-profile", labelKey: "Nursery Profile" },
         { key: "project-report", labelKey: "Project Report" }
       ];
-    } else if (formModel?.model === "projectReports") {
+    } else if (models[0]?.model === "projectReports") {
       return [
         { key: "project-profile", labelKey: "Project Profile" },
         { key: "site-reports", labelKey: "Site Reports" },
         ...(ALL_TF.includes(props.framework) ? [{ key: "nursery-reports", labelKey: "Nursery Reports" }] : [])
       ];
-    } else if (formModel?.model === "srpReports") {
+    } else if (models[0]?.model === "srpReports") {
       return [
         { key: "project-profile", labelKey: "Project Profile" },
         { key: "project-report", labelKey: "Project Report" }
       ];
-    } else if (formModel?.model === "financialReports") {
+    } else if (models[0]?.model === "financialReports") {
       return [
         { key: "organisation-profile", labelKey: "Organisation Profile" },
         { key: "my-projects", labelKey: "Projects" }
@@ -565,7 +586,7 @@ function WizardForm(props: WizardFormProps) {
       { key: "site-reports", labelKey: "Site Reports" },
       ...(props.framework === Framework.TF ? [{ key: "nurseries-reports", labelKey: "Nursery Reports" }] : [])
     ];
-  }, [formModel?.model, props.framework]);
+  }, [models, props.framework]);
 
   const navigateToTab = useCallback(
     (tab: string) => {
@@ -598,7 +619,7 @@ function WizardForm(props: WizardFormProps) {
     <div className={classNames("relative", { "h-full": !isAdmin })}>
       <FrameworkProvider frameworkKey={props.framework}>
         <WizardFormProvider
-          models={props.models}
+          models={models}
           fieldsProvider={props.fieldsProvider}
           orgDetails={orgDetails}
           projectDetails={props.projectDetails}
@@ -611,7 +632,7 @@ function WizardForm(props: WizardFormProps) {
                   <ResponsiveBreadcrumbToolbar
                     breadcrumbs={linkHeaderMap}
                     suffix={
-                      formModel.model.includes("Reports") && (
+                      models[0]?.model.includes("Reports") && (
                         <Flex gap={1.5} alignItems="center">
                           {suffixButtons.map((button, index) => (
                             <Flex key={button.key} alignItems="center" gap={1.5}>
@@ -636,7 +657,7 @@ function WizardForm(props: WizardFormProps) {
                 <div className="bg-theme-neutral-300 pt-[1px]">
                   <PageHeader
                     title={pageHeaderTitle}
-                    label={formModel.model.includes("Reports") ? t("Report Status:") : t("Set Up Status:")}
+                    label={models[0]?.model.includes("Reports") ? t("Report Status:") : t("Set Up Status:")}
                     tag={
                       mapStatusToTagState(entity?.status) ? { state: mapStatusToTagState(entity?.status)! } : undefined
                     }

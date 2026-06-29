@@ -996,6 +996,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                   tooltipType="edit"
                   sitePolygonData={sitePolygonData}
                   mediaFiles={mediaFiles}
+                  alwaysShowPhotosOnMap
                   setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
                   isLoadingDelayedJob={props.isLoadingDelayedJob}
                   setAlertTitle={props.setAlertTitle}
