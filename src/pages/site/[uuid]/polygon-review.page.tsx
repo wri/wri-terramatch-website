@@ -15,7 +15,6 @@ import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
 import AdminSitePolygonReviewShell from "./sitePolygonReview/AdminSitePolygonReviewShell";
-import SitePolygonsWorkspace from "./sitePolygonReview/SitePolygonsWorkspace";
 
 const SitePolygonReviewPage = () => {
   const t = useT();
@@ -52,13 +51,7 @@ const SitePolygonReviewPage = () => {
             <Loader />
           </div>
         )}
-        <LoadingContainer loading={!isLoaded}>
-          {site == null ? null : (
-            <AdminSitePolygonReviewShell site={site}>
-              <SitePolygonsWorkspace site={site} variant="adminReview" />
-            </AdminSitePolygonReviewShell>
-          )}
-        </LoadingContainer>
+        <LoadingContainer loading={!isLoaded}>{site == null ? null : <AdminSitePolygonReviewShell />}</LoadingContainer>
       </FrameworkProvider>
     </MapAreaProvider>
   );
