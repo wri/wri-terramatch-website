@@ -55,11 +55,16 @@ const SubmissionPage = () => {
 
   const [orgDetailsLoaded, orgDetails] = useOrgFormDetails(formData?.organisationUuid ?? undefined);
 
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
   const handleSubmit = useCallback(() => {
-    setIsConfirmModalOpen(true);
+    setIsSubmitModalOpen(true);
   }, []);
+
+  const confirmSubmit = useCallback(() => {
+    setIsSubmitModalOpen(false);
+    updateSubmission({ status: "awaiting-approval" });
+  }, [updateSubmission]);
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
@@ -82,6 +87,7 @@ const SubmissionPage = () => {
           onChange={onChange}
           formStatus={submissionUpdating ? "saving" : "saved"}
           onSubmit={handleSubmit}
+          submitButtonText={t("Submit")}
           submitButtonDisable={submissionUpdating}
           defaultValues={defaultValues}
           title={form?.title}
@@ -96,8 +102,8 @@ const SubmissionPage = () => {
         />
       </LoadingContainer>
       <ModalConfirmation
-        open={isConfirmModalOpen}
-        onOpenChange={setIsConfirmModalOpen}
+        open={isSubmitModalOpen}
+        onOpenChange={setIsSubmitModalOpen}
         title={t("Are you ready to submit your application?")}
         content={
           <Flex flexDirection="column" gap={2} alignItems="center">
@@ -113,10 +119,8 @@ const SubmissionPage = () => {
           {
             children: t("Submit"),
             className: "!w-full",
-            onClick: () => {
-              setIsConfirmModalOpen(false);
-              updateSubmission({ status: "awaiting-approval" });
-            }
+            disabled: submissionUpdating,
+            onClick: confirmSubmit
           }
         ]}
         buttonsCancel={[
@@ -124,7 +128,7 @@ const SubmissionPage = () => {
             children: t("Cancel"),
             variant: "secondary",
             className: "!w-full",
-            onClick: () => setIsConfirmModalOpen(false)
+            onClick: () => setIsSubmitModalOpen(false)
           }
         ]}
       />

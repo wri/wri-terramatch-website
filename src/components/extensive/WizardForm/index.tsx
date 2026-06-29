@@ -255,9 +255,10 @@ function WizardForm(props: WizardFormProps) {
       <SaveAndCloseModal
         {...props.saveAndCloseModal}
         onConfirm={props.saveAndCloseModal?.onConfirm || props.onCloseForm || props.onBackFirstStep}
+        models={models}
       />
     );
-  }, [formHook, modal, props, reportAnalytics]);
+  }, [formHook, modal, props, reportAnalytics, models]);
 
   const onClickSaveAndExit = useCallback(() => {
     if (isAdmin) {
@@ -363,9 +364,7 @@ function WizardForm(props: WizardFormProps) {
                 }
               : {
                   children: t("Save and Exit"),
-                  onClick: () => {
-                    props.onSubmit?.(formHook.getValues());
-                  }
+                  onClick: onClickSaveAndClose
                 }
           }
           tertiaryButtonProps={{
