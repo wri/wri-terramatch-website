@@ -601,21 +601,17 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           title={t("Polygons")}
           className="scroll-mt-[5.5rem]"
           flexProps={{ width: "100%", id: SITE_POLYGON_TAB_HEADER_ID }}
-          downloadButtonProps={
-            isAdmin
-              ? {
-                  variant: "secondary",
-                  size: "small",
-                  children: t("Download All"),
-                  leftIcon: <DownloadIcon />,
-                  loading: isDownloadingAllPolygons,
-                  disabled: site.uuid == null || site.uuid === "",
-                  onClick: () => {
-                    void downloadAll();
-                  }
-                }
-              : undefined
-          }
+          downloadButtonProps={{
+            variant: "secondary",
+            size: "small",
+            children: t("Download All"),
+            leftIcon: <DownloadIcon />,
+            loading: isDownloadingAllPolygons,
+            disabled: site.uuid == null || site.uuid === "",
+            onClick: () => {
+              void downloadAll();
+            }
+          }}
           buttonProps={
             isAdmin
               ? {
