@@ -50,7 +50,7 @@ const PageItem: FC<PageItemProps> = ({
         {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
         {buttonProps !== null && (
           <>
-            <SimpleDivider className="!h-7 !w-[0.063rem]" />
+            {downloadButtonProps !== null && <SimpleDivider className="!h-7 !w-[0.063rem]" />}
             <Button {...buttonProps} />
           </>
         )}
