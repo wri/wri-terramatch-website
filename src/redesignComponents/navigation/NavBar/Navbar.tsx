@@ -1,5 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { FC, ReactNode, useState } from "react";
+import { useT } from "@transifex/react";
+import { FC, ReactNode } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { LanguageIcon } from "@/redesignComponents/foundations/Icons";
@@ -7,45 +8,62 @@ import { TMLogo } from "@/redesignComponents/foundations/Logos/TMLogo";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import { NavigationMenuItem } from "@/redesignComponents/navigation/NavBar/NavigationMenu/NavigationMenu";
 
+import Avatar from "../Avatar/Avatar";
 import NavbarMenu from "./NavbarMenu/NavbarMenu";
-
-export interface NavbarLinkItem {
-  label: string;
-  href?: string;
-  onClick?: () => void;
-  isActive?: boolean;
-}
+import { NavbarLinkItem, useNavbarData } from "./useNavbarData";
 
 export interface NavbarProps {
   navLinks?: NavbarLinkItem[];
   languageItems?: NavigationMenuItem[];
+  selectedLanguageIndex?: number;
   onLanguageSelect?: (index: number) => void;
   accountItems?: NavigationMenuItem[];
   accountLabel?: ReactNode;
   accountPrefix?: ReactNode;
   accountSuffix?: ReactNode;
   onAccountSelect?: (index: number) => void;
+  linksDisabled?: boolean;
+  isLoggedIn?: boolean;
 }
 
 const Navbar: FC<NavbarProps> = ({
-  navLinks = [],
-  languageItems = [],
-  onLanguageSelect,
-  accountItems = [],
-  accountLabel = "Account",
-  accountPrefix,
+  navLinks: navLinksProp,
+  languageItems: languageItemsProp,
+  selectedLanguageIndex: selectedLanguageIndexProp,
+  onLanguageSelect: onLanguageSelectProp,
+  accountItems: accountItemsProp,
+  accountLabel: accountLabelProp,
   accountSuffix,
-  onAccountSelect
+  onAccountSelect: onAccountSelectProp,
+  linksDisabled: linksDisabledProp,
+  isLoggedIn: isLoggedInProp
 }) => {
-  const [selectedLanguageIndex, setSelectedLanguageIndex] = useState<number | undefined>(undefined);
+  const t = useT();
+
+  const data = useNavbarData();
+
+  const navLinks = data.isAdmin ? [] : navLinksProp ?? data.navLinks;
+  const languageItems = languageItemsProp ?? data.languageItems;
+  const selectedLanguageIndex = selectedLanguageIndexProp ?? data.selectedLanguageIndex;
+  const accountItems = accountItemsProp ?? data.accountItems;
+  const accountLabel = accountLabelProp ?? data.accountLabel;
+  const linksDisabled = linksDisabledProp ?? data.linksDisabled;
+  const isLoggedIn = isLoggedInProp ?? data.isLoggedIn;
 
   const handleLanguageSelect = (index: number) => {
-    setSelectedLanguageIndex(index);
-    onLanguageSelect?.(index);
+    onLanguageSelectProp?.(index);
+    data.onLanguageSelect(index);
   };
+
+  const handleAccountSelect = (index: number) => {
+    onAccountSelectProp?.(index);
+    data.onAccountSelect(index);
+  };
+
+  const accountPrefix = <Avatar name={data.user?.firstName + " " + data.user?.lastName} size="small" />;
   return (
-    <Box backgroundColor="primary.900">
-      <Flex justifyContent="space-between" alignItems="center" gap={4}>
+    <Box as="header" backgroundColor="primary.900" position="sticky" top={0} zIndex={50}>
+      <Flex justifyContent="space-between" alignItems="center" gap={4} h="3rem">
         <Flex gap={4} alignItems="center" pl={4}>
           <TMLogo boxSize="3.25rem" />
           {navLinks.map((link, index) => (
@@ -62,16 +80,18 @@ const Navbar: FC<NavbarProps> = ({
           ))}
         </Flex>
         <Flex gap={2} alignItems="center">
-          {accountItems.length > 0 ? (
+          {isLoggedIn ? (
             <NavbarMenu
               items={accountItems}
               label={accountLabel}
-              onSelect={onAccountSelect}
+              onSelect={handleAccountSelect}
               prefix={accountPrefix}
               suffix={accountSuffix}
               variant="mega"
+              disabled={linksDisabled}
             />
           ) : (
+            // Logged-out auth buttons are design placeholders until the redesign navbar is fully wired.
             <>
               <Button
                 variant="outline"
@@ -79,11 +99,12 @@ const Navbar: FC<NavbarProps> = ({
                 borderColor="neutral.100 !important"
                 className="hover:!border-theme-primary-800 hover:!text-theme-primary-800"
                 size="small"
+                disabled={linksDisabled}
               >
-                Create account
+                {t("Create account")}
               </Button>
-              <Button variant="primary" className="" size="small">
-                Sign in
+              <Button variant="primary" size="small" disabled={linksDisabled}>
+                {t("Sign in")}
               </Button>
             </>
           )}

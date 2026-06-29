@@ -80,18 +80,29 @@ const PDStack = ({ children }: PropsWithChildren) => (
   </RouteHistoryProvider>
 );
 
-const SiteStack = ({ children }: PropsWithChildren) => (
+const SiteRouteStack = ({ children, withMainLayout = true }: PropsWithChildren<{ withMainLayout?: boolean }>) => (
   <RouteHistoryProvider>
     <NavbarProvider>
       <ModalRoot />
       <Toast />
       <WRIToast />
-      <MainLayout>
-        {children}
-        <CookieBanner />
-      </MainLayout>
+      {withMainLayout ? (
+        <MainLayout>
+          {children}
+          <CookieBanner />
+        </MainLayout>
+      ) : (
+        children
+      )}
     </NavbarProvider>
   </RouteHistoryProvider>
+);
+
+const SiteStack = ({ children }: PropsWithChildren) => <SiteRouteStack>{children}</SiteRouteStack>;
+
+// Polygon review owns its layout shell, so skip MainLayout here.
+const SitePolygonReviewStack = ({ children }: PropsWithChildren) => (
+  <SiteRouteStack withMainLayout={false}>{children}</SiteRouteStack>
 );
 
 const _App = ({ Component, pageProps }: AppProps) => {
@@ -99,6 +110,7 @@ const _App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
+  const isOnSitePolygonReview = /^\/site\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath);
   const isOnSite = router.asPath.includes("/site");
 
   setupYup(t);
@@ -120,6 +132,10 @@ const _App = ({ Component, pageProps }: AppProps) => {
                       <AdminStack>
                         <Component {...pageProps} />
                       </AdminStack>
+                    ) : isOnSitePolygonReview ? (
+                      <SitePolygonReviewStack>
+                        <Component {...pageProps} />
+                      </SitePolygonReviewStack>
                     ) : isOnSite ? (
                       <SiteStack>
                         <Component {...pageProps} />

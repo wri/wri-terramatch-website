@@ -29,7 +29,7 @@ import { ValidationDto } from "@/generated/v3/researchService/researchServiceSch
 import { hasValidationCriteria } from "@/helpers/polygonValidation";
 import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
-import { DownloadIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
+import { DownloadIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import Log from "@/utils/log";
 import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils/polygonAnalytics";
@@ -61,14 +61,18 @@ import { useSitePolygonTableData } from "../hooks/useSitePolygonTableData";
 import { useStartSitePolygonDrawing } from "../hooks/useStartSitePolygonDrawing";
 import { getPolygonTableLoadingLabel } from "../utils/polygonTableLoadingLabel";
 
-interface SitePolygonsTabProps {
+export type SitePolygonsWorkspaceVariant = "champions" | "adminReview";
+
+export interface SitePolygonsWorkspaceProps {
   site: SiteFullDto;
+  variant?: SitePolygonsWorkspaceVariant;
 }
 
 export type { PolygonTableRow } from "../components/PolygonTableRow";
 
-const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
+const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, variant = "champions" }) => {
   const t = useT();
+  const isAdminReview = variant === "adminReview";
   const { isOpen: isEditPolygonOpen, suppressMapSelectionHighlight } = usePolygonEditDrawer();
   const {
     isUserDrawingEnabled,
@@ -549,12 +553,13 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   useSyncPolygonTableSelectionStore(selectedRowIds);
 
   const polygonsTableStyles = useMemo(() => getPolygonsTableStyles(isStickyActive), [isStickyActive]);
-  const bulkToolbarSubmitLabel = useMemo(
-    () => (hasSelectedOverlapFailure ? t("Fix Overlap") : t("Submit")),
-    [hasSelectedOverlapFailure, t]
-  );
+  const bulkToolbarSubmitLabel = useMemo(() => {
+    if (hasSelectedOverlapFailure) return t("Fix Overlap");
+    return isAdminReview ? t("Approve") : t("Submit");
+  }, [hasSelectedOverlapFailure, isAdminReview, t]);
   const isBulkSubmitDisabled =
-    !hasSelectedOverlapFailure && hasPolygonSelection && selectedSubmittablePolygonUuids.length === 0;
+    !hasSelectedOverlapFailure &&
+    (isAdminReview || (hasPolygonSelection && selectedSubmittablePolygonUuids.length === 0));
 
   useEffect(() => {
     const container = tableContainerRef.current?.children[0]?.children[0];
@@ -594,6 +599,17 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           title={t("Polygons")}
           className="scroll-mt-[5.5rem]"
           flexProps={{ width: "100%", id: SITE_POLYGON_TAB_HEADER_ID }}
+          downloadButtonProps={
+            isAdminReview
+              ? {
+                  variant: "secondary",
+                  size: "small",
+                  children: t("Upload Monitoring Plots"),
+                  leftIcon: <UploadIcon />,
+                  disabled: true
+                }
+              : undefined
+          }
           buttonProps={{
             variant: "secondary",
             size: "small",
@@ -638,7 +654,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             onClearFilters={handleClearPolygonFilters}
           />
         </PageItem>
-
         <PolygonBulkActionToolbar
           siteUuid={site.uuid}
           visible={hasPolygonSelection}
@@ -663,7 +678,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           canAutoFixOverlap={hasFixableSelectedOverlap}
           isSubmitDisabled={isBulkSubmitDisabled}
         />
-
         <SitePolygonModals
           siteUuid={site.uuid}
           siteHasExistingPolygons={polygonsData.length > 0}
@@ -711,7 +725,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           }}
           onViewOverlapPolygon={handleViewOverlapFixPolygon}
         />
-
         <SitePolygonMapSection
           site={site}
           polygons={polygonsData}
@@ -723,7 +736,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           showUndoButton={showPolygonUndoButton}
           onUndoDraw={handleUndoPolygonDraw}
         />
-
         {polygonLoadError != null && (
           <InlineMessage
             className="mt-4"
@@ -736,7 +748,6 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
             }}
           />
         )}
-
         {shouldShowNoResults ? (
           <Box>
             <Text textStyle="400-bold">{t("No results found")}</Text>
@@ -774,12 +785,12 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
   );
 };
 
-const SitePolygonsTab: FC<SitePolygonsTabProps> = ({ site }) => (
+const SitePolygonsWorkspace: FC<SitePolygonsWorkspaceProps> = ({ site, variant = "champions" }) => (
   <AnrMapOverlayProvider>
     <PolygonEditDrawerProvider>
-      <SitePolygonsTabContent site={site} />
+      <SitePolygonsWorkspaceContent site={site} variant={variant} />
     </PolygonEditDrawerProvider>
   </AnrMapOverlayProvider>
 );
 
-export default SitePolygonsTab;
+export default SitePolygonsWorkspace;
