@@ -654,7 +654,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             onClearFilters={handleClearPolygonFilters}
           />
         </PageItem>
-
         <PolygonBulkActionToolbar
           siteUuid={site.uuid}
           visible={hasPolygonSelection}
@@ -679,7 +678,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           canAutoFixOverlap={hasFixableSelectedOverlap}
           isSubmitDisabled={isBulkSubmitDisabled}
         />
-
         <SitePolygonModals
           siteUuid={site.uuid}
           siteHasExistingPolygons={polygonsData.length > 0}
@@ -727,7 +725,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           }}
           onViewOverlapPolygon={handleViewOverlapFixPolygon}
         />
-
         <SitePolygonMapSection
           site={site}
           polygons={polygonsData}
@@ -739,7 +736,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           showUndoButton={showPolygonUndoButton}
           onUndoDraw={handleUndoPolygonDraw}
         />
-
         {polygonLoadError != null && (
           <InlineMessage
             className="mt-4"
@@ -752,7 +748,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             }}
           />
         )}
-
         {shouldShowNoResults ? (
           <Box>
             <Text textStyle="400-bold">{t("No results found")}</Text>

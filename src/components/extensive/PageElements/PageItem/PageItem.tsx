@@ -48,7 +48,12 @@ const PageItem: FC<PageItemProps> = ({
       </div>
       <Flex gap={4} className={classNames("mobile:justify-end", classNameRightSectionHeader)}>
         {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
-        {buttonProps !== null && <Button {...buttonProps} />}
+        {buttonProps !== null && (
+          <>
+            {downloadButtonProps !== null && <SimpleDivider className="!h-7 !w-[0.063rem]" />}
+            <Button {...buttonProps} />
+          </>
+        )}
         {multiActionButtonProps !== null && (
           <>
             <SimpleDivider className="!h-7 !w-[0.063rem]" />

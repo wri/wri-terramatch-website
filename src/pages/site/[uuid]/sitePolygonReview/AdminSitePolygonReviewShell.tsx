@@ -1,60 +1,93 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, ReactNode } from "react";
+import { useRouter } from "next/router";
+import { FC } from "react";
 
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
+import { SiteIcon } from "@/redesignComponents/foundations/Icons";
+import Layout from "@/redesignComponents/Loayout/Layout";
 
-const MOCK_TAB_KEYS = ["Overview", "Site Details", "Polygons", "Gallery", "Progress & Goals", "History"] as const;
-const ACTIVE_TAB = "Polygons";
+import SitePolygonsWorkspace from "./SitePolygonsWorkspace";
 
 interface AdminSitePolygonReviewShellProps {
   site: SiteFullDto;
-  children: ReactNode;
 }
 
-const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ site, children }) => {
+const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ site }) => {
   const t = useT();
+  const router = useRouter();
+  const siteUUID = router.query.uuid as string;
+  const polygonReviewPath = `/site/${siteUUID}/polygon-review`;
+
+  const currentTab = (router.query.tab as string) ?? "polygons";
+  const isSuffixView = currentTab === "completed-tasks";
+  const activeTab = isSuffixView ? "polygons" : currentTab;
+
+  const tabItems = [
+    {
+      key: "polygons",
+      title: t("Polygons"),
+      body: <SitePolygonsWorkspace site={site} variant="adminReview" />
+    }
+  ];
+
+  const suffixContent = isSuffixView ? <SiteCompletedReportsTab site={site} /> : null;
 
   return (
-    <Flex minHeight="100vh" width="100%" alignItems="stretch">
-      <Box as="aside" flexShrink={0} width="64px" className="bg-theme-primary-900" aria-hidden />
-
-      <Flex direction="column" flex={1} minWidth={0}>
-        <Box as="header" className="border-b border-theme-neutral-200 bg-white px-6 pt-4">
-          <Flex alignItems="center" justifyContent="space-between" gap={4}>
-            <Box minWidth={0}>
-              <Text textStyle="300" color="neutral.700" truncate>
-                {site.projectName ?? ""}
-              </Text>
-              <Text textStyle="600" color="primary.900" truncate>
-                {site.name ?? t("Site")}
-              </Text>
-            </Box>
-            <Text textStyle="300" color="neutral.700" flexShrink={0}>
-              {t("Admin Polygon Review")}
-            </Text>
-          </Flex>
-
-          <Flex gap={6} marginTop={3}>
-            {MOCK_TAB_KEYS.map(tab => (
-              <Box
-                key={tab}
-                paddingBottom={2}
-                className={tab === ACTIVE_TAB ? "border-b-2 border-theme-primary-500" : "cursor-default opacity-60"}
-              >
-                <Text textStyle="400" color={tab === ACTIVE_TAB ? "primary.900" : "neutral.700"}>
-                  {t(tab)}
-                </Text>
-              </Box>
-            ))}
-          </Flex>
-        </Box>
-
-        <Box as="main" flex={1} minWidth={0}>
-          {children}
-        </Box>
-      </Flex>
-    </Flex>
+    <Layout>
+      <SiteBanner
+        site={site}
+        reviewLabel={t("Cycle 1 QA:")}
+        showStatusTag
+        breadcrumbs={[
+          {
+            label: t("Sites"),
+            link: "/admin#/site?filter=%7B%7D&order=ASC&page=1&perPage=10&sort=",
+            icon: <SiteIcon className="!text-theme-primary-900" />
+          },
+          { label: site.name ?? "", link: `/admin#/site/${site.uuid}/show` },
+          ...(isSuffixView ? [{ label: t("Reports"), link: `${polygonReviewPath}?tab=completed-tasks` }] : [])
+        ]}
+        suffix={
+          <div className="flex gap-1.5">
+            <Button
+              variant="borderless"
+              size="small"
+              className="underline underline-offset-2"
+              onClick={() => router.push(`/admin#/project/${site.projectUuid}/show`)}
+            >
+              {t("Project Profile")}
+            </Button>
+            <span className="text-sm text-theme-neutral-300">|</span>
+            <Button
+              variant="borderless"
+              size="small"
+              className="underline underline-offset-2"
+              onClick={() => router.push(`/admin#/site/${site.uuid}/show?tab=completed-tasks`)}
+            >
+              {t("Site Reports")}
+            </Button>
+          </div>
+        }
+        toolbar={{
+          tabBar: {
+            tabs: tabItems.map(item => ({
+              value: item.key,
+              label: item.title
+            })),
+            defaultValue: isSuffixView ? "__none__" : activeTab,
+            onTabClick: (tabValue: string) => {
+              void router.push(`${polygonReviewPath}?tab=${tabValue}`, undefined, { shallow: true });
+            }
+          }
+        }}
+      />
+      <div className="flex flex-1">{suffixContent ?? tabItems.find(item => item.key === activeTab)?.body}</div>
+      <PageFooter />
+    </Layout>
   );
 };
 
