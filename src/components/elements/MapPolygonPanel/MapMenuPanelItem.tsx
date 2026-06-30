@@ -11,6 +11,7 @@ import { usePolygonValidation } from "@/connections/Validation";
 import { useModalContext } from "@/context/modal.provider";
 import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { parseV3ValidationData } from "@/helpers/polygonValidation";
+import { useValidationResultsLabels } from "@/hooks/translation/useValidationResultsLabels";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { AssistedNaturalRegenIcon } from "@/redesignComponents/foundations/Icons";
 import {
@@ -69,6 +70,7 @@ const MapMenuPanelItem: FC<MapMenuPanelItemProps> = ({
   const [openCollapse, setOpenCollapse] = useState(false);
   const [showWarning, setShowWarning] = useState(validationStatus === "partial");
   const t = useT();
+  const validationResultsLabels = useValidationResultsLabels();
   const [adjustedValidationStatus, setAdjustedValidationStatus] = useState(validationStatus);
   const isAdminUser = useIsAdmin();
   const adminCheck = isAdmin || isAdminUser;
@@ -76,7 +78,7 @@ const MapMenuPanelItem: FC<MapMenuPanelItemProps> = ({
 
   useEffect(() => {
     if (validationData != null) {
-      const parsedData = parseV3ValidationData(validationData);
+      const parsedData = parseV3ValidationData(validationData, validationResultsLabels);
       if (!adminCheck) {
         const updatedData = parsedData.map((item: ICriteriaCheckItem) => {
           if (Number(item.id) === COMPLETED_DATA_CRITERIA_ID && !item.status && item.extra_info != null) {
@@ -114,7 +116,7 @@ const MapMenuPanelItem: FC<MapMenuPanelItemProps> = ({
     } else {
       setAdjustedValidationStatus(validationStatus);
     }
-  }, [validationData, polygonUuid, adminCheck, validationStatus]);
+  }, [validationData, polygonUuid, adminCheck, validationStatus, validationResultsLabels]);
 
   const openFormModalHandlerConfirm = () => {
     openModal(

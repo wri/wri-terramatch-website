@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { usePolygonValidationConnection } from "@/connections/Validation";
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { parseV3ValidationData, shouldDisplayValidationCriteria } from "@/helpers/polygonValidation";
+import { useValidationResultsLabels } from "@/hooks/translation/useValidationResultsLabels";
 import { ICriteriaCheckItem, OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
@@ -40,6 +41,7 @@ export const usePolygonValidationCriteria = (
   const [isLoaded, { data: validation }] = usePolygonValidationConnection({
     polygonUuid: polygonUuid ?? ""
   });
+  const validationResultsLabels = useValidationResultsLabels();
 
   const isLoadingValidation = !isLoaded && hasValidPolygonUuid(polygonUuid);
 
@@ -48,7 +50,7 @@ export const usePolygonValidationCriteria = (
       return { ...EMPTY_CRITERIA_STATE, isLoadingValidation };
     }
 
-    const items = parseV3ValidationData(validation);
+    const items = parseV3ValidationData(validation, validationResultsLabels);
     const failedCount = items.filter(item => !item.status).length;
     const lastValidationDate = items.reduce<Date | null>((latestDate, record) => {
       if (record.date == null) {
@@ -85,5 +87,5 @@ export const usePolygonValidationCriteria = (
       hasOverlaps,
       fixabilityResult
     };
-  }, [isLoadingValidation, validation, validationStatus]);
+  }, [isLoadingValidation, validation, validationStatus, validationResultsLabels]);
 };

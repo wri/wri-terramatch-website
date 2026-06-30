@@ -10,6 +10,7 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { parseV3ValidationData } from "@/helpers/polygonValidation";
+import { useValidationResultsLabels } from "@/hooks/translation/useValidationResultsLabels";
 import { usePolygonClippingCompletion } from "@/hooks/usePolygonClippingCompletion";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -38,6 +39,7 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
     hasOverlaps
   } = useMapAreaContext();
   const t = useT();
+  const validationResultsLabels = useValidationResultsLabels();
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
 
@@ -156,7 +158,7 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
 
   useEffect(() => {
     if (v3ValidationData?.criteriaList && v3ValidationData.criteriaList.length > 0) {
-      const processedMenu = parseV3ValidationData(v3ValidationData);
+      const processedMenu = parseV3ValidationData(v3ValidationData, validationResultsLabels);
 
       const hasOverlapsInData = processedMenu.some(item => Number(item.id) === OVERLAPPING_CRITERIA_ID && !item.status);
 
@@ -179,7 +181,7 @@ const CheckIndividualPolygonControl: FC<CheckIndividualPolygonControlProps> = ({
       setFixabilityResult(null);
       setCanBeFixed(false);
     }
-  }, [v3ValidationData]);
+  }, [v3ValidationData, validationResultsLabels]);
 
   return (
     <div className="flex gap-2">

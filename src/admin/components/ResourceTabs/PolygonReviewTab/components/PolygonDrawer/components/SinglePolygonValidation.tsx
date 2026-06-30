@@ -7,6 +7,7 @@ import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { usePolygonValidation } from "@/connections/Validation";
 import { parseV3ValidationData, shouldShowAsWarning } from "@/helpers/polygonValidation";
+import { useValidationResultsLabels } from "@/hooks/translation/useValidationResultsLabels";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 import { ICriteriaCheckItem, OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
@@ -49,6 +50,7 @@ const SinglePolygonValidation: FC<CriteriaCheckProps> = props => {
   const [status, setStatus] = useState(false);
   const [fixabilityResult, setFixabilityResult] = useState<PolygonFixabilityResult | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const validationResultsLabels = useValidationResultsLabels();
   const { getFormatedExtraInfo } = useMessageValidators();
 
   const v3ValidationData = usePolygonValidation({
@@ -57,14 +59,14 @@ const SinglePolygonValidation: FC<CriteriaCheckProps> = props => {
 
   useEffect(() => {
     if (v3ValidationData?.criteriaList && v3ValidationData.criteriaList.length > 0) {
-      const processedMenu = parseV3ValidationData(v3ValidationData);
+      const processedMenu = parseV3ValidationData(v3ValidationData, validationResultsLabels);
       setMenu(processedMenu);
       setStatus(true);
     } else {
       setMenu([]);
       setStatus(false);
     }
-  }, [v3ValidationData]);
+  }, [v3ValidationData, validationResultsLabels]);
 
   useEffect(() => {
     if (menu) {

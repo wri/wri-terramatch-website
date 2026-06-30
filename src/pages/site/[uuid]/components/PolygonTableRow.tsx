@@ -1,4 +1,5 @@
 import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
 import { CSSProperties, FC, memo, ReactNode, useCallback, useMemo } from "react";
 
@@ -152,6 +153,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   onHover,
   onSelectChange
 }) => {
+  const t = useT();
   const targetLandUseLabels = useTargetLandUseLabels();
   const treeDistributionOptions = useTreeDistributionOptions();
   const treeDistributionLabels = useMemo(
@@ -231,7 +233,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
       <TableCell className="min-w-[12.75rem]">{formatNumberLocaleString(row.treesPlanted) ?? "—"}</TableCell>
       <TableCell className="min-w-[15.75rem]">{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
       <TableCell className="min-w-[12rem]">
-        <Text>{row.source}</Text>
+        <Text>{row.source === "uploaded" ? t("Uploaded") : row.source}</Text>
       </TableCell>
     </TableRow>
   );
