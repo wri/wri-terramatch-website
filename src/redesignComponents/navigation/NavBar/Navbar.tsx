@@ -91,6 +91,7 @@ const Navbar: FC<NavbarProps> = ({
               disabled={linksDisabled}
             />
           ) : (
+            // Logged-out auth buttons are design placeholders until the redesign navbar is fully wired.
             <>
               <Button
                 variant="outline"

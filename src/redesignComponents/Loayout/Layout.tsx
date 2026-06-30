@@ -15,6 +15,7 @@ import Navbar from "../navigation/NavBar/Navbar";
 import SideNavigation from "../navigation/NavBar/SideNavigation/SideNavigation";
 import InlineMessage from "../status/InlineMessage/InlineMessage";
 
+// Temporary admin-review shell: sidebar links, labels, and notification counts are design placeholders.
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [isWarningVisible, setIsWarningVisible] = useState(true);
   const t = useT();

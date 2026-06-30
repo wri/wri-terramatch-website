@@ -12,6 +12,8 @@ import PageHeader from "../PageHeader";
 
 export interface SiteHeaderProps {
   site: SiteFullDto;
+  reviewLabel?: string;
+  showStatusTag?: boolean;
 }
 
 const SiteHeader: FC<SiteHeaderProps> = ({ site }) => {

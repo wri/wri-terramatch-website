@@ -45,8 +45,8 @@ const useRedirect = () => {
       matcher.when(isFunderOrGovernment)?.redirect("/dashboard/learn-more?tab=about-us");
 
       // The standalone admin polygon review page lives outside of /admin while react-admin is
-      // being removed. Let eligible users reach it without being forced back to the RA panel;
-      // the page itself still enforces admin/project-manager access.
+      // being removed. Let admins reach it without being forced back to the RA panel;
+      // the page itself enforces admin access.
       matcher.when(/^\/site\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath))?.allow();
 
       matcher.when(isAdmin)?.ensure("/admin");

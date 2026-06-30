@@ -4,11 +4,10 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import { PropsWithChildren, useMemo, useRef, useState } from "react";
 
-import { removeAccessToken } from "@/admin/apiProvider/utils/token";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { useMyUser } from "@/connections/User";
-import ApiSlice from "@/store/apiSlice";
+import { logout } from "@/generated/v3/utils";
 
 import Text from "../../Text/Text";
 import { MyAccountDropdownVariant, VARIANT_MY_ACCOUNT_DROPDOWN } from "./MyAccountDropdownVariant";
@@ -74,10 +73,7 @@ const MyAccountDropdown = (props: PropsWithChildren<MyAccountDropdownProps>) => 
         router.push(`/auth/login?returnUrl=${returnUrl}`);
       }
     } else if (item.value === "Logout") {
-      removeAccessToken();
-      router.push("/auth/login").then(() => {
-        ApiSlice.clearApiCache();
-      });
+      logout(router);
     } else {
       if (!loaded) return;
       if (isOnDashboard) {

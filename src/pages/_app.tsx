@@ -80,31 +80,29 @@ const PDStack = ({ children }: PropsWithChildren) => (
   </RouteHistoryProvider>
 );
 
-const SiteStack = ({ children }: PropsWithChildren) => (
+const SiteRouteStack = ({ children, withMainLayout = true }: PropsWithChildren<{ withMainLayout?: boolean }>) => (
   <RouteHistoryProvider>
     <NavbarProvider>
       <ModalRoot />
       <Toast />
       <WRIToast />
-      <MainLayout>
-        {children}
-        <CookieBanner />
-      </MainLayout>
+      {withMainLayout ? (
+        <MainLayout>
+          {children}
+          <CookieBanner />
+        </MainLayout>
+      ) : (
+        children
+      )}
     </NavbarProvider>
   </RouteHistoryProvider>
 );
 
-// Standalone admin polygon review: same app-level providers as SiteStack, but without
-// MainLayout because the page owns its temporary admin header/sidebar shell.
+const SiteStack = ({ children }: PropsWithChildren) => <SiteRouteStack>{children}</SiteRouteStack>;
+
+// Polygon review owns its layout shell, so skip MainLayout here.
 const SitePolygonReviewStack = ({ children }: PropsWithChildren) => (
-  <RouteHistoryProvider>
-    <NavbarProvider>
-      <ModalRoot />
-      <Toast />
-      <WRIToast />
-      {children}
-    </NavbarProvider>
-  </RouteHistoryProvider>
+  <SiteRouteStack withMainLayout={false}>{children}</SiteRouteStack>
 );
 
 const _App = ({ Component, pageProps }: AppProps) => {

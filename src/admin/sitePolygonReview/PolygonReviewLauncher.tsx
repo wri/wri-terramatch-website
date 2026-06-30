@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC } from "react";
 import { useShowContext } from "react-admin";
 
@@ -10,6 +11,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
  * Delete this file when react-admin site show is removed.
  */
 const PolygonReviewLauncher: FC = () => {
+  const t = useT();
   const { isLoading, record } = useShowContext();
 
   if (isLoading || record?.uuid == null) return null;
@@ -17,10 +19,10 @@ const PolygonReviewLauncher: FC = () => {
   return (
     <div className="flex w-full flex-col items-center gap-4 rounded-xl border-2 border-grey-350 bg-white p-10 shadow-monitored">
       <Text variant="text-16-bold" className="text-darkCustom">
-        Polygon Review has moved
+        {t("Polygon Review has moved")}
       </Text>
       <Text variant="text-14-light" className="max-w-xl text-center text-darkCustom">
-        Review, validate, and edit site polygons in the new dedicated page. It opens in a new browser tab.
+        {t("Review, validate, and edit site polygons in the new dedicated page. It opens in a new browser tab.")}
       </Text>
       <Button
         iconProps={{ name: IconNames.LINK, className: "h-4 w-4" }}
@@ -29,7 +31,7 @@ const PolygonReviewLauncher: FC = () => {
         }}
       >
         <Text variant="text-14-bold" className="text-white">
-          Open Polygon Review
+          {t("Open Polygon Review")}
         </Text>
       </Button>
     </div>
