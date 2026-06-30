@@ -8,6 +8,7 @@ import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
+import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -21,7 +22,6 @@ import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { AreaHectaresIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
@@ -212,12 +212,10 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                     <strong>{t("Sites")} </strong>
                     {t(aboutSitesContentItem?.paragraph1!)}
                   </Text>
-                  <Text color="neutral.900" textStyle="300">
-                    {t(aboutSitesContentItem?.paragraph2!)}
-                    <Button variant="borderless" size="small" rightIcon={<ChevronRightIcon />} as="span">
-                      info@terramatch.org
-                    </Button>
-                  </Text>
+                  <ContactSupport
+                    message={t(aboutSitesContentItem?.paragraph2!)}
+                    subject={t("Support Request for Site Profile")}
+                  />
                 </Flex>
               }
               links={
