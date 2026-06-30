@@ -2,9 +2,7 @@ import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
-import MetricCardsRow, {
-  METRIC_CARD_CLASS_NAME
-} from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
+import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework } from "@/context/framework.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -46,8 +44,6 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
       ? keyIndicatorsTooltipContentItem.estimatedTreesRestored
       : null;
 
-  const maxCardsInRow = site.frameworkKey === Framework.PPC ? 4 : 5;
-
   return (
     <MetricCardsRow>
       <MetricCard
@@ -58,7 +54,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         icon={<TreeIcon />}
         color="secondary.600"
         type="treesRestored"
-        className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
+        className="flex-[0_0_calc(50%_-_0.75rem)]"
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}</b>
@@ -70,7 +66,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
       <ContextCondition frameworksHide={[Framework.PPC, Framework.HBF]}>
         <ContextCondition frameworksHide={ALL_TF.concat(Framework.EPA_GHANA_PILOT)}>
           <MetricCard
-            className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
+            className="flex-[0_0_calc(50%_-_0.75rem)]"
             title={t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}
             variant="large"
             progress={site.seedsPlantedCount ?? 0}
@@ -87,7 +83,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           />
         </ContextCondition>
         <MetricCard
-          className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
+          className="flex-[0_0_calc(50%_-_0.75rem)]"
           title={t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}
           variant="large"
           progress={treesFromReportsAnr}
@@ -103,7 +99,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           color="secondary.600"
         />
         <MetricCard
-          className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
+          className="h-auto flex-[0_0_calc(50%_-_0.75rem)]"
           title={t("Survival Rate")}
           variant="large"
           progress={site.lastReportedSurvivalRate ?? 0}
@@ -127,7 +123,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         icon={<AreaHectaresIcon />}
         color="secondary.700"
         type="hectaresRestored"
-        className={METRIC_CARD_CLASS_NAME(maxCardsInRow)}
+        className="flex-[0_0_calc(50%_-_0.75rem)]"
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.hectaresRestored.title}`)}</b>
@@ -144,7 +140,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           variant={keyIndicatorsTooltipContentItem?.jobsCreated.type as MetricCardVariant}
           icon={<JobsIcon />}
           type="jobsCreated"
-          className={METRIC_CARD_CLASS_NAME(maxCardsInRow) + " !h-auto"}
+          className="!h-auto flex-[0_0_calc(50%_-_0.75rem)]"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>
@@ -164,7 +160,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           icon={<TreeIcon />}
           color="secondary.600"
           type="estimatedTreesRestored"
-          className={`${METRIC_CARD_CLASS_NAME(maxCardsInRow)} !h-auto`}
+          className="!h-auto flex-[0_0_calc(50%_-_0.75rem)]"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${ppcEstimatedTreesTooltip.title}`)}</b>
