@@ -1,5 +1,6 @@
 import { type FC, memo, useCallback, useMemo, useRef } from "react";
 
+import { getThemedColor } from "@/lib/theme";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
 
@@ -7,7 +8,7 @@ import PopupContentPlotANR from "./PopupPlotANR/PopupContentPlotANR";
 import PopupFooterPlotANR from "./PopupPlotANR/PopupFooterPlotANR";
 import PopupHeaderPlotANR from "./PopupPlotANR/PopupHeaderPlotANR";
 
-const ANR_MARKER_COLOR = "#2A698D";
+const ANR_MARKER_COLOR = getThemedColor("primary", 700);
 
 export type AnrPlotMapPopupProps = {
   plotId?: number;

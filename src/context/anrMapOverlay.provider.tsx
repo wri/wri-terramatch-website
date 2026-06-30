@@ -7,6 +7,10 @@ export type AnrMapOverlayContextValue = {
   sitePolygonUuidForApi: string | null;
   /** Geometry polygon UUID (map id); used to detect polygon switch */
   geometryPolygonUuid: string | null;
+  /** Site polygon status — drives default ANR plot colors on the map */
+  polygonStatus: string | null;
+  /** Site polygon display name — shown in the ANR plot map popup */
+  polygonName: string | null;
   /** True when polygon drawer is on the ANR Monitoring Plots tab */
   anrTabActive: boolean;
   setAnrTabActive: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,7 +20,12 @@ export type AnrMapOverlayContextValue = {
   /** Called when drawer closes — clears overlay state */
   resetAnrMapOverlay: () => void;
   /** Called from PolygonDrawer when drawer is open */
-  syncDrawerSelection: (args: { sitePolygonUuid: string; geometryPolygonUuid: string }) => void;
+  syncDrawerSelection: (args: {
+    sitePolygonUuid: string;
+    geometryPolygonUuid: string;
+    polygonStatus?: string | null;
+    polygonName?: string | null;
+  }) => void;
   setDrawerOpen: (open: boolean) => void;
 };
 
@@ -26,6 +35,8 @@ export const AnrMapOverlayProvider: React.FC<{ children: ReactNode }> = ({ child
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sitePolygonUuidForApi, setSitePolygonUuidForApi] = useState<string | null>(null);
   const [geometryPolygonUuid, setGeometryPolygonUuid] = useState<string | null>(null);
+  const [polygonStatus, setPolygonStatus] = useState<string | null>(null);
+  const [polygonName, setPolygonName] = useState<string | null>(null);
   const [anrTabActive, setAnrTabActiveState] = useState(false);
   const [showPlotsOnMap, setShowPlotsOnMapState] = useState(false);
   const prevGeometryUuidRef = useRef<string | null>(null);
@@ -34,27 +45,41 @@ export const AnrMapOverlayProvider: React.FC<{ children: ReactNode }> = ({ child
     setDrawerOpen(false);
     setSitePolygonUuidForApi(null);
     setGeometryPolygonUuid(null);
+    setPolygonStatus(null);
+    setPolygonName(null);
     prevGeometryUuidRef.current = null;
     setAnrTabActiveState(false);
     setShowPlotsOnMapState(false);
   }, []);
 
-  const syncDrawerSelection = useCallback((args: { sitePolygonUuid: string; geometryPolygonUuid: string }) => {
-    const { sitePolygonUuid, geometryPolygonUuid: geom } = args;
-    const prev = prevGeometryUuidRef.current;
-    if (prev != null && prev !== "" && geom !== "" && prev !== geom) {
-      setShowPlotsOnMapState(false);
-    }
-    prevGeometryUuidRef.current = geom === "" ? null : geom;
-    setSitePolygonUuidForApi(sitePolygonUuid === "" ? null : sitePolygonUuid);
-    setGeometryPolygonUuid(geom === "" ? null : geom);
-  }, []);
+  const syncDrawerSelection = useCallback(
+    (args: {
+      sitePolygonUuid: string;
+      geometryPolygonUuid: string;
+      polygonStatus?: string | null;
+      polygonName?: string | null;
+    }) => {
+      const { sitePolygonUuid, geometryPolygonUuid: geom, polygonStatus: status, polygonName: name } = args;
+      const prev = prevGeometryUuidRef.current;
+      if (prev != null && prev !== "" && geom !== "" && prev !== geom) {
+        setShowPlotsOnMapState(false);
+      }
+      prevGeometryUuidRef.current = geom === "" ? null : geom;
+      setSitePolygonUuidForApi(sitePolygonUuid === "" ? null : sitePolygonUuid);
+      setGeometryPolygonUuid(geom === "" ? null : geom);
+      setPolygonStatus(status ?? null);
+      setPolygonName(name ?? null);
+    },
+    []
+  );
 
   const value = useMemo<AnrMapOverlayContextValue>(
     () => ({
       drawerOpen,
       sitePolygonUuidForApi,
       geometryPolygonUuid,
+      polygonStatus,
+      polygonName,
       anrTabActive,
       setAnrTabActive: setAnrTabActiveState,
       showPlotsOnMap,
@@ -67,6 +92,8 @@ export const AnrMapOverlayProvider: React.FC<{ children: ReactNode }> = ({ child
       drawerOpen,
       sitePolygonUuidForApi,
       geometryPolygonUuid,
+      polygonStatus,
+      polygonName,
       anrTabActive,
       showPlotsOnMap,
       resetAnrMapOverlay,

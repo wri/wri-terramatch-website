@@ -1,4 +1,5 @@
 import {
+  type DataDrivenPropertyValueSpecification,
   LayerSpecification,
   Map as MapboxMap,
   MapMouseEvent,
@@ -9,6 +10,7 @@ import { createElement } from "react";
 import { createRoot, Root } from "react-dom/client";
 
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
+import { getThemedColor } from "@/lib/theme";
 import Log from "@/utils/log";
 
 import { convertToAcceptedGEOJSON } from "../adapters/geojson";
@@ -301,7 +303,91 @@ type AnrPlotOverlayState = {
   marker: InstanceType<typeof MapboxMarker> | null;
   markerRoot: Root | null;
   pendingIdleRetry: { fn: () => void } | null;
+  selectedPlotId: number | null;
+  polygonStatus: string | null;
+  polygonName: string | null;
 };
+
+// rgba baked — avoids fill-opacity multiplying unexpectedly
+// slightly grayer than pure white: neutral-400 #C9C9C9 at 45% opacity
+const ANR_DEFAULT_PLOT_FILL_RGBA = ["rgba", 201, 201, 201, 0.45] as const;
+// #50B6E2 — slightly higher alpha than 0x66 so the selected fill reads clearer on satellite
+const ANR_SELECTED_PLOT_FILL_RGBA = ["rgba", 80, 182, 226, 0.58] as const;
+const ANR_DEFAULT_PLOT_LINE_COLOR = "#C9C9C9";
+const ANR_SELECTED_PLOT_LINE_COLOR = getThemedColor("primary", 600); // #50B6E2
+const ANR_DEFAULT_PLOT_LINE_OPACITY = 0.95;
+const ANR_SELECTED_PLOT_LINE_OPACITY = 1;
+const ANR_SELECTED_PLOT_LINE_WIDTH = 2.25;
+const ANR_DEFAULT_PLOT_LINE_WIDTH = 1.5;
+
+const ANR_PLOT_ID_EXPR: unknown[] = ["coalesce", ["get", "plotId"], ["get", "plot_id"]];
+
+function parseAnrPlotId(value: unknown): number | null {
+  if (typeof value === "number" && !Number.isNaN(value)) {
+    return value;
+  }
+  if (value != null && !Number.isNaN(Number(value))) {
+    return Number(value);
+  }
+  return null;
+}
+
+function applyAnrPlotLayerPaint(
+  map: MapboxMap,
+  options: { polygonStatus: string | null; selectedPlotId: number | null }
+): void {
+  if (map.getLayer(ANR_PLOT_FILL_LAYER_ID) == null || map.getLayer(ANR_PLOT_LINE_LAYER_ID) == null) {
+    return;
+  }
+
+  const selectedPlotId = options.selectedPlotId;
+
+  // Alpha is baked into the rgba expression — fill-opacity is always 1
+  const fillColor =
+    selectedPlotId != null
+      ? ["case", ["==", ANR_PLOT_ID_EXPR, selectedPlotId], ANR_SELECTED_PLOT_FILL_RGBA, ANR_DEFAULT_PLOT_FILL_RGBA]
+      : ANR_DEFAULT_PLOT_FILL_RGBA;
+
+  const lineColor: DataDrivenPropertyValueSpecification<string> =
+    selectedPlotId != null
+      ? ([
+          "case",
+          ["==", ANR_PLOT_ID_EXPR, selectedPlotId],
+          ANR_SELECTED_PLOT_LINE_COLOR,
+          ANR_DEFAULT_PLOT_LINE_COLOR
+        ] as DataDrivenPropertyValueSpecification<string>)
+      : ANR_DEFAULT_PLOT_LINE_COLOR;
+
+  const lineOpacity: DataDrivenPropertyValueSpecification<number> =
+    selectedPlotId != null
+      ? ([
+          "case",
+          ["==", ANR_PLOT_ID_EXPR, selectedPlotId],
+          ANR_SELECTED_PLOT_LINE_OPACITY,
+          ANR_DEFAULT_PLOT_LINE_OPACITY
+        ] as DataDrivenPropertyValueSpecification<number>)
+      : ANR_DEFAULT_PLOT_LINE_OPACITY;
+
+  const lineWidth: DataDrivenPropertyValueSpecification<number> =
+    selectedPlotId != null
+      ? ([
+          "case",
+          ["==", ANR_PLOT_ID_EXPR, selectedPlotId],
+          ANR_SELECTED_PLOT_LINE_WIDTH,
+          ANR_DEFAULT_PLOT_LINE_WIDTH
+        ] as DataDrivenPropertyValueSpecification<number>)
+      : ANR_DEFAULT_PLOT_LINE_WIDTH;
+
+  try {
+    map.setPaintProperty(ANR_PLOT_FILL_LAYER_ID, "fill-color", fillColor);
+    map.setPaintProperty(ANR_PLOT_FILL_LAYER_ID, "fill-opacity", 1);
+    map.setPaintProperty(ANR_PLOT_LINE_LAYER_ID, "line-color", lineColor);
+    map.setPaintProperty(ANR_PLOT_LINE_LAYER_ID, "line-opacity", lineOpacity);
+    map.setPaintProperty(ANR_PLOT_LINE_LAYER_ID, "line-width", lineWidth);
+  } catch (e) {
+    Log.warn("applyAnrPlotLayerPaint:", e);
+  }
+}
 
 const anrPlotOverlayStateByMap = new WeakMap<MapboxMap, AnrPlotOverlayState>();
 
@@ -314,7 +400,10 @@ function getAnrPlotOverlayState(map: MapboxMap): AnrPlotOverlayState {
     mouseLeaveHandler: null,
     marker: null,
     markerRoot: null,
-    pendingIdleRetry: null
+    pendingIdleRetry: null,
+    selectedPlotId: null,
+    polygonStatus: null,
+    polygonName: null
   };
   anrPlotOverlayStateByMap.set(map, created);
   return created;
@@ -361,10 +450,17 @@ export function removeAnrPlotGeometryOverlay(map: MapboxMap | null | undefined):
   }
 }
 
-export function upsertAnrPlotGeometryOverlay(map: MapboxMap, geojson: unknown, options: { visible: boolean }): void {
+export function upsertAnrPlotGeometryOverlay(
+  map: MapboxMap,
+  geojson: unknown,
+  options: { visible: boolean; polygonStatus?: string | null; polygonName?: string | null }
+): void {
   if (map == null) return;
   removeAnrPlotGeometryOverlay(map);
   const state = getAnrPlotOverlayState(map);
+  state.polygonStatus = options.polygonStatus ?? null;
+  state.polygonName = options.polygonName ?? null;
+  state.selectedPlotId = null;
 
   if (!options.visible) return;
 
@@ -393,7 +489,7 @@ export function upsertAnrPlotGeometryOverlay(map: MapboxMap, geojson: unknown, o
         type: "fill",
         source: ANR_PLOT_SOURCE_ID,
         layout: { visibility: "visible" },
-        paint: { "fill-color": "#9ca3af", "fill-opacity": 0.7 }
+        paint: { "fill-color": ANR_DEFAULT_PLOT_FILL_RGBA as unknown as string, "fill-opacity": 1 }
       },
       beforeLayer
     );
@@ -403,10 +499,19 @@ export function upsertAnrPlotGeometryOverlay(map: MapboxMap, geojson: unknown, o
         type: "line",
         source: ANR_PLOT_SOURCE_ID,
         layout: { visibility: "visible" },
-        paint: { "line-color": "#6b7280", "line-width": 1.95, "line-opacity": 0.9 }
+        paint: {
+          "line-color": ANR_DEFAULT_PLOT_LINE_COLOR,
+          "line-width": ANR_DEFAULT_PLOT_LINE_WIDTH,
+          "line-opacity": ANR_DEFAULT_PLOT_LINE_OPACITY
+        }
       },
       beforeLayer
     );
+
+    applyAnrPlotLayerPaint(map, {
+      polygonStatus: state.polygonStatus,
+      selectedPlotId: state.selectedPlotId
+    });
 
     if (map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) != null) {
       try {
@@ -420,6 +525,15 @@ export function upsertAnrPlotGeometryOverlay(map: MapboxMap, geojson: unknown, o
     state.clickHandler = (e: MapMouseEvent) => {
       const feature = e.features?.[0];
       if (feature == null) return;
+
+      const props = feature.properties ?? {};
+      const plotId = parseAnrPlotId(props.plotId ?? props.plot_id);
+      state.selectedPlotId = plotId;
+      applyAnrPlotLayerPaint(map, {
+        polygonStatus: state.polygonStatus,
+        selectedPlotId: state.selectedPlotId
+      });
+
       if (state.marker != null) {
         state.marker.remove();
         state.marker = null;
@@ -429,29 +543,37 @@ export function upsertAnrPlotGeometryOverlay(map: MapboxMap, geojson: unknown, o
         state.markerRoot = null;
       }
 
-      const props = feature.properties ?? {};
       const markerEl = document.createElement("div");
       markerEl.className = "anr-plot-marker";
       const root = createRoot(markerEl);
       state.markerRoot = root;
-      const rawPlotId = props.plotId;
-      const toNum = (v: unknown) =>
-        typeof v === "number" ? v : v != null && !Number.isNaN(Number(v)) ? Number(v) : undefined;
 
       const handleClose = () => {
+        state.selectedPlotId = null;
+        applyAnrPlotLayerPaint(map, {
+          polygonStatus: state.polygonStatus,
+          selectedPlotId: null
+        });
         state.marker?.remove();
         state.marker = null;
         state.markerRoot?.unmount();
         state.markerRoot = null;
       };
 
+      const resolvedPolygonName =
+        state.polygonName != null && state.polygonName !== ""
+          ? state.polygonName
+          : props.name != null
+          ? String(props.name)
+          : "ANR monitoring plot";
+
       root.render(
         createElement(
           PopupProviders,
           null,
           createElement(AnrPlotMapPopup, {
-            plotId: toNum(rawPlotId),
-            polygonName: props.name != null ? String(props.name) : "ANR monitoring plot",
+            plotId: plotId ?? undefined,
+            polygonName: resolvedPolygonName,
             onClose: handleClose
           })
         )

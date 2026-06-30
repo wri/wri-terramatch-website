@@ -14,6 +14,9 @@ import NotificationIndicator from "@/redesignComponents/navigation/NotificationI
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 import ApiSlice from "@/store/apiSlice";
 
+import DeleteAnrMonitoringPlots from "./Modals/AnrMonitoringPlots/DeleteAnrMonitoringPlots";
+import UploadAnrMonitoringPlots from "./Modals/AnrMonitoringPlots/UploadAnrMonitoringPlots";
+import { useAnrMonitoringPlotActions } from "./Modals/AnrMonitoringPlots/useAnrMonitoringPlotActions";
 import DeletePolygon from "./Modals/DeletePolygon";
 import SavePolygon from "./Modals/SavePolygon";
 import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
@@ -60,6 +63,9 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
   const [deletePayload, setDeletePayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
   const [submitPayload, setSubmitPayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
+  const [anrPlotsModal, setAnrPlotsModal] = useState<
+    null | { kind: "upload"; mode: "upload" | "replace" } | { kind: "delete" }
+  >(null);
   const deleteConfirmedRef = useRef(false);
   const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
   const [savePolygonName, setSavePolygonName] = useState("");
@@ -87,6 +93,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
 
   useEffect(() => {
     setActiveTab("edit");
+    setAnrPlotsModal(null);
   }, [polygon?.polygonUuid]);
 
   useEffect(() => {
@@ -119,7 +126,17 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   }, []);
 
   const saveConfirmationPolygonName = getPolygonNameForSaveRef.current().trim();
-  const isAnyConfirmationModalOpen = showSaveConfirmationModal || deletePayload != null || submitPayload != null;
+  const sitePolygonUuidForAnr = selectedPolygon?.uuid ?? "";
+  const {
+    deleteAnrPlotFile,
+    isDeleting: isDeletingAnrPlots,
+    isUploading: isUploadingAnrPlots,
+    uploadAnrPlotFile
+  } = useAnrMonitoringPlotActions({
+    sitePolygonUuid: sitePolygonUuidForAnr
+  });
+  const isAnyConfirmationModalOpen =
+    showSaveConfirmationModal || deletePayload != null || submitPayload != null || anrPlotsModal != null;
   const isDrawerVisible = (open ?? false) && !isAnyConfirmationModalOpen;
 
   const handleSave = useCallback(
@@ -253,6 +270,9 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     onRegisterPlantStartDate={registerPlantStartDate}
                     onRequestDeleteModal={handleRequestDeleteModal}
                     onRequestSubmitModal={handleRequestSubmitModal}
+                    onRequestAnrUploadModal={mode => setAnrPlotsModal({ kind: "upload", mode })}
+                    onRequestAnrDeleteModal={() => setAnrPlotsModal({ kind: "delete" })}
+                    isAnrPlotsOperating={isUploadingAnrPlots || isDeletingAnrPlots}
                     onSaved={onSaved}
                     onPolygonUpdated={onPolygonUpdated}
                     onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
@@ -331,6 +351,43 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         }}
         polygons={submitPayload?.polygons ?? []}
         onSubmit={comment => submitPolygonRef.current?.(comment)}
+      />
+
+      <UploadAnrMonitoringPlots
+        open={anrPlotsModal?.kind === "upload"}
+        mode={anrPlotsModal?.kind === "upload" ? anrPlotsModal.mode : "upload"}
+        isSaving={isUploadingAnrPlots}
+        onOpenChange={nextOpen => {
+          if (!nextOpen) {
+            setAnrPlotsModal(current => (current?.kind === "upload" ? null : current));
+          }
+        }}
+        onSave={file =>
+          uploadAnrPlotFile(file, anrPlotsModal?.kind === "upload" ? anrPlotsModal.mode : "upload").then(isSaved => {
+            if (isSaved) {
+              setAnrPlotsModal(null);
+            }
+            return isSaved;
+          })
+        }
+      />
+
+      <DeleteAnrMonitoringPlots
+        open={anrPlotsModal?.kind === "delete"}
+        isDeleting={isDeletingAnrPlots}
+        onOpenChange={nextOpen => {
+          if (!nextOpen) {
+            setAnrPlotsModal(current => (current?.kind === "delete" ? null : current));
+          }
+        }}
+        onDelete={() =>
+          deleteAnrPlotFile().then(isDeleted => {
+            if (isDeleted) {
+              setAnrPlotsModal(null);
+            }
+            return isDeleted;
+          })
+        }
       />
     </>
   );
