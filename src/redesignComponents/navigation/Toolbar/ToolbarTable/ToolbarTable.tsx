@@ -26,6 +26,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   selectedFilters,
   classNameContentLeft
 }) => {
+  console.log("search", search);
   const t = useT();
   const queryRef = useRef("");
 

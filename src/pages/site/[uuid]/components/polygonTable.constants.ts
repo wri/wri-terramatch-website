@@ -1,6 +1,6 @@
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 
-import { TARGET_LAND_USE_LABELS } from "./polygonFilter.constants";
+import { TARGET_LAND_USE_VALUES } from "./polygonFilter.constants";
 
 export const isRestorationStrategy = (value: string): value is restorationStrategyType => {
   return (
@@ -12,7 +12,7 @@ export const isRestorationStrategy = (value: string): value is restorationStrate
 };
 
 export const isTargetLandUseType = (value: string): value is targetLandUseType => {
-  return value in TARGET_LAND_USE_LABELS;
+  return (TARGET_LAND_USE_VALUES as string[]).includes(value);
 };
 
 export const formatDistributionValue = (value: string): string => {

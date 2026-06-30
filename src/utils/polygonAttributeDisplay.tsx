@@ -2,7 +2,6 @@ import { Flex, Text } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
-import { TARGET_LAND_USE_LABELS } from "@/pages/site/[uuid]/components/polygonFilter.constants";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import {
   AssistedNaturalRegenIcon,
@@ -55,7 +54,10 @@ export const renderRestorationPracticeIcons = (restorationPractice: restorationS
   );
 };
 
-export const renderTargetLandUseLabel = (targetLandUse: targetLandUseType | null) => {
+export const renderTargetLandUseLabel = (
+  targetLandUse: targetLandUseType | null,
+  targetLandUseLabels: Record<targetLandUseType, string>
+) => {
   if (targetLandUse == null) {
     return (
       <Text color="neutral.900" textStyle="400-bold">
@@ -66,7 +68,7 @@ export const renderTargetLandUseLabel = (targetLandUse: targetLandUseType | null
 
   return (
     <Text color="neutral.900" textStyle="400-bold">
-      {TARGET_LAND_USE_LABELS[targetLandUse]}
+      {targetLandUseLabels[targetLandUse]}
     </Text>
   );
 };
