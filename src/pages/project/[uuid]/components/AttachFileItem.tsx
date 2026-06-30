@@ -27,7 +27,7 @@ const AttachFileItem: FC<AttachFileItemProps> = ({ fileName, onClick, fileType, 
         </Button>
       </Flex>
       <Text textStyle="200" color="neutral.700">
-        Date uploaded: {uploadedDate}
+        {t("Date uploaded")}: {uploadedDate}
       </Text>
     </Flex>
   );
