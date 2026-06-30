@@ -1,8 +1,10 @@
 import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
-import { CSSProperties, FC, memo, ReactNode, useCallback } from "react";
+import { CSSProperties, FC, memo, ReactNode, useCallback, useMemo } from "react";
 
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
+import { useTargetLandUseLabels } from "@/hooks/translation/useTargetLandUseLabels";
+import { TreeDistributionType, useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
 import { getThemedColor } from "@/lib/theme";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import MappedTag, { MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
@@ -28,8 +30,6 @@ import {
 } from "@/redesignComponents/foundations/Icons";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
-import { TARGET_LAND_USE_LABELS } from "./polygonFilter.constants";
-
 export type PolygonTableRow = {
   id: string;
   polygonName: string;
@@ -39,7 +39,8 @@ export type PolygonTableRow = {
   restorationPracticeSort: string;
   targetLandUse: targetLandUseType | null;
   targetLandUseSort: string;
-  treeDistribution: string;
+  treeDistribution: TreeDistributionType[];
+  treeDistributionSort: string;
   plantingDate: string;
   treesPlanted: number;
   area: number;
@@ -48,30 +49,18 @@ export type PolygonTableRow = {
 
 type SiteTypeConfig = { icon: ReactNode; label: string };
 
-const TARGET_LAND_USE_MAP: Record<targetLandUseType, SiteTypeConfig> = {
-  agroforest: { icon: <AgroforestyIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS.agroforest },
-  "agricultural-land": {
-    icon: <AgriculturalLandIcon boxSize={3.5} />,
-    label: TARGET_LAND_USE_LABELS["agricultural-land"]
-  },
-  grassland: { icon: <GrasslandIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS.grassland },
-  mangrove: { icon: <MangroveIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS.mangrove },
-  "open-natural-ecosystem": {
-    icon: <OpenNaturalEcosystemIcon boxSize={3.5} />,
-    label: TARGET_LAND_USE_LABELS["open-natural-ecosystem"]
-  },
-  "natural-forest": { icon: <NaturalForestIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS["natural-forest"] },
-  peatland: { icon: <PeatlandIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS.peatland },
-  "riparian-area-or-wetland": {
-    icon: <WetlandIcon boxSize={3.5} />,
-    label: TARGET_LAND_USE_LABELS["riparian-area-or-wetland"]
-  },
-  silvopasture: { icon: <SilvopastureIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS.silvopasture },
-  "urban-forest": { icon: <UrbanForestIcon boxSize={3.5} />, label: TARGET_LAND_USE_LABELS["urban-forest"] },
-  "woodlot-or-plantation": {
-    icon: <WoodlotIcon boxSize={3.5} />,
-    label: TARGET_LAND_USE_LABELS["woodlot-or-plantation"]
-  }
+const TARGET_LAND_USE_ICONS: Record<targetLandUseType, ReactNode> = {
+  agroforest: <AgroforestyIcon boxSize={3.5} />,
+  "agricultural-land": <AgriculturalLandIcon boxSize={3.5} />,
+  grassland: <GrasslandIcon boxSize={3.5} />,
+  mangrove: <MangroveIcon boxSize={3.5} />,
+  "open-natural-ecosystem": <OpenNaturalEcosystemIcon boxSize={3.5} />,
+  "natural-forest": <NaturalForestIcon boxSize={3.5} />,
+  peatland: <PeatlandIcon boxSize={3.5} />,
+  "riparian-area-or-wetland": <WetlandIcon boxSize={3.5} />,
+  silvopasture: <SilvopastureIcon boxSize={3.5} />,
+  "urban-forest": <UrbanForestIcon boxSize={3.5} />,
+  "woodlot-or-plantation": <WoodlotIcon boxSize={3.5} />
 };
 
 const SITE_RESTORATION_STRATEGY_MAP: Record<restorationStrategyType, ReactNode> = {
@@ -102,11 +91,14 @@ const HOVERED_ROW_STYLE: CSSProperties = {
   borderBottom: `2px solid ${getThemedColor("primary", 700)}`
 };
 
-const renderTargetLandUse = (targetLandUse: targetLandUseType | null) => {
+const renderTargetLandUse = (
+  targetLandUse: targetLandUseType | null,
+  targetLandUseMap: Record<targetLandUseType, SiteTypeConfig>
+) => {
   if (targetLandUse == null) {
     return <Text>—</Text>;
   }
-  const config = TARGET_LAND_USE_MAP[targetLandUse];
+  const config = targetLandUseMap[targetLandUse];
   return (
     <Flex className="items-center gap-2" color="neutral.800">
       {config.icon}
@@ -132,6 +124,17 @@ const renderRestorationPractice = (restorationPractice: restorationStrategyType[
   );
 };
 
+const renderTreeDistribution = (
+  treeDistribution: TreeDistributionType[],
+  labelByValue: Record<TreeDistributionType, string>
+) => {
+  if (treeDistribution.length === 0) {
+    return <Text>—</Text>;
+  }
+
+  return <Text>{treeDistribution.map(value => labelByValue[value]).join(", ")}</Text>;
+};
+
 interface PolygonRowProps {
   row: PolygonTableRow;
   rowProps?: Record<string, unknown>;
@@ -149,6 +152,28 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   onHover,
   onSelectChange
 }) => {
+  const targetLandUseLabels = useTargetLandUseLabels();
+  const treeDistributionOptions = useTreeDistributionOptions();
+  const treeDistributionLabels = useMemo(
+    (): Record<TreeDistributionType, string> =>
+      Object.fromEntries(treeDistributionOptions.map(({ value, label }) => [value, label])) as Record<
+        TreeDistributionType,
+        string
+      >,
+    [treeDistributionOptions]
+  );
+  const targetLandUseMap = useMemo(
+    (): Record<targetLandUseType, SiteTypeConfig> =>
+      (Object.keys(TARGET_LAND_USE_ICONS) as targetLandUseType[]).reduce(
+        (map, key) => ({
+          ...map,
+          [key]: { icon: TARGET_LAND_USE_ICONS[key], label: targetLandUseLabels[key] }
+        }),
+        {} as Record<targetLandUseType, SiteTypeConfig>
+      ),
+    [targetLandUseLabels]
+  );
+
   const handleOnRowSelected = useCallback(
     ({ checked }: { checked?: boolean | "indeterminate" }) => {
       onSelectChange(row, Boolean(checked));
@@ -191,9 +216,9 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
       <TableCell className="min-w-[15.5rem]">
         <Flex className="items-center gap-2">{renderRestorationPractice(row.restorationPractice)}</Flex>
       </TableCell>
-      <TableCell className="min-w-[16.75rem]">{renderTargetLandUse(row.targetLandUse)}</TableCell>
+      <TableCell className="min-w-[16.75rem]">{renderTargetLandUse(row.targetLandUse, targetLandUseMap)}</TableCell>
       <TableCell className="min-w-[15.875rem]">
-        <Text>{row.treeDistribution}</Text>
+        {renderTreeDistribution(row.treeDistribution, treeDistributionLabels)}
       </TableCell>
       <TableCell className="min-w-[11.5rem]">
         <FeedbackTag

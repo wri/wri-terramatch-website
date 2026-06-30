@@ -73,8 +73,8 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
         selectedFilters={activeFilterLabels}
         classNameContentLeft="w-full"
         search={{
-          label: t(resultCount === 1 ? "Result" : "Results"),
-          placeholder: t("Search"),
+          label: t(resultCount === 1 ? t("Result") : t("Results")),
+          placeholder: t("Search polygons"),
           options: [],
           resetKey: searchResetKey,
           displayResults: "none",

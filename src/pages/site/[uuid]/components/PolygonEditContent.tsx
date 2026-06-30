@@ -21,15 +21,13 @@ import {
   PolygonStatus,
   pruneSitePolygonsCache
 } from "@/connections/SitePolygons";
-import {
-  dropdownOptionsRestoration,
-  dropdownOptionsTarget,
-  dropdownOptionsTree
-} from "@/constants/polygonDropdownOptions";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
+import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOptions";
+import { useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
@@ -91,11 +89,6 @@ type PolygonEditContentProps = {
 type PolygonVersionRow = SitePolygonLightDto & { id: string };
 
 type PolygonEditAccordionSection = "details" | "monitoring-plots" | "geotagged-photos" | "versions";
-
-const optionToSelectItem = (option: { title: string; value: string }) => ({
-  label: option.title,
-  value: option.value
-});
 
 const isoStringToDateValue = (value: string | null | undefined): DateValue[] => {
   if (value == null || value === "") return [];
@@ -240,18 +233,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   });
   const isLoadingVersions = !isVersionsLoaded;
 
-  const restorationOptions = useMemo(
-    () => dropdownOptionsRestoration.map(option => ({ ...optionToSelectItem(option), label: t(option.title) })),
-    [t]
-  );
-  const targetOptions = useMemo(
-    () => dropdownOptionsTarget.map(option => ({ ...optionToSelectItem(option), label: t(option.title) })),
-    [t]
-  );
-  const treeOptions = useMemo(
-    () => dropdownOptionsTree.map(option => ({ ...optionToSelectItem(option), label: t(option.title) })),
-    [t]
-  );
+  const restorationOptions = useRestorationPracticeOptions();
+  const targetOptions = useTargetLandUseOptions();
+  const treeOptions = useTreeDistributionOptions();
   const formattedArea = useMemo(
     () => polygon?.calcArea?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? "",
     [polygon?.calcArea]

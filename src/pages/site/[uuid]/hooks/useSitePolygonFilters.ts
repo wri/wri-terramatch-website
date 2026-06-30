@@ -1,17 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { SitePolygonsIndexQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
+import { useRestorationPracticeLabels } from "@/hooks/translation/useRestorationPracticeLabels";
+import { useSubmissionStatusLabels } from "@/hooks/translation/useSubmissionStatusLabels";
+import { useTargetLandUseLabels } from "@/hooks/translation/useTargetLandUseLabels";
+import { useValidationStatusLabels } from "@/hooks/translation/useValidationStatusLabels";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import { trackPolygonFilterCleared } from "@/utils/polygonAnalytics";
 
-import {
-  EMPTY_POLYGON_FILTERS,
-  PolygonFilterState,
-  RESTORATION_PRACTICE_LABELS,
-  SUBMISSION_STATUS_LABELS,
-  TARGET_LAND_USE_LABELS,
-  VALIDATION_STATUS_LABELS
-} from "../components/polygonFilter.constants";
+import { EMPTY_POLYGON_FILTERS, PolygonFilterState } from "../components/polygonFilter.constants";
 
 type UseSitePolygonFiltersParams = {
   siteUuid: string;
@@ -19,6 +16,10 @@ type UseSitePolygonFiltersParams = {
 };
 
 export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersParams) => {
+  const submissionStatusLabels = useSubmissionStatusLabels();
+  const validationStatusLabels = useValidationStatusLabels();
+  const restorationPracticeLabels = useRestorationPracticeLabels();
+  const targetLandUseLabels = useTargetLandUseLabels();
   const [polygonSearch, setPolygonSearch] = useState("");
   const [debouncedPolygonSearch, setDebouncedPolygonSearch] = useState("");
   const [polygonFilters, setPolygonFilters] = useState<PolygonFilterState>(EMPTY_POLYGON_FILTERS);
@@ -58,7 +59,7 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
     const labels: SelectedFilter[] = [];
     if (polygonFilters.polygonStatus.length > 0) {
       labels.push({
-        label: polygonFilters.polygonStatus.map(status => t(SUBMISSION_STATUS_LABELS[status])),
+        label: polygonFilters.polygonStatus.map(status => submissionStatusLabels[status]),
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, polygonStatus: [] }));
         },
@@ -67,7 +68,7 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
     }
     if (polygonFilters.validationStatus.length > 0) {
       labels.push({
-        label: polygonFilters.validationStatus.map(status => t(VALIDATION_STATUS_LABELS[status])),
+        label: polygonFilters.validationStatus.map(status => validationStatusLabels[status]),
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, validationStatus: [] }));
         },
@@ -86,7 +87,7 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
     }
     if (polygonFilters.practice.length > 0) {
       labels.push({
-        label: polygonFilters.practice.map(practice => t(RESTORATION_PRACTICE_LABELS[practice])),
+        label: polygonFilters.practice.map(practice => restorationPracticeLabels[practice]),
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, practice: [] }));
         }
@@ -94,7 +95,7 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
     }
     if (polygonFilters.targetSys.length > 0) {
       labels.push({
-        label: polygonFilters.targetSys.map(targetSys => t(TARGET_LAND_USE_LABELS[targetSys])),
+        label: polygonFilters.targetSys.map(targetSys => targetLandUseLabels[targetSys]),
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, targetSys: [] }));
         }
@@ -109,7 +110,14 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
       });
     }
     return labels;
-  }, [polygonFilters, t]);
+  }, [
+    polygonFilters,
+    restorationPracticeLabels,
+    submissionStatusLabels,
+    t,
+    targetLandUseLabels,
+    validationStatusLabels
+  ]);
 
   return {
     polygonSearch,
