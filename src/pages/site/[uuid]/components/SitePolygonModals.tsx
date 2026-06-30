@@ -2,8 +2,10 @@ import type { FC } from "react";
 
 import type { BulkSitePolygonAttributeChanges } from "@/connections/SitePolygons";
 import type { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import type { SubmittedPolygonComment } from "../hooks/useSitePolygonBulkActions";
+import ApprovePolygonConfirmation from "./Modals/ApprovePolygon/ApprovePolygonConfirmation";
 import DeletePolygon from "./Modals/DeletePolygon";
 import EditPhotoDetails from "./Modals/GeotaggedPhotos/EditPhotoDetails";
 import OverlapFix, { type OverlapFixPolygon } from "./Modals/OverlapFix";
@@ -60,6 +62,11 @@ type SitePolygonModalsProps = {
   onUploadPhotosModalOpenChange: (open: boolean) => void;
   onUploadSuccess: (result: { createdSitePolygonUuid?: string | null; uploadedFileCount: number }) => void;
   onViewOverlapPolygon: (polygonUuid: string) => void;
+  openApprovePolygonConfirmationModal: boolean;
+  onApprovePolygonConfirmationModalOpenChange: (open: boolean) => void;
+  approvePayload: { polygons: PolygonTableRow[] } | null;
+  onApprove: (comment: string) => void | Promise<void>;
+  onRequestInformation: () => void | Promise<void>;
 };
 
 const SitePolygonModals: FC<SitePolygonModalsProps> = ({
@@ -102,77 +109,94 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   onUploadModalOpenChange,
   onUploadPhotosModalOpenChange,
   onUploadSuccess,
-  onViewOverlapPolygon
-}) => (
-  <>
-    <PolygonBulkEditDrawer
-      selectedPolygons={bulkEditPayload?.polygons ?? []}
-      open={openBulkEditDrawer}
-      onOpenChange={onBulkEditDrawerOpenChange}
-      isSaving={isBulkUpdatingPolygons}
-      onSave={onBulkEditSave}
-    />
-    <UploadPolygons
-      open={openUploadModal}
-      siteUuid={siteUuid}
-      siteHasExistingPolygons={siteHasExistingPolygons}
-      onOpenChange={onUploadModalOpenChange}
-      onUploadSuccess={onUploadSuccess}
-      onUploadError={onUploadError}
-    />
-    <SubmitPolygons
-      open={openSubmitPolygonsModal}
-      onOpenChange={onSubmitPolygonsModalOpenChange}
-      eligibleCount={submitPayload?.eligibleCount ?? 0}
-      totalCount={submitPayload?.totalCount ?? 0}
-      onSubmit={onProceedToBulkSubmitConfirmation}
-    />
-
-    <SubmitPolygonConfirmation
-      open={openSubmitPolygonConfirmationModal}
-      onOpenChange={onSubmitPolygonConfirmationModalOpenChange}
-      polygons={submitPayload?.polygons ?? []}
-      onSubmit={onSubmitPolygons}
-    />
-    <SubmitPolygonConfirmation
-      open={openMapPopupSubmitConfirmationModal}
-      onOpenChange={onMapPopupSubmitConfirmationModalOpenChange}
-      polygons={mapPopupSubmitPolygons}
-      onSubmit={onMapPopupSubmit}
-    />
-    <PolygonSubmitted
-      open={openPolygonSubmittedModal && submittedPolygonNames.length > 0}
-      onOpenChange={onPolygonSubmittedModalOpenChange}
-      polygons={submittedPolygonNames}
-      submittedComment={submittedPolygonComment}
-    />
-    <DeletePolygon
-      open={openDeletePolygonModal}
-      onOpenChange={onDeletePolygonModalOpenChange}
-      polygons={deletePayload?.polygons ?? []}
-      onDelete={onDelete}
-    />
-    <OverlapFix
-      open={
-        openOverlapFixModal &&
-        (overlapFixResults.polygonsFixed.length > 0 || overlapFixResults.polygonsNotFixed.length > 0)
-      }
-      onClose={onOverlapFixClose}
-      polygonsFixed={overlapFixResults.polygonsFixed}
-      polygonsNotFixed={overlapFixResults.polygonsNotFixed}
-      onViewPolygon={onViewOverlapPolygon}
-    />
-    <UploadError open={openUploadErrorModal} onOpenChange={onUploadErrorModalOpenChange} />
-    <UploadPhotos open={openUploadPhotosModal} onOpenChange={onUploadPhotosModalOpenChange} />
-    {editPhotoDetailsMedia != null && (
-      <EditPhotoDetails
-        key={editPhotoDetailsMedia.uuid}
-        open
-        data={editPhotoDetailsMedia}
-        onClose={onEditPhotoDetailsClose}
+  onViewOverlapPolygon,
+  openApprovePolygonConfirmationModal,
+  onApprovePolygonConfirmationModalOpenChange,
+  approvePayload,
+  onApprove,
+  onRequestInformation
+}) => {
+  const isAdmin = useIsAdmin();
+  return (
+    <>
+      {isAdmin && (
+        <ApprovePolygonConfirmation
+          open={openApprovePolygonConfirmationModal}
+          onOpenChange={onApprovePolygonConfirmationModalOpenChange}
+          polygons={approvePayload?.polygons ?? []}
+          onApprove={onApprove}
+          onRequestInformation={onRequestInformation}
+        />
+      )}
+      <PolygonBulkEditDrawer
+        selectedPolygons={bulkEditPayload?.polygons ?? []}
+        open={openBulkEditDrawer}
+        onOpenChange={onBulkEditDrawerOpenChange}
+        isSaving={isBulkUpdatingPolygons}
+        onSave={onBulkEditSave}
       />
-    )}
-  </>
-);
+      <UploadPolygons
+        open={openUploadModal}
+        siteUuid={siteUuid}
+        siteHasExistingPolygons={siteHasExistingPolygons}
+        onOpenChange={onUploadModalOpenChange}
+        onUploadSuccess={onUploadSuccess}
+        onUploadError={onUploadError}
+      />
+      <SubmitPolygons
+        open={openSubmitPolygonsModal}
+        onOpenChange={onSubmitPolygonsModalOpenChange}
+        eligibleCount={submitPayload?.eligibleCount ?? 0}
+        totalCount={submitPayload?.totalCount ?? 0}
+        onSubmit={onProceedToBulkSubmitConfirmation}
+      />
+
+      <SubmitPolygonConfirmation
+        open={openSubmitPolygonConfirmationModal}
+        onOpenChange={onSubmitPolygonConfirmationModalOpenChange}
+        polygons={submitPayload?.polygons ?? []}
+        onSubmit={onSubmitPolygons}
+      />
+      <SubmitPolygonConfirmation
+        open={openMapPopupSubmitConfirmationModal}
+        onOpenChange={onMapPopupSubmitConfirmationModalOpenChange}
+        polygons={mapPopupSubmitPolygons}
+        onSubmit={onMapPopupSubmit}
+      />
+      <PolygonSubmitted
+        open={openPolygonSubmittedModal && submittedPolygonNames.length > 0}
+        onOpenChange={onPolygonSubmittedModalOpenChange}
+        polygons={submittedPolygonNames}
+        submittedComment={submittedPolygonComment}
+      />
+      <DeletePolygon
+        open={openDeletePolygonModal}
+        onOpenChange={onDeletePolygonModalOpenChange}
+        polygons={deletePayload?.polygons ?? []}
+        onDelete={onDelete}
+      />
+      <OverlapFix
+        open={
+          openOverlapFixModal &&
+          (overlapFixResults.polygonsFixed.length > 0 || overlapFixResults.polygonsNotFixed.length > 0)
+        }
+        onClose={onOverlapFixClose}
+        polygonsFixed={overlapFixResults.polygonsFixed}
+        polygonsNotFixed={overlapFixResults.polygonsNotFixed}
+        onViewPolygon={onViewOverlapPolygon}
+      />
+      <UploadError open={openUploadErrorModal} onOpenChange={onUploadErrorModalOpenChange} />
+      <UploadPhotos open={openUploadPhotosModal} onOpenChange={onUploadPhotosModalOpenChange} />
+      {editPhotoDetailsMedia != null && (
+        <EditPhotoDetails
+          key={editPhotoDetailsMedia.uuid}
+          open
+          data={editPhotoDetailsMedia}
+          onClose={onEditPhotoDetailsClose}
+        />
+      )}
+    </>
+  );
+};
 
 export default SitePolygonModals;

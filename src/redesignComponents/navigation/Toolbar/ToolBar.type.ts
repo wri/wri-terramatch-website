@@ -28,7 +28,7 @@ export interface BulkActionToolbarProps {
   cancelAction: IButtonProps;
   deleteAction: BulkToolbarAction;
   actions?: BulkToolbarAction[];
-  primaryAction?: IButtonProps;
+  primaryAction?: IButtonProps | IMultiActionButtonProps;
   infoTooltip?: ReactNode;
 }
 

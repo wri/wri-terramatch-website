@@ -49,7 +49,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
   return (
     <Flex
       className={classNames(
-        "bg-theme-primary-800 flex-col",
+        "flex-col bg-theme-primary-800",
         shellTransition,
         isCollapsed ? COLLAPSED_WIDTH_CLASS : EXPANDED_WIDTH_CLASS
       )}

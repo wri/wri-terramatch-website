@@ -27,6 +27,7 @@ import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { hasValidationCriteria } from "@/helpers/polygonValidation";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { DownloadIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
@@ -508,6 +509,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
 
   const isSitePolygonsLoading = isLoadingPolygons || isValidatingPolygons || isFixingOverlaps || isDeletingPolygons;
   const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
+  const isAdmin = useIsAdmin();
   const { showPolygonUndoButton, handleUndoPolygonDraw } = usePolygonDrawUndo({
     isEditPolygonOpen,
     isUserDrawingEnabled,
@@ -535,6 +537,29 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
 
   const handleClearHover = useCallback(() => {
     setPolygonTableHoveredUuid(null);
+  }, []);
+
+  const [showApprovePolygonConfirmationModal, setShowApprovePolygonConfirmationModal] = useState(false);
+  const [approvePayload, setApprovePayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
+
+  const handleOpenApprovePolygonModal = useCallback(() => {
+    setApprovePayload({ polygons: selectedRows });
+    setShowApprovePolygonConfirmationModal(true);
+  }, [selectedRows]);
+
+  const handleApprovePolygonConfirmationModalChange = useCallback((open: boolean) => {
+    setShowApprovePolygonConfirmationModal(open);
+    if (!open) setApprovePayload(null);
+  }, []);
+
+  const handleApprovePolygons = useCallback(async (_comment: string) => {
+    setShowApprovePolygonConfirmationModal(false);
+    setApprovePayload(null);
+  }, []);
+
+  const handleRequestInformation = useCallback(async () => {
+    setShowApprovePolygonConfirmationModal(false);
+    setApprovePayload(null);
   }, []);
 
   const hasPolygonSelection = selectedRows.length > 0;
@@ -599,18 +624,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           title={t("Polygons")}
           className="scroll-mt-[5.5rem]"
           flexProps={{ width: "100%", id: SITE_POLYGON_TAB_HEADER_ID }}
-          downloadButtonProps={
-            isAdminReview
-              ? {
-                  variant: "secondary",
-                  size: "small",
-                  children: t("Upload Monitoring Plots"),
-                  leftIcon: <UploadIcon />,
-                  disabled: true
-                }
-              : undefined
-          }
-          buttonProps={{
+          downloadButtonProps={{
             variant: "secondary",
             size: "small",
             children: t("Download All"),
@@ -621,6 +635,17 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
               void downloadAll();
             }
           }}
+          buttonProps={
+            isAdmin
+              ? {
+                  variant: "secondary",
+                  size: "small",
+                  children: t("Upload Monitoring Plots"),
+                  leftIcon: <UploadIcon />,
+                  disabled: true
+                }
+              : undefined
+          }
           multiActionButtonProps={{
             mainActionLabel: t("Add"),
             size: "small",
@@ -674,6 +699,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           onViewPolygonDetails={openPolygonEditDrawerForRow}
           onRunValidation={handleRunValidation}
           onSubmit={handleOpenSubmitPolygonsModal}
+          onOpenApproveModal={handleOpenApprovePolygonModal}
           isOverlapFixAction={hasSelectedOverlapFailure}
           canAutoFixOverlap={hasFixableSelectedOverlap}
           isSubmitDisabled={isBulkSubmitDisabled}
@@ -724,6 +750,11 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             void refetchPolygons();
           }}
           onViewOverlapPolygon={handleViewOverlapFixPolygon}
+          openApprovePolygonConfirmationModal={showApprovePolygonConfirmationModal}
+          onApprovePolygonConfirmationModalOpenChange={handleApprovePolygonConfirmationModalChange}
+          approvePayload={approvePayload}
+          onApprove={handleApprovePolygons}
+          onRequestInformation={handleRequestInformation}
         />
         <SitePolygonMapSection
           site={site}
