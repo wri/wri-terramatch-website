@@ -1,10 +1,9 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { useT } from "@transifex/react";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formatMonthYear } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
-import { useNavbarData } from "@/redesignComponents/navigation/NavBar/useNavbarData";
+import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import SiteInfo from "../components/SiteInfo";
 import SitePlantingStatus from "../components/SitePlantingStatus";
@@ -16,17 +15,15 @@ export interface SiteHeaderProps {
   showStatusTag?: boolean;
 }
 
-const SiteHeader: FC<SiteHeaderProps> = ({ site }) => {
-  const data = useNavbarData();
-  const isAdmin = data.isAdmin;
-  const t = useT();
+const SiteHeader: FC<SiteHeaderProps> = ({ site, reviewLabel, showStatusTag = false }) => {
+  const statusTag = useMemo(() => mapStatusToTagStateEntity(site.status), [site.status]);
+
   return (
     <>
-      {/* TODO: Add the tag based on the site.status */}
       <PageHeader
         title={site.name ?? ""}
-        label={isAdmin ? t("Cycle 1 QA:") : ""}
-        tag={isAdmin ? { state: "pending-approval" } : undefined}
+        label={reviewLabel ?? ""}
+        tag={showStatusTag && statusTag != null ? { state: statusTag.type } : undefined}
       />
       <Box display="flex" gap={4} px={6} py={5} justifyContent="space-between" className="mobile:flex-col">
         <Flex gap={5}>
