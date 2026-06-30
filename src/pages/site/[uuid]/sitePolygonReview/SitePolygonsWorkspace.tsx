@@ -539,6 +539,29 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     setPolygonTableHoveredUuid(null);
   }, []);
 
+  const [showApprovePolygonConfirmationModal, setShowApprovePolygonConfirmationModal] = useState(false);
+  const [approvePayload, setApprovePayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
+
+  const handleOpenApprovePolygonModal = useCallback(() => {
+    setApprovePayload({ polygons: selectedRows });
+    setShowApprovePolygonConfirmationModal(true);
+  }, [selectedRows]);
+
+  const handleApprovePolygonConfirmationModalChange = useCallback((open: boolean) => {
+    setShowApprovePolygonConfirmationModal(open);
+    if (!open) setApprovePayload(null);
+  }, []);
+
+  const handleApprovePolygons = useCallback(async (_comment: string) => {
+    setShowApprovePolygonConfirmationModal(false);
+    setApprovePayload(null);
+  }, []);
+
+  const handleRequestInformation = useCallback(async () => {
+    setShowApprovePolygonConfirmationModal(false);
+    setApprovePayload(null);
+  }, []);
+
   const hasPolygonSelection = selectedRows.length > 0;
   const shouldShowNoResults = !isSitePolygonsLoading && polygonRows.length === 0;
 
@@ -676,6 +699,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           onViewPolygonDetails={openPolygonEditDrawerForRow}
           onRunValidation={handleRunValidation}
           onSubmit={handleOpenSubmitPolygonsModal}
+          onOpenApproveModal={handleOpenApprovePolygonModal}
           isOverlapFixAction={hasSelectedOverlapFailure}
           canAutoFixOverlap={hasFixableSelectedOverlap}
           isSubmitDisabled={isBulkSubmitDisabled}
@@ -726,6 +750,11 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             void refetchPolygons();
           }}
           onViewOverlapPolygon={handleViewOverlapFixPolygon}
+          openApprovePolygonConfirmationModal={showApprovePolygonConfirmationModal}
+          onApprovePolygonConfirmationModalOpenChange={handleApprovePolygonConfirmationModalChange}
+          approvePayload={approvePayload}
+          onApprove={handleApprovePolygons}
+          onRequestInformation={handleRequestInformation}
         />
         <SitePolygonMapSection
           site={site}

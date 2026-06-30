@@ -4,6 +4,7 @@ import { memo, useCallback, useMemo, useState } from "react";
 
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
@@ -27,6 +28,7 @@ export type PolygonBulkActionToolbarProps = {
   onDownload: () => void;
   onEdit: () => void;
   onSubmit: () => void;
+  onOpenApproveModal: () => void;
   onViewPolygonDetails?: (polygon: PolygonTableRow) => void;
   onRunValidation: (geometryPolygonUuids: string[]) => Promise<void>;
   isOverlapFixAction?: boolean;
@@ -52,6 +54,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   onDownload,
   onEdit,
   onSubmit,
+  onOpenApproveModal,
   onViewPolygonDetails,
   polygons,
   onRunValidation,
@@ -63,6 +66,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   isSubmitDisabled = false
 }: PolygonBulkActionToolbarProps) {
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
+  const isAdmin = useIsAdmin();
   const t = useT();
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
   const [validatedPolygons, setValidatedPolygons] = useState<PolygonTableRow[]>([]);
@@ -170,11 +174,34 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
 
   const primaryAction = useMemo(
     () => ({
-      children: submitLabel,
-      disabled: isOverlapAutoFixUnavailable || isSubmitDisabled || submitDisabledTooltip != null,
-      onClick: onSubmit
+      children: isAdmin ? t("Review") : submitLabel,
+      disabled: isAdmin ? false : isOverlapAutoFixUnavailable || isSubmitDisabled || submitDisabledTooltip != null,
+      onClick: isAdmin ? () => {} : onSubmit,
+      ...(isAdmin && {
+        otherActions: [
+          {
+            label: t("Approve"),
+            onClick: () => {
+              onOpenApproveModal();
+            }
+          },
+          {
+            label: t("Request information"),
+            onClick: () => {}
+          }
+        ]
+      })
     }),
-    [isOverlapAutoFixUnavailable, isSubmitDisabled, onSubmit, submitDisabledTooltip, submitLabel]
+    [
+      isOverlapAutoFixUnavailable,
+      isSubmitDisabled,
+      onSubmit,
+      onOpenApproveModal,
+      submitDisabledTooltip,
+      submitLabel,
+      isAdmin,
+      t
+    ]
   );
 
   const overlapTooltip = useMemo(
@@ -201,7 +228,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
         isLoadingResults={isAwaitingValidationResults}
       />
       {isToolbarVisible && (
-        <Box position="fixed" zIndex="100" bottom={3} left={3} right={3}>
+        <Box position="fixed" zIndex="100" bottom={3} left={isAdmin ? 14 : 3} right={isAdmin ? 3 : 0}>
           <BulkActionToolbar
             selectedCount={itemCount}
             cancelAction={cancelAction}

@@ -21,7 +21,11 @@ const SiteHeader: FC<SiteHeaderProps> = ({ site }) => {
   return (
     <>
       {/* TODO: Add the tag based on the site.status */}
-      <PageHeader title={site.name ?? ""} label={isAdmin ? t("Cycle 1 QA:") : ""} tag={{ state: "pending-approval" }} />
+      <PageHeader
+        title={site.name ?? ""}
+        label={isAdmin ? t("Cycle 1 QA:") : ""}
+        tag={isAdmin ? { state: "pending-approval" } : undefined}
+      />
       <Box display="flex" gap={4} px={6} py={5} justifyContent="space-between" className="mobile:flex-col">
         <Flex gap={5}>
           <SiteInfo
