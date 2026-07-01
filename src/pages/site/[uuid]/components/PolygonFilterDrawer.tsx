@@ -13,6 +13,7 @@ import { useTargetLandUseLabels } from "@/hooks/translation/useTargetLandUseLabe
 import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOptions";
 import { useValidationStatusLabels } from "@/hooks/translation/useValidationStatusLabels";
 import { useValidationStatusOptions } from "@/hooks/translation/useValidationStatusOptions";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
@@ -71,6 +72,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   onOpenChange
 }) => {
   const t = useT();
+  const isAdmin = useIsAdmin();
   const submissionStatusOptions = useSubmissionStatusOptions();
   const validationStatusOptions = useValidationStatusOptions();
   const restorationPracticeOptions = useRestorationPracticeOptions();
@@ -184,6 +186,12 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     return dates;
   }, [draftFilters.plantStartFrom, draftFilters.plantStartTo]);
 
+  const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
+    { value: "option-1", label: t("Option 1") },
+    { value: "option-2", label: t("Option 2") },
+    { value: "option-3", label: t("Option 3") }
+  ];
+
   return (
     <Drawer trigger={trigger} open={open} onOpenChange={onOpenChange} maxW="22rem">
       {({ onClose }) => (
@@ -261,17 +269,17 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   onChange={handleTargetLandUseChange}
                 />
               </FilterCard>
-              {/* TODO: Add submission cycle filter when it is implemented */}
-              {/* <FilterCard label={t("Submission Cycle")}>
+              <FilterCard label={t("Submission Cycle")}>
                 <SelectInput
                   placeholder={t("Please Select")}
                   size="small"
+                  disabled={!isAdmin}
                   items={SUBMISSION_CYCLE_MOCKED_OPTIONS.map(option => ({
                     value: option.value,
                     label: t("Option {option}", { option: option.value })
                   }))}
                 />
-              </FilterCard> */}
+              </FilterCard>
               <FilterCard label={t("Overlap")}>
                 <Switch name="overlap" checked={draftFilters.hasOverlap} onCheckedChange={handleOverlapChange}>
                   {t("Show Polygon Overlaps")}

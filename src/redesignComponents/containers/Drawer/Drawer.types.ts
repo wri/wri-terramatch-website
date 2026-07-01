@@ -15,6 +15,7 @@ export interface DrawerProps {
   placement?: DrawerPlacement;
   modal?: boolean;
   maxW?: SizeValue;
+  trapFocus?: boolean;
 }
 
 export interface DrawerTyped {
@@ -25,6 +26,7 @@ export interface DrawerTyped {
   size: NonNullable<DrawerProps["size"]>;
   placement?: DrawerPlacement;
   modal?: boolean;
+  trapFocus?: boolean;
 }
 
 export interface DrawerTriggerTyped {
