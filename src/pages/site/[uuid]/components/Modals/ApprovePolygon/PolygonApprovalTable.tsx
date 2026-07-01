@@ -1,9 +1,9 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
-import Table from "@/redesignComponents/dataDisplay/Table/Table";
+import Table, { type TableColumn } from "@/redesignComponents/dataDisplay/Table/Table";
 import { AreaHectaresCircleIcon } from "@/redesignComponents/foundations/Icons";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
@@ -12,10 +12,30 @@ import { POLYGON_APPROVAL_TABLE_CSS } from "./PolygonApprovalTable.styles";
 
 interface PolygonApprovalTableProps {
   polygons: PolygonTableRow[];
+  selectedRows?: PolygonTableRow[];
+  onRowSelected?: (row: PolygonTableRow, checked: boolean) => void;
+  onAllItemsSelected?: (checked: boolean, visibleRows: PolygonTableRow[]) => void;
+  selectable?: boolean;
+  showArea?: boolean;
 }
 
-const PolygonApprovalTable: FC<PolygonApprovalTableProps> = ({ polygons }) => {
+const PolygonApprovalTable: FC<PolygonApprovalTableProps> = ({
+  polygons,
+  selectedRows,
+  onRowSelected,
+  onAllItemsSelected,
+  selectable = true,
+  showArea = true
+}) => {
   const t = useT();
+
+  const columns = useMemo<TableColumn[]>(() => {
+    const baseColumns: TableColumn[] = [
+      { key: "polygonName", label: t("Polygon Name") },
+      { key: "validation", label: t("Validation") }
+    ];
+    return showArea ? [...baseColumns, { key: "area", label: t("Total Area") }] : baseColumns;
+  }, [showArea, t]);
 
   return (
     <Table
@@ -24,12 +44,9 @@ const PolygonApprovalTable: FC<PolygonApprovalTableProps> = ({ polygons }) => {
       data={polygons}
       showPagination={false}
       showItemCount={false}
-      selectable={true}
-      columns={[
-        { key: "polygonName", label: t("Polygon Name") },
-        { key: "validation", label: t("Validation") },
-        { key: "area", label: t("Total Area") }
-      ]}
+      selectable={selectable}
+      {...(selectable ? { selectedRows, onRowSelected, onAllItemsSelected } : {})}
+      columns={columns}
       renderDataCell={(row, columnKey) => {
         if (columnKey === "validation") {
           return row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>;

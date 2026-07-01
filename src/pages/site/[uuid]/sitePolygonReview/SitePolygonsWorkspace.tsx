@@ -6,14 +6,8 @@ import { scrollToSitePolygonTabHeader } from "@/components/elements/Map-mapbox/s
 import { resolvePolygonTableRowId } from "@/components/elements/Map-mapbox/sitePolygonPopupUtils";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import {
-  bulkUpdateSitePolygonStatus,
-  loadAllSitePolygons,
-  pruneSitePolygonsCache,
-  useAllSitePolygons
-} from "@/connections/SitePolygons";
+import { loadAllSitePolygons, useAllSitePolygons } from "@/connections/SitePolygons";
 import { fetchPolygonValidation, useAllSiteValidations } from "@/connections/Validation";
-import { POLYGON_APPROVED, POLYGON_INFORMATION_REQUIRED } from "@/constants/polygonStatuses";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { openPolygonPopupFromMapArea } from "@/context/mapArea.utils";
@@ -39,11 +33,7 @@ import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTab
 import { DownloadIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import Log from "@/utils/log";
-import {
-  trackBulkActionCompleted,
-  trackPolygonStatusChanged,
-  trackPolygonValidationResults
-} from "@/utils/polygonAnalytics";
+import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils/polygonAnalytics";
 
 import { type OverlapFixPolygon } from "../components/Modals/OverlapFix";
 import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
@@ -91,7 +81,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     setSiteData,
     resetSiteMapInteractionState,
     closeMapPopups,
-    invalidatePolygonMapTiles,
     polygonSubmitConfirmation,
     polygonApproveConfirmation,
     setPolygonApproveConfirmation,
@@ -475,6 +464,12 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     showMapPopupSubmitConfirmationModal,
     submittedPolygonNames,
     submittedPolygonComment,
+    showPolygonApprovedModal,
+    approvedPolygonNames,
+    approvedPolygonComment,
+    showInformationRequestedModal,
+    requestedInformationPolygonNames,
+    requestedInformationComment,
     isBulkUpdatingPolygons,
     isDeletingPolygons,
     isDownloadingSelectedPolygons,
@@ -483,6 +478,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     deletingPolygonCount,
     fixingOverlapsCount,
     validatingPolygonCount,
+    approvePolygons,
+    requestInformationForPolygons,
     handleBulkDelete,
     handleBulkDownloadClick,
     handleBulkEditDetails,
@@ -492,9 +489,11 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     handleConfirmMapPopupSubmit,
     handleDeletePolygonModalChange,
     handleDrawerOverlapFixed,
+    handleInformationRequestedModalChange,
     handleMapPopupSubmitConfirmationModalChange,
     handleOpenDeletePolygonModal,
     handleOpenSubmitPolygonsModal,
+    handlePolygonApprovedModalChange,
     handlePolygonDeletingChange,
     handlePolygonSubmittedModalChange,
     handleProceedToBulkSubmitConfirmation,
@@ -581,27 +580,38 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     if (!open) setRequestInformationPayload(null);
   }, []);
 
-  const handleApprovePolygons = useCallback(
-    async (comment: string) => {
-      const polygonUuids = (approvePayload?.polygons ?? [])
-        .map(p => p.id)
-        .filter((id): id is string => id != null && id !== "");
+  const resolveSitePolygonUuidsAndNames = useCallback(
+    (rows: PolygonTableRow[]) => {
+      const sitePolygonUuids: string[] = [];
+      const names: string[] = [];
 
-      if (polygonUuids.length === 0) {
+      rows.forEach(row => {
+        const sitePolygon = polygonsData.find(polygon => polygon.polygonUuid === row.id || polygon.uuid === row.id);
+        if (sitePolygon?.uuid == null || sitePolygon.uuid === "") {
+          return;
+        }
+        sitePolygonUuids.push(sitePolygon.uuid);
+        names.push(sitePolygon.name ?? row.polygonName ?? t("Unnamed polygon"));
+      });
+
+      return { sitePolygonUuids, names };
+    },
+    [polygonsData, t]
+  );
+
+  const handleApprovePolygons = useCallback(
+    async (comment: string, selectedPolygons: PolygonTableRow[]) => {
+      const { sitePolygonUuids, names } = resolveSitePolygonUuidsAndNames(selectedPolygons);
+
+      if (sitePolygonUuids.length === 0) {
         setShowApprovePolygonConfirmationModal(false);
         setApprovePayload(null);
         return;
       }
 
       try {
-        await bulkUpdateSitePolygonStatus(polygonUuids, POLYGON_APPROVED, comment);
-        pruneSitePolygonsCache();
-        invalidatePolygonMapTiles();
+        await approvePolygons(sitePolygonUuids, names, comment);
         clearBulkTableSelection();
-        await refetchPolygons();
-        polygonUuids.forEach(polygonId => {
-          trackPolygonStatusChanged({ siteUuid: site.uuid, polygonId, fromStatus: "", toStatus: POLYGON_APPROVED });
-        });
       } catch (error) {
         Log.error("Failed to approve polygons:", error);
       } finally {
@@ -609,35 +619,22 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
         setApprovePayload(null);
       }
     },
-    [approvePayload, clearBulkTableSelection, invalidatePolygonMapTiles, refetchPolygons, site.uuid]
+    [approvePolygons, clearBulkTableSelection, resolveSitePolygonUuidsAndNames]
   );
 
   const handleConfirmRequestInformation = useCallback(
     async (comment: string) => {
-      const polygonUuids = (requestInformationPayload?.polygons ?? [])
-        .map(p => p.id)
-        .filter((id): id is string => id != null && id !== "");
+      const { sitePolygonUuids, names } = resolveSitePolygonUuidsAndNames(requestInformationPayload?.polygons ?? []);
 
-      if (polygonUuids.length === 0) {
+      if (sitePolygonUuids.length === 0) {
         setShowRequestInformationModal(false);
         setRequestInformationPayload(null);
         return;
       }
 
       try {
-        await bulkUpdateSitePolygonStatus(polygonUuids, POLYGON_INFORMATION_REQUIRED, comment);
-        pruneSitePolygonsCache();
-        invalidatePolygonMapTiles();
+        await requestInformationForPolygons(sitePolygonUuids, names, comment);
         clearBulkTableSelection();
-        await refetchPolygons();
-        polygonUuids.forEach(polygonId => {
-          trackPolygonStatusChanged({
-            siteUuid: site.uuid,
-            polygonId,
-            fromStatus: "",
-            toStatus: POLYGON_INFORMATION_REQUIRED
-          });
-        });
       } catch (error) {
         Log.error("Failed to request information for polygons:", error);
       } finally {
@@ -645,7 +642,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
         setRequestInformationPayload(null);
       }
     },
-    [requestInformationPayload, clearBulkTableSelection, invalidatePolygonMapTiles, refetchPolygons, site.uuid]
+    [clearBulkTableSelection, requestInformationForPolygons, requestInformationPayload, resolveSitePolygonUuidsAndNames]
   );
 
   const handleRequestInformation = useCallback(async () => {
@@ -883,12 +880,21 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           openApprovePolygonConfirmationModal={showApprovePolygonConfirmationModal}
           onApprovePolygonConfirmationModalOpenChange={handleApprovePolygonConfirmationModalChange}
           approvePayload={approvePayload}
+          projectUuid={site.projectUuid}
           onApprove={handleApprovePolygons}
           onRequestInformation={handleRequestInformation}
           openRequestInformationModal={showRequestInformationModal}
           onRequestInformationModalOpenChange={handleRequestInformationModalChange}
           requestInformationPayload={requestInformationPayload}
           onConfirmRequestInformation={handleConfirmRequestInformation}
+          openPolygonApprovedModal={showPolygonApprovedModal && approvedPolygonNames.length > 0}
+          onPolygonApprovedModalOpenChange={handlePolygonApprovedModalChange}
+          approvedPolygonNames={approvedPolygonNames}
+          approvedPolygonComment={approvedPolygonComment}
+          openInformationRequestedModal={showInformationRequestedModal && requestedInformationPolygonNames.length > 0}
+          onInformationRequestedModalOpenChange={handleInformationRequestedModalChange}
+          requestedInformationPolygonNames={requestedInformationPolygonNames}
+          requestedInformationComment={requestedInformationComment}
         />
         <SitePolygonMapSection
           site={site}

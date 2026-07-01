@@ -8,11 +8,9 @@ import Modal from "@/redesignComponents/containers/Modal/Modal";
 import CommentInput from "@/redesignComponents/content/Message/CommentInput";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
+import { formatCommentAuthorName } from "../../../utils/polygonStatusChangeComment";
 import type { PolygonTableRow } from "../../PolygonTableRow";
 import PolygonApprovalTable from "../ApprovePolygon/PolygonApprovalTable";
-
-const formatAuthorName = (firstName?: string | null, lastName?: string | null): string =>
-  firstName == null && lastName == null ? "Unknown User" : `${firstName ?? ""} ${lastName ?? ""}`.trim();
 
 export interface RequestInformationConfirmationProps {
   open: boolean;
@@ -32,7 +30,8 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
   const [isSaving, setIsSaving] = useState(false);
   const [comment, setComment] = useState("");
 
-  const currentUserName = formatAuthorName(user?.firstName, user?.lastName);
+  const currentUserName = formatCommentAuthorName(user?.firstName, user?.lastName);
+  const isCommentMissing = comment.trim() === "";
 
   useEffect(() => {
     if (!open) {
@@ -45,8 +44,7 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
   }, [onOpenChange]);
 
   const handleConfirm = useCallback(async () => {
-    if (onRequestInformation == null) {
-      onOpenChange(false);
+    if (onRequestInformation == null || isCommentMissing) {
       return;
     }
     try {
@@ -56,46 +54,51 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
     } finally {
       setIsSaving(false);
     }
-  }, [comment, onRequestInformation, onOpenChange]);
+  }, [comment, isCommentMissing, onRequestInformation, onOpenChange]);
 
   return (
     <Modal
       open={open}
       onClose={handleClose}
       size="large"
-      header={
-        <b className="text-theme-neutral-800">
-          {polygons.length === 1 ? t("Request information for polygon?") : t("Request information for polygons?")}
-        </b>
-      }
+      header={<b className="text-theme-neutral-800">{t("Request information?")}</b>}
       content={
         <Flex className="-m-2.5 flex-col gap-4">
           <Box px={4} pt={4}>
             <Text textStyle="400" color="neutral.900" mb={4}>
               {t(
-                `You're about to request information for the following ${
+                `Are you sure you want to request additional information for the following ${
                   polygons.length === 1 ? "polygon" : "polygons"
-                }:`
+                }?`
               )}
             </Text>
             <Box maxW="100%">
-              <PolygonApprovalTable polygons={polygons} />
+              <PolygonApprovalTable polygons={polygons} selectable={false} showArea={false} />
             </Box>
           </Box>
           <Box bg="neutral.200" mb={-0.5}>
             <SimpleDivider />
-            <CommentInput
-              label={t("Comment")}
-              showOptionalLabel={true}
-              caption={t("Describe what additional information is needed.")}
-              name={currentUserName}
-              placeholder={t("Write a message...")}
-              value={comment}
-              onValueChange={setComment}
-              showSendIcon={false}
-              showAttachFileIcon={false}
-              className="px-4 pt-2 pb-4"
-            />
+            <Box px={4} pt={2} pb={4}>
+              <Flex alignItems="center" gap={0.5}>
+                <Text textStyle="400-bold" color="primary.900">
+                  {t("Comment")}
+                </Text>
+                <Text as="span" textStyle="400-bold" color="error.500">
+                  *
+                </Text>
+              </Flex>
+              <Text textStyle="400" color="neutral.900" mb={2}>
+                {t("Add a comment about the information required.")}
+              </Text>
+              <CommentInput
+                name={currentUserName}
+                placeholder={t("Describe what needs to be updated or clarified...")}
+                value={comment}
+                onValueChange={setComment}
+                showSendIcon={false}
+                showAttachFileIcon={false}
+              />
+            </Box>
           </Box>
         </Flex>
       }
@@ -110,8 +113,8 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
             },
             {
               id: "confirm",
-              children: t("Request information"),
-              disabled: isSaving,
+              children: t("Request Information"),
+              disabled: isSaving || isCommentMissing,
               onClick: () => void handleConfirm()
             }
           ]}
