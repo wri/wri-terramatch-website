@@ -105,8 +105,8 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
           <DateRange
             startDate={formatMonthYear(dueAt ?? report.dueAt)}
             endDate={formatMonthYear(report.updatedAt)}
-            startDateLabel="Due:"
-            endDateLabel="Last updated:"
+            startDateLabel={`${t("Due")}:`}
+            endDateLabel={`${t("Last updated")}:`}
           />
           <Flex gap={2} className="items-center" mb={2.5}>
             <Text textStyle="300" color="neutral.800" lineHeight="normal">

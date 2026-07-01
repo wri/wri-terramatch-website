@@ -13,13 +13,13 @@ import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/M
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { ABOUT_SITES_CONTENT } from "@/constants/AboutSites.constants";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useAboutSitesContent } from "@/hooks/translation/useAboutSitesContent";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -76,9 +76,10 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     });
   };
 
+  const aboutSitesContent = useAboutSitesContent();
   const aboutSitesContentItem = useMemo(() => {
-    return ABOUT_SITES_CONTENT.find(content => content.frameworks.includes(site.frameworkKey!));
-  }, [site.frameworkKey]);
+    return aboutSitesContent.find(content => content.frameworks.includes(site.frameworkKey!));
+  }, [aboutSitesContent, site.frameworkKey]);
 
   const needMoreInformation =
     site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
@@ -212,7 +213,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 <Flex direction="column" gap={5}>
                   <Text color="neutral.900" textStyle="300">
                     <strong>{t("Sites")} </strong>
-                    {t(aboutSitesContentItem?.paragraph1!)}
+                    {aboutSitesContentItem?.paragraph1}
                   </Text>
                   <ContactSupport
                     message={t(aboutSitesContentItem?.paragraph2!)}
@@ -220,12 +221,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                   />
                 </Flex>
               }
-              links={
-                aboutSitesContentItem?.links.map(link => ({
-                  title: t(link.title),
-                  link: link.link
-                })) ?? []
-              }
+              links={aboutSitesContentItem?.links ?? []}
             />
           </PageItem>
         </Flex>

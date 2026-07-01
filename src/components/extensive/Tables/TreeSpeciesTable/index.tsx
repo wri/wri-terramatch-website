@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
 import Table from "@/components/elements/Table/Table";
@@ -80,23 +81,29 @@ const TreeSpeciesDataFetcher: FC<TreeSpeciesDataFetcherProps> = ({
 const TreeSpeciesTableView: FC<TreeSpeciesTableViewProps> = ({
   data,
   tableType,
-  headerName = "Species Name",
+  headerName,
   visibleRows = 5,
   galleryType,
   secondColumnWidth = ""
-}) => (
-  <div>
-    <Table
-      data={data}
-      columns={useTreeTableColumns(tableType, headerName, secondColumnWidth)}
-      variant={VARIANT_TABLE_TREE_SPECIES}
-      hasPagination
-      invertSelectPagination
-      visibleRows={visibleRows}
-      galleryType={galleryType}
-    />
-  </div>
-);
+}) => {
+  const t = useT();
+  if (headerName == null) {
+    headerName = t("Species Name") as string;
+  }
+  return (
+    <div>
+      <Table
+        data={data}
+        columns={useTreeTableColumns(tableType, headerName, secondColumnWidth)}
+        variant={VARIANT_TABLE_TREE_SPECIES}
+        hasPagination
+        invertSelectPagination
+        visibleRows={visibleRows}
+        galleryType={galleryType}
+      />
+    </div>
+  );
+};
 
 const TreeSpeciesTable: FC<TreeSpeciesTableProps> = props => {
   const {

@@ -19,13 +19,3 @@ export const POLYGON_SUBMISSION_STATUS_LABELS: Record<PolygonDataSubmissionOptio
 export function isPolygonDataSubmissionOption(value: string): value is PolygonDataSubmissionOption {
   return (POLYGON_DATA_SUBMISSION_OPTION_VALUES as readonly string[]).includes(value);
 }
-
-export function getPolygonSubmissionStatusLabel(
-  value: PolygonDataSubmissionOption | string | null | undefined
-): string {
-  if (value != null && isPolygonDataSubmissionOption(value)) {
-    return POLYGON_SUBMISSION_STATUS_LABELS[value];
-  }
-
-  return "-";
-}

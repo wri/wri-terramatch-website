@@ -3,9 +3,6 @@ import { closeToast, showToast } from "@worldresources/wri-design-systems";
 const DEFAULT_TOAST_ID = "downloadToast";
 const DEFAULT_PLACEMENT = "bottom" as const;
 
-export const DOWNLOAD_COMPLETE_MESSAGE = "Download complete";
-export const DOWNLOAD_ERROR_MESSAGE = "Something went wrong!";
-
 export type DownloadToastMessages = {
   downloading: string;
   complete: string;

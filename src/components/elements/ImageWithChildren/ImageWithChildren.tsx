@@ -30,8 +30,10 @@ const ImageWithChildren = ({
   return (
     <div {...divProps} className={classNames(className, "relative")}>
       <div className="absolute bottom-4 left-4 z-10 flex gap-2">
-        {isGeotagged && <div className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white">Geotagged</div>}
-        {isCover && <div className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white">Cover</div>}
+        {isGeotagged && (
+          <div className="text-14 rounded-full bg-[#6f6d6d80] px-2 py-[2px] text-white">{t("Geotagged")}</div>
+        )}
+        {isCover && <div className="text-14 rounded-full bg-[#30CF1770] px-2 py-[2px] text-white">{t("Cover")}</div>}
       </div>
       <ImageWithPlaceholder
         imageUrl={imageSrc as string}

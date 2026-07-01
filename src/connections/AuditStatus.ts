@@ -106,20 +106,6 @@ export const getUnreadCommentCount = (auditStatuses?: AuditStatusDto[], currentU
   auditStatuses?.filter(a => a.type === "comment" && a.isRead === false && !isCommentByUser(a, currentUser)).length ??
   0;
 
-export const formatAuditStatusEntityForDisplay = (entityType: AuditStatusEntityType): string => {
-  if (entityType === "sitePolygons") {
-    return "Polygon";
-  }
-
-  const words = entityType
-    .replace(/([A-Z])/g, " $1")
-    .split(" ")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .filter(word => word.length > 0);
-
-  return words.join(" ");
-};
-
 export const v3EntityToAuditLogEntity = (entityType: AuditStatusEntityType): string => {
   const mapping: Record<AuditStatusEntityType, string> = {
     projects: "Project",

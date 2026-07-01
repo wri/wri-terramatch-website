@@ -5,8 +5,9 @@ import { Dispatch, FC, SetStateAction } from "react";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import Text from "@/components/elements/Text/Text";
-import { AuditStatusEntityType, formatAuditStatusEntityForDisplay } from "@/connections/AuditStatus";
+import { AuditStatusEntityType } from "@/connections/AuditStatus";
 import { SelectedItem } from "@/hooks/AuditStatus/useLoadEntityList";
+import { useAuditEntityTypeName } from "@/hooks/translation/useAuditEntityTypeName";
 
 import StatusDisplay from "../../PolygonReviewTab/components/PolygonStatus/StatusDisplay";
 
@@ -41,7 +42,8 @@ const SiteAuditLogEntityStatusSide: FC<SiteAndAuditLogEntityStatusSideProps> = (
   onStatusChange,
   onChangeRequest
 }) => {
-  const displayEntityName = formatAuditStatusEntityForDisplay(entityType);
+  const auditEntityTypeName = useAuditEntityTypeName();
+  const displayEntityName = auditEntityTypeName[entityType];
   const t = useT();
 
   return (
