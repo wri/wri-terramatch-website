@@ -32,9 +32,15 @@ const Button = ({
       <Box
         css={{
           "& button": {
-            backgroundColor: `${getThemedColor("error", 100)} !important`,
+            backgroundColor:
+              variant === "borderless"
+                ? `${getThemedColor("neutral", 100)} !important`
+                : `${getThemedColor("error", 100)} !important`,
             borderColor: `${getThemedColor("error", 300)} !important`,
             color: `${getThemedColor("error", 900)} !important`
+          },
+          "& button:hover": {
+            backgroundColor: variant === "borderless" && `${getThemedColor("error", 100)} !important`
           },
           "& button:active": {
             backgroundColor: `${getThemedColor("error", 400)} !important`
