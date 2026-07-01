@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { kebabCase } from "lodash";
-import { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
@@ -18,6 +18,7 @@ import ApiSlice from "@/store/apiSlice";
 import { Entity, EntityName } from "@/types/common";
 
 import { useBaseMap } from "../../Map-mapbox/hooks/useBaseMap";
+import type { PolygonFromMapState } from "../../Map-mapbox/Map.d";
 import { storePolygonProject } from "../../Map-mapbox/utils";
 
 export interface RHFMapProps extends UseControllerProps, InputWrapperProps {
@@ -47,9 +48,23 @@ const RHFMap = ({
     field: { value }
   } = useController(inputWrapperProps);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
-  const [polygonFromMap, setPolygonFromMap] = useState<any>(null);
+  const [polygonFromMap, setPolygonFromMapState] = useState<PolygonFromMapState>({ isOpen: false, uuid: "" });
   const { setSiteData } = useMapAreaContext();
   const { setSelectPolygonFromMap } = useMonitoredDataContext();
+
+  const setPolygonFromMap = useCallback(
+    (value: PolygonFromMapState | ((prev: PolygonFromMapState) => PolygonFromMapState)) => {
+      setPolygonFromMapState(prev => {
+        const next = typeof value === "function" ? value(prev) : value;
+        return {
+          ...next,
+          entityName: "project-pitches",
+          projectPitchUuid: entityUUID ?? next.projectPitchUuid
+        };
+      });
+    },
+    [entityUUID]
+  );
 
   const refetchData = () => {
     mapFunctions?.onCancel(polygonDataMap);
@@ -87,18 +102,20 @@ const RHFMap = ({
         setPolygonFromMap({ isOpen: false, uuid: "" });
         setSelectPolygonFromMap?.({ uuid: "", isOpen: false });
       } else {
-        setPolygonDataMap({ [FORM_POLYGONS]: [...projectPolygons.map(polygon => polygon.polygonUuid)] });
-        setPolygonFromMap({
-          isOpen: true,
-          uuid: projectPolygons[0].polygonUuid,
-          entityName: "project-pitches",
-          projectPitchUuid: projectPolygons[0].projectPitchUuid ?? entityUUID ?? undefined
+        setPolygonDataMap({
+          [FORM_POLYGONS]: projectPolygons
+            .map(polygon => polygon.polygonUuid)
+            .filter((polygonUuid): polygonUuid is string => polygonUuid != null)
         });
+        setPolygonFromMap(prev => ({
+          isOpen: prev.uuid !== "" ? prev.isOpen : false,
+          uuid: prev.uuid !== "" ? prev.uuid : projectPolygons[0].polygonUuid ?? ""
+        }));
       }
     };
 
     getDataProjectPolygon();
-  }, [projectPolygons, isFetching, setSelectPolygonFromMap, entityUUID]);
+  }, [projectPolygons, isFetching, setSelectPolygonFromMap, entityUUID, setPolygonFromMap]);
 
   useEffect(() => {
     const apiPolygonUuid = projectPolygons?.[0]?.polygonUuid;
@@ -142,6 +159,18 @@ const RHFMap = ({
     }
   };
 
+  const selectedPolygonUuid = polygonFromMap.uuid !== "" ? polygonFromMap.uuid : undefined;
+
+  const polygonTableHighlight = useMemo(
+    () => ({
+      selectedPolygonUuids: selectedPolygonUuid != null ? [selectedPolygonUuid] : [],
+      onPolygonClickedFromMap: (uuid: string) => {
+        setPolygonFromMap({ isOpen: true, uuid });
+      }
+    }),
+    [selectedPolygonUuid, setPolygonFromMap]
+  );
+
   return (
     <SitePolygonDataProvider sitePolygonData={undefined} reloadSiteData={reloadSiteDataWithBoundingBox}>
       <InputWrapper {...inputWrapperProps}>
@@ -155,6 +184,8 @@ const RHFMap = ({
           polygonFromMap={polygonFromMap}
           setPolygonFromMap={setPolygonFromMap}
           editable
+          showPopups
+          polygonTableHighlight={polygonTableHighlight}
           onError={onError}
           captureAdditionalPolygonProperties={entityName != null && entityName !== "project"}
           mapFunctions={mapFunctions}

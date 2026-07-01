@@ -1,5 +1,5 @@
 import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
-import { createProjectPolygonWithReplace } from "@/connections/ProjectPolygons";
+import { createProjectPolygonResource } from "@/connections/ProjectPolygons";
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { CreateSitePolygonAttributesDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
@@ -74,7 +74,7 @@ export async function storePolygonProject(
     }
   ];
 
-  const response = await createProjectPolygonWithReplace({ geometries }, entityUuid);
+  const response = await createProjectPolygonResource({ geometries });
   const polygonUuid = response.polygonUuid;
   if (polygonUuid != null) {
     const analyticsContext = getPolygonAnalyticsContext({
@@ -89,7 +89,7 @@ export async function storePolygonProject(
     refetch?.();
     setPolygonFromMap?.({
       uuid: polygonUuid,
-      isOpen: true,
+      isOpen: false,
       entityName: "project-pitches",
       projectPitchUuid: entityUuid
     });
