@@ -102,10 +102,14 @@ const RHFMap = ({
         setPolygonFromMap({ isOpen: false, uuid: "" });
         setSelectPolygonFromMap?.({ uuid: "", isOpen: false });
       } else {
-        setPolygonDataMap({ [FORM_POLYGONS]: [...projectPolygons.map(polygon => polygon.polygonUuid)] });
+        setPolygonDataMap({
+          [FORM_POLYGONS]: projectPolygons
+            .map(polygon => polygon.polygonUuid)
+            .filter((polygonUuid): polygonUuid is string => polygonUuid != null)
+        });
         setPolygonFromMap(prev => ({
           isOpen: prev.uuid !== "" ? prev.isOpen : false,
-          uuid: prev.uuid !== "" ? prev.uuid : projectPolygons[0].polygonUuid
+          uuid: prev.uuid !== "" ? prev.uuid : projectPolygons[0].polygonUuid ?? ""
         }));
       }
     };
