@@ -162,19 +162,12 @@ const RHFMap = ({
   const selectedPolygonUuid = polygonFromMap.uuid !== "" ? polygonFromMap.uuid : undefined;
 
   const polygonTableHighlight = useMemo(
-    () =>
-      selectedPolygonUuid != null
-        ? {
-            selectedPolygonUuids: [selectedPolygonUuid],
-            onPolygonClickedFromMap: (uuid: string) => {
-              setPolygonFromMap({ isOpen: true, uuid });
-            }
-          }
-        : {
-            onPolygonClickedFromMap: (uuid: string) => {
-              setPolygonFromMap({ isOpen: true, uuid });
-            }
-          },
+    () => ({
+      selectedPolygonUuids: selectedPolygonUuid != null ? [selectedPolygonUuid] : [],
+      onPolygonClickedFromMap: (uuid: string) => {
+        setPolygonFromMap({ isOpen: true, uuid });
+      }
+    }),
     [selectedPolygonUuid, setPolygonFromMap]
   );
 
