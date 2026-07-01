@@ -190,7 +190,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             <KeyIndicatorsInsightsTab site={site} />
           </Flex>
         </PageItem>
-        <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[35.625rem] sm:flex-row">
+        <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[39.625rem] sm:flex-row">
           <PageItem
             title={t("Latest Images")}
             flexProps={{ flex: 1 }}

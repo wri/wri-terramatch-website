@@ -298,7 +298,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
       >
         <KeyIndicatorsInsightsTab project={project} />
       </PageItem>
-      <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[35.625rem] sm:flex-row">
+      <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[39.625rem] sm:flex-row">
         <PageItem
           flexProps={{ flex: 1 }}
           title={t("Team Members")}
