@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import { useMemo } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
-import { IMPACT_CATEGORIES } from "@/admin/modules/impactStories/components/ImpactStoryForm";
 import Button from "@/components/elements/Button/Button";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import IconSocialImpactStory from "@/components/extensive/Icon/IconSocialImpactStory";
@@ -10,6 +9,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalShareImpactStory from "@/components/extensive/Modal/ModalShareImpactStory";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
+import { ImpactCategory, useImpactCategories } from "@/hooks/translation/useImpactCategories";
 
 import ShareSection from "./ShareSection";
 
@@ -35,9 +35,9 @@ interface SectionShareProps {
   className?: string;
 }
 
-const getCategoryTitles = (categories: string[] = []) => {
+const getCategoryTitles = (categories: string[] = [], impactCategories: ImpactCategory[]) => {
   return categories
-    .map(value => IMPACT_CATEGORIES.find(item => item.value === value)?.title)
+    .map(value => impactCategories.find(item => item.value === value)?.title)
     .filter((title): title is string => Boolean(title));
 };
 
@@ -45,6 +45,7 @@ const SectionShare = ({ data, className }: SectionShareProps) => {
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
   const t = useT();
+  const impactCategories = useImpactCategories();
 
   const isButtonDisabled = useMemo(() => {
     if (!data || !data.organization) return true;
@@ -98,7 +99,10 @@ const SectionShare = ({ data, className }: SectionShareProps) => {
       </Button>
       <ShareSection label={t("COUNTRY")} value={t(data?.organization?.country)} />
       <ShareSection label={t("ORGANIZATION")} value={data?.organization?.name} />
-      <ShareSection label={t("IMPACT CATEGORY")} value={getCategoryTitles(data?.organization?.category).map(t)} />
+      <ShareSection
+        label={t("IMPACT CATEGORY")}
+        value={getCategoryTitles(data?.organization?.category, impactCategories)}
+      />
 
       {socialMediaLinks.length > 0 && (
         <div className="flex gap-x-4">

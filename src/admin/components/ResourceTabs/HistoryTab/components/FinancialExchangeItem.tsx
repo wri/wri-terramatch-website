@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -8,13 +9,14 @@ interface FinancialExchangeItemProps {
 }
 
 const FinancialExchangeItem: FC<FinancialExchangeItemProps> = ({ label, exchangeRate }) => {
+  const t = useT();
   return (
     <div className="flex flex-col gap-1">
       <Text variant="text-16-bold" className="text-blueCustom-900">
         {label}
       </Text>
       <Text variant="text-16-light" className="w-full text-left text-blueCustom-900">
-        {exchangeRate != 0 ? exchangeRate : "None Available"}
+        {exchangeRate != 0 ? exchangeRate : t("None Available")}
       </Text>
     </div>
   );

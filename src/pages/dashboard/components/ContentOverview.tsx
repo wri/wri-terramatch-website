@@ -40,7 +40,6 @@ import {
   MODAL_TABLE_PAGE_SIZE,
   RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP,
   TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP,
-  TERRAFUND_MRV_LINK,
   TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP,
   TOTAL_NUMBER_OF_SITES_TOOLTIP,
   VISIBLE_TABLE_ROWS_ON_DASHBOARD
@@ -280,8 +279,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   }, [columns, closeModal, dashboardCountries, data, isMobile, openModal, setFilters, textTooltipTable, titleTable]);
 
   const impactStoriesModalColumns = useMemo(
-    () => buildImpactStoriesModalColumns(openStoryFromListItem),
-    [openStoryFromListItem]
+    () => buildImpactStoriesModalColumns(t, openStoryFromListItem),
+    [t, openStoryFromListItem]
   );
 
   const openImpactStoriesTableModal = useCallback(() => {
@@ -436,7 +435,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         variantSubTitle="text-14-light"
         iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
         subtitle={t(
-          `This section displays data related to <em>Indicator 2: Land Restoration</em> described in ${TERRAFUND_MRV_LINK}. Please refer to the linked framework for details on how these numbers are sourced and verified.`
+          "This section displays data related to <em>Indicator 2: Land Restoration</em> described in {mrvLink}. Please refer to the linked framework for details on how these numbers are sourced and verified.",
+          { mrvLink: contentOverviewTexts.TERRAFUND_MRV_LINK }
         )}
         widthTooltip="w-52 lg:w-64"
         collapseChildren={isMobile}

@@ -3,7 +3,8 @@ import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import Text from "@/components/elements/Text/Text";
-import { getPolygonSubmissionStatusLabel, PolygonDataSubmissionOption } from "@/constants/polygonHandoff";
+import { isPolygonDataSubmissionOption, PolygonDataSubmissionOption } from "@/constants/polygonHandoff";
+import { usePolygonSubmissionStatusLabels } from "@/hooks/translation/usePolygonSubmissionStatusLabels";
 
 type Props = {
   polygonDataSubmission: PolygonDataSubmissionOption | string | null | undefined;
@@ -12,6 +13,11 @@ type Props = {
 
 const PolygonHandoffSummary: FC<Props> = ({ polygonDataSubmission, readyForBaseline }) => {
   const t = useT();
+  const polygonSubmissionStatusLabels = usePolygonSubmissionStatusLabels();
+  const submissionLabel =
+    polygonDataSubmission != null && isPolygonDataSubmissionOption(polygonDataSubmission)
+      ? polygonSubmissionStatusLabels[polygonDataSubmission]
+      : "-";
 
   return (
     <Grid spacing={2} container>
@@ -21,7 +27,7 @@ const PolygonHandoffSummary: FC<Props> = ({ polygonDataSubmission, readyForBasel
             {t("Polygon Submission Status")}
           </Text>
           <Text variant="text-14-semibold" className="text-darkCustom">
-            {t(getPolygonSubmissionStatusLabel(polygonDataSubmission))}
+            {submissionLabel}
           </Text>
         </Stack>
       </Grid>

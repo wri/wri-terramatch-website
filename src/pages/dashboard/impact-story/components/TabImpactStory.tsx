@@ -1,10 +1,10 @@
 import { useT } from "@transifex/react";
 import { useState } from "react";
 
-import { IMPACT_CATEGORIES } from "@/admin/modules/impactStories/components/ImpactStoryForm";
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import { VARIANT_TABS_IMPACT_STORY } from "@/components/elements/Tabs/Secondary/SecuandaryTabsVariants";
 import { useImpactStories } from "@/connections/ImpactStory";
+import { useImpactCategories } from "@/hooks/translation/useImpactCategories";
 
 import CardImpactStory from "./CardImpactStory";
 
@@ -14,8 +14,9 @@ interface TabImpactStoryProps {
 
 const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
   const t = useT();
+  const impactCategories = useImpactCategories();
   const [activeTab, setActiveTab] = useState<number>(0);
-  const currentCategory = activeTab === 0 ? null : IMPACT_CATEGORIES[activeTab - 1].value;
+  const currentCategory = activeTab === 0 ? null : impactCategories[activeTab - 1].value;
 
   const [isLoaded, { data: impactStories }] = useImpactStories({
     filter: {
@@ -43,7 +44,7 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
       image: story.thumbnail?.url,
       tags: story.category
         ? story.category.map((cat: string) => {
-            const category = IMPACT_CATEGORIES.find(c => c.value === cat);
+            const category = impactCategories.find(c => c.value === cat);
             return category ? category.title : cat;
           })
         : [],
@@ -73,9 +74,9 @@ const TabImpactStory = ({ searchTerm = "" }: TabImpactStoryProps) => {
         </div>
       )
     },
-    ...IMPACT_CATEGORIES.map(category => ({
+    ...impactCategories.map(category => ({
       key: category.value,
-      title: t(category.title),
+      title: category.title,
       body: (
         <div className="w-full">
           {!isLoaded ? (

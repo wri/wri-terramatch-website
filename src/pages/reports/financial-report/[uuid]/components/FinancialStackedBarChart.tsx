@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import _ from "lodash";
 import React, { useMemo } from "react";
 import {
@@ -19,6 +20,7 @@ import { FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSch
 import { currencyInput, formatProfitValue, formatYAxisNumber } from "@/utils/financialReport";
 
 const FinancialStackedBarChart = ({ data, currency }: { data: FinancialIndicatorDto[]; currency?: string }) => {
+  const t = useT();
   const currencySymbol = useMemo(() => {
     return currency ? currencyInput[currency] || "" : "";
   }, [currency]);
@@ -239,9 +241,9 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialIndicator
 
           <ReferenceLine y={0} stroke="#999" strokeWidth={2} strokeOpacity={0.5} />
 
-          <Bar dataKey="revenue" fill="#8BC34A" name="Revenue" stackId="stack" />
+          <Bar dataKey="revenue" fill="#8BC34A" name={t("Revenue")} stackId="stack" />
 
-          <Bar dataKey="expenses" fill="#F44336" name="Expenses" stackId="stack">
+          <Bar dataKey="expenses" fill="#F44336" name={t("Expenses")} stackId="stack">
             <LabelList content={renderExpenseLabel} />
             <LabelList content={renderWhiteLineOnExpenseBars} />
           </Bar>
@@ -252,7 +254,7 @@ const FinancialStackedBarChart = ({ data, currency }: { data: FinancialIndicator
             strokeWidth={3}
             dot={{ fill: "#2196F3", strokeWidth: 2, r: 6 }}
             activeDot={{ r: 8, fill: "#2196F3" }}
-            name="Profit"
+            name={t("Profit")}
           />
 
           <Customized

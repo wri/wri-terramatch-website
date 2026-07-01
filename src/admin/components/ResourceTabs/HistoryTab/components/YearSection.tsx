@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -10,6 +11,7 @@ interface YearSectionProps {
 }
 
 const YearSection: FC<YearSectionProps> = ({ year, files }) => {
+  const t = useT();
   return (
     <div className="flex flex-col gap-1">
       <Text variant="text-14-bold" className="text-blueCustom-900">
@@ -20,7 +22,7 @@ const YearSection: FC<YearSectionProps> = ({ year, files }) => {
       ))}
       {files?.length === 0 && (
         <Text variant="text-16-light" className="text-blueCustom-900">
-          None Available
+          {t("None Available")}
         </Text>
       )}
     </div>
