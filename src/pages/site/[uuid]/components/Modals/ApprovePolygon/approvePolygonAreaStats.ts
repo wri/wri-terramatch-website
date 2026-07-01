@@ -11,7 +11,13 @@ export type ApprovedProjectAreaStats = {
   afterApprovalArea: number;
   afterApprovalPercentage: number;
   projectGoal: number;
+  exceedsApprovedAreaLimit: boolean;
 };
+
+export const APPROVED_AREA_LIMIT_PERCENTAGE = 125;
+
+export const exceedsApprovedAreaLimit = (afterApprovalPercentage: number): boolean =>
+  afterApprovalPercentage > APPROVED_AREA_LIMIT_PERCENTAGE;
 
 export const calculateApprovedProjectAreaStats = (
   projectGoal: number | null | undefined,
@@ -35,6 +41,7 @@ export const calculateApprovedProjectAreaStats = (
     currentPercentage,
     afterApprovalArea,
     afterApprovalPercentage,
-    projectGoal
+    projectGoal,
+    exceedsApprovedAreaLimit: exceedsApprovedAreaLimit(afterApprovalPercentage)
   };
 };

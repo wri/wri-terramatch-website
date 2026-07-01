@@ -8,7 +8,9 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import CommentInput from "@/redesignComponents/content/Message/CommentInput";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
+import { WarningIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
+import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
 import type { PolygonTableRow } from "../../PolygonTableRow";
@@ -73,6 +75,8 @@ const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({
     );
   }, [isProjectLoaded, project, projectUuid, selectedRows]);
 
+  const isSinglePolygon = polygons.length === 1;
+
   const handleClose = useCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
@@ -105,6 +109,20 @@ const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({
       content={
         <Flex className="-m-2.5 flex-col gap-4">
           <Box px={4} pt={4}>
+            {areaStats?.exceedsApprovedAreaLimit === true && (
+              <InlineMessage
+                className="mb-4"
+                variant="warning"
+                size="full-width"
+                icon={<WarningIcon />}
+                label={t("Warning")}
+                caption={t(
+                  isSinglePolygon
+                    ? "Approving this polygon will exceed the 125% approved area limit."
+                    : "Approving these polygons will exceed the 125% approved area limit."
+                )}
+              />
+            )}
             <Text textStyle="400" color="neutral.900" display={"flex"} gap={0.5} alignItems={"center"} mb={4}>
               {t(`You're about to approve the following ${polygons.length === 1 ? "polygon" : "polygons"}:`)}
             </Text>
