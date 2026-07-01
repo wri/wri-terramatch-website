@@ -30,6 +30,7 @@ import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonS
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
@@ -158,6 +159,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onDeletingChange
 }) => {
   const t = useT();
+  const isAdmin = useIsAdmin();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const showStatusToast = useCallback((type: "success" | "error" | "warning", label: string) => {
     if (type === "error") {
@@ -193,6 +195,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
+  const [submissionCycle, setSubmissionCycle] = useState<string[]>(["option-1"]);
   const [treesPlanted, setTreesPlanted] = useState("");
   const [plotsVisible, setPlotsVisible] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
@@ -272,6 +275,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setRestorationPractice(polygon?.practice ?? []);
     setTargetLandUseSystem(normalizeTargetSystem(polygon?.targetSys));
     setTreeDistribution(polygon?.distr ?? []);
+    setSubmissionCycle(["option-1"]);
     setTreesPlanted(polygon?.numTrees != null ? String(polygon.numTrees) : "");
   }, [polygon]);
 
@@ -791,6 +795,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     onRegisterPlantStartDate?.(() => hasPlantStartDateForDisplay(plantStartDate, polygon));
   }, [onRegisterPlantStartDate, plantStartDate, polygon]);
 
+  const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
+    { value: "option-1", label: t("Option 1") },
+    { value: "option-2", label: t("Option 2") },
+    { value: "option-3", label: t("Option 3") }
+  ];
+
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
       <UploadGeotaggedPhotos
@@ -867,6 +877,17 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                 }
               ]}
             />
+            {(isAdmin || submissionCycle.length > 0) && (
+              <SelectInput
+                key={`submission-cycle-${sitePolygonUuid}`}
+                items={SUBMISSION_CYCLE_MOCKED_OPTIONS}
+                label={t("Submission Cycle")}
+                defaultValue={submissionCycle}
+                onChange={setSubmissionCycle}
+                placeholder={t("Select...")}
+                disabled={!isAdmin}
+              />
+            )}
           </Flex>
         </Accordion>
         {isAnrEligible ? (
