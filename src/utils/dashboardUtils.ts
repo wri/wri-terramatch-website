@@ -647,7 +647,7 @@ export const useParseDataToObjetive = (projectData?: {
   projectSummary?: string | null;
   landTenureProjectArea?: string[] | null;
 }): Objetive => {
-  const objetiveText = projectData?.projectSummary ?? "No Objective";
+  const objetiveText = projectData?.projectSummary ?? "No Summary";
   const landTenure = useFormatLandTenureProjectAreaDisplay(projectData?.landTenureProjectArea);
   return {
     objetiveText,

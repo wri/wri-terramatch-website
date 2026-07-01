@@ -550,7 +550,7 @@ const Dashboard = () => {
               </div>
             </div>
             <SecDashboard
-              title={t("Objective")}
+              title={t("Summary")}
               classNameTitle="capitalize"
               type="legend"
               data={objectiveData}
