@@ -281,7 +281,6 @@ export function useMapDraw({
     if (!polygonFromMap?.isOpen || polygonFromMap?.uuid === "") return;
 
     const polygonuuid = polygonFromMap.uuid;
-    filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
     const isProjectPolygon = isProjectPitchesEntityName(polygonFromMap?.entityName ?? "");
     const projectPitchUuid = polygonFromMap?.projectPitchUuid;
     const rawStatus =
@@ -289,12 +288,16 @@ export function useMapDraw({
     const polygonStatus: PolygonDrawStatus | undefined = isPolygonDrawStatus(rawStatus) ? rawStatus : undefined;
 
     try {
+      // Fetch before hiding the tile-rendered polygon: it keeps showing its real
+      // status color for the whole network round trip instead of disappearing,
+      // then we swap tile -> Draw feature in one synchronous pass (no visible gap).
       const geometry = await fetchPolygonGeometry(polygonuuid, true, isProjectPolygon ? projectPitchUuid : undefined);
       if (geometry == null) {
         openNotification("error", t("Error"), t("No geometry found for polygon. The polygon may have been deleted."));
         return;
       }
       if (map.current != null && draw.current != null) {
+        filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
         originalGeometryRef.current = geometry;
         resetGeometryHistory(geometry);
         setPolygonGeometryEdit?.({

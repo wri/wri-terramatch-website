@@ -552,9 +552,11 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
 
   const lastAutoEditPolygonRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!props.autoEditPolygon || !polygonFromMap?.isOpen || polygonFromMap.uuid === "") {
+    const isAutoEditActive =
+      props.autoEditPolygon === true && polygonFromMap?.isOpen === true && polygonFromMap.uuid !== "";
+
+    if (!isAutoEditActive) {
       if (lastAutoEditPolygonRef.current != null) {
-        onCancelEdit();
         setIsEditing(false);
       }
       lastAutoEditPolygonRef.current = null;
@@ -567,8 +569,11 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     }
 
     if (previousUuid != null) {
+      // Switching directly between two auto-edited polygons without ever closing —
+      // polygonFromMap.isOpen stays true throughout, so useMapDraw's cleanup effect
+      // never fires here. This is the one case that still needs an explicit cancel
+      // to clear the previous polygon's draw feature before the next one is added.
       onCancelEdit();
-      setIsEditing(false);
     }
 
     lastAutoEditPolygonRef.current = polygonFromMap.uuid;

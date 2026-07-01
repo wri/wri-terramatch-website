@@ -310,17 +310,34 @@ type AnrPlotOverlayState = {
 
 // rgba baked — avoids fill-opacity multiplying unexpectedly
 // slightly grayer than pure white: neutral-400 #C9C9C9 at 45% opacity
-const ANR_DEFAULT_PLOT_FILL_RGBA = ["rgba", 201, 201, 201, 0.45] as const;
-// #50B6E2 — slightly higher alpha than 0x66 so the selected fill reads clearer on satellite
-const ANR_SELECTED_PLOT_FILL_RGBA = ["rgba", 80, 182, 226, 0.58] as const;
+const ANR_DEFAULT_PLOT_FILL_RGBA: DataDrivenPropertyValueSpecification<string> = ["rgba", 201, 201, 201, 0.45];
+const ANR_SELECTED_PLOT_FILL_RGBA: DataDrivenPropertyValueSpecification<string> = ["rgba", 80, 182, 226, 0.58];
 const ANR_DEFAULT_PLOT_LINE_COLOR = "#C9C9C9";
-const ANR_SELECTED_PLOT_LINE_COLOR = getThemedColor("primary", 600); // #50B6E2
+const ANR_SELECTED_PLOT_LINE_COLOR = getThemedColor("primary", 700); // #11688D — darker than fill for contrast
 const ANR_DEFAULT_PLOT_LINE_OPACITY = 0.95;
 const ANR_SELECTED_PLOT_LINE_OPACITY = 1;
-const ANR_SELECTED_PLOT_LINE_WIDTH = 2.25;
+const ANR_SELECTED_PLOT_LINE_WIDTH = 3;
 const ANR_DEFAULT_PLOT_LINE_WIDTH = 1.5;
 
-const ANR_PLOT_ID_EXPR: unknown[] = ["coalesce", ["get", "plotId"], ["get", "plot_id"]];
+const ANR_PLOT_SELECTED_EXPR: unknown[] = ["boolean", ["feature-state", "selected"], false];
+
+function clearAnrPlotSelection(map: MapboxMap, plotId: number | null): void {
+  if (plotId == null) return;
+  try {
+    map.removeFeatureState({ source: ANR_PLOT_SOURCE_ID, id: plotId }, "selected");
+  } catch (e) {
+    Log.warn("clearAnrPlotSelection:", e);
+  }
+}
+
+function setAnrPlotSelection(map: MapboxMap, plotId: number | null): void {
+  if (plotId == null) return;
+  try {
+    map.setFeatureState({ source: ANR_PLOT_SOURCE_ID, id: plotId }, { selected: true });
+  } catch (e) {
+    Log.warn("setAnrPlotSelection:", e);
+  }
+}
 
 function parseAnrPlotId(value: unknown): number | null {
   if (typeof value === "number" && !Number.isNaN(value)) {
@@ -332,55 +349,43 @@ function parseAnrPlotId(value: unknown): number | null {
   return null;
 }
 
-function applyAnrPlotLayerPaint(
-  map: MapboxMap,
-  options: { polygonStatus: string | null; selectedPlotId: number | null }
-): void {
+function applyAnrPlotLayerPaint(map: MapboxMap): void {
   if (map.getLayer(ANR_PLOT_FILL_LAYER_ID) == null || map.getLayer(ANR_PLOT_LINE_LAYER_ID) == null) {
     return;
   }
 
-  const selectedPlotId = options.selectedPlotId;
+  const fillColor: DataDrivenPropertyValueSpecification<string> = [
+    "case",
+    ANR_PLOT_SELECTED_EXPR,
+    ANR_SELECTED_PLOT_FILL_RGBA,
+    ANR_DEFAULT_PLOT_FILL_RGBA
+  ] as DataDrivenPropertyValueSpecification<string>;
 
-  // Alpha is baked into the rgba expression — fill-opacity is always 1
-  const fillColor =
-    selectedPlotId != null
-      ? ["case", ["==", ANR_PLOT_ID_EXPR, selectedPlotId], ANR_SELECTED_PLOT_FILL_RGBA, ANR_DEFAULT_PLOT_FILL_RGBA]
-      : ANR_DEFAULT_PLOT_FILL_RGBA;
+  const lineColor: DataDrivenPropertyValueSpecification<string> = [
+    "case",
+    ANR_PLOT_SELECTED_EXPR,
+    ANR_SELECTED_PLOT_LINE_COLOR,
+    ANR_DEFAULT_PLOT_LINE_COLOR
+  ] as DataDrivenPropertyValueSpecification<string>;
 
-  const lineColor: DataDrivenPropertyValueSpecification<string> =
-    selectedPlotId != null
-      ? ([
-          "case",
-          ["==", ANR_PLOT_ID_EXPR, selectedPlotId],
-          ANR_SELECTED_PLOT_LINE_COLOR,
-          ANR_DEFAULT_PLOT_LINE_COLOR
-        ] as DataDrivenPropertyValueSpecification<string>)
-      : ANR_DEFAULT_PLOT_LINE_COLOR;
+  const lineOpacity: DataDrivenPropertyValueSpecification<number> = [
+    "case",
+    ANR_PLOT_SELECTED_EXPR,
+    ANR_SELECTED_PLOT_LINE_OPACITY,
+    ANR_DEFAULT_PLOT_LINE_OPACITY
+  ] as DataDrivenPropertyValueSpecification<number>;
 
-  const lineOpacity: DataDrivenPropertyValueSpecification<number> =
-    selectedPlotId != null
-      ? ([
-          "case",
-          ["==", ANR_PLOT_ID_EXPR, selectedPlotId],
-          ANR_SELECTED_PLOT_LINE_OPACITY,
-          ANR_DEFAULT_PLOT_LINE_OPACITY
-        ] as DataDrivenPropertyValueSpecification<number>)
-      : ANR_DEFAULT_PLOT_LINE_OPACITY;
-
-  const lineWidth: DataDrivenPropertyValueSpecification<number> =
-    selectedPlotId != null
-      ? ([
-          "case",
-          ["==", ANR_PLOT_ID_EXPR, selectedPlotId],
-          ANR_SELECTED_PLOT_LINE_WIDTH,
-          ANR_DEFAULT_PLOT_LINE_WIDTH
-        ] as DataDrivenPropertyValueSpecification<number>)
-      : ANR_DEFAULT_PLOT_LINE_WIDTH;
+  const lineWidth: DataDrivenPropertyValueSpecification<number> = [
+    "case",
+    ANR_PLOT_SELECTED_EXPR,
+    ANR_SELECTED_PLOT_LINE_WIDTH,
+    ANR_DEFAULT_PLOT_LINE_WIDTH
+  ] as DataDrivenPropertyValueSpecification<number>;
 
   try {
     map.setPaintProperty(ANR_PLOT_FILL_LAYER_ID, "fill-color", fillColor);
     map.setPaintProperty(ANR_PLOT_FILL_LAYER_ID, "fill-opacity", 1);
+    map.setPaintProperty(ANR_PLOT_FILL_LAYER_ID, "fill-antialias", false);
     map.setPaintProperty(ANR_PLOT_LINE_LAYER_ID, "line-color", lineColor);
     map.setPaintProperty(ANR_PLOT_LINE_LAYER_ID, "line-opacity", lineOpacity);
     map.setPaintProperty(ANR_PLOT_LINE_LAYER_ID, "line-width", lineWidth);
@@ -481,7 +486,7 @@ export function upsertAnrPlotGeometryOverlay(
   const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) != null ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
 
   try {
-    map.addSource(ANR_PLOT_SOURCE_ID, { type: "geojson", data: geojsonFormatted });
+    map.addSource(ANR_PLOT_SOURCE_ID, { type: "geojson", data: geojsonFormatted, promoteId: "plotId" });
 
     map.addLayer(
       {
@@ -489,7 +494,11 @@ export function upsertAnrPlotGeometryOverlay(
         type: "fill",
         source: ANR_PLOT_SOURCE_ID,
         layout: { visibility: "visible" },
-        paint: { "fill-color": ANR_DEFAULT_PLOT_FILL_RGBA as unknown as string, "fill-opacity": 1 }
+        paint: {
+          "fill-color": ANR_DEFAULT_PLOT_FILL_RGBA,
+          "fill-opacity": 1,
+          "fill-antialias": false
+        }
       },
       beforeLayer
     );
@@ -508,15 +517,12 @@ export function upsertAnrPlotGeometryOverlay(
       beforeLayer
     );
 
-    applyAnrPlotLayerPaint(map, {
-      polygonStatus: state.polygonStatus,
-      selectedPlotId: state.selectedPlotId
-    });
+    applyAnrPlotLayerPaint(map);
 
     if (map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) != null) {
       try {
+        map.moveLayer(ANR_PLOT_FILL_LAYER_ID, LAYERS_NAMES.MEDIA_IMAGES);
         map.moveLayer(ANR_PLOT_LINE_LAYER_ID, LAYERS_NAMES.MEDIA_IMAGES);
-        map.moveLayer(ANR_PLOT_FILL_LAYER_ID, ANR_PLOT_LINE_LAYER_ID);
       } catch (e) {
         Log.warn("moveLayer ANR plot overlay:", e);
       }
@@ -528,11 +534,9 @@ export function upsertAnrPlotGeometryOverlay(
 
       const props = feature.properties ?? {};
       const plotId = parseAnrPlotId(props.plotId ?? props.plot_id);
+      clearAnrPlotSelection(map, state.selectedPlotId);
       state.selectedPlotId = plotId;
-      applyAnrPlotLayerPaint(map, {
-        polygonStatus: state.polygonStatus,
-        selectedPlotId: state.selectedPlotId
-      });
+      setAnrPlotSelection(map, plotId);
 
       if (state.marker != null) {
         state.marker.remove();
@@ -549,11 +553,8 @@ export function upsertAnrPlotGeometryOverlay(
       state.markerRoot = root;
 
       const handleClose = () => {
+        clearAnrPlotSelection(map, state.selectedPlotId);
         state.selectedPlotId = null;
-        applyAnrPlotLayerPaint(map, {
-          polygonStatus: state.polygonStatus,
-          selectedPlotId: null
-        });
         state.marker?.remove();
         state.marker = null;
         state.markerRoot?.unmount();
