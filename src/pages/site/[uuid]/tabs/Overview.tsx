@@ -107,6 +107,63 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       <PageContent>
         {EditModals}
         <Flex gap={7} className="flex-col sm:flex-row">
+          <Flex className="flex-[2] flex-col gap-7 mobile:flex-[1]">
+            <PageItem
+              title={t("Key Indicators & Insights")}
+              flexProps={{ paddingY: 2, width: "100%" }}
+              buttonProps={{
+                variant: "secondary",
+                size: "small",
+                children: t("View Progress & Goals"),
+                rightIcon: <ChevronRightIcon />,
+                onClick: () => goToTab("goals")
+              }}
+            >
+              <Flex gap={4}>
+                <KeyIndicatorsInsightsTab site={site} />
+              </Flex>
+            </PageItem>
+            <PageItem
+              title={t("Latest Images")}
+              flexProps={{ flex: 1 }}
+              buttonProps={{
+                variant: "secondary",
+                size: "small",
+                children: t("View Gallery"),
+                rightIcon: <ChevronRightIcon />,
+                onClick: () => goToTab("gallery")
+              }}
+            >
+              <LatestImagesSectionTab entityUuid={site.uuid} entityName="sites" columns={isMobile ? 2 : 4} rows={1} />
+            </PageItem>
+          </Flex>
+          <PageItem
+            flexProps={{ width: "fit-content", overflow: "hidden" }}
+            className="!w-full !max-w-full flex-[1] sm:!w-[30%] sm:!max-w-[30%]"
+            title={t("Sites Set Up")}
+            classNameRightSectionHeader="mobile:!w-fit"
+            tag={(() => {
+              const tagState = mapStatusToTagStateEntity(site?.status);
+              return site.updateRequestStatus === "awaiting-approval" ? (
+                <TagSubmission state="pending-approval" />
+              ) : site?.status != null ? (
+                <TagSubmission state={tagState?.type as TagSubmissionState} />
+              ) : null;
+            })()}
+            buttonProps={{
+              variant: "primary",
+              size: "small",
+              children: isSiteSetupComplete ? t("Edit") : t("Continue"),
+              rightIcon: <ChevronRightIcon boxSize={4} />,
+              onClick: () => handleEditClick()
+            }}
+          >
+            <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+              <EntitySetUpSection onStatusChange={setIsSiteSetupComplete} entity={site} type="sites" />
+            </Box>
+          </PageItem>
+        </Flex>
+        <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[35.625rem] sm:flex-row">
           <PageItem
             title={t("Site Map")}
             flexProps={{ flex: 1 }}
@@ -148,61 +205,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 />
               )}
             </Box>
-          </PageItem>
-          <PageItem
-            flexProps={{ width: "fit-content", overflow: "hidden" }}
-            className="!w-full !max-w-full sm:!w-[30%] sm:!max-w-[30%]"
-            title={t("Sites Set Up")}
-            classNameRightSectionHeader="mobile:!w-fit"
-            tag={(() => {
-              const tagState = mapStatusToTagStateEntity(site?.status);
-              return site.updateRequestStatus === "awaiting-approval" ? (
-                <TagSubmission state="pending-approval" />
-              ) : site?.status != null ? (
-                <TagSubmission state={tagState?.type as TagSubmissionState} />
-              ) : null;
-            })()}
-            buttonProps={{
-              variant: "primary",
-              size: "small",
-              children: isSiteSetupComplete ? t("Edit") : t("Continue"),
-              rightIcon: <ChevronRightIcon boxSize={4} />,
-              onClick: () => handleEditClick()
-            }}
-          >
-            <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <EntitySetUpSection onStatusChange={setIsSiteSetupComplete} entity={site} type="sites" />
-            </Box>
-          </PageItem>
-        </Flex>
-        <PageItem
-          title={t("Key Indicators & Insights")}
-          flexProps={{ paddingY: 2, width: "100%" }}
-          buttonProps={{
-            variant: "secondary",
-            size: "small",
-            children: t("View Progress & Goals"),
-            rightIcon: <ChevronRightIcon />,
-            onClick: () => goToTab("goals")
-          }}
-        >
-          <Flex gap={4}>
-            <KeyIndicatorsInsightsTab site={site} />
-          </Flex>
-        </PageItem>
-        <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[35.625rem] sm:flex-row">
-          <PageItem
-            title={t("Latest Images")}
-            flexProps={{ flex: 1 }}
-            buttonProps={{
-              variant: "secondary",
-              size: "small",
-              children: t("View Gallery"),
-              rightIcon: <ChevronRightIcon />,
-              onClick: () => goToTab("gallery")
-            }}
-          >
-            <LatestImagesSectionTab entityUuid={site.uuid} entityName="sites" columns={isMobile ? 2 : 3} />
           </PageItem>
           <PageItem title={t(aboutSitesContentItem?.title!)}>
             <About
