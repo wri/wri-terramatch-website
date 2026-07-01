@@ -14,6 +14,7 @@ import {
   showPolygonProgressToast
 } from "@/pages/site/[uuid]/utils/polygonOperationToasts";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { DownloadIcon, EditIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
 import { wrapToolbarInfoTooltipContent } from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
@@ -31,6 +32,11 @@ type PopupFooterPolygonProps = {
   viewDetailsDisabled?: boolean;
   submitDisabledTooltip?: string;
   tooltipType?: TooltipType;
+  isAdminReview?: boolean;
+  approveDisabled?: boolean;
+  approveDisabledTooltip?: string;
+  onApprove?: () => void;
+  onRequestInformation?: () => void;
 };
 
 const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
@@ -43,7 +49,12 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   onViewDetails,
   viewDetailsDisabled = false,
   submitDisabledTooltip,
-  tooltipType
+  tooltipType,
+  isAdminReview = false,
+  approveDisabled = false,
+  approveDisabledTooltip,
+  onApprove,
+  onRequestInformation
 }) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
@@ -74,54 +85,95 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
     await onSubmit();
   }, [onSubmit, submitDisabled]);
 
-  return (
-    <Grid templateColumns={tooltipType === "view" ? "repeat(2, 1fr)" : "repeat(3, 1fr)"} gap={3} width="100%">
-      {tooltipType === "view" ? (
-        <>
-          <Button variant="secondary" size="small" onClick={onClose}>
-            {t("Close")}
-          </Button>
-          <Button
+  if (tooltipType === "view") {
+    return (
+      <Grid templateColumns="repeat(2, 1fr)" gap={3} width="100%">
+        <Button variant="secondary" size="small" onClick={onClose}>
+          {t("Close")}
+        </Button>
+        <Button
+          variant="primary"
+          size="small"
+          onClick={onViewDetails}
+          disabled={viewDetailsDisabled || onViewDetails == null}
+        >
+          {t("View details")}
+        </Button>
+      </Grid>
+    );
+  }
+
+  if (isAdminReview) {
+    return (
+      <Grid templateColumns="repeat(3, 1fr)" gap={3} width="100%">
+        <Button
+          variant="secondary"
+          size="small"
+          leftIcon={<DownloadIcon />}
+          onClick={() => void handleDownload()}
+          disabled={!canDownload}
+        >
+          {t("Download")}
+        </Button>
+        <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit}>
+          {t("Edit")}
+        </Button>
+        <Flex alignItems="center" gap={1.5} minWidth={0}>
+          <MultiActionButton
+            mainActionLabel={t("Review")}
+            mainActionOnClick={() => {}}
+            otherActions={[
+              { label: t("Approve"), value: "approve", onClick: onApprove ?? (() => {}) },
+              {
+                label: t("Request information"),
+                value: "request-information",
+                onClick: onRequestInformation ?? (() => {})
+              }
+            ]}
             variant="primary"
             size="small"
-            onClick={onViewDetails}
-            disabled={viewDetailsDisabled || onViewDetails == null}
-          >
-            {t("View details")}
-          </Button>
-        </>
-      ) : (
-        <>
-          <Button
-            variant="secondary"
-            size="small"
-            leftIcon={<DownloadIcon />}
-            onClick={() => void handleDownload()}
-            disabled={!canDownload}
-          >
-            {t("Download")}
-          </Button>
-          <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit}>
-            {t("Edit")}
-          </Button>
-          <Flex alignItems="center" gap={1.5} minWidth={0}>
-            <Button
-              variant="primary"
-              size="small"
-              onClick={() => void handleSubmit()}
-              disabled={submitDisabled}
-              className="min-w-0 flex-1"
-            >
-              {t("Submit")}
-            </Button>
-            {submitDisabled && submitDisabledTooltip != null && (
-              <Tooltip content={wrapToolbarInfoTooltipContent(submitDisabledTooltip)} position="top">
-                <InfoIcon height="1rem" width="1rem" color="neutral.800" />
-              </Tooltip>
-            )}
-          </Flex>
-        </>
-      )}
+            className="min-w-0 flex-1"
+          />
+          {approveDisabled && approveDisabledTooltip != null && (
+            <Tooltip content={wrapToolbarInfoTooltipContent(approveDisabledTooltip)} position="top">
+              <InfoIcon height="1rem" width="1rem" color="neutral.800" />
+            </Tooltip>
+          )}
+        </Flex>
+      </Grid>
+    );
+  }
+
+  return (
+    <Grid templateColumns="repeat(3, 1fr)" gap={3} width="100%">
+      <Button
+        variant="secondary"
+        size="small"
+        leftIcon={<DownloadIcon />}
+        onClick={() => void handleDownload()}
+        disabled={!canDownload}
+      >
+        {t("Download")}
+      </Button>
+      <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit}>
+        {t("Edit")}
+      </Button>
+      <Flex alignItems="center" gap={1.5} minWidth={0}>
+        <Button
+          variant="primary"
+          size="small"
+          onClick={() => void handleSubmit()}
+          disabled={submitDisabled}
+          className="min-w-0 flex-1"
+        >
+          {t("Submit")}
+        </Button>
+        {submitDisabled && submitDisabledTooltip != null && (
+          <Tooltip content={wrapToolbarInfoTooltipContent(submitDisabledTooltip)} position="top">
+            <InfoIcon height="1rem" width="1rem" color="neutral.800" />
+          </Tooltip>
+        )}
+      </Flex>
     </Grid>
   );
 };

@@ -10,6 +10,7 @@ import DeletePolygon from "./Modals/DeletePolygon";
 import EditPhotoDetails from "./Modals/GeotaggedPhotos/EditPhotoDetails";
 import OverlapFix, { type OverlapFixPolygon } from "./Modals/OverlapFix";
 import PolygonSubmitted from "./Modals/PolygonSubmitted";
+import RequestInformationConfirmation from "./Modals/RequestInformation/RequestInformationConfirmation";
 import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import SubmitPolygons from "./Modals/SubmitPolygons";
 import UploadError from "./Modals/UploadError";
@@ -67,6 +68,10 @@ type SitePolygonModalsProps = {
   approvePayload: { polygons: PolygonTableRow[] } | null;
   onApprove: (comment: string) => void | Promise<void>;
   onRequestInformation: () => void | Promise<void>;
+  openRequestInformationModal: boolean;
+  onRequestInformationModalOpenChange: (open: boolean) => void;
+  requestInformationPayload: { polygons: PolygonTableRow[] } | null;
+  onConfirmRequestInformation: (comment: string) => void | Promise<void>;
 };
 
 const SitePolygonModals: FC<SitePolygonModalsProps> = ({
@@ -114,19 +119,31 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   onApprovePolygonConfirmationModalOpenChange,
   approvePayload,
   onApprove,
-  onRequestInformation
+  onRequestInformation,
+  openRequestInformationModal,
+  onRequestInformationModalOpenChange,
+  requestInformationPayload,
+  onConfirmRequestInformation
 }) => {
   const isAdmin = useIsAdmin();
   return (
     <>
       {isAdmin && (
-        <ApprovePolygonConfirmation
-          open={openApprovePolygonConfirmationModal}
-          onOpenChange={onApprovePolygonConfirmationModalOpenChange}
-          polygons={approvePayload?.polygons ?? []}
-          onApprove={onApprove}
-          onRequestInformation={onRequestInformation}
-        />
+        <>
+          <ApprovePolygonConfirmation
+            open={openApprovePolygonConfirmationModal}
+            onOpenChange={onApprovePolygonConfirmationModalOpenChange}
+            polygons={approvePayload?.polygons ?? []}
+            onApprove={onApprove}
+            onRequestInformation={onRequestInformation}
+          />
+          <RequestInformationConfirmation
+            open={openRequestInformationModal}
+            onOpenChange={onRequestInformationModalOpenChange}
+            polygons={requestInformationPayload?.polygons ?? []}
+            onRequestInformation={onConfirmRequestInformation}
+          />
+        </>
       )}
       <PolygonBulkEditDrawer
         selectedPolygons={bulkEditPayload?.polygons ?? []}

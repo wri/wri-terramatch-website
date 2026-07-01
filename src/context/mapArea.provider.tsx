@@ -74,6 +74,10 @@ type MapAreaType = {
   closeMapPopups: () => void;
   polygonSubmitConfirmation: PolygonSubmitConfirmationState;
   setPolygonSubmitConfirmation: (value: PolygonSubmitConfirmationState) => void;
+  polygonApproveConfirmation: string | null;
+  setPolygonApproveConfirmation: (value: string | null) => void;
+  polygonRequestInformationConfirmation: string | null;
+  setPolygonRequestInformationConfirmation: (value: string | null) => void;
   editPhotoDetailsMedia: MediaDto | null;
   setEditPhotoDetailsMedia: (value: MediaDto | null) => void;
   showPhotosOnMap: boolean;
@@ -126,6 +130,10 @@ const defaultValue: MapAreaType = {
   closeMapPopups: () => {},
   polygonSubmitConfirmation: null,
   setPolygonSubmitConfirmation: () => {},
+  polygonApproveConfirmation: null,
+  setPolygonApproveConfirmation: () => {},
+  polygonRequestInformationConfirmation: null,
+  setPolygonRequestInformationConfirmation: () => {},
   editPhotoDetailsMedia: null,
   setEditPhotoDetailsMedia: () => {},
   showPhotosOnMap: false,
@@ -161,6 +169,10 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     uuid: ""
   });
   const [polygonSubmitConfirmation, setPolygonSubmitConfirmation] = useState<PolygonSubmitConfirmationState>(null);
+  const [polygonApproveConfirmation, setPolygonApproveConfirmation] = useState<string | null>(null);
+  const [polygonRequestInformationConfirmation, setPolygonRequestInformationConfirmation] = useState<string | null>(
+    null
+  );
   const [editPhotoDetailsMedia, setEditPhotoDetailsMedia] = useState<MediaDto | null>(null);
   const [showPhotosOnMap, setShowPhotosOnMap] = useState(false);
   const [mediaFiles, setMediaFiles] = useState<MediaDto[]>([]);
@@ -199,7 +211,9 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     registerMapAreaPopupActions({
       openPolygonSubmitConfirmation: setPolygonSubmitConfirmation,
       openEditPhotoDetails,
-      closeMapPopups
+      closeMapPopups,
+      openPolygonApproveConfirmation: setPolygonApproveConfirmation,
+      openPolygonRequestInformationConfirmation: setPolygonRequestInformationConfirmation
     });
     return unregisterMapAreaPopupActions;
   }, [closeMapPopups, openEditPhotoDetails]);
@@ -267,6 +281,10 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     closeMapPopups,
     polygonSubmitConfirmation,
     setPolygonSubmitConfirmation,
+    polygonApproveConfirmation,
+    setPolygonApproveConfirmation,
+    polygonRequestInformationConfirmation,
+    setPolygonRequestInformationConfirmation,
     editPhotoDetailsMedia,
     setEditPhotoDetailsMedia,
     showPhotosOnMap,

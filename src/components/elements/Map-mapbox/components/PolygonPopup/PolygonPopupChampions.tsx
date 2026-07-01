@@ -2,12 +2,19 @@ import { useT } from "@transifex/react";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { useAuditStatuses } from "@/connections/AuditStatus";
-import { closeMapPopupsFromMapPopup, openPolygonSubmitConfirmationFromMapPopup } from "@/context/mapArea.utils";
+import {
+  closeMapPopupsFromMapPopup,
+  openPolygonApproveConfirmationFromMapPopup,
+  openPolygonRequestInformationConfirmationFromMapPopup,
+  openPolygonSubmitConfirmationFromMapPopup
+} from "@/context/mapArea.utils";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { isRestorationStrategy, isTargetLandUseType } from "@/pages/site/[uuid]/components/polygonTable.constants";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
+import { getSingleSitePolygonApproveTooltip, isSitePolygonApprovable } from "@/utils/sitePolygonReview";
 import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
 import type { PopupComponentProps, TooltipType } from "../../Map.d";
@@ -41,6 +48,7 @@ export function PolygonPopupChampions({
   siteReportPolygonPopup = false
 }: PolygonPopupChampionsProps) {
   const t = useT();
+  const isAdmin = useIsAdmin();
   const siteUuid = useMemo(() => resolveViewDetailsSiteUuid(sitePolygon), [sitePolygon]);
   const [open, setOpen] = useState(true);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -81,6 +89,9 @@ export function PolygonPopupChampions({
   const submitDisabled = !isSitePolygonSubmittable(sitePolygon);
   const submitDisabledTooltip = getSingleSitePolygonSubmitTooltip(sitePolygon, t);
 
+  const approveDisabled = !isSitePolygonApprovable(sitePolygon);
+  const approveDisabledTooltip = getSingleSitePolygonApproveTooltip(sitePolygon, t);
+
   const closeMapPopup = useCallback(() => {
     setOpen(false);
     popup?.remove();
@@ -94,6 +105,22 @@ export function PolygonPopupChampions({
     openPolygonSubmitConfirmationFromMapPopup(sitePolygon.uuid);
     closeMapPopupsFromMapPopup();
   }, [sitePolygon?.uuid, submitDisabled]);
+
+  const handleApprove = useCallback(() => {
+    if (sitePolygon?.uuid == null || sitePolygon.uuid === "") {
+      return;
+    }
+    openPolygonApproveConfirmationFromMapPopup(sitePolygon.uuid);
+    closeMapPopupsFromMapPopup();
+  }, [sitePolygon?.uuid]);
+
+  const handleRequestInformation = useCallback(() => {
+    if (sitePolygon?.uuid == null || sitePolygon.uuid === "") {
+      return;
+    }
+    openPolygonRequestInformationConfirmationFromMapPopup(sitePolygon.uuid);
+    closeMapPopupsFromMapPopup();
+  }, [sitePolygon?.uuid]);
 
   const handleEdit = useCallback(() => {
     openPolygonEditDrawerForSitePolygon(sitePolygon, metrics.polygonName);
@@ -139,6 +166,11 @@ export function PolygonPopupChampions({
             onViewDetails={handleViewDetails}
             viewDetailsDisabled={!canNavigateToSitePolygonViewDetails(geometryUuid, siteUuid)}
             tooltipType={tooltipType}
+            isAdminReview={isAdmin}
+            approveDisabled={approveDisabled}
+            approveDisabledTooltip={approveDisabledTooltip}
+            onApprove={handleApprove}
+            onRequestInformation={handleRequestInformation}
           />
         }
         placement="right"

@@ -30,6 +30,7 @@ import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonS
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
@@ -47,6 +48,7 @@ import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/Float
 import ApiSlice from "@/store/apiSlice";
 import { trackPolygonDownloaded, trackPolygonStatusChanged } from "@/utils/polygonAnalytics";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
+import { getSingleSitePolygonApproveTooltip, isSitePolygonApprovable } from "@/utils/sitePolygonReview";
 import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
 import {
@@ -85,6 +87,8 @@ type PolygonEditContentProps = {
   onRequestAnrUploadModal?: (mode: "upload" | "replace") => void;
   onRequestAnrDeleteModal?: () => void;
   isAnrPlotsOperating?: boolean;
+  onRequestApproveModal?: () => void;
+  onRequestInformationModal?: () => void;
   onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
@@ -152,12 +156,15 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRequestAnrUploadModal,
   onRequestAnrDeleteModal,
   isAnrPlotsOperating = false,
+  onRequestApproveModal,
+  onRequestInformationModal,
   onSaved,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
   onDeletingChange
 }) => {
   const t = useT();
+  const isAdmin = useIsAdmin();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const showStatusToast = useCallback((type: "success" | "error" | "warning", label: string) => {
     if (type === "error") {
@@ -215,6 +222,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const isCreateMode = polygon?.primaryUuid == null || polygon.primaryUuid === "";
   const isPolygonSubmittable = isSitePolygonSubmittable(polygon);
   const submitTooltip = getSingleSitePolygonSubmitTooltip(polygon, t);
+  const isPolygonApprovable = isSitePolygonApprovable(polygon);
+  const approveTooltip = getSingleSitePolygonApproveTooltip(polygon, t);
   const shouldMapEditPolygon =
     openAccordionSection !== "monitoring-plots" && openAccordionSection !== "geotagged-photos";
   const resolvedSiteUuid = polygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : "");
@@ -1046,12 +1055,26 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               items={[
                 { label: t("Delete"), onClick: onRequestDeleteModal, labelColor: "error.500" },
                 { label: t("Download"), onClick: () => void handleDownloadPolygon() },
-                {
-                  label: t("Submit"),
-                  disabled: !isPolygonSubmittable,
-                  infoTooltip: !isPolygonSubmittable ? submitTooltip : undefined,
-                  onClick: onRequestSubmitModal
-                }
+                isAdmin
+                  ? {
+                      label: t("Review"),
+                      onClick: () => {},
+                      infoTooltip: !isPolygonApprovable ? approveTooltip : undefined,
+                      otherActions: [
+                        { label: t("Approve"), value: "approve", onClick: onRequestApproveModal ?? (() => {}) },
+                        {
+                          label: t("Request information"),
+                          value: "request-information",
+                          onClick: onRequestInformationModal ?? (() => {})
+                        }
+                      ]
+                    }
+                  : {
+                      label: t("Submit"),
+                      disabled: !isPolygonSubmittable,
+                      infoTooltip: !isPolygonSubmittable ? submitTooltip : undefined,
+                      onClick: onRequestSubmitModal
+                    }
               ]}
             />
           </Flex>
