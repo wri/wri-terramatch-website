@@ -9,6 +9,7 @@ import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
+import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -329,7 +330,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           <About
             title={t("Monitoring, Reporting, and Verification (MRV)")}
             description={
-              <>
+              <Flex direction="column" gap={5}>
                 <Box as="ul" listStyleType="disc" marginInlineStart={3} paddingLeft={4}>
                   <Box as="li">
                     <Text color="neutral.900" textStyle="300">
@@ -361,7 +362,11 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
                     {t(mrvOnboardingContentItem?.content.mrvLinkText)}
                   </Button>
                 </Flex>
-              </>
+                <ContactSupport
+                  message={t("If you have challenges or need assistance, please reach out to your project manager or")}
+                  subject={t("Support Request for Project Profile")}
+                />
+              </Flex>
             }
             links={mrvOnboardingContentItem?.content.helpfulLinks ?? []}
           />

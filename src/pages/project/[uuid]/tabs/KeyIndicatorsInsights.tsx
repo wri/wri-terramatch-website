@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
 import { ContextCondition } from "@/context/ContextCondition";
-import { Framework } from "@/context/framework.provider";
+import { ALL_TF, Framework } from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import {
@@ -106,7 +106,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           }
         />
       </ContextCondition>
-      {(project?.frameworkKey == "terra-fund-3" || project?.frameworkKey == Framework.TF_3) && (
+      {project.frameworkKey != null && ALL_TF.includes(project.frameworkKey as Framework) && (
         <MetricCard
           title={t(`${keyIndicatorsTooltipContentItem?.treesToBeRestored.title}`)}
           progress={project.treesToBeRestoredGoal ?? 0}

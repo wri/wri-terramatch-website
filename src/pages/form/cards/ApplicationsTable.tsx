@@ -59,7 +59,7 @@ const ApplicationsTable: FC<DraftApplicationsTableProps> = ({ fundingProgrammeUu
           columns={[
             {
               accessorKey: "status",
-              header: "Status",
+              header: t("Status"),
               cell: props => {
                 const statusProps = getActionCardStatusMapper(t)[props.getValue() as string];
                 if (!statusProps) return null;
@@ -73,8 +73,8 @@ const ApplicationsTable: FC<DraftApplicationsTableProps> = ({ fundingProgrammeUu
                 );
               }
             },
-            { accessorKey: "updatedAt", header: "Last Updated", cell: props => format(props.getValue() as string) },
-            { accessorKey: "updatedBy", header: "Updated By", enableSorting: false },
+            { accessorKey: "updatedAt", header: t("Last Updated"), cell: props => format(props.getValue() as string) },
+            { accessorKey: "updatedBy", header: t("Updated By"), enableSorting: false },
             {
               accessorKey: "uuid",
               header: "",

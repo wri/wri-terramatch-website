@@ -5,7 +5,8 @@ import { UseFormReturn } from "react-hook-form";
 
 import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
-import { DOWNLOAD_COMPLETE_MESSAGE, DOWNLOAD_ERROR_MESSAGE, runWithDownloadToast } from "@/utils/downloadToast";
+import { useDownloadToastMessages } from "@/hooks/translation/useDownloadToastMessages";
+import { runWithDownloadToast } from "@/utils/downloadToast";
 
 type UseDownloadFormAnswersParams = {
   fieldsProvider: FormFieldsProvider;
@@ -14,16 +15,17 @@ type UseDownloadFormAnswersParams = {
 
 export const useDownloadFormAnswers = ({ fieldsProvider, formHook }: UseDownloadFormAnswersParams) => {
   const t = useT();
+  const downloadToastMessages = useDownloadToastMessages();
 
   return useCallback(() => {
     runWithDownloadToast(
       {
         downloading: t("Downloading Answers..."),
-        complete: t(DOWNLOAD_COMPLETE_MESSAGE),
-        error: t(DOWNLOAD_ERROR_MESSAGE)
+        complete: downloadToastMessages.complete,
+        error: downloadToastMessages.error
       },
       () => downloadAnswersCSV(fieldsProvider, formHook.getValues() as Dictionary<unknown>),
       "wizardFormDownloadToast"
     );
-  }, [fieldsProvider, formHook, t]);
+  }, [downloadToastMessages, fieldsProvider, formHook, t]);
 };

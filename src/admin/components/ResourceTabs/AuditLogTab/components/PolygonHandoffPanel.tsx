@@ -9,11 +9,11 @@ import { useFullProject } from "@/connections/Entity";
 import {
   isPolygonDataSubmissionOption,
   POLYGON_DATA_SUBMISSION_OPTION_VALUES,
-  POLYGON_SUBMISSION_STATUS_LABELS,
   PolygonDataSubmissionOption
 } from "@/constants/polygonHandoff";
 import { useNotificationContext } from "@/context/notification.provider";
 import { ProjectUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import { usePolygonSubmissionStatusLabels } from "@/hooks/translation/usePolygonSubmissionStatusLabels";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import ApiSlice from "@/store/apiSlice";
 
@@ -29,14 +29,15 @@ const PolygonHandoffPanel: FC<Props> = ({ projectUuid, polygonDataSubmission, re
   const { openNotification } = useNotificationContext();
   const [, { isUpdating, updateFailure, update }] = useFullProject({ id: projectUuid });
   const [isPolygonHandoffNotification, setIsPolygonHandoffNotification] = useState(false);
+  const polygonSubmissionStatusLabels = usePolygonSubmissionStatusLabels();
 
   const options = useMemo(
     () =>
       POLYGON_DATA_SUBMISSION_OPTION_VALUES.map(value => ({
-        title: t(POLYGON_SUBMISSION_STATUS_LABELS[value]),
+        title: polygonSubmissionStatusLabels[value],
         value
       })),
-    [t]
+    [polygonSubmissionStatusLabels]
   );
 
   const [submission, setSubmission] = useState<string>(polygonDataSubmission ?? "no-polygons-submitted");

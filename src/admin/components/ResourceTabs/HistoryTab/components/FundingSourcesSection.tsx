@@ -7,6 +7,7 @@ import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_SECONDARY } from "@/components/elements/Toggle/ToggleVariants";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { FundingTypeDto } from "@/generated/v3/userService/userServiceSchemas";
+import { useGetFundingSourcesTableColumns } from "@/hooks/translation/useGetFundingSourcesTableColumns";
 import { formatFinancialAmount, getCurrencySymbolPrefix } from "@/utils/financialReport";
 
 interface IProps {
@@ -14,41 +15,9 @@ interface IProps {
   currency?: string;
 }
 
-const ColumnsTableFundingSources = [
-  {
-    id: "id",
-    header: "#",
-    accessorKey: "id",
-    enableSorting: true
-  },
-  {
-    id: "fundingYear",
-    header: "Funding Year",
-    accessorKey: "fundingYear",
-    enableSorting: true
-  },
-  {
-    id: "fundingType",
-    header: "Funding Type",
-    accessorKey: "fundingType",
-    enableSorting: true
-  },
-  {
-    id: "fundingSource",
-    header: "Funding Source",
-    accessorKey: "fundingSource",
-    enableSorting: true
-  },
-  {
-    id: "fundingAmount",
-    header: "Funding Amount",
-    accessorKey: "fundingAmount",
-    enableSorting: true
-  }
-];
-
 const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
   const t = useT();
+  const columns = useGetFundingSourcesTableColumns();
   const fundingSourcesItems = [
     { key: "all", render: t("All Years") },
     ...Array.from(new Set(data?.map(item => item.year as number)))
@@ -93,7 +62,7 @@ const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
       />
       <div>
         <Table
-          columns={ColumnsTableFundingSources}
+          columns={columns}
           data={tableData ?? []}
           variant={VARIANT_TABLE_DASHBOARD_LIST}
           hasPagination={true}

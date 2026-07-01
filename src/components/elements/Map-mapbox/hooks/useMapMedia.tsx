@@ -10,6 +10,7 @@ import { openEditPhotoDetailsFromMapPopup } from "@/context/mapArea.utils";
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useDownloadToastMessages } from "@/hooks/translation/useDownloadToastMessages";
 import { TranslatedText } from "@/i18n/types";
 import { runWithDownloadToast } from "@/utils/downloadToast";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
@@ -60,6 +61,7 @@ export function useMapMedia({
   isPolygonGeometryLoading = false
 }: UseMapMediaParams) {
   const championsMap = useChampionsMap();
+  const downloadToastMessages = useDownloadToastMessages();
   const { showPhotosOnMap } = useMapAreaContext();
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
   const showPhotosWhileDrawerClosed =
@@ -143,8 +145,8 @@ export function useMapMedia({
         await runWithDownloadToast(
           {
             downloading: t("Downloading Geotagged Photo…"),
-            complete: t("Download Complete"),
-            error: t("Download Failed")
+            complete: downloadToastMessages.complete,
+            error: downloadToastMessages.error
           },
           () => exportImage.downloadFile({ pathParams: { uuid } }, { defaultFileName }),
           `media-download-${uuid}`

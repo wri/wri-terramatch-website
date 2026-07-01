@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
-import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { uploadProjectPolygonFileResource } from "@/connections/ProjectPolygons";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -83,24 +82,6 @@ export const PolygonHandler = () => {
     }
   };
 
-  const openFormModalHandlerConfirmUpload = (type: string) => {
-    openModal(
-      ModalId.CONFIRM_POLYGON_TYPE,
-      <ModalConfirm
-        title={t(`Confirm Polygon ${type}`)}
-        content={t(
-          `${
-            type === "Creation" ? "Creating" : "Uploading"
-          } a new polygon will overwrite the existing geometry. Proceed?`
-        )}
-        onClose={() => closeModal(ModalId.CONFIRM_POLYGON_TYPE)}
-        onConfirm={() => {
-          type === "Creation" ? setIsUserDrawingEnabled(true) : openFormModalHandlerAddPolygon();
-        }}
-      />
-    );
-  };
-
   const openFormModalHandlerAddPolygon = () => {
     openModal(
       ModalId.ADD_POLYGONS,
@@ -126,11 +107,7 @@ export const PolygonHandler = () => {
 
   return (
     <div className="flex gap-2">
-      <Button
-        variant="white-button-map"
-        className="group  bg-[#E5F9FD] "
-        onClick={() => openFormModalHandlerConfirmUpload("Creation")}
-      >
+      <Button variant="white-button-map" className="group  bg-[#E5F9FD] " onClick={() => setIsUserDrawingEnabled(true)}>
         <Text
           as="div"
           className="flex items-center font-bold uppercase text-[#637579] group-hover:text-black"
@@ -140,7 +117,7 @@ export const PolygonHandler = () => {
           &nbsp;{t("Create Polygon")}
         </Text>
       </Button>
-      <Button variant="white-button-map" className="group " onClick={() => openFormModalHandlerConfirmUpload("Upload")}>
+      <Button variant="white-button-map" className="group " onClick={openFormModalHandlerAddPolygon}>
         <Text
           as="div"
           className="flex items-center font-bold uppercase text-[#637579] group-hover:text-black"

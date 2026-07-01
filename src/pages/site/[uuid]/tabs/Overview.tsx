@@ -8,20 +8,20 @@ import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
+import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { ABOUT_SITES_CONTENT } from "@/constants/AboutSites.constants";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useAboutSitesContent } from "@/hooks/translation/useAboutSitesContent";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { AreaHectaresIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
@@ -76,9 +76,10 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     });
   };
 
+  const aboutSitesContent = useAboutSitesContent();
   const aboutSitesContentItem = useMemo(() => {
-    return ABOUT_SITES_CONTENT.find(content => content.frameworks.includes(site.frameworkKey!));
-  }, [site.frameworkKey]);
+    return aboutSitesContent.find(content => content.frameworks.includes(site.frameworkKey!));
+  }, [aboutSitesContent, site.frameworkKey]);
 
   const needMoreInformation =
     site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
@@ -107,6 +108,63 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       <PageContent>
         {EditModals}
         <Flex gap={7} className="flex-col sm:flex-row">
+          <Flex className="flex-[2] flex-col gap-7 mobile:flex-[1]">
+            <PageItem
+              title={t("Key Indicators & Insights")}
+              flexProps={{ paddingY: 2, width: "100%" }}
+              buttonProps={{
+                variant: "secondary",
+                size: "small",
+                children: t("View Progress & Goals"),
+                rightIcon: <ChevronRightIcon />,
+                onClick: () => goToTab("goals")
+              }}
+            >
+              <Flex gap={4}>
+                <KeyIndicatorsInsightsTab site={site} />
+              </Flex>
+            </PageItem>
+            <PageItem
+              title={t("Latest Images")}
+              flexProps={{ flex: 1 }}
+              buttonProps={{
+                variant: "secondary",
+                size: "small",
+                children: t("View Gallery"),
+                rightIcon: <ChevronRightIcon />,
+                onClick: () => goToTab("gallery")
+              }}
+            >
+              <LatestImagesSectionTab entityUuid={site.uuid} entityName="sites" columns={isMobile ? 2 : 4} rows={1} />
+            </PageItem>
+          </Flex>
+          <PageItem
+            flexProps={{ width: "fit-content", overflow: "hidden" }}
+            className="!w-full !max-w-full flex-[1] sm:!w-[30%] sm:!max-w-[30%]"
+            title={t("Sites Set Up")}
+            classNameRightSectionHeader="mobile:!w-fit"
+            tag={(() => {
+              const tagState = mapStatusToTagStateEntity(site?.status);
+              return site.updateRequestStatus === "awaiting-approval" ? (
+                <TagSubmission state="pending-approval" />
+              ) : site?.status != null ? (
+                <TagSubmission state={tagState?.type as TagSubmissionState} />
+              ) : null;
+            })()}
+            buttonProps={{
+              variant: "primary",
+              size: "small",
+              children: isSiteSetupComplete ? t("Edit") : t("Continue"),
+              rightIcon: <ChevronRightIcon boxSize={4} />,
+              onClick: () => handleEditClick()
+            }}
+          >
+            <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+              <EntitySetUpSection onStatusChange={setIsSiteSetupComplete} entity={site} type="sites" />
+            </Box>
+          </PageItem>
+        </Flex>
+        <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[39.625rem] sm:flex-row">
           <PageItem
             title={t("Site Map")}
             flexProps={{ flex: 1 }}
@@ -149,83 +207,21 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               )}
             </Box>
           </PageItem>
-          <PageItem
-            flexProps={{ width: "fit-content", overflow: "hidden" }}
-            className="!w-full !max-w-full sm:!w-[30%] sm:!max-w-[30%]"
-            title={t("Sites Set Up")}
-            classNameRightSectionHeader="mobile:!w-fit"
-            tag={(() => {
-              const tagState = mapStatusToTagStateEntity(site?.status);
-              return site.updateRequestStatus === "awaiting-approval" ? (
-                <TagSubmission state="pending-approval" />
-              ) : site?.status != null ? (
-                <TagSubmission state={tagState?.type as TagSubmissionState} />
-              ) : null;
-            })()}
-            buttonProps={{
-              variant: "primary",
-              size: "small",
-              children: isSiteSetupComplete ? t("Edit") : t("Continue"),
-              rightIcon: <ChevronRightIcon boxSize={4} />,
-              onClick: () => handleEditClick()
-            }}
-          >
-            <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <EntitySetUpSection onStatusChange={setIsSiteSetupComplete} entity={site} type="sites" />
-            </Box>
-          </PageItem>
-        </Flex>
-        <PageItem
-          title={t("Key Indicators & Insights")}
-          flexProps={{ paddingY: 2, width: "100%" }}
-          buttonProps={{
-            variant: "secondary",
-            size: "small",
-            children: t("View Progress & Goals"),
-            rightIcon: <ChevronRightIcon />,
-            onClick: () => goToTab("goals")
-          }}
-        >
-          <Flex gap={4}>
-            <KeyIndicatorsInsightsTab site={site} />
-          </Flex>
-        </PageItem>
-        <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[39.625rem] sm:flex-row">
-          <PageItem
-            title={t("Latest Images")}
-            flexProps={{ flex: 1 }}
-            buttonProps={{
-              variant: "secondary",
-              size: "small",
-              children: t("View Gallery"),
-              rightIcon: <ChevronRightIcon />,
-              onClick: () => goToTab("gallery")
-            }}
-          >
-            <LatestImagesSectionTab entityUuid={site.uuid} entityName="sites" columns={isMobile ? 2 : 3} />
-          </PageItem>
           <PageItem title={t(aboutSitesContentItem?.title!)}>
             <About
               description={
                 <Flex direction="column" gap={5}>
                   <Text color="neutral.900" textStyle="300">
                     <strong>{t("Sites")} </strong>
-                    {t(aboutSitesContentItem?.paragraph1!)}
+                    {aboutSitesContentItem?.paragraph1}
                   </Text>
-                  <Text color="neutral.900" textStyle="300">
-                    {t(aboutSitesContentItem?.paragraph2!)}
-                    <Button variant="borderless" size="small" rightIcon={<ChevronRightIcon />} as="span">
-                      info@terramatch.org
-                    </Button>
-                  </Text>
+                  <ContactSupport
+                    message={t(aboutSitesContentItem?.paragraph2!)}
+                    subject={t("Support Request for Site Profile")}
+                  />
                 </Flex>
               }
-              links={
-                aboutSitesContentItem?.links.map(link => ({
-                  title: t(link.title),
-                  link: link.link
-                })) ?? []
-              }
+              links={aboutSitesContentItem?.links ?? []}
             />
           </PageItem>
         </Flex>

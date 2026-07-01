@@ -80,7 +80,8 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
     states: null,
     projectCountyDistrict: null,
     plantingEndDate: "2026-12-31T00:00:00Z",
-    description:
+    description: null,
+    projectSummary:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     budget: 1000000,
     history: null,
@@ -162,8 +163,7 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
     consortiumPartnershipAgreements: [],
     treesRegeneratingSpeciesCount: 0,
     polygonDataSubmission: "no-polygons-submitted",
-    readyForBaseline: false,
-    projectSummary: null
+    readyForBaseline: false
   };
 
   return {
@@ -204,7 +204,7 @@ export const Default: Story = {
       name: "Project Name",
       plantingStatus: "in-progress",
       country: "Ghana",
-      description:
+      projectSummary:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     })
   }
@@ -219,7 +219,7 @@ export const NotStarted: Story = {
       name: "Project Name",
       plantingStatus: "not-started",
       country: "Ghana",
-      description:
+      projectSummary:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     })
   }
@@ -234,7 +234,7 @@ export const InProgress: Story = {
       name: "Project Name",
       plantingStatus: "in-progress",
       country: "Ghana",
-      description:
+      projectSummary:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     })
   }
@@ -249,22 +249,22 @@ export const Complete: Story = {
       name: "Project Name",
       plantingStatus: "completed",
       country: "Ghana",
-      description:
+      projectSummary:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     })
   }
 };
 
 /**
- * Project header without description
+ * Project header without project summary
  */
-export const WithoutDescription: Story = {
+export const WithoutProjectSummary: Story = {
   args: {
     project: createMockProject({
       name: "Project Name",
       plantingStatus: "in-progress",
       country: "Ghana",
-      description: null
+      projectSummary: null
     })
   }
 };
@@ -278,7 +278,7 @@ export const WithoutTeam: Story = {
       name: "Project Name",
       plantingStatus: "in-progress",
       country: "Ghana",
-      description:
+      projectSummary:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
       plantingStartDate: "2024-04-01T00:00:00Z",
       plantingEndDate: "2026-03-31T00:00:00Z"
@@ -301,7 +301,7 @@ export const AllProgressStates: Story = {
           country: "Ghana",
           plantingStartDate: "2025-01-01T00:00:00Z",
           plantingEndDate: "2026-12-31T00:00:00Z",
-          description:
+          projectSummary:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         })}
       />
@@ -314,7 +314,7 @@ export const AllProgressStates: Story = {
           country: "Ghana",
           plantingStartDate: "2024-01-01T00:00:00Z",
           plantingEndDate: "2025-12-31T00:00:00Z",
-          description:
+          projectSummary:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         })}
       />
@@ -327,7 +327,7 @@ export const AllProgressStates: Story = {
           country: "Ghana",
           plantingStartDate: "2022-01-01T00:00:00Z",
           plantingEndDate: "2023-12-31T00:00:00Z",
-          description:
+          projectSummary:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         })}
       />
