@@ -164,7 +164,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             </Box>
           </PageItem>
         </Flex>
-        <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[35.625rem] sm:flex-row">
+        <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[39.625rem] sm:flex-row">
           <PageItem
             title={t("Site Map")}
             flexProps={{ flex: 1 }}
