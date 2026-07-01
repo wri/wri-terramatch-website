@@ -23,12 +23,14 @@ export interface EditPhotoDetailsProps {
 const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) => {
   const t = useT();
   const { format: formatFileSize } = useFileSize();
+  const [imageName, setImageName] = useState(data.name ?? "");
   const [description, setDescription] = useState(data.description ?? "");
   const [photographer, setPhotographer] = useState(data.photographer ?? "");
   const [isPublic, setIsPublic] = useState(data.isPublic);
   const [isCover, setIsCover] = useState(data.isCover);
   const [isUpdating, setIsUpdating] = useState(false);
   const initialValues = useRef({
+    imageName: data.name ?? "",
     description: data.description ?? "",
     photographer: data.photographer ?? "",
     isPublic: data.isPublic,
@@ -39,12 +41,13 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
   const hasChanges = useCallback(() => {
     const initial = initialValues.current;
     return (
+      imageName !== initial.imageName ||
       description !== initial.description ||
       photographer !== initial.photographer ||
       isPublic !== initial.isPublic ||
       isCover !== initial.isCover
     );
-  }, [description, photographer, isPublic, isCover]);
+  }, [description, imageName, photographer, isPublic, isCover]);
 
   const handleSave = useCallback(async () => {
     if (!hasChanges()) {
@@ -61,6 +64,7 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
     const updatePromises: Promise<unknown>[] = [];
 
     if (
+      imageName !== initial.imageName ||
       description !== initial.description ||
       photographer !== initial.photographer ||
       isPublic !== initial.isPublic ||
@@ -69,8 +73,8 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
       updatePromises.push(
         updateMedia(
           {
-            name: data.name,
-            title: data.name,
+            name: imageName,
+            title: imageName,
             photographer,
             description: description || undefined,
             isPublic,
@@ -121,10 +125,10 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
       setIsUpdating(false);
     }
   }, [
-    data.name,
     data.profileImagePosition,
     data.profileImageScale,
     data.uuid,
+    imageName,
     description,
     hasChanges,
     isCover,
@@ -151,7 +155,13 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
               size={"full"}
             />
             <Flex direction="column" flex="1 0 0" gap={4}>
-              <TextInput label="Image Name" name="imageName" required value={data.name} />
+              <TextInput
+                label="Image Name"
+                name="imageName"
+                required
+                value={imageName}
+                onChange={e => setImageName(e.target.value)}
+              />
               <TextInput
                 label="Photographer"
                 placeholder="Name Surname"
