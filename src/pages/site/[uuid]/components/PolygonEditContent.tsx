@@ -42,7 +42,7 @@ import DatePickerInput from "@/redesignComponents/Forms/Inputs/DateInputs/DatePi
 import InputWithUnits from "@/redesignComponents/Forms/Inputs/InputWithUnits";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
-import { DownloadIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
+import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
 import { trackPolygonDownloaded, trackPolygonStatusChanged } from "@/utils/polygonAnalytics";
@@ -82,6 +82,9 @@ type PolygonEditContentProps = {
   onRegisterPlantStartDate?: (hasPlantStartDate: () => boolean) => void;
   onRequestDeleteModal: () => void;
   onRequestSubmitModal: () => void;
+  onRequestAnrUploadModal?: (mode: "upload" | "replace") => void;
+  onRequestAnrDeleteModal?: () => void;
+  isAnrPlotsOperating?: boolean;
   onSaved?: PolygonSaveCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
@@ -146,6 +149,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRegisterPlantStartDate,
   onRequestDeleteModal,
   onRequestSubmitModal,
+  onRequestAnrUploadModal,
+  onRequestAnrDeleteModal,
+  isAnrPlotsOperating = false,
   onSaved,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
@@ -436,6 +442,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [sitePolygonUuid]);
 
   useEffect(() => {
+    if (!hasAnrPlotGeometry) {
+      setPlotsVisible(false);
+    }
+  }, [hasAnrPlotGeometry]);
+
+  useEffect(() => {
     if (!isAnrEligible) {
       setPlotsVisible(false);
       setOpenAccordionSection(current => (current === "monitoring-plots" ? "details" : current));
@@ -488,7 +500,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     overlay.setShowPlotsOnMap(canShowAnrPlots && plotsVisible);
 
     if (sitePolygonUuid !== "" && geometryPolygonUuid !== "") {
-      overlay.syncDrawerSelection({ sitePolygonUuid, geometryPolygonUuid });
+      overlay.syncDrawerSelection({
+        sitePolygonUuid,
+        geometryPolygonUuid,
+        polygonStatus: polygon?.status ?? null,
+        polygonName: polygon?.name ?? null
+      });
     }
   }, [
     anrMapOverlayRef,
@@ -497,6 +514,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     isAnrEligible,
     openAccordionSection,
     plotsVisible,
+    polygon?.name,
+    polygon?.status,
     sitePolygonUuid
   ]);
 
@@ -856,52 +875,76 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             open={openAccordionSection === "monitoring-plots"}
             onOpenChange={handleAccordionOpenChange("monitoring-plots")}
             actions={
-              <Button
-                leftIcon={<DownloadIcon />}
-                onClick={() => void downloadMonitoringPlots()}
-                size="small"
-                variant="secondary"
-                disabled={!hasAnrPlotGeometry}
-              >
-                {t("Download")}
-              </Button>
+              <Flex gap={2}>
+                {hasAnrPlotGeometry ? (
+                  <>
+                    <Button
+                      leftIcon={<DownloadIcon />}
+                      onClick={() => void downloadMonitoringPlots()}
+                      size="small"
+                      variant="secondary"
+                      disabled={isAnrPlotsOperating}
+                    >
+                      {t("Download")}
+                    </Button>
+                    <Button
+                      leftIcon={<RefreshIcon />}
+                      onClick={() => onRequestAnrUploadModal?.("replace")}
+                      size="small"
+                      variant="secondary"
+                      disabled={isAnrPlotsOperating}
+                    >
+                      {t("Update")}
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    leftIcon={<UploadIcon />}
+                    onClick={() => onRequestAnrUploadModal?.("upload")}
+                    size="small"
+                    variant="secondary"
+                    disabled={isAnrPlotsOperating}
+                  >
+                    {t("Upload")}
+                  </Button>
+                )}
+              </Flex>
             }
           >
             <Flex className="mb-4 flex-1 flex-col gap-4">
-              <Switch
-                name="showPlotsOnMap"
-                checked={plotsVisible}
-                disabled={!hasAnrPlotGeometry}
-                onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
-                  setPlotsVisible(checked === true)
-                }
-              >
-                {t("Show Plots on Map")}
-              </Switch>
-              <Flex className="flex-col gap-7">
-                {isAnrLoading ? (
-                  <Text>{t("Loading ANR monitoring plots...")}</Text>
-                ) : hasAnrPlotGeometry ? (
-                  <>
-                    <Text>
-                      {t(
-                        "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time."
-                      )}
-                    </Text>
-                    <Text>
-                      {t(
-                        "Download the monitoring plots to help your team locate and monitor the areas during field visits."
-                      )}
-                    </Text>
-                  </>
-                ) : (
+              {isAnrLoading ? (
+                <Text>{t("Loading ANR monitoring plots...")}</Text>
+              ) : hasAnrPlotGeometry ? (
+                <>
+                  <Switch
+                    name="showPlotsOnMap"
+                    checked={plotsVisible}
+                    onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
+                      setPlotsVisible(checked === true)
+                    }
+                  >
+                    {t("Show Plots on Map")}
+                  </Switch>
                   <Text>
                     {t(
-                      "The monitoring plots are not available yet. They will appear here once they are updated by the project team and ready for download."
+                      "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time."
                     )}
                   </Text>
-                )}
-              </Flex>
+                  <Button
+                    variant="borderless"
+                    typeVariant="negative"
+                    className="!justify-start !px-0"
+                    disabled={isAnrPlotsOperating}
+                    onClick={() => onRequestAnrDeleteModal?.()}
+                  >
+                    {t("Delete Plots")}
+                  </Button>
+                </>
+              ) : (
+                <Text textStyle="400-bold" color="neutral.900">
+                  {t("No monitoring plots yet.")}
+                </Text>
+              )}
             </Flex>
           </Accordion>
         ) : null}
