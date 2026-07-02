@@ -40,8 +40,6 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
     [pendingValidationPolygonIds]
   );
 
-  // Only include polygons whose fresh criteria have actually loaded. While a polygon is pending,
-  // ignore any stale criteria still in the cache from a previous run.
   const polygonsWithResolvedValidation = useMemo(
     () =>
       polygons.reduce<PolygonTableRow[]>((resolvedPolygons, polygon) => {

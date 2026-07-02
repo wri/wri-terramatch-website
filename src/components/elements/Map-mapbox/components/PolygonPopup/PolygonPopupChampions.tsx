@@ -132,8 +132,6 @@ export function PolygonPopupChampions({
 
   const geometryUuid = getSitePolygonGeometryUuid(sitePolygon);
 
-  // Close the map popup immediately and hand off to the shared workspace flow, which opens the
-  // results modal with its own loader — no intermediate button-state changes on this popup.
   const handleRunValidation = useCallback(() => {
     if (geometryUuid == null || geometryUuid === "") {
       return;
