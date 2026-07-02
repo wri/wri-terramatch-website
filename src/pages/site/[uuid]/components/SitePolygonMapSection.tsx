@@ -17,6 +17,8 @@ type SitePolygonMapSectionProps = {
   polygons: SitePolygonLightDto[];
   isEditPolygonOpen: boolean;
   isSitePolygonsLoading: boolean;
+  freezeCameraZoom?: boolean;
+  skipNextSiteBboxZoomNonce?: number;
   polygonTableHighlight: ComponentProps<typeof PolygonsMap>["polygonTableHighlight"];
   overlapPolygons: OverlapPolygonPoint[];
   onRefetchPolygons: ComponentProps<typeof PolygonsMap>["onRefetchPolygons"];
@@ -29,6 +31,8 @@ const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
   polygons,
   isEditPolygonOpen,
   isSitePolygonsLoading,
+  freezeCameraZoom = false,
+  skipNextSiteBboxZoomNonce = 0,
   polygonTableHighlight,
   overlapPolygons,
   onRefetchPolygons,
@@ -59,7 +63,8 @@ const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
         polygons={polygons}
         onRefetchPolygons={onRefetchPolygons}
         isLoadingPolygons={isSitePolygonsLoading}
-        freezeCameraZoom={isSitePolygonsLoading}
+        freezeCameraZoom={freezeCameraZoom}
+        skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
         polygonTableHighlight={polygonTableHighlight}
         overlapPolygons={overlapPolygons}
       />

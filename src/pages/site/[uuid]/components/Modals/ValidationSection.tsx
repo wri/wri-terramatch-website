@@ -33,6 +33,9 @@ const ItemPolygon: FC<{
   );
   const totalItems = items.length;
   const failedCount = items.filter(i => !i.status).length;
+  // By the time a polygon reaches this list its validation has already resolved with fresh
+  // criteria (see SystemValidationComplete), so `items` is guaranteed non-empty here. There's
+  // no "still loading" state to guard against at this level, so the button is never disabled.
   const hasDetails = totalItems > 0;
 
   return (
@@ -47,7 +50,6 @@ const ItemPolygon: FC<{
         <Button
           variant={"borderless"}
           size="small"
-          disabled={!hasDetails}
           onClick={() => setIsOpen(!isOpen)}
           rightIcon={<ChevronDownIcon boxSize={2.5} className={isOpen ? "rotate-180" : "rotate-0"} />}
         >

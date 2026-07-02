@@ -4,16 +4,19 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { useAuditStatuses } from "@/connections/AuditStatus";
 import {
   closeMapPopupsFromMapPopup,
+  isSitePolygonAdminReviewMode,
   openPolygonApproveConfirmationFromMapPopup,
   openPolygonRequestInformationConfirmationFromMapPopup,
-  openPolygonSubmitConfirmationFromMapPopup
+  openPolygonSubmitConfirmationFromMapPopup,
+  runPolygonValidationFromMapPopup
 } from "@/context/mapArea.utils";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { isRestorationStrategy, isTargetLandUseType } from "@/pages/site/[uuid]/components/polygonTable.constants";
+import { showPolygonErrorToast } from "@/pages/site/[uuid]/utils/polygonOperationToasts";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
+import Log from "@/utils/log";
 import { getSingleSitePolygonApproveTooltip, isSitePolygonApprovable } from "@/utils/sitePolygonReview";
 import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
@@ -48,7 +51,7 @@ export function PolygonPopupChampions({
   siteReportPolygonPopup = false
 }: PolygonPopupChampionsProps) {
   const t = useT();
-  const isAdmin = useIsAdmin();
+  const isAdminReview = isSitePolygonAdminReviewMode();
   const siteUuid = useMemo(() => resolveViewDetailsSiteUuid(sitePolygon), [sitePolygon]);
   const [open, setOpen] = useState(true);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -129,6 +132,25 @@ export function PolygonPopupChampions({
 
   const geometryUuid = getSitePolygonGeometryUuid(sitePolygon);
 
+  // Close the map popup immediately and hand off to the shared workspace flow, which opens the
+  // results modal with its own loader — no intermediate button-state changes on this popup.
+  const handleRunValidation = useCallback(() => {
+    if (geometryUuid == null || geometryUuid === "") {
+      return;
+    }
+
+    const runValidation = runPolygonValidationFromMapPopup([geometryUuid]);
+    if (runValidation == null) {
+      return;
+    }
+
+    closeMapPopup();
+    void runValidation.catch(error => {
+      Log.error("Failed to validate polygon from map popup:", error);
+      showPolygonErrorToast(t("Failed to validate polygons"));
+    });
+  }, [closeMapPopup, geometryUuid, t]);
+
   const handleViewDetails = useCallback(() => {
     if (geometryUuid == null) {
       return;
@@ -166,7 +188,8 @@ export function PolygonPopupChampions({
             onViewDetails={handleViewDetails}
             viewDetailsDisabled={!canNavigateToSitePolygonViewDetails(geometryUuid, siteUuid)}
             tooltipType={tooltipType}
-            isAdminReview={isAdmin}
+            isAdminReview={isAdminReview}
+            onRunValidation={isAdminReview ? handleRunValidation : undefined}
             approveDisabled={approveDisabled}
             approveDisabledTooltip={approveDisabledTooltip}
             onApprove={handleApprove}

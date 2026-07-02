@@ -2,6 +2,7 @@ import type { FC } from "react";
 
 import type { BulkSitePolygonAttributeChanges } from "@/connections/SitePolygons";
 import type { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import type { SubmittedPolygonComment } from "../hooks/useSitePolygonBulkActions";
@@ -16,6 +17,7 @@ import InformationRequested from "./Modals/RequestInformation/InformationRequest
 import RequestInformationConfirmation from "./Modals/RequestInformation/RequestInformationConfirmation";
 import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import SubmitPolygons from "./Modals/SubmitPolygons";
+import SystemValidationComplete from "./Modals/SystemValidationComplete";
 import UploadError from "./Modals/UploadError";
 import UploadPhotos from "./Modals/UploadPhotos";
 import UploadPolygons from "./Modals/UploadPolygons";
@@ -84,6 +86,13 @@ type SitePolygonModalsProps = {
   onInformationRequestedModalOpenChange: (open: boolean) => void;
   requestedInformationPolygonNames: string[];
   requestedInformationComment: PolygonStatusChangeComment | null;
+  openSystemValidationCompleteModal: boolean;
+  validatedPolygons: PolygonTableRow[];
+  polygonValidations: Map<string, ValidationDto>;
+  pendingValidationPolygonIds: string[];
+  isAwaitingValidationResults: boolean;
+  onSystemValidationCompleteModalOpenChange: (open: boolean) => void;
+  onViewValidationDetails: (polygon: PolygonTableRow) => void;
 };
 
 const SitePolygonModals: FC<SitePolygonModalsProps> = ({
@@ -144,7 +153,14 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   openInformationRequestedModal,
   onInformationRequestedModalOpenChange,
   requestedInformationPolygonNames,
-  requestedInformationComment
+  requestedInformationComment,
+  openSystemValidationCompleteModal,
+  validatedPolygons,
+  polygonValidations,
+  pendingValidationPolygonIds,
+  isAwaitingValidationResults,
+  onSystemValidationCompleteModalOpenChange,
+  onViewValidationDetails
 }) => {
   const isAdmin = useIsAdmin();
   return (
@@ -235,6 +251,15 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
         polygonsFixed={overlapFixResults.polygonsFixed}
         polygonsNotFixed={overlapFixResults.polygonsNotFixed}
         onViewPolygon={onViewOverlapPolygon}
+      />
+      <SystemValidationComplete
+        open={openSystemValidationCompleteModal}
+        onOpenChange={onSystemValidationCompleteModalOpenChange}
+        polygons={validatedPolygons}
+        polygonValidations={polygonValidations}
+        pendingValidationPolygonIds={pendingValidationPolygonIds}
+        isLoadingResults={isAwaitingValidationResults}
+        onViewDetails={onViewValidationDetails}
       />
       <UploadError open={openUploadErrorModal} onOpenChange={onUploadErrorModalOpenChange} />
       <UploadPhotos open={openUploadPhotosModal} onOpenChange={onUploadPhotosModalOpenChange} />
