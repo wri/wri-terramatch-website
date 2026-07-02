@@ -8,7 +8,6 @@ import { VARIANT_TOGGLE_SECONDARY } from "@/components/elements/Toggle/ToggleVar
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { FundingTypeDto } from "@/generated/v3/userService/userServiceSchemas";
 import { useGetFundingSourcesTableColumns } from "@/hooks/translation/useGetFundingSourcesTableColumns";
-import { formatFinancialAmount, getCurrencySymbolPrefix } from "@/utils/financialReport";
 
 interface IProps {
   data?: FundingTypeDto[];
@@ -37,7 +36,7 @@ const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
   const tableData = filteredData?.map((item: FundingTypeDto, index: number) => {
     const amount =
       item?.amount != null && Number.isFinite(Number(item.amount))
-        ? `${getCurrencySymbolPrefix(currency)} ${formatFinancialAmount(Number(item.amount), currency)}`.trim()
+        ? `$ ${Number(item.amount)?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
         : "";
     return {
       id: index + 1,
