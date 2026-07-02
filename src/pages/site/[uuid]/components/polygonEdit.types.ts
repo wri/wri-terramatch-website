@@ -13,3 +13,8 @@ export type PolygonOverlapFixParams = {
 };
 
 export type PolygonOverlapFixCallback = (params: PolygonOverlapFixParams) => Promise<SitePolygonLightDto | undefined>;
+
+export type PolygonValidationJobsStartedCallback = (
+  polygonUuids: string[],
+  options?: { trackBulkCompletion?: boolean }
+) => void;

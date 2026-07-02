@@ -97,6 +97,7 @@ export const getFixingOverlapsProgressLabel = (t: TranslateFn, count: number) =>
 export type PolygonOperationToastLabels = {
   uploadingPolygonsComplete: string;
   submittingComplete: string;
+  savedAndSubmittedComplete: string;
   savingChangesProgress: string;
   savingChangesComplete: string;
   downloadingPolygonsComplete: string;
@@ -111,6 +112,7 @@ export type PolygonOperationToastLabels = {
 export const getPolygonOperationToastLabels = (t: TranslateFn): PolygonOperationToastLabels => ({
   uploadingPolygonsComplete: t("Upload Complete"),
   submittingComplete: t("Submission Complete"),
+  savedAndSubmittedComplete: t("Polygon saved and submitted"),
   savingChangesProgress: t("Saving Changes..."),
   savingChangesComplete: t("Changes Saved"),
   downloadingPolygonsComplete: t("Download Complete"),

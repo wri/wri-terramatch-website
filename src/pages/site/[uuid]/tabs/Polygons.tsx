@@ -588,6 +588,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
         onOverlapFixed={handleDrawerOverlapFixed}
         onRunValidation={runPolygonValidation}
         onPolygonDeletingChange={handlePolygonDeletingChange}
+        onValidationJobsStarted={handleValidationJobsStarted}
       />
       <PageContent className="bg-theme-neutral-100">
         <PageItem

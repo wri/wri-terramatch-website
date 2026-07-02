@@ -18,8 +18,13 @@ import DeletePolygon from "./Modals/DeletePolygon";
 import SavePolygon from "./Modals/SavePolygon";
 import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import PolygonCommentContent from "./PolygonCommentContent";
-import type { PolygonOverlapFixCallback, PolygonSaveCallback } from "./polygonEdit.types";
+import type {
+  PolygonOverlapFixCallback,
+  PolygonSaveCallback,
+  PolygonValidationJobsStartedCallback
+} from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
+import type { SavePolygonFlowOptions } from "./polygonEditSave";
 import PolygonSystemValidationContent from "./PolygonSystemValidationContent";
 import type { PolygonTableRow } from "./PolygonTableRow";
 import { mapSitePolygonToTableRow } from "./polygonTableRow.utils";
@@ -32,6 +37,7 @@ interface PolygonEditDrawerProps {
   onSaved?: PolygonSaveCallback;
   onOverlapFixed?: PolygonOverlapFixCallback;
   onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
+  onValidationJobsStarted?: PolygonValidationJobsStartedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
@@ -45,6 +51,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onSaved,
   onOverlapFixed,
   onRunValidation,
+  onValidationJobsStarted,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
   onDeletingChange
@@ -53,11 +60,15 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const [, { user }] = useMyUser();
   const { draftPolygonGeometry, siteData } = useMapAreaContext();
   const [activeTab, setActiveTab] = useState<string>("edit");
-  const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
+  const [saveEditContent, setSaveEditContent] = useState<
+    ((options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) | null
+  >(null);
   const deletePolygonRef = useRef<(() => Promise<void>) | null>(null);
   const submitPolygonRef = useRef<((comment: string) => Promise<void>) | null>(null);
+  const saveAndSubmitPolygonRef = useRef<((comment: string) => Promise<void>) | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
+  const [isSubmitWithUnsavedChangesModal, setIsSubmitWithUnsavedChangesModal] = useState(false);
   const [deletePayload, setDeletePayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
   const [submitPayload, setSubmitPayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
   const deleteConfirmedRef = useRef(false);
@@ -89,17 +100,24 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     setActiveTab("edit");
   }, [polygon?.polygonUuid]);
 
+  const selectedPolygonIdentityKey = `${selectedPolygon?.uuid ?? ""}:${selectedPolygon?.polygonUuid ?? ""}`;
+
   useEffect(() => {
     setSaveEditContent(null);
+    setIsSubmitWithUnsavedChangesModal(false);
+    setShowSaveConfirmationModal(false);
     const initialName = polygon?.polygonName?.trim() ?? "";
     getPolygonNameForSaveRef.current = () => polygon?.polygonName?.trim() ?? "";
     setSavePolygonName(initialName);
     setHasPlantStartDate(selectedPolygon?.plantStart != null && selectedPolygon.plantStart !== "");
-  }, [polygon?.polygonName, selectedPolygon?.plantStart, selectedPolygon?.uuid]);
+  }, [selectedPolygonIdentityKey, polygon?.polygonName, selectedPolygon?.plantStart]);
 
-  const registerSave = useCallback((saveHandler: () => Promise<boolean>) => {
-    setSaveEditContent(() => saveHandler);
-  }, []);
+  const registerSave = useCallback(
+    (saveHandler: (options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) => {
+      setSaveEditContent(() => saveHandler);
+    },
+    []
+  );
 
   const registerDelete = useCallback((deleteHandler: () => Promise<void>) => {
     deletePolygonRef.current = deleteHandler;
@@ -107,6 +125,10 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
 
   const registerSubmit = useCallback((submitHandler: (comment: string) => Promise<void>) => {
     submitPolygonRef.current = submitHandler;
+  }, []);
+
+  const registerSaveAndSubmit = useCallback((saveAndSubmitHandler: (comment: string) => Promise<void>) => {
+    saveAndSubmitPolygonRef.current = saveAndSubmitHandler;
   }, []);
 
   const registerPolygonName = useCallback((getPolygonName: () => string) => {
@@ -119,8 +141,10 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   }, []);
 
   const saveConfirmationPolygonName = getPolygonNameForSaveRef.current().trim();
-  const isAnyConfirmationModalOpen = showSaveConfirmationModal || deletePayload != null || submitPayload != null;
-  const isDrawerVisible = (open ?? false) && !isAnyConfirmationModalOpen;
+
+  const closeDrawer = useCallback(() => {
+    onOpenChange?.(false);
+  }, [onOpenChange]);
 
   const handleSave = useCallback(
     async (onClose: () => void) => {
@@ -132,7 +156,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
       setIsSaving(true);
       try {
         const saved = await saveEditContent();
-        if (saved) {
+        if (saved != null) {
           onClose();
         }
       } finally {
@@ -142,15 +166,18 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     [activeTab, saveEditContent]
   );
 
-  const closeDrawer = useCallback(() => {
-    onOpenChange?.(false);
-  }, [onOpenChange]);
+  const handleSaveAndSubmit = useCallback(async () => {
+    await saveAndSubmitPolygonRef.current?.("");
+  }, []);
 
   const handleSaveConfirmationModalChange = useCallback(
     (nextOpen: boolean) => {
       setShowSaveConfirmationModal(nextOpen);
-      if (!nextOpen && isCreateMode) {
-        closeDrawer();
+      if (!nextOpen) {
+        setIsSubmitWithUnsavedChangesModal(false);
+        if (isCreateMode) {
+          closeDrawer();
+        }
       }
     },
     [closeDrawer, isCreateMode]
@@ -165,13 +192,22 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     setDeletePayload({ polygons: [mapSitePolygonToTableRow(selectedPolygon, t)] });
   }, [selectedPolygon, t]);
 
-  const handleRequestSubmitModal = useCallback(() => {
-    if (selectedPolygon == null) {
-      return;
-    }
+  const handleRequestSubmitModal = useCallback(
+    (hasUnsavedChanges: boolean) => {
+      if (selectedPolygon == null) {
+        return;
+      }
 
-    setSubmitPayload({ polygons: [mapSitePolygonToTableRow(selectedPolygon, t)] });
-  }, [selectedPolygon, t]);
+      if (hasUnsavedChanges) {
+        setIsSubmitWithUnsavedChangesModal(true);
+        setShowSaveConfirmationModal(true);
+        return;
+      }
+
+      setSubmitPayload({ polygons: [mapSitePolygonToTableRow(selectedPolygon, t)] });
+    },
+    [selectedPolygon, t]
+  );
 
   const handleDeleteConfirmationModalChange = useCallback(
     (nextOpen: boolean) => {
@@ -193,7 +229,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     <>
       <Drawer
         modal={false}
-        open={isDrawerVisible}
+        open={open ?? false}
         closeOnInteractOutside={false}
         onOpenChange={onOpenChange}
         size="md"
@@ -249,11 +285,13 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     onRegisterSave={registerSave}
                     onRegisterDelete={registerDelete}
                     onRegisterSubmit={registerSubmit}
+                    onRegisterSaveAndSubmit={registerSaveAndSubmit}
                     onRegisterPolygonName={registerPolygonName}
                     onRegisterPlantStartDate={registerPlantStartDate}
                     onRequestDeleteModal={handleRequestDeleteModal}
                     onRequestSubmitModal={handleRequestSubmitModal}
                     onSaved={onSaved}
+                    onValidationJobsStarted={onValidationJobsStarted}
                     onPolygonUpdated={onPolygonUpdated}
                     onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
                     onDeletingChange={onDeletingChange}
@@ -294,6 +332,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                           void handleSave(onClose);
                           return;
                         }
+                        setIsSubmitWithUnsavedChangesModal(false);
                         setShowSaveConfirmationModal(true);
                       }
                     }
@@ -309,7 +348,9 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         open={showSaveConfirmationModal}
         onOpenChange={handleSaveConfirmationModalChange}
         polygon={{ polygonName: saveConfirmationPolygonName } as unknown as PolygonTableRow}
+        showSaveAndSubmit={isSubmitWithUnsavedChangesModal}
         onSave={() => void handleSave(closeDrawer)}
+        onSaveAndSubmit={isSubmitWithUnsavedChangesModal ? () => void handleSaveAndSubmit() : undefined}
       />
 
       <DeletePolygon
