@@ -32,7 +32,6 @@ const getLatestCriteriaCreatedAtMs = (validation: ValidationDto): number | null 
   return Math.max(...timestamps);
 };
 
-/** True when every criteria row was created at or after the validation run was requested. */
 export const isValidationFreshAfter = (validation: ValidationDto | undefined, startedAtMs: number): boolean => {
   if (!hasValidationCriteria(validation)) {
     return false;
@@ -43,7 +42,6 @@ export const isValidationFreshAfter = (validation: ValidationDto | undefined, st
     return false;
   }
 
-  // Small buffer for API/clock skew between client start and server persistence.
   return latestCriteriaCreatedAtMs >= startedAtMs - 2_000;
 };
 

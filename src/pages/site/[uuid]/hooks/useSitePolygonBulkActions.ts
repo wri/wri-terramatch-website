@@ -387,12 +387,6 @@ export const useSitePolygonBulkActions = ({
     }
   }, []);
 
-  /**
-   * Single entry point for "Run Validation" used by both the bulk actions toolbar and the
-   * map popup, so every trigger point gets identical tracking + results modal behavior (DRY).
-   * Polygon rows are looked up from `polygonsData` by geometry uuid so the results modal is never
-   * built from stale/positionally-mismatched data (see `SystemValidationComplete`).
-   */
   const runValidationWithResultsModal = useCallback(
     async (geometryPolygonUuids: string[]) => {
       if (geometryPolygonUuids.length === 0) {
@@ -420,7 +414,6 @@ export const useSitePolygonBulkActions = ({
       try {
         await handleRunValidation(geometryPolygonUuids);
       } catch {
-        // Error feedback is already surfaced by handleRunValidation; dismiss the results modal.
         onValidationPendingClear?.();
         setIsSystemValidationCompleteModalOpen(false);
         setValidatedPolygons([]);
