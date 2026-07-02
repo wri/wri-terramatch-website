@@ -35,12 +35,12 @@ const Sidebar: FC = () => {
     {
       path: "/dashboard",
       icon: IconNames.DASHBOARDS,
-      label: "Dashboards"
+      label: t("Dashboards")
     },
     {
       path: "/dashboard/project-list",
       icon: IconNames.PROJECT_PROFILE,
-      label: "Project<br />List"
+      label: t("Project<br />List")
     },
     ...(isMobile
       ? []
@@ -48,19 +48,19 @@ const Sidebar: FC = () => {
           {
             path: "/dashboard/project-insights",
             icon: IconNames.DASHBOARD_AIRTABLE,
-            label: "Project<br />Insights",
+            label: t("Project<br />Insights"),
             disabled: true
           }
         ]),
     {
       path: "/dashboard/impact-story",
       icon: IconNames.DASHBOARD_IMPACT_STORY,
-      label: "Impact<br />Story"
+      label: t("Impact<br />Story")
     },
     {
       path: "/dashboard/learn-more",
       icon: IconNames.ABOUT_US,
-      label: "Learn More"
+      label: t("Learn More")
     }
   ];
   const changeLanguageHandler = (lang: string) => {
@@ -101,7 +101,7 @@ const Sidebar: FC = () => {
             >
               <Icon name={icon} className="h-8 w-8" />
               <Text variant={isMobile ? "text-14-semibold" : "text-8"} className="text-center uppercase" containHtml>
-                {t(label)}
+                {label}
               </Text>
             </a>
           </Tooltip>
@@ -131,7 +131,7 @@ const Sidebar: FC = () => {
         <div className="flex items-center gap-2">
           <Icon name={icon} className="h-4 w-4" />
           <Text variant={isMobile ? "text-14-semibold" : "text-8"} className="text-center" containHtml>
-            {t(label.replace("<br />", " "))}
+            {label.replace("<br />", " ")}
           </Text>
         </div>
         <Icon name={IconNames.IC_ARROW_COLLAPSE} className="h-3 w-3 rotate-90" />
