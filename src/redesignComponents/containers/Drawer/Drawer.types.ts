@@ -16,6 +16,11 @@ export interface DrawerProps {
   modal?: boolean;
   maxW?: SizeValue;
   trapFocus?: boolean;
+  paddingTop?: SizeValue;
+  paddingLeft?: SizeValue;
+  paddingRight?: SizeValue;
+  paddingBottom?: SizeValue;
+  maxH?: SizeValue;
 }
 
 export interface DrawerTyped {
@@ -37,4 +42,9 @@ export interface DrawerTriggerTyped {
 export interface DrawerContainerTyped {
   children: ReactNode;
   maxW?: SizeValue;
+  paddingTop?: SizeValue;
+  paddingLeft?: SizeValue;
+  paddingRight?: SizeValue;
+  paddingBottom?: SizeValue;
+  maxH?: SizeValue;
 }

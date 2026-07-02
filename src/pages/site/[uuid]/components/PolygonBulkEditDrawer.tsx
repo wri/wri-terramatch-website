@@ -295,6 +295,9 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
       open={open}
       onOpenChange={handleOpenChange}
       size="md"
+      paddingTop={isAdmin ? 12 : 0}
+      paddingLeft={isAdmin ? 12 : 0}
+      maxH={isAdmin ? "calc(100vh - 3rem)" : "100vh"}
     >
       {({ onClose }) => (
         <>
