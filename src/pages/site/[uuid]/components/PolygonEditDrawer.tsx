@@ -57,7 +57,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onRequestInformationModal
 }) => {
   const t = useT();
-  const [, { user }] = useMyUser();
+  const [, { user, isAdmin }] = useMyUser();
   const { draftPolygonGeometry, siteData } = useMapAreaContext();
   const [activeTab, setActiveTab] = useState<string>("edit");
   const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
@@ -219,13 +219,16 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         onOpenChange={onOpenChange}
         size="md"
         placement="start"
+        paddingTop={isAdmin ? 12 : 0}
+        paddingLeft={isAdmin ? 12 : 0}
+        maxH={isAdmin ? "calc(100vh - 3rem)" : "100vh"}
       >
         {({ onClose }) => (
           <FilterPanel
             title={polygon?.polygonUuid ? polygon?.polygonName ?? t("-") : t("New Polygon")}
             variant="fixed"
             onClose={onClose}
-            className="h-screen w-full"
+            className="h-full w-full"
             content={
               <Flex className="h-full flex-col">
                 {polygon?.polygonUuid && (

@@ -14,6 +14,7 @@ import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../constants/sitePolygonM
 
 type SitePolygonMapSectionProps = {
   site: SiteFullDto;
+  isAdmin: boolean;
   polygons: SitePolygonLightDto[];
   isEditPolygonOpen: boolean;
   isSitePolygonsLoading: boolean;
@@ -26,6 +27,7 @@ type SitePolygonMapSectionProps = {
 
 const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
   site,
+  isAdmin,
   polygons,
   isEditPolygonOpen,
   isSitePolygonsLoading,
@@ -42,20 +44,16 @@ const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
       initialHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
       minHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
       maxHeight={600}
-      className={classNames({
-        "!h-[calc(100vh-66px)] w-screen": isEditPolygonOpen
-      })}
     >
       <PolygonsMap
         entityModel={site}
         type="sites"
-        className={classNames(
-          "overflow-hidden",
-          isEditPolygonOpen
-            ? // TODO: Update `top-[70px]` when the navbar is redesigned so this offset matches the new header height.
-              "!fixed top-[70px] bottom-0 left-0 right-0 z-[37] !h-[calc(100vh-66px)] w-screen rounded-none"
-            : "h-full w-full !rounded-[0.25rem_0.25rem_0_0]"
-        )}
+        className={classNames("overflow-hidden", {
+          "!fixed top-0 bottom-0 left-0 right-0 z-[37] w-screen rounded-none": isEditPolygonOpen,
+          "mt-12 ml-12": isEditPolygonOpen && isAdmin,
+          "mt-[70px]": isEditPolygonOpen && !isAdmin,
+          "h-full w-full !rounded-[0.25rem_0.25rem_0_0]": !isEditPolygonOpen
+        })}
         polygons={polygons}
         onRefetchPolygons={onRefetchPolygons}
         isLoadingPolygons={isSitePolygonsLoading}

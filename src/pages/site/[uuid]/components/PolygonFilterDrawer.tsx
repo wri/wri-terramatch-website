@@ -185,7 +185,14 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   ];
 
   return (
-    <Drawer trigger={trigger} open={open} onOpenChange={onOpenChange} maxW="22rem">
+    <Drawer
+      trigger={trigger}
+      open={open}
+      onOpenChange={onOpenChange}
+      maxW="22rem"
+      paddingTop={isAdmin ? 12 : 0}
+      maxH={isAdmin ? "calc(100vh - 3rem)" : "100vh"}
+    >
       {({ onClose }) => (
         <FilterPanel
           title={t("Filters")}
@@ -271,7 +278,6 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                 <SelectInput
                   placeholder={t("Please Select")}
                   size="small"
-                  disabled={!isAdmin}
                   items={SUBMISSION_CYCLE_MOCKED_OPTIONS.map(option => ({
                     value: option.value,
                     label: t("Option {option}", { option: option.value })

@@ -897,6 +897,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           requestedInformationComment={requestedInformationComment}
         />
         <SitePolygonMapSection
+          isAdmin={isAdmin}
           site={site}
           polygons={polygonsData}
           isEditPolygonOpen={isEditPolygonOpen}
