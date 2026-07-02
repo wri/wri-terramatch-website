@@ -9,6 +9,7 @@ import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActio
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
 import { trackPolygonRunValidationClicked } from "@/utils/polygonAnalytics";
+import { getSitePolygonsApproveTooltipIfNoneEligible } from "@/utils/sitePolygonReview";
 import { getSitePolygonsSubmitTooltipIfNoneEligible } from "@/utils/sitePolygonSubmit";
 
 import SystemValidationComplete from "./Modals/SystemValidationComplete";
@@ -29,6 +30,7 @@ export type PolygonBulkActionToolbarProps = {
   onEdit: () => void;
   onSubmit: () => void;
   onOpenApproveModal: () => void;
+  onOpenRequestInformationModal: () => void;
   onViewPolygonDetails?: (polygon: PolygonTableRow) => void;
   onRunValidation: (geometryPolygonUuids: string[]) => Promise<void>;
   isOverlapFixAction?: boolean;
@@ -55,6 +57,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   onEdit,
   onSubmit,
   onOpenApproveModal,
+  onOpenRequestInformationModal,
   onViewPolygonDetails,
   polygons,
   onRunValidation,
@@ -72,6 +75,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const [validatedPolygons, setValidatedPolygons] = useState<PolygonTableRow[]>([]);
   const [validatedGeometryPolygonUuids, setValidatedGeometryPolygonUuids] = useState<string[]>([]);
   const isOverlapAutoFixUnavailable = isOverlapFixAction && !canAutoFixOverlap;
+
   const submitDisabledTooltip = useMemo(
     () =>
       isOverlapFixAction
@@ -81,6 +85,17 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
             t
           ),
     [isOverlapFixAction, polygons, t]
+  );
+
+  const approveDisabledTooltip = useMemo(
+    () =>
+      isAdmin
+        ? getSitePolygonsApproveTooltipIfNoneEligible(
+            polygons.map(polygon => ({ status: polygon.submission, validationStatus: polygon.validation })),
+            t
+          )
+        : undefined,
+    [isAdmin, polygons, t]
   );
 
   const handleSystemValidationCompleteModalChange = useCallback((open: boolean) => {
@@ -181,13 +196,13 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
         otherActions: [
           {
             label: t("Approve"),
-            onClick: () => {
-              onOpenApproveModal();
-            }
+            value: "approve",
+            onClick: onOpenApproveModal
           },
           {
             label: t("Request information"),
-            onClick: () => {}
+            value: "request-information",
+            onClick: onOpenRequestInformationModal
           }
         ]
       })
@@ -197,6 +212,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
       isSubmitDisabled,
       onSubmit,
       onOpenApproveModal,
+      onOpenRequestInformationModal,
       submitDisabledTooltip,
       submitLabel,
       isAdmin,
@@ -212,6 +228,14 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
         />
       ) : undefined,
     [isOverlapAutoFixUnavailable, t]
+  );
+
+  const adminApproveTooltip = useMemo(
+    () =>
+      isAdmin && approveDisabledTooltip != null ? (
+        <ToolbarInfoTooltipContent lines={[approveDisabledTooltip]} />
+      ) : undefined,
+    [isAdmin, approveDisabledTooltip]
   );
 
   const isToolbarVisible = visible && !isPolygonEditDrawerOpen && !isBulkEditDrawerOpen;
@@ -235,7 +259,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
             deleteAction={deleteAction}
             actions={toolbarActions}
             primaryAction={primaryAction}
-            infoTooltip={overlapTooltip ?? submitDisabledTooltip}
+            infoTooltip={overlapTooltip ?? adminApproveTooltip ?? submitDisabledTooltip}
           />
         </Box>
       )}

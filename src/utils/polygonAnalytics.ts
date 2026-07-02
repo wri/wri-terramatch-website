@@ -5,7 +5,13 @@ import { getPolygonAnalyticsContext, trackPolygonEvent } from "./ga4";
 
 export type PolygonType = "monitoring_plot" | "standard";
 
-export type BulkActionType = "fix_overlap" | "run_validation" | "submit" | "download";
+export type BulkActionType =
+  | "fix_overlap"
+  | "run_validation"
+  | "submit"
+  | "download"
+  | "approve"
+  | "request_information";
 
 export type PolygonUploadErrorType = "file_format" | "geometry" | "size_limit";
 

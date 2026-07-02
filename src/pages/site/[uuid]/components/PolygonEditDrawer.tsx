@@ -38,6 +38,8 @@ interface PolygonEditDrawerProps {
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
+  onRequestApproveModal?: () => void;
+  onRequestInformationModal?: () => void;
 }
 
 const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
@@ -50,7 +52,9 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onRunValidation,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
-  onDeletingChange
+  onDeletingChange,
+  onRequestApproveModal,
+  onRequestInformationModal
 }) => {
   const t = useT();
   const [, { user }] = useMyUser();
@@ -273,6 +277,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     onRequestAnrUploadModal={mode => setAnrPlotsModal({ kind: "upload", mode })}
                     onRequestAnrDeleteModal={() => setAnrPlotsModal({ kind: "delete" })}
                     isAnrPlotsOperating={isUploadingAnrPlots || isDeletingAnrPlots}
+                    onRequestApproveModal={onRequestApproveModal}
+                    onRequestInformationModal={onRequestInformationModal}
                     onSaved={onSaved}
                     onPolygonUpdated={onPolygonUpdated}
                     onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}

@@ -4,17 +4,17 @@ import { FC } from "react";
 
 import { CheckApprovedIcon } from "@/redesignComponents/foundations/Icons";
 
-import type { PolygonStatusChangeComment } from "../../utils/polygonStatusChangeComment";
-import PolygonStatusChangeResultModal from "./PolygonStatusChangeResultModal";
+import type { PolygonStatusChangeComment } from "../../../utils/polygonStatusChangeComment";
+import PolygonStatusChangeResultModal from "../PolygonStatusChangeResultModal";
 
-export interface PolygonSubmittedProps {
+export interface InformationRequestedProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   polygons: string[];
-  submittedComment?: PolygonStatusChangeComment | null;
+  comment?: PolygonStatusChangeComment | null;
 }
 
-const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polygons, submittedComment }) => {
+const InformationRequested: FC<InformationRequestedProps> = ({ open, onOpenChange, polygons, comment }) => {
   const t = useT();
 
   return (
@@ -22,31 +22,31 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
       open={open}
       onOpenChange={onOpenChange}
       polygons={polygons}
-      comment={submittedComment}
-      singleTitle={t("Polygon submitted")}
-      pluralTitle={t("Polygons submitted")}
+      comment={comment}
+      singleTitle={t("Information requested")}
+      pluralTitle={t("Information requested")}
       renderSingleContent={polygonName => (
         <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2} px={4}>
           <CheckApprovedIcon boxSize={8} color={"success.500"} mb={2} />
+          <Text textStyle="400" color="neutral.900" textAlign="center">
+            {t("Additional information has been requested for")}
+          </Text>
           <Text textStyle="500-bold" color="neutral.900" textAlign="center">
             {polygonName}
-          </Text>
-          <Text textStyle="400" color="neutral.900">
-            {t("has been submitted.")}
           </Text>
         </Flex>
       )}
       renderPluralLeadContent={() => (
         <Text textStyle="400" color="neutral.900" display={"flex"} gap={0.5} mb={3} alignItems={"center"}>
           <CheckApprovedIcon boxSize={4} color={"success.500"} mr={2} />
-          {t("The following Polygons")}
-          <Text textStyle="400-bold" color="neutral.900" ml={0.5}>
-            {t("have been submitted:")}
+          <Text as="span" textStyle="400-bold" color="neutral.900" mr={0.5}>
+            {t("Additional information")}
           </Text>
+          {t("has been requested for the following polygons:")}
         </Text>
       )}
     />
   );
 };
 
-export default PolygonSubmitted;
+export default InformationRequested;
