@@ -144,10 +144,10 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
   const suffixButtons: SuffixButtonConfig[] = useMemo(
     () => [
-      { key: "site-profile", labelKey: "Site Profile" },
-      { key: "project-report", labelKey: "Project Report" }
+      { key: "site-profile", labelKey: t("Site Profile") },
+      { key: "project-report", labelKey: t("Project Report") }
     ],
-    []
+    [t]
   );
 
   return (

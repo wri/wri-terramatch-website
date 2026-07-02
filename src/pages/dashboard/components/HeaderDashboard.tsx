@@ -22,10 +22,11 @@ import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
+import { useLandscapeOptions } from "@/hooks/translation/useLandscapeMappings";
 import { useOnMount } from "@/hooks/useOnMount";
 import { EMPTY_I18N } from "@/i18n/util";
 import { OptionValue } from "@/types/common";
-import { convertCodesToNames, convertNamesToCodes, LANDSCAPE_OPTIONS } from "@/utils/landscapeUtils";
+import { convertCodesToNames, convertNamesToCodes } from "@/utils/landscapeUtils";
 
 import { useDashboardData } from "../hooks/useDashboardData";
 import BlurContainer from "./BlurContainer";
@@ -56,6 +57,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     setSelectedCountry
   } = props;
   const t = useT();
+  const landscapeOptions = useLandscapeOptions();
   const router = useRouter();
   const { showLoader, hideLoader } = useLoading();
   const { filters, setFilters, setSearchTerm, searchTerm, lastUpdatedAt, setLastUpdatedAt } = useDashboardContext();
@@ -452,7 +454,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                   onClear={() => {
                     handleChange("landscapes", []);
                   }}
-                  options={LANDSCAPE_OPTIONS}
+                  options={landscapeOptions}
                   optionClassName="hover:bg-grey-200"
                   containerClassName="z-[4] w-full"
                 />
@@ -490,7 +492,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                     }));
                   }}
                   options={activeCountries.map((country: CountriesProps) => ({
-                    title: country.data.label,
+                    title: t(country.data.label),
                     value: country.id,
                     prefix: <CountryFlag src={country.data.icon} size="sm" />
                   }))}
