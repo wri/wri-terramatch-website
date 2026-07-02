@@ -5,9 +5,7 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
-import { useCurrencyContext } from "@/context/currency.provider";
 import { useLocalStepsProvider, useWizardOrgFormDetails } from "@/context/wizardForm.provider";
-import { formatFinancialAmount, getCurrencySymbolPrefix } from "@/utils/financialReport";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
@@ -81,14 +79,7 @@ const RHFFundingTypeDataTable: FC<PropsWithChildren<RHFFundingTypeTableProps>> =
   const value = useMemo((): FundingTypeData[] => (Array.isArray(field?.value) ? field.value : []), [field?.value]);
   const [tableKey, setTableKey] = useState(0);
 
-  const { currency } = useCurrencyContext();
   const orgDetails = useWizardOrgFormDetails();
-  const isoCurrency =
-    currency != null && currency !== ""
-      ? String(currency)
-      : orgDetails?.currency != null && orgDetails.currency !== ""
-      ? String(orgDetails.currency)
-      : undefined;
 
   const refreshTable = () => {
     setTableKey(prev => prev + 1);
@@ -148,14 +139,14 @@ const RHFFundingTypeDataTable: FC<PropsWithChildren<RHFFundingTypeTableProps>> =
                 if (!Number.isFinite(n)) {
                   return "";
                 }
-                return `${getCurrencySymbolPrefix(isoCurrency)} ${formatFinancialAmount(n, isoCurrency)}`.trim();
+                return `$ ${n?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
               }
             }
           : col
       ),
       steps: [{ id: "fundingTypeTable", fields: getFundingTypeQuestions(t) }]
     }),
-    [isoCurrency, t]
+    [t]
   );
   const fieldsProvider = useLocalStepsProvider(steps);
 
