@@ -30,6 +30,7 @@ import {
   formatPolygonTargetId,
   trackBulkActionCompleted,
   trackPolygonDownloaded,
+  trackPolygonRunValidationClicked,
   trackPolygonStatusChanged
 } from "@/utils/polygonAnalytics";
 
@@ -37,6 +38,7 @@ import type { OverlapFixPolygon } from "../components/Modals/OverlapFix";
 import type { PolygonOverlapFixParams } from "../components/polygonEdit.types";
 import { prunePolygonValidationCache } from "../components/polygonEditSave";
 import type { PolygonTableRow } from "../components/PolygonTableRow";
+import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
 import {
   closePolygonProgressToast,
   completePolygonProgressToast,
@@ -84,6 +86,8 @@ type UseSitePolygonBulkActionsParams = {
     polygonsNotFixed: OverlapFixPolygon[];
   }) => void;
   onValidationJobsStarted?: (polygonUuids: string[], options?: { trackBulkCompletion?: boolean }) => void;
+  onValidationPending?: (polygonUuids: string[]) => void;
+  onValidationPendingClear?: () => void;
 };
 
 export const useSitePolygonBulkActions = ({
@@ -102,7 +106,9 @@ export const useSitePolygonBulkActions = ({
   fetchAllValidationPages,
   fetchOverlapValidations,
   onOverlapFixResultsOpen,
-  onValidationJobsStarted
+  onValidationJobsStarted,
+  onValidationPending,
+  onValidationPendingClear
 }: UseSitePolygonBulkActionsParams) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
@@ -369,6 +375,58 @@ export const useSitePolygonBulkActions = ({
       }
     },
     [openNotification, runPolygonValidation, t]
+  );
+
+  const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
+  const [validatedPolygons, setValidatedPolygons] = useState<PolygonTableRow[]>([]);
+
+  const handleSystemValidationCompleteModalChange = useCallback((open: boolean) => {
+    setIsSystemValidationCompleteModalOpen(open);
+    if (!open) {
+      setValidatedPolygons([]);
+    }
+  }, []);
+
+  /**
+   * Single entry point for "Run Validation" used by both the bulk actions toolbar and the
+   * map popup, so every trigger point gets identical tracking + results modal behavior (DRY).
+   * Polygon rows are looked up from `polygonsData` by geometry uuid so the results modal is never
+   * built from stale/positionally-mismatched data (see `SystemValidationComplete`).
+   */
+  const runValidationWithResultsModal = useCallback(
+    async (geometryPolygonUuids: string[]) => {
+      if (geometryPolygonUuids.length === 0) {
+        return;
+      }
+
+      trackPolygonRunValidationClicked({ siteUuid: site.uuid, polygonIds: geometryPolygonUuids });
+
+      const rows = geometryPolygonUuids
+        .map(geometryPolygonUuid =>
+          polygonsData.find(polygon => (polygon.polygonUuid ?? polygon.uuid) === geometryPolygonUuid)
+        )
+        .filter((polygon): polygon is SitePolygonLightDto => polygon != null)
+        .map(polygon => mapSitePolygonToTableRow(polygon, t));
+
+      onValidationPending?.(geometryPolygonUuids);
+      geometryPolygonUuids.forEach(geometryPolygonUuid => {
+        prunePolygonValidationCache(geometryPolygonUuid);
+      });
+      ApiSlice.pruneCache("validations");
+
+      setValidatedPolygons(rows);
+      setIsSystemValidationCompleteModalOpen(true);
+
+      try {
+        await handleRunValidation(geometryPolygonUuids);
+      } catch {
+        // Error feedback is already surfaced by handleRunValidation; dismiss the results modal.
+        onValidationPendingClear?.();
+        setIsSystemValidationCompleteModalOpen(false);
+        setValidatedPolygons([]);
+      }
+    },
+    [handleRunValidation, onValidationPending, onValidationPendingClear, polygonsData, site.uuid, t]
   );
 
   const handlePolygonDeletingChange = useCallback((isDeleting: boolean, count = 0) => {
@@ -971,7 +1029,11 @@ export const useSitePolygonBulkActions = ({
     handleRunValidation,
     handleSubmitPolygonConfirmationModalChange,
     handleSubmitPolygonsModalChange,
+    handleSystemValidationCompleteModalChange,
+    isSystemValidationCompleteModalOpen,
     openPolygonEditDrawerForRow,
-    runPolygonValidation
+    runPolygonValidation,
+    runValidationWithResultsModal,
+    validatedPolygons
   };
 };

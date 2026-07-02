@@ -172,6 +172,8 @@ type UsePolygonSelectionZoomParams = {
   selectedPolygonUuids: string[] | undefined;
   focusPolygonUuid?: string | null;
   onFocusPolygonConsumed?: () => void;
+  validationZoomPolygonUuids?: string[] | null;
+  onValidationZoomConsumed?: () => void;
   sitePolygonData: SitePolygonLightDto[] | undefined;
 };
 
@@ -258,9 +260,12 @@ export function usePolygonSelectionZoom({
   selectedPolygonUuids,
   focusPolygonUuid,
   onFocusPolygonConsumed,
+  validationZoomPolygonUuids,
+  onValidationZoomConsumed,
   sitePolygonData
 }: UsePolygonSelectionZoomParams): void {
   const lastZoomedSelectionRef = useRef<string>("");
+  const lastValidationZoomKeyRef = useRef<string>("");
   const requestSequenceRef = useRef(0);
   const sitePolygonIdsFingerprint = buildSitePolygonIdsFingerprint(sitePolygonData);
 
@@ -360,6 +365,52 @@ export function usePolygonSelectionZoom({
       requestSequenceRef.current += 1;
     };
   }, [map, styleReady, sourcesAdded, focusPolygonUuid, onFocusPolygonConsumed, zoomToUuids]);
+
+  useEffect(() => {
+    const uuids = (validationZoomPolygonUuids ?? []).filter(uuid => uuid !== "");
+    if (uuids.length === 0) {
+      lastValidationZoomKeyRef.current = "";
+      return;
+    }
+
+    if (!styleReady || !sourcesAdded || map.current == null) {
+      return;
+    }
+
+    const selectionKey = getSortedSelectionKey(uuids);
+    if (selectionKey === lastValidationZoomKeyRef.current) {
+      return;
+    }
+
+    const m = map.current;
+    const requestSequence = requestSequenceRef.current + 1;
+    requestSequenceRef.current = requestSequence;
+    let cancelled = false;
+
+    const isStale = () =>
+      cancelled || requestSequence !== requestSequenceRef.current || map.current == null || map.current !== m;
+
+    const attemptZoom = async () => {
+      polygonSelectionZoomBboxCache.delete(selectionKey);
+      const zoomed = await zoomToUuids(uuids, m, isStale);
+      if (zoomed && !isStale()) {
+        lastValidationZoomKeyRef.current = selectionKey;
+        onValidationZoomConsumed?.();
+      }
+    };
+
+    if (m.loaded()) {
+      void attemptZoom();
+    } else {
+      m.once("idle", attemptZoom);
+    }
+
+    return () => {
+      cancelled = true;
+      m.off("idle", attemptZoom);
+      requestSequenceRef.current += 1;
+    };
+  }, [map, onValidationZoomConsumed, sourcesAdded, styleReady, validationZoomPolygonUuids, zoomToUuids]);
 }
 
 type UsePolygonTableHighlightPointerParams = {

@@ -8,6 +8,8 @@ let closeMapPopupsExternal: (() => void) | null = null;
 let openPolygonPopupExternal: ((polygonUuid: string) => void | Promise<void>) | null = null;
 let openPolygonApproveConfirmationExternal: ((sitePolygonUuid: string) => void) | null = null;
 let openPolygonRequestInformationConfirmationExternal: ((sitePolygonUuid: string) => void) | null = null;
+let sitePolygonAdminReviewMode = false;
+let runPolygonValidationFromMapPopupExternal: ((geometryPolygonUuids: string[]) => Promise<void>) | null = null;
 
 export const registerMapAreaPopupActions = (actions: {
   openPolygonSubmitConfirmation: (sitePolygonUuid: PolygonSubmitConfirmationRequest) => void;
@@ -30,6 +32,25 @@ export const unregisterMapAreaPopupActions = (): void => {
   openPolygonApproveConfirmationExternal = null;
   openPolygonRequestInformationConfirmationExternal = null;
 };
+
+export const registerSitePolygonAdminReviewMode = (isAdminReview: boolean): void => {
+  sitePolygonAdminReviewMode = isAdminReview;
+};
+
+export const isSitePolygonAdminReviewMode = (): boolean => sitePolygonAdminReviewMode;
+
+export const registerRunPolygonValidationFromMapPopup = (
+  handler: (geometryPolygonUuids: string[]) => Promise<void>
+): void => {
+  runPolygonValidationFromMapPopupExternal = handler;
+};
+
+export const unregisterRunPolygonValidationFromMapPopup = (): void => {
+  runPolygonValidationFromMapPopupExternal = null;
+};
+
+export const runPolygonValidationFromMapPopup = (geometryPolygonUuids: string[]): Promise<void> | undefined =>
+  runPolygonValidationFromMapPopupExternal?.(geometryPolygonUuids);
 
 export const registerOpenPolygonPopupHandler = (handler: (polygonUuid: string) => void | Promise<void>): void => {
   openPolygonPopupExternal = handler;
