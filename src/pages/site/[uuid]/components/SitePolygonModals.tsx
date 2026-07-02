@@ -2,16 +2,22 @@ import type { FC } from "react";
 
 import type { BulkSitePolygonAttributeChanges } from "@/connections/SitePolygons";
 import type { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import type { SubmittedPolygonComment } from "../hooks/useSitePolygonBulkActions";
+import type { PolygonStatusChangeComment } from "../utils/polygonStatusChangeComment";
 import ApprovePolygonConfirmation from "./Modals/ApprovePolygon/ApprovePolygonConfirmation";
+import PolygonApproved from "./Modals/ApprovePolygon/PolygonApproved";
 import DeletePolygon from "./Modals/DeletePolygon";
 import EditPhotoDetails from "./Modals/GeotaggedPhotos/EditPhotoDetails";
 import OverlapFix, { type OverlapFixPolygon } from "./Modals/OverlapFix";
 import PolygonSubmitted from "./Modals/PolygonSubmitted";
+import InformationRequested from "./Modals/RequestInformation/InformationRequested";
+import RequestInformationConfirmation from "./Modals/RequestInformation/RequestInformationConfirmation";
 import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import SubmitPolygons from "./Modals/SubmitPolygons";
+import SystemValidationComplete from "./Modals/SystemValidationComplete";
 import UploadError from "./Modals/UploadError";
 import UploadPhotos from "./Modals/UploadPhotos";
 import UploadPolygons from "./Modals/UploadPolygons";
@@ -65,8 +71,28 @@ type SitePolygonModalsProps = {
   openApprovePolygonConfirmationModal: boolean;
   onApprovePolygonConfirmationModalOpenChange: (open: boolean) => void;
   approvePayload: { polygons: PolygonTableRow[] } | null;
-  onApprove: (comment: string) => void | Promise<void>;
+  projectUuid?: string | null;
+  onApprove: (comment: string, selectedPolygons: PolygonTableRow[]) => void | Promise<void>;
   onRequestInformation: () => void | Promise<void>;
+  openRequestInformationModal: boolean;
+  onRequestInformationModalOpenChange: (open: boolean) => void;
+  requestInformationPayload: { polygons: PolygonTableRow[] } | null;
+  onConfirmRequestInformation: (comment: string) => void | Promise<void>;
+  openPolygonApprovedModal: boolean;
+  onPolygonApprovedModalOpenChange: (open: boolean) => void;
+  approvedPolygonNames: string[];
+  approvedPolygonComment: PolygonStatusChangeComment | null;
+  openInformationRequestedModal: boolean;
+  onInformationRequestedModalOpenChange: (open: boolean) => void;
+  requestedInformationPolygonNames: string[];
+  requestedInformationComment: PolygonStatusChangeComment | null;
+  openSystemValidationCompleteModal: boolean;
+  validatedPolygons: PolygonTableRow[];
+  polygonValidations: Map<string, ValidationDto>;
+  pendingValidationPolygonIds: string[];
+  isAwaitingValidationResults: boolean;
+  onSystemValidationCompleteModalOpenChange: (open: boolean) => void;
+  onViewValidationDetails: (polygon: PolygonTableRow) => void;
 };
 
 const SitePolygonModals: FC<SitePolygonModalsProps> = ({
@@ -113,20 +139,61 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   openApprovePolygonConfirmationModal,
   onApprovePolygonConfirmationModalOpenChange,
   approvePayload,
+  projectUuid,
   onApprove,
-  onRequestInformation
+  onRequestInformation,
+  openRequestInformationModal,
+  onRequestInformationModalOpenChange,
+  requestInformationPayload,
+  onConfirmRequestInformation,
+  openPolygonApprovedModal,
+  onPolygonApprovedModalOpenChange,
+  approvedPolygonNames,
+  approvedPolygonComment,
+  openInformationRequestedModal,
+  onInformationRequestedModalOpenChange,
+  requestedInformationPolygonNames,
+  requestedInformationComment,
+  openSystemValidationCompleteModal,
+  validatedPolygons,
+  polygonValidations,
+  pendingValidationPolygonIds,
+  isAwaitingValidationResults,
+  onSystemValidationCompleteModalOpenChange,
+  onViewValidationDetails
 }) => {
   const isAdmin = useIsAdmin();
   return (
     <>
       {isAdmin && (
-        <ApprovePolygonConfirmation
-          open={openApprovePolygonConfirmationModal}
-          onOpenChange={onApprovePolygonConfirmationModalOpenChange}
-          polygons={approvePayload?.polygons ?? []}
-          onApprove={onApprove}
-          onRequestInformation={onRequestInformation}
-        />
+        <>
+          <ApprovePolygonConfirmation
+            open={openApprovePolygonConfirmationModal}
+            onOpenChange={onApprovePolygonConfirmationModalOpenChange}
+            polygons={approvePayload?.polygons ?? []}
+            projectUuid={projectUuid}
+            onApprove={onApprove}
+            onRequestInformation={onRequestInformation}
+          />
+          <RequestInformationConfirmation
+            open={openRequestInformationModal}
+            onOpenChange={onRequestInformationModalOpenChange}
+            polygons={requestInformationPayload?.polygons ?? []}
+            onRequestInformation={onConfirmRequestInformation}
+          />
+          <PolygonApproved
+            open={openPolygonApprovedModal}
+            onOpenChange={onPolygonApprovedModalOpenChange}
+            polygons={approvedPolygonNames}
+            comment={approvedPolygonComment}
+          />
+          <InformationRequested
+            open={openInformationRequestedModal}
+            onOpenChange={onInformationRequestedModalOpenChange}
+            polygons={requestedInformationPolygonNames}
+            comment={requestedInformationComment}
+          />
+        </>
       )}
       <PolygonBulkEditDrawer
         selectedPolygons={bulkEditPayload?.polygons ?? []}
@@ -184,6 +251,15 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
         polygonsFixed={overlapFixResults.polygonsFixed}
         polygonsNotFixed={overlapFixResults.polygonsNotFixed}
         onViewPolygon={onViewOverlapPolygon}
+      />
+      <SystemValidationComplete
+        open={openSystemValidationCompleteModal}
+        onOpenChange={onSystemValidationCompleteModalOpenChange}
+        polygons={validatedPolygons}
+        polygonValidations={polygonValidations}
+        pendingValidationPolygonIds={pendingValidationPolygonIds}
+        isLoadingResults={isAwaitingValidationResults}
+        onViewDetails={onViewValidationDetails}
       />
       <UploadError open={openUploadErrorModal} onOpenChange={onUploadErrorModalOpenChange} />
       <UploadPhotos open={openUploadPhotosModal} onOpenChange={onUploadPhotosModalOpenChange} />

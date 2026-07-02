@@ -38,6 +38,8 @@ interface PolygonEditDrawerProps {
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
+  onRequestApproveModal?: () => void;
+  onRequestInformationModal?: () => void;
 }
 
 const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
@@ -50,10 +52,12 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onRunValidation,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
-  onDeletingChange
+  onDeletingChange,
+  onRequestApproveModal,
+  onRequestInformationModal
 }) => {
   const t = useT();
-  const [, { user }] = useMyUser();
+  const [, { user, isAdmin }] = useMyUser();
   const { draftPolygonGeometry, siteData } = useMapAreaContext();
   const [activeTab, setActiveTab] = useState<string>("edit");
   const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
@@ -215,13 +219,16 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         onOpenChange={onOpenChange}
         size="md"
         placement="start"
+        paddingTop={isAdmin ? 12 : 0}
+        paddingLeft={isAdmin ? 12 : 0}
+        maxH={isAdmin ? "calc(100vh - 3rem)" : "100vh"}
       >
         {({ onClose }) => (
           <FilterPanel
             title={polygon?.polygonUuid ? polygon?.polygonName ?? t("-") : t("New Polygon")}
             variant="fixed"
             onClose={onClose}
-            className="h-screen w-full"
+            className="h-full w-full"
             content={
               <Flex className="h-full flex-col">
                 {polygon?.polygonUuid && (
@@ -273,6 +280,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     onRequestAnrUploadModal={mode => setAnrPlotsModal({ kind: "upload", mode })}
                     onRequestAnrDeleteModal={() => setAnrPlotsModal({ kind: "delete" })}
                     isAnrPlotsOperating={isUploadingAnrPlots || isDeletingAnrPlots}
+                    onRequestApproveModal={onRequestApproveModal}
+                    onRequestInformationModal={onRequestInformationModal}
                     onSaved={onSaved}
                     onPolygonUpdated={onPolygonUpdated}
                     onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}

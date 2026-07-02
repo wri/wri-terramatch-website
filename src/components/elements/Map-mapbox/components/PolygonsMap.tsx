@@ -42,12 +42,15 @@ interface PolygonsMapProps {
   onRefetchPolygons: () => void | Promise<void>;
   isLoadingPolygons?: boolean;
   freezeCameraZoom?: boolean;
+  skipNextSiteBboxZoomNonce?: number;
   className?: string;
   polygonTableHighlight?: {
     selectedPolygonUuids: string[];
     onPolygonClickedFromMap?: (uuid: string) => void;
     focusPolygonUuid?: string | null;
     onFocusPolygonConsumed?: () => void;
+    validationZoomPolygonUuids?: string[] | null;
+    onValidationZoomConsumed?: () => void;
   };
   overlapPolygons?: OverlapPolygonPoint[];
 }
@@ -66,6 +69,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   onRefetchPolygons,
   isLoadingPolygons = false,
   freezeCameraZoom = false,
+  skipNextSiteBboxZoomNonce = 0,
   className,
   polygonTableHighlight,
   overlapPolygons
@@ -226,6 +230,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData && !freezeCameraZoom}
+        skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
         mediaFiles={mediaFiles}
         sitePolygonData={sitePolygonDataV3}
         disabledPolygonPanel={disabledPolygonPanel}

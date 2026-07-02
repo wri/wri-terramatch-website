@@ -86,6 +86,7 @@ export interface BaseMapProps {
   legendPosition?: ControlMapPosition;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
+  skipNextSiteBboxZoomNonce?: number;
   /** Tile cache key from another map; modal can reuse the same Geoserver RND. */
   initialTileVersion?: string;
   /** When it matches current polygon data, skip bumping the tile cache on mount. */
@@ -98,6 +99,8 @@ export interface BaseMapProps {
     onPolygonClickedFromMap?: (uuid: string) => void;
     focusPolygonUuid?: string | null;
     onFocusPolygonConsumed?: () => void;
+    validationZoomPolygonUuids?: string[] | null;
+    onValidationZoomConsumed?: () => void;
   };
   overlapPolygons?: OverlapPolygonPoint[];
   autoEditPolygon?: boolean;
@@ -420,6 +423,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     selectedPolygonUuids: polygonTableHighlight?.selectedPolygonUuids,
     focusPolygonUuid: polygonTableHighlight?.focusPolygonUuid,
     onFocusPolygonConsumed: polygonTableHighlight?.onFocusPolygonConsumed,
+    validationZoomPolygonUuids: polygonTableHighlight?.validationZoomPolygonUuids,
+    onValidationZoomConsumed: polygonTableHighlight?.onValidationZoomConsumed,
     sitePolygonData
   });
 
@@ -484,6 +489,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     zoom,
     hasControls,
     shouldBboxZoom,
+    skipNextSiteBboxZoomNonce: props.skipNextSiteBboxZoomNonce,
     polygonFromMap,
     polygonBbox,
     isUserDrawingEnabled,

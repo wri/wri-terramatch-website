@@ -5,6 +5,7 @@ import { useT } from "@transifex/react";
 import React, { FC, useEffect, useMemo, useState } from "react";
 
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
@@ -72,6 +73,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
 }) => {
   const t = useT();
   const [draftFilters, setDraftFilters] = useState<PolygonFilterState>(filters);
+  const isAdmin = useIsAdmin();
 
   useEffect(() => {
     if (open === true) {
@@ -176,8 +178,21 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     return dates;
   }, [draftFilters.plantStartFrom, draftFilters.plantStartTo]);
 
+  const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
+    { value: "option-1", label: t("Option 1") },
+    { value: "option-2", label: t("Option 2") },
+    { value: "option-3", label: t("Option 3") }
+  ];
+
   return (
-    <Drawer trigger={trigger} open={open} onOpenChange={onOpenChange} maxW="22rem">
+    <Drawer
+      trigger={trigger}
+      open={open}
+      onOpenChange={onOpenChange}
+      maxW="22rem"
+      paddingTop={isAdmin ? 12 : 0}
+      maxH={isAdmin ? "calc(100vh - 3rem)" : "100vh"}
+    >
       {({ onClose }) => (
         <FilterPanel
           title={t("Filters")}
@@ -259,8 +274,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   onChange={handleTargetLandUseChange}
                 />
               </FilterCard>
-              {/* TODO: Add submission cycle filter when it is implemented */}
-              {/* <FilterCard label={t("Submission Cycle")}>
+              <FilterCard label={t("Submission Cycle")}>
                 <SelectInput
                   placeholder={t("Please Select")}
                   size="small"
@@ -269,7 +283,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                     label: t("Option {option}", { option: option.value })
                   }))}
                 />
-              </FilterCard> */}
+              </FilterCard>
               <FilterCard label={t("Overlap")}>
                 <Switch name="overlap" checked={draftFilters.hasOverlap} onCheckedChange={handleOverlapChange}>
                   {t("Show Polygon Overlaps")}

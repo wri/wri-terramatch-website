@@ -12,6 +12,7 @@ type UseMapCameraParams = {
   zoom?: number;
   hasControls?: boolean;
   shouldBboxZoom?: boolean;
+  skipNextSiteBboxZoomNonce?: number;
   polygonFromMap?: Pick<PolygonFromMapState, "isOpen" | "uuid"> | null;
   polygonBbox?: BBox | null;
   isUserDrawingEnabled?: boolean;
@@ -25,6 +26,7 @@ export function useMapCamera({
   zoom,
   hasControls,
   shouldBboxZoom,
+  skipNextSiteBboxZoomNonce = 0,
   polygonFromMap,
   polygonBbox,
   isUserDrawingEnabled,
@@ -36,6 +38,14 @@ export function useMapCamera({
   const suppressNextAutoCameraMoveRef = useRef<boolean>(false);
   const wasDrawingEnabledRef = useRef<boolean>(false);
   const suppressAutoCameraUntilPolygonSelectionRef = useRef<boolean>(false);
+  const lastSkipNextSiteBboxZoomNonceRef = useRef(0);
+
+  useEffect(() => {
+    if (skipNextSiteBboxZoomNonce > lastSkipNextSiteBboxZoomNonceRef.current) {
+      lastSkipNextSiteBboxZoomNonceRef.current = skipNextSiteBboxZoomNonce;
+      suppressNextAutoCameraMoveRef.current = true;
+    }
+  }, [skipNextSiteBboxZoomNonce]);
 
   useEffect(() => {
     if (isUserDrawingEnabled === true) {

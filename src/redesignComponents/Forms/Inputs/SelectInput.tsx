@@ -24,6 +24,9 @@ const StyledWrapper = styled.div`
   & button[data-part="trigger"]:not([data-placeholder-shown]) {
     border-color: ${getThemedColor("neutral", 700)};
   }
+  & button[data-part="trigger"][data-disabled] {
+    border-color: ${getThemedColor("neutral", 300)};
+  }
 `;
 
 const SelectInput: FC<ComponentProps<typeof WriSelect>> = props => (

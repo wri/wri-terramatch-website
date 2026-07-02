@@ -4,17 +4,17 @@ import { FC } from "react";
 
 import { CheckApprovedIcon } from "@/redesignComponents/foundations/Icons";
 
-import type { PolygonStatusChangeComment } from "../../utils/polygonStatusChangeComment";
-import PolygonStatusChangeResultModal from "./PolygonStatusChangeResultModal";
+import type { PolygonStatusChangeComment } from "../../../utils/polygonStatusChangeComment";
+import PolygonStatusChangeResultModal from "../PolygonStatusChangeResultModal";
 
-export interface PolygonSubmittedProps {
+export interface PolygonApprovedProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   polygons: string[];
-  submittedComment?: PolygonStatusChangeComment | null;
+  comment?: PolygonStatusChangeComment | null;
 }
 
-const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polygons, submittedComment }) => {
+const PolygonApproved: FC<PolygonApprovedProps> = ({ open, onOpenChange, polygons, comment }) => {
   const t = useT();
 
   return (
@@ -22,9 +22,9 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
       open={open}
       onOpenChange={onOpenChange}
       polygons={polygons}
-      comment={submittedComment}
-      singleTitle={t("Polygon submitted")}
-      pluralTitle={t("Polygons submitted")}
+      comment={comment}
+      singleTitle={t("Polygon approved")}
+      pluralTitle={t("Polygons approved")}
       renderSingleContent={polygonName => (
         <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2} px={4}>
           <CheckApprovedIcon boxSize={8} color={"success.500"} mb={2} />
@@ -32,7 +32,7 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
             {polygonName}
           </Text>
           <Text textStyle="400" color="neutral.900">
-            {t("has been submitted.")}
+            {t("has been approved.")}
           </Text>
         </Flex>
       )}
@@ -41,7 +41,7 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
           <CheckApprovedIcon boxSize={4} color={"success.500"} mr={2} />
           {t("The following Polygons")}
           <Text textStyle="400-bold" color="neutral.900" ml={0.5}>
-            {t("have been submitted:")}
+            {t("have been approved:")}
           </Text>
         </Text>
       )}
@@ -49,4 +49,4 @@ const PolygonSubmitted: FC<PolygonSubmittedProps> = ({ open, onOpenChange, polyg
   );
 };
 
-export default PolygonSubmitted;
+export default PolygonApproved;
