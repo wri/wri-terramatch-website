@@ -5,10 +5,11 @@ import { ChangeEvent, DragEvent, FC, useCallback, useRef, useState } from "react
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
-import RadioButtonGroup from "@/redesignComponents/Forms/Actions/RadioButton/Radio";
 import { UploadIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ANR_ACCEPTED_UPLOAD_FORMATS, isAcceptedAnrUploadFile } from "./useAnrMonitoringPlotActions";
+
+const UPLOAD_LIMIT_MB = 50;
 
 type UploadAnrMonitoringPlotsMode = "upload" | "replace";
 
@@ -31,8 +32,7 @@ const UploadAnrMonitoringPlots: FC<UploadAnrMonitoringPlotsProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadMode, setUploadMode] = useState<UploadAnrMonitoringPlotsMode>("upload");
-  const primaryLabel = uploadMode === "replace" ? t("Update") : t("Save");
+  const primaryLabel = mode === "replace" ? t("Update") : t("Save");
 
   const handleClose = useCallback(() => {
     onOpenChange(false);
@@ -92,25 +92,6 @@ const UploadAnrMonitoringPlots: FC<UploadAnrMonitoringPlotsProps> = ({
       }
       content={
         <Box px={4}>
-          <Text mb={3} textStyle="400-bold" color="neutral.900">
-            {t("Choose an upload option:")}
-          </Text>
-          <RadioButtonGroup
-            name="upload-mode"
-            value={mode}
-            onChange={(_name, value) => setUploadMode(value as UploadAnrMonitoringPlotsMode)}
-            options={[
-              { label: t("New monitoring plots"), value: "upload" },
-              { label: t("Update existing plots"), value: "replace" }
-            ]}
-          />
-          {/* TODO: add the original UUID copy to be provided by the team */}
-          <Text mb={4} textStyle="300" color="neutral.800" mt={4}>
-            {t(
-              "To update existing monitoring plots, the files must have the original UUID <copy to be provided by the team>"
-            )}
-          </Text>
-
           <input
             ref={fileInputRef}
             type="file"
@@ -149,7 +130,7 @@ const UploadAnrMonitoringPlots: FC<UploadAnrMonitoringPlotsProps> = ({
               <Text color="neutral.700" textStyle="300">
                 {t("Upload size limit:")}{" "}
                 <Text as="span" textStyle="300-bold" color="neutral.700">
-                  XX MB
+                  {UPLOAD_LIMIT_MB} MB
                 </Text>
                 .
               </Text>
