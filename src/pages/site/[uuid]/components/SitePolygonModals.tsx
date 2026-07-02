@@ -5,11 +5,14 @@ import type { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import type { SubmittedPolygonComment } from "../hooks/useSitePolygonBulkActions";
+import type { PolygonStatusChangeComment } from "../utils/polygonStatusChangeComment";
 import ApprovePolygonConfirmation from "./Modals/ApprovePolygon/ApprovePolygonConfirmation";
+import PolygonApproved from "./Modals/ApprovePolygon/PolygonApproved";
 import DeletePolygon from "./Modals/DeletePolygon";
 import EditPhotoDetails from "./Modals/GeotaggedPhotos/EditPhotoDetails";
 import OverlapFix, { type OverlapFixPolygon } from "./Modals/OverlapFix";
 import PolygonSubmitted from "./Modals/PolygonSubmitted";
+import InformationRequested from "./Modals/RequestInformation/InformationRequested";
 import RequestInformationConfirmation from "./Modals/RequestInformation/RequestInformationConfirmation";
 import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import SubmitPolygons from "./Modals/SubmitPolygons";
@@ -66,12 +69,21 @@ type SitePolygonModalsProps = {
   openApprovePolygonConfirmationModal: boolean;
   onApprovePolygonConfirmationModalOpenChange: (open: boolean) => void;
   approvePayload: { polygons: PolygonTableRow[] } | null;
-  onApprove: (comment: string) => void | Promise<void>;
+  projectUuid?: string | null;
+  onApprove: (comment: string, selectedPolygons: PolygonTableRow[]) => void | Promise<void>;
   onRequestInformation: () => void | Promise<void>;
   openRequestInformationModal: boolean;
   onRequestInformationModalOpenChange: (open: boolean) => void;
   requestInformationPayload: { polygons: PolygonTableRow[] } | null;
   onConfirmRequestInformation: (comment: string) => void | Promise<void>;
+  openPolygonApprovedModal: boolean;
+  onPolygonApprovedModalOpenChange: (open: boolean) => void;
+  approvedPolygonNames: string[];
+  approvedPolygonComment: PolygonStatusChangeComment | null;
+  openInformationRequestedModal: boolean;
+  onInformationRequestedModalOpenChange: (open: boolean) => void;
+  requestedInformationPolygonNames: string[];
+  requestedInformationComment: PolygonStatusChangeComment | null;
 };
 
 const SitePolygonModals: FC<SitePolygonModalsProps> = ({
@@ -118,12 +130,21 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   openApprovePolygonConfirmationModal,
   onApprovePolygonConfirmationModalOpenChange,
   approvePayload,
+  projectUuid,
   onApprove,
   onRequestInformation,
   openRequestInformationModal,
   onRequestInformationModalOpenChange,
   requestInformationPayload,
-  onConfirmRequestInformation
+  onConfirmRequestInformation,
+  openPolygonApprovedModal,
+  onPolygonApprovedModalOpenChange,
+  approvedPolygonNames,
+  approvedPolygonComment,
+  openInformationRequestedModal,
+  onInformationRequestedModalOpenChange,
+  requestedInformationPolygonNames,
+  requestedInformationComment
 }) => {
   const isAdmin = useIsAdmin();
   return (
@@ -134,6 +155,7 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
             open={openApprovePolygonConfirmationModal}
             onOpenChange={onApprovePolygonConfirmationModalOpenChange}
             polygons={approvePayload?.polygons ?? []}
+            projectUuid={projectUuid}
             onApprove={onApprove}
             onRequestInformation={onRequestInformation}
           />
@@ -142,6 +164,18 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
             onOpenChange={onRequestInformationModalOpenChange}
             polygons={requestInformationPayload?.polygons ?? []}
             onRequestInformation={onConfirmRequestInformation}
+          />
+          <PolygonApproved
+            open={openPolygonApprovedModal}
+            onOpenChange={onPolygonApprovedModalOpenChange}
+            polygons={approvedPolygonNames}
+            comment={approvedPolygonComment}
+          />
+          <InformationRequested
+            open={openInformationRequestedModal}
+            onOpenChange={onInformationRequestedModalOpenChange}
+            polygons={requestedInformationPolygonNames}
+            comment={requestedInformationComment}
           />
         </>
       )}

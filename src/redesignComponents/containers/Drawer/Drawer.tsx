@@ -19,7 +19,8 @@ const Drawer: FC<DrawerProps> = ({
   size = "xs",
   placement,
   modal = true,
-  maxW
+  maxW,
+  trapFocus = true
 }) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const isControlled = openProp !== undefined;
@@ -48,6 +49,7 @@ const Drawer: FC<DrawerProps> = ({
       size={size}
       placement={placement}
       modal={modal}
+      trapFocus={trapFocus}
     >
       {trigger != null ? <TypedDrawerTrigger asChild>{trigger}</TypedDrawerTrigger> : null}
       <Portal>
