@@ -961,7 +961,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                   <Button
                     variant="borderless"
                     typeVariant="negative"
-                    className="!justify-start !px-0"
                     disabled={isAnrPlotsOperating}
                     onClick={() => onRequestAnrDeleteModal?.()}
                   >
