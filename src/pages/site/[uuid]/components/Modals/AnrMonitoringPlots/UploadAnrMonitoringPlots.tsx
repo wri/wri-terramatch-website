@@ -1,4 +1,4 @@
-import { Box, Flex, List, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { ChangeEvent, DragEvent, FC, useCallback, useRef, useState } from "react";
 
@@ -33,9 +33,6 @@ const UploadAnrMonitoringPlots: FC<UploadAnrMonitoringPlotsProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [uploadMode, setUploadMode] = useState<UploadAnrMonitoringPlotsMode>("upload");
   const primaryLabel = uploadMode === "replace" ? t("Update") : t("Save");
-  // TODO: If Plots match existing Polygon UUIDs
-  const isMatchPolygonUuids = false;
-  const mockPolygonNames = ["Polygon UUID 1", "Polygon UUID 2", "Polygon UUID 3"];
 
   const handleClose = useCallback(() => {
     onOpenChange(false);
@@ -94,120 +91,91 @@ const UploadAnrMonitoringPlots: FC<UploadAnrMonitoringPlotsProps> = ({
         </Text>
       }
       content={
-        isMatchPolygonUuids ? (
-          <Box px={4}>
-            <Text mb={3} textStyle="400" color="neutral.900">
-              {t(
-                `These monitoring plots were matched to the following ${
-                  mockPolygonNames.length > 1 ? "polygons" : "polygon"
-                }:`
-              )}
-            </Text>
-            <Flex flexDirection="column" gap={4} bg="primary.100" py={4} px={6} rounded={4}>
-              <List.Root as="ul" pl={4} spaceY={3} listStyleType="disc">
-                {mockPolygonNames.map((uuid, index) => (
-                  <List.Item
-                    key={`${uuid}-${index}`}
-                    _marker={{
-                      color: "neutral.900"
-                    }}
-                  >
-                    <Text textStyle="500" color="neutral.900" as="span">
-                      {uuid}
-                    </Text>
-                  </List.Item>
-                ))}
-              </List.Root>
-            </Flex>
-          </Box>
-        ) : (
-          <Box px={4}>
-            <Text mb={3} textStyle="400-bold" color="neutral.900">
-              {t("Choose an upload option:")}
-            </Text>
-            {/* TODO: add onChange to set the mode */}
-            <RadioButtonGroup
-              name="upload-mode"
-              value={mode}
-              onChange={(_name, value) => setUploadMode(value as UploadAnrMonitoringPlotsMode)}
-              options={[
-                { label: t("New monitoring plots"), value: "upload" },
-                { label: t("Update existing plots"), value: "replace" }
-              ]}
-            />
-            {/* TODO: add the original UUID copy to be provided by the team */}
-            <Text mb={4} textStyle="300" color="neutral.800" mt={4}>
-              {t(
-                "To update existing monitoring plots, the files must have the original UUID <copy to be provided by the team>"
-              )}
-            </Text>
+        <Box px={4}>
+          <Text mb={3} textStyle="400-bold" color="neutral.900">
+            {t("Choose an upload option:")}
+          </Text>
+          <RadioButtonGroup
+            name="upload-mode"
+            value={mode}
+            onChange={(_name, value) => setUploadMode(value as UploadAnrMonitoringPlotsMode)}
+            options={[
+              { label: t("New monitoring plots"), value: "upload" },
+              { label: t("Update existing plots"), value: "replace" }
+            ]}
+          />
+          {/* TODO: add the original UUID copy to be provided by the team */}
+          <Text mb={4} textStyle="300" color="neutral.800" mt={4}>
+            {t(
+              "To update existing monitoring plots, the files must have the original UUID <copy to be provided by the team>"
+            )}
+          </Text>
 
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept={ANR_ACCEPTED_UPLOAD_FORMATS}
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-            />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={ANR_ACCEPTED_UPLOAD_FORMATS}
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
 
-            <Flex
-              flexDirection="column"
-              gap={4}
-              bg={isDragging ? "primary.100" : "neutral.200"}
-              justifyContent="center"
-              alignItems="center"
-              py={6}
-              px={4}
-              rounded={2}
-              transition="background-color 0.15s ease-in-out"
-              onDrop={handleDrop}
-              onDragOver={event => {
-                event.preventDefault();
-                setIsDragging(true);
-              }}
-              onDragLeave={() => setIsDragging(false)}
-            >
-              <Flex justifyContent="center" alignItems="center" flexDirection="column" gap={0}>
-                <Text color="neutral.900" textStyle="400">
-                  {t("Drag and drop files here or")}
+          <Flex
+            flexDirection="column"
+            gap={4}
+            bg={isDragging ? "primary.100" : "neutral.200"}
+            justifyContent="center"
+            alignItems="center"
+            py={6}
+            px={4}
+            rounded={2}
+            transition="background-color 0.15s ease-in-out"
+            onDrop={handleDrop}
+            onDragOver={event => {
+              event.preventDefault();
+              setIsDragging(true);
+            }}
+            onDragLeave={() => setIsDragging(false)}
+          >
+            <Flex justifyContent="center" alignItems="center" flexDirection="column" gap={0}>
+              <Text color="neutral.900" textStyle="400">
+                {t("Drag and drop files here or")}
+              </Text>
+              <Button leftIcon={<UploadIcon />} variant="borderless" onClick={() => fileInputRef.current?.click()}>
+                {t("Click to upload")}
+              </Button>
+              <Text color="neutral.700" textStyle="300">
+                {t("Accepted format: GeoJSON")}
+              </Text>
+              <Text color="neutral.700" textStyle="300">
+                {t("Upload size limit:")}{" "}
+                <Text as="span" textStyle="300-bold" color="neutral.700">
+                  XX MB
                 </Text>
-                <Button leftIcon={<UploadIcon />} variant="borderless" onClick={() => fileInputRef.current?.click()}>
-                  {t("Click to upload")}
+                .
+              </Text>
+            </Flex>
+
+            {selectedFile != null ? (
+              <Flex
+                justifyContent="space-between"
+                alignItems="center"
+                gap={2}
+                bg="neutral.300"
+                px={4}
+                py={2}
+                rounded={2}
+                w="full"
+              >
+                <Text textStyle="300-bold" color="primary.700" lineClamp={1}>
+                  {selectedFile.name}
+                </Text>
+                <Button variant="borderless" size="small" onClick={() => setSelectedFile(null)}>
+                  {t("Remove")}
                 </Button>
-                <Text color="neutral.700" textStyle="300">
-                  {t("Accepted format: GeoJSON")}
-                </Text>
-                <Text color="neutral.700" textStyle="300">
-                  {t("Upload size limit:")}{" "}
-                  <Text as="span" textStyle="300-bold" color="neutral.700">
-                    XX MB
-                  </Text>
-                  .
-                </Text>
               </Flex>
-
-              {selectedFile != null ? (
-                <Flex
-                  justifyContent="space-between"
-                  alignItems="center"
-                  gap={2}
-                  bg="neutral.300"
-                  px={4}
-                  py={2}
-                  rounded={2}
-                  w="full"
-                >
-                  <Text textStyle="300-bold" color="primary.700" lineClamp={1}>
-                    {selectedFile.name}
-                  </Text>
-                  <Button variant="borderless" size="small" onClick={() => setSelectedFile(null)}>
-                    {t("Remove")}
-                  </Button>
-                </Flex>
-              ) : null}
-            </Flex>
-          </Box>
-        )
+            ) : null}
+          </Flex>
+        </Box>
       }
       footer={
         <ButtonGroup
