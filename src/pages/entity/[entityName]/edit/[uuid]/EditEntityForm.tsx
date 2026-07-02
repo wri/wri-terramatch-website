@@ -1,4 +1,3 @@
-import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import { Dictionary } from "lodash";
@@ -133,18 +132,6 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
 
-  const saveAndCloseModalMapping: any = {
-    projects: t(
-      "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the 'My Projects' section. Would you like to close this form and continue later?"
-    ),
-    sites: t(
-      "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the sites section under your project page. Would you like to close this form and continue later?"
-    ),
-    nurseries: t(
-      "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the nurseries section under your project page. Would you like to close this form and continue later?"
-    )
-  };
-
   const initialStepProps = useMemo(() => {
     if (providerLoaded && feedbackFields != null) {
       for (const [stepIndex, stepId] of fieldsProvider.stepIds().entries()) {
@@ -227,19 +214,6 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
             }}
             roundedCorners
             saveAndCloseModal={{
-              content: saveAndCloseModalMapping[entityName] ?? (
-                <Box>
-                  <Text as="span" textStyle="400">
-                    {t("Your progress will be saved as a draft. You can access this form again from the ")}
-                  </Text>
-                  <Text as="span" textStyle="400-bold">
-                    {t("Reporting Tasks")}
-                  </Text>
-                  <Text as="span" textStyle="400">
-                    {t(" section on your project page.")}
-                  </Text>
-                </Box>
-              ),
               onConfirm() {
                 showToast({
                   label: t("Draft saved"),
