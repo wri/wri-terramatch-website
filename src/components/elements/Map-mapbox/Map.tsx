@@ -624,6 +624,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
             formMap: isFormMap,
             editable,
             polygonFromMap,
+            setPolygonFromMap,
             viewImages: isViewingImages,
             setViewImages: setIsViewingImages
           }}

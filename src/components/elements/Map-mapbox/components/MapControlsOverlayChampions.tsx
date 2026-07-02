@@ -43,7 +43,14 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
     hideFullscreenControl,
     selectedPolygonsInCheckbox
   } = admin;
-  const { formMap: isFormMap, editable, polygonFromMap, viewImages: isViewingImages, setViewImages } = form;
+  const {
+    formMap: isFormMap,
+    editable,
+    polygonFromMap,
+    setPolygonFromMap,
+    viewImages: isViewingImages,
+    setViewImages
+  } = form;
   const { map } = camera;
   const { dashboardMode, showViewGallery, imageGalleryRef } = gallery;
   const { showDownloadPolygons, isDownloadingPolygons, downloadGeoJsonPolygon } = download;
@@ -140,6 +147,7 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
               <ControlGroup position="top-right" className="top-[17rem]">
                 <PolygonModifier
                   polygonFromMap={polygonFromMap}
+                  setPolygonFromMap={setPolygonFromMap}
                   onClick={handleEditPolygon}
                   onSave={onSaveEdit}
                   onCancel={onCancelEdit}

@@ -38,6 +38,7 @@ export type FormControlsProps = {
   formMap?: boolean;
   editable?: boolean;
   polygonFromMap?: PolygonFromMapState;
+  setPolygonFromMap?: (value: PolygonFromMapState) => void;
   viewImages: boolean;
   setViewImages: Dispatch<SetStateAction<boolean>>;
 };
