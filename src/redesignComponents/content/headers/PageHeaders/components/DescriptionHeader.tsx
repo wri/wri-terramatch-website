@@ -90,14 +90,16 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
           </Button>
         ) : null}
       </Box>
-      <Flex gap={1} className="items-center">
-        <Text textStyle="300" color="neutral.900">
-          {t("ID:")}
-        </Text>
-        <Text textStyle="300-bold" color="neutral.900">
-          {id}
-        </Text>
-      </Flex>
+      {id != null && id !== "" ? (
+        <Flex gap={1} className="items-center">
+          <Text textStyle="300" color="neutral.900">
+            {t("ID:")}
+          </Text>
+          <Text textStyle="300-bold" color="neutral.900">
+            {id}
+          </Text>
+        </Flex>
+      ) : null}
       <div className="flex w-fit gap-2">
         <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
           {t("Edit")}
