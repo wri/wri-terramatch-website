@@ -107,10 +107,17 @@ const RHFMap = ({
             .map(polygon => polygon.polygonUuid)
             .filter((polygonUuid): polygonUuid is string => polygonUuid != null)
         });
-        setPolygonFromMap(prev => ({
-          isOpen: prev.uuid !== "" ? prev.isOpen : false,
-          uuid: prev.uuid !== "" ? prev.uuid : projectPolygons[0].polygonUuid ?? ""
-        }));
+        setPolygonFromMap(prev => {
+          const polygonUuids = projectPolygons
+            .map(polygon => polygon.polygonUuid)
+            .filter((polygonUuid): polygonUuid is string => polygonUuid != null);
+          const selectedStillExists = prev.uuid !== "" && polygonUuids.includes(prev.uuid);
+
+          return {
+            isOpen: selectedStillExists ? prev.isOpen : false,
+            uuid: selectedStillExists ? prev.uuid : ""
+          };
+        });
       }
     };
 
@@ -184,7 +191,6 @@ const RHFMap = ({
           polygonFromMap={polygonFromMap}
           setPolygonFromMap={setPolygonFromMap}
           editable
-          showPopups
           polygonTableHighlight={polygonTableHighlight}
           onError={onError}
           captureAdditionalPolygonProperties={entityName != null && entityName !== "project"}
