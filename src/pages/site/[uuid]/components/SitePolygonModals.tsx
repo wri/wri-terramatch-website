@@ -51,8 +51,9 @@ type SitePolygonModalsProps = {
   onSubmitPolygonConfirmationModalOpenChange: (open: boolean) => void;
   onSubmitPolygonsModalOpenChange: (open: boolean) => void;
   onSubmitPolygons: (comment: string) => void | Promise<void>;
-  onUploadError: () => void;
+  onUploadError: (message: string) => void;
   openUploadErrorModal: boolean;
+  uploadErrorMessage: string | null;
   openUploadModal: boolean;
   openUploadPhotosModal: boolean;
   onUploadErrorModalOpenChange: (open: boolean) => void;
@@ -99,6 +100,7 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   onSubmitPolygons,
   onUploadError,
   onUploadErrorModalOpenChange,
+  uploadErrorMessage,
   onUploadModalOpenChange,
   onUploadPhotosModalOpenChange,
   onUploadSuccess,
@@ -162,7 +164,11 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
       polygonsNotFixed={overlapFixResults.polygonsNotFixed}
       onViewPolygon={onViewOverlapPolygon}
     />
-    <UploadError open={openUploadErrorModal} onOpenChange={onUploadErrorModalOpenChange} />
+    <UploadError
+      open={openUploadErrorModal}
+      backendErrorMessage={uploadErrorMessage}
+      onOpenChange={onUploadErrorModalOpenChange}
+    />
     <UploadPhotos open={openUploadPhotosModal} onOpenChange={onUploadPhotosModalOpenChange} />
     {editPhotoDetailsMedia != null && (
       <EditPhotoDetails
