@@ -42,6 +42,7 @@ import { useMapOverlapIndicators } from "./hooks/useMapOverlapIndicators";
 import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
 import { useMapStyle } from "./hooks/useMapStyle";
+import { usePolygonEditFocusStyle } from "./hooks/usePolygonEditFocusStyle";
 import {
   usePolygonSelectionZoom,
   usePolygonTableHighlightPointer,
@@ -410,6 +411,15 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
   });
 
   const editFocus = useMapEditFocus({ polygonFromMap, editPolygon });
+
+  usePolygonEditFocusStyle({
+    map,
+    styleReady,
+    styleVersion,
+    sourcesAdded,
+    tileLoadRequestId,
+    isGeometryEditing: editFocus.isGeometryEditing
+  });
 
   usePolygonTableHighlightStyle({
     map,

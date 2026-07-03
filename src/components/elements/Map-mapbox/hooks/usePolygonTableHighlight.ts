@@ -25,11 +25,6 @@ const HOVER_FILL_OPACITY = 0.6;
 const SELECTED_FILL_OPACITY = 1;
 const HIGHLIGHT_LINE_WIDTH = 2;
 
-// Edit-focus dimming: neighbors fade so the polygon being edited stands out.
-const EDIT_NEIGHBOR_FILL_DIM_FACTOR = 1 / 3;
-const EDIT_NEIGHBOR_LINE_OPACITY = 0.4;
-const BASE_LINE_OPACITY = 1;
-
 const TILE_POLYGON_ID_EXPR: unknown[] = ["coalesce", ["get", "uuid"], ["get", "polygonUuid"]];
 
 const TRANSIENT_MAPBOX_ERROR_PATTERNS = [
@@ -49,36 +44,11 @@ function isTransientMapboxError(error: unknown): boolean {
   return TRANSIENT_MAPBOX_ERROR_PATTERNS.some(pattern => lower.includes(pattern.toLowerCase()));
 }
 
-/** Value for the edited polygon vs. a dimmed value for every other polygon. */
-function buildEditFocusExpression(
-  focusedValue: number,
-  dimmedValue: number,
-  editedPolygonUuid: string | null
-): number | DataDrivenPropertyValueSpecification<number> {
-  if (editedPolygonUuid == null) {
-    return dimmedValue;
-  }
-  return [
-    "case",
-    ["==", TILE_POLYGON_ID_EXPR, editedPolygonUuid],
-    focusedValue,
-    dimmedValue
-  ] as DataDrivenPropertyValueSpecification<number>;
-}
-
 function buildFillOpacityExpression(
   baseOpacity: number,
   hoveredUuid: string | null | undefined,
-  selectedUuids: string[],
-  editFocus: MapEditFocusState
+  selectedUuids: string[]
 ): number | DataDrivenPropertyValueSpecification<number> {
-  if (editFocus.isEditFocusActive) {
-    return buildEditFocusExpression(
-      baseOpacity,
-      baseOpacity * EDIT_NEIGHBOR_FILL_DIM_FACTOR,
-      editFocus.editedPolygonUuid
-    );
-  }
   const hasSelected = selectedUuids.length > 0;
   const hasHover = hoveredUuid != null && hoveredUuid !== "";
   if (!hasSelected && !hasHover) {
@@ -98,13 +68,8 @@ function buildFillOpacityExpression(
 function buildLineWidthExpression(
   baseLineWidth: number,
   hoveredUuid: string | null | undefined,
-  selectedUuids: string[],
-  editFocus: MapEditFocusState
+  selectedUuids: string[]
 ): number | DataDrivenPropertyValueSpecification<number> {
-  if (editFocus.isEditFocusActive) {
-    // No hover/selection emphasis while editing; keep the base outline width.
-    return baseLineWidth;
-  }
   const hasSelected = selectedUuids.length > 0;
   const hasHover = hoveredUuid != null && hoveredUuid !== "";
   if (!hasSelected && !hasHover) {
@@ -119,15 +84,6 @@ function buildLineWidthExpression(
   }
   expr.push(baseLineWidth);
   return expr as DataDrivenPropertyValueSpecification<number>;
-}
-
-function buildLineOpacityExpression(
-  editFocus: MapEditFocusState
-): number | DataDrivenPropertyValueSpecification<number> {
-  if (!editFocus.isEditFocusActive) {
-    return BASE_LINE_OPACITY;
-  }
-  return buildEditFocusExpression(BASE_LINE_OPACITY, EDIT_NEIGHBOR_LINE_OPACITY, editFocus.editedPolygonUuid);
 }
 
 type PolygonTableHighlight = {
@@ -156,48 +112,33 @@ export function usePolygonTableHighlightStyle({
 }: UsePolygonTableHighlightStyleParams): void {
   const lastAppliedRef = useRef<Map<string, string>>(new Map());
   const isHighlightActive = highlight != null;
-  const { isEditFocusActive, editedPolygonUuid } = editFocus;
-  // Hover has no visual effect while editing, so skip store subscriptions entirely.
-  const hoveredUuid = usePolygonTableHoveredUuid(isHighlightActive && !isEditFocusActive);
+  const isGeometryEditing = editFocus.isGeometryEditing;
+  // Neighbor dimming is owned by usePolygonEditFocusStyle while geometry is edited.
+  const hoveredUuid = usePolygonTableHoveredUuid(isHighlightActive && !isGeometryEditing);
   const selectedUuids = highlight?.selectedPolygonUuids ?? EMPTY_SELECTION;
 
   useEffect(() => {
-    const isStyleActive = isHighlightActive || isEditFocusActive;
-    if (!styleReady || !sourcesAdded || map.current == null) return;
-    // Once deactivated, run one final pass so paints restore to base values.
-    if (!isStyleActive && lastAppliedRef.current.size === 0) return;
+    if (!isHighlightActive || isGeometryEditing || !styleReady || !sourcesAdded || map.current == null) return;
 
     const m = map.current;
-    const currentEditFocus: MapEditFocusState = isStyleActive
-      ? { isEditFocusActive, editedPolygonUuid }
-      : INACTIVE_MAP_EDIT_FOCUS;
-    const effectiveHovered = isStyleActive ? hoveredUuid : null;
-    const effectiveSelected = isStyleActive && !isEditFocusActive ? selectedUuids : EMPTY_SELECTION;
     const fillConfigs = getPolygonGeometryFillLayerConfigs();
     const lineConfigs = getPolygonGeometryLineLayerConfigs();
-    const fingerprint = `${isEditFocusActive ? `E:${editedPolygonUuid ?? ""}` : ""}|${
-      effectiveHovered ?? ""
-    }|${effectiveSelected.join(",")}`;
+    const fingerprint = `${hoveredUuid ?? ""}|${selectedUuids.join(",")}`;
 
     for (const { layerId, baseFillOpacity } of fillConfigs) {
       if (m.getLayer(layerId) == null) continue;
       const key = `${layerId}:fill-opacity@${baseFillOpacity}`;
       if (lastAppliedRef.current.get(key) === fingerprint) continue;
       try {
-        const value = buildFillOpacityExpression(
-          baseFillOpacity,
-          effectiveHovered,
-          effectiveSelected,
-          currentEditFocus
-        );
+        const value = buildFillOpacityExpression(baseFillOpacity, hoveredUuid, selectedUuids);
         m.setPaintProperty(layerId, "fill-opacity", value);
         lastAppliedRef.current.set(key, fingerprint);
       } catch (error) {
         if (!isTransientMapboxError(error)) {
           Log.warn("usePolygonTableHighlightStyle: set fill-opacity failed", {
             layerId,
-            hoveredUuid: effectiveHovered,
-            selectedCount: effectiveSelected.length,
+            hoveredUuid,
+            selectedCount: selectedUuids.length,
             error
           });
         }
@@ -209,39 +150,21 @@ export function usePolygonTableHighlightStyle({
       const key = `${layerId}:line-width@${baseLineWidth}`;
       if (lastAppliedRef.current.get(key) === fingerprint) continue;
       try {
-        m.setPaintProperty(
-          layerId,
-          "line-width",
-          buildLineWidthExpression(baseLineWidth, effectiveHovered, effectiveSelected, currentEditFocus)
-        );
-        m.setPaintProperty(layerId, "line-opacity", buildLineOpacityExpression(currentEditFocus));
+        const value = buildLineWidthExpression(baseLineWidth, hoveredUuid, selectedUuids);
+        m.setPaintProperty(layerId, "line-width", value);
         lastAppliedRef.current.set(key, fingerprint);
       } catch (error) {
         if (!isTransientMapboxError(error)) {
           Log.warn("usePolygonTableHighlightStyle: set line-width failed", {
             layerId,
-            hoveredUuid: effectiveHovered,
-            selectedCount: effectiveSelected.length,
+            hoveredUuid,
+            selectedCount: selectedUuids.length,
             error
           });
         }
       }
     }
-
-    if (!isStyleActive) {
-      lastAppliedRef.current = new Map();
-    }
-  }, [
-    map,
-    styleReady,
-    styleVersion,
-    sourcesAdded,
-    isHighlightActive,
-    hoveredUuid,
-    selectedUuids,
-    isEditFocusActive,
-    editedPolygonUuid
-  ]);
+  }, [map, styleReady, styleVersion, sourcesAdded, isHighlightActive, isGeometryEditing, hoveredUuid, selectedUuids]);
 
   useEffect(() => {
     lastAppliedRef.current = new Map();
@@ -516,9 +439,8 @@ export function usePolygonTableHighlightPointer({
   editFocus = INACTIVE_MAP_EDIT_FOCUS
 }: UsePolygonTableHighlightPointerParams): void {
   const isHighlightActive = highlight != null;
-  // While editing, only the edited polygon (handled by MapboxDraw) is interactive:
-  // no hover feedback and no click-to-select on neighboring polygons.
-  const isPointerActive = isHighlightActive && !editFocus.isEditFocusActive;
+  const isGeometryEditing = editFocus.isGeometryEditing;
+  const isPointerActive = isHighlightActive && !isGeometryEditing;
   const onPolygonClickedFromMap = highlight?.onPolygonClickedFromMap;
   const lastReportedRef = useRef<string | null>(null);
   const rafRef = useRef<number | null>(null);

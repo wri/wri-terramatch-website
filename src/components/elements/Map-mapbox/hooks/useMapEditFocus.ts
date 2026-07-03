@@ -8,12 +8,15 @@ import type { EditPolygonState } from "../Map.d";
 export type MapEditFocusState = {
   /** True when a polygon edit panel (champions drawer or legacy admin panel) is open. */
   isEditFocusActive: boolean;
+  /** True while an existing polygon's geometry is actively being edited on the map. */
+  isGeometryEditing: boolean;
   /** Polygon geometry uuid being edited; null when drawing a brand-new polygon. */
   editedPolygonUuid: string | null;
 };
 
 export const INACTIVE_MAP_EDIT_FOCUS: MapEditFocusState = {
   isEditFocusActive: false,
+  isGeometryEditing: false,
   editedPolygonUuid: null
 };
 
@@ -35,15 +38,19 @@ export function useMapEditFocus({ polygonFromMap, editPolygon }: UseMapEditFocus
 
   const isLegacyEditPanelOpen = !championsMap && polygonFromMap?.isOpen === true;
   const drawerPolygonUuid = drawerPolygon?.polygonUuid;
-  const editPolygonUuid = editPolygon?.uuid;
+  const editPolygonUuid = editPolygon?.isOpen === true ? editPolygon?.uuid : undefined;
+  const mapPolygonUuid = polygonFromMap?.isOpen === true ? polygonFromMap?.uuid : undefined;
   const legacyPanelUuid = isLegacyEditPanelOpen ? polygonFromMap?.uuid : undefined;
 
+  const geometryEditUuid = normalizeUuid(editPolygonUuid) ?? normalizeUuid(mapPolygonUuid);
+  const isGeometryEditing = geometryEditUuid != null;
+
   return useMemo(() => {
-    if (!isDrawerOpen && !isLegacyEditPanelOpen) {
+    const isEditFocusActive = isDrawerOpen || isLegacyEditPanelOpen || isGeometryEditing;
+    if (!isEditFocusActive) {
       return INACTIVE_MAP_EDIT_FOCUS;
     }
-    const editedPolygonUuid =
-      normalizeUuid(editPolygonUuid) ?? normalizeUuid(drawerPolygonUuid) ?? normalizeUuid(legacyPanelUuid);
-    return { isEditFocusActive: true, editedPolygonUuid };
-  }, [isDrawerOpen, isLegacyEditPanelOpen, editPolygonUuid, drawerPolygonUuid, legacyPanelUuid]);
+    const editedPolygonUuid = geometryEditUuid ?? normalizeUuid(drawerPolygonUuid) ?? normalizeUuid(legacyPanelUuid);
+    return { isEditFocusActive: true, isGeometryEditing, editedPolygonUuid };
+  }, [isDrawerOpen, isLegacyEditPanelOpen, isGeometryEditing, geometryEditUuid, drawerPolygonUuid, legacyPanelUuid]);
 }

@@ -82,6 +82,9 @@ type MapAreaType = {
   setEditPhotoDetailsMedia: (value: MediaDto | null) => void;
   showPhotosOnMap: boolean;
   setShowPhotosOnMap: (value: boolean) => void;
+  /** Geotagged Photos accordion open and "Show Photos on Map" switch on. */
+  geotaggedPhotosMapVisible: boolean;
+  setGeotaggedPhotosMapVisible: (value: boolean) => void;
   mediaFiles: MediaDto[];
   setMediaFiles: (value: MediaDto[]) => void;
   resetSiteMapInteractionState: () => void;
@@ -138,6 +141,8 @@ const defaultValue: MapAreaType = {
   setEditPhotoDetailsMedia: () => {},
   showPhotosOnMap: false,
   setShowPhotosOnMap: () => {},
+  geotaggedPhotosMapVisible: false,
+  setGeotaggedPhotosMapVisible: () => {},
   mediaFiles: [],
   setMediaFiles: () => {},
   resetSiteMapInteractionState: () => {}
@@ -175,6 +180,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   );
   const [editPhotoDetailsMedia, setEditPhotoDetailsMedia] = useState<MediaDto | null>(null);
   const [showPhotosOnMap, setShowPhotosOnMap] = useState(false);
+  const [geotaggedPhotosMapVisible, setGeotaggedPhotosMapVisible] = useState(false);
   const [mediaFiles, setMediaFiles] = useState<MediaDto[]>([]);
 
   const setEditPolygon = useCallback((value: EditPolygonState) => {
@@ -235,6 +241,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonSubmitConfirmation(null);
     setEditPhotoDetailsMedia(null);
     setShowPhotosOnMap(false);
+    setGeotaggedPhotosMapVisible(false);
     setMediaFiles([]);
   }, [closeMapPopups]);
 
@@ -289,6 +296,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setEditPhotoDetailsMedia,
     showPhotosOnMap,
     setShowPhotosOnMap,
+    geotaggedPhotosMapVisible,
+    setGeotaggedPhotosMapVisible,
     mediaFiles,
     setMediaFiles,
     resetSiteMapInteractionState

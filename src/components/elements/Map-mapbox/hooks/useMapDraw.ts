@@ -34,6 +34,7 @@ import { removePopups } from "../interactions/popups";
 import { addSourcesToLayers } from "../layers/polygonLayers";
 import { DashboardGetProjectsData, PolygonFromMapState } from "../Map.d";
 import { applyMapDrawStatusStyles, isPolygonDrawStatus, PolygonDrawStatus } from "../mapStyle";
+import { applyPolygonNeighborDimming } from "./polygonEditFocusStyle";
 import { filterPolygonFromLayers } from "./useMapLayers";
 
 type UseMapDrawParams = {
@@ -298,6 +299,7 @@ export function useMapDraw({
       }
       if (map.current != null && draw.current != null) {
         filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
+        applyPolygonNeighborDimming(map.current, true);
         originalGeometryRef.current = geometry;
         resetGeometryHistory(geometry);
         setPolygonGeometryEdit?.({
