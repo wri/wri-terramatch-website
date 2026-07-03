@@ -112,13 +112,15 @@ export function usePolygonTableHighlightStyle({
 }: UsePolygonTableHighlightStyleParams): void {
   const lastAppliedRef = useRef<Map<string, string>>(new Map());
   const isHighlightActive = highlight != null;
-  const isGeometryEditing = editFocus.isGeometryEditing;
-  // Neighbor dimming is owned by usePolygonEditFocusStyle while geometry is edited.
-  const hoveredUuid = usePolygonTableHoveredUuid(isHighlightActive && !isGeometryEditing);
+  // Hover/selection styling is suspended for the whole time the edit panel is open (not just
+  // while geometry is actively being edited) — only the edited polygon should be interactive.
+  // Neighbor dimming itself is owned separately by usePolygonEditFocusStyle.
+  const isEditFocusActive = editFocus.isEditFocusActive;
+  const hoveredUuid = usePolygonTableHoveredUuid(isHighlightActive && !isEditFocusActive);
   const selectedUuids = highlight?.selectedPolygonUuids ?? EMPTY_SELECTION;
 
   useEffect(() => {
-    if (!isHighlightActive || isGeometryEditing || !styleReady || !sourcesAdded || map.current == null) return;
+    if (!isHighlightActive || isEditFocusActive || !styleReady || !sourcesAdded || map.current == null) return;
 
     const m = map.current;
     const fillConfigs = getPolygonGeometryFillLayerConfigs();
@@ -164,7 +166,7 @@ export function usePolygonTableHighlightStyle({
         }
       }
     }
-  }, [map, styleReady, styleVersion, sourcesAdded, isHighlightActive, isGeometryEditing, hoveredUuid, selectedUuids]);
+  }, [map, styleReady, styleVersion, sourcesAdded, isHighlightActive, isEditFocusActive, hoveredUuid, selectedUuids]);
 
   useEffect(() => {
     lastAppliedRef.current = new Map();
@@ -439,8 +441,9 @@ export function usePolygonTableHighlightPointer({
   editFocus = INACTIVE_MAP_EDIT_FOCUS
 }: UsePolygonTableHighlightPointerParams): void {
   const isHighlightActive = highlight != null;
-  const isGeometryEditing = editFocus.isGeometryEditing;
-  const isPointerActive = isHighlightActive && !isGeometryEditing;
+  // Disabled for the whole time the edit panel is open, per req: only the edited polygon
+  // should be interactive while editing (see usePolygonTableHighlightStyle for the same gate).
+  const isPointerActive = isHighlightActive && !editFocus.isEditFocusActive;
   const onPolygonClickedFromMap = highlight?.onPolygonClickedFromMap;
   const lastReportedRef = useRef<string | null>(null);
   const rafRef = useRef<number | null>(null);

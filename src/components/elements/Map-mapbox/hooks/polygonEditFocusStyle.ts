@@ -45,13 +45,16 @@ export function applyPolygonNeighborDimming(map: MapboxMap, active: boolean): vo
     }
   }
 
-  for (const { layerId } of lineConfigs) {
+  for (const { layerId, baseLineWidth } of lineConfigs) {
     if (map.getLayer(layerId) == null) continue;
     try {
       map.setPaintProperty(layerId, "line-opacity", active ? EDIT_NEIGHBOR_LINE_OPACITY : BASE_LINE_OPACITY);
+      // Reset any stale hover/selection line-width left over from before edit started —
+      // usePolygonTableHighlightStyle is suspended for the whole edit-panel-open window.
+      map.setPaintProperty(layerId, "line-width", baseLineWidth);
     } catch (error) {
       if (!isTransientMapboxError(error)) {
-        Log.warn("applyPolygonNeighborDimming: set line-opacity failed", { layerId, active, error });
+        Log.warn("applyPolygonNeighborDimming: set line style failed", { layerId, active, error });
       }
     }
   }
