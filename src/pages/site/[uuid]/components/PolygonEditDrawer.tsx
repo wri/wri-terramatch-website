@@ -5,7 +5,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getUnreadCommentCount, useAuditStatuses } from "@/connections/AuditStatus";
 import { useMyUser } from "@/connections/User";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import type { PolygonEditDrawerPolygon } from "@/context/polygonEditDrawer.types";
+import type { PolygonEditDrawerPolygon, PolygonEditDrawerTab } from "@/context/polygonEditDrawer.types";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
@@ -40,6 +40,7 @@ interface PolygonEditDrawerProps {
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
   onRequestApproveModal?: () => void;
   onRequestInformationModal?: () => void;
+  defaultTab?: PolygonEditDrawerTab;
 }
 
 const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
@@ -54,12 +55,13 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onSuppressMapSelectionHighlightChange,
   onDeletingChange,
   onRequestApproveModal,
-  onRequestInformationModal
+  onRequestInformationModal,
+  defaultTab = "edit"
 }) => {
   const t = useT();
   const [, { user, isAdmin }] = useMyUser();
   const { draftPolygonGeometry, siteData } = useMapAreaContext();
-  const [activeTab, setActiveTab] = useState<string>("edit");
+  const [activeTab, setActiveTab] = useState<string>(defaultTab);
   const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
   const deletePolygonRef = useRef<(() => Promise<void>) | null>(null);
   const submitPolygonRef = useRef<((comment: string) => Promise<void>) | null>(null);
@@ -96,9 +98,9 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const unreadCommentCount = useMemo(() => getUnreadCommentCount(auditStatusesData, user), [auditStatusesData, user]);
 
   useEffect(() => {
-    setActiveTab("edit");
+    setActiveTab(defaultTab);
     setAnrPlotsModal(null);
-  }, [polygon?.polygonUuid]);
+  }, [polygon?.polygonUuid, defaultTab]);
 
   useEffect(() => {
     setSaveEditContent(null);
@@ -233,6 +235,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
               <Flex className="h-full flex-col">
                 {polygon?.polygonUuid && (
                   <TabBar
+                    key={`${polygon?.polygonUuid}-${defaultTab}`}
                     onTabClick={(tabValue: string) => {
                       setActiveTab(tabValue);
                       if (tabValue === "comments") {
@@ -262,7 +265,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                         value: "comments"
                       }
                     ]}
-                    defaultValue={activeTab}
+                    defaultValue={defaultTab}
                     variant="panel"
                   />
                 )}

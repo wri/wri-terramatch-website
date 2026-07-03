@@ -41,6 +41,7 @@ const BulkActionToolbar = memo(function BulkActionToolbar({
                 (primaryAction as IMultiActionButtonProps).mainActionLabel ??
                 String((primaryAction as IButtonProps).children ?? "")
               }
+              mainActionOnClick={(primaryAction as IMultiActionButtonProps).mainActionOnClick ?? (() => {})}
               variant="primary"
               className="disabled:!border-theme-neutral-400 disabled:!bg-theme-neutral-300 disabled:!text-theme-neutral-500 disabled:!opacity-100"
             />

@@ -7,7 +7,11 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
-import { getSitePolygonsApproveTooltipIfNoneEligible, isSitePolygonApprovable } from "@/utils/sitePolygonReview";
+import {
+  getSitePolygonsApproveTooltipIfNoneEligible,
+  isSitePolygonApprovable,
+  toReviewAvailabilityPolygon
+} from "@/utils/sitePolygonReview";
 import { getSitePolygonsSubmitTooltipIfNoneEligible } from "@/utils/sitePolygonSubmit";
 
 import { PolygonTableRow } from "./PolygonTableRow";
@@ -62,35 +66,21 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const t = useT();
   const isOverlapAutoFixUnavailable = isOverlapFixAction && !canAutoFixOverlap;
 
+  const reviewPolygons = useMemo(() => polygons.map(toReviewAvailabilityPolygon), [polygons]);
+
   const submitDisabledTooltip = useMemo(
-    () =>
-      isAdmin || isOverlapFixAction
-        ? undefined
-        : getSitePolygonsSubmitTooltipIfNoneEligible(
-            polygons.map(polygon => ({ status: polygon.submission, validationStatus: polygon.validation })),
-            t
-          ),
-    [isAdmin, isOverlapFixAction, polygons, t]
+    () => (isAdmin || isOverlapFixAction ? undefined : getSitePolygonsSubmitTooltipIfNoneEligible(reviewPolygons, t)),
+    [isAdmin, isOverlapFixAction, reviewPolygons, t]
   );
 
   const isApproveDisabled = useMemo(
-    () =>
-      isAdmin &&
-      !polygons.some(polygon =>
-        isSitePolygonApprovable({ status: polygon.submission, validationStatus: polygon.validation })
-      ),
-    [isAdmin, polygons]
+    () => isAdmin && !reviewPolygons.some(isSitePolygonApprovable),
+    [isAdmin, reviewPolygons]
   );
 
   const approveDisabledTooltip = useMemo(
-    () =>
-      isAdmin
-        ? getSitePolygonsApproveTooltipIfNoneEligible(
-            polygons.map(polygon => ({ status: polygon.submission, validationStatus: polygon.validation })),
-            t
-          )
-        : undefined,
-    [isAdmin, polygons, t]
+    () => (isAdmin ? getSitePolygonsApproveTooltipIfNoneEligible(reviewPolygons, t) : undefined),
+    [isAdmin, reviewPolygons, t]
   );
 
   const toolbarActions = useMemo<BulkToolbarAction[]>(
@@ -154,7 +144,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
       isAdmin
         ? {
             mainActionLabel: t("Review"),
-            onClick: () => {},
+            mainActionOnClick: () => {},
             otherActions: [
               {
                 label: t("Approve"),
