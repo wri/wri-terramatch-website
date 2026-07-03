@@ -45,6 +45,7 @@ import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils
 import { type OverlapFixPolygon } from "../components/Modals/OverlapFix";
 import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
+import PolygonSubmissionAnnouncement from "../components/PolygonSubmissionAnnouncement";
 import { PolygonTableRow } from "../components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
 import { getPolygonsTableStyles } from "../components/polygonTableStyles";
@@ -811,6 +812,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
 
   return (
     <>
+      {!isAdminReview ? <PolygonSubmissionAnnouncement /> : null}
       <PolygonEditDrawerDataSync
         polygons={polygonsData}
         onRefetchPolygons={refetchPolygons}
