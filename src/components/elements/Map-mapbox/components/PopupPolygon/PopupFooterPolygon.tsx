@@ -57,11 +57,13 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   approveDisabled = false,
   approveDisabledTooltip,
   onApprove,
-  onRequestInformation
+  onRequestInformation,
+  onRunValidation
 }) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const canDownload = polygonUuid != null && polygonUuid !== "";
+  const canRunValidation = polygonUuid != null && polygonUuid !== "" && onRunValidation != null;
 
   const handleDownload = useCallback(async () => {
     if (!canDownload) {
@@ -108,15 +110,9 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
 
   if (isAdminReview) {
     return (
-      <Grid templateColumns="repeat(3, 1fr)" gap={3} width="100%">
-        <Button
-          variant="secondary"
-          size="small"
-          leftIcon={<DownloadIcon />}
-          onClick={() => void handleDownload()}
-          disabled={!canDownload}
-        >
-          {t("Download")}
+      <Flex alignItems="center" gap={2} width="100%">
+        <Button variant="secondary" size="small" onClick={onRunValidation} disabled={!canRunValidation}>
+          {t("Run Validation")}
         </Button>
         <Button variant="secondary" size="small" leftIcon={<CommentIcon />} onClick={onComment}>
           {t("Comment")}
@@ -143,7 +139,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
             </Tooltip>
           )}
         </Flex>
-      </Grid>
+      </Flex>
     );
   }
 
