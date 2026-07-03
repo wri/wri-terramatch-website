@@ -16,7 +16,7 @@ type FloatingActionItem = {
   labelColor?: string;
   disabled?: boolean;
   infoTooltip?: ReactNode;
-  otherActions?: { label: string; value: string; onClick: () => void }[];
+  otherActions?: { label: string; value: string; onClick: () => void; disabled?: boolean }[];
 };
 
 interface FloatingActionToolbarProps {

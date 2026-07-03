@@ -122,7 +122,12 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
             mainActionLabel={t("Review")}
             mainActionOnClick={() => {}}
             otherActions={[
-              { label: t("Approve"), value: "approve", onClick: onApprove ?? (() => {}) },
+              {
+                label: t("Approve"),
+                value: "approve",
+                disabled: approveDisabled,
+                onClick: onApprove ?? (() => {})
+              },
               {
                 label: t("Request information"),
                 value: "request-information",

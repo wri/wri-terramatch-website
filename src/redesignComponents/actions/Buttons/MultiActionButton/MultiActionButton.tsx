@@ -7,20 +7,30 @@ import { getThemedColor } from "@/lib/theme";
 
 import { secondaryTextColorClass } from "./MultiActionButton.styles";
 
+export interface IMultiActionOtherAction {
+  label: React.ReactNode;
+  value: string;
+  onClick: VoidFunction;
+  disabled?: boolean;
+}
+
 export interface IMultiActionButtonProps {
   variant?: "primary" | "secondary" | "borderless";
   size?: "default" | "small";
   mainActionLabel: string;
   mainActionOnClick: VoidFunction;
-  otherActions: {
-    label: React.ReactNode;
-    value: string;
-    onClick: VoidFunction;
-  }[];
+  otherActions: IMultiActionOtherAction[];
   disabled?: boolean;
   leftIcon?: React.ReactNode;
   className?: string;
 }
+
+const mapOtherActionsForWri = (otherActions: IMultiActionOtherAction[]) =>
+  otherActions.map(({ disabled: isActionDisabled, onClick, label, value }) => ({
+    label,
+    value,
+    onClick: isActionDisabled ? () => {} : onClick
+  }));
 
 const MultiActionButton: FC<IMultiActionButtonProps> = ({
   variant,
@@ -33,6 +43,7 @@ const MultiActionButton: FC<IMultiActionButtonProps> = ({
   ...props
 }) => {
   const buttonClassName = clsx(className, variant === "secondary" && secondaryTextColorClass);
+  const wriOtherActions = mapOtherActionsForWri(otherActions);
 
   if (variant === "borderless") {
     return (
@@ -60,13 +71,14 @@ const MultiActionButton: FC<IMultiActionButtonProps> = ({
           className={buttonClassName}
           mainActionLabel={mainActionLabel}
           mainActionOnClick={mainActionOnClick}
-          otherActions={otherActions}
+          otherActions={wriOtherActions}
           disabled={disabled}
           {...props}
         />
       </Box>
     );
   }
+
   return (
     <WriMultiActionButton
       variant={variant}
@@ -74,7 +86,7 @@ const MultiActionButton: FC<IMultiActionButtonProps> = ({
       className={buttonClassName}
       mainActionLabel={mainActionLabel}
       mainActionOnClick={mainActionOnClick}
-      otherActions={otherActions}
+      otherActions={wriOtherActions}
       disabled={disabled}
       {...props}
     />
