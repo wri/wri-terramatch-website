@@ -1,5 +1,4 @@
 import { Group, Menu, MenuContent, MenuItem, MenuPositioner, MenuTrigger, Portal } from "@chakra-ui/react";
-import { MultiActionButton as WriMultiActionButton } from "@worldresources/wri-design-systems";
 import clsx from "clsx";
 import { FC, ReactNode, useState } from "react";
 
@@ -51,7 +50,7 @@ export interface IMultiActionButtonProps {
   className?: string;
 }
 
-const MultiActionButtonWithDisabledItems: FC<IMultiActionButtonProps> = ({
+const MultiActionButton: FC<IMultiActionButtonProps> = ({
   variant = "primary",
   size = "default",
   mainActionLabel,
@@ -119,29 +118,6 @@ const MultiActionButtonWithDisabledItems: FC<IMultiActionButtonProps> = ({
         </Portal>
       </Menu.Root>
     </Group>
-  );
-};
-
-const MultiActionButton: FC<IMultiActionButtonProps> = props => {
-  const { variant, size, mainActionLabel, mainActionOnClick, otherActions, disabled, className, ...rest } = props;
-  const buttonClassName = clsx(className, variant === "secondary" && secondaryTextColorClass);
-  const hasDisabledItems = otherActions.some(action => action.disabled);
-
-  if (hasDisabledItems) {
-    return <MultiActionButtonWithDisabledItems {...props} />;
-  }
-
-  return (
-    <WriMultiActionButton
-      variant={variant}
-      size={size}
-      className={buttonClassName}
-      mainActionLabel={mainActionLabel}
-      mainActionOnClick={mainActionOnClick}
-      otherActions={otherActions}
-      disabled={disabled}
-      {...rest}
-    />
   );
 };
 
