@@ -37,7 +37,7 @@ const FloatingActionToolbar: FC<FloatingActionToolbarProps> = ({ items, classNam
                   mainActionOnClick={onClick}
                   otherActions={otherActions}
                   disabled={disabled}
-                  variant="primary"
+                  variant="borderless"
                   size="small"
                 />
               ) : (

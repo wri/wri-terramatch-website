@@ -383,7 +383,6 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                   <TextInput
                     width="12.75rem"
                     label={t("Trees Planted")}
-                    showOptionalLabel={false}
                     value={treesPlanted}
                     onChange={event => setTreesPlanted(event.target.value.replace(/\D/g, ""))}
                     disabled={editingField !== "numTrees"}
