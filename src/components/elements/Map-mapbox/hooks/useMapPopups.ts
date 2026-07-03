@@ -6,13 +6,13 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { loadBoundingBox, normalizeBoundingBoxDto } from "@/connections/BoundingBox";
 import { LAYERS_NAMES } from "@/constants/layers";
 import { registerOpenPolygonPopupHandler, unregisterOpenPolygonPopupHandler } from "@/context/mapArea.utils";
-import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { useChampionsMap } from "../championsMap.context";
 import { DashboardPopup } from "../components/DashboardPopup";
 import { PolygonPopup } from "../components/PolygonPopup/PolygonPopup";
+import { useMapEditFocus } from "../hooks/useMapEditFocus";
 import {
   closeAllPopups,
   disableBackgroundClickClose,
@@ -87,9 +87,10 @@ export function useMapPopups({
   polygonFromMap
 }: UseMapPopupsParams) {
   const championsMap = useChampionsMap();
-  const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
-  const isEditPanelActive = isPolygonEditDrawerOpen || (!championsMap && polygonFromMap?.isOpen === true);
-  const effectiveShowPopups = showPopups === true && !isEditPanelActive;
+  // Shared edit-focus state keeps popup suppression consistent with polygon
+  // dimming/hover gating regardless of how edit mode was entered.
+  const { isEditFocusActive } = useMapEditFocus({ polygonFromMap, editPolygon });
+  const effectiveShowPopups = showPopups === true && !isEditFocusActive;
   const callbacksRef = useRef({ setPolygonFromMap, setEditPolygon, setMobilePopupData });
   useEffect(() => {
     callbacksRef.current = { setPolygonFromMap, setEditPolygon, setMobilePopupData };
@@ -103,10 +104,10 @@ export function useMapPopups({
   const popupOptionsRef = useRef<PopupHandlerOptions | null>(null);
 
   useEffect(() => {
-    if (!isEditPanelActive || map.current == null) return;
+    if (!isEditFocusActive || map.current == null) return;
     closeAllPopups(map.current);
     removePopups(map.current, "POLYGON");
-  }, [isEditPanelActive, map]);
+  }, [isEditFocusActive, map]);
 
   useEffect(() => {
     if (!sourcesAdded || map.current == null || draw.current == null || !effectiveShowPopups) return;
