@@ -10,6 +10,7 @@ import {
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
 import { CompareGeometryFileResponse } from "@/generated/v3/researchService/researchServiceComponents";
+import { extractErrorMessage } from "@/utils/errors";
 import {
   classifyUploadFailureErrorType,
   inferUploadFileFormat,
@@ -60,19 +61,6 @@ type GeometryUploadHandler = (
     onError: (error: unknown) => void;
   }
 ) => void;
-
-const extractErrorMessage = (error: unknown): string => {
-  if (error == null || typeof error !== "object") return "An unknown error occurred";
-  if ("message" in error) {
-    try {
-      const parsed = JSON.parse((error as { message: string }).message);
-      return parsed?.message ?? (error as { message: string }).message;
-    } catch {
-      return (error as { message: string }).message;
-    }
-  }
-  return "An unknown error occurred";
-};
 
 const parseComparisonResult = (response: CompareGeometryFileResponse): GeometryUploadComparisonResult => {
   const attrs = response.data?.attributes;

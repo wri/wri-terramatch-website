@@ -90,6 +90,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
     polygonsNotFixed: OverlapFixPolygon[];
   }>({ polygonsFixed: [], polygonsNotFixed: [] });
   const [showUploadErrorModal, setUploadErrorModal] = useState(false);
+  const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(null);
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
   const [uploadedPolygonUuidToOpen, setUploadedPolygonUuidToOpen] = useState<string | null>(null);
   const [focusPolygonUuid, setFocusPolygonUuid] = useState<string | null>(null);
@@ -680,6 +681,7 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           openSubmitPolygonsModal={showSubmitPolygonsModal}
           openSubmitPolygonConfirmationModal={showSubmitPolygonConfirmationModal}
           openUploadErrorModal={showUploadErrorModal}
+          uploadErrorMessage={uploadErrorMessage}
           openUploadModal={showUploadModal}
           openUploadPhotosModal={showUploadPhotosModal}
           openMapPopupSubmitConfirmationModal={showMapPopupSubmitConfirmationModal}
@@ -700,8 +702,16 @@ const SitePolygonsTabContent: FC<SitePolygonsTabProps> = ({ site }) => {
           onSubmitPolygonConfirmationModalOpenChange={handleSubmitPolygonConfirmationModalChange}
           onSubmitPolygonsModalOpenChange={handleSubmitPolygonsModalChange}
           onSubmitPolygons={handleConfirmBulkSubmit}
-          onUploadError={() => setUploadErrorModal(true)}
-          onUploadErrorModalOpenChange={setUploadErrorModal}
+          onUploadError={message => {
+            setUploadErrorMessage(message);
+            setUploadErrorModal(true);
+          }}
+          onUploadErrorModalOpenChange={open => {
+            setUploadErrorModal(open);
+            if (!open) {
+              setUploadErrorMessage(null);
+            }
+          }}
           onUploadModalOpenChange={setShowUploadModal}
           onUploadPhotosModalOpenChange={setShowUploadPhotosModal}
           onUploadSuccess={({ createdSitePolygonUuid, uploadedFileCount }) => {
