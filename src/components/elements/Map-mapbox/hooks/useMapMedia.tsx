@@ -62,12 +62,8 @@ export function useMapMedia({
   const championsMap = useChampionsMap();
   const { geotaggedPhotosMapVisible, editPolygon } = useMapAreaContext();
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
-  // editPolygon can flip before drawer context propagates — treat either as edit mode.
   const isPolygonEditActive =
     isPolygonEditDrawerOpen || (editPolygon?.isOpen === true && (editPolygon?.uuid ?? "") !== "");
-  // Geotagged icons are hidden by default (champions map) and only appear while editing a
-  // polygon, with the Geotagged Photos section expanded and its "Show Photos on Map" switch on.
-  // `alwaysShowPhotosOnMap` is an opt-in override used by legacy admin map views only.
   const showPhotosInEditMode = championsMap && isPolygonEditActive && geotaggedPhotosMapVisible;
   const wantsPhotosOnMap = !hideMediaOnMap && (alwaysShowPhotosOnMap || showPhotosInEditMode);
   const photosVisible = wantsPhotosOnMap && !isPolygonGeometryLoading;
@@ -109,7 +105,6 @@ export function useMapMedia({
     addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
   };
 
-  // Hide immediately when entering edit — avoids one frame of stale markers.
   useLayoutEffect(() => {
     const mapInstance = map.current;
     if (mapInstance == null || !styleReady || !isPolygonEditActive || photosVisible) return;

@@ -82,7 +82,6 @@ type MapAreaType = {
   setEditPhotoDetailsMedia: (value: MediaDto | null) => void;
   showPhotosOnMap: boolean;
   setShowPhotosOnMap: (value: boolean) => void;
-  /** Geotagged Photos accordion open and "Show Photos on Map" switch on. */
   geotaggedPhotosMapVisible: boolean;
   setGeotaggedPhotosMapVisible: (value: boolean) => void;
   mediaFiles: MediaDto[];

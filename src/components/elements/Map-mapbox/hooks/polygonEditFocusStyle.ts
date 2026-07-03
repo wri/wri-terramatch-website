@@ -6,7 +6,6 @@ import {
 } from "@/components/elements/Map-mapbox/layers/polygonLayers";
 import Log from "@/utils/log";
 
-// Edited geometry lives in MapboxDraw; every polygon still on tile layers is a neighbor.
 export const EDIT_NEIGHBOR_FILL_DIM_FACTOR = 2 / 5;
 export const EDIT_NEIGHBOR_LINE_OPACITY = 0.5;
 const BASE_LINE_OPACITY = 1;
@@ -25,7 +24,6 @@ function isTransientMapboxError(error: unknown): boolean {
   return TRANSIENT_MAPBOX_ERROR_PATTERNS.some(pattern => lower.includes(pattern));
 }
 
-/** Dim or restore every polygon tile layer (neighbors only while geometry is in MapboxDraw). */
 export function applyPolygonNeighborDimming(map: MapboxMap, active: boolean): void {
   const fillConfigs = getPolygonGeometryFillLayerConfigs();
   const lineConfigs = getPolygonGeometryLineLayerConfigs();
@@ -49,8 +47,6 @@ export function applyPolygonNeighborDimming(map: MapboxMap, active: boolean): vo
     if (map.getLayer(layerId) == null) continue;
     try {
       map.setPaintProperty(layerId, "line-opacity", active ? EDIT_NEIGHBOR_LINE_OPACITY : BASE_LINE_OPACITY);
-      // Reset any stale hover/selection line-width left over from before edit started —
-      // usePolygonTableHighlightStyle is suspended for the whole edit-panel-open window.
       map.setPaintProperty(layerId, "line-width", baseLineWidth);
     } catch (error) {
       if (!isTransientMapboxError(error)) {

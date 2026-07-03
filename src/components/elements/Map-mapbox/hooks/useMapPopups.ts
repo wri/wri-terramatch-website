@@ -87,8 +87,6 @@ export function useMapPopups({
   polygonFromMap
 }: UseMapPopupsParams) {
   const championsMap = useChampionsMap();
-  // Shared edit-focus state keeps popup suppression consistent with polygon
-  // dimming/hover gating regardless of how edit mode was entered.
   const { isEditFocusActive } = useMapEditFocus({ polygonFromMap, editPolygon });
   const effectiveShowPopups = showPopups === true && !isEditFocusActive;
   const callbacksRef = useRef({ setPolygonFromMap, setEditPolygon, setMobilePopupData });

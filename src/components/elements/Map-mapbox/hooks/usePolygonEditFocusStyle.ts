@@ -9,14 +9,9 @@ type UsePolygonEditFocusStyleParams = {
   styleVersion: number;
   sourcesAdded: boolean;
   tileLoadRequestId: number;
-  /** True while an existing polygon's geometry is being edited on the map. */
   isGeometryEditing: boolean;
 };
 
-/**
- * Dims all tile-rendered polygons while geometry edit is active. Re-applies after
- * tile layer reloads and map idle so paints are not lost when filters or sources refresh.
- */
 export function usePolygonEditFocusStyle({
   map,
   styleReady,
@@ -33,7 +28,6 @@ export function usePolygonEditFocusStyle({
 
     if (!isGeometryEditing) return;
 
-    // filterPolygonFromLayers and tile reloads reset paint — re-apply after tiles settle.
     const onIdle = () => {
       if (map.current !== m) return;
       applyPolygonNeighborDimming(m, true);

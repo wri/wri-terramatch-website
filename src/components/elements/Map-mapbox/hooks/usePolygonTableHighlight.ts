@@ -112,9 +112,6 @@ export function usePolygonTableHighlightStyle({
 }: UsePolygonTableHighlightStyleParams): void {
   const lastAppliedRef = useRef<Map<string, string>>(new Map());
   const isHighlightActive = highlight != null;
-  // Hover/selection styling is suspended for the whole time the edit panel is open (not just
-  // while geometry is actively being edited) — only the edited polygon should be interactive.
-  // Neighbor dimming itself is owned separately by usePolygonEditFocusStyle.
   const isEditFocusActive = editFocus.isEditFocusActive;
   const hoveredUuid = usePolygonTableHoveredUuid(isHighlightActive && !isEditFocusActive);
   const selectedUuids = highlight?.selectedPolygonUuids ?? EMPTY_SELECTION;
@@ -441,8 +438,6 @@ export function usePolygonTableHighlightPointer({
   editFocus = INACTIVE_MAP_EDIT_FOCUS
 }: UsePolygonTableHighlightPointerParams): void {
   const isHighlightActive = highlight != null;
-  // Disabled for the whole time the edit panel is open, per req: only the edited polygon
-  // should be interactive while editing (see usePolygonTableHighlightStyle for the same gate).
   const isPointerActive = isHighlightActive && !editFocus.isEditFocusActive;
   const onPolygonClickedFromMap = highlight?.onPolygonClickedFromMap;
   const lastReportedRef = useRef<string | null>(null);
