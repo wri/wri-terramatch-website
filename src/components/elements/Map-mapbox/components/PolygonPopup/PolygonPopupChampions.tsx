@@ -110,12 +110,12 @@ export function PolygonPopupChampions({
   }, [sitePolygon?.uuid, submitDisabled]);
 
   const handleApprove = useCallback(() => {
-    if (sitePolygon?.uuid == null || sitePolygon.uuid === "") {
+    if (approveDisabled || sitePolygon?.uuid == null || sitePolygon.uuid === "") {
       return;
     }
     openPolygonApproveConfirmationFromMapPopup(sitePolygon.uuid);
     closeMapPopupsFromMapPopup();
-  }, [sitePolygon?.uuid]);
+  }, [approveDisabled, sitePolygon?.uuid]);
 
   const handleRequestInformation = useCallback(() => {
     if (sitePolygon?.uuid == null || sitePolygon.uuid === "") {

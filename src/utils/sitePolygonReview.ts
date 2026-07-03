@@ -90,3 +90,13 @@ export const getSitePolygonsApproveTooltipIfNoneEligible = (
 export const isSitePolygonEligibleForRequestInformation = (
   polygon: ReviewAvailabilityPolygon | null | undefined
 ): boolean => polygon?.status === POLYGON_PENDING_APPROVAL || polygon?.status === POLYGON_DRAFT;
+
+export type PolygonTableReviewFields = {
+  submission?: string | null;
+  validation?: string | null;
+};
+
+export const toReviewAvailabilityPolygon = (polygon: PolygonTableReviewFields): ReviewAvailabilityPolygon => ({
+  status: polygon.submission,
+  validationStatus: polygon.validation
+});
