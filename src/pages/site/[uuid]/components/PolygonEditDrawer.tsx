@@ -5,7 +5,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getUnreadCommentCount, useAuditStatuses } from "@/connections/AuditStatus";
 import { useMyUser } from "@/connections/User";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import type { PolygonEditDrawerPolygon } from "@/context/polygonEditDrawer.types";
+import type { PolygonEditDrawerPolygon, PolygonEditDrawerTab } from "@/context/polygonEditDrawer.types";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
@@ -40,7 +40,7 @@ interface PolygonEditDrawerProps {
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
   onRequestApproveModal?: () => void;
   onRequestInformationModal?: () => void;
-  defaultTab?: string;
+  defaultTab?: PolygonEditDrawerTab;
 }
 
 const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({

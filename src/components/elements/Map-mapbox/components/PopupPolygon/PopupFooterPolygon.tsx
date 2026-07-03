@@ -114,7 +114,13 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
         <Button variant="secondary" size="small" onClick={onRunValidation} disabled={!canRunValidation}>
           {t("Run Validation")}
         </Button>
-        <Button variant="secondary" size="small" leftIcon={<CommentIcon />} onClick={onComment}>
+        <Button
+          variant="secondary"
+          size="small"
+          leftIcon={<CommentIcon />}
+          onClick={onComment}
+          disabled={onComment == null}
+        >
           {t("Comment")}
         </Button>
         <Flex alignItems="center" gap={1.5} minWidth={0}>

@@ -41,7 +41,7 @@ import { DownloadIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundat
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import Log from "@/utils/log";
 import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils/polygonAnalytics";
-import { isSitePolygonApprovable } from "@/utils/sitePolygonReview";
+import { isSitePolygonApprovable, toReviewAvailabilityPolygon } from "@/utils/sitePolygonReview";
 
 import { type OverlapFixPolygon } from "../components/Modals/OverlapFix";
 import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
@@ -638,9 +638,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   );
 
   const handleOpenApprovePolygonModal = useCallback(() => {
-    const approvableRows = selectedRows.filter(row =>
-      isSitePolygonApprovable({ status: row.submission, validationStatus: row.validation })
-    );
+    const approvableRows = selectedRows.filter(row => isSitePolygonApprovable(toReviewAvailabilityPolygon(row)));
     if (approvableRows.length === 0) {
       return;
     }

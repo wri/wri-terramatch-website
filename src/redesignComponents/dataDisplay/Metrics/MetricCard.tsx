@@ -206,7 +206,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
         )}
       </Flex>
       <Flex gap={2} alignItems="center">
-        <ProgressBar progress={progressValue} color={color} width={widthProgressBar as string} />
+        <ProgressBar progress={progressValue} color={color} width={widthProgressBar} />
         <Flex gap={1} alignItems="center">
           <Flex gap={1} className="items-center">
             <Text textStyle="400-bold" color="neutral.900">
@@ -420,7 +420,7 @@ const MetricCard: FC<MetricCardProps> = props => {
     <Flex
       padding={3}
       className={twMerge(
-        "border-theme-neutral-300 bg-theme-neutral-100 h-fit justify-start rounded-lg border p-3",
+        "h-fit justify-start rounded-lg border border-theme-neutral-300 bg-theme-neutral-100 p-3",
         className
       )}
     >

@@ -62,7 +62,7 @@ const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
           selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
           tooltipContent={t("This is the sum of hectares from the selected polygons")}
           className={classNames(
-            " mobile:w-full mobile:min-w-full",
+            "mobile:w-full mobile:min-w-full",
             showRestorationProgressBar ? "min-w-[18rem]" : "min-w-[12.5rem]"
           )}
         />

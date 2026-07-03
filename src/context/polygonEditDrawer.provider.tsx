@@ -7,7 +7,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import type { PolygonOverlapFixCallback, PolygonSaveCallback } from "@/pages/site/[uuid]/components/polygonEdit.types";
 import PolygonEditDrawer from "@/pages/site/[uuid]/components/PolygonEditDrawer";
 
-import type { PolygonEditDrawerPolygon } from "./polygonEditDrawer.types";
+import type { PolygonEditDrawerPolygon, PolygonEditDrawerTab } from "./polygonEditDrawer.types";
 
 export type { PolygonEditDrawerPolygon };
 
@@ -128,7 +128,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [polygon, setPolygon] = useState<PolygonEditDrawerPolygon>({});
-  const [defaultTab, setDefaultTab] = useState<string>("edit");
+  const [defaultTab, setDefaultTab] = useState<PolygonEditDrawerTab>("edit");
   const [polygons, setPolygons] = useState(polygonsProp);
   const [suppressMapSelectionHighlight, setSuppressMapSelectionHighlight] = useState(false);
 
@@ -243,6 +243,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const closePolygonEdit = useCallback(() => {
     setIsOpen(false);
     setPolygon({});
+    setDefaultTab("edit");
     setSuppressMapSelectionHighlight(false);
     dispatchClearDraftDrawEvent();
     setIsUserDrawingEnabled(false);
