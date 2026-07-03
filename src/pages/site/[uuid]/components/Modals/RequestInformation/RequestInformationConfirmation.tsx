@@ -76,8 +76,8 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
               <PolygonApprovalTable polygons={polygons} selectable={false} showArea={false} />
             </Box>
           </Box>
-          <Box bg="neutral.200" mb={-0.5}>
-            <SimpleDivider />
+          <Box bg="warning.100" mb={-0.5}>
+            <SimpleDivider backgroundColor="warning.300" />
             <Box px={4} pt={2} pb={4}>
               <Flex alignItems="center" gap={0.5}>
                 <Text textStyle="400-bold" color="primary.900">
@@ -104,6 +104,7 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
       }
       footer={
         <ButtonGroup
+          borderColor="warning.300"
           buttons={[
             {
               id: "cancel",
