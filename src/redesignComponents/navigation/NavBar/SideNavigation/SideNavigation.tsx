@@ -1,6 +1,6 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
 import classNames from "classnames";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 
 import { MenuItemOption } from "@/redesignComponents/actions/Buttons/Menu/MenuCustom.types";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
@@ -35,10 +35,17 @@ interface SideNavigationProps {
   title: string;
   groups: SideNavigationGroup[];
   collapsed?: boolean;
+  isCollapsedDisabled?: boolean;
 }
 
-const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = false }) => {
+const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = false, isCollapsedDisabled = false }) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
+
+  useEffect(() => {
+    if (isCollapsedDisabled) {
+      setIsCollapsed(true);
+    }
+  }, [isCollapsedDisabled]);
 
   const handleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -61,6 +68,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
         )}
         color="neutral.100"
         onClick={handleCollapse}
+        disabled={isCollapsedDisabled}
       >
         <Text
           textStyle="400-bold"
@@ -72,7 +80,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, groups, collapsed = fa
           boxSize={4}
           className={classNames(
             "shrink-0 transition-transform duration-300 ease-in-out motion-reduce:transition-none",
-            isCollapsed ? "rotate-180" : "rotate-0"
+            isCollapsed ? "rotate-0" : "rotate-180"
           )}
         />
       </Button>

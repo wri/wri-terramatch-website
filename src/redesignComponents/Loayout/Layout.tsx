@@ -14,11 +14,14 @@ import { SiteIcon } from "../foundations/Icons/NavigationSections/SiteIcon";
 import Navbar from "../navigation/NavBar/Navbar";
 import SideNavigation from "../navigation/NavBar/SideNavigation/SideNavigation";
 import InlineMessage from "../status/InlineMessage/InlineMessage";
+import { LayoutShellProvider, useLayoutShell } from "./LayoutShell.provider";
 
 // Temporary admin-review shell: sidebar links, labels, and notification counts are design placeholders.
-export default function Layout({ children }: { children: React.ReactNode }) {
+function LayoutContent({ children }: { children: React.ReactNode }) {
   const [isWarningVisible, setIsWarningVisible] = useState(true);
+  const { isSidebarCollapseDisabled } = useLayoutShell();
   const t = useT();
+
   return (
     <div className="flex h-screen w-full flex-col">
       <header className="fixed inset-x-0 top-0 z-50 h-[3rem]">
@@ -27,6 +30,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="flex min-h-0 overflow-hidden pt-[3rem]">
         <SideNavigation
           collapsed={true}
+          isCollapsedDisabled={isSidebarCollapseDisabled}
           groups={[
             {
               links: [
@@ -110,5 +114,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <LayoutShellProvider>
+      <LayoutContent>{children}</LayoutContent>
+    </LayoutShellProvider>
   );
 }
