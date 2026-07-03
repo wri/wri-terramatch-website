@@ -27,8 +27,15 @@ export interface IMultiActionButtonProps {
 
 const mapOtherActionsForWri = (otherActions: IMultiActionOtherAction[]) =>
   otherActions.map(({ disabled: isActionDisabled, onClick, label, value }) => ({
-    label,
+    label: isActionDisabled ? (
+      <span style={{ color: getThemedColor("neutral", 600), pointerEvents: "none", cursor: "default !important" }}>
+        {label}
+      </span>
+    ) : (
+      label
+    ),
     value,
+    disabled: isActionDisabled,
     onClick: isActionDisabled ? () => {} : onClick
   }));
 
