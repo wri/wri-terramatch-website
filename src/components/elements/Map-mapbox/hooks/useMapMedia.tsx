@@ -142,8 +142,8 @@ export function useMapMedia({
       try {
         await runWithDownloadToast(
           {
-            downloading: t("Downloading Geotagged Photo…"),
-            complete: t("Download Complete"),
+            downloading: t("Downloading photo"),
+            complete: t("Photo downloaded"),
             error: t("Download Failed")
           },
           () => exportImage.downloadFile({ pathParams: { uuid } }, { defaultFileName }),
