@@ -193,6 +193,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setStatusSelectedPolygon,
     showPhotosOnMap,
     setShowPhotosOnMap,
+    setGeotaggedPhotosMapVisible,
     mediaFiles
   } = useMapAreaContext();
   const [polygonName, setPolygonName] = useState("");
@@ -543,11 +544,16 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     }
   }, [openAccordionSection, setShowPhotosOnMap]);
 
+  useEffect(() => {
+    setGeotaggedPhotosMapVisible(openAccordionSection === "geotagged-photos" && showPhotosOnMap);
+  }, [openAccordionSection, showPhotosOnMap, setGeotaggedPhotosMapVisible]);
+
   useEffect(
     () => () => {
       setShowPhotosOnMap(false);
+      setGeotaggedPhotosMapVisible(false);
     },
-    [setShowPhotosOnMap]
+    [setGeotaggedPhotosMapVisible, setShowPhotosOnMap]
   );
 
   const downloadMonitoringPlots = useCallback(async () => {

@@ -214,13 +214,17 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     setIsUserDrawingEnabled,
     setPolygonGeometryEdit,
     setDraftPolygonGeometry,
-    setShouldRefetchPolygonData
+    setShouldRefetchPolygonData,
+    setShowPhotosOnMap,
+    setGeotaggedPhotosMapVisible
   } = useMapAreaContext();
   const anrMapOverlay = useAnrMapOverlayOptional();
 
   const openPolygonEdit = useCallback(
     (params?: PolygonEditDrawerPolygon) => {
       closeMapPopups();
+      setShowPhotosOnMap(false);
+      setGeotaggedPhotosMapVisible(false);
       const polygonUuid = params?.polygonUuid ?? params?.sitePolygon?.polygonUuid ?? undefined;
       const primaryUuid = params?.sitePolygon?.primaryUuid;
       if (polygonUuid == null || polygonUuid === "") {
@@ -237,7 +241,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
       }
       setIsOpen(true);
     },
-    [closeMapPopups, setDraftPolygonGeometry, setEditPolygon]
+    [closeMapPopups, setDraftPolygonGeometry, setEditPolygon, setGeotaggedPhotosMapVisible, setShowPhotosOnMap]
   );
 
   const closePolygonEdit = useCallback(() => {
@@ -250,8 +254,18 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     setEditPolygon({ isOpen: false, uuid: "" });
     setPolygonGeometryEdit(undefined);
     setDraftPolygonGeometry(undefined);
+    setShowPhotosOnMap(false);
+    setGeotaggedPhotosMapVisible(false);
     anrMapOverlay?.resetAnrMapOverlay();
-  }, [anrMapOverlay, setDraftPolygonGeometry, setEditPolygon, setIsUserDrawingEnabled, setPolygonGeometryEdit]);
+  }, [
+    anrMapOverlay,
+    setDraftPolygonGeometry,
+    setEditPolygon,
+    setGeotaggedPhotosMapVisible,
+    setIsUserDrawingEnabled,
+    setPolygonGeometryEdit,
+    setShowPhotosOnMap
+  ]);
 
   const setSelectedPolygon = useCallback(
     (sitePolygon: SitePolygonLightDto) => {

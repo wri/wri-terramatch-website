@@ -34,6 +34,7 @@ import { useGoogleSatellite } from "./hooks/useGoogleSatellite";
 import { useMapCamera } from "./hooks/useMapCamera";
 import { useMapDownload } from "./hooks/useMapDownload";
 import { useMapDraw } from "./hooks/useMapDraw";
+import { useMapEditFocus } from "./hooks/useMapEditFocus";
 import { useMapFullscreen } from "./hooks/useMapFullscreen";
 import { useMapLayers } from "./hooks/useMapLayers";
 import { useMapMedia } from "./hooks/useMapMedia";
@@ -41,6 +42,7 @@ import { useMapOverlapIndicators } from "./hooks/useMapOverlapIndicators";
 import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
 import { useMapStyle } from "./hooks/useMapStyle";
+import { usePolygonEditFocusStyle } from "./hooks/usePolygonEditFocusStyle";
 import {
   usePolygonSelectionZoom,
   usePolygonTableHighlightPointer,
@@ -408,12 +410,24 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     polygonMapTileNonce
   });
 
+  const editFocus = useMapEditFocus({ polygonFromMap, editPolygon });
+
+  usePolygonEditFocusStyle({
+    map,
+    styleReady,
+    styleVersion,
+    sourcesAdded,
+    tileLoadRequestId,
+    isGeometryEditing: editFocus.isGeometryEditing
+  });
+
   usePolygonTableHighlightStyle({
     map,
     styleReady,
     styleVersion,
     sourcesAdded,
-    highlight: polygonTableHighlight
+    highlight: polygonTableHighlight,
+    editFocus
   });
 
   usePolygonSelectionZoom({
@@ -434,7 +448,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     styleReady,
     styleVersion,
     sourcesAdded,
-    highlight: polygonTableHighlight
+    highlight: polygonTableHighlight,
+    editFocus
   });
 
   useEffect(() => {
