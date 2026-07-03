@@ -16,7 +16,7 @@ import {
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
-import { DownloadIcon, EditIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
+import { CommentIcon, DownloadIcon, EditIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
 import { wrapToolbarInfoTooltipContent } from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
 
 import type { TooltipType } from "../../Map.d";
@@ -27,6 +27,7 @@ type PopupFooterPolygonProps = {
   submitDisabled?: boolean;
   onSubmit?: () => Promise<void>;
   onEdit?: () => void;
+  onComment?: () => void;
   onClose?: () => void;
   onViewDetails?: () => void;
   viewDetailsDisabled?: boolean;
@@ -46,6 +47,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   submitDisabled = false,
   onSubmit,
   onEdit,
+  onComment,
   onClose,
   onViewDetails,
   viewDetailsDisabled = false,
@@ -55,13 +57,11 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   approveDisabled = false,
   approveDisabledTooltip,
   onApprove,
-  onRequestInformation,
-  onRunValidation
+  onRequestInformation
 }) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const canDownload = polygonUuid != null && polygonUuid !== "";
-  const canRunValidation = polygonUuid != null && polygonUuid !== "" && onRunValidation != null;
 
   const handleDownload = useCallback(async () => {
     if (!canDownload) {
@@ -109,11 +109,17 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   if (isAdminReview) {
     return (
       <Grid templateColumns="repeat(3, 1fr)" gap={3} width="100%">
-        <Button variant="secondary" size="small" onClick={onRunValidation} disabled={!canRunValidation}>
-          {t("Run Validation")}
+        <Button
+          variant="secondary"
+          size="small"
+          leftIcon={<DownloadIcon />}
+          onClick={() => void handleDownload()}
+          disabled={!canDownload}
+        >
+          {t("Download")}
         </Button>
-        <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit}>
-          {t("Edit")}
+        <Button variant="secondary" size="small" leftIcon={<CommentIcon />} onClick={onComment}>
+          {t("Comment")}
         </Button>
         <Flex alignItems="center" gap={1.5} minWidth={0}>
           <MultiActionButton

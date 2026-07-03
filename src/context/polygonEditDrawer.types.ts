@@ -4,4 +4,5 @@ export type PolygonEditDrawerPolygon = {
   polygonUuid?: string;
   polygonName?: string;
   sitePolygon?: SitePolygonLightDto;
+  defaultTab?: string;
 };

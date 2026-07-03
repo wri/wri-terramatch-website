@@ -128,6 +128,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [polygon, setPolygon] = useState<PolygonEditDrawerPolygon>({});
+  const [defaultTab, setDefaultTab] = useState<string>("edit");
   const [polygons, setPolygons] = useState(polygonsProp);
   const [suppressMapSelectionHighlight, setSuppressMapSelectionHighlight] = useState(false);
 
@@ -230,6 +231,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
         polygonName: params?.polygonName,
         sitePolygon: params?.sitePolygon
       });
+      setDefaultTab(params?.defaultTab ?? "edit");
       if (polygonUuid != null && polygonUuid !== "") {
         setEditPolygon({ isOpen: true, uuid: polygonUuid, primaryUuid: primaryUuid ?? undefined });
       }
@@ -341,6 +343,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
           onDeletingChange={handlePolygonDeletingChange}
           onRequestApproveModal={handleRequestApproveModal}
           onRequestInformationModal={handleRequestInformationModal}
+          defaultTab={defaultTab}
         />
       </PolygonEditDrawerContext.Provider>
     </PolygonEditDrawerDataContext.Provider>
