@@ -54,7 +54,8 @@ type MetricCardFieldsForContentVariants =
   | "type"
   | "frameworkKey"
   | "selection"
-  | "metricLabel";
+  | "metricLabel"
+  | "widthProgressBar";
 
 export interface MetricCardCommonVariantProps extends Pick<MetricCardProps, MetricCardFieldsForContentVariants> {
   iconWithColor: ReactNode;
