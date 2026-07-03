@@ -198,7 +198,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           title={t("Filters")}
           variant="fixed"
           onClose={onClose}
-          className="h-screen w-full"
+          className="h-full w-full"
           content={
             <Flex className="h-full flex-col gap-3 overflow-auto p-4">
               {activeFilters.length > 0 && (

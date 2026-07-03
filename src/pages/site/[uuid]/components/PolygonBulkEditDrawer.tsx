@@ -305,7 +305,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
             title={t("Edit Details")}
             variant="fixed"
             onClose={() => handleFooterCancel(onClose)}
-            className="h-screen w-full"
+            className="h-full w-full"
             content={
               <Flex className="mr-1 min-h-0 flex-1 flex-col gap-4 overflow-auto py-5 pr-5 pl-4">
                 <SelectedPolygonsSummary selectedPolygons={selectedPolygons} open={open} />
