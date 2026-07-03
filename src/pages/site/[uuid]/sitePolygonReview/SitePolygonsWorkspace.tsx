@@ -1014,6 +1014,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             <SitePolygonMetricsSection
               totalTreesPlanted={totalTreesPlanted}
               totalRestorationAreaHa={totalRestorationAreaHa}
+              restorationAreaGoal={site.hectaresToRestoreGoal}
               hasPolygonSelection={hasPolygonSelection}
               selectedTreesPlanted={selectedTreesPlanted}
               selectedRestorationAreaRounded={selectedRestorationAreaRounded}
