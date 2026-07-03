@@ -6,6 +6,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import type { PolygonOverlapFixCallback, PolygonSaveCallback } from "@/pages/site/[uuid]/components/polygonEdit.types";
 import PolygonEditDrawer from "@/pages/site/[uuid]/components/PolygonEditDrawer";
+import { useLayoutShell } from "@/redesignComponents/Loayout/LayoutShell.provider";
 
 import type { PolygonEditDrawerPolygon, PolygonEditDrawerTab } from "./polygonEditDrawer.types";
 
@@ -117,6 +118,18 @@ export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({
   useEffect(() => {
     dataContext?.setOnRequestInformationModal(onRequestInformationModal);
   }, [dataContext, onRequestInformationModal]);
+
+  return null;
+};
+
+const PolygonEditDrawerLayoutShellSync: FC = () => {
+  const { isOpen } = usePolygonEditDrawer();
+  const { setSidebarCollapseDisabled } = useLayoutShell();
+
+  useEffect(() => {
+    setSidebarCollapseDisabled(isOpen);
+    return () => setSidebarCollapseDisabled(false);
+  }, [isOpen, setSidebarCollapseDisabled]);
 
   return null;
 };
@@ -344,6 +357,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   return (
     <PolygonEditDrawerDataContext.Provider value={dataContextValue}>
       <PolygonEditDrawerContext.Provider value={value}>
+        <PolygonEditDrawerLayoutShellSync />
         {children}
         <PolygonEditDrawer
           open={isOpen}
