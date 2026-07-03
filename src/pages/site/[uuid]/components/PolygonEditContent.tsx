@@ -1079,7 +1079,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                       onClick: () => {},
                       infoTooltip: !isPolygonApprovable ? approveTooltip : undefined,
                       otherActions: [
-                        { label: t("Approve"), value: "approve", onClick: onRequestApproveModal ?? (() => {}) },
+                        {
+                          label: t("Approve"),
+                          value: "approve",
+                          disabled: !isPolygonApprovable,
+                          onClick: onRequestApproveModal ?? (() => {})
+                        },
                         {
                           label: t("Request information"),
                           value: "request-information",
