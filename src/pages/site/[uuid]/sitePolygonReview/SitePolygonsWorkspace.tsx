@@ -41,6 +41,7 @@ import { DownloadIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundat
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import Log from "@/utils/log";
 import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils/polygonAnalytics";
+import { isSitePolygonApprovable } from "@/utils/sitePolygonReview";
 
 import { type OverlapFixPolygon } from "../components/Modals/OverlapFix";
 import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
@@ -637,7 +638,13 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   );
 
   const handleOpenApprovePolygonModal = useCallback(() => {
-    setApprovePayload({ polygons: selectedRows });
+    const approvableRows = selectedRows.filter(row =>
+      isSitePolygonApprovable({ status: row.submission, validationStatus: row.validation })
+    );
+    if (approvableRows.length === 0) {
+      return;
+    }
+    setApprovePayload({ polygons: approvableRows });
     setShowApprovePolygonConfirmationModal(true);
   }, [selectedRows]);
 
@@ -730,7 +737,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     if (polygonApproveConfirmation == null) return;
     const polygon = polygonsData.find(p => p.uuid === polygonApproveConfirmation);
     setPolygonApproveConfirmation(null);
-    if (polygon != null) {
+    if (polygon != null && isSitePolygonApprovable(polygon)) {
       setApprovePayload({ polygons: [mapSitePolygonToTableRow(polygon, t)] });
       setShowApprovePolygonConfirmationModal(true);
     }
@@ -748,7 +755,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
 
   const handleDrawerRequestApproveModal = useCallback(() => {
     const drawerPolygon = polygonsData.find(p => p.polygonUuid === editPolygon.uuid || p.uuid === editPolygon.uuid);
-    if (drawerPolygon != null) {
+    if (drawerPolygon != null && isSitePolygonApprovable(drawerPolygon)) {
       setApprovePayload({ polygons: [mapSitePolygonToTableRow(drawerPolygon, t)] });
       setShowApprovePolygonConfirmationModal(true);
     }

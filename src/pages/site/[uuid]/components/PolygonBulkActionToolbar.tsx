@@ -7,7 +7,7 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
-import { getSitePolygonsApproveTooltipIfNoneEligible } from "@/utils/sitePolygonReview";
+import { getSitePolygonsApproveTooltipIfNoneEligible, isSitePolygonApprovable } from "@/utils/sitePolygonReview";
 import { getSitePolygonsSubmitTooltipIfNoneEligible } from "@/utils/sitePolygonSubmit";
 
 import { PolygonTableRow } from "./PolygonTableRow";
@@ -64,13 +64,22 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
 
   const submitDisabledTooltip = useMemo(
     () =>
-      isOverlapFixAction
+      isAdmin || isOverlapFixAction
         ? undefined
         : getSitePolygonsSubmitTooltipIfNoneEligible(
             polygons.map(polygon => ({ status: polygon.submission, validationStatus: polygon.validation })),
             t
           ),
-    [isOverlapFixAction, polygons, t]
+    [isAdmin, isOverlapFixAction, polygons, t]
+  );
+
+  const isApproveDisabled = useMemo(
+    () =>
+      isAdmin &&
+      !polygons.some(polygon =>
+        isSitePolygonApprovable({ status: polygon.submission, validationStatus: polygon.validation })
+      ),
+    [isAdmin, polygons]
   );
 
   const approveDisabledTooltip = useMemo(
@@ -141,28 +150,34 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   );
 
   const primaryAction = useMemo(
-    () => ({
-      children: isAdmin ? t("Review") : submitLabel,
-      disabled: isAdmin ? false : isOverlapAutoFixUnavailable || isSubmitDisabled || submitDisabledTooltip != null,
-      onClick: isAdmin ? () => {} : onSubmit,
-      ...(isAdmin && {
-        otherActions: [
-          {
-            label: t("Approve"),
-            value: "approve",
-            onClick: onOpenApproveModal
-          },
-          {
-            label: t("Request information"),
-            value: "request-information",
-            onClick: onOpenRequestInformationModal
+    () =>
+      isAdmin
+        ? {
+            mainActionLabel: t("Review"),
+            onClick: () => {},
+            otherActions: [
+              {
+                label: t("Approve"),
+                value: "approve",
+                disabled: isApproveDisabled,
+                onClick: onOpenApproveModal
+              },
+              {
+                label: t("Request information"),
+                value: "request-information",
+                onClick: onOpenRequestInformationModal
+              }
+            ]
           }
-        ]
-      })
-    }),
+        : {
+            children: submitLabel,
+            disabled: isOverlapAutoFixUnavailable || isSubmitDisabled || submitDisabledTooltip != null,
+            onClick: onSubmit
+          },
     [
       isOverlapAutoFixUnavailable,
       isSubmitDisabled,
+      isApproveDisabled,
       onSubmit,
       onOpenApproveModal,
       onOpenRequestInformationModal,
@@ -203,7 +218,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
             deleteAction={deleteAction}
             actions={toolbarActions}
             primaryAction={primaryAction}
-            infoTooltip={overlapTooltip ?? adminApproveTooltip ?? submitDisabledTooltip}
+            infoTooltip={overlapTooltip ?? adminApproveTooltip ?? (isAdmin ? undefined : submitDisabledTooltip)}
           />
         </Box>
       )}
