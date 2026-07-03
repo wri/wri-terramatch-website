@@ -1,123 +1,83 @@
-import { Group, Menu, MenuContent, MenuItem, MenuPositioner, MenuTrigger, Portal } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
+import { MultiActionButton as WriMultiActionButton } from "@worldresources/wri-design-systems";
 import clsx from "clsx";
-import { FC, ReactNode, useState } from "react";
+import { FC } from "react";
 
-import { ChevronDownIcon } from "@/redesignComponents/foundations/Icons";
+import { getThemedColor } from "@/lib/theme";
 
-import Button from "../Button/Button";
 import { secondaryTextColorClass } from "./MultiActionButton.styles";
 
-type MenuTriggerTyped = {
-  children: ReactNode;
-  asChild?: boolean;
-};
-
-type MenuContainerTyped = {
-  children: ReactNode;
-  minW?: string;
-};
-
-type MenuItemTyped = {
-  children: ReactNode;
-  value?: string;
-  color?: string;
-  opacity?: number;
-  cursor?: string;
-  disabled?: boolean;
-  onClick?: () => void;
-};
-
-const TypedMenuTrigger = MenuTrigger as FC<MenuTriggerTyped>;
-const TypedMenuPositioner = MenuPositioner as FC<MenuContainerTyped>;
-const TypedMenuContent = MenuContent as FC<MenuContainerTyped>;
-const TypedMenuItem = MenuItem as FC<MenuItemTyped>;
-
-export interface IMultiActionOtherAction {
-  label: React.ReactNode;
-  value: string;
-  onClick: VoidFunction;
-  disabled?: boolean;
-}
-
 export interface IMultiActionButtonProps {
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "borderless";
   size?: "default" | "small";
   mainActionLabel: string;
   mainActionOnClick: VoidFunction;
-  otherActions: IMultiActionOtherAction[];
+  otherActions: {
+    label: React.ReactNode;
+    value: string;
+    onClick: VoidFunction;
+  }[];
   disabled?: boolean;
   leftIcon?: React.ReactNode;
   className?: string;
 }
 
 const MultiActionButton: FC<IMultiActionButtonProps> = ({
-  variant = "primary",
-  size = "default",
+  variant,
+  size,
   mainActionLabel,
   mainActionOnClick,
   otherActions,
-  disabled = false,
-  leftIcon,
-  className
+  disabled,
+  className,
+  ...props
 }) => {
-  const [open, setOpen] = useState(false);
   const buttonClassName = clsx(className, variant === "secondary" && secondaryTextColorClass);
 
+  if (variant === "borderless") {
+    return (
+      <Box
+        css={{
+          "& button": {
+            boxShadow: "none !important",
+            backgroundColor: "transparent",
+            border: "none",
+            color: `${getThemedColor("neutral", 900)} !important`
+          },
+          "& button:focus-visible": {
+            outlineColor: `${getThemedColor("primary", 700)} !important`
+          },
+          "& button:active": {
+            outline: "none",
+            backgroundColor: ` ${getThemedColor("primary", 200)} !important`,
+            boxShadow: "0 0.25rem 0.375rem -0.0625rem #0000001A"
+          }
+        }}
+      >
+        <WriMultiActionButton
+          variant="secondary"
+          size={size}
+          className={buttonClassName}
+          mainActionLabel={mainActionLabel}
+          mainActionOnClick={mainActionOnClick}
+          otherActions={otherActions}
+          disabled={disabled}
+          {...props}
+        />
+      </Box>
+    );
+  }
   return (
-    <Group attached className={buttonClassName}>
-      <Button
-        variant={variant}
-        size={size}
-        onClick={mainActionOnClick}
-        disabled={disabled}
-        leftIcon={leftIcon}
-        className="min-w-0 flex-1"
-      >
-        {mainActionLabel}
-      </Button>
-      <Menu.Root
-        open={open}
-        onOpenChange={(details: { open: boolean }) => setOpen(details.open)}
-        positioning={{ placement: "bottom-end" }}
-      >
-        <TypedMenuTrigger asChild>
-          <Button
-            variant={variant}
-            size={size}
-            disabled={disabled}
-            aria-label={`Open ${mainActionLabel} options`}
-            aria-haspopup="menu"
-            aria-expanded={open}
-            className="!px-2"
-          >
-            <ChevronDownIcon
-              boxSize={4}
-              transform={open ? "rotate(180deg)" : "rotate(0deg)"}
-              transition="transform 0.2s"
-            />
-          </Button>
-        </TypedMenuTrigger>
-        <Portal>
-          <TypedMenuPositioner>
-            <TypedMenuContent minW="10rem">
-              {otherActions.map(action => (
-                <TypedMenuItem
-                  key={action.value}
-                  value={action.value}
-                  disabled={action.disabled}
-                  onClick={action.disabled ? undefined : action.onClick}
-                  color="neutral.900"
-                  opacity={action.disabled ? 0.5 : 1}
-                  cursor={action.disabled ? "not-allowed" : "pointer"}
-                >
-                  {action.label}
-                </TypedMenuItem>
-              ))}
-            </TypedMenuContent>
-          </TypedMenuPositioner>
-        </Portal>
-      </Menu.Root>
-    </Group>
+    <WriMultiActionButton
+      variant={variant}
+      size={size}
+      className={buttonClassName}
+      mainActionLabel={mainActionLabel}
+      mainActionOnClick={mainActionOnClick}
+      otherActions={otherActions}
+      disabled={disabled}
+      {...props}
+    />
   );
 };
 
