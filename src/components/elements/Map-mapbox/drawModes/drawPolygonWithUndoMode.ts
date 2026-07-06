@@ -41,6 +41,17 @@ const refreshActiveDrawDisplay = (featureId: string): void => {
   activeDrawModeContext._ctx.map.triggerRepaint();
 };
 
+export const completeActivePolygonDraw = (): boolean => {
+  if (activeDrawModeState == null || activeDrawModeContext == null) return false;
+  if (!canCompletePolygon(activeDrawModeState)) return false;
+
+  baseDrawPolygonMode.onKeyUp?.call(activeDrawModeContext, activeDrawModeState, {
+    key: "Enter"
+  } as KeyboardEvent);
+  syncPolygonDrawCanUndo();
+  return true;
+};
+
 export const performPolygonDrawUndo = (): boolean => {
   if (activeDrawModeState == null || activeDrawModeContext == null) return false;
 

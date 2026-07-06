@@ -257,6 +257,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     <>
       <Drawer
         modal={false}
+        trapFocus={false}
         open={open ?? false}
         closeOnInteractOutside={false}
         onOpenChange={onOpenChange}
