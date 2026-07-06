@@ -577,11 +577,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     const overlay = anrMapOverlayRef.current;
     if (overlay == null) return;
 
-    const isMonitoringPlotsSectionActive = openAccordionSection === "monitoring-plots" || plotsVisible;
+    const isMonitoringPlotsSectionActive = openAccordionSection === "monitoring-plots";
     const canShowAnrPlots = isAnrEligible && hasAnrPlotGeometry;
     overlay.setDrawerOpen(true);
     overlay.setAnrTabActive(canShowAnrPlots && isMonitoringPlotsSectionActive);
-    overlay.setShowPlotsOnMap(canShowAnrPlots && plotsVisible);
+    overlay.setShowPlotsOnMap(canShowAnrPlots && isMonitoringPlotsSectionActive && plotsVisible);
 
     if (sitePolygonUuid !== "" && geometryPolygonUuid !== "") {
       overlay.syncDrawerSelection({
@@ -615,6 +615,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setShowPhotosOnMap(false);
     }
   }, [openAccordionSection, setShowPhotosOnMap]);
+
+  useEffect(() => {
+    if (openAccordionSection !== "monitoring-plots") {
+      setPlotsVisible(false);
+    }
+  }, [openAccordionSection]);
 
   useEffect(() => {
     setGeotaggedPhotosMapVisible(openAccordionSection === "geotagged-photos" && showPhotosOnMap);
