@@ -606,7 +606,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     void handleEditPolygon();
   }, [handleEditPolygon, onCancelEdit, polygonFromMap?.isOpen, polygonFromMap?.uuid, props.autoEditPolygon]);
 
-  const { isFullscreen, toggleFullscreen } = useMapFullscreen({ mapContainer, map });
+  const { isFullscreen, toggleFullscreen } = useMapFullscreen({ map });
 
   const { isDownloadingPolygons, downloadGeoJsonPolygon } = useMapDownload({
     polygonsData,
@@ -625,7 +625,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
 
   return (
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
-      <MapCanvas mapContainer={mapContainer} className={className}>
+      <MapCanvas mapContainer={mapContainer} className={className} isFullscreen={isFullscreen}>
         <MapControlsOverlay
           showBaseMapControl={showBaseMapControl}
           hasControls={hasControls}
