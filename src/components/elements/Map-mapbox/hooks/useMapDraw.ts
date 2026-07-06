@@ -315,7 +315,7 @@ export function useMapDraw({
       }
       if (map.current != null && draw.current != null) {
         filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
-        applyPolygonNeighborDimming(map.current, true);
+        applyPolygonNeighborDimming(map.current, true, polygonuuid);
         originalGeometryRef.current = geometry;
         resetGeometryHistory(geometry);
         setPolygonGeometryEdit?.({
