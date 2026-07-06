@@ -32,7 +32,6 @@ const UploadAnrMonitoringPlots: FC<UploadAnrMonitoringPlotsProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const primaryLabel = mode === "replace" ? t("Update") : t("Save");
 
   const handleClose = useCallback(() => {
     onOpenChange(false);
@@ -170,7 +169,7 @@ const UploadAnrMonitoringPlots: FC<UploadAnrMonitoringPlotsProps> = ({
             },
             {
               id: "save",
-              children: isSaving ? t("Saving...") : primaryLabel,
+              children: isSaving ? t("Saving...") : t("Upload"),
               loading: isSaving,
               disabled: selectedFile == null || isSaving,
               onClick: () => void handleSave()
