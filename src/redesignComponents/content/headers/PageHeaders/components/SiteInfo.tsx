@@ -86,13 +86,18 @@ const SiteInfo: FC<SiteInfoProps> = ({
         <Button
           variant="borderless"
           size="small"
-          className="-mr-2"
+          className="-mr-2 block max-w-[30vw] truncate"
           onClick={() => router.push(`/project/${projectUuid}`)}
         >
           {projectName}
         </Button>
         <SeparatorDot />
-        <Button variant="borderless" size="small" className="-ml-2" onClick={() => router.push(`/my-projects`)}>
+        <Button
+          variant="borderless"
+          size="small"
+          className="-ml-2 block max-w-[30vw] truncate"
+          onClick={() => router.push(`/my-projects`)}
+        >
           {organization}
         </Button>
       </Text>

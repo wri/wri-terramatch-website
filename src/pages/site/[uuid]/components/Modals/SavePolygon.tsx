@@ -5,7 +5,7 @@ import { FC, useCallback, useState } from "react";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 
-import type { PolygonTableRow } from "../../tabs/Polygons";
+import type { PolygonTableRow } from "../PolygonTableRow";
 export interface SavePolygonProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

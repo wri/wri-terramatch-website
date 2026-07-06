@@ -14,6 +14,8 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import Log from "@/utils/log";
 
 import { BBox } from "../GeoJSON";
+import type { MapEditFocusState } from "../hooks/useMapEditFocus";
+import { INACTIVE_MAP_EDIT_FOCUS } from "../hooks/useMapEditFocus";
 import { polygonSelectionZoomBboxCache } from "../polygonSelectionZoomBboxCache";
 
 const POLYGON_FILL_LAYER_IDS = getPolygonGeometryFillLayerConfigs().map(c => c.layerId);
@@ -97,6 +99,7 @@ type UsePolygonTableHighlightStyleParams = {
   styleVersion: number;
   sourcesAdded: boolean;
   highlight: PolygonTableHighlight | undefined;
+  editFocus?: MapEditFocusState;
 };
 
 export function usePolygonTableHighlightStyle({
@@ -104,15 +107,17 @@ export function usePolygonTableHighlightStyle({
   styleReady,
   styleVersion,
   sourcesAdded,
-  highlight
+  highlight,
+  editFocus = INACTIVE_MAP_EDIT_FOCUS
 }: UsePolygonTableHighlightStyleParams): void {
   const lastAppliedRef = useRef<Map<string, string>>(new Map());
   const isHighlightActive = highlight != null;
-  const hoveredUuid = usePolygonTableHoveredUuid(isHighlightActive);
+  const isEditFocusActive = editFocus.isEditFocusActive;
+  const hoveredUuid = usePolygonTableHoveredUuid(isHighlightActive && !isEditFocusActive);
   const selectedUuids = highlight?.selectedPolygonUuids ?? EMPTY_SELECTION;
 
   useEffect(() => {
-    if (!isHighlightActive || !styleReady || !sourcesAdded || map.current == null) return;
+    if (!isHighlightActive || isEditFocusActive || !styleReady || !sourcesAdded || map.current == null) return;
 
     const m = map.current;
     const fillConfigs = getPolygonGeometryFillLayerConfigs();
@@ -158,7 +163,7 @@ export function usePolygonTableHighlightStyle({
         }
       }
     }
-  }, [map, styleReady, styleVersion, sourcesAdded, isHighlightActive, hoveredUuid, selectedUuids]);
+  }, [map, styleReady, styleVersion, sourcesAdded, isHighlightActive, isEditFocusActive, hoveredUuid, selectedUuids]);
 
   useEffect(() => {
     lastAppliedRef.current = new Map();
@@ -172,6 +177,8 @@ type UsePolygonSelectionZoomParams = {
   selectedPolygonUuids: string[] | undefined;
   focusPolygonUuid?: string | null;
   onFocusPolygonConsumed?: () => void;
+  validationZoomPolygonUuids?: string[] | null;
+  onValidationZoomConsumed?: () => void;
   sitePolygonData: SitePolygonLightDto[] | undefined;
 };
 
@@ -258,9 +265,12 @@ export function usePolygonSelectionZoom({
   selectedPolygonUuids,
   focusPolygonUuid,
   onFocusPolygonConsumed,
+  validationZoomPolygonUuids,
+  onValidationZoomConsumed,
   sitePolygonData
 }: UsePolygonSelectionZoomParams): void {
   const lastZoomedSelectionRef = useRef<string>("");
+  const lastValidationZoomKeyRef = useRef<string>("");
   const requestSequenceRef = useRef(0);
   const sitePolygonIdsFingerprint = buildSitePolygonIdsFingerprint(sitePolygonData);
 
@@ -360,6 +370,52 @@ export function usePolygonSelectionZoom({
       requestSequenceRef.current += 1;
     };
   }, [map, styleReady, sourcesAdded, focusPolygonUuid, onFocusPolygonConsumed, zoomToUuids]);
+
+  useEffect(() => {
+    const uuids = (validationZoomPolygonUuids ?? []).filter(uuid => uuid !== "");
+    if (uuids.length === 0) {
+      lastValidationZoomKeyRef.current = "";
+      return;
+    }
+
+    if (!styleReady || !sourcesAdded || map.current == null) {
+      return;
+    }
+
+    const selectionKey = getSortedSelectionKey(uuids);
+    if (selectionKey === lastValidationZoomKeyRef.current) {
+      return;
+    }
+
+    const m = map.current;
+    const requestSequence = requestSequenceRef.current + 1;
+    requestSequenceRef.current = requestSequence;
+    let cancelled = false;
+
+    const isStale = () =>
+      cancelled || requestSequence !== requestSequenceRef.current || map.current == null || map.current !== m;
+
+    const attemptZoom = async () => {
+      polygonSelectionZoomBboxCache.delete(selectionKey);
+      const zoomed = await zoomToUuids(uuids, m, isStale);
+      if (zoomed && !isStale()) {
+        lastValidationZoomKeyRef.current = selectionKey;
+        onValidationZoomConsumed?.();
+      }
+    };
+
+    if (m.loaded()) {
+      void attemptZoom();
+    } else {
+      m.once("idle", attemptZoom);
+    }
+
+    return () => {
+      cancelled = true;
+      m.off("idle", attemptZoom);
+      requestSequenceRef.current += 1;
+    };
+  }, [map, onValidationZoomConsumed, sourcesAdded, styleReady, validationZoomPolygonUuids, zoomToUuids]);
 }
 
 type UsePolygonTableHighlightPointerParams = {
@@ -369,6 +425,7 @@ type UsePolygonTableHighlightPointerParams = {
   styleVersion: number;
   sourcesAdded: boolean;
   highlight: PolygonTableHighlight | undefined;
+  editFocus?: MapEditFocusState;
 };
 
 export function usePolygonTableHighlightPointer({
@@ -377,16 +434,18 @@ export function usePolygonTableHighlightPointer({
   styleReady,
   styleVersion,
   sourcesAdded,
-  highlight
+  highlight,
+  editFocus = INACTIVE_MAP_EDIT_FOCUS
 }: UsePolygonTableHighlightPointerParams): void {
   const isHighlightActive = highlight != null;
+  const isPointerActive = isHighlightActive && !editFocus.isEditFocusActive;
   const onPolygonClickedFromMap = highlight?.onPolygonClickedFromMap;
   const lastReportedRef = useRef<string | null>(null);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (
-      !isHighlightActive ||
+      !isPointerActive ||
       !styleReady ||
       !sourcesAdded ||
       map.current == null ||
@@ -461,5 +520,5 @@ export function usePolygonTableHighlightPointer({
         setPolygonTableHoveredUuid(null);
       }
     };
-  }, [map, draw, styleReady, styleVersion, sourcesAdded, isHighlightActive, onPolygonClickedFromMap]);
+  }, [map, draw, styleReady, styleVersion, sourcesAdded, isPointerActive, onPolygonClickedFromMap]);
 }

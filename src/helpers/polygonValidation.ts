@@ -17,6 +17,33 @@ export const isPolygonValidationChecked = (validationStatus: string | null | und
 export const hasValidationCriteria = (validation: ValidationDto | undefined): validation is ValidationDto =>
   validation != null && (validation.criteriaList?.length ?? 0) > 0;
 
+const getLatestCriteriaCreatedAtMs = (validation: ValidationDto): number | null => {
+  const timestamps = validation.criteriaList
+    .map(criteria => criteria.createdAt)
+    .filter((createdAt): createdAt is string => createdAt != null && createdAt !== "")
+    .map(createdAt => Date.parse(createdAt))
+    .filter(timestamp => !Number.isNaN(timestamp));
+
+  if (timestamps.length === 0) {
+    return null;
+  }
+
+  return Math.max(...timestamps);
+};
+
+export const isValidationFreshAfter = (validation: ValidationDto | undefined, startedAtMs: number): boolean => {
+  if (!hasValidationCriteria(validation)) {
+    return false;
+  }
+
+  const latestCriteriaCreatedAtMs = getLatestCriteriaCreatedAtMs(validation);
+  if (latestCriteriaCreatedAtMs == null) {
+    return false;
+  }
+
+  return latestCriteriaCreatedAtMs >= startedAtMs - 2_000;
+};
+
 export const shouldDisplayValidationCriteria = (
   validation: ValidationDto | undefined,
   validationStatus: string | null | undefined

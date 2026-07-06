@@ -6,7 +6,7 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons";
 
-import type { PolygonTableRow } from "../../tabs/Polygons";
+import type { PolygonTableRow } from "../PolygonTableRow";
 
 export interface DeletePolygonProps {
   open: boolean;
@@ -36,7 +36,9 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, o
       onClose={handleClose}
       size="medium"
       header={
-        <b className="text-theme-neutral-800">{polygons.length === 1 ? t("Delete polygon?") : t("Delete polygons?")}</b>
+        <Text textStyle="400-bold" color="neutral.800">
+          {polygons.length === 1 ? t("Delete polygon?") : t("Delete polygons?")}
+        </Text>
       }
       content={
         polygons.length === 1 ? (

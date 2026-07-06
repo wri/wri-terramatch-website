@@ -12,6 +12,8 @@ type AnrMapOverlay = {
   drawerOpen?: boolean;
   anrTabActive?: boolean;
   showPlotsOnMap?: boolean;
+  polygonStatus?: string | null;
+  polygonName?: string | null;
 } | null;
 
 type UseMapOverlaysParams = {
@@ -52,7 +54,11 @@ export function useMapOverlays({
       removeAnrPlotGeometryOverlay(currentMap);
       return;
     }
-    upsertAnrPlotGeometryOverlay(currentMap, anrPlotGeometryDto?.geojson, { visible: true });
+    upsertAnrPlotGeometryOverlay(currentMap, anrPlotGeometryDto?.geojson, {
+      visible: true,
+      polygonStatus: anrMapOverlay?.polygonStatus ?? null,
+      polygonName: anrMapOverlay?.polygonName ?? null
+    });
 
     return () => {
       removeAnrPlotGeometryOverlay(currentMap);

@@ -28,6 +28,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
 import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOptions";
 import { useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
@@ -40,11 +41,12 @@ import DatePickerInput from "@/redesignComponents/Forms/Inputs/DateInputs/DatePi
 import InputWithUnits from "@/redesignComponents/Forms/Inputs/InputWithUnits";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
-import { DownloadIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
+import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
 import { trackPolygonDownloaded, trackPolygonStatusChanged } from "@/utils/polygonAnalytics";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
+import { getSingleSitePolygonApproveTooltip, isSitePolygonApprovable } from "@/utils/sitePolygonReview";
 import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
 import {
@@ -85,6 +87,11 @@ type PolygonEditContentProps = {
   onRegisterPlantStartDate?: (hasPlantStartDate: () => boolean) => void;
   onRequestDeleteModal: () => void;
   onRequestSubmitModal: (hasUnsavedChanges: boolean) => void;
+  onRequestAnrUploadModal?: (mode: "upload" | "replace") => void;
+  onRequestAnrDeleteModal?: () => void;
+  isAnrPlotsOperating?: boolean;
+  onRequestApproveModal?: () => void;
+  onRequestInformationModal?: () => void;
   onSaved?: PolygonSaveCallback;
   onValidationJobsStarted?: PolygonValidationJobsStartedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
@@ -175,6 +182,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRegisterPlantStartDate,
   onRequestDeleteModal,
   onRequestSubmitModal,
+  onRequestAnrUploadModal,
+  onRequestAnrDeleteModal,
+  isAnrPlotsOperating = false,
+  onRequestApproveModal,
+  onRequestInformationModal,
   onSaved,
   onValidationJobsStarted,
   onPolygonUpdated,
@@ -182,6 +194,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onDeletingChange
 }) => {
   const t = useT();
+  const isAdmin = useIsAdmin();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const showStatusToast = useCallback((type: "success" | "error" | "warning", label: string) => {
     if (type === "error") {
@@ -210,6 +223,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     setStatusSelectedPolygon,
     showPhotosOnMap,
     setShowPhotosOnMap,
+    setGeotaggedPhotosMapVisible,
     mediaFiles
   } = useMapAreaContext();
   const [polygonName, setPolygonName] = useState("");
@@ -217,6 +231,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
+  const [submissionCycle, setSubmissionCycle] = useState<string[]>(["option-1"]);
   const [treesPlanted, setTreesPlanted] = useState("");
   const [plotsVisible, setPlotsVisible] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
@@ -240,6 +255,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const isCreateMode = polygon?.primaryUuid == null || polygon.primaryUuid === "";
   const isPolygonSubmittable = isSitePolygonSubmittable(polygon);
   const submitTooltip = getSingleSitePolygonSubmitTooltip(polygon, t);
+  const isPolygonApprovable = isSitePolygonApprovable(polygon);
+  const approveTooltip = getSingleSitePolygonApproveTooltip(polygon, t);
   const shouldMapEditPolygon =
     openAccordionSection !== "monitoring-plots" && openAccordionSection !== "geotagged-photos";
   const resolvedSiteUuid = polygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : "");
@@ -293,6 +310,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setTreeDistribution,
       setTreesPlanted
     });
+    setSubmissionCycle(["option-1"]);
   }, [polygon]);
 
   const onSavedRef = useLatestRef(onSaved);
@@ -508,6 +526,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [sitePolygonUuid]);
 
   useEffect(() => {
+    if (!hasAnrPlotGeometry) {
+      setPlotsVisible(false);
+    }
+  }, [hasAnrPlotGeometry]);
+
+  useEffect(() => {
     if (!isAnrEligible) {
       setPlotsVisible(false);
       setOpenAccordionSection(current => (current === "monitoring-plots" ? "details" : current));
@@ -560,7 +584,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     overlay.setShowPlotsOnMap(canShowAnrPlots && plotsVisible);
 
     if (sitePolygonUuid !== "" && geometryPolygonUuid !== "") {
-      overlay.syncDrawerSelection({ sitePolygonUuid, geometryPolygonUuid });
+      overlay.syncDrawerSelection({
+        sitePolygonUuid,
+        geometryPolygonUuid,
+        polygonStatus: polygon?.status ?? null,
+        polygonName: polygon?.name ?? null
+      });
     }
   }, [
     anrMapOverlayRef,
@@ -569,6 +598,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     isAnrEligible,
     openAccordionSection,
     plotsVisible,
+    polygon?.name,
+    polygon?.status,
     sitePolygonUuid
   ]);
 
@@ -585,11 +616,16 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     }
   }, [openAccordionSection, setShowPhotosOnMap]);
 
+  useEffect(() => {
+    setGeotaggedPhotosMapVisible(openAccordionSection === "geotagged-photos" && showPhotosOnMap);
+  }, [openAccordionSection, showPhotosOnMap, setGeotaggedPhotosMapVisible]);
+
   useEffect(
     () => () => {
       setShowPhotosOnMap(false);
+      setGeotaggedPhotosMapVisible(false);
     },
-    [setShowPhotosOnMap]
+    [setGeotaggedPhotosMapVisible, setShowPhotosOnMap]
   );
 
   const downloadMonitoringPlots = useCallback(async () => {
@@ -891,6 +927,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     onRegisterPlantStartDate?.(() => hasPlantStartDateForDisplay(plantStartDate, polygon));
   }, [onRegisterPlantStartDate, plantStartDate, polygon]);
 
+  const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
+    { value: "option-1", label: t("Option 1") },
+    { value: "option-2", label: t("Option 2") },
+    { value: "option-3", label: t("Option 3") }
+  ];
+
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
       <UploadGeotaggedPhotos
@@ -967,6 +1009,17 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                 }
               ]}
             />
+            {(isAdmin || submissionCycle.length > 0) && (
+              <SelectInput
+                key={`submission-cycle-${sitePolygonUuid}`}
+                items={SUBMISSION_CYCLE_MOCKED_OPTIONS}
+                label={t("Submission Cycle")}
+                defaultValue={submissionCycle}
+                onChange={setSubmissionCycle}
+                placeholder={t("Select...")}
+                disabled={!isAdmin}
+              />
+            )}
           </Flex>
         </Accordion>
         {isAnrEligible ? (
@@ -975,52 +1028,75 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             open={openAccordionSection === "monitoring-plots"}
             onOpenChange={handleAccordionOpenChange("monitoring-plots")}
             actions={
-              <Button
-                leftIcon={<DownloadIcon />}
-                onClick={() => void downloadMonitoringPlots()}
-                size="small"
-                variant="secondary"
-                disabled={!hasAnrPlotGeometry}
-              >
-                {t("Download")}
-              </Button>
+              <Flex gap={2}>
+                {hasAnrPlotGeometry ? (
+                  <>
+                    <Button
+                      leftIcon={<DownloadIcon />}
+                      onClick={() => void downloadMonitoringPlots()}
+                      size="small"
+                      variant="secondary"
+                      disabled={isAnrPlotsOperating}
+                    >
+                      {t("Download")}
+                    </Button>
+                    <Button
+                      leftIcon={<RefreshIcon />}
+                      onClick={() => onRequestAnrUploadModal?.("replace")}
+                      size="small"
+                      variant="secondary"
+                      disabled={isAnrPlotsOperating}
+                    >
+                      {t("Update")}
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    leftIcon={<UploadIcon />}
+                    onClick={() => onRequestAnrUploadModal?.("upload")}
+                    size="small"
+                    variant="secondary"
+                    disabled={isAnrPlotsOperating}
+                  >
+                    {t("Upload")}
+                  </Button>
+                )}
+              </Flex>
             }
           >
             <Flex className="mb-4 flex-1 flex-col gap-4">
-              <Switch
-                name="showPlotsOnMap"
-                checked={plotsVisible}
-                disabled={!hasAnrPlotGeometry}
-                onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
-                  setPlotsVisible(checked === true)
-                }
-              >
-                {t("Show Plots on Map")}
-              </Switch>
-              <Flex className="flex-col gap-7">
-                {isAnrLoading ? (
-                  <Text>{t("Loading ANR monitoring plots...")}</Text>
-                ) : hasAnrPlotGeometry ? (
-                  <>
-                    <Text>
-                      {t(
-                        "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time."
-                      )}
-                    </Text>
-                    <Text>
-                      {t(
-                        "Download the monitoring plots to help your team locate and monitor the areas during field visits."
-                      )}
-                    </Text>
-                  </>
-                ) : (
+              {isAnrLoading ? (
+                <Text>{t("Loading ANR monitoring plots...")}</Text>
+              ) : hasAnrPlotGeometry ? (
+                <>
+                  <Switch
+                    name="showPlotsOnMap"
+                    checked={plotsVisible}
+                    onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
+                      setPlotsVisible(checked === true)
+                    }
+                  >
+                    {t("Show Plots on Map")}
+                  </Switch>
                   <Text>
                     {t(
-                      "The monitoring plots are not available yet. They will appear here once they are updated by the project team and ready for download."
+                      "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time."
                     )}
                   </Text>
-                )}
-              </Flex>
+                  <Button
+                    variant="borderless"
+                    typeVariant="negative"
+                    disabled={isAnrPlotsOperating}
+                    onClick={() => onRequestAnrDeleteModal?.()}
+                  >
+                    {t("Delete Plots")}
+                  </Button>
+                </>
+              ) : (
+                <Text textStyle="400-bold" color="neutral.900">
+                  {t("No monitoring plots yet.")}
+                </Text>
+              )}
             </Flex>
           </Accordion>
         ) : null}
@@ -1122,12 +1198,31 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               items={[
                 { label: t("Delete"), onClick: onRequestDeleteModal, labelColor: "error.500" },
                 { label: t("Download"), onClick: () => void handleDownloadPolygon() },
-                {
-                  label: t("Submit"),
-                  disabled: !isPolygonSubmittable,
-                  infoTooltip: !isPolygonSubmittable ? submitTooltip : undefined,
-                  onClick: handleRequestSubmit
-                }
+                isAdmin
+                  ? {
+                      label: t("Review"),
+                      onClick: () => {},
+                      infoTooltip: !isPolygonApprovable ? approveTooltip : undefined,
+                      otherActions: [
+                        {
+                          label: t("Approve"),
+                          value: "approve",
+                          disabled: !isPolygonApprovable,
+                          onClick: onRequestApproveModal ?? (() => {})
+                        },
+                        {
+                          label: t("Request information"),
+                          value: "request-information",
+                          onClick: onRequestInformationModal ?? (() => {})
+                        }
+                      ]
+                    }
+                  : {
+                      label: t("Submit"),
+                      disabled: !isPolygonSubmittable,
+                      infoTooltip: !isPolygonSubmittable ? submitTooltip : undefined,
+                      onClick: handleRequestSubmit
+                    }
               ]}
             />
           </Flex>

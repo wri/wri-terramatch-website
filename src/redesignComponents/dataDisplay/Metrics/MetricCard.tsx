@@ -188,6 +188,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   tooltipContent,
   classNameTitle,
   metricLabel,
+  widthProgressBar = "100%",
   type
 }) => {
   const t = useT();
@@ -205,7 +206,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
         )}
       </Flex>
       <Flex gap={2} alignItems="center">
-        <ProgressBar progress={progressValue} color={color} />
+        <ProgressBar progress={progressValue} color={color} width={widthProgressBar} />
         <Flex gap={1} alignItems="center">
           <Flex gap={1} className="items-center">
             <Text textStyle="400-bold" color="neutral.900">
@@ -331,7 +332,8 @@ const MetricCard: FC<MetricCardProps> = props => {
     classNameTitle,
     frameworkKey,
     selection,
-    metricLabel
+    metricLabel,
+    widthProgressBar
   } = props;
   const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "14px", color, variant);
   const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "24px", color, variant);
@@ -355,6 +357,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           classNameTitle={classNameTitle}
           metricLabel={metricLabel}
           type={type}
+          widthProgressBar={widthProgressBar}
         />
       );
       break;

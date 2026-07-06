@@ -33,6 +33,7 @@ import {
 import { removePopups } from "../interactions/popups";
 import { DashboardGetProjectsData, PolygonFromMapState } from "../Map.d";
 import { applyMapDrawStatusStyles, isPolygonDrawStatus, PolygonDrawStatus } from "../mapStyle";
+import { applyPolygonNeighborDimming } from "./polygonEditFocusStyle";
 import { filterPolygonFromLayers } from "./useMapLayers";
 
 type UseMapDrawParams = {
@@ -292,12 +293,17 @@ export function useMapDraw({
     const polygonStatus: PolygonDrawStatus | undefined = isPolygonDrawStatus(rawStatus) ? rawStatus : undefined;
 
     try {
+      // Fetch before hiding the tile-rendered polygon: it keeps showing its real
+      // status color for the whole network round trip instead of disappearing,
+      // then we swap tile -> Draw feature in one synchronous pass (no visible gap).
       const geometry = await fetchPolygonGeometry(polygonuuid, true, isProjectPolygon ? projectPitchUuid : undefined);
       if (geometry == null) {
         openNotification("error", t("Error"), t("No geometry found for polygon. The polygon may have been deleted."));
         return;
       }
       if (map.current != null && draw.current != null) {
+        filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
+        applyPolygonNeighborDimming(map.current, true);
         originalGeometryRef.current = geometry;
         resetGeometryHistory(geometry);
         setPolygonGeometryEdit?.({

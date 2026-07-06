@@ -34,6 +34,7 @@ import { useGoogleSatellite } from "./hooks/useGoogleSatellite";
 import { useMapCamera } from "./hooks/useMapCamera";
 import { useMapDownload } from "./hooks/useMapDownload";
 import { useMapDraw } from "./hooks/useMapDraw";
+import { useMapEditFocus } from "./hooks/useMapEditFocus";
 import { useMapFullscreen } from "./hooks/useMapFullscreen";
 import { useMapLayers } from "./hooks/useMapLayers";
 import { useMapMedia } from "./hooks/useMapMedia";
@@ -41,6 +42,7 @@ import { useMapOverlapIndicators } from "./hooks/useMapOverlapIndicators";
 import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
 import { useMapStyle } from "./hooks/useMapStyle";
+import { usePolygonEditFocusStyle } from "./hooks/usePolygonEditFocusStyle";
 import {
   usePolygonSelectionZoom,
   usePolygonTableHighlightPointer,
@@ -86,6 +88,7 @@ export interface BaseMapProps {
   legendPosition?: ControlMapPosition;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
+  skipNextSiteBboxZoomNonce?: number;
   /** Tile cache key from another map; modal can reuse the same Geoserver RND. */
   initialTileVersion?: string;
   /** When it matches current polygon data, skip bumping the tile cache on mount. */
@@ -98,6 +101,8 @@ export interface BaseMapProps {
     onPolygonClickedFromMap?: (uuid: string) => void;
     focusPolygonUuid?: string | null;
     onFocusPolygonConsumed?: () => void;
+    validationZoomPolygonUuids?: string[] | null;
+    onValidationZoomConsumed?: () => void;
   };
   overlapPolygons?: OverlapPolygonPoint[];
   autoEditPolygon?: boolean;
@@ -405,12 +410,24 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     polygonMapTileNonce
   });
 
+  const editFocus = useMapEditFocus({ polygonFromMap, editPolygon });
+
+  usePolygonEditFocusStyle({
+    map,
+    styleReady,
+    styleVersion,
+    sourcesAdded,
+    tileLoadRequestId,
+    isGeometryEditing: editFocus.isGeometryEditing
+  });
+
   usePolygonTableHighlightStyle({
     map,
     styleReady,
     styleVersion,
     sourcesAdded,
-    highlight: polygonTableHighlight
+    highlight: polygonTableHighlight,
+    editFocus
   });
 
   usePolygonSelectionZoom({
@@ -420,6 +437,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     selectedPolygonUuids: polygonTableHighlight?.selectedPolygonUuids,
     focusPolygonUuid: polygonTableHighlight?.focusPolygonUuid,
     onFocusPolygonConsumed: polygonTableHighlight?.onFocusPolygonConsumed,
+    validationZoomPolygonUuids: polygonTableHighlight?.validationZoomPolygonUuids,
+    onValidationZoomConsumed: polygonTableHighlight?.onValidationZoomConsumed,
     sitePolygonData
   });
 
@@ -429,7 +448,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     styleReady,
     styleVersion,
     sourcesAdded,
-    highlight: polygonTableHighlight
+    highlight: polygonTableHighlight,
+    editFocus
   });
 
   useEffect(() => {
@@ -484,6 +504,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     zoom,
     hasControls,
     shouldBboxZoom,
+    skipNextSiteBboxZoomNonce: props.skipNextSiteBboxZoomNonce,
     polygonFromMap,
     polygonBbox,
     isUserDrawingEnabled,
@@ -552,9 +573,11 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
 
   const lastAutoEditPolygonRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!props.autoEditPolygon || !polygonFromMap?.isOpen || polygonFromMap.uuid === "") {
+    const isAutoEditActive =
+      props.autoEditPolygon === true && polygonFromMap?.isOpen === true && polygonFromMap.uuid !== "";
+
+    if (!isAutoEditActive) {
       if (lastAutoEditPolygonRef.current != null) {
-        onCancelEdit();
         setIsEditing(false);
       }
       lastAutoEditPolygonRef.current = null;
@@ -567,8 +590,11 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     }
 
     if (previousUuid != null) {
+      // Switching directly between two auto-edited polygons without ever closing —
+      // polygonFromMap.isOpen stays true throughout, so useMapDraw's cleanup effect
+      // never fires here. This is the one case that still needs an explicit cancel
+      // to clear the previous polygon's draw feature before the next one is added.
       onCancelEdit();
-      setIsEditing(false);
     }
 
     lastAutoEditPolygonRef.current = polygonFromMap.uuid;

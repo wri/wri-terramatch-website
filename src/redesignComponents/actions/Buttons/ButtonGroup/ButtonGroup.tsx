@@ -16,14 +16,21 @@ export interface ButtonGroupProps {
   buttons?: IButtonProps[];
   classNameGroup?: string;
   groups?: { id: string; buttons: IButtonProps[] }[];
+  borderColor?: string;
 }
-const ButtonGroup: FC<ButtonGroupProps> = ({ className, buttons = [], groups = [], classNameGroup }) => {
+const ButtonGroup: FC<ButtonGroupProps> = ({
+  className,
+  buttons = [],
+  groups = [],
+  classNameGroup,
+  borderColor = "neutral.300"
+}) => {
   return (
     <Flex
       className={className}
       width="100%"
       borderTop="0.0625rem solid"
-      borderColor="neutral.300"
+      borderColor={borderColor}
       py={3}
       px={4}
       bg="neutral.100"

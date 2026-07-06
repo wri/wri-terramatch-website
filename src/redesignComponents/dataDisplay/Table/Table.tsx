@@ -35,6 +35,7 @@ interface TableProps<T extends BaseRow> {
   showPagination?: boolean;
   containerRef?: Ref<HTMLDivElement>;
   selectedRows?: T[];
+  onRowSelected?: (rowData: T, checked: boolean) => void;
   onAllItemsSelected?: (checked: boolean, visibleRows: T[]) => void;
 }
 
@@ -92,6 +93,7 @@ const Table = <T extends BaseRow>({
   showPagination = true,
   containerRef,
   selectedRows: controlledSelectedRows,
+  onRowSelected: controlledOnRowSelected,
   onAllItemsSelected: controlledOnAllItemsSelected
 }: TableProps<T>) => {
   const t = useT();
@@ -103,12 +105,13 @@ const Table = <T extends BaseRow>({
   const { setSortColumn, sortedData } = useTableSorting(data);
   const {
     selectedRows: internalSelectedRows,
-    handleRowSelected,
+    handleRowSelected: internalHandleRowSelected,
     onAllItemsSelected: internalOnAllItemsSelected
   } = useTableSelection(selectable, sortedData);
 
   // When a consumer passes controlled selectedRows, use those; otherwise fall back to internal state.
   const selectedRows = controlledSelectedRows ?? internalSelectedRows;
+  const handleRowSelected = controlledOnRowSelected ?? internalHandleRowSelected;
 
   const actualTotalItems = totalItems ?? data.length;
   const totalPages = Math.ceil(actualTotalItems / pageSize);

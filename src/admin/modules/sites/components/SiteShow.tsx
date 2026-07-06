@@ -8,9 +8,8 @@ import DocumentTab from "@/admin/components/ResourceTabs/DocumentTab/DocumentTab
 import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
 import MonitoredTab from "@/admin/components/ResourceTabs/MonitoredTab/MonitoredTab";
-import PolygonReviewTab from "@/admin/components/ResourceTabs/PolygonReviewTab";
+import PolygonReviewLauncher from "@/admin/sitePolygonReview/PolygonReviewLauncher";
 import { RecordFrameworkProvider } from "@/context/framework.provider";
-import { MapAreaProvider } from "@/context/mapArea.provider";
 
 const SiteShow = () => (
   <Show actions={<ShowActions resourceName="site" />} className="-mt-[50px] bg-neutral-100">
@@ -18,9 +17,7 @@ const SiteShow = () => (
       <TabbedShowLayout>
         <InformationTab type="sites" />
         <TabbedShowLayout.Tab label="Polygon Review">
-          <MapAreaProvider>
-            <PolygonReviewTab label="" type={"sites"} />
-          </MapAreaProvider>
+          <PolygonReviewLauncher />
         </TabbedShowLayout.Tab>
         <GalleryTab label="Site Gallery" entity="sites" />
         <DocumentTab label="Site Documents" entity="sites" />

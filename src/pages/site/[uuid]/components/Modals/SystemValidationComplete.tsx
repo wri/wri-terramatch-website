@@ -16,39 +16,48 @@ export interface SystemValidationCompleteProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   polygons: PolygonTableRow[];
-  geometryPolygonUuids?: string[];
   onViewDetails?: (polygon: PolygonTableRow) => void;
   polygonValidations: Map<string, ValidationDto>;
   isLoadingResults?: boolean;
+  pendingValidationPolygonIds?: string[];
 }
 const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
   open,
   onOpenChange,
   polygons,
-  geometryPolygonUuids,
   onViewDetails,
   polygonValidations,
-  isLoadingResults = false
+  isLoadingResults = false,
+  pendingValidationPolygonIds = []
 }) => {
   const t = useT();
   const handleClose = useCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
 
+  const pendingValidationIds = useMemo(
+    () => new Set(pendingValidationPolygonIds.filter(id => id !== "")),
+    [pendingValidationPolygonIds]
+  );
+
   const polygonsWithResolvedValidation = useMemo(
     () =>
-      polygons.map((polygon, index) => {
-        const validationLookupId = geometryPolygonUuids?.[index] ?? polygon.id;
-        const resolvedValidation =
-          mapValidationDtoToTagState(polygonValidations.get(validationLookupId)) ?? polygon.validation;
-
-        if (resolvedValidation === polygon.validation) {
-          return polygon;
+      polygons.reduce<PolygonTableRow[]>((resolvedPolygons, polygon) => {
+        if (pendingValidationIds.has(polygon.id)) {
+          return resolvedPolygons;
         }
 
-        return { ...polygon, validation: resolvedValidation };
-      }),
-    [geometryPolygonUuids, polygons, polygonValidations]
+        const resolvedValidation = mapValidationDtoToTagState(polygonValidations.get(polygon.id));
+        if (resolvedValidation == null) {
+          return resolvedPolygons;
+        }
+
+        resolvedPolygons.push(
+          resolvedValidation === polygon.validation ? polygon : { ...polygon, validation: resolvedValidation }
+        );
+        return resolvedPolygons;
+      }, []),
+    [pendingValidationIds, polygons, polygonValidations]
   );
 
   const { approvalValidations, partiallyPassedValidations, failedValidations } = useMemo(() => {
@@ -75,7 +84,8 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
 
   const hasValidationResults =
     approvalValidations.length > 0 || partiallyPassedValidations.length > 0 || failedValidations.length > 0;
-  const showLoadingState = isLoadingResults && !hasValidationResults;
+  const isAwaitingFreshResults = polygons.some(polygon => pendingValidationIds.has(polygon.id));
+  const showLoadingState = isAwaitingFreshResults || (isLoadingResults && !hasValidationResults);
 
   return (
     <Modal
@@ -92,7 +102,7 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
                 {t("Loading validation results...")}
               </Text>
             </Flex>
-          ) : (
+          ) : hasValidationResults ? (
             <>
               <ValidationSection
                 polygons={approvalValidations}
@@ -115,6 +125,10 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
                 onViewDetails={onViewDetails}
               />
             </>
+          ) : (
+            <Text textStyle="400" color="neutral.800" py={2}>
+              {t("No validation results are available yet. Please try running validation again.")}
+            </Text>
           )}
         </Flex>
       }

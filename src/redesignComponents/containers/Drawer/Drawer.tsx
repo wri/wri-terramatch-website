@@ -19,7 +19,13 @@ const Drawer: FC<DrawerProps> = ({
   size = "xs",
   placement,
   modal = true,
-  maxW
+  maxW,
+  trapFocus = true,
+  paddingTop,
+  paddingLeft,
+  paddingRight,
+  paddingBottom,
+  maxH
 }) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const isControlled = openProp !== undefined;
@@ -48,12 +54,18 @@ const Drawer: FC<DrawerProps> = ({
       size={size}
       placement={placement}
       modal={modal}
+      trapFocus={trapFocus}
     >
       {trigger != null ? <TypedDrawerTrigger asChild>{trigger}</TypedDrawerTrigger> : null}
       <Portal>
         {closeOnInteractOutside && <TypedDrawerBackdrop />}
-        <TypedDrawerPositioner>
-          <TypedDrawerContent maxW={maxW}>
+        <TypedDrawerPositioner
+          paddingTop={paddingTop}
+          paddingLeft={paddingLeft}
+          paddingRight={paddingRight}
+          paddingBottom={paddingBottom}
+        >
+          <TypedDrawerContent maxW={maxW} maxH={maxH}>
             {typeof children === "function" ? children({ onClose: handleClose }) : children}
           </TypedDrawerContent>
         </TypedDrawerPositioner>

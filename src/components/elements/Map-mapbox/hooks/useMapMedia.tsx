@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { Map as MapboxMap } from "mapbox-gl";
-import React, { MutableRefObject, useEffect, useRef } from "react";
+import React, { MutableRefObject, useEffect, useLayoutEffect, useRef } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
@@ -62,13 +62,57 @@ export function useMapMedia({
 }: UseMapMediaParams) {
   const championsMap = useChampionsMap();
   const downloadToastMessages = useDownloadToastMessages();
-  const { showPhotosOnMap } = useMapAreaContext();
+  const { geotaggedPhotosMapVisible, editPolygon } = useMapAreaContext();
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
-  const showPhotosWhileDrawerClosed =
-    !hideMediaOnMap && championsMap && !alwaysShowPhotosOnMap && !isPolygonEditDrawerOpen;
-  const wantsPhotosOnMap = !hideMediaOnMap && (alwaysShowPhotosOnMap || showPhotosWhileDrawerClosed || showPhotosOnMap);
+  const isPolygonEditActive =
+    isPolygonEditDrawerOpen || (editPolygon?.isOpen === true && (editPolygon?.uuid ?? "") !== "");
+  const showPhotosInEditMode = championsMap && isPolygonEditActive && geotaggedPhotosMapVisible;
+  const wantsPhotosOnMap = !hideMediaOnMap && (alwaysShowPhotosOnMap || showPhotosInEditMode);
   const photosVisible = wantsPhotosOnMap && !isPolygonGeometryLoading;
   const callbacksRef = useRef<MediaCallbacks | null>(null);
+
+  const applyPhotosVisibility = (mapInstance: MapboxMap): void => {
+    if (hideMediaOnMap || mediaFiles == null) {
+      if (championsMap) {
+        removeMediaMarkers(mapInstance);
+      } else {
+        removeMediaSymbolLayer(mapInstance);
+      }
+      return;
+    }
+
+    if (championsMap) {
+      if (!photosVisible) {
+        const callbacks = callbacksRef.current;
+        if (callbacks != null) {
+          addMediaMarkers(mapInstance, mediaFiles, callbacks, false, hideMediaPopupActions);
+        } else {
+          removeMediaMarkers(mapInstance);
+        }
+        return;
+      }
+      const callbacks = callbacksRef.current;
+      if (callbacks == null) return;
+      addMediaMarkers(mapInstance, mediaFiles, callbacks, true, hideMediaPopupActions);
+      return;
+    }
+
+    if (!photosVisible) {
+      removeMediaSymbolLayer(mapInstance);
+      return;
+    }
+
+    const callbacks = callbacksRef.current;
+    if (callbacks == null) return;
+    addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
+  };
+
+  useLayoutEffect(() => {
+    const mapInstance = map.current;
+    if (mapInstance == null || !styleReady || !isPolygonEditActive || photosVisible) return;
+    applyPhotosVisibility(mapInstance);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPolygonEditActive, photosVisible, styleReady]);
 
   useEffect(() => {
     const mapInstance = map.current;
@@ -187,30 +231,16 @@ export function useMapMedia({
   useEffect(() => {
     const mapInstance = map.current;
     if (mapInstance == null || !styleReady) return;
-
-    if (hideMediaOnMap || mediaFiles == null) {
-      if (championsMap) {
-        removeMediaMarkers(mapInstance);
-      } else {
-        removeMediaSymbolLayer(mapInstance);
-      }
-      return;
-    }
-
-    const callbacks = callbacksRef.current;
-    if (callbacks == null) return;
-
-    if (championsMap) {
-      addMediaMarkers(mapInstance, mediaFiles, callbacks, photosVisible, hideMediaPopupActions);
-      return;
-    }
-
-    if (!photosVisible) {
-      removeMediaSymbolLayer(mapInstance);
-      return;
-    }
-
-    addMediaSymbolLayer(mapInstance, mediaFiles, callbacks);
+    applyPhotosVisibility(mapInstance);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [photosVisible, championsMap, styleReady, mediaFiles, hideMediaPopupActions, hideMediaOnMap]);
+  }, [
+    photosVisible,
+    isPolygonEditActive,
+    geotaggedPhotosMapVisible,
+    championsMap,
+    styleReady,
+    mediaFiles,
+    hideMediaPopupActions,
+    hideMediaOnMap
+  ]);
 }

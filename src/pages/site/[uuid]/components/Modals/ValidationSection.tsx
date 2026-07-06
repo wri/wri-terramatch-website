@@ -49,7 +49,6 @@ const ItemPolygon: FC<{
         <Button
           variant={"borderless"}
           size="small"
-          disabled={!hasDetails}
           onClick={() => setIsOpen(!isOpen)}
           rightIcon={<ChevronDownIcon boxSize={2.5} className={isOpen ? "rotate-180" : "rotate-0"} />}
         >

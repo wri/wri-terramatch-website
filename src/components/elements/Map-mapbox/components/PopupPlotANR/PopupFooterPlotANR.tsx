@@ -22,7 +22,7 @@ const PopupFooterPlotANR: FC<PopupFooterPlotANRProps> = ({ onCancel }) => {
   return (
     <Flex justifyContent="space-between" gap={0} width="100%" wrap="wrap">
       <Button variant="secondary" size="small" onClick={handleCancel} classNameContainer="w-fit">
-        {t("Cancel")}
+        {t("Close")}
       </Button>
     </Flex>
   );

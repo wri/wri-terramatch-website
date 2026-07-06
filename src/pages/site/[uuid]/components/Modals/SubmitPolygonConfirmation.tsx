@@ -8,7 +8,7 @@ import Modal from "@/redesignComponents/containers/Modal/Modal";
 import CommentInput from "@/redesignComponents/content/Message/CommentInput";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
-import type { PolygonTableRow } from "../../tabs/Polygons";
+import type { PolygonTableRow } from "../PolygonTableRow";
 
 const formatAuthorName = (firstName?: string | null, lastName?: string | null): string =>
   firstName == null && lastName == null ? "Unknown User" : `${firstName ?? ""} ${lastName ?? ""}`.trim();
