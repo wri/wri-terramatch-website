@@ -80,6 +80,7 @@ type PolygonEditContentProps = {
   onRegisterDelete: (deleteHandler: () => Promise<void>) => void;
   onRegisterSubmit: (submitHandler: (comment: string) => Promise<void>) => void;
   onRegisterSaveAndSubmit?: (saveAndSubmitHandler: (comment: string) => Promise<void>) => void;
+  onRegisterHasUnsavedChanges?: (hasUnsavedChanges: () => boolean) => void;
   onRegisterPolygonName?: (getPolygonName: () => string) => void;
   onRegisterPlantStartDate?: (hasPlantStartDate: () => boolean) => void;
   onRequestDeleteModal: () => void;
@@ -169,6 +170,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRegisterDelete,
   onRegisterSubmit,
   onRegisterSaveAndSubmit,
+  onRegisterHasUnsavedChanges,
   onRegisterPolygonName,
   onRegisterPlantStartDate,
   onRequestDeleteModal,
@@ -361,15 +363,14 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     ]
   );
 
+  const checkHasUnsavedChanges = useCallback(
+    () => hasUnsavedFormChanges(formBaselineRef.current, getFormValues(), geometryChanged, dateValueToIsoString),
+    [geometryChanged, getFormValues]
+  );
+
   const handleRequestSubmit = useCallback(() => {
-    const hasUnsavedChanges = hasUnsavedFormChanges(
-      formBaselineRef.current,
-      getFormValues(),
-      geometryChanged,
-      dateValueToIsoString
-    );
-    onRequestSubmitModal(hasUnsavedChanges);
-  }, [geometryChanged, getFormValues, onRequestSubmitModal]);
+    onRequestSubmitModal(checkHasUnsavedChanges());
+  }, [checkHasUnsavedChanges, onRequestSubmitModal]);
 
   const saveNewPolygonFlow = useCallback(
     async (options?: SavePolygonFlowOptions): Promise<SitePolygonLightDto | null> => {
@@ -869,6 +870,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   useEffect(() => {
     onRegisterSaveAndSubmit?.(handleSaveAndSubmitPolygon);
   }, [handleSaveAndSubmitPolygon, onRegisterSaveAndSubmit]);
+
+  useEffect(() => {
+    onRegisterHasUnsavedChanges?.(checkHasUnsavedChanges);
+  }, [checkHasUnsavedChanges, onRegisterHasUnsavedChanges]);
 
   useEffect(() => {
     onRegisterDelete(handleDeletePolygon);

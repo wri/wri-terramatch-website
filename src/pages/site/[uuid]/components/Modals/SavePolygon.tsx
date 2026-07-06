@@ -83,6 +83,7 @@ const SavePolygon: FC<SavePolygonProps> = ({
           {
             id: "save-and-submit",
             children: t("Save and Submit"),
+            className: "pr-4",
             disabled: isActionInProgress,
             loading: isSavingAndSubmitting,
             onClick: () => void handleSaveAndSubmit()
