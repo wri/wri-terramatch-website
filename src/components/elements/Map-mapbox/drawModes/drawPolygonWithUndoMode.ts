@@ -45,6 +45,7 @@ export const completeActivePolygonDraw = (): boolean => {
   if (activeDrawModeState == null || activeDrawModeContext == null) return false;
   if (!canCompletePolygon(activeDrawModeState)) return false;
 
+  // @ts-expect-error - activeDrawModeContext is not a valid type for onKeyUp
   baseDrawPolygonMode.onKeyUp?.call(activeDrawModeContext, activeDrawModeState, {
     key: "Enter"
   } as KeyboardEvent);
