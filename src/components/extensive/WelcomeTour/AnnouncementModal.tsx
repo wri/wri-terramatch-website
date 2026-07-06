@@ -38,11 +38,14 @@ const AnnouncementModal: FC<AnnouncementModalProps> = ({
         className="h-screen max-h-[280px] min-h-[180px] rounded-lg object-cover"
       />
     ) : null}
-    <Text variant="text-bold-headline-1000" className={`${bannerImage != null ? "mt-10" : ""} mb-4 uppercase`}>
+    <Text
+      variant="text-bold-headline-1000"
+      className={`${bannerImage != null ? "mt-10" : ""} mb-4 text-center uppercase`}
+    >
       {title}
     </Text>
     {typeof body === "string" ? (
-      <Text variant="text-light-body-300" containHtml>
+      <Text variant="text-light-body-300" className="text-center" containHtml>
         {body}
       </Text>
     ) : (
