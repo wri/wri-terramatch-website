@@ -41,6 +41,7 @@ const BulkEditPolygonAttributes: FC<BulkEditPolygonAttributesProps> = ({
 
   return (
     <Modal
+      modal={false}
       open={open}
       onClose={handleClose}
       size="medium"

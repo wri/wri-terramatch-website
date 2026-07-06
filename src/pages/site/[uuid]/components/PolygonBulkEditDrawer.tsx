@@ -273,7 +273,8 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
 
   return (
     <Drawer
-      trapFocus={false}
+      modal={false}
+      closeOnInteractOutside={false}
       placement="start"
       defaultOpen={false}
       open={open}

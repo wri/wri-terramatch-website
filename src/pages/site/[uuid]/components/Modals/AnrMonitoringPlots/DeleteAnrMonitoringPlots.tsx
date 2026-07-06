@@ -34,6 +34,7 @@ const DeleteAnrMonitoringPlots: FC<DeleteAnrMonitoringPlotsProps> = ({
 
   return (
     <Modal
+      modal={false}
       open={open}
       onClose={handleClose}
       size="medium"

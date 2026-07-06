@@ -58,6 +58,7 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
 
   return (
     <Modal
+      modal={false}
       open={open}
       onClose={handleClose}
       size="large"
