@@ -3,8 +3,6 @@ import { useState } from "react";
 
 import { UserIcon } from "../foundations/Icons/Function/UserIcon";
 import { DashboardIcon } from "../foundations/Icons/NavigationSections/DashboardIcon";
-import { MessagesIcon } from "../foundations/Icons/NavigationSections/MessagesIcon";
-import { NotificationIcon } from "../foundations/Icons/NavigationSections/NotificationIcon";
 import { NurseryIcon } from "../foundations/Icons/NavigationSections/NurseryIcon";
 import { OrganizationIcon } from "../foundations/Icons/NavigationSections/OrganizationIcon";
 import { ProgrammeIcon } from "../foundations/Icons/NavigationSections/ProgrammeIcon";
@@ -32,22 +30,6 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
           collapsed={true}
           isCollapsedDisabled={isSidebarCollapseDisabled}
           groups={[
-            {
-              links: [
-                {
-                  href: "#",
-                  icon: <NotificationIcon boxSize={4} />,
-                  label: "Notifications",
-                  notificationValue: 20
-                },
-                {
-                  href: "#",
-                  icon: <MessagesIcon boxSize={4} />,
-                  label: "Messages",
-                  notificationValue: 20
-                }
-              ]
-            },
             {
               links: [
                 {
