@@ -94,6 +94,7 @@ const SavePolygon: FC<SavePolygonProps> = ({
 
   return (
     <Modal
+      modal={false}
       open={open}
       onClose={handleClose}
       size="medium"

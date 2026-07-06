@@ -5,9 +5,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { mapboxToken } from "@/constants/environment";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 
-import { drawPolygonWithUndoMode, performPolygonDrawUndo } from "../drawModes/drawPolygonWithUndoMode";
+import {
+  completeActivePolygonDraw,
+  drawPolygonWithUndoMode,
+  performPolygonDrawUndo
+} from "../drawModes/drawPolygonWithUndoMode";
 import { FeatureCollection } from "../GeoJSON";
-import { CLEAR_DRAFT_DRAW_EVENT, UNDO_POLYGON_DRAW_EVENT } from "../interactions/draftDrawEvents";
+import {
+  CLEAR_DRAFT_DRAW_EVENT,
+  shouldIgnorePolygonDrawUndoShortcut,
+  UNDO_POLYGON_DRAW_EVENT
+} from "../interactions/draftDrawEvents";
 import { applyMapDrawingCursor, preloadMapDrawingCursor } from "../interactions/mapDrawingCursor";
 import type { ControlType } from "../Map.d";
 import { BASEMAP_CONFIGS, MapStyle } from "../MapControls/types";
@@ -84,11 +92,22 @@ export const useBaseMap = (onSave?: MapDrawSaveHandler, record?: MapDrawSaveReco
       performPolygonDrawUndo();
     };
 
+    const handleCompletePolygonDraw = (event: KeyboardEvent) => {
+      if (event.key !== "Enter" || event.repeat) return;
+      if (shouldIgnorePolygonDrawUndoShortcut(event.target)) return;
+      if (draw.current?.getMode() !== "draw_polygon") return;
+      if (!completeActivePolygonDraw()) return;
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
     window.addEventListener(CLEAR_DRAFT_DRAW_EVENT, handleClearDraftDraw);
     window.addEventListener(UNDO_POLYGON_DRAW_EVENT, handleUndoPolygonDraw);
+    window.addEventListener("keydown", handleCompletePolygonDraw, true);
     return () => {
       window.removeEventListener(CLEAR_DRAFT_DRAW_EVENT, handleClearDraftDraw);
       window.removeEventListener(UNDO_POLYGON_DRAW_EVENT, handleUndoPolygonDraw);
+      window.removeEventListener("keydown", handleCompletePolygonDraw, true);
     };
   }, [deferDrawCreateSave, setDraftPolygonGeometry]);
 

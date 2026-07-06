@@ -81,6 +81,7 @@ const UploadAnrMonitoringPlots: FC<UploadAnrMonitoringPlotsProps> = ({
 
   return (
     <Modal
+      modal={false}
       open={open}
       onClose={handleClose}
       size="medium"

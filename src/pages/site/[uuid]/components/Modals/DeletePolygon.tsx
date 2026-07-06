@@ -13,8 +13,19 @@ export interface DeletePolygonProps {
   onOpenChange: (open: boolean) => void;
   polygons: PolygonTableRow[];
   onDelete?: () => void | Promise<void>;
+  modal?: boolean;
+  trapFocus?: boolean;
+  restoreFocus?: boolean;
 }
-const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, onDelete }) => {
+const DeletePolygon: FC<DeletePolygonProps> = ({
+  open,
+  onOpenChange,
+  polygons,
+  onDelete,
+  modal = true,
+  trapFocus = true,
+  restoreFocus = true
+}) => {
   const t = useT();
 
   const handleClose = useCallback(() => {
@@ -32,6 +43,9 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, o
 
   return (
     <Modal
+      modal={modal}
+      trapFocus={trapFocus}
+      restoreFocus={restoreFocus}
       open={open}
       onClose={handleClose}
       size="medium"
