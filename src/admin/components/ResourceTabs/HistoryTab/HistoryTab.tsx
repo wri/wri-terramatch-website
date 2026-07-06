@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import React, { FC, Fragment, useMemo } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
@@ -25,6 +26,7 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 const SUPPORTED_INPUT_TYPES: FieldInputType[] = ["financialIndicators", "fundingType"];
 
 const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
+  const t = useT();
   const { isLoading: ctxLoading, record } = useShowContext();
   const entityName = entity ?? record?.entity;
   const entityUuid = record?.uuid;
@@ -59,14 +61,14 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
             <Fragment key={field.name}>
               <FinancialMetrics data={values[field.name]} years={field.years ?? undefined} />
               <Accordion
-                title="Financial Documents per Year"
+                title={t("Financial Documents per Year")}
                 variant="drawer"
                 className="rounded-lg bg-white px-6 py-4 shadow-all"
               >
                 <FinancialDocumentsSection files={formatDocumentData(values[field.name])} />
               </Accordion>
               <Accordion
-                title="Descriptions of Financials per Year"
+                title={t("Descriptions of Financials per Year")}
                 variant="drawer"
                 className="rounded-lg bg-white px-6 py-4 shadow-all"
               >
@@ -76,7 +78,7 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           ) : field.inputType === "fundingType" ? (
             <Accordion
               key={field.name}
-              title="Major Funding Sources by Year"
+              title={t("Major Funding Sources by Year")}
               variant="drawer"
               className="rounded-lg bg-white px-6 py-4 shadow-all"
             >

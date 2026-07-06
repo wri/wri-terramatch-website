@@ -4,7 +4,7 @@ import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import { format } from "date-fns";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   downloadGeoJsonFile,
@@ -21,15 +21,13 @@ import {
   PolygonStatus,
   pruneSitePolygonsCache
 } from "@/connections/SitePolygons";
-import {
-  dropdownOptionsRestoration,
-  dropdownOptionsTarget,
-  dropdownOptionsTree
-} from "@/constants/polygonDropdownOptions";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
+import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOptions";
+import { useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useLatestRef } from "@/hooks/useLatestRef";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -56,15 +54,18 @@ import {
   completePolygonProgressToast,
   getDownloadingPolygonsProgressLabel,
   getPolygonOperationToastLabels,
+  getSubmittingProgressLabel,
   POLYGON_TOAST_IDS,
   showPolygonCompleteToast,
   showPolygonErrorToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
 import UploadGeotaggedPhotos from "./Modals/GeotaggedPhotos/UploadGeotaggedPhotos";
-import type { PolygonSaveCallback } from "./polygonEdit.types";
+import type { PolygonSaveCallback, PolygonValidationJobsStartedCallback } from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
+  type SavePolygonFlowOptions,
+  hasUnsavedFormChanges,
   isValidPlantStartDate,
   isValidPolygonName,
   prunePolygonValidationCache,
@@ -77,19 +78,22 @@ import SubmissionValidationTags from "./SubmissionValidationTags";
 type PolygonEditContentProps = {
   polygon?: SitePolygonLightDto;
   onClose?: () => void;
-  onRegisterSave?: (saveHandler: () => Promise<boolean>) => void;
+  onRegisterSave?: (saveHandler: (options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) => void;
   onRegisterDelete: (deleteHandler: () => Promise<void>) => void;
   onRegisterSubmit: (submitHandler: (comment: string) => Promise<void>) => void;
+  onRegisterSaveAndSubmit?: (saveAndSubmitHandler: (comment: string) => Promise<void>) => void;
+  onRegisterHasUnsavedChanges?: (hasUnsavedChanges: () => boolean) => void;
   onRegisterPolygonName?: (getPolygonName: () => string) => void;
   onRegisterPlantStartDate?: (hasPlantStartDate: () => boolean) => void;
   onRequestDeleteModal: () => void;
-  onRequestSubmitModal: () => void;
+  onRequestSubmitModal: (hasUnsavedChanges: boolean) => void;
   onRequestAnrUploadModal?: (mode: "upload" | "replace") => void;
   onRequestAnrDeleteModal?: () => void;
   isAnrPlotsOperating?: boolean;
   onRequestApproveModal?: () => void;
   onRequestInformationModal?: () => void;
   onSaved?: PolygonSaveCallback;
+  onValidationJobsStarted?: PolygonValidationJobsStartedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
@@ -98,11 +102,6 @@ type PolygonEditContentProps = {
 type PolygonVersionRow = SitePolygonLightDto & { id: string };
 
 type PolygonEditAccordionSection = "details" | "monitoring-plots" | "geotagged-photos" | "versions";
-
-const optionToSelectItem = (option: { title: string; value: string }) => ({
-  label: option.title,
-  value: option.value
-});
 
 const isoStringToDateValue = (value: string | null | undefined): DateValue[] => {
   if (value == null || value === "") return [];
@@ -143,12 +142,42 @@ const hasPlantStartDateForDisplay = (formDate: DateValue[], polygon?: SitePolygo
   return plantStart != null && plantStart !== "";
 };
 
+const buildFormValuesFromPolygon = (source: SitePolygonLightDto | undefined): PolygonEditFormValues => ({
+  polygonName: source?.name ?? "",
+  plantStartDate: isoStringToDateValue(source?.plantStart),
+  restorationPractice: source?.practice ?? [],
+  targetLandUseSystem: normalizeTargetSystem(source?.targetSys),
+  treeDistribution: source?.distr ?? [],
+  treesPlanted: source?.numTrees != null ? String(source.numTrees) : ""
+});
+
+const applyFormValuesToState = (
+  values: PolygonEditFormValues,
+  setters: {
+    setPolygonName: (value: string) => void;
+    setPlantStartDate: (value: DateValue[]) => void;
+    setRestorationPractice: (value: string[]) => void;
+    setTargetLandUseSystem: (value: string[]) => void;
+    setTreeDistribution: (value: string[]) => void;
+    setTreesPlanted: (value: string) => void;
+  }
+): void => {
+  setters.setPolygonName(values.polygonName);
+  setters.setPlantStartDate(values.plantStartDate);
+  setters.setRestorationPractice(values.restorationPractice);
+  setters.setTargetLandUseSystem(values.targetLandUseSystem);
+  setters.setTreeDistribution(values.treeDistribution);
+  setters.setTreesPlanted(values.treesPlanted);
+};
+
 const PolygonEditContent: FC<PolygonEditContentProps> = ({
   polygon,
   onClose,
   onRegisterSave,
   onRegisterDelete,
   onRegisterSubmit,
+  onRegisterSaveAndSubmit,
+  onRegisterHasUnsavedChanges,
   onRegisterPolygonName,
   onRegisterPlantStartDate,
   onRequestDeleteModal,
@@ -159,6 +188,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRequestApproveModal,
   onRequestInformationModal,
   onSaved,
+  onValidationJobsStarted,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
   onDeletingChange
@@ -207,6 +237,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
   const [openAccordionSection, setOpenAccordionSection] = useState<PolygonEditAccordionSection | null>("details");
+  const formBaselineRef = useRef<PolygonEditFormValues | null>(null);
 
   const handleAccordionOpenChange = useCallback(
     (section: PolygonEditAccordionSection) => (open: boolean) => {
@@ -257,18 +288,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   });
   const isLoadingVersions = !isVersionsLoaded;
 
-  const restorationOptions = useMemo(
-    () => dropdownOptionsRestoration.map(option => ({ ...optionToSelectItem(option), label: t(option.title) })),
-    [t]
-  );
-  const targetOptions = useMemo(
-    () => dropdownOptionsTarget.map(option => ({ ...optionToSelectItem(option), label: t(option.title) })),
-    [t]
-  );
-  const treeOptions = useMemo(
-    () => dropdownOptionsTree.map(option => ({ ...optionToSelectItem(option), label: t(option.title) })),
-    [t]
-  );
+  const restorationOptions = useRestorationPracticeOptions();
+  const targetOptions = useTargetLandUseOptions();
+  const treeOptions = useTreeDistributionOptions();
   const formattedArea = useMemo(
     () => polygon?.calcArea?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? "",
     [polygon?.calcArea]
@@ -278,13 +300,17 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     [versionsData]
   );
   useEffect(() => {
-    setPolygonName(polygon?.name ?? "");
-    setPlantStartDate(isoStringToDateValue(polygon?.plantStart));
-    setRestorationPractice(polygon?.practice ?? []);
-    setTargetLandUseSystem(normalizeTargetSystem(polygon?.targetSys));
-    setTreeDistribution(polygon?.distr ?? []);
+    const baseline = buildFormValuesFromPolygon(polygon);
+    formBaselineRef.current = baseline;
+    applyFormValuesToState(baseline, {
+      setPolygonName,
+      setPlantStartDate,
+      setRestorationPractice,
+      setTargetLandUseSystem,
+      setTreeDistribution,
+      setTreesPlanted
+    });
     setSubmissionCycle(["option-1"]);
-    setTreesPlanted(polygon?.numTrees != null ? String(polygon.numTrees) : "");
   }, [polygon]);
 
   const onSavedRef = useLatestRef(onSaved);
@@ -303,11 +329,21 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     }),
     [polygonName, plantStartDate, restorationPractice, targetLandUseSystem, treeDistribution, treesPlanted]
   );
+  const getFormValuesRef = useLatestRef(getFormValues);
+
+  const updateFormBaseline = useCallback(() => {
+    formBaselineRef.current = getFormValuesRef.current();
+  }, [getFormValuesRef]);
 
   const finalizeSuccessfulSave = useCallback(
     async (
       savedPolygon: SitePolygonLightDto,
-      options: { geometryChanged: boolean; refetchVersionsList: boolean; previousPolygonUuid?: string | null }
+      options: {
+        geometryChanged: boolean;
+        refetchVersionsList: boolean;
+        previousPolygonUuid?: string | null;
+        closeOnSave?: boolean;
+      }
     ) => {
       runPolygonCacheCleanup({
         polygonUuid: savedPolygon.polygonUuid,
@@ -325,7 +361,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         await refetchVersionsRef.current?.();
       }
       await onSavedRef.current?.();
-      onCloseRef.current?.();
+      updateFormBaseline();
+      if (options.closeOnSave !== false) {
+        onCloseRef.current?.();
+      }
+      return savedPolygon;
     },
     [
       invalidatePolygonMapTiles,
@@ -336,118 +376,150 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setDraftPolygonGeometry,
       setIsUserDrawingEnabled,
       setPolygonGeometryEdit,
-      setShouldRefetchPolygonData
+      setShouldRefetchPolygonData,
+      updateFormBaseline
     ]
   );
 
-  const saveNewPolygonFlow = useCallback(async (): Promise<boolean> => {
-    if (draftPolygonGeometry == null) {
-      showStatusToast("error", t("Draw a polygon before saving"));
-      return false;
-    }
-    if (!isValidPolygonName(polygonName)) {
-      showStatusToast("error", t("Polygon name is required"));
-      return false;
-    }
-    if (!isValidPlantStartDate(plantStartDate)) {
-      showStatusToast("error", t("Plant start date is required"));
-      return false;
-    }
-    if (resolvedSiteUuid == null || resolvedSiteUuid === "") {
-      showStatusToast("error", t("Missing site information"));
-      return false;
-    }
+  const checkHasUnsavedChanges = useCallback(
+    () => hasUnsavedFormChanges(formBaselineRef.current, getFormValues(), geometryChanged, dateValueToIsoString),
+    [geometryChanged, getFormValues]
+  );
 
-    showPolygonProgressToast(t, toastLabels.savingChangesProgress, POLYGON_TOAST_IDS.savingChanges);
+  const handleRequestSubmit = useCallback(() => {
+    onRequestSubmitModal(checkHasUnsavedChanges());
+  }, [checkHasUnsavedChanges, onRequestSubmitModal]);
 
-    try {
-      const createdPolygon = await saveNewSitePolygon({
-        siteId: resolvedSiteUuid,
-        geometry: draftPolygonGeometry,
-        form: getFormValues(),
-        dateValueToIso: dateValueToIsoString
-      });
-      await finalizeSuccessfulSave(createdPolygon, { geometryChanged: true, refetchVersionsList: false });
-      completePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges, toastLabels.savingChangesComplete);
-      return true;
-    } catch {
-      closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
-      showPolygonErrorToast(t("Error creating polygon"));
-      return false;
-    }
-  }, [
-    draftPolygonGeometry,
-    finalizeSuccessfulSave,
-    getFormValues,
-    plantStartDate,
-    polygonName,
-    resolvedSiteUuid,
-    showStatusToast,
-    t,
-    toastLabels
-  ]);
+  const saveNewPolygonFlow = useCallback(
+    async (options?: SavePolygonFlowOptions): Promise<SitePolygonLightDto | null> => {
+      if (draftPolygonGeometry == null) {
+        showStatusToast("error", t("Draw a polygon before saving"));
+        return null;
+      }
+      if (!isValidPolygonName(polygonName)) {
+        showStatusToast("error", t("Polygon name is required"));
+        return null;
+      }
+      if (!isValidPlantStartDate(plantStartDate)) {
+        showStatusToast("error", t("Plant start date is required"));
+        return null;
+      }
+      if (resolvedSiteUuid == null || resolvedSiteUuid === "") {
+        showStatusToast("error", t("Missing site information"));
+        return null;
+      }
 
-  const saveExistingPolygonFlow = useCallback(async (): Promise<boolean> => {
-    if (polygon?.primaryUuid == null || polygon.primaryUuid === "") {
-      showStatusToast("error", t("Missing polygon information"));
-      return false;
-    }
-    if (!isValidPolygonName(polygonName)) {
-      showStatusToast("error", t("Polygon name is required"));
-      return false;
-    }
-    if (!isValidPlantStartDate(plantStartDate)) {
-      showStatusToast("error", t("Plant start date is required"));
-      return false;
-    }
-    if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
-      showStatusToast("error", t("Missing site information"));
-      return false;
-    }
+      showPolygonProgressToast(t, toastLabels.savingChangesProgress, POLYGON_TOAST_IDS.savingChanges);
 
-    showPolygonProgressToast(t, toastLabels.savingChangesProgress, POLYGON_TOAST_IDS.savingChanges);
+      try {
+        const createdPolygon = await saveNewSitePolygon({
+          siteId: resolvedSiteUuid,
+          geometry: draftPolygonGeometry,
+          form: getFormValues(),
+          dateValueToIso: dateValueToIsoString
+        });
+        const savedPolygon = await finalizeSuccessfulSave(createdPolygon, {
+          geometryChanged: true,
+          refetchVersionsList: false,
+          closeOnSave: options?.closeOnSave
+        });
+        if (options?.deferSuccessToast) {
+          closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
+        } else {
+          completePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges, toastLabels.savingChangesComplete);
+        }
+        return savedPolygon;
+      } catch {
+        closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
+        showPolygonErrorToast(t("Error creating polygon"));
+        return null;
+      }
+    },
+    [
+      draftPolygonGeometry,
+      finalizeSuccessfulSave,
+      getFormValues,
+      plantStartDate,
+      polygonName,
+      resolvedSiteUuid,
+      showStatusToast,
+      t,
+      toastLabels
+    ]
+  );
 
-    try {
-      const previousPolygonUuid = geometryPolygonUuid !== "" ? geometryPolygonUuid : undefined;
-      const updatedPolygon = await saveExistingPolygonVersion({
-        primaryUuid: polygon.primaryUuid,
-        siteId: polygon.siteId as string,
-        form: getFormValues(),
-        geometryChanged,
-        currentGeometry: polygonGeometryEdit?.currentGeometry,
-        dateValueToIso: dateValueToIsoString
-      });
-      await finalizeSuccessfulSave(updatedPolygon, {
-        geometryChanged,
-        refetchVersionsList: true,
-        previousPolygonUuid
-      });
-      completePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges, toastLabels.savingChangesComplete);
-      return true;
-    } catch {
-      closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
-      showPolygonErrorToast(t("Error creating polygon version"));
-      return false;
-    }
-  }, [
-    finalizeSuccessfulSave,
-    geometryChanged,
-    geometryPolygonUuid,
-    getFormValues,
-    polygon?.primaryUuid,
-    polygon?.siteId,
-    polygonGeometryEdit?.currentGeometry,
-    plantStartDate,
-    polygonName,
-    showStatusToast,
-    t,
-    toastLabels
-  ]);
+  const saveExistingPolygonFlow = useCallback(
+    async (options?: SavePolygonFlowOptions): Promise<SitePolygonLightDto | null> => {
+      if (polygon?.primaryUuid == null || polygon.primaryUuid === "") {
+        showStatusToast("error", t("Missing polygon information"));
+        return null;
+      }
+      if (!isValidPolygonName(polygonName)) {
+        showStatusToast("error", t("Polygon name is required"));
+        return null;
+      }
+      if (!isValidPlantStartDate(plantStartDate)) {
+        showStatusToast("error", t("Plant start date is required"));
+        return null;
+      }
+      if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
+        showStatusToast("error", t("Missing site information"));
+        return null;
+      }
 
-  const savePolygonData = useCallback(async () => {
-    if (isCreateMode) return saveNewPolygonFlow();
-    return saveExistingPolygonFlow();
-  }, [isCreateMode, saveExistingPolygonFlow, saveNewPolygonFlow]);
+      showPolygonProgressToast(t, toastLabels.savingChangesProgress, POLYGON_TOAST_IDS.savingChanges);
+
+      try {
+        const previousPolygonUuid = geometryPolygonUuid !== "" ? geometryPolygonUuid : undefined;
+        const updatedPolygon = await saveExistingPolygonVersion({
+          primaryUuid: polygon.primaryUuid,
+          siteId: polygon.siteId as string,
+          form: getFormValues(),
+          geometryChanged,
+          currentGeometry: polygonGeometryEdit?.currentGeometry,
+          dateValueToIso: dateValueToIsoString
+        });
+        const savedPolygon = await finalizeSuccessfulSave(updatedPolygon, {
+          geometryChanged,
+          refetchVersionsList: true,
+          previousPolygonUuid,
+          closeOnSave: options?.closeOnSave
+        });
+        if (options?.deferSuccessToast) {
+          closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
+        } else {
+          completePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges, toastLabels.savingChangesComplete);
+        }
+        return savedPolygon;
+      } catch {
+        closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
+        showPolygonErrorToast(t("Error creating polygon version"));
+        return null;
+      }
+    },
+    [
+      finalizeSuccessfulSave,
+      geometryChanged,
+      geometryPolygonUuid,
+      getFormValues,
+      polygon?.primaryUuid,
+      polygon?.siteId,
+      polygonGeometryEdit?.currentGeometry,
+      plantStartDate,
+      polygonName,
+      showStatusToast,
+      t,
+      toastLabels
+    ]
+  );
+
+  const savePolygonData = useCallback(
+    async (options?: SavePolygonFlowOptions): Promise<SitePolygonLightDto | null> => {
+      if (isCreateMode) return saveNewPolygonFlow(options);
+      return saveExistingPolygonFlow(options);
+    },
+    [isCreateMode, saveExistingPolygonFlow, saveNewPolygonFlow]
+  );
 
   useEffect(() => {
     setPlotsVisible(false);
@@ -686,25 +758,27 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     }
   }, [geometryPolygonUuid, onClose, polygon?.name, resolvedSiteUuid, showStatusToast, t, toastLabels]);
 
-  const handleSubmitPolygon = useCallback(
-    async (comment: string) => {
-      if (polygon?.uuid == null || polygon.uuid === "") {
+  const submitPolygonWithData = useCallback(
+    async (targetPolygon: SitePolygonLightDto, comment: string): Promise<boolean> => {
+      if (targetPolygon.uuid == null || targetPolygon.uuid === "") {
         showStatusToast("error", t("Missing polygon information"));
-        return;
+        return false;
       }
 
-      if (polygon.status === POLYGON_PENDING_APPROVAL || polygon.status === POLYGON_APPROVED) {
+      if (targetPolygon.status === POLYGON_PENDING_APPROVAL || targetPolygon.status === POLYGON_APPROVED) {
         showStatusToast("error", t("This polygon has already been submitted"));
-        return;
+        return false;
       }
+
+      const targetGeometryPolygonUuid = targetPolygon.polygonUuid ?? "";
 
       try {
-        await bulkUpdateSitePolygonStatus([polygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, comment);
-        if (resolvedSiteUuid !== "" && geometryPolygonUuid !== "") {
+        await bulkUpdateSitePolygonStatus([targetPolygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, comment);
+        if (resolvedSiteUuid !== "" && targetGeometryPolygonUuid !== "") {
           trackPolygonStatusChanged({
             siteUuid: resolvedSiteUuid,
-            polygonId: geometryPolygonUuid,
-            fromStatus: polygon.status ?? "draft",
+            polygonId: targetGeometryPolygonUuid,
+            fromStatus: targetPolygon.status ?? "draft",
             toStatus: POLYGON_PENDING_APPROVAL
           });
         }
@@ -718,9 +792,14 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         onClose?.();
         await waitForMapEditCleanup();
         await onSaved?.();
+        if (targetGeometryPolygonUuid !== "") {
+          onValidationJobsStarted?.([targetGeometryPolygonUuid], { trackBulkCompletion: false });
+        }
+        return true;
       } catch (error) {
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
         showPolygonErrorToast(t("Error submitting polygon"));
+        return false;
       }
     },
     [
@@ -728,9 +807,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       invalidatePolygonMapTiles,
       onClose,
       onSaved,
-      geometryPolygonUuid,
-      polygon?.status,
-      polygon?.uuid,
+      onValidationJobsStarted,
       resolvedSiteUuid,
       setIsUserDrawingEnabled,
       setPolygonGeometryEdit,
@@ -739,6 +816,40 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       showStatusToast,
       t
     ]
+  );
+
+  const handleSubmitPolygon = useCallback(
+    async (comment: string) => {
+      if (polygon == null) {
+        showStatusToast("error", t("Missing polygon information"));
+        return;
+      }
+
+      showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1), POLYGON_TOAST_IDS.submitting);
+
+      const submitted = await submitPolygonWithData(polygon, comment);
+      if (submitted) {
+        completePolygonProgressToast(POLYGON_TOAST_IDS.submitting, toastLabels.submittingComplete);
+      }
+    },
+    [polygon, showStatusToast, submitPolygonWithData, t, toastLabels.submittingComplete]
+  );
+
+  const handleSaveAndSubmitPolygon = useCallback(
+    async (comment: string) => {
+      const savedPolygon = await savePolygonData({ closeOnSave: false, deferSuccessToast: true });
+      if (savedPolygon == null) {
+        return;
+      }
+
+      showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1), POLYGON_TOAST_IDS.submitting);
+
+      const submitted = await submitPolygonWithData(savedPolygon, comment);
+      if (submitted) {
+        completePolygonProgressToast(POLYGON_TOAST_IDS.submitting, toastLabels.savedAndSubmittedComplete);
+      }
+    },
+    [savePolygonData, submitPolygonWithData, t, toastLabels.savedAndSubmittedComplete]
   );
 
   const handleDeletePolygon = useCallback(async () => {
@@ -791,6 +902,14 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   useEffect(() => {
     onRegisterSave?.(savePolygonData);
   }, [onRegisterSave, savePolygonData]);
+
+  useEffect(() => {
+    onRegisterSaveAndSubmit?.(handleSaveAndSubmitPolygon);
+  }, [handleSaveAndSubmitPolygon, onRegisterSaveAndSubmit]);
+
+  useEffect(() => {
+    onRegisterHasUnsavedChanges?.(checkHasUnsavedChanges);
+  }, [checkHasUnsavedChanges, onRegisterHasUnsavedChanges]);
 
   useEffect(() => {
     onRegisterDelete(handleDeletePolygon);
@@ -1102,7 +1221,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                       label: t("Submit"),
                       disabled: !isPolygonSubmittable,
                       infoTooltip: !isPolygonSubmittable ? submitTooltip : undefined,
-                      onClick: onRequestSubmitModal
+                      onClick: handleRequestSubmit
                     }
               ]}
             />

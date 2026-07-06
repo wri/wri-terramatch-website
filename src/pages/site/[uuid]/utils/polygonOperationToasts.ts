@@ -70,33 +70,34 @@ export const showPolygonErrorToast = (label: string) =>
 
 type TranslateFn = (key: string) => string;
 
-const polygonCountLabel = (t: TranslateFn, count: number | undefined, singular: string, plural: string) =>
-  count === 1 ? t(singular) : t(plural);
+const polygonCountLabel = (count: number | undefined, singular: string, plural: string) =>
+  count === 1 ? singular : plural;
 
 export const getUploadingPolygonsProgressLabel = (t: TranslateFn, count: number) =>
-  polygonCountLabel(t, count, "Uploading Polygon...", "Uploading Polygons...");
+  polygonCountLabel(count, t("Uploading Polygon..."), t("Uploading Polygons..."));
 
 export const getSubmittingProgressLabel = (t: TranslateFn, count: number) =>
-  polygonCountLabel(t, count, "Submitting Polygon...", "Submitting Polygons...");
+  polygonCountLabel(count, t("Submitting Polygon..."), t("Submitting Polygons..."));
 
 export const getDownloadingPolygonsProgressLabel = (t: TranslateFn, count?: number) =>
-  polygonCountLabel(t, count, "Downloading Polygon...", "Downloading Polygons...");
+  polygonCountLabel(count, t("Downloading Polygon..."), t("Downloading Polygons..."));
 
 export const getUpdatingPolygonsProgressLabel = (t: TranslateFn, count: number) =>
-  polygonCountLabel(t, count, "Updating Polygon...", "Updating Polygons...");
+  polygonCountLabel(count, t("Updating Polygon..."), t("Updating Polygons..."));
 
 export const getDeletingProgressLabel = (t: TranslateFn, count: number) =>
-  polygonCountLabel(t, count, "Deleting Polygon...", "Deleting Polygons...");
+  polygonCountLabel(count, t("Deleting Polygon..."), t("Deleting Polygons..."));
 
 export const getValidatingProgressLabel = (t: TranslateFn, count: number) =>
-  polygonCountLabel(t, count, "Validating Polygon...", "Validating Polygons...");
+  polygonCountLabel(count, t("Validating Polygon..."), t("Validating Polygons..."));
 
 export const getFixingOverlapsProgressLabel = (t: TranslateFn, count: number) =>
-  polygonCountLabel(t, count, "Fixing Polygon Overlaps...", "Fixing Polygons' Overlaps...");
+  polygonCountLabel(count, t("Fixing Polygon Overlaps..."), t("Fixing Polygons' Overlaps..."));
 
 export type PolygonOperationToastLabels = {
   uploadingPolygonsComplete: string;
   submittingComplete: string;
+  savedAndSubmittedComplete: string;
   savingChangesProgress: string;
   savingChangesComplete: string;
   downloadingPolygonsComplete: string;
@@ -111,6 +112,7 @@ export type PolygonOperationToastLabels = {
 export const getPolygonOperationToastLabels = (t: TranslateFn): PolygonOperationToastLabels => ({
   uploadingPolygonsComplete: t("Upload Complete"),
   submittingComplete: t("Submission Complete"),
+  savedAndSubmittedComplete: t("Polygon saved and submitted"),
   savingChangesProgress: t("Saving Changes..."),
   savingChangesComplete: t("Changes Saved"),
   downloadingPolygonsComplete: t("Download Complete"),

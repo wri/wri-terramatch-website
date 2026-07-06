@@ -1,4 +1,5 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
 import React, { Ref, useCallback, useEffect, useRef } from "react";
 
@@ -95,6 +96,7 @@ const Table = <T extends BaseRow>({
   onRowSelected: controlledOnRowSelected,
   onAllItemsSelected: controlledOnAllItemsSelected
 }: TableProps<T>) => {
+  const t = useT();
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
     DEFAULT_CURRENT_PAGE,
     initialPageSize
@@ -227,7 +229,7 @@ const Table = <T extends BaseRow>({
           color={getThemedColor("neutral", 700)}
           className="absolute bottom-0 left-1/2 w-fit -translate-x-1/2 text-center mobile:hidden"
         >
-          Showing {`${displayStart} - ${displayEnd} of ${actualTotalItems}`}
+          {t("Showing {start} - {end} of {total}", { start: displayStart, end: displayEnd, total: actualTotalItems })}
         </Text>
       )}
     </Box>

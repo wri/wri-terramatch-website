@@ -28,7 +28,7 @@ const OpportunitiesPage = () => {
       <Head>
         <title>{t("Opportunities")}</title>
       </Head>
-      <PageHeader className="h-[203px]" title="Opportunities" />
+      <PageHeader className="h-[203px]" title={t("Opportunities")} />
       <PageBody>
         {organisation?.status === "approved" ? (
           <>

@@ -11,11 +11,6 @@ export const CODE_TO_NAME_MAPPING = Object.fromEntries(
   Object.entries(LANDSCAPE_MAPPINGS).map(([name, code]) => [code, name])
 ) as Record<LandscapeCode, LandscapeName>;
 
-export const LANDSCAPE_OPTIONS = Object.keys(LANDSCAPE_MAPPINGS).map(name => ({
-  title: name,
-  value: name
-}));
-
 export const convertNamesToCodes = (names: string[]): LandscapeCode[] => {
   return names.map(name => LANDSCAPE_MAPPINGS[name as LandscapeName] ?? name).filter(isValidLandscapeCode);
 };

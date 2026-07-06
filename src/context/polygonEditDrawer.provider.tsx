@@ -4,7 +4,11 @@ import { dispatchClearDraftDrawEvent } from "@/components/elements/Map-mapbox/in
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import type { PolygonOverlapFixCallback, PolygonSaveCallback } from "@/pages/site/[uuid]/components/polygonEdit.types";
+import type {
+  PolygonOverlapFixCallback,
+  PolygonSaveCallback,
+  PolygonValidationJobsStartedCallback
+} from "@/pages/site/[uuid]/components/polygonEdit.types";
 import PolygonEditDrawer from "@/pages/site/[uuid]/components/PolygonEditDrawer";
 import { useLayoutShell } from "@/redesignComponents/Loayout/LayoutShell.provider";
 
@@ -66,6 +70,7 @@ type PolygonEditDrawerDataSyncProps = {
   onPolygonDeletingChange?: PolygonDeletingChangeCallback;
   onRequestApproveModal?: PolygonReviewActionCallback;
   onRequestInformationModal?: PolygonReviewActionCallback;
+  onValidationJobsStarted?: PolygonValidationJobsStartedCallback;
 };
 
 type PolygonEditDrawerDataContextValue = {
@@ -76,6 +81,7 @@ type PolygonEditDrawerDataContextValue = {
   setOnPolygonDeletingChange: (onPolygonDeletingChange?: PolygonDeletingChangeCallback) => void;
   setOnRequestApproveModal: (cb?: PolygonReviewActionCallback) => void;
   setOnRequestInformationModal: (cb?: PolygonReviewActionCallback) => void;
+  setOnValidationJobsStarted: (onValidationJobsStarted?: PolygonValidationJobsStartedCallback) => void;
 };
 
 const PolygonEditDrawerDataContext = createContext<PolygonEditDrawerDataContextValue | null>(null);
@@ -87,7 +93,8 @@ export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({
   onRunValidation,
   onPolygonDeletingChange,
   onRequestApproveModal,
-  onRequestInformationModal
+  onRequestInformationModal,
+  onValidationJobsStarted
 }) => {
   const dataContext = useContext(PolygonEditDrawerDataContext);
 
@@ -118,6 +125,10 @@ export const PolygonEditDrawerDataSync: FC<PolygonEditDrawerDataSyncProps> = ({
   useEffect(() => {
     dataContext?.setOnRequestInformationModal(onRequestInformationModal);
   }, [dataContext, onRequestInformationModal]);
+
+  useEffect(() => {
+    dataContext?.setOnValidationJobsStarted(onValidationJobsStarted);
+  }, [dataContext, onValidationJobsStarted]);
 
   return null;
 };
@@ -151,6 +162,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
   const onPolygonDeletingChangeRef = useRef<PolygonDeletingChangeCallback | undefined>(undefined);
   const onRequestApproveModalRef = useRef<PolygonReviewActionCallback | undefined>(undefined);
   const onRequestInformationModalRef = useRef<PolygonReviewActionCallback | undefined>(undefined);
+  const onValidationJobsStartedRef = useRef<PolygonValidationJobsStartedCallback | undefined>(undefined);
 
   useEffect(() => {
     setPolygons(polygonsProp);
@@ -184,6 +196,10 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     onRequestInformationModalRef.current = cb;
   }, []);
 
+  const setOnValidationJobsStarted = useCallback((handler?: PolygonValidationJobsStartedCallback) => {
+    onValidationJobsStartedRef.current = handler;
+  }, []);
+
   const handlePolygonDeletingChange = useCallback((isDeleting: boolean, count?: number) => {
     onPolygonDeletingChangeRef.current?.(isDeleting, count);
   }, []);
@@ -200,6 +216,13 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
     onRequestInformationModalRef.current?.();
   }, []);
 
+  const handleValidationJobsStarted = useCallback(
+    (geometryPolygonUuids: string[], options?: { trackBulkCompletion?: boolean }) => {
+      onValidationJobsStartedRef.current?.(geometryPolygonUuids, options);
+    },
+    []
+  );
+
   const handleSaved = useCallback(() => onRefetchPolygonsRef.current?.(), []);
 
   const dataContextValue = useMemo(
@@ -210,7 +233,8 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
       setOnRunValidation,
       setOnPolygonDeletingChange,
       setOnRequestApproveModal,
-      setOnRequestInformationModal
+      setOnRequestInformationModal,
+      setOnValidationJobsStarted
     }),
     [
       setOnRefetchPolygons,
@@ -218,7 +242,8 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
       setOnRunValidation,
       setOnPolygonDeletingChange,
       setOnRequestApproveModal,
-      setOnRequestInformationModal
+      setOnRequestInformationModal,
+      setOnValidationJobsStarted
     ]
   );
   const {
@@ -367,6 +392,7 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
           onSaved={handleSaved}
           onOverlapFixed={handleOverlapFixed}
           onRunValidation={handleRunValidation}
+          onValidationJobsStarted={handleValidationJobsStarted}
           onPolygonUpdated={setSelectedPolygon}
           onSuppressMapSelectionHighlightChange={setSuppressMapSelectionHighlight}
           onDeletingChange={handlePolygonDeletingChange}

@@ -1,3 +1,6 @@
+import { useT } from "@transifex/react";
+import { useMemo } from "react";
+
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
 import { useDisturbances } from "@/connections/EntityAssociation";
@@ -10,12 +13,16 @@ export interface DisturbancesTableProps {
   headerName?: string;
 }
 
-const DisturbancesTablePD = ({
-  modelName,
-  modelUUID,
-  visibleRows = 5,
-  headerName = "Disturbance Type"
-}: DisturbancesTableProps) => {
+const DisturbancesTablePD = ({ modelName, modelUUID, visibleRows = 5, headerName }: DisturbancesTableProps) => {
+  const t = useT();
+
+  const headerNameTranslated = useMemo(() => {
+    if (headerName) {
+      return t(headerName);
+    }
+    return t("Disturbance Type");
+  }, [headerName, t]);
+
   const [, { data: disturbances }] = useDisturbances({ entity: modelName, uuid: modelUUID });
 
   const processDisturbanceData = (rows: any[]) => {
@@ -33,7 +40,7 @@ const DisturbancesTablePD = ({
 
   const rowDisturbanceType = {
     accessorKey: "name",
-    header: headerName,
+    header: headerNameTranslated,
     enableSorting: false,
     cell: (props: any) => {
       const value = props.getValue();
@@ -43,7 +50,7 @@ const DisturbancesTablePD = ({
 
   const columnIntensity = {
     accessorKey: "intensity",
-    header: "Intensity",
+    header: t("Intensity"),
     enableSorting: false,
     cell: (props: any) => {
       const value = props.getValue();
@@ -53,7 +60,7 @@ const DisturbancesTablePD = ({
 
   const columnExtent = {
     accessorKey: "extent",
-    header: "Extent (% of Site Affected)",
+    header: t("Extent (% of Site Affected)"),
     enableSorting: false,
     cell: (props: any) => {
       const value = props.getValue();
@@ -63,7 +70,7 @@ const DisturbancesTablePD = ({
 
   const columnDescription = {
     accessorKey: "description",
-    header: "Description",
+    header: t("Description"),
     enableSorting: false,
     cell: (props: any) => {
       const value = props.getValue();

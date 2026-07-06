@@ -1,7 +1,7 @@
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useT } from "@transifex/react";
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -14,19 +14,16 @@ import {
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { loadAnrPlotGeometryGeoJson } from "@/connections/AnrPlotGeometry";
 import { createVersionWithAttributes, pruneSitePolygonsCache } from "@/connections/SitePolygons";
-import {
-  dropdownOptionsRestoration,
-  dropdownOptionsTarget,
-  dropdownOptionsTree
-} from "@/constants/polygonDropdownOptions";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
+import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOptions";
+import { useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
 import Text from "../Text/Text";
-import { useTranslatedOptions } from "./hooks/useTranslatedOptions";
 
 type AttributeInformationProps = {
   handleClose: () => void;
@@ -59,10 +56,22 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
   const [treesPlanted, setTreesPlanted] = useState<number>(0);
   const [calculatedArea, setCalculatedArea] = useState<number>(0);
   const [formattedArea, setFormattedArea] = useState<string>();
+  const restorationPracticeOptions = useRestorationPracticeOptions();
+  const targetLandUseOptions = useTargetLandUseOptions();
+  const treeDistributionOptions = useTreeDistributionOptions();
 
-  const translatedRestorationOptions = useTranslatedOptions(dropdownOptionsRestoration);
-  const translatedTargetOptions = useTranslatedOptions(dropdownOptionsTarget);
-  const translatedTreeOptions = useTranslatedOptions(dropdownOptionsTree);
+  const translatedRestorationOptions = useMemo(
+    () => restorationPracticeOptions.map(({ value, label }) => ({ value, title: label })),
+    [restorationPracticeOptions]
+  );
+  const translatedTargetOptions = useMemo(
+    () => targetLandUseOptions.map(({ value, label }) => ({ value, title: label })),
+    [targetLandUseOptions]
+  );
+  const translatedTreeOptions = useMemo(
+    () => treeDistributionOptions.map(({ value, label }) => ({ value, title: label })),
+    [treeDistributionOptions]
+  );
   const { openNotification } = useNotificationContext();
 
   useEffect(() => {

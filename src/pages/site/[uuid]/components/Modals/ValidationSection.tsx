@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { FC, useMemo, useState } from "react";
 
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useValidationResultsLabels } from "@/hooks/translation/useValidationResultsLabels";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ValidationTag from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import ProgressBar from "@/redesignComponents/dataDisplay/Metrics/ProgressBar";
@@ -26,10 +27,11 @@ const ItemPolygon: FC<{
 }> = ({ polygon, validation, onViewDetails }) => {
   const [isOpen, setIsOpen] = useState(false);
   const t = useT();
+  const validationResultsLabels = useValidationResultsLabels();
 
   const items = useMemo(
-    () => getValidationCriteriaItemsForTag(validation, polygon.validation),
-    [polygon.validation, validation]
+    () => getValidationCriteriaItemsForTag(validation, polygon.validation, validationResultsLabels),
+    [polygon.validation, validation, validationResultsLabels]
   );
   const totalItems = items.length;
   const failedCount = items.filter(i => !i.status).length;

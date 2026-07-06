@@ -4,11 +4,9 @@ import { useT } from "@transifex/react";
 import { cloneElement, FC, isValidElement, ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 
 import type { BulkSitePolygonAttributeChanges } from "@/connections/SitePolygons";
-import {
-  dropdownOptionsRestoration,
-  dropdownOptionsTarget,
-  dropdownOptionsTree
-} from "@/constants/polygonDropdownOptions";
+import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
+import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOptions";
+import { useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
@@ -83,11 +81,6 @@ const EditWrapper: FC<{
   );
 };
 
-const optionToSelectItem = (option: { title: string; value: string }) => ({
-  label: option.title,
-  value: option.value
-});
-
 const dateValueToIsoString = (value: DateValue | undefined): string | undefined => {
   if (value == null) return undefined;
   const mm = String(value.month).padStart(2, "0");
@@ -115,18 +108,9 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
   const [submissionCycle, setSubmissionCycle] = useState<string[]>([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  const restorationOptions = useMemo(
-    () => dropdownOptionsRestoration.map(option => ({ ...optionToSelectItem(option), label: t(option.title) })),
-    [t]
-  );
-  const targetOptions = useMemo(
-    () => dropdownOptionsTarget.map(option => ({ ...optionToSelectItem(option), label: t(option.title) })),
-    [t]
-  );
-  const treeOptions = useMemo(
-    () => dropdownOptionsTree.map(option => ({ ...optionToSelectItem(option), label: t(option.title) })),
-    [t]
-  );
+  const restorationOptions = useRestorationPracticeOptions();
+  const targetOptions = useTargetLandUseOptions();
+  const treeOptions = useTreeDistributionOptions();
 
   const captureFieldSnapshot = useCallback(
     (field: BulkEditField): FieldValueSnapshot => {

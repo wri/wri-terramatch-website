@@ -73,7 +73,7 @@ const ImageControl = ({
                     "text-red": !image.isVerified
                   })}
                 >
-                  {image.isVerified ? "GeoTagged Verified" : "Not Verified"}
+                  {image.isVerified ? t("GeoTagged Verified") : t("Not Verified")}
                 </Text>
               </div>
             </div>

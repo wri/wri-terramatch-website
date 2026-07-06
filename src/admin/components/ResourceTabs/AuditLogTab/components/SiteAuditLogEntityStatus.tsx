@@ -5,9 +5,9 @@ import { Link as RaLink, useBasename } from "react-admin";
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
-import { formatAuditStatusEntityForDisplay } from "@/connections/AuditStatus";
 import { AuditStatusEntityType } from "@/connections/AuditStatus";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useAuditEntityTypeName } from "@/hooks/translation/useAuditEntityTypeName";
 
 import CommentarySection from "../../PolygonReviewTab/components/CommentarySection/CommentarySection";
 import { ADMIN_SHOW_AUDIT_LOG_TAB_INDEX } from "../constants/adminShowAuditLogTabIndex";
@@ -58,6 +58,9 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
   const basename = useBasename();
   const t = useT();
 
+  const auditEntityTypeName = useAuditEntityTypeName();
+  const displayEntityName = auditEntityTypeName[entityType];
+
   const formatUrl = () => {
     switch (REPORT_TYPES_MAPPING[buttonToggle]) {
       case "project-reports":
@@ -84,8 +87,6 @@ const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({
           ? formatUrl()
           : `/${modules.site.ResourceName}/${record?.uuid}/show/${ADMIN_SHOW_AUDIT_LOG_TAB_INDEX.site}`
       }`;
-
-  const displayEntityName = formatAuditStatusEntityForDisplay(entityType);
 
   return (
     <div className="flex flex-col gap-6">

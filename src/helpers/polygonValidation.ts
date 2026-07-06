@@ -1,4 +1,3 @@
-import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { ValidationCriteriaDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import {
   COMPLETED_DATA_CRITERIA_ID,
@@ -50,7 +49,10 @@ export const shouldDisplayValidationCriteria = (
   validationStatus: string | null | undefined
 ): validation is ValidationDto => isPolygonValidationChecked(validationStatus) && hasValidationCriteria(validation);
 
-export const parseV3ValidationData = (criteriaData: ValidationDto): ICriteriaCheckItem[] => {
+export const parseV3ValidationData = (
+  criteriaData: ValidationDto,
+  validationLabels: Record<number, string>
+): ICriteriaCheckItem[] => {
   const existingValidations = new Map<number, ICriteriaCheckItem>(
     criteriaData.criteriaList.map((criteria: ValidationCriteriaDto) => [
       criteria.criteriaId,
@@ -82,7 +84,7 @@ export const parseV3ValidationData = (criteriaData: ValidationDto): ICriteriaChe
   return transformedData;
 };
 
-export const parseValidationDataFromContext = (polygonValidation: any) => {
+export const parseValidationDataFromContext = (polygonValidation: any, validationLabels: Record<number, string>) => {
   if (!polygonValidation?.nonValidCriteria) {
     return [];
   }

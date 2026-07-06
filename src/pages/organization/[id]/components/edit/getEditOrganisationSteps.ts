@@ -173,50 +173,50 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
         children: [
           {
             name: "ftPermanentEmployees",
-            label: "Number of full-time permanent employees",
-            placeholder: "Enter a Value",
+            label: t("Number of full-time permanent employees"),
+            placeholder: t("Enter a Value"),
             inputType: "number",
             validation: { min: 0, max: 999999 }
           },
           {
             name: "ptPermanentEmployees",
-            label: "Number of part-time permanent employees",
-            placeholder: "Enter a Value",
+            label: t("Number of part-time permanent employees"),
+            placeholder: t("Enter a Value"),
             inputType: "number",
             validation: { min: 0, max: 999999 }
           },
           {
             name: "tempEmployees",
-            label: "Number of temporary employees",
-            placeholder: "Enter a Value",
+            label: t("Number of temporary employees"),
+            placeholder: t("Enter a Value"),
             inputType: "number",
             validation: { min: 0, max: 999999 }
           },
           {
             name: "femaleEmployees",
-            label: "Number of female employees",
-            placeholder: "Enter a Value",
+            label: t("Number of female employees"),
+            placeholder: t("Enter a Value"),
             inputType: "number",
             validation: { min: 0, max: 999999 }
           },
           {
             name: "maleEmployees",
-            label: "Number of male employees",
-            placeholder: "Enter a Value",
+            label: t("Number of male employees"),
+            placeholder: t("Enter a Value"),
             inputType: "number",
             validation: { min: 0, max: 999999 }
           },
           {
             name: "youngEmployees",
-            label: "Number of employees between and including ages 18 and 35",
-            placeholder: "Enter a Value",
+            label: t("Number of employees between and including ages 18 and 35"),
+            placeholder: t("Enter a Value"),
             inputType: "number",
             validation: { min: 0, max: 999999 }
           },
           {
             name: "over35Employees",
-            label: "Number of employees older than 35 years of age",
-            placeholder: "Enter a Value",
+            label: t("Number of employees older than 35 years of age"),
+            placeholder: t("Enter a Value"),
             inputType: "number",
             validation: { min: 0, max: 999999 }
           }

@@ -23,9 +23,9 @@ export const useKeyIndicatorsTooltipContent = () => {
         )
       },
       treesToBeRestored: {
-        title: t("Trees to be restored"),
+        title: t("Trees to be Grown"),
         content: t(
-          "This is the expected number of trees that will be restored through this project. It represents the following calculation: [trees to be planted * expected survival rate] + [trees to be regenerated]."
+          "This is the expected number of trees that will be grown through this project. It represents the following calculation: [trees to be planted * expected survival rate] + [trees to be regenerated]."
         )
       },
       hectaresRestored: {
@@ -56,8 +56,10 @@ export const useKeyIndicatorsTooltipContent = () => {
         )
       },
       treesToBeRestored: {
-        title: t("Trees to be restored"),
-        content: ""
+        title: t("Trees to be Grown"),
+        content: t(
+          "This is the expected number of trees that will be grown through this project. It represents the following calculation: [trees to be planted * expected survival rate] + [trees to be regenerated]."
+        )
       },
       hectaresRestored: {
         title: t("Area Restored (ha)"),

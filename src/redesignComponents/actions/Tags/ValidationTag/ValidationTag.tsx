@@ -1,5 +1,7 @@
 import { FC } from "react";
 
+import { usePolygonValidationTagValues } from "@/hooks/translation/usePolygonValidationTagValues";
+
 import ActionStatusTag from "../ActionStatusTag/ActionStatusTag";
 import { ActionStatusTagState } from "../ActionStatusTag/ActionStatusTag.type";
 
@@ -18,15 +20,12 @@ const ValidationTagStateMap: Record<ValidationTagState, ActionStatusTagState> = 
   passed: "success"
 };
 
-const ValidationTagLabelMap: Record<ValidationTagState, string> = {
-  "not-started": "Not Started",
-  "partially-passed": "Partially Passed",
-  failed: "Failed",
-  passed: "Passed"
-};
+const ValidationTag: FC<ValidationTagMapProps> = ({ status, ...rest }) => {
+  const ValidationTagLabelMap = usePolygonValidationTagValues();
 
-const ValidationTag: FC<ValidationTagMapProps> = ({ status, ...rest }) => (
-  <ActionStatusTag state={ValidationTagStateMap[status]} label={ValidationTagLabelMap[status]} {...rest} />
-);
+  return (
+    <ActionStatusTag state={ValidationTagStateMap[status]} label={ValidationTagLabelMap[status] ?? ""} {...rest} />
+  );
+};
 
 export default ValidationTag;

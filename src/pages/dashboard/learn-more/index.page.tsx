@@ -10,6 +10,9 @@ import { TERRAFUND_MONITORING_LINK } from "@/constants/dashboardConsts";
 
 import TabCarouselAboutUs from "../components/TabCarouselAboutUs";
 
+const REQUEST_ACCOUNT_LINK =
+  "https://terramatchsupport.zendesk.com/hc/en-us/requests/new?ticket_form_id=30623040820123&tf_subject=Account%20Access%20Request%20for%20TerraMatch%20Dashboard&tf_description=Please%20provide%20your%20details%20to%20request%20access%20to%20the%20TerraMatch%20Dashboard.%20Once%20your%20information%20is%20submitted,%20our%20team%20will%20review%20your%20request%20and%20set%20up%20an%20account%20for%20you.%20You%E2%80%99ll%20receive%20an%20email%20with%20further%20instructions%20once%20your%20account%20is%20ready";
+
 const Homepage = () => {
   const first = useRef<HTMLDivElement>(null);
   const second = useRef<HTMLDivElement>(null);
@@ -73,34 +76,19 @@ const Homepage = () => {
           <div className="flex w-full gap-12 mobile:flex-col">
             <div className="h-min w-3/5 text-darkCustom mobile:w-full">
               <div className="grid gap-6 lg:gap-8">
-                <Text variant="text-14-light" as="p" className="text-darkCustom-150">
-                  Welcome to the TerraMatch Dashboard! Here, restoration champions of all shapes and sizes – local
-                  organizations that grow trees, their financial and government partners, and the wider public – can
-                  access data and insights about projects that are tracked through&nbsp;
-                  <a
-                    href={TERRAFUND_MONITORING_LINK}
-                    target="_blank"
-                    className="text-14-bold underline underline-offset-4"
-                    rel="noreferrer"
-                  >
-                    TerraMatch’s monitoring, reporting, and verification system.
-                  </a>
+                <Text variant="text-14-light" as="p" className="text-darkCustom-150" containHtml>
+                  {t(
+                    'Welcome to the TerraMatch Dashboard! Here, restoration champions of all shapes and sizes – local organizations that grow trees, their financial and government partners, and the wider public – can access data and insights about projects that are tracked through&nbsp;<a href="{link}" target="_blank" class="text-14-bold underline underline-offset-4" rel="noreferrer">TerraMatch\'s monitoring, reporting, and verification system.</a>',
+                    { link: TERRAFUND_MONITORING_LINK }
+                  )}
+                </Text>
+                <Text variant="text-14-light" as="p" className="text-darkCustom-150" containHtml>
+                  {t(
+                    `The dashboard contains progress data for the 251 projects financed by <a href="https://www.africa.terramatch.org/" target="_blank" class="text-14-bold underline underline-offset-4" rel="noreferrer">TerraFund for AFR100</a>. These projects are broken down by the three TerraFund programmes – Cohort One of 2022, Cohort Two of 2024, and Cohort Three of 2026.`
+                  )}
                 </Text>
                 <Text variant="text-14-light" as="p" className="text-darkCustom-150">
-                  The dashboard contains progress data for the 251 projects financed by{" "}
-                  <a
-                    href="https://www.africa.terramatch.org/"
-                    target="_blank"
-                    className="text-14-bold underline underline-offset-4"
-                    rel="noreferrer"
-                  >
-                    TerraFund for AFR100
-                  </a>
-                  . These projects are broken down by the three TerraFund programmes – Cohort One of 2022, Cohort Two of
-                  2024, and Cohort Three of 2026.
-                </Text>
-                <Text variant="text-14-light" as="p" className="text-darkCustom-150">
-                  Each project reports 12 times over six years.
+                  {t("Each project reports 12 times over six years.")}
                 </Text>
                 <Button
                   variant="about-us"
@@ -115,17 +103,17 @@ const Homepage = () => {
               <div className="grid h-fit w-full grid-cols-2 gap-4 mobile:grid-cols-1">
                 <img
                   src="/images/upcoming-opportunities-explainer.webp"
-                  alt="tree"
+                  alt={t("tree")}
                   className="h-full w-full rounded-2xl object-cover mobile:h-[164px]"
                 />
                 <img
                   src="/images/usign-platform.png"
-                  alt="tree"
+                  alt={t("tree")}
                   className="h-full w-full rounded-2xl object-cover mobile:h-[164px]"
                 />
                 <img
                   src="/images/priceless-planet-coalition-explainer.webp"
-                  alt="tree"
+                  alt={t("tree")}
                   className="col-span-2 max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px] mobile:col-span-1 mobile:h-[164px]"
                 />
               </div>
@@ -139,82 +127,47 @@ const Homepage = () => {
         ref={first}
       >
         <Text variant={isMobile ? "text-32-bold" : "text-40-bold"} className="leading-[normal] text-darkCustom-150">
-          Accessing the
+          {t("Accessing the")}
         </Text>
         <Text
           variant={isMobile ? "text-32-bold" : "text-40-bold"}
           className="mb-10 leading-[normal] text-darkCustom-150"
         >
-          platform
+          {t("platform")}
         </Text>
         <div className="mb-8 flex gap-12 mobile:flex-col">
           <div className="flex flex-1 flex-col gap-4">
             <Icon name={IconNames.VISIT_DASHBOARD} className="h-16 w-16" />
             <Text variant="text-24" className="text-darkCustom">
-              Visit the Public Dashboard
+              {t("Visit the Public Dashboard")}
             </Text>
-            <Text variant="text-14-light" className="text-darkCustom-150">
-              Access the public dashboard{" "}
-              <a
-                href="/dashboard"
-                target="_blank"
-                className="text-14-semibold text-darkCustom underline underline-offset-4"
-              >
-                here
-              </a>{" "}
-              or by clicking &ldquo;Dashboards&rdquo; on the navigation bar on the left of the screen.
+            <Text variant="text-14-light" className="text-darkCustom-150" containHtml>
+              {t(
+                `Access the public dashboard <a href="/dashboard" target="_blank" class="text-14-semibold text-darkCustom underline underline-offset-4">here</a> or by clicking &ldquo;Dashboards&rdquo; on the navigation bar on the left of the screen.`
+              )}
             </Text>
           </div>
           <div className="flex flex-1 flex-col gap-4">
             <Icon name={IconNames.PRE_FILTERED_PAGE} className="h-16 w-16" />
             <Text variant="text-24" className="text-darkCustom">
-              Pre-Filtered Pages
+              {t("Pre-Filtered Pages")}
             </Text>
-            <Text variant="text-14-light" className="text-darkCustom-150">
-              Access pre-filtered pages for each of TerraFund’s target landscapes here-{" "}
-              <a
-                href="/dashboard?landscapes=gcb"
-                target="_blank"
-                className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
-              >
-                Ghana Cocoa Belt
-              </a>
-              ,{" "}
-              <a
-                href="/dashboard?landscapes=grv"
-                target="_blank"
-                className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
-              >
-                Greater Rift Valley of Kenya
-              </a>
-              , and{" "}
-              <a
-                href="/dashboard?landscapes=ikr"
-                target="_blank"
-                className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
-              >
-                Lake Kivu & Rusizi River Basin
-              </a>
-              . These pages show relevant projects from all three TerraFund programmes.
+            <Text variant="text-14-light" className="text-darkCustom-150" containHtml>
+              {t(
+                `Access pre-filtered pages for each of TerraFund's target landscapes here- <a href="/dashboard?landscapes=gcb" target="_blank" class="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4">Ghana Cocoa Belt</a>, <a href="/dashboard?landscapes=grv" target="_blank" class="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4">Greater Rift Valley of Kenya</a>, and <a href="/dashboard?landscapes=ikr" target="_blank" class="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4">Lake Kivu & Rusizi River Basin</a>. These pages show relevant projects from all three TerraFund programmes.`
+              )}
             </Text>
           </div>
           <div className="flex flex-1 flex-col gap-4">
             <Icon name={IconNames.REQUEST_ACCOUNT} className="h-16 w-16" />
             <Text variant="text-24" className="text-darkCustom">
-              Request an Account
+              {t("Request an Account")}
             </Text>
-            <Text variant="text-14-light" className="text-darkCustom-150">
-              Are you a current funder, government official, TerraFund staff member, or a funded organization? If so,
-              click here to{" "}
-              <a
-                href="https://terramatchsupport.zendesk.com/hc/en-us/requests/new?ticket_form_id=30623040820123&tf_subject=Account%20Access%20Request%20for%20TerraMatch%20Dashboard&tf_description=Please%20provide%20your%20details%20to%20request%20access%20to%20the%20TerraMatch%20Dashboard.%20Once%20your%20information%20is%20submitted,%20our%20team%20will%20review%20your%20request%20and%20set%20up%20an%20account%20for%20you.%20You%E2%80%99ll%20receive%20an%20email%20with%20further%20instructions%20once%20your%20account%20is%20ready"
-                target="_blank"
-                className="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4"
-                rel="noreferrer"
-              >
-                request an account
-              </a>{" "}
-              or login to see additional data.
+            <Text variant="text-14-light" className="text-darkCustom-150" containHtml>
+              {t(
+                'Are you a current funder, government official, TerraFund staff member, or a funded organization? If so, click here to <a href="{link}" target="_blank" class="text-14-semibold text-darkCustom text-opacity-80 underline underline-offset-4" rel="noreferrer">request an account</a> or login to see additional data.',
+                { link: REQUEST_ACCOUNT_LINK }
+              )}
             </Text>
           </div>
         </div>
@@ -222,19 +175,14 @@ const Homepage = () => {
           <Icon name={IconNames.ORANGE_DOTS} className="h-5 w-5 shrink-0" />
           <div>
             <Text variant={isMobile ? "text-12" : "text-14"}>
-              Are you interested in becoming a funder, a restoration champion, or getting involved in another way? If
-              so, or if you have any other questions,
+              {t(
+                "Are you interested in becoming a funder, a restoration champion, or getting involved in another way? If so, or if you have any other questions,"
+              )}
             </Text>
-            <Text variant={isMobile ? "text-12" : "text-14"}>
-              please email our support team at{" "}
-              <a
-                href="mailto:info@terramatch.org"
-                target="_blank"
-                className="text-14-bold underline underline-offset-4"
-                rel="noreferrer"
-              >
-                info@terramatch.org
-              </a>
+            <Text variant={isMobile ? "text-12" : "text-14"} containHtml>
+              {t(
+                `please email our support team at <a href="mailto:info@terramatch.org" target="_blank" class="text-14-bold underline underline-offset-4" rel="noreferrer">info@terramatch.org</a>`
+              )}
             </Text>
           </div>
         </div>
@@ -255,17 +203,17 @@ const Homepage = () => {
           <div className="grid h-fit w-full grid-cols-2 gap-4 mobile:grid-cols-1">
             <img
               src="/images/learn-more-data-1.jpg"
-              alt="tree"
+              alt={t("tree")}
               className="h-full max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px]"
             />
             <img
               src="/images/learn-more-data-3.jpg"
-              alt="tree"
+              alt={t("tree")}
               className="h-full max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px]"
             />
             <img
               src="/images/learn-more-data-2.jpg"
-              alt="tree"
+              alt={t("tree")}
               className="col-span-2 max-h-[170px] w-full rounded-2xl object-cover lg:max-h-[220px] wide:max-h-[308px] mobile:col-span-1"
             />
           </div>
@@ -273,28 +221,18 @@ const Homepage = () => {
         <div className="h-min w-3/5 text-darkCustom mobile:w-full">
           <div className="grid gap-2">
             <Text variant={isMobile ? "text-32-bold" : "text-36-bold"} className="text-darkCustom-150">
-              About the data
+              {t("About the data")}
+            </Text>
+            <Text variant="text-14-light" as="p" className="text-darkCustom-150" containHtml>
+              {t(
+                'The dashboard displays data collected through the <a href="{link}" target="_blank" class="text-14-bold underline underline-offset-4" rel="noreferrer">TerraFund Monitoring, Reporting, and Verification (MRV) Framework</a>. Data are sourced from funding applications, quality assured project reports, and validated geospatial boundaries of project sites. Future iterations of the dashboard will include remote sensing data and field monitoring insights. As the quality of each dataset is reviewed and improved with restoration champions, additional self-reported and verified data will become available.',
+                { link: TERRAFUND_MONITORING_LINK }
+              )}
             </Text>
             <Text variant="text-14-light" as="p" className="text-darkCustom-150">
-              The dashboard displays data collected through the{" "}
-              <a
-                href={TERRAFUND_MONITORING_LINK}
-                target="_blank"
-                className="text-14-bold underline underline-offset-4"
-                rel="noreferrer"
-              >
-                TerraFund Monitoring, Reporting, and Verification (MRV) Framework
-              </a>
-              . Data are sourced from funding applications, quality assured project reports, and validated geospatial
-              boundaries of project sites. Future iterations of the dashboard will include remote sensing data and field
-              monitoring insights. As the quality of each dataset is reviewed and improved with restoration champions,
-              additional self-reported and verified data will become available.
-            </Text>
-            <Text variant="text-14-light" as="p" className="text-darkCustom-150">
-              Because the dashboard is directly linked to TerraMatch, numbers update in real-time as new data are
-              entered and approved. This happens predominantly after TerraFund projects submit reports in January and
-              July of each year, and those data are meticulously checked by experienced project managers and geospatial
-              data experts. Projects where no progress data is available are still undergoing quality assurance.
+              {t(
+                "Because the dashboard is directly linked to TerraMatch, numbers update in real-time as new data are entered and approved. This happens predominantly after TerraFund projects submit reports in January and July of each year, and those data are meticulously checked by experienced project managers and geospatial data experts. Projects where no progress data is available are still undergoing quality assurance."
+              )}
             </Text>
           </div>
         </div>

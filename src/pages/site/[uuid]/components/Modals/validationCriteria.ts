@@ -38,18 +38,20 @@ export const isValidationTagChecked = (validationTag: ValidationTagState): boole
 
 export const getValidationCriteriaItems = (
   validation: ValidationDto | undefined,
+  validationLabels: Record<number, string>,
   validationStatus?: string | null
 ): ICriteriaCheckItem[] => {
   if (!shouldDisplayValidationCriteria(validation, validationStatus)) {
     return [];
   }
 
-  return parseV3ValidationData(validation);
+  return parseV3ValidationData(validation, validationLabels);
 };
 
 export const getValidationCriteriaItemsForTag = (
   validation: ValidationDto | undefined,
-  validationTag: ValidationTagState
+  validationTag: ValidationTagState,
+  validationLabels: Record<number, string>
 ): ICriteriaCheckItem[] => {
   if (!isValidationTagChecked(validationTag)) {
     return [];
@@ -59,7 +61,7 @@ export const getValidationCriteriaItemsForTag = (
     return [];
   }
 
-  return parseV3ValidationData(validation);
+  return parseV3ValidationData(validation, validationLabels);
 };
 
 export const getItemSeverity = (item: ICriteriaCheckItem): CriteriaSeverity => {

@@ -2,7 +2,7 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import bbox from "@turf/bbox";
 import { Map as MapboxMap } from "mapbox-gl";
 
-import { loadPolygonGeoJson, loadProjectPolygonsGeoJson } from "@/connections/GeoJsonExport";
+import { loadPolygonGeoJson } from "@/connections/GeoJsonExport";
 import { updateProjectPolygonResource } from "@/connections/ProjectPolygons";
 import { GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
@@ -111,7 +111,7 @@ export const drawTemporaryPolygon = (
 export async function fetchPolygonGeometry(
   polygonUuid: string,
   geometryOnly: boolean = true,
-  projectPitchUuid?: string
+  _projectPitchUuid?: string
 ): Promise<GeoJSON.Geometry | null> {
   if (polygonUuid == null || polygonUuid === "") {
     Log.error("fetchPolygonGeometry called with undefined or empty polygonUuid");
@@ -119,19 +119,27 @@ export async function fetchPolygonGeometry(
   }
 
   try {
-    let result;
-    if (projectPitchUuid != null) {
-      result = await loadProjectPolygonsGeoJson({ projectPitchUuid, enabled: true });
-    } else {
-      result = await loadPolygonGeoJson({ uuid: polygonUuid, geometryOnly, includeExtendedData: false, enabled: true });
-    }
+    const result = await loadPolygonGeoJson({
+      uuid: polygonUuid,
+      geometryOnly,
+      includeExtendedData: false,
+      enabled: true
+    });
 
     const geojson = extractGeoJsonFromResponse(result.data);
     if (geojson == null || geojson.features == null || geojson.features.length === 0) {
       Log.warn("No geometry found in GeoJSON response for polygon:", polygonUuid);
       return null;
     }
-    return geojson.features[0].geometry;
+
+    const matchingFeature =
+      geojson.features.find(feature => {
+        const properties = feature.properties ?? {};
+        const featureUuid = properties.uuid ?? properties.polygonUuid ?? properties.polyUuid;
+        return featureUuid != null && String(featureUuid) === polygonUuid;
+      }) ?? geojson.features[0];
+
+    return matchingFeature.geometry ?? null;
   } catch (error) {
     Log.error("Failed to fetch polygon geometry:", error);
     throw error;

@@ -85,13 +85,13 @@ const mapActiveProjects = (projects: DashboardProjectsLightDto[], excludeUUID?: 
   return projects ? projects.filter((item: { uuid: string }) => excludeUUID == null || item.uuid !== excludeUUID) : [];
 };
 
-const getOrganizationByUuid = (projects: any[], uuid: string) => {
-  if (!projects) return "Unknown Organization";
+const getOrganizationByUuid = (projects: any[], uuid: string, unknownOrganization: string) => {
+  if (!projects) return unknownOrganization;
 
   const project = projects.find((project: any) => project.uuid === uuid);
-  if (!project) return "Unknown Organization";
+  if (!project) return unknownOrganization;
 
-  return project.organisationName || "Unknown Organization";
+  return project.organisationName || unknownOrganization;
 };
 
 const Dashboard = () => {
@@ -260,7 +260,7 @@ const Dashboard = () => {
   const COLUMN_ACTIVE_COUNTRY = useMemo(
     () => [
       {
-        header: "Project",
+        header: t("Project"),
         accessorKey: "name",
         enableSorting: false,
         cell: (props: any) => {
@@ -269,21 +269,21 @@ const Dashboard = () => {
         }
       },
       {
-        header: "Trees Planted",
+        header: t("Trees Planted"),
         accessorKey: "treesPlantedCount",
         enableSorting: false,
         sortingFn: numericSortingFn,
         cell: (props: { getValue: () => number }) => <span>{formatTableNumber(props.getValue())}</span>
       },
       {
-        header: "Hectares",
+        header: t("Hectares"),
         accessorKey: "totalHectaresRestoredSum",
         enableSorting: false,
         sortingFn: numericSortingFn,
         cell: (props: { getValue: () => number }) => <span>{formatTableNumber(props.getValue())}</span>
       },
       {
-        header: "Jobs Created",
+        header: t("Jobs Created"),
         accessorKey: "totalJobsCreated",
         enableSorting: false,
         sortingFn: numericSortingFn,
@@ -313,7 +313,7 @@ const Dashboard = () => {
         }
       }
     ],
-    [setFilters]
+    [setFilters, t]
   );
 
   const DATA_ACTIVE_PROGRAMME = useMemo(() => {
@@ -345,9 +345,11 @@ const Dashboard = () => {
     [allAvailableProjects, filters.uuid]
   );
   const organizationName = useMemo(
-    () => getOrganizationByUuid(activeProjects, filters.uuid),
-    [activeProjects, filters.uuid]
+    () => getOrganizationByUuid(activeProjects, filters.uuid, t("Unknown Organization")),
+    [activeProjects, filters.uuid, t]
   );
+
+  const mrvLink = useMemo(() => t(TERRAFUND_MRV_LINK), [t]);
 
   const jobsCreatedByGenderData = useMemo(
     () => parseJobCreatedByType(jobsCreatedData, "gender", t),
@@ -445,10 +447,8 @@ const Dashboard = () => {
               <>
                 {filters.country?.data.icon ? <CountryFlag src={filters.country.data.icon} size="md" /> : null}
                 <Text variant="text-24-semibold" className="text-black">
-                  {t(
-                    countryChoices.find(country => country.id === filters.country?.country_slug)?.name ||
-                      filters.country?.data.label
-                  )}
+                  {countryChoices.find(country => country.id === filters.country?.country_slug)?.name ||
+                    filters.country?.data.label}
                 </Text>
               </>
             )}
@@ -500,7 +500,7 @@ const Dashboard = () => {
 
                 <div className="flex items-center gap-2">
                   <Text variant={isMobile ? "text-16" : "text-20"} className="text-darkCustom" as="span">
-                    {t(item.value)}
+                    {item.value === "Loading..." ? t("Loading...") : item.value}
                   </Text>
                   <ToolTip
                     title={t(item.label)}
@@ -531,26 +531,28 @@ const Dashboard = () => {
                 />
               )}
               <div>
-                <Text variant="text-20-bold">{t(singleDashboardProject?.name)}</Text>
+                <Text variant="text-20-bold">{singleDashboardProject?.name}</Text>
                 <Text variant="text-14-light" className="text-darkCustom">
-                  {t(`Operations: ${countryData?.data?.label}`)}
+                  {t(`Operations: {countryLabel}`, { countryLabel: countryData?.data?.label })}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                  {t(`Registration: ${countryData?.data?.label}`)}
+                  {t(`Registration: {countryLabel}`, { countryLabel: countryData?.data?.label })}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                  {t(`Organization: ${organizationName}`)}
+                  {t(`Organization: {organizationName}`, { organizationName: organizationName })}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                  {t(
-                    `Type: ${
-                      ORGANIZATIONS_TYPES[singleDashboardProject?.organisationType as keyof typeof ORGANIZATIONS_TYPES]
-                    }`
-                  )}
+                  {t(`Type: {organizationType}`, {
+                    organizationType: t(
+                      ORGANIZATIONS_TYPES[
+                        singleDashboardProject?.organisationType as keyof typeof ORGANIZATIONS_TYPES
+                      ] ?? ""
+                    )
+                  })}
                   <span className="text-18-bold mx-2 text-grey-500">&bull;</span>
-                  {t(`Cohort: ${cohortDisplayName}`)}
+                  {t(`Cohort: {cohortDisplayName}`, { cohortDisplayName: cohortDisplayName })}
                 </Text>
               </div>
             </div>
             <SecDashboard
-              title={t("Objective")}
+              title={t("Summary")}
               classNameTitle="capitalize"
               type="legend"
               data={objectiveData}
@@ -570,7 +572,8 @@ const Dashboard = () => {
           iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
           variantSubTitle="text-14-light"
           subtitle={t(
-            `This section displays data related to <em>Indicator 1: Tree Restoration</em> described in ${TERRAFUND_MRV_LINK}. Please refer to the linked framework for details on how these numbers are sourced and verified.`
+            "This section displays data related to <em>Indicator 1: Tree Restoration</em> described in {mrvLink}. Please refer to the linked framework for details on how these numbers are sourced and verified.",
+            { mrvLink }
           )}
           collapseChildren={isMobile ? true : false}
         >
@@ -622,7 +625,8 @@ const Dashboard = () => {
           widthTooltip="w-80 lg:w-96"
           iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
           subtitle={t(
-            `This section displays data related to <em>Indicator 3: Jobs Created</em> described in ${TERRAFUND_MRV_LINK}. Please refer to the linked framework for additional details on how these numbers are sourced and verified.`
+            "This section displays data related to <em>Indicator 3: Jobs Created</em> described in {mrvLink}. Please refer to the linked framework for additional details on how these numbers are sourced and verified.",
+            { mrvLink }
           )}
           collapseChildren={isMobile ? true : false}
         >
@@ -717,7 +721,8 @@ const Dashboard = () => {
           widthTooltip="w-80 lg:w-96"
           iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
           subtitle={t(
-            `This section displays data related to <em>Indicator 4: Livelihood Benefits</em> described in ${TERRAFUND_MRV_LINK}. Please refer to the linked framework for additional details on how these numbers are sourced and verified.`
+            "This section displays data related to <em>Indicator 4: Livelihood Benefits</em> described in {mrvLink}. Please refer to the linked framework for additional details on how these numbers are sourced and verified.",
+            { mrvLink }
           )}
           collapseChildren={isMobile ? true : false}
         >

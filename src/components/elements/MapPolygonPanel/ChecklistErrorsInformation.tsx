@@ -9,6 +9,7 @@ import {
   parseV3ValidationData,
   shouldShowAsWarning
 } from "@/helpers/polygonValidation";
+import { useValidationResultsLabels } from "@/hooks/translation/useValidationResultsLabels";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 import { TextVariants } from "@/types/common";
 import { ICriteriaCheckItem } from "@/types/validation";
@@ -29,6 +30,7 @@ const ChecklistErrorsInformation: FC<ChecklistErrorsInformationProps> = ({
   onWarningChange
 }) => {
   const t = useT();
+  const validationResultsLabels = useValidationResultsLabels();
   const { getFormatedExtraInfo } = useMessageValidators();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,13 +41,13 @@ const ChecklistErrorsInformation: FC<ChecklistErrorsInformationProps> = ({
 
   useEffect(() => {
     if (v3ValidationData?.criteriaList != null && v3ValidationData.criteriaList.length > 0) {
-      setPolygonValidationData(parseV3ValidationData(v3ValidationData));
+      setPolygonValidationData(parseV3ValidationData(v3ValidationData, validationResultsLabels));
       setIsLoading(false);
       onWarningChange?.(hasCompletedDataWhitinStimatedAreaCriteriaInvalidV3(v3ValidationData));
     } else {
       setIsLoading(v3ValidationData == null);
     }
-  }, [v3ValidationData, onWarningChange]);
+  }, [v3ValidationData, onWarningChange, validationResultsLabels]);
   const VARIANT_MAP = {
     table: { text: "text-12", container: "gap-1 mt-1" },
     default: { text: "text-14-light", container: "gap-3 mt-3" }

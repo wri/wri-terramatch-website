@@ -14,6 +14,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalStory from "@/components/extensive/Modal/ModalStory";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useImpactCategories } from "@/hooks/translation/useImpactCategories";
 import { useOnMount } from "@/hooks/useOnMount";
 import { parseImpactStoryContent } from "@/utils/impactStory";
 
@@ -23,32 +24,16 @@ import QuillEditor from "./QuillEditor";
 import StyledFileUploadInput from "./StyledFileUploadInput";
 import { StyledAutocompleteInput, StyledReferenceInput } from "./StyledInputs";
 
-export interface ImpactCategory {
-  title: string;
-  value: string;
-}
-
 export interface ImpactStoryFormProps {
   mode: "create" | "edit";
 }
-
-export const IMPACT_CATEGORIES: ImpactCategory[] = [
-  { title: "Business development/fundraising", value: "business-dev-fund" },
-  { title: "Community benefits", value: "community-benefits" },
-  { title: "Livelihoods strengthening", value: "livelihoods-strengthening" },
-  { title: "Gender equity", value: "gender-equity" },
-  { title: "Youth engagement", value: "youth-engagement" },
-  { title: "Ecosystem services", value: "ecosystem-services" },
-  { title: "Climate resilience", value: "climate-resilience" },
-  { title: "Institutional capacity", value: "institutional-capacity" },
-  { title: "Technical capacity", value: "technical-capacity" }
-];
 
 const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
   const { initialValues, handlers } = useImpactStoryForm(mode);
   const { openModal } = useModalContext();
   const { getValues, trigger, watch } = useFormContext();
   const { showLoader, hideLoader } = useLoading();
+  const impactCategories = useImpactCategories();
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [organizationUuid, setOrganizationUuid] = useState(undefined);
@@ -169,7 +154,7 @@ const ImpactStoryForm: React.FC<ImpactStoryFormProps> = memo(({ mode }) => {
 
         <Dropdown
           label="Impact Category"
-          options={IMPACT_CATEGORIES}
+          options={impactCategories}
           value={categoryValue}
           onChange={e => handlers.handleImpactCategoryChange(e as string[])}
           labelClassName="capitalize text-14-bold"

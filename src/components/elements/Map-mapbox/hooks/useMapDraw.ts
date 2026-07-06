@@ -6,8 +6,8 @@ import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
-import { FORM_POLYGONS } from "@/constants/statuses";
 import type { PolygonGeometryEditState } from "@/context/mapArea.provider";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { isProjectPitchesEntityName } from "@/helpers/entity";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -31,7 +31,6 @@ import {
   updatePolygonProjectGeometry
 } from "../interactions/draw";
 import { removePopups } from "../interactions/popups";
-import { addSourcesToLayers } from "../layers/polygonLayers";
 import { DashboardGetProjectsData, PolygonFromMapState } from "../Map.d";
 import { applyMapDrawStatusStyles, isPolygonDrawStatus, PolygonDrawStatus } from "../mapStyle";
 import { applyPolygonNeighborDimming } from "./polygonEditFocusStyle";
@@ -82,6 +81,7 @@ export function useMapDraw({
   hideLoader,
   openNotification
 }: UseMapDrawParams) {
+  const { invalidatePolygonMapTiles } = useMapAreaContext();
   const originalGeometryRef = useRef<GeoJSON.Geometry | null>(null);
   const geometryHistoryRef = useRef<GeoJSON.Geometry[]>([]);
   const isApplyingGeometryUndoRef = useRef(false);
@@ -251,9 +251,6 @@ export function useMapDraw({
       requestAnimationFrame(() => {
         if (map.current != null) applyMapDrawingCursor(map.current);
       });
-      if (formMap && polygonFromMap?.uuid) {
-        filterPolygonFromLayers(polygonFromMap.uuid, polygonsData, map.current);
-      }
     } else {
       draw.current.changeMode("simple_select");
       resetMapDrawingCursor(map.current);
@@ -279,9 +276,16 @@ export function useMapDraw({
   const handleEditPolygon = useCallback(async () => {
     if (map.current == null) return;
     removePopups(map.current, "POLYGON");
-    if (!polygonFromMap?.isOpen || polygonFromMap?.uuid === "") return;
 
-    const polygonuuid = polygonFromMap.uuid;
+    const polygonuuid = polygonFromMap?.uuid ?? "";
+    const canEdit = formMap ? polygonuuid !== "" : polygonFromMap?.isOpen === true && polygonuuid !== "";
+
+    if (!canEdit) {
+      openNotification("warning", t("Select a polygon"), t("Click a polygon on the map before editing."));
+      return;
+    }
+
+    filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
     const isProjectPolygon = isProjectPitchesEntityName(polygonFromMap?.entityName ?? "");
     const projectPitchUuid = polygonFromMap?.projectPitchUuid;
     const rawStatus =
@@ -338,19 +342,25 @@ export function useMapDraw({
         const projectPitchUuid = polygonFromMap.projectPitchUuid;
         await updatePolygonProjectGeometry([feature], polygonFromMap.uuid, reloadSiteData);
 
-        if (draw.current) draw.current.deleteAll();
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        const isProjectPolygon = isProjectPitchesEntityName(polygonFromMap?.entityName ?? "");
-        const updatedGeometry = await fetchPolygonGeometry(
-          polygonFromMap.uuid,
-          true,
-          isProjectPolygon ? projectPitchUuid : undefined
-        );
-        if (updatedGeometry != null && map.current != null) {
-          addSourcesToLayers(map.current, { [FORM_POLYGONS]: [polygonFromMap.uuid] }, centroids);
+        if (draw.current) {
+          draw.current.deleteAll();
+          draw.current.changeMode("simple_select");
+        }
+        resetMapDrawingCursor(map.current);
+        onCancel(polygonsData);
+        invalidatePolygonMapTiles();
+        if (projectPitchUuid != null) {
+          ApiSlice.pruneCache("geojsonExports", [projectPitchUuid]);
+          ApiSlice.pruneCache("projectPolygons", [projectPitchUuid]);
+          ApiSlice.pruneCache("boundingBoxes", [projectPitchUuid]);
+        } else {
+          ApiSlice.pruneCache("projectPolygons");
+          ApiSlice.pruneCache("boundingBoxes");
         }
         pruneBoundingBoxesCache();
+        originalGeometryRef.current = null;
+        clearGeometryHistory();
+        setPolygonGeometryEdit?.(undefined);
         openNotification("success", t("Success"), t("Project polygon updated successfully."));
         trackPolygonEvent("polygon_shape_edited", {
           ...getPolygonAnalyticsContext({
@@ -426,11 +436,14 @@ export function useMapDraw({
 
   const onCancelEdit = useCallback(() => {
     onCancel(polygonsData);
+    if (formMap) {
+      invalidatePolygonMapTiles();
+    }
     originalGeometryRef.current = null;
     clearGeometryHistory();
     setPolygonGeometryEdit?.(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clearGeometryHistory, polygonsData, setPolygonGeometryEdit]);
+  }, [clearGeometryHistory, formMap, invalidatePolygonMapTiles, polygonsData, setPolygonGeometryEdit]);
 
   return { handleEditPolygon, onSaveEdit, onCancelEdit };
 }

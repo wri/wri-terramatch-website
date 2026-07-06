@@ -5,6 +5,7 @@ import { FC, useEffect, useRef, useState } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { shouldShowAsWarning } from "@/helpers/polygonValidation";
+import { useValidationResultsLabels } from "@/hooks/translation/useValidationResultsLabels";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 import { ICriteriaCheckItem } from "@/types/validation";
@@ -22,19 +23,6 @@ export type CriteriaData = {
   }[];
 };
 
-export const validationLabels: any = {
-  3: "No Overlapping Polygon",
-  4: "No Self-Intersection",
-  5: "Inside Coordinate System",
-  6: "Inside Size Limit",
-  7: "Within Country",
-  8: "No Spike",
-  10: "Polygon Type",
-  12: "Within Total Area Expected",
-  14: "Data Completed",
-  15: "Plant Start Date"
-};
-
 function useRenderCounter() {
   const ref = useRef(0);
   Log.debug(`Render count: ${++ref.current}`);
@@ -46,6 +34,7 @@ type ChecklistInformationProps = {
 
 const ChecklistInformation: FC<ChecklistInformationProps> = ({ criteriaData }) => {
   useRenderCounter();
+  const validationResultsLabels = useValidationResultsLabels();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [validationStatus, setValidationStatus] = useState<boolean>(false);
   const [failedValidationCounter, setFailedValidationCounter] = useState<number>(0);
@@ -62,13 +51,13 @@ const ChecklistInformation: FC<ChecklistInformationProps> = ({ criteriaData }) =
             id: criteria.criteriaId,
             date: criteria.latestCreatedAt,
             status: criteria.valid === 1,
-            label: validationLabels[criteria.criteriaId],
+            label: validationResultsLabels[criteria.criteriaId],
             extra_info: criteria.extraInfo
           }
         ])
       );
 
-      const transformedData: ICriteriaCheckItem[] = Object.entries(validationLabels).map(([id, label]) => {
+      const transformedData: ICriteriaCheckItem[] = Object.entries(validationResultsLabels).map(([id, label]) => {
         const existingValidation = existingValidations.get(Number(id));
 
         if (!isAdmin && Number(id) === 14 && existingValidation != null && !existingValidation.status) {
@@ -100,7 +89,7 @@ const ChecklistInformation: FC<ChecklistInformationProps> = ({ criteriaData }) =
     } else {
       setValidationStatus(false);
     }
-  }, [criteriaData, isAdmin]);
+  }, [criteriaData, isAdmin, validationResultsLabels]);
 
   useEffect(() => {
     if (polygonValidationData != null) {

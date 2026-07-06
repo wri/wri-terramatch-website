@@ -35,6 +35,126 @@ export const isValidPlantStartDate = (plantStartDate: DateValue[]): boolean => p
 
 export type DateValueToIsoString = (value: DateValue | undefined) => string | undefined;
 
+const normalizeStringArray = (values: string[] | null | undefined): string[] =>
+  (values ?? [])
+    .map(value => value.trim())
+    .filter(value => value.length > 0)
+    .sort();
+
+const areStringArraysEqual = (left: string[], right: string[]): boolean =>
+  left.length === right.length && left.every((value, index) => value === right[index]);
+
+const normalizePlantStartDate = (value: string | null | undefined): string => value?.split("T")[0] ?? "";
+
+export const arePolygonEditFormValuesEqual = (
+  left: PolygonEditFormValues,
+  right: PolygonEditFormValues,
+  dateValueToIso: DateValueToIsoString
+): boolean => {
+  if (left.polygonName.trim() !== right.polygonName.trim()) {
+    return false;
+  }
+
+  const leftPlantStart = normalizePlantStartDate(dateValueToIso(left.plantStartDate[0]));
+  const rightPlantStart = normalizePlantStartDate(dateValueToIso(right.plantStartDate[0]));
+  if (leftPlantStart !== rightPlantStart) {
+    return false;
+  }
+
+  if (
+    !areStringArraysEqual(
+      normalizeStringArray(left.restorationPractice),
+      normalizeStringArray(right.restorationPractice)
+    )
+  ) {
+    return false;
+  }
+
+  if (left.targetLandUseSystem.join(", ").trim() !== right.targetLandUseSystem.join(", ").trim()) {
+    return false;
+  }
+
+  if (
+    !areStringArraysEqual(normalizeStringArray(left.treeDistribution), normalizeStringArray(right.treeDistribution))
+  ) {
+    return false;
+  }
+
+  const leftNumTrees = left.treesPlanted.trim() === "" ? 0 : Number(left.treesPlanted);
+  const rightNumTrees = right.treesPlanted.trim() === "" ? 0 : Number(right.treesPlanted);
+
+  return leftNumTrees === rightNumTrees;
+};
+
+export const hasUnsavedFormChanges = (
+  baseline: PolygonEditFormValues | null | undefined,
+  current: PolygonEditFormValues,
+  geometryChanged: boolean,
+  dateValueToIso: DateValueToIsoString
+): boolean => {
+  if (geometryChanged) {
+    return true;
+  }
+
+  if (baseline == null) {
+    return false;
+  }
+
+  return !arePolygonEditFormValuesEqual(baseline, current, dateValueToIso);
+};
+
+export const hasUnsavedPolygonChanges = (
+  polygon: SitePolygonLightDto | undefined,
+  form: PolygonEditFormValues,
+  geometryChanged: boolean,
+  dateValueToIso: DateValueToIsoString
+): boolean => {
+  if (geometryChanged) {
+    return true;
+  }
+
+  if (polygon == null) {
+    return false;
+  }
+
+  if (form.polygonName.trim() !== (polygon.name ?? "").trim()) {
+    return true;
+  }
+
+  const formPlantStart = normalizePlantStartDate(dateValueToIso(form.plantStartDate[0]));
+  const savedPlantStart = normalizePlantStartDate(polygon.plantStart);
+  if (formPlantStart !== savedPlantStart) {
+    return true;
+  }
+
+  if (!areStringArraysEqual(normalizeStringArray(form.restorationPractice), normalizeStringArray(polygon.practice))) {
+    return true;
+  }
+
+  const formTargetSys = form.targetLandUseSystem.join(", ").trim();
+  const savedTargetSys = (polygon.targetSys ?? "").trim();
+  if (formTargetSys !== savedTargetSys) {
+    return true;
+  }
+
+  if (!areStringArraysEqual(normalizeStringArray(form.treeDistribution), normalizeStringArray(polygon.distr))) {
+    return true;
+  }
+
+  const formNumTrees = form.treesPlanted.trim() === "" ? 0 : Number(form.treesPlanted);
+  const savedNumTrees = polygon.numTrees ?? 0;
+  if (formNumTrees !== savedNumTrees) {
+    return true;
+  }
+
+  return false;
+};
+
+export type SavePolygonFlowOptions = {
+  closeOnSave?: boolean;
+  deferSuccessToast?: boolean;
+};
+
 type SitePolygonCreateFeature = GeoJSON.Feature<GeoJSON.Geometry, CreatePolygonFeatureProperties>;
 
 type SitePolygonCreateFeatureCollection = {

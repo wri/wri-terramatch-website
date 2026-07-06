@@ -1,4 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
+import { useT } from "@transifex/react";
 
 import CountryFlag from "@/components/dashboard/CountryFlag";
 import Text from "@/components/elements/Text/Text";
@@ -17,16 +18,17 @@ export type ImpactStoryModalRow = {
 };
 
 export function buildImpactStoriesModalColumns(
+  t: typeof useT,
   onOpenStory: (row: ImpactStoryModalRow) => void
 ): ColumnDef<ImpactStoryModalRow>[] {
   return [
     {
-      header: "Impact Story",
+      header: t("Impact Story"),
       accessorKey: "title",
       enableSorting: true
     },
     {
-      header: "Country",
+      header: t("Country"),
       cell: (props: { row: { original: ImpactStoryModalRow } }) => {
         const countries = props.row.original.organization?.countries_data ?? [];
         if (countries.length === 0) {
@@ -48,12 +50,12 @@ export function buildImpactStoriesModalColumns(
       enableSorting: true
     },
     {
-      header: "Organization",
+      header: t("Organization"),
       accessorKey: "organization.name",
       enableSorting: true
     },
     {
-      header: "Date Created",
+      header: t("Date Created"),
       accessorKey: "date",
       enableSorting: false
     },

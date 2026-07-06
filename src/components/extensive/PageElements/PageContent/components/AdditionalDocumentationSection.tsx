@@ -1,4 +1,5 @@
 import { Flex } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import {
@@ -21,6 +22,7 @@ type AdditionalDocumentationSectionProps = {
 };
 
 const AdditionalDocumentationSection: FC<AdditionalDocumentationSectionProps> = ({ value, entityName, entityUUID }) => {
+  const t = useT();
   const files = parseFilesFromHtml(value);
 
   if (files.length === 0) return null;
@@ -34,12 +36,12 @@ const AdditionalDocumentationSection: FC<AdditionalDocumentationSectionProps> = 
       {documentFiles.length > 0 && <DocumentsSection files={documentFiles} showTitle={entityName === "projects"} />}
       {photos.length > 0 && videos.length > 0 && <SimpleDivider />}
       {photos.length > 0 && (
-        <MediaSection label="Photos" files={photos} entityName={entityName} entityUUID={entityUUID} />
+        <MediaSection label={t("Photos")} files={photos} entityName={entityName} entityUUID={entityUUID} />
       )}
       {photos.length > 0 && videos.length > 0 && <SimpleDivider />}
       {videos.length > 0 && (
         <MediaSection
-          label="Videos"
+          label={t("Videos")}
           files={videos}
           entityName={entityName}
           entityUUID={entityUUID}

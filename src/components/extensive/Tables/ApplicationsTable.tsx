@@ -20,12 +20,12 @@ const ApplicationsTable = () => {
     (): ColumnDef<ApplicationDto>[] => [
       {
         accessorKey: "fundingProgrammeName",
-        header: "Application"
+        header: t("Application")
       },
       {
         accessorKey: "uuid",
         id: "stage",
-        header: "Stage",
+        header: t("Stage"),
         cell: props => last(props.row.original.submissions)?.stageName
       },
       {
@@ -44,7 +44,7 @@ const ApplicationsTable = () => {
             </StatusPill>
           );
         },
-        header: "Status"
+        header: t("Status")
       },
       {
         accessorKey: "uuid",

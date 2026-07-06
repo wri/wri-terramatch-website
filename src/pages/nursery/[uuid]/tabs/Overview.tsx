@@ -1,4 +1,4 @@
-import { Box, Flex, Link, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
@@ -7,6 +7,7 @@ import EntityStatusModal, { StatusProps } from "@/components/extensive/EntitySta
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
+import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
@@ -106,21 +107,18 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
         >
           <About
             description={
-              <Text textStyle="300" as="span">
-                <strong>{t("Nurseries")}</strong>&nbsp;
-                {t(
-                  "are the lifeblood of your tree planting project. Whenever your project builds a new nursery or expands an existing one to supply your sites, create a nursery profile on TerraMatch. If your project uses nurseries managed by others, or relies only on direct seeding or assisted natural regeneration, you do not need to add any nursery profiles. If you have challenges or need assistance, please reach out to your project manager or "
-                )}
-                <Link
-                  href="mailto:info@terramatch.org?subject=Support%20Request%20for%20Nursery%20Profile"
-                  fontWeight="bold"
-                  target="_blank"
-                >
-                  <Text as="span" textStyle="200-bold">
-                    info@terramatch.org
-                  </Text>
-                </Link>
-              </Text>
+              <Flex direction="column" gap={5}>
+                <Text textStyle="300" color="neutral.900">
+                  <strong>{t("Nurseries")}</strong>&nbsp;
+                  {t(
+                    "are the lifeblood of your tree planting project. Whenever your project builds a new nursery or expands an existing one to supply your sites, create a nursery profile on TerraMatch. If your project uses nurseries managed by others, or relies only on direct seeding or assisted natural regeneration, you do not need to add any nursery profiles."
+                  )}
+                </Text>
+                <ContactSupport
+                  message={t("If you have challenges or need assistance, please reach out to your project manager or")}
+                  subject={t("Support Request for Nursery Profile")}
+                />
+              </Flex>
             }
             links={[
               {
