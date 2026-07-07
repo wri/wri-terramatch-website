@@ -617,10 +617,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [openAccordionSection, setShowPhotosOnMap]);
 
   useEffect(() => {
-    if (openAccordionSection !== "monitoring-plots") {
-      setPlotsVisible(false);
+    if (geotaggedPhotosCount === 0 && showPhotosOnMap) {
+      setShowPhotosOnMap(false);
     }
-  }, [openAccordionSection]);
+  }, [geotaggedPhotosCount, showPhotosOnMap, setShowPhotosOnMap]);
 
   useEffect(() => {
     setGeotaggedPhotosMapVisible(openAccordionSection === "geotagged-photos" && showPhotosOnMap);
@@ -633,6 +633,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     },
     [setGeotaggedPhotosMapVisible, setShowPhotosOnMap]
   );
+
+  useEffect(() => {
+    if (openAccordionSection !== "monitoring-plots") {
+      setPlotsVisible(false);
+    }
+  }, [openAccordionSection]);
 
   const downloadMonitoringPlots = useCallback(async () => {
     if (sitePolygonUuid === "" || !isAnrEligible) {
@@ -1131,6 +1137,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             <Switch
               name="showPhotosOnMap"
               checked={showPhotosOnMap}
+              disabled={geotaggedPhotosCount === 0}
               onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
                 setShowPhotosOnMap(checked === true)
               }
