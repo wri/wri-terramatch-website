@@ -303,6 +303,23 @@ export default function SiteAttributeTable({
               }
             },
             {
+              header: "Submission Cycle",
+              accessorKey: "submission-cycle",
+              meta: {
+                style: { width: "9rem", paddingLeft: "1rem", paddingRight: "1rem" },
+                cellStyles: {
+                  style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                  className: "w-[9rem] wide:w-[14rem] min-w-[9rem]"
+                },
+                className: "!px-4"
+              },
+              cell: (info: { row: { original: SitePolygonRow } }) => {
+                const value = info.row.original["submission-cycle"];
+                if (value === "") return null;
+                return <span className="whitespace-nowrap">{value}</span>;
+              }
+            },
+            {
               header: "Source",
               accessorKey: "source",
               meta: {
