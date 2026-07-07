@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC } from "react";
 
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -61,7 +60,7 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
             >
               {t("Project Profile")}
             </Button>
-            <span className="text-sm text-theme-neutral-300">|</span>
+            <span className="text-theme-neutral-300 text-sm">|</span>
             <Button
               variant="borderless"
               size="small"
@@ -86,7 +85,7 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
         }}
       />
       <div className="flex flex-1">{suffixContent ?? tabItems.find(item => item.key === activeTab)?.body}</div>
-      <PageFooter />
+      {/* <PageFooter /> */}
     </Layout>
   );
 };
