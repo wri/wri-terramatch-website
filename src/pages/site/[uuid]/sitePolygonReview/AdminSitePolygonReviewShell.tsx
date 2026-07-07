@@ -60,7 +60,7 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
             >
               {t("Project Profile")}
             </Button>
-            <span className="text-sm text-theme-neutral-300">|</span>
+            <span className="text-theme-neutral-300 text-sm">|</span>
             <Button
               variant="borderless"
               size="small"
@@ -85,7 +85,6 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
         }}
       />
       <div className="flex flex-1">{suffixContent ?? tabItems.find(item => item.key === activeTab)?.body}</div>
-      {/* <PageFooter /> */}
     </Layout>
   );
 };
