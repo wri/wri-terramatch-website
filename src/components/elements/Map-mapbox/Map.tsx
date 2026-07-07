@@ -539,7 +539,9 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
     hideMediaOnMap,
-    isPolygonGeometryLoading
+    isPolygonGeometryLoading,
+    isEditFocusActive: editFocus.isEditFocusActive,
+    overlapPolygons
   });
 
   useMapOverlapIndicators({
