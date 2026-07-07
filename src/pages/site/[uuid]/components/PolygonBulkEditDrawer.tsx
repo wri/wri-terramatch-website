@@ -19,6 +19,7 @@ import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { EditIcon } from "@/redesignComponents/foundations/Icons/Function/EditIcon";
 
 import BulkEditPolygonAttributes from "./Modals/BulkEditPolygonAttributes";
+import { SUBMISSION_CYCLE_LABELS, SUBMISSION_CYCLE_OPTIONS } from "./polygonFilter.constants";
 import { PolygonTableRow } from "./PolygonTableRow";
 import SelectedPolygonsSummary from "./SelectedPolygonsSummary";
 
@@ -190,8 +191,9 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
       if (field === "targetSys") changes.targetSys = targetLandUseSystem[0] ?? "";
       if (field === "distr") changes.distr = treeDistribution;
       if (field === "numTrees") changes.numTrees = Number(treesPlanted || 0);
+      if (field === "submissionCycle") changes.submissionCycle = submissionCycle;
     },
-    [plantStartDate, restorationPractice, targetLandUseSystem, treeDistribution, treesPlanted]
+    [plantStartDate, restorationPractice, submissionCycle, targetLandUseSystem, treeDistribution, treesPlanted]
   );
 
   const attributeChanges = useMemo<BulkSitePolygonAttributeChanges>(() => {
@@ -265,11 +267,10 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
     [resetForm]
   );
 
-  const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
-    { value: "option-1", label: t("Option 1") },
-    { value: "option-2", label: t("Option 2") },
-    { value: "option-3", label: t("Option 3") }
-  ];
+  const submissionCycleOptions = useMemo(
+    () => SUBMISSION_CYCLE_OPTIONS.map(value => ({ value, label: SUBMISSION_CYCLE_LABELS[value] })),
+    []
+  );
 
   return (
     <Drawer
@@ -381,12 +382,13 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                     onSave={() => saveField("submissionCycle")}
                   >
                     <SelectInput
-                      items={SUBMISSION_CYCLE_MOCKED_OPTIONS}
+                      items={submissionCycleOptions}
                       label={t("Submission Cycle")}
                       placeholder={t("Select...")}
                       value={submissionCycle}
-                      onChange={value => setSubmissionCycle(value.slice(0, 1))}
+                      onChange={setSubmissionCycle}
                       disabled={!isAdmin || editingField !== "submissionCycle"}
+                      multiple
                     />
                   </EditWrapper>
                 )}

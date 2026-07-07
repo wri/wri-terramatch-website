@@ -31,6 +31,8 @@ import {
 } from "@/redesignComponents/foundations/Icons";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
+import { type SubmissionCycleOption, formatSubmissionCycleDisplay } from "./polygonFilter.constants";
+
 export type PolygonTableRow = {
   id: string;
   polygonName: string;
@@ -45,6 +47,8 @@ export type PolygonTableRow = {
   plantingDate: string;
   treesPlanted: number;
   area: number;
+  submissionCycle: string[];
+  submissionCycleSort: string;
   source: string;
 };
 
@@ -232,6 +236,11 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
       </TableCell>
       <TableCell className="min-w-[12.75rem]">{formatNumberLocaleString(row.treesPlanted) ?? "—"}</TableCell>
       <TableCell className="min-w-[15.75rem]">{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
+      <TableCell className="min-w-[12rem]">
+        {row.submissionCycle.length > 0 ? (
+          <Text>{formatSubmissionCycleDisplay(row.submissionCycle as SubmissionCycleOption[])}</Text>
+        ) : null}
+      </TableCell>
       <TableCell className="min-w-[12rem]">
         <Text>{row.source === "uploaded" ? t("Uploaded") : row.source}</Text>
       </TableCell>

@@ -18,6 +18,7 @@ export type CreatePolygonFeatureProperties = {
   targetSys?: string;
   distr?: string[];
   numTrees?: number;
+  submissionCycle?: string[];
 };
 
 export type PolygonEditFormValues = {
@@ -27,6 +28,11 @@ export type PolygonEditFormValues = {
   targetLandUseSystem: string[];
   treeDistribution: string[];
   treesPlanted: string;
+  submissionCycle: string[];
+};
+
+export type BuildAttributeChangesOptions = {
+  includeSubmissionCycle?: boolean;
 };
 
 export const isValidPolygonName = (polygonName: string): boolean => polygonName.trim().length > 0;
@@ -77,6 +83,10 @@ export const arePolygonEditFormValuesEqual = (
   if (
     !areStringArraysEqual(normalizeStringArray(left.treeDistribution), normalizeStringArray(right.treeDistribution))
   ) {
+    return false;
+  }
+
+  if (!areStringArraysEqual(normalizeStringArray(left.submissionCycle), normalizeStringArray(right.submissionCycle))) {
     return false;
   }
 
@@ -141,6 +151,15 @@ export const hasUnsavedPolygonChanges = (
     return true;
   }
 
+  if (
+    !areStringArraysEqual(
+      normalizeStringArray(form.submissionCycle),
+      normalizeStringArray(polygon.submissionCycle ?? [])
+    )
+  ) {
+    return true;
+  }
+
   const formNumTrees = form.treesPlanted.trim() === "" ? 0 : Number(form.treesPlanted);
   const savedNumTrees = polygon.numTrees ?? 0;
   if (formNumTrees !== savedNumTrees) {
@@ -164,20 +183,30 @@ type SitePolygonCreateFeatureCollection = {
 
 export const buildAttributeChanges = (
   form: PolygonEditFormValues,
-  dateValueToIso: DateValueToIsoString
-): AttributeChangesDto => ({
-  polyName: form.polygonName,
-  plantStart: dateValueToIso(form.plantStartDate[0]),
-  practice: form.restorationPractice,
-  targetSys: form.targetLandUseSystem.join(", "),
-  distr: form.treeDistribution,
-  numTrees: Number(form.treesPlanted ?? 0)
-});
+  dateValueToIso: DateValueToIsoString,
+  options?: BuildAttributeChangesOptions
+): AttributeChangesDto => {
+  const changes: AttributeChangesDto = {
+    polyName: form.polygonName,
+    plantStart: dateValueToIso(form.plantStartDate[0]),
+    practice: form.restorationPractice,
+    targetSys: form.targetLandUseSystem.join(", "),
+    distr: form.treeDistribution,
+    numTrees: Number(form.treesPlanted ?? 0)
+  };
+
+  if (options?.includeSubmissionCycle === true) {
+    changes.submissionCycle = form.submissionCycle;
+  }
+
+  return changes;
+};
 
 export const buildCreatePolygonFeatureProperties = (
   siteId: string,
   form: PolygonEditFormValues,
-  dateValueToIso: DateValueToIsoString
+  dateValueToIso: DateValueToIsoString,
+  options?: BuildAttributeChangesOptions
 ): CreatePolygonFeatureProperties => {
   const properties: CreatePolygonFeatureProperties = { siteId };
   const polygonNameValue = form.polygonName.trim();
@@ -189,6 +218,9 @@ export const buildCreatePolygonFeatureProperties = (
   if (form.targetLandUseSystem.length > 0) properties.targetSys = form.targetLandUseSystem.join(", ");
   if (form.treeDistribution.length > 0) properties.distr = form.treeDistribution;
   if (form.treesPlanted.trim() !== "") properties.numTrees = Number(form.treesPlanted);
+  if (options?.includeSubmissionCycle === true && form.submissionCycle.length > 0) {
+    properties.submissionCycle = form.submissionCycle;
+  }
 
   return properties;
 };
@@ -197,7 +229,8 @@ export const buildCreateSitePolygonAttributes = (
   siteId: string,
   geometry: GeoJSON.Geometry,
   form: PolygonEditFormValues,
-  dateValueToIso: DateValueToIsoString
+  dateValueToIso: DateValueToIsoString,
+  options?: BuildAttributeChangesOptions
 ): CreateSitePolygonAttributesDto => {
   const featureCollection: SitePolygonCreateFeatureCollection = {
     type: "FeatureCollection",
@@ -205,7 +238,7 @@ export const buildCreateSitePolygonAttributes = (
       {
         type: "Feature",
         geometry,
-        properties: buildCreatePolygonFeatureProperties(siteId, form, dateValueToIso)
+        properties: buildCreatePolygonFeatureProperties(siteId, form, dateValueToIso, options)
       }
     ]
   };
@@ -260,6 +293,7 @@ export type SaveNewPolygonParams = {
   geometry: GeoJSON.Geometry;
   form: PolygonEditFormValues;
   dateValueToIso: DateValueToIsoString;
+  isAdmin?: boolean;
 };
 
 export const saveNewSitePolygon = (params: SaveNewPolygonParams): Promise<SitePolygonLightDto> => {
@@ -267,7 +301,8 @@ export const saveNewSitePolygon = (params: SaveNewPolygonParams): Promise<SitePo
     params.siteId,
     params.geometry,
     params.form,
-    params.dateValueToIso
+    params.dateValueToIso,
+    { includeSubmissionCycle: params.isAdmin === true }
   );
   return createSitePolygonsResource(attributes);
 };
@@ -279,10 +314,13 @@ export type SaveExistingPolygonVersionParams = {
   geometryChanged: boolean;
   currentGeometry?: GeoJSON.Geometry;
   dateValueToIso: DateValueToIsoString;
+  isAdmin?: boolean;
 };
 
 export const saveExistingPolygonVersion = (params: SaveExistingPolygonVersionParams): Promise<SitePolygonLightDto> => {
-  const attributeChanges = buildAttributeChanges(params.form, params.dateValueToIso);
+  const attributeChanges = buildAttributeChanges(params.form, params.dateValueToIso, {
+    includeSubmissionCycle: params.isAdmin === true
+  });
   const versionGeometry =
     params.geometryChanged && params.currentGeometry != null
       ? {

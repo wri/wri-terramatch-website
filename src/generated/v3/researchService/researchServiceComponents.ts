@@ -223,6 +223,10 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["distr[]"]?: ("single-line" | "partial" | "full")[];
   /**
+   * Filter by submission cycle (any selected value matches)
+   */
+  ["submissionCycle[]"]?: ("1" | "2" | "3" | "4" | "5")[];
+  /**
    * Filter by polygon source (any selected value matches)
    */
   ["source[]"]?: ("terramatch" | "greenhouse" | "research")[];
@@ -742,7 +746,7 @@ export type BulkUpdateSitePolygonAttributesVariables = {
 
 /**
  * Creates a new version for each site polygon with the same attribute changes applied.
- *     Supported fields: plantStart, practice, targetSys, distr, numTrees.
+ *     Supported fields: plantStart, practice, targetSys, distr, numTrees, submissionCycle.
  *     At least one attribute field must be provided. Empty string or empty array explicitly clears a field.
  *     Omitted fields inherit values from each polygon's active version.
  */
