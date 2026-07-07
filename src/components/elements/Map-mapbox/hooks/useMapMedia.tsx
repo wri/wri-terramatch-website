@@ -5,9 +5,7 @@ import React, { MutableRefObject, useEffect, useLayoutEffect, useRef } from "rea
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { deleteMedia, updateMedia } from "@/connections/Media";
-import { useMapAreaContext } from "@/context/mapArea.provider";
 import { openEditPhotoDetailsFromMapPopup } from "@/context/mapArea.utils";
-import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { exportImage } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDownloadToastMessages } from "@/hooks/translation/useDownloadToastMessages";
@@ -20,6 +18,8 @@ import { useChampionsMap } from "../championsMap.context";
 import { addMediaMarkers, removeMediaMarkers } from "../layers/mediaMarkers";
 import { addMediaSymbolLayer, removeMediaSymbolLayer } from "../layers/mediaSymbolLayer";
 import { MediaCallbacks } from "../layers/mediaTypes";
+import { OverlapPolygonPoint } from "../layers/overlapTypes";
+import { useGeotaggedPhotosVisibility } from "./useGeotaggedPhotosVisibility";
 
 type UseMapMediaParams = {
   map: MutableRefObject<MapboxMap | null>;
@@ -39,6 +39,8 @@ type UseMapMediaParams = {
   hideMediaPopupActions?: boolean;
   hideMediaOnMap?: boolean;
   isPolygonGeometryLoading?: boolean;
+  isEditFocusActive?: boolean;
+  overlapPolygons?: OverlapPolygonPoint[];
 };
 
 export function useMapMedia({
@@ -58,17 +60,19 @@ export function useMapMedia({
   alwaysShowPhotosOnMap = false,
   hideMediaPopupActions = false,
   hideMediaOnMap = false,
-  isPolygonGeometryLoading = false
+  isPolygonGeometryLoading = false,
+  isEditFocusActive = false,
+  overlapPolygons
 }: UseMapMediaParams) {
   const championsMap = useChampionsMap();
   const downloadToastMessages = useDownloadToastMessages();
-  const { geotaggedPhotosMapVisible, editPolygon } = useMapAreaContext();
-  const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
-  const isPolygonEditActive =
-    isPolygonEditDrawerOpen || (editPolygon?.isOpen === true && (editPolygon?.uuid ?? "") !== "");
-  const showPhotosInEditMode = championsMap && isPolygonEditActive && geotaggedPhotosMapVisible;
-  const wantsPhotosOnMap = !hideMediaOnMap && (alwaysShowPhotosOnMap || showPhotosInEditMode);
-  const photosVisible = wantsPhotosOnMap && !isPolygonGeometryLoading;
+  const photosVisible = useGeotaggedPhotosVisibility({
+    alwaysShowPhotosOnMap,
+    hideMediaOnMap,
+    isPolygonGeometryLoading,
+    isEditFocusActive,
+    overlapPolygons
+  });
   const callbacksRef = useRef<MediaCallbacks | null>(null);
 
   const applyPhotosVisibility = (mapInstance: MapboxMap): void => {
@@ -82,18 +86,14 @@ export function useMapMedia({
     }
 
     if (championsMap) {
-      if (!photosVisible) {
-        const callbacks = callbacksRef.current;
-        if (callbacks != null) {
-          addMediaMarkers(mapInstance, mediaFiles, callbacks, false, hideMediaPopupActions);
-        } else {
+      const callbacks = callbacksRef.current;
+      if (callbacks == null) {
+        if (!photosVisible) {
           removeMediaMarkers(mapInstance);
         }
         return;
       }
-      const callbacks = callbacksRef.current;
-      if (callbacks == null) return;
-      addMediaMarkers(mapInstance, mediaFiles, callbacks, true, hideMediaPopupActions);
+      addMediaMarkers(mapInstance, mediaFiles, callbacks, photosVisible, hideMediaPopupActions);
       return;
     }
 
@@ -109,10 +109,10 @@ export function useMapMedia({
 
   useLayoutEffect(() => {
     const mapInstance = map.current;
-    if (mapInstance == null || !styleReady || !isPolygonEditActive || photosVisible) return;
+    if (mapInstance == null || !styleReady || photosVisible) return;
     applyPhotosVisibility(mapInstance);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPolygonEditActive, photosVisible, styleReady]);
+  }, [photosVisible, styleReady]);
 
   useEffect(() => {
     const mapInstance = map.current;
@@ -212,7 +212,7 @@ export function useMapMedia({
     callbacksRef.current = callbacks;
 
     if (championsMap) {
-      addMediaMarkers(mapInstance, mediaFiles, callbacks, false, hideMediaPopupActions);
+      addMediaMarkers(mapInstance, mediaFiles, callbacks, photosVisible, hideMediaPopupActions);
       return () => {
         removeMediaMarkers(mapInstance);
         callbacksRef.current = null;
@@ -233,14 +233,5 @@ export function useMapMedia({
     if (mapInstance == null || !styleReady) return;
     applyPhotosVisibility(mapInstance);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    photosVisible,
-    isPolygonEditActive,
-    geotaggedPhotosMapVisible,
-    championsMap,
-    styleReady,
-    mediaFiles,
-    hideMediaPopupActions,
-    hideMediaOnMap
-  ]);
+  }, [photosVisible, championsMap, styleReady, mediaFiles, hideMediaPopupActions, hideMediaOnMap]);
 }
