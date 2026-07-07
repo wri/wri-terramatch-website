@@ -186,11 +186,12 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     return dates;
   }, [draftFilters.plantStartFrom, draftFilters.plantStartTo]);
 
-  const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
-    { value: "option-1", label: t("Option 1") },
-    { value: "option-2", label: t("Option 2") },
-    { value: "option-3", label: t("Option 3") }
-  ];
+  // TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
+  // const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
+  //   { value: "option-1", label: t("Option 1") },
+  //   { value: "option-2", label: t("Option 2") },
+  //   { value: "option-3", label: t("Option 3") }
+  // ];
 
   return (
     <Drawer
@@ -276,6 +277,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   onChange={handleTargetLandUseChange}
                 />
               </FilterCard>
+              {/* TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
               <FilterCard label={t("Submission Cycle")}>
                 <SelectInput
                   placeholder={t("Please Select")}
@@ -286,6 +288,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   }))}
                 />
               </FilterCard>
+              */}
               <FilterCard label={t("Overlap")}>
                 <Switch name="overlap" checked={draftFilters.hasOverlap} onCheckedChange={handleOverlapChange}>
                   {t("Show Polygon Overlaps")}
