@@ -1,9 +1,10 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useLayoutShell } from "@/redesignComponents/Loayout/LayoutShell.provider";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
@@ -62,6 +63,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   isSubmitDisabled = false
 }: PolygonBulkActionToolbarProps) {
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
+  const { setSidebarCollapseDisabled } = useLayoutShell();
   const isAdmin = useIsAdmin();
   const t = useT();
   const isOverlapAutoFixUnavailable = isOverlapFixAction && !canAutoFixOverlap;
@@ -197,6 +199,11 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   );
 
   const isToolbarVisible = visible && !isPolygonEditDrawerOpen && !isBulkEditDrawerOpen;
+
+  useEffect(() => {
+    setSidebarCollapseDisabled(isToolbarVisible);
+    return () => setSidebarCollapseDisabled(false);
+  }, [isToolbarVisible, setSidebarCollapseDisabled]);
 
   return (
     <>

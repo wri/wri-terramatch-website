@@ -418,7 +418,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     styleVersion,
     sourcesAdded,
     tileLoadRequestId,
-    isGeometryEditing: editFocus.isGeometryEditing
+    isEditFocusActive: editFocus.isEditFocusActive,
+    editedPolygonUuid: editFocus.editedPolygonUuid
   });
 
   usePolygonTableHighlightStyle({
@@ -538,7 +539,9 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
     hideMediaOnMap,
-    isPolygonGeometryLoading
+    isPolygonGeometryLoading,
+    isEditFocusActive: editFocus.isEditFocusActive,
+    overlapPolygons
   });
 
   useMapOverlapIndicators({
@@ -579,6 +582,9 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     if (!isAutoEditActive) {
       if (lastAutoEditPolygonRef.current != null) {
         setIsEditing(false);
+        // Leaving geometry edit (e.g. Geotagged Photos accordion) must clear draw handles
+        // and restore the polygon to tile layers without waiting for polygonFromMap sync.
+        onCancelEdit();
       }
       lastAutoEditPolygonRef.current = null;
       return;
@@ -602,7 +608,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     void handleEditPolygon();
   }, [handleEditPolygon, onCancelEdit, polygonFromMap?.isOpen, polygonFromMap?.uuid, props.autoEditPolygon]);
 
-  const { isFullscreen, toggleFullscreen } = useMapFullscreen({ mapContainer, map });
+  const { isFullscreen, toggleFullscreen } = useMapFullscreen({ map });
 
   const { isDownloadingPolygons, downloadGeoJsonPolygon } = useMapDownload({
     polygonsData,
@@ -621,7 +627,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
 
   return (
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
-      <MapCanvas mapContainer={mapContainer} className={className}>
+      <MapCanvas mapContainer={mapContainer} className={className} isFullscreen={isFullscreen}>
         <MapControlsOverlay
           showBaseMapControl={showBaseMapControl}
           hasControls={hasControls}

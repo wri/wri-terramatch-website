@@ -9,7 +9,10 @@ type UsePolygonEditFocusStyleParams = {
   styleVersion: number;
   sourcesAdded: boolean;
   tileLoadRequestId: number;
-  isGeometryEditing: boolean;
+  /** True while the polygon edit drawer/panel is open (entire edit modal, not only geometry draw). */
+  isEditFocusActive: boolean;
+  /** Geometry uuid of the polygon being edited; kept at full opacity while neighbors dim. */
+  editedPolygonUuid: string | null;
 };
 
 export function usePolygonEditFocusStyle({
@@ -18,24 +21,26 @@ export function usePolygonEditFocusStyle({
   styleVersion,
   sourcesAdded,
   tileLoadRequestId,
-  isGeometryEditing
+  isEditFocusActive,
+  editedPolygonUuid
 }: UsePolygonEditFocusStyleParams): void {
   useEffect(() => {
     if (!styleReady || !sourcesAdded || map.current == null) return;
 
     const m = map.current;
-    applyPolygonNeighborDimming(m, isGeometryEditing);
+    const excludeUuid = isEditFocusActive ? editedPolygonUuid : null;
+    applyPolygonNeighborDimming(m, isEditFocusActive, excludeUuid);
 
-    if (!isGeometryEditing) return;
+    if (!isEditFocusActive) return;
 
     const onIdle = () => {
       if (map.current !== m) return;
-      applyPolygonNeighborDimming(m, true);
+      applyPolygonNeighborDimming(m, true, editedPolygonUuid);
     };
 
     m.on("idle", onIdle);
     return () => {
       m.off("idle", onIdle);
     };
-  }, [map, styleReady, styleVersion, sourcesAdded, tileLoadRequestId, isGeometryEditing]);
+  }, [map, styleReady, styleVersion, sourcesAdded, tileLoadRequestId, isEditFocusActive, editedPolygonUuid]);
 }

@@ -61,6 +61,7 @@ const PolygonStatusChangeResultModal: FC<PolygonStatusChangeResultModalProps> = 
 
   return (
     <Modal
+      modal={false}
       open={open}
       onClose={handleClose}
       size="medium"

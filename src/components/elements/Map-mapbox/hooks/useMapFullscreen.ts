@@ -1,71 +1,43 @@
 import { Map as MapboxMap } from "mapbox-gl";
-import { MutableRefObject, useEffect, useState } from "react";
-
-import Log from "@/utils/log";
-
-type DocumentWithFullscreen = Document & {
-  webkitFullscreenElement?: Element | null;
-  webkitExitFullscreen?: () => Promise<void>;
-};
-
-type HTMLElementWithFullscreen = HTMLElement & {
-  webkitRequestFullscreen?: () => Promise<void>;
-};
+import { MutableRefObject, useCallback, useEffect, useState } from "react";
 
 type UseMapFullscreenParams = {
-  mapContainer: MutableRefObject<HTMLDivElement | null>;
   map: MutableRefObject<MapboxMap | null>;
 };
 
-const getIsFullscreen = (): boolean => {
-  const doc = document as DocumentWithFullscreen;
-  return doc.fullscreenElement != null || doc.webkitFullscreenElement != null;
-};
+const isLayeredUiOpen = (): boolean =>
+  document.querySelector('[role="dialog"], [role="alertdialog"], [role="menu"]') != null;
 
-export function useMapFullscreen({ mapContainer, map }: UseMapFullscreenParams) {
-  const [isFullscreen, setIsFullscreen] = useState<boolean>(getIsFullscreen);
+export function useMapFullscreen({ map }: UseMapFullscreenParams) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen(current => !current);
+  }, []);
 
   useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(getIsFullscreen());
-      if (map.current != null) {
-        requestAnimationFrame(() => map.current?.resize());
-      }
-    };
+    if (!isFullscreen) return;
 
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || event.defaultPrevented) return;
+      if (isLayeredUiOpen()) return;
+      setIsFullscreen(false);
+    };
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [map]);
+  }, [isFullscreen]);
 
-  const toggleFullscreen = async () => {
-    if (mapContainer.current == null) return;
-
-    const element = mapContainer.current as HTMLElementWithFullscreen;
-    const doc = document as DocumentWithFullscreen;
-
-    try {
-      if (!getIsFullscreen()) {
-        if (element.requestFullscreen) {
-          await element.requestFullscreen();
-        } else if (element.webkitRequestFullscreen) {
-          await element.webkitRequestFullscreen();
-        }
-      } else {
-        if (doc.exitFullscreen) {
-          await doc.exitFullscreen();
-        } else if (doc.webkitExitFullscreen) {
-          await doc.webkitExitFullscreen();
-        }
-      }
-    } catch (error) {
-      Log.error("Fullscreen error:", error);
-    }
-  };
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => map.current?.resize());
+    return () => cancelAnimationFrame(frame);
+  }, [isFullscreen, map]);
 
   return { isFullscreen, toggleFullscreen };
 }

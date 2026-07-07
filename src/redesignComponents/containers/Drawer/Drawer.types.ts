@@ -16,6 +16,8 @@ export interface DrawerProps {
   modal?: boolean;
   maxW?: SizeValue;
   trapFocus?: boolean;
+  restoreFocus?: boolean;
+  closeOnEscape?: boolean;
   paddingTop?: SizeValue;
   paddingLeft?: SizeValue;
   paddingRight?: SizeValue;
@@ -32,6 +34,10 @@ export interface DrawerTyped {
   placement?: DrawerPlacement;
   modal?: boolean;
   trapFocus?: boolean;
+  restoreFocus?: boolean;
+  closeOnEscape?: boolean;
+  lazyMount?: boolean;
+  unmountOnExit?: boolean;
 }
 
 export interface DrawerTriggerTyped {

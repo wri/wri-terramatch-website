@@ -13,8 +13,19 @@ export interface DeletePolygonProps {
   onOpenChange: (open: boolean) => void;
   polygons: PolygonTableRow[];
   onDelete?: () => void | Promise<void>;
+  modal?: boolean;
+  trapFocus?: boolean;
+  restoreFocus?: boolean;
 }
-const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, onDelete }) => {
+const DeletePolygon: FC<DeletePolygonProps> = ({
+  open,
+  onOpenChange,
+  polygons,
+  onDelete,
+  modal = true,
+  trapFocus = true,
+  restoreFocus = true
+}) => {
   const t = useT();
 
   const handleClose = useCallback(() => {
@@ -32,6 +43,9 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, o
 
   return (
     <Modal
+      modal={modal}
+      trapFocus={trapFocus}
+      restoreFocus={restoreFocus}
       open={open}
       onClose={handleClose}
       size="medium"
@@ -59,11 +73,15 @@ const DeletePolygon: FC<DeletePolygonProps> = ({ open, onOpenChange, polygons, o
           <Box px={4}>
             <Text textStyle="400" color="neutral.900" display={"flex"} gap={0.5} alignItems={"center"}>
               <WarningIcon boxSize={4} color={"warning.500"} mr={2} />
-              {t("Are you sure you want to")}
-              <Text textStyle="400-bold" color="neutral.900" mx={0.5} as="span">
-                {t("delete")}
-              </Text>
-              {t("these polygons?")}
+              <span>
+                {t("Are you sure you want to {action} these polygons?", {
+                  action: (
+                    <Text textStyle="400-bold" color="neutral.900" mx={0.5} as="span">
+                      {t("delete")}
+                    </Text>
+                  )
+                })}
+              </span>
             </Text>
             <Text textStyle="400-bold" color="warning.900" ml={7} mb={3}>
               {t("This action cannot be undone.")}

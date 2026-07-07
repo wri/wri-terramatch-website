@@ -28,7 +28,7 @@ const AnrPlotMapPopupInner: FC<AnrPlotMapPopupProps> = ({ plotId, polygonName, o
 
   const popupHeader = useMemo(() => <PopupHeaderPlotANR polygonName={polygonName} />, [polygonName]);
   const popupContent = useMemo(() => <PopupContentPlotANR plotId={plotId ?? 0} />, [plotId]);
-  const popupFooter = useMemo(() => <PopupFooterPlotANR onCancel={onClose} />, [onClose]);
+  const popupFooter = useMemo(() => <PopupFooterPlotANR onClose={onClose} />, [onClose]);
 
   return (
     <>

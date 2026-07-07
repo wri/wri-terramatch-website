@@ -257,6 +257,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     <>
       <Drawer
         modal={false}
+        trapFocus={false}
         open={open ?? false}
         closeOnInteractOutside={false}
         onOpenChange={onOpenChange}
@@ -393,6 +394,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
       />
 
       <DeletePolygon
+        modal={false}
         open={deletePayload != null}
         onOpenChange={handleDeleteConfirmationModalChange}
         polygons={deletePayload?.polygons ?? []}
@@ -403,6 +405,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
       />
 
       <SubmitPolygonConfirmation
+        modal={false}
         open={submitPayload != null}
         onOpenChange={open => {
           if (!open) {

@@ -25,7 +25,7 @@ const PolygonReviewLauncher: FC = () => {
         {t("Review, validate, and edit site polygons in the new dedicated page. It opens in a new browser tab.")}
       </Text>
       <Button
-        iconProps={{ name: IconNames.LINK, className: "h-4 w-4" }}
+        iconProps={{ name: IconNames.LINK_PA, className: "h-4 w-4 !text-white" }}
         onClick={() => {
           window.open(`/site/${record.uuid}/polygon-review`, "_blank", "noopener,noreferrer");
         }}

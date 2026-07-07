@@ -10,6 +10,7 @@ let pendingPolygonFocusUuid: string | null = null;
 const selectedListeners = new Map<RowId, Set<Listener>>();
 const hoverListeners = new Map<RowId, Set<Listener>>();
 const globalHoverListeners = new Set<Listener>();
+const globalSelectionListeners = new Set<Listener>();
 
 const noopUnsubscribe = () => {};
 
@@ -23,6 +24,10 @@ const notifyHover = (rowId: RowId) => {
 
 const notifyGlobalHover = () => {
   globalHoverListeners.forEach(listener => listener());
+};
+
+const notifyGlobalSelection = () => {
+  globalSelectionListeners.forEach(listener => listener());
 };
 
 const subscribeSelected = (rowId: RowId, listener: Listener) => {
@@ -115,7 +120,10 @@ export const syncPolygonTableSelectedRowIds = (next: Set<RowId>) => {
 
   selectedRowIds = next;
   changed.forEach(notifySelected);
+  notifyGlobalSelection();
 };
+
+export const getPolygonTableHasSelection = () => selectedRowIds.size > 0;
 
 export const getPolygonRowIsSelected = (rowId: RowId) => selectedRowIds.has(rowId);
 
@@ -140,6 +148,18 @@ export const usePolygonTableHoveredUuid = (enabled = true) =>
     enabled ? subscribeGlobalHover : () => noopUnsubscribe,
     () => (enabled ? hoveredPolygonUuid : null),
     () => null
+  );
+
+export const usePolygonTableHasSelection = () =>
+  useSyncExternalStore(
+    listener => {
+      globalSelectionListeners.add(listener);
+      return () => {
+        globalSelectionListeners.delete(listener);
+      };
+    },
+    () => getPolygonTableHasSelection(),
+    () => false
   );
 
 export const useSyncPolygonTableSelectionStore = (selectedIds: Set<RowId>) => {
