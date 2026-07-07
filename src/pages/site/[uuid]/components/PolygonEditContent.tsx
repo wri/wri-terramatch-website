@@ -1039,10 +1039,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             />
             {(isAdmin || submissionCycle.length > 0) && (
               <SelectInput
-                key={`submission-cycle-${sitePolygonUuid}-${submissionCycle.join("|")}`}
+                key={`submission-cycle-${sitePolygonUuid}-${(polygon?.submissionCycle ?? []).join("|")}`}
                 items={submissionCycleOptions}
                 label={t("Submission Cycle")}
-                value={submissionCycle}
+                defaultValue={normalizeSubmissionCycle(polygon?.submissionCycle)}
                 onChange={setSubmissionCycle}
                 placeholder={t("Select...")}
                 disabled={!isAdmin}
