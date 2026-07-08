@@ -5,23 +5,23 @@ import { type FC, memo, useCallback } from "react";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 
 type PopupFooterPlotANRProps = {
-  onCancel: () => void;
+  onClose: () => void;
 };
 
-const PopupFooterPlotANR: FC<PopupFooterPlotANRProps> = ({ onCancel }) => {
+const PopupFooterPlotANR: FC<PopupFooterPlotANRProps> = ({ onClose }) => {
   const t = useT();
 
-  const handleCancel = useCallback(
+  const handleClose = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.stopPropagation();
-      onCancel();
+      onClose();
     },
-    [onCancel]
+    [onClose]
   );
 
   return (
     <Flex justifyContent="space-between" gap={0} width="100%" wrap="wrap">
-      <Button variant="secondary" size="small" onClick={handleCancel} classNameContainer="w-fit">
+      <Button variant="secondary" size="small" onClick={handleClose} classNameContainer="w-fit">
         {t("Close")}
       </Button>
     </Flex>

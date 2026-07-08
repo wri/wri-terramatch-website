@@ -63,7 +63,7 @@ const PopupContentPolygon: FC<PopupContentPolygonProps> = ({
   }
 
   return (
-    <Flex padding="0.75rem" direction="column" gap={4} width="20rem">
+    <Flex padding="0.75rem" direction="column" gap={4} minWidth="20rem">
       <Flex alignItems="center" gap="3.625rem" justifyContent="space-between">
         <Flex alignItems="center" gap={2}>
           <TreeCircleIcon boxSize={6} />

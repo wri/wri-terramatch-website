@@ -343,6 +343,18 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     validationRunStartedAtRef.current = 0;
   }, []);
 
+  const handleValidationUiCleared = useCallback((geometryPolygonUuids: string[]) => {
+    if (geometryPolygonUuids.length === 0) {
+      return;
+    }
+
+    const clearedUuidSet = new Set(geometryPolygonUuids);
+    setSupplementalValidations(prev =>
+      prev.filter(validation => validation.polygonUuid == null || !clearedUuidSet.has(validation.polygonUuid))
+    );
+    setPendingValidationPolygonUuids(prev => prev.filter(uuid => !clearedUuidSet.has(uuid)));
+  }, []);
+
   const handleValidationJobsStarted = useCallback(
     (polygonUuids: string[], options?: { trackBulkCompletion?: boolean }) => {
       const priorStatuses = new Map<string, string | null | undefined>();
@@ -561,7 +573,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     onOverlapFixResultsOpen: openOverlapFixResultsModal,
     onValidationJobsStarted: handleValidationJobsStarted,
     onValidationPending: markValidationPending,
-    onValidationPendingClear: clearValidationPending
+    onValidationPendingClear: clearValidationPending,
+    onValidationUiCleared: handleValidationUiCleared
   });
 
   useEffect(() => {

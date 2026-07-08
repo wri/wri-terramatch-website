@@ -98,6 +98,7 @@ const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({
 
   return (
     <Modal
+      modal={false}
       open={open}
       onClose={handleClose}
       size="large"

@@ -46,6 +46,7 @@ import { FormFooter } from "./FormFooter";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
+import { useHotjarAboveStickyFooter } from "./useHotjarAboveStickyFooter";
 import { getFormHeaderLabel } from "./utils";
 
 export type WizardFormEntity = {
@@ -136,6 +137,8 @@ function WizardForm(props: WizardFormProps) {
   const fieldsProvider = useFieldsProvider();
 
   const [showValidationErrors, setShowValidationErrors] = useState(!(props.deferValidation ?? false));
+
+  useHotjarAboveStickyFooter();
 
   const models = useMemo(() => toArray(props.models), [props.models]);
   const isSubmissionModel = models.length > 1;

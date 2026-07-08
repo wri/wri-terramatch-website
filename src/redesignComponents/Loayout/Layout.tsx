@@ -37,14 +37,12 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
                 {
                   href: "#",
                   icon: <NotificationIcon boxSize={4} />,
-                  label: "Notifications",
-                  notificationValue: 20
+                  label: "Notifications"
                 },
                 {
                   href: "#",
                   icon: <MessagesIcon boxSize={4} />,
-                  label: "Messages",
-                  notificationValue: 20
+                  label: "Messages"
                 }
               ]
             },
