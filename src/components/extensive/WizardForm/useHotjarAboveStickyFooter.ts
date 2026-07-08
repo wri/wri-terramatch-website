@@ -8,50 +8,36 @@ const HOTJAR_ROOT_SELECTORS = [
 ].join(", ");
 
 /**
- * Footer is ~py-3 + button (~4rem). Use extra clearance so the bubble sits
- * fully above Download / Save and Exit / Submit.
+ * Footer is ~py-3 + button height. Lift the whole Hotjar chrome as one unit so
+ * the minimized bubble clears Submit without breaking open/close layout.
  */
-const HOTJAR_BOTTOM_OFFSET = "5rem";
+const HOTJAR_LIFT = "4rem";
+const HOTJAR_TRANSFORM = `translateY(-${HOTJAR_LIFT})`;
 
-const collectHotjarElements = (): HTMLElement[] => {
-  const roots = Array.from(document.querySelectorAll(HOTJAR_ROOT_SELECTORS)).filter(
+const collectHotjarRoots = (): HTMLElement[] =>
+  Array.from(document.querySelectorAll(HOTJAR_ROOT_SELECTORS)).filter(
     (node): node is HTMLElement => node instanceof HTMLElement
   );
 
-  const targets = new Set<HTMLElement>();
-
-  roots.forEach(root => {
-    targets.add(root);
-    root.querySelectorAll("*").forEach(child => {
-      if (!(child instanceof HTMLElement)) return;
-      const { position, bottom } = window.getComputedStyle(child);
-      // Only viewport-fixed nodes share the sticky-footer collision; leave
-      // absolute layout inside the survey chrome alone.
-      if (position === "fixed" && bottom !== "auto") {
-        targets.add(child);
-      }
-    });
-  });
-
-  return Array.from(targets);
-};
-
 /**
- * Hotjar injects survey UI on document.body. The visible bubble is often a
- * nested `position: fixed` node, so offsetting only the root is not enough.
+ * Prefer transform on the root over rewriting nested `bottom` values.
+ * Nested Hotjar nodes use position:fixed; forcing the same bottom on all of
+ * them stacks the open survey over the toggle and blocks closing.
+ * A transform on the root creates a containing block so the bubble + panel
+ * move together and Hotjar's internal open/close layout stays intact.
  */
 export const useHotjarAboveStickyFooter = () => {
   useEffect(() => {
-    const applyOffset = () => {
-      collectHotjarElements().forEach(node => {
-        if (node.style.getPropertyValue("bottom") === HOTJAR_BOTTOM_OFFSET) return;
-        node.style.setProperty("bottom", HOTJAR_BOTTOM_OFFSET, "important");
+    const applyLift = () => {
+      collectHotjarRoots().forEach(root => {
+        if (root.style.getPropertyValue("transform") === HOTJAR_TRANSFORM) return;
+        root.style.setProperty("transform", HOTJAR_TRANSFORM, "important");
       });
     };
 
-    applyOffset();
+    applyLift();
 
-    const observer = new MutationObserver(applyOffset);
+    const observer = new MutationObserver(applyLift);
     observer.observe(document.body, {
       childList: true,
       subtree: true,
@@ -61,8 +47,8 @@ export const useHotjarAboveStickyFooter = () => {
 
     return () => {
       observer.disconnect();
-      collectHotjarElements().forEach(node => {
-        node.style.removeProperty("bottom");
+      collectHotjarRoots().forEach(root => {
+        root.style.removeProperty("transform");
       });
     };
   }, []);
