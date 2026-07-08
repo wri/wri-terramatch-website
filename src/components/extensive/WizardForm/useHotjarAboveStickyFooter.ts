@@ -11,7 +11,7 @@ const HOTJAR_ROOT_SELECTORS = [
  * Footer is ~py-3 + button (~4rem). Use extra clearance so the bubble sits
  * fully above Download / Save and Exit / Submit.
  */
-const HOTJAR_BOTTOM_OFFSET = "7rem";
+const HOTJAR_BOTTOM_OFFSET = "5rem";
 
 const collectHotjarElements = (): HTMLElement[] => {
   const roots = Array.from(document.querySelectorAll(HOTJAR_ROOT_SELECTORS)).filter(
