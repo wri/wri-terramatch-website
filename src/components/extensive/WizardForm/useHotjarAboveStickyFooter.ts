@@ -1,25 +1,49 @@
 import { useEffect } from "react";
 
-const HOTJAR_WIDGET_SELECTORS = [
+const HOTJAR_ROOT_SELECTORS = [
   "#_hj_feedback_container",
   "[id^='_hj_feedback']",
   "[id^='survey_']",
   "._hj-widget-container"
 ].join(", ");
 
-/** Matches ToolbarForm sticky footer height (~py-3 + button + shadow). */
-const HOTJAR_BOTTOM_OFFSET = "5.5rem";
+/**
+ * Footer is ~py-3 + button (~4rem). Use extra clearance so the bubble sits
+ * fully above Download / Save and Exit / Submit.
+ */
+const HOTJAR_BOTTOM_OFFSET = "7rem";
+
+const collectHotjarElements = (): HTMLElement[] => {
+  const roots = Array.from(document.querySelectorAll(HOTJAR_ROOT_SELECTORS)).filter(
+    (node): node is HTMLElement => node instanceof HTMLElement
+  );
+
+  const targets = new Set<HTMLElement>();
+
+  roots.forEach(root => {
+    targets.add(root);
+    root.querySelectorAll("*").forEach(child => {
+      if (!(child instanceof HTMLElement)) return;
+      const { position, bottom } = window.getComputedStyle(child);
+      // Only viewport-fixed nodes share the sticky-footer collision; leave
+      // absolute layout inside the survey chrome alone.
+      if (position === "fixed" && bottom !== "auto") {
+        targets.add(child);
+      }
+    });
+  });
+
+  return Array.from(targets);
+};
 
 /**
- * Hotjar injects survey UI on document.body with inline styles (often `bottom` +
- * `!important`). Author CSS cannot reliably override that, so we set the same
- * property on the live nodes while the wizard sticky footer is open.
+ * Hotjar injects survey UI on document.body. The visible bubble is often a
+ * nested `position: fixed` node, so offsetting only the root is not enough.
  */
 export const useHotjarAboveStickyFooter = () => {
   useEffect(() => {
     const applyOffset = () => {
-      document.querySelectorAll(HOTJAR_WIDGET_SELECTORS).forEach(node => {
-        if (!(node instanceof HTMLElement)) return;
+      collectHotjarElements().forEach(node => {
         if (node.style.getPropertyValue("bottom") === HOTJAR_BOTTOM_OFFSET) return;
         node.style.setProperty("bottom", HOTJAR_BOTTOM_OFFSET, "important");
       });
@@ -37,10 +61,8 @@ export const useHotjarAboveStickyFooter = () => {
 
     return () => {
       observer.disconnect();
-      document.querySelectorAll(HOTJAR_WIDGET_SELECTORS).forEach(node => {
-        if (node instanceof HTMLElement) {
-          node.style.removeProperty("bottom");
-        }
+      collectHotjarElements().forEach(node => {
+        node.style.removeProperty("bottom");
       });
     };
   }, []);
