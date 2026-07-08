@@ -1,5 +1,5 @@
 import { Map as MapboxMap } from "mapbox-gl";
-import { MutableRefObject, useCallback, useEffect, useState } from "react";
+import { MutableRefObject, useCallback, useEffect, useLayoutEffect, useState } from "react";
 
 type UseMapFullscreenParams = {
   map: MutableRefObject<MapboxMap | null>;
@@ -34,10 +34,41 @@ export function useMapFullscreen({ map }: UseMapFullscreenParams) {
     };
   }, [isFullscreen]);
 
+  const scheduleMapResize = useCallback(() => {
+    const resizeNow = () => map.current?.resize();
+    const firstFrame = requestAnimationFrame(() => {
+      resizeNow();
+      requestAnimationFrame(resizeNow);
+    });
+    const timeoutId = window.setTimeout(resizeNow, 0);
+
+    return () => {
+      cancelAnimationFrame(firstFrame);
+      window.clearTimeout(timeoutId);
+    };
+  }, [map]);
+
+  useLayoutEffect(() => {
+    return scheduleMapResize();
+  }, [isFullscreen, scheduleMapResize]);
+
   useEffect(() => {
-    const frame = requestAnimationFrame(() => map.current?.resize());
-    return () => cancelAnimationFrame(frame);
-  }, [isFullscreen, map]);
+    if (!isFullscreen) return;
+
+    const handleViewportChange = () => {
+      scheduleMapResize();
+    };
+
+    window.addEventListener("resize", handleViewportChange);
+    document.addEventListener("fullscreenchange", handleViewportChange);
+    window.visualViewport?.addEventListener("resize", handleViewportChange);
+
+    return () => {
+      window.removeEventListener("resize", handleViewportChange);
+      document.removeEventListener("fullscreenchange", handleViewportChange);
+      window.visualViewport?.removeEventListener("resize", handleViewportChange);
+    };
+  }, [isFullscreen, scheduleMapResize]);
 
   return { isFullscreen, toggleFullscreen };
 }
