@@ -44,15 +44,3 @@
 .ds-text-input-container {
   margin-bottom: 0 !important;
 }
-
-/*
- * Hotjar injects its survey/feedback UI on document.body (outside React).
- * When a wizard sticky footer is open, lift Hotjar so it does not cover Next/Submit.
- * Selectors match Hotjar's public DOM contract (_hj-* / survey_*).
- */
-body[data-wizard-sticky-footer] #_hj_feedback_container,
-body[data-wizard-sticky-footer] [id^="_hj_feedback"],
-body[data-wizard-sticky-footer] [id^="survey_"],
-body[data-wizard-sticky-footer] ._hj-widget-container {
-  bottom: 5.5rem !important;
-}
