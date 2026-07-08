@@ -49,9 +49,6 @@ import SummaryItem from "./SummaryItem";
 import { useHotjarAboveStickyFooter } from "./useHotjarAboveStickyFooter";
 import { getFormHeaderLabel } from "./utils";
 
-/** Marks the page while a wizard sticky footer is present (for third-party widget CSS). */
-export const WIZARD_STICKY_FOOTER_BODY_ATTR = "data-wizard-sticky-footer";
-
 export type WizardFormEntity = {
   siteUuid?: string | null;
   uuid?: string | null;
