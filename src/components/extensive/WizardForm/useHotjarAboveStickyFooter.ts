@@ -1,33 +1,43 @@
 import { useEffect } from "react";
 
-const HOTJAR_WIDGET_SELECTORS = [
+const HOTJAR_ROOT_SELECTORS = [
   "#_hj_feedback_container",
   "[id^='_hj_feedback']",
   "[id^='survey_']",
   "._hj-widget-container"
 ].join(", ");
 
-/** Matches ToolbarForm sticky footer height (~py-3 + button + shadow). */
-const HOTJAR_BOTTOM_OFFSET = "5.5rem";
+/**
+ * Footer is ~py-3 + button height. Lift the whole Hotjar chrome as one unit so
+ * the minimized bubble clears Submit without breaking open/close layout.
+ */
+const HOTJAR_LIFT = "4rem";
+const HOTJAR_TRANSFORM = `translateY(-${HOTJAR_LIFT})`;
+
+const collectHotjarRoots = (): HTMLElement[] =>
+  Array.from(document.querySelectorAll(HOTJAR_ROOT_SELECTORS)).filter(
+    (node): node is HTMLElement => node instanceof HTMLElement
+  );
 
 /**
- * Hotjar injects survey UI on document.body with inline styles (often `bottom` +
- * `!important`). Author CSS cannot reliably override that, so we set the same
- * property on the live nodes while the wizard sticky footer is open.
+ * Prefer transform on the root over rewriting nested `bottom` values.
+ * Nested Hotjar nodes use position:fixed; forcing the same bottom on all of
+ * them stacks the open survey over the toggle and blocks closing.
+ * A transform on the root creates a containing block so the bubble + panel
+ * move together and Hotjar's internal open/close layout stays intact.
  */
 export const useHotjarAboveStickyFooter = () => {
   useEffect(() => {
-    const applyOffset = () => {
-      document.querySelectorAll(HOTJAR_WIDGET_SELECTORS).forEach(node => {
-        if (!(node instanceof HTMLElement)) return;
-        if (node.style.getPropertyValue("bottom") === HOTJAR_BOTTOM_OFFSET) return;
-        node.style.setProperty("bottom", HOTJAR_BOTTOM_OFFSET, "important");
+    const applyLift = () => {
+      collectHotjarRoots().forEach(root => {
+        if (root.style.getPropertyValue("transform") === HOTJAR_TRANSFORM) return;
+        root.style.setProperty("transform", HOTJAR_TRANSFORM, "important");
       });
     };
 
-    applyOffset();
+    applyLift();
 
-    const observer = new MutationObserver(applyOffset);
+    const observer = new MutationObserver(applyLift);
     observer.observe(document.body, {
       childList: true,
       subtree: true,
@@ -37,10 +47,8 @@ export const useHotjarAboveStickyFooter = () => {
 
     return () => {
       observer.disconnect();
-      document.querySelectorAll(HOTJAR_WIDGET_SELECTORS).forEach(node => {
-        if (node instanceof HTMLElement) {
-          node.style.removeProperty("bottom");
-        }
+      collectHotjarRoots().forEach(root => {
+        root.style.removeProperty("transform");
       });
     };
   }, []);
