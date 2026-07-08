@@ -5,7 +5,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getUnreadCommentCount, useAuditStatuses } from "@/connections/AuditStatus";
 import { useMyUser } from "@/connections/User";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import type { PolygonEditDrawerPolygon } from "@/context/polygonEditDrawer.types";
+import type { PolygonEditDrawerPolygon, PolygonEditDrawerTab } from "@/context/polygonEditDrawer.types";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
@@ -14,12 +14,20 @@ import NotificationIndicator from "@/redesignComponents/navigation/NotificationI
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 import ApiSlice from "@/store/apiSlice";
 
+import DeleteAnrMonitoringPlots from "./Modals/AnrMonitoringPlots/DeleteAnrMonitoringPlots";
+import UploadAnrMonitoringPlots from "./Modals/AnrMonitoringPlots/UploadAnrMonitoringPlots";
+import { useAnrMonitoringPlotActions } from "./Modals/AnrMonitoringPlots/useAnrMonitoringPlotActions";
 import DeletePolygon from "./Modals/DeletePolygon";
 import SavePolygon from "./Modals/SavePolygon";
 import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import PolygonCommentContent from "./PolygonCommentContent";
-import type { PolygonOverlapFixCallback, PolygonSaveCallback } from "./polygonEdit.types";
+import type {
+  PolygonOverlapFixCallback,
+  PolygonSaveCallback,
+  PolygonValidationJobsStartedCallback
+} from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
+import type { SavePolygonFlowOptions } from "./polygonEditSave";
 import PolygonSystemValidationContent from "./PolygonSystemValidationContent";
 import type { PolygonTableRow } from "./PolygonTableRow";
 import { mapSitePolygonToTableRow } from "./polygonTableRow.utils";
@@ -32,9 +40,13 @@ interface PolygonEditDrawerProps {
   onSaved?: PolygonSaveCallback;
   onOverlapFixed?: PolygonOverlapFixCallback;
   onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
+  onValidationJobsStarted?: PolygonValidationJobsStartedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
+  onRequestApproveModal?: () => void;
+  onRequestInformationModal?: () => void;
+  defaultTab?: PolygonEditDrawerTab;
 }
 
 const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
@@ -45,21 +57,33 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onSaved,
   onOverlapFixed,
   onRunValidation,
+  onValidationJobsStarted,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
-  onDeletingChange
+  onDeletingChange,
+  onRequestApproveModal,
+  onRequestInformationModal,
+  defaultTab = "edit"
 }) => {
   const t = useT();
-  const [, { user }] = useMyUser();
+  const [, { user, isAdmin }] = useMyUser();
   const { draftPolygonGeometry, siteData } = useMapAreaContext();
-  const [activeTab, setActiveTab] = useState<string>("edit");
-  const [saveEditContent, setSaveEditContent] = useState<(() => Promise<boolean>) | null>(null);
+  const [activeTab, setActiveTab] = useState<string>(defaultTab);
+  const [saveEditContent, setSaveEditContent] = useState<
+    ((options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) | null
+  >(null);
   const deletePolygonRef = useRef<(() => Promise<void>) | null>(null);
   const submitPolygonRef = useRef<((comment: string) => Promise<void>) | null>(null);
+  const saveAndSubmitPolygonRef = useRef<((comment: string) => Promise<void>) | null>(null);
+  const hasUnsavedChangesRef = useRef<(() => boolean) | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
+  const [isSubmitWithUnsavedChangesModal, setIsSubmitWithUnsavedChangesModal] = useState(false);
   const [deletePayload, setDeletePayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
   const [submitPayload, setSubmitPayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
+  const [anrPlotsModal, setAnrPlotsModal] = useState<
+    null | { kind: "upload"; mode: "upload" | "replace" } | { kind: "delete" }
+  >(null);
   const deleteConfirmedRef = useRef(false);
   const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
   const [savePolygonName, setSavePolygonName] = useState("");
@@ -86,20 +110,28 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const unreadCommentCount = useMemo(() => getUnreadCommentCount(auditStatusesData, user), [auditStatusesData, user]);
 
   useEffect(() => {
-    setActiveTab("edit");
-  }, [polygon?.polygonUuid]);
+    setActiveTab(defaultTab);
+    setAnrPlotsModal(null);
+  }, [polygon?.polygonUuid, defaultTab]);
+
+  const selectedPolygonIdentityKey = `${selectedPolygon?.uuid ?? ""}:${selectedPolygon?.polygonUuid ?? ""}`;
 
   useEffect(() => {
     setSaveEditContent(null);
+    setIsSubmitWithUnsavedChangesModal(false);
+    setShowSaveConfirmationModal(false);
     const initialName = polygon?.polygonName?.trim() ?? "";
     getPolygonNameForSaveRef.current = () => polygon?.polygonName?.trim() ?? "";
     setSavePolygonName(initialName);
     setHasPlantStartDate(selectedPolygon?.plantStart != null && selectedPolygon.plantStart !== "");
-  }, [polygon?.polygonName, selectedPolygon?.plantStart, selectedPolygon?.uuid]);
+  }, [selectedPolygonIdentityKey, polygon?.polygonName, selectedPolygon?.plantStart]);
 
-  const registerSave = useCallback((saveHandler: () => Promise<boolean>) => {
-    setSaveEditContent(() => saveHandler);
-  }, []);
+  const registerSave = useCallback(
+    (saveHandler: (options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) => {
+      setSaveEditContent(() => saveHandler);
+    },
+    []
+  );
 
   const registerDelete = useCallback((deleteHandler: () => Promise<void>) => {
     deletePolygonRef.current = deleteHandler;
@@ -107,6 +139,14 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
 
   const registerSubmit = useCallback((submitHandler: (comment: string) => Promise<void>) => {
     submitPolygonRef.current = submitHandler;
+  }, []);
+
+  const registerSaveAndSubmit = useCallback((saveAndSubmitHandler: (comment: string) => Promise<void>) => {
+    saveAndSubmitPolygonRef.current = saveAndSubmitHandler;
+  }, []);
+
+  const registerHasUnsavedChanges = useCallback((hasUnsavedChanges: () => boolean) => {
+    hasUnsavedChangesRef.current = hasUnsavedChanges;
   }, []);
 
   const registerPolygonName = useCallback((getPolygonName: () => string) => {
@@ -119,8 +159,20 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   }, []);
 
   const saveConfirmationPolygonName = getPolygonNameForSaveRef.current().trim();
-  const isAnyConfirmationModalOpen = showSaveConfirmationModal || deletePayload != null || submitPayload != null;
-  const isDrawerVisible = (open ?? false) && !isAnyConfirmationModalOpen;
+  const sitePolygonUuidForAnr = selectedPolygon?.uuid ?? "";
+  const {
+    deleteAnrPlotFile,
+    isDeleting: isDeletingAnrPlots,
+    isUploading: isUploadingAnrPlots,
+    uploadAnrPlotFile
+  } = useAnrMonitoringPlotActions({
+    sitePolygonUuid: sitePolygonUuidForAnr
+  });
+  const showSaveAndSubmitOption = isSubmitWithUnsavedChangesModal && !isCreateMode;
+
+  const closeDrawer = useCallback(() => {
+    onOpenChange?.(false);
+  }, [onOpenChange]);
 
   const handleSave = useCallback(
     async (onClose: () => void) => {
@@ -132,7 +184,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
       setIsSaving(true);
       try {
         const saved = await saveEditContent();
-        if (saved) {
+        if (saved != null) {
           onClose();
         }
       } finally {
@@ -142,15 +194,18 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     [activeTab, saveEditContent]
   );
 
-  const closeDrawer = useCallback(() => {
-    onOpenChange?.(false);
-  }, [onOpenChange]);
+  const handleSaveAndSubmit = useCallback(async () => {
+    await saveAndSubmitPolygonRef.current?.("");
+  }, []);
 
   const handleSaveConfirmationModalChange = useCallback(
     (nextOpen: boolean) => {
       setShowSaveConfirmationModal(nextOpen);
-      if (!nextOpen && isCreateMode) {
-        closeDrawer();
+      if (!nextOpen) {
+        setIsSubmitWithUnsavedChangesModal(false);
+        if (isCreateMode) {
+          closeDrawer();
+        }
       }
     },
     [closeDrawer, isCreateMode]
@@ -165,13 +220,22 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     setDeletePayload({ polygons: [mapSitePolygonToTableRow(selectedPolygon, t)] });
   }, [selectedPolygon, t]);
 
-  const handleRequestSubmitModal = useCallback(() => {
-    if (selectedPolygon == null) {
-      return;
-    }
+  const handleRequestSubmitModal = useCallback(
+    (hasUnsavedChanges: boolean) => {
+      if (selectedPolygon == null) {
+        return;
+      }
 
-    setSubmitPayload({ polygons: [mapSitePolygonToTableRow(selectedPolygon, t)] });
-  }, [selectedPolygon, t]);
+      if (hasUnsavedChanges) {
+        setIsSubmitWithUnsavedChangesModal(hasUnsavedChanges && !isCreateMode);
+        setShowSaveConfirmationModal(true);
+        return;
+      }
+
+      setSubmitPayload({ polygons: [mapSitePolygonToTableRow(selectedPolygon, t)] });
+    },
+    [isCreateMode, selectedPolygon, t]
+  );
 
   const handleDeleteConfirmationModalChange = useCallback(
     (nextOpen: boolean) => {
@@ -193,22 +257,27 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     <>
       <Drawer
         modal={false}
-        open={isDrawerVisible}
+        trapFocus={false}
+        open={open ?? false}
         closeOnInteractOutside={false}
         onOpenChange={onOpenChange}
         size="md"
         placement="start"
+        paddingTop={isAdmin ? 12 : 0}
+        paddingLeft={isAdmin ? 12 : 0}
+        maxH={isAdmin ? "calc(100vh - 3rem)" : "100vh"}
       >
         {({ onClose }) => (
           <FilterPanel
             title={polygon?.polygonUuid ? polygon?.polygonName ?? t("-") : t("New Polygon")}
             variant="fixed"
             onClose={onClose}
-            className="h-screen w-full"
+            className="h-full w-full"
             content={
               <Flex className="h-full flex-col">
                 {polygon?.polygonUuid && (
                   <TabBar
+                    key={`${polygon?.polygonUuid}-${defaultTab}`}
                     onTabClick={(tabValue: string) => {
                       setActiveTab(tabValue);
                       if (tabValue === "comments") {
@@ -238,7 +307,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                         value: "comments"
                       }
                     ]}
-                    defaultValue={activeTab}
+                    defaultValue={defaultTab}
                     variant="panel"
                   />
                 )}
@@ -249,11 +318,19 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     onRegisterSave={registerSave}
                     onRegisterDelete={registerDelete}
                     onRegisterSubmit={registerSubmit}
+                    onRegisterSaveAndSubmit={registerSaveAndSubmit}
+                    onRegisterHasUnsavedChanges={registerHasUnsavedChanges}
                     onRegisterPolygonName={registerPolygonName}
                     onRegisterPlantStartDate={registerPlantStartDate}
                     onRequestDeleteModal={handleRequestDeleteModal}
                     onRequestSubmitModal={handleRequestSubmitModal}
+                    onRequestAnrUploadModal={mode => setAnrPlotsModal({ kind: "upload", mode })}
+                    onRequestAnrDeleteModal={() => setAnrPlotsModal({ kind: "delete" })}
+                    isAnrPlotsOperating={isUploadingAnrPlots || isDeletingAnrPlots}
+                    onRequestApproveModal={onRequestApproveModal}
+                    onRequestInformationModal={onRequestInformationModal}
                     onSaved={onSaved}
+                    onValidationJobsStarted={onValidationJobsStarted}
                     onPolygonUpdated={onPolygonUpdated}
                     onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
                     onDeletingChange={onDeletingChange}
@@ -294,6 +371,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                           void handleSave(onClose);
                           return;
                         }
+                        const hasUnsavedChanges = hasUnsavedChangesRef.current?.() ?? false;
+                        setIsSubmitWithUnsavedChangesModal(hasUnsavedChanges && !isCreateMode);
                         setShowSaveConfirmationModal(true);
                       }
                     }
@@ -309,10 +388,13 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         open={showSaveConfirmationModal}
         onOpenChange={handleSaveConfirmationModalChange}
         polygon={{ polygonName: saveConfirmationPolygonName } as unknown as PolygonTableRow}
+        showSaveAndSubmit={showSaveAndSubmitOption}
         onSave={() => void handleSave(closeDrawer)}
+        onSaveAndSubmit={showSaveAndSubmitOption ? () => void handleSaveAndSubmit() : undefined}
       />
 
       <DeletePolygon
+        modal={false}
         open={deletePayload != null}
         onOpenChange={handleDeleteConfirmationModalChange}
         polygons={deletePayload?.polygons ?? []}
@@ -323,6 +405,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
       />
 
       <SubmitPolygonConfirmation
+        modal={false}
         open={submitPayload != null}
         onOpenChange={open => {
           if (!open) {
@@ -331,6 +414,43 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         }}
         polygons={submitPayload?.polygons ?? []}
         onSubmit={comment => submitPolygonRef.current?.(comment)}
+      />
+
+      <UploadAnrMonitoringPlots
+        open={anrPlotsModal?.kind === "upload"}
+        mode={anrPlotsModal?.kind === "upload" ? anrPlotsModal.mode : "upload"}
+        isSaving={isUploadingAnrPlots}
+        onOpenChange={nextOpen => {
+          if (!nextOpen) {
+            setAnrPlotsModal(current => (current?.kind === "upload" ? null : current));
+          }
+        }}
+        onSave={file =>
+          uploadAnrPlotFile(file, anrPlotsModal?.kind === "upload" ? anrPlotsModal.mode : "upload").then(isSaved => {
+            if (isSaved) {
+              setAnrPlotsModal(null);
+            }
+            return isSaved;
+          })
+        }
+      />
+
+      <DeleteAnrMonitoringPlots
+        open={anrPlotsModal?.kind === "delete"}
+        isDeleting={isDeletingAnrPlots}
+        onOpenChange={nextOpen => {
+          if (!nextOpen) {
+            setAnrPlotsModal(current => (current?.kind === "delete" ? null : current));
+          }
+        }}
+        onDelete={() =>
+          deleteAnrPlotFile().then(isDeleted => {
+            if (isDeleted) {
+              setAnrPlotsModal(null);
+            }
+            return isDeleted;
+          })
+        }
       />
     </>
   );

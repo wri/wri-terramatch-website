@@ -2,12 +2,22 @@ import { useT } from "@transifex/react";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { useAuditStatuses } from "@/connections/AuditStatus";
-import { closeMapPopupsFromMapPopup, openPolygonSubmitConfirmationFromMapPopup } from "@/context/mapArea.utils";
+import {
+  closeMapPopupsFromMapPopup,
+  isSitePolygonAdminReviewMode,
+  openPolygonApproveConfirmationFromMapPopup,
+  openPolygonRequestInformationConfirmationFromMapPopup,
+  openPolygonSubmitConfirmationFromMapPopup,
+  runPolygonValidationFromMapPopup
+} from "@/context/mapArea.utils";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { isRestorationStrategy, isTargetLandUseType } from "@/pages/site/[uuid]/components/polygonTable.constants";
+import { showPolygonErrorToast } from "@/pages/site/[uuid]/utils/polygonOperationToasts";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
+import Log from "@/utils/log";
+import { getSingleSitePolygonApproveTooltip, isSitePolygonApprovable } from "@/utils/sitePolygonReview";
 import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
 import type { PopupComponentProps, TooltipType } from "../../Map.d";
@@ -41,6 +51,7 @@ export function PolygonPopupChampions({
   siteReportPolygonPopup = false
 }: PolygonPopupChampionsProps) {
   const t = useT();
+  const isAdminReview = isSitePolygonAdminReviewMode();
   const siteUuid = useMemo(() => resolveViewDetailsSiteUuid(sitePolygon), [sitePolygon]);
   const [open, setOpen] = useState(true);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -81,6 +92,9 @@ export function PolygonPopupChampions({
   const submitDisabled = !isSitePolygonSubmittable(sitePolygon);
   const submitDisabledTooltip = getSingleSitePolygonSubmitTooltip(sitePolygon, t);
 
+  const approveDisabled = !isSitePolygonApprovable(sitePolygon);
+  const approveDisabledTooltip = getSingleSitePolygonApproveTooltip(sitePolygon, t);
+
   const closeMapPopup = useCallback(() => {
     setOpen(false);
     popup?.remove();
@@ -95,12 +109,50 @@ export function PolygonPopupChampions({
     closeMapPopupsFromMapPopup();
   }, [sitePolygon?.uuid, submitDisabled]);
 
+  const handleApprove = useCallback(() => {
+    if (approveDisabled || sitePolygon?.uuid == null || sitePolygon.uuid === "") {
+      return;
+    }
+    openPolygonApproveConfirmationFromMapPopup(sitePolygon.uuid);
+    closeMapPopupsFromMapPopup();
+  }, [approveDisabled, sitePolygon?.uuid]);
+
+  const handleRequestInformation = useCallback(() => {
+    if (sitePolygon?.uuid == null || sitePolygon.uuid === "") {
+      return;
+    }
+    openPolygonRequestInformationConfirmationFromMapPopup(sitePolygon.uuid);
+    closeMapPopupsFromMapPopup();
+  }, [sitePolygon?.uuid]);
+
   const handleEdit = useCallback(() => {
     openPolygonEditDrawerForSitePolygon(sitePolygon, metrics.polygonName);
     closeMapPopup();
   }, [closeMapPopup, metrics.polygonName, sitePolygon]);
 
+  const handleComment = useCallback(() => {
+    openPolygonEditDrawerForSitePolygon(sitePolygon, metrics.polygonName, "comments");
+    closeMapPopup();
+  }, [closeMapPopup, metrics.polygonName, sitePolygon]);
+
   const geometryUuid = getSitePolygonGeometryUuid(sitePolygon);
+
+  const handleRunValidation = useCallback(() => {
+    if (geometryUuid == null || geometryUuid === "") {
+      return;
+    }
+
+    const runValidation = runPolygonValidationFromMapPopup([geometryUuid]);
+    if (runValidation == null) {
+      return;
+    }
+
+    closeMapPopup();
+    void runValidation.catch(error => {
+      Log.error("Failed to validate polygon from map popup:", error);
+      showPolygonErrorToast(t("Failed to validate polygons"));
+    });
+  }, [closeMapPopup, geometryUuid, t]);
 
   const handleViewDetails = useCallback(() => {
     if (geometryUuid == null) {
@@ -135,10 +187,17 @@ export function PolygonPopupChampions({
             submitDisabledTooltip={submitDisabledTooltip}
             onSubmit={handleRequestSubmit}
             onEdit={handleEdit}
+            onComment={handleComment}
             onClose={closeMapPopup}
             onViewDetails={handleViewDetails}
             viewDetailsDisabled={!canNavigateToSitePolygonViewDetails(geometryUuid, siteUuid)}
             tooltipType={tooltipType}
+            isAdminReview={isAdminReview}
+            onRunValidation={isAdminReview ? handleRunValidation : undefined}
+            approveDisabled={approveDisabled}
+            approveDisabledTooltip={approveDisabledTooltip}
+            onApprove={handleApprove}
+            onRequestInformation={handleRequestInformation}
           />
         }
         placement="right"

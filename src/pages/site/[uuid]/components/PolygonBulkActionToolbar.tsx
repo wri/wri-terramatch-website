@@ -1,20 +1,23 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useEffect, useMemo } from "react";
 
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
-import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useLayoutShell } from "@/redesignComponents/Loayout/LayoutShell.provider";
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
 import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
-import { trackPolygonRunValidationClicked } from "@/utils/polygonAnalytics";
+import {
+  getSitePolygonsApproveTooltipIfNoneEligible,
+  isSitePolygonApprovable,
+  toReviewAvailabilityPolygon
+} from "@/utils/sitePolygonReview";
 import { getSitePolygonsSubmitTooltipIfNoneEligible } from "@/utils/sitePolygonSubmit";
 
-import SystemValidationComplete from "./Modals/SystemValidationComplete";
 import { PolygonTableRow } from "./PolygonTableRow";
 
 export type PolygonBulkActionToolbarProps = {
-  siteUuid: string;
   visible: boolean;
   itemCount: number;
   isBulkEditDrawerOpen?: boolean;
@@ -27,19 +30,17 @@ export type PolygonBulkActionToolbarProps = {
   onDownload: () => void;
   onEdit: () => void;
   onSubmit: () => void;
-  onViewPolygonDetails?: (polygon: PolygonTableRow) => void;
+  onOpenApproveModal: () => void;
+  onOpenRequestInformationModal: () => void;
   onRunValidation: (geometryPolygonUuids: string[]) => Promise<void>;
   isOverlapFixAction?: boolean;
   canAutoFixOverlap?: boolean;
   isSubmitDisabled?: boolean;
   polygons: PolygonTableRow[];
-  polygonValidations: Map<string, ValidationDto>;
   selectedGeometryPolygonUuids: string[];
-  isAwaitingValidationResults?: boolean;
 };
 
 const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
-  siteUuid,
   visible,
   itemCount,
   isBulkEditDrawerOpen = false,
@@ -52,75 +53,36 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   onDownload,
   onEdit,
   onSubmit,
-  onViewPolygonDetails,
+  onOpenApproveModal,
+  onOpenRequestInformationModal,
   polygons,
   onRunValidation,
-  polygonValidations,
   selectedGeometryPolygonUuids,
-  isAwaitingValidationResults = false,
   isOverlapFixAction = false,
   canAutoFixOverlap = false,
   isSubmitDisabled = false
 }: PolygonBulkActionToolbarProps) {
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
+  const { setSidebarCollapseDisabled } = useLayoutShell();
+  const isAdmin = useIsAdmin();
   const t = useT();
-  const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
-  const [validatedPolygons, setValidatedPolygons] = useState<PolygonTableRow[]>([]);
-  const [validatedGeometryPolygonUuids, setValidatedGeometryPolygonUuids] = useState<string[]>([]);
   const isOverlapAutoFixUnavailable = isOverlapFixAction && !canAutoFixOverlap;
+
+  const reviewPolygons = useMemo(() => polygons.map(toReviewAvailabilityPolygon), [polygons]);
+
   const submitDisabledTooltip = useMemo(
-    () =>
-      isOverlapFixAction
-        ? undefined
-        : getSitePolygonsSubmitTooltipIfNoneEligible(
-            polygons.map(polygon => ({ status: polygon.submission, validationStatus: polygon.validation })),
-            t
-          ),
-    [isOverlapFixAction, polygons, t]
+    () => (isAdmin || isOverlapFixAction ? undefined : getSitePolygonsSubmitTooltipIfNoneEligible(reviewPolygons, t)),
+    [isAdmin, isOverlapFixAction, reviewPolygons, t]
   );
 
-  const handleSystemValidationCompleteModalChange = useCallback((open: boolean) => {
-    setIsSystemValidationCompleteModalOpen(open);
-    if (!open) {
-      setValidatedPolygons([]);
-      setValidatedGeometryPolygonUuids([]);
-    }
-  }, []);
+  const isApproveDisabled = useMemo(
+    () => isAdmin && !reviewPolygons.some(isSitePolygonApprovable),
+    [isAdmin, reviewPolygons]
+  );
 
-  const handleRunValidation = useCallback(async () => {
-    if (selectedGeometryPolygonUuids.length === 0) {
-      return;
-    }
-
-    const polygonUuids = selectedGeometryPolygonUuids;
-    trackPolygonRunValidationClicked({
-      siteUuid,
-      polygonIds: polygonUuids
-    });
-
-    setValidatedPolygons(
-      polygons.map((polygon, index) => ({
-        ...polygon,
-        id: polygonUuids[index] ?? polygon.id
-      }))
-    );
-    setValidatedGeometryPolygonUuids(polygonUuids);
-    onClearSelection?.();
-
-    try {
-      await onRunValidation(polygonUuids);
-      setIsSystemValidationCompleteModalOpen(true);
-    } catch {
-      // Error feedback is handled in the parent.
-    }
-  }, [onClearSelection, onRunValidation, polygons, selectedGeometryPolygonUuids, siteUuid]);
-
-  const handleViewValidationDetails = useCallback(
-    (polygon: PolygonTableRow) => {
-      handleSystemValidationCompleteModalChange(false);
-      onViewPolygonDetails?.(polygon);
-    },
-    [handleSystemValidationCompleteModalChange, onViewPolygonDetails]
+  const approveDisabledTooltip = useMemo(
+    () => (isAdmin ? getSitePolygonsApproveTooltipIfNoneEligible(reviewPolygons, t) : undefined),
+    [isAdmin, reviewPolygons, t]
   );
 
   const toolbarActions = useMemo<BulkToolbarAction[]>(
@@ -138,7 +100,8 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
         loading: isValidating,
         disabled: isValidating,
         onClick: () => {
-          void handleRunValidation();
+          onClearSelection?.();
+          void onRunValidation(selectedGeometryPolygonUuids);
         }
       },
       {
@@ -147,7 +110,17 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
         onClick: onEdit
       }
     ],
-    [handleRunValidation, isDownloading, isValidating, itemCount, onDownload, onEdit, t]
+    [
+      isDownloading,
+      isValidating,
+      itemCount,
+      onClearSelection,
+      onDownload,
+      onEdit,
+      onRunValidation,
+      selectedGeometryPolygonUuids,
+      t
+    ]
   );
 
   const cancelAction = useMemo(
@@ -169,12 +142,42 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   );
 
   const primaryAction = useMemo(
-    () => ({
-      children: submitLabel,
-      disabled: isOverlapAutoFixUnavailable || isSubmitDisabled || submitDisabledTooltip != null,
-      onClick: onSubmit
-    }),
-    [isOverlapAutoFixUnavailable, isSubmitDisabled, onSubmit, submitDisabledTooltip, submitLabel]
+    () =>
+      isAdmin
+        ? {
+            mainActionLabel: t("Review"),
+            mainActionOnClick: () => {},
+            otherActions: [
+              {
+                label: t("Approve"),
+                value: "approve",
+                disabled: isApproveDisabled,
+                onClick: onOpenApproveModal
+              },
+              {
+                label: t("Request information"),
+                value: "request-information",
+                onClick: onOpenRequestInformationModal
+              }
+            ]
+          }
+        : {
+            children: submitLabel,
+            disabled: isOverlapAutoFixUnavailable || isSubmitDisabled || submitDisabledTooltip != null,
+            onClick: onSubmit
+          },
+    [
+      isOverlapAutoFixUnavailable,
+      isSubmitDisabled,
+      isApproveDisabled,
+      onSubmit,
+      onOpenApproveModal,
+      onOpenRequestInformationModal,
+      submitDisabledTooltip,
+      submitLabel,
+      isAdmin,
+      t
+    ]
   );
 
   const overlapTooltip = useMemo(
@@ -187,28 +190,32 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     [isOverlapAutoFixUnavailable, t]
   );
 
+  const adminApproveTooltip = useMemo(
+    () =>
+      isAdmin && approveDisabledTooltip != null ? (
+        <ToolbarInfoTooltipContent lines={[approveDisabledTooltip]} />
+      ) : undefined,
+    [isAdmin, approveDisabledTooltip]
+  );
+
   const isToolbarVisible = visible && !isPolygonEditDrawerOpen && !isBulkEditDrawerOpen;
+
+  useEffect(() => {
+    setSidebarCollapseDisabled(isToolbarVisible);
+    return () => setSidebarCollapseDisabled(false);
+  }, [isToolbarVisible, setSidebarCollapseDisabled]);
 
   return (
     <>
-      <SystemValidationComplete
-        polygons={validatedPolygons}
-        geometryPolygonUuids={validatedGeometryPolygonUuids}
-        polygonValidations={polygonValidations}
-        open={isSystemValidationCompleteModalOpen}
-        onOpenChange={handleSystemValidationCompleteModalChange}
-        onViewDetails={handleViewValidationDetails}
-        isLoadingResults={isAwaitingValidationResults}
-      />
       {isToolbarVisible && (
-        <Box position="fixed" zIndex="100" bottom={3} left={3} right={3}>
+        <Box position="fixed" zIndex="100" bottom={3} left={isAdmin ? 14 : 3} right={isAdmin ? 3 : 0}>
           <BulkActionToolbar
             selectedCount={itemCount}
             cancelAction={cancelAction}
             deleteAction={deleteAction}
             actions={toolbarActions}
             primaryAction={primaryAction}
-            infoTooltip={overlapTooltip ?? submitDisabledTooltip}
+            infoTooltip={overlapTooltip ?? adminApproveTooltip ?? (isAdmin ? undefined : submitDisabledTooltip)}
           />
         </Box>
       )}

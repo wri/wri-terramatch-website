@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -10,21 +10,24 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import { userVerification } from "@/connections/VerificationUser";
-import { useValueChanged } from "@/hooks/useValueChanged";
 
 const VerifyEmail = () => {
   const t = useT();
   const router = useRouter();
   const [isVerified, setIsVerified] = useState(false);
 
-  useValueChanged(router.query.token, async () => {
-    try {
-      const response = await userVerification({ token: router.query.token as string });
-      setIsVerified(response != null);
-    } catch (error) {
-      router.push("/");
-    }
-  });
+  useEffect(() => {
+    if (!router.isReady) return;
+    const validateToken = async () => {
+      try {
+        const response = await userVerification({ token: router.query.token as string });
+        setIsVerified(response != null);
+      } catch (error) {
+        router.push("/");
+      }
+    };
+    validateToken();
+  }, [router, router.isReady, router.query]);
 
   return (
     isVerified && (

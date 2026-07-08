@@ -1,7 +1,10 @@
 import { Flex } from "@chakra-ui/react";
 import { memo } from "react";
 
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
+import MultiActionButton, {
+  IMultiActionButtonProps
+} from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { InfoIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -31,9 +34,20 @@ const BulkActionToolbar = memo(function BulkActionToolbar({
       contentRight={
         <Flex alignItems="center" gap={2} flexWrap="wrap">
           <BulkActionToolbarActions deleteAction={deleteAction} actions={actions} />
-          {primaryAction != null && (
+          {primaryAction != null && "otherActions" in primaryAction && primaryAction.otherActions.length > 0 ? (
+            <MultiActionButton
+              {...(primaryAction as IMultiActionButtonProps)}
+              mainActionLabel={
+                (primaryAction as IMultiActionButtonProps).mainActionLabel ??
+                String((primaryAction as IButtonProps).children ?? "")
+              }
+              mainActionOnClick={(primaryAction as IMultiActionButtonProps).mainActionOnClick ?? (() => {})}
+              variant="primary"
+              className="disabled:!border-theme-neutral-400 disabled:!bg-theme-neutral-300 disabled:!text-theme-neutral-500 disabled:!opacity-100"
+            />
+          ) : (
             <Button
-              {...primaryAction}
+              {...(primaryAction as IButtonProps)}
               variant="primary"
               className="disabled:!border-theme-neutral-400 disabled:!bg-theme-neutral-300 disabled:!text-theme-neutral-500 disabled:!opacity-100"
             />

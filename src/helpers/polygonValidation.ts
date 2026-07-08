@@ -1,4 +1,3 @@
-import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { ValidationCriteriaDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import {
   COMPLETED_DATA_CRITERIA_ID,
@@ -18,12 +17,42 @@ export const isPolygonValidationChecked = (validationStatus: string | null | und
 export const hasValidationCriteria = (validation: ValidationDto | undefined): validation is ValidationDto =>
   validation != null && (validation.criteriaList?.length ?? 0) > 0;
 
+const getLatestCriteriaCreatedAtMs = (validation: ValidationDto): number | null => {
+  const timestamps = validation.criteriaList
+    .map(criteria => criteria.createdAt)
+    .filter((createdAt): createdAt is string => createdAt != null && createdAt !== "")
+    .map(createdAt => Date.parse(createdAt))
+    .filter(timestamp => !Number.isNaN(timestamp));
+
+  if (timestamps.length === 0) {
+    return null;
+  }
+
+  return Math.max(...timestamps);
+};
+
+export const isValidationFreshAfter = (validation: ValidationDto | undefined, startedAtMs: number): boolean => {
+  if (!hasValidationCriteria(validation)) {
+    return false;
+  }
+
+  const latestCriteriaCreatedAtMs = getLatestCriteriaCreatedAtMs(validation);
+  if (latestCriteriaCreatedAtMs == null) {
+    return false;
+  }
+
+  return latestCriteriaCreatedAtMs >= startedAtMs - 2_000;
+};
+
 export const shouldDisplayValidationCriteria = (
   validation: ValidationDto | undefined,
   validationStatus: string | null | undefined
 ): validation is ValidationDto => isPolygonValidationChecked(validationStatus) && hasValidationCriteria(validation);
 
-export const parseV3ValidationData = (criteriaData: ValidationDto): ICriteriaCheckItem[] => {
+export const parseV3ValidationData = (
+  criteriaData: ValidationDto,
+  validationLabels: Record<number, string>
+): ICriteriaCheckItem[] => {
   const existingValidations = new Map<number, ICriteriaCheckItem>(
     criteriaData.criteriaList.map((criteria: ValidationCriteriaDto) => [
       criteria.criteriaId,
@@ -55,7 +84,7 @@ export const parseV3ValidationData = (criteriaData: ValidationDto): ICriteriaChe
   return transformedData;
 };
 
-export const parseValidationDataFromContext = (polygonValidation: any) => {
+export const parseValidationDataFromContext = (polygonValidation: any, validationLabels: Record<number, string>) => {
   if (!polygonValidation?.nonValidCriteria) {
     return [];
   }

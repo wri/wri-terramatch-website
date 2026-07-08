@@ -11,10 +11,23 @@ import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessa
 import Container from "../Layout/Container";
 import NavbarContent from "./NavbarContent";
 
+export const REDESIGN_BANNER_DISMISSED_SESSION_KEY = "terramatch-redesign-banner-dismissed";
+
+export const isRedesignBannerDismissed = (): boolean =>
+  typeof window !== "undefined" && sessionStorage.getItem(REDESIGN_BANNER_DISMISSED_SESSION_KEY) === "true";
+
+export const dismissRedesignBanner = (): void => {
+  sessionStorage.setItem(REDESIGN_BANNER_DISMISSED_SESSION_KEY, "true");
+};
+
+export const resetRedesignBannerDismissal = (): void => {
+  sessionStorage.removeItem(REDESIGN_BANNER_DISMISSED_SESSION_KEY);
+};
+
 const Navbar: FC = () => {
   const t = useT();
   const { isOpen, setIsOpen, linksDisabled } = useNavbarContext();
-  const [isOpenMessage, setIsOpenMessage] = useState(true);
+  const [isOpenMessage, setIsOpenMessage] = useState(() => !isRedesignBannerDismissed());
 
   const isLg = useMediaQuery("(min-width:1024px)");
 
@@ -79,7 +92,10 @@ const Navbar: FC = () => {
           )}
           size="full-width"
           actionLabel={t("Close")}
-          onActionClick={() => setIsOpenMessage(false)}
+          onActionClick={() => {
+            dismissRedesignBanner();
+            setIsOpenMessage(false);
+          }}
           isButtonRight={true}
         />
       )}

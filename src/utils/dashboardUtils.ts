@@ -644,10 +644,10 @@ export const parseHectaresUnderRestorationData = (
 };
 
 export const useParseDataToObjetive = (projectData?: {
-  objectives?: string | null;
+  projectSummary?: string | null;
   landTenureProjectArea?: string[] | null;
 }): Objetive => {
-  const objetiveText = projectData?.objectives || "No Objective";
+  const objetiveText = projectData?.projectSummary ?? "No Summary";
   const landTenure = useFormatLandTenureProjectAreaDisplay(projectData?.landTenureProjectArea);
   return {
     objetiveText,

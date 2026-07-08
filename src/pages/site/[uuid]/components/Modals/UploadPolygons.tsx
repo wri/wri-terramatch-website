@@ -28,7 +28,7 @@ export interface UploadPolygonsProps {
   siteHasExistingPolygons?: boolean;
   onOpenChange: (open: boolean) => void;
   onUploadSuccess: (result: UploadPolygonsSuccessResult) => void;
-  onUploadError: () => void;
+  onUploadError: (message: string) => void;
 }
 
 const mergeSelectedFiles = (currentFiles: File[], incomingFiles: File[]): File[] => {
@@ -66,7 +66,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({
     siteUuid,
     siteHasExistingPolygons,
     onUploadSuccess,
-    onError: () => onUploadError()
+    onError: onUploadError
   });
 
   const resetState = useCallback(() => {

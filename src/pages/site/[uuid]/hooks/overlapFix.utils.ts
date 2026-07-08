@@ -44,6 +44,8 @@ const getResourceAttributes = (value: unknown): Record<string, unknown> | null =
 
 const toStringOrNull = (value: unknown): string | null => (typeof value === "string" && value !== "" ? value : null);
 
+const toNonEmptyUuid = (value: string | null | undefined): value is string => value != null && value !== "";
+
 const getPolygonDisplayName = (polygon: SitePolygonLightDto | undefined, row: PolygonTableRow): string =>
   polygon?.name ?? row.polygonName;
 
@@ -54,6 +56,34 @@ const getOverlapCriteria = (validation: ValidationDto | undefined): ValidationCr
 
 export const hasOverlapValidationFailure = (validation: ValidationDto | undefined): boolean =>
   getOverlapCriteria(validation) != null;
+
+export const collectRelatedPartnerUuidsFromFixability = (
+  results: Array<PolygonFixabilityResult | null | undefined>
+): string[] => {
+  const uuids = new Set<string>();
+
+  for (const result of results) {
+    for (const detail of result?.overlapDetails ?? []) {
+      if (toNonEmptyUuid(detail.polyUuid)) {
+        uuids.add(detail.polyUuid);
+      }
+    }
+  }
+
+  return [...uuids];
+};
+
+export const collectGeometryUuidsForValidationUiClear = ({
+  previousGeometryUuids = [],
+  newGeometryUuids = [],
+  relatedPartnerUuids = []
+}: {
+  previousGeometryUuids?: Array<string | null | undefined>;
+  newGeometryUuids?: Array<string | null | undefined>;
+  relatedPartnerUuids?: Array<string | null | undefined>;
+}): string[] => [
+  ...new Set([...previousGeometryUuids, ...newGeometryUuids, ...relatedPartnerUuids].filter(toNonEmptyUuid))
+];
 
 export const getSelectedOverlapFixSummary = (
   selectedRows: PolygonTableRow[],

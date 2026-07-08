@@ -371,7 +371,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
           country={formatOptionsList(countryOptions ?? [], project.country ?? [])}
           startDate={formatMonthYear(project.plantingStartDate)}
           endDate={formatMonthYear(project.plantingEndDate)}
-          description={project.description ?? undefined}
+          description={project.projectSummary?.trim() || undefined}
           countryFlag={countryCodeToFlag(project.country)}
         />
       </Flex>

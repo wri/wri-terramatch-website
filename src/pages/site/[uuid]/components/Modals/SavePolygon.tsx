@@ -5,17 +5,28 @@ import { FC, useCallback, useState } from "react";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 
-import type { PolygonTableRow } from "../../tabs/Polygons";
+import type { PolygonTableRow } from "../PolygonTableRow";
 export interface SavePolygonProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   polygon: PolygonTableRow;
   onSave?: () => void | Promise<void>;
+  showSaveAndSubmit?: boolean;
+  onSaveAndSubmit?: () => void | Promise<void>;
 }
 
-const SavePolygon: FC<SavePolygonProps> = ({ open, onOpenChange, polygon, onSave }) => {
+const SavePolygon: FC<SavePolygonProps> = ({
+  open,
+  onOpenChange,
+  polygon,
+  onSave,
+  showSaveAndSubmit = false,
+  onSaveAndSubmit
+}) => {
   const t = useT();
   const [isSaving, setIsSaving] = useState(false);
+  const [isSavingAndSubmitting, setIsSavingAndSubmitting] = useState(false);
+  const isActionInProgress = isSaving || isSavingAndSubmitting;
 
   const handleClose = useCallback(() => {
     onOpenChange(false);
@@ -36,8 +47,54 @@ const SavePolygon: FC<SavePolygonProps> = ({ open, onOpenChange, polygon, onSave
     }
   }, [onSave, onOpenChange]);
 
+  const handleSaveAndSubmit = useCallback(async () => {
+    if (onSaveAndSubmit == null) {
+      onOpenChange(false);
+      return;
+    }
+
+    try {
+      setIsSavingAndSubmitting(true);
+      await onSaveAndSubmit();
+      onOpenChange(false);
+    } finally {
+      setIsSavingAndSubmitting(false);
+    }
+  }, [onSaveAndSubmit, onOpenChange]);
+
+  const footerButtons = [
+    {
+      id: "cancel",
+      variant: "secondary" as const,
+      children: t("Cancel"),
+      disabled: isActionInProgress,
+      onClick: handleClose
+    },
+    {
+      id: "save",
+      variant: "secondary" as const,
+      children: t("Save"),
+      disabled: isActionInProgress,
+      loading: isSaving,
+      onClick: () => void handleSave()
+    },
+    ...(showSaveAndSubmit
+      ? [
+          {
+            id: "save-and-submit",
+            children: t("Save and Submit"),
+            className: "pr-4",
+            disabled: isActionInProgress,
+            loading: isSavingAndSubmitting,
+            onClick: () => void handleSaveAndSubmit()
+          }
+        ]
+      : [])
+  ];
+
   return (
     <Modal
+      modal={false}
       open={open}
       onClose={handleClose}
       size="medium"
@@ -52,24 +109,7 @@ const SavePolygon: FC<SavePolygonProps> = ({ open, onOpenChange, polygon, onSave
           </Text>
         </Flex>
       }
-      footer={
-        <ButtonGroup
-          buttons={[
-            {
-              id: "cancel",
-              variant: "secondary",
-              children: t("Cancel"),
-              onClick: handleClose
-            },
-            {
-              id: "save",
-              children: t("Yes, save"),
-              disabled: isSaving,
-              onClick: () => void handleSave()
-            }
-          ]}
-        />
-      }
+      footer={<ButtonGroup buttons={footerButtons} />}
     />
   );
 };

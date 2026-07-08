@@ -8,13 +8,11 @@ import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
 import { useListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithAttributes } from "@/connections/SitePolygons";
-import {
-  dropdownOptionsRestoration,
-  dropdownOptionsTarget,
-  dropdownOptionsTree
-} from "@/constants/polygonDropdownOptions";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
+import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOptions";
+import { useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
@@ -57,6 +55,21 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
   const { openNotification } = useNotificationContext();
 
   const t = useT();
+  const restorationPracticeOptions = useRestorationPracticeOptions();
+  const targetLandUseOptions = useTargetLandUseOptions();
+  const treeDistributionOptions = useTreeDistributionOptions();
+  const restorationDropdownOptions = useMemo(
+    () => restorationPracticeOptions.map(({ value, label }) => ({ value, title: label })),
+    [restorationPracticeOptions]
+  );
+  const targetDropdownOptions = useMemo(
+    () => targetLandUseOptions.map(({ value, label }) => ({ value, title: label })),
+    [targetLandUseOptions]
+  );
+  const treeDropdownOptions = useMemo(
+    () => treeDistributionOptions.map(({ value, label }) => ({ value, title: label })),
+    [treeDistributionOptions]
+  );
   const { refetch } = useShowContext();
 
   const connectionProps = useMemo(
@@ -215,14 +228,14 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
             multiSelect
             value={restorationPractice}
             onChange={e => setRestorationPractice(e as string[])}
-            options={dropdownOptionsRestoration}
+            options={restorationDropdownOptions}
           />
           <Dropdown
             label="Target Land Use System"
             labelClassName="capitalize"
             labelVariant="text-14-light"
             placeholder="Select Target Land Use System"
-            options={dropdownOptionsTarget}
+            options={targetDropdownOptions}
             value={targetLandUseSystem}
             onChange={e => setTargetLandUseSystem(e as string[])}
           />
@@ -232,7 +245,7 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
             labelClassName="capitalize"
             labelVariant="text-14-light"
             placeholder="Select Tree Distribution"
-            options={dropdownOptionsTree}
+            options={treeDropdownOptions}
             value={treeDistribution}
             onChange={e => setTreeDistribution(e as string[])}
           />

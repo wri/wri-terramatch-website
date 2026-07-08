@@ -1,13 +1,12 @@
-import { restorationStrategyType } from "@/constants/polygons";
+import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { TreeDistributionType } from "@/hooks/translation/useTreeDistributionOptions";
 import {
   mapSitePolygonStatusToMappedTagState,
   mapSiteValidationStatusToTagState
 } from "@/utils/mapStatusToTagStateEntity";
 
-import { TARGET_LAND_USE_LABELS } from "./polygonFilter.constants";
 import {
-  formatDistributionValue,
   formatPolygonSource,
   isRestorationStrategy,
   isTargetLandUseType,
@@ -22,6 +21,29 @@ const RESTORATION_PRACTICE_SORT_LABELS: Record<restorationStrategyType, string> 
   "direct-seeding": "Direct seeding"
 };
 
+const TARGET_LAND_USE_SORT_LABELS: Record<targetLandUseType, string> = {
+  agroforest: "Agroforest",
+  "agricultural-land": "Agricultural Land",
+  grassland: "Grassland",
+  mangrove: "Mangrove",
+  "open-natural-ecosystem": "Open Natural Ecosystem",
+  "natural-forest": "Natural Forest",
+  peatland: "Peatland",
+  "riparian-area-or-wetland": "Riparian Area / Wetland",
+  silvopasture: "Silvopasture",
+  "urban-forest": "Urban Forest",
+  "woodlot-or-plantation": "Woodlot / Plantation"
+};
+
+const TREE_DISTRIBUTION_SORT_LABELS: Record<TreeDistributionType, string> = {
+  "single-line": "Single Line",
+  partial: "Partial",
+  full: "Full Coverage"
+};
+
+const isTreeDistributionType = (value: string): value is TreeDistributionType =>
+  value === "single-line" || value === "partial" || value === "full";
+
 const formatPlantingDate = (plantStart: string | null | undefined): string => {
   if (plantStart == null || plantStart === "") {
     return "-";
@@ -32,14 +54,13 @@ const formatPlantingDate = (plantStart: string | null | undefined): string => {
 const buildRestorationPracticeSortKey = (practices: restorationStrategyType[]): string =>
   toSortableJoinedList(practices.map(practice => RESTORATION_PRACTICE_SORT_LABELS[practice]));
 
-const buildTreeDistributionDisplay = (distr: string[] | null | undefined): string => {
-  const labels = (distr ?? []).map(formatDistributionValue);
-  return labels.length > 0 ? labels.join(", ") : "—";
-};
+const buildTreeDistributionSortKey = (distr: TreeDistributionType[]): string =>
+  toSortableJoinedList(distr.map(value => TREE_DISTRIBUTION_SORT_LABELS[value]));
 
 export const mapSitePolygonToTableRow = (polygon: SitePolygonLightDto, t: (key: string) => string): PolygonTableRow => {
   const restorationPractice = (polygon.practice ?? []).filter(isRestorationStrategy);
   const targetLandUse = polygon.targetSys != null && isTargetLandUseType(polygon.targetSys) ? polygon.targetSys : null;
+  const treeDistribution = (polygon.distr ?? []).filter(isTreeDistributionType);
 
   return {
     id: polygon.polygonUuid ?? polygon.uuid,
@@ -49,8 +70,9 @@ export const mapSitePolygonToTableRow = (polygon: SitePolygonLightDto, t: (key: 
     restorationPractice,
     restorationPracticeSort: buildRestorationPracticeSortKey(restorationPractice),
     targetLandUse,
-    targetLandUseSort: targetLandUse != null ? TARGET_LAND_USE_LABELS[targetLandUse] : "",
-    treeDistribution: buildTreeDistributionDisplay(polygon.distr),
+    targetLandUseSort: targetLandUse != null ? TARGET_LAND_USE_SORT_LABELS[targetLandUse] : "",
+    treeDistribution,
+    treeDistributionSort: buildTreeDistributionSortKey(treeDistribution),
     plantingDate: formatPlantingDate(polygon.plantStart),
     treesPlanted: polygon.numTrees ?? 0,
     area: polygon.calcArea ?? 0,

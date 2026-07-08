@@ -1,5 +1,6 @@
 import type { FC, ReactElement } from "react";
 
+import { usePolygonTagValues } from "@/hooks/translation/usePolygonTagValues";
 import { CheckApprovedIcon, DraftIcon, InfoIcon, PendingIcon } from "@/redesignComponents/foundations/Icons";
 
 import ActionStatusTag from "../ActionStatusTag/ActionStatusTag";
@@ -11,13 +12,6 @@ export interface MappedTagProps {
 }
 
 export type MappedTagState = "draft" | "pending-approval" | "information-required" | "approved";
-
-const MappedTagLabelMap: Record<MappedTagState, string> = {
-  draft: "Draft",
-  "pending-approval": "Pending Approval",
-  "information-required": "Information Required",
-  approved: "Approved"
-};
 
 function getMappedTagIcon(state: MappedTagState, size: "small" | "default" = "default"): ReactElement {
   switch (state) {
@@ -34,14 +28,18 @@ function getMappedTagIcon(state: MappedTagState, size: "small" | "default" = "de
   }
 }
 
-const MappedTag: FC<MappedTagProps> = ({ state, size = "default", ...rest }) => (
-  <ActionStatusTag
-    icon={getMappedTagIcon(state, size)}
-    state="neutral-light"
-    label={MappedTagLabelMap[state]}
-    size={size}
-    {...rest}
-  />
-);
+const MappedTag: FC<MappedTagProps> = ({ state, size = "default", ...rest }) => {
+  const MappedTagLabelMap = usePolygonTagValues();
+
+  return (
+    <ActionStatusTag
+      icon={getMappedTagIcon(state, size)}
+      state="neutral-light"
+      label={MappedTagLabelMap[state] ?? ""}
+      size={size}
+      {...rest}
+    />
+  );
+};
 
 export default MappedTag;

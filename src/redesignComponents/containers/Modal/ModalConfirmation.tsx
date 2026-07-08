@@ -72,8 +72,6 @@ const ModalConfirmation: FC<ModalConfirmationProps> = ({
       open={open}
       onClose={handleClose}
       size={size}
-      lazyMount
-      unmountOnExit
       header={
         <Text textStyle="400-bold" className="text-theme-neutral-800">
           {t(title)}

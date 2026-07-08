@@ -1,4 +1,5 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
 import React, { Ref, useCallback, useEffect, useRef } from "react";
 
@@ -34,6 +35,7 @@ interface TableProps<T extends BaseRow> {
   showPagination?: boolean;
   containerRef?: Ref<HTMLDivElement>;
   selectedRows?: T[];
+  onRowSelected?: (rowData: T, checked: boolean) => void;
   onAllItemsSelected?: (checked: boolean, visibleRows: T[]) => void;
 }
 
@@ -91,8 +93,10 @@ const Table = <T extends BaseRow>({
   showPagination = true,
   containerRef,
   selectedRows: controlledSelectedRows,
+  onRowSelected: controlledOnRowSelected,
   onAllItemsSelected: controlledOnAllItemsSelected
 }: TableProps<T>) => {
+  const t = useT();
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
     DEFAULT_CURRENT_PAGE,
     initialPageSize
@@ -101,12 +105,13 @@ const Table = <T extends BaseRow>({
   const { setSortColumn, sortedData } = useTableSorting(data);
   const {
     selectedRows: internalSelectedRows,
-    handleRowSelected,
+    handleRowSelected: internalHandleRowSelected,
     onAllItemsSelected: internalOnAllItemsSelected
   } = useTableSelection(selectable, sortedData);
 
   // When a consumer passes controlled selectedRows, use those; otherwise fall back to internal state.
   const selectedRows = controlledSelectedRows ?? internalSelectedRows;
+  const handleRowSelected = controlledOnRowSelected ?? internalHandleRowSelected;
 
   const actualTotalItems = totalItems ?? data.length;
   const totalPages = Math.ceil(actualTotalItems / pageSize);
@@ -224,7 +229,7 @@ const Table = <T extends BaseRow>({
           color={getThemedColor("neutral", 700)}
           className="absolute bottom-0 left-1/2 w-fit -translate-x-1/2 text-center mobile:hidden"
         >
-          Showing {`${displayStart} - ${displayEnd} of ${actualTotalItems}`}
+          {t("Showing {start} - {end} of {total}", { start: displayStart, end: displayEnd, total: actualTotalItems })}
         </Text>
       )}
     </Box>

@@ -1,6 +1,8 @@
 import { DrawerBackdrop, DrawerContent, DrawerPositioner, DrawerRoot, DrawerTrigger, Portal } from "@chakra-ui/react";
 import { FC, useCallback, useRef, useState } from "react";
 
+import { useModalScrollFix } from "@/hooks/useModalScrollFix";
+
 import { DrawerContainerTyped, DrawerProps, DrawerTriggerTyped, DrawerTyped } from "./Drawer.types";
 
 const TypedDrawerRoot = DrawerRoot as FC<DrawerTyped>;
@@ -19,7 +21,15 @@ const Drawer: FC<DrawerProps> = ({
   size = "xs",
   placement,
   modal = true,
-  maxW
+  maxW,
+  trapFocus = true,
+  restoreFocus = true,
+  closeOnEscape = true,
+  paddingTop,
+  paddingLeft,
+  paddingRight,
+  paddingBottom,
+  maxH
 }) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const isControlled = openProp !== undefined;
@@ -40,20 +50,32 @@ const Drawer: FC<DrawerProps> = ({
   const handleClose = useCallback(() => setOpen(false), [setOpen]);
   const handleRootOpenChange = useCallback((e: { open: boolean }) => setOpen(e.open), [setOpen]);
 
+  useModalScrollFix(open);
+
   return (
     <TypedDrawerRoot
+      lazyMount
+      unmountOnExit
       closeOnInteractOutside={closeOnInteractOutside}
       open={open}
       onOpenChange={handleRootOpenChange}
       size={size}
       placement={placement}
       modal={modal}
+      trapFocus={trapFocus}
+      restoreFocus={restoreFocus}
+      closeOnEscape={closeOnEscape}
     >
       {trigger != null ? <TypedDrawerTrigger asChild>{trigger}</TypedDrawerTrigger> : null}
       <Portal>
         {closeOnInteractOutside && <TypedDrawerBackdrop />}
-        <TypedDrawerPositioner>
-          <TypedDrawerContent maxW={maxW}>
+        <TypedDrawerPositioner
+          paddingTop={paddingTop}
+          paddingLeft={paddingLeft}
+          paddingRight={paddingRight}
+          paddingBottom={paddingBottom}
+        >
+          <TypedDrawerContent maxW={maxW} maxH={maxH}>
             {typeof children === "function" ? children({ onClose: handleClose }) : children}
           </TypedDrawerContent>
         </TypedDrawerPositioner>

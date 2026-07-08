@@ -4,11 +4,10 @@ import { useT } from "@transifex/react";
 import { cloneElement, FC, isValidElement, ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 
 import type { BulkSitePolygonAttributeChanges } from "@/connections/SitePolygons";
-import {
-  dropdownOptionsRestoration,
-  dropdownOptionsTarget,
-  dropdownOptionsTree
-} from "@/constants/polygonDropdownOptions";
+import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
+import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOptions";
+import { useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import IconButton from "@/redesignComponents/actions/Buttons/IconButton/IconButton";
@@ -31,29 +30,31 @@ interface PolygonBulkEditDrawerProps {
   onSave?: (attributeChanges: BulkSitePolygonAttributeChanges) => void | Promise<void>;
 }
 
-type BulkEditField = "plantStart" | "practice" | "targetSys" | "distr" | "numTrees";
+type BulkEditField = "plantStart" | "practice" | "targetSys" | "distr" | "numTrees" | "submissionCycle";
 
 type FieldValueSnapshot =
   | { field: "plantStart"; value: DateValue[] }
   | { field: "practice"; value: string[] }
   | { field: "targetSys"; value: string[] }
   | { field: "distr"; value: string[] }
-  | { field: "numTrees"; value: string };
+  | { field: "numTrees"; value: string }
+  | { field: "submissionCycle"; value: string[] };
 
 type EditableInputProps = { disabled?: boolean };
 
 const EditWrapper: FC<{
   enabled: boolean;
+  editable?: boolean;
   onEnable: () => void;
   onCancel: () => void;
   onSave: () => void;
   children: ReactElement<EditableInputProps>;
-}> = ({ enabled, onEnable, onCancel, onSave, children }) => {
+}> = ({ enabled, editable = true, onEnable, onCancel, onSave, children }) => {
   const t = useT();
 
   const input = isValidElement(children)
     ? cloneElement(children, {
-        disabled: !enabled || children.props.disabled === true
+        disabled: !editable || !enabled || children.props.disabled === true
       })
     : children;
 
@@ -69,19 +70,16 @@ const EditWrapper: FC<{
             {t("Save")}
           </Button>
         </Flex>
-      ) : (
+      ) : editable ? (
         <Box className="mt-auto flex h-[2.5rem] items-center justify-center">
           <IconButton icon={<EditIcon color="neutral.800" boxSize={4} />} onClick={onEnable} />
         </Box>
+      ) : (
+        <Box className="mt-auto h-[2.5rem] w-[2.5rem] shrink-0" />
       )}
     </Flex>
   );
 };
-
-const optionToSelectItem = (option: { title: string; value: string }) => ({
-  label: option.title,
-  value: option.value
-});
 
 const dateValueToIsoString = (value: DateValue | undefined): string | undefined => {
   if (value == null) return undefined;
@@ -98,6 +96,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
   onSave
 }) => {
   const t = useT();
+  const isAdmin = useIsAdmin();
   const [editingField, setEditingField] = useState<BulkEditField | null>(null);
   const [committedFields, setCommittedFields] = useState<Set<BulkEditField>>(() => new Set());
   const [fieldSnapshots, setFieldSnapshots] = useState<Partial<Record<BulkEditField, FieldValueSnapshot>>>({});
@@ -106,20 +105,12 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState("");
+  const [submissionCycle, setSubmissionCycle] = useState<string[]>([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  const restorationOptions = useMemo(
-    () => dropdownOptionsRestoration.map(option => ({ ...optionToSelectItem(option), label: t(option.title) })),
-    [t]
-  );
-  const targetOptions = useMemo(
-    () => dropdownOptionsTarget.map(option => ({ ...optionToSelectItem(option), label: t(option.title) })),
-    [t]
-  );
-  const treeOptions = useMemo(
-    () => dropdownOptionsTree.map(option => ({ ...optionToSelectItem(option), label: t(option.title) })),
-    [t]
-  );
+  const restorationOptions = useRestorationPracticeOptions();
+  const targetOptions = useTargetLandUseOptions();
+  const treeOptions = useTreeDistributionOptions();
 
   const captureFieldSnapshot = useCallback(
     (field: BulkEditField): FieldValueSnapshot => {
@@ -127,9 +118,11 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
       if (field === "practice") return { field, value: [...restorationPractice] };
       if (field === "targetSys") return { field, value: [...targetLandUseSystem] };
       if (field === "distr") return { field, value: [...treeDistribution] };
-      return { field, value: treesPlanted };
+      if (field === "numTrees") return { field, value: treesPlanted };
+      if (field === "submissionCycle") return { field, value: [...submissionCycle] };
+      return { field, value: [] };
     },
-    [plantStartDate, restorationPractice, targetLandUseSystem, treeDistribution, treesPlanted]
+    [plantStartDate, restorationPractice, targetLandUseSystem, treeDistribution, treesPlanted, submissionCycle]
   );
 
   const applyFieldSnapshot = useCallback((snapshot: FieldValueSnapshot) => {
@@ -138,6 +131,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
     if (snapshot.field === "targetSys") setTargetLandUseSystem(snapshot.value);
     if (snapshot.field === "distr") setTreeDistribution(snapshot.value);
     if (snapshot.field === "numTrees") setTreesPlanted(snapshot.value);
+    if (snapshot.field === "submissionCycle") setSubmissionCycle(snapshot.value);
   }, []);
 
   const clearFieldValues = useCallback((field: BulkEditField) => {
@@ -146,6 +140,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
     if (field === "targetSys") setTargetLandUseSystem([]);
     if (field === "distr") setTreeDistribution([]);
     if (field === "numTrees") setTreesPlanted("");
+    if (field === "submissionCycle") setSubmissionCycle([]);
   }, []);
 
   const resetForm = useCallback(() => {
@@ -157,6 +152,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
     setTargetLandUseSystem([]);
     setTreeDistribution([]);
     setTreesPlanted("");
+    setSubmissionCycle([]);
     setShowConfirmModal(false);
   }, []);
 
@@ -211,6 +207,8 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
 
   const enableField = useCallback(
     (field: BulkEditField) => {
+      if (field === "submissionCycle" && !isAdmin) return;
+
       if (editingField === field) return;
 
       if (editingField != null) {
@@ -219,7 +217,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
 
       setEditingField(field);
     },
-    [commitFieldLocally, editingField]
+    [commitFieldLocally, editingField, isAdmin]
   );
 
   const saveField = useCallback(
@@ -267,15 +265,33 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
     [resetForm]
   );
 
+  // TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
+  // const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
+  //   { value: "option-1", label: t("Option 1") },
+  //   { value: "option-2", label: t("Option 2") },
+  //   { value: "option-3", label: t("Option 3") }
+  // ];
+
   return (
-    <Drawer placement="start" defaultOpen={false} open={open} onOpenChange={handleOpenChange} size="md">
+    <Drawer
+      modal={false}
+      closeOnInteractOutside={false}
+      placement="start"
+      defaultOpen={false}
+      open={open}
+      onOpenChange={handleOpenChange}
+      size="md"
+      paddingTop={isAdmin ? 12 : 0}
+      paddingLeft={isAdmin ? 12 : 0}
+      maxH={isAdmin ? "calc(100vh - 3rem)" : "100vh"}
+    >
       {({ onClose }) => (
         <>
           <FilterPanel
             title={t("Edit Details")}
             variant="fixed"
             onClose={() => handleFooterCancel(onClose)}
-            className="h-screen w-full"
+            className="h-full w-full"
             content={
               <Flex className="mr-1 min-h-0 flex-1 flex-col gap-4 overflow-auto py-5 pr-5 pl-4">
                 <SelectedPolygonsSummary selectedPolygons={selectedPolygons} open={open} />
@@ -353,12 +369,31 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                   <TextInput
                     width="12.75rem"
                     label={t("Trees Planted")}
-                    showOptionalLabel={false}
                     value={treesPlanted}
                     onChange={event => setTreesPlanted(event.target.value.replace(/\D/g, ""))}
                     disabled={editingField !== "numTrees"}
                   />
                 </EditWrapper>
+                {/* TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
+                {(isAdmin || submissionCycle.length > 0) && (
+                  <EditWrapper
+                    editable={isAdmin}
+                    enabled={editingField === "submissionCycle"}
+                    onEnable={() => enableField("submissionCycle")}
+                    onCancel={() => cancelField("submissionCycle")}
+                    onSave={() => saveField("submissionCycle")}
+                  >
+                    <SelectInput
+                      items={SUBMISSION_CYCLE_MOCKED_OPTIONS}
+                      label={t("Submission Cycle")}
+                      placeholder={t("Select...")}
+                      value={submissionCycle}
+                      onChange={value => setSubmissionCycle(value.slice(0, 1))}
+                      disabled={!isAdmin || editingField !== "submissionCycle"}
+                    />
+                  </EditWrapper>
+                )}
+                */}
               </Flex>
             }
             footer={

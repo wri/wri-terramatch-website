@@ -39,6 +39,7 @@ export interface MetricCardProps {
   frameworkKey?: string;
   selection?: number;
   metricLabel?: string;
+  widthProgressBar?: string;
 }
 
 type MetricCardFieldsForContentVariants =
@@ -53,7 +54,8 @@ type MetricCardFieldsForContentVariants =
   | "type"
   | "frameworkKey"
   | "selection"
-  | "metricLabel";
+  | "metricLabel"
+  | "widthProgressBar";
 
 export interface MetricCardCommonVariantProps extends Pick<MetricCardProps, MetricCardFieldsForContentVariants> {
   iconWithColor: ReactNode;
@@ -87,7 +89,8 @@ type ProgressBarMetricCardContentKeys =
   | "type"
   | "tooltipContent"
   | "classNameTitle"
-  | "metricLabel";
+  | "metricLabel"
+  | "widthProgressBar";
 
 export type ProgressBarMetricCardContentProps = Pick<MetricCardCommonVariantProps, ProgressBarMetricCardContentKeys>;
 

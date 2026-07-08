@@ -8,40 +8,50 @@ import Menu from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { AuditStatusEntityType, deleteAuditStatusAsync } from "@/connections/AuditStatus";
-import { getPolygonSubmissionStatusLabel } from "@/constants/polygonHandoff";
+import { isPolygonDataSubmissionOption, PolygonDataSubmissionOption } from "@/constants/polygonHandoff";
 import { useNotificationContext } from "@/context/notification.provider";
 import { AuditStatusDto, MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useGetAuditLogColumnTitles } from "@/hooks/translation/useGetAuditLogColumnTitles";
+import { usePolygonSubmissionStatusLabels } from "@/hooks/translation/usePolygonSubmissionStatusLabels";
 
 const formattedTextStatus = (text: string) => {
   return text?.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
 };
 
-const getTextForActionTable = (item: { type: string; status: string }, entity?: string): string => {
+const getTextForActionTable = (
+  t: ReturnType<typeof useT>,
+  item: { type: string; status: string },
+  entity: string | undefined,
+  polygonSubmissionStatusLabels: Record<PolygonDataSubmissionOption, string>
+): string => {
   if (item.type === "comment" && entity == "site-polygon") {
-    return "New Comment";
+    return t("New Comment");
   } else if (item.type === "status" && entity == "site-polygon") {
-    const text = `New Status: ${formattedTextStatus(item.status)}`;
-    if (text === "New Status: Updated") {
-      return "Updated";
+    if (item.status === "updated") {
+      return t("Updated");
+    } else {
+      return t("New Status: {status}", { status: formattedTextStatus(item.status) });
     }
-    return text;
   } else if (item.type === "polygon-data-submission") {
-    return item.status != null ? getPolygonSubmissionStatusLabel(item.status) : "Polygon Submission Status";
+    if (item.status != null && isPolygonDataSubmissionOption(item.status)) {
+      return polygonSubmissionStatusLabels[item.status];
+    }
+    return item.status != null ? "-" : t("Polygon Submission Status");
   } else if (item.type === "ready-for-baseline") {
-    return item.status === "yes" ? "Ready for baseline: Yes" : "Ready for baseline: No";
+    return item.status === "yes" ? t("Ready for baseline: Yes") : t("Ready for baseline: No");
   } else if (item.type === "change-request-updated") {
-    return "Change Request Updated";
+    return t("Change Request Updated");
   } else if (item.type === "reminder-sent") {
-    return "Reminder Sent";
+    return t("Reminder Sent");
   } else if (item.type === "change-request") {
-    return "Change Requested";
+    return t("Change Requested");
   } else {
     return "-";
   }
 };
 
-const generateUserName = (firstName?: string | null, lastName?: string | null): string =>
-  firstName == null && lastName == null ? "Unknown User" : `${firstName} ${lastName}`.trim();
+const generateUserName = (t: ReturnType<typeof useT>, firstName?: string | null, lastName?: string | null): string =>
+  firstName == null && lastName == null ? t("Unknown User") : `${firstName} ${lastName}`.trim();
 
 const ENTITY_MAP: Record<string, AuditStatusEntityType> = {
   "site-polygon": "sitePolygons",
@@ -70,22 +80,6 @@ const AuditLogTable: FC<{
   const columnLayoutEntity = polygonHandoffColumnStyle ? "site-polygon" : (auditData?.entity as string);
   const showAuditStatusColumn = columnLayoutEntity !== "site-polygon" && fullColumns;
 
-  const getColumnTitles = (entity: string, isAdmin: boolean, fullColumns: boolean) => {
-    if (entity === "site-polygon") {
-      if (fullColumns) {
-        return isAdmin
-          ? ["Date", "User", "Action", "Comments", "Attachments", ""]
-          : ["Date", "User", "Action", "Comments", "Attachments"];
-      } else {
-        return ["Date", "User", "Action"];
-      }
-    } else {
-      return isAdmin
-        ? ["Date", "User", "Status", "Change Request", "Comments", "Attachments", ""]
-        : ["Date", "User", "Status", "Change Request", "Comments", "Attachments"];
-    }
-  };
-
   const getGridColumnSize = (entity: string, isAdmin: boolean) => {
     if (entity === "site-polygon") {
       if (fullColumns) {
@@ -98,11 +92,12 @@ const AuditLogTable: FC<{
     }
   };
 
-  const columnTitles = getColumnTitles(columnLayoutEntity, isAdmin, fullColumns);
+  const columnTitles = useGetAuditLogColumnTitles(columnLayoutEntity, isAdmin, fullColumns);
   const gridColumnSize = getGridColumnSize(columnLayoutEntity, isAdmin);
 
   const { openNotification } = useNotificationContext();
   const t = useT();
+  const polygonSubmissionStatusLabels = usePolygonSubmissionStatusLabels();
 
   const deleteAuditStatus = async (auditUuid: string) => {
     try {
@@ -149,7 +144,7 @@ const AuditLogTable: FC<{
                   {item.dateCreated != null ? convertDateFormat(item.dateCreated) : "-"}
                 </Text>
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
-                  {generateUserName(item.firstName, item.lastName)}
+                  {generateUserName(t, item.firstName, item.lastName)}
                 </Text>
                 {showAuditStatusColumn ? (
                   <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
@@ -158,11 +153,13 @@ const AuditLogTable: FC<{
                 ) : null}
                 <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                   {getTextForActionTable(
+                    t,
                     {
                       type: item.type ?? "",
                       status: item.status ?? ""
                     },
-                    auditData?.entity
+                    auditData?.entity,
+                    polygonSubmissionStatusLabels
                   )}
                 </Text>
                 {fullColumns ? (
@@ -202,7 +199,7 @@ const AuditLogTable: FC<{
                               onClick={() => deleteAuditStatus(item.uuid)}
                             >
                               <Icon name={IconNames.TRASH} className="h-4 w-4 lg:h-5 lg:w-5" />
-                              &nbsp; Delete
+                              &nbsp; {t("Delete")}
                             </Text>
                           )
                         }

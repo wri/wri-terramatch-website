@@ -11,7 +11,7 @@ import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { SupportedEntity } from "@/connections/EntityAssociation";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { ALL_TF, useFrameworkContext } from "@/context/framework.provider";
 import { type FormFieldsProvider, useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 
 type InformationTabRowProps = Omit<FormSummaryRowProps, "index" | "type">;
@@ -24,10 +24,8 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
   const fieldsProvider = useFieldsProvider();
   const { framework } = useFrameworkContext();
   const title = fieldsProvider.step(props.stepId)?.title;
-  const showTreesToBeRestored =
-    entityName === "projects" &&
-    framework === Framework.TF_3 &&
-    stepIncludesTreesGoalField(fieldsProvider, props.stepId);
+  const showTreesToBeGrown =
+    entityName === "projects" && ALL_TF.includes(framework) && stepIncludesTreesGoalField(fieldsProvider, props.stepId);
   return (
     <>
       <Text variant="text-16-semibold" className="text-darkCustom">
@@ -96,11 +94,11 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
           );
         }}
       />
-      {showTreesToBeRestored ? (
+      {showTreesToBeGrown ? (
         <Typography className={LabeledClasses.label}>
           <div className="mt-4 flex items-center gap-2 py-1">
-            <Text as="span" variant="text-16-bold" className="capitalize text-darkCustom">
-              Trees to be Restored:
+            <Text as="span" variant="text-16-bold" className="text-darkCustom">
+              Trees to be Grown:
             </Text>
             <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
               {(record?.treesToBeRestoredGoal ?? 0).toLocaleString()}

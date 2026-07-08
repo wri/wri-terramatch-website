@@ -15,7 +15,7 @@ import {
 } from "@/connections/SitePolygons";
 import { useMyUser } from "@/connections/User";
 import { createPolygonValidation } from "@/connections/Validation";
-import { POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
+import { POLYGON_APPROVED, POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
@@ -30,6 +30,7 @@ import {
   formatPolygonTargetId,
   trackBulkActionCompleted,
   trackPolygonDownloaded,
+  trackPolygonRunValidationClicked,
   trackPolygonStatusChanged
 } from "@/utils/polygonAnalytics";
 
@@ -37,6 +38,7 @@ import type { OverlapFixPolygon } from "../components/Modals/OverlapFix";
 import type { PolygonOverlapFixParams } from "../components/polygonEdit.types";
 import { prunePolygonValidationCache } from "../components/polygonEditSave";
 import type { PolygonTableRow } from "../components/PolygonTableRow";
+import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
 import {
   closePolygonProgressToast,
   completePolygonProgressToast,
@@ -47,20 +49,22 @@ import {
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
 import {
+  type PolygonStatusChangeComment,
+  buildStatusChangeComment,
+  formatCommentAuthorName
+} from "../utils/polygonStatusChangeComment";
+import {
   type OverlapFixSelectionSummary,
   buildOverlapFixResultPolygons,
+  collectGeometryUuidsForValidationUiClear,
+  collectRelatedPartnerUuidsFromFixability,
   extractClippedVersions,
   resolveActivePolygonAfterOverlapFix
 } from "./overlapFix.utils";
 
-const formatAuthorName = (firstName?: string | null, lastName?: string | null): string =>
-  firstName == null && lastName == null ? "Unknown User" : `${firstName ?? ""} ${lastName ?? ""}`.trim();
+const formatAuthorName = formatCommentAuthorName;
 
-export type SubmittedPolygonComment = {
-  authorName: string;
-  message: string;
-  createdAt: string;
-};
+export type SubmittedPolygonComment = PolygonStatusChangeComment;
 
 type FetchValidations = (clearCache?: boolean) => Promise<ValidationDto[] | undefined>;
 
@@ -84,6 +88,10 @@ type UseSitePolygonBulkActionsParams = {
     polygonsNotFixed: OverlapFixPolygon[];
   }) => void;
   onValidationJobsStarted?: (polygonUuids: string[], options?: { trackBulkCompletion?: boolean }) => void;
+  onValidationPending?: (polygonUuids: string[]) => void;
+  onValidationPendingClear?: () => void;
+  /** Drop local/cached validation UI for geometries cleared server-side by clipping. */
+  onValidationUiCleared?: (geometryPolygonUuids: string[]) => void;
 };
 
 export const useSitePolygonBulkActions = ({
@@ -102,7 +110,10 @@ export const useSitePolygonBulkActions = ({
   fetchAllValidationPages,
   fetchOverlapValidations,
   onOverlapFixResultsOpen,
-  onValidationJobsStarted
+  onValidationJobsStarted,
+  onValidationPending,
+  onValidationPendingClear,
+  onValidationUiCleared
 }: UseSitePolygonBulkActionsParams) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
@@ -140,6 +151,14 @@ export const useSitePolygonBulkActions = ({
   const [showPolygonSubmittedModal, setPolygonSubmittedModal] = useState(false);
   const [submittedPolygonNames, setSubmittedPolygonNames] = useState<string[]>([]);
   const [submittedPolygonComment, setSubmittedPolygonComment] = useState<SubmittedPolygonComment | null>(null);
+  const [showPolygonApprovedModal, setPolygonApprovedModal] = useState(false);
+  const [approvedPolygonNames, setApprovedPolygonNames] = useState<string[]>([]);
+  const [approvedPolygonComment, setApprovedPolygonComment] = useState<PolygonStatusChangeComment | null>(null);
+  const [showInformationRequestedModal, setInformationRequestedModal] = useState(false);
+  const [requestedInformationPolygonNames, setRequestedInformationPolygonNames] = useState<string[]>([]);
+  const [requestedInformationComment, setRequestedInformationComment] = useState<PolygonStatusChangeComment | null>(
+    null
+  );
   const [showDeletePolygonModal, setDeletePolygonModal] = useState(false);
   const [showBulkEditDrawer, setShowBulkEditDrawer] = useState(false);
   const [isDownloadingSelectedPolygons, setIsDownloadingSelectedPolygons] = useState(false);
@@ -196,6 +215,34 @@ export const useSitePolygonBulkActions = ({
   const schedulePolygonSubmittedModal = useCallback(() => {
     window.setTimeout(() => {
       setPolygonSubmittedModal(true);
+    }, 200);
+  }, []);
+
+  const handlePolygonApprovedModalChange = useCallback((open: boolean) => {
+    setPolygonApprovedModal(open);
+    if (!open) {
+      setApprovedPolygonNames([]);
+      setApprovedPolygonComment(null);
+    }
+  }, []);
+
+  const schedulePolygonApprovedModal = useCallback(() => {
+    window.setTimeout(() => {
+      setPolygonApprovedModal(true);
+    }, 200);
+  }, []);
+
+  const handleInformationRequestedModalChange = useCallback((open: boolean) => {
+    setInformationRequestedModal(open);
+    if (!open) {
+      setRequestedInformationPolygonNames([]);
+      setRequestedInformationComment(null);
+    }
+  }, []);
+
+  const scheduleInformationRequestedModal = useCallback(() => {
+    window.setTimeout(() => {
+      setInformationRequestedModal(true);
     }, 200);
   }, []);
 
@@ -335,17 +382,76 @@ export const useSitePolygonBulkActions = ({
     [openNotification, runPolygonValidation, t]
   );
 
+  const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
+  const [validatedPolygons, setValidatedPolygons] = useState<PolygonTableRow[]>([]);
+
+  const handleSystemValidationCompleteModalChange = useCallback((open: boolean) => {
+    setIsSystemValidationCompleteModalOpen(open);
+    if (!open) {
+      setValidatedPolygons([]);
+    }
+  }, []);
+
+  const runValidationWithResultsModal = useCallback(
+    async (geometryPolygonUuids: string[]) => {
+      if (geometryPolygonUuids.length === 0) {
+        return;
+      }
+
+      trackPolygonRunValidationClicked({ siteUuid: site.uuid, polygonIds: geometryPolygonUuids });
+
+      const rows = geometryPolygonUuids
+        .map(geometryPolygonUuid =>
+          polygonsData.find(polygon => (polygon.polygonUuid ?? polygon.uuid) === geometryPolygonUuid)
+        )
+        .filter((polygon): polygon is SitePolygonLightDto => polygon != null)
+        .map(polygon => mapSitePolygonToTableRow(polygon, t));
+
+      onValidationPending?.(geometryPolygonUuids);
+      geometryPolygonUuids.forEach(geometryPolygonUuid => {
+        prunePolygonValidationCache(geometryPolygonUuid);
+      });
+      ApiSlice.pruneCache("validations");
+
+      setValidatedPolygons(rows);
+      setIsSystemValidationCompleteModalOpen(true);
+
+      try {
+        await handleRunValidation(geometryPolygonUuids);
+      } catch {
+        onValidationPendingClear?.();
+        setIsSystemValidationCompleteModalOpen(false);
+        setValidatedPolygons([]);
+      }
+    },
+    [handleRunValidation, onValidationPending, onValidationPendingClear, polygonsData, site.uuid, t]
+  );
+
   const handlePolygonDeletingChange = useCallback((isDeleting: boolean, count = 0) => {
     setIsDeletingPolygons(isDeleting);
     setDeletingPolygonCount(count);
   }, []);
 
+  const clearValidationUiAfterOverlapFix = useCallback(
+    async (geometryPolygonUuids: string[]) => {
+      if (geometryPolygonUuids.length > 0) {
+        // Match backend clearValidationForPolygons: drop criteria + status from client caches only.
+        prunePolygonValidationCache(...geometryPolygonUuids);
+        onValidationUiCleared?.(geometryPolygonUuids);
+      }
+
+      const [, overlapValidations] = await Promise.all([fetchAllValidationPages(true), fetchOverlapValidations(true)]);
+
+      return overlapValidations ?? [];
+    },
+    [fetchAllValidationPages, fetchOverlapValidations, onValidationUiCleared]
+  );
+
   const handleDrawerOverlapFixed = useCallback(
     async (params: PolygonOverlapFixParams) => {
-      prunePolygonValidationCache(params.previousPolygonUuid);
       invalidatePolygonMapTiles();
 
-      const refreshedPolygons = await refreshPolygonData({ refreshValidations: true, loadAll: true });
+      const refreshedPolygons = await refreshPolygonData({ loadAll: true });
 
       const updatedPolygon = resolveActivePolygonAfterOverlapFix(
         refreshedPolygons,
@@ -357,9 +463,12 @@ export const useSitePolygonBulkActions = ({
         params.clippedVersions ?? []
       );
 
-      if (updatedPolygon?.polygonUuid != null && updatedPolygon.polygonUuid !== "") {
-        prunePolygonValidationCache(params.previousPolygonUuid, updatedPolygon.polygonUuid);
-      }
+      const geometryUuidsToClear = collectGeometryUuidsForValidationUiClear({
+        previousGeometryUuids: [params.previousPolygonUuid],
+        newGeometryUuids: [updatedPolygon?.polygonUuid, ...(params.clippedVersions ?? []).map(version => version.uuid)],
+        relatedPartnerUuids: params.relatedPartnerUuids
+      });
+      await clearValidationUiAfterOverlapFix(geometryUuidsToClear);
 
       const fixedId = updatedPolygon?.polygonUuid ?? updatedPolygon?.uuid;
       const fixedName = updatedPolygon?.name ?? null;
@@ -375,7 +484,13 @@ export const useSitePolygonBulkActions = ({
 
       return updatedPolygon;
     },
-    [invalidatePolygonMapTiles, onOverlapFixResultsOpen, polygonsData, refreshPolygonData]
+    [
+      clearValidationUiAfterOverlapFix,
+      invalidatePolygonMapTiles,
+      onOverlapFixResultsOpen,
+      polygonsData,
+      refreshPolygonData
+    ]
   );
 
   const handleOverlapFix = useCallback(
@@ -397,19 +512,24 @@ export const useSitePolygonBulkActions = ({
         const response = await clipPolygonListAsync(fixableCandidates.map(candidate => candidate.id));
         const fixedVersions = extractClippedVersions(response);
 
-        ApiSlice.pruneCache("validations");
         invalidatePolygonMapTiles();
 
-        const refreshedPolygons = await loadAllSitePolygons({
-          entityName: "sites",
-          entityUuid: site.uuid,
-          enabled: site.uuid != null && site.uuid !== ""
+        const geometryUuidsToClear = collectGeometryUuidsForValidationUiClear({
+          previousGeometryUuids: fixableCandidates.map(candidate => candidate.id),
+          newGeometryUuids: fixedVersions.map(version => version.uuid),
+          relatedPartnerUuids: collectRelatedPartnerUuidsFromFixability(
+            fixableCandidates.map(candidate => candidate.fixabilityResult)
+          )
         });
 
-        const [, , refreshedOverlapValidations] = await Promise.all([
-          refreshPolygonData(),
-          fetchAllValidationPages(true),
-          fetchOverlapValidations(true)
+        const [refreshedPolygons, refreshedOverlapValidations] = await Promise.all([
+          loadAllSitePolygons({
+            entityName: "sites",
+            entityUuid: site.uuid,
+            enabled: site.uuid != null && site.uuid !== ""
+          }),
+          clearValidationUiAfterOverlapFix(geometryUuidsToClear),
+          refreshPolygonData()
         ]);
 
         onOverlapFixResultsOpen(
@@ -437,9 +557,8 @@ export const useSitePolygonBulkActions = ({
       }
     },
     [
+      clearValidationUiAfterOverlapFix,
       closeMapPopups,
-      fetchAllValidationPages,
-      fetchOverlapValidations,
       invalidatePolygonMapTiles,
       onOverlapFixResultsOpen,
       refreshPolygonData,
@@ -614,6 +733,148 @@ export const useSitePolygonBulkActions = ({
     [polygonSubmitConfirmation, polygonsData, submitPolygons, t]
   );
 
+  const approvePolygons = useCallback(
+    async (sitePolygonUuids: string[], approvedNames: string[], comment: string) => {
+      if (sitePolygonUuids.length === 0) {
+        openNotification("error", t("Error!"), t("No selected polygons are eligible for approval"));
+        return;
+      }
+
+      try {
+        const response = await bulkUpdateSitePolygonStatus(
+          sitePolygonUuids,
+          POLYGON_APPROVED as PolygonStatus,
+          comment
+        );
+
+        setApprovedPolygonComment(
+          buildStatusChangeComment(
+            comment,
+            formatCommentAuthorName(user?.firstName, user?.lastName),
+            getStatusUpdateCommentCreatedAt(response)
+          )
+        );
+        closeMapPopups();
+        setPolygonTableHoveredUuid(null);
+        invalidatePolygonMapTiles();
+        setApprovedPolygonNames(approvedNames);
+        setShouldRefetchPolygonData(true);
+        await refreshPolygonData();
+        ApiSlice.pruneCache("auditStatuses");
+        schedulePolygonApprovedModal();
+
+        for (const sitePolygonUuid of sitePolygonUuids) {
+          const sitePolygon = polygonsData.find(polygon => polygon.uuid === sitePolygonUuid);
+          const geometryPolygonUuid = sitePolygon?.polygonUuid;
+          if (geometryPolygonUuid == null || geometryPolygonUuid === "") {
+            continue;
+          }
+
+          trackPolygonStatusChanged({
+            siteUuid: site.uuid,
+            polygonId: geometryPolygonUuid,
+            fromStatus: sitePolygon?.status ?? "pending-approval",
+            toStatus: POLYGON_APPROVED
+          });
+        }
+
+        trackBulkActionCompleted({
+          siteUuid: site.uuid,
+          actionType: "approve",
+          polygonCount: sitePolygonUuids.length
+        });
+      } catch (error) {
+        Log.error("Failed to approve selected polygons:", error);
+        openNotification("error", t("Error!"), t("Error approving polygons"));
+        throw error;
+      }
+    },
+    [
+      closeMapPopups,
+      invalidatePolygonMapTiles,
+      openNotification,
+      polygonsData,
+      refreshPolygonData,
+      schedulePolygonApprovedModal,
+      setShouldRefetchPolygonData,
+      site.uuid,
+      t,
+      user?.firstName,
+      user?.lastName
+    ]
+  );
+
+  const requestInformationForPolygons = useCallback(
+    async (sitePolygonUuids: string[], polygonNames: string[], comment: string) => {
+      if (sitePolygonUuids.length === 0) {
+        openNotification("error", t("Error!"), t("No selected polygons are eligible for this action"));
+        return;
+      }
+
+      try {
+        const response = await bulkUpdateSitePolygonStatus(
+          sitePolygonUuids,
+          POLYGON_INFORMATION_REQUIRED as PolygonStatus,
+          comment
+        );
+
+        setRequestedInformationComment(
+          buildStatusChangeComment(
+            comment,
+            formatCommentAuthorName(user?.firstName, user?.lastName),
+            getStatusUpdateCommentCreatedAt(response)
+          )
+        );
+        closeMapPopups();
+        setPolygonTableHoveredUuid(null);
+        invalidatePolygonMapTiles();
+        setRequestedInformationPolygonNames(polygonNames);
+        setShouldRefetchPolygonData(true);
+        await refreshPolygonData();
+        ApiSlice.pruneCache("auditStatuses");
+        scheduleInformationRequestedModal();
+
+        for (const sitePolygonUuid of sitePolygonUuids) {
+          const sitePolygon = polygonsData.find(polygon => polygon.uuid === sitePolygonUuid);
+          const geometryPolygonUuid = sitePolygon?.polygonUuid;
+          if (geometryPolygonUuid == null || geometryPolygonUuid === "") {
+            continue;
+          }
+
+          trackPolygonStatusChanged({
+            siteUuid: site.uuid,
+            polygonId: geometryPolygonUuid,
+            fromStatus: sitePolygon?.status ?? "pending-approval",
+            toStatus: POLYGON_INFORMATION_REQUIRED
+          });
+        }
+
+        trackBulkActionCompleted({
+          siteUuid: site.uuid,
+          actionType: "request_information",
+          polygonCount: sitePolygonUuids.length
+        });
+      } catch (error) {
+        Log.error("Failed to request information for selected polygons:", error);
+        openNotification("error", t("Error!"), t("Error requesting information for polygons"));
+        throw error;
+      }
+    },
+    [
+      closeMapPopups,
+      invalidatePolygonMapTiles,
+      openNotification,
+      polygonsData,
+      refreshPolygonData,
+      scheduleInformationRequestedModal,
+      setShouldRefetchPolygonData,
+      site.uuid,
+      t,
+      user?.firstName,
+      user?.lastName
+    ]
+  );
+
   const handleBulkDownload = useCallback(
     async (geometryPolygonUuids: string[], downloadSitePolygons: SitePolygonLightDto[]) => {
       if (geometryPolygonUuids.length === 0) {
@@ -757,6 +1018,12 @@ export const useSitePolygonBulkActions = ({
     showMapPopupSubmitConfirmationModal,
     submittedPolygonNames,
     submittedPolygonComment,
+    showPolygonApprovedModal,
+    approvedPolygonNames,
+    approvedPolygonComment,
+    showInformationRequestedModal,
+    requestedInformationPolygonNames,
+    requestedInformationComment,
     isBulkUpdatingPolygons,
     isDeletingPolygons,
     isDownloadingSelectedPolygons,
@@ -765,6 +1032,8 @@ export const useSitePolygonBulkActions = ({
     deletingPolygonCount,
     fixingOverlapsCount,
     validatingPolygonCount,
+    approvePolygons,
+    requestInformationForPolygons,
     handleBulkDelete,
     handleBulkDownloadClick,
     handleBulkEditDetails,
@@ -774,16 +1043,22 @@ export const useSitePolygonBulkActions = ({
     handleConfirmMapPopupSubmit,
     handleDeletePolygonModalChange,
     handleDrawerOverlapFixed,
+    handleInformationRequestedModalChange,
     handleMapPopupSubmitConfirmationModalChange,
     handleOpenDeletePolygonModal,
     handleOpenSubmitPolygonsModal,
+    handlePolygonApprovedModalChange,
     handlePolygonDeletingChange,
     handlePolygonSubmittedModalChange,
     handleProceedToBulkSubmitConfirmation,
     handleRunValidation,
     handleSubmitPolygonConfirmationModalChange,
     handleSubmitPolygonsModalChange,
+    handleSystemValidationCompleteModalChange,
+    isSystemValidationCompleteModalOpen,
     openPolygonEditDrawerForRow,
-    runPolygonValidation
+    runPolygonValidation,
+    runValidationWithResultsModal,
+    validatedPolygons
   };
 };

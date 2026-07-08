@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -16,13 +17,13 @@ import { calculateTotalsFromProjects, groupProjectsByCountry } from "@/utils/das
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
 import Log from "@/utils/log";
 
-export const TREES_PLANTED_TOOLTIP =
+const TREES_PLANTED_TOOLTIP =
   "The total self-reported number of trees planted by TerraFund organizations, over the duration of the entire project.";
 
-export const HECTARES_UNDER_RESTORATION_TOOLTIP =
+const HECTARES_UNDER_RESTORATION_TOOLTIP =
   "The total area where active restoration interventions are being implemented, tallied by the total area of polygons submitted by projects and approved by GIS Associates.";
 
-export const JOBS_CREATED_TOOLTIP =
+const JOBS_CREATED_TOOLTIP =
   "TerraFund defines a job as a set of tasks and duties performed by one person aged 18 or over in exchange for monetary pay in line with living wage standards. Individuals counted toward indicators part-time employees and full-time employees must be directly employed by the project, as reflected on employment records.";
 
 const DEFAULT_COHORT: string[] = ["terrafund-cohort-1", "terrafund-cohort-2", "terrafund-cohort-3"];
@@ -32,22 +33,23 @@ const DEFAULT_ORGANIZATION_TYPES: ("for-profit-organization" | "non-profit-organ
 ];
 
 export const useDashboardData = (filters: any) => {
+  const t = useT();
   const [generalBboxParsed, setGeneralBboxParsed] = useState<BBox | undefined>(undefined);
   const [dashboardHeader, setDashboardHeader] = useState([
     {
-      label: "Trees Planted",
+      label: t("Trees Planted"),
       value: "Loading...",
-      tooltip: TREES_PLANTED_TOOLTIP
+      tooltip: t(TREES_PLANTED_TOOLTIP)
     },
     {
-      label: "Hectares Under Restoration",
+      label: t("Hectares Under Restoration"),
       value: "Loading...",
-      tooltip: HECTARES_UNDER_RESTORATION_TOOLTIP
+      tooltip: t(HECTARES_UNDER_RESTORATION_TOOLTIP)
     },
     {
-      label: "Jobs Created",
+      label: t("Jobs Created"),
       value: "Loading...",
-      tooltip: JOBS_CREATED_TOOLTIP
+      tooltip: t(JOBS_CREATED_TOOLTIP)
     }
   ]);
   const [numberTreesPlanted, setNumberTreesPlanted] = useState({

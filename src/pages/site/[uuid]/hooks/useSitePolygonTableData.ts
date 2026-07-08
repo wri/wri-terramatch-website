@@ -46,7 +46,7 @@ export const useSitePolygonTableData = ({ polygonsData, polygonValidations, t }:
       { key: "validation", label: t("Validation"), sortable: true },
       { key: "restorationPracticeSort", label: t("Restoration Practice"), sortable: true },
       { key: "targetLandUseSort", label: t("Target Land Use"), sortable: true },
-      { key: "treeDistribution", label: t("Tree Distribution"), sortable: true },
+      { key: "treeDistributionSort", label: t("Tree Distribution"), sortable: true },
       { key: "plantingDate", label: t("Planting Start Date"), sortable: true },
       { key: "treesPlanted", label: t("Trees Planted"), sortable: true },
       { key: "area", label: t("Area (ha)"), sortable: true },

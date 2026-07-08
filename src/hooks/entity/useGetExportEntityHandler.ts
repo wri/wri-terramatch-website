@@ -5,8 +5,9 @@ import { useCallback, useState } from "react";
 import { SupportedEntity } from "@/connections/Entity";
 import { entityExport } from "@/generated/v3/entityService/entityServiceComponents";
 import { singularEntityName, v3EntityName } from "@/helpers/entity";
+import { useDownloadToastMessages } from "@/hooks/translation/useDownloadToastMessages";
 import { EntityName, SingularEntityName } from "@/types/common";
-import { DOWNLOAD_COMPLETE_MESSAGE, DOWNLOAD_ERROR_MESSAGE, runWithDownloadToast } from "@/utils/downloadToast";
+import { runWithDownloadToast } from "@/utils/downloadToast";
 import Log from "@/utils/log";
 
 /**
@@ -14,6 +15,7 @@ import Log from "@/utils/log";
  */
 export const useGetExportEntityHandler = (entity: EntityName | SingularEntityName | string, uuid: string) => {
   const t = useT();
+  const downloadToastMessages = useDownloadToastMessages();
   const [loading, setLoading] = useState(false);
 
   const handleExport = useCallback(async () => {
@@ -24,9 +26,9 @@ export const useGetExportEntityHandler = (entity: EntityName | SingularEntityNam
     try {
       await runWithDownloadToast(
         {
-          downloading: t(`Downloading ${entityLabel}...`),
-          complete: t(DOWNLOAD_COMPLETE_MESSAGE),
-          error: t(DOWNLOAD_ERROR_MESSAGE)
+          downloading: `${t(`Downloading {entityLabel}`, { entityLabel })}...`,
+          complete: downloadToastMessages.complete,
+          error: downloadToastMessages.error
         },
         async () => {
           const entityName = v3EntityName(entity as EntityName | SingularEntityName) as SupportedEntity;
@@ -39,7 +41,7 @@ export const useGetExportEntityHandler = (entity: EntityName | SingularEntityNam
     } finally {
       setLoading(false);
     }
-  }, [entity, t, uuid]);
+  }, [downloadToastMessages, entity, t, uuid]);
 
   return { handleExport, loading };
 };

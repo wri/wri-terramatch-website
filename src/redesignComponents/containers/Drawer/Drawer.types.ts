@@ -15,6 +15,14 @@ export interface DrawerProps {
   placement?: DrawerPlacement;
   modal?: boolean;
   maxW?: SizeValue;
+  trapFocus?: boolean;
+  restoreFocus?: boolean;
+  closeOnEscape?: boolean;
+  paddingTop?: SizeValue;
+  paddingLeft?: SizeValue;
+  paddingRight?: SizeValue;
+  paddingBottom?: SizeValue;
+  maxH?: SizeValue;
 }
 
 export interface DrawerTyped {
@@ -25,6 +33,11 @@ export interface DrawerTyped {
   size: NonNullable<DrawerProps["size"]>;
   placement?: DrawerPlacement;
   modal?: boolean;
+  trapFocus?: boolean;
+  restoreFocus?: boolean;
+  closeOnEscape?: boolean;
+  lazyMount?: boolean;
+  unmountOnExit?: boolean;
 }
 
 export interface DrawerTriggerTyped {
@@ -35,4 +48,9 @@ export interface DrawerTriggerTyped {
 export interface DrawerContainerTyped {
   children: ReactNode;
   maxW?: SizeValue;
+  paddingTop?: SizeValue;
+  paddingLeft?: SizeValue;
+  paddingRight?: SizeValue;
+  paddingBottom?: SizeValue;
+  maxH?: SizeValue;
 }

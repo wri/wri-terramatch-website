@@ -8,6 +8,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { deleteProjectPolygon } from "@/connections/ProjectPolygons";
+import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -18,25 +19,30 @@ import Text from "../../Text/Text";
 
 interface PolygonModifierProps {
   polygonFromMap: { uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string } | undefined;
-  onClick?: () => void;
-  onSave?: () => void;
+  setPolygonFromMap?: (value: { uuid: string; isOpen: boolean }) => void;
+  onClick?: () => void | Promise<void>;
+  onSave?: () => void | Promise<void>;
   onCancel?: () => void;
 }
 
-const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonModifierProps) => {
+const PolygonModifier = ({ polygonFromMap, setPolygonFromMap, onClick, onSave, onCancel }: PolygonModifierProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
   const contextSite = useSitePolygonData();
   const reloadSiteData = contextSite?.reloadSiteData;
+  const { invalidatePolygonMapTiles } = useMapAreaContext();
   const t = useT();
 
   const handleSave = async () => {
+    if (polygonFromMap?.uuid == null || polygonFromMap.uuid === "") {
+      openNotification("warning", t("Select a polygon"), t("Click a polygon on the map before saving edits."));
+      return;
+    }
+
     try {
-      onSave?.();
+      await onSave?.();
       setIsEditing(false);
-      reloadSiteData?.();
-      openNotification("success", t("Polygon updated successfully"), t("The polygon has been updated."));
     } catch (error) {
       Log.error("Error saving polygon:", error);
       openNotification("error", t("Error updating polygon"), t("There was an error updating the polygon."));
@@ -44,12 +50,17 @@ const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonM
   };
 
   const handleDelete = async () => {
+    if (polygonFromMap?.uuid == null || polygonFromMap.uuid === "") {
+      openNotification("warning", t("Select a polygon"), t("Click a polygon on the map before deleting."));
+      return;
+    }
+
     try {
-      if (polygonFromMap?.uuid) {
-        await deleteProjectPolygon(polygonFromMap.uuid);
-        reloadSiteData?.();
-        openNotification("success", t("Polygon deleted"), t("The polygon has been deleted successfully."));
-      }
+      await deleteProjectPolygon(polygonFromMap.uuid);
+      setPolygonFromMap?.({ isOpen: false, uuid: "" });
+      invalidatePolygonMapTiles();
+      reloadSiteData?.();
+      openNotification("success", t("Polygon deleted"), t("The polygon has been deleted successfully."));
     } catch (error) {
       Log.error("Error deleting polygon:", error);
       openNotification("error", t("Error deleting polygon"), t("There was an error deleting the polygon."));
@@ -76,8 +87,12 @@ const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonM
       <IconButton
         iconProps={{ name: IconNames.EDIT, width: 24, height: 24 }}
         onClick={() => {
+          if (polygonFromMap?.uuid == null || polygonFromMap.uuid === "") {
+            openNotification("warning", t("Select a polygon"), t("Click a polygon on the map before editing."));
+            return;
+          }
           setIsEditing(true);
-          onClick?.();
+          void onClick?.();
         }}
         className="rounded-b-none rounded-t-lg p-[10px]"
         aria-label={t("Edit Polygon")}
