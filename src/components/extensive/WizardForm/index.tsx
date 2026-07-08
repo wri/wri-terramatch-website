@@ -4,7 +4,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FieldErrors, useForm, UseFormProps, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
@@ -46,8 +46,10 @@ import { FormFooter } from "./FormFooter";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
-import { useHotjarAboveStickyFooter } from "./useHotjarAboveStickyFooter";
 import { getFormHeaderLabel } from "./utils";
+
+/** Marks the page while a wizard sticky footer is present (for third-party widget CSS). */
+export const WIZARD_STICKY_FOOTER_BODY_ATTR = "data-wizard-sticky-footer";
 
 export type WizardFormEntity = {
   siteUuid?: string | null;
@@ -138,7 +140,12 @@ function WizardForm(props: WizardFormProps) {
 
   const [showValidationErrors, setShowValidationErrors] = useState(!(props.deferValidation ?? false));
 
-  useHotjarAboveStickyFooter();
+  useEffect(() => {
+    document.body.setAttribute(WIZARD_STICKY_FOOTER_BODY_ATTR, "");
+    return () => {
+      document.body.removeAttribute(WIZARD_STICKY_FOOTER_BODY_ATTR);
+    };
+  }, []);
 
   const models = useMemo(() => toArray(props.models), [props.models]);
   const isSubmissionModel = models.length > 1;
