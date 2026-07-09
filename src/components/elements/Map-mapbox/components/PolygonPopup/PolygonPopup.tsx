@@ -16,7 +16,7 @@ export function PolygonPopup(event: PopupComponentProps) {
     setEditPolygon,
     championsMap,
     sitePolygonData,
-    siteReportPolygonPopup
+    overviewPolygonPopup
   } = event;
   const polygonUuid = (feature.properties?.uuid ?? "") as string;
 
@@ -32,7 +32,7 @@ export function PolygonPopup(event: PopupComponentProps) {
         setShouldRefetchPolygonData={setShouldRefetchPolygonData}
         sitePolygon={selectedSitePolygon}
         tooltipType={type}
-        siteReportPolygonPopup={siteReportPolygonPopup}
+        overviewPolygonPopup={overviewPolygonPopup}
       />
     );
   }
