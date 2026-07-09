@@ -63,6 +63,7 @@ import {
 } from "../hooks/overlapFix.utils";
 import { useDownloadSitePolygons } from "../hooks/useDownloadSitePolygons";
 import { usePolygonDrawUndo } from "../hooks/usePolygonDrawUndo";
+import { usePolygonUploadErrorModal } from "../hooks/usePolygonUploadErrorModal";
 import { useSelectedSitePolygons } from "../hooks/useSelectedSitePolygons";
 import { useSitePolygonBulkActions } from "../hooks/useSitePolygonBulkActions";
 import { useSitePolygonFilters } from "../hooks/useSitePolygonFilters";
@@ -107,8 +108,12 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     polygonsFixed: OverlapFixPolygon[];
     polygonsNotFixed: OverlapFixPolygon[];
   }>({ polygonsFixed: [], polygonsNotFixed: [] });
-  const [showUploadErrorModal, setUploadErrorModal] = useState(false);
-  const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(null);
+  const {
+    openUploadErrorModal: showUploadErrorModal,
+    uploadErrorMessage,
+    onUploadError,
+    onUploadErrorModalOpenChange
+  } = usePolygonUploadErrorModal();
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
   const [uploadedPolygonUuidToOpen, setUploadedPolygonUuidToOpen] = useState<string | null>(null);
   const [focusPolygonUuid, setFocusPolygonUuid] = useState<string | null>(null);
@@ -967,16 +972,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           isAwaitingValidationResults={pendingValidationPolygonUuids.length > 0}
           onSystemValidationCompleteModalOpenChange={handleSystemValidationCompleteModalChange}
           onViewValidationDetails={handleViewValidationDetails}
-          onUploadError={message => {
-            setUploadErrorMessage(message);
-            setUploadErrorModal(true);
-          }}
-          onUploadErrorModalOpenChange={open => {
-            setUploadErrorModal(open);
-            if (!open) {
-              setUploadErrorMessage(null);
-            }
-          }}
+          onUploadError={onUploadError}
+          onUploadErrorModalOpenChange={onUploadErrorModalOpenChange}
           onUploadModalOpenChange={setShowUploadModal}
           onUploadPhotosModalOpenChange={setShowUploadPhotosModal}
           onUploadSuccess={({ createdSitePolygonUuid, uploadedFileCount }) => {

@@ -48,13 +48,25 @@ export const getErrorMessageFromPayload = (payload: any): string => {
   }
 };
 
+const normalizeErrorMessage = (message: unknown): string => {
+  if (Array.isArray(message)) {
+    return message.filter((part): part is string => typeof part === "string").join(". ");
+  }
+
+  if (typeof message === "string") {
+    return message;
+  }
+
+  return String(message);
+};
+
 export const extractErrorMessage = (error: unknown): string => {
   if (error != null && typeof error === "object" && "message" in error) {
-    const message = error.message as string;
+    const message = normalizeErrorMessage((error as { message: unknown }).message);
     try {
       const parsed = JSON.parse(message);
       if (parsed != null && typeof parsed === "object" && "message" in parsed) {
-        return parsed.message;
+        return normalizeErrorMessage((parsed as { message: unknown }).message);
       }
     } catch {
       return message;
