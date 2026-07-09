@@ -184,6 +184,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 className="h-full min-h-0 rounded"
                 disabledPolygonPanel={true}
                 hideFullscreenControl={true}
+                overviewPolygonPopup={true}
               />
               {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
                 <MapPlaceholder

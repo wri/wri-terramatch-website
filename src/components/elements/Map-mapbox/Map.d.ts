@@ -83,8 +83,7 @@ export type PopupComponentProps = {
   dashboardMode?: string;
   /** When true, map uses the champions (non-admin) layout and controls. */
   championsMap?: boolean;
-  /** Site report overview map: polygon popup shows restoration practice and target land use. */
-  siteReportPolygonPopup?: boolean;
+  overviewPolygonPopup?: boolean;
 };
 
 /** Data shape passed to setMobilePopupData; mirrors PopupComponentProps minus the live Popup instance. */

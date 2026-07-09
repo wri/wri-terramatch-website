@@ -49,7 +49,7 @@ type UseMapPopupsParams = {
   editPolygon: EditPolygonState;
   setMobilePopupData: (v: MobilePopupData) => void;
   dashboardContext?: DashboardPopupContext | null;
-  siteReportPolygonPopup?: boolean;
+  overviewPolygonPopup?: boolean;
   polygonFromMap?: Pick<PolygonFromMapState, "isOpen"> | null;
 };
 
@@ -83,7 +83,7 @@ export function useMapPopups({
   editPolygon,
   setMobilePopupData,
   dashboardContext,
-  siteReportPolygonPopup,
+  overviewPolygonPopup,
   polygonFromMap
 }: UseMapPopupsParams) {
   const championsMap = useChampionsMap();
@@ -125,7 +125,7 @@ export function useMapPopups({
       setMobilePopupData:
         isMobile || dashboardContext?.dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined,
       championsMap,
-      siteReportPolygonPopup
+      overviewPolygonPopup
     };
     popupOptionsRef.current = popupOptions;
 
@@ -186,6 +186,6 @@ export function useMapPopups({
     map,
     draw,
     championsMap,
-    siteReportPolygonPopup
+    overviewPolygonPopup
   ]);
 }

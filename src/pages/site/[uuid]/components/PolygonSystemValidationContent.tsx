@@ -10,7 +10,7 @@ import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 import { trackPolygonRunValidationClicked } from "@/utils/polygonAnalytics";
 
-import { extractClippedVersions } from "../hooks/overlapFix.utils";
+import { collectRelatedPartnerUuidsFromFixability, extractClippedVersions } from "../hooks/overlapFix.utils";
 import { usePolygonValidationCriteria } from "../hooks/usePolygonValidationCriteria";
 import {
   closePolygonProgressToast,
@@ -95,7 +95,8 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
         previousPolygonUuid: polygonUuid,
         primaryUuid: polygon?.primaryUuid,
         sitePolygonUuid: polygon?.uuid,
-        clippedVersions
+        clippedVersions,
+        relatedPartnerUuids: collectRelatedPartnerUuidsFromFixability([fixabilityResult])
       });
     } catch (error) {
       Log.error("Failed to fix polygon overlaps:", error);

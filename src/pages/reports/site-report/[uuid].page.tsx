@@ -27,6 +27,7 @@ import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
+import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 
 type TabItem = {
@@ -118,6 +119,11 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
         key: "goals",
         title: t("Indicators & Insights"),
         renderBody: () => <GoalsAndProgressTab siteReport={siteReport} site={site} workdaysTotal={workdaysTotal} />
+      },
+      {
+        key: "audit-log",
+        title: t("Audit Log"),
+        renderBody: () => <AuditLog siteReport={siteReport} />
       }
     ],
     [siteReport, site, workdaysTotal, t]

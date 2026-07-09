@@ -10,6 +10,7 @@ export type PolygonOverlapFixParams = {
   primaryUuid?: string | null;
   sitePolygonUuid?: string | null;
   clippedVersions?: ClippedVersionSummary[];
+  relatedPartnerUuids?: string[];
 };
 
 export type PolygonOverlapFixCallback = (params: PolygonOverlapFixParams) => Promise<SitePolygonLightDto | undefined>;
