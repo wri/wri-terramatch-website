@@ -42,6 +42,14 @@ describe("polygonUploadErrors", () => {
       expect(copy.bullets).toEqual(["Points only", "Polygons or multipolygons only"]);
     });
 
+    it("uses instructions line before bullets for projection errors", () => {
+      const copy = getPolygonUploadErrorCopy("projection", identityTranslate);
+
+      expect(copy.summary).toBe("This file uses an unsupported coordinate projection.");
+      expect(copy.instructions).toBe("Please re-export your file using:");
+      expect(copy.bullets).toEqual(["WGS-84 projection (EPSG:4326)"]);
+    });
+
     it("returns fallback copy for unexpected errors", () => {
       const copy = getPolygonUploadErrorCopy("fallback", identityTranslate);
 
