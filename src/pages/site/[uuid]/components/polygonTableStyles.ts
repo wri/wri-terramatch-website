@@ -1,38 +1,48 @@
 import { getThemedColor } from "@/lib/theme";
 
+const CHECKBOX_COLUMN_Z_INDEX = {
+  header: 4,
+  body: 3
+} as const;
+
+const POLYGON_NAME_COLUMN_Z_INDEX = {
+  header: 3,
+  body: 2
+} as const;
+
 export const getPolygonsTableStyles = (isStickyTableActive: boolean) => ({
   "& table td": { height: "3rem" },
   "& table th:first-of-type": {
     position: "sticky",
     left: 0,
-    zIndex: 2,
-    background: getThemedColor("neutral", 200)
+    zIndex: CHECKBOX_COLUMN_Z_INDEX.header,
+    backgroundColor: getThemedColor("neutral", 200)
   },
   "& table td:first-of-type": {
     position: "sticky",
     left: 0,
-    zIndex: 2,
-    background: getThemedColor("neutral", 100),
+    zIndex: CHECKBOX_COLUMN_Z_INDEX.body,
+    backgroundColor: getThemedColor("neutral", 100),
     transition: "background-color 0.15s ease-in-out"
   },
   "& table th:nth-of-type(2)": {
     position: "sticky",
     left: "3rem",
-    zIndex: 2,
-    background: getThemedColor("neutral", 200),
+    zIndex: POLYGON_NAME_COLUMN_Z_INDEX.header,
+    backgroundColor: getThemedColor("neutral", 200),
     padding: 0
   },
   "& table td:nth-of-type(2)": {
     position: "sticky",
     left: "3rem",
-    zIndex: 2,
-    background: getThemedColor("neutral", 100),
+    zIndex: POLYGON_NAME_COLUMN_Z_INDEX.body,
+    backgroundColor: getThemedColor("neutral", 100),
     padding: 0,
     transition: "background-color 0.15s ease-in-out"
   },
   "& table tbody tr:hover td:nth-of-type(2), & table tbody tr:hover td:first-of-type, & table tbody tr[aria-selected='true'] td:nth-of-type(2), & table tbody tr[aria-selected='true'] td:first-of-type":
     {
-      background: getThemedColor("primary", 100)
+      backgroundColor: getThemedColor("primary", 100)
     },
   "& table th:nth-of-type(2) > div, & table td:nth-of-type(2) div": {
     position: "relative",
@@ -44,7 +54,10 @@ export const getPolygonsTableStyles = (isStickyTableActive: boolean) => ({
 
   "& table th:nth-of-type(2), & table td:nth-of-type(2)": {
     minWidth: "17.75rem",
-    maxWidth: "17.75rem"
+    maxWidth: "17.75rem",
+    ...(isStickyTableActive && {
+      boxShadow: `inset -0.063rem 0 0 0 ${getThemedColor("neutral", 400)}`
+    })
   },
   "& table th:nth-of-type(3), & table td:nth-of-type(3)": {
     minWidth: "15.875rem",
@@ -81,11 +94,5 @@ export const getPolygonsTableStyles = (isStickyTableActive: boolean) => ({
   "& table th:nth-of-type(11), & table td:nth-of-type(11)": {
     minWidth: "12rem",
     maxWidth: "12rem"
-  },
-
-  ...(isStickyTableActive && {
-    "& table th:nth-of-type(2), & table td:nth-of-type(2)": {
-      boxShadow: `inset -0.063rem 0 0 0 ${getThemedColor("neutral", 400)}`
-    }
-  })
+  }
 });
