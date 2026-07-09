@@ -5,12 +5,11 @@ import { FC, useCallback, useMemo } from "react";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
-
 import {
   getPolygonUploadErrorCopy,
   getPolygonUploadErrorTitle,
   resolvePolygonUploadErrorVariant
-} from "../../utils/polygonUploadErrors";
+} from "@/utils/polygonUploadErrors";
 
 export interface UploadErrorProps {
   open: boolean;
