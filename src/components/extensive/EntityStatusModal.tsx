@@ -4,12 +4,11 @@ import { kebabCase } from "lodash";
 import { useRouter } from "next/router";
 import { FC } from "react";
 
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { IconNames } from "@/components/extensive/Icon/Icon";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormEntity } from "@/connections/Form";
-import { useModalContext } from "@/context/modal.provider";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
+import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 
 export type StatusProps = { title: string; icon: IconNames; className: string };
 
@@ -21,9 +20,13 @@ type EntityStatusModalProps = {
   entityName: FormEntity;
   entityUuid: string;
   formStepId?: string | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
 const EntityStatusModal: FC<EntityStatusModalProps> = ({
+  open,
+  onOpenChange,
   statusProps,
   feedback,
   needMoreInformation,
@@ -34,10 +37,9 @@ const EntityStatusModal: FC<EntityStatusModalProps> = ({
 }) => {
   const t = useT();
   const router = useRouter();
-  const { closeModal, modalOpened } = useModalContext();
   const shouldShowProvideFeedback = showProvideFeedback ?? needMoreInformation ?? false;
 
-  const handleClose = () => closeModal(ModalId.STATUS);
+  const handleClose = () => onOpenChange(false);
   const handleProvideFeedback = () => {
     const targetStepId = formStepId ?? "summary";
 
@@ -49,12 +51,12 @@ const EntityStatusModal: FC<EntityStatusModalProps> = ({
 
   return (
     <ModalConfirmation
-      open={modalOpened(ModalId.STATUS)}
+      open={open}
       onOpenChange={open => !open && handleClose()}
       title={statusProps.title}
       content={
         <Flex direction="column" align="center" gap={3}>
-          <Icon name={statusProps.icon} className={statusProps.className} width={40} height={40} />
+          <InformationRequiredIcon color="warning.500" boxSize={"2rem"} />
           <Text textStyle="400" color="neutral.900">
             {feedback ?? t("No feedback provided")}
           </Text>

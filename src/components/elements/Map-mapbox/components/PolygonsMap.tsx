@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
 import type { FC } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -17,7 +18,6 @@ import {
   POLYGON_PENDING_APPROVAL
 } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -79,7 +79,6 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   const [polygonDataMap, setPolygonDataMap] = useState<Record<string, string[]>>(() => ({ ...EMPTY_POLYGON_MAP }));
   const [polygonFromMap, setPolygonFromMap] = useState<PolygonFromMapState>({ isOpen: false, uuid: "" });
   const [isPolygonTilesLoading, setIsPolygonTilesLoading] = useState(false);
-  const { openNotification } = useNotificationContext();
 
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
@@ -107,10 +106,10 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
           error != null && typeof error === "object" && "message" in error
             ? String(error.message)
             : t("Failed to create polygon");
-        openNotification("error", t("Error"), errorMessage);
+        showToast({ label: errorMessage, type: "error", placement: "bottom", duration: 5000 });
       }
     },
-    [entityModel, onRefetchPolygons, openNotification, setPolygonFromMap, t]
+    [entityModel, onRefetchPolygons, setPolygonFromMap, t]
   );
 
   const mapFunctions = useBaseMap(onSave, undefined, { deferDrawCreateSave: true });
