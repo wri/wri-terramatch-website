@@ -45,7 +45,7 @@ describe("polygonAnalytics", () => {
           { criteriaId: 3, valid: false, extraInfo: null },
           { criteriaId: 14, valid: false, extraInfo: null }
         ]
-      } as ValidationDto;
+      } as unknown as ValidationDto;
 
       expect(resolveValidationErrorTypes(validation)).toEqual(["overlap", "incomplete"]);
     });
