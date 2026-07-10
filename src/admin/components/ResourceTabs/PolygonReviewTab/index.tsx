@@ -53,6 +53,10 @@ import {
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import {
+  formatSubmissionCycleDisplay,
+  normalizeSubmissionCycle
+} from "@/pages/site/[uuid]/components/polygonFilter.constants";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
@@ -80,6 +84,7 @@ export type SitePolygonRow = {
   "planting-start-date": string;
   "num-trees": number;
   "calc-area": number;
+  "submission-cycle": string;
   source: string;
   uuid?: string;
   ellipse: boolean;
@@ -276,6 +281,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           "planting-start-date": data?.plantStart ?? "",
           "num-trees": data?.numTrees ?? 0,
           "calc-area": data?.calcArea ?? 0,
+          "submission-cycle": formatSubmissionCycleDisplay(normalizeSubmissionCycle(data?.submissionCycle)),
           source: data?.source ?? "",
           uuid: data?.polygonUuid ?? undefined,
           ellipse: index === (sitePolygonData ?? []).length - 1

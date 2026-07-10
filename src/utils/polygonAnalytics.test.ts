@@ -39,13 +39,23 @@ describe("polygonAnalytics", () => {
 
   describe("resolveValidationErrorTypes", () => {
     it("maps failed criteria ids to error types", () => {
-      const validation = {
+      const validation: ValidationDto = {
         polygonUuid: "polygon-1",
         criteriaList: [
-          { criteriaId: 3, valid: false, extraInfo: null },
-          { criteriaId: 14, valid: false, extraInfo: null }
+          {
+            criteriaId: 3,
+            validationType: "OVERLAPPING",
+            valid: false,
+            createdAt: "2025-11-28T20:41:50.060Z"
+          },
+          {
+            criteriaId: 14,
+            validationType: "DATA_COMPLETENESS",
+            valid: false,
+            createdAt: "2025-11-28T20:41:50.060Z"
+          }
         ]
-      } as ValidationDto;
+      };
 
       expect(resolveValidationErrorTypes(validation)).toEqual(["overlap", "incomplete"]);
     });
@@ -69,6 +79,7 @@ describe("polygonAnalytics", () => {
           plantStartTo: "",
           practice: [],
           targetSys: [],
+          submissionCycle: [],
           hasOverlap: true
         })
       ).toEqual(["status", "validation_result", "overlap"]);

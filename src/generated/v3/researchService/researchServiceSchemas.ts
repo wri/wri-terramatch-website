@@ -244,6 +244,10 @@ export type SitePolygonLightDto = {
   practice: string[] | null;
   targetSys: string | null;
   distr: string[] | null;
+  /**
+   * Submission cycle(s) assigned to the polygon
+   */
+  submissionCycle: ("1" | "2" | "3" | "4" | "5")[] | null;
   numTrees: number | null;
   /**
    * Source of the site polygon
@@ -322,6 +326,13 @@ export type AttributeChangesDto = {
    * @example single-line
    */
   distr?: string[];
+  /**
+   * Updated submission cycle(s) as array of strings
+   *
+   * @example 1
+   * @example 2
+   */
+  submissionCycle?: string[];
   /**
    * Updated number of trees
    *
@@ -480,6 +491,10 @@ export type SitePolygonFullDto = {
   practice: string[] | null;
   targetSys: string | null;
   distr: string[] | null;
+  /**
+   * Submission cycle(s) assigned to the polygon
+   */
+  submissionCycle: ("1" | "2" | "3" | "4" | "5")[] | null;
   numTrees: number | null;
   /**
    * Source of the site polygon
@@ -552,6 +567,13 @@ export type SitePolygonBulkAttributeChangesDto = {
    * @example full
    */
   distr?: string[];
+  /**
+   * Submission cycle slug(s). Empty array clears the field.
+   *
+   * @example 1
+   * @example 2
+   */
+  submissionCycle?: string[];
   /**
    * Number of trees planted
    *
@@ -756,6 +778,29 @@ export type BoundingBoxDto = {
 
 export type Object = {};
 
+export type ValidationSummaryDto = {
+  /**
+   * The UUID of the site that was validated (null for project-level validation)
+   *
+   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
+   */
+  siteUuid: Record<string, any> | null;
+  /**
+   * Total number of polygons in the site
+   */
+  totalPolygons: number;
+  /**
+   * Number of polygons that were validated
+   */
+  validatedPolygons: number;
+  /**
+   * When the validation was completed
+   *
+   * @format date-time
+   */
+  completedAt: string;
+};
+
 export type ValidationRequestAttributes = {
   /**
    * Array of polygon UUIDs to validate
@@ -789,29 +834,6 @@ export type ValidationRequestData = {
 
 export type ValidationRequestBody = {
   data: ValidationRequestData;
-};
-
-export type ValidationSummaryDto = {
-  /**
-   * The UUID of the site that was validated (null for project-level validation)
-   *
-   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
-   */
-  siteUuid: Record<string, any> | null;
-  /**
-   * Total number of polygons in the site
-   */
-  totalPolygons: number;
-  /**
-   * Number of polygons that were validated
-   */
-  validatedPolygons: number;
-  /**
-   * When the validation was completed
-   *
-   * @format date-time
-   */
-  completedAt: string;
 };
 
 export type SiteValidationRequestAttributes = {

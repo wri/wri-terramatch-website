@@ -25,10 +25,13 @@ import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRan
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
 import {
+  type SubmissionCycleOption,
   EMPTY_POLYGON_FILTERS,
   PolygonFilterState,
   PolygonSubmissionStatus,
-  PolygonValidationStatus
+  PolygonValidationStatus,
+  SUBMISSION_CYCLE_LABELS,
+  SUBMISSION_CYCLE_OPTIONS
 } from "./polygonFilter.constants";
 
 type CheckboxChange = { checked?: boolean | "indeterminate" };
@@ -110,6 +113,9 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     for (const target of draftFilters.targetSys) {
       tags.push({ id: `targetSys:${target}`, label: targetLandUseLabels[target] });
     }
+    for (const cycle of draftFilters.submissionCycle) {
+      tags.push({ id: `submissionCycle:${cycle}`, label: SUBMISSION_CYCLE_LABELS[cycle] });
+    }
     if (draftFilters.hasOverlap) {
       tags.push({ id: "hasOverlap", label: "Overlap" });
     }
@@ -129,6 +135,8 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           return { ...current, practice: current.practice.filter(s => s !== value) };
         case "targetSys":
           return { ...current, targetSys: current.targetSys.filter(s => s !== value) };
+        case "submissionCycle":
+          return { ...current, submissionCycle: current.submissionCycle.filter(s => s !== value) };
         case "plantStartFrom":
           return { ...current, plantStartFrom: "" };
         case "plantStartTo":
@@ -165,6 +173,15 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     setDraftFilters(current => ({ ...current, targetSys: selected ? [selected] : [] }));
   };
 
+  const handleSubmissionCycleChange = (value: string[]) => {
+    setDraftFilters(current => ({
+      ...current,
+      submissionCycle: value.filter((item): item is SubmissionCycleOption =>
+        SUBMISSION_CYCLE_OPTIONS.includes(item as SubmissionCycleOption)
+      )
+    }));
+  };
+
   const handlePlantStartDateChange = (value: DateValue[]) => {
     setDraftFilters(current => ({
       ...current,
@@ -186,12 +203,10 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     return dates;
   }, [draftFilters.plantStartFrom, draftFilters.plantStartTo]);
 
-  // TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
-  // const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
-  //   { value: "option-1", label: t("Option 1") },
-  //   { value: "option-2", label: t("Option 2") },
-  //   { value: "option-3", label: t("Option 3") }
-  // ];
+  const submissionCycleOptions = useMemo(
+    () => SUBMISSION_CYCLE_OPTIONS.map(value => ({ value, label: SUBMISSION_CYCLE_LABELS[value] })),
+    []
+  );
 
   return (
     <Drawer
@@ -277,18 +292,16 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   onChange={handleTargetLandUseChange}
                 />
               </FilterCard>
-              {/* TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
               <FilterCard label={t("Submission Cycle")}>
                 <SelectInput
                   placeholder={t("Please Select")}
                   size="small"
-                  items={SUBMISSION_CYCLE_MOCKED_OPTIONS.map(option => ({
-                    value: option.value,
-                    label: t("Option {option}", { option: option.value })
-                  }))}
+                  value={draftFilters.submissionCycle}
+                  items={submissionCycleOptions}
+                  onChange={handleSubmissionCycleChange}
+                  multiple
                 />
               </FilterCard>
-              */}
               <FilterCard label={t("Overlap")}>
                 <Switch name="overlap" checked={draftFilters.hasOverlap} onCheckedChange={handleOverlapChange}>
                   {t("Show Polygon Overlaps")}

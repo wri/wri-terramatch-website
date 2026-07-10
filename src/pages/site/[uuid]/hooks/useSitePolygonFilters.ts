@@ -8,7 +8,11 @@ import { useValidationStatusLabels } from "@/hooks/translation/useValidationStat
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import { trackPolygonFilterCleared } from "@/utils/polygonAnalytics";
 
-import { EMPTY_POLYGON_FILTERS, PolygonFilterState } from "../components/polygonFilter.constants";
+import {
+  EMPTY_POLYGON_FILTERS,
+  PolygonFilterState,
+  SUBMISSION_CYCLE_LABELS
+} from "../components/polygonFilter.constants";
 
 type UseSitePolygonFiltersParams = {
   siteUuid: string;
@@ -40,6 +44,7 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
     if (polygonFilters.plantStartTo !== "") filter.plantStartTo = `${polygonFilters.plantStartTo}T00:00:00.000Z`;
     if (polygonFilters.practice.length > 0) filter.practice = polygonFilters.practice;
     if (polygonFilters.targetSys.length > 0) filter.targetSys = polygonFilters.targetSys;
+    if (polygonFilters.submissionCycle.length > 0) filter.submissionCycle = polygonFilters.submissionCycle;
     if (polygonFilters.hasOverlap) filter.hasOverlap = true;
     if (debouncedPolygonSearch !== "") {
       filter.search = debouncedPolygonSearch;
@@ -99,6 +104,15 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, targetSys: [] }));
         }
+      });
+    }
+    if (polygonFilters.submissionCycle.length > 0) {
+      labels.push({
+        label: polygonFilters.submissionCycle.map(cycle => SUBMISSION_CYCLE_LABELS[cycle]),
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, submissionCycle: [] }));
+        },
+        category: t("Submission Cycle")
       });
     }
     if (polygonFilters.hasOverlap) {

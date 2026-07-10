@@ -1,6 +1,27 @@
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { type PolygonStatus } from "@/constants/polygonStatuses";
 
+export type SubmissionCycleOption = "1" | "2" | "3" | "4" | "5";
+
+export const SUBMISSION_CYCLE_OPTIONS: SubmissionCycleOption[] = ["1", "2", "3", "4", "5"];
+
+export const SUBMISSION_CYCLE_LABELS: Record<SubmissionCycleOption, string> = {
+  "1": "1",
+  "2": "2",
+  "3": "3",
+  "4": "4",
+  "5": "5"
+};
+
+export const isSubmissionCycleOption = (value: string): value is SubmissionCycleOption =>
+  SUBMISSION_CYCLE_OPTIONS.includes(value as SubmissionCycleOption);
+
+export const normalizeSubmissionCycle = (values: string[] | null | undefined): SubmissionCycleOption[] =>
+  [...new Set((values ?? []).filter(isSubmissionCycleOption))].sort();
+
+export const formatSubmissionCycleDisplay = (values: SubmissionCycleOption[]): string =>
+  values.map(value => SUBMISSION_CYCLE_LABELS[value]).join(", ");
+
 export type PolygonSubmissionStatus = PolygonStatus;
 export type PolygonValidationStatus = "not_checked" | "failed" | "partial" | "passed";
 
@@ -11,6 +32,7 @@ export type PolygonFilterState = {
   plantStartTo: string;
   practice: restorationStrategyType[];
   targetSys: targetLandUseType[];
+  submissionCycle: SubmissionCycleOption[];
   hasOverlap: boolean;
 };
 
@@ -21,6 +43,7 @@ export const EMPTY_POLYGON_FILTERS: PolygonFilterState = {
   plantStartTo: "",
   practice: [],
   targetSys: [],
+  submissionCycle: [],
   hasOverlap: false
 };
 
