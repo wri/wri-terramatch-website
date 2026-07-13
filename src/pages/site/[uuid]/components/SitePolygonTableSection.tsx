@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import type { FC, RefObject } from "react";
+import { useMemo } from "react";
 
 import LoadingTable from "@/redesignComponents/dataDisplay/Table/components/LoadingTable";
 import Table, { type TableColumn } from "@/redesignComponents/dataDisplay/Table/Table";
@@ -20,6 +21,7 @@ type SitePolygonTableSectionProps = {
   onAllItemsSelected: (checked: boolean, visibleRows: PolygonTableRow[]) => void;
   onClearHover: () => void;
   onRowSelected: (row: PolygonTableRow, selected: boolean) => void;
+  readOnly?: boolean;
 };
 
 const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
@@ -32,29 +34,36 @@ const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
   loadingLabel,
   onAllItemsSelected,
   onClearHover,
-  onRowSelected
-}) => (
-  <PolygonTableInteractionActionsProvider onSelectChange={onRowSelected}>
-    <Box onMouseLeave={onClearHover} position="relative">
-      <Table<PolygonTableRow>
-        css={tableStyles}
-        containerRef={tableContainerRef}
-        data={isSitePolygonsLoading ? [] : polygonRows}
-        columns={columns}
-        showPagination
-        pageSize={10}
-        selectable
-        selectedRows={selectedRows}
-        onAllItemsSelected={onAllItemsSelected}
-        renderRow={renderPolygonTableRow}
-      />
-      {isSitePolygonsLoading && (
-        <Box py={20}>
-          <LoadingTable text={loadingLabel} />
-        </Box>
-      )}
-    </Box>
-  </PolygonTableInteractionActionsProvider>
-);
+  onRowSelected,
+  readOnly = false
+}) => {
+  const renderRow = useMemo(() => renderPolygonTableRow(readOnly), [readOnly]);
+  const handleAllItemsSelected = readOnly ? () => undefined : onAllItemsSelected;
+  const handleRowSelected = readOnly ? () => undefined : onRowSelected;
+
+  return (
+    <PolygonTableInteractionActionsProvider onSelectChange={handleRowSelected}>
+      <Box onMouseLeave={onClearHover} position="relative">
+        <Table<PolygonTableRow>
+          css={tableStyles}
+          containerRef={tableContainerRef}
+          data={isSitePolygonsLoading ? [] : polygonRows}
+          columns={columns}
+          showPagination
+          pageSize={10}
+          selectable
+          selectedRows={selectedRows}
+          onAllItemsSelected={handleAllItemsSelected}
+          renderRow={renderRow}
+        />
+        {isSitePolygonsLoading && (
+          <Box py={20}>
+            <LoadingTable text={loadingLabel} />
+          </Box>
+        )}
+      </Box>
+    </PolygonTableInteractionActionsProvider>
+  );
+};
 
 export default SitePolygonTableSection;

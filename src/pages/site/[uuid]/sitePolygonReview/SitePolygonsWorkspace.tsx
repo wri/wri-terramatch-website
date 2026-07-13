@@ -788,6 +788,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
 
   const hasPolygonSelection = selectedRows.length > 0;
   const shouldShowNoResults = !isSitePolygonsLoading && polygonRows.length === 0;
+  const isDeletedAuditView = polygonFilters.showDeleted;
 
   const mapPopupSubmitPolygons = useMemo(() => {
     const sitePolygonUuid = polygonSubmitConfirmation;
@@ -874,27 +875,31 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
                 }
               : undefined
           }
-          multiActionButtonProps={{
-            mainActionLabel: t("Add"),
-            size: "small",
-            leftIcon: <PlusIcon />,
-            mainActionOnClick: startNewPolygonFlow,
-            otherActions: [
-              {
-                label: t("Draw Polygon"),
-                onClick: startNewPolygonFlow,
-                value: "draw-polygon"
-              },
-              {
-                label: t("Upload"),
-                onClick: () => {
-                  setShowUploadModal(true);
-                },
-                value: "upload"
-              }
-            ],
-            variant: "primary"
-          }}
+          multiActionButtonProps={
+            isDeletedAuditView
+              ? undefined
+              : {
+                  mainActionLabel: t("Add"),
+                  size: "small",
+                  leftIcon: <PlusIcon />,
+                  mainActionOnClick: startNewPolygonFlow,
+                  otherActions: [
+                    {
+                      label: t("Draw Polygon"),
+                      onClick: startNewPolygonFlow,
+                      value: "draw-polygon"
+                    },
+                    {
+                      label: t("Upload"),
+                      onClick: () => {
+                        setShowUploadModal(true);
+                      },
+                      value: "upload"
+                    }
+                  ],
+                  variant: "primary"
+                }
+          }
         >
           <PolygonToolbar
             siteUuid={site.uuid}
@@ -908,7 +913,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           />
         </PageItem>
         <PolygonBulkActionToolbar
-          visible={hasPolygonSelection}
+          visible={hasPolygonSelection && !isDeletedAuditView}
           itemCount={selectedRows.length}
           isBulkEditDrawerOpen={showBulkEditDrawer}
           submitLabel={bulkToolbarSubmitLabel}
@@ -1015,6 +1020,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           onRefetchPolygons={refetchPolygons}
           showUndoButton={showPolygonUndoButton}
           onUndoDraw={handleUndoPolygonDraw}
+          isDeletedAuditView={isDeletedAuditView}
         />
         {polygonLoadError != null && (
           <InlineMessage
@@ -1037,16 +1043,18 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           </Box>
         ) : (
           <>
-            <SitePolygonMetricsSection
-              totalTreesPlanted={totalTreesPlanted}
-              totalRestorationAreaHa={totalRestorationAreaHa}
-              restorationAreaGoal={site.hectaresToRestoreGoal}
-              hasPolygonSelection={hasPolygonSelection}
-              selectedTreesPlanted={selectedTreesPlanted}
-              selectedRestorationAreaRounded={selectedRestorationAreaRounded}
-              polygonsWithOverlapCount={polygonsWithOverlapCount}
-              onSelectOverlapPolygons={handleSelectOverlapPolygons}
-            />
+            {!isDeletedAuditView && (
+              <SitePolygonMetricsSection
+                totalTreesPlanted={totalTreesPlanted}
+                totalRestorationAreaHa={totalRestorationAreaHa}
+                restorationAreaGoal={site.hectaresToRestoreGoal}
+                hasPolygonSelection={hasPolygonSelection}
+                selectedTreesPlanted={selectedTreesPlanted}
+                selectedRestorationAreaRounded={selectedRestorationAreaRounded}
+                polygonsWithOverlapCount={polygonsWithOverlapCount}
+                onSelectOverlapPolygons={handleSelectOverlapPolygons}
+              />
+            )}
             <SitePolygonTableSection
               tableContainerRef={tableContainerRef}
               tableStyles={polygonsTableStyles}
@@ -1058,6 +1066,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
               onAllItemsSelected={onAllItemsSelected}
               onClearHover={handleClearHover}
               onRowSelected={handleRowSelected}
+              readOnly={isDeletedAuditView}
             />
           </>
         )}
