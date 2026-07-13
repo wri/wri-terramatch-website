@@ -80,7 +80,8 @@ describe("polygonAnalytics", () => {
           practice: [],
           targetSys: [],
           submissionCycle: [],
-          hasOverlap: true
+          hasOverlap: true,
+          showDeleted: false
         })
       ).toEqual(["status", "validation_result", "overlap"]);
     });

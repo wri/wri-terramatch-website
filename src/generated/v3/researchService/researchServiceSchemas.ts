@@ -276,6 +276,12 @@ export type SitePolygonLightDto = {
    * @format date-time
    */
   createdAt: string | null;
+  /**
+   * When this site polygon was soft-deleted. Only populated when deletedOnly is requested.
+   *
+   * @format date-time
+   */
+  deletedAt: string | null;
 };
 
 export type CreateSitePolygonRequestDto = {
@@ -523,6 +529,12 @@ export type SitePolygonFullDto = {
    * @format date-time
    */
   createdAt: string | null;
+  /**
+   * When this site polygon was soft-deleted. Only populated when deletedOnly is requested.
+   *
+   * @format date-time
+   */
+  deletedAt: string | null;
   geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.

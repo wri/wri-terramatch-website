@@ -34,6 +34,7 @@ export type PolygonFilterState = {
   targetSys: targetLandUseType[];
   submissionCycle: SubmissionCycleOption[];
   hasOverlap: boolean;
+  showDeleted: boolean;
 };
 
 export const EMPTY_POLYGON_FILTERS: PolygonFilterState = {
@@ -44,7 +45,8 @@ export const EMPTY_POLYGON_FILTERS: PolygonFilterState = {
   practice: [],
   targetSys: [],
   submissionCycle: [],
-  hasOverlap: false
+  hasOverlap: false,
+  showDeleted: false
 };
 
 export const TARGET_LAND_USE_VALUES: targetLandUseType[] = [
