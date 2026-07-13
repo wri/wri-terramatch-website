@@ -174,7 +174,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   const { polygonsWithOverlapCount, overlapPolygons, overlapValidations, fetchOverlapValidations } =
     useSitePolygonOverlap({
       siteUuid: site.uuid,
-      polygonsData
+      polygonsData,
+      t
     });
   const overlapPolygonValidations = useMemo(() => buildPolygonValidationsMap(overlapValidations), [overlapValidations]);
 
