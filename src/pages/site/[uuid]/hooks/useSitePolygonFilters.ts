@@ -38,6 +38,15 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
 
   const sitePolygonFilter = useMemo(() => {
     const filter: Record<string, unknown> = {};
+    if (debouncedPolygonSearch !== "") {
+      filter.search = debouncedPolygonSearch;
+      filter.searchFields = ["polyName", "polygonUuid"];
+    }
+    if (polygonFilters.showDeleted) {
+      filter.deletedOnly = true;
+      return filter as Partial<SitePolygonsIndexQueryParams>;
+    }
+
     if (polygonFilters.polygonStatus.length > 0) filter.polygonStatus = polygonFilters.polygonStatus;
     if (polygonFilters.validationStatus.length > 0) filter.validationStatus = polygonFilters.validationStatus;
     if (polygonFilters.plantStartFrom !== "") filter.plantStartFrom = `${polygonFilters.plantStartFrom}T00:00:00.000Z`;
@@ -46,10 +55,6 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
     if (polygonFilters.targetSys.length > 0) filter.targetSys = polygonFilters.targetSys;
     if (polygonFilters.submissionCycle.length > 0) filter.submissionCycle = polygonFilters.submissionCycle;
     if (polygonFilters.hasOverlap) filter.hasOverlap = true;
-    if (debouncedPolygonSearch !== "") {
-      filter.search = debouncedPolygonSearch;
-      filter.searchFields = ["polyName", "polygonUuid"];
-    }
     return filter as Partial<SitePolygonsIndexQueryParams>;
   }, [debouncedPolygonSearch, polygonFilters]);
 
@@ -62,6 +67,16 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
 
   const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
+    if (polygonFilters.showDeleted) {
+      return [
+        {
+          label: t("Deleted Polygons"),
+          onRemove: () => {
+            setPolygonFilters(current => ({ ...current, showDeleted: false }));
+          }
+        }
+      ];
+    }
     if (polygonFilters.polygonStatus.length > 0) {
       labels.push({
         label: polygonFilters.polygonStatus.map(status => submissionStatusLabels[status]),

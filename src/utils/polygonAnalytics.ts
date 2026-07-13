@@ -316,7 +316,8 @@ export const resolveActivePolygonFilterTypes = ({
   practice,
   targetSys,
   submissionCycle,
-  hasOverlap
+  hasOverlap,
+  showDeleted
 }: {
   polygonStatus: string[];
   validationStatus: string[];
@@ -326,7 +327,10 @@ export const resolveActivePolygonFilterTypes = ({
   targetSys: string[];
   submissionCycle: string[];
   hasOverlap: boolean;
+  showDeleted: boolean;
 }): string[] => {
+  if (showDeleted) return ["deleted"];
+
   const filterTypes: string[] = [];
   if (polygonStatus.length > 0) filterTypes.push("status");
   if (validationStatus.length > 0) filterTypes.push("validation_result");
