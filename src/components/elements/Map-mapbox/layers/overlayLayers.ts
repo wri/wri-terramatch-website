@@ -29,6 +29,7 @@ import {
   TERRAMATCH_SATELLITE_STYLE_ID,
   TERRAMATCH_STREET_STYLE_ID
 } from "../MapControls/types";
+import { CrossSiteOverlapPolygon } from "./overlapTypes";
 import { setFilterLandscape } from "./polygonLayers";
 
 const GOOGLE_RASTER_SOURCE_ID = "google-satellite-source";
@@ -595,5 +596,122 @@ export function upsertAnrPlotGeometryOverlay(
     map.on("mouseleave", ANR_PLOT_FILL_LAYER_ID, state.mouseLeaveHandler);
   } catch (e) {
     Log.warn("upsertAnrPlotGeometryOverlay:", e);
+  }
+}
+
+export const CROSS_SITE_OVERLAP_SOURCE_ID = "cross-site-overlap-source";
+export const CROSS_SITE_OVERLAP_FILL_LAYER_ID = "cross-site-overlap-fill-layer";
+export const CROSS_SITE_OVERLAP_LINE_LAYER_ID = "cross-site-overlap-line-layer";
+
+const CROSS_SITE_OVERLAP_FILL_RGBA: DataDrivenPropertyValueSpecification<string> = ["rgba", 158, 158, 158, 0.45];
+const CROSS_SITE_OVERLAP_LINE_COLOR = "#FFFFFF";
+const CROSS_SITE_OVERLAP_LINE_WIDTH = 2;
+const CROSS_SITE_OVERLAP_LINE_DASHARRAY: [number, number] = [2, 1.5];
+
+type CrossSiteOverlapOverlayState = {
+  pendingIdleRetry: { fn: () => void } | null;
+};
+
+const crossSiteOverlapOverlayStateByMap = new WeakMap<MapboxMap, CrossSiteOverlapOverlayState>();
+
+function getCrossSiteOverlapOverlayState(map: MapboxMap): CrossSiteOverlapOverlayState {
+  const existing = crossSiteOverlapOverlayStateByMap.get(map);
+  if (existing != null) return existing;
+  const created: CrossSiteOverlapOverlayState = { pendingIdleRetry: null };
+  crossSiteOverlapOverlayStateByMap.set(map, created);
+  return created;
+}
+
+function cancelCrossSiteOverlapPendingRetry(map: MapboxMap): void {
+  const state = getCrossSiteOverlapOverlayState(map);
+  if (state.pendingIdleRetry != null) {
+    map.off("idle", state.pendingIdleRetry.fn);
+    state.pendingIdleRetry = null;
+  }
+}
+
+export function buildCrossSiteOverlapFeatureCollection(polygons: CrossSiteOverlapPolygon[]): GeoJSON.FeatureCollection {
+  return {
+    type: "FeatureCollection",
+    features: polygons.map(polygon => ({
+      type: "Feature",
+      geometry: polygon.geometry,
+      properties: {
+        polygonUuid: polygon.polygonUuid,
+        polyName: polygon.polyName,
+        siteName: polygon.siteName
+      }
+    }))
+  };
+}
+
+export function removeCrossSiteOverlapOverlay(map: MapboxMap | null | undefined): void {
+  if (map == null) return;
+  cancelCrossSiteOverlapPendingRetry(map);
+  try {
+    if (map.getLayer(CROSS_SITE_OVERLAP_LINE_LAYER_ID) != null) map.removeLayer(CROSS_SITE_OVERLAP_LINE_LAYER_ID);
+    if (map.getLayer(CROSS_SITE_OVERLAP_FILL_LAYER_ID) != null) map.removeLayer(CROSS_SITE_OVERLAP_FILL_LAYER_ID);
+    if (map.getSource(CROSS_SITE_OVERLAP_SOURCE_ID) != null) map.removeSource(CROSS_SITE_OVERLAP_SOURCE_ID);
+  } catch (e) {
+    Log.warn("removeCrossSiteOverlapOverlay:", e);
+  }
+}
+
+export function upsertCrossSiteOverlapOverlay(
+  map: MapboxMap,
+  featureCollection: GeoJSON.FeatureCollection | null | undefined
+): void {
+  if (map == null) return;
+  removeCrossSiteOverlapOverlay(map);
+
+  if (featureCollection == null || featureCollection.features.length === 0) return;
+
+  if (!map.isStyleLoaded()) {
+    const state = getCrossSiteOverlapOverlayState(map);
+    const retryFn = () => {
+      const currentState = getCrossSiteOverlapOverlayState(map);
+      currentState.pendingIdleRetry = null;
+      upsertCrossSiteOverlapOverlay(map, featureCollection);
+    };
+    state.pendingIdleRetry = { fn: retryFn };
+    map.once("idle", retryFn);
+    return;
+  }
+
+  const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) != null ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
+
+  try {
+    map.addSource(CROSS_SITE_OVERLAP_SOURCE_ID, { type: "geojson", data: featureCollection });
+
+    map.addLayer(
+      {
+        id: CROSS_SITE_OVERLAP_FILL_LAYER_ID,
+        type: "fill",
+        source: CROSS_SITE_OVERLAP_SOURCE_ID,
+        layout: { visibility: "visible" },
+        paint: {
+          "fill-color": CROSS_SITE_OVERLAP_FILL_RGBA,
+          "fill-opacity": 1,
+          "fill-antialias": false
+        }
+      },
+      beforeLayer
+    );
+    map.addLayer(
+      {
+        id: CROSS_SITE_OVERLAP_LINE_LAYER_ID,
+        type: "line",
+        source: CROSS_SITE_OVERLAP_SOURCE_ID,
+        layout: { visibility: "visible" },
+        paint: {
+          "line-color": CROSS_SITE_OVERLAP_LINE_COLOR,
+          "line-width": CROSS_SITE_OVERLAP_LINE_WIDTH,
+          "line-dasharray": CROSS_SITE_OVERLAP_LINE_DASHARRAY
+        }
+      },
+      beforeLayer
+    );
+  } catch (e) {
+    Log.warn("upsertCrossSiteOverlapOverlay:", e);
   }
 }

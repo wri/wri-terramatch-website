@@ -100,6 +100,7 @@ export const useSelectedSitePolygons = ({
   return {
     selectedPolygonUuids,
     overlapPolygonsForMap,
+    editDrawerPolygonUuid,
     selectedTreesPlanted,
     selectedRestorationAreaRounded: Math.round(selectedRestorationAreaHa * 100) / 100,
     ...selectedPolygonData

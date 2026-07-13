@@ -4,3 +4,10 @@ export type OverlapPolygonPoint = {
   lng: number;
   tooltip?: string;
 };
+
+export type CrossSiteOverlapPolygon = {
+  polygonUuid: string;
+  polyName: string;
+  siteName: string;
+  geometry: GeoJSON.Geometry;
+};

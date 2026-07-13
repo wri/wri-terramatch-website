@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import type { CrossSiteOverlapPolygon } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { fetchPolygonGeometry } from "@/components/elements/Map-mapbox/utils";
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
@@ -7,12 +8,7 @@ import type { OverlapExtraInfo } from "@/utils/polygonFixValidation";
 
 import { getCrossSiteOverlapPartnersForValidation } from "./crossSiteOverlap.utils";
 
-export type CrossSiteOverlapPolygon = {
-  polygonUuid: string;
-  polyName: string;
-  siteName: string;
-  geometry: GeoJSON.Geometry;
-};
+export type { CrossSiteOverlapPolygon };
 
 type UseCrossSiteOverlapGeometriesParams = {
   polygonUuid: string | null | undefined;

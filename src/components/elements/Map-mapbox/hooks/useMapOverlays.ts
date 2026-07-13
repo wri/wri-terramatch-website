@@ -5,7 +5,9 @@ import {
   addBorderLandscape,
   removeAnrPlotGeometryOverlay,
   removeBorderLandscape,
-  upsertAnrPlotGeometryOverlay
+  removeCrossSiteOverlapOverlay,
+  upsertAnrPlotGeometryOverlay,
+  upsertCrossSiteOverlapOverlay
 } from "../layers/overlayLayers";
 
 type AnrMapOverlay = {
@@ -21,6 +23,7 @@ type UseMapOverlaysParams = {
   selectedLandscapes?: string[];
   anrMapOverlay?: AnrMapOverlay;
   anrPlotGeometryDto?: { geojson?: any } | null;
+  crossSiteOverlapFeatureCollection?: GeoJSON.FeatureCollection | null;
   styleReady: boolean;
   styleVersion: number;
   sourcesAdded: boolean;
@@ -31,6 +34,7 @@ export function useMapOverlays({
   selectedLandscapes,
   anrMapOverlay,
   anrPlotGeometryDto,
+  crossSiteOverlapFeatureCollection,
   styleReady,
   styleVersion,
   sourcesAdded
@@ -79,4 +83,21 @@ export function useMapOverlays({
     addBorderLandscape(currentMap, selectedLandscapes);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLandscapeKey, styleReady, styleVersion, sourcesAdded]);
+
+  useEffect(() => {
+    if (map.current == null) return;
+    const currentMap = map.current;
+
+    const hasFeatures = (crossSiteOverlapFeatureCollection?.features.length ?? 0) > 0;
+    if (!hasFeatures) {
+      removeCrossSiteOverlapOverlay(currentMap);
+      return;
+    }
+
+    upsertCrossSiteOverlapOverlay(currentMap, crossSiteOverlapFeatureCollection);
+
+    return () => {
+      removeCrossSiteOverlapOverlay(currentMap);
+    };
+  }, [map, crossSiteOverlapFeatureCollection, styleReady, styleVersion, sourcesAdded]);
 }
