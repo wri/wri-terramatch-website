@@ -23,6 +23,8 @@ import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
+import AuditLog from "./tabs/AuditLog";
+
 type TabItem = {
   key: string;
   title: string;
@@ -86,6 +88,11 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
         key: "goals",
         title: t("Indicators & Insights"),
         renderBody: () => <NurseryReportGoalsAndProgressTab nurseryReport={nurseryReport} />
+      },
+      {
+        key: "audit-log",
+        title: t("Audit Log"),
+        renderBody: () => <AuditLog nurseryReport={nurseryReport} />
       }
     ],
     [nurseryReport, t]

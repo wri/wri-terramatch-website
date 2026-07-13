@@ -265,15 +265,17 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
     [resetForm]
   );
 
-  const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
-    { value: "option-1", label: t("Option 1") },
-    { value: "option-2", label: t("Option 2") },
-    { value: "option-3", label: t("Option 3") }
-  ];
+  // TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
+  // const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
+  //   { value: "option-1", label: t("Option 1") },
+  //   { value: "option-2", label: t("Option 2") },
+  //   { value: "option-3", label: t("Option 3") }
+  // ];
 
   return (
     <Drawer
-      trapFocus={false}
+      modal={false}
+      closeOnInteractOutside={false}
       placement="start"
       defaultOpen={false}
       open={open}
@@ -372,6 +374,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                     disabled={editingField !== "numTrees"}
                   />
                 </EditWrapper>
+                {/* TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
                 {(isAdmin || submissionCycle.length > 0) && (
                   <EditWrapper
                     editable={isAdmin}
@@ -390,6 +393,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                     />
                   </EditWrapper>
                 )}
+                */}
               </Flex>
             }
             footer={

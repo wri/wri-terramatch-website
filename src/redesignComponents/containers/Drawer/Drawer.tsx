@@ -1,6 +1,8 @@
 import { DrawerBackdrop, DrawerContent, DrawerPositioner, DrawerRoot, DrawerTrigger, Portal } from "@chakra-ui/react";
 import { FC, useCallback, useRef, useState } from "react";
 
+import { useModalScrollFix } from "@/hooks/useModalScrollFix";
+
 import { DrawerContainerTyped, DrawerProps, DrawerTriggerTyped, DrawerTyped } from "./Drawer.types";
 
 const TypedDrawerRoot = DrawerRoot as FC<DrawerTyped>;
@@ -21,6 +23,8 @@ const Drawer: FC<DrawerProps> = ({
   modal = true,
   maxW,
   trapFocus = true,
+  restoreFocus = true,
+  closeOnEscape = true,
   paddingTop,
   paddingLeft,
   paddingRight,
@@ -46,8 +50,12 @@ const Drawer: FC<DrawerProps> = ({
   const handleClose = useCallback(() => setOpen(false), [setOpen]);
   const handleRootOpenChange = useCallback((e: { open: boolean }) => setOpen(e.open), [setOpen]);
 
+  useModalScrollFix(open);
+
   return (
     <TypedDrawerRoot
+      lazyMount
+      unmountOnExit
       closeOnInteractOutside={closeOnInteractOutside}
       open={open}
       onOpenChange={handleRootOpenChange}
@@ -55,6 +63,8 @@ const Drawer: FC<DrawerProps> = ({
       placement={placement}
       modal={modal}
       trapFocus={trapFocus}
+      restoreFocus={restoreFocus}
+      closeOnEscape={closeOnEscape}
     >
       {trigger != null ? <TypedDrawerTrigger asChild>{trigger}</TypedDrawerTrigger> : null}
       <Portal>

@@ -95,7 +95,7 @@ export interface BaseMapProps {
   initialPolygonFingerprint?: string;
   /** Champions (non-admin) map layout and controls; omit or false for the default map. */
   championsMap?: boolean;
-  siteReportPolygonPopup?: boolean;
+  overviewPolygonPopup?: boolean;
   polygonTableHighlight?: {
     selectedPolygonUuids: string[];
     onPolygonClickedFromMap?: (uuid: string) => void;
@@ -246,7 +246,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     hideMediaPopupActions,
     hideMediaOnMap,
     isPolygonGeometryLoading = false,
-    siteReportPolygonPopup = false
+    overviewPolygonPopup = false
   } = props;
 
   const [isViewingImages, setIsViewingImages] = useState(false);
@@ -418,7 +418,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     styleVersion,
     sourcesAdded,
     tileLoadRequestId,
-    isGeometryEditing: editFocus.isGeometryEditing
+    isEditFocusActive: editFocus.isEditFocusActive,
+    editedPolygonUuid: editFocus.editedPolygonUuid
   });
 
   usePolygonTableHighlightStyle({
@@ -473,7 +474,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     editPolygon,
     setMobilePopupData,
     dashboardContext: resolvedDashboardContext,
-    siteReportPolygonPopup,
+    overviewPolygonPopup,
     polygonFromMap
   });
 
@@ -538,7 +539,9 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
     hideMediaOnMap,
-    isPolygonGeometryLoading
+    isPolygonGeometryLoading,
+    isEditFocusActive: editFocus.isEditFocusActive,
+    overlapPolygons
   });
 
   useMapOverlapIndicators({
@@ -578,6 +581,9 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     if (!isAutoEditActive) {
       if (lastAutoEditPolygonRef.current != null) {
         setIsEditing(false);
+        // Leaving geometry edit (e.g. Geotagged Photos accordion) must clear draw handles
+        // and restore the polygon to tile layers without waiting for polygonFromMap sync.
+        onCancelEdit();
       }
       lastAutoEditPolygonRef.current = null;
       return;
@@ -601,7 +607,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     void handleEditPolygon();
   }, [handleEditPolygon, onCancelEdit, polygonFromMap?.isOpen, polygonFromMap?.uuid, props.autoEditPolygon]);
 
-  const { isFullscreen, toggleFullscreen } = useMapFullscreen({ mapContainer, map });
+  const { isFullscreen, toggleFullscreen } = useMapFullscreen({ map });
 
   const { isDownloadingPolygons, downloadGeoJsonPolygon } = useMapDownload({
     polygonsData,
@@ -620,7 +626,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
 
   return (
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
-      <MapCanvas mapContainer={mapContainer} className={className}>
+      <MapCanvas mapContainer={mapContainer} className={className} isFullscreen={isFullscreen}>
         <MapControlsOverlay
           showBaseMapControl={showBaseMapControl}
           hasControls={hasControls}

@@ -79,7 +79,7 @@ export function useMapDraw({
   showLoader,
   hideLoader
 }: UseMapDrawParams) {
-  const { invalidatePolygonMapTiles } = useMapAreaContext();
+  const { draftPolygonGeometry, invalidatePolygonMapTiles } = useMapAreaContext();
   const originalGeometryRef = useRef<GeoJSON.Geometry | null>(null);
   const geometryHistoryRef = useRef<GeoJSON.Geometry[]>([]);
   const isApplyingGeometryUndoRef = useRef(false);
@@ -231,13 +231,25 @@ export function useMapDraw({
 
   useEffect(() => {
     if (polygonFromMap?.isOpen === true) return;
+    // New-polygon create flow keeps polygonFromMap closed while the edit drawer is open.
+    if (isUserDrawingEnabled) return;
+    if (draftPolygonGeometry != null) return;
     if (draw.current == null) return;
 
     onCancel(polygonsData);
     originalGeometryRef.current = null;
     clearGeometryHistory();
     setPolygonGeometryEdit?.(undefined);
-  }, [clearGeometryHistory, draw, onCancel, polygonFromMap?.isOpen, polygonsData, setPolygonGeometryEdit]);
+  }, [
+    clearGeometryHistory,
+    draftPolygonGeometry,
+    draw,
+    isUserDrawingEnabled,
+    onCancel,
+    polygonFromMap?.isOpen,
+    polygonsData,
+    setPolygonGeometryEdit
+  ]);
 
   useValueChanged(isUserDrawingEnabled, () => {
     if (map.current == null || draw.current == null) return;
@@ -311,7 +323,7 @@ export function useMapDraw({
       }
       if (map.current != null && draw.current != null) {
         filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
-        applyPolygonNeighborDimming(map.current, true);
+        applyPolygonNeighborDimming(map.current, true, polygonuuid);
         originalGeometryRef.current = geometry;
         resetGeometryHistory(geometry);
         setPolygonGeometryEdit?.({

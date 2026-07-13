@@ -1,4 +1,8 @@
-import { getPolygonUploadErrorCopy, resolvePolygonUploadErrorVariant } from "./polygonUploadErrors";
+import {
+  getPolygonUploadErrorCopy,
+  resolvePolygonUploadErrorVariant,
+  resolvePolygonUploadErrorVariantFromUnknown
+} from "./polygonUploadErrors";
 
 const identityTranslate = (message: string) => message;
 
@@ -42,6 +46,17 @@ describe("polygonUploadErrors", () => {
       const copy = getPolygonUploadErrorCopy("fallback", identityTranslate);
 
       expect(copy.summary).toBe("Something went wrong with your upload. Please check your file and try again.");
+    });
+  });
+
+  describe("resolvePolygonUploadErrorVariantFromUnknown", () => {
+    it("maps API error payloads with array messages", () => {
+      expect(
+        resolvePolygonUploadErrorVariantFromUnknown({
+          statusCode: 400,
+          message: ["File contains 3D coordinates"]
+        })
+      ).toBe("coordinate_system");
     });
   });
 });

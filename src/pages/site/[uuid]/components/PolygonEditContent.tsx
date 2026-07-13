@@ -231,7 +231,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
-  const [submissionCycle, setSubmissionCycle] = useState<string[]>(["option-1"]);
+  // TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
+  // const [submissionCycle, setSubmissionCycle] = useState<string[]>(["option-1"]);
   const [treesPlanted, setTreesPlanted] = useState("");
   const [plotsVisible, setPlotsVisible] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
@@ -310,7 +311,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setTreeDistribution,
       setTreesPlanted
     });
-    setSubmissionCycle(["option-1"]);
+    // setSubmissionCycle(["option-1"]);
   }, [polygon]);
 
   const onSavedRef = useLatestRef(onSaved);
@@ -577,11 +578,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     const overlay = anrMapOverlayRef.current;
     if (overlay == null) return;
 
-    const isMonitoringPlotsSectionActive = openAccordionSection === "monitoring-plots" || plotsVisible;
+    const isMonitoringPlotsSectionActive = openAccordionSection === "monitoring-plots";
     const canShowAnrPlots = isAnrEligible && hasAnrPlotGeometry;
     overlay.setDrawerOpen(true);
     overlay.setAnrTabActive(canShowAnrPlots && isMonitoringPlotsSectionActive);
-    overlay.setShowPlotsOnMap(canShowAnrPlots && plotsVisible);
+    overlay.setShowPlotsOnMap(canShowAnrPlots && isMonitoringPlotsSectionActive && plotsVisible);
 
     if (sitePolygonUuid !== "" && geometryPolygonUuid !== "") {
       overlay.syncDrawerSelection({
@@ -617,6 +618,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [openAccordionSection, setShowPhotosOnMap]);
 
   useEffect(() => {
+    if (geotaggedPhotosCount === 0 && showPhotosOnMap) {
+      setShowPhotosOnMap(false);
+    }
+  }, [geotaggedPhotosCount, showPhotosOnMap, setShowPhotosOnMap]);
+
+  useEffect(() => {
     setGeotaggedPhotosMapVisible(openAccordionSection === "geotagged-photos" && showPhotosOnMap);
   }, [openAccordionSection, showPhotosOnMap, setGeotaggedPhotosMapVisible]);
 
@@ -627,6 +634,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     },
     [setGeotaggedPhotosMapVisible, setShowPhotosOnMap]
   );
+
+  useEffect(() => {
+    if (openAccordionSection !== "monitoring-plots") {
+      setPlotsVisible(false);
+    }
+  }, [openAccordionSection]);
 
   const downloadMonitoringPlots = useCallback(async () => {
     if (sitePolygonUuid === "" || !isAnrEligible) {
@@ -927,11 +940,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     onRegisterPlantStartDate?.(() => hasPlantStartDateForDisplay(plantStartDate, polygon));
   }, [onRegisterPlantStartDate, plantStartDate, polygon]);
 
-  const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
-    { value: "option-1", label: t("Option 1") },
-    { value: "option-2", label: t("Option 2") },
-    { value: "option-3", label: t("Option 3") }
-  ];
+  // TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
+  // const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
+  //   { value: "option-1", label: t("Option 1") },
+  //   { value: "option-2", label: t("Option 2") },
+  //   { value: "option-3", label: t("Option 3") }
+  // ];
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
@@ -1009,6 +1023,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                 }
               ]}
             />
+            {/* TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
             {(isAdmin || submissionCycle.length > 0) && (
               <SelectInput
                 key={`submission-cycle-${sitePolygonUuid}`}
@@ -1020,6 +1035,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                 disabled={!isAdmin}
               />
             )}
+            */}
           </Flex>
         </Accordion>
         {isAnrEligible ? (
@@ -1125,6 +1141,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             <Switch
               name="showPhotosOnMap"
               checked={showPhotosOnMap}
+              disabled={geotaggedPhotosCount === 0}
               onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
                 setShowPhotosOnMap(checked === true)
               }
