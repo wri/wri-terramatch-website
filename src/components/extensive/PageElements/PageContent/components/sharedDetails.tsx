@@ -29,7 +29,8 @@ import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import { ArrowForwardIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 import { EntityName } from "@/types/common";
-import { resolveReportEntityTypeFromEntityName, trackReportAnalyticsEvent } from "@/utils/analytics/reportAnalytics";
+import { resolveReportEntityTypeFromEntityName } from "@/utils/analytics/reportAnalytics";
+import { trackReportOverviewAccordionExpanded } from "@/utils/analytics/reportsIndexAnalytics";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
 import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
@@ -116,10 +117,10 @@ const SharedDetails: FC<SharedDetailsProps> = ({
   const handleAccordionOpenChange = (open: boolean) => {
     if (!open || reportEntityType == null || accordionLabel === "") return;
 
-    trackReportAnalyticsEvent("accordion_expanded", {
+    trackReportOverviewAccordionExpanded({
       entityType: reportEntityType,
       entityId: entityUUID,
-      accordion_label: accordionLabel
+      accordionLabel
     });
   };
 

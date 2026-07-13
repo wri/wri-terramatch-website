@@ -46,6 +46,14 @@ export type ReportEventName =
 
 export type OnboardingCardEventName = "onboarding_card_viewed" | "onboarding_card_link_clicked";
 
+export type ReportsIndexEventName =
+  | "index_filter_applied"
+  | "index_sort_applied"
+  | "index_search_used"
+  | "index_row_action_clicked"
+  | "index_selection_changed"
+  | "index_bulk_action_submitted";
+
 export type Ga4EntityType = "project" | "site" | "nursery" | "unknown";
 
 type Ga4EventParams = Record<string, string | number | boolean | null | undefined>;
@@ -157,5 +165,9 @@ export const trackReportEvent = (eventName: ReportEventName, params: Ga4EventPar
 };
 
 export const trackOnboardingCardEvent = (eventName: OnboardingCardEventName, params: Ga4EventParams): void => {
+  trackGa4Event(eventName, params);
+};
+
+export const trackReportsIndexEvent = (eventName: ReportsIndexEventName, params: Ga4EventParams): void => {
   trackGa4Event(eventName, params);
 };

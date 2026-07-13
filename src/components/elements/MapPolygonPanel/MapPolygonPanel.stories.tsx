@@ -44,8 +44,7 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null,
-    submissionCycle: null
+    createdAt: null
   },
   {
     uuid: "2",
@@ -76,8 +75,7 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null,
-    submissionCycle: null
+    createdAt: null
   },
   {
     uuid: "3",
@@ -108,8 +106,7 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null,
-    submissionCycle: null
+    createdAt: null
   },
   {
     uuid: "4",
@@ -140,8 +137,7 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null,
-    submissionCycle: null
+    createdAt: null
   },
   {
     uuid: "5",
@@ -172,8 +168,7 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null,
-    submissionCycle: null
+    createdAt: null
   },
   {
     uuid: "6",
@@ -204,8 +199,7 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null,
-    submissionCycle: null
+    createdAt: null
   }
 ];
 
