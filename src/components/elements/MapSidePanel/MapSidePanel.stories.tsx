@@ -60,7 +60,8 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    submissionCycle: null
   },
   {
     uuid: "2",
@@ -90,7 +91,8 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    submissionCycle: null
   },
   {
     uuid: "3",
@@ -120,6 +122,7 @@ const items: SitePolygonLightDto[] = [
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    submissionCycle: null
   }
 ];
