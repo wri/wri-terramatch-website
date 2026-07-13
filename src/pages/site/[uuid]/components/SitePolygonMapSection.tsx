@@ -25,6 +25,7 @@ type SitePolygonMapSectionProps = {
   onRefetchPolygons: ComponentProps<typeof PolygonsMap>["onRefetchPolygons"];
   showUndoButton: boolean;
   onUndoDraw: () => void;
+  isDeletedAuditView?: boolean;
 };
 
 const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
@@ -39,7 +40,8 @@ const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
   overlapPolygons,
   onRefetchPolygons,
   showUndoButton,
-  onUndoDraw
+  onUndoDraw,
+  isDeletedAuditView = false
 }) => {
   const t = useT();
 
@@ -65,8 +67,9 @@ const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
         skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
         polygonTableHighlight={polygonTableHighlight}
         overlapPolygons={overlapPolygons}
+        isDeletedAuditView={isDeletedAuditView}
       />
-      {showUndoButton && (
+      {showUndoButton && !isDeletedAuditView && (
         <Button
           variant="secondary"
           leftIcon={<UndoIcon />}
