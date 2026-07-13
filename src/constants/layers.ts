@@ -9,7 +9,7 @@ import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
 import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { getThemedColor } from "@/lib/theme";
 
-import { DELETED_POLYGONS } from "./statuses";
+import { DELETED_AUDIT_POLYGONS, DELETED_POLYGONS } from "./statuses";
 
 type LayerStyleFragment<T extends LayerSpecification> = Omit<T, "id" | "source" | "source-layer"> & {
   metadata?: unknown;
@@ -133,6 +133,29 @@ export const layersList: LayerType[] = [
         paint: {
           "line-color": "#3bb2d0",
           "line-width": 1
+        },
+        filter: ["==", ["get", "uuid"], ""]
+      }),
+      // Ghost/outline style for the read-only deleted-polygons audit view. Distinct from
+      // LAYERS_NAMES.DELETED_GEOMETRIES below, which is a red delete-confirmation highlight
+      // used while a user is actively deleting polygons, not for browsing past deletions.
+      fillStyle({
+        metadata: { polygonStatus: DELETED_AUDIT_POLYGONS },
+        type: "fill",
+        layout: {},
+        paint: {
+          "fill-color": "#FFFFFF",
+          "fill-opacity": 0.25
+        },
+        filter: ["==", ["get", "uuid"], ""]
+      }),
+      lineStyle({
+        metadata: { polygonStatus: DELETED_AUDIT_POLYGONS },
+        type: "line",
+        layout: {},
+        paint: {
+          "line-color": "#FFFFFF",
+          "line-width": 1.5
         },
         filter: ["==", ["get", "uuid"], ""]
       })
