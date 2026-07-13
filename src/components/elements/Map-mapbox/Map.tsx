@@ -59,7 +59,7 @@ import {
 } from "./hooks/usePolygonTableHighlight";
 import { addGeojsonToDraw } from "./interactions/draw";
 import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "./layers/overlapTypes";
-import { buildCrossSiteOverlapFeatureCollection } from "./layers/overlayLayers";
+import { buildCrossSiteOverlapFeatureCollection, buildCrossSiteOverlapMarkerPoints } from "./layers/overlayLayers";
 import type {
   DashboardGetProjectsData,
   DashboardPopupContext,
@@ -532,6 +532,25 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     [crossSiteOverlapPolygons]
   );
 
+  const crossSiteOverlapMarkerPoints = useMemo(
+    () =>
+      crossSiteOverlapPolygons != null && crossSiteOverlapPolygons.length > 0
+        ? buildCrossSiteOverlapMarkerPoints(
+            crossSiteOverlapPolygons,
+            t("This polygon belongs to another site in this project.")
+          )
+        : [],
+    [crossSiteOverlapPolygons, t]
+  );
+
+  const overlapPolygonsWithExternal = useMemo(
+    () =>
+      crossSiteOverlapMarkerPoints.length > 0
+        ? [...(overlapPolygons ?? []), ...crossSiteOverlapMarkerPoints]
+        : overlapPolygons,
+    [overlapPolygons, crossSiteOverlapMarkerPoints]
+  );
+
   useMapOverlays({
     map,
     selectedLandscapes,
@@ -569,7 +588,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     map,
     styleReady,
     styleVersion,
-    overlapPolygons
+    overlapPolygons: overlapPolygonsWithExternal
   });
 
   const { handleEditPolygon, onSaveEdit, onCancelEdit } = useMapDraw({

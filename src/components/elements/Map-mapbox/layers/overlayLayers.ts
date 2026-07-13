@@ -1,3 +1,4 @@
+import bbox from "@turf/bbox";
 import {
   type DataDrivenPropertyValueSpecification,
   LayerSpecification,
@@ -29,7 +30,7 @@ import {
   TERRAMATCH_SATELLITE_STYLE_ID,
   TERRAMATCH_STREET_STYLE_ID
 } from "../MapControls/types";
-import { CrossSiteOverlapPolygon } from "./overlapTypes";
+import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "./overlapTypes";
 import { setFilterLandscape } from "./polygonLayers";
 
 const GOOGLE_RASTER_SOURCE_ID = "google-satellite-source";
@@ -643,6 +644,28 @@ export function buildCrossSiteOverlapFeatureCollection(polygons: CrossSiteOverla
       }
     }))
   };
+}
+
+export function buildCrossSiteOverlapMarkerPoints(
+  polygons: CrossSiteOverlapPolygon[],
+  tooltip: string
+): OverlapPolygonPoint[] {
+  return polygons.flatMap(polygon => {
+    try {
+      const [minLng, minLat, maxLng, maxLat] = bbox({ type: "Feature", geometry: polygon.geometry, properties: {} });
+      return [
+        {
+          polygonUuid: polygon.polygonUuid,
+          lat: (minLat + maxLat) / 2,
+          lng: (minLng + maxLng) / 2,
+          tooltip
+        }
+      ];
+    } catch (e) {
+      Log.warn("buildCrossSiteOverlapMarkerPoints:", e);
+      return [];
+    }
+  });
 }
 
 export function removeCrossSiteOverlapOverlay(map: MapboxMap | null | undefined): void {
