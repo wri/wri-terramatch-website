@@ -16,6 +16,7 @@ import {
   AgroforestyIcon,
   AssistedNaturalRegenIcon,
   CalendarIcon,
+  DeleteIcon,
   DirectSeedingIcon,
   GrasslandIcon,
   MangroveIcon,
@@ -147,6 +148,8 @@ interface PolygonRowProps {
   isHovered: boolean;
   onHover: (uuid: string) => void;
   onSelectChange: (row: PolygonTableRow, checked: boolean) => void;
+  // Deleted-polygons audit view: no selection, no bulk actions, submission status is always "deleted".
+  readOnly?: boolean;
 }
 
 const PolygonRowComponent: FC<PolygonRowProps> = ({
@@ -155,7 +158,8 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   isSelected,
   isHovered,
   onHover,
-  onSelectChange
+  onSelectChange,
+  readOnly = false
 }) => {
   const t = useT();
   const targetLandUseLabels = useTargetLandUseLabels();
@@ -204,6 +208,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
           aria-label={`Select polygon ${row.polygonName}`}
           onCheckedChange={handleOnRowSelected}
           checked={isSelected}
+          disabled={readOnly}
         />
       </TableCell>
       <TableCell className="min-w-[17.75rem] max-w-[17.75rem]">
@@ -214,7 +219,13 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
         </Box>
       </TableCell>
       <TableCell className="min-w-[15.875rem]">
-        {row.submission != null ? <MappedTag state={row.submission} /> : <Text>—</Text>}
+        {readOnly ? (
+          <FeedbackTag type="info-grey" className="w-fit" label={t("Deleted")} icon={<DeleteIcon boxSize={2.5} />} />
+        ) : row.submission != null ? (
+          <MappedTag state={row.submission} />
+        ) : (
+          <Text>—</Text>
+        )}
       </TableCell>
       <TableCell className="min-w-[12.75rem]">
         {row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>}
@@ -254,7 +265,8 @@ const polygonRowPropsAreEqual = (prev: PolygonRowProps, next: PolygonRowProps) =
   prev.isHovered === next.isHovered &&
   prev.rowProps === next.rowProps &&
   prev.onHover === next.onHover &&
-  prev.onSelectChange === next.onSelectChange;
+  prev.onSelectChange === next.onSelectChange &&
+  prev.readOnly === next.readOnly;
 
 export const PolygonRow = memo(PolygonRowComponent, polygonRowPropsAreEqual);
 

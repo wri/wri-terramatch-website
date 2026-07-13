@@ -5542,6 +5542,15 @@ export type FormPullTranslationsPathParams = {
   uuid: string;
 };
 
+export type FormPullTranslationsQueryParams = {
+  /**
+   * If true, all translations will be pulled, otherwise only new translations will be pulled
+   *
+   * @default false
+   */
+  forceAll?: Schemas.Object;
+};
+
 export type FormPullTranslationsError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -5606,6 +5615,7 @@ export type FormPullTranslationsResponse = {
 
 export type FormPullTranslationsVariables = {
   pathParams: FormPullTranslationsPathParams;
+  queryParams?: FormPullTranslationsQueryParams;
 };
 
 /**
