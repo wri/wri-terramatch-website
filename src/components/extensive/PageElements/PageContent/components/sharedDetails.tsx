@@ -29,10 +29,8 @@ import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import { ArrowForwardIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 import { EntityName } from "@/types/common";
-import {
-  resolveReportEntityTypeFromEntityName,
-  trackReportOverviewAccordionExpanded
-} from "@/utils/analytics/reportsIndexAnalytics";
+import { resolveReportEntityTypeFromEntityName } from "@/utils/analytics/reportAnalytics";
+import { trackReportOverviewAccordionExpanded } from "@/utils/analytics/reportsIndexAnalytics";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
 import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
