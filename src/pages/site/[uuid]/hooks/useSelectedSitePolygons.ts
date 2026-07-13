@@ -11,24 +11,41 @@ type UseSelectedSitePolygonsParams = {
   selectedRowIds: Set<string | number>;
   selectedRows: PolygonTableRow[];
   overlapPolygons: OverlapPolygonPoint[];
+  isEditPolygonOpen: boolean;
+  editPolygonUuid: string | null;
 };
 
 export const useSelectedSitePolygons = ({
   polygonsData,
   selectedRowIds,
   selectedRows,
-  overlapPolygons
+  overlapPolygons,
+  isEditPolygonOpen,
+  editPolygonUuid
 }: UseSelectedSitePolygonsParams) => {
   const selectedPolygonUuids = useMemo(() => Array.from(selectedRowIds, id => String(id)), [selectedRowIds]);
 
+  const editDrawerPolygonUuid = useMemo(() => {
+    if (!isEditPolygonOpen || editPolygonUuid == null || editPolygonUuid === "") {
+      return null;
+    }
+    const drawerPolygon = polygonsData.find(
+      polygon => polygon.polygonUuid === editPolygonUuid || polygon.uuid === editPolygonUuid
+    );
+    return drawerPolygon?.polygonUuid ?? drawerPolygon?.uuid ?? null;
+  }, [isEditPolygonOpen, editPolygonUuid, polygonsData]);
+
   const overlapPolygonsForMap = useMemo(() => {
-    if (selectedPolygonUuids.length === 0) {
+    const overlapMapPolygonUuids = new Set(selectedPolygonUuids);
+    if (editDrawerPolygonUuid != null) {
+      overlapMapPolygonUuids.add(editDrawerPolygonUuid);
+    }
+    if (overlapMapPolygonUuids.size === 0) {
       return [];
     }
 
-    const selectedIds = new Set(selectedPolygonUuids);
-    return overlapPolygons.filter(point => selectedIds.has(point.polygonUuid));
-  }, [overlapPolygons, selectedPolygonUuids]);
+    return overlapPolygons.filter(point => overlapMapPolygonUuids.has(point.polygonUuid));
+  }, [overlapPolygons, selectedPolygonUuids, editDrawerPolygonUuid]);
 
   const selectedPolygonData = useMemo(() => {
     const sitePolygons: SitePolygonLightDto[] = [];

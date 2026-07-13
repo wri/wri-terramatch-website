@@ -195,7 +195,9 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     polygonsData,
     selectedRowIds,
     selectedRows,
-    overlapPolygons
+    overlapPolygons,
+    isEditPolygonOpen,
+    editPolygonUuid: editPolygon.uuid !== "" ? editPolygon.uuid : null
   });
 
   const selectedOverlapFixSummary = useMemo(
