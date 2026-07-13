@@ -94,19 +94,39 @@ describe("reportAnalytics", () => {
       trackReportAnalyticsEvent("report_opened", {
         entityType: "project-report" as ReportEntityType,
         entityId: "report-uuid",
-        userRole: "project-developer"
+        userRole: "project-developer",
+        page_context: "report_overview"
       });
 
       expect(gtag).toHaveBeenCalledWith("event", "report_opened", {
         entity_type: "project-report",
         entity_id: "report-uuid",
-        user_role: "project-developer"
+        user_role: "project-developer",
+        page_context: "report_overview"
       });
       expect(dataLayer).toContainEqual({
         event: "report_opened",
         entity_type: "project-report",
         entity_id: "report-uuid",
-        user_role: "project-developer"
+        user_role: "project-developer",
+        page_context: "report_overview"
+      });
+    });
+
+    it("omits optional params when they are blank", () => {
+      trackReportAnalyticsEvent("report_opened", {
+        entityType: "project-report" as ReportEntityType,
+        entityId: "report-uuid",
+        userRole: "project-developer",
+        page_context: "report_overview",
+        entry_point: ""
+      });
+
+      expect(gtag).toHaveBeenCalledWith("event", "report_opened", {
+        entity_type: "project-report",
+        entity_id: "report-uuid",
+        user_role: "project-developer",
+        page_context: "report_overview"
       });
     });
 

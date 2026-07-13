@@ -5,7 +5,9 @@ import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFor
 import { FormFieldsProvider, FormModelsDefinition } from "@/context/wizardForm.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import {
+  ACCORDION_CONTEXT_REPORT_DETAILS,
   getAnalyticsUserRole,
+  PAGE_CONTEXT_REPORT_OVERVIEW,
   ReportEntityType,
   resolveReportEntityType,
   resolveReportSectionName,
@@ -122,6 +124,8 @@ export const useReportAnalytics = ({
       trackReportAnalyticsEvent("accordion_expanded", {
         entityType: context.entityType,
         entityId: context.entityId,
+        page_context: PAGE_CONTEXT_REPORT_OVERVIEW,
+        accordion_context: ACCORDION_CONTEXT_REPORT_DETAILS,
         accordion_label: accordionLabel
       });
     },
