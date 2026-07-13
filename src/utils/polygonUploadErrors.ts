@@ -72,14 +72,14 @@ export const getPolygonUploadErrorCopy = (
       };
     case "coordinate_system":
       return {
-        summary: t(
-          "This file contains 3D coordinates (x, y, z). Only 2D coordinates are supported. Please re-export your file using:"
-        ),
+        summary: t("This file contains 3D coordinates (x, y, z). Only 2D coordinates are supported."),
+        instructions: t("Please re-export your file using:"),
         bullets: [t("2D coordinates (x, y) only")]
       };
     case "projection":
       return {
-        summary: t("This file uses an unsupported coordinate projection. Please re-export your file using:"),
+        summary: t("This file uses an unsupported coordinate projection."),
+        instructions: t("Please re-export your file using:"),
         bullets: [t("WGS-84 projection (EPSG:4326)")]
       };
     case "linear_ring":
@@ -90,7 +90,8 @@ export const getPolygonUploadErrorCopy = (
       };
     case "size_limit":
       return {
-        summary: t("This file exceeds the maximum upload size of 50MB. Please try one of the following:"),
+        summary: t("This file exceeds the maximum upload size of 50MB."),
+        instructions: t("Please try one of the following:"),
         bullets: [
           t("Split the file into smaller uploads"),
           t("Simplify polygon geometries to reduce file size"),
