@@ -6,15 +6,15 @@ import { twMerge } from "tailwind-merge";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAboutSection } from "@/connections/AboutSection";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
-import { AboutSectionGetPathParams } from "@/generated/v3/entityService/entityServiceComponents";
+import { useFrameworkContext } from "@/context/framework.provider";
+import { AboutSectionIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ChevronRightIcon from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import { useOnboardingCardAnalyticsContext } from "@/utils/analytics/onboardingCardAnalytics.context";
 
 type AboutPageItemProps = {
-  type: AboutSectionGetPathParams["type"];
+  type: NonNullable<AboutSectionIndexQueryParams["type"]>;
   className?: string;
 };
 
@@ -43,10 +43,7 @@ const parserReplacements: HTMLReactParserOptions["replace"] = domNode => {
 
 const AboutPageItem = ({ type, className }: AboutPageItemProps) => {
   const { framework } = useFrameworkContext();
-  const [loaded, { data: aboutSection }] = useAboutSection({
-    type,
-    framework: framework === Framework.UNDEFINED ? undefined : framework
-  });
+  const [loaded, { data: aboutSection }] = useAboutSection({ type, framework });
   const t = useT();
   const onboardingAnalytics = useOnboardingCardAnalyticsContext();
 

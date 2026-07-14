@@ -302,11 +302,13 @@ export type ImpactStoryBulkDeleteBodyDto = {
 };
 
 export type LinkDto = {
+  id: string;
   title: string;
   url: string;
 };
 
 export type AboutSectionDto = {
+  id: string;
   type: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
   frameworks:
     | (

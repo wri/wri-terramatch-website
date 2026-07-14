@@ -656,11 +656,25 @@ export const impactStoryBulkDelete = new V3ApiEndpoint<
   {}
 >("/entities/v3/impactStories/bulkDelete", "DELETE");
 
-export type AboutSectionGetPathParams = {
-  type: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
-};
-
-export type AboutSectionGetQueryParams = {
+export type AboutSectionIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  type?: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
   framework?:
     | "terrafund"
     | "terrafund-landscapes"
@@ -672,6 +686,95 @@ export type AboutSectionGetQueryParams = {
     | "fundo-flora"
     | "fundo-flora-1"
     | "wcb";
+};
+
+export type AboutSectionIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type AboutSectionIndexResponse = {
+  meta?: {
+    /**
+     * @example aboutSections
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example aboutSections
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.AboutSectionDto;
+  }[];
+};
+
+export type AboutSectionIndexVariables = {
+  queryParams?: AboutSectionIndexQueryParams;
+};
+
+/**
+ * Get a paginated and filtered list of about sections. If a type and framework key are included, the result will be a single section
+ */
+export const aboutSectionIndex = new V3ApiEndpoint<
+  AboutSectionIndexResponse,
+  AboutSectionIndexError,
+  AboutSectionIndexVariables,
+  {}
+>("/aboutSections/v3/aboutSections", "GET");
+
+export type AboutSectionGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
 };
 
 export type AboutSectionGetError = Fetcher.ErrorWrapper<
@@ -715,6 +818,9 @@ export type AboutSectionGetResponse = {
      * @example aboutSections
      */
     type?: string;
+    /**
+     * @format uuid
+     */
     id?: string;
     attributes?: Schemas.AboutSectionDto;
   };
@@ -722,18 +828,17 @@ export type AboutSectionGetResponse = {
 
 export type AboutSectionGetVariables = {
   pathParams: AboutSectionGetPathParams;
-  queryParams?: AboutSectionGetQueryParams;
 };
 
 /**
- * Get an about section by type, with optional framework
+ * Get an about section by uuid
  */
 export const aboutSectionGet = new V3ApiEndpoint<
   AboutSectionGetResponse,
   AboutSectionGetError,
   AboutSectionGetVariables,
   {}
->("/aboutSections/v3/aboutSections/{type}", "GET");
+>("/aboutSections/v3/aboutSections/{uuid}", "GET");
 
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -6906,7 +7011,7 @@ export const operationsByTag = {
     impactStoryDelete,
     impactStoryBulkDelete
   },
-  aboutSections: { aboutSectionGet },
+  aboutSections: { aboutSectionIndex, aboutSectionGet },
   tasks: { taskIndex, taskGet, taskUpdate },
   files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
