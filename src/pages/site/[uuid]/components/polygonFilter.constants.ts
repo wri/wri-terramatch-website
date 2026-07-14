@@ -16,8 +16,8 @@ export const SUBMISSION_CYCLE_LABELS: Record<SubmissionCycleOption, string> = {
 export const isSubmissionCycleOption = (value: string): value is SubmissionCycleOption =>
   SUBMISSION_CYCLE_OPTIONS.includes(value as SubmissionCycleOption);
 
-export const normalizeSubmissionCycle = (values: string[] | null | undefined): SubmissionCycleOption[] =>
-  [...new Set((values ?? []).filter(isSubmissionCycleOption))].sort();
+export const normalizeSubmissionCycle = (value: string | null | undefined): SubmissionCycleOption[] =>
+  value != null && isSubmissionCycleOption(value) ? [value] : [];
 
 export const formatSubmissionCycleDisplay = (values: SubmissionCycleOption[]): string =>
   values.length > 0 ? values.map(value => SUBMISSION_CYCLE_LABELS[value]).join(", ") : "—";

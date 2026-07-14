@@ -1039,14 +1039,13 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             />
             {(isAdmin || submissionCycle.length > 0) && (
               <SelectInput
-                key={`submission-cycle-${sitePolygonUuid}-${(polygon?.submissionCycle ?? []).join("|")}`}
+                key={`submission-cycle-${sitePolygonUuid}-${polygon?.submissionCycle ?? ""}`}
                 items={submissionCycleOptions}
                 label={t("Submission Cycle")}
                 defaultValue={normalizeSubmissionCycle(polygon?.submissionCycle)}
-                onChange={setSubmissionCycle}
+                onChange={value => setSubmissionCycle(value.slice(0, 1))}
                 placeholder={t("Select...")}
                 disabled={!isAdmin}
-                multiple
               />
             )}
           </Flex>

@@ -18,7 +18,7 @@ export type CreatePolygonFeatureProperties = {
   targetSys?: string;
   distr?: string[];
   numTrees?: number;
-  submissionCycle?: string[];
+  submissionCycle?: string;
 };
 
 export type PolygonEditFormValues = {
@@ -86,7 +86,7 @@ export const arePolygonEditFormValuesEqual = (
     return false;
   }
 
-  if (!areStringArraysEqual(normalizeStringArray(left.submissionCycle), normalizeStringArray(right.submissionCycle))) {
+  if (left.submissionCycle.join(", ").trim() !== right.submissionCycle.join(", ").trim()) {
     return false;
   }
 
@@ -151,12 +151,9 @@ export const hasUnsavedPolygonChanges = (
     return true;
   }
 
-  if (
-    !areStringArraysEqual(
-      normalizeStringArray(form.submissionCycle),
-      normalizeStringArray(polygon.submissionCycle ?? [])
-    )
-  ) {
+  const formSubmissionCycle = form.submissionCycle.join(", ").trim();
+  const savedSubmissionCycle = (polygon.submissionCycle ?? "").trim();
+  if (formSubmissionCycle !== savedSubmissionCycle) {
     return true;
   }
 
@@ -196,7 +193,7 @@ export const buildAttributeChanges = (
   };
 
   if (options?.includeSubmissionCycle === true) {
-    changes.submissionCycle = form.submissionCycle;
+    changes.submissionCycle = form.submissionCycle.join(", ");
   }
 
   return changes;
@@ -219,7 +216,7 @@ export const buildCreatePolygonFeatureProperties = (
   if (form.treeDistribution.length > 0) properties.distr = form.treeDistribution;
   if (form.treesPlanted.trim() !== "") properties.numTrees = Number(form.treesPlanted);
   if (options?.includeSubmissionCycle === true && form.submissionCycle.length > 0) {
-    properties.submissionCycle = form.submissionCycle;
+    properties.submissionCycle = form.submissionCycle.join(", ");
   }
 
   return properties;
