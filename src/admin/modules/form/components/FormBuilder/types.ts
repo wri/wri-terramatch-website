@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash";
+import { cloneDeep, omit } from "lodash";
 import isArray from "lodash/isArray";
 
 import { isDtoOption } from "@/components/extensive/WizardForm/utils";
@@ -33,13 +33,8 @@ export const formDtoToBuilder = ({ sections, ...form }: FormFullDto): FormBuilde
   }))
 });
 
-export const formBuilderToAttributes = ({
-  id,
-  steps,
-  deadlineAt: _deadlineAt,
-  ...form
-}: FormBuilderData): StoreFormAttributes => ({
-  ...form,
+export const formBuilderToAttributes = ({ id, steps, ...form }: FormBuilderData): StoreFormAttributes => ({
+  ...omit(form, "deadlineAt"),
   sections: steps.map(
     ({ id, fields, ...section }): StoreFormSectionAttributes => ({
       id: id?.startsWith("new-step-") ? undefined : id,
