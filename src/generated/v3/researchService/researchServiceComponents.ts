@@ -223,6 +223,10 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["distr[]"]?: ("single-line" | "partial" | "full")[];
   /**
+   * Filter by submission cycle (any selected value matches)
+   */
+  ["submissionCycle[]"]?: ("1" | "2" | "3" | "4" | "5")[];
+  /**
    * Filter by polygon source (any selected value matches)
    */
   ["source[]"]?: ("terramatch" | "greenhouse" | "research")[];
@@ -238,6 +242,12 @@ export type SitePolygonsIndexQueryParams = {
    * @default false
    */
   hasOverlap?: boolean;
+  /**
+   * Soft-deleted polygons for one site. Search is supported; other filters are ignored.
+   *
+   * @default false
+   */
+  deletedOnly?: boolean;
   search?: string;
   /**
    * Select the fields used by search.
@@ -742,7 +752,7 @@ export type BulkUpdateSitePolygonAttributesVariables = {
 
 /**
  * Creates a new version for each site polygon with the same attribute changes applied.
- *     Supported fields: plantStart, practice, targetSys, distr, numTrees.
+ *     Supported fields: plantStart, practice, targetSys, distr, numTrees, submissionCycle.
  *     At least one attribute field must be provided. Empty string or empty array explicitly clears a field.
  *     Omitted fields inherit values from each polygon's active version.
  */
@@ -1752,61 +1762,63 @@ export const getSiteValidation = new V3ApiEndpoint<
   {}
 >("/validations/v3/sites/{siteUuid}", "GET");
 
-export type CreatePolygonValidationsError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type CreatePolygonValidationsResponse = {
-  meta?: {
+export type CreatePolygonValidationsError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
     /**
-     * @example validations
+     * @example 400
      */
-    resourceType?: string;
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
   };
-  data?: {
-    /**
-     * @example validations
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.ValidationDto;
-  };
-};
+}>;
 
 export type CreatePolygonValidationsVariables = {
   body: Schemas.ValidationRequestBody;
 };
 
 export const createPolygonValidations = new V3ApiEndpoint<
-  CreatePolygonValidationsResponse,
+  | {
+      meta?: {
+        /**
+         * @example validationSummaries
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example validationSummaries
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ValidationSummaryDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
   CreatePolygonValidationsError,
   CreatePolygonValidationsVariables,
   {}
@@ -2538,10 +2550,10 @@ export type CreateProjectPolygonVariables = {
 };
 
 /**
- * Create a project polygon for a project pitch from GeoJSON.
+ * Create project polygon(s) for a project pitch from GeoJSON.
  *
  *     Each feature must have `projectPitchUuid` in properties.
- *     Only one polygon per project pitch is supported. If a polygon already exists for the project pitch, it will be deleted and replaced with the new polygon.
+ *     New polygons are appended to any existing polygons for the project pitch.
  */
 export const createProjectPolygon = new V3ApiEndpoint<
   CreateProjectPolygonResponse,
@@ -2628,7 +2640,7 @@ export type UploadProjectPolygonFileVariables = {
  *     - Single polygon/line: Uses the geometry as-is
  *
  *
- *     If a project polygon already exists for the project pitch, it will be replaced.
+ *     New polygons are appended to any existing polygons for the project pitch.
  */
 export const uploadProjectPolygonFile = new V3ApiEndpoint<
   UploadProjectPolygonFileResponse,

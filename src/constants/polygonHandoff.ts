@@ -1,4 +1,32 @@
-export const PROJECT_POLYGON_HANDOFF_AUDIT_TYPES = ["polygon-data-submission", "ready-for-baseline"];
+export const PROJECT_POLYGON_HANDOFF_AUDIT_TYPES = [
+  "polygon-data-submission",
+  "ready-for-baseline",
+  "project-qa-status-1",
+  "project-qa-status-2",
+  "project-qa-status-3",
+  "project-qa-status-4",
+  "project-qa-status-5"
+] as const;
+
+export type ProjectPolygonHandoffAuditType = (typeof PROJECT_POLYGON_HANDOFF_AUDIT_TYPES)[number];
+
+export const PROJECT_QA_STATUS_AUDIT_TYPES = [
+  "project-qa-status-1",
+  "project-qa-status-2",
+  "project-qa-status-3",
+  "project-qa-status-4",
+  "project-qa-status-5"
+] as const;
+
+export type ProjectQaStatusAuditType = (typeof PROJECT_QA_STATUS_AUDIT_TYPES)[number];
+
+export function isProjectQaStatusAuditType(value: string): value is ProjectQaStatusAuditType {
+  return (PROJECT_QA_STATUS_AUDIT_TYPES as readonly string[]).includes(value);
+}
+
+export function getProjectQaStatusNumberFromAuditType(type: ProjectQaStatusAuditType): 1 | 2 | 3 | 4 | 5 {
+  return Number(type.replace("project-qa-status-", "")) as 1 | 2 | 3 | 4 | 5;
+}
 
 export const POLYGON_DATA_SUBMISSION_OPTION_VALUES = [
   "no-polygons-submitted",
@@ -18,4 +46,36 @@ export const POLYGON_SUBMISSION_STATUS_LABELS: Record<PolygonDataSubmissionOptio
 
 export function isPolygonDataSubmissionOption(value: string): value is PolygonDataSubmissionOption {
   return (POLYGON_DATA_SUBMISSION_OPTION_VALUES as readonly string[]).includes(value);
+}
+
+export const PROJECT_QA_STATUS_OPTION_VALUES = [
+  "due",
+  "no-data-submitted",
+  "not-applicable",
+  "qa-in-progress",
+  "qa-completed"
+] as const;
+
+export type ProjectQaStatusOption = (typeof PROJECT_QA_STATUS_OPTION_VALUES)[number];
+
+export const PROJECT_QA_STATUS_FIELDS = [
+  "projectQaStatus1",
+  "projectQaStatus2",
+  "projectQaStatus3",
+  "projectQaStatus4",
+  "projectQaStatus5"
+] as const;
+
+export type ProjectQaStatusField = (typeof PROJECT_QA_STATUS_FIELDS)[number];
+
+export const PROJECT_QA_STATUS_LABELS: Record<ProjectQaStatusOption, string> = {
+  due: "Due",
+  "no-data-submitted": "No data submitted",
+  "not-applicable": "Not applicable",
+  "qa-in-progress": "QA in progress",
+  "qa-completed": "QA completed"
+};
+
+export function isProjectQaStatusOption(value: string): value is ProjectQaStatusOption {
+  return (PROJECT_QA_STATUS_OPTION_VALUES as readonly string[]).includes(value);
 }
