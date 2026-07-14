@@ -1564,6 +1564,26 @@ export type ProjectFullDto = {
   proofOfLandTenureMou: MediaDto[];
   consortiumPartnershipAgreements: MediaDto[];
   detailedProjectBudget: MediaDto;
+  /**
+   * QA status for polygon dataset stage 1
+   */
+  projectQaStatus1: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  /**
+   * QA status for polygon dataset stage 2
+   */
+  projectQaStatus2: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  /**
+   * QA status for polygon dataset stage 3
+   */
+  projectQaStatus3: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  /**
+   * QA status for polygon dataset stage 4
+   */
+  projectQaStatus4: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  /**
+   * QA status for polygon dataset stage 5
+   */
+  projectQaStatus5: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
 };
 
 export type SiteFullDto = {
@@ -2496,6 +2516,26 @@ export type ProjectUpdateAttributes = {
    * Whether the project is ready for baseline analysis
    */
   readyForBaseline?: boolean;
+  /**
+   * QA status for polygon dataset stage 1
+   */
+  projectQaStatus1?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * QA status for polygon dataset stage 2
+   */
+  projectQaStatus2?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * QA status for polygon dataset stage 3
+   */
+  projectQaStatus3?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * QA status for polygon dataset stage 4
+   */
+  projectQaStatus4?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * QA status for polygon dataset stage 5
+   */
+  projectQaStatus5?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
   /**
    * Optional comment recorded on polygon handoff audit entries when updating submission/baseline
    */
@@ -3619,6 +3659,11 @@ export type ApplicationHistoryEntryDto = {
     | "polygon-data-submission"
     | "ready-for-baseline"
     | "polygon-validation"
+    | "project-qa-status-1"
+    | "project-qa-status-2"
+    | "project-qa-status-3"
+    | "project-qa-status-4"
+    | "project-qa-status-5"
     | null;
   status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
   /**

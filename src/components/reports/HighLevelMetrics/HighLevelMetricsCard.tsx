@@ -1,6 +1,7 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect } from "react";
 
 import { trackMetricsCardAnalyticsEvent, trackMetricsCardViewedOnce } from "@/utils/analytics/metricsCardAnalytics";
+import { PAGE_CONTEXT_REPORT_OVERVIEW, PageContext } from "@/utils/analytics/pageContext";
 import { MetricsCardEntityType } from "@/utils/ga4";
 
 type MetricsCardAnalyticsContextValue = {
@@ -16,22 +17,29 @@ export type HighLevelMetricsCardProps = {
   entityType: MetricsCardEntityType;
   entityId: string;
   children: ReactNode;
+  pageContext?: PageContext;
 };
 
-const HighLevelMetricsCard: FC<HighLevelMetricsCardProps> = ({ entityType, entityId, children }) => {
+const HighLevelMetricsCard: FC<HighLevelMetricsCardProps> = ({
+  entityType,
+  entityId,
+  children,
+  pageContext = PAGE_CONTEXT_REPORT_OVERVIEW
+}) => {
   useEffect(() => {
-    trackMetricsCardViewedOnce({ entityType, entityId });
-  }, [entityId, entityType]);
+    trackMetricsCardViewedOnce({ entityType, entityId, pageContext });
+  }, [entityId, entityType, pageContext]);
 
   const onTooltipEngaged = useCallback(
     (metricLabel: string) => {
       trackMetricsCardAnalyticsEvent("metrics_card_tooltip_engaged", {
         entityType,
         entityId,
-        metricLabel
+        metricLabel,
+        pageContext
       });
     },
-    [entityId, entityType]
+    [entityId, entityType, pageContext]
   );
 
   return (

@@ -9,6 +9,7 @@ import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
 import AuditLogSiteTabSelection from "./components/AuditLogSiteTabSelection";
 import AuditLogTable from "./components/AuditLogTable";
+import OverallPolygonQaStatusPanel from "./components/OverallPolygonQaStatusPanel";
 import PolygonHandoffPanel from "./components/PolygonHandoffPanel";
 import SiteAuditLogEntityStatus from "./components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "./components/SiteAuditLogEntityStatusSide";
@@ -138,17 +139,39 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   return isLoading ? null : (
     <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
       {isProjectPolygonHandoffTab ? (
-        <Stack gap={4} className="max-h-[200vh] overflow-auto px-2 py-2 pl-8 pr-4 pt-9">
-          {tabSelectionWhenAllowed}
-          <PolygonHandoffPanel
-            projectUuid={record.uuid}
-            polygonDataSubmission={record.polygonDataSubmission}
-            readyForBaseline={record.readyForBaseline}
-            onSaved={() => {
-              refetch();
-              loadEntityList();
-            }}
-          />
+        <Stack gap={6} className="max-h-[200vh] overflow-auto px-2 py-2 pl-8 pr-4 pt-9">
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={6}>
+              <Stack gap={4}>
+                {tabSelectionWhenAllowed}
+                <PolygonHandoffPanel
+                  projectUuid={record.uuid}
+                  polygonDataSubmission={record.polygonDataSubmission}
+                  readyForBaseline={record.readyForBaseline}
+                  onSaved={() => {
+                    refetch();
+                    loadEntityList();
+                  }}
+                />
+              </Stack>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <OverallPolygonQaStatusPanel
+                projectUuid={record.uuid}
+                statuses={{
+                  projectQaStatus1: record.projectQaStatus1,
+                  projectQaStatus2: record.projectQaStatus2,
+                  projectQaStatus3: record.projectQaStatus3,
+                  projectQaStatus4: record.projectQaStatus4,
+                  projectQaStatus5: record.projectQaStatus5
+                }}
+                onSaved={() => {
+                  refetch();
+                  loadEntityList();
+                }}
+              />
+            </Grid>
+          </Grid>
           <div>
             <Text variant="text-16-bold" className="mb-6">
               History and Discussion
