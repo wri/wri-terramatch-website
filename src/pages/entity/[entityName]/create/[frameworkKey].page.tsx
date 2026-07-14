@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import { kebabCase } from "lodash";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
@@ -20,7 +20,9 @@ import {
 import { singularEntityName, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useGetReportingFrameworkFormKey } from "@/hooks/useGetFormKey";
+import { useReportEntityDueAt } from "@/hooks/useReportEntityDueAt";
 import { EntityName } from "@/types/common";
+import { resolveFormIntroDeadline } from "@/utils/formIntroDeadline";
 import Log from "@/utils/log";
 
 const useCreateEntity = (
@@ -68,6 +70,15 @@ const EntityIntroPage = () => {
   const [, { data: frameworkForm }] = useForm({ id: formUUID ?? undefined, enabled: formUUID != null });
   const { form: entityForm } = useEntityForm(v3EntityName(entityName) as FormEntity, entityUUID);
   const form = frameworkForm ?? entityForm;
+  const reportDueAt = useReportEntityDueAt(entityName, entityUUID);
+  const deadline = useMemo(
+    () =>
+      resolveFormIntroDeadline({
+        formType: form?.type,
+        reportDueAt
+      }),
+    [form?.type, reportDueAt]
+  );
   const { createEntity, isCreating } = useCreateEntity(
     v3EntityName(entityName) as FormEntity,
     useCallback(({ uuid }) => router.replace(`/entity/${entityName}/edit/${uuid}`), [entityName, router]),
@@ -100,7 +111,7 @@ const EntityIntroPage = () => {
               title={form.title}
               imageSrc={form.banner?.url ?? undefined}
               description={form.description ?? undefined}
-              deadline={form.deadlineAt ?? undefined}
+              deadline={deadline}
               ctaProps={{
                 children: form.documentationLabel ?? t("View list of questions"),
                 as: Link,

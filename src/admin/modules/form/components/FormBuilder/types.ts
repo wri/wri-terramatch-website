@@ -33,7 +33,12 @@ export const formDtoToBuilder = ({ sections, ...form }: FormFullDto): FormBuilde
   }))
 });
 
-export const formBuilderToAttributes = ({ id, steps, ...form }: FormBuilderData): StoreFormAttributes => ({
+export const formBuilderToAttributes = ({
+  id,
+  steps,
+  deadlineAt: _deadlineAt,
+  ...form
+}: FormBuilderData): StoreFormAttributes => ({
   ...form,
   sections: steps.map(
     ({ id, fields, ...section }): StoreFormSectionAttributes => ({
