@@ -656,6 +656,85 @@ export const impactStoryBulkDelete = new V3ApiEndpoint<
   {}
 >("/entities/v3/impactStories/bulkDelete", "DELETE");
 
+export type AboutSectionGetPathParams = {
+  type: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
+};
+
+export type AboutSectionGetQueryParams = {
+  framework?:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | "fundo-flora-1"
+    | "wcb";
+};
+
+export type AboutSectionGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type AboutSectionGetResponse = {
+  meta?: {
+    /**
+     * @example aboutSections
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example aboutSections
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.AboutSectionDto;
+  };
+};
+
+export type AboutSectionGetVariables = {
+  pathParams: AboutSectionGetPathParams;
+  queryParams?: AboutSectionGetQueryParams;
+};
+
+/**
+ * Get an about section by type, with optional framework
+ */
+export const aboutSectionGet = new V3ApiEndpoint<
+  AboutSectionGetResponse,
+  AboutSectionGetError,
+  AboutSectionGetVariables,
+  {}
+>("/aboutSections/v3/aboutSections/{type}", "GET");
+
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -5542,6 +5621,15 @@ export type FormPullTranslationsPathParams = {
   uuid: string;
 };
 
+export type FormPullTranslationsQueryParams = {
+  /**
+   * If true, all translations will be pulled, otherwise only new translations will be pulled
+   *
+   * @default false
+   */
+  forceAll?: Schemas.Object;
+};
+
 export type FormPullTranslationsError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -5606,6 +5694,7 @@ export type FormPullTranslationsResponse = {
 
 export type FormPullTranslationsVariables = {
   pathParams: FormPullTranslationsPathParams;
+  queryParams?: FormPullTranslationsQueryParams;
 };
 
 /**
@@ -6817,6 +6906,7 @@ export const operationsByTag = {
     impactStoryDelete,
     impactStoryBulkDelete
   },
+  aboutSections: { aboutSectionGet },
   tasks: { taskIndex, taskGet, taskUpdate },
   files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
