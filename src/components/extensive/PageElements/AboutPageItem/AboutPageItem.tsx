@@ -1,10 +1,9 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import parse, { DOMNode, domToReact, Element, HTMLReactParserOptions } from "html-react-parser";
-import { twMerge } from "tailwind-merge";
 
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
-import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import PageItem, { PageItemProps } from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAboutSection } from "@/connections/AboutSection";
 import { useFrameworkContext } from "@/context/framework.provider";
 import { AboutSectionIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
@@ -13,9 +12,8 @@ import ChevronRightIcon from "@/redesignComponents/foundations/Icons/Function/Ch
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import { useOnboardingCardAnalyticsContext } from "@/utils/analytics/onboardingCardAnalytics.context";
 
-type AboutPageItemProps = {
+type AboutPageItemProps = Pick<PageItemProps, "flexProps" | "className"> & {
   type: NonNullable<AboutSectionIndexQueryParams["type"]>;
-  className?: string;
 };
 
 const parserReplacements: HTMLReactParserOptions["replace"] = domNode => {
@@ -38,10 +36,17 @@ const parserReplacements: HTMLReactParserOptions["replace"] = domNode => {
           </Text>
         </Box>
       );
+
+    case "p":
+      return (
+        <Text color="neutral.900" textStyle="300">
+          {domToReact(children as DOMNode[], { replace: parserReplacements })}
+        </Text>
+      );
   }
 };
 
-const AboutPageItem = ({ type, className }: AboutPageItemProps) => {
+const AboutPageItem = ({ type, flexProps, className }: AboutPageItemProps) => {
   const { framework } = useFrameworkContext();
   const [loaded, { data: aboutSection }] = useAboutSection({ type, framework });
   const t = useT();
@@ -49,8 +54,8 @@ const AboutPageItem = ({ type, className }: AboutPageItemProps) => {
 
   if (!loaded || aboutSection == null) return null;
   return (
-    <PageItem title={aboutSection.header}>
-      <Flex className={twMerge("rounded-1 min-h-0 flex-col gap-2 bg-theme-neutral-100 p-5", className)}>
+    <PageItem title={aboutSection.header} className={className} flexProps={flexProps}>
+      <Flex className="rounded-1 min-h-0 flex-col gap-2 bg-theme-neutral-100 p-5">
         {aboutSection.title && (
           <Text color="neutral.900" textStyle="400-bold">
             {aboutSection.title}
