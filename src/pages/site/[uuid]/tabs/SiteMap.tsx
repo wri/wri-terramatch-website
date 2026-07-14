@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { FC, useEffect, useState } from "react";
 
 import ModalIdentified from "@/admin/components/extensive/Modal/ModalIdentified";
@@ -25,7 +26,6 @@ import { POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { useNotificationContext } from "@/context/notification.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { CompareGeometryFileResponse } from "@/generated/v3/researchService/researchServiceComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -82,7 +82,6 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
   const { openModal, closeModal } = useModalContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
-  const { openNotification } = useNotificationContext();
   const { hideLoader } = useLoading();
   const uploadGeometry = useUploadGeometry({});
   const compareGeometry = useCompareGeometry({});
@@ -130,7 +129,12 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
 
       try {
         await Promise.all(uploadPromises);
-        openNotification("success", t("Success!"), t("Polygons versioned successfully"));
+        showToast({
+          label: t("Polygons versioned successfully"),
+          type: "success",
+          placement: "bottom",
+          duration: 5000
+        });
         trackPolygonEvent("polygon_uploaded", {
           ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
           polygon_id: "bulk_upload",
@@ -145,10 +149,10 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
           if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
             errorMessage = parsedMessage.message;
           }
-          openNotification("error", t("Error uploading file"), errorMessage);
+          showToast({ label: errorMessage, type: "error", placement: "bottom", duration: 5000 });
         } else {
           const errorMessage = getErrorMessageFromPayload(error);
-          openNotification("error", t("Error uploading file"), t(errorMessage));
+          showToast({ label: t(errorMessage), type: "error", placement: "bottom", duration: 5000 });
         }
       } finally {
         setPolygonLoaded(false);
@@ -175,7 +179,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
       try {
         await Promise.all(uploadPromises);
         setShouldRefetchPolygonData(true);
-        openNotification("success", t("Success!"), t("File uploaded successfully"));
+        showToast({ label: t("File uploaded successfully"), type: "success", placement: "bottom", duration: 5000 });
         trackPolygonEvent("polygon_uploaded", {
           ...getPolygonAnalyticsContext({ entityType: "site", entityId: siteUuid }),
           polygon_id: "bulk_upload",
@@ -187,7 +191,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
           error && typeof error === "object" && "message" in error
             ? (error.message as string)
             : t("An unknown error occurred");
-        openNotification("error", t("Error uploading file"), errorMessage);
+        showToast({ label: errorMessage, type: "error", placement: "bottom", duration: 5000 });
       } finally {
         setPolygonLoaded(false);
         setSubmitPolygonLoaded(false);
@@ -202,7 +206,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
       if (isPreviewMode) {
         const file = files[0];
         if (!file) {
-          openNotification("error", t("Error"), t("No file selected"));
+          showToast({ label: t("No file selected"), type: "error", placement: "bottom", duration: 5000 });
           return;
         }
 
@@ -231,7 +235,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
               error && typeof error === "object" && "message" in error
                 ? (error.message as string)
                 : t("An unknown error occurred");
-            openNotification("error", t("Error uploading file"), errorMessage);
+            showToast({ label: errorMessage, type: "error", placement: "bottom", duration: 5000 });
           }
         });
       }
@@ -242,10 +246,10 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
         if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
           errorMessage = parsedMessage.message;
         }
-        openNotification("error", t("Error uploading file"), errorMessage);
+        showToast({ label: errorMessage, type: "error", placement: "bottom", duration: 5000 });
       } else {
         const errorMessage = getErrorMessageFromPayload(error);
-        openNotification("error", t("Error uploading file"), t(errorMessage));
+        showToast({ label: t(errorMessage), type: "error", placement: "bottom", duration: 5000 });
       }
     } finally {
       setPolygonLoaded(false);
@@ -329,7 +333,9 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
         }}
         acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
         maxFileSize={2 * 1024 * 1024}
-        setErrorMessage={(message: string) => openNotification("error", t("Error uploading file"), t(message))}
+        setErrorMessage={(message: string) =>
+          showToast({ label: t(message), type: "error", placement: "bottom", duration: 5000 })
+        }
         setFile={setFiles}
       ></ModalAdd>
     );
@@ -431,7 +437,12 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
               });
             });
             setShouldRefetchPolygonData(true);
-            openNotification("success", t("Success! Your polygons were submitted."));
+            showToast({
+              label: t("Success! Your polygons were submitted."),
+              type: "success",
+              placement: "bottom",
+              duration: 5000
+            });
           } catch (error) {
             Log.error("Failed to fetch polygon statuses", error);
           }
@@ -470,7 +481,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
   };
 
   return (
-    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7 mobile:w-full">
+    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-7 mobile:w-full">
       <Box className="relative h-auto">
         <div className="mb-6 flex gap-11">
           <div className="w-[54%] mobile:w-full">

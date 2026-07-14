@@ -17,7 +17,6 @@ import { useMyUser } from "@/connections/User";
 import { createPolygonValidation } from "@/connections/Validation";
 import { POLYGON_APPROVED, POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useNotificationContext } from "@/context/notification.provider";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { setPolygonTableHoveredUuid } from "@/context/polygonTableInteraction.store";
 import type { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -124,7 +123,6 @@ export const useSitePolygonBulkActions = ({
     setPolygonSubmitConfirmation,
     setShouldRefetchPolygonData
   } = useMapAreaContext();
-  const { openNotification } = useNotificationContext();
   const [, { user }] = useMyUser();
 
   const pendingPolygonSubmittedModalRef = useRef(false);
@@ -319,7 +317,12 @@ export const useSitePolygonBulkActions = ({
   const handleBulkDelete = useCallback(async () => {
     const sitePolygonUuids = deletePayload?.sitePolygonUuids ?? [];
     if (sitePolygonUuids.length === 0) {
-      openNotification("error", t("Error!"), t("Could not find selected polygons to delete"));
+      showToast({
+        label: t("Could not find selected polygons to delete"),
+        type: "error",
+        placement: "bottom",
+        duration: 5000
+      });
       return;
     }
 
@@ -338,13 +341,13 @@ export const useSitePolygonBulkActions = ({
     } catch (error) {
       Log.error("Failed to delete selected polygons:", error);
       closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
-      openNotification("error", t("Error!"), t("Error deleting polygons"));
+      showToast({ label: t("Error deleting polygons"), type: "error", placement: "bottom", duration: 5000 });
       throw error;
     } finally {
       setIsDeletingPolygons(false);
       setDeletingPolygonCount(0);
     }
-  }, [closeMapPopups, deletePayload, invalidatePolygonMapTiles, openNotification, refreshPolygonData, t, toastLabels]);
+  }, [closeMapPopups, deletePayload, invalidatePolygonMapTiles, refreshPolygonData, t, toastLabels]);
 
   const runPolygonValidation = useCallback(
     async (polygonUuids: string[]) => {
@@ -372,14 +375,14 @@ export const useSitePolygonBulkActions = ({
         await runPolygonValidation(polygonUuids);
       } catch (error) {
         Log.error("Failed to validate selected polygons:", error);
-        openNotification("error", t("Error!"), t("Failed to validate polygons"));
+        showToast({ label: t("Failed to validate polygons"), type: "error", placement: "bottom", duration: 5000 });
         throw error;
       } finally {
         setIsValidatingPolygons(false);
         setValidatingPolygonCount(0);
       }
     },
-    [openNotification, runPolygonValidation, t]
+    [runPolygonValidation, t]
   );
 
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
@@ -619,7 +622,7 @@ export const useSitePolygonBulkActions = ({
   const submitPolygons = useCallback(
     async (sitePolygonUuids: string[], submittedNames: string[], emptySelectionMessage: string, comment: string) => {
       if (sitePolygonUuids.length === 0) {
-        openNotification("error", t("Error!"), emptySelectionMessage);
+        showToast({ label: emptySelectionMessage, type: "error", placement: "bottom", duration: 5000 });
         return;
       }
 
@@ -681,7 +684,7 @@ export const useSitePolygonBulkActions = ({
       } catch (error) {
         Log.error("Failed to submit selected polygons:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
-        openNotification("error", t("Error!"), t("Error submitting polygons"));
+        showToast({ label: t("Error submitting polygons"), type: "error", placement: "bottom", duration: 5000 });
         throw error;
       }
     },
@@ -689,7 +692,6 @@ export const useSitePolygonBulkActions = ({
       closeMapPopups,
       invalidatePolygonMapTiles,
       onValidationJobsStarted,
-      openNotification,
       polygonsData,
       refreshPolygonData,
       setShouldRefetchPolygonData,
@@ -736,7 +738,12 @@ export const useSitePolygonBulkActions = ({
   const approvePolygons = useCallback(
     async (sitePolygonUuids: string[], approvedNames: string[], comment: string) => {
       if (sitePolygonUuids.length === 0) {
-        openNotification("error", t("Error!"), t("No selected polygons are eligible for approval"));
+        showToast({
+          label: t("No selected polygons are eligible for approval"),
+          type: "error",
+          placement: "bottom",
+          duration: 5000
+        });
         return;
       }
 
@@ -785,14 +792,13 @@ export const useSitePolygonBulkActions = ({
         });
       } catch (error) {
         Log.error("Failed to approve selected polygons:", error);
-        openNotification("error", t("Error!"), t("Error approving polygons"));
+        showToast({ label: t("Error approving polygons"), type: "error", placement: "bottom", duration: 5000 });
         throw error;
       }
     },
     [
       closeMapPopups,
       invalidatePolygonMapTiles,
-      openNotification,
       polygonsData,
       refreshPolygonData,
       schedulePolygonApprovedModal,
@@ -807,7 +813,12 @@ export const useSitePolygonBulkActions = ({
   const requestInformationForPolygons = useCallback(
     async (sitePolygonUuids: string[], polygonNames: string[], comment: string) => {
       if (sitePolygonUuids.length === 0) {
-        openNotification("error", t("Error!"), t("No selected polygons are eligible for this action"));
+        showToast({
+          label: t("No selected polygons are eligible for this action"),
+          type: "error",
+          placement: "bottom",
+          duration: 5000
+        });
         return;
       }
 
@@ -856,14 +867,18 @@ export const useSitePolygonBulkActions = ({
         });
       } catch (error) {
         Log.error("Failed to request information for selected polygons:", error);
-        openNotification("error", t("Error!"), t("Error requesting information for polygons"));
+        showToast({
+          label: t("Error requesting information for polygons"),
+          type: "error",
+          placement: "bottom",
+          duration: 5000
+        });
         throw error;
       }
     },
     [
       closeMapPopups,
       invalidatePolygonMapTiles,
-      openNotification,
       polygonsData,
       refreshPolygonData,
       scheduleInformationRequestedModal,
@@ -964,7 +979,12 @@ export const useSitePolygonBulkActions = ({
     async (attributeChanges: BulkSitePolygonAttributeChanges) => {
       const sitePolygonUuids = bulkEditPayload?.sitePolygonUuids ?? [];
       if (sitePolygonUuids.length === 0) {
-        openNotification("error", t("Error!"), t("Could not find selected polygons to update"));
+        showToast({
+          label: t("Could not find selected polygons to update"),
+          type: "error",
+          placement: "bottom",
+          duration: 5000
+        });
         return;
       }
 
@@ -989,21 +1009,12 @@ export const useSitePolygonBulkActions = ({
       } catch (error) {
         Log.error("Failed to update selected polygon details:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
-        openNotification("error", t("Error!"), t("Error updating polygon details"));
+        showToast({ label: t("Error updating polygon details"), type: "error", placement: "bottom", duration: 5000 });
       } finally {
         setIsBulkUpdatingPolygons(false);
       }
     },
-    [
-      bulkEditPayload,
-      closeMapPopups,
-      invalidatePolygonMapTiles,
-      openNotification,
-      refreshPolygonData,
-      site.uuid,
-      t,
-      toastLabels
-    ]
+    [bulkEditPayload, closeMapPopups, invalidatePolygonMapTiles, refreshPolygonData, site.uuid, t, toastLabels]
   );
 
   return {

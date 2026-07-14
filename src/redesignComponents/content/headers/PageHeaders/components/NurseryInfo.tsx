@@ -1,13 +1,11 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
-import { useModalContext } from "@/context/modal.provider";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -39,7 +37,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
 }) => {
   const t = useT();
   const router = useRouter();
-  const { openModal } = useModalContext();
+  const [openStatusModal, setOpenStatusModal] = useState(false);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "nurseries",
     entityUUID: nursery.uuid,
@@ -65,24 +63,24 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
 
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval && statusProps != null) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={nursery.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="nurseries"
-          entityUuid={nursery.uuid}
-        />
-      );
+      setOpenStatusModal(true);
     } else {
       handleEdit();
     }
-  }, [needMoreInformation, statusProps, openModal, nursery.feedback, nursery.uuid, handleEdit, awaitingApproval]);
+  }, [needMoreInformation, handleEdit, awaitingApproval, statusProps]);
 
   return (
     <Box gap={2} className="flex flex-col">
       {EditModals}
+      <EntityStatusModal
+        statusProps={statusProps!}
+        feedback={nursery.feedback}
+        needMoreInformation={needMoreInformation}
+        entityName="nurseries"
+        entityUuid={nursery.uuid}
+        open={openStatusModal}
+        onOpenChange={setOpenStatusModal}
+      />
       <Text
         textStyle="400"
         color="neutral.900"

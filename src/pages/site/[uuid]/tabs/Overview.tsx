@@ -6,7 +6,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
@@ -15,7 +14,6 @@ import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -37,8 +35,7 @@ interface SiteOverviewTabProps {
 const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
   const contextMapArea = useMapAreaContext();
-  const { openModal } = useModalContext();
-
+  const [openStatusModal, setOpenStatusModal] = useState(false);
   const { setSiteData, resetSiteMapInteractionState } = contextMapArea;
 
   useEffect(() => {
@@ -88,23 +85,23 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
 
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps!}
-          feedback={site.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="sites"
-          entityUuid={site.uuid}
-        />
-      );
+      setOpenStatusModal(true);
     } else {
       handleEdit();
     }
-  }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit, awaitingApproval]);
+  }, [needMoreInformation, handleEdit, awaitingApproval]);
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
+      <EntityStatusModal
+        statusProps={statusProps!}
+        feedback={site.feedback}
+        needMoreInformation={needMoreInformation}
+        entityName="sites"
+        entityUuid={site.uuid}
+        open={openStatusModal}
+        onOpenChange={setOpenStatusModal}
+      />
       <PageContent>
         {EditModals}
         <Flex gap={7} className="flex-col sm:flex-row">
