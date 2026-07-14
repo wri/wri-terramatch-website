@@ -2,7 +2,7 @@ import { Delete as DeleteIcon, ExpandMore, UploadFile } from "@mui/icons-materia
 import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from "@mui/material";
 import { camelCase } from "lodash";
 import { useCallback, useMemo, useState } from "react";
-import { ArrayInput, DateTimeInput, maxLength, minLength, required, SelectInput, TextInput } from "react-admin";
+import { ArrayInput, maxLength, minLength, required, SelectInput, TextInput } from "react-admin";
 import { useFormContext } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
@@ -143,12 +143,6 @@ export const FormBuilderForm = () => {
                   label="Download URL"
                   helperText="Please add a link to the button above. This link is usually used to direct project developers to attachments or the help center for additional information and support."
                   validate={[maxLength(2083)]}
-                  fullWidth
-                />
-                <DateTimeInput
-                  source="deadlineAt"
-                  label="Deadline(Date)"
-                  helperText="Please set a deadline (date and time in Eastern Standard Time) for project developers to complete this form. The deadline will be displayed on the first page of the form and will be automatically adjusted based on the project developers' respective time zones. This field is optional; however, if you are creating a form for an application, it is strongly advised to include a deadline."
                   fullWidth
                 />
               </AccordionDetails>
