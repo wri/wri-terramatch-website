@@ -30,7 +30,9 @@ describe("polygonUploadErrors", () => {
     it("returns ticket copy for shapefile missing errors", () => {
       const copy = getPolygonUploadErrorCopy("shapefile_not_found", identityTranslate);
 
-      expect(copy.summary).toContain(".shp file");
+      expect(copy.summary).toBe("This ZIP file does not contain a valid .shp file.");
+      expect(copy.emphasis).toBe("Please check your file and try again.");
+      expect(copy.instructions).toBe("Upload a ZIP file that includes:");
       expect(copy.bullets).toEqual(["A .shp file", "Its associated .dbf and .prj files"]);
     });
 

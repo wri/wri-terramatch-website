@@ -66,7 +66,8 @@ export const getPolygonUploadErrorCopy = (
   switch (variant) {
     case "shapefile_not_found":
       return {
-        summary: t("This ZIP file does not contain a valid .shp file. Please check your file and try again."),
+        summary: t("This ZIP file does not contain a valid .shp file."),
+        emphasis: t("Please check your file and try again."),
         instructions: t("Upload a ZIP file that includes:"),
         bullets: [t("A .shp file"), t("Its associated .dbf and .prj files")]
       };
@@ -104,7 +105,7 @@ export const getPolygonUploadErrorCopy = (
       };
     case "mixed_geometry_types":
       return {
-        summary: t("This file contains both points and polygons. "),
+        summary: t("This file contains both points and polygons."),
         emphasis: t("Files must contain only one geometry type."),
         instructions: t("Upload either:"),
         bullets: [t("Points only"), t("Polygons or multipolygons only")]
