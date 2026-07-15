@@ -936,7 +936,7 @@ export type DisturbanceDto = {
   intensity: string | null;
   extent: string | null;
   peopleAffected: number | null;
-  monetaryDamage: number | null;
+  financialLoss: number | null;
   description: string | null;
   actionDescription: string | null;
   propertyAffected: string | null;
@@ -2386,6 +2386,7 @@ export type DisturbanceReportFullDto = {
   answers: string | null;
   description: string | null;
   actionDescription: string | null;
+  currency: string | null;
   media: MediaDto[];
 };
 
@@ -3469,10 +3470,6 @@ export type FormFullDto = {
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
-  /**
-   * @format date-time
-   */
-  deadlineAt?: string | null;
   submissionMessage: string;
   stageId?: string | null;
   fundingProgrammeId: string | null;
@@ -3603,10 +3600,6 @@ export type StoreFormAttributes = {
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
-  /**
-   * @format date-time
-   */
-  deadlineAt?: string | null;
   submissionMessage: string;
   stageId?: string | null;
   sections?: StoreFormSectionAttributes[];

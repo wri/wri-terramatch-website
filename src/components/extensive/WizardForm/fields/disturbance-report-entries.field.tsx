@@ -50,7 +50,7 @@ export const DisturbanceReportEntriesField: FormFieldFactory = {
         return `${v.title}: ${formatOptions(v.value ?? "")}`;
       }
 
-      if (v.name === "monetary-damage") {
+      if (v.name === "financial-loss") {
         return `${v.title}: ${v.value ? `$${Number(v.value)}` : t("Answer Not Provided")}`;
       }
 
