@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
 import { sitePolygonsConnection } from "@/connections/SitePolygons";
-import { SitePolygonsIndexQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { loadConnection } from "@/utils/loadConnection";
 
 import { EXPLORER_PAGE_SIZE, FILTER_DEBOUNCE_MS, MAP_FLUSH_PAGE_INTERVAL, PARALLEL_PAGE_REQUESTS } from "../constants";
+import type { ExplorerApiQuery } from "./usePolygonExplorerFilters";
 
 export type ExplorerDataResult = {
   /** Polygons loaded so far; flushed to consumers every MAP_FLUSH_PAGE_INTERVAL pages. */
@@ -18,9 +18,10 @@ export type ExplorerDataResult = {
   error: Error | null;
 };
 
-const loadPage = (filter: Partial<SitePolygonsIndexQueryParams>, pageNumber: number) =>
+const loadPage = (query: ExplorerApiQuery, pageNumber: number) =>
   loadConnection(sitePolygonsConnection, {
-    filter,
+    filter: query.filter,
+    ...(query.projectUuid !== "" ? { entityName: "projects" as const, entityUuid: query.projectUuid } : {}),
     pageSize: EXPLORER_PAGE_SIZE,
     pageNumber
   });
@@ -30,16 +31,16 @@ const loadPage = (filter: Partial<SitePolygonsIndexQueryParams>, pageNumber: num
  * Read-only: only the GET sitePolygons index endpoint is used. The load restarts
  * (and the in-flight one is abandoned) whenever the filter changes.
  */
-export const usePolygonExplorerData = (apiFilter: Partial<SitePolygonsIndexQueryParams>): ExplorerDataResult => {
+export const usePolygonExplorerData = (apiQuery: ExplorerApiQuery): ExplorerDataResult => {
   const [polygons, setPolygons] = useState<SitePolygonLightDto[]>([]);
   const [loadedCount, setLoadedCount] = useState(0);
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const filterKey = JSON.stringify(apiFilter);
-  const filterRef = useRef(apiFilter);
-  filterRef.current = apiFilter;
+  const filterKey = JSON.stringify(apiQuery);
+  const queryRef = useRef(apiQuery);
+  queryRef.current = apiQuery;
 
   const [debouncedFilterKey, setDebouncedFilterKey] = useState(filterKey);
   useEffect(() => {
@@ -53,7 +54,7 @@ export const usePolygonExplorerData = (apiFilter: Partial<SitePolygonsIndexQuery
     const generation = ++generationRef.current;
     let cancelled = false;
     const isStale = () => cancelled || generationRef.current !== generation;
-    const filter = filterRef.current;
+    const query = queryRef.current;
 
     setIsLoading(true);
     setError(null);
@@ -62,7 +63,7 @@ export const usePolygonExplorerData = (apiFilter: Partial<SitePolygonsIndexQuery
     setTotal(0);
 
     const run = async () => {
-      const firstPage = await loadPage(filter, 1);
+      const firstPage = await loadPage(query, 1);
       if (isStale()) return;
       if (firstPage.loadFailure != null) throw firstPage.loadFailure;
 
@@ -86,7 +87,7 @@ export const usePolygonExplorerData = (apiFilter: Partial<SitePolygonsIndexQuery
         const pageNumbers = [];
         for (let page = batchStart; page <= batchEnd; page++) pageNumbers.push(page);
 
-        const responses = await Promise.all(pageNumbers.map(page => loadPage(filter, page)));
+        const responses = await Promise.all(pageNumbers.map(page => loadPage(query, page)));
         if (isStale()) return;
 
         for (const response of responses) {
@@ -112,7 +113,6 @@ export const usePolygonExplorerData = (apiFilter: Partial<SitePolygonsIndexQuery
     });
 
     return () => {
-      // Abandon any in-flight batches from this run (filter change or unmount).
       cancelled = true;
     };
   }, [debouncedFilterKey]);

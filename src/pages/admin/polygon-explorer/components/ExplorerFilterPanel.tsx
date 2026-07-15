@@ -9,12 +9,16 @@ import { LandscapeCode } from "@/utils/landscapeUtils";
 
 import { COHORT_OPTIONS, LANDSCAPE_OPTIONS } from "../constants";
 import { ExplorerFilterState } from "../hooks/usePolygonExplorerFilters";
+import ExplorerProjectSelect from "./ExplorerProjectSelect";
 
 type ExplorerFilterPanelProps = {
   search: string;
   onSearchChange: (value: string) => void;
   filters: ExplorerFilterState;
   setFilters: Dispatch<SetStateAction<ExplorerFilterState>>;
+  setProject: (uuid: string, label: string) => void;
+  setLandscape: (landscape: LandscapeCode | "") => void;
+  toggleProjectCohort: (cohort: string) => void;
   onClear: () => void;
   activeFilterCount: number;
 };
@@ -22,9 +26,10 @@ type ExplorerFilterPanelProps = {
 const toggleArrayValue = <T extends string>(values: T[], value: T): T[] =>
   values.includes(value) ? values.filter(item => item !== value) : [...values, value];
 
-const FilterSection: FC<{ title: string; children: ReactNode }> = ({ title, children }) => (
+const FilterSection: FC<{ title: string; hint?: string; children: ReactNode }> = ({ title, hint, children }) => (
   <div className="border-b border-neutral-200 px-4 py-3">
-    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">{title}</p>
+    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-neutral-500">{title}</p>
+    {hint != null ? <p className="mb-2 text-xs text-neutral-400">{hint}</p> : null}
     {children}
   </div>
 );
@@ -41,6 +46,9 @@ const ExplorerFilterPanel: FC<ExplorerFilterPanelProps> = ({
   onSearchChange,
   filters,
   setFilters,
+  setProject,
+  setLandscape,
+  toggleProjectCohort,
   onClear,
   activeFilterCount
 }) => {
@@ -56,7 +64,7 @@ const ExplorerFilterPanel: FC<ExplorerFilterPanelProps> = ({
         <p className="text-sm font-semibold text-neutral-800">{t("Filters")}</p>
         {activeFilterCount > 0 ? (
           <button type="button" className="text-blue-600 text-xs font-medium hover:underline" onClick={onClear}>
-            {t("Clear all ({count})", { count: activeFilterCount })}
+            {t("Reset ({count})", { count: activeFilterCount })}
           </button>
         ) : null}
       </div>
@@ -71,13 +79,20 @@ const ExplorerFilterPanel: FC<ExplorerFilterPanelProps> = ({
         />
       </div>
 
+      <FilterSection title={t("Project")} hint={t("Clears landscape / cohort when selected (API scope rule).")}>
+        <ExplorerProjectSelect
+          projectUuid={filters.projectUuid}
+          projectLabel={filters.projectLabel}
+          onSelect={setProject}
+        />
+      </FilterSection>
+
       <FilterSection title={t("Landscape")}>
         <select
           value={filters.landscape}
-          onChange={event =>
-            setFilters(current => ({ ...current, landscape: event.target.value as LandscapeCode | "" }))
-          }
-          className="focus:border-blue-500 w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm outline-none"
+          onChange={event => setLandscape(event.target.value as LandscapeCode | "")}
+          disabled={filters.projectUuid !== ""}
+          className="focus:border-blue-500 w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm outline-none disabled:bg-neutral-100 disabled:text-neutral-400"
         >
           <option value="">{t("All landscapes")}</option>
           {LANDSCAPE_OPTIONS.map(option => (
@@ -89,17 +104,18 @@ const ExplorerFilterPanel: FC<ExplorerFilterPanelProps> = ({
       </FilterSection>
 
       <FilterSection title={t("Project cohort")}>
+        {filters.projectUuid !== "" ? (
+          <p className="text-xs text-neutral-400">{t("Disabled while a project is selected.")}</p>
+        ) : null}
         {COHORT_OPTIONS.map(option => (
           <CheckboxRow
             key={option.value}
             label={option.label}
             checked={filters.projectCohort.includes(option.value)}
-            onChange={() =>
-              setFilters(current => ({
-                ...current,
-                projectCohort: toggleArrayValue(current.projectCohort, option.value)
-              }))
-            }
+            onChange={() => {
+              if (filters.projectUuid !== "") return;
+              toggleProjectCohort(option.value);
+            }}
           />
         ))}
       </FilterSection>

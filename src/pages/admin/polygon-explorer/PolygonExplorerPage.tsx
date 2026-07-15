@@ -1,7 +1,8 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useBoundingBox } from "@/connections/BoundingBox";
 
 import ExplorerFilterPanel from "./components/ExplorerFilterPanel";
@@ -12,12 +13,26 @@ import { usePolygonExplorerFilters } from "./hooks/usePolygonExplorerFilters";
 
 const PolygonExplorerPage: FC = () => {
   const t = useT();
-  const { search, setSearch, filters, setFilters, apiFilter, clearFilters, activeFilterCount } =
-    usePolygonExplorerFilters();
-  const { polygons, loadedCount, total, isLoading, error } = usePolygonExplorerData(apiFilter);
+  const {
+    search,
+    setSearch,
+    filters,
+    setFilters,
+    setProject,
+    setLandscape,
+    toggleProjectCohort,
+    apiQuery,
+    clearFilters,
+    activeFilterCount
+  } = usePolygonExplorerFilters();
+  const { polygons, loadedCount, total, isLoading, error } = usePolygonExplorerData(apiQuery);
 
-  // Zoom the camera to the landscape extent when a landscape scope is selected.
-  const landscapeBbox = useBoundingBox(filters.landscape !== "" ? { landscapes: [filters.landscape] } : {});
+  const projectBbox = useBoundingBox(filters.projectUuid !== "" ? { projectUuid: filters.projectUuid } : {});
+  const landscapeBbox = useBoundingBox(
+    filters.projectUuid === "" && filters.landscape !== "" ? { landscapes: [filters.landscape] } : {}
+  );
+
+  const mapBbox = useMemo((): BBox | undefined => projectBbox ?? landscapeBbox, [landscapeBbox, projectBbox]);
 
   return (
     <div className="flex h-screen flex-col bg-neutral-50">
@@ -50,11 +65,14 @@ const PolygonExplorerPage: FC = () => {
           onSearchChange={setSearch}
           filters={filters}
           setFilters={setFilters}
+          setProject={setProject}
+          setLandscape={setLandscape}
+          toggleProjectCohort={toggleProjectCohort}
           onClear={clearFilters}
           activeFilterCount={activeFilterCount}
         />
         <main className="min-w-0 flex-1">
-          <ExplorerMap polygons={polygons} bbox={landscapeBbox} isLoading={isLoading} />
+          <ExplorerMap polygons={polygons} bbox={mapBbox} isLoading={isLoading} />
         </main>
       </div>
     </div>

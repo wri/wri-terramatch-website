@@ -19,10 +19,10 @@ export const VIEWPORT_PADDING_RATIO = 0.2;
 export const EXPLORER_PAGE_SIZE = 100;
 
 /** Number of index pages fetched in parallel per batch during the background load. */
-export const PARALLEL_PAGE_REQUESTS = 5;
+export const PARALLEL_PAGE_REQUESTS = 10;
 
 /** Flush accumulated polygons to the map every N loaded pages (progress updates every batch). */
-export const MAP_FLUSH_PAGE_INTERVAL = 10;
+export const MAP_FLUSH_PAGE_INTERVAL = 5;
 
 /** Debounce applied to filter changes before restarting the background load. */
 export const FILTER_DEBOUNCE_MS = 400;
