@@ -11,7 +11,8 @@ const CHAMPIONS_LEGEND_SPECS = [
   { text: "Draft", color: "neutralActive.3" },
   { text: "Pending Approval", color: "neutralActive.1" },
   { text: "Information Required", color: "attention.1" },
-  { text: "Approved", color: "positive.1" }
+  { text: "Approved", color: "positive.1" },
+  { text: "Deleted", color: "neutralPassive.1" }
 ] as const;
 
 const POLYGON_FILTER_LEGEND = [
