@@ -34,6 +34,12 @@ export const Approved: Story = {
   }
 };
 
+export const Deleted: Story = {
+  args: {
+    state: "deleted"
+  }
+};
+
 export const AllStates: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
@@ -41,6 +47,7 @@ export const AllStates: Story = {
       <MappedTag state="pending-approval" />
       <MappedTag state="information-required" />
       <MappedTag state="approved" />
+      <MappedTag state="deleted" />
     </div>
   )
 };

@@ -136,16 +136,13 @@ export const layersList: LayerType[] = [
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
-      // Ghost/outline style for the read-only deleted-polygons audit view. Distinct from
-      // LAYERS_NAMES.DELETED_GEOMETRIES below, which is a red delete-confirmation highlight
-      // used while a user is actively deleting polygons, not for browsing past deletions.
       fillStyle({
         metadata: { polygonStatus: DELETED_AUDIT_POLYGONS },
         type: "fill",
         layout: {},
         paint: {
-          "fill-color": "#FFFFFF",
-          "fill-opacity": 0.25
+          "fill-color": "#C9C9C9",
+          "fill-opacity": 0.3
         },
         filter: ["==", ["get", "uuid"], ""]
       }),
@@ -154,8 +151,8 @@ export const layersList: LayerType[] = [
         type: "line",
         layout: {},
         paint: {
-          "line-color": "#FFFFFF",
-          "line-width": 1.5
+          "line-color": "#C9C9C9",
+          "line-width": 1
         },
         filter: ["==", ["get", "uuid"], ""]
       })

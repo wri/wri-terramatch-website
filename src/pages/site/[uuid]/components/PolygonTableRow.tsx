@@ -16,7 +16,6 @@ import {
   AgroforestyIcon,
   AssistedNaturalRegenIcon,
   CalendarIcon,
-  DeleteIcon,
   DirectSeedingIcon,
   GrasslandIcon,
   MangroveIcon,
@@ -219,13 +218,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
         </Box>
       </TableCell>
       <TableCell className="min-w-[15.875rem]">
-        {readOnly ? (
-          <FeedbackTag type="info-grey" className="w-fit" label={t("Deleted")} icon={<DeleteIcon boxSize={2.5} />} />
-        ) : row.submission != null ? (
-          <MappedTag state={row.submission} />
-        ) : (
-          <Text>—</Text>
-        )}
+        {row.submission != null ? <MappedTag state={readOnly ? "deleted" : row.submission} /> : <Text>—</Text>}
       </TableCell>
       <TableCell className="min-w-[12.75rem]">
         {row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>}

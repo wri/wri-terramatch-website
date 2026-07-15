@@ -144,8 +144,22 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   const hasPolygons = polygons.length > 0;
 
+  const deletedAuditPolygonUuids = useMemo(() => {
+    if (!isDeletedAuditView) {
+      return undefined;
+    }
+    const uuids = polygons
+      .map(polygon => polygon.polygonUuid)
+      .filter((uuid): uuid is string => uuid != null && uuid !== "");
+    return uuids.length > 0 ? uuids : undefined;
+  }, [isDeletedAuditView, polygons]);
+
   const modelBbox = useBoundingBox(
-    type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
+    deletedAuditPolygonUuids != null
+      ? { polygonUuids: deletedAuditPolygonUuids }
+      : type === "sites"
+      ? { siteUuid: entityModel.uuid }
+      : { projectUuid: entityModel.uuid }
   );
 
   const projectBbox = useBoundingBox(
