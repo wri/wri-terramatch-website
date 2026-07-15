@@ -5,7 +5,7 @@ import type { FC } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { type MapDrawSaveHandler, useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
-import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
+import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
@@ -54,6 +54,7 @@ interface PolygonsMapProps {
     onValidationZoomConsumed?: () => void;
   };
   overlapPolygons?: OverlapPolygonPoint[];
+  crossSiteOverlapPolygons?: CrossSiteOverlapPolygon[];
   // Read-only audit mode for browsing soft-deleted polygons: renders every polygon with a single
   // ghost style regardless of prior status, and suppresses popups/tooltips since there are no
   // actions available on a deleted polygon.
@@ -78,6 +79,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   className,
   polygonTableHighlight,
   overlapPolygons,
+  crossSiteOverlapPolygons,
   isDeletedAuditView = false
 }) => {
   const t = useT();
@@ -243,6 +245,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         autoEditPolygon={editPolygon.isOpen}
         polygonTableHighlight={polygonTableHighlight}
         overlapPolygons={overlapPolygons}
+        crossSiteOverlapPolygons={crossSiteOverlapPolygons}
         isPolygonGeometryLoading={isPolygonGeometryLoading}
         onPolygonTilesLoadingChange={setIsPolygonTilesLoading}
       />

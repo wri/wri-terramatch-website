@@ -61,6 +61,7 @@ import {
   hasOverlapFailureInSelection,
   hasOverlapValidationFailure
 } from "../hooks/overlapFix.utils";
+import { useCrossSiteOverlapGeometries } from "../hooks/useCrossSiteOverlapGeometries";
 import { useDownloadSitePolygons } from "../hooks/useDownloadSitePolygons";
 import { usePolygonDrawUndo } from "../hooks/usePolygonDrawUndo";
 import { usePolygonUploadErrorModal } from "../hooks/usePolygonUploadErrorModal";
@@ -174,7 +175,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   const { polygonsWithOverlapCount, overlapPolygons, overlapValidations, fetchOverlapValidations } =
     useSitePolygonOverlap({
       siteUuid: site.uuid,
-      polygonsData
+      polygonsData,
+      t
     });
   const overlapPolygonValidations = useMemo(() => buildPolygonValidationsMap(overlapValidations), [overlapValidations]);
 
@@ -183,6 +185,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   const {
     selectedPolygonUuids,
     overlapPolygonsForMap,
+    editDrawerPolygonUuid,
     selectedTreesPlanted,
     selectedRestorationAreaRounded,
     selectedSitePolygons,
@@ -194,7 +197,27 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     polygonsData,
     selectedRowIds,
     selectedRows,
-    overlapPolygons
+    overlapPolygons,
+    isEditPolygonOpen,
+    editPolygonUuid: editPolygon.uuid !== "" ? editPolygon.uuid : null
+  });
+
+  const currentSiteGeometryUuids = useMemo(
+    () =>
+      polygonsData
+        .map(polygon => polygon.polygonUuid ?? polygon.uuid)
+        .filter((uuid): uuid is string => uuid != null && uuid !== ""),
+    [polygonsData]
+  );
+  const editDrawerPolygonValidation = useMemo(
+    () => overlapValidations.find(validation => validation.polygonUuid === editDrawerPolygonUuid),
+    [overlapValidations, editDrawerPolygonUuid]
+  );
+  const { crossSiteOverlapPolygons } = useCrossSiteOverlapGeometries({
+    polygonUuid: editDrawerPolygonUuid,
+    validation: editDrawerPolygonValidation,
+    currentSiteGeometryUuids,
+    enabled: isEditPolygonOpen && editDrawerPolygonUuid != null
   });
 
   const selectedOverlapFixSummary = useMemo(
@@ -1017,6 +1040,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
           polygonTableHighlight={polygonTableHighlight}
           overlapPolygons={overlapPolygonsForMap}
+          crossSiteOverlapPolygons={crossSiteOverlapPolygons}
           onRefetchPolygons={refetchPolygons}
           showUndoButton={showPolygonUndoButton}
           onUndoDraw={handleUndoPolygonDraw}
