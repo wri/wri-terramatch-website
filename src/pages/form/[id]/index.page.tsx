@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
@@ -9,8 +9,10 @@ import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useForm } from "@/connections/Form";
 import { useSubmissionCreate } from "@/connections/FormSubmission";
+import { useFundingProgramme } from "@/connections/FundingProgramme";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import ApiSlice from "@/store/apiSlice";
+import { resolveFormIntroDeadline } from "@/utils/formIntroDeadline";
 import Log from "@/utils/log";
 
 import ApplicationsTable from "../cards/ApplicationsTable";
@@ -21,6 +23,19 @@ const FormIntroPage = () => {
   const formUUID = router.query.id as string;
 
   const [, { data: form }] = useForm({ id: formUUID, enabled: formUUID != null });
+  const [, { data: fundingProgramme }] = useFundingProgramme({
+    id: form?.fundingProgrammeId ?? undefined,
+    enabled: form?.fundingProgrammeId != null
+  });
+  const deadline = useMemo(
+    () =>
+      resolveFormIntroDeadline({
+        formType: form?.type,
+        stages: fundingProgramme?.stages,
+        formUuid: form?.uuid
+      }),
+    [form?.type, form?.uuid, fundingProgramme?.stages]
+  );
 
   const [, { create, data: submission, isCreating, createFailure }] = useSubmissionCreate({});
   useRequestSuccess(
@@ -33,6 +48,8 @@ const FormIntroPage = () => {
     "Application creation failed"
   );
 
+  console.log("deadline", deadline);
+
   return (
     <BackgroundLayout>
       <ContentLayout>
@@ -44,7 +61,7 @@ const FormIntroPage = () => {
                 title={form.title}
                 imageSrc={form.banner?.url ?? undefined}
                 description={form.description ?? undefined}
-                deadline={form.deadlineAt ?? undefined}
+                deadline={deadline}
                 ctaProps={{
                   children: form.documentationLabel ?? t("View list of questions"),
                   as: Link,

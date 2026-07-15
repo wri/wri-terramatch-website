@@ -2756,6 +2756,26 @@ export type EntityIndexQueryParams = {
    * Filter projects where ready for baseline is true or false
    */
   readyForBaseline?: boolean;
+  /**
+   * Filter projects by QA status for polygon dataset stage 1
+   */
+  projectQaStatus1?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 2
+   */
+  projectQaStatus2?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 3
+   */
+  projectQaStatus3?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 4
+   */
+  projectQaStatus4?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 5
+   */
+  projectQaStatus5?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -4400,6 +4420,26 @@ export type EntityAssociationIndexQueryParams = {
    * Filter projects where ready for baseline is true or false
    */
   readyForBaseline?: boolean;
+  /**
+   * Filter projects by QA status for polygon dataset stage 1
+   */
+  projectQaStatus1?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 2
+   */
+  projectQaStatus2?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 3
+   */
+  projectQaStatus3?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 4
+   */
+  projectQaStatus4?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 5
+   */
+  projectQaStatus5?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
   modelType?: string;
   /**
    * @default false

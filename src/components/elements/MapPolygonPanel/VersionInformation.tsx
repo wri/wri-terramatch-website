@@ -15,6 +15,8 @@ import { isMapAreaSiteFullDto, useMapAreaContext } from "@/context/mapArea.provi
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import UploadError from "@/pages/site/[uuid]/components/Modals/UploadError";
+import { usePolygonUploadErrorModal } from "@/pages/site/[uuid]/hooks/usePolygonUploadErrorModal";
 import { FileType, UploadedFile } from "@/types/common";
 import { extractErrorMessage } from "@/utils/errors";
 
@@ -47,6 +49,8 @@ const VersionInformation = ({
 
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
+  const { openUploadErrorModal, uploadErrorMessage, onUploadError, onUploadErrorModalOpenChange } =
+    usePolygonUploadErrorModal();
 
   useEffect(() => {
     if (files && files.length > 0 && saveFlags) {
@@ -119,8 +123,7 @@ const VersionInformation = ({
       openNotification("success", t("Success!"), t("File uploaded successfully"));
       closeModal(ModalId.ADD_POLYGON);
     } catch (error) {
-      const errorMessage = extractErrorMessage(error);
-      openNotification("error", t("Error uploading file"), errorMessage);
+      onUploadError(extractErrorMessage(error));
     }
   };
 
@@ -296,6 +299,11 @@ const VersionInformation = ({
 
   return (
     <div className="flex h-full flex-col">
+      <UploadError
+        open={openUploadErrorModal}
+        backendErrorMessage={uploadErrorMessage}
+        onOpenChange={onUploadErrorModalOpenChange}
+      />
       <div className="grid grid-flow-col grid-cols-4 border-b-2 border-t border-[#ffffff1a] py-2 opacity-60">
         <Text variant="text-10-light" className="col-span-2 text-white">
           {t("Version/Name")}

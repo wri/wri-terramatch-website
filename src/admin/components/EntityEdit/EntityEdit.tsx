@@ -21,6 +21,7 @@ import { EntityName } from "@/types/common";
 import {
   getAnalyticsUserRole,
   isReportReopenedStatus,
+  PAGE_CONTEXT_REPORT_OVERVIEW,
   resolveReportEntityTypeFromEntityName,
   trackReportAnalyticsEvent
 } from "@/utils/analytics/reportAnalytics";
@@ -81,7 +82,8 @@ const EntityEditDisplay = () => {
     const analyticsContext = {
       entityType: reportEntityType,
       entityId: entityUUID,
-      userRole: getAnalyticsUserRole()
+      userRole: getAnalyticsUserRole(),
+      page_context: PAGE_CONTEXT_REPORT_OVERVIEW
     };
 
     trackReportAnalyticsEvent("report_opened", analyticsContext);

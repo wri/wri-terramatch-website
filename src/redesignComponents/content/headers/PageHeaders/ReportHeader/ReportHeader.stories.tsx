@@ -78,7 +78,7 @@ export const Default: Story = {
   }
 };
 
-export const WithoutSubmittedBy: Story = {
+export const NoData: Story = {
   args: {
     report: {
       ...baseSiteReport,

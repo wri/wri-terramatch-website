@@ -6,6 +6,7 @@ import {
   trackMetricsCardEvent
 } from "@/utils/ga4";
 
+import { PAGE_CONTEXT_REPORT_OVERVIEW, PageContext } from "./pageContext";
 const METRICS_CARD_ENTITY_TYPES = new Set<MetricsCardEntityType>([
   "project-report",
   "site-report",
@@ -47,8 +48,8 @@ type MetricsCardAnalyticsPayload = {
   entityType: MetricsCardEntityType;
   entityId?: string | null;
   metricLabel?: string | null;
+  pageContext?: PageContext;
 };
-
 const isValidMetricsCardPayload = (
   eventName: MetricsCardEventName,
   { entityType, entityId, metricLabel }: MetricsCardAnalyticsPayload
@@ -74,16 +75,15 @@ export const trackMetricsCardAnalyticsEvent = (
 ): void => {
   if (!isValidMetricsCardPayload(eventName, payload)) return;
 
-  trackMetricsCardEvent(
-    eventName,
-    getMetricsCardAnalyticsContext({
+  trackMetricsCardEvent(eventName, {
+    ...getMetricsCardAnalyticsContext({
       entityType: payload.entityType,
       entityId: payload.entityId,
       metricLabel: payload.metricLabel
-    })
-  );
+    }),
+    page_context: payload.pageContext ?? PAGE_CONTEXT_REPORT_OVERVIEW
+  });
 };
-
 export const trackMetricsCardViewedOnce = (payload: Omit<MetricsCardAnalyticsPayload, "metricLabel">): void => {
   const entityId = payload.entityId?.trim() ?? "";
   if (entityId === "") return;

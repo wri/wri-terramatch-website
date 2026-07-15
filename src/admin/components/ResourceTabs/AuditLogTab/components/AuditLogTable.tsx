@@ -8,11 +8,19 @@ import Menu from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { AuditStatusEntityType, deleteAuditStatusAsync } from "@/connections/AuditStatus";
-import { isPolygonDataSubmissionOption, PolygonDataSubmissionOption } from "@/constants/polygonHandoff";
+import {
+  getProjectQaStatusNumberFromAuditType,
+  isPolygonDataSubmissionOption,
+  isProjectQaStatusAuditType,
+  isProjectQaStatusOption,
+  PolygonDataSubmissionOption,
+  ProjectQaStatusOption
+} from "@/constants/polygonHandoff";
 import { useNotificationContext } from "@/context/notification.provider";
 import { AuditStatusDto, MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetAuditLogColumnTitles } from "@/hooks/translation/useGetAuditLogColumnTitles";
 import { usePolygonSubmissionStatusLabels } from "@/hooks/translation/usePolygonSubmissionStatusLabels";
+import { useProjectQaStatusFieldLabels, useProjectQaStatusLabels } from "@/hooks/translation/useProjectQaStatusLabels";
 
 const formattedTextStatus = (text: string) => {
   return text?.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
@@ -22,7 +30,9 @@ const getTextForActionTable = (
   t: ReturnType<typeof useT>,
   item: { type: string; status: string },
   entity: string | undefined,
-  polygonSubmissionStatusLabels: Record<PolygonDataSubmissionOption, string>
+  polygonSubmissionStatusLabels: Record<PolygonDataSubmissionOption, string>,
+  projectQaStatusLabels: Record<ProjectQaStatusOption, string>,
+  projectQaStatusFieldLabels: Record<1 | 2 | 3 | 4 | 5, string>
 ): string => {
   if (item.type === "comment" && entity == "site-polygon") {
     return t("New Comment");
@@ -39,6 +49,16 @@ const getTextForActionTable = (
     return item.status != null ? "-" : t("Polygon Submission Status");
   } else if (item.type === "ready-for-baseline") {
     return item.status === "yes" ? t("Ready for baseline: Yes") : t("Ready for baseline: No");
+  } else if (isProjectQaStatusAuditType(item.type)) {
+    const number = getProjectQaStatusNumberFromAuditType(item.type);
+    const fieldLabel = projectQaStatusFieldLabels[number];
+    if (item.status != null && isProjectQaStatusOption(item.status)) {
+      return t("{field}: {status}", {
+        field: fieldLabel,
+        status: projectQaStatusLabels[item.status]
+      });
+    }
+    return item.status != null ? t("{field}: {status}", { field: fieldLabel, status: item.status }) : fieldLabel;
   } else if (item.type === "change-request-updated") {
     return t("Change Request Updated");
   } else if (item.type === "reminder-sent") {
@@ -98,6 +118,8 @@ const AuditLogTable: FC<{
   const { openNotification } = useNotificationContext();
   const t = useT();
   const polygonSubmissionStatusLabels = usePolygonSubmissionStatusLabels();
+  const projectQaStatusLabels = useProjectQaStatusLabels();
+  const projectQaStatusFieldLabels = useProjectQaStatusFieldLabels();
 
   const deleteAuditStatus = async (auditUuid: string) => {
     try {
@@ -159,7 +181,9 @@ const AuditLogTable: FC<{
                       status: item.status ?? ""
                     },
                     auditData?.entity,
-                    polygonSubmissionStatusLabels
+                    polygonSubmissionStatusLabels,
+                    projectQaStatusLabels,
+                    projectQaStatusFieldLabels
                   )}
                 </Text>
                 {fullColumns ? (
