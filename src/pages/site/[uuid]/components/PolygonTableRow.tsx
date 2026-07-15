@@ -248,9 +248,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
       <TableCell className="min-w-[12.75rem]">{formatNumberLocaleString(row.treesPlanted) ?? "—"}</TableCell>
       <TableCell className="min-w-[15.75rem]">{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
       <TableCell className="min-w-[12rem]">
-        {row.submissionCycle.length > 0 ? (
-          <Text>{formatSubmissionCycleDisplay(row.submissionCycle as SubmissionCycleOption[])}</Text>
-        ) : null}
+        <Text>{formatSubmissionCycleDisplay(row.submissionCycle as SubmissionCycleOption[])}</Text>
       </TableCell>
       <TableCell className="min-w-[12rem]">
         <Text>{row.source === "uploaded" ? t("Uploaded") : row.source}</Text>
