@@ -1,6 +1,6 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { GeoJSONFeature, Map as MapboxMap } from "mapbox-gl";
-import { MutableRefObject, useEffect, useRef } from "react";
+import { ComponentType, MutableRefObject, useEffect, useRef } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { loadBoundingBox, normalizeBoundingBoxDto } from "@/connections/BoundingBox";
@@ -30,6 +30,7 @@ import type {
   EditPolygonState,
   MobilePopupData,
   PolygonFromMapState,
+  PopupComponentProps,
   SetPolygonFromMap,
   TooltipType
 } from "../Map.d";
@@ -51,6 +52,8 @@ type UseMapPopupsParams = {
   dashboardContext?: DashboardPopupContext | null;
   siteReportPolygonPopup?: boolean;
   polygonFromMap?: Pick<PolygonFromMapState, "isOpen"> | null;
+  /** Optional override; used by temporary tools (e.g. polygon explorer). */
+  polygonPopupComponent?: ComponentType<PopupComponentProps>;
 };
 
 const buildPopupFeature = (polygonUuid: string): GeoJSONFeature =>
@@ -84,7 +87,8 @@ export function useMapPopups({
   setMobilePopupData,
   dashboardContext,
   siteReportPolygonPopup,
-  polygonFromMap
+  polygonFromMap,
+  polygonPopupComponent
 }: UseMapPopupsParams) {
   const championsMap = useChampionsMap();
   const { isEditFocusActive } = useMapEditFocus({ polygonFromMap, editPolygon });
@@ -110,7 +114,8 @@ export function useMapPopups({
   useEffect(() => {
     if (!sourcesAdded || map.current == null || draw.current == null || !effectiveShowPopups) return;
 
-    const PopupComponent = dashboardContext?.dashboardMode != null ? DashboardPopup : PolygonPopup;
+    const PopupComponent =
+      polygonPopupComponent ?? (dashboardContext?.dashboardMode != null ? DashboardPopup : PolygonPopup);
     const mapInstance = map.current;
 
     const popupOptions: PopupHandlerOptions = {
@@ -186,6 +191,7 @@ export function useMapPopups({
     map,
     draw,
     championsMap,
-    siteReportPolygonPopup
+    siteReportPolygonPopup,
+    polygonPopupComponent
   ]);
 }

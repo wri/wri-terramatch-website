@@ -58,6 +58,7 @@ import type {
   MobilePopupData,
   PolygonCentroid,
   PolygonFromMapState,
+  PopupComponentProps,
   SetPolygonFromMap,
   TooltipType
 } from "./Map.d";
@@ -96,6 +97,8 @@ export interface BaseMapProps {
   /** Champions (non-admin) map layout and controls; omit or false for the default map. */
   championsMap?: boolean;
   siteReportPolygonPopup?: boolean;
+  /** Optional popup override for temporary / read-only map surfaces. */
+  polygonPopupComponent?: React.ComponentType<PopupComponentProps>;
   polygonTableHighlight?: {
     selectedPolygonUuids: string[];
     onPolygonClickedFromMap?: (uuid: string) => void;
@@ -246,7 +249,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     hideMediaPopupActions,
     hideMediaOnMap,
     isPolygonGeometryLoading = false,
-    siteReportPolygonPopup = false
+    siteReportPolygonPopup = false,
+    polygonPopupComponent
   } = props;
 
   const [isViewingImages, setIsViewingImages] = useState(false);
@@ -475,7 +479,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setMobilePopupData,
     dashboardContext: resolvedDashboardContext,
     siteReportPolygonPopup,
-    polygonFromMap
+    polygonFromMap,
+    polygonPopupComponent
   });
 
   useEffect(() => {

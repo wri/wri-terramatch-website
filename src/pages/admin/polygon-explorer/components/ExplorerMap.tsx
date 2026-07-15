@@ -12,6 +12,7 @@ import {
   useExplorerMapInstance,
   useExplorerViewportPolygons
 } from "../hooks/useExplorerMap";
+import { ExplorerPolygonPopup } from "./ExplorerPolygonPopup";
 
 type ExplorerMapProps = {
   polygons: SitePolygonLightDto[];
@@ -42,8 +43,7 @@ const ExplorerMap: FC<ExplorerMapProps> = ({ polygons, bbox, isLoading }) => {
         showPopups
         showLegend
         showViewGallery={false}
-        tooltipType="view"
-        overviewPolygonPopup
+        polygonPopupComponent={ExplorerPolygonPopup}
         className="h-full w-full"
       />
 
