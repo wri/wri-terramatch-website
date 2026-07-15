@@ -315,8 +315,7 @@ export default function SiteAttributeTable({
               },
               cell: (info: { row: { original: SitePolygonRow } }) => {
                 const value = info.row.original["submission-cycle"];
-                if (value === "") return null;
-                return <span className="whitespace-nowrap">{value}</span>;
+                return <span className="whitespace-nowrap">{value === "" ? "—" : value}</span>;
               }
             },
             {

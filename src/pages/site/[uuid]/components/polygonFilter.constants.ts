@@ -20,7 +20,7 @@ export const normalizeSubmissionCycle = (values: string[] | null | undefined): S
   [...new Set((values ?? []).filter(isSubmissionCycleOption))].sort();
 
 export const formatSubmissionCycleDisplay = (values: SubmissionCycleOption[]): string =>
-  values.map(value => SUBMISSION_CYCLE_LABELS[value]).join(", ");
+  values.length > 0 ? values.map(value => SUBMISSION_CYCLE_LABELS[value]).join(", ") : "—";
 
 export type PolygonSubmissionStatus = PolygonStatus;
 export type PolygonValidationStatus = "not_checked" | "failed" | "partial" | "passed";
