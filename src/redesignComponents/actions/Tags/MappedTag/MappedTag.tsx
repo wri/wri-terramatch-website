@@ -1,7 +1,13 @@
 import type { FC, ReactElement } from "react";
 
 import { usePolygonTagValues } from "@/hooks/translation/usePolygonTagValues";
-import { CheckApprovedIcon, DraftIcon, InfoIcon, PendingIcon } from "@/redesignComponents/foundations/Icons";
+import {
+  CheckApprovedIcon,
+  DeleteIcon,
+  DraftIcon,
+  InfoIcon,
+  PendingIcon
+} from "@/redesignComponents/foundations/Icons";
 
 import ActionStatusTag from "../ActionStatusTag/ActionStatusTag";
 
@@ -11,7 +17,7 @@ export interface MappedTagProps {
   size?: "small" | "default";
 }
 
-export type MappedTagState = "draft" | "pending-approval" | "information-required" | "approved";
+export type MappedTagState = "draft" | "pending-approval" | "information-required" | "approved" | "deleted";
 
 function getMappedTagIcon(state: MappedTagState, size: "small" | "default" = "default"): ReactElement {
   switch (state) {
@@ -23,6 +29,8 @@ function getMappedTagIcon(state: MappedTagState, size: "small" | "default" = "de
       return <InfoIcon color="attention.1" boxSize={size === "default" ? 3 : 2.5} />;
     case "approved":
       return <CheckApprovedIcon color="positive.1" boxSize={size === "default" ? 3 : 2.5} />;
+    case "deleted":
+      return <DeleteIcon color="neutralPassive.2" boxSize={size === "default" ? 3 : 2.5} />;
     default:
       return <></>;
   }
