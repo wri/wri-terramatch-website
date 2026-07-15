@@ -49,7 +49,6 @@ export const useCrossSiteOverlapGeometries = ({
       return [];
     }
     return getCrossSiteOverlapPartnersForValidation(validation, currentSiteGeometryUuids);
-    // currentSiteGeometryUuidsKey is the stable dependency; currentSiteGeometryUuids itself is a new array each render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, polygonUuid, validation, currentSiteGeometryUuidsKey]);
 
@@ -105,7 +104,6 @@ export const useCrossSiteOverlapGeometries = ({
     return () => {
       cancelled = true;
     };
-    // partnersKey is the stable dependency that mirrors the `partners` array contents.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [partnersKey]);
 
