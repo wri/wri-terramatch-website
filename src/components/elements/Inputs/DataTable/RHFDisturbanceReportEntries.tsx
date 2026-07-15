@@ -203,7 +203,7 @@ const RHFDisturbanceReportEntries = ({
   const handleMonetaryDamageChange = useCallback(
     (e: any) => {
       const newValue = e.target.value;
-      updateFieldValue("monetary-damage", newValue);
+      updateFieldValue("financial-loss", newValue);
     },
     [updateFieldValue]
   );
@@ -276,12 +276,12 @@ const RHFDisturbanceReportEntries = ({
               <div>
                 <Input
                   type="number"
-                  name="monetary-damage"
+                  name="financial-loss"
                   placeholder={t("Enter amount")}
-                  label={t("Monetary Damage (USD)")}
+                  label={t("Financial Loss")}
                   required
                   description={DISTURBANCE_MONETARY_DAMAGE_FIELD_DESCRIPTION}
-                  value={getFieldValue("monetary-damage") ?? ""}
+                  value={getFieldValue("financial-loss") ?? ""}
                   onChange={handleMonetaryDamageChange}
                   className="pl-8"
                   iconButtonPropsLeft={{

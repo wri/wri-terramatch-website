@@ -25,7 +25,7 @@ export const Default: Story = {
           { name: "intensity", value: "low" },
           { name: "extent", value: "21-40" },
           { name: "people-affected", value: 100 },
-          { name: "monetary-damage", value: 100000 },
+          { name: "financial-loss", value: 100000 },
           { name: "disturbance-start-date", value: "2025-01-01" },
           { name: "disturbance-end-date", value: "2025-01-01" },
           {
