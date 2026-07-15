@@ -113,12 +113,14 @@ const OverallPolygonQaStatusPanel: FC<Props> = ({ projectUuid, statuses, onSaved
           {t("Overall Polygon QA Status")}
         </Text>
         <Text variant="text-14-light" className="mb-4">
-          {t("Update overall polygon QA statuses. Changes are recorded in the history below.")}
+          {t("Update overall polygon QA statuses per {cycle}. Changes are recorded in the history below.", {
+            cycle: <b>{t("reporting cycle")}</b>
+          })}
         </Text>
       </div>
       {PROJECT_QA_STATUS_FIELDS.map(field => (
         <div key={field} className="flex items-center gap-3">
-          <Text variant="text-16-bold" className="w-28 shrink-0">
+          <Text variant="text-16-bold" className="w-44 shrink-0 whitespace-nowrap">
             {fieldLabels[field]}
           </Text>
           <Dropdown
