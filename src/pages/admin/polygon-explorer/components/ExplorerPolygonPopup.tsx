@@ -106,3 +106,5 @@ export function ExplorerPolygonPopup({ feature, popup, sitePolygonData }: PopupC
     </>
   );
 }
+
+export default ExplorerPolygonPopup;
