@@ -1,4 +1,5 @@
 import { DataConnection, v3Resource } from "@/connections/util/apiConnectionFactory";
+import { connectionLoader } from "@/connections/util/connectionShortcuts";
 import { Framework } from "@/context/framework.provider";
 import { aboutSectionIndex, AboutSectionIndexQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import { AboutSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -11,6 +12,8 @@ const aboutSectionIndexConnection = v3Resource("aboutSections", aboutSectionInde
   .filter<Filter<AboutSectionIndexQueryParams>>()
   .enabledProp()
   .buildConnection();
+
+export const loadAboutSections = connectionLoader(aboutSectionIndexConnection);
 
 type FindAboutSectionProps = {
   type: NonNullable<AboutSectionIndexQueryParams["type"]>;

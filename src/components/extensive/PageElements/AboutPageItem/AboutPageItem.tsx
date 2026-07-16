@@ -1,6 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import parse, { DOMNode, domToReact, Element, HTMLReactParserOptions } from "html-react-parser";
+import { FC } from "react";
 import { twMerge } from "tailwind-merge";
 
 import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
@@ -49,7 +50,13 @@ const parserReplacements: HTMLReactParserOptions["replace"] = domNode => {
   }
 };
 
-const AboutPageItem = ({ type, flexProps, className, contentClassName, descriptionMaxWidth }: AboutPageItemProps) => {
+const AboutPageItem: FC<AboutPageItemProps> = ({
+  type,
+  flexProps,
+  className,
+  contentClassName,
+  descriptionMaxWidth
+}) => {
   const { framework } = useFrameworkContext();
   const [loaded, { data: aboutSection }] = useAboutSection({ type, framework });
   const t = useT();

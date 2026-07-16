@@ -170,6 +170,12 @@ const AdminPanel: FC = () => {
           options={{ label: "Impact Stories" }}
         />
         <Resource
+          name={modules.aboutSections.ResourceName}
+          list={modules.aboutSections.List}
+          icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
+          options={{ label: "About Sections" }}
+        />
+        <Resource
           name={modules.srpReport.ResourceName}
           list={modules.srpReport.List}
           show={modules.srpReport.Show}

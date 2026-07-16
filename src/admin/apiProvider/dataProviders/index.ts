@@ -1,5 +1,6 @@
 import { combineDataProviders } from "react-admin";
 
+import { aboutSectionsDataProvider } from "@/admin/apiProvider/dataProviders/aboutSectionsDataProvider";
 import { reportingFrameworkDataProvider } from "@/admin/apiProvider/dataProviders/reportingFrameworkDataProvider";
 import { taskDataProvider } from "@/admin/apiProvider/dataProviders/taskDataProvider";
 import modules from "@/admin/modules";
@@ -67,6 +68,9 @@ export const dataProvider = combineDataProviders(resource => {
 
     case modules.impactStories.ResourceName:
       return impactStoriesDataProvider;
+
+    case modules.aboutSections.ResourceName:
+      return aboutSectionsDataProvider;
 
     case modules.disturbanceReport.ResourceName:
       return disturbanceReportDataProvider;

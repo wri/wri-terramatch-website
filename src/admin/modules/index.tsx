@@ -1,4 +1,5 @@
 import { EntityEdit } from "@/admin/components/EntityEdit/EntityEdit";
+import AboutSectionsList from "@/admin/modules/aboutSections/components/AboutSectionsList";
 import { FormCreate } from "@/admin/modules/form/components/FormCreate";
 import { FormEdit } from "@/admin/modules/form/components/FormEdit";
 import { FormList } from "@/admin/modules/form/components/FormList";
@@ -155,6 +156,11 @@ const impactStories = {
   Edit: ImpactStoriesEdit
 };
 
+const aboutSections = {
+  ResourceName: "aboutSections",
+  List: AboutSectionsList
+};
+
 const disturbanceReport = {
   ResourceName: "disturbanceReport",
   List: DisturbanceReportList,
@@ -186,6 +192,7 @@ const modules = {
   financialReport,
   audit,
   impactStories,
+  aboutSections,
   disturbanceReport,
   srpReport
 };
