@@ -15,6 +15,13 @@ export type TableColumn = {
   key: string;
   label: string;
   sortable?: boolean;
+  /** Fixed column width (e.g. "17.75rem"). Applied by the library as width + minWidth. */
+  width?: string;
+};
+
+export type TableRenderRowContext = {
+  className?: string;
+  getCellProps: (columnKey: string) => Record<string, any>;
 };
 
 interface TableProps<T extends BaseRow> {
@@ -24,7 +31,7 @@ interface TableProps<T extends BaseRow> {
   height?: string;
   stickyHeader?: boolean;
   loading?: boolean;
-  renderRow?: (rowData: T, rowProps?: Record<string, unknown>) => React.ReactNode;
+  renderRow?: (rowData: T, context?: TableRenderRowContext) => React.ReactNode;
   renderDataCell?: (rowData: T, columnKey: string) => React.ReactNode;
   totalItems?: number;
   showItemCount?: boolean;
@@ -173,10 +180,23 @@ const Table = <T extends BaseRow>({
   customRenderRowRef.current = customRenderRow;
 
   const finalRenderRow = useCallback(
-    (rowData: T, rowProps?: Record<string, unknown>) => {
+    (rowData: T, context?: TableRenderRowContext) => {
       const renderRow = customRenderRowRef.current;
       if (renderRow != null) {
-        return renderRow(rowData, rowProps);
+        // TODO: Remove this getCellProps augmentation once the library adds maxWidth to its own
+        // cell props. It currently returns only width + minWidth from columns[].width, so columns
+        // can still grow past their configured size; we add maxWidth = width to pin the width.
+        const enhancedContext: TableRenderRowContext | undefined =
+          context != null
+            ? {
+                ...context,
+                getCellProps: (columnKey: string) => {
+                  const cellProps = context.getCellProps(columnKey);
+                  return cellProps.width != null ? { ...cellProps, maxWidth: cellProps.width } : cellProps;
+                }
+              }
+            : context;
+        return renderRow(rowData, enhancedContext);
       }
       if (selectable) {
         return defaultSelectableRenderRow(rowData);
@@ -201,7 +221,7 @@ const Table = <T extends BaseRow>({
       <WriTable
         columns={columns}
         data={dataByPage}
-        renderRow={finalRenderRow as (rowData: BaseRow, rowProps?: Record<string, unknown>) => React.ReactNode}
+        renderRow={finalRenderRow as (rowData: BaseRow, context?: TableRenderRowContext) => React.ReactNode}
         onSortColumn={setSortColumn}
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}
