@@ -1,6 +1,7 @@
 import { getThemedColor } from "@/lib/theme";
 
-const STICKY_COVER_WIDTH = "1rem";
+const STICKY_COVER_WIDTH = "1.5rem";
+export const CHECKBOX_COLUMN_WIDTH = "3rem";
 
 const CHECKBOX_COLUMN_Z_INDEX = {
   header: 12,
@@ -11,6 +12,12 @@ const POLYGON_NAME_COLUMN_Z_INDEX = {
   header: 10,
   body: 9
 } as const;
+
+const STICKY_COLUMN_BASE_STYLES = {
+  isolation: "isolate" as const,
+  overflow: "hidden" as const,
+  transform: "translateZ(0)"
+};
 
 type StickyCoverOptions = {
   leftCover?: boolean;
@@ -41,13 +48,8 @@ export const getPolygonsTableStyles = (isStickyTableActive: boolean) => {
   const bodyBackground = getThemedColor("neutral", 100);
   const hoverBackground = getThemedColor("primary", 100);
 
-  const checkboxHeaderShadow = isStickyTableActive
-    ? buildStickyCoverShadow(headerBackground, { leftCover: true, rightCover: true })
-    : undefined;
-
-  const checkboxBodyShadow = isStickyTableActive
-    ? buildStickyCoverShadow(bodyBackground, { leftCover: true, rightCover: true })
-    : undefined;
+  const checkboxHeaderShadow = buildStickyCoverShadow(headerBackground, { leftCover: true, rightCover: true });
+  const checkboxBodyShadow = buildStickyCoverShadow(bodyBackground, { leftCover: true, rightCover: true });
 
   const polygonNameHeaderShadow = isStickyTableActive
     ? buildStickyCoverShadow(headerBackground, { rightCover: true, divider: true })
@@ -77,36 +79,44 @@ export const getPolygonsTableStyles = (isStickyTableActive: boolean) => {
       left: 0,
       zIndex: CHECKBOX_COLUMN_Z_INDEX.header,
       backgroundColor: headerBackground,
-      isolation: "isolate",
-      ...(checkboxHeaderShadow != null && { boxShadow: checkboxHeaderShadow })
+      boxShadow: checkboxHeaderShadow,
+      width: CHECKBOX_COLUMN_WIDTH,
+      minWidth: CHECKBOX_COLUMN_WIDTH,
+      maxWidth: CHECKBOX_COLUMN_WIDTH,
+      boxSizing: "border-box",
+      ...STICKY_COLUMN_BASE_STYLES
     },
     "& table td:first-of-type": {
       position: "sticky",
       left: 0,
       zIndex: CHECKBOX_COLUMN_Z_INDEX.body,
       backgroundColor: bodyBackground,
-      isolation: "isolate",
+      boxShadow: checkboxBodyShadow,
+      width: CHECKBOX_COLUMN_WIDTH,
+      minWidth: CHECKBOX_COLUMN_WIDTH,
+      maxWidth: CHECKBOX_COLUMN_WIDTH,
+      boxSizing: "border-box",
       transition: "background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
-      ...(checkboxBodyShadow != null && { boxShadow: checkboxBodyShadow })
+      ...STICKY_COLUMN_BASE_STYLES
     },
     "& table th:nth-of-type(2)": {
       position: "sticky",
-      left: "3rem",
+      left: CHECKBOX_COLUMN_WIDTH,
       zIndex: POLYGON_NAME_COLUMN_Z_INDEX.header,
       backgroundColor: headerBackground,
       padding: 0,
-      isolation: "isolate",
-      ...(polygonNameHeaderShadow != null && { boxShadow: polygonNameHeaderShadow })
+      ...(polygonNameHeaderShadow != null && { boxShadow: polygonNameHeaderShadow }),
+      ...STICKY_COLUMN_BASE_STYLES
     },
     "& table td:nth-of-type(2)": {
       position: "sticky",
-      left: "3rem",
+      left: CHECKBOX_COLUMN_WIDTH,
       zIndex: POLYGON_NAME_COLUMN_Z_INDEX.body,
       backgroundColor: bodyBackground,
       padding: 0,
-      isolation: "isolate",
       transition: "background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
-      ...(polygonNameBodyShadow != null && { boxShadow: polygonNameBodyShadow })
+      ...(polygonNameBodyShadow != null && { boxShadow: polygonNameBodyShadow }),
+      ...STICKY_COLUMN_BASE_STYLES
     },
     "& table tbody tr:hover td:nth-of-type(2), & table tbody tr:hover td:first-of-type, & table tbody tr[aria-selected='true'] td:nth-of-type(2), & table tbody tr[aria-selected='true'] td:first-of-type":
       {

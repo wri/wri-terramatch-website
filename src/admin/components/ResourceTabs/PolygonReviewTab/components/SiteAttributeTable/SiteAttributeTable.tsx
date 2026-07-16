@@ -11,6 +11,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Pagination from "@/components/extensive/Pagination";
 import { VARIANT_PAGINATION_POLYGON_REVIEW } from "@/components/extensive/Pagination/PaginationVariant";
 import { getThemedColor } from "@/lib/theme";
+import { findHorizontalScrollContainer } from "@/pages/site/[uuid]/components/polygonTableScroll";
 import { buildStickyCoverShadow } from "@/pages/site/[uuid]/components/polygonTableStyles";
 
 import { SitePolygonRow } from "../..";
@@ -59,7 +60,7 @@ export default function SiteAttributeTable({
   const [isStickyActive, setIsStickyActive] = useState(false);
 
   useEffect(() => {
-    const scrollContainer = containerRef.current?.querySelector(".overflow-x-auto");
+    const scrollContainer = findHorizontalScrollContainer(containerRef.current);
     if (scrollContainer == null) {
       return;
     }
@@ -86,13 +87,18 @@ export default function SiteAttributeTable({
       "& > div > div": {
         backgroundColor: bodyBackground
       },
-      "& table th:first-of-type, & table td:first-of-type": {
-        isolation: "isolate"
-      },
       "& table th:first-of-type": {
+        isolation: "isolate",
+        overflow: "hidden",
+        transform: "translateZ(0)",
+        backgroundColor: headerBackground,
         boxShadow: buildStickyCoverShadow(headerBackground, { leftCover: true, rightCover: true })
       },
       "& table td:first-of-type": {
+        isolation: "isolate",
+        overflow: "hidden",
+        transform: "translateZ(0)",
+        backgroundColor: bodyBackground,
         boxShadow: buildStickyCoverShadow(bodyBackground, { leftCover: true, rightCover: true })
       }
     };

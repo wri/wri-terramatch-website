@@ -66,14 +66,14 @@ export const getTableWrapperStyles = (
     ...(selectable && {
       "& table thead th:first-of-type": {
         width: "1%",
-        minWidth: "48px",
-        maxWidth: "48px",
+        minWidth: "3rem",
+        maxWidth: "3rem",
         padding: "0.5rem"
       },
       "& table tbody td:first-of-type": {
         width: "1%",
-        minWidth: "48px",
-        maxWidth: "48px",
+        minWidth: "3rem",
+        maxWidth: "3rem",
         padding: "0.5rem"
       }
     }),
