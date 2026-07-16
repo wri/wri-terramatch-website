@@ -10,6 +10,8 @@ export const getTableWrapperStyles = (
   const shouldHidePagination =
     actualTotalItems != null ? actualTotalItems <= (pageSize ?? 0) : dataByPage?.length === 0;
 
+  const { "& > div > div": cssScrollContainer, ...restCss } = css ?? {};
+
   return {
     ...(shouldHidePagination && {
       "& [data-scope='pagination']": {
@@ -26,7 +28,8 @@ export const getTableWrapperStyles = (
     "& > div > div": {
       overflowX: "auto",
       maxWidth: "100%",
-      width: "100%"
+      width: "100%",
+      ...(typeof cssScrollContainer === "object" && cssScrollContainer != null ? cssScrollContainer : {})
     },
     "& table tbody tr": {
       backgroundColor: "transparent",
@@ -100,7 +103,7 @@ export const getTableWrapperStyles = (
       border: `1px solid ${getThemedColor("neutral", 400)} !important`
     },
 
-    ...css
+    ...restCss
   };
 };
 
