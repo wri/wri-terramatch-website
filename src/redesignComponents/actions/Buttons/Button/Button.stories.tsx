@@ -111,44 +111,41 @@ export const SecondarySmall: Story = {
   }
 };
 
-// Secondary Negative Variant Stories
-export const SecondaryNegative: Story = {
+// Negative Variant Stories
+export const Negative: Story = {
   args: {
     children: "Label",
-    variant: "secondary",
-    typeVariant: "negative"
+    variant: "negative"
   }
 };
 
-export const SecondaryNegativeDisabled: Story = {
+export const NegativeDisabled: Story = {
   args: {
     children: "Label",
-    variant: "secondary",
-    typeVariant: "negative",
+    variant: "negative",
     disabled: true
   }
 };
 
-export const SecondaryNegativeSmall: Story = {
+export const NegativeSmall: Story = {
   args: {
     children: "Label",
-    variant: "secondary",
-    typeVariant: "negative",
+    variant: "negative",
     size: "small"
   }
 };
 
-export const SecondaryNegativeWithLeftIcon: Story = {
+export const NegativeWithLeftIcon: Story = {
   render: () => (
-    <Button variant="secondary" typeVariant="negative" leftIcon={<EditIcon className="h-4 w-4" />}>
+    <Button variant="negative" leftIcon={<EditIcon className="h-4 w-4" />}>
       Label
     </Button>
   )
 };
 
-export const SecondaryNegativeWithRightIcon: Story = {
+export const NegativeWithRightIcon: Story = {
   render: () => (
-    <Button variant="secondary" typeVariant="negative" rightIcon={<EditIcon className="h-4 w-4" />}>
+    <Button variant="negative" rightIcon={<EditIcon className="h-4 w-4" />}>
       Label
     </Button>
   )
@@ -312,9 +309,7 @@ export const AllVariants: Story = {
     <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
       <Button variant="primary">Primary</Button>
       <Button variant="secondary">Secondary</Button>
-      <Button variant="secondary" typeVariant="negative">
-        Secondary Negative
-      </Button>
+      <Button variant="negative">Negative</Button>
       <Button variant="borderless">Borderless</Button>
       <Button variant="outline">Outline</Button>
     </div>
