@@ -6,7 +6,6 @@ import Accordion from "@/components/elements/Accordion/Accordion";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
-import { IconNames } from "@/components/extensive/Icon/Icon";
 import { DisturbanceAffectedSites } from "@/components/extensive/WizardForm/DisturbanceAffectedSites";
 import { useDisturbanceExtentOption } from "@/hooks/translation/useDisturbanceExtentOptions";
 import { useDisturbanceOptions } from "@/hooks/translation/useDisturbanceOptions";
@@ -283,13 +282,6 @@ const RHFDisturbanceReportEntries = ({
                   description={DISTURBANCE_MONETARY_DAMAGE_FIELD_DESCRIPTION}
                   value={getFieldValue("financial-loss") ?? ""}
                   onChange={handleMonetaryDamageChange}
-                  className="pl-8"
-                  iconButtonPropsLeft={{
-                    iconProps: {
-                      name: IconNames.DOLLAR_SIGN,
-                      className: "fill-neutral-700"
-                    }
-                  }}
                 />
               </div>
               <div>

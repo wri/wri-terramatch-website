@@ -222,7 +222,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
           <TextEntry value={disturbanceStartDate ?? t("Answer Not Provided")} label={t("Disturbance Start Date")} />
           <TextEntry value={disturbanceEndDate ?? t("Answer Not Provided")} label={t("Disturbance End Date")} />
           <TextEntry
-            value={financialLoss ? `$${Number(financialLoss).toLocaleString()}` : t("Answer Not Provided")}
+            value={financialLoss ? `${Number(financialLoss).toLocaleString()}` : t("Answer Not Provided")}
             label={t("Financial Loss")}
           />
         </div>
