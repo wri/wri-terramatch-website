@@ -24,6 +24,8 @@ type UseMapLayersParams = {
   initialTileVersion?: string;
   initialPolygonFingerprint?: string;
   polygonMapTileNonce?: number;
+  geoserverPolygonWorkspace?: string;
+  geoserverPolygonLayerName?: string;
 };
 
 export const hashString = (value: string): number => {
@@ -73,7 +75,9 @@ export function useMapLayers({
   selectedPolygonsInCheckbox,
   initialTileVersion,
   initialPolygonFingerprint,
-  polygonMapTileNonce = 0
+  polygonMapTileNonce = 0,
+  geoserverPolygonWorkspace,
+  geoserverPolygonLayerName
 }: UseMapLayersParams) {
   const [sourcesAdded, setSourcesAdded] = useState(false);
   const [tileLoadRequestId, setTileLoadRequestId] = useState(0);
@@ -101,6 +105,14 @@ export function useMapLayers({
     const zoomFilter = dashboardMode ? 9 : undefined;
     const polygonsDataToUse = dashboardMode != null && projectUUID != null && hasAccess === false ? {} : polygonsData;
 
+    const geoserverOverrides =
+      geoserverPolygonWorkspace != null && geoserverPolygonLayerName != null
+        ? {
+            workspaceOverride: geoserverPolygonWorkspace,
+            layerNameOverride: geoserverPolygonLayerName
+          }
+        : undefined;
+
     addSourcesToLayers(
       map.current,
       polygonsDataToUse,
@@ -108,7 +120,8 @@ export function useMapLayers({
       zoomFilter,
       dashboardMode,
       polygonsCentroids,
-      tileVersionRef.current
+      tileVersionRef.current,
+      geoserverOverrides
     );
     setTileLoadRequestId(prev => prev + 1);
     setSourcesAdded(true);
@@ -122,7 +135,9 @@ export function useMapLayers({
     dashboardMode,
     projectUUID,
     hasAccess,
-    polygonMapTileNonce
+    polygonMapTileNonce,
+    geoserverPolygonWorkspace,
+    geoserverPolygonLayerName
   ]);
 
   useEffect(() => {

@@ -6,7 +6,12 @@ import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
-import { GEOMETRY_MIN_ZOOM, MAX_VISIBLE_GEOMETRIES } from "../constants";
+import {
+  EXPLORER_GEOSERVER_POLYGON_LAYER,
+  EXPLORER_GEOSERVER_WORKSPACE,
+  GEOMETRY_MIN_ZOOM,
+  MAX_VISIBLE_GEOMETRIES
+} from "../constants";
 import {
   useExplorerCentroidLayers,
   useExplorerMapInstance,
@@ -44,6 +49,8 @@ const ExplorerMap: FC<ExplorerMapProps> = ({ polygons, bbox, isLoading }) => {
         showLegend
         showViewGallery={false}
         polygonPopupComponent={ExplorerPolygonPopup}
+        geoserverPolygonWorkspace={EXPLORER_GEOSERVER_WORKSPACE}
+        geoserverPolygonLayerName={EXPLORER_GEOSERVER_POLYGON_LAYER}
         className="h-full w-full"
       />
 

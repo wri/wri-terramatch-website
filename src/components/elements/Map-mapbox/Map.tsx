@@ -114,6 +114,8 @@ export interface BaseMapProps {
   hideMediaPopupActions?: boolean;
   hideMediaOnMap?: boolean;
   isPolygonGeometryLoading?: boolean;
+  geoserverPolygonWorkspace?: string;
+  geoserverPolygonLayerName?: string;
 }
 
 export interface DashboardMapExtras {
@@ -250,7 +252,9 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     hideMediaOnMap,
     isPolygonGeometryLoading = false,
     siteReportPolygonPopup = false,
-    polygonPopupComponent
+    polygonPopupComponent,
+    geoserverPolygonWorkspace,
+    geoserverPolygonLayerName
   } = props;
 
   const [isViewingImages, setIsViewingImages] = useState(false);
@@ -411,7 +415,9 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     selectedPolygonsInCheckbox,
     initialTileVersion,
     initialPolygonFingerprint,
-    polygonMapTileNonce
+    polygonMapTileNonce,
+    geoserverPolygonWorkspace,
+    geoserverPolygonLayerName
   });
 
   const editFocus = useMapEditFocus({ polygonFromMap, editPolygon });

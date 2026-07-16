@@ -5,7 +5,7 @@ import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
-import { getGeoserverURL } from "../adapters/geoserver";
+import { GeoserverLayerOptions, getGeoserverURL, resolveGeoserverLayer } from "../adapters/geoserver";
 import type { LayerType, LayerWithStyle } from "../Map.d";
 import { DashboardGetProjectsData } from "../Map.d";
 import { getPulsingDot } from "../pulsing.dot";
@@ -206,13 +206,16 @@ export function getMapTileVersion(map: MapboxMap | null | undefined): string {
   return getSourceCacheKeys(map)[LAYERS_NAMES.POLYGON_GEOMETRY] ?? "0";
 }
 
+export type GeoserverPolygonOverrides = GeoserverLayerOptions;
+
 export const addSourceToLayer = (
   layer: LayerType,
   map: MapboxMap,
   polygonsData: Record<string, string[]> | undefined,
   zoomFilter?: number | undefined,
   dashboardMode?: string | undefined,
-  cacheKey: string = "0"
+  cacheKey: string = "0",
+  geoserverOverrides?: GeoserverPolygonOverrides
 ) => {
   const { name, geoserverLayerName, styles } = layer;
   try {
@@ -237,11 +240,12 @@ export const addSourceToLayer = (
       map.removeSource(name);
     }
 
-    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName, dashboardMode, cacheKey);
+    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName, dashboardMode, cacheKey, geoserverOverrides);
+    const { layerName: mvtSourceLayer } = resolveGeoserverLayer(geoserverLayerName, dashboardMode, geoserverOverrides);
     keys[name] = cacheKey;
     map.addSource(name, { type: "vector", tiles: [GEOSERVER_TILE_URL] });
     styles?.forEach((style: LayerWithStyle, index: number) => {
-      addLayerStyle(map, name, geoserverLayerName, style, index, zoomFilter);
+      addLayerStyle(map, name, mvtSourceLayer, style, index, zoomFilter);
     });
     if (polygonsData) {
       loadLayersInMap(map, polygonsData, layer, zoomFilter);
@@ -320,7 +324,7 @@ export const addLayerGeojsonStyle = (
 export const addLayerStyle = (
   map: MapboxMap,
   layerName: string,
-  sourceName: string,
+  sourceLayerName: string,
   style: LayerWithStyle,
   index_suffix: number | string,
   zoomFilter?: number | undefined
@@ -333,8 +337,8 @@ export const addLayerStyle = (
     {
       ...style,
       id: `${layerName}-${index_suffix}`,
-      source: sourceName,
-      "source-layer": sourceName,
+      source: layerName,
+      "source-layer": sourceLayerName,
       ...(zoomFilter && {
         filter: ["all", style.filter || ["==", true, true], [">=", ["zoom"], zoomFilter]]
       })
@@ -351,7 +355,8 @@ export const addSourcesToLayers = (
   zoomFilter?: number | undefined,
   dashboardMode?: string | undefined,
   polygonsCentroids?: { uuid: string; long: number; lat: number }[] | undefined,
-  cacheKey: string = "0"
+  cacheKey: string = "0",
+  geoserverOverrides?: GeoserverPolygonOverrides
 ) => {
   if (map == null) return;
 
@@ -359,7 +364,7 @@ export const addSourcesToLayers = (
 
   layersList.forEach((layer: LayerType) => {
     if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
-      addSourceToLayer(layer, map, polygonsData, zoomFilter, dashboardMode, cacheKey);
+      addSourceToLayer(layer, map, polygonsData, zoomFilter, dashboardMode, cacheKey, geoserverOverrides);
     }
     if (layer.name === LAYERS_NAMES.CENTROIDS && dashboardMode) {
       addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, existsPolygonsForCentroidGeojson);

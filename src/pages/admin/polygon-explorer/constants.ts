@@ -7,6 +7,12 @@ import {
 import { getThemedColor } from "@/lib/theme";
 import { LANDSCAPE_MAPPINGS } from "@/utils/landscapeUtils";
 
+/** GeoServer workspace for the explorer-only polygon_geometry_explorer MVT layer. */
+export const EXPLORER_GEOSERVER_WORKSPACE = "wri_prod";
+
+/** GeoServer layer name for the explorer-only SQL-view polygon tiles. */
+export const EXPLORER_GEOSERVER_POLYGON_LAYER = "polygon_geometry_explorer";
+
 /** Zoom level at which Geoserver polygon geometry becomes visible (mirrors the dashboard gate). */
 export const GEOMETRY_MIN_ZOOM = 9;
 
