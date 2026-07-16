@@ -6811,7 +6811,7 @@
 
 "@worldresources/wri-design-systems@^2.202.1":
   version "2.202.1"
-  resolved "https://registry.npmjs.org/@worldresources/wri-design-systems/-/wri-design-systems-2.202.1.tgz#1334792f300ebdeb0f5cb5533de6cc41c1d2e6b1"
+  resolved "https://registry.yarnpkg.com/@worldresources/wri-design-systems/-/wri-design-systems-2.202.1.tgz#1334792f300ebdeb0f5cb5533de6cc41c1d2e6b1"
   integrity sha512-abrlViK9uTCMw73GBcbM79QvGTT70rrZ1V/65el/aJTCYXO0UMD+PSvFyj4f7SZ5Au3QnB6/Xfl9LGmpBIGNgg==
   dependencies:
     "@tiptap/core" "^3.23.6"
