@@ -613,7 +613,7 @@ const CROSS_SITE_OVERLAP_PATTERN_LARGE_ID = "cross-site-overlap-pattern-large";
 
 const CROSS_SITE_OVERLAP_FILL_RGBA: DataDrivenPropertyValueSpecification<string> = ["rgba", 230, 230, 230, 0.55];
 const CROSS_SITE_OVERLAP_PATTERN_OPACITY = 0.28;
-const CROSS_SITE_OVERLAP_LINE_COLOR = "#FFFFFF";
+const CROSS_SITE_OVERLAP_LINE_COLOR = getThemedColor("neutralPassive", 1);
 const CROSS_SITE_OVERLAP_LINE_WIDTH = 2;
 
 const CROSS_SITE_OVERLAP_FILL_PATTERN: DataDrivenPropertyValueSpecification<string> = [
