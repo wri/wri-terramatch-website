@@ -13,6 +13,10 @@ const isFeedbackFieldInStep = (
   );
 };
 
+/** Top-level step fields plus conditional/table children (fieldNames excludes children). */
+const fieldNamesInStepIncludingChildren = (fieldsProvider: FormFieldsProvider, stepId: string): string[] =>
+  fieldsProvider.fieldNames(stepId).flatMap(fieldName => [fieldName, ...fieldsProvider.childNames(fieldName)]);
+
 export const getFeedbackFieldNamesInStep = (
   fieldsProvider: FormFieldsProvider,
   stepId: string,
@@ -20,9 +24,9 @@ export const getFeedbackFieldNamesInStep = (
 ): string[] => {
   if (feedbackFieldIds == null || feedbackFieldIds.length === 0) return [];
 
-  return fieldsProvider
-    .fieldNames(stepId)
-    .filter(fieldName => isFeedbackFieldInStep(fieldName, fieldsProvider, feedbackFieldIds));
+  return fieldNamesInStepIncludingChildren(fieldsProvider, stepId).filter(fieldName =>
+    isFeedbackFieldInStep(fieldName, fieldsProvider, feedbackFieldIds)
+  );
 };
 
 export const isFeedbackFieldUnresolved = (
@@ -33,6 +37,21 @@ export const isFeedbackFieldUnresolved = (
   initialValues: Record<string, unknown> | undefined
 ): boolean => {
   if (!isFeedbackFieldInStep(fieldName, fieldsProvider, feedbackFieldIds)) return false;
+
+  const childNames = fieldsProvider.childNames(fieldName);
+  // Conditional (or other parent): editing a visible child also addresses the feedback.
+  if (childNames.length > 0) {
+    if (!valueWiseEqual(currentValues[fieldName], initialValues?.[fieldName])) return false;
+
+    const parentValue = currentValues[fieldName];
+    const childEdited = childNames.some(childName => {
+      const child = fieldsProvider.fieldByName(childName);
+      if (child == null || child.showOnParentCondition !== parentValue) return false;
+      return !valueWiseEqual(currentValues[childName], initialValues?.[childName]);
+    });
+    return !childEdited;
+  }
+
   return valueWiseEqual(currentValues[fieldName], initialValues?.[fieldName]);
 };
 

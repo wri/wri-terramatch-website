@@ -139,6 +139,10 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
           if (fieldsProvider.feedbackRequired(fieldId)) {
             return { initialStepIndex: stepIndex, disableInitialAutoProgress: true };
           }
+          // Also check conditional children — fieldNames() excludes them.
+          if (fieldsProvider.childNames(fieldId).some(childId => fieldsProvider.feedbackRequired(childId))) {
+            return { initialStepIndex: stepIndex, disableInitialAutoProgress: true };
+          }
         }
       }
     }
