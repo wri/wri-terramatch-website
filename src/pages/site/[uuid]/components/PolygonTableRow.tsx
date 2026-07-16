@@ -202,27 +202,21 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
           checked={isSelected}
         />
       </TableCell>
-      <TableCell className="min-w-[17.75rem] max-w-[17.75rem]">
+      <TableCell>
         <Box>
           <Text textStyle="400-bold" color="neutral.800" className="truncate">
             {row.polygonName ?? "—"}
           </Text>
         </Box>
       </TableCell>
-      <TableCell className="min-w-[15.875rem]">
-        {row.submission != null ? <MappedTag state={row.submission} /> : <Text>—</Text>}
-      </TableCell>
-      <TableCell className="min-w-[12.75rem]">
-        {row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>}
-      </TableCell>
-      <TableCell className="min-w-[15.5rem]">
+      <TableCell>{row.submission != null ? <MappedTag state={row.submission} /> : <Text>—</Text>}</TableCell>
+      <TableCell>{row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>}</TableCell>
+      <TableCell>
         <Flex className="items-center gap-2">{renderRestorationPractice(row.restorationPractice)}</Flex>
       </TableCell>
-      <TableCell className="min-w-[16.75rem]">{renderTargetLandUse(row.targetLandUse, targetLandUseMap)}</TableCell>
-      <TableCell className="min-w-[15.875rem]">
-        {renderTreeDistribution(row.treeDistribution, treeDistributionLabels)}
-      </TableCell>
-      <TableCell className="min-w-[11.5rem]">
+      <TableCell>{renderTargetLandUse(row.targetLandUse, targetLandUseMap)}</TableCell>
+      <TableCell>{renderTreeDistribution(row.treeDistribution, treeDistributionLabels)}</TableCell>
+      <TableCell>
         <FeedbackTag
           type="info-grey"
           className="w-fit"
@@ -230,11 +224,9 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
           icon={<CalendarIcon boxSize={2.5} />}
         />
       </TableCell>
-      <TableCell className="min-w-[12.75rem]">{formatNumberLocaleString(row.treesPlanted) ?? "—"}</TableCell>
-      <TableCell className="min-w-[15.75rem]">{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
-      <TableCell className="min-w-[12rem]">
-        <Text>{row.source === "uploaded" ? t("Uploaded") : row.source}</Text>
-      </TableCell>
+      <TableCell>{formatNumberLocaleString(row.treesPlanted) ?? "—"}</TableCell>
+      <TableCell>{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
+      <TableCell>{row.source === "uploaded" ? t("Uploaded") : row.source}</TableCell>
     </TableRow>
   );
 };

@@ -95,7 +95,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
   const propertyAffected = getFieldValue("property-affected");
   const peopleAffected = getFieldValue("people-affected");
   const disturbanceStartDate = getFieldValue("disturbance-start-date");
-  const monetaryDamage = getFieldValue("monetary-damage");
+  const financialLoss = getFieldValue("financial-loss");
   const sitesAffected = getFieldValue("site-affected");
   const polygonsAffected = getFieldValue("polygon-affected");
   const nurseriesAffected = getFieldValue("nursery-affected");
@@ -222,8 +222,8 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
           <TextEntry value={disturbanceStartDate ?? t("Answer Not Provided")} label={t("Disturbance Start Date")} />
           <TextEntry value={disturbanceEndDate ?? t("Answer Not Provided")} label={t("Disturbance End Date")} />
           <TextEntry
-            value={monetaryDamage ? `$${Number(monetaryDamage).toLocaleString()}` : t("Answer Not Provided")}
-            label={t("Monetary Damage (USD)")}
+            value={financialLoss ? `${Number(financialLoss).toLocaleString()}` : t("Answer Not Provided")}
+            label={t("Financial Loss")}
           />
         </div>
       </div>

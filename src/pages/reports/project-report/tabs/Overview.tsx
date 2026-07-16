@@ -1,11 +1,10 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
-import About from "@/components/extensive/PageElements/About/About";
-import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
+import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
@@ -15,7 +14,6 @@ import { getEntitySetupButtonLabel } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
-import { useProjectReportAboutContent } from "@/pages/reports/project-report/constants/projectReportAboutContent";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
@@ -33,7 +31,6 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
   const router = useRouter();
   const t = useT();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
-  const projectReportAboutContent = useProjectReportAboutContent();
 
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "project-reports",
@@ -54,10 +51,6 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
     },
     [router]
   );
-
-  const aboutContentItem = useMemo(() => {
-    return projectReportAboutContent.find(content => content.frameworks.includes(projectReport.frameworkKey!));
-  }, [projectReport.frameworkKey, projectReportAboutContent]);
 
   const editButtonLabel = getEntitySetupButtonLabel(t, projectReport.status, isReportSetupComplete);
 
@@ -137,47 +130,18 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
             </Box>
           </PageItem>
         </Flex>
-        <PageItem title={t("About Project Report")} flexProps={{ flex: 1 }}>
-          <OnboardingCard
-            cardType={ONBOARDING_CARD_TYPES.MRV_GUIDANCE}
-            entityType="project-report"
-            entityId={projectReport.uuid}
-          >
-            <About
-              className="flex-row gap-14"
-              description={
-                <Flex direction="column" gap={5} maxWidth="65%">
-                  {aboutContentItem?.paragraphs.map((paragraph, index) => {
-                    const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
-
-                    if (isLastParagraph) {
-                      return (
-                        <ContactSupport
-                          key={index}
-                          message={paragraph}
-                          subject={t("Support Request for Project Report")}
-                        />
-                      );
-                    }
-
-                    return (
-                      <Text key={index} color="neutral.900" textStyle="300">
-                        {index === 0 && <strong>{t("Project Report")} </strong>}
-                        {paragraph}
-                      </Text>
-                    );
-                  })}
-                </Flex>
-              }
-              links={
-                aboutContentItem?.links.map(link => ({
-                  title: t(link.title),
-                  link: link.link
-                })) ?? []
-              }
-            />
-          </OnboardingCard>
-        </PageItem>
+        <OnboardingCard
+          cardType={ONBOARDING_CARD_TYPES.MRV_GUIDANCE}
+          entityType="project-report"
+          entityId={projectReport.uuid}
+        >
+          <AboutPageItem
+            type="project-report"
+            flexProps={{ flex: 1 }}
+            contentClassName="flex-row gap-14"
+            descriptionMaxWidth="65%"
+          />
+        </OnboardingCard>
       </Flex>
     </PageContent>
   );

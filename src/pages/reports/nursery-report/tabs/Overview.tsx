@@ -1,12 +1,11 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import { Component, ErrorInfo, FC, ReactNode, useCallback, useMemo, useState } from "react";
 
 import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
-import About from "@/components/extensive/PageElements/About/About";
-import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
+import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -19,7 +18,6 @@ import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler"
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
 import NothingToReportEmptyState from "@/pages/reports/nursery-report/components/NothingToReportEmptyState";
-import { useNurseryReportAboutContent } from "@/pages/reports/nursery-report/constants/nurseryReportAboutContent";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { ChevronRightIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
@@ -78,7 +76,6 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
   const t = useT();
   const router = useRouter();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
-  const nurseryReportAboutContent = useNurseryReportAboutContent();
 
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "nursery-reports",
@@ -90,15 +87,6 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
     feedback: report.feedback,
     useStatusModal: true
   });
-
-  const aboutContentItem = useMemo(() => {
-    if (report.frameworkKey == null) return nurseryReportAboutContent[0];
-
-    return (
-      nurseryReportAboutContent.find(content => content.frameworks.includes(report.frameworkKey ?? "")) ??
-      nurseryReportAboutContent[0]
-    );
-  }, [report.frameworkKey, nurseryReportAboutContent]);
 
   const goToTab = useCallback(
     (tab: string) => {
@@ -213,55 +201,18 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
             </Box>
           </PageItem>
         </Flex>
-        <PageItem title={t("About Nursery Report")}>
-          <OnboardingCard
-            cardType={ONBOARDING_CARD_TYPES.MRV_GUIDANCE}
-            entityType="nursery-report"
-            entityId={report.uuid}
-          >
-            <About
-              className="flex-row gap-14"
-              description={
-                <Flex direction="column" gap={5} maxWidth="65%">
-                  {aboutContentItem?.paragraphs.map((paragraph, index) => {
-                    const isFirstParagraph = index === 0;
-                    const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
-
-                    if (isFirstParagraph) {
-                      return (
-                        <Text key={index} color="neutral.900" textStyle="300">
-                          <strong>{t("Nursery Report")} </strong> {paragraph}
-                        </Text>
-                      );
-                    }
-
-                    if (isLastParagraph) {
-                      return (
-                        <ContactSupport
-                          key={index}
-                          message={paragraph}
-                          subject={t("Support Request for Nursery Report")}
-                        />
-                      );
-                    }
-
-                    return (
-                      <Text key={index} color="neutral.900" textStyle="300">
-                        {paragraph}
-                      </Text>
-                    );
-                  })}
-                </Flex>
-              }
-              links={
-                aboutContentItem?.links.map(link => ({
-                  title: t(link.title),
-                  link: link.link
-                })) ?? []
-              }
-            />
-          </OnboardingCard>
-        </PageItem>
+        <OnboardingCard
+          cardType={ONBOARDING_CARD_TYPES.MRV_GUIDANCE}
+          entityType="nursery-report"
+          entityId={report.uuid}
+        >
+          <AboutPageItem
+            type="nursery-report"
+            className="flex-row gap-14"
+            contentClassName="flex-row gap-14"
+            descriptionMaxWidth="65%"
+          />
+        </OnboardingCard>
       </Flex>
     </PageContent>
   );

@@ -1,4 +1,4 @@
-import { Box, Flex, Text, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, useBreakpointValue } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import router from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -7,8 +7,7 @@ import OverviewMapArea from "@/components/elements/Map-mapbox/components/Overvie
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import About from "@/components/extensive/PageElements/About/About";
-import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
+import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -19,16 +18,15 @@ import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
-import { useAboutSitesContent } from "@/hooks/translation/useAboutSitesContent";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
-import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { AreaHectaresIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "../constants/sitePolygonMapSizing";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
+
 interface SiteOverviewTabProps {
   site: SiteFullDto;
   refetch?: () => void;
@@ -75,11 +73,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
       shallow: true
     });
   };
-
-  const aboutSitesContent = useAboutSitesContent();
-  const aboutSitesContentItem = useMemo(() => {
-    return aboutSitesContent.find(content => content.frameworks.includes(site.frameworkKey!));
-  }, [aboutSitesContent, site.frameworkKey]);
 
   const needMoreInformation =
     site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
@@ -208,23 +201,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               )}
             </Box>
           </PageItem>
-          <PageItem title={t(aboutSitesContentItem?.title!)}>
-            <About
-              description={
-                <Flex direction="column" gap={5}>
-                  <Text color="neutral.900" textStyle="300">
-                    <strong>{t("Sites")} </strong>
-                    {aboutSitesContentItem?.paragraph1}
-                  </Text>
-                  <ContactSupport
-                    message={t(aboutSitesContentItem?.paragraph2!)}
-                    subject={t("Support Request for Site Profile")}
-                  />
-                </Flex>
-              }
-              links={aboutSitesContentItem?.links ?? []}
-            />
-          </PageItem>
+          <AboutPageItem type="site" />
         </Flex>
       </PageContent>
     </SitePolygonDataProvider>

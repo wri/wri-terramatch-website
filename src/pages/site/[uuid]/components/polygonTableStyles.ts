@@ -202,8 +202,8 @@ export const getPolygonsTableStyles = (isStickyTableActive: boolean) => {
       maxWidth: "15.875rem"
     },
     "& table th:nth-of-type(8), & table td:nth-of-type(8)": {
-      minWidth: "11.5rem",
-      maxWidth: "11.5rem"
+      minWidth: "12.5rem",
+      maxWidth: "12.5rem"
     },
     "& table th:nth-of-type(9), & table td:nth-of-type(9)": {
       minWidth: "12.75rem",

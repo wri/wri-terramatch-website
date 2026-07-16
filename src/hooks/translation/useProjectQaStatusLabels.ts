@@ -23,11 +23,11 @@ export const useProjectQaStatusFieldLabels = () => {
 
   return useMemo(
     (): Record<1 | 2 | 3 | 4 | 5, string> => ({
-      1: t("QA Status 1"),
-      2: t("QA Status 2"),
-      3: t("QA Status 3"),
-      4: t("QA Status 4"),
-      5: t("QA Status 5")
+      1: t("QA Status (Cycle 1)"),
+      2: t("QA Status (Cycle 2)"),
+      3: t("QA Status (Cycle 3)"),
+      4: t("QA Status (Cycle 4)"),
+      5: t("QA Status (Cycle 5)")
     }),
     [t]
   );

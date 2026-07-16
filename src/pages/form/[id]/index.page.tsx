@@ -48,8 +48,6 @@ const FormIntroPage = () => {
     "Application creation failed"
   );
 
-  console.log("deadline", deadline);
-
   return (
     <BackgroundLayout>
       <ContentLayout>

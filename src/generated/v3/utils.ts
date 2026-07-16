@@ -32,6 +32,7 @@ export const isTranslatableError = (payload: ErrorPayload): payload is Translata
   (payload as TranslatableError).code != null;
 
 const V3_NAMESPACES: Dictionary<string> = {
+  aboutSections: entityServiceUrl,
   applications: entityServiceUrl,
   auth: userServiceUrl,
   boundingBoxes: researchServiceUrl,
