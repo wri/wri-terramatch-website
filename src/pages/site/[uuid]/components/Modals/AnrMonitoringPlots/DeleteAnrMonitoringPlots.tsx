@@ -71,8 +71,7 @@ const DeleteAnrMonitoringPlots: FC<DeleteAnrMonitoringPlotsProps> = ({
             },
             {
               id: "delete",
-              variant: "primary",
-              typeVariant: "negative",
+              variant: "negative",
               classNameContainer: "!w-1/2",
               className: "!w-full",
               children: isDeleting ? t("Deleting...") : t("Delete"),

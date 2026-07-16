@@ -1099,12 +1099,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                       "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time."
                     )}
                   </Text>
-                  <Button
-                    variant="borderless"
-                    typeVariant="negative"
-                    disabled={isAnrPlotsOperating}
-                    onClick={() => onRequestAnrDeleteModal?.()}
-                  >
+                  <Button variant="negative" disabled={isAnrPlotsOperating} onClick={() => onRequestAnrDeleteModal?.()}>
                     {t("Delete Plots")}
                   </Button>
                 </>

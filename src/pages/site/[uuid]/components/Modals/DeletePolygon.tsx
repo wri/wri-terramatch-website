@@ -117,8 +117,7 @@ const DeletePolygon: FC<DeletePolygonProps> = ({
             {
               id: "delete",
               children: t("Delete"),
-              variant: "secondary",
-              typeVariant: "negative",
+              variant: "negative",
               classNameContainer: "!w-[50%]",
               className: "!w-full",
               onClick: () => void handleSave()

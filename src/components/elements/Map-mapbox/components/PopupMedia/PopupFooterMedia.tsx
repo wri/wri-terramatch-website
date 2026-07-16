@@ -20,13 +20,11 @@ const PopupFooterMedia: FC<PopupFooterMediaProps> = ({ isProjectPath, onDownload
   return (
     <Flex justifyContent="space-between" gap={0} width="100%" wrap="wrap">
       <Button
-        variant="secondary"
+        variant="negative"
         size="small"
         leftIcon={<DeleteIcon color="error.500" />}
         onClick={onDelete}
         classNameContainer="w-fit"
-        typeVariant="negative"
-        className="!border-theme-error-300 !bg-theme-error-100 !text-theme-error-900"
       >
         {t("Delete")}
       </Button>
