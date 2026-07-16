@@ -1,5 +1,5 @@
 import type { DateValue } from "@ark-ui/react";
-import { Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
@@ -1154,29 +1154,24 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             columns={[
               {
                 key: "name",
-                label: t("Version Name")
-              },
-              {
-                key: "createdAt",
-                label: t("Date")
-              },
-              {
-                key: "isActive",
-                label: t("State")
-              }
-            ]}
-            data={versionRows}
-            renderRow={row => (
-              <TableRow key={row.uuid}>
-                <TableCell>
+                label: t("Version Name"),
+                cell: (row: PolygonVersionRow) => (
                   <Text title={row.versionName ?? row.name ?? t("Unnamed Polygon")} className="max-w-[10rem] truncate">
                     {row.versionName ?? row.name ?? t("Unnamed Polygon")}
                   </Text>
-                </TableCell>
-                <TableCell>
+                )
+              },
+              {
+                key: "createdAt",
+                label: t("Date"),
+                cell: (row: PolygonVersionRow) => (
                   <Text>{row.createdAt != null ? format(new Date(row.createdAt), "MM/dd/yyyy") : "-"}</Text>
-                </TableCell>
-                <TableCell>
+                )
+              },
+              {
+                key: "isActive",
+                label: t("State"),
+                cell: (row: PolygonVersionRow) => (
                   <MultiActionButton
                     mainActionLabel={row.isActive ? t("Active") : t("Inactive")}
                     mainActionOnClick={() => {
@@ -1195,9 +1190,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                     size="small"
                     variant="secondary"
                   />
-                </TableCell>
-              </TableRow>
-            )}
+                )
+              }
+            ]}
+            data={versionRows}
           />
           {isLoadingVersions ? <LoadingTable text="Loading Versions" /> : null}
         </Accordion>
