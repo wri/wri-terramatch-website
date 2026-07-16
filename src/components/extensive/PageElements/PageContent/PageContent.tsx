@@ -5,7 +5,10 @@ import { twMerge } from "tailwind-merge";
 const PageContent: FC<HTMLAttributes<HTMLDivElement>> = ({ className, ...props }) => (
   <div
     {...props}
-    className={twMerge(classNames("flex h-full w-full flex-col gap-5 bg-theme-neutral-200 px-6 pt-6 pb-10"), className)}
+    className={twMerge(
+      classNames("flex h-full w-full min-w-0 flex-col gap-5 bg-theme-neutral-200 px-6 pt-6 pb-10"),
+      className
+    )}
   />
 );
 

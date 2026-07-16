@@ -35,7 +35,7 @@ const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
   onRowSelected
 }) => (
   <PolygonTableInteractionActionsProvider onSelectChange={onRowSelected}>
-    <Box onMouseLeave={onClearHover} position="relative">
+    <Box onMouseLeave={onClearHover} position="relative" width="100%" maxWidth="100%" minWidth={0}>
       <Table<PolygonTableRow>
         css={tableStyles}
         containerRef={tableContainerRef}

@@ -20,8 +20,13 @@ export const getTableWrapperStyles = (
       }
     }),
     position: "relative",
+    width: "100%",
+    maxWidth: "100%",
+    minWidth: 0,
     "& > div > div": {
-      overflowX: "auto"
+      overflowX: "auto",
+      maxWidth: "100%",
+      width: "100%"
     },
     "& table tbody tr": {
       backgroundColor: "transparent",
