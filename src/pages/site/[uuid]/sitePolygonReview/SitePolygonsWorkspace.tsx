@@ -116,7 +116,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     onUploadError,
     onUploadErrorModalOpenChange
   } = usePolygonUploadErrorModal();
-  const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
   const [uploadedPolygonUuidToOpen, setUploadedPolygonUuidToOpen] = useState<string | null>(null);
   const [focusPolygonUuid, setFocusPolygonUuid] = useState<string | null>(null);
   const [isStickyActive, setIsStickyActive] = useState(false);
@@ -769,11 +768,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     [clearBulkTableSelection, requestInformationForPolygons, requestInformationPayload, resolveSitePolygonUuidsAndNames]
   );
 
-  const handleRequestInformation = useCallback(async () => {
-    setShowApprovePolygonConfirmationModal(false);
-    setApprovePayload(null);
-  }, []);
-
   useEffect(() => {
     if (polygonApproveConfirmation == null) return;
     const polygon = polygonsData.find(p => p.uuid === polygonApproveConfirmation);
@@ -978,7 +972,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           openUploadErrorModal={showUploadErrorModal}
           uploadErrorMessage={uploadErrorMessage}
           openUploadModal={showUploadModal}
-          openUploadPhotosModal={showUploadPhotosModal}
           openMapPopupSubmitConfirmationModal={showMapPopupSubmitConfirmationModal}
           mapPopupSubmitPolygons={mapPopupSubmitPolygons}
           submittedPolygonNames={submittedPolygonNames}
@@ -1007,7 +1000,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           onUploadError={onUploadError}
           onUploadErrorModalOpenChange={onUploadErrorModalOpenChange}
           onUploadModalOpenChange={setShowUploadModal}
-          onUploadPhotosModalOpenChange={setShowUploadPhotosModal}
           onUploadSuccess={({ createdSitePolygonUuid, uploadedFileCount }) => {
             if (createdSitePolygonUuid != null && uploadedFileCount === 1) {
               setUploadedPolygonUuidToOpen(createdSitePolygonUuid);
@@ -1020,7 +1012,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           approvePayload={approvePayload}
           projectUuid={site.projectUuid}
           onApprove={handleApprovePolygons}
-          onRequestInformation={handleRequestInformation}
           openRequestInformationModal={showRequestInformationModal}
           onRequestInformationModalOpenChange={handleRequestInformationModalChange}
           requestInformationPayload={requestInformationPayload}
