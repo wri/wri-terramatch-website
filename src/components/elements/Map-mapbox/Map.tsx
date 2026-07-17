@@ -4,7 +4,16 @@ import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { Map as MapboxMap, Marker } from "mapbox-gl";
 import { useRouter } from "next/router";
-import React, { createContext, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  DetailedHTMLProps,
+  FC,
+  HTMLAttributes,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import { ValidationError } from "yup";
 
 import ControlGroup, { ControlMapPosition } from "@/components/elements/Map-mapbox/components/ControlGroup";
@@ -49,7 +58,8 @@ import {
   usePolygonTableHighlightStyle
 } from "./hooks/usePolygonTableHighlight";
 import { addGeojsonToDraw } from "./interactions/draw";
-import { OverlapPolygonPoint } from "./layers/overlapTypes";
+import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "./layers/overlapTypes";
+import { buildCrossSiteOverlapFeatureCollection, buildCrossSiteOverlapMarkerPoints } from "./layers/overlayLayers";
 import type {
   DashboardGetProjectsData,
   DashboardPopupContext,
@@ -105,6 +115,7 @@ export interface BaseMapProps {
     onValidationZoomConsumed?: () => void;
   };
   overlapPolygons?: OverlapPolygonPoint[];
+  crossSiteOverlapPolygons?: CrossSiteOverlapPolygon[];
   autoEditPolygon?: boolean;
   onPolygonTilesLoadingChange?: (value: boolean) => void;
   alwaysShowPhotosOnMap?: boolean;
@@ -241,6 +252,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     initialPolygonFingerprint,
     polygonTableHighlight,
     overlapPolygons,
+    crossSiteOverlapPolygons,
     onPolygonTilesLoadingChange,
     alwaysShowPhotosOnMap,
     hideMediaPopupActions,
@@ -512,11 +524,39 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     isEditing
   });
 
+  const crossSiteOverlapFeatureCollection = useMemo(
+    () =>
+      crossSiteOverlapPolygons != null && crossSiteOverlapPolygons.length > 0
+        ? buildCrossSiteOverlapFeatureCollection(crossSiteOverlapPolygons)
+        : null,
+    [crossSiteOverlapPolygons]
+  );
+
+  const crossSiteOverlapMarkerPoints = useMemo(
+    () =>
+      crossSiteOverlapPolygons != null && crossSiteOverlapPolygons.length > 0
+        ? buildCrossSiteOverlapMarkerPoints(
+            crossSiteOverlapPolygons,
+            t("This polygon belongs to another site in this project.")
+          )
+        : [],
+    [crossSiteOverlapPolygons, t]
+  );
+
+  const overlapPolygonsWithExternal = useMemo(
+    () =>
+      crossSiteOverlapMarkerPoints.length > 0
+        ? [...(overlapPolygons ?? []), ...crossSiteOverlapMarkerPoints]
+        : overlapPolygons,
+    [overlapPolygons, crossSiteOverlapMarkerPoints]
+  );
+
   useMapOverlays({
     map,
     selectedLandscapes,
     anrMapOverlay,
     anrPlotGeometryDto,
+    crossSiteOverlapFeatureCollection,
     styleReady,
     styleVersion,
     sourcesAdded
@@ -548,7 +588,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     map,
     styleReady,
     styleVersion,
-    overlapPolygons
+    overlapPolygons: overlapPolygonsWithExternal
   });
 
   const { handleEditPolygon, onSaveEdit, onCancelEdit } = useMapDraw({

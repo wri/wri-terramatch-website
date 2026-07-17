@@ -20,7 +20,6 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { setPolygonTableHoveredUuid } from "@/context/polygonTableInteraction.store";
 import type { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import type { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
@@ -357,7 +356,6 @@ export const useSitePolygonBulkActions = ({
 
       await createPolygonValidation({ polygonUuids });
       ApiSlice.pruneCache("validations");
-      await listDelayedJobs.fetch({});
       onValidationJobsStarted?.(polygonUuids);
     },
     [onValidationJobsStarted]
@@ -526,13 +524,8 @@ export const useSitePolygonBulkActions = ({
         });
 
         const [refreshedPolygons, refreshedOverlapValidations] = await Promise.all([
-          loadAllSitePolygons({
-            entityName: "sites",
-            entityUuid: site.uuid,
-            enabled: site.uuid != null && site.uuid !== ""
-          }),
-          clearValidationUiAfterOverlapFix(geometryUuidsToClear),
-          refreshPolygonData()
+          refreshPolygonData({ loadAll: true }),
+          clearValidationUiAfterOverlapFix(geometryUuidsToClear)
         ]);
 
         onOverlapFixResultsOpen(

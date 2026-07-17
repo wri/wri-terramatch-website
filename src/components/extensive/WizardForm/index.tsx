@@ -2,7 +2,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Dictionary } from "lodash";
+import { cloneDeep, Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FieldErrors, useForm, UseFormProps, UseFormReturn } from "react-hook-form";
@@ -164,7 +164,8 @@ function WizardForm(props: WizardFormProps) {
 
   const initialFormValues = useRef(props.defaultValues);
   if (initialFormValues.current == null && props.defaultValues != null) {
-    initialFormValues.current = props.defaultValues;
+    // Clone so nested/conditional child edits are not lost against a shared reference.
+    initialFormValues.current = cloneDeep(props.defaultValues);
   }
 
   const formValues = formHook.watch();

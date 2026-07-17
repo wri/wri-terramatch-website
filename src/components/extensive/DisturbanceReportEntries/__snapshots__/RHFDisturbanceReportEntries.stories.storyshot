@@ -307,7 +307,7 @@ exports[`Storyshots Components/Extensive/RHFDisturbanceReportEntries Default 1`]
                     data-testid="txt"
                     htmlFor=":r3q:"
                   >
-                    Monetary Damage (USD) *
+                    Financial Loss *
                   </label>
                   <div
                     className="relative"
@@ -329,7 +329,7 @@ exports[`Storyshots Components/Extensive/RHFDisturbanceReportEntries Default 1`]
                       aria-invalid={false}
                       className="pl-8 w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
                       id=":r3q:"
-                      name="monetary-damage"
+                      name="financial-loss"
                       onChange={[Function]}
                       onKeyDown={[Function]}
                       placeholder="Enter amount"

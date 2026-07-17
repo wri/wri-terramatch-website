@@ -4,26 +4,10 @@ import { FC } from "react";
 
 import { useModalScrollFix } from "@/hooks/useModalScrollFix";
 
-const Modal: FC<ComponentProps<typeof WriModal>> = ({
-  open = false,
-  modal = true,
-  trapFocus = true,
-  restoreFocus = true,
-  ...props
-}) => {
+const Modal: FC<ComponentProps<typeof WriModal>> = ({ open = false, modal = true, restoreFocus = true, ...props }) => {
   useModalScrollFix(open);
 
-  return (
-    <WriModal
-      lazyMount
-      unmountOnExit
-      open={open}
-      modal={modal}
-      trapFocus={trapFocus}
-      restoreFocus={restoreFocus}
-      {...props}
-    />
-  );
+  return <WriModal lazyMount unmountOnExit open={open} modal={modal} restoreFocus={restoreFocus} {...props} />;
 };
 
 export default Modal;

@@ -3,7 +3,6 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import type { FC } from "react";
 
-import { useIsAdmin } from "@/hooks/useIsAdmin";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { AreaHectaresIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
@@ -19,8 +18,6 @@ type SitePolygonMetricsSectionProps = {
   onSelectOverlapPolygons: () => void;
 };
 
-const hasMetricGoal = (goal: number | null | undefined): goal is number => goal != null && goal > 0;
-
 const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
   totalTreesPlanted,
   totalRestorationAreaHa,
@@ -32,8 +29,6 @@ const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
   onSelectOverlapPolygons
 }) => {
   const t = useT();
-  const isAdmin = useIsAdmin();
-  const showRestorationProgressBar = isAdmin && hasMetricGoal(restorationAreaGoal);
 
   return (
     <Flex className="items-center justify-between gap-4 mobile:flex-col">
@@ -52,19 +47,16 @@ const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
         <MetricCard
           color="secondary.700"
           icon={<AreaHectaresIcon />}
-          variant={showRestorationProgressBar ? "progressBar" : "medium"}
+          variant={"medium"}
           title={t("Restoration Area")}
           progress={totalRestorationAreaHa}
           goal={restorationAreaGoal ?? 0}
           progressSuffix="ha"
           goalSuffix="ha"
-          widthProgressBar={showRestorationProgressBar ? "5rem" : undefined}
+          widthProgressBar={undefined}
           selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
           tooltipContent={t("This is the sum of hectares from the selected polygons")}
-          className={classNames(
-            "mobile:w-full mobile:min-w-full",
-            showRestorationProgressBar ? "min-w-[18rem]" : "min-w-[12.5rem]"
-          )}
+          className={classNames("mobile:w-full mobile:min-w-full", "min-w-[12.5rem]")}
         />
       </Flex>
       {polygonsWithOverlapCount > 0 && (

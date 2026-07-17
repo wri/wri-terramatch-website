@@ -1,24 +1,23 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 
 import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import About from "@/components/extensive/PageElements/About/About";
-import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
+import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
-import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 import ChevronRightIcon from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
+
 interface NurseryOverviewTabProps {
   nursery: NurseryFullDto;
 }
@@ -98,34 +97,11 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             color="secondary.500"
           />
         </PageItem>
-        <PageItem
-          title={t("About Nurseries")}
+        <AboutPageItem
+          type="nursery"
           flexProps={{ maxWidth: "37%" }}
           className="!w-full !max-w-full sm:!w-[37%] sm:!max-w-[37%]"
-        >
-          <About
-            description={
-              <Flex direction="column" gap={5}>
-                <Text textStyle="300" color="neutral.900">
-                  <strong>{t("Nurseries")}</strong>&nbsp;
-                  {t(
-                    "are the lifeblood of your tree planting project. Whenever your project builds a new nursery or expands an existing one to supply your sites, create a nursery profile on TerraMatch. If your project uses nurseries managed by others, or relies only on direct seeding or assisted natural regeneration, you do not need to add any nursery profiles."
-                  )}
-                </Text>
-                <ContactSupport
-                  message={t("If you have challenges or need assistance, please reach out to your project manager or")}
-                  subject={t("Support Request for Nursery Profile")}
-                />
-              </Flex>
-            }
-            links={[
-              {
-                title: t("Create a Nursery Profile"),
-                link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/12512665359899-How-to-Create-a-Nursery-Profile"
-              }
-            ]}
-          />
-        </PageItem>
+        />
         <PageItem
           flexProps={{ maxWidth: "37%", overflow: "hidden" }}
           className="!w-full !max-w-full sm:!w-[37%] sm:!max-w-[37%]"

@@ -11,6 +11,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Pagination from "@/components/extensive/Pagination";
 import { VARIANT_PAGINATION_POLYGON_REVIEW } from "@/components/extensive/Pagination/PaginationVariant";
 import { getThemedColor } from "@/lib/theme";
+import { findHorizontalScrollContainer } from "@/pages/site/[uuid]/components/polygonTableScroll";
 import { buildStickyCoverShadow } from "@/pages/site/[uuid]/components/polygonTableStyles";
 
 import { SitePolygonRow } from "../..";
@@ -59,7 +60,7 @@ export default function SiteAttributeTable({
   const [isStickyActive, setIsStickyActive] = useState(false);
 
   useEffect(() => {
-    const scrollContainer = containerRef.current?.querySelector(".overflow-x-auto");
+    const scrollContainer = findHorizontalScrollContainer(containerRef.current);
     if (scrollContainer == null) {
       return;
     }
@@ -86,13 +87,18 @@ export default function SiteAttributeTable({
       "& > div > div": {
         backgroundColor: bodyBackground
       },
-      "& table th:first-of-type, & table td:first-of-type": {
-        isolation: "isolate"
-      },
       "& table th:first-of-type": {
+        isolation: "isolate",
+        overflow: "hidden",
+        transform: "translateZ(0)",
+        backgroundColor: headerBackground,
         boxShadow: buildStickyCoverShadow(headerBackground, { leftCover: true, rightCover: true })
       },
       "& table td:first-of-type": {
+        isolation: "isolate",
+        overflow: "hidden",
+        transform: "translateZ(0)",
+        backgroundColor: bodyBackground,
         boxShadow: buildStickyCoverShadow(bodyBackground, { leftCover: true, rightCover: true })
       }
     };
@@ -300,6 +306,22 @@ export default function SiteAttributeTable({
                   maximumFractionDigits: 2
                 });
                 return <span className="whitespace-nowrap">{`${calculatedArea} ha`}</span>;
+              }
+            },
+            {
+              header: "Submission Cycle",
+              accessorKey: "submission-cycle",
+              meta: {
+                style: { width: "9rem", paddingLeft: "1rem", paddingRight: "1rem" },
+                cellStyles: {
+                  style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                  className: "w-[9rem] wide:w-[14rem] min-w-[9rem]"
+                },
+                className: "!px-4"
+              },
+              cell: (info: { row: { original: SitePolygonRow } }) => {
+                const value = info.row.original["submission-cycle"];
+                return <span className="whitespace-nowrap">{value === "" ? "—" : value}</span>;
               }
             },
             {

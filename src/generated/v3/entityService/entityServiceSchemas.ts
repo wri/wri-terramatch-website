@@ -301,6 +301,40 @@ export type ImpactStoryBulkDeleteBodyDto = {
   data: ImpactStoryDeleteData[];
 };
 
+export type LinkDto = {
+  id: string;
+  title: string;
+  url: string;
+};
+
+export type AboutSectionDto = {
+  id: string;
+  type: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
+  frameworks:
+    | (
+        | "terrafund"
+        | "terrafund-landscapes"
+        | "enterprises"
+        | "epa-ghana-pilot"
+        | "terrafund-3"
+        | "ppc"
+        | "hbf"
+        | "fundo-flora"
+        | "fundo-flora-1"
+        | "wcb"
+      )[]
+    | null;
+  header: string;
+  title: string | null;
+  /**
+   * The content of the about section in semantic HTML to be parsed into design system components on the client.
+   */
+  description: string;
+  contactSupportMessage: string;
+  contactSupportSubject: string;
+  links: LinkDto[];
+};
+
 export type TaskLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -902,7 +936,7 @@ export type DisturbanceDto = {
   intensity: string | null;
   extent: string | null;
   peopleAffected: number | null;
-  monetaryDamage: number | null;
+  financialLoss: number | null;
   description: string | null;
   actionDescription: string | null;
   propertyAffected: string | null;
@@ -2352,6 +2386,7 @@ export type DisturbanceReportFullDto = {
   answers: string | null;
   description: string | null;
   actionDescription: string | null;
+  currency: string | null;
   media: MediaDto[];
 };
 
@@ -3435,10 +3470,6 @@ export type FormFullDto = {
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
-  /**
-   * @format date-time
-   */
-  deadlineAt?: string | null;
   submissionMessage: string;
   stageId?: string | null;
   fundingProgrammeId: string | null;
@@ -3569,10 +3600,6 @@ export type StoreFormAttributes = {
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
-  /**
-   * @format date-time
-   */
-  deadlineAt?: string | null;
   submissionMessage: string;
   stageId?: string | null;
   sections?: StoreFormSectionAttributes[];

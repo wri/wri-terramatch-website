@@ -9,7 +9,7 @@ import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
 import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { getThemedColor } from "@/lib/theme";
 
-import { DELETED_POLYGONS } from "./statuses";
+import { DELETED_AUDIT_POLYGONS, DELETED_POLYGONS } from "./statuses";
 
 type LayerStyleFragment<T extends LayerSpecification> = Omit<T, "id" | "source" | "source-layer"> & {
   metadata?: unknown;
@@ -132,6 +132,26 @@ export const layersList: LayerType[] = [
         layout: {},
         paint: {
           "line-color": "#3bb2d0",
+          "line-width": 1
+        },
+        filter: ["==", ["get", "uuid"], ""]
+      }),
+      fillStyle({
+        metadata: { polygonStatus: DELETED_AUDIT_POLYGONS },
+        type: "fill",
+        layout: {},
+        paint: {
+          "fill-color": "#C9C9C9",
+          "fill-opacity": 0.3
+        },
+        filter: ["==", ["get", "uuid"], ""]
+      }),
+      lineStyle({
+        metadata: { polygonStatus: DELETED_AUDIT_POLYGONS },
+        type: "line",
+        layout: {},
+        paint: {
+          "line-color": "#C9C9C9",
           "line-width": 1
         },
         filter: ["==", ["get", "uuid"], ""]

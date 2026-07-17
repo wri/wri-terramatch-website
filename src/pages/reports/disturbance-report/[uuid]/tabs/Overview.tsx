@@ -119,7 +119,7 @@ const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabPr
   const extent = getFieldValue("extent");
   const propertyAffected = getFieldValue("property-affected");
   const peopleAffected = getFieldValue("people-affected");
-  const monetaryDamage = getFieldValue("monetary-damage");
+  const financialLoss = getFieldValue("financial-loss");
   const sitesAffected = getFieldValue("site-affected");
   const polygonsAffected = getFieldValue("polygon-affected");
   const nurseriesAffected = getFieldValue("nursery-affected");
@@ -158,8 +158,8 @@ const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabPr
             <LongTextField title={t("People Affected")}>
               {peopleAffected ? Number(peopleAffected)?.toLocaleString() : null}
             </LongTextField>
-            <LongTextField title={t("Monetary Damage (USD)")}>
-              {monetaryDamage ? `$${Number(monetaryDamage)?.toLocaleString()}` : null}
+            <LongTextField title={t("Financial Loss")}>
+              {financialLoss ? `$${Number(financialLoss)?.toLocaleString()}` : null}
             </LongTextField>
             <LongTextField title={t("Property Affected")}>{formatOptions(propertyAffected)?.join(", ")}</LongTextField>
             <LongTextField title={t("Disturbance Start Date")}>
