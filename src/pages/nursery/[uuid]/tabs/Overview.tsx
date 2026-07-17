@@ -1,16 +1,14 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
-import { useModalContext } from "@/context/modal.provider";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
@@ -27,7 +25,7 @@ interface NurseryOverviewTabProps {
 const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
-  const { openModal } = useModalContext();
+  const [openStatusModal, setOpenStatusModal] = useState(false);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "nurseries",
     entityUUID: nursery.uuid,
@@ -52,20 +50,11 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
 
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval && statusProps != null) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={nursery.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="nurseries"
-          entityUuid={nursery.uuid}
-        />
-      );
+      setOpenStatusModal(true);
     } else {
       handleEdit();
     }
-  }, [needMoreInformation, statusProps, openModal, nursery.feedback, nursery.uuid, handleEdit, awaitingApproval]);
+  }, [needMoreInformation, statusProps, handleEdit, awaitingApproval]);
 
   const goToTab = (tab: string) => {
     router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
@@ -76,6 +65,15 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   return (
     <PageContent>
       {EditModals}
+      <EntityStatusModal
+        statusProps={statusProps!}
+        feedback={nursery.feedback}
+        needMoreInformation={needMoreInformation}
+        entityName="nurseries"
+        entityUuid={nursery.uuid}
+        open={openStatusModal}
+        onOpenChange={setOpenStatusModal}
+      />
       <Flex gap={7} className="flex-col sm:flex-row">
         <PageItem
           title={t("Key Indicators")}

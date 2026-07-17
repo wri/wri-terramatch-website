@@ -7,7 +7,6 @@ import OverviewMapArea from "@/components/elements/Map-mapbox/components/Overvie
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -16,7 +15,6 @@ import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
@@ -44,7 +42,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
-  const { openModal } = useModalContext();
+  const [openStatusModal, setOpenStatusModal] = useState(false);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
@@ -82,20 +80,11 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps!}
-          feedback={project.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="projects"
-          entityUuid={project.uuid}
-        />
-      );
+      setOpenStatusModal(true);
     } else {
       handleEdit();
     }
-  }, [openModal, project.feedback, project.uuid, handleEdit, needMoreInformation, statusProps, awaitingApproval]);
+  }, [handleEdit, needMoreInformation, awaitingApproval]);
 
   const goToTab = useCallback(
     (tab: string) => {
@@ -189,6 +178,15 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   return (
     <PageContent>
       {EditModals}
+      <EntityStatusModal
+        statusProps={statusProps!}
+        feedback={project.feedback}
+        needMoreInformation={needMoreInformation}
+        entityName="projects"
+        entityUuid={project.uuid}
+        open={openStatusModal}
+        onOpenChange={setOpenStatusModal}
+      />
       <InviteMonitoringPartnerModal
         projectUUID={project.uuid}
         open={showInviteModal}
