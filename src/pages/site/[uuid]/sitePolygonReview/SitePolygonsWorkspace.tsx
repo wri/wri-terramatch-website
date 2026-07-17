@@ -49,6 +49,7 @@ import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import PolygonSubmissionAnnouncement from "../components/PolygonSubmissionAnnouncement";
 import { PolygonTableRow } from "../components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
+import { findHorizontalScrollContainer } from "../components/polygonTableScroll";
 import { getPolygonsTableStyles } from "../components/polygonTableStyles";
 import PolygonToolbar from "../components/PolygonToolbar";
 import SitePolygonMapSection from "../components/SitePolygonMapSection";
@@ -811,15 +812,18 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     (isAdminReview || (hasPolygonSelection && selectedSubmittablePolygonUuids.length === 0));
 
   useEffect(() => {
-    const container = tableContainerRef.current?.children[0]?.children[0];
-    if (container == null) return;
+    const scrollContainer = findHorizontalScrollContainer(tableContainerRef.current);
+    if (scrollContainer == null) {
+      return;
+    }
+
     const handleScroll = () => {
-      setIsStickyActive(container.scrollLeft > 0);
+      setIsStickyActive(scrollContainer.scrollLeft > 0);
     };
 
     handleScroll();
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
+    scrollContainer.addEventListener("scroll", handleScroll);
+    return () => scrollContainer.removeEventListener("scroll", handleScroll);
   }, [isSitePolygonsLoading, shouldShowNoResults]);
 
   const loadingLabel = getPolygonTableLoadingLabel({
