@@ -881,7 +881,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           multiActionButtonProps={{
             mainActionLabel: t("Add"),
             size: "small",
-            leftIcon: <PlusIcon />,
+            mainActionLeftIcon: <PlusIcon />,
             mainActionOnClick: startNewPolygonFlow,
             otherActions: [
               {
