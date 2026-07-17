@@ -179,11 +179,11 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   };
 
   const handleSubmissionCycleChange = (value: string[]) => {
+    const selected = value[0];
+    const isValidCycle = selected != null && SUBMISSION_CYCLE_OPTIONS.includes(selected as SubmissionCycleOption);
     setDraftFilters(current => ({
       ...current,
-      submissionCycle: value.filter((item): item is SubmissionCycleOption =>
-        SUBMISSION_CYCLE_OPTIONS.includes(item as SubmissionCycleOption)
-      )
+      submissionCycle: isValidCycle ? [selected as SubmissionCycleOption] : []
     }));
   };
 
@@ -321,7 +321,6 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   value={draftFilters.submissionCycle}
                   items={submissionCycleOptions}
                   onChange={handleSubmissionCycleChange}
-                  multiple
                 />
               </FilterCard>
               <FilterCard label={t("Overlap")}>

@@ -191,7 +191,7 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
       if (field === "targetSys") changes.targetSys = targetLandUseSystem[0] ?? "";
       if (field === "distr") changes.distr = treeDistribution;
       if (field === "numTrees") changes.numTrees = Number(treesPlanted || 0);
-      if (field === "submissionCycle") changes.submissionCycle = submissionCycle;
+      if (field === "submissionCycle") changes.submissionCycle = submissionCycle[0] ?? "";
     },
     [plantStartDate, restorationPractice, submissionCycle, targetLandUseSystem, treeDistribution, treesPlanted]
   );
@@ -387,9 +387,8 @@ const PolygonBulkEditDrawer: FC<PolygonBulkEditDrawerProps> = ({
                       label={t("Submission Cycle")}
                       placeholder={t("Select...")}
                       value={submissionCycle}
-                      onChange={setSubmissionCycle}
+                      onChange={value => setSubmissionCycle(value.slice(0, 1))}
                       disabled={!isAdmin || editingField !== "submissionCycle"}
-                      multiple
                     />
                   </EditWrapper>
                 )}
