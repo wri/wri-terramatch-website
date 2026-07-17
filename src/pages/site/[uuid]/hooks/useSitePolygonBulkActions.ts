@@ -435,14 +435,21 @@ export const useSitePolygonBulkActions = ({
   const clearValidationUiAfterOverlapFix = useCallback(
     async (geometryPolygonUuids: string[]) => {
       if (geometryPolygonUuids.length > 0) {
-        // Match backend clearValidationForPolygons: drop criteria + status from client caches only.
         prunePolygonValidationCache(...geometryPolygonUuids);
         onValidationUiCleared?.(geometryPolygonUuids);
       }
 
-      const [, overlapValidations] = await Promise.all([fetchAllValidationPages(true), fetchOverlapValidations(true)]);
+      // Clear validations cache so site + overlap GETs run again.
+      ApiSlice.pruneCache("validations");
+      const validationIndices = ApiSlice.currentState.meta.indices.validations ?? {};
+      Object.keys(validationIndices).forEach(indexKey => {
+        ApiSlice.pruneIndex("validations", indexKey);
+      });
 
-      return overlapValidations ?? [];
+      const overlapValidations = (await fetchOverlapValidations(true)) ?? [];
+      await fetchAllValidationPages(true);
+
+      return overlapValidations;
     },
     [fetchAllValidationPages, fetchOverlapValidations, onValidationUiCleared]
   );
