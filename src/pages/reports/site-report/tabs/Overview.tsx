@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
@@ -8,8 +8,7 @@ import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
-import About from "@/components/extensive/PageElements/About/About";
-import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
+import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -26,7 +25,6 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
 import SiteReportKeyIndicatorsInsights from "@/pages/reports/site-report/components/KeyIndicatorsInsights";
-import { useSiteReportAboutContent } from "@/pages/reports/site-report/constants/siteReportAboutContent";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { AreaHectaresIcon } from "@/redesignComponents/foundations/Icons";
@@ -46,7 +44,6 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const t = useT();
   const { setSiteData, resetSiteMapInteractionState } = useMapAreaContext();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
-  const siteReportAboutContent = useSiteReportAboutContent();
 
   const {
     data: sitePolygonDataV3,
@@ -95,10 +92,6 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
 
     router.push(`/site/${site.uuid}?tab=polygons`);
   }, [router, site?.uuid]);
-
-  const aboutContentItem = useMemo(() => {
-    return siteReportAboutContent.find(content => content.frameworks.includes(siteReport.frameworkKey!));
-  }, [siteReport.frameworkKey, siteReportAboutContent]);
 
   const editButtonLabel = getEntitySetupButtonLabel(t, siteReport.status, isReportSetupComplete);
 
@@ -231,54 +224,13 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                 </Box>
               </PageItem>
             )}
-            <PageItem title={t("About Site Report")} flexProps={{ flex: 1 }}>
-              <OnboardingCard
-                cardType={ONBOARDING_CARD_TYPES.MRV_GUIDANCE}
-                entityType="site-report"
-                entityId={siteReport.uuid}
-              >
-                <About
-                  description={
-                    <Flex direction="column" gap={5}>
-                      {aboutContentItem?.paragraphs.map((paragraph, index) => {
-                        const isFirstParagraph = index === 0;
-                        const isLastParagraph = index === (aboutContentItem.paragraphs.length ?? 0) - 1;
-
-                        if (isFirstParagraph) {
-                          return (
-                            <Text key={index} color="neutral.900" textStyle="300">
-                              <strong>{t("Site Report")} </strong> {paragraph}
-                            </Text>
-                          );
-                        }
-
-                        if (isLastParagraph) {
-                          return (
-                            <ContactSupport
-                              key={index}
-                              message={paragraph}
-                              subject={t("Support Request for Site Report")}
-                            />
-                          );
-                        }
-
-                        return (
-                          <Text key={index} color="neutral.900" textStyle="300">
-                            {paragraph}
-                          </Text>
-                        );
-                      })}
-                    </Flex>
-                  }
-                  links={
-                    aboutContentItem?.links.map(link => ({
-                      title: t(link.title),
-                      link: link.link
-                    })) ?? []
-                  }
-                />
-              </OnboardingCard>
-            </PageItem>
+            <OnboardingCard
+              cardType={ONBOARDING_CARD_TYPES.MRV_GUIDANCE}
+              entityType="site-report"
+              entityId={siteReport.uuid}
+            >
+              <AboutPageItem type="site-report" flexProps={{ flex: 1 }} />
+            </OnboardingCard>
           </Flex>
         </Flex>
       </PageContent>

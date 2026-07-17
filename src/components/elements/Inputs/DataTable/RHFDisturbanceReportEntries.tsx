@@ -6,7 +6,6 @@ import Accordion from "@/components/elements/Accordion/Accordion";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
-import { IconNames } from "@/components/extensive/Icon/Icon";
 import { DisturbanceAffectedSites } from "@/components/extensive/WizardForm/DisturbanceAffectedSites";
 import { useDisturbanceExtentOption } from "@/hooks/translation/useDisturbanceExtentOptions";
 import { useDisturbanceOptions } from "@/hooks/translation/useDisturbanceOptions";
@@ -203,7 +202,7 @@ const RHFDisturbanceReportEntries = ({
   const handleMonetaryDamageChange = useCallback(
     (e: any) => {
       const newValue = e.target.value;
-      updateFieldValue("monetary-damage", newValue);
+      updateFieldValue("financial-loss", newValue);
     },
     [updateFieldValue]
   );
@@ -276,20 +275,13 @@ const RHFDisturbanceReportEntries = ({
               <div>
                 <Input
                   type="number"
-                  name="monetary-damage"
+                  name="financial-loss"
                   placeholder={t("Enter amount")}
-                  label={t("Monetary Damage (USD)")}
+                  label={t("Financial Loss")}
                   required
                   description={DISTURBANCE_MONETARY_DAMAGE_FIELD_DESCRIPTION}
-                  value={getFieldValue("monetary-damage") ?? ""}
+                  value={getFieldValue("financial-loss") ?? ""}
                   onChange={handleMonetaryDamageChange}
-                  className="pl-8"
-                  iconButtonPropsLeft={{
-                    iconProps: {
-                      name: IconNames.DOLLAR_SIGN,
-                      className: "fill-neutral-700"
-                    }
-                  }}
                 />
               </div>
               <div>

@@ -41,7 +41,7 @@ const useDisturbanceReportDescriptions = () => {
         `Provide the estimated total number of individuals impacted over the duration of the disturbance event`
       ),
       DISTURBANCE_MONETARY_DAMAGE_FIELD_DESCRIPTION: t(
-        `Provide an estimate of the amount of damage incurred by the disturbance event`
+        `Provide an estimate of the financial loss resulting from the disturbance. Please report in your local currency`
       ),
       DISTURBANCE_PROPERTY_AFFECTED_FIELD_DESCRIPTION: t(
         `Identify the property that was affected by the disturbance event`

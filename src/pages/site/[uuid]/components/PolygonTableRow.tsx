@@ -210,7 +210,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
           disabled={readOnly}
         />
       </TableCell>
-      <TableCell className="min-w-[17.75rem] max-w-[17.75rem]">
+      <TableCell>
         <Box>
           <Text textStyle="400-bold" color="neutral.800" className="truncate">
             {row.polygonName ?? "—"}
@@ -226,11 +226,9 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
       <TableCell className="min-w-[15.5rem]">
         <Flex className="items-center gap-2">{renderRestorationPractice(row.restorationPractice)}</Flex>
       </TableCell>
-      <TableCell className="min-w-[16.75rem]">{renderTargetLandUse(row.targetLandUse, targetLandUseMap)}</TableCell>
-      <TableCell className="min-w-[15.875rem]">
-        {renderTreeDistribution(row.treeDistribution, treeDistributionLabels)}
-      </TableCell>
-      <TableCell className="min-w-[11.5rem]">
+      <TableCell>{renderTargetLandUse(row.targetLandUse, targetLandUseMap)}</TableCell>
+      <TableCell>{renderTreeDistribution(row.treeDistribution, treeDistributionLabels)}</TableCell>
+      <TableCell>
         <FeedbackTag
           type="info-grey"
           className="w-fit"
