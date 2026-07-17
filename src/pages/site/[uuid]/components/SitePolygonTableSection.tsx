@@ -12,6 +12,7 @@ import type { getPolygonsTableStyles } from "./polygonTableStyles";
 
 type SitePolygonTableSectionProps = {
   tableContainerRef: RefObject<HTMLDivElement>;
+  tableScrollContainerRef?: RefObject<HTMLDivElement>;
   tableStyles: ReturnType<typeof getPolygonsTableStyles>;
   isSitePolygonsLoading: boolean;
   polygonRows: PolygonTableRow[];
@@ -26,6 +27,7 @@ type SitePolygonTableSectionProps = {
 
 const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
   tableContainerRef,
+  tableScrollContainerRef,
   tableStyles,
   isSitePolygonsLoading,
   polygonRows,
@@ -47,6 +49,7 @@ const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
         <Table<PolygonTableRow>
           css={tableStyles}
           containerRef={tableContainerRef}
+          scrollContainerRef={tableScrollContainerRef}
           data={isSitePolygonsLoading ? [] : polygonRows}
           columns={columns}
           showPagination

@@ -61,6 +61,7 @@ interface PolygonFilterDrawerProps {
   trigger?: React.ReactNode;
   open?: boolean;
   filters: PolygonFilterState;
+  isAdminReview?: boolean;
   onApplyFilters: (filters: PolygonFilterState) => void;
   onClearFilters: () => void;
   onOpenChange?: (open: boolean) => void;
@@ -70,6 +71,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   trigger,
   open,
   filters,
+  isAdminReview = false,
   onApplyFilters,
   onClearFilters,
   onOpenChange
@@ -333,7 +335,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   {t("Show Polygon Overlaps")}
                 </Switch>
               </FilterCard>
-              {isAdmin && (
+              {isAdminReview && (
                 <FilterCard label={t("Deleted Polygons")}>
                   <Switch
                     name="showDeleted"
