@@ -1,10 +1,11 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
-import React, { Ref, useCallback, useEffect, useRef } from "react";
+import React, { Ref, useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
+import { findHorizontalScrollContainer } from "./findHorizontalScrollContainer";
 import { getTableWrapperStyles } from "./tableStyles";
 import { type BaseRow, DEFAULT_CURRENT_PAGE } from "./tableUtils";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
@@ -34,6 +35,7 @@ interface TableProps<T extends BaseRow> {
   className?: string;
   showPagination?: boolean;
   containerRef?: Ref<HTMLDivElement>;
+  scrollContainerRef?: Ref<HTMLDivElement>;
   selectedRows?: T[];
   onRowSelected?: (rowData: T, checked: boolean) => void;
   onAllItemsSelected?: (checked: boolean, visibleRows: T[]) => void;
@@ -92,11 +94,13 @@ const Table = <T extends BaseRow>({
   className,
   showPagination = true,
   containerRef,
+  scrollContainerRef,
   selectedRows: controlledSelectedRows,
   onRowSelected: controlledOnRowSelected,
   onAllItemsSelected: controlledOnAllItemsSelected
 }: TableProps<T>) => {
   const t = useT();
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
     DEFAULT_CURRENT_PAGE,
     initialPageSize
@@ -123,6 +127,38 @@ const Table = <T extends BaseRow>({
   }, [currentPage, totalPages, setCurrentPage]);
 
   const dataByPage = sortedData.slice(startRange, endRange);
+
+  const assignRef = useCallback((ref: Ref<HTMLDivElement> | undefined, node: HTMLDivElement | null) => {
+    if (ref == null) {
+      return;
+    }
+    if (typeof ref === "function") {
+      ref(node);
+      return;
+    }
+    (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  }, []);
+
+  const setWrapperRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      wrapperRef.current = node;
+      assignRef(containerRef, node);
+    },
+    [assignRef, containerRef]
+  );
+
+  useLayoutEffect(() => {
+    const root = wrapperRef.current;
+    if (root == null || scrollContainerRef == null) {
+      return;
+    }
+
+    const scrollNode = findHorizontalScrollContainer(root) as HTMLDivElement | null;
+    assignRef(scrollContainerRef, scrollNode);
+    return () => {
+      assignRef(scrollContainerRef, null);
+    };
+  }, [assignRef, dataByPage.length, scrollContainerRef, selectable]);
 
   const defaultRenderDataCell = useCallback((rowData: T, columnKey: string) => {
     return (rowData as Record<string, unknown>)[columnKey] as React.ReactNode;
@@ -193,7 +229,7 @@ const Table = <T extends BaseRow>({
 
   return (
     <Box
-      ref={containerRef}
+      ref={setWrapperRef}
       css={getTableWrapperStyles(selectable, dataByPage, pageSize, actualTotalItems, css)}
       className={className}
       {...(height != null ? { height } : {})}

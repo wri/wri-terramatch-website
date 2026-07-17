@@ -26,7 +26,6 @@ export interface ApprovePolygonConfirmationProps {
   polygons: PolygonTableRow[];
   projectUuid?: string | null;
   onApprove?: (comment: string, selectedPolygons: PolygonTableRow[]) => void | Promise<void>;
-  onRequestInformation?: () => void | Promise<void>;
 }
 
 const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({

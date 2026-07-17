@@ -5,7 +5,7 @@ import type { FC } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { type MapDrawSaveHandler, useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
-import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
+import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import type { PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
@@ -16,6 +16,7 @@ import {
   POLYGON_INFORMATION_REQUIRED,
   POLYGON_PENDING_APPROVAL
 } from "@/constants/polygonStatuses";
+import { DELETED_AUDIT_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -53,6 +54,11 @@ interface PolygonsMapProps {
     onValidationZoomConsumed?: () => void;
   };
   overlapPolygons?: OverlapPolygonPoint[];
+  crossSiteOverlapPolygons?: CrossSiteOverlapPolygon[];
+  // Read-only audit mode for browsing soft-deleted polygons: renders every polygon with a single
+  // ghost style regardless of prior status, and suppresses popups/tooltips since there are no
+  // actions available on a deleted polygon.
+  isDeletedAuditView?: boolean;
 }
 
 const EMPTY_POLYGON_MAP: Record<string, string[]> = {
@@ -72,7 +78,9 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   skipNextSiteBboxZoomNonce = 0,
   className,
   polygonTableHighlight,
-  overlapPolygons
+  overlapPolygons,
+  crossSiteOverlapPolygons,
+  isDeletedAuditView = false
 }) => {
   const t = useT();
   const disabledPolygonPanel = true;
@@ -136,8 +144,22 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   const hasPolygons = polygons.length > 0;
 
+  const deletedAuditPolygonUuids = useMemo(() => {
+    if (!isDeletedAuditView) {
+      return undefined;
+    }
+    const uuids = polygons
+      .map(polygon => polygon.polygonUuid)
+      .filter((uuid): uuid is string => uuid != null && uuid !== "");
+    return uuids.length > 0 ? uuids : undefined;
+  }, [isDeletedAuditView, polygons]);
+
   const modelBbox = useBoundingBox(
-    type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
+    deletedAuditPolygonUuids != null
+      ? { polygonUuids: deletedAuditPolygonUuids }
+      : type === "sites"
+      ? { siteUuid: entityModel.uuid }
+      : { projectUuid: entityModel.uuid }
   );
 
   const projectBbox = useBoundingBox(
@@ -195,12 +217,12 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   useEffect(() => {
     if (polygons.length > 0) {
-      const dataMap = parsePolygonDataV3(polygons);
+      const dataMap = parsePolygonDataV3(polygons, isDeletedAuditView ? DELETED_AUDIT_POLYGONS : undefined);
       setPolygonDataMap(dataMap);
     } else {
       setPolygonDataMap({ ...EMPTY_POLYGON_MAP });
     }
-  }, [polygons]);
+  }, [polygons, isDeletedAuditView]);
 
   const isPolygonGeometryLoading = isLoadingPolygons || (polygons.length > 0 && isPolygonTilesLoading);
 
@@ -213,7 +235,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         polygonsData={polygonDataMap}
         bbox={extentBbox}
         tooltipType={type === "sites" ? "edit" : "goTo"}
-        showPopups
+        showPopups={!isDeletedAuditView}
         showLegend
         siteData={true}
         status={type === "sites" && !disabledPolygonPanel && editPolygon.isOpen}
@@ -237,6 +259,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         autoEditPolygon={editPolygon.isOpen}
         polygonTableHighlight={polygonTableHighlight}
         overlapPolygons={overlapPolygons}
+        crossSiteOverlapPolygons={crossSiteOverlapPolygons}
         isPolygonGeometryLoading={isPolygonGeometryLoading}
         onPolygonTilesLoadingChange={setIsPolygonTilesLoading}
       />

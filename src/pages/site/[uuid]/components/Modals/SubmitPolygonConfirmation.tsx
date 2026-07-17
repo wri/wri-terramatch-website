@@ -19,7 +19,6 @@ export interface SubmitPolygonConfirmationProps {
   polygons: PolygonTableRow[];
   onSubmit?: (comment: string) => void | Promise<void>;
   modal?: boolean;
-  trapFocus?: boolean;
   restoreFocus?: boolean;
 }
 
@@ -29,7 +28,6 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({
   polygons,
   onSubmit,
   modal = true,
-  trapFocus = true,
   restoreFocus = true
 }) => {
   const t = useT();
@@ -67,7 +65,6 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({
   return (
     <Modal
       modal={modal}
-      trapFocus={trapFocus}
       restoreFocus={restoreFocus}
       open={open}
       onClose={handleClose}

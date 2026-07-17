@@ -21,7 +21,12 @@ const areOverlapPointsEqual = (a: OverlapPolygonPoint[], b: OverlapPolygonPoint[
   for (let i = 0; i < a.length; i += 1) {
     const left = a[i];
     const right = b[i];
-    if (left.polygonUuid !== right.polygonUuid || left.lat !== right.lat || left.lng !== right.lng) {
+    if (
+      left.polygonUuid !== right.polygonUuid ||
+      left.lat !== right.lat ||
+      left.lng !== right.lng ||
+      left.tooltip !== right.tooltip
+    ) {
       return false;
     }
   }

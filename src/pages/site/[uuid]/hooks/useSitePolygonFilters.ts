@@ -8,7 +8,11 @@ import { useValidationStatusLabels } from "@/hooks/translation/useValidationStat
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import { trackPolygonFilterCleared } from "@/utils/polygonAnalytics";
 
-import { EMPTY_POLYGON_FILTERS, PolygonFilterState } from "../components/polygonFilter.constants";
+import {
+  EMPTY_POLYGON_FILTERS,
+  PolygonFilterState,
+  SUBMISSION_CYCLE_LABELS
+} from "../components/polygonFilter.constants";
 
 type UseSitePolygonFiltersParams = {
   siteUuid: string;
@@ -34,17 +38,23 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
 
   const sitePolygonFilter = useMemo(() => {
     const filter: Record<string, unknown> = {};
+    if (debouncedPolygonSearch !== "") {
+      filter.search = debouncedPolygonSearch;
+      filter.searchFields = ["polyName", "polygonUuid"];
+    }
+    if (polygonFilters.showDeleted) {
+      filter.deletedOnly = true;
+      return filter as Partial<SitePolygonsIndexQueryParams>;
+    }
+
     if (polygonFilters.polygonStatus.length > 0) filter.polygonStatus = polygonFilters.polygonStatus;
     if (polygonFilters.validationStatus.length > 0) filter.validationStatus = polygonFilters.validationStatus;
     if (polygonFilters.plantStartFrom !== "") filter.plantStartFrom = `${polygonFilters.plantStartFrom}T00:00:00.000Z`;
     if (polygonFilters.plantStartTo !== "") filter.plantStartTo = `${polygonFilters.plantStartTo}T00:00:00.000Z`;
     if (polygonFilters.practice.length > 0) filter.practice = polygonFilters.practice;
     if (polygonFilters.targetSys.length > 0) filter.targetSys = polygonFilters.targetSys;
+    if (polygonFilters.submissionCycle.length > 0) filter.submissionCycle = polygonFilters.submissionCycle;
     if (polygonFilters.hasOverlap) filter.hasOverlap = true;
-    if (debouncedPolygonSearch !== "") {
-      filter.search = debouncedPolygonSearch;
-      filter.searchFields = ["polyName", "polygonUuid"];
-    }
     return filter as Partial<SitePolygonsIndexQueryParams>;
   }, [debouncedPolygonSearch, polygonFilters]);
 
@@ -57,6 +67,16 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
 
   const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
+    if (polygonFilters.showDeleted) {
+      return [
+        {
+          label: t("Deleted Polygons"),
+          onRemove: () => {
+            setPolygonFilters(current => ({ ...current, showDeleted: false }));
+          }
+        }
+      ];
+    }
     if (polygonFilters.polygonStatus.length > 0) {
       labels.push({
         label: polygonFilters.polygonStatus.map(status => submissionStatusLabels[status]),
@@ -99,6 +119,15 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, targetSys: [] }));
         }
+      });
+    }
+    if (polygonFilters.submissionCycle.length > 0) {
+      labels.push({
+        label: polygonFilters.submissionCycle.map(cycle => SUBMISSION_CYCLE_LABELS[cycle]),
+        onRemove: () => {
+          setPolygonFilters(current => ({ ...current, submissionCycle: [] }));
+        },
+        category: t("Submission Cycle")
       });
     }
     if (polygonFilters.hasOverlap) {
