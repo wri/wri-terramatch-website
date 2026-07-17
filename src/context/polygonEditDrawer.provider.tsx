@@ -52,8 +52,6 @@ export const usePolygonEditDrawer = (): PolygonEditDrawerContextValue => {
 
 type PolygonEditDrawerProviderProps = {
   children: ReactNode;
-  polygons?: SitePolygonLightDto[];
-  onRefetchPolygons?: PolygonSaveCallback;
 };
 
 type PolygonRunValidationCallback = (geometryPolygonUuids: string[]) => Promise<void>;
@@ -145,32 +143,20 @@ const PolygonEditDrawerLayoutShellSync: FC = () => {
   return null;
 };
 
-export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({
-  children,
-  polygons: polygonsProp = EMPTY_POLYGONS,
-  onRefetchPolygons: onRefetchPolygonsProp
-}) => {
+export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [polygon, setPolygon] = useState<PolygonEditDrawerPolygon>({});
   const [defaultTab, setDefaultTab] = useState<PolygonEditDrawerTab>("edit");
-  const [polygons, setPolygons] = useState(polygonsProp);
+  const [polygons, setPolygons] = useState(EMPTY_POLYGONS);
   const [suppressMapSelectionHighlight, setSuppressMapSelectionHighlight] = useState(false);
 
-  const onRefetchPolygonsRef = useRef<PolygonSaveCallback | undefined>(onRefetchPolygonsProp);
+  const onRefetchPolygonsRef = useRef<PolygonSaveCallback | undefined>(undefined);
   const onOverlapFixedRef = useRef<PolygonOverlapFixCallback | undefined>(undefined);
   const onRunValidationRef = useRef<PolygonRunValidationCallback | undefined>(undefined);
   const onPolygonDeletingChangeRef = useRef<PolygonDeletingChangeCallback | undefined>(undefined);
   const onRequestApproveModalRef = useRef<PolygonReviewActionCallback | undefined>(undefined);
   const onRequestInformationModalRef = useRef<PolygonReviewActionCallback | undefined>(undefined);
   const onValidationJobsStartedRef = useRef<PolygonValidationJobsStartedCallback | undefined>(undefined);
-
-  useEffect(() => {
-    setPolygons(polygonsProp);
-  }, [polygonsProp]);
-
-  useEffect(() => {
-    onRefetchPolygonsRef.current = onRefetchPolygonsProp;
-  }, [onRefetchPolygonsProp]);
 
   const setOnRefetchPolygons = useCallback((handler?: PolygonSaveCallback) => {
     onRefetchPolygonsRef.current = handler;
