@@ -18,22 +18,12 @@ export const useSitePolygonOverlap = ({ siteUuid, polygonsData, t }: UseSitePoly
   const { allValidations: overlapValidations, fetchAllValidationPages: fetchOverlapValidations } =
     useAllSiteValidations(siteUuid, OVERLAPPING_CRITERIA_ID);
 
-  const polygonIdsKey = useMemo(
-    () =>
-      polygonsData
-        .map(polygon => polygon.uuid)
-        .filter((uuid): uuid is string => uuid != null && uuid !== "")
-        .sort()
-        .join(","),
-    [polygonsData]
-  );
-
   useEffect(() => {
     if (siteUuid == null || siteUuid === "") {
       return;
     }
     void fetchOverlapValidations();
-  }, [siteUuid, polygonIdsKey, fetchOverlapValidations]);
+  }, [siteUuid, fetchOverlapValidations]);
 
   return useMemo(() => {
     const currentPolygonUuids = new Set(

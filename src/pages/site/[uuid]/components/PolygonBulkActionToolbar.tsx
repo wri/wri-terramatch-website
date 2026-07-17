@@ -21,6 +21,7 @@ export type PolygonBulkActionToolbarProps = {
   visible: boolean;
   itemCount: number;
   isBulkEditDrawerOpen?: boolean;
+  isAdminReview?: boolean;
   submitLabel: string;
   isDownloading?: boolean;
   isValidating?: boolean;
@@ -44,6 +45,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   visible,
   itemCount,
   isBulkEditDrawerOpen = false,
+  isAdminReview = false,
   submitLabel,
   isDownloading = false,
   isValidating = false,
@@ -71,18 +73,19 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   const reviewPolygons = useMemo(() => polygons.map(toReviewAvailabilityPolygon), [polygons]);
 
   const submitDisabledTooltip = useMemo(
-    () => (isAdmin || isOverlapFixAction ? undefined : getSitePolygonsSubmitTooltipIfNoneEligible(reviewPolygons, t)),
-    [isAdmin, isOverlapFixAction, reviewPolygons, t]
+    () =>
+      isAdminReview || isOverlapFixAction ? undefined : getSitePolygonsSubmitTooltipIfNoneEligible(reviewPolygons, t),
+    [isAdminReview, isOverlapFixAction, reviewPolygons, t]
   );
 
   const isApproveDisabled = useMemo(
-    () => isAdmin && !reviewPolygons.some(isSitePolygonApprovable),
-    [isAdmin, reviewPolygons]
+    () => isAdminReview && !reviewPolygons.some(isSitePolygonApprovable),
+    [isAdminReview, reviewPolygons]
   );
 
   const approveDisabledTooltip = useMemo(
-    () => (isAdmin ? getSitePolygonsApproveTooltipIfNoneEligible(reviewPolygons, t) : undefined),
-    [isAdmin, reviewPolygons, t]
+    () => (isAdminReview ? getSitePolygonsApproveTooltipIfNoneEligible(reviewPolygons, t) : undefined),
+    [isAdminReview, reviewPolygons, t]
   );
 
   const toolbarActions = useMemo<BulkToolbarAction[]>(
@@ -143,7 +146,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
 
   const primaryAction = useMemo(
     () =>
-      isAdmin
+      isAdminReview
         ? {
             mainActionLabel: t("Review"),
             mainActionOnClick: () => {},
@@ -175,7 +178,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
       onOpenRequestInformationModal,
       submitDisabledTooltip,
       submitLabel,
-      isAdmin,
+      isAdminReview,
       t
     ]
   );
@@ -192,10 +195,10 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
 
   const adminApproveTooltip = useMemo(
     () =>
-      isAdmin && approveDisabledTooltip != null ? (
+      isAdminReview && approveDisabledTooltip != null ? (
         <ToolbarInfoTooltipContent lines={[approveDisabledTooltip]} />
       ) : undefined,
-    [isAdmin, approveDisabledTooltip]
+    [isAdminReview, approveDisabledTooltip]
   );
 
   const isToolbarVisible = visible && !isPolygonEditDrawerOpen && !isBulkEditDrawerOpen;
@@ -215,7 +218,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
             deleteAction={deleteAction}
             actions={toolbarActions}
             primaryAction={primaryAction}
-            infoTooltip={overlapTooltip ?? adminApproveTooltip ?? (isAdmin ? undefined : submitDisabledTooltip)}
+            infoTooltip={overlapTooltip ?? adminApproveTooltip ?? (isAdminReview ? undefined : submitDisabledTooltip)}
           />
         </Box>
       )}

@@ -3,7 +3,6 @@ import type { FC } from "react";
 import type { BulkSitePolygonAttributeChanges } from "@/connections/SitePolygons";
 import type { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import type { SubmittedPolygonComment } from "../hooks/useSitePolygonBulkActions";
 import type { PolygonStatusChangeComment } from "../utils/polygonStatusChangeComment";
@@ -25,6 +24,7 @@ import type { PolygonTableRow } from "./PolygonTableRow";
 
 type SitePolygonModalsProps = {
   siteUuid: string;
+  isAdminReview?: boolean;
   siteHasExistingPolygons?: boolean;
   bulkEditPayload: { polygons: PolygonTableRow[] } | null;
   deletePayload: { polygons: PolygonTableRow[] } | null;
@@ -94,6 +94,7 @@ type SitePolygonModalsProps = {
 
 const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   siteUuid,
+  isAdminReview = false,
   siteHasExistingPolygons = false,
   bulkEditPayload,
   deletePayload,
@@ -157,10 +158,9 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   onSystemValidationCompleteModalOpenChange,
   onViewValidationDetails
 }) => {
-  const isAdmin = useIsAdmin();
   return (
     <>
-      {isAdmin && (
+      {isAdminReview && (
         <>
           <ApprovePolygonConfirmation
             open={openApprovePolygonConfirmationModal}

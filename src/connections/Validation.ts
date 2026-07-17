@@ -75,9 +75,6 @@ export const useAllSiteValidations = (siteUuid: string, criteriaId?: number) => 
     async (clearCache: boolean = false) => {
       if (siteUuid == null) return;
 
-      setAllValidations([]);
-      setTotal(0);
-
       try {
         if (clearCache) {
           ApiSlice.pruneCache("validations");
