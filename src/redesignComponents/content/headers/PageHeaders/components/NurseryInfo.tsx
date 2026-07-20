@@ -72,15 +72,17 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
   return (
     <Box gap={2} className="flex flex-col">
       {EditModals}
-      <EntityStatusModal
-        statusProps={statusProps!}
-        feedback={nursery.feedback}
-        needMoreInformation={needMoreInformation}
-        entityName="nurseries"
-        entityUuid={nursery.uuid}
-        open={openStatusModal}
-        onOpenChange={setOpenStatusModal}
-      />
+      {statusProps != null && (
+        <EntityStatusModal
+          statusProps={statusProps}
+          feedback={nursery.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="nurseries"
+          entityUuid={nursery.uuid}
+          open={openStatusModal}
+          onOpenChange={setOpenStatusModal}
+        />
+      )}
       <Text
         textStyle="400"
         color="neutral.900"
