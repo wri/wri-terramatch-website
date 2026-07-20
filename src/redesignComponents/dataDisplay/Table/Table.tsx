@@ -4,6 +4,7 @@ import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems"
 import React, { Ref, useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
 import { getThemedColor } from "@/lib/theme";
+import PaginationTable from "@/redesignComponents/navigation/Pagination/PaginationTable";
 
 import { findHorizontalScrollContainer } from "./findHorizontalScrollContainer";
 import { getTableWrapperStyles } from "./tableStyles";
@@ -29,6 +30,7 @@ interface TableProps<T extends BaseRow> {
   renderDataCell?: (rowData: T, columnKey: string) => React.ReactNode;
   totalItems?: number;
   showItemCount?: boolean;
+  paginationVariant?: "default" | "compact" | "compact-with-buttons";
   variant?: "default" | "full-width";
   css?: any;
   pageSize?: number;
@@ -88,6 +90,7 @@ const Table = <T extends BaseRow>({
   renderDataCell: customRenderDataCell,
   totalItems,
   showItemCount = true,
+  paginationVariant = "default",
   variant = "default",
   css,
   pageSize: initialPageSize,
@@ -226,6 +229,7 @@ const Table = <T extends BaseRow>({
   const displayEnd = Math.min(endRange, actualTotalItems);
 
   const shouldShowPagination = actualTotalItems > 0 && (pageSize == null || actualTotalItems >= pageSize);
+  const useCompactPagination = paginationVariant !== "default";
 
   return (
     <Box
@@ -242,7 +246,7 @@ const Table = <T extends BaseRow>({
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}
         pagination={
-          showPagination && shouldShowPagination
+          showPagination && shouldShowPagination && !useCompactPagination
             ? {
                 totalItems: actualTotalItems,
                 currentPage,
@@ -258,7 +262,20 @@ const Table = <T extends BaseRow>({
         stickyHeader={stickyHeader}
         loading={loading}
       />
-      {showItemCount && shouldShowPagination && (
+      {showPagination && shouldShowPagination && useCompactPagination ? (
+        <Box>
+          <PaginationTable
+            pageSize={pageSize}
+            currentPage={currentPage}
+            totalItems={actualTotalItems}
+            onPageSizeChange={setPageSize}
+            onPageChange={setCurrentPage}
+            showItemCountText={false}
+            variant={paginationVariant}
+          />
+        </Box>
+      ) : null}
+      {showItemCount && shouldShowPagination && !useCompactPagination ? (
         <Text
           textStyle="500"
           fontWeight="400"
@@ -267,7 +284,7 @@ const Table = <T extends BaseRow>({
         >
           {t("Showing {start} - {end} of {total}", { start: displayStart, end: displayEnd, total: actualTotalItems })}
         </Text>
-      )}
+      ) : null}
     </Box>
   );
 };
