@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { FC, Fragment } from "react";
 
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
-import { countFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
+import { countFeedbackInStep, countUnresolvedFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
@@ -70,6 +70,7 @@ export type SharedDetailsProps = {
     | DisturbanceReportFullDto
     | FinancialReportFullDto;
   feedbackFieldsOptions?: string[] | null;
+  feedbackBaselineValues?: Dictionary<unknown>;
 };
 
 const SharedDetails: FC<SharedDetailsProps> = ({
@@ -81,14 +82,24 @@ const SharedDetails: FC<SharedDetailsProps> = ({
   updateRequestStatus,
   stepIndex,
   entity,
-  feedbackFieldsOptions
+  feedbackFieldsOptions,
+  feedbackBaselineValues
 }) => {
   const t = useT();
   const router = useRouter();
   const fieldsProvider = useFieldsProvider();
 
   const isValid = step.validation.isValidSync(formValues);
-  const feedbackFieldsRequiringAttention = countFeedbackInStep(fieldsProvider, step.id, feedbackFieldsOptions);
+  const feedbackFieldsRequiringAttention =
+    feedbackBaselineValues != null
+      ? countUnresolvedFeedbackInStep(
+          fieldsProvider,
+          step.id,
+          feedbackFieldsOptions,
+          formValues,
+          feedbackBaselineValues
+        )
+      : countFeedbackInStep(fieldsProvider, step.id, feedbackFieldsOptions);
   const hasStepFeedback = feedbackFieldsRequiringAttention > 0;
   const accordionHeaderStatus = !isValid || hasStepFeedback ? "error" : "complete";
   const validationFieldsRequiringAttention = getFieldsRequiringAttentionCount(step.validation, formValues);

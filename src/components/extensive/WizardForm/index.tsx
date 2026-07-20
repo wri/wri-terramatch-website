@@ -80,6 +80,7 @@ export interface WizardFormProps {
   framework: Framework;
 
   defaultValues?: any;
+  feedbackBaselineValues?: Dictionary<unknown>;
   onStepChange?: (values: any) => void;
   onChange?: (values: Dictionary<any>, isCloseAndSave?: boolean) => void;
   onSubmit?: (values: any) => void;
@@ -162,10 +163,12 @@ function WizardForm(props: WizardFormProps) {
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
 
-  const initialFormValues = useRef(props.defaultValues);
-  if (initialFormValues.current == null && props.defaultValues != null) {
-    // Clone so nested/conditional child edits are not lost against a shared reference.
-    initialFormValues.current = cloneDeep(props.defaultValues);
+  const initialFormValues = useRef<Record<string, unknown> | null>(null);
+  if (initialFormValues.current == null) {
+    const baseline = props.feedbackBaselineValues ?? props.defaultValues;
+    if (baseline != null) {
+      initialFormValues.current = cloneDeep(baseline);
+    }
   }
 
   const formValues = formHook.watch();
@@ -181,7 +184,7 @@ function WizardForm(props: WizardFormProps) {
         stepId,
         entity?.feedbackFields,
         formValues,
-        initialFormValues.current
+        initialFormValues.current!
       ),
     [entity?.feedbackFields, formValues, props.fieldsProvider, showValidationErrors]
   );
@@ -193,7 +196,7 @@ function WizardForm(props: WizardFormProps) {
     fieldsProvider: props.fieldsProvider,
     entityId: models[0]?.uuid ?? entity?.uuid,
     feedbackFields: entity?.feedbackFields,
-    initialValues: initialFormValues.current,
+    initialValues: initialFormValues.current!,
     summaryTitle: props.summaryOptions?.title,
     stepHasIssues
   });
@@ -437,7 +440,7 @@ function WizardForm(props: WizardFormProps) {
             onSaveAndExit={onClickSaveAndExit}
             feedback={entity?.feedback}
             feedbackFields={entity?.feedbackFields}
-            initialValues={initialFormValues.current}
+            initialValues={initialFormValues.current!}
             reportSummaryAnalytics={
               reportAnalytics.isTrackingEnabled
                 ? {
@@ -640,7 +643,7 @@ function WizardForm(props: WizardFormProps) {
                         <Flex gap={1.5} alignItems="center">
                           {suffixButtons.map((button, index) => (
                             <Flex key={button.key} alignItems="center" gap={1.5}>
-                              {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
+                              {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
                               <Button
                                 variant="borderless"
                                 size="small"
