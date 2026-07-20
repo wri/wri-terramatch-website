@@ -65,15 +65,17 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   return (
     <PageContent>
       {EditModals}
-      <EntityStatusModal
-        statusProps={statusProps!}
-        feedback={nursery.feedback}
-        needMoreInformation={needMoreInformation}
-        entityName="nurseries"
-        entityUuid={nursery.uuid}
-        open={openStatusModal}
-        onOpenChange={setOpenStatusModal}
-      />
+      {statusProps != null && (
+        <EntityStatusModal
+          statusProps={statusProps}
+          feedback={nursery.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="nurseries"
+          entityUuid={nursery.uuid}
+          open={openStatusModal}
+          onOpenChange={setOpenStatusModal}
+        />
+      )}
       <Flex gap={7} className="flex-col sm:flex-row">
         <PageItem
           title={t("Key Indicators")}

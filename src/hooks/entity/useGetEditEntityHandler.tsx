@@ -131,16 +131,18 @@ export const useGetEditEntityHandler = ({
           }
         ]}
       />
-      <EntityStatusModal
-        statusProps={statusProps!}
-        feedback={feedback}
-        showProvideFeedback={shouldShowStatusFeedbackModal}
-        entityName={formEntityName}
-        entityUuid={entityUUID}
-        formStepId={stepId}
-        open={openStatusModal}
-        onOpenChange={setOpenStatusModal}
-      />
+      {statusProps != null && (
+        <EntityStatusModal
+          statusProps={statusProps}
+          feedback={feedback}
+          showProvideFeedback={shouldShowStatusFeedbackModal}
+          entityName={formEntityName}
+          entityUuid={entityUUID}
+          formStepId={stepId}
+          open={openStatusModal}
+          onOpenChange={setOpenStatusModal}
+        />
+      )}
       <ModalConfirmation
         open={openConfirmEditModal}
         onOpenChange={open => setOpenConfirmEditModal(open)}
