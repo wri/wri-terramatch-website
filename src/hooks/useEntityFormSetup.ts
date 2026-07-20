@@ -5,6 +5,7 @@ import { FormEntity } from "@/connections/Form";
 import { Framework, toFramework } from "@/context/framework.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { v3EntityName } from "@/helpers/entity";
+import { useFeedbackBaselineValues } from "@/hooks/useFeedbackBaselineValues";
 import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
 
@@ -24,7 +25,15 @@ export const useEntityFormSetup = (entityName: EntityName, entityUUID: string) =
   const defaultValues = useDefaultValues(formData, fieldsProvider);
   const steps = useFormStepsWithValidation(fieldsProvider, framework);
 
-  const isReady = !isFormLoading && providerLoaded;
+  const { feedbackBaselineValues, updateRequestLoaded } = useFeedbackBaselineValues({
+    entity: model.model,
+    uuid: entityUUID,
+    formData,
+    fieldsProvider,
+    providerLoaded
+  });
+
+  const isReady = !isFormLoading && providerLoaded && updateRequestLoaded && feedbackBaselineValues != null;
 
   return {
     model,
@@ -33,6 +42,7 @@ export const useEntityFormSetup = (entityName: EntityName, entityUUID: string) =
     feedbackFields,
     fieldsProvider,
     defaultValues,
+    feedbackBaselineValues,
     steps,
     isFormLoading,
     providerLoaded,
