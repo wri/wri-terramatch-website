@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo, useState } from "react";
@@ -168,7 +169,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           <div className="flex gap-1.5">
             {suffixButtons.map((button, index) => (
               <div key={button.key} className="flex gap-1.5">
-                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
+                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
                 <Button
                   variant="borderless"
                   size="small"
@@ -201,11 +202,20 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
 
 const ProjectDetailPage = () => {
   const router = useRouter();
+  const t = useT();
   const { loading } = useLoading();
   const projectUUID = router.query.uuid as string;
   const [isLoaded, { data: project, refetch }] = useFullProject({ id: projectUUID });
 
   if (!isLoaded || project == null) {
+    showToast({
+      label: t("Project not found"),
+      type: "error",
+      id: "project-not-found",
+      placement: "bottom",
+      duration: 5000,
+      maxWidth: "auto"
+    });
     return null;
   }
 

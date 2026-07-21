@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
@@ -10,7 +11,6 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullNurseryReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
-import { ToastType, useToastContext } from "@/context/toast.provider";
 import { NurseryFullDto, NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -169,7 +169,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
               </Button>
             )}
             {nurseryReport.nurseryUuid != null && nurseryReport.projectReportUuid != null && (
-              <span className="text-sm text-theme-neutral-300">|</span>
+              <span className="text-theme-neutral-300 text-sm">|</span>
             )}
             {nurseryReport.projectReportUuid != null && (
               <Button
@@ -205,11 +205,16 @@ const NurseryReportDetailPage = () => {
   const nurseryReportUUID = router.query.uuid as string;
 
   const [reportLoaded, { data: nurseryReport, loadFailure }] = useFullNurseryReport({ id: nurseryReportUUID });
-  const { openToast } = useToastContext();
   useValueChanged(reportLoaded, () => {
     if (reportLoaded && nurseryReport == null) {
       Log.error("Nursery report not found", { nurseryReportUUID, loadFailure });
-      openToast(t("Nursery report not found"), ToastType.ERROR);
+      showToast({
+        label: t("Nursery report not found"),
+        type: "error",
+        placement: "bottom",
+        duration: 5000,
+        maxWidth: "auto"
+      });
     }
   });
 

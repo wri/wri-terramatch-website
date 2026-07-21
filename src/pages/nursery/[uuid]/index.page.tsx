@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { useRouter } from "next/router";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
@@ -6,7 +7,6 @@ import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
-import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryOverviewTab from "@/pages/nursery/[uuid]/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -25,11 +25,16 @@ const NurseryDetailPage = () => {
   const nurseryUUID = router.query.uuid as string;
 
   const [isLoaded, { data: nursery, loadFailure }] = useFullNursery({ id: nurseryUUID });
-  const { openToast } = useToastContext();
   useValueChanged(isLoaded, () => {
     if (isLoaded && nursery == null) {
       Log.error("Nursery not found", { nurseryUUID, loadFailure });
-      openToast("Nursery not found", ToastType.ERROR);
+      showToast({
+        label: "Nursery not found",
+        type: "error",
+        placement: "bottom",
+        duration: 5000,
+        maxWidth: "auto"
+      });
     }
   });
 
@@ -93,7 +98,7 @@ const NurseryDetailPage = () => {
                     >
                       {t("Project Profile")}
                     </Button>
-                    <span className="text-sm text-theme-neutral-300">|</span>
+                    <span className="text-theme-neutral-300 text-sm">|</span>
                     <Button
                       variant="borderless"
                       size="small"
