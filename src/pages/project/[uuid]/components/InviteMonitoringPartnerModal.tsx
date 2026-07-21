@@ -1,18 +1,19 @@
 import { Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { useUserAssociationCreation } from "@/connections/UserAssociation";
-import { useToastContext } from "@/context/toast.provider";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
+
 interface InviteMonitoringPartnerModalProps {
   projectUUID: string;
   open: boolean;
@@ -28,7 +29,6 @@ type FormValues = yup.InferType<typeof schema>;
 
 const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }: InviteMonitoringPartnerModalProps) => {
   const t = useT();
-  const { openToast } = useToastContext();
 
   const {
     control,
@@ -63,11 +63,18 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
         } else {
           ApiSlice.pruneCache("associatedUsers");
           onSuccess?.();
-          openToast(t("Invitation sent successfully"));
+          showToast({
+            label: t("Invitation sent successfully"),
+            type: "success",
+            placement: "bottom",
+            duration: 5000,
+            maxWidth: "auto",
+            id: "invitation-sent-successfully"
+          });
           handleClose();
         }
       },
-      [setError, onSuccess, openToast, handleClose, t]
+      [setError, onSuccess, handleClose, t]
     )
   );
 
@@ -84,7 +91,7 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
       onClose={handleClose}
       header={<b className="text-theme-neutral-800">{t("Invite Monitoring Partner")}</b>}
       content={
-        <div className="mb-[-12px] flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
           <Text textStyle="400" color="neutral.900">
             {t("Invite a new team member to join your project as a Monitoring Partner.")}
           </Text>
