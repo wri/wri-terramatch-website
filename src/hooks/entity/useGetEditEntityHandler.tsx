@@ -5,11 +5,9 @@ import { useRef, useState } from "react";
 
 import { type StatusBarStatus, getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormEntity } from "@/connections/Form";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
-import { useModalContext } from "@/context/modal.provider";
 import { getEntityEditPageLink, getEntityEditPathSegment, v3EntityName } from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
@@ -43,7 +41,8 @@ export const useGetEditEntityHandler = ({
 }: GetEditEntityHandlerArgs) => {
   const t = useT();
   const router = useRouter();
-  const { openModal } = useModalContext();
+  const [stepId, setStepId] = useState<string | null | undefined>(undefined);
+  const [openStatusModal, setOpenStatusModal] = useState(false);
   const [openReviewInProgressModal, setOpenReviewInProgressModal] = useState(false);
   const [openConfirmEditModal, setOpenConfirmEditModal] = useState(false);
   const pendingStepId = useRef<string | null | undefined>(undefined);
@@ -92,17 +91,8 @@ export const useGetEditEntityHandler = ({
     if (awaitingApproval) {
       setOpenReviewInProgressModal(true);
     } else if (shouldShowStatusFeedbackModal && statusProps != null) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={feedback}
-          showProvideFeedback={shouldShowStatusFeedbackModal}
-          entityName={formEntityName}
-          entityUuid={entityUUID}
-          formStepId={stepId}
-        />
-      );
+      setStepId(stepId);
+      setOpenStatusModal(true);
     } else {
       pendingStepId.current = stepId;
       setOpenConfirmEditModal(true);
@@ -141,6 +131,18 @@ export const useGetEditEntityHandler = ({
           }
         ]}
       />
+      {statusProps != null && (
+        <EntityStatusModal
+          statusProps={statusProps}
+          feedback={feedback}
+          showProvideFeedback={shouldShowStatusFeedbackModal}
+          entityName={formEntityName}
+          entityUuid={entityUUID}
+          formStepId={stepId}
+          open={openStatusModal}
+          onOpenChange={setOpenStatusModal}
+        />
+      )}
       <ModalConfirmation
         open={openConfirmEditModal}
         onOpenChange={open => setOpenConfirmEditModal(open)}

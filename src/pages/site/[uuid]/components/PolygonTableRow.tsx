@@ -31,6 +31,8 @@ import {
 } from "@/redesignComponents/foundations/Icons";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
+import { type SubmissionCycleOption, formatSubmissionCycleDisplay } from "./polygonFilter.constants";
+
 export type PolygonTableRow = {
   id: string;
   polygonName: string;
@@ -45,6 +47,8 @@ export type PolygonTableRow = {
   plantingDate: string;
   treesPlanted: number;
   area: number;
+  submissionCycle: string[];
+  submissionCycleSort: string;
   source: string;
 };
 
@@ -143,6 +147,8 @@ interface PolygonRowProps {
   isHovered: boolean;
   onHover: (uuid: string) => void;
   onSelectChange: (row: PolygonTableRow, checked: boolean) => void;
+  // Deleted-polygons audit view: no selection, no bulk actions, submission status is always "deleted".
+  readOnly?: boolean;
 }
 
 const PolygonRowComponent: FC<PolygonRowProps> = ({
@@ -151,7 +157,8 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   isSelected,
   isHovered,
   onHover,
-  onSelectChange
+  onSelectChange,
+  readOnly = false
 }) => {
   const t = useT();
   const targetLandUseLabels = useTargetLandUseLabels();
@@ -200,6 +207,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
           aria-label={`Select polygon ${row.polygonName}`}
           onCheckedChange={handleOnRowSelected}
           checked={isSelected}
+          disabled={readOnly}
         />
       </TableCell>
       <TableCell>
@@ -209,9 +217,13 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
           </Text>
         </Box>
       </TableCell>
-      <TableCell>{row.submission != null ? <MappedTag state={row.submission} /> : <Text>—</Text>}</TableCell>
-      <TableCell>{row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>}</TableCell>
-      <TableCell>
+      <TableCell className="min-w-[15.875rem]">
+        {row.submission != null ? <MappedTag state={readOnly ? "deleted" : row.submission} /> : <Text>—</Text>}
+      </TableCell>
+      <TableCell className="min-w-[12.75rem]">
+        {row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>}
+      </TableCell>
+      <TableCell className="min-w-[15.5rem]">
         <Flex className="items-center gap-2">{renderRestorationPractice(row.restorationPractice)}</Flex>
       </TableCell>
       <TableCell>{renderTargetLandUse(row.targetLandUse, targetLandUseMap)}</TableCell>
@@ -224,9 +236,14 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
           icon={<CalendarIcon boxSize={2.5} />}
         />
       </TableCell>
-      <TableCell>{formatNumberLocaleString(row.treesPlanted) ?? "—"}</TableCell>
-      <TableCell>{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
-      <TableCell>{row.source === "uploaded" ? t("Uploaded") : row.source}</TableCell>
+      <TableCell className="min-w-[12.75rem]">{formatNumberLocaleString(row.treesPlanted) ?? "—"}</TableCell>
+      <TableCell className="min-w-[15.75rem]">{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
+      <TableCell className="min-w-[12rem]">
+        <Text>{formatSubmissionCycleDisplay(row.submissionCycle as SubmissionCycleOption[])}</Text>
+      </TableCell>
+      <TableCell className="min-w-[12rem]">
+        <Text>{row.source === "uploaded" ? t("Uploaded") : row.source}</Text>
+      </TableCell>
     </TableRow>
   );
 };
@@ -237,7 +254,8 @@ const polygonRowPropsAreEqual = (prev: PolygonRowProps, next: PolygonRowProps) =
   prev.isHovered === next.isHovered &&
   prev.rowProps === next.rowProps &&
   prev.onHover === next.onHover &&
-  prev.onSelectChange === next.onSelectChange;
+  prev.onSelectChange === next.onSelectChange &&
+  prev.readOnly === next.readOnly;
 
 export const PolygonRow = memo(PolygonRowComponent, polygonRowPropsAreEqual);
 

@@ -24,7 +24,6 @@ const ItemCount: FC<ItemCountProps> = ({
   return (
     <Box
       css={itemCountStyles({
-        ...css,
         width: "100%",
         justifyContent: "space-between",
         "& > div": {
@@ -37,7 +36,8 @@ const ItemCount: FC<ItemCountProps> = ({
           marginBottom: "0rem !important",
           zIndex: 10,
           justifyContent: "space-between"
-        }
+        },
+        ...css
       })}
       display="flex"
       justifyContent="center"

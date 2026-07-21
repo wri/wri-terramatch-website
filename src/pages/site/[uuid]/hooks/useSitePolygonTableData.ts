@@ -50,6 +50,7 @@ export const useSitePolygonTableData = ({ polygonsData, polygonValidations, t }:
       { key: "plantingDate", label: t("Planting Start Date"), sortable: true },
       { key: "treesPlanted", label: t("Trees Planted"), sortable: true },
       { key: "area", label: t("Area (ha)"), sortable: true },
+      { key: "submissionCycleSort", label: t("Submission Cycle"), sortable: true },
       { key: "source", label: t("Source"), sortable: true }
     ],
     [t]

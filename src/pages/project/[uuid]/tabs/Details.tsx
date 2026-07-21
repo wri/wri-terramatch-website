@@ -18,9 +18,16 @@ type SharedDetailsStepProps = {
   formValues: Dictionary<unknown>;
   project: ProjectFullDto;
   stepIndex: number;
+  feedbackBaselineValues?: Dictionary<unknown>;
 };
 
-const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, project, stepIndex }) => (
+const SharedDetailsStep: FC<SharedDetailsStepProps> = ({
+  step,
+  formValues,
+  project,
+  stepIndex,
+  feedbackBaselineValues
+}) => (
   <SharedDetails
     step={step}
     formValues={formValues}
@@ -31,11 +38,12 @@ const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, proje
     entity={project}
     stepIndex={stepIndex}
     feedbackFieldsOptions={project.feedbackFields}
+    feedbackBaselineValues={feedbackBaselineValues}
   />
 );
 
 const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
-  const { steps, defaultValues, fieldsProvider, isFormLoading, providerLoaded } = useEntityFormSetup(
+  const { steps, defaultValues, fieldsProvider, isReady, feedbackBaselineValues } = useEntityFormSetup(
     "projects",
     project?.uuid
   );
@@ -43,7 +51,7 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
 
   const formValues = defaultValues ?? {};
 
-  if (isFormLoading || !providerLoaded || orgLoading) {
+  if (!isReady || orgLoading) {
     return null;
   }
 
@@ -51,7 +59,14 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
     <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
       <WizardFormProvider fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
         {steps.map((step, index) => (
-          <SharedDetailsStep key={step.id} step={step} formValues={formValues} project={project} stepIndex={index} />
+          <SharedDetailsStep
+            key={step.id}
+            step={step}
+            formValues={formValues}
+            project={project}
+            stepIndex={index}
+            feedbackBaselineValues={feedbackBaselineValues}
+          />
         ))}
       </WizardFormProvider>
     </PageContent>

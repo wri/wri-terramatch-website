@@ -9,7 +9,7 @@ const meta: Meta<typeof MultiActionButton> = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["primary", "secondary"]
+      options: ["primary", "secondary", "borderless", "outline", "negative"]
     },
     size: {
       control: "select",
@@ -27,249 +27,314 @@ const meta: Meta<typeof MultiActionButton> = {
 export default meta;
 type Story = StoryObj<typeof MultiActionButton>;
 
-// Primary Variant Stories
+const stateLabel = (text: string) => (
+  <p
+    style={{
+      marginTop: "0.5rem",
+      marginBottom: "1.5rem",
+      fontSize: "0.7rem",
+      color: "#999",
+      textTransform: "uppercase",
+      letterSpacing: "0.05em"
+    }}
+  >
+    {text}
+  </p>
+);
+
+const groupWrapper = (children: React.ReactNode) => (
+  <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", alignItems: "flex-start" }}>{children}</div>
+);
+
+const stateBlock = (label: string, node: React.ReactNode) => (
+  <div style={{ textAlign: "center" }}>
+    {node}
+    {stateLabel(label)}
+  </div>
+);
+
+// Primary Variant
 export const Primary: Story = {
-  args: {
-    variant: "primary",
-    mainActionLabel: "Save",
-    mainActionOnClick: () => alert("Main action clicked!"),
-    otherActions: [
-      {
-        label: "Save as Draft",
-        value: "draft",
-        onClick: () => alert("Save as Draft clicked!")
-      },
-      {
-        label: "Save and Close",
-        value: "save-close",
-        onClick: () => alert("Save and Close clicked!")
-      }
-    ]
-  }
+  render: () =>
+    groupWrapper(
+      <>
+        {stateBlock(
+          "Default",
+          <MultiActionButton
+            variant="primary"
+            mainActionLabel="Save"
+            mainActionOnClick={() => alert("Save clicked!")}
+            otherActions={[
+              { label: "Save as Draft", value: "draft", onClick: () => alert("Save as Draft clicked!") },
+              { label: "Save and Close", value: "save-close", onClick: () => alert("Save and Close clicked!") }
+            ]}
+          />
+        )}
+        {stateBlock(
+          "Disabled",
+          <MultiActionButton
+            variant="primary"
+            mainActionLabel="Save"
+            mainActionOnClick={() => {}}
+            disabled
+            otherActions={[{ label: "Save as Draft", value: "draft", onClick: () => {} }]}
+          />
+        )}
+        {stateBlock(
+          "Small",
+          <MultiActionButton
+            variant="primary"
+            size="small"
+            mainActionLabel="Save"
+            mainActionOnClick={() => alert("Save clicked!")}
+            otherActions={[
+              { label: "Save as Draft", value: "draft", onClick: () => alert("Save as Draft clicked!") },
+              { label: "Save and Close", value: "save-close", onClick: () => alert("Save and Close clicked!") }
+            ]}
+          />
+        )}
+        {stateBlock(
+          "Item Disabled",
+          <MultiActionButton
+            variant="primary"
+            mainActionLabel="Save"
+            mainActionOnClick={() => alert("Save clicked!")}
+            otherActions={[
+              { label: "Save as Draft", value: "draft", onClick: () => alert("Save as Draft clicked!") },
+              { label: "Save and Close", value: "save-close", onClick: () => {}, disabled: true }
+            ]}
+          />
+        )}
+      </>
+    )
 };
 
-export const PrimaryDisabled: Story = {
-  args: {
-    variant: "primary",
-    mainActionLabel: "Save",
-    mainActionOnClick: () => {},
-    disabled: true,
-    otherActions: [
-      {
-        label: "Save as Draft",
-        value: "draft",
-        onClick: () => {}
-      }
-    ]
-  }
-};
-
-export const PrimarySmall: Story = {
-  args: {
-    variant: "primary",
-    size: "small",
-    mainActionLabel: "Save",
-    mainActionOnClick: () => alert("Main action clicked!"),
-    otherActions: [
-      {
-        label: "Save as Draft",
-        value: "draft",
-        onClick: () => alert("Save as Draft clicked!")
-      },
-      {
-        label: "Save and Close",
-        value: "save-close",
-        onClick: () => alert("Save and Close clicked!")
-      }
-    ]
-  }
-};
-
-// Secondary Variant Stories
+// Secondary Variant
 export const Secondary: Story = {
-  args: {
-    variant: "secondary",
-    mainActionLabel: "Export",
-    mainActionOnClick: () => alert("Export clicked!"),
-    otherActions: [
-      {
-        label: "Export as CSV",
-        value: "csv",
-        onClick: () => alert("Export as CSV clicked!")
-      },
-      {
-        label: "Export as Excel",
-        value: "excel",
-        onClick: () => alert("Export as Excel clicked!")
-      },
-      {
-        label: "Export as PDF",
-        value: "pdf",
-        onClick: () => alert("Export as PDF clicked!")
-      }
-    ]
-  }
+  render: () =>
+    groupWrapper(
+      <>
+        {stateBlock(
+          "Default",
+          <MultiActionButton
+            variant="secondary"
+            mainActionLabel="Export"
+            mainActionOnClick={() => alert("Export clicked!")}
+            otherActions={[
+              { label: "Export as CSV", value: "csv", onClick: () => alert("Export as CSV clicked!") },
+              { label: "Export as Excel", value: "excel", onClick: () => alert("Export as Excel clicked!") },
+              { label: "Export as PDF", value: "pdf", onClick: () => alert("Export as PDF clicked!") }
+            ]}
+          />
+        )}
+        {stateBlock(
+          "Disabled",
+          <MultiActionButton
+            variant="secondary"
+            mainActionLabel="Export"
+            mainActionOnClick={() => {}}
+            disabled
+            otherActions={[{ label: "Export as CSV", value: "csv", onClick: () => {} }]}
+          />
+        )}
+        {stateBlock(
+          "Small",
+          <MultiActionButton
+            variant="secondary"
+            size="small"
+            mainActionLabel="Export"
+            mainActionOnClick={() => alert("Export clicked!")}
+            otherActions={[
+              { label: "Export as CSV", value: "csv", onClick: () => alert("Export as CSV clicked!") },
+              { label: "Export as Excel", value: "excel", onClick: () => alert("Export as Excel clicked!") }
+            ]}
+          />
+        )}
+        {stateBlock(
+          "Item Disabled",
+          <MultiActionButton
+            variant="secondary"
+            mainActionLabel="Export"
+            mainActionOnClick={() => alert("Export clicked!")}
+            otherActions={[
+              { label: "Export as CSV", value: "csv", onClick: () => alert("Export as CSV clicked!") },
+              { label: "Export as Excel", value: "excel", onClick: () => {}, disabled: true },
+              { label: "Export as PDF", value: "pdf", onClick: () => alert("Export as PDF clicked!") }
+            ]}
+          />
+        )}
+      </>
+    )
 };
 
-export const SecondaryDisabled: Story = {
-  args: {
-    variant: "secondary",
-    mainActionLabel: "Export",
-    mainActionOnClick: () => {},
-    disabled: true,
-    otherActions: [
-      {
-        label: "Export as CSV",
-        value: "csv",
-        onClick: () => {}
-      }
-    ]
-  }
+// Borderless Variant
+export const Borderless: Story = {
+  render: () =>
+    groupWrapper(
+      <>
+        {stateBlock(
+          "Default",
+          <MultiActionButton
+            variant="borderless"
+            mainActionLabel="More Options"
+            mainActionOnClick={() => alert("More Options clicked!")}
+            otherActions={[
+              { label: "Option A", value: "a", onClick: () => alert("Option A clicked!") },
+              { label: "Option B", value: "b", onClick: () => alert("Option B clicked!") }
+            ]}
+          />
+        )}
+        {stateBlock(
+          "Disabled",
+          <MultiActionButton
+            variant="borderless"
+            mainActionLabel="More Options"
+            mainActionOnClick={() => {}}
+            disabled
+            otherActions={[{ label: "Option A", value: "a", onClick: () => {} }]}
+          />
+        )}
+        {stateBlock(
+          "Small",
+          <MultiActionButton
+            variant="borderless"
+            size="small"
+            mainActionLabel="More Options"
+            mainActionOnClick={() => alert("More Options clicked!")}
+            otherActions={[
+              { label: "Option A", value: "a", onClick: () => alert("Option A clicked!") },
+              { label: "Option B", value: "b", onClick: () => alert("Option B clicked!") }
+            ]}
+          />
+        )}
+        {stateBlock(
+          "Item Disabled",
+          <MultiActionButton
+            variant="borderless"
+            mainActionLabel="More Options"
+            mainActionOnClick={() => alert("More Options clicked!")}
+            otherActions={[
+              { label: "Option A", value: "a", onClick: () => alert("Option A clicked!") },
+              { label: "Option B", value: "b", onClick: () => {}, disabled: true }
+            ]}
+          />
+        )}
+      </>
+    )
 };
 
-export const SecondarySmall: Story = {
-  args: {
-    variant: "secondary",
-    size: "small",
-    mainActionLabel: "Export",
-    mainActionOnClick: () => alert("Export clicked!"),
-    otherActions: [
-      {
-        label: "Export as CSV",
-        value: "csv",
-        onClick: () => alert("Export as CSV clicked!")
-      },
-      {
-        label: "Export as Excel",
-        value: "excel",
-        onClick: () => alert("Export as Excel clicked!")
-      }
-    ]
-  }
+// Outline Variant
+export const Outline: Story = {
+  render: () =>
+    groupWrapper(
+      <>
+        {stateBlock(
+          "Default",
+          <MultiActionButton
+            variant="outline"
+            mainActionLabel="Actions"
+            mainActionOnClick={() => alert("Actions clicked!")}
+            otherActions={[
+              { label: "Action A", value: "a", onClick: () => alert("Action A clicked!") },
+              { label: "Action B", value: "b", onClick: () => alert("Action B clicked!") }
+            ]}
+          />
+        )}
+        {stateBlock(
+          "Disabled",
+          <MultiActionButton
+            variant="outline"
+            mainActionLabel="Actions"
+            mainActionOnClick={() => {}}
+            disabled
+            otherActions={[{ label: "Action A", value: "a", onClick: () => {} }]}
+          />
+        )}
+        {stateBlock(
+          "Small",
+          <MultiActionButton
+            variant="outline"
+            size="small"
+            mainActionLabel="Actions"
+            mainActionOnClick={() => alert("Actions clicked!")}
+            otherActions={[
+              { label: "Action A", value: "a", onClick: () => alert("Action A clicked!") },
+              { label: "Action B", value: "b", onClick: () => alert("Action B clicked!") }
+            ]}
+          />
+        )}
+        {stateBlock(
+          "Item Disabled",
+          <MultiActionButton
+            variant="outline"
+            mainActionLabel="Actions"
+            mainActionOnClick={() => alert("Actions clicked!")}
+            otherActions={[
+              { label: "Action A", value: "a", onClick: () => alert("Action A clicked!") },
+              { label: "Action B", value: "b", onClick: () => {}, disabled: true }
+            ]}
+          />
+        )}
+      </>
+    )
 };
 
-// Different Use Cases
-export const PublishActions: Story = {
-  args: {
-    variant: "primary",
-    mainActionLabel: "Publish",
-    mainActionOnClick: () => alert("Publish clicked!"),
-    otherActions: [
-      {
-        label: "Publish and Notify",
-        value: "publish-notify",
-        onClick: () => alert("Publish and Notify clicked!")
-      },
-      {
-        label: "Schedule Publish",
-        value: "schedule",
-        onClick: () => alert("Schedule Publish clicked!")
-      },
-      {
-        label: "Save as Draft",
-        value: "draft",
-        onClick: () => alert("Save as Draft clicked!")
-      }
-    ]
-  }
+// Negative Variant
+export const Negative: Story = {
+  render: () =>
+    groupWrapper(
+      <>
+        {stateBlock(
+          "Default",
+          <MultiActionButton
+            variant="negative"
+            mainActionLabel="Delete"
+            mainActionOnClick={() => alert("Delete clicked!")}
+            otherActions={[
+              { label: "Delete Permanently", value: "permanent", onClick: () => alert("Delete Permanently clicked!") },
+              { label: "Archive Instead", value: "archive", onClick: () => alert("Archive Instead clicked!") }
+            ]}
+          />
+        )}
+        {stateBlock(
+          "Disabled",
+          <MultiActionButton
+            variant="negative"
+            mainActionLabel="Delete"
+            mainActionOnClick={() => {}}
+            disabled
+            otherActions={[{ label: "Delete Permanently", value: "permanent", onClick: () => {} }]}
+          />
+        )}
+        {stateBlock(
+          "Small",
+          <MultiActionButton
+            variant="negative"
+            size="small"
+            mainActionLabel="Delete"
+            mainActionOnClick={() => alert("Delete clicked!")}
+            otherActions={[
+              { label: "Delete Permanently", value: "permanent", onClick: () => alert("Delete Permanently clicked!") },
+              { label: "Archive Instead", value: "archive", onClick: () => alert("Archive Instead clicked!") }
+            ]}
+          />
+        )}
+        {stateBlock(
+          "Item Disabled",
+          <MultiActionButton
+            variant="negative"
+            mainActionLabel="Delete"
+            mainActionOnClick={() => alert("Delete clicked!")}
+            otherActions={[
+              { label: "Delete Permanently", value: "permanent", onClick: () => alert("Delete Permanently clicked!") },
+              { label: "Archive Instead", value: "archive", onClick: () => {}, disabled: true }
+            ]}
+          />
+        )}
+      </>
+    )
 };
 
-export const DownloadActions: Story = {
-  args: {
-    variant: "secondary",
-    mainActionLabel: "Download",
-    mainActionOnClick: () => alert("Download clicked!"),
-    otherActions: [
-      {
-        label: "Download Original",
-        value: "original",
-        onClick: () => alert("Download Original clicked!")
-      },
-      {
-        label: "Download Compressed",
-        value: "compressed",
-        onClick: () => alert("Download Compressed clicked!")
-      },
-      {
-        label: "Download All",
-        value: "all",
-        onClick: () => alert("Download All clicked!")
-      }
-    ]
-  }
-};
-
-export const SubmitActions: Story = {
-  args: {
-    variant: "primary",
-    mainActionLabel: "Submit",
-    mainActionOnClick: () => alert("Submit clicked!"),
-    otherActions: [
-      {
-        label: "Submit for Review",
-        value: "review",
-        onClick: () => alert("Submit for Review clicked!")
-      },
-      {
-        label: "Submit and Continue",
-        value: "continue",
-        onClick: () => alert("Submit and Continue clicked!")
-      }
-    ]
-  }
-};
-
-export const CreateActions: Story = {
-  args: {
-    variant: "primary",
-    mainActionLabel: "Create",
-    mainActionOnClick: () => alert("Create clicked!"),
-    otherActions: [
-      {
-        label: "Create and Add Another",
-        value: "add-another",
-        onClick: () => alert("Create and Add Another clicked!")
-      },
-      {
-        label: "Create Template",
-        value: "template",
-        onClick: () => alert("Create Template clicked!")
-      },
-      {
-        label: "Create Draft",
-        value: "draft",
-        onClick: () => alert("Create Draft clicked!")
-      }
-    ]
-  }
-};
-
-export const ShareActions: Story = {
-  args: {
-    variant: "secondary",
-    mainActionLabel: "Share",
-    mainActionOnClick: () => alert("Share clicked!"),
-    otherActions: [
-      {
-        label: "Share via Email",
-        value: "email",
-        onClick: () => alert("Share via Email clicked!")
-      },
-      {
-        label: "Copy Link",
-        value: "copy",
-        onClick: () => alert("Copy Link clicked!")
-      },
-      {
-        label: "Generate QR Code",
-        value: "qr",
-        onClick: () => alert("Generate QR Code clicked!")
-      }
-    ]
-  }
-};
-
-// With Many Actions
 export const ManyActions: Story = {
   args: {
     variant: "primary",
@@ -286,44 +351,34 @@ export const ManyActions: Story = {
   }
 };
 
-// With Few Actions
 export const FewActions: Story = {
   args: {
     variant: "primary",
     mainActionLabel: "Continue",
     mainActionOnClick: () => alert("Continue clicked!"),
-    otherActions: [
-      {
-        label: "Go Back",
-        value: "back",
-        onClick: () => alert("Go Back clicked!")
-      }
-    ]
+    otherActions: [{ label: "Go Back", value: "back", onClick: () => alert("Go Back clicked!") }]
   }
 };
 
 // All Variants Showcase
 export const AllVariants: Story = {
   render: () => (
-    <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
-      <MultiActionButton
-        variant="primary"
-        mainActionLabel="Primary"
-        mainActionOnClick={() => alert("Primary clicked!")}
-        otherActions={[
-          { label: "Option 1", value: "1", onClick: () => {} },
-          { label: "Option 2", value: "2", onClick: () => {} }
-        ]}
-      />
-      <MultiActionButton
-        variant="secondary"
-        mainActionLabel="Secondary"
-        mainActionOnClick={() => alert("Secondary clicked!")}
-        otherActions={[
-          { label: "Option 1", value: "1", onClick: () => {} },
-          { label: "Option 2", value: "2", onClick: () => {} }
-        ]}
-      />
+    <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", alignItems: "flex-start" }}>
+      {(["primary", "secondary", "borderless", "outline", "negative"] as const).map(variant =>
+        stateBlock(
+          variant,
+          <MultiActionButton
+            key={variant}
+            variant={variant}
+            mainActionLabel={variant.charAt(0).toUpperCase() + variant.slice(1)}
+            mainActionOnClick={() => alert(`${variant} clicked!`)}
+            otherActions={[
+              { label: "Option 1", value: "1", onClick: () => {} },
+              { label: "Option 2", value: "2", onClick: () => {} }
+            ]}
+          />
+        )
+      )}
     </div>
   )
 };
@@ -331,27 +386,33 @@ export const AllVariants: Story = {
 // All Sizes Showcase
 export const AllSizes: Story = {
   render: () => (
-    <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
-      <MultiActionButton
-        variant="primary"
-        size="default"
-        mainActionLabel="Default Size"
-        mainActionOnClick={() => alert("Clicked!")}
-        otherActions={[
-          { label: "Option 1", value: "1", onClick: () => {} },
-          { label: "Option 2", value: "2", onClick: () => {} }
-        ]}
-      />
-      <MultiActionButton
-        variant="primary"
-        size="small"
-        mainActionLabel="Small Size"
-        mainActionOnClick={() => alert("Clicked!")}
-        otherActions={[
-          { label: "Option 1", value: "1", onClick: () => {} },
-          { label: "Option 2", value: "2", onClick: () => {} }
-        ]}
-      />
+    <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", alignItems: "flex-start" }}>
+      {stateBlock(
+        "Default",
+        <MultiActionButton
+          variant="primary"
+          size="default"
+          mainActionLabel="Default Size"
+          mainActionOnClick={() => alert("Clicked!")}
+          otherActions={[
+            { label: "Option 1", value: "1", onClick: () => {} },
+            { label: "Option 2", value: "2", onClick: () => {} }
+          ]}
+        />
+      )}
+      {stateBlock(
+        "Small",
+        <MultiActionButton
+          variant="primary"
+          size="small"
+          mainActionLabel="Small Size"
+          mainActionOnClick={() => alert("Clicked!")}
+          otherActions={[
+            { label: "Option 1", value: "1", onClick: () => {} },
+            { label: "Option 2", value: "2", onClick: () => {} }
+          ]}
+        />
+      )}
     </div>
   )
 };
@@ -359,8 +420,9 @@ export const AllSizes: Story = {
 // All States Showcase
 export const AllStates: Story = {
   render: () => (
-    <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
-      <div style={{ textAlign: "center" }}>
+    <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", alignItems: "flex-start" }}>
+      {stateBlock(
+        "Default",
         <MultiActionButton
           variant="primary"
           mainActionLabel="Enabled"
@@ -370,9 +432,9 @@ export const AllStates: Story = {
             { label: "Option 2", value: "2", onClick: () => {} }
           ]}
         />
-        <p style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#666" }}>Default</p>
-      </div>
-      <div style={{ textAlign: "center" }}>
+      )}
+      {stateBlock(
+        "Disabled",
         <MultiActionButton
           variant="primary"
           mainActionLabel="Disabled"
@@ -383,8 +445,20 @@ export const AllStates: Story = {
             { label: "Option 2", value: "2", onClick: () => {} }
           ]}
         />
-        <p style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#666" }}>Disabled</p>
-      </div>
+      )}
+      {stateBlock(
+        "Small",
+        <MultiActionButton
+          variant="primary"
+          size="small"
+          mainActionLabel="Small"
+          mainActionOnClick={() => alert("Clicked!")}
+          otherActions={[
+            { label: "Option 1", value: "1", onClick: () => {} },
+            { label: "Option 2", value: "2", onClick: () => {} }
+          ]}
+        />
+      )}
     </div>
   )
 };

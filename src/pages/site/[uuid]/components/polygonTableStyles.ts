@@ -8,8 +8,8 @@ const CHECKBOX_COLUMN_Z_INDEX = {
 } as const;
 
 const POLYGON_NAME_COLUMN_Z_INDEX = {
-  header: 10,
-  body: 9
+  header: 12,
+  body: 11
 } as const;
 
 type StickyCoverOptions = {
@@ -68,9 +68,14 @@ export const getPolygonsTableStyles = (isStickyTableActive: boolean) => {
   return {
     ...(isStickyTableActive && {
       "& > div > div": {
-        backgroundColor: bodyBackground
+        backgroundColor: bodyBackground,
+        width: "100%",
+        overflow: "auto"
       }
     }),
+    "& table": {
+      display: "contents"
+    },
     "& table td": { height: "3rem" },
     "& table th:first-of-type": {
       position: "sticky",
@@ -153,8 +158,8 @@ export const getPolygonsTableStyles = (isStickyTableActive: boolean) => {
       maxWidth: "15.875rem"
     },
     "& table th:nth-of-type(8), & table td:nth-of-type(8)": {
-      minWidth: "12.5rem",
-      maxWidth: "12.5rem"
+      minWidth: "11.5rem",
+      maxWidth: "11.5rem"
     },
     "& table th:nth-of-type(9), & table td:nth-of-type(9)": {
       minWidth: "12.75rem",

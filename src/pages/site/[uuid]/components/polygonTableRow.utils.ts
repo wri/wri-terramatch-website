@@ -6,6 +6,7 @@ import {
   mapSiteValidationStatusToTagState
 } from "@/utils/mapStatusToTagStateEntity";
 
+import { normalizeSubmissionCycle } from "./polygonFilter.constants";
 import {
   formatPolygonSource,
   isRestorationStrategy,
@@ -61,6 +62,7 @@ export const mapSitePolygonToTableRow = (polygon: SitePolygonLightDto, t: (key: 
   const restorationPractice = (polygon.practice ?? []).filter(isRestorationStrategy);
   const targetLandUse = polygon.targetSys != null && isTargetLandUseType(polygon.targetSys) ? polygon.targetSys : null;
   const treeDistribution = (polygon.distr ?? []).filter(isTreeDistributionType);
+  const submissionCycle = normalizeSubmissionCycle(polygon.submissionCycle);
 
   return {
     id: polygon.polygonUuid ?? polygon.uuid,
@@ -76,6 +78,8 @@ export const mapSitePolygonToTableRow = (polygon: SitePolygonLightDto, t: (key: 
     plantingDate: formatPlantingDate(polygon.plantStart),
     treesPlanted: polygon.numTrees ?? 0,
     area: polygon.calcArea ?? 0,
+    submissionCycle,
+    submissionCycleSort: submissionCycle.join(", "),
     source: formatPolygonSource(polygon.source)
   };
 };

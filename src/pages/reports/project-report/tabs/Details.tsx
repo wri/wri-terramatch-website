@@ -19,9 +19,16 @@ type SharedDetailsStepProps = {
   formValues: Dictionary<unknown>;
   report: ProjectReportFullDto;
   stepIndex: number;
+  feedbackBaselineValues?: Dictionary<unknown>;
 };
 
-const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, report, stepIndex }) => (
+const SharedDetailsStep: FC<SharedDetailsStepProps> = ({
+  step,
+  formValues,
+  report,
+  stepIndex,
+  feedbackBaselineValues
+}) => (
   <SharedDetails
     step={step}
     formValues={formValues}
@@ -32,11 +39,12 @@ const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, repor
     stepIndex={stepIndex}
     entity={report}
     feedbackFieldsOptions={report.feedbackFields}
+    feedbackBaselineValues={feedbackBaselineValues}
   />
 );
 
 const ProjectReportDetailsTab: FC<ProjectReportDetailsTabProps> = ({ report }) => {
-  const { steps, defaultValues, fieldsProvider, isFormLoading, providerLoaded } = useEntityFormSetup(
+  const { steps, defaultValues, fieldsProvider, isReady, feedbackBaselineValues } = useEntityFormSetup(
     "project-reports",
     report.uuid
   );
@@ -44,7 +52,7 @@ const ProjectReportDetailsTab: FC<ProjectReportDetailsTabProps> = ({ report }) =
 
   const formValues = defaultValues ?? {};
 
-  if (isFormLoading || !providerLoaded || orgLoading) {
+  if (!isReady || orgLoading) {
     return (
       <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
         <Loader className="h-32 w-full" />
@@ -56,7 +64,14 @@ const ProjectReportDetailsTab: FC<ProjectReportDetailsTabProps> = ({ report }) =
     <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
       <WizardFormProvider fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
         {steps.map((step, index) => (
-          <SharedDetailsStep key={step.id} step={step} formValues={formValues} report={report} stepIndex={index} />
+          <SharedDetailsStep
+            key={step.id}
+            step={step}
+            formValues={formValues}
+            report={report}
+            stepIndex={index}
+            feedbackBaselineValues={feedbackBaselineValues}
+          />
         ))}
       </WizardFormProvider>
     </PageContent>

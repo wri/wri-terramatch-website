@@ -1,5 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -12,7 +13,6 @@ import { ModalBase } from "@/components/extensive/Modal/ModalsBases";
 import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { useInviteOrganisationUser } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
-import { useToastContext } from "@/context/toast.provider";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 
 interface InviteTeamMemberModalProps {
@@ -29,7 +29,6 @@ type FormValues = yup.InferType<typeof schema>;
 const InviteTeamMemberModal = ({ organisationUUID, onSuccess }: InviteTeamMemberModalProps) => {
   const t = useT();
   const { closeModal } = useModalContext();
-  const { openToast } = useToastContext();
 
   const {
     register,
@@ -57,7 +56,13 @@ const InviteTeamMemberModal = ({ organisationUUID, onSuccess }: InviteTeamMember
           if (onSuccess != null) {
             onSuccess();
           }
-          openToast(t("Invitation sent successfully"));
+          showToast({
+            label: t("Invitation sent successfully"),
+            type: "success",
+            placement: "bottom",
+            duration: 5000,
+            maxWidth: "auto"
+          });
           hideModal();
         } else {
           setError("email", {
@@ -66,7 +71,7 @@ const InviteTeamMemberModal = ({ organisationUUID, onSuccess }: InviteTeamMember
           });
         }
       },
-      [onSuccess, openToast, t, setError, hideModal]
+      [onSuccess, t, setError, hideModal]
     )
   );
 
