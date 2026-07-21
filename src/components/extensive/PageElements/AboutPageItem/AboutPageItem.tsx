@@ -58,7 +58,7 @@ const AboutPageItem = ({ type, flexProps, className, contentClassName, descripti
   if (!loaded || aboutSection == null) return null;
   return (
     <PageItem title={aboutSection.header} className={className} flexProps={flexProps}>
-      <Flex className={twMerge("rounded-1 bg-theme-neutral-100 min-h-0 flex-col gap-2 p-5", contentClassName)}>
+      <Flex className={twMerge("rounded-1 min-h-0 flex-col gap-2 bg-theme-neutral-100 p-5", contentClassName)}>
         {aboutSection.title && (
           <Text color="neutral.900" textStyle="400-bold">
             {aboutSection.title}
