@@ -2,6 +2,7 @@ import { Box, Spinner } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useEffect, useMemo } from "react";
 
+import { hasUnresolvedFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
 import { EntityFullDto, SupportedEntity } from "@/connections/Entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
@@ -30,7 +31,10 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
   reportTitle
 }) => {
   const t = useT();
-  const { defaultValues, steps, isReady } = useEntityFormSetup(type, entity.uuid);
+  const { defaultValues, steps, isReady, fieldsProvider, feedbackFields, feedbackBaselineValues } = useEntityFormSetup(
+    type,
+    entity.uuid
+  );
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: type,
     entityUUID: entity.uuid,
@@ -42,16 +46,16 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
   });
   const handleStepEdit = onEditStep ?? handleEdit;
 
-  const feedbackFields = useMemo(() => entity.feedbackFields ?? [], [entity.feedbackFields]);
-
   const tabItemsStep: StepProps[] = useMemo(() => {
     return steps.map((step, index) => {
-      const items = step.validation["_nodes"];
-      const isFeedbackField = items.some((item: string) => feedbackFields.includes(item));
       const valid = defaultValues == null || step.validation.isValidSync(defaultValues);
+      const hasUnresolvedFeedback =
+        defaultValues != null &&
+        feedbackBaselineValues != null &&
+        hasUnresolvedFeedbackInStep(fieldsProvider, step.id, feedbackFields, defaultValues, feedbackBaselineValues);
       return {
         index: index + 1,
-        status: isFeedbackField ? "error" : stepStatusToBadge(valid),
+        status: hasUnresolvedFeedback ? "error" : stepStatusToBadge(valid),
         label: step.title ?? "",
         actions: (
           <Button
@@ -71,16 +75,20 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
         }
       };
     });
-  }, [t, steps, defaultValues, handleStepEdit, feedbackFields]);
+  }, [t, steps, defaultValues, handleStepEdit, fieldsProvider, feedbackFields, feedbackBaselineValues]);
 
   const allStepsCompleted = useMemo(() => {
     if (!steps.length) return false;
 
     return steps.every(step => {
       const valid = defaultValues == null || step.validation.isValidSync(defaultValues);
-      return stepStatusToBadge(valid) === "completed";
+      const hasUnresolvedFeedback =
+        defaultValues != null &&
+        feedbackBaselineValues != null &&
+        hasUnresolvedFeedbackInStep(fieldsProvider, step.id, feedbackFields, defaultValues, feedbackBaselineValues);
+      return !hasUnresolvedFeedback && stepStatusToBadge(valid) === "completed";
     });
-  }, [steps, defaultValues]);
+  }, [steps, defaultValues, fieldsProvider, feedbackFields, feedbackBaselineValues]);
 
   useEffect(() => {
     if (onStatusChange) {

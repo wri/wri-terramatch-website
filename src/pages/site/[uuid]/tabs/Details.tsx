@@ -18,9 +18,16 @@ type SharedDetailsStepProps = {
   formValues: Dictionary<unknown>;
   site: SiteFullDto;
   stepIndex: number;
+  feedbackBaselineValues?: Dictionary<unknown>;
 };
 
-const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, site, stepIndex }) => (
+const SharedDetailsStep: FC<SharedDetailsStepProps> = ({
+  step,
+  formValues,
+  site,
+  stepIndex,
+  feedbackBaselineValues
+}) => (
   <SharedDetails
     step={step}
     formValues={formValues}
@@ -31,25 +38,33 @@ const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, site,
     stepIndex={stepIndex}
     entity={site}
     feedbackFieldsOptions={site.feedbackFields}
+    feedbackBaselineValues={feedbackBaselineValues}
   />
 );
 
 const SiteDetailTab: FC<SiteDetailsTabProps> = ({ site }) => {
-  const { steps, defaultValues, fieldsProvider, isFormLoading, providerLoaded } = useEntityFormSetup(
+  const { steps, defaultValues, fieldsProvider, isReady, feedbackBaselineValues } = useEntityFormSetup(
     "sites",
     site.uuid
   );
   const { orgDetails, isLoading: orgLoading } = useProjectOrgFormData("sites", site);
 
-  if (isFormLoading || !providerLoaded || orgLoading) {
+  if (!isReady || orgLoading) {
     return null;
   }
 
   return (
-    <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
+    <PageContent className="bg-theme-neutral-100 gap-2 sm:px-32">
       <WizardFormProvider fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
         {steps.map((step, index) => (
-          <SharedDetailsStep key={step.id} step={step} formValues={defaultValues} site={site} stepIndex={index} />
+          <SharedDetailsStep
+            key={step.id}
+            step={step}
+            formValues={defaultValues}
+            site={site}
+            stepIndex={index}
+            feedbackBaselineValues={feedbackBaselineValues}
+          />
         ))}
       </WizardFormProvider>
     </PageContent>

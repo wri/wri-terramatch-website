@@ -18,6 +18,7 @@ interface PolygonToolbarProps {
   polygonSearch: string;
   polygonFilters: PolygonFilterState;
   activeFilterLabels: SelectedFilter[];
+  isAdminReview?: boolean;
   onSearchChange: (value: string) => void;
   onApplyFilters: (filters: PolygonFilterState) => void;
   onClearFilters: () => void;
@@ -29,6 +30,7 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
   polygonSearch,
   polygonFilters,
   activeFilterLabels,
+  isAdminReview = false,
   onSearchChange,
   onApplyFilters,
   onClearFilters
@@ -85,6 +87,7 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
       <PolygonFilterDrawer
         open={isFilterDrawerOpen}
         filters={polygonFilters}
+        isAdminReview={isAdminReview}
         onApplyFilters={handleApplyFilters}
         onClearFilters={handleOnClearFilters}
         onOpenChange={setIsFilterDrawerOpen}

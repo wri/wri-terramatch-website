@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useMemo } from "react";
@@ -10,7 +11,6 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject, useFullProjectReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import FrameworkProvider, { shouldHideNurseries, toFramework, useFrameworkContext } from "@/context/framework.provider";
-import { ToastType, useToastContext } from "@/context/toast.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -154,7 +154,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
               >
                 {t("Project Profile")}
               </Button>
-              <span className="text-sm text-theme-neutral-300">|</span>
+              <span className="text-theme-neutral-300 text-sm">|</span>
               <Button
                 variant="borderless"
                 size="small"
@@ -169,7 +169,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
               </Button>
               {!hideNurseries && (
                 <>
-                  <span className="text-sm text-theme-neutral-300">|</span>
+                  <span className="text-theme-neutral-300 text-sm">|</span>
                   <Button
                     variant="borderless"
                     size="small"
@@ -209,12 +209,16 @@ const ProjectReportDetailPage = () => {
   const uuid = useRouter().query.uuid as string;
   const t = useT();
   const [isLoaded, { data: projectReport, loadFailure }] = useFullProjectReport({ id: uuid });
-  const { openToast } = useToastContext();
-
   useValueChanged(isLoaded, () => {
     if (isLoaded && projectReport == null) {
       Log.error("Project report not found", { uuid, loadFailure });
-      openToast(t("Project report not found"), ToastType.ERROR);
+      showToast({
+        label: t("Project report not found"),
+        type: "error",
+        placement: "bottom",
+        duration: 5000,
+        maxWidth: "auto"
+      });
     }
   });
 

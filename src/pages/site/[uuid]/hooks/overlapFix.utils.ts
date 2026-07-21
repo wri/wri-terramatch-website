@@ -49,7 +49,7 @@ const toNonEmptyUuid = (value: string | null | undefined): value is string => va
 const getPolygonDisplayName = (polygon: SitePolygonLightDto | undefined, row: PolygonTableRow): string =>
   polygon?.name ?? row.polygonName;
 
-const getOverlapCriteria = (validation: ValidationDto | undefined): ValidationCriteriaDto | undefined =>
+export const getOverlapCriteria = (validation: ValidationDto | undefined): ValidationCriteriaDto | undefined =>
   validation?.criteriaList.find(
     criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID && criteria.valid === false
   );

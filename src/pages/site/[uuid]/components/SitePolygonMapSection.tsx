@@ -3,7 +3,10 @@ import classNames from "classnames";
 import type { ComponentProps, FC } from "react";
 
 import PolygonsMap from "@/components/elements/Map-mapbox/components/PolygonsMap";
-import type { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
+import type {
+  CrossSiteOverlapPolygon,
+  OverlapPolygonPoint
+} from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import type { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -22,9 +25,11 @@ type SitePolygonMapSectionProps = {
   skipNextSiteBboxZoomNonce?: number;
   polygonTableHighlight: ComponentProps<typeof PolygonsMap>["polygonTableHighlight"];
   overlapPolygons: OverlapPolygonPoint[];
+  crossSiteOverlapPolygons?: CrossSiteOverlapPolygon[];
   onRefetchPolygons: ComponentProps<typeof PolygonsMap>["onRefetchPolygons"];
   showUndoButton: boolean;
   onUndoDraw: () => void;
+  isDeletedAuditView?: boolean;
 };
 
 const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
@@ -37,9 +42,11 @@ const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
   skipNextSiteBboxZoomNonce = 0,
   polygonTableHighlight,
   overlapPolygons,
+  crossSiteOverlapPolygons,
   onRefetchPolygons,
   showUndoButton,
-  onUndoDraw
+  onUndoDraw,
+  isDeletedAuditView = false
 }) => {
   const t = useT();
 
@@ -65,8 +72,10 @@ const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
         skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
         polygonTableHighlight={polygonTableHighlight}
         overlapPolygons={overlapPolygons}
+        crossSiteOverlapPolygons={crossSiteOverlapPolygons}
+        isDeletedAuditView={isDeletedAuditView}
       />
-      {showUndoButton && (
+      {showUndoButton && !isDeletedAuditView && (
         <Button
           variant="secondary"
           leftIcon={<UndoIcon />}
