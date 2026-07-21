@@ -43,7 +43,10 @@ import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils
 import { isSitePolygonApprovable, toReviewAvailabilityPolygon } from "@/utils/sitePolygonReview";
 
 import { type OverlapFixPolygon } from "../components/Modals/OverlapFix";
-import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
+import {
+  buildPolygonValidationsMap,
+  withResolvedValidationStatusFromCriteria
+} from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import PolygonSubmissionAnnouncement from "../components/PolygonSubmissionAnnouncement";
 import { PolygonTableRow } from "../components/PolygonTableRow";
@@ -152,11 +155,15 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     filter: sitePolygonFilter
   });
 
-  const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
+  const polygonsQueryDataOrEmpty = polygonsQueryData ?? EMPTY_POLYGONS;
   const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
   const polygonValidations = useMemo(
     () => buildPolygonValidationsMap([...allValidations, ...supplementalValidations]),
     [allValidations, supplementalValidations]
+  );
+  const polygonsData = useMemo(
+    () => withResolvedValidationStatusFromCriteria(polygonsQueryDataOrEmpty, polygonValidations),
+    [polygonsQueryDataOrEmpty, polygonValidations]
   );
 
   const { polygonRows, columns, totalTreesPlanted, totalRestorationAreaHa } = useSitePolygonTableData({

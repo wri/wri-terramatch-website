@@ -1,4 +1,4 @@
-import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import type { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import {
   getExcludedCriteriaIds,
   hasValidationCriteria,
@@ -32,6 +32,46 @@ export const mapValidationDtoToTagState = (validation: ValidationDto | undefined
   );
 
   return hasFailingNonExcluded ? "failed" : "partially-passed";
+};
+
+export const resolveValidationStatusFromCriteria = (
+  validationStatus: string | null | undefined,
+  validation: ValidationDto | undefined
+): string | null => {
+  const fromCriteria = mapValidationDtoToTagState(validation);
+  if (fromCriteria == null) {
+    return validationStatus ?? null;
+  }
+  if (fromCriteria === "partially-passed") {
+    return "partial";
+  }
+  return fromCriteria;
+};
+
+export const withResolvedValidationStatusFromCriteria = (
+  polygons: SitePolygonLightDto[],
+  validationsByPolygonUuid: Map<string, ValidationDto>
+): SitePolygonLightDto[] => {
+  let changed = false;
+  const next = polygons.map(polygon => {
+    const polygonUuid = polygon.polygonUuid;
+    if (polygonUuid == null || polygonUuid === "") {
+      return polygon;
+    }
+
+    const resolved = resolveValidationStatusFromCriteria(
+      polygon.validationStatus,
+      validationsByPolygonUuid.get(polygonUuid)
+    );
+    if (resolved === (polygon.validationStatus ?? null)) {
+      return polygon;
+    }
+
+    changed = true;
+    return { ...polygon, validationStatus: resolved };
+  });
+
+  return changed ? next : polygons;
 };
 
 export const isValidationTagChecked = (validationTag: ValidationTagState): boolean => validationTag !== "not-started";
