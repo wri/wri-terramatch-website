@@ -1,13 +1,11 @@
 import { useT } from "@transifex/react";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import StatusBar from "@/components/elements/StatusBar/StatusBar";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { EntityFullDto } from "@/connections/Entity";
 import { FormEntity } from "@/connections/Form";
-import { useModalContext } from "@/context/modal.provider";
 
 import EntityStatusModal, { StatusProps } from "./EntityStatusModal";
 
@@ -63,7 +61,7 @@ export const getStatusProps = (
 
 const EntityStatusBar: FC<EntityStatusBarProps> = ({ entityName, entity }) => {
   const t = useT();
-  const { openModal } = useModalContext();
+  const [openStatusModal, setOpenStatusModal] = useState(false);
 
   const entityStatus = (hasUpdateRequest(entity) ? entity.updateRequestStatus : entity.status) as StatusBarStatus;
   const needMoreInformation = entityStatus === "needs-more-information";
@@ -74,20 +72,20 @@ const EntityStatusBar: FC<EntityStatusBarProps> = ({ entityName, entity }) => {
 
   const viewFeedback = useCallback(() => {
     if (statusProps == null) return;
-    openModal(
-      ModalId.STATUS,
+    setOpenStatusModal(true);
+  }, [statusProps]);
+
+  return projectedEntityStatus == null ? null : (
+    <StatusBar status={projectedEntityStatus} title={statusProps?.title ?? ""}>
       <EntityStatusModal
-        statusProps={statusProps}
+        statusProps={statusProps!}
         feedback={entity.feedback}
         needMoreInformation={needMoreInformation}
         entityName={entityName}
         entityUuid={entity.uuid}
+        open={openStatusModal}
+        onOpenChange={setOpenStatusModal}
       />
-    );
-  }, [entity.feedback, entity.uuid, entityName, needMoreInformation, openModal, statusProps]);
-
-  return projectedEntityStatus == null ? null : (
-    <StatusBar status={projectedEntityStatus} title={statusProps?.title ?? ""}>
       {hasFeedback ? (
         <Button variant="secondary" onClick={viewFeedback}>
           {t("View Feedback")}

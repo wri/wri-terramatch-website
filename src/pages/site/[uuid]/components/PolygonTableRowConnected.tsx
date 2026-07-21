@@ -9,11 +9,13 @@ import { type PolygonTableRow, PolygonRow } from "./PolygonTableRow";
 type PolygonTableRowConnectedProps = {
   row: PolygonTableRow;
   context?: TableRenderRowContext;
+  readOnly?: boolean;
 };
 
 export const PolygonTableRowConnected = memo(function PolygonTableRowConnected({
   row,
-  context
+  context,
+  readOnly = false
 }: PolygonTableRowConnectedProps) {
   const isSelected = usePolygonRowSelected(row.id);
   const isHovered = usePolygonRowHovered(row.id);
@@ -27,12 +29,12 @@ export const PolygonTableRowConnected = memo(function PolygonTableRowConnected({
       isHovered={isHovered}
       onHover={onHover}
       onSelectChange={onSelectChange}
+      readOnly={readOnly}
     />
   );
 });
 
-export const renderPolygonTableRow = (row: PolygonTableRow, context?: TableRenderRowContext) => (
-  <PolygonTableRowConnected row={row} context={context} />
-);
+export const renderPolygonTableRow = (readOnly: boolean) => (row: PolygonTableRow, context?: TableRenderRowContext) =>
+  <PolygonTableRowConnected row={row} context={context} readOnly={readOnly} />;
 
 export default PolygonTableRowConnected;

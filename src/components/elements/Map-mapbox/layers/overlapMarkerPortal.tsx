@@ -3,6 +3,7 @@ import { Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl";
 import { FC, memo, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
+import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 
 import { OverlapPolygonPoint } from "./overlapTypes";
@@ -33,10 +34,20 @@ const OverlapMarkerPortal: FC<OverlapMarkerPortalProps> = ({ map, point }) => {
     };
   }, [map, el, point.lng, point.lat]);
 
-  return createPortal(
+  const icon = (
     <Flex aria-hidden justify="center" align="center" w="1.375rem" h="1.375rem" rounded="full" bg="neutral.100">
       <InformationRequiredIcon boxSize="1.125rem" color="error.500" />
-    </Flex>,
+    </Flex>
+  );
+
+  return createPortal(
+    point.tooltip != null && point.tooltip !== "" ? (
+      <Tooltip content={point.tooltip} position="top">
+        {icon}
+      </Tooltip>
+    ) : (
+      icon
+    ),
     el
   );
 };

@@ -26,7 +26,7 @@ export const useGetExportEntityHandler = (entity: EntityName | SingularEntityNam
     try {
       await runWithDownloadToast(
         {
-          downloading: `${t(`Downloading {entityLabel}`, { entityLabel })}...`,
+          downloading: `${t(`Downloading {entityLabel}`, { entityLabel: t(entityLabel) })}...`,
           complete: downloadToastMessages.complete,
           error: downloadToastMessages.error
         },

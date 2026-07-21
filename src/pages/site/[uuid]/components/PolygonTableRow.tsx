@@ -32,6 +32,8 @@ import {
 } from "@/redesignComponents/foundations/Icons";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
+import { type SubmissionCycleOption, formatSubmissionCycleDisplay } from "./polygonFilter.constants";
+
 export type PolygonTableRow = {
   id: string;
   polygonName: string;
@@ -46,6 +48,8 @@ export type PolygonTableRow = {
   plantingDate: string;
   treesPlanted: number;
   area: number;
+  submissionCycle: string[];
+  submissionCycleSort: string;
   source: string;
 };
 
@@ -144,9 +148,19 @@ interface PolygonRowProps {
   isHovered: boolean;
   onHover: (uuid: string) => void;
   onSelectChange: (row: PolygonTableRow, checked: boolean) => void;
+  // Deleted-polygons audit view: no selection, no bulk actions, submission status is always "deleted".
+  readOnly?: boolean;
 }
 
-const PolygonRowComponent: FC<PolygonRowProps> = ({ row, context, isSelected, isHovered, onHover, onSelectChange }) => {
+const PolygonRowComponent: FC<PolygonRowProps> = ({
+  row,
+  context,
+  isSelected,
+  isHovered,
+  onHover,
+  onSelectChange,
+  readOnly = false
+}) => {
   const t = useT();
   const targetLandUseLabels = useTargetLandUseLabels();
   const treeDistributionOptions = useTreeDistributionOptions();
@@ -194,6 +208,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({ row, context, isSelected, is
           aria-label={`Select polygon ${row.polygonName}`}
           onCheckedChange={handleOnRowSelected}
           checked={isSelected}
+          disabled={readOnly}
         />
       </TableCell>
       <TableCell {...context?.getCellProps("polygonName")}>
@@ -204,7 +219,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({ row, context, isSelected, is
         </Box>
       </TableCell>
       <TableCell {...context?.getCellProps("submission")}>
-        {row.submission != null ? <MappedTag state={row.submission} /> : <Text>—</Text>}
+        {row.submission != null ? <MappedTag state={readOnly ? "deleted" : row.submission} /> : <Text>—</Text>}
       </TableCell>
       <TableCell {...context?.getCellProps("validation")}>
         {row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>}
@@ -230,8 +245,11 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({ row, context, isSelected, is
         {formatNumberLocaleString(row.treesPlanted) ?? "—"}
       </TableCell>
       <TableCell {...context?.getCellProps("area")}>{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
+      <TableCell {...context?.getCellProps("submissionCycleSort")}>
+        <Text>{formatSubmissionCycleDisplay(row.submissionCycle as SubmissionCycleOption[])}</Text>
+      </TableCell>
       <TableCell {...context?.getCellProps("source")}>
-        {row.source === "uploaded" ? t("Uploaded") : row.source}
+        <Text>{row.source === "uploaded" ? t("Uploaded") : row.source}</Text>
       </TableCell>
     </TableRow>
   );
@@ -243,7 +261,8 @@ const polygonRowPropsAreEqual = (prev: PolygonRowProps, next: PolygonRowProps) =
   prev.isHovered === next.isHovered &&
   prev.context === next.context &&
   prev.onHover === next.onHover &&
-  prev.onSelectChange === next.onSelectChange;
+  prev.onSelectChange === next.onSelectChange &&
+  prev.readOnly === next.readOnly;
 
 export const PolygonRow = memo(PolygonRowComponent, polygonRowPropsAreEqual);
 

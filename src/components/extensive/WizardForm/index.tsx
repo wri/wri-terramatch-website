@@ -2,7 +2,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Dictionary } from "lodash";
+import { cloneDeep, Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FieldErrors, useForm, UseFormProps, UseFormReturn } from "react-hook-form";
@@ -80,6 +80,7 @@ export interface WizardFormProps {
   framework: Framework;
 
   defaultValues?: any;
+  feedbackBaselineValues?: Dictionary<unknown>;
   onStepChange?: (values: any) => void;
   onChange?: (values: Dictionary<any>, isCloseAndSave?: boolean) => void;
   onSubmit?: (values: any) => void;
@@ -162,9 +163,12 @@ function WizardForm(props: WizardFormProps) {
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
 
-  const initialFormValues = useRef(props.defaultValues);
-  if (initialFormValues.current == null && props.defaultValues != null) {
-    initialFormValues.current = props.defaultValues;
+  const initialFormValues = useRef<Record<string, unknown> | null>(null);
+  if (initialFormValues.current == null) {
+    const baseline = props.feedbackBaselineValues ?? props.defaultValues;
+    if (baseline != null) {
+      initialFormValues.current = cloneDeep(baseline);
+    }
   }
 
   const formValues = formHook.watch();
@@ -180,7 +184,7 @@ function WizardForm(props: WizardFormProps) {
         stepId,
         entity?.feedbackFields,
         formValues,
-        initialFormValues.current
+        initialFormValues.current!
       ),
     [entity?.feedbackFields, formValues, props.fieldsProvider, showValidationErrors]
   );
@@ -192,7 +196,7 @@ function WizardForm(props: WizardFormProps) {
     fieldsProvider: props.fieldsProvider,
     entityId: models[0]?.uuid ?? entity?.uuid,
     feedbackFields: entity?.feedbackFields,
-    initialValues: initialFormValues.current,
+    initialValues: initialFormValues.current!,
     summaryTitle: props.summaryOptions?.title,
     stepHasIssues
   });
@@ -321,7 +325,7 @@ function WizardForm(props: WizardFormProps) {
         })}
       >
         {index === 0 && title === "Site Overview" && (
-          <div className="w-full bg-white pt-8 pl-20">
+          <div className="w-full bg-white pt-8 pl-14">
             <InlineMessage
               size="full-width"
               label={t("Note")}
@@ -436,7 +440,7 @@ function WizardForm(props: WizardFormProps) {
             onSaveAndExit={onClickSaveAndExit}
             feedback={entity?.feedback}
             feedbackFields={entity?.feedbackFields}
-            initialValues={initialFormValues.current}
+            initialValues={initialFormValues.current!}
             reportSummaryAnalytics={
               reportAnalytics.isTrackingEnabled
                 ? {

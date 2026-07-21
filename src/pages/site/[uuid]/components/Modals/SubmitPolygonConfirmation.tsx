@@ -19,7 +19,6 @@ export interface SubmitPolygonConfirmationProps {
   polygons: PolygonTableRow[];
   onSubmit?: (comment: string) => void | Promise<void>;
   modal?: boolean;
-  trapFocus?: boolean;
   restoreFocus?: boolean;
 }
 
@@ -29,7 +28,6 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({
   polygons,
   onSubmit,
   modal = true,
-  trapFocus = true,
   restoreFocus = true
 }) => {
   const t = useT();
@@ -67,16 +65,16 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({
   return (
     <Modal
       modal={modal}
-      trapFocus={trapFocus}
       restoreFocus={restoreFocus}
       open={open}
       onClose={handleClose}
       size="medium"
+      contentPadding={false}
       header={
         <b className="text-theme-neutral-800">{polygons.length === 1 ? t("Submit Polygon?") : t("Submit Polygons?")}</b>
       }
       content={
-        <Flex className="-m-2.5 flex-col gap-4">
+        <Flex className="flex-col gap-4">
           {polygons.length === 1 ? (
             <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={4}>
               <Text textStyle="400" color="neutral.900">
