@@ -53,7 +53,7 @@ const EntityStatusModal: FC<EntityStatusModalProps> = ({
     <ModalConfirmation
       open={open}
       onOpenChange={open => !open && handleClose()}
-      title={statusProps.title}
+      title={statusProps?.title ?? ""}
       content={
         <Flex direction="column" align="center" gap={3}>
           <InformationRequiredIcon color="warning.500" boxSize={"2rem"} />
