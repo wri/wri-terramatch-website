@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
@@ -37,9 +38,13 @@ const OrganizationPage = () => {
   });
 
   const coverUrl = useMemo(() => coverMedia[0]?.url ?? null, [coverMedia]);
+  const pageTitle = organisation?.name?.trim() ?? t("My Organization");
 
   return (
     <LoadingContainer loading={!loaded || organizationLoading}>
+      <Head>
+        <title>{pageTitle}</title>
+      </Head>
       <HeroBanner bgImage={coverUrl ?? "/images/bg-hero-banner-2.webp"} className="h-[200px]" />
       <OrganizationHeader organization={organisation ?? undefined} />
       <SecondaryTabs

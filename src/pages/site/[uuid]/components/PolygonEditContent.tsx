@@ -1168,6 +1168,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           onOpenChange={handleAccordionOpenChange("versions")}
         >
           <Table<PolygonVersionRow>
+            paginationVariant="compact"
             columns={[
               {
                 key: "name",

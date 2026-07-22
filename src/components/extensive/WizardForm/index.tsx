@@ -325,7 +325,7 @@ function WizardForm(props: WizardFormProps) {
         })}
       >
         {index === 0 && title === "Site Overview" && (
-          <div className="w-full bg-white pt-8 pl-20">
+          <div className="w-full bg-white pt-8 pl-14">
             <InlineMessage
               size="full-width"
               label={t("Note")}

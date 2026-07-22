@@ -610,8 +610,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setPolygonGeometryEdit,
     t,
     showLoader,
-    hideLoader,
-    openNotification
+    hideLoader
   });
 
   const lastAutoEditPolygonRef = useRef<string | null>(null);
