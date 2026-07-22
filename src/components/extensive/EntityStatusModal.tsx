@@ -13,7 +13,7 @@ import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons"
 export type StatusProps = { title: string; icon: IconNames; className: string };
 
 type EntityStatusModalProps = {
-  statusProps: StatusProps;
+  statusProps?: StatusProps;
   feedback?: string | null;
   needMoreInformation?: boolean;
   showProvideFeedback?: boolean;
