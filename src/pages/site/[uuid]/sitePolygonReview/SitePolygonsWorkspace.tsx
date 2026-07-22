@@ -171,13 +171,18 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     polygonValidations,
     t
   });
-  const { polygonsWithOverlapCount, overlapPolygons, overlapValidations, fetchOverlapValidations } =
-    useSitePolygonOverlap({
-      siteUuid: site.uuid,
-      polygonsData,
-      t
-    });
-  const overlapPolygonValidations = useMemo(() => buildPolygonValidationsMap(overlapValidations), [overlapValidations]);
+  const {
+    polygonsWithOverlapCount,
+    overlapPolygons,
+    overlapValidations,
+    overlapValidationsByPolygonUuid,
+    fetchOverlapValidations
+  } = useSitePolygonOverlap({
+    siteUuid: site.uuid,
+    polygonsData,
+    preferredValidationsByPolygonUuid: polygonValidations,
+    t
+  });
 
   const { selectedRows, selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } =
     useTableSelection<PolygonTableRow>(true, polygonRows);
@@ -209,8 +214,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     [polygonsData]
   );
   const editDrawerPolygonValidation = useMemo(
-    () => overlapValidations.find(validation => validation.polygonUuid === editDrawerPolygonUuid),
-    [overlapValidations, editDrawerPolygonUuid]
+    () => (editDrawerPolygonUuid != null ? overlapValidationsByPolygonUuid.get(editDrawerPolygonUuid) : undefined),
+    [overlapValidationsByPolygonUuid, editDrawerPolygonUuid]
   );
   const { crossSiteOverlapPolygons } = useCrossSiteOverlapGeometries({
     polygonUuid: editDrawerPolygonUuid,
@@ -220,11 +225,12 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   });
 
   const selectedOverlapFixSummary = useMemo(
-    () => getSelectedOverlapFixSummary(selectedRows, overlapPolygonValidations, polygonsData),
-    [selectedRows, overlapPolygonValidations, polygonsData]
+    () => getSelectedOverlapFixSummary(selectedRows, overlapValidationsByPolygonUuid, polygonsData),
+    [selectedRows, overlapValidationsByPolygonUuid, polygonsData]
   );
   const hasSelectedOverlapFailure = hasOverlapFailureInSelection(selectedOverlapFixSummary);
-  const hasFixableSelectedOverlap = canAutoFixOverlapSelection(selectedOverlapFixSummary);
+  const hasFixableSelectedOverlap =
+    canAutoFixOverlapSelection(selectedOverlapFixSummary) && pendingValidationPolygonUuids.length === 0;
 
   const openPolygonEditDrawerByPolygonId = useCallback(
     (polygonId: string) => {

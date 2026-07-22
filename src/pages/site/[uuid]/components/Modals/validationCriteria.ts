@@ -11,8 +11,29 @@ import type { ICriteriaCheckItem } from "@/types/validation";
 
 export type CriteriaSeverity = "success" | "warning" | "error";
 
+const hasPolygonUuid = (validation: ValidationDto): validation is ValidationDto & { polygonUuid: string } =>
+  validation.polygonUuid != null && validation.polygonUuid !== "";
+
 export const buildPolygonValidationsMap = (validations: ValidationDto[]): Map<string, ValidationDto> =>
-  new Map(validations.map(v => [v.polygonUuid, v]));
+  new Map(validations.filter(hasPolygonUuid).map(validation => [validation.polygonUuid, validation]));
+
+export const mergeValidationsByPolygonUuid = (
+  ...sources: Array<Iterable<ValidationDto> | Map<string, ValidationDto>>
+): Map<string, ValidationDto> => {
+  const merged = new Map<string, ValidationDto>();
+
+  for (const source of sources) {
+    const validations = source instanceof Map ? source.values() : source;
+    for (const validation of validations) {
+      if (!hasPolygonUuid(validation)) {
+        continue;
+      }
+      merged.set(validation.polygonUuid, validation);
+    }
+  }
+
+  return merged;
+};
 
 export const mapValidationDtoToTagState = (validation: ValidationDto | undefined): ValidationTagState | null => {
   if (!hasValidationCriteria(validation)) {
