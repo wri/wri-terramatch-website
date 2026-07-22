@@ -315,7 +315,9 @@ export const resolveActivePolygonFilterTypes = ({
   plantStartTo,
   practice,
   targetSys,
-  hasOverlap
+  submissionCycle,
+  hasOverlap,
+  showDeleted
 }: {
   polygonStatus: string[];
   validationStatus: string[];
@@ -323,14 +325,19 @@ export const resolveActivePolygonFilterTypes = ({
   plantStartTo: string;
   practice: string[];
   targetSys: string[];
+  submissionCycle: string[];
   hasOverlap: boolean;
+  showDeleted: boolean;
 }): string[] => {
+  if (showDeleted) return ["deleted"];
+
   const filterTypes: string[] = [];
   if (polygonStatus.length > 0) filterTypes.push("status");
   if (validationStatus.length > 0) filterTypes.push("validation_result");
   if (plantStartFrom !== "" || plantStartTo !== "") filterTypes.push("plant_start_date");
   if (practice.length > 0) filterTypes.push("practice");
   if (targetSys.length > 0) filterTypes.push("target_land_use");
+  if (submissionCycle.length > 0) filterTypes.push("submission_cycle");
   if (hasOverlap) filterTypes.push("overlap");
   return filterTypes;
 };

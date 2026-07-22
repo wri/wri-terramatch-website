@@ -1,4 +1,4 @@
-import { Box, Flex, Text, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, useBreakpointValue } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import router from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -6,29 +6,25 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import About from "@/components/extensive/PageElements/About/About";
-import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
+import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
-import { useAboutSitesContent } from "@/hooks/translation/useAboutSitesContent";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
-import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { AreaHectaresIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "../constants/sitePolygonMapSizing";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
+
 interface SiteOverviewTabProps {
   site: SiteFullDto;
   refetch?: () => void;
@@ -37,8 +33,7 @@ interface SiteOverviewTabProps {
 const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
   const contextMapArea = useMapAreaContext();
-  const { openModal } = useModalContext();
-
+  const [openStatusModal, setOpenStatusModal] = useState(false);
   const { setSiteData, resetSiteMapInteractionState } = contextMapArea;
 
   useEffect(() => {
@@ -76,11 +71,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     });
   };
 
-  const aboutSitesContent = useAboutSitesContent();
-  const aboutSitesContentItem = useMemo(() => {
-    return aboutSitesContent.find(content => content.frameworks.includes(site.frameworkKey!));
-  }, [aboutSitesContent, site.frameworkKey]);
-
   const needMoreInformation =
     site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
   const awaitingApproval = site.updateRequestStatus === AWAITING_APPROVAL || site.status === AWAITING_APPROVAL;
@@ -88,23 +78,23 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
 
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps!}
-          feedback={site.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="sites"
-          entityUuid={site.uuid}
-        />
-      );
+      setOpenStatusModal(true);
     } else {
       handleEdit();
     }
-  }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit, awaitingApproval]);
+  }, [needMoreInformation, handleEdit, awaitingApproval]);
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
+      <EntityStatusModal
+        statusProps={statusProps!}
+        feedback={site.feedback}
+        needMoreInformation={needMoreInformation}
+        entityName="sites"
+        entityUuid={site.uuid}
+        open={openStatusModal}
+        onOpenChange={setOpenStatusModal}
+      />
       <PageContent>
         {EditModals}
         <Flex gap={7} className="flex-col sm:flex-row">
@@ -184,6 +174,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 className="h-full min-h-0 rounded"
                 disabledPolygonPanel={true}
                 hideFullscreenControl={true}
+                overviewPolygonPopup={true}
               />
               {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
                 <MapPlaceholder
@@ -207,23 +198,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               )}
             </Box>
           </PageItem>
-          <PageItem title={t(aboutSitesContentItem?.title!)}>
-            <About
-              description={
-                <Flex direction="column" gap={5}>
-                  <Text color="neutral.900" textStyle="300">
-                    <strong>{t("Sites")} </strong>
-                    {aboutSitesContentItem?.paragraph1}
-                  </Text>
-                  <ContactSupport
-                    message={t(aboutSitesContentItem?.paragraph2!)}
-                    subject={t("Support Request for Site Profile")}
-                  />
-                </Flex>
-              }
-              links={aboutSitesContentItem?.links ?? []}
-            />
-          </PageItem>
+          <AboutPageItem type="site" />
         </Flex>
       </PageContent>
     </SitePolygonDataProvider>

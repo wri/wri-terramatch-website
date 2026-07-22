@@ -3,9 +3,19 @@ import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import { EntityName } from "@/types/common";
 import { ReportEventName, trackReportEvent } from "@/utils/ga4";
 
+import { PageContext } from "./pageContext";
+
 export type ReportEntityType = "project-report" | "site-report" | "nursery-report" | "financial-report";
 export type ReportUserRole = "admin" | "project-developer";
 
+export type { PageContext };
+export {
+  ACCORDION_CONTEXT_REPORT_DETAILS,
+  ACCORDION_CONTEXT_REPORTING_PERIOD_GROUP,
+  PAGE_CONTEXT_REPORT_OVERVIEW,
+  PAGE_CONTEXT_REPORTS_INDEX,
+  REPORT_OPENED_ENTRY_POINT_INDEX_ROW_ACTION
+} from "./pageContext";
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const REPORT_MODEL_TYPES: Partial<Record<FormModelType, ReportEntityType>> = {
@@ -81,8 +91,12 @@ export const trackReportAnalyticsEvent = (
   const { entityType, entityId, userRole, ...rest } = params;
   if (entityId == null || entityId === "") return;
 
+  const optionalParams = Object.fromEntries(
+    Object.entries(rest).filter(([, value]) => value != null && value !== "")
+  ) as Record<string, string | number | boolean>;
+
   trackReportEvent(eventName, {
     ...getReportAnalyticsContext({ entityType, entityId, userRole }),
-    ...rest
+    ...optionalParams
   });
 };

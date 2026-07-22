@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
@@ -7,9 +7,7 @@ import OverviewMapArea from "@/components/elements/Map-mapbox/components/Overvie
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import About from "@/components/extensive/PageElements/About/About";
-import ContactSupport from "@/components/extensive/PageElements/ContactSupport/ContactSupport";
+import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -17,21 +15,17 @@ import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import type { ButtonGroupButtonProps } from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
 import { ChevronRightIcon, DownloadIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
-import { useMrvOnboardingContent } from "./constants/mrvOnboardingContent";
 import EntitySetUpSection from "./EntitySetUpSection";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 import LatestImagesSectionTab from "./LatestImagesSection";
@@ -48,8 +42,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
-  const mrvOnboardingContent = useMrvOnboardingContent();
-  const { openModal } = useModalContext();
+  const [openStatusModal, setOpenStatusModal] = useState(false);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
@@ -87,20 +80,11 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps!}
-          feedback={project.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="projects"
-          entityUuid={project.uuid}
-        />
-      );
+      setOpenStatusModal(true);
     } else {
       handleEdit();
     }
-  }, [openModal, project.feedback, project.uuid, handleEdit, needMoreInformation, statusProps, awaitingApproval]);
+  }, [handleEdit, needMoreInformation, awaitingApproval]);
 
   const goToTab = useCallback(
     (tab: string) => {
@@ -110,10 +94,6 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     },
     [router]
   );
-
-  const mrvOnboardingContentItem = useMemo(() => {
-    return mrvOnboardingContent.find(content => content.frameworks.includes(project.frameworkKey!));
-  }, [project.frameworkKey, mrvOnboardingContent]);
 
   const handleInviteClick = useCallback(() => {
     setShowInviteModal(true);
@@ -198,6 +178,15 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   return (
     <PageContent>
       {EditModals}
+      <EntityStatusModal
+        statusProps={statusProps!}
+        feedback={project.feedback}
+        needMoreInformation={needMoreInformation}
+        entityName="projects"
+        entityUuid={project.uuid}
+        open={openStatusModal}
+        onOpenChange={setOpenStatusModal}
+      />
       <InviteMonitoringPartnerModal
         projectUUID={project.uuid}
         open={showInviteModal}
@@ -326,51 +315,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         >
           <LatestImagesSectionTab entityUuid={project.uuid} entityName="projects" />
         </PageItem>
-        <PageItem title={t("Project Onboarding")}>
-          <About
-            title={t("Monitoring, Reporting, and Verification (MRV)")}
-            description={
-              <Flex direction="column" gap={5}>
-                <Box as="ul" listStyleType="disc" marginInlineStart={3} paddingLeft={4}>
-                  <Box as="li">
-                    <Text color="neutral.900" textStyle="300">
-                      <strong>{t("Monitoring")}:</strong> {t(mrvOnboardingContentItem?.content.monitoring)}
-                    </Text>
-                  </Box>
-                  <Box as="li">
-                    <Text color="neutral.900" textStyle="300">
-                      <strong>{t("Reporting")}:</strong> {t(mrvOnboardingContentItem?.content.reporting)}
-                    </Text>
-                  </Box>
-                  <Box as="li">
-                    <Text color="neutral.900" textStyle="300">
-                      <strong>{t("Verification")}:</strong> {t(mrvOnboardingContentItem?.content.verification)}
-                    </Text>
-                  </Box>
-                </Box>
-                <Flex alignItems="center" flexWrap="wrap">
-                  <Text color="neutral.900" textStyle="300">
-                    {t(mrvOnboardingContentItem?.content.mrvLinkPrefix)}
-                  </Text>
-                  <Button
-                    variant="borderless"
-                    size="small"
-                    className="mobile:max-w-full mobile:truncate"
-                    rightIcon={<ChevronRightIcon />}
-                    onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
-                  >
-                    {t(mrvOnboardingContentItem?.content.mrvLinkText)}
-                  </Button>
-                </Flex>
-                <ContactSupport
-                  message={t("If you have challenges or need assistance, please reach out to your project manager or")}
-                  subject={t("Support Request for Project Profile")}
-                />
-              </Flex>
-            }
-            links={mrvOnboardingContentItem?.content.helpfulLinks ?? []}
-          />
-        </PageItem>
+        <AboutPageItem type="project" />
       </Flex>
     </PageContent>
   );

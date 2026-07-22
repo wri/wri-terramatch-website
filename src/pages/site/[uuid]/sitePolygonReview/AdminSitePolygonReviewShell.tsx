@@ -84,7 +84,9 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
           }
         }}
       />
-      <div className="flex flex-1">{suffixContent ?? tabItems.find(item => item.key === activeTab)?.body}</div>
+      <div className="flex w-full min-w-0 flex-1">
+        {suffixContent ?? tabItems.find(item => item.key === activeTab)?.body}
+      </div>
     </Layout>
   );
 };

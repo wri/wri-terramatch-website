@@ -41,14 +41,14 @@ type PolygonPopupChampionsProps = {
   setShouldRefetchPolygonData?: PopupComponentProps["setShouldRefetchPolygonData"];
   sitePolygon?: SitePolygonLightDto;
   tooltipType?: TooltipType;
-  siteReportPolygonPopup?: boolean;
+  overviewPolygonPopup?: boolean;
 };
 
 export function PolygonPopupChampions({
   popup,
   sitePolygon,
   tooltipType,
-  siteReportPolygonPopup = false
+  overviewPolygonPopup = false
 }: PolygonPopupChampionsProps) {
   const t = useT();
   const isAdminReview = isSitePolygonAdminReviewMode();
@@ -62,7 +62,7 @@ export function PolygonPopupChampions({
   const [, { data: auditStatusesData }] = useAuditStatuses({
     entity: "sitePolygons",
     uuid: selectedSitePolygonUuid,
-    enabled: hasValidSitePolygonUuid && !siteReportPolygonPopup
+    enabled: hasValidSitePolygonUuid && !overviewPolygonPopup
   });
 
   const commentsCount = useMemo(() => {
@@ -174,7 +174,7 @@ export function PolygonPopupChampions({
             areaHectaresDisplay={metrics.areaHectaresDisplay}
             commentsDisplay={metrics.commentsDisplay}
             validationStatus={metrics.validationStatus}
-            siteReportPolygonPopup={siteReportPolygonPopup}
+            overviewPolygonPopup={overviewPolygonPopup}
             restorationPractice={metrics.restorationPractice}
             targetLandUse={metrics.targetLandUse}
           />

@@ -22,8 +22,11 @@ import { createBlankVersion } from "@/connections/SitePolygons";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import UploadError from "@/pages/site/[uuid]/components/Modals/UploadError";
+import { usePolygonUploadErrorModal } from "@/pages/site/[uuid]/hooks/usePolygonUploadErrorModal";
 import ApiSlice from "@/store/apiSlice";
 import { FileType, UploadedFile } from "@/types/common";
+import { extractErrorMessage } from "@/utils/errors";
 
 const VersionHistory = ({
   selectedPolygon,
@@ -63,6 +66,8 @@ const VersionHistory = ({
   const ctx = useShowContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
+  const { openUploadErrorModal, uploadErrorMessage, onUploadError, onUploadErrorModalOpenChange } =
+    usePolygonUploadErrorModal();
 
   const primaryUuid = useMemo(
     () => selectPolygonVersion?.primaryUuid ?? selectedPolygon.primaryUuid,
@@ -119,21 +124,6 @@ const VersionHistory = ({
     ]
   );
 
-  const handleError = useCallback((error: unknown, defaultMessage: string) => {
-    if (error != null && typeof error === "object" && "message" in error) {
-      try {
-        const parsedMessage = JSON.parse(error.message as string);
-        if (parsedMessage != null && typeof parsedMessage === "object" && "message" in parsedMessage) {
-          return parsedMessage.message as string;
-        }
-      } catch {
-        return error.message as string;
-      }
-      return error.message as string;
-    }
-    return defaultMessage;
-  }, []);
-
   useEffect(() => {
     if (files && files.length > 0 && saveFlags) {
       uploadFiles();
@@ -189,9 +179,7 @@ const VersionHistory = ({
       openNotification("success", t("Success!"), t("File uploaded successfully"));
       closeModal(ModalId.ADD_POLYGON);
     } catch (error) {
-      const errorMessage = handleError(error, t("An unknown error occurred"));
-      // TODO: review errorMessage possible values and translate them
-      openNotification("error", t(errorMessage), t("Error uploading file"));
+      onUploadError(extractErrorMessage(error));
       setIsLoadingDropdown(false);
     }
   };
@@ -349,6 +337,11 @@ const VersionHistory = ({
 
   return (
     <div className="flex flex-col gap-4">
+      <UploadError
+        open={openUploadErrorModal}
+        backendErrorMessage={uploadErrorMessage}
+        onOpenChange={onUploadErrorModalOpenChange}
+      />
       {isLoadingVersions || isLoadingDropdown ? (
         <div className="flex items-center justify-center p-4">
           <Text variant="text-14-light">{t("Loading versions...")}</Text>

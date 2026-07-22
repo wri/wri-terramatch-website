@@ -31,6 +31,7 @@ import { EntityName } from "@/types/common";
 import {
   getAnalyticsUserRole,
   isReportReopenedStatus,
+  PAGE_CONTEXT_REPORT_OVERVIEW,
   resolveReportEntityTypeFromEntityName,
   trackReportAnalyticsEvent
 } from "@/utils/analytics/reportAnalytics";
@@ -63,8 +64,10 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     feedbackFields,
     fieldsProvider,
     defaultValues,
+    feedbackBaselineValues,
     isFormLoading: isLoading,
     providerLoaded,
+    isReady,
     loadFailure,
     formLoadFailure
   } = useEntityFormSetup(entityName, entityUUID);
@@ -173,7 +176,8 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     const analyticsContext = {
       entityType: reportEntityType,
       entityId: entityUUID,
-      userRole: getAnalyticsUserRole()
+      userRole: getAnalyticsUserRole(),
+      page_context: PAGE_CONTEXT_REPORT_OVERVIEW
     };
 
     trackReportAnalyticsEvent("report_opened", analyticsContext);
@@ -194,9 +198,9 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   if (hasLoadFailure) return null;
 
   return (
-    <LoadingContainer loading={isLoading || !providerLoaded || orgLoading || !entityLoaded}>
+    <LoadingContainer loading={isLoading || !isReady || orgLoading || !entityLoaded}>
       <CurrencyProvider>
-        {providerLoaded && (
+        {isReady && feedbackBaselineValues != null && (
           <WizardForm
             framework={framework}
             models={model}
@@ -210,6 +214,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
             onSubmit={submitEntity}
             submitButtonDisable={isSubmitting}
             defaultValues={defaultValues}
+            feedbackBaselineValues={feedbackBaselineValues}
             title={formTitle}
             subtitle={formSubtitle}
             summaryOptions={{

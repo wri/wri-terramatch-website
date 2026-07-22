@@ -1,4 +1,8 @@
-import { getPolygonUploadErrorCopy, resolvePolygonUploadErrorVariant } from "./polygonUploadErrors";
+import {
+  getPolygonUploadErrorCopy,
+  resolvePolygonUploadErrorVariant,
+  resolvePolygonUploadErrorVariantFromUnknown
+} from "./polygonUploadErrors";
 
 const identityTranslate = (message: string) => message;
 
@@ -26,7 +30,9 @@ describe("polygonUploadErrors", () => {
     it("returns ticket copy for shapefile missing errors", () => {
       const copy = getPolygonUploadErrorCopy("shapefile_not_found", identityTranslate);
 
-      expect(copy.summary).toContain(".shp file");
+      expect(copy.summary).toBe("This ZIP file does not contain a valid .shp file.");
+      expect(copy.emphasis).toBe("Please check your file and try again.");
+      expect(copy.instructions).toBe("Upload a ZIP file that includes:");
       expect(copy.bullets).toEqual(["A .shp file", "Its associated .dbf and .prj files"]);
     });
 
@@ -38,10 +44,29 @@ describe("polygonUploadErrors", () => {
       expect(copy.bullets).toEqual(["Points only", "Polygons or multipolygons only"]);
     });
 
+    it("uses instructions line before bullets for projection errors", () => {
+      const copy = getPolygonUploadErrorCopy("projection", identityTranslate);
+
+      expect(copy.summary).toBe("This file uses an unsupported coordinate projection.");
+      expect(copy.instructions).toBe("Please re-export your file using:");
+      expect(copy.bullets).toEqual(["WGS-84 projection (EPSG:4326)"]);
+    });
+
     it("returns fallback copy for unexpected errors", () => {
       const copy = getPolygonUploadErrorCopy("fallback", identityTranslate);
 
       expect(copy.summary).toBe("Something went wrong with your upload. Please check your file and try again.");
+    });
+  });
+
+  describe("resolvePolygonUploadErrorVariantFromUnknown", () => {
+    it("maps API error payloads with array messages", () => {
+      expect(
+        resolvePolygonUploadErrorVariantFromUnknown({
+          statusCode: 400,
+          message: ["File contains 3D coordinates"]
+        })
+      ).toBe("coordinate_system");
     });
   });
 });

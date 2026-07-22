@@ -12,6 +12,10 @@ export const SUBMITTED = "submitted";
 export const FORM_POLYGONS = "form-polygons";
 export const DELETED_POLYGONS = "deleted-polygons";
 export const AWAITING_APPROVAL = "awaiting-approval";
+// Synthetic status bucket used only by the read-only deleted-polygons audit view (never
+// persisted): every polygon returned by that view is bucketed here regardless of its real
+// (pre-deletion) status, so the map can render them all with one dedicated ghost style.
+export const DELETED_AUDIT_POLYGONS = "deleted-audit";
 export const STATUSES = [
   {
     label: "Draft",

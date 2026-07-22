@@ -1,5 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
@@ -13,7 +14,6 @@ import { useFullSite, useFullSiteReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import FrameworkProvider, { Framework, toFramework, useFrameworkContext } from "@/context/framework.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
-import { ToastType, useToastContext } from "@/context/toast.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -27,6 +27,7 @@ import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
+import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 
 type TabItem = {
@@ -118,6 +119,11 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
         key: "goals",
         title: t("Indicators & Insights"),
         renderBody: () => <GoalsAndProgressTab siteReport={siteReport} site={site} workdaysTotal={workdaysTotal} />
+      },
+      {
+        key: "audit-log",
+        title: t("Audit Log"),
+        renderBody: () => <AuditLog siteReport={siteReport} />
       }
     ],
     [siteReport, site, workdaysTotal, t]
@@ -229,11 +235,16 @@ const SiteReportDetailPage = () => {
   const t = useT();
 
   const [reportLoaded, { data: siteReport, loadFailure }] = useFullSiteReport({ id: siteReportUUID });
-  const { openToast } = useToastContext();
   useValueChanged(reportLoaded, () => {
     if (reportLoaded && siteReport == null) {
       Log.error("Site report not found", { siteReportUUID, loadFailure });
-      openToast(t("Site report not found"), ToastType.ERROR);
+      showToast({
+        label: t("Site report not found"),
+        type: "error",
+        placement: "bottom",
+        duration: 5000,
+        maxWidth: "auto"
+      });
     }
   });
 

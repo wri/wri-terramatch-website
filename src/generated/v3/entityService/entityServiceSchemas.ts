@@ -301,6 +301,40 @@ export type ImpactStoryBulkDeleteBodyDto = {
   data: ImpactStoryDeleteData[];
 };
 
+export type LinkDto = {
+  id: string;
+  title: string;
+  url: string;
+};
+
+export type AboutSectionDto = {
+  id: string;
+  type: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
+  frameworks:
+    | (
+        | "terrafund"
+        | "terrafund-landscapes"
+        | "enterprises"
+        | "epa-ghana-pilot"
+        | "terrafund-3"
+        | "ppc"
+        | "hbf"
+        | "fundo-flora"
+        | "fundo-flora-1"
+        | "wcb"
+      )[]
+    | null;
+  header: string;
+  title: string | null;
+  /**
+   * The content of the about section in semantic HTML to be parsed into design system components on the client.
+   */
+  description: string;
+  contactSupportMessage: string;
+  contactSupportSubject: string;
+  links: LinkDto[];
+};
+
 export type TaskLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -902,7 +936,7 @@ export type DisturbanceDto = {
   intensity: string | null;
   extent: string | null;
   peopleAffected: number | null;
-  monetaryDamage: number | null;
+  financialLoss: number | null;
   description: string | null;
   actionDescription: string | null;
   propertyAffected: string | null;
@@ -1564,6 +1598,26 @@ export type ProjectFullDto = {
   proofOfLandTenureMou: MediaDto[];
   consortiumPartnershipAgreements: MediaDto[];
   detailedProjectBudget: MediaDto;
+  /**
+   * QA status for polygon dataset stage 1
+   */
+  projectQaStatus1: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  /**
+   * QA status for polygon dataset stage 2
+   */
+  projectQaStatus2: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  /**
+   * QA status for polygon dataset stage 3
+   */
+  projectQaStatus3: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  /**
+   * QA status for polygon dataset stage 4
+   */
+  projectQaStatus4: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  /**
+   * QA status for polygon dataset stage 5
+   */
+  projectQaStatus5: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
 };
 
 export type SiteFullDto = {
@@ -2332,6 +2386,7 @@ export type DisturbanceReportFullDto = {
   answers: string | null;
   description: string | null;
   actionDescription: string | null;
+  currency: string | null;
   media: MediaDto[];
 };
 
@@ -2496,6 +2551,26 @@ export type ProjectUpdateAttributes = {
    * Whether the project is ready for baseline analysis
    */
   readyForBaseline?: boolean;
+  /**
+   * QA status for polygon dataset stage 1
+   */
+  projectQaStatus1?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * QA status for polygon dataset stage 2
+   */
+  projectQaStatus2?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * QA status for polygon dataset stage 3
+   */
+  projectQaStatus3?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * QA status for polygon dataset stage 4
+   */
+  projectQaStatus4?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * QA status for polygon dataset stage 5
+   */
+  projectQaStatus5?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
   /**
    * Optional comment recorded on polygon handoff audit entries when updating submission/baseline
    */
@@ -3395,10 +3470,6 @@ export type FormFullDto = {
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
-  /**
-   * @format date-time
-   */
-  deadlineAt?: string | null;
   submissionMessage: string;
   stageId?: string | null;
   fundingProgrammeId: string | null;
@@ -3529,10 +3600,6 @@ export type StoreFormAttributes = {
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
-  /**
-   * @format date-time
-   */
-  deadlineAt?: string | null;
   submissionMessage: string;
   stageId?: string | null;
   sections?: StoreFormSectionAttributes[];
@@ -3619,6 +3686,11 @@ export type ApplicationHistoryEntryDto = {
     | "polygon-data-submission"
     | "ready-for-baseline"
     | "polygon-validation"
+    | "project-qa-status-1"
+    | "project-qa-status-2"
+    | "project-qa-status-3"
+    | "project-qa-status-4"
+    | "project-qa-status-5"
     | null;
   status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
   /**

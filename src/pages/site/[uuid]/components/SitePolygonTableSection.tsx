@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import type { FC, RefObject } from "react";
+import { useMemo } from "react";
 
 import LoadingTable from "@/redesignComponents/dataDisplay/Table/components/LoadingTable";
 import Table, { type TableColumn } from "@/redesignComponents/dataDisplay/Table/Table";
@@ -11,6 +12,7 @@ import type { getPolygonsTableStyles } from "./polygonTableStyles";
 
 type SitePolygonTableSectionProps = {
   tableContainerRef: RefObject<HTMLDivElement>;
+  tableScrollContainerRef?: RefObject<HTMLDivElement>;
   tableStyles: ReturnType<typeof getPolygonsTableStyles>;
   isSitePolygonsLoading: boolean;
   polygonRows: PolygonTableRow[];
@@ -20,10 +22,12 @@ type SitePolygonTableSectionProps = {
   onAllItemsSelected: (checked: boolean, visibleRows: PolygonTableRow[]) => void;
   onClearHover: () => void;
   onRowSelected: (row: PolygonTableRow, selected: boolean) => void;
+  readOnly?: boolean;
 };
 
 const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
   tableContainerRef,
+  tableScrollContainerRef,
   tableStyles,
   isSitePolygonsLoading,
   polygonRows,
@@ -32,29 +36,37 @@ const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
   loadingLabel,
   onAllItemsSelected,
   onClearHover,
-  onRowSelected
-}) => (
-  <PolygonTableInteractionActionsProvider onSelectChange={onRowSelected}>
-    <Box onMouseLeave={onClearHover} position="relative">
-      <Table<PolygonTableRow>
-        css={tableStyles}
-        containerRef={tableContainerRef}
-        data={isSitePolygonsLoading ? [] : polygonRows}
-        columns={columns}
-        showPagination
-        pageSize={10}
-        selectable
-        selectedRows={selectedRows}
-        onAllItemsSelected={onAllItemsSelected}
-        renderRow={renderPolygonTableRow}
-      />
-      {isSitePolygonsLoading && (
-        <Box py={20}>
-          <LoadingTable text={loadingLabel} />
-        </Box>
-      )}
-    </Box>
-  </PolygonTableInteractionActionsProvider>
-);
+  onRowSelected,
+  readOnly = false
+}) => {
+  const renderRow = useMemo(() => renderPolygonTableRow(readOnly), [readOnly]);
+  const handleAllItemsSelected = readOnly ? () => undefined : onAllItemsSelected;
+  const handleRowSelected = readOnly ? () => undefined : onRowSelected;
+
+  return (
+    <PolygonTableInteractionActionsProvider onSelectChange={handleRowSelected}>
+      <Box onMouseLeave={onClearHover} position="relative" width="100%" maxWidth="100%" minWidth={0}>
+        <Table<PolygonTableRow>
+          css={tableStyles}
+          containerRef={tableContainerRef}
+          scrollContainerRef={tableScrollContainerRef}
+          data={isSitePolygonsLoading ? [] : polygonRows}
+          columns={columns}
+          showPagination
+          pageSize={10}
+          selectable
+          selectedRows={selectedRows}
+          onAllItemsSelected={handleAllItemsSelected}
+          renderRow={renderRow}
+        />
+        {isSitePolygonsLoading && (
+          <Box py={20}>
+            <LoadingTable text={loadingLabel} />
+          </Box>
+        )}
+      </Box>
+    </PolygonTableInteractionActionsProvider>
+  );
+};
 
 export default SitePolygonTableSection;

@@ -51,7 +51,6 @@ const ProjectIntroPage = () => {
               title={form.title}
               imageSrc={form.banner?.url ?? undefined}
               description={form.description ?? undefined}
-              deadline={form.deadlineAt ?? undefined}
               ctaProps={{
                 children: form.documentationLabel ?? t("View list of questions"),
                 as: Link,

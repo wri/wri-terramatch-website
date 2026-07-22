@@ -1,5 +1,6 @@
+import { Box } from "@chakra-ui/react";
 import { SortingState } from "@tanstack/react-table";
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
@@ -9,6 +10,9 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Pagination from "@/components/extensive/Pagination";
 import { VARIANT_PAGINATION_POLYGON_REVIEW } from "@/components/extensive/Pagination/PaginationVariant";
+import { getThemedColor } from "@/lib/theme";
+import { findHorizontalScrollContainer } from "@/pages/site/[uuid]/components/polygonTableScroll";
+import { buildStickyCoverShadow } from "@/pages/site/[uuid]/components/polygonTableStyles";
 
 import { SitePolygonRow } from "../..";
 
@@ -53,6 +57,53 @@ export default function SiteAttributeTable({
   setPageSize,
   containerRef
 }: SiteAttributeTableProps) {
+  const [isStickyActive, setIsStickyActive] = useState(false);
+
+  useEffect(() => {
+    const scrollContainer = findHorizontalScrollContainer(containerRef.current);
+    if (scrollContainer == null) {
+      return;
+    }
+
+    const handleScroll = () => {
+      setIsStickyActive(scrollContainer.scrollLeft > 0);
+    };
+
+    handleScroll();
+    scrollContainer.addEventListener("scroll", handleScroll);
+
+    return () => scrollContainer.removeEventListener("scroll", handleScroll);
+  }, [containerRef, paginatedData.length]);
+
+  const stickyTableStyles = useMemo(() => {
+    if (!isStickyActive) {
+      return undefined;
+    }
+
+    const headerBackground = getThemedColor("neutral", 200);
+    const bodyBackground = getThemedColor("neutral", 100);
+
+    return {
+      "& > div > div": {
+        backgroundColor: bodyBackground
+      },
+      "& table th:first-of-type": {
+        isolation: "isolate",
+        overflow: "hidden",
+        transform: "translateZ(0)",
+        backgroundColor: headerBackground,
+        boxShadow: buildStickyCoverShadow(headerBackground, { leftCover: true, rightCover: true })
+      },
+      "& table td:first-of-type": {
+        isolation: "isolate",
+        overflow: "hidden",
+        transform: "translateZ(0)",
+        backgroundColor: bodyBackground,
+        boxShadow: buildStickyCoverShadow(bodyBackground, { leftCover: true, rightCover: true })
+      }
+    };
+  }, [isStickyActive]);
+
   // Calculate totals from all data (not just current page)
   const totals = useMemo(() => {
     return allData.reduce(
@@ -145,165 +196,186 @@ export default function SiteAttributeTable({
           </div>
         </div>
       </div>
-      <Table
-        variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
-        hasPagination={false}
-        visibleRows={10000000}
-        classNameTableWrapper="!overflow-x-auto"
-        serverSideData
-        classNameWrapper="!px-0"
-        contentClassName={"w-[inherit] !px-0"}
-        onTableStateChange={state => {
-          if (typeof state.sorting === "function") {
-            setSorting(state.sorting(sorting));
-          } else {
-            setSorting(state.sorting);
-          }
-        }}
-        columns={[
-          {
-            header: "Polygon Name",
-            accessorKey: "polygon-name",
-            meta: {
-              sticky: true,
-              style: { width: "12.875rem", position: "sticky", left: 0 },
-              cellStyles: {
-                className: "w-[12.875rem] wide:w-[17.875rem] min-w-[12.875rem] pr-6 sticky left-0"
-              },
-              className: "whitespace-nowrap wide:w-[17.875rem] pr-6 sticky left-0 z-20"
+      <Box css={stickyTableStyles}>
+        <Table
+          variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
+          hasPagination={false}
+          visibleRows={10000000}
+          classNameTableWrapper="!overflow-x-auto"
+          serverSideData
+          classNameWrapper="!px-0"
+          contentClassName={"w-[inherit] !px-0"}
+          onTableStateChange={state => {
+            if (typeof state.sorting === "function") {
+              setSorting(state.sorting(sorting));
+            } else {
+              setSorting(state.sorting);
             }
-          },
-          {
-            header: "Restoration Practice",
-            accessorKey: "restoration-practice",
-            meta: {
-              style: { width: "10rem", paddingLeft: "1rem", paddingRight: "1rem" },
-              cellStyles: {
-                style: { paddingLeft: "1rem", paddingRight: "1rem" },
-                className: "w-[10rem] wide:w-[15rem] min-w-[10rem]"
-              },
-              className: "!px-4"
-            }
-          },
-          {
-            header: "Target Land Use System",
-            accessorKey: "target-land-use-system",
-            meta: {
-              style: { width: "11rem", paddingLeft: "1rem", paddingRight: "1rem" },
-              cellStyles: {
-                style: { paddingLeft: "1rem", paddingRight: "1rem" },
-                className: "w-[11rem] wide:w-[16rem] min-w-[11rem]"
-              },
-              className: "!px-4"
-            }
-          },
-          {
-            header: "Tree Distribution",
-            accessorKey: "tree-distribution",
-            meta: {
-              style: { width: "10rem", paddingLeft: "1rem", paddingRight: "1rem" },
-              cellStyles: {
-                style: { paddingLeft: "1rem", paddingRight: "1rem" },
-                className: "w-[10rem] wide:w-[15rem] min-w-[10rem]"
-              },
-              className: "!px-4"
-            }
-          },
-          {
-            header: "Planting Start Date",
-            accessorKey: "planting-start-date",
-            meta: {
-              style: { width: "9.5rem", paddingLeft: "1rem", paddingRight: "1rem" },
-              cellStyles: {
-                style: { paddingLeft: "1rem", paddingRight: "1rem" },
-                className: "w-[9.5rem] wide:w-[14.5rem] min-w-[9.5rem]"
-              },
-              className: "!px-4"
-            }
-          },
-          {
-            header: "Trees Planted",
-            accessorKey: "num-trees",
-            meta: {
-              style: { width: "9rem", paddingLeft: "1rem", paddingRight: "1rem" },
-              cellStyles: {
-                style: { paddingLeft: "1rem", paddingRight: "1rem" },
-                className: "w-[9rem] wide:w-[14rem] min-w-[9rem]"
-              },
-              className: "!px-4"
-            },
-            cell: (info: { row: { original: SitePolygonRow } }) => {
-              const value = info.row.original["num-trees"];
-              return <span className="whitespace-nowrap">{value.toLocaleString()}</span>;
-            }
-          },
-          {
-            header: "Calculated Area",
-            accessorKey: "calc-area",
-            meta: {
-              style: { width: "10rem", paddingLeft: "1rem", paddingRight: "1rem" },
-              cellStyles: {
-                style: { paddingLeft: "1rem", paddingRight: "1rem" },
-                className: "w-[10rem] wide:w-[15rem] min-w-[10rem]"
-              },
-              className: "!px-4"
-            },
-            cell: (info: { row: { original: SitePolygonRow } }) => {
-              const calculatedArea = info.row.original["calc-area"].toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              });
-              return <span className="whitespace-nowrap">{`${calculatedArea} ha`}</span>;
-            }
-          },
-          {
-            header: "Source",
-            accessorKey: "source",
-            meta: {
-              style: { width: "7rem", paddingLeft: "1rem", paddingRight: "1rem" },
-              cellStyles: {
-                style: { paddingLeft: "1rem", paddingRight: "1rem" },
-                className: "w-[7rem] wide:w-[12rem] wide:min-w-[12rem] min-w-[7rem]"
-              },
-              className: "!px-4"
-            }
-          },
-          {
-            header: "",
-            accessorKey: "ellipse",
-            enableSorting: false,
-            meta: {
-              sticky: true,
-              style: {
-                position: "sticky",
-                right: 0,
-                zIndex: 9999
-              },
-              cellStyles: {
-                className: "pr-6 sticky right-0 relative z-[9999]"
-              },
-              className: "whitespace-nowrap pr-6 sticky right-0 relative z-[9999]"
-            },
-            cell: (props: { row: { original: SitePolygonRow } }) => {
-              const rowData = props.row.original;
-              if (!rowData.uuid) {
-                return null;
+          }}
+          columns={[
+            {
+              header: "Polygon Name",
+              accessorKey: "polygon-name",
+              meta: {
+                sticky: true,
+                style: { width: "12.875rem", position: "sticky", left: 0 },
+                cellStyles: {
+                  className: "w-[12.875rem] wide:w-[17.875rem] min-w-[12.875rem] pr-6 sticky left-0"
+                },
+                className: "whitespace-nowrap wide:w-[17.875rem] pr-6 sticky left-0 z-20"
               }
-              return (
-                <Menu
-                  menu={tableItemMenu({ ...rowData, uuid: rowData.uuid } as TableItemMenuProps)}
-                  placement={MENU_PLACEMENT_RIGHT_TOP}
-                >
-                  <div className="rounded p-1 hover:bg-primary-200">
-                    <Icon name={IconNames.ELIPSES} className="h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
-                  </div>
-                </Menu>
-              );
+            },
+            {
+              header: "Restoration Practice",
+              accessorKey: "restoration-practice",
+              meta: {
+                style: { width: "10rem", paddingLeft: "1rem", paddingRight: "1rem" },
+                cellStyles: {
+                  style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                  className: "w-[10rem] wide:w-[15rem] min-w-[10rem]"
+                },
+                className: "!px-4"
+              }
+            },
+            {
+              header: "Target Land Use System",
+              accessorKey: "target-land-use-system",
+              meta: {
+                style: { width: "11rem", paddingLeft: "1rem", paddingRight: "1rem" },
+                cellStyles: {
+                  style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                  className: "w-[11rem] wide:w-[16rem] min-w-[11rem]"
+                },
+                className: "!px-4"
+              }
+            },
+            {
+              header: "Tree Distribution",
+              accessorKey: "tree-distribution",
+              meta: {
+                style: { width: "10rem", paddingLeft: "1rem", paddingRight: "1rem" },
+                cellStyles: {
+                  style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                  className: "w-[10rem] wide:w-[15rem] min-w-[10rem]"
+                },
+                className: "!px-4"
+              }
+            },
+            {
+              header: "Planting Start Date",
+              accessorKey: "planting-start-date",
+              meta: {
+                style: { width: "9.5rem", paddingLeft: "1rem", paddingRight: "1rem" },
+                cellStyles: {
+                  style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                  className: "w-[9.5rem] wide:w-[14.5rem] min-w-[9.5rem]"
+                },
+                className: "!px-4"
+              }
+            },
+            {
+              header: "Trees Planted",
+              accessorKey: "num-trees",
+              meta: {
+                style: { width: "9rem", paddingLeft: "1rem", paddingRight: "1rem" },
+                cellStyles: {
+                  style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                  className: "w-[9rem] wide:w-[14rem] min-w-[9rem]"
+                },
+                className: "!px-4"
+              },
+              cell: (info: { row: { original: SitePolygonRow } }) => {
+                const value = info.row.original["num-trees"];
+                return <span className="whitespace-nowrap">{value.toLocaleString()}</span>;
+              }
+            },
+            {
+              header: "Calculated Area",
+              accessorKey: "calc-area",
+              meta: {
+                style: { width: "10rem", paddingLeft: "1rem", paddingRight: "1rem" },
+                cellStyles: {
+                  style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                  className: "w-[10rem] wide:w-[15rem] min-w-[10rem]"
+                },
+                className: "!px-4"
+              },
+              cell: (info: { row: { original: SitePolygonRow } }) => {
+                const calculatedArea = info.row.original["calc-area"].toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                });
+                return <span className="whitespace-nowrap">{`${calculatedArea} ha`}</span>;
+              }
+            },
+            {
+              header: "Submission Cycle",
+              accessorKey: "submission-cycle",
+              meta: {
+                style: { width: "9rem", paddingLeft: "1rem", paddingRight: "1rem" },
+                cellStyles: {
+                  style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                  className: "w-[9rem] wide:w-[14rem] min-w-[9rem]"
+                },
+                className: "!px-4"
+              },
+              cell: (info: { row: { original: SitePolygonRow } }) => {
+                const value = info.row.original["submission-cycle"];
+                return <span className="whitespace-nowrap">{value === "" ? "—" : value}</span>;
+              }
+            },
+            {
+              header: "Source",
+              accessorKey: "source",
+              meta: {
+                style: { width: "7rem", paddingLeft: "1rem", paddingRight: "1rem" },
+                cellStyles: {
+                  style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                  className: "w-[7rem] wide:w-[12rem] wide:min-w-[12rem] min-w-[7rem]"
+                },
+                className: "!px-4"
+              }
+            },
+            {
+              header: "",
+              accessorKey: "ellipse",
+              enableSorting: false,
+              meta: {
+                sticky: true,
+                style: {
+                  position: "sticky",
+                  right: 0,
+                  zIndex: 9999
+                },
+                cellStyles: {
+                  className: "pr-6 sticky right-0 relative z-[9999]"
+                },
+                className: "whitespace-nowrap pr-6 sticky right-0 relative z-[9999]"
+              },
+              cell: (props: { row: { original: SitePolygonRow } }) => {
+                const rowData = props.row.original;
+                if (!rowData.uuid) {
+                  return null;
+                }
+                return (
+                  <Menu
+                    menu={tableItemMenu({ ...rowData, uuid: rowData.uuid } as TableItemMenuProps)}
+                    placement={MENU_PLACEMENT_RIGHT_TOP}
+                  >
+                    <div className="rounded p-1 hover:bg-primary-200">
+                      <Icon
+                        name={IconNames.ELIPSES}
+                        className="h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200"
+                      />
+                    </div>
+                  </Menu>
+                );
+              }
             }
-          }
-        ]}
-        data={paginatedData}
-      />
+          ]}
+          data={paginatedData}
+        />
+      </Box>
       <div className="mt-4 mb-20">
         <div className="relative">
           <Pagination

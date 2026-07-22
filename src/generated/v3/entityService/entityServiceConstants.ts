@@ -3,6 +3,7 @@ import {
   ProjectPitchDto,
   ImpactStoryLightDto,
   ImpactStoryFullDto,
+  AboutSectionDto,
   TaskLightDto,
   TaskFullDto,
   ProjectReportLightDto,
@@ -56,6 +57,7 @@ import {
 export const ENTITY_SERVICE_RESOURCES = [
   "projectPitches",
   "impactStories",
+  "aboutSections",
   "tasks",
   "projectReports",
   "siteReports",
@@ -98,6 +100,7 @@ export const ENTITY_SERVICE_RESOURCES = [
 export type EntityServiceApiResources = {
   projectPitches: StoreResourceMap<ProjectPitchDto>;
   impactStories: StoreResourceMap<ImpactStoryLightDto | ImpactStoryFullDto>;
+  aboutSections: StoreResourceMap<AboutSectionDto>;
   tasks: StoreResourceMap<TaskLightDto | TaskFullDto>;
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;

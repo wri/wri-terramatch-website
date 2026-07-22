@@ -220,7 +220,7 @@ const useAuditLogActions = ({
       ? {
           entity: "projects" as const,
           uuid: record.uuid,
-          types: PROJECT_POLYGON_HANDOFF_AUDIT_TYPES
+          types: [...PROJECT_POLYGON_HANDOFF_AUDIT_TYPES]
         }
       : {
           entity: v3EntityType,

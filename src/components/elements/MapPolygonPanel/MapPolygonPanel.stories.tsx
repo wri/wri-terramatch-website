@@ -37,13 +37,15 @@ const items: SitePolygonLightDto[] = [
     practice: null,
     targetSys: null,
     distr: null,
+    submissionCycle: null,
     numTrees: null,
     source: null,
     validationStatus: "notChecked",
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    deletedAt: null
   },
   {
     uuid: "2",
@@ -67,13 +69,15 @@ const items: SitePolygonLightDto[] = [
     practice: null,
     targetSys: null,
     distr: null,
+    submissionCycle: null,
     numTrees: null,
     source: null,
     validationStatus: "notChecked",
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    deletedAt: null
   },
   {
     uuid: "3",
@@ -97,13 +101,15 @@ const items: SitePolygonLightDto[] = [
     practice: null,
     targetSys: null,
     distr: null,
+    submissionCycle: null,
     numTrees: null,
     source: null,
     validationStatus: "notChecked",
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    deletedAt: null
   },
   {
     uuid: "4",
@@ -127,13 +133,15 @@ const items: SitePolygonLightDto[] = [
     practice: null,
     targetSys: null,
     distr: null,
+    submissionCycle: null,
     numTrees: null,
     source: null,
     validationStatus: "notChecked",
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    deletedAt: null
   },
   {
     uuid: "5",
@@ -157,13 +165,15 @@ const items: SitePolygonLightDto[] = [
     practice: null,
     targetSys: null,
     distr: null,
+    submissionCycle: null,
     numTrees: null,
     source: null,
     validationStatus: "notChecked",
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    deletedAt: null
   },
   {
     uuid: "6",
@@ -187,13 +197,15 @@ const items: SitePolygonLightDto[] = [
     practice: null,
     targetSys: null,
     distr: null,
+    submissionCycle: null,
     numTrees: null,
     source: null,
     validationStatus: "notChecked",
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
-    createdAt: null
+    createdAt: null,
+    deletedAt: null
   }
 ];
 

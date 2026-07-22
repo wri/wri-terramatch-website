@@ -656,6 +656,190 @@ export const impactStoryBulkDelete = new V3ApiEndpoint<
   {}
 >("/entities/v3/impactStories/bulkDelete", "DELETE");
 
+export type AboutSectionIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  type?: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
+  framework?:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | "fundo-flora-1"
+    | "wcb";
+};
+
+export type AboutSectionIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type AboutSectionIndexResponse = {
+  meta?: {
+    /**
+     * @example aboutSections
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example aboutSections
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.AboutSectionDto;
+  }[];
+};
+
+export type AboutSectionIndexVariables = {
+  queryParams?: AboutSectionIndexQueryParams;
+};
+
+/**
+ * Get a paginated and filtered list of about sections. If a type and framework key are included, the result will be a single section
+ */
+export const aboutSectionIndex = new V3ApiEndpoint<
+  AboutSectionIndexResponse,
+  AboutSectionIndexError,
+  AboutSectionIndexVariables,
+  {}
+>("/aboutSections/v3/aboutSections", "GET");
+
+export type AboutSectionGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type AboutSectionGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type AboutSectionGetResponse = {
+  meta?: {
+    /**
+     * @example aboutSections
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example aboutSections
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.AboutSectionDto;
+  };
+};
+
+export type AboutSectionGetVariables = {
+  pathParams: AboutSectionGetPathParams;
+};
+
+/**
+ * Get an about section by uuid
+ */
+export const aboutSectionGet = new V3ApiEndpoint<
+  AboutSectionGetResponse,
+  AboutSectionGetError,
+  AboutSectionGetVariables,
+  {}
+>("/aboutSections/v3/aboutSections/{uuid}", "GET");
+
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -2572,6 +2756,26 @@ export type EntityIndexQueryParams = {
    * Filter projects where ready for baseline is true or false
    */
   readyForBaseline?: boolean;
+  /**
+   * Filter projects by QA status for polygon dataset stage 1
+   */
+  projectQaStatus1?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 2
+   */
+  projectQaStatus2?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 3
+   */
+  projectQaStatus3?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 4
+   */
+  projectQaStatus4?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 5
+   */
+  projectQaStatus5?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -4216,6 +4420,26 @@ export type EntityAssociationIndexQueryParams = {
    * Filter projects where ready for baseline is true or false
    */
   readyForBaseline?: boolean;
+  /**
+   * Filter projects by QA status for polygon dataset stage 1
+   */
+  projectQaStatus1?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 2
+   */
+  projectQaStatus2?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 3
+   */
+  projectQaStatus3?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 4
+   */
+  projectQaStatus4?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  /**
+   * Filter projects by QA status for polygon dataset stage 5
+   */
+  projectQaStatus5?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
   modelType?: string;
   /**
    * @default false
@@ -5542,6 +5766,15 @@ export type FormPullTranslationsPathParams = {
   uuid: string;
 };
 
+export type FormPullTranslationsQueryParams = {
+  /**
+   * If true, all translations will be pulled, otherwise only new translations will be pulled
+   *
+   * @default false
+   */
+  forceAll?: Schemas.Object;
+};
+
 export type FormPullTranslationsError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -5606,6 +5839,7 @@ export type FormPullTranslationsResponse = {
 
 export type FormPullTranslationsVariables = {
   pathParams: FormPullTranslationsPathParams;
+  queryParams?: FormPullTranslationsQueryParams;
 };
 
 /**
@@ -6817,6 +7051,7 @@ export const operationsByTag = {
     impactStoryDelete,
     impactStoryBulkDelete
   },
+  aboutSections: { aboutSectionIndex, aboutSectionGet },
   tasks: { taskIndex, taskGet, taskUpdate },
   files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },

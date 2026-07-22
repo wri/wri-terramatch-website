@@ -5,12 +5,11 @@ import { FC, useCallback, useMemo } from "react";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
-
 import {
   getPolygonUploadErrorCopy,
   getPolygonUploadErrorTitle,
   resolvePolygonUploadErrorVariant
-} from "../../utils/polygonUploadErrors";
+} from "@/utils/polygonUploadErrors";
 
 export interface UploadErrorProps {
   open: boolean;
@@ -38,23 +37,23 @@ const UploadError: FC<UploadErrorProps> = ({ open, backendErrorMessage, onOpenCh
       header={<b className="text-theme-neutral-800">{getPolygonUploadErrorTitle(t)}</b>}
       content={
         <Box px={4}>
-          <Text textStyle="400" color="neutral.900" display={"flex"} gap={0.5} alignItems={"center"}>
-            <InformationRequiredIcon boxSize={4} color={"error.500"} mr={1.5} />
+          <Text textStyle="400" color="neutral.900" display="flex" gap={0.5} alignItems="flex-start">
+            <InformationRequiredIcon boxSize={4} color="error.500" mr={1.5} mt={0.5} flexShrink={0} />
             {errorCopy.summary}
           </Text>
           {errorCopy.emphasis != null && (
-            <Text textStyle="400-bold" color="neutral.900" ml={7} mb={3}>
+            <Text textStyle="400-bold" color="neutral.900" ml={7} mt={2} mb={3}>
               {errorCopy.emphasis}
             </Text>
           )}
           {errorCopy.instructions != null && (
-            <Text textStyle="300" color="neutral.800" ml={7} mb={3}>
+            <Text textStyle="300" color="neutral.800" ml={7} mt={errorCopy.emphasis == null ? 2 : 0} mb={3}>
               {errorCopy.instructions}
             </Text>
           )}
           {errorCopy.bullets != null && errorCopy.bullets.length > 0 && (
-            <Box ml={14}>
-              <List.Root as="ul" spaceY={1} listStyleType="disc">
+            <Box ml={7}>
+              <List.Root as="ul" pl={4} spaceY={1} listStyleType="disc">
                 {errorCopy.bullets.map(bullet => (
                   <List.Item
                     key={bullet}

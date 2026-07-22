@@ -1,5 +1,4 @@
 import { FC, PropsWithChildren } from "react";
-import { twMerge } from "tailwind-merge";
 
 import { useOnboardingCardAnalytics } from "@/hooks/useOnboardingCardAnalytics";
 import { OnboardingCardEntityType, OnboardingCardType } from "@/utils/analytics/onboardingCardAnalytics";
@@ -21,9 +20,7 @@ const OnboardingCard: FC<OnboardingCardProps> = ({ cardType, entityType, entityI
   const analytics = useOnboardingCardAnalytics({ cardType, entityType, entityId });
 
   return (
-    <OnboardingCardAnalyticsContext.Provider value={analytics}>
-      <div className={twMerge(className)}>{children}</div>
-    </OnboardingCardAnalyticsContext.Provider>
+    <OnboardingCardAnalyticsContext.Provider value={analytics}>{children}</OnboardingCardAnalyticsContext.Provider>
   );
 };
 

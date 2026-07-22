@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo, useState } from "react";
@@ -12,6 +13,7 @@ import FrameworkProvider, { shouldHideNurseries, useFrameworkContext } from "@/c
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
@@ -201,25 +203,35 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
 
 const ProjectDetailPage = () => {
   const router = useRouter();
+  const t = useT();
   const { loading } = useLoading();
   const projectUUID = router.query.uuid as string;
   const [isLoaded, { data: project, refetch }] = useFullProject({ id: projectUUID });
 
-  if (!isLoaded || project == null) {
-    return null;
-  }
+  useValueChanged(isLoaded, () => {
+    if (isLoaded && project == null) {
+      showToast({
+        label: t("Project not found"),
+        type: "error",
+        id: "project-not-found",
+        placement: "bottom",
+        duration: 5000,
+        maxWidth: "auto"
+      });
+    }
+  });
 
   return (
     <MapAreaProvider>
       {/* Programme framework for descendants (e.g. ContextCondition in TeamSection logos, tab visibility). */}
-      <FrameworkProvider frameworkKey={project.frameworkKey}>
+      <FrameworkProvider frameworkKey={project?.frameworkKey}>
         {loading && (
           <div className="fixed top-0 z-50 flex h-screen w-screen items-center justify-center backdrop-brightness-50">
             <Loader />
           </div>
         )}
         <LoadingContainer loading={!isLoaded}>
-          <ProjectContent project={project} refetch={refetch} />
+          {project == null ? null : <ProjectContent project={project} refetch={refetch} />}
         </LoadingContainer>
       </FrameworkProvider>
     </MapAreaProvider>

@@ -66,20 +66,21 @@ export const getPolygonUploadErrorCopy = (
   switch (variant) {
     case "shapefile_not_found":
       return {
-        summary: t("This ZIP file does not contain a valid .shp file. Please check your file and try again."),
+        summary: t("This ZIP file does not contain a valid .shp file."),
+        emphasis: t("Please check your file and try again."),
         instructions: t("Upload a ZIP file that includes:"),
         bullets: [t("A .shp file"), t("Its associated .dbf and .prj files")]
       };
     case "coordinate_system":
       return {
-        summary: t(
-          "This file contains 3D coordinates (x, y, z). Only 2D coordinates are supported. Please re-export your file using:"
-        ),
+        summary: t("This file contains 3D coordinates (x, y, z). Only 2D coordinates are supported."),
+        instructions: t("Please re-export your file using:"),
         bullets: [t("2D coordinates (x, y) only")]
       };
     case "projection":
       return {
-        summary: t("This file uses an unsupported coordinate projection. Please re-export your file using:"),
+        summary: t("This file uses an unsupported coordinate projection."),
+        instructions: t("Please re-export your file using:"),
         bullets: [t("WGS-84 projection (EPSG:4326)")]
       };
     case "linear_ring":
@@ -90,7 +91,8 @@ export const getPolygonUploadErrorCopy = (
       };
     case "size_limit":
       return {
-        summary: t("This file exceeds the maximum upload size of 50MB. Please try one of the following:"),
+        summary: t("This file exceeds the maximum upload size of 50MB."),
+        instructions: t("Please try one of the following:"),
         bullets: [
           t("Split the file into smaller uploads"),
           t("Simplify polygon geometries to reduce file size"),
@@ -103,7 +105,7 @@ export const getPolygonUploadErrorCopy = (
       };
     case "mixed_geometry_types":
       return {
-        summary: t("This file contains both points and polygons. "),
+        summary: t("This file contains both points and polygons."),
         emphasis: t("Files must contain only one geometry type."),
         instructions: t("Upload either:"),
         bullets: [t("Points only"), t("Polygons or multipolygons only")]
