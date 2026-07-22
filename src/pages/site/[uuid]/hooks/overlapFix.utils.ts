@@ -57,6 +57,26 @@ export const getOverlapCriteria = (validation: ValidationDto | undefined): Valid
 export const hasOverlapValidationFailure = (validation: ValidationDto | undefined): boolean =>
   getOverlapCriteria(validation) != null;
 
+export const buildOverlapFailureValidationsMap = (
+  validations: Iterable<ValidationDto>,
+  currentPolygonUuids: ReadonlySet<string>
+): Map<string, ValidationDto> => {
+  const overlapFailures = new Map<string, ValidationDto>();
+
+  for (const validation of validations) {
+    const polygonUuid = validation.polygonUuid;
+    if (polygonUuid == null || polygonUuid === "" || !currentPolygonUuids.has(polygonUuid)) {
+      continue;
+    }
+    if (!hasOverlapValidationFailure(validation)) {
+      continue;
+    }
+    overlapFailures.set(polygonUuid, validation);
+  }
+
+  return overlapFailures;
+};
+
 export const collectRelatedPartnerUuidsFromFixability = (
   results: Array<PolygonFixabilityResult | null | undefined>
 ): string[] => {
