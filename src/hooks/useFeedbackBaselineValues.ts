@@ -30,7 +30,7 @@ export const useFeedbackBaselineValues = ({
   const [updateRequestLoaded, { data: updateRequest }] = useUpdateRequest({
     entity,
     uuid,
-    enabled: enabled && uuid != null
+    enabled: enabled && uuid != null && uuid.length > 0
   });
 
   const feedbackBaselineValues = useMemo(() => {

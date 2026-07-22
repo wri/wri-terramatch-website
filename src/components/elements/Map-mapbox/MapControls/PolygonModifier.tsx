@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { useState } from "react";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
@@ -10,7 +11,6 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { deleteProjectPolygon } from "@/connections/ProjectPolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import Log from "@/utils/log";
 
@@ -28,7 +28,6 @@ interface PolygonModifierProps {
 const PolygonModifier = ({ polygonFromMap, setPolygonFromMap, onClick, onSave, onCancel }: PolygonModifierProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const { openModal, closeModal } = useModalContext();
-  const { openNotification } = useNotificationContext();
   const contextSite = useSitePolygonData();
   const reloadSiteData = contextSite?.reloadSiteData;
   const { invalidatePolygonMapTiles } = useMapAreaContext();
@@ -36,7 +35,12 @@ const PolygonModifier = ({ polygonFromMap, setPolygonFromMap, onClick, onSave, o
 
   const handleSave = async () => {
     if (polygonFromMap?.uuid == null || polygonFromMap.uuid === "") {
-      openNotification("warning", t("Select a polygon"), t("Click a polygon on the map before saving edits."));
+      showToast({
+        label: t("Click a polygon on the map before saving edits."),
+        type: "warning",
+        placement: "bottom",
+        duration: 5000
+      });
       return;
     }
 
@@ -45,13 +49,23 @@ const PolygonModifier = ({ polygonFromMap, setPolygonFromMap, onClick, onSave, o
       setIsEditing(false);
     } catch (error) {
       Log.error("Error saving polygon:", error);
-      openNotification("error", t("Error updating polygon"), t("There was an error updating the polygon."));
+      showToast({
+        label: t("There was an error updating the polygon."),
+        type: "error",
+        placement: "bottom",
+        duration: 5000
+      });
     }
   };
 
   const handleDelete = async () => {
     if (polygonFromMap?.uuid == null || polygonFromMap.uuid === "") {
-      openNotification("warning", t("Select a polygon"), t("Click a polygon on the map before deleting."));
+      showToast({
+        label: t("Click a polygon on the map before deleting."),
+        type: "warning",
+        placement: "bottom",
+        duration: 5000
+      });
       return;
     }
 
@@ -60,10 +74,20 @@ const PolygonModifier = ({ polygonFromMap, setPolygonFromMap, onClick, onSave, o
       setPolygonFromMap?.({ isOpen: false, uuid: "" });
       invalidatePolygonMapTiles();
       reloadSiteData?.();
-      openNotification("success", t("Polygon deleted"), t("The polygon has been deleted successfully."));
+      showToast({
+        label: t("The polygon has been deleted successfully."),
+        type: "success",
+        placement: "bottom",
+        duration: 5000
+      });
     } catch (error) {
       Log.error("Error deleting polygon:", error);
-      openNotification("error", t("Error deleting polygon"), t("There was an error deleting the polygon."));
+      showToast({
+        label: t("There was an error deleting the polygon."),
+        type: "error",
+        placement: "bottom",
+        duration: 5000
+      });
     }
   };
 
@@ -88,7 +112,12 @@ const PolygonModifier = ({ polygonFromMap, setPolygonFromMap, onClick, onSave, o
         iconProps={{ name: IconNames.EDIT, width: 24, height: 24 }}
         onClick={() => {
           if (polygonFromMap?.uuid == null || polygonFromMap.uuid === "") {
-            openNotification("warning", t("Select a polygon"), t("Click a polygon on the map before editing."));
+            showToast({
+              label: t("Click a polygon on the map before editing."),
+              type: "warning",
+              placement: "bottom",
+              duration: 5000
+            });
             return;
           }
           setIsEditing(true);

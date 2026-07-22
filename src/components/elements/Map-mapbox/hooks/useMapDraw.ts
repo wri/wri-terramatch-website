@@ -1,5 +1,6 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 
@@ -11,7 +12,6 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { isProjectPitchesEntityName } from "@/helpers/entity";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { TranslatedText } from "@/i18n/types";
 import ApiSlice from "@/store/apiSlice";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
@@ -56,7 +56,6 @@ type UseMapDrawParams = {
   t: typeof useT;
   showLoader: () => void;
   hideLoader: () => void;
-  openNotification: (type: "success" | "error" | "warning", title: TranslatedText, message?: any) => void;
 };
 
 export function useMapDraw({
@@ -78,8 +77,7 @@ export function useMapDraw({
   setPolygonGeometryEdit,
   t,
   showLoader,
-  hideLoader,
-  openNotification
+  hideLoader
 }: UseMapDrawParams) {
   const { draftPolygonGeometry, invalidatePolygonMapTiles } = useMapAreaContext();
   const originalGeometryRef = useRef<GeoJSON.Geometry | null>(null);
@@ -293,7 +291,12 @@ export function useMapDraw({
     const canEdit = formMap ? polygonuuid !== "" : polygonFromMap?.isOpen === true && polygonuuid !== "";
 
     if (!canEdit) {
-      openNotification("warning", t("Select a polygon"), t("Click a polygon on the map before editing."));
+      showToast({
+        label: t("Click a polygon on the map before editing."),
+        type: "warning",
+        placement: "bottom",
+        duration: 5000
+      });
       return;
     }
 
@@ -310,7 +313,12 @@ export function useMapDraw({
       // then we swap tile -> Draw feature in one synchronous pass (no visible gap).
       const geometry = await fetchPolygonGeometry(polygonuuid, true, isProjectPolygon ? projectPitchUuid : undefined);
       if (geometry == null) {
-        openNotification("error", t("Error"), t("No geometry found for polygon. The polygon may have been deleted."));
+        showToast({
+          label: t("No geometry found for polygon. The polygon may have been deleted."),
+          type: "error",
+          placement: "bottom",
+          duration: 5000
+        });
         return;
       }
       if (map.current != null && draw.current != null) {
@@ -328,7 +336,12 @@ export function useMapDraw({
       }
     } catch (error) {
       Log.error("Error fetching polygon geometry:", error);
-      openNotification("error", t("Error"), t("Failed to load polygon geometry. Please try again."));
+      showToast({
+        label: t("Failed to load polygon geometry. Please try again."),
+        type: "error",
+        placement: "bottom",
+        duration: 5000
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -373,7 +386,12 @@ export function useMapDraw({
         originalGeometryRef.current = null;
         clearGeometryHistory();
         setPolygonGeometryEdit?.(undefined);
-        openNotification("success", t("Success"), t("Project polygon updated successfully."));
+        showToast({
+          label: t("Project polygon updated successfully."),
+          type: "success",
+          placement: "bottom",
+          duration: 5000
+        });
         trackPolygonEvent("polygon_shape_edited", {
           ...getPolygonAnalyticsContext({
             entityType: polygonFromMap?.entityName,
@@ -382,7 +400,12 @@ export function useMapDraw({
           polygon_id: polygonFromMap.uuid
         });
       } catch (e: any) {
-        openNotification("error", t("Error"), e?.message ?? t("Please try again later."));
+        showToast({
+          label: e?.message ?? t("Please try again later."),
+          type: "error",
+          placement: "bottom",
+          duration: 5000
+        });
       } finally {
         hideLoader();
       }
@@ -391,7 +414,7 @@ export function useMapDraw({
 
     const selectedPolygon = sitePolygonData?.find(item => item.polygonUuid === polygonFromMap.uuid);
     if (selectedPolygon?.primaryUuid == null) {
-      openNotification("error", t("Error"), t("Missing polygon information"));
+      showToast({ label: t("Missing polygon information"), type: "error", placement: "bottom", duration: 5000 });
       return;
     }
 
@@ -423,7 +446,12 @@ export function useMapDraw({
       setPolygonGeometryEdit?.(undefined);
 
       setShouldRefetchPolygonData?.(true);
-      openNotification("success", t("Success"), t("Site polygon version created successfully."));
+      showToast({
+        label: t("Site polygon version created successfully."),
+        type: "success",
+        placement: "bottom",
+        duration: 5000
+      });
       trackPolygonEvent("polygon_shape_edited", {
         ...getPolygonAnalyticsContext({
           entityType: "site",
@@ -432,7 +460,12 @@ export function useMapDraw({
         polygon_id: polygonFromMap.uuid
       });
     } catch (e: any) {
-      openNotification("error", t("Error"), e?.message ?? t("Please try again later."));
+      showToast({
+        label: e?.message ?? t("Please try again later."),
+        type: "error",
+        placement: "bottom",
+        duration: 5000
+      });
     } finally {
       hideLoader();
     }
