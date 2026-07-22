@@ -424,6 +424,16 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
 
   const editFocus = useMapEditFocus({ polygonFromMap, editPolygon });
 
+  usePolygonTableHighlightStyle({
+    map,
+    styleReady,
+    styleVersion,
+    sourcesAdded,
+    tileLoadRequestId,
+    highlight: polygonTableHighlight,
+    editFocus
+  });
+
   usePolygonEditFocusStyle({
     map,
     styleReady,
@@ -432,15 +442,6 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     tileLoadRequestId,
     isEditFocusActive: editFocus.isEditFocusActive,
     editedPolygonUuid: editFocus.editedPolygonUuid
-  });
-
-  usePolygonTableHighlightStyle({
-    map,
-    styleReady,
-    styleVersion,
-    sourcesAdded,
-    highlight: polygonTableHighlight,
-    editFocus
   });
 
   usePolygonSelectionZoom({
