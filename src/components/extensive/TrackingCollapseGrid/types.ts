@@ -57,7 +57,13 @@ export type DemographicType = (typeof DEMOGRAPHIC_TYPES)[number];
 export const isDemographicType = (value: unknown): value is DemographicType =>
   typeof value === "string" && DEMOGRAPHIC_TYPES.includes(value as DemographicType);
 
-export const RESTORATION_TYPES = ["hectaresGoal", "hectaresHistorical", "treesGoal", "treesHistorical"] as const;
+export const RESTORATION_TYPES = [
+  "hectaresGoal",
+  "hectaresHistorical",
+  "treesGoal",
+  "treesPlantedGoal",
+  "treesHistorical"
+] as const;
 export type RestorationType = (typeof RESTORATION_TYPES)[number];
 export const isRestorationType = (value: unknown): value is RestorationType =>
   typeof value === "string" && RESTORATION_TYPES.includes(value as RestorationType);
@@ -140,6 +146,13 @@ const useTrackingLabelsTypes = (): { [k in TrackingType]: TrackingLabelPropertie
         rowLabelPlural: t("Trees")
       },
       treesGoal: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("Tree"),
+        rowLabelPlural: t("Trees"),
+        summaryTotalSingular: t("Total Tree"),
+        summaryTotalPlural: t("Total Trees")
+      },
+      treesPlantedGoal: {
         sectionLabel: t("Total"),
         rowLabelSingular: t("Tree"),
         rowLabelPlural: t("Trees"),
@@ -573,16 +586,19 @@ const HISTORICAL: TrackingEntryConfig[] = [
 
 const TREES_GOAL: TrackingEntryConfig[] = [
   {
+    type: "strategy",
+    title: "Strategy",
+    subTypes: GOAL_STRATEGY,
+    balanced: true
+  }
+];
+
+const TREES_PLANTED_GOAL: TrackingEntryConfig[] = [
+  {
     type: "years",
     title: "Years",
     subTypes: GOAL_YEARS,
     balanced: true
-  },
-  {
-    type: "strategy",
-    title: "Strategy",
-    subTypes: GOAL_STRATEGY,
-    balanced: false
   }
 ];
 
@@ -631,6 +647,8 @@ const FF_HECTARES_GOAL: TrackingEntryConfig[] = [
 const getRestorationEntryConfigs = (type: TrackingType, framework: Framework) => {
   if (type === "treesGoal") {
     return TREES_GOAL;
+  } else if (type === "treesPlantedGoal") {
+    return TREES_PLANTED_GOAL;
   } else if (type === "hectaresGoal") {
     return framework === Framework.FF_1 ? FF_HECTARES_GOAL : HECTARES_GOAL;
   } else return HISTORICAL;
