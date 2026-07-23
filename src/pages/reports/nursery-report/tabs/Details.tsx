@@ -55,7 +55,7 @@ const NurseryReportDetailsTab: FC<NurseryReportDetailsTabProps> = ({ report }) =
 
   if (report.nothingToReport) {
     return (
-      <PageContent className="bg-theme-neutral-100 gap-2 sm:px-32">
+      <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
         <NothingToReportEmptyState />
       </PageContent>
     );
@@ -63,14 +63,14 @@ const NurseryReportDetailsTab: FC<NurseryReportDetailsTabProps> = ({ report }) =
 
   if (!isReady || orgLoading) {
     return (
-      <PageContent className="bg-theme-neutral-100 gap-2 sm:px-32">
+      <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
         <Loader className="h-32 w-full" />
       </PageContent>
     );
   }
 
   return (
-    <PageContent className="bg-theme-neutral-100 gap-2 sm:px-32">
+    <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
       <WizardFormProvider fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
         {steps.map((step, index) => (
           <SharedDetailsStep

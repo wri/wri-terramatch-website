@@ -56,7 +56,7 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
   }
 
   return (
-    <PageContent className="bg-theme-neutral-100 gap-2 sm:px-32">
+    <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
       <WizardFormProvider fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
         {steps.map((step, index) => (
           <SharedDetailsStep
