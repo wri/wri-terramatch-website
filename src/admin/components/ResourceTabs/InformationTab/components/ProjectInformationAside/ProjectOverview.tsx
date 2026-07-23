@@ -34,7 +34,7 @@ const ProjectOverview: FC = () => {
           </Grid>
 
           <Grid xs={4} item>
-            <Labeled label="Funding Programme">
+            <Labeled label="Framework">
               <FrameworkField prop="frameworkKey" />
             </Labeled>
           </Grid>
