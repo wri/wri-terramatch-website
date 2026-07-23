@@ -82,7 +82,7 @@ type PolygonEditContentProps = {
   onRegisterSave?: (saveHandler: (options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) => void;
   onRegisterDelete: (deleteHandler: () => Promise<void>) => void;
   onRegisterSubmit: (submitHandler: (comment: string) => Promise<void>) => void;
-  onRegisterSaveAndSubmit?: (saveAndSubmitHandler: (comment: string) => Promise<void>) => void;
+  onRegisterSaveAndSubmit?: (saveAndSubmitHandler: (comment: string) => Promise<boolean>) => void;
   onRegisterHasUnsavedChanges?: (hasUnsavedChanges: () => boolean) => void;
   onRegisterPolygonName?: (getPolygonName: () => string) => void;
   onRegisterPlantStartDate?: (hasPlantStartDate: () => boolean) => void;
@@ -865,10 +865,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   );
 
   const handleSaveAndSubmitPolygon = useCallback(
-    async (comment: string) => {
+    async (comment: string): Promise<boolean> => {
       const savedPolygon = await savePolygonData({ closeOnSave: false, deferSuccessToast: true });
       if (savedPolygon == null) {
-        return;
+        return false;
       }
 
       showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1), POLYGON_TOAST_IDS.submitting);
@@ -877,6 +877,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       if (submitted) {
         completePolygonProgressToast(POLYGON_TOAST_IDS.submitting, toastLabels.savedAndSubmittedComplete);
       }
+      return submitted;
     },
     [savePolygonData, submitPolygonWithData, t, toastLabels.savedAndSubmittedComplete]
   );
