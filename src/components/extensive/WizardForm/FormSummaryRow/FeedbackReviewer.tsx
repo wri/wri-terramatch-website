@@ -29,24 +29,29 @@ const FeedbackReviewer: FC<FeedbackReviewerProps> = ({
   const entries =
     feedbackFieldsOptions?.reduce<FormEntry[]>((acc, fieldId) => {
       const field = fieldsProvider.fieldByName(fieldId) ?? fieldsProvider.fieldByKey(fieldId);
+
       if (field == null) return acc;
 
       acc.push({
         title: field.label ?? "",
         inputType: field.inputType,
-        value: values != null && typeof values === "object" && fieldId in values ? values[fieldId] : null
+        value: values != null && typeof values === "object" && field.name in values ? values[field.name] : null
       });
       return acc;
     }, []) ?? [];
 
+  const hasFeedbackText = feedback != null && feedback.trim().length > 0;
+
   useEffect(() => {
-    if (reportSummaryAnalytics == null || entries.length === 0 || feedbackBannerTracked.current) return;
+    if (reportSummaryAnalytics == null || (entries.length === 0 && !hasFeedbackText) || feedbackBannerTracked.current) {
+      return;
+    }
 
     feedbackBannerTracked.current = true;
     reportSummaryAnalytics.onFeedbackBannerDisplayed(reportSummaryAnalytics.reviewSectionName);
-  }, [entries.length, reportSummaryAnalytics]);
+  }, [entries.length, hasFeedbackText, reportSummaryAnalytics]);
 
-  if (entries.length === 0) return null;
+  if (entries.length === 0 && !hasFeedbackText) return null;
 
   const handleAccordionOpenChange = (open: boolean) => {
     if (open) {
