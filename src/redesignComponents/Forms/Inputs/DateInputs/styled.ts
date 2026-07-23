@@ -23,7 +23,7 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
     align-items: center;
     gap: 0.25rem;
     height: ${size === "small" ? "1.75rem" : "2.5rem"};
-    border: 0.0625rem solid ${getThemedColor("neutral", 300)};
+    border: 0.0625rem solid ${getThemedColor("neutral", 400)};
     border-radius: 0.25rem;
     padding: ${size === "small" ? "0.25rem 0.5rem" : "0.75rem"};
     background: ${getThemedColor("neutral", 100)};
@@ -54,7 +54,7 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
 
   &[data-disabled] [data-part="control"] {
     background-color: ${getThemedColor("neutral", 200)};
-    border-color: ${getThemedColor("neutral", 300)};
+    border-color: ${getThemedColor("neutral", 400)};
     outline: none;
     box-shadow: 0 0.0625rem 0.125rem 0 #0000000d;
     cursor: not-allowed;
