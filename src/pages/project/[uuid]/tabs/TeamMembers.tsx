@@ -11,7 +11,7 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
-import Table from "@/redesignComponents/dataDisplay/Table/Table";
+import Table, { type TableRenderRowContext } from "@/redesignComponents/dataDisplay/Table/Table";
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { DeleteIcon, UserAddIcon } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
@@ -169,9 +169,9 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         <Table
           data={teamMembers ?? []}
           renderRow={useCallback(
-            (rowData: RowData) => (
-              <TableRow className="group">
-                <ChakraTableCell>
+            (rowData: RowData, context?: TableRenderRowContext) => (
+              <TableRow className={context?.className != null ? `group ${context.className}` : "group"}>
+                <ChakraTableCell {...context?.getCellProps("fullName")}>
                   <CustomTableCell
                     avatars={[
                       {
@@ -182,15 +182,19 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                     ]}
                   />
                 </ChakraTableCell>
-                <ChakraTableCell>{t(rowData?.organisationName)}</ChakraTableCell>
-                {!isMobile && <ChakraTableCell>{rowData?.emailAddress}</ChakraTableCell>}
-                <ChakraTableCell>
+                <ChakraTableCell {...context?.getCellProps("organisationName")}>
+                  {t(rowData?.organisationName)}
+                </ChakraTableCell>
+                {!isMobile && (
+                  <ChakraTableCell {...context?.getCellProps("emailAddress")}>{rowData?.emailAddress}</ChakraTableCell>
+                )}
+                <ChakraTableCell {...context?.getCellProps("roleName")}>
                   {rowData?.roleName != null
                     ? t(TEAM_MEMBER_ROLE_CHOICES.find(choice => choice.id === rowData.roleName)?.name)
                     : "-"}
                 </ChakraTableCell>
-                <ChakraTableCell>{t(rowData?.status)}</ChakraTableCell>
-                <ChakraTableCell>
+                <ChakraTableCell {...context?.getCellProps("status")}>{t(rowData?.status)}</ChakraTableCell>
+                <ChakraTableCell {...context?.getCellProps("actions")}>
                   <ActionCell
                     // TODO: comment out for now as we don't have an edit functionality yet
                     // button={{
