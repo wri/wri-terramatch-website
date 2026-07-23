@@ -30,14 +30,16 @@ export type ReportSummaryAnalyticsProps = {
 const FormSummary = (props: FormSummaryProps) => {
   const { feedback, feedbackFieldsOptions, reportSummaryAnalytics } = props;
   const stepIds = useFieldsProvider().stepIds();
-  const hasFeedback = Array.isArray(feedbackFieldsOptions) && feedbackFieldsOptions.length > 0;
+  const hasFeedback =
+    (Array.isArray(feedbackFieldsOptions) && feedbackFieldsOptions.length > 0) ||
+    (typeof feedback === "string" && feedback.trim().length > 0);
 
   return (
     <div className="space-y-6">
       {hasFeedback && (
         <FeedbackReviewer
           feedback={feedback}
-          feedbackFieldsOptions={feedbackFieldsOptions}
+          feedbackFieldsOptions={feedbackFieldsOptions ?? null}
           values={props.values}
           reportSummaryAnalytics={reportSummaryAnalytics}
         />
