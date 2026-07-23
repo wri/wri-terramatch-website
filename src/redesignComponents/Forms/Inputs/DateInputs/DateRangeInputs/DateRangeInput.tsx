@@ -2,9 +2,9 @@ import type { DatePickerRootProps, DateValue } from "@ark-ui/react";
 import { DatePicker, Portal, useDatePicker } from "@ark-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FieldWrapper } from "@worldresources/wri-design-systems";
+import { FieldWrapper, getThemedColor } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
-import type { FC } from "react";
+import type { FC, KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
@@ -12,6 +12,7 @@ import { formatDateValue, getDateFormatString, parseDateInput } from "@/utils/da
 
 import { DayView, MonthView, YearView } from "../components";
 import { datePickerControlStyles } from "../styled";
+import { useKeyboardFocusVisible } from "../useKeyboardFocusVisible";
 import { DateRangeInputs } from "./components";
 import { calendarGlobalStyles } from "./styled";
 import type { PreservedDate } from "./types";
@@ -49,6 +50,7 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
   defaultValue = [],
   onValueChange
 }) => {
+  useKeyboardFocusVisible();
   const [uncontrolledDates, setUncontrolledDates] = useState<DateValue[]>(defaultValue);
   const dates = valueProp ?? uncontrolledDates;
   const isFilled = dates.length > 0;
@@ -125,6 +127,17 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
     [dates, picker, setDates]
   );
 
+  const handleInputKeyDown = useCallback(
+    (event: ReactKeyboardEvent<HTMLInputElement>) => {
+      if (disabled || picker.open) return;
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        picker.setOpen(true);
+      }
+    },
+    [disabled, picker]
+  );
+
   return (
     <FieldWrapper
       label={label}
@@ -148,11 +161,11 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
         <DatePicker.RootProvider value={picker}>
           <DatePicker.Control
             onClick={() => !disabled && picker.setOpen(true)}
-            style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+            style={{ gap: "0.5rem", cursor: disabled ? "not-allowed" : "pointer" }}
           >
-            <CalendarIcon />
+            <CalendarIcon style={{ color: getThemedColor("neutral", 600) }} />
             <div className="flex justify-center">
-              <DatePicker.Input index={0} placeholder={dateFormat} />
+              <DatePicker.Input index={0} placeholder={dateFormat} onKeyDown={handleInputKeyDown} />
             </div>
 
             <span
@@ -164,7 +177,7 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
             </span>
 
             <div className="flex justify-center">
-              <DatePicker.Input index={1} placeholder={dateFormat} />
+              <DatePicker.Input index={1} placeholder={dateFormat} onKeyDown={handleInputKeyDown} />
             </div>
           </DatePicker.Control>
           <Portal>

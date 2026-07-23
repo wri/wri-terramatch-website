@@ -314,7 +314,7 @@ module.exports = {
   plugins: [
     require("@tailwindcss/line-clamp"),
     require("@headlessui/tailwindcss")({ prefix: "ui" }),
-    require("@tailwindcss/forms")
+    require("@tailwindcss/forms")({ strategy: "class" })
   ],
   safelist: [
     {

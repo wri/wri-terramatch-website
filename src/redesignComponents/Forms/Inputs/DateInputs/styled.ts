@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 
 import { getThemedColor, getThemedFontSize, getThemedLineHeight } from "../../../../lib/theme";
+import { KEYBOARD_FOCUS_ATTRIBUTE } from "./useKeyboardFocusVisible";
 
 export const datePickerControlStyles = (size: "default" | "small" = "default") => css`
   font-family: inherit;
@@ -28,9 +29,13 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
     background: ${getThemedColor("neutral", 100)};
     box-shadow: 0 0.0625rem 0.125rem 0 #0000000d;
     transition: border-color 0.15s;
+    outline: none;
   }
 
-  &[data-filled] [data-part="control"] {
+  /* Match DS TextInput: filled, open, or mouse focus → neutral 700 border */
+  &[data-filled] [data-part="control"],
+  &[data-open] [data-part="control"],
+  &:has([data-part="input"]:focus) [data-part="control"] {
     border-color: ${getThemedColor("neutral", 700)};
   }
 
@@ -38,7 +43,10 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
     border-color: ${getThemedColor("error", 900)};
   }
 
-  &[data-open] [data-part="control"] {
+  /* Primary ring only while navigating with the keyboard. A text input always matches the
+     native :focus-visible, so it would otherwise reappear when the field is re-focused after
+     a mouse selection; gate on the keyboard-modality attribute instead. */
+  html[${KEYBOARD_FOCUS_ATTRIBUTE}] &:has([data-part="input"]:focus) [data-part="control"] {
     outline: 0.125rem solid ${getThemedColor("primary", 700)};
     outline-offset: 0.125rem;
     box-shadow: 0 0 0 0.125rem ${getThemedColor("neutral", 100)}, rgba(0, 0, 0, 0.05) 0 0.125rem 0.125rem 0.25rem;
@@ -55,6 +63,7 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
   [data-part="input"] {
     border: none;
     outline: none;
+    box-shadow: none;
     background: transparent;
     font-size: ${size === "small" ? "0.875rem" : "1rem"};
     color: ${getThemedColor("neutral", 900)};
@@ -62,30 +71,53 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
     padding: 0;
   }
 
+  [data-part="input"]:focus,
+  [data-part="input"]:focus-visible {
+    outline: none;
+    box-shadow: none;
+    border: none;
+  }
+
   [data-part="input"]::placeholder {
     color: ${getThemedColor("neutral", 600)};
   }
 
-  [data-part="control"] > .chakra-icon {
-    display: flex;
+  /* Calendar trigger: a real <button> so the picker can be opened with the keyboard. */
+  [data-part="trigger"] {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
     color: ${getThemedColor("neutral", 700)};
     transition: color 0.15s;
     margin-right: 0.25rem;
+    cursor: pointer;
+    outline: none;
+    border-radius: 0.25rem;
   }
 
-  [data-part="control"]:hover > .chakra-icon {
+  [data-part="trigger"] .chakra-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  [data-part="control"]:hover [data-part="trigger"] {
     color: ${getThemedColor("primary", 600)};
   }
 
-  [data-part="control"][data-disabled] > .chakra-icon {
+  &[data-disabled] [data-part="trigger"] {
     color: ${getThemedColor("neutral", 500)};
+    cursor: not-allowed;
   }
 
-  [data-part="control"][data-disabled]:hover > .chakra-icon {
-    color: ${getThemedColor("neutral", 500)};
+  /* Trigger is a button, so native :focus-visible already means "keyboard only". */
+  [data-part="trigger"]:focus-visible {
+    outline: 0.125rem solid ${getThemedColor("primary", 700)};
+    outline-offset: 0.125rem;
   }
 `;
 
@@ -226,6 +258,14 @@ export const calendarBaseGlobalStyles = css`
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"]:hover {
     background: ${getThemedColor("primary", 200)};
+  }
+
+  /* Keyboard (arrow-key) navigation indicator for day cells. These are <button>s, so
+     :focus-visible only fires for keyboard nav — exactly what we want in the grid. */
+  [data-scope="date-picker"] [data-part="table-cell-trigger"]:focus-visible {
+    outline: 0.125rem solid ${getThemedColor("primary", 700)};
+    outline-offset: -0.125rem;
+    z-index: 2;
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-today] {

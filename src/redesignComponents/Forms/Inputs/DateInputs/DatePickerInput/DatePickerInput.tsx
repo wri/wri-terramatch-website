@@ -2,7 +2,7 @@ import type { DatePickerRootProps, DateValue } from "@ark-ui/react";
 import { DatePicker, Portal, useDatePicker } from "@ark-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FieldWrapper } from "@worldresources/wri-design-systems";
+import { FieldWrapper, getThemedColor } from "@worldresources/wri-design-systems";
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -12,6 +12,7 @@ import { formatDateValue, getDateFormatString, parseDateInput } from "@/utils/da
 
 import { DayView, MonthView, YearView } from "../components";
 import { calendarBaseGlobalStyles, datePickerControlStyles } from "../styled";
+import { useKeyboardFocusVisible } from "../useKeyboardFocusVisible";
 
 interface DatePickerInputProps {
   showOptionalLabel?: boolean;
@@ -50,6 +51,7 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
   onValueChange,
   className
 }) => {
+  useKeyboardFocusVisible();
   const [uncontrolledDate, setUncontrolledDate] = useState<DateValue[]>(defaultValue);
   const date = valueProp ?? uncontrolledDate;
   const isFilled = date.length > 0;
@@ -102,10 +104,20 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
         <DatePicker.RootProvider value={picker}>
           <DatePicker.Control
             onClick={() => !disabled && picker.setOpen(true)}
-            style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+            style={{ gap: "0.5rem", cursor: disabled ? "not-allowed" : "pointer" }}
           >
-            <CalendarIcon />
-            <DatePicker.Input index={0} placeholder={dateFormat} />
+            <CalendarIcon style={{ color: getThemedColor("neutral", 600) }} />
+            <DatePicker.Input
+              index={0}
+              placeholder={dateFormat}
+              onKeyDown={event => {
+                if (disabled || picker.open) return;
+                if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                  event.preventDefault();
+                  picker.setOpen(true);
+                }
+              }}
+            />
           </DatePicker.Control>
           <Portal>
             <DatePicker.Positioner>
