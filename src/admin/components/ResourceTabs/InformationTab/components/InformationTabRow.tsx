@@ -113,7 +113,7 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
 function stepIncludesTreesGoalField(fieldsProvider: FormFieldsProvider, stepId: string): boolean {
   const visit = (fieldName: string): boolean => {
     const field = fieldsProvider.fieldByName(fieldName);
-    if (field?.inputType === "treesGoal") return true;
+    if (field?.inputType === "treesGoal" || field?.inputType === "treesPlantedGoal") return true;
     return fieldsProvider.childNames(fieldName).some(child => visit(child));
   };
   return fieldsProvider.fieldNames(stepId).some(visit);

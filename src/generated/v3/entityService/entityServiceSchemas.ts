@@ -2964,6 +2964,7 @@ export type TrackingDto = {
     | "hectares-goal"
     | "hectares-historical"
     | "trees-goal"
+    | "trees-planted-goal"
     | "trees-historical";
   collection: string;
   entries: TrackingEntryDto[];
@@ -3175,6 +3176,7 @@ export type LinkedFieldDto = {
     | "stratas"
     | "trainingBeneficiaries"
     | "treesGoal"
+    | "treesPlantedGoal"
     | "treesHistorical"
     | "treeSpecies"
     | "volunteers"
@@ -3369,6 +3371,7 @@ export type FormQuestionDto = {
     | "stratas"
     | "trainingBeneficiaries"
     | "treesGoal"
+    | "treesPlantedGoal"
     | "treesHistorical"
     | "treeSpecies"
     | "volunteers"
@@ -3526,6 +3529,7 @@ export type StoreFormQuestionAttributes = {
     | "stratas"
     | "trainingBeneficiaries"
     | "treesGoal"
+    | "treesPlantedGoal"
     | "treesHistorical"
     | "treeSpecies"
     | "volunteers"
