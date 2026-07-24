@@ -87,7 +87,11 @@ const SiteOverview: FC = () => {
             <Button
               className="button-aside-page-admin"
               startIcon={<Check />}
-              disabled={record?.status === "approved" || record?.updateRequestStatus === "awaiting-approval"}
+              disabled={
+                record?.status === "approved" ||
+                record?.updateRequestStatus === "awaiting-approval" ||
+                record?.updateRequestStatus === "draft"
+              }
               onClick={() => setStatusModal("approved")}
             >
               Approve

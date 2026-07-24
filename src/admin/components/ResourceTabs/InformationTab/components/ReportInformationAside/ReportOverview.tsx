@@ -82,7 +82,9 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             <Button
               variant="contained"
               startIcon={<Check />}
-              disabled={reportActionDisabled || record?.status === "approved"}
+              disabled={
+                reportActionDisabled || record?.status === "approved" || record?.updateRequestStatus === "draft"
+              }
               onClick={() => setStatusModal("approved")}
             >
               Approve
