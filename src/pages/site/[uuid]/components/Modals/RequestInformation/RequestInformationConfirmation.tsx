@@ -62,9 +62,10 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
       open={open}
       onClose={handleClose}
       size="large"
+      contentPadding={false}
       header={<b className="text-theme-neutral-800">{t("Request information?")}</b>}
       content={
-        <Flex className="-m-2.5 flex-col gap-4">
+        <Flex className="flex-col gap-4">
           <Box px={4} pt={4}>
             <Text textStyle="400" color="neutral.900" mb={4}>
               {t(
@@ -77,7 +78,7 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
               <PolygonApprovalTable polygons={polygons} selectable={false} showArea={false} />
             </Box>
           </Box>
-          <Box bg="warning.100" mb={-0.5}>
+          <Box bg="warning.100">
             <SimpleDivider backgroundColor="warning.300" />
             <Box px={4} pt={2} pb={4}>
               <Flex alignItems="center" gap={0.5}>

@@ -326,7 +326,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
             title={polygon?.polygonUuid ? polygon?.polygonName ?? t("-") : t("New Polygon")}
             variant="fixed"
             onClose={onClose}
-            className="h-full w-full"
+            className="h-full"
             content={
               <Flex className="h-full flex-col">
                 {polygon?.polygonUuid && (
