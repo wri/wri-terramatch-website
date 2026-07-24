@@ -41,22 +41,19 @@ const listOfPolygonsFixed = (data: Record<string, any> | null) => {
 };
 
 const getIndicatorCalculationValues = (data: Record<string, any> | null) => {
-  if (!data?.data) return null;
+  if (data?.data == null || typeof data.data !== "object" || data.data.totalPolygons == null) {
+    return null;
+  }
 
-  let indicatorCalculationValues = "";
-
-  if (typeof data.data === "object") {
-    indicatorCalculationValues = `
-    Total Polygons Processed: ${data.data?.totalPolygons} <br />
-    Successful (Data Found): ${data.data?.dataFound} <br />
-    No Data Available (Coverage Gap): ${data.data?.noData} <br />
+  return `
+    Total Polygons Processed: ${data.data.totalPolygons} <br />
+    Successful (Data Found): ${data.data.dataFound} <br />
+    No Data Available (Coverage Gap): ${data.data.noData} <br />
     Failed: ${
-      data.data?.failureMessage
-        ? `<strong style="font-weight: 600; color: red;">${data.data?.failureMessage}</strong>`
+      data.data.failureMessage
+        ? `<strong style="font-weight: 600; color: red;">${data.data.failureMessage}</strong>`
         : "-"
     } <br />`;
-  }
-  return indicatorCalculationValues;
 };
 
 const getFailedPolygonUuidsFromIndicatorPayload = (data: Record<string, any> | null): string[] => {
@@ -72,6 +69,11 @@ const getIndicatorSlugFromPayload = (
   if (typeof slug !== "string" || slug.length === 0) return null;
   return slug as StartIndicatorCalculationPathParams["slug"];
 };
+
+const LEGACY_INDICATOR_JOB_NAME = "Indicator Calculation";
+
+const isIndicatorCalculationJob = (job: Pick<DelayedJobDto, "name" | "payload">): boolean =>
+  job.name === LEGACY_INDICATOR_JOB_NAME || getIndicatorSlugFromPayload(job.payload) != null;
 
 const getValidationMessages = (data: Record<string, any> | null): string[] => {
   if (data?.included == null) return [];
@@ -182,7 +184,7 @@ const FloatNotification: FC = () => {
     if (!delayedJobs || delayedJobs.length === 0) return;
 
     delayedJobs.forEach(job => {
-      if (job.name === "Indicator Calculation" && !processedIndicatorJobs.has(job.uuid)) {
+      if (isIndicatorCalculationJob(job) && !processedIndicatorJobs.has(job.uuid)) {
         const isCompleted = job.status === "succeeded" || job.status === "failed";
 
         if (isCompleted) {
@@ -272,13 +274,12 @@ const FloatNotification: FC = () => {
               {isLoaded &&
                 notAcknowledgedJobs &&
                 notAcknowledgedJobs.map((item, index) => {
-                  const indicatorCalculationHtml =
-                    item.name === "Indicator Calculation" ? getIndicatorCalculationValues(item.payload) : null;
-                  const failedPolygonUuids =
-                    item.name === "Indicator Calculation"
-                      ? getFailedPolygonUuidsFromIndicatorPayload(item.payload)
-                      : [];
-                  const canRerunFailed = item.name === "Indicator Calculation" && failedPolygonUuids.length > 0;
+                  const isIndicatorJob = isIndicatorCalculationJob(item);
+                  const indicatorCalculationHtml = isIndicatorJob ? getIndicatorCalculationValues(item.payload) : null;
+                  const failedPolygonUuids = isIndicatorJob
+                    ? getFailedPolygonUuidsFromIndicatorPayload(item.payload)
+                    : [];
+                  const canRerunFailed = isIndicatorJob && failedPolygonUuids.length > 0;
                   const isRerunFailedLoading = rerunningFailedJobs.has(item.uuid);
 
                   return (
