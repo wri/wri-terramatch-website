@@ -10,7 +10,11 @@ import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 import { trackPolygonRunValidationClicked } from "@/utils/polygonAnalytics";
 
-import { collectRelatedPartnerUuidsFromFixability, extractClippedVersions } from "../hooks/overlapFix.utils";
+import {
+  collectGeometryUuidsForValidationUiClear,
+  collectRelatedPartnerUuidsFromFixability,
+  extractClippedVersions
+} from "../hooks/overlapFix.utils";
 import { usePolygonValidationCriteria } from "../hooks/usePolygonValidationCriteria";
 import {
   closePolygonProgressToast,
@@ -19,7 +23,7 @@ import {
   POLYGON_TOAST_IDS,
   showPolygonErrorToast
 } from "../utils/polygonOperationToasts";
-import type { PolygonOverlapFixCallback } from "./polygonEdit.types";
+import type { PolygonOverlapFixCallback, PolygonValidationPendingCallback } from "./polygonEdit.types";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 import ValidationDetail from "./ValidationDetail";
 
@@ -27,6 +31,8 @@ export type PolygonSystemValidationContentProps = {
   siteUuid: string;
   polygon?: SitePolygonLightDto;
   onOverlapFixed?: PolygonOverlapFixCallback;
+  onOverlapFixValidationStarted?: PolygonValidationPendingCallback;
+  onOverlapFixValidationFailed?: () => void;
   onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
 };
 
@@ -46,6 +52,8 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
   siteUuid,
   polygon,
   onOverlapFixed,
+  onOverlapFixValidationStarted,
+  onOverlapFixValidationFailed,
   onRunValidation
 }) => {
   const t = useT();
@@ -88,6 +96,14 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
       polygon_id: polygonUuid
     });
 
+    const relatedPartnerUuids = collectRelatedPartnerUuidsFromFixability([fixabilityResult]);
+    onOverlapFixValidationStarted?.(
+      collectGeometryUuidsForValidationUiClear({
+        previousGeometryUuids: [polygonUuid],
+        relatedPartnerUuids
+      })
+    );
+
     try {
       const response = await clipPolygonListAsync([polygonUuid]);
       const clippedVersions = extractClippedVersions(response);
@@ -96,16 +112,19 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
         primaryUuid: polygon?.primaryUuid,
         sitePolygonUuid: polygon?.uuid,
         clippedVersions,
-        relatedPartnerUuids: collectRelatedPartnerUuidsFromFixability([fixabilityResult])
+        relatedPartnerUuids
       });
     } catch (error) {
       Log.error("Failed to fix polygon overlaps:", error);
+      onOverlapFixValidationFailed?.();
       showPolygonErrorToast(t("Failed to fix polygon overlaps"));
     } finally {
       setPendingClipping(false);
     }
   }, [
     fixabilityResult,
+    onOverlapFixValidationFailed,
+    onOverlapFixValidationStarted,
     onOverlapFixed,
     pendingClipping,
     polygon?.primaryUuid,
