@@ -17,6 +17,7 @@ import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useOnUnmount } from "@/hooks/useOnMount";
 import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
+import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import {
   getAnalyticsUserRole,
@@ -60,6 +61,7 @@ const EntityEditDisplay = () => {
   // When we unmount, clear the cache of the base entity so it gets fetched again when needed.
   useOnUnmount(() => {
     pruneEntityCache(formEntity, entityUUID);
+    ApiSlice.pruneCache("updateRequests", [`${formEntity}|${entityUUID}`]);
     refetch();
   });
 
