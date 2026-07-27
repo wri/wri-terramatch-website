@@ -765,6 +765,10 @@ export const parsePolygonsIndicatorDataForLandUse = (
 };
 
 export const parsePolygonsIndicatorDataForStrategies = (polygonsIndicator: PolygonIndicator[]): ParsedDataItem[] => {
+  if (!polygonsIndicator?.length) {
+    return [];
+  }
+
   const totals = {
     "Tree Planting": 0,
     "Direct Seeding": 0,
