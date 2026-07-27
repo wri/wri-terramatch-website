@@ -82,7 +82,7 @@ const OrganisationFundingProgrammesTable: FC = () => {
 
     uuidsToFetch.forEach(uuid => fetchedUuidsRef.current.add(uuid));
 
-    const fundingProgrammePromises = uuidsToFetch.map(uuid => loadFundingProgramme({ id: uuid, translated: false }));
+    const fundingProgrammePromises = uuidsToFetch.map(uuid => loadFundingProgramme({ id: uuid }));
 
     const results = await Promise.all(fundingProgrammePromises);
 

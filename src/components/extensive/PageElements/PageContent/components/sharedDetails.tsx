@@ -213,7 +213,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
               <Fragment key={`${step.id}-${entry.title}-${index}`}>
                 <Flex direction="column" gap={1}>
                   <Text className="flex items-center gap-1 leading-normal" textStyle="300-bold" color="primary.900">
-                    {entry.title}:
+                    {t(entry.title)}:
                   </Text>
                   <EntryDefaultValueRenderer entry={entry} />
                 </Flex>

@@ -13,14 +13,12 @@ import { FundingProgrammeDto } from "@/generated/v3/entityService/entityServiceS
 
 const fundingProgrammeConnection = v3Resource("fundingProgrammes", fundingProgrammeGet)
   .singleResource<FundingProgrammeDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
-  .addProps<{ translated?: boolean }>(({ translated }) => ({ queryParams: { translated: translated } }))
   .enabledProp()
   .update(fundingProgrammeUpdate)
   .buildConnection();
 
 const fundingProgrammesConnection = v3Resource("fundingProgrammes", fundingProgrammesIndex)
   .index<FundingProgrammeDto>()
-  .addProps<{ translated?: boolean }>(({ translated }) => ({ queryParams: { translated: translated } }))
   .buildConnection();
 
 export const loadFundingProgramme = connectionLoader(fundingProgrammeConnection);
