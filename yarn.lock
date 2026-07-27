@@ -6809,10 +6809,10 @@
     "@webassemblyjs/ast" "1.12.1"
     "@xtuc/long" "4.2.2"
 
-"@worldresources/wri-design-systems@2.202.6":
-  version "2.202.6"
-  resolved "https://registry.yarnpkg.com/@worldresources/wri-design-systems/-/wri-design-systems-2.202.6.tgz#bf27b3d4d7556b24f23b27901f5166d4a52be999"
-  integrity sha512-r8suBUBCsxLBgiRfDsTcQ4Pdwxto38bDZT3TtniEgt4N/QszfKZbffPZbwKQIoykNlWvqmWov4PA5IQ7S2e/zQ==
+"@worldresources/wri-design-systems@2.202.7":
+  version "2.202.7"
+  resolved "https://registry.yarnpkg.com/@worldresources/wri-design-systems/-/wri-design-systems-2.202.7.tgz#f15ae638bff543a6a58d4b9d9a61d8d93c83bfc5"
+  integrity sha512-oDa4gP28YGPCWDhdBTeeD1JN2ft9YrhCw/V5A0fwKSFR9J3dNyLm66b13ENy9qXB6gJt91Sd133001EYP8k+9A==
   dependencies:
     "@tiptap/core" "^3.23.6"
     "@tiptap/extension-image" "^3.23.6"
