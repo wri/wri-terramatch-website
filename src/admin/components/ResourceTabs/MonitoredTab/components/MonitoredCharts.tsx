@@ -62,6 +62,7 @@ const RestorationMetrics: FC<RestorationMetricsProps> = ({ record, totalHectares
 type MonitoredChartsProps = {
   selected: React.Key[];
   isLoadingIndicator: boolean;
+  hasIndicatorData: boolean;
   parsedData: any[];
   ecoRegionData: any;
   strategiesData: any[];
@@ -73,6 +74,7 @@ type MonitoredChartsProps = {
 const MonitoredCharts: FC<MonitoredChartsProps> = ({
   selected,
   isLoadingIndicator,
+  hasIndicatorData,
   parsedData,
   ecoRegionData,
   strategiesData,
@@ -85,45 +87,31 @@ const MonitoredCharts: FC<MonitoredChartsProps> = ({
   useEffect(() => {
     if (isLoadingIndicator) {
       setHasNoData(false);
+      return;
     }
-    const noData = selected.some(chartId => {
-      switch (chartId) {
-        case "1":
-        case "2":
-          return !parsedData?.length;
-        case "3":
-          return !ecoRegionData?.chartData?.length;
-        case "4":
-          return !strategiesData?.length;
-        case "5":
-          return !landUseData?.graphicTargetLandUseTypes?.length;
-        default:
-          return false;
-      }
-    });
-    setHasNoData(noData);
-  }, [selected, parsedData, ecoRegionData, strategiesData, landUseData, isLoadingIndicator]);
+    setHasNoData(!hasIndicatorData);
+  }, [hasIndicatorData, isLoadingIndicator]);
 
   const renderChart = (chartId: React.Key) => {
     switch (chartId) {
       case "1":
       case "2":
         return (
-          <ChartContainer key={chartId} isLoading={isLoadingIndicator} hasNoData={!parsedData?.length}>
+          <ChartContainer key={chartId} isLoading={isLoadingIndicator} hasNoData={!hasIndicatorData}>
             <TreeLossBarChart data={parsedData} className="flex flex-col" />
           </ChartContainer>
         );
 
       case "3":
         return (
-          <ChartContainer key={chartId} isLoading={isLoadingIndicator} hasNoData={!ecoRegionData?.chartData?.length}>
+          <ChartContainer key={chartId} isLoading={isLoadingIndicator} hasNoData={!hasIndicatorData}>
             <EcoRegionDoughnutChart data={ecoRegionData} />
           </ChartContainer>
         );
 
       case "4":
         return (
-          <ChartContainer key={chartId} isLoading={isLoadingIndicator} hasNoData={!strategiesData?.length}>
+          <ChartContainer key={chartId} isLoading={isLoadingIndicator} hasNoData={!hasIndicatorData}>
             <RestorationMetrics
               record={record}
               totalHectaresRestoredGoal={totalHectaresRestoredGoal}
@@ -134,11 +122,7 @@ const MonitoredCharts: FC<MonitoredChartsProps> = ({
 
       case "5":
         return (
-          <ChartContainer
-            key={chartId}
-            isLoading={isLoadingIndicator}
-            hasNoData={!landUseData?.graphicTargetLandUseTypes?.length}
-          >
+          <ChartContainer key={chartId} isLoading={isLoadingIndicator} hasNoData={!hasIndicatorData}>
             <div className="w-full">
               <GraphicIconDashboard
                 title="Hectares Under Restoration By Target Land Use System"
