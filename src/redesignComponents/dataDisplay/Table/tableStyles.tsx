@@ -19,6 +19,9 @@ export const getTableWrapperStyles = (
       },
       "& [data-scope='select'][data-part='root']": {
         display: "none"
+      },
+      "& div:has(.ds-select-input-container)": {
+        display: "none"
       }
     }),
     position: "relative",
