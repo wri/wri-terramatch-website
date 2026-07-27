@@ -129,7 +129,7 @@ const SignUpForm = ({ form, loading, handleSave, role }: SignUpFormProps) => {
                 labelClassName={"text-14-light normal-case text-dark-500"}
                 placeholder={t("Repeat Password")}
               />
-              <div className={`mt-7 flex flex-col ${errors.terms ? "gap-7" : "gap-1"}`}>
+              <div className={`mt-7 mr-2 flex flex-col ${errors.terms ? "gap-7" : "gap-1"}`}>
                 <Checkbox
                   name="terms"
                   form={form}

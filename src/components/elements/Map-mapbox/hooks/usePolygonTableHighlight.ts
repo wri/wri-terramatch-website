@@ -98,6 +98,7 @@ type UsePolygonTableHighlightStyleParams = {
   styleReady: boolean;
   styleVersion: number;
   sourcesAdded: boolean;
+  tileLoadRequestId: number;
   highlight: PolygonTableHighlight | undefined;
   editFocus?: MapEditFocusState;
 };
@@ -107,17 +108,27 @@ export function usePolygonTableHighlightStyle({
   styleReady,
   styleVersion,
   sourcesAdded,
+  tileLoadRequestId,
   highlight,
   editFocus = INACTIVE_MAP_EDIT_FOCUS
 }: UsePolygonTableHighlightStyleParams): void {
   const lastAppliedRef = useRef<Map<string, string>>(new Map());
+  const lastStyleKeyRef = useRef<string>("");
   const isHighlightActive = highlight != null;
   const isEditFocusActive = editFocus.isEditFocusActive;
   const hoveredUuid = usePolygonTableHoveredUuid(isHighlightActive && !isEditFocusActive);
   const selectedUuids = highlight?.selectedPolygonUuids ?? EMPTY_SELECTION;
 
   useEffect(() => {
-    if (!isHighlightActive || isEditFocusActive || !styleReady || !sourcesAdded || map.current == null) return;
+    if (!isHighlightActive || !styleReady || !sourcesAdded || map.current == null) return;
+
+    const styleKey = `${styleVersion}:${sourcesAdded}:${tileLoadRequestId}:${isEditFocusActive}`;
+    if (lastStyleKeyRef.current !== styleKey) {
+      lastStyleKeyRef.current = styleKey;
+      lastAppliedRef.current = new Map();
+    }
+
+    if (isEditFocusActive) return;
 
     const m = map.current;
     const fillConfigs = getPolygonGeometryFillLayerConfigs();
@@ -163,11 +174,17 @@ export function usePolygonTableHighlightStyle({
         }
       }
     }
-  }, [map, styleReady, styleVersion, sourcesAdded, isHighlightActive, isEditFocusActive, hoveredUuid, selectedUuids]);
-
-  useEffect(() => {
-    lastAppliedRef.current = new Map();
-  }, [styleVersion, sourcesAdded]);
+  }, [
+    map,
+    styleReady,
+    styleVersion,
+    sourcesAdded,
+    tileLoadRequestId,
+    isHighlightActive,
+    isEditFocusActive,
+    hoveredUuid,
+    selectedUuids
+  ]);
 }
 
 type UsePolygonSelectionZoomParams = {

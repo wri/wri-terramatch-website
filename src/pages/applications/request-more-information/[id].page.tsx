@@ -106,7 +106,16 @@ const RequestMoreInformationPage = () => {
           roundedCorners
           orgDetails={orgDetails}
           redirectEntityPage={`/applications/${uuid}`}
-          entity={application != null && submission != null ? { ...application, status: submission.status } : undefined}
+          entity={
+            application != null && submission != null
+              ? {
+                  ...application,
+                  status: submission.status,
+                  feedback: submission.feedback,
+                  feedbackFields: submission.translatedFeedbackFields
+                }
+              : undefined
+          }
         />
       </LoadingContainer>
     </BackgroundLayout>

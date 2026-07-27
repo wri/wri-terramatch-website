@@ -43,7 +43,10 @@ import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils
 import { isSitePolygonApprovable, toReviewAvailabilityPolygon } from "@/utils/sitePolygonReview";
 
 import { type OverlapFixPolygon } from "../components/Modals/OverlapFix";
-import { buildPolygonValidationsMap } from "../components/Modals/validationCriteria";
+import {
+  buildPolygonValidationsMap,
+  withResolvedValidationStatusFromCriteria
+} from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import PolygonSubmissionAnnouncement from "../components/PolygonSubmissionAnnouncement";
 import { PolygonTableRow } from "../components/PolygonTableRow";
@@ -152,11 +155,15 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     filter: sitePolygonFilter
   });
 
-  const polygonsData = polygonsQueryData ?? EMPTY_POLYGONS;
+  const polygonsQueryDataOrEmpty = polygonsQueryData ?? EMPTY_POLYGONS;
   const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
   const polygonValidations = useMemo(
     () => buildPolygonValidationsMap([...allValidations, ...supplementalValidations]),
     [allValidations, supplementalValidations]
+  );
+  const polygonsData = useMemo(
+    () => withResolvedValidationStatusFromCriteria(polygonsQueryDataOrEmpty, polygonValidations),
+    [polygonsQueryDataOrEmpty, polygonValidations]
   );
 
   const { polygonRows, columns, totalTreesPlanted, totalRestorationAreaHa } = useSitePolygonTableData({
@@ -164,13 +171,18 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     polygonValidations,
     t
   });
-  const { polygonsWithOverlapCount, overlapPolygons, overlapValidations, fetchOverlapValidations } =
-    useSitePolygonOverlap({
-      siteUuid: site.uuid,
-      polygonsData,
-      t
-    });
-  const overlapPolygonValidations = useMemo(() => buildPolygonValidationsMap(overlapValidations), [overlapValidations]);
+  const {
+    polygonsWithOverlapCount,
+    overlapPolygons,
+    overlapValidations,
+    overlapValidationsByPolygonUuid,
+    fetchOverlapValidations
+  } = useSitePolygonOverlap({
+    siteUuid: site.uuid,
+    polygonsData,
+    preferredValidationsByPolygonUuid: polygonValidations,
+    t
+  });
 
   const { selectedRows, selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } =
     useTableSelection<PolygonTableRow>(true, polygonRows);
@@ -202,8 +214,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     [polygonsData]
   );
   const editDrawerPolygonValidation = useMemo(
-    () => overlapValidations.find(validation => validation.polygonUuid === editDrawerPolygonUuid),
-    [overlapValidations, editDrawerPolygonUuid]
+    () => (editDrawerPolygonUuid != null ? overlapValidationsByPolygonUuid.get(editDrawerPolygonUuid) : undefined),
+    [overlapValidationsByPolygonUuid, editDrawerPolygonUuid]
   );
   const { crossSiteOverlapPolygons } = useCrossSiteOverlapGeometries({
     polygonUuid: editDrawerPolygonUuid,
@@ -213,11 +225,12 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   });
 
   const selectedOverlapFixSummary = useMemo(
-    () => getSelectedOverlapFixSummary(selectedRows, overlapPolygonValidations, polygonsData),
-    [selectedRows, overlapPolygonValidations, polygonsData]
+    () => getSelectedOverlapFixSummary(selectedRows, overlapValidationsByPolygonUuid, polygonsData),
+    [selectedRows, overlapValidationsByPolygonUuid, polygonsData]
   );
   const hasSelectedOverlapFailure = hasOverlapFailureInSelection(selectedOverlapFixSummary);
-  const hasFixableSelectedOverlap = canAutoFixOverlapSelection(selectedOverlapFixSummary);
+  const hasFixableSelectedOverlap =
+    canAutoFixOverlapSelection(selectedOverlapFixSummary) && pendingValidationPolygonUuids.length === 0;
 
   const openPolygonEditDrawerByPolygonId = useCallback(
     (polygonId: string) => {

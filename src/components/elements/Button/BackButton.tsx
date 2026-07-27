@@ -8,7 +8,8 @@ import { History, useRouteHistoryContext } from "@/context/routeHistory.provider
 const BackButton = (props: { fallback?: History }) => {
   const t = useT();
   const { previousRoute } = useRouteHistoryContext();
-  const to = previousRoute || props.fallback || { path: "/home", title: t("Home") };
+  const to = previousRoute ?? props.fallback ?? { path: "/home", title: t("Home") };
+  const pageName = to.title?.trim() ?? t("Home");
 
   return (
     <Button
@@ -16,9 +17,9 @@ const BackButton = (props: { fallback?: History }) => {
       variant="text"
       iconProps={{ name: IconNames.CHEVRON_LEFT_CIRCLE, width: 32, height: 32 }}
       className="gap-2 px-0"
-      href={to?.path}
+      href={to.path ?? "/home"}
     >
-      {t("Back to {pageName}", { pageName: to?.title })}
+      {t("Back to {pageName}", { pageName })}
     </Button>
   );
 };

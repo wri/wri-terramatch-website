@@ -13,7 +13,7 @@ import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons"
 export type StatusProps = { title: string; icon: IconNames; className: string };
 
 type EntityStatusModalProps = {
-  statusProps: StatusProps;
+  statusProps?: StatusProps;
   feedback?: string | null;
   needMoreInformation?: boolean;
   showProvideFeedback?: boolean;
@@ -53,7 +53,7 @@ const EntityStatusModal: FC<EntityStatusModalProps> = ({
     <ModalConfirmation
       open={open}
       onOpenChange={open => !open && handleClose()}
-      title={statusProps.title}
+      title={statusProps?.title ?? ""}
       content={
         <Flex direction="column" align="center" gap={3}>
           <InformationRequiredIcon color="warning.500" boxSize={"2rem"} />

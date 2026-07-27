@@ -74,11 +74,13 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   >(null);
   const deletePolygonRef = useRef<(() => Promise<void>) | null>(null);
   const submitPolygonRef = useRef<((comment: string) => Promise<void>) | null>(null);
-  const saveAndSubmitPolygonRef = useRef<((comment: string) => Promise<void>) | null>(null);
+  const saveAndSubmitPolygonRef = useRef<((comment: string) => Promise<boolean>) | null>(null);
   const hasUnsavedChangesRef = useRef<(() => boolean) | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
   const [isSubmitWithUnsavedChangesModal, setIsSubmitWithUnsavedChangesModal] = useState(false);
+  const [hasPendingOverlapFixSave, setHasPendingOverlapFixSave] = useState(false);
+  const [pendingOverlapFixSaveModal, setPendingOverlapFixSaveModal] = useState(false);
   const [deletePayload, setDeletePayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
   const [submitPayload, setSubmitPayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
   const [anrPlotsModal, setAnrPlotsModal] = useState<
@@ -114,6 +116,23 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     setAnrPlotsModal(null);
   }, [polygon?.polygonUuid, defaultTab]);
 
+  useEffect(() => {
+    if (!open) {
+      setHasPendingOverlapFixSave(false);
+      setPendingOverlapFixSaveModal(false);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (!pendingOverlapFixSaveModal || activeTab !== "edit" || saveEditContent == null || isCreateMode) {
+      return;
+    }
+
+    setIsSubmitWithUnsavedChangesModal(true);
+    setShowSaveConfirmationModal(true);
+    setPendingOverlapFixSaveModal(false);
+  }, [activeTab, isCreateMode, pendingOverlapFixSaveModal, saveEditContent]);
+
   const selectedPolygonIdentityKey = `${selectedPolygon?.uuid ?? ""}:${selectedPolygon?.polygonUuid ?? ""}`;
 
   useEffect(() => {
@@ -141,7 +160,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     submitPolygonRef.current = submitHandler;
   }, []);
 
-  const registerSaveAndSubmit = useCallback((saveAndSubmitHandler: (comment: string) => Promise<void>) => {
+  const registerSaveAndSubmit = useCallback((saveAndSubmitHandler: (comment: string) => Promise<boolean>) => {
     saveAndSubmitPolygonRef.current = saveAndSubmitHandler;
   }, []);
 
@@ -168,15 +187,47 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   } = useAnrMonitoringPlotActions({
     sitePolygonUuid: sitePolygonUuidForAnr
   });
-  const showSaveAndSubmitOption = isSubmitWithUnsavedChangesModal && !isCreateMode;
+  const showSaveAndSubmitOption = !isCreateMode && (isSubmitWithUnsavedChangesModal || hasPendingOverlapFixSave);
+
+  const handleOverlapFixed = useCallback<PolygonOverlapFixCallback>(
+    async params => {
+      const updatedPolygon = await onOverlapFixed?.(params);
+      if (updatedPolygon != null) {
+        setHasPendingOverlapFixSave(true);
+      }
+      return updatedPolygon;
+    },
+    [onOverlapFixed]
+  );
 
   const closeDrawer = useCallback(() => {
     onOpenChange?.(false);
   }, [onOpenChange]);
 
+  const openSaveConfirmationModal = useCallback(
+    (hasUnsavedChanges: boolean) => {
+      setIsSubmitWithUnsavedChangesModal(!isCreateMode && (hasUnsavedChanges || hasPendingOverlapFixSave));
+      setShowSaveConfirmationModal(true);
+    },
+    [hasPendingOverlapFixSave, isCreateMode]
+  );
+
+  const requestSaveConfirmationModal = useCallback(
+    (hasUnsavedChanges: boolean) => {
+      if (hasPendingOverlapFixSave && !isCreateMode && activeTab !== "edit") {
+        setActiveTab("edit");
+        setPendingOverlapFixSaveModal(true);
+        return;
+      }
+
+      openSaveConfirmationModal(hasUnsavedChanges);
+    },
+    [activeTab, hasPendingOverlapFixSave, isCreateMode, openSaveConfirmationModal]
+  );
+
   const handleSave = useCallback(
     async (onClose: () => void) => {
-      if (activeTab !== "edit" || saveEditContent == null) {
+      if (saveEditContent == null) {
         onClose();
         return;
       }
@@ -185,17 +236,21 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
       try {
         const saved = await saveEditContent();
         if (saved != null) {
+          setHasPendingOverlapFixSave(false);
           onClose();
         }
       } finally {
         setIsSaving(false);
       }
     },
-    [activeTab, saveEditContent]
+    [saveEditContent]
   );
 
   const handleSaveAndSubmit = useCallback(async () => {
-    await saveAndSubmitPolygonRef.current?.("");
+    const succeeded = (await saveAndSubmitPolygonRef.current?.("")) ?? false;
+    if (succeeded) {
+      setHasPendingOverlapFixSave(false);
+    }
   }, []);
 
   const handleSaveConfirmationModalChange = useCallback(
@@ -226,15 +281,14 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         return;
       }
 
-      if (hasUnsavedChanges) {
-        setIsSubmitWithUnsavedChangesModal(hasUnsavedChanges && !isCreateMode);
-        setShowSaveConfirmationModal(true);
+      if (hasUnsavedChanges || hasPendingOverlapFixSave) {
+        requestSaveConfirmationModal(hasUnsavedChanges);
         return;
       }
 
       setSubmitPayload({ polygons: [mapSitePolygonToTableRow(selectedPolygon, t)] });
     },
-    [isCreateMode, selectedPolygon, t]
+    [hasPendingOverlapFixSave, requestSaveConfirmationModal, selectedPolygon, t]
   );
 
   const handleDeleteConfirmationModalChange = useCallback(
@@ -340,7 +394,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                   <PolygonSystemValidationContent
                     siteUuid={resolvedSiteUuid}
                     polygon={selectedPolygon}
-                    onOverlapFixed={onOverlapFixed}
+                    onOverlapFixed={handleOverlapFixed}
                     onRunValidation={onRunValidation}
                   />
                 )}
@@ -367,13 +421,17 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                       loading: isSaving,
                       disabled: isSaveDisabled || isSaving,
                       onClick: () => {
+                        if (hasPendingOverlapFixSave && !isCreateMode) {
+                          requestSaveConfirmationModal(hasUnsavedChangesRef.current?.() ?? false);
+                          return;
+                        }
+
                         if (activeTab !== "edit" || saveEditContent == null) {
                           void handleSave(onClose);
                           return;
                         }
-                        const hasUnsavedChanges = hasUnsavedChangesRef.current?.() ?? false;
-                        setIsSubmitWithUnsavedChangesModal(hasUnsavedChanges && !isCreateMode);
-                        setShowSaveConfirmationModal(true);
+
+                        requestSaveConfirmationModal(hasUnsavedChangesRef.current?.() ?? false);
                       }
                     }
                   ]}

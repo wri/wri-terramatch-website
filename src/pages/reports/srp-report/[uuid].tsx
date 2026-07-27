@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
@@ -8,7 +9,6 @@ import { getFormHeaderLabel, getShortPeriodLabel } from "@/components/extensive/
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSRPReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
-import { ToastType, useToastContext } from "@/context/toast.provider";
 import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -169,11 +169,16 @@ const SocioEconomicReportDetailPage = () => {
   const socioEconomicReportUUID = router.query.uuid as string;
 
   const [isLoaded, { data: srpReport, loadFailure }] = useFullSRPReport({ id: socioEconomicReportUUID });
-  const { openToast } = useToastContext();
-  useValueChanged(isLoaded, () => {
+  useValueChanged(srpReport, () => {
     if (isLoaded && srpReport == null) {
       Log.error("SRP report not found", { socioEconomicReportUUID, loadFailure });
-      openToast("SRP report not found", ToastType.ERROR);
+      showToast({
+        label: t("SRP report not found"),
+        type: "error",
+        placement: "bottom",
+        duration: 5000,
+        maxWidth: "auto"
+      });
     }
   });
 

@@ -27,11 +27,10 @@ export function usePolygonEditFocusStyle({
   useEffect(() => {
     if (!styleReady || !sourcesAdded || map.current == null) return;
 
-    const m = map.current;
-    const excludeUuid = isEditFocusActive ? editedPolygonUuid : null;
-    applyPolygonNeighborDimming(m, isEditFocusActive, excludeUuid);
-
     if (!isEditFocusActive) return;
+
+    const m = map.current;
+    applyPolygonNeighborDimming(m, true, editedPolygonUuid);
 
     const onIdle = () => {
       if (map.current !== m) return;
