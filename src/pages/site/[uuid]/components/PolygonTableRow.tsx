@@ -11,6 +11,7 @@ import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackT
 import MappedTag, { MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
 import ValidationTag, { ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
+import type { TableRenderRowContext } from "@/redesignComponents/dataDisplay/Table/Table";
 import {
   AgriculturalLandIcon,
   AgroforestyIcon,
@@ -142,7 +143,7 @@ const renderTreeDistribution = (
 
 interface PolygonRowProps {
   row: PolygonTableRow;
-  rowProps?: Record<string, unknown>;
+  context?: TableRenderRowContext;
   isSelected: boolean;
   isHovered: boolean;
   onHover: (uuid: string) => void;
@@ -153,7 +154,7 @@ interface PolygonRowProps {
 
 const PolygonRowComponent: FC<PolygonRowProps> = ({
   row,
-  rowProps,
+  context,
   isSelected,
   isHovered,
   onHover,
@@ -196,7 +197,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
 
   return (
     <TableRow
-      {...(rowProps ?? {})}
+      className={context?.className}
       aria-selected={isSelected}
       onMouseEnter={handleMouseEnter}
       style={isHovered ? HOVERED_ROW_STYLE : undefined}
@@ -210,25 +211,29 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
           disabled={readOnly}
         />
       </TableCell>
-      <TableCell>
+      <TableCell {...context?.getCellProps("polygonName")}>
         <Box>
           <Text textStyle="400-bold" color="neutral.800" className="truncate">
             {row.polygonName ?? "—"}
           </Text>
         </Box>
       </TableCell>
-      <TableCell className="min-w-[15.875rem]">
+      <TableCell {...context?.getCellProps("submission")}>
         {row.submission != null ? <MappedTag state={readOnly ? "deleted" : row.submission} /> : <Text>—</Text>}
       </TableCell>
-      <TableCell className="min-w-[12.75rem]">
+      <TableCell {...context?.getCellProps("validation")}>
         {row.validation != null ? <ValidationTag status={row.validation} /> : <Text>—</Text>}
       </TableCell>
-      <TableCell className="min-w-[15.5rem]">
+      <TableCell {...context?.getCellProps("restorationPracticeSort")}>
         <Flex className="items-center gap-2">{renderRestorationPractice(row.restorationPractice)}</Flex>
       </TableCell>
-      <TableCell>{renderTargetLandUse(row.targetLandUse, targetLandUseMap)}</TableCell>
-      <TableCell>{renderTreeDistribution(row.treeDistribution, treeDistributionLabels)}</TableCell>
-      <TableCell>
+      <TableCell {...context?.getCellProps("targetLandUseSort")}>
+        {renderTargetLandUse(row.targetLandUse, targetLandUseMap)}
+      </TableCell>
+      <TableCell {...context?.getCellProps("treeDistributionSort")}>
+        {renderTreeDistribution(row.treeDistribution, treeDistributionLabels)}
+      </TableCell>
+      <TableCell {...context?.getCellProps("plantingDate")}>
         <FeedbackTag
           type="info-grey"
           className="w-fit"
@@ -236,12 +241,14 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
           icon={<CalendarIcon boxSize={2.5} />}
         />
       </TableCell>
-      <TableCell className="min-w-[12.75rem]">{formatNumberLocaleString(row.treesPlanted) ?? "—"}</TableCell>
-      <TableCell className="min-w-[15.75rem]">{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
-      <TableCell className="min-w-[12rem]">
+      <TableCell {...context?.getCellProps("treesPlanted")}>
+        {formatNumberLocaleString(row.treesPlanted) ?? "—"}
+      </TableCell>
+      <TableCell {...context?.getCellProps("area")}>{formatNumberLocaleString(row.area) ?? "—"}</TableCell>
+      <TableCell {...context?.getCellProps("submissionCycleSort")}>
         <Text>{formatSubmissionCycleDisplay(row.submissionCycle as SubmissionCycleOption[])}</Text>
       </TableCell>
-      <TableCell className="min-w-[12rem]">
+      <TableCell {...context?.getCellProps("source")}>
         <Text>{row.source === "uploaded" ? t("Uploaded") : row.source}</Text>
       </TableCell>
     </TableRow>
@@ -252,7 +259,7 @@ const polygonRowPropsAreEqual = (prev: PolygonRowProps, next: PolygonRowProps) =
   prev.row === next.row &&
   prev.isSelected === next.isSelected &&
   prev.isHovered === next.isHovered &&
-  prev.rowProps === next.rowProps &&
+  prev.context === next.context &&
   prev.onHover === next.onHover &&
   prev.onSelectChange === next.onSelectChange &&
   prev.readOnly === next.readOnly;

@@ -1,19 +1,20 @@
 import { memo } from "react";
 
 import { usePolygonRowHovered, usePolygonRowSelected } from "@/context/polygonTableInteraction.store";
+import type { TableRenderRowContext } from "@/redesignComponents/dataDisplay/Table/Table";
 
 import { usePolygonTableInteractionActions } from "./polygonTableInteractionContext";
 import { type PolygonTableRow, PolygonRow } from "./PolygonTableRow";
 
 type PolygonTableRowConnectedProps = {
   row: PolygonTableRow;
-  rowProps?: Record<string, unknown>;
+  context?: TableRenderRowContext;
   readOnly?: boolean;
 };
 
 export const PolygonTableRowConnected = memo(function PolygonTableRowConnected({
   row,
-  rowProps,
+  context,
   readOnly = false
 }: PolygonTableRowConnectedProps) {
   const isSelected = usePolygonRowSelected(row.id);
@@ -23,7 +24,7 @@ export const PolygonTableRowConnected = memo(function PolygonTableRowConnected({
   return (
     <PolygonRow
       row={row}
-      rowProps={rowProps}
+      context={context}
       isSelected={isSelected}
       isHovered={isHovered}
       onHover={onHover}
@@ -33,8 +34,7 @@ export const PolygonTableRowConnected = memo(function PolygonTableRowConnected({
   );
 });
 
-export const renderPolygonTableRow =
-  (readOnly: boolean) => (row: PolygonTableRow, rowProps?: Record<string, unknown>) =>
-    <PolygonTableRowConnected row={row} rowProps={rowProps} readOnly={readOnly} />;
+export const renderPolygonTableRow = (readOnly: boolean) => (row: PolygonTableRow, context?: TableRenderRowContext) =>
+  <PolygonTableRowConnected row={row} context={context} readOnly={readOnly} />;
 
 export default PolygonTableRowConnected;

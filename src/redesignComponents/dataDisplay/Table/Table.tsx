@@ -1,7 +1,7 @@
-import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
-import React, { Ref, useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { Table as WriTable } from "@worldresources/wri-design-systems";
+import React, { Ref, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 import PaginationTable from "@/redesignComponents/navigation/Pagination/PaginationTable";
@@ -17,6 +17,15 @@ export type TableColumn = {
   key: string;
   label: string;
   sortable?: boolean;
+  /** Fixed column width (e.g. "17.75rem"). Applied by the library as width + minWidth. */
+  width?: string;
+  /** Custom cell renderer used by the library's native row renderer. */
+  cell?: (rowData: any) => React.ReactNode;
+};
+
+export type TableRenderRowContext = {
+  className?: string;
+  getCellProps: (columnKey: string) => Record<string, any>;
 };
 
 interface TableProps<T extends BaseRow> {
@@ -26,7 +35,7 @@ interface TableProps<T extends BaseRow> {
   height?: string;
   stickyHeader?: boolean;
   loading?: boolean;
-  renderRow?: (rowData: T, rowProps?: Record<string, unknown>) => React.ReactNode;
+  renderRow?: (rowData: T, context?: TableRenderRowContext) => React.ReactNode;
   renderDataCell?: (rowData: T, columnKey: string) => React.ReactNode;
   totalItems?: number;
   showItemCount?: boolean;
@@ -42,42 +51,6 @@ interface TableProps<T extends BaseRow> {
   onRowSelected?: (rowData: T, checked: boolean) => void;
   onAllItemsSelected?: (checked: boolean, visibleRows: T[]) => void;
 }
-
-interface SelectableRowProps<T extends BaseRow> {
-  rowData: T;
-  columns: TableColumn[];
-  renderDataCell: (rowData: T, columnKey: string) => React.ReactNode;
-  selectedRows: T[];
-  onRowSelected: (rowData: T, checked: boolean) => void;
-}
-
-const SelectableRow = <T extends BaseRow>({
-  rowData,
-  columns,
-  renderDataCell,
-  selectedRows,
-  onRowSelected
-}: SelectableRowProps<T>) => {
-  const handleOnRowSelected = useCallback(
-    ({ checked }: any) => {
-      onRowSelected(rowData, checked);
-    },
-    [rowData, onRowSelected]
-  );
-
-  const isRowSelected = selectedRows != null && selectedRows.some(item => item.id === rowData.id);
-
-  return (
-    <TableRow aria-selected={isRowSelected}>
-      <ChakraTableCell>
-        <Checkbox name={`checkbox-${rowData.id}`} onCheckedChange={handleOnRowSelected} checked={isRowSelected} />
-      </ChakraTableCell>
-      {columns.map(column => (
-        <ChakraTableCell key={`${rowData.id}-${column.key}`}>{renderDataCell(rowData, column.key)}</ChakraTableCell>
-      ))}
-    </TableRow>
-  );
-};
 
 const Table = <T extends BaseRow>({
   data,
@@ -163,23 +136,16 @@ const Table = <T extends BaseRow>({
     };
   }, [assignRef, dataByPage.length, scrollContainerRef, selectable]);
 
-  const defaultRenderDataCell = useCallback((rowData: T, columnKey: string) => {
-    return (rowData as Record<string, unknown>)[columnKey] as React.ReactNode;
-  }, []);
-
-  const renderDataCell = customRenderDataCell ?? defaultRenderDataCell;
-
-  const defaultRenderRow = useCallback(
-    (rowData: T) => {
-      return (
-        <TableRow className="group">
-          {columns.map(column => (
-            <ChakraTableCell key={`${rowData.id}-${column.key}`}>{renderDataCell(rowData, column.key)}</ChakraTableCell>
-          ))}
-        </TableRow>
-      );
-    },
-    [columns, renderDataCell]
+  // Bridge the legacy renderDataCell API onto the library's native columns[].cell so the
+  // library's default row renderer (native checkbox column included) produces cell content.
+  const resolvedColumns = useMemo<TableColumn[]>(
+    () =>
+      columns.map(column =>
+        column.cell == null && customRenderDataCell != null
+          ? { ...column, cell: (rowData: T) => customRenderDataCell(rowData, column.key) }
+          : column
+      ),
+    [columns, customRenderDataCell]
   );
 
   const handleAllItemsSelected = useCallback(
@@ -193,37 +159,29 @@ const Table = <T extends BaseRow>({
     [controlledOnAllItemsSelected, internalOnAllItemsSelected, dataByPage]
   );
 
-  const defaultSelectableRenderRow = useCallback(
-    (rowData: T) => {
-      return (
-        <SelectableRow
-          rowData={rowData}
-          columns={columns}
-          renderDataCell={renderDataCell}
-          selectedRows={selectedRows}
-          onRowSelected={handleRowSelected}
-        />
-      );
-    },
-    [columns, renderDataCell, selectedRows, handleRowSelected]
-  );
-
   const customRenderRowRef = useRef(customRenderRow);
   customRenderRowRef.current = customRenderRow;
 
-  const finalRenderRow = useCallback(
-    (rowData: T, rowProps?: Record<string, unknown>) => {
-      const renderRow = customRenderRowRef.current;
-      if (renderRow != null) {
-        return renderRow(rowData, rowProps);
-      }
-      if (selectable) {
-        return defaultSelectableRenderRow(rowData);
-      }
-      return defaultRenderRow(rowData);
-    },
-    [selectable, defaultSelectableRenderRow, defaultRenderRow]
-  );
+  const finalRenderRow = useCallback((rowData: T, context?: TableRenderRowContext) => {
+    const renderRow = customRenderRowRef.current;
+    if (renderRow == null) {
+      return null;
+    }
+    // TODO: Remove this getCellProps augmentation once the library adds maxWidth to its own
+    // cell props. It currently returns only width + minWidth from columns[].width, so columns
+    // can still grow past their configured size; we add maxWidth = width to pin the width.
+    const enhancedContext: TableRenderRowContext | undefined =
+      context != null
+        ? {
+            ...context,
+            getCellProps: (columnKey: string) => {
+              const cellProps = context.getCellProps(columnKey);
+              return cellProps.width != null ? { ...cellProps, maxWidth: cellProps.width } : cellProps;
+            }
+          }
+        : context;
+    return renderRow(rowData, enhancedContext);
+  }, []);
 
   const displayStart = actualTotalItems === 0 ? 0 : startRange + 1;
   const displayEnd = Math.min(endRange, actualTotalItems);
@@ -239,9 +197,13 @@ const Table = <T extends BaseRow>({
       {...(height != null ? { height } : {})}
     >
       <WriTable
-        columns={columns}
+        columns={resolvedColumns}
         data={dataByPage}
-        renderRow={finalRenderRow as (rowData: BaseRow, rowProps?: Record<string, unknown>) => React.ReactNode}
+        renderRow={
+          customRenderRow != null
+            ? (finalRenderRow as (rowData: BaseRow, context?: TableRenderRowContext) => React.ReactNode)
+            : undefined
+        }
         onSortColumn={setSortColumn}
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}
@@ -256,6 +218,7 @@ const Table = <T extends BaseRow>({
             : undefined
         }
         onAllItemsSelected={selectable ? handleAllItemsSelected : undefined}
+        onRowSelected={selectable ? handleRowSelected : undefined}
         selectedRows={selectedRows}
         selectable={selectable}
         variant={variant}

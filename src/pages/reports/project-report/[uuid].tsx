@@ -154,7 +154,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
               >
                 {t("Project Profile")}
               </Button>
-              <span className="text-theme-neutral-300 text-sm">|</span>
+              <span className="text-sm text-theme-neutral-300">|</span>
               <Button
                 variant="borderless"
                 size="small"
@@ -169,7 +169,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
               </Button>
               {!hideNurseries && (
                 <>
-                  <span className="text-theme-neutral-300 text-sm">|</span>
+                  <span className="text-sm text-theme-neutral-300">|</span>
                   <Button
                     variant="borderless"
                     size="small"
