@@ -24,7 +24,8 @@ import PolygonCommentContent from "./PolygonCommentContent";
 import type {
   PolygonOverlapFixCallback,
   PolygonSaveCallback,
-  PolygonValidationJobsStartedCallback
+  PolygonValidationJobsStartedCallback,
+  PolygonValidationPendingCallback
 } from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
 import type { SavePolygonFlowOptions } from "./polygonEditSave";
@@ -39,6 +40,8 @@ interface PolygonEditDrawerProps {
   onOpenChange?: (open: boolean) => void;
   onSaved?: PolygonSaveCallback;
   onOverlapFixed?: PolygonOverlapFixCallback;
+  onOverlapFixValidationStarted?: PolygonValidationPendingCallback;
+  onOverlapFixValidationFailed?: () => void;
   onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
   onValidationJobsStarted?: PolygonValidationJobsStartedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
@@ -56,6 +59,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onOpenChange,
   onSaved,
   onOverlapFixed,
+  onOverlapFixValidationStarted,
+  onOverlapFixValidationFailed,
   onRunValidation,
   onValidationJobsStarted,
   onPolygonUpdated,
@@ -395,6 +400,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                     siteUuid={resolvedSiteUuid}
                     polygon={selectedPolygon}
                     onOverlapFixed={handleOverlapFixed}
+                    onOverlapFixValidationStarted={onOverlapFixValidationStarted}
+                    onOverlapFixValidationFailed={onOverlapFixValidationFailed}
                     onRunValidation={onRunValidation}
                   />
                 )}
