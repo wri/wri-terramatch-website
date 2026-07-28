@@ -74,7 +74,8 @@ export const resolveGeometryUuidsFromClippedVersions = (
         }
 
         const polygon = bySitePolygonUuid.get(version.uuid) ?? byGeometryUuid.get(version.uuid);
-        return toNonEmptyUuid(polygon?.polygonUuid) ? [polygon.polygonUuid] : [];
+        const geometryUuid = polygon?.polygonUuid;
+        return toNonEmptyUuid(geometryUuid) ? [geometryUuid] : [];
       })
     )
   ];
