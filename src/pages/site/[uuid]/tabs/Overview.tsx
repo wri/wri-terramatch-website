@@ -19,7 +19,7 @@ import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler"
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
 import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import { AreaHectaresIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "../constants/sitePolygonMapSizing";
@@ -178,8 +178,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               />
               {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
                 <MapPlaceholder
-                  icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}
-                  title={t("Site Areas not defined yet.")}
+                  icon={<SiteIcon boxSize={6} color="neutral.100" />}
+                  title={t("Project Site not defined")}
                   buttonGroupProps={{
                     buttons: [
                       {

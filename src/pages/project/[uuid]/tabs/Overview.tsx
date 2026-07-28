@@ -114,8 +114,6 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     }
   };
 
-  const hasSites = (project.totalSites ?? 0) > 0;
-  const hasNurseries = (project.totalNurseries ?? 0) > 0;
   const hideNurseries = shouldHideNurseries(framework);
 
   const addSitesAndNurseriesButtons = useMemo<ButtonGroupButtonProps[]>(() => {
@@ -152,10 +150,10 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     enabled: project.uuid != null
   });
 
+  const isDraftOrPendingApproval = project.status === "started" || awaitingApproval;
+
   const showSiteAreasMapPlaceholder =
-    !isLoadingProjectPolygons &&
-    (projectPolygonDataV3?.length ?? 0) === 0 &&
-    (!isProjectSetupComplete || (!hasSites && !hasNurseries));
+    !isLoadingProjectPolygons && (projectPolygonDataV3?.length ?? 0) === 0 && isDraftOrPendingApproval;
 
   const teamMemberItems = useMemo(
     () => [
@@ -224,28 +222,9 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             {showSiteAreasMapPlaceholder && (
               <MapPlaceholder
                 icon={<SiteIcon boxSize={6} color="neutral.100" />}
-                title={t("Siting Strategy not defined yet.")}
+                title={t("Project Sites not defined")}
                 className="z-10 bg-map-project-placeholder"
-                buttonGroupProps={
-                  !isProjectSetupComplete
-                    ? {
-                        buttons: [
-                          {
-                            id: "finish-project-setup",
-                            variant: "borderless",
-                            size: "small",
-                            className: "!text-theme-neutral-100",
-                            children: t("Please finish project set-up before adding sites."),
-                            onClick: handleEditClick
-                          }
-                        ]
-                      }
-                    : !hasSites && !hasNurseries
-                    ? {
-                        buttons: addSitesAndNurseriesButtons
-                      }
-                    : undefined
-                }
+                buttonGroupProps={{ buttons: addSitesAndNurseriesButtons }}
               />
             )}
           </Box>
