@@ -234,9 +234,12 @@ export const PolygonEditDrawerProvider: FC<PolygonEditDrawerProviderProps> = ({ 
     []
   );
 
-  const handleOverlapFixValidationStarted = useCallback((geometryPolygonUuids: string[]) => {
-    onOverlapFixValidationStartedRef.current?.(geometryPolygonUuids);
-  }, []);
+  const handleOverlapFixValidationStarted = useCallback(
+    (geometryPolygonUuids: string[], options?: { poll?: boolean }) => {
+      onOverlapFixValidationStartedRef.current?.(geometryPolygonUuids, options);
+    },
+    []
+  );
 
   const handleOverlapFixValidationFailed = useCallback(() => {
     onOverlapFixValidationFailedRef.current?.();

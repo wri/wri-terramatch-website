@@ -34,6 +34,7 @@ import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents"
 import { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { hasValidationCriteria, isValidationFreshAfter } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useLatestRef } from "@/hooks/useLatestRef";
 import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { DownloadIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
@@ -87,6 +88,7 @@ export type { PolygonTableRow } from "../components/PolygonTableRow";
 
 const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, variant = "champions" }) => {
   const t = useT();
+  const tRef = useLatestRef(t);
   const isAdminReview = variant === "adminReview";
   const { isOpen: isEditPolygonOpen, suppressMapSelectionHighlight } = usePolygonEditDrawer();
   const {
@@ -369,14 +371,19 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     pendingValidationKeyRef.current = "";
   }, []);
 
-  const markValidationPending = useCallback((polygonUuids: string[]) => {
-    const key = [...polygonUuids].sort().join(",");
+  const markValidationPending = useCallback((polygonUuids: string[], options?: { poll?: boolean }) => {
     validationRunStartedAtRef.current = Date.now();
-    pendingValidationKeyRef.current = key;
-    setPendingValidationPolygonUuids(polygonUuids);
     setSupplementalValidations(prev =>
       prev.filter(validation => validation.polygonUuid == null || !polygonUuids.includes(validation.polygonUuid))
     );
+
+    if (options?.poll === false) {
+      return;
+    }
+
+    const key = [...polygonUuids].sort().join(",");
+    pendingValidationKeyRef.current = key;
+    setPendingValidationPolygonUuids(polygonUuids);
   }, []);
 
   const handleValidationUiCleared = useCallback((geometryPolygonUuids: string[]) => {
@@ -388,7 +395,11 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     setSupplementalValidations(prev =>
       prev.filter(validation => validation.polygonUuid == null || !clearedUuidSet.has(validation.polygonUuid))
     );
-    setPendingValidationPolygonUuids(prev => prev.filter(uuid => !clearedUuidSet.has(uuid)));
+    setPendingValidationPolygonUuids(prev => {
+      const next = prev.filter(uuid => !clearedUuidSet.has(uuid));
+      pendingValidationKeyRef.current = next.length === 0 ? "" : [...next].sort().join(",");
+      return next;
+    });
   }, []);
 
   const handleValidationJobsStarted = useCallback(
@@ -491,13 +502,13 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
 
         if (!cancelled) {
           clearValidationPending();
-          showPolygonErrorToast(t("Validation results are taking longer than expected. Please try again."));
+          showPolygonErrorToast(tRef.current("Validation results are taking longer than expected. Please try again."));
         }
       } catch (error) {
         Log.error("Failed while polling polygon validation results:", error);
         if (!cancelled) {
           clearValidationPending();
-          showPolygonErrorToast(t("Failed to load validation results. Please try again."));
+          showPolygonErrorToast(tRef.current("Failed to load validation results. Please try again."));
         }
       }
     };
@@ -514,7 +525,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     pendingValidationPolygonUuids,
     refetchPolygons,
     site.uuid,
-    t
+    tRef
   ]);
 
   useEffect(() => {

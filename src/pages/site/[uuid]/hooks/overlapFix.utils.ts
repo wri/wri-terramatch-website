@@ -26,10 +26,7 @@ export const canAutoFixOverlapSelection = (summary: OverlapFixSelectionSummary):
 export const hasOverlapFailureInSelection = (summary: OverlapFixSelectionSummary): boolean =>
   summary.overlapCandidates.length > 0;
 
-export type ClippedVersionSummary = {
-  uuid: string | null;
-  polyName: string | null;
-};
+export type ClippedVersionSummary = { uuid: string | null; polyName: string | null };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   value != null && typeof value === "object" && !Array.isArray(value);
@@ -45,6 +42,43 @@ const getResourceAttributes = (value: unknown): Record<string, unknown> | null =
 const toStringOrNull = (value: unknown): string | null => (typeof value === "string" && value !== "" ? value : null);
 
 const toNonEmptyUuid = (value: string | null | undefined): value is string => value != null && value !== "";
+
+const buildSitePolygonLookupMaps = (polygons: SitePolygonLightDto[]) => {
+  const byGeometryUuid = new Map<string, SitePolygonLightDto>();
+  const bySitePolygonUuid = new Map<string, SitePolygonLightDto>();
+
+  for (const polygon of polygons) {
+    if (polygon.polygonUuid != null && polygon.polygonUuid !== "") {
+      byGeometryUuid.set(polygon.polygonUuid, polygon);
+    }
+    if (polygon.uuid != null && polygon.uuid !== "") {
+      bySitePolygonUuid.set(polygon.uuid, polygon);
+    }
+  }
+
+  return { byGeometryUuid, bySitePolygonUuid };
+};
+
+/** Map clipped version DTOs (site-polygon UUIDs) to geometry UUIDs for validation APIs. */
+export const resolveGeometryUuidsFromClippedVersions = (
+  clippedVersions: ClippedVersionSummary[],
+  refreshedPolygons: SitePolygonLightDto[]
+): string[] => {
+  const { byGeometryUuid, bySitePolygonUuid } = buildSitePolygonLookupMaps(refreshedPolygons);
+
+  return [
+    ...new Set(
+      clippedVersions.flatMap(version => {
+        if (!toNonEmptyUuid(version.uuid)) {
+          return [];
+        }
+
+        const polygon = bySitePolygonUuid.get(version.uuid) ?? byGeometryUuid.get(version.uuid);
+        return toNonEmptyUuid(polygon?.polygonUuid) ? [polygon.polygonUuid] : [];
+      })
+    )
+  ];
+};
 
 const getPolygonDisplayName = (polygon: SitePolygonLightDto | undefined, row: PolygonTableRow): string =>
   polygon?.name ?? row.polygonName;
@@ -105,6 +139,15 @@ export const collectGeometryUuidsForValidationUiClear = ({
   ...new Set([...previousGeometryUuids, ...newGeometryUuids, ...relatedPartnerUuids].filter(toNonEmptyUuid))
 ];
 
+/** UUIDs the backend revalidates after clipping — excludes replaced previous geometries. */
+export const collectGeometryUuidsForValidationPoll = ({
+  newGeometryUuids = [],
+  relatedPartnerUuids = []
+}: {
+  newGeometryUuids?: Array<string | null | undefined>;
+  relatedPartnerUuids?: Array<string | null | undefined>;
+}): string[] => [...new Set([...newGeometryUuids, ...relatedPartnerUuids].filter(toNonEmptyUuid))];
+
 export const getSelectedOverlapFixSummary = (
   selectedRows: PolygonTableRow[],
   polygonValidations: Map<string, ValidationDto>,
@@ -163,20 +206,15 @@ export const resolveActivePolygonAfterOverlapFix = (
   },
   clippedVersions: ClippedVersionSummary[] = []
 ): SitePolygonLightDto | undefined => {
-  const refreshedByGeometryUuid = new Map(
-    refreshedPolygons
-      .map(polygon =>
-        polygon.polygonUuid != null && polygon.polygonUuid !== "" ? ([polygon.polygonUuid, polygon] as const) : null
-      )
-      .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
-  );
+  const { byGeometryUuid, bySitePolygonUuid } = buildSitePolygonLookupMaps(refreshedPolygons);
 
   for (const version of clippedVersions) {
-    if (version.uuid == null) {
+    if (!toNonEmptyUuid(version.uuid)) {
       continue;
     }
 
-    const clippedPolygon = refreshedByGeometryUuid.get(version.uuid);
+    // ClippedVersionDto.uuid is the site-polygon version id; fall back to geometry id for safety.
+    const clippedPolygon = bySitePolygonUuid.get(version.uuid) ?? byGeometryUuid.get(version.uuid);
     if (clippedPolygon != null) {
       return clippedPolygon;
     }
@@ -192,13 +230,13 @@ export const resolveActivePolygonAfterOverlapFix = (
   }
 
   if (context.sitePolygonUuid != null && context.sitePolygonUuid !== "") {
-    const bySitePolygonUuid = refreshedPolygons.find(polygon => polygon.uuid === context.sitePolygonUuid);
-    if (bySitePolygonUuid != null) {
-      return bySitePolygonUuid;
+    const bySitePolygonUuidMatch = bySitePolygonUuid.get(context.sitePolygonUuid);
+    if (bySitePolygonUuidMatch != null) {
+      return bySitePolygonUuidMatch;
     }
   }
 
-  return refreshedPolygons.find(polygon => polygon.polygonUuid === context.previousPolygonUuid);
+  return byGeometryUuid.get(context.previousPolygonUuid);
 };
 
 export const extractClippedVersions = (response: unknown): ClippedVersionSummary[] => {

@@ -101,7 +101,8 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
       collectGeometryUuidsForValidationUiClear({
         previousGeometryUuids: [polygonUuid],
         relatedPartnerUuids
-      })
+      }),
+      { poll: false }
     );
 
     try {
