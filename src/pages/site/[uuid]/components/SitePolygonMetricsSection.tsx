@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import type { FC } from "react";
@@ -64,10 +64,16 @@ const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
           actionLabel={t("Select Polygons")}
           isButtonRight
           size="small"
+          className="w-max"
           label={
-            polygonsWithOverlapCount === 1
-              ? t("1 overlap detected")
-              : t("{count} overlaps detected", { count: polygonsWithOverlapCount })
+            <Text color="error.900" textStyle="300">
+              <b>
+                {polygonsWithOverlapCount === 1
+                  ? t("1 overlap ")
+                  : t("{count} overlaps ", { count: polygonsWithOverlapCount })}
+              </b>
+              {t("detected")}
+            </Text>
           }
           onActionClick={onSelectOverlapPolygons}
           variant="error"

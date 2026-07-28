@@ -1,32 +1,14 @@
 import { Box } from "@chakra-ui/react";
-import { InlineMessage as InlineMessageComponent } from "@worldresources/wri-design-systems";
+import {
+  InlineMessage as InlineMessageComponent,
+  InlineMessageProps as InlineMessageComponentProps
+} from "@worldresources/wri-design-systems";
 import classNames from "classnames";
 import { FC } from "react";
-export interface InlineMessageProps {
-  label: string;
-  caption?: string;
-  variant: "info-white" | "info-grey" | "success" | "warning" | "error";
-  size?: "small" | "large" | "full-width";
-  icon?: React.ReactNode;
-  onActionClick?: VoidFunction;
-  actionLabel?: string;
-  isButtonRight?: boolean;
-  buttonLeftIcon?: React.ReactNode;
-  buttonRightIcon?: React.ReactNode;
+export interface InlineMessageProps extends InlineMessageComponentProps {
   className?: string;
 }
-
 const BASE_CSS: Record<string, any> = {
-  "& [aria-roledescription] > div > div:first-of-type": {
-    alignItems: "center"
-  },
-  "& [aria-roledescription] > div > div:first-of-type > svg": {
-    marginTop: 0
-  },
-  "& [aria-roledescription]": {
-    columnGap: "1rem",
-    marginBottom: "0 !important"
-  },
   "& [aria-roledescription] > div > div:first-of-type > p": {
     maxWidth: "100%"
   },
@@ -34,8 +16,7 @@ const BASE_CSS: Record<string, any> = {
     maxWidth: "100%"
   },
   "& > div": {
-    maxWidth: "100%",
-    padding: "0.5rem 0.75rem"
+    maxWidth: "100%"
   }
 };
 
