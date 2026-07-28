@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-import { usePolygonRowHovered, usePolygonRowSelected } from "@/context/polygonTableInteraction.store";
+import { usePolygonRowSelected } from "@/context/polygonTableInteraction.store";
 import type { TableRenderRowContext } from "@/redesignComponents/dataDisplay/Table/Table";
 
 import { usePolygonTableInteractionActions } from "./polygonTableInteractionContext";
@@ -18,7 +18,6 @@ export const PolygonTableRowConnected = memo(function PolygonTableRowConnected({
   readOnly = false
 }: PolygonTableRowConnectedProps) {
   const isSelected = usePolygonRowSelected(row.id);
-  const isHovered = usePolygonRowHovered(row.id);
   const { onHover, onSelectChange } = usePolygonTableInteractionActions();
 
   return (
@@ -26,7 +25,6 @@ export const PolygonTableRowConnected = memo(function PolygonTableRowConnected({
       row={row}
       context={context}
       isSelected={isSelected}
-      isHovered={isHovered}
       onHover={onHover}
       onSelectChange={onSelectChange}
       readOnly={readOnly}
