@@ -49,9 +49,8 @@ export function isPolygonDataSubmissionOption(value: string): value is PolygonDa
 }
 
 export const PROJECT_QA_STATUS_OPTION_VALUES = [
-  "due",
   "no-data-submitted",
-  "not-applicable",
+  "no-data-expected",
   "qa-in-progress",
   "qa-completed"
 ] as const;
@@ -69,9 +68,8 @@ export const PROJECT_QA_STATUS_FIELDS = [
 export type ProjectQaStatusField = (typeof PROJECT_QA_STATUS_FIELDS)[number];
 
 export const PROJECT_QA_STATUS_LABELS: Record<ProjectQaStatusOption, string> = {
-  due: "Due",
   "no-data-submitted": "No data submitted",
-  "not-applicable": "Not applicable",
+  "no-data-expected": "No data expected",
   "qa-in-progress": "QA in progress",
   "qa-completed": "QA completed"
 };

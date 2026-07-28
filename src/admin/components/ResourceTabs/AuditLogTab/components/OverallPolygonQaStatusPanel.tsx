@@ -27,10 +27,8 @@ type Props = {
   onSaved?: () => void;
 };
 
-const DEFAULT_QA_STATUS: ProjectQaStatusOption = "due";
-
-const resolveQaStatus = (value: string | null | undefined): ProjectQaStatusOption =>
-  value != null && isProjectQaStatusOption(value) ? value : DEFAULT_QA_STATUS;
+const resolveQaStatus = (value: string | null | undefined): ProjectQaStatusOption | null =>
+  value != null && isProjectQaStatusOption(value) ? value : null;
 
 const OverallPolygonQaStatusPanel: FC<Props> = ({ projectUuid, statuses, onSaved }) => {
   const t = useT();
@@ -60,11 +58,11 @@ const OverallPolygonQaStatusPanel: FC<Props> = ({ projectUuid, statuses, onSaved
     [projectQaStatusFieldLabels]
   );
 
-  const [values, setValues] = useState<Record<ProjectQaStatusField, string>>(() =>
+  const [values, setValues] = useState<Record<ProjectQaStatusField, ProjectQaStatusOption | null>>(() =>
     PROJECT_QA_STATUS_FIELDS.reduce((acc, field) => {
       acc[field] = resolveQaStatus(statuses[field]);
       return acc;
-    }, {} as Record<ProjectQaStatusField, string>)
+    }, {} as Record<ProjectQaStatusField, ProjectQaStatusOption | null>)
   );
 
   useEffect(() => {
@@ -72,11 +70,11 @@ const OverallPolygonQaStatusPanel: FC<Props> = ({ projectUuid, statuses, onSaved
       PROJECT_QA_STATUS_FIELDS.reduce((acc, field) => {
         acc[field] = resolveQaStatus(statuses[field]);
         return acc;
-      }, {} as Record<ProjectQaStatusField, string>)
+      }, {} as Record<ProjectQaStatusField, ProjectQaStatusOption | null>)
     );
   }, [statuses]);
 
-  const handleChange = useCallback((field: ProjectQaStatusField, next: string) => {
+  const handleChange = useCallback((field: ProjectQaStatusField, next: ProjectQaStatusOption | null) => {
     setValues(prev => ({ ...prev, [field]: next }));
   }, []);
 
@@ -84,7 +82,7 @@ const OverallPolygonQaStatusPanel: FC<Props> = ({ projectUuid, statuses, onSaved
     const attrs = PROJECT_QA_STATUS_FIELDS.reduce((acc, field) => {
       acc[field] = resolveQaStatus(values[field]);
       return acc;
-    }, {} as ProjectUpdateAttributes & Record<ProjectQaStatusField, ProjectQaStatusOption>);
+    }, {} as Record<ProjectQaStatusField, ProjectQaStatusOption | null>) as ProjectUpdateAttributes;
 
     setIsQaStatusNotification(true);
     update(attrs);
@@ -126,8 +124,8 @@ const OverallPolygonQaStatusPanel: FC<Props> = ({ projectUuid, statuses, onSaved
           <Dropdown
             containerClassName="min-w-0 flex-1"
             options={options}
-            value={[values[field]]}
-            onChange={v => handleChange(field, String(v[0] ?? DEFAULT_QA_STATUS))}
+            value={values[field] == null ? [] : [values[field]!]}
+            onChange={v => handleChange(field, resolveQaStatus(v[0] != null ? String(v[0]) : null))}
           />
         </div>
       ))}
