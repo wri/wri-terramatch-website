@@ -8,9 +8,8 @@ export const useProjectQaStatusLabels = () => {
 
   return useMemo(
     (): Record<ProjectQaStatusOption, string> => ({
-      due: t("Due"),
       "no-data-submitted": t("No data submitted"),
-      "not-applicable": t("Not applicable"),
+      "no-data-expected": t("No data expected"),
       "qa-in-progress": t("QA in progress"),
       "qa-completed": t("QA completed")
     }),

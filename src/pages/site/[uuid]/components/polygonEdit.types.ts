@@ -19,3 +19,6 @@ export type PolygonValidationJobsStartedCallback = (
   polygonUuids: string[],
   options?: { trackBulkCompletion?: boolean }
 ) => void;
+
+/** Marks geometry UUIDs as awaiting fresh validation results (e.g. before overlap clip). */
+export type PolygonValidationPendingCallback = (geometryPolygonUuids: string[]) => void;

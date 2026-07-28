@@ -97,7 +97,7 @@ const LandingPage = () => {
           "A partnership led by World Resources Institute, Harit Bharat Fund is investing in 20 non-governmental organizations, small enterprises, and and farmer-producer companies that restore land in the Central Indian states of Madhya Pradesh, Maharashtra, and Chhattisgarh. Learning from TerraFund for AFR100, this new initiative uses and adapts TerraMatch's application and monitoring functions. WRI India, India Climate Collaborative, Pune Knowledge Cluster, Sangam, Spectrum Impact, and Transform Rural Impact are implementing partners."
         )}
         buttonText={t("Learn more")}
-        buttonLink="https://www.india.terramatch.org"
+        buttonLink="https://www.haritbharatfund.in/"
         imageSrc={fondoHaritBharatImage}
         imageCredit={{
           name: "FOLU India",
