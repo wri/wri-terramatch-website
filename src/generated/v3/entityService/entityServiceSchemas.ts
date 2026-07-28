@@ -1601,23 +1601,23 @@ export type ProjectFullDto = {
   /**
    * QA status for polygon dataset stage 1
    */
-  projectQaStatus1: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  projectQaStatus1: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 2
    */
-  projectQaStatus2: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  projectQaStatus2: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 3
    */
-  projectQaStatus3: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  projectQaStatus3: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 4
    */
-  projectQaStatus4: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  projectQaStatus4: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 5
    */
-  projectQaStatus5: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  projectQaStatus5: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
 };
 
 export type SiteFullDto = {
@@ -2554,23 +2554,23 @@ export type ProjectUpdateAttributes = {
   /**
    * QA status for polygon dataset stage 1
    */
-  projectQaStatus1?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus1?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 2
    */
-  projectQaStatus2?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus2?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 3
    */
-  projectQaStatus3?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus3?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 4
    */
-  projectQaStatus4?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus4?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 5
    */
-  projectQaStatus5?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus5?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * Optional comment recorded on polygon handoff audit entries when updating submission/baseline
    */
