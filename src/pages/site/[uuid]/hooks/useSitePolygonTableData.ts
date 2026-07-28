@@ -41,7 +41,7 @@ export const useSitePolygonTableData = ({ polygonsData, polygonValidations, t }:
 
   const columns = useMemo(
     () => [
-      { key: "polygonName", label: t("Polygon Name"), sortable: true, width: "17.75rem" },
+      { key: "polygonName", label: t("Polygon Name"), sortable: true, width: "17.75rem", sticky: true },
       { key: "submission", label: t("Submission"), sortable: true, width: "15.875rem" },
       { key: "validation", label: t("Validation"), sortable: true, width: "12.75rem" },
       { key: "restorationPracticeSort", label: t("Restoration Practice"), sortable: true, width: "15.5rem" },

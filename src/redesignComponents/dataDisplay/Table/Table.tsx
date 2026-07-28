@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { type SystemStyleObject, Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Table as WriTable } from "@worldresources/wri-design-systems";
 import React, { Ref, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
@@ -17,16 +17,17 @@ export type TableColumn = {
   key: string;
   label: string;
   sortable?: boolean;
-  /** Fixed column width (e.g. "17.75rem"). Applied by the library as width + minWidth. */
   width?: string;
-  /** Custom cell renderer used by the library's native row renderer. */
   cell?: (rowData: any) => React.ReactNode;
+  sticky?: boolean;
 };
 
 export type TableRenderRowContext = {
   className?: string;
   getCellProps: (columnKey: string) => Record<string, any>;
 };
+
+export const CHECKBOX_COLUMN_KEY = "__checkbox__";
 
 interface TableProps<T extends BaseRow> {
   data: T[];
@@ -41,7 +42,7 @@ interface TableProps<T extends BaseRow> {
   showItemCount?: boolean;
   paginationVariant?: "default" | "compact" | "compact-with-buttons";
   variant?: "default" | "full-width";
-  css?: any;
+  css?: SystemStyleObject;
   pageSize?: number;
   className?: string;
   showPagination?: boolean;

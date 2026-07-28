@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { type SystemStyleObject, Box } from "@chakra-ui/react";
 import type { FC, RefObject } from "react";
 import { useMemo } from "react";
 
@@ -8,12 +8,11 @@ import Table, { type TableColumn } from "@/redesignComponents/dataDisplay/Table/
 import { PolygonTableInteractionActionsProvider } from "./polygonTableInteractionContext";
 import type { PolygonTableRow } from "./PolygonTableRow";
 import { renderPolygonTableRow } from "./PolygonTableRowConnected";
-import type { getPolygonsTableStyles } from "./polygonTableStyles";
 
 type SitePolygonTableSectionProps = {
   tableContainerRef: RefObject<HTMLDivElement>;
   tableScrollContainerRef?: RefObject<HTMLDivElement>;
-  tableStyles: ReturnType<typeof getPolygonsTableStyles>;
+  tableStyles?: SystemStyleObject;
   isSitePolygonsLoading: boolean;
   polygonRows: PolygonTableRow[];
   columns: TableColumn[];

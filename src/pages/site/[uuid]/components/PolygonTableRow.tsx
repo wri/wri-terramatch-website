@@ -1,17 +1,16 @@
 import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
-import { CSSProperties, FC, memo, ReactNode, useCallback, useMemo } from "react";
+import { FC, memo, ReactNode, useCallback, useMemo } from "react";
 
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
 import { useTargetLandUseLabels } from "@/hooks/translation/useTargetLandUseLabels";
 import { TreeDistributionType, useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
-import { getThemedColor } from "@/lib/theme";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import MappedTag, { MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
 import ValidationTag, { ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
-import type { TableRenderRowContext } from "@/redesignComponents/dataDisplay/Table/Table";
+import { type TableRenderRowContext, CHECKBOX_COLUMN_KEY } from "@/redesignComponents/dataDisplay/Table/Table";
 import {
   AgriculturalLandIcon,
   AgroforestyIcon,
@@ -92,11 +91,6 @@ const SITE_RESTORATION_STRATEGY_MAP: Record<restorationStrategyType, ReactNode> 
   )
 };
 
-const HOVERED_ROW_STYLE: CSSProperties = {
-  backgroundColor: getThemedColor("primary", 100),
-  borderBottom: `2px solid ${getThemedColor("primary", 700)}`
-};
-
 const renderTargetLandUse = (
   targetLandUse: targetLandUseType | null,
   targetLandUseMap: Record<targetLandUseType, SiteTypeConfig>
@@ -145,7 +139,6 @@ interface PolygonRowProps {
   row: PolygonTableRow;
   context?: TableRenderRowContext;
   isSelected: boolean;
-  isHovered: boolean;
   onHover: (uuid: string) => void;
   onSelectChange: (row: PolygonTableRow, checked: boolean) => void;
   // Deleted-polygons audit view: no selection, no bulk actions, submission status is always "deleted".
@@ -156,7 +149,6 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   row,
   context,
   isSelected,
-  isHovered,
   onHover,
   onSelectChange,
   readOnly = false
@@ -196,13 +188,8 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   }, [row.id, onHover]);
 
   return (
-    <TableRow
-      className={context?.className}
-      aria-selected={isSelected}
-      onMouseEnter={handleMouseEnter}
-      style={isHovered ? HOVERED_ROW_STYLE : undefined}
-    >
-      <TableCell>
+    <TableRow className={context?.className} aria-selected={isSelected} onMouseEnter={handleMouseEnter}>
+      <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
         <Checkbox
           name={`checkbox-${row.id}`}
           aria-label={`Select polygon ${row.polygonName}`}
@@ -258,7 +245,6 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
 const polygonRowPropsAreEqual = (prev: PolygonRowProps, next: PolygonRowProps) =>
   prev.row === next.row &&
   prev.isSelected === next.isSelected &&
-  prev.isHovered === next.isHovered &&
   prev.context === next.context &&
   prev.onHover === next.onHover &&
   prev.onSelectChange === next.onSelectChange &&
