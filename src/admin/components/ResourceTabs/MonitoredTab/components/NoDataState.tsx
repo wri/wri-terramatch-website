@@ -11,7 +11,7 @@ export const NoDataState = () => {
   return (
     <div className="z-10 flex h-[75%] w-full flex-col items-center justify-center gap-2 rounded-xl border border-grey-1000">
       <Text variant="text-32-semibold" className="text-blueCustom">
-        {t("No Data to Display")}
+        {t("No data available")}
       </Text>
       <div className="flex items-center gap-1">
         <Text variant="text-14" className="text-darkCustom">
