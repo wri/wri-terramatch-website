@@ -124,8 +124,30 @@ export const formatDescriptionIndicator = (
   return formattedItems;
 };
 
-const formattedValue = (value: number | null | undefined, decimals: number) =>
-  value == null || value === 0 ? "0" : value?.toFixed(decimals);
+const formattedValue = (value: number | null | undefined, decimals: number): string | null => {
+  if (value == null || Number.isNaN(value)) return null;
+  if (value === 0) return "0";
+  return value.toFixed(decimals);
+};
+
+const toNumberOrNull = (val: number | string | null | undefined): number | null => {
+  if (val == null) return null;
+  const num = typeof val === "string" ? parseFloat(val) : Number(val);
+  return Number.isNaN(num) ? null : num;
+};
+
+const assignPresentNumber = (
+  source: Record<string, number | string | null | undefined> | undefined,
+  apiKey: string,
+  dataKey: string,
+  target: Record<string, number>
+) => {
+  if (source == null || !(apiKey in source)) return;
+  const num = toNumberOrNull(source[apiKey]);
+  if (num != null) {
+    target[dataKey] = num;
+  }
+};
 
 const getEcoRegionCategory = (region: string): EcoRegionCategory | null => {
   for (const category in categoriesFromEcoRegion) {
@@ -179,22 +201,22 @@ export const processIndicatorData = (presentIndicator: Indicator) => (polygons: 
             ...commonFields,
             siteName: sitePolygon.siteName,
             data: {
-              "2010": formattedValue(treeCoverLoss.value?.["2010"], 3),
-              "2011": formattedValue(treeCoverLoss.value?.["2011"], 3),
-              "2012": formattedValue(treeCoverLoss.value?.["2012"], 3),
-              "2013": formattedValue(treeCoverLoss.value?.["2013"], 3),
-              "2014": formattedValue(treeCoverLoss.value?.["2014"], 3),
-              "2015": formattedValue(treeCoverLoss.value?.["2015"], 3),
-              "2016": formattedValue(treeCoverLoss.value?.["2016"], 3),
-              "2017": formattedValue(treeCoverLoss.value?.["2017"], 3),
-              "2018": formattedValue(treeCoverLoss.value?.["2018"], 3),
-              "2019": formattedValue(treeCoverLoss.value?.["2019"], 3),
-              "2020": formattedValue(treeCoverLoss.value?.["2020"], 3),
-              "2021": formattedValue(treeCoverLoss.value?.["2021"], 3),
-              "2022": formattedValue(treeCoverLoss.value?.["2022"], 3),
-              "2023": formattedValue(treeCoverLoss.value?.["2023"], 3),
-              "2024": formattedValue(treeCoverLoss.value?.["2024"], 3),
-              "2025": formattedValue(treeCoverLoss.value?.["2025"], 3)
+              "2010": formattedValue(treeCoverLoss.value?.["2010"] ?? 0, 3),
+              "2011": formattedValue(treeCoverLoss.value?.["2011"] ?? 0, 3),
+              "2012": formattedValue(treeCoverLoss.value?.["2012"] ?? 0, 3),
+              "2013": formattedValue(treeCoverLoss.value?.["2013"] ?? 0, 3),
+              "2014": formattedValue(treeCoverLoss.value?.["2014"] ?? 0, 3),
+              "2015": formattedValue(treeCoverLoss.value?.["2015"] ?? 0, 3),
+              "2016": formattedValue(treeCoverLoss.value?.["2016"] ?? 0, 3),
+              "2017": formattedValue(treeCoverLoss.value?.["2017"] ?? 0, 3),
+              "2018": formattedValue(treeCoverLoss.value?.["2018"] ?? 0, 3),
+              "2019": formattedValue(treeCoverLoss.value?.["2019"] ?? 0, 3),
+              "2020": formattedValue(treeCoverLoss.value?.["2020"] ?? 0, 3),
+              "2021": formattedValue(treeCoverLoss.value?.["2021"] ?? 0, 3),
+              "2022": formattedValue(treeCoverLoss.value?.["2022"] ?? 0, 3),
+              "2023": formattedValue(treeCoverLoss.value?.["2023"] ?? 0, 3),
+              "2024": formattedValue(treeCoverLoss.value?.["2024"] ?? 0, 3),
+              "2025": formattedValue(treeCoverLoss.value?.["2025"] ?? 0, 3)
             }
           };
         }
@@ -301,30 +323,29 @@ export const transformSitePolygonsToIndicators = (
         case "treeCoverLoss":
         case "treeCoverLossFires": {
           const treeCoverLoss = indicator as IndicatorTreeCoverLossDto;
-          const convertToNumber = (val: number | string | null | undefined): number => {
-            if (val == null) return 0;
-            const num = typeof val === "string" ? parseFloat(val) : Number(val);
-            return Number.isNaN(num) ? 0 : num;
-          };
+          const yearKeys = [
+            "2010",
+            "2011",
+            "2012",
+            "2013",
+            "2014",
+            "2015",
+            "2016",
+            "2017",
+            "2018",
+            "2019",
+            "2020",
+            "2021",
+            "2022",
+            "2023",
+            "2024",
+            "2025"
+          ] as const;
 
-          const transformedData: Record<string, number> = {
-            "2010": convertToNumber(treeCoverLoss.value?.["2010"]),
-            "2011": convertToNumber(treeCoverLoss.value?.["2011"]),
-            "2012": convertToNumber(treeCoverLoss.value?.["2012"]),
-            "2013": convertToNumber(treeCoverLoss.value?.["2013"]),
-            "2014": convertToNumber(treeCoverLoss.value?.["2014"]),
-            "2015": convertToNumber(treeCoverLoss.value?.["2015"]),
-            "2016": convertToNumber(treeCoverLoss.value?.["2016"]),
-            "2017": convertToNumber(treeCoverLoss.value?.["2017"]),
-            "2018": convertToNumber(treeCoverLoss.value?.["2018"]),
-            "2019": convertToNumber(treeCoverLoss.value?.["2019"]),
-            "2020": convertToNumber(treeCoverLoss.value?.["2020"]),
-            "2021": convertToNumber(treeCoverLoss.value?.["2021"]),
-            "2022": convertToNumber(treeCoverLoss.value?.["2022"]),
-            "2023": convertToNumber(treeCoverLoss.value?.["2023"]),
-            "2024": convertToNumber(treeCoverLoss.value?.["2024"]),
-            "2025": convertToNumber(treeCoverLoss.value?.["2025"])
-          };
+          const transformedData: Record<string, number> = {};
+          for (const year of yearKeys) {
+            transformedData[year] = toNumberOrNull(treeCoverLoss.value?.[year]) ?? 0;
+          }
 
           return {
             ...baseIndicator,
@@ -334,36 +355,17 @@ export const transformSitePolygonsToIndicators = (
 
         case "restorationByStrategy": {
           const hectares = indicator as IndicatorHectaresDto;
-          const convertToNumber = (val: number | string | null | undefined): number => {
-            if (val == null) return 0;
-            const num = typeof val === "string" ? parseFloat(val) : Number(val);
-            return Number.isNaN(num) ? 0 : num;
-          };
-
           const data: Record<string, number> = {};
+          const knownKeys = ["tree-planting", "assisted-natural-regeneration", "direct-seeding"] as const;
 
-          const treePlanting = convertToNumber(hectares.value?.["tree-planting"]);
-          const assistedNaturalRegeneration = convertToNumber(hectares.value?.["assisted-natural-regeneration"]);
-          const directSeeding = convertToNumber(hectares.value?.["direct-seeding"]);
-
-          if (treePlanting > 0) {
-            data.tree_planting = treePlanting;
-          }
-          if (assistedNaturalRegeneration > 0) {
-            data.assisted_natural_regeneration = assistedNaturalRegeneration;
-          }
-          if (directSeeding > 0) {
-            data.direct_seeding = directSeeding;
-          }
+          assignPresentNumber(hectares.value, "tree-planting", "tree_planting", data);
+          assignPresentNumber(hectares.value, "assisted-natural-regeneration", "assisted_natural_regeneration", data);
+          assignPresentNumber(hectares.value, "direct-seeding", "direct_seeding", data);
 
           if (hectares.value) {
             Object.keys(hectares.value).forEach(key => {
-              if (!["tree-planting", "assisted-natural-regeneration", "direct-seeding"].includes(key)) {
-                const value = convertToNumber(hectares.value[key]);
-                if (value > 0) {
-                  const convertedKey = key.replace(/-/g, "_");
-                  data[convertedKey] = value;
-                }
+              if (!knownKeys.includes(key as (typeof knownKeys)[number])) {
+                assignPresentNumber(hectares.value, key, key.replace(/-/g, "_"), data);
               }
             });
           }
@@ -376,21 +378,14 @@ export const transformSitePolygonsToIndicators = (
 
         case "restorationByEcoRegion": {
           const hectares = indicator as IndicatorHectaresDto;
-          const convertToNumber = (val: number | string | null | undefined): number => {
-            if (val == null) return 0;
-            const num = typeof val === "string" ? parseFloat(val) : Number(val);
-            return Number.isNaN(num) ? 0 : num;
-          };
-
           const data: Record<string, number> = {};
 
           for (const region in hectares.value) {
             const category = getEcoRegionCategory(region);
-            if (category) {
-              const value = convertToNumber(hectares.value[region]);
-              if (value > 0) {
-                data[category] = value;
-              }
+            if (!category) continue;
+            const value = toNumberOrNull(hectares.value[region]);
+            if (value != null) {
+              data[category] = (data[category] ?? 0) + value;
             }
           }
 
@@ -402,40 +397,18 @@ export const transformSitePolygonsToIndicators = (
 
         case "restorationByLandUse": {
           const hectares = indicator as IndicatorHectaresDto;
-          const convertToNumber = (val: number | string | null | undefined): number => {
-            if (val == null) return 0;
-            const num = typeof val === "string" ? parseFloat(val) : Number(val);
-            return Number.isNaN(num) ? 0 : num;
-          };
-
           const data: Record<string, number> = {};
+          const knownKeys = ["agroforest", "natural-forest", "mangrove", "silvopasture"] as const;
 
-          const agroforest = convertToNumber(hectares.value?.agroforest);
-          const naturalForest = convertToNumber(hectares.value?.["natural-forest"]);
-          const mangrove = convertToNumber(hectares.value?.mangrove);
-          const silvopasture = convertToNumber(hectares.value?.silvopasture);
-
-          if (agroforest > 0) {
-            data.agroforest = agroforest;
-          }
-          if (naturalForest > 0) {
-            data.natural_forest = naturalForest;
-          }
-          if (mangrove > 0) {
-            data.mangrove = mangrove;
-          }
-          if (silvopasture > 0) {
-            data.silvopasture = silvopasture;
-          }
+          assignPresentNumber(hectares.value, "agroforest", "agroforest", data);
+          assignPresentNumber(hectares.value, "natural-forest", "natural_forest", data);
+          assignPresentNumber(hectares.value, "mangrove", "mangrove", data);
+          assignPresentNumber(hectares.value, "silvopasture", "silvopasture", data);
 
           if (hectares.value) {
             Object.keys(hectares.value).forEach(key => {
-              if (!["agroforest", "natural-forest", "mangrove", "silvopasture"].includes(key)) {
-                const value = convertToNumber(hectares.value[key]);
-                if (value > 0) {
-                  const convertedKey = key.replace(/-/g, "_");
-                  data[convertedKey] = value;
-                }
+              if (!knownKeys.includes(key as (typeof knownKeys)[number])) {
+                assignPresentNumber(hectares.value, key, key.replace(/-/g, "_"), data);
               }
             });
           }

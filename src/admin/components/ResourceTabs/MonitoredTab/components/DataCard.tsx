@@ -199,11 +199,11 @@ const NoDataGraph = () => {
   return (
     <div className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-grey-1000">
       <Text variant={"text-32-semibold"} className="text-blueCustom">
-        {t("No Data to Display")}
+        {t("No data available")}
       </Text>
       <div className="flex items-center gap-1">
         <Text variant={"text-14"} className="text-darkCustom">
-          {t("RUN ANALYSUS ON PROJECT POLYGONS TO SEE DATA")}
+          {t("RUN ANALYSIS ON PROJECT POLYGONS TO SEE DATA")}
         </Text>
         <Tooltip content={t("Tooltip")}>
           <Icon name={IconNames.IC_INFO} className="h-4 w-4" />
@@ -873,21 +873,10 @@ const DataCard = ({
         }`
       : "";
 
-  const selectedChartHasData = selected.some(chartId => {
-    switch (chartId) {
-      case "1":
-      case "2":
-        return parsedData.length > 0;
-      case "3":
-        return (ecoRegionData?.chartData?.length ?? 0) > 0;
-      case "4":
-        return strategiesData.length > 0;
-      case "5":
-        return (landUseData?.graphicTargetLandUseTypes?.length ?? 0) > 0;
-      default:
-        return false;
-    }
-  });
+  const selectedChartHasData = (filteredPolygonsIndicator?.length ?? 0) > 0;
+
+  const noIndicatorDataDescription =
+    "No data available for this indicator. Run analysis on project polygons to calculate and display results.";
 
   const monitoredDescriptionParams: Record<string, any> = {
     treeCover: {},
@@ -966,6 +955,13 @@ const DataCard = ({
     }
   };
 
+  const indicatorDescription = !selectedChartHasData
+    ? noIndicatorDataDescription
+    : replaceTextWithParams(
+        monitoredDescriptionParams[indicatorSlug!],
+        DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.description!
+      );
+
   return (
     <>
       <div className="-mx-4 h-[calc(100vh-200px)] overflow-auto px-4 pb-4">
@@ -1038,16 +1034,14 @@ const DataCard = ({
                 </Text>
                 <div className="flex min-h-0 flex-col gap-3 overflow-auto pr-1">
                   <Text variant={"text-14"} className="text-darkCustom" containHtml>
-                    {replaceTextWithParams(
-                      monitoredDescriptionParams[indicatorSlug!],
-                      DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.description!
-                    )}
+                    {indicatorDescription}
                   </Text>
                 </div>
               </div>
               <MonitoredCharts
                 selected={selected}
                 isLoadingIndicator={isLoadingIndicator}
+                hasIndicatorData={selectedChartHasData}
                 parsedData={parsedData}
                 ecoRegionData={ecoRegionData}
                 strategiesData={strategiesData}

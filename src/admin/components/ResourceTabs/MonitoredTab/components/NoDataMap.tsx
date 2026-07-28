@@ -34,7 +34,7 @@ const NoDataMap = () => {
         <div className="relative flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border border-white">
           <div className="absolute top-0 left-0 h-full w-full rounded-xl bg-white bg-opacity-20 backdrop-blur" />
           <Text variant="text-32-semibold" className="z-10 text-white">
-            No Data to Display
+            No data available
           </Text>
           <div className="flex items-center gap-1">
             <Text variant="text-14" className="z-10 text-white">

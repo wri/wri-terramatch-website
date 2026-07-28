@@ -897,6 +897,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
         onRequestApproveModal={isAdminReview ? handleDrawerRequestApproveModal : undefined}
         onRequestInformationModal={isAdminReview ? handleDrawerRequestInformationModal : undefined}
         onValidationJobsStarted={handleValidationJobsStarted}
+        onOverlapFixValidationStarted={markValidationPending}
+        onOverlapFixValidationFailed={clearValidationPending}
       />
       <PageContent className="bg-theme-neutral-100">
         <PageItem
