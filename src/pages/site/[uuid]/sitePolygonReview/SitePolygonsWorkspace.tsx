@@ -130,6 +130,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   const pendingValidationTrackBulkRef = useRef(true);
   const validationRunStartedAtRef = useRef(0);
   const pendingValidationKeyRef = useRef("");
+  const validationPollingGenerationRef = useRef(0);
 
   const {
     polygonSearch,
@@ -336,9 +337,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
 
   const handleOverlapFixModalClose = useCallback(() => {
     setOverlapFixModal(false);
-    window.setTimeout(() => {
-      setOverlapFixResults({ polygonsFixed: [], polygonsNotFixed: [] });
-    }, 0);
+    setOverlapFixResults({ polygonsFixed: [], polygonsNotFixed: [] });
   }, []);
 
   const openOverlapFixResultsModal = useCallback(
@@ -348,9 +347,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
       }
 
       setOverlapFixResults(results);
-      window.setTimeout(() => {
-        setOverlapFixModal(true);
-      }, 0);
+      setOverlapFixModal(true);
     },
     []
   );
@@ -363,6 +360,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   }, [site.uuid, fetchAllValidationPages]);
 
   const clearValidationPending = useCallback(() => {
+    validationPollingGenerationRef.current += 1;
     setPendingValidationPolygonUuids([]);
     setValidationZoomPolygonUuids([]);
     validationRunStartedAtRef.current = 0;
@@ -388,7 +386,13 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     setSupplementalValidations(prev =>
       prev.filter(validation => validation.polygonUuid == null || !clearedUuidSet.has(validation.polygonUuid))
     );
-    setPendingValidationPolygonUuids(prev => prev.filter(uuid => !clearedUuidSet.has(uuid)));
+    setPendingValidationPolygonUuids(prev => {
+      const nextPendingValidationUuids = prev.filter(uuid => !clearedUuidSet.has(uuid));
+      if (nextPendingValidationUuids.length !== prev.length) {
+        validationPollingGenerationRef.current += 1;
+      }
+      return nextPendingValidationUuids;
+    });
   }, []);
 
   const handleValidationJobsStarted = useCallback(
@@ -424,13 +428,17 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
 
     let cancelled = false;
     const polygonUuids = pendingValidationPolygonUuids;
+    const pollingGeneration = validationPollingGenerationRef.current;
 
     const resolveValidationForPolygons = async () => {
       try {
         for (let attempt = 0; attempt < 20 && !cancelled; attempt++) {
+          if (validationPollingGenerationRef.current !== pollingGeneration) {
+            return;
+          }
           const individualValidations = await Promise.all(polygonUuids.map(uuid => fetchPolygonValidation(uuid)));
 
-          if (cancelled) {
+          if (cancelled || validationPollingGenerationRef.current !== pollingGeneration) {
             return;
           }
 
@@ -489,13 +497,13 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           await new Promise(resolve => window.setTimeout(resolve, 1500));
         }
 
-        if (!cancelled) {
+        if (!cancelled && validationPollingGenerationRef.current === pollingGeneration) {
           clearValidationPending();
           showPolygonErrorToast(t("Validation results are taking longer than expected. Please try again."));
         }
       } catch (error) {
         Log.error("Failed while polling polygon validation results:", error);
-        if (!cancelled) {
+        if (!cancelled && validationPollingGenerationRef.current === pollingGeneration) {
           clearValidationPending();
           showPolygonErrorToast(t("Failed to load validation results. Please try again."));
         }
@@ -897,8 +905,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
         onRequestApproveModal={isAdminReview ? handleDrawerRequestApproveModal : undefined}
         onRequestInformationModal={isAdminReview ? handleDrawerRequestInformationModal : undefined}
         onValidationJobsStarted={handleValidationJobsStarted}
-        onOverlapFixValidationStarted={markValidationPending}
-        onOverlapFixValidationFailed={clearValidationPending}
       />
       <PageContent className="bg-theme-neutral-100">
         <PageItem
@@ -990,6 +996,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
         />
         <SitePolygonModals
           siteUuid={site.uuid}
+          isEditPolygonOpen={isEditPolygonOpen}
           isAdminReview={isAdminReview}
           siteHasExistingPolygons={polygonsData.length > 0}
           bulkEditPayload={bulkEditPayload}
