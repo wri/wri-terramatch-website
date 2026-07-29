@@ -685,7 +685,8 @@ export type AboutSectionIndexQueryParams = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
-    | "wcb";
+    | "wcb"
+    | "barka-fund";
 };
 
 export type AboutSectionIndexError = Fetcher.ErrorWrapper<{
@@ -3385,7 +3386,8 @@ export type EntityExportAllQueryParams = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
-    | "wcb";
+    | "wcb"
+    | "barka-fund";
   /**
    * Filter by project
    */

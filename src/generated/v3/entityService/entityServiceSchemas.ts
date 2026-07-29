@@ -322,6 +322,7 @@ export type AboutSectionDto = {
         | "fundo-flora"
         | "fundo-flora-1"
         | "wcb"
+        | "barka-fund"
       )[]
     | null;
   header: string;
@@ -1385,7 +1386,7 @@ export type DisturbanceReportLightDto = {
   /**
    * Entity status for this disturbance report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Update request status for this disturbance report
    */
@@ -2323,7 +2324,7 @@ export type DisturbanceReportFullDto = {
   /**
    * Entity status for this disturbance report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Update request status for this disturbance report
    */
@@ -2674,13 +2675,32 @@ export type FinancialReportUpdateData = {
   attributes: ReportUpdateAttributes;
 };
 
+export type DisturbanceReportUpdateAttributes = {
+  /**
+   * Specific feedback for the PD
+   */
+  feedback?: string;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields?: string[];
+  /**
+   * Request to change to the status of the given disturbance report
+   */
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update the nothingToReport flag.
+   */
+  nothingToReport?: boolean;
+};
+
 export type DisturbanceReportUpdateData = {
   type: "disturbanceReports";
   /**
    * @format uuid
    */
   id: string;
-  attributes: ReportUpdateAttributes;
+  attributes: DisturbanceReportUpdateAttributes;
 };
 
 export type SrpReportUpdateData = {
@@ -3214,6 +3234,7 @@ export type SubmissionDto = {
     | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
+    | "barka-fund"
     | null;
   formUuid: string;
   status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
@@ -3470,6 +3491,7 @@ export type FormFullDto = {
     | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
+    | "barka-fund"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3601,6 +3623,7 @@ export type StoreFormAttributes = {
     | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
+    | "barka-fund"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3744,6 +3767,7 @@ export type FundingProgrammeDto = {
     | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
+    | "barka-fund"
     | null;
   name: string;
   description: string;
@@ -3777,6 +3801,7 @@ export type StoreFundingProgrammeAttributes = {
     | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
+    | "barka-fund"
     | null;
   name: string;
   description: string;
