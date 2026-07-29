@@ -140,14 +140,16 @@ export const resolveClippedGeometryUuids = (
     }
 
     const bySitePolygonUuid = toNonEmptyUuid(version.uuid) ? refreshedBySitePolygonUuid.get(version.uuid) : undefined;
-    if (toNonEmptyUuid(bySitePolygonUuid?.polygonUuid)) {
-      geometryUuids.add(bySitePolygonUuid.polygonUuid);
+    const geometryUuidFromSitePolygon = bySitePolygonUuid?.polygonUuid;
+    if (toNonEmptyUuid(geometryUuidFromSitePolygon)) {
+      geometryUuids.add(geometryUuidFromSitePolygon);
       continue;
     }
 
     const byName = version.polyName != null ? refreshedByName.get(version.polyName) : undefined;
-    if (toNonEmptyUuid(byName?.polygonUuid)) {
-      geometryUuids.add(byName.polygonUuid);
+    const geometryUuidFromName = byName?.polygonUuid;
+    if (toNonEmptyUuid(geometryUuidFromName)) {
+      geometryUuids.add(geometryUuidFromName);
     }
   }
 
