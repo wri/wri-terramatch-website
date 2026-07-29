@@ -89,7 +89,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             >
               Approve
             </Button>
-            {DECLARED_ENV !== "prod" && (
+            {DECLARED_ENV !== "prod" && parent?.label !== "Disturbance Report" && (
               <Button variant="outlined" onClick={() => setStatusModal("due")}>
                 Reset Report
               </Button>
