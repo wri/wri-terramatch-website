@@ -28,6 +28,7 @@ export const hasOverlapFailureInSelection = (summary: OverlapFixSelectionSummary
 
 export type ClippedVersionSummary = {
   uuid: string | null;
+  polygonUuid: string | null;
   polyName: string | null;
 };
 
@@ -96,14 +97,62 @@ export const collectRelatedPartnerUuidsFromFixability = (
 export const collectGeometryUuidsForValidationUiClear = ({
   previousGeometryUuids = [],
   newGeometryUuids = [],
-  relatedPartnerUuids = []
+  relatedPartnerUuids = [],
+  allowedGeometryUuids = []
 }: {
   previousGeometryUuids?: Array<string | null | undefined>;
   newGeometryUuids?: Array<string | null | undefined>;
   relatedPartnerUuids?: Array<string | null | undefined>;
-}): string[] => [
-  ...new Set([...previousGeometryUuids, ...newGeometryUuids, ...relatedPartnerUuids].filter(toNonEmptyUuid))
-];
+  allowedGeometryUuids?: Array<string | null | undefined>;
+}): string[] => {
+  const uuidSet = new Set(
+    [...previousGeometryUuids, ...newGeometryUuids, ...relatedPartnerUuids].filter(toNonEmptyUuid)
+  );
+  const allowedUuidSet = new Set(allowedGeometryUuids.filter(toNonEmptyUuid));
+
+  if (allowedUuidSet.size === 0) {
+    return [...uuidSet];
+  }
+
+  return [...uuidSet].filter(uuid => allowedUuidSet.has(uuid));
+};
+
+export const resolveClippedGeometryUuids = (
+  clippedVersions: ClippedVersionSummary[],
+  refreshedPolygons: SitePolygonLightDto[]
+): string[] => {
+  const refreshedBySitePolygonUuid = new Map(
+    refreshedPolygons
+      .map(polygon => (polygon.uuid != null && polygon.uuid !== "" ? ([polygon.uuid, polygon] as const) : null))
+      .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
+  );
+  const refreshedByName = new Map(
+    refreshedPolygons
+      .map(polygon => (polygon.name != null && polygon.name !== "" ? ([polygon.name, polygon] as const) : null))
+      .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
+  );
+
+  const geometryUuids = new Set<string>();
+  for (const version of clippedVersions) {
+    if (toNonEmptyUuid(version.polygonUuid)) {
+      geometryUuids.add(version.polygonUuid);
+      continue;
+    }
+
+    const bySitePolygonUuid = toNonEmptyUuid(version.uuid) ? refreshedBySitePolygonUuid.get(version.uuid) : undefined;
+    if (toNonEmptyUuid(bySitePolygonUuid?.polygonUuid)) {
+      geometryUuids.add(bySitePolygonUuid.polygonUuid);
+      continue;
+    }
+
+    const byName = version.polyName != null ? refreshedByName.get(version.polyName) : undefined;
+    if (toNonEmptyUuid(byName?.polygonUuid)) {
+      geometryUuids.add(byName.polygonUuid);
+    }
+  }
+
+  return [...geometryUuids];
+};
 
 export const getSelectedOverlapFixSummary = (
   selectedRows: PolygonTableRow[],
@@ -170,14 +219,17 @@ export const resolveActivePolygonAfterOverlapFix = (
       )
       .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
   );
+  const refreshedBySitePolygonUuid = new Map(
+    refreshedPolygons
+      .map(polygon => (polygon.uuid != null && polygon.uuid !== "" ? ([polygon.uuid, polygon] as const) : null))
+      .filter((entry): entry is readonly [string, SitePolygonLightDto] => entry != null)
+  );
 
   for (const version of clippedVersions) {
-    if (version.uuid == null) {
-      continue;
-    }
-
-    const clippedPolygon = refreshedByGeometryUuid.get(version.uuid);
-    if (clippedPolygon != null) {
+    const clippedPolygon =
+      (toNonEmptyUuid(version.polygonUuid) ? refreshedByGeometryUuid.get(version.polygonUuid) : undefined) ??
+      (toNonEmptyUuid(version.uuid) ? refreshedBySitePolygonUuid.get(version.uuid) : undefined);
+    if (clippedPolygon != null && clippedPolygon.isActive) {
       return clippedPolygon;
     }
   }
@@ -219,6 +271,7 @@ export const extractClippedVersions = (response: unknown): ClippedVersionSummary
 
       return {
         uuid: toStringOrNull(attributes.uuid),
+        polygonUuid: toStringOrNull(attributes.polygonUuid),
         polyName: toStringOrNull(attributes.polyName)
       };
     })
@@ -256,7 +309,7 @@ export const buildOverlapFixResultPolygons = (
 
   const fixedVersionPolygons = fixedVersions.flatMap(version => {
     const refreshedPolygon =
-      (version.uuid != null ? refreshedByGeometryUuid.get(version.uuid) : undefined) ??
+      (version.polygonUuid != null ? refreshedByGeometryUuid.get(version.polygonUuid) : undefined) ??
       (version.uuid != null ? refreshedBySitePolygonUuid.get(version.uuid) : undefined) ??
       (version.polyName != null ? refreshedByName.get(version.polyName) : undefined);
     const candidate = version.polyName != null ? candidateByName.get(version.polyName) : undefined;
