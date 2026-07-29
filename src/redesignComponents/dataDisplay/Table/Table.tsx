@@ -231,7 +231,7 @@ const Table = <T extends BaseRow>({
   const useCompactPagination = paginationVariant !== "default";
   const hasMultiplePages = pageSize != null && actualTotalItems > pageSize;
   const shouldShowPaginationControls = showPagination && actualTotalItems > 0 && hasMultiplePages;
-  const shouldShowItemCountText = showItemCount && showPagination && actualTotalItems > 0 && !useCompactPagination;
+  const shouldShowItemCountText = showItemCount && shouldShowPaginationControls && !useCompactPagination;
 
   return (
     <Box
