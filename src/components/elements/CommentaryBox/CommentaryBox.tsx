@@ -58,7 +58,9 @@ const CommentaryBox: FC<CommentaryBoxProps> = props => {
           )
         );
       }
-      openNotification("success", t("Success!"), t("Your comment was just added!"));
+      if (props.entity !== "sitePolygons") {
+        openNotification("success", t("Success!"), t("Your comment was just added!"));
+      }
       setComment("");
       setError("");
       setFiles([]);
