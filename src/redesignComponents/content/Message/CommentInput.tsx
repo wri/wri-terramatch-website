@@ -193,13 +193,6 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
           );
         }
 
-        showToast({
-          label: t("Your comment was just added!"),
-          type: "success",
-          placement: "bottom",
-          duration: 5000,
-          maxWidth: "auto"
-        });
         resetAuditInput();
         ApiSlice.pruneCache("auditStatuses");
         onCommentCreated?.();

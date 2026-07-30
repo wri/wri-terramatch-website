@@ -122,6 +122,32 @@ const menuEntityReportOptions = [
     viewPd: false
   }
 ];
+const menuDisturbanceReportOptions = [
+  {
+    title: "Started",
+    status: "started",
+    value: 1,
+    viewPd: true
+  },
+  {
+    title: "Needs More Information",
+    status: "needs-more-information",
+    value: 2,
+    viewPd: false
+  },
+  {
+    title: "Awaiting Approval",
+    status: "awaiting-approval",
+    value: 3,
+    viewPd: false
+  },
+  {
+    title: "Approved",
+    status: "approved",
+    value: 4,
+    viewPd: false
+  }
+];
 const menuNurseryOptions = [
   {
     title: "Started",
@@ -171,7 +197,7 @@ const menuOptionsMap = {
   Nursery_Report: menuEntityReportOptions,
   Site_Report: menuEntityReportOptions,
   Project_Report: menuEntityReportOptions,
-  Disturbance_Report: menuEntityReportOptions,
+  Disturbance_Report: menuDisturbanceReportOptions,
   Srp_Report: menuEntityReportOptions,
   Financial_Report: menuEntityReportOptions
 };

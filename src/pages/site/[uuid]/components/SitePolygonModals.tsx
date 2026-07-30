@@ -24,6 +24,7 @@ import type { PolygonTableRow } from "./PolygonTableRow";
 
 type SitePolygonModalsProps = {
   siteUuid: string;
+  isEditPolygonOpen?: boolean;
   isAdminReview?: boolean;
   siteHasExistingPolygons?: boolean;
   bulkEditPayload: { polygons: PolygonTableRow[] } | null;
@@ -94,6 +95,7 @@ type SitePolygonModalsProps = {
 
 const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   siteUuid,
+  isEditPolygonOpen = false,
   isAdminReview = false,
   siteHasExistingPolygons = false,
   bulkEditPayload,
@@ -244,6 +246,8 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
         polygonsFixed={overlapFixResults.polygonsFixed}
         polygonsNotFixed={overlapFixResults.polygonsNotFixed}
         onViewPolygon={onViewOverlapPolygon}
+        modal={!isEditPolygonOpen}
+        restoreFocus={!isEditPolygonOpen}
       />
       <SystemValidationComplete
         open={openSystemValidationCompleteModal}

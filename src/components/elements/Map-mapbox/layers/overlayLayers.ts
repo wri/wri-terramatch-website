@@ -655,6 +655,22 @@ function cancelCrossSiteOverlapPendingRetry(map: MapboxMap): void {
   }
 }
 
+function hasMapLayer(map: MapboxMap, layerId: string): boolean {
+  try {
+    return map.getLayer(layerId) != null;
+  } catch {
+    return false;
+  }
+}
+
+function hasMapSource(map: MapboxMap, sourceId: string): boolean {
+  try {
+    return map.getSource(sourceId) != null;
+  } catch {
+    return false;
+  }
+}
+
 async function ensureCrossSiteOverlapPatternImage(map: MapboxMap): Promise<void> {
   const missingVariants = CROSS_SITE_OVERLAP_PATTERN_VARIANTS.filter(variant => !map.hasImage(variant.id));
   if (missingVariants.length === 0) return;
@@ -720,12 +736,12 @@ export function removeCrossSiteOverlapOverlay(map: MapboxMap | null | undefined)
   state.upsertGeneration += 1;
   cancelCrossSiteOverlapPendingRetry(map);
   try {
-    if (map.getLayer(CROSS_SITE_OVERLAP_LINE_LAYER_ID) != null) map.removeLayer(CROSS_SITE_OVERLAP_LINE_LAYER_ID);
-    if (map.getLayer(CROSS_SITE_OVERLAP_PATTERN_LAYER_ID) != null) {
+    if (hasMapLayer(map, CROSS_SITE_OVERLAP_LINE_LAYER_ID)) map.removeLayer(CROSS_SITE_OVERLAP_LINE_LAYER_ID);
+    if (hasMapLayer(map, CROSS_SITE_OVERLAP_PATTERN_LAYER_ID)) {
       map.removeLayer(CROSS_SITE_OVERLAP_PATTERN_LAYER_ID);
     }
-    if (map.getLayer(CROSS_SITE_OVERLAP_FILL_LAYER_ID) != null) map.removeLayer(CROSS_SITE_OVERLAP_FILL_LAYER_ID);
-    if (map.getSource(CROSS_SITE_OVERLAP_SOURCE_ID) != null) map.removeSource(CROSS_SITE_OVERLAP_SOURCE_ID);
+    if (hasMapLayer(map, CROSS_SITE_OVERLAP_FILL_LAYER_ID)) map.removeLayer(CROSS_SITE_OVERLAP_FILL_LAYER_ID);
+    if (hasMapSource(map, CROSS_SITE_OVERLAP_SOURCE_ID)) map.removeSource(CROSS_SITE_OVERLAP_SOURCE_ID);
   } catch (e) {
     Log.warn("removeCrossSiteOverlapOverlay:", e);
   }

@@ -39,5 +39,9 @@ export const getProjectCohortOptions = (t: typeof useT | Function = (t: string) 
     {
       value: "fundo-flora-cohort-1",
       title: t("Fundo Flora Cohort One")
+    },
+    {
+      value: "barka-fund",
+      title: t("Barka Fund")
     }
   ] as Option[];

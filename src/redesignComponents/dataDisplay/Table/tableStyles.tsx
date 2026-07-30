@@ -21,6 +21,12 @@ export const getTableWrapperStyles = (
       },
       "& [data-scope='select'][data-part='root']": {
         display: "none"
+      },
+      "& div:has(.ds-select-input-container)": {
+        display: "none"
+      },
+      "& [data-scope='table'][data-part='footer']": {
+        display: "none"
       }
     }),
     position: "relative",

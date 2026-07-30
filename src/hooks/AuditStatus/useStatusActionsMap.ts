@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { ENTITY_REPORT, NURSERY, POLYGON, PROJECT, SITE } from "@/constants/entities";
 import {
+  getValueForStatusDisturbanceReport,
   getValueForStatusEntityReport,
   getValueForStatusNursery,
   getValueForStatusPolygon,
@@ -101,13 +102,12 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         entityType: ENTITY_REPORT
       },
       [AuditLogButtonStates.DISTURBANCE_REPORT as number]: {
-        valuesForStatus: getValueForStatusEntityReport,
+        valuesForStatus: getValueForStatusDisturbanceReport,
         statusLabels: [
-          { id: "1", label: t("Due") },
-          { id: "2", label: t("Started") },
-          { id: "3", label: t("Needs More Information") },
-          { id: "4", label: t("Awaiting Approval") },
-          { id: "5", label: t("Approved") }
+          { id: "1", label: t("Started") },
+          { id: "2", label: t("Needs More Information") },
+          { id: "3", label: t("Awaiting Approval") },
+          { id: "4", label: t("Approved") }
         ],
         entityType: ENTITY_REPORT
       },

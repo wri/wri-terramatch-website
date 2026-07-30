@@ -187,8 +187,10 @@ const Table = <T extends BaseRow>({
   const displayStart = actualTotalItems === 0 ? 0 : startRange + 1;
   const displayEnd = Math.min(endRange, actualTotalItems);
 
-  const shouldShowPagination = actualTotalItems > 0 && (pageSize == null || actualTotalItems >= pageSize);
   const useCompactPagination = paginationVariant !== "default";
+  const hasMultiplePages = pageSize != null && actualTotalItems > pageSize;
+  const shouldShowPaginationControls = showPagination && actualTotalItems > 0 && hasMultiplePages;
+  const shouldShowItemCountText = showItemCount && shouldShowPaginationControls && !useCompactPagination;
 
   return (
     <Box
@@ -209,7 +211,7 @@ const Table = <T extends BaseRow>({
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}
         pagination={
-          showPagination && shouldShowPagination && !useCompactPagination
+          shouldShowPaginationControls && !useCompactPagination
             ? {
                 totalItems: actualTotalItems,
                 currentPage,
@@ -226,7 +228,7 @@ const Table = <T extends BaseRow>({
         stickyHeader={stickyHeader}
         loading={loading}
       />
-      {showPagination && shouldShowPagination && useCompactPagination ? (
+      {shouldShowPaginationControls && useCompactPagination ? (
         <Box>
           <PaginationTable
             pageSize={pageSize}
@@ -239,7 +241,7 @@ const Table = <T extends BaseRow>({
           />
         </Box>
       ) : null}
-      {showItemCount && shouldShowPagination && !useCompactPagination ? (
+      {shouldShowItemCountText ? (
         <Text
           textStyle="500"
           fontWeight="400"
