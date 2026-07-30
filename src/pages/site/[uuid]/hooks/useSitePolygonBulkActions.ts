@@ -386,12 +386,28 @@ export const useSitePolygonBulkActions = ({
 
   const [isSystemValidationCompleteModalOpen, setIsSystemValidationCompleteModalOpen] = useState(false);
   const [validatedPolygons, setValidatedPolygons] = useState<PolygonTableRow[]>([]);
+  const validationResultsModalPendingRef = useRef(false);
 
   const handleSystemValidationCompleteModalChange = useCallback((open: boolean) => {
     setIsSystemValidationCompleteModalOpen(open);
     if (!open) {
       setValidatedPolygons([]);
+      validationResultsModalPendingRef.current = false;
     }
+  }, []);
+
+  const showValidationResultsModalIfPending = useCallback(() => {
+    if (!validationResultsModalPendingRef.current) {
+      return;
+    }
+
+    validationResultsModalPendingRef.current = false;
+    setIsSystemValidationCompleteModalOpen(true);
+  }, []);
+
+  const cancelPendingValidationResultsModal = useCallback(() => {
+    validationResultsModalPendingRef.current = false;
+    setValidatedPolygons([]);
   }, []);
 
   const runValidationWithResultsModal = useCallback(
@@ -415,18 +431,25 @@ export const useSitePolygonBulkActions = ({
       });
       ApiSlice.pruneCache("validations");
 
+      validationResultsModalPendingRef.current = true;
       setValidatedPolygons(rows);
-      setIsSystemValidationCompleteModalOpen(true);
 
       try {
         await handleRunValidation(geometryPolygonUuids);
       } catch {
         onValidationPendingClear?.();
-        setIsSystemValidationCompleteModalOpen(false);
-        setValidatedPolygons([]);
+        cancelPendingValidationResultsModal();
       }
     },
-    [handleRunValidation, onValidationPending, onValidationPendingClear, polygonsData, site.uuid, t]
+    [
+      cancelPendingValidationResultsModal,
+      handleRunValidation,
+      onValidationPending,
+      onValidationPendingClear,
+      polygonsData,
+      site.uuid,
+      t
+    ]
   );
 
   const handlePolygonDeletingChange = useCallback((isDeleting: boolean, count = 0) => {
@@ -1075,6 +1098,8 @@ export const useSitePolygonBulkActions = ({
     openPolygonEditDrawerForRow,
     runPolygonValidation,
     runValidationWithResultsModal,
+    showValidationResultsModalIfPending,
+    cancelPendingValidationResultsModal,
     validatedPolygons
   };
 };
