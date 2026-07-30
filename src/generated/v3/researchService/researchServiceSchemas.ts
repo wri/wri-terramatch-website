@@ -916,6 +916,12 @@ export type ClippedVersionDto = {
    */
   uuid: string;
   /**
+   * The geometry UUID of the clipped polygon version
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440001
+   */
+  polygonUuid: string;
+  /**
    * The name of the polygon
    *
    * @example Plot_1_2024

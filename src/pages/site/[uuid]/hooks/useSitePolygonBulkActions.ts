@@ -57,7 +57,8 @@ import {
   collectGeometryUuidsForValidationUiClear,
   collectRelatedPartnerUuidsFromFixability,
   extractClippedVersions,
-  resolveActivePolygonAfterOverlapFix
+  resolveActivePolygonAfterOverlapFix,
+  resolveClippedGeometryUuids
 } from "./overlapFix.utils";
 
 const formatAuthorName = formatCommentAuthorName;
@@ -435,17 +436,19 @@ export const useSitePolygonBulkActions = ({
 
   const clearValidationUiAfterOverlapFix = useCallback(
     async (geometryPolygonUuids: string[]) => {
+      onValidationPendingClear?.();
+
       if (geometryPolygonUuids.length > 0) {
         // Match backend clearValidationForPolygons: drop criteria + status from client caches only.
         prunePolygonValidationCache(...geometryPolygonUuids);
         onValidationUiCleared?.(geometryPolygonUuids);
       }
 
-      const [, overlapValidations] = await Promise.all([fetchAllValidationPages(true), fetchOverlapValidations(true)]);
+      const [, overlapValidations] = await Promise.all([fetchAllValidationPages(), fetchOverlapValidations(true)]);
 
       return overlapValidations ?? [];
     },
-    [fetchAllValidationPages, fetchOverlapValidations, onValidationUiCleared]
+    [fetchAllValidationPages, fetchOverlapValidations, onValidationPendingClear, onValidationUiCleared]
   );
 
   const handleDrawerOverlapFixed = useCallback(
@@ -463,18 +466,18 @@ export const useSitePolygonBulkActions = ({
         },
         params.clippedVersions ?? []
       );
+      const clippedGeometryUuids = resolveClippedGeometryUuids(params.clippedVersions ?? [], refreshedPolygons);
+      const currentSiteGeometryUuids = refreshedPolygons
+        .map(polygon => polygon.polygonUuid ?? polygon.uuid)
+        .filter((uuid): uuid is string => uuid != null && uuid !== "");
 
       const geometryUuidsToClear = collectGeometryUuidsForValidationUiClear({
         previousGeometryUuids: [params.previousPolygonUuid],
-        newGeometryUuids: [updatedPolygon?.polygonUuid, ...(params.clippedVersions ?? []).map(version => version.uuid)],
-        relatedPartnerUuids: params.relatedPartnerUuids
+        newGeometryUuids: [updatedPolygon?.polygonUuid, ...clippedGeometryUuids],
+        relatedPartnerUuids: params.relatedPartnerUuids,
+        allowedGeometryUuids: [...currentSiteGeometryUuids, params.previousPolygonUuid]
       });
       await clearValidationUiAfterOverlapFix(geometryUuidsToClear);
-
-      const polygonUuidsToPoll = geometryUuidsToClear.filter(uuid => uuid != null && uuid !== "");
-      if (polygonUuidsToPoll.length > 0) {
-        onValidationJobsStarted?.(polygonUuidsToPoll, { trackBulkCompletion: false });
-      }
 
       const fixedId = updatedPolygon?.polygonUuid ?? updatedPolygon?.uuid;
       const fixedName = updatedPolygon?.name ?? null;
@@ -494,7 +497,6 @@ export const useSitePolygonBulkActions = ({
       clearValidationUiAfterOverlapFix,
       invalidatePolygonMapTiles,
       onOverlapFixResultsOpen,
-      onValidationJobsStarted,
       polygonsData,
       refreshPolygonData
     ]
@@ -515,37 +517,27 @@ export const useSitePolygonBulkActions = ({
       setFixingOverlapsCount(fixableCandidates.length);
       setIsFixingOverlaps(true);
 
-      const geometryUuidsToClear = collectGeometryUuidsForValidationUiClear({
-        previousGeometryUuids: fixableCandidates.map(candidate => candidate.id),
-        relatedPartnerUuids: collectRelatedPartnerUuidsFromFixability(
-          fixableCandidates.map(candidate => candidate.fixabilityResult)
-        )
-      });
-      onValidationPending?.(geometryUuidsToClear);
-
       try {
         const response = await clipPolygonListAsync(fixableCandidates.map(candidate => candidate.id));
         const fixedVersions = extractClippedVersions(response);
 
         invalidatePolygonMapTiles();
+        const refreshedPolygons = await refreshPolygonData({ loadAll: true });
+        const clippedGeometryUuids = resolveClippedGeometryUuids(fixedVersions, refreshedPolygons);
+        const currentSiteGeometryUuids = refreshedPolygons
+          .map(polygon => polygon.polygonUuid ?? polygon.uuid)
+          .filter((uuid): uuid is string => uuid != null && uuid !== "");
 
         const geometryUuidsToClearAfterFix = collectGeometryUuidsForValidationUiClear({
           previousGeometryUuids: fixableCandidates.map(candidate => candidate.id),
-          newGeometryUuids: fixedVersions.map(version => version.uuid),
+          newGeometryUuids: clippedGeometryUuids,
           relatedPartnerUuids: collectRelatedPartnerUuidsFromFixability(
             fixableCandidates.map(candidate => candidate.fixabilityResult)
-          )
+          ),
+          allowedGeometryUuids: [...currentSiteGeometryUuids, ...fixableCandidates.map(candidate => candidate.id)]
         });
 
-        const [refreshedPolygons, refreshedOverlapValidations] = await Promise.all([
-          refreshPolygonData({ loadAll: true }),
-          clearValidationUiAfterOverlapFix(geometryUuidsToClearAfterFix)
-        ]);
-
-        const polygonUuidsToPoll = geometryUuidsToClearAfterFix.filter(uuid => uuid != null && uuid !== "");
-        if (polygonUuidsToPoll.length > 0) {
-          onValidationJobsStarted?.(polygonUuidsToPoll, { trackBulkCompletion: false });
-        }
+        const refreshedOverlapValidations = await clearValidationUiAfterOverlapFix(geometryUuidsToClearAfterFix);
 
         onOverlapFixResultsOpen(
           buildOverlapFixResultPolygons(
@@ -565,7 +557,6 @@ export const useSitePolygonBulkActions = ({
         setPolygonTableHoveredUuid(null);
       } catch (error) {
         Log.error("Failed to fix selected polygon overlaps:", error);
-        onValidationPendingClear?.();
         showPolygonErrorToast(t("Failed to fix selected polygon overlaps"));
       } finally {
         setIsFixingOverlaps(false);
@@ -577,9 +568,6 @@ export const useSitePolygonBulkActions = ({
       closeMapPopups,
       invalidatePolygonMapTiles,
       onOverlapFixResultsOpen,
-      onValidationJobsStarted,
-      onValidationPending,
-      onValidationPendingClear,
       refreshPolygonData,
       site.uuid,
       t
@@ -664,17 +652,18 @@ export const useSitePolygonBulkActions = ({
         invalidatePolygonMapTiles();
         setSubmittedPolygonNames(submittedNames);
         setShouldRefetchPolygonData(true);
-        await refreshPolygonData();
+        const refreshedPolygons = await refreshPolygonData({ loadAll: true });
         pendingPolygonSubmittedModalRef.current = true;
         ApiSlice.pruneCache("auditStatuses");
 
         const geometryPolygonUuids = sitePolygonUuids
-          .map(sitePolygonUuid => polygonsData.find(polygon => polygon.uuid === sitePolygonUuid))
+          .map(sitePolygonUuid => refreshedPolygons.find(polygon => polygon.uuid === sitePolygonUuid))
           .map(polygon => polygon?.polygonUuid)
           .filter((uuid): uuid is string => uuid != null && uuid !== "");
+        const uniqueGeometryPolygonUuids = [...new Set(geometryPolygonUuids)];
 
-        if (geometryPolygonUuids.length > 0) {
-          onValidationJobsStarted?.(geometryPolygonUuids, { trackBulkCompletion: false });
+        if (uniqueGeometryPolygonUuids.length > 0) {
+          onValidationJobsStarted?.(uniqueGeometryPolygonUuids, { trackBulkCompletion: false });
         }
 
         for (const sitePolygonUuid of sitePolygonUuids) {

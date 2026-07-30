@@ -20,6 +20,8 @@ interface OverlapFixProps {
   polygonsFixed?: OverlapFixPolygon[];
   polygonsNotFixed?: OverlapFixPolygon[];
   onViewPolygon?: (polygonUuid: string) => void;
+  modal?: boolean;
+  restoreFocus?: boolean;
 }
 
 const PolygonNameList: FC<{ polygons: OverlapFixPolygon[]; onViewPolygon?: (polygonUuid: string) => void }> = ({
@@ -60,7 +62,9 @@ const OverlapFix: FC<OverlapFixProps> = ({
   onClose,
   polygonsFixed = [],
   polygonsNotFixed = [],
-  onViewPolygon
+  onViewPolygon,
+  modal = true,
+  restoreFocus = true
 }) => {
   const t = useT();
 
@@ -84,6 +88,8 @@ const OverlapFix: FC<OverlapFixProps> = ({
     <Modal
       open={open}
       onClose={handleClose}
+      modal={modal}
+      restoreFocus={restoreFocus}
       size="large"
       header={
         <Flex className="w-full items-center justify-between">
