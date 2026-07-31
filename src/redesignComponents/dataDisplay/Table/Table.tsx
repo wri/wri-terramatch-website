@@ -1,9 +1,7 @@
-import { type SystemStyleObject, Box, Text } from "@chakra-ui/react";
-import { useT } from "@transifex/react";
+import { type SystemStyleObject, Box } from "@chakra-ui/react";
 import { Table as WriTable } from "@worldresources/wri-design-systems";
 import React, { Ref, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
-import { getThemedColor } from "@/lib/theme";
 import PaginationTable from "@/redesignComponents/navigation/Pagination/PaginationTable";
 
 import { findHorizontalScrollContainer } from "./findHorizontalScrollContainer";
@@ -76,7 +74,6 @@ const Table = <T extends BaseRow>({
   onRowSelected: controlledOnRowSelected,
   onAllItemsSelected: controlledOnAllItemsSelected
 }: TableProps<T>) => {
-  const t = useT();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
     DEFAULT_CURRENT_PAGE,
@@ -184,9 +181,6 @@ const Table = <T extends BaseRow>({
     return renderRow(rowData, enhancedContext);
   }, []);
 
-  const displayStart = actualTotalItems === 0 ? 0 : startRange + 1;
-  const displayEnd = Math.min(endRange, actualTotalItems);
-
   const useCompactPagination = paginationVariant !== "default";
   const hasMultiplePages = pageSize != null && actualTotalItems > pageSize;
   const shouldShowPaginationControls = showPagination && actualTotalItems > 0 && hasMultiplePages;
@@ -216,7 +210,8 @@ const Table = <T extends BaseRow>({
                 totalItems: actualTotalItems,
                 currentPage,
                 pageSize,
-                showItemCount
+                showItemCount,
+                showItemCountText: true
               }
             : undefined
         }
@@ -229,27 +224,15 @@ const Table = <T extends BaseRow>({
         loading={loading}
       />
       {shouldShowPaginationControls && useCompactPagination ? (
-        <Box>
-          <PaginationTable
-            pageSize={pageSize}
-            currentPage={currentPage}
-            totalItems={actualTotalItems}
-            onPageSizeChange={setPageSize}
-            onPageChange={setCurrentPage}
-            showItemCountText={false}
-            variant={paginationVariant}
-          />
-        </Box>
-      ) : null}
-      {shouldShowItemCountText ? (
-        <Text
-          textStyle="500"
-          fontWeight="400"
-          color={getThemedColor("neutral", 700)}
-          className="absolute bottom-0 left-1/2 w-fit -translate-x-1/2 text-center mobile:hidden"
-        >
-          {t("Showing {start} - {end} of {total}", { start: displayStart, end: displayEnd, total: actualTotalItems })}
-        </Text>
+        <PaginationTable
+          pageSize={pageSize}
+          currentPage={currentPage}
+          totalItems={actualTotalItems}
+          onPageSizeChange={setPageSize}
+          onPageChange={setCurrentPage}
+          showItemCountText={shouldShowItemCountText}
+          variant={paginationVariant}
+        />
       ) : null}
     </Box>
   );

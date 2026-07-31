@@ -2,8 +2,6 @@ import { Box } from "@chakra-ui/react";
 import { Pagination as WriPagination } from "@worldresources/wri-design-systems";
 import { FC } from "react";
 
-import { paginationButtonStyles } from "./paginationStyles";
-
 export type PaginationProps = {
   currentPage: number;
   totalItems: number;
@@ -14,7 +12,7 @@ export type PaginationProps = {
 
 const Pagination: FC<PaginationProps> = ({ currentPage, totalItems, pageSize, variant, onPageChange }) => {
   return (
-    <Box css={paginationButtonStyles}>
+    <Box>
       <WriPagination
         currentPage={currentPage}
         totalItems={totalItems}
