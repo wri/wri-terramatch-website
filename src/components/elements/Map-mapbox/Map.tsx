@@ -508,6 +508,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     polygonsData,
     bbox,
     shouldBboxZoom,
+    isEditFocusActive: editFocus.isEditFocusActive,
     onLoadingChange: onPolygonTilesLoadingChange
   });
 
