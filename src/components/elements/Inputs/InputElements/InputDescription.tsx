@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC, HTMLAttributes } from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -7,11 +8,14 @@ export interface InputDescriptionProps extends HTMLAttributes<HTMLParagraphEleme
   className?: string;
 }
 
-const InputDescription: FC<InputDescriptionProps> = ({ children, className, ...rest }) =>
-  children == null ? null : (
+const InputDescription: FC<InputDescriptionProps> = ({ children, className, ...rest }) => {
+  const t = useT();
+  if (children == null) return null;
+  return (
     <Text as="p" variant="text-body-400" className={className} containHtml {...rest}>
-      {children}
+      {t(children)}
     </Text>
   );
+};
 
 export default InputDescription;

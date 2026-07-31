@@ -17,6 +17,8 @@ type UsePolygonTilesLoadingParams = {
   polygonsData?: Record<string, string[]>;
   bbox?: BBox;
   shouldBboxZoom?: boolean;
+  /** While the edit drawer is open the active polygon is shown via Mapbox Draw, not tile layers. */
+  isEditFocusActive?: boolean;
   onLoadingChange?: (value: boolean) => void;
 };
 
@@ -31,6 +33,7 @@ export function usePolygonTilesLoading({
   polygonsData,
   bbox,
   shouldBboxZoom,
+  isEditFocusActive = false,
   onLoadingChange
 }: UsePolygonTilesLoadingParams): void {
   const sessionRef = useRef(0);
@@ -80,7 +83,7 @@ export function usePolygonTilesLoading({
     };
 
     const shouldRequireRenderedPolygonFeatures = (): boolean => {
-      if (isLargeExtentBbox(bbox)) {
+      if (isEditFocusActive || isLargeExtentBbox(bbox)) {
         return false;
       }
       return currentMap.getZoom() >= MIN_ZOOM_FOR_RENDERED_POLYGON_CHECK;
@@ -106,9 +109,6 @@ export function usePolygonTilesLoading({
         return false;
       }
       if (!currentMap.isSourceLoaded(sourceId)) {
-        return false;
-      }
-      if (!currentMap.areTilesLoaded()) {
         return false;
       }
       if (shouldRequireRenderedPolygonFeatures() && !hasRenderedPolygonFeatures()) {
@@ -183,5 +183,15 @@ export function usePolygonTilesLoading({
       cleanup();
       onLoadingChange?.(false);
     };
-  }, [map, enabled, sourcesAdded, tileLoadRequestId, polygonsData, bbox, shouldBboxZoom, onLoadingChange]);
+  }, [
+    map,
+    enabled,
+    sourcesAdded,
+    tileLoadRequestId,
+    polygonsData,
+    bbox,
+    shouldBboxZoom,
+    isEditFocusActive,
+    onLoadingChange
+  ]);
 }

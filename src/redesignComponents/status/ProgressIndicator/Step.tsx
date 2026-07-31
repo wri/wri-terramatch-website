@@ -1,4 +1,5 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC } from "react";
 
@@ -17,6 +18,7 @@ import {
 import { StepProps } from "./types";
 
 export const Step: FC<StepProps> = props => {
+  const t = useT();
   const { index, status, label, actions, onClick, isFocused, isHovered, isPressed } = props;
 
   return (
@@ -42,8 +44,8 @@ export const Step: FC<StepProps> = props => {
         >
           {getStepBadgeContent(status, index)}
         </div>
-        <Text title={label} textStyle="400" {...getStepLabelStyle(status)} className="min-w-0 truncate">
-          {label}
+        <Text title={t(label)} textStyle="400" {...getStepLabelStyle(status)} className="min-w-0 truncate">
+          {t(label)}
         </Text>
       </Button>
       {actions}

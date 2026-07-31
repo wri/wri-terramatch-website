@@ -1,4 +1,5 @@
 import { Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import { CheckApprovedIcon, InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
@@ -43,6 +44,7 @@ const StatusLabelTag: FC<StatusLabelTagProps> = ({ label, status }) => {
 };
 
 const AccordionHeader: FC<AccordionHeaderProps> = ({ label, title, badge, status, statusLabel }) => {
+  const t = useT();
   return (
     <div className="flex w-full items-center justify-between">
       <div className="flex items-center gap-3">
@@ -52,7 +54,7 @@ const AccordionHeader: FC<AccordionHeaderProps> = ({ label, title, badge, status
               {label}:
             </Text>
           )}
-          {title}
+          {typeof title === "string" ? t(title) : title}
         </div>
         {badge && <TextBadge>{badge}</TextBadge>}
       </div>

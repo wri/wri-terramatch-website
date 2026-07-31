@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { DetailedHTMLProps, FC, HTMLAttributes, PropsWithChildren } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -17,21 +18,24 @@ const FormStepHeader: FC<PropsWithChildren<FormStepHeaderProps>> = ({
   children,
   className,
   ...divProps
-}) => (
-  <div {...divProps} className={twMerge("flex-1 bg-white py-4 pl-14", className)}>
-    <FormSectionHeader
-      actions={actionButtonProps != null && <Button variant="secondary" {...actionButtonProps} />}
-      title={title}
-      showBorder={false}
-      className="!mb-3"
-    />
-    {subtitle != null && (
-      <Text variant="text-body-600" className="mt-2" containHtml>
-        {subtitle}
-      </Text>
-    )}
-    {children}
-  </div>
-);
+}) => {
+  const t = useT();
+  return (
+    <div {...divProps} className={twMerge("flex-1 bg-white py-4 pl-14", className)}>
+      <FormSectionHeader
+        actions={actionButtonProps != null && <Button variant="secondary" {...actionButtonProps} />}
+        title={title}
+        showBorder={false}
+        className="!mb-3"
+      />
+      {subtitle != null && (
+        <Text variant="text-body-600" className="mt-2" containHtml>
+          {t(subtitle)}
+        </Text>
+      )}
+      {children}
+    </div>
+  );
+};
 
 export default FormStepHeader;
