@@ -1,4 +1,5 @@
 import { Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import { CheckApprovedIcon, InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
@@ -48,6 +49,7 @@ const FormSectionHeader: FC<FormSectionHeaderProps> = ({
   showBorder = true,
   className
 }) => {
+  const t = useT();
   return (
     <Flex
       alignItems="center"
@@ -66,7 +68,7 @@ const FormSectionHeader: FC<FormSectionHeaderProps> = ({
               {label}:
             </Text>
           )}
-          {title}
+          {t(title)}
         </Flex>
         {badge && <TextBadge>{badge}</TextBadge>}
       </div>

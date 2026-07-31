@@ -61,12 +61,15 @@ const AboutPageItem = ({ type, flexProps, className, contentClassName, descripti
       <Flex className={twMerge("rounded-1 min-h-0 flex-col gap-2 bg-theme-neutral-100 p-5", contentClassName)}>
         {aboutSection.title && (
           <Text color="neutral.900" textStyle="400-bold">
-            {aboutSection.title}
+            {t(aboutSection.title)}
           </Text>
         )}
         <Flex direction="column" gap={5} maxWidth={descriptionMaxWidth}>
-          {parse(aboutSection.description, { replace: parserReplacements })}
-          <ContactSupport message={aboutSection.contactSupportMessage} subject={aboutSection.contactSupportSubject} />
+          {parse(t(aboutSection.description), { replace: parserReplacements })}
+          <ContactSupport
+            message={t(aboutSection.contactSupportMessage)}
+            subject={t(aboutSection.contactSupportSubject)}
+          />
         </Flex>
         <Flex className="min-h-0 flex-[1] shrink-0 flex-col gap-2">
           <Text color="neutral.900" textStyle="500-bold">
@@ -86,7 +89,7 @@ const AboutPageItem = ({ type, flexProps, className, contentClassName, descripti
                   window.open(link.url, "_blank");
                 }}
               >
-                {link.title}
+                {t(link.title)}
               </Button>
             ))}
           </Flex>

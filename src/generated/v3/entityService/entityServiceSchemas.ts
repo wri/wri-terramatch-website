@@ -3242,7 +3242,7 @@ export type SubmissionDto = {
   organisationUuid: string | null;
   organisationName: string | null;
   feedback?: string | null;
-  translatedFeedbackFields: string[] | null;
+  feedbackFields: string[] | null;
   stageName: string | null;
   stageUuid: string | null;
 };
@@ -3474,10 +3474,6 @@ export type FormFullDto = {
    * The funding programme, reporting framework or entity that is using this form.
    */
   attachedTo?: FormAttachment;
-  /**
-   * Indicates whether the text fields in this form response have been translated to the user's locale
-   */
-  translated: boolean;
   subtitle?: string | null;
   description?: string | null;
   frameworkKey?:

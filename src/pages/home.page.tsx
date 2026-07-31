@@ -15,16 +15,17 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFundingProgrammes } from "@/connections/FundingProgramme";
 import { useMyOrg } from "@/connections/Organisation";
 import { useAcceptInvitation } from "@/hooks/useInviteToken";
-import { fundingProgrammeToFundingCardProps } from "@/utils/dataTransformation";
+import { useFundingProgrammeToFundingCardProps } from "@/utils/dataTransformation";
 
 const HomePage = () => {
   const t = useT();
   const [, { organisation, organisationId }] = useMyOrg();
   const tourSteps = useGetHomeTourItems();
+
   useAcceptInvitation();
 
   const [loaded, { data: fundingProgrammes }] = useFundingProgrammes({});
-
+  const fundingProgrammesProps = useFundingProgrammeToFundingCardProps(fundingProgrammes ?? []);
   return (
     <PageBody>
       <Head>
@@ -41,14 +42,7 @@ const HomePage = () => {
       {organisation?.status === "approved" ? (
         <LoadingContainer loading={!loaded}>
           <PageSection hasCarousel>
-            <FundingCarouselList
-              title={t("Opportunities")}
-              items={
-                fundingProgrammes
-                  ?.filter(item => item.status !== "disabled")
-                  .map(item => fundingProgrammeToFundingCardProps(item)) || []
-              }
-            />
+            <FundingCarouselList title={t("Opportunities")} items={fundingProgrammesProps ?? []} />
           </PageSection>
           <WelcomeTour tourId="home" tourSteps={tourSteps} />
         </LoadingContainer>

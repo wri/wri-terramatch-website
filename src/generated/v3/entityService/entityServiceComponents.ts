@@ -778,34 +778,19 @@ export type AboutSectionGetPathParams = {
   uuid: string;
 };
 
-export type AboutSectionGetError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
+export type AboutSectionGetError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * @example 404
+     */
+    statusCode: number;
+    /**
+     * @example Not Found
+     */
+    message: string;
+  };
+}>;
 
 export type AboutSectionGetResponse = {
   meta?: {
@@ -5481,41 +5466,19 @@ export type FormGetPathParams = {
   uuid: string;
 };
 
-export type FormGetQueryParams = {
-  /**
-   * @default true
-   */
-  translated?: boolean;
-};
-
-export type FormGetError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
+export type FormGetError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * @example 404
+     */
+    statusCode: number;
+    /**
+     * @example Not Found
+     */
+    message: string;
+  };
+}>;
 
 export type FormGetResponse = {
   meta?: {
@@ -5539,7 +5502,6 @@ export type FormGetResponse = {
 
 export type FormGetVariables = {
   pathParams: FormGetPathParams;
-  queryParams?: FormGetQueryParams;
 };
 
 /**
@@ -5733,20 +5695,20 @@ export type FormPushTranslationError = Fetcher.ErrorWrapper<
 export type FormPushTranslationResponse = {
   meta?: {
     /**
-     * @example formTranslations
+     * @example delayedJobs
      */
     resourceType?: string;
   };
   data?: {
     /**
-     * @example formTranslations
+     * @example delayedJobs
      */
     type?: string;
     /**
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.FormTranslationDto;
+    attributes?: Schemas.DelayedJobDto;
   };
 };
 
@@ -6037,10 +5999,6 @@ export type ApplicationGetQueryParams = {
    * sideloads to include
    */
   sideloads?: ("currentSubmission" | "fundingProgramme")[];
-  /**
-   * @default true
-   */
-  translated?: boolean;
 };
 
 export type ApplicationGetError = Fetcher.ErrorWrapper<
@@ -6278,13 +6236,6 @@ export const applicationHistoryGet = new V3ApiEndpoint<
   {}
 >("/applications/v3/applications/{uuid}/history", "GET");
 
-export type FundingProgrammesIndexQueryParams = {
-  /**
-   * @default true
-   */
-  translated?: boolean;
-};
-
 export type FundingProgrammesIndexError = Fetcher.ErrorWrapper<{
   status: 401;
   payload: {
@@ -6349,14 +6300,10 @@ export type FundingProgrammesIndexResponse = {
   }[];
 };
 
-export type FundingProgrammesIndexVariables = {
-  queryParams?: FundingProgrammesIndexQueryParams;
-};
-
 export const fundingProgrammesIndex = new V3ApiEndpoint<
   FundingProgrammesIndexResponse,
   FundingProgrammesIndexError,
-  FundingProgrammesIndexVariables,
+  {},
   {}
 >("/fundingProgrammes/v3/fundingProgrammes", "GET");
 
@@ -6430,13 +6377,6 @@ export type FundingProgrammeGetPathParams = {
   uuid: string;
 };
 
-export type FundingProgrammeGetQueryParams = {
-  /**
-   * @default true
-   */
-  translated?: boolean;
-};
-
 export type FundingProgrammeGetError = Fetcher.ErrorWrapper<
   | {
       status: 401;
@@ -6488,7 +6428,6 @@ export type FundingProgrammeGetResponse = {
 
 export type FundingProgrammeGetVariables = {
   pathParams: FundingProgrammeGetPathParams;
-  queryParams?: FundingProgrammeGetQueryParams;
 };
 
 export const fundingProgrammeGet = new V3ApiEndpoint<
