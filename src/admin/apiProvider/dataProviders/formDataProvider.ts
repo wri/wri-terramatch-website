@@ -83,7 +83,7 @@ export const formDataProvider: Partial<DataProvider> = {
 
       // In update, do the banner upload first so that the update response shows the new banner media.
       await handleUploads(params, UPLOAD_KEYS, { entity: "forms", uuid: params.id as string });
-      const form = await updateForm(formBuilderToAttributes(body), { id: params.id as string, translated: false });
+      const form = await updateForm(formBuilderToAttributes(body), { id: params.id as string });
 
       await handleOptionFilesUpload(form, body);
 
@@ -108,7 +108,7 @@ export const formDataProvider: Partial<DataProvider> = {
   async getOne<RecordType>(_: string, { id }: GetOneParams) {
     // Disable translation for admin data provider; forms must be edited in English so that the
     // labels that will be translated from the DB are in English as the source language.
-    const connected = await loadForm({ id, translated: false });
+    const connected = await loadForm({ id });
     if (connected.loadFailure != null) {
       throw v3ErrorForRA("Form get fetch failed", connected.loadFailure);
     }
@@ -117,7 +117,7 @@ export const formDataProvider: Partial<DataProvider> = {
   },
 
   async getMany(_, params) {
-    const response = await Promise.all(params.ids.map(id => loadForm({ id: id as string, translated: false })));
+    const response = await Promise.all(params.ids.map(id => loadForm({ id: id as string })));
     const failed = response.find(({ loadFailure }) => loadFailure != null);
     if (failed != null) {
       throw v3ErrorForRA("Form get fetch failed", failed.loadFailure);

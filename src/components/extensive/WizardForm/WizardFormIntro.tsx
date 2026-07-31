@@ -57,11 +57,11 @@ const WizardFormIntro = (props: WizardFormIntroProps) => {
         />
       )}
       <Text variant="text-bold-headline-1000" className="text-center uppercase">
-        {props.title}
+        {t(props.title)}
       </Text>
       {props.description && (
         <Text variant="text-light-body-300" className="text-center" containHtml>
-          {props.description}
+          {t(props.description)}
         </Text>
       )}
       {props.ctaProps?.href && (

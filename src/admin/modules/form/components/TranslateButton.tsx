@@ -1,37 +1,86 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRecordContext } from "react-admin";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useDelayedJobs } from "@/connections/DelayedJob";
 import { loadFormTranslation, pushFormTranslation } from "@/connections/Form";
 import ApiSlice from "@/store/apiSlice";
 
 import { FormBuilderData } from "./FormBuilder/types";
 
+const PUSH_TRANSLATIONS_JOB_NAME = "Push Translations to Transifex";
+
 export const TranslateButton = () => {
   const record = useRecordContext<FormBuilderData>();
+  const [, { delayedJobs }] = useDelayedJobs();
   const [hasBeenPushed, setHasBeenPushed] = useState(false);
   const [hasBeenPulled, setHasBeenPulled] = useState(false);
   const [isPushing, setIsPushing] = useState(false);
   const [isPulling, setIsPulling] = useState(false);
+  const [pendingPush, setPendingPush] = useState(false);
+  const [pendingPushJobUuid, setPendingPushJobUuid] = useState<string | null>(null);
+  const [ignoredPushJobUuids, setIgnoredPushJobUuids] = useState<Set<string>>(() => new Set());
   const [open, setOpen] = useState(false);
 
+  const finishPush = useCallback((succeeded: boolean) => {
+    if (succeeded) {
+      setHasBeenPushed(true);
+    }
+    setIsPushing(false);
+    setPendingPush(false);
+    setPendingPushJobUuid(null);
+  }, []);
+
   const pushTranslations = useCallback(() => {
+    if (record?.uuid == null) return;
+
     setIsPushing(true);
     setHasBeenPulled(false);
     setHasBeenPushed(false);
-    const pushTranslation = async () => {
-      try {
-        await pushFormTranslation(record?.uuid ?? "");
-        setHasBeenPushed(true);
-        setIsPushing(false);
-      } catch (error) {
-        setIsPushing(false);
+    setPendingPushJobUuid(null);
+    setIgnoredPushJobUuids(
+      new Set((delayedJobs ?? []).filter(job => job.name === PUSH_TRANSLATIONS_JOB_NAME).map(job => job.uuid))
+    );
+    setPendingPush(true);
+
+    void pushFormTranslation(record.uuid).catch(() => {
+      finishPush(false);
+    });
+  }, [record?.uuid, delayedJobs, finishPush]);
+
+  useEffect(() => {
+    if (!pendingPush || delayedJobs == null || delayedJobs.length === 0) {
+      return;
+    }
+
+    const relevantJobs = delayedJobs.filter(
+      job => job.name === PUSH_TRANSLATIONS_JOB_NAME && !ignoredPushJobUuids.has(job.uuid)
+    );
+
+    if (pendingPushJobUuid == null) {
+      const pendingJob = relevantJobs.find(job => job.status === "pending");
+      if (pendingJob != null) {
+        setPendingPushJobUuid(pendingJob.uuid);
+        return;
       }
-    };
-    pushTranslation();
-  }, [record?.uuid]);
+
+      // Job may finish before we observe the pending state.
+      const completedJob = relevantJobs.find(job => job.status === "succeeded" || job.status === "failed");
+      if (completedJob != null) {
+        finishPush(completedJob.status === "succeeded");
+      }
+      return;
+    }
+
+    const trackedJob = delayedJobs.find(job => job.uuid === pendingPushJobUuid);
+    if (trackedJob == null || trackedJob.status === "pending") {
+      return;
+    }
+
+    finishPush(trackedJob.status === "succeeded");
+  }, [delayedJobs, pendingPush, pendingPushJobUuid, ignoredPushJobUuids, finishPush]);
 
   const pullTranslations = useCallback(() => {
     setIsPulling(true);
