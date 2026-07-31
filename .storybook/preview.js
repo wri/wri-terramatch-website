@@ -9,29 +9,6 @@ import { system } from "../src/lib/theme";
 import { StoreProvider } from "../src/utils/testStore";
 import { BLUR_DATA_URL } from "./constants";
 
-let hasMountedToast = false;
-
-const SingletonToastContainer = () => {
-  const isFirstMount = React.useRef(false);
-
-  if (!hasMountedToast) {
-    hasMountedToast = true;
-    isFirstMount.current = true;
-  }
-
-  React.useEffect(() => {
-    return () => {
-      if (isFirstMount.current) {
-        hasMountedToast = false;
-      }
-    };
-  }, []);
-
-  if (!isFirstMount.current) return null;
-
-  return <WRIToast />;
-};
-
 // Initialize Transifex (same as in _app.tsx)
 tx.init({
   token: process.env.NEXT_PUBLIC_TRANSIFEX_TOKEN
@@ -60,12 +37,14 @@ if (!descriptor || descriptor.configurable) {
 
 export const decorators = [
   (Story, options) => {
-    const { parameters } = options;
+    const { parameters, viewMode, title, name } = options;
+
+    const shouldRenderToast = viewMode !== "docs" || (title === "Redesign Components/Status/Toast" && name === "Info");
 
     return (
       <ChakraProvider value={system}>
         <StoreProvider storeBuilder={parameters.storeBuilder}>
-          <SingletonToastContainer />
+          {shouldRenderToast ? <WRIToast /> : null}
           <Story {...options} />
         </StoreProvider>
       </ChakraProvider>

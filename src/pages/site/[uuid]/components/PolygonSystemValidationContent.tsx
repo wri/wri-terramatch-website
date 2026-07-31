@@ -181,7 +181,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
         </Flex>
       </Flex>
       {(canRunValidation || canFixOverlap) && (
-        <Flex className="w-full justify-center pb-2 wriDrawer:pb-0">
+        <Flex className="w-full justify-center pb-2">
           <FloatingActionToolbar
             className="bg-theme-neutral-200"
             items={

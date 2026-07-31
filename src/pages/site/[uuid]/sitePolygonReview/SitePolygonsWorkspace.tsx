@@ -35,6 +35,7 @@ import { ValidationDto } from "@/generated/v3/researchService/researchServiceSch
 import { hasValidationCriteria, isValidationFreshAfter } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
+import { HIDDEN_STICKY_COLUMN_EDGE_STYLES } from "@/redesignComponents/dataDisplay/Table/tableStyles";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { DownloadIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
@@ -51,7 +52,6 @@ import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
 import PolygonSubmissionAnnouncement from "../components/PolygonSubmissionAnnouncement";
 import { PolygonTableRow } from "../components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
-import { getPolygonsTableStyles } from "../components/polygonTableStyles";
 import PolygonToolbar from "../components/PolygonToolbar";
 import SitePolygonMapSection from "../components/SitePolygonMapSection";
 import SitePolygonMetricsSection from "../components/SitePolygonMetricsSection";
@@ -865,7 +865,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
 
   useSyncPolygonTableSelectionStore(selectedRowIds);
 
-  const polygonsTableStyles = useMemo(() => getPolygonsTableStyles(isStickyActive), [isStickyActive]);
+  const polygonsTableStyles = isStickyActive ? undefined : HIDDEN_STICKY_COLUMN_EDGE_STYLES;
   const bulkToolbarSubmitLabel = useMemo(() => {
     if (hasSelectedOverlapFailure) return t("Fix Overlap");
     return isAdminReview ? t("Approve") : t("Submit");
@@ -947,7 +947,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
               : {
                   mainActionLabel: t("Add"),
                   size: "small",
-                  leftIcon: <PlusIcon />,
+                  mainActionLeftIcon: <PlusIcon />,
                   mainActionOnClick: startNewPolygonFlow,
                   otherActions: [
                     {

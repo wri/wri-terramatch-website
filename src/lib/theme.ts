@@ -61,6 +61,12 @@ const themeConfig = {
         500: { value: "#C11101" },
         900: { value: "#8D0D01" }
       },
+      information: {
+        100: { value: "#EDF7FD" },
+        300: { value: "#CAE6F8" },
+        500: { value: "#2495E0" },
+        900: { value: "#045992" }
+      },
       negative: {
         1: { value: "#E72828" },
         2: { value: "#D40909" }

@@ -1,15 +1,19 @@
+import { TableCell as ChakraTableCell, TableRow as ChakraTableRow } from "@chakra-ui/react";
 import { Box, TableCell, TableRow } from "@mui/material";
 import { Meta, StoryObj } from "@storybook/react";
-import React from "react";
+import { Checkbox } from "@worldresources/wri-design-systems";
+import React, { useCallback, useMemo, useState } from "react";
 
 import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
+import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
 
 import ActionCell from "./components/ActionCell";
 import CustomTableCell from "./components/TableCell";
 import TitleCell from "./components/TitleCell";
-import Table from "./Table";
+import Table, { type TableRenderRowContext, CHECKBOX_COLUMN_KEY } from "./Table";
 import { FULL_WIDTH_TABLE_HEADER_STYLES, NO_HEADER_TABLE_WRAPPER_STYLES } from "./tableStyles";
 import { type BaseRow, type RowData, hasCustomCellContent } from "./tableUtils";
+import { useTableSelection } from "./useTableSelection";
 
 // Local story row type — extends only BaseRow so story objects don't need
 // all required RowData admin fields, while still accepting every optional RowData field.
@@ -107,7 +111,7 @@ const generateSampleData = (count: number): StoryRowData[] => {
     isManager: false,
     name: `Label ${index + 1}`,
     email: "Label",
-    age: Math.floor(Math.random() * 50) + 18,
+    age: 20 + (index % 40),
     department: "Label",
     location: "Label",
     startDate: "Label",
@@ -129,12 +133,96 @@ const defaultColumns = [
 
 const defaultData = generateSampleData(25);
 
+const SelectableDemo = () => {
+  const { selectedRows, handleRowSelected, onAllItemsSelected } = useTableSelection(true, defaultData);
+
+  return (
+    <Table<StoryRowData>
+      data={defaultData}
+      columns={defaultColumns}
+      selectable
+      selectedRows={selectedRows}
+      onRowSelected={handleRowSelected}
+      onAllItemsSelected={onAllItemsSelected}
+      renderDataCell={defaultRenderDataCell}
+      pageSize={10}
+      showPagination
+    />
+  );
+};
+
 export const Selectable: Story = {
-  args: {
-    data: defaultData,
-    columns: defaultColumns,
-    selectable: true
-  }
+  name: "Selectable (sortable)",
+  render: () => <SelectableDemo />
+};
+
+const SelectableCustomRenderRowDemo = () => {
+  const [selectedRowIds, setSelectedRowIds] = useState<Set<string | number>>(new Set());
+
+  const selectedRows = useMemo(() => defaultData.filter(row => selectedRowIds.has(row.id)), [selectedRowIds]);
+
+  const handleRowSelected = useCallback((rowData: StoryRowData, checked: boolean) => {
+    setSelectedRowIds(current => {
+      const next = new Set(current);
+      if (checked) {
+        next.add(rowData.id);
+      } else {
+        next.delete(rowData.id);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleAllItemsSelected = useCallback((checked: boolean, visibleRows: StoryRowData[]) => {
+    setSelectedRowIds(checked ? new Set(visibleRows.map(row => row.id)) : new Set());
+  }, []);
+
+  const renderRow = useCallback(
+    (rowData: StoryRowData, context?: TableRenderRowContext) => {
+      const isSelected = selectedRowIds.has(rowData.id);
+
+      return (
+        <ChakraTableRow className={context?.className} aria-selected={isSelected}>
+          <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
+            <Checkbox
+              name={`story-checkbox-${rowData.id}`}
+              aria-label={`Select ${rowData.name}`}
+              checked={isSelected}
+              onCheckedChange={({ checked }) => handleRowSelected(rowData, checked === true)}
+            />
+          </ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("name")}>
+            <div className="flex items-center gap-2">
+              <Avatar name={rowData.name ?? ""} />
+              <span>{rowData.name}</span>
+            </div>
+          </ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("email")}>{rowData.email}</ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("age")}>{rowData.age}</ChakraTableCell>
+        </ChakraTableRow>
+      );
+    },
+    [handleRowSelected, selectedRowIds]
+  );
+
+  return (
+    <Table<StoryRowData>
+      data={defaultData}
+      columns={defaultColumns}
+      selectable
+      selectedRows={selectedRows}
+      onRowSelected={handleRowSelected}
+      onAllItemsSelected={handleAllItemsSelected}
+      renderRow={renderRow}
+      pageSize={10}
+      showPagination
+    />
+  );
+};
+
+export const SelectableWithCustomRenderRow: Story = {
+  name: "Selectable with custom renderRow (sortable)",
+  render: () => <SelectableCustomRenderRowDemo />
 };
 
 export const NonSelectable: Story = {

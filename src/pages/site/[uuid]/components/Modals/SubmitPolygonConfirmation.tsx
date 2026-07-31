@@ -69,11 +69,12 @@ const SubmitPolygonConfirmation: FC<SubmitPolygonConfirmationProps> = ({
       open={open}
       onClose={handleClose}
       size="medium"
+      contentPadding={false}
       header={
         <b className="text-theme-neutral-800">{polygons.length === 1 ? t("Submit Polygon?") : t("Submit Polygons?")}</b>
       }
       content={
-        <Flex className="-m-2.5 flex-col gap-4">
+        <Flex className="flex-col gap-4">
           {polygons.length === 1 ? (
             <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={4}>
               <Text textStyle="400" color="neutral.900">

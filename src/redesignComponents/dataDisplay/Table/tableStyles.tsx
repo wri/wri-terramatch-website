@@ -1,12 +1,14 @@
+import type { SystemStyleObject } from "@chakra-ui/react";
+
 import { getThemedColor } from "@/lib/theme";
 
 export const getTableWrapperStyles = (
   selectable?: boolean,
-  dataByPage?: any[],
+  dataByPage?: unknown[],
   pageSize?: number,
   actualTotalItems?: number,
-  css?: any
-) => {
+  css?: SystemStyleObject
+): SystemStyleObject => {
   const shouldHidePagination =
     actualTotalItems != null ? actualTotalItems <= (pageSize ?? 0) : dataByPage?.length === 0;
 
@@ -37,18 +39,17 @@ export const getTableWrapperStyles = (
       width: "100%",
       ...(typeof cssScrollContainer === "object" && cssScrollContainer != null ? cssScrollContainer : {})
     },
+
+    "& table tbody td": {
+      borderBottom: "none"
+    },
     "& table tbody tr": {
-      backgroundColor: "transparent",
-      borderBottom: `2px solid ${getThemedColor("neutral", 300)}`,
-      transition: "background-color 0.15s ease-in-out"
+      borderBottom: `0.125rem solid ${getThemedColor("neutral", 300)}`
+    },
+    "& table tbody tr:hover, & table tbody tr:hover td[data-sticky]": {
+      backgroundColor: getThemedColor("primary", 100)
     },
 
-    "& table tbody tr:hover": {
-      backgroundColor: getThemedColor("primary", 100),
-      borderBottom: `2px solid ${getThemedColor("primary", 700)}`
-    },
-
-    // Pagination button styles - non-selected
     "& button[data-scope='pagination'][data-part='item']:not([data-selected]):not([aria-current='page'])": {
       color: `${getThemedColor("neutral", 600)} !important`,
       fontWeight: "bold !important",
@@ -57,7 +58,6 @@ export const getTableWrapperStyles = (
         fontWeight: "bold !important"
       }
     },
-    // Pagination selected button styles
     "& button[data-selected]": {
       color: `${getThemedColor("neutral", 900)} !important`,
       fontWeight: "bold !important",
@@ -76,7 +76,6 @@ export const getTableWrapperStyles = (
       }
     },
 
-    // Checkbox column styles - minimum width
     ...(selectable && {
       "& table thead th:first-of-type": {
         width: "1%",
@@ -92,19 +91,15 @@ export const getTableWrapperStyles = (
       }
     }),
 
-    // Page size select value styles (e.g. the "10" inside the Per Page select)
     "& [data-scope='select'][data-part='value-text'] p": {
       fontWeight: "700 !important",
       color: `${getThemedColor("neutral", 700)} !important`
     },
 
-    // "Per Page" label styles - find the wrapper div that contains the DS select
-    // and target its direct <p> child (the "Per Page" label)
     "& div:has(.ds-select-input-container) > p": {
       textTransform: "lowercase !important"
     },
 
-    // Per Page select trigger button border
     "& [data-scope='select'][data-part='trigger']": {
       border: `1px solid ${getThemedColor("neutral", 400)} !important`
     },
@@ -113,7 +108,16 @@ export const getTableWrapperStyles = (
   };
 };
 
-export const NO_HEADER_TABLE_WRAPPER_STYLES = {
+export const HIDDEN_STICKY_COLUMN_EDGE_STYLES: SystemStyleObject = {
+  "& table [data-sticky-last='true']": {
+    borderInlineEnd: "none"
+  },
+  "& table [data-sticky-last='true']::after": {
+    content: "none"
+  }
+};
+
+export const NO_HEADER_TABLE_WRAPPER_STYLES: SystemStyleObject = {
   "& table": {
     tableLayout: "fixed !important"
   },
@@ -132,7 +136,7 @@ export const NO_HEADER_TABLE_WRAPPER_STYLES = {
   }
 };
 
-export const FULL_WIDTH_TABLE_HEADER_STYLES = {
+export const FULL_WIDTH_TABLE_HEADER_STYLES: SystemStyleObject = {
   "& table thead tr th": {
     backgroundColor: getThemedColor("neutral", 200)
   },
