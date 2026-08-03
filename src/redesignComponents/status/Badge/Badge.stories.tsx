@@ -30,6 +30,11 @@ const meta = {
       options: ["small", "large"],
       description: "Size of the notification indicator and count"
     },
+    variant: {
+      control: "select",
+      options: ["notification", "information"],
+      description: "Color treatment: notification keeps the library error colors, information recolors the count"
+    },
     children: {
       control: false,
       description: "Custom icon that replaces the default notification icon"
@@ -90,6 +95,37 @@ export const NotificationCountWithLabel: Story = {
     hasNotification: true,
     notificationCount: 5
   }
+};
+
+export const Information: Story = {
+  args: {
+    variant: "information",
+    hasNotification: true,
+    notificationCount: 5
+  }
+};
+
+export const VariantComparison: Story = {
+  render: () => (
+    <HStack gap={8} alignItems="flex-end">
+      <VStack gap={2}>
+        <Badge variant="notification" hasNotification notificationCount={5} />
+        <Text textStyle="200">Notification</Text>
+      </VStack>
+      <VStack gap={2}>
+        <Badge variant="information" hasNotification notificationCount={5} />
+        <Text textStyle="200">Information</Text>
+      </VStack>
+      <VStack gap={2}>
+        <Badge variant="notification" hasNotification />
+        <Text textStyle="200">Notification dot</Text>
+      </VStack>
+      <VStack gap={2}>
+        <Badge variant="information" hasNotification />
+        <Text textStyle="200">Information dot</Text>
+      </VStack>
+    </HStack>
+  )
 };
 
 export const WithCustomIcon: Story = {
