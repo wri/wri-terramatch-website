@@ -26,7 +26,7 @@ const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, prima
         <Flex gap={2} items-center>
           {image != null && <img src={image} alt={label} className="h-6 w-6 rounded border border-theme-neutral-300" />}
           {icon != null && icon}
-          {avatar != null && <Avatar {...avatar} size="small" />}
+          {avatar != null && <Avatar {...avatar} size="medium" />}
           <Box>
             <Text
               as={link ? "a" : "p"}
