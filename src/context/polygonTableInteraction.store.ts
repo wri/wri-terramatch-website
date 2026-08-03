@@ -8,6 +8,7 @@ let hoveredPolygonUuid: string | null = null;
 let pendingPolygonFocusUuid: string | null = null;
 
 const selectedListeners = new Map<RowId, Set<Listener>>();
+const hoverListeners = new Map<RowId, Set<Listener>>();
 const globalHoverListeners = new Set<Listener>();
 const globalSelectionListeners = new Set<Listener>();
 
@@ -15,6 +16,10 @@ const noopUnsubscribe = () => {};
 
 const notifySelected = (rowId: RowId) => {
   selectedListeners.get(rowId)?.forEach(listener => listener());
+};
+
+const notifyHover = (rowId: RowId) => {
+  hoverListeners.get(rowId)?.forEach(listener => listener());
 };
 
 const notifyGlobalHover = () => {
@@ -40,6 +45,21 @@ const subscribeSelected = (rowId: RowId, listener: Listener) => {
   };
 };
 
+const subscribeHover = (rowId: RowId, listener: Listener) => {
+  let listeners = hoverListeners.get(rowId);
+  if (listeners == null) {
+    listeners = new Set();
+    hoverListeners.set(rowId, listeners);
+  }
+  listeners.add(listener);
+  return () => {
+    listeners?.delete(listener);
+    if (listeners?.size === 0) {
+      hoverListeners.delete(rowId);
+    }
+  };
+};
+
 const subscribeGlobalHover = (listener: Listener) => {
   globalHoverListeners.add(listener);
   return () => {
@@ -48,11 +68,18 @@ const subscribeGlobalHover = (listener: Listener) => {
 };
 
 export const setPolygonTableHoveredUuid = (uuid: string | null) => {
-  if (hoveredPolygonUuid === uuid) {
+  const prev = hoveredPolygonUuid;
+  if (prev === uuid) {
     return;
   }
 
   hoveredPolygonUuid = uuid;
+  if (prev != null) {
+    notifyHover(prev);
+  }
+  if (uuid != null) {
+    notifyHover(uuid);
+  }
   notifyGlobalHover();
 };
 
@@ -96,11 +123,20 @@ export const getPolygonTableHasSelection = () => selectedRowIds.size > 0;
 
 export const getPolygonRowIsSelected = (rowId: RowId) => selectedRowIds.has(rowId);
 
+export const getPolygonRowIsHovered = (rowId: RowId) => hoveredPolygonUuid === rowId;
+
 export const usePolygonRowSelected = (rowId: RowId) =>
   useSyncExternalStore(
     listener => subscribeSelected(rowId, listener),
     () => getPolygonRowIsSelected(rowId),
     () => getPolygonRowIsSelected(rowId)
+  );
+
+export const usePolygonRowHovered = (rowId: RowId) =>
+  useSyncExternalStore(
+    listener => subscribeHover(rowId, listener),
+    () => getPolygonRowIsHovered(rowId),
+    () => getPolygonRowIsHovered(rowId)
   );
 
 export const usePolygonTableHoveredUuid = (enabled = true) =>

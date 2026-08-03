@@ -139,6 +139,7 @@ interface PolygonRowProps {
   row: PolygonTableRow;
   context?: TableRenderRowContext;
   isSelected: boolean;
+  isHovered: boolean;
   onHover: (uuid: string) => void;
   onSelectChange: (row: PolygonTableRow, checked: boolean) => void;
   // Deleted-polygons audit view: no selection, no bulk actions, submission status is always "deleted".
@@ -149,6 +150,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   row,
   context,
   isSelected,
+  isHovered,
   onHover,
   onSelectChange,
   readOnly = false
@@ -188,7 +190,12 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   }, [row.id, onHover]);
 
   return (
-    <TableRow className={context?.className} aria-selected={isSelected} onMouseEnter={handleMouseEnter}>
+    <TableRow
+      className={context?.className}
+      aria-selected={isSelected}
+      data-hovered={isHovered || undefined}
+      onMouseEnter={handleMouseEnter}
+    >
       <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
         <Checkbox
           name={`checkbox-${row.id}`}
@@ -245,6 +252,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
 const polygonRowPropsAreEqual = (prev: PolygonRowProps, next: PolygonRowProps) =>
   prev.row === next.row &&
   prev.isSelected === next.isSelected &&
+  prev.isHovered === next.isHovered &&
   prev.context === next.context &&
   prev.onHover === next.onHover &&
   prev.onSelectChange === next.onSelectChange &&
