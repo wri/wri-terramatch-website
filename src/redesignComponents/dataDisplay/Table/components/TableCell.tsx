@@ -41,26 +41,26 @@ const TableCell: React.FC<TableCellProps> = ({
             {visibleAvatars.map(avatar => (
               <div key={avatar.name} className="h-6 w-4">
                 <div className="absolute z-10">
-                  <Avatar key={avatar.name} {...avatar} size="small" />
+                  <Avatar key={avatar.name} {...avatar} size="medium" />
                 </div>
               </div>
             ))}
           </Flex>
 
           {isSingleAvatar && visibleAvatars[0]?.name != null && (
-            <Text textStyle="400-bold" className="ml-2 text-theme-neutral-800">
+            <Text textStyle="400-bold" className="text-theme-neutral-800 ml-2">
               {visibleAvatars[0].name}
             </Text>
           )}
 
           {extraAvatarsCount > 0 && (
-            <Box className="ml-2 text-xs font-semibold text-theme-neutral-800">+{extraAvatarsCount}</Box>
+            <Box className="text-theme-neutral-800 ml-2 text-xs font-semibold">+{extraAvatarsCount}</Box>
           )}
           {progressTag != null && <ProgressTag {...progressTag} />}
           {trees != null && (
             <Flex gap={1} items-center>
               <MetricIcon type="trees" />
-              <Text textStyle="400" className="leading-[28px] text-theme-neutral-800">
+              <Text textStyle="400" className="text-theme-neutral-800 leading-[28px]">
                 {trees}
               </Text>
             </Flex>
@@ -68,7 +68,7 @@ const TableCell: React.FC<TableCellProps> = ({
           {jobs != null && (
             <Flex gap={2}>
               <MetricIcon type="jobs" />
-              <Text textStyle="400" className="leading-[28px] text-theme-neutral-800">
+              <Text textStyle="400" className="text-theme-neutral-800 leading-[28px]">
                 {jobs}
               </Text>
             </Flex>
