@@ -97,10 +97,6 @@ export const getTableWrapperStyles = (
       color: `${getThemedColor("neutral", 700)} !important`
     },
 
-    "& div:has(.ds-select-input-container) > p": {
-      textTransform: "lowercase !important"
-    },
-
     "& [data-scope='select'][data-part='trigger']": {
       border: `1px solid ${getThemedColor("neutral", 400)} !important`
     },
