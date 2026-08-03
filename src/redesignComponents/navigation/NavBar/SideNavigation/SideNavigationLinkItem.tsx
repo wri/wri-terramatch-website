@@ -7,8 +7,8 @@ import type { FC, KeyboardEvent, MouseEvent, ReactNode } from "react";
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
 import { MenuItemOption } from "@/redesignComponents/actions/Buttons/Menu/MenuCustom.types";
 import { MoreVertIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
-import Badge from "@/redesignComponents/status/Badge/BadgeCustom";
-import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
+import Badge from "@/redesignComponents/status/Badge/Badge";
+import NumberBadge from "@/redesignComponents/status/Badge/NumberBadge";
 
 export interface SideNavigationLinkItemProps {
   icon: ReactNode;
@@ -76,17 +76,13 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
     >
       <NextLink href={href} className="min-w-0 flex-1 focus:outline-none" onKeyDown={handleLinkKeyDown}>
         <Flex alignItems="center" gap={2}>
-          <Badge hasNotification={isCollapsed} notificationCount={notificationValue}>
+          <Badge size="small" notificationCount={isCollapsed && notificationValue > 0 ? notificationValue : undefined}>
             {icon}
           </Badge>
           {isCollapsed ? null : (
             <>
               <Text textStyle="400">{label}</Text>
-              {notificationValue > 0 ? (
-                <TextBadge variant="error" className="py-0">
-                  {notificationValue}
-                </TextBadge>
-              ) : null}
+              <NumberBadge count={notificationValue} />
             </>
           )}
         </Flex>

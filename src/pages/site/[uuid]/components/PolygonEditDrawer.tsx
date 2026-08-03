@@ -10,8 +10,8 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
 import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel";
-import NotificationIndicator from "@/redesignComponents/navigation/NotificationIndicator/NotificationIndicator";
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
+import NumberBadge from "@/redesignComponents/status/Badge/NumberBadge";
 import ApiSlice from "@/store/apiSlice";
 
 import DeleteAnrMonitoringPlots from "./Modals/AnrMonitoringPlots/DeleteAnrMonitoringPlots";
@@ -372,11 +372,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                           label: (
                             <Text className="flex items-center gap-2">
                               {t("Comments")}
-                              {unreadCommentCount > 0 && (
-                                <NotificationIndicator bgColor={activeTab != "comments" ? "neutral.700" : undefined}>
-                                  {unreadCommentCount}
-                                </NotificationIndicator>
-                              )}
+                              <NumberBadge count={unreadCommentCount} variant="primary" />
                             </Text>
                           ),
                           value: "comments"
