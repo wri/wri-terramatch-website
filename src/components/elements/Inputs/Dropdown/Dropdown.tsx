@@ -196,13 +196,13 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                       className={props.labelClassName}
                       labelVariant={props.labelVariant}
                     >
-                      {props.label}
+                      {t(props.label)}
                     </InputLabel>
                     {props.suffixLabelView && <div className="flex items-center">{props.suffixLabel}</div>}
                   </div>
                 </Listbox.Label>
               )}
-              {props.description && <InputDescription>{props.description}</InputDescription>}
+              {props.description && <InputDescription>{t(props.description)}</InputDescription>}
               <Listbox.Button
                 as="div"
                 className={tw(
@@ -225,7 +225,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                     className={tw("w-full", variant.titleClassname, props.titleClassname)}
                     title={valuesFormatted}
                   >
-                    {isEmpty(valuesFormatted) ? props.placeholder : valuesFormatted}
+                    {isEmpty(valuesFormatted) ? t(props.placeholder) : valuesFormatted}
                   </Text>
                 </div>
                 {selected.length > 0 && showClear ? (
@@ -340,7 +340,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                                 props.optionTextClassName
                               )}
                             >
-                              {option.title}
+                              {t(option.title)}
                             </Text>
                           </div>
                         )}
