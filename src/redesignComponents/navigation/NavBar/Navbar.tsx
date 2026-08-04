@@ -60,7 +60,7 @@ const Navbar: FC<NavbarProps> = ({
     data.onAccountSelect(index);
   };
 
-  const accountPrefix = <Avatar name={data.user?.firstName + " " + data.user?.lastName} size="small" />;
+  const accountPrefix = <Avatar name={data.user?.firstName + " " + data.user?.lastName} size="medium" />;
   return (
     <Box as="header" backgroundColor="primary.900" position="sticky" top={0} zIndex={50}>
       <Flex justifyContent="space-between" alignItems="center" gap={4} h="3rem">

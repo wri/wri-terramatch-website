@@ -62,7 +62,7 @@ export const Default: Story = {
       { caption: "Caption", label: "Label", icon: <PlaceholderIcon /> }
     ],
     accountLabel: "John Doe",
-    accountPrefix: <Avatar name="John Doe" size="small" />,
+    accountPrefix: <Avatar name="John Doe" size="medium" />,
     accountSuffix: <PlaceholderIcon boxSize={4} />,
     onAccountSelect: action("account:select")
   }
