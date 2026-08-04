@@ -31,7 +31,7 @@ const PaginationTable: FC<PaginationTableProps> = ({
         currentPage={currentPage}
         totalItems={totalItems}
         onPageSizeChange={onPageSizeChange}
-        showItemCountText={true}
+        showItemCountText={showItemCountText}
       />
       <Pagination
         totalItems={totalItems}
@@ -39,6 +39,7 @@ const PaginationTable: FC<PaginationTableProps> = ({
         currentPage={currentPage}
         onPageChange={onPageChange}
         variant={variant}
+        className="flex justify-end"
       />
     </Box>
   );
