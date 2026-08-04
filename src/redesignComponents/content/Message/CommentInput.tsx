@@ -374,7 +374,7 @@ const CommentInput: FC<CommentInputProps> = (props: CommentInputProps) => {
         </Text>
       )}
       <Flex className="items-start gap-3">
-        <Avatar size="small" className="mt-3" name={name} src={src} />
+        <Avatar size="medium" className="mt-3" name={name} src={src} />
         <Box
           className="w-full"
           bg="neutral.100"
