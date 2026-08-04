@@ -26,13 +26,15 @@ const PaginationTable: FC<PaginationTableProps> = ({
 }) => {
   return (
     <Box css={paginationTableStyles} display="flex" alignItems="center" justifyContent="space-between" width="100%">
-      <ItemCount
-        pageSize={pageSize}
-        currentPage={currentPage}
-        totalItems={totalItems}
-        onPageSizeChange={onPageSizeChange}
-        showItemCountText={true}
-      />
+      {variant === "default" && (
+        <ItemCount
+          pageSize={pageSize}
+          currentPage={currentPage}
+          totalItems={totalItems}
+          onPageSizeChange={onPageSizeChange}
+          showItemCountText={showItemCountText}
+        />
+      )}
       <Pagination
         totalItems={totalItems}
         pageSize={pageSize}
