@@ -66,7 +66,7 @@ const HomePage = () => {
               {
                 title: t("Pitches"),
                 subtitle: t(
-                  'Start a pitch or edit your pitches to apply for funding opportunities. To go to create a pitch, manage your pitches/funding applications, tap on "view".'
+                  'Start a pitch or edit your pitches to apply for funding opportunities. To create or manage your pitches and funding applications, tap on "view."'
                 ),
                 actionText: t("View"),
                 actionUrl: `/organization/${organisationId}?tab=pitches`,
