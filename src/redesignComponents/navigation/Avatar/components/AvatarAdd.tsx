@@ -1,35 +1,20 @@
-import { twMerge } from "tailwind-merge";
-
 import { UserAddIcon } from "@/redesignComponents/foundations/Icons";
 
-import { AVATAR_ICON_SIZE_MAP, AvatarSize } from "../constants";
+import { AVATAR_ICON_SIZE_MAP } from "../constants";
+import { StyledAvatarWrapper } from "../styled";
 
 interface AvatarAddProps {
-  size: AvatarSize;
-  finalSize: number | string;
+  size: "small" | "medium";
+  finalSize: string;
   onClick?: () => void;
   ariaLabel?: string;
   customBackgroundColor?: string;
-  className?: string;
 }
 
-export const AvatarAdd = ({
-  size,
-  finalSize,
-  onClick,
-  ariaLabel,
-  customBackgroundColor,
-  className
-}: AvatarAddProps) => {
+export const AvatarAdd = ({ size, finalSize, onClick, ariaLabel, customBackgroundColor }: AvatarAddProps) => {
   return (
-    <div
-      className={twMerge(
-        "pointer-events-auto flex cursor-pointer items-center justify-center rounded-full border border-solid border-theme-neutral-500 bg-theme-neutral-200 transition-[opacity,transform] duration-200",
-        "hover:opacity-80 active:scale-95",
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-theme-primary-700",
-        "disabled:cursor-default disabled:opacity-50",
-        className
-      )}
+    <StyledAvatarWrapper
+      className={`avatar-small pointer-events-auto flex cursor-pointer items-center justify-center rounded-full avatar-${size} avatar-add bg-theme-neutral-200 disabled:cursor-default disabled:opacity-50`}
       onClick={onClick}
       aria-label={ariaLabel}
       role={onClick != null ? "button" : undefined}
@@ -37,11 +22,11 @@ export const AvatarAdd = ({
       style={{
         width: finalSize,
         height: finalSize,
-        backgroundColor: customBackgroundColor
+        backgroundColor: customBackgroundColor ?? "#E5E7EB"
       }}
     >
       <UserAddIcon boxSize={AVATAR_ICON_SIZE_MAP[size]} className="text-theme-neutral-700" />
-    </div>
+    </StyledAvatarWrapper>
   );
 };
 
