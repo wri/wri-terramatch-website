@@ -84,10 +84,6 @@ export const loadFormIndex = connectionLoader(formIndexConnection);
 const formConnection = v3Resource("forms", formGet)
   .singleFullResource<FormFullDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
   .enabledProp()
-  .addProps<{ translated?: boolean }>(
-    ({ translated }) => ({ queryParams: { translated } }),
-    ({ data }, { translated }) => data?.translated === (translated ?? true)
-  )
   .update(formUpdate)
   .buildConnection();
 export const useForm = connectionHook(formConnection);
@@ -99,12 +95,10 @@ const createFormConnection = v3Resource("forms", formCreate).create<FormFullDto>
 export const createForm = resourceCreator(createFormConnection);
 export const useFormCreate = connectionHook(createFormConnection);
 
-export const pushFormTranslation = async (formUuid: string) => {
-  const result = await formPushTranslation.fetchParallel({
+export const pushFormTranslation = (formUuid: string) =>
+  formPushTranslation.fetchParallel({
     pathParams: { uuid: formUuid }
   });
-  return result;
-};
 
 const formPullTranslationConnection = v3Resource("formTranslations", formPullTranslations)
   .singleResource<FormTranslationDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))

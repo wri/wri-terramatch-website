@@ -452,11 +452,15 @@ const POLYGON_STATUS_LABELS: Record<string, string> = {
 
 const POLYGON_STATUS_ORDER = Object.keys(POLYGON_STATUS_LABELS);
 
-export function parsePolygonDataV3(sitePolygonData: SitePolygonLightDto[] | undefined): Record<string, string[]> {
+export function parsePolygonDataV3(
+  sitePolygonData: SitePolygonLightDto[] | undefined,
+  forcedStatusBucket?: string
+): Record<string, string[]> {
   return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygonLightDto) => {
-    if (data.status != null && data.polygonUuid != null) {
-      if (acc[data.status] == null) acc[data.status] = [];
-      acc[data.status].push(data.polygonUuid);
+    const status = forcedStatusBucket ?? data.status;
+    if (status != null && data.polygonUuid != null) {
+      if (acc[status] == null) acc[status] = [];
+      acc[status].push(data.polygonUuid);
     }
     return acc;
   }, {});

@@ -52,7 +52,6 @@ export const applicationDataProvider: Partial<DataProvider> = {
     // Disable translations for admin data provider.
     const application = await loadApplication({
       id,
-      translated: false,
       sideloads: ["fundingProgramme", "currentSubmission"]
     });
     if (application.loadFailure != null) {

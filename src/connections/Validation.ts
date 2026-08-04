@@ -42,8 +42,6 @@ export const fetchPolygonValidation = async (polygonUuid: string): Promise<Valid
     return undefined;
   }
 
-  ApiSlice.pruneCache("validations", [polygonUuid]);
-
   const response = await loadConnection(validationConnection, {
     id: polygonUuid,
     enabled: true
@@ -74,9 +72,6 @@ export const useAllSiteValidations = (siteUuid: string, criteriaId?: number) => 
   const fetchAllValidationPages = useCallback(
     async (clearCache: boolean = false) => {
       if (siteUuid == null) return;
-
-      setAllValidations([]);
-      setTotal(0);
 
       try {
         if (clearCache) {

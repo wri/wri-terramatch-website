@@ -61,7 +61,7 @@ const FormIntroPage = () => {
                 description={form.description ?? undefined}
                 deadline={deadline}
                 ctaProps={{
-                  children: form.documentationLabel ?? t("View list of questions"),
+                  children: form.documentationLabel != null ? t(form.documentationLabel) : t("View list of questions"),
                   as: Link,
                   href: form.documentation ?? undefined,
                   target: "_blank"

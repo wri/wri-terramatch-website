@@ -15,7 +15,7 @@ import { Filter } from "@/types/connection";
 const applicationConnection = v3Resource("applications", applicationGet)
   .singleResource<ApplicationDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
   .isLoading()
-  .addProps<ApplicationGetQueryParams>(({ translated, sideloads }) => ({ queryParams: { translated, sideloads } }))
+  .addProps<ApplicationGetQueryParams>(({ sideloads }) => ({ queryParams: { sideloads } }))
   .buildConnection();
 
 const applicationHistoryConnection = v3Resource("applicationHistories", applicationHistoryGet)

@@ -14,7 +14,6 @@ export interface DeletePolygonProps {
   polygons: PolygonTableRow[];
   onDelete?: () => void | Promise<void>;
   modal?: boolean;
-  trapFocus?: boolean;
   restoreFocus?: boolean;
 }
 const DeletePolygon: FC<DeletePolygonProps> = ({
@@ -23,7 +22,6 @@ const DeletePolygon: FC<DeletePolygonProps> = ({
   polygons,
   onDelete,
   modal = true,
-  trapFocus = true,
   restoreFocus = true
 }) => {
   const t = useT();
@@ -44,7 +42,6 @@ const DeletePolygon: FC<DeletePolygonProps> = ({
   return (
     <Modal
       modal={modal}
-      trapFocus={trapFocus}
       restoreFocus={restoreFocus}
       open={open}
       onClose={handleClose}
@@ -117,8 +114,7 @@ const DeletePolygon: FC<DeletePolygonProps> = ({
             {
               id: "delete",
               children: t("Delete"),
-              variant: "secondary",
-              typeVariant: "negative",
+              variant: "negative",
               classNameContainer: "!w-[50%]",
               className: "!w-full",
               onClick: () => void handleSave()

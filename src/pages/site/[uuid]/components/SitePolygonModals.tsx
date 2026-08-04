@@ -3,7 +3,6 @@ import type { FC } from "react";
 import type { BulkSitePolygonAttributeChanges } from "@/connections/SitePolygons";
 import type { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import type { SubmittedPolygonComment } from "../hooks/useSitePolygonBulkActions";
 import type { PolygonStatusChangeComment } from "../utils/polygonStatusChangeComment";
@@ -19,13 +18,14 @@ import SubmitPolygonConfirmation from "./Modals/SubmitPolygonConfirmation";
 import SubmitPolygons from "./Modals/SubmitPolygons";
 import SystemValidationComplete from "./Modals/SystemValidationComplete";
 import UploadError from "./Modals/UploadError";
-import UploadPhotos from "./Modals/UploadPhotos";
 import UploadPolygons from "./Modals/UploadPolygons";
 import PolygonBulkEditDrawer from "./PolygonBulkEditDrawer";
 import type { PolygonTableRow } from "./PolygonTableRow";
 
 type SitePolygonModalsProps = {
   siteUuid: string;
+  isEditPolygonOpen?: boolean;
+  isAdminReview?: boolean;
   siteHasExistingPolygons?: boolean;
   bulkEditPayload: { polygons: PolygonTableRow[] } | null;
   deletePayload: { polygons: PolygonTableRow[] } | null;
@@ -63,10 +63,8 @@ type SitePolygonModalsProps = {
   openUploadErrorModal: boolean;
   uploadErrorMessage: string | null;
   openUploadModal: boolean;
-  openUploadPhotosModal: boolean;
   onUploadErrorModalOpenChange: (open: boolean) => void;
   onUploadModalOpenChange: (open: boolean) => void;
-  onUploadPhotosModalOpenChange: (open: boolean) => void;
   onUploadSuccess: (result: { createdSitePolygonUuid?: string | null; uploadedFileCount: number }) => void;
   onViewOverlapPolygon: (polygonUuid: string) => void;
   openApprovePolygonConfirmationModal: boolean;
@@ -74,7 +72,6 @@ type SitePolygonModalsProps = {
   approvePayload: { polygons: PolygonTableRow[] } | null;
   projectUuid?: string | null;
   onApprove: (comment: string, selectedPolygons: PolygonTableRow[]) => void | Promise<void>;
-  onRequestInformation: () => void | Promise<void>;
   openRequestInformationModal: boolean;
   onRequestInformationModalOpenChange: (open: boolean) => void;
   requestInformationPayload: { polygons: PolygonTableRow[] } | null;
@@ -98,6 +95,8 @@ type SitePolygonModalsProps = {
 
 const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   siteUuid,
+  isEditPolygonOpen = false,
+  isAdminReview = false,
   siteHasExistingPolygons = false,
   bulkEditPayload,
   deletePayload,
@@ -112,7 +111,6 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   openSubmitPolygonConfirmationModal,
   openUploadErrorModal,
   openUploadModal,
-  openUploadPhotosModal,
   openMapPopupSubmitConfirmationModal,
   mapPopupSubmitPolygons,
   submittedPolygonNames,
@@ -135,7 +133,6 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   onUploadErrorModalOpenChange,
   uploadErrorMessage,
   onUploadModalOpenChange,
-  onUploadPhotosModalOpenChange,
   onUploadSuccess,
   onViewOverlapPolygon,
   openApprovePolygonConfirmationModal,
@@ -143,7 +140,6 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   approvePayload,
   projectUuid,
   onApprove,
-  onRequestInformation,
   openRequestInformationModal,
   onRequestInformationModalOpenChange,
   requestInformationPayload,
@@ -164,10 +160,9 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   onSystemValidationCompleteModalOpenChange,
   onViewValidationDetails
 }) => {
-  const isAdmin = useIsAdmin();
   return (
     <>
-      {isAdmin && (
+      {isAdminReview && (
         <>
           <ApprovePolygonConfirmation
             open={openApprovePolygonConfirmationModal}
@@ -175,7 +170,6 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
             polygons={approvePayload?.polygons ?? []}
             projectUuid={projectUuid}
             onApprove={onApprove}
-            onRequestInformation={onRequestInformation}
           />
           <RequestInformationConfirmation
             open={openRequestInformationModal}
@@ -252,6 +246,8 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
         polygonsFixed={overlapFixResults.polygonsFixed}
         polygonsNotFixed={overlapFixResults.polygonsNotFixed}
         onViewPolygon={onViewOverlapPolygon}
+        modal={!isEditPolygonOpen}
+        restoreFocus={!isEditPolygonOpen}
       />
       <SystemValidationComplete
         open={openSystemValidationCompleteModal}
@@ -267,7 +263,6 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
         backendErrorMessage={uploadErrorMessage}
         onOpenChange={onUploadErrorModalOpenChange}
       />
-      <UploadPhotos open={openUploadPhotosModal} onOpenChange={onUploadPhotosModalOpenChange} />
       {editPhotoDetailsMedia != null && (
         <EditPhotoDetails
           key={editPhotoDetailsMedia.uuid}

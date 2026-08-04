@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
@@ -8,7 +9,6 @@ import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullDisturbanceReport } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
-import { ToastType, useToastContext } from "@/context/toast.provider";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -166,14 +166,20 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
 
 const DisturbanceReportDetailPage = () => {
   const router = useRouter();
+  const t = useT();
   const disturbanceReportUUID = router.query.uuid as string;
 
   const [isLoaded, { data: disturbanceReport, loadFailure }] = useFullDisturbanceReport({ id: disturbanceReportUUID });
-  const { openToast } = useToastContext();
   useValueChanged(isLoaded, () => {
     if (isLoaded && disturbanceReport == null) {
       Log.error("Disturbance report not found", { disturbanceReportUUID, loadFailure });
-      openToast("Disturbance report not found", ToastType.ERROR);
+      showToast({
+        label: t("Disturbance report not found"),
+        type: "error",
+        placement: "bottom",
+        duration: 5000,
+        maxWidth: "auto"
+      });
     }
   });
 

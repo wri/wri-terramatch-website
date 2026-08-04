@@ -12,6 +12,7 @@ export type PaginationTableProps = {
   onPageSizeChange?: (pageSize: number) => void;
   showItemCountText?: boolean;
   onPageChange?: (page: number) => void;
+  variant?: "default" | "compact" | "compact-with-buttons";
 };
 
 const PaginationTable: FC<PaginationTableProps> = ({
@@ -20,29 +21,25 @@ const PaginationTable: FC<PaginationTableProps> = ({
   totalItems,
   onPageSizeChange,
   showItemCountText,
-  onPageChange
+  onPageChange,
+  variant
 }) => {
   return (
-    <Box
-      css={paginationTableStyles}
-      display="flex"
-      alignItems="center"
-      justifyContent="space-between"
-      width="100%"
-      gap={"12%"}
-    >
+    <Box css={paginationTableStyles} display="flex" alignItems="center" justifyContent="space-between" width="100%">
       <ItemCount
-        css={{
-          alignItems: "center",
-          justifyContent: "center"
-        }}
         pageSize={pageSize}
         currentPage={currentPage}
         totalItems={totalItems}
         onPageSizeChange={onPageSizeChange}
-        showItemCountText={showItemCountText}
+        showItemCountText={true}
       />
-      <Pagination totalItems={totalItems} pageSize={pageSize} currentPage={currentPage} onPageChange={onPageChange} />
+      <Pagination
+        totalItems={totalItems}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        onPageChange={onPageChange}
+        variant={variant}
+      />
     </Box>
   );
 };

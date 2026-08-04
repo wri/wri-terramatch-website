@@ -26,7 +26,6 @@ export interface ApprovePolygonConfirmationProps {
   polygons: PolygonTableRow[];
   projectUuid?: string | null;
   onApprove?: (comment: string, selectedPolygons: PolygonTableRow[]) => void | Promise<void>;
-  onRequestInformation?: () => void | Promise<void>;
 }
 
 const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({
@@ -102,13 +101,14 @@ const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({
       open={open}
       onClose={handleClose}
       size="large"
+      contentPadding={false}
       header={
         <b className="text-theme-neutral-800">
           {polygons.length === 1 ? t("Approve polygon?") : t("Approve polygons?")}
         </b>
       }
       content={
-        <Flex className="-m-2.5 flex-col gap-4">
+        <Flex className="flex-col gap-4">
           <Box px={4} pt={4}>
             {areaStats?.exceedsApprovedAreaLimit === true && (
               <InlineMessage

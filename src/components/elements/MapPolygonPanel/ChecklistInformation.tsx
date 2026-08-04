@@ -63,7 +63,7 @@ const ChecklistInformation: FC<ChecklistInformationProps> = ({ criteriaData }) =
         if (!isAdmin && Number(id) === 14 && existingValidation != null && !existingValidation.status) {
           const extraInfo = existingValidation.extra_info ?? [];
           const hasOnlyPlantingStatusError =
-            Array.isArray(extraInfo) && extraInfo.length === 1 && extraInfo[0].field === "planting_status";
+            Array.isArray(extraInfo) && extraInfo.length === 1 && extraInfo[0].field === "plantingStatus";
 
           if (hasOnlyPlantingStatusError) {
             return {

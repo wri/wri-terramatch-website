@@ -182,6 +182,10 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSubmission, reportingFramework, application, t]);
 
+  const feedbackFields = useMemo(() => {
+    return currentSubmission?.feedbackFields?.map(field => t(field)) ?? [];
+  }, [currentSubmission?.feedbackFields, t]);
+
   if (!statusProps) return null;
 
   return (
@@ -218,11 +222,10 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
               <Text variant="text-heading-100">{currentSubmission.feedback}</Text>
             </div>
           ) : null}
-          {currentSubmission?.status === "requires-more-information" &&
-          currentSubmission?.translatedFeedbackFields != null ? (
+          {currentSubmission?.status === "requires-more-information" && currentSubmission?.feedbackFields != null ? (
             <div className="mt-6 flex flex-col gap-2">
               <Text variant="text-body-900">{t("Please provide more information on the following fields:")}</Text>
-              <Text variant="text-heading-100">{currentSubmission?.translatedFeedbackFields?.join(", ")}</Text>
+              <Text variant="text-heading-100">{feedbackFields.join(", ")}</Text>
             </div>
           ) : null}
           {statusProps.secondaryAction != null || statusProps.primaryAction != null ? (

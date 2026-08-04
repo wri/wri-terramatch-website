@@ -95,7 +95,7 @@ const FormSummaryRow = ({ stepId, index, reportSummaryAnalytics, ...props }: For
       }}
       header={
         <AccordionHeader
-          title={title ?? ""}
+          title={t(title) ?? ""}
           badge={
             !valid && (fieldsRequiringAttention > 0 || feedbackFieldsCount > 0)
               ? t("{count} requires attention", { count: fieldsRequiringAttention + feedbackFieldsCount })
@@ -132,7 +132,7 @@ const FormSummaryRow = ({ stepId, index, reportSummaryAnalytics, ...props }: For
                 className={classNames("flex w-full flex-col items-start gap-1 transition-all delay-300 duration-300")}
               >
                 <Text textStyle="300-bold" className="w-full flex-1" color="primary.900">
-                  {entry.title}
+                  {t(entry.title)}
                 </Text>
                 <div
                   className={classNames("w-full flex-1", {

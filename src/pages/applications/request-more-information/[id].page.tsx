@@ -47,10 +47,7 @@ const RequestMoreInformationPage = () => {
     }
     return models;
   }, [submission?.organisationUuid, submission?.projectPitchUuid]);
-  const feedbackFields = useMemo(
-    () => submission?.translatedFeedbackFields ?? [],
-    [submission?.translatedFeedbackFields]
-  );
+  const feedbackFields = useMemo(() => submission?.feedbackFields ?? [], [submission?.feedbackFields]);
   const requestedInformationFilter = useCallback(
     // TODO: this should not be using the label. It will require an API change and a data migration
     //  in the DB to fix this.
@@ -106,7 +103,16 @@ const RequestMoreInformationPage = () => {
           roundedCorners
           orgDetails={orgDetails}
           redirectEntityPage={`/applications/${uuid}`}
-          entity={application != null && submission != null ? { ...application, status: submission.status } : undefined}
+          entity={
+            application != null && submission != null
+              ? {
+                  ...application,
+                  status: submission.status,
+                  feedback: submission.feedback,
+                  feedbackFields: submission.feedbackFields
+                }
+              : undefined
+          }
         />
       </LoadingContainer>
     </BackgroundLayout>

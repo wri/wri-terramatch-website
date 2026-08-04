@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import { useMemo } from "react";
 
 import { useGadmChoices } from "@/connections/Gadm";
-import { normalizeDataCompletenessFieldName } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Log from "@/utils/log";
 
@@ -53,17 +52,12 @@ interface PlantStartDateInfo {
 
 const FIELDS_TO_VALIDATE: Record<string, string> = {
   polyName: "Polygon Name",
-  poly_name: "Polygon Name",
   plantStart: "Plant Start Date",
-  plantstart: "Plant Start Date",
   practice: "Restoration Practice",
   targetSys: "Target Land Use System",
-  target_sys: "Target Land Use System",
   distr: "Tree Distribution",
   plantingStatus: "Planting Status",
-  planting_status: "Planting Status",
-  numTrees: "Number of Trees",
-  num_trees: "Number of Trees"
+  numTrees: "Number of Trees"
 };
 
 export const useMessageValidators = () => {
@@ -136,24 +130,18 @@ export const useMessageValidators = () => {
         const infoArray: ExtraInfoItem[] = extraInfo;
         return infoArray
           .filter(info => {
-            // Filter out deleted plantEnd field
-            if (info.field === "plantend" || info.field === "plantEnd") {
-              return false;
-            }
-            const fieldKey = normalizeDataCompletenessFieldName(info.field) ?? info.field;
-            if (!isAdmin && fieldKey === "plantingStatus") {
+            if (!isAdmin && info.field === "plantingStatus") {
               return false;
             }
             return true;
           })
           .map(info => {
-            const fieldKey = normalizeDataCompletenessFieldName(info.field) ?? info.field;
-            const fieldLabel = FIELDS_TO_VALIDATE[fieldKey] ?? FIELDS_TO_VALIDATE[info.field] ?? fieldKey;
+            const fieldLabel = FIELDS_TO_VALIDATE[info.field] ?? info.field;
 
             if (!info.exists) {
               return t("{field} is missing", { field: fieldLabel });
             }
-            switch (fieldKey) {
+            switch (info.field) {
               case "targetSys":
                 return t(
                   "{field}: {error} is not a valid {field} because it is not one of ['agroforest', 'natural-forest', 'mangrove', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'woodlot-or-plantation', 'urban-forest']",

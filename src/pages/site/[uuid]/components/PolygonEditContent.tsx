@@ -1,5 +1,5 @@
 import type { DateValue } from "@ark-ui/react";
-import { Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
@@ -73,6 +73,7 @@ import {
   saveExistingPolygonVersion,
   saveNewSitePolygon
 } from "./polygonEditSave";
+import { normalizeSubmissionCycle, SUBMISSION_CYCLE_LABELS, SUBMISSION_CYCLE_OPTIONS } from "./polygonFilter.constants";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 
 type PolygonEditContentProps = {
@@ -81,7 +82,7 @@ type PolygonEditContentProps = {
   onRegisterSave?: (saveHandler: (options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) => void;
   onRegisterDelete: (deleteHandler: () => Promise<void>) => void;
   onRegisterSubmit: (submitHandler: (comment: string) => Promise<void>) => void;
-  onRegisterSaveAndSubmit?: (saveAndSubmitHandler: (comment: string) => Promise<void>) => void;
+  onRegisterSaveAndSubmit?: (saveAndSubmitHandler: (comment: string) => Promise<boolean>) => void;
   onRegisterHasUnsavedChanges?: (hasUnsavedChanges: () => boolean) => void;
   onRegisterPolygonName?: (getPolygonName: () => string) => void;
   onRegisterPlantStartDate?: (hasPlantStartDate: () => boolean) => void;
@@ -148,7 +149,8 @@ const buildFormValuesFromPolygon = (source: SitePolygonLightDto | undefined): Po
   restorationPractice: source?.practice ?? [],
   targetLandUseSystem: normalizeTargetSystem(source?.targetSys),
   treeDistribution: source?.distr ?? [],
-  treesPlanted: source?.numTrees != null ? String(source.numTrees) : ""
+  treesPlanted: source?.numTrees != null ? String(source.numTrees) : "",
+  submissionCycle: normalizeSubmissionCycle(source?.submissionCycle)
 });
 
 const applyFormValuesToState = (
@@ -160,6 +162,7 @@ const applyFormValuesToState = (
     setTargetLandUseSystem: (value: string[]) => void;
     setTreeDistribution: (value: string[]) => void;
     setTreesPlanted: (value: string) => void;
+    setSubmissionCycle: (value: string[]) => void;
   }
 ): void => {
   setters.setPolygonName(values.polygonName);
@@ -168,6 +171,7 @@ const applyFormValuesToState = (
   setters.setTargetLandUseSystem(values.targetLandUseSystem);
   setters.setTreeDistribution(values.treeDistribution);
   setters.setTreesPlanted(values.treesPlanted);
+  setters.setSubmissionCycle(values.submissionCycle);
 };
 
 const PolygonEditContent: FC<PolygonEditContentProps> = ({
@@ -231,8 +235,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
-  // TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
-  // const [submissionCycle, setSubmissionCycle] = useState<string[]>(["option-1"]);
+  const [submissionCycle, setSubmissionCycle] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState("");
   const [plotsVisible, setPlotsVisible] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
@@ -309,9 +312,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setRestorationPractice,
       setTargetLandUseSystem,
       setTreeDistribution,
-      setTreesPlanted
+      setTreesPlanted,
+      setSubmissionCycle
     });
-    // setSubmissionCycle(["option-1"]);
   }, [polygon]);
 
   const onSavedRef = useLatestRef(onSaved);
@@ -326,9 +329,18 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       restorationPractice,
       targetLandUseSystem,
       treeDistribution,
-      treesPlanted
+      treesPlanted,
+      submissionCycle
     }),
-    [polygonName, plantStartDate, restorationPractice, targetLandUseSystem, treeDistribution, treesPlanted]
+    [
+      polygonName,
+      plantStartDate,
+      restorationPractice,
+      targetLandUseSystem,
+      treeDistribution,
+      treesPlanted,
+      submissionCycle
+    ]
   );
   const getFormValuesRef = useLatestRef(getFormValues);
 
@@ -417,7 +429,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           siteId: resolvedSiteUuid,
           geometry: draftPolygonGeometry,
           form: getFormValues(),
-          dateValueToIso: dateValueToIsoString
+          dateValueToIso: dateValueToIsoString,
+          isAdmin
         });
         const savedPolygon = await finalizeSuccessfulSave(createdPolygon, {
           geometryChanged: true,
@@ -440,6 +453,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       draftPolygonGeometry,
       finalizeSuccessfulSave,
       getFormValues,
+      isAdmin,
       plantStartDate,
       polygonName,
       resolvedSiteUuid,
@@ -478,7 +492,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           form: getFormValues(),
           geometryChanged,
           currentGeometry: polygonGeometryEdit?.currentGeometry,
-          dateValueToIso: dateValueToIsoString
+          dateValueToIso: dateValueToIsoString,
+          isAdmin
         });
         const savedPolygon = await finalizeSuccessfulSave(updatedPolygon, {
           geometryChanged,
@@ -503,6 +518,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       geometryChanged,
       geometryPolygonUuid,
       getFormValues,
+      isAdmin,
       polygon?.primaryUuid,
       polygon?.siteId,
       polygonGeometryEdit?.currentGeometry,
@@ -849,10 +865,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   );
 
   const handleSaveAndSubmitPolygon = useCallback(
-    async (comment: string) => {
+    async (comment: string): Promise<boolean> => {
       const savedPolygon = await savePolygonData({ closeOnSave: false, deferSuccessToast: true });
       if (savedPolygon == null) {
-        return;
+        return false;
       }
 
       showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1), POLYGON_TOAST_IDS.submitting);
@@ -861,6 +877,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       if (submitted) {
         completePolygonProgressToast(POLYGON_TOAST_IDS.submitting, toastLabels.savedAndSubmittedComplete);
       }
+      return submitted;
     },
     [savePolygonData, submitPolygonWithData, t, toastLabels.savedAndSubmittedComplete]
   );
@@ -940,12 +957,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     onRegisterPlantStartDate?.(() => hasPlantStartDateForDisplay(plantStartDate, polygon));
   }, [onRegisterPlantStartDate, plantStartDate, polygon]);
 
-  // TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
-  // const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
-  //   { value: "option-1", label: t("Option 1") },
-  //   { value: "option-2", label: t("Option 2") },
-  //   { value: "option-3", label: t("Option 3") }
-  // ];
+  const submissionCycleOptions = useMemo(
+    () => SUBMISSION_CYCLE_OPTIONS.map(value => ({ value, label: SUBMISSION_CYCLE_LABELS[value] })),
+    []
+  );
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
@@ -1023,19 +1038,17 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                 }
               ]}
             />
-            {/* TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
             {(isAdmin || submissionCycle.length > 0) && (
               <SelectInput
-                key={`submission-cycle-${sitePolygonUuid}`}
-                items={SUBMISSION_CYCLE_MOCKED_OPTIONS}
+                key={`submission-cycle-${sitePolygonUuid}-${polygon?.submissionCycle ?? ""}`}
+                items={submissionCycleOptions}
                 label={t("Submission Cycle")}
-                defaultValue={submissionCycle}
-                onChange={setSubmissionCycle}
+                defaultValue={normalizeSubmissionCycle(polygon?.submissionCycle)}
+                onChange={value => setSubmissionCycle(value.slice(0, 1))}
                 placeholder={t("Select...")}
                 disabled={!isAdmin}
               />
             )}
-            */}
           </Flex>
         </Accordion>
         {isAnrEligible ? (
@@ -1099,12 +1112,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                       "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time."
                     )}
                   </Text>
-                  <Button
-                    variant="borderless"
-                    typeVariant="negative"
-                    disabled={isAnrPlotsOperating}
-                    onClick={() => onRequestAnrDeleteModal?.()}
-                  >
+                  <Button variant="negative" disabled={isAnrPlotsOperating} onClick={() => onRequestAnrDeleteModal?.()}>
                     {t("Delete Plots")}
                   </Button>
                 </>
@@ -1156,32 +1164,28 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           onOpenChange={handleAccordionOpenChange("versions")}
         >
           <Table<PolygonVersionRow>
+            paginationVariant="compact"
             columns={[
               {
                 key: "name",
-                label: t("Version Name")
-              },
-              {
-                key: "createdAt",
-                label: t("Date")
-              },
-              {
-                key: "isActive",
-                label: t("State")
-              }
-            ]}
-            data={versionRows}
-            renderRow={row => (
-              <TableRow key={row.uuid}>
-                <TableCell>
+                label: t("Version Name"),
+                cell: (row: PolygonVersionRow) => (
                   <Text title={row.versionName ?? row.name ?? t("Unnamed Polygon")} className="max-w-[10rem] truncate">
                     {row.versionName ?? row.name ?? t("Unnamed Polygon")}
                   </Text>
-                </TableCell>
-                <TableCell>
+                )
+              },
+              {
+                key: "createdAt",
+                label: t("Date"),
+                cell: (row: PolygonVersionRow) => (
                   <Text>{row.createdAt != null ? format(new Date(row.createdAt), "MM/dd/yyyy") : "-"}</Text>
-                </TableCell>
-                <TableCell>
+                )
+              },
+              {
+                key: "isActive",
+                label: t("State"),
+                cell: (row: PolygonVersionRow) => (
                   <MultiActionButton
                     mainActionLabel={row.isActive ? t("Active") : t("Inactive")}
                     mainActionOnClick={() => {
@@ -1200,16 +1204,17 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                     size="small"
                     variant="secondary"
                   />
-                </TableCell>
-              </TableRow>
-            )}
+                )
+              }
+            ]}
+            data={versionRows}
           />
           {isLoadingVersions ? <LoadingTable text="Loading Versions" /> : null}
         </Accordion>
       </Flex>
       {!isCreateMode && (
         <>
-          <Flex className="w-full justify-center pb-2 wriDrawer:pb-0">
+          <Flex className="w-full justify-center pb-2">
             <FloatingActionToolbar
               className="bg-theme-neutral-200"
               items={[

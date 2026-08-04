@@ -245,9 +245,9 @@ export type SitePolygonLightDto = {
   targetSys: string | null;
   distr: string[] | null;
   /**
-   * Submission cycle(s) assigned to the polygon
+   * Submission cycle assigned to the polygon
    */
-  submissionCycle: ("1" | "2" | "3" | "4" | "5")[] | null;
+  submissionCycle: "1" | "2" | "3" | "4" | "5" | null;
   numTrees: number | null;
   /**
    * Source of the site polygon
@@ -333,12 +333,11 @@ export type AttributeChangesDto = {
    */
   distr?: string[];
   /**
-   * Updated submission cycle(s) as array of strings
+   * Updated submission cycle
    *
    * @example 1
-   * @example 2
    */
-  submissionCycle?: string[];
+  submissionCycle?: string;
   /**
    * Updated number of trees
    *
@@ -498,9 +497,9 @@ export type SitePolygonFullDto = {
   targetSys: string | null;
   distr: string[] | null;
   /**
-   * Submission cycle(s) assigned to the polygon
+   * Submission cycle assigned to the polygon
    */
-  submissionCycle: ("1" | "2" | "3" | "4" | "5")[] | null;
+  submissionCycle: "1" | "2" | "3" | "4" | "5" | null;
   numTrees: number | null;
   /**
    * Source of the site polygon
@@ -580,12 +579,11 @@ export type SitePolygonBulkAttributeChangesDto = {
    */
   distr?: string[];
   /**
-   * Submission cycle slug(s). Empty array clears the field.
+   * Submission cycle slug. Empty string clears the field.
    *
    * @example 1
-   * @example 2
    */
-  submissionCycle?: string[];
+  submissionCycle?: string;
   /**
    * Number of trees planted
    *
@@ -917,6 +915,12 @@ export type ClippedVersionDto = {
    * @example 550e8400-e29b-41d4-a716-446655440000
    */
   uuid: string;
+  /**
+   * The geometry UUID of the clipped polygon version
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440001
+   */
+  polygonUuid: string;
   /**
    * The name of the polygon
    *

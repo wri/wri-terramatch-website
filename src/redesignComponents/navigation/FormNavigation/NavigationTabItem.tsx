@@ -1,4 +1,5 @@
 import { Box, TabsTrigger } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { FC } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -37,6 +38,7 @@ export const NavigationTabItem: FC<NavigationTabItemProps> = ({
   ariaLabel,
   isSelected
 }) => {
+  const t = useT();
   return (
     <TabsTriggerTyped
       value={value}
@@ -49,7 +51,7 @@ export const NavigationTabItem: FC<NavigationTabItemProps> = ({
           <NavigationTabBadge type={type} isSelected={isSelected} index={index} />
 
           {label != null && (
-            <p className={twMerge("truncate whitespace-nowrap", getLabelClasses(isSelected))}>{label}</p>
+            <p className={twMerge("truncate whitespace-nowrap", getLabelClasses(isSelected))}>{t(label)}</p>
           )}
         </span>
         <ChevronRightIcon />

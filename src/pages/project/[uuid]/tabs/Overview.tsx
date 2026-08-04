@@ -7,7 +7,6 @@ import OverviewMapArea from "@/components/elements/Map-mapbox/components/Overvie
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -16,7 +15,6 @@ import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
@@ -44,7 +42,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
-  const { openModal } = useModalContext();
+  const [openStatusModal, setOpenStatusModal] = useState(false);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
@@ -82,20 +80,11 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps!}
-          feedback={project.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="projects"
-          entityUuid={project.uuid}
-        />
-      );
+      setOpenStatusModal(true);
     } else {
       handleEdit();
     }
-  }, [openModal, project.feedback, project.uuid, handleEdit, needMoreInformation, statusProps, awaitingApproval]);
+  }, [handleEdit, needMoreInformation, awaitingApproval]);
 
   const goToTab = useCallback(
     (tab: string) => {
@@ -125,8 +114,6 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     }
   };
 
-  const hasSites = (project.totalSites ?? 0) > 0;
-  const hasNurseries = (project.totalNurseries ?? 0) > 0;
   const hideNurseries = shouldHideNurseries(framework);
 
   const addSitesAndNurseriesButtons = useMemo<ButtonGroupButtonProps[]>(() => {
@@ -163,10 +150,10 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     enabled: project.uuid != null
   });
 
+  const isDraftOrPendingApproval = project.status === "started" || awaitingApproval;
+
   const showSiteAreasMapPlaceholder =
-    !isLoadingProjectPolygons &&
-    (projectPolygonDataV3?.length ?? 0) === 0 &&
-    (!isProjectSetupComplete || (!hasSites && !hasNurseries));
+    !isLoadingProjectPolygons && (projectPolygonDataV3?.length ?? 0) === 0 && isDraftOrPendingApproval;
 
   const teamMemberItems = useMemo(
     () => [
@@ -189,6 +176,15 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   return (
     <PageContent>
       {EditModals}
+      <EntityStatusModal
+        statusProps={statusProps!}
+        feedback={project.feedback}
+        needMoreInformation={needMoreInformation}
+        entityName="projects"
+        entityUuid={project.uuid}
+        open={openStatusModal}
+        onOpenChange={setOpenStatusModal}
+      />
       <InviteMonitoringPartnerModal
         projectUUID={project.uuid}
         open={showInviteModal}
@@ -226,28 +222,9 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             {showSiteAreasMapPlaceholder && (
               <MapPlaceholder
                 icon={<SiteIcon boxSize={6} color="neutral.100" />}
-                title={t("Siting Strategy not defined yet.")}
+                title={t("Project Sites not defined")}
                 className="z-10 bg-map-project-placeholder"
-                buttonGroupProps={
-                  !isProjectSetupComplete
-                    ? {
-                        buttons: [
-                          {
-                            id: "finish-project-setup",
-                            variant: "borderless",
-                            size: "small",
-                            className: "!text-theme-neutral-100",
-                            children: t("Please finish project set-up before adding sites."),
-                            onClick: handleEditClick
-                          }
-                        ]
-                      }
-                    : !hasSites && !hasNurseries
-                    ? {
-                        buttons: addSitesAndNurseriesButtons
-                      }
-                    : undefined
-                }
+                buttonGroupProps={{ buttons: addSitesAndNurseriesButtons }}
               />
             )}
           </Box>

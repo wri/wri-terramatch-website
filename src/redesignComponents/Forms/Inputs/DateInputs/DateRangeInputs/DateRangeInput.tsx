@@ -2,23 +2,17 @@ import type { DatePickerRootProps, DateValue } from "@ark-ui/react";
 import { DatePicker, Portal, useDatePicker } from "@ark-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
+import { FieldWrapper, getThemedColor } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
-import type { FC } from "react";
+import type { FC, KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 import { formatDateValue, getDateFormatString, parseDateInput } from "@/utils/date";
 
 import { DayView, MonthView, YearView } from "../components";
-import {
-  datePickerControlStyles,
-  FieldCaption,
-  FieldContainer,
-  FieldErrorBar,
-  FieldErrorMessage,
-  FieldLabel,
-  RequiredIndicator
-} from "../styled";
+import { datePickerControlStyles } from "../styled";
+import { useKeyboardFocusVisible } from "../useKeyboardFocusVisible";
 import { DateRangeInputs } from "./components";
 import { calendarGlobalStyles } from "./styled";
 import type { PreservedDate } from "./types";
@@ -34,6 +28,7 @@ interface DateRangeInputProps {
   size?: "default" | "small";
   noMarginBottom?: boolean;
   value?: DateValue[];
+  defaultValue?: DateValue[];
   onValueChange?: (value: DateValue[]) => void;
 }
 
@@ -52,10 +47,13 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
   size = "default",
   noMarginBottom = false,
   value: valueProp,
+  defaultValue = [],
   onValueChange
 }) => {
-  const [uncontrolledDates, setUncontrolledDates] = useState<DateValue[]>([]);
+  useKeyboardFocusVisible();
+  const [uncontrolledDates, setUncontrolledDates] = useState<DateValue[]>(defaultValue);
   const dates = valueProp ?? uncontrolledDates;
+  const isFilled = dates.length > 0;
   const setDates = useCallback(
     (next: DateValue[]) => {
       if (valueProp !== undefined) {
@@ -129,72 +127,72 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
     [dates, picker, setDates]
   );
 
+  const handleInputKeyDown = useCallback(
+    (event: ReactKeyboardEvent<HTMLInputElement>) => {
+      if (disabled || picker.open) return;
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        picker.setOpen(true);
+      }
+    },
+    [disabled, picker]
+  );
+
   return (
-    <FieldContainer $size={size} $noMarginBottom={noMarginBottom} className="ds-date-range-input-container">
-      {errorMessage != null ? <FieldErrorBar /> : null}
-      <div style={{ marginLeft: errorMessage != null ? "1.1875rem" : "0px" }}>
-        {label != null ? (
-          <FieldLabel $size={size} $disabled={disabled} aria-label={label}>
-            {required ? (
-              <RequiredIndicator $disabled={disabled} aria-label="required">
-                *
-              </RequiredIndicator>
-            ) : null}
-            {label}
-          </FieldLabel>
-        ) : null}
-        {caption != null ? (
-          <FieldCaption $size={size} $disabled={disabled} aria-label={caption}>
-            {caption}
-          </FieldCaption>
-        ) : null}
-        {errorMessage != null ? (
-          <FieldErrorMessage $size={size} aria-label={errorMessage} role="alert">
-            {errorMessage}
-          </FieldErrorMessage>
-        ) : null}
-        <StyledPickerWrapper
-          $size={size}
-          data-invalid={errorMessage != null ? "" : undefined}
-          data-open={picker.open ? "" : undefined}
-        >
-          <Global styles={calendarGlobalStyles} />
-          <DatePicker.RootProvider value={picker}>
-            <DatePicker.Control
-              onClick={() => !disabled && picker.setOpen(true)}
-              style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+    <FieldWrapper
+      label={label}
+      caption={caption}
+      errorMessage={errorMessage}
+      required={required}
+      disabled={disabled}
+      size={size}
+      showOptionalLabel={false}
+      noMarginBottom={noMarginBottom}
+      className="ds-date-range-input-container"
+    >
+      <StyledPickerWrapper
+        $size={size}
+        data-invalid={errorMessage != null ? "" : undefined}
+        data-open={picker.open ? "" : undefined}
+        data-filled={isFilled ? "" : undefined}
+        data-disabled={disabled ? "" : undefined}
+      >
+        <Global styles={calendarGlobalStyles} />
+        <DatePicker.RootProvider value={picker}>
+          <DatePicker.Control
+            onClick={() => !disabled && picker.setOpen(true)}
+            style={{ gap: "0.5rem", cursor: disabled ? "not-allowed" : "pointer" }}
+          >
+            <CalendarIcon style={{ color: getThemedColor("neutral", 600) }} />
+            <div className="flex justify-center">
+              <DatePicker.Input index={0} placeholder={dateFormat} onKeyDown={handleInputKeyDown} />
+            </div>
+
+            <span
+              className={classNames("text-14-light text-theme-neutral-800", {
+                "!text-theme-neutral-500": !dates[0] && !dates[1]
+              })}
             >
-              <CalendarIcon />
-              <div className="flex justify-center">
-                <DatePicker.Input index={0} placeholder={dateFormat} />
-              </div>
+              —
+            </span>
 
-              <span
-                className={classNames("text-14-light text-theme-neutral-800", {
-                  "!text-theme-neutral-500": !dates[0] && !dates[1]
-                })}
-              >
-                —
-              </span>
-
-              <div className="flex justify-center">
-                <DatePicker.Input index={1} placeholder={dateFormat} />
-              </div>
-            </DatePicker.Control>
-            <Portal>
-              <DatePicker.Positioner>
-                <DatePicker.Content>
-                  <DateRangeInputs onClearDate={handleClearDate} preservedRef={preservedRef} dateFormat={dateFormat} />
-                  <DayView />
-                  <MonthView />
-                  <YearView />
-                </DatePicker.Content>
-              </DatePicker.Positioner>
-            </Portal>
-          </DatePicker.RootProvider>
-        </StyledPickerWrapper>
-      </div>
-    </FieldContainer>
+            <div className="flex justify-center">
+              <DatePicker.Input index={1} placeholder={dateFormat} onKeyDown={handleInputKeyDown} />
+            </div>
+          </DatePicker.Control>
+          <Portal>
+            <DatePicker.Positioner>
+              <DatePicker.Content>
+                <DateRangeInputs onClearDate={handleClearDate} preservedRef={preservedRef} dateFormat={dateFormat} />
+                <DayView />
+                <MonthView />
+                <YearView />
+              </DatePicker.Content>
+            </DatePicker.Positioner>
+          </Portal>
+        </DatePicker.RootProvider>
+      </StyledPickerWrapper>
+    </FieldWrapper>
   );
 };
 

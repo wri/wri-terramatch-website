@@ -25,10 +25,13 @@ import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRan
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
 import {
+  type SubmissionCycleOption,
   EMPTY_POLYGON_FILTERS,
   PolygonFilterState,
   PolygonSubmissionStatus,
-  PolygonValidationStatus
+  PolygonValidationStatus,
+  SUBMISSION_CYCLE_LABELS,
+  SUBMISSION_CYCLE_OPTIONS
 } from "./polygonFilter.constants";
 
 type CheckboxChange = { checked?: boolean | "indeterminate" };
@@ -58,6 +61,7 @@ interface PolygonFilterDrawerProps {
   trigger?: React.ReactNode;
   open?: boolean;
   filters: PolygonFilterState;
+  isAdminReview?: boolean;
   onApplyFilters: (filters: PolygonFilterState) => void;
   onClearFilters: () => void;
   onOpenChange?: (open: boolean) => void;
@@ -67,6 +71,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   trigger,
   open,
   filters,
+  isAdminReview = false,
   onApplyFilters,
   onClearFilters,
   onOpenChange
@@ -110,12 +115,18 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     for (const target of draftFilters.targetSys) {
       tags.push({ id: `targetSys:${target}`, label: targetLandUseLabels[target] });
     }
+    for (const cycle of draftFilters.submissionCycle) {
+      tags.push({ id: `submissionCycle:${cycle}`, label: SUBMISSION_CYCLE_LABELS[cycle] });
+    }
     if (draftFilters.hasOverlap) {
       tags.push({ id: "hasOverlap", label: "Overlap" });
     }
+    if (draftFilters.showDeleted) {
+      tags.push({ id: "showDeleted", label: t("Deleted Polygons") });
+    }
 
     return tags;
-  }, [draftFilters, restorationPracticeLabels, submissionStatusLabels, targetLandUseLabels, validationStatusLabels]);
+  }, [draftFilters, restorationPracticeLabels, submissionStatusLabels, t, targetLandUseLabels, validationStatusLabels]);
 
   const removeFilter = (id: string) => {
     const [category, value] = id.split(":");
@@ -129,12 +140,16 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           return { ...current, practice: current.practice.filter(s => s !== value) };
         case "targetSys":
           return { ...current, targetSys: current.targetSys.filter(s => s !== value) };
+        case "submissionCycle":
+          return { ...current, submissionCycle: current.submissionCycle.filter(s => s !== value) };
         case "plantStartFrom":
           return { ...current, plantStartFrom: "" };
         case "plantStartTo":
           return { ...current, plantStartTo: "" };
         case "hasOverlap":
           return { ...current, hasOverlap: false };
+        case "showDeleted":
+          return { ...current, showDeleted: false };
         default:
           return current;
       }
@@ -165,6 +180,15 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     setDraftFilters(current => ({ ...current, targetSys: selected ? [selected] : [] }));
   };
 
+  const handleSubmissionCycleChange = (value: string[]) => {
+    setDraftFilters(current => ({
+      ...current,
+      submissionCycle: value.filter((item): item is SubmissionCycleOption =>
+        SUBMISSION_CYCLE_OPTIONS.includes(item as SubmissionCycleOption)
+      )
+    }));
+  };
+
   const handlePlantStartDateChange = (value: DateValue[]) => {
     setDraftFilters(current => ({
       ...current,
@@ -177,6 +201,17 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     setDraftFilters(current => ({ ...current, hasOverlap: checked === true }));
   };
 
+  const handleShowDeletedChange = ({ checked }: CheckboxChange) => {
+    const showDeleted = checked === true;
+    // Deleted polygons is an exclusive audit view: turning it on clears every other draft
+    // filter so the applied state can never combine "deleted" with a status/practice/etc filter.
+    if (showDeleted) {
+      setDraftFilters({ ...EMPTY_POLYGON_FILTERS, showDeleted: true });
+    } else {
+      setDraftFilters(current => ({ ...current, showDeleted: false }));
+    }
+  };
+
   const plantStartDateValue = useMemo<DateValue[]>(() => {
     const dates: DateValue[] = [];
     const from = isoStringToDateValue(draftFilters.plantStartFrom);
@@ -186,12 +221,10 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     return dates;
   }, [draftFilters.plantStartFrom, draftFilters.plantStartTo]);
 
-  // TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
-  // const SUBMISSION_CYCLE_MOCKED_OPTIONS = [
-  //   { value: "option-1", label: t("Option 1") },
-  //   { value: "option-2", label: t("Option 2") },
-  //   { value: "option-3", label: t("Option 3") }
-  // ];
+  const submissionCycleOptions = useMemo(
+    () => SUBMISSION_CYCLE_OPTIONS.map(value => ({ value, label: SUBMISSION_CYCLE_LABELS[value] })),
+    []
+  );
 
   return (
     <Drawer
@@ -207,7 +240,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           title={t("Filters")}
           variant="fixed"
           onClose={onClose}
-          className="h-full w-full"
+          className="h-full"
           content={
             <Flex className="h-full flex-col gap-3 overflow-auto p-4">
               {activeFilters.length > 0 && (
@@ -232,6 +265,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                     name={`submission-status-${option.value}`}
                     value={option.value}
                     checked={draftFilters.polygonStatus.includes(option.value)}
+                    disabled={draftFilters.showDeleted}
                     onCheckedChange={(change: CheckboxChange) => handleSubmissionStatusChange(option.value, change)}
                   >
                     {option.label}
@@ -245,6 +279,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                     name={`system-validation-${option.value}`}
                     value={option.value}
                     checked={draftFilters.validationStatus.includes(option.value)}
+                    disabled={draftFilters.showDeleted}
                     onCheckedChange={(change: CheckboxChange) => handleValidationStatusChange(option.value, change)}
                   >
                     {option.label}
@@ -255,6 +290,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                 <DateRangeInput
                   size="small"
                   noMarginBottom
+                  disabled={draftFilters.showDeleted}
                   value={plantStartDateValue}
                   onValueChange={handlePlantStartDateChange}
                 />
@@ -263,6 +299,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                 <SelectInput
                   placeholder={t("Please Select")}
                   size="small"
+                  disabled={draftFilters.showDeleted}
                   value={draftFilters.practice}
                   items={restorationPracticeOptions}
                   onChange={handlePracticeChange}
@@ -272,28 +309,44 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                 <SelectInput
                   placeholder={t("Please Select")}
                   size="small"
+                  disabled={draftFilters.showDeleted}
                   value={draftFilters.targetSys}
                   items={targetLandUseOptions}
                   onChange={handleTargetLandUseChange}
                 />
               </FilterCard>
-              {/* TODO: Hidden until Submission Cycle is fully implemented in the backend and ready for release.
               <FilterCard label={t("Submission Cycle")}>
                 <SelectInput
                   placeholder={t("Please Select")}
                   size="small"
-                  items={SUBMISSION_CYCLE_MOCKED_OPTIONS.map(option => ({
-                    value: option.value,
-                    label: t("Option {option}", { option: option.value })
-                  }))}
+                  disabled={draftFilters.showDeleted}
+                  value={draftFilters.submissionCycle}
+                  items={submissionCycleOptions}
+                  onChange={handleSubmissionCycleChange}
+                  multiple
                 />
               </FilterCard>
-              */}
               <FilterCard label={t("Overlap")}>
-                <Switch name="overlap" checked={draftFilters.hasOverlap} onCheckedChange={handleOverlapChange}>
+                <Switch
+                  name="overlap"
+                  checked={draftFilters.hasOverlap}
+                  disabled={draftFilters.showDeleted}
+                  onCheckedChange={handleOverlapChange}
+                >
                   {t("Show Polygon Overlaps")}
                 </Switch>
               </FilterCard>
+              {isAdminReview && (
+                <FilterCard label={t("Deleted Polygons")}>
+                  <Switch
+                    name="showDeleted"
+                    checked={draftFilters.showDeleted}
+                    onCheckedChange={handleShowDeletedChange}
+                  >
+                    {t("Show Deleted Polygons")}
+                  </Switch>
+                </FilterCard>
+              )}
             </Flex>
           }
           footer={

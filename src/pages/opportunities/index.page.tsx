@@ -15,13 +15,15 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useApplications } from "@/connections/Application";
 import { useFundingProgrammes } from "@/connections/FundingProgramme";
 import { useMyOrg } from "@/connections/Organisation";
-import { fundingProgrammeToFundingCardProps } from "@/utils/dataTransformation";
+import { useFundingProgrammeToFundingCardProps } from "@/utils/dataTransformation";
 
 const OpportunitiesPage = () => {
   const t = useT();
   const [, { organisation }] = useMyOrg();
   const [loaded, { data: fundingProgrammes }] = useFundingProgrammes({});
   const [, { indexTotal }] = useApplications({});
+
+  const fundingProgrammesProps = useFundingProgrammeToFundingCardProps(fundingProgrammes ?? []);
 
   return (
     <>
@@ -34,13 +36,7 @@ const OpportunitiesPage = () => {
           <>
             <LoadingContainer loading={!loaded}>
               <PageSection hasCarousel>
-                <FundingCarouselList
-                  items={
-                    fundingProgrammes
-                      ?.filter(item => item.status !== "disabled")
-                      .map(item => fundingProgrammeToFundingCardProps(item)) || []
-                  }
-                />
+                <FundingCarouselList items={fundingProgrammesProps ?? []} />
               </PageSection>
             </LoadingContainer>
 

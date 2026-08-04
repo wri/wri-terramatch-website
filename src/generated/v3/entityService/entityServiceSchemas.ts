@@ -322,6 +322,7 @@ export type AboutSectionDto = {
         | "fundo-flora"
         | "fundo-flora-1"
         | "wcb"
+        | "barka-fund"
       )[]
     | null;
   header: string;
@@ -1385,7 +1386,7 @@ export type DisturbanceReportLightDto = {
   /**
    * Entity status for this disturbance report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Update request status for this disturbance report
    */
@@ -1601,23 +1602,23 @@ export type ProjectFullDto = {
   /**
    * QA status for polygon dataset stage 1
    */
-  projectQaStatus1: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  projectQaStatus1: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 2
    */
-  projectQaStatus2: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  projectQaStatus2: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 3
    */
-  projectQaStatus3: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  projectQaStatus3: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 4
    */
-  projectQaStatus4: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  projectQaStatus4: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 5
    */
-  projectQaStatus5: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed" | null;
+  projectQaStatus5: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
 };
 
 export type SiteFullDto = {
@@ -2323,7 +2324,7 @@ export type DisturbanceReportFullDto = {
   /**
    * Entity status for this disturbance report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Update request status for this disturbance report
    */
@@ -2554,23 +2555,23 @@ export type ProjectUpdateAttributes = {
   /**
    * QA status for polygon dataset stage 1
    */
-  projectQaStatus1?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus1?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 2
    */
-  projectQaStatus2?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus2?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 3
    */
-  projectQaStatus3?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus3?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 4
    */
-  projectQaStatus4?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus4?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * QA status for polygon dataset stage 5
    */
-  projectQaStatus5?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus5?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed" | null;
   /**
    * Optional comment recorded on polygon handoff audit entries when updating submission/baseline
    */
@@ -2674,13 +2675,32 @@ export type FinancialReportUpdateData = {
   attributes: ReportUpdateAttributes;
 };
 
+export type DisturbanceReportUpdateAttributes = {
+  /**
+   * Specific feedback for the PD
+   */
+  feedback?: string;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields?: string[];
+  /**
+   * Request to change to the status of the given disturbance report
+   */
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update the nothingToReport flag.
+   */
+  nothingToReport?: boolean;
+};
+
 export type DisturbanceReportUpdateData = {
   type: "disturbanceReports";
   /**
    * @format uuid
    */
   id: string;
-  attributes: ReportUpdateAttributes;
+  attributes: DisturbanceReportUpdateAttributes;
 };
 
 export type SrpReportUpdateData = {
@@ -2964,6 +2984,7 @@ export type TrackingDto = {
     | "hectares-goal"
     | "hectares-historical"
     | "trees-goal"
+    | "trees-planted-goal"
     | "trees-historical";
   collection: string;
   entries: TrackingEntryDto[];
@@ -3175,6 +3196,7 @@ export type LinkedFieldDto = {
     | "stratas"
     | "trainingBeneficiaries"
     | "treesGoal"
+    | "treesPlantedGoal"
     | "treesHistorical"
     | "treeSpecies"
     | "volunteers"
@@ -3212,6 +3234,7 @@ export type SubmissionDto = {
     | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
+    | "barka-fund"
     | null;
   formUuid: string;
   status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
@@ -3219,7 +3242,7 @@ export type SubmissionDto = {
   organisationUuid: string | null;
   organisationName: string | null;
   feedback?: string | null;
-  translatedFeedbackFields: string[] | null;
+  feedbackFields: string[] | null;
   stageName: string | null;
   stageUuid: string | null;
 };
@@ -3369,6 +3392,7 @@ export type FormQuestionDto = {
     | "stratas"
     | "trainingBeneficiaries"
     | "treesGoal"
+    | "treesPlantedGoal"
     | "treesHistorical"
     | "treeSpecies"
     | "volunteers"
@@ -3450,10 +3474,6 @@ export type FormFullDto = {
    * The funding programme, reporting framework or entity that is using this form.
    */
   attachedTo?: FormAttachment;
-  /**
-   * Indicates whether the text fields in this form response have been translated to the user's locale
-   */
-  translated: boolean;
   subtitle?: string | null;
   description?: string | null;
   frameworkKey?:
@@ -3467,6 +3487,7 @@ export type FormFullDto = {
     | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
+    | "barka-fund"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3526,6 +3547,7 @@ export type StoreFormQuestionAttributes = {
     | "stratas"
     | "trainingBeneficiaries"
     | "treesGoal"
+    | "treesPlantedGoal"
     | "treesHistorical"
     | "treeSpecies"
     | "volunteers"
@@ -3597,6 +3619,7 @@ export type StoreFormAttributes = {
     | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
+    | "barka-fund"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3740,6 +3763,7 @@ export type FundingProgrammeDto = {
     | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
+    | "barka-fund"
     | null;
   name: string;
   description: string;
@@ -3773,6 +3797,7 @@ export type StoreFundingProgrammeAttributes = {
     | "fundo-flora"
     | "fundo-flora-1"
     | "wcb"
+    | "barka-fund"
     | null;
   name: string;
   description: string;

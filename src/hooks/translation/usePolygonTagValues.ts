@@ -11,7 +11,8 @@ export const usePolygonTagValues = () => {
       draft: t("Draft"),
       "pending-approval": t("Pending Approval"),
       "information-required": t("Information Required"),
-      approved: t("Approved")
+      approved: t("Approved"),
+      deleted: t("Deleted")
     }),
     [t]
   );

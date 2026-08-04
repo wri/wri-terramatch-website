@@ -88,7 +88,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
           "mt-[0.125rem] !w-full max-w-[45.3125rem]",
           plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
         )}
-        renderRow={row => {
+        renderRow={(row, context) => {
           const isTotalRow = row.name === totalRowName;
           const totalRowStyle = isTotalRow
             ? {
@@ -97,13 +97,13 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
               }
             : undefined;
           return (
-            <TableRow>
-              <TableCell>
+            <TableRow className={context?.className}>
+              <TableCell {...context?.getCellProps("name")}>
                 <Text textStyle="400" color="neutral.700" style={totalRowStyle}>
                   {isTotalRow ? t("Total") : row.name}
                 </Text>
               </TableCell>
-              <TableCell>
+              <TableCell {...context?.getCellProps("amount")}>
                 <Text textStyle="400" color="neutral.700" style={totalRowStyle}>
                   {row.amount}
                 </Text>
@@ -130,11 +130,15 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
         pageSize={NO_COUNT_TABLE_SPECIES_PER_PAGE}
         showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
         className={classNames("mt-[0.125rem]", dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3")}
-        renderRow={row => {
+        renderRow={(row, context) => {
           return (
-            <TableRow>
+            <TableRow className={context?.className}>
               {noCountTableColumns.map((col, idx) => (
-                <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
+                <TableCell
+                  key={col.key + idx}
+                  className={idx === 0 ? undefined : "px-0! py-4"}
+                  {...context?.getCellProps(col.key)}
+                >
                   {row[idx + 1] !== undefined && row[idx + 1] !== "" && (
                     <Text
                       textStyle="400"

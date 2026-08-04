@@ -1,23 +1,8 @@
-import { Box } from "@chakra-ui/react";
 import { Badge as WriBadge } from "@worldresources/wri-design-systems";
-import { ComponentProps, FC } from "react";
+import type { ComponentProps, FC } from "react";
 
-const Badge: FC<ComponentProps<typeof WriBadge>> = props => {
-  return (
-    <Box
-      css={{
-        "& span, & div:not([aria-hidden='true'])": {
-          padding: "0.125rem",
-          paddingRight: "0.1875rem"
-        },
-        "& p[aria-label]": {
-          fontSize: "0.5rem"
-        }
-      }}
-    >
-      <WriBadge {...props} />
-    </Box>
-  );
-};
+type BadgeProps = ComponentProps<typeof WriBadge>;
+
+const Badge: FC<BadgeProps> = props => <WriBadge {...props} />;
 
 export default Badge;

@@ -1,13 +1,11 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
-import { useModalContext } from "@/context/modal.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -39,8 +37,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
 }) => {
   const t = useT();
   const router = useRouter();
-  const { openModal } = useModalContext();
-
+  const [openStatusModal, setOpenStatusModal] = useState(false);
   const needMoreInformation =
     site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
   const awaitingApproval = site.updateRequestStatus === AWAITING_APPROVAL || site.status === AWAITING_APPROVAL;
@@ -56,24 +53,24 @@ const SiteInfo: FC<SiteInfoProps> = ({
 
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps!}
-          feedback={site.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="sites"
-          entityUuid={site.uuid}
-        />
-      );
+      setOpenStatusModal(true);
     } else {
       handleEdit();
     }
-  }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit, awaitingApproval]);
+  }, [needMoreInformation, handleEdit, awaitingApproval]);
 
   return (
     <Box gap={2} className="flex flex-col mobile:w-full">
       {EditModals}
+      <EntityStatusModal
+        statusProps={statusProps!}
+        feedback={site.feedback}
+        needMoreInformation={needMoreInformation}
+        entityName="sites"
+        entityUuid={site.uuid}
+        open={openStatusModal}
+        onOpenChange={setOpenStatusModal}
+      />
       <Text
         textStyle="400"
         color="neutral.900"
