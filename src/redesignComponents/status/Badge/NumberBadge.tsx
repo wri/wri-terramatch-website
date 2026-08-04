@@ -44,7 +44,7 @@ const NumberBadge: FC<NumberBadgeProps> = ({
       backgroundColor={backgroundColor}
       color={color}
       textStyle={textStyle}
-      lineHeight="1"
+      lineHeight="normal"
       aria-label={ariaLabel}
     >
       {count > MAX_COUNT ? `${MAX_COUNT}+` : count}

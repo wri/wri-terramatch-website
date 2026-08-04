@@ -117,7 +117,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
                 <Avatar
                   ariaLabel={`${report.createdByFirstName} ${report.createdByLastName} avatar`}
                   name={`${report.createdByFirstName} ${report.createdByLastName}`}
-                  size="medium"
+                  size="small"
                 />
                 <Text textStyle="400-bold" color="neutral.900" lineHeight="normal">
                   {report.createdByFirstName} {report.createdByLastName}

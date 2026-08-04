@@ -38,7 +38,7 @@ export const Default: Story = {
 export const Account: Story = {
   args: {
     label: "Label",
-    prefix: <Avatar name="John Doe" size="medium" />,
+    prefix: <Avatar name="John Doe" size="small" />,
     suffix: <PlaceholderIcon boxSize={4} />,
     variant: "simple",
     items: [{ label: "Profile" }, { label: "Sign out" }]

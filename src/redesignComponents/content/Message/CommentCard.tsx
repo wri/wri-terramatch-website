@@ -121,7 +121,7 @@ const CommentCard: FC<CommentCardProps> = ({
     >
       {state === "view" && (
         <Flex className="items-start gap-2">
-          <Avatar size="medium" name={authorName} src={avatarSrc} />
+          <Avatar size="small" name={authorName} src={avatarSrc} />
           <Flex className="min-w-0 flex-1 flex-col">
             <Text textStyle="400-bold" color="neutral.900">
               {authorName}
