@@ -17,6 +17,12 @@ const BASE_CSS: Record<string, any> = {
   },
   "& > div": {
     maxWidth: "100%"
+  },
+  "& > div > div > div": {
+    alignItems: "center"
+  },
+  "& > div > div > div > svg": {
+    marginTop: "0"
   }
 };
 

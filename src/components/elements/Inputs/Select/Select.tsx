@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC, Fragment, PropsWithChildren, useEffect, useId } from "react";
 import { FieldError } from "react-hook-form";
 
@@ -31,6 +32,7 @@ export interface SelectProps extends InputWrapperProps {
  * Notice: Use RHFSelect with React Hook Form
  */
 const Select: FC<PropsWithChildren<SelectProps>> = props => {
+  const t = useT();
   const id = useId();
   const [selected, setSelected, setSelectedWithoutEffect] = useStateWithEffect<OptionValue[]>(
     props.defaultValue || props.value || [],
@@ -92,14 +94,14 @@ const Select: FC<PropsWithChildren<SelectProps>> = props => {
             <Checkbox
               name=""
               checked={isSelected}
-              label={option.title}
+              label={t(option.title)}
               className="flex-row-reverse justify-end gap-3"
               onClick={() => onChange(option.value)}
             />
           ) : (
             <Radio
               checked={isSelected}
-              label={option.title}
+              label={t(option.title)}
               className="flex-row-reverse justify-end gap-3"
               onClick={() => onChange(option.value)}
             />

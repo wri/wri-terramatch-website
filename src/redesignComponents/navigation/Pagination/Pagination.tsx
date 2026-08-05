@@ -8,11 +8,12 @@ export type PaginationProps = {
   pageSize: number;
   variant?: "default" | "compact" | "compact-with-buttons";
   onPageChange?: (page: number) => void;
+  className?: string;
 };
 
-const Pagination: FC<PaginationProps> = ({ currentPage, totalItems, pageSize, variant, onPageChange }) => {
+const Pagination: FC<PaginationProps> = ({ currentPage, totalItems, pageSize, variant, onPageChange, className }) => {
   return (
-    <Box>
+    <Box className={className}>
       <WriPagination
         currentPage={currentPage}
         totalItems={totalItems}
