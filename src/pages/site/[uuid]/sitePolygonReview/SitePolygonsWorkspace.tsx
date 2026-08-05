@@ -49,6 +49,7 @@ import {
   withResolvedValidationStatusFromCriteria
 } from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
+import { prunePolygonValidationCache } from "../components/polygonEditSave";
 import PolygonSubmissionAnnouncement from "../components/PolygonSubmissionAnnouncement";
 import { PolygonTableRow } from "../components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
@@ -371,6 +372,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     const key = [...polygonUuids].sort().join(",");
     validationRunStartedAtRef.current = Date.now();
     pendingValidationKeyRef.current = key;
+    prunePolygonValidationCache(...polygonUuids);
     setPendingValidationPolygonUuids(polygonUuids);
     setSupplementalValidations(prev =>
       prev.filter(validation => validation.polygonUuid == null || !polygonUuids.includes(validation.polygonUuid))
@@ -404,18 +406,15 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
       });
       priorValidationStatusRef.current = priorStatuses;
       pendingValidationTrackBulkRef.current = options?.trackBulkCompletion ?? true;
-      if (validationRunStartedAtRef.current === 0) {
-        validationRunStartedAtRef.current = Date.now();
-      }
+      validationRunStartedAtRef.current = Date.now();
 
       const key = [...polygonUuids].sort().join(",");
-      if (pendingValidationKeyRef.current !== key) {
-        pendingValidationKeyRef.current = key;
-        setSupplementalValidations(prev =>
-          prev.filter(validation => validation.polygonUuid == null || !polygonUuids.includes(validation.polygonUuid))
-        );
-        setPendingValidationPolygonUuids(polygonUuids);
-      }
+      prunePolygonValidationCache(...polygonUuids);
+      pendingValidationKeyRef.current = key;
+      setSupplementalValidations(prev =>
+        prev.filter(validation => validation.polygonUuid == null || !polygonUuids.includes(validation.polygonUuid))
+      );
+      setPendingValidationPolygonUuids(polygonUuids);
       void listDelayedJobs.fetch({});
     },
     [polygonsData]
@@ -555,6 +554,9 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           if (validationPollingGenerationRef.current !== pollingGeneration) {
             return;
           }
+
+          prunePolygonValidationCache(...polygonUuids);
+          void listDelayedJobs.fetch({});
           const individualValidations = await Promise.all(polygonUuids.map(uuid => fetchPolygonValidation(uuid)));
 
           if (cancelled || validationPollingGenerationRef.current !== pollingGeneration) {
