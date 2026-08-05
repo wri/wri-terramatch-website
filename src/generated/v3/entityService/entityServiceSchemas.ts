@@ -301,6 +301,21 @@ export type ImpactStoryBulkDeleteBodyDto = {
   data: ImpactStoryDeleteData[];
 };
 
+/**
+ * CONSTANTS
+ */
+export type AboutSectionConstants = {
+  /**
+   * @example project
+   * @example site
+   * @example nursery
+   * @example project-report
+   * @example site-report
+   * @example nursery-report
+   */
+  TYPES: string[];
+};
+
 export type LinkDto = {
   id: string;
   title: string;
@@ -3316,7 +3331,7 @@ export type FormLightDto = {
   lightResource: boolean;
   uuid: string;
   /**
-   * Translated form title
+   * Form title
    */
   title: string;
   type?:
@@ -3437,11 +3452,11 @@ export type FormQuestionDto = {
 export type FormSectionDto = {
   id: string;
   /**
-   * Translated section title
+   * Section title
    */
   title?: string | null;
   /**
-   * Translated section description
+   * Section description
    */
   description?: string | null;
   questions: FormQuestionDto[];
@@ -3454,7 +3469,7 @@ export type FormFullDto = {
   lightResource: boolean;
   uuid: string;
   /**
-   * Translated form title
+   * Form title
    */
   title: string;
   type?:
@@ -3578,11 +3593,11 @@ export type StoreFormQuestionAttributes = {
 
 export type StoreFormSectionAttributes = {
   /**
-   * Translated section title
+   * Section title
    */
   title?: string | null;
   /**
-   * Translated section description
+   * Section description
    */
   description?: string | null;
   id?: string;
@@ -3591,7 +3606,7 @@ export type StoreFormSectionAttributes = {
 
 export type StoreFormAttributes = {
   /**
-   * Translated form title
+   * Form title
    */
   title: string;
   type?:

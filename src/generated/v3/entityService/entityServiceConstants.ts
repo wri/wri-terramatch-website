@@ -140,6 +140,10 @@ export type EntityServiceApiResources = {
   reportingFrameworks: StoreResourceMap<ReportingFrameworkDto>;
 };
 
+export const AboutSectionConstants = {
+  TYPES: ["project", "site", "nursery", "project-report", "site-report", "nursery-report"] as const
+} as const;
+
 export const TreeEntityTypes = {
   ESTABLISHMENT_ENTITIES: [
     "sites",
