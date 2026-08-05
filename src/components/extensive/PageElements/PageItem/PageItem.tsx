@@ -1,4 +1,5 @@
 import { Flex, FlexProps, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, ReactNode } from "react";
 
@@ -33,37 +34,40 @@ const PageItem: FC<PageItemProps> = ({
   multiActionButtonProps = null,
   classNameHeader,
   classNameRightSectionHeader
-}) => (
-  <Flex direction="column" gap={4} flex={1} {...flexProps} className={classNames(className)}>
-    <Flex
-      alignItems="center"
-      justifyContent="space-between"
-      className={classNames("mobile:!items-start mobile:gap-2", classNameHeader)}
-    >
-      <div className="flex items-center gap-2">
-        <Text color="primary.900" textStyle="600">
-          {title}
-        </Text>
-        {tag !== null && tag}
-      </div>
-      <Flex gap={4} className={classNames("mobile:justify-end", classNameRightSectionHeader)}>
-        {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
-        {buttonProps !== null && (
-          <>
-            {downloadButtonProps !== null && <SimpleDivider className="!h-7 !w-[0.063rem]" />}
-            <Button {...buttonProps} />
-          </>
-        )}
-        {multiActionButtonProps !== null && (
-          <>
-            <SimpleDivider className="!h-7 !w-[0.063rem]" />
-            <MultiActionButton {...multiActionButtonProps} />
-          </>
-        )}
+}) => {
+  const t = useT();
+  return (
+    <Flex direction="column" gap={4} flex={1} {...flexProps} className={classNames(className)}>
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+        className={classNames("mobile:!items-start mobile:gap-2", classNameHeader)}
+      >
+        <div className="flex items-center gap-2">
+          <Text color="primary.900" textStyle="600">
+            {t(title)}
+          </Text>
+          {tag !== null && tag}
+        </div>
+        <Flex gap={4} className={classNames("mobile:justify-end", classNameRightSectionHeader)}>
+          {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
+          {buttonProps !== null && (
+            <>
+              {downloadButtonProps !== null && <SimpleDivider className="!h-7 !w-[0.063rem]" />}
+              <Button {...buttonProps} />
+            </>
+          )}
+          {multiActionButtonProps !== null && (
+            <>
+              <SimpleDivider className="!h-7 !w-[0.063rem]" />
+              <MultiActionButton {...multiActionButtonProps} />
+            </>
+          )}
+        </Flex>
       </Flex>
+      {children}
     </Flex>
-    {children}
-  </Flex>
-);
+  );
+};
 
 export default PageItem;

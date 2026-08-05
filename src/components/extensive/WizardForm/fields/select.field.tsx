@@ -25,7 +25,7 @@ export const SelectField: FormFieldFactory = {
     />
   ),
 
-  getAnswer: ({ name, options, optionsList, linkedFieldKey }, formValues, { fieldByKey }) => {
+  getAnswer: ({ name, options, optionsList, linkedFieldKey, optionsOther }, formValues, { fieldByKey }) => {
     const value = formValues[name];
 
     if (optionsList?.startsWith("gadm-level-")) {
@@ -49,11 +49,21 @@ export const SelectField: FormFieldFactory = {
 
     const formOptions =
       options == null && optionsList != null ? getHardcodedOptions(optionsList) : toFormOptions(options);
+
+    // When "Other" is selected, Dropdown stores the free-text as a value that is not in
+    // formOptions. Preserve it on overviews instead of dropping unmatched values.
+    const formatSelectValue = (v: string) => {
+      const title = formOptions.find(o => o.value === v)?.title;
+      if (title != null) return title;
+      if (optionsOther && v) return `Other: ${v}`;
+      return v;
+    };
+
     if (Array.isArray(value)) {
-      return value.map(v => formOptions.find(o => o.value === v)?.title).filter(isNotNull) ?? value;
-    } else {
-      return formOptions.find(o => o.value === value)?.title ?? value;
+      return value.map(formatSelectValue).filter(isNotNull);
     }
+
+    return value != null && value !== "" ? formatSelectValue(value) : value;
   },
 
   formBuilderAdditionalOptions: ({ field, getSource }) => <SelectAdditionalOptions {...{ field, getSource }} />,

@@ -2,25 +2,17 @@ import type { DatePickerRootProps, DateValue } from "@ark-ui/react";
 import { DatePicker, Portal, useDatePicker } from "@ark-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
+import { FieldWrapper, getThemedColor } from "@worldresources/wri-design-systems";
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
-import { getThemedColor } from "@/lib/theme";
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 import { formatDateValue, getDateFormatString, parseDateInput } from "@/utils/date";
 
 import { DayView, MonthView, YearView } from "../components";
-import {
-  calendarBaseGlobalStyles,
-  datePickerControlStyles,
-  FieldCaption,
-  FieldContainer,
-  FieldErrorBar,
-  FieldErrorMessage,
-  FieldLabel,
-  RequiredIndicator
-} from "../styled";
+import { calendarBaseGlobalStyles, datePickerControlStyles } from "../styled";
+import { useKeyboardFocusVisible } from "../useKeyboardFocusVisible";
 
 interface DatePickerInputProps {
   showOptionalLabel?: boolean;
@@ -34,6 +26,7 @@ interface DatePickerInputProps {
   size?: "default" | "small";
   noMarginBottom?: boolean;
   value?: DateValue[];
+  defaultValue?: DateValue[];
   onValueChange?: (value: DateValue[]) => void;
   className?: string;
 }
@@ -54,11 +47,14 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
   size = "default",
   noMarginBottom = false,
   value: valueProp,
+  defaultValue = [],
   onValueChange,
   className
 }) => {
-  const [uncontrolledDate, setUncontrolledDate] = useState<DateValue[]>([]);
+  useKeyboardFocusVisible();
+  const [uncontrolledDate, setUncontrolledDate] = useState<DateValue[]>(defaultValue);
   const date = valueProp ?? uncontrolledDate;
+  const isFilled = date.length > 0;
   const browserLocale = useMemo(() => navigator.language, []);
   const dateFormat = useMemo(() => getDateFormatString(browserLocale), [browserLocale]);
 
@@ -86,64 +82,55 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
   });
 
   return (
-    <FieldContainer
-      $size={size}
-      $noMarginBottom={noMarginBottom}
+    <FieldWrapper
+      label={label}
+      caption={caption}
+      errorMessage={errorMessage}
+      required={required}
+      disabled={disabled}
+      size={size}
+      showOptionalLabel={showOptionalLabel}
+      noMarginBottom={noMarginBottom}
       className={twMerge("ds-date-picker-input-container", className)}
     >
-      {errorMessage != null ? <FieldErrorBar /> : null}
-      <div style={{ marginLeft: errorMessage != null ? "1.1875rem" : "0px" }}>
-        {label != null ? (
-          <FieldLabel $size={size} $disabled={disabled} aria-label={label}>
-            {required ? (
-              <RequiredIndicator $disabled={disabled} aria-label="required">
-                *
-              </RequiredIndicator>
-            ) : null}
-            {label}
-            {showOptionalLabel && !required ? <span className="optional-text">{" (Optional)"}</span> : ""}
-          </FieldLabel>
-        ) : null}
-        {caption != null ? (
-          <FieldCaption $size={size} $disabled={disabled} aria-label={caption}>
-            {caption}
-          </FieldCaption>
-        ) : null}
-        {errorMessage != null ? (
-          <FieldErrorMessage $size={size} aria-label={errorMessage} role="alert">
-            {errorMessage}
-          </FieldErrorMessage>
-        ) : null}
-        <StyledPickerWrapper
-          $size={size}
-          data-invalid={errorMessage != null ? "" : undefined}
-          data-open={picker.open ? "" : undefined}
-        >
-          <Global styles={calendarBaseGlobalStyles} />
-          <DatePicker.RootProvider value={picker}>
-            <DatePicker.Control
-              onClick={() => !disabled && picker.setOpen(true)}
-              style={{
-                cursor: disabled ? "not-allowed" : "pointer",
-                backgroundColor: disabled ? getThemedColor("neutral", 200) : "transparent"
+      <StyledPickerWrapper
+        $size={size}
+        data-invalid={errorMessage != null ? "" : undefined}
+        data-open={picker.open ? "" : undefined}
+        data-filled={isFilled ? "" : undefined}
+        data-disabled={disabled ? "" : undefined}
+      >
+        <Global styles={calendarBaseGlobalStyles} />
+        <DatePicker.RootProvider value={picker}>
+          <DatePicker.Control
+            onClick={() => !disabled && picker.setOpen(true)}
+            style={{ gap: "0.5rem", cursor: disabled ? "not-allowed" : "pointer" }}
+          >
+            <CalendarIcon style={{ color: getThemedColor("neutral", 600) }} />
+            <DatePicker.Input
+              index={0}
+              placeholder={dateFormat}
+              onKeyDown={event => {
+                if (disabled || picker.open) return;
+                if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                  event.preventDefault();
+                  picker.setOpen(true);
+                }
               }}
-            >
-              <CalendarIcon />
-              <DatePicker.Input index={0} placeholder={dateFormat} />
-            </DatePicker.Control>
-            <Portal>
-              <DatePicker.Positioner>
-                <DatePicker.Content className="!min-h-[20.3125rem]">
-                  <DayView />
-                  <MonthView />
-                  <YearView />
-                </DatePicker.Content>
-              </DatePicker.Positioner>
-            </Portal>
-          </DatePicker.RootProvider>
-        </StyledPickerWrapper>
-      </div>
-    </FieldContainer>
+            />
+          </DatePicker.Control>
+          <Portal>
+            <DatePicker.Positioner>
+              <DatePicker.Content className="!min-h-[20.3125rem]">
+                <DayView />
+                <MonthView />
+                <YearView />
+              </DatePicker.Content>
+            </DatePicker.Positioner>
+          </Portal>
+        </DatePicker.RootProvider>
+      </StyledPickerWrapper>
+    </FieldWrapper>
   );
 };
 

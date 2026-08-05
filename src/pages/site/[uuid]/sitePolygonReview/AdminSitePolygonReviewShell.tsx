@@ -39,8 +39,6 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
     <Layout>
       <SiteBanner
         site={site}
-        reviewLabel={t("Cycle 1 QA:")}
-        showStatusTag
         breadcrumbs={[
           {
             label: t("Sites"),

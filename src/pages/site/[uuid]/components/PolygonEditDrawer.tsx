@@ -10,8 +10,8 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
 import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel";
-import NotificationIndicator from "@/redesignComponents/navigation/NotificationIndicator/NotificationIndicator";
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
+import NumberBadge from "@/redesignComponents/status/Badge/NumberBadge";
 import ApiSlice from "@/store/apiSlice";
 
 import DeleteAnrMonitoringPlots from "./Modals/AnrMonitoringPlots/DeleteAnrMonitoringPlots";
@@ -74,16 +74,19 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   >(null);
   const deletePolygonRef = useRef<(() => Promise<void>) | null>(null);
   const submitPolygonRef = useRef<((comment: string) => Promise<void>) | null>(null);
-  const saveAndSubmitPolygonRef = useRef<((comment: string) => Promise<void>) | null>(null);
+  const saveAndSubmitPolygonRef = useRef<((comment: string) => Promise<boolean>) | null>(null);
   const hasUnsavedChangesRef = useRef<(() => boolean) | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
   const [isSubmitWithUnsavedChangesModal, setIsSubmitWithUnsavedChangesModal] = useState(false);
+  const [hasPendingOverlapFixSave, setHasPendingOverlapFixSave] = useState(false);
+  const [pendingOverlapFixSaveModal, setPendingOverlapFixSaveModal] = useState(false);
   const [deletePayload, setDeletePayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
   const [submitPayload, setSubmitPayload] = useState<{ polygons: PolygonTableRow[] } | null>(null);
   const [anrPlotsModal, setAnrPlotsModal] = useState<
     null | { kind: "upload"; mode: "upload" | "replace" } | { kind: "delete" }
   >(null);
+  const preserveActiveTabOnNextPolygonSyncRef = useRef<string | null>(null);
   const deleteConfirmedRef = useRef(false);
   const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
   const [savePolygonName, setSavePolygonName] = useState("");
@@ -108,11 +111,46 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   });
 
   const unreadCommentCount = useMemo(() => getUnreadCommentCount(auditStatusesData, user), [auditStatusesData, user]);
+  const drawerTabIdentityKey =
+    selectedPolygon?.primaryUuid ??
+    selectedPolygon?.uuid ??
+    polygon?.sitePolygon?.primaryUuid ??
+    polygon?.sitePolygon?.uuid ??
+    "";
 
   useEffect(() => {
-    setActiveTab(defaultTab);
     setAnrPlotsModal(null);
-  }, [polygon?.polygonUuid, defaultTab]);
+    const preservedIdentityKey = preserveActiveTabOnNextPolygonSyncRef.current;
+    if (preservedIdentityKey != null) {
+      if (preservedIdentityKey === drawerTabIdentityKey) {
+        preserveActiveTabOnNextPolygonSyncRef.current = null;
+        return;
+      }
+      preserveActiveTabOnNextPolygonSyncRef.current = null;
+    }
+    if (drawerTabIdentityKey === "") {
+      setActiveTab("edit");
+      return;
+    }
+    setActiveTab(defaultTab);
+  }, [defaultTab, drawerTabIdentityKey]);
+
+  useEffect(() => {
+    if (!open) {
+      setHasPendingOverlapFixSave(false);
+      setPendingOverlapFixSaveModal(false);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (!pendingOverlapFixSaveModal || activeTab !== "edit" || saveEditContent == null || isCreateMode) {
+      return;
+    }
+
+    setIsSubmitWithUnsavedChangesModal(true);
+    setShowSaveConfirmationModal(true);
+    setPendingOverlapFixSaveModal(false);
+  }, [activeTab, isCreateMode, pendingOverlapFixSaveModal, saveEditContent]);
 
   const selectedPolygonIdentityKey = `${selectedPolygon?.uuid ?? ""}:${selectedPolygon?.polygonUuid ?? ""}`;
 
@@ -141,7 +179,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     submitPolygonRef.current = submitHandler;
   }, []);
 
-  const registerSaveAndSubmit = useCallback((saveAndSubmitHandler: (comment: string) => Promise<void>) => {
+  const registerSaveAndSubmit = useCallback((saveAndSubmitHandler: (comment: string) => Promise<boolean>) => {
     saveAndSubmitPolygonRef.current = saveAndSubmitHandler;
   }, []);
 
@@ -168,15 +206,48 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   } = useAnrMonitoringPlotActions({
     sitePolygonUuid: sitePolygonUuidForAnr
   });
-  const showSaveAndSubmitOption = isSubmitWithUnsavedChangesModal && !isCreateMode;
+  const showSaveAndSubmitOption = !isCreateMode && (isSubmitWithUnsavedChangesModal || hasPendingOverlapFixSave);
+
+  const handleOverlapFixed = useCallback<PolygonOverlapFixCallback>(
+    async params => {
+      const updatedPolygon = await onOverlapFixed?.(params);
+      if (updatedPolygon != null) {
+        preserveActiveTabOnNextPolygonSyncRef.current = updatedPolygon.primaryUuid ?? updatedPolygon.uuid ?? null;
+        setHasPendingOverlapFixSave(true);
+      }
+      return updatedPolygon;
+    },
+    [onOverlapFixed]
+  );
 
   const closeDrawer = useCallback(() => {
     onOpenChange?.(false);
   }, [onOpenChange]);
 
+  const openSaveConfirmationModal = useCallback(
+    (hasUnsavedChanges: boolean) => {
+      setIsSubmitWithUnsavedChangesModal(!isCreateMode && (hasUnsavedChanges || hasPendingOverlapFixSave));
+      setShowSaveConfirmationModal(true);
+    },
+    [hasPendingOverlapFixSave, isCreateMode]
+  );
+
+  const requestSaveConfirmationModal = useCallback(
+    (hasUnsavedChanges: boolean) => {
+      if (hasPendingOverlapFixSave && !isCreateMode && activeTab !== "edit") {
+        setActiveTab("edit");
+        setPendingOverlapFixSaveModal(true);
+        return;
+      }
+
+      openSaveConfirmationModal(hasUnsavedChanges);
+    },
+    [activeTab, hasPendingOverlapFixSave, isCreateMode, openSaveConfirmationModal]
+  );
+
   const handleSave = useCallback(
     async (onClose: () => void) => {
-      if (activeTab !== "edit" || saveEditContent == null) {
+      if (saveEditContent == null) {
         onClose();
         return;
       }
@@ -185,17 +256,21 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
       try {
         const saved = await saveEditContent();
         if (saved != null) {
+          setHasPendingOverlapFixSave(false);
           onClose();
         }
       } finally {
         setIsSaving(false);
       }
     },
-    [activeTab, saveEditContent]
+    [saveEditContent]
   );
 
   const handleSaveAndSubmit = useCallback(async () => {
-    await saveAndSubmitPolygonRef.current?.("");
+    const succeeded = (await saveAndSubmitPolygonRef.current?.("")) ?? false;
+    if (succeeded) {
+      setHasPendingOverlapFixSave(false);
+    }
   }, []);
 
   const handleSaveConfirmationModalChange = useCallback(
@@ -226,15 +301,14 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         return;
       }
 
-      if (hasUnsavedChanges) {
-        setIsSubmitWithUnsavedChangesModal(hasUnsavedChanges && !isCreateMode);
-        setShowSaveConfirmationModal(true);
+      if (hasUnsavedChanges || hasPendingOverlapFixSave) {
+        requestSaveConfirmationModal(hasUnsavedChanges);
         return;
       }
 
       setSubmitPayload({ polygons: [mapSitePolygonToTableRow(selectedPolygon, t)] });
     },
-    [isCreateMode, selectedPolygon, t]
+    [hasPendingOverlapFixSave, requestSaveConfirmationModal, selectedPolygon, t]
   );
 
   const handleDeleteConfirmationModalChange = useCallback(
@@ -268,119 +342,124 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
         maxH={isAdmin ? "calc(100vh - 3rem)" : "100vh"}
       >
         {({ onClose }) => (
-          <FilterPanel
-            title={polygon?.polygonUuid ? polygon?.polygonName ?? t("-") : t("New Polygon")}
-            variant="fixed"
-            onClose={onClose}
-            className="h-full w-full"
-            content={
-              <Flex className="h-full flex-col">
-                {polygon?.polygonUuid && (
-                  <TabBar
-                    key={`${polygon?.polygonUuid}-${defaultTab}`}
-                    onTabClick={(tabValue: string) => {
-                      setActiveTab(tabValue);
-                      if (tabValue === "comments") {
-                        ApiSlice.pruneCache("auditStatuses");
-                      }
-                    }}
-                    tabs={[
+          <>
+            <FilterPanel
+              title={polygon?.polygonUuid ? polygon?.polygonName ?? t("-") : t("New Polygon")}
+              variant="fixed"
+              onClose={onClose}
+              className="h-full"
+              content={
+                <Flex className="h-full flex-col">
+                  {polygon?.polygonUuid && (
+                    <TabBar
+                      key={`${drawerTabIdentityKey}-${defaultTab}`}
+                      onTabClick={(tabValue: string) => {
+                        setActiveTab(tabValue);
+                        if (tabValue === "comments") {
+                          ApiSlice.pruneCache("auditStatuses");
+                        }
+                      }}
+                      tabs={[
+                        {
+                          label: t("Edit"),
+                          value: "edit"
+                        },
+                        {
+                          label: t("System Validation"),
+                          value: "systemValidation"
+                        },
+                        {
+                          label: (
+                            <Text className="flex items-center gap-2">
+                              {t("Comments")}
+                              <NumberBadge count={unreadCommentCount} variant="primary" />
+                            </Text>
+                          ),
+                          value: "comments"
+                        }
+                      ]}
+                      defaultValue={defaultTab}
+                      variant="panel"
+                    />
+                  )}
+                  {activeTab === "edit" && (
+                    <PolygonEditContent
+                      polygon={selectedPolygon}
+                      onClose={onClose}
+                      onRegisterSave={registerSave}
+                      onRegisterDelete={registerDelete}
+                      onRegisterSubmit={registerSubmit}
+                      onRegisterSaveAndSubmit={registerSaveAndSubmit}
+                      onRegisterHasUnsavedChanges={registerHasUnsavedChanges}
+                      onRegisterPolygonName={registerPolygonName}
+                      onRegisterPlantStartDate={registerPlantStartDate}
+                      onRequestDeleteModal={handleRequestDeleteModal}
+                      onRequestSubmitModal={handleRequestSubmitModal}
+                      onRequestAnrUploadModal={mode => setAnrPlotsModal({ kind: "upload", mode })}
+                      onRequestAnrDeleteModal={() => setAnrPlotsModal({ kind: "delete" })}
+                      isAnrPlotsOperating={isUploadingAnrPlots || isDeletingAnrPlots}
+                      onRequestApproveModal={onRequestApproveModal}
+                      onRequestInformationModal={onRequestInformationModal}
+                      onSaved={onSaved}
+                      onValidationJobsStarted={onValidationJobsStarted}
+                      onPolygonUpdated={onPolygonUpdated}
+                      onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
+                      onDeletingChange={onDeletingChange}
+                    />
+                  )}
+                  {activeTab === "systemValidation" && (
+                    <PolygonSystemValidationContent
+                      siteUuid={resolvedSiteUuid}
+                      polygon={selectedPolygon}
+                      onOverlapFixed={handleOverlapFixed}
+                      onRunValidation={onRunValidation}
+                    />
+                  )}
+                  {activeTab === "comments" && (
+                    <PolygonCommentContent
+                      polygonUuid={selectedPolygon?.uuid}
+                      polygonStatus={selectedPolygon?.status}
+                    />
+                  )}
+                </Flex>
+              }
+              footer={
+                activeTab !== "comments" && (
+                  <ButtonGroup
+                    buttons={[
                       {
-                        label: t("Edit"),
-                        value: "edit"
+                        id: "polygon-edit-cancel",
+                        children: t("Cancel"),
+                        variant: "secondary",
+                        disabled: isSaving,
+                        onClick: onClose
                       },
                       {
-                        label: t("System Validation"),
-                        value: "systemValidation"
-                      },
-                      {
-                        label: (
-                          <Text className="flex items-center gap-2">
-                            {t("Comments")}
-                            {unreadCommentCount > 0 && (
-                              <NotificationIndicator bgColor={activeTab != "comments" ? "neutral.700" : undefined}>
-                                {unreadCommentCount}
-                              </NotificationIndicator>
-                            )}
-                          </Text>
-                        ),
-                        value: "comments"
+                        id: "polygon-edit-save",
+                        children: t("Save"),
+                        variant: "primary",
+                        loading: isSaving,
+                        disabled: isSaveDisabled || isSaving,
+                        onClick: () => {
+                          if (hasPendingOverlapFixSave && !isCreateMode) {
+                            requestSaveConfirmationModal(hasUnsavedChangesRef.current?.() ?? false);
+                            return;
+                          }
+
+                          if (activeTab !== "edit" || saveEditContent == null) {
+                            void handleSave(onClose);
+                            return;
+                          }
+
+                          requestSaveConfirmationModal(hasUnsavedChangesRef.current?.() ?? false);
+                        }
                       }
                     ]}
-                    defaultValue={defaultTab}
-                    variant="panel"
                   />
-                )}
-                {activeTab === "edit" && (
-                  <PolygonEditContent
-                    polygon={selectedPolygon}
-                    onClose={onClose}
-                    onRegisterSave={registerSave}
-                    onRegisterDelete={registerDelete}
-                    onRegisterSubmit={registerSubmit}
-                    onRegisterSaveAndSubmit={registerSaveAndSubmit}
-                    onRegisterHasUnsavedChanges={registerHasUnsavedChanges}
-                    onRegisterPolygonName={registerPolygonName}
-                    onRegisterPlantStartDate={registerPlantStartDate}
-                    onRequestDeleteModal={handleRequestDeleteModal}
-                    onRequestSubmitModal={handleRequestSubmitModal}
-                    onRequestAnrUploadModal={mode => setAnrPlotsModal({ kind: "upload", mode })}
-                    onRequestAnrDeleteModal={() => setAnrPlotsModal({ kind: "delete" })}
-                    isAnrPlotsOperating={isUploadingAnrPlots || isDeletingAnrPlots}
-                    onRequestApproveModal={onRequestApproveModal}
-                    onRequestInformationModal={onRequestInformationModal}
-                    onSaved={onSaved}
-                    onValidationJobsStarted={onValidationJobsStarted}
-                    onPolygonUpdated={onPolygonUpdated}
-                    onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
-                    onDeletingChange={onDeletingChange}
-                  />
-                )}
-                {activeTab === "systemValidation" && (
-                  <PolygonSystemValidationContent
-                    siteUuid={resolvedSiteUuid}
-                    polygon={selectedPolygon}
-                    onOverlapFixed={onOverlapFixed}
-                    onRunValidation={onRunValidation}
-                  />
-                )}
-                {activeTab === "comments" && (
-                  <PolygonCommentContent polygonUuid={selectedPolygon?.uuid} polygonStatus={selectedPolygon?.status} />
-                )}
-              </Flex>
-            }
-            footer={
-              activeTab !== "comments" && (
-                <ButtonGroup
-                  buttons={[
-                    {
-                      id: "polygon-edit-cancel",
-                      children: t("Cancel"),
-                      variant: "secondary",
-                      disabled: isSaving,
-                      onClick: onClose
-                    },
-                    {
-                      id: "polygon-edit-save",
-                      children: t("Save"),
-                      variant: "primary",
-                      loading: isSaving,
-                      disabled: isSaveDisabled || isSaving,
-                      onClick: () => {
-                        if (activeTab !== "edit" || saveEditContent == null) {
-                          void handleSave(onClose);
-                          return;
-                        }
-                        const hasUnsavedChanges = hasUnsavedChangesRef.current?.() ?? false;
-                        setIsSubmitWithUnsavedChangesModal(hasUnsavedChanges && !isCreateMode);
-                        setShowSaveConfirmationModal(true);
-                      }
-                    }
-                  ]}
-                />
-              )
-            }
-          />
+                )
+              }
+            />
+          </>
         )}
       </Drawer>
 

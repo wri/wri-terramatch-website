@@ -110,42 +110,12 @@ interface ExtraInfoItem {
   error?: string;
 }
 
-/** Maps data-completeness extraInfo `field` (API snake_case or camelCase) to canonical names. */
-const DATA_COMPLETENESS_FIELD_TO_CANONICAL: Record<string, string> = {
-  poly_name: "polyName",
-  polyName: "polyName",
-  practice: "practice",
-  target_sys: "targetSys",
-  targetSys: "targetSys",
-  distr: "distr",
-  num_trees: "numTrees",
-  numTrees: "numTrees",
-  plantstart: "plantStart",
-  plantStart: "plantStart",
-  planting_status: "plantingStatus",
-  plantingStatus: "plantingStatus"
-};
-
-export const normalizeDataCompletenessFieldName = (field: string): string | undefined =>
-  DATA_COMPLETENESS_FIELD_TO_CANONICAL[field];
-
 export const isOnlyNumTreesMissing = (extraInfo: any): boolean => {
   if (extraInfo == null) return false;
 
   try {
     const infoArray: ExtraInfoItem[] = extraInfo;
-
-    const dataFields: ExtraInfoItem[] = infoArray
-      .map((info): ExtraInfoItem | null => {
-        const canonical = normalizeDataCompletenessFieldName(info.field);
-        if (canonical == null) return null;
-        return { ...info, field: canonical };
-      })
-      .filter((item): item is ExtraInfoItem => item != null);
-
-    if (dataFields.length === 0) return false;
-
-    const invalidFields = dataFields.filter(info => !info.exists || info.error != null);
+    const invalidFields = infoArray.filter(info => !info.exists || info.error != null);
 
     return invalidFields.length === 1 && invalidFields[0].field === "numTrees";
   } catch {

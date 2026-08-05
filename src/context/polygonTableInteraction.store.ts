@@ -67,24 +67,20 @@ const subscribeGlobalHover = (listener: Listener) => {
   };
 };
 
-const applyHoveredPolygonUuid = (next: string | null) => {
+export const setPolygonTableHoveredUuid = (uuid: string | null) => {
   const prev = hoveredPolygonUuid;
-  if (prev === next) {
+  if (prev === uuid) {
     return;
   }
 
-  hoveredPolygonUuid = next;
+  hoveredPolygonUuid = uuid;
   if (prev != null) {
     notifyHover(prev);
   }
-  if (next != null) {
-    notifyHover(next);
+  if (uuid != null) {
+    notifyHover(uuid);
   }
   notifyGlobalHover();
-};
-
-export const setPolygonTableHoveredUuid = (uuid: string | null) => {
-  applyHoveredPolygonUuid(uuid);
 };
 
 export const setPendingPolygonFocusUuid = (uuid: string) => {

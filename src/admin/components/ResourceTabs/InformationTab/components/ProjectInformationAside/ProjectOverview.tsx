@@ -34,7 +34,7 @@ const ProjectOverview: FC = () => {
           </Grid>
 
           <Grid xs={4} item>
-            <Labeled label="Funding Programme">
+            <Labeled label="Framework">
               <FrameworkField prop="frameworkKey" />
             </Labeled>
           </Grid>
@@ -67,7 +67,11 @@ const ProjectOverview: FC = () => {
               <Button
                 variant="contained"
                 startIcon={<Check />}
-                disabled={record?.status === "approved" || record?.updateRequestStatus === "awaiting-approval"}
+                disabled={
+                  record?.status === "approved" ||
+                  record?.updateRequestStatus === "awaiting-approval" ||
+                  record?.updateRequestStatus === "draft"
+                }
                 onClick={() => setStatusModal("approved")}
               >
                 Approve

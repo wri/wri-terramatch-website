@@ -133,7 +133,7 @@ export const StrategyAreaInput = (props: StrategyAreaInputProps) => {
             }}
           >
             <Grid item xs={6} sx={{ borderRight: "1px solid #e0e0e0", p: 2 }}>
-              <Typography>{field.strategy}</Typography>
+              <Typography>{t(field.strategy)}</Typography>
             </Grid>
             <Grid item xs={5} sx={{ p: 2 }}>
               <Input

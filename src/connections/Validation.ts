@@ -42,8 +42,6 @@ export const fetchPolygonValidation = async (polygonUuid: string): Promise<Valid
     return undefined;
   }
 
-  ApiSlice.pruneCache("validations", [polygonUuid]);
-
   const response = await loadConnection(validationConnection, {
     id: polygonUuid,
     enabled: true

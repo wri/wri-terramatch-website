@@ -23,7 +23,7 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
+import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
 import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
@@ -49,7 +49,7 @@ const DisturbanceReportDataGrid: FC = () => (
       label="Status"
       sortable={false}
       render={({ status }: DisturbanceReportLightDto) => {
-        const { title } = getReportStatusOptions().find((option: any) => option.value === status) ?? {};
+        const { title } = getStatusOptions().find((option: any) => option.value === status) ?? {};
         return <CustomChipField label={title} />;
       }}
     />
@@ -118,7 +118,7 @@ export const DisturbanceReportList: FC = () => {
       key="status"
       label="Status"
       source="status"
-      choices={optionToChoices(getReportStatusOptions())}
+      choices={optionToChoices(getStatusOptions())}
       className="select-page-admin"
     />,
     <SelectInput

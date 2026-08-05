@@ -84,7 +84,7 @@ const MapMenuPanelItem: FC<MapMenuPanelItemProps> = ({
           if (Number(item.id) === COMPLETED_DATA_CRITERIA_ID && !item.status && item.extra_info != null) {
             const extraInfo = item.extra_info;
             const hasOnlyPlantingStatusError =
-              Array.isArray(extraInfo) && extraInfo.length === 1 && extraInfo[0]?.field === "planting_status";
+              Array.isArray(extraInfo) && extraInfo.length === 1 && extraInfo[0]?.field === "plantingStatus";
 
             if (hasOnlyPlantingStatusError) {
               return {

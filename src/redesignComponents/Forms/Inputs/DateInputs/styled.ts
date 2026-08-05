@@ -1,76 +1,7 @@
 import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 
 import { getThemedColor, getThemedFontSize, getThemedLineHeight } from "../../../../lib/theme";
-
-export const FieldContainer = styled.div<{ $size: "default" | "small"; $noMarginBottom?: boolean }>`
-  position: relative;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: ${({ $size }) => ($size === "small" ? "0.75rem" : "1rem")};
-  margin-bottom: ${({ $noMarginBottom }) => ($noMarginBottom ? "0" : "1.25rem")};
-`;
-
-export const FieldErrorBar = styled.div`
-  width: 0.1875rem;
-  height: 100%;
-  background-color: ${getThemedColor("error", 900)};
-  position: absolute;
-  top: 0;
-  left: 0;
-`;
-
-export const FieldLabel = styled.label<{ $size: "default" | "small"; $disabled?: boolean }>`
-  color: ${({ $disabled }) => getThemedColor("neutral", $disabled ? 600 : 900)};
-  font-size: ${({ $size }) => ($size === "small" ? "0.875rem" : "1rem")};
-  font-weight: 400;
-  line-height: ${({ $size }) => ($size === "small" ? "1.25rem" : "1.5rem")};
-  margin-bottom: 0.125rem;
-  display: flex;
-  align-items: flex-start;
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
-  cursor: text;
-  gap: 0.25rem;
-
-  span {
-    color: ${({ $disabled }) => getThemedColor("neutral", $disabled ? 600 : 700)};
-  }
-
-  .chakra-field__requiredIndicator {
-    margin-top: 0.25rem;
-    color: ${({ $disabled }) => ($disabled ? getThemedColor("neutral", 600) : getThemedColor("error", 500))} !important;
-  }
-`;
-
-export const RequiredIndicator = styled.span<{ $disabled?: boolean }>`
-  margin-top: 0.25rem;
-  color: ${({ $disabled }) => ($disabled ? getThemedColor("neutral", 600) : getThemedColor("error", 500))} !important;
-`;
-
-export const FieldCaption = styled.p<{ $size: "default" | "small"; $disabled?: boolean }>`
-  color: ${({ $disabled }) => getThemedColor("neutral", $disabled ? 600 : 700)};
-  font-size: ${({ $size }) => ($size === "small" ? "0.75rem" : "0.875rem")};
-  font-weight: 400;
-  line-height: ${({ $size }) => ($size === "small" ? "1rem" : "1.25rem")};
-
-  &:first-letter {
-    text-transform: uppercase;
-  }
-`;
-
-export const FieldErrorMessage = styled.p<{ $size: "default" | "small" }>`
-  color: ${getThemedColor("error", 900)};
-  font-size: ${({ $size }) => ($size === "small" ? "0.75rem" : "0.875rem")};
-  font-weight: 700;
-  line-height: ${({ $size }) => ($size === "small" ? "1rem" : "1.25rem")};
-  margin-top: 0.125rem;
-`;
+import { KEYBOARD_FOCUS_ATTRIBUTE } from "./useKeyboardFocusVisible";
 
 export const datePickerControlStyles = (size: "default" | "small" = "default") => css`
   font-family: inherit;
@@ -92,41 +23,47 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
     align-items: center;
     gap: 0.25rem;
     height: ${size === "small" ? "1.75rem" : "2.5rem"};
-    border: 0.0625rem solid ${getThemedColor("neutral", 300)};
+    border: 0.0625rem solid ${getThemedColor("neutral", 400)};
     border-radius: 0.25rem;
     padding: ${size === "small" ? "0.25rem 0.5rem" : "0.75rem"};
     background: ${getThemedColor("neutral", 100)};
     box-shadow: 0 0.0625rem 0.125rem 0 #0000000d;
     transition: border-color 0.15s;
+    outline: none;
   }
 
-  [data-part="control"]:active,
-  [data-state="open"] [data-part="control"],
-  [data-part="control"]:has(input:not(:placeholder-shown)) {
-    border: 0.0625rem solid ${getThemedColor("neutral", 700)};
+  /* Match DS TextInput: filled, open, or mouse focus → neutral 700 border */
+  &[data-filled] [data-part="control"],
+  &[data-open] [data-part="control"],
+  &:has([data-part="input"]:focus) [data-part="control"] {
+    border-color: ${getThemedColor("neutral", 700)};
   }
 
   &[data-invalid] [data-part="control"] {
-    border-color: ${getThemedColor("error", 500)};
+    border-color: ${getThemedColor("error", 900)};
   }
 
-  [data-part="control"]:focus-visible {
-    border: 0.125rem solid ${getThemedColor("neutral", 700)};
+  /* Primary ring only while navigating with the keyboard. A text input always matches the
+     native :focus-visible, so it would otherwise reappear when the field is re-focused after
+     a mouse selection; gate on the keyboard-modality attribute instead. */
+  html[${KEYBOARD_FOCUS_ATTRIBUTE}] &:has([data-part="input"]:focus) [data-part="control"] {
     outline: 0.125rem solid ${getThemedColor("primary", 700)};
     outline-offset: 0.125rem;
     box-shadow: 0 0 0 0.125rem ${getThemedColor("neutral", 100)}, rgba(0, 0, 0, 0.05) 0 0.125rem 0.125rem 0.25rem;
   }
 
-  &[data-invalid] [data-part="control"]:focus-visible {
-    border: 0.125rem solid ${getThemedColor("error", 900)};
-    outline: 0.125rem solid ${getThemedColor("primary", 700)};
-    outline-offset: 0.125rem;
-    box-shadow: 0 0 0 0.125rem ${getThemedColor("neutral", 100)}, rgba(0, 0, 0, 0.05) 0 0.125rem 0.125rem 0.25rem;
+  &[data-disabled] [data-part="control"] {
+    background-color: ${getThemedColor("neutral", 200)};
+    border-color: ${getThemedColor("neutral", 400)};
+    outline: none;
+    box-shadow: 0 0.0625rem 0.125rem 0 #0000000d;
+    cursor: not-allowed;
   }
 
   [data-part="input"] {
     border: none;
     outline: none;
+    box-shadow: none;
     background: transparent;
     font-size: ${size === "small" ? "0.875rem" : "1rem"};
     color: ${getThemedColor("neutral", 900)};
@@ -134,34 +71,53 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
     padding: 0;
   }
 
+  [data-part="input"]:focus,
+  [data-part="input"]:focus-visible {
+    outline: none;
+    box-shadow: none;
+    border: none;
+  }
+
   [data-part="input"]::placeholder {
     color: ${getThemedColor("neutral", 600)};
   }
 
-  [data-part="control"] > .chakra-icon {
-    display: flex;
+  /* Calendar trigger: a real <button> so the picker can be opened with the keyboard. */
+  [data-part="trigger"] {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
     color: ${getThemedColor("neutral", 700)};
     transition: color 0.15s;
     margin-right: 0.25rem;
+    cursor: pointer;
+    outline: none;
+    border-radius: 0.25rem;
   }
 
-  [data-part="control"]:hover > .chakra-icon {
+  [data-part="trigger"] .chakra-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  [data-part="control"]:hover [data-part="trigger"] {
     color: ${getThemedColor("primary", 600)};
   }
 
-  [data-part="control"][data-disabled] {
+  &[data-disabled] [data-part="trigger"] {
+    color: ${getThemedColor("neutral", 500)};
     cursor: not-allowed;
   }
 
-  [data-part="control"][data-disabled] > .chakra-icon {
-    color: ${getThemedColor("neutral", 500)};
-  }
-
-  [data-part="control"][data-disabled]:hover > .chakra-icon {
-    color: ${getThemedColor("neutral", 500)};
+  /* Trigger is a button, so native :focus-visible already means "keyboard only". */
+  [data-part="trigger"]:focus-visible {
+    outline: 0.125rem solid ${getThemedColor("primary", 700)};
+    outline-offset: 0.125rem;
   }
 `;
 
@@ -302,6 +258,14 @@ export const calendarBaseGlobalStyles = css`
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"]:hover {
     background: ${getThemedColor("primary", 200)};
+  }
+
+  /* Keyboard (arrow-key) navigation indicator for day cells. These are <button>s, so
+     :focus-visible only fires for keyboard nav — exactly what we want in the grid. */
+  [data-scope="date-picker"] [data-part="table-cell-trigger"]:focus-visible {
+    outline: 0.125rem solid ${getThemedColor("primary", 700)};
+    outline-offset: -0.125rem;
+    z-index: 2;
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-today] {

@@ -115,10 +115,7 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
             </ControlGroup>
           ) : null}
 
-          <ControlGroup
-            position="bottom-right"
-            className={dashboardMode === "modal" ? "bottom-2 z-[19]" : "-bottom-2 z-[19]"}
-          >
+          <ControlGroup position="bottom-right" className="z-[19]">
             <ZoomControl
               map={map}
               isFullscreen={isFullscreen}

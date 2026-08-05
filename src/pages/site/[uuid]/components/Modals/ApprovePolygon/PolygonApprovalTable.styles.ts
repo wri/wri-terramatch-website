@@ -1,4 +1,6 @@
-export const POLYGON_APPROVAL_TABLE_CSS = {
+import type { SystemStyleObject } from "@chakra-ui/react";
+
+export const POLYGON_APPROVAL_TABLE_CSS: SystemStyleObject = {
   "& >div>div": {
     maxHeight: "15rem",
     overflowY: "auto"

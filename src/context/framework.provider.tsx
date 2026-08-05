@@ -12,6 +12,7 @@ export enum Framework {
   FF = "fundo-flora",
   FF_1 = "fundo-flora-1",
   WCB = "wcb",
+  BARKA_FUND = "barka-fund",
 
   UNDEFINED = "undefined"
 }

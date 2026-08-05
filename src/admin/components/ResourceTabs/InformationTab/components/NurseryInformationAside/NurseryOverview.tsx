@@ -49,7 +49,11 @@ const NurseryOverview: FC = () => {
             <Button
               variant="contained"
               startIcon={<Check />}
-              disabled={record?.status === "approved" || record?.updateRequestStatus === "awaiting-approval"}
+              disabled={
+                record?.status === "approved" ||
+                record?.updateRequestStatus === "awaiting-approval" ||
+                record?.updateRequestStatus === "draft"
+              }
               onClick={() => setStatusModal("approved")}
             >
               Approve

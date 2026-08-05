@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { PropsWithChildren } from "react";
 import { FieldError } from "react-hook-form";
@@ -24,27 +25,30 @@ export interface InputWrapperProps {
   classNameError?: string;
 }
 
-const InputWrapper = (props: PropsWithChildren<InputWrapperProps>) => (
-  <div className={classNames(props.containerClassName, "relative space-y-2")}>
-    <InputLabel
-      htmlFor={props.inputId}
-      required={props.required}
-      feedbackRequired={props.feedbackRequired}
-      labelVariant={props.labelVariant}
-      className={props.labelClassName}
-      suffixLabelView={props.suffixLabelView}
-    >
-      {props.label}
-    </InputLabel>
-    <InputDescription id={props.inputId && `${props.inputId}-description`} className={props.descriptionClassName}>
-      {props.description}
-    </InputDescription>
-    {props.children}
-    <InputDescription id={props.inputId && `${props.inputId}-description`} className={props.descriptionClassName}>
-      {props.descriptionFooter}
-    </InputDescription>
-    <ErrorMessage error={props.error} className={classNames("mt-2", props.classNameError)} />
-  </div>
-);
+const InputWrapper = (props: PropsWithChildren<InputWrapperProps>) => {
+  const t = useT();
+  return (
+    <div className={classNames(props.containerClassName, "relative space-y-2")}>
+      <InputLabel
+        htmlFor={props.inputId}
+        required={props.required}
+        feedbackRequired={props.feedbackRequired}
+        labelVariant={props.labelVariant}
+        className={props.labelClassName}
+        suffixLabelView={props.suffixLabelView}
+      >
+        {t(props.label)}
+      </InputLabel>
+      <InputDescription id={props.inputId && `${props.inputId}-description`} className={props.descriptionClassName}>
+        {t(props.description)}
+      </InputDescription>
+      {props.children}
+      <InputDescription id={props.inputId && `${props.inputId}-description`} className={props.descriptionClassName}>
+        {t(props.descriptionFooter)}
+      </InputDescription>
+      <ErrorMessage error={props.error} className={classNames("mt-2", props.classNameError)} />
+    </div>
+  );
+};
 
 export default InputWrapper;

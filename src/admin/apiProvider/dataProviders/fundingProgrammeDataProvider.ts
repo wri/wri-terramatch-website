@@ -42,7 +42,7 @@ export const fundingProgrammeDataProvider: Partial<DataProvider> = {
   },
 
   async getOne<RecordType>(_: string, { id }: GetOneParams) {
-    const { loadFailure, data: fundingProgramme } = await loadFundingProgramme({ id, translated: false });
+    const { loadFailure, data: fundingProgramme } = await loadFundingProgramme({ id });
     if (loadFailure != null) {
       throw v3ErrorForRA("Funding Programme get fetch failed", loadFailure);
     }
@@ -51,9 +51,7 @@ export const fundingProgrammeDataProvider: Partial<DataProvider> = {
   },
 
   async getMany(_, params) {
-    const response = await Promise.all(
-      params.ids.map(id => loadFundingProgramme({ id: id as string, translated: false }))
-    );
+    const response = await Promise.all(params.ids.map(id => loadFundingProgramme({ id: id as string })));
     const failed = response.find(({ loadFailure }) => loadFailure != null);
     if (failed != null) {
       throw v3ErrorForRA("Funding Programme get fetch failed", failed.loadFailure);
@@ -70,7 +68,7 @@ export const fundingProgrammeDataProvider: Partial<DataProvider> = {
 
       // In update, do the cover upload first so that the update response shows the new cover media.
       await handleUploads(params, UPLOAD_KEYS, { entity: "fundingProgrammes", uuid: params.id as string });
-      const programme = await updateFundingProgramme(attributes, { id: params.id as string, translated: false });
+      const programme = await updateFundingProgramme(attributes, { id: params.id as string });
 
       return { data: { ...programme, id: programme.uuid } } as RecordType;
     } catch (err) {

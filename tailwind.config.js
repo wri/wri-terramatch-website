@@ -15,8 +15,7 @@ module.exports = {
         wide: "2500px",
         lg: "1900px",
         sm: "1200px",
-        mobile: { max: "1200px" },
-        wriDrawer: "1800px"
+        mobile: { max: "1200px" }
       },
       width: {
         "fit-content": "fit-content"
@@ -315,7 +314,7 @@ module.exports = {
   plugins: [
     require("@tailwindcss/line-clamp"),
     require("@headlessui/tailwindcss")({ prefix: "ui" }),
-    require("@tailwindcss/forms")
+    require("@tailwindcss/forms")({ strategy: "class" })
   ],
   safelist: [
     {

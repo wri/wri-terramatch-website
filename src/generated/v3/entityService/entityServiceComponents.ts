@@ -685,7 +685,8 @@ export type AboutSectionIndexQueryParams = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
-    | "wcb";
+    | "wcb"
+    | "barka-fund";
 };
 
 export type AboutSectionIndexError = Fetcher.ErrorWrapper<{
@@ -777,34 +778,19 @@ export type AboutSectionGetPathParams = {
   uuid: string;
 };
 
-export type AboutSectionGetError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
+export type AboutSectionGetError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * @example 404
+     */
+    statusCode: number;
+    /**
+     * @example Not Found
+     */
+    message: string;
+  };
+}>;
 
 export type AboutSectionGetResponse = {
   meta?: {
@@ -2759,23 +2745,23 @@ export type EntityIndexQueryParams = {
   /**
    * Filter projects by QA status for polygon dataset stage 1
    */
-  projectQaStatus1?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus1?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed";
   /**
    * Filter projects by QA status for polygon dataset stage 2
    */
-  projectQaStatus2?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus2?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed";
   /**
    * Filter projects by QA status for polygon dataset stage 3
    */
-  projectQaStatus3?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus3?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed";
   /**
    * Filter projects by QA status for polygon dataset stage 4
    */
-  projectQaStatus4?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus4?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed";
   /**
    * Filter projects by QA status for polygon dataset stage 5
    */
-  projectQaStatus5?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus5?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed";
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -3385,7 +3371,8 @@ export type EntityExportAllQueryParams = {
     | "hbf"
     | "fundo-flora"
     | "fundo-flora-1"
-    | "wcb";
+    | "wcb"
+    | "barka-fund";
   /**
    * Filter by project
    */
@@ -4423,23 +4410,23 @@ export type EntityAssociationIndexQueryParams = {
   /**
    * Filter projects by QA status for polygon dataset stage 1
    */
-  projectQaStatus1?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus1?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed";
   /**
    * Filter projects by QA status for polygon dataset stage 2
    */
-  projectQaStatus2?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus2?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed";
   /**
    * Filter projects by QA status for polygon dataset stage 3
    */
-  projectQaStatus3?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus3?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed";
   /**
    * Filter projects by QA status for polygon dataset stage 4
    */
-  projectQaStatus4?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus4?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed";
   /**
    * Filter projects by QA status for polygon dataset stage 5
    */
-  projectQaStatus5?: "due" | "no-data-submitted" | "not-applicable" | "qa-in-progress" | "qa-completed";
+  projectQaStatus5?: "no-data-submitted" | "no-data-expected" | "qa-in-progress" | "qa-completed";
   modelType?: string;
   /**
    * @default false
@@ -5479,41 +5466,19 @@ export type FormGetPathParams = {
   uuid: string;
 };
 
-export type FormGetQueryParams = {
-  /**
-   * @default true
-   */
-  translated?: boolean;
-};
-
-export type FormGetError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
+export type FormGetError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * @example 404
+     */
+    statusCode: number;
+    /**
+     * @example Not Found
+     */
+    message: string;
+  };
+}>;
 
 export type FormGetResponse = {
   meta?: {
@@ -5537,7 +5502,6 @@ export type FormGetResponse = {
 
 export type FormGetVariables = {
   pathParams: FormGetPathParams;
-  queryParams?: FormGetQueryParams;
 };
 
 /**
@@ -5731,20 +5695,20 @@ export type FormPushTranslationError = Fetcher.ErrorWrapper<
 export type FormPushTranslationResponse = {
   meta?: {
     /**
-     * @example formTranslations
+     * @example delayedJobs
      */
     resourceType?: string;
   };
   data?: {
     /**
-     * @example formTranslations
+     * @example delayedJobs
      */
     type?: string;
     /**
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.FormTranslationDto;
+    attributes?: Schemas.DelayedJobDto;
   };
 };
 
@@ -6035,10 +5999,6 @@ export type ApplicationGetQueryParams = {
    * sideloads to include
    */
   sideloads?: ("currentSubmission" | "fundingProgramme")[];
-  /**
-   * @default true
-   */
-  translated?: boolean;
 };
 
 export type ApplicationGetError = Fetcher.ErrorWrapper<
@@ -6276,13 +6236,6 @@ export const applicationHistoryGet = new V3ApiEndpoint<
   {}
 >("/applications/v3/applications/{uuid}/history", "GET");
 
-export type FundingProgrammesIndexQueryParams = {
-  /**
-   * @default true
-   */
-  translated?: boolean;
-};
-
 export type FundingProgrammesIndexError = Fetcher.ErrorWrapper<{
   status: 401;
   payload: {
@@ -6347,14 +6300,10 @@ export type FundingProgrammesIndexResponse = {
   }[];
 };
 
-export type FundingProgrammesIndexVariables = {
-  queryParams?: FundingProgrammesIndexQueryParams;
-};
-
 export const fundingProgrammesIndex = new V3ApiEndpoint<
   FundingProgrammesIndexResponse,
   FundingProgrammesIndexError,
-  FundingProgrammesIndexVariables,
+  {},
   {}
 >("/fundingProgrammes/v3/fundingProgrammes", "GET");
 
@@ -6428,13 +6377,6 @@ export type FundingProgrammeGetPathParams = {
   uuid: string;
 };
 
-export type FundingProgrammeGetQueryParams = {
-  /**
-   * @default true
-   */
-  translated?: boolean;
-};
-
 export type FundingProgrammeGetError = Fetcher.ErrorWrapper<
   | {
       status: 401;
@@ -6486,7 +6428,6 @@ export type FundingProgrammeGetResponse = {
 
 export type FundingProgrammeGetVariables = {
   pathParams: FundingProgrammeGetPathParams;
-  queryParams?: FundingProgrammeGetQueryParams;
 };
 
 export const fundingProgrammeGet = new V3ApiEndpoint<

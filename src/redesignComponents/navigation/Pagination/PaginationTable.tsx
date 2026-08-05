@@ -25,21 +25,8 @@ const PaginationTable: FC<PaginationTableProps> = ({
   variant
 }) => {
   return (
-    <Box
-      css={paginationTableStyles}
-      display="flex"
-      alignItems="center"
-      justifyContent="space-between"
-      width="100%"
-      gap={"12%"}
-    >
+    <Box css={paginationTableStyles} display="flex" alignItems="center" justifyContent="space-between" width="100%">
       <ItemCount
-        css={{
-          width: "auto",
-          alignItems: "center",
-          justifyContent: "center",
-          "& > div": { width: "auto" }
-        }}
         pageSize={pageSize}
         currentPage={currentPage}
         totalItems={totalItems}
@@ -52,6 +39,7 @@ const PaginationTable: FC<PaginationTableProps> = ({
         currentPage={currentPage}
         onPageChange={onPageChange}
         variant={variant}
+        className="flex justify-end"
       />
     </Box>
   );

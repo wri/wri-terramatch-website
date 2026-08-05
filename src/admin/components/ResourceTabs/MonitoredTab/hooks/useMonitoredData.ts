@@ -22,6 +22,7 @@ export type MonitoredIndicator = {
   createdAt?: string;
   polygonUuid?: string;
   siteId?: string;
+  data?: Record<string, number>;
 };
 
 const dataPolygonOverview = [

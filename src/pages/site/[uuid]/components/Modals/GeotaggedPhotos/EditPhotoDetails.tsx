@@ -229,11 +229,10 @@ const EditPhotoDetails: FC<EditPhotoDetailsProps> = ({ data, open, onClose }) =>
             },
             {
               id: "delete",
-              variant: "secondary",
+              variant: "negative",
               children: t("Delete"),
-              typeVariant: "negative",
               classNameContainer: "w-[32%]",
-              className: "!w-full",
+              className: "!w-[32%]",
               onClick: () => {
                 deleteMedia(data.uuid);
                 showToast({

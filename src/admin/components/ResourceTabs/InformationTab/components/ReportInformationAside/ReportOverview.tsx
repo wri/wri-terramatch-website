@@ -82,12 +82,14 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             <Button
               variant="contained"
               startIcon={<Check />}
-              disabled={reportActionDisabled || record?.status === "approved"}
+              disabled={
+                reportActionDisabled || record?.status === "approved" || record?.updateRequestStatus === "draft"
+              }
               onClick={() => setStatusModal("approved")}
             >
               Approve
             </Button>
-            {DECLARED_ENV !== "prod" && (
+            {DECLARED_ENV !== "prod" && parent?.label !== "Disturbance Report" && (
               <Button variant="outlined" onClick={() => setStatusModal("due")}>
                 Reset Report
               </Button>

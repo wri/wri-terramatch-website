@@ -1,5 +1,5 @@
 import type { DateValue } from "@ark-ui/react";
-import { Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
@@ -82,7 +82,7 @@ type PolygonEditContentProps = {
   onRegisterSave?: (saveHandler: (options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) => void;
   onRegisterDelete: (deleteHandler: () => Promise<void>) => void;
   onRegisterSubmit: (submitHandler: (comment: string) => Promise<void>) => void;
-  onRegisterSaveAndSubmit?: (saveAndSubmitHandler: (comment: string) => Promise<void>) => void;
+  onRegisterSaveAndSubmit?: (saveAndSubmitHandler: (comment: string) => Promise<boolean>) => void;
   onRegisterHasUnsavedChanges?: (hasUnsavedChanges: () => boolean) => void;
   onRegisterPolygonName?: (getPolygonName: () => string) => void;
   onRegisterPlantStartDate?: (hasPlantStartDate: () => boolean) => void;
@@ -865,10 +865,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   );
 
   const handleSaveAndSubmitPolygon = useCallback(
-    async (comment: string) => {
+    async (comment: string): Promise<boolean> => {
       const savedPolygon = await savePolygonData({ closeOnSave: false, deferSuccessToast: true });
       if (savedPolygon == null) {
-        return;
+        return false;
       }
 
       showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1), POLYGON_TOAST_IDS.submitting);
@@ -877,6 +877,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       if (submitted) {
         completePolygonProgressToast(POLYGON_TOAST_IDS.submitting, toastLabels.savedAndSubmittedComplete);
       }
+      return submitted;
     },
     [savePolygonData, submitPolygonWithData, t, toastLabels.savedAndSubmittedComplete]
   );
@@ -1111,12 +1112,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                       "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time."
                     )}
                   </Text>
-                  <Button
-                    variant="borderless"
-                    typeVariant="negative"
-                    disabled={isAnrPlotsOperating}
-                    onClick={() => onRequestAnrDeleteModal?.()}
-                  >
+                  <Button variant="negative" disabled={isAnrPlotsOperating} onClick={() => onRequestAnrDeleteModal?.()}>
                     {t("Delete Plots")}
                   </Button>
                 </>
@@ -1172,29 +1168,24 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             columns={[
               {
                 key: "name",
-                label: t("Version Name")
-              },
-              {
-                key: "createdAt",
-                label: t("Date")
-              },
-              {
-                key: "isActive",
-                label: t("State")
-              }
-            ]}
-            data={versionRows}
-            renderRow={row => (
-              <TableRow key={row.uuid}>
-                <TableCell>
+                label: t("Version Name"),
+                cell: (row: PolygonVersionRow) => (
                   <Text title={row.versionName ?? row.name ?? t("Unnamed Polygon")} className="max-w-[10rem] truncate">
                     {row.versionName ?? row.name ?? t("Unnamed Polygon")}
                   </Text>
-                </TableCell>
-                <TableCell>
+                )
+              },
+              {
+                key: "createdAt",
+                label: t("Date"),
+                cell: (row: PolygonVersionRow) => (
                   <Text>{row.createdAt != null ? format(new Date(row.createdAt), "MM/dd/yyyy") : "-"}</Text>
-                </TableCell>
-                <TableCell>
+                )
+              },
+              {
+                key: "isActive",
+                label: t("State"),
+                cell: (row: PolygonVersionRow) => (
                   <MultiActionButton
                     mainActionLabel={row.isActive ? t("Active") : t("Inactive")}
                     mainActionOnClick={() => {
@@ -1213,16 +1204,17 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
                     size="small"
                     variant="secondary"
                   />
-                </TableCell>
-              </TableRow>
-            )}
+                )
+              }
+            ]}
+            data={versionRows}
           />
           {isLoadingVersions ? <LoadingTable text="Loading Versions" /> : null}
         </Accordion>
       </Flex>
       {!isCreateMode && (
         <>
-          <Flex className="w-full justify-center pb-2 wriDrawer:pb-0">
+          <Flex className="w-full justify-center pb-2">
             <FloatingActionToolbar
               className="bg-theme-neutral-200"
               items={[
