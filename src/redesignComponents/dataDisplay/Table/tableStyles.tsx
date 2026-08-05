@@ -46,9 +46,10 @@ export const getTableWrapperStyles = (
     "& table tbody tr": {
       borderBottom: `0.125rem solid ${getThemedColor("neutral", 300)}`
     },
-    "& table tbody tr:hover, & table tbody tr:hover td[data-sticky]": {
-      backgroundColor: getThemedColor("primary", 100)
-    },
+    "& table tbody tr:hover, & table tbody tr:hover td[data-sticky], & table tbody tr[data-hovered], & table tbody tr[data-hovered] td[data-sticky]":
+      {
+        backgroundColor: getThemedColor("primary", 100)
+      },
 
     "& button[data-scope='pagination'][data-part='item']:not([data-selected]):not([aria-current='page'])": {
       color: `${getThemedColor("neutral", 600)} !important`,
@@ -94,10 +95,6 @@ export const getTableWrapperStyles = (
     "& [data-scope='select'][data-part='value-text'] p": {
       fontWeight: "700 !important",
       color: `${getThemedColor("neutral", 700)} !important`
-    },
-
-    "& div:has(.ds-select-input-container) > p": {
-      textTransform: "lowercase !important"
     },
 
     "& [data-scope='select'][data-part='trigger']": {

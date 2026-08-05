@@ -5,8 +5,8 @@ import type { FC, KeyboardEvent, MouseEvent, ReactNode } from "react";
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
 import { MenuItemOption } from "@/redesignComponents/actions/Buttons/Menu/MenuCustom.types";
 import { ChevronDownIcon, MoreVertIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
-import Badge from "@/redesignComponents/status/Badge/BadgeCustom";
-import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
+import Badge from "@/redesignComponents/status/Badge/Badge";
+import NumberBadge from "@/redesignComponents/status/Badge/NumberBadge";
 
 import SideNavigationLinkItem from "./SideNavigationLinkItem";
 
@@ -91,17 +91,13 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
 
   const itemMainContent = (
     <Flex alignItems="center" gap={2}>
-      <Badge hasNotification={isCollapsed} notificationCount={notificationValue}>
+      <Badge size="small" notificationCount={isCollapsed && notificationValue > 0 ? notificationValue : undefined}>
         {icon}
       </Badge>
       {isCollapsed ? null : (
         <>
           <Text textStyle="400">{label}</Text>
-          {notificationValue > 0 ? (
-            <TextBadge variant="error" className="py-0">
-              {notificationValue}
-            </TextBadge>
-          ) : null}
+          <NumberBadge count={notificationValue} />
         </>
       )}
     </Flex>
