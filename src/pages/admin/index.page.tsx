@@ -172,6 +172,8 @@ const AdminPanel: FC = () => {
         <Resource
           name={modules.aboutSections.ResourceName}
           list={modules.aboutSections.List}
+          create={modules.aboutSections.Create}
+          edit={modules.aboutSections.Edit}
           icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
           options={{ label: "About Sections" }}
         />
