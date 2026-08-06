@@ -9,8 +9,20 @@ import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { AboutSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
+const provideDefaults = (formData: Partial<AboutSectionDto>): AboutSectionDto => ({
+  id: formData.id ?? "",
+  type: formData.type ?? "project",
+  frameworks: formData.frameworks ?? null,
+  header: formData.header ?? "<empty header>",
+  title: formData.title ?? null,
+  description: formData.description ?? "&lt;empty description&gt;",
+  contactSupportMessage: formData.contactSupportMessage ?? "<empty contact support message>",
+  contactSupportSubject: formData.contactSupportSubject ?? "<empty contact support subject>",
+  links: formData.links ?? []
+});
+
 const AboutSectionForm: FC = () => {
-  const { watch } = useFormContext<AboutSectionDto>();
+  const { watch } = useFormContext<Partial<AboutSectionDto>>();
   return (
     <PageContent>
       <Flex gap={7} className="flex-row">
@@ -21,7 +33,7 @@ const AboutSectionForm: FC = () => {
         </PageItem>
         <PageItem title="About Section Preview">
           <SimpleDivider />
-          <AboutPageItemDisplay aboutSection={watch()} />
+          <AboutPageItemDisplay aboutSection={provideDefaults(watch())} />
         </PageItem>
       </Flex>
     </PageContent>
