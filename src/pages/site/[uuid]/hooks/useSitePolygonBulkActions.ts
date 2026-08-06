@@ -167,6 +167,8 @@ export const useSitePolygonBulkActions = ({
   const [fixingOverlapsCount, setFixingOverlapsCount] = useState(0);
   const [isDeletingPolygons, setIsDeletingPolygons] = useState(false);
   const [deletingPolygonCount, setDeletingPolygonCount] = useState(0);
+  const [isSubmittingPolygons, setIsSubmittingPolygons] = useState(false);
+  const [submittingPolygonCount, setSubmittingPolygonCount] = useState(0);
 
   const refreshPolygonData = useCallback(
     async ({
@@ -457,6 +459,11 @@ export const useSitePolygonBulkActions = ({
     setDeletingPolygonCount(count);
   }, []);
 
+  const handlePolygonSubmittingChange = useCallback((isSubmitting: boolean, count = 0) => {
+    setIsSubmittingPolygons(isSubmitting);
+    setSubmittingPolygonCount(count);
+  }, []);
+
   const clearValidationUiAfterOverlapFix = useCallback(
     async (geometryPolygonUuids: string[]) => {
       onValidationPendingClear?.();
@@ -653,6 +660,9 @@ export const useSitePolygonBulkActions = ({
         return;
       }
 
+      setIsSubmittingPolygons(true);
+      setSubmittingPolygonCount(sitePolygonUuids.length);
+
       try {
         const response = await bulkUpdateSitePolygonStatus(
           sitePolygonUuids,
@@ -714,6 +724,9 @@ export const useSitePolygonBulkActions = ({
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
         showToast({ label: t("Error submitting polygons"), type: "error", placement: "bottom", duration: 5000 });
         throw error;
+      } finally {
+        setIsSubmittingPolygons(false);
+        setSubmittingPolygonCount(0);
       }
     },
     [
@@ -1067,9 +1080,11 @@ export const useSitePolygonBulkActions = ({
     isDeletingPolygons,
     isDownloadingSelectedPolygons,
     isFixingOverlaps,
+    isSubmittingPolygons,
     isValidatingPolygons,
     deletingPolygonCount,
     fixingOverlapsCount,
+    submittingPolygonCount,
     validatingPolygonCount,
     approvePolygons,
     requestInformationForPolygons,
@@ -1088,6 +1103,7 @@ export const useSitePolygonBulkActions = ({
     handleOpenSubmitPolygonsModal,
     handlePolygonApprovedModalChange,
     handlePolygonDeletingChange,
+    handlePolygonSubmittingChange,
     handlePolygonSubmittedModalChange,
     handleProceedToBulkSubmitConfirmation,
     handleRunValidation,
