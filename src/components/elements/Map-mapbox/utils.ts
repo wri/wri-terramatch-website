@@ -48,10 +48,6 @@ export const formatFileName = (inputString: string): string => {
   return inputString.toLowerCase().replace(/\s+/g, "_");
 };
 
-export const getPolygonMapLoadingLabel = (t: (key: string) => string, polygonCount: number): string => {
-  return polygonCount === 1 ? t("Loading Polygon") : t("Loading Polygons");
-};
-
 export const extractGeoJsonFromResponse = (
   response: GeoJsonExportDto | { data?: { attributes?: GeoJsonExportDto } } | undefined
 ): GeoJSON.FeatureCollection | undefined => {
