@@ -22,7 +22,7 @@ import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 import MapPolygonPanel from "../../MapPolygonPanel/MapPolygonPanel";
-import { getPolygonMapLoadingLabel, parsePolygonDataV3, storePolygon } from "../utils";
+import { parsePolygonDataV3, storePolygon } from "../utils";
 import LoadingMap from "./LoadingMap";
 
 interface EntityAreaProps {
@@ -96,8 +96,7 @@ const OverviewMapArea = ({
     data: polygonsData,
     refetch,
     polygonCriteriaMap,
-    loading,
-    total: polygonLoadTotal
+    loading
   } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortField, sortDirection, validFilter);
 
   const hasPolygons = polygonsData.length > 0;
@@ -213,13 +212,6 @@ const OverviewMapArea = ({
     [loading, polygonsData.length, isPolygonTilesLoading]
   );
 
-  const polygonCount = useMemo(
-    () => (polygonLoadTotal > 0 ? polygonLoadTotal : polygonsData.length),
-    [polygonLoadTotal, polygonsData.length]
-  );
-
-  const loadingText = useMemo(() => getPolygonMapLoadingLabel(t, polygonCount), [t, polygonCount]);
-
   const validationType = useMemo(() => {
     if (!isSitesPolygonPanelEnabled) return "";
     return editPolygon.isOpen ? "individualValidation" : "bulkValidation";
@@ -269,7 +261,7 @@ const OverviewMapArea = ({
           className
         )}
       >
-        <LoadingMap loading={isMapLoading} text={loadingText} />
+        <LoadingMap loading={isMapLoading} />
         <MapContainer
           showBaseMapControl={false}
           championsMap={true}
