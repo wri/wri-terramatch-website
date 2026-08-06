@@ -82,6 +82,14 @@ const AdminPanel: FC = () => {
               create={modules.form.Create}
               recordRepresentation={record => record?.project_name}
             />
+            <Resource
+              name={modules.aboutSections.ResourceName}
+              list={modules.aboutSections.List}
+              create={modules.aboutSections.Create}
+              edit={modules.aboutSections.Edit}
+              icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
+              options={{ label: "About Sections" }}
+            />
           </>
         )}
         <Resource
@@ -168,14 +176,6 @@ const AdminPanel: FC = () => {
           edit={modules.impactStories.Edit}
           icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
           options={{ label: "Impact Stories" }}
-        />
-        <Resource
-          name={modules.aboutSections.ResourceName}
-          list={modules.aboutSections.List}
-          create={modules.aboutSections.Create}
-          edit={modules.aboutSections.Edit}
-          icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
-          options={{ label: "About Sections" }}
         />
         <Resource
           name={modules.srpReport.ResourceName}
