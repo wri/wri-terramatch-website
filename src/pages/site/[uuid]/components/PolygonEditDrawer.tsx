@@ -44,6 +44,7 @@ interface PolygonEditDrawerProps {
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
+  onSubmittingChange?: (isSubmitting: boolean, count?: number) => void;
   onRequestApproveModal?: () => void;
   onRequestInformationModal?: () => void;
   defaultTab?: PolygonEditDrawerTab;
@@ -61,6 +62,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
   onDeletingChange,
+  onSubmittingChange,
   onRequestApproveModal,
   onRequestInformationModal,
   defaultTab = "edit"
@@ -405,6 +407,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                       onPolygonUpdated={onPolygonUpdated}
                       onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}
                       onDeletingChange={onDeletingChange}
+                      onSubmittingChange={onSubmittingChange}
                     />
                   )}
                   {activeTab === "systemValidation" && (
