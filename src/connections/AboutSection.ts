@@ -1,10 +1,13 @@
 import { DataConnection, v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionLoader } from "@/connections/util/connectionShortcuts";
+import { resourceCreator, resourceUpdater } from "@/connections/util/resourceMutator";
 import { Framework } from "@/context/framework.provider";
 import {
+  aboutSectionCreate,
   aboutSectionGet,
   aboutSectionIndex,
-  AboutSectionIndexQueryParams
+  AboutSectionIndexQueryParams,
+  aboutSectionUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { AboutSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
@@ -38,5 +41,12 @@ export const useAboutSection = ({
 const aboutSectionConnection = v3Resource("aboutSections", aboutSectionGet)
   .singleResource<AboutSectionDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
   .enabledProp()
+  .update(aboutSectionUpdate)
   .buildConnection();
 export const loadAboutSection = connectionLoader(aboutSectionConnection);
+export const updateAboutSection = resourceUpdater(aboutSectionConnection);
+
+const createAboutSectionConnection = v3Resource("aboutSections", aboutSectionCreate)
+  .create<AboutSectionDto>()
+  .buildConnection();
+export const createAboutSection = resourceCreator(createAboutSectionConnection);

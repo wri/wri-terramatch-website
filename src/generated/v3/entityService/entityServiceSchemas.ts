@@ -325,7 +325,7 @@ export type LinkDto = {
 export type AboutSectionDto = {
   id: string;
   type: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
-  frameworks:
+  frameworks?:
     | (
         | "terrafund"
         | "terrafund-landscapes"
@@ -341,7 +341,7 @@ export type AboutSectionDto = {
       )[]
     | null;
   header: string;
-  title: string | null;
+  title?: string | null;
   /**
    * The content of the about section in semantic HTML to be parsed into design system components on the client.
    */
@@ -349,6 +349,63 @@ export type AboutSectionDto = {
   contactSupportMessage: string;
   contactSupportSubject: string;
   links: LinkDto[];
+};
+
+export type StoreLinkAttributes = {
+  title: string;
+  url: string;
+  id?: string;
+};
+
+export type StoreAboutSectionAttributes = {
+  type: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
+  frameworks?:
+    | (
+        | "terrafund"
+        | "terrafund-landscapes"
+        | "enterprises"
+        | "epa-ghana-pilot"
+        | "terrafund-3"
+        | "ppc"
+        | "hbf"
+        | "fundo-flora"
+        | "fundo-flora-1"
+        | "wcb"
+        | "barka-fund"
+      )[]
+    | null;
+  header: string;
+  title?: string | null;
+  /**
+   * The content of the about section in semantic HTML to be parsed into design system components on the client.
+   */
+  description: string;
+  contactSupportMessage: string;
+  contactSupportSubject: string;
+  id?: string;
+  links: StoreLinkAttributes[];
+};
+
+export type CreateAboutSectionData = {
+  type: "aboutSections";
+  attributes: StoreAboutSectionAttributes;
+};
+
+export type CreateAboutSectionBody = {
+  data: CreateAboutSectionData;
+};
+
+export type UpdateAboutSectionData = {
+  type: "aboutSections";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: StoreAboutSectionAttributes;
+};
+
+export type UpdateAboutSectionBody = {
+  data: UpdateAboutSectionData;
 };
 
 export type TaskLightDto = {

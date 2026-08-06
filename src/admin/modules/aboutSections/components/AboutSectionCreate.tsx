@@ -5,7 +5,7 @@ import { Create, SimpleForm } from "react-admin";
 import AboutSectionForm from "@/admin/modules/aboutSections/components/AboutSectionForm";
 
 const AboutSectionCreate: FC = () => (
-  <Create>
+  <Create sx={{ marginBottom: 2, maxWidth: "100%" }}>
     <Typography variant="h5" marginX="1rem" marginTop="1.75rem">
       Create About Section
     </Typography>

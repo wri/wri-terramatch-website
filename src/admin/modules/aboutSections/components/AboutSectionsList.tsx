@@ -4,9 +4,9 @@ import { CreateButton, Datagrid, FilterButton, FunctionField, SelectInput, TextF
 
 import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import { List } from "@/admin/components/AdminList";
+import { SECTION_TYPE_CHOICES } from "@/admin/modules/aboutSections/util";
 import Text from "@/components/elements/Text/Text";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
-import { AboutSectionConstants } from "@/generated/v3/entityService/entityServiceConstants";
 import { AboutSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 const ListActionsAboutSections: FC = () => (
@@ -17,13 +17,7 @@ const ListActionsAboutSections: FC = () => (
 );
 
 const FILTERS = [
-  <SelectInput
-    key="type"
-    label="Type"
-    source="type"
-    choices={AboutSectionConstants.TYPES.map(type => ({ id: type, name: type }))}
-    className="select-page-admin"
-  />
+  <SelectInput key="type" label="Type" source="type" choices={SECTION_TYPE_CHOICES} className="select-page-admin" />
 ];
 
 const AboutSectionsList: FC = () => {
