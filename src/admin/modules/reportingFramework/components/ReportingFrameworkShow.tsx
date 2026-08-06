@@ -73,6 +73,15 @@ export const ReportingFrameworkShow: FC = () => {
         >
           <TextField source="title" />
         </ReferenceField>
+
+        <ReferenceField
+          source="disturbanceReportFormUuid"
+          reference={modules.form.ResourceName}
+          label="Disturbance reporting flow"
+          emptyText="Not provided"
+        >
+          <TextField source="title" />
+        </ReferenceField>
       </SimpleShowLayout>
     </Show>
   );
