@@ -16,6 +16,7 @@ import { ProjectUpdateAttributes } from "@/generated/v3/entityService/entityServ
 import { usePolygonSubmissionStatusLabels } from "@/hooks/translation/usePolygonSubmissionStatusLabels";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import ApiSlice from "@/store/apiSlice";
+import { OptionValue } from "@/types/common";
 
 type Props = {
   projectUuid: string;
@@ -44,10 +45,20 @@ const PolygonHandoffPanel: FC<Props> = ({ projectUuid, polygonDataSubmission, re
   const [baseline, setBaseline] = useState(readyForBaseline === true);
   const [comment, setComment] = useState("");
 
+  const canSetBaseline = submission === "all-polygons-received";
+
   useEffect(() => {
     setSubmission(polygonDataSubmission ?? "no-polygons-submitted");
     setBaseline(readyForBaseline === true);
   }, [polygonDataSubmission, readyForBaseline]);
+
+  const handleSubmissionChange = useCallback((value: OptionValue[]) => {
+    const next = String(value[0] ?? "no-polygons-submitted");
+    setSubmission(next);
+    if (next !== "all-polygons-received") {
+      setBaseline(false);
+    }
+  }, []);
 
   const handleSubmit = useCallback(() => {
     const trimmed = comment.trim();
@@ -56,7 +67,7 @@ const PolygonHandoffPanel: FC<Props> = ({ projectUuid, polygonDataSubmission, re
       : "no-polygons-submitted";
     const attrs: ProjectUpdateAttributes = {
       polygonDataSubmission: submissionValue,
-      readyForBaseline: baseline,
+      readyForBaseline: submissionValue === "all-polygons-received" && baseline,
       ...(trimmed !== "" ? { polygonHandoffComment: trimmed } : {})
     };
     setIsPolygonHandoffNotification(true);
@@ -97,10 +108,17 @@ const PolygonHandoffPanel: FC<Props> = ({ projectUuid, polygonDataSubmission, re
         label={t("Polygon Submission Status")}
         options={options}
         value={[submission]}
-        onChange={v => setSubmission(String(v[0] ?? "no-polygons-submitted"))}
+        onChange={handleSubmissionChange}
       />
       <FormControlLabel
-        control={<Switch checked={baseline} onChange={(_, checked) => setBaseline(checked)} color="primary" />}
+        control={
+          <Switch
+            checked={baseline}
+            onChange={(_, checked) => setBaseline(checked)}
+            color="primary"
+            disabled={!canSetBaseline}
+          />
+        }
         label={<Text variant="text-14-semibold">{t("Project Ready for Baseline")}</Text>}
       />
       <TextField
