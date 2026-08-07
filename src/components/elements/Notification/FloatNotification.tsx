@@ -40,20 +40,38 @@ const listOfPolygonsFixed = (data: Record<string, any> | null) => {
   }
 };
 
+const INDICATORS_WHERE_EMPTY_RESPONSE_IS_SUCCESS = new Set(["treeCoverLoss", "treeCoverLossFires"]);
+const INDICATORS_WITH_NO_DATA_SUMMARY_LINE = new Set([
+  "restorationByEcoRegion",
+  "restorationByStrategy",
+  "restorationByLandUse"
+]);
+
 const getIndicatorCalculationValues = (data: Record<string, any> | null) => {
   if (data?.data == null || typeof data.data !== "object" || data.data.totalPolygons == null) {
     return null;
   }
 
+  const slug = typeof data.data.slug === "string" ? data.data.slug : null;
+  const countsEmptyResponseAsSuccess = slug != null && INDICATORS_WHERE_EMPTY_RESPONSE_IS_SUCCESS.has(slug);
+  const showNoDataLine = slug != null && INDICATORS_WITH_NO_DATA_SUMMARY_LINE.has(slug);
+  const processingSuccessful = countsEmptyResponseAsSuccess
+    ? (data.data.dataFound ?? 0) + (data.data.noData ?? 0)
+    : data.data.dataFound ?? 0;
+
+  const failedDisplay =
+    data.data.failureMessage != null
+      ? `<strong style="font-weight: 600; color: red;">${data.data.failureMessage}</strong>`
+      : (data.data.failed ?? 0) > 0
+      ? String(data.data.failed)
+      : "-";
+
   return `
     Total Polygons Processed: ${data.data.totalPolygons} <br />
-    Successful (Data Found): ${data.data.dataFound} <br />
-    No Data Available (Coverage Gap): ${data.data.noData} <br />
-    Failed: ${
-      data.data.failureMessage
-        ? `<strong style="font-weight: 600; color: red;">${data.data.failureMessage}</strong>`
-        : "-"
-    } <br />`;
+    Processing Successful: ${processingSuccessful} <br />
+    ${
+      showNoDataLine ? `No Data Returned: ${data.data.noData ?? 0} <br />` : ""
+    }Processing Failed: ${failedDisplay} <br />`;
 };
 
 const getFailedPolygonUuidsFromIndicatorPayload = (data: Record<string, any> | null): string[] => {
