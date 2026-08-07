@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
@@ -8,6 +9,7 @@ import { PlusIcon, ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 import Toolbar from "@/redesignComponents/navigation/Toolbar/Toolbar";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
+import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
 type ReportsIndexHeaderProps = {
   activeTab: string;
@@ -15,9 +17,27 @@ type ReportsIndexHeaderProps = {
   onTabChange: (tab: string) => void;
 };
 
+const DEFAULT_FILTERS = ["Site Reports", "Draft", "31/08/2026"];
+
 const ReportsIndexHeader = ({ activeTab, selectedViewLabel, onTabChange }: ReportsIndexHeaderProps) => {
   const t = useT();
   const router = useRouter();
+  const [filtersByTab, setFiltersByTab] = useState<Record<string, string[]>>({
+    "progress-reports": DEFAULT_FILTERS,
+    "additional-reports": DEFAULT_FILTERS
+  });
+  const selectedFilters = filtersByTab[activeTab] ?? DEFAULT_FILTERS;
+
+  const removeFilter = (filterToRemove: string) => {
+    setFiltersByTab(current => ({
+      ...current,
+      [activeTab]: (current[activeTab] ?? DEFAULT_FILTERS).filter(filter => filter !== filterToRemove)
+    }));
+  };
+
+  const clearFilters = () => {
+    setFiltersByTab(current => ({ ...current, [activeTab]: [] }));
+  };
 
   return (
     <div className="bg-white">
@@ -69,6 +89,22 @@ const ReportsIndexHeader = ({ activeTab, selectedViewLabel, onTabChange }: Repor
             className="mobile:!w-full"
           />
         }
+      />
+      <ToolbarTable
+        className="!bg-theme-neutral-200 !px-6 !pb-6 !pt-5"
+        classNameContentLeft="w-full"
+        search={{
+          placeholder: t("Search projects, sites, nurseries"),
+          options: [],
+          displayResults: "none",
+          count: 5,
+          label: t("Reports")
+        }}
+        selectedFilters={selectedFilters.map(label => ({
+          label,
+          onRemove: () => removeFilter(label)
+        }))}
+        onClearFilters={clearFilters}
       />
     </div>
   );

@@ -26,7 +26,6 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   selectedFilters,
   classNameContentLeft
 }) => {
-  console.log("search", search);
   const t = useT();
   const queryRef = useRef("");
 
@@ -92,7 +91,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
 
           <div className="flex min-w-[0] items-center gap-4 mobile:w-full">
             {filters != null && filters.length > 0 ? (
-              <div className="text-14 flex flex-wrap items-center gap-3 text-theme-neutral-900">
+              <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-3">
                 {t("Filter by:")}
 
                 {filters.map((filter, index) => (
