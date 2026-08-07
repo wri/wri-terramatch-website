@@ -16,7 +16,7 @@ exports[`Storyshots Components/Elements/LandingPage/Footer Default 1`] = `
     className="order-3 max-w-[294px] md:order-2 text-heading-200"
     data-testid="txt"
   >
-    WRI would like to thank the German Federal Ministry for Environment, Nature Conservation and Nuclear Safety, Mastercard, and the Bezos Earth Fund for their support for the development of TerraMatch.
+    WRI would like to thank the German Federal Ministry for the Environment, Climate Action, Nature Conservation and Nuclear Safety, Mastercard, and the Bezos Earth Fund for their support in the development of TerraMatch.
   </p>
   <div
     className="order-2 flex flex-col gap-6 md:order-3"

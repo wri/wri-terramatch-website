@@ -2,6 +2,7 @@ import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 
 import CountryFlag from "@/components/dashboard/CountryFlag";
@@ -15,7 +16,13 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { useGadmChoices } from "@/connections/Gadm";
 import { useMyUser } from "@/connections/User";
-import { CHART_TYPES, ORGANIZATIONS_TYPES, TERRAFUND_MRV_LINK, TEXT_TYPES } from "@/constants/dashboardConsts";
+import {
+  CHART_TYPES,
+  DASHBOARD_RETURN_PATH_STORAGE_KEY,
+  ORGANIZATIONS_TYPES,
+  TERRAFUND_MRV_LINK,
+  TEXT_TYPES
+} from "@/constants/dashboardConsts";
 import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { logout } from "@/generated/v3/utils";
@@ -96,6 +103,7 @@ const getOrganizationByUuid = (projects: any[], uuid: string, unknownOrganizatio
 
 const Dashboard = () => {
   const t = useT();
+  const router = useRouter();
   const [, { user }] = useMyUser();
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(undefined);
   const { filters, setFilters } = useDashboardContext();
@@ -408,6 +416,23 @@ const Dashboard = () => {
       id: 1
     };
   }, [singleDashboardProject?.country, countryChoices]);
+
+  useEffect(() => {
+    if (filters.uuid == null || filters.uuid === "") return;
+
+    router.beforePopState(() => {
+      const returnPath = sessionStorage.getItem(DASHBOARD_RETURN_PATH_STORAGE_KEY);
+      if (returnPath == null) return true;
+
+      sessionStorage.removeItem(DASHBOARD_RETURN_PATH_STORAGE_KEY);
+      void router.replace(returnPath);
+      return false;
+    });
+
+    return () => {
+      router.beforePopState(() => true);
+    };
+  }, [filters.uuid, router]);
 
   useEffect(() => {
     if (filters.uuid == null || filters.uuid === "" || countryData == null) return;
@@ -773,7 +798,9 @@ const Dashboard = () => {
           !hasCountrySelection
             ? t("ACTIVE COUNTRIES")
             : filters.uuid
-            ? t("OTHER PROJECTS IN {countryLabel}", { countryLabel: filters?.country?.data?.label.toUpperCase() })
+            ? t("OTHER PROJECTS IN {countryLabel}", {
+                countryLabel: filters?.country?.data?.label?.toUpperCase() ?? ""
+              })
             : t("ACTIVE PROJECTS")
         }
         dataHectaresUnderRestoration={parseHectaresUnderRestorationData(

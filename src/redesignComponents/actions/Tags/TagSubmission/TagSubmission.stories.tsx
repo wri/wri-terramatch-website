@@ -74,3 +74,13 @@ export const SizeVariations: Story = {
     </div>
   )
 };
+
+export const LabelPrefix: Story = {
+  render: () => (
+    <div className="flex gap-4">
+      <TagSubmission state="due" labelPrefix="X" />
+      <TagSubmission state="draft" labelPrefix="X" />
+      <TagSubmission state="information-required" labelPrefix="X" />
+    </div>
+  )
+};
