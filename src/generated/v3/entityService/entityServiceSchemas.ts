@@ -408,6 +408,64 @@ export type UpdateAboutSectionBody = {
   data: UpdateAboutSectionData;
 };
 
+export type FormTranslationDto = {
+  /**
+   * Number of translation keys
+   */
+  translationKeysNumber: number;
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+};
+
+export type DelayedJobDto = {
+  /**
+   * The unique identifier for the delayed job.
+   */
+  uuid: string;
+  /**
+   * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
+   */
+  status: "pending" | "failed" | "succeeded";
+  /**
+   * If the job is out of pending state, this is the HTTP status code for the completed process
+   */
+  statusCode: number | null;
+  /**
+   * If the job is out of pending state, this is the JSON payload for the completed process
+   */
+  payload: Record<string, any> | null;
+  /**
+   * If the job is in progress, this is the total content to process
+   */
+  totalContent: number | null;
+  /**
+   * If the job is in progress, this is the total content processed
+   */
+  processedContent: number | null;
+  /**
+   * If the job is in progress, this is the progress message
+   */
+  progressMessage: string | null;
+  /**
+   * Indicates whether the jobs have been acknowledged (cleared)
+   */
+  isAcknowledged: boolean | null;
+  /**
+   * The name of the delayedJob
+   */
+  name: string | null;
+  /**
+   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
+   */
+  entityName?: string | null;
+  /**
+   * The type of the related entity (e.g., projects, sites, etc).
+   */
+  entityType?: string | null;
+};
+
 export type TaskLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -2538,63 +2596,6 @@ export type SrpReportFullDto = {
   media: MediaDto[];
 };
 
-export type DelayedJobDto = {
-  /**
-   * The unique identifier for the delayed job.
-   */
-  uuid: string;
-  /**
-   * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
-   */
-  status: "pending" | "failed" | "succeeded";
-  /**
-   * If the job is out of pending state, this is the HTTP status code for the completed process
-   */
-  statusCode: number | null;
-  /**
-   * If the job is out of pending state, this is the JSON payload for the completed process
-   */
-  payload: Record<string, any> | null;
-  /**
-   * If the job is in progress, this is the total content to process
-   */
-  totalContent: number | null;
-  /**
-   * If the job is in progress, this is the total content processed
-   */
-  processedContent: number | null;
-  /**
-   * If the job is in progress, this is the progress message
-   */
-  progressMessage: string | null;
-  /**
-   * Indicates whether the jobs have been acknowledged (cleared)
-   */
-  isAcknowledged: boolean | null;
-  /**
-   * The name of the delayedJob
-   */
-  name: string | null;
-  /**
-   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
-   */
-  entityName?: string | null;
-  /**
-   * The type of the related entity (e.g., projects, sites, etc).
-   */
-  entityType?:
-    | "projects"
-    | "sites"
-    | "nurseries"
-    | "projectReports"
-    | "siteReports"
-    | "nurseryReports"
-    | "financialReports"
-    | "disturbanceReports"
-    | "srpReports"
-    | null;
-};
-
 export type ProjectUpdateAttributes = {
   /**
    * Specific feedback for the PD
@@ -3720,17 +3721,6 @@ export type UpdateFormData = {
 
 export type UpdateFormBody = {
   data: UpdateFormData;
-};
-
-export type FormTranslationDto = {
-  /**
-   * Number of translation keys
-   */
-  translationKeysNumber: number;
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
 };
 
 export type EmbeddedSubmissionDto = {

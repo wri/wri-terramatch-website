@@ -1027,6 +1027,90 @@ export const aboutSectionDelete = new V3ApiEndpoint<
   {}
 >("/aboutSections/v3/aboutSections/{uuid}", "DELETE");
 
+export type AboutSectionPushTranslationsPathParams = {
+  uuid: string;
+};
+
+export type AboutSectionPushTranslationsError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type AboutSectionPushTranslationsVariables = {
+  pathParams: AboutSectionPushTranslationsPathParams;
+};
+
+/**
+ * Push translations to Transifex for an About Section
+ */
+export const aboutSectionPushTranslations = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example formTranslations
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example formTranslations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FormTranslationDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  AboutSectionPushTranslationsError,
+  AboutSectionPushTranslationsVariables,
+  {}
+>("/aboutSections/v3/aboutSections/{uuid}/translations", "POST");
+
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -7193,7 +7277,14 @@ export const operationsByTag = {
     impactStoryDelete,
     impactStoryBulkDelete
   },
-  aboutSections: { aboutSectionIndex, aboutSectionCreate, aboutSectionGet, aboutSectionUpdate, aboutSectionDelete },
+  aboutSections: {
+    aboutSectionIndex,
+    aboutSectionCreate,
+    aboutSectionGet,
+    aboutSectionUpdate,
+    aboutSectionDelete,
+    aboutSectionPushTranslations
+  },
   tasks: { taskIndex, taskGet, taskUpdate },
   files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },

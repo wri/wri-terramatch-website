@@ -112,28 +112,32 @@ const clearJob = (item: DelayedJobDto) => {
   acknowledgeJobs([item.uuid]);
 };
 
-const entityName = (job: DelayedJobDto, cachedSiteNames: Record<string, string>): string => {
-  if (job.entityName != null) {
-    return job.entityName;
-  }
-  if (cachedSiteNames[job.uuid] != null) {
-    return cachedSiteNames[job.uuid];
-  }
-  return "Unknown";
-};
-
 const entityType = (job: DelayedJobDto, t: typeof useT) => {
   if (job.entityType != null) {
-    // only three types expected
     return job.entityType === "projects"
       ? t("Project: ")
       : job.entityType === "sites"
       ? t("Site: ")
       : job.entityType === "nurseries"
       ? t("Nursery: ")
+      : job.entityType === "forms"
+      ? t("Form: ")
+      : job.entityType === "aboutSections"
+      ? t("About Section: ")
       : null;
   }
   return job?.name?.includes("Project") ? t("Project: ") : t("Site: ");
+};
+
+const JobDetails: FC<{ job: DelayedJobDto }> = ({ job }) => {
+  const t = useT();
+
+  return (
+    <Text variant="text-14-light" className="text-darkCustom">
+      {entityType(job, t)}
+      <b>{job.entityName ?? "Unknown"}</b>
+    </Text>
+  );
 };
 
 const FloatNotification: FC = () => {
@@ -142,7 +146,6 @@ const FloatNotification: FC = () => {
   const [openModalNotification, setOpenModalNotification] = useState(false);
   const [isLoaded, { delayedJobs }] = useDelayedJobs();
   const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
-  const [cachedSiteNames, setCachedSiteNames] = useState<Record<string, string>>({});
   const [processedIndicatorJobs, setProcessedIndicatorJobs] = useState<Set<string>>(new Set());
   const [processedValidationJobs, setProcessedValidationJobs] = useState<Set<string>>(new Set());
   const [rerunningFailedJobs, setRerunningFailedJobs] = useState<Set<string>>(new Set());
@@ -156,15 +159,7 @@ const FloatNotification: FC = () => {
   }, [delayedJobs]);
 
   useValueChanged(delayedJobs, () => {
-    if (!delayedJobs) return;
-
-    const newCachedNames = { ...cachedSiteNames };
-    delayedJobs.forEach(job => {
-      if (job.entityName && job.uuid) {
-        newCachedNames[job.uuid] = job.entityName;
-      }
-    });
-    setCachedSiteNames(newCachedNames);
+    if (delayedJobs == null) return;
 
     setNotAcknowledgedJobs(delayedJobs);
     if (delayedJobs.length > notAcknowledgedJobs.length && !firstRender.current) {
@@ -297,10 +292,7 @@ const FloatNotification: FC = () => {
                           </button>
                         }
                       </div>
-                      <Text variant="text-14-light" className="text-darkCustom">
-                        {entityType(item, t)}
-                        <b>{entityName(item, cachedSiteNames)}</b>
-                      </Text>
+                      <JobDetails job={item} />
                       <div className="mt-1">
                         {item.status === "failed" ? (
                           <Text variant="text-12-semibold" className="text-error-600">

@@ -9,9 +9,10 @@ import {
   aboutSectionGet,
   aboutSectionIndex,
   AboutSectionIndexQueryParams,
+  aboutSectionPushTranslations,
   aboutSectionUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { AboutSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { AboutSectionDto, FormTranslationDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { Connected, Filter } from "@/types/connection";
 
@@ -48,6 +49,11 @@ const aboutSectionConnection = v3Resource("aboutSections", aboutSectionGet)
 export const loadAboutSection = connectionLoader(aboutSectionConnection);
 export const updateAboutSection = resourceUpdater(aboutSectionConnection);
 export const deleteAboutSection = deleterAsync("aboutSections", aboutSectionDelete, uuid => ({ pathParams: { uuid } }));
+
+const formTranslationConnection = v3Resource("formTranslations", aboutSectionPushTranslations)
+  .singleResource<FormTranslationDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .buildConnection();
+export const pushAboutSectionTranslations = connectionLoader(formTranslationConnection);
 
 const createAboutSectionConnection = v3Resource("aboutSections", aboutSectionCreate)
   .create<AboutSectionDto>()
