@@ -22,7 +22,7 @@ const ReportsIndexHeader = ({ activeTab, selectedViewLabel, onTabChange }: Repor
   return (
     <div className="bg-white">
       <ToolbarObject
-        className="border-b border-theme-neutral-300 !px-6"
+        className="border-theme-neutral-300 border-b !px-6"
         breadcrumbs={{
           links: [
             {
@@ -36,6 +36,7 @@ const ReportsIndexHeader = ({ activeTab, selectedViewLabel, onTabChange }: Repor
         }}
       />
       <PageHeader
+        className="!bg-theme-neutral-100"
         title={t("Reports")}
         actions={
           <Button size="small" leftIcon={<PlusIcon boxSize="10px" />}>
@@ -44,8 +45,9 @@ const ReportsIndexHeader = ({ activeTab, selectedViewLabel, onTabChange }: Repor
         }
       />
       <Toolbar
-        className="items-end border-b border-theme-neutral-200 !px-6 mobile:flex-col mobile:!items-stretch mobile:gap-3"
+        className="border-theme-neutral-200 items-end border-b !px-3 mobile:flex-col mobile:!items-stretch mobile:gap-3"
         classNameContentLeft="min-w-0"
+        classNameContentRight="mt-[-1.25rem]"
         contentLeft={
           <TabBar
             key={activeTab}
