@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
+import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
@@ -88,7 +89,7 @@ const SiteDetailPage = () => {
                     variant="borderless"
                     size="small"
                     className="underline underline-offset-2"
-                    onClick={() => router.push(`/site/${site.uuid}?tab=completed-tasks`)}
+                    onClick={() => router.push(getReportsIndexUrl("site", site.uuid))}
                   >
                     {t("Site Reports")}
                   </Button>
