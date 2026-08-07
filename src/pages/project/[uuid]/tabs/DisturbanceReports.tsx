@@ -20,7 +20,10 @@ const DisturbanceReportsTab = ({ projectUUID }: DisturbanceReportsProps) => {
   const router = useRouter();
   const { create: createDisturbanceReport, isCreating: disturbanceReportCreating } = useCreateDisturbanceReport(
     {},
-    useCallback(({ uuid }) => router.replace(`/entity/disturbance-reports/edit/${uuid}`), [router]),
+    useCallback(
+      ({ uuid }) => router.replace(`/entity/disturbance-reports/create/framework?entity_uuid=${uuid}`),
+      [router]
+    ),
     "Failed to create disturbance report"
   );
 

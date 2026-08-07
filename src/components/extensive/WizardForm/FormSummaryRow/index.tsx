@@ -1,7 +1,6 @@
 import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import type * as yup from "yup";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
@@ -18,6 +17,7 @@ import List from "../../List/List";
 import SpecialEntryRenderer, {
   SPECIAL_ENTRY_TITLES
 } from "../../PageElements/PageContent/components/SpecialEntryRenderer";
+import { getFieldsRequiringAttentionCount } from "../../PageElements/PageContent/utils/detailUtils";
 import { isTrackingType } from "../../TrackingCollapseGrid/types";
 import {
   countFeedbackInStep,
@@ -26,20 +26,6 @@ import {
   hasUnresolvedFeedbackInStep
 } from "../feedbackUtils";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
-
-const getFieldsRequiringAttentionCount = (
-  validation: yup.ObjectSchema<Record<string, unknown>>,
-  values: Record<string, unknown> | undefined
-): number => {
-  if (values == null) return 0;
-  try {
-    validation.validateSync(values, { abortEarly: false });
-    return 0;
-  } catch (err: unknown) {
-    const yupError = err as { inner?: unknown[] };
-    return yupError.inner?.length ?? 0;
-  }
-};
 
 export interface FormSummaryRowProps extends FormSummaryProps {
   type?: EntityName;

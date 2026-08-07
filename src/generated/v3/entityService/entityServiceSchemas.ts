@@ -1410,6 +1410,7 @@ export type DisturbanceReportLightDto = {
   intensity: string | null;
   createdByFirstName: string | null;
   createdByLastName: string | null;
+  frameworkKey: string | null;
   /**
    * @format date-time
    */
@@ -2348,6 +2349,7 @@ export type DisturbanceReportFullDto = {
   intensity: string | null;
   createdByFirstName: string | null;
   createdByLastName: string | null;
+  frameworkKey: string | null;
   /**
    * @format date-time
    */
@@ -2381,7 +2383,6 @@ export type DisturbanceReportFullDto = {
   dueAt: string | null;
   completion: number | null;
   nothingToReport: boolean | null;
-  frameworkKey: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
   answers: string | null;
@@ -3316,7 +3317,7 @@ export type FormLightDto = {
   lightResource: boolean;
   uuid: string;
   /**
-   * Translated form title
+   * Form title
    */
   title: string;
   type?:
@@ -3437,11 +3438,11 @@ export type FormQuestionDto = {
 export type FormSectionDto = {
   id: string;
   /**
-   * Translated section title
+   * Section title
    */
   title?: string | null;
   /**
-   * Translated section description
+   * Section description
    */
   description?: string | null;
   questions: FormQuestionDto[];
@@ -3454,7 +3455,7 @@ export type FormFullDto = {
   lightResource: boolean;
   uuid: string;
   /**
-   * Translated form title
+   * Form title
    */
   title: string;
   type?:
@@ -3578,11 +3579,11 @@ export type StoreFormQuestionAttributes = {
 
 export type StoreFormSectionAttributes = {
   /**
-   * Translated section title
+   * Section title
    */
   title?: string | null;
   /**
-   * Translated section description
+   * Section description
    */
   description?: string | null;
   id?: string;
@@ -3591,7 +3592,7 @@ export type StoreFormSectionAttributes = {
 
 export type StoreFormAttributes = {
   /**
-   * Translated form title
+   * Form title
    */
   title: string;
   type?:
@@ -3841,6 +3842,7 @@ export type ReportingFrameworkDto = {
   nurseryFormUuid: string | null;
   nurseryReportFormUuid: string | null;
   financialReportFormUuid: string | null;
+  disturbanceReportFormUuid: string | null;
   totalProjectsCount: number;
 };
 
@@ -3873,6 +3875,10 @@ export type CreateReportingFrameworkAttributes = {
    * @format uuid
    */
   financialReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  disturbanceReportFormUuid?: string | null;
   /**
    * Framework name; used to generate slug
    */
@@ -3918,6 +3924,10 @@ export type UpdateReportingFrameworkAttributes = {
    * @format uuid
    */
   financialReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  disturbanceReportFormUuid?: string | null;
   name?: string | null;
   slug?: string | null;
 };

@@ -105,6 +105,7 @@ export const getFormEntries = (
     const { addFormEntries } = FormFieldFactories[field.inputType];
     if (addFormEntries == null) {
       entries.push({
+        name: field.name,
         title: field.label ?? "",
         inputType: field.inputType,
         value: getFormattedAnswer(field, values, fieldsProvider) ?? nullText ?? t("Answer Not Provided")

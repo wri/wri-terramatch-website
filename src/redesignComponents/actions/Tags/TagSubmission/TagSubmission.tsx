@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import type { FC, ReactElement } from "react";
+import type { FC, ReactElement, ReactNode } from "react";
 
 import {
   CheckApprovedIcon,
@@ -26,6 +26,7 @@ export interface TagSubmissionProps {
   state: TagSubmissionState;
   className?: string;
   size?: "small" | "default";
+  labelPrefix?: ReactNode;
 }
 
 export const useTagLabel = (tag: TagSubmissionState) => {
@@ -76,7 +77,7 @@ function getTagSubmissionIcon(state: TagSubmissionState, size: "small" | "defaul
   }
 }
 
-const TagSubmission: FC<TagSubmissionProps> = ({ state, size = "default", ...rest }) => {
+const TagSubmission: FC<TagSubmissionProps> = ({ state, size = "default", labelPrefix, ...rest }) => {
   const label = useTagLabel(state);
 
   return (
@@ -85,6 +86,7 @@ const TagSubmission: FC<TagSubmissionProps> = ({ state, size = "default", ...res
       state={TagSubmissionActionStatusTagStateMap[state]}
       label={label}
       size={size}
+      labelPrefix={labelPrefix}
       {...rest}
     />
   );

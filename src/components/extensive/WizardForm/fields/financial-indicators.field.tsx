@@ -226,6 +226,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
       .join("");
 
     entries.push({
+      name: field.name,
       title: field.label,
       inputType: field.inputType,
       value: isEmpty(value) ? t("Answer Not Provided") : value

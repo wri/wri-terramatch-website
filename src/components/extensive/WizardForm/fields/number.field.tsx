@@ -178,6 +178,7 @@ export const NumberField: FormFieldFactory = {
       const num = typeof raw === "number" ? raw : raw == null || raw === "" ? NaN : Number(raw);
       const display = Number.isFinite(num) ? formatFinancialAmount(num, additional.orgDetails?.currency) : nullText;
       entries.push({
+        name: field.name,
         title: field.label ?? "",
         inputType: field.inputType,
         value: display
@@ -188,6 +189,7 @@ export const NumberField: FormFieldFactory = {
     const value =
       formatted == null || formatted === "" ? nullText : typeof formatted === "string" ? formatted : String(formatted);
     entries.push({
+      name: field.name,
       title: field.label ?? "",
       inputType: field.inputType,
       value

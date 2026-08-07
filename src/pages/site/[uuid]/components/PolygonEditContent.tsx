@@ -98,6 +98,7 @@ type PolygonEditContentProps = {
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
+  onSubmittingChange?: (isSubmitting: boolean, count?: number) => void;
 };
 
 type PolygonVersionRow = SitePolygonLightDto & { id: string };
@@ -195,7 +196,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onValidationJobsStarted,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
-  onDeletingChange
+  onDeletingChange,
+  onSubmittingChange
 }) => {
   const t = useT();
   const isAdmin = useIsAdmin();
@@ -801,6 +803,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
       const targetGeometryPolygonUuid = targetPolygon.polygonUuid ?? "";
 
+      onSubmittingChange?.(true, 1);
+
       try {
         await bulkUpdateSitePolygonStatus([targetPolygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, comment);
         if (resolvedSiteUuid !== "" && targetGeometryPolygonUuid !== "") {
@@ -829,6 +833,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
         showPolygonErrorToast(t("Error submitting polygon"));
         return false;
+      } finally {
+        onSubmittingChange?.(false);
       }
     },
     [
@@ -836,6 +842,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       invalidatePolygonMapTiles,
       onClose,
       onSaved,
+      onSubmittingChange,
       onValidationJobsStarted,
       resolvedSiteUuid,
       setIsUserDrawingEnabled,

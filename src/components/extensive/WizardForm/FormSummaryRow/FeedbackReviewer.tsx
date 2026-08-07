@@ -33,6 +33,7 @@ const FeedbackReviewer: FC<FeedbackReviewerProps> = ({
       if (field == null) return acc;
 
       acc.push({
+        name: field.name,
         title: field.label ?? "",
         inputType: field.inputType,
         value: values != null && typeof values === "object" && field.name in values ? values[field.name] : null
@@ -68,7 +69,7 @@ const FeedbackReviewer: FC<FeedbackReviewerProps> = ({
         classNameHeader="!mb-0"
         onOpenChange={handleAccordionOpenChange}
       >
-        <Flex className="flex-col gap-4 bg-theme-warning-100 p-4">
+        <Flex className="bg-theme-warning-100 flex-col gap-4 p-4">
           {feedback != null && feedback.trim().length > 0 && (
             <Text textStyle="400" color="neutral.900">
               {feedback}

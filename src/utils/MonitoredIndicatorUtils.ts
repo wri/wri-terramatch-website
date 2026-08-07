@@ -425,3 +425,27 @@ export const transformSitePolygonsToIndicators = (
     })
     .filter((row): row is MonitoredIndicator => row != null);
 };
+
+const sumPolygonTreeCoverLoss = (polygon: MonitoredIndicator): number => {
+  if (polygon.data == null) return 0;
+
+  return Object.values(polygon.data).reduce((total, value) => total + (typeof value === "number" ? value : 0), 0);
+};
+
+export type TreeCoverLossPolygonCounts = {
+  withLoss: number;
+  noLossDetected: number;
+};
+
+export const getTreeCoverLossPolygonCounts = (polygons: MonitoredIndicator[]): TreeCoverLossPolygonCounts =>
+  polygons.reduce<TreeCoverLossPolygonCounts>(
+    (counts, polygon) => {
+      if (sumPolygonTreeCoverLoss(polygon) > 0) {
+        counts.withLoss += 1;
+      } else {
+        counts.noLossDetected += 1;
+      }
+      return counts;
+    },
+    { withLoss: 0, noLossDetected: 0 }
+  );

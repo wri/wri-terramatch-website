@@ -2,7 +2,7 @@ import { ColumnDef, RowData } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { format } from "date-fns";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useBasename, useShowContext } from "react-admin";
 import { useNavigate } from "react-router-dom";
 
@@ -43,6 +43,7 @@ import {
   formatDescriptionIndicator,
   getKeyValue,
   getOrderTop3,
+  getTreeCoverLossPolygonCounts,
   replaceTextWithParams
 } from "@/utils/MonitoredIndicatorUtils";
 
@@ -875,6 +876,14 @@ const DataCard = ({
 
   const selectedChartHasData = (filteredPolygonsIndicator?.length ?? 0) > 0;
 
+  const treeCoverLossPolygonCounts = useMemo(() => {
+    if (indicatorSlug !== "treeCoverLoss" && indicatorSlug !== "treeCoverLossFires") {
+      return undefined;
+    }
+
+    return getTreeCoverLossPolygonCounts(filteredPolygonsIndicator ?? []);
+  }, [filteredPolygonsIndicator, indicatorSlug]);
+
   const noIndicatorDataDescription =
     "No data available for this indicator. Run analysis on project polygons to calculate and display results.";
 
@@ -1048,6 +1057,7 @@ const DataCard = ({
                 landUseData={landUseData}
                 record={record}
                 totalHectaresRestoredGoal={totalHectaresRestoredGoal}
+                treeCoverLossPolygonCounts={treeCoverLossPolygonCounts}
               />
               {selected.includes("6") && <NoDataGraph />}
             </div>
