@@ -3,6 +3,7 @@ import { FC } from "react";
 import { SelectArrayInput, SelectInput, TextInput } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
+import SemanticHtmlInput from "@/admin/modules/aboutSections/components/SemanticHtmlInput";
 import { SECTION_TYPE_CHOICES } from "@/admin/modules/aboutSections/util";
 import AboutPageItemDisplay from "@/components/extensive/PageElements/AboutPageItem/AboutPageItemDisplay";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -50,6 +51,7 @@ const AboutSectionForm: FC = () => {
                 />
                 <TextInput label="Header" source="header" />
                 <TextInput label="Title" source="title" />
+                <SemanticHtmlInput label="Description" source="description" />
                 <TextInput
                   label="Contact Support Subject"
                   source="contactSupportSubject"
