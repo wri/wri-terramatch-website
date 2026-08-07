@@ -1,6 +1,7 @@
-import { Box, styled } from "@mui/material";
+import { Box, FormHelperText, styled } from "@mui/material";
+import classNames from "classnames";
 import React, { FC, useEffect, useLayoutEffect, useRef } from "react";
-import { useInput } from "react-admin";
+import { InputProps, useInput } from "react-admin";
 
 const Quill = typeof window === "undefined" ? undefined : require("quill").default;
 if (Quill != null) {
@@ -10,6 +11,8 @@ if (Quill != null) {
 type SemanticHtmlInputProps = {
   source: string;
   label: string;
+  validate: InputProps["validate"];
+  helperText?: string;
 };
 
 const StyledFieldset = styled(Box)(({ theme }) => ({
@@ -17,6 +20,9 @@ const StyledFieldset = styled(Box)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
   "&:hover": {
     border: `1px solid rgb(0 0 0)`
+  },
+  ".error &": {
+    border: `1px solid rgb(255, 0, 0)`
   },
   "& legend": {
     margin: theme.spacing(0, 0.75),
@@ -30,9 +36,9 @@ const StyledFieldset = styled(Box)(({ theme }) => ({
 // A different approach from `QuillEditor.tsx` for editing HTML input. In this case we keep a
 // tighter handle on the generated HTML and get the semantic HTML (as simple as possible) so that
 // it's easier to translate cleanly on Transifex.
-const SemanticHtmlInput: FC<SemanticHtmlInputProps> = ({ label, source }) => {
+const SemanticHtmlInput: FC<SemanticHtmlInputProps> = ({ label, source, validate, helperText }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { field } = useInput({ source });
+  const { field, fieldState, isRequired } = useInput({ source, validate });
   const fieldRef = useRef(field);
 
   useLayoutEffect(() => {
@@ -56,7 +62,9 @@ const SemanticHtmlInput: FC<SemanticHtmlInputProps> = ({ label, source }) => {
 
     quill.on("text-change", () => {
       if (fieldRef.current != null) {
-        fieldRef.current.onChange(quill.getSemanticHTML().replaceAll("&nbsp;", " "));
+        const content = quill.getSemanticHTML().replaceAll("&nbsp;", " ");
+        // represent empty content accurately
+        fieldRef.current.onChange(content === "<p></p>" ? "" : content);
       }
     });
 
@@ -66,7 +74,7 @@ const SemanticHtmlInput: FC<SemanticHtmlInputProps> = ({ label, source }) => {
   }, []);
 
   return (
-    <div className="quill-wrapper pb-6">
+    <div className={classNames("quill-wrapper pb-2", { error: fieldState.invalid })}>
       <style>{`
         .quill-wrapper .ql-container { 
           border: none;
@@ -84,9 +92,12 @@ const SemanticHtmlInput: FC<SemanticHtmlInputProps> = ({ label, source }) => {
         }
       `}</style>
       <StyledFieldset component="fieldset">
-        <legend>{label}</legend>
+        <legend>{`${label}${isRequired ? " *" : ""}`}</legend>
         <div ref={containerRef}></div>
       </StyledFieldset>
+      <FormHelperText className="pl-4" error={fieldState.invalid}>
+        {fieldState.error?.message ?? helperText ?? " "}
+      </FormHelperText>
     </div>
   );
 };

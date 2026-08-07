@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import { FC } from "react";
-import { ArrayInput, SelectArrayInput, SelectInput, TextInput } from "react-admin";
+import { ArrayInput, required, SelectArrayInput, SelectInput, TextInput } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
 import { AccordionFormIterator } from "@/admin/components/AccordionFormIterator/AccordionFormIterator";
@@ -52,16 +52,17 @@ const AboutSectionForm: FC = () => {
                   fullWidth
                   helperText="If you choose frameworks that already have an override, an error will be generated on save."
                 />
-                <TextInput label="Header" source="header" />
+                <TextInput label="Header" source="header" validate={required()} />
                 <TextInput label="Title" source="title" />
-                <SemanticHtmlInput label="Description" source="description" />
+                <SemanticHtmlInput label="Description" source="description" validate={required()} />
                 <TextInput
                   label="Contact Support Subject"
                   source="contactSupportSubject"
                   helperText="Email Subject Line"
+                  validate={required()}
                 />
-                <TextInput label="Contact Support Message" source="contactSupportMessage" />
-                <ArrayInput source="links" label="Helpful Links">
+                <TextInput label="Contact Support Message" source="contactSupportMessage" validate={required()} />
+                <ArrayInput source="links" label="Helpful Links" validate={required()}>
                   <AccordionFormIterator
                     accordionSummaryTitle={(index, links) =>
                       `Link ${index + 1} of ${links.length} (${links[index].title})`
@@ -78,8 +79,8 @@ const AboutSectionForm: FC = () => {
                       </RemoveItemButton>
                     }
                   >
-                    <TextInput source="title" label="Title" fullWidth className="m-0" />
-                    <TextInput source="url" label="URL" fullWidth className="m-0" />
+                    <TextInput source="title" label="Title" fullWidth className="m-0" validate={required()} />
+                    <TextInput source="url" label="URL" fullWidth className="m-0" validate={required()} />
                   </AccordionFormIterator>
                 </ArrayInput>
               </>
