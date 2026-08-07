@@ -3,7 +3,6 @@ import * as yup from "yup";
 import { isFieldFeedbackRequiringAttention } from "@/components/extensive/WizardForm/feedbackUtils";
 import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
-import Log from "@/utils/log";
 
 export type EntryInlineIssueKind = "required" | "feedback" | "totals-match";
 
@@ -96,17 +95,6 @@ export const resolveEntryInlineIssue = ({
   if (fieldErrors.some(error => isRequiredValidationError(error, fieldValue))) {
     return { kind: "required" };
   }
-
-  Log.warn("Unhandled details entry validation error", {
-    entryName: entry.name,
-    entryTitle: entry.title,
-    inputType: entry.inputType,
-    errors: fieldErrors.map(error => ({
-      type: error.type,
-      path: error.path,
-      message: error.message
-    }))
-  });
 
   return null;
 };

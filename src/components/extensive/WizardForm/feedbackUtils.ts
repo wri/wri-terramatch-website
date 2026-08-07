@@ -55,7 +55,6 @@ export const isFeedbackFieldUnresolved = (
   return valueWiseEqual(currentValues[fieldName], initialValues?.[fieldName]);
 };
 
-/** Per-field feedback attention: unresolved when baseline exists, otherwise any flagged feedback. */
 export const isFieldFeedbackRequiringAttention = (
   fieldName: string,
   fieldsProvider: FormFieldsProvider,
