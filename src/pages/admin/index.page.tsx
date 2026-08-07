@@ -6,9 +6,11 @@ import { authProvider } from "@/admin/apiProvider/authProvider";
 import { dataProvider } from "@/admin/apiProvider/dataProviders";
 import AppLayout from "@/admin/components/AppLayout";
 import { theme } from "@/admin/components/theme";
+import { sectionTitle } from "@/admin/modules/aboutSections/util";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMyUser } from "@/connections/User";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
+import { AboutSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import LoginPage from "@/pages/auth/login/index.page";
 
 import modules from "../../admin/modules";
@@ -89,6 +91,7 @@ const AdminPanel: FC = () => {
               edit={modules.aboutSections.Edit}
               icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
               options={{ label: "About Sections" }}
+              recordRepresentation={(section: AboutSectionDto) => sectionTitle(section)}
             />
           </>
         )}

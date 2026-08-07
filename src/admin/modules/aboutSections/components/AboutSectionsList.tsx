@@ -33,7 +33,7 @@ const AboutSectionsList: FC = () => {
 
       <List actions={<ListActionsAboutSections />} filters={FILTERS}>
         <AutoResetSort />
-        <Datagrid rowClick="edit" bulkActionButtons={false}>
+        <Datagrid rowClick="show" bulkActionButtons={false}>
           <TextField source="type" label="Type" />
           <FunctionField
             source="frameworks"

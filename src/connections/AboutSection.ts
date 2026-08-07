@@ -1,9 +1,11 @@
 import { DataConnection, v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionLoader } from "@/connections/util/connectionShortcuts";
+import { deleterAsync } from "@/connections/util/resourceDeleter";
 import { resourceCreator, resourceUpdater } from "@/connections/util/resourceMutator";
 import { Framework } from "@/context/framework.provider";
 import {
   aboutSectionCreate,
+  aboutSectionDelete,
   aboutSectionGet,
   aboutSectionIndex,
   AboutSectionIndexQueryParams,
@@ -45,6 +47,7 @@ const aboutSectionConnection = v3Resource("aboutSections", aboutSectionGet)
   .buildConnection();
 export const loadAboutSection = connectionLoader(aboutSectionConnection);
 export const updateAboutSection = resourceUpdater(aboutSectionConnection);
+export const deleteAboutSection = deleterAsync("aboutSections", aboutSectionDelete, uuid => ({ pathParams: { uuid } }));
 
 const createAboutSectionConnection = v3Resource("aboutSections", aboutSectionCreate)
   .create<AboutSectionDto>()

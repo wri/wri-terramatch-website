@@ -970,6 +970,63 @@ export const aboutSectionUpdate = new V3ApiEndpoint<
   {}
 >("/aboutSections/v3/aboutSections/{uuid}", "PUT");
 
+export type AboutSectionDeletePathParams = {
+  uuid: string;
+};
+
+export type AboutSectionDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type AboutSectionDeleteResponse = {
+  meta?: {
+    /**
+     * @example aboutSections
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type AboutSectionDeleteVariables = {
+  pathParams: AboutSectionDeletePathParams;
+};
+
+export const aboutSectionDelete = new V3ApiEndpoint<
+  AboutSectionDeleteResponse,
+  AboutSectionDeleteError,
+  AboutSectionDeleteVariables,
+  {}
+>("/aboutSections/v3/aboutSections/{uuid}", "DELETE");
+
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -7136,7 +7193,7 @@ export const operationsByTag = {
     impactStoryDelete,
     impactStoryBulkDelete
   },
-  aboutSections: { aboutSectionIndex, aboutSectionCreate, aboutSectionGet, aboutSectionUpdate },
+  aboutSections: { aboutSectionIndex, aboutSectionCreate, aboutSectionGet, aboutSectionUpdate, aboutSectionDelete },
   tasks: { taskIndex, taskGet, taskUpdate },
   files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },

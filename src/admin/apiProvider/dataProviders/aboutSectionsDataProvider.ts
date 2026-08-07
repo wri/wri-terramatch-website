@@ -4,6 +4,7 @@ import { v3ErrorForRA } from "@/admin/apiProvider/utils/error";
 import { raConnectionProps } from "@/admin/apiProvider/utils/listing";
 import {
   createAboutSection,
+  deleteAboutSection,
   loadAboutSection,
   loadAboutSections,
   updateAboutSection
@@ -50,5 +51,15 @@ export const aboutSectionsDataProvider: Partial<DataProvider> = {
     }
 
     return { data: connected.data as AboutSectionDto };
+  },
+
+  // @ts-ignore
+  async delete(_: string, { id }: DeleteParams) {
+    try {
+      await deleteAboutSection(id as string);
+      return { data: { id } };
+    } catch (deleteFailure) {
+      throw v3ErrorForRA("About section delete fetch failed", deleteFailure);
+    }
   }
 };
