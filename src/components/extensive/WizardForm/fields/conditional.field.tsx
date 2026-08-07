@@ -79,6 +79,7 @@ export const ConditionalField: FormFieldFactory = {
 
   addFormEntries: (entries, field, formValues, props) => {
     entries.push({
+      name: field.name,
       title: field.label ?? "",
       inputType: field.inputType,
       value: getFormattedAnswer(field, formValues, props.fieldsProvider)
