@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type AccordionVariant = "primary" | "secondary" | "borderless";
+export type AccordionVariant = "primary" | "secondary" | "tertiary" | "quaternary" | "borderless";
 
 export interface AccordionProps {
   children: ReactNode;
@@ -39,4 +39,17 @@ export interface AccordionHeaderProps {
   badge?: string;
   status?: AccordionStatus;
   statusLabel?: string;
+}
+
+export type ListSectionHeaderLevel = "top-level" | "sub-level";
+
+export interface ListSectionHeaderProps {
+  level?: ListSectionHeaderLevel;
+  label?: ReactNode;
+  title: ReactNode;
+  caption?: ReactNode;
+  statusLabels?: ReactNode;
+  icon?: ReactNode;
+  className?: string;
+  dueDate?: string;
 }

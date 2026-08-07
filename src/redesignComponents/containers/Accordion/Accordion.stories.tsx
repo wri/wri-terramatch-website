@@ -1,10 +1,15 @@
+import { Flex } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { EditIcon } from "@/redesignComponents/foundations/Icons";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import { EditIcon, FolderIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
+import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import Accordion from "./Accordion";
 import AccordionHeader from "./AccordionHeader";
+import ListSectionHeader from "./ListSectionHeader";
 
 const meta: Meta<typeof Accordion> = {
   title: "Redesign Components/Containers/Accordion",
@@ -99,10 +104,76 @@ export const variantSecondary: Story = {
   }
 };
 
+export const variantTertiary: Story = {
+  args: {
+    header: <AccordionHeader label="Label" title="Header Title" />,
+    children: "This is the accordion content. You can put any content here.",
+    variant: "tertiary"
+  }
+};
+
 export const StatusLabel: Story = {
   args: {
     header: <AccordionHeader label="Label" title="Header Title" status="error" statusLabel="Status Label" />,
     children: "This is the accordion content. You can put any content here.",
     variant: "secondary"
+  }
+};
+
+export const ListSectionHeaderTopLevel: Story = {
+  render: () => {
+    const [open, setOpen] = useState(true);
+
+    return (
+      <Accordion
+        variant="tertiary"
+        open={open}
+        onOpenChange={setOpen}
+        header={
+          <ListSectionHeader
+            level="top-level"
+            title="Header Title"
+            caption="caption"
+            icon={
+              open ? <FolderOpenIcon boxSize={5} color="primary.600" /> : <FolderIcon boxSize={5} color="neutral.400" />
+            }
+            statusLabels={<TextBadge>Label</TextBadge>}
+          />
+        }
+      >
+        This is the accordion content. You can put any content here.
+      </Accordion>
+    );
+  }
+};
+
+export const ListSectionHeaderSubLevel: Story = {
+  render: () => {
+    const [open, setOpen] = useState(true);
+
+    return (
+      <Accordion
+        variant="quaternary"
+        open={open}
+        onOpenChange={setOpen}
+        header={
+          <ListSectionHeader
+            level="sub-level"
+            label="Label"
+            title="Header Title"
+            dueDate="dd/mm/yyyy"
+            statusLabels={
+              <Flex alignItems="center" gap={2}>
+                <TagSubmission state="due" size="small" />
+                <TagSubmission state="draft" size="small" />
+                <TagSubmission state="information-required" size="small" />
+              </Flex>
+            }
+          />
+        }
+      >
+        Nested content goes here.
+      </Accordion>
+    );
   }
 };

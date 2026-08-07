@@ -37,6 +37,36 @@ const variantStyles = {
       gap: 3
     }
   },
+  tertiary: {
+    container: {
+      background: "neutral.100",
+      paddingX: 4,
+      paddingY: 3,
+      marginBottom: 4,
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderRadius:
+        "var(--Border-Radius-300, 4px) var(--Border-Radius-300, 4px) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
+      borderTop: "var(--Border-Width-200, 2px) solid var(--Neutrals-300, #E7E6E6)"
+    },
+    header: {
+      gap: 2
+    }
+  },
+  quaternary: {
+    container: {
+      background: "neutral.100",
+      padding: 4,
+      marginBottom: 4,
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "space-between"
+    },
+    header: {
+      gap: 2
+    }
+  },
   borderless: {
     container: {
       background: "neutral.100",
@@ -92,7 +122,24 @@ const Accordion: FC<AccordionProps> = ({
         },
         "& [data-scope='accordion'][data-part='item']": {
           overflow: "visible"
-        }
+        },
+        ...(variant === "tertiary"
+          ? {
+              "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
+                borderRadius:
+                  "var(--Border-Radius-300, 4px) var(--Border-Radius-300, 4px) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
+                borderTop: "var(--Border-Width-300, 4px) solid var(--Primary-500, #78CAED)",
+                background: "var(--Primary-100, #F7FBFD)"
+              }
+            }
+          : {}),
+        ...(variant === "quaternary"
+          ? {
+              "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
+                borderBottom: "var(--Border-Width-100, 1px) solid var(--Neutrals-300, #E7E6E6)"
+              }
+            }
+          : {})
       }}
     >
       <AccordionChakra.Root
@@ -105,7 +152,7 @@ const Accordion: FC<AccordionProps> = ({
             })}
       >
         <AccordionChakra.Item value={ACCORDION_ITEM_VALUE}>
-          <Flex {...container} gap={4} className={classNameHeader} alignItems="center">
+          <Flex {...container} gap={4} className={classNameHeader} alignItems="center" data-accordion-header="">
             <AccordionChakra.ItemTrigger
               css={{
                 outline: "none",
