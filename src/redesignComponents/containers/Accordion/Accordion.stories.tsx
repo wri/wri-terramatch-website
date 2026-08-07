@@ -164,9 +164,9 @@ export const ListSectionHeaderSubLevel: Story = {
             dueDate="dd/mm/yyyy"
             statusLabels={
               <Flex alignItems="center" gap={2}>
-                <TagSubmission state="due" size="small" />
-                <TagSubmission state="draft" size="small" />
-                <TagSubmission state="information-required" size="small" />
+                <TagSubmission state="due" size="small" labelPrefix="X" />
+                <TagSubmission state="draft" size="small" labelPrefix="X" />
+                <TagSubmission state="information-required" size="small" labelPrefix="X" />
               </Flex>
             }
           />
