@@ -33,6 +33,7 @@ const FeedbackReviewer: FC<FeedbackReviewerProps> = ({
       if (field == null) return acc;
 
       acc.push({
+        name: field.name,
         title: field.label ?? "",
         inputType: field.inputType,
         value: values != null && typeof values === "object" && field.name in values ? values[field.name] : null

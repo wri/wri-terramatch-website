@@ -7,6 +7,7 @@ import SimpleBarChart from "@/pages/dashboard/charts/SimpleBarChart";
 import GraphicIconDashboard from "@/pages/dashboard/components/GraphicIconDashboard";
 import SecDashboard from "@/pages/dashboard/components/SecDashboard";
 import { isNotNull } from "@/utils/array";
+import { TreeCoverLossPolygonCounts } from "@/utils/MonitoredIndicatorUtils";
 
 import EcoRegionDoughnutChart from "./EcoRegionDoughnutChart";
 import { LoadingState } from "./MonitoredLoading";
@@ -69,6 +70,7 @@ type MonitoredChartsProps = {
   landUseData: any;
   record: RecordType;
   totalHectaresRestoredGoal: number;
+  treeCoverLossPolygonCounts?: TreeCoverLossPolygonCounts;
 };
 
 const MonitoredCharts: FC<MonitoredChartsProps> = ({
@@ -80,7 +82,8 @@ const MonitoredCharts: FC<MonitoredChartsProps> = ({
   strategiesData,
   landUseData,
   record,
-  totalHectaresRestoredGoal
+  totalHectaresRestoredGoal,
+  treeCoverLossPolygonCounts
 }) => {
   const [hasNoData, setHasNoData] = useState(false);
 
@@ -98,7 +101,7 @@ const MonitoredCharts: FC<MonitoredChartsProps> = ({
       case "2":
         return (
           <ChartContainer key={chartId} isLoading={isLoadingIndicator} hasNoData={!hasIndicatorData}>
-            <TreeLossBarChart data={parsedData} className="flex flex-col" />
+            <TreeLossBarChart data={parsedData} className="flex flex-col" polygonCounts={treeCoverLossPolygonCounts} />
           </ChartContainer>
         );
 

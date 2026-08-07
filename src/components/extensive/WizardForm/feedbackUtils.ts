@@ -55,6 +55,20 @@ export const isFeedbackFieldUnresolved = (
   return valueWiseEqual(currentValues[fieldName], initialValues?.[fieldName]);
 };
 
+export const isFieldFeedbackRequiringAttention = (
+  fieldName: string,
+  fieldsProvider: FormFieldsProvider,
+  feedbackFieldIds: string[] | null | undefined,
+  currentValues?: Record<string, unknown>,
+  initialValues?: Record<string, unknown>
+): boolean => {
+  if (initialValues != null) {
+    return isFeedbackFieldUnresolved(fieldName, fieldsProvider, feedbackFieldIds, currentValues ?? {}, initialValues);
+  }
+
+  return isFeedbackFieldInStep(fieldName, fieldsProvider, feedbackFieldIds);
+};
+
 export const hasUnresolvedFeedbackInStep = (
   fieldsProvider: FormFieldsProvider,
   stepId: string,

@@ -3,6 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 import CountryFlag from "@/components/dashboard/CountryFlag";
 import Table from "@/components/elements/Table/Table";
@@ -11,6 +12,7 @@ import { VARIANT_TABLE_DASHBOARD_LIST } from "@/components/elements/Table/TableV
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices } from "@/connections/Gadm";
+import { DASHBOARD_PROJECT_LIST_PATH, DASHBOARD_RETURN_PATH_STORAGE_KEY } from "@/constants/dashboardConsts";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { getFrameworkName } from "@/utils/dashboardUtils";
 
@@ -150,6 +152,10 @@ const ProjectList = () => {
   const { activeProjects } = useDashboardData(filters);
   const countryChoices = useGadmChoices({ level: 0 });
 
+  useEffect(() => {
+    sessionStorage.removeItem(DASHBOARD_RETURN_PATH_STORAGE_KEY);
+  }, []);
+
   const DATA_TABLE_PROJECT_LIST: ProjectListTableRow[] = activeProjects
     ? activeProjects
         .map((item: any) => {
@@ -189,16 +195,22 @@ const ProjectList = () => {
           organization: string;
           uuid: string;
         }) => {
+          const countrySlug = row.country.country_slug;
+          const selectedCountry =
+            dashboardCountries?.find(country => country.country_slug === countrySlug) ?? filters.country;
+
           setFilters(prevValues => ({
             ...prevValues,
-            uuid: row.uuid as string,
-            country:
-              dashboardCountries?.find(country => country.country_slug === row?.country?.country_slug) ||
-              prevValues.country
+            uuid: row.uuid,
+            country: selectedCountry
           }));
+          sessionStorage.setItem(DASHBOARD_RETURN_PATH_STORAGE_KEY, DASHBOARD_PROJECT_LIST_PATH);
           router.push({
             pathname: "/dashboard",
-            query: { ...filters, country: row?.country?.country_slug, uuid: row.uuid as string }
+            query: {
+              country: countrySlug,
+              uuid: row.uuid
+            }
           });
         }}
         initialTableState={{ pagination: { pageSize: 10 } }}

@@ -98,7 +98,7 @@ exports[`Storyshots Components/Extensive/TaskList Default 1`] = `
             className="text-body-400 with-inner-html"
             dangerouslySetInnerHTML={
               Object {
-                "__html": "Start a pitch or edit your pitches to apply for funding opportunities. To go to create a pitch, manage your pitches/funding applications, tap on \\"view\\".",
+                "__html": "Start a pitch or edit your pitches to apply for funding opportunities. To create or manage your pitches and funding applications, tap on \\"view.\\"",
               }
             }
             data-testid="txt"

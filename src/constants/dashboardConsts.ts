@@ -187,3 +187,6 @@ export const DUMMY_DATA_TARGET_LAND_USE_TYPES_REPRESENTED = {
     }
   ]
 };
+
+export const DASHBOARD_PROJECT_LIST_PATH = "/dashboard/project-list";
+export const DASHBOARD_RETURN_PATH_STORAGE_KEY = "dashboardReturnPath";

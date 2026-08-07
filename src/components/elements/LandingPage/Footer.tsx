@@ -12,7 +12,7 @@ const Footer = (props: FooterProps) => {
   const t = useT();
 
   const note = t(
-    "WRI would like to thank the German Federal Ministry for Environment, Nature Conservation and Nuclear Safety, Mastercard, and the Bezos Earth Fund for their support for the development of TerraMatch."
+    "WRI would like to thank the German Federal Ministry for the Environment, Climate Action, Nature Conservation and Nuclear Safety, Mastercard, and the Bezos Earth Fund for their support in the development of TerraMatch."
   );
 
   return (

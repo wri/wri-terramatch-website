@@ -5,7 +5,14 @@ import { twMerge } from "tailwind-merge";
 import { type ActionStatusTagProps } from "./ActionStatusTag.type";
 import { ACTION_STATUS_TAG_MAP } from "./constants";
 
-const ActionStatusTag: FC<ActionStatusTagProps> = ({ state, className, size = "default", label, icon }) => {
+const ActionStatusTag: FC<ActionStatusTagProps> = ({
+  state,
+  className,
+  size = "default",
+  label,
+  icon,
+  labelPrefix
+}) => {
   const stateClassName = state ? ACTION_STATUS_TAG_MAP[state].className : undefined;
 
   return (
@@ -15,10 +22,12 @@ const ActionStatusTag: FC<ActionStatusTagProps> = ({ state, className, size = "d
         stateClassName,
         className
       )}
+      textStyle={size === "default" ? "300-bold" : "200-bold"}
     >
       {icon}
+      {labelPrefix}
       <Tag.Label>
-        <Span textStyle={size === "default" ? "300-bold" : "200-bold"}>{label}</Span>
+        <Span>{label}</Span>
       </Tag.Label>
     </Tag.Root>
   );
