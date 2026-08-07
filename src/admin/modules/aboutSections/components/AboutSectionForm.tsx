@@ -1,8 +1,11 @@
 import { Flex } from "@chakra-ui/react";
+import { Delete as DeleteIcon } from "@mui/icons-material";
 import { FC } from "react";
-import { SelectArrayInput, SelectInput, TextInput } from "react-admin";
+import { ArrayInput, SelectArrayInput, SelectInput, TextInput } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
+import { AccordionFormIterator } from "@/admin/components/AccordionFormIterator/AccordionFormIterator";
+import { AddItemButton, RemoveItemButton } from "@/admin/components/AccordionFormIterator/AccordionFormIteratorButtons";
 import SemanticHtmlInput from "@/admin/modules/aboutSections/components/SemanticHtmlInput";
 import { SECTION_TYPE_CHOICES } from "@/admin/modules/aboutSections/util";
 import AboutPageItemDisplay from "@/components/extensive/PageElements/AboutPageItem/AboutPageItemDisplay";
@@ -58,6 +61,27 @@ const AboutSectionForm: FC = () => {
                   helperText="Email Subject Line"
                 />
                 <TextInput label="Contact Support Message" source="contactSupportMessage" />
+                <ArrayInput source="links" label="Helpful Links">
+                  <AccordionFormIterator
+                    accordionSummaryTitle={(index, links) =>
+                      `Link ${index + 1} of ${links.length} (${links[index].title})`
+                    }
+                    addButton={<AddItemButton variant="contained" label="Add Link" />}
+                    removeButton={
+                      <RemoveItemButton
+                        variant="text"
+                        label="Delete Link"
+                        modalTitle="Delete Link"
+                        modalContent="Are you sure you want to delete this link?"
+                      >
+                        <DeleteIcon />
+                      </RemoveItemButton>
+                    }
+                  >
+                    <TextInput source="title" label="Title" fullWidth className="m-0" />
+                    <TextInput source="url" label="URL" fullWidth className="m-0" />
+                  </AccordionFormIterator>
+                </ArrayInput>
               </>
             )}
           </Flex>
