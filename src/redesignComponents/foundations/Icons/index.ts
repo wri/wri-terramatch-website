@@ -34,6 +34,7 @@ export { EditIcon } from "./Function/EditIcon";
 export { ExpandIcon } from "./Function/ExpandIcon";
 export { GoogleViewIcon } from "./Function/GoogleViewIcon";
 export { FilterIcon } from "./Function/FilterIcon";
+export { FolderOpenIcon } from "./Function/FolderOpenIcon";
 export { GrasslandIcon } from "./RestorationAndLand/GrasslandIcon";
 export { IncorrectIcon } from "./Function/IncorrectIcon";
 export { IndeterminateIcon } from "./Function/IndeterminateIcon";
