@@ -43,14 +43,14 @@ const LandingPage = () => {
             {
               title: t("1. Apply for Funding"),
               description: t(
-                "We are working with dozen of funders who are eager to support locally led restoration projects. We  host requests for proposals on TerraMatch when new capital is ready to be deployed."
+                "We are working with dozens of funders who are eager to support locally led restoration projects. We  host requests for proposals on TerraMatch when new capital is ready to be deployed."
               ),
               iconName: IconNames.USER_CIRCLE
             },
             {
               title: t("2. Find Support"),
               description: t(
-                "TerraMatch is committed to support the growth of locally led restoration project developers. We  host the application process for cohort-based accelerator programs for champions who are looking to level up their operations. We also offer guidance and support for those who do not match with our existing programs."
+                "TerraMatch is committed to supporting the growth of locally led restoration project developers. We  host the application process for cohort-based accelerator programs for champions who are looking to level up their operations. We also offer guidance and support for those who do not match with our existing programs."
               ),
               iconName: IconNames.DOCUMENT_CIRCLE_HOMEPAGE
             },
@@ -94,7 +94,7 @@ const LandingPage = () => {
       <AlternatingSection
         title={t("Harit Bharat Fund")}
         description={t(
-          "A partnership led by World Resources Institute, Harit Bharat Fund is investing in 20 non-governmental organizations, small enterprises, and and farmer-producer companies that restore land in the Central Indian states of Madhya Pradesh, Maharashtra, and Chhattisgarh. Learning from TerraFund for AFR100, this new initiative uses and adapts TerraMatch's application and monitoring functions. WRI India, India Climate Collaborative, Pune Knowledge Cluster, Sangam, Spectrum Impact, and Transform Rural Impact are implementing partners."
+          "A partnership led by World Resources Institute, Harit Bharat Fund is investing in 20 non-governmental organizations, small enterprises, and farmer-producer companies that restore land in the Central Indian states of Madhya Pradesh, Maharashtra, and Chhattisgarh. Building on lessons from TerraFund for AFR100, this new initiative uses and adapts TerraMatch's application and monitoring functions. WRI India, India Climate Collaborative, Pune Knowledge Cluster, Sangam, Spectrum Impact, and Transform Rural Impact are implementing partners."
         )}
         buttonText={t("Learn more")}
         buttonLink="https://www.haritbharatfund.in/"
@@ -107,7 +107,7 @@ const LandingPage = () => {
       <AlternatingSection
         title={t("More Opportunities To Come")}
         description={t(
-          "TerraMatch will continue to host new funding and capacity building programs. Prepare for those upcoming opportunities by filling out your profile today.<br/><br/>The first application on TerraMatch is for the TerraFund for AFR100: Landscapes opportunity, featured above."
+          "TerraMatch will continue to host new funding and capacity-building programs. Prepare for those upcoming opportunities by filling out your profile today.<br/><br/>The first application on TerraMatch is for the TerraFund for AFR100: Landscapes opportunity, featured above."
         )}
         buttonText={t("Sign up")}
         buttonLink="/auth/signup"
@@ -137,7 +137,7 @@ const LandingPage = () => {
             </Text>
             <Text variant="text-body-900" className="text-white">
               {t(
-                "Behind TerraMatch is a team of project specialists determined to help grow the capacity of locally led organizations that restore land. In our resource library, we gather resources and support materials to help aspiring organizations prepare for upcoming applications and funded projects master monitoring, reporting, and verification techniques."
+                "Behind TerraMatch is a team of project specialists determined to help grow the capacity of locally led organizations that restore land. In our resource library, we gather resources and support materials to help aspiring organizations prepare for upcoming applications and help those with funded projects master monitoring, reporting, and verification techniques."
               )}
             </Text>
             <Button as={Link} href={zendeskSupportLink}>

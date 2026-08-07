@@ -65,6 +65,18 @@ export const ReportingFrameworkEdit: FC = () => {
             helperText="please leave this section blank."
           />
         </ReferenceInput>
+        <ReferenceInput
+          source="disturbanceReportFormUuid"
+          reference={modules.form.ResourceName}
+          filter={{ type: "disturbance-report" }}
+        >
+          <AutocompleteInput
+            optionText="title"
+            label="Disturbance Reporting Form"
+            fullWidth
+            helperText="If this reporting framework doesn't require disturbance reports, please leave this section blank."
+          />
+        </ReferenceInput>
       </SimpleForm>
     </Edit>
   );
