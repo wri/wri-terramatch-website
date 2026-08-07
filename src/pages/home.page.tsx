@@ -55,7 +55,7 @@ const HomePage = () => {
             items={[
               {
                 title: t("Organizational Information"),
-                subtitle: t("Keep your profile updated to have more chances of having a successful application. "),
+                subtitle: t("Keep your profile updated for a better chance of a successful application. "),
                 actionText: t("View"),
                 actionUrl: `/organization/${organisationId}`,
                 iconProps: {
