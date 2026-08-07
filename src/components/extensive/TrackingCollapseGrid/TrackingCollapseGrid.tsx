@@ -71,6 +71,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({
   );
 
   const shouldShowError = status === "in-progress";
+  const isFormPage = onChange != null;
 
   return (
     <Accordion
@@ -79,12 +80,12 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({
         <AccordionHeader
           title={boldNumber}
           status={STATUS_MAP[status]}
-          statusLabel={shouldShowError ? t("Totals don't match across categories") : undefined}
+          statusLabel={shouldShowError && isFormPage ? t("Totals don't match across categories") : undefined}
         />
       }
     >
       <div>
-        {shouldShowError && (
+        {shouldShowError && isFormPage && (
           <Text textStyle="300" color="error.900" marginBottom={4}>
             {t("The total number of entries must be the same for each category.")}{" "}
             <strong>{t("Please review your entries.")}</strong>

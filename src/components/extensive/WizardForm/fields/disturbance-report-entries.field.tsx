@@ -58,6 +58,7 @@ export const DisturbanceReportEntriesField: FormFieldFactory = {
     });
 
     entries.push({
+      name: field.name,
       title: field.label,
       inputType: field.inputType,
       value: modValue?.join("<br/>") ?? t("Answer Not Provided")
