@@ -94,7 +94,7 @@ const FinancialTabContent: FC<FinancialTabContentProps> = ({ organization }) => 
       ctaText: t("View Report"),
       onClick: () => ({}),
       statusText: report.status,
-      updatedAt: report.dueAt ? `Due: ${new Date(report.dueAt).toLocaleDateString()}` : ""
+      updatedAt: report.dueAt ? `Due: ${new Date(report.dueAt).toLocaleDateString(undefined, { timeZone: "UTC" })}` : ""
     })
   );
 

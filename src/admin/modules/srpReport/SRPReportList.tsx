@@ -63,7 +63,7 @@ const SRPReportDataGrid: FC = () => {
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
       />
-      <DateField source="dueAt" label="Due Date" locales="en-GB" />
+      <DateField source="dueAt" label="Due Date" locales="en-GB" options={{ timeZone: "UTC" }} />
       <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
       <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />
 
