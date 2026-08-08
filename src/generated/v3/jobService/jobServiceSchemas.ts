@@ -47,17 +47,7 @@ export type DelayedJobDto = {
   /**
    * The type of the related entity (e.g., projects, sites, etc).
    */
-  entityType?:
-    | "projects"
-    | "sites"
-    | "nurseries"
-    | "projectReports"
-    | "siteReports"
-    | "nurseryReports"
-    | "financialReports"
-    | "disturbanceReports"
-    | "srpReports"
-    | null;
+  entityType?: string | null;
 };
 
 export type DelayedJobAttributes = {

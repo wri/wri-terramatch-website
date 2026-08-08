@@ -106,8 +106,6 @@ export const formDataProvider: Partial<DataProvider> = {
   },
 
   async getOne<RecordType>(_: string, { id }: GetOneParams) {
-    // Disable translation for admin data provider; forms must be edited in English so that the
-    // labels that will be translated from the DB are in English as the source language.
     const connected = await loadForm({ id });
     if (connected.loadFailure != null) {
       throw v3ErrorForRA("Form get fetch failed", connected.loadFailure);

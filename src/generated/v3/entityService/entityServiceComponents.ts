@@ -771,6 +771,69 @@ export const aboutSectionIndex = new V3ApiEndpoint<
   {}
 >("/aboutSections/v3/aboutSections", "GET");
 
+export type AboutSectionCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type AboutSectionCreateResponse = {
+  meta?: {
+    /**
+     * @example aboutSections
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example aboutSections
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.AboutSectionDto;
+  };
+};
+
+export type AboutSectionCreateVariables = {
+  body: Schemas.CreateAboutSectionBody;
+};
+
+/**
+ * Create a new about section
+ */
+export const aboutSectionCreate = new V3ApiEndpoint<
+  AboutSectionCreateResponse,
+  AboutSectionCreateError,
+  AboutSectionCreateVariables,
+  {}
+>("/aboutSections/v3/aboutSections", "POST");
+
 export type AboutSectionGetPathParams = {
   /**
    * UUID of the resource.
@@ -825,6 +888,228 @@ export const aboutSectionGet = new V3ApiEndpoint<
   AboutSectionGetVariables,
   {}
 >("/aboutSections/v3/aboutSections/{uuid}", "GET");
+
+export type AboutSectionUpdatePathParams = {
+  uuid: string;
+};
+
+export type AboutSectionUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type AboutSectionUpdateResponse = {
+  meta?: {
+    /**
+     * @example aboutSections
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example aboutSections
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.AboutSectionDto;
+  };
+};
+
+export type AboutSectionUpdateVariables = {
+  body: Schemas.UpdateAboutSectionBody;
+  pathParams: AboutSectionUpdatePathParams;
+};
+
+/**
+ * Update an about section
+ */
+export const aboutSectionUpdate = new V3ApiEndpoint<
+  AboutSectionUpdateResponse,
+  AboutSectionUpdateError,
+  AboutSectionUpdateVariables,
+  {}
+>("/aboutSections/v3/aboutSections/{uuid}", "PUT");
+
+export type AboutSectionDeletePathParams = {
+  uuid: string;
+};
+
+export type AboutSectionDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type AboutSectionDeleteResponse = {
+  meta?: {
+    /**
+     * @example aboutSections
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type AboutSectionDeleteVariables = {
+  pathParams: AboutSectionDeletePathParams;
+};
+
+export const aboutSectionDelete = new V3ApiEndpoint<
+  AboutSectionDeleteResponse,
+  AboutSectionDeleteError,
+  AboutSectionDeleteVariables,
+  {}
+>("/aboutSections/v3/aboutSections/{uuid}", "DELETE");
+
+export type AboutSectionPushTranslationsPathParams = {
+  uuid: string;
+};
+
+export type AboutSectionPushTranslationsError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type AboutSectionPushTranslationsVariables = {
+  pathParams: AboutSectionPushTranslationsPathParams;
+};
+
+/**
+ * Push translations to Transifex for an About Section
+ */
+export const aboutSectionPushTranslations = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example formTranslations
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example formTranslations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FormTranslationDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  AboutSectionPushTranslationsError,
+  AboutSectionPushTranslationsVariables,
+  {}
+>("/aboutSections/v3/aboutSections/{uuid}/translations", "POST");
 
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -6992,7 +7277,14 @@ export const operationsByTag = {
     impactStoryDelete,
     impactStoryBulkDelete
   },
-  aboutSections: { aboutSectionIndex, aboutSectionGet },
+  aboutSections: {
+    aboutSectionIndex,
+    aboutSectionCreate,
+    aboutSectionGet,
+    aboutSectionUpdate,
+    aboutSectionDelete,
+    aboutSectionPushTranslations
+  },
   tasks: { taskIndex, taskGet, taskUpdate },
   files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
