@@ -18,6 +18,7 @@ import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
+import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner/ProjectBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -176,7 +177,11 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
                   size="small"
                   className={`underline underline-offset-2 ${activeSuffixView === button.key ? "font-semibold" : ""}`}
                   onClick={() => {
-                    navigateToTab(button.key);
+                    if (button.key === "reporting-tasks") {
+                      void router.push(getReportsIndexUrl("project", project.uuid));
+                    } else {
+                      navigateToTab(button.key);
+                    }
                   }}
                 >
                   {t(button.labelKey)}

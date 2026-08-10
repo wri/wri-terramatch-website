@@ -9,6 +9,7 @@ import { useFullNursery } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryOverviewTab from "@/pages/nursery/[uuid]/tabs/Overview";
+import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import NurseryBanner from "@/redesignComponents/content/Banner/NurseryBanner/NurseryBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -103,7 +104,7 @@ const NurseryDetailPage = () => {
                       variant="borderless"
                       size="small"
                       className="underline underline-offset-2"
-                      onClick={() => router.push(`/nursery/${nursery.uuid}?tab=completed-tasks`)}
+                      onClick={() => router.push(getReportsIndexUrl("nursery", nursery.uuid))}
                     >
                       {t("Nursery Reports")}
                     </Button>
