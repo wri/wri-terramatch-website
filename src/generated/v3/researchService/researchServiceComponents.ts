@@ -542,6 +542,70 @@ export const bulkDeleteSitePolygons = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons", "DELETE");
 
+export type GetSiteIndicatorRollupQueryParams = {
+  /**
+   * UUID of the project to roll indicators up for. One row is returned per approved site.
+   *
+   * @example cd46fa33-a5c1-40b4-a9ca-4793b6248157
+   */
+  projectId: string;
+};
+
+export type GetSiteIndicatorRollupError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type GetSiteIndicatorRollupResponse = {
+  meta?: {
+    /**
+     * @example siteIndicatorRollups
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example siteIndicatorRollups
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SiteIndicatorRollupDto;
+  };
+};
+
+export type GetSiteIndicatorRollupVariables = {
+  queryParams: GetSiteIndicatorRollupQueryParams;
+};
+
+/**
+ * Returns one row per active, approved site in the project, aggregated in a single
+ *     GROUP BY query: O(sites), not O(polygons). Intended to replace client-side aggregation over
+ *     every polygon for large projects.
+ *
+ *     Only active, APPROVED polygons are counted. Client-side aggregation includes active polygons
+ *     in every status, so the two paths will not agree; whichever basis is used must be stated in
+ *     the UI. treeCoverCoverage reports what fraction of each site's polygons actually contributed
+ *     to treeCoverWeightedMeanPct. treeCoverLossTotal is not yet implemented and is always null.
+ */
+export const getSiteIndicatorRollup = new V3ApiEndpoint<
+  GetSiteIndicatorRollupResponse,
+  GetSiteIndicatorRollupError,
+  GetSiteIndicatorRollupVariables,
+  {}
+>("/research/v3/sitePolygons/indicatorRollup", "GET");
+
 export type GetSitePolygonsGeoJsonQueryParams = {
   /**
    * UUID of a specific polygon
@@ -3119,6 +3183,7 @@ export const operationsByTag = {
     sitePolygonsIndex,
     bulkUpdateSitePolygons,
     bulkDeleteSitePolygons,
+    getSiteIndicatorRollup,
     getSitePolygonsGeoJson,
     bulkUpdateSitePolygonAttributes,
     updateSitePolygonStatus,

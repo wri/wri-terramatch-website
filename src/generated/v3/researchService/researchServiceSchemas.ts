@@ -164,6 +164,53 @@ export type GeoJsonExportDto = {
   }[];
 };
 
+export type SiteIndicatorRollupDto = {
+  /**
+   * UUID of the site this row rolls up.
+   */
+  siteUuid: string;
+  /**
+   * Name of the site.
+   */
+  siteName: string | null;
+  /**
+   * Active polygons on this site that are not approved (draft, pending-approval, information-required). These are excluded from every measurement below; surface the count so the omission is visible.
+   */
+  inReviewCount: number;
+  /**
+   * Count of active, approved polygons on this site.
+   */
+  polygons: number;
+  /**
+   * Sum of calc_area over this site's active, approved polygons. Null when there are none.
+   */
+  hectares: number | null;
+  /**
+   * Area-weighted mean of the latest-year percent_cover across this site's approved polygons. Null when no polygon carries a value.
+   */
+  treeCoverWeightedMeanPct: number | null;
+  /**
+   * Polygons that contributed to treeCoverWeightedMeanPct.
+   */
+  treeCoverPolygonCount: number;
+  /**
+   * treeCoverPolygonCount / polygons. Render alongside the mean; a partial aggregate shown as complete is worse than no number.
+   */
+  treeCoverCoverage: number | null;
+  /**
+   * Per-year tree cover loss summed across years and polygons ('treeCoverLoss' slug only; 'treeCoverLossFires' is a separate indicator). Null means not measured, not zero.
+   */
+  treeCoverLossTotal: number | null;
+  /**
+   * Polygons that contributed a tree cover loss value.
+   */
+  treeCoverLossPolygonCount: number;
+  /**
+   * treeCoverLossPolygonCount / polygons.
+   */
+  treeCoverLossCoverage: number | null;
+};
+
 export type GeometryUploadComparisonSummaryDto = {
   /**
    * Array of UUIDs of existing SitePolygons found in the database
