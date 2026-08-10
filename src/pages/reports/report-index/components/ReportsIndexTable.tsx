@@ -104,14 +104,14 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
           <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
             <Checkbox
               name={`report-${report.id}`}
-              aria-label={t("Select {report}", { report: report.name || typeLabels[report.type] })}
+              aria-label={t("Select {report}", { report: report.name ?? typeLabels[report.type] })}
               checked={isSelected}
               onCheckedChange={({ checked }) => handleRowSelected(report, checked === true)}
             />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("name")}>
             <TitleCell
-              label={report.name || typeLabels[report.type]}
+              label={report.name ?? typeLabels[report.type]}
               link={getReportPath(report)}
               linkTarget="_self"
               showChevron={false}
