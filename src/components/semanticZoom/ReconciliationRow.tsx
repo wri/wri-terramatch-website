@@ -16,7 +16,10 @@ export interface ReconciliationRowProps {
 const ReconciliationRow = ({ reconciliation, unit, formatValue }: ReconciliationRowProps) => {
   const { delta, deltaFraction } = reconciliation;
 
-  if (delta === 0) {
+  // Rounded to what the rows above actually display, an exact tie still leaves a hair of float
+  // behind — "Measured is 0% below reported, Δ −0.00 ha" is a worse statement than "they agree",
+  // and it reads as a divergence when there is none. Anything under a tenth of a percent is a tie.
+  if (delta === 0 || (deltaFraction != null && Math.abs(deltaFraction) < 0.001)) {
     return <p className="mt-1 text-[11px] leading-tight text-theme-neutral-500">Measured matches reported.</p>;
   }
 

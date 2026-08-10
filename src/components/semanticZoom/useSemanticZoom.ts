@@ -231,7 +231,10 @@ export const useSemanticZoom = ({ projectUuid, projectName, claims, goals }: Use
     }
     if (level === "site") {
       return (polygons ?? []).map(polygon => ({
-        id: polygon.polygonUuid ?? polygon.uuid ?? "",
+        // The site-polygon uuid, not polygonUuid (the geometry's own id). The map's features are
+        // keyed by the former, so handing over the latter descends the panel while leaving the map
+        // showing the whole site — the selection silently fails to reach half the UI.
+        id: polygon.uuid ?? polygon.polygonUuid ?? "",
         name: polygon.name ?? "Unnamed polygon",
         polygons: 1,
         inReviewCount: 0

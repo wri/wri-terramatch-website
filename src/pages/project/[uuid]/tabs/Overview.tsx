@@ -33,6 +33,9 @@ import EntitySetUpSection from "./EntitySetUpSection";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 import LatestImagesSectionTab from "./LatestImagesSection";
 
+/** Height of the map-and-panel row. Taller than the map's own minimum so the panel has room. */
+const DRILLDOWN_ROW_HEIGHT = "30rem";
+
 interface ProjectOverviewTabProps {
   project: ProjectFullDto;
   onViewSites?: () => void;
@@ -203,10 +206,13 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         open={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
+      {/* Map and indicators share one full-width card. They were briefly split across two rows;
+          descending then moved the map but left the numbers below the fold, so a click on a site
+          looked like it had done nothing. The whole point of the zoom is that both change at once. */}
       <Flex gap={7} className="flex-col sm:flex-row sm:items-stretch">
         <PageItem
           title={t("Project Map")}
-          flexProps={{ flex: 1 }}
+          flexProps={{ flex: 1, width: "100%" }}
           className="min-h-0"
           buttonProps={{
             variant: "secondary",
@@ -226,19 +232,31 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         >
           <Box className="flex min-h-0 flex-1 flex-col gap-2">
             <SemanticZoomBreadcrumb zoom={zoom} />
-            <Box className="relative flex-1 overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
-              <SemanticZoomMap zoom={zoom} />
-              {showSiteAreasMapPlaceholder && (
-                <MapPlaceholder
-                  icon={<SiteIcon boxSize={6} color="neutral.100" />}
-                  title={t("Project Sites not defined")}
-                  className="z-10 bg-map-project-placeholder"
-                  buttonGroupProps={{ buttons: addSitesAndNurseriesButtons }}
-                />
-              )}
-            </Box>
+            {/* The row height is a Chakra prop, not a Tailwind class, and it has to hold. The
+                panel's child list runs to 100 rows; an unbounded row stretches to fit it and drags
+                the map canvas along — 1,200 x 4,000px, with every polygon scrolled far below the
+                visible slice, which reads as "the map is broken". A `ws-1100:h-[30rem]` did exactly
+                that, because that variant does not survive this project's build. */}
+            <Flex className="flex-col gap-4 sm:flex-row" h={{ base: "auto", sm: DRILLDOWN_ROW_HEIGHT }}>
+              <Box className="relative flex-1 overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
+                <SemanticZoomMap zoom={zoom} />
+                {showSiteAreasMapPlaceholder && (
+                  <MapPlaceholder
+                    icon={<SiteIcon boxSize={6} color="neutral.100" />}
+                    title={t("Project Sites not defined")}
+                    className="z-10 bg-map-project-placeholder"
+                    buttonGroupProps={{ buttons: addSitesAndNurseriesButtons }}
+                  />
+                )}
+              </Box>
+              <Box className="w-full shrink-0 sm:w-[25rem]" h={{ base: DRILLDOWN_ROW_HEIGHT, sm: "100%" }} minH={0}>
+                <SemanticZoomPanel zoom={zoom} />
+              </Box>
+            </Flex>
           </Box>
         </PageItem>
+      </Flex>
+      <Flex gap={7} paddingY={2} className="flex-col sm:flex-row sm:items-stretch">
         <PageItem
           flexProps={{ width: "fit-content", overflow: "hidden" }}
           className="!w-full !max-w-full sm:!w-[35%] sm:!max-w-[35%] lg:!w-[30%] lg:!max-w-[30%]"
@@ -263,39 +281,20 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             <EntitySetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} type="projects" />
           </Box>
         </PageItem>
+        <PageItem
+          title={t("Key Indicators & Insights")}
+          flexProps={{ flex: 1 }}
+          buttonProps={{
+            variant: "secondary",
+            size: "small",
+            children: t("View Progress & Goals"),
+            rightIcon: <ChevronRightIcon />,
+            onClick: () => goToTab("goals")
+          }}
+        >
+          <KeyIndicatorsInsightsTab project={project} />
+        </PageItem>
       </Flex>
-      {/* The other half of the drill-down. Full width because six indicators, their coverage lines
-          and the list of children do not fit in a column beside the map without a scrollbar
-          swallowing most of them. */}
-      <PageItem
-        title={t("Measured Indicators")}
-        flexProps={{ paddingY: 2, width: "100%" }}
-        buttonProps={
-          zoom.level === "project"
-            ? undefined
-            : {
-                variant: "secondary",
-                size: "small",
-                children: t("Back to project"),
-                onClick: () => zoom.navigate({ site: null, polygon: null })
-              }
-        }
-      >
-        <SemanticZoomPanel zoom={zoom} layout="wide" />
-      </PageItem>
-      <PageItem
-        title={t("Key Indicators & Insights")}
-        flexProps={{ paddingY: 2, width: "100%" }}
-        buttonProps={{
-          variant: "secondary",
-          size: "small",
-          children: t("View Progress & Goals"),
-          rightIcon: <ChevronRightIcon />,
-          onClick: () => goToTab("goals")
-        }}
-      >
-        <KeyIndicatorsInsightsTab project={project} />
-      </PageItem>
       <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[39.625rem] sm:flex-row">
         <PageItem
           flexProps={{ flex: 1 }}
