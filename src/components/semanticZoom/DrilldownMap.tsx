@@ -113,7 +113,7 @@ const DrilldownMap = ({ featureCollection, selectedId, onSelectPolygon, loading 
           source: SOURCE_ID,
           paint: {
             "fill-color": ["case", ["boolean", ["feature-state", "selected"], false], "#f2994a", "#27ae60"],
-            "fill-opacity": 0.35
+            "fill-opacity": ["case", ["boolean", ["feature-state", "selected"], false], 0.5, 0.3]
           }
         });
         map.addLayer({
@@ -136,15 +136,19 @@ const DrilldownMap = ({ featureCollection, selectedId, onSelectPolygon, loading 
         map.on("mouseleave", FILL_LAYER, () => (map.getCanvas().style.cursor = ""));
       }
 
-      // Refit on every level change: the framing IS the zoom metaphor.
-      const bounds = boundsOf(featureCollection);
+      // Refit on every level change: the framing IS the zoom metaphor. When a single polygon is
+      // selected, frame that polygon — descending has to be visible on the map, not just in the
+      // panel.
+      const focused =
+        selectedId == null ? null : featureCollection.features.find(feature => feature.properties?.uuid === selectedId);
+      const bounds = boundsOf(focused == null ? featureCollection : { type: "FeatureCollection", features: [focused] });
       boundsRef.current = bounds;
       if (bounds != null) map.fitBounds(bounds, { padding: 32, duration: 600, maxZoom: 17 });
     };
 
     if (map.isStyleLoaded()) apply();
     else map.once("load", apply);
-  }, [featureCollection]);
+  }, [featureCollection, selectedId]);
 
   useEffect(() => {
     const map = mapRef.current;

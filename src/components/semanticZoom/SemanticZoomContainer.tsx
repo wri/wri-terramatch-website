@@ -92,9 +92,22 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
     [polygons, polygonUuid]
   );
 
+  // The geojson covers every polygon on the site, so a name is available even when the polygon's
+  // record is not in the loaded page.
+  const selectedFeature = useMemo(
+    () => featureCollection?.features.find(feature => feature.properties?.uuid === polygonUuid) ?? null,
+    [featureCollection, polygonUuid]
+  );
+  const selectedPolygonName =
+    selectedPolygon?.name ?? (selectedFeature?.properties?.polyName as string | undefined) ?? null;
+
   const aggregate = useMemo(() => {
-    if (level === "polygon" && selectedPolygon != null) {
-      return aggregatePolygon(polygonMeasurementsFrom(selectedPolygon.indicators, selectedPolygon.calcArea ?? null));
+    if (level === "polygon") {
+      // Falling back to the site's numbers here would print aggregated figures under a polygon
+      // heading. Showing nothing is the honest answer; the caller renders an explanation.
+      return selectedPolygon == null
+        ? null
+        : aggregatePolygon(polygonMeasurementsFrom(selectedPolygon.indicators, selectedPolygon.calcArea ?? null));
     }
     if (level === "site" && siteRow != null) return aggregateSite(siteRow);
     return aggregateProject(rows);
@@ -122,7 +135,7 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
 
   const reconciliations = useMemo(() => {
     if (level !== "project") return undefined;
-    return { hectares: reconcile(claims?.hectares ?? null, aggregate.indicators.hectares.value) };
+    return { hectares: reconcile(claims?.hectares ?? null, aggregate?.indicators.hectares.value ?? null) };
   }, [level, claims, aggregate]);
 
   if (!rollupLoaded) {
@@ -134,7 +147,7 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
       ? projectName
       : level === "site"
       ? siteRow?.siteName ?? "Site"
-      : selectedPolygon?.name ?? "Polygon";
+      : selectedPolygonName ?? "Polygon";
 
   return (
     <div className="flex w-full flex-col gap-3">
@@ -153,7 +166,7 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
         {polygonUuid != null && (
           <>
             <span className="text-neutral-400">/</span>
-            <span className="text-neutral-900">{selectedPolygon?.name ?? "Polygon"}</span>
+            <span className="text-neutral-900">{selectedPolygonName ?? "Polygon"}</span>
           </>
         )}
       </nav>
@@ -171,22 +184,33 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
         </div>
 
         <div className="min-h-[420px] w-full shrink-0 ws-1100:w-[400px]">
-          <LevelCard
-            aggregate={aggregate}
-            title={title}
-            subtitle={level === "project" ? `${rows.length} sites` : undefined}
-            childEntries={children}
-            claims={
-              level === "project" && claims?.hectares != null
-                ? { hectares: { value: claims.hectares, label: "Reported (approved reports)" } }
-                : undefined
-            }
-            reconciliations={reconciliations}
-            goals={level === "project" ? { hectares: goals?.hectares ?? null } : undefined}
-            onSelectChild={id =>
-              level === "project" ? navigate({ site: id, polygon: null }) : navigate({ polygon: id })
-            }
-          />
+          {aggregate == null ? (
+            <section className="rounded-lg border border-neutral-200 bg-white p-4">
+              <p className="text-[11px] uppercase tracking-wide text-neutral-400">Polygon</p>
+              <h3 className="text-base font-semibold text-neutral-900">{selectedPolygonName ?? "Polygon"}</h3>
+              <p className="text-orange-700 mt-2 text-xs">
+                This polygon is not in the loaded page, so its own measurements are not available. The site aggregate is
+                deliberately not shown here — it would be a different number under a polygon heading.
+              </p>
+            </section>
+          ) : (
+            <LevelCard
+              aggregate={aggregate}
+              title={title}
+              subtitle={level === "project" ? `${rows.length} sites` : undefined}
+              childEntries={children}
+              claims={
+                level === "project" && claims?.hectares != null
+                  ? { hectares: { value: claims.hectares, label: "Reported (approved reports)" } }
+                  : undefined
+              }
+              reconciliations={reconciliations}
+              goals={level === "project" ? { hectares: goals?.hectares ?? null } : undefined}
+              onSelectChild={id =>
+                level === "project" ? navigate({ site: id, polygon: null }) : navigate({ polygon: id })
+              }
+            />
+          )}
           {level === "site" && polygonsLoaded && (polygonTotal ?? 0) > POLYGON_PAGE_SIZE && (
             // Never let a truncated list read as the whole list.
             <p className="text-orange-700 mt-2 text-[11px]">
