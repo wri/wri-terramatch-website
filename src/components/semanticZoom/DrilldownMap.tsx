@@ -155,11 +155,14 @@ const DrilldownMap = ({ featureCollection, selectedId, onSelectPolygon, loading 
           source: SOURCE_ID,
           filter: ["==", ["geometry-type"], "Point"],
           layout: {
-            "text-field": ["get", "polygons"],
+            // Name first, count second: a reader needs to know which site before how big it is.
+            "text-field": ["format", ["get", "name"], {}, "\n", {}, ["get", "polygonsLabel"], { "font-scale": 0.85 }],
             "text-size": 12,
+            "text-offset": [0, 1.6],
+            "text-anchor": "top",
             "text-allow-overlap": true
           },
-          paint: { "text-color": "#FFFFFF", "text-halo-color": POLYGON_LINE, "text-halo-width": 1 }
+          paint: { "text-color": "#FFFFFF", "text-halo-color": POLYGON_LINE, "text-halo-width": 1.5 }
         });
 
         for (const layer of [FILL_LAYER, POINT_LAYER]) {

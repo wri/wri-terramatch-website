@@ -116,7 +116,13 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
           return {
             type: "Feature" as const,
             // uuid and siteId are both the site here, so a click resolves to the site.
-            properties: { uuid: row.siteUuid, siteId: row.siteUuid, name: row.siteName, polygons: row.polygons },
+            properties: {
+              uuid: row.siteUuid,
+              siteId: row.siteUuid,
+              name: row.siteName ?? "Unnamed site",
+              polygons: row.polygons,
+              polygonsLabel: `${row.polygons.toLocaleString()} polygons`
+            },
             geometry: { type: "Point" as const, coordinates: [acc.lng / acc.n, acc.lat / acc.n] }
           };
         })
