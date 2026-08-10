@@ -55,7 +55,7 @@ const HomePage = () => {
             items={[
               {
                 title: t("Organizational Information"),
-                subtitle: t("Keep your profile updated to have more chances of having a successful application. "),
+                subtitle: t("Keep your profile updated for a better chance of a successful application. "),
                 actionText: t("View"),
                 actionUrl: `/organization/${organisationId}`,
                 iconProps: {
@@ -66,7 +66,7 @@ const HomePage = () => {
               {
                 title: t("Pitches"),
                 subtitle: t(
-                  'Start a pitch or edit your pitches to apply for funding opportunities. To go to create a pitch, manage your pitches/funding applications, tap on "view".'
+                  'Start a pitch or edit your pitches to apply for funding opportunities. To create or manage your pitches and funding applications, tap on "view."'
                 ),
                 actionText: t("View"),
                 actionUrl: `/organization/${organisationId}?tab=pitches`,

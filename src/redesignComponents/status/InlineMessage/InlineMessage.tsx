@@ -3,8 +3,8 @@ import {
   InlineMessage as InlineMessageComponent,
   InlineMessageProps as InlineMessageComponentProps
 } from "@worldresources/wri-design-systems";
-import classNames from "classnames";
 import { FC } from "react";
+import { twMerge } from "tailwind-merge";
 export interface InlineMessageProps extends InlineMessageComponentProps {
   className?: string;
 }
@@ -38,7 +38,7 @@ const InlineMessage: FC<InlineMessageProps> = ({
   className
 }) => {
   return (
-    <Box className={classNames("w-auto", className)} css={BASE_CSS}>
+    <Box className={twMerge("w-auto", className)} css={BASE_CSS}>
       <InlineMessageComponent
         label={label ?? ""}
         variant={variant}

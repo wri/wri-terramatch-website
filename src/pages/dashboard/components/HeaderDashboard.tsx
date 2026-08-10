@@ -168,7 +168,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       isUpdatingRef.current = true;
 
       router
-        .push(
+        .replace(
           {
             pathname: router.pathname,
             query: query
@@ -595,7 +595,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
                             router.push({
                               pathname: "/dashboard",
                               query: {
-                                ...filters,
                                 country: option.country ?? "",
                                 uuid: option.uuid
                               }

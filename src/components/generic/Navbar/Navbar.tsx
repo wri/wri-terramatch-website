@@ -86,7 +86,7 @@ const Navbar: FC = () => {
         <InlineMessage
           className="!w-full"
           variant="warning"
-          label={t("We are Improving TerraMatch")}
+          label={t("We are improving TerraMatch")}
           caption={t(
             "You may notice some pages look different while we update the design to make your experience better. "
           )}

@@ -1,7 +1,9 @@
+import { useT } from "@transifex/react";
 import React from "react";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import CustomBar from "@/pages/dashboard/charts/CustomBarJobsCreated";
+import { TreeCoverLossPolygonCounts } from "@/utils/MonitoredIndicatorUtils";
 
 type TreeLossData = {
   name: number;
@@ -12,9 +14,11 @@ type TreeLossData = {
 interface TreeLossBarChartProps {
   data: TreeLossData[];
   className?: string;
+  polygonCounts?: TreeCoverLossPolygonCounts;
 }
 
-const TreeLossBarChart = ({ data, className = "" }: TreeLossBarChartProps) => {
+const TreeLossBarChart = ({ data, className = "", polygonCounts }: TreeLossBarChartProps) => {
+  const t = useT();
   const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
     if (active && payload && payload.length) {
       return (
@@ -36,9 +40,22 @@ const TreeLossBarChart = ({ data, className = "" }: TreeLossBarChartProps) => {
   };
 
   return (
-    <div className={`h-[375px] w-full p-0 lg:h-[500px] ${className} pt-0`}>
+    <div className={`relative h-[375px] w-full p-0 lg:h-[500px] ${className} pt-0`}>
       <h2 className="text-14 mb-3 pl-8 uppercase text-darkCustom">Tree Loss Retrospective (ha)</h2>
       <h3 className="text-14-semibold mb-4 pl-8">2010-2024</h3>
+      {polygonCounts != null && (
+        <div
+          className="shadow-sm absolute bottom-6 right-8 z-10 rounded-lg border border-grey-350 bg-white px-4 py-3"
+          aria-label={t("Tree cover loss polygon summary")}
+        >
+          <p className="text-12-semibold text-darkCustom">
+            {t("Polygons with Loss: {count}", { count: polygonCounts.withLoss })}
+          </p>
+          <p className="text-12-light mt-1 text-darkCustom">
+            {t("Polygons with No Loss Detected (0 ha): {count}", { count: polygonCounts.noLossDetected })}
+          </p>
+        </div>
+      )}
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}

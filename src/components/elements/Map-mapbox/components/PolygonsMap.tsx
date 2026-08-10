@@ -23,7 +23,7 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
-import { getPolygonMapLoadingLabel, parsePolygonDataV3, storePolygon } from "../utils";
+import { parsePolygonDataV3, storePolygon } from "../utils";
 import LoadingMap from "./LoadingMap";
 
 export type PolygonsMapEntityModel = {
@@ -227,7 +227,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   return (
     <Box position="relative" className={classNames("h-full w-full flex-1", className)}>
-      <LoadingMap text={getPolygonMapLoadingLabel(t, polygons.length)} loading={isPolygonGeometryLoading} />
+      <LoadingMap loading={isPolygonGeometryLoading} />
       <MapContainer
         championsMap={true}
         mapFunctions={mapFunctions}

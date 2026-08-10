@@ -1,17 +1,102 @@
 import * as yup from "yup";
 
+import { isFieldFeedbackRequiringAttention } from "@/components/extensive/WizardForm/feedbackUtils";
+import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/types";
+import { FormFieldsProvider } from "@/context/wizardForm.provider";
+
+export type EntryInlineIssueKind = "required" | "feedback" | "totals-match";
+
+export type EntryInlineIssue = {
+  kind: EntryInlineIssueKind;
+};
+
+export const getValidationErrorsByField = (
+  validation: yup.ObjectSchema<Record<string, unknown>>,
+  values: Record<string, unknown>
+): Map<string, yup.ValidationError[]> => {
+  const errorsByField = new Map<string, yup.ValidationError[]>();
+
+  try {
+    validation.validateSync(values, { abortEarly: false });
+  } catch (err: unknown) {
+    if (!(err instanceof yup.ValidationError)) return errorsByField;
+
+    const errors = err.inner.length > 0 ? err.inner : [err];
+    for (const error of errors) {
+      const fieldName = error.path?.split(".")[0];
+      if (fieldName == null || fieldName === "") continue;
+
+      const fieldErrors = errorsByField.get(fieldName) ?? [];
+      fieldErrors.push(error);
+      errorsByField.set(fieldName, fieldErrors);
+    }
+  }
+
+  return errorsByField;
+};
+
+export const countValidationErrors = (errorsByField: Map<string, yup.ValidationError[]>): number => {
+  let count = 0;
+  for (const fieldErrors of errorsByField.values()) {
+    count += fieldErrors.length;
+  }
+  return count;
+};
+
 export const getFieldsRequiringAttentionCount = (
   validation: yup.ObjectSchema<Record<string, unknown>>,
   values: Record<string, unknown> | undefined
 ): number => {
   if (values == null) return 0;
-  try {
-    validation.validateSync(values, { abortEarly: false });
-    return 0;
-  } catch (err: unknown) {
-    const yupError = err as { inner?: unknown[] };
-    return yupError.inner?.length ?? 0;
+  return countValidationErrors(getValidationErrorsByField(validation, values));
+};
+
+const isEmptyFieldValue = (value: unknown): boolean =>
+  value == null || value === "" || (Array.isArray(value) && value.length === 0);
+
+const isRequiredValidationError = (error: yup.ValidationError, value: unknown): boolean =>
+  error.type === "required" || (error.type === "min" && isEmptyFieldValue(value));
+
+export const resolveEntryInlineIssue = ({
+  entry,
+  formValues,
+  validationErrorsByField,
+  fieldsProvider,
+  feedbackFieldIds,
+  feedbackBaselineValues
+}: {
+  entry: FormEntry;
+  formValues: Record<string, unknown>;
+  validationErrorsByField: Map<string, yup.ValidationError[]>;
+  fieldsProvider: FormFieldsProvider;
+  feedbackFieldIds?: string[] | null;
+  feedbackBaselineValues?: Record<string, unknown>;
+}): EntryInlineIssue | null => {
+  if (entry.name == null) {
+    return null;
   }
+
+  if (
+    isFieldFeedbackRequiringAttention(entry.name, fieldsProvider, feedbackFieldIds, formValues, feedbackBaselineValues)
+  ) {
+    return { kind: "feedback" };
+  }
+
+  const fieldErrors = validationErrorsByField.get(entry.name) ?? [];
+  if (fieldErrors.length === 0) {
+    return null;
+  }
+
+  if (fieldErrors.some(error => error.type === "totals-match")) {
+    return { kind: "totals-match" };
+  }
+
+  const fieldValue = formValues[entry.name];
+  if (fieldErrors.some(error => isRequiredValidationError(error, fieldValue))) {
+    return { kind: "required" };
+  }
+
+  return null;
 };
 
 export function plantsToNoCountRows(

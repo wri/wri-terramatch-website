@@ -484,9 +484,11 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     isDeletingPolygons,
     isDownloadingSelectedPolygons,
     isFixingOverlaps,
+    isSubmittingPolygons,
     isValidatingPolygons,
     deletingPolygonCount,
     fixingOverlapsCount,
+    submittingPolygonCount,
     validatingPolygonCount,
     approvePolygons,
     requestInformationForPolygons,
@@ -505,6 +507,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     handleOpenSubmitPolygonsModal,
     handlePolygonApprovedModalChange,
     handlePolygonDeletingChange,
+    handlePolygonSubmittingChange,
     handlePolygonSubmittedModalChange,
     handleProceedToBulkSubmitConfirmation,
     handleSubmitPolygonConfirmationModalChange,
@@ -676,7 +679,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   );
 
   const isValidationInProgress = isValidatingPolygons || pendingValidationPolygonUuids.length > 0;
-  const isSitePolygonsLoading = isLoadingPolygons || isValidationInProgress || isFixingOverlaps || isDeletingPolygons;
+  const isSitePolygonsLoading =
+    isLoadingPolygons || isValidationInProgress || isFixingOverlaps || isDeletingPolygons || isSubmittingPolygons;
   const freezeCameraZoom =
     isSitePolygonsLoading || pendingValidationPolygonUuids.length > 0 || validationZoomPolygonUuids.length > 0;
   const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
@@ -895,6 +899,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     t,
     isFixingOverlaps,
     fixingOverlapsCount,
+    isSubmittingPolygons,
+    submittingPolygonCount,
     isValidatingPolygons: isValidationInProgress,
     validatingPolygonCount: isValidatingPolygons ? validatingPolygonCount : pendingValidationPolygonUuids.length,
     isDeletingPolygons,
@@ -912,6 +918,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
         onOverlapFixed={handleDrawerOverlapFixed}
         onRunValidation={runPolygonValidation}
         onPolygonDeletingChange={handlePolygonDeletingChange}
+        onPolygonSubmittingChange={handlePolygonSubmittingChange}
         onRequestApproveModal={isAdminReview ? handleDrawerRequestApproveModal : undefined}
         onRequestInformationModal={isAdminReview ? handleDrawerRequestInformationModal : undefined}
         onValidationJobsStarted={handleValidationJobsStarted}
