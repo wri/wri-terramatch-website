@@ -66,7 +66,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
 }) => {
   const t = useT();
   return (
-    <Flex direction="column" gap={2}>
+    <Flex direction="column" gap={1}>
       <Flex gap={1} color={color} alignItems="center">
         {iconWithColor}
         <Text
@@ -335,9 +335,9 @@ const MetricCard: FC<MetricCardProps> = props => {
     metricLabel,
     widthProgressBar
   } = props;
-  const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "14px", color, variant);
-  const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "24px", color, variant);
-  const iconWithColor50 = getIconWithProgressColor(icon, progress, goal, "50px", color, variant);
+  const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "0.875rem", color, variant);
+  const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "1.5rem", color, variant);
+  const iconWithColor50 = getIconWithProgressColor(icon, progress, goal, "3.125rem", color, variant);
 
   let content: ReactNode;
 

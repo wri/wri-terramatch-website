@@ -136,7 +136,9 @@ const Accordion: FC<AccordionProps> = ({
         ...(variant === "quaternary"
           ? {
               "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
-                borderBottom: "var(--Border-Width-100, 1px) solid var(--Neutrals-300, #E7E6E6)"
+                borderBottom: "var(--Border-Width-100, 1px) solid var(--Neutrals-300, #E7E6E6) !important",
+                borderTop: "none !important",
+                background: "neutral.100 !important"
               }
             }
           : {})
