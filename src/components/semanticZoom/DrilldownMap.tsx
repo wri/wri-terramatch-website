@@ -23,6 +23,8 @@ const SELECTED = "#A88100"; // warning.500
 const SOURCE_ID = "semantic-zoom-polygons";
 const FILL_LAYER = "semantic-zoom-fill";
 const LINE_LAYER = "semantic-zoom-line";
+const POINT_LAYER = "semantic-zoom-point";
+const LABEL_LAYER = "semantic-zoom-label";
 
 export interface DrilldownMapProps {
   featureCollection?: FeatureCollection | null;
@@ -132,14 +134,44 @@ const DrilldownMap = ({ featureCollection, selectedId, onSelectPolygon, loading 
           }
         });
 
-        map.on("click", FILL_LAYER, event => {
-          const properties = event.features?.[0]?.properties;
-          const uuid = properties?.uuid;
-          const siteId = properties?.siteId;
-          if (typeof uuid === "string") onSelectRef.current?.(uuid, typeof siteId === "string" ? siteId : null);
+        // Sites are drawn as centroids, not as invented boundaries: there is no site geometry in
+        // the data, and a computed hull would claim land the project does not hold.
+        map.addLayer({
+          id: POINT_LAYER,
+          type: "circle",
+          source: SOURCE_ID,
+          filter: ["==", ["geometry-type"], "Point"],
+          paint: {
+            "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 12, 12, 22],
+            "circle-color": POLYGON_FILL,
+            "circle-opacity": 0.85,
+            "circle-stroke-width": 2,
+            "circle-stroke-color": POLYGON_LINE
+          }
         });
-        map.on("mouseenter", FILL_LAYER, () => (map.getCanvas().style.cursor = "pointer"));
-        map.on("mouseleave", FILL_LAYER, () => (map.getCanvas().style.cursor = ""));
+        map.addLayer({
+          id: LABEL_LAYER,
+          type: "symbol",
+          source: SOURCE_ID,
+          filter: ["==", ["geometry-type"], "Point"],
+          layout: {
+            "text-field": ["get", "polygons"],
+            "text-size": 12,
+            "text-allow-overlap": true
+          },
+          paint: { "text-color": "#FFFFFF", "text-halo-color": POLYGON_LINE, "text-halo-width": 1 }
+        });
+
+        for (const layer of [FILL_LAYER, POINT_LAYER]) {
+          map.on("click", layer, event => {
+            const properties = event.features?.[0]?.properties;
+            const uuid = properties?.uuid;
+            const siteId = properties?.siteId;
+            if (typeof uuid === "string") onSelectRef.current?.(uuid, typeof siteId === "string" ? siteId : null);
+          });
+          map.on("mouseenter", layer, () => (map.getCanvas().style.cursor = "pointer"));
+          map.on("mouseleave", layer, () => (map.getCanvas().style.cursor = ""));
+        }
       }
 
       // Refit on every level change: the framing IS the zoom metaphor. When a single polygon is
@@ -149,7 +181,7 @@ const DrilldownMap = ({ featureCollection, selectedId, onSelectPolygon, loading 
         selectedId == null ? null : featureCollection.features.find(feature => feature.properties?.uuid === selectedId);
       const bounds = boundsOf(focused == null ? featureCollection : { type: "FeatureCollection", features: [focused] });
       boundsRef.current = bounds;
-      if (bounds != null) map.fitBounds(bounds, { padding: 32, duration: 600, maxZoom: 17 });
+      if (bounds != null) map.fitBounds(bounds, { padding: 32, duration: 600, maxZoom: focused == null ? 14 : 17 });
     };
 
     if (map.isStyleLoaded()) apply();

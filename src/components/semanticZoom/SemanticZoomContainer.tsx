@@ -81,6 +81,49 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
 
   const geoLoading = siteUuid == null ? !projectGeoLoaded : !siteGeoLoaded;
 
+  // At project level the map shows one point per site, not every polygon. There is no site
+  // geometry in the data, and a computed hull would draw a boundary the project does not have —
+  // a confident wrong shape is worse than an honest dot. The point sits at the mean of the site's
+  // polygon coordinates and is labelled with its approved polygon count.
+  const siteCentroids = useMemo(() => {
+    if (siteUuid != null || featureCollection == null) return null;
+
+    const sums = new Map<string, { lng: number; lat: number; n: number }>();
+    const visit = (siteId: string, coords: unknown): void => {
+      if (!Array.isArray(coords)) return;
+      if (typeof coords[0] === "number" && typeof coords[1] === "number") {
+        const [lng, lat] = coords as [number, number];
+        if (!Number.isFinite(lng) || !Number.isFinite(lat)) return;
+        const acc = sums.get(siteId) ?? { lng: 0, lat: 0, n: 0 };
+        sums.set(siteId, { lng: acc.lng + lng, lat: acc.lat + lat, n: acc.n + 1 });
+        return;
+      }
+      for (const child of coords) visit(siteId, child);
+    };
+
+    for (const feature of featureCollection.features) {
+      const siteId = feature.properties?.siteId;
+      if (typeof siteId !== "string") continue;
+      if (feature.geometry != null && "coordinates" in feature.geometry) visit(siteId, feature.geometry.coordinates);
+    }
+
+    return {
+      type: "FeatureCollection",
+      features: rows
+        .map(row => {
+          const acc = sums.get(row.siteUuid);
+          if (acc == null || acc.n === 0) return null;
+          return {
+            type: "Feature" as const,
+            // uuid and siteId are both the site here, so a click resolves to the site.
+            properties: { uuid: row.siteUuid, siteId: row.siteUuid, name: row.siteName, polygons: row.polygons },
+            geometry: { type: "Point" as const, coordinates: [acc.lng / acc.n, acc.lat / acc.n] }
+          };
+        })
+        .filter(feature => feature != null)
+    } as FeatureCollection;
+  }, [siteUuid, featureCollection, rows]);
+
   const navigate = useCallback(
     (next: { site?: string | null; polygon?: string | null }) => {
       const query = { ...router.query, tab: "zoom" } as Record<string, string>;
@@ -185,7 +228,7 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
       <div className="flex w-full flex-col gap-3 ws-1100:flex-row">
         <div className="flex min-h-[420px] w-full flex-1 flex-col gap-1">
           <DrilldownMap
-            featureCollection={featureCollection}
+            featureCollection={siteCentroids ?? featureCollection}
             selectedId={polygonUuid}
             loading={geoLoading}
             // One level per interaction. From the project the map descends to the polygon's SITE;
