@@ -11,7 +11,7 @@ import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/M
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -45,7 +45,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "sites",
     entityUUID: site.uuid,
-    entityStatus: site.status ?? "started",
+    entityStatus: site.status ?? "draft",
     updateRequestStatus: site.updateRequestStatus ?? "no-update"
   });
 
@@ -71,9 +71,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     });
   };
 
-  const needMoreInformation =
-    site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval = site.updateRequestStatus === AWAITING_APPROVAL || site.status === AWAITING_APPROVAL;
+  const needMoreInformation = site.updateRequestStatus === INFORMATION_REQUIRED || site.status === INFORMATION_REQUIRED;
+  const awaitingApproval = site.updateRequestStatus === PENDING_APPROVAL || site.status === PENDING_APPROVAL;
   const statusProps = useMemo(() => getStatusProps(t, site, site.status!), [t, site]);
 
   const handleEditClick = useCallback(() => {
@@ -135,7 +134,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             classNameRightSectionHeader="mobile:!w-fit"
             tag={(() => {
               const tagState = mapStatusToTagStateEntity(site?.status);
-              return site.updateRequestStatus === "awaiting-approval" ? (
+              return site.updateRequestStatus === "pending-approval" ? (
                 <TagSubmission state="pending-approval" />
               ) : site?.status != null ? (
                 <TagSubmission state={tagState?.type as TagSubmissionState} />

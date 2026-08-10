@@ -5,7 +5,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -38,9 +38,8 @@ const SiteInfo: FC<SiteInfoProps> = ({
   const t = useT();
   const router = useRouter();
   const [openStatusModal, setOpenStatusModal] = useState(false);
-  const needMoreInformation =
-    site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval = site.updateRequestStatus === AWAITING_APPROVAL || site.status === AWAITING_APPROVAL;
+  const needMoreInformation = site.updateRequestStatus === INFORMATION_REQUIRED || site.status === INFORMATION_REQUIRED;
+  const awaitingApproval = site.updateRequestStatus === PENDING_APPROVAL || site.status === PENDING_APPROVAL;
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "sites",

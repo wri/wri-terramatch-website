@@ -9,11 +9,9 @@ export const mapStatusToTagStateEntity = (
   switch (status) {
     case "draft":
       return { type: "draft" };
-    case "started":
-      return { type: "draft" };
-    case "awaiting-approval":
+    case "pending-approval":
       return { type: "pending-approval" };
-    case "needs-more-information":
+    case "information-required":
       return { type: "information-required" };
     case "approved":
       return { type: "approved" };

@@ -65,7 +65,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
 
   const statusProps = useMemo((): StatusProps | null => {
     switch (currentSubmission?.status) {
-      case "started":
+      case "draft":
         return {
           title: t("Status: Draft"),
           subtitle: t(
@@ -103,9 +103,9 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
           }
         };
 
-      case "awaiting-approval":
+      case "pending-approval":
         return {
-          title: t("Status: Awaiting Approval"),
+          title: t("Status: Pending Approval"),
           subtitle: t(
             "Your application has been submitted. The vetting team will review your application and will either accept your application without further edits; reopen the application for updates; or close the application and let you know about any additional resources or future opportunities that may be relevant. If you have any questions, please reach out to TerraMatch Support at <a href='mailto:info@terramatch.org' class='underline !text-primary'>info@terramatch.org</a>."
           ),
@@ -113,9 +113,9 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
           icon: IconNames.CLOCK
         };
 
-      case "requires-more-information":
+      case "information-required":
         return {
-          title: t("Status: More Information Requested"),
+          title: t("Status: Information Required"),
           subtitle: t("The vetting team has reviewed your application and offered the following feedback:"),
           color: "tertiary",
           icon: IconNames.WARNING,
@@ -215,14 +215,14 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
           ) : null}
         </div>
         <div className="flex flex-col">
-          {currentSubmission?.status === "requires-more-information" &&
+          {currentSubmission?.status === "information-required" &&
           currentSubmission?.feedback != null &&
           typeof currentSubmission?.feedback === "string" ? (
             <div className="mt-6 flex flex-col gap-2">
               <Text variant="text-heading-100">{currentSubmission.feedback}</Text>
             </div>
           ) : null}
-          {currentSubmission?.status === "requires-more-information" && currentSubmission?.feedbackFields != null ? (
+          {currentSubmission?.status === "information-required" && currentSubmission?.feedbackFields != null ? (
             <div className="mt-6 flex flex-col gap-2">
               <Text variant="text-body-900">{t("Please provide more information on the following fields:")}</Text>
               <Text variant="text-heading-100">{feedbackFields.join(", ")}</Text>

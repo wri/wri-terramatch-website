@@ -11,7 +11,7 @@ import ActionTrackerCardEmptyState, { ActionTrackerCardEmptyStateProps } from ".
 import ActionTrackerCardRow, { ActionTrackerCardRowProps } from "./ActionTrackerCardRow";
 
 export const getActionCardStatusMapper = (t: typeof useT): { [index: string]: Partial<ActionTrackerCardRowProps> } => ({
-  started: {
+  draft: {
     status: "edit",
     statusText: t("Draft")
   },
@@ -20,27 +20,23 @@ export const getActionCardStatusMapper = (t: typeof useT): { [index: string]: Pa
     statusText: t("Approved")
   },
   awaiting: {
-    statusText: t("Awaiting Review"),
+    statusText: t("Pending Approval"),
     status: "awaiting"
   },
   pending: {
     statusText: t("Pending"),
     status: "awaiting"
   },
-  "needs-more-information": {
-    statusText: t("More info requested"),
+  "information-required": {
+    statusText: t("Information Required"),
     status: "warning"
   },
   "nothing-to-report": {
     status: "warning",
     statusText: t("Nothing Reported")
   },
-  "requires-more-information": {
-    status: "warning",
-    statusText: t("More info requested")
-  },
-  "awaiting-approval": {
-    statusText: t("Awaiting Approval"),
+  "pending-approval": {
+    statusText: t("Pending Approval"),
     status: "awaiting"
   },
   rejected: {

@@ -5,7 +5,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 
 import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -41,21 +41,21 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "nurseries",
     entityUUID: nursery.uuid,
-    entityStatus: nursery.status ?? "started",
+    entityStatus: nursery.status ?? "draft",
     updateRequestStatus: nursery.updateRequestStatus ?? "no-update"
   });
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery.uuid);
 
   const needMoreInformation =
-    nursery.updateRequestStatus === NEEDS_MORE_INFORMATION || nursery.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval = nursery.updateRequestStatus === AWAITING_APPROVAL || nursery.status === AWAITING_APPROVAL;
+    nursery.updateRequestStatus === INFORMATION_REQUIRED || nursery.status === INFORMATION_REQUIRED;
+  const awaitingApproval = nursery.updateRequestStatus === PENDING_APPROVAL || nursery.status === PENDING_APPROVAL;
   const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
 
   const statusProps: StatusProps | undefined = useMemo(() => {
     if (!needMoreInformation) return undefined;
     const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
     return {
-      title: t(`${titlePrefix} More Info Requested`),
+      title: t(`${titlePrefix} Information Required`),
       icon: IconNames.EXCLAMATION_CIRCLE_FILL,
       className: "fill-tertiary"
     };

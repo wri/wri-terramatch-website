@@ -68,10 +68,10 @@ describe("reportAnalytics", () => {
 
   describe("isReportReopenedStatus", () => {
     it("identifies in-progress report statuses", () => {
-      expect(isReportReopenedStatus("started")).toBe(true);
-      expect(isReportReopenedStatus("needs-more-information")).toBe(true);
+      expect(isReportReopenedStatus("draft")).toBe(true);
+      expect(isReportReopenedStatus("information-required")).toBe(true);
       expect(isReportReopenedStatus("due")).toBe(false);
-      expect(isReportReopenedStatus("awaiting-approval")).toBe(false);
+      expect(isReportReopenedStatus("pending-approval")).toBe(false);
     });
   });
 

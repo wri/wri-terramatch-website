@@ -6166,7 +6166,7 @@ export type ApplicationIndexQueryParams = {
   search?: string;
   fundingProgrammeUuid?: string;
   organisationUuid?: string;
-  currentSubmissionStatus?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started";
+  currentSubmissionStatus?: "approved" | "pending-approval" | "rejected" | "information-required" | "draft";
 };
 
 export type ApplicationIndexError = Fetcher.ErrorWrapper<

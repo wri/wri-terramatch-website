@@ -40,20 +40,20 @@ const menuPolygonOptions = [
 ];
 const menuSiteOptions = [
   {
-    title: "Started",
-    status: "started",
+    title: "Draft",
+    status: "draft",
     value: 1,
     viewPd: true
   },
   {
-    title: "Awaiting Approval",
-    status: "awaiting-approval",
+    title: "Pending Approval",
+    status: "pending-approval",
     value: 2,
     viewPd: true
   },
   {
-    title: "Needs More Information",
-    status: "needs-more-information",
+    title: "Information Required",
+    status: "information-required",
     value: 3,
     viewPd: false
   },
@@ -66,20 +66,20 @@ const menuSiteOptions = [
 ];
 const menuProjectOptions = [
   {
-    title: "Started",
-    status: "started",
+    title: "Draft",
+    status: "draft",
     value: 1,
     viewPd: true
   },
   {
-    title: "Awaiting Approval",
-    status: "awaiting-approval",
+    title: "Pending Approval",
+    status: "pending-approval",
     value: 2,
     viewPd: true
   },
   {
-    title: "Needs More Information",
-    status: "needs-more-information",
+    title: "Information Required",
+    status: "information-required",
     value: 3,
     viewPd: false
   },
@@ -98,20 +98,20 @@ const menuEntityReportOptions = [
     viewPd: true
   },
   {
-    title: "Started",
-    status: "started",
+    title: "Draft",
+    status: "draft",
     value: 2,
     viewPd: true
   },
   {
-    title: "Needs More Information",
-    status: "needs-more-information",
+    title: "Information Required",
+    status: "information-required",
     value: 3,
     viewPd: false
   },
   {
-    title: "Awaiting Approval",
-    status: "awaiting-approval",
+    title: "Pending Approval",
+    status: "pending-approval",
     value: 4,
     viewPd: false
   },
@@ -124,20 +124,20 @@ const menuEntityReportOptions = [
 ];
 const menuDisturbanceReportOptions = [
   {
-    title: "Started",
-    status: "started",
+    title: "Draft",
+    status: "draft",
     value: 1,
     viewPd: true
   },
   {
-    title: "Needs More Information",
-    status: "needs-more-information",
+    title: "Information Required",
+    status: "information-required",
     value: 2,
     viewPd: false
   },
   {
-    title: "Awaiting Approval",
-    status: "awaiting-approval",
+    title: "Pending Approval",
+    status: "pending-approval",
     value: 3,
     viewPd: false
   },
@@ -150,20 +150,20 @@ const menuDisturbanceReportOptions = [
 ];
 const menuNurseryOptions = [
   {
-    title: "Started",
-    status: "started",
+    title: "Draft",
+    status: "draft",
     value: 1,
     viewPd: true
   },
   {
-    title: "Awaiting Approval",
-    status: "awaiting-approval",
+    title: "Pending Approval",
+    status: "pending-approval",
     value: 2,
     viewPd: true
   },
   {
-    title: "Needs More Information",
-    status: "needs-more-information",
+    title: "Information Required",
+    status: "information-required",
     value: 3,
     viewPd: false
   },

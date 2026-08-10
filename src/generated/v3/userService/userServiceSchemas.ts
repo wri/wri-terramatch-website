@@ -389,11 +389,11 @@ export type FinancialReportLightDto = {
   /**
    * Report status for this financial report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update request status for this financial report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated organisation name
    */

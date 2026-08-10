@@ -7,7 +7,7 @@ import { type StatusBarStatus, getStatusProps } from "@/components/extensive/Ent
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormEntity } from "@/connections/Form";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { getEntityEditPageLink, getEntityEditPathSegment, v3EntityName } from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
@@ -50,11 +50,10 @@ export const useGetEditEntityHandler = ({
   const editEntityName = getEntityEditPathSegment(entityName as EntityName | SingularEntityName);
   const formEntityName = v3EntityName(entityName as EntityName | SingularEntityName) as FormEntity;
   const hasRelevantUpdateRequest =
-    updateRequestStatus === AWAITING_APPROVAL || updateRequestStatus === NEEDS_MORE_INFORMATION;
+    updateRequestStatus === PENDING_APPROVAL || updateRequestStatus === INFORMATION_REQUIRED;
   const effectiveStatus = (hasRelevantUpdateRequest ? updateRequestStatus : entityStatus) as StatusBarStatus;
-  const awaitingApproval = entityStatus === AWAITING_APPROVAL || updateRequestStatus === AWAITING_APPROVAL;
-  const needsMoreInformation =
-    entityStatus === NEEDS_MORE_INFORMATION || updateRequestStatus === NEEDS_MORE_INFORMATION;
+  const awaitingApproval = entityStatus === PENDING_APPROVAL || updateRequestStatus === PENDING_APPROVAL;
+  const needsMoreInformation = entityStatus === INFORMATION_REQUIRED || updateRequestStatus === INFORMATION_REQUIRED;
   const shouldShowStatusFeedbackModal = useStatusModal && needsMoreInformation && !awaitingApproval;
   const statusProps = getStatusProps(
     t,

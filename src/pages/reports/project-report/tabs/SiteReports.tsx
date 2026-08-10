@@ -96,7 +96,7 @@ const SiteReportsTab: FC<SiteReportsTabProps> = ({ taskUuid }) => {
                     enableSorting: false,
                     accessorKey: "uuid",
                     cell: props =>
-                      props.row.original?.status === "started" ? (
+                      props.row.original?.status === "draft" ? (
                         <Button
                           as={Link}
                           href={`/entity/site-reports/edit/${props.getValue()}`}

@@ -8,7 +8,7 @@ import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/Abo
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
-import { AWAITING_APPROVAL } from "@/constants/statuses";
+import { PENDING_APPROVAL } from "@/constants/statuses";
 import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntitySetupButtonLabel } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -55,7 +55,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
   const editButtonLabel = getEntitySetupButtonLabel(t, projectReport.status, isReportSetupComplete);
 
   const statusTag = useMemo(() => {
-    if (projectReport.updateRequestStatus === AWAITING_APPROVAL) {
+    if (projectReport.updateRequestStatus === PENDING_APPROVAL) {
       return <TagSubmission size="small" state="pending-approval" />;
     }
 

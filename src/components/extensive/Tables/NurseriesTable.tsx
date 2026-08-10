@@ -120,7 +120,7 @@ const NurseriesTable = ({
                   href: getEntityDetailPageLink("nurseries", props.getValue() as string),
                   children: t("View Nursery")
                 }}
-                hasDeleteButton={record.status === "started"}
+                hasDeleteButton={record.status === "draft"}
                 onDelete={() => handleDeleteNursery(props.getValue() as string)}
               />
             );
