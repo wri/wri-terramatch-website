@@ -8,6 +8,7 @@ import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGallery
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import SemanticZoomTab, { SEMANTIC_ZOOM_TAB_KEY } from "@/components/semanticZoom/SemanticZoomTab";
 import { useFullProject } from "@/connections/Entity";
 import FrameworkProvider, { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -89,6 +90,18 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         )
       },
       { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab project={project} /> },
+      {
+        key: SEMANTIC_ZOOM_TAB_KEY,
+        title: t("Zoom"),
+        body: (
+          <SemanticZoomTab
+            projectUuid={project.uuid}
+            projectName={project.name ?? t("Project")}
+            claims={{ hectares: project.totalHectaresRestoredSum ?? null, trees: project.treesPlantedCount ?? null }}
+            goals={{ hectares: project.totalHectaresRestoredGoal ?? null, trees: project.treesGrownGoal ?? null }}
+          />
+        )
+      },
       { key: "team-members", title: t("Team Members"), body: <TeamMembersTab project={project} /> },
       {
         key: "audit-log",

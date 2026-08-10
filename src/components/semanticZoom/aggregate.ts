@@ -1,4 +1,4 @@
-import { SiteIndicatorRollupDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SiteIndicatorRollupDto, SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import { IndicatorKey, Level } from "./levelContract";
 
@@ -121,6 +121,55 @@ export type PolygonMeasurements = {
   hectares: number | null;
   treeCoverPct: number | null;
   treeCoverLoss: number | null;
+};
+
+/**
+ * Reads a polygon's own recorded indicator values off the light DTO.
+ *
+ * Latest year wins. Rows with no value are discarded BEFORE choosing the latest year, so a
+ * polygon whose newest record is blank falls back to the most recent year that was actually
+ * measured, rather than reporting nothing. Tree cover loss is a per-year map, so its scalar is
+ * the sum across years — the same definition the rollup endpoint uses, so the polygon figure and
+ * the site total are commensurable.
+ */
+export const polygonMeasurementsFrom = (
+  indicators: SitePolygonLightDto["indicators"] | null | undefined,
+  calcArea: number | null
+): PolygonMeasurements => {
+  const rows = indicators ?? [];
+
+  const latest = <T extends { yearOfAnalysis?: number }>(candidates: T[]) =>
+    candidates.length === 0
+      ? undefined
+      : candidates.reduce((best, row) => ((row.yearOfAnalysis ?? 0) > (best.yearOfAnalysis ?? 0) ? row : best));
+
+  const treeCover = latest(
+    rows.filter(
+      (row): row is Extract<(typeof rows)[number], { percentCover: unknown }> =>
+        "percentCover" in row && row.percentCover != null
+    )
+  );
+
+  const lossRow = latest(
+    rows.filter(
+      (row): row is Extract<(typeof rows)[number], { value: unknown }> =>
+        "indicatorSlug" in row && row.indicatorSlug === "treeCoverLoss" && "value" in row && row.value != null
+    )
+  );
+
+  const loss =
+    lossRow?.value == null
+      ? null
+      : Object.values(lossRow.value as Record<string, number>).reduce(
+          (total, value) => total + (Number(value) || 0),
+          0
+        );
+
+  return {
+    hectares: calcArea,
+    treeCoverPct: (treeCover?.percentCover as number | undefined) ?? null,
+    treeCoverLoss: loss
+  };
 };
 
 export const aggregatePolygon = (polygon: PolygonMeasurements): LevelAggregate => ({
