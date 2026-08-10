@@ -139,6 +139,10 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["siteId[]"]?: string[];
   /**
+   * Filter results by site polygon UUID(s). Note this is the site_polygon uuid, which is what GeoJSON features carry, and is NOT the same value as polygonUuid[].
+   */
+  ["uuid[]"]?: string[];
+  /**
    * Filter results by polygon UUID(s)
    */
   ["polygonUuid[]"]?: string[];

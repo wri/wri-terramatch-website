@@ -50,6 +50,15 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
     pageNumber: 1
   });
 
+  // The selected polygon is fetched by uuid rather than hunted for in the loaded page: a site can
+  // hold 7,293 polygons and the one that was clicked is usually not in the first 100.
+  const [, { data: selectedPolygonRows }] = useSitePolygons({
+    enabled: polygonUuid != null,
+    filter: polygonUuid == null ? undefined : { "uuid[]": [polygonUuid] },
+    pageSize: 1,
+    pageNumber: 1
+  });
+
   // Geometry follows the level. Project scope loads every polygon's shape in one request; once a
   // site is chosen the map narrows to that site, which is both the smaller payload and the
   // correct frame.
@@ -88,8 +97,10 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
 
   const siteRow = useMemo(() => rows.find(row => row.siteUuid === siteUuid), [rows, siteUuid]);
   const selectedPolygon = useMemo(
-    () => (polygons ?? []).find(polygon => polygon.polygonUuid === polygonUuid || polygon.uuid === polygonUuid),
-    [polygons, polygonUuid]
+    () =>
+      selectedPolygonRows?.[0] ??
+      (polygons ?? []).find(polygon => polygon.polygonUuid === polygonUuid || polygon.uuid === polygonUuid),
+    [selectedPolygonRows, polygons, polygonUuid]
   );
 
   // The geojson covers every polygon on the site, so a name is available even when the polygon's
@@ -179,7 +190,12 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
             loading={geoLoading}
             // Clicking a shape descends. At project scope the shapes are polygons, so a click
             // jumps straight to the polygon level and the breadcrumb carries the path back up.
-            onSelectPolygon={(uuid, siteId) => navigate({ site: siteId ?? siteUuid, polygon: uuid })}
+            // One level per interaction. From the project the map descends to the polygon's SITE;
+            // only once inside a site does a click select the polygon itself. Skipping the site
+            // hides the level where the aggregation rule actually changes.
+            onSelectPolygon={(uuid, siteId) =>
+              siteUuid == null ? navigate({ site: siteId, polygon: null }) : navigate({ polygon: uuid })
+            }
           />
         </div>
 
