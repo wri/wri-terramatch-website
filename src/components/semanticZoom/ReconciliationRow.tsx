@@ -17,7 +17,7 @@ const ReconciliationRow = ({ reconciliation, unit, formatValue }: Reconciliation
   const { delta, deltaFraction } = reconciliation;
 
   if (delta === 0) {
-    return <p className="mt-1 text-[11px] leading-tight text-neutral-500">Measured matches reported.</p>;
+    return <p className="mt-1 text-[11px] leading-tight text-theme-neutral-500">Measured matches reported.</p>;
   }
 
   const direction = delta < 0 ? "below" : "above";
@@ -25,7 +25,7 @@ const ReconciliationRow = ({ reconciliation, unit, formatValue }: Reconciliation
   const signed = `${delta < 0 ? "−" : "+"}${formatValue(Math.abs(delta))}${unit == null ? "" : ` ${unit}`}`;
 
   return (
-    <p className="text-orange-700 mt-1 text-[11px] leading-tight">
+    <p className="mt-1 text-[11px] leading-tight text-theme-warning-900">
       {magnitude == null ? "Measured differs from reported" : `Measured is ${magnitude} ${direction} reported`}, Δ{" "}
       {signed}
     </p>

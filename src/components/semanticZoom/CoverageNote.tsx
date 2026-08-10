@@ -22,7 +22,7 @@ const CoverageNote = ({ measurement, unit = "polygons" }: CoverageNoteProps) => 
   const partial = isPartial(measurement);
 
   return (
-    <p className={`mt-0.5 text-[11px] leading-tight ${partial ? "text-orange-700" : "text-neutral-500"}`}>
+    <p className={`mt-0.5 text-[11px] leading-tight ${partial ? "text-theme-warning-900" : "text-theme-neutral-500"}`}>
       {measuredCount.toLocaleString()} of {totalCount.toLocaleString()} {unit} analysed
       {partial ? " (partial sum)" : ""}
     </p>

@@ -150,7 +150,7 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
   }, [level, claims, aggregate]);
 
   if (!rollupLoaded) {
-    return <p className="p-4 text-sm text-neutral-500">Loading indicators…</p>;
+    return <p className="p-4 text-sm text-theme-neutral-500">Loading indicators…</p>;
   }
 
   const title =
@@ -162,13 +162,13 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <nav className="flex items-center gap-1 text-xs text-neutral-600" aria-label="Zoom path">
+      <nav className="flex items-center gap-1 text-xs text-theme-neutral-700" aria-label="Zoom path">
         <button type="button" className="hover:underline" onClick={() => navigate({ site: null, polygon: null })}>
           {projectName}
         </button>
         {siteUuid != null && (
           <>
-            <span className="text-neutral-400">/</span>
+            <span className="text-theme-neutral-400">/</span>
             <button type="button" className="hover:underline" onClick={() => navigate({ polygon: null })}>
               {siteRow?.siteName ?? "Site"}
             </button>
@@ -176,8 +176,8 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
         )}
         {polygonUuid != null && (
           <>
-            <span className="text-neutral-400">/</span>
-            <span className="text-neutral-900">{selectedPolygonName ?? "Polygon"}</span>
+            <span className="text-theme-neutral-400">/</span>
+            <span className="text-theme-neutral-900">{selectedPolygonName ?? "Polygon"}</span>
           </>
         )}
       </nav>
@@ -199,10 +199,10 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
 
         <div className="min-h-[420px] w-full shrink-0 ws-1100:w-[400px]">
           {aggregate == null ? (
-            <section className="rounded-lg border border-neutral-200 bg-white p-4">
-              <p className="text-[11px] uppercase tracking-wide text-neutral-400">Polygon</p>
-              <h3 className="text-base font-semibold text-neutral-900">{selectedPolygonName ?? "Polygon"}</h3>
-              <p className="text-orange-700 mt-2 text-xs">
+            <section className="rounded-lg border border-theme-neutral-200 bg-white p-4">
+              <p className="text-[11px] uppercase tracking-wide text-theme-neutral-400">Polygon</p>
+              <h3 className="text-base font-semibold text-theme-neutral-900">{selectedPolygonName ?? "Polygon"}</h3>
+              <p className="mt-2 text-xs text-theme-warning-900">
                 This polygon is not in the loaded page, so its own measurements are not available. The site aggregate is
                 deliberately not shown here — it would be a different number under a polygon heading.
               </p>
@@ -227,7 +227,7 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
           )}
           {level === "site" && polygonsLoaded && (polygonTotal ?? 0) > POLYGON_PAGE_SIZE && (
             // Never let a truncated list read as the whole list.
-            <p className="text-orange-700 mt-2 text-[11px]">
+            <p className="mt-2 text-[11px] text-theme-warning-900">
               Showing the first {POLYGON_PAGE_SIZE} of {(polygonTotal ?? 0).toLocaleString()} polygons. Indicator
               figures above cover all of them.
             </p>

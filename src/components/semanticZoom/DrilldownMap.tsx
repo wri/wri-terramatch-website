@@ -14,6 +14,12 @@ import { mapboxToken } from "@/constants/environment";
  * Selection is driven by the URL, not by internal state, so the map and the indicator panel can
  * never disagree about which level is being shown.
  */
+// Pulled from the WRI palette (tailwind.theme.js) rather than picked by eye, so the map agrees
+// with the panel beside it.
+const POLYGON_FILL = "#78CAED"; // primary.500
+const POLYGON_LINE = "#11688D"; // primary.700
+const SELECTED = "#A88100"; // warning.500
+
 const SOURCE_ID = "semantic-zoom-polygons";
 const FILL_LAYER = "semantic-zoom-fill";
 const LINE_LAYER = "semantic-zoom-line";
@@ -112,7 +118,7 @@ const DrilldownMap = ({ featureCollection, selectedId, onSelectPolygon, loading 
           type: "fill",
           source: SOURCE_ID,
           paint: {
-            "fill-color": ["case", ["boolean", ["feature-state", "selected"], false], "#f2994a", "#27ae60"],
+            "fill-color": ["case", ["boolean", ["feature-state", "selected"], false], SELECTED, POLYGON_FILL],
             "fill-opacity": ["case", ["boolean", ["feature-state", "selected"], false], 0.5, 0.3]
           }
         });
@@ -121,7 +127,7 @@ const DrilldownMap = ({ featureCollection, selectedId, onSelectPolygon, loading 
           type: "line",
           source: SOURCE_ID,
           paint: {
-            "line-color": ["case", ["boolean", ["feature-state", "selected"], false], "#f2994a", "#ffffff"],
+            "line-color": ["case", ["boolean", ["feature-state", "selected"], false], SELECTED, POLYGON_LINE],
             "line-width": ["case", ["boolean", ["feature-state", "selected"], false], 2.5, 0.7]
           }
         });
@@ -162,15 +168,15 @@ const DrilldownMap = ({ featureCollection, selectedId, onSelectPolygon, loading 
   }, [selectedId, featureCollection]);
 
   return (
-    <div className="relative h-full min-h-[420px] overflow-hidden rounded-lg border border-neutral-200">
+    <div className="relative h-full min-h-[420px] overflow-hidden rounded-lg border border-theme-neutral-200">
       <div ref={containerRef} className="h-full w-full" />
       {loading === true && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/70 text-sm text-neutral-600">
+        <div className="absolute inset-0 flex items-center justify-center bg-white/70 text-sm text-theme-neutral-700">
           Loading polygons…
         </div>
       )}
       {loading !== true && (featureCollection?.features.length ?? 0) === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/70 text-sm text-neutral-500">
+        <div className="absolute inset-0 flex items-center justify-center bg-white/70 text-sm text-theme-neutral-500">
           No polygon geometry at this level
         </div>
       )}

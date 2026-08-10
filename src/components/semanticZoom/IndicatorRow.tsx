@@ -42,19 +42,19 @@ const IndicatorRow = ({ contract, level, measurement, claim, reconciliation, goa
   const goalPct = goal != null && goal > 0 && measured != null ? Math.min(100, (measured / goal) * 100) : null;
 
   return (
-    <li className="border-b border-neutral-200 py-3 last:border-b-0">
+    <li className="border-b border-theme-neutral-200 py-3 last:border-b-0">
       <div className="flex items-baseline justify-between gap-3">
-        <h4 className="text-sm font-semibold text-neutral-900">{contract.label}</h4>
-        <span className="shrink-0 text-[11px] uppercase tracking-wide text-neutral-400">
+        <h4 className="text-sm font-semibold text-theme-neutral-900">{contract.label}</h4>
+        <span className="shrink-0 text-[11px] uppercase tracking-wide text-theme-neutral-400">
           {rule === "native" ? "as measured" : rule === "sum" ? "summed" : "area-weighted"}
         </span>
       </div>
 
       {claim != null && (
         <div className="mt-1.5 flex items-baseline justify-between gap-3">
-          <span className="text-xs text-neutral-600">Reported</span>
+          <span className="text-xs text-theme-neutral-700">Reported</span>
           <span className="flex items-baseline gap-2">
-            <span className="text-sm tabular-nums text-neutral-700">
+            <span className="text-sm tabular-nums text-theme-neutral-700">
               {claim.value == null ? "—" : `${format(claim.value)}${unit == null ? "" : ` ${unit}`}`}
             </span>
             <SourceChip tier="reported" label={claim.label} />
@@ -63,14 +63,14 @@ const IndicatorRow = ({ contract, level, measurement, claim, reconciliation, goa
       )}
 
       <div className="mt-1.5 flex items-baseline justify-between gap-3">
-        <span className="text-xs text-neutral-600">{claim == null ? "Value" : "Measured estimate"}</span>
+        <span className="text-xs text-theme-neutral-700">{claim == null ? "Value" : "Measured estimate"}</span>
         <span className="flex items-baseline gap-2">
           {measured == null ? (
-            <span className="text-base tabular-nums text-neutral-400">—</span>
+            <span className="text-base tabular-nums text-theme-neutral-400">—</span>
           ) : (
-            <span className="text-base font-semibold tabular-nums text-neutral-900">
+            <span className="text-base font-semibold tabular-nums text-theme-neutral-900">
               {format(measured)}
-              {unit == null ? "" : <span className="ml-1 text-xs font-normal text-neutral-500">{unit}</span>}
+              {unit == null ? "" : <span className="ml-1 text-xs font-normal text-theme-neutral-500">{unit}</span>}
             </span>
           )}
           <SourceChip tier={measured == null ? "notMeasured" : tier} />
@@ -83,14 +83,14 @@ const IndicatorRow = ({ contract, level, measurement, claim, reconciliation, goa
 
       {goal != null && goal > 0 && (
         <div className="mt-2">
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-200">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-theme-neutral-200">
             <div
-              className="h-full rounded-full bg-primary-500"
+              className="h-full rounded-full bg-theme-primary-500"
               style={{ width: `${goalPct ?? 0}%` }}
               role="presentation"
             />
           </div>
-          <p className="mt-1 text-[11px] leading-tight text-neutral-500">
+          <p className="mt-1 text-[11px] leading-tight text-theme-neutral-500">
             {measured == null ? "No measurement to compare" : `${format(measured)} of ${format(goal)} goal`}
             {unit == null ? "" : ` ${unit}`}
           </p>

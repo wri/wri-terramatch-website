@@ -46,19 +46,22 @@ const LevelCard = ({
   const childNoun = CHILD_NOUN[level];
 
   return (
-    <section className="flex h-full flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white">
-      <header className="border-b border-neutral-200 px-4 py-3">
-        <p className="text-[11px] uppercase tracking-wide text-neutral-400">{LEVEL_NOUN[level]}</p>
-        <h3 className="truncate text-base font-semibold text-neutral-900" title={title}>
+    <section className="flex h-full flex-col overflow-hidden rounded-lg border border-theme-neutral-200 bg-white">
+      <header className="border-b border-theme-neutral-200 px-4 py-3">
+        <p className="text-[11px] uppercase tracking-wide text-theme-neutral-400">{LEVEL_NOUN[level]}</p>
+        <h3 className="truncate text-base font-semibold text-theme-neutral-900" title={title}>
           {title}
         </h3>
-        {subtitle != null && <p className="truncate text-xs text-neutral-500">{subtitle}</p>}
-        <p className="mt-1 text-xs text-neutral-600">
+        {subtitle != null && <p className="truncate text-xs text-theme-neutral-500">{subtitle}</p>}
+        <p className="mt-1 text-xs text-theme-neutral-700">
           {polygons.toLocaleString()} approved {polygons === 1 ? "polygon" : "polygons"}
           {inReviewCount > 0 && (
             // Stated on every level. Measurements exclude these, so the exclusion has to be
             // visible or the smaller number reads as the whole picture.
-            <span className="text-orange-700"> · {inReviewCount.toLocaleString()} in review, not counted below</span>
+            <span className="text-theme-warning-900">
+              {" "}
+              · {inReviewCount.toLocaleString()} in review, not counted below
+            </span>
           )}
         </p>
       </header>
@@ -79,8 +82,8 @@ const LevelCard = ({
         </ul>
 
         {childNoun != null && childEntries != null && childEntries.length > 0 && (
-          <div className="border-t border-neutral-200 py-3">
-            <p className="mb-2 text-[11px] uppercase tracking-wide text-neutral-400">
+          <div className="border-t border-theme-neutral-200 py-3">
+            <p className="mb-2 text-[11px] uppercase tracking-wide text-theme-neutral-400">
               {childNoun} ({childEntries.length.toLocaleString()})
             </p>
             <ul className="flex flex-col gap-1">
@@ -89,13 +92,13 @@ const LevelCard = ({
                   <button
                     type="button"
                     onClick={() => onSelectChild?.(child.id)}
-                    className="flex w-full items-baseline justify-between gap-2 rounded px-2 py-1.5 text-left hover:bg-neutral-100"
+                    className="flex w-full items-baseline justify-between gap-2 rounded px-2 py-1.5 text-left hover:bg-theme-neutral-100"
                   >
-                    <span className="truncate text-xs text-neutral-800">{child.name}</span>
-                    <span className="shrink-0 text-[11px] tabular-nums text-neutral-500">
+                    <span className="truncate text-xs text-theme-neutral-800">{child.name}</span>
+                    <span className="shrink-0 text-[11px] tabular-nums text-theme-neutral-500">
                       {child.polygons.toLocaleString()}
                       {child.inReviewCount > 0 && (
-                        <span className="text-orange-700"> +{child.inReviewCount.toLocaleString()}</span>
+                        <span className="text-theme-warning-900"> +{child.inReviewCount.toLocaleString()}</span>
                       )}
                     </span>
                   </button>

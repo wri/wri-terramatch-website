@@ -8,12 +8,12 @@ import { SOURCE_LABELS, SourceTier } from "./levelContract";
  * measurement, and the two must never be mistaken for each other at a glance.
  */
 const TIER_STYLES: Record<SourceTier, string> = {
-  field: "bg-green-100 text-green-700",
-  satellite: "bg-blue-100 text-blue-700",
-  modeled: "bg-purple-100 text-purple-700",
-  reported: "border border-dashed border-orange-400 bg-orange-50 text-orange-700",
-  derived: "bg-neutral-150 text-neutral-800",
-  notMeasured: "bg-neutral-100 text-neutral-500"
+  field: "bg-theme-success-100 text-theme-success-900",
+  satellite: "bg-theme-secondary-200 text-theme-secondary-800",
+  modeled: "bg-theme-information-100 text-theme-information-900",
+  reported: "border border-dashed border-theme-warning-300 bg-theme-warning-100 text-theme-warning-900",
+  derived: "bg-theme-neutral-200 text-theme-neutral-800",
+  notMeasured: "bg-theme-neutral-100 text-theme-neutral-500"
 };
 
 export interface SourceChipProps {
