@@ -13,13 +13,21 @@ import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/T
 
 type ReportsIndexHeaderProps = {
   activeTab: string;
+  reportCount: number;
   selectedViewLabel: string;
   onTabChange: (tab: string) => void;
+  onQueryChange: (query: string) => void;
 };
 
 const DEFAULT_FILTERS = ["Site Reports", "Draft", "31/08/2026"];
 
-const ReportsIndexHeader = ({ activeTab, selectedViewLabel, onTabChange }: ReportsIndexHeaderProps) => {
+const ReportsIndexHeader = ({
+  activeTab,
+  reportCount,
+  selectedViewLabel,
+  onTabChange,
+  onQueryChange
+}: ReportsIndexHeaderProps) => {
   const t = useT();
   const router = useRouter();
   const [filtersByTab, setFiltersByTab] = useState<Record<string, string[]>>({
@@ -97,8 +105,9 @@ const ReportsIndexHeader = ({ activeTab, selectedViewLabel, onTabChange }: Repor
           placeholder: t("Search projects, sites, nurseries"),
           options: [],
           displayResults: "none",
-          count: 5,
-          label: t("Reports")
+          count: reportCount,
+          label: t("Reports"),
+          onQueryChange
         }}
         selectedFilters={selectedFilters.map(label => ({
           label,

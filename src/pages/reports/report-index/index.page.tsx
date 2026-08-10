@@ -2,19 +2,18 @@ import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullProject, useFullSite } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
+import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
-import ReportsIndexHeader from "./components/ReportsIndexHeader";
+import ReportsIndexContent from "./components/ReportsIndexContent";
 import { isReportsIndexSource } from "./reportIndex.utils";
 
 const ReportsIndexPage = () => {
   const router = useRouter();
   const t = useT();
-  const [activeTab, setActiveTab] = useState("progress-reports");
   const sourceParam = typeof router.query.source === "string" ? router.query.source : undefined;
   const source = isReportsIndexSource(sourceParam) ? sourceParam : undefined;
   const sourceUuid = typeof router.query.uuid === "string" ? router.query.uuid : undefined;
@@ -40,11 +39,9 @@ const ReportsIndexPage = () => {
     return <Box>{t("The reports link is invalid.")}</Box>;
   }
 
-  const selectedViewLabel =
-    source === "project" ? project?.name ?? t("Project") : sourceEntity?.name ?? project?.name ?? "";
-
   return (
     <FrameworkProvider frameworkKey={project?.frameworkKey}>
+      <ResponsiveTypography />
       <Head>
         <title>{t("Reports")}</title>
       </Head>
@@ -52,7 +49,7 @@ const ReportsIndexPage = () => {
         {project == null || source == null || sourceEntity == null ? (
           <Box>{t("The reports information could not be found.")}</Box>
         ) : (
-          <ReportsIndexHeader activeTab={activeTab} selectedViewLabel={selectedViewLabel} onTabChange={setActiveTab} />
+          <ReportsIndexContent project={project} source={source} sourceEntity={sourceEntity} />
         )}
       </LoadingContainer>
     </FrameworkProvider>
