@@ -35,12 +35,11 @@ import { first } from "@/utils/array";
 
 const ReadableStatus: { [index: string]: string } = {
   due: "Due",
-  started: "Started",
-  "awaiting-approval": "Awaiting approval",
-  "needs-more-information": "Needs more information",
+  "pending-approval": "Pending Approval",
+  "information-required": "Information Required",
   approved: "Approved",
   draft: "Draft",
-  "no-update": "No update"
+  "no-update": "No Update"
 };
 
 type ReportRowProps = {

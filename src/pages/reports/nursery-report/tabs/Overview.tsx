@@ -10,7 +10,7 @@ import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/M
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
-import { AWAITING_APPROVAL } from "@/constants/statuses";
+import { PENDING_APPROVAL } from "@/constants/statuses";
 import { isTerrafund, toFramework } from "@/context/framework.provider";
 import { NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntitySetupButtonLabel } from "@/helpers/entity";
@@ -100,7 +100,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
   const editButtonLabel = getEntitySetupButtonLabel(t, report.status, isReportSetupComplete);
 
   const statusTag = useMemo(() => {
-    if (report.updateRequestStatus === AWAITING_APPROVAL) {
+    if (report.updateRequestStatus === PENDING_APPROVAL) {
       return <TagSubmission size="small" state="pending-approval" />;
     }
 

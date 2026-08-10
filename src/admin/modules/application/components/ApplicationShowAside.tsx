@@ -8,7 +8,7 @@ import Aside from "@/admin/components/Aside/Aside";
 import ApplicationRequestMoreInfoModal from "./ApplicationChangeStatusModal";
 import { statusChoices } from "./ApplicationList";
 
-export type status = "approved" | "requires-more-information" | "rejected";
+export type status = "approved" | "information-required" | "rejected";
 
 const ApplicationShowAside = () => {
   const [shouldRequestMessageWithStatus, setShouldRequestMessageWithStatus] = useState<status | null>(null);
@@ -57,14 +57,14 @@ const ApplicationShowAside = () => {
             <Button
               variant="contained"
               onClick={() => setShouldRequestMessageWithStatus("approved")}
-              disabled={isLoading || currentStatus !== "awaiting-approval"}
+              disabled={isLoading || currentStatus !== "pending-approval"}
             >
               Approve
             </Button>
             <Button
               variant="outlined"
-              onClick={() => setShouldRequestMessageWithStatus("requires-more-information")}
-              disabled={isLoading || currentStatus !== "awaiting-approval"}
+              onClick={() => setShouldRequestMessageWithStatus("information-required")}
+              disabled={isLoading || currentStatus !== "pending-approval"}
             >
               Request More Information
             </Button>
@@ -72,7 +72,7 @@ const ApplicationShowAside = () => {
               variant="outlined"
               color="error"
               onClick={() => setShouldRequestMessageWithStatus("rejected")}
-              disabled={isLoading || currentStatus !== "awaiting-approval"}
+              disabled={isLoading || currentStatus !== "pending-approval"}
             >
               Reject
             </Button>

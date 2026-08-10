@@ -54,7 +54,7 @@ const mockProject: ProjectFullDto = {
   organisationName: "WRI Example Organization",
   organisationUuid: "org-1",
   organisationType: "ngo",
-  status: "started",
+  status: "draft",
   plantingStatus: "in-progress",
   updateRequestStatus: "no-update",
   name: "Restoration project in the Uganda Basin",

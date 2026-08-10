@@ -45,7 +45,7 @@ const StatusBar = ({
     },
     warning: {
       classNames: "bg-tertiary-200",
-      title: t("Status: More Info Requested")
+      title: t("Status: Information Required")
     },
     restoration: {
       classNames: "bg-green-30",

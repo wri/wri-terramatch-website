@@ -103,17 +103,17 @@ export default DisturbanceReportsTable;
 
 export const DisturbanceStatusMapping = (t: typeof useT): any => {
   return {
-    "needs-more-information": {
+    "information-required": {
       status: "warning",
-      statusText: t("Needs More Information")
+      statusText: t("Information Required")
     },
     "not-started": {
       status: "error",
       statusText: t("Not started")
     },
-    started: {
+    draft: {
       status: "edit",
-      statusText: t("Started")
+      statusText: t("Draft")
     },
     approved: {
       status: "success",
@@ -123,9 +123,9 @@ export const DisturbanceStatusMapping = (t: typeof useT): any => {
       status: "warning",
       statusText: t("Nothing Reported")
     },
-    "awaiting-approval": {
+    "pending-approval": {
       status: "success",
-      statusText: t("Submitted for approval")
+      statusText: t("Pending Approval")
     }
   };
 };

@@ -161,7 +161,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName,
     entityUUID,
-    entityStatus: entityStatus ?? "started",
+    entityStatus: entityStatus ?? "draft",
     updateRequestStatus: updateRequestStatus ?? "no-update"
   });
 

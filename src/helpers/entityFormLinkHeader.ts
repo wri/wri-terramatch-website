@@ -43,13 +43,9 @@ export const mapStatusToTagState = (status: string | null | undefined): TagSubmi
       return "draft";
     case "due":
       return "due";
-    case "started":
-      return "draft";
-    case "awaiting-approval":
+    case "pending-approval":
       return "pending-approval";
-    case "needs-more-information":
-      return "information-required";
-    case "requires-more-information":
+    case "information-required":
       return "information-required";
     case "approved":
       return "approved";

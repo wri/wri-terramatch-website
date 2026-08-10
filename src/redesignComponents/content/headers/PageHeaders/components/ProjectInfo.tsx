@@ -7,7 +7,7 @@ import Twemoji from "react-twemoji";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { useMyOrg } from "@/connections/Organisation";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -47,7 +47,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
-    entityStatus: project.status ?? "started",
+    entityStatus: project.status ?? "draft",
     updateRequestStatus: project.updateRequestStatus ?? "no-update"
   });
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("projects", project.uuid);
@@ -60,8 +60,8 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   }, [router, myOrg?.organisationId]);
 
   const needMoreInformation =
-    project.updateRequestStatus === NEEDS_MORE_INFORMATION || project.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval = project.updateRequestStatus === AWAITING_APPROVAL || project.status === AWAITING_APPROVAL;
+    project.updateRequestStatus === INFORMATION_REQUIRED || project.status === INFORMATION_REQUIRED;
+  const awaitingApproval = project.updateRequestStatus === PENDING_APPROVAL || project.status === PENDING_APPROVAL;
   const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
 
   const handleEditClick = useCallback(() => {

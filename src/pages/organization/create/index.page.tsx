@@ -41,7 +41,7 @@ const CreateOrganisationForm = () => {
   const handleSubmit = useCallback(async () => {
     if (uuid == null) return;
     try {
-      await updateOrganisation({ status: "pending" }, { id: uuid });
+      await updateOrganisation({ status: "pending-approval" }, { id: uuid });
       router.push("/organization/create/confirm");
     } catch (error) {
       Log.error("Failed to submit organization:", error);

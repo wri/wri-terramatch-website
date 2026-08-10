@@ -9,7 +9,7 @@ import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 
 const NurseryOverview: FC = () => {
   const t = useT();
-  const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | undefined>();
+  const [statusModal, setStatusModal] = useState<"approved" | "information-required" | undefined>();
   const { record } = useShowContext();
 
   return (
@@ -41,8 +41,8 @@ const NurseryOverview: FC = () => {
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               variant="outlined"
-              disabled={record?.status === "needs-more-information"}
-              onClick={() => setStatusModal("needs-more-information")}
+              disabled={record?.status === "information-required"}
+              onClick={() => setStatusModal("information-required")}
             >
               Request More Info
             </Button>
@@ -51,7 +51,7 @@ const NurseryOverview: FC = () => {
               startIcon={<Check />}
               disabled={
                 record?.status === "approved" ||
-                record?.updateRequestStatus === "awaiting-approval" ||
+                record?.updateRequestStatus === "pending-approval" ||
                 record?.updateRequestStatus === "draft"
               }
               onClick={() => setStatusModal("approved")}

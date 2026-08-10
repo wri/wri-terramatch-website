@@ -137,7 +137,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
                   href: getEntityDetailPageLink("sites", props.getValue() as string),
                   children: t("View site")
                 }}
-                hasDeleteButton={record.status === "started"}
+                hasDeleteButton={record.status === "draft"}
                 onDelete={() => handleDeleteSite(props.getValue() as string)}
               />
             );

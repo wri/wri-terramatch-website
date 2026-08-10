@@ -20,17 +20,13 @@ export const getFinancialReportStatusOptions = (t: typeof useT | Function = (t: 
     },
     {
       value: "due",
-      title: t("Draft")
-    },
-    {
-      value: "started",
-      title: t("Draft")
+      title: t("Due")
     },
     {
       value: "submitted",
       title: t("Submitted")
     },
-    ...getReportStatusOptions(t)
+    ...getReportStatusOptions(t).filter(option => !["due", "draft"].includes(option.value as string))
   ] as Option[];
 
 export const getTaskStatusOptions = (t: typeof useT | Function = (t: string) => t) =>
@@ -44,32 +40,32 @@ export const getTaskStatusOptions = (t: typeof useT | Function = (t: string) => 
       title: t("Approved")
     },
     {
-      value: "awaiting-approval",
-      title: t("Awaiting Review")
+      value: "pending-approval",
+      title: t("Pending Approval")
     },
     {
-      value: "needs-more-information",
-      title: t("More info requested")
+      value: "information-required",
+      title: t("Information Required")
     }
   ] as Option[];
 
 export const getStatusOptions = (t: typeof useT | Function = (t: string) => t) =>
   [
     {
-      value: "started",
-      title: t("Started")
+      value: "draft",
+      title: t("Draft")
     },
     {
       value: "approved",
       title: t("Approved")
     },
     {
-      value: "awaiting-approval",
-      title: t("Awaiting Review")
+      value: "pending-approval",
+      title: t("Pending Approval")
     },
     {
-      value: "needs-more-information",
-      title: t("More info requested")
+      value: "information-required",
+      title: t("Information Required")
     }
   ] as Option[];
 export const getPolygonOptions = (t: typeof useT | Function = (t: string) => t) =>
@@ -98,13 +94,24 @@ export const getPolygonOptions = (t: typeof useT | Function = (t: string) => t) 
 export const getChangeRequestStatusOptions = (t: typeof useT | Function = (t: string) => t) =>
   [
     {
-      value: "draft",
-      title: t("Started")
-    },
-    ...getStatusOptions(t).filter(option => option.value !== "started"),
-    {
       value: "no-update",
-      title: t("No update")
+      title: t("No Update")
+    },
+    {
+      value: "draft",
+      title: t("Draft")
+    },
+    {
+      value: "pending-approval",
+      title: t("Pending Approval")
+    },
+    {
+      value: "information-required",
+      title: t("Information Required")
+    },
+    {
+      value: "approved",
+      title: t("Approved")
     }
   ] as Option[];
 

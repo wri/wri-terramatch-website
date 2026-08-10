@@ -8,7 +8,7 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
@@ -34,15 +34,15 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   });
 
   const needMoreInformation =
-    nursery.updateRequestStatus === NEEDS_MORE_INFORMATION || nursery.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval = nursery.updateRequestStatus === AWAITING_APPROVAL || nursery.status === AWAITING_APPROVAL;
+    nursery.updateRequestStatus === INFORMATION_REQUIRED || nursery.status === INFORMATION_REQUIRED;
+  const awaitingApproval = nursery.updateRequestStatus === PENDING_APPROVAL || nursery.status === PENDING_APPROVAL;
   const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
 
   const statusProps: StatusProps | undefined = useMemo(() => {
     if (!needMoreInformation) return undefined;
     const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
     return {
-      title: t(`${titlePrefix} More Info Requested`),
+      title: t(`${titlePrefix} Information Required`),
       icon: IconNames.EXCLAMATION_CIRCLE_FILL,
       className: "fill-tertiary"
     };
@@ -110,9 +110,9 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
           title={t("Nursery Set Up")}
           tag={(() => {
             const tagState = mapStatusToTagStateEntity(
-              nursery?.updateRequestStatus == "awaiting-approval" ? nursery?.updateRequestStatus : nursery?.status
+              nursery?.updateRequestStatus == "pending-approval" ? nursery?.updateRequestStatus : nursery?.status
             );
-            return nursery.updateRequestStatus === "awaiting-approval" ? (
+            return nursery.updateRequestStatus === "pending-approval" ? (
               <TagSubmission state="pending-approval" />
             ) : nursery?.status != null ? (
               <TagSubmission state={tagState?.type as TagSubmissionState} />

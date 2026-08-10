@@ -65,7 +65,7 @@ const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeader
       primaryButtonProps: {
         children: t("Submit Reports"),
         onClick: () => {
-          update?.({ status: "awaiting-approval" });
+          update?.({ status: "pending-approval" });
           closeModal(ModalId.MODALS_MAPPING);
         }
       },
@@ -94,7 +94,7 @@ const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeader
       primaryButtonProps: {
         children: t("Submit Reports"),
         onClick: () => {
-          update?.({ status: "awaiting-approval" });
+          update?.({ status: "pending-approval" });
           closeModal(ModalId.MODALS_MAPPING);
         }
       },
