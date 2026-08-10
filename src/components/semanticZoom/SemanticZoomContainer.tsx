@@ -1,10 +1,13 @@
+import type { FeatureCollection } from "geojson";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 
+import { useProjectSitePolygonsGeoJson, useSitePolygonsGeoJson } from "@/connections/GeoJsonExport";
 import { useSiteIndicatorRollup } from "@/connections/SiteIndicatorRollup";
 import { useSitePolygons } from "@/connections/SitePolygons";
 
 import { aggregatePolygon, aggregateProject, aggregateSite, polygonMeasurementsFrom, reconcile } from "./aggregate";
+import DrilldownMap from "./DrilldownMap";
 import LevelCard, { ChildEntry } from "./LevelCard";
 import { Level } from "./levelContract";
 
@@ -46,6 +49,28 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
     pageSize: POLYGON_PAGE_SIZE,
     pageNumber: 1
   });
+
+  // Geometry follows the level. Project scope loads every polygon's shape in one request; once a
+  // site is chosen the map narrows to that site, which is both the smaller payload and the
+  // correct frame.
+  const [projectGeoLoaded, { data: projectGeo }] = useProjectSitePolygonsGeoJson({
+    projectUuid,
+    geometryOnly: false,
+    enabled: siteUuid == null
+  });
+  const [siteGeoLoaded, { data: siteGeo }] = useSitePolygonsGeoJson({
+    siteUuid: siteUuid ?? undefined,
+    geometryOnly: false,
+    enabled: siteUuid != null
+  });
+
+  const featureCollection = useMemo(() => {
+    const dto = siteUuid == null ? projectGeo : siteGeo;
+    if (dto == null) return null;
+    return { type: "FeatureCollection", features: dto.features ?? [] } as FeatureCollection;
+  }, [siteUuid, projectGeo, siteGeo]);
+
+  const geoLoading = siteUuid == null ? !projectGeoLoaded : !siteGeoLoaded;
 
   const navigate = useCallback(
     (next: { site?: string | null; polygon?: string | null }) => {
@@ -112,7 +137,7 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
       : selectedPolygon?.name ?? "Polygon";
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex w-full flex-col gap-3">
       <nav className="flex items-center gap-1 text-xs text-neutral-600" aria-label="Zoom path">
         <button type="button" className="hover:underline" onClick={() => navigate({ site: null, polygon: null })}>
           {projectName}
@@ -133,12 +158,19 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
         )}
       </nav>
 
-      <div className="grid gap-3 lg:grid-cols-[1fr_380px]">
-        <div className="flex min-h-[420px] items-center justify-center rounded-lg border border-dashed border-neutral-300 bg-neutral-50 text-sm text-neutral-500">
-          Map — not yet wired
+      <div className="flex w-full flex-col gap-3 ws-1100:flex-row">
+        <div className="min-h-[420px] w-full flex-1">
+          <DrilldownMap
+            featureCollection={featureCollection}
+            selectedId={polygonUuid}
+            loading={geoLoading}
+            // Clicking a shape descends. At project scope the shapes are polygons, so a click
+            // jumps straight to the polygon level and the breadcrumb carries the path back up.
+            onSelectPolygon={(uuid, siteId) => navigate({ site: siteId ?? siteUuid, polygon: uuid })}
+          />
         </div>
 
-        <div className="min-h-[420px]">
+        <div className="min-h-[420px] w-full shrink-0 ws-1100:w-[400px]">
           <LevelCard
             aggregate={aggregate}
             title={title}
