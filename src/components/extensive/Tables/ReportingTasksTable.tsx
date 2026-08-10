@@ -102,17 +102,17 @@ export default ReportingTasksTable;
 
 export const CompletionStatusMapping = (t: typeof useT): any => {
   return {
-    "needs-more-information": {
+    "information-required": {
       status: "warning",
-      statusText: t("Needs More Information")
+      statusText: t("Information Required")
     },
     "not-started": {
       status: "error",
       statusText: t("Not started")
     },
-    started: {
+    draft: {
       status: "edit",
-      statusText: t("Started")
+      statusText: t("Draft")
     },
     approved: {
       status: "success",
@@ -122,9 +122,9 @@ export const CompletionStatusMapping = (t: typeof useT): any => {
       status: "warning",
       statusText: t("Nothing Reported")
     },
-    "awaiting-approval": {
+    "pending-approval": {
       status: "success",
-      statusText: t("Submitted for approval")
+      statusText: t("Pending Approval")
     }
   };
 };
@@ -135,13 +135,13 @@ export const SubmissionStatusMapping = (t: typeof useT): any => {
       status: "warning",
       statusText: t("Due")
     },
-    "awaiting-approval": {
+    "pending-approval": {
       status: "awaiting",
-      statusText: t("Awaiting approval")
+      statusText: t("Pending Approval")
     },
-    "needs-more-information": {
+    "information-required": {
       status: "warning",
-      statusText: t("Needs more information")
+      statusText: t("Information Required")
     },
     approved: {
       status: "success",

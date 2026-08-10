@@ -10,11 +10,11 @@ import { DECLARED_ENV } from "@/constants/environment";
 
 const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ parent }) => {
   const [statusModal, setStatusModal] = useState<
-    "approved" | "needs-more-information" | "reminder" | "due" | undefined
+    "approved" | "information-required" | "reminder" | "due" | undefined
   >();
 
   const { record } = useShowContext();
-  const reportActionDisabled = record?.updateRequestStatus === "needs-more-information";
+  const reportActionDisabled = record?.updateRequestStatus === "information-required";
 
   return (
     <>
@@ -65,7 +65,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             {record?.dueAt && parent?.label !== "Disturbance Report" && (
               <Grid xs={4} item>
                 <Labeled label="Due Date">
-                  <DateField source="dueAt" label="Due Date" locales="en-GB" />
+                  <DateField source="dueAt" label="Due Date" locales="en-GB" options={{ timeZone: "UTC" }} />
                 </Labeled>
               </Grid>
             )}
@@ -74,8 +74,8 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               variant="outlined"
-              disabled={reportActionDisabled || record?.status === "needs-more-information"}
-              onClick={() => setStatusModal("needs-more-information")}
+              disabled={reportActionDisabled || record?.status === "information-required"}
+              onClick={() => setStatusModal("information-required")}
             >
               Request More Info
             </Button>

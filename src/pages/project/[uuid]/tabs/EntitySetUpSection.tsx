@@ -38,7 +38,7 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: type,
     entityUUID: entity.uuid,
-    entityStatus: entity.status ?? "started",
+    entityStatus: entity.status ?? "draft",
     updateRequestStatus: entity.updateRequestStatus ?? "no-update",
     feedback: entity.feedback,
     entityTitle: entityTitle ?? "",

@@ -14,7 +14,7 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { AWAITING_APPROVAL } from "@/constants/statuses";
+import { PENDING_APPROVAL } from "@/constants/statuses";
 import { Framework } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
@@ -98,7 +98,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const isAdmin = useIsAdmin();
 
   const statusTag = useMemo(() => {
-    if (siteReport.updateRequestStatus === AWAITING_APPROVAL) {
+    if (siteReport.updateRequestStatus === PENDING_APPROVAL) {
       return <TagSubmission size="small" state={isAdmin ? "pending-approval" : "pending-approval-neutral"} />;
     }
 

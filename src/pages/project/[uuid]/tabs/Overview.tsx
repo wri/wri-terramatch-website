@@ -13,7 +13,7 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -46,7 +46,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
-    entityStatus: project.status ?? "started",
+    entityStatus: project.status ?? "draft",
     updateRequestStatus: project.updateRequestStatus ?? "no-update"
   });
 
@@ -75,8 +75,8 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
       }));
   }, [associatedUsers]);
   const needMoreInformation =
-    project.updateRequestStatus === NEEDS_MORE_INFORMATION || project.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval = project.updateRequestStatus === AWAITING_APPROVAL || project.status === AWAITING_APPROVAL;
+    project.updateRequestStatus === INFORMATION_REQUIRED || project.status === INFORMATION_REQUIRED;
+  const awaitingApproval = project.updateRequestStatus === PENDING_APPROVAL || project.status === PENDING_APPROVAL;
   const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval) {
@@ -150,7 +150,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     enabled: project.uuid != null
   });
 
-  const isDraftOrPendingApproval = project.status === "started" || awaitingApproval;
+  const isDraftOrPendingApproval = project.status === "draft" || awaitingApproval;
 
   const showSiteAreasMapPlaceholder =
     !isLoadingProjectPolygons && (projectPolygonDataV3?.length ?? 0) === 0 && isDraftOrPendingApproval;
@@ -235,7 +235,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           title={t("Project Set Up")}
           tag={(() => {
             const tagState = mapStatusToTagStateEntity(project?.status);
-            return project.updateRequestStatus === "awaiting-approval" ? (
+            return project.updateRequestStatus === "pending-approval" ? (
               <TagSubmission state="pending-approval" />
             ) : project?.status != null ? (
               <TagSubmission state={tagState?.type as TagSubmissionState} />

@@ -87,7 +87,7 @@ const ApplicationsTable: FC<DraftApplicationsTableProps> = ({ fundingProgrammeUu
                   </Button>
                 ];
 
-                if (status === "started" && submissionUuid != null) {
+                if (status === "draft" && submissionUuid != null) {
                   buttons.unshift(
                     <Button key="continue" as={Link} href={`/form/submission/${submissionUuid}`}>
                       {t("Continue")}

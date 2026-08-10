@@ -52,12 +52,12 @@ import { Status } from "@/types/common";
 
 const StatusMapping: { [index: string]: Status } = {
   due: "edit",
-  "awaiting-approval": "awaiting",
+  "pending-approval": "awaiting",
   approved: "success",
-  "needs-more-information": "warning"
+  "information-required": "warning"
 };
 
-const NOTHING_TO_REPORT_DISPLAYABLE_STATUSES = ["due", "started"];
+const NOTHING_TO_REPORT_DISPLAYABLE_STATUSES = ["due", "draft"];
 
 const BULK_MODAL_COPY =
   'Indicate here if any of the sites/nurseries below had no activity to report during the reporting period. You can select sites/nurseries individually, or use the "Select All" button if applicable. Be sure to press "Submit" to confirm your selection and send to your project manager for review. <br />Please note: you must report any planting, assisted natural regeneration activities, maintenance, monitoring, or nursery seedlings by filling out the reports for that site/nursery individually.';
@@ -89,19 +89,19 @@ const shouldShowNothingToReportButton = (report: TaskReport) => {
 const mapTaskReport =
   (format: ReturnType<typeof useDate>["format"]) =>
   (report: TaskReportDto): TaskReport => {
-    let completionStatus = "started";
+    let completionStatus = "draft";
     const { status: reportStatus, updateRequestStatus } = report;
     // If there is no submitted update request in play, then the report status is the source of
     // truth, otherwise update the UI in accordance with the active update request's status.
-    const hasSubmittedUpdateRequest = ["awaiting-approval", "needs-more-information"].includes(updateRequestStatus!);
+    const hasSubmittedUpdateRequest = ["pending-approval", "information-required"].includes(updateRequestStatus!);
     const status = hasSubmittedUpdateRequest ? updateRequestStatus : reportStatus;
 
-    if (status === "needs-more-information") {
-      completionStatus = "needs-more-information";
+    if (status === "information-required") {
+      completionStatus = "information-required";
     } else if ((report as SiteReportLightDto | NurseryReportLightDto).nothingToReport) {
       completionStatus = "nothing-to-report";
-    } else if (status === "awaiting-approval") {
-      completionStatus = "awaiting-approval";
+    } else if (status === "pending-approval") {
+      completionStatus = "pending-approval";
     } else if (status === "approved") {
       completionStatus = "approved";
     } else if (status === "due") {
@@ -243,14 +243,14 @@ const ReportingTaskPage: FC = () => {
               );
 
             case "approved":
-            case "awaiting-approval":
+            case "pending-approval":
               return (
                 <Button as={Link} href={`/reports/${type}/${uuid}`}>
                   {t("View Completed Report")}
                 </Button>
               );
 
-            case "needs-more-information":
+            case "information-required":
               return (
                 <Button as={Link} href={`/reports/${type}/${uuid}`}>
                   {t("View Feedback")}
@@ -338,14 +338,14 @@ const ReportingTaskPage: FC = () => {
               );
 
             case "approved":
-            case "awaiting-approval":
+            case "pending-approval":
               return (
                 <Button as={Link} href={`/reports/${type}/${uuid}`}>
                   {t("View Completed Report")}
                 </Button>
               );
 
-            case "needs-more-information":
+            case "information-required":
               return (
                 <Button as={Link} href={`/reports/${type}/${uuid}`}>
                   {t("View Feedback")}

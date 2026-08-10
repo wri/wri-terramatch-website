@@ -63,7 +63,7 @@ const ProjectsTabContent: FC = () => {
                   enableSorting: false,
                   accessorKey: "uuid",
                   cell: props =>
-                    props.row.original?.status === "started" ? (
+                    props.row.original?.status === "draft" ? (
                       <Button as={Link} href={`/entity/projects/edit/${props.getValue()}`} className="float-right">
                         {t("Continue")}
                       </Button>

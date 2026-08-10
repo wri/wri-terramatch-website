@@ -15,16 +15,16 @@ type EntityStatusBarProps = {
 };
 
 const StatusMapping = {
-  started: "edit",
+  draft: "edit",
   due: "edit",
   approved: "success",
-  "awaiting-approval": "awaiting",
-  "needs-more-information": "warning"
+  "pending-approval": "awaiting",
+  "information-required": "warning"
 } as const;
 export type StatusBarStatus = keyof typeof StatusMapping;
 
 const hasUpdateRequest = ({ updateRequestStatus }: EntityFullDto) =>
-  updateRequestStatus === "awaiting-approval" || updateRequestStatus === "needs-more-information";
+  updateRequestStatus === "pending-approval" || updateRequestStatus === "information-required";
 
 export const getStatusProps = (
   t: typeof useT,
@@ -40,16 +40,16 @@ export const getStatusProps = (
         className: "fill-secondary"
       };
 
-    case "needs-more-information":
+    case "information-required":
       return {
-        title: t(`${titlePrefix} More Info Requested`),
+        title: t(`${titlePrefix} Information Required`),
         icon: IconNames.EXCLAMATION_CIRCLE_FILL,
         className: "fill-tertiary"
       };
 
-    case "awaiting-approval":
+    case "pending-approval":
       return {
-        title: t(`${titlePrefix} Awaiting approval`),
+        title: t(`${titlePrefix} Pending Approval`),
         icon: IconNames.CLOCK,
         className: "fill-primary"
       };
@@ -64,7 +64,7 @@ const EntityStatusBar: FC<EntityStatusBarProps> = ({ entityName, entity }) => {
   const [openStatusModal, setOpenStatusModal] = useState(false);
 
   const entityStatus = (hasUpdateRequest(entity) ? entity.updateRequestStatus : entity.status) as StatusBarStatus;
-  const needMoreInformation = entityStatus === "needs-more-information";
+  const needMoreInformation = entityStatus === "information-required";
   const hasFeedback = needMoreInformation || entityStatus === "approved";
   const projectedEntityStatus = entityStatus == null ? undefined : StatusMapping[entityStatus];
 

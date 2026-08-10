@@ -51,19 +51,19 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
         }
 
         switch (status) {
-          case "started": {
+          case "draft": {
             ctaText = t("Continue Project");
             subtitle = "";
             ctaLink = `/entity/projects/edit/${project?.uuid}`;
             break;
           }
-          case "awaiting-approval": {
+          case "pending-approval": {
             ctaText = t("View Project");
             subtitle = "";
             ctaLink = getEntityDetailPageLink("projects", project?.uuid);
             break;
           }
-          case "needs-more-information": {
+          case "information-required": {
             ctaText = t("View Project");
             subtitle = "";
             ctaLink = getEntityEditPageLink("projects", project?.uuid);

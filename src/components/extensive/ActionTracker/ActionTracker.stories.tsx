@@ -20,7 +20,7 @@ export const Default: Story = {
       {
         title: "Card 1",
         subtitle: "Subtitle",
-        status: StatusEnum.AWAITING_APPROVAL,
+        status: StatusEnum.PENDING_APPROVAL,
         statusText: "Awaiting",
         ctaText: "cta",
         ctaLink: "/"

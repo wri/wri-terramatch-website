@@ -22,8 +22,8 @@ const PolygonReviewButtons = ({
 }) => {
   const polygonStatusLabels = [
     { id: "1", label: "Draft" },
-    { id: "2", label: "Awaiting Approval" },
-    { id: "3", label: "Needs More Information" },
+    { id: "2", label: "Pending Approval" },
+    { id: "3", label: "Information Required" },
     { id: "4", label: "Restoration In Progress" },
     { id: "5", label: "Approved" }
   ];

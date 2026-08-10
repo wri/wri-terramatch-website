@@ -3,20 +3,20 @@
 exports[`snapShot getStatusOptions 1`] = `
 [
   {
-    "title": "Started",
-    "value": "started",
+    "title": "Draft",
+    "value": "draft",
   },
   {
     "title": "Approved",
     "value": "approved",
   },
   {
-    "title": "Awaiting Review",
-    "value": "awaiting-approval",
+    "title": "Pending Approval",
+    "value": "pending-approval",
   },
   {
-    "title": "More info requested",
-    "value": "needs-more-information",
+    "title": "Information Required",
+    "value": "information-required",
   },
 ]
 `;

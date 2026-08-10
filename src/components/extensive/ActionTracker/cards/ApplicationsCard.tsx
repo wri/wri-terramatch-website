@@ -24,8 +24,8 @@ const ApplicationsCard = (props: ApplicationsCardProps) => {
       props.applications
         .filter(
           application =>
-            last(application.submissions)?.status == "started" ||
-            last(application.submissions)?.status == "requires-more-information"
+            last(application.submissions)?.status == "draft" ||
+            last(application.submissions)?.status == "information-required"
         )
         .map(application => {
           const currentSubmission = last(application.submissions);

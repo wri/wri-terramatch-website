@@ -65,10 +65,10 @@ export const getCurrentPathEntity = () => {
 };
 
 export const isEntityAwaitingApproval = (status?: string | null, updateRequestStatus?: string | null): boolean => {
-  return status === "awaiting-approval" || updateRequestStatus === "awaiting-approval";
+  return status === "pending-approval" || updateRequestStatus === "pending-approval";
 };
 
-const ENTITY_DRAFT_STATUSES = new Set(["draft", "started", "due"]);
+const ENTITY_DRAFT_STATUSES = new Set(["draft", "draft", "due"]);
 
 export const isEntityDraftInProgress = (status: string | null | undefined, isSetupComplete: boolean) =>
   status != null && ENTITY_DRAFT_STATUSES.has(status) && !isSetupComplete;

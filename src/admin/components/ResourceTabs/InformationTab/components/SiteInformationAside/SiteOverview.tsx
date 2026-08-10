@@ -13,7 +13,7 @@ import { Framework } from "@/context/framework.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 const SiteOverview: FC = () => {
-  const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | undefined>();
+  const [statusModal, setStatusModal] = useState<"approved" | "information-required" | undefined>();
   const { record } = useShowContext<SiteFullDto & { id: string }>();
 
   return (
@@ -79,8 +79,8 @@ const SiteOverview: FC = () => {
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               className="button-aside-page-admin"
-              disabled={record?.status === "needs-more-information"}
-              onClick={() => setStatusModal("needs-more-information")}
+              disabled={record?.status === "information-required"}
+              onClick={() => setStatusModal("information-required")}
             >
               Request More Info
             </Button>
@@ -89,7 +89,7 @@ const SiteOverview: FC = () => {
               startIcon={<Check />}
               disabled={
                 record?.status === "approved" ||
-                record?.updateRequestStatus === "awaiting-approval" ||
+                record?.updateRequestStatus === "pending-approval" ||
                 record?.updateRequestStatus === "draft"
               }
               onClick={() => setStatusModal("approved")}

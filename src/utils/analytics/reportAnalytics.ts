@@ -62,7 +62,7 @@ export const getAnalyticsUserRole = (): ReportUserRole => {
 };
 
 export const isReportReopenedStatus = (status?: string | null): boolean =>
-  status === "started" || status === "needs-more-information";
+  status === "draft" || status === "information-required";
 
 const isUuid = (value: string): boolean => UUID_PATTERN.test(value);
 
