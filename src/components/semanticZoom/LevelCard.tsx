@@ -30,6 +30,11 @@ export interface LevelCardProps {
   reconciliations?: Partial<Record<(typeof INDICATOR_ORDER)[number], Reconciliation | null>>;
   goals?: Partial<Record<(typeof INDICATOR_ORDER)[number], number | null>>;
   onSelectChild?: (id: string) => void;
+  /**
+   * "column" is the narrow panel beside a map. "wide" is a full-width strip, where a single stack
+   * of six indicators would leave most of the row empty and push the child list off the screen.
+   */
+  layout?: "column" | "wide";
 }
 
 const LevelCard = ({
@@ -40,13 +45,21 @@ const LevelCard = ({
   claims,
   reconciliations,
   goals,
-  onSelectChild
+  onSelectChild,
+  layout = "column"
 }: LevelCardProps) => {
   const { level, polygons, inReviewCount } = aggregate;
   const childNoun = CHILD_NOUN[level];
+  const wide = layout === "wide";
 
   return (
-    <section className="flex h-full flex-col overflow-hidden rounded-lg border border-theme-neutral-200 bg-white">
+    <section
+      className={`flex h-full flex-col overflow-hidden rounded-lg border border-theme-neutral-200 bg-white ${
+        // A site's child list runs to 100 rows. Unbounded, that pushes the rest of the page down by
+        // a screen and a half, so the list scrolls inside the card instead.
+        wide ? "max-h-[34rem]" : ""
+      }`}
+    >
       <header className="border-b border-theme-neutral-200 px-4 py-3">
         <p className="text-[11px] uppercase tracking-wide text-theme-neutral-400">{LEVEL_NOUN[level]}</p>
         <h3 className="truncate text-base font-semibold text-theme-neutral-900" title={title}>
@@ -67,7 +80,7 @@ const LevelCard = ({
       </header>
 
       <div className="flex-1 overflow-y-auto px-4">
-        <ul>
+        <ul className={wide ? "grid gap-x-8 sm:grid-cols-2 xl:grid-cols-3" : undefined}>
           {INDICATOR_ORDER.map(key => (
             <IndicatorRow
               key={key}
@@ -86,7 +99,7 @@ const LevelCard = ({
             <p className="mb-2 text-[11px] uppercase tracking-wide text-theme-neutral-400">
               {childNoun} ({childEntries.length.toLocaleString()})
             </p>
-            <ul className="flex flex-col gap-1">
+            <ul className={wide ? "gap-1 sm:columns-2 xl:columns-3" : "flex flex-col gap-1"}>
               {childEntries.map(child => (
                 <li key={child.id}>
                   <button

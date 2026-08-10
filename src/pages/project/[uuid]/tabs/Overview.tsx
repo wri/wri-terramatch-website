@@ -3,7 +3,6 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 
-import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
@@ -11,6 +10,10 @@ import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/Abo
 import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import SemanticZoomBreadcrumb from "@/components/semanticZoom/SemanticZoomBreadcrumb";
+import SemanticZoomMap from "@/components/semanticZoom/SemanticZoomMap";
+import SemanticZoomPanel from "@/components/semanticZoom/SemanticZoomPanel";
+import { useSemanticZoom } from "@/components/semanticZoom/useSemanticZoom";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
@@ -150,6 +153,16 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     enabled: project.uuid != null
   });
 
+  // The Project -> Site -> Polygon descent. The hook is held here rather than inside either card
+  // because the map and the indicator panel are two separate PageItems on this tab, and they have
+  // to be showing the same level as each other.
+  const zoom = useSemanticZoom({
+    projectUuid: project.uuid,
+    projectName: project.name ?? t("Project"),
+    claims: { hectares: project.totalHectaresRestoredSum ?? null, trees: project.treesPlantedCount ?? null },
+    goals: { hectares: project.totalHectaresRestoredGoal ?? null, trees: project.treesGrownGoal ?? null }
+  });
+
   const isDraftOrPendingApproval = project.status === "started" || awaitingApproval;
 
   const showSiteAreasMapPlaceholder =
@@ -211,22 +224,19 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             loading: isDownloading
           }}
         >
-          <Box className="relative flex-1 overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
-            <OverviewMapArea
-              entityModel={project}
-              type="projects"
-              className="h-full min-h-0 rounded"
-              disabledPolygonPanel={true}
-              hideFullscreenControl={true}
-            />
-            {showSiteAreasMapPlaceholder && (
-              <MapPlaceholder
-                icon={<SiteIcon boxSize={6} color="neutral.100" />}
-                title={t("Project Sites not defined")}
-                className="z-10 bg-map-project-placeholder"
-                buttonGroupProps={{ buttons: addSitesAndNurseriesButtons }}
-              />
-            )}
+          <Box className="flex min-h-0 flex-1 flex-col gap-2">
+            <SemanticZoomBreadcrumb zoom={zoom} />
+            <Box className="relative flex-1 overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
+              <SemanticZoomMap zoom={zoom} />
+              {showSiteAreasMapPlaceholder && (
+                <MapPlaceholder
+                  icon={<SiteIcon boxSize={6} color="neutral.100" />}
+                  title={t("Project Sites not defined")}
+                  className="z-10 bg-map-project-placeholder"
+                  buttonGroupProps={{ buttons: addSitesAndNurseriesButtons }}
+                />
+              )}
+            </Box>
           </Box>
         </PageItem>
         <PageItem
@@ -254,6 +264,25 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           </Box>
         </PageItem>
       </Flex>
+      {/* The other half of the drill-down. Full width because six indicators, their coverage lines
+          and the list of children do not fit in a column beside the map without a scrollbar
+          swallowing most of them. */}
+      <PageItem
+        title={t("Measured Indicators")}
+        flexProps={{ paddingY: 2, width: "100%" }}
+        buttonProps={
+          zoom.level === "project"
+            ? undefined
+            : {
+                variant: "secondary",
+                size: "small",
+                children: t("Back to project"),
+                onClick: () => zoom.navigate({ site: null, polygon: null })
+              }
+        }
+      >
+        <SemanticZoomPanel zoom={zoom} layout="wide" />
+      </PageItem>
       <PageItem
         title={t("Key Indicators & Insights")}
         flexProps={{ paddingY: 2, width: "100%" }}
