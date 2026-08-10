@@ -40,57 +40,60 @@ const TreeLossBarChart = ({ data, className = "", polygonCounts }: TreeLossBarCh
   };
 
   return (
-    <div className={`relative h-[375px] w-full p-0 lg:h-[500px] ${className} pt-0`}>
+    <div className={`w-full p-0 pt-0 ${className}`}>
       <h2 className="text-14 mb-3 pl-8 uppercase text-darkCustom">Tree Loss Retrospective (ha)</h2>
       <h3 className="text-14-semibold mb-4 pl-8">2010-2024</h3>
+      <div className="relative h-[375px] w-full lg:h-[500px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={data}
+            margin={{
+              top: 20,
+              right: 30,
+              left: 0,
+              bottom: 5
+            }}
+            barSize={40}
+          >
+            <CartesianGrid vertical={false} stroke="#E1E4E9" />
+            <XAxis dataKey="name" axisLine={false} tickLine={false} dy={10} />
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={value => `${value.toLocaleString()}`}
+              className="text-12"
+            />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(0, 0, 0, 0.05)" }} />
+            <Legend
+              wrapperStyle={{
+                paddingTop: "20px"
+              }}
+            />
+            <Bar dataKey="treeCoverLossFires" stackId="a" fill="#24555C" name="Tree cover loss from fires" />
+            <Bar
+              dataKey="treeCoverLoss"
+              stackId="a"
+              fill="#4097A3"
+              name="Tree cover loss"
+              shape={(props: any) => <CustomBar {...props} />}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
       {polygonCounts != null && (
-        <div
-          className="shadow-sm absolute bottom-6 right-8 z-10 rounded-lg border border-grey-350 bg-white px-4 py-3"
-          aria-label={t("Tree cover loss polygon summary")}
-        >
-          <p className="text-12-semibold text-darkCustom">
-            {t("Polygons with Loss: {count}", { count: polygonCounts.withLoss })}
-          </p>
-          <p className="text-12-light mt-1 text-darkCustom">
-            {t("Polygons with No Loss Detected (0 ha): {count}", { count: polygonCounts.noLossDetected })}
-          </p>
+        <div className="mt-2 flex justify-end pr-8" aria-label={t("Tree cover loss polygon summary")}>
+          <div className="shadow-sm rounded-lg border border-grey-350 bg-white px-4 py-3">
+            <p className="text-12-light text-darkCustom">
+              {t("Polygons with Loss:")}{" "}
+              <span className="text-12-semibold font-semibold">{polygonCounts.withLoss}</span>
+            </p>
+            <p className="text-12-light mt-1 text-darkCustom">
+              {t("Polygons with No Loss Detected (0 ha):")}{" "}
+              <span className="text-12-semibold font-semibold">{polygonCounts.noLossDetected}</span>
+            </p>
+          </div>
         </div>
       )}
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          data={data}
-          margin={{
-            top: 20,
-            right: 30,
-            left: 0,
-            bottom: 5
-          }}
-          barSize={40}
-        >
-          <CartesianGrid vertical={false} stroke="#E1E4E9" />
-          <XAxis dataKey="name" axisLine={false} tickLine={false} dy={10} />
-          <YAxis
-            axisLine={false}
-            tickLine={false}
-            tickFormatter={value => `${value.toLocaleString()}`}
-            className="text-12"
-          />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(0, 0, 0, 0.05)" }} />
-          <Legend
-            wrapperStyle={{
-              paddingTop: "20px"
-            }}
-          />
-          <Bar dataKey="treeCoverLossFires" stackId="a" fill="#24555C" name="Tree cover loss from fires" />
-          <Bar
-            dataKey="treeCoverLoss"
-            stackId="a"
-            fill="#4097A3"
-            name="Tree cover loss"
-            shape={(props: any) => <CustomBar {...props} />}
-          />
-        </BarChart>
-      </ResponsiveContainer>
     </div>
   );
 };
