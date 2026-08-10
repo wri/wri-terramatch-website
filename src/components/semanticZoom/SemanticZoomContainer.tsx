@@ -81,30 +81,6 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
 
   const geoLoading = siteUuid == null ? !projectGeoLoaded : !siteGeoLoaded;
 
-  // Inside a site, only draw polygons whose records are loaded, so every shape on the map can
-  // actually be descended into. At project scope a click resolves to a site, which is always
-  // available, so nothing is withheld there.
-  //
-  // This hides shapes, so it has to be said out loud: the count below the map states how many are
-  // drawn against how many exist. The indicator figures are unaffected — they come from the
-  // server-side rollup over every approved polygon, not from what the map happens to be showing.
-  const loadedPolygonIds = useMemo(
-    () => new Set((polygons ?? []).map(polygon => polygon.uuid).filter(id => id != null)),
-    [polygons]
-  );
-
-  const mapFeatures = useMemo(() => {
-    if (featureCollection == null) return null;
-    if (siteUuid == null) return featureCollection;
-    return {
-      type: "FeatureCollection",
-      features: featureCollection.features.filter(feature => loadedPolygonIds.has(feature.properties?.uuid))
-    } as FeatureCollection;
-  }, [featureCollection, siteUuid, loadedPolygonIds]);
-
-  const hiddenPolygonCount =
-    siteUuid == null ? 0 : (featureCollection?.features.length ?? 0) - (mapFeatures?.features.length ?? 0);
-
   const navigate = useCallback(
     (next: { site?: string | null; polygon?: string | null }) => {
       const query = { ...router.query, tab: "zoom" } as Record<string, string>;
@@ -209,11 +185,9 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
       <div className="flex w-full flex-col gap-3 ws-1100:flex-row">
         <div className="flex min-h-[420px] w-full flex-1 flex-col gap-1">
           <DrilldownMap
-            featureCollection={mapFeatures}
+            featureCollection={featureCollection}
             selectedId={polygonUuid}
             loading={geoLoading}
-            // Clicking a shape descends. At project scope the shapes are polygons, so a click
-            // jumps straight to the polygon level and the breadcrumb carries the path back up.
             // One level per interaction. From the project the map descends to the polygon's SITE;
             // only once inside a site does a click select the polygon itself. Skipping the site
             // hides the level where the aggregation rule actually changes.
@@ -221,13 +195,6 @@ const SemanticZoomContainer = ({ projectUuid, projectName, claims, goals }: Sema
               siteUuid == null ? navigate({ site: siteId, polygon: null }) : navigate({ polygon: uuid })
             }
           />
-          {hiddenPolygonCount > 0 && (
-            <p className="text-orange-700 text-[11px] leading-tight">
-              Showing {(mapFeatures?.features.length ?? 0).toLocaleString()} of{" "}
-              {(featureCollection?.features.length ?? 0).toLocaleString()} polygons on the map. The rest are not loaded
-              yet, and are hidden rather than drawn unclickable. Indicator figures still cover all of them.
-            </p>
-          )}
         </div>
 
         <div className="min-h-[420px] w-full shrink-0 ws-1100:w-[400px]">
