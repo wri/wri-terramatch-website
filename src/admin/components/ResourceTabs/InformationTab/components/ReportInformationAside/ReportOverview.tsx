@@ -65,7 +65,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             {record?.dueAt && parent?.label !== "Disturbance Report" && (
               <Grid xs={4} item>
                 <Labeled label="Due Date">
-                  <DateField source="dueAt" label="Due Date" locales="en-GB" />
+                  <DateField source="dueAt" label="Due Date" locales="en-GB" options={{ timeZone: "UTC" }} />
                 </Labeled>
               </Grid>
             )}
