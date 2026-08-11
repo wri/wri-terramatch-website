@@ -13,6 +13,7 @@ import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { JobsIcon, RegenerationIcon, SeedlingsIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ReportsIndexPeriod } from "../reportIndex.types";
+import { getReportStatusCounts } from "../reportIndex.utils";
 import ReportsIndexTable from "./ReportsIndexTable";
 
 type ReportingPeriodSectionProps = {
@@ -26,19 +27,7 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
   const { format } = useDate();
   const [open, setOpen] = useState(defaultOpen);
   const periodLabel = useReportingWindow(toFramework(project.frameworkKey), period.task.dueAt);
-  const counts = useMemo(
-    () =>
-      period.reports.reduce(
-        (result, report) => {
-          if (report.status === "due") result.due += 1;
-          if (report.status === "draft") result.draft += 1;
-          if (report.status === "information-required") result.informationRequired += 1;
-          return result;
-        },
-        { due: 0, draft: 0, informationRequired: 0 }
-      ),
-    [period.reports]
-  );
+  const counts = useMemo(() => getReportStatusCounts(period.reports), [period.reports]);
 
   return (
     <Box bg="neutral.100">

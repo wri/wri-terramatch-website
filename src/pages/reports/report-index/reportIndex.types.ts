@@ -14,7 +14,7 @@ export type ReportsIndexSourceEntity = ProjectFullDto | SiteFullDto | NurseryFul
 
 export type ReportsIndexReport = {
   id: string;
-  name: string;
+  name: string | null;
   sourceName: string;
   projectName: string;
   type: ReportsIndexReportType;
@@ -26,4 +26,50 @@ export type ReportsIndexPeriod = {
   id: string;
   task: TaskLightDto;
   reports: ReportsIndexReport[];
+};
+
+export type AdditionalReportType = "financial-report" | "srp-report" | "disturbance-report";
+
+type AdditionalReportBase = {
+  id: string;
+  name: string;
+  type: AdditionalReportType;
+  status: ReportsIndexStatus;
+  updatedAt: string;
+  searchTerms: string[];
+};
+
+export type AdditionalFinancialReport = AdditionalReportBase & {
+  type: "financial-report";
+  dueAt: string | null;
+  currency: string | null;
+  financialYearStart: number | null;
+};
+
+export type AdditionalSrpReport = AdditionalReportBase & {
+  type: "srp-report";
+  dueAt: string | null;
+};
+
+export type AdditionalDisturbanceReport = AdditionalReportBase & {
+  type: "disturbance-report";
+  disturbanceAt: string | null;
+  sitesAffected: number;
+  intensity: string | null;
+};
+
+export type AdditionalReport = AdditionalFinancialReport | AdditionalSrpReport | AdditionalDisturbanceReport;
+
+export type AdditionalReportGroup = {
+  id: string;
+  type: AdditionalReportType;
+  reports: AdditionalReport[];
+};
+
+export type AdditionalReportsEntitySection = {
+  id: string;
+  type: "organisation" | "project";
+  name: string | null;
+  caption: string;
+  groups: AdditionalReportGroup[];
 };

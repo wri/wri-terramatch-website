@@ -8,10 +8,9 @@ import {
   SiteReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import Log from "@/utils/log";
-import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import { ReportsIndexPeriod, ReportsIndexReport, ReportsIndexReportType } from "./reportIndex.types";
-import { ReportsIndexSource } from "./reportIndex.utils";
+import { ReportsIndexSource, resolveReportsIndexStatus } from "./reportIndex.utils";
 
 type ReportsIndexDataState = {
   loading: boolean;
@@ -20,16 +19,6 @@ type ReportsIndexDataState = {
 };
 
 type ReportsIndexRawReport = ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto;
-
-const resolveReportStatus = (report: ReportsIndexRawReport) => {
-  if ("nothingToReport" in report && report.nothingToReport) return "nothing-reported";
-
-  const status = ["draft", "awaiting-approval", "needs-more-information"].includes(report.updateRequestStatus ?? "")
-    ? report.updateRequestStatus
-    : report.status;
-
-  return mapStatusToTagStateEntity(status)?.type ?? "draft";
-};
 
 const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): ReportsIndexReport => {
   const name =
@@ -49,11 +38,11 @@ const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): 
 
   return {
     id: report.uuid,
-    name: name ?? "",
+    name,
     sourceName: sourceName ?? "",
     projectName: report.projectName ?? "",
     type,
-    status: resolveReportStatus(report),
+    status: resolveReportsIndexStatus(report),
     updatedAt: report.updatedAt
   };
 };
