@@ -1027,90 +1027,6 @@ export const aboutSectionDelete = new V3ApiEndpoint<
   {}
 >("/aboutSections/v3/aboutSections/{uuid}", "DELETE");
 
-export type AboutSectionPushTranslationsPathParams = {
-  uuid: string;
-};
-
-export type AboutSectionPushTranslationsError = Fetcher.ErrorWrapper<
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type AboutSectionPushTranslationsVariables = {
-  pathParams: AboutSectionPushTranslationsPathParams;
-};
-
-/**
- * Push translations to Transifex for an About Section
- */
-export const aboutSectionPushTranslations = new V3ApiEndpoint<
-  | {
-      meta?: {
-        /**
-         * @example formTranslations
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example formTranslations
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.FormTranslationDto;
-      };
-    }
-  | {
-      meta?: {
-        /**
-         * @example delayedJobs
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example delayedJobs
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.DelayedJobDto;
-      };
-    },
-  AboutSectionPushTranslationsError,
-  AboutSectionPushTranslationsVariables,
-  {}
->("/aboutSections/v3/aboutSections/{uuid}/translations", "POST");
-
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -3707,6 +3623,342 @@ export const entityExportAll = new V3ApiEndpoint<
   {}
 >("/entities/v3/{entity}/exportAll", "GET");
 
+export type EntityPushTranslationsPathParams = {
+  /**
+   * Translatable entity type (forms, fundingProgrammes, localizationKeys, or aboutSections)
+   */
+  entity: "forms" | "fundingProgrammes" | "localizationKeys" | "aboutSections";
+  /**
+   * Entity UUID for forms, funding programmes, and about sections. Optional for localizationKeys (all keys are pushed/pulled).
+   */
+  uuid?: Schemas.Object;
+};
+
+export type EntityPushTranslationsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityPushTranslationsResponse = {
+  meta?: {
+    /**
+     * @example delayedJobs
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example delayedJobs
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DelayedJobDto;
+  };
+};
+
+export type EntityPushTranslationsVariables = {
+  pathParams: EntityPushTranslationsPathParams;
+};
+
+export const entityPushTranslations = new V3ApiEndpoint<
+  EntityPushTranslationsResponse,
+  EntityPushTranslationsError,
+  EntityPushTranslationsVariables,
+  {}
+>("/entities/v3/{entity}/translations", "POST");
+
+export type EntityPullTranslationsPathParams = {
+  /**
+   * Translatable entity type (forms, fundingProgrammes, localizationKeys, or aboutSections)
+   */
+  entity: "forms" | "fundingProgrammes" | "localizationKeys" | "aboutSections";
+  /**
+   * Entity UUID for forms, funding programmes, and about sections. Optional for localizationKeys (all keys are pushed/pulled).
+   */
+  uuid?: Schemas.Object;
+};
+
+export type EntityPullTranslationsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityPullTranslationsResponse = {
+  meta?: {
+    /**
+     * @example formTranslations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example formTranslations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormTranslationDto;
+  };
+};
+
+export type EntityPullTranslationsVariables = {
+  pathParams: EntityPullTranslationsPathParams;
+};
+
+export const entityPullTranslations = new V3ApiEndpoint<
+  EntityPullTranslationsResponse,
+  EntityPullTranslationsError,
+  EntityPullTranslationsVariables,
+  {}
+>("/entities/v3/{entity}/translations", "GET");
+
+export type EntityPushTranslationsByUuidPathParams = {
+  /**
+   * Translatable entity type (forms, fundingProgrammes, localizationKeys, or aboutSections)
+   */
+  entity: "forms" | "fundingProgrammes" | "localizationKeys" | "aboutSections";
+  /**
+   * Entity UUID for forms, funding programmes, and about sections. Optional for localizationKeys (all keys are pushed/pulled).
+   */
+  uuid?: Schemas.Object;
+};
+
+export type EntityPushTranslationsByUuidError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityPushTranslationsByUuidResponse = {
+  meta?: {
+    /**
+     * @example delayedJobs
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example delayedJobs
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DelayedJobDto;
+  };
+};
+
+export type EntityPushTranslationsByUuidVariables = {
+  pathParams: EntityPushTranslationsByUuidPathParams;
+};
+
+export const entityPushTranslationsByUuid = new V3ApiEndpoint<
+  EntityPushTranslationsByUuidResponse,
+  EntityPushTranslationsByUuidError,
+  EntityPushTranslationsByUuidVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/translations", "POST");
+
+export type EntityPullTranslationsByUuidPathParams = {
+  /**
+   * Translatable entity type (forms, fundingProgrammes, localizationKeys, or aboutSections)
+   */
+  entity: "forms" | "fundingProgrammes" | "localizationKeys" | "aboutSections";
+  /**
+   * Entity UUID for forms, funding programmes, and about sections. Optional for localizationKeys (all keys are pushed/pulled).
+   */
+  uuid?: Schemas.Object;
+};
+
+export type EntityPullTranslationsByUuidError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityPullTranslationsByUuidResponse = {
+  meta?: {
+    /**
+     * @example formTranslations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example formTranslations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormTranslationDto;
+  };
+};
+
+export type EntityPullTranslationsByUuidVariables = {
+  pathParams: EntityPullTranslationsByUuidPathParams;
+};
+
+export const entityPullTranslationsByUuid = new V3ApiEndpoint<
+  EntityPullTranslationsByUuidResponse,
+  EntityPullTranslationsByUuidError,
+  EntityPullTranslationsByUuidVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/translations", "GET");
+
 export type EntityGetPathParams = {
   /**
    * UUID of the resource.
@@ -5931,176 +6183,6 @@ export const formUpdate = new V3ApiEndpoint<FormUpdateResponse, FormUpdateError,
   "PUT"
 );
 
-export type FormPushTranslationPathParams = {
-  uuid: string;
-};
-
-export type FormPushTranslationError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type FormPushTranslationResponse = {
-  meta?: {
-    /**
-     * @example delayedJobs
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example delayedJobs
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.DelayedJobDto;
-  };
-};
-
-export type FormPushTranslationVariables = {
-  pathParams: FormPushTranslationPathParams;
-};
-
-/**
- * Push translations to Transifex for a form
- */
-export const formPushTranslation = new V3ApiEndpoint<
-  FormPushTranslationResponse,
-  FormPushTranslationError,
-  FormPushTranslationVariables,
-  {}
->("/forms/v3/forms/{uuid}/translations", "POST");
-
-export type FormPullTranslationsPathParams = {
-  uuid: string;
-};
-
-export type FormPullTranslationsQueryParams = {
-  /**
-   * If true, all translations will be pulled, otherwise only new translations will be pulled
-   *
-   * @default false
-   */
-  forceAll?: Schemas.Object;
-};
-
-export type FormPullTranslationsError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type FormPullTranslationsResponse = {
-  meta?: {
-    /**
-     * @example formTranslations
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example formTranslations
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.FormTranslationDto;
-  };
-};
-
-export type FormPullTranslationsVariables = {
-  pathParams: FormPullTranslationsPathParams;
-  queryParams?: FormPullTranslationsQueryParams;
-};
-
-/**
- * Pull translations from Transifex for a form
- */
-export const formPullTranslations = new V3ApiEndpoint<
-  FormPullTranslationsResponse,
-  FormPullTranslationsError,
-  FormPullTranslationsVariables,
-  {}
->("/forms/v3/forms/{uuid}/translations", "GET");
-
 export type FormSubmissionsExportCsvPathParams = {
   uuid: string;
 };
@@ -7277,14 +7359,7 @@ export const operationsByTag = {
     impactStoryDelete,
     impactStoryBulkDelete
   },
-  aboutSections: {
-    aboutSectionIndex,
-    aboutSectionCreate,
-    aboutSectionGet,
-    aboutSectionUpdate,
-    aboutSectionDelete,
-    aboutSectionPushTranslations
-  },
+  aboutSections: { aboutSectionIndex, aboutSectionCreate, aboutSectionGet, aboutSectionUpdate, aboutSectionDelete },
   tasks: { taskIndex, taskGet, taskUpdate },
   files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
@@ -7296,6 +7371,10 @@ export const operationsByTag = {
     entityIndex,
     entityCreate,
     entityExportAll,
+    entityPushTranslations,
+    entityPullTranslations,
+    entityPushTranslationsByUuid,
+    entityPullTranslationsByUuid,
     entityGet,
     entityDelete,
     entityUpdate,
@@ -7308,16 +7387,7 @@ export const operationsByTag = {
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
   submissions: { submissionGet, submissionUpdate, submissionCreate },
-  forms: {
-    formIndex,
-    formCreate,
-    formGet,
-    formDelete,
-    formUpdate,
-    formPushTranslation,
-    formPullTranslations,
-    formSubmissionsExportCsv
-  },
+  forms: { formIndex, formCreate, formGet, formDelete, formUpdate, formSubmissionsExportCsv },
   applications: { applicationIndex, applicationGet, applicationDelete, applicationExportGet, applicationHistoryGet },
   fundingProgrammes: {
     fundingProgrammesIndex,
