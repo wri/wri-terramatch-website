@@ -1,3 +1,6 @@
+import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
+
 export const REPORTS_INDEX_SOURCES = ["project", "site", "nursery"] as const;
 
 export type ReportsIndexSource = (typeof REPORTS_INDEX_SOURCES)[number];
@@ -7,3 +10,40 @@ export const isReportsIndexSource = (value: string | undefined): value is Report
 
 export const getReportsIndexUrl = (source: ReportsIndexSource, uuid: string) =>
   `/reports/report-index?source=${source}&uuid=${encodeURIComponent(uuid)}`;
+
+type ReportWithStatus = {
+  status: string | null;
+  updateRequestStatus?: string | null;
+  nothingToReport?: boolean | null;
+};
+
+export const resolveReportsIndexStatus = (report: ReportWithStatus): TagSubmissionState => {
+  if (report.nothingToReport === true) return "nothing-reported";
+
+  const status =
+    report.updateRequestStatus != null && report.updateRequestStatus !== "no-update"
+      ? report.updateRequestStatus
+      : report.status;
+
+  return mapStatusToTagStateEntity(status)?.type ?? "draft";
+};
+
+export const REPORTS_INDEX_ATTENTION_STATUSES: ReadonlySet<TagSubmissionState> = new Set([
+  "due",
+  "information-required",
+  "draft"
+]);
+
+export const getReportsRequiringAttention = (reports: Array<{ status: TagSubmissionState }>) =>
+  reports.filter(report => REPORTS_INDEX_ATTENTION_STATUSES.has(report.status)).length;
+
+export const getReportStatusCounts = (reports: Array<{ status: TagSubmissionState }>) =>
+  reports.reduce(
+    (result, report) => {
+      if (report.status === "due") result.due += 1;
+      if (report.status === "draft") result.draft += 1;
+      if (report.status === "information-required") result.informationRequired += 1;
+      return result;
+    },
+    { due: 0, draft: 0, informationRequired: 0 }
+  );

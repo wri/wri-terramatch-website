@@ -10,8 +10,10 @@ import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import { ReportsIndexSourceEntity } from "../reportIndex.types";
-import { ReportsIndexSource } from "../reportIndex.utils";
+import { getReportsRequiringAttention, ReportsIndexSource } from "../reportIndex.utils";
+import { useAdditionalReportsData } from "../useAdditionalReportsData";
 import { useReportsIndexData } from "../useReportsIndexData";
+import AdditionalReportsContent from "./AdditionalReportsContent";
 import ReportingPeriodSection from "./ReportingPeriodSection";
 import ReportsIndexHeader from "./ReportsIndexHeader";
 
@@ -21,14 +23,21 @@ type ReportsIndexContentProps = {
   sourceEntity: ReportsIndexSourceEntity;
 };
 
-const ATTENTION_STATUSES = new Set(["due", "information-required", "draft"]);
-
 const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexContentProps) => {
   const t = useT();
   const [activeTab, setActiveTab] = useState("progress-reports");
   const [projectOpen, setProjectOpen] = useState(true);
   const [query, setQuery] = useState("");
-  const { periods, loading, error } = useReportsIndexData(project.uuid, source, sourceEntity.uuid);
+  const {
+    periods,
+    loading: progressLoading,
+    error: progressError
+  } = useReportsIndexData(project.uuid, source, sourceEntity.uuid);
+  const {
+    sections: additionalSections,
+    loading: additionalLoading,
+    error: additionalError
+  } = useAdditionalReportsData(project, activeTab === "additional-reports");
 
   const filteredPeriods = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase();
@@ -39,23 +48,48 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
         ...period,
         reports: period.reports.filter(report => {
           return [report.name, report.type, report.sourceName, report.projectName].some(value =>
-            value.toLocaleLowerCase().includes(normalizedQuery)
+            (value ?? "").toLocaleLowerCase().includes(normalizedQuery)
           );
         })
       }))
       .filter(period => period.reports.length > 0);
   }, [periods, query]);
 
-  const reportCount = useMemo(
+  const filteredAdditionalSections = useMemo(() => {
+    const normalizedQuery = query.trim().toLocaleLowerCase();
+    if (normalizedQuery === "") return additionalSections;
+
+    return additionalSections
+      .map(section => ({
+        ...section,
+        groups: section.groups
+          .map(group => ({
+            ...group,
+            reports: group.reports.filter(report =>
+              report.searchTerms.some(value => value.toLocaleLowerCase().includes(normalizedQuery))
+            )
+          }))
+          .filter(group => group.reports.length > 0)
+      }))
+      .filter(section => section.groups.length > 0);
+  }, [additionalSections, query]);
+
+  const progressReportCount = useMemo(
     () => filteredPeriods.reduce((total, period) => total + period.reports.length, 0),
     [filteredPeriods]
   );
-  const attentionCount = useMemo(
+  const additionalReportCount = useMemo(
     () =>
-      periods.reduce(
-        (total, period) => total + period.reports.filter(report => ATTENTION_STATUSES.has(report.status)).length,
+      filteredAdditionalSections.reduce(
+        (sectionTotal, section) =>
+          sectionTotal + section.groups.reduce((groupTotal, group) => groupTotal + group.reports.length, 0),
         0
       ),
+    [filteredAdditionalSections]
+  );
+  const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
+  const attentionCount = useMemo(
+    () => periods.reduce((total, period) => total + getReportsRequiringAttention(period.reports), 0),
     [periods]
   );
   const selectedViewLabel =
@@ -73,14 +107,14 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
       {activeTab === "progress-reports" && (
         <main className="bg-theme-neutral-200 px-2.5 pb-2.5">
-          {loading ? (
+          {progressLoading ? (
             <Flex minHeight="240px" alignItems="center" justifyContent="center" gap={3}>
               <LoadingIcon boxSize={6} className="animate-spin" color="primary.600" />
               <Text textStyle="400" color="neutral.800">
                 {t("Loading reports...")}
               </Text>
             </Flex>
-          ) : error ? (
+          ) : progressError ? (
             <InlineMessage
               className="m-4"
               variant="error"
@@ -129,6 +163,14 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
             </Accordion>
           )}
         </main>
+      )}
+
+      {activeTab === "additional-reports" && (
+        <AdditionalReportsContent
+          sections={filteredAdditionalSections}
+          loading={additionalLoading}
+          error={additionalError}
+        />
       )}
     </div>
   );
