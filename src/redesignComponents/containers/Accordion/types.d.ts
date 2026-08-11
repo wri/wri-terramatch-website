@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 
 export type AccordionVariant = "primary" | "secondary" | "tertiary" | "quaternary" | "borderless";
 
@@ -47,6 +47,8 @@ export interface ListSectionHeaderProps {
   level?: ListSectionHeaderLevel;
   label?: ReactNode;
   title: ReactNode;
+  titleHref?: string;
+  onTitleClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
   caption?: ReactNode;
   statusLabels?: ReactNode;
   icon?: ReactNode;
