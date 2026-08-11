@@ -30,6 +30,10 @@ import {
   POLYGON_TOAST_IDS,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
+import {
+  type DuplicatePolygonUploadInfo,
+  extractPureDuplicateFromUploadResponse
+} from "../utils/polygonUploadDuplicate";
 
 export type UploadMode = "new-polygons" | "update-existing-polygons";
 
@@ -46,6 +50,7 @@ type UseUploadPolygonsOptions = {
   siteUuid: string;
   siteHasExistingPolygons?: boolean;
   onUploadSuccess: (result: UploadPolygonsSuccessResult) => void;
+  onDuplicateDetected?: (duplicate: DuplicatePolygonUploadInfo) => void;
   onError: (message: string) => void;
 };
 
@@ -53,6 +58,8 @@ export type UploadPolygonsSuccessResult = {
   createdSitePolygonUuid: string | null;
   uploadedFileCount: number;
 };
+
+export type { DuplicatePolygonUploadInfo };
 
 type GeometryUploadHandler = (
   attributes: ReturnType<typeof prepareGeometryForUpload>,
@@ -97,6 +104,10 @@ const mergeComparisonResults = (results: GeometryUploadComparisonResult[]): Geom
 const getCreatedSitePolygonUuid = (
   response: UploadGeometryResponse | UploadGeometryWithVersionsResponse
 ): string | null => {
+  if (extractPureDuplicateFromUploadResponse(response) != null) {
+    return null;
+  }
+
   const responseResourceType = response.meta?.resourceType ?? response.data?.type;
   if (responseResourceType !== "sitePolygons") {
     return null;
@@ -154,6 +165,7 @@ export const useUploadPolygons = ({
   siteUuid,
   siteHasExistingPolygons = false,
   onUploadSuccess,
+  onDuplicateDetected,
   onError
 }: UseUploadPolygonsOptions) => {
   const t = useT();
@@ -182,15 +194,39 @@ export const useUploadPolygons = ({
 
       try {
         const responses = await Promise.all(files.map(file => runGeometryUpload(file, siteUuid, upload)));
-        const polygonCount = responses.length;
+        const pureDuplicates = responses
+          .map(response => extractPureDuplicateFromUploadResponse(response))
+          .filter((duplicate): duplicate is DuplicatePolygonUploadInfo => duplicate != null);
+        const nonDuplicateResponses = responses.filter(
+          response => extractPureDuplicateFromUploadResponse(response) == null
+        );
+        const hasCreatedPolygons = nonDuplicateResponses.length > 0;
+        const firstDuplicate = pureDuplicates[0] ?? null;
 
-        completePolygonProgressToast(toastId, labels.complete);
-        trackPolygonUploadSucceeded({
-          siteUuid,
-          polygonCount,
-          isReupload: siteHasExistingPolygons
-        });
-        onUploadSuccess(buildUploadSuccessResult(files, responses));
+        if (hasCreatedPolygons) {
+          completePolygonProgressToast(toastId, labels.complete);
+          trackPolygonUploadSucceeded({
+            siteUuid,
+            polygonCount: nonDuplicateResponses.length,
+            isReupload: siteHasExistingPolygons
+          });
+          onUploadSuccess(buildUploadSuccessResult(files, nonDuplicateResponses));
+        } else if (firstDuplicate != null && onDuplicateDetected != null) {
+          closePolygonProgressToast(toastId);
+          onDuplicateDetected(firstDuplicate);
+        } else {
+          completePolygonProgressToast(toastId, labels.complete);
+          trackPolygonUploadSucceeded({
+            siteUuid,
+            polygonCount: responses.length,
+            isReupload: siteHasExistingPolygons
+          });
+          onUploadSuccess(buildUploadSuccessResult(files, responses));
+        }
+
+        if (hasCreatedPolygons && firstDuplicate != null && onDuplicateDetected != null) {
+          onDuplicateDetected(firstDuplicate);
+        }
       } catch (error) {
         closePolygonProgressToast(toastId);
         const errorMessage = extractErrorMessage(error);
@@ -201,7 +237,7 @@ export const useUploadPolygons = ({
         onError(errorMessage);
       }
     },
-    [onError, onUploadSuccess, siteHasExistingPolygons, siteUuid, t]
+    [onDuplicateDetected, onError, onUploadSuccess, siteHasExistingPolygons, siteUuid, t]
   );
 
   const uploadNewFiles = useCallback(
