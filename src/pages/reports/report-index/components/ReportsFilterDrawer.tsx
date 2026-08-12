@@ -5,13 +5,14 @@ import { useT } from "@transifex/react";
 import { FC, useEffect, useMemo, useState } from "react";
 
 import { getReportStatusOptions } from "@/constants/options/status";
+import { useReportsContext } from "@/context/reports.provider";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
 import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel";
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilteCards";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
-import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRangeInputs/DateRangeInput";
+import DatePickerInput from "@/redesignComponents/Forms/Inputs/DateInputs/DatePickerInput/DatePickerInput";
 
 import {
   ADDITIONAL_REPORT_TYPE_OPTIONS,
@@ -65,6 +66,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
   const t = useT();
   const [draftFilters, setDraftFilters] = useState<ReportFilterState>(filters);
   const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
+  const { setFilters } = useReportsContext();
   const reportTypeOptions =
     activeTab === "additional-reports" ? ADDITIONAL_REPORT_TYPE_OPTIONS : PROGRESS_REPORT_TYPE_OPTIONS;
 
@@ -84,23 +86,17 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
       const option = statusOptions.find(item => item.value === status);
       tags.push({ id: `status-${status}`, label: option?.title ?? status });
     });
-    if (draftFilters.dueDateFrom !== "" || draftFilters.dueDateTo !== "") {
-      const fromLabel = draftFilters.dueDateFrom !== "" ? draftFilters.dueDateFrom : t("Any date");
-      const toLabel = draftFilters.dueDateTo !== "" ? draftFilters.dueDateTo : t("Any date");
-      tags.push({ id: "due-date", label: `${fromLabel} - ${toLabel}` });
+    if (draftFilters.dueDate !== "") {
+      tags.push({ id: "due-date", label: draftFilters.dueDate });
     }
 
     return tags;
   }, [draftFilters, statusOptions, t]);
 
   const dueDateValue = useMemo<DateValue[]>(() => {
-    const dates: DateValue[] = [];
-    const from = isoStringToDateValue(draftFilters.dueDateFrom);
-    const to = isoStringToDateValue(draftFilters.dueDateTo);
-    if (from) dates.push(from);
-    if (to) dates.push(to);
-    return dates;
-  }, [draftFilters.dueDateFrom, draftFilters.dueDateTo]);
+    const date = isoStringToDateValue(draftFilters.dueDate);
+    return date != null ? [date] : [];
+  }, [draftFilters.dueDate]);
 
   const handleReportTypeChange = (value: ReportTypeOption, { checked }: CheckboxChange) => {
     setDraftFilters(current => ({
@@ -119,8 +115,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
   const handleDueDateChange = (dates: DateValue[]) => {
     setDraftFilters(current => ({
       ...current,
-      dueDateFrom: dateValueToIsoString(dates[0]),
-      dueDateTo: dateValueToIsoString(dates[1])
+      dueDate: dateValueToIsoString(dates[0])
     }));
   };
 
@@ -142,7 +137,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
       return;
     }
     if (id === "due-date") {
-      setDraftFilters(current => ({ ...current, dueDateFrom: "", dueDateTo: "" }));
+      setDraftFilters(current => ({ ...current, dueDate: "" }));
     }
   };
 
@@ -196,7 +191,13 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
                 ))}
               </FilterCard>
               <FilterCard label={t("Due Date")}>
-                <DateRangeInput size="small" noMarginBottom value={dueDateValue} onValueChange={handleDueDateChange} />
+                <DatePickerInput
+                  size="small"
+                  noMarginBottom
+                  showOptionalLabel={false}
+                  value={dueDateValue}
+                  onValueChange={handleDueDateChange}
+                />
               </FilterCard>
             </Flex>
           }
@@ -209,6 +210,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
                   variant: "secondary",
                   onClick: () => {
                     setDraftFilters(EMPTY_REPORT_FILTERS);
+                    setFilters(EMPTY_REPORT_FILTERS);
                     onClearFilters();
                     onClose();
                   }
@@ -218,6 +220,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
                   children: t("Apply"),
                   variant: "primary",
                   onClick: () => {
+                    setFilters(draftFilters);
                     onApplyFilters(draftFilters);
                     onClose();
                   }

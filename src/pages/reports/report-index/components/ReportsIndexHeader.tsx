@@ -1,8 +1,9 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { getReportStatusOptions } from "@/constants/options/status";
+import { useReportsContext } from "@/context/reports.provider";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
@@ -33,6 +34,7 @@ const ReportsIndexHeader = ({
 }: ReportsIndexHeaderProps) => {
   const t = useT();
   const router = useRouter();
+  const { setFilters } = useReportsContext();
 
   const [filtersByTab, setFiltersByTab] = useState<Record<string, ReportFilterState>>({
     "progress-reports": EMPTY_REPORT_FILTERS,
@@ -42,6 +44,18 @@ const ReportsIndexHeader = ({
   const selectedFilters = filtersByTab[activeTab] ?? EMPTY_REPORT_FILTERS;
   const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
 
+  const updateActiveFilters = useCallback(
+    (next: ReportFilterState) => {
+      setFiltersByTab(current => ({ ...current, [activeTab]: next }));
+      setFilters(next);
+    },
+    [activeTab, setFilters]
+  );
+
+  useEffect(() => {
+    setFilters(selectedFilters);
+  }, [activeTab, selectedFilters, setFilters]);
+
   const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
 
@@ -50,10 +64,7 @@ const ReportsIndexHeader = ({
         label: selectedFilters.reportTypes.map(type => t(REPORT_TYPE_LABELS[type])),
         category: t("Report Type"),
         onRemove: () => {
-          setFiltersByTab(current => ({
-            ...current,
-            [activeTab]: { ...(current[activeTab] ?? EMPTY_REPORT_FILTERS), reportTypes: [] }
-          }));
+          updateActiveFilters({ ...selectedFilters, reportTypes: [] });
         }
       });
     }
@@ -66,39 +77,34 @@ const ReportsIndexHeader = ({
         }),
         category: t("Status"),
         onRemove: () => {
-          setFiltersByTab(current => ({
-            ...current,
-            [activeTab]: { ...(current[activeTab] ?? EMPTY_REPORT_FILTERS), statuses: [] }
-          }));
+          updateActiveFilters({ ...selectedFilters, statuses: [] });
         }
       });
     }
 
-    if (selectedFilters.dueDateFrom !== "" || selectedFilters.dueDateTo !== "") {
-      const fromLabel = selectedFilters.dueDateFrom !== "" ? selectedFilters.dueDateFrom : t("Any date");
-      const toLabel = selectedFilters.dueDateTo !== "" ? selectedFilters.dueDateTo : t("Any date");
+    if (selectedFilters.dueDate !== "") {
       labels.push({
-        label: `${fromLabel} - ${toLabel}`,
+        label: selectedFilters.dueDate,
         category: t("Due Date"),
         onRemove: () => {
-          setFiltersByTab(current => ({
-            ...current,
-            [activeTab]: { ...(current[activeTab] ?? EMPTY_REPORT_FILTERS), dueDateFrom: "", dueDateTo: "" }
-          }));
+          updateActiveFilters({ ...selectedFilters, dueDate: "" });
         }
       });
     }
 
     return labels;
-  }, [activeTab, selectedFilters, statusOptions, t]);
+  }, [selectedFilters, statusOptions, t, updateActiveFilters]);
 
-  const applyFilters = (filters: ReportFilterState) => {
-    setFiltersByTab(current => ({ ...current, [activeTab]: filters }));
-  };
+  const applyFilters = useCallback(
+    (filters: ReportFilterState) => {
+      updateActiveFilters(filters);
+    },
+    [updateActiveFilters]
+  );
 
-  const clearFilters = () => {
-    setFiltersByTab(current => ({ ...current, [activeTab]: EMPTY_REPORT_FILTERS }));
-  };
+  const clearFilters = useCallback(() => {
+    updateActiveFilters(EMPTY_REPORT_FILTERS);
+  }, [updateActiveFilters]);
 
   return (
     <div className="bg-white">
