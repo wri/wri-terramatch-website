@@ -102,7 +102,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
       });
     } catch (error) {
       Log.error("Failed to fix polygon overlaps:", error);
-      showPolygonErrorToast(t("Failed to fix polygon overlaps"));
+      showPolygonErrorToast(t("Failed to Fix Polygon Overlaps"));
     } finally {
       setPendingClipping(false);
     }
@@ -139,7 +139,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     } catch (error) {
       Log.error("Failed to validate polygon:", error);
       closePolygonProgressToast(POLYGON_TOAST_IDS.validating);
-      showPolygonErrorToast(t("Failed to validate polygons"));
+      showPolygonErrorToast(t("Failed to Validate Polygons"));
     } finally {
       setIsValidating(false);
     }

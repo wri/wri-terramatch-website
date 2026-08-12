@@ -41,7 +41,7 @@ export const useDownloadSitePolygons = ({ siteUuid, siteName }: UseDownloadSiteP
     } catch (error) {
       Log.error("Failed to download site polygons:", error);
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
-      showPolygonErrorToast(t("Error downloading polygons"));
+      showPolygonErrorToast(t("Error Downloading Polygons"));
     } finally {
       setIsDownloading(false);
     }
