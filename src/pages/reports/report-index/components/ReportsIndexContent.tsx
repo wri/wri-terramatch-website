@@ -23,6 +23,7 @@ import {
 import { useReportsSelection } from "../ReportsSelection.provider";
 import { useAdditionalReportsData } from "../useAdditionalReportsData";
 import { useReportsIndexData } from "../useReportsIndexData";
+import { useReportsIndexFilters } from "../useReportsIndexFilters";
 import AdditionalReportsContent from "./AdditionalReportsContent";
 import ReportingPeriodSection from "./ReportingPeriodSection";
 import ReportsBulkActionToolbar from "./ReportsBulkActionToolbar";
@@ -59,54 +60,9 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     error: additionalError
   } = useAdditionalReportsData(project, activeTab === "additional-reports");
 
-  const filteredPeriods = useMemo(() => {
-    const normalizedQuery = query.trim().toLocaleLowerCase();
-    if (normalizedQuery === "") return periods;
+  const { filteredPeriods, filteredAdditionalSections, progressReportCount, additionalReportCount } =
+    useReportsIndexFilters({ periods, additionalSections, query });
 
-    return periods
-      .map(period => ({
-        ...period,
-        reports: period.reports.filter(report =>
-          [report.name, report.type, report.sourceName, report.projectName].some(value =>
-            (value ?? "").toLocaleLowerCase().includes(normalizedQuery)
-          )
-        )
-      }))
-      .filter(period => period.reports.length > 0);
-  }, [periods, query]);
-
-  const filteredAdditionalSections = useMemo(() => {
-    const normalizedQuery = query.trim().toLocaleLowerCase();
-    if (normalizedQuery === "") return additionalSections;
-
-    return additionalSections
-      .map(section => ({
-        ...section,
-        groups: section.groups
-          .map(group => ({
-            ...group,
-            reports: group.reports.filter(report =>
-              report.searchTerms.some(value => value.toLocaleLowerCase().includes(normalizedQuery))
-            )
-          }))
-          .filter(group => group.reports.length > 0)
-      }))
-      .filter(section => section.groups.length > 0);
-  }, [additionalSections, query]);
-
-  const progressReportCount = useMemo(
-    () => filteredPeriods.reduce((total, period) => total + period.reports.length, 0),
-    [filteredPeriods]
-  );
-  const additionalReportCount = useMemo(
-    () =>
-      filteredAdditionalSections.reduce(
-        (sectionTotal, section) =>
-          sectionTotal + section.groups.reduce((groupTotal, group) => groupTotal + group.reports.length, 0),
-        0
-      ),
-    [filteredAdditionalSections]
-  );
   const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
   const attentionCount = useMemo(
     () => periods.reduce((total, period) => total + getReportsRequiringAttention(period.reports), 0),
@@ -187,6 +143,8 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     <div className={`min-h-full bg-theme-neutral-200 ${selectedReports.length > 0 ? "pb-24" : "pb-10"}`}>
       <ReportsIndexHeader
         activeTab={activeTab}
+        source={source}
+        sourceUuid={sourceEntity.uuid}
         projectUuid={project.uuid}
         reportCount={reportCount}
         viewValue={viewValue}

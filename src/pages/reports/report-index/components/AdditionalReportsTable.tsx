@@ -48,7 +48,7 @@ const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): Tab
 
   return [
     { key: "name", label: t("Report Name"), width: "21.375rem" },
-    { key: "disturbanceAt", label: t("Date of Disturbance"), sortable: true, width: "12.5rem" },
+    { key: "dateOfDisturbance", label: t("Date of Disturbance"), sortable: true, width: "12.5rem" },
     { key: "sitesAffected", label: t("Sites Affected"), sortable: true, width: "9.6875rem" },
     { key: "status", label: t("Status"), sortable: true, width: "11.875rem" },
     { key: "intensity", label: t("Intensity"), sortable: true, width: "7.5rem" },
@@ -90,7 +90,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
   const renderRow = useCallback(
     (report: AdditionalReport, context?: TableRenderRowContext) => {
       const isSelected = isReportSelected(report);
-      const reportDate = report.type === "disturbance-report" ? report.disturbanceAt : report.dueAt;
+      const reportDate = report.type === "disturbance-report" ? report.dateOfDisturbance : report.dueAt;
       const reportName = reportDate == null ? report.name : `${report.name} - ${format(reportDate, "MMM yyyy")}`;
 
       return (
@@ -137,8 +137,8 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
 
           {report.type === "disturbance-report" && (
             <>
-              <ChakraTableCell {...context?.getCellProps("disturbanceAt")}>
-                {renderDateTag(report.disturbanceAt)}
+              <ChakraTableCell {...context?.getCellProps("dateOfDisturbance")}>
+                {renderDateTag(report.dateOfDisturbance)}
               </ChakraTableCell>
               <ChakraTableCell {...context?.getCellProps("sitesAffected")}>
                 <Text color="neutral.800" textStyle="400">

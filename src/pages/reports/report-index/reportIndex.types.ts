@@ -36,7 +36,9 @@ type AdditionalReportBase = {
   type: AdditionalReportType;
   status: ReportsIndexStatus;
   updatedAt: string;
-  searchTerms: string[];
+  organisationName: string | null;
+  projectName: string | null;
+  year: string | null;
 };
 
 export type AdditionalFinancialReport = AdditionalReportBase & {
@@ -44,18 +46,22 @@ export type AdditionalFinancialReport = AdditionalReportBase & {
   dueAt: string | null;
   currency: string | null;
   financialYearStart: number | null;
+  organisationName: string | null;
 };
 
 export type AdditionalSrpReport = AdditionalReportBase & {
   type: "srp-report";
   dueAt: string | null;
+  organisationName: string | null;
 };
 
 export type AdditionalDisturbanceReport = AdditionalReportBase & {
   type: "disturbance-report";
-  disturbanceAt: string | null;
+  dueAt: string | null;
   sitesAffected: number;
   intensity: string | null;
+  dateOfDisturbance: string | null;
+  organisationName: string | null;
 };
 
 export type AdditionalReport = AdditionalFinancialReport | AdditionalSrpReport | AdditionalDisturbanceReport;
