@@ -16,11 +16,18 @@ import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
-import { EMPTY_REPORT_FILTERS, REPORT_TYPE_LABELS, ReportFilterState } from "./reportFilter.constants";
+import {
+  EMPTY_REPORT_FILTERS,
+  getDefaultProgressFiltersForSource,
+  REPORT_TYPE_LABELS,
+  ReportFilterState
+} from "./reportFilter.constants";
 import ReportsFilterDrawer from "./ReportsFilterDrawer";
 
 type ReportsIndexHeaderProps = {
   activeTab: string;
+  source: "project" | "site" | "nursery";
+  sourceUuid: string;
   projectUuid: string;
   reportCount: number;
   viewValue: string;
@@ -32,6 +39,8 @@ type ReportsIndexHeaderProps = {
 
 const ReportsIndexHeader = ({
   activeTab,
+  source,
+  sourceUuid,
   projectUuid,
   reportCount,
   viewValue,
@@ -44,10 +53,10 @@ const ReportsIndexHeader = ({
   const router = useRouter();
   const { setFilters } = useReportsContext();
 
-  const [filtersByTab, setFiltersByTab] = useState<Record<string, ReportFilterState>>({
-    "progress-reports": EMPTY_REPORT_FILTERS,
+  const [filtersByTab, setFiltersByTab] = useState<Record<string, ReportFilterState>>(() => ({
+    "progress-reports": getDefaultProgressFiltersForSource(source),
     "additional-reports": EMPTY_REPORT_FILTERS
-  });
+  }));
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const selectedFilters = filtersByTab[activeTab] ?? EMPTY_REPORT_FILTERS;
   const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
@@ -59,6 +68,13 @@ const ReportsIndexHeader = ({
     },
     [activeTab, setFilters]
   );
+
+  useEffect(() => {
+    setFiltersByTab({
+      "progress-reports": getDefaultProgressFiltersForSource(source),
+      "additional-reports": EMPTY_REPORT_FILTERS
+    });
+  }, [source, sourceUuid]);
 
   useEffect(() => {
     setFilters(selectedFilters);

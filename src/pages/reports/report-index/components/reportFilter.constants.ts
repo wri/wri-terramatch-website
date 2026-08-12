@@ -18,6 +18,16 @@ export const EMPTY_REPORT_FILTERS: ReportFilterState = {
   dueDate: ""
 };
 
+export const getDefaultProgressFiltersForSource = (source: "project" | "site" | "nursery"): ReportFilterState => {
+  if (source === "site") {
+    return { ...EMPTY_REPORT_FILTERS, reportTypes: ["site-report"] };
+  }
+  if (source === "nursery") {
+    return { ...EMPTY_REPORT_FILTERS, reportTypes: ["nursery-report"] };
+  }
+  return EMPTY_REPORT_FILTERS;
+};
+
 export const PROGRESS_REPORT_TYPE_OPTIONS: { value: ReportTypeOption; label: string }[] = [
   { value: "project-report", label: "Project Reports" },
   { value: "site-report", label: "Site Reports" },

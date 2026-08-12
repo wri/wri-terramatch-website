@@ -124,9 +124,10 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     <div className="min-h-full bg-theme-neutral-200 pb-10">
       <ReportsIndexHeader
         activeTab={activeTab}
+        source={source}
+        sourceUuid={sourceEntity.uuid}
         projectUuid={project.uuid}
         reportCount={reportCount}
-        selectedViewLabel={project.name ?? t("Project")}
         viewValue={viewValue}
         viewItems={viewItems}
         onTabChange={setActiveTab}
