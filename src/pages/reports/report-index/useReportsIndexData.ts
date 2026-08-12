@@ -108,7 +108,17 @@ export const useReportsIndexData = (
                 .map(report => toReport(report, "nursery-report"))
             ];
 
-            return { id: task.uuid, task, reports };
+            return {
+              id: task.uuid,
+              task,
+              metrics: {
+                treesPlantedCount: taskState.data?.treesPlantedCount ?? 0,
+                seedsPlantedCount: taskState.data?.seedsPlantedCount ?? 0,
+                regeneratedTreesCount: taskState.data?.regeneratedTreesCount ?? 0,
+                jobsCreated: taskState.data?.jobsCreated ?? 0
+              },
+              reports
+            };
           })
         );
 

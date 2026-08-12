@@ -28,6 +28,7 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
   const [open, setOpen] = useState(defaultOpen);
   const periodLabel = useReportingWindow(toFramework(project.frameworkKey), period.task.dueAt);
   const counts = useMemo(() => getReportStatusCounts(period.reports), [period.reports]);
+  const { treesPlantedCount, seedsPlantedCount, regeneratedTreesCount, jobsCreated } = period.metrics;
 
   return (
     <Box bg="neutral.100">
@@ -60,37 +61,37 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
             <MetricCard
               title={t("Trees Growing")}
               color="secondary.600"
-              progress={project.treesPlantedCount ?? project.treesRestoredPpc ?? 0}
+              progress={treesPlantedCount}
               goal={0}
               icon={<TreeIcon color="secondary.600" boxSize="0.875rem" />}
-              tooltipContent={t("Total trees currently reported for this project.")}
+              tooltipContent={t("Total trees planted in this reporting period.")}
               className="w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100"
             />
             <MetricCard
               title={t("Seedlings Grown")}
               color="secondary.600"
-              progress={project.seedsPlantedCount ?? 0}
+              progress={seedsPlantedCount}
               goal={0}
               icon={<SeedlingsIcon color="secondary.600" boxSize="0.875rem" />}
-              tooltipContent={t("Total seedlings and seeds reported for this project.")}
+              tooltipContent={t("Total seedlings and seeds reported in this reporting period.")}
               className="w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100"
             />
             <MetricCard
               title={t("Trees Regenerated")}
               color="secondary.600"
-              progress={project.regeneratedTreesCount ?? 0}
+              progress={regeneratedTreesCount}
               goal={0}
               icon={<RegenerationIcon color="secondary.600" boxSize="0.875rem" />}
-              tooltipContent={t("Total naturally regenerated trees reported for this project.")}
+              tooltipContent={t("Total naturally regenerated trees reported in this reporting period.")}
               className="w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100"
             />
             <MetricCard
               title={t("Jobs Created")}
               color="primary.600"
-              progress={project.totalJobsCreated ?? 0}
+              progress={jobsCreated}
               goal={0}
               icon={<JobsIcon color="primary.600" boxSize="0.875rem" />}
-              tooltipContent={t("Total jobs created by this project.")}
+              tooltipContent={t("Total jobs created in this reporting period.")}
               className="w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100"
             />
           </div>
