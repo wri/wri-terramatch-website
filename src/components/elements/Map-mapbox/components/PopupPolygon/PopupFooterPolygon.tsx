@@ -79,7 +79,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
       completePolygonProgressToast(POLYGON_TOAST_IDS.downloading, toastLabels.downloadingPolygonsComplete);
     } catch {
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
-      showPolygonErrorToast(t("Error downloading polygon"));
+      showPolygonErrorToast(t("Error Downloading Polygon"));
     }
   }, [canDownload, polygonName, polygonUuid, t, toastLabels]);
 

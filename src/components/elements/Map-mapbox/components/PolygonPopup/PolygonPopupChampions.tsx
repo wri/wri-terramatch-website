@@ -150,7 +150,7 @@ export function PolygonPopupChampions({
     closeMapPopup();
     void runValidation.catch(error => {
       Log.error("Failed to validate polygon from map popup:", error);
-      showPolygonErrorToast(t("Failed to validate polygons"));
+      showPolygonErrorToast(t("Failed to Validate Polygons"));
     });
   }, [closeMapPopup, geometryUuid, t]);
 
