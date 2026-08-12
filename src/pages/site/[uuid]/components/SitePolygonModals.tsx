@@ -5,10 +5,12 @@ import type { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas
 import type { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import type { SubmittedPolygonComment } from "../hooks/useSitePolygonBulkActions";
+import type { DuplicatePolygonUploadInfo } from "../hooks/useUploadPolygons";
 import type { PolygonStatusChangeComment } from "../utils/polygonStatusChangeComment";
 import ApprovePolygonConfirmation from "./Modals/ApprovePolygon/ApprovePolygonConfirmation";
 import PolygonApproved from "./Modals/ApprovePolygon/PolygonApproved";
 import DeletePolygon from "./Modals/DeletePolygon";
+import ExistingPolygon from "./Modals/ExistingPolygon";
 import EditPhotoDetails from "./Modals/GeotaggedPhotos/EditPhotoDetails";
 import OverlapFix, { type OverlapFixPolygon } from "./Modals/OverlapFix";
 import PolygonSubmitted from "./Modals/PolygonSubmitted";
@@ -66,6 +68,11 @@ type SitePolygonModalsProps = {
   onUploadErrorModalOpenChange: (open: boolean) => void;
   onUploadModalOpenChange: (open: boolean) => void;
   onUploadSuccess: (result: { createdSitePolygonUuid?: string | null; uploadedFileCount: number }) => void;
+  onDuplicateDetected?: (duplicate: DuplicatePolygonUploadInfo) => void;
+  openExistingPolygonModal: boolean;
+  existingPolygonSiteName: string;
+  onExistingPolygonModalOpenChange: (open: boolean) => void;
+  onViewExistingPolygon: () => void;
   onViewOverlapPolygon: (polygonUuid: string) => void;
   openApprovePolygonConfirmationModal: boolean;
   onApprovePolygonConfirmationModalOpenChange: (open: boolean) => void;
@@ -134,6 +141,11 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
   uploadErrorMessage,
   onUploadModalOpenChange,
   onUploadSuccess,
+  onDuplicateDetected,
+  openExistingPolygonModal,
+  existingPolygonSiteName,
+  onExistingPolygonModalOpenChange,
+  onViewExistingPolygon,
   onViewOverlapPolygon,
   openApprovePolygonConfirmationModal,
   onApprovePolygonConfirmationModalOpenChange,
@@ -204,7 +216,14 @@ const SitePolygonModals: FC<SitePolygonModalsProps> = ({
         siteHasExistingPolygons={siteHasExistingPolygons}
         onOpenChange={onUploadModalOpenChange}
         onUploadSuccess={onUploadSuccess}
+        onDuplicateDetected={onDuplicateDetected}
         onUploadError={onUploadError}
+      />
+      <ExistingPolygon
+        open={openExistingPolygonModal}
+        siteName={existingPolygonSiteName}
+        onOpenChange={onExistingPolygonModalOpenChange}
+        onView={onViewExistingPolygon}
       />
       <SubmitPolygons
         open={openSubmitPolygonsModal}
