@@ -105,15 +105,12 @@ export function usePolygonTilesLoading({
       if (currentMap.getSource(sourceId) == null) {
         return false;
       }
-      // Idle means Mapbox finished requested tiles; canceled XHRs often never emit sourcedata,
-      // so the pending counter is not trustworthy once idle has fired.
       if (opts?.fromIdle !== true && pendingPolygonTiles > 0) {
         return false;
       }
       if (!currentMap.isSourceLoaded(sourceId)) {
         return false;
       }
-      // After idle + source loaded, empty viewport/filters must not keep the spinner forever.
       if (opts?.fromIdle !== true && shouldRequireRenderedPolygonFeatures() && !hasRenderedPolygonFeatures()) {
         return false;
       }
