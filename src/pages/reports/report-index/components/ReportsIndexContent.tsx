@@ -1,6 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useMemo, useState } from "react";
+import { useRouter } from "next/router";
+import { useCallback, useMemo, useState } from "react";
 
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -10,11 +11,13 @@ import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import { ReportsIndexSourceEntity } from "../reportIndex.types";
-import { getReportsRequiringAttention, ReportsIndexSource } from "../reportIndex.utils";
+import { getReportIndexItemPath, getReportsRequiringAttention, ReportsIndexSource } from "../reportIndex.utils";
+import { useReportsSelection } from "../ReportsSelection.provider";
 import { useAdditionalReportsData } from "../useAdditionalReportsData";
 import { useReportsIndexData } from "../useReportsIndexData";
 import AdditionalReportsContent from "./AdditionalReportsContent";
 import ReportingPeriodSection from "./ReportingPeriodSection";
+import ReportsBulkActionToolbar from "./ReportsBulkActionToolbar";
 import ReportsIndexHeader from "./ReportsIndexHeader";
 
 type ReportsIndexContentProps = {
@@ -25,9 +28,11 @@ type ReportsIndexContentProps = {
 
 const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexContentProps) => {
   const t = useT();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("progress-reports");
   const [projectOpen, setProjectOpen] = useState(true);
   const [query, setQuery] = useState("");
+  const { selectedReports, clearSelection } = useReportsSelection();
   const {
     periods,
     loading: progressLoading,
@@ -95,13 +100,27 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const selectedViewLabel =
     source === "project" ? project.name ?? t("Project") : sourceEntity.name ?? project.name ?? "";
 
+  const handleTabChange = useCallback(
+    (tab: string) => {
+      clearSelection();
+      setActiveTab(tab);
+    },
+    [clearSelection]
+  );
+
+  const handleBulkEdit = useCallback(() => {
+    if (selectedReports.length === 1) {
+      void router.push(getReportIndexItemPath(selectedReports[0]));
+    }
+  }, [router, selectedReports]);
+
   return (
-    <div className="min-h-full bg-theme-neutral-200 pb-10">
+    <div className={`bg-theme-neutral-200 min-h-full ${selectedReports.length > 0 ? "pb-24" : "pb-10"}`}>
       <ReportsIndexHeader
         activeTab={activeTab}
         reportCount={reportCount}
         selectedViewLabel={selectedViewLabel}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         onQueryChange={setQuery}
       />
 
@@ -133,7 +152,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
               variant="tertiary"
               open={projectOpen}
               onOpenChange={setProjectOpen}
-              className="overflow-hidden rounded bg-theme-neutral-100"
+              className="bg-theme-neutral-100 overflow-hidden rounded"
               classNameHeader="!mb-0"
               header={
                 <ListSectionHeader
@@ -155,7 +174,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                 />
               }
             >
-              <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
+              <div className="bg-theme-neutral-200 space-y-0.5 pt-0.5">
                 {filteredPeriods.map((period, index) => (
                   <ReportingPeriodSection key={period.id} period={period} project={project} defaultOpen={index === 0} />
                 ))}
@@ -172,6 +191,14 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
           error={additionalError}
         />
       )}
+
+      <ReportsBulkActionToolbar
+        visible={selectedReports.length > 0}
+        itemCount={selectedReports.length}
+        editDisabled={selectedReports.length !== 1}
+        onCancel={clearSelection}
+        onEdit={handleBulkEdit}
+      />
     </div>
   );
 };

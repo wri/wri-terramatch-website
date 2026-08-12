@@ -60,6 +60,8 @@ export type AdditionalDisturbanceReport = AdditionalReportBase & {
 
 export type AdditionalReport = AdditionalFinancialReport | AdditionalSrpReport | AdditionalDisturbanceReport;
 
+export type ReportIndexItem = ReportsIndexReport | AdditionalReport;
+
 export type AdditionalReportGroup = {
   id: string;
   type: AdditionalReportType;

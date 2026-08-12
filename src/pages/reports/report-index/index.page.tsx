@@ -10,6 +10,7 @@ import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
 import ReportsIndexContent from "./components/ReportsIndexContent";
 import { isReportsIndexSource } from "./reportIndex.utils";
+import ReportsSelectionProvider from "./ReportsSelection.provider";
 
 const ReportsIndexPage = () => {
   const router = useRouter();
@@ -49,7 +50,9 @@ const ReportsIndexPage = () => {
         {project == null || source == null || sourceEntity == null ? (
           <Box>{t("The reports information could not be found.")}</Box>
         ) : (
-          <ReportsIndexContent project={project} source={source} sourceEntity={sourceEntity} />
+          <ReportsSelectionProvider key={`${source}:${sourceEntity.uuid}`}>
+            <ReportsIndexContent project={project} source={source} sourceEntity={sourceEntity} />
+          </ReportsSelectionProvider>
         )}
       </LoadingContainer>
     </FrameworkProvider>
