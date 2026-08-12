@@ -74,22 +74,22 @@ const polygonCountLabel = (count: number | undefined, singular: string, plural: 
   count === 1 ? singular : plural;
 
 export const getUploadingPolygonsProgressLabel = (t: TranslateFn, count: number) =>
-  polygonCountLabel(count, t("Uploading Polygon..."), t("Uploading Polygons..."));
+  polygonCountLabel(count, t("Uploading Polygon"), t("Uploading Polygons"));
 
 export const getSubmittingProgressLabel = (t: TranslateFn, count: number) =>
-  polygonCountLabel(count, t("Submitting Polygon..."), t("Submitting Polygons..."));
+  polygonCountLabel(count, t("Submitting Polygon"), t("Submitting Polygons"));
 
 export const getDownloadingPolygonsProgressLabel = (t: TranslateFn, count?: number) =>
-  polygonCountLabel(count, t("Downloading Polygon..."), t("Downloading Polygons..."));
+  polygonCountLabel(count, t("Downloading Polygon"), t("Downloading Polygons"));
 
 export const getUpdatingPolygonsProgressLabel = (t: TranslateFn, count: number) =>
-  polygonCountLabel(count, t("Updating Polygon..."), t("Updating Polygons..."));
+  polygonCountLabel(count, t("Updating Polygon"), t("Updating Polygons"));
 
 export const getDeletingProgressLabel = (t: TranslateFn, count: number) =>
-  polygonCountLabel(count, t("Deleting Polygon..."), t("Deleting Polygons..."));
+  polygonCountLabel(count, t("Deleting Polygon"), t("Deleting Polygons"));
 
 export const getValidatingProgressLabel = (t: TranslateFn, count: number) =>
-  polygonCountLabel(count, t("Validating Polygon..."), t("Validating Polygons..."));
+  polygonCountLabel(count, t("Validating Polygon"), t("Validating Polygons"));
 
 export const getFixingOverlapsProgressLabel = (t: TranslateFn, count: number) =>
   count === 1 ? t("Fixing Polygon Overlaps") : t("Fixing Polygons Overlaps");
@@ -113,13 +113,13 @@ export const getPolygonOperationToastLabels = (t: TranslateFn): PolygonOperation
   uploadingPolygonsComplete: t("Upload Complete"),
   submittingComplete: t("Submission Complete"),
   savedAndSubmittedComplete: t("Polygon Saved and Submitted"),
-  savingChangesProgress: t("Saving Changes..."),
+  savingChangesProgress: t("Saving Changes"),
   savingChangesComplete: t("Changes Saved"),
   downloadingPolygonsComplete: t("Download Complete"),
   updatingPolygonsComplete: t("Update Complete"),
   deletingComplete: t("Deletion Complete"),
   fixingOverlapsComplete: t("Overlap Fix Complete"),
-  downloadingSamplePlotsProgress: t("Downloading Sample Plots..."),
+  downloadingSamplePlotsProgress: t("Downloading Sample Plots"),
   downloadingSamplePlotsComplete: t("Download Complete"),
   validatingComplete: t("Validation Complete")
 });
