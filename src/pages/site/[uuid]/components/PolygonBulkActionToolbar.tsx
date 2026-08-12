@@ -211,7 +211,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   return (
     <>
       {isToolbarVisible && (
-        <Box position="fixed" zIndex="100" bottom={3} left={isAdmin ? 14 : 3} right={isAdmin ? 3 : 0}>
+        <Box position="fixed" zIndex="100" bottom={3} left={isAdmin ? 14 : 3} right={3}>
           <BulkActionToolbar
             selectedCount={itemCount}
             cancelAction={cancelAction}

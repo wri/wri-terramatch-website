@@ -15,14 +15,17 @@ import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessa
 import { ReportsIndexSourceEntity } from "../reportIndex.types";
 import {
   ALL_PROJECTS_VIEW_VALUE,
+  getReportIndexItemPath,
   getReportsIndexUrl,
   getReportsRequiringAttention,
   ReportsIndexSource
 } from "../reportIndex.utils";
+import { useReportsSelection } from "../ReportsSelection.provider";
 import { useAdditionalReportsData } from "../useAdditionalReportsData";
 import { useReportsIndexData } from "../useReportsIndexData";
 import AdditionalReportsContent from "./AdditionalReportsContent";
 import ReportingPeriodSection from "./ReportingPeriodSection";
+import ReportsBulkActionToolbar from "./ReportsBulkActionToolbar";
 import ReportsIndexHeader from "./ReportsIndexHeader";
 
 type ReportsIndexContentProps = {
@@ -41,6 +44,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const [viewValue, setViewValue] = useState(
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
   );
+  const { selectedReports, clearSelection } = useReportsSelection();
   const [projectsLoaded, { data: projects }] = useProjectIndex({});
   const isAllProjectsView = viewValue === ALL_PROJECTS_VIEW_VALUE;
 
@@ -62,11 +66,11 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     return periods
       .map(period => ({
         ...period,
-        reports: period.reports.filter(report => {
-          return [report.name, report.type, report.sourceName, report.projectName].some(value =>
+        reports: period.reports.filter(report =>
+          [report.name, report.type, report.sourceName, report.projectName].some(value =>
             (value ?? "").toLocaleLowerCase().includes(normalizedQuery)
-          );
-        })
+          )
+        )
       }))
       .filter(period => period.reports.length > 0);
   }, [periods, query]);
@@ -131,6 +135,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
   const handleViewChange = useCallback(
     (nextView: string) => {
+      clearSelection();
       setViewValue(nextView);
 
       if (nextView === ALL_PROJECTS_VIEW_VALUE) {
@@ -161,18 +166,32 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
       void router.push(getReportsIndexUrl("project", nextView));
     },
-    [project.uuid, router]
+    [clearSelection, project.uuid, router]
   );
 
+  const handleTabChange = useCallback(
+    (tab: string) => {
+      clearSelection();
+      setActiveTab(tab);
+    },
+    [clearSelection]
+  );
+
+  const handleBulkEdit = useCallback(() => {
+    if (selectedReports.length === 1) {
+      void router.push(getReportIndexItemPath(selectedReports[0]));
+    }
+  }, [router, selectedReports]);
+
   return (
-    <div className="min-h-full bg-theme-neutral-200 pb-10">
+    <div className={`min-h-full bg-theme-neutral-200 ${selectedReports.length > 0 ? "pb-24" : "pb-10"}`}>
       <ReportsIndexHeader
         activeTab={activeTab}
         projectUuid={project.uuid}
         reportCount={reportCount}
         viewValue={viewValue}
         viewItems={viewItems}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         onViewChange={handleViewChange}
         onQueryChange={setQuery}
       />
@@ -244,6 +263,14 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
           error={additionalError}
         />
       )}
+
+      <ReportsBulkActionToolbar
+        visible={selectedReports.length > 0}
+        itemCount={selectedReports.length}
+        editDisabled={selectedReports.length !== 1}
+        onCancel={clearSelection}
+        onEdit={handleBulkEdit}
+      />
     </div>
   );
 };
