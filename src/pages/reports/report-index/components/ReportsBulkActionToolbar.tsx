@@ -1,0 +1,77 @@
+import { Box } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
+import { useEffect } from "react";
+
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useLayoutShell } from "@/redesignComponents/Loayout/LayoutShell.provider";
+import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
+import type { BulkToolbarAction } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
+
+type ReportsBulkActionToolbarProps = {
+  visible: boolean;
+  itemCount: number;
+  editDisabled?: boolean;
+  onCancel: () => void;
+  onDownload?: () => void;
+  onNothingToReport?: () => void;
+  onEdit: () => void;
+  onSubmit?: () => void;
+};
+
+const ReportsBulkActionToolbar = ({
+  visible,
+  itemCount,
+  editDisabled = false,
+  onCancel,
+  onDownload,
+  onNothingToReport,
+  onEdit,
+  onSubmit
+}: ReportsBulkActionToolbarProps) => {
+  const t = useT();
+  const isAdmin = useIsAdmin();
+  const { setSidebarCollapseDisabled } = useLayoutShell();
+
+  const downloadAction: BulkToolbarAction = {
+    id: "download",
+    children: t("Download"),
+    disabled: onDownload == null,
+    onClick: onDownload
+  };
+
+  const actions: BulkToolbarAction[] = [
+    {
+      id: "nothing-to-report",
+      children: t("Nothing to Report"),
+      disabled: onNothingToReport == null,
+      onClick: onNothingToReport
+    },
+    {
+      id: "edit",
+      children: t("Edit"),
+      disabled: editDisabled,
+      onClick: onEdit
+    }
+  ];
+
+  useEffect(() => {
+    setSidebarCollapseDisabled(visible);
+    return () => setSidebarCollapseDisabled(false);
+  }, [setSidebarCollapseDisabled, visible]);
+
+  if (!visible) return null;
+
+  return (
+    <Box position="fixed" zIndex="100" bottom={3} left={isAdmin ? 14 : 3} right={3}>
+      <BulkActionToolbar
+        selectedCount={itemCount}
+        cancelAction={{ children: t("Cancel"), onClick: onCancel }}
+        deleteAction={downloadAction}
+        actions={actions}
+        primaryAction={{ children: t("Submit"), disabled: onSubmit == null, onClick: onSubmit }}
+      />
+    </Box>
+  );
+};
+
+export default ReportsBulkActionToolbar;

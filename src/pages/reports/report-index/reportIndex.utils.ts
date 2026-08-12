@@ -1,6 +1,8 @@
 import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
+import type { ReportIndexItem } from "./reportIndex.types";
+
 export const REPORTS_INDEX_SOURCES = ["project", "site", "nursery"] as const;
 
 export type ReportsIndexSource = (typeof REPORTS_INDEX_SOURCES)[number];
@@ -12,6 +14,14 @@ export const isReportsIndexSource = (value: string | undefined): value is Report
 
 export const getReportsIndexUrl = (source: ReportsIndexSource, uuid: string) =>
   `/reports/report-index?source=${source}&uuid=${encodeURIComponent(uuid)}`;
+
+export const getReportIndexItemPath = (report: ReportIndexItem) => {
+  if (["approved", "pending-approval"].includes(report.status)) {
+    return `/reports/${report.type}/${report.id}`;
+  }
+
+  return `/entity/${report.type}s/edit/${report.id}`;
+};
 
 type ReportWithStatus = {
   status: string | null;
