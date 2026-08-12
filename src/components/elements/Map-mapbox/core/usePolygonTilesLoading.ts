@@ -98,28 +98,31 @@ export function usePolygonTilesLoading({
       return currentMap.queryRenderedFeatures({ layers: layerIds }).length > 0;
     };
 
-    const isReady = () => {
+    const isReady = (opts?: { fromIdle?: boolean }) => {
       if (!cameraSettled) {
         return false;
       }
       if (currentMap.getSource(sourceId) == null) {
         return false;
       }
-      if (pendingPolygonTiles > 0) {
+      // Idle means Mapbox finished requested tiles; canceled XHRs often never emit sourcedata,
+      // so the pending counter is not trustworthy once idle has fired.
+      if (opts?.fromIdle !== true && pendingPolygonTiles > 0) {
         return false;
       }
       if (!currentMap.isSourceLoaded(sourceId)) {
         return false;
       }
-      if (shouldRequireRenderedPolygonFeatures() && !hasRenderedPolygonFeatures()) {
+      // After idle + source loaded, empty viewport/filters must not keep the spinner forever.
+      if (opts?.fromIdle !== true && shouldRequireRenderedPolygonFeatures() && !hasRenderedPolygonFeatures()) {
         return false;
       }
       return true;
     };
 
-    const tryComplete = () => {
+    const tryComplete = (opts?: { fromIdle?: boolean }) => {
       settleCameraIfStopped();
-      if (!isReady()) {
+      if (!isReady(opts)) {
         return;
       }
       safeSetLoading(false);
@@ -161,7 +164,8 @@ export function usePolygonTilesLoading({
     };
 
     const onIdle = () => {
-      tryComplete();
+      pendingPolygonTiles = 0;
+      tryComplete({ fromIdle: true });
     };
 
     const onMoveEnd = () => {
