@@ -616,7 +616,7 @@ export type TreeSpeciesDto = {
 };
 
 export type OrganisationUpdateAttributes = {
-  status?: "approved" | "pending" | "rejected" | "draft";
+  status?: "approved" | "pending-approval" | "rejected" | "draft";
   type?: "non-profit-organization" | "for-profit-organization";
   /**
    * Update the isTest flag.
@@ -751,9 +751,9 @@ export type UserDto = {
 
 export type OrganisationCreateAttributes = {
   /**
-   * @default pending
+   * @default pending-approval
    */
-  status?: "draft" | "pending";
+  status?: "draft" | "pending-approval";
   name?: string;
   type?: "non-profit-organization" | "for-profit-organization";
   hqStreet1?: string;
