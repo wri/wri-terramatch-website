@@ -142,17 +142,15 @@ const ReportsIndexHeader = ({
   return (
     <div className="bg-white">
       <ToolbarObject
-        className="border-b border-theme-neutral-300 !px-6"
         breadcrumbs={{
+          linkRouter: router,
           links: [
             {
+              icon: <ReportsIcon />,
               label: t("Reports"),
-              link: router.asPath,
-              icon: <ReportsIcon className="text-theme-primary-900" />
+              link: "#"
             }
-          ],
-          linkRouter: router,
-          size: "small"
+          ]
         }}
       />
       <PageHeader
@@ -170,7 +168,7 @@ const ReportsIndexHeader = ({
         }
       />
       <Toolbar
-        className="items-end border-b border-theme-neutral-200 !px-3 mobile:flex-col mobile:!items-stretch mobile:gap-3"
+        className="border-theme-neutral-200 items-end border-b !px-3 mobile:flex-col mobile:!items-stretch mobile:gap-3"
         classNameContentLeft="min-w-0"
         classNameContentRight="mt-[-1.25rem]"
         contentLeft={
@@ -200,7 +198,7 @@ const ReportsIndexHeader = ({
         className="!bg-theme-neutral-200 !px-6 !pb-6 !pt-5"
         classNameContentLeft="w-full"
         search={{
-          placeholder: t("Search projects, sites, nurseries"),
+          placeholder: t("Search"),
           options: [],
           displayResults: "none",
           count: reportCount,
