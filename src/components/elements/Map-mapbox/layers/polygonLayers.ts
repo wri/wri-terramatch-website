@@ -270,8 +270,6 @@ export const addSourceToLayer = (
     layerNames[name] = geoserverLayerName;
     map.addSource(name, { type: "vector", tiles: [geoserverTileUrl] });
     styles?.forEach((style: LayerWithStyle, index: number) => {
-      // Mapbox source id stays `name` (e.g. "polygon_geometry"); the MVT source-layer is the
-      // resolved GeoServer layer, which diverges from it once active/deleted variants exist.
       addLayerStyle(map, name, name, geoserverLayerName, style, index, zoomFilter);
     });
     if (polygonsData != null) {
