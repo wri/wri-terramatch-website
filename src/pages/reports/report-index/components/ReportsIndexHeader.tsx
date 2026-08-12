@@ -2,11 +2,13 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useCreateDisturbanceReport } from "@/connections/Entity";
 import { getReportStatusOptions } from "@/constants/options/status";
 import { useReportsContext } from "@/context/reports.provider";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
+import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
 import { PlusIcon, ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
 import Toolbar from "@/redesignComponents/navigation/Toolbar/Toolbar";
@@ -19,17 +21,23 @@ import ReportsFilterDrawer from "./ReportsFilterDrawer";
 
 type ReportsIndexHeaderProps = {
   activeTab: string;
+  projectUuid: string;
   reportCount: number;
-  selectedViewLabel: string;
+  viewValue: string;
+  viewItems: HighLevelSelectorItem[];
   onTabChange: (tab: string) => void;
+  onViewChange: (value: string) => void;
   onQueryChange: (query: string) => void;
 };
 
 const ReportsIndexHeader = ({
   activeTab,
+  projectUuid,
   reportCount,
-  selectedViewLabel,
+  viewValue,
+  viewItems,
   onTabChange,
+  onViewChange,
   onQueryChange
 }: ReportsIndexHeaderProps) => {
   const t = useT();
@@ -55,6 +63,15 @@ const ReportsIndexHeader = ({
   useEffect(() => {
     setFilters(selectedFilters);
   }, [activeTab, selectedFilters, setFilters]);
+
+  const { create: createDisturbanceReport, isCreating: disturbanceReportCreating } = useCreateDisturbanceReport(
+    {},
+    useCallback(
+      ({ uuid }) => router.replace(`/entity/disturbance-reports/create/framework?entity_uuid=${uuid}`),
+      [router]
+    ),
+    "Failed to create disturbance report"
+  );
 
   const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
@@ -126,7 +143,12 @@ const ReportsIndexHeader = ({
         className="!bg-theme-neutral-100"
         title={t("Reports")}
         actions={
-          <Button size="small" leftIcon={<PlusIcon boxSize="10px" />}>
+          <Button
+            size="small"
+            leftIcon={<PlusIcon boxSize="10px" />}
+            disabled={disturbanceReportCreating}
+            onClick={() => createDisturbanceReport({ parentUuid: projectUuid })}
+          >
             {t("Add Disturbance Report")}
           </Button>
         }
@@ -150,10 +172,11 @@ const ReportsIndexHeader = ({
         contentRight={
           <HighLevelSelector
             label={t("View:")}
-            items={[{ label: selectedViewLabel, value: "current-view" }]}
-            value="current-view"
+            items={viewItems}
+            value={viewValue}
             width="400px"
             className="mobile:!w-full"
+            onChange={onViewChange}
           />
         }
       />
