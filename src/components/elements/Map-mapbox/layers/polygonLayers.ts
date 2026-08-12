@@ -1,7 +1,13 @@
 import _ from "lodash";
 import { FilterSpecification, LayerSpecification, Map as MapboxMap } from "mapbox-gl";
 
-import { LAYERS_NAMES, layersList } from "@/constants/layers";
+import {
+  type PolygonGeometryVariant,
+  getPolygonGeometryLayerName,
+  LAYERS_NAMES,
+  layersList,
+  POLYGON_GEOMETRY_VARIANTS
+} from "@/constants/layers";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
@@ -201,9 +207,27 @@ function getSourceCacheKeys(map: MapboxMap): Record<string, string> {
   return sourceCacheKeys.get(map)!;
 }
 
+const sourceGeoserverLayerNames = new WeakMap<MapboxMap, Record<string, string>>();
+
+function getSourceGeoserverLayerNames(map: MapboxMap): Record<string, string> {
+  if (!sourceGeoserverLayerNames.has(map)) sourceGeoserverLayerNames.set(map, {});
+  return sourceGeoserverLayerNames.get(map)!;
+}
+
 export function getMapTileVersion(map: MapboxMap | null | undefined): string {
   if (map == null) return "0";
   return getSourceCacheKeys(map)[LAYERS_NAMES.POLYGON_GEOMETRY] ?? "0";
+}
+
+function resolveGeoserverLayerName(
+  layer: LayerType,
+  dashboardMode: string | undefined,
+  polygonGeometryVariant: PolygonGeometryVariant | undefined
+): string {
+  if (layer.name !== LAYERS_NAMES.POLYGON_GEOMETRY || dashboardMode != null) {
+    return layer.geoserverLayerName;
+  }
+  return getPolygonGeometryLayerName(polygonGeometryVariant ?? POLYGON_GEOMETRY_VARIANTS.Active);
 }
 
 export const addSourceToLayer = (
@@ -212,18 +236,22 @@ export const addSourceToLayer = (
   polygonsData: Record<string, string[]> | undefined,
   zoomFilter?: number | undefined,
   dashboardMode?: string | undefined,
-  cacheKey: string = "0"
-) => {
-  const { name, geoserverLayerName, styles } = layer;
+  cacheKey: string = "0",
+  polygonGeometryVariant?: PolygonGeometryVariant
+): void => {
+  const { name, styles } = layer;
   try {
     if (map == null) return;
 
+    const geoserverLayerName = resolveGeoserverLayerName(layer, dashboardMode, polygonGeometryVariant);
+
     const keys = getSourceCacheKeys(map);
+    const layerNames = getSourceGeoserverLayerNames(map);
     const sourceExists = map.getSource(name) != null;
-    const keyChanged = keys[name] !== cacheKey;
+    const keyChanged = keys[name] !== cacheKey || layerNames[name] !== geoserverLayerName;
 
     if (sourceExists && !keyChanged) {
-      if (polygonsData) {
+      if (polygonsData != null) {
         loadLayersInMap(map, polygonsData, layer, zoomFilter);
       }
       return;
@@ -237,13 +265,14 @@ export const addSourceToLayer = (
       map.removeSource(name);
     }
 
-    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName, dashboardMode, cacheKey);
+    const geoserverTileUrl = getGeoserverURL(geoserverLayerName, dashboardMode, cacheKey);
     keys[name] = cacheKey;
-    map.addSource(name, { type: "vector", tiles: [GEOSERVER_TILE_URL] });
+    layerNames[name] = geoserverLayerName;
+    map.addSource(name, { type: "vector", tiles: [geoserverTileUrl] });
     styles?.forEach((style: LayerWithStyle, index: number) => {
-      addLayerStyle(map, name, geoserverLayerName, style, index, zoomFilter);
+      addLayerStyle(map, name, name, geoserverLayerName, style, index, zoomFilter);
     });
-    if (polygonsData) {
+    if (polygonsData != null) {
       loadLayersInMap(map, polygonsData, layer, zoomFilter);
     }
   } catch (e) {
@@ -320,23 +349,24 @@ export const addLayerGeojsonStyle = (
 export const addLayerStyle = (
   map: MapboxMap,
   layerName: string,
-  sourceName: string,
+  mapboxSourceId: string,
+  sourceLayerName: string,
   style: LayerWithStyle,
   index_suffix: number | string,
   zoomFilter?: number | undefined
-) => {
-  const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
-  if (map.getLayer(`${layerName}-${index_suffix}`)) {
+): void => {
+  const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) != null ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
+  if (map.getLayer(`${layerName}-${index_suffix}`) != null) {
     map.removeLayer(`${layerName}-${index_suffix}`);
   }
   map.addLayer(
     {
       ...style,
       id: `${layerName}-${index_suffix}`,
-      source: sourceName,
-      "source-layer": sourceName,
-      ...(zoomFilter && {
-        filter: ["all", style.filter || ["==", true, true], [">=", ["zoom"], zoomFilter]]
+      source: mapboxSourceId,
+      "source-layer": sourceLayerName,
+      ...(zoomFilter != null && {
+        filter: ["all", style.filter ?? ["==", true, true], [">=", ["zoom"], zoomFilter]]
       })
     } as LayerSpecification,
     beforeLayer
@@ -351,15 +381,16 @@ export const addSourcesToLayers = (
   zoomFilter?: number | undefined,
   dashboardMode?: string | undefined,
   polygonsCentroids?: { uuid: string; long: number; lat: number }[] | undefined,
-  cacheKey: string = "0"
-) => {
+  cacheKey: string = "0",
+  polygonGeometryVariant?: PolygonGeometryVariant
+): void => {
   if (map == null) return;
 
   const existsPolygonsForCentroidGeojson = !_.isEmpty(polygonsData);
 
   layersList.forEach((layer: LayerType) => {
     if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
-      addSourceToLayer(layer, map, polygonsData, zoomFilter, dashboardMode, cacheKey);
+      addSourceToLayer(layer, map, polygonsData, zoomFilter, dashboardMode, cacheKey, polygonGeometryVariant);
     }
     if (layer.name === LAYERS_NAMES.CENTROIDS && dashboardMode) {
       addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, existsPolygonsForCentroidGeojson);
