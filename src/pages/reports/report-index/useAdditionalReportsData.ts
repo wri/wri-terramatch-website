@@ -55,7 +55,9 @@ const toFinancialReport = (
     updatedAt: report.updatedAt,
     currency,
     financialYearStart,
-    searchTerms: [name, report.yearOfReport?.toString() ?? "", report.organisationName ?? "", currency ?? ""]
+    organisationName: report.organisationName ?? null,
+    projectName: null,
+    year: report.yearOfReport?.toString() ?? null
   };
 };
 
@@ -69,7 +71,9 @@ const toSrpReport = (report: SrpReportLightDto): AdditionalSrpReport => {
     status: resolveReportsIndexStatus(report),
     dueAt: report.dueAt,
     updatedAt: report.updatedAt,
-    searchTerms: [name, report.year?.toString() ?? "", report.projectName ?? "", report.organisationName ?? ""]
+    organisationName: report.organisationName ?? null,
+    projectName: report.projectName ?? null,
+    year: report.year?.toString() ?? null
   };
 };
 
@@ -84,11 +88,14 @@ const toDisturbanceReport = (report: DisturbanceReportLightDto): AdditionalDistu
     name,
     type: "disturbance-report",
     status: resolveReportsIndexStatus(report),
-    disturbanceAt: report.disturbanceStartDate,
+    dueAt: null,
+    dateOfDisturbance: report.disturbanceStartDate,
     updatedAt: report.updatedAt,
     sitesAffected: Array.isArray(sitesAffected) ? sitesAffected.length : 0,
     intensity: report.intensity ?? (getEntryValue(report.entries, "intensity") as string | null),
-    searchTerms: [name, report.projectName ?? "", report.organisationName ?? "", report.intensity ?? ""]
+    organisationName: report.organisationName ?? null,
+    projectName: report.projectName ?? null,
+    year: null
   };
 };
 

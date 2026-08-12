@@ -52,14 +52,16 @@ const matchesProgressReport = (report: ReportsIndexReport, criteria: ReportFilte
 const matchesAdditionalReport = (report: AdditionalReport, criteria: ReportFilterCriteria) => {
   if (
     !matchesSearchQuery(
-      [report.name, report.type, report.status, report.organisationName, report.projectName],
+      [report.name, report.type, report.status, report.organisationName, report.projectName, report.year],
       criteria.query
     )
   ) {
     return false;
   }
   if (!matchesTypeAndStatus(report, criteria)) return false;
-  return matchesDueDate(report.dueAt, criteria.dueDate);
+
+  const reportDate = report.type === "disturbance-report" ? report.dateOfDisturbance : report.dueAt;
+  return matchesDueDate(reportDate, criteria.dueDate);
 };
 
 export const filterProgressPeriods = (periods: ReportsIndexPeriod[], criteria: ReportFilterCriteria) =>
