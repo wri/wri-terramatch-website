@@ -139,9 +139,11 @@ const ReportsIndexHeader = ({
     updateActiveFilters(EMPTY_REPORT_FILTERS);
   }, [updateActiveFilters]);
 
+  console.log(activeTab, "activeTab");
   return (
     <div className="bg-white">
       <ToolbarObject
+        className="sticky top-0 z-[50]"
         breadcrumbs={{
           linkRouter: router,
           links: [
@@ -168,7 +170,7 @@ const ReportsIndexHeader = ({
         }
       />
       <Toolbar
-        className="border-theme-neutral-200 items-end border-b !px-3 mobile:flex-col mobile:!items-stretch mobile:gap-3"
+        className="border-theme-neutral-200 mt-3 items-end border-b !px-3 mobile:flex-col mobile:!items-stretch mobile:gap-3"
         classNameContentLeft="min-w-0"
         classNameContentRight="mt-[-1.25rem]"
         contentLeft={
@@ -198,13 +200,14 @@ const ReportsIndexHeader = ({
         className="!bg-theme-neutral-200 !px-6 !pb-6 !pt-5"
         classNameContentLeft="w-full"
         search={{
-          placeholder: t("Search"),
+          placeholder: activeTab === "progress-reports" ? t("Search projects, sites, nurseries") : t("Search"),
           options: [],
           displayResults: "none",
           count: reportCount,
           label: t("Reports"),
           onQueryChange
         }}
+        classNameContentSearch="w-[19rem]"
         selectedFilters={activeFilterLabels}
         showClearFilters={activeFilterLabels.length > 0}
         onClickFilterButton={() => setIsFilterDrawerOpen(true)}

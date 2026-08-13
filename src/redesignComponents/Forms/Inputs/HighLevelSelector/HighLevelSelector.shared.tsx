@@ -55,13 +55,13 @@ export const SelectorLabel: FC<SelectorLabelProps> = ({ children, disabled, id }
 );
 
 export const SelectorOptionText: FC<SelectorTextProps> = ({ children }) => (
-  <Text as="span" data-selector-option-text textStyle="300">
+  <Text as="span" color="neutral.900" data-selector-option-text textStyle="400" lineHeight="normal">
     {children}
   </Text>
 );
 
 export const SelectorEmptyMessage: FC<SelectorTextProps> = ({ children }) => (
-  <Text color="neutral.600" px={2} py={2} textStyle="300">
+  <Text color="neutral.600" px={2} py={2} textStyle="400" lineHeight="normal">
     {children}
   </Text>
 );

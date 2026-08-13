@@ -140,7 +140,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   }, [router, selectedReports]);
 
   return (
-    <div className={`min-h-full bg-theme-neutral-200 ${selectedReports.length > 0 ? "pb-24" : "pb-10"}`}>
+    <div className={`bg-theme-neutral-200 min-h-full ${selectedReports.length > 0 ? "pb-24" : "pb-10"}`}>
       <ReportsIndexHeader
         activeTab={activeTab}
         source={source}
@@ -155,7 +155,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
       />
 
       {activeTab === "progress-reports" && (
-        <main className="bg-theme-neutral-200 px-2.5 pb-2.5">
+        <div className="bg-theme-neutral-200 px-2.5 pb-2.5">
           {progressLoading || (isAllProjectsView && !projectsLoaded) ? (
             <Flex minHeight="240px" alignItems="center" justifyContent="center" gap={3}>
               <LoadingIcon boxSize={6} className="animate-spin" color="primary.600" />
@@ -182,7 +182,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
               variant="tertiary"
               open={projectOpen}
               onOpenChange={setProjectOpen}
-              className="overflow-hidden rounded bg-theme-neutral-100"
+              className="bg-theme-neutral-100 overflow-hidden rounded"
               classNameHeader="!mb-0"
               header={
                 <ListSectionHeader
@@ -191,9 +191,9 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                   caption={isAllProjectsView ? "" : project.organisationName ?? ""}
                   icon={
                     projectOpen ? (
-                      <FolderOpenIcon boxSize={5} color="primary.600" />
+                      <FolderOpenIcon minWidth={5} width={5} height={"auto"} color="primary.600" />
                     ) : (
-                      <FolderIcon boxSize={5} color="neutral.400" />
+                      <FolderIcon minWidth={5} width={5} height={"auto"} color="neutral.400" />
                     )
                   }
                   statusLabels={
@@ -204,14 +204,14 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                 />
               }
             >
-              <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
+              <div className="bg-theme-neutral-200 space-y-0.5 pt-0.5">
                 {filteredPeriods.map((period, index) => (
                   <ReportingPeriodSection key={period.id} period={period} project={project} defaultOpen={index === 0} />
                 ))}
               </div>
             </Accordion>
           )}
-        </main>
+        </div>
       )}
 
       {activeTab === "additional-reports" && (
