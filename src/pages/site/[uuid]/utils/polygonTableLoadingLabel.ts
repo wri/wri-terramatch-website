@@ -19,7 +19,7 @@ type GetPolygonTableLoadingLabelParams = {
 };
 
 export const getSubmittingTableLoadingLabel = (t: (key: string) => string, count: number) =>
-  count === 1 ? t("Submitting polygon") : t("Submitting polygons");
+  count === 1 ? t("Submitting Polygon") : t("Submitting Polygons");
 
 export const getPolygonTableLoadingLabel = ({
   t,

@@ -63,7 +63,11 @@ const CreateOrganisationForm = () => {
   const provider = useLocalStepsProvider(formSteps);
   const defaultValues = useMemo(() => formDefaultValues(orgData ?? {}, provider), [orgData, provider]);
 
-  const onBackFirstStep = () => {
+  const onBackFirstStep = (shouldHideWarning?: boolean) => {
+    if (shouldHideWarning) {
+      handleDeleteDraft();
+      return;
+    }
     openModal(
       ModalId.WARNING,
       <Modal

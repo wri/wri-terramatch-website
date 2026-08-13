@@ -1,21 +1,19 @@
-import { Combobox, Portal, useListCollection } from "@chakra-ui/react";
+import { Combobox, useListCollection } from "@chakra-ui/react";
 import { FC, useEffect, useId } from "react";
 
+import { useAutocompleteMenuNavigation, useKeyboardFocusRing } from "./HighLevelSelector.keyboard";
 import {
   ChakraSlot,
   DEFAULT_EMPTY_MESSAGE,
   DEFAULT_WIDTH,
-  getControlStyles,
-  getMenuItemStyles,
-  menuContentStyles,
   SelectorChevron,
   SelectorFolderIcon,
   SelectorLabel,
-  SelectorOptionText,
-  selectorPositioning,
+  SelectorMenu,
   toCollectionValue,
   useSelectorOpenState
 } from "./HighLevelSelector.shared";
+import { getControlStyles, selectorPositioning } from "./HighLevelSelector.styles";
 import {
   HighLevelSelectorItem,
   SelectorImplementationProps,
@@ -66,6 +64,8 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
   const rootId = id ?? generatedId;
   const labelId = `${rootId}-label`;
   const { open, updateOpen } = useSelectorOpenState(defaultOpen, controlledOpen);
+  const keyboardFocus = useKeyboardFocusRing();
+  const menuNavigation = useAutocompleteMenuNavigation(open);
   const { collection, filter, set } = useListCollection<HighLevelSelectorItem>({
     initialItems: items,
     filter: matchesSearch
@@ -79,6 +79,8 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
   };
 
   const handleOpenChange = (details: SelectorOpenChangeDetails) => {
+    if (menuNavigation.shouldKeepMenuOpen(details.open)) return;
+
     updateOpen(details.open);
     if (details.open && (details.reason === "input-click" || details.reason === "trigger-click")) filter("");
     onOpenChange?.(details.open);
@@ -111,6 +113,7 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
       unstyled
       value={toCollectionValue(value)}
       width={width}
+      {...keyboardFocus.rootFocusProps}
       onInputValueChange={handleInputValueChange}
       onOpenChange={handleOpenChange}
       onValueChange={handleValueChange}
@@ -129,6 +132,7 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
           border="none"
           color={disabled ? "neutral.500" : "neutral.900"}
           cursor={disabled ? "not-allowed" : "text"}
+          data-selector-focus-target
           height="100%"
           outline="none"
           pb={2}
@@ -137,7 +141,9 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
           pt={6}
           textStyle={disabled ? "400" : "400-bold"}
           width="100%"
+          {...keyboardFocus.focusRingStyles}
           onBlur={onBlur}
+          onKeyDown={menuNavigation.handleInputKeyDown}
           _placeholder={{ color: "neutral.600", fontWeight: "normal" }}
         />
 
@@ -158,21 +164,14 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
         </Combobox.IndicatorGroup>
       </ComboboxControl>
 
-      <Portal>
-        <ComboboxPositioner zIndex={1400}>
-          <ComboboxContent {...menuContentStyles}>
-            <Combobox.Empty color="neutral.600" px={4} py={3} textStyle="400">
-              {emptyMessage}
-            </Combobox.Empty>
-
-            {collection.items.map((item: HighLevelSelectorItem) => (
-              <ComboboxItem key={item.value} aria-label={item.label} item={item} {...getMenuItemStyles(item.disabled)}>
-                <SelectorOptionText>{item.label}</SelectorOptionText>
-              </ComboboxItem>
-            ))}
-          </ComboboxContent>
-        </ComboboxPositioner>
-      </Portal>
+      <SelectorMenu
+        Content={ComboboxContent}
+        Item={ComboboxItem}
+        Positioner={ComboboxPositioner}
+        contentRef={menuNavigation.contentRef}
+        emptyMessage={emptyMessage}
+        items={collection.items}
+      />
     </Combobox.Root>
   );
 };
