@@ -22,6 +22,8 @@ type AdditionalReportsContentProps = {
   sections: AdditionalReportsEntitySectionData[];
   loading: boolean;
   error: boolean;
+  /** Skip outer layout/empty states when nested under a multi-project All view. */
+  embedded?: boolean;
 };
 
 const getGroupLabel = (type: AdditionalReportType, t: ReturnType<typeof useT>) => {
@@ -112,8 +114,20 @@ const AdditionalReportsEntitySection = ({ section }: { section: AdditionalReport
   );
 };
 
-const AdditionalReportsContent = ({ sections, loading, error }: AdditionalReportsContentProps) => {
+const AdditionalReportsContent = ({ sections, loading, error, embedded = false }: AdditionalReportsContentProps) => {
   const t = useT();
+
+  if (embedded) {
+    if (loading || error || sections.length === 0) return null;
+
+    return (
+      <div className="space-y-4">
+        {sections.map(section => (
+          <AdditionalReportsEntitySection key={`${section.type}-${section.id}`} section={section} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <main className="bg-theme-neutral-200 px-2.5 pb-2.5">

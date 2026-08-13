@@ -49,13 +49,14 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const [projectsLoaded, { data: projects }] = useProjectIndex({ pageNumber: 1, pageSize: 100 });
   const isAllProjectsView = viewValue === ALL_PROJECTS_VIEW_VALUE;
 
+  const isAdditionalTab = activeTab === "additional-reports";
   const {
     sections: additionalSections,
     loading: additionalLoading,
     error: additionalError
-  } = useAdditionalReportsData(project, activeTab === "additional-reports");
+  } = useAdditionalReportsData(project, isAdditionalTab && !isAllProjectsView);
 
-  const { filteredAdditionalSections, additionalReportCount } = useReportsIndexFilters({
+  const { filteredAdditionalSections, additionalReportCount: singleAdditionalReportCount } = useReportsIndexFilters({
     periods: [],
     additionalSections,
     query
@@ -173,12 +174,12 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     }
   }, [router, selectedReports]);
 
-  const progressReportCount = useMemo(
+  const multiProjectReportCount = useMemo(
     () => Object.values(reportCountsByProject).reduce((total, count) => total + count, 0),
     [reportCountsByProject]
   );
-  const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
-  const progressSectionsReady =
+  const reportCount = isAdditionalTab && !isAllProjectsView ? singleAdditionalReportCount : multiProjectReportCount;
+  const multiProjectSectionsReady =
     !isAllProjectsView || (projectsLoaded && Object.keys(reportCountsByProject).length >= visibleProjects.length);
 
   return (
@@ -215,13 +216,14 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                     projectUuid={item.uuid}
                     source={isEntryProject ? source : "project"}
                     sourceEntityUuid={isEntryProject ? sourceEntity.uuid : item.uuid}
+                    activeTab={activeTab}
                     query={query}
                     defaultOpen={index === 0}
                     onReportCountChange={handleReportCountChange}
                   />
                 );
               })}
-              {progressSectionsReady && progressReportCount === 0 && (
+              {multiProjectSectionsReady && multiProjectReportCount === 0 && (
                 <InlineMessage
                   className="m-4"
                   variant="info-grey"
@@ -234,12 +236,52 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
         </main>
       )}
 
-      {activeTab === "additional-reports" && (
+      {isAdditionalTab && !isAllProjectsView && (
         <AdditionalReportsContent
           sections={filteredAdditionalSections}
           loading={additionalLoading}
           error={additionalError}
         />
+      )}
+
+      {isAdditionalTab && isAllProjectsView && (
+        <main className="space-y-4 bg-theme-neutral-200 px-2.5 pb-2.5">
+          {!projectsLoaded ? (
+            <Flex minHeight="240px" alignItems="center" justifyContent="center" gap={3}>
+              <LoadingIcon boxSize={6} className="animate-spin" color="primary.600" />
+              <Text textStyle="400" color="neutral.800">
+                {t("Loading reports...")}
+              </Text>
+            </Flex>
+          ) : (
+            <>
+              {visibleProjects.map((item, index) => {
+                const isEntryProject = item.uuid === project.uuid;
+                return (
+                  <ReportsIndexProjectSection
+                    key={`additional-${item.uuid}`}
+                    projectUuid={item.uuid}
+                    source={isEntryProject ? source : "project"}
+                    sourceEntityUuid={isEntryProject ? sourceEntity.uuid : item.uuid}
+                    activeTab={activeTab}
+                    query={query}
+                    defaultOpen={index === 0}
+                    includeOrganisationReports={index === 0}
+                    onReportCountChange={handleReportCountChange}
+                  />
+                );
+              })}
+              {multiProjectSectionsReady && multiProjectReportCount === 0 && (
+                <InlineMessage
+                  className="m-4"
+                  variant="info-grey"
+                  label={t("No additional reports found")}
+                  caption={t("Try changing your search or filters.")}
+                />
+              )}
+            </>
+          )}
+        </main>
       )}
 
       <ReportsBulkActionToolbar

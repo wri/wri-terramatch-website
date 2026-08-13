@@ -10,16 +10,21 @@ import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import { getReportsRequiringAttention, ReportsIndexSource } from "../reportIndex.utils";
+import { useAdditionalReportsData } from "../useAdditionalReportsData";
 import { useReportsIndexData } from "../useReportsIndexData";
 import { useReportsIndexFilters } from "../useReportsIndexFilters";
+import AdditionalReportsContent from "./AdditionalReportsContent";
 import ReportingPeriodSection from "./ReportingPeriodSection";
 
 type ReportsIndexProjectSectionProps = {
   projectUuid: string;
   source: ReportsIndexSource;
   sourceEntityUuid: string;
+  activeTab: string;
   query: string;
   defaultOpen?: boolean;
+  /** Only the first All-Projects row should include org-level financial reports. */
+  includeOrganisationReports?: boolean;
   onReportCountChange?: (projectUuid: string, count: number) => void;
 };
 
@@ -27,27 +32,53 @@ const ReportsIndexProjectSection: FC<ReportsIndexProjectSectionProps> = ({
   projectUuid,
   source,
   sourceEntityUuid,
+  activeTab,
   query,
   defaultOpen = false,
+  includeOrganisationReports = false,
   onReportCountChange
 }) => {
   const t = useT();
+  const isAdditionalTab = activeTab === "additional-reports";
   const [projectOpen, setProjectOpen] = useState(defaultOpen);
   const [projectLoaded, { data: project }] = useFullProject({ id: projectUuid });
-  const { periods, loading, error } = useReportsIndexData(projectUuid, source, sourceEntityUuid);
-  const { filteredPeriods, progressReportCount } = useReportsIndexFilters({
+  const {
     periods,
-    additionalSections: [],
-    query
-  });
+    loading: progressLoading,
+    error: progressError
+  } = useReportsIndexData(projectUuid, source, sourceEntityUuid);
+  const {
+    sections: additionalSections,
+    loading: additionalLoading,
+    error: additionalError
+  } = useAdditionalReportsData(project, isAdditionalTab && project != null, { includeOrganisationReports });
 
-  const attentionCount = periods.reduce((total, period) => total + getReportsRequiringAttention(period.reports), 0);
+  const { filteredPeriods, filteredAdditionalSections, progressReportCount, additionalReportCount } =
+    useReportsIndexFilters({
+      periods: isAdditionalTab ? [] : periods,
+      additionalSections: isAdditionalTab ? additionalSections : [],
+      query
+    });
+
+  const reportCount = isAdditionalTab ? additionalReportCount : progressReportCount;
+  const attentionCount = isAdditionalTab
+    ? filteredAdditionalSections.reduce(
+        (total, section) =>
+          total +
+          section.groups.reduce((groupTotal, group) => groupTotal + getReportsRequiringAttention(group.reports), 0),
+        0
+      )
+    : periods.reduce((total, period) => total + getReportsRequiringAttention(period.reports), 0);
 
   useEffect(() => {
-    onReportCountChange?.(projectUuid, progressReportCount);
-  }, [onReportCountChange, projectUuid, progressReportCount]);
+    onReportCountChange?.(projectUuid, reportCount);
+  }, [onReportCountChange, projectUuid, reportCount]);
 
-  if (!projectLoaded || project == null || loading) {
+  const loading = !projectLoaded || project == null || (isAdditionalTab ? additionalLoading : progressLoading);
+  const error = isAdditionalTab ? additionalError : progressError;
+  const hasResults = isAdditionalTab ? filteredAdditionalSections.length > 0 : filteredPeriods.length > 0;
+
+  if (loading) {
     return (
       <Flex
         minHeight="160px"
@@ -64,7 +95,7 @@ const ReportsIndexProjectSection: FC<ReportsIndexProjectSectionProps> = ({
     );
   }
 
-  if (error) {
+  if (error || project == null) {
     return (
       <InlineMessage
         className="m-2"
@@ -75,8 +106,12 @@ const ReportsIndexProjectSection: FC<ReportsIndexProjectSectionProps> = ({
     );
   }
 
-  if (filteredPeriods.length === 0) {
+  if (!hasResults) {
     return null;
+  }
+
+  if (isAdditionalTab) {
+    return <AdditionalReportsContent sections={filteredAdditionalSections} loading={false} error={false} embedded />;
   }
 
   return (

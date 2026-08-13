@@ -99,11 +99,21 @@ const toDisturbanceReport = (report: DisturbanceReportLightDto): AdditionalDistu
   };
 };
 
-export const useAdditionalReportsData = (project: ProjectFullDto, enabled: boolean): AdditionalReportsDataState => {
+type UseAdditionalReportsDataOptions = {
+  /** When false, skip org-level financial reports (used for multi-project All view). */
+  includeOrganisationReports?: boolean;
+};
+
+export const useAdditionalReportsData = (
+  project: ProjectFullDto | undefined,
+  enabled: boolean,
+  options: UseAdditionalReportsDataOptions = {}
+): AdditionalReportsDataState => {
+  const { includeOrganisationReports = true } = options;
   const [state, setState] = useState<AdditionalReportsDataState>(INITIAL_STATE);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || project == null) return;
 
     let active = true;
 
@@ -118,12 +128,13 @@ export const useAdditionalReportsData = (project: ProjectFullDto, enabled: boole
           sortField: "updatedAt",
           sortDirection: "DESC" as const
         };
+        const shouldLoadOrganisationReports = includeOrganisationReports && organisationUuid != null;
 
         const [organisationState, financialState, srpState, disturbanceState] = await Promise.all([
-          organisationUuid == null ? Promise.resolve(undefined) : loadOrganisation({ id: organisationUuid }),
-          organisationUuid == null
-            ? Promise.resolve(undefined)
-            : loadFinancialReportIndex({ ...indexProps, filter: { organisationUuid } }),
+          shouldLoadOrganisationReports ? loadOrganisation({ id: organisationUuid }) : Promise.resolve(undefined),
+          shouldLoadOrganisationReports
+            ? loadFinancialReportIndex({ ...indexProps, filter: { organisationUuid } })
+            : Promise.resolve(undefined),
           loadSRPReportIndex({ ...indexProps, filter: { projectUuid: project.uuid } }),
           loadDisturbanceReportIndex({ ...indexProps, filter: { projectUuid: project.uuid } })
         ]);
@@ -145,7 +156,7 @@ export const useAdditionalReportsData = (project: ProjectFullDto, enabled: boole
         const disturbanceReports = (disturbanceState.data ?? []).map(toDisturbanceReport);
         const sections: AdditionalReportsEntitySection[] = [];
 
-        if (organisationUuid != null && financialReports.length > 0) {
+        if (shouldLoadOrganisationReports && financialReports.length > 0) {
           sections.push({
             id: organisationUuid,
             type: "organisation",
@@ -184,7 +195,7 @@ export const useAdditionalReportsData = (project: ProjectFullDto, enabled: boole
     return () => {
       active = false;
     };
-  }, [enabled, project]);
+  }, [enabled, includeOrganisationReports, project]);
 
   return state;
 };
