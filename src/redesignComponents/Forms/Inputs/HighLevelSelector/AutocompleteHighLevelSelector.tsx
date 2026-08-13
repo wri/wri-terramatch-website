@@ -1,21 +1,19 @@
 import { Combobox, useListCollection } from "@chakra-ui/react";
 import { FC, useEffect, useId } from "react";
 
+import { useAutocompleteMenuNavigation, useKeyboardFocusRing } from "./HighLevelSelector.keyboard";
 import {
   ChakraSlot,
   DEFAULT_EMPTY_MESSAGE,
   DEFAULT_WIDTH,
-  getControlStyles,
   SelectorChevron,
   SelectorFolderIcon,
   SelectorLabel,
   SelectorMenu,
-  selectorPositioning,
   toCollectionValue,
-  useAutocompleteMenuNavigation,
-  useKeyboardFocusRing,
   useSelectorOpenState
 } from "./HighLevelSelector.shared";
+import { getControlStyles, selectorPositioning } from "./HighLevelSelector.styles";
 import {
   HighLevelSelectorItem,
   SelectorImplementationProps,

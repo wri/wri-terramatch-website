@@ -1,20 +1,19 @@
 import { createListCollection, Select } from "@chakra-ui/react";
 import { FC, useId, useMemo } from "react";
 
+import { useKeyboardFocusRing } from "./HighLevelSelector.keyboard";
 import {
   ChakraSlot,
   DEFAULT_EMPTY_MESSAGE,
   DEFAULT_WIDTH,
-  getControlStyles,
   SelectorChevron,
   SelectorFolderIcon,
   SelectorLabel,
   SelectorMenu,
-  selectorPositioning,
   toCollectionValue,
-  useKeyboardFocusRing,
   useSelectorOpenState
 } from "./HighLevelSelector.shared";
+import { getControlStyles, selectorPositioning } from "./HighLevelSelector.styles";
 import {
   SelectorImplementationProps,
   SelectorOpenChangeDetails,
