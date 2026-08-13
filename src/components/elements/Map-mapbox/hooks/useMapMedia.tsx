@@ -124,7 +124,7 @@ export function useMapMedia({
       try {
         await runWithDownloadToast(
           {
-            downloading: t("Deleting Geotagged Photo…"),
+            downloading: t("Deleting Geotagged Photo"),
             complete: t("Photo Deleted"),
             error: t("Failed to delete photo.")
           },
@@ -188,7 +188,7 @@ export function useMapMedia({
       try {
         await runWithDownloadToast(
           {
-            downloading: t("Downloading Geotagged Photo…"),
+            downloading: t("Downloading Geotagged Photo"),
             complete: downloadToastMessages.complete,
             error: downloadToastMessages.error
           },
