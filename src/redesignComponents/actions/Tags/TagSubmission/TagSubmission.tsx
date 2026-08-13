@@ -48,7 +48,7 @@ const TagSubmissionActionStatusTagStateMap: Record<TagSubmissionState, ActionSta
   draft: "neutral-light",
   "nothing-reported": "neutral-dark",
   "pending-approval-neutral": "neutral-light",
-  "pending-approval": "attention",
+  "pending-approval": "information",
   "information-required": "attention",
   approved: "success",
   due: "warning"
@@ -65,7 +65,7 @@ function getTagSubmissionIcon(state: TagSubmissionState, size: "small" | "defaul
     case "pending-approval-neutral":
       return <PendingIcon color="neutral.700" boxSize={boxSize} />;
     case "pending-approval":
-      return <PendingIcon color="warning.500" boxSize={boxSize} />;
+      return <PendingIcon color="primary.600" boxSize={boxSize} />;
     case "information-required":
       return <InfoIcon color="warning.500" boxSize={boxSize} />;
     case "approved":
