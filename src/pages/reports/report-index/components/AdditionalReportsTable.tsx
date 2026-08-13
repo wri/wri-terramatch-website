@@ -81,7 +81,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
           label={format(date)}
           icon={<CalendarIcon boxSize="10px" />}
           size="small"
-          className="bg-theme-neutral-200 rounded"
+          className="rounded bg-theme-neutral-200"
         />
       ),
     [format]
@@ -109,7 +109,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
           <ChakraTableCell {...context?.getCellProps("name")}>
             <TitleCell
               label={reportName}
-              link={getReportIndexItemPath(report)}
+              link={`/reports/${report.type}/${report.id}`}
               linkTarget="_self"
               showChevron={false}
             />

@@ -15,7 +15,6 @@ export type ReportsIndexSourceEntity = ProjectFullDto | SiteFullDto | NurseryFul
 export type ReportsIndexReport = {
   id: string;
   name: string | null;
-  sourceName: string;
   projectName: string;
   type: ReportsIndexReportType;
   status: ReportsIndexStatus;

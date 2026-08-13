@@ -25,21 +25,12 @@ const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): 
     type === "project-report"
       ? (report as ProjectReportLightDto).title
       : type === "site-report"
-      ? (report as SiteReportLightDto).reportTitle ?? (report as SiteReportLightDto).siteName
-      : (report as NurseryReportLightDto).reportTitle ??
-        (report as NurseryReportLightDto).title ??
-        (report as NurseryReportLightDto).nurseryName;
-  const sourceName =
-    type === "project-report"
-      ? report.projectName
-      : type === "site-report"
       ? (report as SiteReportLightDto).siteName
       : (report as NurseryReportLightDto).nurseryName;
 
   return {
     id: report.uuid,
     name,
-    sourceName: sourceName ?? "",
     projectName: report.projectName ?? "",
     type,
     status: resolveReportsIndexStatus(report),

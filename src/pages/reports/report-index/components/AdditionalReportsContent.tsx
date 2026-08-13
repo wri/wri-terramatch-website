@@ -43,6 +43,10 @@ const GroupStatusLabels = ({ reports }: { reports: AdditionalReport[] }) => {
       {counts.informationRequired > 0 && (
         <TagSubmission state="information-required" size="small" labelPrefix={counts.informationRequired} />
       )}
+      {counts.pendingApproval > 0 && (
+        <TagSubmission state="pending-approval" size="small" labelPrefix={counts.pendingApproval} />
+      )}
+      {counts.approved > 0 && <TagSubmission state="approved" size="small" labelPrefix={counts.approved} />}
     </Flex>
   );
 };

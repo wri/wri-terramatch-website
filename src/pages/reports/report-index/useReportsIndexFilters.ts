@@ -43,7 +43,7 @@ const toFilterCriteria = (query: string, filters: ReportsFilterValues): ReportFi
 });
 
 const matchesProgressReport = (report: ReportsIndexReport, criteria: ReportFilterCriteria) => {
-  if (!matchesSearchQuery([report.name, report.type, report.sourceName, report.projectName], criteria.query)) {
+  if (!matchesSearchQuery([report.name, report.type, report.projectName], criteria.query)) {
     return false;
   }
   return matchesTypeAndStatus(report, criteria);
