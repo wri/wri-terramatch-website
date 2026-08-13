@@ -62,8 +62,8 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     query
   });
 
-  // Scope by organisation; pin the user's current project first, then the rest A–Z.
-  const organisationProjects = useMemo<ViewProject[]>(() => {
+  // View list: entry/current project first, then the rest of accessible projects A–Z.
+  const orderedProjects = useMemo<ViewProject[]>(() => {
     const currentProject: ViewProject = {
       uuid: project.uuid,
       name: project.name,
@@ -71,11 +71,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
       organisationUuid: project.organisationUuid
     };
     const others = (projects ?? [])
-      .filter(
-        item =>
-          item.uuid !== project.uuid &&
-          (project.organisationUuid == null || item.organisationUuid === project.organisationUuid)
-      )
+      .filter(item => item.uuid !== project.uuid)
       .map(item => ({
         uuid: item.uuid,
         name: item.name,
@@ -87,22 +83,22 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     return [currentProject, ...others];
   }, [project.name, project.organisationName, project.organisationUuid, project.uuid, projects]);
 
-  // View order: All Projects → user's current project → remaining organisation projects.
+  // View order: All Projects → entry project → remaining projects.
   const viewItems = useMemo<HighLevelSelectorItem[]>(
     () => [
       { label: t("All Projects"), value: ALL_PROJECTS_VIEW_VALUE },
-      ...organisationProjects.map(item => ({
+      ...orderedProjects.map(item => ({
         label: item.name ?? t("Project"),
         value: item.uuid
       }))
     ],
-    [organisationProjects, t]
+    [orderedProjects, t]
   );
 
   const visibleProjects = useMemo<ViewProject[]>(() => {
-    if (isAllProjectsView) return organisationProjects;
-    return [organisationProjects[0]];
-  }, [isAllProjectsView, organisationProjects]);
+    if (isAllProjectsView) return orderedProjects;
+    return [orderedProjects[0]];
+  }, [isAllProjectsView, orderedProjects]);
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -271,14 +267,6 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                   />
                 );
               })}
-              {multiProjectSectionsReady && multiProjectReportCount === 0 && (
-                <InlineMessage
-                  className="m-4"
-                  variant="info-grey"
-                  label={t("No additional reports found")}
-                  caption={t("Try changing your search or filters.")}
-                />
-              )}
             </>
           )}
         </main>

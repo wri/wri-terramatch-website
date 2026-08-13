@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 
 import { useFullProject } from "@/connections/Entity";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -13,7 +13,7 @@ import { getReportsRequiringAttention, ReportsIndexSource } from "../reportIndex
 import { useAdditionalReportsData } from "../useAdditionalReportsData";
 import { useReportsIndexData } from "../useReportsIndexData";
 import { useReportsIndexFilters } from "../useReportsIndexFilters";
-import AdditionalReportsContent from "./AdditionalReportsContent";
+import { AdditionalReportGroupSection, AdditionalReportsEntitySection } from "./AdditionalReportsContent";
 import ReportingPeriodSection from "./ReportingPeriodSection";
 
 type ReportsIndexProjectSectionProps = {
@@ -61,13 +61,16 @@ const ReportsIndexProjectSection: FC<ReportsIndexProjectSectionProps> = ({
     });
 
   const reportCount = isAdditionalTab ? additionalReportCount : progressReportCount;
+  const organisationSections = useMemo(
+    () => filteredAdditionalSections.filter(section => section.type === "organisation"),
+    [filteredAdditionalSections]
+  );
+  const projectAdditionalGroups = useMemo(
+    () => filteredAdditionalSections.find(section => section.type === "project")?.groups ?? [],
+    [filteredAdditionalSections]
+  );
   const attentionCount = isAdditionalTab
-    ? filteredAdditionalSections.reduce(
-        (total, section) =>
-          total +
-          section.groups.reduce((groupTotal, group) => groupTotal + getReportsRequiringAttention(group.reports), 0),
-        0
-      )
+    ? getReportsRequiringAttention(projectAdditionalGroups.flatMap(group => group.reports))
     : periods.reduce((total, period) => total + getReportsRequiringAttention(period.reports), 0);
 
   useEffect(() => {
@@ -76,7 +79,7 @@ const ReportsIndexProjectSection: FC<ReportsIndexProjectSectionProps> = ({
 
   const loading = !projectLoaded || project == null || (isAdditionalTab ? additionalLoading : progressLoading);
   const error = isAdditionalTab ? additionalError : progressError;
-  const hasResults = isAdditionalTab ? filteredAdditionalSections.length > 0 : filteredPeriods.length > 0;
+  const hasProgressResults = filteredPeriods.length > 0;
 
   if (loading) {
     return (
@@ -106,12 +109,57 @@ const ReportsIndexProjectSection: FC<ReportsIndexProjectSectionProps> = ({
     );
   }
 
-  if (!hasResults) {
-    return null;
+  if (isAdditionalTab) {
+    return (
+      <div className="space-y-4">
+        {organisationSections.map(section => (
+          <AdditionalReportsEntitySection key={`${section.type}-${section.id}`} section={section} />
+        ))}
+        <Accordion
+          variant="tertiary"
+          open={projectOpen}
+          onOpenChange={setProjectOpen}
+          className="overflow-hidden rounded bg-theme-neutral-100"
+          classNameHeader="!mb-0"
+          header={
+            <ListSectionHeader
+              level="top-level"
+              title={project.name ?? t("Project")}
+              caption={project.organisationName ?? ""}
+              icon={
+                projectOpen ? (
+                  <FolderOpenIcon boxSize={5} color="primary.600" />
+                ) : (
+                  <FolderIcon boxSize={5} color="neutral.400" />
+                )
+              }
+              statusLabels={
+                attentionCount > 0 ? (
+                  <TextBadge>{t("{count} Require Attention", { count: attentionCount })}</TextBadge>
+                ) : null
+              }
+            />
+          }
+        >
+          <div className="space-y-1 bg-theme-neutral-200 pt-0.5">
+            {projectAdditionalGroups.length === 0 ? (
+              <InlineMessage
+                className="m-4"
+                variant="info-grey"
+                label={t("No additional reports found")}
+                caption={t("Try changing your search or filters.")}
+              />
+            ) : (
+              projectAdditionalGroups.map(group => <AdditionalReportGroupSection key={group.id} group={group} />)
+            )}
+          </div>
+        </Accordion>
+      </div>
+    );
   }
 
-  if (isAdditionalTab) {
-    return <AdditionalReportsContent sections={filteredAdditionalSections} loading={false} error={false} embedded />;
+  if (!hasProgressResults) {
+    return null;
   }
 
   return (

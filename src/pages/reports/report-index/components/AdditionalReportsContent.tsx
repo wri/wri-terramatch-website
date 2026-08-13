@@ -49,7 +49,7 @@ const GroupStatusLabels = ({ reports }: { reports: AdditionalReport[] }) => {
   );
 };
 
-const AdditionalReportGroupSection = ({ group }: { group: AdditionalReportGroup }) => {
+export const AdditionalReportGroupSection = ({ group }: { group: AdditionalReportGroup }) => {
   const t = useT();
   const [open, setOpen] = useState(true);
 
@@ -76,7 +76,7 @@ const AdditionalReportGroupSection = ({ group }: { group: AdditionalReportGroup 
   );
 };
 
-const AdditionalReportsEntitySection = ({ section }: { section: AdditionalReportsEntitySectionData }) => {
+export const AdditionalReportsEntitySection = ({ section }: { section: AdditionalReportsEntitySectionData }) => {
   const t = useT();
   const [open, setOpen] = useState(true);
   const reports = useMemo(() => section.groups.flatMap(group => group.reports), [section.groups]);
