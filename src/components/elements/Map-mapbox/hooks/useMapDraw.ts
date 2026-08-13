@@ -292,7 +292,8 @@ export function useMapDraw({
 
     if (!canEdit) {
       showToast({
-        label: t("Click a polygon on the map before editing."),
+        label: t("Select a Polygon"),
+        caption: t("Click a polygon on the map before editing."),
         type: "warning",
         placement: "bottom",
         duration: 5000

@@ -13,8 +13,9 @@ import { ModalId } from "../../Modal/ModalConst";
 export interface SaveAndCloseModalProps {
   title?: string;
   content?: ReactNode;
-  onConfirm?: () => void;
+  onConfirm?: ((shouldHideWarning?: boolean) => void) | (() => void);
   models?: FormModelsDefinition;
+  shouldHideWarning: boolean;
 }
 
 const PROFILE_SECTION_LABELS: Partial<Record<BaseModelNames, string>> = {
@@ -94,7 +95,7 @@ const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
           variant: "primary",
           className: "!w-full",
           onClick: () => {
-            props.onConfirm?.();
+            props.onConfirm?.(props.shouldHideWarning);
             closeModal(ModalId.SAVE_AND_CLOSE_MODAL);
           }
         }

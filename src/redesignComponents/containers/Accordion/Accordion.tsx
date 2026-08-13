@@ -1,5 +1,6 @@
 import { Accordion as AccordionChakra, Box, Flex } from "@chakra-ui/react";
-import type { FC } from "react";
+import type { FC, MouseEvent, PointerEvent as ReactPointerEvent } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { ChevronDownIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -107,9 +108,35 @@ const Accordion: FC<AccordionProps> = ({
 }) => {
   const { container, header: headerStyles } = variantStyles[variant];
   const isControlled = open !== undefined;
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+  const isOpen = isControlled ? open : uncontrolledOpen;
+  const onOpenChangeRef = useRef(onOpenChange);
+  onOpenChangeRef.current = onOpenChange;
 
-  const handleValueChange = (details: { value: string[] }) => {
-    onOpenChange?.(details.value.includes(ACCORDION_ITEM_VALUE));
+  const setIsOpen = useCallback(
+    (nextOpen: boolean) => {
+      if (!isControlled) {
+        setUncontrolledOpen(nextOpen);
+      }
+      onOpenChangeRef.current?.(nextOpen);
+    },
+    [isControlled]
+  );
+
+  const handleTriggerPointerDown = useCallback((event: ReactPointerEvent<HTMLButtonElement>) => {
+    const button = event.currentTarget;
+    if (document.activeElement === button) {
+      button.blur();
+    }
+    button.focus();
+  }, []);
+
+  const handleTriggerClick = useCallback(() => {
+    setIsOpen(!isOpen);
+  }, [isOpen, setIsOpen]);
+
+  const handleActionsClick = (event: MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
   };
 
   return (
@@ -144,39 +171,43 @@ const Accordion: FC<AccordionProps> = ({
           : {})
       }}
     >
-      <AccordionChakra.Root
-        multiple
-        {...(isControlled
-          ? { value: open ? [ACCORDION_ITEM_VALUE] : [], onValueChange: handleValueChange }
-          : {
-              defaultValue: defaultOpen ? [ACCORDION_ITEM_VALUE] : [],
-              onValueChange: handleValueChange
-            })}
-      >
+      <AccordionChakra.Root multiple collapsible value={isOpen ? [ACCORDION_ITEM_VALUE] : []}>
         <AccordionChakra.Item value={ACCORDION_ITEM_VALUE}>
           <Flex {...container} gap={4} className={classNameHeader} alignItems="center" data-accordion-header="">
             <AccordionChakra.ItemTrigger
+              onPointerDown={handleTriggerPointerDown}
+              onClick={handleTriggerClick}
               css={{
                 outline: "none",
                 flex: 1,
-                minWidth: 0
+                minWidth: 0,
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+                width: "100%",
+                cursor: "pointer"
               }}
             >
-              <Flex flex="1" alignItems="center" width="100%" {...headerStyles}>
-                <Box flex="1" fontSize="1.25rem" lineHeight="1.75rem" color="primary.900">
+              <Flex flex="1" alignItems="center" width="100%" minWidth={0} {...headerStyles}>
+                <Box flex="1" fontSize="1.25rem" lineHeight="1.75rem" color="primary.900" minWidth={0}>
                   {header}
                 </Box>
               </Flex>
-            </AccordionChakra.ItemTrigger>
-            {actions != null ? (
-              <Box display="flex" gap={3} alignItems="center" flexShrink={0}>
-                {actions}
+              {actions != null ? (
+                <Box
+                  display="flex"
+                  gap={3}
+                  alignItems="center"
+                  flexShrink={0}
+                  onClick={handleActionsClick}
+                  onPointerDown={event => event.stopPropagation()}
+                >
+                  {actions}
+                </Box>
+              ) : null}
+              <Box flexShrink={0}>
+                <AccordionIcon variant={variant} />
               </Box>
-            ) : null}
-            <AccordionChakra.ItemTrigger
-              css={{ outline: "none", flexShrink: 0, cursor: "pointer", width: "fit-content" }}
-            >
-              <AccordionIcon variant={variant} />
             </AccordionChakra.ItemTrigger>
           </Flex>
 

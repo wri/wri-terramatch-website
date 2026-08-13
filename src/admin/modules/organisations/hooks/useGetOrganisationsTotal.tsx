@@ -7,8 +7,8 @@ export const useGetOrganisationsTotals = (filterValues: any) => {
   const { total: draft } = useGetList(resourceName, {
     filter: { ...filterValues, status: "draft" }
   });
-  const { total: pending } = useGetList(resourceName, {
-    filter: { ...filterValues, status: "pending" }
+  const { total: pendingApproval } = useGetList(resourceName, {
+    filter: { ...filterValues, status: "pending-approval" }
   });
   const { total: approved } = useGetList(resourceName, {
     filter: { ...filterValues, status: "approved" }
@@ -19,7 +19,7 @@ export const useGetOrganisationsTotals = (filterValues: any) => {
 
   return {
     draft,
-    pending,
+    "pending-approval": pendingApproval,
     approved,
     rejected
   };
