@@ -155,7 +155,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
       />
 
       {activeTab === "progress-reports" && (
-        <main className="bg-theme-neutral-200 px-2.5 pb-2.5">
+        <div className="bg-theme-neutral-200 px-2.5 pb-2.5">
           {progressLoading || (isAllProjectsView && !projectsLoaded) ? (
             <Flex minHeight="240px" alignItems="center" justifyContent="center" gap={3}>
               <LoadingIcon boxSize={6} className="animate-spin" color="primary.600" />
@@ -191,9 +191,9 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                   caption={isAllProjectsView ? "" : project.organisationName ?? ""}
                   icon={
                     projectOpen ? (
-                      <FolderOpenIcon boxSize={5} color="primary.600" />
+                      <FolderOpenIcon minWidth={5} width={5} height={"auto"} color="primary.600" />
                     ) : (
-                      <FolderIcon boxSize={5} color="neutral.400" />
+                      <FolderIcon minWidth={5} width={5} height={"auto"} color="neutral.400" />
                     )
                   }
                   statusLabels={
@@ -211,7 +211,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
               </div>
             </Accordion>
           )}
-        </main>
+        </div>
       )}
 
       {activeTab === "additional-reports" && (

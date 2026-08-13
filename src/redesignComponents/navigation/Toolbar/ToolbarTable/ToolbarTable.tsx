@@ -24,7 +24,8 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   showClearFilters = true,
   onClickFilterButton,
   selectedFilters,
-  classNameContentLeft
+  classNameContentLeft,
+  classNameContentSearch
 }) => {
   const t = useT();
   const queryRef = useRef("");
@@ -57,7 +58,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
         <div className="flex items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0 mobile:gap-y-4">
           {search != null && (
             <div className="flex w-full min-w-max max-w-max items-center gap-4">
-              <div onKeyDown={handleKeyDown}>
+              <div onKeyDown={handleKeyDown} className={classNameContentSearch}>
                 <Search
                   key={search.resetKey ?? "search"}
                   {...({
