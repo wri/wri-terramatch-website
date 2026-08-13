@@ -86,7 +86,7 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
           <ChakraTableCell {...context?.getCellProps("name")}>
             <TitleCell
               label={report.name ?? typeLabels[report.type]}
-              link={getReportIndexItemPath(report)}
+              link={`/reports/${report.type}/${report.id}`}
               linkTarget="_self"
               showChevron={false}
             />
@@ -108,7 +108,7 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
                 label={format(report.updatedAt)}
                 icon={<CalendarIcon boxSize="10px" />}
                 size="small"
-                className="bg-theme-neutral-200 rounded"
+                className="rounded bg-theme-neutral-200"
               />
             )}
           </ChakraTableCell>

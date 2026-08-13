@@ -244,6 +244,7 @@ export const deleteNurseryReport = createEntityDeleter("nurseryReports");
 // Financial Reports
 export const indexFinancialReportConnection = createEntityIndexConnection<FinancialReportLightDto>("financialReports");
 export const loadFinancialReportIndex = connectionLoader(indexFinancialReportConnection);
+export const useFinancialReportIndex = connectionHook(indexFinancialReportConnection);
 const fullFinancialReportConnection = createEntityGetConnection<FinancialReportFullDto, FinancialReportUpdateData>(
   "financialReports"
 );
@@ -255,6 +256,7 @@ export const deleteFinancialReport = createEntityDeleter("financialReports");
 export const indexDisturbanceReportConnection =
   createEntityIndexConnection<DisturbanceReportLightDto>("disturbanceReports");
 export const loadDisturbanceReportIndex = connectionLoader(indexDisturbanceReportConnection);
+export const useDisturbanceReportIndex = connectionHook(indexDisturbanceReportConnection);
 const fullDisturbanceReportConnection = createEntityGetConnection<
   DisturbanceReportFullDto,
   DisturbanceReportUpdateData
@@ -273,6 +275,7 @@ export const useCreateDisturbanceReport = creationHook(
 // SRP Reports
 export const indexSRPReportConnection = createEntityIndexConnection<SrpReportLightDto>("srpReports");
 export const loadSRPReportIndex = connectionLoader(indexSRPReportConnection);
+export const useSRPReportIndex = connectionHook(indexSRPReportConnection);
 const fullSRPReportConnection = createEntityGetConnection<SrpReportFullDto, EntityUpdateData>("srpReports");
 const lightSRPReportConnection = createEntityGetConnection<SrpReportLightDto, EntityUpdateData>("srpReports", false);
 export const loadFullSRPReport = connectionLoader(fullSRPReportConnection);
