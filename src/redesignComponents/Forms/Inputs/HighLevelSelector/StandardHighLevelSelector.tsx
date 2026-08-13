@@ -1,22 +1,19 @@
-import { createListCollection, Portal, Select } from "@chakra-ui/react";
+import { createListCollection, Select } from "@chakra-ui/react";
 import { FC, useId, useMemo } from "react";
 
+import { useKeyboardFocusRing } from "./HighLevelSelector.keyboard";
 import {
   ChakraSlot,
   DEFAULT_EMPTY_MESSAGE,
   DEFAULT_WIDTH,
-  getControlStyles,
-  getMenuItemStyles,
-  menuContentStyles,
   SelectorChevron,
-  SelectorEmptyMessage,
   SelectorFolderIcon,
   SelectorLabel,
-  SelectorOptionText,
-  selectorPositioning,
+  SelectorMenu,
   toCollectionValue,
   useSelectorOpenState
 } from "./HighLevelSelector.shared";
+import { getControlStyles, selectorPositioning } from "./HighLevelSelector.styles";
 import {
   SelectorImplementationProps,
   SelectorOpenChangeDetails,
@@ -54,6 +51,7 @@ const StandardHighLevelSelector: FC<SelectorImplementationProps> = ({
   const rootId = id ?? generatedId;
   const labelId = `${rootId}-label`;
   const { open, updateOpen } = useSelectorOpenState(defaultOpen, controlledOpen);
+  const keyboardFocus = useKeyboardFocusRing();
   const collection = useMemo(() => createListCollection({ items }), [items]);
 
   const handleOpenChange = (details: SelectorOpenChangeDetails) => {
@@ -80,6 +78,7 @@ const StandardHighLevelSelector: FC<SelectorImplementationProps> = ({
       unstyled
       value={toCollectionValue(value)}
       width={width}
+      {...keyboardFocus.rootFocusProps}
       onOpenChange={handleOpenChange}
       onValueChange={handleValueChange}
     >
@@ -97,6 +96,7 @@ const StandardHighLevelSelector: FC<SelectorImplementationProps> = ({
           border="none"
           color={disabled ? "neutral.500" : "neutral.900"}
           cursor={disabled ? "not-allowed" : "pointer"}
+          data-selector-focus-target
           display="flex"
           gap={2}
           height="100%"
@@ -107,6 +107,7 @@ const StandardHighLevelSelector: FC<SelectorImplementationProps> = ({
           pt={6}
           textAlign="left"
           width="100%"
+          {...keyboardFocus.focusRingStyles}
           onBlur={onBlur}
         >
           <SelectorFolderIcon disabled={disabled} />
@@ -124,21 +125,13 @@ const StandardHighLevelSelector: FC<SelectorImplementationProps> = ({
         </SelectTrigger>
       </SelectControl>
 
-      <Portal>
-        <SelectPositioner zIndex={1400}>
-          <SelectContent {...menuContentStyles}>
-            {items.length === 0 ? (
-              <SelectorEmptyMessage>{emptyMessage}</SelectorEmptyMessage>
-            ) : (
-              items.map(item => (
-                <SelectItem key={item.value} aria-label={item.label} item={item} {...getMenuItemStyles(item.disabled)}>
-                  <SelectorOptionText>{item.label}</SelectorOptionText>
-                </SelectItem>
-              ))
-            )}
-          </SelectContent>
-        </SelectPositioner>
-      </Portal>
+      <SelectorMenu
+        Content={SelectContent}
+        Item={SelectItem}
+        Positioner={SelectPositioner}
+        emptyMessage={emptyMessage}
+        items={items}
+      />
     </Select.Root>
   );
 };

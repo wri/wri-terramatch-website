@@ -1,4 +1,3 @@
-import { Box, Grid, Text } from "@chakra-ui/react";
 import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/react";
 
@@ -64,38 +63,4 @@ export const Disabled: Story = {
     defaultValue: "label-1",
     disabled: true
   }
-};
-
-export const Empty: Story = {
-  args: {
-    items: []
-  }
-};
-
-export const States: Story = {
-  render: () => (
-    <Grid alignItems="center" gapX={8} gapY={24} gridTemplateColumns="7rem 25rem" paddingY={8}>
-      <Text textStyle="500">Initial</Text>
-      <HighLevelSelector defaultValue="label-1" items={folders} label="Label" onChange={action("initial:onChange")} />
-
-      <Text alignSelf="start" paddingTop={5} textStyle="500">
-        Active
-      </Text>
-      <Box minHeight="13rem">
-        <HighLevelSelector
-          defaultOpen
-          defaultValue="label-1"
-          items={folders}
-          label="Label"
-          onChange={action("active:onChange")}
-        />
-      </Box>
-
-      <Text textStyle="500">Focused</Text>
-      <HighLevelSelector autoFocus defaultValue="label-1" items={folders} label="Label" />
-
-      <Text textStyle="500">Disabled</Text>
-      <HighLevelSelector defaultValue="label-1" disabled items={folders} label="Label" />
-    </Grid>
-  )
 };
