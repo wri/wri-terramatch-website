@@ -104,7 +104,7 @@ export type OrganisationLightDto = {
    */
   lightResource: boolean;
   uuid: string;
-  status: "draft" | "pending" | "approved" | "rejected";
+  status: "draft" | "pending-approval" | "approved" | "rejected";
   name: string | null;
   type: string | null;
   /**
@@ -119,7 +119,7 @@ export type OrganisationFullDto = {
    */
   lightResource: boolean;
   uuid: string;
-  status: "draft" | "pending" | "approved" | "rejected";
+  status: "draft" | "pending-approval" | "approved" | "rejected";
   name: string | null;
   type: string | null;
   /**
