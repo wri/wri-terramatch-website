@@ -140,7 +140,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   }, [router, selectedReports]);
 
   return (
-    <div className={`bg-theme-neutral-200 min-h-full ${selectedReports.length > 0 ? "pb-24" : "pb-10"}`}>
+    <div className={`min-h-full bg-theme-neutral-200 ${selectedReports.length > 0 ? "pb-24" : "pb-10"}`}>
       <ReportsIndexHeader
         activeTab={activeTab}
         source={source}
@@ -182,7 +182,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
               variant="tertiary"
               open={projectOpen}
               onOpenChange={setProjectOpen}
-              className="bg-theme-neutral-100 overflow-hidden rounded"
+              className="overflow-hidden rounded bg-theme-neutral-100"
               classNameHeader="!mb-0"
               header={
                 <ListSectionHeader
@@ -204,7 +204,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                 />
               }
             >
-              <div className="bg-theme-neutral-200 space-y-0.5 pt-0.5">
+              <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
                 {filteredPeriods.map((period, index) => (
                   <ReportingPeriodSection key={period.id} period={period} project={project} defaultOpen={index === 0} />
                 ))}

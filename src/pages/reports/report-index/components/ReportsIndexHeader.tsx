@@ -143,7 +143,6 @@ const ReportsIndexHeader = ({
   return (
     <div className="bg-white">
       <ToolbarObject
-        className="sticky top-0 z-[50]"
         breadcrumbs={{
           linkRouter: router,
           links: [
@@ -170,7 +169,7 @@ const ReportsIndexHeader = ({
         }
       />
       <Toolbar
-        className="border-theme-neutral-200 mt-3 items-end border-b !px-3 mobile:flex-col mobile:!items-stretch mobile:gap-3"
+        className="mt-3 items-end border-b border-theme-neutral-200 !px-3 mobile:flex-col mobile:!items-stretch mobile:gap-3"
         classNameContentLeft="min-w-0"
         classNameContentRight="mt-[-1.25rem]"
         contentLeft={

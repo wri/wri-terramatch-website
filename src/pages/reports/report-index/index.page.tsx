@@ -54,13 +54,13 @@ const ReportsIndexPage = () => {
             <Box>{t("The reports information could not be found.")}</Box>
           ) : (
             <ReportsSelectionProvider key={`${source}:${sourceEntity?.uuid}`}>
-            <ReportsIndexContent
-              project={project}
-              source={source as ReportsIndexSource}
-              sourceEntity={sourceEntity as ReportsIndexSourceEntity}
-            />
+              <ReportsIndexContent
+                project={project}
+                source={source as ReportsIndexSource}
+                sourceEntity={sourceEntity as ReportsIndexSourceEntity}
+              />
             </ReportsSelectionProvider>
-        )}
+          )}
         </LoadingContainer>
       </ReportsProvider>
     </FrameworkProvider>
