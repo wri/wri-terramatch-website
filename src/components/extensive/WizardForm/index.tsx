@@ -106,7 +106,7 @@ export interface WizardFormProps {
   hideBackButton?: boolean;
   hideSaveAndCloseButton?: boolean;
 
-  saveAndCloseModal?: SaveAndCloseModalProps;
+  saveAndCloseModal?: Omit<SaveAndCloseModalProps, "shouldHideWarning" | "models">;
 
   disableAutoProgress?: boolean;
   disableInitialAutoProgress?: boolean;
@@ -143,6 +143,12 @@ function WizardForm(props: WizardFormProps) {
 
   const models = useMemo(() => toArray(props.models), [props.models]);
   const isSubmissionModel = models.length > 1;
+
+  const shouldHideWarning = useMemo(
+    () =>
+      models.length === 1 && models[0].model === "organisations" && router.pathname.includes("/organization/create"),
+    [models, router.pathname]
+  );
 
   const formHook: UseFormReturn = useForm(
     useMemo(
@@ -260,12 +266,13 @@ function WizardForm(props: WizardFormProps) {
     modal.openModal(
       ModalId.SAVE_AND_CLOSE_MODAL,
       <SaveAndCloseModal
+        shouldHideWarning={shouldHideWarning}
         {...props.saveAndCloseModal}
         onConfirm={props.saveAndCloseModal?.onConfirm || props.onCloseForm || props.onBackFirstStep}
         models={models}
       />
     );
-  }, [formHook, modal, props, reportAnalytics, models]);
+  }, [formHook, modal, props, reportAnalytics, models, shouldHideWarning]);
 
   const onClickSaveAndExit = useCallback(() => {
     if (isAdmin) {
@@ -279,7 +286,7 @@ function WizardForm(props: WizardFormProps) {
       props.onSubmit?.(values);
       return;
     }
-
+    console.log("onClickSaveAndExit");
     onClickSaveAndClose();
   }, [formHook, isAdmin, onClickSaveAndClose, props, reportAnalytics]);
 
