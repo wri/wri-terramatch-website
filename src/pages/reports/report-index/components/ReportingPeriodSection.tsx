@@ -2,6 +2,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useMemo, useState } from "react";
 
+import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import { toFramework } from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
@@ -27,6 +28,7 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
   const { format } = useDate();
   const [open, setOpen] = useState(defaultOpen);
   const periodLabel = useReportingWindow(toFramework(project.frameworkKey), period.task.dueAt);
+  const taskTitle = t("Reporting Task {window}", { window: periodLabel });
   const counts = useMemo(() => getReportStatusCounts(period.reports), [period.reports]);
 
   return (
@@ -41,7 +43,7 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
           <ListSectionHeader
             level="sub-level"
             label={t("Reporting Period")}
-            title={periodLabel || format(period.task.dueAt, "MMMM yyyy")}
+            title={getShortPeriodLabel(taskTitle ?? "", true)}
             dueDate={format(period.task.dueAt)}
             statusLabels={
               <Flex alignItems="center" gap={2} className="mobile:flex-wrap mobile:justify-end">
@@ -50,6 +52,10 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
                 {counts.informationRequired > 0 && (
                   <TagSubmission state="information-required" size="small" labelPrefix={counts.informationRequired} />
                 )}
+                {counts.pendingApproval > 0 && (
+                  <TagSubmission state="pending-approval" size="small" labelPrefix={counts.pendingApproval} />
+                )}
+                {counts.approved > 0 && <TagSubmission state="approved" size="small" labelPrefix={counts.approved} />}
               </Flex>
             }
           />
