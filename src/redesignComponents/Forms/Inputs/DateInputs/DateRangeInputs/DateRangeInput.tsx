@@ -2,20 +2,25 @@ import type { DatePickerRootProps, DateValue } from "@ark-ui/react";
 import { DatePicker, Portal, useDatePicker } from "@ark-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
+import { useT } from "@transifex/react";
 import { FieldWrapper, getThemedColor } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
 import type { FC, KeyboardEvent as ReactKeyboardEvent } from "react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
-import { formatDateValue, getDateFormatString, parseDateInput } from "@/utils/date";
+import TabBar from "@/redesignComponents/navigation/TabBar/TabBar";
+import { formatDateValue, formatMonthValue, getDateFormatString, parseDateInput, parseMonthInput } from "@/utils/date";
 
 import { DayView, MonthView, YearView } from "../components";
 import { datePickerControlStyles } from "../styled";
 import { useKeyboardFocusVisible } from "../useKeyboardFocusVisible";
-import { DateRangeInputs } from "./components";
+import { DateRangeInputs, FlexibleMonthView } from "./components";
 import { calendarGlobalStyles } from "./styled";
 import type { PreservedDate } from "./types";
+import { Flex } from "@chakra-ui/react";
+
+type DateRangeUnit = "day" | "month";
 
 interface DateRangeInputProps {
   min?: DatePickerRootProps["min"];
@@ -30,11 +35,14 @@ interface DateRangeInputProps {
   value?: DateValue[];
   defaultValue?: DateValue[];
   onValueChange?: (value: DateValue[]) => void;
+  flexibleDates?: boolean;
 }
 
 const StyledPickerWrapper = styled.div<{ $size: "default" | "small" }>`
   ${({ $size }) => datePickerControlStyles($size)}
 `;
+
+const isMonthOnlyValue = (values: DateValue[]): boolean => values.length > 0 && values.every(date => date.day === 1);
 
 export const DateRangeInput: FC<DateRangeInputProps> = ({
   min,
@@ -48,10 +56,16 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
   noMarginBottom = false,
   value: valueProp,
   defaultValue = [],
-  onValueChange
+  onValueChange,
+  flexibleDates = false
 }) => {
   useKeyboardFocusVisible();
+  const t = useT();
   const [uncontrolledDates, setUncontrolledDates] = useState<DateValue[]>(defaultValue);
+  const [dateUnit, setDateUnit] = useState<DateRangeUnit>(() =>
+    flexibleDates && isMonthOnlyValue(valueProp ?? defaultValue) ? "month" : "day"
+  );
+  const isMonthMode = flexibleDates && dateUnit === "month";
   const dates = valueProp ?? uncontrolledDates;
   const isFilled = dates.length > 0;
   const setDates = useCallback(
@@ -76,11 +90,15 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
     max,
     value: dates,
     disabled,
+    minView: isMonthMode ? "month" : "day",
+    maxView: "year",
     format(date) {
-      return formatDateValue(date, dateFormat);
+      return isMonthMode ? formatMonthValue(date, browserLocale) : formatDateValue(date, dateFormat);
     },
     parse(value): DateValue | undefined {
-      return parseDateInput(value, dateFormat) as DateValue | undefined;
+      return (isMonthMode ? parseMonthInput(value, browserLocale) : parseDateInput(value, dateFormat)) as
+        | DateValue
+        | undefined;
     },
     onValueChange({ value }) {
       const preserved = preservedRef.current;
@@ -127,6 +145,29 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
     [dates, picker, setDates]
   );
 
+  const latestRef = useRef({ picker, isMonthMode });
+  latestRef.current = { picker, isMonthMode };
+
+  useEffect(() => {
+    if (!picker.open) return;
+    const { picker: latestPicker, isMonthMode: latestIsMonthMode } = latestRef.current;
+    latestPicker.setView(latestIsMonthMode ? "month" : "day");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [picker.open]);
+
+  const handleDateUnitChange = useCallback(
+    (nextUnit: string) => {
+      if (nextUnit !== "day" && nextUnit !== "month") return;
+      if (nextUnit === dateUnit) return;
+
+      preservedRef.current = null;
+      setDateUnit(nextUnit);
+      setDates([]);
+      picker.setView(nextUnit);
+    },
+    [dateUnit, picker, setDates]
+  );
+
   const handleInputKeyDown = useCallback(
     (event: ReactKeyboardEvent<HTMLInputElement>) => {
       if (disabled || picker.open) return;
@@ -136,6 +177,12 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
       }
     },
     [disabled, picker]
+  );
+
+  const inputPlaceholder = isMonthMode ? "MM/YYYY" : dateFormat;
+  const formatValue = useCallback(
+    (date: DateValue) => (isMonthMode ? formatMonthValue(date, browserLocale) : formatDateValue(date, dateFormat)),
+    [isMonthMode, browserLocale, dateFormat]
   );
 
   return (
@@ -165,7 +212,12 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
           >
             <CalendarIcon style={{ color: getThemedColor("neutral", 600) }} />
             <div className="flex justify-center">
-              <DatePicker.Input index={0} placeholder={dateFormat} onKeyDown={handleInputKeyDown} />
+              <DatePicker.Input
+                index={0}
+                placeholder={inputPlaceholder}
+                onKeyDown={handleInputKeyDown}
+                style={isMonthMode ? { width: "5rem" } : undefined}
+              />
             </div>
 
             <span
@@ -177,15 +229,34 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
             </span>
 
             <div className="flex justify-center">
-              <DatePicker.Input index={1} placeholder={dateFormat} onKeyDown={handleInputKeyDown} />
+              <DatePicker.Input
+                index={1}
+                placeholder={inputPlaceholder}
+                onKeyDown={handleInputKeyDown}
+                style={isMonthMode ? { width: "5rem" } : undefined}
+              />
             </div>
           </DatePicker.Control>
           <Portal>
             <DatePicker.Positioner>
               <DatePicker.Content>
-                <DateRangeInputs onClearDate={handleClearDate} preservedRef={preservedRef} dateFormat={dateFormat} />
+                <DateRangeInputs onClearDate={handleClearDate} preservedRef={preservedRef} formatValue={formatValue} />
+                {flexibleDates && (
+                  <Flex justifyContent="center" alignItems="center" mb="1rem">
+                    <TabBar
+                      key={dateUnit}
+                      defaultValue={dateUnit}
+                      onTabClick={handleDateUnitChange}
+                      className="max-w-[11.25rem]"
+                      tabs={[
+                        { label: t("Days"), value: "day" },
+                        { label: t("Months"), value: "month" }
+                      ]}
+                    />
+                  </Flex>
+                )}
                 <DayView />
-                <MonthView />
+                {isMonthMode ? <FlexibleMonthView /> : <MonthView />}
                 <YearView />
               </DatePicker.Content>
             </DatePicker.Positioner>
