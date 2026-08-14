@@ -152,7 +152,6 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
     if (!picker.open) return;
     const { picker: latestPicker, isMonthMode: latestIsMonthMode } = latestRef.current;
     latestPicker.setView(latestIsMonthMode ? "month" : "day");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [picker.open]);
 
   const handleDateUnitChange = useCallback(
