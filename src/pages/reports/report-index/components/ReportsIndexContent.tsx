@@ -178,7 +178,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                 variant="tertiary"
                 open={projectOpen}
                 onOpenChange={setProjectOpen}
-                className="bg-theme-neutral-100 !m-0 rounded"
+                className="!m-0 rounded bg-theme-neutral-100"
                 classNameHeader="!mb-0"
                 isScrollable={false}
                 header={
@@ -201,7 +201,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                   />
                 }
               >
-                <div className="bg-theme-neutral-200 space-y-0.5 pt-0.5">
+                <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
                   {filteredPeriods.map((period, index) => (
                     <ReportingPeriodSection
                       key={period.id}
