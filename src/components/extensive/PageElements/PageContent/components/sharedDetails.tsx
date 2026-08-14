@@ -164,7 +164,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
     entityName,
     entityUUID,
     entityStatus: entityStatus ?? "draft",
-    updateRequestStatus: updateRequestStatus ?? "no-update"
+    updateRequestStatus: updateRequestStatus!
   });
 
   const reportEntityType = resolveReportEntityTypeFromEntityName(entityName as EntityName);

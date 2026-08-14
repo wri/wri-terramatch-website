@@ -71,9 +71,11 @@ const AdditionalReportGroupSection = ({ group }: { group: AdditionalReportGroup 
         />
       }
     >
-      <div className="bg-theme-neutral-100 px-4 pb-5 pt-4">
-        <AdditionalReportsTable reports={group.reports} type={group.type} />
-      </div>
+      {open ? (
+        <div className="bg-theme-neutral-100 px-4 pb-5 pt-4">
+          <AdditionalReportsTable reports={group.reports} type={group.type} />
+        </div>
+      ) : null}
     </Accordion>
   );
 };
@@ -89,7 +91,7 @@ const AdditionalReportsEntitySection = ({ section }: { section: AdditionalReport
       variant="tertiary"
       open={open}
       onOpenChange={setOpen}
-      className="overflow-hidden rounded bg-theme-neutral-100"
+      className="bg-theme-neutral-100 overflow-hidden rounded"
       classNameHeader="!mb-0"
       header={
         <ListSectionHeader
@@ -107,7 +109,7 @@ const AdditionalReportsEntitySection = ({ section }: { section: AdditionalReport
         />
       }
     >
-      <div className="space-y-1 bg-theme-neutral-200 pt-0.5">
+      <div className="bg-theme-neutral-200 space-y-1 pt-0.5">
         {section.groups.map(group => (
           <AdditionalReportGroupSection key={group.id} group={group} />
         ))}

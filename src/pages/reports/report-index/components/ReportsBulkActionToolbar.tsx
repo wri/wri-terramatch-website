@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useLayoutShell } from "@/redesignComponents/Loayout/LayoutShell.provider";
@@ -11,17 +11,31 @@ type ReportsBulkActionToolbarProps = {
   visible: boolean;
   itemCount: number;
   editDisabled?: boolean;
+  downloadDisabled?: boolean;
+  isDownloading?: boolean;
+  nothingToReportDisabled?: boolean;
+  submitDisabled?: boolean;
+  isUpdating?: boolean;
+  submitDisabledTooltip?: string;
+  nothingToReportDisabledTooltip?: string;
   onCancel: () => void;
-  onDownload?: () => void;
-  onNothingToReport?: () => void;
+  onDownload: () => void;
+  onNothingToReport: () => void;
   onEdit: () => void;
-  onSubmit?: () => void;
+  onSubmit: () => void;
 };
 
 const ReportsBulkActionToolbar = ({
   visible,
   itemCount,
   editDisabled = false,
+  downloadDisabled = false,
+  isDownloading = false,
+  nothingToReportDisabled = false,
+  submitDisabled = false,
+  isUpdating = false,
+  submitDisabledTooltip,
+  nothingToReportDisabledTooltip,
   onCancel,
   onDownload,
   onNothingToReport,
@@ -35,24 +49,33 @@ const ReportsBulkActionToolbar = ({
   const downloadAction: BulkToolbarAction = {
     id: "download",
     children: t("Download"),
-    disabled: onDownload == null,
+    disabled: downloadDisabled || isDownloading,
+    loading: isDownloading,
     onClick: onDownload
   };
 
-  const actions: BulkToolbarAction[] = [
-    {
-      id: "nothing-to-report",
-      children: t("Nothing to Report"),
-      disabled: onNothingToReport == null,
-      onClick: onNothingToReport
-    },
-    {
-      id: "edit",
-      children: t("Edit"),
-      disabled: editDisabled,
-      onClick: onEdit
+  const actions = useMemo<BulkToolbarAction[]>(() => {
+    const nextActions: BulkToolbarAction[] = [
+      {
+        id: "nothing-to-report",
+        children: t("Nothing to Report"),
+        disabled: nothingToReportDisabled || isUpdating,
+        onClick: onNothingToReport,
+        infoTooltip: nothingToReportDisabled ? nothingToReportDisabledTooltip : undefined
+      }
+    ];
+
+    if (!editDisabled) {
+      nextActions.push({
+        id: "edit",
+        children: t("Edit"),
+        disabled: isUpdating,
+        onClick: onEdit
+      });
     }
-  ];
+
+    return nextActions;
+  }, [editDisabled, isUpdating, nothingToReportDisabled, nothingToReportDisabledTooltip, onEdit, onNothingToReport, t]);
 
   useEffect(() => {
     setSidebarCollapseDisabled(visible);
@@ -65,10 +88,15 @@ const ReportsBulkActionToolbar = ({
     <Box position="fixed" zIndex="100" bottom={3} left={isAdmin ? 14 : 3} right={3}>
       <BulkActionToolbar
         selectedCount={itemCount}
-        cancelAction={{ children: t("Cancel"), onClick: onCancel }}
+        cancelAction={{ children: t("Cancel"), onClick: onCancel, disabled: isUpdating }}
         deleteAction={downloadAction}
         actions={actions}
-        primaryAction={{ children: t("Submit"), disabled: onSubmit == null, onClick: onSubmit }}
+        primaryAction={{
+          children: t("Submit"),
+          disabled: submitDisabled || isUpdating,
+          onClick: onSubmit
+        }}
+        infoTooltip={submitDisabled ? submitDisabledTooltip : undefined}
       />
     </Box>
   );

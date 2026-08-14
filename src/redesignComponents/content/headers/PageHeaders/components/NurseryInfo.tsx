@@ -42,14 +42,15 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
     entityName: "nurseries",
     entityUUID: nursery.uuid,
     entityStatus: nursery.status ?? "draft",
-    updateRequestStatus: nursery.updateRequestStatus ?? "no-update"
+    updateRequestStatus: nursery.updateRequestStatus
   });
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery.uuid);
 
   const needMoreInformation =
     nursery.updateRequestStatus === INFORMATION_REQUIRED || nursery.status === INFORMATION_REQUIRED;
   const awaitingApproval = nursery.updateRequestStatus === PENDING_APPROVAL || nursery.status === PENDING_APPROVAL;
-  const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
+  const hasUpdateRequest =
+    !["draft", "approved"].includes(nursery.updateRequestStatus ?? "") && nursery.updateRequestStatus != null;
 
   const statusProps: StatusProps | undefined = useMemo(() => {
     if (!needMoreInformation) return undefined;
