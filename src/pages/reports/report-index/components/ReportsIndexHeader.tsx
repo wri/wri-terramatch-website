@@ -18,6 +18,7 @@ import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/T
 
 import {
   EMPTY_REPORT_FILTERS,
+  formatDueDateRangeLabel,
   getDefaultProgressFiltersForSource,
   REPORT_TYPE_LABELS,
   ReportFilterState
@@ -115,12 +116,12 @@ const ReportsIndexHeader = ({
       });
     }
 
-    if (selectedFilters.dueDate !== "") {
+    if (selectedFilters.dueDateFrom !== "" || selectedFilters.dueDateTo !== "") {
       labels.push({
-        label: selectedFilters.dueDate,
+        label: formatDueDateRangeLabel(selectedFilters.dueDateFrom, selectedFilters.dueDateTo),
         category: t("Due Date"),
         onRemove: () => {
-          updateActiveFilters({ ...selectedFilters, dueDate: "" });
+          updateActiveFilters({ ...selectedFilters, dueDateFrom: "", dueDateTo: "" });
         }
       });
     }
@@ -136,10 +137,11 @@ const ReportsIndexHeader = ({
   );
 
   const clearFilters = useCallback(() => {
-    updateActiveFilters(EMPTY_REPORT_FILTERS);
-  }, [updateActiveFilters]);
+    const cleared =
+      activeTab === "progress-reports" ? getDefaultProgressFiltersForSource(source) : EMPTY_REPORT_FILTERS;
+    updateActiveFilters(cleared);
+  }, [activeTab, source, updateActiveFilters]);
 
-  console.log(activeTab, "activeTab");
   return (
     <div className="bg-white">
       <ToolbarObject

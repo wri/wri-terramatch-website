@@ -13,7 +13,8 @@ type ReportFilterCriteria = {
   query: string;
   reportTypes: string[];
   statuses: string[];
-  dueDate: string;
+  dueDateFrom: string;
+  dueDateTo: string;
 };
 
 const matchesSearchQuery = (values: Array<string | null | undefined>, query: string) => {
@@ -30,16 +31,22 @@ const matchesTypeAndStatus = (
   return true;
 };
 
-const matchesDueDate = (dueAt: string | null | undefined, dueDate: string) => {
-  if (dueDate === "") return true;
-  return (dueAt?.slice(0, 10) ?? "") === dueDate;
+const matchesDueDateRange = (dueAt: string | null | undefined, dueDateFrom: string, dueDateTo: string) => {
+  if (dueDateFrom === "" && dueDateTo === "") return true;
+
+  const date = dueAt?.slice(0, 10) ?? "";
+  if (date === "") return false;
+  if (dueDateFrom !== "" && date < dueDateFrom) return false;
+  if (dueDateTo !== "" && date > dueDateTo) return false;
+  return true;
 };
 
 const toFilterCriteria = (query: string, filters: ReportsFilterValues): ReportFilterCriteria => ({
   query: query.trim().toLocaleLowerCase(),
   reportTypes: filters.reportTypes,
   statuses: filters.statuses,
-  dueDate: filters.dueDate
+  dueDateFrom: filters.dueDateFrom,
+  dueDateTo: filters.dueDateTo
 });
 
 const matchesProgressReport = (report: ReportsIndexReport, criteria: ReportFilterCriteria) => {
@@ -61,7 +68,7 @@ const matchesAdditionalReport = (report: AdditionalReport, criteria: ReportFilte
   if (!matchesTypeAndStatus(report, criteria)) return false;
 
   const reportDate = report.type === "disturbance-report" ? report.dateOfDisturbance : report.dueAt;
-  return matchesDueDate(reportDate, criteria.dueDate);
+  return matchesDueDateRange(reportDate, criteria.dueDateFrom, criteria.dueDateTo);
 };
 
 export const filterProgressPeriods = (periods: ReportsIndexPeriod[], criteria: ReportFilterCriteria) =>
@@ -72,7 +79,7 @@ export const filterProgressPeriods = (periods: ReportsIndexPeriod[], criteria: R
     }))
     .filter(period => {
       if (period.reports.length === 0) return false;
-      return matchesDueDate(period.task.dueAt, criteria.dueDate);
+      return matchesDueDateRange(period.task.dueAt, criteria.dueDateFrom, criteria.dueDateTo);
     });
 
 export const filterAdditionalSections = (sections: AdditionalReportsEntitySection[], criteria: ReportFilterCriteria) =>
