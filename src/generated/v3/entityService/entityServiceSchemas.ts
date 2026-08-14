@@ -487,7 +487,7 @@ export type ProjectReportLightDto = {
   /**
    * Update request status for this project report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * @format date-time
    */
@@ -529,7 +529,7 @@ export type SiteReportLightDto = {
   /**
    * Update request status for this site report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -597,7 +597,7 @@ export type NurseryReportLightDto = {
   /**
    * Update request status for this nursery report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -653,7 +653,7 @@ export type SrpReportLightDto = {
   /**
    * Update request status for this srp report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -1233,7 +1233,7 @@ export type ProjectLightDto = {
   /**
    * Update request status for this project
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   name: string | null;
   shortName: string | null;
   /**
@@ -1301,7 +1301,7 @@ export type SiteLightDto = {
   /**
    * Update request status for this site
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   name: string | null;
   /**
    * The associated project name
@@ -1339,7 +1339,7 @@ export type NurseryLightDto = {
   /**
    * Update request status for this nursery
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated project name
    */
@@ -1386,7 +1386,7 @@ export type FinancialReportLightDto = {
   /**
    * Update request status for this financial report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated organisation name
    */
@@ -1462,7 +1462,7 @@ export type DisturbanceReportLightDto = {
   /**
    * Update request status for this disturbance report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated project name
    */
@@ -1604,7 +1604,7 @@ export type ProjectFullDto = {
   /**
    * Update request status for this project
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   name: string | null;
   shortName: string | null;
   /**
@@ -1779,7 +1779,7 @@ export type SiteFullDto = {
   /**
    * Update request status for this site
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   name: string | null;
   /**
    * The associated project name
@@ -1891,7 +1891,7 @@ export type NurseryFullDto = {
   /**
    * Update request status for this nursery
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated project name
    */
@@ -1975,7 +1975,7 @@ export type ProjectReportFullDto = {
   /**
    * Update request status for this project report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * @format date-time
    */
@@ -2109,7 +2109,7 @@ export type NurseryReportFullDto = {
   /**
    * Update request status for this nursery report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -2194,7 +2194,7 @@ export type SiteReportFullDto = {
   /**
    * Update request status for this site report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -2392,7 +2392,7 @@ export type FinancialReportFullDto = {
   /**
    * Update request status for this financial report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated organisation name
    */
@@ -2459,7 +2459,7 @@ export type DisturbanceReportFullDto = {
   /**
    * Update request status for this disturbance report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated project name
    */
@@ -2535,7 +2535,7 @@ export type SrpReportFullDto = {
   /**
    * Update request status for this srp report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -2883,7 +2883,7 @@ export type UpdateFormDataBody = {
 
 export type UpdateRequestDto = {
   formUuid: string;
-  status: "no-update" | "draft" | "pending-approval" | "approved" | "information-required";
+  status: "draft" | "pending-approval" | "approved" | "information-required";
   entityAnswers: Record<string, any>;
   updateRequestAnswers: Record<string, any>;
 };
@@ -2900,7 +2900,7 @@ export type UpdateRequestAttributes = {
   /**
    * Request to change to the status of the given entity
    */
-  status?: "no-update" | "draft" | "pending-approval" | "approved" | "information-required";
+  status?: "draft" | "pending-approval" | "approved" | "information-required";
 };
 
 export type UpdateRequestData = {

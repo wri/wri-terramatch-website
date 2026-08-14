@@ -31,7 +31,7 @@ const baseSite: SiteFullDto = {
   name: "Site Name",
   uuid: "550e8400-e29b-41d4-a716-446655440099",
   status: "approved",
-  updateRequestStatus: "no-update",
+  updateRequestStatus: null,
   plantingStatus: "in-progress",
   restorationStrategy: "Tree Planting",
   landUseTypes: "Agroforesty",

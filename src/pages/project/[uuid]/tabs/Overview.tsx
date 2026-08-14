@@ -47,7 +47,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     entityName: "projects",
     entityUUID: project.uuid,
     entityStatus: project.status ?? "draft",
-    updateRequestStatus: project.updateRequestStatus ?? "no-update"
+    updateRequestStatus: project.updateRequestStatus
   });
 
   const [, { data: associatedUsers }] = useUserAssociations({

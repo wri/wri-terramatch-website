@@ -48,7 +48,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
     entityName: "projects",
     entityUUID: project.uuid,
     entityStatus: project.status ?? "draft",
-    updateRequestStatus: project.updateRequestStatus ?? "no-update"
+    updateRequestStatus: project.updateRequestStatus
   });
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("projects", project.uuid);
   const [, myOrg] = useMyOrg();
