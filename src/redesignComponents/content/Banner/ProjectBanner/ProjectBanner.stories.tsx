@@ -56,7 +56,7 @@ const mockProject: ProjectFullDto = {
   organisationType: "ngo",
   status: "draft",
   plantingStatus: "in-progress",
-  updateRequestStatus: "no-update",
+  updateRequestStatus: null,
   name: "Restoration project in the Uganda Basin",
   shortName: "Congo Basin Project",
   plantingStartDate: "2024-01-01T00:00:00.000Z",

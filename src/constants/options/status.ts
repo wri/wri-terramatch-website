@@ -94,10 +94,6 @@ export const getPolygonOptions = (t: typeof useT | Function = (t: string) => t) 
 export const getChangeRequestStatusOptions = (t: typeof useT | Function = (t: string) => t) =>
   [
     {
-      value: "no-update",
-      title: t("No Update")
-    },
-    {
       value: "draft",
       title: t("Draft")
     },

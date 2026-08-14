@@ -51,7 +51,9 @@ export const isEntityReport = (entityName: EntityName) => {
  * @returns combinedStatus
  */
 export const getEntityCombinedStatus = (entity: any): string => {
-  return !!entity.update_request_status && entity.update_request_status !== "no-update"
+  return entity.update_request_status != null &&
+    entity.update_request_status !== "" &&
+    entity.update_request_status !== "no-update"
     ? entity.update_request_status
     : entity.status;
 };
