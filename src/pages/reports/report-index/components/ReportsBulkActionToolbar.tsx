@@ -17,7 +17,6 @@ type ReportsBulkActionToolbarProps = {
   submitDisabled?: boolean;
   isUpdating?: boolean;
   submitDisabledTooltip?: string;
-  nothingToReportDisabledTooltip?: string;
   onCancel: () => void;
   onDownload: () => void;
   onNothingToReport: () => void;
@@ -35,7 +34,6 @@ const ReportsBulkActionToolbar = ({
   submitDisabled = false,
   isUpdating = false,
   submitDisabledTooltip,
-  nothingToReportDisabledTooltip,
   onCancel,
   onDownload,
   onNothingToReport,
@@ -60,8 +58,7 @@ const ReportsBulkActionToolbar = ({
         id: "nothing-to-report",
         children: t("Nothing to Report"),
         disabled: nothingToReportDisabled || isUpdating,
-        onClick: onNothingToReport,
-        infoTooltip: nothingToReportDisabled ? nothingToReportDisabledTooltip : undefined
+        onClick: onNothingToReport
       }
     ];
 
@@ -75,7 +72,7 @@ const ReportsBulkActionToolbar = ({
     }
 
     return nextActions;
-  }, [editDisabled, isUpdating, nothingToReportDisabled, nothingToReportDisabledTooltip, onEdit, onNothingToReport, t]);
+  }, [editDisabled, isUpdating, nothingToReportDisabled, onEdit, onNothingToReport, t]);
 
   useEffect(() => {
     setSidebarCollapseDisabled(visible);
