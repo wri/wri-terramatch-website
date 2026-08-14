@@ -141,9 +141,7 @@ function ShowReports() {
     const reports: SelectedItem[] = [];
     siteReports.forEach((report: any) => {
       if (
-        report &&
-        report.status !== APPROVED &&
-        report.nothingToReport === true &&
+        (report && report.status !== APPROVED && report.nothingToReport === true && !report.updateRequestStatus) ||
         report.updateRequestStatus === "no-update"
       ) {
         reports.push({
@@ -156,9 +154,7 @@ function ShowReports() {
     });
     nurseryReports.forEach((report: any) => {
       if (
-        report &&
-        report.status !== APPROVED &&
-        report.nothingToReport === true &&
+        (report && report.status !== APPROVED && report.nothingToReport === true && !report.updateRequestStatus) ||
         report.updateRequestStatus === "no-update"
       ) {
         reports.push({

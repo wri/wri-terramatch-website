@@ -46,7 +46,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     entityName: "sites",
     entityUUID: site.uuid,
     entityStatus: site.status ?? "draft",
-    updateRequestStatus: site.updateRequestStatus ?? "no-update"
+    updateRequestStatus: site.updateRequestStatus
   });
 
   const {

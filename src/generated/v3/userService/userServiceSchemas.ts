@@ -393,7 +393,7 @@ export type FinancialReportLightDto = {
   /**
    * Update request status for this financial report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated organisation name
    */

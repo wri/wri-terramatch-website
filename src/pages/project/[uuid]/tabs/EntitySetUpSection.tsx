@@ -39,7 +39,7 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
     entityName: type,
     entityUUID: entity.uuid,
     entityStatus: entity.status ?? "draft",
-    updateRequestStatus: entity.updateRequestStatus ?? "no-update",
+    updateRequestStatus: entity.updateRequestStatus,
     feedback: entity.feedback,
     entityTitle: entityTitle ?? "",
     reportTitle: reportTitle ?? ""
