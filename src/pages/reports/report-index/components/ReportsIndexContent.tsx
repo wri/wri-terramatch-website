@@ -158,7 +158,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
           <>
             {progressLoading || (isAllProjectsView && !projectsLoaded) ? (
               <Flex minHeight="240px" alignItems="center" justifyContent="center" gap={3}>
-                <LoadingIcon boxSize={6} className="animate-spin" color="primary.600" />
+                <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
                 <Text textStyle="400" color="neutral.800">
                   {t("Loading reports...")}
                 </Text>
@@ -178,7 +178,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                 variant="tertiary"
                 open={projectOpen}
                 onOpenChange={setProjectOpen}
-                className="!m-0 rounded bg-theme-neutral-100"
+                className="bg-theme-neutral-100 !m-0 rounded"
                 classNameHeader="!mb-0"
                 isScrollable={false}
                 header={
@@ -201,7 +201,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                   />
                 }
               >
-                <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
+                <div className="bg-theme-neutral-200 space-y-0.5 pt-0.5">
                   {filteredPeriods.map((period, index) => (
                     <ReportingPeriodSection
                       key={period.id}
