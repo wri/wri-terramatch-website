@@ -192,7 +192,7 @@ export const CompletedProject: Story = {
     ...baseArgs,
     project: {
       ...baseArgs.project,
-      plantingStatus: "completed" as ProjectFullDto["plantingStatus"],
+      plantingStatus: "completed",
       name: "Completed restoration project in the Congo Basin"
     }
   }

@@ -121,7 +121,6 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
                   href: getReportIndexItemPath(report),
                   leftIcon: (
                     <EditIcon
-                      className="hidden"
                       css={{
                         "& svg path": {
                           fill: getThemedColor("neutral", 900) + " !important",

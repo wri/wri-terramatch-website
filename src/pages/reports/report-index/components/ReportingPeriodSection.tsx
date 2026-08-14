@@ -71,7 +71,7 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
                 goal={0}
                 icon={<TreeIcon color="secondary.600" boxSize="0.875rem" />}
                 tooltipContent={t("Total trees currently reported for this project.")}
-                className="w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100"
+                className="bg-theme-neutral-100 w-auto min-w-[12.5rem] border-[0.125rem]"
               />
               <MetricCard
                 title={t("Seedlings Grown")}
@@ -80,7 +80,7 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
                 goal={0}
                 icon={<SeedlingsIcon color="secondary.600" boxSize="0.875rem" />}
                 tooltipContent={t("Total seedlings and seeds reported for this project.")}
-                className="w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100"
+                className="bg-theme-neutral-100 w-auto min-w-[12.5rem] border-[0.125rem]"
               />
               <MetricCard
                 title={t("Trees Regenerated")}
@@ -89,7 +89,7 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
                 goal={0}
                 icon={<RegenerationIcon color="secondary.600" boxSize="0.875rem" />}
                 tooltipContent={t("Total naturally regenerated trees reported for this project.")}
-                className="w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100"
+                className="bg-theme-neutral-100 w-auto min-w-[12.5rem] border-[0.125rem]"
               />
               <MetricCard
                 title={t("Jobs Created")}
@@ -98,7 +98,7 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
                 goal={0}
                 icon={<JobsIcon color="primary.600" boxSize="0.875rem" />}
                 tooltipContent={t("Total jobs created by this project.")}
-                className="w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100"
+                className="bg-theme-neutral-100 w-auto min-w-[12.5rem] border-[0.125rem]"
               />
             </div>
             <ReportsIndexTable reports={period.reports} />
