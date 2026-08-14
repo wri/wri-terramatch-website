@@ -79,7 +79,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({
       header={
         <AccordionHeader
           title={boldNumber}
-          status={STATUS_MAP[status]}
+          status={isFormPage ? STATUS_MAP[status] : undefined}
           statusLabel={shouldShowError && isFormPage ? t("Totals don't match across categories") : undefined}
         />
       }
