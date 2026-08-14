@@ -29,7 +29,9 @@ export function formatDateValue(date: { year: number; month: number; day: number
 
 /** Formats a year/month value as a localized "MMM YYYY" string, e.g. "May 2026". */
 export function formatMonthValue(date: { year: number; month: number }, locale: string): string {
-  return new Intl.DateTimeFormat(locale, { month: "short", year: "numeric" }).format(new Date(date.year, date.month - 1, 1));
+  return new Intl.DateTimeFormat(locale, { month: "short", year: "numeric" }).format(
+    new Date(date.year, date.month - 1, 1)
+  );
 }
 
 const monthNameCache = new Map<string, string[]>();

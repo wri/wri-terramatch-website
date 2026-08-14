@@ -1,5 +1,6 @@
 import type { DatePickerRootProps, DateValue } from "@ark-ui/react";
 import { DatePicker, Portal, useDatePicker } from "@ark-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useT } from "@transifex/react";
@@ -18,7 +19,6 @@ import { useKeyboardFocusVisible } from "../useKeyboardFocusVisible";
 import { DateRangeInputs, FlexibleMonthView } from "./components";
 import { calendarGlobalStyles } from "./styled";
 import type { PreservedDate } from "./types";
-import { Flex } from "@chakra-ui/react";
 
 type DateRangeUnit = "day" | "month";
 

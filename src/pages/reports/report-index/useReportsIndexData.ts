@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { loadLightNurseryReportList, loadLightProjectReport, loadLightSiteReportList } from "@/connections/Entity";
+import { loadFullProjectReport, loadLightNurseryReportList, loadLightSiteReportList } from "@/connections/Entity";
 import { loadTask, loadTasks } from "@/connections/Task";
 import {
   NurseryReportLightDto,
+  ProjectReportFullDto,
   ProjectReportLightDto,
   SiteReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -18,12 +19,12 @@ type ReportsIndexDataState = {
   error: boolean;
 };
 
-type ReportsIndexRawReport = ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto;
+type ReportsIndexRawReport = ProjectReportLightDto | ProjectReportFullDto | SiteReportLightDto | NurseryReportLightDto;
 
 const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): ReportsIndexReport => {
   const name =
     type === "project-report"
-      ? (report as ProjectReportLightDto).title
+      ? (report as ProjectReportLightDto | ProjectReportFullDto).title
       : type === "site-report"
       ? (report as SiteReportLightDto).siteName
       : (report as NurseryReportLightDto).nurseryName;
@@ -81,10 +82,11 @@ export const useReportsIndexData = (
 
             const siteReportUuids = taskState.siteReportUuids ?? [];
             const nurseryReportUuids = taskState.nurseryReportUuids ?? [];
+            const projectReportUuid = taskState.projectReportUuid ?? null;
             const [projectReportState, siteReportsState, nurseryReportsState] = await Promise.all([
-              taskState.projectReportUuid == null
-                ? Promise.resolve({ data: undefined })
-                : loadLightProjectReport({ id: taskState.projectReportUuid }),
+              projectReportUuid == null
+                ? Promise.resolve({ data: undefined as ProjectReportFullDto | undefined })
+                : loadFullProjectReport({ id: projectReportUuid }),
               siteReportUuids.length === 0
                 ? Promise.resolve({ data: [] as SiteReportLightDto[] })
                 : loadLightSiteReportList({ ids: siteReportUuids }),
@@ -93,10 +95,11 @@ export const useReportsIndexData = (
                 : loadLightNurseryReportList({ ids: nurseryReportUuids })
             ]);
 
+            const projectReport = projectReportState.data;
             const reports = [
-              ...(projectReportState.data == null || !belongsToSource(projectReportState.data, source, sourceUuid)
+              ...(projectReport == null || !belongsToSource(projectReport, source, sourceUuid)
                 ? []
-                : [toReport(projectReportState.data, "project-report")]),
+                : [toReport(projectReport, "project-report")]),
               ...(siteReportsState.data ?? [])
                 .filter(isPresentReport)
                 .filter(report => belongsToSource(report, source, sourceUuid))
@@ -107,7 +110,17 @@ export const useReportsIndexData = (
                 .map(report => toReport(report, "nursery-report"))
             ];
 
-            return { id: task.uuid, task, reports };
+            return {
+              id: task.uuid,
+              task,
+              projectReportUuid,
+              metrics: {
+                treesPlantedCount: projectReport?.treesPlantedCount ?? taskState.data?.treesPlantedCount ?? 0,
+                seedsPlantedCount: projectReport?.seedsPlantedCount ?? 0,
+                regeneratedTreesCount: projectReport?.regeneratedTreesCount ?? 0
+              },
+              reports
+            };
           })
         );
 

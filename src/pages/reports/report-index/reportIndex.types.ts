@@ -23,9 +23,17 @@ export type ReportsIndexReport = {
   updatedAt: string;
 };
 
+export type ReportsIndexPeriodMetrics = {
+  treesPlantedCount: number;
+  seedsPlantedCount: number;
+  regeneratedTreesCount: number;
+};
+
 export type ReportsIndexPeriod = {
   id: string;
   task: TaskLightDto;
+  metrics: ReportsIndexPeriodMetrics;
+  projectReportUuid: string | null;
   reports: ReportsIndexReport[];
 };
 
