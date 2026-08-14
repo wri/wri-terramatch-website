@@ -92,7 +92,6 @@ export const useReportsBulkActions = ({
 
   const canSubmit = selectedReports.length > 0 && submittableReports.length === selectedReports.length;
   const canMarkNothingToReport = selectedReports.length > 0 && nothingToReportReports.length === selectedReports.length;
-  const selectionIncludesProjectReport = selectedReports.some(report => report.type === "project-report");
 
   const submitDisabledTooltip = useMemo(() => {
     if (canSubmit) return undefined;
@@ -101,18 +100,6 @@ export const useReportsBulkActions = ({
     }
     return t("One or more selected reports must be completed before submission.");
   }, [canSubmit, selectedReports.length, t]);
-
-  const nothingToReportDisabledTooltip = useMemo(() => {
-    if (canMarkNothingToReport) return undefined;
-    if (selectionIncludesProjectReport) {
-      return selectedReports.length === 1
-        ? t("Project reports cannot be marked as nothing to report.")
-        : t("One or more selected reports cannot be marked as nothing to report. Project reports are not eligible.");
-    }
-    return selectedReports.length === 1
-      ? t("This report cannot be marked as nothing to report.")
-      : t("One or more selected reports cannot be marked as nothing to report.");
-  }, [canMarkNothingToReport, selectionIncludesProjectReport, selectedReports.length, t]);
 
   const handleDownload = useCallback(async () => {
     if (selectedReports.length === 0 || isDownloading) return;
@@ -240,7 +227,6 @@ export const useReportsBulkActions = ({
     canSubmit,
     canMarkNothingToReport,
     submitDisabledTooltip,
-    nothingToReportDisabledTooltip,
     handleDownload,
     handleNothingToReport,
     handleSubmit

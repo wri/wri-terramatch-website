@@ -21,7 +21,6 @@ const ReportsIndexBulkBar = ({ onReportsChanged }: ReportsIndexBulkBarProps) => 
     canSubmit,
     canMarkNothingToReport,
     submitDisabledTooltip,
-    nothingToReportDisabledTooltip,
     handleDownload,
     handleNothingToReport,
     handleSubmit
@@ -49,7 +48,6 @@ const ReportsIndexBulkBar = ({ onReportsChanged }: ReportsIndexBulkBarProps) => 
         submitDisabled={!canSubmit}
         isUpdating={isUpdating}
         submitDisabledTooltip={submitDisabledTooltip}
-        nothingToReportDisabledTooltip={nothingToReportDisabledTooltip}
         onCancel={clearSelection}
         onDownload={() => void handleDownload()}
         onNothingToReport={() => void handleNothingToReport()}
