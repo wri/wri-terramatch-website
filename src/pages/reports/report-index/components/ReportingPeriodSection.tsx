@@ -1,8 +1,11 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
+import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
+import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
 import { toFramework } from "@/context/framework.provider";
+import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -22,13 +25,43 @@ type ReportingPeriodSectionProps = {
   defaultOpen?: boolean;
 };
 
+type PeriodJobsMetricCardProps = {
+  projectReportUuid: string;
+  className: string;
+};
+
+const PeriodJobsMetricCard: FC<PeriodJobsMetricCardProps> = ({ projectReportUuid, className }) => {
+  const t = useT();
+  const jobsCreated =
+    useCollectionsTotal({
+      entity: "projectReports",
+      uuid: projectReportUuid,
+      domain: "demographics",
+      trackingType: "jobs" as TrackingType,
+      collections: DemographicCollections.JOBS_PROJECT
+    }) ?? 0;
+
+  return (
+    <MetricCard
+      title={t("Jobs Created")}
+      color="primary.600"
+      progress={jobsCreated}
+      goal={0}
+      icon={<JobsIcon color="primary.600" boxSize="0.875rem" />}
+      tooltipContent={t("Total jobs created in this reporting period.")}
+      className={className}
+    />
+  );
+};
+
 const ReportingPeriodSection = ({ period, project, defaultOpen = false }: ReportingPeriodSectionProps) => {
   const t = useT();
   const { format } = useDate();
   const [open, setOpen] = useState(defaultOpen);
   const periodLabel = useReportingWindow(toFramework(project.frameworkKey), period.task.dueAt);
   const counts = useMemo(() => getReportStatusCounts(period.reports), [period.reports]);
-  const { treesPlantedCount, seedsPlantedCount, regeneratedTreesCount, jobsCreated } = period.metrics;
+  const { treesPlantedCount, seedsPlantedCount, regeneratedTreesCount } = period.metrics;
+  const metricCardClassName = "w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100";
 
   return (
     <Box bg="neutral.100">
@@ -65,7 +98,7 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
               goal={0}
               icon={<TreeIcon color="secondary.600" boxSize="0.875rem" />}
               tooltipContent={t("Total trees planted in this reporting period.")}
-              className="w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100"
+              className={metricCardClassName}
             />
             <MetricCard
               title={t("Seedlings Grown")}
@@ -74,7 +107,7 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
               goal={0}
               icon={<SeedlingsIcon color="secondary.600" boxSize="0.875rem" />}
               tooltipContent={t("Total seedlings and seeds reported in this reporting period.")}
-              className="w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100"
+              className={metricCardClassName}
             />
             <MetricCard
               title={t("Trees Regenerated")}
@@ -83,17 +116,21 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
               goal={0}
               icon={<RegenerationIcon color="secondary.600" boxSize="0.875rem" />}
               tooltipContent={t("Total naturally regenerated trees reported in this reporting period.")}
-              className="w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100"
+              className={metricCardClassName}
             />
-            <MetricCard
-              title={t("Jobs Created")}
-              color="primary.600"
-              progress={jobsCreated}
-              goal={0}
-              icon={<JobsIcon color="primary.600" boxSize="0.875rem" />}
-              tooltipContent={t("Total jobs created in this reporting period.")}
-              className="w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100"
-            />
+            {period.projectReportUuid != null ? (
+              <PeriodJobsMetricCard projectReportUuid={period.projectReportUuid} className={metricCardClassName} />
+            ) : (
+              <MetricCard
+                title={t("Jobs Created")}
+                color="primary.600"
+                progress={0}
+                goal={0}
+                icon={<JobsIcon color="primary.600" boxSize="0.875rem" />}
+                tooltipContent={t("Total jobs created in this reporting period.")}
+                className={metricCardClassName}
+              />
+            )}
           </div>
           <ReportsIndexTable reports={period.reports} />
         </div>

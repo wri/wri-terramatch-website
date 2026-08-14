@@ -446,22 +446,7 @@ export type TaskFullDto = {
    * @format date-time
    */
   updatedAt: string;
-  /**
-   * Trees planted across approved site reports for this reporting period
-   */
   treesPlantedCount: number;
-  /**
-   * Seeds planted across approved site reports for this reporting period
-   */
-  seedsPlantedCount: number;
-  /**
-   * Naturally regenerated trees across approved site reports for this reporting period
-   */
-  regeneratedTreesCount: number;
-  /**
-   * Jobs created (or HBF direct workdays) reported on the project report for this reporting period
-   */
-  jobsCreated: number;
 };
 
 export type ProjectReportLightDto = {
