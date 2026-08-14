@@ -53,9 +53,11 @@ const ProjectReportsSection = ({ section, defaultOpen = false }: ProjectReportsS
       }
     >
       <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
-        {section.periods.map((period, index) => (
-          <ReportingPeriodSection key={period.id} period={period} defaultOpen={index === 0} />
-        ))}
+        {open
+          ? section.periods.map((period, index) => (
+              <ReportingPeriodSection key={period.id} period={period} defaultOpen={index === 0} />
+            ))
+          : null}
       </div>
     </Accordion>
   );

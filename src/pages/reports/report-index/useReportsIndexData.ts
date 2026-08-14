@@ -33,12 +33,6 @@ type ReportsIndexRawReport = ProjectReportLightDto | SiteReportLightDto | Nurser
 
 const UNSCHEDULED_PERIOD = "unscheduled";
 
-const EMPTY_PERIOD_METRICS = {
-  treesPlantedCount: 0,
-  seedsPlantedCount: 0,
-  regeneratedTreesCount: 0
-};
-
 const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): ReportsIndexReport => {
   const name =
     type === "project-report"
@@ -57,6 +51,12 @@ const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): 
     completion: report.completion,
     updatedAt: report.updatedAt
   };
+};
+
+const resolveProjectReportUuid = (report: ReportsIndexRawReport, type: ReportsIndexReportType) => {
+  if (type === "project-report") return report.uuid;
+  if ("projectReportUuid" in report) return report.projectReportUuid ?? null;
+  return null;
 };
 
 const byDueAtDescending = (a: ReportsIndexPeriod, b: ReportsIndexPeriod) =>
@@ -156,15 +156,18 @@ export const useReportsIndexData = (
           id: `${reportProjectUuid}-${periodKey}`,
           dueAt: report.dueAt,
           frameworkKey: report.frameworkKey,
-          metrics: { ...EMPTY_PERIOD_METRICS },
           projectReportUuid: null,
           reports: []
         };
         draft.periodsByDueAt.set(periodKey, period);
       }
 
+      // Prefer the project-report uuid when present; site/nursery light DTOs only fill the gap when
+      // the project-report index is disabled (site/nursery source views).
       if (type === "project-report") {
         period.projectReportUuid = report.uuid;
+      } else if (period.projectReportUuid == null) {
+        period.projectReportUuid = resolveProjectReportUuid(report, type);
       }
 
       period.reports.push(toReport(report, type));
