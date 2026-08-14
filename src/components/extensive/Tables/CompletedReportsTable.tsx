@@ -7,7 +7,6 @@ import Button from "@/components/elements/Button/Button";
 import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
-import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
 import { indexNurseryReportConnection, indexSiteReportConnection } from "@/connections/Entity";
 import { NurseryReportLightDto, SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -58,24 +57,17 @@ const CompletedReportsTable: FC<CompletedReportsTableProps> = ({ modelName, mode
         {
           accessorKey: "status",
           header: t("Completion Status"),
-          cell: props => {
-            let value = props.getValue() as string;
-
-            const statusProps = getActionCardStatusMapper(t)[value] as any;
-            return <StatusTableCell statusProps={statusProps} />;
-          }
+          cell: props => <StatusTableCell status={props.getValue() as string} />
         },
         {
           accessorKey: "updateRequestStatus",
           header: t("Change Request"),
           cell: props => {
-            let value = props.getValue() as string;
-            const statusProps = getActionCardStatusMapper(t)[value] as any;
-
+            const value = props.getValue() as string;
             if (value == null || value === "" || value === "no-update") {
               return null;
             }
-            return <StatusTableCell statusProps={statusProps} />;
+            return <StatusTableCell status={value} />;
           }
         },
         {

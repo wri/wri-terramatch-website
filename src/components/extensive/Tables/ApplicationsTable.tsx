@@ -5,13 +5,10 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
-import StatusPill from "@/components/elements/StatusPill/StatusPill";
-import Text from "@/components/elements/Text/Text";
-import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import ActionTableCell from "@/components/extensive/TableCells/ActionTableCell";
 import { applicationsConnection } from "@/connections/Application";
 import { ApplicationDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { Status } from "@/types/common";
 
 const ApplicationsTable = () => {
   const t = useT();
@@ -33,16 +30,9 @@ const ApplicationsTable = () => {
         id: "status",
         cell: props => {
           const status = last(props.row.original.submissions)?.status;
-          const statusProps = status == null ? undefined : getActionCardStatusMapper(t)[status];
-          if (statusProps == null) return null;
+          if (status == null) return null;
 
-          return (
-            <StatusPill status={statusProps.status as Status} className="w-fit">
-              <Text variant="text-bold-caption-100" className="whitespace-nowrap">
-                {statusProps.statusText}
-              </Text>
-            </StatusPill>
-          );
+          return <StatusTag status={status} size="small" />;
         },
         header: t("Status")
       },

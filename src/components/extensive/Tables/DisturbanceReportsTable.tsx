@@ -11,10 +11,7 @@ import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCe
 import { indexDisturbanceReportConnection } from "@/connections/Entity";
 import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
-import { Status } from "@/types/common";
 import { Selected } from "@/types/connection";
-
-import { getActionCardStatusMapper } from "../ActionTracker/ActionTrackerCard";
 
 interface DisturbanceReportsTableProps {
   projectUUID: string;
@@ -42,24 +39,17 @@ const DisturbanceReportsTable = ({
         {
           accessorKey: "status",
           header: t("Status"),
-          cell: props => {
-            let value = props.getValue() as string;
-
-            const statusProps = getActionCardStatusMapper(t)[value]!;
-            return <StatusTableCell statusProps={statusProps as { status: Status; statusText: string }} />;
-          }
+          cell: props => <StatusTableCell status={props.getValue() as string} />
         },
         {
           accessorKey: "updateRequestStatus",
           header: t("Change Request Status"),
           cell: props => {
-            let value = props.getValue() as string;
-            const statusProps = getActionCardStatusMapper(t)[value]!;
-
+            const value = props.getValue() as string;
             if (value == null || value === "" || value === "no-update") {
               return null;
             }
-            return <StatusTableCell statusProps={statusProps as { status: Status; statusText: string }} />;
+            return <StatusTableCell status={value} />;
           }
         },
         {
@@ -108,7 +98,7 @@ export const DisturbanceStatusMapping = (t: typeof useT): any => {
     },
     "not-started": {
       status: "error",
-      statusText: t("Not started")
+      statusText: t("Due")
     },
     draft: {
       status: "edit",
