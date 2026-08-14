@@ -4,14 +4,13 @@ export const STATUSES = [
   "Information Required",
   "Approved",
   "Deleted",
-  "External Site"
+  "External"
 ] as const;
 
-export const INTERACTION_STATES = ["default", "hover", "selected", "editable", "selected-overlap"] as const;
-export const POLYGON_STATES = [...INTERACTION_STATES, "external"] as const;
+export const STYLES = ["Default", "Hover", "Selected", "Editable", "Selected Overlap"] as const;
 
 export type BoundaryStatus = (typeof STATUSES)[number];
-export type PolygonState = (typeof POLYGON_STATES)[number];
+export type PolygonStyle = (typeof STYLES)[number];
 
 export const STATUS_COLORS: Record<BoundaryStatus, string> = {
   Draft: "neutralActive.3",
@@ -19,25 +18,15 @@ export const STATUS_COLORS: Record<BoundaryStatus, string> = {
   "Information Required": "attention.1",
   Approved: "positive.1",
   Deleted: "neutral.400",
-  "External Site": "neutralPassive.2"
+  External: "neutralPassive.2"
 };
 
-export const STATE_LABELS: Record<PolygonState, string> = {
-  default: "Default",
-  hover: "Hover",
-  selected: "Selected",
-  editable: "Editable",
-  "selected-overlap": "Selected Overlap",
-  external: "External"
-};
-
-export const FILL_OPACITY: Record<PolygonState, number> = {
-  default: 0.3,
-  hover: 0.6,
-  selected: 1,
-  editable: 0.4,
-  "selected-overlap": 0.7,
-  external: 0
+export const FILL_OPACITY: Record<PolygonStyle, number> = {
+  Default: 0.3,
+  Hover: 0.6,
+  Selected: 1,
+  Editable: 0.4,
+  "Selected Overlap": 0.7
 };
 
 export const POLYGON_VERTICES = [
@@ -52,16 +41,16 @@ export const POLYGON_VERTICES = [
 
 type MatrixRow = {
   status: BoundaryStatus;
-  states: ReadonlyArray<PolygonState | null>;
+  styles: ReadonlyArray<PolygonStyle | null>;
 };
 
 export const ROWS: MatrixRow[] = [
-  { status: "Draft", states: INTERACTION_STATES },
-  { status: "Pending Approval", states: INTERACTION_STATES },
-  { status: "Information Required", states: INTERACTION_STATES },
-  { status: "Approved", states: INTERACTION_STATES },
-  { status: "Deleted", states: ["default", "hover", null, null, null] },
-  { status: "External Site", states: [null, null, null, null, "external"] }
+  { status: "Draft", styles: STYLES },
+  { status: "Pending Approval", styles: STYLES },
+  { status: "Information Required", styles: STYLES },
+  { status: "Approved", styles: STYLES },
+  { status: "Deleted", styles: ["Default", "Hover", null, null, null] },
+  { status: "External", styles: [null, null, null, null, "Selected Overlap"] }
 ];
 
 export const ROW_TEMPLATE = `repeat(${ROWS.length}, 8.25rem)`;
