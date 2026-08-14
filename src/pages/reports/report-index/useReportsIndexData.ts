@@ -34,6 +34,8 @@ const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): 
     projectName: report.projectName ?? "",
     type,
     status: resolveReportsIndexStatus(report),
+    updateRequestStatus: report.updateRequestStatus ?? null,
+    completion: report.completion,
     updatedAt: report.updatedAt
   };
 };
@@ -44,10 +46,14 @@ const belongsToSource = (report: ReportsIndexRawReport, source: ReportsIndexSour
   return "nurseryUuid" in report && report.nurseryUuid === sourceUuid;
 };
 
+const isPresentReport = (report: ReportsIndexRawReport | undefined | null): report is ReportsIndexRawReport =>
+  report != null;
+
 export const useReportsIndexData = (
   projectUuid: string,
   source: ReportsIndexSource,
-  sourceUuid: string
+  sourceUuid: string,
+  reloadNonce = 0
 ): ReportsIndexDataState => {
   const [state, setState] = useState<ReportsIndexDataState>({ loading: true, periods: [], error: false });
 
@@ -55,7 +61,7 @@ export const useReportsIndexData = (
     let active = true;
 
     const load = async () => {
-      setState({ loading: true, periods: [], error: false });
+      setState(current => ({ ...current, loading: current.periods.length === 0, error: false }));
 
       try {
         const taskIndex = await loadTasks({
@@ -92,9 +98,11 @@ export const useReportsIndexData = (
                 ? []
                 : [toReport(projectReportState.data, "project-report")]),
               ...(siteReportsState.data ?? [])
+                .filter(isPresentReport)
                 .filter(report => belongsToSource(report, source, sourceUuid))
                 .map(report => toReport(report, "site-report")),
               ...(nurseryReportsState.data ?? [])
+                .filter(isPresentReport)
                 .filter(report => belongsToSource(report, source, sourceUuid))
                 .map(report => toReport(report, "nursery-report"))
             ];
@@ -121,7 +129,7 @@ export const useReportsIndexData = (
     return () => {
       active = false;
     };
-  }, [projectUuid, source, sourceUuid]);
+  }, [projectUuid, reloadNonce, source, sourceUuid]);
 
   return state;
 };

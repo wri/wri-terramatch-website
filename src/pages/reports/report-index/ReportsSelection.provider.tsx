@@ -1,74 +1,149 @@
-import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useSyncExternalStore
+} from "react";
 
 import type { ReportIndexItem } from "./reportIndex.types";
 
-type ReportsSelectionContextValue = {
-  selectedReports: ReportIndexItem[];
-  clearSelection: () => void;
-  isReportSelected: (report: ReportIndexItem) => boolean;
-  setReportSelected: (report: ReportIndexItem, selected: boolean) => void;
-  setVisibleReportsSelected: (reports: ReportIndexItem[], selected: boolean) => void;
-};
-
-const ReportsSelectionContext = createContext<ReportsSelectionContextValue | undefined>(undefined);
-
 const getSelectionKey = (report: ReportIndexItem) => `${report.type}:${report.id}`;
 
-const ReportsSelectionProvider = ({ children }: PropsWithChildren) => {
-  const [selectedByKey, setSelectedByKey] = useState<Map<string, ReportIndexItem>>(new Map());
+type Listener = () => void;
 
-  const clearSelection = useCallback(() => setSelectedByKey(new Map()), []);
+class ReportsSelectionStore {
+  private selectedByKey = new Map<string, ReportIndexItem>();
+  private listeners = new Set<Listener>();
 
-  const isReportSelected = useCallback(
-    (report: ReportIndexItem) => selectedByKey.has(getSelectionKey(report)),
-    [selectedByKey]
-  );
+  subscribe = (listener: Listener) => {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  };
 
-  const setReportSelected = useCallback((report: ReportIndexItem, selected: boolean) => {
-    setSelectedByKey(current => {
-      const next = new Map(current);
+  private emit() {
+    this.listeners.forEach(listener => listener());
+  }
+
+  getSelectedReports = () => Array.from(this.selectedByKey.values());
+
+  getSelectedCount = () => this.selectedByKey.size;
+
+  isSelectedKey = (key: string) => this.selectedByKey.has(key);
+
+  getTableFingerprint = (reports: ReportIndexItem[]) =>
+    reports.map(report => (this.selectedByKey.has(getSelectionKey(report)) ? "1" : "0")).join("");
+
+  clearSelection = () => {
+    if (this.selectedByKey.size === 0) return;
+    this.selectedByKey = new Map();
+    this.emit();
+  };
+
+  setReportSelected = (report: ReportIndexItem, selected: boolean) => {
+    const key = getSelectionKey(report);
+    if (selected === this.selectedByKey.has(key)) return;
+
+    const next = new Map(this.selectedByKey);
+    if (selected) next.set(key, report);
+    else next.delete(key);
+    this.selectedByKey = next;
+    this.emit();
+  };
+
+  setVisibleReportsSelected = (reports: ReportIndexItem[], selected: boolean) => {
+    const next = new Map(this.selectedByKey);
+    let changed = false;
+
+    reports.forEach(report => {
       const key = getSelectionKey(report);
+      if (selected === next.has(key)) return;
+      changed = true;
       if (selected) next.set(key, report);
       else next.delete(key);
-      return next;
     });
-  }, []);
 
-  const setVisibleReportsSelected = useCallback((reports: ReportIndexItem[], selected: boolean) => {
-    setSelectedByKey(current => {
-      const next = new Map(current);
-      reports.forEach(report => {
-        const key = getSelectionKey(report);
-        if (selected) next.set(key, report);
-        else next.delete(key);
-      });
-      return next;
-    });
-  }, []);
+    if (!changed) return;
+    this.selectedByKey = next;
+    this.emit();
+  };
+}
 
-  const value = useMemo<ReportsSelectionContextValue>(
+type ReportsSelectionStoreValue = {
+  store: ReportsSelectionStore;
+};
+
+const ReportsSelectionStoreContext = createContext<ReportsSelectionStoreValue | undefined>(undefined);
+
+const ReportsSelectionProvider = ({ children }: PropsWithChildren) => {
+  const storeRef = useRef<ReportsSelectionStore>();
+  if (storeRef.current == null) {
+    storeRef.current = new ReportsSelectionStore();
+  }
+
+  const value = useMemo(() => ({ store: storeRef.current! }), []);
+
+  return <ReportsSelectionStoreContext.Provider value={value}>{children}</ReportsSelectionStoreContext.Provider>;
+};
+
+const useReportsSelectionStore = () => {
+  const context = useContext(ReportsSelectionStoreContext);
+  if (context == null) {
+    throw new Error("Reports selection hooks must be used inside ReportsSelectionProvider");
+  }
+  return context.store;
+};
+
+export const useReportsSelectionActions = () => {
+  const store = useReportsSelectionStore();
+
+  return useMemo(
     () => ({
-      selectedReports: Array.from(selectedByKey.values()),
-      clearSelection,
-      isReportSelected,
-      setReportSelected,
-      setVisibleReportsSelected
+      clearSelection: store.clearSelection,
+      setReportSelected: store.setReportSelected,
+      setVisibleReportsSelected: store.setVisibleReportsSelected
     }),
-    [clearSelection, isReportSelected, selectedByKey, setReportSelected, setVisibleReportsSelected]
+    [store]
   );
+};
 
-  return <ReportsSelectionContext.Provider value={value}>{children}</ReportsSelectionContext.Provider>;
+export const useReportsSelectionState = () => {
+  const store = useReportsSelectionStore();
+  const selectedCount = useSyncExternalStore(store.subscribe, store.getSelectedCount, store.getSelectedCount);
+
+  return useMemo(
+    () => ({
+      selectedReports: store.getSelectedReports(),
+      selectedCount,
+      isReportSelected: (report: ReportIndexItem) => store.isSelectedKey(getSelectionKey(report))
+    }),
+    [selectedCount, store]
+  );
 };
 
 export const useReportsSelection = () => {
-  const context = useContext(ReportsSelectionContext);
-  if (context == null) throw new Error("useReportsSelection must be used inside ReportsSelectionProvider");
-  return context;
+  const actions = useReportsSelectionActions();
+  const state = useReportsSelectionState();
+  return { ...actions, ...state };
 };
 
 export const useReportTableSelection = <T extends ReportIndexItem>(reports: T[]) => {
-  const { isReportSelected, setReportSelected, setVisibleReportsSelected } = useReportsSelection();
-  const selectedRows = useMemo(() => reports.filter(isReportSelected), [isReportSelected, reports]);
+  const store = useReportsSelectionStore();
+  const { setReportSelected, setVisibleReportsSelected } = useReportsSelectionActions();
+
+  const getFingerprint = useCallback(() => store.getTableFingerprint(reports), [reports, store]);
+  const fingerprint = useSyncExternalStore(store.subscribe, getFingerprint, getFingerprint);
+
+  const selectedRows = useMemo(() => {
+    void fingerprint;
+    return reports.filter(report => store.isSelectedKey(getSelectionKey(report)));
+  }, [fingerprint, reports, store]);
+
+  const isReportSelected = useCallback((report: T) => store.isSelectedKey(getSelectionKey(report)), [store]);
 
   const handleRowSelected = useCallback(
     (report: T, selected: boolean) => setReportSelected(report, selected),

@@ -3578,6 +3578,10 @@ export type EntityExportAllQueryParams = {
    * Filter by project
    */
   projectUuid?: string;
+  /**
+   * Filter by specific entity UUIDs. When provided, frameworkKey and projectUuid are ignored.
+   */
+  uuids?: string[];
 };
 
 export type EntityExportAllError = Fetcher.ErrorWrapper<{
