@@ -15,18 +15,17 @@ import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessa
 import { ReportsIndexSourceEntity } from "../reportIndex.types";
 import {
   ALL_PROJECTS_VIEW_VALUE,
-  getReportIndexItemPath,
   getReportsIndexUrl,
   getReportsRequiringAttention,
   ReportsIndexSource
 } from "../reportIndex.utils";
-import { useReportsSelection } from "../ReportsSelection.provider";
+import { useReportsSelectionActions } from "../ReportsSelection.provider";
 import { useAdditionalReportsData } from "../useAdditionalReportsData";
 import { useReportsIndexData } from "../useReportsIndexData";
 import { useReportsIndexFilters } from "../useReportsIndexFilters";
 import AdditionalReportsContent from "./AdditionalReportsContent";
 import ReportingPeriodSection from "./ReportingPeriodSection";
-import ReportsBulkActionToolbar from "./ReportsBulkActionToolbar";
+import ReportsIndexBulkBar from "./ReportsIndexBulkBar";
 import ReportsIndexHeader from "./ReportsIndexHeader";
 
 type ReportsIndexContentProps = {
@@ -45,7 +44,8 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const [viewValue, setViewValue] = useState(
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
   );
-  const { selectedReports, clearSelection } = useReportsSelection();
+  const { clearSelection } = useReportsSelectionActions();
+  const [reloadNonce, setReloadNonce] = useState(0);
   const [projectsLoaded, { data: projects }] = useProjectIndex({});
   const isAllProjectsView = viewValue === ALL_PROJECTS_VIEW_VALUE;
 
@@ -53,7 +53,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     periods,
     loading: progressLoading,
     error: progressError
-  } = useReportsIndexData(project.uuid, source, sourceEntity.uuid);
+  } = useReportsIndexData(project.uuid, source, sourceEntity.uuid, reloadNonce);
   const {
     sections: additionalSections,
     loading: additionalLoading,
@@ -84,10 +84,12 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   }, [project.name, project.uuid, projects, t]);
 
   useEffect(() => {
-    if (!router.isReady) return;
-    const nextView = viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid;
-    if (nextView !== viewValue) setViewValue(nextView);
-  }, [project.uuid, router.isReady, viewFromQuery, viewValue]);
+    if (viewFromQuery === ALL_PROJECTS_VIEW_VALUE) {
+      setViewValue(ALL_PROJECTS_VIEW_VALUE);
+      return;
+    }
+    setViewValue(project.uuid);
+  }, [project.uuid, viewFromQuery]);
 
   const handleViewChange = useCallback(
     (nextView: string) => {
@@ -133,14 +135,12 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     [clearSelection]
   );
 
-  const handleBulkEdit = useCallback(() => {
-    if (selectedReports.length === 1) {
-      void router.push(getReportIndexItemPath(selectedReports[0]));
-    }
-  }, [router, selectedReports]);
+  const handleReportsChanged = useCallback(() => {
+    setReloadNonce(current => current + 1);
+  }, []);
 
   return (
-    <div className={`min-h-full bg-theme-neutral-200 ${selectedReports.length > 0 ? "pb-24" : "pb-10"}`}>
+    <div className="min-h-full bg-theme-neutral-200 pb-10">
       <ReportsIndexHeader
         activeTab={activeTab}
         source={source}
@@ -222,13 +222,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
         />
       )}
 
-      <ReportsBulkActionToolbar
-        visible={selectedReports.length > 0}
-        itemCount={selectedReports.length}
-        editDisabled={selectedReports.length !== 1}
-        onCancel={clearSelection}
-        onEdit={handleBulkEdit}
-      />
+      <ReportsIndexBulkBar onReportsChanged={handleReportsChanged} />
     </div>
   );
 };

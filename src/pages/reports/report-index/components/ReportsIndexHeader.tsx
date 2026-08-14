@@ -139,7 +139,6 @@ const ReportsIndexHeader = ({
     updateActiveFilters(EMPTY_REPORT_FILTERS);
   }, [updateActiveFilters]);
 
-  console.log(activeTab, "activeTab");
   return (
     <div className="bg-white">
       <ToolbarObject

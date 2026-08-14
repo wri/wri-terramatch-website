@@ -18,6 +18,8 @@ export type ReportsIndexReport = {
   projectName: string;
   type: ReportsIndexReportType;
   status: ReportsIndexStatus;
+  updateRequestStatus: string | null;
+  completion: number | null;
   updatedAt: string;
 };
 
@@ -34,6 +36,8 @@ type AdditionalReportBase = {
   name: string;
   type: AdditionalReportType;
   status: ReportsIndexStatus;
+  updateRequestStatus: string | null;
+  completion: number | null;
   updatedAt: string;
   organisationName: string | null;
   projectName: string | null;

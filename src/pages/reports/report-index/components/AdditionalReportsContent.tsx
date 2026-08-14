@@ -71,9 +71,11 @@ const AdditionalReportGroupSection = ({ group }: { group: AdditionalReportGroup 
         />
       }
     >
-      <div className="bg-theme-neutral-100 px-4 pb-5 pt-4">
-        <AdditionalReportsTable reports={group.reports} type={group.type} />
-      </div>
+      {open ? (
+        <div className="bg-theme-neutral-100 px-4 pb-5 pt-4">
+          <AdditionalReportsTable reports={group.reports} type={group.type} />
+        </div>
+      ) : null}
     </Accordion>
   );
 };
