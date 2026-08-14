@@ -1,9 +1,4 @@
-import {
-  NurseryFullDto,
-  ProjectFullDto,
-  SiteFullDto,
-  TaskLightDto
-} from "@/generated/v3/entityService/entityServiceSchemas";
+import { NurseryFullDto, ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 
 export type ReportsIndexReportType = "project-report" | "site-report" | "nursery-report";
@@ -29,12 +24,25 @@ export type ReportsIndexPeriodMetrics = {
   regeneratedTreesCount: number;
 };
 
+/**
+ * A reporting period is the set of reports a project has to deliver for a given due date, which is
+ * what a reporting task represents on the backend. The reports carry their own due date and
+ * framework, so the period is derived from them without having to walk the tasks.
+ */
 export type ReportsIndexPeriod = {
   id: string;
-  task: TaskLightDto;
+  dueAt: string | null;
+  frameworkKey: string | null;
   metrics: ReportsIndexPeriodMetrics;
   projectReportUuid: string | null;
   reports: ReportsIndexReport[];
+};
+
+export type ReportsIndexProjectSection = {
+  id: string;
+  name: string | null;
+  organisationName: string | null;
+  periods: ReportsIndexPeriod[];
 };
 
 export type AdditionalReportType = "financial-report" | "srp-report" | "disturbance-report";

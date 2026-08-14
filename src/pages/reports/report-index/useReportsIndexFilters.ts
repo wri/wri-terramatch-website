@@ -6,6 +6,7 @@ import {
   AdditionalReport,
   AdditionalReportsEntitySection,
   ReportsIndexPeriod,
+  ReportsIndexProjectSection,
   ReportsIndexReport
 } from "./reportIndex.types";
 
@@ -79,8 +80,13 @@ export const filterProgressPeriods = (periods: ReportsIndexPeriod[], criteria: R
     }))
     .filter(period => {
       if (period.reports.length === 0) return false;
-      return matchesDueDateRange(period.task.dueAt, criteria.dueDateFrom, criteria.dueDateTo);
+      return matchesDueDateRange(period.dueAt, criteria.dueDateFrom, criteria.dueDateTo);
     });
+
+export const filterProgressSections = (sections: ReportsIndexProjectSection[], criteria: ReportFilterCriteria) =>
+  sections
+    .map(section => ({ ...section, periods: filterProgressPeriods(section.periods, criteria) }))
+    .filter(section => section.periods.length > 0);
 
 export const filterAdditionalSections = (sections: AdditionalReportsEntitySection[], criteria: ReportFilterCriteria) =>
   sections
@@ -96,16 +102,19 @@ export const filterAdditionalSections = (sections: AdditionalReportsEntitySectio
     .filter(section => section.groups.length > 0);
 
 type UseReportsIndexFiltersArgs = {
-  periods: ReportsIndexPeriod[];
+  progressSections: ReportsIndexProjectSection[];
   additionalSections: AdditionalReportsEntitySection[];
   query: string;
 };
 
-export const useReportsIndexFilters = ({ periods, additionalSections, query }: UseReportsIndexFiltersArgs) => {
+export const useReportsIndexFilters = ({ progressSections, additionalSections, query }: UseReportsIndexFiltersArgs) => {
   const { filters } = useReportsContext();
   const criteria = useMemo(() => toFilterCriteria(query, filters), [query, filters]);
 
-  const filteredPeriods = useMemo(() => filterProgressPeriods(periods, criteria), [periods, criteria]);
+  const filteredProgressSections = useMemo(
+    () => filterProgressSections(progressSections, criteria),
+    [progressSections, criteria]
+  );
 
   const filteredAdditionalSections = useMemo(
     () => filterAdditionalSections(additionalSections, criteria),
@@ -113,8 +122,13 @@ export const useReportsIndexFilters = ({ periods, additionalSections, query }: U
   );
 
   const progressReportCount = useMemo(
-    () => filteredPeriods.reduce((total, period) => total + period.reports.length, 0),
-    [filteredPeriods]
+    () =>
+      filteredProgressSections.reduce(
+        (sectionTotal, section) =>
+          sectionTotal + section.periods.reduce((periodTotal, period) => periodTotal + period.reports.length, 0),
+        0
+      ),
+    [filteredProgressSections]
   );
 
   const additionalReportCount = useMemo(
@@ -128,7 +142,7 @@ export const useReportsIndexFilters = ({ periods, additionalSections, query }: U
   );
 
   return {
-    filteredPeriods,
+    filteredProgressSections,
     filteredAdditionalSections,
     progressReportCount,
     additionalReportCount

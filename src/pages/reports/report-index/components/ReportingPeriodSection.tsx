@@ -5,9 +5,9 @@ import { FC, useMemo, useState } from "react";
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
+import { useFullProjectReport } from "@/connections/Entity";
 import { toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -22,7 +22,6 @@ import ReportsIndexTable from "./ReportsIndexTable";
 
 type ReportingPeriodSectionProps = {
   period: ReportsIndexPeriod;
-  project: ProjectFullDto;
   defaultOpen?: boolean;
 };
 
@@ -55,15 +54,22 @@ const PeriodJobsMetricCard: FC<PeriodJobsMetricCardProps> = ({ projectReportUuid
   );
 };
 
-const ReportingPeriodSection = ({ period, project, defaultOpen = false }: ReportingPeriodSectionProps) => {
+const ReportingPeriodSection = ({ period, defaultOpen = false }: ReportingPeriodSectionProps) => {
   const t = useT();
   const { format } = useDate();
   const [open, setOpen] = useState(defaultOpen);
-  const periodLabel = useReportingWindow(toFramework(project.frameworkKey), period.task.dueAt);
+  const periodLabel = useReportingWindow(toFramework(period.frameworkKey), period.dueAt ?? undefined);
   const taskTitle = t("Reporting Task {window}", { window: periodLabel });
   const counts = useMemo(() => getReportStatusCounts(period.reports), [period.reports]);
-  const { treesPlantedCount, seedsPlantedCount, regeneratedTreesCount } = period.metrics;
   const metricCardClassName = "w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100";
+
+  const [, { data: projectReport }] = useFullProjectReport({
+    id: open && period.projectReportUuid != null ? period.projectReportUuid : undefined
+  });
+
+  const treesPlantedCount = projectReport?.treesPlantedCount ?? period.metrics.treesPlantedCount;
+  const seedsPlantedCount = projectReport?.seedsPlantedCount ?? period.metrics.seedsPlantedCount;
+  const regeneratedTreesCount = projectReport?.regeneratedTreesCount ?? period.metrics.regeneratedTreesCount;
 
   return (
     <Box bg="neutral.100">
@@ -78,7 +84,7 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
             level="sub-level"
             label={t("Reporting Period")}
             title={getShortPeriodLabel(taskTitle ?? "", true)}
-            dueDate={format(period.task.dueAt)}
+            dueDate={period.dueAt == null ? undefined : format(period.dueAt)}
             statusLabels={
               <Flex alignItems="center" gap={2} className="mobile:flex-wrap mobile:justify-end">
                 {counts.due > 0 && <TagSubmission state="due" size="small" labelPrefix={counts.due} />}
