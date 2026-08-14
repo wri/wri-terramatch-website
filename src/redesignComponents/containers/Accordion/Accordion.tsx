@@ -104,7 +104,8 @@ const Accordion: FC<AccordionProps> = ({
   classNameHeader,
   defaultOpen = false,
   open,
-  onOpenChange
+  onOpenChange,
+  isScrollable = true
 }) => {
   const { container, header: headerStyles } = variantStyles[variant];
   const isControlled = open !== undefined;
@@ -143,10 +144,14 @@ const Accordion: FC<AccordionProps> = ({
     <Box
       className={className}
       css={{
-        "& [data-scope='accordion'][data-part='item-content']": {
-          margin: "0 -2rem",
-          padding: "0 2rem"
-        },
+        ...(isScrollable
+          ? {
+              "& [data-scope='accordion'][data-part='item-content']": {
+                margin: "0 -2rem",
+                padding: "0 2rem"
+              }
+            }
+          : {}),
         "& [data-scope='accordion'][data-part='item']": {
           overflow: "visible"
         },

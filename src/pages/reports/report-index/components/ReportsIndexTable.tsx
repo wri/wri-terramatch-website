@@ -108,7 +108,7 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
                 label={format(report.updatedAt)}
                 icon={<CalendarIcon boxSize="10px" />}
                 size="small"
-                className="rounded bg-theme-neutral-200"
+                className="bg-theme-neutral-200 rounded"
               />
             )}
           </ChakraTableCell>
@@ -121,7 +121,6 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
                   href: getReportIndexItemPath(report),
                   leftIcon: (
                     <EditIcon
-                      className="hidden"
                       css={{
                         "& svg path": {
                           fill: getThemedColor("neutral", 900) + " !important",

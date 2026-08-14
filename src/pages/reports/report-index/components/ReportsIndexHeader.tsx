@@ -141,8 +141,9 @@ const ReportsIndexHeader = ({
 
   console.log(activeTab, "activeTab");
   return (
-    <div className="bg-white">
+    <>
       <ToolbarObject
+        className="sticky top-0 z-20"
         breadcrumbs={{
           linkRouter: router,
           links: [
@@ -155,7 +156,7 @@ const ReportsIndexHeader = ({
         }}
       />
       <PageHeader
-        className="!bg-theme-neutral-100"
+        className="!bg-theme-neutral-100 !px-6"
         title={t("Reports")}
         actions={
           <Button
@@ -169,7 +170,7 @@ const ReportsIndexHeader = ({
         }
       />
       <Toolbar
-        className="mt-3 items-end border-b border-theme-neutral-200 !px-3 mobile:flex-col mobile:!items-stretch mobile:gap-3"
+        className="border-theme-neutral-200 bg-theme-neutral-100 sticky top-10 z-10 items-end border-b !px-2 pt-3"
         classNameContentLeft="min-w-0"
         classNameContentRight="mt-[-1.25rem]"
         contentLeft={
@@ -220,7 +221,7 @@ const ReportsIndexHeader = ({
         onClearFilters={clearFilters}
         onOpenChange={setIsFilterDrawerOpen}
       />
-    </div>
+    </>
   );
 };
 
