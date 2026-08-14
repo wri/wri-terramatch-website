@@ -66,6 +66,13 @@ export const Disabled: Story = {
   }
 };
 
+export const FlexibleDates: Story = {
+  args: {
+    label: "Label",
+    flexibleDates: true
+  }
+};
+
 export const AllVariants: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", maxWidth: "17.6875rem" }}>
