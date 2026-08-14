@@ -197,7 +197,13 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
                 ))}
               </FilterCard>
               <FilterCard label={t("Due Date")}>
-                <DateRangeInput size="small" noMarginBottom value={dueDateValue} onValueChange={handleDueDateChange} />
+                <DateRangeInput
+                  size="small"
+                  noMarginBottom
+                  value={dueDateValue}
+                  onValueChange={handleDueDateChange}
+                  flexibleDates={activeTab === "progress-reports"}
+                />
               </FilterCard>
             </Flex>
           }
