@@ -1,7 +1,8 @@
 import React, { createContext, ReactNode, useContext } from "react";
 
 export type ReportsFilterValues = {
-  dueDate: string;
+  dueDateFrom: string;
+  dueDateTo: string;
   reportTypes: string[];
   statuses: string[];
 };
@@ -16,7 +17,8 @@ type ReportsType = {
 };
 
 const EMPTY_FILTERS: ReportsFilterValues = {
-  dueDate: "",
+  dueDateFrom: "",
+  dueDateTo: "",
   reportTypes: [],
   statuses: []
 };

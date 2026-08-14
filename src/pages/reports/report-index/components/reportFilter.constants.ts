@@ -9,13 +9,15 @@ export type ReportTypeOption =
 export type ReportFilterState = {
   reportTypes: ReportTypeOption[];
   statuses: string[];
-  dueDate: string;
+  dueDateFrom: string;
+  dueDateTo: string;
 };
 
 export const EMPTY_REPORT_FILTERS: ReportFilterState = {
   reportTypes: [],
   statuses: [],
-  dueDate: ""
+  dueDateFrom: "",
+  dueDateTo: ""
 };
 
 export const getDefaultProgressFiltersForSource = (source: "project" | "site" | "nursery"): ReportFilterState => {
@@ -26,6 +28,11 @@ export const getDefaultProgressFiltersForSource = (source: "project" | "site" | 
     return { ...EMPTY_REPORT_FILTERS, reportTypes: ["nursery-report"] };
   }
   return EMPTY_REPORT_FILTERS;
+};
+
+export const formatDueDateRangeLabel = (from: string, to: string) => {
+  if (from !== "" && to !== "") return `${from} — ${to}`;
+  return from !== "" ? from : to;
 };
 
 export const PROGRESS_REPORT_TYPE_OPTIONS: { value: ReportTypeOption; label: string }[] = [
