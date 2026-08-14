@@ -6,10 +6,13 @@ import { useRouter } from "next/router";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullProject, useFullSite } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
+import { ReportsProvider } from "@/context/reports.provider";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
 import ReportsIndexContent from "./components/ReportsIndexContent";
-import { isReportsIndexSource } from "./reportIndex.utils";
+import { ReportsIndexSourceEntity } from "./reportIndex.types";
+import { isReportsIndexSource, ReportsIndexSource } from "./reportIndex.utils";
+import ReportsSelectionProvider from "./ReportsSelection.provider";
 
 const ReportsIndexPage = () => {
   const router = useRouter();
@@ -41,17 +44,25 @@ const ReportsIndexPage = () => {
 
   return (
     <FrameworkProvider frameworkKey={project?.frameworkKey}>
-      <ResponsiveTypography />
-      <Head>
-        <title>{t("Reports")}</title>
-      </Head>
-      <LoadingContainer loading={loading}>
-        {project == null || source == null || sourceEntity == null ? (
-          <Box>{t("The reports information could not be found.")}</Box>
-        ) : (
-          <ReportsIndexContent project={project} source={source} sourceEntity={sourceEntity} />
-        )}
-      </LoadingContainer>
+      <ReportsProvider>
+        <ResponsiveTypography />
+        <Head>
+          <title>{t("Reports")}</title>
+        </Head>
+        <LoadingContainer loading={loading}>
+          {project == null ? (
+            <Box>{t("The reports information could not be found.")}</Box>
+          ) : (
+            <ReportsSelectionProvider key={`${source}:${sourceEntity?.uuid}`}>
+              <ReportsIndexContent
+                project={project}
+                source={source as ReportsIndexSource}
+                sourceEntity={sourceEntity as ReportsIndexSourceEntity}
+              />
+            </ReportsSelectionProvider>
+          )}
+        </LoadingContainer>
+      </ReportsProvider>
     </FrameworkProvider>
   );
 };

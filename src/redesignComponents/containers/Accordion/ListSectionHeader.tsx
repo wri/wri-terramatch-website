@@ -56,7 +56,7 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   });
 
   const titleLinkClassName = classNames(
-    "min-w-0 truncate rounded-[6px]",
+    "min-w-0 truncate rounded-[6px] leading-[normal]",
     "text-theme-primary-900",
     "hover:text-theme-primary-700",
     "active:text-theme-primary-800",
@@ -65,7 +65,7 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
 
   return (
     <Flex alignItems="center" justifyContent="space-between" width="100%" gap={3} className={className}>
-      <Flex alignItems="center" gap={gap} minWidth={0} flex={1}>
+      <Flex alignItems="baseline" gap={gap} minWidth={0} flex={1}>
         {icon}
         <Flex direction="column" minWidth={0} alignItems="flex-start">
           <Flex alignItems="center" gap={1}>

@@ -3,7 +3,7 @@ import _ from "lodash";
 import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 
-import { LAYERS_NAMES, layersList } from "@/constants/layers";
+import { LAYERS_NAMES, layersList, resolvePolygonGeometryVariant } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
 
 import { addDeleteLayer, addFilterOnLayer, addSourcesToLayers } from "../layers/polygonLayers";
@@ -82,6 +82,8 @@ export function useMapLayers({
   const prevPolygonMapTileNonceRef = useRef<number>(polygonMapTileNonce);
   const tileVersionRef = useRef<string>(initialTileVersion ?? "0");
 
+  const polygonGeometryVariant = resolvePolygonGeometryVariant(polygonsData);
+
   useEffect(() => {
     if (!styleReady || map.current == null || (!dashboardMode && _.isEmpty(polygonsData))) {
       setSourcesAdded(false);
@@ -108,7 +110,8 @@ export function useMapLayers({
       zoomFilter,
       dashboardMode,
       polygonsCentroids,
-      tileVersionRef.current
+      tileVersionRef.current,
+      polygonGeometryVariant
     );
     setTileLoadRequestId(prev => prev + 1);
     setSourcesAdded(true);
@@ -122,7 +125,8 @@ export function useMapLayers({
     dashboardMode,
     projectUUID,
     hasAccess,
-    polygonMapTileNonce
+    polygonMapTileNonce,
+    polygonGeometryVariant
   ]);
 
   useEffect(() => {

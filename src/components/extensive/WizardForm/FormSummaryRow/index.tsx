@@ -1,6 +1,7 @@
 import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { useState } from "react";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
@@ -42,6 +43,7 @@ const FormSummaryRow = ({ stepId, index, reportSummaryAnalytics, ...props }: For
   const { framework } = useFrameworkContext();
   const stepsWithValidation = useFormStepsWithValidation(fieldsProvider, framework);
   const validation = stepsWithValidation[index].validation;
+  const [isOpen, setIsOpen] = useState(false);
   const hasStepFeedback =
     props.initialValues != null
       ? hasUnresolvedFeedbackInStep(
@@ -70,15 +72,19 @@ const FormSummaryRow = ({ stepId, index, reportSummaryAnalytics, ...props }: For
         )
       : countFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    const accordionLabel = title?.trim() ?? "";
+    if (open && accordionLabel !== "") {
+      reportSummaryAnalytics?.onAccordionExpanded(accordionLabel);
+    }
+  };
+
   return (
     <Accordion
       variant="primary"
-      onOpenChange={open => {
-        const accordionLabel = title?.trim() ?? "";
-        if (open && accordionLabel !== "") {
-          reportSummaryAnalytics?.onAccordionExpanded(accordionLabel);
-        }
-      }}
+      open={isOpen}
+      onOpenChange={handleOpenChange}
       header={
         <AccordionHeader
           title={t(title) ?? ""}

@@ -65,6 +65,7 @@ const EntryInlineIssueMessage: FC<{
         actionLabel={t("View feedback")}
         onActionClick={onViewFeedback}
         isButtonRight
+        size="small"
       />
     );
   }
@@ -75,11 +76,12 @@ const EntryInlineIssueMessage: FC<{
         label={t("Category totals must match. Please review your entries")}
         variant="error"
         className="mt-1 mb-3 w-fit"
+        size="small"
       />
     );
   }
 
-  return <InlineMessage label={t("Please complete this field")} variant="error" className="mt-1 w-fit" />;
+  return <InlineMessage label={t("Please complete this field")} variant="error" className="mt-1 w-fit" size="small" />;
 };
 
 export type SharedDetailsProps = {
@@ -162,7 +164,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
     entityName,
     entityUUID,
     entityStatus: entityStatus ?? "draft",
-    updateRequestStatus: updateRequestStatus ?? "no-update"
+    updateRequestStatus: updateRequestStatus!
   });
 
   const reportEntityType = resolveReportEntityTypeFromEntityName(entityName as EntityName);

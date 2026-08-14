@@ -4,6 +4,7 @@ import {
   ArrayField,
   Datagrid,
   DateField,
+  FunctionField,
   ImageField,
   NumberField,
   RecordContextProvider,
@@ -175,7 +176,19 @@ const EnrichedOrganisationShowContent = () => {
       <TabbedShowLayout>
         <TabbedShowLayout.Tab label="Organization Details">
           <TextField source="name" label="Legal Name" emptyText="Not Provided" />
-          <TextField source="status" label="Status" emptyText="Not Provided" className="capitalize" />
+          <FunctionField
+            source="status"
+            label="Status"
+            render={(record: { status?: string }) => {
+              const labels: Record<string, string> = {
+                draft: "Draft",
+                "pending-approval": "Pending Approval",
+                approved: "Approved",
+                rejected: "Rejected"
+              };
+              return labels[record?.status ?? ""] ?? record?.status ?? "Not Provided";
+            }}
+          />
           <SelectField
             source="type"
             label="Organization Type"

@@ -165,7 +165,7 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
 
       if (failedCount > 0) {
         showToast({
-          label: t("Partial upload"),
+          label: t("Partial Upload"),
           caption: t("{count} of {total} photos uploaded successfully.", {
             count: successCount,
             total: results.length
@@ -249,7 +249,7 @@ const UploadGeotaggedPhotos: FC<UploadGeotaggedPhotosProps> = ({ open, siteUuid,
       size={showNonGeotaggedWarning ? "medium" : "large"}
       header={
         <b className="text-theme-neutral-800">
-          {showNonGeotaggedWarning ? t("Upload photos?") : t("Upload geotagged photos")}
+          {showNonGeotaggedWarning ? t("Upload Photos?") : t("Upload Geotagged Photos")}
         </b>
       }
       content={

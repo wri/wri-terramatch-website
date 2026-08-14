@@ -1,9 +1,10 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useCreateDisturbanceReport } from "@/connections/Entity";
 import { getReportStatusOptions } from "@/constants/options/status";
+import { useReportsContext } from "@/context/reports.provider";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
@@ -15,11 +16,19 @@ import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
-import { EMPTY_REPORT_FILTERS, REPORT_TYPE_LABELS, ReportFilterState } from "./reportFilter.constants";
+import {
+  EMPTY_REPORT_FILTERS,
+  formatDueDateRangeLabel,
+  getDefaultProgressFiltersForSource,
+  REPORT_TYPE_LABELS,
+  ReportFilterState
+} from "./reportFilter.constants";
 import ReportsFilterDrawer from "./ReportsFilterDrawer";
 
 type ReportsIndexHeaderProps = {
   activeTab: string;
+  source: "project" | "site" | "nursery";
+  sourceUuid: string;
   projectUuid: string;
   reportCount: number;
   viewValue: string;
@@ -31,6 +40,8 @@ type ReportsIndexHeaderProps = {
 
 const ReportsIndexHeader = ({
   activeTab,
+  source,
+  sourceUuid,
   projectUuid,
   reportCount,
   viewValue,
@@ -41,14 +52,34 @@ const ReportsIndexHeader = ({
 }: ReportsIndexHeaderProps) => {
   const t = useT();
   const router = useRouter();
+  const { setFilters } = useReportsContext();
 
-  const [filtersByTab, setFiltersByTab] = useState<Record<string, ReportFilterState>>({
-    "progress-reports": EMPTY_REPORT_FILTERS,
+  const [filtersByTab, setFiltersByTab] = useState<Record<string, ReportFilterState>>(() => ({
+    "progress-reports": getDefaultProgressFiltersForSource(source),
     "additional-reports": EMPTY_REPORT_FILTERS
-  });
+  }));
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const selectedFilters = filtersByTab[activeTab] ?? EMPTY_REPORT_FILTERS;
   const statusOptions = useMemo(() => getReportStatusOptions(t), [t]);
+
+  const updateActiveFilters = useCallback(
+    (next: ReportFilterState) => {
+      setFiltersByTab(current => ({ ...current, [activeTab]: next }));
+      setFilters(next);
+    },
+    [activeTab, setFilters]
+  );
+
+  useEffect(() => {
+    setFiltersByTab({
+      "progress-reports": getDefaultProgressFiltersForSource(source),
+      "additional-reports": EMPTY_REPORT_FILTERS
+    });
+  }, [source, sourceUuid]);
+
+  useEffect(() => {
+    setFilters(selectedFilters);
+  }, [activeTab, selectedFilters, setFilters]);
 
   const { create: createDisturbanceReport, isCreating: disturbanceReportCreating } = useCreateDisturbanceReport(
     {},
@@ -67,10 +98,7 @@ const ReportsIndexHeader = ({
         label: selectedFilters.reportTypes.map(type => t(REPORT_TYPE_LABELS[type])),
         category: t("Report Type"),
         onRemove: () => {
-          setFiltersByTab(current => ({
-            ...current,
-            [activeTab]: { ...(current[activeTab] ?? EMPTY_REPORT_FILTERS), reportTypes: [] }
-          }));
+          updateActiveFilters({ ...selectedFilters, reportTypes: [] });
         }
       });
     }
@@ -83,58 +111,54 @@ const ReportsIndexHeader = ({
         }),
         category: t("Status"),
         onRemove: () => {
-          setFiltersByTab(current => ({
-            ...current,
-            [activeTab]: { ...(current[activeTab] ?? EMPTY_REPORT_FILTERS), statuses: [] }
-          }));
+          updateActiveFilters({ ...selectedFilters, statuses: [] });
         }
       });
     }
 
     if (selectedFilters.dueDateFrom !== "" || selectedFilters.dueDateTo !== "") {
-      const fromLabel = selectedFilters.dueDateFrom !== "" ? selectedFilters.dueDateFrom : t("Any date");
-      const toLabel = selectedFilters.dueDateTo !== "" ? selectedFilters.dueDateTo : t("Any date");
       labels.push({
-        label: `${fromLabel} - ${toLabel}`,
+        label: formatDueDateRangeLabel(selectedFilters.dueDateFrom, selectedFilters.dueDateTo),
         category: t("Due Date"),
         onRemove: () => {
-          setFiltersByTab(current => ({
-            ...current,
-            [activeTab]: { ...(current[activeTab] ?? EMPTY_REPORT_FILTERS), dueDateFrom: "", dueDateTo: "" }
-          }));
+          updateActiveFilters({ ...selectedFilters, dueDateFrom: "", dueDateTo: "" });
         }
       });
     }
 
     return labels;
-  }, [activeTab, selectedFilters, statusOptions, t]);
+  }, [selectedFilters, statusOptions, t, updateActiveFilters]);
 
-  const applyFilters = (filters: ReportFilterState) => {
-    setFiltersByTab(current => ({ ...current, [activeTab]: filters }));
-  };
+  const applyFilters = useCallback(
+    (filters: ReportFilterState) => {
+      updateActiveFilters(filters);
+    },
+    [updateActiveFilters]
+  );
 
-  const clearFilters = () => {
-    setFiltersByTab(current => ({ ...current, [activeTab]: EMPTY_REPORT_FILTERS }));
-  };
+  const clearFilters = useCallback(() => {
+    const cleared =
+      activeTab === "progress-reports" ? getDefaultProgressFiltersForSource(source) : EMPTY_REPORT_FILTERS;
+    updateActiveFilters(cleared);
+  }, [activeTab, source, updateActiveFilters]);
 
   return (
-    <div className="bg-white">
+    <>
       <ToolbarObject
-        className="border-b border-theme-neutral-300 !px-6"
+        className="sticky top-0 z-20"
         breadcrumbs={{
+          linkRouter: router,
           links: [
             {
+              icon: <ReportsIcon />,
               label: t("Reports"),
-              link: router.asPath,
-              icon: <ReportsIcon className="text-theme-primary-900" />
+              link: "#"
             }
-          ],
-          linkRouter: router,
-          size: "small"
+          ]
         }}
       />
       <PageHeader
-        className="!bg-theme-neutral-100"
+        className="!bg-theme-neutral-100 !px-6"
         title={t("Reports")}
         actions={
           <Button
@@ -148,7 +172,7 @@ const ReportsIndexHeader = ({
         }
       />
       <Toolbar
-        className="items-end border-b border-theme-neutral-200 !px-3 mobile:flex-col mobile:!items-stretch mobile:gap-3"
+        className="sticky top-10 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-3"
         classNameContentLeft="min-w-0"
         classNameContentRight="mt-[-1.25rem]"
         contentLeft={
@@ -178,13 +202,14 @@ const ReportsIndexHeader = ({
         className="!bg-theme-neutral-200 !px-6 !pb-6 !pt-5"
         classNameContentLeft="w-full"
         search={{
-          placeholder: t("Search projects, sites, nurseries"),
+          placeholder: activeTab === "progress-reports" ? t("Search projects, sites, nurseries") : t("Search"),
           options: [],
           displayResults: "none",
           count: reportCount,
           label: t("Reports"),
           onQueryChange
         }}
+        classNameContentSearch="w-[19rem]"
         selectedFilters={activeFilterLabels}
         showClearFilters={activeFilterLabels.length > 0}
         onClickFilterButton={() => setIsFilterDrawerOpen(true)}
@@ -198,7 +223,7 @@ const ReportsIndexHeader = ({
         onClearFilters={clearFilters}
         onOpenChange={setIsFilterDrawerOpen}
       />
-    </div>
+    </>
   );
 };
 

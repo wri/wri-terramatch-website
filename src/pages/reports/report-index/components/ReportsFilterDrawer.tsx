@@ -15,7 +15,7 @@ import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRan
 
 import {
   ADDITIONAL_REPORT_TYPE_OPTIONS,
-  EMPTY_REPORT_FILTERS,
+  formatDueDateRangeLabel,
   PROGRESS_REPORT_TYPE_OPTIONS,
   REPORT_TYPE_LABELS,
   ReportFilterState,
@@ -85,21 +85,22 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
       tags.push({ id: `status-${status}`, label: option?.title ?? status });
     });
     if (draftFilters.dueDateFrom !== "" || draftFilters.dueDateTo !== "") {
-      const fromLabel = draftFilters.dueDateFrom !== "" ? draftFilters.dueDateFrom : t("Any date");
-      const toLabel = draftFilters.dueDateTo !== "" ? draftFilters.dueDateTo : t("Any date");
-      tags.push({ id: "due-date", label: `${fromLabel} - ${toLabel}` });
+      tags.push({
+        id: "due-date",
+        label: formatDueDateRangeLabel(draftFilters.dueDateFrom, draftFilters.dueDateTo)
+      });
     }
 
     return tags;
   }, [draftFilters, statusOptions, t]);
 
   const dueDateValue = useMemo<DateValue[]>(() => {
-    const dates: DateValue[] = [];
     const from = isoStringToDateValue(draftFilters.dueDateFrom);
     const to = isoStringToDateValue(draftFilters.dueDateTo);
-    if (from) dates.push(from);
-    if (to) dates.push(to);
-    return dates;
+    if (from != null && to != null) return [from, to];
+    if (from != null) return [from];
+    if (to != null) return [to];
+    return [];
   }, [draftFilters.dueDateFrom, draftFilters.dueDateTo]);
 
   const handleReportTypeChange = (value: ReportTypeOption, { checked }: CheckboxChange) => {
@@ -208,7 +209,6 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
                   children: t("Clear all"),
                   variant: "secondary",
                   onClick: () => {
-                    setDraftFilters(EMPTY_REPORT_FILTERS);
                     onClearFilters();
                     onClose();
                   }

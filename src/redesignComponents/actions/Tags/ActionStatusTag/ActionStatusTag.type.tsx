@@ -1,6 +1,12 @@
 import { ReactElement, ReactNode } from "react";
 
-export type ActionStatusTagState = "neutral-light" | "neutral-dark" | "attention" | "success" | "warning";
+export type ActionStatusTagState =
+  | "neutral-light"
+  | "neutral-dark"
+  | "information"
+  | "attention"
+  | "success"
+  | "warning";
 
 export interface ActionStatusTagProps {
   state?: ActionStatusTagState;

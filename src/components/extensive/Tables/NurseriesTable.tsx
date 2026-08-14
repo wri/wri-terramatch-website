@@ -89,11 +89,10 @@ const NurseriesTable = ({
             let value = props.getValue() as string;
             const statusProps = getActionCardStatusMapper(t)[value] as any;
 
-            if (value === "no-update") {
-              return t("N/A");
-            } else {
-              return <StatusTableCell statusProps={statusProps} />;
+            if (value == null || value === "" || value === "no-update") {
+              return null;
             }
+            return <StatusTableCell statusProps={statusProps} />;
           }
         },
         {

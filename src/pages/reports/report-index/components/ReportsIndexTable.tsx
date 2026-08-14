@@ -1,6 +1,6 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import { useDate } from "@/hooks/useDate";
 import { getThemedColor } from "@/lib/theme";
@@ -18,19 +18,14 @@ import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import { CalendarIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ReportsIndexReport } from "../reportIndex.types";
-
-const getReportPath = (report: ReportsIndexReport) => {
-  if (["approved", "pending-approval"].includes(report.status)) {
-    return `/reports/${report.type}/${report.id}`;
-  }
-
-  return `/entity/${report.type}s/edit/${report.id}`;
-};
+import { getReportIndexItemPath } from "../reportIndex.utils";
+import { useReportTableSelection } from "../ReportsSelection.provider";
 
 const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
   const t = useT();
   const { format } = useDate();
-  const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
+  const { selectedRows, isReportSelected, handleRowSelected, handleAllItemsSelected } =
+    useReportTableSelection(reports);
 
   const typeLabels = useMemo(
     () => ({
@@ -71,30 +66,9 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
     [t]
   );
 
-  const selectedRows = useMemo(
-    () => reports.filter(report => selectedRowIds.has(report.id)),
-    [reports, selectedRowIds]
-  );
-
-  const handleRowSelected = useCallback((report: ReportsIndexReport, checked: boolean) => {
-    setSelectedRowIds(current => {
-      const next = new Set(current);
-      if (checked) {
-        next.add(report.id);
-      } else {
-        next.delete(report.id);
-      }
-      return next;
-    });
-  }, []);
-
-  const handleAllItemsSelected = useCallback((checked: boolean, visibleReports: ReportsIndexReport[]) => {
-    setSelectedRowIds(checked ? new Set(visibleReports.map(report => report.id)) : new Set());
-  }, []);
-
   const renderRow = useCallback(
     (report: ReportsIndexReport, context?: TableRenderRowContext) => {
-      const isSelected = selectedRowIds.has(report.id);
+      const isSelected = isReportSelected(report);
 
       return (
         <TableRow
@@ -112,7 +86,7 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
           <ChakraTableCell {...context?.getCellProps("name")}>
             <TitleCell
               label={report.name ?? typeLabels[report.type]}
-              link={getReportPath(report)}
+              link={`/reports/${report.type}/${report.id}`}
               linkTarget="_self"
               showChevron={false}
             />
@@ -144,10 +118,9 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
                 button={{
                   children: t("Edit"),
                   as: "a",
-                  href: getReportPath(report),
+                  href: getReportIndexItemPath(report),
                   leftIcon: (
                     <EditIcon
-                      className="hidden"
                       css={{
                         "& svg path": {
                           fill: getThemedColor("neutral", 900) + " !important",
@@ -163,7 +136,7 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
         </TableRow>
       );
     },
-    [format, handleRowSelected, selectedRowIds, t, typeLabels]
+    [format, handleRowSelected, isReportSelected, t, typeLabels]
   );
 
   if (reports.length === 0) {

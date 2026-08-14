@@ -1,7 +1,7 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { startCase } from "lodash";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
@@ -20,14 +20,8 @@ import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import { CalendarIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { AdditionalReport, AdditionalReportType } from "../reportIndex.types";
-
-const getReportPath = (report: AdditionalReport) => {
-  if (["approved", "pending-approval"].includes(report.status)) {
-    return `/reports/${report.type}/${report.id}`;
-  }
-
-  return `/entity/${report.type}s/edit/${report.id}`;
-};
+import { getReportIndexItemPath } from "../reportIndex.utils";
+import { useReportTableSelection } from "../ReportsSelection.provider";
 
 const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): TableColumn[] => {
   if (type === "financial-report") {
@@ -54,7 +48,7 @@ const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): Tab
 
   return [
     { key: "name", label: t("Report Name"), width: "21.375rem" },
-    { key: "disturbanceAt", label: t("Date of Disturbance"), sortable: true, width: "12.5rem" },
+    { key: "dateOfDisturbance", label: t("Date of Disturbance"), sortable: true, width: "12.5rem" },
     { key: "sitesAffected", label: t("Sites Affected"), sortable: true, width: "9.6875rem" },
     { key: "status", label: t("Status"), sortable: true, width: "11.875rem" },
     { key: "intensity", label: t("Intensity"), sortable: true, width: "7.5rem" },
@@ -71,27 +65,11 @@ type AdditionalReportsTableProps = {
 const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) => {
   const t = useT();
   const { format } = useDate();
-  const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
+  const { selectedRows, isReportSelected, handleRowSelected, handleAllItemsSelected } =
+    useReportTableSelection(reports);
   const columns = useMemo(() => getColumns(type, t), [t, type]);
   const currencyLabels = useMemo(() => getCurrencyOptions(t), [t]);
   const monthLabels = useMemo(() => getMonthOptions(t), [t]);
-  const selectedRows = useMemo(
-    () => reports.filter(report => selectedRowIds.has(report.id)),
-    [reports, selectedRowIds]
-  );
-
-  const handleRowSelected = useCallback((report: AdditionalReport, checked: boolean) => {
-    setSelectedRowIds(current => {
-      const next = new Set(current);
-      if (checked) next.add(report.id);
-      else next.delete(report.id);
-      return next;
-    });
-  }, []);
-
-  const handleAllItemsSelected = useCallback((checked: boolean, visibleReports: AdditionalReport[]) => {
-    setSelectedRowIds(checked ? new Set(visibleReports.map(report => report.id)) : new Set());
-  }, []);
 
   const renderDateTag = useCallback(
     (date: string | null) =>
@@ -111,8 +89,8 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
 
   const renderRow = useCallback(
     (report: AdditionalReport, context?: TableRenderRowContext) => {
-      const isSelected = selectedRowIds.has(report.id);
-      const reportDate = report.type === "disturbance-report" ? report.disturbanceAt : report.dueAt;
+      const isSelected = isReportSelected(report);
+      const reportDate = report.type === "disturbance-report" ? report.dateOfDisturbance : report.dueAt;
       const reportName = reportDate == null ? report.name : `${report.name} - ${format(reportDate, "MMM yyyy")}`;
 
       return (
@@ -129,7 +107,12 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
             />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("name")}>
-            <TitleCell label={reportName} link={getReportPath(report)} linkTarget="_self" showChevron={false} />
+            <TitleCell
+              label={reportName}
+              link={`/reports/${report.type}/${report.id}`}
+              linkTarget="_self"
+              showChevron={false}
+            />
           </ChakraTableCell>
 
           {report.type === "financial-report" && (
@@ -154,8 +137,8 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
 
           {report.type === "disturbance-report" && (
             <>
-              <ChakraTableCell {...context?.getCellProps("disturbanceAt")}>
-                {renderDateTag(report.disturbanceAt)}
+              <ChakraTableCell {...context?.getCellProps("dateOfDisturbance")}>
+                {renderDateTag(report.dateOfDisturbance)}
               </ChakraTableCell>
               <ChakraTableCell {...context?.getCellProps("sitesAffected")}>
                 <Text color="neutral.800" textStyle="400">
@@ -184,7 +167,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
                 button={{
                   children: t("Edit"),
                   as: "a",
-                  href: getReportPath(report),
+                  href: getReportIndexItemPath(report),
                   leftIcon: (
                     <EditIcon
                       className="hidden"
@@ -203,7 +186,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
         </TableRow>
       );
     },
-    [currencyLabels, format, handleRowSelected, monthLabels, renderDateTag, selectedRowIds, t]
+    [currencyLabels, format, handleRowSelected, isReportSelected, monthLabels, renderDateTag, t]
   );
 
   return (

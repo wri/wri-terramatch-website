@@ -43,6 +43,10 @@ const GroupStatusLabels = ({ reports }: { reports: AdditionalReport[] }) => {
       {counts.informationRequired > 0 && (
         <TagSubmission state="information-required" size="small" labelPrefix={counts.informationRequired} />
       )}
+      {counts.pendingApproval > 0 && (
+        <TagSubmission state="pending-approval" size="small" labelPrefix={counts.pendingApproval} />
+      )}
+      {counts.approved > 0 && <TagSubmission state="approved" size="small" labelPrefix={counts.approved} />}
     </Flex>
   );
 };
@@ -67,9 +71,11 @@ const AdditionalReportGroupSection = ({ group }: { group: AdditionalReportGroup 
         />
       }
     >
-      <div className="bg-theme-neutral-100 px-4 pb-5 pt-4">
-        <AdditionalReportsTable reports={group.reports} type={group.type} />
-      </div>
+      {open ? (
+        <div className="bg-theme-neutral-100 px-4 pb-5 pt-4">
+          <AdditionalReportsTable reports={group.reports} type={group.type} />
+        </div>
+      ) : null}
     </Accordion>
   );
 };

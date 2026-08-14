@@ -343,7 +343,7 @@ export const useSitePolygonBulkActions = ({
     } catch (error) {
       Log.error("Failed to delete selected polygons:", error);
       closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
-      showToast({ label: t("Error deleting polygons"), type: "error", placement: "bottom", duration: 5000 });
+      showToast({ label: t("Error Deleting Polygons"), type: "error", placement: "bottom", duration: 5000 });
       throw error;
     } finally {
       setIsDeletingPolygons(false);
@@ -376,7 +376,7 @@ export const useSitePolygonBulkActions = ({
         await runPolygonValidation(polygonUuids);
       } catch (error) {
         Log.error("Failed to validate selected polygons:", error);
-        showToast({ label: t("Failed to validate polygons"), type: "error", placement: "bottom", duration: 5000 });
+        showToast({ label: t("Failed to Validate Polygons"), type: "error", placement: "bottom", duration: 5000 });
         throw error;
       } finally {
         setIsValidatingPolygons(false);
@@ -587,7 +587,7 @@ export const useSitePolygonBulkActions = ({
         setPolygonTableHoveredUuid(null);
       } catch (error) {
         Log.error("Failed to fix selected polygon overlaps:", error);
-        showPolygonErrorToast(t("Failed to fix selected polygon overlaps"));
+        showPolygonErrorToast(t("Failed to Fix Selected Polygon Overlaps"));
       } finally {
         setIsFixingOverlaps(false);
         setFixingOverlapsCount(0);
@@ -722,7 +722,7 @@ export const useSitePolygonBulkActions = ({
       } catch (error) {
         Log.error("Failed to submit selected polygons:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
-        showToast({ label: t("Error submitting polygons"), type: "error", placement: "bottom", duration: 5000 });
+        showToast({ label: t("Error Submitting Polygons"), type: "error", placement: "bottom", duration: 5000 });
         throw error;
       } finally {
         setIsSubmittingPolygons(false);
@@ -833,7 +833,7 @@ export const useSitePolygonBulkActions = ({
         });
       } catch (error) {
         Log.error("Failed to approve selected polygons:", error);
-        showToast({ label: t("Error approving polygons"), type: "error", placement: "bottom", duration: 5000 });
+        showToast({ label: t("Error Approving Polygons"), type: "error", placement: "bottom", duration: 5000 });
         throw error;
       }
     },
@@ -909,7 +909,7 @@ export const useSitePolygonBulkActions = ({
       } catch (error) {
         Log.error("Failed to request information for selected polygons:", error);
         showToast({
-          label: t("Error requesting information for polygons"),
+          label: t("Error Requesting Information for Polygons"),
           type: "error",
           placement: "bottom",
           duration: 5000
@@ -972,7 +972,7 @@ export const useSitePolygonBulkActions = ({
         Log.error("Failed to download selected polygons:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
         showToast({
-          label: t("Error downloading polygon"),
+          label: t("Error Downloading Polygon"),
           type: "error",
           placement: "bottom",
           duration: 5000,
@@ -1050,7 +1050,7 @@ export const useSitePolygonBulkActions = ({
       } catch (error) {
         Log.error("Failed to update selected polygon details:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
-        showToast({ label: t("Error updating polygon details"), type: "error", placement: "bottom", duration: 5000 });
+        showToast({ label: t("Error Updating Polygon Details"), type: "error", placement: "bottom", duration: 5000 });
       } finally {
         setIsBulkUpdatingPolygons(false);
       }

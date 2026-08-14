@@ -104,7 +104,7 @@ export type OrganisationLightDto = {
    */
   lightResource: boolean;
   uuid: string;
-  status: "draft" | "pending" | "approved" | "rejected";
+  status: "draft" | "pending-approval" | "approved" | "rejected";
   name: string | null;
   type: string | null;
   /**
@@ -119,7 +119,7 @@ export type OrganisationFullDto = {
    */
   lightResource: boolean;
   uuid: string;
-  status: "draft" | "pending" | "approved" | "rejected";
+  status: "draft" | "pending-approval" | "approved" | "rejected";
   name: string | null;
   type: string | null;
   /**
@@ -393,7 +393,7 @@ export type FinancialReportLightDto = {
   /**
    * Update request status for this financial report
    */
-  updateRequestStatus: "no-update" | "draft" | "pending-approval" | "approved" | "information-required" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated organisation name
    */

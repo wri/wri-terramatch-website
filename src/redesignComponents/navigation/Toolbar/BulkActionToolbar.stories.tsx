@@ -77,3 +77,36 @@ export const Default: Story = {
     }
   }
 };
+
+export const DisabledSubmitWithTooltip: Story = {
+  args: {
+    selectedCount: 1,
+    cancelAction: {
+      children: "Cancel",
+      onClick: () => console.log("Cancel clicked")
+    },
+    deleteAction: {
+      id: "download",
+      children: "Download",
+      onClick: () => console.log("Download clicked")
+    },
+    actions: [
+      {
+        id: "nothing-to-report",
+        children: "Nothing to Report",
+        onClick: () => console.log("Nothing to Report clicked")
+      },
+      {
+        id: "edit",
+        children: "Edit",
+        onClick: () => console.log("Edit clicked")
+      }
+    ],
+    primaryAction: {
+      children: "Submit",
+      disabled: true,
+      onClick: () => console.log("Submit clicked")
+    },
+    infoTooltip: "This report is missing mandatory information. Please complete the required fields before submitting."
+  }
+};

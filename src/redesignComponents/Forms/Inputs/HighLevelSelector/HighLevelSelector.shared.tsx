@@ -1,78 +1,16 @@
-import { Text } from "@chakra-ui/react";
-import { FC, ReactNode, useState } from "react";
+import { Portal, Text } from "@chakra-ui/react";
+import { FC, PropsWithChildren, ReactNode, RefObject, useState } from "react";
 
 import { ChevronDownIcon, ChevronUpIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
+
+import { getMenuItemKeyboardProps, handleMenuContentKeyDown } from "./HighLevelSelector.keyboard";
+import { getLabelStyles, getMenuItemStyles, menuContentStyles } from "./HighLevelSelector.styles";
+import { HighLevelSelectorItem } from "./HighLevelSelector.types";
 
 export const DEFAULT_EMPTY_MESSAGE = "No results found";
 export const DEFAULT_WIDTH = "100%";
 
-export type ChakraSlot = FC<any>;
-
-export const selectorPositioning = {
-  gutter: 0,
-  placement: "bottom-start",
-  sameWidth: true
-} as const;
-
-const getLabelStyles = (disabled: boolean) =>
-  ({
-    color: disabled ? "neutral.500" : "neutral.900",
-    left: 2,
-    lineHeight: "normal",
-    marginTop: "-0.25rem",
-    pointerEvents: "none",
-    position: "absolute",
-    textStyle: "300",
-    top: 2,
-    zIndex: 2
-  } as const);
-
-export const getControlStyles = (disabled: boolean) =>
-  ({
-    bg: "neutral.100",
-    border: "none",
-    borderRadius: "0.25rem",
-    height: "3.6875rem",
-    outline: "none",
-    position: "relative",
-    _after: {
-      bg: disabled ? "neutral.500" : "primary.600",
-      bottom: 0,
-      content: '""',
-      height: "0.125rem",
-      left: 0,
-      pointerEvents: "none",
-      position: "absolute",
-      right: 0
-    },
-    _focusWithin: {
-      outline: "0.125rem solid",
-      outlineColor: "primary.700",
-      outlineOffset: "0.1875rem"
-    }
-  } as const);
-
-export const menuContentStyles = {
-  bg: "neutral.100",
-  border: "none",
-  boxShadow: "0 0.5rem 1rem rgba(0, 0, 0, 0.14)",
-  maxHeight: "18rem",
-  overflowY: "auto",
-  py: 1
-} as const;
-
-export const getMenuItemStyles = (disabled = false) =>
-  ({
-    color: "neutral.900",
-    cursor: disabled ? "not-allowed" : "pointer",
-    minHeight: "3.25rem",
-    px: 4,
-    py: 3,
-    textStyle: "400",
-    _disabled: { color: "neutral.500", cursor: "not-allowed" },
-    _highlighted: { bg: "primary.200", outline: "none" },
-    _hover: { bg: disabled ? "neutral.100" : "primary.100" }
-  } as const);
+export type ChakraSlot = FC<PropsWithChildren<Record<string, unknown>>>;
 
 interface SelectorChevronProps {
   open: boolean;
@@ -117,15 +55,48 @@ export const SelectorLabel: FC<SelectorLabelProps> = ({ children, disabled, id }
 );
 
 export const SelectorOptionText: FC<SelectorTextProps> = ({ children }) => (
-  <Text as="span" textStyle="400">
+  <Text as="span" color="neutral.900" data-selector-option-text textStyle="400" lineHeight="normal">
     {children}
   </Text>
 );
 
 export const SelectorEmptyMessage: FC<SelectorTextProps> = ({ children }) => (
-  <Text color="neutral.600" px={4} py={3} textStyle="400">
+  <Text color="neutral.600" px={2} py={2} textStyle="400" lineHeight="normal">
     {children}
   </Text>
+);
+
+interface SelectorMenuProps {
+  Content: ChakraSlot;
+  Item: ChakraSlot;
+  Positioner: ChakraSlot;
+  emptyMessage: ReactNode;
+  items: HighLevelSelectorItem[];
+  contentRef?: RefObject<HTMLDivElement>;
+}
+
+export const SelectorMenu: FC<SelectorMenuProps> = ({ Content, Item, Positioner, contentRef, emptyMessage, items }) => (
+  <Portal>
+    <Positioner zIndex={1500}>
+      <Content ref={contentRef} tabIndex={-1} {...menuContentStyles} onKeyDown={handleMenuContentKeyDown}>
+        {items.length === 0 ? (
+          <SelectorEmptyMessage>{emptyMessage}</SelectorEmptyMessage>
+        ) : (
+          items.map(item => (
+            <Item
+              key={item.value}
+              aria-label={item.label}
+              item={item}
+              {...getMenuItemStyles(item.disabled)}
+              {...getMenuItemKeyboardProps(item.disabled)}
+            >
+              <SelectorOptionText>{item.label}</SelectorOptionText>
+            </Item>
+          ))
+        )}
+      </Content>
+    </Positioner>
+  </Portal>
 );
 
 export const toCollectionValue = (value?: string) => (value === undefined ? undefined : value ? [value] : []);

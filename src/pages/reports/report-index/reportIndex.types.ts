@@ -15,10 +15,11 @@ export type ReportsIndexSourceEntity = ProjectFullDto | SiteFullDto | NurseryFul
 export type ReportsIndexReport = {
   id: string;
   name: string | null;
-  sourceName: string;
   projectName: string;
   type: ReportsIndexReportType;
   status: ReportsIndexStatus;
+  updateRequestStatus: string | null;
+  completion: number | null;
   updatedAt: string;
 };
 
@@ -43,8 +44,12 @@ type AdditionalReportBase = {
   name: string;
   type: AdditionalReportType;
   status: ReportsIndexStatus;
+  updateRequestStatus: string | null;
+  completion: number | null;
   updatedAt: string;
-  searchTerms: string[];
+  organisationName: string | null;
+  projectName: string | null;
+  year: string | null;
 };
 
 export type AdditionalFinancialReport = AdditionalReportBase & {
@@ -52,21 +57,27 @@ export type AdditionalFinancialReport = AdditionalReportBase & {
   dueAt: string | null;
   currency: string | null;
   financialYearStart: number | null;
+  organisationName: string | null;
 };
 
 export type AdditionalSrpReport = AdditionalReportBase & {
   type: "srp-report";
   dueAt: string | null;
+  organisationName: string | null;
 };
 
 export type AdditionalDisturbanceReport = AdditionalReportBase & {
   type: "disturbance-report";
-  disturbanceAt: string | null;
+  dueAt: string | null;
   sitesAffected: number;
   intensity: string | null;
+  dateOfDisturbance: string | null;
+  organisationName: string | null;
 };
 
 export type AdditionalReport = AdditionalFinancialReport | AdditionalSrpReport | AdditionalDisturbanceReport;
+
+export type ReportIndexItem = ReportsIndexReport | AdditionalReport;
 
 export type AdditionalReportGroup = {
   id: string;

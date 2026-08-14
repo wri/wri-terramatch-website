@@ -1,29 +1,23 @@
+import type { DateValue } from "@ark-ui/react";
 import { useDatePickerContext } from "@ark-ui/react";
 import type { FC } from "react";
 
 import CloseButton from "@/redesignComponents/actions/Buttons/CloseButton/CloseButton";
-import { formatDateValue } from "@/utils/date";
 
 import type { PreservedDate } from "../types";
 
 interface DateRangeInputsProps {
   onClearDate: (index: 0 | 1) => void;
   preservedRef: React.RefObject<PreservedDate | null>;
-  dateFormat: string;
+  formatValue: (date: DateValue) => string;
 }
 
-const DateRangeInputs: FC<DateRangeInputsProps> = ({ onClearDate, preservedRef, dateFormat }) => {
+const DateRangeInputs: FC<DateRangeInputsProps> = ({ onClearDate, preservedRef, formatValue }) => {
   const { value } = useDatePickerContext();
 
   const isStartCleared = preservedRef.current?.clearedIndex === 0 && value.length === 1;
-  const startText = isStartCleared ? "" : value[0] ? formatDateValue(value[0], dateFormat) : "";
-  const endText = isStartCleared
-    ? value[0]
-      ? formatDateValue(value[0], dateFormat)
-      : ""
-    : value[1]
-    ? formatDateValue(value[1], dateFormat)
-    : "";
+  const startText = isStartCleared ? "" : value[0] ? formatValue(value[0]) : "";
+  const endText = isStartCleared ? (value[0] ? formatValue(value[0]) : "") : value[1] ? formatValue(value[1]) : "";
 
   return (
     <div className="mb-3 grid w-full max-w-[20rem] grid-cols-2 items-center gap-2">
