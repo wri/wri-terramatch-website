@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -6,25 +6,18 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useProjectIndex } from "@/connections/Entity";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
-import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
-import { FolderIcon, FolderOpenIcon, LoadingIcon } from "@/redesignComponents/foundations/Icons";
-import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
+import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
+import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import { ReportsIndexSourceEntity } from "../reportIndex.types";
-import {
-  ALL_PROJECTS_VIEW_VALUE,
-  getReportsIndexUrl,
-  getReportsRequiringAttention,
-  ReportsIndexSource
-} from "../reportIndex.utils";
+import { ALL_PROJECTS_VIEW_VALUE, getReportsIndexUrl, ReportsIndexSource } from "../reportIndex.utils";
 import { useReportsSelectionActions } from "../ReportsSelection.provider";
 import { useAdditionalReportsData } from "../useAdditionalReportsData";
 import { useReportsIndexData } from "../useReportsIndexData";
 import { useReportsIndexFilters } from "../useReportsIndexFilters";
 import AdditionalReportsContent from "./AdditionalReportsContent";
-import ReportingPeriodSection from "./ReportingPeriodSection";
+import ProjectReportsSection from "./ProjectReportsSection";
 import ReportsIndexBulkBar from "./ReportsIndexBulkBar";
 import ReportsIndexHeader from "./ReportsIndexHeader";
 
@@ -39,7 +32,6 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const router = useRouter();
   const viewFromQuery = typeof router.query.view === "string" ? router.query.view : undefined;
   const [activeTab, setActiveTab] = useState("progress-reports");
-  const [projectOpen, setProjectOpen] = useState(true);
   const [query, setQuery] = useState("");
   const [viewValue, setViewValue] = useState(
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
@@ -50,24 +42,20 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const isAllProjectsView = viewValue === ALL_PROJECTS_VIEW_VALUE;
 
   const {
-    periods,
+    sections: progressSections,
     loading: progressLoading,
     error: progressError
-  } = useReportsIndexData(project.uuid, source, sourceEntity.uuid, reloadNonce);
+  } = useReportsIndexData(project, source, sourceEntity.uuid, isAllProjectsView, reloadNonce);
   const {
     sections: additionalSections,
     loading: additionalLoading,
     error: additionalError
-  } = useAdditionalReportsData(project, activeTab === "additional-reports");
+  } = useAdditionalReportsData(project, activeTab === "additional-reports", isAllProjectsView);
 
-  const { filteredPeriods, filteredAdditionalSections, progressReportCount, additionalReportCount } =
-    useReportsIndexFilters({ periods, additionalSections, query });
+  const { filteredProgressSections, filteredAdditionalSections, progressReportCount, additionalReportCount } =
+    useReportsIndexFilters({ progressSections, additionalSections, query });
 
   const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
-  const attentionCount = useMemo(
-    () => periods.reduce((total, period) => total + getReportsRequiringAttention(period.reports), 0),
-    [periods]
-  );
 
   const viewItems = useMemo<HighLevelSelectorItem[]>(() => {
     const projectItems =
@@ -84,12 +72,10 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   }, [project.name, project.uuid, projects, t]);
 
   useEffect(() => {
-    if (viewFromQuery === ALL_PROJECTS_VIEW_VALUE) {
-      setViewValue(ALL_PROJECTS_VIEW_VALUE);
-      return;
-    }
-    setViewValue(project.uuid);
-  }, [project.uuid, viewFromQuery]);
+    if (!router.isReady) return;
+    const nextView = viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid;
+    if (nextView !== viewValue) setViewValue(nextView);
+  }, [project.uuid, router.isReady, viewFromQuery, viewValue]);
 
   const handleViewChange = useCallback(
     (nextView: string) => {
@@ -164,54 +150,25 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                 </Text>
               </Flex>
             ) : progressError ? (
-              <Box background="neutral.100" h="full" p={4}>
-                <Text textStyle="400-bold">{t("Reports could not be loaded")}</Text>
-                <Text textStyle="400">{t("Please refresh the page and try again.")}</Text>
-              </Box>
-            ) : filteredPeriods.length === 0 ? (
-              <Box background="neutral.100" h="full" p={4}>
-                <Text textStyle="400-bold">{t("No results found")}</Text>
-                <Text textStyle="400">{t("Try changing your search or filters.")}</Text>
-              </Box>
+              <InlineMessage
+                className="m-4"
+                variant="error"
+                label={t("Reports could not be loaded")}
+                caption={t("Please refresh the page and try again.")}
+              />
+            ) : filteredProgressSections.length === 0 ? (
+              <InlineMessage
+                className="m-4"
+                variant="info-grey"
+                label={t("No reports found")}
+                caption={t("Try changing your search or filters.")}
+              />
             ) : (
-              <Accordion
-                variant="tertiary"
-                open={projectOpen}
-                onOpenChange={setProjectOpen}
-                className="!m-0 rounded bg-theme-neutral-100"
-                classNameHeader="!mb-0"
-                isScrollable={false}
-                header={
-                  <ListSectionHeader
-                    level="top-level"
-                    title={isAllProjectsView ? t("All Projects") : project.name ?? t("Project")}
-                    caption={isAllProjectsView ? "" : project.organisationName ?? ""}
-                    icon={
-                      projectOpen ? (
-                        <FolderOpenIcon minWidth={5} width={5} height={"auto"} color="primary.600" />
-                      ) : (
-                        <FolderIcon minWidth={5} width={5} height={"auto"} color="neutral.400" />
-                      )
-                    }
-                    statusLabels={
-                      attentionCount > 0 ? (
-                        <TextBadge>{t("{count} Require Attention", { count: attentionCount })}</TextBadge>
-                      ) : null
-                    }
-                  />
-                }
-              >
-                <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
-                  {filteredPeriods.map((period, index) => (
-                    <ReportingPeriodSection
-                      key={period.id}
-                      period={period}
-                      project={project}
-                      defaultOpen={index === 0}
-                    />
-                  ))}
-                </div>
-              </Accordion>
+              <div className="space-y-4">
+                {filteredProgressSections.map((section, index) => (
+                  <ProjectReportsSection key={section.id} section={section} defaultOpen={index === 0} />
+                ))}
+              </div>
             )}
           </>
         )}

@@ -1,30 +1,42 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
-import { loadFullProjectReport, loadLightNurseryReportList, loadLightSiteReportList } from "@/connections/Entity";
-import { loadTask, loadTasks } from "@/connections/Task";
+import {
+  indexNurseryReportConnection,
+  indexProjectReportConnection,
+  indexSiteReportConnection
+} from "@/connections/Entity";
 import {
   NurseryReportLightDto,
-  ProjectReportFullDto,
+  ProjectFullDto,
   ProjectReportLightDto,
   SiteReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import Log from "@/utils/log";
+import { useAllPages } from "@/hooks/useConnection";
+import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 
-import { ReportsIndexPeriod, ReportsIndexReport, ReportsIndexReportType } from "./reportIndex.types";
+import {
+  ReportsIndexPeriod,
+  ReportsIndexProjectSection,
+  ReportsIndexReport,
+  ReportsIndexReportType
+} from "./reportIndex.types";
 import { ReportsIndexSource, resolveReportsIndexStatus } from "./reportIndex.utils";
 
 type ReportsIndexDataState = {
   loading: boolean;
-  periods: ReportsIndexPeriod[];
+  sections: ReportsIndexProjectSection[];
   error: boolean;
 };
 
-type ReportsIndexRawReport = ProjectReportLightDto | ProjectReportFullDto | SiteReportLightDto | NurseryReportLightDto;
+type ReportsIndexRawReport = ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto;
+
+const UNSCHEDULED_PERIOD = "unscheduled";
 
 const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): ReportsIndexReport => {
   const name =
     type === "project-report"
-      ? (report as ProjectReportLightDto | ProjectReportFullDto).title
+      ? (report as ProjectReportLightDto).title
       : type === "site-report"
       ? (report as SiteReportLightDto).siteName
       : (report as NurseryReportLightDto).nurseryName;
@@ -41,108 +53,137 @@ const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): 
   };
 };
 
-const belongsToSource = (report: ReportsIndexRawReport, source: ReportsIndexSource, sourceUuid: string) => {
-  if (source === "project") return report.projectUuid === sourceUuid;
-  if (source === "site") return "siteUuid" in report && report.siteUuid === sourceUuid;
-  return "nurseryUuid" in report && report.nurseryUuid === sourceUuid;
+const resolveProjectReportUuid = (report: ReportsIndexRawReport, type: ReportsIndexReportType) => {
+  if (type === "project-report") return report.uuid;
+  if ("projectReportUuid" in report) return report.projectReportUuid ?? null;
+  return null;
 };
 
-const isPresentReport = (report: ReportsIndexRawReport | undefined | null): report is ReportsIndexRawReport =>
-  report != null;
+const byDueAtDescending = (a: ReportsIndexPeriod, b: ReportsIndexPeriod) =>
+  (b.dueAt ?? "").localeCompare(a.dueAt ?? "");
 
+const byNameAscending = (a: ReportsIndexProjectSection, b: ReportsIndexProjectSection) =>
+  (a.name ?? "").localeCompare(b.name ?? "");
+
+type ProjectSectionDraft = Omit<ReportsIndexProjectSection, "periods"> & {
+  periodsByDueAt: Map<string, ReportsIndexPeriod>;
+};
+
+/**
+ * Loads the progress reports (project, site and nursery) that belong to the entity the reports page
+ * was opened for, or to every project in the "All Projects" view, and groups them by project and
+ * then by reporting period.
+ *
+ * The reports are read straight from their indexes rather than walking the reporting tasks one by
+ * one: the "All Projects" view would need a request per task across every project, and the index
+ * DTOs already carry everything a period needs (due date and framework). Period metric values are
+ * loaded lazily from the project report when a period accordion opens.
+ */
 export const useReportsIndexData = (
-  projectUuid: string,
+  project: ProjectFullDto,
   source: ReportsIndexSource,
   sourceUuid: string,
+  allProjects: boolean,
+  // Bumped by the bulk actions once the reports they touched have been updated, so the indexes are
+  // fetched again instead of serving the snapshot the page loaded with.
   reloadNonce = 0
 ): ReportsIndexDataState => {
-  const [state, setState] = useState<ReportsIndexDataState>({ loading: true, periods: [], error: false });
+  const { uuid: projectUuid, name: projectName, organisationName } = project;
 
-  useEffect(() => {
-    let active = true;
+  useValueChanged(reloadNonce, () => {
+    if (reloadNonce === 0) return;
+    ApiSlice.pruneIndex("projectReports", "");
+    ApiSlice.pruneIndex("siteReports", "");
+    ApiSlice.pruneIndex("nurseryReports", "");
+  });
 
-    const load = async () => {
-      setState(current => ({ ...current, loading: current.periods.length === 0, error: false }));
+  // The "All Projects" view pulls the indexes unfiltered; otherwise they're scoped to the entity the
+  // page was opened for, and the indexes that can't hold reports for that entity stay disabled.
+  const [projectReportsLoaded, projectReports, projectReportsFailure] = useAllPages(
+    indexProjectReportConnection,
+    {
+      filter: allProjects ? {} : { projectUuid },
+      enabled: allProjects || source === "project"
+    },
+    reloadNonce
+  );
 
-      try {
-        const taskIndex = await loadTasks({
-          filter: { projectUuid },
-          pageNumber: 1,
-          pageSize: 100,
-          sortField: "dueAt",
-          sortDirection: "DESC"
-        });
+  const [siteReportsLoaded, siteReports, siteReportsFailure] = useAllPages(
+    indexSiteReportConnection,
+    {
+      filter: allProjects ? {} : source === "site" ? { siteUuid: sourceUuid } : { projectUuid },
+      enabled: allProjects || source !== "nursery"
+    },
+    reloadNonce
+  );
 
-        if (taskIndex.loadFailure != null) throw new Error("Unable to load reporting tasks");
+  const [nurseryReportsLoaded, nurseryReports, nurseryReportsFailure] = useAllPages(
+    indexNurseryReportConnection,
+    {
+      filter: allProjects ? {} : source === "nursery" ? { nurseryUuid: sourceUuid } : { projectUuid },
+      enabled: allProjects || source !== "site"
+    },
+    reloadNonce
+  );
 
-        const periods = await Promise.all(
-          (taskIndex.data ?? []).map(async task => {
-            const taskState = await loadTask({ id: task.uuid });
-            if (taskState.loadFailure != null) throw new Error(`Unable to load task ${task.uuid}`);
+  const loading = !projectReportsLoaded || !siteReportsLoaded || !nurseryReportsLoaded;
+  const error = projectReportsFailure != null || siteReportsFailure != null || nurseryReportsFailure != null;
 
-            const siteReportUuids = taskState.siteReportUuids ?? [];
-            const nurseryReportUuids = taskState.nurseryReportUuids ?? [];
-            const projectReportUuid = taskState.projectReportUuid ?? null;
-            const [projectReportState, siteReportsState, nurseryReportsState] = await Promise.all([
-              projectReportUuid == null
-                ? Promise.resolve({ data: undefined as ProjectReportFullDto | undefined })
-                : loadFullProjectReport({ id: projectReportUuid }),
-              siteReportUuids.length === 0
-                ? Promise.resolve({ data: [] as SiteReportLightDto[] })
-                : loadLightSiteReportList({ ids: siteReportUuids }),
-              nurseryReportUuids.length === 0
-                ? Promise.resolve({ data: [] as NurseryReportLightDto[] })
-                : loadLightNurseryReportList({ ids: nurseryReportUuids })
-            ]);
+  const sections = useMemo((): ReportsIndexProjectSection[] => {
+    if (loading || error) return [];
 
-            const projectReport = projectReportState.data;
-            const reports = [
-              ...(projectReport == null || !belongsToSource(projectReport, source, sourceUuid)
-                ? []
-                : [toReport(projectReport, "project-report")]),
-              ...(siteReportsState.data ?? [])
-                .filter(isPresentReport)
-                .filter(report => belongsToSource(report, source, sourceUuid))
-                .map(report => toReport(report, "site-report")),
-              ...(nurseryReportsState.data ?? [])
-                .filter(isPresentReport)
-                .filter(report => belongsToSource(report, source, sourceUuid))
-                .map(report => toReport(report, "nursery-report"))
-            ];
+    const draftsByProject = new Map<string, ProjectSectionDraft>();
 
-            return {
-              id: task.uuid,
-              task,
-              projectReportUuid,
-              metrics: {
-                treesPlantedCount: projectReport?.treesPlantedCount ?? taskState.data?.treesPlantedCount ?? 0,
-                seedsPlantedCount: projectReport?.seedsPlantedCount ?? 0,
-                regeneratedTreesCount: projectReport?.regeneratedTreesCount ?? 0
-              },
-              reports
-            };
-          })
-        );
+    const addReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType) => {
+      const reportProjectUuid = report.projectUuid;
+      if (reportProjectUuid == null) return;
 
-        if (active) {
-          setState({
-            loading: false,
-            periods: periods.filter(period => period.reports.length > 0),
-            error: false
-          });
-        }
-      } catch (error) {
-        Log.error("Unable to load reports index", { projectUuid, source, sourceUuid, error });
-        if (active) setState({ loading: false, periods: [], error: true });
+      let draft = draftsByProject.get(reportProjectUuid);
+      if (draft == null) {
+        draft = {
+          id: reportProjectUuid,
+          name: report.projectName ?? (reportProjectUuid === projectUuid ? projectName : null),
+          organisationName: report.organisationName ?? (reportProjectUuid === projectUuid ? organisationName : null),
+          periodsByDueAt: new Map()
+        };
+        draftsByProject.set(reportProjectUuid, draft);
       }
+
+      const periodKey = report.dueAt ?? UNSCHEDULED_PERIOD;
+      let period = draft.periodsByDueAt.get(periodKey);
+      if (period == null) {
+        period = {
+          id: `${reportProjectUuid}-${periodKey}`,
+          dueAt: report.dueAt,
+          frameworkKey: report.frameworkKey,
+          projectReportUuid: null,
+          reports: []
+        };
+        draft.periodsByDueAt.set(periodKey, period);
+      }
+
+      // Prefer the project-report uuid when present; site/nursery light DTOs only fill the gap when
+      // the project-report index is disabled (site/nursery source views).
+      if (type === "project-report") {
+        period.projectReportUuid = report.uuid;
+      } else if (period.projectReportUuid == null) {
+        period.projectReportUuid = resolveProjectReportUuid(report, type);
+      }
+
+      period.reports.push(toReport(report, type));
     };
 
-    void load();
+    projectReports.forEach(report => addReport(report, "project-report"));
+    siteReports.forEach(report => addReport(report, "site-report"));
+    nurseryReports.forEach(report => addReport(report, "nursery-report"));
 
-    return () => {
-      active = false;
-    };
-  }, [projectUuid, reloadNonce, source, sourceUuid]);
+    return Array.from(draftsByProject.values())
+      .map(({ periodsByDueAt, ...draft }) => ({
+        ...draft,
+        periods: Array.from(periodsByDueAt.values()).sort(byDueAtDescending)
+      }))
+      .sort(byNameAscending);
+  }, [error, loading, nurseryReports, organisationName, projectName, projectReports, projectUuid, siteReports]);
 
-  return state;
+  return { loading, sections, error };
 };

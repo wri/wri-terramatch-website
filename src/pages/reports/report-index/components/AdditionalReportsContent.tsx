@@ -97,9 +97,14 @@ const AdditionalReportsEntitySection = ({ section }: { section: AdditionalReport
         <ListSectionHeader
           level="top-level"
           title={section.name ?? (section.type === "organisation" ? t("Organisation") : t("Project"))}
+          titleHref={section.type === "project" ? `/project/${section.id}` : undefined}
           caption={section.type === "organisation" ? t("Organisation") : section.caption}
           icon={
-            open ? <FolderOpenIcon boxSize={5} color="primary.600" /> : <FolderIcon boxSize={5} color="neutral.400" />
+            open ? (
+              <FolderOpenIcon minWidth={5} width={5} height={"auto"} color="primary.600" />
+            ) : (
+              <FolderIcon minWidth={5} width={5} height={"auto"} color="neutral.400" />
+            )
           }
           statusLabels={
             attentionCount > 0 ? (
