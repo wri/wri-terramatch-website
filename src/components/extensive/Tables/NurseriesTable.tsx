@@ -5,7 +5,6 @@ import { useCallback, useMemo } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
-import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import ActionTableCell from "@/components/extensive/TableCells/ActionTableCell";
@@ -75,24 +74,17 @@ const NurseriesTable = ({
         {
           accessorKey: "status",
           header: t("Status"),
-          cell: props => {
-            let value = props.getValue() as string;
-
-            const statusProps = getActionCardStatusMapper(t)[value] as any;
-            return <StatusTableCell statusProps={statusProps} />;
-          }
+          cell: props => <StatusTableCell status={props.getValue() as string} variant="mapped" />
         },
         {
           accessorKey: "updateRequestStatus",
           header: t("Change Request"),
           cell: props => {
-            let value = props.getValue() as string;
-            const statusProps = getActionCardStatusMapper(t)[value] as any;
-
+            const value = props.getValue() as string;
             if (value == null || value === "" || value === "no-update") {
               return null;
             }
-            return <StatusTableCell statusProps={statusProps} />;
+            return <StatusTableCell status={value} />;
           }
         },
         {

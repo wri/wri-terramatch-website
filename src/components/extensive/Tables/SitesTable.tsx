@@ -7,7 +7,6 @@ import { useCallback, useMemo, useState } from "react";
 import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
-import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import ActionTableCell from "@/components/extensive/TableCells/ActionTableCell";
@@ -18,7 +17,6 @@ import { useModalContext } from "@/context/modal.provider";
 import { ProjectLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import { Status } from "@/types/common";
 import { Selected } from "@/types/connection";
 
 import { ModalId } from "../Modal/ModalConst";
@@ -92,24 +90,17 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
         {
           accessorKey: "status",
           header: t("Status"),
-          cell: props => {
-            let value = props.getValue() as string;
-
-            const statusProps = getActionCardStatusMapper(t)[value]!;
-            return <StatusTableCell statusProps={statusProps as { status: Status; statusText: string }} />;
-          }
+          cell: props => <StatusTableCell status={props.getValue() as string} variant="mapped" />
         },
         {
           accessorKey: "updateRequestStatus",
           header: t("Change Request"),
           cell: props => {
-            let value = props.getValue() as string;
-            const statusProps = getActionCardStatusMapper(t)[value]!;
-
+            const value = props.getValue() as string;
             if (value == null || value === "" || value === "no-update") {
               return null;
             }
-            return <StatusTableCell statusProps={statusProps as { status: Status; statusText: string }} />;
+            return <StatusTableCell status={value} />;
           }
         },
         {
