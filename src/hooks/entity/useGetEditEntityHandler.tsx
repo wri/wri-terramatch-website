@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 
+import EntityInformationRequiredModal from "@/components/extensive/EntityInformationRequiredModal";
 import { type StatusBarStatus, getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
@@ -23,6 +24,7 @@ interface GetEditEntityHandlerArgs {
   reportTitle?: string;
   feedback?: string | null;
   useStatusModal?: boolean;
+  useInformationRequiredModal?: boolean;
 }
 
 /**
@@ -37,7 +39,8 @@ export const useGetEditEntityHandler = ({
   feedback,
   useStatusModal = false,
   entityTitle,
-  reportTitle
+  reportTitle,
+  useInformationRequiredModal = false
 }: GetEditEntityHandlerArgs) => {
   const t = useT();
   const router = useRouter();
@@ -130,18 +133,27 @@ export const useGetEditEntityHandler = ({
           }
         ]}
       />
-      {statusProps != null && (
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={feedback}
-          showProvideFeedback={shouldShowStatusFeedbackModal}
-          entityName={formEntityName}
-          entityUuid={entityUUID}
-          formStepId={stepId}
-          open={openStatusModal}
-          onOpenChange={setOpenStatusModal}
-        />
-      )}
+      {statusProps != null &&
+        (useInformationRequiredModal ? (
+          <EntityInformationRequiredModal
+            feedback={feedback}
+            entityName={formEntityName}
+            entityUuid={entityUUID}
+            open={openStatusModal}
+            onOpenChange={setOpenStatusModal}
+          />
+        ) : (
+          <EntityStatusModal
+            statusProps={statusProps}
+            feedback={feedback}
+            showProvideFeedback={shouldShowStatusFeedbackModal}
+            entityName={formEntityName}
+            entityUuid={entityUUID}
+            formStepId={stepId}
+            open={openStatusModal}
+            onOpenChange={setOpenStatusModal}
+          />
+        ))}
       <ModalConfirmation
         open={openConfirmEditModal}
         onOpenChange={open => setOpenConfirmEditModal(open)}

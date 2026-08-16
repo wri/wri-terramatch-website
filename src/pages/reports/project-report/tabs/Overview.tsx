@@ -40,7 +40,8 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
     entityTitle: projectReport.projectName ?? "",
     reportTitle: projectReport.reportTitle ?? "",
     feedback: projectReport.feedback,
-    useStatusModal: true
+    useStatusModal: true,
+    useInformationRequiredModal: true
   });
 
   const goToTab = useCallback(

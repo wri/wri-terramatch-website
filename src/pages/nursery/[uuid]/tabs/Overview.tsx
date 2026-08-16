@@ -1,10 +1,9 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 
-import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
-import { IconNames } from "@/components/extensive/Icon/Icon";
+import EntityInformationRequiredModal from "@/components/extensive/EntityInformationRequiredModal";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
@@ -36,26 +35,14 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   const needMoreInformation =
     nursery.updateRequestStatus === INFORMATION_REQUIRED || nursery.status === INFORMATION_REQUIRED;
   const awaitingApproval = nursery.updateRequestStatus === PENDING_APPROVAL || nursery.status === PENDING_APPROVAL;
-  const hasUpdateRequest =
-    !["draft", "approved"].includes(nursery.updateRequestStatus ?? "") && nursery.updateRequestStatus != null;
-
-  const statusProps: StatusProps | undefined = useMemo(() => {
-    if (!needMoreInformation) return undefined;
-    const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
-    return {
-      title: t(`${titlePrefix} Information Required`),
-      icon: IconNames.EXCLAMATION_CIRCLE_FILL,
-      className: "fill-tertiary"
-    };
-  }, [needMoreInformation, hasUpdateRequest, t]);
 
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval && statusProps != null) {
+    if (needMoreInformation && !awaitingApproval) {
       setOpenStatusModal(true);
     } else {
       handleEdit();
     }
-  }, [needMoreInformation, statusProps, handleEdit, awaitingApproval]);
+  }, [needMoreInformation, handleEdit, awaitingApproval]);
 
   const goToTab = (tab: string) => {
     router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
@@ -66,17 +53,13 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   return (
     <PageContent>
       {EditModals}
-      {statusProps != null && (
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={nursery.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="nurseries"
-          entityUuid={nursery.uuid}
-          open={openStatusModal}
-          onOpenChange={setOpenStatusModal}
-        />
-      )}
+      <EntityInformationRequiredModal
+        feedback={nursery.feedback}
+        entityName="nurseries"
+        entityUuid={nursery.uuid}
+        open={openStatusModal}
+        onOpenChange={setOpenStatusModal}
+      />
       <Flex gap={7} className="flex-col sm:flex-row">
         <PageItem
           title={t("Key Indicators")}

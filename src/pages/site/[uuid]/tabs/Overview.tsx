@@ -1,11 +1,10 @@
 import { Box, Flex, useBreakpointValue } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import router from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
+import EntityInformationRequiredModal from "@/components/extensive/EntityInformationRequiredModal";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -73,7 +72,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
 
   const needMoreInformation = site.updateRequestStatus === INFORMATION_REQUIRED || site.status === INFORMATION_REQUIRED;
   const awaitingApproval = site.updateRequestStatus === PENDING_APPROVAL || site.status === PENDING_APPROVAL;
-  const statusProps = useMemo(() => getStatusProps(t, site, site.status!), [t, site]);
 
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval) {
@@ -85,10 +83,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
-      <EntityStatusModal
-        statusProps={statusProps!}
+      <EntityInformationRequiredModal
         feedback={site.feedback}
-        needMoreInformation={needMoreInformation}
         entityName="sites"
         entityUuid={site.uuid}
         open={openStatusModal}
