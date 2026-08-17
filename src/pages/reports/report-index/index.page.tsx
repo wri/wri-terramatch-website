@@ -2,6 +2,7 @@ import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useRef } from "react";
 
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullProject, useFullSite } from "@/connections/Entity";
@@ -31,31 +32,38 @@ const ReportsIndexPage = () => {
   const projectUuid =
     (source === "project" ? sourceUuid : source === "site" ? site?.projectUuid : nursery?.projectUuid) ?? undefined;
   const [projectLoaded, { data: project }] = useFullProject({ id: projectUuid });
+  // Keep the last loaded project so switching View does not unmount the page shell.
+  const displayedProjectRef = useRef(project);
+  if (project != null) displayedProjectRef.current = project;
+  const displayedProject = project ?? displayedProjectRef.current;
 
   const sourceLoaded = source === "project" ? projectLoaded : source === "site" ? siteLoaded : nurseryLoaded;
-  const sourceEntity = source === "project" ? project : source === "site" ? site : nursery;
+  const sourceEntity = source === "project" ? displayedProject : source === "site" ? site : nursery;
   const loading =
     !router.isReady ||
-    (source != null && sourceUuid != null && (!sourceLoaded || (projectUuid != null && !projectLoaded)));
+    (displayedProject == null &&
+      source != null &&
+      sourceUuid != null &&
+      (!sourceLoaded || (projectUuid != null && !projectLoaded)));
 
   if (router.isReady && (source == null || sourceUuid == null)) {
     return <Box>{t("The reports link is invalid.")}</Box>;
   }
 
   return (
-    <FrameworkProvider frameworkKey={project?.frameworkKey}>
+    <FrameworkProvider frameworkKey={displayedProject?.frameworkKey}>
       <ReportsProvider>
         <ResponsiveTypography />
         <Head>
           <title>{t("Reports")}</title>
         </Head>
         <LoadingContainer loading={loading}>
-          {project == null ? (
+          {displayedProject == null ? (
             <Box>{t("The reports information could not be found.")}</Box>
           ) : (
             <ReportsSelectionProvider key={`${source}:${sourceEntity?.uuid}`}>
               <ReportsIndexContent
-                project={project}
+                project={displayedProject}
                 source={source as ReportsIndexSource}
                 sourceEntity={sourceEntity as ReportsIndexSourceEntity}
               />

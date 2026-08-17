@@ -184,7 +184,7 @@ export const useCreateNursery = creationHook(
 );
 
 // Project Reports
-const indexProjectReportConnection = createEntityIndexConnection<ProjectReportLightDto>("projectReports");
+export const indexProjectReportConnection = createEntityIndexConnection<ProjectReportLightDto>("projectReports");
 export const loadProjectReportIndex = connectionLoader(indexProjectReportConnection);
 const fullProjectReportConnection = createEntityGetConnection<ProjectReportFullDto, ProjectReportUpdateData>(
   "projectReports"

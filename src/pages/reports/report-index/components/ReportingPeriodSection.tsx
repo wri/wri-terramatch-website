@@ -5,9 +5,13 @@ import { FC, useMemo, useState } from "react";
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
-import { toFramework } from "@/context/framework.provider";
+import {
+  DemographicsLoader,
+  getReportKeyIndicatorFramework
+} from "@/components/reports/KeyIndicators/reportKeyIndicatorPrimitives";
+import { useFullProjectReport } from "@/connections/Entity";
+import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -22,48 +26,74 @@ import ReportsIndexTable from "./ReportsIndexTable";
 
 type ReportingPeriodSectionProps = {
   period: ReportsIndexPeriod;
-  project: ProjectFullDto;
   defaultOpen?: boolean;
 };
 
 type PeriodJobsMetricCardProps = {
   projectReportUuid: string;
+  frameworkKey: string | null;
   className: string;
 };
 
-const PeriodJobsMetricCard: FC<PeriodJobsMetricCardProps> = ({ projectReportUuid, className }) => {
+const PeriodJobsMetricCard: FC<PeriodJobsMetricCardProps> = ({ projectReportUuid, frameworkKey, className }) => {
   const t = useT();
-  const jobsCreated =
-    useCollectionsTotal({
-      entity: "projectReports",
-      uuid: projectReportUuid,
-      domain: "demographics",
-      trackingType: "jobs" as TrackingType,
-      collections: DemographicCollections.JOBS_PROJECT
-    }) ?? 0;
+  const framework = getReportKeyIndicatorFramework(frameworkKey);
+
+  const trackingType = (framework === "terrafund" ? "jobs" : "workdays") as TrackingType;
+  const collections =
+    framework === "hbf"
+      ? (["direct"] as const)
+      : framework === "ppc"
+      ? DemographicCollections.WORKDAYS_PROJECT
+      : DemographicCollections.JOBS_PROJECT;
+
+  const total = useCollectionsTotal({
+    entity: "projectReports",
+    uuid: projectReportUuid,
+    domain: "demographics",
+    trackingType,
+    collections
+  });
+
+  if (total == null) return <DemographicsLoader className={className} />;
+
+  const title = framework === "terrafund" ? t("Jobs Created") : t("Workdays Created");
+  const tooltipContent =
+    framework === "terrafund"
+      ? t("Total jobs created in this reporting period.")
+      : t("Total workdays created in this reporting period.");
 
   return (
     <MetricCard
-      title={t("Jobs Created")}
+      title={title}
       color="primary.600"
-      progress={jobsCreated}
+      progress={total}
       goal={0}
       icon={<JobsIcon color="primary.600" boxSize="0.875rem" />}
-      tooltipContent={t("Total jobs created in this reporting period.")}
+      tooltipContent={tooltipContent}
       className={className}
     />
   );
 };
 
-const ReportingPeriodSection = ({ period, project, defaultOpen = false }: ReportingPeriodSectionProps) => {
+const ReportingPeriodSection = ({ period, defaultOpen = false }: ReportingPeriodSectionProps) => {
   const t = useT();
   const { format } = useDate();
   const [open, setOpen] = useState(defaultOpen);
-  const periodLabel = useReportingWindow(toFramework(project.frameworkKey), period.task.dueAt);
+  const periodLabel = useReportingWindow(toFramework(period.frameworkKey), period.dueAt ?? undefined);
   const taskTitle = t("Reporting Task {window}", { window: periodLabel });
   const counts = useMemo(() => getReportStatusCounts(period.reports), [period.reports]);
-  const { treesPlantedCount, seedsPlantedCount, regeneratedTreesCount } = period.metrics;
   const metricCardClassName = "w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100";
+
+  const [reportLoaded, { data: projectReport }] = useFullProjectReport({
+    id: open && period.projectReportUuid != null ? period.projectReportUuid : undefined
+  });
+
+  const metricsLoading = period.projectReportUuid != null && open && !reportLoaded;
+  const treesPlantedCount = projectReport?.treesPlantedCount ?? 0;
+  const seedsPlantedCount = projectReport?.seedsPlantedCount ?? 0;
+  const regeneratedTreesCount = projectReport?.regeneratedTreesCount ?? 0;
+  const frameworkKey = projectReport?.frameworkKey ?? period.frameworkKey;
 
   return (
     <Box bg="neutral.100">
@@ -78,7 +108,7 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
             level="sub-level"
             label={t("Reporting Period")}
             title={getShortPeriodLabel(taskTitle ?? "", true)}
-            dueDate={format(period.task.dueAt)}
+            dueDate={period.dueAt == null ? undefined : format(period.dueAt)}
             statusLabels={
               <Flex alignItems="center" gap={2} className="mobile:flex-wrap mobile:justify-end">
                 {counts.due > 0 && <TagSubmission state="due" size="small" labelPrefix={counts.due} />}
@@ -97,48 +127,58 @@ const ReportingPeriodSection = ({ period, project, defaultOpen = false }: Report
       >
         {open ? (
           <div className="bg-theme-neutral-100 p-4">
-            <div className="mb-5 flex flex-wrap gap-4">
-              <MetricCard
-                title={t("Trees Growing")}
-                color="secondary.600"
-                progress={treesPlantedCount}
-                goal={0}
-                icon={<TreeIcon color="secondary.600" boxSize="0.875rem" />}
-                tooltipContent={t("Total trees planted in this reporting period.")}
-                className={metricCardClassName}
-              />
-              <MetricCard
-                title={t("Seedlings Grown")}
-                color="secondary.600"
-                progress={seedsPlantedCount}
-                goal={0}
-                icon={<SeedlingsIcon color="secondary.600" boxSize="0.875rem" />}
-                tooltipContent={t("Total seedlings and seeds reported in this reporting period.")}
-                className={metricCardClassName}
-              />
-              <MetricCard
-                title={t("Trees Regenerated")}
-                color="secondary.600"
-                progress={regeneratedTreesCount}
-                goal={0}
-                icon={<RegenerationIcon color="secondary.600" boxSize="0.875rem" />}
-                tooltipContent={t("Total naturally regenerated trees reported in this reporting period.")}
-                className={metricCardClassName}
-              />
-              {period.projectReportUuid != null ? (
-                <PeriodJobsMetricCard projectReportUuid={period.projectReportUuid} className={metricCardClassName} />
-              ) : (
-                <MetricCard
-                  title={t("Jobs Created")}
-                  color="primary.600"
-                  progress={0}
-                  goal={0}
-                  icon={<JobsIcon color="primary.600" boxSize="0.875rem" />}
-                  tooltipContent={t("Total jobs created in this reporting period.")}
-                  className={metricCardClassName}
-                />
-              )}
-            </div>
+            {metricsLoading ? (
+              <DemographicsLoader className="mb-5 h-24 w-full" />
+            ) : (
+              <FrameworkProvider frameworkKey={frameworkKey}>
+                <div className="mb-5 flex flex-wrap gap-4">
+                  <MetricCard
+                    title={t("Trees Growing")}
+                    color="secondary.600"
+                    progress={treesPlantedCount}
+                    goal={0}
+                    icon={<TreeIcon color="secondary.600" boxSize="0.875rem" />}
+                    tooltipContent={t("Total trees planted in this reporting period.")}
+                    className={metricCardClassName}
+                  />
+                  <MetricCard
+                    title={t("Seedlings Grown")}
+                    color="secondary.600"
+                    progress={seedsPlantedCount}
+                    goal={0}
+                    icon={<SeedlingsIcon color="secondary.600" boxSize="0.875rem" />}
+                    tooltipContent={t("Total seedlings and seeds reported in this reporting period.")}
+                    className={metricCardClassName}
+                  />
+                  <MetricCard
+                    title={t("Trees Regenerated")}
+                    color="secondary.600"
+                    progress={regeneratedTreesCount}
+                    goal={0}
+                    icon={<RegenerationIcon color="secondary.600" boxSize="0.875rem" />}
+                    tooltipContent={t("Total naturally regenerated trees reported in this reporting period.")}
+                    className={metricCardClassName}
+                  />
+                  {period.projectReportUuid != null ? (
+                    <PeriodJobsMetricCard
+                      projectReportUuid={period.projectReportUuid}
+                      frameworkKey={frameworkKey}
+                      className={metricCardClassName}
+                    />
+                  ) : (
+                    <MetricCard
+                      title={t("Jobs Created")}
+                      color="primary.600"
+                      progress={0}
+                      goal={0}
+                      icon={<JobsIcon color="primary.600" boxSize="0.875rem" />}
+                      tooltipContent={t("Total jobs created in this reporting period.")}
+                      className={metricCardClassName}
+                    />
+                  )}
+                </div>
+              </FrameworkProvider>
+            )}
             <ReportsIndexTable reports={period.reports} />
           </div>
         ) : null}

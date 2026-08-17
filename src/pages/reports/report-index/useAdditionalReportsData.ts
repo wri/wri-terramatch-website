@@ -15,6 +15,7 @@ import {
 import {
   AdditionalDisturbanceReport,
   AdditionalFinancialReport,
+  AdditionalReportGroup,
   AdditionalReportsEntitySection,
   AdditionalSrpReport
 } from "./reportIndex.types";
@@ -101,10 +102,25 @@ const toDisturbanceReport = (report: DisturbanceReportLightDto): AdditionalDistu
   };
 };
 
-export const useAdditionalReportsData = (project: ProjectFullDto, enabled: boolean): AdditionalReportsDataState => {
+type ProjectSectionDraft = {
+  id: string;
+  name: string | null;
+  caption: string;
+  srpReports: AdditionalSrpReport[];
+  disturbanceReports: AdditionalDisturbanceReport[];
+};
+
+type ProjectScopedReport = { projectUuid: string | null; projectName: string | null; organisationName: string | null };
+
+export const useAdditionalReportsData = (
+  project: ProjectFullDto,
+  enabled: boolean,
+  allProjects: boolean
+): AdditionalReportsDataState => {
   const [userLoaded, { user }] = useMyUser();
   const organisationUuid = user?.organisationUuid ?? null;
   const loadOrganisationData = enabled && organisationUuid != null;
+  const projectFilter = allProjects ? {} : { projectUuid: project.uuid };
 
   const [organisationLoaded, { data: organisation, loadFailure: organisationFailure }] = useOrganisation(
     loadOrganisationData ? { id: organisationUuid } : {}
@@ -118,13 +134,13 @@ export const useAdditionalReportsData = (project: ProjectFullDto, enabled: boole
 
   const [srpLoaded, { data: srpData, loadFailure: srpFailure }] = useSRPReportIndex({
     ...INDEX_PROPS,
-    filter: { projectUuid: project.uuid },
+    filter: projectFilter,
     enabled
   });
 
   const [disturbanceLoaded, { data: disturbanceData, loadFailure: disturbanceFailure }] = useDisturbanceReportIndex({
     ...INDEX_PROPS,
-    filter: { projectUuid: project.uuid },
+    filter: projectFilter,
     enabled
   });
 
@@ -141,8 +157,6 @@ export const useAdditionalReportsData = (project: ProjectFullDto, enabled: boole
     const financialReports = (financialData ?? []).map(report =>
       toFinancialReport(report, organisation?.currency ?? null, organisation?.finStartMonth ?? null)
     );
-    const srpReports = (srpData ?? []).map(toSrpReport);
-    const disturbanceReports = (disturbanceData ?? []).map(toDisturbanceReport);
     const nextSections: AdditionalReportsEntitySection[] = [];
 
     if (organisationUuid != null && financialReports.length > 0) {
@@ -155,24 +169,54 @@ export const useAdditionalReportsData = (project: ProjectFullDto, enabled: boole
       });
     }
 
-    const projectGroups = [
-      ...(srpReports.length === 0 ? [] : [{ id: "annual-srp", type: "srp-report" as const, reports: srpReports }]),
-      ...(disturbanceReports.length === 0
-        ? []
-        : [{ id: "disturbance-reports", type: "disturbance-report" as const, reports: disturbanceReports }])
-    ];
+    // SRP and disturbance reports hang off a project, so they get one accordion per project. In the
+    // single project view this collapses to the one project being looked at.
+    const draftsByProject = new Map<string, ProjectSectionDraft>();
 
-    if (projectGroups.length > 0) {
-      nextSections.push({
-        id: project.uuid,
-        type: "project",
-        name: project.name,
-        caption: project.organisationName ?? "",
-        groups: projectGroups
-      });
-    }
+    const draftFor = (report: ProjectScopedReport) => {
+      const projectUuid = report.projectUuid ?? project.uuid;
+      let draft = draftsByProject.get(projectUuid);
 
-    return nextSections;
+      if (draft == null) {
+        draft = {
+          id: projectUuid,
+          name: report.projectName ?? (projectUuid === project.uuid ? project.name : null),
+          caption: report.organisationName ?? project.organisationName ?? "",
+          srpReports: [],
+          disturbanceReports: []
+        };
+        draftsByProject.set(projectUuid, draft);
+      }
+
+      return draft;
+    };
+
+    (srpData ?? []).forEach(report => draftFor(report).srpReports.push(toSrpReport(report)));
+    (disturbanceData ?? []).forEach(report => draftFor(report).disturbanceReports.push(toDisturbanceReport(report)));
+
+    const projectSections = Array.from(draftsByProject.values())
+      .map(draft => {
+        const groups: AdditionalReportGroup[] = [
+          ...(draft.srpReports.length === 0
+            ? []
+            : [{ id: `${draft.id}-annual-srp`, type: "srp-report" as const, reports: draft.srpReports }]),
+          ...(draft.disturbanceReports.length === 0
+            ? []
+            : [
+                {
+                  id: `${draft.id}-disturbance-reports`,
+                  type: "disturbance-report" as const,
+                  reports: draft.disturbanceReports
+                }
+              ])
+        ];
+
+        return { id: draft.id, type: "project" as const, name: draft.name, caption: draft.caption, groups };
+      })
+      .filter(section => section.groups.length > 0)
+      .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
+
+    return [...nextSections, ...projectSections];
   }, [
     disturbanceData,
     enabled,

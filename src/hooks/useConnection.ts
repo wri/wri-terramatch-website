@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { IndexConnection } from "@/connections/util/apiConnectionFactory";
-import { useValueChanged } from "@/hooks/useValueChanged";
-import ApiSlice from "@/store/apiSlice";
+import { EnabledProp, IndexConnection, LoadFailureConnection } from "@/connections/util/apiConnectionFactory";
+import ApiSlice, { PendingError } from "@/store/apiSlice";
 import { AppStore } from "@/store/store";
 import { Connected, Connection, OptionalProps, PaginatedConnectionProps } from "@/types/connection";
 
@@ -35,34 +34,78 @@ export function useConnection<TSelected, TProps extends OptionalProps, State>(
 }
 
 const PAGE_SIZE = 100;
-export const useAllPages = <D, S extends IndexConnection<D>, P extends PaginatedConnectionProps>(
+const NO_DATA: never[] = [];
+
+/**
+ * Loads every page of a paginated index connection. Follows the same accumulation pattern as
+ * `useAllMedias`: pages are stored by number (avoids duplicate appends) and page advancement is
+ * guarded so a cached page cannot advance twice.
+ *
+ * `resetKey` drops accumulated pages when the index was pruned without the filter props changing
+ * (e.g. reports index bulk actions).
+ */
+export const useAllPages = <
+  D,
+  S extends IndexConnection<D> & Partial<LoadFailureConnection>,
+  P extends PaginatedConnectionProps & EnabledProp
+>(
   // & IndexConnection<D> needed to get TS to correctly infer D for the return type
   // https://stackoverflow.com/a/76295763/139109
   connection: Connection<S & IndexConnection<D>, P>,
-  props: Omit<P, "pageNumber" | "pageSize">
-): [boolean, D[]] => {
-  const [data, setData] = useState<D[]>([]);
+  props: Omit<P, "pageNumber" | "pageSize">,
+  resetKey?: unknown
+): [boolean, D[], PendingError | undefined] => {
+  const stableProps = useStableProps(props);
   const [pageNumber, setPageNumber] = useState(1);
-  const [dataStable, { data: pageData, indexTotal }] = useConnection(connection, {
-    ...props,
+  const [pagesByNumber, setPagesByNumber] = useState<Record<number, D[]>>({});
+  const advancedFromPageRef = useRef<number | null>(null);
+  const [paginationIdentity, setPaginationIdentity] = useState({ props: stableProps, resetKey });
+
+  // Reset in render so a filter change cannot paint the previous query's pages.
+  if (stableProps !== paginationIdentity.props || resetKey !== paginationIdentity.resetKey) {
+    setPaginationIdentity({ props: stableProps, resetKey });
+    setPageNumber(1);
+    setPagesByNumber({});
+    advancedFromPageRef.current = null;
+  }
+
+  const [pageLoaded, { data: pageData, indexTotal, loadFailure }] = useConnection(connection, {
+    ...stableProps,
     pageNumber,
     pageSize: PAGE_SIZE
   } as P);
-  useEffect(() => {
-    if (pageData != null) setData(data => [...data, ...pageData]);
-  }, [pageData]);
-  useValueChanged(dataStable, () => {
-    if (dataStable && indexTotal != null) {
-      setPageNumber(pageNumber => {
-        const maxPage = Math.ceil(indexTotal / PAGE_SIZE);
-        return pageNumber < maxPage ? pageNumber + 1 : pageNumber;
-      });
-    }
-  });
 
-  if (indexTotal == null || !dataStable) return [false, data];
-  if (pageNumber === 1 && indexTotal === 0) return [true, data];
+  useEffect(() => {
+    if (pageData == null) return;
+    setPagesByNumber(current => (pageNumber === 1 ? { 1: pageData } : { ...current, [pageNumber]: pageData }));
+  }, [pageData, pageNumber]);
+
+  useEffect(() => {
+    // Walk forward until the last page has been consumed. Depends on page data rather than only
+    // the loaded flag because a page already in the store is delivered without a load in between.
+    if (!pageLoaded || indexTotal == null || pageData == null) return;
+
+    const maxPage = Math.ceil(indexTotal / PAGE_SIZE);
+    if (pageNumber >= maxPage || advancedFromPageRef.current === pageNumber) return;
+
+    advancedFromPageRef.current = pageNumber;
+    setPageNumber(currentPage => currentPage + 1);
+  }, [pageLoaded, indexTotal, pageNumber, pageData]);
+
+  const data = useMemo(
+    () =>
+      Object.keys(pagesByNumber)
+        .map(Number)
+        .sort((a, b) => a - b)
+        .flatMap(page => pagesByNumber[page] ?? []),
+    [pagesByNumber]
+  );
+
+  if (stableProps.enabled === false) return [true, NO_DATA, undefined];
+  if (loadFailure != null) return [true, NO_DATA, loadFailure];
+  if (indexTotal == null || !pageLoaded) return [false, data, undefined];
+  if (pageNumber === 1 && indexTotal === 0) return [true, data, undefined];
 
   const allPagesLoaded = pageNumber === Math.ceil(indexTotal / PAGE_SIZE);
-  return [allPagesLoaded, data];
+  return [allPagesLoaded, data, undefined];
 };
