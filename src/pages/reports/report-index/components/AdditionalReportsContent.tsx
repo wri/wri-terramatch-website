@@ -3,7 +3,6 @@ import { useT } from "@transifex/react";
 import { useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
-import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import { FolderIcon, FolderOpenIcon, LoadingIcon } from "@/redesignComponents/foundations/Icons";
@@ -16,9 +15,8 @@ import {
 } from "../reportIndex.types";
 import { getReportsRequiringAttention } from "../reportIndex.utils";
 import AdditionalReportsTable from "./AdditionalReportsTable";
-import ReportsSearchNoResults from "./ReportsSearchNoResults";
-import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import ReportAttentionStatusLabels from "./ReportAttentionStatusLabels";
+import ReportsSearchNoResults from "./ReportsSearchNoResults";
 
 type AdditionalReportsContentProps = {
   sections: AdditionalReportsEntitySectionData[];
@@ -131,12 +129,10 @@ const AdditionalReportsContent = ({
         hasActiveSearch ? (
           <ReportsSearchNoResults />
         ) : (
-          <InlineMessage
-            className="m-4"
-            variant="info-grey"
-            label={t("No additional reports found")}
-            caption={t("Try changing your search or filters.")}
-          />
+          <Box background="neutral.100" h="full" p={4}>
+            <Text textStyle="400-bold">{t("No additional reports found")}</Text>
+            <Text textStyle="400">{t("Try changing your search or filters.")}</Text>
+          </Box>
         )
       ) : (
         <div className="space-y-4">
