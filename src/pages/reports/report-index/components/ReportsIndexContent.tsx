@@ -20,6 +20,7 @@ import AdditionalReportsContent from "./AdditionalReportsContent";
 import ProjectReportsSection from "./ProjectReportsSection";
 import ReportsIndexBulkBar from "./ReportsIndexBulkBar";
 import ReportsIndexHeader from "./ReportsIndexHeader";
+import ReportsSearchNoResults from "./ReportsSearchNoResults";
 
 type ReportsIndexContentProps = {
   project: ProjectFullDto;
@@ -58,6 +59,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     useReportsIndexFilters({ progressSections, additionalSections, query });
 
   const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
+  const hasActiveSearch = query.trim().length > 0;
 
   const viewItems = useMemo<HighLevelSelectorItem[]>(() => {
     const projectItems =
@@ -161,12 +163,16 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                 caption={t("Please refresh the page and try again.")}
               />
             ) : filteredProgressSections.length === 0 ? (
-              <InlineMessage
-                className="m-4"
-                variant="info-grey"
-                label={t("No reports found")}
-                caption={t("Try changing your search or filters.")}
-              />
+              hasActiveSearch ? (
+                <ReportsSearchNoResults />
+              ) : (
+                <InlineMessage
+                  className="m-4"
+                  variant="info-grey"
+                  label={t("No reports found")}
+                  caption={t("Try changing your search or filters.")}
+                />
+              )
             ) : (
               <div className="space-y-4">
                 {filteredProgressSections.map((section, index) => (
@@ -182,6 +188,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
             sections={filteredAdditionalSections}
             loading={additionalLoading || isSwitchingProject}
             error={additionalError}
+            hasActiveSearch={hasActiveSearch}
           />
         )}
 

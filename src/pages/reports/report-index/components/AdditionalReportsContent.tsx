@@ -16,12 +16,15 @@ import {
 } from "../reportIndex.types";
 import { getReportsRequiringAttention } from "../reportIndex.utils";
 import AdditionalReportsTable from "./AdditionalReportsTable";
+import ReportsSearchNoResults from "./ReportsSearchNoResults";
+import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import ReportAttentionStatusLabels from "./ReportAttentionStatusLabels";
 
 type AdditionalReportsContentProps = {
   sections: AdditionalReportsEntitySectionData[];
   loading: boolean;
   error: boolean;
+  hasActiveSearch?: boolean;
 };
 
 const getGroupLabel = (type: AdditionalReportType, t: ReturnType<typeof useT>) => {
@@ -102,7 +105,12 @@ const AdditionalReportsEntitySection = ({ section }: { section: AdditionalReport
   );
 };
 
-const AdditionalReportsContent = ({ sections, loading, error }: AdditionalReportsContentProps) => {
+const AdditionalReportsContent = ({
+  sections,
+  loading,
+  error,
+  hasActiveSearch = false
+}: AdditionalReportsContentProps) => {
   const t = useT();
 
   return (
@@ -120,10 +128,16 @@ const AdditionalReportsContent = ({ sections, loading, error }: AdditionalReport
           <Text textStyle="400">{t("Please refresh the page and try again.")}</Text>
         </Box>
       ) : sections.length === 0 ? (
-        <Box background="neutral.100" h="full" p={4}>
-          <Text textStyle="400-bold">{t("No results found")}</Text>
-          <Text textStyle="400">{t("Try changing your search or filters.")}</Text>
-        </Box>
+        hasActiveSearch ? (
+          <ReportsSearchNoResults />
+        ) : (
+          <InlineMessage
+            className="m-4"
+            variant="info-grey"
+            label={t("No additional reports found")}
+            caption={t("Try changing your search or filters.")}
+          />
+        )
       ) : (
         <div className="space-y-4">
           {sections.map(section => (
