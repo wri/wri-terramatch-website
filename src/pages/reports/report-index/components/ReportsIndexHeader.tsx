@@ -220,7 +220,6 @@ const ReportsIndexHeader = ({
         activeTab={activeTab}
         filters={selectedFilters}
         onApplyFilters={applyFilters}
-        onClearFilters={clearFilters}
         onOpenChange={setIsFilterDrawerOpen}
       />
     </>

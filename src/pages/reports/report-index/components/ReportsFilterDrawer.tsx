@@ -15,6 +15,7 @@ import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRan
 
 import {
   ADDITIONAL_REPORT_TYPE_OPTIONS,
+  EMPTY_REPORT_FILTERS,
   formatDueDateRangeLabel,
   PROGRESS_REPORT_TYPE_OPTIONS,
   REPORT_TYPE_LABELS,
@@ -50,7 +51,6 @@ interface ReportsFilterDrawerProps {
   activeTab: string;
   filters: ReportFilterState;
   onApplyFilters: (filters: ReportFilterState) => void;
-  onClearFilters: () => void;
   onOpenChange?: (open: boolean) => void;
 }
 
@@ -59,7 +59,6 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
   activeTab,
   filters,
   onApplyFilters,
-  onClearFilters,
   onOpenChange
 }) => {
   const t = useT();
@@ -215,8 +214,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
                   children: t("Clear all"),
                   variant: "secondary",
                   onClick: () => {
-                    onClearFilters();
-                    onClose();
+                    setDraftFilters(EMPTY_REPORT_FILTERS);
                   }
                 },
                 {

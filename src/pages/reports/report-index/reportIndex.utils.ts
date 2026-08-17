@@ -70,8 +70,13 @@ export const REPORTS_INDEX_ATTENTION_STATUSES: ReadonlySet<TagSubmissionState> =
   "draft"
 ]);
 
+const REPORTS_INDEX_COMPLETE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["approved", "nothing-reported"]);
+
 export const getReportsRequiringAttention = (reports: Array<{ status: TagSubmissionState }>) =>
   reports.filter(report => REPORTS_INDEX_ATTENTION_STATUSES.has(report.status)).length;
+
+export const areAllReportsComplete = (reports: Array<{ status: TagSubmissionState }>) =>
+  reports.length > 0 && reports.every(report => REPORTS_INDEX_COMPLETE_STATUSES.has(report.status));
 
 export const getReportStatusCounts = (reports: Array<{ status: TagSubmissionState }>) =>
   reports.reduce(
@@ -79,11 +84,9 @@ export const getReportStatusCounts = (reports: Array<{ status: TagSubmissionStat
       if (report.status === "due") result.due += 1;
       if (report.status === "draft") result.draft += 1;
       if (report.status === "information-required") result.informationRequired += 1;
-      if (report.status === "pending-approval") result.pendingApproval += 1;
-      if (report.status === "approved") result.approved += 1;
       return result;
     },
-    { due: 0, draft: 0, informationRequired: 0, pendingApproval: 0, approved: 0 }
+    { due: 0, draft: 0, informationRequired: 0 }
   );
 
 const hasOpenChangeRequestDraft = (report: ReportIndexItem) => report.updateRequestStatus === "draft";

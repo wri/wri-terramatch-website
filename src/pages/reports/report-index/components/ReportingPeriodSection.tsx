@@ -1,6 +1,6 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useMemo, useState } from "react";
+import { FC, useState } from "react";
 
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
@@ -14,14 +14,13 @@ import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
-import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { JobsIcon, RegenerationIcon, SeedlingsIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ReportsIndexPeriod } from "../reportIndex.types";
-import { getReportStatusCounts } from "../reportIndex.utils";
+import ReportAttentionStatusLabels from "./ReportAttentionStatusLabels";
 import ReportsIndexTable from "./ReportsIndexTable";
 
 type ReportingPeriodSectionProps = {
@@ -82,7 +81,6 @@ const ReportingPeriodSection = ({ period, defaultOpen = false }: ReportingPeriod
   const [open, setOpen] = useState(defaultOpen);
   const periodLabel = useReportingWindow(toFramework(period.frameworkKey), period.dueAt ?? undefined);
   const taskTitle = t("Reporting Task {window}", { window: periodLabel });
-  const counts = useMemo(() => getReportStatusCounts(period.reports), [period.reports]);
   const metricCardClassName = "w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100";
 
   const [reportLoaded, { data: projectReport }] = useFullProjectReport({
@@ -109,19 +107,7 @@ const ReportingPeriodSection = ({ period, defaultOpen = false }: ReportingPeriod
             label={t("Reporting Period")}
             title={getShortPeriodLabel(taskTitle ?? "", false)}
             dueDate={period.dueAt == null ? undefined : format(period.dueAt)}
-            statusLabels={
-              <Flex alignItems="center" gap={2} className="mobile:flex-wrap mobile:justify-end">
-                {counts.due > 0 && <TagSubmission state="due" size="small" labelPrefix={counts.due} />}
-                {counts.draft > 0 && <TagSubmission state="draft" size="small" labelPrefix={counts.draft} />}
-                {counts.informationRequired > 0 && (
-                  <TagSubmission state="information-required" size="small" labelPrefix={counts.informationRequired} />
-                )}
-                {counts.pendingApproval > 0 && (
-                  <TagSubmission state="pending-approval" size="small" labelPrefix={counts.pendingApproval} />
-                )}
-                {counts.approved > 0 && <TagSubmission state="approved" size="small" labelPrefix={counts.approved} />}
-              </Flex>
-            }
+            statusLabels={<ReportAttentionStatusLabels reports={period.reports} />}
           />
         }
       >
