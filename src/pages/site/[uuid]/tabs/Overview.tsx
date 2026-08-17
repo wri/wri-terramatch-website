@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import router from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import EntityDataView from "@/components/entityData/EntityDataView";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
@@ -23,11 +24,6 @@ import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSect
 import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
-
-/** Fixed height of the map row. The map fills it on the left; the right column stacks the Actions
- * panel over the indicator panel within the same height. Set inline (not via a Tailwind arbitrary
- * class) so the Mapbox canvas is bounded and cannot overflow into the section below. */
-const DRILLDOWN_ROW_HEIGHT = "34rem";
 
 interface SiteOverviewTabProps {
   site: SiteFullDto;
@@ -121,25 +117,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             onClick: () => goToTab("polygons")
           }}
         >
-          <Flex gap={5} className="w-full flex-col ws-1100:flex-row" style={{ minHeight: DRILLDOWN_ROW_HEIGHT }}>
-            <Box className="relative w-full flex-1 overflow-hidden rounded-lg" style={{ height: DRILLDOWN_ROW_HEIGHT }}>
-              <SiteMap drilldown={drilldown} projectUuid={projectUuid} />
-            </Box>
-            <Flex
-              className="w-full shrink-0 flex-col ws-1100:w-[26rem]"
-              gap={4}
-              style={{ height: DRILLDOWN_ROW_HEIGHT }}
-            >
-              <Box className="shrink-0">
-                <SiteActionsPanel projectUuid={projectUuid} siteUuid={site.uuid} />
-              </Box>
-              {/* Indicators fill the rest of the column and scroll internally, so a long polygon
-                  list never pushes the column past the map's height. */}
-              <Box className="min-h-0 flex-1 overflow-hidden">
-                <SiteKpiPanel drilldown={drilldown} siteName={site.name ?? t("Site")} projectUuid={projectUuid} />
-              </Box>
-            </Flex>
-          </Flex>
+          <EntityDataView
+            map={<SiteMap drilldown={drilldown} projectUuid={projectUuid} />}
+            actions={<SiteActionsPanel projectUuid={projectUuid} siteUuid={site.uuid} />}
+            kpis={<SiteKpiPanel drilldown={drilldown} siteName={site.name ?? t("Site")} projectUuid={projectUuid} />}
+          />
         </PageItem>
         {/* Sites Set Up, demoted below the fold: it is a setup/editing flow, not day-to-day data. */}
         <PageItem
