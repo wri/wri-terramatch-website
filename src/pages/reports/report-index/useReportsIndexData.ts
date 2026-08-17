@@ -126,7 +126,12 @@ export const useReportsIndexData = (
     reloadNonce
   );
 
-  const loading = !projectReportsLoaded || !siteReportsLoaded || !nurseryReportsLoaded;
+  // All Projects walks every index page (max 100 rows each). Block the first paint on the first
+  // page of each index, not on the full walk, or the tab stays on "Loading reports..." for a long time.
+  const loading =
+    (!projectReportsLoaded && projectReports.length === 0) ||
+    (!siteReportsLoaded && siteReports.length === 0) ||
+    (!nurseryReportsLoaded && nurseryReports.length === 0);
   const error = projectReportsFailure != null || siteReportsFailure != null || nurseryReportsFailure != null;
 
   const sections = useMemo((): ReportsIndexProjectSection[] => {
