@@ -29,7 +29,8 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
     entityName: "nurseries",
     entityUUID: nursery.uuid,
     entityStatus: nursery.status ?? "draft",
-    updateRequestStatus: nursery.updateRequestStatus
+    updateRequestStatus: nursery.updateRequestStatus,
+    useInformationRequiredModal: true
   });
 
   const needMoreInformation =

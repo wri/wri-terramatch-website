@@ -42,7 +42,8 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
     updateRequestStatus: entity.updateRequestStatus,
     feedback: entity.feedback,
     entityTitle: entityTitle ?? "",
-    reportTitle: reportTitle ?? ""
+    reportTitle: reportTitle ?? "",
+    useInformationRequiredModal: true
   });
   const handleStepEdit = onEditStep ?? handleEdit;
 

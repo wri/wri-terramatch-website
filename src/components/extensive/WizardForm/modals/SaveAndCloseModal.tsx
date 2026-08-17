@@ -4,8 +4,9 @@ import { ReactNode, useMemo } from "react";
 
 import { useModalContext } from "@/context/modal.provider";
 import { FormModelsDefinition } from "@/context/wizardForm.provider";
+import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
-import { BaseModelNames, EntityName, isReportModelName } from "@/types/common";
+import { EntityName, isReportModelName, SingularEntityName } from "@/types/common";
 import { toArray } from "@/utils/array";
 
 import { ModalId } from "../../Modal/ModalConst";
@@ -18,14 +19,9 @@ export interface SaveAndCloseModalProps {
   shouldHideWarning: boolean;
 }
 
-const PROFILE_SECTION_LABELS: Partial<Record<BaseModelNames, string>> = {
-  projects: "Project",
-  sites: "Site",
-  nurseries: "Nursery"
-};
-
 const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
   const { closeModal } = useModalContext();
+  const { getReadableEntityName } = useGetReadableEntityName();
   const t = useT();
   const models = useMemo(() => toArray(props.models), [props.models]);
   const modelName = models[0]?.model as EntityName | undefined;
@@ -33,6 +29,25 @@ const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
   const defaultContent = useMemo(() => {
     if (modelName == null) {
       return null;
+    }
+
+    if (["projects", "sites", "nurseries", "projectReports", "siteReports", "nurseryReports"].includes(modelName)) {
+      return (
+        <Box>
+          <Text as="span" textStyle="400">
+            {t("TerraMatch will save the information you've entered in this form.")}
+          </Text>
+          <br />
+          <Text as="span" textStyle="400">
+            {t(
+              'Be sure to return to complete this form and press "Submit" on the last page of the form to send your {entityName} to an Admin for review.',
+              {
+                entityName: getReadableEntityName(modelName as EntityName | SingularEntityName, true)
+              }
+            )}
+          </Text>
+        </Box>
+      );
     }
 
     if (isReportModelName(modelName)) {
@@ -51,23 +66,6 @@ const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
       );
     }
 
-    const profileSectionLabel = PROFILE_SECTION_LABELS[modelName as BaseModelNames];
-    if (profileSectionLabel != null) {
-      return (
-        <Box>
-          <Text as="span" textStyle="400">
-            {t("Your progress will be saved as a draft. You can access this form again from the ")}
-          </Text>
-          <Text as="span" textStyle="400-bold">
-            {t(profileSectionLabel)}
-          </Text>
-          <Text as="span" textStyle="400">
-            {t(" section.")}
-          </Text>
-        </Box>
-      );
-    }
-
     return (
       <Box>
         <Text as="span" textStyle="400">
@@ -81,17 +79,17 @@ const SaveAndCloseModal = (props: SaveAndCloseModalProps) => {
         </Text>
       </Box>
     );
-  }, [modelName, t]);
+  }, [getReadableEntityName, modelName, t]);
 
   return (
     <ModalConfirmation
       open={true}
-      title={props.title ?? t("Save and exit?")}
+      title={props.title ?? t("Save and Exit")}
       content={props.content ?? defaultContent}
       buttonsPrimary={[
         {
           id: "close",
-          children: t("Save and exit"),
+          children: t("Save and Exit"),
           variant: "primary",
           className: "!w-full",
           onClick: () => {
