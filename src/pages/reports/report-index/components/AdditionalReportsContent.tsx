@@ -130,7 +130,7 @@ const AdditionalReportsContent = ({ sections, loading, error }: AdditionalReport
     <main className="bg-theme-neutral-200 px-2.5 pb-2.5">
       {loading ? (
         <Flex minHeight="240px" alignItems="center" justifyContent="center" gap={3}>
-          <LoadingIcon boxSize={6} className="animate-spin" color="primary.600" />
+          <LoadingIcon boxSize={6} className="animate-spin" color="primary.800" />
           <Text textStyle="400" color="neutral.800">
             {t("Loading reports...")}
           </Text>
