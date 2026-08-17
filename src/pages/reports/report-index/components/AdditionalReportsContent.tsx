@@ -18,6 +18,7 @@ import {
 import { getReportsRequiringAttention, getReportStatusCounts } from "../reportIndex.utils";
 import AdditionalReportsTable from "./AdditionalReportsTable";
 import ReportsSearchNoResults from "./ReportsSearchNoResults";
+import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 type AdditionalReportsContentProps = {
   sections: AdditionalReportsEntitySectionData[];
