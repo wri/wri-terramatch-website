@@ -139,6 +139,10 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["siteId[]"]?: string[];
   /**
+   * Filter results by site polygon UUID(s). Note this is the site_polygon uuid, which is what GeoJSON features carry, and is NOT the same value as polygonUuid[].
+   */
+  ["uuid[]"]?: string[];
+  /**
    * Filter results by polygon UUID(s)
    */
   ["polygonUuid[]"]?: string[];
@@ -541,6 +545,146 @@ export const bulkDeleteSitePolygons = new V3ApiEndpoint<
   BulkDeleteSitePolygonsVariables,
   {}
 >("/research/v3/sitePolygons", "DELETE");
+
+export type GetSiteIndicatorRollupQueryParams = {
+  /**
+   * UUID of the project to roll indicators up for. One row is returned per approved site.
+   *
+   * @example cd46fa33-a5c1-40b4-a9ca-4793b6248157
+   */
+  projectId: string;
+};
+
+export type GetSiteIndicatorRollupError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type GetSiteIndicatorRollupResponse = {
+  meta?: {
+    /**
+     * @example siteIndicatorRollups
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example siteIndicatorRollups
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SiteIndicatorRollupDto;
+  };
+};
+
+export type GetSiteIndicatorRollupVariables = {
+  queryParams: GetSiteIndicatorRollupQueryParams;
+};
+
+/**
+ * Returns one row per active, approved site in the project, aggregated in a single
+ *     GROUP BY query: O(sites), not O(polygons). Intended to replace client-side aggregation over
+ *     every polygon for large projects.
+ *
+ *     Only active, APPROVED polygons are counted. Client-side aggregation includes active polygons
+ *     in every status, so the two paths will not agree; whichever basis is used must be stated in
+ *     the UI. treeCoverCoverage reports what fraction of each site's polygons actually contributed
+ *     to treeCoverWeightedMeanPct. treeCoverLossTotal is not yet implemented and is always null.
+ */
+export const getSiteIndicatorRollup = new V3ApiEndpoint<
+  GetSiteIndicatorRollupResponse,
+  GetSiteIndicatorRollupError,
+  GetSiteIndicatorRollupVariables,
+  {}
+>("/research/v3/sitePolygons/indicatorRollup", "GET");
+
+export type GetTreeCoverLossTimelineQueryParams = {
+  /**
+   * UUID of the project. Without siteId, one series is returned per approved site.
+   *
+   * @example a44be1df-b79a-4f1b-9689-b6a768b12b60
+   */
+  projectId: string;
+  /**
+   * Narrow to one site, returning one series per polygon on it instead of one per site.
+   *
+   * @example 5d9a8323-3444-4745-929b-863d2ffe72b2
+   */
+  siteId?: string;
+};
+
+export type GetTreeCoverLossTimelineError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type GetTreeCoverLossTimelineResponse = {
+  meta?: {
+    /**
+     * @example treeCoverLossTimelines
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example treeCoverLossTimelines
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.TreeCoverLossTimelineDto;
+  };
+};
+
+export type GetTreeCoverLossTimelineVariables = {
+  queryParams: GetTreeCoverLossTimelineQueryParams;
+};
+
+/**
+ * Returns the per-year tree cover loss series, one resource per approved site, or
+ *     one per polygon when siteId is supplied.
+ *
+ *     This is the only indicator with a real time axis. year_of_analysis is NOT that axis — 98% of
+ *     polygons carry exactly one row and the column contains values such as -1 and 2041. The series
+ *     lives inside indicator_output_tree_cover_loss.value, a per-year JSON map, and this endpoint
+ *     unpacks it.
+ *
+ *     The maps do not share a span (most are 2015-2024, some 2010-2025, some empty), so lossByYear
+ *     omits any year no polygon observed. An omitted year means not observed; it does not mean zero
+ *     hectares were lost. observedByYear carries the per-year coverage to render that distinction.
+ *
+ *     The figures describe canopy lost inside project boundaries. They are not restoration progress
+ *     and must not be presented as such.
+ */
+export const getTreeCoverLossTimeline = new V3ApiEndpoint<
+  GetTreeCoverLossTimelineResponse,
+  GetTreeCoverLossTimelineError,
+  GetTreeCoverLossTimelineVariables,
+  {}
+>("/research/v3/sitePolygons/treeCoverLossTimeline", "GET");
 
 export type GetSitePolygonsGeoJsonQueryParams = {
   /**
@@ -3119,6 +3263,8 @@ export const operationsByTag = {
     sitePolygonsIndex,
     bulkUpdateSitePolygons,
     bulkDeleteSitePolygons,
+    getSiteIndicatorRollup,
+    getTreeCoverLossTimeline,
     getSitePolygonsGeoJson,
     bulkUpdateSitePolygonAttributes,
     updateSitePolygonStatus,

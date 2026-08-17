@@ -142,7 +142,7 @@ export type ValidationDto = {
   /**
    * List of validation criteria results for this polygon
    *
-   * @example {"criteriaId":16,"validationType":"DUPLICATE_GEOMETRY","valid":false,"createdAt":"2025-11-28T20:41:50.060Z","extraInfo":{"polygonUuid":"54aa2c7a-e139-4017-b86b-d904f4a3ed5c","message":"This geometry already exists in the project","sitePolygonUuid":"fd6cd4e8-0c56-45dc-8991-1cebfd3871ca","sitePolygonName":"AREA_NAME","siteUuid":"8f3c2b1a-4d5e-6f70-8192-a3b4c5d6e7f8","siteName":"Site Name"}}
+   * @example {"criteriaId":16,"validationType":"DUPLICATE_GEOMETRY","valid":false,"createdAt":"2025-11-28T20:41:50.060Z","extraInfo":{"polygonUuid":"54aa2c7a-e139-4017-b86b-d904f4a3ed5c","message":"This geometry already exists in the project","sitePolygonUuid":"fd6cd4e8-0c56-45dc-8991-1cebfd3871ca","sitePolygonName":"AREA_NAME"}}
    */
   criteriaList: ValidationCriteriaDto[];
 };
@@ -162,6 +162,80 @@ export type GeoJsonExportDto = {
     geometry?: Record<string, any>;
     properties?: Record<string, any> | null;
   }[];
+};
+
+export type SiteIndicatorRollupDto = {
+  /**
+   * UUID of the site this row rolls up.
+   */
+  siteUuid: string;
+  /**
+   * Name of the site.
+   */
+  siteName: string | null;
+  /**
+   * Active polygons on this site that are not approved (draft, pending-approval, information-required). These are excluded from every measurement below; surface the count so the omission is visible.
+   */
+  inReviewCount: number;
+  /**
+   * Count of active, approved polygons on this site.
+   */
+  polygons: number;
+  /**
+   * Sum of calc_area over this site's active, approved polygons. Null when there are none.
+   */
+  hectares: number | null;
+  /**
+   * Area-weighted mean of the latest-year percent_cover across this site's approved polygons. Null when no polygon carries a value.
+   */
+  treeCoverWeightedMeanPct: number | null;
+  /**
+   * Polygons that contributed to treeCoverWeightedMeanPct.
+   */
+  treeCoverPolygonCount: number;
+  /**
+   * treeCoverPolygonCount / polygons. Render alongside the mean; a partial aggregate shown as complete is worse than no number.
+   */
+  treeCoverCoverage: number | null;
+  /**
+   * Per-year tree cover loss summed across years and polygons ('treeCoverLoss' slug only; 'treeCoverLossFires' is a separate indicator). Null means not measured, not zero.
+   */
+  treeCoverLossTotal: number | null;
+  /**
+   * Polygons that contributed a tree cover loss value.
+   */
+  treeCoverLossPolygonCount: number;
+  /**
+   * treeCoverLossPolygonCount / polygons.
+   */
+  treeCoverLossCoverage: number | null;
+};
+
+export type TreeCoverLossTimelineDto = {
+  /**
+   * UUID of the site (project scope) or polygon (site scope).
+   */
+  uuid: string;
+  /**
+   * Name of the site or polygon.
+   */
+  name: string | null;
+  /**
+   * Hectares lost, keyed by year. A year is absent from this map when no polygon beneath the entity carried that year — absent means not observed, never zero.
+   */
+  lossByYear: Record<string, any>;
+  /**
+   * Polygons carrying an observation for each year. Use it to render a year's coverage honestly.
+   */
+  observedByYear: Record<string, any>;
+  /**
+   * Polygons with loss greater than zero in each year.
+   */
+  affectedByYear: Record<string, any>;
+  /**
+   * Sum of lossByYear across observed years.
+   */
+  totalLoss: number;
 };
 
 export type GeometryUploadComparisonSummaryDto = {
@@ -348,12 +422,6 @@ export type AttributeChangesDto = {
    * @example 150
    */
   numTrees?: number;
-  /**
-   * Framework-configured custom attribute values keyed by definition key. Only sent keys are updated; null (or empty array for multi_select) clears the value. Omitted keys are inherited from the previous version via copy-on-version.
-   *
-   * @example {"anrSubcategory":"farmer-managed"}
-   */
-  customAttributes?: Record<string, any>;
 };
 
 export type CreateSitePolygonAttributesDto = {
