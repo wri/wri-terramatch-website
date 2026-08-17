@@ -68,15 +68,19 @@ const PolygonDetailView = ({ projectUuid, polygonUuid }: PolygonDetailViewProps)
   });
   const polygon = polygonRows?.[0] ?? null;
 
+  // The single-polygon geojson endpoint keys on the geometry's own uuid (polygonUuid), NOT the
+  // site-polygon uuid in the route — passing the latter returns zero features and the map never
+  // frames. So the geometry fetch waits for the record, then asks by its polygonUuid.
+  const geometryUuid = polygon?.polygonUuid ?? null;
   const [geoLoaded, { data: geo }] = usePolygonGeoJson({
-    uuid: polygonUuid,
+    uuid: geometryUuid ?? undefined,
     geometryOnly: false,
-    enabled: polygonUuid != null
+    enabled: geometryUuid != null
   });
+  const geoPending = geometryUuid == null || !geoLoaded;
 
-  // One feature, framed by DrilldownMap. The uuid property is what the map keys selection on, so it
-  // is stamped explicitly even when the export omits it — otherwise the shape would draw but never
-  // frame as "selected".
+  // One feature, framed by DrilldownMap. The feature's uuid is stamped to the route's polygonUuid —
+  // the same id passed as selectedId — so the shape both frames and highlights as selected.
   const featureCollection = useMemo<FeatureCollection | null>(() => {
     if (geo?.features == null || geo.features.length === 0) return null;
     return {
@@ -84,7 +88,7 @@ const PolygonDetailView = ({ projectUuid, polygonUuid }: PolygonDetailViewProps)
       features: geo.features.map(feature => ({
         type: "Feature",
         geometry: feature.geometry as FeatureCollection["features"][number]["geometry"],
-        properties: { ...(feature.properties ?? {}), uuid: feature.properties?.uuid ?? polygonUuid }
+        properties: { ...(feature.properties ?? {}), uuid: polygonUuid }
       }))
     } as FeatureCollection;
   }, [geo, polygonUuid]);
@@ -118,12 +122,12 @@ const PolygonDetailView = ({ projectUuid, polygonUuid }: PolygonDetailViewProps)
     </Box>
   );
 
-  // Not found is only asserted once both requests have settled and neither carries the polygon.
-  // Asserting it earlier would flash "not found" over data that is merely in flight.
-  const settled = polygonLoaded && geoLoaded;
-  if (settled && polygon == null && featureCollection == null) {
+  // Not found keys on the record — the source of truth for whether the polygon exists. Only asserted
+  // once its request has settled, so it never flashes over data that is merely in flight. A polygon
+  // that exists but has no geometry is a different, softer state, handled by the map's own empty view.
+  if (polygonLoaded && polygon == null) {
     return (
-      <>
+      <div className="flex w-full flex-1 flex-col">
         {breadcrumbBar}
         <PageContent>
           <PageItem title={t("Polygon not found")} flexProps={{ width: "100%" }}>
@@ -132,7 +136,7 @@ const PolygonDetailView = ({ projectUuid, polygonUuid }: PolygonDetailViewProps)
             </p>
           </PageItem>
         </PageContent>
-      </>
+      </div>
     );
   }
 
@@ -167,7 +171,7 @@ const PolygonDetailView = ({ projectUuid, polygonUuid }: PolygonDetailViewProps)
   );
 
   return (
-    <>
+    <div className="flex w-full flex-1 flex-col">
       {breadcrumbBar}
       <PageContent>
         {/* Above the fold: the polygon's shape on the left, and a right column holding this polygon's
@@ -190,7 +194,7 @@ const PolygonDetailView = ({ projectUuid, polygonUuid }: PolygonDetailViewProps)
           }
         >
           <EntityDataView
-            map={<DrilldownMap featureCollection={featureCollection} selectedId={polygonUuid} loading={!geoLoaded} />}
+            map={<DrilldownMap featureCollection={featureCollection} selectedId={polygonUuid} loading={geoPending} />}
             actions={<EntityActions projectUuid={projectUuid} entityUuid={polygonUuid} entityStatus={status} />}
             kpis={indicatorPanel}
           />
@@ -211,7 +215,7 @@ const PolygonDetailView = ({ projectUuid, polygonUuid }: PolygonDetailViewProps)
           </div>
         </PageItem>
       </PageContent>
-    </>
+    </div>
   );
 };
 
