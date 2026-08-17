@@ -3,25 +3,20 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 
-import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
-import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import ProjectDrilldownLaunchpad from "@/components/projectData/ProjectDrilldownLaunchpad";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
-import { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
-import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
-import type { ButtonGroupButtonProps } from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
-import { ChevronRightIcon, DownloadIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
@@ -38,7 +33,6 @@ interface ProjectOverviewTabProps {
 const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
-  const { framework } = useFrameworkContext();
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
@@ -114,47 +108,6 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     }
   };
 
-  const hideNurseries = shouldHideNurseries(framework);
-
-  const addSitesAndNurseriesButtons = useMemo<ButtonGroupButtonProps[]>(() => {
-    const buttons: ButtonGroupButtonProps[] = [
-      {
-        id: "add-sites",
-        variant: "borderless",
-        size: "small",
-        rightIcon: <ChevronRightIcon boxSize={4} />,
-        className: "!text-theme-neutral-100",
-        children: t("Add Sites"),
-        onClick: () => goToTab("sites")
-      }
-    ];
-
-    if (!hideNurseries) {
-      buttons.push({
-        id: "add-nurseries",
-        variant: "borderless",
-        size: "small",
-        rightIcon: <ChevronRightIcon boxSize={4} />,
-        className: "!text-theme-neutral-100",
-        children: t("Add Nurseries"),
-        onClick: () => goToTab("nurseries")
-      });
-    }
-
-    return buttons;
-  }, [goToTab, hideNurseries, t]);
-
-  const { data: projectPolygonDataV3, isLoading: isLoadingProjectPolygons } = useAllSitePolygons({
-    entityName: "projects",
-    entityUuid: project.uuid,
-    enabled: project.uuid != null
-  });
-
-  const isDraftOrPendingApproval = project.status === "draft" || awaitingApproval;
-
-  const showSiteAreasMapPlaceholder =
-    !isLoadingProjectPolygons && (projectPolygonDataV3?.length ?? 0) === 0 && isDraftOrPendingApproval;
-
   const teamMemberItems = useMemo(
     () => [
       {
@@ -190,70 +143,34 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         open={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
-      <Flex gap={7} className="flex-col sm:flex-row sm:items-stretch">
-        <PageItem
-          title={t("Project Map")}
-          flexProps={{ flex: 1 }}
-          className="min-h-0"
-          buttonProps={{
-            variant: "secondary",
-            size: "small",
-            children: t("View Sites"),
-            rightIcon: <ChevronRightIcon />,
-            onClick: onViewSites ?? (() => goToTab("sites"))
-          }}
-          downloadButtonProps={{
-            variant: "secondary",
-            size: "small",
-            children: t("Download Project Polygons"),
-            leftIcon: <DownloadIcon />,
-            onClick: handleDownloadPolygons,
-            loading: isDownloading
-          }}
-        >
-          <Box className="relative flex-1 overflow-hidden rounded" minH={SITE_POLYGON_MAP_INITIAL_HEIGHT}>
-            <OverviewMapArea
-              entityModel={project}
-              type="projects"
-              className="h-full min-h-0 rounded"
-              disabledPolygonPanel={true}
-              hideFullscreenControl={true}
-            />
-            {showSiteAreasMapPlaceholder && (
-              <MapPlaceholder
-                icon={<SiteIcon boxSize={6} color="neutral.100" />}
-                title={t("Project Sites not defined")}
-                className="z-10 bg-map-project-placeholder"
-                buttonGroupProps={{ buttons: addSitesAndNurseriesButtons }}
-              />
-            )}
-          </Box>
-        </PageItem>
-        <PageItem
-          flexProps={{ width: "fit-content", overflow: "hidden" }}
-          className="!w-full !max-w-full sm:!w-[35%] sm:!max-w-[35%] lg:!w-[30%] lg:!max-w-[30%]"
-          title={t("Project Set Up")}
-          tag={(() => {
-            const tagState = mapStatusToTagStateEntity(project?.status);
-            return project.updateRequestStatus === "pending-approval" ? (
-              <TagSubmission state="pending-approval" />
-            ) : project?.status != null ? (
-              <TagSubmission state={tagState?.type as TagSubmissionState} />
-            ) : null;
-          })()}
-          buttonProps={{
-            variant: "primary",
-            size: "small",
-            children: isProjectSetupComplete ? t("Edit") : t("Continue"),
-            rightIcon: <ChevronRightIcon />,
-            onClick: handleEditClick
-          }}
-        >
-          <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-            <EntitySetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} type="projects" />
-          </Box>
-        </PageItem>
-      </Flex>
+      {/* TODO(actions): ProjectActionsPanel ("actions you might need this week", anomaly-driven)
+          mounts here once the anomaly engine lands — this is the top-of-page slot. */}
+
+      {/* Above the fold: the drill-down. Project-level aggregated indicators beside a map of site
+          centroids; clicking a site — on the map or in the list — opens that site's page. Replaces
+          the old static Project Map, and takes the prime slot that Project Set Up used to hold. */}
+      <PageItem
+        title={t("Project Data")}
+        flexProps={{ width: "100%" }}
+        className="min-h-0"
+        buttonProps={{
+          variant: "secondary",
+          size: "small",
+          children: t("View Sites"),
+          rightIcon: <ChevronRightIcon />,
+          onClick: onViewSites ?? (() => goToTab("sites"))
+        }}
+        downloadButtonProps={{
+          variant: "secondary",
+          size: "small",
+          children: t("Download Project Polygons"),
+          leftIcon: <DownloadIcon />,
+          onClick: handleDownloadPolygons,
+          loading: isDownloading
+        }}
+      >
+        <ProjectDrilldownLaunchpad projectUuid={project.uuid} projectName={project.name ?? t("Project")} />
+      </PageItem>
       <PageItem
         title={t("Key Indicators & Insights")}
         flexProps={{ paddingY: 2, width: "100%" }}
@@ -266,6 +183,30 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         }}
       >
         <KeyIndicatorsInsightsTab project={project} />
+      </PageItem>
+      {/* Project Set Up, demoted below the fold: it is a setup/editing flow, not day-to-day data. */}
+      <PageItem
+        flexProps={{ paddingY: 2, width: "100%" }}
+        title={t("Project Set Up")}
+        tag={(() => {
+          const tagState = mapStatusToTagStateEntity(project?.status);
+          return project.updateRequestStatus === "pending-approval" ? (
+            <TagSubmission state="pending-approval" />
+          ) : project?.status != null ? (
+            <TagSubmission state={tagState?.type as TagSubmissionState} />
+          ) : null;
+        })()}
+        buttonProps={{
+          variant: "primary",
+          size: "small",
+          children: isProjectSetupComplete ? t("Edit") : t("Continue"),
+          rightIcon: <ChevronRightIcon />,
+          onClick: handleEditClick
+        }}
+      >
+        <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+          <EntitySetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} type="projects" />
+        </Box>
       </PageItem>
       <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[39.625rem] sm:flex-row">
         <PageItem
