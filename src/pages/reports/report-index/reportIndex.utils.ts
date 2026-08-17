@@ -70,8 +70,13 @@ export const REPORTS_INDEX_ATTENTION_STATUSES: ReadonlySet<TagSubmissionState> =
   "draft"
 ]);
 
+const REPORTS_INDEX_COMPLETE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["approved", "nothing-reported"]);
+
 export const getReportsRequiringAttention = (reports: Array<{ status: TagSubmissionState }>) =>
   reports.filter(report => REPORTS_INDEX_ATTENTION_STATUSES.has(report.status)).length;
+
+export const areAllReportsComplete = (reports: Array<{ status: TagSubmissionState }>) =>
+  reports.length > 0 && reports.every(report => REPORTS_INDEX_COMPLETE_STATUSES.has(report.status));
 
 export const getReportStatusCounts = (reports: Array<{ status: TagSubmissionState }>) =>
   reports.reduce(
