@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { EnabledProp, IndexConnection, LoadFailureConnection } from "@/connections/util/apiConnectionFactory";
-import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice, { PendingError } from "@/store/apiSlice";
 import { AppStore } from "@/store/store";
 import { Connected, Connection, OptionalProps, PaginatedConnectionProps } from "@/types/connection";
@@ -60,17 +59,15 @@ export const useAllPages = <
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesByNumber, setPagesByNumber] = useState<Record<number, D[]>>({});
   const advancedFromPageRef = useRef<number | null>(null);
+  const [paginationIdentity, setPaginationIdentity] = useState({ props: stableProps, resetKey });
 
-  const resetPagination = useCallback(() => {
+  // Reset in render so a filter change cannot paint the previous query's pages.
+  if (stableProps !== paginationIdentity.props || resetKey !== paginationIdentity.resetKey) {
+    setPaginationIdentity({ props: stableProps, resetKey });
     setPageNumber(1);
     setPagesByNumber({});
     advancedFromPageRef.current = null;
-  }, []);
-
-  // Declared before the effects that accumulate pages so stale pages are dropped before the first
-  // page of the new query arrives.
-  useValueChanged(stableProps, resetPagination);
-  useValueChanged(resetKey, resetPagination);
+  }
 
   const [pageLoaded, { data: pageData, indexTotal, loadFailure }] = useConnection(connection, {
     ...stableProps,

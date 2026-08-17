@@ -39,7 +39,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   );
   const { clearSelection } = useReportsSelectionActions();
   const [reloadNonce, setReloadNonce] = useState(0);
-  const [projectsLoaded, { data: projects }] = useProjectIndex({});
+  const [, { data: projects }] = useProjectIndex({});
   const isAllProjectsView = viewValue === ALL_PROJECTS_VIEW_VALUE;
   const isSwitchingProject = !isAllProjectsView && viewValue !== project.uuid;
 
@@ -145,7 +145,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
       <PageContent className="px-2 py-0">
         {activeTab === "progress-reports" && (
           <>
-            {progressLoading || isSwitchingProject || (isAllProjectsView && !projectsLoaded) ? (
+            {progressLoading || isSwitchingProject ? (
               <Flex minHeight="240px" alignItems="center" justifyContent="center" gap={3}>
                 <LoadingIcon boxSize={6} className="animate-spin" color="primary.800" />
                 <Text textStyle="400" color="neutral.800">
