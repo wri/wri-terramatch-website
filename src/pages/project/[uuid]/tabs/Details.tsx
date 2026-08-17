@@ -3,7 +3,9 @@ import { FC } from "react";
 
 import SharedDetails from "@/components/extensive/PageElements/PageContent/components/sharedDetails";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
+import ProjectDataTable from "@/components/projectData/ProjectDataTable";
 import WizardFormProvider from "@/context/wizardForm.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
@@ -57,6 +59,9 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
 
   return (
     <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
+      <PageItem title="Sites & Polygons" flexProps={{ width: "100%" }}>
+        <ProjectDataTable projectUuid={project.uuid} project={project} />
+      </PageItem>
       <WizardFormProvider fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
         {steps.map((step, index) => (
           <SharedDetailsStep

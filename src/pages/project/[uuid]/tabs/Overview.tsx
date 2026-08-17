@@ -9,6 +9,7 @@ import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import ProjectActionsPanel from "@/components/projectData/actions/ProjectActionsPanel";
 import ProjectDrilldownLaunchpad from "@/components/projectData/ProjectDrilldownLaunchpad";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
@@ -143,8 +144,11 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         open={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
-      {/* TODO(actions): ProjectActionsPanel ("actions you might need this week", anomaly-driven)
-          mounts here once the anomaly engine lands — this is the top-of-page slot. */}
+      {/* Anomaly-driven work queue: the first thing on the tab, so a reviewer sees what needs acting
+          on before the data itself. Resolves what it safely can in place; deep-links the rest. */}
+      <PageItem title={t("Actions You Might Need This Week")} flexProps={{ paddingY: 2, width: "100%" }}>
+        <ProjectActionsPanel projectUuid={project.uuid} project={project} />
+      </PageItem>
 
       {/* Above the fold: the drill-down. Project-level aggregated indicators beside a map of site
           centroids; clicking a site — on the map or in the list — opens that site's page. Replaces

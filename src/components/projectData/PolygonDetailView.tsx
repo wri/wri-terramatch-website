@@ -9,6 +9,7 @@ import { aggregatePolygon, polygonMeasurementsFrom } from "../semanticZoom/aggre
 import DrilldownMap from "../semanticZoom/DrilldownMap";
 import IndicatorRow from "../semanticZoom/IndicatorRow";
 import { INDICATOR_ORDER, LEVEL_CONTRACT } from "../semanticZoom/levelContract";
+import EntityActions from "./actions/EntityActions";
 
 /**
  * The standardised single-polygon entity page.
@@ -199,7 +200,8 @@ const PolygonDetailView = ({ projectUuid, polygonUuid }: PolygonDetailViewProps)
           </div>
         </div>
 
-        {/* TODO(anomaly-actions): per-polygon anomaly + action controls wire in here */}
+        {/* Per-polygon anomalies with their inline controls. Renders nothing when the polygon is clean. */}
+        <EntityActions projectUuid={projectUuid} entityUuid={polygonUuid} entityStatus={status} />
       </header>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

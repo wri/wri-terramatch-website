@@ -8,6 +8,7 @@ import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGallery
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useProjectAnomalies } from "@/components/projectData/anomalies/useProjectAnomalies";
 import { useFullProject } from "@/connections/Entity";
 import FrameworkProvider, { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -53,6 +54,10 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const { framework } = useFrameworkContext();
   const [showInviteModal, setShowInviteModal] = useState(false);
 
+  // Project-wide anomaly count for the "Project Details and Data" tab badge. Folds geometry
+  // validation together with the watchlist checks — one merged flag, per the product decision.
+  const { totalCount: anomalyCount } = useProjectAnomalies(project.uuid, project);
+
   const currentTab = (router.query.tab as string) ?? "overview";
   const isSuffix = SUFFIX_VIEW_KEYS.includes(currentTab);
   const activeSuffixView = isSuffix ? currentTab : null;
@@ -72,7 +77,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         title: t("Overview"),
         body: <ProjectOverviewTab project={project} onViewSites={() => navigateToTab("sites")} />
       },
-      { key: "details", title: t("Project Details"), body: <ProjectDetailTab project={project} /> },
+      { key: "details", title: t("Project Details and Data"), body: <ProjectDetailTab project={project} /> },
       {
         key: "gallery",
         title: t("Gallery"),
@@ -103,9 +108,11 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     () =>
       tabItems.map(item => ({
         value: item.key,
-        label: item.title
+        // The design-system tab label is string-only, so the anomaly flag rides on the label text:
+        // a ⚑ and the count appended to the Data tab when anything is flagged.
+        label: item.key === "details" && anomalyCount > 0 ? `${item.title}  ⚑ ${anomalyCount}` : item.title
       })),
-    [tabItems]
+    [tabItems, anomalyCount]
   );
 
   const hideNurseries = shouldHideNurseries(framework);
