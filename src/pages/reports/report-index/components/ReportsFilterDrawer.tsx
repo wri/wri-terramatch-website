@@ -147,7 +147,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
   };
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} maxW="22rem">
+    <Drawer trapFocus={false} open={open} onOpenChange={onOpenChange} maxW="22rem">
       {({ onClose }) => (
         <FilterPanel
           title={t("Filters")}
@@ -156,19 +156,21 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
           className="h-full"
           content={
             <Flex className="h-full flex-col gap-3 overflow-auto p-4">
-              {activeFilterTags.length > 0 && (
-                <Flex className="mb-2 flex-wrap gap-2">
-                  {activeFilterTags.map(filter => (
-                    <FeedbackTag
-                      key={filter.id}
-                      type="info-white"
-                      label={filter.label}
-                      closable
-                      onClose={() => removeFilterTag(filter.id)}
-                    />
-                  ))}
-                </Flex>
-              )}
+              <Flex
+                className="mb-2 flex-wrap gap-2"
+                display={activeFilterTags.length > 0 ? "flex" : "none"}
+              >
+                {activeFilterTags.map(filter => (
+                  <FeedbackTag
+                    key={filter.id}
+                    type="info-white"
+                    label={filter.label}
+                    closable
+                    onClose={() => removeFilterTag(filter.id)}
+                  />
+                ))}
+              </Flex>
+
               <FilterCard label={t("Report Type")}>
                 {reportTypeOptions.map(option => (
                   <Checkbox
@@ -196,13 +198,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
                 ))}
               </FilterCard>
               <FilterCard label={t("Due Date")}>
-                <DateRangeInput
-                  size="small"
-                  noMarginBottom
-                  value={dueDateValue}
-                  onValueChange={handleDueDateChange}
-                  flexibleDates={activeTab === "progress-reports"}
-                />
+                <DateRangeInput size="small" noMarginBottom value={dueDateValue} onValueChange={handleDueDateChange} />
               </FilterCard>
             </Flex>
           }
