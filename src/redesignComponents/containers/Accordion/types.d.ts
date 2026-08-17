@@ -57,4 +57,6 @@ export interface ListSectionHeaderProps {
   icon?: ReactNode;
   className?: string;
   dueDate?: string;
+  dueIcon?: ReactNode;
+  dueDateType?: "info-white" | "info-grey" | "error";
 }
