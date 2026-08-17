@@ -11,9 +11,6 @@ export const ACTION_STATUS_TAG_MAP: Record<ActionStatusTagState, ActionStatusTag
   "neutral-dark": {
     className: "border-theme-neutral-300 bg-theme-neutral-100 text-theme-neutral-900"
   },
-  information: {
-    className: "border-theme-primary-300 bg-theme-primary-200 text-theme-primary-900"
-  },
   attention: {
     className: "border-theme-warning-300 bg-theme-warning-100 text-theme-warning-900"
   },

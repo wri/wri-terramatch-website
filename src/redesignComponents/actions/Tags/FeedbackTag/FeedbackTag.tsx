@@ -36,6 +36,9 @@ const FeedbackTag: FC<FeedbackTagProps> = ({
         },
         "& svg": {
           size: size === "small" ? 8 : size === "default" ? 10 : 12
+        },
+        "& .chakra-tag__startElement": {
+          width: "auto"
         }
       }}
     >

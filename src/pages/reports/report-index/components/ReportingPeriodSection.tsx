@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useState } from "react";
 
@@ -17,9 +17,10 @@ import { useReportingWindow } from "@/hooks/useReportingWindow";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
-import { JobsIcon, RegenerationIcon, SeedlingsIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
+import { DueIcon, JobsIcon, RegenerationIcon, SeedlingsIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ReportsIndexPeriod } from "../reportIndex.types";
+import { getReportingPeriodDueDateType } from "../reportIndex.utils";
 import ReportAttentionStatusLabels from "./ReportAttentionStatusLabels";
 import ReportsIndexTable from "./ReportsIndexTable";
 
@@ -94,6 +95,14 @@ const ReportingPeriodSection = ({ period, defaultOpen = false, metricsReady = tr
   const seedsPlantedCount = projectReport?.seedsPlantedCount ?? 0;
   const regeneratedTreesCount = projectReport?.regeneratedTreesCount ?? 0;
   const frameworkKey = projectReport?.frameworkKey ?? period.frameworkKey;
+  const dueDateType = getReportingPeriodDueDateType(period.dueAt, period.reports);
+  const formattedDueDate = period.dueAt == null ? undefined : format(period.dueAt);
+  const dueDateLabel =
+    formattedDueDate == null
+      ? undefined
+      : dueDateType === "info-white"
+      ? formattedDueDate
+      : t("{date}", { date: formattedDueDate });
 
   return (
     <Box bg="neutral.100">
@@ -108,7 +117,17 @@ const ReportingPeriodSection = ({ period, defaultOpen = false, metricsReady = tr
             level="sub-level"
             label={t("Reporting Period")}
             title={getShortPeriodLabel(taskTitle ?? "", false)}
-            dueDate={period.dueAt == null ? undefined : format(period.dueAt)}
+            dueIcon={
+              <Flex alignItems="center">
+                <DueIcon color={dueDateType === "error" ? "error.500" : undefined} />
+                <Text textStyle="200">
+                  {t("Overdue:")}
+                  {"\u00A0"}
+                </Text>
+              </Flex>
+            }
+            dueDate={dueDateLabel}
+            dueDateType={dueDateType}
             statusLabels={<ReportAttentionStatusLabels reports={period.reports} />}
           />
         }

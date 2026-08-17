@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import type { FC, MouseEvent } from "react";
 
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
-import { DueIcon } from "@/redesignComponents/foundations/Icons";
 
 import type { ListSectionHeaderLevel, ListSectionHeaderProps } from "./types";
 
@@ -33,7 +32,9 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   statusLabels,
   icon,
   className,
-  dueDate
+  dueDate,
+  dueIcon,
+  dueDateType = "info-white"
 }) => {
   const gap = levelStyles[level].gap;
   const isTopLevelLink = titleHref != null;
@@ -96,9 +97,7 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
             </Text>
           )}
         </Flex>
-        {dueDate && (
-          <FeedbackTag icon={<DueIcon />} label={dueDate} onClose={() => {}} size="default" type="info-white" />
-        )}
+        {dueDate && <FeedbackTag icon={dueIcon} label={dueDate} onClose={() => {}} size="default" type={dueDateType} />}
       </Flex>
       {statusLabels != null && (
         <Flex alignItems="center" gap={2} flexShrink={0}>

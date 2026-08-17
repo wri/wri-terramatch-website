@@ -1,3 +1,4 @@
+import type { FeedbackTagProps } from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
@@ -77,6 +78,31 @@ export const getReportsRequiringAttention = (reports: Array<{ status: TagSubmiss
 
 export const areAllReportsComplete = (reports: Array<{ status: TagSubmissionState }>) =>
   reports.length > 0 && reports.every(report => REPORTS_INDEX_COMPLETE_STATUSES.has(report.status));
+
+export type ReportingPeriodDueDateType = Extract<FeedbackTagProps["type"], "info-white" | "info-grey" | "error">;
+
+export const isReportingPeriodDueDatePast = (dueAt: string) => {
+  const due = new Date(dueAt);
+  const now = new Date();
+  const dueDay = Date.UTC(due.getUTCFullYear(), due.getUTCMonth(), due.getUTCDate());
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  return dueDay < today;
+};
+
+/**
+ * Sub-level reporting period date tag:
+ * - future/today due date → info-white
+ * - past due date, all reports complete → info-grey
+ * - past due date, incomplete items remain → error
+ */
+export const getReportingPeriodDueDateType = (
+  dueAt: string | null | undefined,
+  reports: Array<{ status: TagSubmissionState }>
+): ReportingPeriodDueDateType | undefined => {
+  if (dueAt == null) return undefined;
+  if (!isReportingPeriodDueDatePast(dueAt)) return "info-white";
+  return areAllReportsComplete(reports) ? "info-grey" : "error";
+};
 
 export const getReportStatusCounts = (reports: Array<{ status: TagSubmissionState }>) =>
   reports.reduce(
