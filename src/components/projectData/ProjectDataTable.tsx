@@ -1,11 +1,15 @@
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { Fragment, useCallback, useMemo, useState } from "react";
 
 import { useProjectAnomalies } from "@/components/projectData/anomalies/useProjectAnomalies";
+import BulkEditBar from "@/components/projectData/BulkEditBar";
+import InlineRowEditor from "@/components/projectData/InlineRowEditor";
+import { useSitePolygonEditing } from "@/components/projectData/useSitePolygonEditing";
 import { useSiteIndicatorRollup } from "@/connections/SiteIndicatorRollup";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { POLYGON_APPROVED } from "@/constants/polygonStatuses";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { SearchIcon, WarningIcon } from "@/redesignComponents/foundations/Icons";
+import { EditIcon, SearchIcon, WarningIcon } from "@/redesignComponents/foundations/Icons";
 
 /**
  * The project-level sites/polygons table.
@@ -82,6 +86,35 @@ const AnomaliesCell = ({ count }: { count: number }) =>
     <span className="text-xs text-theme-neutral-400">0</span>
   );
 
+/** A checkbox that can show the "some but not all" indeterminate state (native checkboxes only
+ * expose this via a DOM ref, not a prop). */
+const TriStateCheckbox = ({
+  checked,
+  indeterminate,
+  onChange,
+  ariaLabel
+}: {
+  checked: boolean;
+  indeterminate: boolean;
+  onChange: () => void;
+  ariaLabel: string;
+}) => {
+  return (
+    <input
+      ref={node => {
+        if (node) node.indeterminate = !checked && indeterminate;
+      }}
+      type="checkbox"
+      aria-label={ariaLabel}
+      checked={checked}
+      onChange={onChange}
+      // Selecting a row must never trigger the row's navigation click.
+      onClick={event => event.stopPropagation()}
+      className="h-3.5 w-3.5 cursor-pointer accent-theme-primary-500"
+    />
+  );
+};
+
 const SegmentedToggle = ({
   view,
   onChange,
@@ -121,6 +154,11 @@ const ProjectDataTable = ({ projectUuid, project }: ProjectDataTableProps) => {
   const [view, setView] = useState<TableView>("sites");
   const [search, setSearch] = useState("");
   const [flaggedOnly, setFlaggedOnly] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(() => new Set());
+  const [editingUuid, setEditingUuid] = useState<string | null>(null);
+
+  const { withOverride, approve, applyAttributes, isApproving, isSavingAttributes, savingRowUuid } =
+    useSitePolygonEditing();
 
   const [rollupLoaded, { data: rollupRows }] = useSiteIndicatorRollup(projectUuid);
   const sites = useMemo(() => rollupRows ?? [], [rollupRows]);
@@ -145,14 +183,64 @@ const ProjectDataTable = ({ projectUuid, project }: ProjectDataTableProps) => {
     });
   }, [sites, search, flaggedOnly, countsByEntity]);
 
+  // Overrides are merged on before filtering so an optimistically-approved row's new status is
+  // visible everywhere downstream — including the "Approve N" count, which is status-derived.
   const filteredPolygons = useMemo(() => {
     const term = search.trim().toLowerCase();
-    return (allPolygons ?? []).filter(polygon => {
+    return (allPolygons ?? []).map(withOverride).filter(polygon => {
       if (flaggedOnly && (countsByEntity[polygon.uuid] ?? 0) <= 0) return false;
       if (term !== "" && !(polygon.name ?? "").toLowerCase().includes(term)) return false;
       return true;
     });
-  }, [allPolygons, search, flaggedOnly, countsByEntity]);
+  }, [allPolygons, search, flaggedOnly, countsByEntity, withOverride]);
+
+  const selectedPolygons = useMemo(
+    () => filteredPolygons.filter(polygon => selected.has(polygon.uuid)),
+    [filteredPolygons, selected]
+  );
+  const approvableUuids = useMemo(
+    () => selectedPolygons.filter(polygon => polygon.status !== POLYGON_APPROVED).map(polygon => polygon.uuid),
+    [selectedPolygons]
+  );
+  const allFilteredSelected = filteredPolygons.length > 0 && selectedPolygons.length === filteredPolygons.length;
+
+  const toggleRow = useCallback((uuid: string) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(uuid)) next.delete(uuid);
+      else next.add(uuid);
+      return next;
+    });
+  }, []);
+
+  const toggleAll = useCallback(() => {
+    setSelected(prev => {
+      if (filteredPolygons.length > 0 && prev.size >= filteredPolygons.length) return new Set();
+      return new Set(filteredPolygons.map(polygon => polygon.uuid));
+    });
+  }, [filteredPolygons]);
+
+  const clearSelection = useCallback(() => setSelected(new Set()), []);
+
+  const handleChangeView = useCallback((next: TableView) => {
+    setView(next);
+    setSelected(new Set());
+    setEditingUuid(null);
+  }, []);
+
+  const handleBulkApprove = useCallback(async () => {
+    const ok = await approve(approvableUuids);
+    if (ok) clearSelection();
+  }, [approve, approvableUuids, clearSelection]);
+
+  const handleBulkAttributes = useCallback(
+    async (changes: Parameters<typeof applyAttributes>[1]) => {
+      const ok = await applyAttributes(selectedPolygons, changes);
+      if (ok) clearSelection();
+      return ok;
+    },
+    [applyAttributes, selectedPolygons, clearSelection]
+  );
 
   const goToSite = (siteUuid: string) => router.push(`/site/${siteUuid}`);
   const goToPolygon = (polygonUuid: string) => router.push(`/project/${projectUuid}/polygon/${polygonUuid}`);
@@ -165,7 +253,7 @@ const ProjectDataTable = ({ projectUuid, project }: ProjectDataTableProps) => {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <SegmentedToggle
           view={view}
-          onChange={setView}
+          onChange={handleChangeView}
           sitesCount={sites.length}
           polygonsCount={allPolygons?.length ?? 0}
         />
@@ -251,9 +339,17 @@ const ProjectDataTable = ({ projectUuid, project }: ProjectDataTableProps) => {
               </tbody>
             </table>
           ) : (
-            <table className="w-full min-w-[760px] text-left text-sm">
+            <table className="w-full min-w-[820px] text-left text-sm">
               <thead className="sticky top-0 bg-theme-neutral-100">
                 <tr>
+                  <th className="border-b border-theme-neutral-200 px-4 py-2">
+                    <TriStateCheckbox
+                      ariaLabel="Select all filtered polygons"
+                      checked={allFilteredSelected}
+                      indeterminate={selectedPolygons.length > 0}
+                      onChange={toggleAll}
+                    />
+                  </th>
                   {["Polygon name", "Site", "Status", "Validation", "Area", "Trees", "Anomalies"].map(header => (
                     <th
                       key={header}
@@ -262,6 +358,7 @@ const ProjectDataTable = ({ projectUuid, project }: ProjectDataTableProps) => {
                       {header}
                     </th>
                   ))}
+                  <th className="border-b border-theme-neutral-200 px-4 py-2" aria-label="Row actions" />
                 </tr>
               </thead>
               <tbody>
@@ -269,48 +366,88 @@ const ProjectDataTable = ({ projectUuid, project }: ProjectDataTableProps) => {
                   const anomalyCount = countsByEntity[polygon.uuid] ?? 0;
                   const flagged = anomalyCount > 0;
                   const validationKey = polygon.validationStatus?.toLowerCase() ?? null;
+                  const isSelected = selected.has(polygon.uuid);
+                  const isEditing = editingUuid === polygon.uuid;
                   return (
-                    <tr
-                      key={polygon.uuid}
-                      onClick={() => goToPolygon(polygon.uuid)}
-                      className={`cursor-pointer border-b border-l-2 border-theme-neutral-200 last:border-b-0 hover:bg-theme-neutral-100 ${
-                        flagged ? "border-l-theme-warning-500" : "border-l-transparent"
-                      }`}
-                    >
-                      <td className="px-4 py-2 font-medium text-theme-neutral-900">
-                        {polygon.name ?? "Unnamed polygon"}
-                      </td>
-                      <td className="px-4 py-2 text-theme-neutral-700">{polygon.siteName ?? "—"}</td>
-                      <td className="px-4 py-2">
-                        <Pill
-                          label={polygon.status == null ? "—" : STATUS_LABELS[polygon.status] ?? polygon.status}
-                          className={
-                            polygon.status == null
-                              ? "bg-theme-neutral-100 text-theme-neutral-500"
-                              : STATUS_STYLES[polygon.status] ?? "bg-theme-neutral-200 text-theme-neutral-800"
-                          }
+                    <Fragment key={polygon.uuid}>
+                      <tr
+                        onClick={() => goToPolygon(polygon.uuid)}
+                        className={`cursor-pointer border-b border-l-2 border-theme-neutral-200 last:border-b-0 hover:bg-theme-neutral-100 ${
+                          flagged ? "border-l-theme-warning-500" : "border-l-transparent"
+                        } ${isEditing ? "bg-theme-neutral-50" : ""}`}
+                      >
+                        <td className="px-4 py-2">
+                          <TriStateCheckbox
+                            ariaLabel={`Select ${polygon.name ?? "polygon"}`}
+                            checked={isSelected}
+                            indeterminate={false}
+                            onChange={() => toggleRow(polygon.uuid)}
+                          />
+                        </td>
+                        <td className="px-4 py-2 font-medium text-theme-neutral-900">
+                          {polygon.name ?? "Unnamed polygon"}
+                        </td>
+                        <td className="px-4 py-2 text-theme-neutral-700">{polygon.siteName ?? "—"}</td>
+                        <td className="px-4 py-2">
+                          <Pill
+                            label={polygon.status == null ? "—" : STATUS_LABELS[polygon.status] ?? polygon.status}
+                            className={
+                              polygon.status == null
+                                ? "bg-theme-neutral-100 text-theme-neutral-500"
+                                : STATUS_STYLES[polygon.status] ?? "bg-theme-neutral-200 text-theme-neutral-800"
+                            }
+                          />
+                        </td>
+                        <td className="px-4 py-2">
+                          <Pill
+                            label={
+                              validationKey == null
+                                ? "—"
+                                : VALIDATION_LABELS[validationKey] ?? polygon.validationStatus!
+                            }
+                            className={
+                              validationKey == null
+                                ? "bg-theme-neutral-100 text-theme-neutral-500"
+                                : VALIDATION_STYLES[validationKey] ?? "bg-theme-neutral-200 text-theme-neutral-800"
+                            }
+                          />
+                        </td>
+                        <td className="px-4 py-2 tabular-nums text-theme-neutral-700">
+                          {orDash(polygon.calcArea, " ha")}
+                        </td>
+                        <td className="px-4 py-2 tabular-nums text-theme-neutral-700">{orDash(polygon.numTrees)}</td>
+                        <td className="px-4 py-2">
+                          <AnomaliesCell count={anomalyCount} />
+                        </td>
+                        <td className="px-4 py-2 text-right">
+                          <button
+                            type="button"
+                            aria-label={`Edit ${polygon.name ?? "polygon"}`}
+                            onClick={event => {
+                              // The edit control opens the inline editor; it must not navigate the row.
+                              event.stopPropagation();
+                              setEditingUuid(isEditing ? null : polygon.uuid);
+                            }}
+                            className={
+                              isEditing
+                                ? "rounded border border-theme-primary-500 bg-theme-primary-100 p-1 text-theme-primary-500"
+                                : "rounded border border-transparent p-1 text-theme-neutral-400 hover:border-theme-neutral-200 hover:text-theme-neutral-700"
+                            }
+                          >
+                            <EditIcon boxSize={2.5} />
+                          </button>
+                        </td>
+                      </tr>
+                      {isEditing && (
+                        <InlineRowEditor
+                          polygon={polygon}
+                          colSpan={9}
+                          isSaving={savingRowUuid === polygon.uuid}
+                          onCancel={() => setEditingUuid(null)}
+                          onSave={changes => applyAttributes([polygon], changes, { row: true })}
                         />
-                      </td>
-                      <td className="px-4 py-2">
-                        <Pill
-                          label={
-                            validationKey == null ? "—" : VALIDATION_LABELS[validationKey] ?? polygon.validationStatus!
-                          }
-                          className={
-                            validationKey == null
-                              ? "bg-theme-neutral-100 text-theme-neutral-500"
-                              : VALIDATION_STYLES[validationKey] ?? "bg-theme-neutral-200 text-theme-neutral-800"
-                          }
-                        />
-                      </td>
-                      <td className="px-4 py-2 tabular-nums text-theme-neutral-700">
-                        {orDash(polygon.calcArea, " ha")}
-                      </td>
-                      <td className="px-4 py-2 tabular-nums text-theme-neutral-700">{orDash(polygon.numTrees)}</td>
-                      <td className="px-4 py-2">
-                        <AnomaliesCell count={anomalyCount} />
-                      </td>
-                    </tr>
+                      )}
+                    </Fragment>
                   );
                 })}
               </tbody>
@@ -332,6 +469,18 @@ const ProjectDataTable = ({ projectUuid, project }: ProjectDataTableProps) => {
           {isLoading && <p className="px-4 py-8 text-center text-sm text-theme-neutral-500">Loading…</p>}
         </div>
       </div>
+
+      {view === "polygons" && selectedPolygons.length > 0 && (
+        <BulkEditBar
+          selectedCount={selectedPolygons.length}
+          approvableCount={approvableUuids.length}
+          isApproving={isApproving}
+          isSavingAttributes={isSavingAttributes}
+          onClear={clearSelection}
+          onApprove={handleBulkApprove}
+          onApplyAttributes={handleBulkAttributes}
+        />
+      )}
 
       {anomaliesLoaded && (
         <p className="text-[11px] text-theme-neutral-400">

@@ -27,9 +27,10 @@ import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerM
 import EntitySetUpSection from "./EntitySetUpSection";
 import LatestImagesSectionTab from "./LatestImagesSection";
 
-/** Fixed height of the project map. Set here (not via a Tailwind arbitrary class) so the Mapbox
- * canvas is bounded and cannot overflow into the indicators below. */
-const DRILLDOWN_MAP_HEIGHT = "28rem";
+/** Fixed height of the map row. The map fills it on the left; the right column stacks the Actions
+ * panel over the indicator panel within the same height. Set inline (not via a Tailwind arbitrary
+ * class) so the Mapbox canvas is bounded and cannot overflow into the section below. */
+const DRILLDOWN_ROW_HEIGHT = "34rem";
 
 interface ProjectOverviewTabProps {
   project: ProjectFullDto;
@@ -153,14 +154,14 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         open={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
-      {/* Above the fold: the map, with the anomaly work-queue to its right. The map's height is fixed
-          here (a Chakra prop, not a Tailwind arbitrary height — those did not survive this project's
-          build in earlier passes) so its canvas can never spill into the row below, and overflow is
-          clipped. The Actions panel is collapsed by default and sizes to its header. */}
+      {/* Above the fold: the map on the left, and a right column stacking the anomaly work-queue over
+          the aggregated indicators. Everything lives inside one PageItem with a fixed row height, so
+          no section can overflow into another — the map's Mapbox canvas is bounded and clipped, and
+          the indicator panel scrolls within its share of the column. The row height is an inline
+          style, not a Tailwind arbitrary height: those did not survive this project's build. */}
       <PageItem
         title={t("Project Data")}
         flexProps={{ width: "100%" }}
-        className="min-h-0"
         buttonProps={{
           variant: "secondary",
           size: "small",
@@ -177,32 +178,21 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           loading: isDownloading
         }}
       >
-        <Flex gap={5} className="w-full flex-col ws-1100:flex-row ws-1100:items-start">
-          <Box className="relative w-full flex-1 overflow-hidden rounded-lg" style={{ height: DRILLDOWN_MAP_HEIGHT }}>
+        <Flex gap={5} className="w-full flex-col ws-1100:flex-row" style={{ minHeight: DRILLDOWN_ROW_HEIGHT }}>
+          <Box className="relative w-full flex-1 overflow-hidden rounded-lg" style={{ height: DRILLDOWN_ROW_HEIGHT }}>
             <ProjectSitesMap drilldown={drilldown} />
           </Box>
-          <Box className="w-full shrink-0 ws-1100:w-[24rem]">
-            <ProjectActionsPanel projectUuid={project.uuid} project={project} />
-          </Box>
+          <Flex className="w-full shrink-0 flex-col ws-1100:w-[26rem]" gap={4} style={{ height: DRILLDOWN_ROW_HEIGHT }}>
+            <Box className="shrink-0">
+              <ProjectActionsPanel projectUuid={project.uuid} project={project} />
+            </Box>
+            {/* Indicators fill the rest of the column and scroll internally, so a long site list
+                never pushes the column past the map's height. */}
+            <Box className="min-h-0 flex-1 overflow-hidden">
+              <ProjectKpiPanel drilldown={drilldown} projectName={project.name ?? t("Project")} />
+            </Box>
+          </Flex>
         </Flex>
-      </PageItem>
-
-      {/* The aggregated KPIs, below the map+actions row. Bounded height so a long site list scrolls
-          inside the card rather than stretching the page. */}
-      <PageItem
-        title={t("Project Indicators")}
-        flexProps={{ paddingY: 2, width: "100%" }}
-        buttonProps={{
-          variant: "secondary",
-          size: "small",
-          children: t("View Progress & Goals"),
-          rightIcon: <ChevronRightIcon />,
-          onClick: () => goToTab("goals")
-        }}
-      >
-        <Box className="w-full overflow-hidden" style={{ maxHeight: "34rem" }}>
-          <ProjectKpiPanel drilldown={drilldown} projectName={project.name ?? t("Project")} />
-        </Box>
       </PageItem>
       {/* Project Set Up, demoted below the fold: it is a setup/editing flow, not day-to-day data. */}
       <PageItem
