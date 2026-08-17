@@ -1,9 +1,18 @@
+import { Box } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import type { FeatureCollection } from "geojson";
-import Link from "next/link";
 import { useMemo } from "react";
 
+import EntityDataView from "@/components/entityData/EntityDataView";
+import { StatusPill, ValidationPill } from "@/components/entityData/polygonTableCells";
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
+import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { usePolygonGeoJson } from "@/connections/GeoJsonExport";
 import { useSitePolygons } from "@/connections/SitePolygons";
+import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import ResponsiveBreadcrumbToolbar, {
+  BreadcrumbLink
+} from "@/redesignComponents/navigation/Toolbar/ResponsiveBreadcrumbToolbar";
 
 import { aggregatePolygon, polygonMeasurementsFrom } from "../semanticZoom/aggregate";
 import DrilldownMap from "../semanticZoom/DrilldownMap";
@@ -12,56 +21,19 @@ import { INDICATOR_ORDER, LEVEL_CONTRACT } from "../semanticZoom/levelContract";
 import EntityActions from "./actions/EntityActions";
 
 /**
- * The standardised single-polygon entity page.
+ * The single-polygon entity page, laid out to match the site page: the same breadcrumb bar, the same
+ * PageContent/PageItem cards, and the same map-plus-panel EntityDataView shell.
  *
- * It is deliberately read-first: the polygon is fetched by uuid, its own recorded indicator values
- * are rolled through the same `aggregatePolygon` seam the Semantic Zoom panel uses, and every
- * figure keeps the provenance and coverage treatment defined once in `IndicatorRow`. Nothing here
- * recomputes an indicator by hand, so the polygon page and the drill-down can never disagree about
- * what a number means.
- *
- * A polygon is the native level of the contract — nothing is aggregated — so the point of the page
- * is to show the values that were actually recorded against this one boundary, beside the shape it
- * was measured over.
+ * The content differs because a polygon is the leaf of the contract — nothing is aggregated and there
+ * is nothing to drill into — so the right column holds this polygon's own anomalies over its recorded
+ * indicator values, rather than a child list. Every figure still flows through the same
+ * `aggregatePolygon` seam and `IndicatorRow` treatment the drill-down uses, so the page and the panel
+ * can never disagree about what a number means.
  */
 export interface PolygonDetailViewProps {
   projectUuid: string;
   polygonUuid: string;
 }
-
-const STATUS_LABELS: Record<string, string> = {
-  draft: "Draft",
-  "pending-approval": "Pending approval",
-  "information-required": "Information required",
-  approved: "Approved"
-};
-
-// Status is where a polygon sits in the review workflow; validation is whether its geometry passed
-// the automated checks. They are different axes and are pilled separately so neither is read as the
-// other. Colours are drawn from the same theme tokens the provenance chips use.
-const STATUS_STYLES: Record<string, string> = {
-  draft: "bg-theme-neutral-200 text-theme-neutral-800",
-  "pending-approval": "bg-theme-warning-100 text-theme-warning-900",
-  "information-required": "bg-theme-warning-100 text-theme-warning-900",
-  approved: "bg-theme-success-100 text-theme-success-900"
-};
-
-const VALIDATION_STYLES: Record<string, string> = {
-  passed: "bg-theme-success-100 text-theme-success-900",
-  partial: "bg-theme-warning-100 text-theme-warning-900",
-  failed: "bg-theme-error-100 text-theme-error-900"
-};
-
-const Pill = ({ label, value, className }: { label: string; value: string; className: string }) => (
-  <span className="inline-flex items-center gap-1.5">
-    <span className="text-[11px] uppercase tracking-wide text-theme-neutral-400">{label}</span>
-    <span
-      className={`inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium leading-none ${className}`}
-    >
-      {value}
-    </span>
-  </span>
-);
 
 // "—" for anything absent — never 0, never an empty string. Absent data is a state, not a value.
 const orDash = (value: string | number | null | undefined) =>
@@ -84,6 +56,8 @@ const Attribute = ({ label, value }: { label: string; value: string }) => (
 );
 
 const PolygonDetailView = ({ projectUuid, polygonUuid }: PolygonDetailViewProps) => {
+  const t = useT();
+
   // Fetched by uuid rather than paged: the same access pattern the drill-down uses, because a site
   // can hold thousands of polygons and the one being viewed is rarely on the first page.
   const [polygonLoaded, { data: polygonRows }] = useSitePolygons({
@@ -131,126 +105,113 @@ const PolygonDetailView = ({ projectUuid, polygonUuid }: PolygonDetailViewProps)
   const status = polygon?.status ?? null;
   const validationStatus = polygon?.validationStatus ?? null;
 
+  const breadcrumbs: BreadcrumbLink[] = [
+    { label: t("Projects"), link: "/my-projects", icon: <ProjectIcon className="!text-theme-primary-900" /> },
+    { label: projectName ?? t("Project"), link: `/project/${projectUuid}` },
+    { label: siteName ?? t("Site"), link: siteUuid == null ? `/project/${projectUuid}` : `/site/${siteUuid}` },
+    { label: name, link: `/project/${projectUuid}/polygon/${polygonUuid}` }
+  ];
+
+  const breadcrumbBar = (
+    <Box borderBottom="0.0625rem solid" borderColor="neutral.300" className="sticky top-0 z-20 px-1">
+      <ResponsiveBreadcrumbToolbar breadcrumbs={breadcrumbs} suffix={null} />
+    </Box>
+  );
+
   // Not found is only asserted once both requests have settled and neither carries the polygon.
   // Asserting it earlier would flash "not found" over data that is merely in flight.
   const settled = polygonLoaded && geoLoaded;
   if (settled && polygon == null && featureCollection == null) {
     return (
-      <div className="mx-auto w-full max-w-6xl px-4 py-10">
-        <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-theme-neutral-500">
-          <Link href={`/project/${projectUuid}`} className="hover:text-theme-primary-500 hover:underline">
-            Project
-          </Link>
-        </nav>
-        <div className="rounded-lg border border-theme-neutral-200 bg-white px-6 py-10 text-center">
-          <h1 className="text-base font-semibold text-theme-neutral-900">Polygon not found</h1>
-          <p className="mt-1 text-sm text-theme-neutral-500">
-            No polygon matches this link. It may have been deleted, or the address is incorrect.
-          </p>
-        </div>
-      </div>
+      <>
+        {breadcrumbBar}
+        <PageContent>
+          <PageItem title={t("Polygon not found")} flexProps={{ width: "100%" }}>
+            <p className="px-1 py-4 text-sm text-theme-neutral-500">
+              No polygon matches this link. It may have been deleted, or the address is incorrect.
+            </p>
+          </PageItem>
+        </PageContent>
+      </>
     );
   }
 
-  return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-6">
-      <nav className="mb-4 flex flex-wrap items-center gap-1.5 text-xs text-theme-neutral-500">
-        <Link href={`/project/${projectUuid}`} className="hover:text-theme-primary-500 hover:underline">
-          {orDash(projectName) === "—" ? "Project" : projectName}
-        </Link>
-        <span className="text-theme-neutral-300">/</span>
-        {siteUuid == null ? (
-          <span>{siteName ?? "Site"}</span>
-        ) : (
-          <Link href={`/site/${siteUuid}`} className="hover:text-theme-primary-500 hover:underline">
-            {siteName ?? "Site"}
-          </Link>
-        )}
-        <span className="text-theme-neutral-300">/</span>
-        <span className="text-theme-neutral-700">{name}</span>
-      </nav>
-
-      <header className="mb-4 flex flex-col gap-2">
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <div className="flex flex-col gap-1">
-            <p className="text-[11px] uppercase tracking-wide text-theme-neutral-400">Polygon</p>
-            <h1 className="text-xl font-semibold text-theme-neutral-900" title={name}>
-              {name}
-            </h1>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <Pill
-              label="Status"
-              value={status == null ? "—" : STATUS_LABELS[status] ?? status}
-              className={
-                status == null
-                  ? "bg-theme-neutral-100 text-theme-neutral-500"
-                  : STATUS_STYLES[status] ?? "bg-theme-neutral-200 text-theme-neutral-800"
-              }
-            />
-            <Pill
-              label="Validation"
-              value={validationStatus == null || validationStatus === "" ? "—" : validationStatus}
-              className={
-                validationStatus == null
-                  ? "bg-theme-neutral-100 text-theme-neutral-500"
-                  : VALIDATION_STYLES[validationStatus.toLowerCase()] ?? "bg-theme-neutral-200 text-theme-neutral-800"
-              }
-            />
-          </div>
-        </div>
-
-        {/* Per-polygon anomalies with their inline controls. Renders nothing when the polygon is clean. */}
-        <EntityActions projectUuid={projectUuid} entityUuid={polygonUuid} entityStatus={status} />
+  const indicatorPanel = (
+    <section className="flex h-full flex-col overflow-hidden rounded-lg border border-theme-neutral-200 bg-white">
+      <header className="border-b border-theme-neutral-200 px-4 py-3">
+        <p className="text-[11px] uppercase tracking-wide text-theme-neutral-400">Indicators</p>
+        <p className="mt-1 text-xs text-theme-neutral-700">As measured on this polygon</p>
       </header>
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div className="min-h-[420px]">
-          <DrilldownMap featureCollection={featureCollection} selectedId={polygonUuid} loading={!geoLoaded} />
-        </div>
-
-        <section className="flex flex-col overflow-hidden rounded-lg border border-theme-neutral-200 bg-white">
-          <header className="border-b border-theme-neutral-200 px-4 py-3">
-            <p className="text-[11px] uppercase tracking-wide text-theme-neutral-400">Indicators</p>
-            <p className="mt-1 text-xs text-theme-neutral-700">As measured on this polygon</p>
-          </header>
-          <div className="flex-1 overflow-y-auto px-4">
-            {aggregate == null ? (
-              // The same honest treatment the panel uses: while the record is loading, say so; if it
-              // never arrives, an em-dash per row would imply a measurement that does not exist, so a
-              // single neutral line is the truthful state.
-              <p className="py-6 text-sm text-theme-neutral-500">
-                {polygonLoaded ? "This polygon's record could not be loaded." : "Loading indicators…"}
-              </p>
-            ) : (
-              <ul>
-                {INDICATOR_ORDER.map(key => (
-                  <IndicatorRow
-                    key={key}
-                    contract={LEVEL_CONTRACT[key]}
-                    level="polygon"
-                    measurement={aggregate.indicators[key]}
-                  />
-                ))}
-              </ul>
-            )}
-          </div>
-        </section>
+      <div className="flex-1 overflow-y-auto px-4">
+        {aggregate == null ? (
+          // The same honest treatment the panel uses: while the record is loading, say so; if it never
+          // arrives, an em-dash per row would imply a measurement that does not exist, so a single
+          // neutral line is the truthful state.
+          <p className="py-6 text-sm text-theme-neutral-500">
+            {polygonLoaded ? "This polygon's record could not be loaded." : "Loading indicators…"}
+          </p>
+        ) : (
+          <ul>
+            {INDICATOR_ORDER.map(key => (
+              <IndicatorRow
+                key={key}
+                contract={LEVEL_CONTRACT[key]}
+                level="polygon"
+                measurement={aggregate.indicators[key]}
+              />
+            ))}
+          </ul>
+        )}
       </div>
+    </section>
+  );
 
-      <section className="mt-4 rounded-lg border border-theme-neutral-200 bg-white px-4 py-4">
-        <p className="mb-3 text-[11px] uppercase tracking-wide text-theme-neutral-400">Attributes</p>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          <Attribute label="Area" value={polygon?.calcArea == null ? "—" : `${polygon.calcArea.toLocaleString()} ha`} />
-          <Attribute label="Trees" value={orDash(polygon?.numTrees)} />
-          <Attribute label="Plant start" value={formatDate(polygon?.plantStart)} />
-          <Attribute label="Practice" value={orDashList(polygon?.practice)} />
-          <Attribute label="Target system" value={orDash(polygon?.targetSys)} />
-          <Attribute label="Distribution" value={orDashList(polygon?.distr)} />
-          <Attribute label="Source" value={orDash(polygon?.source)} />
-        </div>
-      </section>
-    </div>
+  return (
+    <>
+      {breadcrumbBar}
+      <PageContent>
+        {/* Above the fold: the polygon's shape on the left, and a right column holding this polygon's
+            anomalies over its recorded indicators — the same EntityDataView shell the project and site
+            pages use, with the child drill-down replaced by the leaf's own values. */}
+        <PageItem
+          title={name}
+          flexProps={{ width: "100%" }}
+          tag={
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="text-[11px] uppercase tracking-wide text-theme-neutral-400">Status</span>
+                <StatusPill status={status} />
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="text-[11px] uppercase tracking-wide text-theme-neutral-400">Validation</span>
+                <ValidationPill validationStatus={validationStatus} />
+              </span>
+            </div>
+          }
+        >
+          <EntityDataView
+            map={<DrilldownMap featureCollection={featureCollection} selectedId={polygonUuid} loading={!geoLoaded} />}
+            actions={<EntityActions projectUuid={projectUuid} entityUuid={polygonUuid} entityStatus={status} />}
+            kpis={indicatorPanel}
+          />
+        </PageItem>
+
+        <PageItem title={t("Attributes")} flexProps={{ paddingY: 2, width: "100%" }}>
+          <div className="grid grid-cols-2 gap-4 px-1 py-2 sm:grid-cols-3 lg:grid-cols-4">
+            <Attribute
+              label="Area"
+              value={polygon?.calcArea == null ? "—" : `${polygon.calcArea.toLocaleString()} ha`}
+            />
+            <Attribute label="Trees" value={orDash(polygon?.numTrees)} />
+            <Attribute label="Plant start" value={formatDate(polygon?.plantStart)} />
+            <Attribute label="Practice" value={orDashList(polygon?.practice)} />
+            <Attribute label="Target system" value={orDash(polygon?.targetSys)} />
+            <Attribute label="Distribution" value={orDashList(polygon?.distr)} />
+            <Attribute label="Source" value={orDash(polygon?.source)} />
+          </div>
+        </PageItem>
+      </PageContent>
+    </>
   );
 };
 
