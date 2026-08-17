@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 
-import { getThemedColor, getThemedFontSize } from "../../../../../lib/theme";
+import { getThemedColor } from "../../../../../lib/theme";
 import { calendarBaseGlobalStyles } from "../styled";
 
 export const calendarGlobalStyles = css`
@@ -77,70 +77,10 @@ export const calendarGlobalStyles = css`
     background: ${getThemedColor("primary", 600)};
   }
 
-  .flexible-month-view [data-part="table"] {
-    table-layout: fixed;
-  }
-
-  .flexible-month-view [data-part="table-cell"] {
-    height: 4rem;
-    padding: 0.25rem;
-  }
-
-  .flexible-month-view [data-part="table-cell-trigger"] {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    border-radius: 0.25rem;
-    background: ${getThemedColor("neutral", 200)};
-    color: ${getThemedColor("neutral", 900)};
-    font-size: ${getThemedFontSize("400")};
-    font-weight: 400;
-    text-transform: capitalize;
-  }
-
-  .flexible-month-view [data-part="table-cell-trigger"]:hover {
-    background: ${getThemedColor("neutral", 300)};
-  }
-
-  .flexible-month-view [data-part="table-cell-trigger"][data-today] {
-    border: none;
-    border-radius: 0.25rem;
-  }
-
-  .flexible-month-view [data-part="table-cell-trigger"][data-in-range]:not([data-selected]) {
-    width: 100%;
-    height: 100%;
-    border: none;
-    border-radius: 0.25rem;
-    background: ${getThemedColor("primary", 200)};
-    color: ${getThemedColor("primary", 700)};
-  }
-
-  .flexible-month-view [data-part="table-cell-trigger"][data-in-range]:not([data-selected]):hover {
-    background: ${getThemedColor("primary", 300)};
-  }
-
-  .flexible-month-view [data-part="table-cell-trigger"][data-selected] {
-    width: 100%;
-    height: 100%;
-    border: none;
-    border-radius: 0.25rem;
-    background: ${getThemedColor("primary", 500)};
-    color: ${getThemedColor("neutral", 900)};
-  }
-
-  .flexible-month-view [data-part="table-cell-trigger"][data-selected]:hover {
-    background: ${getThemedColor("primary", 600)};
-  }
-
   .rect-cell-view [data-part="table-cell"]:has([data-in-range]),
   .rect-cell-view [data-part="table-cell"]:has([data-range-start]),
   .rect-cell-view [data-part="table-cell"]:has([data-range-end]),
-  .rect-cell-view [data-part="table-cell"]:has([data-range-start][data-range-end]),
-  .flexible-month-view [data-part="table-cell"]:has([data-in-range]),
-  .flexible-month-view [data-part="table-cell"]:has([data-range-start]),
-  .flexible-month-view [data-part="table-cell"]:has([data-range-end]),
-  .flexible-month-view [data-part="table-cell"]:has([data-range-start][data-range-end]) {
+  .rect-cell-view [data-part="table-cell"]:has([data-range-start][data-range-end]) {
     background: transparent;
   }
 `;
