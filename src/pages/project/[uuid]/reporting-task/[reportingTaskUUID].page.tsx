@@ -7,10 +7,9 @@ import React, { FC, useCallback, useMemo, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import StatusBar from "@/components/elements/StatusBar/StatusBar";
-import StatusPill from "@/components/elements/StatusPill/StatusPill";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import Table from "@/components/elements/Table/Table";
 import { FilterValue } from "@/components/elements/TableFilters/TableFilter";
-import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
@@ -193,14 +192,9 @@ const ReportingTaskPage: FC = () => {
       header: t("Status"),
       cell: props => {
         const value = props.getValue() as string;
-        const { status, statusText } = CompletionStatusMapping(t)?.[value] || {};
-        if (!status) return null;
+        if (CompletionStatusMapping(t)?.[value] == null) return null;
 
-        return (
-          <StatusPill status={status} className="w-fit">
-            <Text variant="text-bold-caption-100">{statusText}</Text>
-          </StatusPill>
-        );
+        return <StatusTag status={value} size="small" />;
       }
     },
     {
@@ -290,14 +284,9 @@ const ReportingTaskPage: FC = () => {
       header: t("Status"),
       cell: props => {
         const value = props.getValue() as string;
-        const { status, statusText } = CompletionStatusMapping(t)?.[value] || {};
-        if (!status) return null;
+        if (CompletionStatusMapping(t)?.[value] == null) return null;
 
-        return (
-          <StatusPill status={status} className="w-fit">
-            <Text variant="text-bold-caption-100">{statusText}</Text>
-          </StatusPill>
-        );
+        return <StatusTag status={value} size="small" />;
       }
     },
     {

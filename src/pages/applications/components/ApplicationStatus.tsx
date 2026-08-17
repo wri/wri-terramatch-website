@@ -60,7 +60,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
     useCallback(() => {
       router.push(`/form/submission/${submission?.uuid}/intro`);
     }, [router, submission?.uuid]),
-    "Form submission creation failed"
+    "Form submission Creation Failed"
   );
 
   const statusProps = useMemo((): StatusProps | null => {

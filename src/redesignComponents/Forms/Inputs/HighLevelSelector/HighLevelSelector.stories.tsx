@@ -4,10 +4,10 @@ import type { Meta, StoryObj } from "@storybook/react";
 import HighLevelSelector, { HighLevelSelectorItem } from ".";
 
 const folders: HighLevelSelectorItem[] = [
-  { label: "Label", value: "label-1" },
-  { label: "Label", value: "label-2" },
-  { label: "Label", value: "label-3" },
-  { label: "Label", value: "label-4" }
+  { label: "Label 1", value: "label-1" },
+  { label: "Label 2", value: "label-2" },
+  { label: "Label 3", value: "label-3" },
+  { label: "Label 4", value: "label-4" }
 ];
 
 const meta = {

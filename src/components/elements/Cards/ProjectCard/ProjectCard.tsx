@@ -6,9 +6,8 @@ import { DetailedHTMLProps, FC, HTMLAttributes, PropsWithChildren, useState } fr
 import Button from "@/components/elements/Button/Button";
 import ExpandedCard from "@/components/elements/Cards/ExpandedCard/ExpandedCard";
 import Paper from "@/components/elements/Paper/Paper";
-import StatusPill from "@/components/elements/StatusPill/StatusPill";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import Text from "@/components/elements/Text/Text";
-import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import NurseriesTable from "@/components/extensive/Tables/NurseriesTable";
 import SitesTable from "@/components/extensive/Tables/SitesTable";
@@ -18,9 +17,6 @@ import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchem
 import { getEntityCombinedStatus } from "@/helpers/entity";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
 import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
-import { Status } from "@/types/common";
-
-import { StatusEnum } from "../../Status/constants/statusMap";
 
 type ProjectCardProps = PropsWithChildren<
   DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
@@ -42,7 +38,7 @@ const FrameworkName: FC<{ frameworkKey?: string | null }> = ({ frameworkKey }) =
 const ProjectCard: FC<ProjectCardProps> = ({ project, title, children, className, ...rest }) => {
   const t = useT();
   const status = getEntityCombinedStatus(project);
-  const statusProps = project.status ? getActionCardStatusMapper(t)[status] : undefined;
+  const isDraft = status === "draft";
   const [nurseriesCount, setNurseriesCount] = useState<number | undefined>();
   const [siteCount, setSiteCount] = useState<number | undefined>();
 
@@ -52,12 +48,10 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, title, children, className
         <div className="flex items-center gap-4 border-b border-neutral-100 px-8 py-6 mobile:flex-col mobile:px-3">
           <div className="flex flex-1 flex-col gap-2">
             <Text variant="text-bold-headline-800">{project.name}</Text>
-            {statusProps && (
-              <div className="flex">
-                <Text variant="text-bold-subtitle-500">{t("Status")}:&#160;</Text>
-                <StatusPill status={statusProps.status as unknown as Status} className="w-fit-content">
-                  <Text variant="text-bold-caption-100">{statusProps.statusText}</Text>
-                </StatusPill>
+            {project.status != null && status != null && (
+              <div className="flex items-center gap-2">
+                <Text variant="text-bold-subtitle-500">{t("Status")}:</Text>
+                <StatusTag status={status} variant="mapped" />
               </div>
             )}
             <div className="flex">
@@ -70,7 +64,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, title, children, className
             </div>
           </div>
           <div className="flex gap-4 mobile:flex-col mobile:self-baseline">
-            {statusProps?.status === StatusEnum.EDIT ? (
+            {isDraft ? (
               <>
                 <Button as={Link} href={`/entity/projects/edit/${project.uuid}`}>
                   {t("Continue Project")}
@@ -88,7 +82,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, title, children, className
             )}
           </div>
         </div>
-        {statusProps?.status !== StatusEnum.EDIT && (
+        {!isDraft && (
           <div className="space-y-6 p-8 mobile:px-3">
             <ExpandedCard
               headerChildren={

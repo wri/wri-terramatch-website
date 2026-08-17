@@ -5,8 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
+import EntityInformationRequiredModal from "@/components/extensive/EntityInformationRequiredModal";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -77,7 +76,6 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const needMoreInformation =
     project.updateRequestStatus === INFORMATION_REQUIRED || project.status === INFORMATION_REQUIRED;
   const awaitingApproval = project.updateRequestStatus === PENDING_APPROVAL || project.status === PENDING_APPROVAL;
-  const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval) {
       setOpenStatusModal(true);
@@ -176,10 +174,8 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   return (
     <PageContent>
       {EditModals}
-      <EntityStatusModal
-        statusProps={statusProps!}
+      <EntityInformationRequiredModal
         feedback={project.feedback}
-        needMoreInformation={needMoreInformation}
         entityName="projects"
         entityUuid={project.uuid}
         open={openStatusModal}

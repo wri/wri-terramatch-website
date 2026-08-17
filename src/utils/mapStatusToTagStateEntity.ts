@@ -8,15 +8,51 @@ export const mapStatusToTagStateEntity = (
 ): { type: TagSubmissionState } | undefined => {
   switch (status) {
     case "draft":
+    case "started":
       return { type: "draft" };
     case "pending-approval":
+    case "awaiting":
+    case "awaiting-approval":
+    case "submitted":
+    case "submitted-for-approval":
       return { type: "pending-approval" };
     case "information-required":
+    case "needs-more-information":
+    case "more-info-requested":
       return { type: "information-required" };
     case "approved":
       return { type: "approved" };
     case "due":
+    case "not-started":
       return { type: "due" };
+    case "nothing-to-report":
+    case "nothing-reported":
+    case "no-update":
+      return { type: "nothing-reported" };
+    case "rejected":
+      return { type: "not-selected" };
+    case "active":
+      return { type: "receiving-applications" };
+    default:
+      return undefined;
+  }
+};
+
+export const mapStatusToMappedTagState = (status: string | null | undefined): MappedTagState | undefined => {
+  switch (status) {
+    case "draft":
+    case "started":
+      return "draft";
+    case "pending-approval":
+    case "awaiting":
+    case "awaiting-approval":
+      return "pending-approval";
+    case "information-required":
+    case "needs-more-information":
+    case "more-info-requested":
+      return "information-required";
+    case "approved":
+      return "approved";
     default:
       return undefined;
   }

@@ -44,10 +44,7 @@ const ReportingTasksTable = ({ projectUUID, onFetch, alwaysShowPagination = fals
         {
           accessorKey: "status",
           header: t("Submission Status"),
-          cell: props => {
-            const statusProps = SubmissionStatusMapping(t)?.[props.getValue() as string] ?? {};
-            return <StatusTableCell statusProps={statusProps} />;
-          }
+          cell: props => <StatusTableCell status={props.getValue() as string} />
         },
         {
           id: "title",
@@ -60,10 +57,7 @@ const ReportingTasksTable = ({ projectUUID, onFetch, alwaysShowPagination = fals
           accessorKey: "completionStatus",
           header: t("Completion Status"),
           enableSorting: false,
-          cell: props => {
-            const statusProps = CompletionStatusMapping(t)?.[props.getValue() as string] ?? {};
-            return <StatusTableCell statusProps={statusProps} />;
-          }
+          cell: props => <StatusTableCell status={props.getValue() as string} />
         },
         {
           accessorKey: "uuid",
@@ -108,7 +102,7 @@ export const CompletionStatusMapping = (t: typeof useT): any => {
     },
     "not-started": {
       status: "error",
-      statusText: t("Not started")
+      statusText: t("Due")
     },
     draft: {
       status: "edit",

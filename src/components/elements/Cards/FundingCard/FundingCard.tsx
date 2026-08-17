@@ -4,7 +4,7 @@ import Link from "next/link";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import Pill from "@/components/elements/Pill/Pill";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames, IconProps } from "@/components/extensive/Icon/Icon";
 import { useDate } from "@/hooks/useDate";
@@ -25,22 +25,6 @@ const FundingCard = (props: FundingCardProps) => {
   const t = useT();
   const { format } = useDate();
 
-  const StatusPropsMap: any = {
-    active: {
-      text: t("Receiving Applications"),
-      className: "bg-secondary-200"
-    },
-    inactive: {
-      text: t("Closed"),
-      className: "bg-neutral-200"
-    },
-    "coming-soon": {
-      text: t("Coming Soon"),
-      className: "bg-primary-200"
-    }
-  };
-  const statusProps = StatusPropsMap[status];
-
   return (
     <div
       {...rest}
@@ -49,9 +33,7 @@ const FundingCard = (props: FundingCardProps) => {
         "flex h-[420px] w-full flex-col overflow-auto rounded-lg border border-neutral-100 border-opacity-25 bg-white p-6 shadow wide:h-[500px]"
       )}
     >
-      {statusProps == null ? null : (
-        <Pill className={classNames(statusProps?.className, "mb-4 w-fit")}>{statusProps.text}</Pill>
-      )}
+      {status === "disabled" ? null : <StatusTag status={status} className="mb-4" />}
       <Text variant="text-bold-subtitle-500" className="mb-2">
         {title}
       </Text>

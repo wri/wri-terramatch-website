@@ -5,16 +5,14 @@ import type { ComponentType, SVGProps } from "react";
 import * as BoundaryPolygonModule from "./BoundaryPolygon.svg";
 import {
   type BoundaryStatus,
-  type PolygonState,
+  type PolygonStyle,
   FILL_OPACITY,
-  INTERACTION_STATES,
-  POLYGON_STATES,
   POLYGON_VERTICES,
   ROW_TEMPLATE,
   ROWS,
-  STATE_LABELS,
   STATUS_COLORS,
-  STATUSES
+  STATUSES,
+  STYLES
 } from "./MapBoundaryPolygon.constants";
 
 const BoundaryPolygon = (
@@ -23,8 +21,10 @@ const BoundaryPolygon = (
   }
 ).ReactComponent;
 
+const STORYBOOK_STATUSES = STATUSES.filter(status => status !== "External");
+
 type MapBoundaryPolygonProps = {
-  state?: PolygonState;
+  style?: PolygonStyle;
   status: BoundaryStatus;
 };
 
@@ -71,9 +71,10 @@ const OverlapWarning = () => (
   </Box>
 );
 
-const MapBoundaryPolygon = ({ state = "default", status }: MapBoundaryPolygonProps) => {
-  const isEditable = state === "editable";
-  const isExternal = state === "external";
+const MapBoundaryPolygon = ({ style = "Default", status }: MapBoundaryPolygonProps) => {
+  const appliedStyle = status === "External" ? "Selected Overlap" : style;
+  const isEditable = appliedStyle === "Editable";
+  const isExternal = status === "External";
 
   return (
     <Box
@@ -81,13 +82,13 @@ const MapBoundaryPolygon = ({ state = "default", status }: MapBoundaryPolygonPro
       boxSize="5rem"
       color={STATUS_COLORS[status]}
       role="img"
-      aria-label={`${status}, ${STATE_LABELS[state]}`}
+      aria-label={`${status}, ${appliedStyle}`}
       css={{
         "& > svg": { position: "absolute", inset: 0, width: "100%", height: "100%" },
         "& .boundary-polygon__shape": { overflow: "hidden" },
         "& .boundary-polygon__shape path": {
-          fillOpacity: FILL_OPACITY[state],
-          strokeWidth: state === "default" ? "1px" : "2px",
+          fillOpacity: FILL_OPACITY[appliedStyle],
+          strokeWidth: appliedStyle === "Default" ? "1px" : "2px",
           strokeDasharray: isEditable ? "2px 2px" : "none"
         },
         "& .boundary-polygon__vertices": { pointerEvents: "none", overflow: "visible" },
@@ -97,7 +98,7 @@ const MapBoundaryPolygon = ({ state = "default", status }: MapBoundaryPolygonPro
       <BoundaryPolygon className="boundary-polygon__shape" aria-hidden="true" />
       {isExternal && <ExternalPattern />}
       {isEditable && <EditableVertices />}
-      {(state === "selected-overlap" || isExternal) && <OverlapWarning />}
+      {appliedStyle === "Selected Overlap" && <OverlapWarning />}
     </Box>
   );
 };
@@ -108,8 +109,12 @@ const meta = {
   parameters: { layout: "centered" },
   tags: ["autodocs"],
   argTypes: {
-    status: { control: "select", options: STATUSES },
-    state: { control: "select", options: POLYGON_STATES }
+    status: { control: "select", options: STORYBOOK_STATUSES },
+    style: {
+      control: "select",
+      options: STYLES,
+      if: { arg: "status", neq: "External" }
+    }
   }
 } satisfies Meta<typeof MapBoundaryPolygon>;
 
@@ -117,11 +122,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { state: "default", status: "Draft" }
+  args: { style: "Default", status: "Draft" }
 };
 
 export const AllStates: Story = {
-  args: { state: "default", status: "Draft" },
+  args: { style: "Default", status: "Draft" },
   parameters: { controls: { disable: true } },
   render: () => (
     <Box
@@ -143,9 +148,9 @@ export const AllStates: Story = {
         aria-hidden="true"
       >
         <Box />
-        {INTERACTION_STATES.map(state => (
-          <Text paddingX="0.5rem" textStyle="300" textAlign="center" key={state}>
-            {STATE_LABELS[state]}
+        {STYLES.map(style => (
+          <Text paddingX="0.5rem" textStyle="300" textAlign="center" key={style}>
+            {style}
           </Text>
         ))}
       </Grid>
@@ -167,16 +172,16 @@ export const AllStates: Story = {
           border="1px dashed"
           borderColor="neutralActive.3"
         >
-          {ROWS.flatMap(({ status, states }) =>
-            states.map((state, columnIndex) => (
+          {ROWS.flatMap(({ status, styles }) =>
+            styles.map((style, columnIndex) => (
               <Grid
                 placeItems="center"
                 width="100%"
                 height="100%"
                 padding="1.125rem"
-                key={`${status}-${INTERACTION_STATES[columnIndex]}`}
+                key={`${status}-${STYLES[columnIndex]}`}
               >
-                {state && <MapBoundaryPolygon state={state} status={status} />}
+                {style && <MapBoundaryPolygon style={style} status={status} />}
               </Grid>
             ))
           )}
