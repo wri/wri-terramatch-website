@@ -50,7 +50,7 @@ const ProjectCard: FC<ProjectCardProps> = ({ project, title, children, className
             {project.status != null && status != null && (
               <div className="flex items-center gap-2">
                 <Text variant="text-bold-subtitle-500">{t("Status")}:</Text>
-                <StatusTag status={status} variant="mapped" />
+                <StatusTag status={status} />
               </div>
             )}
             <div className="flex">
