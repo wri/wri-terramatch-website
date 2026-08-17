@@ -149,7 +149,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
           <>
             {progressLoading || isSwitchingProject ? (
               <Flex minHeight="240px" alignItems="center" justifyContent="center" gap={3}>
-                <LoadingIcon boxSize={6} className="animate-spin" color="primary.800" />
+                <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
                 <Text textStyle="400" color="neutral.800">
                   {t("Loading reports...")}
                 </Text>

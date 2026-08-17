@@ -55,7 +55,7 @@ export const SelectorLabel: FC<SelectorLabelProps> = ({ children, disabled, id }
 );
 
 export const SelectorOptionText: FC<SelectorTextProps> = ({ children }) => (
-  <Text as="span" color="neutral.900" data-selector-option-text textStyle="400" lineHeight="normal">
+  <Text as="span" color="neutral.900" truncate data-selector-option-text textStyle="400" lineHeight="normal">
     {children}
   </Text>
 );
