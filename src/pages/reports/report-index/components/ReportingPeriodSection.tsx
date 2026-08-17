@@ -107,7 +107,7 @@ const ReportingPeriodSection = ({ period, defaultOpen = false }: ReportingPeriod
           <ListSectionHeader
             level="sub-level"
             label={t("Reporting Period")}
-            title={getShortPeriodLabel(taskTitle ?? "", true)}
+            title={getShortPeriodLabel(taskTitle ?? "", false)}
             dueDate={period.dueAt == null ? undefined : format(period.dueAt)}
             statusLabels={
               <Flex alignItems="center" gap={2} className="mobile:flex-wrap mobile:justify-end">

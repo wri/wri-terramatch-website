@@ -17,11 +17,13 @@ import {
 } from "../reportIndex.types";
 import { getReportsRequiringAttention, getReportStatusCounts } from "../reportIndex.utils";
 import AdditionalReportsTable from "./AdditionalReportsTable";
+import ReportsSearchNoResults from "./ReportsSearchNoResults";
 
 type AdditionalReportsContentProps = {
   sections: AdditionalReportsEntitySectionData[];
   loading: boolean;
   error: boolean;
+  hasActiveSearch?: boolean;
 };
 
 const getGroupLabel = (type: AdditionalReportType, t: ReturnType<typeof useT>) => {
@@ -123,7 +125,12 @@ const AdditionalReportsEntitySection = ({ section }: { section: AdditionalReport
   );
 };
 
-const AdditionalReportsContent = ({ sections, loading, error }: AdditionalReportsContentProps) => {
+const AdditionalReportsContent = ({
+  sections,
+  loading,
+  error,
+  hasActiveSearch = false
+}: AdditionalReportsContentProps) => {
   const t = useT();
 
   return (
@@ -143,12 +150,16 @@ const AdditionalReportsContent = ({ sections, loading, error }: AdditionalReport
           caption={t("Please refresh the page and try again.")}
         />
       ) : sections.length === 0 ? (
-        <InlineMessage
-          className="m-4"
-          variant="info-grey"
-          label={t("No additional reports found")}
-          caption={t("Try changing your search or filters.")}
-        />
+        hasActiveSearch ? (
+          <ReportsSearchNoResults />
+        ) : (
+          <InlineMessage
+            className="m-4"
+            variant="info-grey"
+            label={t("No additional reports found")}
+            caption={t("Try changing your search or filters.")}
+          />
+        )
       ) : (
         <div className="space-y-4">
           {sections.map(section => (
