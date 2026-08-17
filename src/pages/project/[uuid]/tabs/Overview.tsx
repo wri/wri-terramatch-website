@@ -4,16 +4,16 @@ import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
+import EntityActionsPanel from "@/components/entityData/EntityActionsPanel";
 import EntityDataView from "@/components/entityData/EntityDataView";
+import EntityKpiPanel from "@/components/entityData/EntityKpiPanel";
+import EntityMap from "@/components/entityData/EntityMap";
+import { useEntityDrilldown } from "@/components/entityData/useEntityDrilldown";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import ProjectActionsPanel from "@/components/projectData/actions/ProjectActionsPanel";
-import ProjectKpiPanel from "@/components/projectData/ProjectKpiPanel";
-import ProjectSitesMap from "@/components/projectData/ProjectSitesMap";
-import { useProjectDrilldown } from "@/components/projectData/useProjectDrilldown";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -52,9 +52,9 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     model: "projects"
   });
 
-  // Rollup + centroids + aggregate, shared by the map (top) and the KPI panel (below) so the two
-  // rows show the same project figures.
-  const drilldown = useProjectDrilldown(project.uuid);
+  // Rollup + centroids + aggregate, shared by the map and the KPI panel so both show the same
+  // project figures.
+  const drilldown = useEntityDrilldown({ level: "project", projectUuid: project.uuid });
 
   const monitoringPartners = useMemo(() => {
     return associatedUsers
@@ -175,9 +175,11 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         }}
       >
         <EntityDataView
-          map={<ProjectSitesMap drilldown={drilldown} />}
-          actions={<ProjectActionsPanel projectUuid={project.uuid} project={project} />}
-          kpis={<ProjectKpiPanel drilldown={drilldown} projectName={project.name ?? t("Project")} />}
+          map={<EntityMap drilldown={drilldown} projectUuid={project.uuid} />}
+          actions={<EntityActionsPanel level="project" projectUuid={project.uuid} project={project} />}
+          kpis={
+            <EntityKpiPanel drilldown={drilldown} title={project.name ?? t("Project")} projectUuid={project.uuid} />
+          }
         />
       </PageItem>
       {/* Project Set Up, demoted below the fold: it is a setup/editing flow, not day-to-day data. */}

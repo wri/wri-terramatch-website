@@ -1,11 +1,11 @@
 import { Dictionary } from "lodash";
 import { FC } from "react";
 
+import SiteDataTable from "@/components/entityData/SiteDataTable";
 import SharedDetails from "@/components/extensive/PageElements/PageContent/components/sharedDetails";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
-import SiteDataTable from "@/components/siteData/SiteDataTable";
 import WizardFormProvider from "@/context/wizardForm.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";

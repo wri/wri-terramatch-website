@@ -1,9 +1,9 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 
+import { useEntityAnomalies } from "@/components/entityData/useEntityAnomalies";
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
-import { useSiteAnomalies } from "@/components/siteData/useSiteAnomalies";
 import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
@@ -26,7 +26,11 @@ const SiteDetailPage = () => {
 
   // Merged anomaly count for the "Site Details and Data" tab badge — the same site-scoped fold the
   // Overview's SiteActionsPanel reads, so the badge and the panel can never disagree.
-  const { totalCount: siteAnomalyCount } = useSiteAnomalies(site?.projectUuid ?? undefined, site?.uuid);
+  const { totalCount: siteAnomalyCount } = useEntityAnomalies({
+    level: "site",
+    projectUuid: site?.projectUuid ?? undefined,
+    siteUuid: site?.uuid
+  });
 
   const currentTab = (router.query.tab as string) ?? "overview";
   const isSuffixView = currentTab === "completed-tasks";

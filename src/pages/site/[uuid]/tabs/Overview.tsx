@@ -3,16 +3,16 @@ import { useT } from "@transifex/react";
 import router from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import EntityActionsPanel from "@/components/entityData/EntityActionsPanel";
 import EntityDataView from "@/components/entityData/EntityDataView";
+import EntityKpiPanel from "@/components/entityData/EntityKpiPanel";
+import EntityMap from "@/components/entityData/EntityMap";
+import { useEntityDrilldown } from "@/components/entityData/useEntityDrilldown";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import SiteActionsPanel from "@/components/siteData/SiteActionsPanel";
-import SiteKpiPanel from "@/components/siteData/SiteKpiPanel";
-import SiteMap from "@/components/siteData/SiteMap";
-import { useSiteDrilldown } from "@/components/siteData/useSiteDrilldown";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -66,8 +66,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const projectUuid = site.projectUuid ?? "";
 
   // Rollup + geometry + aggregate, shared by the map (left) and the KPI panel (right) so both show
-  // the same site figures — the site analogue of the project Overview's drill-down.
-  const drilldown = useSiteDrilldown(projectUuid, site.uuid);
+  // the same site figures — the same drill-down hook the project uses, at site level.
+  const drilldown = useEntityDrilldown({ level: "site", projectUuid, siteUuid: site.uuid });
 
   const goToTab = (tab: string) => {
     router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
@@ -118,9 +118,9 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           }}
         >
           <EntityDataView
-            map={<SiteMap drilldown={drilldown} projectUuid={projectUuid} />}
-            actions={<SiteActionsPanel projectUuid={projectUuid} siteUuid={site.uuid} />}
-            kpis={<SiteKpiPanel drilldown={drilldown} siteName={site.name ?? t("Site")} projectUuid={projectUuid} />}
+            map={<EntityMap drilldown={drilldown} projectUuid={projectUuid} />}
+            actions={<EntityActionsPanel level="site" projectUuid={projectUuid} siteUuid={site.uuid} />}
+            kpis={<EntityKpiPanel drilldown={drilldown} title={site.name ?? t("Site")} projectUuid={projectUuid} />}
           />
         </PageItem>
         {/* Sites Set Up, demoted below the fold: it is a setup/editing flow, not day-to-day data. */}

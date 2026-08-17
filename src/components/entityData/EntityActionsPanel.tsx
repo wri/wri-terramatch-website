@@ -5,34 +5,40 @@ import ActionRow from "@/components/projectData/actions/ActionRow";
 import { useAnomalyActions } from "@/components/projectData/actions/useAnomalyActions";
 import { Anomaly } from "@/components/projectData/anomalies/types";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { ChevronDownIcon } from "@/redesignComponents/foundations/Icons";
 
-import { useSiteAnomalies } from "./useSiteAnomalies";
+import { EntityLevel } from "./entityLevel";
+import { useEntityAnomalies } from "./useEntityAnomalies";
 
 /**
- * "Actions you might need this week", scoped to one site.
+ * "Actions you might need this week" — the anomaly work-queue, for a project or a site.
  *
- * Structurally identical to the project ActionsPanel — collapsed by default, header count that
- * survives collapse, grouping by (type, severity) with singletons as ActionRow and multi-item
- * groups as ActionGroupRow — but its anomalies come from `useSiteAnomalies`, so only this site's
- * work appears. It reuses the project ActionRow / ActionGroupRow / useAnomalyActions directly
- * (importing is fine; the deep-links resolve off the `projectUuid` passed through to them).
+ * The one panel for both levels: it reads the level-scoped anomalies, orders by severity, collapses
+ * the validation floods into summary rows (a project can carry dozens of identical "partial geometry"
+ * rows, which would bury the standout watchlist items), and offers a real inline Approve where an
+ * anomaly is genuinely resolvable — a geometry-validation polygon a reviewer can accept — deep-linking
+ * everything else. Collapsed by default; the header always shows the open count.
  */
-export interface SiteActionsPanelProps {
+export interface EntityActionsPanelProps {
+  level: EntityLevel;
   projectUuid: string;
-  siteUuid: string;
+  /** Required at site level. */
+  siteUuid?: string;
+  /** Project level only, so the goal-relative watchlist checks can fire. */
+  project?: ProjectFullDto;
 }
 
-const SiteActionsPanel = ({ projectUuid, siteUuid }: SiteActionsPanelProps) => {
+const EntityActionsPanel = ({ level, projectUuid, siteUuid, project }: EntityActionsPanelProps) => {
   const [open, setOpen] = useState(false);
-  const { loaded, anomalies, totalCount } = useSiteAnomalies(projectUuid, siteUuid);
+  const { loaded, anomalies, totalCount } = useEntityAnomalies({ level, projectUuid, siteUuid, project });
 
-  // The site's polygons, used to know each polygon's review status so Approve is only offered where
-  // it is not already approved. Resolves from the redux cache the anomaly engine already populated.
+  // Each polygon's review status, so Approve is only offered where it is not already approved. Scoped
+  // to the level; resolves from the redux cache the anomaly engine already populated.
   const { data: polygons } = useAllSitePolygons({
-    entityName: "sites",
-    entityUuid: siteUuid,
-    enabled: siteUuid != null && siteUuid !== ""
+    entityName: level === "project" ? "projects" : "sites",
+    entityUuid: level === "project" ? projectUuid : siteUuid,
+    enabled: (level === "project" ? projectUuid : siteUuid) != null
   });
 
   const statusByUuid = useMemo(() => {
@@ -46,9 +52,6 @@ const SiteActionsPanel = ({ projectUuid, siteUuid }: SiteActionsPanelProps) => {
     statusByUuid
   });
 
-  // Group by (type, severity), preserving the engine's severity-first order. Geometry validation
-  // floods the list, so a multi-item group collapses to a single summary row while singletons keep
-  // their own row.
   const groups = useMemo(() => {
     const order: string[] = [];
     const byKey = new Map<string, Anomaly[]>();
@@ -129,4 +132,4 @@ const SiteActionsPanel = ({ projectUuid, siteUuid }: SiteActionsPanelProps) => {
   );
 };
 
-export default SiteActionsPanel;
+export default EntityActionsPanel;
