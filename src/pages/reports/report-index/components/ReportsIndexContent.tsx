@@ -31,6 +31,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const t = useT();
   const router = useRouter();
   const viewFromQuery = typeof router.query.view === "string" ? router.query.view : undefined;
+  const uuidFromQuery = typeof router.query.uuid === "string" ? router.query.uuid : undefined;
   const [activeTab, setActiveTab] = useState("progress-reports");
   const [query, setQuery] = useState("");
   const [viewValue, setViewValue] = useState(
@@ -40,6 +41,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const [reloadNonce, setReloadNonce] = useState(0);
   const [projectsLoaded, { data: projects }] = useProjectIndex({});
   const isAllProjectsView = viewValue === ALL_PROJECTS_VIEW_VALUE;
+  const isSwitchingProject = !isAllProjectsView && viewValue !== project.uuid;
 
   const {
     sections: progressSections,
@@ -73,9 +75,10 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
   useEffect(() => {
     if (!router.isReady) return;
-    const nextView = viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid;
-    if (nextView !== viewValue) setViewValue(nextView);
-  }, [project.uuid, router.isReady, viewFromQuery, viewValue]);
+    const nextView =
+      viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : uuidFromQuery ?? project.uuid;
+    setViewValue(nextView);
+  }, [project.uuid, router.isReady, uuidFromQuery, viewFromQuery]);
 
   const handleViewChange = useCallback(
     (nextView: string) => {
@@ -108,7 +111,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
         return;
       }
 
-      void router.push(getReportsIndexUrl("project", nextView));
+      void router.replace(getReportsIndexUrl("project", nextView), undefined, { shallow: true });
     },
     [clearSelection, project.uuid, router]
   );
@@ -142,9 +145,9 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
       <PageContent className="px-2 py-0">
         {activeTab === "progress-reports" && (
           <>
-            {progressLoading || (isAllProjectsView && !projectsLoaded) ? (
+            {progressLoading || isSwitchingProject || (isAllProjectsView && !projectsLoaded) ? (
               <Flex minHeight="240px" alignItems="center" justifyContent="center" gap={3}>
-                <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+                <LoadingIcon boxSize={6} className="animate-spin" color="primary.800" />
                 <Text textStyle="400" color="neutral.800">
                   {t("Loading reports...")}
                 </Text>
@@ -176,7 +179,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
         {activeTab === "additional-reports" && (
           <AdditionalReportsContent
             sections={filteredAdditionalSections}
-            loading={additionalLoading}
+            loading={additionalLoading || isSwitchingProject}
             error={additionalError}
           />
         )}
