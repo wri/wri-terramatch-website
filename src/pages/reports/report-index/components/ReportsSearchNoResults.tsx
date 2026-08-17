@@ -7,7 +7,7 @@ const ReportsSearchNoResults = () => {
   return (
     <Box>
       <Text textStyle="400-bold">{t("No results found")}</Text>
-      <Text textStyle="400">{t(" We couldn’t find any reports matching your search. Try a different keyword.")}</Text>
+      <Text textStyle="400">{t("We couldn’t find any reports matching your search. Try a different keyword.")}</Text>
     </Box>
   );
 };
