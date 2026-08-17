@@ -33,13 +33,15 @@ const SiteDetailPage = () => {
   });
 
   const currentTab = (router.query.tab as string) ?? "overview";
-  const isSuffixView = currentTab === "completed-tasks";
+  // The polygon editor (the heavy geometry/upload/validation workspace) is reachable but not a
+  // tab-bar tab: the site's single polygon home is now "Site Details and Data", and the editor opens
+  // from a button there. It rides the same suffix-view channel as Site Reports.
+  const isSuffixView = currentTab === "completed-tasks" || currentTab === "polygons";
   const activeTab = isSuffixView ? "overview" : currentTab;
 
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site!} refetch={refetch} /> },
     { key: "details", title: t("Site Details and Data"), body: <SiteDetailTab site={site!} /> },
-    { key: "polygons", title: t("Polygons"), body: <SitePolygonsTab site={site!} /> },
     {
       key: "gallery",
       title: t("Gallery"),
@@ -63,7 +65,12 @@ const SiteDetailPage = () => {
     }
   ];
 
-  const suffixContent = isSuffixView ? <SiteCompletedReportsTab site={site!} /> : null;
+  const suffixContent =
+    currentTab === "completed-tasks" ? (
+      <SiteCompletedReportsTab site={site!} />
+    ) : currentTab === "polygons" ? (
+      <SitePolygonsTab site={site!} />
+    ) : null;
 
   return (
     <SitePageProviders frameworkKey={site?.frameworkKey} isLoaded={isLoaded}>
@@ -79,7 +86,12 @@ const SiteDetailPage = () => {
               },
               { label: site.projectName ?? "", link: `/project/${site.projectUuid}` },
               { label: site.name ?? "", link: `/site/${site.uuid}` },
-              ...(isSuffixView ? [{ label: t("Reports"), link: `/site/${site.uuid}?tab=completed-tasks` }] : [])
+              ...(currentTab === "completed-tasks"
+                ? [{ label: t("Reports"), link: `/site/${site.uuid}?tab=completed-tasks` }]
+                : []),
+              ...(currentTab === "polygons"
+                ? [{ label: t("Polygon Editor"), link: `/site/${site.uuid}?tab=polygons` }]
+                : [])
             ]}
             suffix={
               <div className="flex gap-1.5">
@@ -100,6 +112,15 @@ const SiteDetailPage = () => {
                     onClick={() => router.push(`/site/${site.uuid}?tab=completed-tasks`)}
                   >
                     {t("Site Reports")}
+                  </Button>
+                  <span className="text-sm text-theme-neutral-300">|</span>
+                  <Button
+                    variant="borderless"
+                    size="small"
+                    className={`underline underline-offset-2 ${currentTab === "polygons" ? "font-semibold" : ""}`}
+                    onClick={() => router.push(`/site/${site.uuid}?tab=polygons`)}
+                  >
+                    {t("Polygon Editor")}
                   </Button>
                 </div>
               </div>

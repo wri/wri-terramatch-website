@@ -1,4 +1,5 @@
 import { Dictionary } from "lodash";
+import { useRouter } from "next/router";
 import { FC } from "react";
 
 import SiteDataTable from "@/components/entityData/SiteDataTable";
@@ -10,6 +11,7 @@ import WizardFormProvider from "@/context/wizardForm.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
 interface SiteDetailsTabProps {
   site: SiteFullDto;
@@ -45,6 +47,7 @@ const SharedDetailsStep: FC<SharedDetailsStepProps> = ({
 );
 
 const SiteDetailTab: FC<SiteDetailsTabProps> = ({ site }) => {
+  const router = useRouter();
   const { steps, defaultValues, fieldsProvider, isReady, feedbackBaselineValues } = useEntityFormSetup(
     "sites",
     site.uuid
@@ -57,7 +60,19 @@ const SiteDetailTab: FC<SiteDetailsTabProps> = ({ site }) => {
 
   return (
     <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
-      <PageItem title="Site Polygons" flexProps={{ width: "100%" }}>
+      {/* The single polygon home. Geometry editing, upload, and validation review live in the heavier
+          workspace, opened from here rather than shown as a second, redundant polygon tab. */}
+      <PageItem
+        title="Site Polygons"
+        flexProps={{ width: "100%" }}
+        buttonProps={{
+          variant: "secondary",
+          size: "small",
+          children: "Open polygon editor",
+          rightIcon: <ChevronRightIcon />,
+          onClick: () => router.push(`/site/${site.uuid}?tab=polygons`)
+        }}
+      >
         <SiteDataTable siteUuid={site.uuid} projectUuid={site.projectUuid ?? ""} />
       </PageItem>
       <WizardFormProvider fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
