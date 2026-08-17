@@ -78,7 +78,7 @@ export const userDataProvider: Partial<DataProvider> = {
 
       return { data: { id: user.uuid } } as RecordType;
     } catch (createFailure) {
-      throw v3ErrorForRA("User creation failed", createFailure);
+      throw v3ErrorForRA("User Creation Failed", createFailure);
     }
   },
 

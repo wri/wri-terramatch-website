@@ -85,7 +85,8 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
     entityTitle: report.nurseryName ?? "",
     reportTitle: report.reportTitle ?? "",
     feedback: report.feedback,
-    useStatusModal: true
+    useStatusModal: true,
+    useInformationRequiredModal: true
   });
 
   const goToTab = useCallback(

@@ -75,7 +75,8 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
     entityTitle: siteReport.siteName ?? "",
     reportTitle: siteReport.reportTitle ?? "",
     feedback: siteReport.feedback,
-    useStatusModal: true
+    useStatusModal: true,
+    useInformationRequiredModal: true
   });
 
   const goToTab = useCallback(

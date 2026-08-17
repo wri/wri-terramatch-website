@@ -28,7 +28,7 @@ export const organisationDataProvider: OrganisationDataProvider = {
       const { uuid } = await createOrg(params.data);
       return { data: { id: uuid } };
     } catch (createFailure) {
-      throw v3ErrorForRA("Organisation creation failed", createFailure);
+      throw v3ErrorForRA("Organisation Creation Failed", createFailure);
     }
   },
 
