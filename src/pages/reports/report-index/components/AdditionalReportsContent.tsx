@@ -76,7 +76,7 @@ const AdditionalReportsEntitySection = ({ section }: { section: AdditionalReport
         <ListSectionHeader
           level="top-level"
           title={section.name ?? (section.type === "organisation" ? t("Organisation") : t("Project"))}
-          titleHref={section.type === "project" ? `/project/${section.id}` : undefined}
+          titleHref={section.type === "project" ? `/project/${section.id}` : `/organization/${section.id}`}
           caption={section.type === "organisation" ? t("Organisation") : section.caption}
           icon={
             open ? (

@@ -189,9 +189,11 @@ const ReportsIndexHeader = ({
         }
         contentRight={
           <HighLevelSelector
+            autocomplete
             label={t("View:")}
             items={viewItems}
             value={viewValue}
+            emptyMessage={t("No results found")}
             width="400px"
             className="mobile:!w-full"
             onChange={onViewChange}

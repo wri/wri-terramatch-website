@@ -70,8 +70,9 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
       ? projectItems
       : [{ label: project.name ?? t("Project"), value: project.uuid }, ...projectItems];
 
-    return [{ label: t("All Projects"), value: ALL_PROJECTS_VIEW_VALUE }, ...items];
-  }, [project.name, project.uuid, projects, t]);
+    const allLabel = activeTab === "additional-reports" ? t("All") : t("All Projects");
+    return [{ label: allLabel, value: ALL_PROJECTS_VIEW_VALUE }, ...items];
+  }, [activeTab, project.name, project.uuid, projects, t]);
 
   useEffect(() => {
     if (!router.isReady) return;
