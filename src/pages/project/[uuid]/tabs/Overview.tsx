@@ -10,7 +10,9 @@ import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/Abo
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import ProjectActionsPanel from "@/components/projectData/actions/ProjectActionsPanel";
-import ProjectDrilldownLaunchpad from "@/components/projectData/ProjectDrilldownLaunchpad";
+import ProjectKpiPanel from "@/components/projectData/ProjectKpiPanel";
+import ProjectSitesMap from "@/components/projectData/ProjectSitesMap";
+import { useProjectDrilldown } from "@/components/projectData/useProjectDrilldown";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -23,8 +25,11 @@ import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 import EntitySetUpSection from "./EntitySetUpSection";
-import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 import LatestImagesSectionTab from "./LatestImagesSection";
+
+/** Fixed height of the project map. Set here (not via a Tailwind arbitrary class) so the Mapbox
+ * canvas is bounded and cannot overflow into the indicators below. */
+const DRILLDOWN_MAP_HEIGHT = "28rem";
 
 interface ProjectOverviewTabProps {
   project: ProjectFullDto;
@@ -49,6 +54,10 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     uuid: project.uuid,
     model: "projects"
   });
+
+  // Rollup + centroids + aggregate, shared by the map (top) and the KPI panel (below) so the two
+  // rows show the same project figures.
+  const drilldown = useProjectDrilldown(project.uuid);
 
   const monitoringPartners = useMemo(() => {
     return associatedUsers
@@ -144,15 +153,10 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         open={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
-      {/* Anomaly-driven work queue: the first thing on the tab, so a reviewer sees what needs acting
-          on before the data itself. Resolves what it safely can in place; deep-links the rest. */}
-      <PageItem title={t("Actions You Might Need This Week")} flexProps={{ paddingY: 2, width: "100%" }}>
-        <ProjectActionsPanel projectUuid={project.uuid} project={project} />
-      </PageItem>
-
-      {/* Above the fold: the drill-down. Project-level aggregated indicators beside a map of site
-          centroids; clicking a site — on the map or in the list — opens that site's page. Replaces
-          the old static Project Map, and takes the prime slot that Project Set Up used to hold. */}
+      {/* Above the fold: the map, with the anomaly work-queue to its right. The map's height is fixed
+          here (a Chakra prop, not a Tailwind arbitrary height — those did not survive this project's
+          build in earlier passes) so its canvas can never spill into the row below, and overflow is
+          clipped. The Actions panel is collapsed by default and sizes to its header. */}
       <PageItem
         title={t("Project Data")}
         flexProps={{ width: "100%" }}
@@ -173,10 +177,20 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           loading: isDownloading
         }}
       >
-        <ProjectDrilldownLaunchpad projectUuid={project.uuid} projectName={project.name ?? t("Project")} />
+        <Flex gap={5} className="w-full flex-col ws-1100:flex-row ws-1100:items-start">
+          <Box className="relative w-full flex-1 overflow-hidden rounded-lg" style={{ height: DRILLDOWN_MAP_HEIGHT }}>
+            <ProjectSitesMap drilldown={drilldown} />
+          </Box>
+          <Box className="w-full shrink-0 ws-1100:w-[24rem]">
+            <ProjectActionsPanel projectUuid={project.uuid} project={project} />
+          </Box>
+        </Flex>
       </PageItem>
+
+      {/* The aggregated KPIs, below the map+actions row. Bounded height so a long site list scrolls
+          inside the card rather than stretching the page. */}
       <PageItem
-        title={t("Key Indicators & Insights")}
+        title={t("Project Indicators")}
         flexProps={{ paddingY: 2, width: "100%" }}
         buttonProps={{
           variant: "secondary",
@@ -186,7 +200,9 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           onClick: () => goToTab("goals")
         }}
       >
-        <KeyIndicatorsInsightsTab project={project} />
+        <Box className="w-full overflow-hidden" style={{ maxHeight: "34rem" }}>
+          <ProjectKpiPanel drilldown={drilldown} projectName={project.name ?? t("Project")} />
+        </Box>
       </PageItem>
       {/* Project Set Up, demoted below the fold: it is a setup/editing flow, not day-to-day data. */}
       <PageItem

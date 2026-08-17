@@ -128,9 +128,10 @@ const ProjectDataTable = ({ projectUuid, project }: ProjectDataTableProps) => {
   const { data: allPolygons, isLoading: polygonsLoading } = useAllSitePolygons({
     entityName: "projects",
     entityUuid: projectUuid,
-    // Only fetched once the user actually looks at the polygon view — the rollup already covers
-    // the Sites view, and a project can hold thousands of polygons.
-    enabled: view === "polygons" && projectUuid != null && projectUuid !== ""
+    // Loaded regardless of the active view: useProjectAnomalies below already fetches the same
+    // polygons for its counts, so this hits the cache rather than the network — and gating it on
+    // the polygon view left the "Polygons (N)" toggle reading 0 until first clicked.
+    enabled: projectUuid != null && projectUuid !== ""
   });
 
   const { loaded: anomaliesLoaded, countsByEntity } = useProjectAnomalies(projectUuid, project);

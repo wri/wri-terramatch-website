@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ChevronDownIcon } from "@/redesignComponents/foundations/Icons";
 
 import { Anomaly } from "../anomalies/types";
 import { useProjectAnomalies } from "../anomalies/useProjectAnomalies";
@@ -24,6 +25,9 @@ export interface ProjectActionsPanelProps {
 }
 
 const ProjectActionsPanel = ({ projectUuid, project }: ProjectActionsPanelProps) => {
+  // Collapsed by default: the panel is a work queue you open when you're triaging, not something to
+  // scroll past every visit. The header always shows the open count so the signal survives collapse.
+  const [open, setOpen] = useState(false);
   const { loaded, anomalies, totalCount } = useProjectAnomalies(projectUuid, project);
 
   // The same "all polygons for the project" data the anomaly engine reads, used here to know each
@@ -66,19 +70,30 @@ const ProjectActionsPanel = ({ projectUuid, project }: ProjectActionsPanelProps)
 
   return (
     <section className="w-full overflow-hidden rounded-lg border border-theme-neutral-200 bg-white">
-      <header className="flex items-center justify-between gap-3 border-b border-theme-neutral-200 px-4 py-3">
-        <div>
-          <p className="text-[11px] uppercase tracking-wide text-theme-neutral-400">This week</p>
-          <h3 className="text-base font-semibold text-theme-neutral-900">Actions you might need</h3>
+      <button
+        type="button"
+        onClick={() => setOpen(value => !value)}
+        aria-expanded={open}
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left hover:bg-theme-neutral-100"
+      >
+        <div className="flex items-center gap-2">
+          <ChevronDownIcon
+            className={`text-theme-neutral-500 transition-transform ${open ? "" : "-rotate-90"}`}
+            boxSize={4}
+          />
+          <div>
+            <p className="text-[11px] uppercase tracking-wide text-theme-neutral-400">This week</p>
+            <h3 className="text-base font-semibold text-theme-neutral-900">Actions you might need</h3>
+          </div>
         </div>
         {loaded && visible.length > 0 && (
           <span className="inline-flex items-center rounded-full bg-theme-warning-100 px-2.5 py-1 text-xs font-semibold text-theme-warning-900">
             {visible.length} open
           </span>
         )}
-      </header>
+      </button>
 
-      <div className="px-4">
+      <div className={`border-t border-theme-neutral-200 px-4 ${open ? "" : "hidden"}`}>
         {!loaded ? (
           <p className="py-6 text-sm text-theme-neutral-500">Checking for anomalies…</p>
         ) : totalCount === 0 ? (
