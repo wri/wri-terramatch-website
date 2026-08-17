@@ -3,7 +3,9 @@ import { useMemo } from "react";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
+import { Anomaly } from "../anomalies/types";
 import { useProjectAnomalies } from "../anomalies/useProjectAnomalies";
+import ActionGroupRow from "./ActionGroupRow";
 import ActionRow from "./ActionRow";
 import { useAnomalyActions } from "./useAnomalyActions";
 
@@ -39,7 +41,28 @@ const ProjectActionsPanel = ({ projectUuid, project }: ProjectActionsPanelProps)
     return map;
   }, [polygons]);
 
-  const { visible, isApprovable, isApproving, approve, dismiss } = useAnomalyActions({ anomalies, statusByUuid });
+  const { visible, isApprovable, isApproving, approve, approveMany, dismiss, dismissMany } = useAnomalyActions({
+    anomalies,
+    statusByUuid
+  });
+
+  // Group by (type, severity), preserving the engine's severity-first order. Validation floods the
+  // list — one project can carry dozens of identical "partial geometry" rows — so a multi-item group
+  // collapses into a single summary row and the standout singletons (the watchlist anomalies) keep
+  // their own row.
+  const groups = useMemo(() => {
+    const order: string[] = [];
+    const byKey = new Map<string, Anomaly[]>();
+    for (const anomaly of visible) {
+      const key = `${anomaly.type}:${anomaly.severity}`;
+      if (!byKey.has(key)) {
+        byKey.set(key, []);
+        order.push(key);
+      }
+      byKey.get(key)!.push(anomaly);
+    }
+    return order.map(key => ({ key, items: byKey.get(key)! }));
+  }, [visible]);
 
   return (
     <section className="w-full overflow-hidden rounded-lg border border-theme-neutral-200 bg-white">
@@ -65,17 +88,31 @@ const ProjectActionsPanel = ({ projectUuid, project }: ProjectActionsPanelProps)
           <p className="py-6 text-sm text-theme-neutral-500">You’re all caught up — every action has been handled.</p>
         ) : (
           <ul>
-            {visible.map(anomaly => (
-              <ActionRow
-                key={anomaly.id}
-                anomaly={anomaly}
-                projectUuid={projectUuid}
-                approvable={isApprovable(anomaly)}
-                approving={isApproving(anomaly.id)}
-                onApprove={approve}
-                onDismiss={dismiss}
-              />
-            ))}
+            {groups.map(group =>
+              group.items.length === 1 ? (
+                <ActionRow
+                  key={group.key}
+                  anomaly={group.items[0]}
+                  projectUuid={projectUuid}
+                  approvable={isApprovable(group.items[0])}
+                  approving={isApproving(group.items[0].id)}
+                  onApprove={approve}
+                  onDismiss={dismiss}
+                />
+              ) : (
+                <ActionGroupRow
+                  key={group.key}
+                  items={group.items}
+                  projectUuid={projectUuid}
+                  isApprovable={isApprovable}
+                  isApproving={isApproving}
+                  onApprove={approve}
+                  onApproveMany={approveMany}
+                  onDismiss={dismiss}
+                  onDismissMany={dismissMany}
+                />
+              )
+            )}
           </ul>
         )}
       </div>

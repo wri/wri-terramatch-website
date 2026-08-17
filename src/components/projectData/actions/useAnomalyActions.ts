@@ -28,8 +28,12 @@ export type UseAnomalyActions = {
   isApproving: (anomalyId: string) => boolean;
   /** Fire the real polygon status update, then optimistically drop the row on success. */
   approve: (anomaly: Anomaly) => Promise<void>;
+  /** Approve every approvable anomaly in a group in one request — the grouped "Approve all N". */
+  approveMany: (group: Anomaly[]) => Promise<void>;
   /** Local acknowledge — hides the row for this session only (see note below). */
   dismiss: (anomalyId: string) => void;
+  /** Local acknowledge for a whole group at once. */
+  dismissMany: (anomalyIds: string[]) => void;
 };
 
 export const useAnomalyActions = ({
@@ -90,7 +94,41 @@ export const useAnomalyActions = ({
     [openToast]
   );
 
+  const approveMany = useCallback(
+    async (group: Anomaly[]) => {
+      // Only the approvable members go to the endpoint; a mixed group (e.g. an already-approved
+      // polygon slipped in) still approves the rest rather than failing the whole batch.
+      const approvables = group.filter(anomaly => isApprovable(anomaly));
+      if (approvables.length === 0) return;
+
+      const ids = approvables.map(anomaly => anomaly.id);
+      const uuids = approvables.map(anomaly => anomaly.entityUuid);
+      setApproving(prev => new Set([...prev, ...ids]));
+      try {
+        // One request for the whole group — bulkUpdateSitePolygonStatus already takes an array.
+        await bulkUpdateSitePolygonStatus(uuids, POLYGON_APPROVED as PolygonStatus, APPROVE_COMMENT);
+        setDismissed(prev => new Set([...prev, ...ids]));
+        pruneSitePolygonsCache();
+        openToast(`Approved ${uuids.length} ${uuids.length === 1 ? "polygon" : "polygons"}.`, ToastType.SUCCESS);
+      } catch (error) {
+        Log.error("Failed to bulk-approve polygons from the Actions panel", error);
+        openToast(`Could not approve ${uuids.length} polygons. Please try again.`, ToastType.ERROR);
+      } finally {
+        setApproving(prev => {
+          const next = new Set(prev);
+          ids.forEach(id => next.delete(id));
+          return next;
+        });
+      }
+    },
+    [isApprovable, openToast]
+  );
+
+  const dismissMany = useCallback((anomalyIds: string[]) => {
+    setDismissed(prev => new Set([...prev, ...anomalyIds]));
+  }, []);
+
   const visible = useMemo(() => anomalies.filter(anomaly => !dismissed.has(anomaly.id)), [anomalies, dismissed]);
 
-  return { visible, isApprovable, isApproving, approve, dismiss };
+  return { visible, isApprovable, isApproving, approve, approveMany, dismiss, dismissMany };
 };
