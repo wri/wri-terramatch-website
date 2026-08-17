@@ -81,7 +81,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
           label={format(date)}
           icon={<CalendarIcon boxSize="10px" />}
           size="small"
-          className="bg-theme-neutral-200 rounded"
+          className="rounded bg-theme-neutral-200"
         />
       ),
     [format]
