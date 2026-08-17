@@ -38,26 +38,6 @@ export const mapStatusToTagStateEntity = (
   }
 };
 
-export const mapStatusToMappedTagState = (status: string | null | undefined): MappedTagState | undefined => {
-  switch (status) {
-    case "draft":
-    case "started":
-      return "draft";
-    case "pending-approval":
-    case "awaiting":
-    case "awaiting-approval":
-      return "pending-approval";
-    case "information-required":
-    case "needs-more-information":
-    case "more-info-requested":
-      return "information-required";
-    case "approved":
-      return "approved";
-    default:
-      return undefined;
-  }
-};
-
 export const mapSitePolygonStatusToMappedTagState = (status: SitePolygonLightDto["status"]): MappedTagState => {
   switch (status) {
     case "approved":
