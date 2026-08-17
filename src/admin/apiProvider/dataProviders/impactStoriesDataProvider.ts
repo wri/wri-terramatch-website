@@ -45,7 +45,7 @@ export const impactStoriesDataProvider: Partial<DataProvider> = {
     const { organizationUuid } = params.data;
 
     if (organizationUuid == null) {
-      throw v3ErrorForRA("Impact story creation failed", new Error("Organization UUID is required"));
+      throw v3ErrorForRA("Impact story Creation Failed", new Error("Organization UUID is required"));
     }
 
     const attributes: CreateImpactStoryAttributes = {
@@ -62,14 +62,14 @@ export const impactStoriesDataProvider: Partial<DataProvider> = {
       const { uuid } = impactStory;
 
       if (uuid == null) {
-        throw v3ErrorForRA("Impact story creation failed", new Error("Created impact story missing UUID"));
+        throw v3ErrorForRA("Impact story Creation Failed", new Error("Created impact story missing UUID"));
       }
 
       await handleUploads(params, uploadKeys, { uuid, entity: "impactStories" });
 
       return { data: { ...impactStory, id: uuid } };
     } catch (err) {
-      throw v3ErrorForRA("Impact story creation failed", err);
+      throw v3ErrorForRA("Impact story Creation Failed", err);
     }
   },
   //@ts-ignore
