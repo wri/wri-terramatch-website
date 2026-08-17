@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
+import { useSiteAnomalies } from "@/components/siteData/useSiteAnomalies";
 import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
@@ -23,13 +24,17 @@ const SiteDetailPage = () => {
 
   const { isLoaded, site, refetch } = useSitePageLoad(siteUUID);
 
+  // Merged anomaly count for the "Site Details and Data" tab badge — the same site-scoped fold the
+  // Overview's SiteActionsPanel reads, so the badge and the panel can never disagree.
+  const { totalCount: siteAnomalyCount } = useSiteAnomalies(site?.projectUuid ?? undefined, site?.uuid);
+
   const currentTab = (router.query.tab as string) ?? "overview";
   const isSuffixView = currentTab === "completed-tasks";
   const activeTab = isSuffixView ? "overview" : currentTab;
 
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site!} refetch={refetch} /> },
-    { key: "details", title: t("Site Details"), body: <SiteDetailTab site={site!} /> },
+    { key: "details", title: t("Site Details and Data"), body: <SiteDetailTab site={site!} /> },
     { key: "polygons", title: t("Polygons"), body: <SitePolygonsTab site={site!} /> },
     {
       key: "gallery",
@@ -99,7 +104,11 @@ const SiteDetailPage = () => {
               tabBar: {
                 tabs: TabItems.map(item => ({
                   value: item.key,
-                  label: item.title
+                  // The design-system tab label is string-only, so the anomaly flag rides on the
+                  // label text: a ⚑ and the count appended to the Data tab when anything is flagged —
+                  // same convention the project page's tab bar uses.
+                  label:
+                    item.key === "details" && siteAnomalyCount > 0 ? `${item.title}  ⚑ ${siteAnomalyCount}` : item.title
                 })),
                 defaultValue: isSuffixView ? "__none__" : activeTab,
                 onTabClick: (tabValue: string) => {
