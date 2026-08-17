@@ -3,7 +3,6 @@ import { useT } from "@transifex/react";
 import { useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
-import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import { FolderIcon, FolderOpenIcon, LoadingIcon } from "@/redesignComponents/foundations/Icons";
@@ -16,9 +15,8 @@ import {
 } from "../reportIndex.types";
 import { getReportsRequiringAttention } from "../reportIndex.utils";
 import AdditionalReportsTable from "./AdditionalReportsTable";
-import ReportsSearchNoResults from "./ReportsSearchNoResults";
-import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import ReportAttentionStatusLabels from "./ReportAttentionStatusLabels";
+import ReportsSearchNoResults from "./ReportsSearchNoResults";
 
 type AdditionalReportsContentProps = {
   sections: AdditionalReportsEntitySectionData[];
@@ -73,7 +71,7 @@ const AdditionalReportsEntitySection = ({ section }: { section: AdditionalReport
       variant="tertiary"
       open={open}
       onOpenChange={setOpen}
-      className="bg-theme-neutral-100 overflow-hidden rounded"
+      className="overflow-hidden rounded bg-theme-neutral-100"
       classNameHeader="!mb-0"
       header={
         <ListSectionHeader
@@ -96,7 +94,7 @@ const AdditionalReportsEntitySection = ({ section }: { section: AdditionalReport
         />
       }
     >
-      <div className="bg-theme-neutral-200 space-y-1 pt-0.5">
+      <div className="space-y-1 bg-theme-neutral-200 pt-0.5">
         {section.groups.map(group => (
           <AdditionalReportGroupSection key={group.id} group={group} />
         ))}
@@ -131,12 +129,10 @@ const AdditionalReportsContent = ({
         hasActiveSearch ? (
           <ReportsSearchNoResults />
         ) : (
-          <InlineMessage
-            className="m-4"
-            variant="info-grey"
-            label={t("No additional reports found")}
-            caption={t("Try changing your search or filters.")}
-          />
+          <Box background="neutral.100" h="full" p={4}>
+            <Text textStyle="400-bold">{t("No additional reports found")}</Text>
+            <Text textStyle="400">{t("Try changing your search or filters.")}</Text>
+          </Box>
         )
       ) : (
         <div className="space-y-4">

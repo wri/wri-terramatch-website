@@ -56,7 +56,7 @@ const PeriodJobsMetricCard: FC<PeriodJobsMetricCardProps> = ({ projectReportUuid
     collections
   });
 
-  if (total == null) return <DemographicsLoader className={className} />;
+  if (total == null) return <DemographicsLoader className="h-auto w-48" />;
 
   const title = framework === "terrafund" ? t("Jobs Created") : t("Workdays Created");
   const tooltipContent =
@@ -135,7 +135,7 @@ const ReportingPeriodSection = ({ period, defaultOpen = false, metricsReady = tr
         {open ? (
           <div className="bg-theme-neutral-100 p-4">
             {metricsLoading ? (
-              <DemographicsLoader className="mb-5 h-24 w-full" />
+              <DemographicsLoader className="mb-5 h-10 w-full" />
             ) : (
               <FrameworkProvider frameworkKey={frameworkKey}>
                 <div className="mb-5 flex flex-wrap gap-4">

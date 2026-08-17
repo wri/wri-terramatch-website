@@ -244,10 +244,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           className="h-full"
           content={
             <Flex className="h-full flex-col gap-3 overflow-auto p-4">
-              <Flex
-                className="mb-2 flex-wrap gap-2"
-                display={activeFilters.length > 0 ? "flex" : "none"}
-              >
+              <Flex className="mb-2 flex-wrap gap-2" display={activeFilters.length > 0 ? "flex" : "none"}>
                 {activeFilters.map(filter => (
                   <FeedbackTag
                     key={filter.id}

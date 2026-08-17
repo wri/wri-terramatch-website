@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -8,7 +8,6 @@ import { useProjectIndex } from "@/connections/Entity";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
-import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import { ReportsIndexSourceEntity } from "../reportIndex.types";
 import { ALL_PROJECTS_VIEW_VALUE, getReportsIndexUrl, ReportsIndexSource } from "../reportIndex.utils";
@@ -163,22 +162,18 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                 </Text>
               </Flex>
             ) : progressError ? (
-              <InlineMessage
-                className="m-4"
-                variant="error"
-                label={t("Reports could not be loaded")}
-                caption={t("Please refresh the page and try again.")}
-              />
+              <Box background="neutral.100" h="full" p={4}>
+                <Text textStyle="400-bold">{t("Reports could not be loaded")}</Text>
+                <Text textStyle="400">{t("Please refresh the page and try again.")}</Text>
+              </Box>
             ) : filteredProgressSections.length === 0 ? (
               hasActiveSearch ? (
                 <ReportsSearchNoResults />
               ) : (
-                <InlineMessage
-                  className="m-4"
-                  variant="info-grey"
-                  label={t("No reports found")}
-                  caption={t("Try changing your search or filters.")}
-                />
+                <Box background="neutral.100" h="full" p={4}>
+                  <Text textStyle="400-bold">{t("No additional reports found")}</Text>
+                  <Text textStyle="400">{t("Try changing your search or filters.")}</Text>
+                </Box>
               )
             ) : (
               <div className="space-y-4">

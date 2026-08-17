@@ -156,10 +156,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
           className="h-full"
           content={
             <Flex className="h-full flex-col gap-3 overflow-auto p-4">
-              <Flex
-                className="mb-2 flex-wrap gap-2"
-                display={activeFilterTags.length > 0 ? "flex" : "none"}
-              >
+              <Flex className="mb-2 flex-wrap gap-2" display={activeFilterTags.length > 0 ? "flex" : "none"}>
                 {activeFilterTags.map(filter => (
                   <FeedbackTag
                     key={filter.id}
