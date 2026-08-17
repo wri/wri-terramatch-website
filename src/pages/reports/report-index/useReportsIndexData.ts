@@ -25,6 +25,7 @@ import { ReportsIndexSource, resolveReportsIndexStatus } from "./reportIndex.uti
 
 type ReportsIndexDataState = {
   loading: boolean;
+  metricsReady: boolean;
   sections: ReportsIndexProjectSection[];
   error: boolean;
 };
@@ -133,6 +134,8 @@ export const useReportsIndexData = (
     (!siteReportsLoaded && siteReports.length === 0) ||
     (!nurseryReportsLoaded && nurseryReports.length === 0);
   const error = projectReportsFailure != null || siteReportsFailure != null || nurseryReportsFailure != null;
+  const metricsReady = projectReportsLoaded && siteReportsLoaded && nurseryReportsLoaded;
+  const projectReportsEnabled = allProjects || source === "project";
 
   const sections = useMemo((): ReportsIndexProjectSection[] => {
     if (loading || error) return [];
@@ -167,11 +170,12 @@ export const useReportsIndexData = (
         draft.periodsByDueAt.set(periodKey, period);
       }
 
-      // Prefer the project-report uuid when present; site/nursery light DTOs only fill the gap when
-      // the project-report index is disabled (site/nursery source views).
+      // Prefer the project-report uuid when present. Site/nursery DTOs only fill the gap after the
+      // project-report index has finished, so a partial first page cannot trigger metric fetches
+      // against a stale or unauthorized project-report id.
       if (type === "project-report") {
         period.projectReportUuid = report.uuid;
-      } else if (period.projectReportUuid == null) {
+      } else if (period.projectReportUuid == null && (!projectReportsEnabled || projectReportsLoaded)) {
         period.projectReportUuid = resolveProjectReportUuid(report, type);
       }
 
@@ -188,7 +192,18 @@ export const useReportsIndexData = (
         periods: Array.from(periodsByDueAt.values()).sort(byDueAtDescending)
       }))
       .sort(byNameAscending);
-  }, [error, loading, nurseryReports, organisationName, projectName, projectReports, projectUuid, siteReports]);
+  }, [
+    error,
+    loading,
+    nurseryReports,
+    organisationName,
+    projectName,
+    projectReports,
+    projectReportsEnabled,
+    projectReportsLoaded,
+    projectUuid,
+    siteReports
+  ]);
 
-  return { loading, sections, error };
+  return { loading, metricsReady, sections, error };
 };

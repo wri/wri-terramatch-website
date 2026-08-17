@@ -47,6 +47,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const {
     sections: progressSections,
     loading: progressLoading,
+    metricsReady: progressMetricsReady,
     error: progressError
   } = useReportsIndexData(project, source, sourceEntity.uuid, isAllProjectsView, reloadNonce);
   const {
@@ -78,10 +79,16 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
   useEffect(() => {
     if (!router.isReady) return;
+    // Site/nursery entry points put the entity uuid in the query, not the project. Only project
+    // URLs should drive the View selector from `uuid`.
     const nextView =
-      viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : uuidFromQuery ?? project.uuid;
+      viewFromQuery === ALL_PROJECTS_VIEW_VALUE
+        ? ALL_PROJECTS_VIEW_VALUE
+        : source === "project"
+        ? uuidFromQuery ?? project.uuid
+        : project.uuid;
     setViewValue(nextView);
-  }, [project.uuid, router.isReady, uuidFromQuery, viewFromQuery]);
+  }, [project.uuid, router.isReady, source, uuidFromQuery, viewFromQuery]);
 
   const handleViewChange = useCallback(
     (nextView: string) => {
@@ -176,7 +183,12 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
             ) : (
               <div className="space-y-4">
                 {filteredProgressSections.map((section, index) => (
-                  <ProjectReportsSection key={section.id} section={section} defaultOpen={index === 0} />
+                  <ProjectReportsSection
+                    key={section.id}
+                    section={section}
+                    defaultOpen={index === 0}
+                    metricsReady={progressMetricsReady}
+                  />
                 ))}
               </div>
             )}

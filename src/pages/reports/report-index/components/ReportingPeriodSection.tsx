@@ -26,6 +26,7 @@ import ReportsIndexTable from "./ReportsIndexTable";
 type ReportingPeriodSectionProps = {
   period: ReportsIndexPeriod;
   defaultOpen?: boolean;
+  metricsReady?: boolean;
 };
 
 type PeriodJobsMetricCardProps = {
@@ -75,19 +76,20 @@ const PeriodJobsMetricCard: FC<PeriodJobsMetricCardProps> = ({ projectReportUuid
   );
 };
 
-const ReportingPeriodSection = ({ period, defaultOpen = false }: ReportingPeriodSectionProps) => {
+const ReportingPeriodSection = ({ period, defaultOpen = false, metricsReady = true }: ReportingPeriodSectionProps) => {
   const t = useT();
   const { format } = useDate();
   const [open, setOpen] = useState(defaultOpen);
   const periodLabel = useReportingWindow(toFramework(period.frameworkKey), period.dueAt ?? undefined);
   const taskTitle = t("Reporting Task {window}", { window: periodLabel });
   const metricCardClassName = "w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100";
+  const projectReportUuid = metricsReady ? period.projectReportUuid : null;
 
   const [reportLoaded, { data: projectReport }] = useFullProjectReport({
-    id: open && period.projectReportUuid != null ? period.projectReportUuid : undefined
+    id: open && projectReportUuid != null ? projectReportUuid : undefined
   });
 
-  const metricsLoading = period.projectReportUuid != null && open && !reportLoaded;
+  const metricsLoading = open && (!metricsReady || (projectReportUuid != null && !reportLoaded));
   const treesPlantedCount = projectReport?.treesPlantedCount ?? 0;
   const seedsPlantedCount = projectReport?.seedsPlantedCount ?? 0;
   const regeneratedTreesCount = projectReport?.regeneratedTreesCount ?? 0;
@@ -145,9 +147,9 @@ const ReportingPeriodSection = ({ period, defaultOpen = false }: ReportingPeriod
                     tooltipContent={t("Total naturally regenerated trees reported in this reporting period.")}
                     className={metricCardClassName}
                   />
-                  {period.projectReportUuid != null ? (
+                  {projectReportUuid != null ? (
                     <PeriodJobsMetricCard
-                      projectReportUuid={period.projectReportUuid}
+                      projectReportUuid={projectReportUuid}
                       frameworkKey={frameworkKey}
                       className={metricCardClassName}
                     />

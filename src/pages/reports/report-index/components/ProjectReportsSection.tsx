@@ -13,9 +13,10 @@ import ReportingPeriodSection from "./ReportingPeriodSection";
 type ProjectReportsSectionProps = {
   section: ReportsIndexProjectSection;
   defaultOpen?: boolean;
+  metricsReady?: boolean;
 };
 
-const ProjectReportsSection = ({ section, defaultOpen = false }: ProjectReportsSectionProps) => {
+const ProjectReportsSection = ({ section, defaultOpen = false, metricsReady = true }: ProjectReportsSectionProps) => {
   const t = useT();
   const [open, setOpen] = useState(defaultOpen);
 
@@ -29,7 +30,7 @@ const ProjectReportsSection = ({ section, defaultOpen = false }: ProjectReportsS
       variant="tertiary"
       open={open}
       onOpenChange={setOpen}
-      className="bg-theme-neutral-100 overflow-hidden rounded"
+      className="overflow-hidden rounded bg-theme-neutral-100"
       classNameHeader="!mb-0"
       header={
         <ListSectionHeader
@@ -52,10 +53,15 @@ const ProjectReportsSection = ({ section, defaultOpen = false }: ProjectReportsS
         />
       }
     >
-      <div className="bg-theme-neutral-200 space-y-0.5 pt-0.5">
+      <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
         {open
           ? section.periods.map((period, index) => (
-              <ReportingPeriodSection key={period.id} period={period} defaultOpen={index === 0} />
+              <ReportingPeriodSection
+                key={period.id}
+                period={period}
+                defaultOpen={index === 0}
+                metricsReady={metricsReady}
+              />
             ))
           : null}
       </div>
