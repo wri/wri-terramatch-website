@@ -81,7 +81,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
           label={format(date)}
           icon={<CalendarIcon boxSize="10px" />}
           size="small"
-          className="rounded bg-theme-neutral-200"
+          className="bg-theme-neutral-200 rounded"
         />
       ),
     [format]
@@ -170,7 +170,6 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
                   href: getReportIndexItemPath(report),
                   leftIcon: (
                     <EditIcon
-                      className="hidden"
                       css={{
                         "& svg path": {
                           fill: getThemedColor("neutral", 900) + " !important",
