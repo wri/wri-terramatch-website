@@ -79,11 +79,9 @@ export const getReportStatusCounts = (reports: Array<{ status: TagSubmissionStat
       if (report.status === "due") result.due += 1;
       if (report.status === "draft") result.draft += 1;
       if (report.status === "information-required") result.informationRequired += 1;
-      if (report.status === "pending-approval") result.pendingApproval += 1;
-      if (report.status === "approved") result.approved += 1;
       return result;
     },
-    { due: 0, draft: 0, informationRequired: 0, pendingApproval: 0, approved: 0 }
+    { due: 0, draft: 0, informationRequired: 0 }
   );
 
 const hasOpenChangeRequestDraft = (report: ReportIndexItem) => report.updateRequestStatus === "draft";

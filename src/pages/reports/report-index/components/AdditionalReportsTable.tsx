@@ -1,4 +1,4 @@
-import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
+import { Box, Flex, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { startCase } from "lodash";
 import { useCallback, useMemo } from "react";
@@ -8,6 +8,7 @@ import { getMonthOptions } from "@/constants/options/months";
 import { useDate } from "@/hooks/useDate";
 import { getThemedColor } from "@/lib/theme";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
+import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import TitleCell from "@/redesignComponents/dataDisplay/Table/components/TitleCell";
@@ -17,7 +18,7 @@ import Table, {
   TableRenderRowContext
 } from "@/redesignComponents/dataDisplay/Table/Table";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
-import { CalendarIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
+import { CalendarIcon, DueIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { AdditionalReport, AdditionalReportType } from "../reportIndex.types";
 import { getReportIndexItemPath } from "../reportIndex.utils";
@@ -72,9 +73,13 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
   const monthLabels = useMemo(() => getMonthOptions(t), [t]);
 
   const renderDateTag = useCallback(
-    (date: string | null) =>
+    (date: string | null, dueAt: boolean) =>
       date == null ? (
         "—"
+      ) : dueAt ? (
+        <Flex>
+          <FeedbackTag icon={<DueIcon />} label={format(date)} onClose={() => {}} size="default" type="info-white" />
+        </Flex>
       ) : (
         <ActionStatusTag
           state="neutral-light"
@@ -117,7 +122,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
 
           {report.type === "financial-report" && (
             <>
-              <ChakraTableCell {...context?.getCellProps("dueAt")}>{renderDateTag(report.dueAt)}</ChakraTableCell>
+              <ChakraTableCell {...context?.getCellProps("dueAt")}>{renderDateTag(report.dueAt, true)}</ChakraTableCell>
               <ChakraTableCell {...context?.getCellProps("currency")}>
                 <Text color="neutral.800" textStyle="400">
                   {currencyLabels.find(option => option.value === report.currency)?.title ?? report.currency ?? "—"}
@@ -132,13 +137,13 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
           )}
 
           {report.type === "srp-report" && (
-            <ChakraTableCell {...context?.getCellProps("dueAt")}>{renderDateTag(report.dueAt)}</ChakraTableCell>
+            <ChakraTableCell {...context?.getCellProps("dueAt")}>{renderDateTag(report.dueAt, true)}</ChakraTableCell>
           )}
 
           {report.type === "disturbance-report" && (
             <>
               <ChakraTableCell {...context?.getCellProps("dateOfDisturbance")}>
-                {renderDateTag(report.dateOfDisturbance)}
+                {renderDateTag(report.dateOfDisturbance, false)}
               </ChakraTableCell>
               <ChakraTableCell {...context?.getCellProps("sitesAffected")}>
                 <Text color="neutral.800" textStyle="400">
@@ -160,7 +165,9 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
             </ChakraTableCell>
           )}
 
-          <ChakraTableCell {...context?.getCellProps("updatedAt")}>{renderDateTag(report.updatedAt)}</ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("updatedAt")}>
+            {renderDateTag(report.updatedAt, false)}
+          </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("actions")}>
             <Box pr="1.5625rem">
               <ActionCell

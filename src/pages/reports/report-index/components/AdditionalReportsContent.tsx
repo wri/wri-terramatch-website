@@ -2,21 +2,20 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useMemo, useState } from "react";
 
-import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
-import { CheckApprovedIcon, FolderIcon, FolderOpenIcon, LoadingIcon } from "@/redesignComponents/foundations/Icons";
+import { FolderIcon, FolderOpenIcon, LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
 import {
-  AdditionalReport,
   AdditionalReportGroup,
   AdditionalReportsEntitySection as AdditionalReportsEntitySectionData,
   AdditionalReportType
 } from "../reportIndex.types";
-import { getReportsRequiringAttention, getReportStatusCounts } from "../reportIndex.utils";
+import { getReportsRequiringAttention } from "../reportIndex.utils";
 import AdditionalReportsTable from "./AdditionalReportsTable";
+import ReportAttentionStatusLabels from "./ReportAttentionStatusLabels";
 
 type AdditionalReportsContentProps = {
   sections: AdditionalReportsEntitySectionData[];
@@ -28,27 +27,6 @@ const getGroupLabel = (type: AdditionalReportType, t: ReturnType<typeof useT>) =
   if (type === "financial-report") return t("Financial Report");
   if (type === "srp-report") return t("Annual SRP");
   return t("Disturbance Reports");
-};
-
-const GroupStatusLabels = ({ reports }: { reports: AdditionalReport[] }) => {
-  const counts = useMemo(() => getReportStatusCounts(reports), [reports]);
-  const hasAttention = counts.due + counts.draft + counts.informationRequired > 0;
-
-  if (!hasAttention) return <CheckApprovedIcon boxSize={4} color="success.500" />;
-
-  return (
-    <Flex alignItems="center" gap={2} className="mobile:flex-wrap mobile:justify-end">
-      {counts.due > 0 && <TagSubmission state="due" size="small" labelPrefix={counts.due} />}
-      {counts.draft > 0 && <TagSubmission state="draft" size="small" labelPrefix={counts.draft} />}
-      {counts.informationRequired > 0 && (
-        <TagSubmission state="information-required" size="small" labelPrefix={counts.informationRequired} />
-      )}
-      {counts.pendingApproval > 0 && (
-        <TagSubmission state="pending-approval" size="small" labelPrefix={counts.pendingApproval} />
-      )}
-      {counts.approved > 0 && <TagSubmission state="approved" size="small" labelPrefix={counts.approved} />}
-    </Flex>
-  );
 };
 
 const AdditionalReportGroupSection = ({ group }: { group: AdditionalReportGroup }) => {
@@ -67,7 +45,7 @@ const AdditionalReportGroupSection = ({ group }: { group: AdditionalReportGroup 
           level="sub-level"
           label={t("Report Type")}
           title={getGroupLabel(group.type, t)}
-          statusLabels={<GroupStatusLabels reports={group.reports} />}
+          statusLabels={<ReportAttentionStatusLabels reports={group.reports} />}
         />
       }
     >
