@@ -47,6 +47,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const {
     sections: progressSections,
     loading: progressLoading,
+    metricsReady: progressMetricsReady,
     error: progressError
   } = useReportsIndexData(project, source, sourceEntity.uuid, isAllProjectsView, reloadNonce);
   const {
@@ -176,7 +177,12 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
             ) : (
               <div className="space-y-4">
                 {filteredProgressSections.map((section, index) => (
-                  <ProjectReportsSection key={section.id} section={section} defaultOpen={index === 0} />
+                  <ProjectReportsSection
+                    key={section.id}
+                    section={section}
+                    defaultOpen={index === 0}
+                    metricsReady={progressMetricsReady}
+                  />
                 ))}
               </div>
             )}
