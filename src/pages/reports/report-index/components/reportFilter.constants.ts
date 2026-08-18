@@ -42,7 +42,7 @@ export const PROGRESS_REPORT_TYPE_OPTIONS: { value: ReportTypeOption; label: str
 ];
 
 export const ADDITIONAL_REPORT_TYPE_OPTIONS: { value: ReportTypeOption; label: string }[] = [
-  { value: "srp-report", label: "Annual Reports" },
+  { value: "srp-report", label: "Annual SRP" },
   { value: "disturbance-report", label: "Disturbance Reports" },
   { value: "financial-report", label: "Financial Reports" }
 ];
