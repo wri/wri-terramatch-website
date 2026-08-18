@@ -1,7 +1,7 @@
 import { Portal, Text } from "@chakra-ui/react";
 import { FC, PropsWithChildren, ReactNode, RefObject, useState } from "react";
 
-import { ChevronDownIcon, ChevronUpIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
 
 import { getMenuItemKeyboardProps, handleMenuContentKeyDown } from "./HighLevelSelector.keyboard";
 import { getLabelStyles, getMenuItemStyles, menuContentStyles } from "./HighLevelSelector.styles";
@@ -69,13 +69,22 @@ export const SelectorEmptyMessage: FC<SelectorTextProps> = ({ children }) => (
 interface SelectorMenuProps {
   Content: ChakraSlot;
   Item: ChakraSlot;
+  ItemIndicator: ChakraSlot;
   Positioner: ChakraSlot;
   emptyMessage: ReactNode;
   items: HighLevelSelectorItem[];
   contentRef?: RefObject<HTMLDivElement>;
 }
 
-export const SelectorMenu: FC<SelectorMenuProps> = ({ Content, Item, Positioner, contentRef, emptyMessage, items }) => (
+export const SelectorMenu: FC<SelectorMenuProps> = ({
+  Content,
+  Item,
+  ItemIndicator,
+  Positioner,
+  contentRef,
+  emptyMessage,
+  items
+}) => (
   <Portal>
     <Positioner zIndex={1500}>
       <Content ref={contentRef} tabIndex={-1} {...menuContentStyles} onKeyDown={handleMenuContentKeyDown}>
@@ -90,6 +99,9 @@ export const SelectorMenu: FC<SelectorMenuProps> = ({ Content, Item, Positioner,
               {...getMenuItemStyles(item.disabled)}
               {...getMenuItemKeyboardProps(item.disabled)}
             >
+              <ItemIndicator>
+                <CheckIcon aria-hidden="true" width={4} color="neutral.800" height={"auto"} flexShrink={0} />
+              </ItemIndicator>
               <SelectorOptionText>{item.label}</SelectorOptionText>
             </Item>
           ))

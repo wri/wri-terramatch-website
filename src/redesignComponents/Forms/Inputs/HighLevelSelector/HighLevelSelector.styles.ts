@@ -73,7 +73,7 @@ const menuItemFocusStyles = {
 
 export const getMenuItemStyles = (disabled = false) =>
   ({
-    alignItems: "flex-start",
+    alignItems: "baseline",
     bg: "transparent",
     borderRadius: "0.25rem",
     color: "neutral.900",
@@ -82,7 +82,6 @@ export const getMenuItemStyles = (disabled = false) =>
     flexDirection: "row",
     gap: 2,
     height: "2.25rem",
-    justifyContent: "space-between",
     minHeight: "2.25rem",
     outline: "none",
     position: "relative",
