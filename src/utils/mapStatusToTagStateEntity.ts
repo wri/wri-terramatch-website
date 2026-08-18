@@ -30,9 +30,14 @@ export const mapStatusToTagStateEntity = (
     case "no-update":
       return { type: "nothing-reported" };
     case "rejected":
+    case "disabled":
       return { type: "not-selected" };
     case "active":
       return { type: "receiving-applications" };
+    case "inactive":
+      return { type: "closed" };
+    case "coming-soon":
+      return { type: "coming-soon" };
     default:
       return undefined;
   }
