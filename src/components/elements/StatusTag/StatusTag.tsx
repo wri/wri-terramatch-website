@@ -14,7 +14,7 @@ export interface StatusTagProps {
 }
 
 const FUNDING_STATUS_TAG: Record<string, { state: ActionStatusTagState; label: string }> = {
-  inactive: { state: "neutral-dark", label: "Closed" },
+  inactive: { state: "neutral-light", label: "Closed" },
   "coming-soon": { state: "attention", label: "Coming Soon" }
 };
 
@@ -33,7 +33,7 @@ const StatusTag: FC<StatusTagProps> = ({ status, size = "default", className }) 
       status === "coming-soon" ? (
         <PendingIcon color="warning.500" boxSize={boxSize} />
       ) : (
-        <RejectedIcon color="neutral.900" boxSize={boxSize} />
+        <RejectedIcon color="neutral.600" boxSize={boxSize} />
       );
 
     return (
