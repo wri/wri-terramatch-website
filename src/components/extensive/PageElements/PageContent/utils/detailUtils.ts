@@ -63,7 +63,8 @@ export const resolveEntryInlineIssue = ({
   validationErrorsByField,
   fieldsProvider,
   feedbackFieldIds,
-  feedbackBaselineValues
+  feedbackBaselineValues,
+  stepId
 }: {
   entry: FormEntry;
   formValues: Record<string, unknown>;
@@ -71,13 +72,21 @@ export const resolveEntryInlineIssue = ({
   fieldsProvider: FormFieldsProvider;
   feedbackFieldIds?: string[] | null;
   feedbackBaselineValues?: Record<string, unknown>;
+  stepId?: string;
 }): EntryInlineIssue | null => {
   if (entry.name == null) {
     return null;
   }
 
   if (
-    isFieldFeedbackRequiringAttention(entry.name, fieldsProvider, feedbackFieldIds, formValues, feedbackBaselineValues)
+    isFieldFeedbackRequiringAttention(
+      entry.name,
+      fieldsProvider,
+      feedbackFieldIds,
+      formValues,
+      feedbackBaselineValues,
+      stepId
+    )
   ) {
     return { kind: "feedback" };
   }

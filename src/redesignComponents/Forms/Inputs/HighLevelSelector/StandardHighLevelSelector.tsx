@@ -26,6 +26,7 @@ const SelectValueText = Select.ValueText as ChakraSlot;
 const SelectPositioner = Select.Positioner as ChakraSlot;
 const SelectContent = Select.Content as ChakraSlot;
 const SelectItem = Select.Item as ChakraSlot;
+const SelectItemIndicator = Select.ItemIndicator as ChakraSlot;
 
 const StandardHighLevelSelector: FC<SelectorImplementationProps> = ({
   items,
@@ -128,6 +129,7 @@ const StandardHighLevelSelector: FC<SelectorImplementationProps> = ({
       <SelectorMenu
         Content={SelectContent}
         Item={SelectItem}
+        ItemIndicator={SelectItemIndicator}
         Positioner={SelectPositioner}
         emptyMessage={emptyMessage}
         items={items}

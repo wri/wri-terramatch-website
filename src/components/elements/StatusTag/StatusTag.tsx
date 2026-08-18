@@ -3,16 +3,14 @@ import { FC } from "react";
 
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import { ActionStatusTagState } from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag.type";
-import MappedTag from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { PendingIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
-import { mapStatusToMappedTagState, mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
+import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 export interface StatusTagProps {
   status?: string | null;
   size?: "small" | "default";
   className?: string;
-  variant?: "mapped" | "submission";
 }
 
 const FUNDING_STATUS_TAG: Record<string, { state: ActionStatusTagState; label: string }> = {
@@ -20,18 +18,9 @@ const FUNDING_STATUS_TAG: Record<string, { state: ActionStatusTagState; label: s
   "coming-soon": { state: "attention", label: "Coming Soon" }
 };
 
-const StatusTag: FC<StatusTagProps> = ({ status, size = "default", className, variant = "submission" }) => {
+const StatusTag: FC<StatusTagProps> = ({ status, size = "default", className }) => {
   const t = useT();
   const boxSize = size === "default" ? 3 : 2.5;
-  const mappedState = mapStatusToMappedTagState(status);
-
-  if (variant === "mapped" && mappedState != null) {
-    return <MappedTag state={mappedState} size={size} className={className} />;
-  }
-
-  if (status === "approved") {
-    return <MappedTag state="approved" size={size} className={className} />;
-  }
 
   const tagState = mapStatusToTagStateEntity(status);
   if (tagState != null) {

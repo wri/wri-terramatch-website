@@ -58,7 +58,7 @@ const TagSubmissionActionStatusTagStateMap: Record<TagSubmissionState, ActionSta
   approved: "success",
   due: "warning",
   "not-selected": "warning",
-  "receiving-applications": "success"
+  "receiving-applications": "neutral-dark"
 };
 
 function getTagSubmissionIcon(state: TagSubmissionState, size: "small" | "default"): ReactElement {
@@ -82,7 +82,7 @@ function getTagSubmissionIcon(state: TagSubmissionState, size: "small" | "defaul
     case "not-selected":
       return <DisallowedIcon color="error.500" boxSize={boxSize} />;
     case "receiving-applications":
-      return <InfoIcon color="success.500" boxSize={boxSize} />;
+      return <InfoIcon color="neutral.900" boxSize={boxSize} />;
     default:
       return <></>;
   }
