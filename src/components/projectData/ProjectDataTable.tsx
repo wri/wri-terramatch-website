@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 
 import PolygonDataTable from "@/components/entityData/PolygonDataTable";
-import { AnomaliesCell, FlaggedFilterButton, orDash } from "@/components/entityData/polygonTableCells";
+import { AnomaliesCell, FlaggedFilterButton, orDash, Pill } from "@/components/entityData/polygonTableCells";
 import { useProjectAnomalies } from "@/components/projectData/anomalies/useProjectAnomalies";
 import { useSiteIndicatorRollup } from "@/connections/SiteIndicatorRollup";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
@@ -168,11 +168,18 @@ const ProjectDataTable = ({ projectUuid, project }: ProjectDataTableProps) => {
                     <td className="px-4 py-2 font-medium text-theme-neutral-900">{site.siteName ?? "Unnamed site"}</td>
                     <td className="px-4 py-2 tabular-nums text-theme-neutral-700">{site.polygons.toLocaleString()}</td>
                     <td className="px-4 py-2 tabular-nums text-theme-neutral-700">{orDash(site.hectares, " ha")}</td>
-                    <td className="px-4 py-2 tabular-nums">
+                    {/* A site's in-review count is the site-level echo of a polygon's "pending
+                        approval" status, which the shared polygon table shows as a warning pill — so
+                        this speaks the same pill vocabulary rather than a bespoke coloured number,
+                        and its quiet zero matches AnomaliesCell's. */}
+                    <td className="px-4 py-2">
                       {site.inReviewCount > 0 ? (
-                        <span className="text-theme-warning-900">{site.inReviewCount.toLocaleString()}</span>
+                        <Pill
+                          label={site.inReviewCount.toLocaleString()}
+                          className="bg-theme-warning-100 text-theme-warning-900"
+                        />
                       ) : (
-                        <span className="text-theme-neutral-400">0</span>
+                        <span className="text-xs text-theme-neutral-400">0</span>
                       )}
                     </td>
                     <td className="px-4 py-2">
