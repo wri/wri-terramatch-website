@@ -38,7 +38,7 @@ const FeedbackTag: FC<FeedbackTagProps> = ({
           size: size === "small" ? 8 : size === "default" ? 10 : 12
         },
         "& .chakra-tag__startElement": {
-          width: "auto"
+          width: "auto !important"
         }
       }}
     >
