@@ -124,7 +124,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
             loading: exportLoader,
             children: t("Download Project Files")
           }}
-          readMoreOnClick={() => router.push(`/project/${project.uuid}?tab=details`)}
+          readMoreOnClick={() => router.push(`/project/${project.uuid}?tab=overview`)}
         />
       ) : (
         <div className="w-fit">

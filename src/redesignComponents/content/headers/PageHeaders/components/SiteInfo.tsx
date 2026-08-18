@@ -113,7 +113,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
             children: t("Download Site Files")
           }}
           maxLines={2}
-          readMoreOnClick={() => router.push(`/site/${site.uuid}?tab=details`)}
+          readMoreOnClick={() => router.push(`/site/${site.uuid}?tab=overview`)}
           id={site.ppcExternalId?.toString() ?? "-"}
         />
       ) : (

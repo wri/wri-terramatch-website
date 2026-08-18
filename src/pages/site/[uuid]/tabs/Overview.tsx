@@ -1,10 +1,11 @@
-import { Box, Flex, useBreakpointValue } from "@chakra-ui/react";
+import { Flex, useBreakpointValue } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import router from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import EntityActionsPanel from "@/components/entityData/EntityActionsPanel";
 import EntityDataView from "@/components/entityData/EntityDataView";
+import EntityDetailsSection from "@/components/entityData/EntityDetailsSection";
 import EntityKpiPanel from "@/components/entityData/EntityKpiPanel";
 import EntityMap from "@/components/entityData/EntityMap";
 import { useEntityDrilldown } from "@/components/entityData/useEntityDrilldown";
@@ -14,12 +15,11 @@ import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/Abo
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
+import { APPROVED, INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
-import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
 import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
@@ -77,6 +77,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
 
   const needMoreInformation = site.updateRequestStatus === INFORMATION_REQUIRED || site.status === INFORMATION_REQUIRED;
   const awaitingApproval = site.updateRequestStatus === PENDING_APPROVAL || site.status === PENDING_APPROVAL;
+  const isApproved = site.status === APPROVED;
   const statusProps = useMemo(() => getStatusProps(t, site, site.status!), [t, site]);
 
   const handleEditClick = useCallback(() => {
@@ -123,10 +124,12 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             kpis={<EntityKpiPanel drilldown={drilldown} title={site.name ?? t("Site")} projectUuid={projectUuid} />}
           />
         </PageItem>
-        {/* Sites Set Up, demoted below the fold: it is a setup/editing flow, not day-to-day data. */}
+        {/* Site Details, demoted below the fold: it is a setup/editing flow, not day-to-day data.
+            The single consolidated surface — progress bar (until approved) over the editable detail
+            accordions. */}
         <PageItem
           flexProps={{ paddingY: 2, width: "100%" }}
-          title={t("Sites Set Up")}
+          title={t("Site Details")}
           tag={(() => {
             const tagState = mapStatusToTagStateEntity(site?.status);
             return site.updateRequestStatus === "pending-approval" ? (
@@ -138,14 +141,12 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           buttonProps={{
             variant: "primary",
             size: "small",
-            children: isSiteSetupComplete ? t("Edit") : t("Continue"),
+            children: isApproved || isSiteSetupComplete ? t("Edit") : t("Continue"),
             rightIcon: <ChevronRightIcon boxSize={4} />,
             onClick: () => handleEditClick()
           }}
         >
-          <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-            <EntitySetUpSection onStatusChange={setIsSiteSetupComplete} entity={site} type="sites" />
-          </Box>
+          <EntityDetailsSection entity={site} type="sites" onStatusChange={setIsSiteSetupComplete} />
         </PageItem>
         <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[39.625rem] sm:flex-row">
           <PageItem

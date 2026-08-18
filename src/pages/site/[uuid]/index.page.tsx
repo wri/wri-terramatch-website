@@ -41,7 +41,7 @@ const SiteDetailPage = () => {
 
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site!} refetch={refetch} /> },
-    { key: "details", title: t("Site Details and Data"), body: <SiteDetailTab site={site!} /> },
+    { key: "details", title: t("Data"), body: <SiteDetailTab site={site!} /> },
     {
       key: "gallery",
       title: t("Gallery"),

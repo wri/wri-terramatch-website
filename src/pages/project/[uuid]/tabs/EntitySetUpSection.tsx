@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { FC, useEffect, useMemo } from "react";
 
 import { hasUnresolvedFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
+import { useStepCompletion } from "@/components/extensive/WizardForm/useStepCompletion";
 import { EntityFullDto, SupportedEntity } from "@/connections/Entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
@@ -77,18 +78,13 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({
     });
   }, [t, steps, defaultValues, handleStepEdit, fieldsProvider, feedbackFields, feedbackBaselineValues]);
 
-  const allStepsCompleted = useMemo(() => {
-    if (!steps.length) return false;
-
-    return steps.every(step => {
-      const valid = defaultValues == null || step.validation.isValidSync(defaultValues);
-      const hasUnresolvedFeedback =
-        defaultValues != null &&
-        feedbackBaselineValues != null &&
-        hasUnresolvedFeedbackInStep(fieldsProvider, step.id, feedbackFields, defaultValues, feedbackBaselineValues);
-      return !hasUnresolvedFeedback && stepStatusToBadge(valid) === "completed";
-    });
-  }, [steps, defaultValues, fieldsProvider, feedbackFields, feedbackBaselineValues]);
+  const { allStepsCompleted } = useStepCompletion(
+    steps,
+    defaultValues,
+    fieldsProvider,
+    feedbackFields,
+    feedbackBaselineValues
+  );
 
   useEffect(() => {
     if (onStatusChange) {

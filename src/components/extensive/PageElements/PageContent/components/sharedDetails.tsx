@@ -111,6 +111,12 @@ export type SharedDetailsProps = {
     | FinancialReportFullDto;
   feedbackFieldsOptions?: string[] | null;
   feedbackBaselineValues?: Dictionary<unknown>;
+  /**
+   * Render the accordion expanded on first mount. Defaults to collapsed, preserving the behavior of
+   * every existing consumer; used by the consolidated Overview to auto-open steps that still have an
+   * error while the entity is approved.
+   */
+  defaultOpen?: boolean;
 };
 
 const SharedDetails: FC<SharedDetailsProps> = ({
@@ -123,7 +129,8 @@ const SharedDetails: FC<SharedDetailsProps> = ({
   stepIndex,
   entity,
   feedbackFieldsOptions,
-  feedbackBaselineValues
+  feedbackBaselineValues,
+  defaultOpen = false
 }) => {
   const t = useT();
   const router = useRouter();
@@ -197,6 +204,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
       {EditModals}
       <Accordion
         key={step.id}
+        defaultOpen={defaultOpen}
         onOpenChange={handleAccordionOpenChange}
         header={
           <AccordionHeader

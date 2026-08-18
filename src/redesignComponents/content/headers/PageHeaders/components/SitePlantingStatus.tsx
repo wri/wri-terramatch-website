@@ -228,7 +228,7 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
               </Text>
             )}
             {hiddenCount > 0 && (
-              <Button variant="borderless" onClick={() => router.push(`/site/${site.uuid}?tab=details`)}>
+              <Button variant="borderless" onClick={() => router.push(`/site/${site.uuid}?tab=overview`)}>
                 {t("+{count} More", { count: hiddenCount })}
               </Button>
             )}

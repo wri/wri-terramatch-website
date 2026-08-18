@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
@@ -6,6 +6,7 @@ import { useCallback, useMemo, useState } from "react";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import EntityActionsPanel from "@/components/entityData/EntityActionsPanel";
 import EntityDataView from "@/components/entityData/EntityDataView";
+import EntityDetailsSection from "@/components/entityData/EntityDetailsSection";
 import EntityKpiPanel from "@/components/entityData/EntityKpiPanel";
 import EntityMap from "@/components/entityData/EntityMap";
 import { useEntityDrilldown } from "@/components/entityData/useEntityDrilldown";
@@ -15,7 +16,7 @@ import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/Abo
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useUserAssociations } from "@/connections/UserAssociation";
-import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
+import { APPROVED, INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -25,7 +26,6 @@ import Log from "@/utils/log";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
-import EntitySetUpSection from "./EntitySetUpSection";
 import LatestImagesSectionTab from "./LatestImagesSection";
 
 interface ProjectOverviewTabProps {
@@ -78,6 +78,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const needMoreInformation =
     project.updateRequestStatus === INFORMATION_REQUIRED || project.status === INFORMATION_REQUIRED;
   const awaitingApproval = project.updateRequestStatus === PENDING_APPROVAL || project.status === PENDING_APPROVAL;
+  const isApproved = project.status === APPROVED;
   const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
   const handleEditClick = useCallback(() => {
     if (needMoreInformation && !awaitingApproval) {
@@ -182,10 +183,12 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           }
         />
       </PageItem>
-      {/* Project Set Up, demoted below the fold: it is a setup/editing flow, not day-to-day data. */}
+      {/* Project Details, demoted below the fold: it is a setup/editing flow, not day-to-day data.
+          The single consolidated surface — progress bar (until approved) over the editable detail
+          accordions. */}
       <PageItem
         flexProps={{ paddingY: 2, width: "100%" }}
-        title={t("Project Set Up")}
+        title={t("Project Details")}
         tag={(() => {
           const tagState = mapStatusToTagStateEntity(project?.status);
           return project.updateRequestStatus === "pending-approval" ? (
@@ -197,14 +200,12 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         buttonProps={{
           variant: "primary",
           size: "small",
-          children: isProjectSetupComplete ? t("Edit") : t("Continue"),
+          children: isApproved || isProjectSetupComplete ? t("Edit") : t("Continue"),
           rightIcon: <ChevronRightIcon />,
           onClick: handleEditClick
         }}
       >
-        <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-          <EntitySetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} type="projects" />
-        </Box>
+        <EntityDetailsSection entity={project} type="projects" onStatusChange={setIsProjectSetupComplete} />
       </PageItem>
       <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[39.625rem] sm:flex-row">
         <PageItem

@@ -77,7 +77,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         title: t("Overview"),
         body: <ProjectOverviewTab project={project} onViewSites={() => navigateToTab("sites")} />
       },
-      { key: "details", title: t("Project Details and Data"), body: <ProjectDetailTab project={project} /> },
+      { key: "details", title: t("Data"), body: <ProjectDetailTab project={project} /> },
       {
         key: "gallery",
         title: t("Gallery"),
