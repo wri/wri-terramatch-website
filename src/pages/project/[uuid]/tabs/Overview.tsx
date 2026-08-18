@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import EntityInformationRequiredModal from "@/components/extensive/EntityInformationRequiredModal";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
@@ -18,11 +19,10 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import type { ButtonGroupButtonProps } from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
 import { ChevronRightIcon, DownloadIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
-import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 import EntitySetUpSection from "./EntitySetUpSection";
@@ -229,14 +229,13 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           flexProps={{ width: "fit-content", overflow: "hidden" }}
           className="!w-full !max-w-full sm:!w-[35%] sm:!max-w-[35%] lg:!w-[30%] lg:!max-w-[30%]"
           title={t("Project Set Up")}
-          tag={(() => {
-            const tagState = mapStatusToTagStateEntity(project?.status);
-            return project.updateRequestStatus === "pending-approval" ? (
+          tag={
+            project.updateRequestStatus === PENDING_APPROVAL ? (
               <TagSubmission state="pending-approval" />
-            ) : project?.status != null ? (
-              <TagSubmission state={tagState?.type as TagSubmissionState} />
-            ) : null;
-          })()}
+            ) : (
+              <StatusTag status={project?.status} />
+            )
+          }
           buttonProps={{
             variant: "primary",
             size: "small",

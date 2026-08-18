@@ -33,7 +33,7 @@ const FundingCard = (props: FundingCardProps) => {
         "flex h-[420px] w-full flex-col overflow-auto rounded-lg border border-neutral-100 border-opacity-25 bg-white p-6 shadow wide:h-[500px]"
       )}
     >
-      {status === "disabled" ? null : <StatusTag status={status} className="mb-4" />}
+      <StatusTag status={status} className="mb-4" />
       <Text variant="text-bold-subtitle-500" className="mb-2">
         {title}
       </Text>

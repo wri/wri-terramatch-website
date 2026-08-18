@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import EntityInformationRequiredModal from "@/components/extensive/EntityInformationRequiredModal";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -11,11 +12,10 @@ import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
-import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 import ChevronRightIcon from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
-import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 interface NurseryOverviewTabProps {
   nursery: NurseryFullDto;
@@ -93,16 +93,13 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
           flexProps={{ maxWidth: "37%", overflow: "hidden" }}
           className="!w-full !max-w-full sm:!w-[37%] sm:!max-w-[37%]"
           title={t("Nursery Set Up")}
-          tag={(() => {
-            const tagState = mapStatusToTagStateEntity(
-              nursery?.updateRequestStatus == "pending-approval" ? nursery?.updateRequestStatus : nursery?.status
-            );
-            return nursery.updateRequestStatus === "pending-approval" ? (
+          tag={
+            nursery.updateRequestStatus === PENDING_APPROVAL ? (
               <TagSubmission state="pending-approval" />
-            ) : nursery?.status != null ? (
-              <TagSubmission state={tagState?.type as TagSubmissionState} />
-            ) : null;
-          })()}
+            ) : (
+              <StatusTag status={nursery?.status} />
+            )
+          }
           buttonProps={{
             variant: "primary",
             size: "small",

@@ -4,6 +4,7 @@ import router from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import EntityInformationRequiredModal from "@/components/extensive/EntityInformationRequiredModal";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
@@ -17,9 +18,8 @@ import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
-import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { ChevronRightIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
-import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "../constants/sitePolygonMapSizing";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
@@ -129,14 +129,13 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             className="!w-full !max-w-full flex-[1] sm:!w-[30%] sm:!max-w-[30%]"
             title={t("Sites Set Up")}
             classNameRightSectionHeader="mobile:!w-fit"
-            tag={(() => {
-              const tagState = mapStatusToTagStateEntity(site?.status);
-              return site.updateRequestStatus === "pending-approval" ? (
+            tag={
+              site.updateRequestStatus === PENDING_APPROVAL ? (
                 <TagSubmission state="pending-approval" />
-              ) : site?.status != null ? (
-                <TagSubmission state={tagState?.type as TagSubmissionState} />
-              ) : null;
-            })()}
+              ) : (
+                <StatusTag status={site?.status} />
+              )
+            }
             buttonProps={{
               variant: "primary",
               size: "small",
