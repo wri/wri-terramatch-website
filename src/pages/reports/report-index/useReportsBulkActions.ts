@@ -21,6 +21,8 @@ import Log from "@/utils/log";
 
 import type { ReportIndexItem } from "./reportIndex.types";
 import {
+  getNothingToReportDisabledTooltip,
+  getSubmitDisabledTooltip,
   groupReportUuidsByEntity,
   isReportNothingToReportEligible,
   isReportSubmittable,
@@ -93,13 +95,12 @@ export const useReportsBulkActions = ({
   const canSubmit = selectedReports.length > 0 && submittableReports.length === selectedReports.length;
   const canMarkNothingToReport = selectedReports.length > 0 && nothingToReportReports.length === selectedReports.length;
 
-  const submitDisabledTooltip = useMemo(() => {
-    if (canSubmit) return undefined;
-    if (selectedReports.length === 1) {
-      return t("This report is missing mandatory information. Please complete the required fields before submitting.");
-    }
-    return t("One or more selected reports must be completed before submission.");
-  }, [canSubmit, selectedReports.length, t]);
+  const submitDisabledTooltip = useMemo(() => getSubmitDisabledTooltip(selectedReports, t), [selectedReports, t]);
+
+  const nothingToReportDisabledTooltip = useMemo(
+    () => getNothingToReportDisabledTooltip(selectedReports, t),
+    [selectedReports, t]
+  );
 
   const handleDownload = useCallback(async () => {
     if (selectedReports.length === 0 || isDownloading) return;
@@ -154,7 +155,7 @@ export const useReportsBulkActions = ({
       clearSelection();
       onReportsChanged();
       showToast({
-        label: t("Reports marked as nothing to report"),
+        label: t('Your report(s) have been successfully marked as "Nothing to Report" for this reporting period'),
         type: "success",
         placement: "bottom"
       });
@@ -196,7 +197,7 @@ export const useReportsBulkActions = ({
       clearSelection();
       onReportsChanged();
       showToast({
-        label: t("Reports submitted"),
+        label: t("Your report(s) have been successfully submitted and will be reviewed by the team"),
         type: "success",
         placement: "bottom"
       });
@@ -227,6 +228,7 @@ export const useReportsBulkActions = ({
     canSubmit,
     canMarkNothingToReport,
     submitDisabledTooltip,
+    nothingToReportDisabledTooltip,
     handleDownload,
     handleNothingToReport,
     handleSubmit

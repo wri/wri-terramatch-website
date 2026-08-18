@@ -1,4 +1,5 @@
 import { Flex } from "@chakra-ui/react";
+import classNames from "classnames";
 import { Fragment, memo } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -47,7 +48,10 @@ const BulkActionToolbarActions = memo(function BulkActionToolbarActions({
             <Flex alignItems="center" gap={0.5}>
               <Button
                 {...buttonProps}
-                className={tone === "danger" ? BORDERLESS_DANGER_CLASS : BORDERLESS_NEUTRAL_CLASS}
+                className={classNames(
+                  tone === "danger" ? BORDERLESS_DANGER_CLASS : BORDERLESS_NEUTRAL_CLASS,
+                  buttonProps.className
+                )}
                 variant="borderless"
               />
               {infoTooltip != null && (
