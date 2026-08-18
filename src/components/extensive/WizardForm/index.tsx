@@ -182,9 +182,14 @@ function WizardForm(props: WizardFormProps) {
   const formHasError = useRef(false);
   formHasError.current = showValidationErrors && Object.values(formHook.formState.errors ?? {}).length > 0;
 
-  const stepHasIssues = useCallback(
+  const stepHasValidationIssues = useCallback(
     (stepId: string, validation: (typeof steps)[number]["validation"]) =>
-      (showValidationErrors && !validation.isValidSync(formValues)) ||
+      showValidationErrors && !validation.isValidSync(formValues),
+    [formValues, showValidationErrors]
+  );
+
+  const stepHasFeedbackIssues = useCallback(
+    (stepId: string) =>
       hasUnresolvedFeedbackInStep(
         props.fieldsProvider,
         stepId,
@@ -192,7 +197,13 @@ function WizardForm(props: WizardFormProps) {
         formValues,
         initialFormValues.current!
       ),
-    [entity?.feedbackFields, formValues, props.fieldsProvider, showValidationErrors]
+    [entity?.feedbackFields, formValues, props.fieldsProvider]
+  );
+
+  const stepHasIssues = useCallback(
+    (stepId: string, validation: (typeof steps)[number]["validation"]) =>
+      stepHasValidationIssues(stepId, validation) || stepHasFeedbackIssues(stepId),
+    [stepHasFeedbackIssues, stepHasValidationIssues]
   );
 
   const reportAnalytics = useReportAnalytics({
@@ -207,7 +218,7 @@ function WizardForm(props: WizardFormProps) {
     stepHasIssues
   });
 
-  const hasErrorInAnyStep = steps.some(({ id, validation }) => stepHasIssues(id, validation));
+  const hasValidationErrorInAnyStep = steps.some(({ id, validation }) => stepHasValidationIssues(id, validation));
 
   Log.debug("Form Values", formValues);
   Log.debug("Form Errors", formHook.formState.errors);
@@ -359,7 +370,7 @@ function WizardForm(props: WizardFormProps) {
           )}
           primaryButtonProps={{
             children: t(`${selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
-            disabled: hasErrorInAnyStep && selectedStepIndex === lastIndex,
+            disabled: hasValidationErrorInAnyStep && selectedStepIndex === lastIndex,
             onClick: formHook.handleSubmit(onSubmitStep, onSubmitStepError)
           }}
           secondaryButtonProps={
@@ -397,7 +408,7 @@ function WizardForm(props: WizardFormProps) {
       _onChange,
       selectedStepIndex,
       lastIndex,
-      hasErrorInAnyStep,
+      hasValidationErrorInAnyStep,
       onSubmitStep,
       onSubmitStepError,
       isSubmissionModel,
@@ -431,7 +442,7 @@ function WizardForm(props: WizardFormProps) {
       title: t(`{title}`, { title: props.summaryOptions?.title }),
       renderBody: () => {
         const submitButtonDisable =
-          props.submitButtonDisable || steps.some(({ id, validation }) => stepHasIssues(id, validation));
+          props.submitButtonDisable || steps.some(({ id, validation }) => stepHasValidationIssues(id, validation));
         return (
           <SummaryItem
             title={props.summaryOptions?.title!}
@@ -477,7 +488,7 @@ function WizardForm(props: WizardFormProps) {
       onClickSaveAndExit,
       entity?.feedback,
       entity?.feedbackFields,
-      stepHasIssues,
+      stepHasValidationIssues,
       reportAnalytics
     ]
   );

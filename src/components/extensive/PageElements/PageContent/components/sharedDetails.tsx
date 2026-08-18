@@ -245,7 +245,8 @@ const SharedDetails: FC<SharedDetailsProps> = ({
               validationErrorsByField,
               fieldsProvider,
               feedbackFieldIds: feedbackFieldsOptions,
-              feedbackBaselineValues
+              feedbackBaselineValues,
+              stepId: step.id
             });
 
             if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "file") {
