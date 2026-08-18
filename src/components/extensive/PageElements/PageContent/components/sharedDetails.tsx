@@ -201,7 +201,6 @@ const SharedDetails: FC<SharedDetailsProps> = ({
         header={
           <AccordionHeader
             title={step.title ?? ""}
-            status={accordionHeaderStatus}
             badge={
               fieldsRequiringAttention > 0
                 ? t("{count} requires attention", { count: fieldsRequiringAttention })
