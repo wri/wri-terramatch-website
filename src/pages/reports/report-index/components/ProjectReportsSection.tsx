@@ -14,9 +14,15 @@ type ProjectReportsSectionProps = {
   section: ReportsIndexProjectSection;
   defaultOpen?: boolean;
   metricsReady?: boolean;
+  indexHref?: string;
 };
 
-const ProjectReportsSection = ({ section, defaultOpen = false, metricsReady = true }: ProjectReportsSectionProps) => {
+const ProjectReportsSection = ({
+  section,
+  defaultOpen = false,
+  metricsReady = true,
+  indexHref
+}: ProjectReportsSectionProps) => {
   const t = useT();
   const [open, setOpen] = useState(defaultOpen);
 
@@ -38,6 +44,7 @@ const ProjectReportsSection = ({ section, defaultOpen = false, metricsReady = tr
           title={section.name ?? t("Project")}
           titleHref={`/project/${section.id}`}
           caption={section.organisationName ?? ""}
+          captionHref={section.organisationUuid != null ? `/organization/${section.organisationUuid}` : undefined}
           icon={
             open ? (
               <FolderOpenIcon minWidth={5} width={5} height={"auto"} color="primary.600" />
@@ -61,6 +68,7 @@ const ProjectReportsSection = ({ section, defaultOpen = false, metricsReady = tr
                 period={period}
                 defaultOpen={index === 0}
                 metricsReady={metricsReady}
+                indexHref={indexHref}
               />
             ))
           : null}

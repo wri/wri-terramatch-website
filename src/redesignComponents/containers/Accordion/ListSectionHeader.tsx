@@ -29,6 +29,7 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   titleHref,
   onTitleClick,
   caption,
+  captionHref,
   statusLabels,
   icon,
   className,
@@ -38,6 +39,7 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
 }) => {
   const gap = levelStyles[level].gap;
   const isTopLevelLink = titleHref != null;
+  const isCaptionLink = captionHref != null;
 
   const router = useRouter();
 
@@ -52,12 +54,19 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
     router?.push(titleHref);
   };
 
+  const handleCaptionClick = (event: MouseEvent) => {
+    event.stopPropagation();
+    if (!captionHref) return;
+    event.preventDefault();
+    router?.push(captionHref);
+  };
+
   const titleClassName = classNames("truncate", {
     "text-decoration-solid underline underline-offset-2": level === "top-level"
   });
 
   const titleLinkClassName = classNames(
-    "min-w-0 truncate rounded-[6px] leading-[normal]",
+    "min-w-0 truncate rounded-[0.375rem] leading-[normal]",
     "text-theme-primary-900",
     "hover:text-theme-primary-700",
     "active:text-theme-primary-800",
@@ -69,7 +78,7 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
       <Flex alignItems="baseline" gap={gap} minWidth={0} flex={1}>
         {icon}
         <Flex direction="column" minWidth={0} alignItems="flex-start">
-          <Flex alignItems="center" gap={1}>
+          <Flex alignItems="center" gap={1} width="100%" minWidth={0}>
             {label && (
               <Text textStyle="300" color="neutral.800">
                 {label}:
@@ -91,11 +100,18 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
               </Text>
             )}
           </Flex>
-          {caption != null && (
-            <Text textStyle="300" className="truncate">
-              {caption}
-            </Text>
-          )}
+          {caption != null &&
+            (isCaptionLink ? (
+              <NextLink href={captionHref} className={titleLinkClassName} onClick={handleCaptionClick}>
+                <Text as="span" textStyle="300" className="truncate underline underline-offset-2">
+                  {caption}
+                </Text>
+              </NextLink>
+            ) : (
+              <Text textStyle="300" className="truncate">
+                {caption}
+              </Text>
+            ))}
         </Flex>
         {dueDate && <FeedbackTag icon={dueIcon} label={dueDate} onClose={() => {}} size="default" type={dueDateType} />}
       </Flex>

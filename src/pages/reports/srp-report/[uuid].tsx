@@ -12,6 +12,7 @@ import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -85,6 +86,11 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "details";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const reportsIndexHref =
+    getReportsIndexHrefFromQuery(router.query.from) ??
+    (srpReport.projectUuid != null
+      ? getReportsIndexUrl("project", srpReport.projectUuid, { tab: "additional-reports" })
+      : "/my-projects");
 
   return (
     <>
@@ -109,11 +115,11 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
           },
           {
             label: t("Reports"),
-            link: `/project/${srpReport.projectUuid}?tab=reporting-tasks`
+            link: reportsIndexHref
           },
           {
             label: getShortPeriodLabel(taskTitle ?? "", true),
-            link: `/project/${srpReport.projectUuid ?? ""}/reporting-task/${srpReport.taskUuid ?? ""}`
+            link: reportsIndexHref
           },
           {
             label: t("SRP Report"),

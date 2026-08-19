@@ -17,6 +17,7 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
 import NurseryReportGoalsAndProgressTab from "@/pages/reports/nursery-report/tabs/GoalsAndProgress";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
+import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -117,6 +118,9 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const reportsIndexHref =
+    getReportsIndexHrefFromQuery(router.query.from) ??
+    (nurseryReport.nurseryUuid != null ? getReportsIndexUrl("nursery", nurseryReport.nurseryUuid) : "/my-projects");
 
   return (
     <>
@@ -149,7 +153,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
           },
           {
             label: t("Reports"),
-            link: `/nursery/${nurseryReport.nurseryUuid}?tab=completed-tasks`
+            link: reportsIndexHref
           },
           {
             label: t("Nursery Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),

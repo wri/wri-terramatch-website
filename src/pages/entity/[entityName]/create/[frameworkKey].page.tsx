@@ -21,6 +21,7 @@ import { singularEntityName, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useGetReportingFrameworkFormKey } from "@/hooks/useGetFormKey";
 import { useReportEntityDueAt } from "@/hooks/useReportEntityDueAt";
+import { getReportsIndexHrefFromQuery, withReportsIndexReturn } from "@/pages/reports/report-index/reportIndex.utils";
 import { EntityName } from "@/types/common";
 import { resolveFormIntroDeadline } from "@/utils/formIntroDeadline";
 import Log from "@/utils/log";
@@ -65,6 +66,7 @@ const EntityIntroPage = () => {
   //Allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
   const parentUUID = router.query.parent_uuid as string;
   const entityUUID = router.query.entity_uuid as string | undefined;
+  const from = getReportsIndexHrefFromQuery(router.query.from);
 
   const formUUID = entityUUID == null ? useGetReportingFrameworkFormKey(frameworkKey, entityName) : undefined;
   const [, { data: frameworkForm }] = useForm({ id: formUUID ?? undefined, enabled: formUUID != null });
@@ -81,13 +83,16 @@ const EntityIntroPage = () => {
   );
   const { createEntity, isCreating } = useCreateEntity(
     v3EntityName(entityName) as FormEntity,
-    useCallback(({ uuid }) => router.replace(`/entity/${entityName}/edit/${uuid}`), [entityName, router]),
+    useCallback(
+      ({ uuid }) => router.replace(withReportsIndexReturn(`/entity/${entityName}/edit/${uuid}`, from)),
+      [entityName, from, router]
+    ),
     `Failed to create ${kebabCase(singularEntityName(entityName)).replace("-", " ")}`
   );
 
   const handleContinue = useCallback(() => {
     if (entityUUID != null) {
-      router.push(`/entity/${entityName}/edit/${entityUUID}`);
+      router.push(withReportsIndexReturn(`/entity/${entityName}/edit/${entityUUID}`, from));
     } else {
       if (entityName === "projects") {
         (createEntity as (attributes: ProjectCreateAttributes) => void)({
@@ -100,7 +105,7 @@ const EntityIntroPage = () => {
         });
       }
     }
-  }, [createEntity, entityName, entityUUID, formUUID, parentUUID, router]);
+  }, [createEntity, entityName, entityUUID, formUUID, from, parentUUID, router]);
 
   return (
     <BackgroundLayout>

@@ -10,7 +10,13 @@ import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/Hi
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ReportsIndexSourceEntity } from "../reportIndex.types";
-import { ALL_PROJECTS_VIEW_VALUE, getReportsIndexUrl, ReportsIndexSource } from "../reportIndex.utils";
+import {
+  ALL_PROJECTS_VIEW_VALUE,
+  getReportsIndexUrl,
+  isReportsIndexTab,
+  ReportsIndexSource,
+  ReportsIndexTab
+} from "../reportIndex.utils";
 import { useReportsSelectionActions } from "../ReportsSelection.provider";
 import { useAdditionalReportsData } from "../useAdditionalReportsData";
 import { useReportsIndexData } from "../useReportsIndexData";
@@ -32,7 +38,8 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const router = useRouter();
   const viewFromQuery = typeof router.query.view === "string" ? router.query.view : undefined;
   const uuidFromQuery = typeof router.query.uuid === "string" ? router.query.uuid : undefined;
-  const [activeTab, setActiveTab] = useState("progress-reports");
+  const tabFromQuery = typeof router.query.tab === "string" ? router.query.tab : undefined;
+  const activeTab: ReportsIndexTab = isReportsIndexTab(tabFromQuery) ? tabFromQuery : "progress-reports";
   const [query, setQuery] = useState("");
   const [viewValue, setViewValue] = useState(
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
@@ -57,6 +64,11 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
   const { filteredProgressSections, filteredAdditionalSections, progressReportCount, additionalReportCount } =
     useReportsIndexFilters({ progressSections, additionalSections, query });
+
+  const indexHref = getReportsIndexUrl(source, sourceEntity.uuid, {
+    tab: activeTab,
+    view: isAllProjectsView ? ALL_PROJECTS_VIEW_VALUE : undefined
+  });
 
   const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
   const hasActiveSearch = query.trim().length > 0;
@@ -120,17 +132,29 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
         return;
       }
 
-      void router.replace(getReportsIndexUrl("project", nextView), undefined, { shallow: true });
+      void router.replace(
+        getReportsIndexUrl("project", nextView, {
+          tab: activeTab === "additional-reports" ? "additional-reports" : undefined
+        }),
+        undefined,
+        { shallow: true }
+      );
     },
-    [clearSelection, project.uuid, router]
+    [clearSelection, project.uuid, router, activeTab]
   );
 
   const handleTabChange = useCallback(
     (tab: string) => {
       clearSelection();
-      setActiveTab(tab);
+      const query = { ...router.query };
+      if (tab === "additional-reports") {
+        query.tab = tab;
+      } else {
+        delete query.tab;
+      }
+      void router.replace({ pathname: router.pathname, query }, undefined, { shallow: true });
     },
-    [clearSelection]
+    [clearSelection, router]
   );
 
   const handleReportsChanged = useCallback(() => {
@@ -150,12 +174,13 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
         onTabChange={handleTabChange}
         onViewChange={handleViewChange}
         onQueryChange={setQuery}
+        indexHref={indexHref}
       />
-      <PageContent className="px-2 py-0">
+      <PageContent className="px-1.5 py-0">
         {activeTab === "progress-reports" && (
           <>
             {progressLoading || isSwitchingProject ? (
-              <Flex minHeight="240px" alignItems="center" justifyContent="center" gap={3}>
+              <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
                 <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
                 <Text textStyle="400" color="neutral.800">
                   {t("Loading reports...")}
@@ -171,7 +196,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                 <ReportsSearchNoResults />
               ) : (
                 <Box background="neutral.100" h="full" p={4}>
-                  <Text textStyle="400-bold">{t("No additional reports found")}</Text>
+                  <Text textStyle="400-bold">{t("No reports found")}</Text>
                   <Text textStyle="400">{t("Try changing your search or filters.")}</Text>
                 </Box>
               )
@@ -181,8 +206,9 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                   <ProjectReportsSection
                     key={section.id}
                     section={section}
-                    defaultOpen={index === 0}
+                    defaultOpen={index === 0 && !isAllProjectsView}
                     metricsReady={progressMetricsReady}
+                    indexHref={indexHref}
                   />
                 ))}
               </div>
@@ -196,6 +222,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
             loading={additionalLoading || isSwitchingProject}
             error={additionalError}
             hasActiveSearch={hasActiveSearch}
+            indexHref={indexHref}
           />
         )}
 

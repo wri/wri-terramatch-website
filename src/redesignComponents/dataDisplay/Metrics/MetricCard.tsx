@@ -45,7 +45,7 @@ const MetricTooltipTrigger: FC<MetricTooltipTriggerProps> = ({ tooltipContent, m
   return (
     <Tooltip content={tooltipContent} position="top">
       <button type="button" className="inline-flex items-center" onClick={handleClick} aria-label="Metric information">
-        <InfoIcon color="neutral.800" boxSize="14px" />
+        <InfoIcon color="neutral.800" boxSize="0.875rem" />
       </button>
     </Tooltip>
   );

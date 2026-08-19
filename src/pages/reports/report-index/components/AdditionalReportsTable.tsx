@@ -21,7 +21,7 @@ import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import { CalendarIcon, DueIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { AdditionalReport, AdditionalReportType } from "../reportIndex.types";
-import { getReportIndexItemPath } from "../reportIndex.utils";
+import { getReportIndexItemPath, withReportsIndexReturn } from "../reportIndex.utils";
 import { useReportTableSelection } from "../ReportsSelection.provider";
 
 const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): TableColumn[] => {
@@ -61,9 +61,10 @@ const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): Tab
 type AdditionalReportsTableProps = {
   reports: AdditionalReport[];
   type: AdditionalReportType;
+  indexHref?: string;
 };
 
-const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) => {
+const AdditionalReportsTable = ({ reports, type, indexHref }: AdditionalReportsTableProps) => {
   const t = useT();
   const { format } = useDate();
   const { selectedRows, isReportSelected, handleRowSelected, handleAllItemsSelected } =
@@ -84,7 +85,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
         <ActionStatusTag
           state="neutral-light"
           label={format(date)}
-          icon={<CalendarIcon boxSize="10px" />}
+          icon={<CalendarIcon boxSize="0.625rem" />}
           size="small"
           className="rounded bg-theme-neutral-200"
         />
@@ -114,7 +115,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
           <ChakraTableCell {...context?.getCellProps("name")}>
             <TitleCell
               label={reportName}
-              link={`/reports/${report.type}/${report.id}`}
+              link={withReportsIndexReturn(`/reports/${report.type}/${report.id}`, indexHref)}
               linkTarget="_self"
               showChevron={false}
             />
@@ -174,7 +175,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
                 button={{
                   children: t("Edit"),
                   as: "a",
-                  href: getReportIndexItemPath(report),
+                  href: withReportsIndexReturn(getReportIndexItemPath(report), indexHref),
                   leftIcon: (
                     <EditIcon
                       css={{
@@ -192,7 +193,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
         </TableRow>
       );
     },
-    [currencyLabels, format, handleRowSelected, isReportSelected, monthLabels, renderDateTag, t]
+    [currencyLabels, format, handleRowSelected, indexHref, isReportSelected, monthLabels, renderDateTag, t]
   );
 
   return (

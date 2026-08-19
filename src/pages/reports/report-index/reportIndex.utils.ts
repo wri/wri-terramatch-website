@@ -8,7 +8,13 @@ export const REPORTS_INDEX_SOURCES = ["project", "site", "nursery"] as const;
 
 export type ReportsIndexSource = (typeof REPORTS_INDEX_SOURCES)[number];
 
+export const REPORTS_INDEX_TABS = ["progress-reports", "additional-reports"] as const;
+
+export type ReportsIndexTab = (typeof REPORTS_INDEX_TABS)[number];
+
 export const ALL_PROJECTS_VIEW_VALUE = "all";
+
+export const REPORTS_INDEX_PATH = "/reports/report-index";
 
 export const REPORT_INDEX_TYPE_TO_ENTITY = {
   "project-report": "projectReports",
@@ -37,8 +43,64 @@ const NOTHING_TO_REPORT_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["dr
 export const isReportsIndexSource = (value: string | undefined): value is ReportsIndexSource =>
   REPORTS_INDEX_SOURCES.some(source => source === value);
 
-export const getReportsIndexUrl = (source: ReportsIndexSource, uuid: string) =>
-  `/reports/report-index?source=${source}&uuid=${encodeURIComponent(uuid)}`;
+export const isReportsIndexTab = (value: string | undefined): value is ReportsIndexTab =>
+  REPORTS_INDEX_TABS.some(tab => tab === value);
+
+export const isReportsIndexPath = (href: string | undefined): href is string => {
+  if (href == null || href === "") return false;
+  const path = href.split("?")[0];
+  return path === REPORTS_INDEX_PATH || path.endsWith(REPORTS_INDEX_PATH);
+};
+
+export type ReportsIndexUrlOptions = {
+  tab?: ReportsIndexTab;
+  view?: string;
+};
+
+export const getReportsIndexUrl = (source: ReportsIndexSource, uuid: string, options?: ReportsIndexUrlOptions) => {
+  const params = new URLSearchParams({ source, uuid });
+  if (options?.tab != null && options.tab !== "progress-reports") {
+    params.set("tab", options.tab);
+  }
+  if (options?.view != null && options.view !== "") {
+    params.set("view", options.view);
+  }
+  return `${REPORTS_INDEX_PATH}?${params.toString()}`;
+};
+
+type ReportEntityForIndex = {
+  projectUuid?: string | null;
+  siteUuid?: string | null;
+  nurseryUuid?: string | null;
+};
+
+export const getReportsIndexUrlForEntity = (
+  tab: ReportsIndexTab,
+  entity: ReportEntityForIndex,
+  source?: ReportsIndexSource
+) => {
+  if (source === "site" && entity.siteUuid != null) {
+    return getReportsIndexUrl("site", entity.siteUuid, { tab });
+  }
+  if (source === "nursery" && entity.nurseryUuid != null) {
+    return getReportsIndexUrl("nursery", entity.nurseryUuid, { tab });
+  }
+  if (entity.projectUuid != null) {
+    return getReportsIndexUrl("project", entity.projectUuid, { tab });
+  }
+  return undefined;
+};
+
+export const getReportsIndexHrefFromQuery = (from: unknown, fallback?: string) => {
+  const value = typeof from === "string" ? from : undefined;
+  return isReportsIndexPath(value) ? value : fallback;
+};
+
+export const withReportsIndexReturn = (href: string, indexHref?: string) => {
+  if (indexHref == null || indexHref === "") return href;
+  const separator = href.includes("?") ? "&" : "?";
+  return `${href}${separator}from=${encodeURIComponent(indexHref)}`;
+};
 
 export const getReportIndexItemPath = (report: ReportIndexItem) => {
   if (["approved", "pending-approval"].includes(report.status)) {

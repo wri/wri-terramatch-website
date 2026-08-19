@@ -3,6 +3,11 @@ import { startCase } from "lodash";
 import { ReactNode } from "react";
 
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
+import {
+  getReportsIndexHrefFromQuery,
+  getReportsIndexUrl,
+  getReportsIndexUrlForEntity
+} from "@/pages/reports/report-index/reportIndex.utils";
 import { ProgressState } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { EntityName, SingularEntityName } from "@/types/common";
@@ -34,6 +39,7 @@ export type EntityLinkHeaderParams = {
   firstLinkIcon: ReactNode;
   t: typeof useT;
   taskTitle?: string;
+  from?: unknown;
 };
 
 export type EntityLinkHeaderMap = Record<string, Array<{ label: string; link: string; icon?: ReactNode }>>;
@@ -64,7 +70,18 @@ export const mapEntityTitle = (title: string | null, model: string, t: typeof us
 };
 
 export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkHeaderMap {
-  const { isAdmin, model, uuid, redirectEntityPage, adminListPath, entity, firstLinkIcon, t, taskTitle = "" } = params;
+  const {
+    isAdmin,
+    model,
+    uuid,
+    redirectEntityPage,
+    adminListPath,
+    entity,
+    firstLinkIcon,
+    t,
+    taskTitle = "",
+    from
+  } = params;
   const linkLabel = t(startCase(model));
 
   const editLink = uuid ? `/entity/${singularEntityName(model as EntityName | SingularEntityName)}/edit/${uuid}` : "#";
@@ -80,6 +97,24 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
 
   const entityPageLink =
     isAdmin && redirectEntityPage == undefined ? adminListPath! : redirectEntityPage ?? "/my-projects";
+
+  const progressReportsHref =
+    getReportsIndexHrefFromQuery(from, getReportsIndexUrlForEntity("progress-reports", entity ?? {}, "project")) ??
+    entityPageLink;
+  const siteReportsHref =
+    getReportsIndexHrefFromQuery(from, getReportsIndexUrlForEntity("progress-reports", entity ?? {}, "site")) ??
+    entityPageLink;
+  const nurseryReportsHref =
+    getReportsIndexHrefFromQuery(from, getReportsIndexUrlForEntity("progress-reports", entity ?? {}, "nursery")) ??
+    entityPageLink;
+  const additionalReportsHref =
+    getReportsIndexHrefFromQuery(from, getReportsIndexUrlForEntity("additional-reports", entity ?? {}, "project")) ??
+    (entity?.projectUuid != null
+      ? getReportsIndexUrl("project", entity.projectUuid, { tab: "additional-reports" })
+      : entityPageLink);
+  const financialReportsHref =
+    getReportsIndexHrefFromQuery(from, undefined) ??
+    (entity?.organisationUuid != null ? `/organization/${entity.organisationUuid}` : entityPageLink);
 
   return {
     projects: withFirstIcon([
@@ -117,11 +152,11 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
       },
       {
         label: "Reports",
-        link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}?tab=reporting-tasks`
+        link: isAdmin ? adminListPath! : progressReportsHref
       },
       {
         label: getShortPeriodLabel(taskTitle, true),
-        link: `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
+        link: isAdmin ? adminListPath! : progressReportsHref
       },
       { label: entityTitle, link: entityPageLink },
       { label: t("Edit"), link: editLink }
@@ -145,7 +180,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
       },
       {
         label: "Reports",
-        link: isAdmin ? adminListPath! : `/site/${entity?.siteUuid ?? ""}?tab=completed-tasks`
+        link: isAdmin ? adminListPath! : siteReportsHref
       },
       { label: entityTitle + " - " + getShortPeriodLabel(taskTitle), link: entityPageLink },
       { label: t("Edit"), link: editLink }
@@ -169,7 +204,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
       },
       {
         label: "Reports",
-        link: isAdmin ? adminListPath! : `/nursery/${entity?.nurseryUuid ?? ""}?tab=completed-tasks`
+        link: isAdmin ? adminListPath! : nurseryReportsHref
       },
       { label: entityTitle + " - " + getShortPeriodLabel(taskTitle), link: entityPageLink },
       { label: t("Edit"), link: editLink }
@@ -179,11 +214,11 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         label: isAdmin
           ? linkLabel
           : t("Organisation - {organisationName}", { organisationName: entity?.organisationName ?? "" }),
-        link: isAdmin ? adminListPath! : `/organization/${entity?.organisationUuid ?? ""}?tab=financial_information`
+        link: isAdmin ? adminListPath! : `/organization/${entity?.organisationUuid ?? ""}`
       },
       {
         label: t("Financial Reports"),
-        link: isAdmin ? adminListPath! : `/organization/${entity?.organisationUuid ?? ""}?tab=financial_information`
+        link: isAdmin ? adminListPath! : financialReportsHref
       },
       { label: entityTitle + " - " + getShortPeriodLabel(taskTitle ?? "", true), link: entityPageLink },
       { label: t("Edit"), link: editLink }
@@ -199,13 +234,11 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
       },
       {
         label: t("Reports"),
-        link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}?tab=reporting-tasks`
+        link: isAdmin ? adminListPath! : additionalReportsHref
       },
       {
         label: t("Disturbance Reports"),
-        link: isAdmin
-          ? adminListPath!
-          : `/project/${entity?.projectUuid ?? ""}?tab=reporting-tasks&subTab=disturbance-reports`
+        link: isAdmin ? adminListPath! : additionalReportsHref
       },
       { label: entityTitle, link: entityPageLink },
       { label: t("Edit"), link: editLink }
@@ -221,11 +254,11 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
       },
       {
         label: "Reports",
-        link: isAdmin ? adminListPath! : `/project/${entity?.projectUuid ?? ""}?tab=reporting-tasks`
+        link: isAdmin ? adminListPath! : additionalReportsHref
       },
       {
         label: getShortPeriodLabel(taskTitle, true),
-        link: `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
+        link: isAdmin ? adminListPath! : additionalReportsHref
       },
       { label: entityTitle, link: entityPageLink },
       { label: t("Edit"), link: editLink }
