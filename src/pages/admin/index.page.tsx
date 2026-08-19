@@ -1,12 +1,14 @@
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import { FC } from "react";
-import { Admin, Resource } from "react-admin";
+import { Admin, CustomRoutes, Resource } from "react-admin";
+import { Route } from "react-router-dom";
 
 import { authProvider } from "@/admin/apiProvider/authProvider";
 import { dataProvider } from "@/admin/apiProvider/dataProviders";
 import AppLayout from "@/admin/components/AppLayout";
 import { theme } from "@/admin/components/theme";
 import { sectionTitle } from "@/admin/modules/aboutSections/util";
+import { PolygonOptionalAttributes } from "@/admin/modules/reportingFramework/components/PolygonOptionalAttributes";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMyUser } from "@/connections/User";
 import { LoadingProvider } from "@/context/loaderAdmin.provider";
@@ -188,6 +190,12 @@ const AdminPanel: FC = () => {
           icon={() => <Icon className="h-7 w-7" name={IconNames.SRP_REPORT} />}
           options={{ label: "SRP Reports" }}
         />
+        <CustomRoutes>
+          <Route
+            path={`${modules.reportingFramework.ResourceName}/:frameworkKey/optional-attributes`}
+            element={<PolygonOptionalAttributes />}
+          />
+        </CustomRoutes>
       </Admin>
     </LoadingProvider>
   );
