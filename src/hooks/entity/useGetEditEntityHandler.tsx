@@ -117,7 +117,7 @@ export const useGetEditEntityHandler = ({
             <WarningIcon boxSize={10} color="warning.500" />
             <Text textStyle="400" color="neutral.900">
               {t(
-                "While we review your {entityName}, it is closed for editing. After a thorough review, a TerraMatch Admin will either approve this {entityName} or request more information. If you have any questions or have critical changes to make in the meantime, please contact {email} with the details.",
+                "While we review your {entityName}, it is closed for editing. A Reviewer will either approve this {entityName} or request more information. If you have any questions or have critical changes to make in the meantime, please contact {email} with the details.",
                 {
                   entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true),
                   email: (
