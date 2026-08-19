@@ -32,7 +32,7 @@ const ApplicationsTable = () => {
           const status = last(props.row.original.submissions)?.status;
           if (status == null) return null;
 
-          return <StatusTag status={status} size="small" />;
+          return <StatusTag status={status} size="small" source="formSubmission" />;
         },
         header: t("Status")
       },
