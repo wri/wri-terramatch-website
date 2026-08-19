@@ -49,6 +49,7 @@ const BulkActionToolbarActions = memo(function BulkActionToolbarActions({
               <Button
                 {...buttonProps}
                 className={classNames(
+                  "disabled:!text-theme-neutral-400",
                   tone === "danger" ? BORDERLESS_DANGER_CLASS : BORDERLESS_NEUTRAL_CLASS,
                   buttonProps.className
                 )}
