@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useCreateDisturbanceReport } from "@/connections/Entity";
 import { getReportStatusOptions } from "@/constants/options/status";
 import { useReportsContext } from "@/context/reports.provider";
+import { useDate } from "@/hooks/useDate";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
@@ -16,10 +17,13 @@ import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
+import { ReportPeriodOptions } from "../reportPeriodFilter";
 import {
+  clearReportPeriodFilters,
   EMPTY_REPORT_FILTERS,
-  formatDueDateRangeLabel,
+  formatReportPeriodLabel,
   getDefaultProgressFiltersForSource,
+  getReportPeriodControl,
   REPORT_TYPE_LABELS,
   ReportFilterState
 } from "./reportFilter.constants";
@@ -33,6 +37,7 @@ type ReportsIndexHeaderProps = {
   reportCount: number;
   viewValue: string;
   viewItems: HighLevelSelectorItem[];
+  periodOptions: ReportPeriodOptions;
   onTabChange: (tab: string) => void;
   onViewChange: (value: string) => void;
   onQueryChange: (query: string) => void;
@@ -46,12 +51,14 @@ const ReportsIndexHeader = ({
   reportCount,
   viewValue,
   viewItems,
+  periodOptions,
   onTabChange,
   onViewChange,
   onQueryChange
 }: ReportsIndexHeaderProps) => {
   const t = useT();
   const router = useRouter();
+  const { format } = useDate();
   const { setFilters } = useReportsContext();
 
   const [filtersByTab, setFiltersByTab] = useState<Record<string, ReportFilterState>>(() => ({
@@ -116,18 +123,20 @@ const ReportsIndexHeader = ({
       });
     }
 
-    if (selectedFilters.dueDateFrom !== "" || selectedFilters.dueDateTo !== "") {
+    const periodLabel = formatReportPeriodLabel(selectedFilters, format);
+    if (periodLabel != null) {
+      const isDateRange = getReportPeriodControl(activeTab, selectedFilters.reportTypes) === "date-range";
       labels.push({
-        label: formatDueDateRangeLabel(selectedFilters.dueDateFrom, selectedFilters.dueDateTo),
-        category: t("Due Date"),
+        label: periodLabel,
+        category: isDateRange ? t("Due Date") : t("Time Period"),
         onRemove: () => {
-          updateActiveFilters({ ...selectedFilters, dueDateFrom: "", dueDateTo: "" });
+          updateActiveFilters(clearReportPeriodFilters(selectedFilters));
         }
       });
     }
 
     return labels;
-  }, [selectedFilters, statusOptions, t, updateActiveFilters]);
+  }, [activeTab, format, selectedFilters, statusOptions, t, updateActiveFilters]);
 
   const applyFilters = useCallback(
     (filters: ReportFilterState) => {
@@ -221,6 +230,7 @@ const ReportsIndexHeader = ({
         open={isFilterDrawerOpen}
         activeTab={activeTab}
         filters={selectedFilters}
+        periodOptions={periodOptions}
         onApplyFilters={applyFilters}
         onOpenChange={setIsFilterDrawerOpen}
       />

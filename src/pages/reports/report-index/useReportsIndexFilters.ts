@@ -9,6 +9,13 @@ import {
   ReportsIndexProjectSection,
   ReportsIndexReport
 } from "./reportIndex.types";
+import {
+  getAdditionalReportDate,
+  getAdditionalReportYear,
+  getIsoMonth,
+  getReportingPeriod,
+  ReportPeriod
+} from "./reportPeriodFilter";
 
 type ReportFilterCriteria = {
   query: string;
@@ -16,6 +23,8 @@ type ReportFilterCriteria = {
   statuses: string[];
   dueDateFrom: string;
   dueDateTo: string;
+  dueMonth: string;
+  dueYear: string;
 };
 
 const matchesSearchQuery = (values: Array<string | null | undefined>, query: string) => {
@@ -42,12 +51,30 @@ const matchesDueDateRange = (dueAt: string | null | undefined, dueDateFrom: stri
   return true;
 };
 
+/**
+ * A report matches the time period filters when it clears the date range and, where set, reports on
+ * the selected month (on any year) or year. The month and year inputs are mutually exclusive in the
+ * drawer, so at most one of them narrows the list.
+ */
+const matchesReportPeriod = (
+  date: string | null | undefined,
+  period: Partial<ReportPeriod>,
+  criteria: ReportFilterCriteria
+) => {
+  if (!matchesDueDateRange(date, criteria.dueDateFrom, criteria.dueDateTo)) return false;
+  if (criteria.dueMonth !== "" && period.month !== criteria.dueMonth) return false;
+  if (criteria.dueYear !== "" && period.year !== criteria.dueYear) return false;
+  return true;
+};
+
 const toFilterCriteria = (query: string, filters: ReportsFilterValues): ReportFilterCriteria => ({
   query: query.trim().toLocaleLowerCase(),
   reportTypes: filters.reportTypes,
   statuses: filters.statuses,
   dueDateFrom: filters.dueDateFrom,
-  dueDateTo: filters.dueDateTo
+  dueDateTo: filters.dueDateTo,
+  dueMonth: filters.dueMonth,
+  dueYear: filters.dueYear
 });
 
 const matchesProgressReport = (report: ReportsIndexReport, criteria: ReportFilterCriteria) => {
@@ -68,8 +95,8 @@ const matchesAdditionalReport = (report: AdditionalReport, criteria: ReportFilte
   }
   if (!matchesTypeAndStatus(report, criteria)) return false;
 
-  const reportDate = report.type === "disturbance-report" ? report.dateOfDisturbance : report.dueAt;
-  return matchesDueDateRange(reportDate, criteria.dueDateFrom, criteria.dueDateTo);
+  const date = getAdditionalReportDate(report);
+  return matchesReportPeriod(date, { month: getIsoMonth(date), year: getAdditionalReportYear(report) }, criteria);
 };
 
 export const filterProgressPeriods = (periods: ReportsIndexPeriod[], criteria: ReportFilterCriteria) =>
@@ -80,7 +107,7 @@ export const filterProgressPeriods = (periods: ReportsIndexPeriod[], criteria: R
     }))
     .filter(period => {
       if (period.reports.length === 0) return false;
-      return matchesDueDateRange(period.dueAt, criteria.dueDateFrom, criteria.dueDateTo);
+      return matchesReportPeriod(period.dueAt, getReportingPeriod(period.dueAt) ?? {}, criteria);
     });
 
 export const filterProgressSections = (sections: ReportsIndexProjectSection[], criteria: ReportFilterCriteria) =>

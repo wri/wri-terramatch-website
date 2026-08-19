@@ -11,13 +11,19 @@ export type ReportFilterState = {
   statuses: string[];
   dueDateFrom: string;
   dueDateTo: string;
+  /** Reporting month as "1"–"12", matched on any year. Mutually exclusive with `dueYear`. */
+  dueMonth: string;
+  /** Reporting year as "2026". Mutually exclusive with `dueMonth`. */
+  dueYear: string;
 };
 
 export const EMPTY_REPORT_FILTERS: ReportFilterState = {
   reportTypes: [],
   statuses: [],
   dueDateFrom: "",
-  dueDateTo: ""
+  dueDateTo: "",
+  dueMonth: "",
+  dueYear: ""
 };
 
 export const getDefaultProgressFiltersForSource = (source: "project" | "site" | "nursery"): ReportFilterState => {
@@ -33,6 +39,40 @@ export const getDefaultProgressFiltersForSource = (source: "project" | "site" | 
 export const formatDueDateRangeLabel = (from: string, to: string) => {
   if (from !== "" && to !== "") return `${from} — ${to}`;
   return from !== "" ? from : to;
+};
+
+/**
+ * Which time period control the filters offer. Progress reports are filed on a fixed set of
+ * reporting months, so they refine by month or year. Annual SRP and financial reports only report
+ * on a year. Disturbances happen on an arbitrary date, so they keep the range picker.
+ */
+export type ReportPeriodControl = "month-year" | "year" | "date-range";
+
+export const getReportPeriodControl = (activeTab: string, reportTypes: ReportTypeOption[]): ReportPeriodControl => {
+  if (reportTypes.includes("disturbance-report")) return "date-range";
+  return activeTab === "additional-reports" ? "year" : "month-year";
+};
+
+export const clearReportPeriodFilters = (filters: ReportFilterState): ReportFilterState => ({
+  ...filters,
+  dueDateFrom: "",
+  dueDateTo: "",
+  dueMonth: "",
+  dueYear: ""
+});
+
+type DateFormatter = (date?: string | number | Date | null, pattern?: string) => string;
+
+export const formatMonthLabel = (month: string, format: DateFormatter) =>
+  format(new Date(2000, Number(month) - 1, 1), "LLLL");
+
+export const formatReportPeriodLabel = (filters: ReportFilterState, format: DateFormatter): string | undefined => {
+  if (filters.dueMonth !== "") return formatMonthLabel(filters.dueMonth, format);
+  if (filters.dueYear !== "") return filters.dueYear;
+  if (filters.dueDateFrom !== "" || filters.dueDateTo !== "") {
+    return formatDueDateRangeLabel(filters.dueDateFrom, filters.dueDateTo);
+  }
+  return undefined;
 };
 
 export const PROGRESS_REPORT_TYPE_OPTIONS: { value: ReportTypeOption; label: string }[] = [
