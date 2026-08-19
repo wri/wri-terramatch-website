@@ -1,17 +1,16 @@
 import { Box, Flex, useBreakpointValue } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import router from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import StatusTag from "@/components/elements/StatusTag/StatusTag";
-import EntityInformationRequiredModal from "@/components/extensive/EntityInformationRequiredModal";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
+import { PENDING_APPROVAL } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -32,7 +31,6 @@ interface SiteOverviewTabProps {
 const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
   const contextMapArea = useMapAreaContext();
-  const [openStatusModal, setOpenStatusModal] = useState(false);
   const { setSiteData, resetSiteMapInteractionState } = contextMapArea;
 
   useEffect(() => {
@@ -46,6 +44,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     entityUUID: site.uuid,
     entityStatus: site.status ?? "draft",
     updateRequestStatus: site.updateRequestStatus,
+    feedback: site.feedback,
     useInformationRequiredModal: true
   });
 
@@ -71,26 +70,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     });
   };
 
-  const needMoreInformation = site.updateRequestStatus === INFORMATION_REQUIRED || site.status === INFORMATION_REQUIRED;
-  const awaitingApproval = site.updateRequestStatus === PENDING_APPROVAL || site.status === PENDING_APPROVAL;
-
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval) {
-      setOpenStatusModal(true);
-    } else {
-      handleEdit();
-    }
-  }, [needMoreInformation, handleEdit, awaitingApproval]);
-
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
-      <EntityInformationRequiredModal
-        feedback={site.feedback}
-        entityName="sites"
-        entityUuid={site.uuid}
-        open={openStatusModal}
-        onOpenChange={setOpenStatusModal}
-      />
       <PageContent>
         {EditModals}
         <Flex gap={7} className="flex-col sm:flex-row">
@@ -141,7 +122,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               size: "small",
               children: isSiteSetupComplete ? t("Edit") : t("Continue"),
               rightIcon: <ChevronRightIcon boxSize={4} />,
-              onClick: () => handleEditClick()
+              onClick: () => handleEdit()
             }}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
