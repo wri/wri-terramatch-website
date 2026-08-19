@@ -106,7 +106,7 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
               <ActionStatusTag
                 state="neutral-light"
                 label={format(report.updatedAt)}
-                icon={<CalendarIcon boxSize="10px" />}
+                icon={<CalendarIcon boxSize="0.625rem" />}
                 size="small"
                 className="rounded bg-theme-neutral-200"
               />
@@ -141,7 +141,7 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
 
   if (reports.length === 0) {
     return (
-      <div className="flex min-h-[120px] items-center justify-center">
+      <div className="flex min-h-[7.5rem] items-center justify-center">
         <Button variant="borderless" disabled>
           {t("No reports are available for this reporting period.")}
         </Button>

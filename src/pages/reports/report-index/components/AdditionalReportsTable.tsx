@@ -84,7 +84,7 @@ const AdditionalReportsTable = ({ reports, type }: AdditionalReportsTableProps) 
         <ActionStatusTag
           state="neutral-light"
           label={format(date)}
-          icon={<CalendarIcon boxSize="10px" />}
+          icon={<CalendarIcon boxSize="0.625rem" />}
           size="small"
           className="rounded bg-theme-neutral-200"
         />
