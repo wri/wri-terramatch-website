@@ -10,6 +10,7 @@ import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/Hi
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ReportsIndexSourceEntity } from "../reportIndex.types";
+import { getReportPeriodOptions } from "../reportPeriodFilter";
 import {
   ALL_PROJECTS_VIEW_VALUE,
   getReportsIndexUrl,
@@ -72,6 +73,13 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
   const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
   const hasActiveSearch = query.trim().length > 0;
+
+  // Built from the unfiltered sections so refining by a period never shrinks the list of periods
+  // still on offer.
+  const periodOptions = useMemo(
+    () => getReportPeriodOptions(progressSections, additionalSections),
+    [additionalSections, progressSections]
+  );
 
   const viewItems = useMemo<HighLevelSelectorItem[]>(() => {
     const projectItems =
@@ -171,6 +179,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
         reportCount={reportCount}
         viewValue={viewValue}
         viewItems={viewItems}
+        periodOptions={periodOptions}
         onTabChange={handleTabChange}
         onViewChange={handleViewChange}
         onQueryChange={setQuery}
