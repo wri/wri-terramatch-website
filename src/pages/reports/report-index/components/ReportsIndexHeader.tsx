@@ -158,12 +158,12 @@ const ReportsIndexHeader = ({
         }}
       />
       <PageHeader
-        className="!bg-theme-neutral-100 !px-6"
+        className="!bg-theme-neutral-100 !px-5"
         title={t("Reports")}
         actions={
           <Button
             size="small"
-            leftIcon={<PlusIcon boxSize="10px" />}
+            leftIcon={<PlusIcon boxSize="0.625rem" />}
             disabled={disturbanceReportCreating}
             onClick={() => createDisturbanceReport({ parentUuid: projectUuid })}
           >
@@ -172,7 +172,7 @@ const ReportsIndexHeader = ({
         }
       />
       <Toolbar
-        className="sticky top-10 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-3"
+        className="sticky top-10 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-1.5 pt-3"
         classNameContentLeft="min-w-0"
         classNameContentRight="mt-[-1.25rem]"
         contentLeft={
@@ -194,14 +194,14 @@ const ReportsIndexHeader = ({
             items={viewItems}
             value={viewValue}
             emptyMessage={t("No results found")}
-            width="400px"
+            width="25rem"
             className="mobile:!w-full"
             onChange={onViewChange}
           />
         }
       />
       <ToolbarTable
-        className="!bg-theme-neutral-200 !px-6 !pb-6 !pt-5"
+        className="!bg-theme-neutral-200 !px-5 !pb-6 !pt-5"
         classNameContentLeft="w-full"
         search={{
           placeholder: activeTab === "progress-reports" ? t("Search projects, sites, nurseries") : t("Search"),

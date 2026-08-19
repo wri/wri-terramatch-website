@@ -48,8 +48,8 @@ const variantStyles = {
       alignItems: "center",
       justifyContent: "space-between",
       borderRadius:
-        "var(--Border-Radius-300, 4px) var(--Border-Radius-300, 4px) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
-      borderTop: "var(--Border-Width-200, 2px) solid var(--Neutrals-300, #E7E6E6)"
+        "var(--Border-Radius-300, 0.25rem) var(--Border-Radius-300, 0.25rem) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
+      borderTop: "var(--Border-Width-200, 0.125rem) solid var(--Neutrals-300, #E7E6E6)"
     },
     header: {
       gap: 2
@@ -159,8 +159,8 @@ const Accordion: FC<AccordionProps> = ({
           ? {
               "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
                 borderRadius:
-                  "var(--Border-Radius-300, 4px) var(--Border-Radius-300, 4px) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
-                borderTop: "var(--Border-Width-300, 4px) solid var(--Primary-500, #78CAED)",
+                  "var(--Border-Radius-300, 0.25rem) var(--Border-Radius-300, 0.25rem) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
+                borderTop: "var(--Border-Width-300, 0.25rem) solid var(--Primary-500, #78CAED)",
                 background: "var(--Primary-100, #F7FBFD)"
               }
             }
@@ -168,7 +168,7 @@ const Accordion: FC<AccordionProps> = ({
         ...(variant === "quaternary"
           ? {
               "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
-                borderBottom: "var(--Border-Width-100, 1px) solid var(--Neutrals-300, #E7E6E6) !important",
+                borderBottom: "var(--Border-Width-100, 0.0625rem) solid var(--Neutrals-300, #E7E6E6) !important",
                 borderTop: "none !important",
                 background: "neutral.100 !important"
               }
