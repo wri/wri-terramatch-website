@@ -36,6 +36,7 @@ export type ReportsIndexProjectSection = {
   id: string;
   name: string | null;
   organisationName: string | null;
+  organisationUuid: string | null;
   periods: ReportsIndexPeriod[];
 };
 
@@ -92,5 +93,6 @@ export type AdditionalReportsEntitySection = {
   type: "organisation" | "project";
   name: string | null;
   caption: string;
+  organisationUuid: string | null;
   groups: AdditionalReportGroup[];
 };

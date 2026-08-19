@@ -31,6 +31,7 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
+import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
@@ -529,7 +530,8 @@ function WizardForm(props: WizardFormProps) {
           <ProjectIcon className="!text-theme-primary-900" />
         ),
         t,
-        taskTitle
+        taskTitle,
+        from: router.query.from
       })[models[0].model];
     }
     return [];
@@ -542,7 +544,8 @@ function WizardForm(props: WizardFormProps) {
     props.adminListPath,
     t,
     isAdmin,
-    taskTitle
+    taskTitle,
+    router.query.from
   ]);
 
   const pageHeaderTitle = useMemo(() => {
@@ -617,14 +620,29 @@ function WizardForm(props: WizardFormProps) {
     (tab: string) => {
       if (tab === "project-profile") {
         router.push(`/project/${entity?.projectUuid}`, undefined, { shallow: true });
-      } else if (tab == "site-profile") {
+      } else if (tab === "site-profile") {
         router.push(`/site/${entity?.siteUuid}`, undefined, { shallow: true });
-      } else if (tab == "nursery-profile") {
+      } else if (tab === "nursery-profile") {
         router.push(`/nursery/${entity?.nurseryUuid}`, undefined, { shallow: true });
-      } else if (tab == "project-report") {
+      } else if (tab === "organisation-profile") {
+        router.push(`/organization/${entity?.organisationUuid}`, undefined, { shallow: true });
+      } else if (tab === "my-projects") {
+        router.push("/my-projects", undefined, { shallow: true });
+      } else if (tab === "project-report") {
         router.push(`/reports/project-report/${entity?.projectReportUuid}`, undefined, { shallow: true });
+      } else if (tab === "site-reports") {
+        router.push(`/reports/project-report/${entity?.uuid}?tab=site-reports`, undefined, { shallow: true });
+      } else if (tab === "nursery-reports" || tab === "nurseries-reports") {
+        router.push(`/reports/project-report/${entity?.uuid}?tab=nursery-reports`, undefined, { shallow: true });
       } else {
-        router.push(`/project/${entity?.projectUuid}/reporting-task/${entity?.taskUuid}`, undefined, { shallow: true });
+        const reportsIndexHref = getReportsIndexHrefFromQuery(router.query.from);
+        if (reportsIndexHref != null) {
+          router.push(reportsIndexHref, undefined, { shallow: true });
+          return;
+        }
+        if (entity?.projectUuid != null) {
+          router.push(getReportsIndexUrl("project", entity.projectUuid), undefined, { shallow: true });
+        }
       }
     },
     [router, entity]

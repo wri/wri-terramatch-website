@@ -11,6 +11,7 @@ import { FormEntity } from "@/connections/Form";
 import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { getEntityEditPageLink, getEntityEditPathSegment, v3EntityName } from "@/helpers/entity";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
+import { withReportsIndexReturn } from "@/pages/reports/report-index/reportIndex.utils";
 import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import { WarningIcon } from "@/redesignComponents/foundations/Icons/Function/WarningIcon";
 import { EntityName, SingularEntityName } from "@/types/common";
@@ -192,14 +193,18 @@ export const useGetEditEntityHandler = ({
             onClick: () => {
               setOpenConfirmEditModal(false);
               const stepId = pendingStepId.current;
+              const from = typeof router.query.from === "string" ? router.query.from : undefined;
               if (stepId != null) {
                 router.push(
-                  `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`
+                  withReportsIndexReturn(
+                    `/entity/${editEntityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`,
+                    from
+                  )
                 );
               } else if (entityStatus === "approved") {
-                router.push(getEntityEditPageLink(entityName, entityUUID));
+                router.push(withReportsIndexReturn(getEntityEditPageLink(entityName, entityUUID), from));
               } else {
-                router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
+                router.push(withReportsIndexReturn(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`, from));
               }
             }
           }

@@ -28,6 +28,7 @@ type ReportingPeriodSectionProps = {
   period: ReportsIndexPeriod;
   defaultOpen?: boolean;
   metricsReady?: boolean;
+  indexHref?: string;
 };
 
 type PeriodJobsMetricCardProps = {
@@ -77,7 +78,12 @@ const PeriodJobsMetricCard: FC<PeriodJobsMetricCardProps> = ({ projectReportUuid
   );
 };
 
-const ReportingPeriodSection = ({ period, defaultOpen = false, metricsReady = true }: ReportingPeriodSectionProps) => {
+const ReportingPeriodSection = ({
+  period,
+  defaultOpen = false,
+  metricsReady = true,
+  indexHref
+}: ReportingPeriodSectionProps) => {
   const t = useT();
   const { format } = useDate();
   const [open, setOpen] = useState(defaultOpen);
@@ -186,7 +192,7 @@ const ReportingPeriodSection = ({ period, defaultOpen = false, metricsReady = tr
                 </div>
               </FrameworkProvider>
             )}
-            <ReportsIndexTable reports={period.reports} />
+            <ReportsIndexTable reports={period.reports} indexHref={indexHref} />
           </div>
         ) : null}
       </Accordion>

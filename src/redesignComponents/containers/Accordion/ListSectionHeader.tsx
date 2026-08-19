@@ -29,6 +29,7 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   titleHref,
   onTitleClick,
   caption,
+  captionHref,
   statusLabels,
   icon,
   className,
@@ -38,6 +39,7 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
 }) => {
   const gap = levelStyles[level].gap;
   const isTopLevelLink = titleHref != null;
+  const isCaptionLink = captionHref != null;
 
   const router = useRouter();
 
@@ -50,6 +52,13 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
     event.preventDefault();
 
     router?.push(titleHref);
+  };
+
+  const handleCaptionClick = (event: MouseEvent) => {
+    event.stopPropagation();
+    if (!captionHref) return;
+    event.preventDefault();
+    router?.push(captionHref);
   };
 
   const titleClassName = classNames("truncate", {
@@ -91,11 +100,18 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
               </Text>
             )}
           </Flex>
-          {caption != null && (
-            <Text textStyle="300" className="truncate">
-              {caption}
-            </Text>
-          )}
+          {caption != null &&
+            (isCaptionLink ? (
+              <NextLink href={captionHref} className={titleLinkClassName} onClick={handleCaptionClick}>
+                <Text as="span" textStyle="300" className="truncate underline underline-offset-2">
+                  {caption}
+                </Text>
+              </NextLink>
+            ) : (
+              <Text textStyle="300" className="truncate">
+                {caption}
+              </Text>
+            ))}
         </Flex>
         {dueDate && <FeedbackTag icon={dueIcon} label={dueDate} onClose={() => {}} size="default" type={dueDateType} />}
       </Flex>
