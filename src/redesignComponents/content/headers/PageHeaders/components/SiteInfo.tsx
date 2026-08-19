@@ -1,11 +1,8 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback } from "react";
 
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -37,40 +34,21 @@ const SiteInfo: FC<SiteInfoProps> = ({
 }) => {
   const t = useT();
   const router = useRouter();
-  const [openStatusModal, setOpenStatusModal] = useState(false);
-  const needMoreInformation = site.updateRequestStatus === INFORMATION_REQUIRED || site.status === INFORMATION_REQUIRED;
-  const awaitingApproval = site.updateRequestStatus === PENDING_APPROVAL || site.status === PENDING_APPROVAL;
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "sites",
     entityUUID: site.uuid,
     entityStatus: site.status as string,
     updateRequestStatus: site.updateRequestStatus as string,
+    feedback: site.feedback,
     useInformationRequiredModal: true
   });
 
-  const statusProps = useMemo(() => getStatusProps(t, site, site.status!), [t, site]);
-
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval) {
-      setOpenStatusModal(true);
-    } else {
-      handleEdit();
-    }
-  }, [needMoreInformation, handleEdit, awaitingApproval]);
+  const handleEditClick = useCallback(() => handleEdit(), [handleEdit]);
 
   return (
     <Box gap={2} className="flex flex-col mobile:w-full">
       {EditModals}
-      <EntityStatusModal
-        statusProps={statusProps!}
-        feedback={site.feedback}
-        needMoreInformation={needMoreInformation}
-        entityName="sites"
-        entityUuid={site.uuid}
-        open={openStatusModal}
-        onOpenChange={setOpenStatusModal}
-      />
       <Text
         textStyle="400"
         color="neutral.900"

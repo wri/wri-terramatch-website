@@ -124,6 +124,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
     entityUUID,
     entityStatus: entityStatus ?? "draft",
     updateRequestStatus: updateRequestStatus!,
+    feedback: entity.feedback,
     useInformationRequiredModal: true
   });
 
