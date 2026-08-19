@@ -97,6 +97,10 @@ export const useGetEditEntityHandler = ({
       setOpenStatusModal(true);
     } else {
       pendingStepId.current = stepId;
+      if (entityStatus === "draft") {
+        router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
+        return;
+      }
       setOpenConfirmEditModal(true);
     }
   };
@@ -142,7 +146,7 @@ export const useGetEditEntityHandler = ({
             id: "cancel",
             className: "w-fit",
             variant: "secondary",
-            children: t("Cancel"),
+            children: useInformationRequiredModal ? t("Close") : t("Cancel"),
             onClick: () => setOpenReviewInProgressModal(false)
           }
         ]}

@@ -134,7 +134,6 @@ const SharedDetails: FC<SharedDetailsProps> = ({
     [step.validation, formValues]
   );
   const validationFieldsRequiringAttention = countValidationErrors(validationErrorsByField);
-  const isValid = validationFieldsRequiringAttention === 0;
 
   const feedbackFieldsRequiringAttention =
     feedbackBaselineValues != null
@@ -147,7 +146,6 @@ const SharedDetails: FC<SharedDetailsProps> = ({
         )
       : countFeedbackInStep(fieldsProvider, step.id, feedbackFieldsOptions);
   const hasStepFeedback = feedbackFieldsRequiringAttention > 0;
-  const accordionHeaderStatus = !isValid || hasStepFeedback ? "error" : "complete";
   const fieldsRequiringAttention = hasStepFeedback
     ? Math.max(validationFieldsRequiringAttention, feedbackFieldsRequiringAttention)
     : validationFieldsRequiringAttention;
@@ -164,7 +162,8 @@ const SharedDetails: FC<SharedDetailsProps> = ({
     entityName,
     entityUUID,
     entityStatus: entityStatus ?? "draft",
-    updateRequestStatus: updateRequestStatus!
+    updateRequestStatus: updateRequestStatus!,
+    useInformationRequiredModal: true
   });
 
   const reportEntityType = resolveReportEntityTypeFromEntityName(entityName as EntityName);
