@@ -14,7 +14,6 @@ type ReportsBulkActionToolbarProps = {
   downloadDisabled?: boolean;
   isDownloading?: boolean;
   nothingToReportDisabled?: boolean;
-  nothingToReportDisabledTooltip?: string;
   submitDisabled?: boolean;
   isUpdating?: boolean;
   submitDisabledTooltip?: string;
@@ -25,8 +24,6 @@ type ReportsBulkActionToolbarProps = {
   onSubmit: () => void;
 };
 
-const BORDERLESS_DISABLED_CLASS = "!cursor-not-allowed !text-theme-neutral-400 !opacity-60";
-
 const ReportsBulkActionToolbar = ({
   visible,
   itemCount,
@@ -34,7 +31,6 @@ const ReportsBulkActionToolbar = ({
   downloadDisabled = false,
   isDownloading = false,
   nothingToReportDisabled = false,
-  nothingToReportDisabledTooltip,
   submitDisabled = false,
   isUpdating = false,
   submitDisabledTooltip,
@@ -62,8 +58,6 @@ const ReportsBulkActionToolbar = ({
         id: "nothing-to-report",
         children: t("Nothing to Report"),
         disabled: nothingToReportDisabled || isUpdating,
-        infoTooltip: nothingToReportDisabled ? nothingToReportDisabledTooltip : undefined,
-        className: nothingToReportDisabled ? BORDERLESS_DISABLED_CLASS : undefined,
         onClick: onNothingToReport
       }
     ];
@@ -78,7 +72,7 @@ const ReportsBulkActionToolbar = ({
     }
 
     return nextActions;
-  }, [editDisabled, isUpdating, nothingToReportDisabled, nothingToReportDisabledTooltip, onEdit, onNothingToReport, t]);
+  }, [editDisabled, isUpdating, nothingToReportDisabled, onEdit, onNothingToReport, t]);
 
   useEffect(() => {
     setSidebarCollapseDisabled(visible);
