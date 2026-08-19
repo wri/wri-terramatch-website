@@ -55,7 +55,7 @@ const EntityInformationRequiredModal: FC<EntityInformationRequiredModalProps> = 
           <InformationRequiredIcon color="warning.500" boxSize={"2rem"} />
           <Text textStyle="400" color="neutral.900">
             {t(
-              "A TerraMatch Admin requested additional details on this {entityName}. Please review the feedback provided and update the relevant fields.",
+              "A Reviewer requested additional details on this {entityName}. Please review the feedback provided and update the relevant fields.",
               { entityName: readableEntityName }
             )}
           </Text>
