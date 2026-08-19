@@ -18,10 +18,10 @@ import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import { CalendarIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ReportsIndexReport } from "../reportIndex.types";
-import { getReportIndexItemPath } from "../reportIndex.utils";
+import { getReportIndexItemPath, withReportsIndexReturn } from "../reportIndex.utils";
 import { useReportTableSelection } from "../ReportsSelection.provider";
 
-const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
+const ReportsIndexTable = ({ reports, indexHref }: { reports: ReportsIndexReport[]; indexHref?: string }) => {
   const t = useT();
   const { format } = useDate();
   const { selectedRows, isReportSelected, handleRowSelected, handleAllItemsSelected } =
@@ -86,7 +86,7 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
           <ChakraTableCell {...context?.getCellProps("name")}>
             <TitleCell
               label={report.name ?? typeLabels[report.type]}
-              link={`/reports/${report.type}/${report.id}`}
+              link={withReportsIndexReturn(`/reports/${report.type}/${report.id}`, indexHref)}
               linkTarget="_self"
               showChevron={false}
             />
@@ -118,7 +118,7 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
                 button={{
                   children: t("Edit"),
                   as: "a",
-                  href: getReportIndexItemPath(report),
+                  href: withReportsIndexReturn(getReportIndexItemPath(report), indexHref),
                   leftIcon: (
                     <EditIcon
                       css={{
@@ -136,7 +136,7 @@ const ReportsIndexTable = ({ reports }: { reports: ReportsIndexReport[] }) => {
         </TableRow>
       );
     },
-    [format, handleRowSelected, isReportSelected, t, typeLabels]
+    [format, handleRowSelected, indexHref, isReportSelected, t, typeLabels]
   );
 
   if (reports.length === 0) {

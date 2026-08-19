@@ -36,6 +36,7 @@ type ReportsIndexHeaderProps = {
   onTabChange: (tab: string) => void;
   onViewChange: (value: string) => void;
   onQueryChange: (query: string) => void;
+  indexHref: string;
 };
 
 const ReportsIndexHeader = ({
@@ -48,7 +49,8 @@ const ReportsIndexHeader = ({
   viewItems,
   onTabChange,
   onViewChange,
-  onQueryChange
+  onQueryChange,
+  indexHref
 }: ReportsIndexHeaderProps) => {
   const t = useT();
   const router = useRouter();
@@ -84,8 +86,11 @@ const ReportsIndexHeader = ({
   const { create: createDisturbanceReport, isCreating: disturbanceReportCreating } = useCreateDisturbanceReport(
     {},
     useCallback(
-      ({ uuid }) => router.replace(`/entity/disturbance-reports/create/framework?entity_uuid=${uuid}`),
-      [router]
+      ({ uuid }) =>
+        router.replace(
+          `/entity/disturbance-reports/create/framework?entity_uuid=${uuid}&from=${encodeURIComponent(indexHref)}`
+        ),
+      [indexHref, router]
     ),
     "Failed to create disturbance report"
   );

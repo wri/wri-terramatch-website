@@ -14,6 +14,7 @@ import FrameworkProvider, { shouldHideNurseries, toFramework, useFrameworkContex
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -49,6 +50,9 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
 
   const reportTitle = projectReport.reportTitle ?? t("Project Report");
   const currentTab = (router.query.tab as string) ?? "overview";
+  const reportsIndexHref =
+    getReportsIndexHrefFromQuery(router.query.from) ??
+    (projectReport.projectUuid != null ? getReportsIndexUrl("project", projectReport.projectUuid) : "/my-projects");
 
   const tabItems = useMemo<TabItem[]>(
     () => [
@@ -135,11 +139,11 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
           },
           {
             label: t("Reports"),
-            link: `/project/${projectReport.projectUuid}?tab=reporting-tasks`
+            link: reportsIndexHref
           },
           {
             label: getShortPeriodLabel(taskTitle ?? "", true),
-            link: `/project/${projectReport.projectUuid ?? ""}/reporting-task/${projectReport.taskUuid ?? ""}`
+            link: reportsIndexHref
           },
           { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` }
         ]}

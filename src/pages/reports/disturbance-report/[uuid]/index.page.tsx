@@ -11,6 +11,7 @@ import { useFullDisturbanceReport } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -101,6 +102,11 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "report-data";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const reportsIndexHref =
+    getReportsIndexHrefFromQuery(router.query.from) ??
+    (disturbanceReport.projectUuid != null
+      ? getReportsIndexUrl("project", disturbanceReport.projectUuid, { tab: "additional-reports" })
+      : "/my-projects");
 
   return (
     <>
@@ -125,11 +131,11 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
           },
           {
             label: t("Reports"),
-            link: `/project/${disturbanceReport.projectUuid}?tab=reporting-tasks`
+            link: reportsIndexHref
           },
           {
             label: t("Disturbance Reports"),
-            link: `/project/${disturbanceReport.projectUuid}?tab=reporting-tasks&subTab=disturbance-reports`
+            link: reportsIndexHref
           },
           {
             label: t("Disturbance Report"),

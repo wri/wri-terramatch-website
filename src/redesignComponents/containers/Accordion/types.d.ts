@@ -53,6 +53,7 @@ export interface ListSectionHeaderProps {
   titleHref?: string;
   onTitleClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
   caption?: ReactNode;
+  captionHref?: string;
   statusLabels?: ReactNode;
   icon?: ReactNode;
   className?: string;
