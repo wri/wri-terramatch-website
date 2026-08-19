@@ -44,12 +44,13 @@ export const fieldFocusRingStyles = {
   outlineOffset: "0.1875rem"
 } as const;
 
-export const menuContentStyles = {
+export const contentMenuStyles = {
   bg: "neutral.100",
   border: "0.0625rem solid",
   borderColor: "neutral.400",
   borderRadius: "0.5rem",
-  borderTopLeftRadius: 0,
+  borderTopLeftRadius: "0 !important",
+  borderTopRightRadius: "0 !important",
   boxShadow: "0 0.25rem 0.375rem -0.25rem rgba(0, 0, 0, 0.1), 0 0.625rem 0.9375rem -0.1875rem rgba(0, 0, 0, 0.1)",
   color: "neutral.900",
   display: "flex",
@@ -60,6 +61,20 @@ export const menuContentStyles = {
   outline: "none",
   overflowY: "auto",
   p: 1,
+  width: "100%"
+} as const;
+
+export const menuContentStyles = {
+  bg: "neutral.100",
+  color: "neutral.900",
+  display: "flex",
+  flexDirection: "column",
+  fontFamily: "Inter, sans-serif",
+  fontSize: "0.875rem",
+  maxHeight: "18rem",
+  outline: "none",
+  overflowY: "auto",
+  px: 1,
   width: "100%"
 } as const;
 
