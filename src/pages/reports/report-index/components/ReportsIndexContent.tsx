@@ -187,7 +187,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                 </Text>
               </Flex>
             ) : progressError ? (
-              <Box background="neutral.100" h="full" p={5}>
+              <Box background="neutral.100" h="full" p={4}>
                 <Text textStyle="400-bold">{t("Reports could not be loaded")}</Text>
                 <Text textStyle="400">{t("Please refresh the page and try again.")}</Text>
               </Box>
