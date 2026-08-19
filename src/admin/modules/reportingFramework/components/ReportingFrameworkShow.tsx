@@ -1,5 +1,7 @@
+import { Button } from "@mui/material";
 import { FC } from "react";
-import { ReferenceField, Show, SimpleShowLayout, TextField } from "react-admin";
+import { ReferenceField, Show, SimpleShowLayout, TextField, useRecordContext } from "react-admin";
+import { Link } from "react-router-dom";
 
 import modules from "@/admin/modules";
 
@@ -82,7 +84,25 @@ export const ReportingFrameworkShow: FC = () => {
         >
           <TextField source="title" />
         </ReferenceField>
+
+        <PolygonOptionalAttributesLink />
       </SimpleShowLayout>
     </Show>
+  );
+};
+
+const PolygonOptionalAttributesLink = () => {
+  const record = useRecordContext();
+  if (record?.slug == null) return null;
+
+  return (
+    <Button
+      component={Link}
+      to={`../${record.slug}/optional-attributes`}
+      variant="text"
+      sx={{ justifyContent: "flex-start", px: 0 }}
+    >
+      Add Polygon Optional Attributes
+    </Button>
   );
 };
