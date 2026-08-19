@@ -6,7 +6,6 @@ import FinancialDescriptionsSection from "@/admin/components/ResourceTabs/Histor
 import FinancialDocumentsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDocumentsSection";
 import FinancialExchangeSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialExchangeSection";
 import FundingSourcesSection from "@/admin/components/ResourceTabs/HistoryTab/components/FundingSourcesSection";
-import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import type { ActionTrackerCardRowProps } from "@/components/extensive/ActionTracker/ActionTrackerCardRow";
 import ActionTrackerCardRow from "@/components/extensive/ActionTracker/ActionTrackerCardRow";
@@ -87,13 +86,10 @@ const FinancialTabContent: FC<FinancialTabContentProps> = ({ organization }) => 
     (report: FinancialReportLightDto) => ({
       title: organization?.name ?? report.organisationName ?? t("Financial Report"),
       subtitle: `Year: ${report.yearOfReport ?? ""}`,
-      status: Object.values(StatusEnum).includes(report.status as StatusEnum)
-        ? (report.status as StatusEnum)
-        : StatusEnum.DRAFT,
+      status: report.status,
       ctaLink: `/reports/financial-report/${report.uuid}`,
       ctaText: t("View Report"),
       onClick: () => ({}),
-      statusText: report.status,
       updatedAt: report.dueAt ? `Due: ${new Date(report.dueAt).toLocaleDateString()}` : ""
     })
   );
