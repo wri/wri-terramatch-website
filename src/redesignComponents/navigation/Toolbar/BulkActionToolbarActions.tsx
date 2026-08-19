@@ -13,6 +13,7 @@ import { wrapToolbarInfoTooltipContent } from "./ToolbarInfoTooltipContent";
 const ACTION_DIVIDER_CLASS = "!h-3.5 !w-[0.0625rem]";
 const BORDERLESS_NEUTRAL_CLASS = "!px-1.5 !text-theme-neutral-100";
 const BORDERLESS_DANGER_CLASS = "!px-1.5 !text-theme-error-300";
+const BORDERLESS_DISABLED_CLASS = "!cursor-not-allowed !text-theme-neutral-400 !opacity-60";
 
 type BulkActionToolbarActionsProps = {
   deleteAction: BulkToolbarAction;
@@ -30,7 +31,10 @@ const BulkActionToolbarActions = memo(function BulkActionToolbarActions({
       <Flex alignItems="center" gap={0.5}>
         <Button
           {...deleteButtonProps}
-          className={deleteTone === "danger" ? BORDERLESS_DANGER_CLASS : BORDERLESS_NEUTRAL_CLASS}
+          className={classNames(
+            deleteTone === "danger" ? BORDERLESS_DANGER_CLASS : BORDERLESS_NEUTRAL_CLASS,
+            deleteButtonProps.disabled && BORDERLESS_DISABLED_CLASS
+          )}
           variant="borderless"
         />
         {deleteInfoTooltip != null && (
@@ -50,6 +54,7 @@ const BulkActionToolbarActions = memo(function BulkActionToolbarActions({
                 {...buttonProps}
                 className={classNames(
                   tone === "danger" ? BORDERLESS_DANGER_CLASS : BORDERLESS_NEUTRAL_CLASS,
+                  buttonProps.disabled && BORDERLESS_DISABLED_CLASS,
                   buttonProps.className
                 )}
                 variant="borderless"
