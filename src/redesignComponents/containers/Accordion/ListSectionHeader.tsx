@@ -78,7 +78,7 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
       <Flex alignItems="baseline" gap={gap} minWidth={0} flex={1}>
         {icon}
         <Flex direction="column" minWidth={0} alignItems="flex-start">
-          <Flex alignItems="center" gap={1}>
+          <Flex alignItems="center" gap={1} width="100%" minWidth={0}>
             {label && (
               <Text textStyle="300" color="neutral.800">
                 {label}:
