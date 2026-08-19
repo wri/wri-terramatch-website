@@ -2,7 +2,6 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useMemo, useState } from "react";
 
-import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import { FolderIcon, FolderOpenIcon, LoadingIcon } from "@/redesignComponents/foundations/Icons";
@@ -125,16 +124,16 @@ const AdditionalReportsContent = ({
   const t = useT();
 
   return (
-    <PageContent className="px-2 py-0">
+    <>
       {loading ? (
-        <Flex minHeight="240px" alignItems="center" justifyContent="center" gap={3}>
+        <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
           <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
           <Text textStyle="400" color="neutral.800">
             {t("Loading reports...")}
           </Text>
         </Flex>
       ) : error ? (
-        <Box background="neutral.100" h="full" p={4}>
+        <Box background="neutral.100" h="full" p={5}>
           <Text textStyle="400-bold">{t("Reports could not be loaded")}</Text>
           <Text textStyle="400">{t("Please refresh the page and try again.")}</Text>
         </Box>
@@ -142,7 +141,7 @@ const AdditionalReportsContent = ({
         hasActiveSearch ? (
           <ReportsSearchNoResults />
         ) : (
-          <Box background="neutral.100" h="full" p={4}>
+          <Box background="neutral.100" h="full" p={5}>
             <Text textStyle="400-bold">{t("No additional reports found")}</Text>
             <Text textStyle="400">{t("Try changing your search or filters.")}</Text>
           </Box>
@@ -158,7 +157,7 @@ const AdditionalReportsContent = ({
           ))}
         </div>
       )}
-    </PageContent>
+    </>
   );
 };
 

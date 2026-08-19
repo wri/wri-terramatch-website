@@ -66,7 +66,7 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   });
 
   const titleLinkClassName = classNames(
-    "min-w-0 truncate rounded-[6px] leading-[normal]",
+    "min-w-0 truncate rounded-[0.375rem] leading-[normal]",
     "text-theme-primary-900",
     "hover:text-theme-primary-700",
     "active:text-theme-primary-800",

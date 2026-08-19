@@ -176,18 +176,18 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
         onQueryChange={setQuery}
         indexHref={indexHref}
       />
-      <PageContent className="px-2 py-0">
+      <PageContent className="px-1.5 py-0">
         {activeTab === "progress-reports" && (
           <>
             {progressLoading || isSwitchingProject ? (
-              <Flex minHeight="240px" alignItems="center" justifyContent="center" gap={3}>
+              <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
                 <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
                 <Text textStyle="400" color="neutral.800">
                   {t("Loading reports...")}
                 </Text>
               </Flex>
             ) : progressError ? (
-              <Box background="neutral.100" h="full" p={4}>
+              <Box background="neutral.100" h="full" p={5}>
                 <Text textStyle="400-bold">{t("Reports could not be loaded")}</Text>
                 <Text textStyle="400">{t("Please refresh the page and try again.")}</Text>
               </Box>
