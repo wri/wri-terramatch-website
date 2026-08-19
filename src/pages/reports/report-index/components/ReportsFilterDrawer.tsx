@@ -151,13 +151,12 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
     }));
   };
 
-  // Only one of the two inputs refines the list, so picking one clears the other.
   const handleMonthChange = (value: string[]) => {
-    setDraftFilters(current => ({ ...current, dueMonth: value[0] ?? "", dueYear: "" }));
+    setDraftFilters(current => ({ ...current, dueMonth: value[0] ?? "" }));
   };
 
   const handleYearChange = (value: string[]) => {
-    setDraftFilters(current => ({ ...current, dueYear: value[0] ?? "", dueMonth: "" }));
+    setDraftFilters(current => ({ ...current, dueYear: value[0] ?? "" }));
   };
 
   const removeFilterTag = (id: string) => {
@@ -242,7 +241,7 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
                   />
                 </FilterCard>
               ) : periodControl === "month-year" ? (
-                <FilterCard label={t("Time Period")} caption={t("Refine by month or year")}>
+                <FilterCard label={t("Time Period")} caption={t("Refine by month and/or year")}>
                   <Flex gap={2}>
                     <Box flex={1} minW={0}>
                       <SelectInput

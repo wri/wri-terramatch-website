@@ -51,11 +51,6 @@ const matchesDueDateRange = (dueAt: string | null | undefined, dueDateFrom: stri
   return true;
 };
 
-/**
- * A report matches the time period filters when it clears the date range and, where set, reports on
- * the selected month (on any year) or year. The month and year inputs are mutually exclusive in the
- * drawer, so at most one of them narrows the list.
- */
 const matchesReportPeriod = (
   date: string | null | undefined,
   period: Partial<ReportPeriod>,
