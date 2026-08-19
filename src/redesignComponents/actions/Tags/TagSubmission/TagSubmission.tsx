@@ -63,9 +63,9 @@ const TagSubmissionActionStatusTagStateMap: Record<TagSubmissionState, ActionSta
   approved: "success",
   due: "warning",
   "not-selected": "warning",
-  "receiving-applications": "neutral-dark",
+  "receiving-applications": "information",
   closed: "neutral-light",
-  "coming-soon": "attention"
+  "coming-soon": "neutral-dark"
 };
 
 function getTagSubmissionIcon(state: TagSubmissionState, size: "small" | "default"): ReactElement {
@@ -89,11 +89,11 @@ function getTagSubmissionIcon(state: TagSubmissionState, size: "small" | "defaul
     case "not-selected":
       return <DisallowedIcon color="error.500" boxSize={boxSize} />;
     case "receiving-applications":
-      return <InfoIcon color="neutral.900" boxSize={boxSize} />;
+      return <PendingIcon color="information.500" boxSize={boxSize} />;
     case "closed":
-      return <RejectedIcon color="neutral.900" boxSize={boxSize} />;
+      return <NothingReportedIcon color="neutral.600" boxSize={boxSize} />;
     case "coming-soon":
-      return <PendingIcon color="warning.500" boxSize={boxSize} />;
+      return <InfoIcon color="neutral.800" boxSize={boxSize} />;
     default:
       return <></>;
   }
