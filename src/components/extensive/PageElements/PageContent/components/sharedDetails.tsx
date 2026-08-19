@@ -7,7 +7,7 @@ import { FC, Fragment, useMemo } from "react";
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import { countFeedbackInStep, countUnresolvedFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
-import { STEP_QUERY_PARAM, SUMMARY_ID } from "@/components/extensive/WizardForm/useFormNavigation";
+import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
 import {
@@ -28,17 +28,11 @@ import { ProgressTag } from "@/redesignComponents/actions/Tags/ProgressTag/Progr
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import { ArrowForwardIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
-import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import { EntityName } from "@/types/common";
 import { resolveReportEntityTypeFromEntityName } from "@/utils/analytics/reportAnalytics";
 import { trackReportOverviewAccordionExpanded } from "@/utils/analytics/reportsIndexAnalytics";
 
-import {
-  countValidationErrors,
-  EntryInlineIssue,
-  getValidationErrorsByField,
-  resolveEntryInlineIssue
-} from "../utils/detailUtils";
+import { countValidationErrors, getValidationErrorsByField } from "../utils/detailUtils";
 import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
 import SpecialEntryRenderer, { SPECIAL_ENTRY_TITLES } from "./SpecialEntryRenderer";
 
@@ -49,40 +43,6 @@ const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }
     {text}
   </Button>
 );
-
-const EntryInlineIssueMessage: FC<{
-  issue: EntryInlineIssue;
-  onViewFeedback: () => void;
-}> = ({ issue, onViewFeedback }) => {
-  const t = useT();
-
-  if (issue.kind === "feedback") {
-    return (
-      <InlineMessage
-        label={t("Changes requested")}
-        variant="error"
-        className="mt-1 mb-3 w-fit"
-        actionLabel={t("View feedback")}
-        onActionClick={onViewFeedback}
-        isButtonRight
-        size="small"
-      />
-    );
-  }
-
-  if (issue.kind === "totals-match") {
-    return (
-      <InlineMessage
-        label={t("Category totals must match. Please review your entries")}
-        variant="error"
-        className="mt-1 mb-3 w-fit"
-        size="small"
-      />
-    );
-  }
-
-  return <InlineMessage label={t("Please complete this field")} variant="error" className="mt-1 w-fit" size="small" />;
-};
 
 export type SharedDetailsProps = {
   step: FormStepWithValidation;
@@ -149,7 +109,8 @@ const SharedDetails: FC<SharedDetailsProps> = ({
   const fieldsRequiringAttention = hasStepFeedback
     ? Math.max(validationFieldsRequiringAttention, feedbackFieldsRequiringAttention)
     : validationFieldsRequiringAttention;
-
+  const isValid = step.validation.isValidSync(formValues);
+  const accordionHeaderStatus = !isValid || hasStepFeedback ? "error" : "complete";
   const entries = useGetFormEntries({
     stepId: step.id,
     values: formValues,
@@ -200,6 +161,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
         header={
           <AccordionHeader
             title={step.title ?? ""}
+            status={accordionHeaderStatus}
             badge={
               fieldsRequiringAttention > 0
                 ? t("{count} requires attention", { count: fieldsRequiringAttention })
@@ -237,16 +199,6 @@ const SharedDetails: FC<SharedDetailsProps> = ({
               </Flex>
             );
 
-            const entryIssue = resolveEntryInlineIssue({
-              entry,
-              formValues,
-              validationErrorsByField,
-              fieldsProvider,
-              feedbackFieldIds: feedbackFieldsOptions,
-              feedbackBaselineValues,
-              stepId: step.id
-            });
-
             if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "file") {
               return (
                 <Fragment key={`${step.id}-${entry.title}-${index}`}>
@@ -262,9 +214,6 @@ const SharedDetails: FC<SharedDetailsProps> = ({
                   <Text className="flex items-center gap-1 leading-normal" textStyle="300-bold" color="primary.900">
                     {t(entry.title)}:
                   </Text>
-                  {entryIssue != null && (
-                    <EntryInlineIssueMessage issue={entryIssue} onViewFeedback={() => navigateToEdit(SUMMARY_ID)} />
-                  )}
                   <EntryDefaultValueRenderer entry={entry} />
                 </Flex>
                 {projectStageSection}
