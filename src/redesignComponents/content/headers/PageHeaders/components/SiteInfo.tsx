@@ -45,7 +45,8 @@ const SiteInfo: FC<SiteInfoProps> = ({
     entityName: "sites",
     entityUUID: site.uuid,
     entityStatus: site.status as string,
-    updateRequestStatus: site.updateRequestStatus as string
+    updateRequestStatus: site.updateRequestStatus as string,
+    useInformationRequiredModal: true
   });
 
   const statusProps = useMemo(() => getStatusProps(t, site, site.status!), [t, site]);
