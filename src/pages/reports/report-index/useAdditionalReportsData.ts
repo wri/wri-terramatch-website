@@ -106,11 +106,17 @@ type ProjectSectionDraft = {
   id: string;
   name: string | null;
   caption: string;
+  organisationUuid: string | null;
   srpReports: AdditionalSrpReport[];
   disturbanceReports: AdditionalDisturbanceReport[];
 };
 
-type ProjectScopedReport = { projectUuid: string | null; projectName: string | null; organisationName: string | null };
+type ProjectScopedReport = {
+  projectUuid: string | null;
+  projectName: string | null;
+  organisationName: string | null;
+  organisationUuid: string | null;
+};
 
 export const useAdditionalReportsData = (
   project: ProjectFullDto,
@@ -159,12 +165,13 @@ export const useAdditionalReportsData = (
     );
     const nextSections: AdditionalReportsEntitySection[] = [];
 
-    if (organisationUuid != null && financialReports.length > 0) {
+    if (allProjects && organisationUuid != null && financialReports.length > 0) {
       nextSections.push({
         id: organisationUuid,
         type: "organisation",
         name: organisation?.name ?? project.organisationName,
         caption: "Organisation",
+        organisationUuid,
         groups: [{ id: "financial-reports", type: "financial-report", reports: financialReports }]
       });
     }
@@ -182,6 +189,7 @@ export const useAdditionalReportsData = (
           id: projectUuid,
           name: report.projectName ?? (projectUuid === project.uuid ? project.name : null),
           caption: report.organisationName ?? project.organisationName ?? "",
+          organisationUuid: report.organisationUuid ?? project.organisationUuid,
           srpReports: [],
           disturbanceReports: []
         };
@@ -211,13 +219,45 @@ export const useAdditionalReportsData = (
               ])
         ];
 
-        return { id: draft.id, type: "project" as const, name: draft.name, caption: draft.caption, groups };
+        return {
+          id: draft.id,
+          type: "project" as const,
+          name: draft.name,
+          caption: draft.caption,
+          organisationUuid: draft.organisationUuid,
+          groups
+        };
       })
       .filter(section => section.groups.length > 0)
       .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
 
+    if (!allProjects && financialReports.length > 0) {
+      const financialGroup: AdditionalReportGroup = {
+        id: "financial-reports",
+        type: "financial-report",
+        reports: financialReports
+      };
+      const currentProjectIndex = projectSections.findIndex(section => section.id === project.uuid);
+      if (currentProjectIndex >= 0) {
+        projectSections[currentProjectIndex] = {
+          ...projectSections[currentProjectIndex],
+          groups: [financialGroup, ...projectSections[currentProjectIndex].groups]
+        };
+      } else {
+        projectSections.unshift({
+          id: project.uuid,
+          type: "project",
+          name: project.name,
+          caption: project.organisationName ?? "",
+          organisationUuid: project.organisationUuid,
+          groups: [financialGroup]
+        });
+      }
+    }
+
     return [...nextSections, ...projectSections];
   }, [
+    allProjects,
     disturbanceData,
     enabled,
     error,
@@ -229,6 +269,7 @@ export const useAdditionalReportsData = (
     organisationUuid,
     project.name,
     project.organisationName,
+    project.organisationUuid,
     project.uuid,
     srpData
   ]);

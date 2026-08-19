@@ -19,6 +19,7 @@ import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/ent
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
+import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Details from "@/pages/reports/site-report/tabs/Details";
 import Overview from "@/pages/reports/site-report/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -148,6 +149,9 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const reportsIndexHref =
+    getReportsIndexHrefFromQuery(router.query.from) ??
+    (siteReport.siteUuid != null ? getReportsIndexUrl("site", siteReport.siteUuid) : "/my-projects");
   const suffixButtons: SuffixButtonConfig[] = useMemo(
     () => [
       { key: "site-profile", labelKey: t("Site Profile") },
@@ -187,7 +191,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
           },
           {
             label: t("Reports"),
-            link: `/site/${siteReport.siteUuid ?? ""}?tab=completed-tasks`
+            link: reportsIndexHref
           },
           {
             label: t("Site Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),

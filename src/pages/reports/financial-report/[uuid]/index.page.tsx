@@ -12,6 +12,7 @@ import { ToastType, useToastContext } from "@/context/toast.provider";
 import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { getReportsIndexHrefFromQuery } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { OrganizationIcon } from "@/redesignComponents/foundations/Icons";
@@ -92,6 +93,9 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "report-data";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
+  const organisationHref =
+    financialReport.organisationUuid != null ? `/organization/${financialReport.organisationUuid}` : "/my-projects";
+  const reportsIndexHref = getReportsIndexHrefFromQuery(router.query.from, organisationHref) ?? organisationHref;
 
   return (
     <>
@@ -107,12 +111,12 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
         breadcrumbs={[
           {
             label: t("Organization - {organisationName}", { organisationName: financialReport.organisationName }),
-            link: `/organization/${financialReport.organisationUuid}?tab=financial_information`,
+            link: organisationHref,
             icon: <OrganizationIcon className="!text-theme-primary-900" />
           },
           {
             label: t("Financial Reports"),
-            link: `/organization/${financialReport.organisationUuid}?tab=financial_information`
+            link: reportsIndexHref
           },
           {
             label: t("Financial Report - {period}", { period: getShortPeriodLabel(taskTitle ?? "", true) }),

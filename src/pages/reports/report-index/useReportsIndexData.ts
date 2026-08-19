@@ -89,7 +89,7 @@ export const useReportsIndexData = (
   // fetched again instead of serving the snapshot the page loaded with.
   reloadNonce = 0
 ): ReportsIndexDataState => {
-  const { uuid: projectUuid, name: projectName, organisationName } = project;
+  const { uuid: projectUuid, name: projectName, organisationName, organisationUuid } = project;
 
   useValueChanged(reloadNonce, () => {
     if (reloadNonce === 0) return;
@@ -127,12 +127,13 @@ export const useReportsIndexData = (
     reloadNonce
   );
 
-  // All Projects walks every index page (max 100 rows each). Block the first paint on the first
-  // page of each index, not on the full walk, or the tab stays on "Loading reports..." for a long time.
-  const loading =
-    (!projectReportsLoaded && projectReports.length === 0) ||
-    (!siteReportsLoaded && siteReports.length === 0) ||
-    (!nurseryReportsLoaded && nurseryReports.length === 0);
+  // All Projects walks every index page (max 100 rows each). Keep the tab on loading until the
+  // full walk finishes so intermediate grouping of hundreds of projects cannot freeze the page.
+  const loading = allProjects
+    ? !(projectReportsLoaded && siteReportsLoaded && nurseryReportsLoaded)
+    : (!projectReportsLoaded && projectReports.length === 0) ||
+      (!siteReportsLoaded && siteReports.length === 0) ||
+      (!nurseryReportsLoaded && nurseryReports.length === 0);
   const error = projectReportsFailure != null || siteReportsFailure != null || nurseryReportsFailure != null;
   const metricsReady = projectReportsLoaded && siteReportsLoaded && nurseryReportsLoaded;
   const projectReportsEnabled = allProjects || source === "project";
@@ -152,6 +153,7 @@ export const useReportsIndexData = (
           id: reportProjectUuid,
           name: report.projectName ?? (reportProjectUuid === projectUuid ? projectName : null),
           organisationName: report.organisationName ?? (reportProjectUuid === projectUuid ? organisationName : null),
+          organisationUuid: report.organisationUuid ?? (reportProjectUuid === projectUuid ? organisationUuid : null),
           periodsByDueAt: new Map()
         };
         draftsByProject.set(reportProjectUuid, draft);
@@ -197,6 +199,7 @@ export const useReportsIndexData = (
     loading,
     nurseryReports,
     organisationName,
+    organisationUuid,
     projectName,
     projectReports,
     projectReportsEnabled,
