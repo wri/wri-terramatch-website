@@ -47,14 +47,6 @@ import {
 } from "@/pages/project/[uuid]/reporting-task/types";
 import useGetReportingTasksTourSteps from "@/pages/project/[uuid]/reporting-task/useGetReportingTasksTourSteps";
 import ApiSlice from "@/store/apiSlice";
-import { Status } from "@/types/common";
-
-const StatusMapping: { [index: string]: Status } = {
-  due: "edit",
-  "pending-approval": "awaiting",
-  approved: "success",
-  "information-required": "warning"
-};
 
 const NOTHING_TO_REPORT_DISPLAYABLE_STATUSES = ["due", "draft"];
 
@@ -83,6 +75,30 @@ const shouldShowNothingToReportButton = (report: TaskReport) => {
     NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) &&
     completion != 100
   );
+};
+
+const getReportingTaskHeaderStatus = (
+  task: { status?: string; completionStatus?: string | null } | undefined,
+  reports: TaskReports
+) => {
+  if (task?.completionStatus != null && task.completionStatus !== "") {
+    return task.completionStatus;
+  }
+
+  const hasInformationRequired = [...reports.mandatory, ...reports.additional, ...reports.srpReports].some(report => {
+    const updateRequestStatus = report.updateRequestStatus;
+    return (
+      report.completionStatus === "information-required" ||
+      report.status === "information-required" ||
+      updateRequestStatus === "information-required"
+    );
+  });
+
+  if (task?.status === "information-required" || hasInformationRequired) {
+    return "information-required";
+  }
+
+  return task?.status;
 };
 
 const mapTaskReport =
@@ -415,7 +431,7 @@ const ReportingTaskPage: FC = () => {
     <FrameworkProvider frameworkKey={project?.frameworkKey}>
       <LoadingContainer loading={task == null}>
         <ReportingTaskHeader {...{ project, taskUuid: reportingTaskUUID, reports }} />
-        <StatusBar status={StatusMapping?.[task?.status ?? ""]} />
+        <StatusBar status={getReportingTaskHeaderStatus(task, reports)} />
         <PageBody className={classNames(tourEnabled && "pb-52 xl:pb-52")}>
           <PageSection>
             <PageCard title={t("Mandatory Project Report")}>
