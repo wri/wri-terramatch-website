@@ -28,6 +28,7 @@ const ComboboxTrigger = Combobox.Trigger as ChakraSlot;
 const ComboboxPositioner = Combobox.Positioner as ChakraSlot;
 const ComboboxContent = Combobox.Content as ChakraSlot;
 const ComboboxItem = Combobox.Item as ChakraSlot;
+const ComboboxItemIndicator = Combobox.ItemIndicator as ChakraSlot;
 
 const normalize = (value: string) =>
   value
@@ -167,6 +168,7 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
       <SelectorMenu
         Content={ComboboxContent}
         Item={ComboboxItem}
+        ItemIndicator={ComboboxItemIndicator}
         Positioner={ComboboxPositioner}
         contentRef={menuNavigation.contentRef}
         emptyMessage={emptyMessage}

@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import { Component, ErrorInfo, FC, ReactNode, useCallback, useMemo, useState } from "react";
 
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
@@ -24,7 +25,6 @@ import { ChevronRightIcon, SeedlingsIcon } from "@/redesignComponents/foundation
 import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
 import { ONBOARDING_CARD_TYPES } from "@/utils/analytics/onboardingCardAnalytics";
 import Log from "@/utils/log";
-import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 interface NurseryReportOverviewProps {
   report: NurseryReportFullDto;
@@ -85,7 +85,8 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
     entityTitle: report.nurseryName ?? "",
     reportTitle: report.reportTitle ?? "",
     feedback: report.feedback,
-    useStatusModal: true
+    useStatusModal: true,
+    useInformationRequiredModal: true
   });
 
   const goToTab = useCallback(
@@ -104,10 +105,7 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
       return <TagSubmission size="small" state="pending-approval" />;
     }
 
-    const tagState = mapStatusToTagStateEntity(report.status);
-    if (report.status == null || tagState == null) return null;
-
-    return <TagSubmission size="small" state={tagState.type} />;
+    return <StatusTag size="small" status={report.status} />;
   }, [report.status, report.updateRequestStatus]);
 
   if (report.nothingToReport) {

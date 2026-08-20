@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 
+import EntityInformationRequiredModal from "@/components/extensive/EntityInformationRequiredModal";
 import { type StatusBarStatus, getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
@@ -23,6 +24,7 @@ interface GetEditEntityHandlerArgs {
   reportTitle?: string;
   feedback?: string | null;
   useStatusModal?: boolean;
+  useInformationRequiredModal?: boolean;
 }
 
 /**
@@ -37,7 +39,8 @@ export const useGetEditEntityHandler = ({
   feedback,
   useStatusModal = false,
   entityTitle,
-  reportTitle
+  reportTitle,
+  useInformationRequiredModal = false
 }: GetEditEntityHandlerArgs) => {
   const t = useT();
   const router = useRouter();
@@ -54,6 +57,7 @@ export const useGetEditEntityHandler = ({
   const effectiveStatus = (hasRelevantUpdateRequest ? updateRequestStatus : entityStatus) as StatusBarStatus;
   const awaitingApproval = entityStatus === PENDING_APPROVAL || updateRequestStatus === PENDING_APPROVAL;
   const needsMoreInformation = entityStatus === INFORMATION_REQUIRED || updateRequestStatus === INFORMATION_REQUIRED;
+  const shouldShowInformationRequiredModal = useInformationRequiredModal && needsMoreInformation && !awaitingApproval;
   const shouldShowStatusFeedbackModal = useStatusModal && needsMoreInformation && !awaitingApproval;
   const statusProps = getStatusProps(
     t,
@@ -66,7 +70,7 @@ export const useGetEditEntityHandler = ({
   });
 
   let editContent: string = t(
-    "Are you sure you want to edit {entityTitle} {reportTitle} Editing this report will require it to be resubmitted for approval.",
+    "Are you sure you want to edit {entityTitle} {reportTitle} Editing this {entityName} will require it to be resubmitted for approval.",
     {
       entityTitle: (
         <Text as="span" textStyle="400-bold">
@@ -89,11 +93,15 @@ export const useGetEditEntityHandler = ({
   const handleEdit = (stepId?: string | null) => {
     if (awaitingApproval) {
       setOpenReviewInProgressModal(true);
-    } else if (shouldShowStatusFeedbackModal && statusProps != null) {
+    } else if (shouldShowInformationRequiredModal || (shouldShowStatusFeedbackModal && statusProps != null)) {
       setStepId(stepId);
       setOpenStatusModal(true);
     } else {
       pendingStepId.current = stepId;
+      if (entityStatus === "draft") {
+        router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
+        return;
+      }
       setOpenConfirmEditModal(true);
     }
   };
@@ -109,14 +117,16 @@ export const useGetEditEntityHandler = ({
             <WarningIcon boxSize={10} color="warning.500" />
             <Text textStyle="400" color="neutral.900">
               {t(
-                "While we're reviewing your {entityName}, you can't make changes for now. This ensures a thorough review. After it's done, you can make any needed adjustments.",
+                "While we review your {entityName}, it is closed for editing. A Reviewer will either approve this {entityName} or request more information. If you have any questions or have critical changes to make in the meantime, please contact {email} with the details.",
                 {
-                  entityName: getReadableEntityName(entityName as EntityName | SingularEntityName)
+                  entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true),
+                  email: (
+                    <a href="mailto:info@terramatch.org" className="text-primary-500 underline">
+                      info@terramatch.org
+                    </a>
+                  )
                 }
               )}
-            </Text>
-            <Text textStyle="400" color="neutral.900">
-              {t("If you have any questions or concerns, contact our support team through the help center.")}
             </Text>
           </Flex>
         }
@@ -125,22 +135,33 @@ export const useGetEditEntityHandler = ({
             id: "cancel",
             className: "w-fit",
             variant: "secondary",
-            children: t("Cancel"),
+            children: t("Close"),
             onClick: () => setOpenReviewInProgressModal(false)
           }
         ]}
       />
-      {statusProps != null && (
-        <EntityStatusModal
-          statusProps={statusProps}
+      {useInformationRequiredModal ? (
+        <EntityInformationRequiredModal
           feedback={feedback}
-          showProvideFeedback={shouldShowStatusFeedbackModal}
           entityName={formEntityName}
           entityUuid={entityUUID}
           formStepId={stepId}
           open={openStatusModal}
           onOpenChange={setOpenStatusModal}
         />
+      ) : (
+        statusProps != null && (
+          <EntityStatusModal
+            statusProps={statusProps}
+            feedback={feedback}
+            showProvideFeedback={shouldShowStatusFeedbackModal}
+            entityName={formEntityName}
+            entityUuid={entityUUID}
+            formStepId={stepId}
+            open={openStatusModal}
+            onOpenChange={setOpenStatusModal}
+          />
+        )
       )}
       <ModalConfirmation
         open={openConfirmEditModal}
@@ -153,8 +174,7 @@ export const useGetEditEntityHandler = ({
             id: "cancel",
             className: "!w-full",
             variant: "secondary",
-            children: t("Cancel"),
-
+            children: useInformationRequiredModal ? t("Close") : t("Cancel"),
             onClick: () => setOpenConfirmEditModal(false)
           }
         ]}

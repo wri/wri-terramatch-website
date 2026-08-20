@@ -54,8 +54,11 @@ export const getFieldsRequiringAttentionCount = (
 const isEmptyFieldValue = (value: unknown): boolean =>
   value == null || value === "" || (Array.isArray(value) && value.length === 0);
 
+const PRESENCE_ERROR_TYPES = new Set(["required", "nullable", "optionality"]);
+
 const isRequiredValidationError = (error: yup.ValidationError, value: unknown): boolean =>
-  error.type === "required" || (error.type === "min" && isEmptyFieldValue(value));
+  (error.type != null && PRESENCE_ERROR_TYPES.has(error.type)) ||
+  (error.type === "min" && isEmptyFieldValue(value));
 
 export const resolveEntryInlineIssue = ({
   entry,
@@ -63,7 +66,8 @@ export const resolveEntryInlineIssue = ({
   validationErrorsByField,
   fieldsProvider,
   feedbackFieldIds,
-  feedbackBaselineValues
+  feedbackBaselineValues,
+  stepId
 }: {
   entry: FormEntry;
   formValues: Record<string, unknown>;
@@ -71,13 +75,21 @@ export const resolveEntryInlineIssue = ({
   fieldsProvider: FormFieldsProvider;
   feedbackFieldIds?: string[] | null;
   feedbackBaselineValues?: Record<string, unknown>;
+  stepId?: string;
 }): EntryInlineIssue | null => {
   if (entry.name == null) {
     return null;
   }
 
   if (
-    isFieldFeedbackRequiringAttention(entry.name, fieldsProvider, feedbackFieldIds, formValues, feedbackBaselineValues)
+    isFieldFeedbackRequiringAttention(
+      entry.name,
+      fieldsProvider,
+      feedbackFieldIds,
+      formValues,
+      feedbackBaselineValues,
+      stepId
+    )
   ) {
     return { kind: "feedback" };
   }

@@ -64,6 +64,26 @@ export type DocumentationData = {
   [key: string]: string | number | null | UploadedFile[];
 };
 
+type DocumentationFileLike = {
+  uuid?: string | null;
+  uploadState?: { isLoading?: boolean; error?: string | null };
+};
+
+/**
+ * A documentation year only satisfies `required` when at least one file actually landed on the
+ * server. Failed uploads (no UUID / error state) must not clear the required validation.
+ */
+export const hasRequiredDocumentationFiles = (
+  files: DocumentationFileLike[] | null | undefined,
+  { includePending = false }: { includePending?: boolean } = {}
+) => {
+  if (!Array.isArray(files) || files.length === 0) return false;
+  return files.some(file => {
+    if (includePending && file.uploadState?.isLoading === true) return true;
+    return file.uuid != null && file.uploadState?.error == null;
+  });
+};
+
 export type FinancialIndicatorTableData = {
   forProfitAnalysisData: ForProfitAnalysisData[];
   nonProfitAnalysisData: NonProfitAnalysisData[];

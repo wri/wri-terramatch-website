@@ -74,7 +74,7 @@ const NurseriesTable = ({
         {
           accessorKey: "status",
           header: t("Status"),
-          cell: props => <StatusTableCell status={props.getValue() as string} variant="mapped" />
+          cell: props => <StatusTableCell status={props.getValue() as string} />
         },
         {
           accessorKey: "updateRequestStatus",

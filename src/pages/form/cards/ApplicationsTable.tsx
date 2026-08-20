@@ -62,7 +62,7 @@ const ApplicationsTable: FC<DraftApplicationsTableProps> = ({ fundingProgrammeUu
                 const status = props.getValue() as string;
                 if (status == null) return null;
 
-                return <StatusTag status={status} size="small" />;
+                return <StatusTag status={status} size="small" source="formSubmission" />;
               }
             },
             { accessorKey: "updatedAt", header: t("Last Updated"), cell: props => format(props.getValue() as string) },
