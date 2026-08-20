@@ -28,6 +28,7 @@ export const FundingTypeField: FormFieldFactory = {
 
     if (!Array.isArray(rows) || rows.length === 0) {
       entries.push({
+        name: field.name,
         title: field.label ?? "",
         inputType: field.inputType,
         value: empty
@@ -45,6 +46,7 @@ export const FundingTypeField: FormFieldFactory = {
     });
 
     entries.push({
+      name: field.name,
       title: field.label ?? "",
       inputType: field.inputType,
       value: lines.join("<br/>")

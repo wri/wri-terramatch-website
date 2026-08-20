@@ -1,7 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
-
 import { IconNames } from "../Icon/Icon";
 import Component from "./ActionTrackerCard";
 
@@ -20,40 +18,35 @@ export const Default: Story = {
       {
         title: "Card 1",
         subtitle: "Subtitle",
-        status: StatusEnum.AWAITING_APPROVAL,
-        statusText: "Awaiting",
+        status: "pending-approval",
         ctaText: "cta",
         ctaLink: "/"
       },
       {
         title: "Card 2",
         subtitle: "Subtitle",
-        status: StatusEnum.EDIT,
-        statusText: "Edit",
+        status: "draft",
         ctaText: "cta",
         ctaLink: "/"
       },
       {
         title: "Card 3",
         subtitle: "Subtitle",
-        status: StatusEnum.ERROR,
-        statusText: "Error",
+        status: "due",
         ctaText: "cta",
         ctaLink: "/"
       },
       {
         title: "Card 4",
         subtitle: "Subtitle",
-        status: StatusEnum.APPROVED,
-        statusText: "Success",
+        status: "approved",
         ctaText: "cta",
         ctaLink: "/"
       },
       {
         title: "Card 5",
         subtitle: "Subtitle",
-        status: StatusEnum.WARNING,
-        statusText: "Warning",
+        status: "information-required",
         ctaText: "cta",
         ctaLink: "/"
       }

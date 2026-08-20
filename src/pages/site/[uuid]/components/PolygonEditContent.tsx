@@ -98,6 +98,7 @@ type PolygonEditContentProps = {
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
+  onSubmittingChange?: (isSubmitting: boolean, count?: number) => void;
 };
 
 type PolygonVersionRow = SitePolygonLightDto & { id: string };
@@ -195,7 +196,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onValidationJobsStarted,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
-  onDeletingChange
+  onDeletingChange,
+  onSubmittingChange
 }) => {
   const t = useT();
   const isAdmin = useIsAdmin();
@@ -367,9 +369,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setIsUserDrawingEnabled(false);
       setDraftPolygonGeometry(undefined);
       setPolygonGeometryEdit(undefined);
-      onPolygonUpdatedRef.current?.(savedPolygon);
       setShouldRefetchPolygonData(true);
       await waitForMapEditCleanup();
+      onPolygonUpdatedRef.current?.(savedPolygon);
       if (options.refetchVersionsList) {
         await refetchVersionsRef.current?.();
       }
@@ -445,7 +447,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         return savedPolygon;
       } catch {
         closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
-        showPolygonErrorToast(t("Error creating polygon"));
+        showPolygonErrorToast(t("Error Creating Polygon"));
         return null;
       }
     },
@@ -509,7 +511,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         return savedPolygon;
       } catch {
         closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
-        showPolygonErrorToast(t("Error creating polygon version"));
+        showPolygonErrorToast(t("Error Creating Polygon Version"));
         return null;
       }
     },
@@ -687,7 +689,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       );
     } catch (error) {
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloadingSamplePlots);
-      showPolygonErrorToast(t("Error downloading ANR monitoring plots"));
+      showPolygonErrorToast(t("Error Downloading ANR Monitoring Plots"));
     }
   }, [
     geometryPolygonUuid,
@@ -738,9 +740,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         setStatusSelectedPolygon(updatedVersion.status ?? "");
         setShouldRefetchPolygonData(true);
 
-        showStatusToast("success", t("Polygon version updated successfully"));
+        showStatusToast("success", t("Polygon Version Updated Successfully"));
       } catch (error) {
-        showStatusToast("error", t("Error updating polygon version"));
+        showStatusToast("error", t("Error Updating Polygon Version"));
       } finally {
         setIsVersionUpdating(false);
       }
@@ -783,7 +785,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       completePolygonProgressToast(POLYGON_TOAST_IDS.downloading, toastLabels.downloadingPolygonsComplete);
     } catch (error) {
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
-      showPolygonErrorToast(t("Error downloading polygon"));
+      showPolygonErrorToast(t("Error Downloading Polygon"));
     }
   }, [geometryPolygonUuid, onClose, polygon?.name, resolvedSiteUuid, showStatusToast, t, toastLabels]);
 
@@ -800,6 +802,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       }
 
       const targetGeometryPolygonUuid = targetPolygon.polygonUuid ?? "";
+
+      onSubmittingChange?.(true, 1);
 
       try {
         await bulkUpdateSitePolygonStatus([targetPolygon.uuid], POLYGON_PENDING_APPROVAL as PolygonStatus, comment);
@@ -827,8 +831,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         return true;
       } catch (error) {
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
-        showPolygonErrorToast(t("Error submitting polygon"));
+        showPolygonErrorToast(t("Error Submitting Polygon"));
         return false;
+      } finally {
+        onSubmittingChange?.(false);
       }
     },
     [
@@ -836,6 +842,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       invalidatePolygonMapTiles,
       onClose,
       onSaved,
+      onSubmittingChange,
       onValidationJobsStarted,
       resolvedSiteUuid,
       setIsUserDrawingEnabled,
@@ -908,7 +915,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       completePolygonProgressToast(POLYGON_TOAST_IDS.deleting, toastLabels.deletingComplete);
     } catch (error) {
       closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
-      showPolygonErrorToast(t("Error deleting polygon"));
+      showPolygonErrorToast(t("Error Deleting Polygon"));
       throw error;
     } finally {
       onDeletingChange?.(false);

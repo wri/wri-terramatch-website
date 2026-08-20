@@ -40,20 +40,38 @@ const listOfPolygonsFixed = (data: Record<string, any> | null) => {
   }
 };
 
+const INDICATORS_WHERE_EMPTY_RESPONSE_IS_SUCCESS = new Set(["treeCoverLoss", "treeCoverLossFires"]);
+const INDICATORS_WITH_NO_DATA_SUMMARY_LINE = new Set([
+  "restorationByEcoRegion",
+  "restorationByStrategy",
+  "restorationByLandUse"
+]);
+
 const getIndicatorCalculationValues = (data: Record<string, any> | null) => {
   if (data?.data == null || typeof data.data !== "object" || data.data.totalPolygons == null) {
     return null;
   }
 
+  const slug = typeof data.data.slug === "string" ? data.data.slug : null;
+  const countsEmptyResponseAsSuccess = slug != null && INDICATORS_WHERE_EMPTY_RESPONSE_IS_SUCCESS.has(slug);
+  const showNoDataLine = slug != null && INDICATORS_WITH_NO_DATA_SUMMARY_LINE.has(slug);
+  const processingSuccessful = countsEmptyResponseAsSuccess
+    ? (data.data.dataFound ?? 0) + (data.data.noData ?? 0)
+    : data.data.dataFound ?? 0;
+
+  const failedDisplay =
+    data.data.failureMessage != null
+      ? `<strong style="font-weight: 600; color: red;">${data.data.failureMessage}</strong>`
+      : (data.data.failed ?? 0) > 0
+      ? String(data.data.failed)
+      : "-";
+
   return `
     Total Polygons Processed: ${data.data.totalPolygons} <br />
-    Successful (Data Found): ${data.data.dataFound} <br />
-    No Data Available (Coverage Gap): ${data.data.noData} <br />
-    Failed: ${
-      data.data.failureMessage
-        ? `<strong style="font-weight: 600; color: red;">${data.data.failureMessage}</strong>`
-        : "-"
-    } <br />`;
+    Processing Successful: ${processingSuccessful} <br />
+    ${
+      showNoDataLine ? `No Data Returned: ${data.data.noData ?? 0} <br />` : ""
+    }Processing Failed: ${failedDisplay} <br />`;
 };
 
 const getFailedPolygonUuidsFromIndicatorPayload = (data: Record<string, any> | null): string[] => {
@@ -112,28 +130,32 @@ const clearJob = (item: DelayedJobDto) => {
   acknowledgeJobs([item.uuid]);
 };
 
-const entityName = (job: DelayedJobDto, cachedSiteNames: Record<string, string>): string => {
-  if (job.entityName != null) {
-    return job.entityName;
-  }
-  if (cachedSiteNames[job.uuid] != null) {
-    return cachedSiteNames[job.uuid];
-  }
-  return "Unknown";
-};
-
 const entityType = (job: DelayedJobDto, t: typeof useT) => {
   if (job.entityType != null) {
-    // only three types expected
     return job.entityType === "projects"
       ? t("Project: ")
       : job.entityType === "sites"
       ? t("Site: ")
       : job.entityType === "nurseries"
       ? t("Nursery: ")
+      : job.entityType === "forms"
+      ? t("Form: ")
+      : job.entityType === "aboutSections"
+      ? t("About Section: ")
       : null;
   }
   return job?.name?.includes("Project") ? t("Project: ") : t("Site: ");
+};
+
+const JobDetails: FC<{ job: DelayedJobDto }> = ({ job }) => {
+  const t = useT();
+
+  return (
+    <Text variant="text-14-light" className="text-darkCustom">
+      {entityType(job, t)}
+      <b>{job.entityName ?? "Unknown"}</b>
+    </Text>
+  );
 };
 
 const FloatNotification: FC = () => {
@@ -142,7 +164,6 @@ const FloatNotification: FC = () => {
   const [openModalNotification, setOpenModalNotification] = useState(false);
   const [isLoaded, { delayedJobs }] = useDelayedJobs();
   const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
-  const [cachedSiteNames, setCachedSiteNames] = useState<Record<string, string>>({});
   const [processedIndicatorJobs, setProcessedIndicatorJobs] = useState<Set<string>>(new Set());
   const [processedValidationJobs, setProcessedValidationJobs] = useState<Set<string>>(new Set());
   const [rerunningFailedJobs, setRerunningFailedJobs] = useState<Set<string>>(new Set());
@@ -156,15 +177,7 @@ const FloatNotification: FC = () => {
   }, [delayedJobs]);
 
   useValueChanged(delayedJobs, () => {
-    if (!delayedJobs) return;
-
-    const newCachedNames = { ...cachedSiteNames };
-    delayedJobs.forEach(job => {
-      if (job.entityName && job.uuid) {
-        newCachedNames[job.uuid] = job.entityName;
-      }
-    });
-    setCachedSiteNames(newCachedNames);
+    if (delayedJobs == null) return;
 
     setNotAcknowledgedJobs(delayedJobs);
     if (delayedJobs.length > notAcknowledgedJobs.length && !firstRender.current) {
@@ -297,10 +310,7 @@ const FloatNotification: FC = () => {
                           </button>
                         }
                       </div>
-                      <Text variant="text-14-light" className="text-darkCustom">
-                        {entityType(item, t)}
-                        <b>{entityName(item, cachedSiteNames)}</b>
-                      </Text>
+                      <JobDetails job={item} />
                       <div className="mt-1">
                         {item.status === "failed" ? (
                           <Text variant="text-12-semibold" className="text-error-600">

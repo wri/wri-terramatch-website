@@ -60,7 +60,7 @@ export const Awaiting: Story = {
     status: "awaiting",
     children: (
       <Text variant="text-body-100" className="pt-0.5">
-        Awaiting Review
+        Pending Approval
       </Text>
     )
   }
@@ -72,7 +72,7 @@ export const Warning: Story = {
     status: "warning",
     children: (
       <Text variant="text-body-100" className="pt-0.5">
-        More Info Requested
+        Information Required
       </Text>
     )
   }

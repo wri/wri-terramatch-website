@@ -6,6 +6,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
@@ -14,7 +15,7 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { AWAITING_APPROVAL } from "@/constants/statuses";
+import { PENDING_APPROVAL } from "@/constants/statuses";
 import { Framework } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
@@ -31,7 +32,6 @@ import { AreaHectaresIcon } from "@/redesignComponents/foundations/Icons";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
 import { ONBOARDING_CARD_TYPES } from "@/utils/analytics/onboardingCardAnalytics";
-import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 interface OverviewProps {
   siteReport: SiteReportFullDto;
@@ -75,7 +75,8 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
     entityTitle: siteReport.siteName ?? "",
     reportTitle: siteReport.reportTitle ?? "",
     feedback: siteReport.feedback,
-    useStatusModal: true
+    useStatusModal: true,
+    useInformationRequiredModal: true
   });
 
   const goToTab = useCallback(
@@ -98,14 +99,11 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const isAdmin = useIsAdmin();
 
   const statusTag = useMemo(() => {
-    if (siteReport.updateRequestStatus === AWAITING_APPROVAL) {
+    if (siteReport.updateRequestStatus === PENDING_APPROVAL) {
       return <TagSubmission size="small" state={isAdmin ? "pending-approval" : "pending-approval-neutral"} />;
     }
 
-    const tagState = mapStatusToTagStateEntity(siteReport.status);
-    if (siteReport.status == null || tagState == null) return null;
-
-    return <TagSubmission size="small" state={tagState.type} />;
+    return <StatusTag size="small" status={siteReport.status} />;
   }, [siteReport.status, siteReport.updateRequestStatus, isAdmin]);
 
   if (siteReport.nothingToReport) {

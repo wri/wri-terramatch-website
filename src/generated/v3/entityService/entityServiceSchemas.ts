@@ -301,6 +301,21 @@ export type ImpactStoryBulkDeleteBodyDto = {
   data: ImpactStoryDeleteData[];
 };
 
+/**
+ * CONSTANTS
+ */
+export type AboutSectionConstants = {
+  /**
+   * @example project
+   * @example site
+   * @example nursery
+   * @example project-report
+   * @example site-report
+   * @example nursery-report
+   */
+  TYPES: string[];
+};
+
 export type LinkDto = {
   id: string;
   title: string;
@@ -310,7 +325,7 @@ export type LinkDto = {
 export type AboutSectionDto = {
   id: string;
   type: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
-  frameworks:
+  frameworks?:
     | (
         | "terrafund"
         | "terrafund-landscapes"
@@ -326,7 +341,7 @@ export type AboutSectionDto = {
       )[]
     | null;
   header: string;
-  title: string | null;
+  title?: string | null;
   /**
    * The content of the about section in semantic HTML to be parsed into design system components on the client.
    */
@@ -334,6 +349,63 @@ export type AboutSectionDto = {
   contactSupportMessage: string;
   contactSupportSubject: string;
   links: LinkDto[];
+};
+
+export type StoreLinkAttributes = {
+  title: string;
+  url: string;
+  id?: string;
+};
+
+export type StoreAboutSectionAttributes = {
+  type: "project" | "site" | "nursery" | "project-report" | "site-report" | "nursery-report";
+  frameworks?:
+    | (
+        | "terrafund"
+        | "terrafund-landscapes"
+        | "enterprises"
+        | "epa-ghana-pilot"
+        | "terrafund-3"
+        | "ppc"
+        | "hbf"
+        | "fundo-flora"
+        | "fundo-flora-1"
+        | "wcb"
+        | "barka-fund"
+      )[]
+    | null;
+  header: string;
+  title?: string | null;
+  /**
+   * The content of the about section in semantic HTML to be parsed into design system components on the client.
+   */
+  description: string;
+  contactSupportMessage: string;
+  contactSupportSubject: string;
+  id?: string;
+  links: StoreLinkAttributes[];
+};
+
+export type CreateAboutSectionData = {
+  type: "aboutSections";
+  attributes: StoreAboutSectionAttributes;
+};
+
+export type CreateAboutSectionBody = {
+  data: CreateAboutSectionData;
+};
+
+export type UpdateAboutSectionData = {
+  type: "aboutSections";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: StoreAboutSectionAttributes;
+};
+
+export type UpdateAboutSectionBody = {
+  data: UpdateAboutSectionData;
 };
 
 export type TaskLightDto = {
@@ -397,7 +469,7 @@ export type ProjectReportLightDto = {
   /**
    * Report status for this project report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   completion: number | null;
   /**
    * @format date-time
@@ -415,7 +487,7 @@ export type ProjectReportLightDto = {
   /**
    * Update request status for this project report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * @format date-time
    */
@@ -453,11 +525,11 @@ export type SiteReportLightDto = {
   /**
    * Report status for this site report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update request status for this site report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -521,11 +593,11 @@ export type NurseryReportLightDto = {
   /**
    * Report status for this nursery report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update request status for this nursery report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -577,11 +649,11 @@ export type SrpReportLightDto = {
   /**
    * Report status for this srp report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update request status for this srp report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -627,7 +699,7 @@ export type TaskUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
    */
-  status?: "due" | "needs-more-information" | "awaiting-approval" | "approved";
+  status?: "due" | "information-required" | "pending-approval" | "approved";
   /**
    * Specific feedback for the PD
    */
@@ -1147,7 +1219,7 @@ export type ProjectLightDto = {
   /**
    * Entity status for this project
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Planting status for this project
    */
@@ -1161,7 +1233,7 @@ export type ProjectLightDto = {
   /**
    * Update request status for this project
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   name: string | null;
   shortName: string | null;
   /**
@@ -1215,7 +1287,7 @@ export type SiteLightDto = {
   /**
    * Entity status for this site
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * Planting status for this site
    */
@@ -1229,7 +1301,7 @@ export type SiteLightDto = {
   /**
    * Update request status for this site
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   name: string | null;
   /**
    * The associated project name
@@ -1263,11 +1335,11 @@ export type NurseryLightDto = {
   /**
    * Entity status for this nursery
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * Update request status for this nursery
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated project name
    */
@@ -1310,11 +1382,11 @@ export type FinancialReportLightDto = {
   /**
    * Report status for this financial report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update request status for this financial report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated organisation name
    */
@@ -1386,11 +1458,11 @@ export type DisturbanceReportLightDto = {
   /**
    * Entity status for this disturbance report
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update request status for this disturbance report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated project name
    */
@@ -1410,6 +1482,7 @@ export type DisturbanceReportLightDto = {
   intensity: string | null;
   createdByFirstName: string | null;
   createdByLastName: string | null;
+  frameworkKey: string | null;
   /**
    * @format date-time
    */
@@ -1432,6 +1505,64 @@ export type DisturbanceReportLightDto = {
 
 export type FileDownloadDto = {
   url: string;
+};
+
+export type DelayedJobDto = {
+  /**
+   * The unique identifier for the delayed job.
+   */
+  uuid: string;
+  /**
+   * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
+   */
+  status: "pending" | "failed" | "succeeded";
+  /**
+   * If the job is out of pending state, this is the HTTP status code for the completed process
+   */
+  statusCode: number | null;
+  /**
+   * If the job is out of pending state, this is the JSON payload for the completed process
+   */
+  payload: Record<string, any> | null;
+  /**
+   * If the job is in progress, this is the total content to process
+   */
+  totalContent: number | null;
+  /**
+   * If the job is in progress, this is the total content processed
+   */
+  processedContent: number | null;
+  /**
+   * If the job is in progress, this is the progress message
+   */
+  progressMessage: string | null;
+  /**
+   * Indicates whether the jobs have been acknowledged (cleared)
+   */
+  isAcknowledged: boolean | null;
+  /**
+   * The name of the delayedJob
+   */
+  name: string | null;
+  /**
+   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
+   */
+  entityName?: string | null;
+  /**
+   * The type of the related entity (e.g., projects, sites, etc).
+   */
+  entityType?: string | null;
+};
+
+export type FormTranslationDto = {
+  /**
+   * Number of translation keys
+   */
+  translationKeysNumber: number;
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
 };
 
 export type ProjectFullDto = {
@@ -1459,7 +1590,7 @@ export type ProjectFullDto = {
   /**
    * Entity status for this project
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Planting status for this project
    */
@@ -1473,7 +1604,7 @@ export type ProjectFullDto = {
   /**
    * Update request status for this project
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   name: string | null;
   shortName: string | null;
   /**
@@ -1634,7 +1765,7 @@ export type SiteFullDto = {
   /**
    * Entity status for this site
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * Planting status for this site
    */
@@ -1648,7 +1779,7 @@ export type SiteFullDto = {
   /**
    * Update request status for this site
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   name: string | null;
   /**
    * The associated project name
@@ -1756,11 +1887,11 @@ export type NurseryFullDto = {
   /**
    * Entity status for this nursery
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  status: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * Update request status for this nursery
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated project name
    */
@@ -1826,7 +1957,7 @@ export type ProjectReportFullDto = {
   /**
    * Report status for this project report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   completion: number | null;
   /**
    * @format date-time
@@ -1844,7 +1975,7 @@ export type ProjectReportFullDto = {
   /**
    * Update request status for this project report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * @format date-time
    */
@@ -1974,11 +2105,11 @@ export type NurseryReportFullDto = {
   /**
    * Report status for this nursery report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update request status for this nursery report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -2059,11 +2190,11 @@ export type SiteReportFullDto = {
   /**
    * Report status for this site report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update request status for this site report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -2257,11 +2388,11 @@ export type FinancialReportFullDto = {
   /**
    * Report status for this financial report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update request status for this financial report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated organisation name
    */
@@ -2324,11 +2455,11 @@ export type DisturbanceReportFullDto = {
   /**
    * Entity status for this disturbance report
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update request status for this disturbance report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated project name
    */
@@ -2348,6 +2479,7 @@ export type DisturbanceReportFullDto = {
   intensity: string | null;
   createdByFirstName: string | null;
   createdByLastName: string | null;
+  frameworkKey: string | null;
   /**
    * @format date-time
    */
@@ -2381,7 +2513,6 @@ export type DisturbanceReportFullDto = {
   dueAt: string | null;
   completion: number | null;
   nothingToReport: boolean | null;
-  frameworkKey: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
   answers: string | null;
@@ -2400,11 +2531,11 @@ export type SrpReportFullDto = {
   /**
    * Report status for this srp report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update request status for this srp report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -2466,63 +2597,6 @@ export type SrpReportFullDto = {
   media: MediaDto[];
 };
 
-export type DelayedJobDto = {
-  /**
-   * The unique identifier for the delayed job.
-   */
-  uuid: string;
-  /**
-   * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
-   */
-  status: "pending" | "failed" | "succeeded";
-  /**
-   * If the job is out of pending state, this is the HTTP status code for the completed process
-   */
-  statusCode: number | null;
-  /**
-   * If the job is out of pending state, this is the JSON payload for the completed process
-   */
-  payload: Record<string, any> | null;
-  /**
-   * If the job is in progress, this is the total content to process
-   */
-  totalContent: number | null;
-  /**
-   * If the job is in progress, this is the total content processed
-   */
-  processedContent: number | null;
-  /**
-   * If the job is in progress, this is the progress message
-   */
-  progressMessage: string | null;
-  /**
-   * Indicates whether the jobs have been acknowledged (cleared)
-   */
-  isAcknowledged: boolean | null;
-  /**
-   * The name of the delayedJob
-   */
-  name: string | null;
-  /**
-   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
-   */
-  entityName?: string | null;
-  /**
-   * The type of the related entity (e.g., projects, sites, etc).
-   */
-  entityType?:
-    | "projects"
-    | "sites"
-    | "nurseries"
-    | "projectReports"
-    | "siteReports"
-    | "nurseryReports"
-    | "financialReports"
-    | "disturbanceReports"
-    | "srpReports"
-    | null;
-};
-
 export type ProjectUpdateAttributes = {
   /**
    * Specific feedback for the PD
@@ -2535,7 +2609,7 @@ export type ProjectUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
    */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status?: "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update the isTest flag.
    */
@@ -2599,7 +2673,7 @@ export type EntityUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
    */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status?: "draft" | "pending-approval" | "approved" | "information-required";
 };
 
 export type SiteUpdateData = {
@@ -2632,7 +2706,7 @@ export type ReportUpdateAttributes = {
   /**
    * Request to change to the status of the given report
    */
-  status?: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status?: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update the nothingToReport flag.
    */
@@ -2687,7 +2761,7 @@ export type DisturbanceReportUpdateAttributes = {
   /**
    * Request to change to the status of the given disturbance report
    */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status?: "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update the nothingToReport flag.
    */
@@ -2809,7 +2883,7 @@ export type UpdateFormDataBody = {
 
 export type UpdateRequestDto = {
   formUuid: string;
-  status: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "draft" | "pending-approval" | "approved" | "information-required";
   entityAnswers: Record<string, any>;
   updateRequestAnswers: Record<string, any>;
 };
@@ -2826,7 +2900,7 @@ export type UpdateRequestAttributes = {
   /**
    * Request to change to the status of the given entity
    */
-  status?: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information";
+  status?: "draft" | "pending-approval" | "approved" | "information-required";
 };
 
 export type UpdateRequestData = {
@@ -3237,7 +3311,7 @@ export type SubmissionDto = {
     | "barka-fund"
     | null;
   formUuid: string;
-  status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
+  status?: "approved" | "pending-approval" | "rejected" | "information-required" | "draft" | null;
   answers: Record<string, any>;
   organisationUuid: string | null;
   organisationName: string | null;
@@ -3265,7 +3339,7 @@ export type CreateSubmissionBody = {
 };
 
 export type UpdateSubmissionAttributes = {
-  status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
+  status?: "approved" | "pending-approval" | "rejected" | "information-required" | "draft" | null;
   feedback?: string | null;
   answers?: Record<string, any>;
   feedbackFields?: string[];
@@ -3316,7 +3390,7 @@ export type FormLightDto = {
   lightResource: boolean;
   uuid: string;
   /**
-   * Translated form title
+   * Form title
    */
   title: string;
   type?:
@@ -3437,11 +3511,11 @@ export type FormQuestionDto = {
 export type FormSectionDto = {
   id: string;
   /**
-   * Translated section title
+   * Section title
    */
   title?: string | null;
   /**
-   * Translated section description
+   * Section description
    */
   description?: string | null;
   questions: FormQuestionDto[];
@@ -3454,7 +3528,7 @@ export type FormFullDto = {
   lightResource: boolean;
   uuid: string;
   /**
-   * Translated form title
+   * Form title
    */
   title: string;
   type?:
@@ -3578,11 +3652,11 @@ export type StoreFormQuestionAttributes = {
 
 export type StoreFormSectionAttributes = {
   /**
-   * Translated section title
+   * Section title
    */
   title?: string | null;
   /**
-   * Translated section description
+   * Section description
    */
   description?: string | null;
   id?: string;
@@ -3591,7 +3665,7 @@ export type StoreFormSectionAttributes = {
 
 export type StoreFormAttributes = {
   /**
-   * Translated form title
+   * Form title
    */
   title: string;
   type?:
@@ -3650,17 +3724,6 @@ export type UpdateFormBody = {
   data: UpdateFormData;
 };
 
-export type FormTranslationDto = {
-  /**
-   * Number of translation keys
-   */
-  translationKeysNumber: number;
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-};
-
 export type EmbeddedSubmissionDto = {
   uuid: string;
   /**
@@ -3672,7 +3735,7 @@ export type EmbeddedSubmissionDto = {
    */
   updatedAt: string;
   updatedByName: string | null;
-  status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
+  status?: "approved" | "pending-approval" | "rejected" | "information-required" | "draft" | null;
   stageName: string | null;
 };
 
@@ -3715,7 +3778,7 @@ export type ApplicationHistoryEntryDto = {
     | "project-qa-status-4"
     | "project-qa-status-5"
     | null;
-  status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
+  status: "approved" | "pending-approval" | "rejected" | "information-required" | "draft" | null;
   /**
    * @format date-time
    */
@@ -3841,6 +3904,7 @@ export type ReportingFrameworkDto = {
   nurseryFormUuid: string | null;
   nurseryReportFormUuid: string | null;
   financialReportFormUuid: string | null;
+  disturbanceReportFormUuid: string | null;
   totalProjectsCount: number;
 };
 
@@ -3873,6 +3937,10 @@ export type CreateReportingFrameworkAttributes = {
    * @format uuid
    */
   financialReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  disturbanceReportFormUuid?: string | null;
   /**
    * Framework name; used to generate slug
    */
@@ -3918,6 +3986,10 @@ export type UpdateReportingFrameworkAttributes = {
    * @format uuid
    */
   financialReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  disturbanceReportFormUuid?: string | null;
   name?: string | null;
   slug?: string | null;
 };

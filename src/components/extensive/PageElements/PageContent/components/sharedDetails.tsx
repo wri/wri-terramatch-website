@@ -2,7 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
-import { FC, Fragment } from "react";
+import { FC, Fragment, useMemo } from "react";
 
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import { countFeedbackInStep, countUnresolvedFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
@@ -32,11 +32,11 @@ import { EntityName } from "@/types/common";
 import { resolveReportEntityTypeFromEntityName } from "@/utils/analytics/reportAnalytics";
 import { trackReportOverviewAccordionExpanded } from "@/utils/analytics/reportsIndexAnalytics";
 
-import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
+import { countValidationErrors, getValidationErrorsByField } from "../utils/detailUtils";
 import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
 import SpecialEntryRenderer, { SPECIAL_ENTRY_TITLES } from "./SpecialEntryRenderer";
 
-export { getFieldsRequiringAttentionCount, plantsToNoCountRows };
+export { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
 
 const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }) => (
   <Button variant="secondary" size="small" leftIcon={<EditIcon boxSize={4} />} onClick={onClick}>
@@ -89,7 +89,12 @@ const SharedDetails: FC<SharedDetailsProps> = ({
   const router = useRouter();
   const fieldsProvider = useFieldsProvider();
 
-  const isValid = step.validation.isValidSync(formValues);
+  const validationErrorsByField = useMemo(
+    () => getValidationErrorsByField(step.validation, formValues),
+    [step.validation, formValues]
+  );
+  const validationFieldsRequiringAttention = countValidationErrors(validationErrorsByField);
+
   const feedbackFieldsRequiringAttention =
     feedbackBaselineValues != null
       ? countUnresolvedFeedbackInStep(
@@ -101,12 +106,11 @@ const SharedDetails: FC<SharedDetailsProps> = ({
         )
       : countFeedbackInStep(fieldsProvider, step.id, feedbackFieldsOptions);
   const hasStepFeedback = feedbackFieldsRequiringAttention > 0;
-  const accordionHeaderStatus = !isValid || hasStepFeedback ? "error" : "complete";
-  const validationFieldsRequiringAttention = getFieldsRequiringAttentionCount(step.validation, formValues);
   const fieldsRequiringAttention = hasStepFeedback
     ? Math.max(validationFieldsRequiringAttention, feedbackFieldsRequiringAttention)
     : validationFieldsRequiringAttention;
-
+  const isValid = step.validation.isValidSync(formValues);
+  const accordionHeaderStatus = !isValid || hasStepFeedback ? "error" : "complete";
   const entries = useGetFormEntries({
     stepId: step.id,
     values: formValues,
@@ -118,12 +122,26 @@ const SharedDetails: FC<SharedDetailsProps> = ({
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName,
     entityUUID,
-    entityStatus: entityStatus ?? "started",
-    updateRequestStatus: updateRequestStatus ?? "no-update"
+    entityStatus: entityStatus ?? "draft",
+    updateRequestStatus: updateRequestStatus!,
+    feedback: entity.feedback,
+    useInformationRequiredModal: true
   });
 
   const reportEntityType = resolveReportEntityTypeFromEntityName(entityName as EntityName);
   const accordionLabel = step.title?.trim() ?? "";
+
+  const navigateToEdit = (targetStepId: string) => {
+    if (isEntityReport(entityName as EntityName) || isEntityAwaitingApproval(entityStatus, updateRequestStatus)) {
+      handleEdit(targetStepId);
+    } else {
+      router.push(
+        `/entity/${pluralEntityName(entityName)}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
+          targetStepId
+        )}`
+      );
+    }
+  };
 
   const handleAccordionOpenChange = (open: boolean) => {
     if (!open || reportEntityType == null || accordionLabel === "") return;
@@ -152,25 +170,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
             }
           />
         }
-        actions={
-          <EditButton
-            onClick={() => {
-              if (
-                isEntityReport(entityName as EntityName) ||
-                isEntityAwaitingApproval(entityStatus, updateRequestStatus)
-              ) {
-                handleEdit(step.id);
-              } else {
-                router.push(
-                  `/entity/${pluralEntityName(entityName)}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(
-                    step.id
-                  )}`
-                );
-              }
-            }}
-            text={t("Edit")}
-          />
-        }
+        actions={<EditButton onClick={() => navigateToEdit(step.id)} text={t("Edit")} />}
       >
         <Flex flexDirection="column" gap={3}>
           {entries.map((entry, index) => {

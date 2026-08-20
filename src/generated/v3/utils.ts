@@ -165,11 +165,10 @@ export class V3ApiEndpoint<
   }
 
   async fetchAwait(variables: TVariables, headers?: THeaders): Promise<TResponse> {
-    const fullUrl = resolveUrl(this.url, variables);
     const failure = this.fetchFailedSelector(variables)(ApiSlice.currentState);
 
     if (failure != null) {
-      ApiSlice.clearPending(fullUrl, this.method);
+      this.clearPending(variables);
     }
 
     return await this.executeRequest(variables, headers);
@@ -257,6 +256,10 @@ export class V3ApiEndpoint<
     await downloadFileBlob(await response.blob(), fileName ?? defaultFileName);
   }
 
+  clearPending(variables: TVariables) {
+    ApiSlice.clearPending(resolveUrl(this.url, variables), this.method);
+  }
+
   isFetchingSelector(variables: Omit<RequestVariables, "body">) {
     const fullUrl = resolveUrl(this.url, variables);
     return (store: ApiDataStore) => isInProgress(store.meta.pending[this.method.toUpperCase() as Method][fullUrl]);
@@ -330,7 +333,18 @@ export class V3ApiEndpoint<
   }
 }
 
-const isPending = (method: Method, fullUrl: string) => ApiSlice.currentState.meta.pending[method][fullUrl] != null;
+const isPending = (method: Method, fullUrl: string) => {
+  const pending = ApiSlice.currentState.meta.pending[method][fullUrl];
+  if (pending == null) return false;
+
+  // Creation endpoints are no longer pending after they succeed and are simply holding the resulting resource ids.
+  if (method === "POST" && isObject(pending)) {
+    const keys = Object.keys(pending);
+    return !(keys.length === 1 && keys[0] === "resourceIds");
+  }
+
+  return true;
+};
 
 const isPendingError = (error: any): error is PendingError => {
   if (!isObject(error) || error instanceof Error) return false;

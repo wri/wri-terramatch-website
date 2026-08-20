@@ -5,6 +5,7 @@ import { FieldDefinition, FieldInputType, GetEntryValueProps } from "@/component
 import { Entity } from "@/types/common";
 
 export type FormEntry = {
+  name?: string;
   title?: string;
   inputType: FieldInputType;
   value: any;
@@ -16,6 +17,7 @@ export const addEntryWith =
   (factory: EntryFactory) =>
   (entries: FormEntry[], field: FieldDefinition, formValues: Dictionary<any>, additional: GetEntryValueProps) => {
     entries.push({
+      name: field.name,
       title: field.label ?? "",
       inputType: field.inputType,
       value: factory(field, formValues, additional)

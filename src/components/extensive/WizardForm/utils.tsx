@@ -49,6 +49,20 @@ export const addFieldValidation = (
 export const isDtoOption = (option: FormQuestionOptionDto | Option): option is FormQuestionOptionDto =>
   (option as FormQuestionOptionDto).slug != null;
 
+export const toFormOptionsWithTranslation = (options?: FormQuestionOptionDto[] | Option[] | null, t?: typeof useT) =>
+  (options ?? []).map(option =>
+    isDtoOption(option)
+      ? {
+          title: t(option.label),
+          value: option.slug,
+          meta: {
+            image_url: option.imageUrl,
+            image: option.thumbUrl == null ? null : { thumb_url: option.thumbUrl }
+          }
+        }
+      : option
+  );
+
 export const toFormOptions = (options?: FormQuestionOptionDto[] | Option[] | null) =>
   (options ?? []).map(option =>
     isDtoOption(option)

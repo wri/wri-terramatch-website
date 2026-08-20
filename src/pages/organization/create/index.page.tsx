@@ -41,7 +41,7 @@ const CreateOrganisationForm = () => {
   const handleSubmit = useCallback(async () => {
     if (uuid == null) return;
     try {
-      await updateOrganisation({ status: "pending" }, { id: uuid });
+      await updateOrganisation({ status: "pending-approval" }, { id: uuid });
       router.push("/organization/create/confirm");
     } catch (error) {
       Log.error("Failed to submit organization:", error);
@@ -63,7 +63,11 @@ const CreateOrganisationForm = () => {
   const provider = useLocalStepsProvider(formSteps);
   const defaultValues = useMemo(() => formDefaultValues(orgData ?? {}, provider), [orgData, provider]);
 
-  const onBackFirstStep = () => {
+  const onBackFirstStep = (shouldHideWarning?: boolean) => {
+    if (shouldHideWarning) {
+      handleDeleteDraft();
+      return;
+    }
     openModal(
       ModalId.WARNING,
       <Modal

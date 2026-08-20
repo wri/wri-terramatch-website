@@ -24,6 +24,7 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
+import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
 import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
@@ -41,47 +42,61 @@ const tableMenu = [
   }
 ];
 
-const DisturbanceReportDataGrid: FC = () => (
-  <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
-    <TextField source="projectName" label="Project Name" />
-    <FunctionField
-      source="status"
-      label="Status"
-      sortable={false}
-      render={({ status }: DisturbanceReportLightDto) => {
-        const { title } = getStatusOptions().find((option: any) => option.value === status) ?? {};
-        return <CustomChipField label={title} />;
-      }}
-    />
-    <FunctionField
-      source="updateRequestStatus"
-      label="Change Request Status"
-      sortable={false}
-      render={(record?: DisturbanceReportLightDto) => {
-        const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-          (option: any) => option.value === record?.updateRequestStatus
-        );
-        return <CustomChipField label={readableChangeRequestStatus?.title} />;
-      }}
-    />
-    <FunctionField
-      source="intensity"
-      label="Intensity"
-      render={(record: DisturbanceReportLightDto) => (
-        <Intensity intensity={record?.intensity?.toLowerCase() as IntensityEnum} />
-      )}
-      sortable={false}
-    />
-    <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
-    <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />
-    <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
-      <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
-    </Menu>
-  </Datagrid>
-);
+const DisturbanceReportDataGrid: FC = () => {
+  const frameworkInputChoices = useUserFrameworkChoices();
+  return (
+    <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
+      <TextField source="projectName" label="Project Name" />
+      <FunctionField
+        source="status"
+        label="Status"
+        sortable={false}
+        render={({ status }: DisturbanceReportLightDto) => {
+          const { title } = getStatusOptions().find((option: any) => option.value === status) ?? {};
+          return <CustomChipField label={title} />;
+        }}
+      />
+      <FunctionField
+        source="updateRequestStatus"
+        label="Change Request Status"
+        sortable={false}
+        render={(record?: DisturbanceReportLightDto) => {
+          const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
+            (option: any) => option.value === record?.updateRequestStatus
+          );
+          return readableChangeRequestStatus?.title ? (
+            <CustomChipField label={readableChangeRequestStatus.title} />
+          ) : null;
+        }}
+      />
+      <FunctionField
+        source="frameworkKey"
+        label="Framework"
+        render={({ frameworkKey }: DisturbanceReportLightDto) =>
+          frameworkInputChoices.find((framework: any) => framework.id === frameworkKey)?.name ?? frameworkKey
+        }
+        sortable={false}
+      />
+      <FunctionField
+        source="intensity"
+        label="Intensity"
+        render={(record: DisturbanceReportLightDto) => (
+          <Intensity intensity={record?.intensity?.toLowerCase() as IntensityEnum} />
+        )}
+        sortable={false}
+      />
+      <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
+      <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />
+      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
+        <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
+      </Menu>
+    </Datagrid>
+  );
+};
 
 export const DisturbanceReportList: FC = () => {
   const [exporting, setExporting] = useState<boolean>(false);
+  const frameworkInputChoices = useUserFrameworkChoices();
 
   const handleExport = async () => {
     setExporting(true);
@@ -126,6 +141,13 @@ export const DisturbanceReportList: FC = () => {
       label="Change Request Status"
       source="updateRequestStatus"
       choices={optionToChoices(getChangeRequestStatusOptions())}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="frameworkKey"
+      label="Framework"
+      source="frameworkKey"
+      choices={frameworkInputChoices}
       className="select-page-admin"
     />
   ];

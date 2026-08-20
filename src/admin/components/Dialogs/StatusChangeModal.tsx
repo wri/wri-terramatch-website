@@ -42,7 +42,7 @@ interface StatusChangeModalProps extends DialogProps {
   handleClose: () => void;
   // During the transition, this is supporting both the actions that v2 expects and the status to
   // update to that v3 expects
-  status?: "approved" | "needs-more-information" | "reminder" | "due";
+  status?: "approved" | "information-required" | "reminder" | "due";
 }
 
 const moreInfoValidationSchema = yup.object({
@@ -71,7 +71,7 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
       failure => {
         if (failure != null) return;
 
-        if (status === "approved" || status === "needs-more-information") {
+        if (status === "approved" || status === "information-required") {
           const reportEntityType = resolveReportEntityTypeFromAdminResource(resource);
           if (reportEntityType != null) {
             trackReportAnalyticsEvent(status === "approved" ? "report_approved" : "report_needs_more_info", {
@@ -124,7 +124,7 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
       case "approved":
         return `Are you sure you want to approve this ${name}`;
 
-      case "needs-more-information":
+      case "information-required":
         return `Request more information for ${name}`;
 
       case "reminder":
@@ -201,9 +201,7 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
     <Dialog {...dialogProps} fullWidth>
       <Form
         onSubmit={handleSave}
-        validate={validateForm(
-          status === "needs-more-information" ? moreInfoValidationSchema : genericValidationSchema
-        )}
+        validate={validateForm(status === "information-required" ? moreInfoValidationSchema : genericValidationSchema)}
       >
         <DialogTitle>{dialogTitle}</DialogTitle>
 
@@ -219,7 +217,7 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
               helperText={false}
             />
           )}
-          {status === "needs-more-information" && feedbackChoices.length > 0 ? (
+          {status === "information-required" && feedbackChoices.length > 0 ? (
             <AutocompleteArrayInput
               source="feedbackFields"
               label="Fields"

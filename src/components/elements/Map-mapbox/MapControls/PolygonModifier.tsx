@@ -113,7 +113,8 @@ const PolygonModifier = ({ polygonFromMap, setPolygonFromMap, onClick, onSave, o
         onClick={() => {
           if (polygonFromMap?.uuid == null || polygonFromMap.uuid === "") {
             showToast({
-              label: t("Click a polygon on the map before editing."),
+              label: t("Select a Polygon"),
+              caption: t("Click a polygon on the map before editing."),
               type: "warning",
               placement: "bottom",
               duration: 5000

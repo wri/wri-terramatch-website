@@ -35,6 +35,7 @@ import {
   DisturbanceReportFullDto,
   FileDownloadDto,
   DelayedJobDto,
+  FormTranslationDto,
   FormDataDto,
   UpdateRequestDto,
   TrackingDto,
@@ -47,7 +48,6 @@ import {
   SubmissionDto,
   FormLightDto,
   FormFullDto,
-  FormTranslationDto,
   ApplicationDto,
   ApplicationHistoryDto,
   FundingProgrammeDto,
@@ -79,6 +79,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "disturbanceReports",
   "fileDownloads",
   "delayedJobs",
+  "formTranslations",
   "formData",
   "updateRequests",
   "trackings",
@@ -90,7 +91,6 @@ export const ENTITY_SERVICE_RESOURCES = [
   "linkedFields",
   "submissions",
   "forms",
-  "formTranslations",
   "applications",
   "applicationHistories",
   "fundingProgrammes",
@@ -122,6 +122,7 @@ export type EntityServiceApiResources = {
   disturbanceReports: StoreResourceMap<DisturbanceReportLightDto | DisturbanceReportFullDto>;
   fileDownloads: StoreResourceMap<FileDownloadDto>;
   delayedJobs: StoreResourceMap<DelayedJobDto>;
+  formTranslations: StoreResourceMap<FormTranslationDto>;
   formData: StoreResourceMap<FormDataDto>;
   updateRequests: StoreResourceMap<UpdateRequestDto>;
   trackings: StoreResourceMap<TrackingDto>;
@@ -133,12 +134,15 @@ export type EntityServiceApiResources = {
   linkedFields: StoreResourceMap<LinkedFieldDto>;
   submissions: StoreResourceMap<SubmissionDto>;
   forms: StoreResourceMap<FormLightDto | FormFullDto>;
-  formTranslations: StoreResourceMap<FormTranslationDto>;
   applications: StoreResourceMap<ApplicationDto>;
   applicationHistories: StoreResourceMap<ApplicationHistoryDto>;
   fundingProgrammes: StoreResourceMap<FundingProgrammeDto>;
   reportingFrameworks: StoreResourceMap<ReportingFrameworkDto>;
 };
+
+export const AboutSectionConstants = {
+  TYPES: ["project", "site", "nursery", "project-report", "site-report", "nursery-report"] as const
+} as const;
 
 export const TreeEntityTypes = {
   ESTABLISHMENT_ENTITIES: [

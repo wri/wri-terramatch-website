@@ -1,13 +1,10 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback } from "react";
 import Twemoji from "react-twemoji";
 
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { useMyOrg } from "@/connections/Organisation";
-import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -43,12 +40,13 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   project
 }) => {
   const t = useT();
-  const [openStatusModal, setOpenStatusModal] = useState(false);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
-    entityStatus: project.status ?? "started",
-    updateRequestStatus: project.updateRequestStatus ?? "no-update"
+    entityStatus: project.status ?? "draft",
+    updateRequestStatus: project.updateRequestStatus,
+    feedback: project.feedback,
+    useInformationRequiredModal: true
   });
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("projects", project.uuid);
   const [, myOrg] = useMyOrg();
@@ -59,30 +57,10 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
     router.push(orgId != null ? `/organization/${orgId}` : "/");
   }, [router, myOrg?.organisationId]);
 
-  const needMoreInformation =
-    project.updateRequestStatus === NEEDS_MORE_INFORMATION || project.status === NEEDS_MORE_INFORMATION;
-  const awaitingApproval = project.updateRequestStatus === AWAITING_APPROVAL || project.status === AWAITING_APPROVAL;
-  const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
-
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval) {
-      setOpenStatusModal(true);
-    } else {
-      handleEdit();
-    }
-  }, [needMoreInformation, handleEdit, awaitingApproval]);
+  const handleEditClick = useCallback(() => handleEdit(), [handleEdit]);
 
   return (
     <Box gap={2} className="flex flex-col">
-      <EntityStatusModal
-        statusProps={statusProps!}
-        feedback={project.feedback}
-        needMoreInformation={needMoreInformation}
-        entityName="projects"
-        entityUuid={project.uuid}
-        open={openStatusModal}
-        onOpenChange={setOpenStatusModal}
-      />
       {EditModals}
       <Text
         fontSize="1.75rem"

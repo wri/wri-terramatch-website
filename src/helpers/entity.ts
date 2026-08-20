@@ -51,7 +51,9 @@ export const isEntityReport = (entityName: EntityName) => {
  * @returns combinedStatus
  */
 export const getEntityCombinedStatus = (entity: any): string => {
-  return !!entity.update_request_status && entity.update_request_status !== "no-update"
+  return entity.update_request_status != null &&
+    entity.update_request_status !== "" &&
+    entity.update_request_status !== "no-update"
     ? entity.update_request_status
     : entity.status;
 };
@@ -65,10 +67,10 @@ export const getCurrentPathEntity = () => {
 };
 
 export const isEntityAwaitingApproval = (status?: string | null, updateRequestStatus?: string | null): boolean => {
-  return status === "awaiting-approval" || updateRequestStatus === "awaiting-approval";
+  return status === "pending-approval" || updateRequestStatus === "pending-approval";
 };
 
-const ENTITY_DRAFT_STATUSES = new Set(["draft", "started", "due"]);
+const ENTITY_DRAFT_STATUSES = new Set(["draft", "draft", "due"]);
 
 export const isEntityDraftInProgress = (status: string | null | undefined, isSetupComplete: boolean) =>
   status != null && ENTITY_DRAFT_STATUSES.has(status) && !isSetupComplete;

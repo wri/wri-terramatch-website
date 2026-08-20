@@ -4,17 +4,15 @@ import { FC } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
-import StatusPill from "@/components/elements/StatusPill/StatusPill";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
-import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Container from "@/components/generic/Layout/Container";
 import { useProjectIndex } from "@/connections/Entity";
 import { useGadmOptions } from "@/connections/Gadm";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { Status } from "@/types/common";
 import { formatOptionsList } from "@/utils/options";
 
 const ProjectsTabContent: FC = () => {
@@ -47,23 +45,14 @@ const ProjectsTabContent: FC = () => {
                 {
                   accessorKey: "status",
                   header: t("Status"),
-                  cell: (props: any) => {
-                    const statusProps = getActionCardStatusMapper(t)[props.getValue() as any];
-                    if (!statusProps) return null;
-
-                    return (
-                      <StatusPill status={statusProps.status! as unknown as Status} className="w-fit">
-                        <Text variant="text-bold-caption-100">{statusProps.statusText}</Text>
-                      </StatusPill>
-                    );
-                  }
+                  cell: (props: any) => <StatusTag status={props.getValue() as string} size="small" />
                 },
                 {
                   header: "",
                   enableSorting: false,
                   accessorKey: "uuid",
                   cell: props =>
-                    props.row.original?.status === "started" ? (
+                    props.row.original?.status === "draft" ? (
                       <Button as={Link} href={`/entity/projects/edit/${props.getValue()}`} className="float-right">
                         {t("Continue")}
                       </Button>

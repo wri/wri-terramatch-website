@@ -1,13 +1,15 @@
 import { useT } from "@transifex/react";
-import type { FC, ReactElement } from "react";
+import type { FC, ReactElement, ReactNode } from "react";
 
 import {
   CheckApprovedIcon,
+  DisallowedIcon,
   DraftIcon,
   DueIcon,
   InfoIcon,
   NothingReportedIcon,
-  PendingIcon
+  PendingIcon,
+  RejectedIcon
 } from "@/redesignComponents/foundations/Icons";
 
 import ActionStatusTag from "../ActionStatusTag/ActionStatusTag";
@@ -20,12 +22,17 @@ export type TagSubmissionState =
   | "pending-approval"
   | "information-required"
   | "approved"
-  | "due";
+  | "due"
+  | "not-selected"
+  | "receiving-applications"
+  | "closed"
+  | "coming-soon";
 
 export interface TagSubmissionProps {
   state: TagSubmissionState;
   className?: string;
   size?: "small" | "default";
+  labelPrefix?: ReactNode;
 }
 
 export const useTagLabel = (tag: TagSubmissionState) => {
@@ -37,7 +44,11 @@ export const useTagLabel = (tag: TagSubmissionState) => {
     "pending-approval": t("Pending Approval"),
     "information-required": t("Information Required"),
     approved: t("Approved"),
-    due: t("Due")
+    due: t("Due"),
+    "not-selected": t("Not Selected"),
+    "receiving-applications": t("Receiving Applications"),
+    closed: t("Closed"),
+    "coming-soon": t("Coming Soon")
   };
 
   return map[tag];
@@ -47,10 +58,14 @@ const TagSubmissionActionStatusTagStateMap: Record<TagSubmissionState, ActionSta
   draft: "neutral-light",
   "nothing-reported": "neutral-dark",
   "pending-approval-neutral": "neutral-light",
-  "pending-approval": "attention",
+  "pending-approval": "information",
   "information-required": "attention",
   approved: "success",
-  due: "warning"
+  due: "warning",
+  "not-selected": "warning",
+  "receiving-applications": "information",
+  closed: "neutral-light",
+  "coming-soon": "neutral-dark"
 };
 
 function getTagSubmissionIcon(state: TagSubmissionState, size: "small" | "default"): ReactElement {
@@ -64,19 +79,27 @@ function getTagSubmissionIcon(state: TagSubmissionState, size: "small" | "defaul
     case "pending-approval-neutral":
       return <PendingIcon color="neutral.700" boxSize={boxSize} />;
     case "pending-approval":
-      return <PendingIcon color="warning.500" boxSize={boxSize} />;
+      return <PendingIcon color="information.500" boxSize={boxSize} />;
     case "information-required":
       return <InfoIcon color="warning.500" boxSize={boxSize} />;
     case "approved":
       return <CheckApprovedIcon color="success.500" boxSize={boxSize} />;
     case "due":
       return <DueIcon color="error.500" boxSize={boxSize} />;
+    case "not-selected":
+      return <DisallowedIcon color="error.500" boxSize={boxSize} />;
+    case "receiving-applications":
+      return <PendingIcon color="information.500" boxSize={boxSize} />;
+    case "closed":
+      return <NothingReportedIcon color="neutral.600" boxSize={boxSize} />;
+    case "coming-soon":
+      return <InfoIcon color="neutral.800" boxSize={boxSize} />;
     default:
       return <></>;
   }
 }
 
-const TagSubmission: FC<TagSubmissionProps> = ({ state, size = "default", ...rest }) => {
+const TagSubmission: FC<TagSubmissionProps> = ({ state, size = "default", labelPrefix, ...rest }) => {
   const label = useTagLabel(state);
 
   return (
@@ -85,6 +108,7 @@ const TagSubmission: FC<TagSubmissionProps> = ({ state, size = "default", ...res
       state={TagSubmissionActionStatusTagStateMap[state]}
       label={label}
       size={size}
+      labelPrefix={labelPrefix}
       {...rest}
     />
   );

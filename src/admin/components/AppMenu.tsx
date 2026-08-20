@@ -1,5 +1,6 @@
 import DefaultIcon from "@mui/icons-material/ViewList";
 import classNames from "classnames";
+import { isEmpty } from "lodash";
 import { createElement, FC } from "react";
 import { Menu, useGetResourceLabel, useResourceDefinitions } from "react-admin";
 import { useLocation } from "react-router-dom";
@@ -13,7 +14,9 @@ const FilterClearMenuItem: FC<{ resourceName: string }> = ({ resourceName }) => 
   const getResourceLabel = useGetResourceLabel();
   const resource = resources?.[resourceName];
   if (resource == null) {
-    Log.error("Resource not found for admin nav", { resourceName });
+    if (!isEmpty(resources)) {
+      Log.error("Resource not found for admin nav", { resourceName });
+    }
     return null;
   }
 
@@ -75,6 +78,9 @@ const AppMenu = () => {
       </div>
       <div className={classNames({ "Sidebar-active": hash === "impactStories" })}>
         <FilterClearMenuItem resourceName={modules.impactStories.ResourceName} />
+      </div>
+      <div className={classNames({ "Sidebar-active": hash === "aboutSections" })}>
+        <FilterClearMenuItem resourceName={modules.aboutSections.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "disturbanceReport" })}>
         <FilterClearMenuItem resourceName={modules.disturbanceReport.ResourceName} />

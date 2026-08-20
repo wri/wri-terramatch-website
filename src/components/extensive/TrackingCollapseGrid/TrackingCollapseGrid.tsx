@@ -96,16 +96,14 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({
             const typeDefinition = entryConfigs.find(({ type }) => type === entryType);
             const sectionTotal = counts?.[entryType] ?? 0;
 
+            const isBalanced = typeDefinition?.balanced === true;
+
             let sectionStatus: Status = "not-started";
 
-            if (sectionTotal === 0) {
-              sectionStatus = "not-started";
-            } else if (!typeDefinition?.balanced) {
-              sectionStatus = "complete";
-            } else if (sectionTotal === total) {
-              sectionStatus = "complete";
-            } else if (shouldShowError) {
+            if (shouldShowError && isBalanced) {
               sectionStatus = "in-progress";
+            } else if (sectionTotal > 0) {
+              sectionStatus = "complete";
             }
 
             return (

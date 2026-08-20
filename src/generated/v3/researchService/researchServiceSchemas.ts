@@ -142,7 +142,7 @@ export type ValidationDto = {
   /**
    * List of validation criteria results for this polygon
    *
-   * @example {"criteriaId":16,"validationType":"DUPLICATE_GEOMETRY","valid":false,"createdAt":"2025-11-28T20:41:50.060Z","extraInfo":{"polygonUuid":"54aa2c7a-e139-4017-b86b-d904f4a3ed5c","message":"This geometry already exists in the project","sitePolygonUuid":"fd6cd4e8-0c56-45dc-8991-1cebfd3871ca","sitePolygonName":"AREA_NAME"}}
+   * @example {"criteriaId":16,"validationType":"DUPLICATE_GEOMETRY","valid":false,"createdAt":"2025-11-28T20:41:50.060Z","extraInfo":{"polygonUuid":"54aa2c7a-e139-4017-b86b-d904f4a3ed5c","message":"This geometry already exists in the project","sitePolygonUuid":"fd6cd4e8-0c56-45dc-8991-1cebfd3871ca","sitePolygonName":"AREA_NAME","siteUuid":"8f3c2b1a-4d5e-6f70-8192-a3b4c5d6e7f8","siteName":"Site Name"}}
    */
   criteriaList: ValidationCriteriaDto[];
 };
@@ -282,6 +282,10 @@ export type SitePolygonLightDto = {
    * @format date-time
    */
   deletedAt: string | null;
+  /**
+   * Sparse map of framework-configured custom attribute values keyed by definition key. Only stored values are included (missing key means unset).
+   */
+  customAttributes: Record<string, any>;
 };
 
 export type CreateSitePolygonRequestDto = {
@@ -344,6 +348,12 @@ export type AttributeChangesDto = {
    * @example 150
    */
   numTrees?: number;
+  /**
+   * Framework-configured custom attribute values keyed by definition key. Only sent keys are updated; null (or empty array for multi_select) clears the value. Omitted keys are inherited from the previous version via copy-on-version.
+   *
+   * @example {"anrSubcategory":"farmer-managed"}
+   */
+  customAttributes?: Record<string, any>;
 };
 
 export type CreateSitePolygonAttributesDto = {
@@ -534,6 +544,10 @@ export type SitePolygonFullDto = {
    * @format date-time
    */
   deletedAt: string | null;
+  /**
+   * Sparse map of framework-configured custom attribute values keyed by definition key. Only stored values are included (missing key means unset).
+   */
+  customAttributes: Record<string, any>;
   geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.
@@ -761,17 +775,7 @@ export type DelayedJobDto = {
   /**
    * The type of the related entity (e.g., projects, sites, etc).
    */
-  entityType?:
-    | "projects"
-    | "sites"
-    | "nurseries"
-    | "projectReports"
-    | "siteReports"
-    | "nurseryReports"
-    | "financialReports"
-    | "disturbanceReports"
-    | "srpReports"
-    | null;
+  entityType?: string | null;
 };
 
 export type BoundingBoxDto = {
