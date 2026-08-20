@@ -17,6 +17,7 @@ import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
+import { ALL_PROJECTS_VIEW_VALUE, getReportsIndexUrl } from "../reportIndex.utils";
 import { ReportPeriodOptions } from "../reportPeriodFilter";
 import {
   clearReportPeriodFilters,
@@ -151,10 +152,16 @@ const ReportsIndexHeader = ({
   );
 
   const clearFilters = useCallback(() => {
-    const cleared =
-      activeTab === "progress-reports" ? getDefaultProgressFiltersForSource(source) : EMPTY_REPORT_FILTERS;
-    updateActiveFilters(cleared);
-  }, [activeTab, source, updateActiveFilters]);
+    updateActiveFilters(EMPTY_REPORT_FILTERS);
+    if (source === "project") return;
+
+    void router.replace(
+      getReportsIndexUrl("project", projectUuid, {
+        tab: activeTab === "additional-reports" ? "additional-reports" : undefined,
+        view: viewValue === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : undefined
+      })
+    );
+  }, [activeTab, projectUuid, router, source, updateActiveFilters, viewValue]);
 
   return (
     <>

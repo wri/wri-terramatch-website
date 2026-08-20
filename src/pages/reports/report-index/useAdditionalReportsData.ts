@@ -1,7 +1,7 @@
 import { startCase } from "lodash";
 import { useMemo } from "react";
 
-import { useDisturbanceReportIndex, useFinancialReportIndex, useSRPReportIndex } from "@/connections/Entity";
+import { indexFinancialReportConnection, useDisturbanceReportIndex, useSRPReportIndex } from "@/connections/Entity";
 import { useOrganisation } from "@/connections/Organisation";
 import { useMyUser } from "@/connections/User";
 import {
@@ -11,6 +11,7 @@ import {
   ProjectFullDto,
   SrpReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useAllPages } from "@/hooks/useConnection";
 
 import {
   AdditionalDisturbanceReport,
@@ -61,6 +62,7 @@ const toFinancialReport = (
   financialYearStart,
   completion: null,
   organisationName: report.organisationName ?? null,
+  organisationUuid: report.organisationUuid ?? null,
   projectName: null,
   year: report.yearOfReport?.toString() ?? null
 });
@@ -75,6 +77,7 @@ const toSrpReport = (report: SrpReportLightDto): AdditionalSrpReport => ({
   updatedAt: report.updatedAt,
   completion: report.completion,
   organisationName: report.organisationName ?? null,
+  organisationUuid: report.organisationUuid ?? null,
   projectName: report.projectName ?? null,
   year: report.year?.toString() ?? null
 });
@@ -97,6 +100,7 @@ const toDisturbanceReport = (report: DisturbanceReportLightDto): AdditionalDistu
     sitesAffected: Array.isArray(sitesAffected) ? sitesAffected.length : 0,
     intensity: report.intensity ?? (getEntryValue(report.entries, "intensity") as string | null),
     organisationName: report.organisationName ?? null,
+    organisationUuid: report.organisationUuid ?? null,
     projectName: report.projectName ?? null,
     year: null
   };
@@ -126,16 +130,16 @@ export const useAdditionalReportsData = (
   const [userLoaded, { user }] = useMyUser();
   const organisationUuid = user?.organisationUuid ?? null;
   const loadOrganisationData = enabled && organisationUuid != null;
+  const financialEnabled = enabled && (allProjects || organisationUuid != null);
   const projectFilter = allProjects ? {} : { projectUuid: project.uuid };
 
   const [organisationLoaded, { data: organisation, loadFailure: organisationFailure }] = useOrganisation(
     loadOrganisationData ? { id: organisationUuid } : {}
   );
 
-  const [financialLoaded, { data: financialData, loadFailure: financialFailure }] = useFinancialReportIndex({
-    ...INDEX_PROPS,
-    filter: { organisationUuid: organisationUuid ?? "" },
-    enabled: loadOrganisationData
+  const [financialLoaded, financialData, financialFailure] = useAllPages(indexFinancialReportConnection, {
+    filter: allProjects ? {} : { organisationUuid: organisationUuid ?? "" },
+    enabled: financialEnabled
   });
 
   const [srpLoaded, { data: srpData, loadFailure: srpFailure }] = useSRPReportIndex({
@@ -151,7 +155,7 @@ export const useAdditionalReportsData = (
   });
 
   const organisationReady = !loadOrganisationData || organisationLoaded;
-  const financialReady = !loadOrganisationData || financialLoaded;
+  const financialReady = !financialEnabled || financialLoaded;
   const loading = enabled && (!userLoaded || !(organisationReady && financialReady && srpLoaded && disturbanceLoaded));
   const error =
     enabled &&
@@ -160,20 +164,41 @@ export const useAdditionalReportsData = (
   const sections = useMemo((): AdditionalReportsEntitySection[] => {
     if (!enabled || loading || error) return [];
 
-    const financialReports = (financialData ?? []).map(report =>
-      toFinancialReport(report, organisation?.currency ?? null, organisation?.finStartMonth ?? null)
-    );
+    const financialReports = financialData.map(report => {
+      const isCurrentOrganisation = report.organisationUuid === organisationUuid;
+      return toFinancialReport(
+        report,
+        isCurrentOrganisation ? organisation?.currency ?? null : null,
+        isCurrentOrganisation ? organisation?.finStartMonth ?? null : null
+      );
+    });
     const nextSections: AdditionalReportsEntitySection[] = [];
 
-    if (allProjects && organisationUuid != null && financialReports.length > 0) {
-      nextSections.push({
-        id: organisationUuid,
-        type: "organisation",
-        name: organisation?.name ?? project.organisationName,
-        caption: "Organisation",
-        organisationUuid,
-        groups: [{ id: "financial-reports", type: "financial-report", reports: financialReports }]
+    if (allProjects && financialReports.length > 0) {
+      const reportsByOrganisation = new Map<string, { name: string | null; reports: AdditionalFinancialReport[] }>();
+
+      financialReports.forEach(report => {
+        const organisationId = report.organisationUuid ?? "unknown";
+        const current = reportsByOrganisation.get(organisationId);
+        if (current == null) {
+          reportsByOrganisation.set(organisationId, { name: report.organisationName, reports: [report] });
+          return;
+        }
+        current.reports.push(report);
       });
+
+      Array.from(reportsByOrganisation.entries())
+        .sort((a, b) => (a[1].name ?? "").localeCompare(b[1].name ?? ""))
+        .forEach(([organisationId, { name, reports }]) => {
+          nextSections.push({
+            id: organisationId,
+            type: "organisation",
+            name: organisationId === organisationUuid ? organisation?.name ?? name : name,
+            caption: "Organisation",
+            organisationUuid: organisationId === "unknown" ? null : organisationId,
+            groups: [{ id: `${organisationId}-financial-reports`, type: "financial-report", reports }]
+          });
+        });
     }
 
     // SRP and disturbance reports hang off a project, so they get one accordion per project. In the

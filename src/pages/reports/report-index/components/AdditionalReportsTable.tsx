@@ -21,7 +21,12 @@ import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import { CalendarIcon, DueIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { AdditionalReport, AdditionalReportType } from "../reportIndex.types";
-import { getReportIndexItemPath, withReportsIndexReturn } from "../reportIndex.utils";
+import {
+  getReportIndexItemPath,
+  getReportStatusSortValue,
+  rememberReportsIndexPosition,
+  withReportsIndexReturn
+} from "../reportIndex.utils";
 import { useReportTableSelection } from "../ReportsSelection.provider";
 
 const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): TableColumn[] => {
@@ -31,7 +36,13 @@ const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): Tab
       { key: "dueAt", label: t("Due Date"), sortable: true, width: "8.75rem" },
       { key: "currency", label: t("Local Currency"), width: "11.25rem" },
       { key: "financialYearStart", label: t("Financial Year Start"), sortable: true, width: "12.1875rem" },
-      { key: "status", label: t("Status"), sortable: true, width: "12.5rem" },
+      {
+        key: "status",
+        label: t("Status"),
+        sortable: true,
+        width: "12.5rem",
+        sortValue: row => getReportStatusSortValue((row as AdditionalReport).status)
+      },
       { key: "updatedAt", label: t("Last Updated"), sortable: true, width: "9.375rem" },
       { key: "actions", label: "", width: "8.125rem" }
     ];
@@ -41,7 +52,13 @@ const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): Tab
     return [
       { key: "name", label: t("Report Name"), width: "25.25rem" },
       { key: "dueAt", label: t("Due Date"), sortable: true, width: "15.625rem" },
-      { key: "status", label: t("Status"), sortable: true, width: "15.625rem" },
+      {
+        key: "status",
+        label: t("Status"),
+        sortable: true,
+        width: "15.625rem",
+        sortValue: row => getReportStatusSortValue((row as AdditionalReport).status)
+      },
       { key: "updatedAt", label: t("Last Updated"), sortable: true, width: "15.625rem" },
       { key: "actions", label: "", width: "8.125rem" }
     ];
@@ -51,7 +68,13 @@ const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): Tab
     { key: "name", label: t("Report Name"), width: "21.375rem" },
     { key: "dateOfDisturbance", label: t("Date of Disturbance"), sortable: true, width: "12.5rem" },
     { key: "sitesAffected", label: t("Sites Affected"), sortable: true, width: "9.6875rem" },
-    { key: "status", label: t("Status"), sortable: true, width: "11.875rem" },
+    {
+      key: "status",
+      label: t("Status"),
+      sortable: true,
+      width: "11.875rem",
+      sortValue: row => getReportStatusSortValue((row as AdditionalReport).status)
+    },
     { key: "intensity", label: t("Intensity"), sortable: true, width: "7.5rem" },
     { key: "updatedAt", label: t("Last Updated"), sortable: true, width: "9.1875rem" },
     { key: "actions", label: "", width: "8.125rem" }
@@ -62,9 +85,17 @@ type AdditionalReportsTableProps = {
   reports: AdditionalReport[];
   type: AdditionalReportType;
   indexHref?: string;
+  restoreRowId?: string;
+  onRowRestored?: () => void;
 };
 
-const AdditionalReportsTable = ({ reports, type, indexHref }: AdditionalReportsTableProps) => {
+const AdditionalReportsTable = ({
+  reports,
+  type,
+  indexHref,
+  restoreRowId,
+  onRowRestored
+}: AdditionalReportsTableProps) => {
   const t = useT();
   const { format } = useDate();
   const { selectedRows, isReportSelected, handleRowSelected, handleAllItemsSelected } =
@@ -103,6 +134,8 @@ const AdditionalReportsTable = ({ reports, type, indexHref }: AdditionalReportsT
         <TableRow
           className={context?.className != null ? `group ${context.className}` : "group"}
           aria-selected={isSelected}
+          data-report-id={report.id}
+          style={{ scrollMarginTop: "7rem" }}
         >
           <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
             <Checkbox
@@ -118,6 +151,7 @@ const AdditionalReportsTable = ({ reports, type, indexHref }: AdditionalReportsT
               link={withReportsIndexReturn(`/reports/${report.type}/${report.id}`, indexHref)}
               linkTarget="_self"
               showChevron={false}
+              onClick={() => rememberReportsIndexPosition(indexHref, report.id)}
             />
           </ChakraTableCell>
 
@@ -176,6 +210,7 @@ const AdditionalReportsTable = ({ reports, type, indexHref }: AdditionalReportsT
                   children: t("Edit"),
                   as: "a",
                   href: withReportsIndexReturn(getReportIndexItemPath(report), indexHref),
+                  onClick: () => rememberReportsIndexPosition(indexHref, report.id),
                   leftIcon: (
                     <EditIcon
                       css={{
@@ -208,6 +243,8 @@ const AdditionalReportsTable = ({ reports, type, indexHref }: AdditionalReportsT
         renderRow={renderRow}
         pageSize={10}
         totalItems={reports.length}
+        restoreRowId={restoreRowId}
+        onRowRestored={onRowRestored}
         className="overflow-hidden rounded"
       />
     </Box>

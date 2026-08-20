@@ -2,7 +2,7 @@ import type { FeedbackTagProps } from "@/redesignComponents/actions/Tags/Feedbac
 import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
-import type { ReportIndexItem } from "./reportIndex.types";
+import type { AdditionalReportsEntitySection, ReportIndexItem, ReportsIndexProjectSection } from "./reportIndex.types";
 
 export const REPORTS_INDEX_SOURCES = ["project", "site", "nursery"] as const;
 
@@ -271,3 +271,99 @@ export const groupReportUuidsByEntity = (reports: ReportIndexItem[]): Partial<Re
     grouped[entity] = [...(grouped[entity] ?? []), report.id];
     return grouped;
   }, {});
+
+const REPORT_STATUS_SORT_ORDER: Record<string, number> = {
+  due: 0,
+  draft: 1,
+  "pending-approval": 2,
+  "pending-approval-neutral": 2,
+  "information-required": 3,
+  "nothing-reported": 4,
+  approved: 5
+};
+
+const REPORT_TYPE_SORT_ORDER: Record<string, number> = {
+  "project-report": 0,
+  "site-report": 1,
+  "nursery-report": 2
+};
+
+export const getReportStatusSortValue = (status: string) => REPORT_STATUS_SORT_ORDER[status] ?? Number.MAX_SAFE_INTEGER;
+
+export const getReportTypeSortValue = (type: string) => REPORT_TYPE_SORT_ORDER[type] ?? Number.MAX_SAFE_INTEGER;
+
+const REPORTS_INDEX_RESTORE_KEY = "terramatch.reportsIndex.restore";
+
+type ReportsIndexRestoreState = {
+  indexHref: string;
+  reportId: string;
+};
+
+export type ProgressReportRestoreLocation = {
+  sectionId: string;
+  periodId: string;
+};
+
+export type AdditionalReportRestoreLocation = {
+  sectionId: string;
+  groupId: string;
+};
+
+const isRestoreState = (value: unknown): value is ReportsIndexRestoreState => {
+  if (value == null || typeof value !== "object") return false;
+  const candidate = value as ReportsIndexRestoreState;
+  return typeof candidate.indexHref === "string" && typeof candidate.reportId === "string";
+};
+
+export const rememberReportsIndexPosition = (indexHref: string | undefined, reportId: string) => {
+  if (typeof window === "undefined" || indexHref == null || indexHref === "") return;
+  const state: ReportsIndexRestoreState = { indexHref, reportId };
+  sessionStorage.setItem(REPORTS_INDEX_RESTORE_KEY, JSON.stringify(state));
+};
+
+export const readReportsIndexRestore = (indexHref: string): string | null => {
+  if (typeof window === "undefined" || indexHref === "") return null;
+  const raw = sessionStorage.getItem(REPORTS_INDEX_RESTORE_KEY);
+  if (raw == null) return null;
+
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!isRestoreState(parsed) || parsed.indexHref !== indexHref) return null;
+    return parsed.reportId;
+  } catch {
+    return null;
+  }
+};
+
+export const clearReportsIndexRestore = () => {
+  if (typeof window === "undefined") return;
+  sessionStorage.removeItem(REPORTS_INDEX_RESTORE_KEY);
+};
+
+export const findProgressReportLocation = (
+  sections: ReportsIndexProjectSection[],
+  reportId: string
+): ProgressReportRestoreLocation | null => {
+  for (const section of sections) {
+    for (const period of section.periods) {
+      if (period.reports.some(report => report.id === reportId)) {
+        return { sectionId: section.id, periodId: period.id };
+      }
+    }
+  }
+  return null;
+};
+
+export const findAdditionalReportLocation = (
+  sections: AdditionalReportsEntitySection[],
+  reportId: string
+): AdditionalReportRestoreLocation | null => {
+  for (const section of sections) {
+    for (const group of section.groups) {
+      if (group.reports.some(report => report.id === reportId)) {
+        return { sectionId: section.id, groupId: group.id };
+      }
+    }
+  }
+  return null;
+};
