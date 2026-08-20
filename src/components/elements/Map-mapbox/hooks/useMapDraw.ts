@@ -11,6 +11,7 @@ import type { PolygonGeometryEditState } from "@/context/mapArea.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { isProjectPitchesEntityName } from "@/helpers/entity";
+import { useLatestRef } from "@/hooks/useLatestRef";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
@@ -83,6 +84,8 @@ export function useMapDraw({
   const originalGeometryRef = useRef<GeoJSON.Geometry | null>(null);
   const geometryHistoryRef = useRef<GeoJSON.Geometry[]>([]);
   const isApplyingGeometryUndoRef = useRef(false);
+  const editSessionRef = useRef(0);
+  const latestPolygonFromMapRef = useLatestRef(polygonFromMap);
 
   const serializeGeometry = useCallback((geometry: GeoJSON.Geometry | null | undefined) => {
     return geometry == null ? "" : JSON.stringify(geometry);
@@ -240,6 +243,7 @@ export function useMapDraw({
     originalGeometryRef.current = null;
     clearGeometryHistory();
     setPolygonGeometryEdit?.(undefined);
+    editSessionRef.current += 1;
   }, [
     clearGeometryHistory,
     draftPolygonGeometry,
@@ -301,6 +305,8 @@ export function useMapDraw({
       return;
     }
 
+    const editSession = ++editSessionRef.current;
+
     filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
     const isProjectPolygon = isProjectPitchesEntityName(polygonFromMap?.entityName ?? "");
     const projectPitchUuid = polygonFromMap?.projectPitchUuid;
@@ -309,9 +315,6 @@ export function useMapDraw({
     const polygonStatus: PolygonDrawStatus | undefined = isPolygonDrawStatus(rawStatus) ? rawStatus : undefined;
 
     try {
-      // Fetch before hiding the tile-rendered polygon: it keeps showing its real
-      // status color for the whole network round trip instead of disappearing,
-      // then we swap tile -> Draw feature in one synchronous pass (no visible gap).
       const geometry = await fetchPolygonGeometry(polygonuuid, true, isProjectPolygon ? projectPitchUuid : undefined);
       if (geometry == null) {
         showToast({
@@ -322,6 +325,15 @@ export function useMapDraw({
         });
         return;
       }
+
+      const editIsStale =
+        editSession !== editSessionRef.current ||
+        latestPolygonFromMapRef.current?.uuid !== polygonuuid ||
+        (formMap !== true && latestPolygonFromMapRef.current?.isOpen !== true);
+      if (editIsStale) {
+        return;
+      }
+
       if (map.current != null && draw.current != null) {
         filterPolygonFromLayers(polygonuuid, polygonsData, map.current);
         applyPolygonNeighborDimming(map.current, true, polygonuuid);
@@ -352,7 +364,8 @@ export function useMapDraw({
     polygonFromMap?.projectPitchUuid,
     polygonsData,
     sitePolygonData,
-    statusSelectedPolygon
+    statusSelectedPolygon,
+    formMap
   ]);
 
   const onSaveEdit = useCallback(async () => {
@@ -481,6 +494,7 @@ export function useMapDraw({
   ]);
 
   const onCancelEdit = useCallback(() => {
+    editSessionRef.current += 1;
     onCancel(polygonsData);
     if (formMap) {
       invalidatePolygonMapTiles();
