@@ -85,11 +85,6 @@ const AdditionalReportsEntitySection = ({
           title={section.name ?? (section.type === "organisation" ? t("Organisation") : t("Project"))}
           titleHref={section.type === "project" ? `/project/${section.id}` : `/organization/${section.id}`}
           caption={section.type === "organisation" ? t("Organisation") : section.caption}
-          captionHref={
-            section.type === "project" && section.organisationUuid != null
-              ? `/organization/${section.organisationUuid}`
-              : undefined
-          }
           icon={
             open ? (
               <FolderOpenIcon minWidth={5} width={5} height={"auto"} color="primary.600" />

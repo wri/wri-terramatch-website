@@ -44,7 +44,6 @@ const ProjectReportsSection = ({
           title={section.name ?? t("Project")}
           titleHref={`/project/${section.id}`}
           caption={section.organisationName ?? ""}
-          captionHref={section.organisationUuid != null ? `/organization/${section.organisationUuid}` : undefined}
           icon={
             open ? (
               <FolderOpenIcon minWidth={5} width={5} height={"auto"} color="primary.600" />
