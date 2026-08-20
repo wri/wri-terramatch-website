@@ -18,10 +18,26 @@ import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import { CalendarIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ReportsIndexReport } from "../reportIndex.types";
-import { getReportIndexItemPath, withReportsIndexReturn } from "../reportIndex.utils";
+import {
+  getReportIndexItemPath,
+  getReportStatusSortValue,
+  getReportTypeSortValue,
+  rememberReportsIndexPosition,
+  withReportsIndexReturn
+} from "../reportIndex.utils";
 import { useReportTableSelection } from "../ReportsSelection.provider";
 
-const ReportsIndexTable = ({ reports, indexHref }: { reports: ReportsIndexReport[]; indexHref?: string }) => {
+const ReportsIndexTable = ({
+  reports,
+  indexHref,
+  restoreRowId,
+  onRowRestored
+}: {
+  reports: ReportsIndexReport[];
+  indexHref?: string;
+  restoreRowId?: string;
+  onRowRestored?: () => void;
+}) => {
   const t = useT();
   const { format } = useDate();
   const { selectedRows, isReportSelected, handleRowSelected, handleAllItemsSelected } =
@@ -46,12 +62,14 @@ const ReportsIndexTable = ({ reports, indexHref }: { reports: ReportsIndexReport
       {
         key: "type",
         label: t("Report Type"),
-        sortable: true
+        sortable: true,
+        sortValue: row => getReportTypeSortValue((row as ReportsIndexReport).type)
       },
       {
         key: "status",
         label: t("Status"),
-        sortable: true
+        sortable: true,
+        sortValue: row => getReportStatusSortValue((row as ReportsIndexReport).status)
       },
       {
         key: "updatedAt",
@@ -74,6 +92,8 @@ const ReportsIndexTable = ({ reports, indexHref }: { reports: ReportsIndexReport
         <TableRow
           className={context?.className != null ? `group ${context.className}` : "group"}
           aria-selected={isSelected}
+          data-report-id={report.id}
+          style={{ scrollMarginTop: "7rem" }}
         >
           <ChakraTableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
             <Checkbox
@@ -89,6 +109,7 @@ const ReportsIndexTable = ({ reports, indexHref }: { reports: ReportsIndexReport
               link={withReportsIndexReturn(`/reports/${report.type}/${report.id}`, indexHref)}
               linkTarget="_self"
               showChevron={false}
+              onClick={() => rememberReportsIndexPosition(indexHref, report.id)}
             />
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("type")}>
@@ -119,6 +140,7 @@ const ReportsIndexTable = ({ reports, indexHref }: { reports: ReportsIndexReport
                   children: t("Edit"),
                   as: "a",
                   href: withReportsIndexReturn(getReportIndexItemPath(report), indexHref),
+                  onClick: () => rememberReportsIndexPosition(indexHref, report.id),
                   leftIcon: (
                     <EditIcon
                       css={{
@@ -161,6 +183,8 @@ const ReportsIndexTable = ({ reports, indexHref }: { reports: ReportsIndexReport
         renderRow={renderRow}
         pageSize={10}
         totalItems={reports.length}
+        restoreRowId={restoreRowId}
+        onRowRestored={onRowRestored}
         className="overflow-hidden rounded"
       />
     </Box>

@@ -51,6 +51,7 @@ type AdditionalReportBase = {
   completion: number | null;
   updatedAt: string;
   organisationName: string | null;
+  organisationUuid: string | null;
   projectName: string | null;
   year: string | null;
 };

@@ -15,16 +15,24 @@ type ProjectReportsSectionProps = {
   defaultOpen?: boolean;
   metricsReady?: boolean;
   indexHref?: string;
+  restoreSectionId?: string;
+  restorePeriodId?: string;
+  restoreReportId?: string;
+  onRowRestored?: () => void;
 };
 
 const ProjectReportsSection = ({
   section,
   defaultOpen = false,
   metricsReady = true,
-  indexHref
+  indexHref,
+  restoreSectionId,
+  restorePeriodId,
+  restoreReportId,
+  onRowRestored
 }: ProjectReportsSectionProps) => {
   const t = useT();
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useState(restoreSectionId != null ? section.id === restoreSectionId : defaultOpen);
 
   const attentionCount = useMemo(
     () => section.periods.reduce((total, period) => total + getReportsRequiringAttention(period.reports), 0),
@@ -65,9 +73,11 @@ const ProjectReportsSection = ({
               <ReportingPeriodSection
                 key={period.id}
                 period={period}
-                defaultOpen={index === 0}
+                defaultOpen={restorePeriodId != null ? period.id === restorePeriodId : index === 0}
                 metricsReady={metricsReady}
                 indexHref={indexHref}
+                restoreReportId={period.id === restorePeriodId ? restoreReportId : undefined}
+                onRowRestored={onRowRestored}
               />
             ))
           : null}

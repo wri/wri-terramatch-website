@@ -10,14 +10,18 @@ import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/Hi
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ReportsIndexSourceEntity } from "../reportIndex.types";
-import { getReportPeriodOptions } from "../reportPeriodFilter";
 import {
   ALL_PROJECTS_VIEW_VALUE,
+  clearReportsIndexRestore,
+  findAdditionalReportLocation,
+  findProgressReportLocation,
   getReportsIndexUrl,
   isReportsIndexTab,
+  readReportsIndexRestore,
   ReportsIndexSource,
   ReportsIndexTab
 } from "../reportIndex.utils";
+import { getReportPeriodOptions } from "../reportPeriodFilter";
 import { useReportsSelectionActions } from "../ReportsSelection.provider";
 import { useAdditionalReportsData } from "../useAdditionalReportsData";
 import { useReportsIndexData } from "../useReportsIndexData";
@@ -70,6 +74,46 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     tab: activeTab,
     view: isAllProjectsView ? ALL_PROJECTS_VIEW_VALUE : undefined
   });
+
+  const [restoreReportId, setRestoreReportId] = useState<string | null>(null);
+  const [restoreReady, setRestoreReady] = useState(false);
+
+  useEffect(() => {
+    setRestoreReportId(readReportsIndexRestore(indexHref));
+    setRestoreReady(true);
+  }, [indexHref]);
+
+  const progressRestore = useMemo(
+    () => (restoreReportId == null ? null : findProgressReportLocation(filteredProgressSections, restoreReportId)),
+    [filteredProgressSections, restoreReportId]
+  );
+  const additionalRestore = useMemo(
+    () => (restoreReportId == null ? null : findAdditionalReportLocation(filteredAdditionalSections, restoreReportId)),
+    [filteredAdditionalSections, restoreReportId]
+  );
+
+  const handleRowRestored = useCallback(() => {
+    clearReportsIndexRestore();
+    setRestoreReportId(null);
+  }, []);
+
+  useEffect(() => {
+    if (!restoreReady || restoreReportId == null) return;
+    const tabLoading = activeTab === "additional-reports" ? additionalLoading : progressLoading;
+    if (tabLoading) return;
+    if (progressRestore == null && additionalRestore == null) {
+      clearReportsIndexRestore();
+      setRestoreReportId(null);
+    }
+  }, [
+    activeTab,
+    additionalLoading,
+    additionalRestore,
+    progressLoading,
+    progressRestore,
+    restoreReady,
+    restoreReportId
+  ]);
 
   const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
   const hasActiveSearch = query.trim().length > 0;
@@ -188,7 +232,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
       <PageContent className="px-1.5 py-0">
         {activeTab === "progress-reports" && (
           <>
-            {progressLoading || isSwitchingProject ? (
+            {progressLoading || isSwitchingProject || !restoreReady ? (
               <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
                 <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
                 <Text textStyle="400" color="neutral.800">
@@ -218,6 +262,10 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                     defaultOpen={index === 0 && !isAllProjectsView}
                     metricsReady={progressMetricsReady}
                     indexHref={indexHref}
+                    restoreSectionId={progressRestore?.sectionId}
+                    restorePeriodId={progressRestore?.periodId}
+                    restoreReportId={restoreReportId ?? undefined}
+                    onRowRestored={handleRowRestored}
                   />
                 ))}
               </div>
@@ -228,10 +276,13 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
         {activeTab === "additional-reports" && (
           <AdditionalReportsContent
             sections={filteredAdditionalSections}
-            loading={additionalLoading || isSwitchingProject}
+            loading={additionalLoading || isSwitchingProject || !restoreReady}
             error={additionalError}
             hasActiveSearch={hasActiveSearch}
             indexHref={indexHref}
+            restoreGroupId={additionalRestore?.groupId}
+            restoreReportId={restoreReportId ?? undefined}
+            onRowRestored={handleRowRestored}
           />
         )}
 

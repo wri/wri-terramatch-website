@@ -14,6 +14,7 @@ export interface TitleCellProps {
   link?: string;
   linkTarget?: "_blank" | "_self";
   showChevron?: boolean;
+  onClick?: () => void;
 }
 
 const TitleCell: React.FC<TitleCellProps> = ({
@@ -25,7 +26,8 @@ const TitleCell: React.FC<TitleCellProps> = ({
   secondaryText,
   link,
   linkTarget = "_blank",
-  showChevron = true
+  showChevron = true,
+  onClick
 }) => {
   return (
     <Box
@@ -42,7 +44,7 @@ const TitleCell: React.FC<TitleCellProps> = ({
           <Box>
             <Text
               as={link ? "a" : "p"}
-              {...(link == null ? {} : { href: link, target: linkTarget })}
+              {...(link == null ? {} : { href: link, target: linkTarget, onClick })}
               textStyle="400-bold"
               className="text-theme-neutral-800 underline decoration-theme-primary-700 decoration-dotted underline-offset-4"
             >

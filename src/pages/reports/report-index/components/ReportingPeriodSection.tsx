@@ -29,6 +29,8 @@ type ReportingPeriodSectionProps = {
   defaultOpen?: boolean;
   metricsReady?: boolean;
   indexHref?: string;
+  restoreReportId?: string;
+  onRowRestored?: () => void;
 };
 
 type PeriodJobsMetricCardProps = {
@@ -82,7 +84,9 @@ const ReportingPeriodSection = ({
   period,
   defaultOpen = false,
   metricsReady = true,
-  indexHref
+  indexHref,
+  restoreReportId,
+  onRowRestored
 }: ReportingPeriodSectionProps) => {
   const t = useT();
   const { format } = useDate();
@@ -192,7 +196,12 @@ const ReportingPeriodSection = ({
                 </div>
               </FrameworkProvider>
             )}
-            <ReportsIndexTable reports={period.reports} indexHref={indexHref} />
+            <ReportsIndexTable
+              reports={period.reports}
+              indexHref={indexHref}
+              restoreRowId={restoreReportId}
+              onRowRestored={onRowRestored}
+            />
           </div>
         ) : null}
       </Accordion>

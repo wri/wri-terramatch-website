@@ -23,6 +23,9 @@ type AdditionalReportsContentProps = {
   error: boolean;
   hasActiveSearch?: boolean;
   indexHref?: string;
+  restoreGroupId?: string;
+  restoreReportId?: string;
+  onRowRestored?: () => void;
 };
 
 const getGroupLabel = (type: AdditionalReportType, t: ReturnType<typeof useT>) => {
@@ -31,7 +34,17 @@ const getGroupLabel = (type: AdditionalReportType, t: ReturnType<typeof useT>) =
   return t("Disturbance Reports");
 };
 
-const AdditionalReportGroupSection = ({ group, indexHref }: { group: AdditionalReportGroup; indexHref?: string }) => {
+const AdditionalReportGroupSection = ({
+  group,
+  indexHref,
+  restoreReportId,
+  onRowRestored
+}: {
+  group: AdditionalReportGroup;
+  indexHref?: string;
+  restoreReportId?: string;
+  onRowRestored?: () => void;
+}) => {
   const t = useT();
   const [open, setOpen] = useState(true);
 
@@ -53,7 +66,13 @@ const AdditionalReportGroupSection = ({ group, indexHref }: { group: AdditionalR
     >
       {open ? (
         <div className="bg-theme-neutral-100 px-4 pt-4 pb-5">
-          <AdditionalReportsTable reports={group.reports} type={group.type} indexHref={indexHref} />
+          <AdditionalReportsTable
+            reports={group.reports}
+            type={group.type}
+            indexHref={indexHref}
+            restoreRowId={restoreReportId}
+            onRowRestored={onRowRestored}
+          />
         </div>
       ) : null}
     </Accordion>
@@ -62,10 +81,16 @@ const AdditionalReportGroupSection = ({ group, indexHref }: { group: AdditionalR
 
 const AdditionalReportsEntitySection = ({
   section,
-  indexHref
+  indexHref,
+  restoreGroupId,
+  restoreReportId,
+  onRowRestored
 }: {
   section: AdditionalReportsEntitySectionData;
   indexHref?: string;
+  restoreGroupId?: string;
+  restoreReportId?: string;
+  onRowRestored?: () => void;
 }) => {
   const t = useT();
   const [open, setOpen] = useState(true);
@@ -102,7 +127,13 @@ const AdditionalReportsEntitySection = ({
     >
       <div className="space-y-1 bg-theme-neutral-200 pt-0.5">
         {section.groups.map(group => (
-          <AdditionalReportGroupSection key={group.id} group={group} indexHref={indexHref} />
+          <AdditionalReportGroupSection
+            key={group.id}
+            group={group}
+            indexHref={indexHref}
+            restoreReportId={group.id === restoreGroupId ? restoreReportId : undefined}
+            onRowRestored={onRowRestored}
+          />
         ))}
       </div>
     </Accordion>
@@ -114,7 +145,10 @@ const AdditionalReportsContent = ({
   loading,
   error,
   hasActiveSearch = false,
-  indexHref
+  indexHref,
+  restoreGroupId,
+  restoreReportId,
+  onRowRestored
 }: AdditionalReportsContentProps) => {
   const t = useT();
 
@@ -148,6 +182,9 @@ const AdditionalReportsContent = ({
               key={`${section.type}-${section.id}`}
               section={section}
               indexHref={indexHref}
+              restoreGroupId={restoreGroupId}
+              restoreReportId={restoreReportId}
+              onRowRestored={onRowRestored}
             />
           ))}
         </div>
