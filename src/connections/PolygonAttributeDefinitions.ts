@@ -19,14 +19,34 @@ import { useConnection } from "@/hooks/useConnection";
 import { PendingError } from "@/store/apiSlice";
 import { Connected } from "@/types/connection";
 
+export type FrameworkKey = PolygonAttributeDefinitionsIndexQueryParams["frameworkKey"];
+
+const FRAMEWORK_KEYS: readonly FrameworkKey[] = [
+  "terrafund",
+  "terrafund-landscapes",
+  "enterprises",
+  "epa-ghana-pilot",
+  "terrafund-3",
+  "ppc",
+  "hbf",
+  "fundo-flora",
+  "fundo-flora-1",
+  "wcb",
+  "barka-fund"
+];
+
+export const isFrameworkKey = (value: string | undefined): value is FrameworkKey =>
+  value != null && (FRAMEWORK_KEYS as readonly string[]).includes(value);
+
 const polygonAttributeDefinitionsIndexConnection = v3Resource(
   "polygonAttributeDefinitions",
   polygonAttributeDefinitionsIndex
 )
   .index<PolygonAttributeDefinitionDto>()
-  .addProps<{ frameworkKey?: string }>(({ frameworkKey }) =>
-    frameworkKey == null ? undefined : { queryParams: { frameworkKey } as PolygonAttributeDefinitionsIndexQueryParams }
-  )
+  .addProps<{ frameworkKey?: string }>(({ frameworkKey }) => {
+    if (!isFrameworkKey(frameworkKey)) return undefined;
+    return { queryParams: { frameworkKey } };
+  })
   .enabledProp()
   .loadFailure()
   .buildConnection();
@@ -39,7 +59,7 @@ export const usePolygonAttributeDefinitions = ({
   enabled?: boolean;
 }): Connected<{ data?: PolygonAttributeDefinitionDto[]; loadFailure?: PendingError }> => {
   const [loaded, { data, loadFailure }] = useConnection(polygonAttributeDefinitionsIndexConnection, {
-    enabled: enabled && frameworkKey != null,
+    enabled: enabled && isFrameworkKey(frameworkKey),
     frameworkKey
   });
   return loaded ? [true, { data, loadFailure }] : [false, {}];
