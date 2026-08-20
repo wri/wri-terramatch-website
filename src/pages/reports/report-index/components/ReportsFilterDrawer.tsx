@@ -231,17 +231,15 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
                   </Checkbox>
                 ))}
               </FilterCard>
-              {periodControl === "date-range" ? (
-                <FilterCard label={t("Due Date")}>
+              <FilterCard label={t("Reporting Period")}>
+                {periodControl === "date-range" ? (
                   <DateRangeInput
                     size="small"
                     noMarginBottom
                     value={dueDateValue}
                     onValueChange={handleDueDateChange}
                   />
-                </FilterCard>
-              ) : periodControl === "month-year" ? (
-                <FilterCard label={t("Time Period")} caption={t("Refine by month and/or year")}>
+                ) : periodControl === "month-year" ? (
                   <Flex gap={2}>
                     <Box flex={1} minW={0}>
                       <SelectInput
@@ -262,18 +260,16 @@ const ReportsFilterDrawer: FC<ReportsFilterDrawerProps> = ({
                       />
                     </Box>
                   </Flex>
-                </FilterCard>
-              ) : (
-                <FilterCard label={t("Reporting Period")}>
+                ) : (
                   <SelectInput
-                    placeholder={t("Year")}
+                    placeholder={t("Select Year")}
                     size="small"
                     value={toSelectValue(draftFilters.dueYear)}
                     items={yearItems}
                     onChange={handleYearChange}
                   />
-                </FilterCard>
-              )}
+                )}
+              </FilterCard>
             </Flex>
           }
           footer={
