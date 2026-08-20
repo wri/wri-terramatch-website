@@ -98,7 +98,7 @@ const PolygonOptionalAttributesLink = () => {
   return (
     <Button
       component={Link}
-      to={`../${record.slug}/optional-attributes`}
+      to={`/${modules.reportingFramework.ResourceName}/${record.slug}/optional-attributes`}
       variant="text"
       sx={{ justifyContent: "flex-start", px: 0 }}
     >
