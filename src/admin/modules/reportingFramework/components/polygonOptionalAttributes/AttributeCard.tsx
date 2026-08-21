@@ -131,16 +131,6 @@ export const AttributeCard: FC<AttributeCardProps> = ({
               control={
                 <Switch
                   size="small"
-                  checked={attribute.isRequired}
-                  onChange={event => onUpdate(attribute.localId, { isRequired: event.target.checked })}
-                />
-              }
-              label="Required"
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  size="small"
                   checked={attribute.inputType === "multi_select"}
                   onChange={event =>
                     onUpdate(attribute.localId, {

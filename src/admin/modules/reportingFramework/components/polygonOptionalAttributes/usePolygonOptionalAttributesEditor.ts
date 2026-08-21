@@ -184,7 +184,6 @@ export const usePolygonOptionalAttributesEditor = (
           label: attr.label.trim(),
           inputType: attr.inputType,
           frameworkKey,
-          isRequired: attr.isRequired,
           order: attr.order,
           options: attr.options.map(o => ({ label: o.label.trim() }))
         });

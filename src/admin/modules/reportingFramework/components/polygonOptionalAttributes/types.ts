@@ -18,7 +18,6 @@ export type LocalAttribute = {
   uuid?: string;
   key?: string;
   label: string;
-  isRequired: boolean;
   inputType: PolygonAttributeDefinitionDto["inputType"];
   order: number;
   options: LocalOption[];
@@ -26,7 +25,4 @@ export type LocalAttribute = {
   hasValues: boolean;
 };
 
-export type UpdatePayload = Pick<
-  UpdatePolygonAttributeDefinitionAttributes,
-  "label" | "isRequired" | "order" | "options"
->;
+export type UpdatePayload = Pick<UpdatePolygonAttributeDefinitionAttributes, "label" | "order" | "options">;

@@ -3429,7 +3429,7 @@ export type PolygonAttributeDefinitionUpdateVariables = {
 };
 
 /**
- * Label, required, active, and options may change. Key, framework, and input type cannot. When options are sent, the list is replaced. An omitted option is rejected if any polygon still stores that value.
+ * Label, active, and options may change. Key, framework, and input type cannot. When options are sent, the list is replaced. An omitted option is rejected if any polygon still stores that value.
  */
 export const polygonAttributeDefinitionUpdate = new V3ApiEndpoint<
   PolygonAttributeDefinitionUpdateResponse,
