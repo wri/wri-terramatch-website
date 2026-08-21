@@ -19,7 +19,6 @@ export const toLocalAttribute = (dto: PolygonAttributeDefinitionDto): LocalAttri
   uuid: dto.uuid,
   key: dto.key,
   label: dto.label,
-  isRequired: dto.isRequired,
   inputType: dto.inputType,
   order: dto.order,
   options: dto.options.map(toLocalOption),
@@ -30,7 +29,6 @@ export const toLocalAttribute = (dto: PolygonAttributeDefinitionDto): LocalAttri
 export const emptyAttribute = (order: number): LocalAttribute => ({
   localId: uuidv4(),
   label: "",
-  isRequired: false,
   inputType: "single_select",
   order,
   options: [],
@@ -57,7 +55,6 @@ export const buildUpdatePayload = (
 ): UpdatePayload | null => {
   const payload: UpdatePayload = {};
   if (attribute.label !== original.label) payload.label = attribute.label;
-  if (attribute.isRequired !== original.isRequired) payload.isRequired = attribute.isRequired;
   if (attribute.order !== original.order) payload.order = attribute.order;
 
   const originalOptions = original.options.map(option => ({ uuid: option.uuid, label: option.label }));

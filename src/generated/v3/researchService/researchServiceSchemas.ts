@@ -1239,7 +1239,6 @@ export type PolygonAttributeDefinitionDto = {
     | "fundo-flora-1"
     | "wcb"
     | "barka-fund";
-  isRequired: boolean;
   isActive: boolean;
   /**
    * Display order within the framework.
@@ -1281,15 +1280,11 @@ export type CreatePolygonAttributeDefinitionAttributes = {
     | "wcb"
     | "barka-fund";
   /**
-   * @default false
-   */
-  isRequired?: boolean;
-  /**
    * @default true
    */
   isActive?: boolean;
   /**
-   * Display order within the framework.
+   * Display order within the framework. Defaults to 0.
    */
   order?: number;
   options: StorePolygonAttributeDefinitionOptionAttributes[];
@@ -1306,7 +1301,6 @@ export type CreatePolygonAttributeDefinitionBody = {
 
 export type UpdatePolygonAttributeDefinitionAttributes = {
   label?: string;
-  isRequired?: boolean;
   isActive?: boolean;
   /**
    * Display order within the framework.
