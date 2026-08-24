@@ -111,16 +111,6 @@ export const SmallSize: Story = {
 
 export const Multiple: Story = {
   args: {
-    label: "Multiple selection",
-    caption: "Choose one or more options",
-    placeholder: "Search...",
-    initialItems: defaultItems,
-    multiple: true
-  }
-};
-
-export const MultipleWithSelectedItems: Story = {
-  args: {
     label: "Multiple with selected items",
     caption: "Selected values appear as tags",
     placeholder: "Search...",
