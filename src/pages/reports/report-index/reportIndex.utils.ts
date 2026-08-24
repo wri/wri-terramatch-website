@@ -27,7 +27,8 @@ export const REPORT_INDEX_TYPE_TO_ENTITY = {
 
 export type ReportsIndexEntity = (typeof REPORT_INDEX_TYPE_TO_ENTITY)[ReportIndexItem["type"]];
 
-const SUBMITTABLE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["draft", "due", "information-required"]);
+const SUBMITTABLE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["draft", "information-required"]);
+const EDITABLE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["due", "draft", "information-required"]);
 const SUBMITTED_UPDATE_REQUEST_STATUSES: ReadonlySet<string> = new Set(["pending-approval", "information-required"]);
 
 const NOTHING_TO_REPORT_TYPES: ReadonlySet<ReportIndexItem["type"]> = new Set([
@@ -117,12 +118,9 @@ export const getReportIndexItemPath = (report: ReportIndexItem) => {
 type ReportWithStatus = {
   status: string | null;
   updateRequestStatus?: string | null;
-  nothingToReport?: boolean | null;
 };
 
 export const resolveReportsIndexStatus = (report: ReportWithStatus): TagSubmissionState => {
-  if (report.nothingToReport === true) return "nothing-reported";
-
   const updateRequestStatus = report.updateRequestStatus;
   const hasSubmittedUpdateRequest =
     updateRequestStatus != null && SUBMITTED_UPDATE_REQUEST_STATUSES.has(updateRequestStatus);
@@ -137,7 +135,7 @@ export const REPORTS_INDEX_ATTENTION_STATUSES: ReadonlySet<TagSubmissionState> =
   "draft"
 ]);
 
-const REPORTS_INDEX_COMPLETE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["approved", "nothing-reported"]);
+const REPORTS_INDEX_COMPLETE_STATUSES: ReadonlySet<TagSubmissionState> = new Set(["approved"]);
 
 export const getReportsRequiringAttention = (reports: Array<{ status: TagSubmissionState }>) =>
   reports.filter(report => REPORTS_INDEX_ATTENTION_STATUSES.has(report.status)).length;
@@ -182,6 +180,9 @@ export const getReportStatusCounts = (reports: Array<{ status: TagSubmissionStat
   );
 
 const hasOpenChangeRequestDraft = (report: ReportIndexItem) => report.updateRequestStatus === "draft";
+
+export const isReportBulkEditable = (report: ReportIndexItem) =>
+  report.nothingToReport === true || EDITABLE_STATUSES.has(report.status);
 
 export const isReportCompleteEnoughToSubmit = (report: ReportIndexItem) => {
   if (report.completion == null) return report.status !== "due";
@@ -232,11 +233,9 @@ export const getSubmitDisabledTooltip = (reports: ReportIndexItem[], t: Translat
 };
 
 export const isReportNothingToReportEligible = (report: ReportIndexItem) => {
+  if (report.nothingToReport) return false;
   if (!NOTHING_TO_REPORT_TYPES.has(report.type)) return false;
-  if (!NOTHING_TO_REPORT_STATUSES.has(report.status)) return false;
-  if (hasOpenChangeRequestDraft(report)) return false;
-  if (report.status === "nothing-reported") return false;
-  return report.completion != 100;
+  return NOTHING_TO_REPORT_STATUSES.has(report.status);
 };
 
 export type ReportNothingToReportBlockingReason = "approved" | "pending-approval" | "ineligible";

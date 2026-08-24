@@ -18,6 +18,7 @@ const ReportsIndexBulkBar = ({ onReportsChanged }: ReportsIndexBulkBarProps) => 
   const {
     isDownloading,
     isUpdating,
+    canEdit,
     canSubmit,
     canMarkNothingToReport,
     submitDisabledTooltip,
@@ -31,10 +32,9 @@ const ReportsIndexBulkBar = ({ onReportsChanged }: ReportsIndexBulkBarProps) => 
   });
 
   const handleBulkEdit = useCallback(() => {
-    if (selectedReports.length === 1) {
-      void router.push(getReportIndexItemPath(selectedReports[0]));
-    }
-  }, [router, selectedReports]);
+    if (!canEdit || selectedReports.length !== 1) return;
+    void router.push(getReportIndexItemPath(selectedReports[0]));
+  }, [canEdit, router, selectedReports]);
 
   return (
     <>
@@ -42,7 +42,7 @@ const ReportsIndexBulkBar = ({ onReportsChanged }: ReportsIndexBulkBarProps) => 
       <ReportsBulkActionToolbar
         visible={selectedReports.length > 0}
         itemCount={selectedReports.length}
-        editDisabled={selectedReports.length !== 1}
+        editDisabled={!canEdit}
         isDownloading={isDownloading}
         nothingToReportDisabled={!canMarkNothingToReport}
         submitDisabled={!canSubmit}
