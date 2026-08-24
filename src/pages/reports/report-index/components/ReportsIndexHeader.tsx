@@ -23,7 +23,7 @@ import {
   clearReportPeriodFilters,
   EMPTY_REPORT_FILTERS,
   formatReportPeriodLabel,
-  getDefaultProgressFiltersForSource,
+  getInitialProgressFilters,
   getReportPeriodControl,
   REPORT_TYPE_LABELS,
   ReportFilterState
@@ -64,8 +64,10 @@ const ReportsIndexHeader = ({
   const { format } = useDate();
   const { setFilters } = useReportsContext();
 
+  const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
+
   const [filtersByTab, setFiltersByTab] = useState<Record<string, ReportFilterState>>(() => ({
-    "progress-reports": getDefaultProgressFiltersForSource(source),
+    "progress-reports": getInitialProgressFilters(source, reportTypeFromQuery),
     "additional-reports": EMPTY_REPORT_FILTERS
   }));
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
@@ -82,10 +84,10 @@ const ReportsIndexHeader = ({
 
   useEffect(() => {
     setFiltersByTab({
-      "progress-reports": getDefaultProgressFiltersForSource(source),
+      "progress-reports": getInitialProgressFilters(source, reportTypeFromQuery),
       "additional-reports": EMPTY_REPORT_FILTERS
     });
-  }, [source, sourceUuid]);
+  }, [reportTypeFromQuery, source, sourceUuid]);
 
   useEffect(() => {
     setFilters(selectedFilters);
@@ -153,7 +155,13 @@ const ReportsIndexHeader = ({
 
   const clearFilters = useCallback(() => {
     updateActiveFilters(EMPTY_REPORT_FILTERS);
-    if (source === "project") return;
+    if (source === "project") {
+      if (router.query.reportType == null) return;
+      const query = { ...router.query };
+      delete query.reportType;
+      void router.replace({ pathname: router.pathname, query }, undefined, { shallow: true });
+      return;
+    }
 
     void router.replace(
       getReportsIndexUrl("project", projectUuid, {

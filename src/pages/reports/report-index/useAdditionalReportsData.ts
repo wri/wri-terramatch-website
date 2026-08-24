@@ -1,9 +1,8 @@
 import { startCase } from "lodash";
 import { useMemo } from "react";
 
-import { indexFinancialReportConnection, useDisturbanceReportIndex, useSRPReportIndex } from "@/connections/Entity";
+import { useDisturbanceReportIndex, useFinancialReportIndex, useSRPReportIndex } from "@/connections/Entity";
 import { useOrganisation } from "@/connections/Organisation";
-import { useMyUser } from "@/connections/User";
 import {
   DisturbanceReportEntryDto,
   DisturbanceReportLightDto,
@@ -11,7 +10,6 @@ import {
   ProjectFullDto,
   SrpReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useAllPages } from "@/hooks/useConnection";
 
 import {
   AdditionalDisturbanceReport,
@@ -127,18 +125,18 @@ export const useAdditionalReportsData = (
   enabled: boolean,
   allProjects: boolean
 ): AdditionalReportsDataState => {
-  const [userLoaded, { user }] = useMyUser();
-  const organisationUuid = user?.organisationUuid ?? null;
-  const loadOrganisationData = enabled && organisationUuid != null;
-  const financialEnabled = enabled && (allProjects || organisationUuid != null);
+  const projectOrganisationUuid = project.organisationUuid ?? null;
+  const loadOrganisationData = enabled && !allProjects && projectOrganisationUuid != null;
+  const financialEnabled = enabled && (allProjects || projectOrganisationUuid != null);
   const projectFilter = allProjects ? {} : { projectUuid: project.uuid };
 
-  const [organisationLoaded, { data: organisation, loadFailure: organisationFailure }] = useOrganisation(
-    loadOrganisationData ? { id: organisationUuid } : {}
+  const [organisationLoaded, { data: organisation }] = useOrganisation(
+    loadOrganisationData ? { id: projectOrganisationUuid } : {}
   );
 
-  const [financialLoaded, financialData, financialFailure] = useAllPages(indexFinancialReportConnection, {
-    filter: allProjects ? {} : { organisationUuid: organisationUuid ?? "" },
+  const [financialLoaded, { data: financialData, loadFailure: financialFailure }] = useFinancialReportIndex({
+    ...INDEX_PROPS,
+    filter: allProjects ? {} : { organisationUuid: projectOrganisationUuid ?? "" },
     enabled: financialEnabled
   });
 
@@ -156,20 +154,20 @@ export const useAdditionalReportsData = (
 
   const organisationReady = !loadOrganisationData || organisationLoaded;
   const financialReady = !financialEnabled || financialLoaded;
-  const loading = enabled && (!userLoaded || !(organisationReady && financialReady && srpLoaded && disturbanceLoaded));
-  const error =
-    enabled &&
-    (organisationFailure != null || financialFailure != null || srpFailure != null || disturbanceFailure != null);
+  const loading = enabled && !(organisationReady && financialReady && srpLoaded && disturbanceLoaded);
+  // Financial reports are optional on this tab: a failed unfiltered "All" fetch must not hide SRP
+  // and disturbance reports that already loaded.
+  const error = enabled && (srpFailure != null || disturbanceFailure != null);
 
   const sections = useMemo((): AdditionalReportsEntitySection[] => {
     if (!enabled || loading || error) return [];
 
-    const financialReports = financialData.map(report => {
-      const isCurrentOrganisation = report.organisationUuid === organisationUuid;
+    const financialReports = (financialFailure != null ? [] : financialData ?? []).map(report => {
+      const isProjectOrganisation = report.organisationUuid === projectOrganisationUuid;
       return toFinancialReport(
         report,
-        isCurrentOrganisation ? organisation?.currency ?? null : null,
-        isCurrentOrganisation ? organisation?.finStartMonth ?? null : null
+        isProjectOrganisation ? organisation?.currency ?? null : null,
+        isProjectOrganisation ? organisation?.finStartMonth ?? null : null
       );
     });
     const nextSections: AdditionalReportsEntitySection[] = [];
@@ -193,7 +191,7 @@ export const useAdditionalReportsData = (
           nextSections.push({
             id: organisationId,
             type: "organisation",
-            name: organisationId === organisationUuid ? organisation?.name ?? name : name,
+            name,
             caption: "Organisation",
             organisationUuid: organisationId === "unknown" ? null : organisationId,
             groups: [{ id: `${organisationId}-financial-reports`, type: "financial-report", reports }]
@@ -287,15 +285,15 @@ export const useAdditionalReportsData = (
     enabled,
     error,
     financialData,
+    financialFailure,
     loading,
     organisation?.currency,
     organisation?.finStartMonth,
-    organisation?.name,
-    organisationUuid,
     project.name,
     project.organisationName,
     project.organisationUuid,
     project.uuid,
+    projectOrganisationUuid,
     srpData
   ]);
 

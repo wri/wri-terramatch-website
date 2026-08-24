@@ -631,9 +631,13 @@ function WizardForm(props: WizardFormProps) {
       } else if (tab === "project-report") {
         router.push(`/reports/project-report/${entity?.projectReportUuid}`, undefined, { shallow: true });
       } else if (tab === "site-reports") {
-        router.push(`/reports/project-report/${entity?.uuid}?tab=site-reports`, undefined, { shallow: true });
+        if (entity?.projectUuid != null) {
+          void router.push(getReportsIndexUrl("project", entity.projectUuid, { reportType: "site-report" }));
+        }
       } else if (tab === "nursery-reports" || tab === "nurseries-reports") {
-        router.push(`/reports/project-report/${entity?.uuid}?tab=nursery-reports`, undefined, { shallow: true });
+        if (entity?.projectUuid != null) {
+          void router.push(getReportsIndexUrl("project", entity.projectUuid, { reportType: "nursery-report" }));
+        }
       } else {
         const reportsIndexHref = getReportsIndexHrefFromQuery(router.query.from);
         if (reportsIndexHref != null) {

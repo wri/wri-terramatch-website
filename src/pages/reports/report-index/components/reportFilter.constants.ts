@@ -34,6 +34,19 @@ export const getDefaultProgressFiltersForSource = (source: "project" | "site" | 
   return EMPTY_REPORT_FILTERS;
 };
 
+export const isProgressReportType = (value: string | undefined): value is ReportTypeOption =>
+  value === "project-report" || value === "site-report" || value === "nursery-report";
+
+export const getInitialProgressFilters = (
+  source: "project" | "site" | "nursery",
+  reportType?: string
+): ReportFilterState => {
+  if (isProgressReportType(reportType)) {
+    return { ...EMPTY_REPORT_FILTERS, reportTypes: [reportType] };
+  }
+  return getDefaultProgressFiltersForSource(source);
+};
+
 export const formatDueDateRangeLabel = (from: string, to: string) => {
   if (from !== "" && to !== "") return `${from} — ${to}`;
   return from !== "" ? from : to;

@@ -48,7 +48,14 @@ const FinancialReportContent: FC<FinancialReportContentProps> = ({ financialRepo
 
   const navigateToTab = useCallback(
     (tab: string) => {
-      router.push(`/reports/financial-report/${financialReportUUID}?tab=${tab}`, undefined, { shallow: true });
+      void router.push(
+        {
+          pathname: `/reports/financial-report/${financialReportUUID}`,
+          query: { ...router.query, tab }
+        },
+        undefined,
+        { shallow: true }
+      );
     },
     [router, financialReportUUID]
   );
