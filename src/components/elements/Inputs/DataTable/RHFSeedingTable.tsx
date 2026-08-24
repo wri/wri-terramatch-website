@@ -59,7 +59,8 @@ export const getSeedingTableColumns = (
 
 export const getSeedingsQuestions = (
   t: typeof useT | Function = (t: string) => t,
-  captureCount: boolean
+  captureCount: boolean,
+  required: boolean = false
 ): FieldDefinition[] =>
   captureCount
     ? [
@@ -67,13 +68,13 @@ export const getSeedingsQuestions = (
           label: t("Seed species or Mix"),
           name: "name",
           inputType: "text",
-          validation: { required: true }
+          validation: { required }
         },
         {
           label: t("Number of Seeds"),
           name: "amount",
           inputType: "number",
-          validation: { required: true }
+          validation: { required }
         }
       ]
     : [
@@ -81,25 +82,30 @@ export const getSeedingsQuestions = (
           label: t("Seed species or Mix"),
           name: "name",
           inputType: "text",
-          validation: { required: true }
+          validation: { required }
         },
         {
           label: t("Number of seeds in sample"),
           name: "seedsInSample",
           inputType: "number",
-          validation: { required: true },
+          validation: { required },
           additionalProps: { step: 0.01 }
         },
         {
           label: t("Weight of sample in KG"),
           name: "weightOfSample",
           inputType: "number",
-          validation: { required: true },
+          validation: { required },
           additionalProps: { step: 0.01 }
         }
       ];
 
-const RHFSeedingTable: FC<PropsWithChildren<RHFSeedingProps>> = ({ collection, captureCount, ...props }) => {
+const RHFSeedingTable: FC<PropsWithChildren<RHFSeedingProps>> = ({
+  collection,
+  captureCount,
+  required = false,
+  ...props
+}) => {
   const t = useT();
   const {
     field: { value, onChange }
@@ -108,15 +114,16 @@ const RHFSeedingTable: FC<PropsWithChildren<RHFSeedingProps>> = ({ collection, c
   const { columns, steps } = useMemo(
     () => ({
       columns: getSeedingTableColumns(t, captureCount),
-      steps: [{ id: "seedingTable", fields: getSeedingsQuestions(t, captureCount) }]
+      steps: [{ id: "seedingTable", fields: getSeedingsQuestions(t, captureCount, required) }]
     }),
-    [captureCount, t]
+    [captureCount, required, t]
   );
   const fieldsProvider = useLocalStepsProvider(steps);
 
   return (
     <DataTable
       {...props}
+      required={required}
       value={value ?? []}
       onChange={onChange}
       generateUuids={true}
