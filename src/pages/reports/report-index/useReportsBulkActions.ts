@@ -23,6 +23,7 @@ import type { ReportIndexItem } from "./reportIndex.types";
 import {
   getSubmitDisabledTooltip,
   groupReportUuidsByEntity,
+  isReportBulkEditable,
   isReportNothingToReportEligible,
   isReportSubmittable,
   REPORT_INDEX_TYPE_TO_ENTITY
@@ -91,6 +92,7 @@ export const useReportsBulkActions = ({
     [selectedReports]
   );
 
+  const canEdit = selectedReports.length === 1 && isReportBulkEditable(selectedReports[0]);
   const canSubmit = selectedReports.length > 0 && submittableReports.length === selectedReports.length;
   const canMarkNothingToReport = selectedReports.length > 0 && nothingToReportReports.length === selectedReports.length;
 
@@ -219,6 +221,7 @@ export const useReportsBulkActions = ({
   return {
     isDownloading,
     isUpdating,
+    canEdit,
     canSubmit,
     canMarkNothingToReport,
     submitDisabledTooltip,

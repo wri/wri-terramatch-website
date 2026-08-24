@@ -6,11 +6,9 @@ import { useCallback, useMemo } from "react";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useDate } from "@/hooks/useDate";
-import { getThemedColor } from "@/lib/theme";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import TitleCell from "@/redesignComponents/dataDisplay/Table/components/TitleCell";
 import Table, {
   CHECKBOX_COLUMN_KEY,
@@ -18,16 +16,12 @@ import Table, {
   TableRenderRowContext
 } from "@/redesignComponents/dataDisplay/Table/Table";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
-import { CalendarIcon, DueIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
+import { CalendarIcon, DueIcon } from "@/redesignComponents/foundations/Icons";
 
 import { AdditionalReport, AdditionalReportType } from "../reportIndex.types";
-import {
-  getReportIndexItemPath,
-  getReportStatusSortValue,
-  rememberReportsIndexPosition,
-  withReportsIndexReturn
-} from "../reportIndex.utils";
+import { getReportStatusSortValue, rememberReportsIndexPosition, withReportsIndexReturn } from "../reportIndex.utils";
 import { useReportTableSelection } from "../ReportsSelection.provider";
+import ReportsIndexEditButton from "./ReportsIndexEditButton";
 
 const getColumns = (type: AdditionalReportType, t: ReturnType<typeof useT>): TableColumn[] => {
   if (type === "financial-report") {
@@ -189,7 +183,11 @@ const AdditionalReportsTable = ({
           )}
 
           <ChakraTableCell {...context?.getCellProps("status")}>
-            <TagSubmission state={report.status} size="small" />
+            {report.nothingToReport ? (
+              <TagSubmission state="nothing-reported" size="small" />
+            ) : (
+              <TagSubmission state={report.status} size="small" />
+            )}
           </ChakraTableCell>
 
           {report.type === "disturbance-report" && (
@@ -204,26 +202,7 @@ const AdditionalReportsTable = ({
             {renderDateTag(report.updatedAt, false)}
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("actions")}>
-            <Box pr="1.5625rem">
-              <ActionCell
-                button={{
-                  children: t("Edit"),
-                  as: "a",
-                  href: withReportsIndexReturn(getReportIndexItemPath(report), indexHref),
-                  onClick: () => rememberReportsIndexPosition(indexHref, report.id),
-                  leftIcon: (
-                    <EditIcon
-                      css={{
-                        "& svg path": {
-                          fill: getThemedColor("neutral", 900) + " !important",
-                          color: getThemedColor("neutral", 900) + " !important"
-                        }
-                      }}
-                    />
-                  )
-                }}
-              />
-            </Box>
+            <ReportsIndexEditButton report={report} indexHref={indexHref} />
           </ChakraTableCell>
         </TableRow>
       );
