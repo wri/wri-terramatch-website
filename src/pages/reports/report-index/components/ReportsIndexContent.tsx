@@ -70,9 +70,11 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const { filteredProgressSections, filteredAdditionalSections, progressReportCount, additionalReportCount } =
     useReportsIndexFilters({ progressSections, additionalSections, query });
 
+  const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
   const indexHref = getReportsIndexUrl(source, sourceEntity.uuid, {
     tab: activeTab,
-    view: isAllProjectsView ? ALL_PROJECTS_VIEW_VALUE : undefined
+    view: isAllProjectsView ? ALL_PROJECTS_VIEW_VALUE : undefined,
+    reportType: reportTypeFromQuery
   });
 
   const [restoreReportId, setRestoreReportId] = useState<string | null>(null);
@@ -186,13 +188,14 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
       void router.replace(
         getReportsIndexUrl("project", nextView, {
-          tab: activeTab === "additional-reports" ? "additional-reports" : undefined
+          tab: activeTab === "additional-reports" ? "additional-reports" : undefined,
+          reportType: reportTypeFromQuery
         }),
         undefined,
         { shallow: true }
       );
     },
-    [clearSelection, project.uuid, router, activeTab]
+    [clearSelection, project.uuid, router, activeTab, reportTypeFromQuery]
   );
 
   const handleTabChange = useCallback(

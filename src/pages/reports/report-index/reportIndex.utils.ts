@@ -55,6 +55,7 @@ export const isReportsIndexPath = (href: string | undefined): href is string => 
 export type ReportsIndexUrlOptions = {
   tab?: ReportsIndexTab;
   view?: string;
+  reportType?: string;
 };
 
 export const getReportsIndexUrl = (source: ReportsIndexSource, uuid: string, options?: ReportsIndexUrlOptions) => {
@@ -64,6 +65,9 @@ export const getReportsIndexUrl = (source: ReportsIndexSource, uuid: string, opt
   }
   if (options?.view != null && options.view !== "") {
     params.set("view", options.view);
+  }
+  if (options?.reportType != null && options.reportType !== "") {
+    params.set("reportType", options.reportType);
   }
   return `${REPORTS_INDEX_PATH}?${params.toString()}`;
 };

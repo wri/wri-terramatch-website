@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FC, ReactElement, useMemo } from "react";
+import { FC, ReactElement, useEffect, useMemo } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
@@ -53,6 +53,18 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const reportsIndexHref =
     getReportsIndexHrefFromQuery(router.query.from) ??
     (projectReport.projectUuid != null ? getReportsIndexUrl("project", projectReport.projectUuid) : "/my-projects");
+
+  const isRedirectingToReportsIndex = currentTab === "site-reports" || currentTab === "nursery-reports";
+
+  useEffect(() => {
+    if (projectReport.projectUuid == null) return;
+    if (currentTab === "site-reports") {
+      void router.replace(getReportsIndexUrl("project", projectReport.projectUuid, { reportType: "site-report" }));
+    }
+    if (currentTab === "nursery-reports") {
+      void router.replace(getReportsIndexUrl("project", projectReport.projectUuid, { reportType: "nursery-report" }));
+    }
+  }, [currentTab, projectReport.projectUuid, router]);
 
   const tabItems = useMemo<TabItem[]>(
     () => [
@@ -163,11 +175,12 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
                 variant="borderless"
                 size="small"
                 className="underline underline-offset-2"
-                onClick={() =>
-                  router.push(`/reports/project-report/${projectReport.uuid}?tab=site-reports`, undefined, {
-                    shallow: true
-                  })
-                }
+                onClick={() => {
+                  if (projectReport.projectUuid == null) return;
+                  void router.push(
+                    getReportsIndexUrl("project", projectReport.projectUuid, { reportType: "site-report" })
+                  );
+                }}
               >
                 {t("Site Reports")}
               </Button>
@@ -178,11 +191,12 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
                     variant="borderless"
                     size="small"
                     className="underline underline-offset-2"
-                    onClick={() =>
-                      router.push(`/reports/project-report/${projectReport.uuid}?tab=nursery-reports`, undefined, {
-                        shallow: true
-                      })
-                    }
+                    onClick={() => {
+                      if (projectReport.projectUuid == null) return;
+                      void router.push(
+                        getReportsIndexUrl("project", projectReport.projectUuid, { reportType: "nursery-report" })
+                      );
+                    }}
                   >
                     {t("Nursery Reports")}
                   </Button>
@@ -203,7 +217,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
           }
         }}
       />
-      <div className="flex flex-1">{activeTabItem.renderBody()}</div>
+      <div className="flex flex-1">{isRedirectingToReportsIndex ? null : activeTabItem.renderBody()}</div>
       <PageFooter />
     </>
   );
