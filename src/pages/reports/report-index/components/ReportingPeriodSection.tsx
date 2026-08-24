@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
@@ -27,6 +27,7 @@ import ReportsIndexTable from "./ReportsIndexTable";
 type ReportingPeriodSectionProps = {
   period: ReportsIndexPeriod;
   defaultOpen?: boolean;
+  expandForPeriodFilter?: boolean;
   metricsReady?: boolean;
   indexHref?: string;
   restoreReportId?: string;
@@ -83,6 +84,7 @@ const PeriodJobsMetricCard: FC<PeriodJobsMetricCardProps> = ({ projectReportUuid
 const ReportingPeriodSection = ({
   period,
   defaultOpen = false,
+  expandForPeriodFilter = false,
   metricsReady = true,
   indexHref,
   restoreReportId,
@@ -91,6 +93,13 @@ const ReportingPeriodSection = ({
   const t = useT();
   const { format } = useDate();
   const [open, setOpen] = useState(defaultOpen);
+
+  useEffect(() => {
+    if (expandForPeriodFilter) {
+      setOpen(true);
+    }
+  }, [expandForPeriodFilter]);
+
   const periodLabel = useReportingWindow(toFramework(period.frameworkKey), period.dueAt ?? undefined);
   const taskTitle = t("Reporting Task {window}", { window: periodLabel });
   const metricCardClassName = "w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100";

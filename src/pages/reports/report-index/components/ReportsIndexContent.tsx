@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useProjectIndex } from "@/connections/Entity";
+import { useReportsContext } from "@/context/reports.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
@@ -46,6 +47,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const tabFromQuery = typeof router.query.tab === "string" ? router.query.tab : undefined;
   const activeTab: ReportsIndexTab = isReportsIndexTab(tabFromQuery) ? tabFromQuery : "progress-reports";
   const [query, setQuery] = useState("");
+  const { filters } = useReportsContext();
   const [viewValue, setViewValue] = useState(
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
   );
@@ -119,6 +121,8 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
   const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
   const hasActiveSearch = query.trim().length > 0;
+  const hasActivePeriodFilter =
+    filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
 
   // Built from the unfiltered sections so refining by a period never shrinks the list of periods
   // still on offer.
@@ -263,6 +267,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                     key={section.id}
                     section={section}
                     defaultOpen={index === 0 && !isAllProjectsView}
+                    expandForPeriodFilter={hasActivePeriodFilter}
                     metricsReady={progressMetricsReady}
                     indexHref={indexHref}
                     restoreSectionId={progressRestore?.sectionId}

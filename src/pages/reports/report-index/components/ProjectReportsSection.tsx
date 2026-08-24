@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
@@ -15,6 +15,7 @@ type ProjectReportsSectionProps = {
   defaultOpen?: boolean;
   metricsReady?: boolean;
   indexHref?: string;
+  expandForPeriodFilter?: boolean;
   restoreSectionId?: string;
   restorePeriodId?: string;
   restoreReportId?: string;
@@ -26,6 +27,7 @@ const ProjectReportsSection = ({
   defaultOpen = false,
   metricsReady = true,
   indexHref,
+  expandForPeriodFilter = false,
   restoreSectionId,
   restorePeriodId,
   restoreReportId,
@@ -33,6 +35,12 @@ const ProjectReportsSection = ({
 }: ProjectReportsSectionProps) => {
   const t = useT();
   const [open, setOpen] = useState(restoreSectionId != null ? section.id === restoreSectionId : defaultOpen);
+
+  useEffect(() => {
+    if (expandForPeriodFilter) {
+      setOpen(true);
+    }
+  }, [expandForPeriodFilter]);
 
   const attentionCount = useMemo(
     () => section.periods.reduce((total, period) => total + getReportsRequiringAttention(period.reports), 0),
@@ -73,7 +81,10 @@ const ProjectReportsSection = ({
               <ReportingPeriodSection
                 key={period.id}
                 period={period}
-                defaultOpen={restorePeriodId != null ? period.id === restorePeriodId : index === 0}
+                defaultOpen={
+                  restorePeriodId != null ? period.id === restorePeriodId : expandForPeriodFilter || index === 0
+                }
+                expandForPeriodFilter={expandForPeriodFilter}
                 metricsReady={metricsReady}
                 indexHref={indexHref}
                 restoreReportId={period.id === restorePeriodId ? restoreReportId : undefined}
