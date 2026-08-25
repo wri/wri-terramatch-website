@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useProjectIndex } from "@/connections/Entity";
+import { useReportsContext } from "@/context/reports.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
@@ -41,6 +42,7 @@ type ReportsIndexContentProps = {
 const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexContentProps) => {
   const t = useT();
   const router = useRouter();
+  const { filters } = useReportsContext();
   const viewFromQuery = typeof router.query.view === "string" ? router.query.view : undefined;
   const uuidFromQuery = typeof router.query.uuid === "string" ? router.query.uuid : undefined;
   const tabFromQuery = typeof router.query.tab === "string" ? router.query.tab : undefined;
@@ -119,12 +121,20 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
   const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
   const hasActiveSearch = query.trim().length > 0;
+  const hasReportSubset = hasActiveSearch || filters.reportTypes.length > 0 || filters.statuses.length > 0;
+  const hasActivePeriodFilter =
+    filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
 
   // Built from the unfiltered sections so refining by a period never shrinks the list of periods
   // still on offer.
   const periodOptions = useMemo(
     () => getReportPeriodOptions(progressSections, additionalSections),
     [additionalSections, progressSections]
+  );
+
+  const unfilteredPeriodsByProjectId = useMemo(
+    () => new Map(progressSections.map(section => [section.id, section.periods])),
+    [progressSections]
   );
 
   const viewItems = useMemo<HighLevelSelectorItem[]>(() => {
@@ -262,8 +272,11 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                   <ProjectReportsSection
                     key={section.id}
                     section={section}
+                    unfilteredPeriods={unfilteredPeriodsByProjectId.get(section.id)}
                     defaultOpen={index === 0 && !isAllProjectsView}
+                    expandForPeriodFilter={hasActivePeriodFilter}
                     metricsReady={progressMetricsReady}
+                    hasReportSubset={hasReportSubset}
                     indexHref={indexHref}
                     restoreSectionId={progressRestore?.sectionId}
                     restorePeriodId={progressRestore?.periodId}

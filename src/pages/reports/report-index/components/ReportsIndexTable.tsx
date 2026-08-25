@@ -3,11 +3,9 @@ import { useT } from "@transifex/react";
 import { useCallback, useMemo } from "react";
 
 import { useDate } from "@/hooks/useDate";
-import { getThemedColor } from "@/lib/theme";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import TitleCell from "@/redesignComponents/dataDisplay/Table/components/TitleCell";
 import Table, {
   CHECKBOX_COLUMN_KEY,
@@ -15,17 +13,17 @@ import Table, {
   TableRenderRowContext
 } from "@/redesignComponents/dataDisplay/Table/Table";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
-import { CalendarIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
+import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ReportsIndexReport } from "../reportIndex.types";
 import {
-  getReportIndexItemPath,
   getReportStatusSortValue,
   getReportTypeSortValue,
   rememberReportsIndexPosition,
   withReportsIndexReturn
 } from "../reportIndex.utils";
 import { useReportTableSelection } from "../ReportsSelection.provider";
+import ReportsIndexEditButton from "./ReportsIndexEditButton";
 
 const ReportsIndexTable = ({
   reports,
@@ -118,7 +116,11 @@ const ReportsIndexTable = ({
             </Text>
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("status")}>
-            <TagSubmission state={report.status} size="small" />
+            {report.nothingToReport ? (
+              <TagSubmission state="nothing-reported" size="small" />
+            ) : (
+              <TagSubmission state={report.status} size="small" />
+            )}
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("updatedAt")}>
             {report.status === "due" ? (
@@ -134,26 +136,7 @@ const ReportsIndexTable = ({
             )}
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("actions")}>
-            <Box pr="1.5625rem">
-              <ActionCell
-                button={{
-                  children: t("Edit"),
-                  as: "a",
-                  href: withReportsIndexReturn(getReportIndexItemPath(report), indexHref),
-                  onClick: () => rememberReportsIndexPosition(indexHref, report.id),
-                  leftIcon: (
-                    <EditIcon
-                      css={{
-                        "& svg path": {
-                          fill: getThemedColor("neutral", 900) + " !important",
-                          color: getThemedColor("neutral", 900) + " !important"
-                        }
-                      }}
-                    />
-                  )
-                }}
-              />
-            </Box>
+            <ReportsIndexEditButton report={report} indexHref={indexHref} />
           </ChakraTableCell>
         </TableRow>
       );

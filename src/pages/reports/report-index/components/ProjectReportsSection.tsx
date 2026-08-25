@@ -1,20 +1,23 @@
 import { useT } from "@transifex/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import { FolderIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
-import { ReportsIndexProjectSection } from "../reportIndex.types";
+import { ReportsIndexPeriod, ReportsIndexProjectSection } from "../reportIndex.types";
 import { getReportsRequiringAttention } from "../reportIndex.utils";
 import ReportingPeriodSection from "./ReportingPeriodSection";
 
 type ProjectReportsSectionProps = {
   section: ReportsIndexProjectSection;
+  unfilteredPeriods?: ReportsIndexPeriod[];
   defaultOpen?: boolean;
   metricsReady?: boolean;
+  hasReportSubset?: boolean;
   indexHref?: string;
+  expandForPeriodFilter?: boolean;
   restoreSectionId?: string;
   restorePeriodId?: string;
   restoreReportId?: string;
@@ -23,9 +26,12 @@ type ProjectReportsSectionProps = {
 
 const ProjectReportsSection = ({
   section,
+  unfilteredPeriods,
   defaultOpen = false,
   metricsReady = true,
+  hasReportSubset = false,
   indexHref,
+  expandForPeriodFilter = false,
   restoreSectionId,
   restorePeriodId,
   restoreReportId,
@@ -33,6 +39,12 @@ const ProjectReportsSection = ({
 }: ProjectReportsSectionProps) => {
   const t = useT();
   const [open, setOpen] = useState(restoreSectionId != null ? section.id === restoreSectionId : defaultOpen);
+
+  useEffect(() => {
+    if (expandForPeriodFilter) {
+      setOpen(true);
+    }
+  }, [expandForPeriodFilter]);
 
   const attentionCount = useMemo(
     () => section.periods.reduce((total, period) => total + getReportsRequiringAttention(period.reports), 0),
@@ -73,8 +85,13 @@ const ProjectReportsSection = ({
               <ReportingPeriodSection
                 key={period.id}
                 period={period}
-                defaultOpen={restorePeriodId != null ? period.id === restorePeriodId : index === 0}
+                allPeriodReports={unfilteredPeriods?.find(item => item.id === period.id)?.reports}
+                defaultOpen={
+                  restorePeriodId != null ? period.id === restorePeriodId : expandForPeriodFilter || index === 0
+                }
+                expandForPeriodFilter={expandForPeriodFilter}
                 metricsReady={metricsReady}
+                hasReportSubset={hasReportSubset}
                 indexHref={indexHref}
                 restoreReportId={period.id === restorePeriodId ? restoreReportId : undefined}
                 onRowRestored={onRowRestored}

@@ -59,17 +59,14 @@ const ReportsBulkActionToolbar = ({
         children: t("Nothing to Report"),
         disabled: nothingToReportDisabled || isUpdating,
         onClick: onNothingToReport
-      }
-    ];
-
-    if (!editDisabled) {
-      nextActions.push({
+      },
+      {
         id: "edit",
         children: t("Edit"),
-        disabled: isUpdating,
+        disabled: editDisabled || isUpdating,
         onClick: onEdit
-      });
-    }
+      }
+    ];
 
     return nextActions;
   }, [editDisabled, isUpdating, nothingToReportDisabled, onEdit, onNothingToReport, t]);

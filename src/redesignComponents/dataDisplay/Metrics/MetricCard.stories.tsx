@@ -64,6 +64,33 @@ export const MediumWithSelection: Story = {
   }
 };
 
+export const MediumWithFiltered: Story = {
+  args: {
+    title: "Stat label",
+    progress: 1234,
+    goal: 10000,
+    variant: "medium",
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit",
+    filtered: 800
+  }
+};
+
+export const MediumWithFilteredAndSelection: Story = {
+  args: {
+    title: "Stat label",
+    progress: 1234,
+    goal: 10000,
+    variant: "medium",
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit",
+    filtered: 800,
+    selection: 200
+  }
+};
+
 export const Large: Story = {
   args: {
     title: "Stat label",

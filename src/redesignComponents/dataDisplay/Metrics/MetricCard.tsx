@@ -51,10 +51,44 @@ const MetricTooltipTrigger: FC<MetricTooltipTriggerProps> = ({ tooltipContent, m
   );
 };
 
+type MetricCardExtraLayerProps = {
+  label: string;
+  value: number;
+  progressSuffix?: string;
+  labelTextStyle: "200" | "500";
+  valueTextStyle: "300-bold" | "600-bold";
+};
+
+const MetricCardExtraLayer: FC<MetricCardExtraLayerProps> = ({
+  label,
+  value,
+  progressSuffix,
+  labelTextStyle,
+  valueTextStyle
+}) => (
+  <>
+    <SimpleDivider variant="vertical" className="!h-3" />
+    <Flex gap={1} className="items-center">
+      <Text color="neutral.700" textStyle={labelTextStyle}>
+        {label}
+      </Text>
+      <Text color="neutral.900" textStyle={valueTextStyle}>
+        {formatNumberLocaleString(value)}
+      </Text>
+      {progressSuffix != null && progressSuffix !== "" ? (
+        <Text color="neutral.900" textStyle={valueTextStyle}>
+          {progressSuffix}
+        </Text>
+      ) : null}
+    </Flex>
+  </>
+);
+
 const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   title,
   progress,
   progressLabel,
+  filtered,
   selection,
   progressSuffix,
   color,
@@ -92,23 +126,23 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
             </Text>
           ) : null}
         </Flex>
+        {filtered != null ? (
+          <MetricCardExtraLayer
+            label={t("Filtered:")}
+            value={filtered}
+            progressSuffix={progressSuffix}
+            labelTextStyle="200"
+            valueTextStyle="300-bold"
+          />
+        ) : null}
         {selection != null ? (
-          <>
-            <SimpleDivider variant="vertical" className="!h-3" />
-            <Flex gap={1} className="items-center">
-              <Text color="neutral.700" textStyle="200">
-                {t("Selection:")}
-              </Text>
-              <Text color="neutral.900" textStyle="300-bold">
-                {formatNumberLocaleString(selection)}
-              </Text>
-              {progressSuffix != null && progressSuffix !== "" ? (
-                <Text color="neutral.900" textStyle="300-bold">
-                  {progressSuffix}
-                </Text>
-              ) : null}
-            </Flex>
-          </>
+          <MetricCardExtraLayer
+            label={t("Selection:")}
+            value={selection}
+            progressSuffix={progressSuffix}
+            labelTextStyle="200"
+            valueTextStyle="300-bold"
+          />
         ) : null}
       </Flex>
     </Flex>
@@ -124,6 +158,7 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   iconWithColor,
   tooltipContent,
   classNameTitle,
+  filtered,
   selection,
   metricLabel,
   type
@@ -152,23 +187,23 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
               </Text>
             ) : null}
           </Flex>
+          {filtered != null ? (
+            <MetricCardExtraLayer
+              label={t("Filtered:")}
+              value={filtered}
+              progressSuffix={progressSuffix}
+              labelTextStyle="500"
+              valueTextStyle="600-bold"
+            />
+          ) : null}
           {selection != null ? (
-            <>
-              <SimpleDivider variant="vertical" className="!h-3" />
-              <Flex gap={1} className="items-center">
-                <Text color="neutral.700" textStyle="500">
-                  {t("Selection:")}
-                </Text>
-                <Text color="neutral.900" textStyle="600-bold">
-                  {formatNumberLocaleString(selection)}
-                </Text>
-                {progressSuffix != null && progressSuffix !== "" ? (
-                  <Text color="neutral.900" textStyle="600-bold">
-                    {progressSuffix}
-                  </Text>
-                ) : null}
-              </Flex>
-            </>
+            <MetricCardExtraLayer
+              label={t("Selection:")}
+              value={selection}
+              progressSuffix={progressSuffix}
+              labelTextStyle="500"
+              valueTextStyle="600-bold"
+            />
           ) : null}
         </Flex>
       </Flex>
@@ -331,6 +366,7 @@ const MetricCard: FC<MetricCardProps> = props => {
     className,
     classNameTitle,
     frameworkKey,
+    filtered,
     selection,
     metricLabel,
     widthProgressBar
@@ -391,6 +427,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           iconWithColor={iconWithColor14}
           tooltipContent={tooltipContent}
           classNameTitle={classNameTitle}
+          filtered={filtered}
           selection={selection}
           metricLabel={metricLabel}
           type={type}
@@ -408,6 +445,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           iconWithColor={iconWithColor50}
           tooltipContent={tooltipContent}
           classNameTitle={classNameTitle}
+          filtered={filtered}
           selection={selection}
           metricLabel={metricLabel}
           type={type}
