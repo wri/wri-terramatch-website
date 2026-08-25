@@ -14,6 +14,7 @@ type ProjectReportsSectionProps = {
   section: ReportsIndexProjectSection;
   defaultOpen?: boolean;
   metricsReady?: boolean;
+  hasReportSubset?: boolean;
   indexHref?: string;
   expandForPeriodFilter?: boolean;
   restoreSectionId?: string;
@@ -26,6 +27,7 @@ const ProjectReportsSection = ({
   section,
   defaultOpen = false,
   metricsReady = true,
+  hasReportSubset = false,
   indexHref,
   expandForPeriodFilter = false,
   restoreSectionId,
@@ -86,6 +88,7 @@ const ProjectReportsSection = ({
                 }
                 expandForPeriodFilter={expandForPeriodFilter}
                 metricsReady={metricsReady}
+                hasReportSubset={hasReportSubset}
                 indexHref={indexHref}
                 restoreReportId={period.id === restorePeriodId ? restoreReportId : undefined}
                 onRowRestored={onRowRestored}

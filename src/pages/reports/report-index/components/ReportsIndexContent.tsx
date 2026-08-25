@@ -42,12 +42,12 @@ type ReportsIndexContentProps = {
 const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexContentProps) => {
   const t = useT();
   const router = useRouter();
+  const { filters } = useReportsContext();
   const viewFromQuery = typeof router.query.view === "string" ? router.query.view : undefined;
   const uuidFromQuery = typeof router.query.uuid === "string" ? router.query.uuid : undefined;
   const tabFromQuery = typeof router.query.tab === "string" ? router.query.tab : undefined;
   const activeTab: ReportsIndexTab = isReportsIndexTab(tabFromQuery) ? tabFromQuery : "progress-reports";
   const [query, setQuery] = useState("");
-  const { filters } = useReportsContext();
   const [viewValue, setViewValue] = useState(
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
   );
@@ -121,6 +121,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
   const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
   const hasActiveSearch = query.trim().length > 0;
+  const hasReportSubset = hasActiveSearch || filters.reportTypes.length > 0 || filters.statuses.length > 0;
   const hasActivePeriodFilter =
     filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
 
@@ -269,6 +270,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                     defaultOpen={index === 0 && !isAllProjectsView}
                     expandForPeriodFilter={hasActivePeriodFilter}
                     metricsReady={progressMetricsReady}
+                    hasReportSubset={hasReportSubset}
                     indexHref={indexHref}
                     restoreSectionId={progressRestore?.sectionId}
                     restorePeriodId={progressRestore?.periodId}
