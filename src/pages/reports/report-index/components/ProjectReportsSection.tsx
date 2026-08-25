@@ -6,12 +6,13 @@ import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSec
 import { FolderIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
-import { ReportsIndexProjectSection } from "../reportIndex.types";
+import { ReportsIndexPeriod, ReportsIndexProjectSection } from "../reportIndex.types";
 import { getReportsRequiringAttention } from "../reportIndex.utils";
 import ReportingPeriodSection from "./ReportingPeriodSection";
 
 type ProjectReportsSectionProps = {
   section: ReportsIndexProjectSection;
+  unfilteredPeriods?: ReportsIndexPeriod[];
   defaultOpen?: boolean;
   metricsReady?: boolean;
   hasReportSubset?: boolean;
@@ -25,6 +26,7 @@ type ProjectReportsSectionProps = {
 
 const ProjectReportsSection = ({
   section,
+  unfilteredPeriods,
   defaultOpen = false,
   metricsReady = true,
   hasReportSubset = false,
@@ -83,6 +85,7 @@ const ProjectReportsSection = ({
               <ReportingPeriodSection
                 key={period.id}
                 period={period}
+                allPeriodReports={unfilteredPeriods?.find(item => item.id === period.id)?.reports}
                 defaultOpen={
                   restorePeriodId != null ? period.id === restorePeriodId : expandForPeriodFilter || index === 0
                 }

@@ -14,7 +14,6 @@ import {
 import {
   NurseryReportFullDto,
   NurseryReportLightDto,
-  ProjectReportFullDto,
   SiteReportFullDto,
   SiteReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -33,6 +32,7 @@ export type ReportingPeriodMetricCard = {
   title: string;
   tooltip: string;
   progress: number;
+  filtered?: number;
   selection?: number;
   color: string;
 };
@@ -50,15 +50,6 @@ const treesRegeneratingFromSite = (report: SiteReportFullDto) => {
 
 const treesGrowingFromSite = (report: SiteReportFullDto) =>
   (report.totalTreesPlantedCount ?? 0) + (report.totalSeedsPlantedCount ?? 0) + treesRegeneratingFromSite(report);
-
-const totalsFromProjectReport = (projectReport: ProjectReportFullDto | null | undefined): PeriodMetricTotals => ({
-  treesGrowing:
-    (projectReport?.treesPlantedCount ?? 0) +
-    (projectReport?.seedsPlantedCount ?? 0) +
-    (projectReport?.regeneratedTreesCount ?? 0),
-  treesRegenerated: projectReport?.regeneratedTreesCount ?? 0,
-  seedlingsGrown: projectReport?.seedlingsGrown ?? 0
-});
 
 const totalsFromLoadedReports = (
   reports: ReportsIndexReport[],
@@ -133,16 +124,16 @@ const useLoadedChildReports = (siteIds: string[], nurseryIds: string[], enabled:
 type UseReportingPeriodMetricsArgs = {
   open: boolean;
   reports: ReportsIndexReport[];
+  allReports: ReportsIndexReport[];
   hasReportSubset: boolean;
-  projectReport: ProjectReportFullDto | null | undefined;
   jobsTotal: number | null | undefined;
 };
 
 export const useReportingPeriodMetrics = ({
   open,
   reports,
+  allReports,
   hasReportSubset,
-  projectReport,
   jobsTotal
 }: UseReportingPeriodMetricsArgs) => {
   const { selectedReports } = useReportsSelectionState();
@@ -156,27 +147,24 @@ export const useReportingPeriodMetrics = ({
   }, [reports, selectedReports]);
   const hasSelection = periodSelectedReports.length > 0;
 
-  const siteIds = useMemo(() => {
-    const ids = new Set<string>();
-    if (hasReportSubset) idsOfType(reports, "site-report").forEach(id => ids.add(id));
-    if (hasSelection) idsOfType(periodSelectedReports, "site-report").forEach(id => ids.add(id));
-    return Array.from(ids);
-  }, [hasReportSubset, hasSelection, periodSelectedReports, reports]);
+  const siteIds = useMemo(() => idsOfType(allReports, "site-report"), [allReports]);
+  const nurseryIds = useMemo(() => idsOfType(allReports, "nursery-report"), [allReports]);
 
-  const nurseryIds = useMemo(() => {
-    const ids = new Set<string>();
-    if (hasReportSubset) idsOfType(reports, "nursery-report").forEach(id => ids.add(id));
-    if (hasSelection) idsOfType(periodSelectedReports, "nursery-report").forEach(id => ids.add(id));
-    return Array.from(ids);
-  }, [hasReportSubset, hasSelection, periodSelectedReports, reports]);
+  const { siteReports, nurseryReports, ready } = useLoadedChildReports(siteIds, nurseryIds, open);
 
-  const needsChildReports = open && (hasReportSubset || hasSelection);
-  const { siteReports, nurseryReports, ready } = useLoadedChildReports(siteIds, nurseryIds, needsChildReports);
+  const periodTotals = useMemo(
+    () => totalsFromLoadedReports(allReports, siteReports, nurseryReports),
+    [allReports, nurseryReports, siteReports]
+  );
 
-  const periodTotals = useMemo(() => {
-    if (hasReportSubset) return totalsFromLoadedReports(reports, siteReports, nurseryReports);
-    return totalsFromProjectReport(projectReport);
-  }, [hasReportSubset, nurseryReports, projectReport, reports, siteReports]);
+  const filteredTotals = useMemo(() => {
+    if (!hasReportSubset) return null;
+    const filtered = totalsFromLoadedReports(reports, siteReports, nurseryReports);
+    return {
+      ...filtered,
+      jobs: includesProjectReport(reports) ? jobsTotal ?? 0 : 0
+    };
+  }, [hasReportSubset, jobsTotal, nurseryReports, reports, siteReports]);
 
   const selectionTotals = useMemo(() => {
     if (!hasSelection) return null;
@@ -187,26 +175,45 @@ export const useReportingPeriodMetrics = ({
     };
   }, [hasSelection, jobsTotal, nurseryReports, periodSelectedReports, siteReports]);
 
-  const jobsProgress = includesProjectReport(reports) || !hasReportSubset ? jobsTotal ?? 0 : 0;
+  const jobsProgress = jobsTotal ?? 0;
 
   return {
-    loading: needsChildReports && !ready,
+    loading: open && !ready,
     periodTotals,
+    filteredTotals,
     selectionTotals,
     jobsProgress
   };
+};
+
+type MetricLayerTotals = {
+  treesGrowing: number;
+  treesRegenerated: number;
+  seedlingsGrown: number;
+  jobs: number;
 };
 
 export const useReportingPeriodMetricCards = (
   frameworkKey: string | null,
   periodTotals: PeriodMetricTotals,
   jobsProgress: number,
-  selectionTotals: { treesGrowing: number; treesRegenerated: number; seedlingsGrown: number; jobs: number } | null
+  filteredTotals: MetricLayerTotals | null,
+  selectionTotals: MetricLayerTotals | null
 ): ReportingPeriodMetricCard[] => {
   const t = useT();
   const framework: ReportKeyIndicatorFramework = getReportKeyIndicatorFramework(frameworkKey);
 
   return useMemo(() => {
+    const layers = (
+      progress: number,
+      filteredValue: number | undefined,
+      selectionValue: number | undefined
+    ): Pick<ReportingPeriodMetricCard, "progress" | "filtered" | "selection"> => ({
+      progress,
+      filtered: filteredTotals == null ? undefined : filteredValue,
+      selection: selectionTotals == null ? undefined : selectionValue
+    });
+
     if (framework === "ppc") {
       return [
         {
@@ -215,16 +222,14 @@ export const useReportingPeriodMetricCards = (
           tooltip: t(
             "Planted + direct seeded + regenerating this period, aggregated from site reports in this reporting period."
           ),
-          progress: periodTotals.treesGrowing,
-          selection: selectionTotals?.treesGrowing,
+          ...layers(periodTotals.treesGrowing, filteredTotals?.treesGrowing, selectionTotals?.treesGrowing),
           color: "secondary.600"
         },
         {
           key: "jobs",
           title: t("Workdays Created"),
           tooltip: t("This is the total number of workdays created in this reporting period."),
-          progress: jobsProgress,
-          selection: selectionTotals?.jobs,
+          ...layers(jobsProgress, filteredTotals?.jobs, selectionTotals?.jobs),
           color: "primary.600"
         }
       ];
@@ -236,16 +241,14 @@ export const useReportingPeriodMetricCards = (
           key: "trees-growing",
           title: t("Saplings Growing"),
           tooltip: t("Planted + direct seeded + regenerating, reported in this reporting period."),
-          progress: periodTotals.treesGrowing,
-          selection: selectionTotals?.treesGrowing,
+          ...layers(periodTotals.treesGrowing, filteredTotals?.treesGrowing, selectionTotals?.treesGrowing),
           color: "secondary.600"
         },
         {
           key: "jobs",
           title: t("Workdays Created"),
           tooltip: t("This is the number of direct workdays reported in this reporting period."),
-          progress: jobsProgress,
-          selection: selectionTotals?.jobs,
+          ...layers(jobsProgress, filteredTotals?.jobs, selectionTotals?.jobs),
           color: "primary.600"
         }
       ];
@@ -258,34 +261,30 @@ export const useReportingPeriodMetricCards = (
         tooltip: t(
           "Trees planted + direct seeded + naturally regenerating, summed across site reports in this reporting period."
         ),
-        progress: periodTotals.treesGrowing,
-        selection: selectionTotals?.treesGrowing,
+        ...layers(periodTotals.treesGrowing, filteredTotals?.treesGrowing, selectionTotals?.treesGrowing),
         color: "secondary.600"
       },
       {
         key: "trees-regenerated",
         title: t("Trees Regenerated"),
         tooltip: t("This is the total number of trees naturally regenerating in this reporting period."),
-        progress: periodTotals.treesRegenerated,
-        selection: selectionTotals?.treesRegenerated,
+        ...layers(periodTotals.treesRegenerated, filteredTotals?.treesRegenerated, selectionTotals?.treesRegenerated),
         color: "secondary.600"
       },
       {
         key: "jobs",
         title: t("Jobs Created"),
         tooltip: t("This is the number of jobs created in this reporting period."),
-        progress: jobsProgress,
-        selection: selectionTotals?.jobs,
+        ...layers(jobsProgress, filteredTotals?.jobs, selectionTotals?.jobs),
         color: "primary.600"
       },
       {
         key: "seedlings-grown",
         title: t("Seedlings Grown"),
         tooltip: t("This is the sum of seedlings grown across different nurseries in this reporting period."),
-        progress: periodTotals.seedlingsGrown,
-        selection: selectionTotals?.seedlingsGrown,
+        ...layers(periodTotals.seedlingsGrown, filteredTotals?.seedlingsGrown, selectionTotals?.seedlingsGrown),
         color: "secondary.600"
       }
     ];
-  }, [framework, jobsProgress, periodTotals, selectionTotals, t]);
+  }, [filteredTotals, framework, jobsProgress, periodTotals, selectionTotals, t]);
 };

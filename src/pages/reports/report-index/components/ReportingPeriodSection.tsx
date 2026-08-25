@@ -13,7 +13,6 @@ import {
 import { useFullProjectReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
-import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -29,6 +28,7 @@ import ReportsIndexTable from "./ReportsIndexTable";
 
 type ReportingPeriodSectionProps = {
   period: ReportsIndexPeriod;
+  allPeriodReports?: ReportsIndexReport[];
   defaultOpen?: boolean;
   expandForPeriodFilter?: boolean;
   metricsReady?: boolean;
@@ -41,8 +41,8 @@ type ReportingPeriodSectionProps = {
 type ReportingPeriodMetricsRowProps = {
   open: boolean;
   reports: ReportsIndexReport[];
+  allReports: ReportsIndexReport[];
   hasReportSubset: boolean;
-  projectReport: ProjectReportFullDto | null | undefined;
   projectReportUuid: string | null;
   frameworkKey: string | null;
   className: string;
@@ -77,8 +77,8 @@ const metricIcon = (key: string, color: string): ReactNode => {
 const ReportingPeriodMetricsRow = ({
   open,
   reports,
+  allReports,
   hasReportSubset,
-  projectReport,
   projectReportUuid,
   frameworkKey,
   className
@@ -87,16 +87,23 @@ const ReportingPeriodMetricsRow = ({
   const {
     loading: subsetMetricsLoading,
     periodTotals,
+    filteredTotals,
     selectionTotals,
     jobsProgress
   } = useReportingPeriodMetrics({
     open,
     reports,
+    allReports,
     hasReportSubset,
-    projectReport,
     jobsTotal
   });
-  const cards = useReportingPeriodMetricCards(frameworkKey, periodTotals, jobsProgress, selectionTotals);
+  const cards = useReportingPeriodMetricCards(
+    frameworkKey,
+    periodTotals,
+    jobsProgress,
+    filteredTotals,
+    selectionTotals
+  );
   const jobsLoading = projectReportUuid != null && jobsTotal == null;
 
   if (subsetMetricsLoading || jobsLoading) {
@@ -115,6 +122,7 @@ const ReportingPeriodMetricsRow = ({
           icon={metricIcon(card.key, card.color)}
           tooltipContent={getTooltipContent({ title: card.title, tooltip: card.tooltip })}
           selection={card.selection}
+          filtered={card.filtered}
           className={className}
         />
       ))}
@@ -124,6 +132,7 @@ const ReportingPeriodMetricsRow = ({
 
 const ReportingPeriodSection = ({
   period,
+  allPeriodReports,
   defaultOpen = false,
   expandForPeriodFilter = false,
   metricsReady = true,
@@ -198,8 +207,8 @@ const ReportingPeriodSection = ({
                 <ReportingPeriodMetricsRow
                   open={open}
                   reports={period.reports}
+                  allReports={allPeriodReports ?? period.reports}
                   hasReportSubset={hasReportSubset}
-                  projectReport={projectReport}
                   projectReportUuid={projectReportUuid}
                   frameworkKey={frameworkKey}
                   className={metricCardClassName}
