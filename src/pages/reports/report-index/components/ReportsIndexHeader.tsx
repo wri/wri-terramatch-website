@@ -174,7 +174,7 @@ const ReportsIndexHeader = ({
   return (
     <>
       <ToolbarObject
-        className="sticky top-0 z-20"
+        className="sticky top-0 z-20 !px-6"
         breadcrumbs={{
           linkRouter: router,
           links: [
@@ -187,7 +187,7 @@ const ReportsIndexHeader = ({
         }}
       />
       <PageHeader
-        className="!bg-theme-neutral-100 !px-5"
+        className="!bg-theme-neutral-100 !px-6"
         title={t("Reports")}
         actions={
           <Button
@@ -201,7 +201,7 @@ const ReportsIndexHeader = ({
         }
       />
       <Toolbar
-        className="sticky top-10 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-1.5 pt-3"
+        className="sticky top-10 z-10 items-end border-b border-theme-neutral-200 bg-theme-neutral-100 !px-2 pt-5"
         classNameContentLeft="min-w-0"
         classNameContentRight="mt-[-1.25rem]"
         contentLeft={
@@ -230,7 +230,7 @@ const ReportsIndexHeader = ({
         }
       />
       <ToolbarTable
-        className="!bg-theme-neutral-200 !px-5 !pb-6 !pt-5"
+        className="!bg-theme-neutral-200 !px-6 !pb-6 !pt-5"
         classNameContentLeft="w-full"
         search={{
           placeholder: activeTab === "progress-reports" ? t("Search projects, sites, nurseries") : t("Search"),

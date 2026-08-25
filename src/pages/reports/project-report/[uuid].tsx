@@ -6,18 +6,16 @@ import { FC, ReactElement, useEffect, useMemo } from "react";
 
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
-import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject, useFullProjectReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
-import FrameworkProvider, { shouldHideNurseries, toFramework, useFrameworkContext } from "@/context/framework.provider";
+import FrameworkProvider, { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -45,9 +43,6 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const { framework } = useFrameworkContext();
   const [, { data: project }] = useFullProject({ id: projectReport.projectUuid! });
   const hideNurseries = shouldHideNurseries(framework);
-  const reportingWindow = useReportingWindow(toFramework(projectReport?.frameworkKey), projectReport?.dueAt!);
-  const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
-
   const reportTitle = projectReport.reportTitle ?? t("Project Report");
   const currentTab = (router.query.tab as string) ?? "overview";
   const reportsIndexHref =
@@ -141,21 +136,9 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
         entityName="project-report"
         breadcrumbs={[
           {
-            label: t("Projects"),
-            link: `/my-projects`,
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: projectReport.projectName ?? t("Project"),
-            link: `/project/${projectReport.projectUuid}`
-          },
-          {
             label: t("Reports"),
-            link: reportsIndexHref
-          },
-          {
-            label: getShortPeriodLabel(taskTitle ?? "", true),
-            link: reportsIndexHref
+            link: reportsIndexHref,
+            icon: <ReportsIcon className="!text-theme-primary-900" />
           },
           { label: reportTitle, link: `/reports/project-report/${projectReport.uuid}` }
         ]}

@@ -14,7 +14,7 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -121,21 +121,9 @@ const DisturbanceReportContent: FC<DisturbanceReportContentProps> = ({ disturban
         entityName="disturbance-report"
         breadcrumbs={[
           {
-            label: t("Projects"),
-            link: "/my-projects",
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: disturbanceReport.projectName ?? t("Project"),
-            link: `/project/${disturbanceReport.projectUuid}`
-          },
-          {
             label: t("Reports"),
-            link: reportsIndexHref
-          },
-          {
-            label: t("Disturbance Reports"),
-            link: reportsIndexHref
+            link: reportsIndexHref,
+            icon: <ReportsIcon className="!text-theme-primary-900" />
           },
           {
             label: t("Disturbance Report"),
