@@ -17,9 +17,11 @@ import { createVersionWithAttributes, pruneSitePolygonsCache } from "@/connectio
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { getDisturbanceReportHref } from "@/helpers/disturbanceLinks";
 import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
 import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOptions";
 import { useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { getPolygonAnalyticsContext, trackPolygonEvent } from "@/utils/ga4";
 import Log from "@/utils/log";
 
@@ -45,6 +47,7 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
   setAttributePlotsVisible
 }) => {
   const t = useT();
+  const isAdmin = useIsAdmin();
   const { editPolygon, setShouldRefetchPolygonData, polygonData: polygonDataContext, siteData } = useMapAreaContext();
   const contextEntityId = siteData != null && "entityUUID" in siteData ? siteData.entityUUID : siteData?.uuid;
   const [polygonData, setPolygonData] = useState<SitePolygonLightDto>();
@@ -283,6 +286,21 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
         value={formattedArea + " ha"}
         readOnly
       />
+      {polygonData?.disturbanceReportUuid != null ? (
+        <div>
+          <Text variant="text-14-light" className="capitalize text-white">
+            {t("Disturbance Report")}
+          </Text>
+          <a
+            href={getDisturbanceReportHref(polygonData.disturbanceReportUuid, isAdmin)}
+            className="text-14-semibold text-white underline"
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t("View disturbance report")}
+          </a>
+        </div>
+      ) : null}
       <div className="mt-auto flex items-center justify-end gap-5">
         <Button variant="semi-red" className="w-full" onClick={handleClose}>
           {t("Close")}

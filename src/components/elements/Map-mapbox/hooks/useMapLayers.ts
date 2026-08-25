@@ -153,4 +153,6 @@ export function filterPolygonFromLayers(
 
   const polygonLayer = layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY);
   if (polygonLayer != null) addFilterOnLayer(polygonLayer, newPolygonData, map);
+  const disturbedLayer = layersList.find(layer => layer.name === LAYERS_NAMES.DISTURBED_GEOMETRIES);
+  if (disturbedLayer != null) addFilterOnLayer(disturbedLayer, newPolygonData, map);
 }

@@ -12,14 +12,16 @@ const CHAMPIONS_LEGEND_SPECS = [
   { text: "Pending Approval", color: "neutralActive.1" },
   { text: "Information Required", color: "attention.1" },
   { text: "Approved", color: "positive.1" },
-  { text: "Deleted", color: "neutralPassive.1" }
+  { text: "Deleted", color: "neutralPassive.1" },
+  { text: "Disturbed", color: "#C2410C" }
 ] as const;
 
 const POLYGON_FILTER_LEGEND = [
   { color: "pinkCustom", label: "Draft" },
   { color: "blue", label: "Pending Approval" },
   { color: "tertiary-600", label: "Information Required" },
-  { color: "green", label: "Approved" }
+  { color: "green", label: "Approved" },
+  { color: "#C2410C", label: "Disturbed" }
 ] as const;
 
 const FilterControl: FC = () => {
@@ -55,7 +57,12 @@ const FilterControl: FC = () => {
                     onClick={() => {}}
                   >
                     <div className="text-12-semibold flex items-center">
-                      <div className={`mr-2 h-3 w-3 rounded-sm bg-${color} lg:h-4 lg:w-4 wide:h-5 wide:w-5`} />
+                      <div
+                        className={`mr-2 h-3 w-3 rounded-sm lg:h-4 lg:w-4 wide:h-5 wide:w-5 ${
+                          color.startsWith("#") ? "" : `bg-${color}`
+                        }`}
+                        style={color.startsWith("#") ? { backgroundColor: color } : undefined}
+                      />
                       {t(label)}
                     </div>
                   </Button>
