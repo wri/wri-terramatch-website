@@ -132,6 +132,11 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     [additionalSections, progressSections]
   );
 
+  const unfilteredPeriodsByProjectId = useMemo(
+    () => new Map(progressSections.map(section => [section.id, section.periods])),
+    [progressSections]
+  );
+
   const viewItems = useMemo<HighLevelSelectorItem[]>(() => {
     const projectItems =
       projects?.map(item => ({
@@ -267,6 +272,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                   <ProjectReportsSection
                     key={section.id}
                     section={section}
+                    unfilteredPeriods={unfilteredPeriodsByProjectId.get(section.id)}
                     defaultOpen={index === 0 && !isAllProjectsView}
                     expandForPeriodFilter={hasActivePeriodFilter}
                     metricsReady={progressMetricsReady}
