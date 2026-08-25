@@ -55,18 +55,27 @@ export const mapValidationDtoToTagState = (validation: ValidationDto | undefined
   return hasFailingNonExcluded ? "failed" : "partially-passed";
 };
 
+type SitePolygonValidationStatus = "failed" | "passed" | "partial" | null;
+
+const toSitePolygonValidationStatus = (validationStatus: string | null | undefined): SitePolygonValidationStatus => {
+  if (validationStatus === "failed" || validationStatus === "passed" || validationStatus === "partial") {
+    return validationStatus;
+  }
+  return null;
+};
+
 export const resolveValidationStatusFromCriteria = (
   validationStatus: string | null | undefined,
   validation: ValidationDto | undefined
-): string | null => {
+): SitePolygonValidationStatus => {
   const fromCriteria = mapValidationDtoToTagState(validation);
-  if (fromCriteria == null) {
-    return validationStatus ?? null;
+  if (fromCriteria === "passed" || fromCriteria === "failed") {
+    return fromCriteria;
   }
   if (fromCriteria === "partially-passed") {
     return "partial";
   }
-  return fromCriteria;
+  return toSitePolygonValidationStatus(validationStatus);
 };
 
 export const withResolvedValidationStatusFromCriteria = (
