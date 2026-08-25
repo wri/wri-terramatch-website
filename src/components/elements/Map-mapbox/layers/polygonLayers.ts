@@ -225,12 +225,15 @@ function resolveGeoserverLayerName(
   dashboardMode: string | undefined,
   polygonGeometryVariant: PolygonGeometryVariant | undefined
 ): string {
-  if (layer.name !== LAYERS_NAMES.POLYGON_GEOMETRY) {
-    return layer.geoserverLayerName;
+  if (
+    dashboardMode != null &&
+    (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY || layer.name === LAYERS_NAMES.DISTURBED_GEOMETRIES)
+  ) {
+    return LAYERS_NAMES.POLYGON_GEOMETRY;
   }
 
-  if (dashboardMode != null) {
-    return LAYERS_NAMES.POLYGON_GEOMETRY;
+  if (layer.name !== LAYERS_NAMES.POLYGON_GEOMETRY) {
+    return layer.geoserverLayerName;
   }
 
   return getPolygonGeometryLayerName(polygonGeometryVariant ?? POLYGON_GEOMETRY_VARIANTS.Active);
