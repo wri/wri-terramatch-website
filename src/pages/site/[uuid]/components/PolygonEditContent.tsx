@@ -772,7 +772,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, 1), POLYGON_TOAST_IDS.downloading);
 
     try {
-      await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon", { includeExtendedData: true });
+      await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon");
       if (resolvedSiteUuid !== "") {
         trackPolygonDownloaded({
           siteUuid: resolvedSiteUuid,
