@@ -1,13 +1,14 @@
 import "src/styles/globals.css";
 
 import { ChakraProvider } from "@chakra-ui/react";
+import { injectContentsquareScript } from "@contentsquare/tag-sdk";
 import { tx } from "@transifex/native";
 import { useT } from "@transifex/react";
 import { Toast as WRIToast } from "@worldresources/wri-design-systems";
 import { AppProps } from "next/app";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 
 import Toast from "@/components/elements/Toast/Toast";
 import CookieBanner from "@/components/extensive/CookieBanner/CookieBanner";
@@ -112,6 +113,10 @@ const _App = ({ Component, pageProps }: AppProps) => {
   const isOnDashboards = router.asPath.includes("/dashboard");
   const isOnSitePolygonReview = /^\/site\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath);
   const isOnSite = router.asPath.includes("/site");
+
+  useEffect(() => {
+    injectContentsquareScript({ clientId: "07f3cfaacf302" });
+  }, []);
 
   setupYup(t);
 
