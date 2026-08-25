@@ -12,7 +12,7 @@ import { useTask } from "@/connections/Task";
 import FrameworkProvider, { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
+import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
 import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
@@ -45,9 +45,7 @@ const ProjectReportContent: FC<ProjectReportContentProps> = ({ projectReport, ta
   const hideNurseries = shouldHideNurseries(framework);
   const reportTitle = projectReport.reportTitle ?? t("Project Report");
   const currentTab = (router.query.tab as string) ?? "overview";
-  const reportsIndexHref =
-    getReportsIndexHrefFromQuery(router.query.from) ??
-    (projectReport.projectUuid != null ? getReportsIndexUrl("project", projectReport.projectUuid) : "/my-projects");
+  const reportsIndexHref = getReportsIndexUrl("project", projectReport.projectUuid!);
 
   const isRedirectingToReportsIndex = currentTab === "site-reports" || currentTab === "nursery-reports";
 

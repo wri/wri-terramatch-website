@@ -530,7 +530,6 @@ function WizardForm(props: WizardFormProps) {
           <ProjectIcon className="!text-theme-primary-900" />
         ),
         t,
-        taskTitle,
         from: router.query.from
       })[models[0].model];
     }
@@ -544,7 +543,6 @@ function WizardForm(props: WizardFormProps) {
     props.adminListPath,
     t,
     isAdmin,
-    taskTitle,
     router.query.from
   ]);
 

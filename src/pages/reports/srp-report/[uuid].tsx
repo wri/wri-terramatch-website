@@ -5,17 +5,17 @@ import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useMemo } from "react";
 
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
-import { getFormHeaderLabel, getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
+import { getFormHeaderLabel } from "@/components/extensive/WizardForm/utils";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSRPReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
+import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -86,11 +86,7 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "details";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
-  const reportsIndexHref =
-    getReportsIndexHrefFromQuery(router.query.from) ??
-    (srpReport.projectUuid != null
-      ? getReportsIndexUrl("project", srpReport.projectUuid, { tab: "additional-reports" })
-      : "/my-projects");
+  const reportsIndexHref = getReportsIndexUrl("project", srpReport.projectUuid!, { tab: "additional-reports" });
 
   return (
     <>
@@ -105,21 +101,9 @@ const SrpReportContent: FC<SrpReportContentProps> = ({ srpReport, taskDueAt }) =
         entityName="srp-report"
         breadcrumbs={[
           {
-            label: t("Projects"),
-            link: "/my-projects",
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: srpReport.projectName ?? t("Project"),
-            link: `/project/${srpReport.projectUuid}`
-          },
-          {
             label: t("Reports"),
-            link: reportsIndexHref
-          },
-          {
-            label: getShortPeriodLabel(taskTitle ?? "", true),
-            link: reportsIndexHref
+            link: reportsIndexHref,
+            icon: <ReportsIcon className="!text-theme-primary-900" />
           },
           {
             label: t("SRP Report"),
