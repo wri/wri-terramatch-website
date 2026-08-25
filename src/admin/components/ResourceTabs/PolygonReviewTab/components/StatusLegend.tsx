@@ -22,6 +22,9 @@ const StatusLegend = () => {
         <Text variant="text-14-semibold" className="flex items-center gap-2 py-2 text-darkCustom">
           <div className="aspect-square h-3 w-3 rounded-sm bg-tertiary-600" /> {t("Information Required")}
         </Text>
+        <Text variant="text-14-semibold" className="flex items-center gap-2 py-2 text-darkCustom">
+          <div className="aspect-square h-3 w-3 rounded-sm" style={{ backgroundColor: "#C2410C" }} /> {t("Disturbed")}
+        </Text>
       </div>
     </div>
   );

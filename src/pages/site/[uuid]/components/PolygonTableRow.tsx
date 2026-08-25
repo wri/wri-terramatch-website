@@ -4,8 +4,10 @@ import { Checkbox } from "@worldresources/wri-design-systems";
 import { FC, memo, ReactNode, useCallback, useMemo } from "react";
 
 import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
+import { getDisturbanceReportHref } from "@/helpers/disturbanceLinks";
 import { useTargetLandUseLabels } from "@/hooks/translation/useTargetLandUseLabels";
 import { TreeDistributionType, useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import MappedTag, { MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
 import ValidationTag, { ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
@@ -50,6 +52,7 @@ export type PolygonTableRow = {
   submissionCycle: string[];
   submissionCycleSort: string;
   source: string;
+  disturbanceReportUuid: string | null;
 };
 
 type SiteTypeConfig = { icon: ReactNode; label: string };
@@ -156,6 +159,7 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
   readOnly = false
 }) => {
   const t = useT();
+  const isAdmin = useIsAdmin();
   const targetLandUseLabels = useTargetLandUseLabels();
   const treeDistributionOptions = useTreeDistributionOptions();
   const treeDistributionLabels = useMemo(
@@ -244,6 +248,19 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
       </TableCell>
       <TableCell {...context?.getCellProps("source")}>
         <Text>{row.source === "uploaded" ? t("Uploaded") : row.source}</Text>
+      </TableCell>
+      <TableCell {...context?.getCellProps("disturbanceReportUuid")}>
+        {row.disturbanceReportUuid != null ? (
+          <a
+            href={getDisturbanceReportHref(row.disturbanceReportUuid, isAdmin)}
+            className="text-primary-600 underline"
+            onClick={event => event.stopPropagation()}
+          >
+            {t("View report")}
+          </a>
+        ) : (
+          <Text>—</Text>
+        )}
       </TableCell>
     </TableRow>
   );

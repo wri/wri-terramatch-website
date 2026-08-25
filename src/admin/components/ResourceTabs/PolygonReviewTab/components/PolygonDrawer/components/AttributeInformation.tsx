@@ -10,6 +10,7 @@ import { useListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithAttributes } from "@/connections/SitePolygons";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { getDisturbanceReportHref } from "@/helpers/disturbanceLinks";
 import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
 import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOptions";
 import { useTreeDistributionOptions } from "@/hooks/translation/useTreeDistributionOptions";
@@ -273,6 +274,21 @@ const AttributeInformation: FC<AttributeInformationProps> = ({
         value={formattedArea + " ha"}
         readOnly
       />
+      {selectedPolygon.disturbanceReportUuid != null ? (
+        <div>
+          <Text variant="text-14-light" className="capitalize">
+            {t("Disturbance Report")}
+          </Text>
+          <a
+            href={getDisturbanceReportHref(selectedPolygon.disturbanceReportUuid, true)}
+            className="text-14-semibold underline"
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t("View disturbance report")}
+          </a>
+        </div>
+      ) : null}
       <div className="mt-auto flex items-center justify-end gap-5">
         <Button variant="semi-red" className="w-full" onClick={handleCloseDrawer}>
           {t("Close")}

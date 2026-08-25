@@ -121,6 +121,9 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     if (draftFilters.hasOverlap) {
       tags.push({ id: "hasOverlap", label: "Overlap" });
     }
+    if (draftFilters.hasDisturbance) {
+      tags.push({ id: "hasDisturbance", label: t("Disturbed Polygons") });
+    }
     if (draftFilters.showDeleted) {
       tags.push({ id: "showDeleted", label: t("Deleted Polygons") });
     }
@@ -148,6 +151,8 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           return { ...current, plantStartTo: "" };
         case "hasOverlap":
           return { ...current, hasOverlap: false };
+        case "hasDisturbance":
+          return { ...current, hasDisturbance: false };
         case "showDeleted":
           return { ...current, showDeleted: false };
         default:
@@ -201,6 +206,10 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     setDraftFilters(current => ({ ...current, hasOverlap: checked === true }));
   };
 
+  const handleHasDisturbanceChange = ({ checked }: CheckboxChange) => {
+    setDraftFilters(current => ({ ...current, hasDisturbance: checked === true }));
+  };
+
   const handleShowDeletedChange = ({ checked }: CheckboxChange) => {
     const showDeleted = checked === true;
     // Deleted polygons is an exclusive audit view: turning it on clears every other draft
@@ -244,10 +253,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           className="h-full"
           content={
             <Flex className="h-full flex-col gap-3 overflow-auto p-4">
-              <Flex
-                className="mb-2 flex-wrap gap-2"
-                display={activeFilters.length > 0 ? "flex" : "none"}
-              >
+              <Flex className="mb-2 flex-wrap gap-2" display={activeFilters.length > 0 ? "flex" : "none"}>
                 {activeFilters.map(filter => (
                   <FeedbackTag
                     key={filter.id}
@@ -334,6 +340,16 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   onCheckedChange={handleOverlapChange}
                 >
                   {t("Show Polygon Overlaps")}
+                </Switch>
+              </FilterCard>
+              <FilterCard label={t("Disturbance")}>
+                <Switch
+                  name="hasDisturbance"
+                  checked={draftFilters.hasDisturbance}
+                  disabled={draftFilters.showDeleted}
+                  onCheckedChange={handleHasDisturbanceChange}
+                >
+                  {t("Show Disturbed Polygons")}
                 </Switch>
               </FilterCard>
               {isAdminReview && (

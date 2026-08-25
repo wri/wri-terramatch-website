@@ -51,7 +51,8 @@ export const useSitePolygonTableData = ({ polygonsData, polygonValidations, t }:
       { key: "treesPlanted", label: t("Trees Planted"), sortable: true, width: "12.75rem" },
       { key: "area", label: t("Area (ha)"), sortable: true, width: "15.75rem" },
       { key: "submissionCycleSort", label: t("Submission Cycle"), sortable: true, width: "12rem" },
-      { key: "source", label: t("Source"), sortable: true, width: "12rem" }
+      { key: "source", label: t("Source"), sortable: true, width: "12rem" },
+      { key: "disturbanceReportUuid", label: t("Disturbance"), sortable: false, width: "12rem" }
     ],
     [t]
   );
