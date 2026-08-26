@@ -1,13 +1,16 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC } from "react";
+import { FC, useCallback } from "react";
 
+import Button from "@/components/elements/Button/Button";
 import IconButton from "@/components/elements/IconButton/IconButton";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { ModalBase } from "@/components/extensive/Modal/ModalsBases";
 import { useModalContext } from "@/context/modal.provider";
+import { treeBulkImportCsvGet } from "@/generated/v3/entityService/entityServiceComponents";
+import Log from "@/utils/log";
 
 type BulkTreeImportModalProps = {
   taskUuid: string;
@@ -16,6 +19,14 @@ type BulkTreeImportModalProps = {
 const BulkTreeImportModal: FC<BulkTreeImportModalProps> = ({ taskUuid }) => {
   const t = useT();
   const { closeModal } = useModalContext();
+
+  const downloadCsv = useCallback(async () => {
+    try {
+      await treeBulkImportCsvGet.downloadFile({ pathParams: { uuid: taskUuid } });
+    } catch (err) {
+      Log.error("Failed to fetch bulk import CSV", err);
+    }
+  }, [taskUuid]);
 
   return (
     <ModalBase className="w-[800px] p-0">
@@ -30,7 +41,9 @@ const BulkTreeImportModal: FC<BulkTreeImportModalProps> = ({ taskUuid }) => {
           }}
         />
       </div>
-      <Flex>Test</Flex>
+      <Flex>
+        <Button onClick={downloadCsv}>{t("Download Bulk Import CSV")}</Button>
+      </Flex>
     </ModalBase>
   );
 };

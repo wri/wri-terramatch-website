@@ -457,9 +457,7 @@ const ReportingTaskPage: FC = () => {
               title={t("Additional Reports")}
               headerChildren={
                 <Flex gap={4}>
-                  <Button disabled={reports.nothingToReportEligible.length === 0} onClick={openBulkTreeModal}>
-                    {t("Bulk Tree Import")}
-                  </Button>
+                  <Button onClick={openBulkTreeModal}>{t("Bulk Tree Import")}</Button>
                   <Button disabled={reports.nothingToReportEligible.length === 0} onClick={openBulkModal}>
                     {t('Report "No Updates"')}
                   </Button>

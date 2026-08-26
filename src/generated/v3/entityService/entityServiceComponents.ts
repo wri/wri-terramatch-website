@@ -2179,6 +2179,53 @@ export const treeReportCountsFind = new V3ApiEndpoint<
   {}
 >("/trees/v3/reportCounts/{entity}/{uuid}", "GET");
 
+export type TreeBulkImportCsvGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type TreeBulkImportCsvGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type TreeBulkImportCsvGetVariables = {
+  pathParams: TreeBulkImportCsvGetPathParams;
+};
+
+export const treeBulkImportCsvGet = new V3ApiEndpoint<
+  undefined,
+  TreeBulkImportCsvGetError,
+  TreeBulkImportCsvGetVariables,
+  {}
+>("/trees/v3/bulkImportCsv/{uuid}", "GET");
+
 export type DisturbanceIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -3578,6 +3625,10 @@ export type EntityExportAllQueryParams = {
    * Filter by project
    */
   projectUuid?: string;
+  /**
+   * Filter by specific entity UUIDs. When provided, frameworkKey and projectUuid are ignored.
+   */
+  uuids?: string[];
 };
 
 export type EntityExportAllError = Fetcher.ErrorWrapper<{
@@ -7362,7 +7413,7 @@ export const operationsByTag = {
   aboutSections: { aboutSectionIndex, aboutSectionCreate, aboutSectionGet, aboutSectionUpdate, aboutSectionDelete },
   tasks: { taskIndex, taskGet, taskUpdate },
   files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
-  trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
+  trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind, treeBulkImportCsvGet },
   disturbances: { disturbanceIndex },
   reminders: { sendReminder },
   auditStatus: { getAuditStatuses, createAuditStatus, updateAuditStatus, deleteAuditStatus },
