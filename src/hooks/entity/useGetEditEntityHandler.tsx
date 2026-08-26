@@ -58,6 +58,7 @@ export const useGetEditEntityHandler = ({
   const effectiveStatus = (hasRelevantUpdateRequest ? updateRequestStatus : entityStatus) as StatusBarStatus;
   const awaitingApproval = entityStatus === PENDING_APPROVAL || updateRequestStatus === PENDING_APPROVAL;
   const needsMoreInformation = entityStatus === INFORMATION_REQUIRED || updateRequestStatus === INFORMATION_REQUIRED;
+  const shouldShowInformationRequiredModal = useInformationRequiredModal && needsMoreInformation && !awaitingApproval;
   const shouldShowStatusFeedbackModal = useStatusModal && needsMoreInformation && !awaitingApproval;
   const statusProps = getStatusProps(
     t,
@@ -93,11 +94,15 @@ export const useGetEditEntityHandler = ({
   const handleEdit = (stepId?: string | null) => {
     if (awaitingApproval) {
       setOpenReviewInProgressModal(true);
-    } else if (shouldShowStatusFeedbackModal && statusProps != null) {
+    } else if (shouldShowInformationRequiredModal || (shouldShowStatusFeedbackModal && statusProps != null)) {
       setStepId(stepId);
       setOpenStatusModal(true);
     } else {
       pendingStepId.current = stepId;
+      if (entityStatus === "draft") {
+        router.push(`/entity/${editEntityName}/edit/${entityUUID}?mode=edit`);
+        return;
+      }
       setOpenConfirmEditModal(true);
     }
   };
@@ -112,30 +117,18 @@ export const useGetEditEntityHandler = ({
           <Flex flexDirection="column" gap={2} alignItems="center">
             <WarningIcon boxSize={10} color="warning.500" />
             <Text textStyle="400" color="neutral.900">
-              {useInformationRequiredModal
-                ? t(
-                    "While we review your {entityName}, it is closed for editing. After a thorough review, a TerraMatch Admin will either approve this {entityName} or request more information. If you have any questions or have critical changes to make in the meantime, please contact {email} with the details.",
-                    {
-                      entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true),
-                      email: (
-                        <a href="mailto:info@terramatch.org" className="text-primary-500 underline">
-                          info@terramatch.org
-                        </a>
-                      )
-                    }
+              {t(
+                "While we review your {entityName}, it is closed for editing. A Reviewer will either approve this {entityName} or request more information. If you have any questions or have critical changes to make in the meantime, please contact {email} with the details.",
+                {
+                  entityName: getReadableEntityName(entityName as EntityName | SingularEntityName, true),
+                  email: (
+                    <a href="mailto:info@terramatch.org" className="text-primary-500 underline">
+                      info@terramatch.org
+                    </a>
                   )
-                : t(
-                    "While we're reviewing your {entityName}, you can't make changes for now. This ensures a thorough review. After it's done, you can make any needed adjustments.",
-                    {
-                      entityName: getReadableEntityName(entityName as EntityName | SingularEntityName)
-                    }
-                  )}
+                }
+              )}
             </Text>
-            {!useInformationRequiredModal && (
-              <Text textStyle="400" color="neutral.900">
-                {t("If you have any questions or concerns, contact our support team through the help center.")}
-              </Text>
-            )}
           </Flex>
         }
         buttonsCancel={[
@@ -143,21 +136,22 @@ export const useGetEditEntityHandler = ({
             id: "cancel",
             className: "w-fit",
             variant: "secondary",
-            children: t("Cancel"),
+            children: t("Close"),
             onClick: () => setOpenReviewInProgressModal(false)
           }
         ]}
       />
-      {statusProps != null &&
-        (useInformationRequiredModal ? (
-          <EntityInformationRequiredModal
-            feedback={feedback}
-            entityName={formEntityName}
-            entityUuid={entityUUID}
-            open={openStatusModal}
-            onOpenChange={setOpenStatusModal}
-          />
-        ) : (
+      {useInformationRequiredModal ? (
+        <EntityInformationRequiredModal
+          feedback={feedback}
+          entityName={formEntityName}
+          entityUuid={entityUUID}
+          formStepId={stepId}
+          open={openStatusModal}
+          onOpenChange={setOpenStatusModal}
+        />
+      ) : (
+        statusProps != null && (
           <EntityStatusModal
             statusProps={statusProps}
             feedback={feedback}
@@ -168,7 +162,8 @@ export const useGetEditEntityHandler = ({
             open={openStatusModal}
             onOpenChange={setOpenStatusModal}
           />
-        ))}
+        )
+      )}
       <ModalConfirmation
         open={openConfirmEditModal}
         onOpenChange={open => setOpenConfirmEditModal(open)}

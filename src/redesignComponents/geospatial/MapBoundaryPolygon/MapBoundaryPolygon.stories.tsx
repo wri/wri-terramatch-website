@@ -11,7 +11,6 @@ import {
   ROW_TEMPLATE,
   ROWS,
   STATUS_COLORS,
-  STATUSES,
   STYLES
 } from "./MapBoundaryPolygon.constants";
 
@@ -20,8 +19,6 @@ const BoundaryPolygon = (
     ReactComponent: ComponentType<SVGProps<SVGSVGElement>>;
   }
 ).ReactComponent;
-
-const STORYBOOK_STATUSES = STATUSES.filter(status => status !== "External");
 
 type MapBoundaryPolygonProps = {
   style?: PolygonStyle;
@@ -79,7 +76,7 @@ const MapBoundaryPolygon = ({ style = "Default", status }: MapBoundaryPolygonPro
   return (
     <Box
       position="relative"
-      boxSize="5rem"
+      boxSize={{ base: "2.5rem", sm: "3.5rem", md: "5rem" }}
       color={STATUS_COLORS[status]}
       role="img"
       aria-label={`${status}, ${appliedStyle}`}
@@ -105,70 +102,80 @@ const MapBoundaryPolygon = ({ style = "Default", status }: MapBoundaryPolygonPro
 
 const meta = {
   title: "Redesign Components/Geospatial/Map Boundary Polygon",
-  component: MapBoundaryPolygon,
-  parameters: { layout: "centered" },
-  tags: ["autodocs"],
-  argTypes: {
-    status: { control: "select", options: STORYBOOK_STATUSES },
-    style: {
-      control: "select",
-      options: STYLES,
-      if: { arg: "status", neq: "External" }
-    }
+  parameters: {
+    layout: "centered",
+    controls: { disable: true }
   }
-} satisfies Meta<typeof MapBoundaryPolygon>;
+} satisfies Meta;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: { style: "Default", status: "Draft" }
-};
-
 export const AllStates: Story = {
-  args: { style: "Default", status: "Draft" },
-  parameters: { controls: { disable: true } },
   render: () => (
     <Box
-      width="min(53.75rem, calc(100vw - 2rem))"
-      minWidth="53.5rem"
-      padding="2.625rem 2.5rem 3rem"
-      overflow="auto"
+      width={{ base: "calc(100vw - 1rem)", sm: "calc(100vw - 2rem)" }}
+      maxWidth="53.75rem"
+      padding={{ base: "1.25rem 0.5rem 1.5rem", sm: "1.75rem 1rem 2rem", lg: "2.625rem 2.5rem 3rem" }}
+      overflow="hidden"
       color="neutral.900"
       backgroundColor="neutral.200"
       border="1px solid"
       borderColor="neutral.300"
-      borderRadius="1.5rem"
+      borderRadius={{ base: "1rem", md: "1.5rem" }}
     >
       <Grid
-        gridTemplateColumns="6.375rem repeat(5, minmax(8.125rem, 1fr))"
+        gridTemplateColumns={{
+          base: "4.25rem repeat(5, minmax(0, 1fr))",
+          sm: "5.75rem repeat(5, minmax(0, 1fr))",
+          md: "6.375rem repeat(5, minmax(0, 1fr))"
+        }}
         alignItems="end"
-        marginBottom="1.375rem"
-        paddingX="1.25rem"
+        marginBottom={{ base: "0.75rem", sm: "1rem", md: "1.375rem" }}
+        paddingX={{ base: 0, sm: "0.5rem", md: "1.25rem" }}
         aria-hidden="true"
       >
         <Box />
         {STYLES.map(style => (
-          <Text paddingX="0.5rem" textStyle="300" textAlign="center" key={style}>
+          <Text
+            paddingX={{ base: "0.125rem", sm: "0.25rem", md: "0.5rem" }}
+            fontSize={{ base: "0.625rem", sm: "0.75rem", md: "0.875rem" }}
+            lineHeight={{ base: "0.75rem", sm: "1rem", md: "1.25rem" }}
+            textStyle="300"
+            textAlign="center"
+            key={style}
+          >
             {style}
           </Text>
         ))}
       </Grid>
 
-      <Grid gridTemplateColumns="6.375rem 1fr">
-        <Grid gridTemplateRows={ROW_TEMPLATE} alignItems="center" paddingLeft="1.25rem" aria-hidden="true">
+      <Grid gridTemplateColumns={{ base: "4.25rem 1fr", sm: "5.75rem 1fr", md: "6.375rem 1fr" }}>
+        <Grid
+          gridTemplateRows={ROW_TEMPLATE}
+          alignItems="center"
+          paddingLeft={{ base: "0.25rem", sm: "0.5rem", md: "1.25rem" }}
+          aria-hidden="true"
+        >
           {ROWS.map(({ status }) => (
-            <Text maxWidth="7.5rem" textStyle="300" key={status}>
+            <Text
+              maxWidth="7.5rem"
+              paddingRight="0.25rem"
+              fontSize={{ base: "0.625rem", sm: "0.75rem", md: "0.875rem" }}
+              lineHeight={{ base: "0.75rem", sm: "1rem", md: "1.25rem" }}
+              textStyle="300"
+              key={status}
+            >
               {status}
             </Text>
           ))}
         </Grid>
 
         <Grid
-          gridTemplateColumns="repeat(5, minmax(8.125rem, 1fr))"
+          gridTemplateColumns="repeat(5, minmax(0, 1fr))"
           gridTemplateRows={ROW_TEMPLATE}
           placeItems="center"
-          paddingX="1.25rem"
+          paddingX={{ base: 0, sm: "0.5rem", md: "1.25rem" }}
           border="1px dashed"
           borderColor="neutralActive.3"
         >
@@ -178,7 +185,7 @@ export const AllStates: Story = {
                 placeItems="center"
                 width="100%"
                 height="100%"
-                padding="1.125rem"
+                padding={{ base: "0.125rem", sm: "0.5rem", md: "0.75rem", lg: "1.125rem" }}
                 key={`${status}-${STYLES[columnIndex]}`}
               >
                 {style && <MapBoundaryPolygon style={style} status={status} />}

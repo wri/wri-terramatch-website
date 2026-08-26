@@ -1,11 +1,8 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback } from "react";
 
-import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
-import { IconNames } from "@/components/extensive/Icon/Icon";
-import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -37,53 +34,21 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
 }) => {
   const t = useT();
   const router = useRouter();
-  const [openStatusModal, setOpenStatusModal] = useState(false);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "nurseries",
     entityUUID: nursery.uuid,
     entityStatus: nursery.status ?? "draft",
-    updateRequestStatus: nursery.updateRequestStatus
+    updateRequestStatus: nursery.updateRequestStatus,
+    feedback: nursery.feedback,
+    useInformationRequiredModal: true
   });
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery.uuid);
 
-  const needMoreInformation =
-    nursery.updateRequestStatus === INFORMATION_REQUIRED || nursery.status === INFORMATION_REQUIRED;
-  const awaitingApproval = nursery.updateRequestStatus === PENDING_APPROVAL || nursery.status === PENDING_APPROVAL;
-  const hasUpdateRequest =
-    !["draft", "approved"].includes(nursery.updateRequestStatus ?? "") && nursery.updateRequestStatus != null;
-
-  const statusProps: StatusProps | undefined = useMemo(() => {
-    if (!needMoreInformation) return undefined;
-    const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
-    return {
-      title: t(`${titlePrefix} Information Required`),
-      icon: IconNames.EXCLAMATION_CIRCLE_FILL,
-      className: "fill-tertiary"
-    };
-  }, [needMoreInformation, hasUpdateRequest, t]);
-
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval && statusProps != null) {
-      setOpenStatusModal(true);
-    } else {
-      handleEdit();
-    }
-  }, [needMoreInformation, handleEdit, awaitingApproval, statusProps]);
+  const handleEditClick = useCallback(() => handleEdit(), [handleEdit]);
 
   return (
     <Box gap={2} className="flex flex-col">
       {EditModals}
-      {statusProps != null && (
-        <EntityStatusModal
-          statusProps={statusProps}
-          feedback={nursery.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="nurseries"
-          entityUuid={nursery.uuid}
-          open={openStatusModal}
-          onOpenChange={setOpenStatusModal}
-        />
-      )}
       <Text
         textStyle="400"
         color="neutral.900"
