@@ -20,6 +20,7 @@ export const AWAITING_APPROVAL = PENDING_APPROVAL;
 // persisted): every polygon returned by that view is bucketed here regardless of its real
 // (pre-deletion) status, so the map can render them all with one dedicated ghost style.
 export const DELETED_AUDIT_POLYGONS = "deleted-audit";
+export const DISTURBED_POLYGONS = "disturbed-polygons";
 export const STATUSES = [
   {
     label: "Draft",

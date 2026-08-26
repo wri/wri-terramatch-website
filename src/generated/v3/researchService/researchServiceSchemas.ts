@@ -254,11 +254,9 @@ export type SitePolygonLightDto = {
    */
   source: string | null;
   /**
-   * Validation status of the site polygon
-   *
-   * @maxLength 255
+   * Validation status of the site polygon. Null means validation has not started.
    */
-  validationStatus: string | null;
+  validationStatus: "passed" | "partial" | "failed" | null;
   /**
    * Primary UUID of the site polygon
    */
@@ -267,7 +265,14 @@ export type SitePolygonLightDto = {
    * UUID of the site polygon
    */
   uuid: string;
+  /**
+   * Numeric ID of the disturbance parent entity (typically a disturbance report).
+   */
   disturbanceableId: number | null;
+  /**
+   * UUID of the disturbance report linked to this polygon, including reports that are not yet approved.
+   */
+  disturbanceReportUuid: string | null;
   /**
    * Whether the site polygon is active
    */
@@ -516,11 +521,9 @@ export type SitePolygonFullDto = {
    */
   source: string | null;
   /**
-   * Validation status of the site polygon
-   *
-   * @maxLength 255
+   * Validation status of the site polygon. Null means validation has not started.
    */
-  validationStatus: string | null;
+  validationStatus: "passed" | "partial" | "failed" | null;
   /**
    * Primary UUID of the site polygon
    */
@@ -529,7 +532,14 @@ export type SitePolygonFullDto = {
    * UUID of the site polygon
    */
   uuid: string;
+  /**
+   * Numeric ID of the disturbance parent entity (typically a disturbance report).
+   */
   disturbanceableId: number | null;
+  /**
+   * UUID of the disturbance report linked to this polygon, including reports that are not yet approved.
+   */
+  disturbanceReportUuid: string | null;
   /**
    * Whether the site polygon is active
    */

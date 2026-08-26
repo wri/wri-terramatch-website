@@ -8,6 +8,7 @@ import {
   layersList,
   POLYGON_GEOMETRY_VARIANTS
 } from "@/constants/layers";
+import { DISTURBED_POLYGONS } from "@/constants/statuses";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
@@ -224,9 +225,14 @@ function resolveGeoserverLayerName(
   dashboardMode: string | undefined,
   polygonGeometryVariant: PolygonGeometryVariant | undefined
 ): string {
-  if (layer.name !== LAYERS_NAMES.POLYGON_GEOMETRY || dashboardMode != null) {
+  if (layer.name !== LAYERS_NAMES.POLYGON_GEOMETRY) {
     return layer.geoserverLayerName;
   }
+
+  if (dashboardMode != null) {
+    return LAYERS_NAMES.POLYGON_GEOMETRY;
+  }
+
   return getPolygonGeometryLayerName(polygonGeometryVariant ?? POLYGON_GEOMETRY_VARIANTS.Active);
 }
 
@@ -319,8 +325,9 @@ export const addDeleteLayer = (
   }
 };
 
-const moveDeleteLayers = (map: MapboxMap) => {
-  const layers = layersList.filter(layer => layer.name === LAYERS_NAMES.DELETED_GEOMETRIES);
+const moveOverlayLayers = (map: MapboxMap) => {
+  const overlayNames = new Set<string>([LAYERS_NAMES.DELETED_GEOMETRIES, LAYERS_NAMES.DISTURBED_GEOMETRIES]);
+  const layers = layersList.filter(layer => overlayNames.has(layer.name));
   layers.forEach(layer => {
     const { name, styles } = layer;
     styles?.forEach((_: unknown, index: number) => {
@@ -343,7 +350,7 @@ export const addLayerGeojsonStyle = (
     map.removeLayer(`${layerName}-${index}`);
   }
   map.addLayer({ ...style, id: `${layerName}-${index}`, source: sourceName } as LayerSpecification, beforeLayer);
-  moveDeleteLayers(map);
+  moveOverlayLayers(map);
 };
 
 export const addLayerStyle = (
@@ -371,7 +378,7 @@ export const addLayerStyle = (
     } as LayerSpecification,
     beforeLayer
   );
-  moveDeleteLayers(map);
+  moveOverlayLayers(map);
 };
 
 export const addSourcesToLayers = (
@@ -389,7 +396,7 @@ export const addSourcesToLayers = (
   const existsPolygonsForCentroidGeojson = !_.isEmpty(polygonsData);
 
   layersList.forEach((layer: LayerType) => {
-    if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
+    if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY || layer.name === LAYERS_NAMES.DISTURBED_GEOMETRIES) {
       addSourceToLayer(layer, map, polygonsData, zoomFilter, dashboardMode, cacheKey, polygonGeometryVariant);
     }
     if (layer.name === LAYERS_NAMES.CENTROIDS && dashboardMode) {
@@ -492,6 +499,14 @@ export function parsePolygonDataV3(
     if (status != null && data.polygonUuid != null) {
       if (acc[status] == null) acc[status] = [];
       acc[status].push(data.polygonUuid);
+    }
+    if (
+      forcedStatusBucket == null &&
+      data.polygonUuid != null &&
+      (data.disturbanceableId != null || data.disturbanceReportUuid != null)
+    ) {
+      if (acc[DISTURBED_POLYGONS] == null) acc[DISTURBED_POLYGONS] = [];
+      acc[DISTURBED_POLYGONS].push(data.polygonUuid);
     }
     return acc;
   }, {});

@@ -3,6 +3,8 @@ import { MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/Mapp
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 
+export type StatusTagSource = "entity" | "formSubmission" | "funding";
+
 export const mapStatusToTagStateEntity = (
   status: string | null | undefined
 ): { type: TagSubmissionState } | undefined => {
@@ -29,12 +31,48 @@ export const mapStatusToTagStateEntity = (
     case "nothing-reported":
     case "no-update":
       return { type: "nothing-reported" };
-    case "rejected":
-      return { type: "not-selected" };
-    case "active":
-      return { type: "receiving-applications" };
     default:
       return undefined;
+  }
+};
+
+export const mapFormSubmissionStatusToTagState = (
+  status: string | null | undefined
+): { type: TagSubmissionState } | undefined => {
+  if (status === "rejected") {
+    return { type: "not-selected" };
+  }
+
+  return mapStatusToTagStateEntity(status);
+};
+
+export const mapFundingStatusToTagState = (
+  status: string | null | undefined
+): { type: TagSubmissionState } | undefined => {
+  switch (status) {
+    case "active":
+      return { type: "receiving-applications" };
+    case "inactive":
+    case "disabled":
+      return { type: "closed" };
+    case "coming-soon":
+      return { type: "coming-soon" };
+    default:
+      return undefined;
+  }
+};
+
+export const mapStatusToTagStateBySource = (
+  status: string | null | undefined,
+  source: StatusTagSource = "entity"
+): { type: TagSubmissionState } | undefined => {
+  switch (source) {
+    case "formSubmission":
+      return mapFormSubmissionStatusToTagState(status);
+    case "funding":
+      return mapFundingStatusToTagState(status);
+    default:
+      return mapStatusToTagStateEntity(status);
   }
 };
 

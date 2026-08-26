@@ -9,7 +9,7 @@ import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.uti
 import { sortByDate } from "@/utils/sort";
 
 import { IconNames } from "../../Icon/Icon";
-import ActionTrackerCard, { getActionCardStatusMapper } from "../ActionTrackerCard";
+import ActionTrackerCard from "../ActionTrackerCard";
 import { ActionTrackerCardRowProps } from "../ActionTrackerCardRow";
 import {
   type ReportActionTarget,
@@ -53,7 +53,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
       cardsWithSort.push({
         sortAt: target?.updatedAt ?? "",
         card: {
-          ...getActionCardStatusMapper(t)[status ?? "draft"],
+          status: status ?? "draft",
           ctaLink,
           ctaText: t("View Report(s)"),
           title: getProjectName(target) ?? "",
@@ -111,7 +111,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         cardsWithSort.push({
           sortAt: maxUpdatedAt,
           card: {
-            ...getActionCardStatusMapper(t)[status],
+            status,
             ctaLink,
             ctaText: t("View Report(s)"),
             title: getProjectName(target) ?? "",

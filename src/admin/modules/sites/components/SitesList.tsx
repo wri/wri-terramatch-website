@@ -104,7 +104,7 @@ const SiteDataGrid: FC = () => {
           const readablePlantingStatus = getPlantingStatusOptions().find(
             (option: any) => option.value === record.plantingStatus
           );
-          return <CustomChipField label={readablePlantingStatus?.title} />;
+          return readablePlantingStatus?.title ? <CustomChipField label={readablePlantingStatus.title} /> : null;
         }}
       />
       <ColoredChipFieldArray

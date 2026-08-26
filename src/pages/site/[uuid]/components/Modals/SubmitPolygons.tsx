@@ -48,9 +48,10 @@ const SubmitPolygons: FC<SubmitPolygonsProps> = ({ open, onOpenChange, eligibleC
           </Text>
           {skippedCount > 0 && (
             <Text textStyle="400" color="neutral.900">
-              {t("{skippedCount} polygons are already Pending Approval or Approved and won't be submitted.", {
-                skippedCount
-              })}
+              {t(
+                "{skippedCount} polygons are already Pending Approval, Approved, or failed validations and won't be submitted.",
+                { skippedCount }
+              )}
             </Text>
           )}
         </Box>
