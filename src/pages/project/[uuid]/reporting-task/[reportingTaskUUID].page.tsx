@@ -1,3 +1,4 @@
+import { Flex } from "@chakra-ui/react";
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
@@ -37,9 +38,9 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { v3EntityName } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import BulkNothingToReportModal from "@/pages/project/[uuid]/reporting-task/BulkNothingToReportModal";
+import BulkNothingToReportModal from "@/pages/project/[uuid]/reporting-task/components/BulkNothingToReportModal";
+import NothingToReportModal from "@/pages/project/[uuid]/reporting-task/components/NothingToReportModal";
 import ReportingTaskHeader from "@/pages/project/[uuid]/reporting-task/components/ReportingTaskHeader";
-import NothingToReportModal from "@/pages/project/[uuid]/reporting-task/NothingToReportModal";
 import {
   NOTHING_TO_REPORT_MODELS,
   NothingToReportEntity,
@@ -47,6 +48,8 @@ import {
 } from "@/pages/project/[uuid]/reporting-task/types";
 import useGetReportingTasksTourSteps from "@/pages/project/[uuid]/reporting-task/useGetReportingTasksTourSteps";
 import ApiSlice from "@/store/apiSlice";
+
+import BulkTreeImportModal from "./components/BulkTreeImportModal";
 
 const NOTHING_TO_REPORT_DISPLAYABLE_STATUSES = ["due", "draft"];
 
@@ -426,6 +429,10 @@ const ReportingTaskPage: FC = () => {
     );
   }, [closeModal, openBulkConfirmationModal, openModal, reports.nothingToReportEligible, t]);
 
+  const openBulkTreeModal = useCallback(() => {
+    openModal(ModalId.BULK_TREE_IMPORT, <BulkTreeImportModal taskUuid={reportingTaskUUID} />);
+  }, [openModal, reportingTaskUUID]);
+
   if (!projectLoaded) return null;
   return (
     <FrameworkProvider frameworkKey={project?.frameworkKey}>
@@ -449,9 +456,14 @@ const ReportingTaskPage: FC = () => {
             <PageCard
               title={t("Additional Reports")}
               headerChildren={
-                <Button disabled={reports.nothingToReportEligible.length === 0} onClick={openBulkModal}>
-                  {t('Report "No Updates"')}
-                </Button>
+                <Flex gap={4}>
+                  <Button disabled={reports.nothingToReportEligible.length === 0} onClick={openBulkTreeModal}>
+                    {t("Bulk Tree Import")}
+                  </Button>
+                  <Button disabled={reports.nothingToReportEligible.length === 0} onClick={openBulkModal}>
+                    {t('Report "No Updates"')}
+                  </Button>
+                </Flex>
               }
             >
               <Table
