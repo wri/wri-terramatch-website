@@ -29,6 +29,7 @@ import { useReportsIndexData } from "../useReportsIndexData";
 import { useReportsIndexFilters } from "../useReportsIndexFilters";
 import AdditionalReportsContent from "./AdditionalReportsContent";
 import ProjectReportsSection from "./ProjectReportsSection";
+import { getDefaultProgressFiltersForSource } from "./reportFilter.constants";
 import ReportsIndexBulkBar from "./ReportsIndexBulkBar";
 import ReportsIndexHeader from "./ReportsIndexHeader";
 import ReportsSearchNoResults from "./ReportsSearchNoResults";
@@ -121,9 +122,14 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
   const reportCount = activeTab === "additional-reports" ? additionalReportCount : progressReportCount;
   const hasActiveSearch = query.trim().length > 0;
-  const hasReportSubset = hasActiveSearch || filters.reportTypes.length > 0 || filters.statuses.length > 0;
   const hasActivePeriodFilter =
     filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
+  const defaultReportTypes = getDefaultProgressFiltersForSource(source).reportTypes;
+  const hasUserReportTypeFilter =
+    filters.reportTypes.length !== defaultReportTypes.length ||
+    defaultReportTypes.some(type => !filters.reportTypes.includes(type));
+  const hasReportSubset =
+    hasActiveSearch || hasUserReportTypeFilter || filters.statuses.length > 0 || hasActivePeriodFilter;
 
   // Built from the unfiltered sections so refining by a period never shrinks the list of periods
   // still on offer.
