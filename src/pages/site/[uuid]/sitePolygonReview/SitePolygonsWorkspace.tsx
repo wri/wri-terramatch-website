@@ -738,9 +738,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
 
   useEffect(() => {
     registerSitePolygonAdminReviewMode(isAdminReview);
-    if (isAdminReview) {
-      registerRunPolygonValidationFromMapPopup(runValidationWithResultsModal);
-    }
+    registerRunPolygonValidationFromMapPopup(runValidationWithResultsModal);
     return () => {
       registerSitePolygonAdminReviewMode(false);
       unregisterRunPolygonValidationFromMapPopup();
