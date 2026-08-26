@@ -28,6 +28,7 @@ import {
   useLightSRPReportList
 } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
+import { DECLARED_ENV } from "@/constants/environment";
 import FrameworkProvider from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import {
@@ -457,7 +458,7 @@ const ReportingTaskPage: FC = () => {
               title={t("Additional Reports")}
               headerChildren={
                 <Flex gap={4}>
-                  <Button onClick={openBulkTreeModal}>{t("Bulk Tree Import")}</Button>
+                  {DECLARED_ENV !== "prod" && <Button onClick={openBulkTreeModal}>{t("Bulk Tree Import")}</Button>}
                   <Button disabled={reports.nothingToReportEligible.length === 0} onClick={openBulkModal}>
                     {t('Report "No Updates"')}
                   </Button>
