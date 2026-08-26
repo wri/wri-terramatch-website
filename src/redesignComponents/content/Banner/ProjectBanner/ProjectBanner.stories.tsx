@@ -70,6 +70,7 @@ const mockProject: ProjectFullDto = {
   polygonDataSubmission: "no-polygons-submitted",
   readyForBaseline: false,
   isTest: false,
+  isArchived: false,
   feedback: null,
   feedbackFields: null,
   cohort: null,
