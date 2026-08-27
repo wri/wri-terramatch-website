@@ -55,8 +55,28 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const { clearSelection } = useReportsSelectionActions();
   const [reloadNonce, setReloadNonce] = useState(0);
   const [, { data: projects }] = useProjectIndex({});
-  const isAllProjectsView = viewValue === ALL_PROJECTS_VIEW_VALUE;
+  const organisationViewItems = useMemo<HighLevelSelectorItem[]>(() => {
+    const labelsByUuid = new Map<string, string>();
+    (projects ?? []).forEach(item => {
+      if (item.organisationUuid == null || labelsByUuid.has(item.organisationUuid)) return;
+      labelsByUuid.set(item.organisationUuid, item.organisationName ?? t("Organisation"));
+    });
+    if (project.organisationUuid != null && !labelsByUuid.has(project.organisationUuid)) {
+      labelsByUuid.set(project.organisationUuid, project.organisationName ?? t("Organisation"));
+    }
+
+    return Array.from(labelsByUuid.entries())
+      .sort((a, b) => a[1].localeCompare(b[1]))
+      .map(([value, label]) => ({ value, label }));
+  }, [project.organisationName, project.organisationUuid, projects, t]);
+  const isKnownProjectView = viewValue === project.uuid || (projects ?? []).some(item => item.uuid === viewValue);
+  const isOrganisationView =
+    organisationViewItems.some(item => item.value === viewValue) ||
+    (viewFromQuery === viewValue && viewValue !== ALL_PROJECTS_VIEW_VALUE && !isKnownProjectView);
+  const isAllProjectsView = viewValue === ALL_PROJECTS_VIEW_VALUE || isOrganisationView;
   const isSwitchingProject = !isAllProjectsView && viewValue !== project.uuid;
+  const additionalOrganisationUuid =
+    viewValue === ALL_PROJECTS_VIEW_VALUE ? null : isOrganisationView ? viewValue : project.organisationUuid ?? null;
 
   const {
     sections: progressSections,
@@ -68,7 +88,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     sections: additionalSections,
     loading: additionalLoading,
     error: additionalError
-  } = useAdditionalReportsData(project, activeTab === "additional-reports", isAllProjectsView);
+  } = useAdditionalReportsData(project, activeTab === "additional-reports", additionalOrganisationUuid);
 
   const { filteredProgressSections, filteredAdditionalSections, progressReportCount, additionalReportCount } =
     useReportsIndexFilters({ progressSections, additionalSections, query });
@@ -76,7 +96,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
   const indexHref = getReportsIndexUrl(source, sourceEntity.uuid, {
     tab: activeTab,
-    view: isAllProjectsView ? ALL_PROJECTS_VIEW_VALUE : undefined,
+    view: viewValue === ALL_PROJECTS_VIEW_VALUE || isOrganisationView ? viewValue : undefined,
     reportType: reportTypeFromQuery
   });
 
@@ -144,6 +164,10 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   );
 
   const viewItems = useMemo<HighLevelSelectorItem[]>(() => {
+    if (activeTab === "additional-reports") {
+      return [{ label: t("All"), value: ALL_PROJECTS_VIEW_VALUE }, ...organisationViewItems];
+    }
+
     const projectItems =
       projects?.map(item => ({
         label: item.name ?? t("Project"),
@@ -154,17 +178,25 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
       ? projectItems
       : [{ label: project.name ?? t("Project"), value: project.uuid }, ...projectItems];
 
-    const allLabel = activeTab === "additional-reports" ? t("All") : t("All Projects");
-    return [{ label: allLabel, value: ALL_PROJECTS_VIEW_VALUE }, ...items];
-  }, [activeTab, project.name, project.uuid, projects, t]);
+    return [{ label: t("All Projects"), value: ALL_PROJECTS_VIEW_VALUE }, ...items];
+  }, [activeTab, organisationViewItems, project.name, project.uuid, projects, t]);
+
+  const headerViewValue =
+    activeTab === "additional-reports"
+      ? viewValue === ALL_PROJECTS_VIEW_VALUE
+        ? ALL_PROJECTS_VIEW_VALUE
+        : additionalOrganisationUuid ?? ALL_PROJECTS_VIEW_VALUE
+      : isOrganisationView
+      ? ALL_PROJECTS_VIEW_VALUE
+      : viewValue;
 
   useEffect(() => {
     if (!router.isReady) return;
     // Site/nursery entry points put the entity uuid in the query, not the project. Only project
     // URLs should drive the View selector from `uuid`.
     const nextView =
-      viewFromQuery === ALL_PROJECTS_VIEW_VALUE
-        ? ALL_PROJECTS_VIEW_VALUE
+      viewFromQuery === ALL_PROJECTS_VIEW_VALUE || (viewFromQuery != null && viewFromQuery !== "")
+        ? viewFromQuery
         : source === "project"
         ? uuidFromQuery ?? project.uuid
         : project.uuid;
@@ -175,6 +207,17 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     (nextView: string) => {
       clearSelection();
       setViewValue(nextView);
+
+      if (activeTab === "additional-reports") {
+        const query = { ...router.query };
+        if (nextView === ALL_PROJECTS_VIEW_VALUE) {
+          query.view = ALL_PROJECTS_VIEW_VALUE;
+        } else {
+          query.view = nextView;
+        }
+        void router.replace({ pathname: router.pathname, query }, undefined, { shallow: true });
+        return;
+      }
 
       if (nextView === ALL_PROJECTS_VIEW_VALUE) {
         void router.replace(
@@ -204,7 +247,6 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
       void router.replace(
         getReportsIndexUrl("project", nextView, {
-          tab: activeTab === "additional-reports" ? "additional-reports" : undefined,
           reportType: reportTypeFromQuery
         }),
         undefined,
@@ -240,7 +282,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
         sourceUuid={sourceEntity.uuid}
         projectUuid={project.uuid}
         reportCount={reportCount}
-        viewValue={viewValue}
+        viewValue={headerViewValue}
         viewItems={viewItems}
         periodOptions={periodOptions}
         onTabChange={handleTabChange}

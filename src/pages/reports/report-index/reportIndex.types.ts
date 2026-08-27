@@ -98,4 +98,5 @@ export type AdditionalReportsEntitySection = {
   caption: string;
   organisationUuid: string | null;
   groups: AdditionalReportGroup[];
+  children?: AdditionalReportsEntitySection[];
 };

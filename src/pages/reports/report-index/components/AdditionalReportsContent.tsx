@@ -12,7 +12,7 @@ import {
   AdditionalReportsEntitySection as AdditionalReportsEntitySectionData,
   AdditionalReportType
 } from "../reportIndex.types";
-import { getReportsRequiringAttention } from "../reportIndex.utils";
+import { collectAdditionalReports, getReportsRequiringAttention } from "../reportIndex.utils";
 import AdditionalReportsTable from "./AdditionalReportsTable";
 import ReportAttentionStatusLabels from "./ReportAttentionStatusLabels";
 import ReportsSearchNoResults from "./ReportsSearchNoResults";
@@ -94,7 +94,7 @@ const AdditionalReportsEntitySection = ({
 }) => {
   const t = useT();
   const [open, setOpen] = useState(true);
-  const reports = useMemo(() => section.groups.flatMap(group => group.reports), [section.groups]);
+  const reports = useMemo(() => collectAdditionalReports(section), [section]);
   const attentionCount = useMemo(() => getReportsRequiringAttention(reports), [reports]);
 
   return (
@@ -132,6 +132,16 @@ const AdditionalReportsEntitySection = ({
             group={group}
             indexHref={indexHref}
             restoreReportId={group.id === restoreGroupId ? restoreReportId : undefined}
+            onRowRestored={onRowRestored}
+          />
+        ))}
+        {(section.children ?? []).map(child => (
+          <AdditionalReportsEntitySection
+            key={`${child.type}-${child.id}`}
+            section={child}
+            indexHref={indexHref}
+            restoreGroupId={restoreGroupId}
+            restoreReportId={restoreReportId}
             onRowRestored={onRowRestored}
           />
         ))}
