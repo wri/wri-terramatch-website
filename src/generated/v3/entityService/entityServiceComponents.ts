@@ -2186,6 +2186,13 @@ export type TreeBulkImportCsvGetPathParams = {
   uuid: string;
 };
 
+export type TreeBulkImportCsvGetQueryParams = {
+  /**
+   * The collection to download
+   */
+  collection: "anr" | "replanting" | "tree-planted" | "non-tree" | "invasive";
+};
+
 export type TreeBulkImportCsvGetError = Fetcher.ErrorWrapper<
   | {
       status: 401;
@@ -2217,6 +2224,7 @@ export type TreeBulkImportCsvGetError = Fetcher.ErrorWrapper<
 
 export type TreeBulkImportCsvGetVariables = {
   pathParams: TreeBulkImportCsvGetPathParams;
+  queryParams: TreeBulkImportCsvGetQueryParams;
 };
 
 export const treeBulkImportCsvGet = new V3ApiEndpoint<

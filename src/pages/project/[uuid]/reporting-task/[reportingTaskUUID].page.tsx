@@ -431,8 +431,13 @@ const ReportingTaskPage: FC = () => {
   }, [closeModal, openBulkConfirmationModal, openModal, reports.nothingToReportEligible, t]);
 
   const openBulkTreeModal = useCallback(() => {
-    openModal(ModalId.BULK_TREE_IMPORT, <BulkTreeImportModal taskUuid={reportingTaskUUID} />);
-  }, [openModal, reportingTaskUUID]);
+    openModal(
+      ModalId.BULK_TREE_IMPORT,
+      <FrameworkProvider frameworkKey={project?.frameworkKey}>
+        <BulkTreeImportModal taskUuid={reportingTaskUUID} />
+      </FrameworkProvider>
+    );
+  }, [openModal, project?.frameworkKey, reportingTaskUUID]);
 
   if (!projectLoaded) return null;
   return (

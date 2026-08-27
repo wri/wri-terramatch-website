@@ -1001,7 +1001,12 @@ export type TreeBulkUploadDto = {
   warnings: BulkUploadWarning[];
 };
 
-export type TreeBulkUploadAttributes = {};
+export type TreeBulkUploadAttributes = {
+  /**
+   * The collection the trees belong to
+   */
+  collection: "anr" | "replanting" | "tree-planted" | "non-tree" | "invasive";
+};
 
 export type TreeBulkUploadData = {
   type: "treeBulkUploads";
