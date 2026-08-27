@@ -265,14 +265,7 @@ export type SitePolygonLightDto = {
    * UUID of the site polygon
    */
   uuid: string;
-  /**
-   * Numeric ID of the disturbance parent entity (typically a disturbance report).
-   */
   disturbanceableId: number | null;
-  /**
-   * UUID of the disturbance report linked to this polygon, including reports that are not yet approved.
-   */
-  disturbanceReportUuid: string | null;
   /**
    * Whether the site polygon is active
    */
@@ -532,14 +525,7 @@ export type SitePolygonFullDto = {
    * UUID of the site polygon
    */
   uuid: string;
-  /**
-   * Numeric ID of the disturbance parent entity (typically a disturbance report).
-   */
   disturbanceableId: number | null;
-  /**
-   * UUID of the disturbance report linked to this polygon, including reports that are not yet approved.
-   */
-  disturbanceReportUuid: string | null;
   /**
    * Whether the site polygon is active
    */

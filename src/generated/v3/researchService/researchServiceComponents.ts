@@ -243,12 +243,6 @@ export type SitePolygonsIndexQueryParams = {
    */
   hasOverlap?: boolean;
   /**
-   * Filter to polygons linked to a disturbance report, including reports that are not yet approved.
-   *
-   * @default false
-   */
-  hasDisturbance?: boolean;
-  /**
    * Soft-deleted polygons for one site. Search is supported; other filters are ignored.
    *
    * @default false

@@ -80,7 +80,6 @@ export const mapSitePolygonToTableRow = (polygon: SitePolygonLightDto, t: (key: 
     area: polygon.calcArea ?? 0,
     submissionCycle,
     submissionCycleSort: submissionCycle.join(", "),
-    source: formatPolygonSource(polygon.source),
-    disturbanceReportUuid: polygon.disturbanceReportUuid ?? null
+    source: formatPolygonSource(polygon.source)
   };
 };
