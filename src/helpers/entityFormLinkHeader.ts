@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import { startCase } from "lodash";
 import { ReactNode } from "react";
 
+import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import {
   getReportsIndexHrefFromQuery,
   getReportsIndexUrl,
@@ -38,6 +39,7 @@ export type EntityLinkHeaderParams = {
   firstLinkIcon: ReactNode;
   t: typeof useT;
   from?: unknown;
+  taskTitle?: string;
 };
 
 export type EntityLinkHeaderMap = Record<string, Array<{ label: string; link: string; icon?: ReactNode }>>;
@@ -68,7 +70,7 @@ export const mapEntityTitle = (title: string | null, model: string, t: typeof us
 };
 
 export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkHeaderMap {
-  const { isAdmin, model, uuid, redirectEntityPage, adminListPath, entity, firstLinkIcon, t, from } = params;
+  const { isAdmin, model, uuid, redirectEntityPage, adminListPath, entity, firstLinkIcon, t, from, taskTitle } = params;
   const linkLabel = t(startCase(model));
 
   const editLink = uuid ? `/entity/${singularEntityName(model as EntityName | SingularEntityName)}/edit/${uuid}` : "#";
@@ -99,15 +101,24 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
     getReportsIndexHrefFromQuery(from, undefined) ??
     (entity?.organisationUuid != null ? `/organization/${entity.organisationUuid}` : entityPageLink);
 
-  const reportBreadcrumb = (reportsHref: string) =>
+  const reportBreadcrumb = (reportsHref: string, label: string = entityTitle) =>
     withFirstIcon([
       {
         label: t("Reports"),
         link: isAdmin ? adminListPath! : reportsHref
       },
-      { label: entityTitle, link: entityPageLink },
+      { label, link: entityPageLink },
       { label: t("Edit"), link: editLink }
     ]);
+
+  const siteReportBreadcrumbLabel = t("Site Report {window}: {siteName}", {
+    window: getShortPeriodLabel(taskTitle ?? "", true),
+    siteName: entity?.siteName
+  });
+  const nurseryReportBreadcrumbLabel = t("Nursery Report {window}: {nurseryName}", {
+    window: getShortPeriodLabel(taskTitle ?? "-", true),
+    nurseryName: entity?.nurseryName ?? "-"
+  });
 
   return {
     projects: withFirstIcon([
@@ -135,8 +146,8 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
       { label: t("Edit"), link: editLink }
     ]),
     projectReports: reportBreadcrumb(progressReportsHref),
-    siteReports: reportBreadcrumb(siteReportsHref),
-    nurseryReports: reportBreadcrumb(nurseryReportsHref),
+    siteReports: reportBreadcrumb(siteReportsHref, siteReportBreadcrumbLabel),
+    nurseryReports: reportBreadcrumb(nurseryReportsHref, nurseryReportBreadcrumbLabel),
     financialReports: reportBreadcrumb(financialReportsHref),
     disturbanceReports: reportBreadcrumb(additionalReportsHref),
     srpReports: reportBreadcrumb(additionalReportsHref)

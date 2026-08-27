@@ -138,7 +138,10 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
             icon: <ReportsIcon className="!text-theme-primary-900" />
           },
           {
-            label: t("Nursery Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),
+            label: t("Nursery Report {window}: {nurseryName}", {
+              window: getShortPeriodLabel(taskTitle ?? "-", true),
+              nurseryName: nursery?.name ?? "-"
+            }),
             link: `/reports/nursery-report/${nurseryReportUUID}`
           }
         ]}

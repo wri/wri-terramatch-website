@@ -176,7 +176,10 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
             icon: <ReportsIcon className="!text-theme-primary-900" />
           },
           {
-            label: t("Site Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),
+            label: t("Site Report {window}: {siteName}", {
+              window: getShortPeriodLabel(taskTitle ?? "", true),
+              siteName: site?.name
+            }),
             link: `/reports/site-report/${siteReportUUID}`
           }
         ]}
