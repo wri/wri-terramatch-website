@@ -17,10 +17,10 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import NurseryReportDetailsTab from "@/pages/reports/nursery-report/tabs/Details";
 import NurseryReportGoalsAndProgressTab from "@/pages/reports/nursery-report/tabs/GoalsAndProgress";
 import NurseryReportOverview from "@/pages/reports/nursery-report/tabs/Overview";
-import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
+import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -118,9 +118,7 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
-  const reportsIndexHref =
-    getReportsIndexHrefFromQuery(router.query.from) ??
-    (nurseryReport.nurseryUuid != null ? getReportsIndexUrl("nursery", nurseryReport.nurseryUuid) : "/my-projects");
+  const reportsIndexHref = getReportsIndexUrl("nursery", nurseryReport.nurseryUuid!);
 
   return (
     <>
@@ -135,28 +133,15 @@ const NurseryReportContent: FC<NurseryReportContentProps> = ({ nurseryReport, nu
         entityName="nursery-report"
         breadcrumbs={[
           {
-            label: t("Projects"),
-            link: "/my-projects",
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: nurseryReport.projectName ?? t("Project"),
-            link: `/project/${nurseryReport.projectUuid}`
-          },
-          {
-            label: t("Nurseries"),
-            link: `/project/${nurseryReport.projectUuid}?tab=nurseries`
-          },
-          {
-            label: nurseryReport.nurseryName ?? t("Nursery"),
-            link: `/nursery/${nurseryReport.nurseryUuid}`
-          },
-          {
             label: t("Reports"),
-            link: reportsIndexHref
+            link: reportsIndexHref,
+            icon: <ReportsIcon className="!text-theme-primary-900" />
           },
           {
-            label: t("Nursery Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),
+            label: t("Nursery Report {window}: {nurseryName}", {
+              window: getShortPeriodLabel(taskTitle ?? "-", true),
+              nurseryName: nursery?.name ?? "-"
+            }),
             link: `/reports/nursery-report/${nurseryReportUUID}`
           }
         ]}

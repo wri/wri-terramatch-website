@@ -530,8 +530,8 @@ function WizardForm(props: WizardFormProps) {
           <ProjectIcon className="!text-theme-primary-900" />
         ),
         t,
-        taskTitle,
-        from: router.query.from
+        from: router.query.from,
+        taskTitle
       })[models[0].model];
     }
     return [];
@@ -544,8 +544,8 @@ function WizardForm(props: WizardFormProps) {
     props.adminListPath,
     t,
     isAdmin,
-    taskTitle,
-    router.query.from
+    router.query.from,
+    taskTitle
   ]);
 
   const pageHeaderTitle = useMemo(() => {

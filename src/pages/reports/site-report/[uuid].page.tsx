@@ -19,12 +19,12 @@ import { SiteFullDto, SiteReportFullDto } from "@/generated/v3/entityService/ent
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { SuffixButtonConfig } from "@/pages/project/[uuid]/index.page";
-import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
+import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Details from "@/pages/reports/site-report/tabs/Details";
 import Overview from "@/pages/reports/site-report/tabs/Overview";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ReportBanner from "@/redesignComponents/content/Banner/ReportBanner/ReportBanner";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
+import { ReportsIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
@@ -149,9 +149,7 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
 
   const activeTab = visibleTabItems.some(item => item.key === currentTab) ? currentTab : "overview";
   const activeTabItem = visibleTabItems.find(item => item.key === activeTab) ?? visibleTabItems[0];
-  const reportsIndexHref =
-    getReportsIndexHrefFromQuery(router.query.from) ??
-    (siteReport.siteUuid != null ? getReportsIndexUrl("site", siteReport.siteUuid) : "/my-projects");
+  const reportsIndexHref = getReportsIndexUrl("site", siteReport.siteUuid!);
   const suffixButtons: SuffixButtonConfig[] = useMemo(
     () => [
       { key: "site-profile", labelKey: t("Site Profile") },
@@ -173,28 +171,15 @@ const SiteReportContent: FC<SiteReportContentProps> = ({
         entityName="site-report"
         breadcrumbs={[
           {
-            label: t("Projects"),
-            link: "/my-projects",
-            icon: <ProjectIcon className="!text-theme-primary-900" />
-          },
-          {
-            label: siteReport.projectName ?? t("Project"),
-            link: `/project/${siteReport.projectUuid}`
-          },
-          {
-            label: t("Sites"),
-            link: `/project/${siteReport.projectUuid ?? ""}?tab=sites`
-          },
-          {
-            label: siteReport.siteName ?? t("Site"),
-            link: `/site/${siteReport.siteUuid ?? ""}`
-          },
-          {
             label: t("Reports"),
-            link: reportsIndexHref
+            link: reportsIndexHref,
+            icon: <ReportsIcon className="!text-theme-primary-900" />
           },
           {
-            label: t("Site Report - {window}", { window: getShortPeriodLabel(taskTitle ?? "", true) }),
+            label: t("Site Report {window}: {siteName}", {
+              window: getShortPeriodLabel(taskTitle ?? "", true),
+              siteName: site?.name
+            }),
             link: `/reports/site-report/${siteReportUUID}`
           }
         ]}
