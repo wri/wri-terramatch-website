@@ -32,8 +32,8 @@ export type ReportingPeriodMetricCard = {
   title: string;
   tooltip: string;
   progress: number;
-  filtered?: number;
-  selection?: number;
+  filtered?: number | null;
+  selection?: number | null;
   color: string;
 };
 
@@ -121,6 +121,28 @@ const useLoadedChildReports = (siteIds: string[], nurseryIds: string[], enabled:
   return { siteReports, nurseryReports, ready: !enabled || loadFinished };
 };
 
+type MetricLayerTotals = {
+  treesGrowing: number | null;
+  treesRegenerated: number | null;
+  seedlingsGrown: number | null;
+  jobs: number | null;
+};
+
+const layerTotalsFromReports = (
+  subset: ReportsIndexReport[],
+  siteReports: Array<SiteReportLightDto | undefined> | undefined,
+  nurseryReports: Array<NurseryReportLightDto | undefined> | undefined,
+  jobsTotal: number | null | undefined
+): MetricLayerTotals => {
+  const totals = totalsFromLoadedReports(subset, siteReports, nurseryReports);
+  return {
+    treesGrowing: subset.some(report => report.type === "site-report") ? totals.treesGrowing : null,
+    treesRegenerated: subset.some(report => report.type === "site-report") ? totals.treesRegenerated : null,
+    seedlingsGrown: subset.some(report => report.type === "nursery-report") ? totals.seedlingsGrown : null,
+    jobs: includesProjectReport(subset) ? jobsTotal ?? 0 : null
+  };
+};
+
 type UseReportingPeriodMetricsArgs = {
   open: boolean;
   reports: ReportsIndexReport[];
@@ -157,22 +179,21 @@ export const useReportingPeriodMetrics = ({
     [allReports, nurseryReports, siteReports]
   );
 
+  const showFiltered = useMemo(() => {
+    if (hasReportSubset) return true;
+    if (reports.length !== allReports.length) return true;
+    const visibleKeys = new Set(reports.map(report => `${report.type}:${report.id}`));
+    return allReports.some(report => !visibleKeys.has(`${report.type}:${report.id}`));
+  }, [allReports, hasReportSubset, reports]);
+
   const filteredTotals = useMemo(() => {
-    if (!hasReportSubset) return null;
-    const filtered = totalsFromLoadedReports(reports, siteReports, nurseryReports);
-    return {
-      ...filtered,
-      jobs: includesProjectReport(reports) ? jobsTotal ?? 0 : 0
-    };
-  }, [hasReportSubset, jobsTotal, nurseryReports, reports, siteReports]);
+    if (!showFiltered) return null;
+    return layerTotalsFromReports(reports, siteReports, nurseryReports, jobsTotal);
+  }, [jobsTotal, nurseryReports, reports, showFiltered, siteReports]);
 
   const selectionTotals = useMemo(() => {
     if (!hasSelection) return null;
-    const selected = totalsFromLoadedReports(periodSelectedReports, siteReports, nurseryReports);
-    return {
-      ...selected,
-      jobs: includesProjectReport(periodSelectedReports) ? jobsTotal ?? 0 : 0
-    };
+    return layerTotalsFromReports(periodSelectedReports, siteReports, nurseryReports, jobsTotal);
   }, [hasSelection, jobsTotal, nurseryReports, periodSelectedReports, siteReports]);
 
   const jobsProgress = jobsTotal ?? 0;
@@ -184,13 +205,6 @@ export const useReportingPeriodMetrics = ({
     selectionTotals,
     jobsProgress
   };
-};
-
-type MetricLayerTotals = {
-  treesGrowing: number;
-  treesRegenerated: number;
-  seedlingsGrown: number;
-  jobs: number;
 };
 
 export const useReportingPeriodMetricCards = (
@@ -206,12 +220,12 @@ export const useReportingPeriodMetricCards = (
   return useMemo(() => {
     const layers = (
       progress: number,
-      filteredValue: number | undefined,
-      selectionValue: number | undefined
+      filteredValue: number | null | undefined,
+      selectionValue: number | null | undefined
     ): Pick<ReportingPeriodMetricCard, "progress" | "filtered" | "selection"> => ({
       progress,
-      filtered: filteredTotals == null ? undefined : filteredValue,
-      selection: selectionTotals == null ? undefined : selectionValue
+      filtered: filteredTotals == null ? undefined : filteredValue ?? null,
+      selection: selectionTotals == null ? undefined : selectionValue ?? null
     });
 
     if (framework === "ppc") {

@@ -53,7 +53,7 @@ const MetricTooltipTrigger: FC<MetricTooltipTriggerProps> = ({ tooltipContent, m
 
 type MetricCardExtraLayerProps = {
   label: string;
-  value: number;
+  value: number | null;
   progressSuffix?: string;
   labelTextStyle: "200" | "500";
   valueTextStyle: "300-bold" | "600-bold";
@@ -68,14 +68,14 @@ const MetricCardExtraLayer: FC<MetricCardExtraLayerProps> = ({
 }) => (
   <>
     <SimpleDivider variant="vertical" className="!h-3" />
-    <Flex gap={1} className="items-center">
+    <Flex gap={1} className="items-center whitespace-nowrap">
       <Text color="neutral.700" textStyle={labelTextStyle}>
         {label}
       </Text>
       <Text color="neutral.900" textStyle={valueTextStyle}>
-        {formatNumberLocaleString(value)}
+        {value == null ? "-" : formatNumberLocaleString(value)}
       </Text>
-      {progressSuffix != null && progressSuffix !== "" ? (
+      {value != null && progressSuffix != null && progressSuffix !== "" ? (
         <Text color="neutral.900" textStyle={valueTextStyle}>
           {progressSuffix}
         </Text>
@@ -115,7 +115,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
           <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
         )}
       </Flex>
-      <Flex gap={2} className="items-center">
+      <Flex gap={2} className="flex-wrap items-center">
         <Flex gap={1} className="items-center">
           <Text textStyle="400-bold" color="neutral.900">
             {progressLabel ?? formatNumberLocaleString(progress)}
@@ -126,7 +126,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
             </Text>
           ) : null}
         </Flex>
-        {filtered != null ? (
+        {filtered !== undefined ? (
           <MetricCardExtraLayer
             label={t("Filtered:")}
             value={filtered}
@@ -135,9 +135,9 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
             valueTextStyle="300-bold"
           />
         ) : null}
-        {selection != null ? (
+        {selection !== undefined ? (
           <MetricCardExtraLayer
-            label={t("Selection:")}
+            label={t("Selected:")}
             value={selection}
             progressSuffix={progressSuffix}
             labelTextStyle="200"
@@ -176,7 +176,7 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
             <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
           )}
         </Flex>
-        <Flex gap={2} className="items-center">
+        <Flex gap={2} className="flex-wrap items-center">
           <Flex gap={1} className="items-center">
             <Text textStyle="600-bold" color="neutral.900">
               {progressLabel ?? formatNumberLocaleString(progress)}
@@ -187,7 +187,7 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
               </Text>
             ) : null}
           </Flex>
-          {filtered != null ? (
+          {filtered !== undefined ? (
             <MetricCardExtraLayer
               label={t("Filtered:")}
               value={filtered}
@@ -196,9 +196,9 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
               valueTextStyle="600-bold"
             />
           ) : null}
-          {selection != null ? (
+          {selection !== undefined ? (
             <MetricCardExtraLayer
-              label={t("Selection:")}
+              label={t("Selected:")}
               value={selection}
               progressSuffix={progressSuffix}
               labelTextStyle="500"

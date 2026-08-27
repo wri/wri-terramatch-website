@@ -14,7 +14,7 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-const items: SitePolygonLightDto[] = [
+const items = [
   {
     uuid: "1",
     lightResource: true,
@@ -213,7 +213,7 @@ const items: SitePolygonLightDto[] = [
     deletedAt: null,
     customAttributes: {}
   }
-];
+] as SitePolygonLightDto[];
 
 export const Default: Story = {
   render: args => {

@@ -91,6 +91,20 @@ export const MediumWithFilteredAndSelection: Story = {
   }
 };
 
+export const MediumWithFilteredUnavailable: Story = {
+  args: {
+    title: "Stat label",
+    progress: 1234,
+    goal: 10000,
+    variant: "medium",
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit",
+    filtered: null,
+    selection: null
+  }
+};
+
 export const Large: Story = {
   args: {
     title: "Stat label",
