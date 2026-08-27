@@ -224,10 +224,7 @@ function resolveGeoserverLayerName(
   dashboardMode: string | undefined,
   polygonGeometryVariant: PolygonGeometryVariant | undefined
 ): string {
-  if (
-    dashboardMode != null &&
-    (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY || layer.name === LAYERS_NAMES.DISTURBED_GEOMETRIES)
-  ) {
+  if (dashboardMode != null && layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
     return LAYERS_NAMES.POLYGON_GEOMETRY;
   }
 
