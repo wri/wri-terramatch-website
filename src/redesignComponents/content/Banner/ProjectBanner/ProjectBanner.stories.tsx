@@ -47,7 +47,7 @@ const mockBreadcrumbs = [
   { label: "Restoration project in the Congo Basin", link: "/projects/1" }
 ];
 
-const mockProject: ProjectFullDto = {
+const mockProject = {
   lightResource: false,
   uuid: "project-1",
   frameworkKey: "terrafund",
@@ -70,6 +70,7 @@ const mockProject: ProjectFullDto = {
   polygonDataSubmission: "no-polygons-submitted",
   readyForBaseline: false,
   isTest: false,
+  isArchived: false,
   feedback: null,
   feedbackFields: null,
   cohort: null,
@@ -166,7 +167,7 @@ const mockProject: ProjectFullDto = {
   projectQaStatus3: null,
   projectQaStatus4: null,
   projectQaStatus5: null
-};
+} as ProjectFullDto;
 
 const baseArgs: ProjectBannerProps = {
   breadcrumbs: mockBreadcrumbs,
