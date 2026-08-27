@@ -317,8 +317,7 @@ export const resolveActivePolygonFilterTypes = ({
   targetSys,
   submissionCycle,
   hasOverlap,
-  showDeleted,
-  hasDisturbance
+  showDeleted
 }: {
   polygonStatus: string[];
   validationStatus: string[];
@@ -329,7 +328,6 @@ export const resolveActivePolygonFilterTypes = ({
   submissionCycle: string[];
   hasOverlap: boolean;
   showDeleted: boolean;
-  hasDisturbance: boolean;
 }): string[] => {
   if (showDeleted) return ["deleted"];
 
@@ -341,6 +339,5 @@ export const resolveActivePolygonFilterTypes = ({
   if (targetSys.length > 0) filterTypes.push("target_land_use");
   if (submissionCycle.length > 0) filterTypes.push("submission_cycle");
   if (hasOverlap) filterTypes.push("overlap");
-  if (hasDisturbance) filterTypes.push("disturbance");
   return filterTypes;
 };
