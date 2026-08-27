@@ -9,7 +9,7 @@ import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
 import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { getThemedColor } from "@/lib/theme";
 
-import { DELETED_AUDIT_POLYGONS, DELETED_POLYGONS, DISTURBED_POLYGONS } from "./statuses";
+import { DELETED_AUDIT_POLYGONS, DELETED_POLYGONS } from "./statuses";
 
 type LayerStyleFragment<T extends LayerSpecification> = Omit<T, "id" | "source" | "source-layer"> & {
   metadata?: unknown;
@@ -27,7 +27,6 @@ export const LAYERS_NAMES = {
   POLYGON_GEOMETRY: "polygon_geometry",
   MEDIA_IMAGES: "media_images",
   DELETED_GEOMETRIES: "deleted_geometries",
-  DISTURBED_GEOMETRIES: "disturbed_geometries",
   CENTROIDS: "centroids",
   LANDSCAPES: "landscape_geom",
   POLYGON_CENTROIDS: "polygon_centroids"
@@ -199,33 +198,6 @@ export const layersList: LayerType[] = [
         paint: {
           "line-color": "#E42222",
           "line-width": 2
-        },
-        filter: ["==", ["get", "uuid"], ""]
-      })
-    ]
-  },
-  {
-    name: LAYERS_NAMES.DISTURBED_GEOMETRIES,
-    geoserverLayerName: getPolygonGeometryLayerName(POLYGON_GEOMETRY_VARIANTS.Active),
-    styles: [
-      fillStyle({
-        metadata: { polygonStatus: DISTURBED_POLYGONS },
-        type: "fill",
-        layout: {},
-        paint: {
-          "fill-color": "#C2410C",
-          "fill-opacity": 0.25
-        },
-        filter: ["==", ["get", "uuid"], ""]
-      }),
-      lineStyle({
-        metadata: { polygonStatus: DISTURBED_POLYGONS },
-        type: "line",
-        layout: {},
-        paint: {
-          "line-color": "#9A3412",
-          "line-width": 2,
-          "line-dasharray": [2, 1]
         },
         filter: ["==", ["get", "uuid"], ""]
       })

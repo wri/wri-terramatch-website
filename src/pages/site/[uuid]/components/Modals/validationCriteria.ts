@@ -56,17 +56,17 @@ export const mapValidationDtoToTagState = (validation: ValidationDto | undefined
 };
 
 export const resolveValidationStatusFromCriteria = (
-  validationStatus: SitePolygonLightDto["validationStatus"],
+  validationStatus: string | null | undefined,
   validation: ValidationDto | undefined
-): SitePolygonLightDto["validationStatus"] => {
+): string | null => {
   const fromCriteria = mapValidationDtoToTagState(validation);
-  if (fromCriteria === "passed" || fromCriteria === "failed") {
-    return fromCriteria;
+  if (fromCriteria == null) {
+    return validationStatus ?? null;
   }
   if (fromCriteria === "partially-passed") {
     return "partial";
   }
-  return validationStatus ?? null;
+  return fromCriteria;
 };
 
 export const withResolvedValidationStatusFromCriteria = (
