@@ -20,6 +20,12 @@ function resolveTreeSpeciesFormCollection(
   if (linkedFieldKey === "site-rep-rel-anr-tree-species") {
     return "anr";
   }
+  if (
+    linkedFieldKey === "site-rel-established-tree-species" ||
+    linkedFieldKey === "site-rep-rel-established-tree-species"
+  ) {
+    return "established";
+  }
   if (linkedFieldKey === "site-rep-rel-invasive-tree-species") {
     return "invasive";
   }

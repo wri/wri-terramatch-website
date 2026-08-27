@@ -74,7 +74,12 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               variant="outlined"
-              disabled={reportActionDisabled || record?.status === "information-required"}
+              disabled={
+                reportActionDisabled ||
+                record?.status === "information-required" ||
+                record?.status === "draft" ||
+                record?.status === "due"
+              }
               onClick={() => setStatusModal("information-required")}
             >
               Request More Info
@@ -83,7 +88,12 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
               variant="contained"
               startIcon={<Check />}
               disabled={
-                reportActionDisabled || record?.status === "approved" || record?.updateRequestStatus === "draft"
+                reportActionDisabled ||
+                record?.status === "approved" ||
+                record?.status === "draft" ||
+                record?.status === "pending-approval" ||
+                record?.updateRequestStatus === "draft" ||
+                record?.status === "due"
               }
               onClick={() => setStatusModal("approved")}
             >
