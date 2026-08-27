@@ -1,6 +1,5 @@
 import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { Dictionary } from "lodash";
 import { ChangeEvent, FC, useCallback, useMemo, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { twMerge } from "tailwind-merge";
@@ -15,6 +14,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { ModalBase } from "@/components/extensive/Modal/ModalsBases";
 import { useModalContext } from "@/context/modal.provider";
 import { treeBulkImportCsvGet, treeBulkImportCsvUpload } from "@/generated/v3/entityService/entityServiceComponents";
+import { BulkUploadWarning } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isTranslatableError } from "@/generated/v3/utils";
 import Table, { TableColumn } from "@/redesignComponents/dataDisplay/Table/Table";
 import { getErrorMessages } from "@/utils/errors";
@@ -33,10 +33,20 @@ type UploadWarning = {
   message: string;
 };
 
-const UPLOAD_WARNINGS: Dictionary<string> = {
-  TREE_NAME_MISSING: "Tree Species name missing",
-  SITE_NAME_MISSING: "Site name missing",
-  AMOUNT_UNSUPPORTED: "Amount value not supported: {amountString}"
+const getWarningMessage = (t: typeof useT, { message, code, variables }: BulkUploadWarning): string => {
+  switch (code) {
+    case "TREE_NAME_MISSING":
+      return t("Tree Species name missing");
+    case "SITE_NAME_MISSING":
+      return t("Site name missing");
+    case "AMOUNT_UNSUPPORTED":
+      return t("Amount value not supported: {amountString}", variables);
+    case "TAXON_ID_MISSING":
+      return t("Scientific name not found for tree species: {treeName}", variables);
+    default:
+      Log.error("No upload warning code defined", { code, message, variables });
+      return message;
+  }
 };
 
 const BulkTreeImportModal: FC<BulkTreeImportModalProps> = ({ taskUuid }) => {
@@ -65,14 +75,11 @@ const BulkTreeImportModal: FC<BulkTreeImportModalProps> = ({ taskUuid }) => {
             const warnings = data?.attributes?.warnings;
             if (warnings != null && warnings.length > 0) {
               setWarnings(
-                warnings.map(({ message, code, row, variables }, index) => {
-                  if (UPLOAD_WARNINGS[code] == null) {
-                    Log.error("No upload warning code defined", { code, message });
-                  }
+                warnings.map((warning, index) => {
                   return {
                     id: index,
-                    message: t(UPLOAD_WARNINGS[code] ?? message, variables),
-                    row
+                    message: getWarningMessage(t, warning),
+                    row: warning.row
                   };
                 })
               );
