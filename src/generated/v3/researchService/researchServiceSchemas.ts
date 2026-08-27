@@ -1188,3 +1188,139 @@ export type AnrPlotGeometryDto = {
    */
   createdBy: number | null;
 };
+
+/**
+ * CONSTANTS
+ */
+export type PolygonAttributeDefinitionConstants = {
+  /**
+   * @example single_select
+   * @example multi_select
+   */
+  INPUT_TYPES: string[];
+};
+
+export type PolygonAttributeDefinitionOptionDto = {
+  /**
+   * @format uuid
+   */
+  uuid: string;
+  /**
+   * Stable stored value. Generated from the option label and locked after create.
+   */
+  value: string;
+  label: string;
+  /**
+   * Display order. Array index on write; persisted as order.
+   */
+  order: number;
+};
+
+export type PolygonAttributeDefinitionDto = {
+  /**
+   * @format uuid
+   */
+  uuid: string;
+  /**
+   * Stable identifier generated from the label on create. Used as the GeoJSON property and API map key.
+   */
+  key: string;
+  label: string;
+  inputType: "single_select" | "multi_select";
+  frameworkKey:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | "fundo-flora-1"
+    | "wcb"
+    | "barka-fund";
+  isActive: boolean;
+  /**
+   * Display order within the framework.
+   */
+  order: number;
+  /**
+   * True when at least one polygon has a stored value for this definition. Hard-delete is then forbidden.
+   */
+  hasValues: boolean;
+  options: PolygonAttributeDefinitionOptionDto[];
+};
+
+export type StorePolygonAttributeDefinitionOptionAttributes = {
+  /**
+   * Existing option uuid. Omit to create a new option. Value is locked once created.
+   *
+   * @format uuid
+   */
+  uuid?: string;
+  /**
+   * Option display label. On create, the stored value is camelCased from this label.
+   */
+  label: string;
+};
+
+export type CreatePolygonAttributeDefinitionAttributes = {
+  label: string;
+  inputType: "single_select" | "multi_select";
+  frameworkKey:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | "fundo-flora-1"
+    | "wcb"
+    | "barka-fund";
+  /**
+   * @default true
+   */
+  isActive?: boolean;
+  /**
+   * Display order within the framework. Defaults to 0.
+   */
+  order?: number;
+  options: StorePolygonAttributeDefinitionOptionAttributes[];
+};
+
+export type CreatePolygonAttributeDefinitionData = {
+  type: "polygonAttributeDefinitions";
+  attributes: CreatePolygonAttributeDefinitionAttributes;
+};
+
+export type CreatePolygonAttributeDefinitionBody = {
+  data: CreatePolygonAttributeDefinitionData;
+};
+
+export type UpdatePolygonAttributeDefinitionAttributes = {
+  label?: string;
+  isActive?: boolean;
+  /**
+   * Display order within the framework.
+   */
+  order?: number;
+  /**
+   * When provided, replaces the full option list. Omitted options are removed only if no polygon stores that option value. Existing option values stay locked.
+   */
+  options?: StorePolygonAttributeDefinitionOptionAttributes[];
+};
+
+export type UpdatePolygonAttributeDefinitionData = {
+  type: "polygonAttributeDefinitions";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: UpdatePolygonAttributeDefinitionAttributes;
+};
+
+export type UpdatePolygonAttributeDefinitionBody = {
+  data: UpdatePolygonAttributeDefinitionData;
+};

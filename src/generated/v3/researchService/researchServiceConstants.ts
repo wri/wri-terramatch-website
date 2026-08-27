@@ -10,7 +10,8 @@ import {
   ValidationSummaryDto,
   ClippedVersionDto,
   ProjectPolygonDto,
-  AnrPlotGeometryDto
+  AnrPlotGeometryDto,
+  PolygonAttributeDefinitionDto
 } from "./researchServiceSchemas";
 
 export const RESEARCH_SERVICE_RESOURCES = [
@@ -23,7 +24,8 @@ export const RESEARCH_SERVICE_RESOURCES = [
   "validationSummaries",
   "clippedVersions",
   "projectPolygons",
-  "anrPlotGeometries"
+  "anrPlotGeometries",
+  "polygonAttributeDefinitions"
 ] as const;
 
 export type ResearchServiceApiResources = {
@@ -37,4 +39,9 @@ export type ResearchServiceApiResources = {
   clippedVersions: StoreResourceMap<ClippedVersionDto>;
   projectPolygons: StoreResourceMap<ProjectPolygonDto>;
   anrPlotGeometries: StoreResourceMap<AnrPlotGeometryDto>;
+  polygonAttributeDefinitions: StoreResourceMap<PolygonAttributeDefinitionDto>;
 };
+
+export const PolygonAttributeDefinitionConstants = {
+  INPUT_TYPES: ["single_select", "multi_select"] as const
+} as const;

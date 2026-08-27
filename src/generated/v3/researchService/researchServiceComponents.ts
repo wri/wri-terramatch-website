@@ -3119,6 +3119,407 @@ export const getAnrPlotGeometryGeoJson = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons/{sitePolygonUuid}/plotGeometry/geojson", "GET");
 
+export type PolygonAttributeDefinitionsIndexQueryParams = {
+  /**
+   * Framework slug. Required. Admin list includes inactive definitions.
+   */
+  frameworkKey:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | "fundo-flora-1"
+    | "wcb"
+    | "barka-fund";
+};
+
+export type PolygonAttributeDefinitionsIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type PolygonAttributeDefinitionsIndexResponse = {
+  meta?: {
+    /**
+     * @example polygonAttributeDefinitions
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example polygonAttributeDefinitions
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.PolygonAttributeDefinitionDto;
+  }[];
+};
+
+export type PolygonAttributeDefinitionsIndexVariables = {
+  queryParams: PolygonAttributeDefinitionsIndexQueryParams;
+};
+
+/**
+ * Returns all definitions for the given framework, including inactive ones. Champion write APIs still ignore inactive definitions.
+ */
+export const polygonAttributeDefinitionsIndex = new V3ApiEndpoint<
+  PolygonAttributeDefinitionsIndexResponse,
+  PolygonAttributeDefinitionsIndexError,
+  PolygonAttributeDefinitionsIndexVariables,
+  {}
+>("/research/v3/polygonAttributeDefinitions", "GET");
+
+export type PolygonAttributeDefinitionCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type PolygonAttributeDefinitionCreateResponse = {
+  meta?: {
+    /**
+     * @example polygonAttributeDefinitions
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example polygonAttributeDefinitions
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.PolygonAttributeDefinitionDto;
+  };
+};
+
+export type PolygonAttributeDefinitionCreateVariables = {
+  body: Schemas.CreatePolygonAttributeDefinitionBody;
+};
+
+/**
+ * The stable key is generated from the label (camelCase) and cannot be set by the client. It is locked after create.
+ */
+export const polygonAttributeDefinitionCreate = new V3ApiEndpoint<
+  PolygonAttributeDefinitionCreateResponse,
+  PolygonAttributeDefinitionCreateError,
+  PolygonAttributeDefinitionCreateVariables,
+  {}
+>("/research/v3/polygonAttributeDefinitions", "POST");
+
+export type PolygonAttributeDefinitionGetPathParams = {
+  /**
+   * @format uuid
+   */
+  uuid: string;
+};
+
+export type PolygonAttributeDefinitionGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type PolygonAttributeDefinitionGetResponse = {
+  meta?: {
+    /**
+     * @example polygonAttributeDefinitions
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example polygonAttributeDefinitions
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.PolygonAttributeDefinitionDto;
+  };
+};
+
+export type PolygonAttributeDefinitionGetVariables = {
+  pathParams: PolygonAttributeDefinitionGetPathParams;
+};
+
+export const polygonAttributeDefinitionGet = new V3ApiEndpoint<
+  PolygonAttributeDefinitionGetResponse,
+  PolygonAttributeDefinitionGetError,
+  PolygonAttributeDefinitionGetVariables,
+  {}
+>("/research/v3/polygonAttributeDefinitions/{uuid}", "GET");
+
+export type PolygonAttributeDefinitionUpdatePathParams = {
+  /**
+   * @format uuid
+   */
+  uuid: string;
+};
+
+export type PolygonAttributeDefinitionUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type PolygonAttributeDefinitionUpdateResponse = {
+  meta?: {
+    /**
+     * @example polygonAttributeDefinitions
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example polygonAttributeDefinitions
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.PolygonAttributeDefinitionDto;
+  };
+};
+
+export type PolygonAttributeDefinitionUpdateVariables = {
+  body: Schemas.UpdatePolygonAttributeDefinitionBody;
+  pathParams: PolygonAttributeDefinitionUpdatePathParams;
+};
+
+/**
+ * Label, active, and options may change. Key, framework, and input type cannot. When options are sent, the list is replaced. An omitted option is rejected if any polygon still stores that value.
+ */
+export const polygonAttributeDefinitionUpdate = new V3ApiEndpoint<
+  PolygonAttributeDefinitionUpdateResponse,
+  PolygonAttributeDefinitionUpdateError,
+  PolygonAttributeDefinitionUpdateVariables,
+  {}
+>("/research/v3/polygonAttributeDefinitions/{uuid}", "PUT");
+
+export type PolygonAttributeDefinitionDeletePathParams = {
+  /**
+   * @format uuid
+   */
+  uuid: string;
+};
+
+export type PolygonAttributeDefinitionDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type PolygonAttributeDefinitionDeleteResponse = {
+  meta?: {
+    /**
+     * @example polygonAttributeDefinitions
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type PolygonAttributeDefinitionDeleteVariables = {
+  pathParams: PolygonAttributeDefinitionDeletePathParams;
+};
+
+/**
+ * Hard-deletes the definition and its options only when no polygon values exist. If values exist, deactivate the definition instead.
+ */
+export const polygonAttributeDefinitionDelete = new V3ApiEndpoint<
+  PolygonAttributeDefinitionDeleteResponse,
+  PolygonAttributeDefinitionDeleteError,
+  PolygonAttributeDefinitionDeleteVariables,
+  {}
+>("/research/v3/polygonAttributeDefinitions/{uuid}", "DELETE");
+
 export const operationsByTag = {
   sitePolygons: {
     createSitePolygons,
@@ -3155,5 +3556,12 @@ export const operationsByTag = {
     updateProjectPolygon,
     deleteProjectPolygon
   },
-  anrPlotGeometry: { getAnrPlotGeometry, upsertAnrPlotGeometry, deleteAnrPlotGeometry, getAnrPlotGeometryGeoJson }
+  anrPlotGeometry: { getAnrPlotGeometry, upsertAnrPlotGeometry, deleteAnrPlotGeometry, getAnrPlotGeometryGeoJson },
+  polygonAttributeDefinitions: {
+    polygonAttributeDefinitionsIndex,
+    polygonAttributeDefinitionCreate,
+    polygonAttributeDefinitionGet,
+    polygonAttributeDefinitionUpdate,
+    polygonAttributeDefinitionDelete
+  }
 };
