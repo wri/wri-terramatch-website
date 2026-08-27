@@ -7,10 +7,8 @@ import { indexSiteConnection } from "@/connections/Entity";
 import { APPROVED } from "@/constants/statuses";
 import { useProjectFormDetails } from "@/context/wizardForm.provider";
 import { SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { getSitePolygonReviewHref } from "@/helpers/disturbanceLinks";
 import useDisturbanceReportDescriptions from "@/hooks/translation/useDisturbanceReportDescriptions";
 import { useConnection } from "@/hooks/useConnection";
-import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { OptionValue } from "@/types/common";
 
 export interface DisturbanceSiteAffectedInputProps {
@@ -32,7 +30,6 @@ export const DisturbanceSiteAffectedInput = ({
   field
 }: DisturbanceSiteAffectedInputProps) => {
   const t = useT();
-  const isAdmin = useIsAdmin();
   const projectUuid = useProjectFormDetails()?.uuid;
   const { DISTURBANCE_SITE_AFFECTED_FIELD_DESCRIPTION } = useDisturbanceReportDescriptions();
   const [, sitesData] = useConnection(indexSiteConnection, {
@@ -158,26 +155,14 @@ export const DisturbanceSiteAffectedInput = ({
   }, [siteChoices, sitesArray, value?.siteUuid]);
 
   return (
-    <div className="flex w-full flex-col gap-2">
-      <Dropdown
-        label={t(`Site {index} Affected`, { index: fieldIndex != null ? parseInt(fieldIndex) + 1 : 1 })}
-        options={optionsForDropdown}
-        value={dropdownValue}
-        onChange={_onChange}
-        placeholder={projectUuid ? t("Search and select sites...") : t("Please select a project first")}
-        description={DISTURBANCE_SITE_AFFECTED_FIELD_DESCRIPTION}
-        className="w-full"
-      />
-      {value?.siteUuid != null && value.siteUuid !== "" ? (
-        <a
-          href={getSitePolygonReviewHref(value.siteUuid, isAdmin)}
-          className="text-14-semibold text-primary-600 w-fit underline"
-          target="_blank"
-          rel="noreferrer"
-        >
-          {t("View site polygons")}
-        </a>
-      ) : null}
-    </div>
+    <Dropdown
+      label={t(`Site {index} Affected`, { index: fieldIndex != null ? parseInt(fieldIndex) + 1 : 1 })}
+      options={optionsForDropdown}
+      value={dropdownValue}
+      onChange={_onChange}
+      placeholder={projectUuid ? t("Search and select sites...") : t("Please select a project first")}
+      description={DISTURBANCE_SITE_AFFECTED_FIELD_DESCRIPTION}
+      className="w-full"
+    />
   );
 };
