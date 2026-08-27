@@ -108,6 +108,7 @@ const BulkTreeImportModal: FC<BulkTreeImportModalProps> = ({ taskUuid }) => {
   const t = useT();
   const { closeModal } = useModalContext();
   const [warnings, setWarnings] = useState<UploadWarning[]>([]);
+  const [requestComplete, setRequestComplete] = useState(false);
   const [collection, setCollection] = useState<TreeBulkImportCsvGetQueryParams["collection"]>("tree-planted");
 
   const downloadCsv = useCallback(async () => {
@@ -122,6 +123,7 @@ const BulkTreeImportModal: FC<BulkTreeImportModalProps> = ({ taskUuid }) => {
   const onUploadFile = useCallback(
     (file: File) => {
       setWarnings([]);
+      setRequestComplete(false);
       const formData = new FormData();
       formData.append("uploadFile", file);
       uploadCsv(
@@ -140,12 +142,14 @@ const BulkTreeImportModal: FC<BulkTreeImportModalProps> = ({ taskUuid }) => {
                 })
               );
             }
+            setRequestComplete(true);
           },
           onError: error => {
             const message =
               (isTranslatableError(error) ? getErrorMessages(t, error.code, error.variables)?.message : undefined) ??
               error.message;
             setWarnings([{ id: 0, message }]);
+            setRequestComplete(true);
           }
         }
       );
@@ -231,7 +235,12 @@ const BulkTreeImportModal: FC<BulkTreeImportModalProps> = ({ taskUuid }) => {
             />
           </div>
         </div>
-        {warnings.length > 0 && <Table data={warnings} columns={warningColumns} />}
+        {requestComplete && warnings.length > 0 && <Table data={warnings} columns={warningColumns} />}
+        {requestComplete && warnings.length === 0 && (
+          <Text variant="text-body-1200" className="flex-1">
+            {t("Bulk Import Complete - No Warnings Reported")}
+          </Text>
+        )}
       </Flex>
     </ModalBase>
   );
