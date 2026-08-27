@@ -55,7 +55,6 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
     if (polygonFilters.targetSys.length > 0) filter.targetSys = polygonFilters.targetSys;
     if (polygonFilters.submissionCycle.length > 0) filter.submissionCycle = polygonFilters.submissionCycle;
     if (polygonFilters.hasOverlap) filter.hasOverlap = true;
-    if (polygonFilters.hasDisturbance) filter.hasDisturbance = true;
     return filter as Partial<SitePolygonsIndexQueryParams>;
   }, [debouncedPolygonSearch, polygonFilters]);
 
@@ -136,14 +135,6 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
         label: t("Overlaps"),
         onRemove: () => {
           setPolygonFilters(current => ({ ...current, hasOverlap: false }));
-        }
-      });
-    }
-    if (polygonFilters.hasDisturbance) {
-      labels.push({
-        label: t("Disturbed Polygons"),
-        onRemove: () => {
-          setPolygonFilters(current => ({ ...current, hasDisturbance: false }));
         }
       });
     }

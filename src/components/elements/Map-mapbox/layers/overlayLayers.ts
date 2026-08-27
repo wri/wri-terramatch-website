@@ -128,7 +128,6 @@ export const addGoogleSatelliteLayer = (map: MapboxMap): void => {
     const polygonLayerPrefixes = [
       LAYERS_NAMES.POLYGON_GEOMETRY,
       LAYERS_NAMES.DELETED_GEOMETRIES,
-      LAYERS_NAMES.DISTURBED_GEOMETRIES,
       LAYERS_NAMES.CENTROIDS,
       LAYERS_NAMES.POLYGON_CENTROIDS,
       ANR_PLOT_LAYER_PREFIX
@@ -204,7 +203,6 @@ export const removeGoogleSatelliteLayer = (map: MapboxMap): void => {
       const polygonLayerPrefixes = [
         LAYERS_NAMES.POLYGON_GEOMETRY,
         LAYERS_NAMES.DELETED_GEOMETRIES,
-        LAYERS_NAMES.DISTURBED_GEOMETRIES,
         LAYERS_NAMES.CENTROIDS,
         LAYERS_NAMES.POLYGON_CENTROIDS,
         ANR_PLOT_LAYER_PREFIX
