@@ -37,8 +37,8 @@ export interface MetricCardProps {
   className?: string;
   classNameTitle?: string;
   frameworkKey?: string;
-  filtered?: number;
-  selection?: number;
+  filtered?: number | null;
+  selection?: number | null;
   metricLabel?: string;
   widthProgressBar?: string;
 }
