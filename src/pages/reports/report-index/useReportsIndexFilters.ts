@@ -110,18 +110,23 @@ export const filterProgressSections = (sections: ReportsIndexProjectSection[], c
     .map(section => ({ ...section, periods: filterProgressPeriods(section.periods, criteria) }))
     .filter(section => section.periods.length > 0);
 
-export const filterAdditionalSections = (sections: AdditionalReportsEntitySection[], criteria: ReportFilterCriteria) =>
+export const filterAdditionalSections = (
+  sections: AdditionalReportsEntitySection[],
+  criteria: ReportFilterCriteria
+): AdditionalReportsEntitySection[] =>
   sections
-    .map(section => ({
-      ...section,
-      groups: section.groups
+    .map(section => {
+      const children = filterAdditionalSections(section.children ?? [], criteria);
+      const groups = section.groups
         .map(group => ({
           ...group,
           reports: group.reports.filter(report => matchesAdditionalReport(report, criteria))
         }))
-        .filter(group => group.reports.length > 0)
-    }))
-    .filter(section => section.groups.length > 0);
+        .filter(group => group.reports.length > 0);
+
+      return { ...section, groups, children: children.length > 0 ? children : undefined };
+    })
+    .filter(section => section.groups.length > 0 || (section.children?.length ?? 0) > 0);
 
 type UseReportsIndexFiltersArgs = {
   progressSections: ReportsIndexProjectSection[];
@@ -153,15 +158,13 @@ export const useReportsIndexFilters = ({ progressSections, additionalSections, q
     [filteredProgressSections]
   );
 
-  const additionalReportCount = useMemo(
-    () =>
-      filteredAdditionalSections.reduce(
-        (sectionTotal, section) =>
-          sectionTotal + section.groups.reduce((groupTotal, group) => groupTotal + group.reports.length, 0),
-        0
-      ),
-    [filteredAdditionalSections]
-  );
+  const additionalReportCount = useMemo(() => {
+    const countSection = (section: AdditionalReportsEntitySection): number =>
+      section.groups.reduce((groupTotal, group) => groupTotal + group.reports.length, 0) +
+      (section.children ?? []).reduce((childTotal, child) => childTotal + countSection(child), 0);
+
+    return filteredAdditionalSections.reduce((sectionTotal, section) => sectionTotal + countSection(section), 0);
+  }, [filteredAdditionalSections]);
 
   return {
     filteredProgressSections,

@@ -72,14 +72,16 @@ export const getReportPeriodOptions = (
     })
   );
 
-  additionalSections.forEach(section =>
+  const collectAdditionalYears = (section: AdditionalReportsEntitySection) => {
     section.groups.forEach(group =>
       group.reports.forEach(report => {
         const year = getAdditionalReportYear(report);
         if (year != null) additionalYears.add(year);
       })
-    )
-  );
+    );
+    section.children?.forEach(collectAdditionalYears);
+  };
+  additionalSections.forEach(collectAdditionalYears);
 
   return {
     progressMonths: Array.from(progressMonths).sort(byMonthAscending),

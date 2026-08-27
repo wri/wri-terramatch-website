@@ -1,7 +1,11 @@
 import { startCase } from "lodash";
 import { useMemo } from "react";
 
-import { useDisturbanceReportIndex, useFinancialReportIndex, useSRPReportIndex } from "@/connections/Entity";
+import {
+  indexDisturbanceReportConnection,
+  indexFinancialReportConnection,
+  indexSRPReportConnection
+} from "@/connections/Entity";
 import { useOrganisation } from "@/connections/Organisation";
 import {
   DisturbanceReportEntryDto,
@@ -10,6 +14,7 @@ import {
   ProjectFullDto,
   SrpReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useAllPages } from "@/hooks/useConnection";
 
 import {
   AdditionalDisturbanceReport,
@@ -27,8 +32,6 @@ type AdditionalReportsDataState = {
 };
 
 const INDEX_PROPS = {
-  pageNumber: 1,
-  pageSize: 100,
   sortField: "updatedAt",
   sortDirection: "DESC" as const
 };
@@ -116,6 +119,14 @@ type ProjectSectionDraft = {
   disturbanceReports: AdditionalDisturbanceReport[];
 };
 
+type OrganisationSectionDraft = {
+  id: string;
+  name: string | null;
+  organisationUuid: string | null;
+  financialReports: AdditionalFinancialReport[];
+  projects: Map<string, ProjectSectionDraft>;
+};
+
 type ProjectScopedReport = {
   projectUuid: string | null;
   projectName: string | null;
@@ -123,41 +134,72 @@ type ProjectScopedReport = {
   organisationUuid: string | null;
 };
 
+const UNKNOWN_ORGANISATION = "unknown";
+
+const toProjectSection = (draft: ProjectSectionDraft): AdditionalReportsEntitySection | null => {
+  const groups: AdditionalReportGroup[] = [
+    ...(draft.srpReports.length === 0
+      ? []
+      : [{ id: `${draft.id}-annual-srp`, type: "srp-report" as const, reports: draft.srpReports }]),
+    ...(draft.disturbanceReports.length === 0
+      ? []
+      : [
+          {
+            id: `${draft.id}-disturbance-reports`,
+            type: "disturbance-report" as const,
+            reports: draft.disturbanceReports
+          }
+        ])
+  ];
+
+  if (groups.length === 0) return null;
+
+  return {
+    id: draft.id,
+    type: "project",
+    name: draft.name,
+    caption: draft.caption,
+    organisationUuid: draft.organisationUuid,
+    groups
+  };
+};
+
+/**
+ * Additional Reports are organisation-first: financial reports hang off the org, SRP and
+ * disturbance reports hang off each project inside that org.
+ */
 export const useAdditionalReportsData = (
   project: ProjectFullDto,
   enabled: boolean,
-  allProjects: boolean
+  organisationUuid: string | null
 ): AdditionalReportsDataState => {
-  const projectOrganisationUuid = project.organisationUuid ?? null;
-  const loadOrganisationData = enabled && !allProjects && projectOrganisationUuid != null;
-  const financialEnabled = enabled && (allProjects || projectOrganisationUuid != null);
-  const projectFilter = allProjects ? {} : { projectUuid: project.uuid };
+  const loadOrganisationData = enabled && organisationUuid != null;
+  const indexFilter = organisationUuid == null ? {} : { organisationUuid };
 
   const [organisationLoaded, { data: organisation }] = useOrganisation(
-    loadOrganisationData ? { id: projectOrganisationUuid } : {}
+    loadOrganisationData ? { id: organisationUuid } : {}
   );
 
-  const [financialLoaded, { data: financialData, loadFailure: financialFailure }] = useFinancialReportIndex({
+  const [financialLoaded, financialData, financialFailure] = useAllPages(indexFinancialReportConnection, {
     ...INDEX_PROPS,
-    filter: allProjects ? {} : { organisationUuid: projectOrganisationUuid ?? "" },
-    enabled: financialEnabled
-  });
-
-  const [srpLoaded, { data: srpData, loadFailure: srpFailure }] = useSRPReportIndex({
-    ...INDEX_PROPS,
-    filter: projectFilter,
+    filter: indexFilter,
     enabled
   });
 
-  const [disturbanceLoaded, { data: disturbanceData, loadFailure: disturbanceFailure }] = useDisturbanceReportIndex({
+  const [srpLoaded, srpData, srpFailure] = useAllPages(indexSRPReportConnection, {
     ...INDEX_PROPS,
-    filter: projectFilter,
+    filter: indexFilter,
+    enabled
+  });
+
+  const [disturbanceLoaded, disturbanceData, disturbanceFailure] = useAllPages(indexDisturbanceReportConnection, {
+    ...INDEX_PROPS,
+    filter: indexFilter,
     enabled
   });
 
   const organisationReady = !loadOrganisationData || organisationLoaded;
-  const financialReady = !financialEnabled || financialLoaded;
-  const loading = enabled && !(organisationReady && financialReady && srpLoaded && disturbanceLoaded);
+  const loading = enabled && !(organisationReady && financialLoaded && srpLoaded && disturbanceLoaded);
   // Financial reports are optional on this tab: a failed unfiltered "All" fetch must not hide SRP
   // and disturbance reports that already loaded.
   const error = enabled && (srpFailure != null || disturbanceFailure != null);
@@ -165,51 +207,33 @@ export const useAdditionalReportsData = (
   const sections = useMemo((): AdditionalReportsEntitySection[] => {
     if (!enabled || loading || error) return [];
 
-    const financialReports = (financialFailure != null ? [] : financialData ?? []).map(report => {
-      const isProjectOrganisation = report.organisationUuid === projectOrganisationUuid;
-      return toFinancialReport(
-        report,
-        isProjectOrganisation ? organisation?.currency ?? null : null,
-        isProjectOrganisation ? organisation?.finStartMonth ?? null : null
-      );
-    });
-    const nextSections: AdditionalReportsEntitySection[] = [];
+    const draftsByOrganisation = new Map<string, OrganisationSectionDraft>();
 
-    if (allProjects && financialReports.length > 0) {
-      const reportsByOrganisation = new Map<string, { name: string | null; reports: AdditionalFinancialReport[] }>();
+    const organisationDraft = (uuid: string | null, name: string | null) => {
+      const organisationId = uuid ?? UNKNOWN_ORGANISATION;
+      let draft = draftsByOrganisation.get(organisationId);
+      if (draft == null) {
+        draft = {
+          id: organisationId,
+          name,
+          organisationUuid: uuid,
+          financialReports: [],
+          projects: new Map()
+        };
+        draftsByOrganisation.set(organisationId, draft);
+      } else if (draft.name == null && name != null) {
+        draft.name = name;
+      }
+      return draft;
+    };
 
-      financialReports.forEach(report => {
-        const organisationId = report.organisationUuid ?? "unknown";
-        const current = reportsByOrganisation.get(organisationId);
-        if (current == null) {
-          reportsByOrganisation.set(organisationId, { name: report.organisationName, reports: [report] });
-          return;
-        }
-        current.reports.push(report);
-      });
-
-      Array.from(reportsByOrganisation.entries())
-        .sort((a, b) => (a[1].name ?? "").localeCompare(b[1].name ?? ""))
-        .forEach(([organisationId, { name, reports }]) => {
-          nextSections.push({
-            id: organisationId,
-            type: "organisation",
-            name,
-            caption: "Organisation",
-            organisationUuid: organisationId === "unknown" ? null : organisationId,
-            groups: [{ id: `${organisationId}-financial-reports`, type: "financial-report", reports }]
-          });
-        });
-    }
-
-    // SRP and disturbance reports hang off a project, so they get one accordion per project. In the
-    // single project view this collapses to the one project being looked at.
-    const draftsByProject = new Map<string, ProjectSectionDraft>();
-
-    const draftFor = (report: ProjectScopedReport) => {
+    const projectDraft = (report: ProjectScopedReport) => {
       const projectUuid = report.projectUuid ?? project.uuid;
-      let draft = draftsByProject.get(projectUuid);
-
+      const org = organisationDraft(
+        report.organisationUuid ?? project.organisationUuid,
+        report.organisationName ?? project.organisationName
+      );
+      let draft = org.projects.get(projectUuid);
       if (draft == null) {
         draft = {
           id: projectUuid,
@@ -219,71 +243,54 @@ export const useAdditionalReportsData = (
           srpReports: [],
           disturbanceReports: []
         };
-        draftsByProject.set(projectUuid, draft);
+        org.projects.set(projectUuid, draft);
       }
-
       return draft;
     };
 
-    (srpData ?? []).forEach(report => draftFor(report).srpReports.push(toSrpReport(report)));
-    (disturbanceData ?? []).forEach(report => draftFor(report).disturbanceReports.push(toDisturbanceReport(report)));
+    (financialFailure != null ? [] : financialData).forEach(report => {
+      const isScopedOrganisation = organisationUuid != null && report.organisationUuid === organisationUuid;
+      organisationDraft(report.organisationUuid, report.organisationName).financialReports.push(
+        toFinancialReport(
+          report,
+          isScopedOrganisation ? organisation?.currency ?? null : null,
+          isScopedOrganisation ? organisation?.finStartMonth ?? null : null
+        )
+      );
+    });
+    srpData.forEach(report => projectDraft(report).srpReports.push(toSrpReport(report)));
+    disturbanceData.forEach(report => projectDraft(report).disturbanceReports.push(toDisturbanceReport(report)));
 
-    const projectSections = Array.from(draftsByProject.values())
+    return Array.from(draftsByOrganisation.values())
       .map(draft => {
-        const groups: AdditionalReportGroup[] = [
-          ...(draft.srpReports.length === 0
-            ? []
-            : [{ id: `${draft.id}-annual-srp`, type: "srp-report" as const, reports: draft.srpReports }]),
-          ...(draft.disturbanceReports.length === 0
+        const children = Array.from(draft.projects.values())
+          .map(toProjectSection)
+          .filter((section): section is AdditionalReportsEntitySection => section != null)
+          .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
+        const groups: AdditionalReportGroup[] =
+          draft.financialReports.length === 0
             ? []
             : [
                 {
-                  id: `${draft.id}-disturbance-reports`,
-                  type: "disturbance-report" as const,
-                  reports: draft.disturbanceReports
+                  id: `${draft.id}-financial-reports`,
+                  type: "financial-report",
+                  reports: draft.financialReports
                 }
-              ])
-        ];
+              ];
 
         return {
           id: draft.id,
-          type: "project" as const,
+          type: "organisation" as const,
           name: draft.name,
-          caption: draft.caption,
+          caption: "Organisation",
           organisationUuid: draft.organisationUuid,
-          groups
+          groups,
+          children
         };
       })
-      .filter(section => section.groups.length > 0)
+      .filter(section => section.groups.length > 0 || (section.children?.length ?? 0) > 0)
       .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
-
-    if (!allProjects && financialReports.length > 0) {
-      const financialGroup: AdditionalReportGroup = {
-        id: "financial-reports",
-        type: "financial-report",
-        reports: financialReports
-      };
-      const currentProjectIndex = projectSections.findIndex(section => section.id === project.uuid);
-      if (currentProjectIndex >= 0) {
-        projectSections[currentProjectIndex] = {
-          ...projectSections[currentProjectIndex],
-          groups: [financialGroup, ...projectSections[currentProjectIndex].groups]
-        };
-      } else {
-        projectSections.unshift({
-          id: project.uuid,
-          type: "project",
-          name: project.name,
-          caption: project.organisationName ?? "",
-          organisationUuid: project.organisationUuid,
-          groups: [financialGroup]
-        });
-      }
-    }
-
-    return [...nextSections, ...projectSections];
   }, [
-    allProjects,
     disturbanceData,
     enabled,
     error,
@@ -296,7 +303,7 @@ export const useAdditionalReportsData = (
     project.organisationName,
     project.organisationUuid,
     project.uuid,
-    projectOrganisationUuid,
+    organisationUuid,
     srpData
   ]);
 

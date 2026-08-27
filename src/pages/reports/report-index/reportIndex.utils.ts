@@ -2,7 +2,12 @@ import type { FeedbackTagProps } from "@/redesignComponents/actions/Tags/Feedbac
 import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
-import type { AdditionalReportsEntitySection, ReportIndexItem, ReportsIndexProjectSection } from "./reportIndex.types";
+import type {
+  AdditionalReport,
+  AdditionalReportsEntitySection,
+  ReportIndexItem,
+  ReportsIndexProjectSection
+} from "./reportIndex.types";
 
 export const REPORTS_INDEX_SOURCES = ["project", "site", "nursery"] as const;
 
@@ -357,6 +362,11 @@ export const findProgressReportLocation = (
   return null;
 };
 
+export const collectAdditionalReports = (section: AdditionalReportsEntitySection): AdditionalReport[] => [
+  ...section.groups.flatMap(group => group.reports),
+  ...(section.children ?? []).flatMap(collectAdditionalReports)
+];
+
 export const findAdditionalReportLocation = (
   sections: AdditionalReportsEntitySection[],
   reportId: string
@@ -367,6 +377,8 @@ export const findAdditionalReportLocation = (
         return { sectionId: section.id, groupId: group.id };
       }
     }
+    const nested = findAdditionalReportLocation(section.children ?? [], reportId);
+    if (nested != null) return nested;
   }
   return null;
 };
