@@ -31,7 +31,7 @@ export const Default: Story = {
   }
 };
 
-const items: SitePolygonLightDto[] = [
+const items = [
   {
     uuid: "1",
     lightResource: true,
@@ -60,6 +60,7 @@ const items: SitePolygonLightDto[] = [
     validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
+    disturbanceReportUuid: null,
     isActive: true,
     createdAt: null,
     deletedAt: null,
@@ -93,6 +94,7 @@ const items: SitePolygonLightDto[] = [
     validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
+    disturbanceReportUuid: null,
     isActive: true,
     createdAt: null,
     deletedAt: null,
@@ -126,9 +128,10 @@ const items: SitePolygonLightDto[] = [
     validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
+    disturbanceReportUuid: null,
     isActive: true,
     createdAt: null,
     deletedAt: null,
     customAttributes: {}
   }
-];
+] as SitePolygonLightDto[];
