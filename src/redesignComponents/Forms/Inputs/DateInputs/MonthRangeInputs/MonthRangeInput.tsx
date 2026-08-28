@@ -91,9 +91,7 @@ export const MonthRangeInput: FC<MonthRangeInputProps> = ({
       if (preserved && nextValue.length === 1) {
         preservedRef.current = null;
         const [a, b] =
-          nextValue[0].compare(preserved.date) > 0
-            ? [preserved.date, nextValue[0]]
-            : [nextValue[0], preserved.date];
+          nextValue[0].compare(preserved.date) > 0 ? [preserved.date, nextValue[0]] : [nextValue[0], preserved.date];
         setDates([a, b]);
         return;
       }
@@ -173,7 +171,7 @@ export const MonthRangeInput: FC<MonthRangeInputProps> = ({
           >
             <CalendarIcon style={{ color: getThemedColor("neutral", 600) }} />
             <div className="flex justify-center">
-              <DatePicker.Input index={0} placeholder="MMM YYYY" onKeyDown={handleInputKeyDown} />
+              <DatePicker.Input index={0} placeholder="MM/YYYY" onKeyDown={handleInputKeyDown} />
             </div>
 
             <span
@@ -185,7 +183,7 @@ export const MonthRangeInput: FC<MonthRangeInputProps> = ({
             </span>
 
             <div className="flex justify-center">
-              <DatePicker.Input index={1} placeholder="MMM YYYY" onKeyDown={handleInputKeyDown} />
+              <DatePicker.Input index={1} placeholder="MM/YYYY" onKeyDown={handleInputKeyDown} />
             </div>
           </DatePicker.Control>
           <Portal>
