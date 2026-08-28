@@ -224,9 +224,14 @@ function resolveGeoserverLayerName(
   dashboardMode: string | undefined,
   polygonGeometryVariant: PolygonGeometryVariant | undefined
 ): string {
-  if (layer.name !== LAYERS_NAMES.POLYGON_GEOMETRY || dashboardMode != null) {
+  if (dashboardMode != null && layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
+    return LAYERS_NAMES.POLYGON_GEOMETRY;
+  }
+
+  if (layer.name !== LAYERS_NAMES.POLYGON_GEOMETRY) {
     return layer.geoserverLayerName;
   }
+
   return getPolygonGeometryLayerName(polygonGeometryVariant ?? POLYGON_GEOMETRY_VARIANTS.Active);
 }
 

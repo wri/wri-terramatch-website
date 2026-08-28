@@ -59,7 +59,7 @@ const ProjectOverview: FC = () => {
             <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
               <Button
                 variant="outlined"
-                disabled={record?.status === "information-required"}
+                disabled={record?.status === "information-required" || record?.status === "draft"}
                 onClick={() => setStatusModal("information-required")}
               >
                 Request More Info
@@ -70,7 +70,8 @@ const ProjectOverview: FC = () => {
                 disabled={
                   record?.status === "approved" ||
                   record?.updateRequestStatus === "pending-approval" ||
-                  record?.updateRequestStatus === "draft"
+                  record?.updateRequestStatus === "draft" ||
+                  record?.status === "draft"
                 }
                 onClick={() => setStatusModal("approved")}
               >

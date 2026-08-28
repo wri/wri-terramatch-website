@@ -5,24 +5,23 @@ import { useCallback, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
-import EntityInformationRequiredModal from "@/components/extensive/EntityInformationRequiredModal";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
-import { INFORMATION_REQUIRED, PENDING_APPROVAL } from "@/constants/statuses";
+import { PENDING_APPROVAL } from "@/constants/statuses";
 import { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import type { ButtonGroupButtonProps } from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import TagSubmission, { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
 import { ChevronRightIcon, DownloadIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
-import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 import EntitySetUpSection from "./EntitySetUpSection";
@@ -41,12 +40,13 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
-  const [openStatusModal, setOpenStatusModal] = useState(false);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
     entityStatus: project.status ?? "draft",
-    updateRequestStatus: project.updateRequestStatus
+    updateRequestStatus: project.updateRequestStatus,
+    feedback: project.feedback,
+    useInformationRequiredModal: true
   });
 
   const [, { data: associatedUsers }] = useUserAssociations({
@@ -73,16 +73,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         //TODO: replace with actual image once it is implemented
       }));
   }, [associatedUsers]);
-  const needMoreInformation =
-    project.updateRequestStatus === INFORMATION_REQUIRED || project.status === INFORMATION_REQUIRED;
-  const awaitingApproval = project.updateRequestStatus === PENDING_APPROVAL || project.status === PENDING_APPROVAL;
-  const handleEditClick = useCallback(() => {
-    if (needMoreInformation && !awaitingApproval) {
-      setOpenStatusModal(true);
-    } else {
-      handleEdit();
-    }
-  }, [handleEdit, needMoreInformation, awaitingApproval]);
+  const handleEditClick = useCallback(() => handleEdit(), [handleEdit]);
 
   const goToTab = useCallback(
     (tab: string) => {
@@ -146,7 +137,10 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     enabled: project.uuid != null
   });
 
-  const isDraftOrPendingApproval = project.status === "draft" || awaitingApproval;
+  const isDraftOrPendingApproval =
+    project.status === "draft" ||
+    project.status === PENDING_APPROVAL ||
+    project.updateRequestStatus === PENDING_APPROVAL;
 
   const showSiteAreasMapPlaceholder =
     !isLoadingProjectPolygons && (projectPolygonDataV3?.length ?? 0) === 0 && isDraftOrPendingApproval;
@@ -172,13 +166,6 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   return (
     <PageContent>
       {EditModals}
-      <EntityInformationRequiredModal
-        feedback={project.feedback}
-        entityName="projects"
-        entityUuid={project.uuid}
-        open={openStatusModal}
-        onOpenChange={setOpenStatusModal}
-      />
       <InviteMonitoringPartnerModal
         projectUUID={project.uuid}
         open={showInviteModal}
@@ -227,14 +214,13 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           flexProps={{ width: "fit-content", overflow: "hidden" }}
           className="!w-full !max-w-full sm:!w-[35%] sm:!max-w-[35%] lg:!w-[30%] lg:!max-w-[30%]"
           title={t("Project Set Up")}
-          tag={(() => {
-            const tagState = mapStatusToTagStateEntity(project?.status);
-            return project.updateRequestStatus === "pending-approval" ? (
+          tag={
+            project.updateRequestStatus === PENDING_APPROVAL ? (
               <TagSubmission state="pending-approval" />
-            ) : project?.status != null ? (
-              <TagSubmission state={tagState?.type as TagSubmissionState} />
-            ) : null;
-          })()}
+            ) : (
+              <StatusTag status={project?.status} />
+            )
+          }
           buttonProps={{
             variant: "primary",
             size: "small",

@@ -23,7 +23,9 @@ export type TagSubmissionState =
   | "approved"
   | "due"
   | "not-selected"
-  | "receiving-applications";
+  | "receiving-applications"
+  | "closed"
+  | "coming-soon";
 
 export interface TagSubmissionProps {
   state: TagSubmissionState;
@@ -43,7 +45,9 @@ export const useTagLabel = (tag: TagSubmissionState) => {
     approved: t("Approved"),
     due: t("Due"),
     "not-selected": t("Not Selected"),
-    "receiving-applications": t("Receiving Applications")
+    "receiving-applications": t("Receiving Applications"),
+    closed: t("Closed"),
+    "coming-soon": t("Coming Soon")
   };
 
   return map[tag];
@@ -58,7 +62,9 @@ const TagSubmissionActionStatusTagStateMap: Record<TagSubmissionState, ActionSta
   approved: "success",
   due: "warning",
   "not-selected": "warning",
-  "receiving-applications": "neutral-dark"
+  "receiving-applications": "information",
+  closed: "neutral-light",
+  "coming-soon": "neutral-dark"
 };
 
 function getTagSubmissionIcon(state: TagSubmissionState, size: "small" | "default"): ReactElement {
@@ -82,7 +88,11 @@ function getTagSubmissionIcon(state: TagSubmissionState, size: "small" | "defaul
     case "not-selected":
       return <DisallowedIcon color="error.500" boxSize={boxSize} />;
     case "receiving-applications":
-      return <InfoIcon color="neutral.900" boxSize={boxSize} />;
+      return <PendingIcon color="information.500" boxSize={boxSize} />;
+    case "closed":
+      return <NothingReportedIcon color="neutral.600" boxSize={boxSize} />;
+    case "coming-soon":
+      return <InfoIcon color="neutral.800" boxSize={boxSize} />;
     default:
       return <></>;
   }

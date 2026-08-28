@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC, useCallback, useMemo, useState } from "react";
 
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
@@ -18,7 +19,6 @@ import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSu
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
 import { ONBOARDING_CARD_TYPES } from "@/utils/analytics/onboardingCardAnalytics";
-import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import KeyIndicatorsInsights from "../components/KeyIndicatorsInsights";
 
@@ -60,10 +60,7 @@ const ProjectReportOverviewTab: FC<ProjectReportOverviewTabProps> = ({ projectRe
       return <TagSubmission size="small" state="pending-approval" />;
     }
 
-    const tagState = mapStatusToTagStateEntity(projectReport.status);
-    if (projectReport.status == null || tagState == null) return null;
-
-    return <TagSubmission size="small" state={tagState.type} />;
+    return <StatusTag size="small" status={projectReport.status} />;
   }, [projectReport.status, projectReport.updateRequestStatus]);
 
   return (

@@ -122,24 +122,3 @@ export const CompletionStatusMapping = (t: typeof useT): any => {
     }
   };
 };
-
-export const SubmissionStatusMapping = (t: typeof useT): any => {
-  return {
-    due: {
-      status: "warning",
-      statusText: t("Due")
-    },
-    "pending-approval": {
-      status: "awaiting",
-      statusText: t("Pending Approval")
-    },
-    "information-required": {
-      status: "warning",
-      statusText: t("Information Required")
-    },
-    approved: {
-      status: "success",
-      statusText: t("Approved")
-    }
-  };
-};

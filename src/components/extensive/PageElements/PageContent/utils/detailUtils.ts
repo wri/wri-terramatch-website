@@ -54,8 +54,10 @@ export const getFieldsRequiringAttentionCount = (
 const isEmptyFieldValue = (value: unknown): boolean =>
   value == null || value === "" || (Array.isArray(value) && value.length === 0);
 
+const PRESENCE_ERROR_TYPES = new Set(["required", "nullable", "optionality"]);
+
 const isRequiredValidationError = (error: yup.ValidationError, value: unknown): boolean =>
-  error.type === "required" || (error.type === "min" && isEmptyFieldValue(value));
+  (error.type != null && PRESENCE_ERROR_TYPES.has(error.type)) || (error.type === "min" && isEmptyFieldValue(value));
 
 export const resolveEntryInlineIssue = ({
   entry,

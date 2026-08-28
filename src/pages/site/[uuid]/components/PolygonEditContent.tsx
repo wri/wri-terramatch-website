@@ -369,9 +369,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setIsUserDrawingEnabled(false);
       setDraftPolygonGeometry(undefined);
       setPolygonGeometryEdit(undefined);
-      onPolygonUpdatedRef.current?.(savedPolygon);
       setShouldRefetchPolygonData(true);
       await waitForMapEditCleanup();
+      onPolygonUpdatedRef.current?.(savedPolygon);
       if (options.refetchVersionsList) {
         await refetchVersionsRef.current?.();
       }

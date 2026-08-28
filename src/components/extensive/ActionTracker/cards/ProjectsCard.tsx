@@ -8,7 +8,7 @@ import { useDate } from "@/hooks/useDate";
 import { sortByDate } from "@/utils/sort";
 
 import { IconNames } from "../../Icon/Icon";
-import ActionTrackerCard, { getActionCardStatusMapper } from "../ActionTrackerCard";
+import ActionTrackerCard from "../ActionTrackerCard";
 import { ActionTrackerCardRowProps } from "../ActionTrackerCardRow";
 
 export type ProjectsCardProps = {
@@ -72,7 +72,7 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
         }
 
         return {
-          ...getActionCardStatusMapper(t)[status!],
+          status,
           ctaLink,
           ctaText,
           title: project?.name,

@@ -53,4 +53,9 @@ export const ROWS: MatrixRow[] = [
   { status: "External", styles: [null, null, null, null, "Selected Overlap"] }
 ];
 
-export const ROW_TEMPLATE = `repeat(${ROWS.length}, 8.25rem)`;
+export const ROW_TEMPLATE = {
+  base: `repeat(${ROWS.length}, 4.75rem)`,
+  sm: `repeat(${ROWS.length}, 6rem)`,
+  md: `repeat(${ROWS.length}, 7rem)`,
+  lg: `repeat(${ROWS.length}, 8.25rem)`
+};
