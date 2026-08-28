@@ -14,8 +14,11 @@ export const extractGeoJsonFromResponse = (
 ): GeoJSON.FeatureCollection | undefined => {
   if (response == null) return undefined;
   if (isFeatureCollection(response)) return response;
-  if ("data" in response && isFeatureCollection(response.data?.attributes)) {
-    return response.data.attributes;
+  if (!("data" in response)) return undefined;
+
+  const attributes = response.data?.attributes;
+  if (isFeatureCollection(attributes)) {
+    return attributes;
   }
   return undefined;
 };
