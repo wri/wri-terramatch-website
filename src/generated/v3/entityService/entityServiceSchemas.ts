@@ -1647,6 +1647,10 @@ export type ProjectFullDto = {
    * True for projects that are test data and do not represent actual planting on the ground.
    */
   isTest: boolean;
+  /**
+   * When true, report generation is paused for this project. Does not archive child sites or nurseries.
+   */
+  isArchived: boolean;
   feedback: string | null;
   feedbackFields: string[] | null;
   cohort: string | null;
@@ -1797,6 +1801,10 @@ export type SiteFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  /**
+   * When true, report generation is paused for this site. Independent of project archival.
+   */
+  isArchived: boolean;
   seedsPlantedCount: number;
   overdueSiteReportsTotal: number;
   selfReportedWorkdayCount: number;
@@ -1923,6 +1931,10 @@ export type NurseryFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  /**
+   * When true, report generation is paused for this nursery. Independent of project archival.
+   */
+  isArchived: boolean;
   feedback: string | null;
   feedbackFields: string[] | null;
   type: string | null;

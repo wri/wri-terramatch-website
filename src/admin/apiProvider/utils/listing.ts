@@ -45,6 +45,10 @@ export const raConnectionProps = <FilterType, SideloadType>(params: GetListParam
     filter.frameworkKey = [filter.frameworkKey];
   }
 
+  if (filter.cohort != null && !Array.isArray(filter.cohort)) {
+    filter.cohort = [filter.cohort];
+  }
+
   if (filter.q != null && filter.search == null) {
     filter.search = filter.q;
     delete filter.q;

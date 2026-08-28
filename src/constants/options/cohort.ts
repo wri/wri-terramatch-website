@@ -2,6 +2,42 @@ import { useT } from "@transifex/react";
 
 import { Option } from "@/types/common";
 
+export const getCohortOptions = (t: typeof useT | Function = (t: string) => t) =>
+  [
+    {
+      value: "ppc",
+      title: t("Priceless Planet Coalition")
+    },
+    {
+      value: "terrafund-cohort-1",
+      title: t("TerraFund Cohort One")
+    },
+    {
+      value: "terrafund-cohort-2",
+      title: t("TerraFund Cohort Two")
+    },
+    {
+      value: "hbf",
+      title: t("Harit Bharat Fund")
+    },
+    {
+      value: "epa-ghana-pilot",
+      title: t("EPA-Ghana Pilot")
+    },
+    {
+      value: "terrafund-cohort-3",
+      title: t("TerraFund Cohort Three")
+    },
+    {
+      value: "fundo-flora-cohort-1",
+      title: t("Fundo Flora Cohort One")
+    },
+    {
+      value: "barka-fund",
+      title: t("Barka Fund")
+    }
+  ] as Option[];
+
 export const getProjectCohortOptions = (t: typeof useT | Function = (t: string) => t) =>
   [
     {

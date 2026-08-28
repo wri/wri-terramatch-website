@@ -27,6 +27,7 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices, useGadmOptions } from "@/connections/Gadm";
+import { getCohortOptions } from "@/constants/options/cohort";
 import { getChangeRequestStatusOptions, getPlantingStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -70,7 +71,7 @@ const ProjectDataGrid = () => {
       />
       <FunctionField
         source="updateRequestStatus"
-        label="Change Request Status"
+        label="Change Request Statusx"
         sortable={false}
         render={(record?: ProjectLightDto) => {
           const { title } =
@@ -166,7 +167,7 @@ export const ProjectsList: FC = () => {
     <SelectInput
       key="updateRequestStatus"
       className="select-page-admin"
-      label="Change Request Status"
+      label="Change Request Statusx"
       source="updateRequestStatus"
       choices={optionToChoices(getChangeRequestStatusOptions())}
     />,
@@ -175,6 +176,13 @@ export const ProjectsList: FC = () => {
       label="Framework"
       source="frameworkKey"
       choices={frameworkInputChoices}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="cohort"
+      label="Cohort"
+      source="cohort"
+      choices={optionToChoices(getCohortOptions())}
       className="select-page-admin"
     />
   ];

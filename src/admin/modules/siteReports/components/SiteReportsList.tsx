@@ -24,6 +24,7 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices } from "@/connections/Gadm";
+import { getCohortOptions } from "@/constants/options/cohort";
 import {
   getChangeRequestStatusOptions,
   getNothingReportOptions,
@@ -195,6 +196,13 @@ export const SiteReportsList: FC = () => {
       label="Nothing to Report"
       source="nothingToReport"
       choices={optionToChoices(getNothingReportOptions())}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="cohort"
+      label="Cohort"
+      source="cohort"
+      choices={optionToChoices(getCohortOptions())}
       className="select-page-admin"
     />
   ];

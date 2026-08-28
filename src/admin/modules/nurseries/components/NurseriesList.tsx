@@ -26,6 +26,7 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices } from "@/connections/Gadm";
+import { getCohortOptions } from "@/constants/options/cohort";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { optionToChoices } from "@/utils/options";
@@ -160,7 +161,14 @@ export const NurseriesList: FC = () => {
         className="select-page-admin"
         filterToQuery={searchText => ({ searchFilter: searchText })}
       />
-    </ReferenceInput>
+    </ReferenceInput>,
+    <SelectInput
+      key="cohort"
+      label="Cohort"
+      source="cohort"
+      choices={optionToChoices(getCohortOptions())}
+      className="select-page-admin"
+    />
   ];
 
   const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport(

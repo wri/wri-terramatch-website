@@ -24,6 +24,7 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices } from "@/connections/Gadm";
+import { getCohortOptions } from "@/constants/options/cohort";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { ProjectReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -154,6 +155,13 @@ export const ProjectReportsList: FC = () => {
       label="Framework"
       source="frameworkKey"
       choices={frameworkInputChoices}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="cohort"
+      label="Cohort"
+      source="cohort"
+      choices={optionToChoices(getCohortOptions())}
       className="select-page-admin"
     />
   ];

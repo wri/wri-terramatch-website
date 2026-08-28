@@ -26,6 +26,7 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices } from "@/connections/Gadm";
+import { getCohortOptions } from "@/constants/options/cohort";
 import { getPolygonsSubmittedTypes } from "@/constants/options/polygonsSubmittedTypes";
 import {
   getChangeRequestStatusOptions,
@@ -214,6 +215,13 @@ export const SitesList: FC = () => {
       label="Polygon"
       source="polygonStatus"
       choices={optionToChoices(getPolygonOptions())}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="cohort"
+      label="Cohort"
+      source="cohort"
+      choices={optionToChoices(getCohortOptions())}
       className="select-page-admin"
     />
   ];

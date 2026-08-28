@@ -23,6 +23,7 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { getCohortOptions } from "@/constants/options/cohort";
 import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
@@ -148,6 +149,13 @@ export const DisturbanceReportList: FC = () => {
       label="Framework"
       source="frameworkKey"
       choices={frameworkInputChoices}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="cohort"
+      label="Cohort"
+      source="cohort"
+      choices={optionToChoices(getCohortOptions())}
       className="select-page-admin"
     />
   ];
