@@ -77,7 +77,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
     showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, 1), POLYGON_TOAST_IDS.downloading);
 
     try {
-      await downloadPolygonGeoJson(polygonUuid, filename, { includeExtendedData: true });
+      await downloadPolygonGeoJson(polygonUuid, filename);
       completePolygonProgressToast(POLYGON_TOAST_IDS.downloading, toastLabels.downloadingPolygonsComplete);
     } catch {
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);

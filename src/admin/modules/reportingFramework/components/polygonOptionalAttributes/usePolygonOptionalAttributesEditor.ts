@@ -202,7 +202,6 @@ export const usePolygonOptionalAttributesEditor = (
       await reloadFromServer();
     } catch (error) {
       notify(`Error saving optional attributes: ${formatErrorMessage(error)}`, { type: "error" });
-      // Discard local edits and show server truth after a partial/failed save.
       try {
         await reloadFromServer();
       } catch (reloadError) {

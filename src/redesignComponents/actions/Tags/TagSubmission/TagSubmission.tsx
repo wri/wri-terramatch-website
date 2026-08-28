@@ -8,8 +8,7 @@ import {
   DueIcon,
   InfoIcon,
   NothingReportedIcon,
-  PendingIcon,
-  RejectedIcon
+  PendingIcon
 } from "@/redesignComponents/foundations/Icons";
 
 import ActionStatusTag from "../ActionStatusTag/ActionStatusTag";
