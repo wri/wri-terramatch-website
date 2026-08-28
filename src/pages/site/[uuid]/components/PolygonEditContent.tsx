@@ -14,6 +14,7 @@ import {
 } from "@/components/elements/Map-mapbox/utils";
 import { loadAnrPlotGeometryGeoJson, useAnrPlotGeometry } from "@/connections/AnrPlotGeometry";
 import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
+import { usePolygonAttributeDefinitions } from "@/connections/PolygonAttributeDefinitions";
 import { updatePolygonVersionAsync, useListPolygonVersions } from "@/connections/PolygonVersion";
 import {
   bulkUpdateSitePolygonStatus,
@@ -23,6 +24,7 @@ import {
 } from "@/connections/SitePolygons";
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
@@ -80,6 +82,12 @@ import {
   saveNewSitePolygon
 } from "./polygonEditSave";
 import { normalizeSubmissionCycle, SUBMISSION_CYCLE_LABELS, SUBMISSION_CYCLE_OPTIONS } from "./polygonFilter.constants";
+import {
+  buildCustomAttributeFormValues,
+  selectActiveCustomAttributeDefinitions
+} from "./polygonOptionalAttributes/mappers";
+import OptionalAttributesAccordion from "./polygonOptionalAttributes/OptionalAttributesAccordion";
+import type { CustomAttributeFormValues } from "./polygonOptionalAttributes/types";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 
 type PolygonEditContentProps = {
@@ -111,7 +119,12 @@ type PolygonEditContentProps = {
 
 type PolygonVersionRow = SitePolygonLightDto & { id: string };
 
-type PolygonEditAccordionSection = "details" | "monitoring-plots" | "geotagged-photos" | "versions";
+type PolygonEditAccordionSection =
+  | "details"
+  | "optional-attributes"
+  | "monitoring-plots"
+  | "geotagged-photos"
+  | "versions";
 
 const isoStringToDateValue = (value: string | null | undefined): DateValue[] => {
   if (value == null || value === "") return [];
@@ -159,7 +172,8 @@ const buildFormValuesFromPolygon = (source: SitePolygonLightDto | undefined): Po
   targetLandUseSystem: normalizeTargetSystem(source?.targetSys),
   treeDistribution: source?.distr ?? [],
   treesPlanted: source?.numTrees != null ? String(source.numTrees) : "",
-  submissionCycle: normalizeSubmissionCycle(source?.submissionCycle)
+  submissionCycle: normalizeSubmissionCycle(source?.submissionCycle),
+  customAttributes: {}
 });
 
 const applyFormValuesToState = (
@@ -172,6 +186,7 @@ const applyFormValuesToState = (
     setTreeDistribution: (value: string[]) => void;
     setTreesPlanted: (value: string) => void;
     setSubmissionCycle: (value: string[]) => void;
+    setCustomAttributes: (value: CustomAttributeFormValues) => void;
   }
 ): void => {
   setters.setPolygonName(values.polygonName);
@@ -181,6 +196,7 @@ const applyFormValuesToState = (
   setters.setTreeDistribution(values.treeDistribution);
   setters.setTreesPlanted(values.treesPlanted);
   setters.setSubmissionCycle(values.submissionCycle);
+  setters.setCustomAttributes(values.customAttributes);
 };
 
 const PolygonEditContent: FC<PolygonEditContentProps> = ({
@@ -211,6 +227,15 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 }) => {
   const t = useT();
   const isAdmin = useIsAdmin();
+  const { framework } = useFrameworkContext();
+  const [, { data: customAttributeDefinitionsData }] = usePolygonAttributeDefinitions({
+    frameworkKey: framework,
+    enabled: framework !== Framework.UNDEFINED
+  });
+  const activeCustomAttributeDefinitions = useMemo(
+    () => selectActiveCustomAttributeDefinitions(customAttributeDefinitionsData),
+    [customAttributeDefinitionsData]
+  );
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
   const showStatusToast = useCallback((type: "success" | "error" | "warning", label: string) => {
     if (type === "error") {
@@ -249,6 +274,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
   const [submissionCycle, setSubmissionCycle] = useState<string[]>([]);
   const [treesPlanted, setTreesPlanted] = useState("");
+  const [customAttributes, setCustomAttributes] = useState<CustomAttributeFormValues>({});
   const [plotsVisible, setPlotsVisible] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
   const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
@@ -265,6 +291,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     },
     []
   );
+
+  const handleCustomAttributeChange = useCallback((key: string, value: string[]) => {
+    setCustomAttributes(current => ({ ...current, [key]: value }));
+  }, []);
 
   const sitePolygonUuid = polygon?.uuid ?? "";
   const geometryPolygonUuid = polygon?.polygonUuid ?? "";
@@ -325,9 +355,18 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setTargetLandUseSystem,
       setTreeDistribution,
       setTreesPlanted,
-      setSubmissionCycle
+      setSubmissionCycle,
+      setCustomAttributes
     });
   }, [polygon]);
+
+  useEffect(() => {
+    const values = buildCustomAttributeFormValues(activeCustomAttributeDefinitions, polygon?.customAttributes);
+    setCustomAttributes(values);
+    if (formBaselineRef.current != null) {
+      formBaselineRef.current = { ...formBaselineRef.current, customAttributes: values };
+    }
+  }, [polygon, activeCustomAttributeDefinitions]);
 
   const onSavedRef = useLatestRef(onSaved);
   const onCloseRef = useLatestRef(onClose);
@@ -342,7 +381,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       targetLandUseSystem,
       treeDistribution,
       treesPlanted,
-      submissionCycle
+      submissionCycle,
+      customAttributes
     }),
     [
       polygonName,
@@ -351,7 +391,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       targetLandUseSystem,
       treeDistribution,
       treesPlanted,
-      submissionCycle
+      submissionCycle,
+      customAttributes
     ]
   );
   const getFormValuesRef = useLatestRef(getFormValues);
@@ -511,7 +552,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
           geometryChanged,
           currentGeometry: polygonGeometryEdit?.currentGeometry,
           dateValueToIso: dateValueToIsoString,
-          isAdmin
+          isAdmin,
+          customAttributeDefinitions: activeCustomAttributeDefinitions
         });
         const savedPolygon = await finalizeSuccessfulSave(updatedPolygon, {
           geometryChanged,
@@ -532,6 +574,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       }
     },
     [
+      activeCustomAttributeDefinitions,
       finalizeSuccessfulSave,
       geometryChanged,
       geometryPolygonUuid,
@@ -1104,6 +1147,16 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             )}
           </Flex>
         </Accordion>
+        {!isCreateMode && (
+          <OptionalAttributesAccordion
+            definitions={activeCustomAttributeDefinitions}
+            values={customAttributes}
+            onChange={handleCustomAttributeChange}
+            open={openAccordionSection === "optional-attributes"}
+            onOpenChange={handleAccordionOpenChange("optional-attributes")}
+            instanceKey={sitePolygonUuid}
+          />
+        )}
         {isAnrEligible ? (
           <Accordion
             header={<AccordionHeader title={t("Monitoring Plots")} />}
