@@ -1,7 +1,6 @@
-import { Flex } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import ProfileItem from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileItem";
+import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
 
 import { TreeCircleIcon, UserIcon } from "../../foundations/Icons";
 import List from "./List";
@@ -31,7 +30,7 @@ const meta: Meta<typeof List> = {
     },
     items: {
       description:
-        "Array of ListItemProps — each item supports: label, caption, icon, value (string), variant, disabled, isExpanded, isHighlighted, onItemClick, ariaLabel"
+        "Array of ListItemProps from WRI Design Systems — each item supports: label, caption, icon, value, variant, disabled, isExpanded, isHighlighted, onItemClick, ariaLabel"
     }
   }
 };
@@ -76,30 +75,25 @@ export const DataListItems: Story = {
 export const ProfileListItems: Story = {
   args: {
     items: [
-      { id: "1", label: "Label", caption: "Caption" },
-      { id: "2", label: "Label", caption: "Caption" },
-      { id: "3", label: "Label", caption: "Caption" }
+      {
+        id: "1",
+        label: "Label",
+        caption: "Caption",
+        icon: <Avatar name="Label" src="https://i.pravatar.cc/300?img=1" ariaLabel="Label" size="small" />
+      },
+      {
+        id: "2",
+        label: "Label",
+        caption: "Caption",
+        icon: <Avatar name="Label" ariaLabel="Label" size="small" />
+      },
+      {
+        id: "3",
+        label: "Label",
+        caption: "Caption",
+        icon: <Avatar name="Label" ariaLabel="Label" size="small" />
+      }
     ]
-  },
-  render: args => {
-    return (
-      <Flex gap={4} flexDirection="column" padding={4}>
-        {args.items.map((item, index) => (
-          <ProfileItem
-            key={item.id ?? index}
-            profile={{
-              id: item.id ?? String(index),
-              name: item.label,
-              image: index === 1 ? "https://i.pravatar.cc/300?img=1" : "",
-              email: "name.surname@email.org",
-              isProjectManager: index <= 1 ? true : false,
-              messageText: "Label"
-            }}
-            onProfileClick={() => console.log("Clicked item 1")}
-          />
-        ))}
-      </Flex>
-    );
   }
 };
 
