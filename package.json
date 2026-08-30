@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^3.34.0",
+    "@contentsquare/tag-sdk": "^1.1.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@faker-js/faker": "^8.0.2",
