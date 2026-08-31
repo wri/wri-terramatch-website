@@ -12,10 +12,18 @@ import {
 
 export type SubmissionValidationTagsProps = {
   polygon?: SitePolygonLightDto;
+  treatValidationAsNotStarted?: boolean;
 };
 
-const SubmissionValidationTags: FC<SubmissionValidationTagsProps> = ({ polygon }) => {
+const SubmissionValidationTags: FC<SubmissionValidationTagsProps> = ({
+  polygon,
+  treatValidationAsNotStarted = false
+}) => {
   const t = useT();
+  const validationTagStatus = treatValidationAsNotStarted
+    ? ("not-started" as const)
+    : mapSiteValidationStatusToTagState(polygon?.validationStatus ?? null);
+
   return (
     <Flex className="h-fit w-full gap-6">
       <Flex className="items-center gap-1">
@@ -28,7 +36,7 @@ const SubmissionValidationTags: FC<SubmissionValidationTagsProps> = ({ polygon }
         <Text textStyle="200" color="neutral.800">
           {t("Validation:")}
         </Text>
-        <ValidationTag status={mapSiteValidationStatusToTagState(polygon?.validationStatus ?? null)} />
+        <ValidationTag status={validationTagStatus} />
       </Flex>
     </Flex>
   );
