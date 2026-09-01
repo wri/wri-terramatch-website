@@ -7,6 +7,7 @@ import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { useMyOrg } from "@/connections/Organisation";
 import { useMyUser } from "@/connections/User";
 import { userServiceUrl } from "@/constants/environment";
+import ApiSlice, { JsonApiDocument } from "@/store/apiSlice";
 import Log from "@/utils/log";
 import { PathMatcher, Redirect } from "@/utils/PathMatcher";
 
@@ -128,8 +129,8 @@ const useWebsocket = () => {
       path: "/userSockets/v3/connection",
       auth: { token: `Bearer ${accessToken}` }
     });
-    socket.on("userDataPush", data => {
-      console.log("RECEIVED A MESSAGE", data);
+    socket.on("userDataPush", (document: JsonApiDocument) => {
+      ApiSlice.storeDocument({ document });
     });
 
     return () => {

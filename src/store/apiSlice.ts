@@ -135,17 +135,17 @@ export type ResponseMeta = {
   deleted?: DeletedData[];
 };
 
-export type JsonApiResponse = {
+export type JsonApiDocument = {
   data?: JsonApiResource[] | JsonApiResource;
   included?: JsonApiResource[];
   meta: ResponseMeta;
 };
 
-export type IndexApiResponse = Omit<JsonApiResponse, "meta"> & {
+export type IndexApiResponse = Omit<JsonApiDocument, "meta"> & {
   meta: Omit<ResponseMeta, "indices"> & { indices: IndexData[] };
 };
 
-export type DeleteApiResponse = Omit<JsonApiResponse, "meta" | "data"> & {
+export type DeleteApiResponse = Omit<JsonApiDocument, "meta" | "data"> & {
   meta: Omit<ResponseMeta, "indices" | "resourceIds"> & { resourceIds: string[] };
 };
 
@@ -212,9 +212,11 @@ type ApiFetchFailedProps = ApiFetchStartingProps & {
   error: PendingError;
 };
 
-type ApiFetchSucceededProps = ApiFetchStartingProps & {
-  response: JsonApiResponse;
+type StoreDocumentProps = {
+  document: JsonApiDocument;
 };
+
+type ApiFetchSucceededProps = ApiFetchStartingProps & StoreDocumentProps;
 
 // This may get more sophisticated in the future, but for now this is good enough
 type PruneCacheProps = {
@@ -255,6 +257,53 @@ const clearPending = (state: WritableDraft<ApiDataStore>, action: PayloadAction<
   }
 };
 
+const storeDocument = (state: WritableDraft<ApiDataStore>, action: PayloadAction<StoreDocumentProps>) => {
+  let { data, included } = action.payload.document;
+  if (!isArray(data)) data = [data!];
+
+  if (included != null) {
+    // For the purposes of this reducer, data and included are the same: they both get merged
+    // into the data cache.
+    data = [...data, ...included];
+  }
+  for (const resource of data) {
+    // The data resource type is expected to match what is declared above in ApiDataStore, but
+    // there isn't a way to enforce that with TS against this dynamic data structure, so we
+    // use the dreaded any.
+    const { type, id, attributes, relationships: responseRelationships } = resource;
+    let useResponseResource = true;
+
+    const cached = state[type][id] as StoreResource<any>;
+    if (cached != null) {
+      const { updatedAt: cachedUpdatedAt, lightResource: cachedLightResource } = cached.attributes;
+      const { updatedAt: responseUpdatedAt, lightResource: responseLightResource } = attributes;
+      if (
+        cachedUpdatedAt != null &&
+        responseUpdatedAt != null &&
+        responseLightResource === true &&
+        cachedLightResource === false
+      ) {
+        // if the cached value in the store is a full resource and the resource in the response
+        // is a light resource, we only want to replace what's in the store if the updatedAt
+        // stamp on the response resource is newer.
+        useResponseResource =
+          compareDesc(new Date(responseUpdatedAt as string), new Date(cachedUpdatedAt as string)) > 0;
+      }
+    }
+
+    if (useResponseResource) {
+      const storeResource: StoreResource<any> = { attributes };
+      if (responseRelationships != null) {
+        storeResource.relationships = {};
+        for (const [key, { data }] of Object.entries(responseRelationships)) {
+          storeResource.relationships[key] = Array.isArray(data) ? data : [data];
+        }
+      }
+      state[type][id] = storeResource;
+    }
+  }
+};
+
 const pruneCache = (state: WritableDraft<ApiDataStore>, action: PayloadAction<PruneCacheProps>) => {
   const { resource, ids, searchQuery } = action.payload;
   if (ids == null && searchQuery == null) {
@@ -277,10 +326,10 @@ const pruneCache = (state: WritableDraft<ApiDataStore>, action: PayloadAction<Pr
 const isLogin = ({ url, method }: { url: string; method: Method }) =>
   url.endsWith("auth/v3/logins") && method === "POST";
 
-const isIndexResponse = (method: string, response: JsonApiResponse): response is IndexApiResponse =>
+const isIndexResponse = (method: string, response: JsonApiDocument): response is IndexApiResponse =>
   method === "GET" && isArray(response.data) && response.meta.indices != null && response.meta.indices.length > 0;
 
-const isDeleteResponse = (method: string, response: JsonApiResponse): response is DeleteApiResponse =>
+const isDeleteResponse = (method: string, response: JsonApiDocument): response is DeleteApiResponse =>
   method === "DELETE" && response.meta.resourceIds != null;
 
 export const apiSlice = createSlice({
@@ -300,7 +349,7 @@ export const apiSlice = createSlice({
     },
 
     apiFetchSucceeded: (state, action: PayloadAction<ApiFetchSucceededProps>) => {
-      const { url, method, response } = action.payload;
+      const { url, method, document } = action.payload;
 
       if (isLogin(action.payload)) {
         // After a successful login, clear the entire cache; we want all mounted components to
@@ -310,24 +359,23 @@ export const apiSlice = createSlice({
         clearPending(state, apiSlice.actions.clearPending({ urlPrefix: url, method }));
       }
 
-      if (response.meta.deleted != null) {
+      if (document.meta.deleted != null) {
         // Any request can specify resources that were deleted as a side effect.
-        for (const deleted of response.meta.deleted) {
+        for (const deleted of document.meta.deleted) {
           pruneCache(state, apiSlice.actions.pruneCache({ resource: deleted.resource, ids: [deleted.id] }));
           state.meta.deleted[deleted.resource] = uniq([...state.meta.deleted[deleted.resource], deleted.id]);
         }
       }
 
-      if (isDeleteResponse(method, response)) {
-        const resource = response.meta.resourceType;
-        const ids = response.meta.resourceIds;
+      if (isDeleteResponse(method, document)) {
+        const resource = document.meta.resourceType;
+        const ids = document.meta.resourceIds;
         pruneCache(state, apiSlice.actions.pruneCache({ resource, ids }));
         state.meta.deleted[resource] = uniq([...state.meta.deleted[resource], ...ids]);
         return;
       }
 
-      // All response objects from the v3 api conform to JsonApiResponse
-      let { data, included } = response;
+      let { data } = action.payload.document;
       if (!isArray(data)) data = [data!];
 
       if (method === "POST") {
@@ -335,8 +383,8 @@ export const apiSlice = createSlice({
         state.meta.pending[method][url] = { resourceIds: data.map(({ id }) => id) };
       }
 
-      if (isIndexResponse(method, response)) {
-        for (const indexMeta of response.meta.indices) {
+      if (isIndexResponse(method, document)) {
+        for (const indexMeta of document.meta.indices) {
           let cache = state.meta.indices[indexMeta.resource][indexMeta.requestPath];
           if (cache == null) cache = state.meta.indices[indexMeta.resource][indexMeta.requestPath] = {};
 
@@ -345,52 +393,14 @@ export const apiSlice = createSlice({
         }
       }
 
-      if (included != null) {
-        // For the purposes of this reducer, data and included are the same: they both get merged
-        // into the data cache.
-        data = [...data, ...included];
-      }
-      for (const resource of data) {
-        // The data resource type is expected to match what is declared above in ApiDataStore, but
-        // there isn't a way to enforce that with TS against this dynamic data structure, so we
-        // use the dreaded any.
-        const { type, id, attributes, relationships: responseRelationships } = resource;
-        let useResponseResource = true;
-
-        const cached = state[type][id] as StoreResource<any>;
-        if (cached != null) {
-          const { updatedAt: cachedUpdatedAt, lightResource: cachedLightResource } = cached.attributes;
-          const { updatedAt: responseUpdatedAt, lightResource: responseLightResource } = attributes;
-          if (
-            cachedUpdatedAt != null &&
-            responseUpdatedAt != null &&
-            responseLightResource === true &&
-            cachedLightResource === false
-          ) {
-            // if the cached value in the store is a full resource and the resource in the response
-            // is a light resource, we only want to replace what's in the store if the updatedAt
-            // stamp on the response resource is newer.
-            useResponseResource =
-              compareDesc(new Date(responseUpdatedAt as string), new Date(cachedUpdatedAt as string)) > 0;
-          }
-        }
-
-        if (useResponseResource) {
-          const storeResource: StoreResource<any> = { attributes };
-          if (responseRelationships != null) {
-            storeResource.relationships = {};
-            for (const [key, { data }] of Object.entries(responseRelationships)) {
-              storeResource.relationships[key] = Array.isArray(data) ? data : [data];
-            }
-          }
-          state[type][id] = storeResource;
-        }
-      }
+      storeDocument(state, action);
 
       if (url.endsWith("users/v3/users/me") && method === "GET") {
-        state.meta.meUserId = (response.data as JsonApiResource).id;
+        state.meta.meUserId = (document.data as JsonApiResource).id;
       }
     },
+
+    storeDocument,
 
     clearPending,
 
@@ -424,11 +434,11 @@ authListenerMiddleware.startListening({
     action: PayloadAction<{
       url: string;
       method: Method;
-      response: JsonApiResponse;
+      document: JsonApiDocument;
     }>
   ) => {
     if (!isLogin(action.payload)) return;
-    const { token } = (action.payload.response.data as JsonApiResource).attributes as LoginDto;
+    const { token } = (action.payload.document.data as JsonApiResource).attributes as LoginDto;
     setAccessToken(token);
   }
 });
@@ -454,6 +464,10 @@ export default class ApiSlice {
 
   static fetchSucceeded(props: ApiFetchSucceededProps) {
     this.redux.dispatch(apiSlice.actions.apiFetchSucceeded(props));
+  }
+
+  static storeDocument(props: StoreDocumentProps) {
+    this.redux.dispatch(apiSlice.actions.storeDocument(props));
   }
 
   static pruneCache(resource: ResourceType, ids?: string[]) {
