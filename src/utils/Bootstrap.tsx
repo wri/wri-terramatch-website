@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect, useMemo } from "react";
 import { io } from "socket.io-client";
 
+import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { useMyOrg } from "@/connections/Organisation";
 import { useMyUser } from "@/connections/User";
 import { userServiceUrl } from "@/constants/environment";
@@ -116,14 +117,13 @@ const useWebsocket = () => {
   useValueChanged(user, () => {
     if (!loaded) return;
 
-    console.log(`CONNECTING SOCKET ${userServiceUrl}/userSockets/v3/connection`);
+    const accessToken = typeof window !== "undefined" && getAccessToken();
+    if (accessToken == null) return;
 
-    const socketInstance = io(userServiceUrl, { autoConnect: true, path: "/userSockets/v3/connection" });
-    socketInstance.on("connection", socket => {
-      console.log("RECEIVED CONNECTION", socket);
-    });
-    socketInstance.on("error", error => {
-      console.error("SOCKET ERROR", error);
+    const socketInstance = io(userServiceUrl, {
+      autoConnect: true,
+      path: "/userSockets/v3/connection",
+      auth: { token: `Bearer ${accessToken}` }
     });
     socketInstance.on("message", data => {
       console.log("RECEIVED A MESSAGE", data);
