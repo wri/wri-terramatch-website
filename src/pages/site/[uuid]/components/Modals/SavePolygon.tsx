@@ -11,8 +11,8 @@ export interface SavePolygonProps {
   onOpenChange: (open: boolean) => void;
   polygon: PolygonTableRow;
   onSave?: () => void | Promise<void>;
-  showSaveAndSubmit?: boolean;
-  onSaveAndSubmit?: () => void | Promise<void>;
+  showSaveAndRunValidation?: boolean;
+  onSaveAndRunValidation?: () => void | Promise<void>;
 }
 
 const SavePolygon: FC<SavePolygonProps> = ({
@@ -20,13 +20,13 @@ const SavePolygon: FC<SavePolygonProps> = ({
   onOpenChange,
   polygon,
   onSave,
-  showSaveAndSubmit = false,
-  onSaveAndSubmit
+  showSaveAndRunValidation = false,
+  onSaveAndRunValidation
 }) => {
   const t = useT();
   const [isSaving, setIsSaving] = useState(false);
-  const [isSavingAndSubmitting, setIsSavingAndSubmitting] = useState(false);
-  const isActionInProgress = isSaving || isSavingAndSubmitting;
+  const [isSavingAndRunningValidation, setIsSavingAndRunningValidation] = useState(false);
+  const isActionInProgress = isSaving || isSavingAndRunningValidation;
 
   const handleClose = useCallback(() => {
     onOpenChange(false);
@@ -47,20 +47,20 @@ const SavePolygon: FC<SavePolygonProps> = ({
     }
   }, [onSave, onOpenChange]);
 
-  const handleSaveAndSubmit = useCallback(async () => {
-    if (onSaveAndSubmit == null) {
+  const handleSaveAndRunValidation = useCallback(async () => {
+    if (onSaveAndRunValidation == null) {
       onOpenChange(false);
       return;
     }
 
     try {
-      setIsSavingAndSubmitting(true);
-      await onSaveAndSubmit();
+      setIsSavingAndRunningValidation(true);
+      await onSaveAndRunValidation();
       onOpenChange(false);
     } finally {
-      setIsSavingAndSubmitting(false);
+      setIsSavingAndRunningValidation(false);
     }
-  }, [onSaveAndSubmit, onOpenChange]);
+  }, [onSaveAndRunValidation, onOpenChange]);
 
   const footerButtons = [
     {
@@ -78,15 +78,15 @@ const SavePolygon: FC<SavePolygonProps> = ({
       loading: isSaving,
       onClick: () => void handleSave()
     },
-    ...(showSaveAndSubmit
+    ...(showSaveAndRunValidation
       ? [
           {
-            id: "save-and-submit",
-            children: t("Save and Submit"),
+            id: "save-and-run-validation",
+            children: t("Save and Run Validation"),
             className: "pr-4",
             disabled: isActionInProgress,
-            loading: isSavingAndSubmitting,
-            onClick: () => void handleSaveAndSubmit()
+            loading: isSavingAndRunningValidation,
+            onClick: () => void handleSaveAndRunValidation()
           }
         ]
       : [])
@@ -95,6 +95,8 @@ const SavePolygon: FC<SavePolygonProps> = ({
   return (
     <Modal
       modal={false}
+      trapFocus={false}
+      restoreFocus={false}
       open={open}
       onClose={handleClose}
       size="medium"

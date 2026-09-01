@@ -86,7 +86,6 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
                 reportActionDisabled ||
                 record?.status === "approved" ||
                 record?.status === "draft" ||
-                record?.status === "pending-approval" ||
                 record?.updateRequestStatus === "draft" ||
                 record?.status === "due"
               }
