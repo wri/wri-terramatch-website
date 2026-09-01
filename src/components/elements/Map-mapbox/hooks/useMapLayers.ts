@@ -4,7 +4,7 @@ import { Map as MapboxMap } from "mapbox-gl";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import { LAYERS_NAMES, layersList, resolvePolygonGeometryVariant } from "@/constants/layers";
-import { DELETED_POLYGONS } from "@/constants/statuses";
+import { DELETED_POLYGONS, FORM_POLYGONS } from "@/constants/statuses";
 
 import { addDeleteLayer, addFilterOnLayer, addSourcesToLayers } from "../layers/polygonLayers";
 import { DashboardGetProjectsData, PolygonCentroid } from "../Map.d";
@@ -82,7 +82,8 @@ export function useMapLayers({
   const prevPolygonMapTileNonceRef = useRef<number>(polygonMapTileNonce);
   const tileVersionRef = useRef<string>(initialTileVersion ?? "0");
 
-  const polygonGeometryVariant = resolvePolygonGeometryVariant(polygonsData);
+  const polygonGeometryVariant =
+    polygonsData?.[FORM_POLYGONS] != null ? undefined : resolvePolygonGeometryVariant(polygonsData);
 
   useEffect(() => {
     if (!styleReady || map.current == null || (!dashboardMode && _.isEmpty(polygonsData))) {
