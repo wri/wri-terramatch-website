@@ -1,9 +1,12 @@
 import { normalizeLocale, tx } from "@transifex/native";
 import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect, useMemo } from "react";
+import { io } from "socket.io-client";
 
 import { useMyOrg } from "@/connections/Organisation";
 import { useMyUser } from "@/connections/User";
+import { userServiceUrl } from "@/constants/environment";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 import { PathMatcher, Redirect } from "@/utils/PathMatcher";
 
@@ -107,11 +110,33 @@ const useLanguageTransition = () => {
   }, [router.locale]);
 };
 
+const useWebsocket = () => {
+  const [loaded, { user }] = useMyUser();
+
+  useValueChanged(user, () => {
+    if (!loaded) return;
+
+    console.log(`CONNECTING SOCKET ${userServiceUrl}/userSockets/v3/connection`);
+
+    const socketInstance = io(userServiceUrl, { autoConnect: true, path: "/userSockets/v3/connection" });
+    socketInstance.on("connection", socket => {
+      console.log("RECEIVED CONNECTION", socket);
+    });
+    socketInstance.on("error", error => {
+      console.error("SOCKET ERROR", error);
+    });
+    socketInstance.on("message", data => {
+      console.log("RECEIVED A MESSAGE", data);
+    });
+  });
+};
+
 const Bootstrap = ({ children }: PropsWithChildren) => {
   const [loaded] = useMyUser();
 
   useLanguageTransition();
   useRedirect();
+  useWebsocket();
 
   // don't try to mount children until we've tried to load our own user.
   return !loaded ? null : <>{children}</>;
