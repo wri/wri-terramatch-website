@@ -7,7 +7,6 @@ import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { useMyOrg } from "@/connections/Organisation";
 import { useMyUser } from "@/connections/User";
 import { userServiceUrl } from "@/constants/environment";
-import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 import { PathMatcher, Redirect } from "@/utils/PathMatcher";
 
@@ -111,24 +110,33 @@ const useLanguageTransition = () => {
   }, [router.locale]);
 };
 
+// For now, the socket is only used to receive model updates pushed by the server, so the socket
+// is not exposed to external consumers. If we end up using it for two way communications, the socket
+// should be exposed through a react context.
 const useWebsocket = () => {
   const [loaded, { user }] = useMyUser();
 
-  useValueChanged(user, () => {
-    if (!loaded) return;
+  useEffect(() => {
+    if (!loaded || user == null) return;
 
     const accessToken = typeof window !== "undefined" && getAccessToken();
     if (accessToken == null) return;
 
-    const socketInstance = io(userServiceUrl, {
+    Log.info("Connecting to websocket for user data pushes");
+    const socket = io(userServiceUrl, {
       autoConnect: true,
       path: "/userSockets/v3/connection",
       auth: { token: `Bearer ${accessToken}` }
     });
-    socketInstance.on("message", data => {
+    socket.on("userDataPush", data => {
       console.log("RECEIVED A MESSAGE", data);
     });
-  });
+
+    return () => {
+      Log.info("Disconnecting websocket");
+      socket.disconnect();
+    };
+  }, [loaded, user]);
 };
 
 const Bootstrap = ({ children }: PropsWithChildren) => {
