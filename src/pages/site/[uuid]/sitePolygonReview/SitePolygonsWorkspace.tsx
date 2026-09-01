@@ -37,7 +37,7 @@ import {
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { hasValidationCriteria, isValidationFreshAfter } from "@/helpers/polygonValidation";
+import { isValidationPollingResolved } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import { HIDDEN_STICKY_COLUMN_EDGE_STYLES } from "@/redesignComponents/dataDisplay/Table/tableStyles";
@@ -54,6 +54,7 @@ import {
   withResolvedValidationStatusFromCriteria
 } from "../components/Modals/validationCriteria";
 import PolygonBulkActionToolbar from "../components/PolygonBulkActionToolbar";
+import type { PolygonValidationJobsStartedOptions } from "../components/polygonEdit.types";
 import { prunePolygonValidationCache } from "../components/polygonEditSave";
 import PolygonSubmissionAnnouncement from "../components/PolygonSubmissionAnnouncement";
 import { PolygonTableRow } from "../components/PolygonTableRow";
@@ -143,6 +144,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   const priorValidationStatusRef = useRef<Map<string, string | null | undefined>>(new Map());
   const pendingValidationTrackBulkRef = useRef(true);
   const validationRunStartedAtRef = useRef(0);
+  const validationAfterCriteriaClearRef = useRef(false);
   const pendingValidationKeyRef = useRef("");
   const validationPollingGenerationRef = useRef(0);
 
@@ -447,18 +449,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     setPendingValidationPolygonUuids([]);
     setValidationZoomPolygonUuids([]);
     validationRunStartedAtRef.current = 0;
+    validationAfterCriteriaClearRef.current = false;
     pendingValidationKeyRef.current = "";
-  }, []);
-
-  const markValidationPending = useCallback((polygonUuids: string[]) => {
-    const key = [...polygonUuids].sort().join(",");
-    validationRunStartedAtRef.current = Date.now();
-    pendingValidationKeyRef.current = key;
-    prunePolygonValidationCache(...polygonUuids);
-    setPendingValidationPolygonUuids(polygonUuids);
-    setSupplementalValidations(prev =>
-      prev.filter(validation => validation.polygonUuid == null || !polygonUuids.includes(validation.polygonUuid))
-    );
   }, []);
 
   const handleValidationUiCleared = useCallback((geometryPolygonUuids: string[]) => {
@@ -480,7 +472,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   }, []);
 
   const handleValidationJobsStarted = useCallback(
-    (polygonUuids: string[], options?: { trackBulkCompletion?: boolean }) => {
+    (polygonUuids: string[], options?: PolygonValidationJobsStartedOptions) => {
       const priorStatuses = new Map<string, string | null | undefined>();
       polygonUuids.forEach(polygonUuid => {
         const sitePolygon = polygonsData.find(item => item.polygonUuid === polygonUuid);
@@ -488,6 +480,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
       });
       priorValidationStatusRef.current = priorStatuses;
       pendingValidationTrackBulkRef.current = options?.trackBulkCompletion ?? true;
+      validationAfterCriteriaClearRef.current = options?.validationAfterCriteriaClear === true;
       validationRunStartedAtRef.current = Date.now();
 
       const key = [...polygonUuids].sort().join(",");
@@ -619,10 +612,27 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     fetchOverlapValidations,
     onOverlapFixResultsOpen: openOverlapFixResultsModal,
     onValidationJobsStarted: handleValidationJobsStarted,
-    onValidationPending: markValidationPending,
     onValidationPendingClear: clearValidationPending,
     onValidationUiCleared: handleValidationUiCleared
   });
+
+  const pendingValidationResultsModalWhileDrawerOpenRef = useRef(false);
+
+  const openValidationResultsModalIfPending = useCallback(() => {
+    if (isEditPolygonOpen) {
+      pendingValidationResultsModalWhileDrawerOpenRef.current = true;
+      return;
+    }
+    showValidationResultsModalIfPending();
+  }, [isEditPolygonOpen, showValidationResultsModalIfPending]);
+
+  useEffect(() => {
+    if (isEditPolygonOpen || !pendingValidationResultsModalWhileDrawerOpenRef.current) {
+      return;
+    }
+    pendingValidationResultsModalWhileDrawerOpenRef.current = false;
+    showValidationResultsModalIfPending();
+  }, [isEditPolygonOpen, showValidationResultsModalIfPending]);
 
   useEffect(() => {
     if (pendingValidationPolygonUuids.length === 0) {
@@ -648,11 +658,11 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             return;
           }
 
-          const allResolved = individualValidations.every(
-            validation =>
-              validation != null &&
-              hasValidationCriteria(validation) &&
-              isValidationFreshAfter(validation, validationRunStartedAtRef.current)
+          const allResolved = individualValidations.every(validation =>
+            isValidationPollingResolved(validation, {
+              startedAtMs: validationRunStartedAtRef.current,
+              validationAfterCriteriaClear: validationAfterCriteriaClearRef.current
+            })
           );
 
           if (allResolved) {
@@ -695,9 +705,10 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             pruneBoundingBoxesCache();
             setPendingValidationPolygonUuids([]);
             validationRunStartedAtRef.current = 0;
+            validationAfterCriteriaClearRef.current = false;
             pendingValidationKeyRef.current = "";
             setValidationZoomPolygonUuids(polygonUuids);
-            showValidationResultsModalIfPending();
+            openValidationResultsModalIfPending();
             return;
           }
 
@@ -731,16 +742,14 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     fetchOverlapValidations,
     pendingValidationPolygonUuids,
     refetchPolygons,
-    showValidationResultsModalIfPending,
+    openValidationResultsModalIfPending,
     site.uuid,
     t
   ]);
 
   useEffect(() => {
     registerSitePolygonAdminReviewMode(isAdminReview);
-    if (isAdminReview) {
-      registerRunPolygonValidationFromMapPopup(runValidationWithResultsModal);
-    }
+    registerRunPolygonValidationFromMapPopup(runValidationWithResultsModal);
     return () => {
       registerSitePolygonAdminReviewMode(false);
       unregisterRunPolygonValidationFromMapPopup();
@@ -999,6 +1008,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
         onRefetchPolygons={refetchPolygons}
         onOverlapFixed={handleDrawerOverlapFixed}
         onRunValidation={runPolygonValidation}
+        onRunValidationWithResultsModal={runValidationWithResultsModal}
         onPolygonDeletingChange={handlePolygonDeletingChange}
         onPolygonSubmittingChange={handlePolygonSubmittingChange}
         onRequestApproveModal={isAdminReview ? handleDrawerRequestApproveModal : undefined}

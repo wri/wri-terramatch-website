@@ -79,7 +79,7 @@ const SiteOverview: FC = () => {
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               className="button-aside-page-admin"
-              disabled={record?.status === "information-required"}
+              disabled={record?.status === "information-required" || record?.status === "draft"}
               onClick={() => setStatusModal("information-required")}
             >
               Request More Info
@@ -89,6 +89,7 @@ const SiteOverview: FC = () => {
               startIcon={<Check />}
               disabled={
                 record?.status === "approved" ||
+                record?.status === "draft" ||
                 record?.updateRequestStatus === "pending-approval" ||
                 record?.updateRequestStatus === "draft"
               }

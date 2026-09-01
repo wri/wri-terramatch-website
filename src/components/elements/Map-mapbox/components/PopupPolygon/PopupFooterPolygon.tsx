@@ -39,6 +39,7 @@ type PopupFooterPolygonProps = {
   onApprove?: () => void;
   onRequestInformation?: () => void;
   onRunValidation?: () => void;
+  showRunValidationAsPrimary?: boolean;
 };
 
 const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
@@ -58,7 +59,8 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   approveDisabledTooltip,
   onApprove,
   onRequestInformation,
-  onRunValidation
+  onRunValidation,
+  showRunValidationAsPrimary = false
 }) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
@@ -75,7 +77,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
     showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, 1), POLYGON_TOAST_IDS.downloading);
 
     try {
-      await downloadPolygonGeoJson(polygonUuid, filename, { includeExtendedData: true });
+      await downloadPolygonGeoJson(polygonUuid, filename);
       completePolygonProgressToast(POLYGON_TOAST_IDS.downloading, toastLabels.downloadingPolygonsComplete);
     } catch {
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
@@ -168,22 +170,34 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
       <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit}>
         {t("Edit")}
       </Button>
-      <Flex alignItems="center" gap={1.5} minWidth={0}>
+      {showRunValidationAsPrimary ? (
         <Button
           variant="primary"
           size="small"
-          onClick={() => void handleSubmit()}
-          disabled={submitDisabled}
+          onClick={onRunValidation}
+          disabled={!canRunValidation}
           className="min-w-0 flex-1"
         >
-          {t("Submit")}
+          {t("Run Validation")}
         </Button>
-        {submitDisabled && submitDisabledTooltip != null && (
-          <Tooltip content={wrapToolbarInfoTooltipContent(submitDisabledTooltip)} position="top">
-            <InfoIcon height="1rem" width="1rem" color="neutral.800" />
-          </Tooltip>
-        )}
-      </Flex>
+      ) : (
+        <Flex alignItems="center" gap={1.5} minWidth={0}>
+          <Button
+            variant="primary"
+            size="small"
+            onClick={() => void handleSubmit()}
+            disabled={submitDisabled}
+            className="min-w-0 flex-1"
+          >
+            {t("Submit")}
+          </Button>
+          {submitDisabled && submitDisabledTooltip != null && (
+            <Tooltip content={wrapToolbarInfoTooltipContent(submitDisabledTooltip)} position="top">
+              <InfoIcon height="1rem" width="1rem" color="neutral.800" />
+            </Tooltip>
+          )}
+        </Flex>
+      )}
     </Grid>
   );
 };

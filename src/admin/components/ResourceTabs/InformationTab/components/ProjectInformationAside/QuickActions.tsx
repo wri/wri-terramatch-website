@@ -27,7 +27,7 @@ const QuickActions: FC = () => {
 
     if (entity === "shapefiles") {
       try {
-        await downloadProjectSitePolygonsGeoJson(record.uuid, record.name, { includeExtendedData: true });
+        await downloadProjectSitePolygonsGeoJson(record.uuid, record.name);
       } catch (error) {
         Log.error("Failed to download project polygons:", error);
       }

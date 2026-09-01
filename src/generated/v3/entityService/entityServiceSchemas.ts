@@ -975,6 +975,48 @@ export type TreeReportCountsDto = {
   } | null;
 };
 
+export type BulkUploadWarning = {
+  /**
+   * If relevant, the row the warning occurred on
+   */
+  row: number;
+  /**
+   * The warning message
+   */
+  message: string;
+  /**
+   * The translation code
+   */
+  code: string;
+  /**
+   * The translation variables
+   */
+  variables?: Record<string, any>;
+};
+
+export type TreeBulkUploadDto = {
+  /**
+   * Warnings that occurred during the import of the tree data for site reports.
+   */
+  warnings: BulkUploadWarning[];
+};
+
+export type TreeBulkUploadAttributes = {
+  /**
+   * The collection the trees belong to
+   */
+  collection: "anr" | "replanting" | "tree-planted" | "non-tree" | "invasive";
+};
+
+export type TreeBulkUploadData = {
+  type: "treeBulkUploads";
+  attributes: TreeBulkUploadAttributes;
+};
+
+export type TreeBulkUploadBody = {
+  data: TreeBulkUploadData;
+};
+
 export type DisturbanceDto = {
   /**
    * The entity type this resource is associated with.

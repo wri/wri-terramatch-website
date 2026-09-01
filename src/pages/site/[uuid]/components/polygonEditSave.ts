@@ -1,7 +1,12 @@
 import type { DateValue } from "@ark-ui/react";
 
 import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
-import { createPolygonVersion, createSitePolygonsResource, pruneSitePolygonsCache } from "@/connections/SitePolygons";
+import {
+  createPolygonVersion,
+  createSitePolygonsResource,
+  loadAllSitePolygons,
+  pruneSitePolygonsCache
+} from "@/connections/SitePolygons";
 import type {
   AttributeChangesDto,
   CreateSitePolygonAttributesDto,
@@ -9,6 +14,7 @@ import type {
   SitePolygonLightDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
+import Log from "@/utils/log";
 
 export type CreatePolygonFeatureProperties = {
   siteId: string;
@@ -312,6 +318,49 @@ export type SaveExistingPolygonVersionParams = {
   currentGeometry?: GeoJSON.Geometry;
   dateValueToIso: DateValueToIsoString;
   isAdmin?: boolean;
+};
+
+export const resolveGeometryPolygonUuidAfterSave = async (
+  savedPolygon: SitePolygonLightDto,
+  siteUuid: string,
+  previousGeometryPolygonUuid?: string
+): Promise<string | null> => {
+  const fromCreateResponse = savedPolygon.polygonUuid;
+
+  if (siteUuid === "" || savedPolygon.uuid == null || savedPolygon.uuid === "") {
+    return fromCreateResponse ?? null;
+  }
+
+  try {
+    const polygons = await loadAllSitePolygons({
+      entityName: "sites",
+      entityUuid: siteUuid,
+      enabled: true
+    });
+    const freshPolygon = polygons.find(item => item.uuid === savedPolygon.uuid);
+    const resolvedUuid = freshPolygon?.polygonUuid ?? fromCreateResponse ?? null;
+
+    if (resolvedUuid == null || resolvedUuid === "") {
+      return null;
+    }
+
+    if (
+      previousGeometryPolygonUuid != null &&
+      previousGeometryPolygonUuid !== "" &&
+      resolvedUuid === previousGeometryPolygonUuid
+    ) {
+      Log.error("Saved polygon still references pre-save geometry UUID after geometry change", {
+        sitePolygonUuid: savedPolygon.uuid,
+        geometryPolygonUuid: resolvedUuid
+      });
+      return null;
+    }
+
+    return resolvedUuid;
+  } catch (error) {
+    Log.error("Failed to resolve geometry polygon UUID after save:", error);
+    return fromCreateResponse ?? null;
+  }
 };
 
 export const saveExistingPolygonVersion = (params: SaveExistingPolygonVersionParams): Promise<SitePolygonLightDto> => {

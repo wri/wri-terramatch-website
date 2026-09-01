@@ -93,9 +93,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
 
     setIsDownloading(true);
     try {
-      await downloadProjectSitePolygonsGeoJson(project.uuid, project.name, {
-        includeExtendedData: true
-      });
+      await downloadProjectSitePolygonsGeoJson(project.uuid, project.name);
     } catch (error) {
       Log.error("Failed to download project polygons:", error);
     } finally {

@@ -327,10 +327,6 @@ const VersionHistory = ({
     );
   };
 
-  const downloadGeoJsonPolygon = async (polygonUuid: string, polygon_name: string) => {
-    await downloadPolygonGeoJson(polygonUuid, polygon_name, { includeExtendedData: true });
-  };
-
   const formatStringName = (name: string) => {
     return name.replace(/ /g, "_");
   };
@@ -366,9 +362,9 @@ const VersionHistory = ({
                 <div
                   className="flex cursor-pointer items-center gap-1 text-blue hover:opacity-50"
                   onClick={() =>
-                    downloadGeoJsonPolygon(
+                    void downloadPolygonGeoJson(
                       selectPolygonVersion?.polygonUuid ?? "",
-                      selectPolygonVersion?.name ? formatStringName(selectPolygonVersion.name) : "polygon"
+                      selectPolygonVersion?.name != null ? formatStringName(selectPolygonVersion.name) : "polygon"
                     )
                   }
                 >
