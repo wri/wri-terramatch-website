@@ -4,9 +4,19 @@ import { FC } from "react";
 
 export type { WriListProps };
 
-const List: FC<WriListProps> = props => {
+type ListProps = WriListProps & { itemsAlignItems?: boolean };
+const List: FC<ListProps> = ({ itemsAlignItems = true, ...props }) => {
   return (
-    <Box>
+    <Box
+      css={
+        itemsAlignItems && {
+          "& > div > div > div": {
+            display: "flex !important",
+            alignItems: "center !important"
+          }
+        }
+      }
+    >
       <WriList {...props} />
     </Box>
   );

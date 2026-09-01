@@ -1,8 +1,11 @@
+import { Flex, Text } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
 
-import { TreeCircleIcon, UserIcon } from "../../foundations/Icons";
+import { MessagesIcon, PlaceholderIcon, TreeCircleIcon, UserIcon } from "../../foundations/Icons";
 import List from "./List";
 
 const meta: Meta<typeof List> = {
@@ -48,7 +51,11 @@ export const DataListItems: Story = {
         ariaLabel: "Item 1",
         icon: <TreeCircleIcon className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 1"),
-        value: "XXX,XXX"
+        value: (
+          <Text textStyle={"400-bold"} color="neutral.900">
+            XXX,XXX
+          </Text>
+        )
       },
       {
         id: "2",
@@ -57,7 +64,13 @@ export const DataListItems: Story = {
         ariaLabel: "Item 2",
         icon: <TreeCircleIcon className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 2"),
-        value: "XXX,XXX"
+        value: (
+          <ActionStatusTag
+            state="neutral-dark"
+            icon={<PlaceholderIcon color="neutral.600" boxSize={3} />}
+            label="Label"
+          />
+        )
       },
       {
         id: "3",
@@ -66,7 +79,12 @@ export const DataListItems: Story = {
         ariaLabel: "Item 3",
         icon: <TreeCircleIcon className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 3"),
-        value: "Draft"
+        value: (
+          <Flex alignItems="center" gap={1} textStyle="300" color="neutral.900">
+            <PlaceholderIcon boxSize={4} color="neutral.800" /> + <PlaceholderIcon boxSize={4} color="neutral.800" /> +{" "}
+            <PlaceholderIcon boxSize={4} color="neutral.800" />
+          </Flex>
+        )
       }
     ]
   }
@@ -78,20 +96,32 @@ export const ProfileListItems: Story = {
       {
         id: "1",
         label: "Label",
-        caption: "Caption",
-        icon: <Avatar name="Label" src="https://i.pravatar.cc/300?img=1" ariaLabel="Label" size="small" />
+        icon: <Avatar name="Label" src="https://i.pravatar.cc/300?img=1" ariaLabel="Label" size="small" />,
+        value: (
+          <Button variant="borderless" size="small" leftIcon={<MessagesIcon boxSize={4} color="neutral.800" />}>
+            Label
+          </Button>
+        )
       },
       {
         id: "2",
         label: "Label",
-        caption: "Caption",
-        icon: <Avatar name="Label" ariaLabel="Label" size="small" />
+        icon: <Avatar name="Label" ariaLabel="Label" size="small" />,
+        value: (
+          <Button variant="borderless" size="small" leftIcon={<MessagesIcon boxSize={4} color="neutral.800" />}>
+            Label
+          </Button>
+        )
       },
       {
         id: "3",
         label: "Label",
-        caption: "Caption",
-        icon: <Avatar name="Label" ariaLabel="Label" size="small" />
+        icon: <Avatar name="Label" ariaLabel="Label" size="small" />,
+        value: (
+          <Button variant="borderless" size="small" leftIcon={<MessagesIcon boxSize={4} color="neutral.800" />}>
+            Label
+          </Button>
+        )
       }
     ]
   }
@@ -99,6 +129,7 @@ export const ProfileListItems: Story = {
 
 export const LinkListItems: Story = {
   args: {
+    itemsAlignItems: false,
     items: [
       {
         id: "1",
