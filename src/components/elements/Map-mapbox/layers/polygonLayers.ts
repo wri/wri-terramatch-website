@@ -8,6 +8,7 @@ import {
   layersList,
   POLYGON_GEOMETRY_VARIANTS
 } from "@/constants/layers";
+import { FORM_POLYGONS } from "@/constants/statuses";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
@@ -222,14 +223,16 @@ export function getMapTileVersion(map: MapboxMap | null | undefined): string {
 function resolveGeoserverLayerName(
   layer: LayerType,
   dashboardMode: string | undefined,
-  polygonGeometryVariant: PolygonGeometryVariant | undefined
+  polygonGeometryVariant: PolygonGeometryVariant | undefined,
+  polygonsData?: Record<string, string[]>
 ): string {
-  if (dashboardMode != null && layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
-    return LAYERS_NAMES.POLYGON_GEOMETRY;
-  }
-
   if (layer.name !== LAYERS_NAMES.POLYGON_GEOMETRY) {
     return layer.geoserverLayerName;
+  }
+
+  // Project-pitch (form) polygons and dashboard tiles use unversioned polygon_geometry.
+  if (dashboardMode != null || polygonsData?.[FORM_POLYGONS] != null) {
+    return LAYERS_NAMES.POLYGON_GEOMETRY;
   }
 
   return getPolygonGeometryLayerName(polygonGeometryVariant ?? POLYGON_GEOMETRY_VARIANTS.Active);
@@ -248,7 +251,7 @@ export const addSourceToLayer = (
   try {
     if (map == null) return;
 
-    const geoserverLayerName = resolveGeoserverLayerName(layer, dashboardMode, polygonGeometryVariant);
+    const geoserverLayerName = resolveGeoserverLayerName(layer, dashboardMode, polygonGeometryVariant, polygonsData);
 
     const keys = getSourceCacheKeys(map);
     const layerNames = getSourceGeoserverLayerNames(map);
