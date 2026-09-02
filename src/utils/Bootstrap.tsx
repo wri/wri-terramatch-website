@@ -115,13 +115,16 @@ const useLanguageTransition = () => {
 // is not exposed to external consumers. If we end up using it for two way communications, the socket
 // should be exposed through a react context.
 const useWebsocket = () => {
-  const [loaded, { user }] = useMyUser();
+  const [, { user }] = useMyUser();
 
   useEffect(() => {
-    if (!loaded || user == null) return;
+    if (user?.uuid == null) return;
 
     const accessToken = typeof window !== "undefined" && getAccessToken();
-    if (accessToken == null) return;
+    if (accessToken == null) {
+      Log.error(`We have a logged in user, but no access token [${user.uuid}]`);
+      return;
+    }
 
     Log.info("Connecting to websocket for user data pushes");
     const socket = io(userServiceUrl, {
@@ -137,7 +140,7 @@ const useWebsocket = () => {
       Log.info("Disconnecting websocket");
       socket.disconnect();
     };
-  }, [loaded, user]);
+  }, [user?.uuid]);
 };
 
 const Bootstrap = ({ children }: PropsWithChildren) => {
