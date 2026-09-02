@@ -1,11 +1,15 @@
 import { BooleanInput } from "react-admin";
 
-import RHFSeedingTable, { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
+import RHFSeedingTable, {
+  getSeedingTableColumns,
+  getSeedsPerKg,
+  SeedingEntry
+} from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFSeedingTableInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
-import TreeSpeciesEntryValue from "@/components/extensive/WizardForm/TreeSpeciesEntryValue";
+import SeedingsEntryValue from "@/components/extensive/WizardForm/SeedingsEntryValue";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { appendTableAnswers, dataTableEntryValue } from "@/components/extensive/WizardForm/utils";
+import { appendTableAnswers } from "@/components/extensive/WizardForm/utils";
 import { addValidationWith, arrayValidator } from "@/utils/yup";
 
 export const SeedingsField: FormFieldFactory = {
@@ -20,17 +24,17 @@ export const SeedingsField: FormFieldFactory = {
   },
 
   appendAnswers: ({ label, name, additionalProps }, csv, formValues) => {
-    const headers = getSeedingTableColumns(undefined, additionalProps?.capture_count === true);
-    appendTableAnswers(csv, label, headers, formValues[name]);
+    const captureCount = additionalProps?.capture_count === true;
+    const headers = getSeedingTableColumns(undefined, captureCount);
+    const entries = (formValues[name] ?? []).map((entry: SeedingEntry) =>
+      captureCount ? entry : { ...entry, seedsPerKg: getSeedsPerKg(entry) }
+    );
+    appendTableAnswers(csv, label, headers, entries);
   },
 
-  addFormEntries: addEntryWith((field, formValues, { t, fieldsProvider }) => {
-    if (field.additionalProps?.capture_count === true) {
-      return <TreeSpeciesEntryValue {...{ field, values: formValues, fieldsProvider }} />;
-    } else {
-      return dataTableEntryValue(getSeedingTableColumns(t, false), field, formValues);
-    }
-  }),
+  addFormEntries: addEntryWith((field, formValues, { fieldsProvider }) => (
+    <SeedingsEntryValue {...{ field, values: formValues, fieldsProvider }} />
+  )),
 
   formBuilderAdditionalOptions: ({ getSource }) => (
     <BooleanInput
