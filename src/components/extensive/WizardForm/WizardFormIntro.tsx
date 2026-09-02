@@ -7,6 +7,7 @@ import Button, { IButtonProps as IButtonPropsV2 } from "@/components/elements/Bu
 import Text from "@/components/elements/Text/Text";
 import { useDate } from "@/hooks/useDate";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
+import { toLocalCalendarDate } from "@/utils/formIntroDeadline";
 
 import { FormFooter } from "./FormFooter";
 
@@ -40,6 +41,7 @@ const VARIANTS = {
 const WizardFormIntro = (props: WizardFormIntroProps) => {
   const { format } = useDate();
   const t = useT();
+  const deadlineDate = toLocalCalendarDate(props.deadline);
 
   const { containerClass, imageClass, footerMarginTop } = VARIANTS[props.variant ?? "default"];
 
@@ -67,9 +69,9 @@ const WizardFormIntro = (props: WizardFormIntroProps) => {
       {props.ctaProps?.href && (
         <Button {...props.ctaProps!} variant="text" className="m-auto text-center underline" target="_blank" />
       )}
-      {props.deadline && (
+      {deadlineDate != null && (
         <div className="space-y-3">
-          <InfoItem title={t("Deadline")}>{format(Date.parse(props.deadline!), "do MMMM y")}</InfoItem>
+          <InfoItem title={t("Deadline")}>{format(deadlineDate, "do MMMM y")}</InfoItem>
         </div>
       )}
       <FormFooter
