@@ -17,6 +17,7 @@ import useFormChanges from "@/admin/components/ResourceTabs/ChangeRequestsTab/us
 import List from "@/components/extensive/List/List";
 import { FormEntity, useUpdateRequest } from "@/connections/Form";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { canEntityHaveChangeRequest } from "@/helpers/entity";
 import { Entity, SingularEntityName } from "@/types/common";
 
 import ChangeRequestRequestMoreInfoModal, { IStatus } from "./MoreInformationModal";
@@ -60,6 +61,8 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   const handleStatusUpdate = useCallback((type: IStatus) => {
     setStatusToChangeTo(type);
   }, []);
+  const entityAllowsChangeRequest = canEntityHaveChangeRequest(ctx.record?.status);
+  const changeRequestClosed = ["information-required", "draft"].includes(updateRequest?.status ?? "");
 
   const icon = updateRequest?.status === "pending-approval" ? <PriorityHigh sx={{ color: pink[500] }} /> : undefined;
 
@@ -130,14 +133,16 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                     <Button
                       variant="contained"
                       startIcon={<Check />}
-                      disabled={["approved", "draft"].includes(updateRequest.status ?? "")}
+                      disabled={
+                        !entityAllowsChangeRequest || ["approved", "draft"].includes(updateRequest.status ?? "")
+                      }
                       onClick={() => handleStatusUpdate("approved")}
                     >
                       Approve
                     </Button>
                     <Button
                       variant="outlined"
-                      disabled={["more-information", "draft"].includes(updateRequest.status ?? "")}
+                      disabled={!entityAllowsChangeRequest || changeRequestClosed}
                       onClick={() => handleStatusUpdate("information-required")}
                     >
                       Request More Information
