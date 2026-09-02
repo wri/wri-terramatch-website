@@ -1,7 +1,7 @@
 import { normalizeLocale, tx } from "@transifex/native";
+import { isObject, isString } from "lodash";
 import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect, useMemo } from "react";
-import { io } from "socket.io-client";
 
 import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { useMyOrg } from "@/connections/Organisation";
@@ -121,24 +121,41 @@ const useWebsocket = () => {
     if (user?.uuid == null) return;
 
     const accessToken = typeof window !== "undefined" && getAccessToken();
-    if (accessToken == null) {
+    if (!isString(accessToken) || accessToken === "") {
       Log.error(`We have a logged in user, but no access token [${user.uuid}]`);
       return;
     }
 
     Log.info("Connecting to websocket for user data pushes");
-    const socket = io(userServiceUrl, {
-      autoConnect: true,
-      path: "/userSockets/v3/connection",
-      auth: { token: `Bearer ${accessToken}` }
+    const socket = new WebSocket(
+      `${userServiceUrl.replace("http", "ws")}/userSockets/v3/connection?authToken=${accessToken}`
+    );
+
+    socket.addEventListener("open", () => {
+      Log.info("Websocket open");
     });
-    socket.on("userDataPush", (document: JsonApiDocument) => {
+    socket.addEventListener("close", () => {
+      Log.info("Websocket closed");
+    });
+    socket.addEventListener("error", e => {
+      Log.error("Websocket error", e);
+    });
+    socket.addEventListener("message", ({ data }) => {
+      const { event, data: document } = (isObject(data) ? data : JSON.parse(data)) as {
+        event: string;
+        data: JsonApiDocument;
+      };
+      if (event !== "userDataPush") {
+        Log.error("Received unknown websocket event", data);
+        return;
+      }
+
       ApiSlice.storeDocument({ document });
     });
 
     return () => {
       Log.info("Disconnecting websocket");
-      socket.disconnect();
+      socket.close();
     };
   }, [user?.uuid]);
 };
