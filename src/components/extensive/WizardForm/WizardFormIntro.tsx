@@ -70,7 +70,6 @@ const WizardFormIntro = (props: WizardFormIntroProps) => {
       {props.deadline && (
         <div className="space-y-3">
           <InfoItem title={t("Deadline")}>{format(Date.parse(props.deadline!), "do MMMM y")}</InfoItem>
-          <InfoItem title={t("Time")}>{format(Date.parse(props.deadline!), "HH:mm")}</InfoItem>
         </div>
       )}
       <FormFooter
