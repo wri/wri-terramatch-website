@@ -28,7 +28,7 @@ export const getSeedingTableColumns = (
     ? [
         {
           accessorKey: "name",
-          header: t("Species")
+          header: t("Species Name")
         },
         {
           accessorKey: "amount",
@@ -38,19 +38,19 @@ export const getSeedingTableColumns = (
     : [
         {
           accessorKey: "name",
-          header: t("Species")
+          header: t("Species Name")
         },
         {
           accessorKey: "seedsInSample",
-          header: t("Seeds Per Sample")
+          header: t("Seeds per Sample")
         },
         {
           accessorKey: "weightOfSample",
-          header: t("Sample Weight(Kg)")
+          header: t("Sample Weight (kg)")
         },
         {
           accessorKey: "seedsPerKg",
-          header: t("Seeds Per Kg"),
+          header: t("Seeds per kg"),
           cell: props => {
             const original = props.row?.original;
             if (original != null) return getSeedsPerKg(original);
