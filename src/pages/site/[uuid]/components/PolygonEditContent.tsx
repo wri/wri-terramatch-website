@@ -79,6 +79,11 @@ import {
   saveExistingPolygonVersion,
   saveNewSitePolygon
 } from "./polygonEditSave";
+import {
+  getMissingRequiredPolygonAttribute,
+  hasRequiredPolygonAttributes,
+  normalizeTargetSystem
+} from "./polygonEditValidation";
 import { normalizeSubmissionCycle, SUBMISSION_CYCLE_LABELS, SUBMISSION_CYCLE_OPTIONS } from "./polygonFilter.constants";
 import SubmissionValidationTags from "./SubmissionValidationTags";
 
@@ -92,6 +97,7 @@ type PolygonEditContentProps = {
   onRegisterHasUnsavedChanges?: (hasUnsavedChanges: () => boolean) => void;
   onRegisterPolygonName?: (getPolygonName: () => string) => void;
   onRegisterPlantStartDate?: (hasPlantStartDate: () => boolean) => void;
+  onRegisterRequiredAttributes?: (hasRequiredAttributes: () => boolean) => void;
   onRequestDeleteModal: () => void;
   onRequestSubmitModal: (hasUnsavedChanges: boolean) => void;
   onRequestAnrUploadModal?: (mode: "upload" | "replace") => void;
@@ -126,9 +132,6 @@ const dateValueToIsoString = (value: DateValue | undefined): string | undefined 
   const dd = String(value.day).padStart(2, "0");
   return `${value.year}-${mm}-${dd}T00:00:00.000Z`;
 };
-
-const normalizeTargetSystem = (value: string | null | undefined): string[] =>
-  value != null && value !== "" ? value.split(",").map(item => item.trim()) : [];
 
 const waitForMapEditCleanup = async (): Promise<void> => {
   await new Promise<void>(resolve => {
@@ -193,6 +196,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRegisterHasUnsavedChanges,
   onRegisterPolygonName,
   onRegisterPlantStartDate,
+  onRegisterRequiredAttributes,
   onRequestDeleteModal,
   onRequestSubmitModal,
   onRequestAnrUploadModal,
@@ -356,6 +360,19 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   );
   const getFormValuesRef = useLatestRef(getFormValues);
 
+  const getRequiredAttributesError = useCallback((): string | null => {
+    switch (getMissingRequiredPolygonAttribute({ restorationPractice, targetLandUseSystem, treeDistribution })) {
+      case "restorationPractice":
+        return t("Restoration practice is required");
+      case "targetLandUse":
+        return t("Target land use is required");
+      case "treeDistribution":
+        return t("Tree distribution is required");
+      default:
+        return null;
+    }
+  }, [restorationPractice, t, targetLandUseSystem, treeDistribution]);
+
   const updateFormBaseline = useCallback(() => {
     formBaselineRef.current = getFormValuesRef.current();
   }, [getFormValuesRef]);
@@ -435,6 +452,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         showStatusToast("error", t("Plant start date is required"));
         return null;
       }
+      const requiredAttributesError = getRequiredAttributesError();
+      if (requiredAttributesError != null) {
+        showStatusToast("error", requiredAttributesError);
+        return null;
+      }
       if (resolvedSiteUuid == null || resolvedSiteUuid === "") {
         showStatusToast("error", t("Missing site information"));
         return null;
@@ -471,6 +493,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       draftPolygonGeometry,
       finalizeSuccessfulSave,
       getFormValues,
+      getRequiredAttributesError,
       isAdmin,
       plantStartDate,
       polygonName,
@@ -493,6 +516,11 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       }
       if (!isValidPlantStartDate(plantStartDate)) {
         showStatusToast("error", t("Plant start date is required"));
+        return null;
+      }
+      const requiredAttributesError = getRequiredAttributesError();
+      if (requiredAttributesError != null) {
+        showStatusToast("error", requiredAttributesError);
         return null;
       }
       if (geometryChanged && (polygon.siteId == null || polygon.siteId === "")) {
@@ -536,6 +564,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       geometryChanged,
       geometryPolygonUuid,
       getFormValues,
+      getRequiredAttributesError,
       isAdmin,
       polygon?.primaryUuid,
       polygon?.siteId,
@@ -1007,6 +1036,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     onRegisterPlantStartDate?.(() => hasPlantStartDateForDisplay(plantStartDate, polygon));
   }, [onRegisterPlantStartDate, plantStartDate, polygon]);
 
+  useEffect(() => {
+    onRegisterRequiredAttributes?.(() =>
+      hasRequiredPolygonAttributes({ restorationPractice, targetLandUseSystem, treeDistribution })
+    );
+  }, [onRegisterRequiredAttributes, restorationPractice, targetLandUseSystem, treeDistribution]);
+
   const submissionCycleOptions = useMemo(
     () => SUBMISSION_CYCLE_OPTIONS.map(value => ({ value, label: SUBMISSION_CYCLE_LABELS[value] })),
     []
@@ -1053,6 +1088,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               onChange={setRestorationPractice}
               placeholder={t("Select...")}
               multiple
+              required
             />
             <SelectInput
               items={targetOptions}
@@ -1060,6 +1096,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               value={targetLandUseSystem}
               onChange={value => setTargetLandUseSystem(value.slice(0, 1))}
               placeholder={t("Select...")}
+              required
             />
             <SelectInput
               key={`tree-distribution-${sitePolygonUuid}-${(polygon?.distr ?? []).join("|")}`}
@@ -1069,6 +1106,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
               onChange={setTreeDistribution}
               placeholder={t("Select...")}
               multiple
+              required
             />
             <TextInput
               label={t("Trees Planted")}
