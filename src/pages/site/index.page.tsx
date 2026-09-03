@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
@@ -17,25 +18,42 @@ import SiteIndexFilterDrawer, {
   type SiteIndexFilterStatus,
   SITE_INDEX_STATUS_OPTIONS
 } from "./components/SiteIndexFilterDrawer";
-import { type SiteIndexSite, siteIndexProjects } from "./components/siteIndexMockData";
+import { type SiteIndexProject, type SiteIndexSite, siteIndexProjects } from "./components/siteIndexMockData";
+import SiteIndexModals from "./components/SiteIndexModals";
 import SiteProjectSection from "./components/SiteProjectSection";
 
 const ALL_PROJECTS = "all";
 
+const cloneSiteIndexProjects = (): SiteIndexProject[] =>
+  siteIndexProjects.map(project => ({
+    ...project,
+    sites: project.sites.map(site => ({ ...site }))
+  }));
+
 const SiteIndexPage = () => {
   const t = useT();
   const router = useRouter();
+  const [projects, setProjects] = useState<SiteIndexProject[]>(cloneSiteIndexProjects);
   const [selectedProject, setSelectedProject] = useState(ALL_PROJECTS);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilters, setStatusFilters] = useState<SiteIndexFilterStatus[]>([]);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [searchResetKey, setSearchResetKey] = useState(0);
   const [selectedSiteIds, setSelectedSiteIds] = useState<Set<string>>(new Set());
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openSubmitModal, setOpenSubmitModal] = useState(false);
+  const [openSubmittedModal, setOpenSubmittedModal] = useState(false);
+  const [submittedSiteNames, setSubmittedSiteNames] = useState<string[]>([]);
+
+  const selectedSites = useMemo(
+    () => projects.flatMap(project => project.sites).filter(site => selectedSiteIds.has(site.id)),
+    [projects, selectedSiteIds]
+  );
 
   const visibleProjects = useMemo(() => {
     const normalisedQuery = searchQuery.trim().toLowerCase();
 
-    return siteIndexProjects
+    return projects
       .filter(project => selectedProject === ALL_PROJECTS || project.id === selectedProject)
       .map(project => ({
         ...project,
@@ -49,7 +67,7 @@ const SiteIndexPage = () => {
         })
       }))
       .filter(project => project.sites.length > 0 || (normalisedQuery.length === 0 && statusFilters.length === 0));
-  }, [searchQuery, selectedProject, statusFilters]);
+  }, [projects, searchQuery, selectedProject, statusFilters]);
 
   const visibleSiteCount = visibleProjects.reduce((total, project) => total + project.sites.length, 0);
   const hasActiveFilters = searchQuery.trim().length > 0 || statusFilters.length > 0;
@@ -72,6 +90,39 @@ const SiteIndexPage = () => {
 
   const clearSelection = useCallback(() => setSelectedSiteIds(new Set()), []);
 
+  const handleDeleteSites = useCallback(() => {
+    setProjects(current =>
+      current.map(project => ({
+        ...project,
+        sites: project.sites.filter(site => !selectedSiteIds.has(site.id))
+      }))
+    );
+    clearSelection();
+    showToast({
+      label: t("Site Profile(s) deleted"),
+      type: "success",
+      placement: "bottom",
+      duration: 5000
+    });
+  }, [clearSelection, selectedSiteIds, t]);
+
+  const handleSubmitSites = useCallback(() => {
+    const names = selectedSites.map(site => site.name);
+    setProjects(current =>
+      current.map(project => ({
+        ...project,
+        sites: project.sites.map(site =>
+          selectedSiteIds.has(site.id)
+            ? { ...site, status: "pending-approval", changeRequest: "pending-approval" }
+            : site
+        )
+      }))
+    );
+    setSubmittedSiteNames(names);
+    setOpenSubmittedModal(true);
+    clearSelection();
+  }, [clearSelection, selectedSiteIds, selectedSites]);
+
   const clearFilters = () => {
     setSearchQuery("");
     setStatusFilters([]);
@@ -86,7 +137,7 @@ const SiteIndexPage = () => {
 
       <Box className="flex min-h-full flex-1 flex-col bg-white">
         <ToolbarObject
-          className="border-theme-neutral-300 border-b"
+          className="border-b border-theme-neutral-300"
           breadcrumbs={{
             links: [{ label: t("Sites"), link: "/site", icon: <SiteIcon /> }],
             linkRouter: router
@@ -104,7 +155,7 @@ const SiteIndexPage = () => {
               label={t("View:")}
               items={[
                 { label: t("All"), value: ALL_PROJECTS },
-                ...siteIndexProjects.map(project => ({ label: project.name, value: project.id }))
+                ...projects.map(project => ({ label: project.name, value: project.id }))
               ]}
               value={selectedProject}
               onChange={setSelectedProject}
@@ -118,7 +169,7 @@ const SiteIndexPage = () => {
         </Box>
 
         <ToolbarTable
-          className="border-theme-neutral-200 border-b !px-6 py-5"
+          className="border-b border-theme-neutral-200 !px-6 py-5"
           classNameContentLeft="w-full"
           search={{
             label: visibleSiteCount === 1 ? t("Site") : t("Sites"),
@@ -155,14 +206,31 @@ const SiteIndexPage = () => {
           ))}
 
           {visibleProjects.length === 0 ? (
-            <Box className="border-theme-neutral-400 text-theme-neutral-700 mx-4 my-12 rounded-lg border border-dashed p-8 text-center">
+            <Box className="mx-4 my-12 rounded-lg border border-dashed border-theme-neutral-400 p-8 text-center text-theme-neutral-700">
               {t("No sites match the current search and filters.")}
             </Box>
           ) : null}
         </Box>
 
         <PageFooter />
-        <SiteIndexBulkActionToolbar selectedCount={selectedSiteIds.size} onCancel={clearSelection} />
+        <SiteIndexBulkActionToolbar
+          selectedSites={selectedSites}
+          onCancel={clearSelection}
+          onDelete={() => setOpenDeleteModal(true)}
+          onSubmit={() => setOpenSubmitModal(true)}
+        />
+        <SiteIndexModals
+          selectedSites={selectedSites}
+          submittedSiteNames={submittedSiteNames}
+          openDeleteModal={openDeleteModal}
+          openSubmitModal={openSubmitModal}
+          openSubmittedModal={openSubmittedModal}
+          onDeleteModalOpenChange={setOpenDeleteModal}
+          onSubmitModalOpenChange={setOpenSubmitModal}
+          onSubmittedModalOpenChange={setOpenSubmittedModal}
+          onDelete={handleDeleteSites}
+          onSubmit={handleSubmitSites}
+        />
         <SiteIndexFilterDrawer
           open={isFilterDrawerOpen}
           filters={statusFilters}

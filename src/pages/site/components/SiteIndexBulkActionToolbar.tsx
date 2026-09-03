@@ -1,16 +1,30 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import type { FC } from "react";
+import { type FC, useMemo } from "react";
 
 import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActionToolbar";
+import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
+
+import type { SiteIndexSite } from "./siteIndexMockData";
+import { getSiteIndexSubmitTooltip, isSiteSubmittable } from "./siteIndexSubmit";
 
 interface SiteIndexBulkActionToolbarProps {
-  selectedCount: number;
+  selectedSites: SiteIndexSite[];
   onCancel: () => void;
+  onDelete: () => void;
+  onSubmit: () => void;
 }
 
-const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({ selectedCount, onCancel }) => {
+const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({
+  selectedSites,
+  onCancel,
+  onDelete,
+  onSubmit
+}) => {
   const t = useT();
+  const selectedCount = selectedSites.length;
+  const canSubmit = selectedCount > 0 && selectedSites.every(isSiteSubmittable);
+  const submitTooltip = useMemo(() => getSiteIndexSubmitTooltip(selectedSites, t), [selectedSites, t]);
 
   if (selectedCount === 0) return null;
 
@@ -24,9 +38,10 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({ selec
         }}
         deleteAction={{
           id: "delete",
+          variant: "negative",
+          tone: "danger",
           children: t("Delete"),
-          disabled: true,
-          onClick: () => {}
+          onClick: onDelete
         }}
         actions={[
           {
@@ -42,10 +57,16 @@ const SiteIndexBulkActionToolbar: FC<SiteIndexBulkActionToolbarProps> = ({ selec
         ]}
         primaryAction={{
           children: t("Submit"),
-          disabled: true,
-          onClick: () => {}
+          disabled: !canSubmit,
+          onClick: onSubmit
         }}
-        infoTooltip={t("Only eligible sites can be submitted.")}
+        infoTooltip={
+          submitTooltip == null ? undefined : Array.isArray(submitTooltip) ? (
+            <ToolbarInfoTooltipContent lines={submitTooltip} />
+          ) : (
+            submitTooltip
+          )
+        }
       />
     </Box>
   );
