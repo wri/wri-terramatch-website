@@ -1,7 +1,7 @@
 import { normalizeLocale, tx } from "@transifex/native";
-import { isObject, isString } from "lodash";
 import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect, useMemo } from "react";
+import { io } from "socket.io-client";
 
 import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { useMyOrg } from "@/connections/Organisation";
@@ -121,39 +121,33 @@ const useWebsocket = () => {
     if (user?.uuid == null) return;
 
     const accessToken = typeof window !== "undefined" && getAccessToken();
-    if (!isString(accessToken) || accessToken === "") {
+    if (accessToken == null) {
       Log.error(`We have a logged in user, but no access token [${user.uuid}]`);
       return;
     }
 
     Log.info("Connecting to websocket for user data pushes");
-    const socket = new WebSocket(`${websocketUrl}?authToken=${accessToken}`);
-
-    socket.addEventListener("open", () => {
-      Log.info("Websocket open");
+    const socket = io(websocketUrl, {
+      autoConnect: true,
+      path: "/userSockets/v3/connection",
+      auth: { token: `Bearer ${accessToken}` }
     });
-    socket.addEventListener("close", () => {
-      Log.info("Websocket closed");
+    socket.on("connect", () => {
+      Log.info("Websocket connected");
     });
-    socket.addEventListener("error", e => {
-      Log.error("Websocket error", e);
+    socket.on("disconnect", () => {
+      Log.info("Websocket disconnected");
     });
-    socket.addEventListener("message", ({ data }) => {
-      const { event, data: document } = (isObject(data) ? data : JSON.parse(data)) as {
-        event: string;
-        data: JsonApiDocument;
-      };
-      if (event !== "userDataPush") {
-        Log.error("Received unknown websocket event", data);
-        return;
-      }
-
+    socket.on("connect_error", err => {
+      Log.error("Websocket error", err);
+    });
+    socket.on("userDataPush", (document: JsonApiDocument) => {
       ApiSlice.storeDocument({ document });
     });
 
     return () => {
       Log.info("Disconnecting websocket");
-      socket.close();
+      socket.disconnect();
     };
   }, [user?.uuid]);
 };

@@ -43,10 +43,10 @@ const GATEWAY_URLS = {
 };
 
 const WEBSOCKET_URLS = {
-  dev: "wss://ws-dev.terramatch.org/userSockets/v3/connection",
-  test: "wss://ws-test.terramatch.org/userSockets/v3/connection",
-  staging: "wss://ws-staging.terramatch.org/userSockets/v3/connection",
-  prod: "wss://ws.terramatch.org/userSockets/v3/connection"
+  dev: "wss://ws-dev.terramatch.org",
+  test: "wss://ws-test.terramatch.org",
+  staging: "wss://ws-staging.terramatch.org",
+  prod: "wss://ws.terramatch.org"
 };
 
 const LOCAL_SERVICE_URLS = {
@@ -56,7 +56,7 @@ const LOCAL_SERVICE_URLS = {
   entityServiceUrl: "http://localhost:4050",
   dashboardServiceUrl: "http://localhost:4060",
   // Hosted in the user service
-  websocketUrl: "ws://localhost:4010/userSockets/v3/connection"
+  websocketUrl: "ws://localhost:4010"
 };
 
 const defaultServiceUrl = (env: EnvironmentName, service: Service) =>
