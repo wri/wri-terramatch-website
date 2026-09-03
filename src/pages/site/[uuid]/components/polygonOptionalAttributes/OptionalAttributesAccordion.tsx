@@ -47,7 +47,7 @@ const OptionalAttributesAccordion: FC<OptionalAttributesAccordionProps> = ({
             <SelectInput
               key={`custom-attribute-${definition.key}-${instanceKey}-${value.join("|")}`}
               items={items}
-              label={definition.label}
+              label={`${definition.label}${t(" (Optional)")}`}
               defaultValue={value}
               onChange={selected =>
                 onChange(definition.key, definition.inputType === "single_select" ? selected.slice(0, 1) : selected)
