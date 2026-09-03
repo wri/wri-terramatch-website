@@ -7,6 +7,7 @@ import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/A
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
+import Carousel from "@/redesignComponents/containers/Carousel/Carousel";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import Table, { type TableRenderRowContext, CHECKBOX_COLUMN_KEY } from "@/redesignComponents/dataDisplay/Table/Table";
@@ -51,12 +52,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
     totalSiteCount === 0 ? 0 : Math.round(progress * (sites.length / totalSiteCount));
   const selectedMetric = (progress: number) =>
     totalSiteCount === 0 ? 0 : Math.round(progress * (selectedSites.length / totalSiteCount));
-  const metricCardsMaxWidth =
-    isFiltered && selectedSites.length > 0
-      ? "max-w-[83.8125rem]"
-      : isFiltered || selectedSites.length > 0
-      ? "max-w-[70.25rem]"
-      : "max-w-[800px]";
+  const metricCardClassName = "min-w-fit shrink-0 flex-1";
 
   return (
     <Accordion
@@ -82,8 +78,8 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
         ) : undefined
       }
     >
-      <Box paddingX={4} paddingBottom={7} paddingTop={4}>
-        <Box className={`mb-5 grid grid-cols-3 gap-4 mobile:grid-cols-1 ${metricCardsMaxWidth}`}>
+      <Box paddingX={4} paddingBottom={7} paddingTop={4} minW={0}>
+        <Carousel className="mb-5" gap={4} scrollAmount={400}>
           <MetricCard
             title={t("Trees Growing")}
             progress={project.metrics.treesGrowing.progress}
@@ -93,6 +89,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
             widthProgressBar="5rem"
             icon={<TreeIcon />}
             color="secondary.600"
+            className={metricCardClassName}
             filtered={isFiltered ? filteredMetric(project.metrics.treesGrowing.progress) : undefined}
             selection={selectedSites.length > 0 ? selectedMetric(project.metrics.treesGrowing.progress) : undefined}
           />
@@ -104,6 +101,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
             widthProgressBar="5rem"
             color="secondary.700"
             icon={<AreaHectaresIcon />}
+            className={metricCardClassName}
             filtered={isFiltered ? filteredMetric(project.metrics.areaRestored.progress) : undefined}
             selection={selectedSites.length > 0 ? selectedMetric(project.metrics.areaRestored.progress) : undefined}
           />
@@ -114,10 +112,11 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
             variant="progressBar"
             widthProgressBar="5rem"
             icon={<JobsIcon />}
+            className={metricCardClassName}
             filtered={isFiltered ? filteredMetric(project.metrics.workdays.progress) : undefined}
             selection={selectedSites.length > 0 ? selectedMetric(project.metrics.workdays.progress) : undefined}
           />
-        </Box>
+        </Carousel>
 
         <Table<SiteIndexSite>
           data={sites}
