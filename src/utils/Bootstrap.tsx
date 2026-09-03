@@ -6,7 +6,7 @@ import { PropsWithChildren, useEffect, useMemo } from "react";
 import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { useMyOrg } from "@/connections/Organisation";
 import { useMyUser } from "@/connections/User";
-import { userServiceUrl } from "@/constants/environment";
+import { websocketUrl } from "@/constants/environment";
 import ApiSlice, { JsonApiDocument } from "@/store/apiSlice";
 import Log from "@/utils/log";
 import { PathMatcher, Redirect } from "@/utils/PathMatcher";
@@ -127,9 +127,7 @@ const useWebsocket = () => {
     }
 
     Log.info("Connecting to websocket for user data pushes");
-    const socket = new WebSocket(
-      `${userServiceUrl.replace("http", "ws")}/userSockets/v3/connection?authToken=${accessToken}`
-    );
+    const socket = new WebSocket(`${websocketUrl}?authToken=${accessToken}`);
 
     socket.addEventListener("open", () => {
       Log.info("Websocket open");

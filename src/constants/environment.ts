@@ -8,7 +8,8 @@ const SERVICES = [
   "jobServiceUrl",
   "entityServiceUrl",
   "researchServiceUrl",
-  "dashboardServiceUrl"
+  "dashboardServiceUrl",
+  "websocketUrl"
 ] as const;
 type Service = (typeof SERVICES)[number];
 
@@ -18,6 +19,7 @@ type ServicesDefinition = {
   researchServiceUrl: string;
   entityServiceUrl: string;
   dashboardServiceUrl: string;
+  websocketUrl: string;
 };
 
 type Environment = ServicesDefinition & {
@@ -33,11 +35,18 @@ const GLOBAL_GEOSERVER_URL = "https://geoserver-prod.wri-restoration-marketplace
 const GLOBAL_SENTRY_DSN =
   "https://f042ecbd79a15baad04d2a485ae66611@o4511503378284544.ingest.us.sentry.io/4511990614589440";
 
-const GATEWAYS = {
+const GATEWAY_URLS = {
   dev: "https://api-dev.terramatch.org",
   test: "https://api-test.terramatch.org",
   staging: "https://api-staging.terramatch.org",
   prod: "https://api.terramatch.org"
+};
+
+const WEBSOCKET_URLS = {
+  dev: "wss://ws-dev.terramatch.org/userSockets/v3/connection",
+  test: "wss://ws-test.terramatch.org/userSockets/v3/connection",
+  staging: "wss://ws-staging.terramatch.org/userSockets/v3/connection",
+  prod: "wss://ws.terramatch.org/userSockets/v3/connection"
 };
 
 const LOCAL_SERVICE_URLS = {
@@ -45,11 +54,13 @@ const LOCAL_SERVICE_URLS = {
   jobServiceUrl: "http://localhost:4020",
   researchServiceUrl: "http://localhost:4030",
   entityServiceUrl: "http://localhost:4050",
-  dashboardServiceUrl: "http://localhost:4060"
+  dashboardServiceUrl: "http://localhost:4060",
+  // Hosted in the user service
+  websocketUrl: "ws://localhost:4010/userSockets/v3/connection"
 };
 
 const defaultServiceUrl = (env: EnvironmentName, service: Service) =>
-  env === "local" ? LOCAL_SERVICE_URLS[service] : GATEWAYS[env];
+  env === "local" ? LOCAL_SERVICE_URLS[service] : service === "websocketUrl" ? WEBSOCKET_URLS[env] : GATEWAY_URLS[env];
 
 const defaultGeoserverWorkspace = (env: EnvironmentName) =>
   env === "test" ? "wri_test" : env === "prod" ? "wri_prod" : "wri_staging";
@@ -92,3 +103,4 @@ export const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? DEFAULTS.mapb
 export const geoserverUrl = process.env.NEXT_PUBLIC_GEOSERVER_URL ?? DEFAULTS.geoserverUrl;
 export const geoserverWorkspace = process.env.NEXT_PUBLIC_GEOSERVER_WORKSPACE ?? DEFAULTS.geoserverWorkspace;
 export const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN ?? DEFAULTS.sentryDsn;
+export const websocketUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL ?? DEFAULTS.websocketUrl;
