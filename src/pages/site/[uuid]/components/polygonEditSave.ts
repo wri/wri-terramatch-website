@@ -16,6 +16,12 @@ import type {
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
+import {
+  areCustomAttributeRecordsEqual,
+  buildCustomAttributesChangePayload
+} from "./polygonOptionalAttributes/mappers";
+import type { CustomAttributeFormValues, PolygonAttributeDefinitionDto } from "./polygonOptionalAttributes/types";
+
 export type CreatePolygonFeatureProperties = {
   siteId: string;
   polyName?: string;
@@ -35,10 +41,13 @@ export type PolygonEditFormValues = {
   treeDistribution: string[];
   treesPlanted: string;
   submissionCycle: string[];
+  customAttributes: CustomAttributeFormValues;
 };
 
 export type BuildAttributeChangesOptions = {
   includeSubmissionCycle?: boolean;
+  /** Active custom attribute definitions for the polygon's framework, in scope for editing. */
+  customAttributeDefinitions?: PolygonAttributeDefinitionDto[];
 };
 
 export const isValidPolygonName = (polygonName: string): boolean => polygonName.trim().length > 0;
@@ -93,6 +102,10 @@ export const arePolygonEditFormValuesEqual = (
   }
 
   if (left.submissionCycle.join(", ").trim() !== right.submissionCycle.join(", ").trim()) {
+    return false;
+  }
+
+  if (!areCustomAttributeRecordsEqual(left.customAttributes, right.customAttributes)) {
     return false;
   }
 
@@ -163,6 +176,10 @@ export const hasUnsavedPolygonChanges = (
     return true;
   }
 
+  if (!areCustomAttributeRecordsEqual(form.customAttributes, polygon.customAttributes)) {
+    return true;
+  }
+
   const formNumTrees = form.treesPlanted.trim() === "" ? 0 : Number(form.treesPlanted);
   const savedNumTrees = polygon.numTrees ?? 0;
   if (formNumTrees !== savedNumTrees) {
@@ -200,6 +217,13 @@ export const buildAttributeChanges = (
 
   if (options?.includeSubmissionCycle === true) {
     changes.submissionCycle = form.submissionCycle.join(", ");
+  }
+
+  if (options?.customAttributeDefinitions != null && options.customAttributeDefinitions.length > 0) {
+    changes.customAttributes = buildCustomAttributesChangePayload(
+      options.customAttributeDefinitions,
+      form.customAttributes
+    );
   }
 
   return changes;
@@ -318,6 +342,7 @@ export type SaveExistingPolygonVersionParams = {
   currentGeometry?: GeoJSON.Geometry;
   dateValueToIso: DateValueToIsoString;
   isAdmin?: boolean;
+  customAttributeDefinitions?: PolygonAttributeDefinitionDto[];
 };
 
 export const resolveGeometryPolygonUuidAfterSave = async (
@@ -365,7 +390,8 @@ export const resolveGeometryPolygonUuidAfterSave = async (
 
 export const saveExistingPolygonVersion = (params: SaveExistingPolygonVersionParams): Promise<SitePolygonLightDto> => {
   const attributeChanges = buildAttributeChanges(params.form, params.dateValueToIso, {
-    includeSubmissionCycle: params.isAdmin === true
+    includeSubmissionCycle: params.isAdmin === true,
+    customAttributeDefinitions: params.customAttributeDefinitions
   });
   const versionGeometry =
     params.geometryChanged && params.currentGeometry != null
