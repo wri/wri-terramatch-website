@@ -29,6 +29,7 @@ import type {
 } from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
 import type { SavePolygonFlowOptions } from "./polygonEditSave";
+import { hasRequiredPolygonAttributes, requiredPolygonAttributesFromSitePolygon } from "./polygonEditValidation";
 import PolygonSystemValidationContent from "./PolygonSystemValidationContent";
 import type { PolygonTableRow } from "./PolygonTableRow";
 import { mapSitePolygonToTableRow } from "./polygonTableRow.utils";
@@ -96,14 +97,17 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const getPolygonNameForSaveRef = useRef<() => string>(() => polygon?.polygonName?.trim() ?? "");
   const [savePolygonName, setSavePolygonName] = useState("");
   const [hasPlantStartDate, setHasPlantStartDate] = useState(false);
+  const [hasRequiredAttributes, setHasRequiredAttributes] = useState(false);
   const [hasUnsavedChangesInvalidatingValidation, setHasUnsavedChangesInvalidatingValidation] = useState(false);
   const isCreateMode = selectedPolygon?.primaryUuid == null || selectedPolygon.primaryUuid === "";
   const isPolygonNameMissing = savePolygonName.trim() === "";
   const isPlantStartDateMissing = !hasPlantStartDate;
+  const isRequiredAttributesMissing = !hasRequiredAttributes;
   const isSaveDisabled =
     (activeTab === "edit" && isCreateMode && draftPolygonGeometry == null) ||
     isPolygonNameMissing ||
-    isPlantStartDateMissing;
+    isPlantStartDateMissing ||
+    isRequiredAttributesMissing;
   const hasValidPolygonUuid = polygon?.polygonUuid != null;
   const resolvedSiteUuid = useMemo(
     () => selectedPolygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : ""),
@@ -169,7 +173,8 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
     getPolygonNameForSaveRef.current = () => polygon?.polygonName?.trim() ?? "";
     setSavePolygonName(initialName);
     setHasPlantStartDate(selectedPolygon?.plantStart != null && selectedPolygon.plantStart !== "");
-  }, [selectedPolygonIdentityKey, polygon?.polygonName, selectedPolygon?.plantStart]);
+    setHasRequiredAttributes(hasRequiredPolygonAttributes(requiredPolygonAttributesFromSitePolygon(selectedPolygon)));
+  }, [selectedPolygonIdentityKey, polygon?.polygonName, selectedPolygon]);
 
   const registerSave = useCallback(
     (saveHandler: (options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) => {
@@ -201,6 +206,10 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
 
   const registerPlantStartDate = useCallback((getHasPlantStartDate: () => boolean) => {
     setHasPlantStartDate(getHasPlantStartDate());
+  }, []);
+
+  const registerRequiredAttributes = useCallback((getHasRequiredAttributes: () => boolean) => {
+    setHasRequiredAttributes(getHasRequiredAttributes());
   }, []);
 
   const saveConfirmationPolygonName = getPolygonNameForSaveRef.current().trim();
@@ -400,6 +409,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                       onRegisterHasUnsavedChanges={registerHasUnsavedChanges}
                       onRegisterPolygonName={registerPolygonName}
                       onRegisterPlantStartDate={registerPlantStartDate}
+                      onRegisterRequiredAttributes={registerRequiredAttributes}
                       onRequestDeleteModal={handleRequestDeleteModal}
                       onRequestSubmitModal={handleRequestSubmitModal}
                       onRequestAnrUploadModal={mode => setAnrPlotsModal({ kind: "upload", mode })}
