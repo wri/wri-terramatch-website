@@ -1,6 +1,9 @@
-import type { MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
+import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 
-export type SiteIndexStatus = MappedTagState | "due" | "not-started";
+export type SiteIndexStatus = Extract<
+  TagSubmissionState,
+  "draft" | "pending-approval" | "information-required" | "approved" | "due" | "not-started"
+>;
 
 export interface SiteIndexSite {
   id: string;

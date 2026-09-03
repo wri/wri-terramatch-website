@@ -38,6 +38,7 @@ export interface MetricCardProps {
   classNameTitle?: string;
   frameworkKey?: string;
   selection?: number;
+  filtered?: number;
   metricLabel?: string;
   widthProgressBar?: string;
 }
@@ -54,6 +55,7 @@ type MetricCardFieldsForContentVariants =
   | "type"
   | "frameworkKey"
   | "selection"
+  | "filtered"
   | "metricLabel"
   | "widthProgressBar";
 
@@ -89,6 +91,8 @@ type ProgressBarMetricCardContentKeys =
   | "type"
   | "tooltipContent"
   | "classNameTitle"
+  | "selection"
+  | "filtered"
   | "metricLabel"
   | "widthProgressBar";
 

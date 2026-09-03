@@ -86,6 +86,7 @@ export const AllStates: Story = {
       <TagSubmission state="information-required" />
       <TagSubmission state="approved" />
       <TagSubmission state="due" />
+      <TagSubmission state="not-started" />
       <TagSubmission state="not-selected" />
       <TagSubmission state="receiving-applications" />
       <TagSubmission state="closed" />

@@ -19,7 +19,6 @@ export const SITE_INDEX_STATUS_OPTIONS: { label: string; value: SiteIndexFilterS
   { label: "Draft", value: "draft" },
   { label: "Pending Approval", value: "pending-approval" },
   { label: "Information Required", value: "information-required" },
-  { label: "Not Started", value: "not-started" },
   { label: "Approved", value: "approved" }
 ];
 
@@ -64,10 +63,12 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
       trapFocus={false}
       open={open}
       onOpenChange={onOpenChange}
+      size="md"
       placement="end"
       maxW="22.75rem"
-      paddingTop={12}
-      maxH="calc(100vh - 3rem)"
+      paddingTop={0}
+      paddingLeft={0}
+      maxH={"100vh"}
     >
       {({ onClose }) => (
         <FilterPanel

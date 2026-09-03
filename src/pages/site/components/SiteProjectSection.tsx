@@ -4,19 +4,19 @@ import Link from "next/link";
 import { type FC, useMemo } from "react";
 
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
-import MappedTag, { type MappedTagState } from "@/redesignComponents/actions/Tags/MappedTag/MappedTag";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
+import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import Table, { type TableRenderRowContext, CHECKBOX_COLUMN_KEY } from "@/redesignComponents/dataDisplay/Table/Table";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import {
   AreaHectaresIcon,
   CalendarIcon,
-  DueIcon,
+  EditIcon,
   FolderOpenIcon,
   JobsIcon,
-  NothingReportedIcon,
   TreeIcon
 } from "@/redesignComponents/foundations/Icons";
 
@@ -25,45 +25,38 @@ import type { SiteIndexProject, SiteIndexSite, SiteIndexStatus } from "./siteInd
 interface SiteProjectSectionProps {
   project: SiteIndexProject;
   sites: SiteIndexSite[];
+  totalSiteCount: number;
   selectedSiteIds: Set<string>;
   onRowSelected: (site: SiteIndexSite, checked: boolean) => void;
   onAllItemsSelected: (checked: boolean, visibleSites: SiteIndexSite[]) => void;
+  isFiltered: boolean;
   defaultOpen?: boolean;
 }
 
-const mappedStatuses: MappedTagState[] = ["draft", "pending-approval", "information-required", "approved", "deleted"];
-
-const SiteStatusTag: FC<{ status: SiteIndexStatus }> = ({ status }) => {
-  const t = useT();
-
-  if (mappedStatuses.includes(status as MappedTagState)) {
-    return <MappedTag state={status as MappedTagState} size="small" />;
-  }
-
-  if (status === "due") {
-    return <ActionStatusTag state="warning" size="small" label={t("Due")} icon={<DueIcon boxSize={2.5} />} />;
-  }
-
-  return (
-    <ActionStatusTag
-      state="neutral-dark"
-      size="small"
-      label={t("Not Started")}
-      icon={<NothingReportedIcon boxSize={2.5} />}
-    />
-  );
-};
+const SiteStatusTag: FC<{ status: SiteIndexStatus }> = ({ status }) => <TagSubmission state={status} size="small" />;
 
 const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   project,
   sites,
+  totalSiteCount,
   selectedSiteIds,
   onRowSelected,
   onAllItemsSelected,
+  isFiltered,
   defaultOpen = false
 }) => {
   const t = useT();
   const selectedSites = useMemo(() => sites.filter(site => selectedSiteIds.has(site.id)), [selectedSiteIds, sites]);
+  const filteredMetric = (progress: number) =>
+    totalSiteCount === 0 ? 0 : Math.round(progress * (sites.length / totalSiteCount));
+  const selectedMetric = (progress: number) =>
+    totalSiteCount === 0 ? 0 : Math.round(progress * (selectedSites.length / totalSiteCount));
+  const metricCardsMaxWidth =
+    isFiltered && selectedSites.length > 0
+      ? "max-w-[83.8125rem]"
+      : isFiltered || selectedSites.length > 0
+      ? "max-w-[70.25rem]"
+      : "max-w-[800px]";
 
   return (
     <Accordion
@@ -90,7 +83,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
       }
     >
       <Box paddingX={4} paddingBottom={7} paddingTop={4}>
-        <Box className="mb-5 grid max-w-[800px] grid-cols-3 gap-4 mobile:grid-cols-1">
+        <Box className={`mb-5 grid grid-cols-3 gap-4 mobile:grid-cols-1 ${metricCardsMaxWidth}`}>
           <MetricCard
             title={t("Trees Growing")}
             progress={project.metrics.treesGrowing.progress}
@@ -99,6 +92,9 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
             variant="progressBar"
             widthProgressBar="5rem"
             icon={<TreeIcon />}
+            color="secondary.600"
+            filtered={isFiltered ? filteredMetric(project.metrics.treesGrowing.progress) : undefined}
+            selection={selectedSites.length > 0 ? selectedMetric(project.metrics.treesGrowing.progress) : undefined}
           />
           <MetricCard
             title={t("Area restored (Ha)")}
@@ -106,7 +102,10 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
             goal={project.metrics.areaRestored.goal}
             variant="progressBar"
             widthProgressBar="5rem"
+            color="secondary.700"
             icon={<AreaHectaresIcon />}
+            filtered={isFiltered ? filteredMetric(project.metrics.areaRestored.progress) : undefined}
+            selection={selectedSites.length > 0 ? selectedMetric(project.metrics.areaRestored.progress) : undefined}
           />
           <MetricCard
             title={t("Workdays")}
@@ -115,16 +114,25 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
             variant="progressBar"
             widthProgressBar="5rem"
             icon={<JobsIcon />}
+            filtered={isFiltered ? filteredMetric(project.metrics.workdays.progress) : undefined}
+            selection={selectedSites.length > 0 ? selectedMetric(project.metrics.workdays.progress) : undefined}
           />
         </Box>
 
         <Table<SiteIndexSite>
           data={sites}
+          css={{
+            "& table tbody tr:hover": {
+              borderBottomColor: "primary.700",
+              borderBottomWidth: "0.0625rem"
+            }
+          }}
           columns={[
             { key: "name", label: t("Site Name"), sortable: true, width: "44%" },
             { key: "changeRequest", label: t("Change Request"), sortable: true, width: "18%" },
             { key: "status", label: t("Status"), sortable: true, width: "18%" },
-            { key: "dateCreated", label: t("Date Created"), sortable: true, width: "20%" }
+            { key: "dateCreated", label: t("Date Created"), sortable: true, width: "calc(20% - 130px)" },
+            { key: "actions", label: "", width: "130px" }
           ]}
           selectable
           pageSize={10}
@@ -134,7 +142,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
           onRowSelected={onRowSelected}
           onAllItemsSelected={onAllItemsSelected}
           renderRow={(site, context?: TableRenderRowContext) => (
-            <TableRow className={context?.className} aria-selected={selectedSiteIds.has(site.id)}>
+            <TableRow className={`${context?.className ?? ""} group`} aria-selected={selectedSiteIds.has(site.id)}>
               <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
                 <Checkbox
                   name={`site-${site.id}`}
@@ -173,6 +181,18 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
                     –
                   </Text>
                 )}
+              </TableCell>
+              <TableCell {...context?.getCellProps("actions")}>
+                <Box className="flex justify-center">
+                  <ActionCell
+                    button={{
+                      children: t("Edit"),
+                      leftIcon: <EditIcon boxSize={2.5} />,
+                      "aria-label": t("Edit {siteName}", { siteName: site.name }),
+                      onClick: () => {}
+                    }}
+                  />
+                </Box>
               </TableCell>
             </TableRow>
           )}

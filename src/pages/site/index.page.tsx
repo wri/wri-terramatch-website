@@ -39,6 +39,7 @@ const SiteIndexPage = () => {
       .filter(project => selectedProject === ALL_PROJECTS || project.id === selectedProject)
       .map(project => ({
         ...project,
+        totalSiteCount: project.sites.length,
         sites: project.sites.filter(site => {
           const matchesSearch = normalisedQuery.length === 0 || site.name.toLowerCase().includes(normalisedQuery);
           const matchesStatus =
@@ -51,6 +52,7 @@ const SiteIndexPage = () => {
   }, [searchQuery, selectedProject, statusFilters]);
 
   const visibleSiteCount = visibleProjects.reduce((total, project) => total + project.sites.length, 0);
+  const hasActiveFilters = searchQuery.trim().length > 0 || statusFilters.length > 0;
 
   const handleRowSelected = useCallback((site: SiteIndexSite, checked: boolean) => {
     setSelectedSiteIds(current => {
@@ -84,7 +86,7 @@ const SiteIndexPage = () => {
 
       <Box className="flex min-h-full flex-1 flex-col bg-white">
         <ToolbarObject
-          className="border-b border-theme-neutral-300"
+          className="border-theme-neutral-300 border-b"
           breadcrumbs={{
             links: [{ label: t("Sites"), link: "/site", icon: <SiteIcon /> }],
             linkRouter: router
@@ -93,7 +95,7 @@ const SiteIndexPage = () => {
 
         <Box className="flex min-h-[60px] flex-wrap items-stretch bg-white">
           <Box className="min-w-[240px] flex-1">
-            <PageHeader title={t("Sites")} />
+            <PageHeader title={t("Sites")} className="!bg-theme-neutral-100" />
           </Box>
           <Box className="flex min-w-[320px] items-stretch mobile:order-3 mobile:w-full">
             <HighLevelSelector
@@ -116,7 +118,8 @@ const SiteIndexPage = () => {
         </Box>
 
         <ToolbarTable
-          className="border-b border-theme-neutral-200 !px-6 py-5"
+          className="border-theme-neutral-200 border-b !px-6 py-5"
+          classNameContentLeft="w-full"
           search={{
             label: visibleSiteCount === 1 ? t("Site") : t("Sites"),
             placeholder: t("Search sites"),
@@ -133,7 +136,7 @@ const SiteIndexPage = () => {
           }))}
           onClickFilterButton={() => setIsFilterDrawerOpen(true)}
           onClearFilters={clearFilters}
-          showClearFilters={searchQuery.length > 0 || statusFilters.length > 0}
+          showClearFilters={hasActiveFilters}
         />
 
         <Box as="main" className={`flex-1 overflow-x-hidden px-2 pt-1 ${selectedSiteIds.size > 0 ? "pb-24" : "pb-8"}`}>
@@ -142,15 +145,17 @@ const SiteIndexPage = () => {
               key={project.id}
               project={project}
               sites={project.sites}
+              totalSiteCount={project.totalSiteCount}
               selectedSiteIds={selectedSiteIds}
               onRowSelected={handleRowSelected}
               onAllItemsSelected={handleAllItemsSelected}
+              isFiltered={hasActiveFilters}
               defaultOpen={index === 0}
             />
           ))}
 
           {visibleProjects.length === 0 ? (
-            <Box className="mx-4 my-12 rounded-lg border border-dashed border-theme-neutral-400 p-8 text-center text-theme-neutral-700">
+            <Box className="border-theme-neutral-400 text-theme-neutral-700 mx-4 my-12 rounded-lg border border-dashed p-8 text-center">
               {t("No sites match the current search and filters.")}
             </Box>
           ) : null}
