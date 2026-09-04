@@ -64,11 +64,7 @@ import {
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
 import UploadGeotaggedPhotos from "./Modals/GeotaggedPhotos/UploadGeotaggedPhotos";
-import type {
-  PolygonRunValidationWithResultsCallback,
-  PolygonSaveCallback,
-  PolygonValidationJobsStartedCallback
-} from "./polygonEdit.types";
+import type { PolygonRunValidationWithResultsCallback, PolygonSaveCallback } from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
   type SavePolygonFlowOptions,
@@ -115,7 +111,6 @@ type PolygonEditContentProps = {
   onRequestInformationModal?: () => void;
   onSaved?: PolygonSaveCallback;
   onRunValidationWithResultsModal?: PolygonRunValidationWithResultsCallback;
-  onValidationJobsStarted?: PolygonValidationJobsStartedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onUnsavedChangesInvalidatingValidationChange?: (value: boolean) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
@@ -222,7 +217,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRequestInformationModal,
   onSaved,
   onRunValidationWithResultsModal,
-  onValidationJobsStarted,
   onPolygonUpdated,
   onUnsavedChangesInvalidatingValidationChange,
   onSuppressMapSelectionHighlightChange,
@@ -913,9 +907,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         onClose?.();
         await waitForMapEditCleanup();
         await onSaved?.();
-        if (targetGeometryPolygonUuid !== "") {
-          onValidationJobsStarted?.([targetGeometryPolygonUuid], { trackBulkCompletion: false });
-        }
         return true;
       } catch (error) {
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
@@ -931,7 +922,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       onClose,
       onSaved,
       onSubmittingChange,
-      onValidationJobsStarted,
       resolvedSiteUuid,
       setIsUserDrawingEnabled,
       setPolygonGeometryEdit,
