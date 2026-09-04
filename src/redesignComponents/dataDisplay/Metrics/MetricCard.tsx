@@ -189,6 +189,8 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   classNameTitle,
   metricLabel,
   widthProgressBar = "100%",
+  selection,
+  filtered,
   type
 }) => {
   const t = useT();
@@ -231,6 +233,32 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
               </Text>
             ) : null}
           </Flex>
+          {filtered != null ? (
+            <>
+              <SimpleDivider variant="vertical" className="!h-3" />
+              <Flex gap={1} alignItems="center">
+                <Text color="neutral.700" textStyle="200">
+                  {t("Filtered:")}
+                </Text>
+                <Text color="neutral.900" textStyle="300-bold">
+                  {formatNumberLocaleString(filtered)}
+                </Text>
+              </Flex>
+            </>
+          ) : null}
+          {selection != null ? (
+            <>
+              <SimpleDivider variant="vertical" className="!h-3" />
+              <Flex gap={1} alignItems="center">
+                <Text color="neutral.700" textStyle="200">
+                  {t("Selected:")}
+                </Text>
+                <Text color="neutral.900" textStyle="300-bold">
+                  {formatNumberLocaleString(selection)}
+                </Text>
+              </Flex>
+            </>
+          ) : null}
         </Flex>
       </Flex>
     </Flex>
@@ -333,7 +361,8 @@ const MetricCard: FC<MetricCardProps> = props => {
     frameworkKey,
     selection,
     metricLabel,
-    widthProgressBar
+    widthProgressBar,
+    filtered
   } = props;
   const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "14px", color, variant);
   const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "24px", color, variant);
@@ -358,6 +387,8 @@ const MetricCard: FC<MetricCardProps> = props => {
           metricLabel={metricLabel}
           type={type}
           widthProgressBar={widthProgressBar}
+          selection={selection}
+          filtered={filtered}
         />
       );
       break;
@@ -420,7 +451,7 @@ const MetricCard: FC<MetricCardProps> = props => {
     <Flex
       padding={3}
       className={twMerge(
-        "h-fit justify-start rounded-lg border border-theme-neutral-300 bg-theme-neutral-100 p-3",
+        "border-theme-neutral-300 bg-theme-neutral-100 h-fit justify-start rounded-lg border p-3",
         className
       )}
     >

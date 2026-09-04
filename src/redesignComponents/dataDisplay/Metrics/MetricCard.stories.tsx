@@ -88,6 +88,33 @@ export const ProgressBar: Story = {
   }
 };
 
+export const ProgressBarWithFilteredValue: Story = {
+  args: {
+    title: "Trees Growing",
+    progress: 624000,
+    goal: 1000000,
+    filtered: 124800,
+    variant: "progressBar",
+    icon: <PlaceholderIcon />,
+    className: "w-[22.75rem]",
+    widthProgressBar: "5rem"
+  }
+};
+
+export const ProgressBarWithFilteredAndSelectedValues: Story = {
+  args: {
+    title: "Trees Growing",
+    progress: 624000,
+    goal: 1000000,
+    filtered: 170182,
+    selection: 56727,
+    variant: "progressBar",
+    icon: <PlaceholderIcon />,
+    className: "w-[27.875rem]",
+    widthProgressBar: "5rem"
+  }
+};
+
 export const DonutChart: Story = {
   args: {
     title: "Stat label",

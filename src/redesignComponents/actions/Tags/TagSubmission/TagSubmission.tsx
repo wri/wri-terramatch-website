@@ -22,6 +22,7 @@ export type TagSubmissionState =
   | "information-required"
   | "approved"
   | "due"
+  | "not-started"
   | "not-selected"
   | "receiving-applications"
   | "closed"
@@ -44,6 +45,7 @@ export const useTagLabel = (tag: TagSubmissionState) => {
     "information-required": t("Information Required"),
     approved: t("Approved"),
     due: t("Due"),
+    "not-started": t("Not Started"),
     "not-selected": t("Not Selected"),
     "receiving-applications": t("Receiving Applications"),
     closed: t("Closed"),
@@ -61,6 +63,7 @@ const TagSubmissionActionStatusTagStateMap: Record<TagSubmissionState, ActionSta
   "information-required": "attention",
   approved: "success",
   due: "warning",
+  "not-started": "neutral-dark",
   "not-selected": "warning",
   "receiving-applications": "information",
   closed: "neutral-light",
@@ -85,6 +88,8 @@ function getTagSubmissionIcon(state: TagSubmissionState, size: "small" | "defaul
       return <CheckApprovedIcon color="success.500" boxSize={boxSize} />;
     case "due":
       return <DueIcon color="error.500" boxSize={boxSize} />;
+    case "not-started":
+      return <NothingReportedIcon color="neutral.900" boxSize={boxSize} />;
     case "not-selected":
       return <DisallowedIcon color="error.500" boxSize={boxSize} />;
     case "receiving-applications":
