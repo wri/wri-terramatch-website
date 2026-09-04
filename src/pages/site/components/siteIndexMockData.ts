@@ -1,3 +1,4 @@
+import { Framework } from "@/context/framework.provider";
 import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 
 export type SiteIndexStatus = Extract<
@@ -16,12 +17,16 @@ export interface SiteIndexSite {
 export interface SiteIndexProject {
   id: string;
   name: string;
+  frameworkKey: Framework;
   organisationName: string;
   attentionCount: number;
   metrics: {
-    treesGrowing: { progress: number; goal: number };
+    treesGrowing?: { progress: number; goal: number };
+    saplingsGrowing?: { progress: number; goal: number };
+    treesPlanted?: { progress: number; goal: number };
+    treesRegenerated?: { progress: number; goal: number };
     areaRestored: { progress: number; goal: number };
-    workdays: { progress: number; goal: number };
+    workdays?: { progress: number; goal: number };
   };
   sites: SiteIndexSite[];
 }
@@ -108,6 +113,7 @@ export const siteIndexProjects: SiteIndexProject[] = [
   {
     id: "project-1",
     name: "Restoring the Northern Watersheds",
+    frameworkKey: Framework.PPC,
     organisationName: "Green Future Alliance",
     attentionCount: 15,
     metrics: {
@@ -120,24 +126,25 @@ export const siteIndexProjects: SiteIndexProject[] = [
   {
     id: "project-2",
     name: "Community Forest Recovery",
+    frameworkKey: Framework.HBF,
     organisationName: "Kijani Restoration Network",
     attentionCount: 4,
     metrics: {
-      treesGrowing: { progress: 185000, goal: 350000 },
-      areaRestored: { progress: 980, goal: 1800 },
-      workdays: { progress: 7200, goal: 12000 }
+      saplingsGrowing: { progress: 185000, goal: 350000 },
+      areaRestored: { progress: 980, goal: 1800 }
     },
     sites: baseSites.slice(0, 5).map(site => ({ ...site, id: `p2-${site.id}` }))
   },
   {
     id: "project-3",
     name: "Coastal Ecosystems Programme",
+    frameworkKey: Framework.TF,
     organisationName: "Blue Green Foundation",
     attentionCount: 2,
     metrics: {
-      treesGrowing: { progress: 94000, goal: 200000 },
-      areaRestored: { progress: 710, goal: 1500 },
-      workdays: { progress: 5100, goal: 9000 }
+      treesPlanted: { progress: 94000, goal: 200000 },
+      treesRegenerated: { progress: 56000, goal: 120000 },
+      areaRestored: { progress: 710, goal: 1500 }
     },
     sites: baseSites.slice(4, 9).map(site => ({ ...site, id: `p3-${site.id}` }))
   }

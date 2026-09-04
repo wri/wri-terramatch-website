@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { type FC, useMemo } from "react";
 
+import { Framework, isTerrafund } from "@/context/framework.provider";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -18,6 +19,8 @@ import {
   EditIcon,
   FolderOpenIcon,
   JobsIcon,
+  RegenerationIcon,
+  SeedlingsIcon,
   TreeIcon
 } from "@/redesignComponents/foundations/Icons";
 
@@ -53,6 +56,15 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   const selectedMetric = (progress: number) =>
     totalSiteCount === 0 ? 0 : Math.round(progress * (selectedSites.length / totalSiteCount));
   const metricCardClassName = "min-w-fit shrink-0 flex-1";
+  const isHbf = project.frameworkKey === Framework.HBF;
+  const isTerraFund = isTerrafund(project.frameworkKey);
+  const primaryMetric = isHbf
+    ? project.metrics.saplingsGrowing
+    : isTerraFund
+    ? project.metrics.treesPlanted
+    : project.metrics.treesGrowing;
+  const primaryMetricTitle = isHbf ? "Saplings Growing" : isTerraFund ? "Trees Planted" : "Trees Growing";
+  const primaryMetricIcon = isHbf ? <SeedlingsIcon /> : <TreeIcon />;
 
   return (
     <Accordion
@@ -80,19 +92,38 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
     >
       <Box paddingX={4} paddingBottom={7} paddingTop={4} minW={0}>
         <Carousel className="mb-5" gap={4} scrollAmount={400}>
-          <MetricCard
-            title={t("Trees Growing")}
-            progress={project.metrics.treesGrowing.progress}
-            goal={project.metrics.treesGrowing.goal}
-            progressSuffix=""
-            variant="progressBar"
-            widthProgressBar="5rem"
-            icon={<TreeIcon />}
-            color="secondary.600"
-            className={metricCardClassName}
-            filtered={isFiltered ? filteredMetric(project.metrics.treesGrowing.progress) : undefined}
-            selection={selectedSites.length > 0 ? selectedMetric(project.metrics.treesGrowing.progress) : undefined}
-          />
+          {primaryMetric != null && (
+            <MetricCard
+              title={t(primaryMetricTitle)}
+              progress={primaryMetric.progress}
+              goal={primaryMetric.goal}
+              progressSuffix=""
+              variant="progressBar"
+              widthProgressBar="5rem"
+              icon={primaryMetricIcon}
+              color="secondary.600"
+              className={metricCardClassName}
+              filtered={isFiltered ? filteredMetric(primaryMetric.progress) : undefined}
+              selection={selectedSites.length > 0 ? selectedMetric(primaryMetric.progress) : undefined}
+            />
+          )}
+          {isTerraFund && project.metrics.treesRegenerated != null && (
+            <MetricCard
+              title={t("Trees Regenerated")}
+              progress={project.metrics.treesRegenerated.progress}
+              goal={project.metrics.treesRegenerated.goal}
+              progressSuffix=""
+              variant="progressBar"
+              widthProgressBar="5rem"
+              icon={<RegenerationIcon />}
+              color="secondary.600"
+              className={metricCardClassName}
+              filtered={isFiltered ? filteredMetric(project.metrics.treesRegenerated.progress) : undefined}
+              selection={
+                selectedSites.length > 0 ? selectedMetric(project.metrics.treesRegenerated.progress) : undefined
+              }
+            />
+          )}
           <MetricCard
             title={t("Area restored (Ha)")}
             progress={project.metrics.areaRestored.progress}
@@ -105,17 +136,20 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
             filtered={isFiltered ? filteredMetric(project.metrics.areaRestored.progress) : undefined}
             selection={selectedSites.length > 0 ? selectedMetric(project.metrics.areaRestored.progress) : undefined}
           />
-          <MetricCard
-            title={t("Workdays")}
-            progress={project.metrics.workdays.progress}
-            goal={project.metrics.workdays.goal}
-            variant="progressBar"
-            widthProgressBar="5rem"
-            icon={<JobsIcon />}
-            className={metricCardClassName}
-            filtered={isFiltered ? filteredMetric(project.metrics.workdays.progress) : undefined}
-            selection={selectedSites.length > 0 ? selectedMetric(project.metrics.workdays.progress) : undefined}
-          />
+          {!isHbf && !isTerraFund && project.metrics.workdays != null && (
+            <MetricCard
+              title={t("Workdays")}
+              progress={project.metrics.workdays.progress}
+              goal={project.metrics.workdays.goal}
+              variant="progressBar"
+              widthProgressBar="5rem"
+              icon={<JobsIcon />}
+              color="primary.600"
+              className={metricCardClassName}
+              filtered={isFiltered ? filteredMetric(project.metrics.workdays.progress) : undefined}
+              selection={selectedSites.length > 0 ? selectedMetric(project.metrics.workdays.progress) : undefined}
+            />
+          )}
         </Carousel>
 
         <Table<SiteIndexSite>

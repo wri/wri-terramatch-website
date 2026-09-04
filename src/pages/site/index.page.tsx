@@ -137,14 +137,14 @@ const SiteIndexPage = () => {
 
       <Box className="flex min-h-full flex-1 flex-col bg-white">
         <ToolbarObject
-          className="border-b border-theme-neutral-300"
+          className="shadow-sm bg-theme-neutral-100 sticky top-0 z-10 h-10 "
           breadcrumbs={{
             links: [{ label: t("Sites"), link: "/site", icon: <SiteIcon /> }],
             linkRouter: router
           }}
         />
 
-        <Box className="flex min-h-[60px] flex-wrap items-stretch bg-white">
+        <Box className="bg-theme-neutral-100 sticky top-10 z-10 flex min-h-[60px] flex-wrap items-stretch">
           <Box className="min-w-[240px] flex-1">
             <PageHeader title={t("Sites")} className="!bg-theme-neutral-100" />
           </Box>
@@ -169,7 +169,7 @@ const SiteIndexPage = () => {
         </Box>
 
         <ToolbarTable
-          className="border-b border-theme-neutral-200 !px-6 py-5"
+          className="border-theme-neutral-200 border-b !px-6 py-5"
           classNameContentLeft="w-full"
           search={{
             label: visibleSiteCount === 1 ? t("Site") : t("Sites"),
@@ -190,7 +190,7 @@ const SiteIndexPage = () => {
           showClearFilters={hasActiveFilters}
         />
 
-        <Box as="main" className={`flex-1 overflow-x-hidden px-2 pt-1 ${selectedSiteIds.size > 0 ? "pb-24" : "pb-8"}`}>
+        <Box as="main" className={`flex-1 px-2 pt-1 ${selectedSiteIds.size > 0 ? "pb-24" : "pb-8"}`}>
           {visibleProjects.map((project, index) => (
             <SiteProjectSection
               key={project.id}
@@ -206,7 +206,7 @@ const SiteIndexPage = () => {
           ))}
 
           {visibleProjects.length === 0 ? (
-            <Box className="mx-4 my-12 rounded-lg border border-dashed border-theme-neutral-400 p-8 text-center text-theme-neutral-700">
+            <Box className="border-theme-neutral-400 text-theme-neutral-700 mx-4 my-12 rounded-lg border border-dashed p-8 text-center">
               {t("No sites match the current search and filters.")}
             </Box>
           ) : null}
