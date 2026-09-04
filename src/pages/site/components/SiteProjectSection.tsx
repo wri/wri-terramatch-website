@@ -24,7 +24,7 @@ import {
   TreeIcon
 } from "@/redesignComponents/foundations/Icons";
 
-import type { SiteIndexProject, SiteIndexSite, SiteIndexStatus } from "./siteIndexMockData";
+import type { SiteIndexProject, SiteIndexSite, SiteIndexStatus, SiteIndexUpdate } from "./siteIndexMockData";
 
 interface SiteProjectSectionProps {
   project: SiteIndexProject;
@@ -38,6 +38,28 @@ interface SiteProjectSectionProps {
 }
 
 const SiteStatusTag: FC<{ status: SiteIndexStatus }> = ({ status }) => <TagSubmission state={status} size="small" />;
+
+const SiteUpdate: FC<{ update: SiteIndexUpdate }> = ({ update }) => {
+  const t = useT();
+  const updateLabel = {
+    draft: t("Draft"),
+    "pending-approval": t("Pending Approval"),
+    "information-required": t("Information Required"),
+    complete: t("Complete")
+  }[update];
+
+  return (
+    <Box className="text-theme-neutral-800 flex items-center gap-1">
+      <EditIcon boxSize={2.5} />
+      <Text as="span" textStyle="400">
+        {t("Editing:")}
+      </Text>
+      <Text as="span" textStyle="200-bold">
+        {updateLabel}
+      </Text>
+    </Box>
+  );
+};
 
 const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   project,
@@ -161,10 +183,10 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
             }
           }}
           columns={[
-            { key: "name", label: t("Site Name"), sortable: true, width: "44%" },
-            { key: "changeRequest", label: t("Change Request"), sortable: true, width: "18%" },
-            { key: "status", label: t("Status"), sortable: true, width: "18%" },
-            { key: "dateCreated", label: t("Date Created"), sortable: true, width: "calc(20% - 130px)" },
+            { key: "name", label: t("Site Name"), sortable: true, width: "554px" },
+            { key: "status", label: t("Status"), sortable: true, width: "200px" },
+            { key: "update", label: t("Updates"), sortable: true, width: "250px" },
+            { key: "dateCreated", label: t("Date Created"), sortable: true, width: "150px" },
             { key: "actions", label: "", width: "130px" }
           ]}
           selectable
@@ -195,11 +217,11 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
                   </Text>
                 </Link>
               </TableCell>
-              <TableCell {...context?.getCellProps("changeRequest")}>
-                <SiteStatusTag status={site.changeRequest} />
-              </TableCell>
               <TableCell {...context?.getCellProps("status")}>
                 <SiteStatusTag status={site.status} />
+              </TableCell>
+              <TableCell {...context?.getCellProps("update")}>
+                <SiteUpdate update={site.update} />
               </TableCell>
               <TableCell {...context?.getCellProps("dateCreated")}>
                 {site.dateCreated != null ? (

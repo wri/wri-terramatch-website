@@ -7,8 +7,9 @@ import Drawer from "@/redesignComponents/containers/Drawer/Drawer";
 import FilterPanel from "@/redesignComponents/containers/FilterPanel/FilterPanel";
 import FilterCard from "@/redesignComponents/containers/FilterPanel/FilterPanelElements/FilteCards";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
+import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
-import type { SiteIndexStatus } from "./siteIndexMockData";
+import type { SiteIndexStatus, SiteIndexUpdate } from "./siteIndexMockData";
 
 export type SiteIndexFilterStatus = Extract<
   SiteIndexStatus,
@@ -19,7 +20,17 @@ export const SITE_INDEX_STATUS_OPTIONS: { label: string; value: SiteIndexFilterS
   { label: "Draft", value: "draft" },
   { label: "Pending Approval", value: "pending-approval" },
   { label: "Information Required", value: "information-required" },
+  { label: "Not Started", value: "not-started" },
   { label: "Approved", value: "approved" }
+];
+
+export type SiteIndexFilterUpdate = SiteIndexUpdate;
+
+export const SITE_INDEX_UPDATE_OPTIONS: { label: string; value: SiteIndexFilterUpdate }[] = [
+  { label: "Draft", value: "draft" },
+  { label: "Pending Approval", value: "pending-approval" },
+  { label: "Information Required", value: "information-required" },
+  { label: "Complete", value: "complete" }
 ];
 
 type CheckboxChange = { checked?: boolean | "indeterminate" };
@@ -27,26 +38,30 @@ type CheckboxChange = { checked?: boolean | "indeterminate" };
 interface SiteIndexFilterDrawerProps {
   open: boolean;
   filters: SiteIndexFilterStatus[];
+  updateFilter: SiteIndexFilterUpdate | null;
   onOpenChange: (open: boolean) => void;
-  onApplyFilters: (filters: SiteIndexFilterStatus[]) => void;
+  onApplyFilters: (filters: SiteIndexFilterStatus[], updateFilter: SiteIndexFilterUpdate | null) => void;
   onClearFilters: () => void;
 }
 
 const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
   open,
   filters,
+  updateFilter,
   onOpenChange,
   onApplyFilters,
   onClearFilters
 }) => {
   const t = useT();
   const [draftFilters, setDraftFilters] = useState<SiteIndexFilterStatus[]>(filters);
+  const [draftUpdateFilter, setDraftUpdateFilter] = useState<SiteIndexFilterUpdate | null>(updateFilter);
 
   useEffect(() => {
     if (open) {
       setDraftFilters(filters);
+      setDraftUpdateFilter(updateFilter);
     }
-  }, [filters, open]);
+  }, [filters, open, updateFilter]);
 
   const handleStatusChange = (status: SiteIndexFilterStatus, { checked }: CheckboxChange) => {
     setDraftFilters(current =>
@@ -63,21 +78,21 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
       trapFocus={false}
       open={open}
       onOpenChange={onOpenChange}
-      size="md"
+      size="filterPanel"
       placement="end"
       maxW="22.75rem"
       paddingTop={0}
       paddingLeft={0}
-      maxH={"100vh"}
+      maxH="100vh"
     >
       {({ onClose }) => (
         <FilterPanel
           title={t("Filters")}
           variant="fixed"
           onClose={onClose}
-          className="h-full"
+          className="h-screen max-h-screen shadow-[0_10px_7.5px_rgba(0,0,0,0.1),0_4px_3px_rgba(0,0,0,0.1)]"
           content={
-            <Flex className="h-full flex-col overflow-auto p-4">
+            <Flex className="h-full flex-col gap-4 overflow-auto px-4 pt-4 pb-20">
               <FilterCard label={t("Status")}>
                 <Flex className="flex-col gap-4">
                   {SITE_INDEX_STATUS_OPTIONS.map(option => (
@@ -93,6 +108,20 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
                   ))}
                 </Flex>
               </FilterCard>
+              <FilterCard label={t("Updates")}>
+                <SelectInput
+                  placeholder={t("Please select")}
+                  size="small"
+                  value={draftUpdateFilter == null ? [] : [draftUpdateFilter]}
+                  items={SITE_INDEX_UPDATE_OPTIONS.map(option => ({
+                    label: t(option.label),
+                    value: option.value
+                  }))}
+                  onChange={(values: string[]) =>
+                    setDraftUpdateFilter((values[0] as SiteIndexFilterUpdate | undefined) ?? null)
+                  }
+                />
+              </FilterCard>
             </Flex>
           }
           footer={
@@ -104,6 +133,7 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
                   variant: "secondary",
                   onClick: () => {
                     setDraftFilters([]);
+                    setDraftUpdateFilter(null);
                     onClearFilters();
                     onClose();
                   }
@@ -113,7 +143,7 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
                   children: t("Apply"),
                   variant: "primary",
                   onClick: () => {
-                    onApplyFilters(draftFilters);
+                    onApplyFilters(draftFilters, draftUpdateFilter);
                     onClose();
                   }
                 }

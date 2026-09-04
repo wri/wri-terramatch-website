@@ -6,11 +6,15 @@ export type SiteIndexStatus = Extract<
   "draft" | "pending-approval" | "information-required" | "approved" | "due" | "not-started"
 >;
 
+export type SiteIndexUpdate =
+  | Extract<SiteIndexStatus, "draft" | "pending-approval" | "information-required">
+  | "complete";
+
 export interface SiteIndexSite {
   id: string;
   name: string;
-  changeRequest: SiteIndexStatus;
   status: SiteIndexStatus;
+  update: SiteIndexUpdate;
   dateCreated?: string;
 }
 
@@ -35,76 +39,76 @@ const baseSites: SiteIndexSite[] = [
   {
     id: "northern-watershed",
     name: "Northern Watershed Site",
-    changeRequest: "pending-approval",
     status: "pending-approval",
+    update: "pending-approval",
     dateCreated: "14/08/2026"
   },
   {
     id: "kijani-community",
     name: "Kijani Community Site",
-    changeRequest: "draft",
     status: "information-required",
+    update: "draft",
     dateCreated: "02/08/2026"
   },
   {
     id: "riverbank-recovery",
     name: "Riverbank Recovery Site",
-    changeRequest: "information-required",
     status: "information-required",
+    update: "information-required",
     dateCreated: "26/07/2026"
   },
   {
     id: "highland-forest",
     name: "Highland Forest Site",
-    changeRequest: "draft",
-    status: "due"
+    status: "due",
+    update: "draft"
   },
   {
     id: "coastal-mangrove",
     name: "Coastal Mangrove Site",
-    changeRequest: "due",
-    status: "due"
+    status: "due",
+    update: "complete"
   },
   {
     id: "green-valley",
     name: "Green Valley Site",
-    changeRequest: "draft",
     status: "approved",
+    update: "draft",
     dateCreated: "11/06/2026"
   },
   {
     id: "acacia-corridor",
     name: "Acacia Corridor Site",
-    changeRequest: "approved",
     status: "approved",
+    update: "complete",
     dateCreated: "30/05/2026"
   },
   {
     id: "lake-basin",
     name: "Lake Basin Site",
-    changeRequest: "pending-approval",
     status: "pending-approval",
+    update: "pending-approval",
     dateCreated: "21/05/2026"
   },
   {
     id: "community-long-name",
     name: "Community Site with a very long name that truncates safely",
-    changeRequest: "draft",
     status: "not-started",
+    update: "draft",
     dateCreated: "09/05/2026"
   },
   {
     id: "dryland-restoration",
     name: "Dryland Restoration Site",
-    changeRequest: "approved",
     status: "approved",
+    update: "complete",
     dateCreated: "28/04/2026"
   },
   {
     id: "mountain-springs",
     name: "Mountain Springs Site",
-    changeRequest: "draft",
     status: "not-started",
+    update: "draft",
     dateCreated: "07/04/2026"
   }
 ];

@@ -16,7 +16,9 @@ import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/T
 import SiteIndexBulkActionToolbar from "./components/SiteIndexBulkActionToolbar";
 import SiteIndexFilterDrawer, {
   type SiteIndexFilterStatus,
-  SITE_INDEX_STATUS_OPTIONS
+  type SiteIndexFilterUpdate,
+  SITE_INDEX_STATUS_OPTIONS,
+  SITE_INDEX_UPDATE_OPTIONS
 } from "./components/SiteIndexFilterDrawer";
 import { type SiteIndexProject, type SiteIndexSite, siteIndexProjects } from "./components/siteIndexMockData";
 import SiteIndexModals from "./components/SiteIndexModals";
@@ -37,6 +39,7 @@ const SiteIndexPage = () => {
   const [selectedProject, setSelectedProject] = useState(ALL_PROJECTS);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilters, setStatusFilters] = useState<SiteIndexFilterStatus[]>([]);
+  const [updateFilter, setUpdateFilter] = useState<SiteIndexFilterUpdate | null>(null);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [searchResetKey, setSearchResetKey] = useState(0);
   const [selectedSiteIds, setSelectedSiteIds] = useState<Set<string>>(new Set());
@@ -62,15 +65,20 @@ const SiteIndexPage = () => {
           const matchesSearch = normalisedQuery.length === 0 || site.name.toLowerCase().includes(normalisedQuery);
           const matchesStatus =
             statusFilters.length === 0 || statusFilters.includes(site.status as SiteIndexFilterStatus);
+          const matchesUpdate = updateFilter == null || site.update === updateFilter;
 
-          return matchesSearch && matchesStatus;
+          return matchesSearch && matchesStatus && matchesUpdate;
         })
       }))
-      .filter(project => project.sites.length > 0 || (normalisedQuery.length === 0 && statusFilters.length === 0));
-  }, [projects, searchQuery, selectedProject, statusFilters]);
+      .filter(
+        project =>
+          project.sites.length > 0 ||
+          (normalisedQuery.length === 0 && statusFilters.length === 0 && updateFilter == null)
+      );
+  }, [projects, searchQuery, selectedProject, statusFilters, updateFilter]);
 
   const visibleSiteCount = visibleProjects.reduce((total, project) => total + project.sites.length, 0);
-  const hasActiveFilters = searchQuery.trim().length > 0 || statusFilters.length > 0;
+  const hasActiveFilters = searchQuery.trim().length > 0 || statusFilters.length > 0 || updateFilter != null;
 
   const handleRowSelected = useCallback((site: SiteIndexSite, checked: boolean) => {
     setSelectedSiteIds(current => {
@@ -112,9 +120,7 @@ const SiteIndexPage = () => {
       current.map(project => ({
         ...project,
         sites: project.sites.map(site =>
-          selectedSiteIds.has(site.id)
-            ? { ...site, status: "pending-approval", changeRequest: "pending-approval" }
-            : site
+          selectedSiteIds.has(site.id) ? { ...site, status: "pending-approval", update: "pending-approval" } : site
         )
       }))
     );
@@ -126,6 +132,7 @@ const SiteIndexPage = () => {
   const clearFilters = () => {
     setSearchQuery("");
     setStatusFilters([]);
+    setUpdateFilter(null);
     setSearchResetKey(current => current + 1);
   };
 
@@ -180,11 +187,24 @@ const SiteIndexPage = () => {
             onQueryChange: setSearchQuery,
             count: visibleSiteCount
           }}
-          selectedFilters={statusFilters.map(status => ({
-            category: t("Status"),
-            label: t(SITE_INDEX_STATUS_OPTIONS.find(option => option.value === status)?.label ?? status),
-            onRemove: () => setStatusFilters(current => current.filter(currentStatus => currentStatus !== status))
-          }))}
+          selectedFilters={[
+            ...statusFilters.map(status => ({
+              category: t("Status"),
+              label: t(SITE_INDEX_STATUS_OPTIONS.find(option => option.value === status)?.label ?? status),
+              onRemove: () => setStatusFilters(current => current.filter(currentStatus => currentStatus !== status))
+            })),
+            ...(updateFilter == null
+              ? []
+              : [
+                  {
+                    category: t("Updates"),
+                    label: t(
+                      SITE_INDEX_UPDATE_OPTIONS.find(option => option.value === updateFilter)?.label ?? updateFilter
+                    ),
+                    onRemove: () => setUpdateFilter(null)
+                  }
+                ])
+          ]}
           onClickFilterButton={() => setIsFilterDrawerOpen(true)}
           onClearFilters={clearFilters}
           showClearFilters={hasActiveFilters}
@@ -234,9 +254,16 @@ const SiteIndexPage = () => {
         <SiteIndexFilterDrawer
           open={isFilterDrawerOpen}
           filters={statusFilters}
+          updateFilter={updateFilter}
           onOpenChange={setIsFilterDrawerOpen}
-          onApplyFilters={setStatusFilters}
-          onClearFilters={() => setStatusFilters([])}
+          onApplyFilters={(nextStatusFilters, nextUpdateFilter) => {
+            setStatusFilters(nextStatusFilters);
+            setUpdateFilter(nextUpdateFilter);
+          }}
+          onClearFilters={() => {
+            setStatusFilters([]);
+            setUpdateFilter(null);
+          }}
         />
       </Box>
     </>
