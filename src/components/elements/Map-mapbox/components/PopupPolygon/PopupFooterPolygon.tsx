@@ -39,7 +39,6 @@ type PopupFooterPolygonProps = {
   onApprove?: () => void;
   onRequestInformation?: () => void;
   onRunValidation?: () => void;
-  showRunValidationAsPrimary?: boolean;
 };
 
 const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
@@ -59,8 +58,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   approveDisabledTooltip,
   onApprove,
   onRequestInformation,
-  onRunValidation,
-  showRunValidationAsPrimary = false
+  onRunValidation
 }) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
@@ -170,34 +168,22 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
       <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit}>
         {t("Edit")}
       </Button>
-      {showRunValidationAsPrimary ? (
+      <Flex alignItems="center" gap={1.5} minWidth={0}>
         <Button
           variant="primary"
           size="small"
-          onClick={onRunValidation}
-          disabled={!canRunValidation}
+          onClick={() => void handleSubmit()}
+          disabled={submitDisabled}
           className="min-w-0 flex-1"
         >
-          {t("Run Validation")}
+          {t("Submit")}
         </Button>
-      ) : (
-        <Flex alignItems="center" gap={1.5} minWidth={0}>
-          <Button
-            variant="primary"
-            size="small"
-            onClick={() => void handleSubmit()}
-            disabled={submitDisabled}
-            className="min-w-0 flex-1"
-          >
-            {t("Submit")}
-          </Button>
-          {submitDisabled && submitDisabledTooltip != null && (
-            <Tooltip content={wrapToolbarInfoTooltipContent(submitDisabledTooltip)} position="top">
-              <InfoIcon height="1rem" width="1rem" color="neutral.800" />
-            </Tooltip>
-          )}
-        </Flex>
-      )}
+        {submitDisabled && submitDisabledTooltip != null && (
+          <Tooltip content={wrapToolbarInfoTooltipContent(submitDisabledTooltip)} position="top">
+            <InfoIcon height="1rem" width="1rem" color="neutral.800" />
+          </Tooltip>
+        )}
+      </Flex>
     </Grid>
   );
 };

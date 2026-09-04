@@ -20,6 +20,9 @@ export interface SystemValidationCompleteProps {
   polygonValidations: Map<string, ValidationDto>;
   isLoadingResults?: boolean;
   pendingValidationPolygonIds?: string[];
+  modal?: boolean;
+  restoreFocus?: boolean;
+  trapFocus?: boolean;
 }
 const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
   open,
@@ -28,7 +31,10 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
   onViewDetails,
   polygonValidations,
   isLoadingResults = false,
-  pendingValidationPolygonIds = []
+  pendingValidationPolygonIds = [],
+  modal = true,
+  restoreFocus = true,
+  trapFocus = false
 }) => {
   const t = useT();
   const handleClose = useCallback(() => {
@@ -89,6 +95,9 @@ const SystemValidationComplete: FC<SystemValidationCompleteProps> = ({
 
   return (
     <Modal
+      modal={modal}
+      restoreFocus={restoreFocus}
+      trapFocus={trapFocus}
       open={open}
       onClose={handleClose}
       size="large"

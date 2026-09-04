@@ -33,7 +33,11 @@ import {
 } from "@/utils/polygonAnalytics";
 
 import type { OverlapFixPolygon } from "../components/Modals/OverlapFix";
-import type { PolygonOverlapFixParams } from "../components/polygonEdit.types";
+import type {
+  PolygonOverlapFixParams,
+  PolygonRunValidationWithResultsOptions,
+  PolygonValidationJobsStartedOptions
+} from "../components/polygonEdit.types";
 import { prunePolygonValidationCache } from "../components/polygonEditSave";
 import type { PolygonTableRow } from "../components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
@@ -86,8 +90,7 @@ type UseSitePolygonBulkActionsParams = {
     polygonsFixed: OverlapFixPolygon[];
     polygonsNotFixed: OverlapFixPolygon[];
   }) => void;
-  onValidationJobsStarted?: (polygonUuids: string[], options?: { trackBulkCompletion?: boolean }) => void;
-  onValidationPending?: (polygonUuids: string[]) => void;
+  onValidationJobsStarted?: (polygonUuids: string[], options?: PolygonValidationJobsStartedOptions) => void;
   onValidationPendingClear?: () => void;
   /** Drop local/cached validation UI for geometries cleared server-side by clipping. */
   onValidationUiCleared?: (geometryPolygonUuids: string[]) => void;
@@ -110,7 +113,6 @@ export const useSitePolygonBulkActions = ({
   fetchOverlapValidations,
   onOverlapFixResultsOpen,
   onValidationJobsStarted,
-  onValidationPending,
   onValidationPendingClear,
   onValidationUiCleared
 }: UseSitePolygonBulkActionsParams) => {
@@ -352,20 +354,20 @@ export const useSitePolygonBulkActions = ({
   }, [closeMapPopups, deletePayload, invalidatePolygonMapTiles, refreshPolygonData, t, toastLabels]);
 
   const runPolygonValidation = useCallback(
-    async (polygonUuids: string[]) => {
+    async (polygonUuids: string[], options?: PolygonValidationJobsStartedOptions) => {
       if (polygonUuids.length === 0) {
         return;
       }
 
       await createPolygonValidation({ polygonUuids });
       ApiSlice.pruneCache("validations");
-      onValidationJobsStarted?.(polygonUuids);
+      onValidationJobsStarted?.(polygonUuids, options);
     },
     [onValidationJobsStarted]
   );
 
   const handleRunValidation = useCallback(
-    async (polygonUuids: string[]) => {
+    async (polygonUuids: string[], options?: PolygonValidationJobsStartedOptions) => {
       if (polygonUuids.length === 0) {
         return;
       }
@@ -373,7 +375,7 @@ export const useSitePolygonBulkActions = ({
       try {
         setValidatingPolygonCount(polygonUuids.length);
         setIsValidatingPolygons(true);
-        await runPolygonValidation(polygonUuids);
+        await runPolygonValidation(polygonUuids, options);
       } catch (error) {
         Log.error("Failed to validate selected polygons:", error);
         showToast({ label: t("Failed to Validate Polygons"), type: "error", placement: "bottom", duration: 5000 });
@@ -413,22 +415,30 @@ export const useSitePolygonBulkActions = ({
   }, []);
 
   const runValidationWithResultsModal = useCallback(
-    async (geometryPolygonUuids: string[]) => {
+    async (geometryPolygonUuids: string[], options?: PolygonRunValidationWithResultsOptions) => {
       if (geometryPolygonUuids.length === 0) {
         return;
       }
 
       trackPolygonRunValidationClicked({ siteUuid: site.uuid, polygonIds: geometryPolygonUuids });
 
+      const fallbackPolygons = options?.fallbackPolygons ?? [];
       const rows = geometryPolygonUuids
-        .map(geometryPolygonUuid =>
-          polygonsData.find(polygon => (polygon.polygonUuid ?? polygon.uuid) === geometryPolygonUuid)
-        )
-        .filter((polygon): polygon is SitePolygonLightDto => polygon != null)
-        .map(polygon => mapSitePolygonToTableRow(polygon, t));
+        .map(geometryPolygonUuid => {
+          const polygon =
+            fallbackPolygons.find(item => (item.polygonUuid ?? item.uuid) === geometryPolygonUuid) ??
+            polygonsData.find(item => (item.polygonUuid ?? item.uuid) === geometryPolygonUuid);
+          return polygon != null ? mapSitePolygonToTableRow(polygon, t) : null;
+        })
+        .filter((row): row is PolygonTableRow => row != null);
 
-      onValidationPending?.(geometryPolygonUuids);
-      geometryPolygonUuids.forEach(geometryPolygonUuid => {
+      const cacheUuids = [
+        ...geometryPolygonUuids,
+        ...(options?.previousGeometryPolygonUuid != null && options.previousGeometryPolygonUuid !== ""
+          ? [options.previousGeometryPolygonUuid]
+          : [])
+      ];
+      cacheUuids.forEach(geometryPolygonUuid => {
         prunePolygonValidationCache(geometryPolygonUuid);
       });
       ApiSlice.pruneCache("validations");
@@ -436,22 +446,17 @@ export const useSitePolygonBulkActions = ({
       validationResultsModalPendingRef.current = true;
       setValidatedPolygons(rows);
 
+      const validationJobsStartedOptions: PolygonValidationJobsStartedOptions | undefined =
+        options?.validationAfterCriteriaClear === true ? { validationAfterCriteriaClear: true } : undefined;
+
       try {
-        await handleRunValidation(geometryPolygonUuids);
+        await handleRunValidation(geometryPolygonUuids, validationJobsStartedOptions);
       } catch {
         onValidationPendingClear?.();
         cancelPendingValidationResultsModal();
       }
     },
-    [
-      cancelPendingValidationResultsModal,
-      handleRunValidation,
-      onValidationPending,
-      onValidationPendingClear,
-      polygonsData,
-      site.uuid,
-      t
-    ]
+    [cancelPendingValidationResultsModal, handleRunValidation, onValidationPendingClear, polygonsData, site.uuid, t]
   );
 
   const handlePolygonDeletingChange = useCallback((isDeleting: boolean, count = 0) => {
@@ -685,19 +690,9 @@ export const useSitePolygonBulkActions = ({
         invalidatePolygonMapTiles();
         setSubmittedPolygonNames(submittedNames);
         setShouldRefetchPolygonData(true);
-        const refreshedPolygons = await refreshPolygonData({ loadAll: true });
+        await refreshPolygonData({ loadAll: true });
         pendingPolygonSubmittedModalRef.current = true;
         ApiSlice.pruneCache("auditStatuses");
-
-        const geometryPolygonUuids = sitePolygonUuids
-          .map(sitePolygonUuid => refreshedPolygons.find(polygon => polygon.uuid === sitePolygonUuid))
-          .map(polygon => polygon?.polygonUuid)
-          .filter((uuid): uuid is string => uuid != null && uuid !== "");
-        const uniqueGeometryPolygonUuids = [...new Set(geometryPolygonUuids)];
-
-        if (uniqueGeometryPolygonUuids.length > 0) {
-          onValidationJobsStarted?.(uniqueGeometryPolygonUuids, { trackBulkCompletion: false });
-        }
 
         for (const sitePolygonUuid of sitePolygonUuids) {
           const sitePolygon = polygonsData.find(polygon => polygon.uuid === sitePolygonUuid);
@@ -732,7 +727,6 @@ export const useSitePolygonBulkActions = ({
     [
       closeMapPopups,
       invalidatePolygonMapTiles,
-      onValidationJobsStarted,
       polygonsData,
       refreshPolygonData,
       setShouldRefetchPolygonData,

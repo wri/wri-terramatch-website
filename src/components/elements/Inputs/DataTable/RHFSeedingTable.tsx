@@ -7,6 +7,10 @@ import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 
 import DataTable, { DataTableProps } from "./DataTable";
+import { getSeedsPerKg, SeedingEntry } from "./seedingUtils";
+
+export type { SeedingEntry };
+export { getSeedsPerKg };
 
 export interface RHFSeedingProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fieldsProvider" | "addButtonCaption" | "tableColumns">,
@@ -24,7 +28,7 @@ export const getSeedingTableColumns = (
     ? [
         {
           accessorKey: "name",
-          header: t("Species")
+          header: t("Species Name")
         },
         {
           accessorKey: "amount",
@@ -34,25 +38,23 @@ export const getSeedingTableColumns = (
     : [
         {
           accessorKey: "name",
-          header: t("Species")
+          header: t("Species Name")
         },
         {
           accessorKey: "seedsInSample",
-          header: t("Seeds Per Sample")
+          header: t("Seeds per Sample")
         },
         {
           accessorKey: "weightOfSample",
-          header: t("Sample Weight(Kg)")
+          header: t("Sample Weight (kg)")
         },
         {
           accessorKey: "seedsPerKg",
-          header: t("Seeds Per Kg"),
+          header: t("Seeds per kg"),
           cell: props => {
-            const original = props.row?.original ?? {};
-            if (original.seedsInSample == null || original.weightOfSample === 0 || original.weightOfSample == null) {
-              return null;
-            }
-            return (original.seedsInSample / original.weightOfSample).toFixed(2);
+            const original = props.row?.original;
+            if (original != null) return getSeedsPerKg(original);
+            return props.getValue?.() ?? null;
           }
         }
       ];
