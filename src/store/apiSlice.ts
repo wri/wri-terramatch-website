@@ -21,7 +21,7 @@ import {
 } from "@/generated/v3/researchService/researchServiceConstants";
 import { authLogin } from "@/generated/v3/userService/userServiceComponents";
 import { USER_SERVICE_RESOURCES, UserServiceApiResources } from "@/generated/v3/userService/userServiceConstants";
-import { LoginDto } from "@/generated/v3/userService/userServiceSchemas";
+import { LoginDto, UserTaskDto } from "@/generated/v3/userService/userServiceSchemas";
 import { resolveUrl } from "@/generated/v3/utils";
 import { __TEST_HYDRATE__, AppStore } from "@/store/store";
 import { first } from "@/utils/array";
@@ -93,14 +93,17 @@ export const RESOURCES = [
   ...JOB_SERVICE_RESOURCES,
   ...USER_SERVICE_RESOURCES,
   ...RESEARCH_SERVICE_RESOURCES,
-  ...DASHBOARD_SERVICE_RESOURCES
+  ...DASHBOARD_SERVICE_RESOURCES,
+  "userTasks" // UserTaskDto - provided on socket only; no API endpoint.
 ] as const;
 
 export type ApiResources = EntityServiceApiResources &
   JobServiceApiResources &
   UserServiceApiResources &
   ResearchServiceApiResources &
-  DashboardServiceApiResources;
+  DashboardServiceApiResources & {
+    userTasks: StoreResourceMap<UserTaskDto>; // provided on socket only; no API endpoint.
+  };
 
 export type ResourceType = (typeof RESOURCES)[number];
 
@@ -466,8 +469,8 @@ export default class ApiSlice {
     this.redux.dispatch(apiSlice.actions.apiFetchSucceeded(props));
   }
 
-  static storeDocument(props: StoreDocumentProps) {
-    this.redux.dispatch(apiSlice.actions.storeDocument(props));
+  static storeDocument(document: JsonApiDocument) {
+    this.redux.dispatch(apiSlice.actions.storeDocument({ document }));
   }
 
   static pruneCache(resource: ResourceType, ids?: string[]) {

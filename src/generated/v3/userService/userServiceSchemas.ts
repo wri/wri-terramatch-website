@@ -826,6 +826,41 @@ export type ActionDto = {
   updatedAt: string;
 };
 
+export type UserTaskAssociation = {
+  userUuid: string;
+  firstName: string | null;
+  lastName: string | null;
+  assigned: boolean;
+  read: boolean;
+};
+
+export type UserTaskDto = {
+  uuid: string;
+  projectUuid?: string | null;
+  projectName?: string | null;
+  organisationUuid?: string | null;
+  organisationName?: string | null;
+  frameworkKey?:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | "fundo-flora-1"
+    | "wcb"
+    | "barka-fund"
+    | null;
+  status: "due" | "information-required" | "pending-approval" | "approved";
+  /**
+   * @format date-time
+   */
+  dueAt?: string | null;
+  associations: UserTaskAssociation[];
+};
+
 export type UserUpdateAttributes = {
   /**
    * Organisation UUID

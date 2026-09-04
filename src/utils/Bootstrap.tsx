@@ -142,7 +142,11 @@ const useWebsocket = () => {
       Log.error("Websocket error", err);
     });
     socket.on("userDataPush", (document: JsonApiDocument) => {
-      ApiSlice.storeDocument({ document });
+      ApiSlice.storeDocument(document);
+    });
+    socket.on("userDataReset", (document: JsonApiDocument) => {
+      ApiSlice.pruneCache(document.meta.resourceType);
+      ApiSlice.storeDocument(document);
     });
 
     return () => {
