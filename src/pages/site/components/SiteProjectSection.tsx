@@ -55,7 +55,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
     totalSiteCount === 0 ? 0 : Math.round(progress * (sites.length / totalSiteCount));
   const selectedMetric = (progress: number) =>
     totalSiteCount === 0 ? 0 : Math.round(progress * (selectedSites.length / totalSiteCount));
-  const metricCardClassName = "min-w-fit shrink-0 flex-1";
+  const metricCardClassName = "w-max shrink-0 flex-none";
   const isHbf = project.frameworkKey === Framework.HBF;
   const isTerraFund = isTerrafund(project.frameworkKey);
   const primaryMetric = isHbf
