@@ -173,6 +173,13 @@ export const getReportingPeriodDueDateType = (
   return areAllReportsComplete(reports) ? "info-grey" : "error";
 };
 
+export type ReportingPeriodAnalyticsStatus = "open" | "overdue";
+
+export const getReportingPeriodAnalyticsStatus = (
+  dueAt: string | null | undefined,
+  reports: Array<{ status: TagSubmissionState }>
+): ReportingPeriodAnalyticsStatus => (getReportingPeriodDueDateType(dueAt, reports) === "error" ? "overdue" : "open");
+
 export const getReportStatusCounts = (reports: Array<{ status: TagSubmissionState }>) =>
   reports.reduce(
     (result, report) => {

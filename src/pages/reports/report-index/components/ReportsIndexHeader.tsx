@@ -6,6 +6,7 @@ import { useCreateDisturbanceReport } from "@/connections/Entity";
 import { getReportStatusOptions } from "@/constants/options/status";
 import { useReportsContext } from "@/context/reports.provider";
 import { useDate } from "@/hooks/useDate";
+import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
@@ -63,6 +64,7 @@ const ReportsIndexHeader = ({
   const router = useRouter();
   const { format } = useDate();
   const { setFilters } = useReportsContext();
+  const { trackFilterApplied, trackDisturbanceReportClicked } = useReportsIndexAnalytics();
 
   const reportTypeFromQuery = typeof router.query.reportType === "string" ? router.query.reportType : undefined;
 
@@ -148,9 +150,20 @@ const ReportsIndexHeader = ({
 
   const applyFilters = useCallback(
     (filters: ReportFilterState) => {
+      const hasDateFilter =
+        filters.dueDateFrom !== "" || filters.dueDateTo !== "" || filters.dueMonth !== "" || filters.dueYear !== "";
+      if (hasDateFilter) {
+        trackFilterApplied({
+          filterField: "due_date",
+          filterValue: formatReportPeriodLabel(filters, format) ?? "",
+          isDefaultFilter: false,
+          dateDimension:
+            getReportPeriodControl(activeTab, filters.reportTypes) === "date-range" ? "disturbance_date" : "due_date"
+        });
+      }
       updateActiveFilters(filters);
     },
-    [updateActiveFilters]
+    [activeTab, format, trackFilterApplied, updateActiveFilters]
   );
 
   const clearFilters = useCallback(() => {
@@ -194,7 +207,10 @@ const ReportsIndexHeader = ({
             size="small"
             leftIcon={<PlusIcon boxSize="0.625rem" />}
             disabled={disturbanceReportCreating}
-            onClick={() => createDisturbanceReport({ parentUuid: projectUuid })}
+            onClick={() => {
+              trackDisturbanceReportClicked();
+              createDisturbanceReport({ parentUuid: projectUuid });
+            }}
           >
             {t("Add Disturbance Report")}
           </Button>

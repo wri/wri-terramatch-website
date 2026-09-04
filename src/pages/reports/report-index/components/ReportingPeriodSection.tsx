@@ -1,10 +1,11 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 
 import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
 import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
+import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import {
   DemographicsLoader,
   getReportKeyIndicatorFramework,
@@ -15,13 +16,19 @@ import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
+import { useReportsIndexAnalytics } from "@/hooks/useReportsIndexAnalytics";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { DueIcon, JobsIcon, RegenerationIcon, SeedlingsIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
+import { PAGE_CONTEXT_REPORTS_INDEX } from "@/utils/analytics/pageContext";
 
 import { ReportsIndexPeriod, ReportsIndexReport } from "../reportIndex.types";
-import { getReportingPeriodDueDateType } from "../reportIndex.utils";
+import {
+  getReportingPeriodAnalyticsStatus,
+  getReportingPeriodDueDateType,
+  getReportsRequiringAttention
+} from "../reportIndex.utils";
 import { useReportingPeriodMetricCards, useReportingPeriodMetrics } from "../useReportingPeriodMetrics";
 import ReportAttentionStatusLabels from "./ReportAttentionStatusLabels";
 import ReportsIndexTable from "./ReportsIndexTable";
@@ -105,12 +112,14 @@ const ReportingPeriodMetricsRow = ({
     selectionTotals
   );
   const jobsLoading = projectReportUuid != null && jobsTotal == null;
+  const framework = getReportKeyIndicatorFramework(frameworkKey);
+  const metricScope = selectionTotals != null ? "selection" : "period";
 
   if (subsetMetricsLoading || jobsLoading) {
     return <DemographicsLoader className="mb-5 h-10 w-full" />;
   }
 
-  return (
+  const cardsRow = (
     <div className="mb-5 flex flex-wrap gap-4">
       {cards.map(card => (
         <MetricCard
@@ -123,10 +132,27 @@ const ReportingPeriodMetricsRow = ({
           tooltipContent={getTooltipContent({ title: card.title, tooltip: card.tooltip })}
           selection={card.selection}
           filtered={card.filtered}
+          metricLabel={card.metricName}
           className={className}
         />
       ))}
     </div>
+  );
+
+  if (projectReportUuid == null) {
+    return cardsRow;
+  }
+
+  return (
+    <HighLevelMetricsCard
+      entityType="project-report"
+      entityId={projectReportUuid}
+      pageContext={PAGE_CONTEXT_REPORTS_INDEX}
+      framework={framework}
+      metricScope={metricScope}
+    >
+      {cardsRow}
+    </HighLevelMetricsCard>
   );
 };
 
@@ -144,12 +170,21 @@ const ReportingPeriodSection = ({
   const t = useT();
   const { format } = useDate();
   const [open, setOpen] = useState(defaultOpen);
+  const { trackAttentionDisplayed } = useReportsIndexAnalytics();
 
   useEffect(() => {
     if (expandForPeriodFilter) {
       setOpen(true);
     }
   }, [expandForPeriodFilter]);
+
+  const attentionCount = useMemo(() => getReportsRequiringAttention(period.reports), [period.reports]);
+  const periodStatus = getReportingPeriodAnalyticsStatus(period.dueAt, period.reports);
+
+  useEffect(() => {
+    if (attentionCount === 0) return;
+    trackAttentionDisplayed({ attentionCount, periodStatus });
+  }, [attentionCount, period.id, periodStatus, trackAttentionDisplayed]);
 
   const periodLabel = useReportingWindow(toFramework(period.frameworkKey), period.dueAt ?? undefined);
   const taskTitle = t("Reporting Task {window}", { window: periodLabel });

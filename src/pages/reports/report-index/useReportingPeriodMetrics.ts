@@ -29,6 +29,7 @@ type PeriodMetricTotals = {
 
 export type ReportingPeriodMetricCard = {
   key: "trees-growing" | "trees-regenerated" | "jobs" | "seedlings-grown";
+  metricName: string;
   title: string;
   tooltip: string;
   progress: number;
@@ -88,6 +89,13 @@ const totalsFromLoadedReports = (
 
 const idsOfType = (reports: ReportsIndexReport[], type: ReportsIndexReport["type"]) =>
   reports.filter(report => report.type === type).map(report => report.id);
+
+const getPeriodMetricName = (key: ReportingPeriodMetricCard["key"], framework: ReportKeyIndicatorFramework): string => {
+  if (key === "trees-growing") return framework === "hbf" ? "saplings_growing" : "trees_growing";
+  if (key === "jobs") return framework === "terrafund" ? "jobs_created" : "workdays_created";
+  if (key === "seedlings-grown") return "seedlings_grown";
+  return "trees_regenerated";
+};
 
 const includesProjectReport = (reports: ReportsIndexReport[]) =>
   reports.some(report => report.type === "project-report");
@@ -232,6 +240,7 @@ export const useReportingPeriodMetricCards = (
       return [
         {
           key: "trees-growing",
+          metricName: getPeriodMetricName("trees-growing", framework),
           title: t("Trees Growing"),
           tooltip: t(
             "Planted + direct seeded + regenerating this period, aggregated from site reports in this reporting period."
@@ -241,6 +250,7 @@ export const useReportingPeriodMetricCards = (
         },
         {
           key: "jobs",
+          metricName: getPeriodMetricName("jobs", framework),
           title: t("Workdays Created"),
           tooltip: t("This is the total number of workdays created in this reporting period."),
           ...layers(jobsProgress, filteredTotals?.jobs, selectionTotals?.jobs),
@@ -253,6 +263,7 @@ export const useReportingPeriodMetricCards = (
       return [
         {
           key: "trees-growing",
+          metricName: getPeriodMetricName("trees-growing", framework),
           title: t("Saplings Growing"),
           tooltip: t("Planted + direct seeded + regenerating, reported in this reporting period."),
           ...layers(periodTotals.treesGrowing, filteredTotals?.treesGrowing, selectionTotals?.treesGrowing),
@@ -260,6 +271,7 @@ export const useReportingPeriodMetricCards = (
         },
         {
           key: "jobs",
+          metricName: getPeriodMetricName("jobs", framework),
           title: t("Workdays Created"),
           tooltip: t("This is the number of direct workdays reported in this reporting period."),
           ...layers(jobsProgress, filteredTotals?.jobs, selectionTotals?.jobs),
@@ -271,6 +283,7 @@ export const useReportingPeriodMetricCards = (
     return [
       {
         key: "trees-growing",
+        metricName: getPeriodMetricName("trees-growing", framework),
         title: t("Trees Growing"),
         tooltip: t(
           "Trees planted + direct seeded + naturally regenerating, summed across site reports in this reporting period."
@@ -280,6 +293,7 @@ export const useReportingPeriodMetricCards = (
       },
       {
         key: "trees-regenerated",
+        metricName: getPeriodMetricName("trees-regenerated", framework),
         title: t("Trees Regenerated"),
         tooltip: t("This is the total number of trees naturally regenerating in this reporting period."),
         ...layers(periodTotals.treesRegenerated, filteredTotals?.treesRegenerated, selectionTotals?.treesRegenerated),
@@ -287,6 +301,7 @@ export const useReportingPeriodMetricCards = (
       },
       {
         key: "jobs",
+        metricName: getPeriodMetricName("jobs", framework),
         title: t("Jobs Created"),
         tooltip: t("This is the number of jobs created in this reporting period."),
         ...layers(jobsProgress, filteredTotals?.jobs, selectionTotals?.jobs),
@@ -294,6 +309,7 @@ export const useReportingPeriodMetricCards = (
       },
       {
         key: "seedlings-grown",
+        metricName: getPeriodMetricName("seedlings-grown", framework),
         title: t("Seedlings Grown"),
         tooltip: t("This is the sum of seedlings grown across different nurseries in this reporting period."),
         ...layers(periodTotals.seedlingsGrown, filteredTotals?.seedlingsGrown, selectionTotals?.seedlingsGrown),
