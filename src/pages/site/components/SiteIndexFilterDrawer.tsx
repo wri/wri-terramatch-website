@@ -111,7 +111,6 @@ const SiteIndexFilterDrawer: FC<SiteIndexFilterDrawerProps> = ({
               <FilterCard label={t("Updates")}>
                 <SelectInput
                   placeholder={t("Please select")}
-                  size="small"
                   value={draftUpdateFilter == null ? [] : [draftUpdateFilter]}
                   items={SITE_INDEX_UPDATE_OPTIONS.map(option => ({
                     label: t(option.label),

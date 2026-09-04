@@ -190,17 +190,17 @@ const SiteIndexPage = () => {
           selectedFilters={[
             ...statusFilters.map(status => ({
               category: t("Status"),
-              label: t(SITE_INDEX_STATUS_OPTIONS.find(option => option.value === status)?.label ?? status),
+              label: [t(SITE_INDEX_STATUS_OPTIONS.find(option => option.value === status)?.label ?? status)],
               onRemove: () => setStatusFilters(current => current.filter(currentStatus => currentStatus !== status))
             })),
             ...(updateFilter == null
               ? []
               : [
                   {
-                    category: t("Updates"),
-                    label: t(
-                      SITE_INDEX_UPDATE_OPTIONS.find(option => option.value === updateFilter)?.label ?? updateFilter
-                    ),
+                    category: t("Update"),
+                    label: [
+                      t(SITE_INDEX_UPDATE_OPTIONS.find(option => option.value === updateFilter)?.label ?? updateFilter)
+                    ],
                     onRemove: () => setUpdateFilter(null)
                   }
                 ])
