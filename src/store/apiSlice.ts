@@ -144,11 +144,11 @@ export type JsonApiDocument = {
   meta: ResponseMeta;
 };
 
-export type IndexApiResponse = Omit<JsonApiDocument, "meta"> & {
+export type IndexApiDocument = Omit<JsonApiDocument, "meta"> & {
   meta: Omit<ResponseMeta, "indices"> & { indices: IndexData[] };
 };
 
-export type DeleteApiResponse = Omit<JsonApiDocument, "meta" | "data"> & {
+export type DeletionApiDocument = Omit<JsonApiDocument, "meta" | "data"> & {
   meta: Omit<ResponseMeta, "indices" | "resourceIds"> & { resourceIds: string[] };
 };
 
@@ -260,15 +260,23 @@ const clearPending = (state: WritableDraft<ApiDataStore>, action: PayloadAction<
   }
 };
 
-const storeDocument = (state: WritableDraft<ApiDataStore>, action: PayloadAction<StoreDocumentProps>) => {
-  let { data, included } = action.payload.document;
-  if (!isArray(data)) data = [data!];
+const getData = ({ data, included }: JsonApiDocument, withIncluded = false) => {
+  data = data == null ? [] : isArray(data) ? data : [data];
+  return withIncluded && included != null ? [...data, ...included] : data;
+};
 
-  if (included != null) {
-    // For the purposes of this reducer, data and included are the same: they both get merged
-    // into the data cache.
-    data = [...data, ...included];
+const storeDocument = (state: WritableDraft<ApiDataStore>, action: PayloadAction<StoreDocumentProps>) => {
+  const document = action.payload.document;
+
+  if (isDeleteDocument(document)) {
+    const resource = document.meta.resourceType;
+    const ids = document.meta.resourceIds;
+    pruneCache(state, apiSlice.actions.pruneCache({ resource, ids }));
+    state.meta.deleted[resource] = uniq([...state.meta.deleted[resource], ...ids]);
+    return;
   }
+
+  const data = getData(action.payload.document, true);
   for (const resource of data) {
     // The data resource type is expected to match what is declared above in ApiDataStore, but
     // there isn't a way to enforce that with TS against this dynamic data structure, so we
@@ -329,11 +337,11 @@ const pruneCache = (state: WritableDraft<ApiDataStore>, action: PayloadAction<Pr
 const isLogin = ({ url, method }: { url: string; method: Method }) =>
   url.endsWith("auth/v3/logins") && method === "POST";
 
-const isIndexResponse = (method: string, response: JsonApiDocument): response is IndexApiResponse =>
+const isIndexResponse = (method: string, response: JsonApiDocument): response is IndexApiDocument =>
   method === "GET" && isArray(response.data) && response.meta.indices != null && response.meta.indices.length > 0;
 
-const isDeleteResponse = (method: string, response: JsonApiDocument): response is DeleteApiResponse =>
-  method === "DELETE" && response.meta.resourceIds != null;
+const isDeleteDocument = (document: JsonApiDocument): document is DeletionApiDocument =>
+  document.data == null && document.meta.resourceIds != null;
 
 export const apiSlice = createSlice({
   name: "api",
@@ -370,17 +378,7 @@ export const apiSlice = createSlice({
         }
       }
 
-      if (isDeleteResponse(method, document)) {
-        const resource = document.meta.resourceType;
-        const ids = document.meta.resourceIds;
-        pruneCache(state, apiSlice.actions.pruneCache({ resource, ids }));
-        state.meta.deleted[resource] = uniq([...state.meta.deleted[resource], ...ids]);
-        return;
-      }
-
-      let { data } = action.payload.document;
-      if (!isArray(data)) data = [data!];
-
+      const data = getData(action.payload.document);
       if (method === "POST") {
         // If this was a creation request, stash the resulting IDs in the pending store.
         state.meta.pending[method][url] = { resourceIds: data.map(({ id }) => id) };
