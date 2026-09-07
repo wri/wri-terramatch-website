@@ -3,7 +3,7 @@ import type { FC } from "react";
 import DeleteSite from "./Modals/DeleteSite";
 import SiteSubmitted from "./Modals/SiteSubmitted";
 import SubmitSiteConfirmation from "./Modals/SubmitSiteConfirmation";
-import type { SiteIndexSite } from "./siteIndexMockData";
+import type { SiteIndexSite } from "./siteIndex.types";
 
 interface SiteIndexModalsProps {
   selectedSites: SiteIndexSite[];
