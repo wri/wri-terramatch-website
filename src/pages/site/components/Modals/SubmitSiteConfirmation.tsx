@@ -5,7 +5,7 @@ import { FC, useCallback, useState } from "react";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 
-import type { SiteIndexSite } from "../siteIndexMockData";
+import type { SiteIndexSite } from "../siteIndex.types";
 import SiteNameList from "./SiteNameList";
 
 export interface SubmitSiteConfirmationProps {

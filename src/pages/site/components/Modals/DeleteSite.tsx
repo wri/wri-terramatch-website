@@ -5,7 +5,7 @@ import { FC, useCallback } from "react";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 
-import type { SiteIndexSite } from "../siteIndexMockData";
+import type { SiteIndexSite } from "../siteIndex.types";
 import SiteNameList from "./SiteNameList";
 
 export interface DeleteSiteProps {
@@ -23,12 +23,12 @@ const DeleteSite: FC<DeleteSiteProps> = ({ open, onOpenChange, sites, onDelete }
     onOpenChange(false);
   }, [onOpenChange]);
 
-  const handleDelete = useCallback(() => {
+  const handleDelete = useCallback(async () => {
     if (onDelete == null) {
       onOpenChange(false);
       return;
     }
-    void onDelete();
+    await onDelete();
     onOpenChange(false);
   }, [onDelete, onOpenChange]);
 

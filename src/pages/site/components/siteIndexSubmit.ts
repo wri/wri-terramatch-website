@@ -1,6 +1,8 @@
-import type { SiteIndexSite, SiteIndexStatus } from "./siteIndexMockData";
+import type { SiteIndexSite, SiteIndexStatus } from "./siteIndex.types";
 
 type Translate = (key: string, params?: Record<string, unknown>) => string;
+
+const SUBMITTABLE_STATUSES: ReadonlySet<SiteIndexStatus> = new Set(["draft", "information-required"]);
 
 export type SiteSubmitBlockingReason = "approved" | "submitted";
 
@@ -9,10 +11,15 @@ const SUBMIT_BLOCKED_STATUSES: Partial<Record<SiteIndexStatus, SiteSubmitBlockin
   "pending-approval": "submitted"
 };
 
+export const isSiteSubmittable = (site: SiteIndexSite): boolean => SUBMITTABLE_STATUSES.has(site.status);
+
+export const isSiteDeletable = (site: SiteIndexSite): boolean => site.status === "draft";
+
+export const isSiteEditable = (site: SiteIndexSite): boolean =>
+  site.status !== "pending-approval" && site.update !== "pending-approval";
+
 export const getSiteSubmitBlockingReason = (site: SiteIndexSite): SiteSubmitBlockingReason | null =>
   SUBMIT_BLOCKED_STATUSES[site.status] ?? null;
-
-export const isSiteSubmittable = (site: SiteIndexSite): boolean => getSiteSubmitBlockingReason(site) == null;
 
 export const getSiteIndexSubmitTooltip = (sites: SiteIndexSite[], t: Translate): string | string[] | undefined => {
   if (sites.length === 0 || sites.every(isSiteSubmittable)) {
