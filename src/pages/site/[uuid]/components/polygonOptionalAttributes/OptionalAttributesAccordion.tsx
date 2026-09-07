@@ -30,11 +30,7 @@ const OptionalAttributesAccordion: FC<OptionalAttributesAccordionProps> = ({
   if (definitions.length === 0) return null;
 
   return (
-    <Accordion
-      header={<AccordionHeader title={t("Optional Attributes")} badge={t("Optional")} />}
-      open={open}
-      onOpenChange={onOpenChange}
-    >
+    <Accordion header={<AccordionHeader title={t("Optional Attributes")} />} open={open} onOpenChange={onOpenChange}>
       <Flex className="mb-4 flex-1 flex-col gap-4">
         {definitions.map(definition => {
           const items = definition.options
