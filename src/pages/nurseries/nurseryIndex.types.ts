@@ -6,12 +6,18 @@ export type NurseryIndexRow = NurseryLightDto & {
   projectFrameworkKey: string | null;
 };
 
+export type NurseryIndexMetric = {
+  progress: number;
+  goal: number;
+};
+
 export type NurseryIndexProjectSection = {
   id: string;
   projectUuid: string | null;
   projectName: string;
   organisationName: string | null;
   frameworkKey: string | null;
+  seedlingsGrown: NurseryIndexMetric;
   nurseries: NurseryIndexRow[];
 };
 

@@ -103,6 +103,7 @@ const NurseriesIndexContent = () => {
               <NurseryProjectSection
                 key={`${viewValue}-${section.id}`}
                 section={section}
+                isFiltered={query.trim() !== "" || statuses.length > 0}
                 defaultOpen={viewValue !== ALL_PROJECTS_VIEW_VALUE && index === 0}
               />
             ))}

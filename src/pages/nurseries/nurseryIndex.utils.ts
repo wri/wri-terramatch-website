@@ -1,8 +1,13 @@
 import { Framework, toFramework } from "@/context/framework.provider";
 import type { EntityExportAllQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
-import type { NurseryLightDto, ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import type {
+  NurseryLightDto,
+  ProjectFullDto,
+  ProjectLightDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
+import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
-import type { NurseryIndexProjectSection, NurseryIndexRow } from "./nurseryIndex.types";
+import type { NurseryIndexMetric, NurseryIndexProjectSection, NurseryIndexRow } from "./nurseryIndex.types";
 
 type NurseryWithProjectUuid = NurseryLightDto & { projectUuid?: string | null };
 
@@ -37,9 +42,40 @@ const getProjectMatch = (nursery: NurseryWithProjectUuid, projects: ProjectLight
 const getFallbackSectionId = (nursery: NurseryLightDto) =>
   [nursery.organisationUuid ?? normalize(nursery.organisationName), normalize(nursery.projectName)].join(":");
 
+export const toNurseryIndexStatus = (status: string | null | undefined): NurseryIndexRow["status"] => {
+  if (status == null || status.trim() === "") return null;
+
+  const mapped = mapStatusToTagStateEntity(status)?.type;
+  if (
+    mapped === "draft" ||
+    mapped === "pending-approval" ||
+    mapped === "information-required" ||
+    mapped === "approved"
+  ) {
+    return mapped;
+  }
+
+  return "draft";
+};
+
+const getNurserySeedlingsGrownCount = (nursery: Pick<NurseryLightDto, "treesSeedlingsGrownCount">) =>
+  nursery.treesSeedlingsGrownCount ?? 0;
+
+export const sumNurserySeedlingsGrown = (nurseries: Array<Pick<NurseryLightDto, "treesSeedlingsGrownCount">>) =>
+  nurseries.reduce((total, nursery) => total + getNurserySeedlingsGrownCount(nursery), 0);
+
+export const buildSeedlingsGrownMetric = (
+  nurseries: Array<Pick<NurseryLightDto, "treesSeedlingsGrownCount">>,
+  fullProject?: ProjectFullDto
+): NurseryIndexMetric => ({
+  progress: sumNurserySeedlingsGrown(nurseries),
+  goal: fullProject?.nurserySeedlingsGoal ?? 0
+});
+
 export const buildNurseryProjectSections = (
   nurseries: NurseryLightDto[],
-  projects: ProjectLightDto[]
+  projects: ProjectLightDto[],
+  fullProjectsById: Map<string, ProjectFullDto> = new Map()
 ): NurseryIndexProjectSection[] => {
   const sectionsById = new Map<string, NurseryIndexProjectSection>();
 
@@ -50,7 +86,8 @@ export const buildNurseryProjectSections = (
       ...nursery,
       id: nursery.uuid,
       projectUuid: project?.uuid ?? (nursery as NurseryWithProjectUuid).projectUuid ?? null,
-      projectFrameworkKey: project?.frameworkKey ?? nursery.frameworkKey
+      projectFrameworkKey: project?.frameworkKey ?? nursery.frameworkKey,
+      status: toNurseryIndexStatus(nursery.status)
     };
     const existingSection = sectionsById.get(sectionId);
 
@@ -65,15 +102,22 @@ export const buildNurseryProjectSections = (
       projectName: project?.name ?? nursery.projectName ?? "Project",
       organisationName: project?.organisationName ?? nursery.organisationName,
       frameworkKey: row.projectFrameworkKey,
+      seedlingsGrown: { progress: 0, goal: 0 },
       nurseries: [row]
     });
   });
 
   return Array.from(sectionsById.values())
-    .map(section => ({
-      ...section,
-      nurseries: [...section.nurseries].sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""))
-    }))
+    .map(section => {
+      const sortedNurseries = [...section.nurseries].sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
+      const fullProject = section.projectUuid == null ? undefined : fullProjectsById.get(section.projectUuid);
+
+      return {
+        ...section,
+        nurseries: sortedNurseries,
+        seedlingsGrown: buildSeedlingsGrownMetric(sortedNurseries, fullProject)
+      };
+    })
     .sort((a, b) => a.projectName.localeCompare(b.projectName));
 };
 
