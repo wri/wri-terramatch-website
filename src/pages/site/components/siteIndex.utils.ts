@@ -63,6 +63,7 @@ export const mapSiteToIndexSite = (site: SiteLightDto, frameworkKey: Framework):
   update: toSiteIndexUpdate(site.updateRequestStatus),
   updateRequestStatus: site.updateRequestStatus,
   createdAt: site.createdAt,
+  updatedAt: site.updatedAt,
   plantingStatus: site.plantingStatus,
   treesPlantedCount: site.treesPlantedCount ?? 0,
   totalHectaresRestoredSum: site.totalHectaresRestoredSum ?? 0,
