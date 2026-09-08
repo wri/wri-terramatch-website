@@ -77,7 +77,11 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
         "nurseriesBulkExportToast"
       );
     } catch (error) {
-      Log.error("Failed to download selected nurseries", error);
+      showToast({
+        label: t("Failed to download nurseries"),
+        type: "error",
+        placement: "bottom"
+      });
     } finally {
       setIsDownloading(false);
     }
@@ -109,7 +113,6 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
         duration: 5000
       });
     } catch (error) {
-      Log.error("Failed to delete selected nurseries", error);
       showToast({
         label: t("Something went wrong!"),
         type: "error",
