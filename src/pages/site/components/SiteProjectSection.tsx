@@ -11,6 +11,7 @@ import { getEntityEditPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { getThemedColor } from "@/lib/theme";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
+import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
@@ -178,11 +179,12 @@ const SiteProjectTable: FC<{
 
   const columns = useMemo<TableColumn[]>(
     () => [
-      { key: "name", label: t("Site Name"), sortable: true, width: "554px" },
+      { key: "name", label: t("Site Name"), sortable: true, width: "384px" },
       { key: "status", label: t("Status"), sortable: true, width: "200px" },
       { key: "update", label: t("Updates"), sortable: true, width: "250px" },
+      { key: "updatedAt", label: t("Latest Update"), sortable: true, width: "170px" },
       { key: "createdAt", label: t("Date Created"), sortable: true, width: "150px" },
-      { key: "actions", label: "", width: "180px" }
+      { key: "actions", label: "", width: "130px" }
     ],
     [t]
   );
@@ -222,14 +224,32 @@ const SiteProjectTable: FC<{
           <TableCell {...context?.getCellProps("update")}>
             <SiteUpdate update={site.update} />
           </TableCell>
+          <TableCell {...context?.getCellProps("updatedAt")}>
+            {site.updatedAt !== "" ? (
+              <Box w="min-content">
+                <FeedbackTag
+                  type="info-white"
+                  size="default"
+                  label={format(site.updatedAt)}
+                  icon={<CalendarIcon boxSize={2.5} />}
+                />
+              </Box>
+            ) : (
+              <Text textStyle="300" color="neutral.800">
+                –
+              </Text>
+            )}
+          </TableCell>
           <TableCell {...context?.getCellProps("createdAt")}>
             {site.createdAt !== "" ? (
-              <ActionStatusTag
-                state="neutral-dark"
-                size="small"
-                label={format(site.createdAt)}
-                icon={<CalendarIcon boxSize={2.5} />}
-              />
+              <Box w="min-content">
+                <FeedbackTag
+                  type="info-grey"
+                  size="default"
+                  label={format(site.createdAt)}
+                  icon={<CalendarIcon boxSize={2.5} />}
+                />
+              </Box>
             ) : (
               <Text textStyle="300" color="neutral.800">
                 –
