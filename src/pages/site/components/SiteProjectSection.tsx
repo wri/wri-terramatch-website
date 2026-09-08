@@ -57,8 +57,17 @@ const stopRowClick = (event: MouseEvent) => {
 
 const SiteStatusTag: FC<{ status: SiteIndexStatus }> = ({ status }) => <TagSubmission state={status} size="small" />;
 
-const SiteUpdate: FC<{ update: SiteIndexUpdate }> = ({ update }) => {
+const SiteUpdate: FC<{ update: SiteIndexUpdate | null }> = ({ update }) => {
   const t = useT();
+
+  if (update == null) {
+    return (
+      <Text textStyle="300" color="neutral.800">
+        –
+      </Text>
+    );
+  }
+
   const updateLabel = {
     draft: t("Draft"),
     "pending-approval": t("Pending Approval"),
@@ -67,7 +76,7 @@ const SiteUpdate: FC<{ update: SiteIndexUpdate }> = ({ update }) => {
   }[update];
 
   return (
-    <Box className="text-theme-neutral-800 flex items-center gap-1">
+    <Box className="flex items-center gap-1 text-theme-neutral-800">
       <EditIcon boxSize={2.5} />
       <Text as="span" textStyle="200">
         {t("Editing:")}
