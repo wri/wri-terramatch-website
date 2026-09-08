@@ -6,7 +6,6 @@ import { twMerge } from "tailwind-merge";
 import { useMetricsCardAnalyticsContext } from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { Framework } from "@/context/framework.provider";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
-import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import { toMetricLabel } from "@/utils/analytics/metricsCardAnalytics";
 import { formatNumberLocaleString } from "@/utils/dashboardUtils";
 
@@ -23,6 +22,87 @@ import { getIconWithProgressColor } from "./utils/getIconWithProgressColor";
 
 const shouldRenderSuffix = (progressLabel?: string, suffix?: string): boolean =>
   progressLabel == null && suffix != null && suffix !== "";
+
+type MetricContextItemProps = {
+  label: string;
+  value: number;
+  goal?: number;
+  suffix?: string;
+  goalSuffix?: string;
+};
+
+const MetricContextItem: FC<MetricContextItemProps> = ({ label, value, goal, suffix, goalSuffix }) => {
+  const t = useT();
+  const showGoal = goal != null && goal > 0;
+  const valueSuffix = suffix != null && suffix !== "" ? suffix : undefined;
+  const displayedGoalSuffix = goalSuffix != null && goalSuffix !== "" ? goalSuffix : valueSuffix;
+
+  return (
+    <Flex gap={1} className="items-center">
+      <Text color="neutral.700" textStyle="200">
+        {label}
+      </Text>
+      <Text color="neutral.900" textStyle="300-bold">
+        {formatNumberLocaleString(value)}
+      </Text>
+      {valueSuffix != null ? (
+        <Text color="neutral.900" textStyle="300-bold">
+          {valueSuffix}
+        </Text>
+      ) : null}
+      {showGoal ? (
+        <>
+          <Text color="neutral.700" textStyle="200">
+            {t("of")}
+          </Text>
+          <Text color="neutral.900" textStyle="300-bold">
+            {formatNumberLocaleString(goal)}
+          </Text>
+          {displayedGoalSuffix != null ? (
+            <Text color="neutral.900" textStyle="300-bold">
+              {displayedGoalSuffix}
+            </Text>
+          ) : null}
+        </>
+      ) : null}
+    </Flex>
+  );
+};
+
+type MetricContextColProps = {
+  selection?: number;
+  filtered?: number;
+  goal?: number;
+  suffix?: string;
+  goalSuffix?: string;
+};
+
+const MetricContextCol: FC<MetricContextColProps> = ({ selection, filtered, goal, suffix, goalSuffix }) => {
+  const t = useT();
+  const items = [
+    selection != null ? { key: "selection", label: t("Selection:"), value: selection } : null,
+    filtered != null ? { key: "filtered", label: t("Filtered:"), value: filtered } : null
+  ].filter((item): item is { key: string; label: string; value: number } => item != null);
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <Flex gap={2} flexDirection="column">
+      {items.map(item => (
+        <MetricContextItem
+          key={item.key}
+          label={item.label}
+          value={item.value}
+          goal={goal}
+          suffix={suffix}
+          goalSuffix={goalSuffix}
+        />
+      ))}
+    </Flex>
+  );
+};
 
 type MetricTooltipTriggerProps = {
   tooltipContent: ReactNode;
@@ -55,7 +135,6 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   title,
   progress,
   progressLabel,
-  selection,
   progressSuffix,
   color,
   iconWithColor,
@@ -63,57 +142,34 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   classNameTitle,
   metricLabel,
   type
-}) => {
-  const t = useT();
-  return (
-    <Flex direction="column" gap={2}>
-      <Flex gap={1} color={color} alignItems="center">
-        {iconWithColor}
-        <Text
-          textStyle="300"
-          color="neutral.800"
-          paddingLeft={1}
-          className={twMerge("whitespace-nowrap", classNameTitle)}
-        >
-          {title}
-        </Text>
-        {tooltipContent != null && (
-          <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
-        )}
-      </Flex>
-      <Flex gap={2} className="items-center">
-        <Flex gap={1} className="items-center">
-          <Text textStyle="400-bold" color="neutral.900">
-            {progressLabel ?? formatNumberLocaleString(progress)}
-          </Text>
-          {shouldRenderSuffix(progressLabel, progressSuffix) ? (
-            <Text textStyle="400-bold" color="neutral.900">
-              {progressSuffix}
-            </Text>
-          ) : null}
-        </Flex>
-        {selection != null ? (
-          <>
-            <SimpleDivider variant="vertical" className="!h-3" />
-            <Flex gap={1} className="items-center">
-              <Text color="neutral.700" textStyle="200">
-                {t("Selection:")}
-              </Text>
-              <Text color="neutral.900" textStyle="300-bold">
-                {formatNumberLocaleString(selection)}
-              </Text>
-              {progressSuffix != null && progressSuffix !== "" ? (
-                <Text color="neutral.900" textStyle="300-bold">
-                  {progressSuffix}
-                </Text>
-              ) : null}
-            </Flex>
-          </>
-        ) : null}
-      </Flex>
+}) => (
+  <Flex direction="column" gap={2}>
+    <Flex gap={1} color={color} alignItems="center">
+      {iconWithColor}
+      <Text
+        textStyle="300"
+        color="neutral.800"
+        paddingLeft={1}
+        className={twMerge("whitespace-nowrap", classNameTitle)}
+      >
+        {title}
+      </Text>
+      {tooltipContent != null && (
+        <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
+      )}
     </Flex>
-  );
-};
+    <Flex gap={1} className="items-center">
+      <Text textStyle="400-bold" color="neutral.900">
+        {progressLabel ?? formatNumberLocaleString(progress)}
+      </Text>
+      {shouldRenderSuffix(progressLabel, progressSuffix) ? (
+        <Text textStyle="400-bold" color="neutral.900">
+          {progressSuffix}
+        </Text>
+      ) : null}
+    </Flex>
+  </Flex>
+);
 
 const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   title,
@@ -124,57 +180,33 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   iconWithColor,
   tooltipContent,
   classNameTitle,
-  selection,
   metricLabel,
   type
-}) => {
-  const t = useT();
-  return (
-    <Flex gap={3} color={color} alignItems="center">
-      {iconWithColor}
-      <Flex direction="column" gap={0}>
-        <Flex gap={1} alignItems="center">
-          <Text textStyle="400" color="neutral.800" className={twMerge("whitespace-nowrap", classNameTitle)}>
-            {title}
+}) => (
+  <Flex gap={3} color={color} alignItems="center">
+    {iconWithColor}
+    <Flex direction="column" gap={0}>
+      <Flex gap={1} alignItems="center">
+        <Text textStyle="400" color="neutral.800" className={twMerge("whitespace-nowrap", classNameTitle)}>
+          {title}
+        </Text>
+        {tooltipContent != null && (
+          <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
+        )}
+      </Flex>
+      <Flex gap={1} className="items-center">
+        <Text textStyle="600-bold" color="neutral.900">
+          {progressLabel ?? formatNumberLocaleString(progress)}
+        </Text>
+        {shouldRenderSuffix(progressLabel, progressSuffix) ? (
+          <Text textStyle="600-bold" color="neutral.900">
+            {progressSuffix}
           </Text>
-          {tooltipContent != null && (
-            <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
-          )}
-        </Flex>
-        <Flex gap={2} className="items-center">
-          <Flex gap={1} className="items-center">
-            <Text textStyle="600-bold" color="neutral.900">
-              {progressLabel ?? formatNumberLocaleString(progress)}
-            </Text>
-            {shouldRenderSuffix(progressLabel, progressSuffix) ? (
-              <Text textStyle="600-bold" color="neutral.900">
-                {progressSuffix}
-              </Text>
-            ) : null}
-          </Flex>
-          {selection != null ? (
-            <>
-              <SimpleDivider variant="vertical" className="!h-3" />
-              <Flex gap={1} className="items-center">
-                <Text color="neutral.700" textStyle="500">
-                  {t("Selection:")}
-                </Text>
-                <Text color="neutral.900" textStyle="600-bold">
-                  {formatNumberLocaleString(selection)}
-                </Text>
-                {progressSuffix != null && progressSuffix !== "" ? (
-                  <Text color="neutral.900" textStyle="600-bold">
-                    {progressSuffix}
-                  </Text>
-                ) : null}
-              </Flex>
-            </>
-          ) : null}
-        </Flex>
+        ) : null}
       </Flex>
     </Flex>
-  );
-};
+  </Flex>
+);
 
 const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   title,
@@ -332,6 +364,7 @@ const MetricCard: FC<MetricCardProps> = props => {
     classNameTitle,
     frameworkKey,
     selection,
+    filtered,
     metricLabel,
     widthProgressBar
   } = props;
@@ -391,7 +424,6 @@ const MetricCard: FC<MetricCardProps> = props => {
           iconWithColor={iconWithColor14}
           tooltipContent={tooltipContent}
           classNameTitle={classNameTitle}
-          selection={selection}
           metricLabel={metricLabel}
           type={type}
         />
@@ -408,7 +440,6 @@ const MetricCard: FC<MetricCardProps> = props => {
           iconWithColor={iconWithColor50}
           tooltipContent={tooltipContent}
           classNameTitle={classNameTitle}
-          selection={selection}
           metricLabel={metricLabel}
           type={type}
         />
@@ -418,6 +449,8 @@ const MetricCard: FC<MetricCardProps> = props => {
 
   return (
     <Flex
+      direction="column"
+      gap={2}
       padding={3}
       className={twMerge(
         "h-fit justify-start rounded-lg border border-theme-neutral-300 bg-theme-neutral-100 p-3",
@@ -425,6 +458,13 @@ const MetricCard: FC<MetricCardProps> = props => {
       )}
     >
       {content}
+      <MetricContextCol
+        selection={selection}
+        filtered={filtered}
+        goal={goal}
+        suffix={progressSuffix}
+        goalSuffix={goalSuffix}
+      />
     </Flex>
   );
 };

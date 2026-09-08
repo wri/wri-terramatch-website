@@ -31,6 +31,14 @@ const meta: Meta<typeof MetricCard> = {
     goalSuffix: {
       control: "text",
       description: "Suffix displayed next to goal value"
+    },
+    selection: {
+      control: "number",
+      description: "Optional selection count shown at the bottom of the card"
+    },
+    filtered: {
+      control: "number",
+      description: "Optional filtered count shown at the bottom of the card"
     }
   }
 };
@@ -64,6 +72,21 @@ export const MediumWithSelection: Story = {
   }
 };
 
+export const MediumWithSelectionAndFiltered: Story = {
+  args: {
+    title: "Stat label",
+    progress: 1234,
+    goal: 10000,
+    progressSuffix: "ha",
+    variant: "medium",
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit",
+    selection: 1000,
+    filtered: 400
+  }
+};
+
 export const Large: Story = {
   args: {
     title: "Stat label",
@@ -85,6 +108,20 @@ export const ProgressBar: Story = {
     icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
     className: "w-[30rem]"
+  }
+};
+
+export const ProgressBarWithSelectionAndFiltered: Story = {
+  args: {
+    title: "Stat label",
+    progress: 750,
+    goal: 1000,
+    variant: "progressBar",
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-[30rem]",
+    selection: 10000,
+    filtered: 2500
   }
 };
 
@@ -128,6 +165,8 @@ export const AllVariants: Story = {
         tooltipContent="This is a tooltip"
         color="secondary.600"
         className="col-span-2"
+        selection={400}
+        filtered={200}
       />
       <MetricCard
         title="Stat label"

@@ -96,6 +96,7 @@ export interface ToolbarTableProps {
   onClickFilterButton?: () => void;
   selectedFilters?: SelectedFilter[];
   classNameContentLeft?: string;
+  classNameContentSearch?: string;
 }
 
 export interface ViewToolbarProps {
