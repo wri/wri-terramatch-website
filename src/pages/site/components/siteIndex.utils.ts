@@ -41,8 +41,11 @@ export const toSiteIndexStatus = (status: string | null | undefined): SiteIndexS
   return "draft";
 };
 
-export const toSiteIndexUpdate = (updateRequestStatus: string | null | undefined): SiteIndexUpdate => {
-  if (isAbsentChangeRequestStatus(updateRequestStatus) || updateRequestStatus === "approved") {
+export const toSiteIndexUpdate = (updateRequestStatus: string | null | undefined): SiteIndexUpdate | null => {
+  if (isAbsentChangeRequestStatus(updateRequestStatus)) {
+    return null;
+  }
+  if (updateRequestStatus === "approved") {
     return "complete";
   }
   if (
@@ -52,7 +55,7 @@ export const toSiteIndexUpdate = (updateRequestStatus: string | null | undefined
   ) {
     return updateRequestStatus;
   }
-  return "complete";
+  return null;
 };
 
 export const mapSiteToIndexSite = (site: SiteLightDto, frameworkKey: Framework): SiteIndexSite => ({

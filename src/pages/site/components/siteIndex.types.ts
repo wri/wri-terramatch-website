@@ -20,7 +20,7 @@ export interface SiteIndexSite {
   name: string;
   frameworkKey: Framework;
   status: SiteIndexStatus;
-  update: SiteIndexUpdate;
+  update: SiteIndexUpdate | null;
   updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   createdAt: string;
   updatedAt: string;

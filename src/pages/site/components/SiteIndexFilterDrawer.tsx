@@ -21,7 +21,6 @@ export const SITE_INDEX_STATUS_OPTIONS: { label: string; value: SiteIndexFilterS
   { label: "Draft", value: "draft" },
   { label: "Pending Approval", value: "pending-approval" },
   { label: "Information Required", value: "information-required" },
-  { label: "Not Started", value: "not-started" },
   { label: "Approved", value: "approved" }
 ];
 
