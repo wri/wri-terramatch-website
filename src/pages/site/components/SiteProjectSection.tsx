@@ -66,9 +66,9 @@ const SiteUpdate: FC<{ update: SiteIndexUpdate }> = ({ update }) => {
   }[update];
 
   return (
-    <Box className="flex items-center gap-1 text-theme-neutral-800">
+    <Box className="text-theme-neutral-800 flex items-center gap-1">
       <EditIcon boxSize={2.5} />
-      <Text as="span" textStyle="400">
+      <Text as="span" textStyle="200">
         {t("Editing:")}
       </Text>
       <Text as="span" textStyle="200-bold">
@@ -94,7 +94,7 @@ const SiteProjectMetrics: FC<{
   const selectedTrees = selectedSites.reduce((total, site) => total + site.treesPlantedCount, 0);
   const filteredArea = sites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
   const selectedArea = selectedSites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
-  const metricCardClassName = "w-max shrink-0 flex-none";
+  const metricCardClassName = "w-max min-w-[18rem] shrink-0 flex-none";
   const isHbf = project.frameworkKey === Framework.HBF;
   const isTerraFund = isTerrafund(project.frameworkKey);
   const primaryMetric = isHbf

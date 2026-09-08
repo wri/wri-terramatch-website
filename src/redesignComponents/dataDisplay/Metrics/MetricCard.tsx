@@ -195,9 +195,52 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
 }) => {
   const t = useT();
   const progressValue = goal > 0 ? (progress / goal) * 100 : 0;
+  const hasBreakdown = filtered != null || selection != null;
+
+  const renderGoal = () => (
+    <>
+      <Text textStyle="300" color="neutral.800">
+        {t("of")}
+      </Text>
+      <Flex gap={1} className="items-center">
+        <Text textStyle="300" color="neutral.800">
+          {formatNumberLocaleString(goal)}
+        </Text>
+        {goalSuffix != null && goalSuffix !== "" ? (
+          <Text textStyle="300" color="neutral.800">
+            {goalSuffix}
+          </Text>
+        ) : null}
+      </Flex>
+    </>
+  );
+
+  const renderBreakdown = (label: string, value: number) => (
+    <Flex gap={1} alignItems="center">
+      <Text color="neutral.700" textStyle="200">
+        {label}
+      </Text>
+      <Text color="neutral.900" textStyle="300-bold">
+        {formatNumberLocaleString(value)}
+      </Text>
+      <Text color="neutral.900" textStyle="200">
+        {t("of")}
+      </Text>
+      <Flex gap={1} className="items-center">
+        <Text color="neutral.900" textStyle="200">
+          {formatNumberLocaleString(goal)}
+        </Text>
+        {goalSuffix != null && goalSuffix !== "" ? (
+          <Text color="neutral.900" textStyle="200">
+            {goalSuffix}
+          </Text>
+        ) : null}
+      </Flex>
+    </Flex>
+  );
 
   return (
-    <Flex direction="column" gap={2} className="w-full">
+    <Flex direction="column" gap={1} className="w-full">
       <Flex gap={2} alignItems="center">
         {iconWithColor}
         <Text textStyle="300" color="neutral.800" className={twMerge("whitespace-nowrap", classNameTitle)}>
@@ -207,59 +250,35 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
           <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
         )}
       </Flex>
-      <Flex gap={2} alignItems="center">
-        <ProgressBar progress={progressValue} color={color} width={widthProgressBar} />
-        <Flex gap={1} alignItems="center">
-          <Flex gap={1} className="items-center">
-            <Text textStyle="400-bold" color="neutral.900">
-              {progressLabel ?? formatNumberLocaleString(progress)}
-            </Text>
-            {shouldRenderSuffix(progressLabel, progressSuffix) ? (
-              <Text textStyle="400-bold" color="neutral.800">
-                {progressSuffix}
+      <Flex direction="column" gap={0.5} alignItems="flex-start">
+        <Flex gap={2} alignItems="center">
+          <ProgressBar progress={progressValue} color={color} width={widthProgressBar} />
+          <Flex gap={1} alignItems="center">
+            <Flex gap={1} className="items-center">
+              <Text textStyle="400-bold" color="neutral.900">
+                {progressLabel ?? formatNumberLocaleString(progress)}
               </Text>
-            ) : null}
+              {shouldRenderSuffix(progressLabel, progressSuffix) ? (
+                <Text textStyle="400-bold" color="neutral.800">
+                  {progressSuffix}
+                </Text>
+              ) : null}
+            </Flex>
+            {renderGoal()}
           </Flex>
-          <Text textStyle="300" color="neutral.800">
-            {t("of")}
-          </Text>
-          <Flex gap={1} className="items-center">
-            <Text textStyle="300" color="neutral.800">
-              {formatNumberLocaleString(goal)}
-            </Text>
-            {goalSuffix != null && goalSuffix !== "" ? (
-              <Text textStyle="300" color="neutral.800">
-                {goalSuffix}
-              </Text>
-            ) : null}
-          </Flex>
-          {filtered != null ? (
-            <>
-              <SimpleDivider variant="vertical" className="!h-3" />
-              <Flex gap={1} alignItems="center">
-                <Text color="neutral.700" textStyle="200">
-                  {t("Filtered:")}
-                </Text>
-                <Text color="neutral.900" textStyle="300-bold">
-                  {formatNumberLocaleString(filtered)}
-                </Text>
-              </Flex>
-            </>
-          ) : null}
-          {selection != null ? (
-            <>
-              <SimpleDivider variant="vertical" className="!h-3" />
-              <Flex gap={1} alignItems="center">
-                <Text color="neutral.700" textStyle="200">
-                  {t("Selected:")}
-                </Text>
-                <Text color="neutral.900" textStyle="300-bold">
-                  {formatNumberLocaleString(selection)}
-                </Text>
-              </Flex>
-            </>
-          ) : null}
         </Flex>
+
+        {hasBreakdown ? (
+          <Flex gap={2} alignItems="center">
+            {filtered != null ? renderBreakdown(t("Filtered:"), filtered) : null}
+            {selection != null ? (
+              <>
+                {filtered != null ? <SimpleDivider variant="vertical" className="!h-3" /> : null}
+                {renderBreakdown(t("Selected:"), selection)}
+              </>
+            ) : null}
+          </Flex>
+        ) : null}
       </Flex>
     </Flex>
   );
