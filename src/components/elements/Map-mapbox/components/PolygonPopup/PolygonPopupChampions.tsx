@@ -18,11 +18,7 @@ import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
 import PointMarker from "@/redesignComponents/geospatial/PointMarker/PointMarker";
 import Log from "@/utils/log";
 import { getSingleSitePolygonApproveTooltip, isSitePolygonApprovable } from "@/utils/sitePolygonReview";
-import {
-  getSingleSitePolygonSubmitTooltip,
-  isSitePolygonSubmittable,
-  shouldShowRunValidationAsPrimaryAction
-} from "@/utils/sitePolygonSubmit";
+import { getSingleSitePolygonSubmitTooltip, isSitePolygonSubmittable } from "@/utils/sitePolygonSubmit";
 
 import type { PopupComponentProps, TooltipType } from "../../Map.d";
 import {
@@ -95,7 +91,6 @@ export function PolygonPopupChampions({
 
   const submitDisabled = !isSitePolygonSubmittable(sitePolygon);
   const submitDisabledTooltip = getSingleSitePolygonSubmitTooltip(sitePolygon, t);
-  const showRunValidationAsPrimary = !isAdminReview && shouldShowRunValidationAsPrimaryAction(sitePolygon);
 
   const approveDisabled = !isSitePolygonApprovable(sitePolygon);
   const approveDisabledTooltip = getSingleSitePolygonApproveTooltip(sitePolygon, t);
@@ -198,8 +193,7 @@ export function PolygonPopupChampions({
             viewDetailsDisabled={!canNavigateToSitePolygonViewDetails(geometryUuid, siteUuid)}
             tooltipType={tooltipType}
             isAdminReview={isAdminReview}
-            onRunValidation={isAdminReview || showRunValidationAsPrimary ? handleRunValidation : undefined}
-            showRunValidationAsPrimary={showRunValidationAsPrimary}
+            onRunValidation={isAdminReview ? handleRunValidation : undefined}
             approveDisabled={approveDisabled}
             approveDisabledTooltip={approveDisabledTooltip}
             onApprove={handleApprove}

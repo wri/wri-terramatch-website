@@ -106,11 +106,14 @@ const GoalsAndProgressReportSections = ({
   });
 
   const seedlingsTotal = useMemo(() => {
+    if (entity === "nurseryReports" || seedlingOnly) {
+      return totalCountNurserySeedling;
+    }
     if (metrics.seedlingsGrown != null) {
       return metrics.seedlingsGrown;
     }
     return totalCountNurserySeedling;
-  }, [metrics.seedlingsGrown, totalCountNurserySeedling]);
+  }, [entity, metrics.seedlingsGrown, seedlingOnly, totalCountNurserySeedling]);
 
   const seedlingsSpeciesCount = useMemo(() => {
     const plantsWithAmount = (seedlingPlants ?? []).filter(plant => (plant.amount ?? 0) > 0);

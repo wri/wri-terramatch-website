@@ -215,7 +215,7 @@ const InformationTab: FC<IProps> = props => {
                               Non-Trees Planted:
                             </Text>
                             <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                              {totalCountNonTree.toLocaleString() ?? 0}
+                              {(totalCountNonTree ?? 0).toLocaleString()}
                             </Text>
                           </div>
                           <TreeSpeciesTable {...{ entity, entityUuid }} collection="non-tree" secondColumnWidth="45%" />
@@ -230,7 +230,7 @@ const InformationTab: FC<IProps> = props => {
                             Seedlings Grown:
                           </Text>
                           <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                            {totalCountNurserySeedling.toLocaleString() ?? 0}
+                            {(totalCountNurserySeedling ?? 0).toLocaleString()}
                           </Text>
                         </div>
                         <TreeSpeciesTable
@@ -249,7 +249,7 @@ const InformationTab: FC<IProps> = props => {
                                 Seeds Planted:
                               </Text>
                               <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                {totalCountSeeds.toLocaleString()}
+                                {(totalCountSeeds ?? 0).toLocaleString()}
                               </Text>
                             </div>
                             <TreeSpeciesTable {...{ entity, entityUuid }} collection="seeds" secondColumnWidth="45%" />
@@ -264,7 +264,7 @@ const InformationTab: FC<IProps> = props => {
                             Trees Planted:
                           </Text>
                           <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                            {totalCountTreePlanted.toLocaleString()}
+                            {(totalCountTreePlanted ?? 0).toLocaleString()}
                           </Text>
                         </div>
                         <TreeSpeciesTable
@@ -282,7 +282,7 @@ const InformationTab: FC<IProps> = props => {
                               Replanting:
                             </Text>
                             <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                              {totalCountReplanting?.toLocaleString() ?? 0}
+                              {(totalCountReplanting ?? 0).toLocaleString()}
                             </Text>
                           </div>
                           <TreeSpeciesTable
@@ -299,10 +299,10 @@ const InformationTab: FC<IProps> = props => {
                           <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-1 py-1">
                               <Text variant="text-16-bold" className="capitalize">
-                                Trees Regenerating By Species:
+                                Trees Regenerating:
                               </Text>
                               <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                {totalCountAnr.toLocaleString() ?? 0}
+                                {(totalCountAnr ?? 0).toLocaleString()}
                               </Text>
                             </div>
                             <TreeSpeciesTable {...{ entity, entityUuid }} collection="anr" secondColumnWidth="45%" />
@@ -315,7 +315,7 @@ const InformationTab: FC<IProps> = props => {
                                 Trees Replanted:
                               </Text>
                               <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                {totalCountReplanting.toLocaleString() ?? 0}
+                                {(totalCountReplanting ?? 0).toLocaleString()}
                               </Text>
                             </div>
                             <TreeSpeciesTable
@@ -335,7 +335,7 @@ const InformationTab: FC<IProps> = props => {
                               {props.type === "projects" ? "Tree Regenerating:" : "Trees Regenerating:"}
                             </Text>
                             <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                              {totalCountAnr.toLocaleString() ?? 0}
+                              {(totalCountAnr ?? 0).toLocaleString()}
                             </Text>
                           </div>
                           <TreeSpeciesTable {...{ entity, entityUuid }} collection="anr" secondColumnWidth="45%" />
@@ -350,7 +350,7 @@ const InformationTab: FC<IProps> = props => {
                               Trees Replanted:
                             </Text>
                             <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                              {totalCountReplanting.toLocaleString() ?? 0}
+                              {(totalCountReplanting ?? 0).toLocaleString()}
                             </Text>
                           </div>
                           <TreeSpeciesTable
@@ -369,7 +369,7 @@ const InformationTab: FC<IProps> = props => {
                               Invasive Trees Removed:
                             </Text>
                             <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                              {totalCountInvasive.toLocaleString() ?? 0}
+                              {(totalCountInvasive ?? 0).toLocaleString()}
                             </Text>
                           </div>
                           <TreeSpeciesTable {...{ entity, entityUuid }} collection="invasive" secondColumnWidth="45%" />

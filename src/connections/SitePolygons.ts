@@ -6,9 +6,7 @@ import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
-import { POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import type { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import {
   type UpdateSitePolygonStatusResponse,
   bulkDeleteSitePolygons as bulkDeleteSitePolygonsEndpoint,
@@ -209,13 +207,7 @@ export const bulkUpdateSitePolygonStatus = async (
   };
 
   const variables = { body, pathParams: { status } };
-  const response = await updateSitePolygonStatus.fetchAwait(variables);
-
-  if (status === POLYGON_PENDING_APPROVAL) {
-    listDelayedJobs.fetch({});
-  }
-
-  return response;
+  return updateSitePolygonStatus.fetchAwait(variables);
 };
 
 export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {

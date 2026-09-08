@@ -1013,7 +1013,6 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
         onPolygonSubmittingChange={handlePolygonSubmittingChange}
         onRequestApproveModal={isAdminReview ? handleDrawerRequestApproveModal : undefined}
         onRequestInformationModal={isAdminReview ? handleDrawerRequestInformationModal : undefined}
-        onValidationJobsStarted={handleValidationJobsStarted}
       />
       <PageContent className="bg-theme-neutral-100">
         <PageItem
