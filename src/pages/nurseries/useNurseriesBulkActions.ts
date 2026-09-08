@@ -9,7 +9,6 @@ import { getEntityEditPageLink } from "@/helpers/entity";
 import { useDownloadToastMessages } from "@/hooks/translation/useDownloadToastMessages";
 import ApiSlice from "@/store/apiSlice";
 import { runWithDownloadToast } from "@/utils/downloadToast";
-import Log from "@/utils/log";
 
 import type { NurseryIndexRow } from "./nurseryIndex.types";
 import { groupNurseryUuidsByFramework } from "./nurseryIndex.utils";
@@ -78,7 +77,7 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
       );
     } catch (error) {
       showToast({
-        label: t("Failed to download nurseries"),
+        label: t("Failed to download selected nurseries"),
         type: "error",
         placement: "bottom"
       });
@@ -114,7 +113,7 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
       });
     } catch (error) {
       showToast({
-        label: t("Something went wrong!"),
+        label: t("Failed to delete selected nurseries"),
         type: "error",
         placement: "bottom"
       });
@@ -137,9 +136,8 @@ export const useNurseriesBulkActions = ({ selectedNurseries, onNurseriesChanged 
       await refreshTouchedNurseries(submittableNurseries.map(nursery => nursery.uuid));
       onNurseriesChanged();
     } catch (error) {
-      Log.error("Failed to submit selected nurseries", error);
       showToast({
-        label: t("Something went wrong!"),
+        label: t("Failed to submit selected nurseries"),
         type: "error",
         placement: "bottom"
       });

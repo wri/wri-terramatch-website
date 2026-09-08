@@ -1,9 +1,9 @@
+import { showToast } from "@worldresources/wri-design-systems";
 import { useEffect, useMemo, useState } from "react";
 
 import { loadNurseryIndex, loadProjectIndex } from "@/connections/Entity";
 import type { NurseryLightDto, ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
-import Log from "@/utils/log";
 
 import type { NurseryIndexData } from "./nurseryIndex.types";
 import { buildNurseryProjectSections } from "./nurseryIndex.utils";
@@ -61,7 +61,11 @@ export const useNurseriesIndexData = (reloadNonce = 0): NurseryIndexData => {
         setNurseries(loadedNurseries);
         setLoading(false);
       } catch (loadError) {
-        Log.error("Failed to load nursery index", loadError);
+        showToast({
+          label: "Failed to load nursery index",
+          type: "error",
+          placement: "bottom"
+        });
         if (!cancelled) {
           setProjects([]);
           setNurseries([]);
