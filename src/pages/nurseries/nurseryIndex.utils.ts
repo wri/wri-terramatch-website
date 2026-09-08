@@ -1,3 +1,4 @@
+import { APPROVED, PENDING_APPROVAL } from "@/constants/statuses";
 import { Framework, toFramework } from "@/context/framework.provider";
 import type { EntityExportAllQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import type {
@@ -147,6 +148,31 @@ export const filterNurseryProjectSections = (
       };
     })
     .filter(section => section.nurseries.length > 0);
+};
+
+export type NurseryApprovalLockReason = "approved" | "pending-approval";
+
+export const getNurseryApprovalLockReason = (nursery: {
+  status?: string | null;
+  updateRequestStatus?: string | null;
+}): NurseryApprovalLockReason | null => {
+  if (nursery.status === APPROVED) return "approved";
+  if (nursery.status === PENDING_APPROVAL || nursery.updateRequestStatus === PENDING_APPROVAL) {
+    return "pending-approval";
+  }
+  return null;
+};
+
+export const getSelectionApprovalLockReason = (
+  nurseries: Array<{ status?: string | null; updateRequestStatus?: string | null }>
+): NurseryApprovalLockReason | "mixed" | null => {
+  const reasons = new Set(
+    nurseries.map(getNurseryApprovalLockReason).filter((reason): reason is NurseryApprovalLockReason => reason != null)
+  );
+
+  if (reasons.size === 0) return null;
+  if (reasons.size > 1) return "mixed";
+  return Array.from(reasons)[0] ?? null;
 };
 
 type NurseryExportFrameworkKey = NonNullable<EntityExportAllQueryParams["frameworkKey"]>;

@@ -7,7 +7,8 @@ import BulkActionToolbar from "@/redesignComponents/navigation/Toolbar/BulkActio
 import ToolbarInfoTooltipContent from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
 
 import type { NurseryIndexRow } from "../nurseryIndex.types";
-import { getNurseryIndexSubmitTooltip, isNurserySubmittable } from "../nurseryIndexSubmit";
+import { getSelectionApprovalLockReason } from "../nurseryIndex.utils";
+import { isNurserySubmittable } from "../nurseryIndexSubmit";
 
 interface NurseriesIndexBulkActionToolbarProps {
   selectedNurseries: NurseryIndexRow[];
@@ -39,12 +40,34 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
   const selectedCount = selectedNurseries.length;
   const visible = selectedCount > 0;
   const canSubmit = selectedCount > 0 && selectedNurseries.every(isNurserySubmittable);
-  const submitTooltip = useMemo(() => getNurseryIndexSubmitTooltip(selectedNurseries, t), [selectedNurseries, t]);
+  const isEditDisabled = selectedCount !== 1;
+  const approvalLockReason = useMemo(() => getSelectionApprovalLockReason(selectedNurseries), [selectedNurseries]);
 
   useEffect(() => {
     setBulkActionToolbarVisible(visible);
     return () => setBulkActionToolbarVisible(false);
   }, [setBulkActionToolbarVisible, visible]);
+
+  const infoTooltip = useMemo(() => {
+    const statusLine =
+      approvalLockReason === "pending-approval"
+        ? selectedCount === 1
+          ? t("This profile has already been submitted for review")
+          : t("One or more selected profiles have already been submitted for review")
+        : approvalLockReason === "approved"
+        ? selectedCount === 1
+          ? t("This profile has already been approved")
+          : t("One or more selected profiles have already been approved")
+        : approvalLockReason === "mixed"
+        ? t("One or more selected profile can't be submitted because they are already approved or awaiting approval")
+        : null;
+    const lines = [statusLine, isEditDisabled ? t("Select one nursery to edit it.") : null].filter(
+      (line): line is string => line != null
+    );
+
+    if (lines.length === 0) return undefined;
+    return <ToolbarInfoTooltipContent lines={lines} />;
+  }, [approvalLockReason, isEditDisabled, selectedCount, t]);
 
   if (!visible) return null;
 
@@ -84,13 +107,7 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
           disabled: !canSubmit || isUpdating,
           onClick: onSubmit
         }}
-        infoTooltip={
-          submitTooltip == null ? undefined : Array.isArray(submitTooltip) ? (
-            <ToolbarInfoTooltipContent lines={submitTooltip} />
-          ) : (
-            submitTooltip
-          )
-        }
+        infoTooltip={infoTooltip}
       />
     </Box>
   );
