@@ -14,7 +14,7 @@ import type { SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
 
 export type SiteIndexFilterStatus = Extract<
   SiteIndexStatus,
-  "draft" | "pending-approval" | "information-required" | "not-started" | "approved"
+  "draft" | "pending-approval" | "information-required" | "approved"
 >;
 
 export const SITE_INDEX_STATUS_OPTIONS: { label: string; value: SiteIndexFilterStatus }[] = [
