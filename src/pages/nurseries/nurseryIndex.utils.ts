@@ -1,4 +1,5 @@
-import { APPROVED, PENDING_APPROVAL } from "@/constants/statuses";
+import { Framework, toFramework } from "@/context/framework.provider";
+import type { EntityExportAllQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import type { NurseryLightDto, ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import type { NurseryIndexProjectSection, NurseryIndexRow } from "./nurseryIndex.types";
@@ -104,27 +105,22 @@ export const filterNurseryProjectSections = (
     .filter(section => section.nurseries.length > 0);
 };
 
-export type NurseryApprovalLockReason = "approved" | "pending-approval";
+type NurseryExportFrameworkKey = NonNullable<EntityExportAllQueryParams["frameworkKey"]>;
 
-export const getNurseryApprovalLockReason = (nursery: {
-  status?: string | null;
-  updateRequestStatus?: string | null;
-}): NurseryApprovalLockReason | null => {
-  if (nursery.status === APPROVED) return "approved";
-  if (nursery.status === PENDING_APPROVAL || nursery.updateRequestStatus === PENDING_APPROVAL) {
-    return "pending-approval";
-  }
-  return null;
-};
+export const groupNurseryUuidsByFramework = (nurseries: NurseryIndexRow[]) => {
+  const grouped = new Map<NurseryExportFrameworkKey, string[]>();
 
-export const getSelectionApprovalLockReason = (
-  nurseries: Array<{ status?: string | null; updateRequestStatus?: string | null }>
-): NurseryApprovalLockReason | "mixed" | null => {
-  const reasons = new Set(
-    nurseries.map(getNurseryApprovalLockReason).filter((reason): reason is NurseryApprovalLockReason => reason != null)
-  );
+  nurseries.forEach(nursery => {
+    const framework = toFramework(nursery.projectFrameworkKey ?? nursery.frameworkKey);
+    if (framework === Framework.UNDEFINED) {
+      return;
+    }
 
-  if (reasons.size === 0) return null;
-  if (reasons.size > 1) return "mixed";
-  return Array.from(reasons)[0] ?? null;
+    const frameworkKey = framework as NurseryExportFrameworkKey;
+    const uuids = grouped.get(frameworkKey) ?? [];
+    uuids.push(nursery.uuid);
+    grouped.set(frameworkKey, uuids);
+  });
+
+  return Array.from(grouped, ([frameworkKey, uuids]) => ({ frameworkKey, uuids }));
 };

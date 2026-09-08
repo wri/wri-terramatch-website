@@ -18,11 +18,13 @@ const ALL_PROJECTS_VIEW_VALUE = "all-projects";
 
 const NurseriesIndexContent = () => {
   const t = useT();
-  const { projects, sections, loading, error } = useNurseriesIndexData();
+  const [reloadNonce, setReloadNonce] = useState(0);
+  const { projects, sections, loading, error } = useNurseriesIndexData(reloadNonce);
   const { clearSelection } = useNurseriesSelectionActions();
   const [query, setQuery] = useState("");
   const [viewValue, setViewValue] = useState(ALL_PROJECTS_VIEW_VALUE);
   const [statuses, setStatuses] = useState<string[]>([]);
+  const handleNurseriesChanged = useCallback(() => setReloadNonce(current => current + 1), []);
 
   const viewItems = useMemo(
     () => [
@@ -106,7 +108,7 @@ const NurseriesIndexContent = () => {
             ))}
           </div>
         )}
-        <NurseriesIndexBulkBar />
+        <NurseriesIndexBulkBar onNurseriesChanged={handleNurseriesChanged} />
       </PageContent>
     </>
   );
