@@ -3,7 +3,7 @@ import ApiSlice, {
   isCompletedCreationState,
   isErrorState,
   isInProgress,
-  JsonApiResponse,
+  JsonApiDocument,
   Method,
   PendingError,
   ResourceType
@@ -226,7 +226,7 @@ export class V3ApiEndpoint<
         const delayedJobId = responsePayload.data.attributes.uuid as string;
         const isAcknowledged = responsePayload.data.attributes.isAcknowledged as boolean | null;
         try {
-          responsePayload = await processDelayedJob<JsonApiResponse>(delayedJobId);
+          responsePayload = await processDelayedJob<JsonApiDocument>(delayedJobId);
         } finally {
           if (acknowledgeDelayedJob !== false && isAcknowledged !== true) {
             const { acknowledgeJobs } = await import("@/connections/DelayedJob");
@@ -235,7 +235,7 @@ export class V3ApiEndpoint<
         }
       }
 
-      const { data } = responsePayload as JsonApiResponse;
+      const { data } = responsePayload as JsonApiDocument;
       if (data == null || Array.isArray(data) || data.type !== "fileDownloads") {
         throw new Error("Unexpected response format for file download");
       }
@@ -399,12 +399,12 @@ async function dispatchRequest<TResponse>(url: string, requestInit: RequestInit)
       responsePayload?.data?.attributes?.uuid != null &&
       responsePayload?.data?.type == "delayedJobs"
     ) {
-      const delayedPayload = await processDelayedJob<JsonApiResponse>(responsePayload.data.attributes.uuid);
-      ApiSlice.fetchSucceeded({ ...actionPayload, response: delayedPayload });
+      const delayedPayload = await processDelayedJob<JsonApiDocument>(responsePayload.data.attributes.uuid);
+      ApiSlice.fetchSucceeded({ ...actionPayload, document: delayedPayload });
       return delayedPayload as TResponse;
     }
 
-    ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
+    ApiSlice.fetchSucceeded({ ...actionPayload, document: responsePayload });
     return responsePayload as TResponse;
   } catch (e) {
     if (isPendingError(e)) {
