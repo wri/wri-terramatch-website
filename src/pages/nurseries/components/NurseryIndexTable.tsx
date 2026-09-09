@@ -5,6 +5,7 @@ import { useCallback, useMemo } from "react";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
+import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import TitleCell from "@/redesignComponents/dataDisplay/Table/components/TitleCell";
 import Table, {
@@ -13,11 +14,46 @@ import Table, {
   TableRenderRowContext
 } from "@/redesignComponents/dataDisplay/Table/Table";
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
-import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
+import { CalendarIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
+import { isAbsentChangeRequestStatus } from "@/utils/changeRequestStatusDisplay";
 
 import { useNurseryTableSelection } from "../NurseriesSelection.provider";
 import type { NurseryIndexRow } from "../nurseryIndex.types";
 import NurseryIndexEditButton from "./NurseryIndexEditButton";
+
+const NurseryUpdate = ({ status }: { status: NurseryIndexRow["updateRequestStatus"] }) => {
+  const t = useT();
+
+  if (status == null || isAbsentChangeRequestStatus(status)) {
+    return (
+      <Text textStyle="300" color="neutral.800">
+        –
+      </Text>
+    );
+  }
+
+  const complete = status === "approved";
+  const updateLabel = {
+    draft: t("Draft"),
+    "pending-approval": t("Pending Approval"),
+    "information-required": t("Information Required"),
+    approved: t("Complete")
+  }[status];
+
+  return (
+    <Box className="flex items-center gap-1 text-theme-neutral-800">
+      <EditIcon boxSize={2.5} />
+      {!complete ? (
+        <Text as="span" textStyle="200">
+          {t("Editing:")}
+        </Text>
+      ) : null}
+      <Text as="span" textStyle="200-bold">
+        {updateLabel}
+      </Text>
+    </Box>
+  );
+};
 
 const NurseryIndexTable = ({ nurseries }: { nurseries: NurseryIndexRow[] }) => {
   const t = useT();
@@ -27,10 +63,12 @@ const NurseryIndexTable = ({ nurseries }: { nurseries: NurseryIndexRow[] }) => {
 
   const columns = useMemo<TableColumn[]>(
     () => [
-      { key: "name", label: t("Name"), sortable: true, width: "50%" },
-      { key: "status", label: t("Status"), sortable: true },
-      { key: "createdAt", label: t("Date Created"), sortable: true },
-      { key: "actions", label: "" }
+      { key: "name", label: t("Name"), sortable: true, width: "384px" },
+      { key: "status", label: t("Status"), sortable: true, width: "200px" },
+      { key: "updateRequestStatus", label: t("Updates"), sortable: true, width: "250px" },
+      { key: "updatedAt", label: t("Latest Update"), sortable: true, width: "170px" },
+      { key: "createdAt", label: t("Date Created"), sortable: true, width: "150px" },
+      { key: "actions", label: "", width: "130px" }
     ],
     [t]
   );
@@ -58,6 +96,25 @@ const NurseryIndexTable = ({ nurseries }: { nurseries: NurseryIndexRow[] }) => {
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("status")}>
             {nursery.status == null ? <Text>—</Text> : <TagSubmission state={nursery.status} size="small" />}
+          </ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("updateRequestStatus")}>
+            <NurseryUpdate status={nursery.updateRequestStatus} />
+          </ChakraTableCell>
+          <ChakraTableCell {...context?.getCellProps("updatedAt")}>
+            {nursery.updatedAt !== "" ? (
+              <Box w="min-content">
+                <FeedbackTag
+                  type="info-white"
+                  size="default"
+                  label={format(nursery.updatedAt)}
+                  icon={<CalendarIcon boxSize={2.5} />}
+                />
+              </Box>
+            ) : (
+              <Text textStyle="300" color="neutral.800">
+                –
+              </Text>
+            )}
           </ChakraTableCell>
           <ChakraTableCell {...context?.getCellProps("createdAt")}>
             <ActionStatusTag

@@ -140,6 +140,7 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
           pl={8}
           pr={10}
           pt={6}
+          truncate
           textStyle={disabled ? "400" : "400-bold"}
           width="100%"
           {...keyboardFocus.focusRingStyles}
