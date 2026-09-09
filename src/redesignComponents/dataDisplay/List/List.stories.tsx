@@ -1,11 +1,9 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
-import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
+import ProfileItem from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileItem";
 
-import { MessagesIcon, PlaceholderIcon, TreeCircleIcon, UserIcon } from "../../foundations/Icons";
+import { TreeCircleIcon, UserIcon } from "../../foundations/Icons";
 import List from "./List";
 
 const meta: Meta<typeof List> = {
@@ -33,7 +31,7 @@ const meta: Meta<typeof List> = {
     },
     items: {
       description:
-        "Array of ListItemProps from WRI Design Systems — each item supports: label, caption, icon, value, variant, disabled, isExpanded, isHighlighted, onItemClick, ariaLabel"
+        "Array of ListItemProps — each item supports: label, caption, icon, value (string), variant, disabled, isExpanded, isHighlighted, onItemClick, ariaLabel"
     }
   }
 };
@@ -51,11 +49,7 @@ export const DataListItems: Story = {
         ariaLabel: "Item 1",
         icon: <TreeCircleIcon className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 1"),
-        value: (
-          <Text textStyle={"400-bold"} color="neutral.900">
-            XXX,XXX
-          </Text>
-        )
+        value: "XXX,XXX"
       },
       {
         id: "2",
@@ -64,13 +58,7 @@ export const DataListItems: Story = {
         ariaLabel: "Item 2",
         icon: <TreeCircleIcon className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 2"),
-        value: (
-          <ActionStatusTag
-            state="neutral-dark"
-            icon={<PlaceholderIcon color="neutral.600" boxSize={3} />}
-            label="Label"
-          />
-        )
+        value: "XXX,XXX"
       },
       {
         id: "3",
@@ -79,12 +67,7 @@ export const DataListItems: Story = {
         ariaLabel: "Item 3",
         icon: <TreeCircleIcon className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 3"),
-        value: (
-          <Flex alignItems="center" gap={1} textStyle="300" color="neutral.900">
-            <PlaceholderIcon boxSize={4} color="neutral.800" /> + <PlaceholderIcon boxSize={4} color="neutral.800" /> +{" "}
-            <PlaceholderIcon boxSize={4} color="neutral.800" />
-          </Flex>
-        )
+        value: "Draft"
       }
     ]
   }
@@ -93,43 +76,35 @@ export const DataListItems: Story = {
 export const ProfileListItems: Story = {
   args: {
     items: [
-      {
-        id: "1",
-        label: "Label",
-        icon: <Avatar name="Label" src="https://i.pravatar.cc/300?img=1" ariaLabel="Label" size="small" />,
-        value: (
-          <Button variant="borderless" size="small" leftIcon={<MessagesIcon boxSize={4} color="neutral.800" />}>
-            Label
-          </Button>
-        )
-      },
-      {
-        id: "2",
-        label: "Label",
-        icon: <Avatar name="Label" ariaLabel="Label" size="small" />,
-        value: (
-          <Button variant="borderless" size="small" leftIcon={<MessagesIcon boxSize={4} color="neutral.800" />}>
-            Label
-          </Button>
-        )
-      },
-      {
-        id: "3",
-        label: "Label",
-        icon: <Avatar name="Label" ariaLabel="Label" size="small" />,
-        value: (
-          <Button variant="borderless" size="small" leftIcon={<MessagesIcon boxSize={4} color="neutral.800" />}>
-            Label
-          </Button>
-        )
-      }
+      { id: "1", label: "Label", caption: "Caption" },
+      { id: "2", label: "Label", caption: "Caption" },
+      { id: "3", label: "Label", caption: "Caption" }
     ]
+  },
+  render: args => {
+    return (
+      <Flex gap={4} flexDirection="column" padding={4}>
+        {args.items.map((item, index) => (
+          <ProfileItem
+            key={item.id ?? index}
+            profile={{
+              id: item.id ?? String(index),
+              name: item.label,
+              image: index === 1 ? "https://i.pravatar.cc/300?img=1" : "",
+              email: "name.surname@email.org",
+              isProjectManager: index <= 1 ? true : false,
+              messageText: "Label"
+            }}
+            onProfileClick={() => console.log("Clicked item 1")}
+          />
+        ))}
+      </Flex>
+    );
   }
 };
 
 export const LinkListItems: Story = {
   args: {
-    itemsAlignItems: false,
     items: [
       {
         id: "1",

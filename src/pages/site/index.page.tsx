@@ -1,18 +1,18 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
-import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
-import { PlusIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
+import { LoadingIcon, PlusIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
+import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
 import { ALL_PROJECTS_VIEW, getSiteCreateUrl } from "./components/siteIndex.utils";
 import SiteIndexBulkBar from "./components/SiteIndexBulkBar";
@@ -48,11 +48,7 @@ const SiteIndexPageContent = () => {
         totalSiteCount: project.sites.length,
         sites: project.sites.filter(site => {
           const matchesSearch = normalisedQuery.length === 0 || site.name.toLowerCase().includes(normalisedQuery);
-          const matchesStatus =
-            statusFilters.length === 0 ||
-            statusFilters.some(filter =>
-              filter === "not-started" ? site.plantingStatus === "not-started" : site.status === filter
-            );
+          const matchesStatus = statusFilters.length === 0 || statusFilters.some(filter => site.status === filter);
           const matchesUpdate = updateFilter == null || site.update === updateFilter;
 
           return matchesSearch && matchesStatus && matchesUpdate;
@@ -120,97 +116,120 @@ const SiteIndexPageContent = () => {
 
   return (
     <>
+      <ResponsiveTypography />
       <Head>
         <title>{t("Sites")}</title>
       </Head>
+      <ToolbarObject
+        className="sticky top-0 z-20 !px-6"
+        breadcrumbs={{
+          linkRouter: router,
+          links: [
+            {
+              icon: <SiteIcon />,
+              label: t("Sites"),
+              link: "#"
+            }
+          ]
+        }}
+      />
 
-      <Box className="flex min-h-full flex-1 flex-col bg-white">
-        <ToolbarObject
-          className="shadow-sm sticky top-0 z-10 h-10 bg-theme-neutral-100 "
-          breadcrumbs={{
-            links: [{ label: t("Sites"), link: "/site", icon: <SiteIcon /> }],
-            linkRouter: router
-          }}
-        />
-
-        <Box className="sticky top-10 z-10 flex min-h-[60px] flex-wrap items-stretch bg-theme-neutral-100">
-          <Box className="min-w-[240px] flex-1">
-            <PageHeader title={t("Sites")} className="!bg-theme-neutral-100" />
-          </Box>
-          <Box className="flex min-w-[320px] items-stretch mobile:order-3 mobile:w-full">
-            <HighLevelSelector
-              className="w-full"
-              width="100%"
-              label={t("View:")}
-              items={[
-                { label: t("All"), value: ALL_PROJECTS_VIEW },
-                ...projects.map(project => ({ label: project.name, value: project.id }))
-              ]}
-              value={selectedProject}
-              onChange={handleViewChange}
-            />
-          </Box>
-          <Box className="flex items-center px-6 mobile:px-3">
-            <Button size="small" leftIcon={<PlusIcon />} disabled={!canAddSite} onClick={handleAddSite}>
+      <PageHeader
+        title={t("Sites")}
+        className="!bg-theme-neutral-100 !px-6 !pb-0 !pt-1"
+        actions={
+          <Flex gap="0.5rem" alignItems="center">
+            <Box className="w-[25rem] mobile:w-full">
+              <HighLevelSelector
+                autocomplete
+                className="mobile:!w-full"
+                width="25rem"
+                label={t("View:")}
+                items={[
+                  { label: t("All"), value: ALL_PROJECTS_VIEW },
+                  ...projects.map(project => ({ label: project.name, value: project.id }))
+                ]}
+                value={selectedProject}
+                emptyMessage={t("No results found")}
+                onChange={handleViewChange}
+              />
+            </Box>
+            <Button
+              size="small"
+              leftIcon={<PlusIcon boxSize="0.625rem" />}
+              disabled={!canAddSite}
+              onClick={handleAddSite}
+            >
               {t("Add Site")}
             </Button>
+          </Flex>
+        }
+      />
+
+      <ToolbarTable
+        className="!bg-theme-neutral-200 !px-5 !pb-6 !pt-5"
+        classNameContentLeft="w-full"
+        classNameContentSearch="w-[19rem]"
+        search={{
+          label: visibleSiteCount === 1 ? t("Site") : t("Sites"),
+          placeholder: t("Search sites"),
+          options: [],
+          displayResults: "none",
+          onQueryChange: setSearchQuery,
+          count: visibleSiteCount
+        }}
+        selectedFilters={selectedFilters}
+        onClickFilterButton={() => setIsFilterDrawerOpen(true)}
+        onClearFilters={clearFilters}
+        showClearFilters={selectedFilters.length > 0}
+      />
+
+      <PageContent className="px-2 py-0">
+        {loading ? (
+          <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
+            <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+            <Text textStyle="400" color="neutral.800">
+              {t("Loading sites...")}
+            </Text>
+          </Flex>
+        ) : null}
+        <div className="space-y-4">
+          {visibleProjects.map((project, index) => (
+            <SiteProjectSection
+              key={project.id}
+              project={project}
+              sites={project.sites}
+              totalSiteCount={project.totalSiteCount}
+              isFiltered={hasActiveFilters}
+              defaultOpen={index === 0}
+              onSitesChanged={handleSitesChanged}
+            />
+          ))}
+        </div>
+
+        {!loading && visibleProjects.length === 0 ? (
+          <Box background="neutral.100" h="full" p={4}>
+            <Text textStyle="400-bold">{t("No reports found")}</Text>
+            <Text textStyle="400">
+              {hasActiveFilters
+                ? t("No sites match the current search and filters.")
+                : t("No sites have been added yet.")}
+            </Text>
           </Box>
-        </Box>
+        ) : null}
+        <SiteIndexBulkBar onSitesChanged={handleSitesChanged} />
+      </PageContent>
 
-        <ToolbarTable
-          className="border-b border-theme-neutral-200 !px-6 py-5"
-          classNameContentLeft="w-full"
-          search={{
-            label: visibleSiteCount === 1 ? t("Site") : t("Sites"),
-            placeholder: t("Search sites"),
-            options: [],
-            displayResults: "none",
-            onQueryChange: setSearchQuery,
-            count: visibleSiteCount
-          }}
-          selectedFilters={selectedFilters}
-          onClickFilterButton={() => setIsFilterDrawerOpen(true)}
-          onClearFilters={clearFilters}
-          showClearFilters={selectedFilters.length > 0}
-        />
-
-        <Box as="main" className="flex-1 px-2 pb-8 pt-1">
-          <LoadingContainer loading={loading}>
-            {visibleProjects.map((project, index) => (
-              <SiteProjectSection
-                key={project.id}
-                project={project}
-                sites={project.sites}
-                totalSiteCount={project.totalSiteCount}
-                isFiltered={hasActiveFilters}
-                defaultOpen={index === 0}
-                onSitesChanged={handleSitesChanged}
-              />
-            ))}
-
-            {!loading && visibleProjects.length === 0 ? (
-              <Box className="mx-4 my-12 rounded-lg border border-dashed border-theme-neutral-400 p-8 text-center text-theme-neutral-700">
-                {hasActiveFilters
-                  ? t("No sites match the current search and filters.")
-                  : t("No sites have been added yet.")}
-              </Box>
-            ) : null}
-          </LoadingContainer>
-          <SiteIndexBulkBar onSitesChanged={handleSitesChanged} />
-        </Box>
-
-        <PageFooter />
-        <SiteIndexFilterDrawer
-          open={isFilterDrawerOpen}
-          filters={statusFilters}
-          updateFilter={updateFilter}
-          onOpenChange={setIsFilterDrawerOpen}
-          onApplyFilters={(nextStatusFilters, nextUpdateFilter) => {
-            setStatusFilters(nextStatusFilters);
-            setUpdateFilter(nextUpdateFilter);
-          }}
-        />
-      </Box>
+      <SiteIndexFilterDrawer
+        open={isFilterDrawerOpen}
+        filters={statusFilters}
+        updateFilter={updateFilter}
+        onOpenChange={setIsFilterDrawerOpen}
+        onApplyFilters={(nextStatusFilters, nextUpdateFilter) => {
+          setStatusFilters(nextStatusFilters);
+          setUpdateFilter(nextUpdateFilter);
+        }}
+      />
     </>
   );
 };

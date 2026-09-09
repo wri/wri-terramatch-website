@@ -3,7 +3,7 @@ import type { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSu
 
 export type SiteIndexStatus = Extract<
   TagSubmissionState,
-  "draft" | "pending-approval" | "information-required" | "approved" | "due" | "not-started"
+  "draft" | "pending-approval" | "information-required" | "approved" | "due"
 >;
 
 export type SiteIndexUpdate =

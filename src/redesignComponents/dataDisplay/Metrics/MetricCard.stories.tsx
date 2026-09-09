@@ -64,6 +64,47 @@ export const MediumWithSelection: Story = {
   }
 };
 
+export const MediumWithFiltered: Story = {
+  args: {
+    title: "Stat label",
+    progress: 1234,
+    goal: 10000,
+    variant: "medium",
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit",
+    filtered: 800
+  }
+};
+
+export const MediumWithFilteredAndSelection: Story = {
+  args: {
+    title: "Stat label",
+    progress: 1234,
+    goal: 10000,
+    variant: "medium",
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit",
+    filtered: 800,
+    selection: 200
+  }
+};
+
+export const MediumWithFilteredUnavailable: Story = {
+  args: {
+    title: "Stat label",
+    progress: 1234,
+    goal: 10000,
+    variant: "medium",
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit",
+    filtered: null,
+    selection: null
+  }
+};
+
 export const Large: Story = {
   args: {
     title: "Stat label",
@@ -88,30 +129,16 @@ export const ProgressBar: Story = {
   }
 };
 
-export const ProgressBarWithFilteredValue: Story = {
+export const ProgressBarWithBreakdown: Story = {
   args: {
     title: "Trees Growing",
-    progress: 624000,
-    goal: 1000000,
-    filtered: 124800,
+    progress: 25631,
+    goal: 0,
+    filtered: 0,
+    selection: 0,
     variant: "progressBar",
     icon: <PlaceholderIcon />,
-    className: "w-[22.75rem]",
-    widthProgressBar: "5rem"
-  }
-};
-
-export const ProgressBarWithFilteredAndSelectedValues: Story = {
-  args: {
-    title: "Trees Growing",
-    progress: 624000,
-    goal: 1000000,
-    filtered: 170182,
-    selection: 56727,
-    variant: "progressBar",
-    icon: <PlaceholderIcon />,
-    className: "w-[27.875rem]",
-    widthProgressBar: "5rem"
+    className: "w-fit"
   }
 };
 

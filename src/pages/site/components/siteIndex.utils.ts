@@ -17,8 +17,7 @@ export const ALL_PROJECTS_VIEW = "all";
 export const SITE_INDEX_ATTENTION_STATUSES: ReadonlySet<SiteIndexStatus> = new Set([
   "draft",
   "information-required",
-  "due",
-  "not-started"
+  "due"
 ]);
 
 type SiteIndexLightDto = SiteLightDto & {

@@ -12,6 +12,7 @@ export interface AccordionProps {
   defaultOpen?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  isScrollable?: boolean;
 }
 
 export type AccordionStatus = "success" | "error" | "complete";
@@ -52,8 +53,11 @@ export interface ListSectionHeaderProps {
   titleHref?: string;
   onTitleClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
   caption?: ReactNode;
+  captionHref?: string;
   statusLabels?: ReactNode;
   icon?: ReactNode;
   className?: string;
   dueDate?: string;
+  dueIcon?: ReactNode;
+  dueDateType?: "info-white" | "info-grey" | "error";
 }
