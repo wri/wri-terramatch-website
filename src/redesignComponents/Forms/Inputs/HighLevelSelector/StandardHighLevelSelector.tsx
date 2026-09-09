@@ -106,7 +106,6 @@ const StandardHighLevelSelector: FC<SelectorImplementationProps> = ({
           pl={2}
           pr={2}
           pt={6}
-          truncate
           textAlign="left"
           width="100%"
           {...keyboardFocus.focusRingStyles}

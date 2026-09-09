@@ -66,7 +66,7 @@ const NurseryProjectSection = ({ section, isFiltered = false, defaultOpen = fals
     >
       <Flex p={4} bg="neutral.100" gap={5} flexDirection="column">
         <MetricCard
-          className="min-w-[16rem] w-fit"
+          className="w-[16rem]"
           goal={section.seedlingsGrown.goal}
           icon={<SeedlingsIcon />}
           progress={section.seedlingsGrown.progress}
