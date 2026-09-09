@@ -67,11 +67,16 @@ export const sumNurserySeedlingsGrown = (nurseries: Array<Pick<NurseryLightDto, 
 
 export const buildSeedlingsGrownMetric = (
   nurseries: Array<Pick<NurseryLightDto, "treesSeedlingsGrownCount">>,
-  fullProject?: ProjectFullDto
-): NurseryIndexMetric => ({
-  progress: sumNurserySeedlingsGrown(nurseries),
-  goal: fullProject?.nurserySeedlingsGoal ?? 0
-});
+  project?: ProjectFullDto | ProjectLightDto
+): NurseryIndexMetric => {
+  const nurseryProgress = sumNurserySeedlingsGrown(nurseries);
+  const fullProject = project != null && project.lightResource === false ? (project as ProjectFullDto) : undefined;
+
+  return {
+    progress: nurseryProgress,
+    goal: fullProject?.nurserySeedlingsGoal ?? fullProject?.seedsGrownGoal ?? fullProject?.treesGrownGoal ?? 0
+  };
+};
 
 export const buildNurseryProjectSections = (
   nurseries: NurseryLightDto[],
