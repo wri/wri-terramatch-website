@@ -12,27 +12,41 @@ export interface TitleCellProps {
   primaryText?: string;
   secondaryText?: string;
   link?: string;
+  linkTarget?: "_blank" | "_self";
+  showChevron?: boolean;
+  onClick?: () => void;
 }
 
-const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, primaryText, secondaryText, link }) => {
+const TitleCell: React.FC<TitleCellProps> = ({
+  label,
+  image,
+  icon,
+  avatar,
+  primaryText,
+  secondaryText,
+  link,
+  linkTarget = "_blank",
+  showChevron = true,
+  onClick
+}) => {
   return (
     <Box
       className={classNames("flex items-baseline gap-2", {
         "!items-center": image != null || icon != null
       })}
     >
-      <ChevronDownAltIcon />
+      {showChevron && <ChevronDownAltIcon />}
       <Box>
         <Flex gap={2} items-center>
-          {image != null && <img src={image} alt={label} className="h-6 w-6 rounded border border-theme-neutral-300" />}
+          {image != null && <img src={image} alt={label} className="border-theme-neutral-300 h-6 w-6 rounded border" />}
           {icon != null && icon}
           {avatar != null && <Avatar {...avatar} size="small" />}
           <Box>
             <Text
               as={link ? "a" : "p"}
-              {...(link == null ? {} : { href: link, target: "_blank" })}
+              {...(link == null ? {} : { href: link, target: linkTarget, onClick })}
               textStyle="400-bold"
-              className="text-theme-neutral-800 underline decoration-theme-primary-700 decoration-dotted underline-offset-4"
+              className="text-theme-neutral-800 decoration-theme-primary-700 underline decoration-dotted underline-offset-4"
             >
               {label}
             </Text>

@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import type { FC, MouseEvent } from "react";
 
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
-import { DueIcon } from "@/redesignComponents/foundations/Icons";
 
 import type { ListSectionHeaderLevel, ListSectionHeaderProps } from "./types";
 
@@ -30,13 +29,17 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   titleHref,
   onTitleClick,
   caption,
+  captionHref,
   statusLabels,
   icon,
   className,
-  dueDate
+  dueDate,
+  dueIcon,
+  dueDateType = "info-white"
 }) => {
   const gap = levelStyles[level].gap;
   const isTopLevelLink = titleHref != null;
+  const isCaptionLink = captionHref != null;
 
   const router = useRouter();
 
@@ -51,12 +54,19 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
     router?.push(titleHref);
   };
 
+  const handleCaptionClick = (event: MouseEvent) => {
+    event.stopPropagation();
+    if (!captionHref) return;
+    event.preventDefault();
+    router?.push(captionHref);
+  };
+
   const titleClassName = classNames("truncate", {
     "text-decoration-solid underline underline-offset-2": level === "top-level"
   });
 
   const titleLinkClassName = classNames(
-    "min-w-0 truncate rounded-[6px]",
+    "min-w-0 truncate rounded-[0.375rem] leading-[normal]",
     "text-theme-primary-900",
     "hover:text-theme-primary-700",
     "active:text-theme-primary-800",
@@ -65,10 +75,10 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
 
   return (
     <Flex alignItems="center" justifyContent="space-between" width="100%" gap={3} className={className}>
-      <Flex alignItems="center" gap={gap} minWidth={0} flex={1}>
+      <Flex alignItems="baseline" gap={gap} minWidth={0} flex={1}>
         {icon}
         <Flex direction="column" minWidth={0} alignItems="flex-start">
-          <Flex alignItems="center" gap={1}>
+          <Flex alignItems="center" gap={1} width="100%" minWidth={0}>
             {label && (
               <Text textStyle="300" color="neutral.800">
                 {label}:
@@ -90,15 +100,20 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
               </Text>
             )}
           </Flex>
-          {caption != null && (
-            <Text textStyle="300" className="truncate">
-              {caption}
-            </Text>
-          )}
+          {caption != null &&
+            (isCaptionLink ? (
+              <NextLink href={captionHref} className={titleLinkClassName} onClick={handleCaptionClick}>
+                <Text as="span" textStyle="300" className="truncate underline underline-offset-2">
+                  {caption}
+                </Text>
+              </NextLink>
+            ) : (
+              <Text textStyle="300" className="truncate">
+                {caption}
+              </Text>
+            ))}
         </Flex>
-        {dueDate && (
-          <FeedbackTag icon={<DueIcon />} label={dueDate} onClose={() => {}} size="default" type="info-white" />
-        )}
+        {dueDate && <FeedbackTag icon={dueIcon} label={dueDate} onClose={() => {}} size="default" type={dueDateType} />}
       </Flex>
       {statusLabels != null && (
         <Flex alignItems="center" gap={2} flexShrink={0}>

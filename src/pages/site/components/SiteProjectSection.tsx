@@ -1,4 +1,4 @@
-import { Box, TableCell, TableRow, Text } from "@chakra-ui/react";
+import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import Link from "next/link";
@@ -10,12 +10,10 @@ import { Framework, isTerrafund } from "@/context/framework.provider";
 import { getEntityEditPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { getThemedColor } from "@/lib/theme";
-import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
-import Carousel from "@/redesignComponents/containers/Carousel/Carousel";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import Table, {
@@ -29,12 +27,14 @@ import {
   CalendarIcon,
   DeleteIcon,
   EditIcon,
+  FolderIcon,
   FolderOpenIcon,
   JobsIcon,
   RegenerationIcon,
   SeedlingsIcon,
   TreeIcon
 } from "@/redesignComponents/foundations/Icons";
+import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 import ApiSlice from "@/store/apiSlice";
 
 import DeleteSite from "./Modals/DeleteSite";
@@ -76,7 +76,7 @@ const SiteUpdate: FC<{ update: SiteIndexUpdate | null }> = ({ update }) => {
   }[update];
 
   return (
-    <Box className="flex items-center gap-1 text-theme-neutral-800">
+    <Box className="text-theme-neutral-800 flex items-center gap-1">
       <EditIcon boxSize={2.5} />
       <Text as="span" textStyle="200">
         {t("Editing:")}
@@ -104,7 +104,7 @@ const SiteProjectMetrics: FC<{
   const selectedTrees = selectedSites.reduce((total, site) => total + site.treesPlantedCount, 0);
   const filteredArea = sites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
   const selectedArea = selectedSites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
-  const metricCardClassName = "w-max min-w-[18rem] shrink-0 flex-none";
+  const metricCardClassName = "w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100";
   const isHbf = project.frameworkKey === Framework.HBF;
   const isTerraFund = isTerrafund(project.frameworkKey);
   const primaryMetric = isHbf
@@ -116,7 +116,7 @@ const SiteProjectMetrics: FC<{
   const primaryMetricIcon = isHbf ? <SeedlingsIcon /> : <TreeIcon />;
 
   return (
-    <Carousel className="mb-5" gap={4} scrollAmount={400}>
+    <div className="mb-5 flex flex-wrap gap-4">
       {primaryMetric != null && (
         <MetricCard
           title={t(primaryMetricTitle)}
@@ -173,7 +173,7 @@ const SiteProjectMetrics: FC<{
           selection={selectedSites.length > 0 ? selectedMetric(project.metrics.workdays.progress) : undefined}
         />
       )}
-    </Carousel>
+    </div>
   );
 };
 
@@ -338,6 +338,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   onSitesChanged
 }) => {
   const t = useT();
+  const [open, setOpen] = useState(defaultOpen);
   const [siteToDelete, setSiteToDelete] = useState<SiteIndexSite | null>(null);
   const { setSiteSelected } = useSiteIndexSelectionActions();
 
@@ -370,31 +371,35 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   }, [onSitesChanged, setSiteSelected, siteToDelete, t]);
 
   return (
-    <>
+    <Flex direction="column" gap="0.5rem">
       <Accordion
         variant="tertiary"
-        defaultOpen={defaultOpen}
-        className="w-full"
+        open={open}
+        onOpenChange={setOpen}
+        className="bg-theme-neutral-100 w-full overflow-hidden rounded"
         classNameHeader="!mb-0"
         header={
           <ListSectionHeader
+            level="top-level"
             title={project.name}
             titleHref={`/project/${project.id}`}
             caption={project.organisationName}
-            icon={<FolderOpenIcon boxSize={5} color="primary.600" />}
+            icon={
+              open ? (
+                <FolderOpenIcon minWidth={5} width={5} height="auto" color="primary.600" />
+              ) : (
+                <FolderIcon minWidth={5} width={5} height="auto" color="neutral.400" />
+              )
+            }
+            statusLabels={
+              project.attentionCount > 0 ? (
+                <TextBadge>{t("{count} Require Attention", { count: project.attentionCount })}</TextBadge>
+              ) : null
+            }
           />
         }
-        actions={
-          project.attentionCount > 0 ? (
-            <ActionStatusTag
-              label={t("{count} Require Attention", { count: project.attentionCount })}
-              size="small"
-              className="!border-theme-primary-900 !bg-theme-primary-900 !text-theme-primary-100"
-            />
-          ) : undefined
-        }
       >
-        <Box paddingX={4} paddingBottom={7} paddingTop={4} minW={0}>
+        <Box className="bg-theme-neutral-100 p-4" minW={0}>
           <SiteProjectMetrics project={project} sites={sites} totalSiteCount={totalSiteCount} isFiltered={isFiltered} />
           <SiteProjectTable sites={sites} onDeleteSite={setSiteToDelete} />
         </Box>
@@ -409,7 +414,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
         sites={siteToDelete == null ? [] : [siteToDelete]}
         onDelete={handleConfirmRowDelete}
       />
-    </>
+    </Flex>
   );
 };
 

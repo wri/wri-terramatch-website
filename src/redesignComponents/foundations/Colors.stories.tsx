@@ -110,7 +110,7 @@ const ColorScaleCard = ({ variant, getTextColor }: { variant: Variant; getTextCo
               variant={variant}
               shade={shade}
               emphasize={shade === 500}
-              className={classNames("border-y border-theme-neutral-300", {
+              className={classNames("border-theme-neutral-300 border-y", {
                 "border-l": index === 0,
                 "border-r": index === colorShades.length - 1
               })}
@@ -275,17 +275,16 @@ export const ControlsOnNeutralDarks: Story = {
     <ControlColorCard
       controlShade={200}
       backgroundShades={controlOnNeutralDarkBackgroundShades}
-      color={getThemedColor("accessible", "controls-on-neutral-darks")}
+      color={getThemedColor("primary", 200)}
     />
   )
 };
 
 type SemanticVariant = "negative" | "attention" | "positive" | "neutralActive" | "neutralPassive";
-type SemanticShade = 1 | 2 | 3;
 
 type SemanticHue = {
   label: string;
-  shade: SemanticShade;
+  shade: 100 | 200 | 300;
   accessibleOnlyWithBorder?: boolean;
 };
 
@@ -302,8 +301,8 @@ const semanticCategories: SemanticCategory[] = [
     description: "Semantic data vis colors to be used for error, alert, rejected, failed, and other adjacent states.",
     variant: "negative",
     hues: [
-      { label: "Hue one", shade: 1, accessibleOnlyWithBorder: true },
-      { label: "Hue two", shade: 2 }
+      { label: "Hue one", shade: 100, accessibleOnlyWithBorder: true },
+      { label: "Hue two", shade: 200 }
     ]
   },
   {
@@ -312,8 +311,8 @@ const semanticCategories: SemanticCategory[] = [
       "Semantic data vis colors to be used for marking something as cautionary, or warning of need for review.",
     variant: "attention",
     hues: [
-      { label: "Hue one", shade: 1, accessibleOnlyWithBorder: true },
-      { label: "Hue two", shade: 2 }
+      { label: "Hue one", shade: 100, accessibleOnlyWithBorder: true },
+      { label: "Hue two", shade: 200 }
     ]
   },
   {
@@ -322,8 +321,8 @@ const semanticCategories: SemanticCategory[] = [
       "Semantic data vis colors to be used for declaring something as complete, successful, or otherwise positive.",
     variant: "positive",
     hues: [
-      { label: "Hue one", shade: 1, accessibleOnlyWithBorder: true },
-      { label: "Hue two", shade: 2 }
+      { label: "Hue one", shade: 100, accessibleOnlyWithBorder: true },
+      { label: "Hue two", shade: 200 }
     ]
   },
   {
@@ -332,9 +331,9 @@ const semanticCategories: SemanticCategory[] = [
       "Semantic data vis colors to be used for declaring something is in progress, currently active, or live.",
     variant: "neutralActive",
     hues: [
-      { label: "Hue one", shade: 1, accessibleOnlyWithBorder: true },
-      { label: "Hue two", shade: 2 },
-      { label: "Hue three", shade: 3 }
+      { label: "Hue one", shade: 100, accessibleOnlyWithBorder: true },
+      { label: "Hue two", shade: 200 },
+      { label: "Hue three", shade: 300 }
     ]
   },
   {
@@ -342,8 +341,8 @@ const semanticCategories: SemanticCategory[] = [
     description: "Semantic data vis colors to be used for declaring something is inactive, in draft state, or passive.",
     variant: "neutralPassive",
     hues: [
-      { label: "Hue one", shade: 1, accessibleOnlyWithBorder: true },
-      { label: "Hue two", shade: 2 }
+      { label: "Hue one", shade: 100, accessibleOnlyWithBorder: true },
+      { label: "Hue two", shade: 200 }
     ]
   }
 ];
@@ -351,7 +350,7 @@ const semanticCategories: SemanticCategory[] = [
 const SemanticHueSwatch = ({ variant, hue }: { variant: SemanticVariant; hue: SemanticHue }) => (
   <Flex direction="column" align="center" gap={2} width="120px">
     <Box
-      bg={getThemedColor(variant, hue.shade)}
+      bg={`${variant}.${hue.shade}`}
       width="80px"
       height="80px"
       borderRadius="4px"

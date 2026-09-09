@@ -37,8 +37,8 @@ export interface MetricCardProps {
   className?: string;
   classNameTitle?: string;
   frameworkKey?: string;
-  selection?: number;
-  filtered?: number;
+  filtered?: number | null;
+  selection?: number | null;
   metricLabel?: string;
   widthProgressBar?: string;
 }
@@ -54,8 +54,8 @@ type MetricCardFieldsForContentVariants =
   | "color"
   | "type"
   | "frameworkKey"
-  | "selection"
   | "filtered"
+  | "selection"
   | "metricLabel"
   | "widthProgressBar";
 
@@ -74,6 +74,7 @@ type NoGoalMetricCardContentKeys =
   | "type"
   | "tooltipContent"
   | "classNameTitle"
+  | "filtered"
   | "selection"
   | "metricLabel";
 
@@ -91,8 +92,8 @@ type ProgressBarMetricCardContentKeys =
   | "type"
   | "tooltipContent"
   | "classNameTitle"
-  | "selection"
   | "filtered"
+  | "selection"
   | "metricLabel"
   | "widthProgressBar";
 

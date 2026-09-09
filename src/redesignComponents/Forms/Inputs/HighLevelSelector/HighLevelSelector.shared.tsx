@@ -1,10 +1,10 @@
-import { Portal, Text } from "@chakra-ui/react";
+import { Box, Portal, Text } from "@chakra-ui/react";
 import { FC, PropsWithChildren, ReactNode, RefObject, useState } from "react";
 
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
 
 import { getMenuItemKeyboardProps, handleMenuContentKeyDown } from "./HighLevelSelector.keyboard";
-import { getLabelStyles, getMenuItemStyles, menuContentStyles } from "./HighLevelSelector.styles";
+import { contentMenuStyles, getLabelStyles, getMenuItemStyles, menuContentStyles } from "./HighLevelSelector.styles";
 import { HighLevelSelectorItem } from "./HighLevelSelector.types";
 
 export const DEFAULT_EMPTY_MESSAGE = "No results found";
@@ -55,13 +55,13 @@ export const SelectorLabel: FC<SelectorLabelProps> = ({ children, disabled, id }
 );
 
 export const SelectorOptionText: FC<SelectorTextProps> = ({ children }) => (
-  <Text as="span" data-selector-option-text textStyle="300">
+  <Text as="span" color="neutral.900" truncate data-selector-option-text textStyle="400" lineHeight="normal">
     {children}
   </Text>
 );
 
 export const SelectorEmptyMessage: FC<SelectorTextProps> = ({ children }) => (
-  <Text color="neutral.600" px={2} py={2} textStyle="300">
+  <Text color="neutral.600" px={2} py={2} textStyle="400" lineHeight="normal">
     {children}
   </Text>
 );
@@ -87,25 +87,27 @@ export const SelectorMenu: FC<SelectorMenuProps> = ({
 }) => (
   <Portal>
     <Positioner zIndex={1500}>
-      <Content ref={contentRef} tabIndex={-1} {...menuContentStyles} onKeyDown={handleMenuContentKeyDown}>
-        {items.length === 0 ? (
-          <SelectorEmptyMessage>{emptyMessage}</SelectorEmptyMessage>
-        ) : (
-          items.map(item => (
-            <Item
-              key={item.value}
-              aria-label={item.label}
-              item={item}
-              {...getMenuItemStyles(item.disabled)}
-              {...getMenuItemKeyboardProps(item.disabled)}
-            >
-              <ItemIndicator>
-                <CheckIcon aria-hidden="true" width={4} color="neutral.800" height={"auto"} flexShrink={0} />
-              </ItemIndicator>
-              <SelectorOptionText>{item.label}</SelectorOptionText>
-            </Item>
-          ))
-        )}
+      <Content ref={contentRef} tabIndex={-1} {...contentMenuStyles} onKeyDown={handleMenuContentKeyDown}>
+        <Box {...menuContentStyles}>
+          {items.length === 0 ? (
+            <SelectorEmptyMessage>{emptyMessage}</SelectorEmptyMessage>
+          ) : (
+            items.map(item => (
+              <Item
+                key={item.value}
+                aria-label={item.label}
+                item={item}
+                {...getMenuItemStyles(item.disabled)}
+                {...getMenuItemKeyboardProps(item.disabled)}
+              >
+                <ItemIndicator>
+                  <CheckIcon aria-hidden="true" width={4} color="neutral.800" height={"auto"} flexShrink={0} />
+                </ItemIndicator>
+                <SelectorOptionText>{item.label}</SelectorOptionText>
+              </Item>
+            ))
+          )}
+        </Box>
       </Content>
     </Positioner>
   </Portal>
