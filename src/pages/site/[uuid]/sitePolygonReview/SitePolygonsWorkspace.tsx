@@ -12,7 +12,7 @@ import { resolvePolygonTableRowId } from "@/components/elements/Map-mapbox/siteP
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { pruneBoundingBoxesCache } from "@/connections/BoundingBox";
-import { loadAllSitePolygons, useAllSitePolygons } from "@/connections/SitePolygons";
+import { loadAllSitePolygons, useAllSitePolygons, useSitePolygons } from "@/connections/SitePolygons";
 import { fetchPolygonValidation, useAllSiteValidations } from "@/connections/Validation";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -41,6 +41,7 @@ import { isValidationPollingResolved } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import { HIDDEN_STICKY_COLUMN_EDGE_STYLES } from "@/redesignComponents/dataDisplay/Table/tableStyles";
+import type { SortColumn } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { DownloadIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
@@ -59,6 +60,10 @@ import { prunePolygonValidationCache } from "../components/polygonEditSave";
 import PolygonSubmissionAnnouncement from "../components/PolygonSubmissionAnnouncement";
 import { PolygonTableRow } from "../components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
+import {
+  DEFAULT_POLYGON_TABLE_PAGE_SIZE,
+  POLYGON_TABLE_SORT_FIELD_BY_COLUMN
+} from "../components/polygonTableSort.constants";
 import PolygonToolbar from "../components/PolygonToolbar";
 import SitePolygonMapSection from "../components/SitePolygonMapSection";
 import SitePolygonMetricsSection from "../components/SitePolygonMetricsSection";
@@ -158,6 +163,15 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     handleClearPolygonFilters
   } = useSitePolygonFilters({ siteUuid: site.uuid, t });
 
+  const [tablePageNumber, setTablePageNumber] = useState(1);
+  const [tablePageSize, setTablePageSize] = useState(DEFAULT_POLYGON_TABLE_PAGE_SIZE);
+  const [tableSortField, setTableSortField] = useState<string | undefined>(undefined);
+  const [tableSortDirection, setTableSortDirection] = useState<"ASC" | "DESC" | undefined>(undefined);
+
+  useEffect(() => {
+    setTablePageNumber(1);
+  }, [sitePolygonFilter]);
+
   const {
     data: polygonsQueryData,
     isLoading: isLoadingPolygons,
@@ -172,6 +186,17 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     filter: sitePolygonFilter
   });
 
+  const [tablePolygonsLoaded, { data: tablePolygonsPageData, indexTotal: tableIndexTotal }] = useSitePolygons({
+    entityName: "sites",
+    entityUuid: site.uuid,
+    enabled: site.uuid != null && site.uuid !== "",
+    filter: sitePolygonFilter,
+    pageNumber: tablePageNumber,
+    pageSize: tablePageSize,
+    sortField: tableSortField,
+    sortDirection: tableSortDirection
+  });
+
   const polygonsQueryDataOrEmpty = polygonsQueryData ?? EMPTY_POLYGONS;
   const { allValidations, fetchAllValidationPages } = useAllSiteValidations(site.uuid);
   const polygonValidations = useMemo(
@@ -182,9 +207,23 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     () => withResolvedValidationStatusFromCriteria(polygonsQueryDataOrEmpty, polygonValidations),
     [polygonsQueryDataOrEmpty, polygonValidations]
   );
+  const tablePolygonsData = useMemo(
+    () => withResolvedValidationStatusFromCriteria(tablePolygonsPageData ?? EMPTY_POLYGONS, polygonValidations),
+    [tablePolygonsPageData, polygonValidations]
+  );
 
-  const { polygonRows, columns, totalTreesPlanted, totalRestorationAreaHa } = useSitePolygonTableData({
+  const {
+    polygonRows: allPolygonRows,
+    columns,
+    totalTreesPlanted,
+    totalRestorationAreaHa
+  } = useSitePolygonTableData({
     polygonsData,
+    polygonValidations,
+    t
+  });
+  const { polygonRows: tablePolygonRows } = useSitePolygonTableData({
+    polygonsData: tablePolygonsData,
     polygonValidations,
     t
   });
@@ -201,8 +240,19 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     t
   });
 
-  const { selectedRows, selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } =
-    useTableSelection<PolygonTableRow>(true, polygonRows);
+  const { selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } =
+    useTableSelection<PolygonTableRow>(true, tablePolygonRows);
+  const selectedRows = useMemo(
+    () => allPolygonRows.filter(row => selectedRowIds.has(row.id)),
+    [allPolygonRows, selectedRowIds]
+  );
+  const tableSelectedRows = useMemo(
+    () => tablePolygonRows.filter(row => selectedRowIds.has(row.id)),
+    [tablePolygonRows, selectedRowIds]
+  );
+  const tableTotalItems = tableIndexTotal ?? polygonLoadTotal;
+  const isTablePolygonsLoading = !tablePolygonsLoaded || isLoadingPolygons;
+
   const {
     selectedPolygonUuids,
     overlapPolygonsForMap,
@@ -507,12 +557,12 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
 
   useEffect(() => {
     if (isLoadingPolygons) return;
-    const visibleRowIds = new Set(polygonRows.map(row => row.id));
+    const visibleRowIds = new Set(allPolygonRows.map(row => row.id));
     setSelectedRowIds(prev => {
       const next = new Set(Array.from(prev).filter(id => visibleRowIds.has(String(id))));
       return next.size === prev.size ? prev : next;
     });
-  }, [polygonRows, setSelectedRowIds, isLoadingPolygons]);
+  }, [allPolygonRows, setSelectedRowIds, isLoadingPolygons]);
 
   const clearTableSelection = useCallback(() => {
     setSelectedRowIds(new Set<string>());
@@ -772,6 +822,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   const isValidationInProgress = isValidatingPolygons || pendingValidationPolygonUuids.length > 0;
   const isSitePolygonsLoading =
     isLoadingPolygons || isValidationInProgress || isFixingOverlaps || isDeletingPolygons || isSubmittingPolygons;
+  const isTableSectionLoading =
+    isTablePolygonsLoading || isValidationInProgress || isFixingOverlaps || isDeletingPolygons || isSubmittingPolygons;
   const freezeCameraZoom =
     isSitePolygonsLoading || pendingValidationPolygonUuids.length > 0 || validationZoomPolygonUuids.length > 0;
   const startDrawing = useStartSitePolygonDrawing({ onClearTableSelection: clearTableSelection });
@@ -947,7 +999,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   }, [editPolygon.uuid, polygonsData, t]);
 
   const hasPolygonSelection = selectedRows.length > 0;
-  const shouldShowNoResults = !isSitePolygonsLoading && polygonRows.length === 0;
+  const shouldShowNoResults = !isTablePolygonsLoading && tableTotalItems === 0;
   const isDeletedAuditView = polygonFilters.showDeleted;
 
   const mapPopupSubmitPolygons = useMemo(() => {
@@ -984,7 +1036,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     handleScroll();
     scrollContainer.addEventListener("scroll", handleScroll);
     return () => scrollContainer.removeEventListener("scroll", handleScroll);
-  }, [isSitePolygonsLoading, shouldShowNoResults, polygonRows.length]);
+  }, [isTablePolygonsLoading, shouldShowNoResults, tablePolygonRows.length]);
 
   const loadingLabel = getPolygonTableLoadingLabel({
     t,
@@ -999,6 +1051,28 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     polygonLoadProgress,
     polygonLoadTotal
   });
+
+  const handleTablePageChange = useCallback((page: number) => {
+    setTablePageNumber(page);
+  }, []);
+
+  const handleTablePageSizeChange = useCallback((nextPageSize: number) => {
+    setTablePageSize(nextPageSize);
+    setTablePageNumber(1);
+  }, []);
+
+  const handleTableSortChange = useCallback((sortColumn: SortColumn) => {
+    const apiField = POLYGON_TABLE_SORT_FIELD_BY_COLUMN[sortColumn.key];
+    if (apiField == null || sortColumn.order === "") {
+      setTableSortField(undefined);
+      setTableSortDirection(undefined);
+      setTablePageNumber(1);
+      return;
+    }
+    setTableSortField(apiField);
+    setTableSortDirection(sortColumn.order === "desc" ? "DESC" : "ASC");
+    setTablePageNumber(1);
+  }, []);
 
   return (
     <>
@@ -1069,7 +1143,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
         >
           <PolygonToolbar
             siteUuid={site.uuid}
-            resultCount={polygonRows.length}
+            resultCount={tableTotalItems}
             polygonSearch={polygonSearch}
             polygonFilters={polygonFilters}
             activeFilterLabels={activeFilterLabels}
@@ -1235,15 +1309,21 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
               tableContainerRef={tableContainerRef}
               tableScrollContainerRef={tableScrollContainerRef}
               tableStyles={polygonsTableStyles}
-              isSitePolygonsLoading={isSitePolygonsLoading}
-              polygonRows={polygonRows}
+              isSitePolygonsLoading={isTableSectionLoading}
+              polygonRows={tablePolygonRows}
               columns={columns}
-              selectedRows={selectedRows}
+              selectedRows={tableSelectedRows}
               loadingLabel={loadingLabel}
               onAllItemsSelected={onAllItemsSelected}
               onClearHover={handleClearHover}
               onRowSelected={handleRowSelected}
               readOnly={isDeletedAuditView}
+              totalItems={tableTotalItems}
+              currentPage={tablePageNumber}
+              pageSize={tablePageSize}
+              onPageChange={handleTablePageChange}
+              onPageSizeChange={handleTablePageSizeChange}
+              onSortChange={handleTableSortChange}
             />
           </>
         )}

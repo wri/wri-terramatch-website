@@ -1,12 +1,12 @@
 import { type SystemStyleObject, Box } from "@chakra-ui/react";
 import { Table as WriTable } from "@worldresources/wri-design-systems";
-import React, { Ref, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import React, { Ref, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import PaginationTable from "@/redesignComponents/navigation/Pagination/PaginationTable";
 
 import { findHorizontalScrollContainer } from "./findHorizontalScrollContainer";
 import { getTableWrapperStyles } from "./tableStyles";
-import { type BaseRow, DEFAULT_CURRENT_PAGE } from "./tableUtils";
+import { type BaseRow, type SortColumn, DEFAULT_CURRENT_PAGE } from "./tableUtils";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
 import { useTableSelection } from "./useTableSelection";
 import { useTableSorting } from "./useTableSorting";
@@ -49,6 +49,10 @@ interface TableProps<T extends BaseRow> {
   selectedRows?: T[];
   onRowSelected?: (rowData: T, checked: boolean) => void;
   onAllItemsSelected?: (checked: boolean, visibleRows: T[]) => void;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
+  onSortChange?: (sortColumn: SortColumn) => void;
+  currentPage?: number;
 }
 
 const Table = <T extends BaseRow>({
@@ -72,22 +76,31 @@ const Table = <T extends BaseRow>({
   scrollContainerRef,
   selectedRows: controlledSelectedRows,
   onRowSelected: controlledOnRowSelected,
-  onAllItemsSelected: controlledOnAllItemsSelected
+  onAllItemsSelected: controlledOnAllItemsSelected,
+  onPageChange: controlledOnPageChange,
+  onPageSizeChange: controlledOnPageSizeChange,
+  onSortChange,
+  currentPage: controlledCurrentPage
 }: TableProps<T>) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
-    DEFAULT_CURRENT_PAGE,
-    initialPageSize
-  );
+  const isServerPaginated = controlledOnPageChange != null && totalItems != null;
+  const [paginationResetKey, setPaginationResetKey] = useState(0);
+  const previousControlledPageRef = useRef(controlledCurrentPage);
+  const {
+    currentPage: internalCurrentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize
+  } = useTablePaginationState(DEFAULT_CURRENT_PAGE, initialPageSize);
+  const currentPage = controlledCurrentPage ?? internalCurrentPage;
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
   const { setSortColumn, sortedData } = useTableSorting(data);
   const {
     selectedRows: internalSelectedRows,
     handleRowSelected: internalHandleRowSelected,
     onAllItemsSelected: internalOnAllItemsSelected
-  } = useTableSelection(selectable, sortedData);
+  } = useTableSelection(selectable, isServerPaginated ? data : sortedData);
 
-  // When a consumer passes controlled selectedRows, use those; otherwise fall back to internal state.
   const selectedRows = controlledSelectedRows ?? internalSelectedRows;
   const handleRowSelected = controlledOnRowSelected ?? internalHandleRowSelected;
 
@@ -95,12 +108,66 @@ const Table = <T extends BaseRow>({
   const totalPages = Math.ceil(actualTotalItems / pageSize);
 
   useEffect(() => {
+    if (controlledCurrentPage != null) {
+      return;
+    }
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
     }
-  }, [currentPage, totalPages, setCurrentPage]);
+  }, [controlledCurrentPage, currentPage, totalPages, setCurrentPage]);
 
-  const dataByPage = sortedData.slice(startRange, endRange);
+  // WriTable keeps internal page state; remount when parent programmatically resets to page 1
+  // (sort/filter) so the pager UI matches the controlled currentPage.
+  useEffect(() => {
+    if (!isServerPaginated || controlledCurrentPage == null) {
+      previousControlledPageRef.current = controlledCurrentPage;
+      return;
+    }
+    const previousPage = previousControlledPageRef.current;
+    previousControlledPageRef.current = controlledCurrentPage;
+    if (controlledCurrentPage === DEFAULT_CURRENT_PAGE && previousPage != null && previousPage > DEFAULT_CURRENT_PAGE) {
+      setPaginationResetKey(key => key + 1);
+    }
+  }, [controlledCurrentPage, isServerPaginated]);
+
+  const dataByPage = isServerPaginated ? data : sortedData.slice(startRange, endRange);
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      if (controlledOnPageChange != null) {
+        controlledOnPageChange(page);
+        return;
+      }
+      setCurrentPage(page);
+    },
+    [controlledOnPageChange, setCurrentPage]
+  );
+
+  const handlePageSizeChange = useCallback(
+    (nextPageSize: number) => {
+      setPageSize(nextPageSize);
+      if (isServerPaginated) {
+        setCurrentPage(DEFAULT_CURRENT_PAGE);
+        controlledOnPageChange?.(DEFAULT_CURRENT_PAGE);
+        setPaginationResetKey(key => key + 1);
+      }
+      controlledOnPageSizeChange?.(nextPageSize);
+    },
+    [controlledOnPageChange, controlledOnPageSizeChange, isServerPaginated, setCurrentPage, setPageSize]
+  );
+
+  const handleSortColumn = useCallback(
+    (sortColumn: SortColumn) => {
+      setSortColumn(sortColumn);
+      if (isServerPaginated) {
+        setCurrentPage(DEFAULT_CURRENT_PAGE);
+        controlledOnPageChange?.(DEFAULT_CURRENT_PAGE);
+        setPaginationResetKey(key => key + 1);
+      }
+      onSortChange?.(sortColumn);
+    },
+    [controlledOnPageChange, isServerPaginated, onSortChange, setCurrentPage, setSortColumn]
+  );
 
   const assignRef = useCallback((ref: Ref<HTMLDivElement> | undefined, node: HTMLDivElement | null) => {
     if (ref == null) {
@@ -134,8 +201,6 @@ const Table = <T extends BaseRow>({
     };
   }, [assignRef, dataByPage.length, scrollContainerRef, selectable]);
 
-  // Bridge the legacy renderDataCell API onto the library's native columns[].cell so the
-  // library's default row renderer (native checkbox column included) produces cell content.
   const resolvedColumns = useMemo<TableColumn[]>(
     () =>
       columns.map(column =>
@@ -165,9 +230,6 @@ const Table = <T extends BaseRow>({
     if (renderRow == null) {
       return null;
     }
-    // TODO: Remove this getCellProps augmentation once the library adds maxWidth to its own
-    // cell props. It currently returns only width + minWidth from columns[].width, so columns
-    // can still grow past their configured size; we add maxWidth = width to pin the width.
     const enhancedContext: TableRenderRowContext | undefined =
       context != null
         ? {
@@ -194,6 +256,7 @@ const Table = <T extends BaseRow>({
       {...(height != null ? { height } : {})}
     >
       <WriTable
+        key={isServerPaginated ? `server-table-${paginationResetKey}` : undefined}
         columns={resolvedColumns}
         data={dataByPage}
         renderRow={
@@ -201,9 +264,9 @@ const Table = <T extends BaseRow>({
             ? (finalRenderRow as (rowData: BaseRow, context?: TableRenderRowContext) => React.ReactNode)
             : undefined
         }
-        onSortColumn={setSortColumn}
-        onPageSizeChange={setPageSize}
-        onPageChange={setCurrentPage}
+        onSortColumn={handleSortColumn}
+        onPageSizeChange={handlePageSizeChange}
+        onPageChange={handlePageChange}
         pagination={
           shouldShowPaginationControls && !useCompactPagination
             ? {
@@ -228,8 +291,8 @@ const Table = <T extends BaseRow>({
           pageSize={pageSize}
           currentPage={currentPage}
           totalItems={actualTotalItems}
-          onPageSizeChange={setPageSize}
-          onPageChange={setCurrentPage}
+          onPageSizeChange={handlePageSizeChange}
+          onPageChange={handlePageChange}
           showItemCountText={shouldShowItemCountText}
           variant={paginationVariant}
         />
