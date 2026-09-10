@@ -130,11 +130,6 @@ export function PolygonPopupChampions({
     closeMapPopup();
   }, [closeMapPopup, metrics.polygonName, sitePolygon]);
 
-  const handleComment = useCallback(() => {
-    openPolygonEditDrawerForSitePolygon(sitePolygon, metrics.polygonName, "comments");
-    closeMapPopup();
-  }, [closeMapPopup, metrics.polygonName, sitePolygon]);
-
   const geometryUuid = getSitePolygonGeometryUuid(sitePolygon);
 
   const handleRunValidation = useCallback(() => {
@@ -187,7 +182,6 @@ export function PolygonPopupChampions({
             submitDisabledTooltip={submitDisabledTooltip}
             onSubmit={handleRequestSubmit}
             onEdit={handleEdit}
-            onComment={handleComment}
             onClose={closeMapPopup}
             onViewDetails={handleViewDetails}
             viewDetailsDisabled={!canNavigateToSitePolygonViewDetails(geometryUuid, siteUuid)}
