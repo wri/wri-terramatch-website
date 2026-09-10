@@ -74,6 +74,8 @@ const collectionOptionTitle = (t: typeof useT, collection: string) => {
       return t("Non-Tree");
     case "invasive":
       return t("Invasive");
+    case "established":
+      return t("Established");
     default:
       return t("Unknown type");
   }
