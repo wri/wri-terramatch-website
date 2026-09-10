@@ -34,11 +34,11 @@ const meta: Meta<typeof MetricCard> = {
     },
     selection: {
       control: "number",
-      description: "Optional selection count shown beside the metric"
+      description: "Optional selected value shown in the metric context"
     },
     filtered: {
       control: "number",
-      description: "Optional filtered count shown beside the metric"
+      description: "Optional filtered value shown in the metric context"
     }
   }
 };

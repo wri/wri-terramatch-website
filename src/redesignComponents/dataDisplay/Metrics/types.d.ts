@@ -54,8 +54,6 @@ type MetricCardFieldsForContentVariants =
   | "color"
   | "type"
   | "frameworkKey"
-  | "selection"
-  | "filtered"
   | "metricLabel"
   | "widthProgressBar";
 
@@ -68,16 +66,12 @@ type NoGoalMetricCardContentKeys =
   | "title"
   | "progress"
   | "progressLabel"
-  | "goal"
   | "progressSuffix"
-  | "goalSuffix"
   | "color"
   | "iconWithColor"
   | "type"
   | "tooltipContent"
   | "classNameTitle"
-  | "selection"
-  | "filtered"
   | "metricLabel";
 
 export type NoGoalMetricCardContentProps = Pick<MetricCardCommonVariantProps, NoGoalMetricCardContentKeys>;
@@ -94,8 +88,6 @@ type ProgressBarMetricCardContentKeys =
   | "type"
   | "tooltipContent"
   | "classNameTitle"
-  | "selection"
-  | "filtered"
   | "metricLabel"
   | "widthProgressBar";
 
