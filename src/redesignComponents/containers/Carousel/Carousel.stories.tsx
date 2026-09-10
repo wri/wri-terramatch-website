@@ -14,8 +14,7 @@ const meta: Meta<typeof Carousel> = {
   parameters: {
     docs: {
       description: {
-        component:
-          "Horizontal carousel that shows left/right controls only when the content overflows its container."
+        component: "Horizontal carousel that shows left/right controls only when the content overflows its container."
       }
     }
   }
@@ -71,7 +70,7 @@ export const MetricCardsOverflow: Story = {
           color="secondary.600"
           filtered={113455}
           selection={56727}
-          className="min-w-fit shrink-0 flex-1"
+          className="min-w-fit flex-1 shrink-0"
         />
         <MetricCard
           title="Area restored (Ha)"
@@ -83,7 +82,7 @@ export const MetricCardsOverflow: Story = {
           icon={<AreaHectaresIcon />}
           filtered={447}
           selection={224}
-          className="min-w-fit shrink-0 flex-1"
+          className="min-w-fit flex-1 shrink-0"
         />
         <MetricCard
           title="Workdays"
@@ -94,7 +93,7 @@ export const MetricCardsOverflow: Story = {
           icon={<JobsIcon />}
           filtered={3418}
           selection={1709}
-          className="min-w-fit shrink-0 flex-1"
+          className="min-w-fit flex-1 shrink-0"
         />
       </Carousel>
     </Box>
