@@ -2,23 +2,35 @@ import { useEffect, useMemo } from "react";
 
 import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { useAllSiteValidations } from "@/connections/Validation";
-import { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 
 import { mergeValidationsByPolygonUuid } from "../components/Modals/validationCriteria";
 import { getCrossSiteOverlapPartnersForValidation } from "./crossSiteOverlap.utils";
 import { buildOverlapFailureValidationsMap } from "./overlapFix.utils";
 
+export type SitePolygonOverlapIdentity = {
+  uuid?: string | null;
+  polygonUuid?: string | null;
+  lat?: number | null;
+  long?: number | null;
+};
+
 type UseSitePolygonOverlapParams = {
   siteUuid: string;
-  polygonsData: SitePolygonLightDto[];
+  polygonIdentities: SitePolygonOverlapIdentity[];
   preferredValidationsByPolygonUuid?: Map<string, ValidationDto>;
   t: (key: string) => string;
 };
 
+const getPolygonIdentityUuid = (polygon: SitePolygonOverlapIdentity): string | undefined => {
+  const uuid = polygon.polygonUuid ?? polygon.uuid;
+  return uuid != null && uuid !== "" ? uuid : undefined;
+};
+
 export const useSitePolygonOverlap = ({
   siteUuid,
-  polygonsData,
+  polygonIdentities,
   preferredValidationsByPolygonUuid,
   t
 }: UseSitePolygonOverlapParams) => {
@@ -47,9 +59,7 @@ export const useSitePolygonOverlap = ({
 
   return useMemo(() => {
     const currentPolygonUuids = new Set(
-      polygonsData
-        .map(polygon => polygon.polygonUuid ?? polygon.uuid)
-        .filter((id): id is string => id != null && id !== "")
+      polygonIdentities.map(getPolygonIdentityUuid).filter((id): id is string => id != null)
     );
     const overlapValidationByPolygonUuid = buildOverlapFailureValidationsMap(
       overlapValidationsByPolygonUuid.values(),
@@ -69,8 +79,8 @@ export const useSitePolygonOverlap = ({
     const crossSiteOverlapTooltip = t("This polygon overlaps with a polygon on another site in this project.");
 
     const overlapPolygons: OverlapPolygonPoint[] = [];
-    for (const polygon of polygonsData) {
-      const uuid = polygon.polygonUuid ?? polygon.uuid;
+    for (const polygon of polygonIdentities) {
+      const uuid = getPolygonIdentityUuid(polygon);
       const validation = uuid == null ? undefined : overlapValidationByPolygonUuid.get(uuid);
       if (uuid == null || validation == null) continue;
       if (polygon.lat == null || polygon.long == null) continue;
@@ -86,11 +96,11 @@ export const useSitePolygonOverlap = ({
     }
 
     return {
-      polygonsWithOverlapCount: overlapPolygons.length,
+      polygonsWithOverlapCount: overlapValidationByPolygonUuid.size,
       overlapPolygons,
       overlapValidations,
       overlapValidationsByPolygonUuid,
       fetchOverlapValidations
     };
-  }, [overlapValidations, overlapValidationsByPolygonUuid, polygonsData, fetchOverlapValidations, t]);
+  }, [overlapValidations, overlapValidationsByPolygonUuid, polygonIdentities, fetchOverlapValidations, t]);
 };

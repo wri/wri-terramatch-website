@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { ArrayField, ArrayFieldProps, ChipField, FunctionField, SingleFieldList, useRecordContext } from "react-admin";
 
 import { Choice } from "@/admin/types/common";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import {
   POLYGON_APPROVED,
   POLYGON_DRAFT,
@@ -40,11 +40,12 @@ function groupPolygonsByStatus(polygons: any[]) {
 
 const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
   const recordContext = useRecordContext();
-  const { data: sitePolygons } = useAllSitePolygons({
+  const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
     entityName: "sites",
     entityUuid: recordContext.uuid,
     enabled: recordContext.uuid != null
   });
+  const sitePolygons = mapIndexLoaded ? mapIndex?.polygons ?? [] : undefined;
 
   if (!sitePolygons?.length || !Array.isArray(sitePolygons)) {
     return (

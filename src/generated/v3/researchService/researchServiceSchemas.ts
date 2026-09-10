@@ -426,6 +426,32 @@ export type CreateSitePolygonJsonApiRequestDto = {
   data: CreateSitePolygonDataDto;
 };
 
+export type SitePolygonMapEntryDto = {
+  /**
+   * UUID of the site polygon version.
+   */
+  uuid: string;
+  /**
+   * UUID of the associated polygon geometry. Used to match features in GeoServer tiles.
+   */
+  polygonUuid: string | null;
+  /**
+   * Approval status of the polygon, used for map styling and status counts.
+   */
+  status: "draft" | "pending-approval" | "information-required" | "approved" | null;
+};
+
+export type SitePolygonMapIndexDto = {
+  /**
+   * Every polygon matching the requested scope and filters.
+   */
+  polygons: SitePolygonMapEntryDto[];
+  /**
+   * Number of polygons in the polygons array.
+   */
+  total: number;
+};
+
 export type TreeSpeciesDto = {
   /**
    * @example Acacia binervia
@@ -1245,7 +1271,7 @@ export type StorePolygonAttributeDefinitionOptionAttributes = {
    */
   uuid?: string;
   /**
-   * Option display label. On create, the stored value is camelCased from this label.
+   * Option display label. On create, the stored value is kebab-cased from this label.
    */
   label: string;
 };

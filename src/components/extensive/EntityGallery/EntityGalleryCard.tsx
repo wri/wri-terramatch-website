@@ -14,10 +14,11 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { deleteMedia } from "@/connections/Media";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { getEntitiesOptions } from "@/constants/options/entities";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { TranslatedText } from "@/i18n/types";
@@ -134,14 +135,14 @@ const EntityGalleryCard = ({
   );
 
   // Fetch site polygons using V3 endpoint
-  const { data: sitePolygonData } = useAllSitePolygons({
+  const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
     entityName: modelName as "projects" | "sites",
     entityUuid: entityUUID,
     enabled: !!entityUUID && (modelName === "projects" || modelName === "sites")
   });
 
   const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
-  const polygonDataMap = parsePolygonDataV3(sitePolygonData);
+  const polygonDataMap = parsePolygonDataV3(mapIndexLoaded ? mapIndex?.polygons : undefined);
 
   const filterOptions = useMemo(() => {
     const mapping: any = {
@@ -231,7 +232,7 @@ const EntityGalleryCard = ({
         <PageCard title={t("{modelTitle} Area", { modelTitle })}>
           <MapContainer
             polygonsData={polygonDataMap}
-            sitePolygonData={sitePolygonData}
+            sitePolygonData={mapIndex?.polygons as SitePolygonLightDto[] | undefined}
             bbox={mapBbox}
             className="rounded-lg"
             onDeleteImage={async uuid => {

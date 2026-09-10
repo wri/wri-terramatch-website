@@ -10,7 +10,7 @@ import { GetEntryValueProps } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer, loadExternalAnswerSources } from "@/components/extensive/WizardForm/utils";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useProjectPolygonsByPitch } from "@/connections/ProjectPolygons";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import {
   FormFieldsProvider,
@@ -18,7 +18,7 @@ import {
   useFieldsProvider,
   useWizardOrgFormDetails
 } from "@/context/wizardForm.provider";
-import { ProjectPolygonDto, SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { ProjectPolygonDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { Entity, EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
 
@@ -32,11 +32,12 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const uuid = entity?.entityUUID ?? record?.uuid;
   const entityType = entity?.entityName ?? (type as EntityName);
 
-  const { data: sitePolygonData } = useAllSitePolygons({
+  const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
     entityName: "sites",
     entityUuid: uuid,
     enabled: entityType === "sites" && uuid != null
   });
+  const sitePolygonData = mapIndexLoaded ? mapIndex?.polygons : undefined;
 
   const [, { data: projectPolygonsData }] = useProjectPolygonsByPitch({
     projectPitchUuid: uuid,
@@ -123,7 +124,7 @@ const getEntityPolygonData = (
   record: any,
   type?: EntityName,
   entity?: Entity,
-  sitePolygonData?: SitePolygonLightDto[],
+  sitePolygonData?: SitePolygonMapEntryDto[],
   projectPolygonsData?: ProjectPolygonDto[]
 ) => {
   if (!record && !entity) {

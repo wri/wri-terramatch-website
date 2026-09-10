@@ -9,7 +9,7 @@ import {
   POLYGON_GEOMETRY_VARIANTS
 } from "@/constants/layers";
 import { FORM_POLYGONS } from "@/constants/statuses";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { getGeoserverURL } from "../adapters/geoserver";
@@ -489,13 +489,15 @@ const POLYGON_STATUS_LABELS: Record<string, string> = {
   approved: "Approved"
 };
 
+export type PolygonMapStyleFields = Pick<SitePolygonMapEntryDto, "polygonUuid" | "status">;
+
 const POLYGON_STATUS_ORDER = Object.keys(POLYGON_STATUS_LABELS);
 
 export function parsePolygonDataV3(
-  sitePolygonData: SitePolygonLightDto[] | undefined,
+  sitePolygonData: PolygonMapStyleFields[] | undefined,
   forcedStatusBucket?: string
 ): Record<string, string[]> {
-  return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygonLightDto) => {
+  return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: PolygonMapStyleFields) => {
     const status = forcedStatusBucket ?? data.status;
     if (status != null && data.polygonUuid != null) {
       if (acc[status] == null) acc[status] = [];
@@ -505,7 +507,7 @@ export function parsePolygonDataV3(
   }, {});
 }
 
-export const countStatusesV3 = (sitePolygonData: SitePolygonLightDto[]): DataPolygonOverview => {
+export const countStatusesV3 = (sitePolygonData: PolygonMapStyleFields[]): DataPolygonOverview => {
   const statusCountMap: Record<string, number> = {};
 
   sitePolygonData.forEach(item => {

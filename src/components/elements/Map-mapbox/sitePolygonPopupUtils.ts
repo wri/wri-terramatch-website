@@ -20,8 +20,13 @@ export const getSitePolygonGeometryUuid = (sitePolygon: SitePolygonLightDto | un
   return geometryUuid != null && geometryUuid !== "" ? geometryUuid : null;
 };
 
+type PolygonTableRowIdentity = {
+  uuid?: string | null;
+  polygonUuid?: string | null;
+};
+
 export const resolvePolygonTableRowId = (
-  polygons: SitePolygonLightDto[] | undefined,
+  polygons: PolygonTableRowIdentity[] | undefined,
   mapFeatureUuid: string
 ): string | null => {
   if (mapFeatureUuid === "" || polygons == null || polygons.length === 0) {

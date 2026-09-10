@@ -14,8 +14,6 @@ type GetPolygonTableLoadingLabelParams = {
   validatingPolygonCount: number;
   isDeletingPolygons: boolean;
   deletingPolygonCount: number;
-  polygonLoadProgress: number;
-  polygonLoadTotal: number;
 };
 
 export const getSubmittingTableLoadingLabel = (t: (key: string) => string, count: number) =>
@@ -30,9 +28,7 @@ export const getPolygonTableLoadingLabel = ({
   isValidatingPolygons,
   validatingPolygonCount,
   isDeletingPolygons,
-  deletingPolygonCount,
-  polygonLoadProgress,
-  polygonLoadTotal
+  deletingPolygonCount
 }: GetPolygonTableLoadingLabelParams) => {
   if (isFixingOverlaps) {
     return getFixingOverlapsProgressLabel(t, fixingOverlapsCount);
@@ -48,10 +44,6 @@ export const getPolygonTableLoadingLabel = ({
 
   if (isDeletingPolygons) {
     return getDeletingProgressLabel(t, deletingPolygonCount);
-  }
-
-  if (polygonLoadTotal > 0) {
-    return t("Loading polygons ({loaded}/{total})", { loaded: polygonLoadProgress, total: polygonLoadTotal });
   }
 
   return t("Loading polygons");
