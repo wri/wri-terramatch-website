@@ -24,11 +24,8 @@ const convertStatusToReadableStatus = (t: typeof useT, variant: "default" | "sma
     submitted: t("Submitted"),
     "pending-approval": t("Pending Approval"),
     draft: t("Draft"),
-    started: t("Started"),
     "under-review": t("Under Review"),
-    "needs-more-information": t("Needs More Information"),
-    "information-required": t("Information Required"),
-    "awaiting-approval": t("Awaiting Approval")
+    "information-required": t("Information Required")
   };
 
   const statusMapSmall: { [key: string]: string } = {
@@ -36,11 +33,8 @@ const convertStatusToReadableStatus = (t: typeof useT, variant: "default" | "sma
     submitted: t("Submitted"),
     "pending-approval": t("Pending Approval"),
     draft: t("Draft"),
-    started: t("Started"),
     "under-review": t("Under Review"),
-    "needs-more-information": t("Needs Info"),
-    "information-required": t("Info Required"),
-    "awaiting-approval": t("Awaiting Approval")
+    "information-required": t("Information Required")
   };
 
   return variant == "small" ? statusMapSmall[status] ?? "" : statusMap[status] ?? "";

@@ -4,13 +4,14 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import { Component, ErrorInfo, FC, ReactNode, useCallback, useMemo, useState } from "react";
 
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import OnboardingCard from "@/components/extensive/OnboardingCard/OnboardingCard";
 import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/AboutPageItem";
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
-import { AWAITING_APPROVAL } from "@/constants/statuses";
+import { PENDING_APPROVAL } from "@/constants/statuses";
 import { isTerrafund, toFramework } from "@/context/framework.provider";
 import { NurseryReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntitySetupButtonLabel } from "@/helpers/entity";
@@ -24,7 +25,6 @@ import { ChevronRightIcon, SeedlingsIcon } from "@/redesignComponents/foundation
 import { createMetricsCardCtaHandler } from "@/utils/analytics/metricsCardAnalytics";
 import { ONBOARDING_CARD_TYPES } from "@/utils/analytics/onboardingCardAnalytics";
 import Log from "@/utils/log";
-import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 interface NurseryReportOverviewProps {
   report: NurseryReportFullDto;
@@ -85,7 +85,8 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
     entityTitle: report.nurseryName ?? "",
     reportTitle: report.reportTitle ?? "",
     feedback: report.feedback,
-    useStatusModal: true
+    useStatusModal: true,
+    useInformationRequiredModal: true
   });
 
   const goToTab = useCallback(
@@ -100,14 +101,11 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
   const editButtonLabel = getEntitySetupButtonLabel(t, report.status, isReportSetupComplete);
 
   const statusTag = useMemo(() => {
-    if (report.updateRequestStatus === AWAITING_APPROVAL) {
+    if (report.updateRequestStatus === PENDING_APPROVAL) {
       return <TagSubmission size="small" state="pending-approval" />;
     }
 
-    const tagState = mapStatusToTagStateEntity(report.status);
-    if (report.status == null || tagState == null) return null;
-
-    return <TagSubmission size="small" state={tagState.type} />;
+    return <StatusTag size="small" status={report.status} />;
   }, [report.status, report.updateRequestStatus]);
 
   if (report.nothingToReport) {

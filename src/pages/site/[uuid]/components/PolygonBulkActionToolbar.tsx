@@ -65,7 +65,7 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
   isSubmitDisabled = false
 }: PolygonBulkActionToolbarProps) {
   const { isOpen: isPolygonEditDrawerOpen } = usePolygonEditDrawer();
-  const { setSidebarCollapseDisabled } = useLayoutShell();
+  const { isBulkActionToolbarVisible, setBulkActionToolbarVisible, setSidebarCollapseDisabled } = useLayoutShell();
   const isAdmin = useIsAdmin();
   const t = useT();
   const isOverlapAutoFixUnavailable = isOverlapFixAction && !canAutoFixOverlap;
@@ -201,16 +201,21 @@ const PolygonBulkActionToolbar = memo(function PolygonBulkActionToolbar({
     [isAdminReview, approveDisabledTooltip]
   );
 
-  const isToolbarVisible = visible && !isPolygonEditDrawerOpen && !isBulkEditDrawerOpen;
+  const shouldShowBulkActionToolbar = visible && !isPolygonEditDrawerOpen && !isBulkEditDrawerOpen;
 
   useEffect(() => {
-    setSidebarCollapseDisabled(isToolbarVisible);
-    return () => setSidebarCollapseDisabled(false);
-  }, [isToolbarVisible, setSidebarCollapseDisabled]);
+    setBulkActionToolbarVisible(shouldShowBulkActionToolbar);
+    setSidebarCollapseDisabled(shouldShowBulkActionToolbar);
+
+    return () => {
+      setBulkActionToolbarVisible(false);
+      setSidebarCollapseDisabled(false);
+    };
+  }, [setBulkActionToolbarVisible, setSidebarCollapseDisabled, shouldShowBulkActionToolbar]);
 
   return (
     <>
-      {isToolbarVisible && (
+      {isBulkActionToolbarVisible && (
         <Box position="fixed" zIndex="100" bottom={3} left={isAdmin ? 14 : 3} right={isAdmin ? 3 : 0}>
           <BulkActionToolbar
             selectedCount={itemCount}

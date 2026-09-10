@@ -6,12 +6,16 @@ import {
 } from "@/constants/polygonStatuses";
 
 export const DRAFT = "draft";
-export const NEEDS_MORE_INFORMATION = "needs-more-information";
+export const INFORMATION_REQUIRED = "information-required";
+/** @deprecated Use INFORMATION_REQUIRED */
+export const NEEDS_MORE_INFORMATION = INFORMATION_REQUIRED;
 export const APPROVED = "approved";
 export const SUBMITTED = "submitted";
 export const FORM_POLYGONS = "form-polygons";
 export const DELETED_POLYGONS = "deleted-polygons";
-export const AWAITING_APPROVAL = "awaiting-approval";
+export const PENDING_APPROVAL = "pending-approval";
+/** @deprecated Use PENDING_APPROVAL */
+export const AWAITING_APPROVAL = PENDING_APPROVAL;
 // Synthetic status bucket used only by the read-only deleted-polygons audit view (never
 // persisted): every polygon returned by that view is bucketed here regardless of its real
 // (pre-deletion) status, so the map can render them all with one dedicated ghost style.

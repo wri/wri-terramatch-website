@@ -4,6 +4,7 @@ import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
+  entityPushTranslationsByUuid,
   formCreate,
   formDataGet,
   FormDataGetPathParams,
@@ -12,8 +13,6 @@ import {
   formGet,
   formIndex,
   FormIndexQueryParams,
-  formPullTranslations,
-  formPushTranslation,
   formUpdate,
   linkedFieldsIndex,
   LinkedFieldsIndexQueryParams,
@@ -27,7 +26,6 @@ import {
   FormDataDto,
   FormFullDto,
   FormLightDto,
-  FormTranslationDto,
   LinkedFieldDto,
   OptionLabelDto,
   UpdateRequestDto
@@ -96,15 +94,9 @@ export const createForm = resourceCreator(createFormConnection);
 export const useFormCreate = connectionHook(createFormConnection);
 
 export const pushFormTranslation = (formUuid: string) =>
-  formPushTranslation.fetchParallel({
-    pathParams: { uuid: formUuid }
+  entityPushTranslationsByUuid.fetchParallel({
+    pathParams: { entity: "forms", uuid: formUuid }
   });
-
-const formPullTranslationConnection = v3Resource("formTranslations", formPullTranslations)
-  .singleResource<FormTranslationDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
-  .buildConnection();
-
-export const loadFormTranslation = connectionLoader(formPullTranslationConnection);
 
 export type FormEntity = FormDataGetPathParams["entity"];
 const idFactory = (props: { entity?: FormEntity; uuid?: string }) => `${props.entity}|${props.uuid}`;

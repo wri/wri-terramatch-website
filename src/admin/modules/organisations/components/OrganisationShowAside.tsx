@@ -2,6 +2,7 @@ import { Box, Button, Divider, Grid, Stack } from "@mui/material";
 import { FC, useCallback } from "react";
 import {
   Button as AdminButton,
+  FunctionField,
   Labeled,
   Link,
   RaRecord,
@@ -57,7 +58,19 @@ export const OrganisationShowAside: FC<{ financialReportTab?: boolean }> = ({ fi
         </Grid>
         <Grid item xs={6}>
           <Labeled label="Status">
-            <TextField source={hasOrganisationAttrib ? "organisationStatus" : "status"} />
+            <FunctionField
+              source={hasOrganisationAttrib ? "organisationStatus" : "status"}
+              render={(rec: { status?: string; organisationStatus?: string }) => {
+                const value = hasOrganisationAttrib ? rec?.organisationStatus : rec?.status;
+                const labels: Record<string, string> = {
+                  draft: "Draft",
+                  "pending-approval": "Pending Approval",
+                  approved: "Approved",
+                  rejected: "Rejected"
+                };
+                return labels[value ?? ""] ?? value ?? "";
+              }}
+            />
           </Labeled>
         </Grid>
       </Grid>

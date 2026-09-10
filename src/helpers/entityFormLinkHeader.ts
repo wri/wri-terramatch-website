@@ -6,6 +6,7 @@ import { getShortPeriodLabel } from "@/components/extensive/WizardForm/utils";
 import { ProgressState } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { EntityName, SingularEntityName } from "@/types/common";
+import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import { singularEntityName } from "./entity";
 
@@ -37,28 +38,8 @@ export type EntityLinkHeaderParams = {
 
 export type EntityLinkHeaderMap = Record<string, Array<{ label: string; link: string; icon?: ReactNode }>>;
 
-export const mapStatusToTagState = (status: string | null | undefined): TagSubmissionState | undefined => {
-  switch (status) {
-    case "draft":
-      return "draft";
-    case "due":
-      return "due";
-    case "started":
-      return "draft";
-    case "awaiting-approval":
-      return "pending-approval";
-    case "needs-more-information":
-      return "information-required";
-    case "requires-more-information":
-      return "information-required";
-    case "approved":
-      return "approved";
-    case "no-update":
-      return "nothing-reported";
-    default:
-      return undefined;
-  }
-};
+export const mapStatusToTagState = (status: string | null | undefined): TagSubmissionState | undefined =>
+  mapStatusToTagStateEntity(status)?.type;
 
 export const mapPlantingStatusToProgressState = (status: string | null | undefined): ProgressState | undefined => {
   switch (status) {

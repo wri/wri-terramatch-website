@@ -44,6 +44,7 @@ import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { DownloadIcon, RefreshIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import FloatingActionToolbar from "@/redesignComponents/navigation/Toolbar/FloatingActionToolbar";
 import ApiSlice from "@/store/apiSlice";
+import Log from "@/utils/log";
 import { trackPolygonDownloaded, trackPolygonStatusChanged } from "@/utils/polygonAnalytics";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 import { getSingleSitePolygonApproveTooltip, isSitePolygonApprovable } from "@/utils/sitePolygonReview";
@@ -61,7 +62,11 @@ import {
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
 import UploadGeotaggedPhotos from "./Modals/GeotaggedPhotos/UploadGeotaggedPhotos";
-import type { PolygonSaveCallback, PolygonValidationJobsStartedCallback } from "./polygonEdit.types";
+import type {
+  PolygonRunValidationWithResultsCallback,
+  PolygonSaveCallback,
+  PolygonValidationJobsStartedCallback
+} from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
   type SavePolygonFlowOptions,
@@ -69,6 +74,7 @@ import {
   isValidPlantStartDate,
   isValidPolygonName,
   prunePolygonValidationCache,
+  resolveGeometryPolygonUuidAfterSave,
   runPolygonCacheCleanup,
   saveExistingPolygonVersion,
   saveNewSitePolygon
@@ -82,7 +88,7 @@ type PolygonEditContentProps = {
   onRegisterSave?: (saveHandler: (options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) => void;
   onRegisterDelete: (deleteHandler: () => Promise<void>) => void;
   onRegisterSubmit: (submitHandler: (comment: string) => Promise<void>) => void;
-  onRegisterSaveAndSubmit?: (saveAndSubmitHandler: (comment: string) => Promise<boolean>) => void;
+  onRegisterSaveAndRunValidation?: (saveAndRunValidationHandler: () => Promise<boolean>) => void;
   onRegisterHasUnsavedChanges?: (hasUnsavedChanges: () => boolean) => void;
   onRegisterPolygonName?: (getPolygonName: () => string) => void;
   onRegisterPlantStartDate?: (hasPlantStartDate: () => boolean) => void;
@@ -94,8 +100,10 @@ type PolygonEditContentProps = {
   onRequestApproveModal?: () => void;
   onRequestInformationModal?: () => void;
   onSaved?: PolygonSaveCallback;
+  onRunValidationWithResultsModal?: PolygonRunValidationWithResultsCallback;
   onValidationJobsStarted?: PolygonValidationJobsStartedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
+  onUnsavedChangesInvalidatingValidationChange?: (value: boolean) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
   onSubmittingChange?: (isSubmitting: boolean, count?: number) => void;
@@ -181,7 +189,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRegisterSave,
   onRegisterDelete,
   onRegisterSubmit,
-  onRegisterSaveAndSubmit,
+  onRegisterSaveAndRunValidation,
   onRegisterHasUnsavedChanges,
   onRegisterPolygonName,
   onRegisterPlantStartDate,
@@ -193,8 +201,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRequestApproveModal,
   onRequestInformationModal,
   onSaved,
+  onRunValidationWithResultsModal,
   onValidationJobsStarted,
   onPolygonUpdated,
+  onUnsavedChangesInvalidatingValidationChange,
   onSuppressMapSelectionHighlightChange,
   onDeletingChange,
   onSubmittingChange
@@ -369,9 +379,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       setIsUserDrawingEnabled(false);
       setDraftPolygonGeometry(undefined);
       setPolygonGeometryEdit(undefined);
-      onPolygonUpdatedRef.current?.(savedPolygon);
       setShouldRefetchPolygonData(true);
       await waitForMapEditCleanup();
+      onPolygonUpdatedRef.current?.(savedPolygon);
       if (options.refetchVersionsList) {
         await refetchVersionsRef.current?.();
       }
@@ -400,6 +410,12 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     () => hasUnsavedFormChanges(formBaselineRef.current, getFormValues(), geometryChanged, dateValueToIsoString),
     [geometryChanged, getFormValues]
   );
+
+  const hasUnsavedChangesInvalidatingValidation = checkHasUnsavedChanges();
+
+  useEffect(() => {
+    onUnsavedChangesInvalidatingValidationChange?.(hasUnsavedChangesInvalidatingValidation);
+  }, [hasUnsavedChangesInvalidatingValidation, onUnsavedChangesInvalidatingValidationChange]);
 
   const handleRequestSubmit = useCallback(() => {
     onRequestSubmitModal(checkHasUnsavedChanges());
@@ -447,7 +463,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         return savedPolygon;
       } catch {
         closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
-        showPolygonErrorToast(t("Error creating polygon"));
+        showPolygonErrorToast(t("Error Creating Polygon"));
         return null;
       }
     },
@@ -511,7 +527,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         return savedPolygon;
       } catch {
         closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
-        showPolygonErrorToast(t("Error creating polygon version"));
+        showPolygonErrorToast(t("Error Creating Polygon Version"));
         return null;
       }
     },
@@ -689,7 +705,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       );
     } catch (error) {
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloadingSamplePlots);
-      showPolygonErrorToast(t("Error downloading ANR monitoring plots"));
+      showPolygonErrorToast(t("Error Downloading ANR Monitoring Plots"));
     }
   }, [
     geometryPolygonUuid,
@@ -740,9 +756,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         setStatusSelectedPolygon(updatedVersion.status ?? "");
         setShouldRefetchPolygonData(true);
 
-        showStatusToast("success", t("Polygon version updated successfully"));
+        showStatusToast("success", t("Polygon Version Updated Successfully"));
       } catch (error) {
-        showStatusToast("error", t("Error updating polygon version"));
+        showStatusToast("error", t("Error Updating Polygon Version"));
       } finally {
         setIsVersionUpdating(false);
       }
@@ -772,7 +788,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     showPolygonProgressToast(t, getDownloadingPolygonsProgressLabel(t, 1), POLYGON_TOAST_IDS.downloading);
 
     try {
-      await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon", { includeExtendedData: true });
+      await downloadPolygonGeoJson(geometryPolygonUuid, polygon?.name ?? "polygon");
       if (resolvedSiteUuid !== "") {
         trackPolygonDownloaded({
           siteUuid: resolvedSiteUuid,
@@ -785,7 +801,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       completePolygonProgressToast(POLYGON_TOAST_IDS.downloading, toastLabels.downloadingPolygonsComplete);
     } catch (error) {
       closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
-      showPolygonErrorToast(t("Error downloading polygon"));
+      showPolygonErrorToast(t("Error Downloading Polygon"));
     }
   }, [geometryPolygonUuid, onClose, polygon?.name, resolvedSiteUuid, showStatusToast, t, toastLabels]);
 
@@ -831,7 +847,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         return true;
       } catch (error) {
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
-        showPolygonErrorToast(t("Error submitting polygon"));
+        showPolygonErrorToast(t("Error Submitting Polygon"));
         return false;
       } finally {
         onSubmittingChange?.(false);
@@ -871,23 +887,50 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     [polygon, showStatusToast, submitPolygonWithData, t, toastLabels.submittingComplete]
   );
 
-  const handleSaveAndSubmitPolygon = useCallback(
-    async (comment: string): Promise<boolean> => {
-      const savedPolygon = await savePolygonData({ closeOnSave: false, deferSuccessToast: true });
-      if (savedPolygon == null) {
+  const handleSaveAndRunValidation = useCallback(async (): Promise<boolean> => {
+    const previousGeometryPolygonUuid = geometryChanged && geometryPolygonUuid !== "" ? geometryPolygonUuid : undefined;
+    const savedPolygon = await savePolygonData({ closeOnSave: false });
+    if (savedPolygon == null) {
+      return false;
+    }
+
+    const geometryPolygonUuidForValidation = await resolveGeometryPolygonUuidAfterSave(
+      savedPolygon,
+      resolvedSiteUuid,
+      previousGeometryPolygonUuid
+    );
+
+    if (geometryPolygonUuidForValidation == null || geometryPolygonUuidForValidation === "") {
+      showPolygonErrorToast(t("Failed to Validate Polygon"));
+      onClose?.();
+      return false;
+    }
+
+    if (onRunValidationWithResultsModal != null) {
+      try {
+        await onRunValidationWithResultsModal([geometryPolygonUuidForValidation], {
+          fallbackPolygons: [savedPolygon],
+          validationAfterCriteriaClear: true,
+          previousGeometryPolygonUuid
+        });
+      } catch (error) {
+        Log.error("Failed to run validation after saving polygon:", error);
+        showPolygonErrorToast(t("Failed to Validate Polygon"));
         return false;
       }
+    }
 
-      showPolygonProgressToast(t, getSubmittingProgressLabel(t, 1), POLYGON_TOAST_IDS.submitting);
-
-      const submitted = await submitPolygonWithData(savedPolygon, comment);
-      if (submitted) {
-        completePolygonProgressToast(POLYGON_TOAST_IDS.submitting, toastLabels.savedAndSubmittedComplete);
-      }
-      return submitted;
-    },
-    [savePolygonData, submitPolygonWithData, t, toastLabels.savedAndSubmittedComplete]
-  );
+    onClose?.();
+    return true;
+  }, [
+    geometryChanged,
+    geometryPolygonUuid,
+    onClose,
+    onRunValidationWithResultsModal,
+    resolvedSiteUuid,
+    savePolygonData,
+    t
+  ]);
 
   const handleDeletePolygon = useCallback(async () => {
     if (polygon?.uuid == null || polygon.uuid === "") {
@@ -915,7 +958,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       completePolygonProgressToast(POLYGON_TOAST_IDS.deleting, toastLabels.deletingComplete);
     } catch (error) {
       closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
-      showPolygonErrorToast(t("Error deleting polygon"));
+      showPolygonErrorToast(t("Error Deleting Polygon"));
       throw error;
     } finally {
       onDeletingChange?.(false);
@@ -941,8 +984,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   }, [onRegisterSave, savePolygonData]);
 
   useEffect(() => {
-    onRegisterSaveAndSubmit?.(handleSaveAndSubmitPolygon);
-  }, [handleSaveAndSubmitPolygon, onRegisterSaveAndSubmit]);
+    onRegisterSaveAndRunValidation?.(handleSaveAndRunValidation);
+  }, [handleSaveAndRunValidation, onRegisterSaveAndRunValidation]);
 
   useEffect(() => {
     onRegisterHasUnsavedChanges?.(checkHasUnsavedChanges);
@@ -977,7 +1020,10 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         onOpenChange={setShowUploadPhotosModal}
       />
       <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden py-5 px-2 pl-6 pr-7">
-        <SubmissionValidationTags polygon={polygon} />
+        <SubmissionValidationTags
+          polygon={polygon}
+          treatValidationAsNotStarted={hasUnsavedChangesInvalidatingValidation}
+        />
         <Accordion
           header={<AccordionHeader title={t("Details")} />}
           open={openAccordionSection === "details"}

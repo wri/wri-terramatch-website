@@ -66,7 +66,8 @@ const ReportHeader: FC<ReportHeaderProps> = ({ report, title, dueAt, entityName 
     feedback: report.feedback,
     useStatusModal: true,
     entityTitle: entityTitle ?? "",
-    reportTitle: reportTitle ?? ""
+    reportTitle: reportTitle ?? "",
+    useInformationRequiredModal: true
   });
 
   return (

@@ -30,7 +30,7 @@ const RequestMoreInformationPage = () => {
 
   const { updateSubmission, submissionUpdating } = useSubmissionUpdate(submission?.uuid);
   useValueChanged(submissionUpdating, () => {
-    if (!submissionUpdating && submission?.status === "awaiting-approval") {
+    if (!submissionUpdating && submission?.status === "pending-approval") {
       router.push(`/applications/request-more-information/success/${uuid}`);
     }
   });
@@ -74,7 +74,7 @@ const RequestMoreInformationPage = () => {
   );
 
   const onSubmit = useCallback(() => {
-    updateSubmission({ status: "awaiting-approval" });
+    updateSubmission({ status: "pending-approval" });
   }, [updateSubmission]);
 
   return (

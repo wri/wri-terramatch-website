@@ -75,7 +75,7 @@ const ProjectDataGrid = () => {
         render={(record?: ProjectLightDto) => {
           const { title } =
             getChangeRequestStatusOptions().find((option: any) => option.value === record?.updateRequestStatus) ?? {};
-          return <CustomChipField label={title} />;
+          return title ? <CustomChipField label={title} /> : null;
         }}
       />
       <FunctionField
@@ -85,7 +85,7 @@ const ProjectDataGrid = () => {
         render={(record?: ProjectLightDto) => {
           const { title } =
             getPlantingStatusOptions().find((option: any) => option.value === record?.plantingStatus) ?? {};
-          return <CustomChipField label={title} />;
+          return title ? <CustomChipField label={title} /> : null;
         }}
       />
       <TextField source="organisationName" label="Organization" />

@@ -44,10 +44,7 @@ const ReportingTasksTable = ({ projectUUID, onFetch, alwaysShowPagination = fals
         {
           accessorKey: "status",
           header: t("Submission Status"),
-          cell: props => {
-            const statusProps = SubmissionStatusMapping(t)?.[props.getValue() as string] ?? {};
-            return <StatusTableCell statusProps={statusProps} />;
-          }
+          cell: props => <StatusTableCell status={props.getValue() as string} />
         },
         {
           id: "title",
@@ -60,10 +57,7 @@ const ReportingTasksTable = ({ projectUUID, onFetch, alwaysShowPagination = fals
           accessorKey: "completionStatus",
           header: t("Completion Status"),
           enableSorting: false,
-          cell: props => {
-            const statusProps = CompletionStatusMapping(t)?.[props.getValue() as string] ?? {};
-            return <StatusTableCell statusProps={statusProps} />;
-          }
+          cell: props => <StatusTableCell status={props.getValue() as string} />
         },
         {
           accessorKey: "uuid",
@@ -102,17 +96,17 @@ export default ReportingTasksTable;
 
 export const CompletionStatusMapping = (t: typeof useT): any => {
   return {
-    "needs-more-information": {
+    "information-required": {
       status: "warning",
-      statusText: t("Needs More Information")
+      statusText: t("Information Required")
     },
     "not-started": {
       status: "error",
-      statusText: t("Not started")
+      statusText: t("Due")
     },
-    started: {
+    draft: {
       status: "edit",
-      statusText: t("Started")
+      statusText: t("Draft")
     },
     approved: {
       status: "success",
@@ -122,30 +116,9 @@ export const CompletionStatusMapping = (t: typeof useT): any => {
       status: "warning",
       statusText: t("Nothing Reported")
     },
-    "awaiting-approval": {
+    "pending-approval": {
       status: "success",
-      statusText: t("Submitted for approval")
-    }
-  };
-};
-
-export const SubmissionStatusMapping = (t: typeof useT): any => {
-  return {
-    due: {
-      status: "warning",
-      statusText: t("Due")
-    },
-    "awaiting-approval": {
-      status: "awaiting",
-      statusText: t("Awaiting approval")
-    },
-    "needs-more-information": {
-      status: "warning",
-      statusText: t("Needs more information")
-    },
-    approved: {
-      status: "success",
-      statusText: t("Approved")
+      statusText: t("Pending Approval")
     }
   };
 };

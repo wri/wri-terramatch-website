@@ -29,7 +29,7 @@ const SubmissionPage = () => {
     submissionUpdating,
     submissionUpdateFailure,
     useCallback(() => {
-      if (submission?.status === "awaiting-approval") {
+      if (submission?.status === "pending-approval") {
         router.push(`/applications/request-more-information/success/${submission?.applicationUuid}?isSendRequest=true`);
       }
     }, [router, submission?.applicationUuid, submission?.status])
@@ -63,7 +63,7 @@ const SubmissionPage = () => {
 
   const confirmSubmit = useCallback(() => {
     setIsSubmitModalOpen(false);
-    updateSubmission({ status: "awaiting-approval" });
+    updateSubmission({ status: "pending-approval" });
   }, [updateSubmission]);
 
   const onChange = useCallback(

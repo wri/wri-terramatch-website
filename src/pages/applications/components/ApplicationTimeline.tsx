@@ -15,9 +15,9 @@ interface ApplicationTimelineProps {
 }
 
 const UPDATE_TEXT = {
-  started: "Draft",
-  "requires-more-information": "More info requested",
-  "awaiting-approval": "Submitted",
+  draft: "Draft",
+  "information-required": "Information Required",
+  "pending-approval": "Pending Approval",
   approved: "Approved",
   rejected: "Not Selected"
 };

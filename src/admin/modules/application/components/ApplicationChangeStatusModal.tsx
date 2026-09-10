@@ -29,7 +29,7 @@ interface ApplicationRequestMoreInfoModalProps extends DialogProps {
 const statusTitles = {
   rejected: "Reject Application",
   approved: "Approve Application",
-  "requires-more-information": "Request more information for this Application"
+  "information-required": "Request more information for this Application"
 };
 
 const FEEDBACK_FIELDS_MIN_MESSAGE = "Feedback fields must have at least 1 item";
@@ -98,13 +98,13 @@ const ApplicationRequestMoreInfoModal = ({
       <Form
         onSubmit={handleSave}
         validate={validateForm(
-          status === "requires-more-information" && !isAllSelected ? moreInfoValidationSchema : genericValidationSchema
+          status === "information-required" && !isAllSelected ? moreInfoValidationSchema : genericValidationSchema
         )}
       >
         {status == null ? null : <DialogTitle>{statusTitles[status as status]}</DialogTitle>}
         <DialogContent>
           <TextInput source="feedback" label="Feedback" fullWidth multiline margin="dense" helperText={false} />
-          {status === "requires-more-information" && feedbackFields.length > 0 && !isAllSelected ? (
+          {status === "information-required" && feedbackFields.length > 0 && !isAllSelected ? (
             <AutocompleteArrayInput
               source="feedbackFields"
               label="Fields"
@@ -121,7 +121,7 @@ const ApplicationRequestMoreInfoModal = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          {status === "requires-more-information" && !isAllSelected && (
+          {status === "information-required" && !isAllSelected && (
             <Button onClick={() => setIsAllSelected(true)}>Select All Fields</Button>
           )}
           <Button variant="contained" type="submit" disabled={isUpdating}>

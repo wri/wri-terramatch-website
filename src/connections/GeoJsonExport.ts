@@ -8,6 +8,15 @@ import {
 } from "@/generated/v3/researchService/researchServiceComponents";
 import { GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
+export const POLYGON_GEOJSON_DOWNLOAD_QUERY_PARAMS = {
+  includeExtendedData: true
+} as const satisfies Pick<GetSitePolygonsGeoJsonQueryParams, "includeExtendedData">;
+
+export type PolygonGeoJsonDownloadQueryParams = Omit<
+  GetSitePolygonsGeoJsonQueryParams,
+  "uuid" | "siteUuid" | "projectUuid"
+>;
+
 type PolygonGeoJsonProps = {
   uuid?: string;
   includeExtendedData?: boolean;

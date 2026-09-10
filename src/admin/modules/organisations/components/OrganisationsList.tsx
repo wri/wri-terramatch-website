@@ -5,6 +5,7 @@ import {
   Datagrid,
   DateField,
   EditButton,
+  FunctionField,
   SearchInput,
   SelectField,
   SelectInput,
@@ -33,7 +34,7 @@ import { useGetOrganisationsTotals } from "../hooks/useGetOrganisationsTotal";
 
 const tabs = [
   { id: "draft", name: "Draft" },
-  { id: "pending", name: "Pending" },
+  { id: "pending-approval", name: "Pending Approval" },
   { id: "approved", name: "Approved" },
   { id: "rejected", name: "Rejected" }
 ];
@@ -100,7 +101,19 @@ const ApplicationDataGrid = () => {
         <DateField source="createdAt" label="Date Created" locales="en-GB" />
         <TextField source="name" label="Organisation Name" />
         <SelectField label="Organisation Type" source="type" choices={optionToChoices(getOrganisationTypeOptions())} />
-        <TextField className="capitalize" source="status" label="Organisation Status" />
+        <FunctionField
+          source="status"
+          label="Organisation Status"
+          render={(record: { status?: string }) => {
+            const labels: Record<string, string> = {
+              draft: "Draft",
+              "pending-approval": "Pending Approval",
+              approved: "Approved",
+              rejected: "Rejected"
+            };
+            return labels[record?.status ?? ""] ?? record?.status ?? "";
+          }}
+        />
         <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
           <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
         </Menu>

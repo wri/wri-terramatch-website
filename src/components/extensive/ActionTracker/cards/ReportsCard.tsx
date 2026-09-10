@@ -8,7 +8,7 @@ import { useDate } from "@/hooks/useDate";
 import { sortByDate } from "@/utils/sort";
 
 import { IconNames } from "../../Icon/Icon";
-import ActionTrackerCard, { getActionCardStatusMapper } from "../ActionTrackerCard";
+import ActionTrackerCard from "../ActionTrackerCard";
 import { ActionTrackerCardRowProps } from "../ActionTrackerCardRow";
 import {
   type ReportActionTarget,
@@ -53,7 +53,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
       cardsWithSort.push({
         sortAt: target?.updatedAt ?? "",
         card: {
-          ...getActionCardStatusMapper(t)[status ?? "started"],
+          status: status ?? "draft",
           ctaLink,
           ctaText: t("View Report(s)"),
           title: getProjectName(target) ?? "",
@@ -86,13 +86,11 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
 
         const statuses = allReports.map(report => getEntityCombinedStatus(report.target as ReportActionTarget));
 
-        const status = statuses.some(
-          s => s?.includes("needs-more-information") || s?.includes("requires-more-information")
-        )
-          ? "needs-more-information"
+        const status = statuses.some(s => s?.includes("information-required") || s?.includes("information-required"))
+          ? "information-required"
           : statuses.some(s => s?.includes("due"))
           ? "due"
-          : "started";
+          : "draft";
 
         const maxUpdatedAt = allReports.reduce<string>((max, report) => {
           const updatedAt = (report.target as ReportActionTarget)?.updatedAt ?? "";
@@ -113,7 +111,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         cardsWithSort.push({
           sortAt: maxUpdatedAt,
           card: {
-            ...getActionCardStatusMapper(t)[status],
+            status,
             ctaLink,
             ctaText: t("View Report(s)"),
             title: getProjectName(target) ?? "",

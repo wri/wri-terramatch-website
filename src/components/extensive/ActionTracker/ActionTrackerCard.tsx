@@ -1,4 +1,3 @@
-import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
@@ -6,49 +5,8 @@ import Text from "@/components/elements/Text/Text";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import List from "../List/List";
-import { SubmissionStatusMapping } from "../Tables/ReportingTasksTable";
 import ActionTrackerCardEmptyState, { ActionTrackerCardEmptyStateProps } from "./ActionTrackerCardEmptyState";
 import ActionTrackerCardRow, { ActionTrackerCardRowProps } from "./ActionTrackerCardRow";
-
-export const getActionCardStatusMapper = (t: typeof useT): { [index: string]: Partial<ActionTrackerCardRowProps> } => ({
-  started: {
-    status: "edit",
-    statusText: t("Draft")
-  },
-  approved: {
-    status: "success",
-    statusText: t("Approved")
-  },
-  awaiting: {
-    statusText: t("Awaiting Review"),
-    status: "awaiting"
-  },
-  pending: {
-    statusText: t("Pending"),
-    status: "awaiting"
-  },
-  "needs-more-information": {
-    statusText: t("More info requested"),
-    status: "warning"
-  },
-  "nothing-to-report": {
-    status: "warning",
-    statusText: t("Nothing Reported")
-  },
-  "requires-more-information": {
-    status: "warning",
-    statusText: t("More info requested")
-  },
-  "awaiting-approval": {
-    statusText: t("Awaiting Approval"),
-    status: "awaiting"
-  },
-  rejected: {
-    status: "error",
-    statusText: t("Not Selected")
-  },
-  ...SubmissionStatusMapping(t)
-});
 
 export type ActionTrackerCardProps = {
   title: string;

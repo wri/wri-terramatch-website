@@ -20,12 +20,12 @@ export const Default: Story = {
         organisationName: "Milad's organisation"
       } as ApplicationDto,
       {
-        submissions: [{ status: "started" } as EmbeddedSubmissionDto],
+        submissions: [{ status: "draft" } as EmbeddedSubmissionDto],
         fundingProgrammeName: "TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)",
         organisationName: "Milad's organisation"
       } as ApplicationDto,
       {
-        submissions: [{ status: "started" } as EmbeddedSubmissionDto],
+        submissions: [{ status: "draft" } as EmbeddedSubmissionDto],
         fundingProgrammeName: "TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)",
         organisationName: "Milad's organisation"
       } as ApplicationDto,
@@ -35,12 +35,12 @@ export const Default: Story = {
         organisationName: "Milad's organisation"
       } as ApplicationDto,
       {
-        submissions: [{ status: "requires-more-information" } as EmbeddedSubmissionDto],
+        submissions: [{ status: "information-required" } as EmbeddedSubmissionDto],
         fundingProgrammeName: "TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)",
         organisationName: "Milad's organisation"
       } as ApplicationDto,
       {
-        submissions: [{ status: "awaiting-approval" } as EmbeddedSubmissionDto],
+        submissions: [{ status: "pending-approval" } as EmbeddedSubmissionDto],
         fundingProgrammeName: "TerraFund for AFR100: Landscapes - Expression of Interest (Enterprises)",
         organisationName: "Milad's organisation"
       } as ApplicationDto

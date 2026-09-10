@@ -58,10 +58,6 @@ type MapSidePanelProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLD
 
 const formatStringName = (name: string) => name.replace(/ /g, "_");
 
-const downloadGeoJsonPolygon = async (polygonUuid: string, polygon_name: string) => {
-  await downloadPolygonGeoJson(polygonUuid, polygon_name, { includeExtendedData: true });
-};
-
 const MapSidePanel: FC<MapSidePanelProps> = ({
   title,
   items = [],
@@ -142,7 +138,10 @@ const MapSidePanel: FC<MapSidePanelProps> = ({
       flyToPolygonBounds();
       setClickedButton("");
     } else if (clickedButton === "download") {
-      downloadGeoJsonPolygon(selected?.polygonUuid ?? "", selected?.name ? formatStringName(selected.name) : "polygon");
+      void downloadPolygonGeoJson(
+        selected?.polygonUuid ?? "",
+        selected?.name != null ? formatStringName(selected.name) : "polygon"
+      );
       trackPolygonEvent("polygon_downloaded", {
         ...getPolygonAnalyticsContext({
           entityType: "site",

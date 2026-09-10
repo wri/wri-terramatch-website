@@ -228,6 +228,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
 
   return (
     <Drawer
+      trapFocus={false}
       trigger={trigger}
       open={open}
       onOpenChange={onOpenChange}
@@ -243,21 +244,20 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           className="h-full"
           content={
             <Flex className="h-full flex-col gap-3 overflow-auto p-4">
-              {activeFilters.length > 0 && (
-                <Flex className="mb-2 flex-wrap gap-2">
-                  {activeFilters.map(filter => (
-                    <FeedbackTag
-                      key={filter.id}
-                      type="info-white"
-                      label={filter.label}
-                      closable
-                      onClose={() => {
-                        removeFilter(filter.id);
-                      }}
-                    />
-                  ))}
-                </Flex>
-              )}
+              <Flex
+                className="mb-2 flex-wrap gap-2"
+                display={activeFilters.length > 0 ? "flex" : "none"}
+              >
+                {activeFilters.map(filter => (
+                  <FeedbackTag
+                    key={filter.id}
+                    type="info-white"
+                    label={filter.label}
+                    closable
+                    onClose={() => removeFilter(filter.id)}
+                  />
+                ))}
+              </Flex>
               <FilterCard label={t("Submission Status")}>
                 {submissionStatusOptions.map(option => (
                   <Checkbox

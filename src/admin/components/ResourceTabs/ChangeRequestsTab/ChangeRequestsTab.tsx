@@ -61,7 +61,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
     setStatusToChangeTo(type);
   }, []);
 
-  const icon = updateRequest?.status === "awaiting-approval" ? <PriorityHigh sx={{ color: pink[500] }} /> : undefined;
+  const icon = updateRequest?.status === "pending-approval" ? <PriorityHigh sx={{ color: pink[500] }} /> : undefined;
 
   const providerLoading = !updateRequestLoaded || (updateRequest != null && !providerLoaded);
   if (ctx.isLoading || providerLoading) return null;
@@ -104,10 +104,10 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                           switch (updateRequest.status) {
                             case "draft":
                               return "Draft";
-                            case "awaiting-approval":
-                              return "Awaiting Approval";
-                            case "needs-more-information":
-                              return "More information requested";
+                            case "pending-approval":
+                              return "Pending Approval";
+                            case "information-required":
+                              return "Information Required";
                             case "approved":
                               return "Approved";
                             default:
@@ -138,7 +138,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                     <Button
                       variant="outlined"
                       disabled={["more-information", "draft"].includes(updateRequest.status ?? "")}
-                      onClick={() => handleStatusUpdate("needs-more-information")}
+                      onClick={() => handleStatusUpdate("information-required")}
                     >
                       Request More Information
                     </Button>

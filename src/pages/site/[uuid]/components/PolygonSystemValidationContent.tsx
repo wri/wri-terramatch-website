@@ -26,6 +26,7 @@ import ValidationDetail from "./ValidationDetail";
 export type PolygonSystemValidationContentProps = {
   siteUuid: string;
   polygon?: SitePolygonLightDto;
+  treatValidationAsNotStarted?: boolean;
   onOverlapFixed?: PolygonOverlapFixCallback;
   onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
 };
@@ -45,6 +46,7 @@ const formatValidationCheckedAt = (date: Date): string => {
 const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = ({
   siteUuid,
   polygon,
+  treatValidationAsNotStarted = false,
   onOverlapFixed,
   onRunValidation
 }) => {
@@ -102,7 +104,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
       });
     } catch (error) {
       Log.error("Failed to fix polygon overlaps:", error);
-      showPolygonErrorToast(t("Failed to fix polygon overlaps"));
+      showPolygonErrorToast(t("Failed to Fix Polygon Overlaps"));
     } finally {
       setPendingClipping(false);
     }
@@ -139,7 +141,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
     } catch (error) {
       Log.error("Failed to validate polygon:", error);
       closePolygonProgressToast(POLYGON_TOAST_IDS.validating);
-      showPolygonErrorToast(t("Failed to validate polygons"));
+      showPolygonErrorToast(t("Failed to Validate Polygons"));
     } finally {
       setIsValidating(false);
     }
@@ -148,7 +150,7 @@ const PolygonSystemValidationContent: FC<PolygonSystemValidationContentProps> = 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
       <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-auto py-5 px-2 pl-6 pr-7">
-        <SubmissionValidationTags polygon={polygon} />
+        <SubmissionValidationTags polygon={polygon} treatValidationAsNotStarted={treatValidationAsNotStarted} />
         <Flex direction="column" gap={3} className="mt-4">
           {hasValidation ? (
             <>

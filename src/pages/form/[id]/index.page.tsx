@@ -45,7 +45,7 @@ const FormIntroPage = () => {
       ApiSlice.pruneIndex("applications");
       router.push(`/form/submission/${submission?.uuid}`);
     }, [router, submission?.uuid]),
-    "Application creation failed"
+    "Application Creation Failed"
   );
 
   return (

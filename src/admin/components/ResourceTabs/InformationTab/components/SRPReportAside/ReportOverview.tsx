@@ -8,10 +8,10 @@ import FrameworkField from "@/admin/components/Fields/FrameworkField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 
 const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ parent }) => {
-  const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | "reminder" | undefined>();
+  const [statusModal, setStatusModal] = useState<"approved" | "information-required" | "reminder" | undefined>();
 
   const { record } = useShowContext();
-  const reportActionDisabled = record?.updateRequestStatus === "needs-more-information";
+  const reportActionDisabled = record?.updateRequestStatus === "information-required";
 
   return (
     <>
@@ -69,15 +69,26 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               variant="outlined"
-              disabled={reportActionDisabled || record?.status === "needs-more-information"}
-              onClick={() => setStatusModal("needs-more-information")}
+              disabled={
+                reportActionDisabled ||
+                record?.status === "information-required" ||
+                record?.status === "draft" ||
+                record?.status === "due"
+              }
+              onClick={() => setStatusModal("information-required")}
             >
               Request More Info
             </Button>
             <Button
               variant="contained"
               startIcon={<Check />}
-              disabled={reportActionDisabled || record?.status === "approved"}
+              disabled={
+                reportActionDisabled ||
+                record?.status === "approved" ||
+                record?.status === "draft" ||
+                record?.updateRequestStatus === "draft" ||
+                record?.status === "due"
+              }
               onClick={() => setStatusModal("approved")}
             >
               Approve

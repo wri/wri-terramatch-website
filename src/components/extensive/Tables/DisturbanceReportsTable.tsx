@@ -11,10 +11,7 @@ import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCe
 import { indexDisturbanceReportConnection } from "@/connections/Entity";
 import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
-import { Status } from "@/types/common";
 import { Selected } from "@/types/connection";
-
-import { getActionCardStatusMapper } from "../ActionTracker/ActionTrackerCard";
 
 interface DisturbanceReportsTableProps {
   projectUUID: string;
@@ -42,25 +39,17 @@ const DisturbanceReportsTable = ({
         {
           accessorKey: "status",
           header: t("Status"),
-          cell: props => {
-            let value = props.getValue() as string;
-
-            const statusProps = getActionCardStatusMapper(t)[value]!;
-            return <StatusTableCell statusProps={statusProps as { status: Status; statusText: string }} />;
-          }
+          cell: props => <StatusTableCell status={props.getValue() as string} />
         },
         {
           accessorKey: "updateRequestStatus",
           header: t("Change Request Status"),
           cell: props => {
-            let value = props.getValue() as string;
-            const statusProps = getActionCardStatusMapper(t)[value]!;
-
-            if (value === "no-update") {
-              return t("N/A");
-            } else {
-              return <StatusTableCell statusProps={statusProps as { status: Status; statusText: string }} />;
+            const value = props.getValue() as string;
+            if (value == null || value === "" || value === "no-update") {
+              return null;
             }
+            return <StatusTableCell status={value} />;
           }
         },
         {
@@ -103,17 +92,17 @@ export default DisturbanceReportsTable;
 
 export const DisturbanceStatusMapping = (t: typeof useT): any => {
   return {
-    "needs-more-information": {
+    "information-required": {
       status: "warning",
-      statusText: t("Needs More Information")
+      statusText: t("Information Required")
     },
     "not-started": {
       status: "error",
-      statusText: t("Not started")
+      statusText: t("Due")
     },
-    started: {
+    draft: {
       status: "edit",
-      statusText: t("Started")
+      statusText: t("Draft")
     },
     approved: {
       status: "success",
@@ -123,9 +112,9 @@ export const DisturbanceStatusMapping = (t: typeof useT): any => {
       status: "warning",
       statusText: t("Nothing Reported")
     },
-    "awaiting-approval": {
+    "pending-approval": {
       status: "success",
-      statusText: t("Submitted for approval")
+      statusText: t("Pending Approval")
     }
   };
 };

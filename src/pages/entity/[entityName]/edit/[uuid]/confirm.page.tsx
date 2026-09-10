@@ -145,7 +145,7 @@ const ConfirmPage = () => {
             <div
               className="with-inner-html"
               dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(form?.submissionMessage ?? "")
+                __html: DOMPurify.sanitize(form?.submissionMessage ? t(form?.submissionMessage) : "")
               }}
             />
             <div className="mt-15 flex w-full justify-between">

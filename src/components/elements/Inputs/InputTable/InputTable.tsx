@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useMemo } from "react";
 
@@ -33,6 +34,7 @@ function InputTable({
   errors,
   ...inputWrapperProps
 }: InputTableProps) {
+  const t = useT();
   const error = useMemo(() => {
     for (const row of rows) {
       const error = errors?.[row.name];
@@ -63,7 +65,7 @@ function InputTable({
                 <tr key={`row-${index}`}>
                   <td className="h-[53px] border-b border-neutral-400 p-0 pb-1.5 pt-6 align-bottom" align="center">
                     <Text variant="text-heading-100" className="first-letter:uppercase">
-                      {label}
+                      {t(label)}
                     </Text>
                   </td>
                   <td className="h-[53px] p-0 align-bottom">

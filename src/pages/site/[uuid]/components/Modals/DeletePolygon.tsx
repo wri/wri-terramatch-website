@@ -4,7 +4,6 @@ import { FC, useCallback } from "react";
 
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
-import { WarningIcon } from "@/redesignComponents/foundations/Icons";
 
 import type { PolygonTableRow } from "../PolygonTableRow";
 
@@ -54,34 +53,29 @@ const DeletePolygon: FC<DeletePolygonProps> = ({
       content={
         polygons.length === 1 ? (
           <Flex justifyContent="center" alignItems="center" flexDirection="column" pt={2} width="100%">
-            <WarningIcon boxSize={8} color={"warning.500"} mb={2} />
-            <Text textStyle="400" color="neutral.900" textAlign="center">
-              {t("Are you sure you want to delete")}
-            </Text>
             <Text textStyle="500-bold" color="neutral.900" textAlign="center">
               {polygons[0].polygonName}?
             </Text>
+            <Text textStyle="400" color="neutral.900" textAlign="center">
+              {t("will be permanently removed from this site.")}
+            </Text>
 
-            <Text textStyle="400-bold" color="warning.900" mt={2} textAlign="center">
-              {t("This action cannot be undone.")}
+            <Text textStyle="400-bold" color="neutral.900" textAlign="center">
+              {t("You can’t undo this.")}
             </Text>
           </Flex>
         ) : (
           <Box px={4}>
-            <Text textStyle="400" color="neutral.900" display={"flex"} gap={0.5} alignItems={"center"}>
-              <WarningIcon boxSize={4} color={"warning.500"} mr={2} />
+            <Text textStyle="400" color="neutral.900" mb={3}>
               <span>
-                {t("Are you sure you want to {action} these polygons?", {
+                {t("The following polygons will be permanently removed from this site. {action}", {
                   action: (
-                    <Text textStyle="400-bold" color="neutral.900" mx={0.5} as="span">
-                      {t("delete")}
+                    <Text textStyle="400-bold" color="neutral.900" as="span">
+                      {t("You can’t undo this.")}
                     </Text>
                   )
                 })}
               </span>
-            </Text>
-            <Text textStyle="400-bold" color="warning.900" ml={7} mb={3}>
-              {t("This action cannot be undone.")}
             </Text>
             <Flex flexDirection="column" gap={4} bg={"neutral.200"} py={2} px={3} rounded={4}>
               <List.Root as="ul" pl={4} spaceY={2} listStyleType="disc">

@@ -3,12 +3,13 @@ import { Edit, SimpleForm, TextField } from "react-admin";
 
 import FundingForm from "./FundingForm";
 import FundingProgrammeTitle from "./FundingProgrammeTitle";
+import FundingProgrammeToolbar from "./FundingProgrammeToolbar";
 
 const FundingProgrammeEdit = () => {
   return (
     <Edit title={<FundingProgrammeTitle />} mutationMode="pessimistic">
       <TextField source="name" component="h5" variant="h5" className="mt-10" marginX="1rem" paddingTop="1.75rem" />
-      <SimpleForm noValidate paddingY="1.5rem">
+      <SimpleForm noValidate paddingY="1.5rem" toolbar={<FundingProgrammeToolbar />}>
         <FundingForm />
       </SimpleForm>
     </Edit>

@@ -71,7 +71,6 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({
   );
 
   const shouldShowError = status === "in-progress";
-  const isFormPage = onChange != null;
 
   return (
     <Accordion
@@ -80,12 +79,12 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({
         <AccordionHeader
           title={boldNumber}
           status={STATUS_MAP[status]}
-          statusLabel={shouldShowError && isFormPage ? t("Totals don't match across categories") : undefined}
+          statusLabel={shouldShowError ? t("Totals don't match across categories") : undefined}
         />
       }
     >
       <div>
-        {shouldShowError && isFormPage && (
+        {shouldShowError && (
           <Text textStyle="300" color="error.900" marginBottom={4}>
             {t("The total number of entries must be the same for each category.")}{" "}
             <strong>{t("Please review your entries.")}</strong>
@@ -97,16 +96,14 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({
             const typeDefinition = entryConfigs.find(({ type }) => type === entryType);
             const sectionTotal = counts?.[entryType] ?? 0;
 
+            const isBalanced = typeDefinition?.balanced === true;
+
             let sectionStatus: Status = "not-started";
 
-            if (sectionTotal === 0) {
-              sectionStatus = "not-started";
-            } else if (!typeDefinition?.balanced) {
-              sectionStatus = "complete";
-            } else if (sectionTotal === total) {
-              sectionStatus = "complete";
-            } else if (shouldShowError) {
+            if (shouldShowError && isBalanced) {
               sectionStatus = "in-progress";
+            } else if (sectionTotal > 0) {
+              sectionStatus = "complete";
             }
 
             return (

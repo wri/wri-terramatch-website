@@ -17,7 +17,7 @@ export const aboutSectionsDataProvider: Partial<DataProvider> = {
       const section = await createAboutSection(params.data as StoreAboutSectionAttributes);
       return { data: { id: section.id } } as CreateResult;
     } catch (createFailure) {
-      throw v3ErrorForRA("About section creation failed", createFailure);
+      throw v3ErrorForRA("About section Creation Failed", createFailure);
     }
   },
 

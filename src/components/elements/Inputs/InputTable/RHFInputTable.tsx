@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC, PropsWithChildren, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
@@ -47,13 +48,14 @@ const toTableRow = (field?: FieldDefinition): InputTableRow | null => {
 };
 
 const RHFInputTable: FC<RHFInputTableProps> = ({ onChangeCapture, formHook, headers, fieldId, ...props }) => {
+  const t = useT();
   const {
     field: { value, onChange }
   } = useController(props);
   const propsHeaders = useMemo(() => {
-    const labels = headers.map(label => label);
+    const labels = headers.map(label => t(label));
     return [labels[0] ?? "", labels[1] ?? ""] as const;
-  }, [headers]);
+  }, [headers, t]);
   const { childNames, fieldByName } = useFieldsProvider();
   const rows = useMemo(
     () => childNames(fieldId).map(fieldByName).map(toTableRow).filter(isNotNull),

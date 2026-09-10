@@ -3,14 +3,19 @@ import type { FC } from "react";
 
 import ViewNavigation from "./ViewNavigation";
 
-const MonthView: FC = () => {
+interface MonthViewProps {
+  className?: string;
+  columns?: 3 | 4;
+}
+
+const MonthView: FC<MonthViewProps> = ({ className = "rect-cell-view", columns = 3 }) => {
   const { getMonthsGrid } = useDatePickerContext();
   return (
-    <DatePicker.View view="month" className="rect-cell-view">
+    <DatePicker.View view="month" className={className}>
       <ViewNavigation />
       <DatePicker.Table>
         <DatePicker.TableBody>
-          {getMonthsGrid({ columns: 3, format: "short" }).map((months, i) => (
+          {getMonthsGrid({ columns, format: "short" }).map((months, i) => (
             <DatePicker.TableRow key={i}>
               {months.map((month, j) => (
                 <DatePicker.TableCell key={j} value={month.value}>

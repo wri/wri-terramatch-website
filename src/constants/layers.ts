@@ -31,10 +31,29 @@ export const LAYERS_NAMES = {
   LANDSCAPES: "landscape_geom",
   POLYGON_CENTROIDS: "polygon_centroids"
 };
+
+const POLYGON_GEOMETRY_LAYER_BASE = "polygon_geometry";
+
+export const POLYGON_GEOMETRY_VARIANTS = {
+  Active: "active",
+  Deleted: "deleted"
+} as const;
+export type PolygonGeometryVariant = (typeof POLYGON_GEOMETRY_VARIANTS)[keyof typeof POLYGON_GEOMETRY_VARIANTS];
+
+export const getPolygonGeometryLayerName = (variant: PolygonGeometryVariant): string =>
+  `${POLYGON_GEOMETRY_LAYER_BASE}_${variant}`;
+
+export const resolvePolygonGeometryVariant = (
+  polygonsData: Record<string, string[]> | undefined
+): PolygonGeometryVariant =>
+  (polygonsData?.[DELETED_AUDIT_POLYGONS]?.length ?? 0) > 0
+    ? POLYGON_GEOMETRY_VARIANTS.Deleted
+    : POLYGON_GEOMETRY_VARIANTS.Active;
+
 export const layersList: LayerType[] = [
   {
     name: LAYERS_NAMES.POLYGON_GEOMETRY,
-    geoserverLayerName: LAYERS_NAMES.POLYGON_GEOMETRY,
+    geoserverLayerName: getPolygonGeometryLayerName(POLYGON_GEOMETRY_VARIANTS.Active),
     styles: [
       fillStyle({
         metadata: { polygonStatus: "draft" },
@@ -160,7 +179,7 @@ export const layersList: LayerType[] = [
   },
   {
     name: LAYERS_NAMES.DELETED_GEOMETRIES,
-    geoserverLayerName: LAYERS_NAMES.POLYGON_GEOMETRY,
+    geoserverLayerName: getPolygonGeometryLayerName(POLYGON_GEOMETRY_VARIANTS.Active),
     styles: [
       fillStyle({
         metadata: { polygonStatus: DELETED_POLYGONS },

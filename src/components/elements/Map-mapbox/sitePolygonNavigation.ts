@@ -39,6 +39,21 @@ export const scrollToSitePolygonTabHeader = (): void => {
   document.getElementById(SITE_POLYGON_TAB_HEADER_ID)?.scrollIntoView({ block: "start" });
 };
 
+export const EDIT_POLYGON_QUERY_PARAM = "editPolygon";
+
+export const buildSitePolygonEditUrl = (
+  siteUuid: string,
+  sitePolygonUuid: string,
+  options?: { adminReview?: boolean }
+): string => {
+  const editQuery = `${EDIT_POLYGON_QUERY_PARAM}=${encodeURIComponent(sitePolygonUuid)}`;
+  if (options?.adminReview === true) {
+    return `/site/${siteUuid}/polygon-review?${editQuery}`;
+  }
+
+  return `/site/${siteUuid}?tab=polygons&${editQuery}`;
+};
+
 export const navigateToSitePolygonViewDetails = (geometryUuid: string, siteUuid: string | null | undefined): void => {
   if (geometryUuid === "") {
     return;

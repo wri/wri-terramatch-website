@@ -1,7 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
-
 import Component from "./ActionTrackerCardRow";
 
 const meta: Meta<typeof Component> = {
@@ -15,8 +13,7 @@ export const Default: Story = {
   args: {
     title: "TerraFund for AFR100: Landscapes - Non Profits",
     subtitle: "<strong>Stage:</strong> Expression of Interest",
-    status: StatusEnum.EDIT,
-    statusText: "Draft",
+    status: "draft",
     ctaText: "Continue Draft",
     ctaLink: "/"
   }

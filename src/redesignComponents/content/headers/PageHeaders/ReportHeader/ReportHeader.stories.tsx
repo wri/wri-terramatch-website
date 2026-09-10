@@ -43,8 +43,8 @@ type Story = StoryObj<ReportHeaderProps>;
 const COMMON_FIELDS = {
   lightResource: false,
   uuid: "550e8400-e29b-41d4-a716-446655440001",
-  status: "awaiting-approval" as const,
-  updateRequestStatus: "no-update" as const,
+  status: "pending-approval" as const,
+  updateRequestStatus: null,
   feedback: null,
   feedbackFields: null,
   dueAt: "2025-06-30T00:00:00.000Z",

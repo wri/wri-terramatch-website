@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { MouseEvent, PointerEvent, ReactNode } from "react";
 
 export type AccordionVariant = "primary" | "secondary" | "tertiary" | "quaternary" | "borderless";
 
@@ -24,6 +24,8 @@ declare module "@chakra-ui/react/dist/types/components/accordion/accordion" {
   export interface AccordionItemTriggerProps {
     children?: ReactNode;
     css?: Record<string, unknown>;
+    onPointerDown?: (event: PointerEvent<HTMLButtonElement>) => void;
+    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   }
   export interface AccordionItemIndicatorProps {
     children?: ReactNode;
@@ -47,6 +49,8 @@ export interface ListSectionHeaderProps {
   level?: ListSectionHeaderLevel;
   label?: ReactNode;
   title: ReactNode;
+  titleHref?: string;
+  onTitleClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
   caption?: ReactNode;
   statusLabels?: ReactNode;
   icon?: ReactNode;

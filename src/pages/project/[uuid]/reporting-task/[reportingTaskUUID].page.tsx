@@ -1,3 +1,4 @@
+import { Flex } from "@chakra-ui/react";
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
@@ -7,10 +8,9 @@ import React, { FC, useCallback, useMemo, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import StatusBar from "@/components/elements/StatusBar/StatusBar";
-import StatusPill from "@/components/elements/StatusPill/StatusPill";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import Table from "@/components/elements/Table/Table";
 import { FilterValue } from "@/components/elements/TableFilters/TableFilter";
-import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
@@ -28,6 +28,7 @@ import {
   useLightSRPReportList
 } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
+import { DECLARED_ENV } from "@/constants/environment";
 import FrameworkProvider from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import {
@@ -38,9 +39,9 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { v3EntityName } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import BulkNothingToReportModal from "@/pages/project/[uuid]/reporting-task/BulkNothingToReportModal";
+import BulkNothingToReportModal from "@/pages/project/[uuid]/reporting-task/components/BulkNothingToReportModal";
+import NothingToReportModal from "@/pages/project/[uuid]/reporting-task/components/NothingToReportModal";
 import ReportingTaskHeader from "@/pages/project/[uuid]/reporting-task/components/ReportingTaskHeader";
-import NothingToReportModal from "@/pages/project/[uuid]/reporting-task/NothingToReportModal";
 import {
   NOTHING_TO_REPORT_MODELS,
   NothingToReportEntity,
@@ -48,16 +49,10 @@ import {
 } from "@/pages/project/[uuid]/reporting-task/types";
 import useGetReportingTasksTourSteps from "@/pages/project/[uuid]/reporting-task/useGetReportingTasksTourSteps";
 import ApiSlice from "@/store/apiSlice";
-import { Status } from "@/types/common";
 
-const StatusMapping: { [index: string]: Status } = {
-  due: "edit",
-  "awaiting-approval": "awaiting",
-  approved: "success",
-  "needs-more-information": "warning"
-};
+import BulkTreeImportModal from "./components/BulkTreeImportModal";
 
-const NOTHING_TO_REPORT_DISPLAYABLE_STATUSES = ["due", "started"];
+const NOTHING_TO_REPORT_DISPLAYABLE_STATUSES = ["due", "draft"];
 
 const BULK_MODAL_COPY =
   'Indicate here if any of the sites/nurseries below had no activity to report during the reporting period. You can select sites/nurseries individually, or use the "Select All" button if applicable. Be sure to press "Submit" to confirm your selection and send to your project manager for review. <br />Please note: you must report any planting, assisted natural regeneration activities, maintenance, monitoring, or nursery seedlings by filling out the reports for that site/nursery individually.';
@@ -86,22 +81,46 @@ const shouldShowNothingToReportButton = (report: TaskReport) => {
   );
 };
 
+const getReportingTaskHeaderStatus = (
+  task: { status?: string; completionStatus?: string | null } | undefined,
+  reports: TaskReports
+) => {
+  if (task?.completionStatus != null && task.completionStatus !== "") {
+    return task.completionStatus;
+  }
+
+  const hasInformationRequired = [...reports.mandatory, ...reports.additional, ...reports.srpReports].some(report => {
+    const updateRequestStatus = report.updateRequestStatus;
+    return (
+      report.completionStatus === "information-required" ||
+      report.status === "information-required" ||
+      updateRequestStatus === "information-required"
+    );
+  });
+
+  if (task?.status === "information-required" || hasInformationRequired) {
+    return "information-required";
+  }
+
+  return task?.status;
+};
+
 const mapTaskReport =
   (format: ReturnType<typeof useDate>["format"]) =>
   (report: TaskReportDto): TaskReport => {
-    let completionStatus = "started";
+    let completionStatus = "draft";
     const { status: reportStatus, updateRequestStatus } = report;
     // If there is no submitted update request in play, then the report status is the source of
     // truth, otherwise update the UI in accordance with the active update request's status.
-    const hasSubmittedUpdateRequest = ["awaiting-approval", "needs-more-information"].includes(updateRequestStatus!);
+    const hasSubmittedUpdateRequest = ["pending-approval", "information-required"].includes(updateRequestStatus!);
     const status = hasSubmittedUpdateRequest ? updateRequestStatus : reportStatus;
 
-    if (status === "needs-more-information") {
-      completionStatus = "needs-more-information";
+    if (status === "information-required") {
+      completionStatus = "information-required";
     } else if ((report as SiteReportLightDto | NurseryReportLightDto).nothingToReport) {
       completionStatus = "nothing-to-report";
-    } else if (status === "awaiting-approval") {
-      completionStatus = "awaiting-approval";
+    } else if (status === "pending-approval") {
+      completionStatus = "pending-approval";
     } else if (status === "approved") {
       completionStatus = "approved";
     } else if (status === "due") {
@@ -193,14 +212,9 @@ const ReportingTaskPage: FC = () => {
       header: t("Status"),
       cell: props => {
         const value = props.getValue() as string;
-        const { status, statusText } = CompletionStatusMapping(t)?.[value] || {};
-        if (!status) return null;
+        if (CompletionStatusMapping(t)?.[value] == null) return null;
 
-        return (
-          <StatusPill status={status} className="w-fit">
-            <Text variant="text-bold-caption-100">{statusText}</Text>
-          </StatusPill>
-        );
+        return <StatusTag status={value} size="small" />;
       }
     },
     {
@@ -243,14 +257,14 @@ const ReportingTaskPage: FC = () => {
               );
 
             case "approved":
-            case "awaiting-approval":
+            case "pending-approval":
               return (
                 <Button as={Link} href={`/reports/${type}/${uuid}`}>
                   {t("View Completed Report")}
                 </Button>
               );
 
-            case "needs-more-information":
+            case "information-required":
               return (
                 <Button as={Link} href={`/reports/${type}/${uuid}`}>
                   {t("View Feedback")}
@@ -290,14 +304,9 @@ const ReportingTaskPage: FC = () => {
       header: t("Status"),
       cell: props => {
         const value = props.getValue() as string;
-        const { status, statusText } = CompletionStatusMapping(t)?.[value] || {};
-        if (!status) return null;
+        if (CompletionStatusMapping(t)?.[value] == null) return null;
 
-        return (
-          <StatusPill status={status} className="w-fit">
-            <Text variant="text-bold-caption-100">{statusText}</Text>
-          </StatusPill>
-        );
+        return <StatusTag status={value} size="small" />;
       }
     },
     {
@@ -338,14 +347,14 @@ const ReportingTaskPage: FC = () => {
               );
 
             case "approved":
-            case "awaiting-approval":
+            case "pending-approval":
               return (
                 <Button as={Link} href={`/reports/${type}/${uuid}`}>
                   {t("View Completed Report")}
                 </Button>
               );
 
-            case "needs-more-information":
+            case "information-required":
               return (
                 <Button as={Link} href={`/reports/${type}/${uuid}`}>
                   {t("View Feedback")}
@@ -421,12 +430,21 @@ const ReportingTaskPage: FC = () => {
     );
   }, [closeModal, openBulkConfirmationModal, openModal, reports.nothingToReportEligible, t]);
 
+  const openBulkTreeModal = useCallback(() => {
+    openModal(
+      ModalId.BULK_TREE_IMPORT,
+      <FrameworkProvider frameworkKey={project?.frameworkKey}>
+        <BulkTreeImportModal taskUuid={reportingTaskUUID} />
+      </FrameworkProvider>
+    );
+  }, [openModal, project?.frameworkKey, reportingTaskUUID]);
+
   if (!projectLoaded) return null;
   return (
     <FrameworkProvider frameworkKey={project?.frameworkKey}>
       <LoadingContainer loading={task == null}>
         <ReportingTaskHeader {...{ project, taskUuid: reportingTaskUUID, reports }} />
-        <StatusBar status={StatusMapping?.[task?.status ?? ""]} />
+        <StatusBar status={getReportingTaskHeaderStatus(task, reports)} />
         <PageBody className={classNames(tourEnabled && "pb-52 xl:pb-52")}>
           <PageSection>
             <PageCard title={t("Mandatory Project Report")}>
@@ -444,9 +462,12 @@ const ReportingTaskPage: FC = () => {
             <PageCard
               title={t("Additional Reports")}
               headerChildren={
-                <Button disabled={reports.nothingToReportEligible.length === 0} onClick={openBulkModal}>
-                  {t('Report "No Updates"')}
-                </Button>
+                <Flex gap={4}>
+                  {DECLARED_ENV !== "prod" && <Button onClick={openBulkTreeModal}>{t("Bulk Tree Import")}</Button>}
+                  <Button disabled={reports.nothingToReportEligible.length === 0} onClick={openBulkModal}>
+                    {t('Report "No Updates"')}
+                  </Button>
+                </Flex>
               }
             >
               <Table

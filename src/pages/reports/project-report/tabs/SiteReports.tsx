@@ -5,7 +5,6 @@ import { FC } from "react";
 import Button from "@/components/elements/Button/Button";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import Table from "@/components/elements/Table/Table";
-import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -69,26 +68,17 @@ const SiteReportsTab: FC<SiteReportsTabProps> = ({ taskUuid }) => {
                   {
                     accessorKey: "status",
                     header: t("Status"),
-                    cell: (props: any) => {
-                      let value = props.getValue() as string;
-                      const statusProps = getActionCardStatusMapper(t)[value] as any;
-                      if (!statusProps) return null;
-
-                      return <StatusTableCell statusProps={statusProps} />;
-                    }
+                    cell: (props: any) => <StatusTableCell status={props.getValue() as string} />
                   },
                   {
                     accessorKey: "updateRequestStatus",
                     header: t("Change Request"),
                     cell: props => {
-                      let value = props.getValue() as string;
-                      const statusProps = getActionCardStatusMapper(t)[value] as any;
-
-                      if (value === "no-update") {
-                        return t("N/A");
-                      } else {
-                        return <StatusTableCell statusProps={statusProps} />;
+                      const value = props.getValue() as string;
+                      if (value == null || value === "" || value === "no-update") {
+                        return null;
                       }
+                      return <StatusTableCell status={value} />;
                     }
                   },
                   {
@@ -96,7 +86,7 @@ const SiteReportsTab: FC<SiteReportsTabProps> = ({ taskUuid }) => {
                     enableSorting: false,
                     accessorKey: "uuid",
                     cell: props =>
-                      props.row.original?.status === "started" ? (
+                      props.row.original?.status === "draft" ? (
                         <Button
                           as={Link}
                           href={`/entity/site-reports/edit/${props.getValue()}`}

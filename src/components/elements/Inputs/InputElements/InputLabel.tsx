@@ -41,7 +41,7 @@ const InputLabel = forwardRef<HTMLInputElement, InputLabelProps>((props, ref) =>
 
       {feedbackRequired && (
         <StatusPill status="warning" className="inline-flex w-fit">
-          <Text variant="text-bold-caption-100">{t("More Info Requested")}</Text>
+          <Text variant="text-bold-caption-100">{t("Information Required")}</Text>
         </StatusPill>
       )}
     </>
