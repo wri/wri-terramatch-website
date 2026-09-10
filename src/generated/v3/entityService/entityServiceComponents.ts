@@ -2190,7 +2190,7 @@ export type TreeBulkImportCsvGetQueryParams = {
   /**
    * The collection to download
    */
-  collection: "anr" | "replanting" | "tree-planted" | "non-tree" | "invasive";
+  collection: "anr" | "replanting" | "tree-planted" | "non-tree" | "invasive" | "established";
 };
 
 export type TreeBulkImportCsvGetError = Fetcher.ErrorWrapper<
@@ -2300,7 +2300,7 @@ export const treeBulkImportCsvUpload = new V3ApiEndpoint<
   TreeBulkImportCsvUploadError,
   TreeBulkImportCsvUploadVariables,
   {}
->("/trees/v3/bulkImportCsv/{uuid}", "POST");
+>("/trees/v3/bulkImportCsv/{uuid}", "PUT");
 
 export type DisturbanceIndexQueryParams = {
   ["sort[field]"]?: string;
