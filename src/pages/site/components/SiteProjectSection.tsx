@@ -39,6 +39,7 @@ import ApiSlice from "@/store/apiSlice";
 
 import DeleteSite from "./Modals/DeleteSite";
 import type { SiteIndexProject, SiteIndexSite, SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
+import { isSiteApproved } from "./siteIndex.utils";
 import { useSiteIndexSelectionActions, useSiteTableSelection } from "./SiteIndexSelection.provider";
 import { isSiteDeletable } from "./siteIndexSubmit";
 
@@ -93,17 +94,20 @@ const SiteProjectMetrics: FC<{
   sites: SiteIndexSite[];
   totalSiteCount: number;
   isFiltered: boolean;
-}> = ({ project, sites, totalSiteCount, isFiltered }) => {
+}> = ({ project, sites, isFiltered }) => {
   const t = useT();
   const { selectedRows: selectedSites } = useSiteTableSelection(sites);
+  const approvedSites = sites.filter(isSiteApproved);
+  const approvedSelectedSites = selectedSites.filter(isSiteApproved);
+  const approvedTotalCount = project.sites.filter(isSiteApproved).length;
   const filteredMetric = (progress: number) =>
-    totalSiteCount === 0 ? 0 : Math.round(progress * (sites.length / totalSiteCount));
+    approvedTotalCount === 0 ? 0 : Math.round(progress * (approvedSites.length / approvedTotalCount));
   const selectedMetric = (progress: number) =>
-    totalSiteCount === 0 ? 0 : Math.round(progress * (selectedSites.length / totalSiteCount));
-  const filteredTrees = sites.reduce((total, site) => total + site.treesPlantedCount, 0);
-  const selectedTrees = selectedSites.reduce((total, site) => total + site.treesPlantedCount, 0);
-  const filteredArea = sites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
-  const selectedArea = selectedSites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
+    approvedTotalCount === 0 ? 0 : Math.round(progress * (approvedSelectedSites.length / approvedTotalCount));
+  const filteredTrees = approvedSites.reduce((total, site) => total + site.treesPlantedCount, 0);
+  const selectedTrees = approvedSelectedSites.reduce((total, site) => total + site.treesPlantedCount, 0);
+  const filteredArea = approvedSites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
+  const selectedArea = approvedSelectedSites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
   const metricCardClassName = "w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100";
   const isHbf = project.frameworkKey === Framework.HBF;
   const isTerraFund = isTerrafund(project.frameworkKey);

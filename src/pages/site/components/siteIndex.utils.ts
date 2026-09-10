@@ -14,6 +14,8 @@ import type {
 
 export const ALL_PROJECTS_VIEW = "all";
 
+export const isSiteApproved = (site: Pick<SiteIndexSite, "status">): boolean => site.status === "approved";
+
 export const SITE_INDEX_ATTENTION_STATUSES: ReadonlySet<SiteIndexStatus> = new Set([
   "draft",
   "information-required",
@@ -101,9 +103,10 @@ export const buildProjectMetrics = (
   project: ProjectFullDto | ProjectLightDto | undefined,
   sites: SiteIndexSite[]
 ): SiteIndexProject["metrics"] => {
-  const treesPlanted = sites.reduce((total, site) => total + site.treesPlantedCount, 0);
-  const areaRestored = sites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
-  const areaGoal = sites.reduce((total, site) => total + (site.hectaresToRestoreGoal ?? 0), 0);
+  const approvedSites = sites.filter(isSiteApproved);
+  const treesPlanted = approvedSites.reduce((total, site) => total + site.treesPlantedCount, 0);
+  const areaRestored = approvedSites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
+  const areaGoal = approvedSites.reduce((total, site) => total + (site.hectaresToRestoreGoal ?? 0), 0);
   const fullProject = project != null && project.lightResource === false ? (project as ProjectFullDto) : undefined;
 
   const treesProgress = fullProject?.treesPlantedCount ?? treesPlanted;
