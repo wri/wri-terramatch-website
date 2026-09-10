@@ -57,6 +57,7 @@ type MetricCardExtraLayerProps = {
   progressSuffix?: string;
   labelTextStyle: "200" | "500";
   valueTextStyle: "300-bold" | "600-bold";
+  showDivider?: boolean;
 };
 
 const MetricCardExtraLayer: FC<MetricCardExtraLayerProps> = ({
@@ -64,10 +65,11 @@ const MetricCardExtraLayer: FC<MetricCardExtraLayerProps> = ({
   value,
   progressSuffix,
   labelTextStyle,
-  valueTextStyle
+  valueTextStyle,
+  showDivider = true
 }) => (
   <>
-    <SimpleDivider variant="vertical" className="!h-3" />
+    {showDivider ? <SimpleDivider variant="vertical" className="!h-3" /> : null}
     <Flex gap={1} className="items-center whitespace-nowrap">
       <Text color="neutral.700" textStyle={labelTextStyle}>
         {label}
@@ -232,7 +234,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   const progressValue = goal > 0 ? (progress / goal) * 100 : 0;
 
   return (
-    <Flex direction="column" gap={2} className="w-full">
+    <Flex direction="column" gap={1} className="w-full">
       <Flex gap={2} alignItems="center">
         {iconWithColor}
         <Text textStyle="300" color="neutral.800" className={twMerge("whitespace-nowrap", classNameTitle)}>
@@ -242,50 +244,59 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
           <MetricTooltipTrigger tooltipContent={tooltipContent} metricLabel={metricLabel} type={type} />
         )}
       </Flex>
-      <Flex gap={2} className="flex-wrap items-center">
-        <ProgressBar progress={progressValue} color={color} width={widthProgressBar} />
-        <Flex gap={1} alignItems="center">
+      <Flex direction="column" gap={0.5} alignItems="flex-start" justifyContent="center">
+        <Flex gap={2} alignItems="center">
+          <ProgressBar progress={progressValue} color={color} width={widthProgressBar} />
           <Flex gap={1} className="items-center">
-            <Text textStyle="400-bold" color="neutral.900">
-              {progressLabel ?? formatNumberLocaleString(progress)}
-            </Text>
-            {shouldRenderSuffix(progressLabel, progressSuffix) ? (
-              <Text textStyle="400-bold" color="neutral.800">
-                {progressSuffix}
+            <Flex gap={1} className="items-center">
+              <Text textStyle="400-bold" color="neutral.900">
+                {progressLabel ?? formatNumberLocaleString(progress)}
               </Text>
-            ) : null}
-          </Flex>
-          <Text textStyle="300" color="neutral.800">
-            {t("of")}
-          </Text>
-          <Flex gap={1} className="items-center">
+              {shouldRenderSuffix(progressLabel, progressSuffix) ? (
+                <Text textStyle="400-bold" color="neutral.800">
+                  {progressSuffix}
+                </Text>
+              ) : null}
+            </Flex>
             <Text textStyle="300" color="neutral.800">
-              {formatNumberLocaleString(goal)}
+              {t("of")}
             </Text>
-            {goalSuffix != null && goalSuffix !== "" ? (
+            <Flex gap={1} className="items-center">
               <Text textStyle="300" color="neutral.800">
-                {goalSuffix}
+                {formatNumberLocaleString(goal)}
               </Text>
-            ) : null}
+              {goalSuffix != null && goalSuffix !== "" ? (
+                <Text textStyle="300" color="neutral.800">
+                  {goalSuffix}
+                </Text>
+              ) : null}
+            </Flex>
           </Flex>
         </Flex>
-        {filtered !== undefined ? (
-          <MetricCardExtraLayer
-            label={t("Filtered:")}
-            value={filtered}
-            progressSuffix={progressSuffix}
-            labelTextStyle="200"
-            valueTextStyle="300-bold"
-          />
-        ) : null}
-        {selection !== undefined ? (
-          <MetricCardExtraLayer
-            label={t("Selected:")}
-            value={selection}
-            progressSuffix={progressSuffix}
-            labelTextStyle="200"
-            valueTextStyle="300-bold"
-          />
+
+        {filtered !== undefined || selection !== undefined ? (
+          <Flex gap={2} alignItems="flex-start">
+            {filtered !== undefined ? (
+              <MetricCardExtraLayer
+                label={t("Filtered:")}
+                value={filtered}
+                progressSuffix={progressSuffix}
+                labelTextStyle="200"
+                valueTextStyle="300-bold"
+                showDivider={false}
+              />
+            ) : null}
+            {selection !== undefined ? (
+              <MetricCardExtraLayer
+                label={t("Selected:")}
+                value={selection}
+                progressSuffix={progressSuffix}
+                labelTextStyle="200"
+                valueTextStyle="300-bold"
+                showDivider={filtered !== undefined}
+              />
+            ) : null}
+          </Flex>
         ) : null}
       </Flex>
     </Flex>
