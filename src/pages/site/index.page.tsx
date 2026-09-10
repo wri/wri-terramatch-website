@@ -136,14 +136,14 @@ const SiteIndexPageContent = () => {
 
       <PageHeader
         title={t("Sites")}
-        className="!bg-theme-neutral-100 !px-6 !pb-0 !pt-1"
+        className="!bg-theme-neutral-100 !px-6 !pb-0 !pt-1 mobile:flex-col mobile:items-start mobile:gap-4"
+        classNameActions="mobile:w-full"
         actions={
-          <Flex gap="0.5rem" alignItems="center">
+          <Flex gap="0.5rem" alignItems="center" className="mobile:w-full mobile:flex-col mobile:items-stretch">
             <Box className="w-[25rem] mobile:w-full">
               <HighLevelSelector
                 autocomplete
-                className="mobile:!w-full"
-                width="25rem"
+                width="100%"
                 label={t("View:")}
                 items={[
                   { label: t("All"), value: ALL_PROJECTS_VIEW },
@@ -157,6 +157,7 @@ const SiteIndexPageContent = () => {
             <Button
               size="small"
               leftIcon={<PlusIcon boxSize="0.625rem" />}
+              className="mobile:w-full"
               disabled={!canAddSite}
               onClick={handleAddSite}
             >
@@ -192,31 +193,34 @@ const SiteIndexPageContent = () => {
               {t("Loading sites...")}
             </Text>
           </Flex>
-        ) : null}
-        <div className="space-y-4">
-          {visibleProjects.map((project, index) => (
-            <SiteProjectSection
-              key={project.id}
-              project={project}
-              sites={project.sites}
-              totalSiteCount={project.totalSiteCount}
-              isFiltered={hasActiveFilters}
-              defaultOpen={index === 0}
-              onSitesChanged={handleSitesChanged}
-            />
-          ))}
-        </div>
+        ) : (
+          <>
+            <div className="space-y-4">
+              {visibleProjects.map((project, index) => (
+                <SiteProjectSection
+                  key={project.id}
+                  project={project}
+                  sites={project.sites}
+                  totalSiteCount={project.totalSiteCount}
+                  isFiltered={hasActiveFilters}
+                  defaultOpen={index === 0}
+                  onSitesChanged={handleSitesChanged}
+                />
+              ))}
+            </div>
 
-        {!loading && visibleProjects.length === 0 ? (
-          <Box background="neutral.100" h="full" p={4}>
-            <Text textStyle="400-bold">{t("No reports found")}</Text>
-            <Text textStyle="400">
-              {hasActiveFilters
-                ? t("No sites match the current search and filters.")
-                : t("No sites have been added yet.")}
-            </Text>
-          </Box>
-        ) : null}
+            {visibleProjects.length === 0 ? (
+              <Box background="neutral.100" h="full" p={4}>
+                <Text textStyle="400-bold">{t("No sites found")}</Text>
+                <Text textStyle="400">
+                  {hasActiveFilters
+                    ? t("No sites match the current search and filters.")
+                    : t("No sites have been added yet.")}
+                </Text>
+              </Box>
+            ) : null}
+          </>
+        )}
         <SiteIndexBulkBar onSitesChanged={handleSitesChanged} />
       </PageContent>
 

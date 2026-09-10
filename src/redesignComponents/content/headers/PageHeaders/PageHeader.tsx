@@ -11,9 +11,10 @@ export interface PageHeaderProps {
   label?: string;
   actions?: ReactNode;
   className?: string;
+  classNameActions?: string;
 }
 
-const PageHeader: FC<PageHeaderProps> = ({ title, tag, label, actions, className }) => {
+const PageHeader: FC<PageHeaderProps> = ({ title, tag, label, actions, className, classNameActions }) => {
   return (
     <Box
       background="secondary.neutral"
@@ -24,7 +25,7 @@ const PageHeader: FC<PageHeaderProps> = ({ title, tag, label, actions, className
       <Text textStyle="800-bold" color="primary.900">
         {title}
       </Text>
-      <Flex gap={2} alignItems="center">
+      <Flex gap={2} alignItems="center" className={classNameActions}>
         {actions}
         {label != null && (
           <Text textStyle="200-bold" color="neutral.900">
