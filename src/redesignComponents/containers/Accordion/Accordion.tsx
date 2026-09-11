@@ -152,7 +152,7 @@ const Accordion: FC<AccordionProps> = ({
         },
         ...(variant === "tertiary"
           ? {
-              "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
+              "& [data-scope='accordion'][data-part='item'] > [data-accordion-header]": {
                 borderRadius:
                   "var(--Border-Radius-300, 4px) var(--Border-Radius-300, 4px) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
                 borderTop: "var(--Border-Width-300, 4px) solid var(--Primary-500, #78CAED)",

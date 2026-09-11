@@ -25,9 +25,11 @@ const NurseriesIndexContent = () => {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [viewValue, setViewValue] = useState(ALL_PROJECTS_VIEW_VALUE);
   const [statuses, setStatuses] = useState<string[]>([]);
+  const [updates, setUpdates] = useState<string[]>([]);
   const handleNurseriesChanged = useCallback(() => setReloadNonce(current => current + 1), []);
   const selectedProjectUuid = viewValue === ALL_PROJECTS_VIEW_VALUE ? undefined : viewValue;
   const statusFilter = statuses.length === 1 ? statuses[0] : undefined;
+  const updateRequestStatusFilter = updates.length === 1 ? updates[0] : undefined;
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => setDebouncedQuery(query), SEARCH_DEBOUNCE_MS);
@@ -39,7 +41,8 @@ const NurseriesIndexContent = () => {
     {
       search: debouncedQuery,
       projectUuid: selectedProjectUuid,
-      status: statusFilter
+      status: statusFilter,
+      updateRequestStatus: updateRequestStatusFilter
     }
   );
 
@@ -55,11 +58,12 @@ const NurseriesIndexContent = () => {
 
   const selectedProject = useMemo(() => projects.find(project => project.uuid === viewValue), [projects, viewValue]);
   const filteredSections = useMemo(
-    () => filterNurseryProjectSections(sections, "", undefined, statusFilter == null ? statuses : []),
-    [sections, statusFilter, statuses]
+    () => filterNurseryProjectSections(sections, "", undefined, statuses, updates),
+    [sections, statuses, updates]
   );
+  const accordionOpenResetKey = `${viewValue}:${debouncedQuery.trim()}:${statuses.join(",")}:${updates.join(",")}`;
   const nurseryCount =
-    statuses.length > 1
+    statuses.length > 0 || updates.length > 0
       ? filteredSections.reduce((total, section) => total + section.nurseries.length, 0)
       : nurseryTotal;
   const addNurseryHref =
@@ -91,10 +95,11 @@ const NurseriesIndexContent = () => {
     return () => observer.disconnect();
   }, [filteredSections.length, hasMore, loadMore, loading, loadingMore]);
 
-  const handleApplyStatuses = useCallback(
-    (nextStatuses: string[]) => {
+  const handleApplyFilters = useCallback(
+    (nextStatuses: string[], nextUpdates: string[]) => {
       clearSelection();
       setStatuses(nextStatuses);
+      setUpdates(nextUpdates);
     },
     [clearSelection]
   );
@@ -106,8 +111,9 @@ const NurseriesIndexContent = () => {
         viewValue={viewValue}
         viewItems={viewItems}
         statuses={statuses}
+        updates={updates}
         addNurseryHref={addNurseryHref}
-        onApplyStatuses={handleApplyStatuses}
+        onApplyFilters={handleApplyFilters}
         onViewChange={handleViewChange}
         onQueryChange={setQuery}
       />
@@ -128,19 +134,23 @@ const NurseriesIndexContent = () => {
           <Box background="neutral.100" h="full" p={4}>
             <Text textStyle="400-bold">{t("No nurseries found")}</Text>
             <Text textStyle="400">
-              {query.trim() === "" && statuses.length === 0
+              {query.trim() === "" && statuses.length === 0 && updates.length === 0
                 ? t("There are no nurseries available for this project view.")
                 : t("Try changing your search or filters.")}
             </Text>
           </Box>
         ) : (
-          <div className="space-y-4">
+          <Flex gap={4} flexDirection="column">
             {filteredSections.map((section, index) => (
               <NurseryProjectSection
                 key={`${viewValue}-${section.id}-${reloadNonce}`}
                 section={section}
-                isFiltered={query.trim() !== "" || statuses.length > 0}
-                defaultOpen={viewValue !== ALL_PROJECTS_VIEW_VALUE && index === 0}
+                query={debouncedQuery}
+                statuses={statuses}
+                updates={updates}
+                isFiltered={query.trim() !== "" || statuses.length > 0 || updates.length > 0}
+                defaultOpen={index === 0}
+                openResetKey={accordionOpenResetKey}
               />
             ))}
             {hasMore ? (
@@ -155,7 +165,7 @@ const NurseriesIndexContent = () => {
                 ) : null}
               </Flex>
             ) : null}
-          </div>
+          </Flex>
         )}
         <NurseriesIndexBulkBar onNurseriesChanged={handleNurseriesChanged} />
       </PageContent>

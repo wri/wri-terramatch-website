@@ -27,6 +27,7 @@ export type NurseriesIndexQuery = {
   search?: string;
   projectUuid?: string;
   status?: string;
+  updateRequestStatus?: string;
 };
 
 const mergeByUuid = <T extends { uuid: string }>(current: T[], incoming: T[]) => {
@@ -66,6 +67,7 @@ const toNurseryFilter = (query: NurseriesIndexQuery): NurseryIndexFilter | undef
   if (search != null) filter.search = search;
   if (query.projectUuid != null) filter.projectUuid = query.projectUuid;
   if (query.status != null) filter.status = query.status;
+  if (query.updateRequestStatus != null) filter.updateRequestStatus = query.updateRequestStatus;
 
   return Object.keys(filter).length === 0 ? undefined : filter;
 };
@@ -194,7 +196,7 @@ export const useNurseriesIndexData = (reloadNonce = 0, query: NurseriesIndexQuer
     return () => {
       cancelled = true;
     };
-  }, [query.projectUuid, query.search, query.status, reloadNonce]);
+  }, [query.projectUuid, query.search, query.status, query.updateRequestStatus, reloadNonce]);
 
   const sections = useMemo(() => {
     if (query.projectUuid != null) {

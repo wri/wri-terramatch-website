@@ -13,14 +13,23 @@ import Log from "@/utils/log";
 
 import { useNurseryTableSelection } from "../NurseriesSelection.provider";
 import type { NurseryIndexProjectSection, NurseryIndexRow } from "../nurseryIndex.types";
-import { buildSeedlingsGrownMetric, sumNurserySeedlingsGrown, toNurseryIndexRows } from "../nurseryIndex.utils";
+import {
+  buildSeedlingsGrownMetric,
+  filterNurseryProjectSections,
+  sumNurserySeedlingsGrown,
+  toNurseryIndexRows
+} from "../nurseryIndex.utils";
 import { loadAllIndexPages, SECTION_NURSERIES_PAGE_SIZE } from "../useNurseriesIndexData";
 import NurseryIndexTable from "./NurseryIndexTable";
 
 type NurseryProjectSectionProps = {
   section: NurseryIndexProjectSection;
+  query?: string;
+  statuses?: string[];
+  updates?: string[];
   isFiltered?: boolean;
   defaultOpen?: boolean;
+  openResetKey?: string;
 };
 
 const useNurserySectionDetails = (section: NurseryIndexProjectSection, open: boolean) => {
@@ -111,21 +120,35 @@ const useNurserySectionDetails = (section: NurseryIndexProjectSection, open: boo
   return { nurseries, seedlingsGrown, loading };
 };
 
-const NurseryProjectSection = ({ section, isFiltered = false, defaultOpen = false }: NurseryProjectSectionProps) => {
+const NurseryProjectSection = ({
+  section,
+  query = "",
+  statuses = [],
+  updates = [],
+  isFiltered = false,
+  defaultOpen = false,
+  openResetKey
+}: NurseryProjectSectionProps) => {
   const t = useT();
   const [open, setOpen] = useState(defaultOpen);
   const { nurseries, seedlingsGrown, loading } = useNurserySectionDetails(section, open);
-  const { selectedRows } = useNurseryTableSelection(nurseries);
+  const visibleNurseries = useMemo(
+    () =>
+      filterNurseryProjectSections([{ ...section, nurseries }], query, undefined, statuses, updates)[0]?.nurseries ??
+      [],
+    [nurseries, query, section, statuses, updates]
+  );
+  const { selectedRows } = useNurseryTableSelection(visibleNurseries);
   const attentionCount = useMemo(
     () => nurseries.filter(nursery => nursery.status === "information-required").length,
     [nurseries]
   );
-  const filteredSeedlings = useMemo(() => sumNurserySeedlingsGrown(nurseries), [nurseries]);
+  const filteredSeedlings = useMemo(() => sumNurserySeedlingsGrown(visibleNurseries), [visibleNurseries]);
   const selectedSeedlings = useMemo(() => sumNurserySeedlingsGrown(selectedRows), [selectedRows]);
 
   useEffect(() => {
-    if (defaultOpen) setOpen(true);
-  }, [defaultOpen]);
+    setOpen(defaultOpen);
+  }, [defaultOpen, openResetKey]);
 
   return (
     <Accordion
@@ -144,7 +167,7 @@ const NurseryProjectSection = ({ section, isFiltered = false, defaultOpen = fals
             open ? (
               <FolderOpenIcon minWidth={5} width={5} height="auto" color="primary.600" />
             ) : (
-              <FolderIcon minWidth={5} width={5} height="auto" color="neutral.400" />
+              <FolderIcon minWidth={5} width={5} height="auto" color="primary.600" />
             )
           }
           statusLabels={
@@ -180,7 +203,7 @@ const NurseryProjectSection = ({ section, isFiltered = false, defaultOpen = fals
               selection={selectedRows.length > 0 ? selectedSeedlings : undefined}
               filtered={isFiltered ? filteredSeedlings : undefined}
             />
-            <NurseryIndexTable nurseries={nurseries} />
+            <NurseryIndexTable nurseries={visibleNurseries} />
           </>
         ) : null}
       </Flex>

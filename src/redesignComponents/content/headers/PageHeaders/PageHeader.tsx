@@ -4,6 +4,7 @@ import { FC, ReactNode } from "react";
 
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { type TagSubmissionProps } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import { getThemedColor } from "@/lib/theme";
 
 export interface PageHeaderProps {
   title: string;
