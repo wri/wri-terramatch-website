@@ -8,6 +8,7 @@ import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { parsePolygonDataV3 } from "@/components/elements/Map-mapbox/utils";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -18,7 +19,6 @@ import { useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { getEntitiesOptions } from "@/constants/options/entities";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { TranslatedText } from "@/i18n/types";
@@ -143,6 +143,13 @@ const EntityGalleryCard = ({
 
   const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
   const polygonDataMap = parsePolygonDataV3(mapIndexLoaded ? mapIndex?.polygons : undefined);
+  const polygonEntityScope = useMemo<PolygonEntityScope | undefined>(
+    () =>
+      (modelName === "projects" || modelName === "sites") && entityUUID
+        ? { entityName: modelName, entityUuid: entityUUID }
+        : undefined,
+    [modelName, entityUUID]
+  );
 
   const filterOptions = useMemo(() => {
     const mapping: any = {
@@ -232,7 +239,7 @@ const EntityGalleryCard = ({
         <PageCard title={t("{modelTitle} Area", { modelTitle })}>
           <MapContainer
             polygonsData={polygonDataMap}
-            sitePolygonData={mapIndex?.polygons as SitePolygonLightDto[] | undefined}
+            polygonEntityScope={polygonEntityScope}
             bbox={mapBbox}
             className="rounded-lg"
             onDeleteImage={async uuid => {

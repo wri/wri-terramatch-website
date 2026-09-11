@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { type MapDrawSaveHandler, useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import type { PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
+import type { PolygonEntityScope, PolygonFromMapState } from "@/components/elements/Map-mapbox/Map.d";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useAllMedias } from "@/connections/EntityAssociation";
 import {
@@ -142,6 +142,11 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   const hasPolygons = polygons.length > 0;
 
+  const polygonEntityScope = useMemo<PolygonEntityScope>(
+    () => ({ entityName: type, entityUuid: entityModel.uuid }),
+    [type, entityModel.uuid]
+  );
+
   const deletedAuditPolygonUuids = useMemo(() => {
     if (!isDeletedAuditView) {
       return undefined;
@@ -249,6 +254,7 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
         mediaFiles={mediaFiles}
         sitePolygonData={sitePolygonDataV3}
+        polygonEntityScope={polygonEntityScope}
         disabledPolygonPanel={disabledPolygonPanel}
         autoEditPolygon={editPolygon.isOpen}
         polygonTableHighlight={polygonTableHighlight}

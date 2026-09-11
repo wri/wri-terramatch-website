@@ -53,6 +53,11 @@ export type PolygonFromMapState = {
 
 export type SetPolygonFromMap = React.Dispatch<React.SetStateAction<PolygonFromMapState>>;
 
+export type PolygonEntityScope = {
+  entityName: "sites" | "projects";
+  entityUuid: string;
+};
+
 export type EditPolygonState = {
   isOpen: boolean;
   uuid: string;
@@ -73,6 +78,7 @@ export type PopupComponentProps = {
   layerName?: string;
   setPolygonFromMap?: SetPolygonFromMap;
   sitePolygonData?: SitePolygonLightDto[];
+  polygonEntityScope?: PolygonEntityScope;
   type: TooltipType;
   setShouldRefetchPolygonData?: (value: boolean) => void;
   editPolygon: EditPolygonState;

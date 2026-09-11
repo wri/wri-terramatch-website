@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
@@ -171,8 +172,16 @@ const OverviewMapArea = ({
 
   useEffect(() => {
     setPolygonCriteriaMap(polygonCriteriaMap);
-    setPolygonData((isPanelEnabled ? polygonsData : mapPolygons) as SitePolygonLightDto[]);
-  }, [isPanelEnabled, mapPolygons, polygonCriteriaMap, polygonsData, setPolygonCriteriaMap, setPolygonData]);
+    setPolygonData(isPanelEnabled ? polygonsData ?? [] : []);
+  }, [isPanelEnabled, polygonCriteriaMap, polygonsData, setPolygonCriteriaMap, setPolygonData]);
+
+  const polygonEntityScope = useMemo<PolygonEntityScope | undefined>(
+    () =>
+      entityModel?.uuid != null && entityModel.uuid !== ""
+        ? { entityName: entityType, entityUuid: entityModel.uuid }
+        : undefined,
+    [entityType, entityModel?.uuid]
+  );
 
   useEffect(() => {
     if (disabledPolygonPanel) {
@@ -319,6 +328,7 @@ const OverviewMapArea = ({
           shouldBboxZoom={!shouldRefetchPolygonData}
           mediaFiles={mediaFiles}
           sitePolygonData={sitePolygonDataV3}
+          polygonEntityScope={polygonEntityScope}
           disabledPolygonPanel={disabledPolygonPanel}
           hideFullscreenControl={hideFullscreenControl}
           hideMediaPopupActions={disabledPolygonPanel}

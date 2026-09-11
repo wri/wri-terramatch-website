@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
+import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { parsePolygonDataV3 } from "@/components/elements/Map-mapbox/utils";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
 import { useBoundingBox } from "@/connections/BoundingBox";
@@ -38,6 +39,14 @@ const MonitoredDataMap = ({
   });
   const sitePolygons = mapIndex?.polygons;
 
+  const polygonEntityScope = useMemo<PolygonEntityScope | undefined>(
+    () =>
+      (entityName === "sites" || entityName === "projects") && entityUuid !== ""
+        ? { entityName, entityUuid }
+        : undefined,
+    [entityName, entityUuid]
+  );
+
   const [, { data: mediaFiles }] = useMedias({
     entity: entityName as SupportedEntity,
     uuid: entityUuid
@@ -71,7 +80,7 @@ const MonitoredDataMap = ({
         <MapContainer
           className="!h-full"
           mapFunctions={mapFunctions}
-          sitePolygonData={[]}
+          polygonEntityScope={polygonEntityScope}
           hasControls={!selected.includes("6")}
           showLegend={!selected.includes("6")}
           legendPosition="bottom-right"
