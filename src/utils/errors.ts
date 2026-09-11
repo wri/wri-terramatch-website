@@ -20,6 +20,12 @@ export const getErrorMessages = (t: typeof useT, errorCode: string, variables: a
         variables
       ),
       type: "max"
+    },
+    CSV_REQUIRED: {
+      message: t("Uploaded file must be a CSV")
+    },
+    MISSING_CSV_COLUMN: {
+      message: t("{column} column missing", variables)
     }
   };
 

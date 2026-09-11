@@ -10,7 +10,7 @@ import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 import PolygonHandoffSummary from "@/admin/components/ResourceTabs/AuditLogTab/components/PolygonHandoffSummary";
 
 const ProjectOverview: FC = () => {
-  const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | undefined>();
+  const [statusModal, setStatusModal] = useState<"approved" | "information-required" | undefined>();
   const { record } = useShowContext();
 
   return (
@@ -59,8 +59,8 @@ const ProjectOverview: FC = () => {
             <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
               <Button
                 variant="outlined"
-                disabled={record?.status === "needs-more-information"}
-                onClick={() => setStatusModal("needs-more-information")}
+                disabled={record?.status === "information-required" || record?.status === "draft"}
+                onClick={() => setStatusModal("information-required")}
               >
                 Request More Info
               </Button>
@@ -69,8 +69,9 @@ const ProjectOverview: FC = () => {
                 startIcon={<Check />}
                 disabled={
                   record?.status === "approved" ||
-                  record?.updateRequestStatus === "awaiting-approval" ||
-                  record?.updateRequestStatus === "draft"
+                  record?.updateRequestStatus === "pending-approval" ||
+                  record?.updateRequestStatus === "draft" ||
+                  record?.status === "draft"
                 }
                 onClick={() => setStatusModal("approved")}
               >

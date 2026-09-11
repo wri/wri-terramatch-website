@@ -83,6 +83,16 @@ const useGetColumnTitles = ({
         totalToDateColumn: t("TOTAL REMOVED TO DATE:")
       };
     }
+    if (collection === "established") {
+      return {
+        totalReportedColumn: isReport
+          ? t("TOTAL ESTABLISHED THIS REPORT:")
+          : withNumbers
+          ? t("ESTABLISHED TREES:")
+          : "",
+        totalToDateColumn: t("TOTAL ESTABLISHED TO DATE:")
+      };
+    }
     return {
       totalReportedColumn: isReport ? t("TOTAL PLANTED THIS REPORT:") : withNumbers ? t("TREES TO BE PLANTED:") : "",
       totalToDateColumn: t("TOTAL PLANTED TO DATE:")

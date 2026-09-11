@@ -20,7 +20,7 @@ export const useDownloadFormAnswers = ({ fieldsProvider, formHook }: UseDownload
   return useCallback(() => {
     runWithDownloadToast(
       {
-        downloading: t("Downloading Answers..."),
+        downloading: t("Downloading Answers"),
         complete: downloadToastMessages.complete,
         error: downloadToastMessages.error
       },

@@ -12,6 +12,17 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
+const children = (
+  <div className="flex gap-3">
+    <Button variant="secondary">View Feedback</Button>
+    <Button variant="secondary">Learn More</Button>
+    <Button>Setup Project</Button>
+  </div>
+);
+
+const description =
+  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.";
+
 export const Default: Story = {
   decorators: [
     Story => (
@@ -21,24 +32,17 @@ export const Default: Story = {
     )
   ],
   args: {
-    status: "success",
-    children: (
-      <div className="flex gap-3">
-        <Button variant="secondary">View Feedback</Button>
-        <Button variant="secondary">Learn More</Button>
-        <Button>Setup Project</Button>
-      </div>
-    ),
-    description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+    status: "approved",
+    children,
+    description
   }
 };
 
-export const Error: Story = {
+export const Due: Story = {
   ...Default,
   args: {
     ...Default.args,
-    status: "error"
+    status: "due"
   }
 };
 
@@ -46,22 +50,46 @@ export const Draft: Story = {
   ...Default,
   args: {
     ...Default.args,
-    status: "edit"
+    status: "draft"
   }
 };
 
-export const Awaiting: Story = {
+export const PendingApproval: Story = {
   ...Default,
   args: {
     ...Default.args,
-    status: "awaiting"
+    status: "pending-approval"
   }
 };
 
-export const Warning: Story = {
+export const InformationRequired: Story = {
   ...Default,
   args: {
     ...Default.args,
-    status: "warning"
+    status: "information-required"
+  }
+};
+
+export const NotSelected: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    status: "rejected"
+  }
+};
+
+export const NothingReported: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    status: "nothing-to-report"
+  }
+};
+
+export const Restoration: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    status: "restoration"
   }
 };

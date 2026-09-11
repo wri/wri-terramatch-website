@@ -8,6 +8,7 @@ import {
   CURRENT_RATIO_COLUMNS,
   DOCUMENTATION_COLUMNS,
   formatFinancialData,
+  hasRequiredDocumentationFiles,
   NON_PROFILE_ANALYSIS_COLUMNS,
   PROFIT_ANALYSIS_COLUMNS
 } from "@/components/elements/Inputs/FinancialTableInput/types";
@@ -37,7 +38,14 @@ const getTableHtml = (body: string, t: typeof useT) => {
 export const FinancialIndicatorsField: FormFieldFactory = {
   addValidation: addValidationWith(({ validation }) =>
     yup.array().test("required-documentation", function (value) {
-      if (!Array.isArray(value)) return true;
+      // Documentation is only mandatory when the form question itself is marked required.
+      if (validation?.required !== true) return true;
+
+      if (!Array.isArray(value) || value.length === 0) {
+        return this.createError({
+          message: "At least one document upload is required. Please upload at least one supporting document."
+        });
+      }
 
       const documentationEntries = value.filter(
         (item: { uuid?: string; collection?: string }) =>
@@ -47,19 +55,19 @@ export const FinancialIndicatorsField: FormFieldFactory = {
           item.uuid != null && item.collection === "description-documents"
       );
 
-      if (validation?.required === true && documentationEntries.length === 0) {
+      if (documentationEntries.length === 0) {
         return this.createError({
           message: "At least one document upload is required. Please upload at least one supporting document."
         });
       }
 
-      if (documentationEntries.length === 0) {
-        return true;
-      }
-
       const missingYears = documentationEntries
-        .filter(entry => !Array.isArray((entry as any).documentation) || (entry as any).documentation.length === 0)
-        .map(entry => entry.year as number | string);
+        .filter(
+          (entry: { documentation?: { uuid?: string | null; uploadState?: { error?: string | null } }[] }) =>
+            !hasRequiredDocumentationFiles(entry.documentation)
+        )
+        .map((entry: { year?: number | string }) => entry.year)
+        .filter((year): year is number | string => year != null);
 
       if (missingYears.length > 0) {
         return this.createError({

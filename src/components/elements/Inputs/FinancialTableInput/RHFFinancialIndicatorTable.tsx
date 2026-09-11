@@ -18,9 +18,16 @@ import { DataMutationCallback, useTableData } from "@/components/elements/Inputs
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { deleteMedia, fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
 import { useNotificationContext } from "@/context/notification.provider";
-import { useWizardOrgFormDetails } from "@/context/wizardForm.provider";
+import {
+  useFieldsProvider,
+  useFormModelUuid,
+  useShowValidationErrors,
+  useWizardOrgFormDetails
+} from "@/context/wizardForm.provider";
 import { isTranslatableError } from "@/generated/v3/utils";
+import { normalizedFormData } from "@/helpers/customForms";
 import { useFiles } from "@/hooks/useFiles";
+import { useFormUpdate, useSubmissionUpdate } from "@/hooks/useFormUpdate";
 import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { getErrorMessages } from "@/utils/errors";
@@ -45,6 +52,7 @@ import {
   FinancialRow,
   ForProfitAnalysisData,
   HandleChangePayload,
+  hasRequiredDocumentationFiles,
   NON_PROFILE_ANALYSIS_COLUMNS,
   PROFIT_ANALYSIS_COLUMNS,
   RHFFinancialIndicatorsDataTableProps,
@@ -109,14 +117,106 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const router = useRouter();
     const { id } = useParams<"id">();
     const { files, addFile, removeFile } = useFiles(true);
-    const { collection } = props;
+    const { collection, required, error } = props;
     const orgDetails = useWizardOrgFormDetails();
+    const showValidationErrors = useShowValidationErrors();
+    const fieldsProvider = useFieldsProvider();
+    const financialReportUuid = useFormModelUuid("financialReports");
+    const submissionUuid = typeof router.query.submissionUUID === "string" ? router.query.submissionUUID : undefined;
+    const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate(
+      financialReportUuid != null ? "financialReports" : undefined,
+      financialReportUuid
+    );
+    const { updateSubmission, submissionUpdating } = useSubmissionUpdate(submissionUuid);
     const resource = useResourceContext();
 
     const [resetTable, setResetTable] = useState(0);
     const { openNotification } = useNotificationContext();
 
     const { data, updateData, selectCurrency } = useTableData(props);
+    const isSaving = entityAnswersUpdating || submissionUpdating;
+    const isSavingRef = useRef(isSaving);
+    isSavingRef.current = isSaving;
+    const didPersistRef = useRef(false);
+    const persistPromiseRef = useRef<Promise<void> | null>(null);
+    const saveWaitersRef = useRef<
+      {
+        resolve: () => void;
+        reject: (error: Error) => void;
+        sawSaving: boolean;
+        timeoutId: ReturnType<typeof setTimeout>;
+      }[]
+    >([]);
+
+    useEffect(() => {
+      saveWaitersRef.current = saveWaitersRef.current.filter(waiter => {
+        if (isSaving) {
+          waiter.sawSaving = true;
+          return true;
+        }
+        if (!waiter.sawSaving) return true;
+        clearTimeout(waiter.timeoutId);
+        waiter.resolve();
+        return false;
+      });
+    }, [isSaving]);
+
+    useEffect(
+      () => () => {
+        saveWaitersRef.current.forEach(waiter => clearTimeout(waiter.timeoutId));
+        saveWaitersRef.current = [];
+      },
+      []
+    );
+
+    const waitForFormSave = useCallback((requireSaving: boolean) => {
+      return new Promise<void>((resolve, reject) => {
+        if (!requireSaving && !isSavingRef.current) {
+          resolve();
+          return;
+        }
+
+        const waiter = {
+          resolve,
+          reject,
+          sawSaving: isSavingRef.current,
+          timeoutId: setTimeout(() => {
+            saveWaitersRef.current = saveWaitersRef.current.filter(current => current !== waiter);
+            reject(new Error("Timed out waiting for form save."));
+          }, 20000)
+        };
+        saveWaitersRef.current.push(waiter);
+      });
+    }, []);
+
+    const persistFinancialIndicatorAnswers = useCallback(async () => {
+      if (didPersistRef.current) return;
+      if (persistPromiseRef.current != null) return persistPromiseRef.current;
+      const formHook = props.formHook;
+      if (formHook == null) return;
+
+      persistPromiseRef.current = (async () => {
+        const answers = normalizedFormData(formHook.getValues(), fieldsProvider);
+        await waitForFormSave(false);
+        if (financialReportUuid != null) updateEntityAnswers({ answers });
+        else if (submissionUuid != null) updateSubmission({ answers });
+        else throw new Error("Unable to save financial indicators before upload.");
+        await waitForFormSave(true);
+        didPersistRef.current = true;
+      })().finally(() => {
+        persistPromiseRef.current = null;
+      });
+
+      return persistPromiseRef.current;
+    }, [
+      fieldsProvider,
+      financialReportUuid,
+      props.formHook,
+      submissionUuid,
+      updateEntityAnswers,
+      updateSubmission,
+      waitForFormSave
+    ]);
 
     // UUID is filled in with override in the call to uploadFile
     const uploadFile = useUploadFile({
@@ -164,6 +264,24 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             })
           );
         };
+
+        try {
+          await persistFinancialIndicatorAnswers();
+        } catch (error) {
+          const errorMessage =
+            typeof error === "object" && error != null && "message" in error && typeof error.message === "string"
+              ? error.message
+              : t("UPLOAD ERROR: An error occurred during upload. Please try again or upload a smaller file.");
+          const errorFile: Partial<UploadedFile> = {
+            ...fileObject,
+            uploadState: { isLoading: false, isSuccess: false, error: errorMessage }
+          };
+          addFile(errorFile);
+          updateDocumentation(errorFile);
+          openNotification("error", t("Error uploading file"), errorMessage);
+          return;
+        }
+
         uploadFile(await prepareFileForUpload(file), {
           ...fileUploadOptions(file, "documentation", {
             onSuccess: successFile => {
@@ -185,7 +303,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           urlVariablesOverride: { pathParams: { uuid: context.uuid } }
         });
       },
-      [addFile, openNotification, setDocumentationData, t, uploadFile]
+      [addFile, persistFinancialIndicatorAnswers, openNotification, setDocumentationData, t, uploadFile]
     );
 
     const onDeleteFile = useCallback(
@@ -268,7 +386,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             });
 
             return (
-              <InputWrapper required={props.required}>
+              <InputWrapper>
                 <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                   <div className="flex items-center gap-2">
                     {getCurrencySymbolPrefix(String(selectCurrency))}
@@ -335,7 +453,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             });
 
             return (
-              <InputWrapper required={props.required}>
+              <InputWrapper>
                 <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                   <div className="flex items-center gap-2">
                     {getCurrencySymbolPrefix(String(selectCurrency))}
@@ -343,7 +461,6 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                       type="text"
                       inputMode="decimal"
                       variant="secondary"
-                      required
                       className="border-none !p-0"
                       name={`row-${row.index}-${columnKey}`}
                       value={tempValue}
@@ -380,7 +497,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           )
         }
       ],
-      [data.forProfitAnalysisData, props.formHook, props.name, props.required, selectCurrency, t, updateData]
+      [data.forProfitAnalysisData, props.formHook, props.name, selectCurrency, t, updateData]
     );
 
     const nonProfitAnalysisColumns = useMemo(
@@ -428,7 +545,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             });
 
             return (
-              <InputWrapper required={props.required}>
+              <InputWrapper>
                 <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                   <div className="flex items-center gap-2">
                     {getCurrencySymbolPrefix(String(selectCurrency))}
@@ -461,7 +578,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           }
         }
       ],
-      [data.nonProfitAnalysisData, props.formHook, props.name, props.required, selectCurrency, t, updateData]
+      [data.nonProfitAnalysisData, props.formHook, props.name, selectCurrency, t, updateData]
     );
 
     const currentRatioColumns = useMemo(
@@ -506,7 +623,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             });
 
             return (
-              <InputWrapper required={props.required}>
+              <InputWrapper>
                 <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                   <div className="flex items-center gap-2">
                     {getCurrencySymbolPrefix(String(selectCurrency))}
@@ -570,12 +687,11 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             });
 
             return (
-              <InputWrapper required={props.required}>
+              <InputWrapper>
                 <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                   <div className="flex items-center gap-2">
                     {getCurrencySymbolPrefix(String(selectCurrency))}
                     <Input
-                      required
                       type="text"
                       inputMode="decimal"
                       variant="secondary"
@@ -615,7 +731,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           )
         }
       ],
-      [data.currentRatioData, props.formHook, props.name, props.required, selectCurrency, t, updateData]
+      [data.currentRatioData, props.formHook, props.name, selectCurrency, t, updateData]
     );
 
     const documentationColumns = useMemo(
@@ -761,10 +877,12 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
             const files = toArray(data.documentationData[rowIndex]?.[columnKey] as UploadedFile | UploadedFile[]);
 
-            // Check if this year has documentation entries but no files uploaded
             const hasDocumentationEntry = data.documentationData[rowIndex]?.year === row.original.year;
-            const hasFiles = files && files.length > 0;
-            const showError = hasDocumentationEntry && !hasFiles;
+            const showError =
+              required === true &&
+              showValidationErrors &&
+              hasDocumentationEntry &&
+              !hasRequiredDocumentationFiles(files, { includePending: true });
 
             const handleSelectFile = async (file: File) => {
               await onSelectFile(file, {
@@ -807,7 +925,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           }
         }
       ],
-      [data.documentationData, handleDeleteFile, onSelectFile, t, updateData]
+      [data.documentationData, handleDeleteFile, onSelectFile, required, showValidationErrors, t, updateData]
     );
 
     useEffect(() => {
@@ -843,7 +961,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         description={props.description}
         inputId={id}
         feedbackRequired={props.feedbackRequired}
-        error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
+        error={error}
       >
         {collection?.includes("profit") && (
           <div className="mb-10">

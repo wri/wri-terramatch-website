@@ -33,7 +33,11 @@ import {
 } from "@/utils/polygonAnalytics";
 
 import type { OverlapFixPolygon } from "../components/Modals/OverlapFix";
-import type { PolygonOverlapFixParams } from "../components/polygonEdit.types";
+import type {
+  PolygonOverlapFixParams,
+  PolygonRunValidationWithResultsOptions,
+  PolygonValidationJobsStartedOptions
+} from "../components/polygonEdit.types";
 import { prunePolygonValidationCache } from "../components/polygonEditSave";
 import type { PolygonTableRow } from "../components/PolygonTableRow";
 import { mapSitePolygonToTableRow } from "../components/polygonTableRow.utils";
@@ -86,8 +90,7 @@ type UseSitePolygonBulkActionsParams = {
     polygonsFixed: OverlapFixPolygon[];
     polygonsNotFixed: OverlapFixPolygon[];
   }) => void;
-  onValidationJobsStarted?: (polygonUuids: string[], options?: { trackBulkCompletion?: boolean }) => void;
-  onValidationPending?: (polygonUuids: string[]) => void;
+  onValidationJobsStarted?: (polygonUuids: string[], options?: PolygonValidationJobsStartedOptions) => void;
   onValidationPendingClear?: () => void;
   /** Drop local/cached validation UI for geometries cleared server-side by clipping. */
   onValidationUiCleared?: (geometryPolygonUuids: string[]) => void;
@@ -110,7 +113,6 @@ export const useSitePolygonBulkActions = ({
   fetchOverlapValidations,
   onOverlapFixResultsOpen,
   onValidationJobsStarted,
-  onValidationPending,
   onValidationPendingClear,
   onValidationUiCleared
 }: UseSitePolygonBulkActionsParams) => {
@@ -343,7 +345,7 @@ export const useSitePolygonBulkActions = ({
     } catch (error) {
       Log.error("Failed to delete selected polygons:", error);
       closePolygonProgressToast(POLYGON_TOAST_IDS.deleting);
-      showToast({ label: t("Error deleting polygons"), type: "error", placement: "bottom", duration: 5000 });
+      showToast({ label: t("Error Deleting Polygons"), type: "error", placement: "bottom", duration: 5000 });
       throw error;
     } finally {
       setIsDeletingPolygons(false);
@@ -352,20 +354,20 @@ export const useSitePolygonBulkActions = ({
   }, [closeMapPopups, deletePayload, invalidatePolygonMapTiles, refreshPolygonData, t, toastLabels]);
 
   const runPolygonValidation = useCallback(
-    async (polygonUuids: string[]) => {
+    async (polygonUuids: string[], options?: PolygonValidationJobsStartedOptions) => {
       if (polygonUuids.length === 0) {
         return;
       }
 
       await createPolygonValidation({ polygonUuids });
       ApiSlice.pruneCache("validations");
-      onValidationJobsStarted?.(polygonUuids);
+      onValidationJobsStarted?.(polygonUuids, options);
     },
     [onValidationJobsStarted]
   );
 
   const handleRunValidation = useCallback(
-    async (polygonUuids: string[]) => {
+    async (polygonUuids: string[], options?: PolygonValidationJobsStartedOptions) => {
       if (polygonUuids.length === 0) {
         return;
       }
@@ -373,10 +375,10 @@ export const useSitePolygonBulkActions = ({
       try {
         setValidatingPolygonCount(polygonUuids.length);
         setIsValidatingPolygons(true);
-        await runPolygonValidation(polygonUuids);
+        await runPolygonValidation(polygonUuids, options);
       } catch (error) {
         Log.error("Failed to validate selected polygons:", error);
-        showToast({ label: t("Failed to validate polygons"), type: "error", placement: "bottom", duration: 5000 });
+        showToast({ label: t("Failed to Validate Polygons"), type: "error", placement: "bottom", duration: 5000 });
         throw error;
       } finally {
         setIsValidatingPolygons(false);
@@ -413,22 +415,30 @@ export const useSitePolygonBulkActions = ({
   }, []);
 
   const runValidationWithResultsModal = useCallback(
-    async (geometryPolygonUuids: string[]) => {
+    async (geometryPolygonUuids: string[], options?: PolygonRunValidationWithResultsOptions) => {
       if (geometryPolygonUuids.length === 0) {
         return;
       }
 
       trackPolygonRunValidationClicked({ siteUuid: site.uuid, polygonIds: geometryPolygonUuids });
 
+      const fallbackPolygons = options?.fallbackPolygons ?? [];
       const rows = geometryPolygonUuids
-        .map(geometryPolygonUuid =>
-          polygonsData.find(polygon => (polygon.polygonUuid ?? polygon.uuid) === geometryPolygonUuid)
-        )
-        .filter((polygon): polygon is SitePolygonLightDto => polygon != null)
-        .map(polygon => mapSitePolygonToTableRow(polygon, t));
+        .map(geometryPolygonUuid => {
+          const polygon =
+            fallbackPolygons.find(item => (item.polygonUuid ?? item.uuid) === geometryPolygonUuid) ??
+            polygonsData.find(item => (item.polygonUuid ?? item.uuid) === geometryPolygonUuid);
+          return polygon != null ? mapSitePolygonToTableRow(polygon, t) : null;
+        })
+        .filter((row): row is PolygonTableRow => row != null);
 
-      onValidationPending?.(geometryPolygonUuids);
-      geometryPolygonUuids.forEach(geometryPolygonUuid => {
+      const cacheUuids = [
+        ...geometryPolygonUuids,
+        ...(options?.previousGeometryPolygonUuid != null && options.previousGeometryPolygonUuid !== ""
+          ? [options.previousGeometryPolygonUuid]
+          : [])
+      ];
+      cacheUuids.forEach(geometryPolygonUuid => {
         prunePolygonValidationCache(geometryPolygonUuid);
       });
       ApiSlice.pruneCache("validations");
@@ -436,22 +446,17 @@ export const useSitePolygonBulkActions = ({
       validationResultsModalPendingRef.current = true;
       setValidatedPolygons(rows);
 
+      const validationJobsStartedOptions: PolygonValidationJobsStartedOptions | undefined =
+        options?.validationAfterCriteriaClear === true ? { validationAfterCriteriaClear: true } : undefined;
+
       try {
-        await handleRunValidation(geometryPolygonUuids);
+        await handleRunValidation(geometryPolygonUuids, validationJobsStartedOptions);
       } catch {
         onValidationPendingClear?.();
         cancelPendingValidationResultsModal();
       }
     },
-    [
-      cancelPendingValidationResultsModal,
-      handleRunValidation,
-      onValidationPending,
-      onValidationPendingClear,
-      polygonsData,
-      site.uuid,
-      t
-    ]
+    [cancelPendingValidationResultsModal, handleRunValidation, onValidationPendingClear, polygonsData, site.uuid, t]
   );
 
   const handlePolygonDeletingChange = useCallback((isDeleting: boolean, count = 0) => {
@@ -587,7 +592,7 @@ export const useSitePolygonBulkActions = ({
         setPolygonTableHoveredUuid(null);
       } catch (error) {
         Log.error("Failed to fix selected polygon overlaps:", error);
-        showPolygonErrorToast(t("Failed to fix selected polygon overlaps"));
+        showPolygonErrorToast(t("Failed to Fix Selected Polygon Overlaps"));
       } finally {
         setIsFixingOverlaps(false);
         setFixingOverlapsCount(0);
@@ -722,7 +727,7 @@ export const useSitePolygonBulkActions = ({
       } catch (error) {
         Log.error("Failed to submit selected polygons:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
-        showToast({ label: t("Error submitting polygons"), type: "error", placement: "bottom", duration: 5000 });
+        showToast({ label: t("Error Submitting Polygons"), type: "error", placement: "bottom", duration: 5000 });
         throw error;
       } finally {
         setIsSubmittingPolygons(false);
@@ -833,7 +838,7 @@ export const useSitePolygonBulkActions = ({
         });
       } catch (error) {
         Log.error("Failed to approve selected polygons:", error);
-        showToast({ label: t("Error approving polygons"), type: "error", placement: "bottom", duration: 5000 });
+        showToast({ label: t("Error Approving Polygons"), type: "error", placement: "bottom", duration: 5000 });
         throw error;
       }
     },
@@ -909,7 +914,7 @@ export const useSitePolygonBulkActions = ({
       } catch (error) {
         Log.error("Failed to request information for selected polygons:", error);
         showToast({
-          label: t("Error requesting information for polygons"),
+          label: t("Error Requesting Information for Polygons"),
           type: "error",
           placement: "bottom",
           duration: 5000
@@ -972,7 +977,7 @@ export const useSitePolygonBulkActions = ({
         Log.error("Failed to download selected polygons:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.downloading);
         showToast({
-          label: t("Error downloading polygon"),
+          label: t("Error Downloading Polygon"),
           type: "error",
           placement: "bottom",
           duration: 5000,
@@ -1050,7 +1055,7 @@ export const useSitePolygonBulkActions = ({
       } catch (error) {
         Log.error("Failed to update selected polygon details:", error);
         closePolygonProgressToast(POLYGON_TOAST_IDS.savingChanges);
-        showToast({ label: t("Error updating polygon details"), type: "error", placement: "bottom", duration: 5000 });
+        showToast({ label: t("Error Updating Polygon Details"), type: "error", placement: "bottom", duration: 5000 });
       } finally {
         setIsBulkUpdatingPolygons(false);
       }

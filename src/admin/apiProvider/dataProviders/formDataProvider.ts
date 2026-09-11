@@ -73,7 +73,7 @@ export const formDataProvider: Partial<DataProvider> = {
 
       return { data: { id: form.uuid } } as CreateResult;
     } catch (createFailure) {
-      throw v3ErrorForRA("Form creation failed", createFailure);
+      throw v3ErrorForRA("Form Creation Failed", createFailure);
     }
   },
 

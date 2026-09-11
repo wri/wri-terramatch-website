@@ -8,7 +8,7 @@ import { useDate } from "@/hooks/useDate";
 import { isNotNull } from "@/utils/array";
 
 import { IconNames } from "../../Icon/Icon";
-import ActionTrackerCard, { getActionCardStatusMapper } from "../ActionTrackerCard";
+import ActionTrackerCard from "../ActionTrackerCard";
 import { ActionTrackerCardRowProps } from "../ActionTrackerCardRow";
 
 export type ApplicationsCardProps = {
@@ -24,15 +24,15 @@ const ApplicationsCard = (props: ApplicationsCardProps) => {
       props.applications
         .filter(
           application =>
-            last(application.submissions)?.status == "started" ||
-            last(application.submissions)?.status == "requires-more-information"
+            last(application.submissions)?.status == "draft" ||
+            last(application.submissions)?.status == "information-required"
         )
         .map(application => {
           const currentSubmission = last(application.submissions);
           if (currentSubmission?.status == null) return undefined;
 
           return {
-            ...getActionCardStatusMapper(t)[currentSubmission.status],
+            status: currentSubmission.status,
             ctaLink: `applications/${application.uuid}`,
             ctaText: t("View Application"),
             title: application.fundingProgrammeName ?? t("N/A"),

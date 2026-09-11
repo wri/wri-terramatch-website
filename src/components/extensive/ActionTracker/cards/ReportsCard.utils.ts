@@ -6,12 +6,7 @@ import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus } from "@/helpers/entity";
 
 /** Statuses that qualify a report for display on the homepage (TM-2947) */
-export const DISPLAYABLE_REPORT_STATUSES = [
-  "due",
-  "started",
-  "needs-more-information",
-  "requires-more-information"
-] as const;
+export const DISPLAYABLE_REPORT_STATUSES = ["due", "draft", "information-required", "information-required"] as const;
 
 export type ReportActionTarget = {
   uuid?: string;

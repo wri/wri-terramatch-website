@@ -104,7 +104,7 @@ export type OrganisationLightDto = {
    */
   lightResource: boolean;
   uuid: string;
-  status: "draft" | "pending" | "approved" | "rejected";
+  status: "draft" | "pending-approval" | "approved" | "rejected";
   name: string | null;
   type: string | null;
   /**
@@ -119,7 +119,7 @@ export type OrganisationFullDto = {
    */
   lightResource: boolean;
   uuid: string;
-  status: "draft" | "pending" | "approved" | "rejected";
+  status: "draft" | "pending-approval" | "approved" | "rejected";
   name: string | null;
   type: string | null;
   /**
@@ -389,11 +389,11 @@ export type FinancialReportLightDto = {
   /**
    * Report status for this financial report
    */
-  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  status: "due" | "draft" | "pending-approval" | "approved" | "information-required";
   /**
    * Update request status for this financial report
    */
-  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  updateRequestStatus: "draft" | "pending-approval" | "approved" | "information-required" | null;
   /**
    * The associated organisation name
    */
@@ -616,7 +616,7 @@ export type TreeSpeciesDto = {
 };
 
 export type OrganisationUpdateAttributes = {
-  status?: "approved" | "pending" | "rejected" | "draft";
+  status?: "approved" | "pending-approval" | "rejected" | "draft";
   type?: "non-profit-organization" | "for-profit-organization";
   /**
    * Update the isTest flag.
@@ -751,9 +751,9 @@ export type UserDto = {
 
 export type OrganisationCreateAttributes = {
   /**
-   * @default pending
+   * @default pending-approval
    */
-  status?: "draft" | "pending";
+  status?: "draft" | "pending-approval";
   name?: string;
   type?: "non-profit-organization" | "for-profit-organization";
   hqStreet1?: string;

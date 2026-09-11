@@ -57,12 +57,13 @@ const items: SitePolygonLightDto[] = [
     submissionCycle: null,
     numTrees: null,
     source: null,
-    validationStatus: "notChecked",
+    validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
     createdAt: null,
-    deletedAt: null
+    deletedAt: null,
+    customAttributes: {}
   },
   {
     uuid: "2",
@@ -89,12 +90,13 @@ const items: SitePolygonLightDto[] = [
     submissionCycle: null,
     numTrees: null,
     source: null,
-    validationStatus: "notChecked",
+    validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
     createdAt: null,
-    deletedAt: null
+    deletedAt: null,
+    customAttributes: {}
   },
   {
     uuid: "3",
@@ -121,11 +123,12 @@ const items: SitePolygonLightDto[] = [
     submissionCycle: null,
     numTrees: null,
     source: null,
-    validationStatus: "notChecked",
+    validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
     isActive: true,
     createdAt: null,
-    deletedAt: null
+    deletedAt: null,
+    customAttributes: {}
   }
 ];

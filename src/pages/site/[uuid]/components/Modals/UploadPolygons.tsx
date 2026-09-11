@@ -9,6 +9,7 @@ import RadioButtonGroup from "@/redesignComponents/Forms/Actions/RadioButton/Rad
 import { UploadIcon } from "@/redesignComponents/foundations/Icons";
 
 import {
+  type DuplicatePolygonUploadInfo,
   type UploadPolygonsSuccessResult,
   collectAcceptedUploadFiles,
   GeometryUploadComparisonResult,
@@ -28,6 +29,7 @@ export interface UploadPolygonsProps {
   siteHasExistingPolygons?: boolean;
   onOpenChange: (open: boolean) => void;
   onUploadSuccess: (result: UploadPolygonsSuccessResult) => void;
+  onDuplicateDetected?: (duplicate: DuplicatePolygonUploadInfo) => void;
   onUploadError: (message: string) => void;
 }
 
@@ -52,6 +54,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({
   siteHasExistingPolygons = false,
   onOpenChange,
   onUploadSuccess,
+  onDuplicateDetected,
   onUploadError
 }) => {
   const t = useT();
@@ -66,6 +69,7 @@ const UploadPolygons: FC<UploadPolygonsProps> = ({
     siteUuid,
     siteHasExistingPolygons,
     onUploadSuccess,
+    onDuplicateDetected,
     onError: onUploadError
   });
 

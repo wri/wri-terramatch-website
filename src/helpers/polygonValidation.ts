@@ -44,6 +44,26 @@ export const isValidationFreshAfter = (validation: ValidationDto | undefined, st
   return latestCriteriaCreatedAtMs >= startedAtMs - 2_000;
 };
 
+export type ValidationPollingOptions = {
+  startedAtMs: number;
+  validationAfterCriteriaClear?: boolean;
+};
+
+export const isValidationPollingResolved = (
+  validation: ValidationDto | undefined,
+  { startedAtMs, validationAfterCriteriaClear = false }: ValidationPollingOptions
+): boolean => {
+  if (!hasValidationCriteria(validation)) {
+    return false;
+  }
+
+  if (validationAfterCriteriaClear) {
+    return true;
+  }
+
+  return isValidationFreshAfter(validation, startedAtMs);
+};
+
 export const shouldDisplayValidationCriteria = (
   validation: ValidationDto | undefined,
   validationStatus: string | null | undefined

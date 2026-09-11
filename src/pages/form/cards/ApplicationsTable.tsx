@@ -4,14 +4,12 @@ import Link from "next/link";
 import { FC, useMemo } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import StatusPill from "@/components/elements/StatusPill/StatusPill";
+import StatusTag from "@/components/elements/StatusTag/StatusTag";
 import Table from "@/components/elements/Table/Table";
 import Text from "@/components/elements/Text/Text";
-import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { applicationsConnection } from "@/connections/Application";
 import { useAllPages } from "@/hooks/useConnection";
 import { useDate } from "@/hooks/useDate";
-import { Status } from "@/types/common";
 import { isNotNull } from "@/utils/array";
 
 export type DraftApplicationsTableProps = {
@@ -61,16 +59,10 @@ const ApplicationsTable: FC<DraftApplicationsTableProps> = ({ fundingProgrammeUu
               accessorKey: "status",
               header: t("Status"),
               cell: props => {
-                const statusProps = getActionCardStatusMapper(t)[props.getValue() as string];
-                if (!statusProps) return null;
+                const status = props.getValue() as string;
+                if (status == null) return null;
 
-                return (
-                  <StatusPill status={statusProps.status! as unknown as Status} className="w-fit">
-                    <Text variant="text-bold-caption-100" className="whitespace-nowrap">
-                      {statusProps.statusText}
-                    </Text>
-                  </StatusPill>
-                );
+                return <StatusTag status={status} size="small" source="formSubmission" />;
               }
             },
             { accessorKey: "updatedAt", header: t("Last Updated"), cell: props => format(props.getValue() as string) },
@@ -87,7 +79,7 @@ const ApplicationsTable: FC<DraftApplicationsTableProps> = ({ fundingProgrammeUu
                   </Button>
                 ];
 
-                if (status === "started" && submissionUuid != null) {
+                if (status === "draft" && submissionUuid != null) {
                   buttons.unshift(
                     <Button key="continue" as={Link} href={`/form/submission/${submissionUuid}`}>
                       {t("Continue")}

@@ -51,9 +51,15 @@ const userSentryWebpackPluginOptions = {
   // Suppresses source map uploading logs during build
   silent: true,
 
-  org: process.env.SENTRY_ORG ?? "wri-terramatch",
+  org: process.env.SENTRY_ORG ?? "world-resources-institute-data-lab",
   project: process.env.SENTRY_PROJECT ?? "terramatch-frontend",
-  authToken: process.env.SENTRY_AUTH_TOKEN
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  widenClientFileUpload: true,
+
+  deploy: {
+    env: process.env.NEXT_PUBLIC_TARGET_ENV ?? "local"
+  }
 };
 
 /** @type {import('@sentry/nextjs').UserSentryOptions} */

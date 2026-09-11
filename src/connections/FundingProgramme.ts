@@ -3,6 +3,7 @@ import { connectionHook, connectionLoader } from "@/connections/util/connectionS
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import { resourceCreator, resourceUpdater } from "@/connections/util/resourceMutator";
 import {
+  entityPushTranslationsByUuid,
   fundingProgrammeCreate,
   fundingProgrammeDelete,
   fundingProgrammeGet,
@@ -35,3 +36,8 @@ const createFundingProgrammeConnection = v3Resource("fundingProgrammes", funding
   .buildConnection();
 export const createFundingProgramme = resourceCreator(createFundingProgrammeConnection);
 export const updateFundingProgramme = resourceUpdater(fundingProgrammeConnection);
+
+export const pushFundingProgrammeTranslation = (fundingProgrammeUuid: string) =>
+  entityPushTranslationsByUuid.fetchParallel({
+    pathParams: { entity: "fundingProgrammes", uuid: fundingProgrammeUuid }
+  });

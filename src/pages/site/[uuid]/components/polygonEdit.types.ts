@@ -15,10 +15,23 @@ export type PolygonOverlapFixParams = {
 
 export type PolygonOverlapFixCallback = (params: PolygonOverlapFixParams) => Promise<SitePolygonLightDto | undefined>;
 
+export type PolygonValidationJobsStartedOptions = {
+  trackBulkCompletion?: boolean;
+  validationAfterCriteriaClear?: boolean;
+};
+
 export type PolygonValidationJobsStartedCallback = (
   polygonUuids: string[],
-  options?: { trackBulkCompletion?: boolean }
+  options?: PolygonValidationJobsStartedOptions
 ) => void;
 
-/** Marks geometry UUIDs as awaiting fresh validation results (e.g. before overlap clip). */
-export type PolygonValidationPendingCallback = (geometryPolygonUuids: string[]) => void;
+export type PolygonRunValidationWithResultsOptions = {
+  fallbackPolygons?: SitePolygonLightDto[];
+  validationAfterCriteriaClear?: boolean;
+  previousGeometryPolygonUuid?: string;
+};
+
+export type PolygonRunValidationWithResultsCallback = (
+  geometryPolygonUuids: string[],
+  options?: PolygonRunValidationWithResultsOptions
+) => Promise<void>;

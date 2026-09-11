@@ -5,16 +5,13 @@ import type { ComponentType, SVGProps } from "react";
 import * as BoundaryPolygonModule from "./BoundaryPolygon.svg";
 import {
   type BoundaryStatus,
-  type PolygonState,
+  type PolygonStyle,
   FILL_OPACITY,
-  INTERACTION_STATES,
-  POLYGON_STATES,
   POLYGON_VERTICES,
   ROW_TEMPLATE,
   ROWS,
-  STATE_LABELS,
   STATUS_COLORS,
-  STATUSES
+  STYLES
 } from "./MapBoundaryPolygon.constants";
 
 const BoundaryPolygon = (
@@ -24,7 +21,7 @@ const BoundaryPolygon = (
 ).ReactComponent;
 
 type MapBoundaryPolygonProps = {
-  state?: PolygonState;
+  style?: PolygonStyle;
   status: BoundaryStatus;
 };
 
@@ -71,23 +68,24 @@ const OverlapWarning = () => (
   </Box>
 );
 
-const MapBoundaryPolygon = ({ state = "default", status }: MapBoundaryPolygonProps) => {
-  const isEditable = state === "editable";
-  const isExternal = state === "external";
+const MapBoundaryPolygon = ({ style = "Default", status }: MapBoundaryPolygonProps) => {
+  const appliedStyle = status === "External" ? "Selected Overlap" : style;
+  const isEditable = appliedStyle === "Editable";
+  const isExternal = status === "External";
 
   return (
     <Box
       position="relative"
-      boxSize="5rem"
+      boxSize={{ base: "2.5rem", sm: "3.5rem", md: "5rem" }}
       color={STATUS_COLORS[status]}
       role="img"
-      aria-label={`${status}, ${STATE_LABELS[state]}`}
+      aria-label={`${status}, ${appliedStyle}`}
       css={{
         "& > svg": { position: "absolute", inset: 0, width: "100%", height: "100%" },
         "& .boundary-polygon__shape": { overflow: "hidden" },
         "& .boundary-polygon__shape path": {
-          fillOpacity: FILL_OPACITY[state],
-          strokeWidth: state === "default" ? "1px" : "2px",
+          fillOpacity: FILL_OPACITY[appliedStyle],
+          strokeWidth: appliedStyle === "Default" ? "1px" : "2px",
           strokeDasharray: isEditable ? "2px 2px" : "none"
         },
         "& .boundary-polygon__vertices": { pointerEvents: "none", overflow: "visible" },
@@ -97,86 +95,100 @@ const MapBoundaryPolygon = ({ state = "default", status }: MapBoundaryPolygonPro
       <BoundaryPolygon className="boundary-polygon__shape" aria-hidden="true" />
       {isExternal && <ExternalPattern />}
       {isEditable && <EditableVertices />}
-      {(state === "selected-overlap" || isExternal) && <OverlapWarning />}
+      {appliedStyle === "Selected Overlap" && <OverlapWarning />}
     </Box>
   );
 };
 
 const meta = {
   title: "Redesign Components/Geospatial/Map Boundary Polygon",
-  component: MapBoundaryPolygon,
-  parameters: { layout: "centered" },
-  tags: ["autodocs"],
-  argTypes: {
-    status: { control: "select", options: STATUSES },
-    state: { control: "select", options: POLYGON_STATES }
+  parameters: {
+    layout: "centered",
+    controls: { disable: true }
   }
-} satisfies Meta<typeof MapBoundaryPolygon>;
+} satisfies Meta;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: { state: "default", status: "Draft" }
-};
-
 export const AllStates: Story = {
-  args: { state: "default", status: "Draft" },
-  parameters: { controls: { disable: true } },
   render: () => (
     <Box
-      width="min(53.75rem, calc(100vw - 2rem))"
-      minWidth="53.5rem"
-      padding="2.625rem 2.5rem 3rem"
-      overflow="auto"
+      width={{ base: "calc(100vw - 1rem)", sm: "calc(100vw - 2rem)" }}
+      maxWidth="53.75rem"
+      padding={{ base: "1.25rem 0.5rem 1.5rem", sm: "1.75rem 1rem 2rem", lg: "2.625rem 2.5rem 3rem" }}
+      overflow="hidden"
       color="neutral.900"
       backgroundColor="neutral.200"
       border="1px solid"
       borderColor="neutral.300"
-      borderRadius="1.5rem"
+      borderRadius={{ base: "1rem", md: "1.5rem" }}
     >
       <Grid
-        gridTemplateColumns="6.375rem repeat(5, minmax(8.125rem, 1fr))"
+        gridTemplateColumns={{
+          base: "4.25rem repeat(5, minmax(0, 1fr))",
+          sm: "5.75rem repeat(5, minmax(0, 1fr))",
+          md: "6.375rem repeat(5, minmax(0, 1fr))"
+        }}
         alignItems="end"
-        marginBottom="1.375rem"
-        paddingX="1.25rem"
+        marginBottom={{ base: "0.75rem", sm: "1rem", md: "1.375rem" }}
+        paddingX={{ base: 0, sm: "0.5rem", md: "1.25rem" }}
         aria-hidden="true"
       >
         <Box />
-        {INTERACTION_STATES.map(state => (
-          <Text paddingX="0.5rem" textStyle="300" textAlign="center" key={state}>
-            {STATE_LABELS[state]}
+        {STYLES.map(style => (
+          <Text
+            paddingX={{ base: "0.125rem", sm: "0.25rem", md: "0.5rem" }}
+            fontSize={{ base: "0.625rem", sm: "0.75rem", md: "0.875rem" }}
+            lineHeight={{ base: "0.75rem", sm: "1rem", md: "1.25rem" }}
+            textStyle="300"
+            textAlign="center"
+            key={style}
+          >
+            {style}
           </Text>
         ))}
       </Grid>
 
-      <Grid gridTemplateColumns="6.375rem 1fr">
-        <Grid gridTemplateRows={ROW_TEMPLATE} alignItems="center" paddingLeft="1.25rem" aria-hidden="true">
+      <Grid gridTemplateColumns={{ base: "4.25rem 1fr", sm: "5.75rem 1fr", md: "6.375rem 1fr" }}>
+        <Grid
+          gridTemplateRows={ROW_TEMPLATE}
+          alignItems="center"
+          paddingLeft={{ base: "0.25rem", sm: "0.5rem", md: "1.25rem" }}
+          aria-hidden="true"
+        >
           {ROWS.map(({ status }) => (
-            <Text maxWidth="7.5rem" textStyle="300" key={status}>
+            <Text
+              maxWidth="7.5rem"
+              paddingRight="0.25rem"
+              fontSize={{ base: "0.625rem", sm: "0.75rem", md: "0.875rem" }}
+              lineHeight={{ base: "0.75rem", sm: "1rem", md: "1.25rem" }}
+              textStyle="300"
+              key={status}
+            >
               {status}
             </Text>
           ))}
         </Grid>
 
         <Grid
-          gridTemplateColumns="repeat(5, minmax(8.125rem, 1fr))"
+          gridTemplateColumns="repeat(5, minmax(0, 1fr))"
           gridTemplateRows={ROW_TEMPLATE}
           placeItems="center"
-          paddingX="1.25rem"
+          paddingX={{ base: 0, sm: "0.5rem", md: "1.25rem" }}
           border="1px dashed"
           borderColor="neutralActive.3"
         >
-          {ROWS.flatMap(({ status, states }) =>
-            states.map((state, columnIndex) => (
+          {ROWS.flatMap(({ status, styles }) =>
+            styles.map((style, columnIndex) => (
               <Grid
                 placeItems="center"
                 width="100%"
                 height="100%"
-                padding="1.125rem"
-                key={`${status}-${INTERACTION_STATES[columnIndex]}`}
+                padding={{ base: "0.125rem", sm: "0.5rem", md: "0.75rem", lg: "1.125rem" }}
+                key={`${status}-${STYLES[columnIndex]}`}
               >
-                {state && <MapBoundaryPolygon state={state} status={status} />}
+                {style && <MapBoundaryPolygon style={style} status={status} />}
               </Grid>
             ))
           )}

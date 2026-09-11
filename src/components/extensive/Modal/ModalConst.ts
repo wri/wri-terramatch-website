@@ -57,5 +57,6 @@ export const ModalId = {
   MODAL_NOTES: "ModalNotes",
   MODAL_SHARE_IMPACT_STORY: "ModalShareImpactStory",
   MODAL_STORY: "ModalStory",
-  BULK_NOTHING_TO_REPORT: "BulkNothingToReport"
+  BULK_NOTHING_TO_REPORT: "BulkNothingToReport",
+  BULK_TREE_IMPORT: "BulkTreeImport"
 };

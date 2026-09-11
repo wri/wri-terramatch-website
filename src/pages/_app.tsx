@@ -25,6 +25,7 @@ import NotificationProvider from "@/context/notification.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
 import { system } from "@/lib/theme";
+import { LayoutShellProvider } from "@/redesignComponents/Loayout/LayoutShell.provider";
 import { WrappedReduxProvider } from "@/store/store";
 import Bootstrap from "@/utils/Bootstrap";
 import setupYup from "@/yup.locale";
@@ -120,35 +121,37 @@ const _App = ({ Component, pageProps }: AppProps) => {
       <ToastProvider>
         <WrappedReduxProvider>
           <Bootstrap>
-            <LoadingProvider>
-              <NotificationProvider>
-                <ModalProvider>
-                  <EntityScopeFromRouter>
-                    {isOnDashboards ? (
-                      <DashboardStack>
-                        <Component {...pageProps} />
-                      </DashboardStack>
-                    ) : isAdmin ? (
-                      <AdminStack>
-                        <Component {...pageProps} />
-                      </AdminStack>
-                    ) : isOnSitePolygonReview ? (
-                      <SitePolygonReviewStack>
-                        <Component {...pageProps} />
-                      </SitePolygonReviewStack>
-                    ) : isOnSite ? (
-                      <SiteStack>
-                        <Component {...pageProps} />
-                      </SiteStack>
-                    ) : (
-                      <PDStack>
-                        <Component {...pageProps} />
-                      </PDStack>
-                    )}
-                  </EntityScopeFromRouter>
-                </ModalProvider>
-              </NotificationProvider>
-            </LoadingProvider>
+            <LayoutShellProvider>
+              <LoadingProvider>
+                <NotificationProvider>
+                  <ModalProvider>
+                    <EntityScopeFromRouter>
+                      {isOnDashboards ? (
+                        <DashboardStack>
+                          <Component {...pageProps} />
+                        </DashboardStack>
+                      ) : isAdmin ? (
+                        <AdminStack>
+                          <Component {...pageProps} />
+                        </AdminStack>
+                      ) : isOnSitePolygonReview ? (
+                        <SitePolygonReviewStack>
+                          <Component {...pageProps} />
+                        </SitePolygonReviewStack>
+                      ) : isOnSite ? (
+                        <SiteStack>
+                          <Component {...pageProps} />
+                        </SiteStack>
+                      ) : (
+                        <PDStack>
+                          <Component {...pageProps} />
+                        </PDStack>
+                      )}
+                    </EntityScopeFromRouter>
+                  </ModalProvider>
+                </NotificationProvider>
+              </LoadingProvider>
+            </LayoutShellProvider>
           </Bootstrap>
         </WrappedReduxProvider>
       </ToastProvider>

@@ -146,7 +146,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
     const output = [...props.options];
     if (props.hasOtherOptions) {
       output.push({
-        title: "Other",
+        title: t("Other"),
         value: OTHER_KEY
       });
     }
@@ -154,7 +154,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
       return output.filter(option => toArray(props.optionsFilter).includes(option.meta));
     }
     return output;
-  }, [props.options, props.hasOtherOptions, props.optionsFilter]);
+  }, [props.options, props.hasOtherOptions, props.optionsFilter, t]);
 
   const internalError = useMemo(
     () =>

@@ -142,7 +142,7 @@ export type ValidationDto = {
   /**
    * List of validation criteria results for this polygon
    *
-   * @example {"criteriaId":16,"validationType":"DUPLICATE_GEOMETRY","valid":false,"createdAt":"2025-11-28T20:41:50.060Z","extraInfo":{"polygonUuid":"54aa2c7a-e139-4017-b86b-d904f4a3ed5c","message":"This geometry already exists in the project","sitePolygonUuid":"fd6cd4e8-0c56-45dc-8991-1cebfd3871ca","sitePolygonName":"AREA_NAME"}}
+   * @example {"criteriaId":16,"validationType":"DUPLICATE_GEOMETRY","valid":false,"createdAt":"2025-11-28T20:41:50.060Z","extraInfo":{"polygonUuid":"54aa2c7a-e139-4017-b86b-d904f4a3ed5c","message":"This geometry already exists in the project","sitePolygonUuid":"fd6cd4e8-0c56-45dc-8991-1cebfd3871ca","sitePolygonName":"AREA_NAME","siteUuid":"8f3c2b1a-4d5e-6f70-8192-a3b4c5d6e7f8","siteName":"Site Name"}}
    */
   criteriaList: ValidationCriteriaDto[];
 };
@@ -301,11 +301,9 @@ export type SitePolygonLightDto = {
    */
   source: string | null;
   /**
-   * Validation status of the site polygon
-   *
-   * @maxLength 255
+   * Validation status of the site polygon. Null means validation has not started.
    */
-  validationStatus: string | null;
+  validationStatus: "passed" | "partial" | "failed" | null;
   /**
    * Primary UUID of the site polygon
    */
@@ -329,6 +327,10 @@ export type SitePolygonLightDto = {
    * @format date-time
    */
   deletedAt: string | null;
+  /**
+   * Sparse map of framework-configured custom attribute values keyed by definition key. Only stored values are included (missing key means unset).
+   */
+  customAttributes: Record<string, any>;
 };
 
 export type CreateSitePolygonRequestDto = {
@@ -391,6 +393,12 @@ export type AttributeChangesDto = {
    * @example 150
    */
   numTrees?: number;
+  /**
+   * Framework-configured custom attribute values keyed by definition key. Only sent keys are updated; null (or empty array for multi_select) clears the value. Omitted keys are inherited from the previous version via copy-on-version.
+   *
+   * @example {"anrSubcategory":"farmer-managed"}
+   */
+  customAttributes?: Record<string, any>;
 };
 
 export type CreateSitePolygonAttributesDto = {
@@ -553,11 +561,9 @@ export type SitePolygonFullDto = {
    */
   source: string | null;
   /**
-   * Validation status of the site polygon
-   *
-   * @maxLength 255
+   * Validation status of the site polygon. Null means validation has not started.
    */
-  validationStatus: string | null;
+  validationStatus: "passed" | "partial" | "failed" | null;
   /**
    * Primary UUID of the site polygon
    */
@@ -581,6 +587,10 @@ export type SitePolygonFullDto = {
    * @format date-time
    */
   deletedAt: string | null;
+  /**
+   * Sparse map of framework-configured custom attribute values keyed by definition key. Only stored values are included (missing key means unset).
+   */
+  customAttributes: Record<string, any>;
   geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.
@@ -1210,4 +1220,140 @@ export type AnrPlotGeometryDto = {
    * User ID of the Admin who uploaded this grid
    */
   createdBy: number | null;
+};
+
+/**
+ * CONSTANTS
+ */
+export type PolygonAttributeDefinitionConstants = {
+  /**
+   * @example single_select
+   * @example multi_select
+   */
+  INPUT_TYPES: string[];
+};
+
+export type PolygonAttributeDefinitionOptionDto = {
+  /**
+   * @format uuid
+   */
+  uuid: string;
+  /**
+   * Stable stored value. Generated from the option label and locked after create.
+   */
+  value: string;
+  label: string;
+  /**
+   * Display order. Array index on write; persisted as order.
+   */
+  order: number;
+};
+
+export type PolygonAttributeDefinitionDto = {
+  /**
+   * @format uuid
+   */
+  uuid: string;
+  /**
+   * Stable identifier generated from the label on create. Used as the GeoJSON property and API map key.
+   */
+  key: string;
+  label: string;
+  inputType: "single_select" | "multi_select";
+  frameworkKey:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | "fundo-flora-1"
+    | "wcb"
+    | "barka-fund";
+  isActive: boolean;
+  /**
+   * Display order within the framework.
+   */
+  order: number;
+  /**
+   * True when at least one polygon has a stored value for this definition. Hard-delete is then forbidden.
+   */
+  hasValues: boolean;
+  options: PolygonAttributeDefinitionOptionDto[];
+};
+
+export type StorePolygonAttributeDefinitionOptionAttributes = {
+  /**
+   * Existing option uuid. Omit to create a new option. Value is locked once created.
+   *
+   * @format uuid
+   */
+  uuid?: string;
+  /**
+   * Option display label. On create, the stored value is camelCased from this label.
+   */
+  label: string;
+};
+
+export type CreatePolygonAttributeDefinitionAttributes = {
+  label: string;
+  inputType: "single_select" | "multi_select";
+  frameworkKey:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "terrafund-3"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | "fundo-flora-1"
+    | "wcb"
+    | "barka-fund";
+  /**
+   * @default true
+   */
+  isActive?: boolean;
+  /**
+   * Display order within the framework. Defaults to 0.
+   */
+  order?: number;
+  options: StorePolygonAttributeDefinitionOptionAttributes[];
+};
+
+export type CreatePolygonAttributeDefinitionData = {
+  type: "polygonAttributeDefinitions";
+  attributes: CreatePolygonAttributeDefinitionAttributes;
+};
+
+export type CreatePolygonAttributeDefinitionBody = {
+  data: CreatePolygonAttributeDefinitionData;
+};
+
+export type UpdatePolygonAttributeDefinitionAttributes = {
+  label?: string;
+  isActive?: boolean;
+  /**
+   * Display order within the framework.
+   */
+  order?: number;
+  /**
+   * When provided, replaces the full option list. Omitted options are removed only if no polygon stores that option value. Existing option values stay locked.
+   */
+  options?: StorePolygonAttributeDefinitionOptionAttributes[];
+};
+
+export type UpdatePolygonAttributeDefinitionData = {
+  type: "polygonAttributeDefinitions";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: UpdatePolygonAttributeDefinitionAttributes;
+};
+
+export type UpdatePolygonAttributeDefinitionBody = {
+  data: UpdatePolygonAttributeDefinitionData;
 };

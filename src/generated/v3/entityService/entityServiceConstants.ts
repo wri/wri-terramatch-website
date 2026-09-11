@@ -4,8 +4,6 @@ import {
   ImpactStoryLightDto,
   ImpactStoryFullDto,
   AboutSectionDto,
-  FormTranslationDto,
-  DelayedJobDto,
   TaskLightDto,
   TaskFullDto,
   ProjectReportLightDto,
@@ -21,6 +19,7 @@ import {
   ScientificNameDto,
   EstablishmentsTreesDto,
   TreeReportCountsDto,
+  TreeBulkUploadDto,
   DisturbanceDto,
   ReminderDto,
   AuditStatusDto,
@@ -36,6 +35,8 @@ import {
   DisturbanceReportLightDto,
   DisturbanceReportFullDto,
   FileDownloadDto,
+  DelayedJobDto,
+  FormTranslationDto,
   FormDataDto,
   UpdateRequestDto,
   TrackingDto,
@@ -58,8 +59,6 @@ export const ENTITY_SERVICE_RESOURCES = [
   "projectPitches",
   "impactStories",
   "aboutSections",
-  "formTranslations",
-  "delayedJobs",
   "tasks",
   "projectReports",
   "siteReports",
@@ -70,6 +69,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "treeSpeciesScientificNames",
   "establishmentTrees",
   "treeReportCounts",
+  "treeBulkUploads",
   "disturbances",
   "reminders",
   "auditStatuses",
@@ -80,6 +80,8 @@ export const ENTITY_SERVICE_RESOURCES = [
   "financialReports",
   "disturbanceReports",
   "fileDownloads",
+  "delayedJobs",
+  "formTranslations",
   "formData",
   "updateRequests",
   "trackings",
@@ -101,8 +103,6 @@ export type EntityServiceApiResources = {
   projectPitches: StoreResourceMap<ProjectPitchDto>;
   impactStories: StoreResourceMap<ImpactStoryLightDto | ImpactStoryFullDto>;
   aboutSections: StoreResourceMap<AboutSectionDto>;
-  formTranslations: StoreResourceMap<FormTranslationDto>;
-  delayedJobs: StoreResourceMap<DelayedJobDto>;
   tasks: StoreResourceMap<TaskLightDto | TaskFullDto>;
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
@@ -113,6 +113,7 @@ export type EntityServiceApiResources = {
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
+  treeBulkUploads: StoreResourceMap<TreeBulkUploadDto>;
   disturbances: StoreResourceMap<DisturbanceDto>;
   reminders: StoreResourceMap<ReminderDto>;
   auditStatuses: StoreResourceMap<AuditStatusDto>;
@@ -123,6 +124,8 @@ export type EntityServiceApiResources = {
   financialReports: StoreResourceMap<FinancialReportLightDto | FinancialReportFullDto>;
   disturbanceReports: StoreResourceMap<DisturbanceReportLightDto | DisturbanceReportFullDto>;
   fileDownloads: StoreResourceMap<FileDownloadDto>;
+  delayedJobs: StoreResourceMap<DelayedJobDto>;
+  formTranslations: StoreResourceMap<FormTranslationDto>;
   formData: StoreResourceMap<FormDataDto>;
   updateRequests: StoreResourceMap<UpdateRequestDto>;
   trackings: StoreResourceMap<TrackingDto>;

@@ -30,7 +30,7 @@ const ProjectIntroPage = () => {
       },
       [router]
     ),
-    "Project creation failed"
+    "Project Creation Failed"
   );
 
   useEffect(() => {

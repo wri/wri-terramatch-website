@@ -69,7 +69,9 @@ const SiteReportDataGrid: FC = () => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
             (option: any) => option.value === record.updateRequestStatus
           );
-          return <CustomChipField label={readableChangeRequestStatus?.title} />;
+          return readableChangeRequestStatus?.title ? (
+            <CustomChipField label={readableChangeRequestStatus.title} />
+          ) : null;
         }}
       />
       <TextField source="projectName" label="Project" />

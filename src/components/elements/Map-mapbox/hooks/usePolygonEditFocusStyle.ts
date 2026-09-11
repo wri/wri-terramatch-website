@@ -9,9 +9,7 @@ type UsePolygonEditFocusStyleParams = {
   styleVersion: number;
   sourcesAdded: boolean;
   tileLoadRequestId: number;
-  /** True while the polygon edit drawer/panel is open (entire edit modal, not only geometry draw). */
   isEditFocusActive: boolean;
-  /** Geometry uuid of the polygon being edited; kept at full opacity while neighbors dim. */
   editedPolygonUuid: string | null;
 };
 
@@ -27,10 +25,10 @@ export function usePolygonEditFocusStyle({
   useEffect(() => {
     if (!styleReady || !sourcesAdded || map.current == null) return;
 
-    if (!isEditFocusActive) return;
-
     const m = map.current;
-    applyPolygonNeighborDimming(m, true, editedPolygonUuid);
+    applyPolygonNeighborDimming(m, isEditFocusActive, isEditFocusActive ? editedPolygonUuid : null);
+
+    if (!isEditFocusActive) return;
 
     const onIdle = () => {
       if (map.current !== m) return;

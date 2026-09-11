@@ -133,6 +133,8 @@ export const ListSectionHeaderTopLevel: Story = {
           <ListSectionHeader
             level="top-level"
             title="Header Title"
+            titleHref="#"
+            onTitleClick={() => console.log("Title link clicked")}
             caption="caption"
             icon={
               open ? <FolderOpenIcon boxSize={5} color="primary.600" /> : <FolderIcon boxSize={5} color="neutral.400" />

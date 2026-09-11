@@ -8,6 +8,7 @@ import {
   FunctionField,
   ReferenceInput,
   SearchInput,
+  SelectInput,
   ShowButton,
   TextField
 } from "react-admin";
@@ -26,6 +27,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { entityExportAll } from "@/generated/v3/entityService/entityServiceComponents";
 import { SrpReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { optionToChoices } from "@/utils/options";
 
 const SRPReportDataGrid: FC = () => {
   const tableMenu = [
@@ -60,7 +62,9 @@ const SRPReportDataGrid: FC = () => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
             (option: any) => option.value === record.updateRequestStatus
           );
-          return <CustomChipField label={readableChangeRequestStatus?.title} />;
+          return readableChangeRequestStatus?.title ? (
+            <CustomChipField label={readableChangeRequestStatus.title} />
+          ) : null;
         }}
       />
       <DateField source="dueAt" label="Due Date" locales="en-GB" />
@@ -96,7 +100,21 @@ export const SRPReportList: FC = () => {
         className="select-page-admin"
         filterToQuery={searchText => ({ searchFilter: searchText })}
       />
-    </ReferenceInput>
+    </ReferenceInput>,
+    <SelectInput
+      key="status"
+      label="Status"
+      source="status"
+      choices={optionToChoices(getReportStatusOptions())}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="updateRequestStatus"
+      label="Change Request Status"
+      source="updateRequestStatus"
+      choices={optionToChoices(getChangeRequestStatusOptions())}
+      className="select-page-admin"
+    />
   ];
 
   const handleExport = async () => {

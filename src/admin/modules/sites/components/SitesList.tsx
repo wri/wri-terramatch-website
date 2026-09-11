@@ -91,7 +91,9 @@ const SiteDataGrid: FC = () => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
             (option: any) => option.value === record.updateRequestStatus
           );
-          return <CustomChipField label={readableChangeRequestStatus?.title} />;
+          return readableChangeRequestStatus?.title ? (
+            <CustomChipField label={readableChangeRequestStatus.title} />
+          ) : null;
         }}
       />
       <FunctionField
@@ -102,7 +104,7 @@ const SiteDataGrid: FC = () => {
           const readablePlantingStatus = getPlantingStatusOptions().find(
             (option: any) => option.value === record.plantingStatus
           );
-          return <CustomChipField label={readablePlantingStatus?.title} />;
+          return readablePlantingStatus?.title ? <CustomChipField label={readablePlantingStatus.title} /> : null;
         }}
       />
       <ColoredChipFieldArray

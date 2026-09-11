@@ -26,10 +26,10 @@ import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchem
 import modules from "../..";
 
 export const statusChoices = [
-  { id: "started", name: "Started" },
-  { id: "awaiting-approval", name: "Awaiting Approval" },
+  { id: "draft", name: "Draft" },
+  { id: "pending-approval", name: "Pending Approval" },
   { id: "approved", name: "Approved" },
-  { id: "requires-more-information", name: "Requires More Information" },
+  { id: "information-required", name: "Information Required" },
   { id: "rejected", name: "Rejected" }
 ];
 

@@ -1,4 +1,4 @@
-import { Tag } from "@chakra-ui/react";
+import { Tag, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
@@ -34,9 +34,12 @@ export function ProgressTag({ state = null, className }: ProgressTagProps) {
     >
       <Tag.Label className="flex items-center gap-2">
         {config?.icon}
-        <span className="text-nowrap whitespace-nowrap text-sm font-bold text-theme-neutral-900">
-          {t(config.label)}
-        </span>
+        <Text color="netral.900" textStyle="200">
+          {t("Planting: ")}
+          <Text color="netral.900" textStyle="300-bold" as="span">
+            {t(config.label)}
+          </Text>
+        </Text>
       </Tag.Label>
     </Tag.Root>
   );

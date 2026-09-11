@@ -31,7 +31,7 @@ const GLOBAL_MAPBOX_TOKEN =
   "pk.eyJ1IjoidGVycmFtYXRjaCIsImEiOiJjbHN4b2drNnAwNHc0MnBtYzlycmQ1dmxlIn0.ImQurHBtutLZU5KAI5rgng";
 const GLOBAL_GEOSERVER_URL = "https://geoserver-prod.wri-restoration-marketplace-api.com";
 const GLOBAL_SENTRY_DSN =
-  "https://ab2bb67320b91a124ca3c42460b0e005@o4507018550181888.ingest.us.sentry.io/4507018664869888";
+  "https://f042ecbd79a15baad04d2a485ae66611@o4511503378284544.ingest.us.sentry.io/4511990614589440";
 
 const GATEWAYS = {
   dev: "https://api-dev.terramatch.org",

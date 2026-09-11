@@ -160,7 +160,7 @@ const Polygons = (props: IPolygonProps) => {
   const downloadGeoJsonPolygon = useCallback(async (polygon: IPolygonItem) => {
     try {
       const filename = polygon?.label === "Unnamed Polygon" ? "polygon" : polygon?.label;
-      await downloadPolygonGeoJson(polygon.uuid, filename, { includeExtendedData: true });
+      await downloadPolygonGeoJson(polygon.uuid, filename);
     } catch (error) {
       Log.error("Failed to download polygon:", error);
     }

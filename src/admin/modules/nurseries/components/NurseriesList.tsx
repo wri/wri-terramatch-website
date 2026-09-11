@@ -8,7 +8,6 @@ import {
   FunctionField,
   ReferenceInput,
   SearchInput,
-  SelectField,
   SelectInput,
   ShowButton,
   TextField,
@@ -72,14 +71,10 @@ const NurseryDataGrid: FC = () => {
           const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
             (option: any) => option.value === record.updateRequestStatus
           );
-          return <CustomChipField label={readableChangeRequestStatus?.title} />;
+          return readableChangeRequestStatus?.title ? (
+            <CustomChipField label={readableChangeRequestStatus.title} />
+          ) : null;
         }}
-      />
-      <SelectField
-        source="updateRequestStatus"
-        label="Change Request Status"
-        sortable={false}
-        choices={optionToChoices(getChangeRequestStatusOptions())}
       />
       <TextField source="projectName" label="Project Name" />
       <TextField source="organisationName" label="Organization" />

@@ -21,7 +21,7 @@ import { UpdateRequestAttributes } from "@/generated/v3/entityService/entityServ
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { isNotNull } from "@/utils/array";
 
-export type IStatus = "needs-more-information" | "approved";
+export type IStatus = "information-required" | "approved";
 
 interface ChangeRequestRequestMoreInfoModalProps extends DialogProps {
   handleClose: () => void;
@@ -32,7 +32,7 @@ interface ChangeRequestRequestMoreInfoModalProps extends DialogProps {
 
 const STATUS_TITLES = {
   approved: "Approve Change Request",
-  "needs-more-information": "Request more information for this Change Request"
+  "information-required": "Request more information for this Change Request"
 };
 
 const moreInfoValidationSchema = yup.object({
@@ -89,7 +89,7 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
         feedback: feedbackValue
       };
 
-      if (data.feedbackFields && status === "needs-more-information") {
+      if (data.feedbackFields && status === "information-required") {
         attributes.feedbackFields = data.feedbackFields;
       }
 
@@ -102,9 +102,7 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
     <Dialog {...dialogProps} fullWidth>
       <Form
         onSubmit={handleSave}
-        validate={validateForm(
-          status === "needs-more-information" ? moreInfoValidationSchema : genericValidationSchema
-        )}
+        validate={validateForm(status === "information-required" ? moreInfoValidationSchema : genericValidationSchema)}
       >
         {status == null ? null : <DialogTitle>{STATUS_TITLES[status]}</DialogTitle>}
         <DialogContent>
@@ -117,7 +115,7 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
             margin="dense"
             helperText={false}
           />
-          {status === "needs-more-information" && feedbackChoices.length > 0 ? (
+          {status === "information-required" && feedbackChoices.length > 0 ? (
             <AutocompleteArrayInput
               source="feedbackFields"
               label="Fields"

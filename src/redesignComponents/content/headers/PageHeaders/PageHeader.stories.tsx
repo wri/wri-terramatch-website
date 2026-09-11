@@ -87,6 +87,8 @@ export const AllStates: Story = {
       <PageHeader title="Page Header" tag={{ state: "information-required" } as TagSubmissionProps} />
       <PageHeader title="Page Header" tag={{ state: "approved" } as TagSubmissionProps} />
       <PageHeader title="Page Header" tag={{ state: "due" } as TagSubmissionProps} />
+      <PageHeader title="Page Header" tag={{ state: "not-selected" } as TagSubmissionProps} />
+      <PageHeader title="Page Header" tag={{ state: "receiving-applications" } as TagSubmissionProps} />
     </div>
   )
 };

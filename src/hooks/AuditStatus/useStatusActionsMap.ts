@@ -20,9 +20,9 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
       [AuditLogButtonStates.PROJECT as number]: {
         valuesForStatus: getValueForStatusProject,
         statusLabels: [
-          { id: "1", label: t("Started") },
-          { id: "2", label: t("Awaiting Approval") },
-          { id: "3", label: t("Needs More Information") },
+          { id: "1", label: t("Draft") },
+          { id: "2", label: t("Pending Approval") },
+          { id: "3", label: t("Information Required") },
           { id: "4", label: t("Approved") }
         ],
         entityType: PROJECT
@@ -30,9 +30,9 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
       [AuditLogButtonStates.SITE as number]: {
         valuesForStatus: getValueForStatusSite,
         statusLabels: [
-          { id: "1", label: t("Started") },
-          { id: "2", label: t("Awaiting Approval") },
-          { id: "3", label: t("Needs More Info") },
+          { id: "1", label: t("Draft") },
+          { id: "2", label: t("Pending Approval") },
+          { id: "3", label: t("Information Required") },
           { id: "5", label: t("Approved") }
         ],
         entityType: SITE
@@ -41,8 +41,8 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         valuesForStatus: getValueForStatusPolygon,
         statusLabels: [
           { id: "1", label: t("Draft") },
-          { id: "2", label: t("Submitted") },
-          { id: "3", label: t("Needs More Information") },
+          { id: "2", label: t("Pending Approval") },
+          { id: "3", label: t("Information Required") },
           { id: "4", label: t("Approved") }
         ],
         entityType: POLYGON
@@ -50,9 +50,9 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
       [AuditLogButtonStates.NURSERY as number]: {
         valuesForStatus: getValueForStatusNursery,
         statusLabels: [
-          { id: "1", label: t("Started") },
-          { id: "2", label: t("Awaiting Approval") },
-          { id: "3", label: t("Needs More Information") },
+          { id: "1", label: t("Draft") },
+          { id: "2", label: t("Pending Approval") },
+          { id: "3", label: t("Information Required") },
           { id: "4", label: t("Approved") }
         ],
         entityType: NURSERY
@@ -61,9 +61,9 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         valuesForStatus: getValueForStatusEntityReport,
         statusLabels: [
           { id: "1", label: t("Due") },
-          { id: "2", label: t("Started") },
-          { id: "3", label: t("Needs More Information") },
-          { id: "4", label: t("Awaiting Approval") },
+          { id: "2", label: t("Draft") },
+          { id: "3", label: t("Information Required") },
+          { id: "4", label: t("Pending Approval") },
           { id: "5", label: t("Approved") }
         ],
         entityType: ENTITY_REPORT
@@ -72,9 +72,9 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         valuesForStatus: getValueForStatusEntityReport,
         statusLabels: [
           { id: "1", label: t("Due") },
-          { id: "2", label: t("Started") },
-          { id: "3", label: t("Needs More Information") },
-          { id: "4", label: t("Awaiting Approval") },
+          { id: "2", label: t("Draft") },
+          { id: "3", label: t("Information Required") },
+          { id: "4", label: t("Pending Approval") },
           { id: "5", label: t("Approved") }
         ],
         entityType: ENTITY_REPORT
@@ -83,9 +83,9 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         valuesForStatus: getValueForStatusEntityReport,
         statusLabels: [
           { id: "1", label: t("Due") },
-          { id: "2", label: t("Started") },
-          { id: "3", label: t("Needs More Information") },
-          { id: "4", label: t("Awaiting Approval") },
+          { id: "2", label: t("Draft") },
+          { id: "3", label: t("Information Required") },
+          { id: "4", label: t("Pending Approval") },
           { id: "5", label: t("Approved") }
         ],
         entityType: ENTITY_REPORT
@@ -94,9 +94,9 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         valuesForStatus: getValueForStatusEntityReport,
         statusLabels: [
           { id: "1", label: t("Due") },
-          { id: "2", label: t("Started") },
-          { id: "3", label: t("Needs More Information") },
-          { id: "4", label: t("Awaiting Approval") },
+          { id: "2", label: t("Draft") },
+          { id: "3", label: t("Information Required") },
+          { id: "4", label: t("Pending Approval") },
           { id: "5", label: t("Approved") }
         ],
         entityType: ENTITY_REPORT
@@ -104,9 +104,9 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
       [AuditLogButtonStates.DISTURBANCE_REPORT as number]: {
         valuesForStatus: getValueForStatusDisturbanceReport,
         statusLabels: [
-          { id: "1", label: t("Started") },
-          { id: "2", label: t("Needs More Information") },
-          { id: "3", label: t("Awaiting Approval") },
+          { id: "1", label: t("Draft") },
+          { id: "2", label: t("Information Required") },
+          { id: "3", label: t("Pending Approval") },
           { id: "4", label: t("Approved") }
         ],
         entityType: ENTITY_REPORT
@@ -115,9 +115,9 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         valuesForStatus: getValueForStatusEntityReport,
         statusLabels: [
           { id: "1", label: t("Due") },
-          { id: "2", label: t("Started") },
-          { id: "3", label: t("Needs More Information") },
-          { id: "4", label: t("Awaiting Approval") },
+          { id: "2", label: t("Draft") },
+          { id: "3", label: t("Information Required") },
+          { id: "4", label: t("Pending Approval") },
           { id: "5", label: t("Approved") }
         ],
         entityType: ENTITY_REPORT

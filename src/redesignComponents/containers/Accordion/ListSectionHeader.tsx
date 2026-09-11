@@ -1,6 +1,8 @@
 import { Flex, Text } from "@chakra-ui/react";
 import classNames from "classnames";
-import type { FC } from "react";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import type { FC, MouseEvent } from "react";
 
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import { DueIcon } from "@/redesignComponents/foundations/Icons";
@@ -25,6 +27,8 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   level = "top-level",
   label,
   title,
+  titleHref,
+  onTitleClick,
   caption,
   statusLabels,
   icon,
@@ -32,6 +36,32 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   dueDate
 }) => {
   const gap = levelStyles[level].gap;
+  const isTopLevelLink = titleHref != null;
+
+  const router = useRouter();
+
+  const handleTitleClick = (event: MouseEvent) => {
+    event.stopPropagation();
+    onTitleClick?.(event as MouseEvent<HTMLAnchorElement>);
+
+    if (!titleHref) return;
+
+    event.preventDefault();
+
+    router?.push(titleHref);
+  };
+
+  const titleClassName = classNames("truncate", {
+    "text-decoration-solid underline underline-offset-2": level === "top-level"
+  });
+
+  const titleLinkClassName = classNames(
+    "min-w-0 truncate rounded-[6px]",
+    "text-theme-primary-900",
+    "hover:text-theme-primary-700",
+    "active:text-theme-primary-800",
+    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-theme-primary-700"
+  );
 
   return (
     <Flex alignItems="center" justifyContent="space-between" width="100%" gap={3} className={className}>
@@ -44,15 +74,21 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
                 {label}:
               </Text>
             )}
-            <Text
-              color="primary.900"
-              textStyle={level === "top-level" ? "500-bold" : "400-bold"}
-              className={classNames("truncate", {
-                "text-decoration-solid underline underline-offset-2": level === "top-level"
-              })}
-            >
-              {title}
-            </Text>
+            {isTopLevelLink ? (
+              <NextLink href={titleHref} className={titleLinkClassName} onClick={handleTitleClick}>
+                <Text as="span" textStyle="500-bold" className={titleClassName}>
+                  {title}
+                </Text>
+              </NextLink>
+            ) : (
+              <Text
+                color="primary.900"
+                textStyle={level === "top-level" ? "500-bold" : "400-bold"}
+                className={titleClassName}
+              >
+                {title}
+              </Text>
+            )}
           </Flex>
           {caption != null && (
             <Text textStyle="300" className="truncate">

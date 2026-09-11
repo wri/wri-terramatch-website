@@ -52,6 +52,30 @@ export const Due: Story = {
   }
 };
 
+export const NotSelected: Story = {
+  args: {
+    state: "not-selected"
+  }
+};
+
+export const ReceivingApplications: Story = {
+  args: {
+    state: "receiving-applications"
+  }
+};
+
+export const Closed: Story = {
+  args: {
+    state: "closed"
+  }
+};
+
+export const ComingSoon: Story = {
+  args: {
+    state: "coming-soon"
+  }
+};
+
 export const AllStates: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
@@ -62,6 +86,10 @@ export const AllStates: Story = {
       <TagSubmission state="information-required" />
       <TagSubmission state="approved" />
       <TagSubmission state="due" />
+      <TagSubmission state="not-selected" />
+      <TagSubmission state="receiving-applications" />
+      <TagSubmission state="closed" />
+      <TagSubmission state="coming-soon" />
     </div>
   )
 };

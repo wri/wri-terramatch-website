@@ -153,7 +153,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
             "bg-theme-primary-100": status != "in-progress"
           })}
         >
-          <Text color={status === "in-progress" ? "theme.error.900" : "theme.primary.800"} textStyle="300-bold">
+          <Text color={status === "in-progress" ? "error.900" : "primary.800"} textStyle="300-bold">
             {total}
           </Text>
         </div>
