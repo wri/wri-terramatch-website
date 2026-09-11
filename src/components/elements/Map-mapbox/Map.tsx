@@ -99,6 +99,9 @@ export interface BaseMapProps {
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
   skipNextSiteBboxZoomNonce?: number;
+  /** Opt-in: restore the overview (fit all-polygons bbox) when the edit drawer closes, instead of
+   * leaving the camera zoomed in. Used by the project flat view; see useMapCamera. */
+  zoomToBboxOnEditClose?: boolean;
   /** Tile cache key from another map; modal can reuse the same Geoserver RND. */
   initialTileVersion?: string;
   /** When it matches current polygon data, skip bumping the tile cache on mount. */
@@ -523,7 +526,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     polygonFromMap,
     polygonBbox,
     isUserDrawingEnabled,
-    isEditing
+    isEditing,
+    zoomToBboxOnEditClose: props.zoomToBboxOnEditClose
   });
 
   const crossSiteOverlapFeatureCollection = useMemo(

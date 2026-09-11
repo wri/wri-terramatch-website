@@ -58,7 +58,11 @@ const buildRestorationPracticeSortKey = (practices: restorationStrategyType[]): 
 const buildTreeDistributionSortKey = (distr: TreeDistributionType[]): string =>
   toSortableJoinedList(distr.map(value => TREE_DISTRIBUTION_SORT_LABELS[value]));
 
-export const mapSitePolygonToTableRow = (polygon: SitePolygonLightDto, t: (key: string) => string): PolygonTableRow => {
+export const mapSitePolygonToTableRow = (
+  polygon: SitePolygonLightDto,
+  t: (key: string) => string,
+  options?: { includeSiteName?: boolean }
+): PolygonTableRow => {
   const restorationPractice = (polygon.practice ?? []).filter(isRestorationStrategy);
   const targetLandUse = polygon.targetSys != null && isTargetLandUseType(polygon.targetSys) ? polygon.targetSys : null;
   const treeDistribution = (polygon.distr ?? []).filter(isTreeDistributionType);
@@ -67,6 +71,9 @@ export const mapSitePolygonToTableRow = (polygon: SitePolygonLightDto, t: (key: 
   return {
     id: polygon.polygonUuid ?? polygon.uuid,
     polygonName: polygon.name ?? t("Unnamed Polygon"),
+    // Only populated at project scope (where polygons span multiple sites); undefined keeps the
+    // site-page row shape and its column layout unchanged.
+    ...(options?.includeSiteName ? { siteName: polygon.siteName ?? "—" } : {}),
     submission: mapSitePolygonStatusToMappedTagState(polygon.status),
     validation: mapSiteValidationStatusToTagState(polygon.validationStatus),
     restorationPractice,

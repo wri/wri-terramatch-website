@@ -128,7 +128,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
         <Flex alignItems="center" gap={1.5} minWidth={0}>
           <MultiActionButton
             mainActionLabel={t("Review")}
-            mainActionOnClick={() => {}}
+            mainActionOnClick={onEdit ?? (() => {})}
             otherActions={[
               {
                 label: t("Approve"),

@@ -19,6 +19,7 @@ import {
 } from "@/constants/polygonStatuses";
 import { DELETED_AUDIT_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { resolvePolygonMapEditEnabled } from "@/context/mapArea.utils";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -44,6 +45,8 @@ interface PolygonsMapProps {
   isLoadingPolygons?: boolean;
   freezeCameraZoom?: boolean;
   skipNextSiteBboxZoomNonce?: number;
+  // Opt-in: restore the overview when the edit drawer closes (project flat view). See useMapCamera.
+  zoomToBboxOnEditClose?: boolean;
   className?: string;
   polygonTableHighlight?: {
     selectedPolygonUuids: string[];
@@ -59,6 +62,11 @@ interface PolygonsMapProps {
   // ghost style regardless of prior status, and suppresses popups/tooltips since there are no
   // actions available on a deleted polygon.
   isDeletedAuditView?: boolean;
+  // Opt-out for the project polygon review (flat/rollup/drill-in), which product wants free of
+  // geotagged photo markers. Gates the media fetch itself (via useAllMedias' enabled prop, not a
+  // conditional hook call) and forces an empty mediaFiles list so nothing renders. Defaults to
+  // false so every existing caller (the site page, champions tab) is unchanged.
+  hideGeotaggedMedia?: boolean;
 }
 
 const EMPTY_POLYGON_MAP: Record<string, string[]> = {
@@ -76,11 +84,13 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
   isLoadingPolygons = false,
   freezeCameraZoom = false,
   skipNextSiteBboxZoomNonce = 0,
+  zoomToBboxOnEditClose = false,
   className,
   polygonTableHighlight,
   overlapPolygons,
   crossSiteOverlapPolygons,
-  isDeletedAuditView = false
+  isDeletedAuditView = false,
+  hideGeotaggedMedia = false
 }) => {
   const t = useT();
   const disabledPolygonPanel = true;
@@ -122,13 +132,22 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   const mapFunctions = useBaseMap(onSave, undefined, { deferDrawCreateSave: true });
 
-  const [, { data: mediaFiles, refetch: refetchMediaFiles }] = useAllMedias({
+  const [, { data: fetchedMediaFiles, refetch: refetchMediaFiles }] = useAllMedias({
     entity: type as SupportedEntity,
     uuid: entityModel.uuid,
     filter: {
       isGeotagged: true
-    }
+    },
+    enabled: !hideGeotaggedMedia
   });
+
+  // When hidden, force an empty list regardless of what (if anything) the now-disabled connection
+  // still holds, so no photo markers render. Memoized so the forced-empty case is a stable
+  // reference rather than a new array every render.
+  const mediaFiles = useMemo(
+    () => (hideGeotaggedMedia ? [] : fetchedMediaFiles),
+    [hideGeotaggedMedia, fetchedMediaFiles]
+  );
 
   useEffect(() => {
     setMediaFiles(mediaFiles ?? []);
@@ -136,7 +155,9 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
 
   useValueChanged(shouldRefetchMediaData, () => {
     if (shouldRefetchMediaData) {
-      refetchMediaFiles?.();
+      if (!hideGeotaggedMedia) {
+        refetchMediaFiles?.();
+      }
       setShouldRefetchMediaData(false);
     }
   });
@@ -252,10 +273,11 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData && !freezeCameraZoom}
         skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
+        zoomToBboxOnEditClose={zoomToBboxOnEditClose}
         mediaFiles={mediaFiles}
         sitePolygonData={sitePolygonDataV3}
         disabledPolygonPanel={disabledPolygonPanel}
-        autoEditPolygon={editPolygon.isOpen}
+        autoEditPolygon={resolvePolygonMapEditEnabled(editPolygon.isOpen)}
         polygonTableHighlight={polygonTableHighlight}
         overlapPolygons={overlapPolygons}
         crossSiteOverlapPolygons={crossSiteOverlapPolygons}

@@ -1,7 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { AreaHectaresIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
@@ -16,6 +16,13 @@ type SitePolygonMetricsSectionProps = {
   selectedRestorationAreaRounded: number;
   polygonsWithOverlapCount: number;
   onSelectOverlapPolygons: () => void;
+  // Project scope only (F7): count of deduped cross-site overlap pairs and a selection shortcut for
+  // them. Omitted (default undefined/0) on the site page, which has no cross-site concept.
+  crossSiteOverlapCount?: number;
+  onSelectCrossSiteOverlapPolygons?: () => void;
+  // Project scope only (F7): the `‹ ⚠ i of N ›` anomaly stepper, rendered alongside the overlap
+  // banner. Omitted on the site page.
+  anomalyStepper?: ReactNode;
 };
 
 const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
@@ -26,7 +33,10 @@ const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
   selectedTreesPlanted,
   selectedRestorationAreaRounded,
   polygonsWithOverlapCount,
-  onSelectOverlapPolygons
+  onSelectOverlapPolygons,
+  crossSiteOverlapCount = 0,
+  onSelectCrossSiteOverlapPolygons,
+  anomalyStepper
 }) => {
   const t = useT();
 
@@ -59,26 +69,49 @@ const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
           className={classNames("mobile:w-full mobile:min-w-full", "min-w-[12.5rem]")}
         />
       </Flex>
-      {polygonsWithOverlapCount > 0 && (
-        <InlineMessage
-          actionLabel={t("Select Polygons")}
-          isButtonRight
-          size="small"
-          className="w-max"
-          label={
-            <Text color="error.900" textStyle="300">
-              <b>
-                {polygonsWithOverlapCount === 1
-                  ? t("1 overlap ")
-                  : t("{count} overlaps ", { count: polygonsWithOverlapCount })}
-              </b>
-              {t("detected")}
-            </Text>
-          }
-          onActionClick={onSelectOverlapPolygons}
-          variant="error"
-        />
-      )}
+      <Flex className="items-center gap-3 mobile:w-full mobile:flex-col">
+        {anomalyStepper}
+        {polygonsWithOverlapCount > 0 && (
+          <InlineMessage
+            actionLabel={t("Select Polygons")}
+            isButtonRight
+            size="small"
+            className="w-max"
+            label={
+              <Text color="error.900" textStyle="300">
+                <b>
+                  {polygonsWithOverlapCount === 1
+                    ? t("1 overlap ")
+                    : t("{count} overlaps ", { count: polygonsWithOverlapCount })}
+                </b>
+                {t("detected")}
+              </Text>
+            }
+            onActionClick={onSelectOverlapPolygons}
+            variant="error"
+          />
+        )}
+        {crossSiteOverlapCount > 0 && onSelectCrossSiteOverlapPolygons != null && (
+          <InlineMessage
+            actionLabel={t("Select Polygons")}
+            isButtonRight
+            size="small"
+            className="w-max"
+            label={
+              <Text color="error.900" textStyle="300">
+                <b>
+                  {crossSiteOverlapCount === 1
+                    ? t("1 cross-site overlap ")
+                    : t("{count} cross-site overlaps ", { count: crossSiteOverlapCount })}
+                </b>
+                {t("detected")}
+              </Text>
+            }
+            onActionClick={onSelectCrossSiteOverlapPolygons}
+            variant="error"
+          />
+        )}
+      </Flex>
     </Flex>
   );
 };

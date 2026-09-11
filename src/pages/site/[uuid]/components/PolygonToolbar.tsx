@@ -19,6 +19,10 @@ interface PolygonToolbarProps {
   polygonFilters: PolygonFilterState;
   activeFilterLabels: SelectedFilter[];
   isAdminReview?: boolean;
+  // Project scope only: renders the Site facet in the filter drawer when provided.
+  siteOptions?: { uuid: string; name: string }[];
+  // Analytics context; defaults to "site" so the site page's tracked events are unaffected.
+  entityType?: "site" | "project";
   onSearchChange: (value: string) => void;
   onApplyFilters: (filters: PolygonFilterState) => void;
   onClearFilters: () => void;
@@ -31,6 +35,8 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
   polygonFilters,
   activeFilterLabels,
   isAdminReview = false,
+  siteOptions,
+  entityType = "site",
   onSearchChange,
   onApplyFilters,
   onClearFilters
@@ -48,13 +54,14 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
     if (trimmedValue === "") {
       return;
     }
-    trackPolygonSearchUsed({ siteUuid });
+    trackPolygonSearchUsed({ siteUuid, entityType });
     onSearchChange(trimmedValue);
   };
 
   const handleApplyFilters = (filters: PolygonFilterState) => {
     trackPolygonFilterApplied({
       siteUuid,
+      entityType,
       filterTypes: resolveActivePolygonFilterTypes(filters)
     });
     onApplyFilters(filters);
@@ -88,6 +95,7 @@ const PolygonToolbar: FC<PolygonToolbarProps> = ({
         open={isFilterDrawerOpen}
         filters={polygonFilters}
         isAdminReview={isAdminReview}
+        siteOptions={siteOptions}
         onApplyFilters={handleApplyFilters}
         onClearFilters={handleOnClearFilters}
         onOpenChange={setIsFilterDrawerOpen}

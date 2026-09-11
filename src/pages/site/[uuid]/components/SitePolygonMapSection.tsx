@@ -17,12 +17,19 @@ import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../constants/sitePolygonM
 
 type SitePolygonMapSectionProps = {
   site: SiteFullDto;
+  // Entity the underlying map renders for. Defaults to the site; project scope overrides these to
+  // render every polygon rolled up under a project. `site` stays the fallback so site callers are
+  // untouched.
+  entityType?: ComponentProps<typeof PolygonsMap>["type"];
+  entityModel?: ComponentProps<typeof PolygonsMap>["entityModel"];
   isAdmin: boolean;
   polygons: SitePolygonLightDto[];
   isEditPolygonOpen: boolean;
   isSitePolygonsLoading: boolean;
   freezeCameraZoom?: boolean;
   skipNextSiteBboxZoomNonce?: number;
+  // Opt-in: restore the overview when the edit drawer closes (project flat view). See useMapCamera.
+  zoomToBboxOnEditClose?: boolean;
   polygonTableHighlight: ComponentProps<typeof PolygonsMap>["polygonTableHighlight"];
   overlapPolygons: OverlapPolygonPoint[];
   crossSiteOverlapPolygons?: CrossSiteOverlapPolygon[];
@@ -30,23 +37,29 @@ type SitePolygonMapSectionProps = {
   showUndoButton: boolean;
   onUndoDraw: () => void;
   isDeletedAuditView?: boolean;
+  // Forwarded to PolygonsMap. Defaults to false so the site page and champions tab are unchanged.
+  hideGeotaggedMedia?: boolean;
 };
 
 const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
   site,
+  entityType = "sites",
+  entityModel,
   isAdmin,
   polygons,
   isEditPolygonOpen,
   isSitePolygonsLoading,
   freezeCameraZoom = false,
   skipNextSiteBboxZoomNonce = 0,
+  zoomToBboxOnEditClose = false,
   polygonTableHighlight,
   overlapPolygons,
   crossSiteOverlapPolygons,
   onRefetchPolygons,
   showUndoButton,
   onUndoDraw,
-  isDeletedAuditView = false
+  isDeletedAuditView = false,
+  hideGeotaggedMedia = false
 }) => {
   const t = useT();
 
@@ -57,8 +70,8 @@ const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
       maxHeight={600}
     >
       <PolygonsMap
-        entityModel={site}
-        type="sites"
+        entityModel={entityModel ?? site}
+        type={entityType}
         className={classNames("overflow-hidden", {
           "!fixed top-0 bottom-0 left-0 right-0 z-[37] w-screen rounded-none": isEditPolygonOpen,
           "mt-12 ml-12 max-h-[calc(100vh_-_3rem)] max-w-[calc(100vw_-_3rem)]": isEditPolygonOpen && isAdmin,
@@ -70,10 +83,12 @@ const SitePolygonMapSection: FC<SitePolygonMapSectionProps> = ({
         isLoadingPolygons={isSitePolygonsLoading}
         freezeCameraZoom={freezeCameraZoom}
         skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
+        zoomToBboxOnEditClose={zoomToBboxOnEditClose}
         polygonTableHighlight={polygonTableHighlight}
         overlapPolygons={overlapPolygons}
         crossSiteOverlapPolygons={crossSiteOverlapPolygons}
         isDeletedAuditView={isDeletedAuditView}
+        hideGeotaggedMedia={hideGeotaggedMedia}
       />
       {showUndoButton && !isDeletedAuditView && (
         <Button

@@ -10,20 +10,28 @@ type UseSitePolygonTableDataParams = {
   polygonsData: SitePolygonLightDto[];
   polygonValidations: Map<string, ValidationDto>;
   t: (key: string, params?: Record<string, unknown>) => string;
+  // Project scope rolls polygons up across many sites, so it surfaces a Site column to disambiguate
+  // which site each polygon belongs to. Site scope leaves this off (default) for its original layout.
+  showSiteColumn?: boolean;
 };
 
-export const useSitePolygonTableData = ({ polygonsData, polygonValidations, t }: UseSitePolygonTableDataParams) => {
+export const useSitePolygonTableData = ({
+  polygonsData,
+  polygonValidations,
+  t,
+  showSiteColumn = false
+}: UseSitePolygonTableDataParams) => {
   const polygonRows = useMemo<PolygonTableRow[]>(
     () =>
       polygonsData.map(polygon => {
-        const row = mapSitePolygonToTableRow(polygon, t);
+        const row = mapSitePolygonToTableRow(polygon, t, { includeSiteName: showSiteColumn });
         const polygonUuid = polygon.polygonUuid ?? polygon.uuid;
         const validationFromDto =
           polygonUuid != null ? mapValidationDtoToTagState(polygonValidations.get(polygonUuid)) : null;
 
         return validationFromDto != null ? { ...row, validation: validationFromDto } : row;
       }),
-    [polygonsData, polygonValidations, t]
+    [polygonsData, polygonValidations, t, showSiteColumn]
   );
 
   const { totalTreesPlanted, totalRestorationAreaHa } = useMemo(() => {
@@ -42,6 +50,7 @@ export const useSitePolygonTableData = ({ polygonsData, polygonValidations, t }:
   const columns = useMemo(
     () => [
       { key: "polygonName", label: t("Polygon Name"), sortable: true, width: "17.75rem", sticky: true },
+      ...(showSiteColumn ? [{ key: "siteName", label: t("Site"), sortable: true, width: "15.875rem" }] : []),
       { key: "submission", label: t("Submission"), sortable: true, width: "15.875rem" },
       { key: "validation", label: t("Validation"), sortable: true, width: "12.75rem" },
       { key: "restorationPracticeSort", label: t("Restoration Practice"), sortable: true, width: "15.5rem" },
@@ -53,7 +62,7 @@ export const useSitePolygonTableData = ({ polygonsData, polygonValidations, t }:
       { key: "submissionCycleSort", label: t("Submission Cycle"), sortable: true, width: "12rem" },
       { key: "source", label: t("Source"), sortable: true, width: "12rem" }
     ],
-    [t]
+    [t, showSiteColumn]
   );
 
   return {

@@ -17,6 +17,13 @@ type UseMapCameraParams = {
   polygonBbox?: BBox | null;
   isUserDrawingEnabled?: boolean;
   isEditing?: boolean;
+  // REVISIT (2026-09-09): standalone zoom-out-after-save fix, opt-in for the project flat view.
+  // Normally the camera is suppressed on drawer close (stays put). When true, the map instead
+  // restores the overview (fits the all-polygons bbox) on close — needed there because the
+  // whole-project post-save reload keeps freezeCameraZoom true and swallows the natural zoom-out.
+  // Remove/reconcile this if the surgical post-save refresh (perf work) lands and makes the natural
+  // zoom-out fire again. See docs/plans/project-polygons-geometry-editing-plan.md (task 2).
+  zoomToBboxOnEditClose?: boolean;
 };
 
 export function useMapCamera({
@@ -30,7 +37,8 @@ export function useMapCamera({
   polygonFromMap,
   polygonBbox,
   isUserDrawingEnabled,
-  isEditing: isEditingGeometry
+  isEditing: isEditingGeometry,
+  zoomToBboxOnEditClose = false
 }: UseMapCameraParams) {
   const lastPolygonFitKeyRef = useRef<string>("");
   const polygonUuidAtDrawStartRef = useRef<string>("");
@@ -70,11 +78,43 @@ export function useMapCamera({
       suppressAutoCameraUntilPolygonSelectionRef.current = false;
     }
     if (wasPolygonDrawerOpenRef.current === true && isPolygonDrawerOpen === false) {
-      suppressNextAutoCameraMoveRef.current = true;
-      suppressAutoCameraUntilPolygonSelectionRef.current = true;
+      // REVISIT (2026-09-09): opt-in zoom-out-after-save for the project flat view. Default behavior
+      // suppresses the camera so it stays put on close; when zoomToBboxOnEditClose is set we instead
+      // restore the overview by fitting the all-polygons bbox (the flat view's whole-project reload
+      // otherwise keeps the camera frozen through close and swallows the natural zoom-out). Remove if
+      // the surgical post-save refresh (perf work) restores the natural zoom-out.
+      if (zoomToBboxOnEditClose === true && map.current != null && bbox != null && isUserDrawingEnabled !== true) {
+        suppressNextAutoCameraMoveRef.current = false;
+        suppressAutoCameraUntilPolygonSelectionRef.current = false;
+        const mapInstance = map.current;
+        const targetBbox = bbox;
+        const fitControls = hasControls ?? false;
+        // The map container shrinks from fullscreen back to inline on close. Resize the map to the
+        // settled viewport BEFORE fitting — otherwise fitBounds computes zoom for the fullscreen size
+        // and lands under-zoomed-out (not the default landing view). Defer across frames so the
+        // layout change has applied, and resize again just before the fit.
+        requestAnimationFrame(() => {
+          mapInstance.resize();
+          requestAnimationFrame(() => {
+            mapInstance.resize();
+            zoomToBbox(targetBbox, mapInstance, fitControls);
+          });
+        });
+      } else {
+        suppressNextAutoCameraMoveRef.current = true;
+        suppressAutoCameraUntilPolygonSelectionRef.current = true;
+      }
     }
     wasPolygonDrawerOpenRef.current = isPolygonDrawerOpen;
-  }, [polygonFromMap?.isOpen, polygonFromMap?.uuid]);
+  }, [
+    polygonFromMap?.isOpen,
+    polygonFromMap?.uuid,
+    zoomToBboxOnEditClose,
+    bbox,
+    map,
+    hasControls,
+    isUserDrawingEnabled
+  ]);
 
   useEffect(() => {
     if (map.current == null || shouldBboxZoom !== true) return;

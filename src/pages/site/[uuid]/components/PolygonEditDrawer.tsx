@@ -5,6 +5,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getUnreadCommentCount, useAuditStatuses } from "@/connections/AuditStatus";
 import { useMyUser } from "@/connections/User";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { isPolygonReviewOnly } from "@/context/mapArea.utils";
 import type { PolygonEditDrawerPolygon, PolygonEditDrawerTab } from "@/context/polygonEditDrawer.types";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
@@ -73,7 +74,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const t = useT();
   const [, { user, isAdmin }] = useMyUser();
   const { draftPolygonGeometry, siteData } = useMapAreaContext();
-  const [activeTab, setActiveTab] = useState<string>(defaultTab);
+  // Project-level review is read-only: hide the Edit tab (attribute + geometry editing), leaving
+  // System Validation + Comments. See registerPolygonReviewOnly in mapArea.utils.
+  const reviewOnly = isPolygonReviewOnly();
+  const effectiveDefaultTab = reviewOnly && defaultTab === "edit" ? "systemValidation" : defaultTab;
+  const [activeTab, setActiveTab] = useState<string>(effectiveDefaultTab);
   const [saveEditContent, setSaveEditContent] = useState<
     ((options?: SavePolygonFlowOptions) => Promise<SitePolygonLightDto | null>) | null
   >(null);
@@ -135,11 +140,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
       preserveActiveTabOnNextPolygonSyncRef.current = null;
     }
     if (drawerTabIdentityKey === "") {
-      setActiveTab("edit");
+      setActiveTab(reviewOnly ? "systemValidation" : "edit");
       return;
     }
-    setActiveTab(defaultTab);
-  }, [defaultTab, drawerTabIdentityKey]);
+    setActiveTab(effectiveDefaultTab);
+  }, [defaultTab, drawerTabIdentityKey, effectiveDefaultTab, reviewOnly]);
 
   useEffect(() => {
     if (!open) {
@@ -359,7 +364,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                 <Flex className="h-full flex-col">
                   {polygon?.polygonUuid && (
                     <TabBar
-                      key={`${drawerTabIdentityKey}-${defaultTab}`}
+                      key={`${drawerTabIdentityKey}-${effectiveDefaultTab}`}
                       onTabClick={(tabValue: string) => {
                         setActiveTab(tabValue);
                         if (tabValue === "comments") {
@@ -367,10 +372,14 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                         }
                       }}
                       tabs={[
-                        {
-                          label: t("Edit"),
-                          value: "edit"
-                        },
+                        ...(reviewOnly
+                          ? []
+                          : [
+                              {
+                                label: t("Edit"),
+                                value: "edit"
+                              }
+                            ]),
                         {
                           label: t("System Validation"),
                           value: "systemValidation"
@@ -385,11 +394,11 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                           value: "comments"
                         }
                       ]}
-                      defaultValue={defaultTab}
+                      defaultValue={effectiveDefaultTab}
                       variant="panel"
                     />
                   )}
-                  {activeTab === "edit" && (
+                  {activeTab === "edit" && !reviewOnly && (
                     <PolygonEditContent
                       polygon={selectedPolygon}
                       onClose={onClose}

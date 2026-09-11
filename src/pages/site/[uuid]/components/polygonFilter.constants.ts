@@ -35,6 +35,10 @@ export type PolygonFilterState = {
   submissionCycle: SubmissionCycleOption[];
   hasOverlap: boolean;
   showDeleted: boolean;
+  // Project scope only: site uuids to filter by. Applied client-side against the already-loaded
+  // polygon list (the backend index forbids combining siteId[] with projectId[]). Site scope leaves
+  // this empty and the facet is not rendered.
+  siteId: string[];
 };
 
 export const EMPTY_POLYGON_FILTERS: PolygonFilterState = {
@@ -46,7 +50,8 @@ export const EMPTY_POLYGON_FILTERS: PolygonFilterState = {
   targetSys: [],
   submissionCycle: [],
   hasOverlap: false,
-  showDeleted: false
+  showDeleted: false,
+  siteId: []
 };
 
 export const TARGET_LAND_USE_VALUES: targetLandUseType[] = [
