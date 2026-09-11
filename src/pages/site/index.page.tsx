@@ -1,5 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
@@ -100,13 +101,17 @@ const SiteIndexPageContent = () => {
   const handleAddSite = useCallback(() => {
     const targetProject = projects.find(project => project.id === selectedProject);
     if (targetProject == null) {
+      showToast({
+        label: t("Select a project from View to add a site."),
+        type: "warning",
+        placement: "bottom",
+        duration: 5000
+      });
       return;
     }
 
     void router.push(getSiteCreateUrl(targetProject));
-  }, [projects, router, selectedProject]);
-
-  const canAddSite = selectedProject !== ALL_PROJECTS_VIEW;
+  }, [projects, router, selectedProject, t]);
 
   const clearFilters = useCallback(() => {
     setStatusFilters([]);
@@ -157,7 +162,7 @@ const SiteIndexPageContent = () => {
               size="small"
               leftIcon={<PlusIcon boxSize="0.625rem" />}
               className="mobile:w-full"
-              disabled={!canAddSite}
+              disabled={projects.length === 0}
               onClick={handleAddSite}
             >
               {t("Add Site")}
@@ -185,8 +190,8 @@ const SiteIndexPageContent = () => {
         showClearFilters={selectedFilters.length > 0}
       />
 
-      <PageContent className="px-2 py-0">
-        {loading || filtering ? (
+      <PageContent heightFull={false} className="bg-theme-neutral-200 !gap-0 px-2 pb-9 pt-1">
+        {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
             <Text textStyle="400" color="neutral.800">

@@ -194,12 +194,12 @@ const SiteProjectTable: FC<{
 
   const columns = useMemo<TableColumn[]>(
     () => [
-      { key: "name", label: t("Site Name"), sortable: true, width: "384px" },
-      { key: "status", label: t("Status"), sortable: true, width: "200px" },
-      { key: "update", label: t("Updates"), sortable: true, width: "250px" },
-      { key: "updatedAt", label: t("Latest Update"), sortable: true, width: "170px" },
-      { key: "createdAt", label: t("Date Created"), sortable: true, width: "150px" },
-      { key: "actions", label: "", width: "130px" }
+      { key: "name", label: t("Site Name"), sortable: true },
+      { key: "status", label: t("Status"), sortable: true },
+      { key: "update", label: t("Updates"), sortable: true },
+      { key: "updatedAt", label: t("Latest Update"), sortable: true },
+      { key: "createdAt", label: t("Date Created"), sortable: true },
+      { key: "actions", label: "" }
     ],
     [t]
   );
@@ -272,7 +272,7 @@ const SiteProjectTable: FC<{
             )}
           </TableCell>
           <TableCell {...context?.getCellProps("actions")} onClick={stopRowClick}>
-            <Box className="flex justify-center">
+            <Box className="flex justify-end pr-2">
               <ActionCell
                 button={{
                   children: t("Edit"),
@@ -317,6 +317,19 @@ const SiteProjectTable: FC<{
     <Table<SiteIndexSite>
       data={sites}
       css={{
+        // "& > div > div": {
+        //   overflowX: "hidden"
+        // },
+        // "& table": {
+        //   tableLayout: "fixed",
+        //   minWidth: "0 !important",
+        //   width: "100%"
+        // },
+        // "& table thead th:first-of-type, & table tbody td:first-of-type": {
+        //   width: "3.75rem !important",
+        //   minWidth: "3.75rem !important",
+        //   maxWidth: "3.75rem !important"
+        // },
         "& table tbody tr:hover": {
           borderBottomColor: "primary.700",
           borderBottomWidth: "0.0625rem"
@@ -390,6 +403,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
         variant="tertiary"
         open={open}
         onOpenChange={setOpen}
+        isScrollable={false}
         className="w-full overflow-hidden rounded bg-theme-neutral-100"
         classNameHeader="!mb-0"
         header={
@@ -402,7 +416,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
               open ? (
                 <FolderOpenIcon minWidth={5} width={5} height="auto" color="primary.600" />
               ) : (
-                <FolderIcon minWidth={5} width={5} height="auto" color="neutral.400" />
+                <FolderIcon minWidth={5} width={5} height="auto" color="primary.600" />
               )
             }
             statusLabels={

@@ -8,7 +8,7 @@ import { ToolbarObjectProps } from "./ToolBar.type";
 const ToolbarObject: FC<ToolbarObjectProps> = ({ breadcrumbs, suffix, className, classNameSuffix }) => {
   return (
     <Toolbar
-      className={classNames("px-5 py-2", className)}
+      className={classNames("border-theme-neutral-300 border-b px-5 py-2", className)}
       contentLeft={<Breadcrumb {...breadcrumbs} />}
       contentRight={
         suffix != null ? <div className={"flex flex-row-reverse items-center gap-3"}>{suffix}</div> : undefined

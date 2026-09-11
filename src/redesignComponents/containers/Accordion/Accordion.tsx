@@ -40,7 +40,7 @@ const variantStyles = {
   },
   tertiary: {
     container: {
-      background: "neutral.100",
+      background: "primary.100",
       paddingX: 4,
       paddingY: 3,
       marginBottom: 4,
@@ -49,7 +49,7 @@ const variantStyles = {
       justifyContent: "space-between",
       borderRadius:
         "var(--Border-Radius-300, 0.25rem) var(--Border-Radius-300, 0.25rem) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
-      borderTop: "var(--Border-Width-200, 0.125rem) solid var(--Neutrals-300, #E7E6E6)"
+      borderTop: "var(--Border-Width-300, 0.25rem) solid var(--Primary-500, #78CAED)"
     },
     header: {
       gap: 2
