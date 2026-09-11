@@ -4,6 +4,7 @@ import { useMemo } from "react";
 
 import LoadingTable from "@/redesignComponents/dataDisplay/Table/components/LoadingTable";
 import Table, { type TableColumn } from "@/redesignComponents/dataDisplay/Table/Table";
+import type { SortColumn } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 
 import { PolygonTableInteractionActionsProvider } from "./polygonTableInteractionContext";
 import type { PolygonTableRow } from "./PolygonTableRow";
@@ -22,6 +23,12 @@ type SitePolygonTableSectionProps = {
   onClearHover: () => void;
   onRowSelected: (row: PolygonTableRow, selected: boolean) => void;
   readOnly?: boolean;
+  totalItems: number;
+  currentPage: number;
+  pageSize: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
+  onSortChange: (sortColumn: SortColumn) => void;
 };
 
 const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
@@ -36,7 +43,13 @@ const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
   onAllItemsSelected,
   onClearHover,
   onRowSelected,
-  readOnly = false
+  readOnly = false,
+  totalItems,
+  currentPage,
+  pageSize,
+  onPageChange,
+  onPageSizeChange,
+  onSortChange
 }) => {
   const renderRow = useMemo(() => renderPolygonTableRow(readOnly), [readOnly]);
   const handleAllItemsSelected = readOnly ? () => undefined : onAllItemsSelected;
@@ -52,7 +65,12 @@ const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
           data={isSitePolygonsLoading ? [] : polygonRows}
           columns={columns}
           showPagination
-          pageSize={10}
+          pageSize={pageSize}
+          totalItems={totalItems}
+          currentPage={currentPage}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+          onSortChange={onSortChange}
           selectable
           selectedRows={selectedRows}
           onAllItemsSelected={handleAllItemsSelected}

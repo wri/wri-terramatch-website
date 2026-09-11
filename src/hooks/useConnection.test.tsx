@@ -6,7 +6,7 @@ import { createSelector } from "reselect";
 
 import { AuthLoginResponse } from "@/generated/v3/userService/userServiceComponents";
 import { useConnection } from "@/hooks/useConnection";
-import ApiSlice, { ApiDataStore, JsonApiResponse } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, JsonApiDocument } from "@/store/apiSlice";
 import { makeStore } from "@/store/store";
 import { Connection } from "@/types/connection";
 
@@ -63,9 +63,9 @@ describe("Test useConnection hook", () => {
     const response = {
       data: { type: "logins", id: "1", attributes: { token } },
       meta: { resourceType: "logins" }
-    } as JsonApiResponse;
+    } as JsonApiDocument;
     act(() => {
-      ApiSlice.fetchSucceeded({ url: "/foo", method: "POST", response });
+      ApiSlice.fetchSucceeded({ url: "/foo", method: "POST", document: response });
     });
 
     // The store has changed so the selector gets called again, and the selector's result has

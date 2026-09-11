@@ -67,6 +67,7 @@ import type {
   MapFunctions,
   MobilePopupData,
   PolygonCentroid,
+  PolygonEntityScope,
   PolygonFromMapState,
   SetPolygonFromMap,
   TooltipType
@@ -94,6 +95,7 @@ export interface BaseMapProps {
   mediaFiles?: MediaDto[];
   tooltipType?: TooltipType;
   sitePolygonData?: SitePolygonLightDto[];
+  polygonEntityScope?: PolygonEntityScope;
   className?: string;
   legendPosition?: ControlMapPosition;
   polygonsExists?: boolean;
@@ -245,6 +247,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     setPolygonFromMap,
     polygonFromMap,
     sitePolygonData,
+    polygonEntityScope,
     selectedLandscapes,
     projectUUID,
     setLoader,
@@ -478,6 +481,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     sourcesAdded,
     showPopups,
     sitePolygonData,
+    polygonEntityScope,
     tooltipType,
     isMobile,
     setLoader,

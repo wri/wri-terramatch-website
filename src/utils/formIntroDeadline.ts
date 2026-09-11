@@ -1,4 +1,8 @@
+import { isValid, parse } from "date-fns";
+
 import { FormFullDto, StageDto } from "@/generated/v3/entityService/entityServiceSchemas";
+
+const ISO_DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
 
 const REPORT_FORM_TYPES = new Set<NonNullable<FormFullDto["type"]>>([
   "project-report",
@@ -54,4 +58,14 @@ export const resolveFormIntroDeadline = ({
   }
 
   return reportDueAt ?? undefined;
+};
+
+export const toLocalCalendarDate = (value?: string | null): Date | undefined => {
+  if (value == null || value === "") return undefined;
+
+  const datePart = value.trim().slice(0, 10);
+  if (!ISO_DATE_ONLY.test(datePart)) return undefined;
+
+  const parsed = parse(datePart, "yyyy-MM-dd", new Date());
+  return isValid(parsed) ? parsed : undefined;
 };

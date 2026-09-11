@@ -192,6 +192,59 @@ export type GeometryUploadComparisonSummaryDto = {
   featuresForCreation: number;
 };
 
+export type SitePolygonMapEntryDto = {
+  /**
+   * UUID of the site polygon version.
+   */
+  uuid: string;
+  /**
+   * UUID of the associated polygon geometry. Used to match features in GeoServer tiles.
+   */
+  polygonUuid: string | null;
+  /**
+   * Approval status of the polygon, used for map styling and status counts.
+   */
+  status: "draft" | "pending-approval" | "information-required" | "approved" | null;
+};
+
+export type SitePolygonMapIndexDto = {
+  /**
+   * Every polygon matching the requested scope and filters.
+   */
+  polygons: SitePolygonMapEntryDto[];
+  /**
+   * Number of polygons in the polygons array.
+   */
+  total: number;
+};
+
+export type SitePolygonSummaryDto = {
+  /**
+   * Sum of numTrees across polygons in scope.
+   */
+  sumNumTrees: number;
+  /**
+   * Sum of calcArea (ha) across polygons in scope.
+   */
+  sumCalcArea: number;
+  /**
+   * Count of polygons in scope.
+   */
+  totalPolygons: number;
+  /**
+   * Polygon counts keyed by status.
+   *
+   * @example {"draft":0,"pending-approval":0,"information-required":0,"approved":0}
+   */
+  countByStatus: {
+    [key: string]: number;
+  };
+  /**
+   * Optional indicator aggregates keyed by requested indicatorSlug.
+   */
+  indicators?: Record<string, any>;
+};
+
 export type SitePolygonLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -1245,7 +1298,7 @@ export type StorePolygonAttributeDefinitionOptionAttributes = {
    */
   uuid?: string;
   /**
-   * Option display label. On create, the stored value is camelCased from this label.
+   * Option display label. On create, the stored value is kebab-cased from this label.
    */
   label: string;
 };

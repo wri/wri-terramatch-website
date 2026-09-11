@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { resourceCreator } from "@/connections/util/resourceMutator";
@@ -12,6 +12,7 @@ import {
 } from "@/generated/v3/researchService/researchServiceComponents";
 import { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
+import { useStableProps } from "@/hooks/useStableProps";
 import ApiSlice from "@/store/apiSlice";
 import { loadConnection } from "@/utils/loadConnection";
 
@@ -52,6 +53,43 @@ export const fetchPolygonValidation = async (polygonUuid: string): Promise<Valid
   }
 
   return response.data;
+};
+
+export const fetchPolygonValidations = async (
+  polygonUuids: string[],
+  { clearCache = false }: { clearCache?: boolean } = {}
+): Promise<ValidationDto[]> => {
+  const uuids = [...new Set(polygonUuids.filter(uuid => uuid != null && uuid !== ""))];
+  if (uuids.length === 0) {
+    return [];
+  }
+
+  if (clearCache) {
+    ApiSlice.pruneCache("validations", uuids);
+  }
+
+  const results = await Promise.all(uuids.map(uuid => fetchPolygonValidation(uuid)));
+  return results.filter((validation): validation is ValidationDto => validation != null);
+};
+
+export const usePolygonValidations = (polygonUuids: string[]) => {
+  const [validations, setValidations] = useState<ValidationDto[]>([]);
+  const stablePolygonUuids = useStableProps(polygonUuids);
+
+  const fetchValidations = useCallback(
+    async (clearCache: boolean = false) => {
+      const nextValidations = await fetchPolygonValidations(stablePolygonUuids, { clearCache });
+      setValidations(nextValidations);
+      return nextValidations;
+    },
+    [stablePolygonUuids]
+  );
+
+  useEffect(() => {
+    void fetchValidations();
+  }, [fetchValidations]);
+
+  return { validations, fetchValidations };
 };
 
 const siteValidationConnection = v3Resource("validations", getSiteValidation)

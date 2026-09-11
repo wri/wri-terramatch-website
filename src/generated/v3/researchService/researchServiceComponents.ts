@@ -654,6 +654,386 @@ export const getSitePolygonsGeoJson = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons/geojson", "GET");
 
+export type SitePolygonsMapIndexQueryParams = {
+  /**
+   * Scope results to site UUID(s). Exactly one of siteId[] or projectId[] is required.
+   */
+  ["siteId[]"]?: string[];
+  /**
+   * Scope results to project UUID(s). Exactly one of siteId[] or projectId[] is required.
+   */
+  ["projectId[]"]?: string[];
+  /**
+   * Filter results by polygon status
+   */
+  ["polygonStatus[]"]?: ("draft" | "pending-approval" | "information-required" | "approved")[];
+  /**
+   * Filter results by validation status
+   */
+  ["validationStatus[]"]?: string[];
+  /**
+   * Filter results by polygon UUID(s)
+   */
+  ["polygonUuid[]"]?: string[];
+  /**
+   * Filter results by polygons that are missing at least one of the indicators listed
+   */
+  ["missingIndicator[]"]?: (
+    | "treeCover"
+    | "treeCoverLoss"
+    | "treeCoverLossFires"
+    | "restorationByEcoRegion"
+    | "restorationByStrategy"
+    | "restorationByLandUse"
+    | "treeCount"
+    | "earlyTreeVerification"
+    | "fieldMonitoring"
+    | "msuCarbon"
+  )[];
+  /**
+   * Filter results by polygons that have all of the indicators listed
+   */
+  ["presentIndicator[]"]?: (
+    | "treeCover"
+    | "treeCoverLoss"
+    | "treeCoverLossFires"
+    | "restorationByEcoRegion"
+    | "restorationByStrategy"
+    | "restorationByLandUse"
+    | "treeCount"
+    | "earlyTreeVerification"
+    | "fieldMonitoring"
+    | "msuCarbon"
+  )[];
+  /**
+   * Filter results by polygons that have been modified since the date provided
+   *
+   * @format date-time
+   */
+  lastModifiedDate?: string;
+  /**
+   * Inclusive lower bound for plant start date (plantStart)
+   *
+   * @format date
+   */
+  plantStartFrom?: string;
+  /**
+   * Inclusive upper bound for plant start date (plantStart)
+   *
+   * @format date
+   */
+  plantStartTo?: string;
+  /**
+   * Filter by restoration practice (any selected value matches)
+   */
+  ["practice[]"]?: ("tree-planting" | "direct-seeding" | "assisted-natural-regeneration")[];
+  /**
+   * Filter by target land use / target system (any selected value matches)
+   */
+  ["targetSys[]"]?: (
+    | "agroforest"
+    | "agricultural-land"
+    | "grassland"
+    | "open-natural-ecosystem"
+    | "natural-forest"
+    | "mangrove"
+    | "peatland"
+    | "riparian-area-or-wetland"
+    | "silvopasture"
+    | "woodlot-or-plantation"
+    | "urban-forest"
+  )[];
+  /**
+   * Filter by tree distribution (any selected value matches)
+   */
+  ["distr[]"]?: ("single-line" | "partial" | "full")[];
+  /**
+   * Filter by submission cycle (any selected value matches)
+   */
+  ["submissionCycle[]"]?: ("1" | "2" | "3" | "4" | "5")[];
+  /**
+   * Filter by polygon source (any selected value matches)
+   */
+  ["source[]"]?: ("terramatch" | "greenhouse" | "research")[];
+  /**
+   * Filter to polygons with a failed overlap validation.
+   *
+   * @default false
+   */
+  hasOverlap?: boolean;
+  /**
+   * Soft-deleted polygons for one site. Requires exactly one siteId[] value.
+   *
+   * @default false
+   */
+  deletedOnly?: boolean;
+  search?: string;
+  /**
+   * Select the fields used by search.
+   */
+  ["searchFields[]"]?: ("siteName" | "polyName" | "polygonUuid")[];
+};
+
+export type SitePolygonsMapIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type SitePolygonsMapIndexResponse = {
+  meta?: {
+    /**
+     * @example sitePolygonMapIndexes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example sitePolygonMapIndexes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SitePolygonMapIndexDto;
+  };
+};
+
+export type SitePolygonsMapIndexVariables = {
+  queryParams?: SitePolygonsMapIndexQueryParams;
+};
+
+/**
+ * Returns one resource whose attributes hold the complete in-scope polygon list as
+ *     `{ uuid, polygonUuid, status }`, plus a `total`. There is no pagination: the payload stays small
+ *     because each row carries only the three fields a map needs to style and filter GeoServer tiles.
+ *
+ *     Provide exactly one of siteId[] or projectId[]. The remaining workspace filters match the polygon
+ *     table and map, including deletedOnly.
+ */
+export const sitePolygonsMapIndex = new V3ApiEndpoint<
+  SitePolygonsMapIndexResponse,
+  SitePolygonsMapIndexError,
+  SitePolygonsMapIndexVariables,
+  {}
+>("/research/v3/sitePolygons/mapIndex", "GET");
+
+export type SitePolygonsSummaryQueryParams = {
+  /**
+   * Scope results to site UUID(s). Exactly one of siteId[] or projectId[] is required.
+   */
+  ["siteId[]"]?: string[];
+  /**
+   * Scope results to project UUID(s). Exactly one of siteId[] or projectId[] is required.
+   */
+  ["projectId[]"]?: string[];
+  /**
+   * Filter results by polygon status
+   */
+  ["polygonStatus[]"]?: ("draft" | "pending-approval" | "information-required" | "approved")[];
+  /**
+   * Filter results by validation status
+   */
+  ["validationStatus[]"]?: string[];
+  /**
+   * Filter results by polygon UUID(s)
+   */
+  ["polygonUuid[]"]?: string[];
+  /**
+   * Filter results by polygons that are missing at least one of the indicators listed
+   */
+  ["missingIndicator[]"]?: (
+    | "treeCover"
+    | "treeCoverLoss"
+    | "treeCoverLossFires"
+    | "restorationByEcoRegion"
+    | "restorationByStrategy"
+    | "restorationByLandUse"
+    | "treeCount"
+    | "earlyTreeVerification"
+    | "fieldMonitoring"
+    | "msuCarbon"
+  )[];
+  /**
+   * Filter results by polygons that have all of the indicators listed
+   */
+  ["presentIndicator[]"]?: (
+    | "treeCover"
+    | "treeCoverLoss"
+    | "treeCoverLossFires"
+    | "restorationByEcoRegion"
+    | "restorationByStrategy"
+    | "restorationByLandUse"
+    | "treeCount"
+    | "earlyTreeVerification"
+    | "fieldMonitoring"
+    | "msuCarbon"
+  )[];
+  /**
+   * Filter results by polygons that have been modified since the date provided
+   *
+   * @format date-time
+   */
+  lastModifiedDate?: string;
+  /**
+   * Inclusive lower bound for plant start date (plantStart)
+   *
+   * @format date
+   */
+  plantStartFrom?: string;
+  /**
+   * Inclusive upper bound for plant start date (plantStart)
+   *
+   * @format date
+   */
+  plantStartTo?: string;
+  /**
+   * Filter by restoration practice (any selected value matches)
+   */
+  ["practice[]"]?: ("tree-planting" | "direct-seeding" | "assisted-natural-regeneration")[];
+  /**
+   * Filter by target land use / target system (any selected value matches)
+   */
+  ["targetSys[]"]?: (
+    | "agroforest"
+    | "agricultural-land"
+    | "grassland"
+    | "open-natural-ecosystem"
+    | "natural-forest"
+    | "mangrove"
+    | "peatland"
+    | "riparian-area-or-wetland"
+    | "silvopasture"
+    | "woodlot-or-plantation"
+    | "urban-forest"
+  )[];
+  /**
+   * Filter by tree distribution (any selected value matches)
+   */
+  ["distr[]"]?: ("single-line" | "partial" | "full")[];
+  /**
+   * Filter by submission cycle (any selected value matches)
+   */
+  ["submissionCycle[]"]?: ("1" | "2" | "3" | "4" | "5")[];
+  /**
+   * Filter by polygon source (any selected value matches)
+   */
+  ["source[]"]?: ("terramatch" | "greenhouse" | "research")[];
+  /**
+   * Filter to polygons with a failed overlap validation.
+   *
+   * @default false
+   */
+  hasOverlap?: boolean;
+  /**
+   * Soft-deleted polygons for one site. Requires exactly one siteId[] value.
+   *
+   * @default false
+   */
+  deletedOnly?: boolean;
+  search?: string;
+  /**
+   * Select the fields used by search.
+   */
+  ["searchFields[]"]?: ("siteName" | "polyName" | "polygonUuid")[];
+  /**
+   * Optional indicator aggregate blocks for Monitored charts and run-analysis. Distinct from presentIndicator[] / missingIndicator[] which filter the polygon scope.
+   */
+  ["indicatorSlug[]"]?: (
+    | "treeCoverLoss"
+    | "treeCoverLossFires"
+    | "restorationByEcoRegion"
+    | "restorationByStrategy"
+    | "restorationByLandUse"
+  )[];
+};
+
+export type SitePolygonsSummaryError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type SitePolygonsSummaryResponse = {
+  meta?: {
+    /**
+     * @example sitePolygonSummaries
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example sitePolygonSummaries
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.SitePolygonSummaryDto;
+  };
+};
+
+export type SitePolygonsSummaryVariables = {
+  queryParams?: SitePolygonsSummaryQueryParams;
+};
+
+/**
+ * Returns workspace totals and optional indicator aggregates without loading polygon rows.
+ *     Provide exactly one of siteId[] or projectId[]. Workspace filters match mapIndex / index.
+ *     Pass indicatorSlug[] to include Monitored chart and run-analysis aggregates.
+ */
+export const sitePolygonsSummary = new V3ApiEndpoint<
+  SitePolygonsSummaryResponse,
+  SitePolygonsSummaryError,
+  SitePolygonsSummaryVariables,
+  {}
+>("/research/v3/sitePolygons/summary", "GET");
+
 export type BulkUpdateSitePolygonAttributesError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -3215,7 +3595,7 @@ export type PolygonAttributeDefinitionsIndexVariables = {
 };
 
 /**
- * Returns all definitions for the given framework, including inactive ones. Champion write APIs still ignore inactive definitions.
+ * Framework admins (framework-{key} permission) receive all definitions for the given framework, including inactive ones, for use in the management screen. Champions / project managers with access to at least one site in the framework receive active definitions only, for use in the polygon edit UI.
  */
 export const polygonAttributeDefinitionsIndex = new V3ApiEndpoint<
   PolygonAttributeDefinitionsIndexResponse,
@@ -3521,6 +3901,8 @@ export const operationsByTag = {
     bulkUpdateSitePolygons,
     bulkDeleteSitePolygons,
     getSitePolygonsGeoJson,
+    sitePolygonsMapIndex,
+    sitePolygonsSummary,
     bulkUpdateSitePolygonAttributes,
     updateSitePolygonStatus,
     listSitePolygonVersions,

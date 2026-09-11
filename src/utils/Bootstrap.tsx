@@ -1,9 +1,13 @@
 import { normalizeLocale, tx } from "@transifex/native";
 import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect, useMemo } from "react";
+import { io } from "socket.io-client";
 
+import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { useMyOrg } from "@/connections/Organisation";
 import { useMyUser } from "@/connections/User";
+import { websocketUrl } from "@/constants/environment";
+import ApiSlice, { JsonApiDocument } from "@/store/apiSlice";
 import Log from "@/utils/log";
 import { PathMatcher, Redirect } from "@/utils/PathMatcher";
 
@@ -107,11 +111,57 @@ const useLanguageTransition = () => {
   }, [router.locale]);
 };
 
+// For now, the socket is only used to receive model updates pushed by the server, so the socket
+// is not exposed to external consumers. If we end up using it for two way communications, the socket
+// should be exposed through a react context.
+const useWebsocket = () => {
+  const [, { user }] = useMyUser();
+
+  useEffect(() => {
+    if (user?.uuid == null) return;
+
+    const accessToken = typeof window !== "undefined" && getAccessToken();
+    if (accessToken == null) {
+      Log.error(`We have a logged in user, but no access token [${user.uuid}]`);
+      return;
+    }
+
+    Log.info("Connecting to websocket for user data pushes");
+    const socket = io(websocketUrl, {
+      autoConnect: true,
+      path: "/userSockets/v3/connection",
+      auth: { token: `Bearer ${accessToken}` }
+    });
+    socket.on("connect", () => {
+      Log.info("Websocket connected");
+    });
+    socket.on("disconnect", () => {
+      Log.info("Websocket disconnected");
+    });
+    socket.on("connect_error", err => {
+      Log.error("Websocket error", err);
+    });
+    socket.on("userDataPush", (document: JsonApiDocument) => {
+      ApiSlice.storeDocument(document);
+    });
+    socket.on("userDataReset", (document: JsonApiDocument) => {
+      ApiSlice.pruneCache(document.meta.resourceType);
+      ApiSlice.storeDocument(document);
+    });
+
+    return () => {
+      Log.info("Disconnecting websocket");
+      socket.disconnect();
+    };
+  }, [user?.uuid]);
+};
+
 const Bootstrap = ({ children }: PropsWithChildren) => {
   const [loaded] = useMyUser();
 
   useLanguageTransition();
   useRedirect();
+  useWebsocket();
 
   // don't try to mount children until we've tried to load our own user.
   return !loaded ? null : <>{children}</>;

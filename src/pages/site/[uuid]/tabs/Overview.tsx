@@ -9,7 +9,7 @@ import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/Abo
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { pruneSitePolygonsCache, useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
@@ -48,17 +48,13 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     useInformationRequiredModal: true
   });
 
-  const {
-    data: sitePolygonDataV3,
-    isLoading: isLoadingSitePolygons,
-    refetch: refetchV3
-  } = useAllSitePolygons({
+  const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
     entityName: "sites",
     entityUuid: site.uuid,
-    enabled: !!site.uuid
+    enabled: site.uuid != null && site.uuid !== ""
   });
   const reload = () => {
-    refetchV3();
+    pruneSitePolygonsCache();
   };
   useEffect(() => {
     setSiteData(site);
@@ -71,7 +67,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   };
 
   return (
-    <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
+    <SitePolygonDataProvider sitePolygonData={undefined} reloadSiteData={reload}>
       <PageContent>
         {EditModals}
         <Flex gap={7} className="flex-col sm:flex-row">
@@ -152,7 +148,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 hideFullscreenControl={true}
                 overviewPolygonPopup={true}
               />
-              {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
+              {mapIndexLoaded && (mapIndex?.total ?? 0) === 0 && (
                 <MapPlaceholder
                   icon={<SiteIcon boxSize={6} color="neutral.100" />}
                   title={t("Project Site not defined")}

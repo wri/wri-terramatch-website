@@ -8,7 +8,7 @@ import type {
   OverlapPolygonPoint
 } from "@/components/elements/Map-mapbox/layers/overlapTypes";
 import type { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import type { SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 import UndoIcon from "@/redesignComponents/foundations/Icons/Function/UndoIcon";
@@ -18,7 +18,7 @@ import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "../constants/sitePolygonM
 type SitePolygonMapSectionProps = {
   site: SiteFullDto;
   isAdmin: boolean;
-  polygons: SitePolygonLightDto[];
+  polygons: SitePolygonMapEntryDto[];
   isEditPolygonOpen: boolean;
   isSitePolygonsLoading: boolean;
   freezeCameraZoom?: boolean;
