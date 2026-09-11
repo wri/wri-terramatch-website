@@ -17,6 +17,8 @@ import {
   SitePolygonsIndexQueryParams,
   sitePolygonsMapIndex,
   SitePolygonsMapIndexQueryParams,
+  sitePolygonsSummary,
+  SitePolygonsSummaryQueryParams,
   updateSitePolygonStatus
 } from "@/generated/v3/researchService/researchServiceComponents";
 import type {
@@ -27,7 +29,8 @@ import type {
   SitePolygonBulkDeleteBodyDto,
   SitePolygonLightDto,
   SitePolygonMapIndexDto,
-  SitePolygonStatusBulkUpdateBodyDto
+  SitePolygonStatusBulkUpdateBodyDto,
+  SitePolygonSummaryDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
 import { resolveUrl } from "@/generated/v3/utils";
 import { useStableProps } from "@/hooks/useStableProps";
@@ -72,11 +75,27 @@ const sitePolygonMapIndexConnection = v3Resource("sitePolygonMapIndexes", sitePo
 export const useSitePolygonMapIndex = connectionHook(sitePolygonMapIndexConnection);
 export const loadSitePolygonMapIndex = connectionLoader(sitePolygonMapIndexConnection);
 
+export type SitePolygonSummaryFilter = Omit<SitePolygonsSummaryQueryParams, "siteId[]" | "projectId[]">;
+
+const sitePolygonSummaryConnection = v3Resource("sitePolygonSummaries", sitePolygonsSummary)
+  .singleByFilter<SitePolygonSummaryDto, SitePolygonsSummaryQueryParams>()
+  .enabledProp()
+  .addProps<{ entityName?: "projects" | "sites"; entityUuid?: string }>(({ entityName, entityUuid }) => {
+    if (entityName === "projects" && entityUuid != null) return { queryParams: { "projectId[]": [entityUuid] } };
+    if (entityName === "sites" && entityUuid != null) return { queryParams: { "siteId[]": [entityUuid] } };
+    return {};
+  })
+  .buildConnection();
+
+export const useSitePolygonSummary = connectionHook(sitePolygonSummaryConnection);
+export const loadSitePolygonSummary = connectionLoader(sitePolygonSummaryConnection);
+
 export const pruneSitePolygonsCache = (): void => {
   ApiSlice.pruneCache("sitePolygons");
   ApiSlice.pruneIndex("sitePolygons", "");
   ApiSlice.pruneCache("geojsonExports");
   ApiSlice.pruneCache("sitePolygonMapIndexes");
+  ApiSlice.pruneCache("sitePolygonSummaries");
 };
 
 const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygons)
