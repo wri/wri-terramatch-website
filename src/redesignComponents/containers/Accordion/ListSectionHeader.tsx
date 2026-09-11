@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import classNames from "classnames";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -75,8 +75,12 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
 
   return (
     <Flex alignItems="center" justifyContent="space-between" width="100%" gap={3} className={className}>
-      <Flex alignItems="baseline" gap={gap} minWidth={0} flex={1}>
-        {icon}
+      <Flex alignItems={level === "top-level" ? "flex-start" : "baseline"} gap={gap} minWidth={0} flex={1}>
+        {icon != null && (
+          <Box flexShrink={0} paddingTop={level === "top-level" ? 1 : 0}>
+            {icon}
+          </Box>
+        )}
         <Flex direction="column" minWidth={0} alignItems="flex-start">
           <Flex alignItems="center" gap={1} width="100%" minWidth={0}>
             {label && (

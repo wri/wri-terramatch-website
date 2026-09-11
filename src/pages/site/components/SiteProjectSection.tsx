@@ -1,15 +1,12 @@
 import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { showToast } from "@worldresources/wri-design-systems";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { type FC, type MouseEvent, useCallback, useMemo, useState } from "react";
 
-import { deleteSite } from "@/connections/Entity";
 import { Framework, isTerrafund } from "@/context/framework.provider";
 import { getEntityEditPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import { getThemedColor } from "@/lib/theme";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -25,7 +22,6 @@ import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import {
   AreaHectaresIcon,
   CalendarIcon,
-  DeleteIcon,
   EditIcon,
   FolderIcon,
   FolderOpenIcon,
@@ -35,12 +31,9 @@ import {
   TreeIcon
 } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
-import ApiSlice from "@/store/apiSlice";
 
-import DeleteSite from "./Modals/DeleteSite";
 import type { SiteIndexProject, SiteIndexSite, SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
-import { useSiteIndexSelectionActions, useSiteTableSelection } from "./SiteIndexSelection.provider";
-import { isSiteDeletable } from "./siteIndexSubmit";
+import { useSiteTableSelection } from "./SiteIndexSelection.provider";
 
 interface SiteProjectSectionProps {
   project: SiteIndexProject;
@@ -48,7 +41,6 @@ interface SiteProjectSectionProps {
   totalSiteCount: number;
   isFiltered: boolean;
   defaultOpen?: boolean;
-  onSitesChanged: () => void;
 }
 
 const stopRowClick = (event: MouseEvent) => {
@@ -76,7 +68,7 @@ const SiteUpdate: FC<{ update: SiteIndexUpdate | null }> = ({ update }) => {
   }[update];
 
   return (
-    <Box className="flex items-center gap-1 text-theme-neutral-800">
+    <Box className="text-theme-neutral-800 flex items-center gap-1">
       <EditIcon boxSize={2.5} />
       <Text as="span" textStyle="200">
         {t("Editing:")}
@@ -179,8 +171,7 @@ const SiteProjectMetrics: FC<{
 
 const SiteProjectTable: FC<{
   sites: SiteIndexSite[];
-  onDeleteSite: (site: SiteIndexSite) => void;
-}> = ({ sites, onDeleteSite }) => {
+}> = ({ sites }) => {
   const t = useT();
   const router = useRouter();
   const { format } = useDate();
@@ -188,12 +179,12 @@ const SiteProjectTable: FC<{
 
   const columns = useMemo<TableColumn[]>(
     () => [
-      { key: "name", label: t("Site Name"), sortable: true, width: "384px" },
-      { key: "status", label: t("Status"), sortable: true, width: "200px" },
-      { key: "update", label: t("Updates"), sortable: true, width: "250px" },
-      { key: "updatedAt", label: t("Latest Update"), sortable: true, width: "170px" },
-      { key: "createdAt", label: t("Date Created"), sortable: true, width: "150px" },
-      { key: "actions", label: "", width: "130px" }
+      { key: "name", label: t("Site Name"), sortable: true, width: "calc(30% - 1.125rem)" },
+      { key: "status", label: t("Status"), sortable: true, width: "calc(15% - 0.5625rem)" },
+      { key: "update", label: t("Updates"), sortable: true, width: "calc(19% - 0.7125rem)" },
+      { key: "updatedAt", label: t("Latest Update"), sortable: true, width: "calc(14% - 0.525rem)" },
+      { key: "createdAt", label: t("Date Created"), sortable: true, width: "calc(12% - 0.45rem)" },
+      { key: "actions", label: "", width: "calc(10% - 0.375rem)" }
     ],
     [t]
   );
@@ -274,43 +265,32 @@ const SiteProjectTable: FC<{
                   "aria-label": t("Edit {siteName}", { siteName: site.name }),
                   onClick: () => void router.push(getEntityEditPageLink("sites", site.id))
                 }}
-                buttonSecondary={
-                  isSiteDeletable(site)
-                    ? {
-                        children: t("Delete"),
-                        "aria-label": t("Delete {siteName}", { siteName: site.name }),
-                        variant: "secondary",
-                        size: "small",
-                        className: "!border-theme-error-300 !bg-theme-error-100 !text-theme-error-900",
-                        leftIcon: (
-                          <DeleteIcon
-                            boxSize={2.5}
-                            className="!text-theme-error-500"
-                            css={{
-                              "& svg path": {
-                                fill: getThemedColor("error", 500) + " !important",
-                                color: getThemedColor("error", 500) + " !important"
-                              }
-                            }}
-                          />
-                        ),
-                        onClick: () => onDeleteSite(site)
-                      }
-                    : undefined
-                }
               />
             </Box>
           </TableCell>
         </TableRow>
       );
     },
-    [format, handleRowSelected, isSiteSelected, onDeleteSite, router, t]
+    [format, handleRowSelected, isSiteSelected, router, t]
   );
 
   return (
     <Table<SiteIndexSite>
       data={sites}
       css={{
+        "& > div > div": {
+          overflowX: "hidden"
+        },
+        "& table": {
+          tableLayout: "fixed",
+          minWidth: "0 !important",
+          width: "100%"
+        },
+        "& table thead th:first-of-type, & table tbody td:first-of-type": {
+          width: "3.75rem !important",
+          minWidth: "3.75rem !important",
+          maxWidth: "3.75rem !important"
+        },
         "& table tbody tr:hover": {
           borderBottomColor: "primary.700",
           borderBottomWidth: "0.0625rem"
@@ -334,41 +314,10 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   sites,
   totalSiteCount,
   isFiltered,
-  defaultOpen = false,
-  onSitesChanged
+  defaultOpen = false
 }) => {
   const t = useT();
   const [open, setOpen] = useState(defaultOpen);
-  const [siteToDelete, setSiteToDelete] = useState<SiteIndexSite | null>(null);
-  const { setSiteSelected } = useSiteIndexSelectionActions();
-
-  const handleConfirmRowDelete = useCallback(async () => {
-    if (siteToDelete == null) {
-      return;
-    }
-
-    try {
-      await deleteSite(siteToDelete.id);
-      setSiteSelected(siteToDelete, false);
-      ApiSlice.pruneCache("sites", [siteToDelete.id]);
-      ApiSlice.pruneIndex("sites", "");
-      ApiSlice.pruneIndex("projects", "");
-      onSitesChanged();
-      showToast({
-        label: t("Site Profile(s) deleted"),
-        type: "success",
-        placement: "bottom",
-        duration: 5000
-      });
-    } catch (error) {
-      showToast({
-        label: t("Something went wrong!"),
-        type: "error",
-        placement: "bottom"
-      });
-      throw error;
-    }
-  }, [onSitesChanged, setSiteSelected, siteToDelete, t]);
 
   return (
     <Flex direction="column" gap="0.5rem">
@@ -376,7 +325,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
         variant="tertiary"
         open={open}
         onOpenChange={setOpen}
-        className="w-full overflow-hidden rounded bg-theme-neutral-100"
+        className="bg-theme-neutral-100 w-full overflow-hidden rounded"
         classNameHeader="!mb-0"
         header={
           <ListSectionHeader
@@ -388,7 +337,7 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
               open ? (
                 <FolderOpenIcon minWidth={5} width={5} height="auto" color="primary.600" />
               ) : (
-                <FolderIcon minWidth={5} width={5} height="auto" color="neutral.400" />
+                <FolderIcon minWidth={5} width={5} height="auto" color="primary.600" />
               )
             }
             statusLabels={
@@ -401,19 +350,9 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
       >
         <Box className="bg-theme-neutral-100 p-4" minW={0}>
           <SiteProjectMetrics project={project} sites={sites} totalSiteCount={totalSiteCount} isFiltered={isFiltered} />
-          <SiteProjectTable sites={sites} onDeleteSite={setSiteToDelete} />
+          <SiteProjectTable sites={sites} />
         </Box>
       </Accordion>
-      <DeleteSite
-        open={siteToDelete != null}
-        onOpenChange={open => {
-          if (!open) {
-            setSiteToDelete(null);
-          }
-        }}
-        sites={siteToDelete == null ? [] : [siteToDelete]}
-        onDelete={handleConfirmRowDelete}
-      />
     </Flex>
   );
 };

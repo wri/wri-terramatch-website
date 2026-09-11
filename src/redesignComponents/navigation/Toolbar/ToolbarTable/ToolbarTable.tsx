@@ -92,7 +92,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
 
           <div className="flex min-w-[0] items-center gap-4 mobile:w-full">
             {filters != null && filters.length > 0 ? (
-              <div className="text-14 flex flex-wrap items-center gap-3 text-theme-neutral-900">
+              <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-3">
                 {t("Filter by:")}
 
                 {filters.map((filter, index) => (
@@ -109,7 +109,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
             <FilterTag selectedFilters={selectedFilters} />
 
             {showClearFilters && (
-              <Button variant="borderless" size="small" leftIcon={<CloseIcon />} onClick={onClearFilters}>
+              <Button variant="secondary" size="small" leftIcon={<CloseIcon />} onClick={onClearFilters}>
                 {t("Clear All Filters")}
               </Button>
             )}
