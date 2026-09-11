@@ -22,6 +22,7 @@ import type {
   EditPolygonState,
   LayerType,
   MobilePopupData,
+  PolygonEntityScope,
   PopupComponentProps,
   SetPolygonFromMap,
   TooltipType
@@ -98,6 +99,7 @@ export type PopupHandlerOptions = {
   setPolygonFromMap?: SetPolygonFromMap;
   setShouldRefetchPolygonData?: (value: boolean) => void;
   sitePolygonData?: SitePolygonLightDto[];
+  polygonEntityScope?: PolygonEntityScope;
   type: TooltipType;
   editPolygon: EditPolygonState;
   setEditPolygon: (value: EditPolygonState) => void;
@@ -126,6 +128,7 @@ export const openPolygonPopup = (
     setPolygonFromMap,
     setShouldRefetchPolygonData,
     sitePolygonData,
+    polygonEntityScope,
     type,
     editPolygon,
     setEditPolygon,
@@ -184,6 +187,7 @@ export const openPolygonPopup = (
         setPolygonFromMap,
         setShouldRefetchPolygonData,
         sitePolygonData,
+        polygonEntityScope,
         type,
         editPolygon,
         setEditPolygon,
@@ -219,6 +223,7 @@ const handleLayerClick = (
       setPolygonFromMap: options.setPolygonFromMap,
       setShouldRefetchPolygonData: options.setShouldRefetchPolygonData,
       sitePolygonData: options.sitePolygonData,
+      polygonEntityScope: options.polygonEntityScope,
       editPolygon: options.editPolygon,
       setEditPolygon: options.setEditPolygon,
       setLoader,

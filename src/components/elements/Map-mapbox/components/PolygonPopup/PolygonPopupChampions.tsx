@@ -30,7 +30,8 @@ import {
   formatAreaHectaresForPopup,
   formatTreesPlantedForPopup,
   getSitePolygonGeometryUuid,
-  normalizePolygonValidationStatus
+  normalizePolygonValidationStatus,
+  POPUP_METRIC_UNAVAILABLE
 } from "../../sitePolygonPopupUtils";
 import PopupContentPolygon from "../PopupPolygon/PopupContentPolygon";
 import PopupFooterPolygon from "../PopupPolygon/PopupFooterPolygon";
@@ -40,6 +41,7 @@ type PolygonPopupChampionsProps = {
   popup: PopupComponentProps["popup"];
   setShouldRefetchPolygonData?: PopupComponentProps["setShouldRefetchPolygonData"];
   sitePolygon?: SitePolygonLightDto;
+  isLoading?: boolean;
   tooltipType?: TooltipType;
   overviewPolygonPopup?: boolean;
 };
@@ -47,6 +49,7 @@ type PolygonPopupChampionsProps = {
 export function PolygonPopupChampions({
   popup,
   sitePolygon,
+  isLoading = false,
   tooltipType,
   overviewPolygonPopup = false
 }: PolygonPopupChampionsProps) {
@@ -79,15 +82,15 @@ export function PolygonPopupChampions({
       sitePolygon?.targetSys != null && isTargetLandUseType(sitePolygon.targetSys) ? sitePolygon.targetSys : null;
 
     return {
-      polygonName: sitePolygon?.name ?? undefined,
-      treesPlantedDisplay: formatTreesPlantedForPopup(sitePolygon?.numTrees),
-      areaHectaresDisplay: formatAreaHectaresForPopup(sitePolygon?.calcArea),
-      validationStatus,
-      commentsDisplay: commentsCount.toString(),
-      restorationPractice,
-      targetLandUse
+      polygonName: isLoading ? t("Loading...") : sitePolygon?.name ?? undefined,
+      treesPlantedDisplay: isLoading ? POPUP_METRIC_UNAVAILABLE : formatTreesPlantedForPopup(sitePolygon?.numTrees),
+      areaHectaresDisplay: isLoading ? POPUP_METRIC_UNAVAILABLE : formatAreaHectaresForPopup(sitePolygon?.calcArea),
+      validationStatus: isLoading ? ("not-started" as const) : validationStatus,
+      commentsDisplay: isLoading ? POPUP_METRIC_UNAVAILABLE : commentsCount.toString(),
+      restorationPractice: isLoading ? [] : restorationPractice,
+      targetLandUse: isLoading ? null : targetLandUse
     };
-  }, [commentsCount, sitePolygon]);
+  }, [commentsCount, isLoading, sitePolygon, t]);
 
   const submitDisabled = !isSitePolygonSubmittable(sitePolygon);
   const submitDisabledTooltip = getSingleSitePolygonSubmitTooltip(sitePolygon, t);

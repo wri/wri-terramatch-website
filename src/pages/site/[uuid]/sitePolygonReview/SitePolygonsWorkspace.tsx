@@ -27,6 +27,7 @@ import {
 import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
 import { setPolygonTableHoveredUuid, useSyncPolygonTableSelectionStore } from "@/context/polygonTableInteraction.store";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import { HIDDEN_STICKY_COLUMN_EDGE_STYLES } from "@/redesignComponents/dataDisplay/Table/tableStyles";
@@ -56,8 +57,7 @@ import SitePolygonTableSection from "../components/SitePolygonTableSection";
 import {
   canAutoFixOverlapSelection,
   getSelectedOverlapFixSummary,
-  hasOverlapFailureInSelection,
-  hasOverlapValidationFailure
+  hasOverlapFailureInSelection
 } from "../hooks/overlapFix.utils";
 import { useCrossSiteOverlapGeometries } from "../hooks/useCrossSiteOverlapGeometries";
 import { useDownloadSitePolygons } from "../hooks/useDownloadSitePolygons";
@@ -236,50 +236,65 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   const totalTreesPlanted = summaryData?.sumNumTrees ?? 0;
   const totalRestorationAreaHa = Math.round((summaryData?.sumCalcArea ?? 0) * 100) / 100;
 
-  const overlapPolygonIdentities = useMemo(() => {
-    const tableCoordsByUuid = new Map<string, { lat: number; long: number }>();
-    for (const polygon of tablePolygonsData) {
-      if (polygon.lat == null || polygon.long == null) {
-        continue;
-      }
-      const coords = { lat: polygon.lat, long: polygon.long };
-      if (polygon.polygonUuid != null && polygon.polygonUuid !== "") {
-        tableCoordsByUuid.set(polygon.polygonUuid, coords);
-      }
-      if (polygon.uuid != null && polygon.uuid !== "") {
-        tableCoordsByUuid.set(polygon.uuid, coords);
-      }
-    }
-
-    return mapPolygons.map(entry => {
-      const coords = tableCoordsByUuid.get(entry.polygonUuid ?? "") ?? tableCoordsByUuid.get(entry.uuid);
-      return {
-        uuid: entry.uuid,
-        polygonUuid: entry.polygonUuid,
-        lat: coords?.lat,
-        long: coords?.long
-      };
-    });
-  }, [mapPolygons, tablePolygonsData]);
+  const scopedPolygonUuids = useMemo(
+    () => mapPolygons.map(entry => entry.polygonUuid ?? entry.uuid).filter((uuid): uuid is string => uuid != null),
+    [mapPolygons]
+  );
 
   const {
     polygonsWithOverlapCount,
     overlapPolygons,
-    overlapValidations,
+    overlapPolygonUuids,
+    overlapPolygonsData,
     overlapValidationsByPolygonUuid,
     fetchOverlapValidations
   } = useSitePolygonOverlap({
     siteUuid: site.uuid,
-    polygonIdentities: overlapPolygonIdentities,
+    scopedPolygonUuids,
     preferredValidationsByPolygonUuid: polygonValidations,
     t
   });
 
+  const selectionPolygonsData = useMemo(() => {
+    if (overlapPolygonsData.length === 0) {
+      return tablePolygonsData;
+    }
+    const byId = new Map<string, SitePolygonLightDto>();
+    for (const polygon of tablePolygonsData) {
+      byId.set(polygon.polygonUuid ?? polygon.uuid, polygon);
+    }
+    for (const polygon of overlapPolygonsData) {
+      const id = polygon.polygonUuid ?? polygon.uuid;
+      if (!byId.has(id)) {
+        byId.set(id, polygon);
+      }
+    }
+    return Array.from(byId.values());
+  }, [tablePolygonsData, overlapPolygonsData]);
+
+  const selectionTableRows = useMemo(() => {
+    if (overlapPolygonsData.length === 0) {
+      return tablePolygonRows;
+    }
+    const rowsById = new Map<string, PolygonTableRow>();
+    for (const row of tablePolygonRows) {
+      rowsById.set(String(row.id), row);
+    }
+    for (const polygon of overlapPolygonsData) {
+      const id = polygon.polygonUuid ?? polygon.uuid;
+      if (id == null || id === "" || rowsById.has(id)) {
+        continue;
+      }
+      rowsById.set(id, mapSitePolygonToTableRow(polygon, t));
+    }
+    return Array.from(rowsById.values());
+  }, [tablePolygonRows, overlapPolygonsData, t]);
+
   const { selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } =
     useTableSelection<PolygonTableRow>(true, tablePolygonRows);
   const selectedRows = useMemo(
-    () => tablePolygonRows.filter(row => selectedRowIds.has(row.id)),
-    [tablePolygonRows, selectedRowIds]
+    () => selectionTableRows.filter(row => selectedRowIds.has(row.id)),
+    [selectionTableRows, selectedRowIds]
   );
   const tableSelectedRows = selectedRows;
   const tableTotalItems = tableIndexTotal ?? 0;
@@ -297,7 +312,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     selectedSubmittablePolygons,
     selectedSubmittablePolygonUuids
   } = useSelectedSitePolygons({
-    polygonsData: tablePolygonsData,
+    polygonsData: selectionPolygonsData,
     selectedRowIds,
     selectedRows,
     overlapPolygons,
@@ -324,8 +339,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   });
 
   const selectedOverlapFixSummary = useMemo(
-    () => getSelectedOverlapFixSummary(selectedRows, overlapValidationsByPolygonUuid, tablePolygonsData),
-    [selectedRows, overlapValidationsByPolygonUuid, tablePolygonsData]
+    () => getSelectedOverlapFixSummary(selectedRows, overlapValidationsByPolygonUuid, selectionPolygonsData),
+    [selectedRows, overlapValidationsByPolygonUuid, selectionPolygonsData]
   );
   const hasSelectedOverlapFailure = hasOverlapFailureInSelection(selectedOverlapFixSummary);
   const hasFixableSelectedOverlap =
@@ -378,13 +393,13 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   }, [resetSiteMapInteractionState]);
 
   useEffect(() => {
-    if (isTablePolygonsLoading) return;
-    const visibleRowIds = new Set(tablePolygonRows.map(row => row.id));
+    if (!mapIndexLoaded) return;
+    const scopedPolygonUuidSet = new Set(scopedPolygonUuids);
     setSelectedRowIds(prev => {
-      const next = new Set(Array.from(prev).filter(id => visibleRowIds.has(String(id))));
+      const next = new Set(Array.from(prev).filter(id => scopedPolygonUuidSet.has(String(id))));
       return next.size === prev.size ? prev : next;
     });
-  }, [isTablePolygonsLoading, setSelectedRowIds, tablePolygonRows]);
+  }, [mapIndexLoaded, scopedPolygonUuids, setSelectedRowIds]);
 
   const clearTableSelection = useCallback(() => {
     setSelectedRowIds(new Set<string>());
@@ -397,13 +412,8 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   }, [clearTableSelection, closeMapPopups]);
 
   const handleSelectOverlapPolygons = useCallback(() => {
-    const visiblePolygonIds = new Set(tablePolygonRows.map(row => row.id));
-    const overlapRowIds = overlapValidations
-      .filter(hasOverlapValidationFailure)
-      .map(validation => validation.polygonUuid)
-      .filter((id): id is string => id != null && id !== "" && visiblePolygonIds.has(id));
-    setSelectedRowIds(new Set(overlapRowIds));
-  }, [overlapValidations, setSelectedRowIds, tablePolygonRows]);
+    setSelectedRowIds(new Set(overlapPolygonUuids));
+  }, [overlapPolygonUuids, setSelectedRowIds]);
 
   const {
     bulkEditPayload,
@@ -465,7 +475,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
     validatedPolygons
   } = useSitePolygonBulkActions({
     site,
-    polygonsData: tablePolygonsData,
+    polygonsData: selectionPolygonsData,
     selectedRows,
     selectedSitePolygons,
     selectedSitePolygonUuids,

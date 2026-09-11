@@ -1,36 +1,32 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { OverlapPolygonPoint } from "@/components/elements/Map-mapbox/layers/overlapTypes";
+import { loadSitePolygons } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
-import { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
+import Log from "@/utils/log";
 
-import { mergeValidationsByPolygonUuid } from "../components/Modals/validationCriteria";
+import {
+  mergeValidationsByPolygonUuid,
+  withResolvedValidationStatusFromCriteria
+} from "../components/Modals/validationCriteria";
 import { getCrossSiteOverlapPartnersForValidation } from "./crossSiteOverlap.utils";
 import { buildOverlapFailureValidationsMap } from "./overlapFix.utils";
 
-export type SitePolygonOverlapIdentity = {
-  uuid?: string | null;
-  polygonUuid?: string | null;
-  lat?: number | null;
-  long?: number | null;
-};
+const EMPTY_OVERLAP_POLYGONS: SitePolygonLightDto[] = [];
+const OVERLAP_POLYGONS_BATCH_SIZE = 100;
 
 type UseSitePolygonOverlapParams = {
   siteUuid: string;
-  polygonIdentities: SitePolygonOverlapIdentity[];
+  scopedPolygonUuids: string[];
   preferredValidationsByPolygonUuid?: Map<string, ValidationDto>;
   t: (key: string) => string;
 };
 
-const getPolygonIdentityUuid = (polygon: SitePolygonOverlapIdentity): string | undefined => {
-  const uuid = polygon.polygonUuid ?? polygon.uuid;
-  return uuid != null && uuid !== "" ? uuid : undefined;
-};
-
 export const useSitePolygonOverlap = ({
   siteUuid,
-  polygonIdentities,
+  scopedPolygonUuids,
   preferredValidationsByPolygonUuid,
   t
 }: UseSitePolygonOverlapParams) => {
@@ -57,19 +53,77 @@ export const useSitePolygonOverlap = ({
     [overlapValidationsByPolygonUuid]
   );
 
-  return useMemo(() => {
-    const currentPolygonUuids = new Set(
-      polygonIdentities.map(getPolygonIdentityUuid).filter((id): id is string => id != null)
-    );
-    const overlapValidationByPolygonUuid = buildOverlapFailureValidationsMap(
-      overlapValidationsByPolygonUuid.values(),
-      currentPolygonUuids
-    );
+  const currentPolygonUuids = useMemo(() => new Set(scopedPolygonUuids), [scopedPolygonUuids]);
 
+  const overlapValidationByPolygonUuid = useMemo(
+    () => buildOverlapFailureValidationsMap(overlapValidationsByPolygonUuid.values(), currentPolygonUuids),
+    [overlapValidationsByPolygonUuid, currentPolygonUuids]
+  );
+
+  const overlapPolygonUuids = useMemo(
+    () => Array.from(overlapValidationByPolygonUuid.keys()).sort(),
+    [overlapValidationByPolygonUuid]
+  );
+  const overlapPolygonUuidsKey = overlapPolygonUuids.join(",");
+
+  const [overlapPolygonsLightData, setOverlapPolygonsLightData] =
+    useState<SitePolygonLightDto[]>(EMPTY_OVERLAP_POLYGONS);
+
+  useEffect(() => {
+    if (siteUuid == null || siteUuid === "" || overlapPolygonUuids.length === 0) {
+      setOverlapPolygonsLightData(EMPTY_OVERLAP_POLYGONS);
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadOverlapPolygons = async () => {
+      const polygons: SitePolygonLightDto[] = [];
+
+      for (let offset = 0; offset < overlapPolygonUuids.length; offset += OVERLAP_POLYGONS_BATCH_SIZE) {
+        const uuidBatch = overlapPolygonUuids.slice(offset, offset + OVERLAP_POLYGONS_BATCH_SIZE);
+        const response = await loadSitePolygons({
+          entityName: "sites",
+          entityUuid: siteUuid,
+          enabled: true,
+          filter: { "polygonUuid[]": uuidBatch },
+          pageNumber: 1,
+          pageSize: uuidBatch.length
+        });
+
+        if (response.loadFailure != null) {
+          Log.error("Failed to load overlap polygon geometry", { siteUuid, loadFailure: response.loadFailure });
+          continue;
+        }
+
+        polygons.push(...(response.data ?? []));
+      }
+
+      if (!cancelled) {
+        setOverlapPolygonsLightData(polygons);
+      }
+    };
+
+    void loadOverlapPolygons();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [siteUuid, overlapPolygonUuidsKey]);
+
+  const overlapPolygonsData = useMemo(
+    () => withResolvedValidationStatusFromCriteria(overlapPolygonsLightData, overlapValidationsByPolygonUuid),
+    [overlapPolygonsLightData, overlapValidationsByPolygonUuid]
+  );
+
+  return useMemo(() => {
     if (overlapValidationByPolygonUuid.size === 0) {
       return {
         polygonsWithOverlapCount: 0,
         overlapPolygons: [] as OverlapPolygonPoint[],
+        overlapPolygonUuids: [] as string[],
+        overlapPolygonsData: EMPTY_OVERLAP_POLYGONS,
         overlapValidations,
         overlapValidationsByPolygonUuid,
         fetchOverlapValidations
@@ -79,8 +133,8 @@ export const useSitePolygonOverlap = ({
     const crossSiteOverlapTooltip = t("This polygon overlaps with a polygon on another site in this project.");
 
     const overlapPolygons: OverlapPolygonPoint[] = [];
-    for (const polygon of polygonIdentities) {
-      const uuid = getPolygonIdentityUuid(polygon);
+    for (const polygon of overlapPolygonsData) {
+      const uuid = polygon.polygonUuid ?? polygon.uuid;
       const validation = uuid == null ? undefined : overlapValidationByPolygonUuid.get(uuid);
       if (uuid == null || validation == null) continue;
       if (polygon.lat == null || polygon.long == null) continue;
@@ -98,9 +152,20 @@ export const useSitePolygonOverlap = ({
     return {
       polygonsWithOverlapCount: overlapValidationByPolygonUuid.size,
       overlapPolygons,
+      overlapPolygonUuids,
+      overlapPolygonsData,
       overlapValidations,
       overlapValidationsByPolygonUuid,
       fetchOverlapValidations
     };
-  }, [overlapValidations, overlapValidationsByPolygonUuid, polygonIdentities, fetchOverlapValidations, t]);
+  }, [
+    overlapValidationByPolygonUuid,
+    overlapPolygonUuids,
+    overlapPolygonsData,
+    overlapValidations,
+    overlapValidationsByPolygonUuid,
+    currentPolygonUuids,
+    fetchOverlapValidations,
+    t
+  ]);
 };

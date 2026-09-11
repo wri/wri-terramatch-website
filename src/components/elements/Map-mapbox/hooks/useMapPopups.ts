@@ -29,6 +29,7 @@ import type {
   DashboardPopupContext,
   EditPolygonState,
   MobilePopupData,
+  PolygonEntityScope,
   PolygonFromMapState,
   SetPolygonFromMap,
   TooltipType
@@ -40,6 +41,7 @@ type UseMapPopupsParams = {
   sourcesAdded: boolean;
   showPopups?: boolean;
   sitePolygonData?: SitePolygonLightDto[];
+  polygonEntityScope?: PolygonEntityScope;
   tooltipType?: TooltipType;
   isMobile: boolean;
   setLoader?: (v: boolean) => void;
@@ -74,6 +76,7 @@ export function useMapPopups({
   sourcesAdded,
   showPopups,
   sitePolygonData,
+  polygonEntityScope,
   tooltipType,
   isMobile,
   setLoader,
@@ -99,7 +102,18 @@ export function useMapPopups({
     editPolygonRef.current = editPolygon;
   });
 
+  const sitePolygonDataRef = useRef(sitePolygonData);
+  const polygonEntityScopeRef = useRef(polygonEntityScope);
   const popupOptionsRef = useRef<PopupHandlerOptions | null>(null);
+
+  useEffect(() => {
+    sitePolygonDataRef.current = sitePolygonData;
+    polygonEntityScopeRef.current = polygonEntityScope;
+    if (popupOptionsRef.current != null) {
+      popupOptionsRef.current.sitePolygonData = sitePolygonData;
+      popupOptionsRef.current.polygonEntityScope = polygonEntityScope;
+    }
+  }, [sitePolygonData, polygonEntityScope]);
 
   useEffect(() => {
     if (!isEditFocusActive || map.current == null) return;
@@ -116,7 +130,8 @@ export function useMapPopups({
     const popupOptions: PopupHandlerOptions = {
       setPolygonFromMap: callbacksRef.current.setPolygonFromMap,
       setShouldRefetchPolygonData,
-      sitePolygonData,
+      sitePolygonData: sitePolygonDataRef.current,
+      polygonEntityScope: polygonEntityScopeRef.current,
       type: tooltipType ?? "goTo",
       editPolygon: editPolygonRef.current,
       setEditPolygon: callbacksRef.current.setEditPolygon,
@@ -158,7 +173,8 @@ export function useMapPopups({
             editPolygon: editPolygonRef.current,
             setPolygonFromMap: callbacksRef.current.setPolygonFromMap,
             setEditPolygon: callbacksRef.current.setEditPolygon,
-            sitePolygonData
+            sitePolygonData: sitePolygonDataRef.current,
+            polygonEntityScope: polygonEntityScopeRef.current
           }
         );
       } catch (error) {
@@ -176,7 +192,6 @@ export function useMapPopups({
     };
   }, [
     sourcesAdded,
-    sitePolygonData,
     tooltipType,
     isMobile,
     effectiveShowPopups,
