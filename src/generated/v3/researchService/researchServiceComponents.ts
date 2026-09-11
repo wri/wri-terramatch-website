@@ -139,10 +139,6 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["siteId[]"]?: string[];
   /**
-   * Filter results by site polygon UUID(s). Note this is the site_polygon uuid, which is what GeoJSON features carry, and is NOT the same value as polygonUuid[].
-   */
-  ["uuid[]"]?: string[];
-  /**
    * Filter results by polygon UUID(s)
    */
   ["polygonUuid[]"]?: string[];
@@ -545,70 +541,6 @@ export const bulkDeleteSitePolygons = new V3ApiEndpoint<
   BulkDeleteSitePolygonsVariables,
   {}
 >("/research/v3/sitePolygons", "DELETE");
-
-export type GetSiteIndicatorRollupQueryParams = {
-  /**
-   * UUID of the project to roll indicators up for. One row is returned per approved site.
-   *
-   * @example cd46fa33-a5c1-40b4-a9ca-4793b6248157
-   */
-  projectId: string;
-};
-
-export type GetSiteIndicatorRollupError = Fetcher.ErrorWrapper<{
-  status: 401;
-  payload: {
-    /**
-     * @example 401
-     */
-    statusCode: number;
-    /**
-     * @example Unauthorized
-     */
-    message: string;
-  };
-}>;
-
-export type GetSiteIndicatorRollupResponse = {
-  meta?: {
-    /**
-     * @example siteIndicatorRollups
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example siteIndicatorRollups
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.SiteIndicatorRollupDto;
-  };
-};
-
-export type GetSiteIndicatorRollupVariables = {
-  queryParams: GetSiteIndicatorRollupQueryParams;
-};
-
-/**
- * Returns one row per active, approved site in the project, aggregated in a single
- *     GROUP BY query: O(sites), not O(polygons). Intended to replace client-side aggregation over
- *     every polygon for large projects.
- *
- *     Only active, APPROVED polygons are counted. Client-side aggregation includes active polygons
- *     in every status, so the two paths will not agree; whichever basis is used must be stated in
- *     the UI. treeCoverCoverage reports what fraction of each site's polygons actually contributed
- *     to treeCoverWeightedMeanPct. treeCoverLossTotal is not yet implemented and is always null.
- */
-export const getSiteIndicatorRollup = new V3ApiEndpoint<
-  GetSiteIndicatorRollupResponse,
-  GetSiteIndicatorRollupError,
-  GetSiteIndicatorRollupVariables,
-  {}
->("/research/v3/sitePolygons/indicatorRollup", "GET");
 
 export type GetSitePolygonsGeoJsonQueryParams = {
   /**
@@ -1829,6 +1761,67 @@ export const getSiteValidation = new V3ApiEndpoint<
   GetSiteValidationVariables,
   {}
 >("/validations/v3/sites/{siteUuid}", "GET");
+
+// NOTE: hand-added ahead of backend codegen for the project-level polygons admin work.
+// Mirrors `getSiteValidation` for the new `GET /validations/v3/projects/{projectUuid}` endpoint.
+// Replace with generated output via `yarn generate:researchService` once the endpoint is deployed.
+export type GetProjectValidationPathParams = {
+  projectUuid: string;
+};
+
+export type GetProjectValidationQueryParams = GetSiteValidationQueryParams;
+
+export type GetProjectValidationError = GetSiteValidationError;
+
+export type GetProjectValidationResponse = GetSiteValidationResponse;
+
+export type GetProjectValidationVariables = {
+  pathParams: GetProjectValidationPathParams;
+  queryParams?: GetProjectValidationQueryParams;
+};
+
+export const getProjectValidation = new V3ApiEndpoint<
+  GetProjectValidationResponse,
+  GetProjectValidationError,
+  GetProjectValidationVariables,
+  {}
+>("/validations/v3/projects/{projectUuid}", "GET");
+
+// NOTE: hand-added ahead of backend codegen for the project-level polygons site-rollup work.
+// Per-site review rollup for a project (one row per site). Replace via `yarn generate:researchService`.
+export type GetSiteReviewRollupQueryParams = {
+  projectId: string;
+};
+
+export type GetSiteReviewRollupError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    statusCode: number;
+    message: string;
+  };
+}>;
+
+export type GetSiteReviewRollupResponse = {
+  meta?: {
+    resourceType?: string;
+  };
+  data?: {
+    type?: string;
+    id?: string;
+    attributes?: Schemas.SiteReviewRollupDto;
+  };
+};
+
+export type GetSiteReviewRollupVariables = {
+  queryParams: GetSiteReviewRollupQueryParams;
+};
+
+export const getSiteReviewRollup = new V3ApiEndpoint<
+  GetSiteReviewRollupResponse,
+  GetSiteReviewRollupError,
+  GetSiteReviewRollupVariables,
+  {}
+>("/research/v3/sitePolygons/siteReviewRollup", "GET");
 
 export type CreatePolygonValidationsError = Fetcher.ErrorWrapper<{
   status: 400;
@@ -3586,9 +3579,9 @@ export const operationsByTag = {
   sitePolygons: {
     createSitePolygons,
     sitePolygonsIndex,
+    getSiteReviewRollup,
     bulkUpdateSitePolygons,
     bulkDeleteSitePolygons,
-    getSiteIndicatorRollup,
     getSitePolygonsGeoJson,
     bulkUpdateSitePolygonAttributes,
     updateSitePolygonStatus,
@@ -3605,6 +3598,7 @@ export const operationsByTag = {
   validations: {
     getPolygonValidation,
     getSiteValidation,
+    getProjectValidation,
     createPolygonValidations,
     createSiteValidation,
     validateGeometries
