@@ -20,7 +20,7 @@ import {
 import { DELETED_AUDIT_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 import { parsePolygonDataV3, storePolygon } from "../utils";
@@ -39,7 +39,7 @@ type PolygonsMapEntityType = "sites" | "projects";
 interface PolygonsMapProps {
   entityModel: PolygonsMapEntityModel;
   type: PolygonsMapEntityType;
-  polygons: SitePolygonLightDto[];
+  polygons: SitePolygonMapEntryDto[];
   onRefetchPolygons: () => void | Promise<void>;
   isLoadingPolygons?: boolean;
   freezeCameraZoom?: boolean;
@@ -96,7 +96,6 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
     shouldRefetchPolygonData,
     shouldRefetchMediaData,
     setSelectedPolygonsInCheckbox,
-    setPolygonData,
     setMediaFiles,
     shouldRefetchValidation,
     setShouldRefetchValidation,
@@ -187,10 +186,6 @@ const PolygonsMap: FC<PolygonsMapProps> = ({
       }),
     [countryBbox, entityModel.projectUuid, hasPolygons, modelBbox, projectBbox, type]
   );
-
-  useEffect(() => {
-    setPolygonData(polygons);
-  }, [polygons, setPolygonData]);
 
   useEffect(() => {
     const { isOpen, uuid } = editPolygon;
