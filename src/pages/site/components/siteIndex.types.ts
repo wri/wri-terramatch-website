@@ -45,4 +45,6 @@ export interface SiteIndexProject {
     workdays?: SiteIndexMetric;
   };
   sites: SiteIndexSite[];
+  sitesLoaded: boolean;
+  sitesLoading: boolean;
 }

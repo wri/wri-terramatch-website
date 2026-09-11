@@ -14,6 +14,8 @@ import type {
 
 export const ALL_PROJECTS_VIEW = "all";
 
+export const isSiteApproved = (site: Pick<SiteIndexSite, "status">): boolean => site.status === "approved";
+
 export const SITE_INDEX_ATTENTION_STATUSES: ReadonlySet<SiteIndexStatus> = new Set([
   "draft",
   "information-required",
@@ -59,7 +61,7 @@ export const toSiteIndexUpdate = (updateRequestStatus: string | null | undefined
 
 export const mapSiteToIndexSite = (site: SiteLightDto, frameworkKey: Framework): SiteIndexSite => ({
   id: site.uuid,
-  name: site.name?.trim() || "Unnamed site",
+  name: site.name?.trim() ?? "-",
   frameworkKey,
   status: toSiteIndexStatus(site.status),
   update: toSiteIndexUpdate(site.updateRequestStatus),
@@ -101,9 +103,10 @@ export const buildProjectMetrics = (
   project: ProjectFullDto | ProjectLightDto | undefined,
   sites: SiteIndexSite[]
 ): SiteIndexProject["metrics"] => {
-  const treesPlanted = sites.reduce((total, site) => total + site.treesPlantedCount, 0);
-  const areaRestored = sites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
-  const areaGoal = sites.reduce((total, site) => total + (site.hectaresToRestoreGoal ?? 0), 0);
+  const approvedSites = sites.filter(isSiteApproved);
+  const treesPlanted = approvedSites.reduce((total, site) => total + site.treesPlantedCount, 0);
+  const areaRestored = approvedSites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
+  const areaGoal = approvedSites.reduce((total, site) => total + (site.hectaresToRestoreGoal ?? 0), 0);
   const fullProject = project != null && project.lightResource === false ? (project as ProjectFullDto) : undefined;
 
   const treesProgress = fullProject?.treesPlantedCount ?? treesPlanted;
@@ -135,6 +138,44 @@ export const buildProjectMetrics = (
 
 export const getSitesRequiringAttention = (sites: SiteIndexSite[]): number =>
   sites.filter(site => SITE_INDEX_ATTENTION_STATUSES.has(site.status)).length;
+
+export const toSiteIndexUpdateRequestStatus = (
+  update: SiteIndexUpdate | null | undefined
+): NonNullable<SiteLightDto["updateRequestStatus"]> | undefined => {
+  if (update == null) {
+    return undefined;
+  }
+  if (update === "complete") {
+    return "approved";
+  }
+  return update;
+};
+
+export const toSiteIndexProject = (
+  project: ProjectLightDto,
+  options?: {
+    fullProject?: ProjectFullDto | null;
+    sites?: SiteIndexSite[];
+    sitesLoaded?: boolean;
+    sitesLoading?: boolean;
+  }
+): SiteIndexProject => {
+  const frameworkKey = toFramework(project.frameworkKey);
+  const sites = (options?.sites ?? []).map(site => ({ ...site, frameworkKey }));
+  const sitesLoaded = options?.sitesLoaded ?? false;
+
+  return {
+    id: project.uuid,
+    name: project.name?.trim() ?? "-",
+    frameworkKey,
+    organisationName: project.organisationName?.trim() ?? "-",
+    attentionCount: sitesLoaded ? getSitesRequiringAttention(sites) : 0,
+    metrics: buildProjectMetrics(frameworkKey, options?.fullProject ?? project, sites),
+    sites,
+    sitesLoaded,
+    sitesLoading: options?.sitesLoading ?? false
+  };
+};
 
 const resolveProjectUuid = (site: SiteIndexLightDto, projects: ProjectLightDto[]): string | null => {
   if (site.projectUuid != null && site.projectUuid !== "") {
@@ -175,18 +216,13 @@ export const groupSitesByProject = (
 
   return projects
     .map(project => {
-      const frameworkKey = toFramework(project.frameworkKey);
-      const projectSites = (sitesByProjectUuid.get(project.uuid) ?? []).map(site => ({ ...site, frameworkKey }));
+      const projectSites = sitesByProjectUuid.get(project.uuid) ?? [];
 
-      return {
-        id: project.uuid,
-        name: project.name?.trim() || "Unnamed project",
-        frameworkKey,
-        organisationName: project.organisationName?.trim() || "",
-        attentionCount: getSitesRequiringAttention(projectSites),
-        metrics: buildProjectMetrics(frameworkKey, fullProjectsById.get(project.uuid) ?? project, projectSites),
-        sites: projectSites
-      };
+      return toSiteIndexProject(project, {
+        fullProject: fullProjectsById.get(project.uuid),
+        sites: projectSites,
+        sitesLoaded: true
+      });
     })
     .sort((left, right) => left.name.localeCompare(right.name));
 };
