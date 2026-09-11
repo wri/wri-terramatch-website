@@ -10,7 +10,6 @@ import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/Abo
 import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import { useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { shouldHideNurseries, useFrameworkContext } from "@/context/framework.provider";
@@ -40,6 +39,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
+  const [projectPolygonTotal, setProjectPolygonTotal] = useState<number | null>(null);
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
@@ -131,19 +131,13 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     return buttons;
   }, [goToTab, hideNurseries, t]);
 
-  const [projectMapIndexLoaded, { data: projectMapIndex }] = useSitePolygonMapIndex({
-    entityName: "projects",
-    entityUuid: project.uuid,
-    enabled: project.uuid != null
-  });
-
   const isDraftOrPendingApproval =
     project.status === "draft" ||
     project.status === PENDING_APPROVAL ||
     project.updateRequestStatus === PENDING_APPROVAL;
 
   const showSiteAreasMapPlaceholder =
-    projectMapIndexLoaded && (projectMapIndex?.total ?? 0) === 0 && isDraftOrPendingApproval;
+    projectPolygonTotal != null && projectPolygonTotal === 0 && isDraftOrPendingApproval;
 
   const teamMemberItems = useMemo(
     () => [
@@ -199,6 +193,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
               className="h-full min-h-0 rounded"
               disabledPolygonPanel={true}
               hideFullscreenControl={true}
+              onPolygonTotalChange={setProjectPolygonTotal}
             />
             {showSiteAreasMapPlaceholder && (
               <MapPlaceholder

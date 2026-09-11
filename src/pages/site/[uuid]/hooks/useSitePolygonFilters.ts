@@ -37,25 +37,25 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
   }, [polygonSearch]);
 
   const sitePolygonFilter = useMemo(() => {
-    const filter: Record<string, unknown> = {};
+    const filter: Partial<SitePolygonsIndexQueryParams> = {};
     if (debouncedPolygonSearch !== "") {
       filter.search = debouncedPolygonSearch;
-      filter.searchFields = ["polyName", "polygonUuid"];
+      filter["searchFields[]"] = ["polyName", "polygonUuid"];
     }
     if (polygonFilters.showDeleted) {
       filter.deletedOnly = true;
-      return filter as Partial<SitePolygonsIndexQueryParams>;
+      return filter;
     }
 
-    if (polygonFilters.polygonStatus.length > 0) filter.polygonStatus = polygonFilters.polygonStatus;
-    if (polygonFilters.validationStatus.length > 0) filter.validationStatus = polygonFilters.validationStatus;
+    if (polygonFilters.polygonStatus.length > 0) filter["polygonStatus[]"] = polygonFilters.polygonStatus;
+    if (polygonFilters.validationStatus.length > 0) filter["validationStatus[]"] = polygonFilters.validationStatus;
     if (polygonFilters.plantStartFrom !== "") filter.plantStartFrom = `${polygonFilters.plantStartFrom}T00:00:00.000Z`;
     if (polygonFilters.plantStartTo !== "") filter.plantStartTo = `${polygonFilters.plantStartTo}T00:00:00.000Z`;
-    if (polygonFilters.practice.length > 0) filter.practice = polygonFilters.practice;
-    if (polygonFilters.targetSys.length > 0) filter.targetSys = polygonFilters.targetSys;
-    if (polygonFilters.submissionCycle.length > 0) filter.submissionCycle = polygonFilters.submissionCycle;
+    if (polygonFilters.practice.length > 0) filter["practice[]"] = polygonFilters.practice;
+    if (polygonFilters.targetSys.length > 0) filter["targetSys[]"] = polygonFilters.targetSys;
+    if (polygonFilters.submissionCycle.length > 0) filter["submissionCycle[]"] = polygonFilters.submissionCycle;
     if (polygonFilters.hasOverlap) filter.hasOverlap = true;
-    return filter as Partial<SitePolygonsIndexQueryParams>;
+    return filter;
   }, [debouncedPolygonSearch, polygonFilters]);
 
   const handleClearPolygonFilters = useCallback(() => {

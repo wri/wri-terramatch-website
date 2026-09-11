@@ -297,7 +297,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const getComplementarySlug = (slug: string): Indicator | undefined =>
     slug === "treeCoverLoss" ? "treeCoverLossFires" : slug === "treeCoverLossFires" ? "treeCoverLoss" : undefined;
 
-  const complementarySlug = getComplementarySlug(indicatorSlug || "");
+  const complementarySlug = getComplementarySlug(indicatorSlug ?? "");
 
   useEffect(() => {
     if (!hasEntityScope || indicatorSlug == null || indicatorSlug === "") {
@@ -385,8 +385,8 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     slug?: StartIndicatorCalculationPathParams["slug"];
     body?: IndicatorsAttributes;
   }) => {
-    const slug = (params.slug || indicatorSlug || "treeCoverLoss") as StartIndicatorCalculationPathParams["slug"];
-    const body = params.body || { polygonUuids: [], forceRecalculation: false, updateExisting: false };
+    const slug = (params.slug ?? indicatorSlug ?? "treeCoverLoss") as StartIndicatorCalculationPathParams["slug"];
+    const body = params.body ?? { polygonUuids: [], forceRecalculation: false, updateExisting: false };
     return startIndicatorCalculationResource({ slug, body });
   };
 
@@ -400,7 +400,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
           (polygon?.polygonName?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
             polygon?.siteName?.toLowerCase().includes(searchTerm?.toLowerCase()))
       )
-      .sort((a, b) => (a.polygonName || "").localeCompare(b.polygonName || ""));
+      .sort((a, b) => (a.polygonName ?? "").localeCompare(b.polygonName ?? ""));
   }, [indicatorData, searchTerm]);
 
   useEffect(() => {
@@ -432,7 +432,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const selectedSummaryIndicator =
     indicatorSlug != null && indicatorSlug !== "" ? getSummaryIndicator(approvedSummaryData, indicatorSlug) : undefined;
 
-  const polygonMissingAnalysis = selectedSummaryIndicator?.polygonsWithIndicator ?? 0;
+  const polygonsWithAnalysis = selectedSummaryIndicator?.polygonsWithIndicator ?? 0;
 
   useEffect(() => {
     const fetchSlugs = async () => {
@@ -444,7 +444,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
       setIsLoadingVerify(true);
 
       try {
-        const slugToAnalysis: Record<string, any> = {};
+        const slugToAnalysis: Record<string, string[] | { message?: string }> = {};
 
         for (const slug of SLUGS_INDICATORS) {
           const summaryBySlug = getSummaryIndicator(approvedSummaryData, slug);
@@ -474,7 +474,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
         const updateTitleDropdownOptions = () => {
           return DROPDOWN_OPTIONS.map(option => {
             const slugData = slugToAnalysis[`${option.slug}`];
-            if (slugData?.message) {
+            if (!Array.isArray(slugData) && slugData?.message != null) {
               return {
                 ...option,
                 title: `${option.title} (0 polygons not run)`
@@ -584,7 +584,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     rerunDropdownOptions,
     analysisToSlug,
     rerunAnalysisToSlug,
-    polygonMissingAnalysis,
+    polygonMissingAnalysis: polygonsWithAnalysis,
     treeCoverLossData,
     treeCoverLossFiresData,
     totalPolygonsForRerun

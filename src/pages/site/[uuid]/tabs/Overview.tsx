@@ -9,7 +9,7 @@ import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/Abo
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import { pruneSitePolygonsCache, useSitePolygonMapIndex } from "@/connections/SitePolygons";
+import { pruneSitePolygonsCache } from "@/connections/SitePolygons";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
@@ -37,6 +37,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     resetSiteMapInteractionState();
   }, [resetSiteMapInteractionState]);
   const [isSiteSetupComplete, setIsSiteSetupComplete] = useState(false);
+  const [sitePolygonTotal, setSitePolygonTotal] = useState<number | null>(null);
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   const { handleEdit, EditModals } = useGetEditEntityHandler({
@@ -48,11 +49,6 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     useInformationRequiredModal: true
   });
 
-  const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
-    entityName: "sites",
-    entityUuid: site.uuid,
-    enabled: site.uuid != null && site.uuid !== ""
-  });
   const reload = () => {
     pruneSitePolygonsCache();
   };
@@ -147,8 +143,9 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 disabledPolygonPanel={true}
                 hideFullscreenControl={true}
                 overviewPolygonPopup={true}
+                onPolygonTotalChange={setSitePolygonTotal}
               />
-              {mapIndexLoaded && (mapIndex?.total ?? 0) === 0 && (
+              {sitePolygonTotal != null && sitePolygonTotal === 0 && (
                 <MapPlaceholder
                   icon={<SiteIcon boxSize={6} color="neutral.100" />}
                   title={t("Project Site not defined")}

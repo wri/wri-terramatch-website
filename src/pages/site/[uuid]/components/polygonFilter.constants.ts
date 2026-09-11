@@ -25,12 +25,16 @@ export const formatSubmissionCycleDisplay = (values: SubmissionCycleOption[]): s
 export type PolygonSubmissionStatus = PolygonStatus;
 export type PolygonValidationStatus = "not_checked" | "failed" | "partial" | "passed";
 
+// The backend's practice[] filter only accepts this subset of restorationStrategyType ("sapling-planting"
+// is a valid polygon attribute value, but isn't a supported filter value) - the filter UI only offers these.
+export type FilterablePractice = Exclude<restorationStrategyType, "sapling-planting">;
+
 export type PolygonFilterState = {
   polygonStatus: PolygonSubmissionStatus[];
   validationStatus: PolygonValidationStatus[];
   plantStartFrom: string;
   plantStartTo: string;
-  practice: restorationStrategyType[];
+  practice: FilterablePractice[];
   targetSys: targetLandUseType[];
   submissionCycle: SubmissionCycleOption[];
   hasOverlap: boolean;

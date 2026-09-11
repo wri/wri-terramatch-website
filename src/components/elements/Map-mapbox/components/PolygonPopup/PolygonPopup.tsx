@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import TooltipMap from "@/components/elements/TooltipMap/TooltipMap";
+import { useSitePolygonByUuid } from "@/connections/SitePolygons";
 
 import type { PopupComponentProps } from "../../Map.d";
 import { findSitePolygonByMapFeatureUuid } from "../../sitePolygonPopupUtils";
@@ -20,10 +21,15 @@ export function PolygonPopup(event: PopupComponentProps) {
   } = event;
   const polygonUuid = (feature.properties?.uuid ?? "") as string;
 
-  const selectedSitePolygon = useMemo(
+  // Fast path: reuse data we already have client-side (e.g. a fully-loaded champions polygon list).
+  // Fall back to a fresh backend fetch by UUID when the clicked polygon isn't in that local set,
+  // since the polygon table is paginated and no longer guarantees the full list is available here.
+  const localSitePolygon = useMemo(
     () => findSitePolygonByMapFeatureUuid(sitePolygonData, polygonUuid),
     [polygonUuid, sitePolygonData]
   );
+  const [, { data: fetchedSitePolygon }] = useSitePolygonByUuid(localSitePolygon == null ? polygonUuid : undefined);
+  const selectedSitePolygon = localSitePolygon ?? fetchedSitePolygon;
 
   if (championsMap) {
     return (
@@ -39,8 +45,7 @@ export function PolygonPopup(event: PopupComponentProps) {
 
   return (
     <TooltipMap
-      polygonUuid={polygonUuid}
-      sitePolygonData={sitePolygonData}
+      sitePolygon={selectedSitePolygon}
       type={type}
       setTooltipOpen={() => {
         if (popup) {

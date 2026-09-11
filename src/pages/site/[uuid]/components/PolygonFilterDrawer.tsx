@@ -4,7 +4,7 @@ import { CalendarDate } from "@internationalized/date";
 import { useT } from "@transifex/react";
 import React, { FC, useEffect, useMemo, useState } from "react";
 
-import { restorationStrategyType, targetLandUseType } from "@/constants/polygons";
+import { targetLandUseType } from "@/constants/polygons";
 import { useRestorationPracticeLabels } from "@/hooks/translation/useRestorationPracticeLabels";
 import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
 import { useSubmissionStatusLabels } from "@/hooks/translation/useSubmissionStatusLabels";
@@ -25,6 +25,7 @@ import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRan
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 
 import {
+  type FilterablePractice,
   type SubmissionCycleOption,
   EMPTY_POLYGON_FILTERS,
   PolygonFilterState,
@@ -171,7 +172,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   };
 
   const handlePracticeChange = (value: string[]) => {
-    const selected = value[0] as restorationStrategyType | undefined;
+    const selected = value[0] as FilterablePractice | undefined;
     setDraftFilters(current => ({ ...current, practice: selected ? [selected] : [] }));
   };
 
@@ -244,10 +245,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           className="h-full"
           content={
             <Flex className="h-full flex-col gap-3 overflow-auto p-4">
-              <Flex
-                className="mb-2 flex-wrap gap-2"
-                display={activeFilters.length > 0 ? "flex" : "none"}
-              >
+              <Flex className="mb-2 flex-wrap gap-2" display={activeFilters.length > 0 ? "flex" : "none"}>
                 {activeFilters.map(filter => (
                   <FeedbackTag
                     key={filter.id}

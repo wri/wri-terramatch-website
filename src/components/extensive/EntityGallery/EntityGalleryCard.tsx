@@ -138,11 +138,14 @@ const EntityGalleryCard = ({
   const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
     entityName: modelName as "projects" | "sites",
     entityUuid: entityUUID,
-    enabled: !!entityUUID && (modelName === "projects" || modelName === "sites")
+    enabled: entityUUID != null && entityUUID !== "" && (modelName === "projects" || modelName === "sites")
   });
 
   const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
-  const polygonDataMap = parsePolygonDataV3(mapIndexLoaded ? mapIndex?.polygons : undefined);
+  const polygonDataMap = useMemo(
+    () => parsePolygonDataV3(mapIndexLoaded ? mapIndex?.polygons : undefined),
+    [mapIndexLoaded, mapIndex?.polygons]
+  );
 
   const filterOptions = useMemo(() => {
     const mapping: any = {
@@ -169,7 +172,7 @@ const EntityGalleryCard = ({
       ]
     };
 
-    return mapping?.[modelName] || [];
+    return mapping?.[modelName] ?? [];
   }, [modelName, t]);
 
   useValueChanged(shouldRefetchMediaData, () => {

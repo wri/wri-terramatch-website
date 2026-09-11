@@ -11,6 +11,11 @@ import { OptionValue } from "@/types/common";
 
 import NoDataMap from "./NoDataMap";
 
+type MonitoredEntityRecord = {
+  name?: string;
+  projectName?: string;
+};
+
 const MonitoredDataMap = ({
   selected,
   entityName,
@@ -20,18 +25,18 @@ const MonitoredDataMap = ({
   selected: OptionValue[];
   entityName: string;
   entityUuid: string;
-  record?: any;
+  record?: MonitoredEntityRecord;
 }) => {
   const mapFunctions = useBaseMap();
-  const [polygonsData, setPolygonsData] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  const [polygonsData, setPolygonsData] = useState<Record<string, string[]> | undefined>(undefined);
+  const [isTileLoading, setIsTileLoading] = useState(false);
 
   const entityBbox = useBoundingBox(entityName === "sites" ? { siteUuid: entityUuid } : { projectUuid: entityUuid });
 
   const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
     entityName: entityName as "sites" | "projects",
     entityUuid,
-    enabled: !!entityName && !!entityUuid,
+    enabled: entityName != null && entityName !== "" && entityUuid != null && entityUuid !== "",
     filter: {
       "polygonStatus[]": ["approved"]
     }
@@ -44,18 +49,14 @@ const MonitoredDataMap = ({
   });
 
   useEffect(() => {
-    if (!sitePolygons) {
-      setPolygonsData(null);
+    if (sitePolygons == null) {
+      setPolygonsData(undefined);
       return;
     }
 
     const parsedData = parsePolygonDataV3(sitePolygons);
     setPolygonsData(parsedData);
   }, [entityName, entityUuid, sitePolygons]);
-
-  useEffect(() => {
-    setLoading(!mapIndexLoaded);
-  }, [mapIndexLoaded]);
 
   // Transform record to the structure expected by ModalImageDetails
   const transformedEntityData = record
@@ -67,7 +68,7 @@ const MonitoredDataMap = ({
 
   return (
     <div className="relative h-[calc(100vh-295px)] w-full">
-      <LoadingContainerOpacity loading={loading}>
+      <LoadingContainerOpacity loading={!mapIndexLoaded || isTileLoading}>
         <MapContainer
           className="!h-full"
           mapFunctions={mapFunctions}
@@ -78,7 +79,7 @@ const MonitoredDataMap = ({
           showViewGallery={false}
           polygonsData={polygonsData}
           bbox={entityBbox}
-          setLoader={setLoading}
+          setLoader={setIsTileLoading}
           mediaFiles={mediaFiles}
           alwaysShowPhotosOnMap
           showPopups={true}

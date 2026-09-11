@@ -45,31 +45,52 @@ export type PolygonStatus = Required<SitePolygonsIndexQueryParams>["polygonStatu
   ? T
   : never;
 
+type PolygonEntityScopeProps = {
+  entityName?: "projects" | "sites";
+  entityUuid?: string;
+};
+
+const withPolygonEntityScope = ({ entityName, entityUuid }: PolygonEntityScopeProps) => {
+  if (entityName === "projects" && entityUuid != null) return { queryParams: { "projectId[]": [entityUuid] } };
+  if (entityName === "sites" && entityUuid != null) return { queryParams: { "siteId[]": [entityUuid] } };
+  return {};
+};
+
 export const sitePolygonsConnection = v3Resource("sitePolygons", sitePolygonsIndex)
   .index<SitePolygonLightDto>(() => ({ queryParams: { lightResource: true } }))
   .pagination()
   .enabledProp()
   .filter<Omit<Filter<SitePolygonsIndexQueryParams>, "projectId[]" | "siteId[]">>()
-  .addProps<{ entityName?: "projects" | "sites"; entityUuid?: string }>(({ entityName, entityUuid }) => {
-    if (entityName === "projects" && entityUuid != null) return { queryParams: { "projectId[]": [entityUuid] } };
-    if (entityName === "sites" && entityUuid != null) return { queryParams: { "siteId[]": [entityUuid] } };
-    return {};
-  })
+  .addProps<PolygonEntityScopeProps>(withPolygonEntityScope)
   .buildConnection();
 
 export const useSitePolygons = connectionHook(sitePolygonsConnection);
 export const loadSitePolygons = connectionLoader(sitePolygonsConnection);
+
+/**
+ * Fetches a single site polygon by its geometry UUID directly from the backend, with no site/project
+ * scoping required. Map popups use this to get fresh, fully-hydrated polygon data for the clicked
+ * feature, since the polygon table is now paginated and the full site/project polygon list is no
+ * longer guaranteed to be loaded client-side.
+ */
+export const useSitePolygonByUuid = (polygonUuid: string | null | undefined) => {
+  const hasPolygonUuid = polygonUuid != null && polygonUuid !== "";
+  const [loaded, { data, loadFailure }] = useSitePolygons({
+    enabled: hasPolygonUuid,
+    filter: { "polygonUuid[]": hasPolygonUuid ? [polygonUuid] : [] },
+    pageNumber: 1,
+    pageSize: 1
+  });
+
+  return [loaded, { data: data?.find(polygon => polygon.polygonUuid === polygonUuid), loadFailure }] as const;
+};
 
 export type SitePolygonMapIndexFilter = Omit<SitePolygonsMapIndexQueryParams, "siteId[]" | "projectId[]">;
 
 const sitePolygonMapIndexConnection = v3Resource("sitePolygonMapIndexes", sitePolygonsMapIndex)
   .singleByFilter<SitePolygonMapIndexDto, SitePolygonsMapIndexQueryParams>()
   .enabledProp()
-  .addProps<{ entityName?: "projects" | "sites"; entityUuid?: string }>(({ entityName, entityUuid }) => {
-    if (entityName === "projects" && entityUuid != null) return { queryParams: { "projectId[]": [entityUuid] } };
-    if (entityName === "sites" && entityUuid != null) return { queryParams: { "siteId[]": [entityUuid] } };
-    return {};
-  })
+  .addProps<PolygonEntityScopeProps>(withPolygonEntityScope)
   .buildConnection();
 
 export const useSitePolygonMapIndex = connectionHook(sitePolygonMapIndexConnection);
@@ -80,11 +101,7 @@ export type SitePolygonSummaryFilter = Omit<SitePolygonsSummaryQueryParams, "sit
 const sitePolygonSummaryConnection = v3Resource("sitePolygonSummaries", sitePolygonsSummary)
   .singleByFilter<SitePolygonSummaryDto, SitePolygonsSummaryQueryParams>()
   .enabledProp()
-  .addProps<{ entityName?: "projects" | "sites"; entityUuid?: string }>(({ entityName, entityUuid }) => {
-    if (entityName === "projects" && entityUuid != null) return { queryParams: { "projectId[]": [entityUuid] } };
-    if (entityName === "sites" && entityUuid != null) return { queryParams: { "siteId[]": [entityUuid] } };
-    return {};
-  })
+  .addProps<PolygonEntityScopeProps>(withPolygonEntityScope)
   .buildConnection();
 
 export const useSitePolygonSummary = connectionHook(sitePolygonSummaryConnection);

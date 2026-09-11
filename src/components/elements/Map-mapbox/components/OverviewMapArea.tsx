@@ -8,7 +8,7 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
-import { pruneSitePolygonsCache, useSitePolygonMapIndex } from "@/connections/SitePolygons";
+import { pruneSitePolygonsCache, SitePolygonMapIndexFilter, useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import {
   POLYGON_APPROVED,
   POLYGON_DRAFT,
@@ -36,6 +36,7 @@ interface EntityAreaProps {
   disabledPolygonPanel?: boolean;
   hideFullscreenControl?: boolean;
   overviewPolygonPopup?: boolean;
+  onPolygonTotalChange?: (total: number) => void;
 }
 
 const OverviewMapArea = ({
@@ -47,14 +48,21 @@ const OverviewMapArea = ({
   className,
   disabledPolygonPanel,
   hideFullscreenControl = false,
-  overviewPolygonPopup = false
+  overviewPolygonPopup = false,
+  onPolygonTotalChange
 }: EntityAreaProps) => {
   const t = useT();
+  const polygonStatuses = [
+    POLYGON_DRAFT,
+    POLYGON_PENDING_APPROVAL,
+    POLYGON_INFORMATION_REQUIRED,
+    POLYGON_APPROVED
+  ] as const;
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [isPolygonTilesLoading, setIsPolygonTilesLoading] = useState(false);
   const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
   const [stateViewPanel, setStateViewPanel] = useState(false);
-  const [checkedValues, setCheckedValues] = useState<string[]>([]);
+  const [checkedValues, setCheckedValues] = useState<Array<(typeof polygonStatuses)[number]>>([]);
   const [sortField, setSortField] = useState<string>("createdAt");
   const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("ASC");
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
@@ -79,7 +87,7 @@ const OverviewMapArea = ({
   } = useMapAreaContext();
 
   const mapIndexFilter = useMemo(() => {
-    const filter: Record<string, unknown> = {};
+    const filter: SitePolygonMapIndexFilter = {};
     if (checkedValues.length > 0) {
       filter["polygonStatus[]"] = checkedValues;
     }
@@ -175,6 +183,10 @@ const OverviewMapArea = ({
   }, [isPanelEnabled, mapPolygons, polygonCriteriaMap, polygonsData, setPolygonCriteriaMap, setPolygonData]);
 
   useEffect(() => {
+    onPolygonTotalChange?.(mapIndex?.total ?? 0);
+  }, [mapIndex?.total, onPolygonTotalChange]);
+
+  useEffect(() => {
     if (disabledPolygonPanel) {
       setPolygonFromMap({ isOpen: false, uuid: "" });
       return;
@@ -229,10 +241,14 @@ const OverviewMapArea = ({
   }, [mapPolygons]);
 
   const handleCheckboxChange = (value: string, checked: boolean) => {
+    if (!polygonStatuses.includes(value as (typeof polygonStatuses)[number])) {
+      return;
+    }
+    const statusValue = value as (typeof polygonStatuses)[number];
     if (checked) {
-      setCheckedValues([...checkedValues, value]);
+      setCheckedValues(prev => [...prev, statusValue]);
     } else {
-      setCheckedValues(checkedValues.filter(val => val !== value));
+      setCheckedValues(prev => prev.filter(val => val !== statusValue));
     }
   };
 

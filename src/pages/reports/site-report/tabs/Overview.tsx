@@ -14,7 +14,7 @@ import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/M
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
-import { pruneSitePolygonsCache, useSitePolygonMapIndex } from "@/connections/SitePolygons";
+import { pruneSitePolygonsCache } from "@/connections/SitePolygons";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { Framework } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -44,12 +44,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const t = useT();
   const { setSiteData, resetSiteMapInteractionState } = useMapAreaContext();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
-
-  const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
-    entityName: "sites",
-    entityUuid: site?.uuid ?? "",
-    enabled: site?.uuid != null
-  });
+  const [sitePolygonTotal, setSitePolygonTotal] = useState<number | null>(null);
 
   useEffect(() => {
     resetSiteMapInteractionState();
@@ -194,8 +189,9 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                     disabledPolygonPanel={true}
                     hideFullscreenControl={true}
                     overviewPolygonPopup={true}
+                    onPolygonTotalChange={setSitePolygonTotal}
                   />
-                  {mapIndexLoaded && (mapIndex?.total ?? 0) === 0 && (
+                  {sitePolygonTotal != null && sitePolygonTotal === 0 && (
                     <MapPlaceholder
                       icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}
                       title={t("Site Areas not defined yet.")}

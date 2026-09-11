@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { ArrayField, ArrayFieldProps, ChipField, FunctionField, SingleFieldList, useRecordContext } from "react-admin";
 
 import { Choice } from "@/admin/types/common";
-import { useSitePolygonMapIndex } from "@/connections/SitePolygons";
+import { useSitePolygonSummary } from "@/connections/SitePolygons";
 import {
   POLYGON_APPROVED,
   POLYGON_DRAFT,
@@ -14,6 +14,11 @@ interface ColoredChipFieldArrayProps extends Omit<ArrayFieldProps, "children"> {
   choices: Choice[];
 }
 
+type GroupedPolygonStatus = {
+  status: string;
+  count: number;
+};
+
 const POLYGON_STATUS_CLASSNAME_MAP: Record<string, string> = {
   [POLYGON_APPROVED]: "!bg-green-30 tag-approved-color",
   [POLYGON_PENDING_APPROVAL]: "!bg-blue-200 tag-submitted-color",
@@ -21,33 +26,22 @@ const POLYGON_STATUS_CLASSNAME_MAP: Record<string, string> = {
   [POLYGON_INFORMATION_REQUIRED]: "!bg-tertiary-50 tag-need-info-color"
 };
 
-function groupPolygonsByStatus(polygons: any[]) {
-  const groupedPolygons = polygons.reduce((acc, polygon) => {
-    const status = polygon?.status;
-    if (acc?.[status]) {
-      acc[status].count++;
-    } else {
-      acc[status] = {
-        status: status,
-        count: 1
-      };
-    }
-    return acc;
-  }, {});
-
-  return Object.keys(groupedPolygons).map(key => groupedPolygons[key]);
-}
-
 const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
   const recordContext = useRecordContext();
-  const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
+  const [, { data: summaryData }] = useSitePolygonSummary({
     entityName: "sites",
     entityUuid: recordContext.uuid,
     enabled: recordContext.uuid != null
   });
-  const sitePolygons = mapIndexLoaded ? mapIndex?.polygons ?? [] : undefined;
+  const countByStatus = summaryData?.countByStatus;
+  const groupedPolygons: GroupedPolygonStatus[] = props.choices
+    .map(choice => ({
+      status: String(choice.id),
+      count: countByStatus?.[choice.id] ?? 0
+    }))
+    .filter(group => group.count > 0);
 
-  if (!sitePolygons?.length || !Array.isArray(sitePolygons)) {
+  if (groupedPolygons.length === 0) {
     return (
       <div className="text-14 w-fit-content whitespace-nowrap rounded-[3px] bg-grey-200 px-2 text-grey-500">
         {props.emptyText ?? "Not Provided"}
@@ -55,20 +49,18 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
     );
   }
 
-  const groupedPolygons = groupPolygonsByStatus(sitePolygons);
-
   return (
     <ArrayField {...props} record={{ [props.source!]: groupedPolygons }}>
       <SingleFieldList linkType={false}>
         <FunctionField
-          render={(record?: { status: string; count: number }) => {
+          render={(record?: GroupedPolygonStatus) => {
             if (record == null) return null;
-            const status = record?.status;
+            const status = record.status;
             const choice = props.choices.find(i => i.id === status);
-            const PolygonStatusLabel = record?.count + " " + choice?.name!;
+            const polygonStatusLabel = `${record.count} ${choice?.name ?? status}`;
             return (
               <ChipField
-                record={{ status: PolygonStatusLabel }}
+                record={{ status: polygonStatusLabel }}
                 source="status"
                 className={classNames("!h-fit !rounded-[3px] capitalize", POLYGON_STATUS_CLASSNAME_MAP[status])}
               />

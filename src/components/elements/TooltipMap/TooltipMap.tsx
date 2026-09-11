@@ -1,7 +1,5 @@
 import { useT } from "@transifex/react";
-import { useMemo } from "react";
 
-import { findSitePolygonByMapFeatureUuid } from "@/components/elements/Map-mapbox/sitePolygonPopupUtils";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { POLYGON_INFORMATION_REQUIRED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -10,13 +8,10 @@ import type { TooltipType } from "../Map-mapbox/Map.d";
 import { formatPlannedStartDate } from "../Map-mapbox/utils";
 import Text from "../Text/Text";
 
-const EMPTY_SITE_POLYGON_LIST: SitePolygonLightDto[] = [];
-
 export interface TooltipMapProps {
   setTooltipOpen: () => void;
   setEditPolygon: (value?: string) => void;
-  polygonUuid: string;
-  sitePolygonData?: SitePolygonLightDto[];
+  sitePolygon?: SitePolygonLightDto;
   type?: TooltipType;
   popup?: unknown;
 }
@@ -29,15 +24,8 @@ const topBorderColorPopup: Record<SitePolygonLightDto["status"], string> = {
 };
 
 const TooltipMap = (props: TooltipMapProps) => {
-  const { setTooltipOpen, setEditPolygon, polygonUuid, sitePolygonData, type } = props;
+  const { setTooltipOpen, setEditPolygon, sitePolygon: polygonData, type } = props;
   const t = useT();
-
-  const sitePolygonsStable = sitePolygonData ?? EMPTY_SITE_POLYGON_LIST;
-
-  const polygonData = useMemo(
-    () => findSitePolygonByMapFeatureUuid(sitePolygonsStable, polygonUuid),
-    [sitePolygonsStable, polygonUuid]
-  );
 
   const formatArrayField = (arr: string[] | null | undefined): string => {
     if (arr == null || arr.length === 0) {
