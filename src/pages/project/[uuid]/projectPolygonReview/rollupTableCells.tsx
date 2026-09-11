@@ -54,3 +54,10 @@ export const FlaggedFilterButton: FC<{ active: boolean; onClick: () => void; lab
     {label}
   </button>
 );
+
+// This module lives under src/pages/**, where Next's pageExtensions ("tsx") collects every .tsx as
+// a route and requires a default-exported React component (each sibling view file exports one).
+// These are shared presentational cells, not a real page, so the default export is an inert
+// placeholder that renders nothing; the named exports above are the real API.
+const RollupTableCellsRoute: FC = () => null;
+export default RollupTableCellsRoute;
