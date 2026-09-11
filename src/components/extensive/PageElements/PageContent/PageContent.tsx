@@ -11,7 +11,7 @@ const PageContent: FC<HTMLAttributes<HTMLDivElement>> = ({ className, ...props }
     <div
       {...props}
       className={twMerge(
-        classNames("flex h-full w-full min-w-0 flex-col gap-5 bg-theme-neutral-200 px-6 pt-6 pb-9"),
+        classNames("flex h-auto w-full min-w-0 flex-col gap-5 bg-theme-neutral-200 px-6 pt-6 pb-9"),
         isBulkActionToolbarVisible && "pb-[5.75rem]",
         className
       )}

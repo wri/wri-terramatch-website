@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 
-import { getStatusOptions } from "@/constants/options/status";
+import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
@@ -20,8 +20,9 @@ type NurseriesIndexHeaderProps = {
   viewValue: string;
   viewItems: HighLevelSelectorItem[];
   statuses: string[];
+  updates: string[];
   addNurseryHref?: string;
-  onApplyStatuses: (statuses: string[]) => void;
+  onApplyFilters: (statuses: string[], updates: string[]) => void;
   onViewChange: (value: string) => void;
   onQueryChange: (query: string) => void;
 };
@@ -31,8 +32,9 @@ const NurseriesIndexHeader = ({
   viewValue,
   viewItems,
   statuses,
+  updates,
   addNurseryHref,
-  onApplyStatuses,
+  onApplyFilters,
   onViewChange,
   onQueryChange
 }: NurseriesIndexHeaderProps) => {
@@ -40,18 +42,35 @@ const NurseriesIndexHeader = ({
   const router = useRouter();
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const statusOptions = useMemo(() => getStatusOptions(t), [t]);
-  const activeFilterLabels = useMemo<SelectedFilter[]>(
+  const updateOptions = useMemo(
     () =>
-      statuses.length === 0
+      getChangeRequestStatusOptions(t).map(option =>
+        option.value === "approved" ? { ...option, title: t("Complete") } : option
+      ),
+    [t]
+  );
+  const activeFilterLabels = useMemo<SelectedFilter[]>(
+    () => [
+      ...(statuses.length === 0
         ? []
         : [
             {
               category: t("Status"),
               label: statuses.map(status => statusOptions.find(option => option.value === status)?.title ?? status),
-              onRemove: () => onApplyStatuses([])
+              onRemove: () => onApplyFilters([], updates)
             }
-          ],
-    [onApplyStatuses, statusOptions, statuses, t]
+          ]),
+      ...(updates.length === 0
+        ? []
+        : [
+            {
+              category: t("Updates"),
+              label: updates.map(update => updateOptions.find(option => option.value === update)?.title ?? update),
+              onRemove: () => onApplyFilters(statuses, [])
+            }
+          ])
+    ],
+    [onApplyFilters, statusOptions, statuses, t, updateOptions, updates]
   );
 
   return (
@@ -70,7 +89,7 @@ const NurseriesIndexHeader = ({
         }}
       />
       <PageHeader
-        className="!bg-theme-neutral-100 !px-6"
+        className="!bg-theme-neutral-100 !px-6 !py-0 !border-t border-theme-neutral-300"
         title={t("Nurseries")}
         actions={
           <Flex gap={4} alignItems="center">
@@ -112,12 +131,13 @@ const NurseriesIndexHeader = ({
         selectedFilters={activeFilterLabels}
         showClearFilters={activeFilterLabels.length > 0}
         onClickFilterButton={() => setIsFilterDrawerOpen(true)}
-        onClearFilters={() => onApplyStatuses([])}
+        onClearFilters={() => onApplyFilters([], [])}
       />
       <NurseriesFilterDrawer
         open={isFilterDrawerOpen}
         statuses={statuses}
-        onApplyStatuses={onApplyStatuses}
+        updates={updates}
+        onApplyFilters={onApplyFilters}
         onOpenChange={setIsFilterDrawerOpen}
       />
     </>

@@ -168,7 +168,8 @@ export const filterNurseryProjectSections = (
   sections: NurseryIndexProjectSection[],
   query: string,
   projectId?: string,
-  statuses: string[] = []
+  statuses: string[] = [],
+  updates: string[] = []
 ) => {
   const normalizedQuery = normalize(query);
 
@@ -183,9 +184,12 @@ export const filterNurseryProjectSections = (
         ...section,
         nurseries: section.nurseries.filter(nursery => {
           const matchesStatus = statuses.length === 0 || (nursery.status != null && statuses.includes(nursery.status));
+          const matchesUpdate =
+            updates.length === 0 ||
+            (nursery.updateRequestStatus != null && updates.includes(nursery.updateRequestStatus));
           const matchesQuery =
             normalizedQuery === "" || projectMatches || normalize(nursery.name).includes(normalizedQuery);
-          return matchesStatus && matchesQuery;
+          return matchesStatus && matchesUpdate && matchesQuery;
         })
       };
     })
