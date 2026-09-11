@@ -190,8 +190,8 @@ export class V3ApiEndpoint<
    *    accessed by other connections.
    */
   async fetchParallel(variables: TVariables, headers?: THeaders): Promise<TResponse> {
-    if (this.method !== "POST" && !this.url.includes("delayedJobs")) {
-      throw new Error("fetchParallel may only be used with create endpoints and delayed jobs");
+    if (this.method !== "POST" && this.method !== "PUT" && !this.url.includes("delayedJobs")) {
+      throw new Error("fetchParallel may only be used with create and sync endpoints or delayed jobs");
     }
     return await this.executeRequest(variables, headers);
   }
