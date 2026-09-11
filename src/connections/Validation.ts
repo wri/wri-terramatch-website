@@ -8,6 +8,7 @@ import {
   createSiteValidation,
   getPolygonValidation,
   GetPolygonValidationPathParams,
+  getProjectValidation,
   getSiteValidation
 } from "@/generated/v3/researchService/researchServiceComponents";
 import { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -63,7 +64,66 @@ const siteValidationConnection = v3Resource("validations", getSiteValidation)
   .enabledProp()
   .buildConnection();
 
+// Project scope mirror of siteValidationConnection: returns validations for every active polygon
+// across all of a project's sites (backed by GET /validations/v3/projects/{projectUuid}).
+const projectValidationConnection = v3Resource("validations", getProjectValidation)
+  .index<ValidationDto, { projectUuid: string; criteriaId?: number }>(({ projectUuid, criteriaId }) => ({
+    pathParams: { projectUuid },
+    queryParams: { criteriaId }
+  }))
+  .pagination()
+  .enabledProp()
+  .buildConnection();
+
 const ALL_VALIDATIONS_PAGE_SIZE = 100;
+
+const pruneValidationsCache = () => {
+  ApiSlice.pruneCache("validations");
+
+  const currentState = ApiSlice.currentState;
+  const validationIndices = currentState.meta.indices.validations ?? {};
+  Object.keys(validationIndices).forEach(indexKey => {
+    ApiSlice.pruneIndex("validations", indexKey);
+  });
+};
+
+type ValidationPageResult = { data?: ValidationDto[]; indexTotal?: number; loadFailure?: unknown };
+
+// Shared paging loop for the site- and project-scoped validation indexes. Each caller supplies a
+// typed `loadPage(pageNumber)` so the entity-specific params stay type-safe.
+const loadAllValidationPages = async (
+  loadPage: (pageNumber: number) => Promise<ValidationPageResult>,
+  clearCache: boolean
+): Promise<{ validations: ValidationDto[]; total: number }> => {
+  if (clearCache) {
+    pruneValidationsCache();
+  }
+
+  const firstPageResponse = await loadPage(1);
+  if (firstPageResponse.loadFailure != null) {
+    throw firstPageResponse.loadFailure;
+  }
+
+  const validations = firstPageResponse.data ?? [];
+  const totalCount = firstPageResponse.indexTotal ?? 0;
+
+  if (totalCount <= ALL_VALIDATIONS_PAGE_SIZE) {
+    return { validations, total: totalCount };
+  }
+
+  const totalPages = Math.ceil(totalCount / ALL_VALIDATIONS_PAGE_SIZE);
+  const allFetchedValidations = [...validations];
+
+  for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
+    const pageResponse = await loadPage(pageNumber);
+    if (pageResponse.loadFailure != null) {
+      throw pageResponse.loadFailure;
+    }
+    allFetchedValidations.push(...(pageResponse.data ?? []));
+  }
+
+  return { validations: allFetchedValidations, total: totalCount };
+};
 
 export const useAllSiteValidations = (siteUuid: string, criteriaId?: number) => {
   const [allValidations, setAllValidations] = useState<ValidationDto[]>([]);
@@ -74,69 +134,66 @@ export const useAllSiteValidations = (siteUuid: string, criteriaId?: number) => 
       if (siteUuid == null) return;
 
       try {
-        if (clearCache) {
-          ApiSlice.pruneCache("validations");
-
-          const currentState = ApiSlice.currentState;
-          const validationIndices = currentState.meta.indices.validations ?? {};
-          Object.keys(validationIndices).forEach(indexKey => {
-            ApiSlice.pruneIndex("validations", indexKey);
-          });
-        }
-
-        const firstPageResponse = await loadConnection(siteValidationConnection, {
-          siteUuid,
-          criteriaId,
-          pageSize: ALL_VALIDATIONS_PAGE_SIZE,
-          pageNumber: 1,
-          enabled: true
-        });
-
-        if (firstPageResponse.loadFailure != null) {
-          throw firstPageResponse.loadFailure;
-        }
-
-        const validations = firstPageResponse.data ?? [];
-        const totalCount = firstPageResponse.indexTotal ?? 0;
+        const { validations, total: totalCount } = await loadAllValidationPages(
+          pageNumber =>
+            loadConnection(siteValidationConnection, {
+              siteUuid,
+              criteriaId,
+              pageSize: ALL_VALIDATIONS_PAGE_SIZE,
+              pageNumber,
+              enabled: true
+            }),
+          clearCache
+        );
 
         setTotal(totalCount);
-
-        if (totalCount === 0) {
-          setAllValidations([]);
-          return [];
-        }
-
-        if (totalCount <= ALL_VALIDATIONS_PAGE_SIZE) {
-          setAllValidations(validations);
-          return validations;
-        }
-
-        const totalPages = Math.ceil(totalCount / ALL_VALIDATIONS_PAGE_SIZE);
-        let allFetchedValidations = [...validations];
-
-        for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
-          const pageResponse = await loadConnection(siteValidationConnection, {
-            siteUuid,
-            criteriaId,
-            pageSize: ALL_VALIDATIONS_PAGE_SIZE,
-            pageNumber: pageNumber,
-            enabled: true
-          });
-
-          if (pageResponse.loadFailure) {
-            throw pageResponse.loadFailure;
-          }
-
-          allFetchedValidations.push(...(pageResponse.data ?? []));
-        }
-
-        setAllValidations(allFetchedValidations);
-        return allFetchedValidations;
+        setAllValidations(validations);
+        return validations;
       } catch (e: any) {
         return [];
       }
     },
     [siteUuid, criteriaId]
+  );
+
+  return {
+    allValidations,
+    fetchAllValidationPages,
+    total
+  };
+};
+
+// Project scope counterpart of useAllSiteValidations; same return shape so the polygon workspace and
+// overlap hook can consume either entity.
+export const useAllProjectValidations = (projectUuid: string, criteriaId?: number) => {
+  const [allValidations, setAllValidations] = useState<ValidationDto[]>([]);
+  const [total, setTotal] = useState(0);
+
+  const fetchAllValidationPages = useCallback(
+    async (clearCache: boolean = false) => {
+      if (projectUuid == null) return;
+
+      try {
+        const { validations, total: totalCount } = await loadAllValidationPages(
+          pageNumber =>
+            loadConnection(projectValidationConnection, {
+              projectUuid,
+              criteriaId,
+              pageSize: ALL_VALIDATIONS_PAGE_SIZE,
+              pageNumber,
+              enabled: true
+            }),
+          clearCache
+        );
+
+        setTotal(totalCount);
+        setAllValidations(validations);
+        return validations;
+      } catch (e: any) {
+        return [];
+      }
+    },
+    [projectUuid, criteriaId]
   );
 
   return {

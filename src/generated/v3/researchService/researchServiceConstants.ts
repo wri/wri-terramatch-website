@@ -3,7 +3,6 @@ import {
   SitePolygonLightDto,
   SitePolygonFullDto,
   ValidationDto,
-  SiteIndicatorRollupDto,
   GeoJsonExportDto,
   GeometryUploadComparisonSummaryDto,
   DelayedJobDto,
@@ -12,13 +11,13 @@ import {
   ClippedVersionDto,
   ProjectPolygonDto,
   AnrPlotGeometryDto,
-  PolygonAttributeDefinitionDto
+  PolygonAttributeDefinitionDto,
+  SiteReviewRollupDto
 } from "./researchServiceSchemas";
 
 export const RESEARCH_SERVICE_RESOURCES = [
   "sitePolygons",
   "validations",
-  "siteIndicatorRollups",
   "geojsonExports",
   "geometryUploadComparisonSummaries",
   "delayedJobs",
@@ -27,13 +26,14 @@ export const RESEARCH_SERVICE_RESOURCES = [
   "clippedVersions",
   "projectPolygons",
   "anrPlotGeometries",
-  "polygonAttributeDefinitions"
+  "polygonAttributeDefinitions",
+  // hand-added ahead of codegen for the project-level polygons site-rollup work
+  "siteReviewRollups"
 ] as const;
 
 export type ResearchServiceApiResources = {
   sitePolygons: StoreResourceMap<SitePolygonLightDto | SitePolygonFullDto>;
   validations: StoreResourceMap<ValidationDto>;
-  siteIndicatorRollups: StoreResourceMap<SiteIndicatorRollupDto>;
   geojsonExports: StoreResourceMap<GeoJsonExportDto>;
   geometryUploadComparisonSummaries: StoreResourceMap<GeometryUploadComparisonSummaryDto>;
   delayedJobs: StoreResourceMap<DelayedJobDto>;
@@ -43,6 +43,7 @@ export type ResearchServiceApiResources = {
   projectPolygons: StoreResourceMap<ProjectPolygonDto>;
   anrPlotGeometries: StoreResourceMap<AnrPlotGeometryDto>;
   polygonAttributeDefinitions: StoreResourceMap<PolygonAttributeDefinitionDto>;
+  siteReviewRollups: StoreResourceMap<SiteReviewRollupDto>;
 };
 
 export const PolygonAttributeDefinitionConstants = {
