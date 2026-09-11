@@ -46,8 +46,12 @@ const ApprovePolygonConfirmation: FC<ApprovePolygonConfirmationProps> = ({
     id: projectUuid ?? ""
   });
 
+  // Only refresh project stats when the modal actually opens. Previously this pruned on every mount
+  // (even while closed), which — when a parent is subscribed to the same project (e.g. the project
+  // polygon-review page) — forced a project refetch that re-mounted this modal and pruned again, an
+  // infinite loop. Gating on `open` keeps the intended refresh-on-open behavior with no loop.
   useEffect(() => {
-    if (projectUuid != null && projectUuid !== "") {
+    if (open && projectUuid != null && projectUuid !== "") {
       pruneEntityCache("projects", projectUuid);
     }
   }, [projectUuid, open]);

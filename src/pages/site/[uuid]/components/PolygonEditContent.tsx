@@ -24,6 +24,7 @@ import {
 import { POLYGON_APPROVED, POLYGON_PENDING_APPROVAL } from "@/constants/polygonStatuses";
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { isPolygonGeometryEditable } from "@/context/mapArea.utils";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useRestorationPracticeOptions } from "@/hooks/translation/useRestorationPracticeOptions";
 import { useTargetLandUseOptions } from "@/hooks/translation/useTargetLandUseOptions";
@@ -274,7 +275,9 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const isPolygonApprovable = isSitePolygonApprovable(polygon);
   const approveTooltip = getSingleSitePolygonApproveTooltip(polygon, t);
   const shouldMapEditPolygon =
-    openAccordionSection !== "monitoring-plots" && openAccordionSection !== "geotagged-photos";
+    isPolygonGeometryEditable() &&
+    openAccordionSection !== "monitoring-plots" &&
+    openAccordionSection !== "geotagged-photos";
   const resolvedSiteUuid = polygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : "");
   const geotaggedPhotosCount = useMemo(
     () => mediaFiles.filter(file => file.lat != null && file.lng != null).length,

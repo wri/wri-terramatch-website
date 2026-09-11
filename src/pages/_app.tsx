@@ -111,7 +111,8 @@ const _App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
-  const isOnSitePolygonReview = /^\/site\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath);
+  // Site- and project-level polygon review both own their layout shell (skip MainLayout).
+  const isOnSitePolygonReview = /^\/(site|project)\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath);
   const isOnSite = router.asPath.includes("/site");
 
   setupYup(t);

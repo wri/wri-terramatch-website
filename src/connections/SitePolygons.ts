@@ -254,6 +254,27 @@ export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => 
   pruneBoundingBoxesCache();
 };
 
+// Count-only fetch: reads the index's total for a filter without loading the rows (pageSize 1). Used
+// for project-scope summary tiles / size-gating so we can show "N failed, M approvable…" and decide
+// whether to load-all, without pulling thousands of polygons into memory. The `filter` is the same
+// loose shape useSitePolygonFilters builds (keys are the query-param fields, e.g. `validationStatus`).
+export const loadSitePolygonCount = async (props: {
+  entityName?: "projects" | "sites";
+  entityUuid?: string;
+  enabled?: boolean;
+  filter?: Partial<SitePolygonsIndexQueryParams>;
+}): Promise<number> => {
+  const response = await loadConnection(sitePolygonsConnection, {
+    ...(props as ConnectionProps<typeof sitePolygonsConnection>),
+    pageSize: 1,
+    pageNumber: 1
+  });
+  if (response.loadFailure != null) {
+    throw response.loadFailure;
+  }
+  return response.indexTotal ?? 0;
+};
+
 export const loadAllSitePolygons = async (
   props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize"> & {
     sortField?: string;
@@ -316,10 +337,14 @@ export const useAllSitePolygons = (
   const stableProps = useStableProps(props);
 
   const fetchAllPages = useCallback(
-    async (clearCache: boolean = false) => {
+    async (clearCache: boolean = false, keepExistingData: boolean = false) => {
       setIsLoading(true);
       setError(null);
-      setAllPolygons([]);
+      // On a same-query refetch (e.g. after a save/validation) keep the current polygons on screen
+      // until the fresh data arrives, instead of blanking. Blanking is especially disruptive at
+      // project scope, where the refetch reloads the whole project (many pages) and would otherwise
+      // clear the map — and its bbox — for the entire reload. New-query loads still clear.
+      if (!keepExistingData) setAllPolygons([]);
       setProgress(0);
       setTotal(0);
 
@@ -396,7 +421,7 @@ export const useAllSitePolygons = (
   );
 
   const refetch = useCallback(async () => {
-    await fetchAllPages(true);
+    await fetchAllPages(true, true);
   }, [fetchAllPages]);
 
   useEffect(() => {

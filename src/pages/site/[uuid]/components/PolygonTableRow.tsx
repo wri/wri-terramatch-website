@@ -36,6 +36,9 @@ import { type SubmissionCycleOption, formatSubmissionCycleDisplay } from "./poly
 export type PolygonTableRow = {
   id: string;
   polygonName: string;
+  // Present only at project scope (polygons rolled up across a project's sites). When undefined the
+  // Site cell is skipped so the site-page table keeps its original column layout.
+  siteName?: string;
   submission: MappedTagState;
   validation: ValidationTagState;
   restorationPractice: restorationStrategyType[];
@@ -212,6 +215,13 @@ const PolygonRowComponent: FC<PolygonRowProps> = ({
           </Text>
         </Box>
       </TableCell>
+      {row.siteName != null && (
+        <TableCell {...context?.getCellProps("siteName")}>
+          <Text color="neutral.800" className="truncate">
+            {row.siteName}
+          </Text>
+        </TableCell>
+      )}
       <TableCell {...context?.getCellProps("submission")}>
         {row.submission != null ? <MappedTag state={readOnly ? "deleted" : row.submission} /> : <Text>—</Text>}
       </TableCell>

@@ -62,6 +62,9 @@ interface PolygonFilterDrawerProps {
   open?: boolean;
   filters: PolygonFilterState;
   isAdminReview?: boolean;
+  // Project scope only: when provided, renders a Site facet (multi-select) that filters the
+  // already-loaded polygon list client-side. Omitted (default) on the site page — no facet renders.
+  siteOptions?: { uuid: string; name: string }[];
   onApplyFilters: (filters: PolygonFilterState) => void;
   onClearFilters: () => void;
   onOpenChange?: (open: boolean) => void;
@@ -72,6 +75,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   open,
   filters,
   isAdminReview = false,
+  siteOptions,
   onApplyFilters,
   onClearFilters,
   onOpenChange
@@ -87,6 +91,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
   const targetLandUseLabels = useTargetLandUseLabels();
   const [draftFilters, setDraftFilters] = useState<PolygonFilterState>(filters);
   const isAdmin = useIsAdmin();
+  const siteNameByUuid = useMemo(() => new Map((siteOptions ?? []).map(site => [site.uuid, site.name])), [siteOptions]);
 
   useEffect(() => {
     if (open === true) {
@@ -124,9 +129,20 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     if (draftFilters.showDeleted) {
       tags.push({ id: "showDeleted", label: t("Deleted Polygons") });
     }
+    for (const siteUuid of draftFilters.siteId) {
+      tags.push({ id: `siteId:${siteUuid}`, label: siteNameByUuid.get(siteUuid) ?? siteUuid });
+    }
 
     return tags;
-  }, [draftFilters, restorationPracticeLabels, submissionStatusLabels, t, targetLandUseLabels, validationStatusLabels]);
+  }, [
+    draftFilters,
+    restorationPracticeLabels,
+    siteNameByUuid,
+    submissionStatusLabels,
+    t,
+    targetLandUseLabels,
+    validationStatusLabels
+  ]);
 
   const removeFilter = (id: string) => {
     const [category, value] = id.split(":");
@@ -150,6 +166,8 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           return { ...current, hasOverlap: false };
         case "showDeleted":
           return { ...current, showDeleted: false };
+        case "siteId":
+          return { ...current, siteId: current.siteId.filter(s => s !== value) };
         default:
           return current;
       }
@@ -201,6 +219,10 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
     setDraftFilters(current => ({ ...current, hasOverlap: checked === true }));
   };
 
+  const handleSiteChange = (value: string[]) => {
+    setDraftFilters(current => ({ ...current, siteId: value }));
+  };
+
   const handleShowDeletedChange = ({ checked }: CheckboxChange) => {
     const showDeleted = checked === true;
     // Deleted polygons is an exclusive audit view: turning it on clears every other draft
@@ -244,10 +266,7 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
           className="h-full"
           content={
             <Flex className="h-full flex-col gap-3 overflow-auto p-4">
-              <Flex
-                className="mb-2 flex-wrap gap-2"
-                display={activeFilters.length > 0 ? "flex" : "none"}
-              >
+              <Flex className="mb-2 flex-wrap gap-2" display={activeFilters.length > 0 ? "flex" : "none"}>
                 {activeFilters.map(filter => (
                   <FeedbackTag
                     key={filter.id}
@@ -326,6 +345,19 @@ const PolygonFilterDrawer: FC<PolygonFilterDrawerProps> = ({
                   multiple
                 />
               </FilterCard>
+              {siteOptions != null && siteOptions.length > 0 && (
+                <FilterCard label={t("Site")}>
+                  <SelectInput
+                    placeholder={t("All Sites")}
+                    size="small"
+                    disabled={draftFilters.showDeleted}
+                    value={draftFilters.siteId}
+                    items={siteOptions.map(site => ({ value: site.uuid, label: site.name }))}
+                    onChange={handleSiteChange}
+                    multiple
+                  />
+                </FilterCard>
+              )}
               <FilterCard label={t("Overlap")}>
                 <Switch
                   name="overlap"

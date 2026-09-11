@@ -89,11 +89,28 @@ export type SitePolygonsWorkspaceVariant = "champions" | "adminReview";
 export interface SitePolygonsWorkspaceProps {
   site: SiteFullDto;
   variant?: SitePolygonsWorkspaceVariant;
+  // Hides the create/import entry points (Add Polygon, Draw, Upload, Upload Monitoring Plots) so the
+  // workspace presents as review-of-existing rather than the standalone site editor. Everything else
+  // (Download All, filters, bulk actions, the edit drawer) is unaffected. Used by the project
+  // polygon-review drill-in; defaults to false so the site page is unchanged.
+  hideCreateActions?: boolean;
+  // Forwarded to SitePolygonMapSection/PolygonsMap to suppress geotagged photo markers. Defaults to
+  // false so the site page is unchanged.
+  hideGeotaggedMedia?: boolean;
+  // Restore the overview (fit all polygons) when the edit drawer closes, instead of leaving the
+  // camera zoomed in. Used by the project drill-in; defaults to false so the site page is unchanged.
+  zoomToBboxOnEditClose?: boolean;
 }
 
 export type { PolygonTableRow } from "../components/PolygonTableRow";
 
-const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, variant = "champions" }) => {
+const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({
+  site,
+  variant = "champions",
+  hideCreateActions = false,
+  hideGeotaggedMedia = false,
+  zoomToBboxOnEditClose = false
+}) => {
   const t = useT();
   const router = useRouter();
   const isAdminReview = variant === "adminReview";
@@ -1032,7 +1049,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
             }
           }}
           buttonProps={
-            isAdmin
+            isAdmin && !hideCreateActions
               ? {
                   variant: "secondary",
                   size: "small",
@@ -1043,7 +1060,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
               : undefined
           }
           multiActionButtonProps={
-            isDeletedAuditView
+            isDeletedAuditView || hideCreateActions
               ? undefined
               : {
                   mainActionLabel: t("Add"),
@@ -1095,6 +1112,10 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           onDelete={handleOpenDeletePolygonModal}
           onDownload={handleBulkDownloadClick}
           onEdit={handleBulkEditDetails}
+          onReview={() => {
+            const [firstSelected] = selectedRows;
+            if (firstSelected != null) openPolygonEditDrawerForRow(firstSelected);
+          }}
           onRunValidation={runValidationWithResultsModal}
           onSubmit={handleOpenSubmitPolygonsModal}
           onOpenApproveModal={handleOpenApprovePolygonModal}
@@ -1191,6 +1212,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           isSitePolygonsLoading={isSitePolygonsLoading}
           freezeCameraZoom={freezeCameraZoom}
           skipNextSiteBboxZoomNonce={skipNextSiteBboxZoomNonce}
+          zoomToBboxOnEditClose={zoomToBboxOnEditClose}
           polygonTableHighlight={polygonTableHighlight}
           overlapPolygons={overlapPolygonsForMap}
           crossSiteOverlapPolygons={crossSiteOverlapPolygons}
@@ -1198,6 +1220,7 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           showUndoButton={showPolygonUndoButton}
           onUndoDraw={handleUndoPolygonDraw}
           isDeletedAuditView={isDeletedAuditView}
+          hideGeotaggedMedia={hideGeotaggedMedia}
         />
         {polygonLoadError != null && (
           <InlineMessage
@@ -1253,10 +1276,22 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
   );
 };
 
-const SitePolygonsWorkspace: FC<SitePolygonsWorkspaceProps> = ({ site, variant = "champions" }) => (
+const SitePolygonsWorkspace: FC<SitePolygonsWorkspaceProps> = ({
+  site,
+  variant = "champions",
+  hideCreateActions = false,
+  hideGeotaggedMedia = false,
+  zoomToBboxOnEditClose = false
+}) => (
   <AnrMapOverlayProvider>
     <PolygonEditDrawerProvider>
-      <SitePolygonsWorkspaceContent site={site} variant={variant} />
+      <SitePolygonsWorkspaceContent
+        site={site}
+        variant={variant}
+        hideCreateActions={hideCreateActions}
+        hideGeotaggedMedia={hideGeotaggedMedia}
+        zoomToBboxOnEditClose={zoomToBboxOnEditClose}
+      />
     </PolygonEditDrawerProvider>
   </AnrMapOverlayProvider>
 );

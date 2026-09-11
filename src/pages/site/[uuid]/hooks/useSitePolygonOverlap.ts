@@ -9,28 +9,50 @@ import { mergeValidationsByPolygonUuid } from "../components/Modals/validationCr
 import { getCrossSiteOverlapPartnersForValidation } from "./crossSiteOverlap.utils";
 import { buildOverlapFailureValidationsMap } from "./overlapFix.utils";
 
+type OverlapValidationsSource = {
+  allValidations: ValidationDto[];
+  fetchAllValidationPages: (clearCache?: boolean) => Promise<ValidationDto[] | undefined>;
+};
+
 type UseSitePolygonOverlapParams = {
-  siteUuid: string;
+  // Site scope: pass the site uuid and the hook fetches the OVERLAPPING criteria for that site.
+  siteUuid?: string;
+  // Project scope: pass a validations source (e.g. `useAllProjectValidations(projectUuid, OVERLAPPING_CRITERIA_ID)`)
+  // so overlaps are computed across every site in the project. When provided it takes precedence over siteUuid.
+  overlapValidationsSource?: OverlapValidationsSource;
   polygonsData: SitePolygonLightDto[];
   preferredValidationsByPolygonUuid?: Map<string, ValidationDto>;
   t: (key: string) => string;
+  // Optional override for the cross-site partner tooltip (project scope may reword it).
+  crossSiteTooltip?: string;
 };
 
 export const useSitePolygonOverlap = ({
   siteUuid,
+  overlapValidationsSource,
   polygonsData,
   preferredValidationsByPolygonUuid,
-  t
+  t,
+  crossSiteTooltip
 }: UseSitePolygonOverlapParams) => {
-  const { allValidations: indexedOverlapValidations, fetchAllValidationPages: fetchOverlapValidations } =
-    useAllSiteValidations(siteUuid, OVERLAPPING_CRITERIA_ID);
+  // The internal site hook is only used when no project-scope source is supplied. Passing an empty
+  // uuid keeps the hook call unconditional (rules of hooks) without triggering a site fetch.
+  const siteOverlapValidations = useAllSiteValidations(siteUuid ?? "", OVERLAPPING_CRITERIA_ID);
+  const indexedOverlapValidations = overlapValidationsSource?.allValidations ?? siteOverlapValidations.allValidations;
+  const fetchOverlapValidations =
+    overlapValidationsSource?.fetchAllValidationPages ?? siteOverlapValidations.fetchAllValidationPages;
 
+  // Trigger the initial/refresh fetch. Depend on a STABLE boolean (whether a project source exists),
+  // NOT the source object itself: the source object is re-created every time its validations array
+  // changes, so depending on it here would re-fire the fetch after every fetch — an infinite loop.
+  // `fetchOverlapValidations` resolves to a stable useCallback in both scopes.
+  const hasOverlapSource = overlapValidationsSource != null;
   useEffect(() => {
-    if (siteUuid == null || siteUuid === "") {
+    if (!hasOverlapSource && (siteUuid == null || siteUuid === "")) {
       return;
     }
     void fetchOverlapValidations();
-  }, [siteUuid, fetchOverlapValidations]);
+  }, [hasOverlapSource, siteUuid, fetchOverlapValidations]);
 
   const overlapValidationsByPolygonUuid = useMemo(() => {
     if (preferredValidationsByPolygonUuid == null || preferredValidationsByPolygonUuid.size === 0) {
@@ -66,7 +88,8 @@ export const useSitePolygonOverlap = ({
       };
     }
 
-    const crossSiteOverlapTooltip = t("This polygon overlaps with a polygon on another site in this project.");
+    const crossSiteOverlapTooltip =
+      crossSiteTooltip ?? t("This polygon overlaps with a polygon on another site in this project.");
 
     const overlapPolygons: OverlapPolygonPoint[] = [];
     for (const polygon of polygonsData) {
@@ -92,5 +115,5 @@ export const useSitePolygonOverlap = ({
       overlapValidationsByPolygonUuid,
       fetchOverlapValidations
     };
-  }, [overlapValidations, overlapValidationsByPolygonUuid, polygonsData, fetchOverlapValidations, t]);
+  }, [overlapValidations, overlapValidationsByPolygonUuid, polygonsData, fetchOverlapValidations, t, crossSiteTooltip]);
 };

@@ -17,9 +17,19 @@ import {
 type UseSitePolygonFiltersParams = {
   siteUuid: string;
   t: (key: string, params?: Record<string, unknown>) => string;
+  // Project scope only: also matches search against each polygon's site name (backend supports
+  // `siteName` in `searchFields`). Site scope omits this and keeps its original search fields.
+  searchSiteName?: boolean;
+  // Analytics identity; defaults to "site" so the site page's tracked events are unaffected (F9).
+  entityType?: "site" | "project";
 };
 
-export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersParams) => {
+export const useSitePolygonFilters = ({
+  siteUuid,
+  t,
+  searchSiteName = false,
+  entityType = "site"
+}: UseSitePolygonFiltersParams) => {
   const submissionStatusLabels = useSubmissionStatusLabels();
   const validationStatusLabels = useValidationStatusLabels();
   const restorationPracticeLabels = useRestorationPracticeLabels();
@@ -40,7 +50,7 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
     const filter: Record<string, unknown> = {};
     if (debouncedPolygonSearch !== "") {
       filter.search = debouncedPolygonSearch;
-      filter.searchFields = ["polyName", "polygonUuid"];
+      filter.searchFields = searchSiteName ? ["polyName", "polygonUuid", "siteName"] : ["polyName", "polygonUuid"];
     }
     if (polygonFilters.showDeleted) {
       filter.deletedOnly = true;
@@ -55,15 +65,17 @@ export const useSitePolygonFilters = ({ siteUuid, t }: UseSitePolygonFiltersPara
     if (polygonFilters.targetSys.length > 0) filter.targetSys = polygonFilters.targetSys;
     if (polygonFilters.submissionCycle.length > 0) filter.submissionCycle = polygonFilters.submissionCycle;
     if (polygonFilters.hasOverlap) filter.hasOverlap = true;
+    // Note: siteId is deliberately NOT sent server-side — the backend index forbids combining
+    // siteId[] with projectId[]. Project scope filters the already-loaded polygon list client-side.
     return filter as Partial<SitePolygonsIndexQueryParams>;
-  }, [debouncedPolygonSearch, polygonFilters]);
+  }, [debouncedPolygonSearch, polygonFilters, searchSiteName]);
 
   const handleClearPolygonFilters = useCallback(() => {
-    trackPolygonFilterCleared({ siteUuid });
+    trackPolygonFilterCleared({ siteUuid, entityType });
     setPolygonFilters(EMPTY_POLYGON_FILTERS);
     setPolygonSearch("");
     setDebouncedPolygonSearch("");
-  }, [siteUuid]);
+  }, [entityType, siteUuid]);
 
   const activeFilterLabels = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
