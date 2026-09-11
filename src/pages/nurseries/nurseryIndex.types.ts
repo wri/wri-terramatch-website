@@ -25,5 +25,9 @@ export type NurseryIndexData = {
   projects: ProjectLightDto[];
   sections: NurseryIndexProjectSection[];
   loading: boolean;
+  loadingMore: boolean;
+  hasMore: boolean;
+  loadMore: () => void;
+  nurseryTotal: number;
   error: boolean;
 };

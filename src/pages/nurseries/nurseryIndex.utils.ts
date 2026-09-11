@@ -59,6 +59,20 @@ export const toNurseryIndexStatus = (status: string | null | undefined): Nursery
   return "draft";
 };
 
+export const toNurseryIndexRows = (
+  nurseries: NurseryLightDto[],
+  project?: ProjectLightDto | ProjectFullDto
+): NurseryIndexRow[] =>
+  nurseries
+    .map(nursery => ({
+      ...nursery,
+      id: nursery.uuid,
+      projectUuid: project?.uuid ?? (nursery as NurseryWithProjectUuid).projectUuid ?? null,
+      projectFrameworkKey: project?.frameworkKey ?? nursery.frameworkKey,
+      status: toNurseryIndexStatus(nursery.status)
+    }))
+    .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
+
 const getNurserySeedlingsGrownCount = (nursery: Pick<NurseryLightDto, "treesSeedlingsGrownCount">) =>
   nursery.treesSeedlingsGrownCount ?? 0;
 
@@ -75,6 +89,23 @@ export const buildSeedlingsGrownMetric = (
   return {
     progress: nurseryProgress,
     goal: fullProject?.nurserySeedlingsGoal ?? fullProject?.seedsGrownGoal ?? fullProject?.treesGrownGoal ?? 0
+  };
+};
+
+export const createNurseryProjectSection = (
+  project: ProjectLightDto,
+  nurseries: NurseryLightDto[] = []
+): NurseryIndexProjectSection => {
+  const rows = toNurseryIndexRows(nurseries, project);
+
+  return {
+    id: project.uuid,
+    projectUuid: project.uuid,
+    projectName: project.name ?? "Project",
+    organisationName: project.organisationName,
+    frameworkKey: project.frameworkKey,
+    seedlingsGrown: buildSeedlingsGrownMetric(rows),
+    nurseries: rows
   };
 };
 

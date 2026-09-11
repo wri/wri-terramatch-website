@@ -1,16 +1,20 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
+import { loadFullProject, loadNurseryIndex } from "@/connections/Entity";
+import type { NurseryLightDto, ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
-import { FolderIcon, FolderOpenIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
+import { FolderIcon, FolderOpenIcon, LoadingIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
+import Log from "@/utils/log";
 
 import { useNurseryTableSelection } from "../NurseriesSelection.provider";
-import type { NurseryIndexProjectSection } from "../nurseryIndex.types";
-import { sumNurserySeedlingsGrown } from "../nurseryIndex.utils";
+import type { NurseryIndexProjectSection, NurseryIndexRow } from "../nurseryIndex.types";
+import { buildSeedlingsGrownMetric, sumNurserySeedlingsGrown, toNurseryIndexRows } from "../nurseryIndex.utils";
+import { loadAllIndexPages, SECTION_NURSERIES_PAGE_SIZE } from "../useNurseriesIndexData";
 import NurseryIndexTable from "./NurseryIndexTable";
 
 type NurseryProjectSectionProps = {
@@ -19,15 +23,104 @@ type NurseryProjectSectionProps = {
   defaultOpen?: boolean;
 };
 
+const useNurserySectionDetails = (section: NurseryIndexProjectSection, open: boolean) => {
+  const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [nurseries, setNurseries] = useState<NurseryIndexRow[]>(section.nurseries);
+  const [fullProject, setFullProject] = useState<ProjectFullDto | null>(null);
+  const sectionRef = useRef(section);
+  sectionRef.current = section;
+
+  useEffect(() => {
+    if (!loaded) {
+      setNurseries(section.nurseries);
+    }
+  }, [loaded, section.nurseries]);
+
+  useEffect(() => {
+    setLoaded(false);
+    setFullProject(null);
+    setNurseries(sectionRef.current.nurseries);
+  }, [section.id]);
+
+  useEffect(() => {
+    if (!open || loaded) return;
+
+    let cancelled = false;
+    const currentSection = sectionRef.current;
+
+    const loadDetails = async () => {
+      setLoading(true);
+
+      try {
+        const projectUuid = currentSection.projectUuid;
+        if (projectUuid == null) {
+          if (cancelled) return;
+          setNurseries(currentSection.nurseries);
+          setLoaded(true);
+          return;
+        }
+
+        const [projectResult, loadedNurseries] = await Promise.all([
+          loadFullProject({ id: projectUuid }).catch(error => {
+            Log.error("Failed to load full project for nursery section metrics", error);
+            return null;
+          }),
+          loadAllIndexPages<NurseryLightDto>(
+            pageNumber =>
+              loadNurseryIndex({
+                pageNumber,
+                pageSize: SECTION_NURSERIES_PAGE_SIZE,
+                sortField: "name",
+                sortDirection: "ASC",
+                filter: { projectUuid }
+              }),
+            SECTION_NURSERIES_PAGE_SIZE
+          )
+        ]);
+
+        if (cancelled) return;
+
+        const project = projectResult?.data ?? null;
+        setFullProject(project);
+        setNurseries(toNurseryIndexRows(loadedNurseries, project ?? undefined));
+        setLoaded(true);
+      } catch (error) {
+        Log.error("Failed to load nursery section details", error);
+        if (!cancelled) {
+          setNurseries(currentSection.nurseries);
+          setLoaded(true);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    void loadDetails();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [loaded, open, section.id, section.projectUuid]);
+
+  const seedlingsGrown = useMemo(
+    () => buildSeedlingsGrownMetric(nurseries, fullProject ?? undefined),
+    [fullProject, nurseries]
+  );
+
+  return { nurseries, seedlingsGrown, loading };
+};
+
 const NurseryProjectSection = ({ section, isFiltered = false, defaultOpen = false }: NurseryProjectSectionProps) => {
   const t = useT();
   const [open, setOpen] = useState(defaultOpen);
-  const { selectedRows } = useNurseryTableSelection(section.nurseries);
+  const { nurseries, seedlingsGrown, loading } = useNurserySectionDetails(section, open);
+  const { selectedRows } = useNurseryTableSelection(nurseries);
   const attentionCount = useMemo(
-    () => section.nurseries.filter(nursery => nursery.status === "information-required").length,
-    [section.nurseries]
+    () => nurseries.filter(nursery => nursery.status === "information-required").length,
+    [nurseries]
   );
-  const filteredSeedlings = useMemo(() => sumNurserySeedlingsGrown(section.nurseries), [section.nurseries]);
+  const filteredSeedlings = useMemo(() => sumNurserySeedlingsGrown(nurseries), [nurseries]);
   const selectedSeedlings = useMemo(() => sumNurserySeedlingsGrown(selectedRows), [selectedRows]);
 
   useEffect(() => {
@@ -65,19 +158,31 @@ const NurseryProjectSection = ({ section, isFiltered = false, defaultOpen = fals
       }
     >
       <Flex p={4} bg="neutral.100" gap={5} flexDirection="column">
-        <MetricCard
-          className="min-w-[16rem] w-fit"
-          goal={section.seedlingsGrown.goal}
-          icon={<SeedlingsIcon />}
-          progress={section.seedlingsGrown.progress}
-          title={t("Seedlings Grown")}
-          tooltipContent={t("Number of seedlings grown for this project")}
-          variant="progressBar"
-          color="secondary.600"
-          selection={selectedRows.length > 0 ? selectedSeedlings : undefined}
-          filtered={isFiltered ? filteredSeedlings : undefined}
-        />
-        {open ? <NurseryIndexTable nurseries={section.nurseries} /> : null}
+        {open && loading ? (
+          <Flex minHeight="8rem" alignItems="center" justifyContent="center" gap={3}>
+            <LoadingIcon boxSize={5} className="animate-spin" color="primary.700" />
+            <Text textStyle="400" color="neutral.800">
+              {t("Loading nurseries...")}
+            </Text>
+          </Flex>
+        ) : null}
+        {open && !loading ? (
+          <>
+            <MetricCard
+              className="w-fit min-w-[16rem]"
+              goal={seedlingsGrown.goal}
+              icon={<SeedlingsIcon />}
+              progress={seedlingsGrown.progress}
+              title={t("Seedlings Grown")}
+              tooltipContent={t("Number of seedlings grown for this project")}
+              variant="progressBar"
+              color="secondary.600"
+              selection={selectedRows.length > 0 ? selectedSeedlings : undefined}
+              filtered={isFiltered ? filteredSeedlings : undefined}
+            />
+            <NurseryIndexTable nurseries={nurseries} />
+          </>
+        ) : null}
       </Flex>
     </Accordion>
   );
