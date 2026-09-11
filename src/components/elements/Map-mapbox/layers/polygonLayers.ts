@@ -480,18 +480,7 @@ export const addPolygonCentroidsLayer = (
   }
 };
 
-type DataPolygonOverview = { status: string; status_key: string; count: number }[];
-
-const POLYGON_STATUS_LABELS: Record<string, string> = {
-  draft: "Draft",
-  "pending-approval": "Pending Approval",
-  "information-required": "Information Required",
-  approved: "Approved"
-};
-
 export type PolygonMapStyleFields = Pick<SitePolygonMapEntryDto, "polygonUuid" | "status">;
-
-const POLYGON_STATUS_ORDER = Object.keys(POLYGON_STATUS_LABELS);
 
 export function parsePolygonDataV3(
   sitePolygonData: PolygonMapStyleFields[] | undefined,
@@ -506,21 +495,3 @@ export function parsePolygonDataV3(
     return acc;
   }, {});
 }
-
-export const countStatusesV3 = (sitePolygonData: PolygonMapStyleFields[]): DataPolygonOverview => {
-  const statusCountMap: Record<string, number> = {};
-
-  sitePolygonData.forEach(item => {
-    const statusKey = item.status;
-    if (statusKey == null) return;
-    statusCountMap[statusKey] = (statusCountMap[statusKey] ?? 0) + 1;
-  });
-
-  return Object.entries(statusCountMap)
-    .map(([status_key, count]) => ({
-      status_key,
-      status: POLYGON_STATUS_LABELS[status_key] ?? status_key,
-      count
-    }))
-    .sort((a, b) => POLYGON_STATUS_ORDER.indexOf(a.status_key) - POLYGON_STATUS_ORDER.indexOf(b.status_key));
-};

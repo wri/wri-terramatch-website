@@ -14,7 +14,6 @@ import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
   addSourcesToLayers,
-  countStatusesV3,
   downloadSiteGeoJsonPolygons,
   parsePolygonDataV3,
   storePolygon
@@ -36,7 +35,12 @@ import {
   useUploadGeometry,
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
-import { bulkUpdateSitePolygonStatus, deleteSitePolygon, pruneSitePolygonsCache } from "@/connections/SitePolygons";
+import {
+  bulkUpdateSitePolygonStatus,
+  deleteSitePolygon,
+  pruneSitePolygonsCache,
+  useSitePolygonSummary
+} from "@/connections/SitePolygons";
 import { PolygonStatus } from "@/constants/polygonStatuses";
 import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -230,6 +234,15 @@ const PolygonReviewTab: FC<IProps> = props => {
     total,
     progress
   } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, "createdAt", "ASC", validFilter);
+  const [, { data: summaryData }] = useSitePolygonSummary({
+    entityName: "sites",
+    entityUuid: record?.uuid ?? "",
+    enabled: record?.uuid != null && record?.uuid !== "",
+    filter:
+      validFilter != null && validFilter !== "" && validFilter !== "all"
+        ? { "validationStatus[]": [validFilter] }
+        : undefined
+  });
 
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, { ...record, entityName: record?.entityName ?? "site" }, setSelectPolygonFromMap, refetch);
@@ -332,7 +345,24 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const polygonDataMap = useMemo(() => parsePolygonDataV3(sitePolygonData), [sitePolygonData]);
 
-  const dataPolygonOverview = countStatusesV3(sitePolygonData);
+  const dataPolygonOverview = useMemo(
+    () =>
+      [
+        { status_key: "draft", status: "Draft", count: summaryData?.countByStatus?.draft ?? 0 },
+        {
+          status_key: "pending-approval",
+          status: "Pending Approval",
+          count: summaryData?.countByStatus?.["pending-approval"] ?? 0
+        },
+        {
+          status_key: "information-required",
+          status: "Information Required",
+          count: summaryData?.countByStatus?.["information-required"] ?? 0
+        },
+        { status_key: "approved", status: "Approved", count: summaryData?.countByStatus?.approved ?? 0 }
+      ].filter(item => item.count > 0),
+    [summaryData?.countByStatus]
+  );
 
   const { openModal, closeModal } = useModalContext();
 
@@ -1021,6 +1051,10 @@ const PolygonReviewTab: FC<IProps> = props => {
                   setCurrentPage={setCurrentPage}
                   setPageSize={setPageSize}
                   containerRef={containerRef}
+                  summaryTotals={{
+                    totalTreesPlanted: summaryData?.sumNumTrees ?? 0,
+                    totalCalculatedArea: summaryData?.sumCalcArea ?? 0
+                  }}
                 />
               </Stack>
             </Grid>
