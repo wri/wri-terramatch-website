@@ -2,7 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { loadFullProject, loadNurseryIndex } from "@/connections/Entity";
+import { loadFullNursery, loadFullProject, loadNurseryIndex } from "@/connections/Entity";
 import type { NurseryLightDto, ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
@@ -21,6 +21,25 @@ type NurseryProjectSectionProps = {
   section: NurseryIndexProjectSection;
   isFiltered?: boolean;
   defaultOpen?: boolean;
+};
+
+const loadNurserySeedlingGoals = async (nurseries: NurseryLightDto[]) => {
+  const results = await Promise.all(
+    nurseries.map(nursery =>
+      loadFullNursery({ id: nursery.uuid }).catch(error => {
+        Log.error("Failed to load full nursery for seedlings goal", error);
+        return null;
+      })
+    )
+  );
+
+  const goalsByUuid = new Map<string, number | null>();
+  results.forEach(result => {
+    if (result?.data == null) return;
+    goalsByUuid.set(result.data.uuid, result.data.seedlingGrown);
+  });
+
+  return goalsByUuid;
 };
 
 const useNurserySectionDetails = (section: NurseryIndexProjectSection, open: boolean) => {
@@ -79,11 +98,21 @@ const useNurserySectionDetails = (section: NurseryIndexProjectSection, open: boo
           )
         ]);
 
+        const project = projectResult?.data ?? null;
+        let rows = toNurseryIndexRows(loadedNurseries, project ?? undefined);
+        const projectGoal = project?.nurserySeedlingsGoal;
+        if (!cancelled && (projectGoal == null || projectGoal <= 0)) {
+          const goalsByUuid = await loadNurserySeedlingGoals(loadedNurseries);
+          rows = rows.map(row => ({
+            ...row,
+            seedlingGrown: goalsByUuid.get(row.uuid) ?? null
+          }));
+        }
+
         if (cancelled) return;
 
-        const project = projectResult?.data ?? null;
         setFullProject(project);
-        setNurseries(toNurseryIndexRows(loadedNurseries, project ?? undefined));
+        setNurseries(rows);
         setLoaded(true);
       } catch (error) {
         Log.error("Failed to load nursery section details", error);

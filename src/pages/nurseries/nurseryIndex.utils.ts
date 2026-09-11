@@ -76,19 +76,25 @@ export const toNurseryIndexRows = (
 const getNurserySeedlingsGrownCount = (nursery: Pick<NurseryLightDto, "treesSeedlingsGrownCount">) =>
   nursery.treesSeedlingsGrownCount ?? 0;
 
+const getNurserySeedlingsGoal = (nursery: { seedlingGrown?: number | null }) => nursery.seedlingGrown ?? 0;
+
+const firstPositiveGoal = (...values: Array<number | null | undefined>) =>
+  values.find(value => value != null && value > 0) ?? 0;
+
 export const sumNurserySeedlingsGrown = (nurseries: Array<Pick<NurseryLightDto, "treesSeedlingsGrownCount">>) =>
   nurseries.reduce((total, nursery) => total + getNurserySeedlingsGrownCount(nursery), 0);
 
 export const buildSeedlingsGrownMetric = (
-  nurseries: Array<Pick<NurseryLightDto, "treesSeedlingsGrownCount">>,
+  nurseries: Array<Pick<NurseryLightDto, "treesSeedlingsGrownCount"> & { seedlingGrown?: number | null }>,
   project?: ProjectFullDto | ProjectLightDto
 ): NurseryIndexMetric => {
   const nurseryProgress = sumNurserySeedlingsGrown(nurseries);
+  const nurseryGoal = nurseries.reduce((total, nursery) => total + getNurserySeedlingsGoal(nursery), 0);
   const fullProject = project != null && project.lightResource === false ? (project as ProjectFullDto) : undefined;
 
   return {
     progress: nurseryProgress,
-    goal: fullProject?.nurserySeedlingsGoal ?? fullProject?.seedsGrownGoal ?? fullProject?.treesGrownGoal ?? 0
+    goal: firstPositiveGoal(fullProject?.nurserySeedlingsGoal, nurseryGoal)
   };
 };
 
