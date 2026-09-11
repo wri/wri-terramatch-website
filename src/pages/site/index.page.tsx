@@ -31,38 +31,38 @@ const SiteIndexPageContent = () => {
   const router = useRouter();
   const { clearSelection } = useSiteIndexSelectionActions();
   const [reloadNonce, setReloadNonce] = useState(0);
-  const { loading, projects } = useSiteIndexData(reloadNonce);
   const [selectedProject, setSelectedProject] = useState(ALL_PROJECTS_VIEW);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilters, setStatusFilters] = useState<SiteIndexFilterStatus[]>([]);
   const [updateFilter, setUpdateFilter] = useState<SiteIndexFilterUpdate | null>(null);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const hasActiveSearch = searchQuery.trim().length > 0;
+  const hasActiveFilters = hasActiveSearch || statusFilters.length > 0 || updateFilter != null;
+  const { loading, filtering, projects, totalSiteCount, onProjectOpened } = useSiteIndexData({
+    reloadNonce,
+    search: searchQuery,
+    statusFilters,
+    updateFilter,
+    projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject
+  });
 
   const visibleProjects = useMemo(() => {
-    const normalisedQuery = searchQuery.trim().toLowerCase();
+    const scopedProjects = projects.filter(
+      project => selectedProject === ALL_PROJECTS_VIEW || project.id === selectedProject
+    );
 
-    return projects
-      .filter(project => selectedProject === ALL_PROJECTS_VIEW || project.id === selectedProject)
-      .map(project => ({
-        ...project,
-        totalSiteCount: project.sites.length,
-        sites: project.sites.filter(site => {
-          const matchesSearch = normalisedQuery.length === 0 || site.name.toLowerCase().includes(normalisedQuery);
-          const matchesStatus = statusFilters.length === 0 || statusFilters.some(filter => site.status === filter);
-          const matchesUpdate = updateFilter == null || site.update === updateFilter;
+    if (!hasActiveFilters) {
+      return scopedProjects;
+    }
 
-          return matchesSearch && matchesStatus && matchesUpdate;
-        })
-      }))
-      .filter(
-        project =>
-          project.sites.length > 0 ||
-          (normalisedQuery.length === 0 && statusFilters.length === 0 && updateFilter == null)
-      );
-  }, [projects, searchQuery, selectedProject, statusFilters, updateFilter]);
+    return scopedProjects.filter(project => project.sites.length > 0);
+  }, [hasActiveFilters, projects, selectedProject]);
 
-  const visibleSiteCount = visibleProjects.reduce((total, project) => total + project.sites.length, 0);
-  const hasActiveSearch = searchQuery.trim().length > 0;
+  const visibleSiteCount = hasActiveFilters
+    ? visibleProjects.reduce((total, project) => total + project.sites.length, 0)
+    : selectedProject === ALL_PROJECTS_VIEW
+    ? totalSiteCount
+    : visibleProjects[0]?.sites.length ?? 0;
   const selectedFilters = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
 
@@ -86,7 +86,6 @@ const SiteIndexPageContent = () => {
 
     return labels;
   }, [statusFilters, t, updateFilter]);
-  const hasActiveFilters = hasActiveSearch || selectedFilters.length > 0;
 
   const handleSitesChanged = useCallback(() => setReloadNonce(current => current + 1), []);
 
@@ -177,6 +176,7 @@ const SiteIndexPageContent = () => {
           options: [],
           displayResults: "none",
           onQueryChange: setSearchQuery,
+          isLoading: filtering,
           count: visibleSiteCount
         }}
         selectedFilters={selectedFilters}
@@ -186,7 +186,7 @@ const SiteIndexPageContent = () => {
       />
 
       <PageContent className="px-2 py-0">
-        {loading ? (
+        {loading || filtering ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
             <Text textStyle="400" color="neutral.800">
@@ -201,9 +201,10 @@ const SiteIndexPageContent = () => {
                   key={project.id}
                   project={project}
                   sites={project.sites}
-                  totalSiteCount={project.totalSiteCount}
+                  totalSiteCount={project.sites.length}
                   isFiltered={hasActiveFilters}
                   defaultOpen={index === 0}
+                  onProjectOpened={onProjectOpened}
                   onSitesChanged={handleSitesChanged}
                 />
               ))}

@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { type FC, type MouseEvent, useCallback, useMemo, useState } from "react";
+import { type FC, type MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { deleteSite } from "@/connections/Entity";
 import { Framework, isTerrafund } from "@/context/framework.provider";
@@ -30,6 +30,7 @@ import {
   FolderIcon,
   FolderOpenIcon,
   JobsIcon,
+  LoadingIcon,
   RegenerationIcon,
   SeedlingsIcon,
   TreeIcon
@@ -49,6 +50,7 @@ interface SiteProjectSectionProps {
   totalSiteCount: number;
   isFiltered: boolean;
   defaultOpen?: boolean;
+  onProjectOpened: (projectId: string) => void;
   onSitesChanged: () => void;
 }
 
@@ -339,12 +341,20 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   totalSiteCount,
   isFiltered,
   defaultOpen = false,
+  onProjectOpened,
   onSitesChanged
 }) => {
   const t = useT();
   const [open, setOpen] = useState(defaultOpen);
   const [siteToDelete, setSiteToDelete] = useState<SiteIndexSite | null>(null);
   const { setSiteSelected } = useSiteIndexSelectionActions();
+  const showSitesLoading = open && (project.sitesLoading || (!project.sitesLoaded && !isFiltered));
+
+  useEffect(() => {
+    if (open) {
+      onProjectOpened(project.id);
+    }
+  }, [isFiltered, onProjectOpened, open, project.id, project.sitesLoaded]);
 
   const handleConfirmRowDelete = useCallback(async () => {
     if (siteToDelete == null) {
@@ -404,8 +414,24 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
         }
       >
         <Box className="bg-theme-neutral-100 p-4" minW={0}>
-          <SiteProjectMetrics project={project} sites={sites} totalSiteCount={totalSiteCount} isFiltered={isFiltered} />
-          <SiteProjectTable sites={sites} onDeleteSite={setSiteToDelete} />
+          {showSitesLoading ? (
+            <Flex minHeight="10rem" alignItems="center" justifyContent="center" gap={3}>
+              <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+              <Text textStyle="400" color="neutral.800">
+                {t("Loading sites...")}
+              </Text>
+            </Flex>
+          ) : (
+            <>
+              <SiteProjectMetrics
+                project={project}
+                sites={sites}
+                totalSiteCount={totalSiteCount}
+                isFiltered={isFiltered}
+              />
+              <SiteProjectTable sites={sites} onDeleteSite={setSiteToDelete} />
+            </>
+          )}
         </Box>
       </Accordion>
       <DeleteSite
