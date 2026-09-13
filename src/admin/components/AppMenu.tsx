@@ -5,6 +5,7 @@ import { createElement, FC } from "react";
 import { Menu, useGetResourceLabel, useResourceDefinitions } from "react-admin";
 import { useLocation } from "react-router-dom";
 
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Log from "@/utils/log";
 
 import modules from "../modules";
@@ -57,6 +58,13 @@ const AppMenu = () => {
       </div>
       <div className={classNames({ "Sidebar-active": hash === "site" })}>
         <FilterClearMenuItem resourceName={modules.site.ResourceName} />
+      </div>
+      <div className={classNames({ "Sidebar-active": hash === "polygon-review" })}>
+        <Menu.Item
+          to="/polygon-review"
+          primaryText="Polygon Review"
+          leftIcon={<Icon className="h-8 w-8" name={IconNames.POLYGON} />}
+        />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "nursery" })}>
         <FilterClearMenuItem resourceName={modules.nursery.ResourceName} />

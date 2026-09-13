@@ -59,6 +59,10 @@ const AdminStack = ({ children }: PropsWithChildren) => (
     <FloatNotificationProvider>
       <MonitoredDataProvider>
         <ModalRoot />
+        {/* Toast roots so admin pages that use the app/wri toast APIs (e.g. the Polygon Review
+            workspace's validation/save feedback) can render notifications. */}
+        <Toast />
+        <WRIToast />
         {children}
       </MonitoredDataProvider>
     </FloatNotificationProvider>
@@ -112,7 +116,7 @@ const _App = ({ Component, pageProps }: AppProps) => {
   const isAdmin = router.asPath.includes("/admin");
   const isOnDashboards = router.asPath.includes("/dashboard");
   // Site- and project-level polygon review both own their layout shell (skip MainLayout).
-  const isOnSitePolygonReview = /^\/(site|project)\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath);
+  const isOnSitePolygonReview = /^\/site\/[^/]+\/polygon-review(?:[/?#]|$)/.test(router.asPath);
   const isOnSite = router.asPath.includes("/site");
 
   setupYup(t);

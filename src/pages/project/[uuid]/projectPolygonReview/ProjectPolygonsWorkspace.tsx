@@ -8,12 +8,18 @@ import ProjectFlatPolygonsView from "./ProjectFlatPolygonsView";
 import { resolveProjectPolygonViewMode } from "./projectPolygonViewMode";
 import ProjectSiteDrilldownView from "./ProjectSiteDrilldownView";
 import ProjectSiteRollupView from "./ProjectSiteRollupView";
-import { useProjectSiteDrilldown } from "./useProjectSiteDrilldown";
+import { UseProjectSiteDrilldown, useProjectSiteDrilldown } from "./useProjectSiteDrilldown";
 import { useProjectSiteRollup } from "./useProjectSiteRollup";
 
 export interface ProjectPolygonsWorkspaceProps {
   project: ProjectFullDto;
   variant?: "adminReview";
+  /**
+   * Drill-in state provider. Defaults to the Next-router `useProjectSiteDrilldown` (standalone page).
+   * The admin panel runs under react-admin's HashRouter, where the Next router can't see the in-hash
+   * `?site=`, so it injects a `useSearchParams`-based adapter instead.
+   */
+  drilldown?: UseProjectSiteDrilldown;
 }
 
 /**
@@ -32,9 +38,16 @@ export interface ProjectPolygonsWorkspaceProps {
  *
  * A one-site project has nothing to roll up, so it auto-drills into that site.
  */
-const ProjectPolygonsWorkspaceContent: FC<ProjectPolygonsWorkspaceProps> = ({ project, variant = "adminReview" }) => {
+const ProjectPolygonsWorkspaceContent: FC<ProjectPolygonsWorkspaceProps> = ({
+  project,
+  variant = "adminReview",
+  drilldown
+}) => {
   const { loaded: rollupLoaded, rows, total, error: rollupError } = useProjectSiteRollup(project.uuid);
-  const { siteUuid, drillInto, backToSites } = useProjectSiteDrilldown();
+  // Always call the Next-router default (hooks must be unconditional); use the injected adapter when
+  // provided (admin/HashRouter). The default's navigate is never invoked when an adapter is injected.
+  const fallbackDrilldown = useProjectSiteDrilldown();
+  const { siteUuid, drillInto, backToSites } = drilldown ?? fallbackDrilldown;
 
   const mode = resolveProjectPolygonViewMode({
     isLoadingTotal: !rollupLoaded,
@@ -73,10 +86,14 @@ const ProjectPolygonsWorkspaceContent: FC<ProjectPolygonsWorkspaceProps> = ({ pr
   );
 };
 
-const ProjectPolygonsWorkspace: FC<ProjectPolygonsWorkspaceProps> = ({ project, variant = "adminReview" }) => (
+const ProjectPolygonsWorkspace: FC<ProjectPolygonsWorkspaceProps> = ({
+  project,
+  variant = "adminReview",
+  drilldown
+}) => (
   <AnrMapOverlayProvider>
     <PolygonEditDrawerProvider>
-      <ProjectPolygonsWorkspaceContent project={project} variant={variant} />
+      <ProjectPolygonsWorkspaceContent project={project} variant={variant} drilldown={drilldown} />
     </PolygonEditDrawerProvider>
   </AnrMapOverlayProvider>
 );
