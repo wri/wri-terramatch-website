@@ -1,9 +1,11 @@
+import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import PolygonReviewHeader from "@/pages/admin/polygonReview/PolygonReviewHeader";
 import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 import { DownloadIcon } from "@/redesignComponents/foundations/Icons";
@@ -40,7 +42,14 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
   const featureCollection = useMemo(() => buildSiteCentroidFeatureCollection(rows), [rows]);
 
   return (
-    <PageContent className="bg-theme-neutral-100">
+    <>
+      <PolygonReviewHeader>
+        <Text textStyle="800-bold" color="primary.900" mb={3}>
+          {project.name ?? t("Project")}
+        </Text>
+        <ProjectSiteRollupSummary rows={rows} isLoading={!loaded} />
+      </PolygonReviewHeader>
+      <PageContent className="bg-theme-neutral-100">
       <PageItem
         title={t("Sites")}
         className="scroll-mt-[5.5rem]"
@@ -68,8 +77,6 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
         />
       ) : (
         <>
-          <ProjectSiteRollupSummary rows={rows} isLoading={!loaded} />
-
           <ResizeBox
             initialHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
             minHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
@@ -81,7 +88,8 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
           <ProjectSiteRollupTable rows={rows} loading={!loaded} onSelectSite={onSelectSite} />
         </>
       )}
-    </PageContent>
+      </PageContent>
+    </>
   );
 };
 

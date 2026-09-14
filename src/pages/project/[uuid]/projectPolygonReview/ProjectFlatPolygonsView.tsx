@@ -67,6 +67,8 @@ import Log from "@/utils/log";
 import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils/polygonAnalytics";
 import { isSitePolygonApprovable, toReviewAvailabilityPolygon } from "@/utils/sitePolygonReview";
 
+import PolygonReviewHeader from "@/pages/admin/polygonReview/PolygonReviewHeader";
+
 import PolygonAnomalyStepper from "./PolygonAnomalyStepper";
 import { buildProjectOverlapPairs } from "./projectOverlapPairs";
 import ProjectPolygonSummaryTiles from "./ProjectPolygonSummaryTiles";
@@ -953,6 +955,17 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
 
   return (
     <>
+      <PolygonReviewHeader>
+        <Text textStyle="800-bold" color="primary.900" mb={3}>
+          {project.name ?? t("Project")}
+        </Text>
+        <ProjectPolygonSummaryTiles
+          counts={statusCounts}
+          isLoading={isLoadingCounts}
+          activeStatuses={polygonFilters.validationStatus}
+          onApplyStatuses={applyValidationStatuses}
+        />
+      </PolygonReviewHeader>
       <PolygonEditDrawerDataSync
         polygons={polygonsData}
         onRefetchPolygons={refetchPolygons}
@@ -1102,12 +1115,6 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
           onInformationRequestedModalOpenChange={handleInformationRequestedModalChange}
           requestedInformationPolygonNames={requestedInformationPolygonNames}
           requestedInformationComment={requestedInformationComment}
-        />
-        <ProjectPolygonSummaryTiles
-          counts={statusCounts}
-          isLoading={isLoadingCounts}
-          activeStatuses={polygonFilters.validationStatus}
-          onApplyStatuses={applyValidationStatuses}
         />
         <SitePolygonMapSection
           isAdmin={isAdmin}

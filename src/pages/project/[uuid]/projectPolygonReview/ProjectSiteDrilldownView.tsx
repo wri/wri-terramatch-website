@@ -1,8 +1,10 @@
+import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSite } from "@/connections/Entity";
+import PolygonReviewHeader from "@/pages/admin/polygonReview/PolygonReviewHeader";
 import SitePolygonsWorkspace from "@/pages/site/[uuid]/sitePolygonReview/SitePolygonsWorkspace";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
@@ -31,11 +33,18 @@ const ProjectSiteDrilldownView: FC<ProjectSiteDrilldownViewProps> = ({ siteUuid,
 
   return (
     <div className="flex w-full min-w-0 flex-1 flex-col">
-      <div className="px-6 pt-4">
-        <Button variant="borderless" size="small" className="underline underline-offset-2" onClick={onBack}>
-          {`← ${t("All sites")}`}
-        </Button>
-      </div>
+      {/* TODO(site buckets): no site-level polygon status-counts component/hook exists yet; render
+          site name + back + picker only. Add the buckets here once such a component lands. */}
+      <PolygonReviewHeader>
+        <Text textStyle="800-bold" color="primary.900" mb={2}>
+          {site?.name ?? t("Site")}
+        </Text>
+        <Box>
+          <Button variant="borderless" size="small" className="underline underline-offset-2" onClick={onBack}>
+            {`← ${t("All sites")}`}
+          </Button>
+        </Box>
+      </PolygonReviewHeader>
       {loadFailure != null ? (
         <div className="px-6 pb-6">
           <InlineMessage

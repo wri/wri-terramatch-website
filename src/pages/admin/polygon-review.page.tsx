@@ -1,15 +1,15 @@
 import { Box, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import { ComponentProps, useCallback, useEffect, useMemo } from "react";
+import { ComponentProps, useEffect, useMemo } from "react";
 
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useFullProject, useProjectIndex } from "@/connections/Entity";
+import { useFullProject } from "@/connections/Entity";
 import { useMyUser } from "@/connections/User";
 import FrameworkProvider from "@/context/framework.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import PolygonReviewHeader from "@/pages/admin/polygonReview/PolygonReviewHeader";
 import { ArrowForwardIcon } from "@/redesignComponents/foundations/Icons";
-import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import Layout, { defaultAdminNavGroups } from "@/redesignComponents/Loayout/Layout";
 import ProjectPolygonsWorkspace from "@/pages/project/[uuid]/projectPolygonReview/ProjectPolygonsWorkspace";
 
@@ -33,7 +33,6 @@ const AdminPolygonReviewPage = () => {
     if (isAccessDenied) void router.replace("/admin");
   }, [isAccessDenied, router]);
 
-  const [projectsLoaded, { data: projects }] = useProjectIndex({ pageSize: 100 });
   const [projectLoaded, { data: project }] = useFullProject({ id: selectedProjectUuid });
 
   // Blue side nav: the shared admin-review placeholders, plus a "Back to admin" link and a
@@ -59,65 +58,19 @@ const AdminPolygonReviewPage = () => {
     ];
   }, []);
 
-  const projectItems = useMemo(() => {
-    return (projects ?? [])
-      .map(item => ({
-        label:
-          item.organisationName != null
-            ? `${item.name ?? item.uuid} — ${item.organisationName}`
-            : item.name ?? item.uuid,
-        value: item.uuid
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label));
-  }, [projects]);
-
-  const handleSelect = useCallback(
-    (value: string[]) => {
-      const uuid = value?.[0];
-      const query = { ...router.query } as Record<string, string>;
-      if (uuid != null && uuid !== "") query.project = uuid;
-      else delete query.project;
-      delete query.site; // a new project resets any site drill-in
-      void router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
-    },
-    [router]
-  );
-
   if (!isUserLoaded || isAccessDenied) return null;
 
   return (
     <Layout navGroups={navGroups} navTitle="Management Panel">
       <Box className="flex w-full min-w-0 flex-col">
-        <Box className="px-8 pb-4 pt-6">
-          <Typography variant="h5" className="mb-4">
-            Polygon Review
-          </Typography>
-          <Box className="max-w-md">
-            <SelectInput
-              label="Project"
-              placeholder={projectsLoaded ? "Select a project..." : "Loading projects..."}
-              items={projectItems}
-              value={selectedProjectUuid != null ? [selectedProjectUuid] : []}
-              onChange={handleSelect}
-              disabled={!projectsLoaded}
-            />
-          </Box>
-          {project != null && selectedProjectUuid != null && (
-            <Box className="mt-4">
-              <Typography variant="h6">{project.name ?? "Project"}</Typography>
-              {project.organisationName != null && (
-                <Typography variant="body2" color="text.secondary">
-                  {project.organisationName}
-                </Typography>
-              )}
-            </Box>
-          )}
-        </Box>
-
         {selectedProjectUuid == null ? (
-          <Typography variant="body1" color="text.secondary" className="px-8 pb-8">
-            Select a project to review its polygons.
-          </Typography>
+          // No project chosen yet — the header still renders so its (right-justified) picker is
+          // available; each view supplies its own header once a project is selected.
+          <PolygonReviewHeader>
+            <Typography variant="body1" color="text.secondary">
+              Select a project to review its polygons.
+            </Typography>
+          </PolygonReviewHeader>
         ) : (
           <Box className="w-full min-w-0 flex-1">
             <MapAreaProvider>
