@@ -5,6 +5,7 @@ import { FC, useMemo } from "react";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import SitePolygonMetricsSection from "@/pages/site/[uuid]/components/SitePolygonMetricsSection";
 import PolygonReviewHeader from "@/pages/admin/polygonReview/PolygonReviewHeader";
 import {
   SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS,
@@ -63,12 +64,7 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
         <Text textStyle="800-bold" color="primary.900" mb={3}>
           {project.name ?? t("Project")}
         </Text>
-        <ProjectSiteRollupSummary
-          rows={rows}
-          isLoading={!loaded}
-          totalHectares={project.totalHectaresRestoredSum}
-          treesPlanted={project.treesPlantedCount}
-        />
+        <ProjectSiteRollupSummary rows={rows} isLoading={!loaded} />
       </PolygonReviewHeader>
       <PageContent className="bg-theme-neutral-100">
       <PageItem
@@ -117,6 +113,19 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
           >
             <SiteRollupMap featureCollection={featureCollection} onSelectSite={onSelectSite} loading={!loaded} />
           </ResizeBox>
+
+          {/* Project-wide trees planted + restoration area, using the same MetricCard design as the
+              site level. Rollup has no polygon selection, so the selection/overlap args are inert. */}
+          <SitePolygonMetricsSection
+            totalTreesPlanted={project.treesPlantedCount ?? 0}
+            totalRestorationAreaHa={project.totalHectaresRestoredSum}
+            restorationAreaGoal={project.totalHectaresRestoredGoal}
+            hasPolygonSelection={false}
+            selectedTreesPlanted={0}
+            selectedRestorationAreaRounded={0}
+            polygonsWithOverlapCount={0}
+            onSelectOverlapPolygons={() => {}}
+          />
 
           <ProjectSiteRollupTable
             rows={filteredRows}
