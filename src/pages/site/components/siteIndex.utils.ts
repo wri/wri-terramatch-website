@@ -98,39 +98,44 @@ const metric = (progress: number | null | undefined, goal: number | null | undef
   goal: goal ?? 0
 });
 
+const firstPositiveGoal = (...values: Array<number | null | undefined>) =>
+  values.find(value => value != null && value > 0) ?? 0;
+
 export const buildProjectMetrics = (
   frameworkKey: Framework,
   project: ProjectFullDto | ProjectLightDto | undefined,
   sites: SiteIndexSite[]
 ): SiteIndexProject["metrics"] => {
-  const approvedSites = sites.filter(isSiteApproved);
-  const treesPlanted = approvedSites.reduce((total, site) => total + site.treesPlantedCount, 0);
-  const areaRestored = approvedSites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
-  const areaGoal = approvedSites.reduce((total, site) => total + (site.hectaresToRestoreGoal ?? 0), 0);
+  const siteTreesPlanted = sites.reduce((total, site) => total + site.treesPlantedCount, 0);
+  const siteAreaRestored = sites.reduce((total, site) => total + site.totalHectaresRestoredSum, 0);
+  const siteAreaGoal = sites.reduce((total, site) => total + (site.hectaresToRestoreGoal ?? 0), 0);
   const fullProject = project != null && project.lightResource === false ? (project as ProjectFullDto) : undefined;
 
-  const treesProgress = fullProject?.treesPlantedCount ?? treesPlanted;
-  const treesGoal = fullProject?.treesGrownGoal ?? 0;
-  const restoredAreaProgress = fullProject?.totalHectaresRestoredSum ?? areaRestored;
-  const restoredAreaGoal = fullProject?.totalHectaresRestoredGoal ?? areaGoal;
+  const treesPlanted = fullProject?.treesPlantedCount ?? project?.treesPlantedCount ?? siteTreesPlanted;
+  const treesFromReportsAnr = fullProject?.regeneratedTreesCount ?? 0;
+  const combinedTreesProgress = treesPlanted + (fullProject?.seedsPlantedCount ?? 0) + treesFromReportsAnr;
+  const treesGoal = firstPositiveGoal(fullProject?.treesGrownGoal);
+  const restoredAreaProgress =
+    fullProject?.totalHectaresRestoredSum ?? project?.totalHectaresRestoredSum ?? siteAreaRestored;
+  const restoredAreaGoal = firstPositiveGoal(fullProject?.totalHectaresRestoredGoal, siteAreaGoal);
 
   if (frameworkKey === Framework.HBF) {
     return {
-      saplingsGrowing: metric(treesProgress, fullProject?.nurserySeedlingsGoal ?? treesGoal),
+      saplingsGrowing: metric(combinedTreesProgress, firstPositiveGoal(fullProject?.nurserySeedlingsGoal, treesGoal)),
       areaRestored: metric(restoredAreaProgress, restoredAreaGoal)
     };
   }
 
   if (isTerrafund(frameworkKey)) {
     return {
-      treesPlanted: metric(treesProgress, treesGoal),
+      treesPlanted: metric(treesPlanted, treesGoal),
       treesRegenerated: metric(fullProject?.treesRestoredPpc, treesGoal),
       areaRestored: metric(restoredAreaProgress, restoredAreaGoal)
     };
   }
 
   return {
-    treesGrowing: metric(fullProject?.treesRestoredPpc ?? treesProgress, treesGoal),
+    treesGrowing: metric(combinedTreesProgress, treesGoal),
     areaRestored: metric(restoredAreaProgress, restoredAreaGoal),
     workdays: metric(fullProject?.combinedWorkdayCount ?? fullProject?.workdayCount, fullProject?.jobsCreatedGoal)
   };
@@ -138,6 +143,27 @@ export const buildProjectMetrics = (
 
 export const getSitesRequiringAttention = (sites: SiteIndexSite[]): number =>
   sites.filter(site => SITE_INDEX_ATTENTION_STATUSES.has(site.status)).length;
+
+export const filterSiteIndexSites = (
+  sites: SiteIndexSite[],
+  options: {
+    search?: string;
+    statusFilters?: SiteIndexStatus[];
+    updateFilter?: SiteIndexUpdate | null;
+  }
+): SiteIndexSite[] => {
+  const query = options.search?.trim().toLowerCase() ?? "";
+  const statusFilters = options.statusFilters ?? [];
+  const updateFilter = options.updateFilter ?? null;
+
+  return sites.filter(site => {
+    const matchesSearch = query === "" || site.name.toLowerCase().includes(query);
+    const matchesStatus = statusFilters.length === 0 || statusFilters.includes(site.status);
+    const matchesUpdate = updateFilter == null || site.update === updateFilter;
+
+    return matchesSearch && matchesStatus && matchesUpdate;
+  });
+};
 
 export const toSiteIndexUpdateRequestStatus = (
   update: SiteIndexUpdate | null | undefined
@@ -177,52 +203,82 @@ export const toSiteIndexProject = (
   };
 };
 
-const resolveProjectUuid = (site: SiteIndexLightDto, projects: ProjectLightDto[]): string | null => {
+const normalize = (value?: string | null) => value?.trim().toLocaleLowerCase() ?? "";
+
+const getProjectMatch = (site: SiteIndexLightDto, projects: ProjectLightDto[]) => {
   if (site.projectUuid != null && site.projectUuid !== "") {
-    return site.projectUuid;
+    const projectByUuid = projects.find(project => project.uuid === site.projectUuid);
+    if (projectByUuid != null) {
+      return projectByUuid;
+    }
   }
 
-  const nameMatches = projects.filter(project => project.name === site.projectName);
+  const siteProjectName = normalize(site.projectName);
+  const nameMatches = projects.filter(
+    project => normalize(project.name) === siteProjectName || normalize(project.shortName) === siteProjectName
+  );
   if (nameMatches.length === 1) {
-    return nameMatches[0].uuid;
+    return nameMatches[0];
   }
 
   const frameworkMatches = nameMatches.filter(project => project.frameworkKey === site.frameworkKey);
   if (frameworkMatches.length === 1) {
-    return frameworkMatches[0].uuid;
+    return frameworkMatches[0];
   }
 
-  return nameMatches[0]?.uuid ?? null;
+  return nameMatches[0];
 };
+
+const getFallbackSectionId = (site: SiteLightDto) => [normalize(site.projectName), site.frameworkKey ?? ""].join(":");
 
 export const groupSitesByProject = (
   projects: ProjectLightDto[],
   sites: SiteLightDto[],
   fullProjectsById: Map<string, ProjectFullDto>
 ): SiteIndexProject[] => {
-  const sitesByProjectUuid = new Map<string, SiteIndexSite[]>();
+  const sectionsById = new Map<string, { project?: ProjectLightDto; projectName: string; sites: SiteIndexSite[] }>();
 
   sites.forEach(site => {
-    const projectUuid = resolveProjectUuid(site, projects);
-    if (projectUuid == null) {
+    const project = getProjectMatch(site, projects);
+    const sectionId = project?.uuid ?? getFallbackSectionId(site);
+    const mappedSite = mapSiteToIndexSite(site, toFramework(project?.frameworkKey ?? site.frameworkKey));
+    const current = sectionsById.get(sectionId);
+
+    if (current != null) {
+      current.sites.push(mappedSite);
       return;
     }
 
-    const mappedSite = mapSiteToIndexSite(site, toFramework(site.frameworkKey));
-    const current = sitesByProjectUuid.get(projectUuid) ?? [];
-    current.push(mappedSite);
-    sitesByProjectUuid.set(projectUuid, current);
+    sectionsById.set(sectionId, {
+      project,
+      projectName: project?.name?.trim() || site.projectName?.trim() || "-",
+      sites: [mappedSite]
+    });
   });
 
-  return projects
-    .map(project => {
-      const projectSites = sitesByProjectUuid.get(project.uuid) ?? [];
+  return Array.from(sectionsById.entries())
+    .map(([id, section]) => {
+      if (section.project != null) {
+        return toSiteIndexProject(section.project, {
+          fullProject: fullProjectsById.get(section.project.uuid),
+          sites: section.sites,
+          sitesLoaded: false
+        });
+      }
 
-      return toSiteIndexProject(project, {
-        fullProject: fullProjectsById.get(project.uuid),
-        sites: projectSites,
-        sitesLoaded: true
-      });
+      const firstSite = section.sites[0];
+
+      return {
+        id,
+        name: section.projectName,
+        frameworkKey: firstSite?.frameworkKey ?? Framework.UNDEFINED,
+        organisationName: "-",
+        attentionCount: 0,
+        metrics: buildProjectMetrics(firstSite?.frameworkKey ?? Framework.UNDEFINED, undefined, section.sites),
+        sites: section.sites,
+        sitesLoaded: true,
+        sitesLoading: false
+      };
     })
     .sort((left, right) => left.name.localeCompare(right.name));
 };
