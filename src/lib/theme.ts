@@ -364,3 +364,21 @@ export const getThemedColor = (
 
   return "";
 };
+
+/**
+ * Like `getThemedColor`, but always resolves to a literal color value (e.g. "#78CAED") from the theme
+ * config rather than a CSS `var(--…)` reference. Use this anywhere a CSS variable can't be used —
+ * canvas/WebGL, and in particular Mapbox GL paint properties, whose color parser cannot resolve
+ * `var(--…)` (an unparseable paint color silently drops the layer). Returns "" if the token is not in
+ * `themeConfig` (the design-system-only variants like "accessible" are not covered here).
+ */
+export const getThemedColorValue = (
+  variant: Extract<Parameters<typeof getThemedColor>[0], keyof typeof themeConfig.tokens.colors>,
+  index: Parameters<typeof getThemedColor>[1]
+): string => {
+  const colorVariant = themeConfig.tokens.colors[variant];
+  if (colorVariant && index in colorVariant) {
+    return (colorVariant as Record<string | number, { value: string }>)[index]?.value ?? "";
+  }
+  return "";
+};
