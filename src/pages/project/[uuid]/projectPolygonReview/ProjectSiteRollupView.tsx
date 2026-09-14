@@ -63,7 +63,12 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
         <Text textStyle="800-bold" color="primary.900" mb={3}>
           {project.name ?? t("Project")}
         </Text>
-        <ProjectSiteRollupSummary rows={rows} isLoading={!loaded} />
+        <ProjectSiteRollupSummary
+          rows={rows}
+          isLoading={!loaded}
+          totalHectares={project.totalHectaresRestoredSum}
+          treesPlanted={project.treesPlantedCount}
+        />
       </PolygonReviewHeader>
       <PageContent className="bg-theme-neutral-100">
       <PageItem

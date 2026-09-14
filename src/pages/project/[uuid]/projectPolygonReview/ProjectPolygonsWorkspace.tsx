@@ -59,7 +59,14 @@ const ProjectPolygonsWorkspaceContent: FC<ProjectPolygonsWorkspaceProps> = ({ pr
   }
 
   if (siteUuid != null) {
-    return <ProjectSiteDrilldownView siteUuid={siteUuid} onBack={backToSites} />;
+    return (
+      <ProjectSiteDrilldownView
+        siteUuid={siteUuid}
+        projectName={project.name ?? ""}
+        projectUuid={project.uuid}
+        onBack={backToSites}
+      />
+    );
   }
 
   return (

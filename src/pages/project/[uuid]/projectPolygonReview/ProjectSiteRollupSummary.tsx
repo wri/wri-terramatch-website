@@ -2,6 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
+import { orDash } from "./rollupTableCells";
 import { SITE_STATUS_PREDICATES } from "./siteRollupFilter.constants";
 import SummaryTile from "./SummaryTile";
 import { SiteReviewRollupRow } from "./useProjectSiteRollup";
@@ -21,9 +22,18 @@ const TONE_FG: Record<Tile["tone"], string> = {
 interface ProjectSiteRollupSummaryProps {
   rows: SiteReviewRollupRow[];
   isLoading: boolean;
+  /** Project-wide restored hectares (ProjectFullDto.totalHectaresRestoredSum). */
+  totalHectares: number;
+  /** Project-wide trees planted (ProjectFullDto.treesPlantedCount); null when not yet measured. */
+  treesPlanted: number | null;
 }
 
-const ProjectSiteRollupSummary: FC<ProjectSiteRollupSummaryProps> = ({ rows, isLoading }) => {
+const ProjectSiteRollupSummary: FC<ProjectSiteRollupSummaryProps> = ({
+  rows,
+  isLoading,
+  totalHectares,
+  treesPlanted
+}) => {
   const t = useT();
 
   const { tiles, totalPolygons } = useMemo(() => {
@@ -58,6 +68,17 @@ const ProjectSiteRollupSummary: FC<ProjectSiteRollupSummaryProps> = ({ rows, isL
             valueColor={TONE_FG[tile.tone]}
           />
         ))}
+        {/* Project-wide totals (read-only): sourced from the project DTO, not summed from rows. */}
+        <SummaryTile
+          value={isLoading ? "—" : `${totalHectares.toLocaleString()} ha`}
+          label={t("Total hectares")}
+          valueColor={TONE_FG.neutral}
+        />
+        <SummaryTile
+          value={isLoading ? "—" : orDash(treesPlanted)}
+          label={t("Trees planted")}
+          valueColor={TONE_FG.neutral}
+        />
       </Flex>
       <Text textStyle="300" color="neutral.600" mt={2}>
         {isLoading
