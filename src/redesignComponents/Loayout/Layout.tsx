@@ -47,9 +47,16 @@ interface LayoutProps {
   // href matches the current path renders as selected.
   navGroups?: NavGroups;
   navTitle?: string;
+  // Initial collapsed state of the side nav (default collapsed). Pass false to open it expanded.
+  collapsed?: boolean;
 }
 
-function LayoutContent({ children, navGroups = defaultAdminNavGroups, navTitle = "Management Panel" }: LayoutProps) {
+function LayoutContent({
+  children,
+  navGroups = defaultAdminNavGroups,
+  navTitle = "Management Panel",
+  collapsed = true
+}: LayoutProps) {
   const [isWarningVisible, setIsWarningVisible] = useState(true);
   const { isSidebarCollapseDisabled } = useLayoutShell();
   const t = useT();
@@ -61,7 +68,7 @@ function LayoutContent({ children, navGroups = defaultAdminNavGroups, navTitle =
       </header>
       <div className="flex min-h-0 flex-1 overflow-hidden pt-[3rem]">
         <SideNavigation
-          collapsed={true}
+          collapsed={collapsed}
           isCollapsedDisabled={isSidebarCollapseDisabled}
           groups={navGroups}
           title={navTitle}
@@ -88,10 +95,10 @@ function LayoutContent({ children, navGroups = defaultAdminNavGroups, navTitle =
   );
 }
 
-export default function Layout({ children, navGroups, navTitle }: LayoutProps) {
+export default function Layout({ children, navGroups, navTitle, collapsed }: LayoutProps) {
   return (
     <LayoutShellProvider>
-      <LayoutContent navGroups={navGroups} navTitle={navTitle}>
+      <LayoutContent navGroups={navGroups} navTitle={navTitle} collapsed={collapsed}>
         {children}
       </LayoutContent>
     </LayoutShellProvider>

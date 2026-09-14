@@ -61,7 +61,7 @@ const AdminPolygonReviewPage = () => {
   if (!isUserLoaded || isAccessDenied) return null;
 
   return (
-    <Layout navGroups={navGroups} navTitle="Management Panel">
+    <Layout navGroups={navGroups} navTitle="Management Panel" collapsed={false}>
       <Box className="flex w-full min-w-0 flex-col">
         {selectedProjectUuid == null ? (
           // No project chosen yet — the header still renders so its (right-justified) picker is
