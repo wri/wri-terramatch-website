@@ -1,9 +1,10 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import { PolygonValidationStatus } from "@/pages/site/[uuid]/components/polygonFilter.constants";
 
+import SummaryTile from "./SummaryTile";
 import { ProjectPolygonStatusCounts } from "./useProjectPolygonStatusCounts";
 
 // Each tile maps to a validationStatus[] filter selection. "All" clears the status filter. Clicking a
@@ -18,10 +19,10 @@ type Tile = {
 };
 
 const TONE_STYLES: Record<Tile["tone"], { fg: string; activeBg: string; activeBorder: string }> = {
-  neutral: { fg: "neutral.800", activeBg: "neutral.150", activeBorder: "neutral.400" },
-  good: { fg: "green.500", activeBg: "green.50", activeBorder: "green.300" },
-  warning: { fg: "red.500", activeBg: "red.50", activeBorder: "red.300" },
-  muted: { fg: "neutral.600", activeBg: "neutral.150", activeBorder: "neutral.400" }
+  neutral: { fg: "neutral.800", activeBg: "neutral.200", activeBorder: "neutral.400" },
+  good: { fg: "success.500", activeBg: "success.100", activeBorder: "success.300" },
+  warning: { fg: "error.500", activeBg: "error.100", activeBorder: "error.300" },
+  muted: { fg: "neutral.600", activeBg: "neutral.200", activeBorder: "neutral.400" }
 };
 
 const sameStatuses = (a: PolygonValidationStatus[], b: PolygonValidationStatus[]) =>
@@ -68,38 +69,16 @@ const ProjectPolygonSummaryTiles: FC<ProjectPolygonSummaryTilesProps> = ({
         const tone = TONE_STYLES[tile.tone];
         const toggle = () => onApplyStatuses(isActive && tile.statuses.length > 0 ? [] : tile.statuses);
         return (
-          <Box
+          <SummaryTile
             key={tile.key}
-            role="button"
-            tabIndex={0}
-            onClick={toggle}
-            onKeyDown={e => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                toggle();
-              }
-            }}
-            textAlign="left"
-            flex="1 1 0"
-            minW="150px"
-            px={4}
-            py={3}
-            borderRadius="lg"
-            borderWidth="1px"
-            borderColor={isActive ? tone.activeBorder : "neutral.200"}
-            bg={isActive ? tone.activeBg : "white"}
-            cursor="pointer"
-            transition="border-color .1s, background .1s"
-            _hover={{ borderColor: tone.activeBorder }}
-            aria-pressed={isActive}
-          >
-            <Text textStyle="500-bold" color={tone.fg} fontSize="24px" lineHeight="1.1">
-              {isLoading ? "—" : tile.value.toLocaleString()}
-            </Text>
-            <Text textStyle="300" color="neutral.700" mt={1}>
-              {tile.label}
-            </Text>
-          </Box>
+            value={isLoading ? "—" : tile.value.toLocaleString()}
+            label={tile.label}
+            valueColor={tone.fg}
+            onToggle={toggle}
+            isActive={isActive}
+            activeBg={tone.activeBg}
+            activeBorder={tone.activeBorder}
+          />
         );
       })}
     </Flex>

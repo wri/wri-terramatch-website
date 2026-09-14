@@ -1,19 +1,23 @@
-import { TableCell, TableRow, Text } from "@chakra-ui/react";
+import { Box, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { FC, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 
+import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import Table, { type TableColumn, type TableRenderRowContext } from "@/redesignComponents/dataDisplay/Table/Table";
 import { type BaseRow } from "@/redesignComponents/dataDisplay/Table/tableUtils";
-import { SearchIcon } from "@/redesignComponents/foundations/Icons";
 
-import { AnomaliesCell, FlaggedFilterButton, orDash, Pill } from "./rollupTableCells";
+import { AnomaliesCell, orDash } from "./rollupTableCells";
 import { SiteReviewRollupRow } from "./useProjectSiteRollup";
 
 type RollupTableRow = SiteReviewRollupRow & BaseRow;
 
 export interface ProjectSiteRollupTableProps {
+  // Already filtered by the toolbar/drawer at the view level (so the table and the map show the same
+  // sites). The table only adds a row id and keeps column sorting.
   rows: SiteReviewRollupRow[];
+  // Unfiltered site count, so the empty state can tell "no sites yet" from "no sites match filters".
+  totalSiteCount: number;
   loading: boolean;
   onSelectSite: (siteUuid: string) => void;
 }
@@ -22,23 +26,13 @@ export interface ProjectSiteRollupTableProps {
  * Per-site rollup table for the project polygon-review "rollup" mode (plan §3.2/T3). Adapted from the
  * prototype's Sites view (`design/project-data-experience:src/components/projectData/ProjectDataTable.tsx`
  * ~85-207) onto the design-system Table so it matches the rest of the review workspace, with row
- * click driving the in-place site drill-in instead of a page navigation.
+ * click driving the in-place site drill-in instead of a page navigation. Search + facet filtering now
+ * live in the view's toolbar/drawer (SiteRollupToolbar); this table just renders the filtered rows.
  */
-const ProjectSiteRollupTable: FC<ProjectSiteRollupTableProps> = ({ rows, loading, onSelectSite }) => {
+const ProjectSiteRollupTable: FC<ProjectSiteRollupTableProps> = ({ rows, totalSiteCount, loading, onSelectSite }) => {
   const t = useT();
-  const [search, setSearch] = useState("");
-  const [flaggedOnly, setFlaggedOnly] = useState(false);
 
-  const filteredRows = useMemo<RollupTableRow[]>(() => {
-    const term = search.trim().toLowerCase();
-    return rows
-      .filter(row => {
-        if (flaggedOnly && row.overlapCount <= 0) return false;
-        if (term !== "" && !(row.siteName || "").toLowerCase().includes(term)) return false;
-        return true;
-      })
-      .map(row => ({ ...row, id: row.siteUuid }));
-  }, [rows, search, flaggedOnly]);
+  const tableRows = useMemo<RollupTableRow[]>(() => rows.map(row => ({ ...row, id: row.siteUuid })), [rows]);
 
   const columns: TableColumn[] = useMemo(
     () => [
@@ -73,14 +67,15 @@ const ProjectSiteRollupTable: FC<ProjectSiteRollupTableProps> = ({ rows, loading
         </TableCell>
         <TableCell {...context?.getCellProps("approvable")}>
           {approvable != null && approvable > 0 ? (
-            <Pill label={orDash(approvable)} className="bg-theme-success-100 text-theme-success-900" />
+            <ActionStatusTag state="success" size="small" label={orDash(approvable)} />
           ) : (
             <Text color="neutral.600">{orDash(approvable)}</Text>
           )}
         </TableCell>
         <TableCell {...context?.getCellProps("failed")}>
           {failed != null && failed > 0 ? (
-            <Pill label={orDash(failed)} className="bg-theme-error-100 text-theme-error-900" />
+            // "warning" state renders the error/red palette — matching the old failed pill.
+            <ActionStatusTag state="warning" size="small" label={orDash(failed)} />
           ) : (
             <Text color="neutral.600">{orDash(failed)}</Text>
           )}
@@ -90,7 +85,8 @@ const ProjectSiteRollupTable: FC<ProjectSiteRollupTableProps> = ({ rows, loading
         </TableCell>
         <TableCell {...context?.getCellProps("inReview")}>
           {inReview != null && inReview > 0 ? (
-            <Pill label={orDash(inReview)} className="bg-theme-warning-100 text-theme-warning-900" />
+            // "attention" state renders the amber/warning palette — matching the old in-review pill.
+            <ActionStatusTag state="attention" size="small" label={orDash(inReview)} />
           ) : (
             <Text color="neutral.600">{orDash(inReview)}</Text>
           )}
@@ -107,34 +103,8 @@ const ProjectSiteRollupTable: FC<ProjectSiteRollupTableProps> = ({ rows, loading
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Text textStyle="400-bold" color="neutral.800">
-          {t("Sites")}
-        </Text>
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="relative">
-            <SearchIcon
-              boxSize={3.5}
-              className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-theme-neutral-400"
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={event => setSearch(event.target.value)}
-              placeholder={t("Search sites…")}
-              className="w-48 rounded border border-theme-neutral-200 py-1 pl-7 pr-2 text-xs text-theme-neutral-900 placeholder:text-theme-neutral-400 focus:border-theme-primary-500 focus:outline-none"
-            />
-          </div>
-          <FlaggedFilterButton
-            active={flaggedOnly}
-            onClick={() => setFlaggedOnly(prev => !prev)}
-            label={t("Show only flagged")}
-          />
-        </div>
-      </div>
-
       <Table<RollupTableRow>
-        data={filteredRows}
+        data={tableRows}
         columns={columns}
         loading={loading}
         renderRow={renderRow}
@@ -142,10 +112,13 @@ const ProjectSiteRollupTable: FC<ProjectSiteRollupTableProps> = ({ rows, loading
         pageSize={10}
       />
 
-      {!loading && filteredRows.length === 0 && (
-        <Text textStyle="400" color="neutral.500" className="py-8 text-center">
-          {rows.length === 0 ? t("This project has no sites yet.") : t("No sites match your filters.")}
-        </Text>
+      {!loading && tableRows.length === 0 && (
+        <Box className="py-8 text-center">
+          <Text textStyle="400-bold">{totalSiteCount === 0 ? t("No sites yet") : t("No results found")}</Text>
+          <Text textStyle="400">
+            {totalSiteCount === 0 ? t("This project has no sites yet.") : t("No sites match your filters.")}
+          </Text>
+        </Box>
       )}
     </div>
   );

@@ -23,6 +23,10 @@ type SitePolygonMetricsSectionProps = {
   // Project scope only (F7): the `‹ ⚠ i of N ›` anomaly stepper, rendered alongside the overlap
   // banner. Omitted on the site page.
   anomalyStepper?: ReactNode;
+  // When false, hides the two Trees Planted / Restoration Area MetricCards but keeps the overlap /
+  // cross-site / anomaly-stepper section. Used by the flat project view, where those KPIs now live in
+  // the toolbar. Defaults to true so the site page and rollup callers are unaffected.
+  showMetricCards?: boolean;
 };
 
 const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
@@ -36,39 +40,42 @@ const SitePolygonMetricsSection: FC<SitePolygonMetricsSectionProps> = ({
   onSelectOverlapPolygons,
   crossSiteOverlapCount = 0,
   onSelectCrossSiteOverlapPolygons,
-  anomalyStepper
+  anomalyStepper,
+  showMetricCards = true
 }) => {
   const t = useT();
 
   return (
     <Flex className="items-center justify-between gap-4 mobile:flex-col">
-      <Flex className="items-center gap-4 mobile:w-full mobile:flex-col">
-        <MetricCard
-          color="secondary.600"
-          icon={<TreeIcon />}
-          variant="medium"
-          title={t("Trees Planted")}
-          progress={totalTreesPlanted}
-          goal={0}
-          selection={hasPolygonSelection ? selectedTreesPlanted : undefined}
-          tooltipContent={t("This is the sum of trees planted as reported in the polygon attributes")}
-          className="min-w-[12.5rem] mobile:w-full mobile:min-w-full"
-        />
-        <MetricCard
-          color="secondary.700"
-          icon={<AreaHectaresIcon />}
-          variant={"medium"}
-          title={t("Restoration Area")}
-          progress={totalRestorationAreaHa}
-          goal={restorationAreaGoal ?? 0}
-          progressSuffix="ha"
-          goalSuffix="ha"
-          widthProgressBar={undefined}
-          selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
-          tooltipContent={t("This is the sum of hectares from the selected polygons")}
-          className={classNames("mobile:w-full mobile:min-w-full", "min-w-[12.5rem]")}
-        />
-      </Flex>
+      {showMetricCards && (
+        <Flex className="items-center gap-4 mobile:w-full mobile:flex-col">
+          <MetricCard
+            color="secondary.600"
+            icon={<TreeIcon />}
+            variant="medium"
+            title={t("Trees Planted")}
+            progress={totalTreesPlanted}
+            goal={0}
+            selection={hasPolygonSelection ? selectedTreesPlanted : undefined}
+            tooltipContent={t("This is the sum of trees planted as reported in the polygon attributes")}
+            className="min-w-[12.5rem] mobile:w-full mobile:min-w-full"
+          />
+          <MetricCard
+            color="secondary.700"
+            icon={<AreaHectaresIcon />}
+            variant={"medium"}
+            title={t("Restoration Area")}
+            progress={totalRestorationAreaHa}
+            goal={restorationAreaGoal ?? 0}
+            progressSuffix="ha"
+            goalSuffix="ha"
+            widthProgressBar={undefined}
+            selection={hasPolygonSelection ? selectedRestorationAreaRounded : undefined}
+            tooltipContent={t("This is the sum of hectares from the selected polygons")}
+            className={classNames("mobile:w-full mobile:min-w-full", "min-w-[12.5rem]")}
+          />
+        </Flex>
+      )}
       <Flex className="items-center gap-3 mobile:w-full mobile:flex-col">
         {anomalyStepper}
         {polygonsWithOverlapCount > 0 && (

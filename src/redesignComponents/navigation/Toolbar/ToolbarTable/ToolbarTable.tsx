@@ -24,9 +24,9 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   showClearFilters = true,
   onClickFilterButton,
   selectedFilters,
-  classNameContentLeft
+  classNameContentLeft,
+  rightContent
 }) => {
-  console.log("search", search);
   const t = useT();
   const queryRef = useRef("");
 
@@ -125,6 +125,8 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
               <InfoIcon className="text-theme-neutral-800" />
             </Tooltip>
           )}
+
+          {rightContent}
         </Flex>
       }
     />

@@ -34,7 +34,7 @@ export interface ProjectPolygonsWorkspaceProps {
  */
 const ProjectPolygonsWorkspaceContent: FC<ProjectPolygonsWorkspaceProps> = ({ project, variant = "adminReview" }) => {
   const { loaded: rollupLoaded, rows, total, error: rollupError } = useProjectSiteRollup(project.uuid);
-  const { siteUuid, drillInto, backToSites } = useProjectSiteDrilldown();
+  const { siteUuid, drillInto } = useProjectSiteDrilldown();
 
   const mode = resolveProjectPolygonViewMode({
     isLoadingTotal: !rollupLoaded,
@@ -59,7 +59,7 @@ const ProjectPolygonsWorkspaceContent: FC<ProjectPolygonsWorkspaceProps> = ({ pr
   }
 
   if (siteUuid != null) {
-    return <ProjectSiteDrilldownView siteUuid={siteUuid} onBack={backToSites} />;
+    return <ProjectSiteDrilldownView siteUuid={siteUuid} />;
   }
 
   return (

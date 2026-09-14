@@ -10,7 +10,6 @@ import GalleryTab from "@/admin/components/ResourceTabs/GalleryTab/GalleryTab";
 import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
 import MonitoredTab from "@/admin/components/ResourceTabs/MonitoredTab/MonitoredTab";
 import ReportTab from "@/admin/components/ResourceTabs/ReportTab/ReportTab";
-import PolygonReviewLauncher from "@/admin/sitePolygonReview/PolygonReviewLauncher";
 import { useFullProject } from "@/connections/Entity";
 import { RecordFrameworkProvider } from "@/context/framework.provider";
 
@@ -52,9 +51,6 @@ const ProjectShow = () => {
       <RecordFrameworkProvider>
         <TabbedShowLayout>
           <InformationTab type="projects" />
-          <TabbedShowLayout.Tab label="Polygons">
-            <PolygonReviewLauncher entity="project" />
-          </TabbedShowLayout.Tab>
           <ReportTab label="Project Progress" type="projects" />
           <GalleryTab label="Project Gallery" entity="projects" />
           <DocumentTab label="Project Documents" entity="projects" />

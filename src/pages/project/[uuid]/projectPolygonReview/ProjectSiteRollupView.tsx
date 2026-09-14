@@ -1,20 +1,28 @@
+import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
+import {
+  SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS,
+  SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS
+} from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
-import { DownloadIcon } from "@/redesignComponents/foundations/Icons";
+import { AreaHectaresIcon, DownloadIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
+import CompactKpi from "./CompactKpi";
 import ProjectSiteRollupSummary from "./ProjectSiteRollupSummary";
 import ProjectSiteRollupTable from "./ProjectSiteRollupTable";
 import { buildSiteCentroidFeatureCollection } from "./siteCentroidFeatureCollection";
+import { siteMatchesRollupFilters } from "./siteRollupFilter.constants";
 import SiteRollupMap from "./SiteRollupMap";
+import SiteRollupToolbar from "./SiteRollupToolbar";
 import { useDownloadProjectPolygons } from "./useDownloadProjectPolygons";
 import { SiteReviewRollupRow } from "./useProjectSiteRollup";
+import { useSiteRollupFilters } from "./useSiteRollupFilters";
 
 export interface ProjectSiteRollupViewProps {
   project: ProjectFullDto;
@@ -33,18 +41,30 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
   const t = useT();
   const { isDownloading: isDownloadingAll, download: handleDownloadAll } = useDownloadProjectPolygons(project);
 
+  const { siteSearch, siteFilters, activeFilterLabels, setSiteSearch, setSiteFilters, handleClearSiteFilters } =
+    useSiteRollupFilters({ t });
+
   // Total active polygons across the project — drives only the Download-All disabled state; the
   // visible summary is site-focused (see ProjectSiteRollupSummary).
   const totalPolygons = useMemo(() => rows.reduce((sum, row) => sum + row.activeTotal, 0), [rows]);
 
-  const featureCollection = useMemo(() => buildSiteCentroidFeatureCollection(rows), [rows]);
+  // One filtered set drives both the table AND the map centroids, so they always show the same
+  // sites. The summary above stays on the full, unfiltered rows (it reports project totals).
+  const filteredRows = useMemo(
+    () => rows.filter(row => siteMatchesRollupFilters(row, siteFilters, siteSearch)),
+    [rows, siteFilters, siteSearch]
+  );
+
+  const featureCollection = useMemo(() => buildSiteCentroidFeatureCollection(filteredRows), [filteredRows]);
 
   return (
     <PageContent className="bg-theme-neutral-100">
       <PageItem
         title={t("Sites")}
-        className="scroll-mt-[5.5rem]"
-        flexProps={{ width: "100%" }}
+        className={SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS}
+        // PageItem defaults to flex={1}; on a sparse project it would grow and push the map down.
+        // Size it to its content (title + toolbar) so the map sits directly beneath.
+        flexProps={{ width: "100%", flex: "0 0 auto" }}
         downloadButtonProps={{
           variant: "secondary",
           size: "small",
@@ -58,7 +78,33 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
             void handleDownloadAll();
           }
         }}
-      />
+      >
+        <SiteRollupToolbar
+          resultCount={filteredRows.length}
+          siteSearch={siteSearch}
+          siteFilters={siteFilters}
+          activeFilterLabels={activeFilterLabels}
+          rightContent={
+            <Flex gap={3} align="center">
+              <CompactKpi
+                icon={<TreeIcon />}
+                label={t("Trees Planted")}
+                value={(project.treesPlantedCount ?? 0).toLocaleString()}
+              />
+              <CompactKpi
+                icon={<AreaHectaresIcon />}
+                label={t("Restoration Area")}
+                value={`${project.totalHectaresRestoredSum.toLocaleString(undefined, {
+                  maximumFractionDigits: 2
+                })} ha`}
+              />
+            </Flex>
+          }
+          onSearchChange={setSiteSearch}
+          onApplyFilters={setSiteFilters}
+          onClearFilters={handleClearSiteFilters}
+        />
+      </PageItem>
 
       {error != null ? (
         <InlineMessage
@@ -68,8 +114,6 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
         />
       ) : (
         <>
-          <ProjectSiteRollupSummary rows={rows} isLoading={!loaded} />
-
           <ResizeBox
             initialHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
             minHeight={SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS}
@@ -78,7 +122,24 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
             <SiteRollupMap featureCollection={featureCollection} onSelectSite={onSelectSite} loading={!loaded} />
           </ResizeBox>
 
-          <ProjectSiteRollupTable rows={rows} loading={!loaded} onSelectSite={onSelectSite} />
+          {/* Site status buckets sit between the map and the table. The trees/restoration KPIs now live
+              in the toolbar. An extra top margin (matching PageContent's gap-5) sets the buckets clearly
+              apart from the map above; the summary's own bottom margin separates it from the table. */}
+          <Box mt={5}>
+            <ProjectSiteRollupSummary
+              rows={rows}
+              isLoading={!loaded}
+              siteFilters={siteFilters}
+              setSiteFilters={setSiteFilters}
+            />
+          </Box>
+
+          <ProjectSiteRollupTable
+            rows={filteredRows}
+            totalSiteCount={rows.length}
+            loading={!loaded}
+            onSelectSite={onSelectSite}
+          />
         </>
       )}
     </PageContent>

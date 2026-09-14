@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -44,7 +44,10 @@ import SitePolygonMapSection from "@/pages/site/[uuid]/components/SitePolygonMap
 import SitePolygonMetricsSection from "@/pages/site/[uuid]/components/SitePolygonMetricsSection";
 import SitePolygonModals from "@/pages/site/[uuid]/components/SitePolygonModals";
 import SitePolygonTableSection from "@/pages/site/[uuid]/components/SitePolygonTableSection";
-import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
+import {
+  SITE_POLYGON_TAB_HEADER_ID,
+  SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS
+} from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import {
   canAutoFixOverlapSelection,
   getSelectedOverlapFixSummary,
@@ -60,13 +63,14 @@ import { useSitePolygonTableData } from "@/pages/site/[uuid]/hooks/useSitePolygo
 import { showPolygonErrorToast } from "@/pages/site/[uuid]/utils/polygonOperationToasts";
 import { HIDDEN_STICKY_COLUMN_EDGE_STYLES } from "@/redesignComponents/dataDisplay/Table/tableStyles";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
-import { DownloadIcon } from "@/redesignComponents/foundations/Icons";
+import { AreaHectaresIcon, DownloadIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import Log from "@/utils/log";
 import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils/polygonAnalytics";
 import { isSitePolygonApprovable, toReviewAvailabilityPolygon } from "@/utils/sitePolygonReview";
 
+import CompactKpi from "./CompactKpi";
 import PolygonAnomalyStepper from "./PolygonAnomalyStepper";
 import { buildProjectOverlapPairs } from "./projectOverlapPairs";
 import ProjectPolygonSummaryTiles from "./ProjectPolygonSummaryTiles";
@@ -967,8 +971,10 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
       <PageContent className="bg-theme-neutral-100">
         <PageItem
           title={t("Polygons")}
-          className="scroll-mt-[5.5rem]"
-          flexProps={{ width: "100%", id: SITE_POLYGON_TAB_HEADER_ID }}
+          className={SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS}
+          // flex: "0 0 auto" so this panel sizes to its content (title + toolbar) instead of the
+          // PageItem default flex={1}, which on a sparse project grows and opens a gap above the map.
+          flexProps={{ width: "100%", flex: "0 0 auto", id: SITE_POLYGON_TAB_HEADER_ID }}
           downloadButtonProps={{
             variant: "secondary",
             size: "small",
@@ -992,6 +998,16 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
             activeFilterLabels={activeFilterLabels}
             isAdminReview={isAdminReview}
             siteOptions={siteOptions}
+            rightContent={
+              <Flex gap={3} align="center">
+                <CompactKpi icon={<TreeIcon />} label={t("Trees Planted")} value={totalTreesPlanted.toLocaleString()} />
+                <CompactKpi
+                  icon={<AreaHectaresIcon />}
+                  label={t("Restoration Area")}
+                  value={`${totalRestorationAreaHa.toLocaleString()} ha`}
+                />
+              </Flex>
+            }
             onSearchChange={setPolygonSearch}
             onApplyFilters={setPolygonFilters}
             onClearFilters={handleClearPolygonFilters}
@@ -1103,12 +1119,6 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
           requestedInformationPolygonNames={requestedInformationPolygonNames}
           requestedInformationComment={requestedInformationComment}
         />
-        <ProjectPolygonSummaryTiles
-          counts={statusCounts}
-          isLoading={isLoadingCounts}
-          activeStatuses={polygonFilters.validationStatus}
-          onApplyStatuses={applyValidationStatuses}
-        />
         <SitePolygonMapSection
           isAdmin={isAdmin}
           site={virtualSite}
@@ -1145,6 +1155,35 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
             }}
           />
         )}
+        {/* Status tiles (the primary filter entry point) between the map and the table, with the
+            anomaly stepper / overlap alert on the right of the same row. */}
+        <Flex className="w-full flex-wrap items-start justify-between gap-4">
+          <ProjectPolygonSummaryTiles
+            counts={statusCounts}
+            isLoading={isLoadingCounts}
+            activeStatuses={polygonFilters.validationStatus}
+            onApplyStatuses={applyValidationStatuses}
+          />
+          {!shouldShowNoResults && !isDeletedAuditView && (
+            <SitePolygonMetricsSection
+              totalTreesPlanted={totalTreesPlanted}
+              totalRestorationAreaHa={totalRestorationAreaHa}
+              restorationAreaGoal={project.totalHectaresRestoredGoal}
+              hasPolygonSelection={hasPolygonSelection}
+              selectedTreesPlanted={selectedTreesPlanted}
+              selectedRestorationAreaRounded={selectedRestorationAreaRounded}
+              polygonsWithOverlapCount={polygonsWithOverlapCount}
+              onSelectOverlapPolygons={handleSelectOverlapPolygons}
+              crossSiteOverlapCount={crossSiteOverlapCount}
+              onSelectCrossSiteOverlapPolygons={handleSelectCrossSiteOverlapPolygons}
+              // KPI cards now live in the toolbar; keep only the overlap / cross-site / anomaly section.
+              showMetricCards={false}
+              anomalyStepper={
+                <PolygonAnomalyStepper anomalyUuids={anomalyUuids} onStepToPolygon={handleStepToAnomalyPolygon} />
+              }
+            />
+          )}
+        </Flex>
         {shouldShowNoResults ? (
           <Box>
             <Text textStyle="400-bold">{t("No results found")}</Text>
@@ -1153,39 +1192,20 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
             </Text>
           </Box>
         ) : (
-          <>
-            {!isDeletedAuditView && (
-              <SitePolygonMetricsSection
-                totalTreesPlanted={totalTreesPlanted}
-                totalRestorationAreaHa={totalRestorationAreaHa}
-                restorationAreaGoal={project.totalHectaresRestoredGoal}
-                hasPolygonSelection={hasPolygonSelection}
-                selectedTreesPlanted={selectedTreesPlanted}
-                selectedRestorationAreaRounded={selectedRestorationAreaRounded}
-                polygonsWithOverlapCount={polygonsWithOverlapCount}
-                onSelectOverlapPolygons={handleSelectOverlapPolygons}
-                crossSiteOverlapCount={crossSiteOverlapCount}
-                onSelectCrossSiteOverlapPolygons={handleSelectCrossSiteOverlapPolygons}
-                anomalyStepper={
-                  <PolygonAnomalyStepper anomalyUuids={anomalyUuids} onStepToPolygon={handleStepToAnomalyPolygon} />
-                }
-              />
-            )}
-            <SitePolygonTableSection
-              tableContainerRef={tableContainerRef}
-              tableScrollContainerRef={tableScrollContainerRef}
-              tableStyles={polygonsTableStyles}
-              isSitePolygonsLoading={isSitePolygonsLoading}
-              polygonRows={polygonRows}
-              columns={columns}
-              selectedRows={selectedRows}
-              loadingLabel={loadingLabel}
-              onAllItemsSelected={onAllItemsSelected}
-              onClearHover={handleClearHover}
-              onRowSelected={handleRowSelected}
-              readOnly={isDeletedAuditView}
-            />
-          </>
+          <SitePolygonTableSection
+            tableContainerRef={tableContainerRef}
+            tableScrollContainerRef={tableScrollContainerRef}
+            tableStyles={polygonsTableStyles}
+            isSitePolygonsLoading={isSitePolygonsLoading}
+            polygonRows={polygonRows}
+            columns={columns}
+            selectedRows={selectedRows}
+            loadingLabel={loadingLabel}
+            onAllItemsSelected={onAllItemsSelected}
+            onClearHover={handleClearHover}
+            onRowSelected={handleRowSelected}
+            readOnly={isDeletedAuditView}
+          />
         )}
       </PageContent>
     </>

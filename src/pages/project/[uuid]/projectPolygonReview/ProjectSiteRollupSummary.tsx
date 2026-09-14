@@ -1,74 +1,126 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useMemo } from "react";
+import { Dispatch, FC, SetStateAction, useMemo } from "react";
 
+import {
+  EMPTY_SITE_ROLLUP_FILTERS,
+  SITE_STATUS_PREDICATES,
+  SiteRollupFilterState,
+  SiteStatusBucket
+} from "./siteRollupFilter.constants";
+import SummaryTile from "./SummaryTile";
 import { SiteReviewRollupRow } from "./useProjectSiteRollup";
 
-// Read-only, site-focused summary for the rollup landing view. The rollup lists SITES, so the tiles
-// count sites (not polygons); the project-wide polygon total is a subtitle for context. Non-interactive
-// (the site table below is where a reviewer acts).
-type Tile = { key: string; label: string; value: number; tone: "neutral" | "good" | "warning" | "muted" };
+// Site-focused summary for the rollup landing view. The rollup lists SITES, so the tiles count sites
+// (not polygons); the project-wide polygon total is a subtitle for context. The tiles double as the
+// primary status filter: clicking a bucket sets the site filter to that status (mirroring
+// ProjectPolygonSummaryTiles), the "Sites" tile clears it, and the active tile reflects
+// `siteFilters.status`. Buckets share their predicates with the filter drawer (SITE_STATUS_PREDICATES),
+// so the tiles and the drawer can never disagree.
+type Tone = "neutral" | "good" | "warning" | "muted";
 
-const TONE_FG: Record<Tile["tone"], string> = {
-  neutral: "neutral.800",
-  good: "green.500",
-  warning: "red.500",
-  muted: "neutral.600"
+type Tile = {
+  key: string;
+  label: string;
+  value: number;
+  tone: Tone;
+  // The status bucket this tile filters to; undefined for the "Sites" tile, which clears the filter.
+  bucket?: SiteStatusBucket;
+};
+
+const TONE_STYLES: Record<Tone, { fg: string; activeBg: string; activeBorder: string }> = {
+  neutral: { fg: "neutral.800", activeBg: "neutral.200", activeBorder: "neutral.400" },
+  good: { fg: "success.500", activeBg: "success.100", activeBorder: "success.300" },
+  warning: { fg: "error.500", activeBg: "error.100", activeBorder: "error.300" },
+  muted: { fg: "neutral.600", activeBg: "neutral.200", activeBorder: "neutral.400" }
 };
 
 interface ProjectSiteRollupSummaryProps {
   rows: SiteReviewRollupRow[];
   isLoading: boolean;
+  siteFilters: SiteRollupFilterState;
+  setSiteFilters: Dispatch<SetStateAction<SiteRollupFilterState>>;
 }
 
-const ProjectSiteRollupSummary: FC<ProjectSiteRollupSummaryProps> = ({ rows, isLoading }) => {
+const ProjectSiteRollupSummary: FC<ProjectSiteRollupSummaryProps> = ({
+  rows,
+  isLoading,
+  siteFilters,
+  setSiteFilters
+}) => {
   const t = useT();
 
   const { tiles, totalPolygons } = useMemo(() => {
-    const withPolygons = rows.filter(row => row.activeTotal > 0);
     const sites = rows.length;
-    // A site "needs review" if any polygon failed validation or is still awaiting a decision.
-    const withFailures = withPolygons.filter(row => row.failed > 0).length;
-    // Every active polygon is approvable (passed/partial): nothing failed, nothing unchecked.
-    const fullyApprovable = withPolygons.filter(row => row.failed === 0 && row.notChecked === 0).length;
-    // No validation has run yet — every polygon is still not-checked.
-    const notStarted = withPolygons.filter(row => row.notChecked === row.activeTotal).length;
+    // These three buckets share their exact predicates with the filter drawer (SITE_STATUS_PREDICATES),
+    // so the summary counts and the filter selections can never disagree. Each predicate already guards
+    // on activeTotal > 0 (the former `withPolygons` pre-filter).
+    const withFailures = rows.filter(SITE_STATUS_PREDICATES.withFailures).length;
+    const fullyApprovable = rows.filter(SITE_STATUS_PREDICATES.fullyApprovable).length;
+    const notStarted = rows.filter(SITE_STATUS_PREDICATES.notStarted).length;
     const total = rows.reduce((sum, row) => sum + row.activeTotal, 0);
 
     return {
       totalPolygons: total,
       tiles: [
         { key: "sites", label: t("Sites"), value: sites, tone: "neutral" as const },
-        { key: "failures", label: t("With failures"), value: withFailures, tone: "warning" as const },
-        { key: "approvable", label: t("Fully approvable"), value: fullyApprovable, tone: "good" as const },
-        { key: "notStarted", label: t("Not started"), value: notStarted, tone: "muted" as const }
-      ]
+        {
+          key: "failures",
+          label: t("With failures"),
+          value: withFailures,
+          tone: "warning" as const,
+          bucket: "withFailures" as const
+        },
+        {
+          key: "approvable",
+          label: t("Fully approvable"),
+          value: fullyApprovable,
+          tone: "good" as const,
+          bucket: "fullyApprovable" as const
+        },
+        {
+          key: "notStarted",
+          label: t("Not started"),
+          value: notStarted,
+          tone: "muted" as const,
+          bucket: "notStarted" as const
+        }
+      ] satisfies Tile[]
     };
   }, [rows, t]);
+
+  // A status tile is active when the filter's status is exactly that single bucket; the "Sites" tile is
+  // active when no status is selected.
+  const isTileActive = (tile: Tile) =>
+    tile.bucket == null
+      ? siteFilters.status.length === 0
+      : siteFilters.status.length === 1 && siteFilters.status[0] === tile.bucket;
 
   return (
     <Box mb={4}>
       <Flex gap={3} wrap="wrap">
-        {tiles.map(tile => (
-          <Box
-            key={tile.key}
-            flex="1 1 0"
-            minW="150px"
-            px={4}
-            py={3}
-            borderRadius="lg"
-            borderWidth="1px"
-            borderColor="neutral.200"
-            bg="white"
-          >
-            <Text textStyle="500-bold" color={TONE_FG[tile.tone]} fontSize="24px" lineHeight="1.1">
-              {isLoading ? "—" : tile.value.toLocaleString()}
-            </Text>
-            <Text textStyle="300" color="neutral.700" mt={1}>
-              {tile.label}
-            </Text>
-          </Box>
-        ))}
+        {tiles.map(tile => {
+          const tone = TONE_STYLES[tile.tone];
+          const active = isTileActive(tile);
+          const toggle = () =>
+            setSiteFilters(
+              tile.bucket == null || active
+                ? EMPTY_SITE_ROLLUP_FILTERS
+                : { ...EMPTY_SITE_ROLLUP_FILTERS, status: [tile.bucket] }
+            );
+          return (
+            <SummaryTile
+              key={tile.key}
+              value={isLoading ? "—" : tile.value.toLocaleString()}
+              label={tile.label}
+              valueColor={tone.fg}
+              onToggle={toggle}
+              isActive={active}
+              activeBg={tone.activeBg}
+              activeBorder={tone.activeBorder}
+            />
+          );
+        })}
       </Flex>
       <Text textStyle="300" color="neutral.600" mt={2}>
         {isLoading

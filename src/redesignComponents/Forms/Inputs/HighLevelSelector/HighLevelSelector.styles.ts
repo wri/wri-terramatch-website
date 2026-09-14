@@ -60,7 +60,10 @@ export const menuContentStyles = {
   outline: "none",
   overflowY: "auto",
   p: 1,
-  width: "100%"
+  width: "100%",
+  // Float above in-page overlays (e.g. the map's basemap/style controls at z-[18]/[19]); without
+  // this the portaled dropdown renders under them.
+  zIndex: 50
 } as const;
 
 const menuItemFocusStyles = {

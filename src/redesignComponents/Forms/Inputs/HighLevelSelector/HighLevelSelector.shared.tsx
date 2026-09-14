@@ -55,7 +55,19 @@ export const SelectorLabel: FC<SelectorLabelProps> = ({ children, disabled, id }
 );
 
 export const SelectorOptionText: FC<SelectorTextProps> = ({ children }) => (
-  <Text as="span" data-selector-option-text textStyle="300">
+  // Single-line + ellipsis: option rows are a fixed height, so long labels must not wrap (wrapping
+  // makes multi-line options overflow and overlap). flex/minW let it truncate inside the item row.
+  <Text
+    as="span"
+    data-selector-option-text
+    textStyle="300"
+    display="block"
+    flex="1"
+    minW={0}
+    overflow="hidden"
+    whiteSpace="nowrap"
+    textOverflow="ellipsis"
+  >
     {children}
   </Text>
 );
@@ -95,6 +107,7 @@ export const SelectorMenu: FC<SelectorMenuProps> = ({
             <Item
               key={item.value}
               aria-label={item.label}
+              title={item.label}
               item={item}
               {...getMenuItemStyles(item.disabled)}
               {...getMenuItemKeyboardProps(item.disabled)}
