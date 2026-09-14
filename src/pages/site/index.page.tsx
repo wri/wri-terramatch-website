@@ -190,7 +190,7 @@ const SiteIndexPageContent = () => {
         showClearFilters={selectedFilters.length > 0}
       />
 
-      <PageContent heightFull={false} className="bg-theme-neutral-200 !gap-0 px-2 pb-9 pt-1">
+      <PageContent heightFull={false} className="!gap-0 bg-theme-neutral-200 px-2 pb-9 pt-1">
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />

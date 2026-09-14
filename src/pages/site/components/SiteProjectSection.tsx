@@ -317,19 +317,6 @@ const SiteProjectTable: FC<{
     <Table<SiteIndexSite>
       data={sites}
       css={{
-        // "& > div > div": {
-        //   overflowX: "hidden"
-        // },
-        // "& table": {
-        //   tableLayout: "fixed",
-        //   minWidth: "0 !important",
-        //   width: "100%"
-        // },
-        // "& table thead th:first-of-type, & table tbody td:first-of-type": {
-        //   width: "3.75rem !important",
-        //   minWidth: "3.75rem !important",
-        //   maxWidth: "3.75rem !important"
-        // },
         "& table tbody tr:hover": {
           borderBottomColor: "primary.700",
           borderBottomWidth: "0.0625rem"

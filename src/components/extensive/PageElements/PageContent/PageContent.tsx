@@ -15,7 +15,7 @@ const PageContent: FC<PageContentProps> = ({ className, heightFull = true, ...pr
     <div
       {...props}
       className={twMerge(
-        classNames("bg-theme-neutral-200 flex w-full min-w-0 flex-col gap-5 px-6 pt-6 pb-9"),
+        classNames("flex w-full min-w-0 flex-col gap-5 bg-theme-neutral-200 px-6 pt-6 pb-9"),
         isBulkActionToolbarVisible && "pb-[5.75rem]",
         heightFull && "h-full",
         className
