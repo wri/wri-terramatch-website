@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { ComponentProps, useState } from "react";
 
 import { UserIcon } from "../foundations/Icons/Function/UserIcon";
 import { DashboardIcon } from "../foundations/Icons/NavigationSections/DashboardIcon";
@@ -16,8 +16,40 @@ import SideNavigation from "../navigation/NavBar/SideNavigation/SideNavigation";
 import InlineMessage from "../status/InlineMessage/InlineMessage";
 import { LayoutShellProvider, useLayoutShell } from "./LayoutShell.provider";
 
-// Temporary admin-review shell: sidebar links, labels, and notification counts are design placeholders.
-function LayoutContent({ children }: { children: React.ReactNode }) {
+type NavGroups = ComponentProps<typeof SideNavigation>["groups"];
+
+// The default admin-review sidebar. Links, labels, and notification counts are design placeholders.
+// Exported so pages can reuse this set and augment it (e.g. add a selected feature link).
+export const defaultAdminNavGroups: NavGroups = [
+  {
+    links: [
+      { href: "#", icon: <NotificationIcon boxSize={4} />, label: "Notifications" },
+      { href: "#", icon: <MessagesIcon boxSize={4} />, label: "Messages" }
+    ]
+  },
+  {
+    links: [
+      { href: "#", icon: <DashboardIcon boxSize={4} />, label: "Dashboard" },
+      { href: "#", icon: <OrganizationIcon boxSize={4} />, label: "Organizations" },
+      { href: "#", icon: <ProgrammeIcon boxSize={4} />, label: "Programmes" },
+      { href: "#", icon: <ProjectIcon boxSize={4} />, label: "Projects" },
+      { href: "#", icon: <SiteIcon boxSize={4} />, label: "Sites" },
+      { href: "#", icon: <NurseryIcon boxSize={4} />, label: "Nurseries" },
+      { href: "#", icon: <ReportsIcon boxSize={4} />, label: "Reports" },
+      { href: "#", icon: <UserIcon boxSize={4} />, label: "Users" }
+    ]
+  }
+];
+
+interface LayoutProps {
+  children: React.ReactNode;
+  // Override the sidebar groups (defaults to the shared admin-review placeholders). A link whose
+  // href matches the current path renders as selected.
+  navGroups?: NavGroups;
+  navTitle?: string;
+}
+
+function LayoutContent({ children, navGroups = defaultAdminNavGroups, navTitle = "Management Panel" }: LayoutProps) {
   const [isWarningVisible, setIsWarningVisible] = useState(true);
   const { isSidebarCollapseDisabled } = useLayoutShell();
   const t = useT();
@@ -27,71 +59,12 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
       <header className="fixed inset-x-0 top-0 z-50 h-[3rem]">
         <Navbar />
       </header>
-      <div className="flex min-h-0 overflow-hidden pt-[3rem]">
+      <div className="flex min-h-0 flex-1 overflow-hidden pt-[3rem]">
         <SideNavigation
           collapsed={true}
           isCollapsedDisabled={isSidebarCollapseDisabled}
-          groups={[
-            {
-              links: [
-                {
-                  href: "#",
-                  icon: <NotificationIcon boxSize={4} />,
-                  label: "Notifications"
-                },
-                {
-                  href: "#",
-                  icon: <MessagesIcon boxSize={4} />,
-                  label: "Messages"
-                }
-              ]
-            },
-            {
-              links: [
-                {
-                  href: "#",
-                  icon: <DashboardIcon boxSize={4} />,
-                  label: "Dashboard"
-                },
-                {
-                  href: "#",
-                  icon: <OrganizationIcon boxSize={4} />,
-                  label: "Organizations"
-                },
-                {
-                  href: "#",
-                  icon: <ProgrammeIcon boxSize={4} />,
-                  label: "Programmes"
-                },
-                {
-                  href: "#",
-                  icon: <ProjectIcon boxSize={4} />,
-                  label: "Projects"
-                },
-                {
-                  href: "#",
-                  icon: <SiteIcon boxSize={4} />,
-                  label: "Sites"
-                },
-                {
-                  href: "#",
-                  icon: <NurseryIcon boxSize={4} />,
-                  label: "Nurseries"
-                },
-                {
-                  href: "#",
-                  icon: <ReportsIcon boxSize={4} />,
-                  label: "Reports"
-                },
-                {
-                  href: "#",
-                  icon: <UserIcon boxSize={4} />,
-                  label: "Users"
-                }
-              ]
-            }
-          ]}
-          title="Management Panel"
+          groups={navGroups}
+          title={navTitle}
         />
         <main className="flex min-h-0 flex-[1_1_0] flex-col overflow-auto">
           {isWarningVisible && (
@@ -115,10 +88,12 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children, navGroups, navTitle }: LayoutProps) {
   return (
     <LayoutShellProvider>
-      <LayoutContent>{children}</LayoutContent>
+      <LayoutContent navGroups={navGroups} navTitle={navTitle}>
+        {children}
+      </LayoutContent>
     </LayoutShellProvider>
   );
 }

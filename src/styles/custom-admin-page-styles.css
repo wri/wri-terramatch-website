@@ -105,19 +105,6 @@
   @apply !bg-neutral-100 !pt-8 !px-8 !pb-4;
 }
 
-/*
- * Polygon Review admin page (/admin#/polygon-review). The project polygon workspace was built for
- * the full-width redesign layout; inside react-admin its intrinsic width (wide table/map) makes the
- * flex content column refuse to shrink (default min-width:auto) and pushes a horizontal page scroll.
- * min-width:0 lets the column shrink to the viewport so the table scrolls internally, and dropping
- * the content padding lets the workspace render as one cohesive, full-bleed page (it supplies its
- * own padding/background). Scoped via a body class toggled by PolygonReviewPage so other admin
- * pages are unaffected.
- */
-body.polygon-review-page .RaLayout-content {
-  @apply !min-w-0 !p-0;
-}
-
 .RaList-main > span {
   @apply mt-[74px];
 }

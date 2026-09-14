@@ -59,12 +59,15 @@ const AppMenu = () => {
       <div className={classNames({ "Sidebar-active": hash === "site" })}>
         <FilterClearMenuItem resourceName={modules.site.ResourceName} />
       </div>
-      <div className={classNames({ "Sidebar-active": hash === "polygon-review" })}>
-        <Menu.Item
-          to="/polygon-review"
-          primaryText="Polygon Review"
-          leftIcon={<Icon className="h-8 w-8" name={IconNames.POLYGON} />}
-        />
+      <div>
+        {/* A native anchor with an absolute path — the Polygon Review New UX lives at the Next route
+            /admin/polygon-review, outside react-admin's HashRouter. A react-router Menu.Item `to`
+            would resolve into the hash (/admin#/admin/polygon-review) and 404, so we do a real
+            full-page navigation. Inherits the sidebar link styling (.RaSidebar-fixed a). */}
+        <a href="/admin/polygon-review" className="flex items-center gap-3 py-2 no-underline">
+          <Icon className="h-8 w-8" name={IconNames.POLYGON} />
+          <span>Polygon Review</span>
+        </a>
       </div>
       <div className={classNames({ "Sidebar-active": hash === "nursery" })}>
         <FilterClearMenuItem resourceName={modules.nursery.ResourceName} />

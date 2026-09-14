@@ -8,7 +8,6 @@ import { dataProvider } from "@/admin/apiProvider/dataProviders";
 import AppLayout from "@/admin/components/AppLayout";
 import { theme } from "@/admin/components/theme";
 import { sectionTitle } from "@/admin/modules/aboutSections/util";
-import { PolygonReviewPage } from "@/admin/modules/polygonReview/components/PolygonReviewPage";
 import { PolygonOptionalAttributes } from "@/admin/modules/reportingFramework/components/PolygonOptionalAttributes";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useMyUser } from "@/connections/User";
@@ -196,7 +195,6 @@ const AdminPanel: FC = () => {
             path={`${modules.reportingFramework.ResourceName}/:frameworkKey/optional-attributes`}
             element={<PolygonOptionalAttributes />}
           />
-          <Route path="polygon-review" element={<PolygonReviewPage />} />
         </CustomRoutes>
       </Admin>
     </LoadingProvider>
