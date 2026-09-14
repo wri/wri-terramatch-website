@@ -1,12 +1,13 @@
-import { TableCell, TableRow, Text } from "@chakra-ui/react";
+import { Box, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useMemo } from "react";
 
+import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import Table, { type TableColumn, type TableRenderRowContext } from "@/redesignComponents/dataDisplay/Table/Table";
 import { type BaseRow } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 
-import { AnomaliesCell, orDash, Pill } from "./rollupTableCells";
+import { AnomaliesCell, orDash } from "./rollupTableCells";
 import { SiteReviewRollupRow } from "./useProjectSiteRollup";
 
 type RollupTableRow = SiteReviewRollupRow & BaseRow;
@@ -66,14 +67,15 @@ const ProjectSiteRollupTable: FC<ProjectSiteRollupTableProps> = ({ rows, totalSi
         </TableCell>
         <TableCell {...context?.getCellProps("approvable")}>
           {approvable != null && approvable > 0 ? (
-            <Pill label={orDash(approvable)} className="bg-theme-success-100 text-theme-success-900" />
+            <ActionStatusTag state="success" size="small" label={orDash(approvable)} />
           ) : (
             <Text color="neutral.600">{orDash(approvable)}</Text>
           )}
         </TableCell>
         <TableCell {...context?.getCellProps("failed")}>
           {failed != null && failed > 0 ? (
-            <Pill label={orDash(failed)} className="bg-theme-error-100 text-theme-error-900" />
+            // "warning" state renders the error/red palette — matching the old failed pill.
+            <ActionStatusTag state="warning" size="small" label={orDash(failed)} />
           ) : (
             <Text color="neutral.600">{orDash(failed)}</Text>
           )}
@@ -83,7 +85,8 @@ const ProjectSiteRollupTable: FC<ProjectSiteRollupTableProps> = ({ rows, totalSi
         </TableCell>
         <TableCell {...context?.getCellProps("inReview")}>
           {inReview != null && inReview > 0 ? (
-            <Pill label={orDash(inReview)} className="bg-theme-warning-100 text-theme-warning-900" />
+            // "attention" state renders the amber/warning palette — matching the old in-review pill.
+            <ActionStatusTag state="attention" size="small" label={orDash(inReview)} />
           ) : (
             <Text color="neutral.600">{orDash(inReview)}</Text>
           )}
@@ -110,9 +113,12 @@ const ProjectSiteRollupTable: FC<ProjectSiteRollupTableProps> = ({ rows, totalSi
       />
 
       {!loading && tableRows.length === 0 && (
-        <Text textStyle="400" color="neutral.500" className="py-8 text-center">
-          {totalSiteCount === 0 ? t("This project has no sites yet.") : t("No sites match your filters.")}
-        </Text>
+        <Box className="py-8 text-center">
+          <Text textStyle="400-bold">{totalSiteCount === 0 ? t("No sites yet") : t("No results found")}</Text>
+          <Text textStyle="400">
+            {totalSiteCount === 0 ? t("This project has no sites yet.") : t("No sites match your filters.")}
+          </Text>
+        </Box>
       )}
     </div>
   );

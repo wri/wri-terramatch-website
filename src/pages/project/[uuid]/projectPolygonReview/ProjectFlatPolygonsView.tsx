@@ -44,7 +44,10 @@ import SitePolygonMapSection from "@/pages/site/[uuid]/components/SitePolygonMap
 import SitePolygonMetricsSection from "@/pages/site/[uuid]/components/SitePolygonMetricsSection";
 import SitePolygonModals from "@/pages/site/[uuid]/components/SitePolygonModals";
 import SitePolygonTableSection from "@/pages/site/[uuid]/components/SitePolygonTableSection";
-import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
+import {
+  SITE_POLYGON_TAB_HEADER_ID,
+  SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS
+} from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import {
   canAutoFixOverlapSelection,
   getSelectedOverlapFixSummary,
@@ -980,7 +983,7 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
       <PageContent className="bg-theme-neutral-100">
         <PageItem
           title={t("Polygons")}
-          className="scroll-mt-[5.5rem]"
+          className={SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS}
           flexProps={{ width: "100%", id: SITE_POLYGON_TAB_HEADER_ID }}
           downloadButtonProps={{
             variant: "secondary",

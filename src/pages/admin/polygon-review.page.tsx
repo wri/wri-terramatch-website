@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import { Text } from "@chakra-ui/react";
+import { Box } from "@mui/material";
 import { useRouter } from "next/router";
 import { ComponentProps, useEffect, useMemo } from "react";
 
@@ -67,9 +68,9 @@ const AdminPolygonReviewPage = () => {
           // No project chosen yet — the header still renders so its (right-justified) picker is
           // available; each view supplies its own header once a project is selected.
           <PolygonReviewHeader>
-            <Typography variant="body1" color="text.secondary">
+            <Text textStyle="400" color="neutral.700">
               Select a project to review its polygons.
-            </Typography>
+            </Text>
           </PolygonReviewHeader>
         ) : (
           <Box className="w-full min-w-0 flex-1">

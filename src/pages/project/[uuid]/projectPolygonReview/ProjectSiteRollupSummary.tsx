@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
 import { SITE_STATUS_PREDICATES } from "./siteRollupFilter.constants";
+import SummaryTile from "./SummaryTile";
 import { SiteReviewRollupRow } from "./useProjectSiteRollup";
 
 // Read-only, site-focused summary for the rollup landing view. The rollup lists SITES, so the tiles
@@ -12,8 +13,8 @@ type Tile = { key: string; label: string; value: number; tone: "neutral" | "good
 
 const TONE_FG: Record<Tile["tone"], string> = {
   neutral: "neutral.800",
-  good: "green.500",
-  warning: "red.500",
+  good: "success.500",
+  warning: "error.500",
   muted: "neutral.600"
 };
 
@@ -50,24 +51,12 @@ const ProjectSiteRollupSummary: FC<ProjectSiteRollupSummaryProps> = ({ rows, isL
     <Box mb={4}>
       <Flex gap={3} wrap="wrap">
         {tiles.map(tile => (
-          <Box
+          <SummaryTile
             key={tile.key}
-            flex="1 1 0"
-            minW="150px"
-            px={4}
-            py={3}
-            borderRadius="lg"
-            borderWidth="1px"
-            borderColor="neutral.200"
-            bg="white"
-          >
-            <Text textStyle="500-bold" color={TONE_FG[tile.tone]} fontSize="24px" lineHeight="1.1">
-              {isLoading ? "—" : tile.value.toLocaleString()}
-            </Text>
-            <Text textStyle="300" color="neutral.700" mt={1}>
-              {tile.label}
-            </Text>
-          </Box>
+            value={isLoading ? "—" : tile.value.toLocaleString()}
+            label={tile.label}
+            valueColor={TONE_FG[tile.tone]}
+          />
         ))}
       </Flex>
       <Text textStyle="300" color="neutral.600" mt={2}>

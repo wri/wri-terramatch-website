@@ -6,7 +6,10 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import PolygonReviewHeader from "@/pages/admin/polygonReview/PolygonReviewHeader";
-import { SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
+import {
+  SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS,
+  SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS
+} from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
 import { DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
@@ -65,7 +68,7 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
       <PageContent className="bg-theme-neutral-100">
       <PageItem
         title={t("Sites")}
-        className="scroll-mt-[5.5rem]"
+        className={SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS}
         flexProps={{ width: "100%" }}
         downloadButtonProps={{
           variant: "secondary",

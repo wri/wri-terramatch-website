@@ -4,6 +4,7 @@ import mapboxgl from "mapbox-gl";
 import { useEffect, useRef } from "react";
 
 import { mapboxToken } from "@/constants/environment";
+import { getThemedColor } from "@/lib/theme";
 
 /**
  * The site-rollup map for project polygon review's "rollup" mode (plan §3.2/T4) — a read-only map on
@@ -20,11 +21,15 @@ import { mapboxToken } from "@/constants/environment";
  * answers one question — "where are this project's sites, and how many polygons does each hold" —
  * and it never mounts alongside the editing map (rollup and drill-in are mutually exclusive views).
  */
-// Pulled from the WRI palette (tailwind.theme.js) rather than picked by eye, matching the prototype.
-const SITE_FILL = "#78CAED"; // primary.500
-const SITE_LINE = "#11688D"; // primary.700
-const ANOMALY_FILL = "#C0453B"; // risk red — sites with failed/overlapping polygons
-const ANOMALY_LINE = "#7A2A24";
+// Pulled from the design-system theme tokens rather than picked by eye, so the map tracks the palette.
+const SITE_FILL = getThemedColor("primary", 500);
+const SITE_LINE = getThemedColor("primary", 700);
+const ANOMALY_FILL = getThemedColor("error", 500); // risk red — sites with failed/overlapping polygons
+// error has no 600 token; 900 is the nearest darker shade, keeping the line darker than the fill.
+const ANOMALY_LINE = getThemedColor("error", 900);
+
+// 420px — kept as a named constant so the container avoids an arbitrary Tailwind value.
+const SITE_ROLLUP_MAP_MIN_HEIGHT = "26.25rem";
 
 const SOURCE_ID = "project-site-rollup";
 const POINT_LAYER = "project-site-rollup-point";
@@ -142,7 +147,7 @@ const SiteRollupMap = ({ featureCollection, onSelectSite, loading }: SiteRollupM
             "circle-color": [
               "case",
               ["boolean", ["feature-state", "selected"], false],
-              "#A88100", // warning.500 — selection color (matches the prototype)
+              getThemedColor("warning", 500), // selection color
               ["boolean", ["get", "hasAnomaly"], false],
               ANOMALY_FILL,
               SITE_FILL
@@ -199,7 +204,10 @@ const SiteRollupMap = ({ featureCollection, onSelectSite, loading }: SiteRollupM
   }, [featureCollection]);
 
   return (
-    <div className="relative h-full min-h-[420px] overflow-hidden rounded-lg border border-theme-neutral-200">
+    <div
+      className="relative h-full overflow-hidden rounded-lg border border-theme-neutral-200"
+      style={{ minHeight: SITE_ROLLUP_MAP_MIN_HEIGHT }}
+    >
       <div ref={containerRef} className="h-full w-full" />
       {loading === true && (
         <div className="absolute inset-0 flex items-center justify-center bg-white/70 text-sm text-theme-neutral-700">
