@@ -19,11 +19,11 @@ export interface ProjectSiteDrilldownViewProps {
  * duplication: everything about reviewing a site's polygons (its own map, table, bulk actions, edit
  * drawer) is the site workspace's own, unmodified.
  *
- * Product wants this to read as an in-place, project-scoped filtered review rather than the
- * standalone site editor: `hideCreateActions` removes the Add/Draw/Upload entry points and
- * `hideGeotaggedMedia` removes photo markers, while every FULL review action (approve,
- * request-information, run-validation, bulk edit details, the edit drawer) stays enabled — this
- * intentionally does not apply the flat view's Phase-1 `registerPolygonReviewOnly`/geometry gate.
+ * This reads as an in-place, project-scoped review with the site's full toolset: the Add / Draw
+ * Polygon / Upload entry points stay enabled (same as the standalone site review), and every FULL
+ * review action (approve, request-information, run-validation, bulk edit details, the edit drawer)
+ * stays enabled. `hideGeotaggedMedia` removes photo markers; this intentionally does not apply the
+ * flat view's Phase-1 `registerPolygonReviewOnly`/geometry gate.
  */
 const ProjectSiteDrilldownView: FC<ProjectSiteDrilldownViewProps> = ({ siteUuid, onBack }) => {
   const t = useT();
@@ -51,7 +51,6 @@ const ProjectSiteDrilldownView: FC<ProjectSiteDrilldownViewProps> = ({ siteUuid,
               key={site.uuid}
               site={site}
               variant="adminReview"
-              hideCreateActions
               hideGeotaggedMedia
               zoomToBboxOnEditClose
             />
