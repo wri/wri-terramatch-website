@@ -102,6 +102,7 @@ export const useSiteIndexData = ({
   const [loading, setLoading] = useState(true);
   const [filtering, setFiltering] = useState(false);
   const [projectIndex, setProjectIndex] = useState<ProjectLightDto[]>([]);
+  const [projectIdsWithSites, setProjectIdsWithSites] = useState<Set<string>>(new Set());
   const [sitesByProjectId, setSitesByProjectId] = useState<Map<string, SiteIndexSite[]>>(new Map());
   const [fullProjectsById, setFullProjectsById] = useState<Map<string, ProjectFullDto>>(new Map());
   const [loadedProjectIds, setLoadedProjectIds] = useState<Set<string>>(new Set());
@@ -149,6 +150,7 @@ export const useSiteIndexData = ({
       setFullProjectsById(new Map());
       setLoadedProjectIds(new Set());
       setLoadingProjectIds(new Set());
+      setProjectIdsWithSites(new Set());
 
       if (reloadNonce > 0) {
         ApiSlice.pruneIndex("projects", "");
@@ -156,12 +158,9 @@ export const useSiteIndexData = ({
       }
 
       try {
-        const [loadedProjects, siteCountPage] = await Promise.all([
+        const [loadedProjects, loadedSites] = await Promise.all([
           loadAllIndexPages<ProjectLightDto>(pageNumber => loadProjectIndex({ pageNumber, pageSize: PAGE_SIZE })),
-          loadSiteIndex({ pageNumber: 1, pageSize: 1 }).catch(error => {
-            Log.error("Failed to load site index total", error);
-            return { indexTotal: 0 };
-          })
+          loadAllIndexPages<SiteLightDto>(pageNumber => loadSiteIndex({ pageNumber, pageSize: PAGE_SIZE }))
         ]);
 
         if (cancelled) {
@@ -169,12 +168,26 @@ export const useSiteIndexData = ({
         }
 
         setProjectIndex(loadedProjects);
-        setTotalSiteCount(siteCountPage.indexTotal ?? 0);
+        const projectsWithSites = groupSitesByProject(loadedProjects, loadedSites, new Map()).filter(
+          project => project.sites.length > 0
+        );
+        const nextSites = new Map<string, SiteIndexSite[]>();
+        const nextLoaded = new Set<string>();
+        projectsWithSites.forEach(project => {
+          nextSites.set(project.id, project.sites);
+          nextLoaded.add(project.id);
+        });
+        loadedProjectIdsRef.current = nextLoaded;
+        setProjectIdsWithSites(nextLoaded);
+        setSitesByProjectId(nextSites);
+        setLoadedProjectIds(nextLoaded);
+        setTotalSiteCount(loadedSites.length);
         setLoading(false);
       } catch (error) {
         Log.error("Failed to load site index", error);
         if (!cancelled) {
           setProjectIndex([]);
+          setProjectIdsWithSites(new Set());
           setTotalSiteCount(0);
           setLoading(false);
         }
@@ -357,6 +370,7 @@ export const useSiteIndexData = ({
 
   const projects = useMemo(() => {
     const baseProjects = projectIndex
+      .filter(project => projectIdsWithSites.has(project.uuid))
       .map(project =>
         toSiteIndexProject(project, {
           fullProject: fullProjectsById.get(project.uuid),
@@ -386,6 +400,7 @@ export const useSiteIndexData = ({
     hasActiveFilters,
     loadedProjectIds,
     loadingProjectIds,
+    projectIdsWithSites,
     projectIndex,
     sitesByProjectId
   ]);
