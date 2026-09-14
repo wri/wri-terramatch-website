@@ -1162,15 +1162,35 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
             }}
           />
         )}
-        {/* Status tiles sit between the map and the table. gap-5 (PageContent) separates them from the
-            map above; the tiles' own mb from the summary component sets them apart from what follows.
-            Kept always visible (independent of results) — they are the primary filter entry point. */}
-        <ProjectPolygonSummaryTiles
-          counts={statusCounts}
-          isLoading={isLoadingCounts}
-          activeStatuses={polygonFilters.validationStatus}
-          onApplyStatuses={applyValidationStatuses}
-        />
+        {/* Status tiles (the primary filter entry point) between the map and the table, with the
+            anomaly stepper / overlap alert on the right of the same row. */}
+        <Flex className="w-full flex-wrap items-start justify-between gap-4">
+          <ProjectPolygonSummaryTiles
+            counts={statusCounts}
+            isLoading={isLoadingCounts}
+            activeStatuses={polygonFilters.validationStatus}
+            onApplyStatuses={applyValidationStatuses}
+          />
+          {!shouldShowNoResults && !isDeletedAuditView && (
+            <SitePolygonMetricsSection
+              totalTreesPlanted={totalTreesPlanted}
+              totalRestorationAreaHa={totalRestorationAreaHa}
+              restorationAreaGoal={project.totalHectaresRestoredGoal}
+              hasPolygonSelection={hasPolygonSelection}
+              selectedTreesPlanted={selectedTreesPlanted}
+              selectedRestorationAreaRounded={selectedRestorationAreaRounded}
+              polygonsWithOverlapCount={polygonsWithOverlapCount}
+              onSelectOverlapPolygons={handleSelectOverlapPolygons}
+              crossSiteOverlapCount={crossSiteOverlapCount}
+              onSelectCrossSiteOverlapPolygons={handleSelectCrossSiteOverlapPolygons}
+              // KPI cards now live in the toolbar; keep only the overlap / cross-site / anomaly section.
+              showMetricCards={false}
+              anomalyStepper={
+                <PolygonAnomalyStepper anomalyUuids={anomalyUuids} onStepToPolygon={handleStepToAnomalyPolygon} />
+              }
+            />
+          )}
+        </Flex>
         {shouldShowNoResults ? (
           <Box>
             <Text textStyle="400-bold">{t("No results found")}</Text>
@@ -1179,41 +1199,20 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
             </Text>
           </Box>
         ) : (
-          <>
-            {!isDeletedAuditView && (
-              <SitePolygonMetricsSection
-                totalTreesPlanted={totalTreesPlanted}
-                totalRestorationAreaHa={totalRestorationAreaHa}
-                restorationAreaGoal={project.totalHectaresRestoredGoal}
-                hasPolygonSelection={hasPolygonSelection}
-                selectedTreesPlanted={selectedTreesPlanted}
-                selectedRestorationAreaRounded={selectedRestorationAreaRounded}
-                polygonsWithOverlapCount={polygonsWithOverlapCount}
-                onSelectOverlapPolygons={handleSelectOverlapPolygons}
-                crossSiteOverlapCount={crossSiteOverlapCount}
-                onSelectCrossSiteOverlapPolygons={handleSelectCrossSiteOverlapPolygons}
-                // KPI cards now live in the toolbar; keep only the overlap / cross-site / anomaly section.
-                showMetricCards={false}
-                anomalyStepper={
-                  <PolygonAnomalyStepper anomalyUuids={anomalyUuids} onStepToPolygon={handleStepToAnomalyPolygon} />
-                }
-              />
-            )}
-            <SitePolygonTableSection
-              tableContainerRef={tableContainerRef}
-              tableScrollContainerRef={tableScrollContainerRef}
-              tableStyles={polygonsTableStyles}
-              isSitePolygonsLoading={isSitePolygonsLoading}
-              polygonRows={polygonRows}
-              columns={columns}
-              selectedRows={selectedRows}
-              loadingLabel={loadingLabel}
-              onAllItemsSelected={onAllItemsSelected}
-              onClearHover={handleClearHover}
-              onRowSelected={handleRowSelected}
-              readOnly={isDeletedAuditView}
-            />
-          </>
+          <SitePolygonTableSection
+            tableContainerRef={tableContainerRef}
+            tableScrollContainerRef={tableScrollContainerRef}
+            tableStyles={polygonsTableStyles}
+            isSitePolygonsLoading={isSitePolygonsLoading}
+            polygonRows={polygonRows}
+            columns={columns}
+            selectedRows={selectedRows}
+            loadingLabel={loadingLabel}
+            onAllItemsSelected={onAllItemsSelected}
+            onClearHover={handleClearHover}
+            onRowSelected={handleRowSelected}
+            readOnly={isDeletedAuditView}
+          />
         )}
       </PageContent>
     </>
