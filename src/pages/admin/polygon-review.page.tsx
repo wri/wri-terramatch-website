@@ -1,10 +1,10 @@
-import { Text } from "@chakra-ui/react";
 import { Box } from "@mui/material";
 import { useRouter } from "next/router";
 import { ComponentProps, useEffect, useMemo } from "react";
 
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import Paper from "@/components/elements/Paper/Paper";
+import Text from "@/components/elements/Text/Text";
 import { useFullProject } from "@/connections/Entity";
 import { useMyUser } from "@/connections/User";
 import FrameworkProvider from "@/context/framework.provider";
@@ -70,14 +70,14 @@ const AdminPolygonReviewPage = () => {
           // project picker as the primary action.
           <Box className="flex min-h-[60vh] flex-1 items-center justify-center p-8">
             <Paper className="w-full max-w-xl p-15 text-center">
-              <Icon name={IconNames.POLYGON} width={72} className="m-auto mb-6 text-primary-500" />
-              <Text textStyle="800-bold" color="primary.900" className="mb-2">
+              <Icon name={IconNames.POLYGON} width={80} className="m-auto mb-8 text-primary-500" />
+              <Text variant="text-bold-headline-1000" className="mb-5 text-center">
                 Review project polygons
               </Text>
-              <Text textStyle="400" color="neutral.700" className="mx-auto mb-8 max-w-md">
+              <Text variant="text-light-body-300" className="m-auto mb-8 max-w-md text-center">
                 Select a project to review, validate, and approve its site polygons.
               </Text>
-              <Box className="mx-auto max-w-sm text-left">
+              <Box className="flex justify-center">
                 <ProjectPickerSelect />
               </Box>
             </Paper>
