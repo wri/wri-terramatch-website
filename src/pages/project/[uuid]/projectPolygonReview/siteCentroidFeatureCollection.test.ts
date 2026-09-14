@@ -18,6 +18,11 @@ const row = (overrides: Partial<SiteReviewRollupRow> = {}): SiteReviewRollupRow 
   hectares: 12.5,
   centroidLat: 1.5,
   centroidLong: 2.5,
+  // No footprint by default so the centroid-Point path is exercised; the rectangle tests opt in.
+  bboxMinLat: null,
+  bboxMaxLat: null,
+  bboxMinLong: null,
+  bboxMaxLong: null,
   ...overrides
 });
 
@@ -79,5 +84,44 @@ describe("buildSiteCentroidFeatureCollection", () => {
 
   it("returns an empty feature collection for no rows", () => {
     expect(buildSiteCentroidFeatureCollection([])).toEqual({ type: "FeatureCollection", features: [] });
+  });
+
+  it("builds a closed rectangle Polygon from a non-degenerate bbox", () => {
+    const [feature] = buildSiteCentroidFeatureCollection([
+      row({ bboxMinLat: 1, bboxMaxLat: 3, bboxMinLong: 10, bboxMaxLong: 14 })
+    ]).features;
+    expect(feature.geometry.type).toBe("Polygon");
+    // [lng, lat] corners, wound and closed (first === last).
+    expect(feature.geometry).toEqual({
+      type: "Polygon",
+      coordinates: [
+        [
+          [10, 1],
+          [14, 1],
+          [14, 3],
+          [10, 3],
+          [10, 1]
+        ]
+      ]
+    });
+  });
+
+  it("falls back to a centroid Point when the bbox is a degenerate point (single polygon)", () => {
+    const [feature] = buildSiteCentroidFeatureCollection([
+      row({ bboxMinLat: 1.5, bboxMaxLat: 1.5, bboxMinLong: 2.5, bboxMaxLong: 2.5 })
+    ]).features;
+    expect(feature.geometry).toEqual({ type: "Point", coordinates: [2.5, 1.5] });
+  });
+
+  it("falls back to a centroid Point when the bbox is a zero-area sliver on one axis", () => {
+    const [feature] = buildSiteCentroidFeatureCollection([
+      row({ bboxMinLat: 1, bboxMaxLat: 3, bboxMinLong: 2.5, bboxMaxLong: 2.5 })
+    ]).features;
+    expect(feature.geometry).toEqual({ type: "Point", coordinates: [2.5, 1.5] });
+  });
+
+  it("skips a site with a degenerate bbox and no centroid", () => {
+    const rows = [row({ bboxMinLat: 1, bboxMaxLat: 1, bboxMinLong: 2, bboxMaxLong: 2, centroidLat: null })];
+    expect(buildSiteCentroidFeatureCollection(rows).features).toHaveLength(0);
   });
 });

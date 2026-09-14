@@ -1,4 +1,4 @@
-import type { Feature, FeatureCollection, Point } from "geojson";
+import type { Feature, FeatureCollection, Point, Polygon } from "geojson";
 
 import { SiteReviewRollupRow } from "./useProjectSiteRollup";
 
@@ -24,42 +24,81 @@ const buildPolygonsLabel = (activeTotal: number, failed: number, overlapCount: n
   return base;
 };
 
-export type SiteCentroidFeature = Feature<Point, SiteCentroidFeatureProperties>;
-export type SiteCentroidFeatureCollection = FeatureCollection<Point, SiteCentroidFeatureProperties>;
+// A site's geometry on the rollup map is EITHER an approximate rectangular footprint (the bounding box
+// of its active-polygon centroids) OR, when that box is degenerate, a single centroid marker.
+export type SiteCentroidFeature = Feature<Point | Polygon, SiteCentroidFeatureProperties>;
+export type SiteCentroidFeatureCollection = FeatureCollection<Point | Polygon, SiteCentroidFeatureProperties>;
+
+const isFiniteNumber = (value: number | null): value is number => value != null && Number.isFinite(value);
 
 /**
- * Builds the site-centroid GeoJSON that SiteRollupMap draws — one Point per site, at the center of
- * its bounding box (`centroidLat`/`centroidLong` on the rollup row), labelled "{name} / N polygons".
- * Feature shape matches what the prototype's DrilldownMap expects (`kind: "site"`, `uuid === siteId`
- * so a click resolves straight to the site) — see
+ * A closed rectangle ring from the bbox corners, or null when the box is degenerate. A single-polygon
+ * site has min == max on both axes (a point); polygons collinear on one axis give a zero-area sliver.
+ * Both cases fail here and the caller falls back to a centroid Point, because a zero-area polygon draws
+ * nothing (no fill) yet still claims to be a footprint.
+ */
+const rectangleRing = (row: SiteReviewRollupRow): Polygon["coordinates"] | null => {
+  const { bboxMinLat, bboxMaxLat, bboxMinLong, bboxMaxLong } = row;
+  if (
+    !isFiniteNumber(bboxMinLat) ||
+    !isFiniteNumber(bboxMaxLat) ||
+    !isFiniteNumber(bboxMinLong) ||
+    !isFiniteNumber(bboxMaxLong)
+  ) {
+    return null;
+  }
+  if (bboxMaxLat <= bboxMinLat || bboxMaxLong <= bboxMinLong) return null;
+  // GeoJSON is [lng, lat]; ring wound and closed (first === last).
+  return [
+    [
+      [bboxMinLong, bboxMinLat],
+      [bboxMaxLong, bboxMinLat],
+      [bboxMaxLong, bboxMaxLat],
+      [bboxMinLong, bboxMaxLat],
+      [bboxMinLong, bboxMinLat]
+    ]
+  ];
+};
+
+/**
+ * Builds the site GeoJSON that SiteRollupMap draws — one feature per site, labelled "{name} / N
+ * polygons". Where a site has an approximate footprint (a non-degenerate bounding box of its active
+ * polygon centroids) the feature is a Polygon rectangle; otherwise it falls back to a centroid Point
+ * (`centroidLat`/`centroidLong`). Feature shape matches what the prototype's DrilldownMap expects
+ * (`kind: "site"`, `uuid === siteId` so a click resolves straight to the site) — see
  * `design/project-data-experience:src/components/semanticZoom/useSemanticZoom.ts` ~167-178.
  *
- * Rows with no centroid (e.g. a site with no polygons yet, so no bounding box) are skipped — an
- * invented [0, 0] point would be a confident wrong location, worse than omitting the site from the
+ * Rows with neither a usable bbox nor a centroid (e.g. a site with no polygons yet) are skipped — an
+ * invented [0, 0] location would be a confident wrong answer, worse than omitting the site from the
  * map (it still appears in ProjectSiteRollupTable).
  */
-export const buildSiteCentroidFeatureCollection = (rows: SiteReviewRollupRow[]): SiteCentroidFeatureCollection => ({
-  type: "FeatureCollection",
-  features: rows
-    .filter(
-      (row): row is SiteReviewRollupRow & { centroidLat: number; centroidLong: number } =>
-        Number.isFinite(row.centroidLat) && Number.isFinite(row.centroidLong)
-    )
-    .map(
-      (row): SiteCentroidFeature => ({
+export const buildSiteCentroidFeatureCollection = (rows: SiteReviewRollupRow[]): SiteCentroidFeatureCollection => {
+  const features: SiteCentroidFeature[] = [];
+
+  for (const row of rows) {
+    const properties: SiteCentroidFeatureProperties = {
+      uuid: row.siteUuid,
+      siteId: row.siteUuid,
+      kind: "site",
+      name: row.siteName === "" ? "Unnamed site" : row.siteName,
+      polygons: row.activeTotal,
+      polygonsLabel: buildPolygonsLabel(row.activeTotal, row.failed, row.overlapCount),
+      hasAnomaly: row.failed > 0 || row.overlapCount > 0,
+      failed: row.failed,
+      overlapCount: row.overlapCount
+    };
+
+    const ring = rectangleRing(row);
+    if (ring != null) {
+      features.push({ type: "Feature", properties, geometry: { type: "Polygon", coordinates: ring } });
+    } else if (isFiniteNumber(row.centroidLat) && isFiniteNumber(row.centroidLong)) {
+      features.push({
         type: "Feature",
-        properties: {
-          uuid: row.siteUuid,
-          siteId: row.siteUuid,
-          kind: "site",
-          name: row.siteName === "" ? "Unnamed site" : row.siteName,
-          polygons: row.activeTotal,
-          polygonsLabel: buildPolygonsLabel(row.activeTotal, row.failed, row.overlapCount),
-          hasAnomaly: row.failed > 0 || row.overlapCount > 0,
-          failed: row.failed,
-          overlapCount: row.overlapCount
-        },
+        properties,
         geometry: { type: "Point", coordinates: [row.centroidLong, row.centroidLat] }
-      })
-    )
-});
+      });
+    }
+  }
+
+  return { type: "FeatureCollection", features };
+};

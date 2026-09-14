@@ -23,6 +23,13 @@ export type SiteReviewRollupRow = {
   hectares: number;
   centroidLat: number | null;
   centroidLong: number | null;
+  // Bounding box of the site's active-polygon centroids — an approximate footprint the rollup map
+  // draws as a rectangle. Understated vs. true geometry, and degenerate (min == max) for a
+  // single-polygon site, in which case SiteRollupMap falls back to a centroid marker.
+  bboxMinLat: number | null;
+  bboxMaxLat: number | null;
+  bboxMinLong: number | null;
+  bboxMaxLong: number | null;
 };
 
 export type UseProjectSiteRollup = {
@@ -32,24 +39,41 @@ export type UseProjectSiteRollup = {
   error: unknown;
 };
 
-const toRow = (dto: SiteReviewRollupDto): SiteReviewRollupRow => ({
-  siteUuid: dto.siteUuid,
-  siteName: dto.siteName ?? "",
-  siteStatus: dto.siteStatus ?? null,
-  activeTotal: dto.activeTotal ?? 0,
-  passed: dto.passed ?? 0,
-  partial: dto.partial ?? 0,
-  failed: dto.failed ?? 0,
-  notChecked: dto.notChecked ?? 0,
-  approved: dto.approved ?? 0,
-  pendingApproval: dto.pendingApproval ?? 0,
-  draft: dto.draft ?? 0,
-  informationRequired: dto.informationRequired ?? 0,
-  overlapCount: dto.overlapCount ?? 0,
-  hectares: dto.hectares ?? 0,
-  centroidLat: dto.centroidLat ?? null,
-  centroidLong: dto.centroidLong ?? null
-});
+// The bbox fields are added by a backend that may not yet be reflected in the generated schema
+// (codegen runs against api-dev). Widen locally so this compiles before/after regeneration; once the
+// generated SiteReviewRollupDto carries the bbox fields this intersection is a no-op and can be dropped.
+type SiteReviewRollupDtoWithBbox = SiteReviewRollupDto & {
+  bboxMinLat?: number | null;
+  bboxMaxLat?: number | null;
+  bboxMinLong?: number | null;
+  bboxMaxLong?: number | null;
+};
+
+const toRow = (dto: SiteReviewRollupDto): SiteReviewRollupRow => {
+  const bbox = dto as SiteReviewRollupDtoWithBbox;
+  return {
+    siteUuid: dto.siteUuid,
+    siteName: dto.siteName ?? "",
+    siteStatus: dto.siteStatus ?? null,
+    activeTotal: dto.activeTotal ?? 0,
+    passed: dto.passed ?? 0,
+    partial: dto.partial ?? 0,
+    failed: dto.failed ?? 0,
+    notChecked: dto.notChecked ?? 0,
+    approved: dto.approved ?? 0,
+    pendingApproval: dto.pendingApproval ?? 0,
+    draft: dto.draft ?? 0,
+    informationRequired: dto.informationRequired ?? 0,
+    overlapCount: dto.overlapCount ?? 0,
+    hectares: dto.hectares ?? 0,
+    centroidLat: dto.centroidLat ?? null,
+    centroidLong: dto.centroidLong ?? null,
+    bboxMinLat: bbox.bboxMinLat ?? null,
+    bboxMaxLat: bbox.bboxMaxLat ?? null,
+    bboxMinLong: bbox.bboxMinLong ?? null,
+    bboxMaxLong: bbox.bboxMaxLong ?? null
+  };
+};
 
 /**
  * Per-site rollup for a project's polygon review, scoped ONLY to sites (never loads polygon rows —
