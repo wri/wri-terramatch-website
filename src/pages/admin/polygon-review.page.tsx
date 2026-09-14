@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { ComponentProps, useEffect, useMemo } from "react";
@@ -78,11 +77,11 @@ const AdminPolygonReviewPage = () => {
 
   return (
     <Layout navGroups={navGroups} collapsed={false}>
-      <Box className="flex w-full min-w-0 flex-col">
+      <div className="flex w-full min-w-0 flex-col">
         {selectedProjectUuid == null ? (
           // Starting screen: a centered card (TerraMatch EmptyState/Paper pattern) with the searchable
           // project picker as the primary action.
-          <Box className="flex min-h-[60vh] flex-1 items-center justify-center p-8">
+          <div className="flex min-h-[60vh] flex-1 items-center justify-center p-8">
             <Paper className="w-full max-w-xl p-15 text-center">
               <Icon name={IconNames.POLYGON} width={80} className="m-auto mb-8 text-primary-500" />
               <Text variant="text-bold-headline-1000" className="mb-5 text-center">
@@ -91,27 +90,27 @@ const AdminPolygonReviewPage = () => {
               <Text variant="text-light-body-300" className="m-auto mb-8 max-w-md text-center">
                 {t("Select a project to review, validate, and approve its site polygons.")}
               </Text>
-              <Box className="flex justify-center">
+              <div className="flex justify-center">
                 <ProjectPickerSelect />
-              </Box>
+              </div>
             </Paper>
-          </Box>
+          </div>
         ) : (
-          <Box className="flex w-full min-w-0 flex-1 flex-col">
+          <div className="flex w-full min-w-0 flex-1 flex-col">
             <PolygonReviewHeader
               projectName={project?.name ?? undefined}
               projectUuid={selectedProjectUuid}
               siteName={site?.name ?? undefined}
             />
-            <Box className="w-full min-w-0 flex-1">
+            <div className="w-full min-w-0 flex-1">
               {projectUnavailable ? (
-                <Box className="p-6">
+                <div className="p-6">
                   <InlineMessage
                     variant="error"
                     label={t("Unable to load this project")}
                     caption={t("We couldn't load this project's polygon review. Please pick another project or retry.")}
                   />
-                </Box>
+                </div>
               ) : (
                 <MapAreaProvider>
                   <FrameworkProvider frameworkKey={project?.frameworkKey}>
@@ -123,10 +122,10 @@ const AdminPolygonReviewPage = () => {
                   </FrameworkProvider>
                 </MapAreaProvider>
               )}
-            </Box>
-          </Box>
+            </div>
+          </div>
         )}
-      </Box>
+      </div>
     </Layout>
   );
 };
