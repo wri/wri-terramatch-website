@@ -4,7 +4,12 @@ import { FC, KeyboardEvent } from "react";
 /**
  * The shared summary-tile card used by both ProjectPolygonSummaryTiles (interactive filter toggles)
  * and ProjectSiteRollupSummary (read-only counts). One card layout, one type scale — pass `onToggle`
- * to make a tile behave as a filter button (keyboard-activatable, with an active bg/border).
+ * to make a tile behave as a filter button (keyboard-activatable, with an active bg/border and a
+ * visible focus ring).
+ *
+ * There is no design-system primitive for a toggleable count tile (MetricCard is a metric-vs-goal card,
+ * ItemCount is a pagination widget, Badge/Tag are labels), so this stays a custom component — but it is
+ * built entirely on DS tokens (type scale, semantic colors, spacing/radius).
  *
  * Lives under src/pages/**, where Next's pageExtensions ("tsx") collects every .tsx as a route and
  * requires a default-exported React component — this component satisfies that; it is never routed to.
@@ -52,9 +57,13 @@ const SummaryTile: FC<SummaryTileProps> = ({
       cursor={interactive ? "pointer" : undefined}
       transition={interactive ? "border-color .1s, background .1s" : undefined}
       _hover={interactive ? { borderColor: activeBorder } : undefined}
+      // The theme defines no global focus ring, so give the toggle its own visible focus state.
+      _focusVisible={
+        interactive ? { outline: "2px solid", outlineColor: "primary.500", outlineOffset: "2px" } : undefined
+      }
       textAlign="left"
       flex="1 1 0"
-      minW="150px"
+      minW="9.375rem"
       px={4}
       py={3}
       borderRadius="lg"
@@ -62,7 +71,7 @@ const SummaryTile: FC<SummaryTileProps> = ({
       borderColor={interactive && isActive ? activeBorder : "neutral.200"}
       bg={interactive && isActive ? activeBg : "white"}
     >
-      <Text textStyle="700-bold" color={valueColor} lineHeight="1.1">
+      <Text textStyle="700-bold" color={valueColor}>
         {value}
       </Text>
       <Text textStyle="300" color="neutral.700" mt={1}>

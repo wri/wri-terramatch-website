@@ -3,6 +3,10 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { FC, forwardRef, useEffect, useState } from "react";
 
+import {
+  DESKTOP_MAX_LABEL_LENGTH,
+  truncateBreadcrumbLabel
+} from "@/redesignComponents/navigation/Breadcrumbs/breadcrumbLabel";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 
 interface NextLinkAdapterProps {
@@ -37,7 +41,6 @@ export interface ResponsiveBreadcrumbToolbarProps {
 const CHAR_WIDTH_PX = 12;
 const OVERHEAD_PER_CRUMB = 40;
 const HORIZONTAL_PADDING = 32;
-const DESKTOP_MAX_LABEL_LENGTH = 25;
 
 const ResponsiveBreadcrumbToolbar: FC<ResponsiveBreadcrumbToolbarProps> = ({
   breadcrumbs,
@@ -67,10 +70,7 @@ const ResponsiveBreadcrumbToolbar: FC<ResponsiveBreadcrumbToolbarProps> = ({
   }));
 
   const truncatedBreadcrumbs = translatedBreadcrumbs.map(link => ({
-    label:
-      (link.label ?? "").length > maxLabelLength
-        ? `${(link.label ?? "").slice(0, maxLabelLength)}...`
-        : link.label ?? "",
+    label: truncateBreadcrumbLabel(link.label ?? "", maxLabelLength),
     link: link.link,
     icon: link.icon
   }));
