@@ -34,27 +34,6 @@ export const AnomaliesCell: FC<{ count: number | null }> = ({ count }) => {
   );
 };
 
-/** The "show only flagged" toggle button, matching the prototype's table toolbars. */
-export const FlaggedFilterButton: FC<{ active: boolean; onClick: () => void; label: string }> = ({
-  active,
-  onClick,
-  label
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    aria-pressed={active}
-    className={
-      active
-        ? "inline-flex items-center gap-1 rounded border border-theme-warning-500 bg-theme-warning-100 px-2 py-1 text-xs font-medium text-theme-warning-900"
-        : "inline-flex items-center gap-1 rounded border border-theme-neutral-200 px-2 py-1 text-xs text-theme-neutral-600 hover:bg-theme-neutral-100"
-    }
-  >
-    <WarningIcon boxSize={2.5} />
-    {label}
-  </button>
-);
-
 // This module lives under src/pages/**, where Next's pageExtensions ("tsx") collects every .tsx as
 // a route and requires a default-exported React component (each sibling view file exports one).
 // These are shared presentational cells, not a real page, so the default export is an inert

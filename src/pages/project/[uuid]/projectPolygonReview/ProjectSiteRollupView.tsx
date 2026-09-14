@@ -14,9 +14,12 @@ import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessa
 import ProjectSiteRollupSummary from "./ProjectSiteRollupSummary";
 import ProjectSiteRollupTable from "./ProjectSiteRollupTable";
 import { buildSiteCentroidFeatureCollection } from "./siteCentroidFeatureCollection";
+import { siteMatchesRollupFilters } from "./siteRollupFilter.constants";
 import SiteRollupMap from "./SiteRollupMap";
+import SiteRollupToolbar from "./SiteRollupToolbar";
 import { useDownloadProjectPolygons } from "./useDownloadProjectPolygons";
 import { SiteReviewRollupRow } from "./useProjectSiteRollup";
+import { useSiteRollupFilters } from "./useSiteRollupFilters";
 
 export interface ProjectSiteRollupViewProps {
   project: ProjectFullDto;
@@ -35,11 +38,21 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
   const t = useT();
   const { isDownloading: isDownloadingAll, download: handleDownloadAll } = useDownloadProjectPolygons(project);
 
+  const { siteSearch, siteFilters, activeFilterLabels, setSiteSearch, setSiteFilters, handleClearSiteFilters } =
+    useSiteRollupFilters({ t });
+
   // Total active polygons across the project — drives only the Download-All disabled state; the
   // visible summary is site-focused (see ProjectSiteRollupSummary).
   const totalPolygons = useMemo(() => rows.reduce((sum, row) => sum + row.activeTotal, 0), [rows]);
 
-  const featureCollection = useMemo(() => buildSiteCentroidFeatureCollection(rows), [rows]);
+  // One filtered set drives both the table AND the map centroids, so they always show the same
+  // sites. The summary above stays on the full, unfiltered rows (it reports project totals).
+  const filteredRows = useMemo(
+    () => rows.filter(row => siteMatchesRollupFilters(row, siteFilters, siteSearch)),
+    [rows, siteFilters, siteSearch]
+  );
+
+  const featureCollection = useMemo(() => buildSiteCentroidFeatureCollection(filteredRows), [filteredRows]);
 
   return (
     <>
@@ -67,7 +80,17 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
             void handleDownloadAll();
           }
         }}
-      />
+      >
+        <SiteRollupToolbar
+          resultCount={filteredRows.length}
+          siteSearch={siteSearch}
+          siteFilters={siteFilters}
+          activeFilterLabels={activeFilterLabels}
+          onSearchChange={setSiteSearch}
+          onApplyFilters={setSiteFilters}
+          onClearFilters={handleClearSiteFilters}
+        />
+      </PageItem>
 
       {error != null ? (
         <InlineMessage
@@ -85,7 +108,12 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
             <SiteRollupMap featureCollection={featureCollection} onSelectSite={onSelectSite} loading={!loaded} />
           </ResizeBox>
 
-          <ProjectSiteRollupTable rows={rows} loading={!loaded} onSelectSite={onSelectSite} />
+          <ProjectSiteRollupTable
+            rows={filteredRows}
+            totalSiteCount={rows.length}
+            loading={!loaded}
+            onSelectSite={onSelectSite}
+          />
         </>
       )}
       </PageContent>

@@ -2,6 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
+import { SITE_STATUS_PREDICATES } from "./siteRollupFilter.constants";
 import { SiteReviewRollupRow } from "./useProjectSiteRollup";
 
 // Read-only, site-focused summary for the rollup landing view. The rollup lists SITES, so the tiles
@@ -25,14 +26,13 @@ const ProjectSiteRollupSummary: FC<ProjectSiteRollupSummaryProps> = ({ rows, isL
   const t = useT();
 
   const { tiles, totalPolygons } = useMemo(() => {
-    const withPolygons = rows.filter(row => row.activeTotal > 0);
     const sites = rows.length;
-    // A site "needs review" if any polygon failed validation or is still awaiting a decision.
-    const withFailures = withPolygons.filter(row => row.failed > 0).length;
-    // Every active polygon is approvable (passed/partial): nothing failed, nothing unchecked.
-    const fullyApprovable = withPolygons.filter(row => row.failed === 0 && row.notChecked === 0).length;
-    // No validation has run yet — every polygon is still not-checked.
-    const notStarted = withPolygons.filter(row => row.notChecked === row.activeTotal).length;
+    // These three buckets share their exact predicates with the filter drawer
+    // (SITE_STATUS_PREDICATES), so the summary counts and the filter selections can never disagree.
+    // Each predicate already guards on activeTotal > 0 (the former `withPolygons` pre-filter).
+    const withFailures = rows.filter(SITE_STATUS_PREDICATES.withFailures).length;
+    const fullyApprovable = rows.filter(SITE_STATUS_PREDICATES.fullyApprovable).length;
+    const notStarted = rows.filter(SITE_STATUS_PREDICATES.notStarted).length;
     const total = rows.reduce((sum, row) => sum + row.activeTotal, 0);
 
     return {
