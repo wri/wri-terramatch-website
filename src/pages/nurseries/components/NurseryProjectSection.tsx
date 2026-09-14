@@ -194,9 +194,9 @@ const NurseryProjectSection = ({
           caption={section.organisationName ?? ""}
           icon={
             open ? (
-              <FolderOpenIcon minWidth={5} width={5} height="auto" color="primary.600" />
+              <FolderOpenIcon minWidth={5} width={5} height="auto" color="primary.600" mt={2} mb='auto' />
             ) : (
-              <FolderIcon minWidth={5} width={5} height="auto" color="primary.600" />
+              <FolderIcon minWidth={5} width={5} height="auto" color="primary.600" mt={2} mb='auto' />
             )
           }
           statusLabels={
