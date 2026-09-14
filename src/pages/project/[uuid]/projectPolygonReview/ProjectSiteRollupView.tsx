@@ -1,4 +1,4 @@
-import { Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
@@ -60,10 +60,7 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
 
   return (
     <>
-      <PolygonReviewHeader>
-        <Text textStyle="800-bold" color="primary.900" mb={3}>
-          {project.name ?? t("Project")}
-        </Text>
+      <PolygonReviewHeader projectName={project.name ?? undefined} projectUuid={project.uuid}>
         <ProjectSiteRollupSummary rows={rows} isLoading={!loaded} />
       </PolygonReviewHeader>
       <PageContent className="bg-theme-neutral-100">
@@ -115,17 +112,21 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
           </ResizeBox>
 
           {/* Project-wide trees planted + restoration area, using the same MetricCard design as the
-              site level. Rollup has no polygon selection, so the selection/overlap args are inert. */}
-          <SitePolygonMetricsSection
-            totalTreesPlanted={project.treesPlantedCount ?? 0}
-            totalRestorationAreaHa={project.totalHectaresRestoredSum}
-            restorationAreaGoal={project.totalHectaresRestoredGoal}
-            hasPolygonSelection={false}
-            selectedTreesPlanted={0}
-            selectedRestorationAreaRounded={0}
-            polygonsWithOverlapCount={0}
-            onSelectOverlapPolygons={() => {}}
-          />
+              site level. Rollup has no polygon selection, so the selection/overlap args are inert.
+              An extra top margin (matching PageContent's gap-5) sets the KPI cards clearly apart from
+              the map above, so they don't read as attached to it. */}
+          <Box mt={5}>
+            <SitePolygonMetricsSection
+              totalTreesPlanted={project.treesPlantedCount ?? 0}
+              totalRestorationAreaHa={project.totalHectaresRestoredSum}
+              restorationAreaGoal={project.totalHectaresRestoredGoal}
+              hasPolygonSelection={false}
+              selectedTreesPlanted={0}
+              selectedRestorationAreaRounded={0}
+              polygonsWithOverlapCount={0}
+              onSelectOverlapPolygons={() => {}}
+            />
+          </Box>
 
           <ProjectSiteRollupTable
             rows={filteredRows}

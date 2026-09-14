@@ -958,10 +958,7 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
 
   return (
     <>
-      <PolygonReviewHeader>
-        <Text textStyle="800-bold" color="primary.900" mb={3}>
-          {project.name ?? t("Project")}
-        </Text>
+      <PolygonReviewHeader projectName={project.name ?? undefined} projectUuid={project.uuid}>
         <ProjectPolygonSummaryTiles
           counts={statusCounts}
           isLoading={isLoadingCounts}
