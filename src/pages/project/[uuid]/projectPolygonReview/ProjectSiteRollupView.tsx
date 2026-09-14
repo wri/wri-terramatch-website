@@ -69,7 +69,9 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
       <PageItem
         title={t("Sites")}
         className={SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS}
-        flexProps={{ width: "100%" }}
+        // PageItem defaults to flex={1}; on a sparse project it would grow and push the map down.
+        // Size it to its content (title + toolbar) so the map sits directly beneath.
+        flexProps={{ width: "100%", flex: "0 0 auto" }}
         downloadButtonProps={{
           variant: "secondary",
           size: "small",
