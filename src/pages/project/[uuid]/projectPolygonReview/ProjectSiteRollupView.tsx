@@ -10,10 +10,10 @@ import {
   SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS
 } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
+import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { AreaHectaresIcon, DownloadIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
-import CompactKpi from "./CompactKpi";
 import ProjectSiteRollupSummary from "./ProjectSiteRollupSummary";
 import ProjectSiteRollupTable from "./ProjectSiteRollupTable";
 import { buildSiteCentroidFeatureCollection } from "./siteCentroidFeatureCollection";
@@ -86,17 +86,22 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
           activeFilterLabels={activeFilterLabels}
           rightContent={
             <Flex gap={3} align="center">
-              <CompactKpi
+              <MetricCard
+                color="secondary.600"
                 icon={<TreeIcon />}
-                label={t("Trees Planted")}
-                value={(project.treesPlantedCount ?? 0).toLocaleString()}
+                variant="medium"
+                title={t("Trees Planted")}
+                progress={project.treesPlantedCount ?? 0}
+                goal={0}
               />
-              <CompactKpi
+              <MetricCard
+                color="secondary.700"
                 icon={<AreaHectaresIcon />}
-                label={t("Restoration Area")}
-                value={`${project.totalHectaresRestoredSum.toLocaleString(undefined, {
-                  maximumFractionDigits: 2
-                })} ha`}
+                variant="medium"
+                title={t("Restoration Area")}
+                progress={project.totalHectaresRestoredSum}
+                goal={0}
+                progressSuffix="ha"
               />
             </Flex>
           }

@@ -61,6 +61,7 @@ import { useSitePolygonFilters } from "@/pages/site/[uuid]/hooks/useSitePolygonF
 import { useSitePolygonOverlap } from "@/pages/site/[uuid]/hooks/useSitePolygonOverlap";
 import { useSitePolygonTableData } from "@/pages/site/[uuid]/hooks/useSitePolygonTableData";
 import { showPolygonErrorToast } from "@/pages/site/[uuid]/utils/polygonOperationToasts";
+import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { HIDDEN_STICKY_COLUMN_EDGE_STYLES } from "@/redesignComponents/dataDisplay/Table/tableStyles";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
 import { AreaHectaresIcon, DownloadIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
@@ -70,7 +71,6 @@ import Log from "@/utils/log";
 import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils/polygonAnalytics";
 import { isSitePolygonApprovable, toReviewAvailabilityPolygon } from "@/utils/sitePolygonReview";
 
-import CompactKpi from "./CompactKpi";
 import PolygonAnomalyStepper from "./PolygonAnomalyStepper";
 import { buildProjectOverlapPairs } from "./projectOverlapPairs";
 import ProjectPolygonSummaryTiles from "./ProjectPolygonSummaryTiles";
@@ -1000,11 +1000,22 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
             siteOptions={siteOptions}
             rightContent={
               <Flex gap={3} align="center">
-                <CompactKpi icon={<TreeIcon />} label={t("Trees Planted")} value={totalTreesPlanted.toLocaleString()} />
-                <CompactKpi
+                <MetricCard
+                  color="secondary.600"
+                  icon={<TreeIcon />}
+                  variant="medium"
+                  title={t("Trees Planted")}
+                  progress={totalTreesPlanted}
+                  goal={0}
+                />
+                <MetricCard
+                  color="secondary.700"
                   icon={<AreaHectaresIcon />}
-                  label={t("Restoration Area")}
-                  value={`${totalRestorationAreaHa.toLocaleString()} ha`}
+                  variant="medium"
+                  title={t("Restoration Area")}
+                  progress={totalRestorationAreaHa}
+                  goal={0}
+                  progressSuffix="ha"
                 />
               </Flex>
             }

@@ -4,6 +4,10 @@ import { useRouter } from "next/router";
 import { FC, forwardRef, MouseEvent, ReactNode, useMemo } from "react";
 
 import Breadcrumb from "@/redesignComponents/navigation/Breadcrumbs/Breadcrumb";
+import {
+  DESKTOP_MAX_LABEL_LENGTH,
+  truncateBreadcrumbLabel
+} from "@/redesignComponents/navigation/Breadcrumbs/breadcrumbLabel";
 
 import ProjectPickerSelect from "./ProjectPickerSelect";
 
@@ -67,10 +71,17 @@ const PolygonReviewHeader: FC<PolygonReviewHeaderProps> = ({ projectName, projec
 
   const links = useMemo(() => {
     const projectHref = `${POLYGON_REVIEW_PATH}?project=${projectUuid}`;
+    // Labels are truncated at the string level (the product-wide convention, see breadcrumbLabel /
+    // ResponsiveBreadcrumbToolbar) so a long project or site name keeps the breadcrumb on one line
+    // instead of wrapping the single-line design-system Breadcrumb.
     const crumbs: { label: string; link: string }[] = [{ label: t("Polygon Review"), link: POLYGON_REVIEW_PATH }];
-    if (projectName != null) crumbs.push({ label: projectName, link: projectHref });
+    if (projectName != null) {
+      crumbs.push({ label: truncateBreadcrumbLabel(projectName, DESKTOP_MAX_LABEL_LENGTH), link: projectHref });
+    }
     // The site crumb is always last, so it is rendered non-clickable; its link is unused but required.
-    if (siteName != null) crumbs.push({ label: siteName, link: projectHref });
+    if (siteName != null) {
+      crumbs.push({ label: truncateBreadcrumbLabel(siteName, DESKTOP_MAX_LABEL_LENGTH), link: projectHref });
+    }
     return crumbs;
   }, [projectName, projectUuid, siteName, t]);
 
