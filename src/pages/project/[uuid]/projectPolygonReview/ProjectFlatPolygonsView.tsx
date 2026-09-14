@@ -70,8 +70,6 @@ import Log from "@/utils/log";
 import { trackBulkActionCompleted, trackPolygonValidationResults } from "@/utils/polygonAnalytics";
 import { isSitePolygonApprovable, toReviewAvailabilityPolygon } from "@/utils/sitePolygonReview";
 
-import PolygonReviewHeader from "@/pages/admin/polygonReview/PolygonReviewHeader";
-
 import CompactKpi from "./CompactKpi";
 import PolygonAnomalyStepper from "./PolygonAnomalyStepper";
 import { buildProjectOverlapPairs } from "./projectOverlapPairs";
@@ -959,7 +957,6 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
 
   return (
     <>
-      <PolygonReviewHeader projectName={project.name ?? undefined} projectUuid={project.uuid} />
       <PolygonEditDrawerDataSync
         polygons={polygonsData}
         onRefetchPolygons={refetchPolygons}
@@ -1003,11 +1000,7 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
             siteOptions={siteOptions}
             rightContent={
               <Flex gap={3} align="center">
-                <CompactKpi
-                  icon={<TreeIcon />}
-                  label={t("Trees Planted")}
-                  value={totalTreesPlanted.toLocaleString()}
-                />
+                <CompactKpi icon={<TreeIcon />} label={t("Trees Planted")} value={totalTreesPlanted.toLocaleString()} />
                 <CompactKpi
                   icon={<AreaHectaresIcon />}
                   label={t("Restoration Area")}

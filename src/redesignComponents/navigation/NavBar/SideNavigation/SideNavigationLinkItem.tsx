@@ -42,7 +42,14 @@ const SideNavigationLinkItem: FC<SideNavigationLinkItemProps> = ({
     currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
   }
 
-  const isActive = currentPath === href;
+  // For links whose href carries a query (`?`) or hash (`#`) — the placeholder `#` links and any
+  // full-URL links — keep the strict full-path match. For a plain path href (e.g. "/admin/polygon-review")
+  // match on the pathname only, so the item stays active across its own query params (`?project=`, `?site=`).
+  const hrefHasQueryOrHash = href.includes("?") || href.includes("#");
+  const currentPathname = pathname ?? (typeof window !== "undefined" ? window.location.pathname : "");
+  const isActive = hrefHasQueryOrHash
+    ? currentPath === href
+    : currentPathname !== "" && (currentPathname === href || currentPathname.startsWith(`${href}/`));
 
   const handleLinkKeyDown = (event: KeyboardEvent<HTMLAnchorElement>) => {
     if (event.key === "Enter") {

@@ -2,11 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 
-import {
-  EMPTY_SITE_ROLLUP_FILTERS,
-  SITE_STATUS_LABELS,
-  SiteRollupFilterState
-} from "./siteRollupFilter.constants";
+import { EMPTY_SITE_ROLLUP_FILTERS, SITE_STATUS_LABELS, SiteRollupFilterState } from "./siteRollupFilter.constants";
 
 type UseSiteRollupFiltersParams = {
   t: (key: string, params?: Record<string, unknown>) => string;

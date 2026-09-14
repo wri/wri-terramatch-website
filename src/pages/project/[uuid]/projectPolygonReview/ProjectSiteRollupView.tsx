@@ -5,7 +5,6 @@ import { FC, useMemo } from "react";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import PolygonReviewHeader from "@/pages/admin/polygonReview/PolygonReviewHeader";
 import {
   SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS,
   SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS
@@ -59,9 +58,7 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
   const featureCollection = useMemo(() => buildSiteCentroidFeatureCollection(filteredRows), [filteredRows]);
 
   return (
-    <>
-      <PolygonReviewHeader projectName={project.name ?? undefined} projectUuid={project.uuid} />
-      <PageContent className="bg-theme-neutral-100">
+    <PageContent className="bg-theme-neutral-100">
       <PageItem
         title={t("Sites")}
         className={SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS}
@@ -97,7 +94,9 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
               <CompactKpi
                 icon={<AreaHectaresIcon />}
                 label={t("Restoration Area")}
-                value={`${project.totalHectaresRestoredSum.toLocaleString()} ha`}
+                value={`${project.totalHectaresRestoredSum.toLocaleString(undefined, {
+                  maximumFractionDigits: 2
+                })} ha`}
               />
             </Flex>
           }
@@ -127,7 +126,12 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
               in the toolbar. An extra top margin (matching PageContent's gap-5) sets the buckets clearly
               apart from the map above; the summary's own bottom margin separates it from the table. */}
           <Box mt={5}>
-            <ProjectSiteRollupSummary rows={rows} isLoading={!loaded} />
+            <ProjectSiteRollupSummary
+              rows={rows}
+              isLoading={!loaded}
+              siteFilters={siteFilters}
+              setSiteFilters={setSiteFilters}
+            />
           </Box>
 
           <ProjectSiteRollupTable
@@ -138,8 +142,7 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
           />
         </>
       )}
-      </PageContent>
-    </>
+    </PageContent>
   );
 };
 

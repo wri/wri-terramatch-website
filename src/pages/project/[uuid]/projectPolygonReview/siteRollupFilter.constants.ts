@@ -9,19 +9,18 @@ import { SiteReviewRollupRow } from "./useProjectSiteRollup";
 
 export type SiteStatusBucket = "withFailures" | "fullyApprovable" | "notStarted";
 
-// English labels are passed through `t(...)` at the call site; keeping them here keeps the drawer
-// checkboxes, the toolbar tags and the summary tiles reading from one list.
+// English labels are passed through `t(...)` at the call site; a single ordered list keeps the drawer
+// checkboxes, the toolbar tags and the summary tiles reading from one source. `SITE_STATUS_OPTIONS`
+// (ordered, for the drawer) and `SITE_STATUS_LABELS` (a lookup) are both derived from it.
 export const SITE_STATUS_OPTIONS: { value: SiteStatusBucket; label: string }[] = [
   { value: "withFailures", label: "With failures" },
   { value: "fullyApprovable", label: "Fully approvable" },
   { value: "notStarted", label: "Not started" }
 ];
 
-export const SITE_STATUS_LABELS: Record<SiteStatusBucket, string> = {
-  withFailures: "With failures",
-  fullyApprovable: "Fully approvable",
-  notStarted: "Not started"
-};
+export const SITE_STATUS_LABELS = Object.fromEntries(
+  SITE_STATUS_OPTIONS.map(({ value, label }) => [value, label])
+) as Record<SiteStatusBucket, string>;
 
 /**
  * The single source of truth for the three site status buckets. `ProjectSiteRollupSummary` counts
@@ -31,7 +30,7 @@ export const SITE_STATUS_LABELS: Record<SiteStatusBucket, string> = {
  * pre-filter: a site with no active polygons belongs to no bucket.
  */
 export const SITE_STATUS_PREDICATES: Record<SiteStatusBucket, (row: SiteReviewRollupRow) => boolean> = {
-  // Any polygon failed validation or is still awaiting a decision.
+  // At least one polygon failed validation.
   withFailures: row => row.activeTotal > 0 && row.failed > 0,
   // Every active polygon is approvable (passed/partial): nothing failed, nothing unchecked.
   fullyApprovable: row => row.activeTotal > 0 && row.failed === 0 && row.notChecked === 0,

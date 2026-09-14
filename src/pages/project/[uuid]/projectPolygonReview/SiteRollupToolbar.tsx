@@ -4,8 +4,8 @@ import { FC, ReactNode, useState } from "react";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
-import SiteRollupFilterDrawer from "./SiteRollupFilterDrawer";
 import { SiteRollupFilterState } from "./siteRollupFilter.constants";
+import SiteRollupFilterDrawer from "./SiteRollupFilterDrawer";
 
 interface SiteRollupToolbarProps {
   resultCount: number;
@@ -61,7 +61,7 @@ const SiteRollupToolbar: FC<SiteRollupToolbarProps> = ({
         // right edge (justify-between); otherwise it keeps its full-width behavior.
         classNameContentLeft={rightContent != null ? undefined : "w-full"}
         search={{
-          label: t(resultCount === 1 ? t("Site") : t("Sites")),
+          label: resultCount === 1 ? t("Site") : t("Sites"),
           placeholder: t("Search sites"),
           options: [],
           resetKey: searchResetKey,

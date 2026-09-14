@@ -7,7 +7,7 @@ import Breadcrumb from "@/redesignComponents/navigation/Breadcrumbs/Breadcrumb";
 
 import ProjectPickerSelect from "./ProjectPickerSelect";
 
-const POLYGON_REVIEW_PATH = "/admin/polygon-review";
+export const POLYGON_REVIEW_PATH = "/admin/polygon-review";
 
 export interface PolygonReviewHeaderProps {
   /** The current project's name — adds a "[project]" crumb after "Polygon Review". */
@@ -20,10 +20,38 @@ export interface PolygonReviewHeaderProps {
   children?: ReactNode;
 }
 
+// linkRouter adapter for the shared Breadcrumb (WriBreadcrumb renders each non-final crumb through it,
+// passing `to`/`href`; the final crumb is a non-clickable <p>). A plain left-click routes in-place to
+// that crumb's own link via a shallow push (pathname is constant, only the query changes); modified
+// clicks fall through to the href so "open in new tab" still works. Defined at module scope (it calls
+// useRouter itself) so it is a stable component type, not re-created on every header render.
+const CrumbLink = forwardRef<
+  HTMLAnchorElement,
+  { to?: string; href?: string; className?: string; children: ReactNode }
+>(function CrumbLink({ to, href, className, children }, ref) {
+  const router = useRouter();
+  const target = to ?? href;
+  return (
+    <a
+      ref={ref}
+      href={target}
+      className={className}
+      onClick={(event: MouseEvent<HTMLAnchorElement>) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey) return;
+        event.preventDefault();
+        if (target != null) void router.push(target, undefined, { shallow: true });
+      }}
+    >
+      {children}
+    </a>
+  );
+});
+
 /**
  * PolygonReviewHeader — the cohesive top panel shared by every polygon-review view (empty state, flat
- * list, site rollup, site drill-in). Two rows on a neutral/white panel consistent with the surrounding
- * PageContent:
+ * list, site rollup, site drill-in). Rendered ONCE by the admin polygon-review page above the workspace,
+ * so it stays mounted across mode changes and project switches. Two rows on a neutral/white panel
+ * consistent with the surrounding PageContent:
  *   • Top row: a breadcrumb (LEFT) reflecting the current depth — "Polygon Review" › [project] › [site],
  *     each crumb conditional on props — and the searchable project picker (RIGHT).
  *   • Bottom row: the caller's status tiles / prompt (`children`), sitting BELOW the picker.
@@ -36,35 +64,6 @@ export interface PolygonReviewHeaderProps {
  */
 const PolygonReviewHeader: FC<PolygonReviewHeaderProps> = ({ projectName, projectUuid, siteName, children }) => {
   const t = useT();
-  const router = useRouter();
-
-  // linkRouter adapter for the shared Breadcrumb (WriBreadcrumb renders each non-final crumb through it,
-  // passing `to`/`href`; the final crumb is a non-clickable <p>). A plain left-click routes in-place to
-  // that crumb's own link via a shallow push (pathname is constant, only the query changes); modified
-  // clicks fall through to the href so "open in new tab" still works.
-  const CrumbLink = useMemo(
-    () =>
-      forwardRef<HTMLAnchorElement, { to?: string; href?: string; className?: string; children: ReactNode }>(
-        function CrumbLink({ to, href, className, children: crumbChildren }, ref) {
-          const target = to ?? href;
-          return (
-            <a
-              ref={ref}
-              href={target}
-              className={className}
-              onClick={(event: MouseEvent<HTMLAnchorElement>) => {
-                if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
-                event.preventDefault();
-                if (target != null) void router.push(target, undefined, { shallow: true });
-              }}
-            >
-              {crumbChildren}
-            </a>
-          );
-        }
-      ),
-    [router]
-  );
 
   const links = useMemo(() => {
     const projectHref = `${POLYGON_REVIEW_PATH}?project=${projectUuid}`;
@@ -76,14 +75,7 @@ const PolygonReviewHeader: FC<PolygonReviewHeaderProps> = ({ projectName, projec
   }, [projectName, projectUuid, siteName, t]);
 
   return (
-    <Box
-      as="header"
-      bg="white"
-      borderBottomWidth="1px"
-      borderColor="neutral.200"
-      paddingX={6}
-      paddingY={4}
-    >
+    <Box as="header" bg="white" borderBottomWidth="1px" borderColor="neutral.200" paddingX={6} paddingY={4}>
       <Flex align="flex-start" justify="space-between" gap={4}>
         <Box minW={0} flex="1 1 auto">
           <Breadcrumb linkRouter={CrumbLink} links={links} />

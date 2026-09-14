@@ -107,6 +107,7 @@ export const SelectorMenu: FC<SelectorMenuProps> = ({
             <Item
               key={item.value}
               aria-label={item.label}
+              title={item.label}
               item={item}
               {...getMenuItemStyles(item.disabled)}
               {...getMenuItemKeyboardProps(item.disabled)}
