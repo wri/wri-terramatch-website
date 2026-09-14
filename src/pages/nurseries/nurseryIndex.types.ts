@@ -4,7 +4,6 @@ export type NurseryIndexRow = NurseryLightDto & {
   id: string;
   projectUuid: string | null;
   projectFrameworkKey: string | null;
-  seedlingGrown?: number | null;
 };
 
 export type NurseryIndexMetric = {

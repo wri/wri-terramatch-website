@@ -12,7 +12,6 @@ import { buildNurseryProjectSections, createNurseryProjectSection } from "./nurs
 
 export const DISCOVERY_PAGE_SIZE = 25;
 export const PROJECT_INDEX_PAGE_SIZE = 100;
-export const SECTION_NURSERIES_PAGE_SIZE = 100;
 
 type IndexPage<T> = {
   data?: T[] | null;
@@ -43,7 +42,7 @@ const mergeByUuid = <T extends { uuid: string }>(current: T[], incoming: T[]) =>
   return next;
 };
 
-export const loadAllIndexPages = async <T>(
+const loadAllIndexPages = async <T>(
   loadPage: (pageNumber: number) => Promise<IndexPage<T>>,
   pageSize: number
 ): Promise<T[]> => {
