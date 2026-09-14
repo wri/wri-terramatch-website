@@ -981,7 +981,9 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
         <PageItem
           title={t("Polygons")}
           className={SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS}
-          flexProps={{ width: "100%", id: SITE_POLYGON_TAB_HEADER_ID }}
+          // flex: "0 0 auto" so this panel sizes to its content (title + toolbar) instead of the
+          // PageItem default flex={1}, which on a sparse project grows and opens a gap above the map.
+          flexProps={{ width: "100%", flex: "0 0 auto", id: SITE_POLYGON_TAB_HEADER_ID }}
           downloadButtonProps={{
             variant: "secondary",
             size: "small",

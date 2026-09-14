@@ -4,12 +4,13 @@ import { useRouter } from "next/router";
 import { ComponentProps, useEffect, useMemo } from "react";
 
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import Paper from "@/components/elements/Paper/Paper";
 import { useFullProject } from "@/connections/Entity";
 import { useMyUser } from "@/connections/User";
 import FrameworkProvider from "@/context/framework.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import PolygonReviewHeader from "@/pages/admin/polygonReview/PolygonReviewHeader";
+import ProjectPickerSelect from "@/pages/admin/polygonReview/ProjectPickerSelect";
 import { ArrowForwardIcon } from "@/redesignComponents/foundations/Icons";
 import Layout, { defaultAdminNavGroups } from "@/redesignComponents/Loayout/Layout";
 import ProjectPolygonsWorkspace from "@/pages/project/[uuid]/projectPolygonReview/ProjectPolygonsWorkspace";
@@ -65,13 +66,22 @@ const AdminPolygonReviewPage = () => {
     <Layout navGroups={navGroups} navTitle="Management Panel" collapsed={false}>
       <Box className="flex w-full min-w-0 flex-col">
         {selectedProjectUuid == null ? (
-          // No project chosen yet — the header still renders so its (right-justified) picker is
-          // available; each view supplies its own header once a project is selected.
-          <PolygonReviewHeader>
-            <Text textStyle="400" color="neutral.700">
-              Select a project to review its polygons.
-            </Text>
-          </PolygonReviewHeader>
+          // Starting screen: a centered card (TerraMatch EmptyState/Paper pattern) with the searchable
+          // project picker as the primary action.
+          <Box className="flex min-h-[60vh] flex-1 items-center justify-center p-8">
+            <Paper className="w-full max-w-xl p-15 text-center">
+              <Icon name={IconNames.POLYGON} width={72} className="m-auto mb-6 text-primary-500" />
+              <Text textStyle="800-bold" color="primary.900" className="mb-2">
+                Review project polygons
+              </Text>
+              <Text textStyle="400" color="neutral.700" className="mx-auto mb-8 max-w-md">
+                Select a project to review, validate, and approve its site polygons.
+              </Text>
+              <Box className="mx-auto max-w-sm text-left">
+                <ProjectPickerSelect />
+              </Box>
+            </Paper>
+          </Box>
         ) : (
           <Box className="w-full min-w-0 flex-1">
             <MapAreaProvider>
