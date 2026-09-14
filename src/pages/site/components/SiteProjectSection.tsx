@@ -40,7 +40,7 @@ import ApiSlice from "@/store/apiSlice";
 
 import DeleteSite from "./Modals/DeleteSite";
 import type { SiteIndexProject, SiteIndexSite, SiteIndexStatus, SiteIndexUpdate } from "./siteIndex.types";
-import { isSiteApproved } from "./siteIndex.utils";
+import { filterSiteIndexSites, isSiteApproved } from "./siteIndex.utils";
 import { useSiteIndexSelectionActions, useSiteTableSelection } from "./SiteIndexSelection.provider";
 import { isSiteDeletable } from "./siteIndexSubmit";
 
@@ -49,7 +49,11 @@ interface SiteProjectSectionProps {
   sites: SiteIndexSite[];
   totalSiteCount: number;
   isFiltered: boolean;
+  searchQuery?: string;
+  statusFilters?: SiteIndexStatus[];
+  updateFilter?: SiteIndexUpdate | null;
   defaultOpen?: boolean;
+  openResetKey?: string;
   onProjectOpened: (projectId: string) => void;
   onSitesChanged: () => void;
 }
@@ -340,7 +344,11 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   sites,
   totalSiteCount,
   isFiltered,
+  searchQuery = "",
+  statusFilters = [],
+  updateFilter = null,
   defaultOpen = false,
+  openResetKey,
   onProjectOpened,
   onSitesChanged
 }) => {
@@ -348,13 +356,26 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   const [open, setOpen] = useState(defaultOpen);
   const [siteToDelete, setSiteToDelete] = useState<SiteIndexSite | null>(null);
   const { setSiteSelected } = useSiteIndexSelectionActions();
-  const showSitesLoading = open && (project.sitesLoading || (!project.sitesLoaded && !isFiltered));
+  const showSitesLoading = open && (project.sitesLoading || !project.sitesLoaded);
+  const visibleSites = useMemo(
+    () =>
+      filterSiteIndexSites(sites, {
+        search: searchQuery,
+        statusFilters,
+        updateFilter
+      }),
+    [searchQuery, sites, statusFilters, updateFilter]
+  );
 
   useEffect(() => {
     if (open) {
       onProjectOpened(project.id);
     }
-  }, [isFiltered, onProjectOpened, open, project.id, project.sitesLoaded]);
+  }, [onProjectOpened, open, project.id, project.sitesLoaded]);
+
+  useEffect(() => {
+    setOpen(defaultOpen);
+  }, [defaultOpen, openResetKey]);
 
   const handleConfirmRowDelete = useCallback(async () => {
     if (siteToDelete == null) {
@@ -426,11 +447,11 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
             <>
               <SiteProjectMetrics
                 project={project}
-                sites={sites}
+                sites={visibleSites}
                 totalSiteCount={totalSiteCount}
                 isFiltered={isFiltered}
               />
-              <SiteProjectTable sites={sites} onDeleteSite={setSiteToDelete} />
+              <SiteProjectTable sites={visibleSites} onDeleteSite={setSiteToDelete} />
             </>
           )}
         </Box>

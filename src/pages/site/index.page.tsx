@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -25,7 +25,7 @@ import SiteIndexFilterDrawer, {
 } from "./components/SiteIndexFilterDrawer";
 import SiteIndexSelectionProvider, { useSiteIndexSelectionActions } from "./components/SiteIndexSelection.provider";
 import SiteProjectSection from "./components/SiteProjectSection";
-import { useSiteIndexData } from "./components/useSiteIndexData";
+import { SEARCH_DEBOUNCE_MS, useSiteIndexData } from "./components/useSiteIndexData";
 
 const SiteIndexPageContent = () => {
   const t = useT();
@@ -34,18 +34,30 @@ const SiteIndexPageContent = () => {
   const [reloadNonce, setReloadNonce] = useState(0);
   const [selectedProject, setSelectedProject] = useState(ALL_PROJECTS_VIEW);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilters, setStatusFilters] = useState<SiteIndexFilterStatus[]>([]);
   const [updateFilter, setUpdateFilter] = useState<SiteIndexFilterUpdate | null>(null);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => setDebouncedSearch(searchQuery.trim()), SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timeoutId);
+  }, [searchQuery]);
+
   const hasActiveSearch = searchQuery.trim().length > 0;
   const hasActiveFilters = hasActiveSearch || statusFilters.length > 0 || updateFilter != null;
-  const { loading, filtering, projects, totalSiteCount, onProjectOpened } = useSiteIndexData({
-    reloadNonce,
-    search: searchQuery,
-    statusFilters,
-    updateFilter,
-    projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject
-  });
+  const filtering = searchQuery.trim() !== debouncedSearch;
+  const { loading, loadingMore, hasMore, loadMore, viewProjects, projects, totalSiteCount, onProjectOpened } =
+    useSiteIndexData({
+      reloadNonce,
+      search: debouncedSearch,
+      statusFilters,
+      updateFilter,
+      projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject
+    });
+  const accordionOpenResetKey = `${selectedProject}:${debouncedSearch}:${statusFilters.join(",")}:${
+    updateFilter ?? ""
+  }`;
 
   const visibleProjects = useMemo(() => {
     const scopedProjects = projects.filter(
@@ -59,11 +71,25 @@ const SiteIndexPageContent = () => {
     return scopedProjects.filter(project => project.sites.length > 0);
   }, [hasActiveFilters, projects, selectedProject]);
 
-  const visibleSiteCount = hasActiveFilters
-    ? visibleProjects.reduce((total, project) => total + project.sites.length, 0)
-    : selectedProject === ALL_PROJECTS_VIEW
-    ? totalSiteCount
-    : visibleProjects[0]?.sites.length ?? 0;
+  const visibleSiteCount = totalSiteCount;
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (node == null || !hasMore || loading || loadingMore) return;
+
+    const observer = new IntersectionObserver(
+      entries => {
+        if (!entries.some(entry => entry.isIntersecting)) return;
+        void loadMore();
+      },
+      { rootMargin: "200px" }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, loadMore, loading, loadingMore, visibleProjects.length]);
+
   const selectedFilters = useMemo<SelectedFilter[]>(() => {
     const labels: SelectedFilter[] = [];
 
@@ -99,7 +125,7 @@ const SiteIndexPageContent = () => {
   );
 
   const handleAddSite = useCallback(() => {
-    const targetProject = projects.find(project => project.id === selectedProject);
+    const targetProject = viewProjects.find(project => project.id === selectedProject);
     if (targetProject == null) {
       showToast({
         label: t("Select a project from View to add a site."),
@@ -111,7 +137,7 @@ const SiteIndexPageContent = () => {
     }
 
     void router.push(getSiteCreateUrl(targetProject));
-  }, [projects, router, selectedProject, t]);
+  }, [router, selectedProject, t, viewProjects]);
 
   const clearFilters = useCallback(() => {
     setStatusFilters([]);
@@ -151,7 +177,7 @@ const SiteIndexPageContent = () => {
                 label={t("View:")}
                 items={[
                   { label: t("All"), value: ALL_PROJECTS_VIEW },
-                  ...projects.map(project => ({ label: project.name, value: project.id }))
+                  ...viewProjects.map(project => ({ label: project.name, value: project.id }))
                 ]}
                 value={selectedProject}
                 emptyMessage={t("No results found")}
@@ -162,7 +188,7 @@ const SiteIndexPageContent = () => {
               size="small"
               leftIcon={<PlusIcon boxSize="0.625rem" />}
               className="mobile:w-full"
-              disabled={projects.length === 0}
+              disabled={viewProjects.length === 0}
               onClick={handleAddSite}
             >
               {t("Add Site")}
@@ -208,11 +234,27 @@ const SiteIndexPageContent = () => {
                   sites={project.sites}
                   totalSiteCount={project.sites.length}
                   isFiltered={hasActiveFilters}
+                  searchQuery={debouncedSearch}
+                  statusFilters={statusFilters}
+                  updateFilter={updateFilter}
                   defaultOpen={index === 0}
+                  openResetKey={accordionOpenResetKey}
                   onProjectOpened={onProjectOpened}
                   onSitesChanged={handleSitesChanged}
                 />
               ))}
+              {hasMore ? (
+                <Flex ref={sentinelRef} minHeight="4rem" alignItems="center" justifyContent="center" gap={3}>
+                  {loadingMore ? (
+                    <>
+                      <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
+                      <Text textStyle="400" color="neutral.800">
+                        {t("Loading more sites...")}
+                      </Text>
+                    </>
+                  ) : null}
+                </Flex>
+              ) : null}
             </div>
 
             {visibleProjects.length === 0 ? (
