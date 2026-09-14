@@ -4,7 +4,7 @@ import mapboxgl from "mapbox-gl";
 import { useEffect, useRef } from "react";
 
 import { mapboxToken } from "@/constants/environment";
-import { getThemedColor } from "@/lib/theme";
+import { getThemedColorValue } from "@/lib/theme";
 
 /**
  * The site-rollup map for project polygon review's "rollup" mode (plan §3.2/T4) — a read-only map on
@@ -22,11 +22,14 @@ import { getThemedColor } from "@/lib/theme";
  * and it never mounts alongside the editing map (rollup and drill-in are mutually exclusive views).
  */
 // Pulled from the design-system theme tokens rather than picked by eye, so the map tracks the palette.
-const SITE_FILL = getThemedColor("primary", 500);
-const SITE_LINE = getThemedColor("primary", 700);
-const ANOMALY_FILL = getThemedColor("error", 500); // risk red — sites with failed/overlapping polygons
+// getThemedColorValue (not getThemedColor) is required here: Mapbox GL's paint parser cannot resolve a
+// CSS `var(--…)` reference, and an unparseable color silently drops the layer (the markers vanish while
+// the map still frames) — so these must be literal hex values.
+const SITE_FILL = getThemedColorValue("primary", 500);
+const SITE_LINE = getThemedColorValue("primary", 700);
+const ANOMALY_FILL = getThemedColorValue("error", 500); // risk red — sites with failed/overlapping polygons
 // error has no 600 token; 900 is the nearest darker shade, keeping the line darker than the fill.
-const ANOMALY_LINE = getThemedColor("error", 900);
+const ANOMALY_LINE = getThemedColorValue("error", 900);
 
 // 420px — kept as a named constant so the container avoids an arbitrary Tailwind value.
 const SITE_ROLLUP_MAP_MIN_HEIGHT = "26.25rem";
@@ -147,7 +150,7 @@ const SiteRollupMap = ({ featureCollection, onSelectSite, loading }: SiteRollupM
             "circle-color": [
               "case",
               ["boolean", ["feature-state", "selected"], false],
-              getThemedColor("warning", 500), // selection color
+              getThemedColorValue("warning", 500), // selection color
               ["boolean", ["get", "hasAnomaly"], false],
               ANOMALY_FILL,
               SITE_FILL
