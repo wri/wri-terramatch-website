@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -63,7 +63,7 @@ import { useSitePolygonTableData } from "@/pages/site/[uuid]/hooks/useSitePolygo
 import { showPolygonErrorToast } from "@/pages/site/[uuid]/utils/polygonOperationToasts";
 import { HIDDEN_STICKY_COLUMN_EDGE_STYLES } from "@/redesignComponents/dataDisplay/Table/tableStyles";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
-import { DownloadIcon } from "@/redesignComponents/foundations/Icons";
+import { AreaHectaresIcon, DownloadIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import Log from "@/utils/log";
@@ -72,6 +72,7 @@ import { isSitePolygonApprovable, toReviewAvailabilityPolygon } from "@/utils/si
 
 import PolygonReviewHeader from "@/pages/admin/polygonReview/PolygonReviewHeader";
 
+import CompactKpi from "./CompactKpi";
 import PolygonAnomalyStepper from "./PolygonAnomalyStepper";
 import { buildProjectOverlapPairs } from "./projectOverlapPairs";
 import ProjectPolygonSummaryTiles from "./ProjectPolygonSummaryTiles";
@@ -958,14 +959,7 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
 
   return (
     <>
-      <PolygonReviewHeader projectName={project.name ?? undefined} projectUuid={project.uuid}>
-        <ProjectPolygonSummaryTiles
-          counts={statusCounts}
-          isLoading={isLoadingCounts}
-          activeStatuses={polygonFilters.validationStatus}
-          onApplyStatuses={applyValidationStatuses}
-        />
-      </PolygonReviewHeader>
+      <PolygonReviewHeader projectName={project.name ?? undefined} projectUuid={project.uuid} />
       <PolygonEditDrawerDataSync
         polygons={polygonsData}
         onRefetchPolygons={refetchPolygons}
@@ -1007,6 +1001,20 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
             activeFilterLabels={activeFilterLabels}
             isAdminReview={isAdminReview}
             siteOptions={siteOptions}
+            rightContent={
+              <Flex gap={3} align="center">
+                <CompactKpi
+                  icon={<TreeIcon />}
+                  label={t("Trees Planted")}
+                  value={totalTreesPlanted.toLocaleString()}
+                />
+                <CompactKpi
+                  icon={<AreaHectaresIcon />}
+                  label={t("Restoration Area")}
+                  value={`${totalRestorationAreaHa.toLocaleString()} ha`}
+                />
+              </Flex>
+            }
             onSearchChange={setPolygonSearch}
             onApplyFilters={setPolygonFilters}
             onClearFilters={handleClearPolygonFilters}
@@ -1154,6 +1162,15 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
             }}
           />
         )}
+        {/* Status tiles sit between the map and the table. gap-5 (PageContent) separates them from the
+            map above; the tiles' own mb from the summary component sets them apart from what follows.
+            Kept always visible (independent of results) — they are the primary filter entry point. */}
+        <ProjectPolygonSummaryTiles
+          counts={statusCounts}
+          isLoading={isLoadingCounts}
+          activeStatuses={polygonFilters.validationStatus}
+          onApplyStatuses={applyValidationStatuses}
+        />
         {shouldShowNoResults ? (
           <Box>
             <Text textStyle="400-bold">{t("No results found")}</Text>
@@ -1175,6 +1192,8 @@ const ProjectFlatPolygonsView: FC<ProjectFlatPolygonsViewProps> = ({ project, va
                 onSelectOverlapPolygons={handleSelectOverlapPolygons}
                 crossSiteOverlapCount={crossSiteOverlapCount}
                 onSelectCrossSiteOverlapPolygons={handleSelectCrossSiteOverlapPolygons}
+                // KPI cards now live in the toolbar; keep only the overlap / cross-site / anomaly section.
+                showMetricCards={false}
                 anomalyStepper={
                   <PolygonAnomalyStepper anomalyUuids={anomalyUuids} onStepToPolygon={handleStepToAnomalyPolygon} />
                 }

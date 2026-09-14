@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { FC, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
@@ -12,6 +12,8 @@ interface SiteRollupToolbarProps {
   siteSearch: string;
   siteFilters: SiteRollupFilterState;
   activeFilterLabels: SelectedFilter[];
+  // Optional right-slot content (e.g. compact KPI boxes) rendered right-aligned in the toolbar.
+  rightContent?: ReactNode;
   onSearchChange: (value: string) => void;
   onApplyFilters: (filters: SiteRollupFilterState) => void;
   onClearFilters: () => void;
@@ -28,6 +30,7 @@ const SiteRollupToolbar: FC<SiteRollupToolbarProps> = ({
   siteSearch,
   siteFilters,
   activeFilterLabels,
+  rightContent,
   onSearchChange,
   onApplyFilters,
   onClearFilters
@@ -53,7 +56,10 @@ const SiteRollupToolbar: FC<SiteRollupToolbarProps> = ({
         onClearFilters={handleOnClearFilters}
         showClearFilters={activeFilterLabels.length > 0 || siteSearch.trim().length > 0}
         selectedFilters={activeFilterLabels}
-        classNameContentLeft="w-full"
+        rightContent={rightContent}
+        // With right-slot content present, the left group sizes to its content so the KPIs sit at the
+        // right edge (justify-between); otherwise it keeps its full-width behavior.
+        classNameContentLeft={rightContent != null ? undefined : "w-full"}
         search={{
           label: t(resultCount === 1 ? t("Site") : t("Sites")),
           placeholder: t("Search sites"),

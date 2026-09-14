@@ -1,20 +1,20 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import SitePolygonMetricsSection from "@/pages/site/[uuid]/components/SitePolygonMetricsSection";
 import PolygonReviewHeader from "@/pages/admin/polygonReview/PolygonReviewHeader";
 import {
   SITE_POLYGON_MAP_INITIAL_HEIGHT_UNITS,
   SITE_POLYGON_TAB_SCROLL_MARGIN_CLASS
 } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
 import ResizeBox from "@/redesignComponents/containers/ResizableSplitView/ResizableBox";
-import { DownloadIcon } from "@/redesignComponents/foundations/Icons";
+import { AreaHectaresIcon, DownloadIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
 import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 
+import CompactKpi from "./CompactKpi";
 import ProjectSiteRollupSummary from "./ProjectSiteRollupSummary";
 import ProjectSiteRollupTable from "./ProjectSiteRollupTable";
 import { buildSiteCentroidFeatureCollection } from "./siteCentroidFeatureCollection";
@@ -60,9 +60,7 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
 
   return (
     <>
-      <PolygonReviewHeader projectName={project.name ?? undefined} projectUuid={project.uuid}>
-        <ProjectSiteRollupSummary rows={rows} isLoading={!loaded} />
-      </PolygonReviewHeader>
+      <PolygonReviewHeader projectName={project.name ?? undefined} projectUuid={project.uuid} />
       <PageContent className="bg-theme-neutral-100">
       <PageItem
         title={t("Sites")}
@@ -89,6 +87,20 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
           siteSearch={siteSearch}
           siteFilters={siteFilters}
           activeFilterLabels={activeFilterLabels}
+          rightContent={
+            <Flex gap={3} align="center">
+              <CompactKpi
+                icon={<TreeIcon />}
+                label={t("Trees Planted")}
+                value={(project.treesPlantedCount ?? 0).toLocaleString()}
+              />
+              <CompactKpi
+                icon={<AreaHectaresIcon />}
+                label={t("Restoration Area")}
+                value={`${project.totalHectaresRestoredSum.toLocaleString()} ha`}
+              />
+            </Flex>
+          }
           onSearchChange={setSiteSearch}
           onApplyFilters={setSiteFilters}
           onClearFilters={handleClearSiteFilters}
@@ -111,21 +123,11 @@ const ProjectSiteRollupView: FC<ProjectSiteRollupViewProps> = ({ project, rows, 
             <SiteRollupMap featureCollection={featureCollection} onSelectSite={onSelectSite} loading={!loaded} />
           </ResizeBox>
 
-          {/* Project-wide trees planted + restoration area, using the same MetricCard design as the
-              site level. Rollup has no polygon selection, so the selection/overlap args are inert.
-              An extra top margin (matching PageContent's gap-5) sets the KPI cards clearly apart from
-              the map above, so they don't read as attached to it. */}
+          {/* Site status buckets sit between the map and the table. The trees/restoration KPIs now live
+              in the toolbar. An extra top margin (matching PageContent's gap-5) sets the buckets clearly
+              apart from the map above; the summary's own bottom margin separates it from the table. */}
           <Box mt={5}>
-            <SitePolygonMetricsSection
-              totalTreesPlanted={project.treesPlantedCount ?? 0}
-              totalRestorationAreaHa={project.totalHectaresRestoredSum}
-              restorationAreaGoal={project.totalHectaresRestoredGoal}
-              hasPolygonSelection={false}
-              selectedTreesPlanted={0}
-              selectedRestorationAreaRounded={0}
-              polygonsWithOverlapCount={0}
-              onSelectOverlapPolygons={() => {}}
-            />
+            <ProjectSiteRollupSummary rows={rows} isLoading={!loaded} />
           </Box>
 
           <ProjectSiteRollupTable

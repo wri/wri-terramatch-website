@@ -96,6 +96,8 @@ export interface ToolbarTableProps {
   onClickFilterButton?: () => void;
   selectedFilters?: SelectedFilter[];
   classNameContentLeft?: string;
+  /** Extra content rendered in the toolbar's right slot, composed after any button/tooltip. */
+  rightContent?: ReactNode;
 }
 
 export interface ViewToolbarProps {
