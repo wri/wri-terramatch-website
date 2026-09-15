@@ -3,16 +3,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { loadFullProject, loadProjectIndex, loadSiteIndex } from "@/connections/Entity";
 import { toFramework } from "@/context/framework.provider";
 import type { ProjectFullDto, ProjectLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
+import ApiSlice, { type ApiFilteredIndexCache } from "@/store/apiSlice";
 import Log from "@/utils/log";
 
-import type { SiteIndexProject, SiteIndexSite } from "./siteIndex.types";
-import {
-  groupSitesByProject,
-  mapSiteToIndexSite,
-  toSiteIndexProject,
-  toSiteIndexUpdateRequestStatus
-} from "./siteIndex.utils";
+import type { SiteIndexProject } from "./siteIndex.types";
+import { mapSiteToIndexSite, toSiteIndexProject, toSiteIndexUpdateRequestStatus } from "./siteIndex.utils";
 import type { SiteIndexFilterStatus, SiteIndexFilterUpdate } from "./SiteIndexFilterDrawer";
 
 type UseSiteIndexDataParams = {
@@ -34,10 +29,21 @@ type UseSiteIndexDataResult = {
   onProjectOpened: (projectId: string) => void;
 };
 
-export const DISCOVERY_PAGE_SIZE = 25;
-export const PROJECT_INDEX_PAGE_SIZE = 100;
+export const PROJECT_PAGE_SIZE = 10;
+
+const PROJECT_SITE_SIDELOADS = [{ entity: "sites" as const, pageSize: 100 }];
+const SEARCH_SITES_PAGE_SIZE = 100;
+const SEARCH_SITES_MAX_PAGES = 3;
+const CLOSED_PROJECT_ROW_PX = 80;
+const PAGE_CHROME_PX = 280;
 export const SECTION_SITES_PAGE_SIZE = 100;
 export const SEARCH_DEBOUNCE_MS = 300;
+
+const getViewportProjectCount = () => {
+  if (typeof window === "undefined") return PROJECT_PAGE_SIZE;
+  const availableHeight = window.innerHeight - PAGE_CHROME_PX;
+  return Math.max(1, Math.min(20, Math.ceil(availableHeight / CLOSED_PROJECT_ROW_PX)));
+};
 
 type IndexPage<T> = {
   data?: T[] | null;
@@ -45,24 +51,101 @@ type IndexPage<T> = {
   loadFailure?: unknown;
 };
 
-type SiteIndexFilter = {
-  projectUuid?: string;
+const loadLimitedIndexPages = async <T>(
+  loadPage: (pageNumber: number) => Promise<IndexPage<T>>,
+  pageSize: number,
+  maxPages: number
+): Promise<T[]> => {
+  const firstPage = await loadPage(1);
+  if (firstPage.loadFailure != null) throw firstPage.loadFailure;
+
+  const items = [...(firstPage.data ?? [])];
+  const total = firstPage.indexTotal ?? items.length;
+  const lastPage = Math.min(maxPages, Math.max(1, Math.ceil(total / pageSize)));
+
+  for (let pageNumber = 2; pageNumber <= lastPage; pageNumber++) {
+    const page = await loadPage(pageNumber);
+    if (page.loadFailure != null) throw page.loadFailure;
+    items.push(...(page.data ?? []));
+  }
+
+  return items;
+};
+
+const getSiteProjectId = (site: SiteLightDto) => {
+  const typed = site as SiteLightDto & { projectUuid?: string | null };
+  if (typed.projectUuid != null && typed.projectUuid !== "") return typed.projectUuid;
+
+  const related =
+    ApiSlice.currentState.sites[site.uuid]?.relationships?.project ??
+    ApiSlice.currentState.sites[site.uuid]?.relationships?.projects ??
+    [];
+  const relatedId = related[0]?.id;
+  return relatedId != null && relatedId !== "" ? relatedId : null;
+};
+
+const loadFilteredSites = async ({
+  search = "",
+  status,
+  updateRequestStatus,
+  projectUuid
+}: {
   search?: string;
   status?: string;
   updateRequestStatus?: string;
+  projectUuid?: string;
+}) => {
+  try {
+    return await loadLimitedIndexPages<SiteLightDto>(
+      pageNumber =>
+        loadSiteIndex({
+          pageNumber,
+          pageSize: SEARCH_SITES_PAGE_SIZE,
+          sortField: "name",
+          sortDirection: "ASC",
+          filter: {
+            ...(search === "" ? {} : { search }),
+            ...(status == null || status === "" ? {} : { status }),
+            ...(updateRequestStatus == null || updateRequestStatus === "" ? {} : { updateRequestStatus }),
+            ...(requireProjectUuid(projectUuid) ? { projectUuid } : {})
+          }
+        }),
+      SEARCH_SITES_PAGE_SIZE,
+      SEARCH_SITES_MAX_PAGES
+    );
+  } catch (error) {
+    Log.error("Failed to filter sites", error);
+    return [] as SiteLightDto[];
+  }
 };
 
-const mergeByUuid = <T extends { uuid: string }>(current: T[], incoming: T[]) => {
-  const seen = new Set(current.map(item => item.uuid));
-  const next = [...current];
+const loadSitesForFilters = async ({
+  search = "",
+  statusFilters = [],
+  updateFilter = null,
+  projectUuid
+}: {
+  search?: string;
+  statusFilters?: SiteIndexFilterStatus[];
+  updateFilter?: SiteIndexFilterUpdate | null;
+  projectUuid?: string;
+}) => {
+  const updateRequestStatus = toSiteIndexUpdateRequestStatus(updateFilter);
+  const statuses = statusFilters.length > 0 ? statusFilters : [undefined];
+  const pages = await Promise.all(
+    statuses.map(status =>
+      loadFilteredSites({
+        search,
+        status,
+        updateRequestStatus,
+        projectUuid
+      })
+    )
+  );
 
-  incoming.forEach(item => {
-    if (seen.has(item.uuid)) return;
-    seen.add(item.uuid);
-    next.push(item);
-  });
-
-  return next;
+  const sitesById = new Map<string, SiteLightDto>();
+  pages.flat().forEach(site => sitesById.set(site.uuid, site));
+  return [...sitesById.values()];
 };
 
 const loadAllIndexPages = async <T>(
@@ -70,12 +153,15 @@ const loadAllIndexPages = async <T>(
   pageSize: number
 ): Promise<T[]> => {
   const firstPage = await loadPage(1);
+  if (firstPage.loadFailure != null) throw firstPage.loadFailure;
+
   const items = [...(firstPage.data ?? [])];
   const total = firstPage.indexTotal ?? items.length;
   const lastPage = Math.max(1, Math.ceil(total / pageSize));
 
   for (let pageNumber = 2; pageNumber <= lastPage; pageNumber++) {
     const page = await loadPage(pageNumber);
+    if (page.loadFailure != null) throw page.loadFailure;
     items.push(...(page.data ?? []));
   }
 
@@ -85,77 +171,69 @@ const loadAllIndexPages = async <T>(
 const asFullProject = (project: ProjectLightDto | ProjectFullDto | undefined): ProjectFullDto | undefined =>
   project != null && project.lightResource === false ? (project as ProjectFullDto) : undefined;
 
-const uniqueSites = (sites: SiteLightDto[]) => {
-  const byId = new Map<string, SiteLightDto>();
-  sites.forEach(site => {
-    byId.set(site.uuid, site);
-  });
-  return Array.from(byId.values());
+const requireProjectUuid = (projectUuid?: string): projectUuid is string => projectUuid != null && projectUuid !== "";
+
+const projectMatchesSearch = (project: ProjectLightDto, search: string) => {
+  if (search === "") return true;
+  const query = search.toLocaleLowerCase();
+  return [project.name, project.organisationName, project.shortName].some(value =>
+    (value ?? "").toLocaleLowerCase().includes(query)
+  );
 };
 
-const buildSiteFilters = ({
-  projectUuid,
-  search,
-  status,
-  updateRequestStatus
-}: SiteIndexFilter): SiteIndexFilter | undefined => {
-  const filter: SiteIndexFilter = {};
+const getSideloadedSitesPage = (projectUuid: string) => {
+  if (!requireProjectUuid(projectUuid)) return null;
 
-  if (projectUuid != null && projectUuid !== "") {
-    filter.projectUuid = projectUuid;
-  }
-  if (search != null && search !== "") {
-    filter.search = search;
-  }
-  if (status != null && status !== "") {
-    filter.status = status;
-  }
-  if (updateRequestStatus != null && updateRequestStatus !== "") {
-    filter.updateRequestStatus = updateRequestStatus;
+  const sitePages = ApiSlice.currentState.meta.indices.sites;
+  if (sitePages == null) return null;
+
+  const marker = `projectUuid=${projectUuid}`;
+
+  for (const [requestPath, pages] of Object.entries(sitePages) as [string, Record<number, ApiFilteredIndexCache>][]) {
+    const path = decodeURIComponent(requestPath);
+    if (!requestPath.includes(marker) && !path.includes(marker)) continue;
+    return pages[1] ?? Object.values(pages)[0] ?? null;
   }
 
-  return Object.keys(filter).length > 0 ? filter : undefined;
+  return null;
 };
 
-const loadSiteDiscoveryPage = async (
-  pageNumber: number,
-  query: {
-    search?: string;
-    projectUuid?: string;
-    statusFilters: SiteIndexFilterStatus[];
-    updateRequestStatus?: string;
+const getSideloadedSiteCount = (projectUuid: string) => {
+  const page = getSideloadedSitesPage(projectUuid);
+  if (page == null) return 0;
+  return page.total ?? page.ids.length;
+};
+
+const getSideloadedSites = (projectUuid: string) => {
+  const page = getSideloadedSitesPage(projectUuid);
+  if (page == null) return [] as SiteLightDto[];
+
+  return page.ids
+    .map(id => ApiSlice.currentState.sites[id]?.attributes as SiteLightDto | undefined)
+    .filter((site): site is SiteLightDto => site != null);
+};
+
+const loadProjectSites = async (projectUuid: string) => {
+  if (!requireProjectUuid(projectUuid)) {
+    Log.error("Skipped sites request without projectUuid");
+    return [] as SiteLightDto[];
   }
-) => {
-  const statuses = query.statusFilters.length > 0 ? query.statusFilters : [undefined];
-  const pages = await Promise.all(
-    statuses.map(status =>
+
+  const sideloaded = getSideloadedSites(projectUuid);
+  const total = getSideloadedSiteCount(projectUuid);
+  if (sideloaded.length >= total) return sideloaded;
+
+  return loadAllIndexPages<SiteLightDto>(
+    pageNumber =>
       loadSiteIndex({
         pageNumber,
-        pageSize: DISCOVERY_PAGE_SIZE,
-        filter: buildSiteFilters({
-          projectUuid: query.projectUuid,
-          search: query.search,
-          status,
-          updateRequestStatus: query.updateRequestStatus
-        })
-      })
-    )
+        pageSize: SECTION_SITES_PAGE_SIZE,
+        sortField: "name",
+        sortDirection: "ASC",
+        filter: { projectUuid }
+      }),
+    SECTION_SITES_PAGE_SIZE
   );
-
-  const failedPage = pages.find(page => page.loadFailure != null);
-  if (failedPage?.loadFailure != null) {
-    throw failedPage.loadFailure;
-  }
-
-  const data = uniqueSites(pages.flatMap(page => page.data ?? []));
-  const indexTotal = pages.reduce((total, page) => total + (page.indexTotal ?? 0), 0);
-  const maxTotal = Math.max(0, ...pages.map(page => page.indexTotal ?? 0));
-
-  return {
-    data,
-    indexTotal,
-    hasMore: pageNumber * DISCOVERY_PAGE_SIZE < maxTotal
-  };
 };
 
 export const useSiteIndexData = ({
@@ -168,128 +246,383 @@ export const useSiteIndexData = ({
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [projectIndex, setProjectIndex] = useState<ProjectLightDto[]>([]);
-  const [discoveredSites, setDiscoveredSites] = useState<SiteLightDto[]>([]);
-  const [sitesByProjectId, setSitesByProjectId] = useState<Map<string, SiteIndexSite[]>>(new Map());
+  const [siteCountByProjectId, setSiteCountByProjectId] = useState<Map<string, number>>(new Map());
+  const [sitesByProjectId, setSitesByProjectId] = useState<Map<string, SiteIndexProject["sites"]>>(new Map());
   const [fullProjectsById, setFullProjectsById] = useState<Map<string, ProjectFullDto>>(new Map());
   const [loadedProjectIds, setLoadedProjectIds] = useState<Set<string>>(new Set());
   const [loadingProjectIds, setLoadingProjectIds] = useState<Set<string>>(new Set());
-  const [totalSiteCount, setTotalSiteCount] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
+  const [hasMorePages, setHasMorePages] = useState(false);
 
   const projectIndexRef = useRef(projectIndex);
-  projectIndexRef.current = projectIndex;
   const loadedProjectIdsRef = useRef(loadedProjectIds);
   loadedProjectIdsRef.current = loadedProjectIds;
   const fullProjectsByIdRef = useRef(fullProjectsById);
   fullProjectsByIdRef.current = fullProjectsById;
-  const inFlightRef = useRef(new Map<string, Promise<void>>());
-  const pageRef = useRef(1);
-  const hasMoreRef = useRef(false);
-  const loadingMoreRef = useRef(false);
+  const siteCountByProjectIdRef = useRef(siteCountByProjectId);
+  siteCountByProjectIdRef.current = siteCountByProjectId;
+  const matchingProjectsRef = useRef<ProjectLightDto[]>([]);
+  const nextPageNumberRef = useRef(1);
+  const projectTotalRef = useRef<number | null>(null);
+  const probingRef = useRef(false);
+  const inFlightRef = useRef(new Set<string>());
   const requestIdRef = useRef(0);
+  const projectUuidRef = useRef(projectUuid);
+  projectUuidRef.current = projectUuid;
 
   const normalisedSearch = search.trim();
-  const updateRequestStatus = toSiteIndexUpdateRequestStatus(updateFilter);
 
-  const queryRef = useRef({
-    search: normalisedSearch,
-    projectUuid,
-    statusFilters,
-    updateRequestStatus
-  });
-  queryRef.current = {
-    search: normalisedSearch,
-    projectUuid,
-    statusFilters,
-    updateRequestStatus
-  };
+  const loadSitesIfNeeded = useCallback(async (projectId: string) => {
+    if (!requireProjectUuid(projectId)) return;
+    if (
+      !projectIndexRef.current.some(project => project.uuid === projectId) ||
+      loadedProjectIdsRef.current.has(projectId) ||
+      inFlightRef.current.has(projectId)
+    ) {
+      return;
+    }
 
-  const loadMore = useCallback(async () => {
-    if (loadingMoreRef.current || !hasMoreRef.current) return;
-
-    loadingMoreRef.current = true;
-    setLoadingMore(true);
+    inFlightRef.current.add(projectId);
     const requestId = requestIdRef.current;
-    const nextPage = pageRef.current + 1;
+    setLoadingProjectIds(current => new Set(current).add(projectId));
 
     try {
-      const page = await loadSiteDiscoveryPage(nextPage, queryRef.current);
+      const loadedSites = await loadProjectSites(projectId);
       if (requestId !== requestIdRef.current) return;
 
-      setDiscoveredSites(current => mergeByUuid(current, page.data));
-      pageRef.current = nextPage;
-      hasMoreRef.current = page.hasMore;
-      setHasMore(page.hasMore);
-      setTotalSiteCount(page.indexTotal);
-    } catch (error) {
-      if (requestId !== requestIdRef.current) return;
-      Log.error("Failed to load more sites", error);
+      const project = projectIndexRef.current.find(item => item.uuid === projectId);
+      const mappedSites = loadedSites.map(site => mapSiteToIndexSite(site, toFramework(project?.frameworkKey)));
+
+      loadedProjectIdsRef.current = new Set(loadedProjectIdsRef.current).add(projectId);
+      setSitesByProjectId(current => new Map(current).set(projectId, mappedSites));
+      setLoadedProjectIds(current => new Set(current).add(projectId));
+      setSiteCountByProjectId(current => {
+        const next = new Map(current);
+        next.set(projectId, mappedSites.length);
+        siteCountByProjectIdRef.current = next;
+        return next;
+      });
+
+      if (fullProjectsByIdRef.current.has(projectId)) return;
+
+      const result = await loadFullProject({ id: projectId });
+      if (requestId !== requestIdRef.current || result.data == null) return;
+
+      setFullProjectsById(current => {
+        if (current.has(projectId)) return current;
+        const next = new Map(current);
+        next.set(projectId, result.data!);
+        return next;
+      });
+    } catch {
+      loadedProjectIdsRef.current = new Set(loadedProjectIdsRef.current).add(projectId);
+      setLoadedProjectIds(current => new Set(current).add(projectId));
     } finally {
-      if (requestId === requestIdRef.current) {
-        loadingMoreRef.current = false;
-        setLoadingMore(false);
-      }
+      inFlightRef.current.delete(projectId);
+      setLoadingProjectIds(current => {
+        const next = new Set(current);
+        next.delete(projectId);
+        return next;
+      });
     }
   }, []);
+
+  const matchingProjects = useMemo(() => {
+    const source = projectUuid != null ? projectIndex.filter(project => project.uuid === projectUuid) : projectIndex;
+
+    if (normalisedSearch === "") return source;
+
+    const query = normalisedSearch.toLocaleLowerCase();
+    return source.filter(project => {
+      if (projectMatchesSearch(project, normalisedSearch)) return true;
+      return (sitesByProjectId.get(project.uuid) ?? []).some(site => site.name.toLocaleLowerCase().includes(query));
+    });
+  }, [normalisedSearch, projectIndex, projectUuid, sitesByProjectId]);
+  matchingProjectsRef.current = matchingProjects;
+
+  const countProjectsWithSites = () =>
+    matchingProjectsRef.current.filter(project => (siteCountByProjectIdRef.current.get(project.uuid) ?? 0) > 0).length;
+
+  const hasMoreProjectPages = () => {
+    if (projectTotalRef.current == null) return true;
+    return (nextPageNumberRef.current - 1) * PROJECT_PAGE_SIZE < projectTotalRef.current;
+  };
+
+  const loadNextProjectPage = useCallback(
+    async (requestId: number) => {
+      if (!hasMoreProjectPages() || requestId !== requestIdRef.current) return [] as ProjectLightDto[];
+
+      const search = normalisedSearch;
+      const page = await loadProjectIndex({
+        pageNumber: nextPageNumberRef.current,
+        pageSize: PROJECT_PAGE_SIZE,
+        sortField: "name",
+        sortDirection: "ASC",
+        sideloads: PROJECT_SITE_SIDELOADS,
+        ...(search === "" ? {} : { filter: { search } })
+      });
+
+      if (page.loadFailure != null && (page.data == null || page.data.length === 0)) {
+        throw page.loadFailure;
+      }
+      if (requestId !== requestIdRef.current) return [] as ProjectLightDto[];
+
+      const loadedProjects = page.data ?? [];
+      nextPageNumberRef.current += 1;
+
+      if (page.indexTotal != null) {
+        projectTotalRef.current = page.indexTotal;
+      } else if (loadedProjects.length < PROJECT_PAGE_SIZE) {
+        projectTotalRef.current = projectIndexRef.current.length + loadedProjects.length;
+      }
+
+      if (loadedProjects.length === 0) {
+        setHasMorePages(false);
+        return [] as ProjectLightDto[];
+      }
+
+      const existingIds = new Set(projectIndexRef.current.map(project => project.uuid));
+      const newProjects = loadedProjects.filter(project => !existingIds.has(project.uuid));
+      const nextProjects = [...projectIndexRef.current, ...newProjects];
+      projectIndexRef.current = nextProjects;
+      matchingProjectsRef.current = nextProjects.filter(project => projectMatchesSearch(project, search));
+      setProjectIndex(nextProjects);
+      setHasMorePages(hasMoreProjectPages());
+
+      const cachedFullProjects = new Map(fullProjectsByIdRef.current);
+      newProjects.forEach(project => {
+        const fullProject = asFullProject(project);
+        if (fullProject != null) cachedFullProjects.set(project.uuid, fullProject);
+      });
+      if (cachedFullProjects.size !== fullProjectsByIdRef.current.size) {
+        fullProjectsByIdRef.current = cachedFullProjects;
+        setFullProjectsById(cachedFullProjects);
+      }
+
+      return newProjects;
+    },
+    [normalisedSearch]
+  );
+
+  const applySideloadedSiteCounts = (projects: ProjectLightDto[]) => {
+    if (projects.length === 0) return;
+
+    const nextCounts = new Map(siteCountByProjectIdRef.current);
+    projects.forEach(project => {
+      nextCounts.set(project.uuid, getSideloadedSiteCount(project.uuid));
+    });
+    siteCountByProjectIdRef.current = nextCounts;
+    setSiteCountByProjectId(nextCounts);
+  };
+
+  const appendProject = (project: ProjectLightDto | ProjectFullDto) => {
+    if (projectIndexRef.current.some(item => item.uuid === project.uuid)) return;
+
+    const nextProjects = [...projectIndexRef.current, project as ProjectLightDto];
+    projectIndexRef.current = nextProjects;
+    matchingProjectsRef.current = nextProjects;
+    setProjectIndex(nextProjects);
+
+    const fullProject = asFullProject(project);
+    if (fullProject != null && !fullProjectsByIdRef.current.has(project.uuid)) {
+      const nextFull = new Map(fullProjectsByIdRef.current);
+      nextFull.set(project.uuid, fullProject);
+      fullProjectsByIdRef.current = nextFull;
+      setFullProjectsById(nextFull);
+    }
+  };
+
+  const mergeSearchSites = useCallback(async (sites: SiteLightDto[], requestId: number) => {
+    if (sites.length === 0 || requestId !== requestIdRef.current) return;
+
+    const sitesByProject = new Map<string, SiteLightDto[]>();
+    const unmatched: SiteLightDto[] = [];
+
+    sites.forEach(site => {
+      const projectId = getSiteProjectId(site);
+      if (projectId == null) {
+        unmatched.push(site);
+        return;
+      }
+      const current = sitesByProject.get(projectId) ?? [];
+      current.push(site);
+      sitesByProject.set(projectId, current);
+    });
+
+    const matchByName = (site: SiteLightDto) => {
+      const projectName = (site.projectName ?? "").trim().toLocaleLowerCase();
+      if (projectName === "") return;
+      const project = projectIndexRef.current.find(
+        item =>
+          (item.name ?? "").trim().toLocaleLowerCase() === projectName ||
+          (item.shortName ?? "").trim().toLocaleLowerCase() === projectName
+      );
+      if (project == null) return;
+      const current = sitesByProject.get(project.uuid) ?? [];
+      current.push(site);
+      sitesByProject.set(project.uuid, current);
+    };
+
+    unmatched.forEach(matchByName);
+
+    const remaining = unmatched.filter(site => {
+      const projectName = (site.projectName ?? "").trim().toLocaleLowerCase();
+      return (
+        projectName !== "" &&
+        !projectIndexRef.current.some(
+          item =>
+            (item.name ?? "").trim().toLocaleLowerCase() === projectName ||
+            (item.shortName ?? "").trim().toLocaleLowerCase() === projectName
+        )
+      );
+    });
+
+    const missingNames = [...new Set(remaining.map(site => site.projectName?.trim() ?? "").filter(Boolean))];
+    await Promise.all(
+      missingNames.map(async name => {
+        try {
+          const page = await loadProjectIndex({
+            pageNumber: 1,
+            pageSize: PROJECT_PAGE_SIZE,
+            sortField: "name",
+            sortDirection: "ASC",
+            sideloads: PROJECT_SITE_SIDELOADS,
+            filter: { search: name }
+          });
+          if (requestId !== requestIdRef.current) return;
+          (page.data ?? []).forEach(appendProject);
+          applySideloadedSiteCounts(page.data ?? []);
+        } catch (error) {
+          Log.error("Failed to load project for site name search", error);
+        }
+      })
+    );
+
+    if (requestId !== requestIdRef.current) return;
+    remaining.forEach(matchByName);
+
+    const missingIds = [...sitesByProject.keys()].filter(
+      id => !projectIndexRef.current.some(project => project.uuid === id)
+    );
+    await Promise.all(
+      missingIds.map(async id => {
+        const result = await loadFullProject({ id });
+        if (requestId !== requestIdRef.current || result.data == null) return;
+        appendProject(result.data);
+      })
+    );
+
+    if (requestId !== requestIdRef.current) return;
+
+    setSitesByProjectId(current => {
+      const next = new Map(current);
+      sitesByProject.forEach((projectSites, projectId) => {
+        const project = projectIndexRef.current.find(item => item.uuid === projectId);
+        next.set(
+          projectId,
+          projectSites.map(site => mapSiteToIndexSite(site, toFramework(project?.frameworkKey ?? site.frameworkKey)))
+        );
+      });
+      return next;
+    });
+
+    loadedProjectIdsRef.current = new Set([...loadedProjectIdsRef.current, ...sitesByProject.keys()]);
+    setLoadedProjectIds(current => new Set([...current, ...sitesByProject.keys()]));
+
+    const nextCounts = new Map(siteCountByProjectIdRef.current);
+    sitesByProject.forEach((projectSites, projectId) => {
+      nextCounts.set(
+        projectId,
+        Math.max(nextCounts.get(projectId) ?? 0, projectSites.length, getSideloadedSiteCount(projectId))
+      );
+    });
+    siteCountByProjectIdRef.current = nextCounts;
+    setSiteCountByProjectId(nextCounts);
+  }, []);
+
+  const loadNextProjectBatch = useCallback(
+    async (requestId: number) => {
+      if (requestId !== requestIdRef.current) return false;
+      probingRef.current = true;
+
+      try {
+        const newProjects = await loadNextProjectPage(requestId);
+        if (requestId !== requestIdRef.current) return false;
+        applySideloadedSiteCounts(newProjects);
+        return newProjects.length > 0;
+      } catch (error) {
+        Log.error("Failed to load next project page for site index", error);
+        return false;
+      } finally {
+        if (requestId === requestIdRef.current) probingRef.current = false;
+      }
+    },
+    [loadNextProjectPage]
+  );
 
   useEffect(() => {
     let cancelled = false;
     const requestId = ++requestIdRef.current;
-    pageRef.current = 1;
-    hasMoreRef.current = false;
-    loadingMoreRef.current = false;
     inFlightRef.current.clear();
     loadedProjectIdsRef.current = new Set();
+    probingRef.current = false;
+    nextPageNumberRef.current = 1;
+    projectTotalRef.current = null;
+    projectIndexRef.current = [];
+    matchingProjectsRef.current = [];
 
     const loadIndex = async () => {
       setLoading(true);
       setLoadingMore(false);
-      setHasMore(false);
-      setDiscoveredSites([]);
+      setHasMorePages(false);
+      setProjectIndex([]);
+      setSiteCountByProjectId(new Map());
+      siteCountByProjectIdRef.current = new Map();
       setSitesByProjectId(new Map());
       setLoadedProjectIds(new Set());
       setLoadingProjectIds(new Set());
+      setFullProjectsById(new Map());
+      fullProjectsByIdRef.current = new Map();
 
       if (reloadNonce > 0) {
         ApiSlice.pruneIndex("projects", "");
         ApiSlice.pruneIndex("sites", "");
       }
 
-      try {
-        const [loadedProjects, firstSites] = await Promise.all([
-          loadAllIndexPages<ProjectLightDto>(
-            pageNumber => loadProjectIndex({ pageNumber, pageSize: PROJECT_INDEX_PAGE_SIZE }),
-            PROJECT_INDEX_PAGE_SIZE
-          ),
-          loadSiteDiscoveryPage(1, queryRef.current)
-        ]);
+      const visibleTarget = getViewportProjectCount();
+      const hasStatusOrUpdateFilter = statusFilters.length > 0 || updateFilter != null;
 
-        if (cancelled || requestId !== requestIdRef.current) {
-          return;
+      try {
+        if (normalisedSearch !== "" || hasStatusOrUpdateFilter) {
+          const matchingSites = await loadSitesForFilters({
+            search: normalisedSearch,
+            statusFilters,
+            updateFilter,
+            projectUuid
+          });
+          if (cancelled || requestId !== requestIdRef.current) return;
+          await mergeSearchSites(matchingSites, requestId);
         }
 
-        const cachedFullProjects = new Map<string, ProjectFullDto>();
-        loadedProjects.forEach(project => {
-          const fullProject = asFullProject(project);
-          if (fullProject != null) {
-            cachedFullProjects.set(project.uuid, fullProject);
-          }
-        });
+        if (!hasStatusOrUpdateFilter) {
+          do {
+            const loadedBatch = await loadNextProjectBatch(requestId);
+            if (!loadedBatch) break;
+          } while (
+            !cancelled &&
+            requestId === requestIdRef.current &&
+            hasMoreProjectPages() &&
+            countProjectsWithSites() < visibleTarget
+          );
+        }
 
-        setFullProjectsById(cachedFullProjects);
-        setProjectIndex(loadedProjects);
-        setDiscoveredSites(firstSites.data);
-        setTotalSiteCount(firstSites.indexTotal);
-        hasMoreRef.current = firstSites.hasMore;
-        setHasMore(firstSites.hasMore);
-        setLoading(false);
+        if (!cancelled && requestId === requestIdRef.current) {
+          setHasMorePages(!hasStatusOrUpdateFilter && hasMoreProjectPages());
+          setLoading(false);
+        }
       } catch (error) {
         Log.error("Failed to load site index", error);
         if (!cancelled && requestId === requestIdRef.current) {
-          setProjectIndex([]);
-          setDiscoveredSites([]);
-          setTotalSiteCount(0);
-          setHasMore(false);
+          setHasMorePages(!hasStatusOrUpdateFilter && hasMoreProjectPages());
           setLoading(false);
         }
       }
@@ -300,131 +633,72 @@ export const useSiteIndexData = ({
     return () => {
       cancelled = true;
     };
-  }, [normalisedSearch, projectUuid, reloadNonce, statusFilters, updateRequestStatus]);
+  }, [loadNextProjectBatch, normalisedSearch, projectUuid, reloadNonce, statusFilters, updateFilter, mergeSearchSites]);
 
-  const loadSitesIfNeeded = useCallback(async (projectId: string) => {
-    const isKnownProject = projectIndexRef.current.some(project => project.uuid === projectId);
-    if (!isKnownProject || loadedProjectIdsRef.current.has(projectId) || inFlightRef.current.has(projectId)) {
+  const projectsWithSites = useMemo(
+    () => matchingProjects.filter(project => (siteCountByProjectId.get(project.uuid) ?? 0) > 0),
+    [matchingProjects, siteCountByProjectId]
+  );
+
+  const loadMore = useCallback(async () => {
+    if (
+      projectUuidRef.current != null ||
+      statusFilters.length > 0 ||
+      updateFilter != null ||
+      !hasMorePages ||
+      probingRef.current
+    ) {
       return;
     }
 
     const requestId = requestIdRef.current;
-    const request = (async () => {
-      setLoadingProjectIds(current => new Set(current).add(projectId));
-
-      try {
-        const cachedFullProject = fullProjectsByIdRef.current.get(projectId);
-        const [loadedSites, fullProject] = await Promise.all([
-          loadAllIndexPages<SiteLightDto>(
-            pageNumber =>
-              loadSiteIndex({
-                pageNumber,
-                pageSize: SECTION_SITES_PAGE_SIZE,
-                sortField: "name",
-                sortDirection: "ASC",
-                filter: buildSiteFilters({ projectUuid: projectId })
-              }),
-            SECTION_SITES_PAGE_SIZE
-          ),
-          cachedFullProject != null
-            ? Promise.resolve(cachedFullProject)
-            : loadFullProject({ id: projectId })
-                .then(result => result.data ?? null)
-                .catch(error => {
-                  Log.error("Failed to load full project for site index metrics", error);
-                  return null;
-                })
-        ]);
-
-        if (requestId !== requestIdRef.current) {
-          return;
-        }
-
-        const project = projectIndexRef.current.find(item => item.uuid === projectId);
-        const frameworkKey = toFramework(project?.frameworkKey);
-        const mappedSites = loadedSites.map(site => mapSiteToIndexSite(site, frameworkKey));
-
-        if (fullProject != null) {
-          setFullProjectsById(current => {
-            if (current.has(projectId)) {
-              return current;
-            }
-            const next = new Map(current);
-            next.set(projectId, fullProject);
-            return next;
-          });
-        }
-
-        loadedProjectIdsRef.current = new Set(loadedProjectIdsRef.current).add(projectId);
-        setSitesByProjectId(current => new Map(current).set(projectId, mappedSites));
-        setLoadedProjectIds(current => new Set(current).add(projectId));
-      } catch (error) {
-        Log.error("Failed to load sites for project", error);
-      } finally {
-        inFlightRef.current.delete(projectId);
-        if (requestId === requestIdRef.current) {
-          setLoadingProjectIds(current => {
-            const next = new Set(current);
-            next.delete(projectId);
-            return next;
-          });
-        }
+    setLoadingMore(true);
+    try {
+      await loadNextProjectBatch(requestId);
+    } finally {
+      if (requestId === requestIdRef.current) {
+        setHasMorePages(hasMoreProjectPages());
+        setLoadingMore(false);
       }
-    })();
-
-    inFlightRef.current.set(projectId, request);
-    await request;
-  }, []);
-
-  const onProjectOpened = useCallback(
-    (projectId: string) => {
-      void loadSitesIfNeeded(projectId);
-    },
-    [loadSitesIfNeeded]
-  );
+    }
+  }, [hasMorePages, loadNextProjectBatch, statusFilters.length, updateFilter]);
 
   const viewProjects = useMemo(
     () =>
-      projectIndex
-        .map(project =>
-          toSiteIndexProject(project, {
-            fullProject: fullProjectsById.get(project.uuid) ?? asFullProject(project)
-          })
-        )
-        .sort((left, right) => left.name.localeCompare(right.name)),
+      projectIndex.map(project =>
+        toSiteIndexProject(project, {
+          fullProject: fullProjectsById.get(project.uuid) ?? asFullProject(project)
+        })
+      ),
     [fullProjectsById, projectIndex]
   );
 
-  const projects = useMemo(() => {
-    return groupSitesByProject(projectIndex, discoveredSites, fullProjectsById)
-      .filter(section => section.sites.length > 0)
-      .map(section => {
-        const lightProject = projectIndex.find(item => item.uuid === section.id);
-        const sites = sitesByProjectId.get(section.id) ?? section.sites;
-        const sitesLoaded = loadedProjectIds.has(section.id);
-        const sitesLoading = loadingProjectIds.has(section.id);
+  const projects = useMemo(
+    () =>
+      projectsWithSites.map(project =>
+        toSiteIndexProject(project, {
+          fullProject: fullProjectsById.get(project.uuid) ?? asFullProject(project),
+          sites: sitesByProjectId.get(project.uuid) ?? [],
+          sitesLoaded: loadedProjectIds.has(project.uuid),
+          sitesLoading: loadingProjectIds.has(project.uuid)
+        })
+      ),
+    [fullProjectsById, loadedProjectIds, loadingProjectIds, projectsWithSites, sitesByProjectId]
+  );
 
-        if (lightProject == null) {
-          return { ...section, sites, sitesLoaded, sitesLoading };
-        }
-
-        return toSiteIndexProject(lightProject, {
-          fullProject: fullProjectsById.get(section.id) ?? asFullProject(lightProject),
-          sites,
-          sitesLoaded,
-          sitesLoading
-        });
-      });
-  }, [discoveredSites, fullProjectsById, loadedProjectIds, loadingProjectIds, projectIndex, sitesByProjectId]);
+  const totalSiteCount = useMemo(
+    () => projectsWithSites.reduce((total, project) => total + (siteCountByProjectId.get(project.uuid) ?? 0), 0),
+    [projectsWithSites, siteCountByProjectId]
+  );
 
   return {
     loading,
     loadingMore,
-    hasMore,
+    hasMore: projectUuid == null && hasMorePages && statusFilters.length === 0 && updateFilter == null,
     loadMore,
     viewProjects,
     projects,
     totalSiteCount,
-    onProjectOpened
+    onProjectOpened: loadSitesIfNeeded
   };
 };

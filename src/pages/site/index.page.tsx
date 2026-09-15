@@ -188,7 +188,7 @@ const SiteIndexPageContent = () => {
               size="small"
               leftIcon={<PlusIcon boxSize="0.625rem" />}
               className="mobile:w-full"
-              disabled={viewProjects.length === 0}
+              disabled={viewProjects.length === 0 || selectedProject == ALL_PROJECTS_VIEW}
               onClick={handleAddSite}
             >
               {t("Add Site")}
@@ -249,7 +249,7 @@ const SiteIndexPageContent = () => {
                     <>
                       <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
                       <Text textStyle="400" color="neutral.800">
-                        {t("Loading more sites...")}
+                        {t("Loading...")}
                       </Text>
                     </>
                   ) : null}
