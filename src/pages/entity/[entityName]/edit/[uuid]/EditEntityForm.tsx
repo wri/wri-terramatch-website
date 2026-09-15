@@ -102,7 +102,6 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const submitEntity = useCallback(() => {
     if (entity?.status === PENDING_APPROVAL) return;
     pendingSubmissionConfirmationRef.current = true;
-    pendingApprovalRedirected.current = true;
     updateEntity({ status: "pending-approval" });
     ApiSlice.pruneCache("actions");
   }, [entity?.status, updateEntity]);
@@ -113,14 +112,13 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     useCallback(
       failure => {
         if (!pendingSubmissionConfirmationRef.current) return;
+        pendingSubmissionConfirmationRef.current = false;
         if (failure == null) {
           router.replace(`/entity/${entityName}/edit/${entityUUID}/confirm`);
-          return;
+        } else {
+          Log.error("Request failed: Submission failed", failure);
+          openToast(t("Submission failed"), ToastType.ERROR);
         }
-        pendingSubmissionConfirmationRef.current = false;
-        pendingApprovalRedirected.current = false;
-        Log.error("Request failed: Submission failed", failure);
-        openToast(t("Submission failed"), ToastType.ERROR);
       },
       [entityName, entityUUID, openToast, router, t]
     )
@@ -213,7 +211,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     router.replace(getEntityDetailPageLink(entityName, entityUUID));
   }, [entity, entityLoaded, entityName, entityUUID, openToast, router, t]);
 
-  if (hasLoadFailure || (isClosedForEditing && !pendingApprovalRedirected.current)) return null;
+  if (hasLoadFailure || isClosedForEditing) return null;
 
   return (
     <LoadingContainer loading={isLoading || !isReady || orgLoading || !entityLoaded}>
