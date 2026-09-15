@@ -4,7 +4,6 @@ import Head from "next/head";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 import ResponsiveTypography from "@/styles/ResponsiveTypography";
 
@@ -79,33 +78,22 @@ const NurseriesIndexContent = () => {
     [clearSelection]
   );
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const skipInitialIntersectionRef = useRef(true);
-
-  useEffect(() => {
-    if (loading) skipInitialIntersectionRef.current = true;
-  }, [loading]);
 
   useEffect(() => {
     const node = sentinelRef.current;
     if (node == null || !hasMore || loading || loadingMore) return;
 
-    const observer = new IntersectionObserver(entries => {
-      if (!entries.some(entry => entry.isIntersecting)) return;
-      if (skipInitialIntersectionRef.current) {
-        skipInitialIntersectionRef.current = false;
-        return;
-      }
-      void loadMore();
-    });
+    const observer = new IntersectionObserver(
+      entries => {
+        if (!entries.some(entry => entry.isIntersecting)) return;
+        void loadMore();
+      },
+      { rootMargin: "0px 0px 400px 0px" }
+    );
 
     observer.observe(node);
     return () => observer.disconnect();
   }, [filteredSections.length, hasMore, loadMore, loading, loadingMore]);
-
-  const handleLoadMore = useCallback(() => {
-    skipInitialIntersectionRef.current = false;
-    void loadMore();
-  }, [loadMore]);
 
   const handleApplyFilters = useCallback(
     (nextStatuses: string[], nextUpdates: string[]) => {
@@ -174,11 +162,7 @@ const NurseriesIndexContent = () => {
                       {t("Loading more nurseries...")}
                     </Text>
                   </>
-                ) : (
-                  <Button variant="secondary" size="small" onClick={handleLoadMore}>
-                    {t("Load more nurseries")}
-                  </Button>
-                )}
+                ) : null}
               </Flex>
             ) : null}
           </Flex>
