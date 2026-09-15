@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import EntityGalleryTab from "@/components/extensive/EntityGallery/EntityGalleryTab";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
-import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
 import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
@@ -24,9 +23,7 @@ const SiteDetailPage = () => {
 
   const { isLoaded, site, refetch } = useSitePageLoad(siteUUID);
 
-  const currentTab = (router.query.tab as string) ?? "overview";
-  const isSuffixView = currentTab === "completed-tasks";
-  const activeTab = isSuffixView ? "overview" : currentTab;
+  const activeTab = (router.query.tab as string) ?? "overview";
 
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site!} refetch={refetch} /> },
@@ -55,8 +52,6 @@ const SiteDetailPage = () => {
     }
   ];
 
-  const suffixContent = isSuffixView ? <SiteCompletedReportsTab site={site!} /> : null;
-
   return (
     <SitePageProviders frameworkKey={site?.frameworkKey} isLoaded={isLoaded}>
       {site == null ? null : (
@@ -70,8 +65,7 @@ const SiteDetailPage = () => {
                 icon: <ProjectIcon className="!text-theme-primary-900" />
               },
               { label: site.projectName ?? "", link: `/project/${site.projectUuid}` },
-              { label: site.name ?? "", link: `/site/${site.uuid}` },
-              ...(isSuffixView ? [{ label: t("Reports"), link: `/site/${site.uuid}?tab=completed-tasks` }] : [])
+              { label: site.name ?? "", link: `/site/${site.uuid}` }
             ]}
             suffix={
               <div className="flex gap-1.5">
@@ -84,7 +78,7 @@ const SiteDetailPage = () => {
                   >
                     {t("Project Profile")}
                   </Button>
-                  <span className="text-sm text-theme-neutral-300">|</span>
+                  <span className="text-theme-neutral-300 text-sm">|</span>
                   <Button
                     variant="borderless"
                     size="small"
@@ -102,14 +96,14 @@ const SiteDetailPage = () => {
                   value: item.key,
                   label: item.title
                 })),
-                defaultValue: isSuffixView ? "__none__" : activeTab,
+                defaultValue: activeTab,
                 onTabClick: (tabValue: string) => {
                   router.push(`/site/${siteUUID}?tab=${tabValue}`, undefined, { shallow: true });
                 }
               }
             }}
           />
-          <div className="flex flex-1">{suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}</div>
+          <div className="flex flex-1">{TabItems.find(item => item.key === activeTab)?.body}</div>
         </>
       )}
       <PageFooter />

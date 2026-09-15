@@ -37,11 +37,9 @@ export const ModalId = {
   MODAL_CONFIRM_DELETE_PARTNER: "ModalConfirmDeletePartner",
   MODAL_WITH_LOGO: "ModalWithLogo",
   MODAL_IMAGE_DETAIL: "ModalImageDetail",
-  MODALS_MAPPING: "ModalsMapping",
   ORGANIZATION_EDIT_MODAL: "OrganizationEditModal",
   PITCH_EDIT_MODAL: "pitchEditModal",
   REVIEW_IN_PROGRESS: "ReviewinProgress",
-  REPORTS_SUBMITTED: "ReportsSubmitted",
   UPLOAD_IMAGES: "UploadImages",
   STATUS: "Status",
   STATUS_CHANGE: "StatusChange",
@@ -56,6 +54,5 @@ export const ModalId = {
   MODAL_RUN_ANALYSIS: "ModalRunAnalysis",
   MODAL_NOTES: "ModalNotes",
   MODAL_SHARE_IMPACT_STORY: "ModalShareImpactStory",
-  MODAL_STORY: "ModalStory",
-  BULK_NOTHING_TO_REPORT: "BulkNothingToReport"
+  MODAL_STORY: "ModalStory"
 };
