@@ -70,7 +70,7 @@ export const useSitePolygonValidationState = ({ findTableSitePolygon }: UseSiteP
       priorValidationStatusRef.current = priorStatuses;
       pendingValidationTrackBulkRef.current = options?.trackBulkCompletion ?? true;
       validationAfterCriteriaClearRef.current = options?.validationAfterCriteriaClear === true;
-      validationRunStartedAtRef.current = Date.now();
+      validationRunStartedAtRef.current = options?.startedAtMs ?? Date.now();
 
       const key = [...polygonUuids].sort().join(",");
       prunePolygonValidationCache(...polygonUuids);

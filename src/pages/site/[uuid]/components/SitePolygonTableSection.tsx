@@ -2,7 +2,6 @@ import { type SystemStyleObject, Box } from "@chakra-ui/react";
 import type { FC, RefObject } from "react";
 import { useMemo } from "react";
 
-import LoadingTable from "@/redesignComponents/dataDisplay/Table/components/LoadingTable";
 import Table, { type TableColumn } from "@/redesignComponents/dataDisplay/Table/Table";
 import type { SortColumn } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 
@@ -75,12 +74,9 @@ const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
           selectedRows={selectedRows}
           onAllItemsSelected={handleAllItemsSelected}
           renderRow={renderRow}
+          loading={isSitePolygonsLoading}
+          loadingText={loadingLabel}
         />
-        {isSitePolygonsLoading && (
-          <Box py={20}>
-            <LoadingTable text={loadingLabel} />
-          </Box>
-        )}
       </Box>
     </PolygonTableInteractionActionsProvider>
   );
