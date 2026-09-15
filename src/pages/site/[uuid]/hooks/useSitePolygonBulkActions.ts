@@ -359,9 +359,10 @@ export const useSitePolygonBulkActions = ({
         return;
       }
 
+      const startedAtMs = Date.now();
       await createPolygonValidation({ polygonUuids });
       ApiSlice.pruneCache("validations");
-      onValidationJobsStarted?.(polygonUuids, options);
+      onValidationJobsStarted?.(polygonUuids, { ...options, startedAtMs });
     },
     [onValidationJobsStarted]
   );

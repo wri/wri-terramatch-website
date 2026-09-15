@@ -2,6 +2,7 @@ import { type SystemStyleObject, Box } from "@chakra-ui/react";
 import { Table as WriTable } from "@worldresources/wri-design-systems";
 import React, { Ref, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
+import LoadingTable from "@/redesignComponents/dataDisplay/Table/components/LoadingTable";
 import PaginationTable from "@/redesignComponents/navigation/Pagination/PaginationTable";
 
 import { findHorizontalScrollContainer } from "./findHorizontalScrollContainer";
@@ -34,6 +35,7 @@ interface TableProps<T extends BaseRow> {
   height?: string;
   stickyHeader?: boolean;
   loading?: boolean;
+  loadingText?: string;
   renderRow?: (rowData: T, context?: TableRenderRowContext) => React.ReactNode;
   renderDataCell?: (rowData: T, columnKey: string) => React.ReactNode;
   totalItems?: number;
@@ -62,6 +64,7 @@ const Table = <T extends BaseRow>({
   height,
   stickyHeader,
   loading,
+  loadingText,
   renderRow: customRenderRow,
   renderDataCell: customRenderDataCell,
   totalItems,
@@ -247,6 +250,9 @@ const Table = <T extends BaseRow>({
   const hasMultiplePages = pageSize != null && actualTotalItems > pageSize;
   const shouldShowPaginationControls = showPagination && actualTotalItems > 0 && hasMultiplePages;
   const shouldShowItemCountText = showItemCount && shouldShowPaginationControls && !useCompactPagination;
+  const showLoadingAbovePagination = Boolean(loading && loadingText);
+  const showInTablePagination = shouldShowPaginationControls && !useCompactPagination && !showLoadingAbovePagination;
+  const showExternalPagination = shouldShowPaginationControls && (useCompactPagination || showLoadingAbovePagination);
 
   return (
     <Box
@@ -268,7 +274,7 @@ const Table = <T extends BaseRow>({
         onPageSizeChange={handlePageSizeChange}
         onPageChange={handlePageChange}
         pagination={
-          shouldShowPaginationControls && !useCompactPagination
+          showInTablePagination
             ? {
                 totalItems: actualTotalItems,
                 currentPage,
@@ -284,17 +290,22 @@ const Table = <T extends BaseRow>({
         selectable={selectable}
         variant={variant}
         stickyHeader={stickyHeader}
-        loading={loading}
+        loading={loading && !showLoadingAbovePagination}
       />
-      {shouldShowPaginationControls && useCompactPagination ? (
+      {showLoadingAbovePagination && loadingText != null ? (
+        <Box py={20}>
+          <LoadingTable text={loadingText} />
+        </Box>
+      ) : null}
+      {showExternalPagination ? (
         <PaginationTable
           pageSize={pageSize}
           currentPage={currentPage}
           totalItems={actualTotalItems}
           onPageSizeChange={handlePageSizeChange}
           onPageChange={handlePageChange}
-          showItemCountText={shouldShowItemCountText}
-          variant={paginationVariant}
+          showItemCountText={shouldShowItemCountText || showLoadingAbovePagination}
+          variant={useCompactPagination ? paginationVariant : "default"}
         />
       ) : null}
     </Box>
