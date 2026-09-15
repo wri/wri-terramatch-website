@@ -159,7 +159,7 @@ const NurseriesIndexContent = () => {
                   <>
                     <LoadingIcon boxSize={5} className="animate-spin" color="primary.700" />
                     <Text textStyle="400" color="neutral.800">
-                      {t("Loading more nurseries...")}
+                      {t("Loading...")}
                     </Text>
                   </>
                 ) : null}
