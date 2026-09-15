@@ -197,13 +197,16 @@ export const isReportBulkEditable = (report: ReportIndexItem) =>
   report.nothingToReport === true || EDITABLE_STATUSES.has(report.status);
 
 export const isReportCompleteEnoughToSubmit = (report: ReportIndexItem) => {
+  if (report.nothingToReport && NOTHING_TO_REPORT_TYPES.has(report.type)) return true;
   if (report.completion == null) return report.status !== "due";
   return report.completion === 100;
 };
 
 export const isReportSubmittable = (report: ReportIndexItem) => {
   if (hasOpenChangeRequestDraft(report)) return false;
-  if (!SUBMITTABLE_STATUSES.has(report.status)) return false;
+  const markedNothingToReportDue =
+    report.status === "due" && report.nothingToReport && NOTHING_TO_REPORT_TYPES.has(report.type);
+  if (!SUBMITTABLE_STATUSES.has(report.status) && !markedNothingToReportDue) return false;
   return isReportCompleteEnoughToSubmit(report);
 };
 
