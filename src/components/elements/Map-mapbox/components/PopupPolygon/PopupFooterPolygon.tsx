@@ -16,7 +16,7 @@ import {
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
-import { CommentIcon, DownloadIcon, EditIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
+import { DownloadIcon, EditIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
 import { wrapToolbarInfoTooltipContent } from "@/redesignComponents/navigation/Toolbar/ToolbarInfoTooltipContent";
 
 import type { TooltipType } from "../../Map.d";
@@ -27,7 +27,6 @@ type PopupFooterPolygonProps = {
   submitDisabled?: boolean;
   onSubmit?: () => Promise<void>;
   onEdit?: () => void;
-  onComment?: () => void;
   onClose?: () => void;
   onViewDetails?: () => void;
   viewDetailsDisabled?: boolean;
@@ -39,7 +38,6 @@ type PopupFooterPolygonProps = {
   onApprove?: () => void;
   onRequestInformation?: () => void;
   onRunValidation?: () => void;
-  showRunValidationAsPrimary?: boolean;
 };
 
 const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
@@ -48,7 +46,6 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   submitDisabled = false,
   onSubmit,
   onEdit,
-  onComment,
   onClose,
   onViewDetails,
   viewDetailsDisabled = false,
@@ -59,8 +56,7 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
   approveDisabledTooltip,
   onApprove,
   onRequestInformation,
-  onRunValidation,
-  showRunValidationAsPrimary = false
+  onRunValidation
 }) => {
   const t = useT();
   const toastLabels = useMemo(() => getPolygonOperationToastLabels(t), [t]);
@@ -116,14 +112,8 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
         <Button variant="secondary" size="small" onClick={onRunValidation} disabled={!canRunValidation}>
           {t("Run Validation")}
         </Button>
-        <Button
-          variant="secondary"
-          size="small"
-          leftIcon={<CommentIcon />}
-          onClick={onComment}
-          disabled={onComment == null}
-        >
-          {t("Comment")}
+        <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit} disabled={onEdit == null}>
+          {t("Edit")}
         </Button>
         <Flex alignItems="center" gap={1.5} minWidth={0}>
           <MultiActionButton
@@ -170,34 +160,22 @@ const PopupFooterPolygon: FC<PopupFooterPolygonProps> = ({
       <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={onEdit}>
         {t("Edit")}
       </Button>
-      {showRunValidationAsPrimary ? (
+      <Flex alignItems="center" gap={1.5} minWidth={0}>
         <Button
           variant="primary"
           size="small"
-          onClick={onRunValidation}
-          disabled={!canRunValidation}
+          onClick={() => void handleSubmit()}
+          disabled={submitDisabled}
           className="min-w-0 flex-1"
         >
-          {t("Run Validation")}
+          {t("Submit")}
         </Button>
-      ) : (
-        <Flex alignItems="center" gap={1.5} minWidth={0}>
-          <Button
-            variant="primary"
-            size="small"
-            onClick={() => void handleSubmit()}
-            disabled={submitDisabled}
-            className="min-w-0 flex-1"
-          >
-            {t("Submit")}
-          </Button>
-          {submitDisabled && submitDisabledTooltip != null && (
-            <Tooltip content={wrapToolbarInfoTooltipContent(submitDisabledTooltip)} position="top">
-              <InfoIcon height="1rem" width="1rem" color="neutral.800" />
-            </Tooltip>
-          )}
-        </Flex>
-      )}
+        {submitDisabled && submitDisabledTooltip != null && (
+          <Tooltip content={wrapToolbarInfoTooltipContent(submitDisabledTooltip)} position="top">
+            <InfoIcon height="1rem" width="1rem" color="neutral.800" />
+          </Tooltip>
+        )}
+      </Flex>
     </Grid>
   );
 };

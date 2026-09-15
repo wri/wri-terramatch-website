@@ -1,13 +1,15 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useBaseMap } from "@/components/elements/Map-mapbox/hooks/useBaseMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import type { PolygonEntityScope } from "@/components/elements/Map-mapbox/Map.d";
 import { resolveMapExtentBbox, useBoundingBox } from "@/connections/BoundingBox";
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import { pruneSitePolygonsCache, useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import {
   POLYGON_APPROVED,
   POLYGON_DRAFT,
@@ -60,6 +62,8 @@ const OverviewMapArea = ({
   const [processedPolyValidationJobs, setProcessedPolyValidationJobs] = useState<Set<string>>(new Set());
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
+  const entityType = type === "sites" ? "sites" : "projects";
+  const isPanelEnabled = !disabledPolygonPanel;
 
   const {
     editPolygon,
@@ -74,6 +78,47 @@ const OverviewMapArea = ({
     polygonData: sitePolygonDataV3,
     validFilter
   } = useMapAreaContext();
+
+  const mapIndexFilter = useMemo(() => {
+    const filter: Record<string, unknown> = {};
+    if (checkedValues.length > 0) {
+      filter["polygonStatus[]"] = checkedValues;
+    }
+    if (validFilter != null && validFilter !== "" && validFilter !== "all") {
+      filter["validationStatus[]"] = [validFilter];
+    }
+    return filter;
+  }, [checkedValues, validFilter]);
+
+  const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
+    entityName: entityType,
+    entityUuid: entityModel?.uuid,
+    enabled: entityModel?.uuid != null && entityModel.uuid !== "",
+    filter: mapIndexFilter
+  });
+  const mapPolygons = useMemo(() => mapIndex?.polygons ?? [], [mapIndex?.polygons]);
+
+  const {
+    data: polygonsData,
+    refetch: refetchLightPolygons,
+    polygonCriteriaMap,
+    loading: isLoadingLightPolygons
+  } = useLoadSitePolygonsData(
+    entityModel.uuid,
+    type,
+    checkedValues.join(","),
+    sortField,
+    sortDirection,
+    validFilter,
+    isPanelEnabled
+  );
+
+  const refetch = useCallback(() => {
+    pruneSitePolygonsCache();
+    if (isPanelEnabled) {
+      refetchLightPolygons();
+    }
+  }, [isPanelEnabled, refetchLightPolygons]);
 
   const [, { delayedJobs }] = useDelayedJobs();
   const onSave = (geojson: any) =>
@@ -92,15 +137,7 @@ const OverviewMapArea = ({
     enabled: entityModel?.uuid != null
   });
 
-  const {
-    data: polygonsData,
-    refetch,
-    polygonCriteriaMap,
-    loading
-  } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortField, sortDirection, validFilter);
-
-  const hasPolygons = polygonsData.length > 0;
-  const entityType = type === "sites" ? "sites" : "projects";
+  const hasPolygons = (mapIndex?.total ?? 0) > 0;
 
   const modelBbox = useBoundingBox(
     entityType === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
@@ -133,14 +170,18 @@ const OverviewMapArea = ({
     [countryBbox, entityModel?.projectUuid, entityType, hasPolygons, modelBbox, projectBbox]
   );
 
-  useValueChanged(loading, () => {
-    setPolygonCriteriaMap(polygonCriteriaMap);
-    setPolygonData(polygonsData);
-  });
   useEffect(() => {
-    refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkedValues, sortField, sortDirection, validFilter]);
+    setPolygonCriteriaMap(polygonCriteriaMap);
+    setPolygonData(isPanelEnabled ? polygonsData ?? [] : []);
+  }, [isPanelEnabled, polygonCriteriaMap, polygonsData, setPolygonCriteriaMap, setPolygonData]);
+
+  const polygonEntityScope = useMemo<PolygonEntityScope | undefined>(
+    () =>
+      entityModel?.uuid != null && entityModel.uuid !== ""
+        ? { entityName: entityType, entityUuid: entityModel.uuid }
+        : undefined,
+    [entityType, entityModel?.uuid]
+  );
 
   useEffect(() => {
     if (disabledPolygonPanel) {
@@ -184,9 +225,8 @@ const OverviewMapArea = ({
     }
   }, [delayedJobs, processedPolyValidationJobs, refetch]);
   useEffect(() => {
-    if (polygonsData?.length > 0) {
-      const dataMap = parsePolygonDataV3(polygonsData);
-      setPolygonDataMap(dataMap);
+    if (mapPolygons.length > 0) {
+      setPolygonDataMap(parsePolygonDataV3(mapPolygons));
     } else {
       setPolygonDataMap({
         [POLYGON_PENDING_APPROVAL]: [],
@@ -195,7 +235,7 @@ const OverviewMapArea = ({
         [POLYGON_DRAFT]: []
       });
     }
-  }, [polygonsData]);
+  }, [mapPolygons]);
 
   const handleCheckboxChange = (value: string, checked: boolean) => {
     if (checked) {
@@ -208,8 +248,11 @@ const OverviewMapArea = ({
   const isSitesPolygonPanelEnabled = type === "sites" && !disabledPolygonPanel;
 
   const isMapLoading = useMemo(
-    () => loading || (polygonsData.length > 0 && isPolygonTilesLoading),
-    [loading, polygonsData.length, isPolygonTilesLoading]
+    () =>
+      !mapIndexLoaded ||
+      (isPanelEnabled && isLoadingLightPolygons) ||
+      (mapPolygons.length > 0 && isPolygonTilesLoading),
+    [isLoadingLightPolygons, isPanelEnabled, isPolygonTilesLoading, mapIndexLoaded, mapPolygons.length]
   );
 
   const validationType = useMemo(() => {
@@ -279,12 +322,13 @@ const OverviewMapArea = ({
             "flex-1",
             disabledPolygonPanel ? "h-full rounded" : "h-[650px] rounded-r-lg wide:h-[1225px]"
           )}
-          polygonsExists={polygonsData.length > 0}
+          polygonsExists={hasPolygons}
           setPolygonFromMap={setPolygonFromMap}
           polygonFromMap={polygonFromMap}
           shouldBboxZoom={!shouldRefetchPolygonData}
           mediaFiles={mediaFiles}
           sitePolygonData={sitePolygonDataV3}
+          polygonEntityScope={polygonEntityScope}
           disabledPolygonPanel={disabledPolygonPanel}
           hideFullscreenControl={hideFullscreenControl}
           hideMediaPopupActions={disabledPolygonPanel}

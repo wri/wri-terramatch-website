@@ -18,6 +18,7 @@ export type PolygonOverlapFixCallback = (params: PolygonOverlapFixParams) => Pro
 export type PolygonValidationJobsStartedOptions = {
   trackBulkCompletion?: boolean;
   validationAfterCriteriaClear?: boolean;
+  startedAtMs?: number;
 };
 
 export type PolygonValidationJobsStartedCallback = (
