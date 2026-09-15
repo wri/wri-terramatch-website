@@ -43,7 +43,14 @@ export const addFieldValidation = (
   validations[field.name] = (validations[field.name] ?? yup.mixed()).nullable().label(field.label ?? "");
 
   // .required() has to be added after the .nullable() call above to be functional.
-  if (field.validation?.required) validations[field.name] = validations[field.name].required();
+  if (field.validation?.required) {
+    // yup.boolean().required() treats `false` as empty, so Yes/No would stay invalid after selecting No.
+    if (field.inputType === "boolean" || field.inputType === "conditional") {
+      validations[field.name] = validations[field.name].oneOf([true, false], t("This field is required"));
+    } else {
+      validations[field.name] = validations[field.name].required();
+    }
+  }
 };
 
 export const isDtoOption = (option: FormQuestionOptionDto | Option): option is FormQuestionOptionDto =>
