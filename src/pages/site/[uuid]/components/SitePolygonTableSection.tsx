@@ -2,7 +2,6 @@ import { type SystemStyleObject, Box } from "@chakra-ui/react";
 import type { FC, RefObject } from "react";
 import { useMemo } from "react";
 
-import LoadingTable from "@/redesignComponents/dataDisplay/Table/components/LoadingTable";
 import Table, { type TableColumn } from "@/redesignComponents/dataDisplay/Table/Table";
 import type { SortColumn } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 
@@ -54,12 +53,21 @@ const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
   const renderRow = useMemo(() => renderPolygonTableRow(readOnly), [readOnly]);
   const handleAllItemsSelected = readOnly ? () => undefined : onAllItemsSelected;
   const handleRowSelected = readOnly ? () => undefined : onRowSelected;
+  const resolvedTableStyles = isSitePolygonsLoading
+    ? {
+        ...tableStyles,
+        "& > div > div": {
+          overflowX: "hidden",
+          overflowY: "hidden"
+        }
+      }
+    : tableStyles;
 
   return (
     <PolygonTableInteractionActionsProvider onSelectChange={handleRowSelected}>
       <Box onMouseLeave={onClearHover} position="relative" width="100%" maxWidth="100%" minWidth={0}>
         <Table<PolygonTableRow>
-          css={tableStyles}
+          css={resolvedTableStyles}
           containerRef={tableContainerRef}
           scrollContainerRef={tableScrollContainerRef}
           data={isSitePolygonsLoading ? [] : polygonRows}
@@ -75,12 +83,9 @@ const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
           selectedRows={selectedRows}
           onAllItemsSelected={handleAllItemsSelected}
           renderRow={renderRow}
+          loading={isSitePolygonsLoading}
+          loadingText={loadingLabel}
         />
-        {isSitePolygonsLoading && (
-          <Box py={20}>
-            <LoadingTable text={loadingLabel} />
-          </Box>
-        )}
       </Box>
     </PolygonTableInteractionActionsProvider>
   );

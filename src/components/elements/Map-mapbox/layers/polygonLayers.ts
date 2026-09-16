@@ -8,6 +8,12 @@ import {
   layersList,
   POLYGON_GEOMETRY_VARIANTS
 } from "@/constants/layers";
+import {
+  POLYGON_APPROVED,
+  POLYGON_DRAFT,
+  POLYGON_INFORMATION_REQUIRED,
+  POLYGON_PENDING_APPROVAL
+} from "@/constants/polygonStatuses";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
@@ -481,6 +487,13 @@ export const addPolygonCentroidsLayer = (
 };
 
 export type PolygonMapStyleFields = Pick<SitePolygonMapEntryDto, "polygonUuid" | "status">;
+
+export const EMPTY_STATUS_POLYGON_MAP: Record<string, string[]> = {
+  [POLYGON_PENDING_APPROVAL]: [],
+  [POLYGON_APPROVED]: [],
+  [POLYGON_INFORMATION_REQUIRED]: [],
+  [POLYGON_DRAFT]: []
+};
 
 export function parsePolygonDataV3(
   sitePolygonData: PolygonMapStyleFields[] | undefined,

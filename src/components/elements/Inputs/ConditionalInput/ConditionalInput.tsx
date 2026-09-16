@@ -42,7 +42,7 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   }, [children, fieldId, value]);
 
   const onChange = (value: OptionValueWithBoolean) => {
-    field.onChange(value);
+    field.onChange(value === "yes" || value === true);
     onChangeCapture();
     formHook.trigger();
   };
@@ -57,10 +57,10 @@ const ConditionalInput = (props: ConditionalInputProps) => {
       <RadioGroup
         {...inputProps}
         options={[
-          { title: t("Yes"), value: true },
-          { title: t("No"), value: false }
+          { title: t("Yes"), value: "yes" },
+          { title: t("No"), value: "no" }
         ]}
-        value={field.value}
+        value={field.value === true ? "yes" : field.value === false ? "no" : undefined}
         onChange={onChange}
       />
 
