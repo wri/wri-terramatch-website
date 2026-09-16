@@ -14,7 +14,7 @@ import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/M
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { pruneSitePolygonsCache, useSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { Framework } from "@/context/framework.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -45,11 +45,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const { setSiteData, resetSiteMapInteractionState } = useMapAreaContext();
   const [isReportSetupComplete, setIsReportSetupComplete] = useState(false);
 
-  const {
-    data: sitePolygonDataV3,
-    isLoading: isLoadingSitePolygons,
-    refetch: refetchSitePolygons
-  } = useAllSitePolygons({
+  const [mapIndexLoaded, { data: mapIndex }] = useSitePolygonMapIndex({
     entityName: "sites",
     entityUuid: site?.uuid ?? "",
     enabled: site?.uuid != null
@@ -64,8 +60,8 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   }, [setSiteData, site]);
 
   const reloadSiteData = useCallback(() => {
-    refetchSitePolygons();
-  }, [refetchSitePolygons]);
+    pruneSitePolygonsCache();
+  }, []);
 
   const { handleEdit, EditModals } = useGetEditEntityHandler({
     entityName: "site-reports",
@@ -123,7 +119,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
   const isHBFFramework = siteReport.frameworkKey === Framework.HBF;
 
   return (
-    <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reloadSiteData}>
+    <SitePolygonDataProvider sitePolygonData={undefined} reloadSiteData={reloadSiteData}>
       <PageContent>
         {EditModals}
         <Flex gap={7} className="flex-col">
@@ -199,7 +195,7 @@ const Overview: FC<OverviewProps> = ({ siteReport, site, workdaysTotal }) => {
                     hideFullscreenControl={true}
                     overviewPolygonPopup={true}
                   />
-                  {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
+                  {mapIndexLoaded && (mapIndex?.total ?? 0) === 0 && (
                     <MapPlaceholder
                       icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}
                       title={t("Site Areas not defined yet.")}

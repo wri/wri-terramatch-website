@@ -359,9 +359,10 @@ export const useSitePolygonBulkActions = ({
         return;
       }
 
+      const startedAtMs = Date.now();
       await createPolygonValidation({ polygonUuids });
       ApiSlice.pruneCache("validations");
-      onValidationJobsStarted?.(polygonUuids, options);
+      onValidationJobsStarted?.(polygonUuids, { ...options, startedAtMs });
     },
     [onValidationJobsStarted]
   );
@@ -690,19 +691,9 @@ export const useSitePolygonBulkActions = ({
         invalidatePolygonMapTiles();
         setSubmittedPolygonNames(submittedNames);
         setShouldRefetchPolygonData(true);
-        const refreshedPolygons = await refreshPolygonData({ loadAll: true });
+        await refreshPolygonData({ loadAll: true });
         pendingPolygonSubmittedModalRef.current = true;
         ApiSlice.pruneCache("auditStatuses");
-
-        const geometryPolygonUuids = sitePolygonUuids
-          .map(sitePolygonUuid => refreshedPolygons.find(polygon => polygon.uuid === sitePolygonUuid))
-          .map(polygon => polygon?.polygonUuid)
-          .filter((uuid): uuid is string => uuid != null && uuid !== "");
-        const uniqueGeometryPolygonUuids = [...new Set(geometryPolygonUuids)];
-
-        if (uniqueGeometryPolygonUuids.length > 0) {
-          onValidationJobsStarted?.(uniqueGeometryPolygonUuids, { trackBulkCompletion: false });
-        }
 
         for (const sitePolygonUuid of sitePolygonUuids) {
           const sitePolygon = polygonsData.find(polygon => polygon.uuid === sitePolygonUuid);
@@ -737,7 +728,6 @@ export const useSitePolygonBulkActions = ({
     [
       closeMapPopups,
       invalidatePolygonMapTiles,
-      onValidationJobsStarted,
       polygonsData,
       refreshPolygonData,
       setShouldRefetchPolygonData,

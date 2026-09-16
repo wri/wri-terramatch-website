@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditStatusEntityType, useAuditStatuses, useCreateAuditStatus } from "@/connections/AuditStatus";
-import { bulkUpdateSitePolygonStatus, PolygonStatus, useAllSitePolygons } from "@/connections/SitePolygons";
+import { bulkUpdateSitePolygonStatus, PolygonStatus, useSitePolygonSummary } from "@/connections/SitePolygons";
 import { usePolygonValidation } from "@/connections/Validation";
 import { PROJECT_POLYGON_HANDOFF_AUDIT_TYPES } from "@/constants/polygonHandoff";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -110,18 +110,26 @@ const useAuditLogActions = ({
   const siteUuid =
     v3EntityType === "sites" && record?.uuid && isSite ? (isSiteProject ? selected?.uuid : record.uuid) : undefined;
 
-  const { data: sitePolygons } = useAllSitePolygons({
+  const [, { data: sitePolygonSummary }] = useSitePolygonSummary({
     entityName: "sites",
-    entityUuid: siteUuid,
+    entityUuid: siteUuid ?? "",
     enabled: !!siteUuid && v3EntityType === "sites" && isSite
   });
 
   const checkPolygons = useMemo<boolean | undefined>(() => {
-    if (!siteUuid || !sitePolygons || sitePolygons.length === 0) {
+    if (siteUuid == null || siteUuid === "") {
       return undefined;
     }
-    return sitePolygons.some(polygon => polygon.isActive && polygon.status !== "approved");
-  }, [siteUuid, sitePolygons]);
+    const countByStatus = sitePolygonSummary?.countByStatus;
+    if (countByStatus == null) {
+      return undefined;
+    }
+
+    const draftCount = countByStatus.draft ?? 0;
+    const pendingCount = countByStatus["pending-approval"] ?? 0;
+    const infoRequiredCount = countByStatus["information-required"] ?? 0;
+    return draftCount + pendingCount + infoRequiredCount > 0;
+  }, [sitePolygonSummary, siteUuid]);
 
   const verifyEntity = [
     "project-reports",

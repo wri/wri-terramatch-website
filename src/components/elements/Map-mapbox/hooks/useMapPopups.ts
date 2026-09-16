@@ -6,7 +6,7 @@ import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { loadBoundingBox, normalizeBoundingBoxDto } from "@/connections/BoundingBox";
 import { LAYERS_NAMES } from "@/constants/layers";
 import { registerOpenPolygonPopupHandler, unregisterOpenPolygonPopupHandler } from "@/context/mapArea.utils";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { useChampionsMap } from "../championsMap.context";
@@ -29,6 +29,7 @@ import type {
   DashboardPopupContext,
   EditPolygonState,
   MobilePopupData,
+  PolygonEntityScope,
   PolygonFromMapState,
   SetPolygonFromMap,
   TooltipType
@@ -40,6 +41,8 @@ type UseMapPopupsParams = {
   sourcesAdded: boolean;
   showPopups?: boolean;
   sitePolygonData?: SitePolygonLightDto[];
+  polygonEntityScope?: PolygonEntityScope;
+  mapIndexPolygons?: SitePolygonMapEntryDto[];
   tooltipType?: TooltipType;
   isMobile: boolean;
   setLoader?: (v: boolean) => void;
@@ -74,6 +77,8 @@ export function useMapPopups({
   sourcesAdded,
   showPopups,
   sitePolygonData,
+  polygonEntityScope,
+  mapIndexPolygons,
   tooltipType,
   isMobile,
   setLoader,
@@ -99,7 +104,21 @@ export function useMapPopups({
     editPolygonRef.current = editPolygon;
   });
 
+  const sitePolygonDataRef = useRef(sitePolygonData);
+  const polygonEntityScopeRef = useRef(polygonEntityScope);
+  const mapIndexPolygonsRef = useRef(mapIndexPolygons);
   const popupOptionsRef = useRef<PopupHandlerOptions | null>(null);
+
+  useEffect(() => {
+    sitePolygonDataRef.current = sitePolygonData;
+    polygonEntityScopeRef.current = polygonEntityScope;
+    mapIndexPolygonsRef.current = mapIndexPolygons;
+    if (popupOptionsRef.current != null) {
+      popupOptionsRef.current.sitePolygonData = sitePolygonData;
+      popupOptionsRef.current.polygonEntityScope = polygonEntityScope;
+      popupOptionsRef.current.mapIndexPolygons = mapIndexPolygons;
+    }
+  }, [sitePolygonData, polygonEntityScope, mapIndexPolygons]);
 
   useEffect(() => {
     if (!isEditFocusActive || map.current == null) return;
@@ -116,7 +135,9 @@ export function useMapPopups({
     const popupOptions: PopupHandlerOptions = {
       setPolygonFromMap: callbacksRef.current.setPolygonFromMap,
       setShouldRefetchPolygonData,
-      sitePolygonData,
+      sitePolygonData: sitePolygonDataRef.current,
+      polygonEntityScope: polygonEntityScopeRef.current,
+      mapIndexPolygons: mapIndexPolygonsRef.current,
       type: tooltipType ?? "goTo",
       editPolygon: editPolygonRef.current,
       setEditPolygon: callbacksRef.current.setEditPolygon,
@@ -158,7 +179,9 @@ export function useMapPopups({
             editPolygon: editPolygonRef.current,
             setPolygonFromMap: callbacksRef.current.setPolygonFromMap,
             setEditPolygon: callbacksRef.current.setEditPolygon,
-            sitePolygonData
+            sitePolygonData: sitePolygonDataRef.current,
+            polygonEntityScope: polygonEntityScopeRef.current,
+            mapIndexPolygons: mapIndexPolygonsRef.current
           }
         );
       } catch (error) {
@@ -176,7 +199,6 @@ export function useMapPopups({
     };
   }, [
     sourcesAdded,
-    sitePolygonData,
     tooltipType,
     isMobile,
     effectiveShowPopups,

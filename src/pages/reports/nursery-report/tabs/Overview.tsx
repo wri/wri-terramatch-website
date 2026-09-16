@@ -10,6 +10,7 @@ import AboutPageItem from "@/components/extensive/PageElements/AboutPageItem/Abo
 import MetricCardsRow from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import HighLevelMetricsCard from "@/components/reports/HighLevelMetrics/HighLevelMetricsCard";
 import { PENDING_APPROVAL } from "@/constants/statuses";
 import { isTerrafund, toFramework } from "@/context/framework.provider";
@@ -99,6 +100,11 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
   );
 
   const editButtonLabel = getEntitySetupButtonLabel(t, report.status, isReportSetupComplete);
+  const seedlingsGrown = usePlantTotalCount({
+    entity: "nurseryReports",
+    entityUuid: report.uuid,
+    collection: "nursery-seedling"
+  });
 
   const statusTag = useMemo(() => {
     if (report.updateRequestStatus === PENDING_APPROVAL) {
@@ -117,7 +123,6 @@ const NurseryReportOverviewContent: FC<NurseryReportOverviewProps> = ({ report }
   }
 
   const isTerrafundFramework = isTerrafund(toFramework(report.frameworkKey));
-  const seedlingsGrown = report.seedlingsYoungTrees ?? 0;
 
   return (
     <PageContent>

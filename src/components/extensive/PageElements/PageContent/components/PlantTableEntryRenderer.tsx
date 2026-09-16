@@ -23,11 +23,12 @@ import { plantsToNoCountRows } from "../utils/detailUtils";
 type PlantTableEntryRendererProps = {
   tableType: "noCount" | "noGoal";
   plants: Parameters<typeof plantsToNoCountRows>[0];
+  amountColumnLabel?: string;
 };
 
 export const NO_GOAL_PLANTS_PER_PAGE = 10;
 
-export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tableType, plants }) => {
+export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tableType, plants, amountColumnLabel }) => {
   const { framework } = useFrameworkContext();
   const t = useT();
   const isMobile = useBreakpointValue({ base: true, lg: false }) ?? false;
@@ -42,9 +43,9 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ tabl
   const noGoalTableColumns = useMemo(
     () => [
       { key: "name", label: t("Species Name") },
-      { key: "amount", label: t("Number of Trees") }
+      { key: "amount", label: amountColumnLabel ?? t("Number of Trees") }
     ],
-    [t]
+    [amountColumnLabel, t]
   );
   const totalRowName = "__total_row__";
   const totalAmount = useMemo(

@@ -70,6 +70,9 @@ export const isEntityAwaitingApproval = (status?: string | null, updateRequestSt
   return status === "pending-approval" || updateRequestStatus === "pending-approval";
 };
 
+export const canEntityHaveChangeRequest = (status?: string | null): boolean =>
+  status === "approved" || status === "information-required";
+
 const ENTITY_DRAFT_STATUSES = new Set(["draft", "draft", "due"]);
 
 export const isEntityDraftInProgress = (status: string | null | undefined, isSetupComplete: boolean) =>

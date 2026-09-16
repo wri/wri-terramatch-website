@@ -212,7 +212,9 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     ))}
                   </div>
                 </div>
-                {aggregateLoaded && dataAggregated != null ? (
+                {!aggregateLoaded ? (
+                  <Loader />
+                ) : (
                   <BlurContainer
                     className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]"
                     isBlur={isAggregateReportsEmpty(dataAggregated)}
@@ -220,8 +222,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   >
                     <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
                   </BlurContainer>
-                ) : (
-                  <Loader />
                 )}
               </div>
             </div>
