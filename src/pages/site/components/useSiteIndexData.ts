@@ -670,12 +670,14 @@ export const useSiteIndexData = ({
 
   const viewProjects = useMemo(
     () =>
-      projectIndex.map(project =>
-        toSiteIndexProject(project, {
-          fullProject: fullProjectsById.get(project.uuid) ?? asFullProject(project)
-        })
-      ),
-    [fullProjectsById, projectIndex]
+      projectIndex
+        .filter(project => (siteCountByProjectId.get(project.uuid) ?? 0) > 0)
+        .map(project =>
+          toSiteIndexProject(project, {
+            fullProject: fullProjectsById.get(project.uuid) ?? asFullProject(project)
+          })
+        ),
+    [fullProjectsById, projectIndex, siteCountByProjectId]
   );
 
   const projects = useMemo(

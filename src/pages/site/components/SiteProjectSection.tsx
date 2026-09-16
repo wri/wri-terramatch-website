@@ -85,9 +85,11 @@ const SiteUpdate: FC<{ update: SiteIndexUpdate | null }> = ({ update }) => {
   return (
     <Box className="flex items-center gap-1 text-theme-neutral-800">
       <EditIcon boxSize={2.5} />
-      <Text as="span" textStyle="200">
-        {t("Editing:")}
-      </Text>
+      {update != "complete" && (
+        <Text as="span" textStyle="200">
+          {t("Editing:")}
+        </Text>
+      )}
       <Text as="span" textStyle="200-bold">
         {updateLabel}
       </Text>
