@@ -282,12 +282,16 @@ export const useSiteIndexData = ({
     }
 
     inFlightRef.current.add(projectId);
-    const requestId = requestIdRef.current;
     setLoadingProjectIds(current => new Set(current).add(projectId));
 
     try {
       const loadedSites = await loadProjectSites(projectId);
-      if (requestId !== requestIdRef.current) return;
+      if (
+        !projectIndexRef.current.some(project => project.uuid === projectId) ||
+        loadedProjectIdsRef.current.has(projectId)
+      ) {
+        return;
+      }
 
       const project = projectIndexRef.current.find(item => item.uuid === projectId);
       const mappedSites = loadedSites.map(site => mapSiteToIndexSite(site, toFramework(project?.frameworkKey)));
@@ -305,7 +309,7 @@ export const useSiteIndexData = ({
       if (fullProjectsByIdRef.current.has(projectId)) return;
 
       const result = await loadFullProject({ id: projectId });
-      if (requestId !== requestIdRef.current || result.data == null) return;
+      if (result.data == null || !projectIndexRef.current.some(project => project.uuid === projectId)) return;
 
       setFullProjectsById(current => {
         if (current.has(projectId)) return current;
@@ -314,6 +318,7 @@ export const useSiteIndexData = ({
         return next;
       });
     } catch {
+      if (!projectIndexRef.current.some(project => project.uuid === projectId)) return;
       loadedProjectIdsRef.current = new Set(loadedProjectIdsRef.current).add(projectId);
       setLoadedProjectIds(current => new Set(current).add(projectId));
     } finally {
