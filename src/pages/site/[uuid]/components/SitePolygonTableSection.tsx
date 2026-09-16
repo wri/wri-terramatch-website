@@ -53,12 +53,21 @@ const SitePolygonTableSection: FC<SitePolygonTableSectionProps> = ({
   const renderRow = useMemo(() => renderPolygonTableRow(readOnly), [readOnly]);
   const handleAllItemsSelected = readOnly ? () => undefined : onAllItemsSelected;
   const handleRowSelected = readOnly ? () => undefined : onRowSelected;
+  const resolvedTableStyles = isSitePolygonsLoading
+    ? {
+        ...tableStyles,
+        "& > div > div": {
+          overflowX: "hidden",
+          overflowY: "hidden"
+        }
+      }
+    : tableStyles;
 
   return (
     <PolygonTableInteractionActionsProvider onSelectChange={handleRowSelected}>
       <Box onMouseLeave={onClearHover} position="relative" width="100%" maxWidth="100%" minWidth={0}>
         <Table<PolygonTableRow>
-          css={tableStyles}
+          css={resolvedTableStyles}
           containerRef={tableContainerRef}
           scrollContainerRef={tableScrollContainerRef}
           data={isSitePolygonsLoading ? [] : polygonRows}
