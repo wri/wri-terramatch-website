@@ -368,10 +368,9 @@ const SiteProjectSection: FC<SiteProjectSectionProps> = ({
   );
 
   useEffect(() => {
-    if (open) {
-      onProjectOpened(project.id);
-    }
-  }, [onProjectOpened, open, project.id, project.sitesLoaded]);
+    if (!open || project.sitesLoaded || project.sitesLoading) return;
+    onProjectOpened(project.id);
+  }, [onProjectOpened, open, project.id, project.sitesLoaded, project.sitesLoading]);
 
   useEffect(() => {
     setOpen(defaultOpen);

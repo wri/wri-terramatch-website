@@ -227,7 +227,7 @@ const SiteIndexPageContent = () => {
         ) : (
           <>
             <div className="space-y-4">
-              {visibleProjects.map((project, index) => (
+              {visibleProjects.map(project => (
                 <SiteProjectSection
                   key={project.id}
                   project={project}
@@ -237,7 +237,6 @@ const SiteIndexPageContent = () => {
                   searchQuery={debouncedSearch}
                   statusFilters={statusFilters}
                   updateFilter={updateFilter}
-                  defaultOpen={index === 0}
                   openResetKey={accordionOpenResetKey}
                   onProjectOpened={onProjectOpened}
                   onSitesChanged={handleSitesChanged}
