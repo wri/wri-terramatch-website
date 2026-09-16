@@ -5,11 +5,13 @@ import { useFullSite } from "@/connections/Entity";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
-export const useSitePageLoad = (siteUUID: string) => {
+export const useSitePageLoad = (siteUUID: string | undefined) => {
   const t = useT();
-  const [isLoaded, { data: site, loadFailure, refetch }] = useFullSite({ id: siteUUID });
+  const hasSiteUuid = siteUUID != null && siteUUID !== "";
+  const [isLoaded, { data: site, loadFailure, refetch }] = useFullSite({ id: siteUUID ?? "" });
 
   useValueChanged(isLoaded, () => {
+    if (!hasSiteUuid) return;
     if (isLoaded && site == null) {
       Log.error("Site not found", { siteUUID, loadFailure });
       showToast({
@@ -23,5 +25,5 @@ export const useSitePageLoad = (siteUUID: string) => {
     }
   });
 
-  return { isLoaded, site, loadFailure, refetch };
+  return { isLoaded: hasSiteUuid && isLoaded, site, loadFailure, refetch };
 };

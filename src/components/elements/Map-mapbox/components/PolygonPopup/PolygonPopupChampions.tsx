@@ -10,8 +10,7 @@ import {
   openPolygonSubmitConfirmationFromMapPopup,
   runPolygonValidationFromMapPopup
 } from "@/context/mapArea.utils";
-import { openPolygonEditDrawerForSitePolygon } from "@/context/polygonEditDrawer.utils";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { openPolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 import { isRestorationStrategy, isTargetLandUseType } from "@/pages/site/[uuid]/components/polygonTable.constants";
 import { showPolygonErrorToast } from "@/pages/site/[uuid]/utils/polygonOperationToasts";
 import MapPopUp from "@/redesignComponents/geospatial/MapPopUp/MapPopUp";
@@ -27,6 +26,7 @@ import {
   resolveViewDetailsSiteUuid
 } from "../../sitePolygonNavigation";
 import {
+  type SitePolygonPopupFields,
   formatAreaHectaresForPopup,
   formatTreesPlantedForPopup,
   getSitePolygonGeometryUuid,
@@ -40,7 +40,7 @@ import PopupHeaderPolygon from "../PopupPolygon/PopupHeaderPolygon";
 type PolygonPopupChampionsProps = {
   popup: PopupComponentProps["popup"];
   setShouldRefetchPolygonData?: PopupComponentProps["setShouldRefetchPolygonData"];
-  sitePolygon?: SitePolygonLightDto;
+  sitePolygon?: SitePolygonPopupFields;
   isLoading?: boolean;
   tooltipType?: TooltipType;
   overviewPolygonPopup?: boolean;
@@ -129,7 +129,10 @@ export function PolygonPopupChampions({
   }, [sitePolygon?.uuid]);
 
   const handleEdit = useCallback(() => {
-    openPolygonEditDrawerForSitePolygon(sitePolygon, metrics.polygonName);
+    openPolygonEditDrawer({
+      polygonUuid: getSitePolygonGeometryUuid(sitePolygon) ?? undefined,
+      polygonName: metrics.polygonName
+    });
     closeMapPopup();
   }, [closeMapPopup, metrics.polygonName, sitePolygon]);
 

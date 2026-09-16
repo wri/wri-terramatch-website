@@ -1,9 +1,22 @@
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { ValidationTagState } from "@/redesignComponents/actions/Tags/ValidationTag/ValidationTag";
 
 export const POPUP_METRIC_UNAVAILABLE = "\u2014";
 
 export type NormalizedPolygonValidationStatus = ValidationTagState;
+
+export type SitePolygonPopupFields = SitePolygonMapEntryDto &
+  Partial<Pick<SitePolygonLightDto, "practice" | "targetSys" | "primaryUuid" | "siteId">>;
+
+export const findMapIndexEntryByMapFeatureUuid = (
+  mapIndexPolygons: SitePolygonMapEntryDto[] | undefined,
+  polygonUuid: string
+): SitePolygonMapEntryDto | undefined => {
+  if (polygonUuid === "" || mapIndexPolygons == null || mapIndexPolygons.length === 0) {
+    return undefined;
+  }
+  return mapIndexPolygons.find(p => p.polygonUuid === polygonUuid || p.uuid === polygonUuid);
+};
 
 export const findSitePolygonByMapFeatureUuid = (
   sitePolygons: SitePolygonLightDto[] | undefined,
@@ -15,7 +28,7 @@ export const findSitePolygonByMapFeatureUuid = (
   return sitePolygons.find(p => p.polygonUuid === polygonUuid);
 };
 
-export const getSitePolygonGeometryUuid = (sitePolygon: SitePolygonLightDto | undefined): string | null => {
+export const getSitePolygonGeometryUuid = (sitePolygon: SitePolygonPopupFields | undefined): string | null => {
   const geometryUuid = sitePolygon?.polygonUuid;
   return geometryUuid != null && geometryUuid !== "" ? geometryUuid : null;
 };

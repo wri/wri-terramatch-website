@@ -28,7 +28,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 
 import { addOrUpdateMarkerAndZoom } from "./adapters/camera";
@@ -60,6 +60,7 @@ import {
 import { addGeojsonToDraw } from "./interactions/draw";
 import { CrossSiteOverlapPolygon, OverlapPolygonPoint } from "./layers/overlapTypes";
 import { buildCrossSiteOverlapFeatureCollection, buildCrossSiteOverlapMarkerPoints } from "./layers/overlayLayers";
+import { EMPTY_STATUS_POLYGON_MAP, parsePolygonDataV3 } from "./layers/polygonLayers";
 import type {
   DashboardGetProjectsData,
   DashboardPopupContext,
@@ -96,6 +97,8 @@ export interface BaseMapProps {
   tooltipType?: TooltipType;
   sitePolygonData?: SitePolygonLightDto[];
   polygonEntityScope?: PolygonEntityScope;
+  mapIndexPolygons?: SitePolygonMapEntryDto[];
+  mapPolygonsForcedStatus?: string;
   className?: string;
   legendPosition?: ControlMapPosition;
   polygonsExists?: boolean;
@@ -248,6 +251,8 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     polygonFromMap,
     sitePolygonData,
     polygonEntityScope,
+    mapIndexPolygons,
+    mapPolygonsForcedStatus,
     selectedLandscapes,
     projectUUID,
     setLoader,
@@ -263,6 +268,15 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     isPolygonGeometryLoading = false,
     overviewPolygonPopup = false
   } = props;
+
+  const polygonsDataForLayers = useMemo(() => {
+    if (mapIndexPolygons != null) {
+      return mapIndexPolygons.length === 0
+        ? EMPTY_STATUS_POLYGON_MAP
+        : parsePolygonDataV3(mapIndexPolygons, mapPolygonsForcedStatus);
+    }
+    return polygonsData;
+  }, [mapIndexPolygons, mapPolygonsForcedStatus, polygonsData]);
 
   const [isViewingImages, setIsViewingImages] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -413,7 +427,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     draw,
     styleReady,
     styleVersion,
-    polygonsData,
+    polygonsData: polygonsDataForLayers,
     centroids,
     polygonsCentroids,
     dashboardMode,
@@ -482,6 +496,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     showPopups,
     sitePolygonData,
     polygonEntityScope,
+    mapIndexPolygons,
     tooltipType,
     isMobile,
     setLoader,
@@ -509,7 +524,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     enabled: siteData === true && onPolygonTilesLoadingChange != null,
     sourcesAdded,
     tileLoadRequestId,
-    polygonsData,
+    polygonsData: polygonsDataForLayers,
     bbox,
     shouldBboxZoom,
     isEditFocusActive: editFocus.isEditFocusActive,
@@ -603,7 +618,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     isUserDrawingEnabled,
     formMap: isFormMap,
     polygonFromMap,
-    polygonsData,
+    polygonsData: polygonsDataForLayers,
     centroids,
     sitePolygonData,
     selectedPolyVersion,
@@ -656,7 +671,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
   const { isFullscreen, toggleFullscreen } = useMapFullscreen({ map });
 
   const { isDownloadingPolygons, downloadGeoJsonPolygon } = useMapDownload({
-    polygonsData,
+    polygonsData: polygonsDataForLayers,
     entityData,
     record,
     t,

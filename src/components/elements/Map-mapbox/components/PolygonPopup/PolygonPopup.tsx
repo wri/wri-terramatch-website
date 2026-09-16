@@ -5,7 +5,11 @@ import { useSitePolygons } from "@/connections/SitePolygons";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import type { PopupComponentProps } from "../../Map.d";
-import { findSitePolygonByMapFeatureUuid } from "../../sitePolygonPopupUtils";
+import {
+  type SitePolygonPopupFields,
+  findMapIndexEntryByMapFeatureUuid,
+  findSitePolygonByMapFeatureUuid
+} from "../../sitePolygonPopupUtils";
 import { PolygonPopupChampions } from "./PolygonPopupChampions";
 
 export function PolygonPopup(event: PopupComponentProps) {
@@ -19,11 +23,15 @@ export function PolygonPopup(event: PopupComponentProps) {
     championsMap,
     sitePolygonData,
     polygonEntityScope,
+    mapIndexPolygons,
     overviewPolygonPopup
   } = event;
   const polygonUuid = (feature.properties?.uuid ?? "") as string;
+  const useMapIndexPopup = overviewPolygonPopup !== true;
 
-  const shouldLoadByUuid = polygonEntityScope != null && polygonEntityScope.entityUuid !== "" && polygonUuid !== "";
+  const shouldLoadByUuid =
+    !useMapIndexPopup && polygonEntityScope != null && polygonEntityScope.entityUuid !== "" && polygonUuid !== "";
+
   const [polygonByUuidLoaded, { data: loadedPolygons }] = useSitePolygons({
     entityName: polygonEntityScope?.entityName,
     entityUuid: polygonEntityScope?.entityUuid ?? "",
@@ -45,15 +53,27 @@ export function PolygonPopup(event: PopupComponentProps) {
     [sitePolygonData, polygonUuid]
   );
 
-  const isPolygonDataLoading = shouldLoadByUuid && !polygonByUuidLoaded && cachedSitePolygon == null;
+  const mapIndexEntry = useMemo(
+    () => (useMapIndexPopup ? findMapIndexEntryByMapFeatureUuid(mapIndexPolygons, polygonUuid) : undefined),
+    [useMapIndexPopup, mapIndexPolygons, polygonUuid]
+  );
 
-  const resolvedSitePolygon = shouldLoadByUuid
+  const isPolygonDataLoading = useMapIndexPopup
+    ? mapIndexEntry == null && (mapIndexPolygons == null || mapIndexPolygons.length === 0)
+    : shouldLoadByUuid && !polygonByUuidLoaded && cachedSitePolygon == null;
+
+  const resolvedSitePolygon: SitePolygonPopupFields | undefined = useMapIndexPopup
+    ? mapIndexEntry
+    : shouldLoadByUuid
     ? loadedSitePolygon ?? (polygonByUuidLoaded ? undefined : cachedSitePolygon)
     : cachedSitePolygon;
-  const resolvedSitePolygonData = useMemo(
-    () => (resolvedSitePolygon != null ? [resolvedSitePolygon] : sitePolygonData),
-    [resolvedSitePolygon, sitePolygonData]
-  );
+
+  const resolvedSitePolygonData = useMemo(() => {
+    if (useMapIndexPopup || resolvedSitePolygon == null) {
+      return sitePolygonData;
+    }
+    return [resolvedSitePolygon as SitePolygonLightDto];
+  }, [useMapIndexPopup, resolvedSitePolygon, sitePolygonData]);
 
   if (championsMap) {
     return (

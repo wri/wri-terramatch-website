@@ -3,7 +3,7 @@ import { GeoJSONFeature, Map as MapboxMap, Popup } from "mapbox-gl";
 import { MutableRefObject, RefObject } from "react";
 
 import { CountriesProps, DashboardFilters } from "@/context/dashboard.provider";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import { MapStyle } from "./MapControls/types";
 
@@ -79,6 +79,7 @@ export type PopupComponentProps = {
   setPolygonFromMap?: SetPolygonFromMap;
   sitePolygonData?: SitePolygonLightDto[];
   polygonEntityScope?: PolygonEntityScope;
+  mapIndexPolygons?: SitePolygonMapEntryDto[];
   type: TooltipType;
   setShouldRefetchPolygonData?: (value: boolean) => void;
   editPolygon: EditPolygonState;
