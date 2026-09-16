@@ -75,6 +75,20 @@ export type DownloadFileOptions = {
   acknowledgeDelayedJob?: boolean;
 };
 
+const normalizeArrayQueryKeys = (queryParams?: FetchParams | null): FetchParams => {
+  if (queryParams == null) return {};
+
+  const normalized: FetchParams = {};
+  for (const [key, value] of Object.entries(queryParams)) {
+    if (key.endsWith("[]") && Array.isArray(value)) {
+      normalized[key.slice(0, -2)] = value;
+    } else {
+      normalized[key] = value;
+    }
+  }
+  return normalized;
+};
+
 export const getStableQuery = (queryParams?: FetchParams, replaceEmptyBrackets = true) => {
   if (queryParams == null) return "";
 
@@ -95,7 +109,10 @@ export const getStableQuery = (queryParams?: FetchParams, replaceEmptyBrackets =
     }
   }
 
-  const query = qs.stringify(queryParams, { arrayFormat: "indices", sort: (a, b) => a.localeCompare(b) });
+  const query = qs.stringify(normalizeArrayQueryKeys(queryParams), {
+    arrayFormat: "indices",
+    sort: (a, b) => a.localeCompare(b)
+  });
   if (query.length === 0) return query;
   return `?${replaceEmptyBrackets ? query.replace(/%5B%5D/g, "") : query}`;
 };
@@ -109,7 +126,9 @@ export const getStableIndexPath = (url: string, variables: RequestVariables) => 
   // Some query params get specified as a single indexed key like `page[number]`, and some get
   // specified as a complex object like `sideloads: [{ entity: "sites", pageSize: 5 }]`, and running
   // what we get through qs stringify / parse will normalize it.
-  const normalizedQuery = qs.parse(qs.stringify(variables.queryParams), { arrayLimit: 1000 });
+  const normalizedQuery = qs.parse(qs.stringify(normalizeArrayQueryKeys(variables.queryParams as FetchParams)), {
+    arrayLimit: 1000
+  });
   const queryKeys = Object.keys(normalizedQuery);
   const pageNumber = Number(queryKeys.includes("page") ? (normalizedQuery.page as ParsedQs).number : 1);
   if (queryKeys.includes("page") && (normalizedQuery.page as ParsedQs).number != null) {
@@ -119,7 +138,7 @@ export const getStableIndexPath = (url: string, variables: RequestVariables) => 
     delete normalizedQuery.sideloads;
   }
 
-  return { stableUrl: getStablePathAndQuery(url, normalizedQuery, variables.pathParams), pageNumber };
+  return { stableUrl: getStablePathAndQuery(url, normalizedQuery as FetchParams, variables.pathParams), pageNumber };
 };
 
 export const resolveUrl = <TQueryParams extends {}, TPathParams extends {}>(

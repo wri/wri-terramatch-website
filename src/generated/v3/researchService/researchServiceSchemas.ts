@@ -205,6 +205,22 @@ export type SitePolygonMapEntryDto = {
    * Approval status of the polygon, used for map styling and status counts.
    */
   status: "draft" | "pending-approval" | "information-required" | "approved" | null;
+  /**
+   * Polygon display name (from polyName).
+   */
+  name: string | null;
+  /**
+   * Number of trees planted.
+   */
+  numTrees: number | null;
+  /**
+   * Calculated area in hectares.
+   */
+  calcArea: number | null;
+  /**
+   * Validation status. Null means validation has not started.
+   */
+  validationStatus: "passed" | "partial" | "failed" | null;
 };
 
 export type SitePolygonMapIndexDto = {
