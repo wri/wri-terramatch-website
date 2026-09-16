@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
+import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import HighLevelSelector from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector";
 import { LoadingIcon, PlusIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 import { SelectedFilter } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
@@ -45,7 +46,8 @@ const SiteIndexPageContent = () => {
   }, [searchQuery]);
 
   const hasActiveSearch = searchQuery.trim().length > 0;
-  const hasActiveFilters = hasActiveSearch || statusFilters.length > 0 || updateFilter != null;
+  const hasAppliedFilters = statusFilters.length > 0 || updateFilter != null;
+  const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
   const filtering = searchQuery.trim() !== debouncedSearch;
   const { loading, loadingMore, hasMore, loadMore, viewProjects, projects, totalSiteCount, onProjectOpened } =
     useSiteIndexData({
@@ -216,7 +218,7 @@ const SiteIndexPageContent = () => {
         showClearFilters={selectedFilters.length > 0}
       />
 
-      <PageContent heightFull={false} className="!gap-0 bg-theme-neutral-200 px-2 pb-9 pt-1">
+      <PageContent heightFull={false} className="bg-theme-neutral-200 flex-1 !gap-0 px-2 pb-9 pt-1">
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
@@ -257,14 +259,17 @@ const SiteIndexPageContent = () => {
             </div>
 
             {visibleProjects.length === 0 ? (
-              <Box background="neutral.100" h="full" p={4}>
-                <Text textStyle="400-bold">{t("No sites found")}</Text>
-                <Text textStyle="400">
-                  {hasActiveFilters
-                    ? t("No sites match the current search and filters.")
-                    : t("No sites have been added yet.")}
-                </Text>
-              </Box>
+              <NoResults
+                className="px-4"
+                title={hasActiveFilters ? t("No results found") : t("No sites found")}
+                description={
+                  hasActiveSearch
+                    ? t("We couldn’t find any sites matching your search. Try a different keyword.")
+                    : hasAppliedFilters
+                    ? t("We couldn’t find any sites matching your filters. Try adjusting or clearing your filters.")
+                    : t("No sites have been added yet.")
+                }
+              />
             ) : null}
           </>
         )}
