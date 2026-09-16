@@ -27,16 +27,11 @@ const shouldRenderSuffix = (progressLabel?: string, suffix?: string): boolean =>
 type MetricContextItemProps = {
   label: string;
   value: number;
-  goal?: number;
   suffix?: string;
-  goalSuffix?: string;
 };
 
-const MetricContextItem: FC<MetricContextItemProps> = ({ label, value, goal, suffix, goalSuffix }) => {
-  const t = useT();
-  const showGoal = goal != null && goal > 0;
+const MetricContextItem: FC<MetricContextItemProps> = ({ label, value, suffix }) => {
   const valueSuffix = suffix != null && suffix !== "" ? suffix : undefined;
-  const displayedGoalSuffix = goalSuffix != null && goalSuffix !== "" ? goalSuffix : valueSuffix;
 
   return (
     <Flex gap={1} className="items-center">
@@ -51,21 +46,6 @@ const MetricContextItem: FC<MetricContextItemProps> = ({ label, value, goal, suf
           {valueSuffix}
         </Text>
       ) : null}
-      {showGoal ? (
-        <>
-          <Text color="neutral.700" textStyle="200">
-            {t("of")}
-          </Text>
-          <Text color="neutral.900" textStyle="300-bold">
-            {formatNumberLocaleString(goal)}
-          </Text>
-          {displayedGoalSuffix != null ? (
-            <Text color="neutral.900" textStyle="300-bold">
-              {displayedGoalSuffix}
-            </Text>
-          ) : null}
-        </>
-      ) : null}
     </Flex>
   );
 };
@@ -73,12 +53,10 @@ const MetricContextItem: FC<MetricContextItemProps> = ({ label, value, goal, suf
 type MetricContextDetailsProps = {
   selection?: number;
   filtered?: number;
-  goal?: number;
   suffix?: string;
-  goalSuffix?: string;
 };
 
-const MetricContextDetails: FC<MetricContextDetailsProps> = ({ selection, filtered, goal, suffix, goalSuffix }) => {
+const MetricContextDetails: FC<MetricContextDetailsProps> = ({ selection, filtered, suffix }) => {
   const t = useT();
   const selectionItem = selection != null ? { key: "selection", label: t("Selected:"), value: selection } : null;
   const filteredItem = filtered != null ? { key: "filtered", label: t("Filtered:"), value: filtered } : null;
@@ -95,14 +73,7 @@ const MetricContextDetails: FC<MetricContextDetailsProps> = ({ selection, filter
       {items.map((item, itemIndex) => (
         <Flex key={item.key} gap={2} className="items-center">
           {itemIndex > 0 && <SimpleDivider variant="vertical" className="!h-3 shrink-0" />}
-          <MetricContextItem
-            key={item.key}
-            label={item.label}
-            value={item.value}
-            goal={goal}
-            suffix={suffix}
-            goalSuffix={goalSuffix}
-          />
+          <MetricContextItem key={item.key} label={item.label} value={item.value} suffix={suffix} />
         </Flex>
       ))}
     </Flex>
@@ -463,13 +434,7 @@ const MetricCard: FC<MetricCardProps> = props => {
       )}
     >
       {content}
-      <MetricContextDetails
-        selection={selection}
-        filtered={filtered}
-        goal={goal}
-        suffix={progressSuffix}
-        goalSuffix={goalSuffix}
-      />
+      <MetricContextDetails selection={selection} filtered={filtered} suffix={progressSuffix} />
     </Flex>
   );
 };
