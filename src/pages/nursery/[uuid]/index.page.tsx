@@ -17,7 +17,6 @@ import ProjectResponsiveTypography from "@/styles/ResponsiveTypography";
 import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
-import CompletedReportsTab from "./tabs/CompletedReports";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 
 const NurseryDetailPage = () => {
@@ -39,9 +38,7 @@ const NurseryDetailPage = () => {
     }
   });
 
-  const currentTab = (router.query.tab as string) ?? "overview";
-  const isSuffixView = currentTab === "completed-tasks";
-  const activeTab = isSuffixView ? "overview" : currentTab;
+  const activeTab = (router.query.tab as string) ?? "overview";
 
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <NurseryOverviewTab nursery={nursery!} /> },
@@ -64,8 +61,6 @@ const NurseryDetailPage = () => {
     { key: "audit-log", title: t("Audit Log"), body: <AuditLog nursery={nursery} /> }
   ];
 
-  const suffixContent = isSuffixView && nursery != null ? <CompletedReportsTab nursery={nursery} /> : null;
-
   return (
     <FrameworkProvider frameworkKey={nursery?.frameworkKey}>
       <ProjectResponsiveTypography />
@@ -85,8 +80,7 @@ const NurseryDetailPage = () => {
                   label: "Nurseries",
                   link: `/project/${nursery.projectUuid}?tab=nurseries`
                 },
-                { label: nursery.name ?? "", link: `/nursery/${nursery.uuid}` },
-                ...(isSuffixView ? [{ label: t("Reports"), link: `/nursery/${nursery.uuid}?tab=completed-tasks` }] : [])
+                { label: nursery.name ?? "", link: `/nursery/${nursery.uuid}` }
               ]}
               suffix={
                 <div className="flex gap-1.5">
@@ -99,7 +93,7 @@ const NurseryDetailPage = () => {
                     >
                       {t("Project Profile")}
                     </Button>
-                    <span className="text-sm text-theme-neutral-300">|</span>
+                    <span className="text-theme-neutral-300 text-sm">|</span>
                     <Button
                       variant="borderless"
                       size="small"
@@ -117,14 +111,14 @@ const NurseryDetailPage = () => {
                     value: item.key,
                     label: item.title
                   })),
-                  defaultValue: isSuffixView ? "__none__" : activeTab,
+                  defaultValue: activeTab,
                   onTabClick: (tabValue: string) => {
                     router.push(`/nursery/${nurseryUUID}?tab=${tabValue}`, undefined, { shallow: true });
                   }
                 }
               }}
             />
-            <div className="flex flex-1">{suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}</div>
+            <div className="flex flex-1">{TabItems.find(item => item.key === activeTab)?.body}</div>
           </>
         )}
         <PageFooter />
