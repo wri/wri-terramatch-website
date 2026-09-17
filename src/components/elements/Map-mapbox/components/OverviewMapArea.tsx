@@ -76,7 +76,8 @@ const OverviewMapArea = ({
     setShouldRefetchValidation,
     setShouldRefetchPolygonData,
     polygonData: sitePolygonDataV3,
-    validFilter
+    validFilter,
+    setMediaFiles
   } = useMapAreaContext();
 
   const mapIndexFilter = useMemo(() => {
@@ -136,6 +137,10 @@ const OverviewMapArea = ({
     uuid: entityModel?.uuid,
     enabled: entityModel?.uuid != null
   });
+
+  useEffect(() => {
+    setMediaFiles(mediaFiles ?? []);
+  }, [mediaFiles, setMediaFiles]);
 
   const hasPolygons = (mapIndex?.total ?? 0) > 0;
 

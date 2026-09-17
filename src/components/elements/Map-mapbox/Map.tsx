@@ -601,7 +601,6 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
     hideMediaPopupActions,
     hideMediaOnMap,
     isPolygonGeometryLoading,
-    isEditFocusActive: editFocus.isEditFocusActive,
     overlapPolygons
   });
 
