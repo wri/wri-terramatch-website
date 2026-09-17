@@ -344,8 +344,7 @@ export const useSiteIndexData = ({
   }, [normalisedSearch, projectIndex, projectUuid, sitesByProjectId]);
   matchingProjectsRef.current = matchingProjects;
 
-  const countProjectsWithSites = () =>
-    matchingProjectsRef.current.filter(project => (siteCountByProjectIdRef.current.get(project.uuid) ?? 0) > 0).length;
+  const countLoadedProjects = () => matchingProjectsRef.current.length;
 
   const hasMoreProjectPages = () => {
     if (projectTotalRef.current == null) return true;
@@ -616,7 +615,7 @@ export const useSiteIndexData = ({
             !cancelled &&
             requestId === requestIdRef.current &&
             hasMoreProjectPages() &&
-            countProjectsWithSites() < visibleTarget
+            countLoadedProjects() < visibleTarget
           );
         }
 
@@ -639,11 +638,6 @@ export const useSiteIndexData = ({
       cancelled = true;
     };
   }, [loadNextProjectBatch, normalisedSearch, projectUuid, reloadNonce, statusFilters, updateFilter, mergeSearchSites]);
-
-  const projectsWithSites = useMemo(
-    () => matchingProjects.filter(project => (siteCountByProjectId.get(project.uuid) ?? 0) > 0),
-    [matchingProjects, siteCountByProjectId]
-  );
 
   const loadMore = useCallback(async () => {
     if (
@@ -670,19 +664,17 @@ export const useSiteIndexData = ({
 
   const viewProjects = useMemo(
     () =>
-      projectIndex
-        .filter(project => (siteCountByProjectId.get(project.uuid) ?? 0) > 0)
-        .map(project =>
-          toSiteIndexProject(project, {
-            fullProject: fullProjectsById.get(project.uuid) ?? asFullProject(project)
-          })
-        ),
-    [fullProjectsById, projectIndex, siteCountByProjectId]
+      projectIndex.map(project =>
+        toSiteIndexProject(project, {
+          fullProject: fullProjectsById.get(project.uuid) ?? asFullProject(project)
+        })
+      ),
+    [fullProjectsById, projectIndex]
   );
 
   const projects = useMemo(
     () =>
-      projectsWithSites.map(project =>
+      matchingProjects.map(project =>
         toSiteIndexProject(project, {
           fullProject: fullProjectsById.get(project.uuid) ?? asFullProject(project),
           sites: sitesByProjectId.get(project.uuid) ?? [],
@@ -690,12 +682,12 @@ export const useSiteIndexData = ({
           sitesLoading: loadingProjectIds.has(project.uuid)
         })
       ),
-    [fullProjectsById, loadedProjectIds, loadingProjectIds, projectsWithSites, sitesByProjectId]
+    [fullProjectsById, loadedProjectIds, loadingProjectIds, matchingProjects, sitesByProjectId]
   );
 
   const totalSiteCount = useMemo(
-    () => projectsWithSites.reduce((total, project) => total + (siteCountByProjectId.get(project.uuid) ?? 0), 0),
-    [projectsWithSites, siteCountByProjectId]
+    () => matchingProjects.reduce((total, project) => total + (siteCountByProjectId.get(project.uuid) ?? 0), 0),
+    [matchingProjects, siteCountByProjectId]
   );
 
   return {
