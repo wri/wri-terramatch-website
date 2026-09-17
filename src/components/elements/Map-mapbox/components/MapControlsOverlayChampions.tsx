@@ -5,6 +5,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { usePolygonEditDrawer } from "@/context/polygonEditDrawer.provider";
 
 import CheckIndividualPolygonControl from "../MapControls/CheckIndividualPolygonControl";
+import { GeotaggedPhotosControl } from "../MapControls/GeotaggedPhotosControl";
 import CheckPolygonControl from "../MapControls/CheckPolygonControl";
 import EditControl from "../MapControls/EditControl";
 import ImageControl from "../MapControls/ImageControl";
@@ -115,7 +116,8 @@ const MapControlsOverlayChampions: FC<MapControlsOverlayProps> = ({
             </ControlGroup>
           ) : null}
 
-          <ControlGroup position="bottom-right" className="z-[19]">
+          <ControlGroup position="bottom-right" className="z-[19] gap-2">
+            <GeotaggedPhotosControl />
             <ZoomControl
               map={map}
               isFullscreen={isFullscreen}
