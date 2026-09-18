@@ -975,11 +975,16 @@ export type TreeReportCountsDto = {
   } | null;
 };
 
+export type BulkUploadWarningLocation = {
+  row: number;
+  col: number;
+};
+
 export type BulkUploadWarning = {
   /**
-   * If relevant, the row the warning occurred on
+   * If relevant, the location where the warning occurred
    */
-  row: number;
+  location: BulkUploadWarningLocation;
   /**
    * The warning message
    */
