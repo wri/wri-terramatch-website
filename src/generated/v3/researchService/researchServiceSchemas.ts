@@ -1251,6 +1251,7 @@ export type PolygonAttributeDefinitionConstants = {
   /**
    * @example single_select
    * @example multi_select
+   * @example date
    */
   INPUT_TYPES: string[];
 };
@@ -1281,7 +1282,7 @@ export type PolygonAttributeDefinitionDto = {
    */
   key: string;
   label: string;
-  inputType: "single_select" | "multi_select";
+  inputType: "single_select" | "multi_select" | "date";
   frameworkKey:
     | "terrafund"
     | "terrafund-landscapes"
@@ -1321,7 +1322,7 @@ export type StorePolygonAttributeDefinitionOptionAttributes = {
 
 export type CreatePolygonAttributeDefinitionAttributes = {
   label: string;
-  inputType: "single_select" | "multi_select";
+  inputType: "single_select" | "multi_select" | "date";
   frameworkKey:
     | "terrafund"
     | "terrafund-landscapes"
@@ -1342,6 +1343,9 @@ export type CreatePolygonAttributeDefinitionAttributes = {
    * Display order within the framework. Defaults to 0.
    */
   order?: number;
+  /**
+   * Required with at least one entry for single_select/multi_select. Must be an empty array for date.
+   */
   options: StorePolygonAttributeDefinitionOptionAttributes[];
 };
 
@@ -1362,7 +1366,7 @@ export type UpdatePolygonAttributeDefinitionAttributes = {
    */
   order?: number;
   /**
-   * When provided, replaces the full option list. Omitted options are removed only if no polygon stores that option value. Existing option values stay locked.
+   * When provided, replaces the full option list (single_select/multi_select require at least one entry; date must be empty). Omitted options are removed only if no polygon stores that option value. Existing option values stay locked.
    */
   options?: StorePolygonAttributeDefinitionOptionAttributes[];
 };
