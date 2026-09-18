@@ -49,5 +49,5 @@ export type ResearchServiceApiResources = {
 };
 
 export const PolygonAttributeDefinitionConstants = {
-  INPUT_TYPES: ["single_select", "multi_select"] as const
+  INPUT_TYPES: ["single_select", "multi_select", "date"] as const
 } as const;
