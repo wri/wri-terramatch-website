@@ -9,7 +9,7 @@ import {
   loadNurseryIndex,
   loadSiteIndex
 } from "@/connections/Entity";
-import { loadAllSitePolygons } from "@/connections/SitePolygons";
+import { loadSitePolygonMapIndex } from "@/connections/SitePolygons";
 import { loadTask } from "@/connections/Task";
 import { IndexConnection } from "@/connections/util/apiConnectionFactory";
 import { NurseryLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -131,15 +131,17 @@ const useLoadEntityList = ({
 
     if (entityType === "sitePolygons") {
       const entityName = isSiteProjectLevel ? "projects" : "sites";
-      const polygons = await loadAllSitePolygons({
+      const mapIndex = await loadSitePolygonMapIndex({
         entityName,
-        entityUuid: entity.uuid
+        entityUuid: entity.uuid,
+        enabled: true
       });
+      const polygons = mapIndex.data?.polygons ?? [];
 
       _entityList = polygons.map(polygon => ({
         name: polygon.name ?? undefined,
         uuid: polygon.uuid,
-        status: polygon.status,
+        status: polygon.status ?? undefined,
         polygonUuid: polygon.polygonUuid ?? undefined
       }));
     } else if (entityType === "projects") {
