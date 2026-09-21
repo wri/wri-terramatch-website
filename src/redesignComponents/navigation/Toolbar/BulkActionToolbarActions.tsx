@@ -1,5 +1,5 @@
-import { Flex } from "@chakra-ui/react";
-import { Fragment, memo, type ReactElement } from "react";
+import { Flex, Text } from "@chakra-ui/react";
+import { type ReactElement, Fragment, memo } from "react";
 import { twMerge } from "tailwind-merge";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -43,7 +43,7 @@ const renderToolbarActionButton = ({
 
   return (
     <Tooltip content={wrapToolbarInfoTooltipContent(tooltip)} position="top">
-      <span className="inline-flex">{button}</span>
+      <Text as="span">{button}</Text>
     </Tooltip>
   );
 };
