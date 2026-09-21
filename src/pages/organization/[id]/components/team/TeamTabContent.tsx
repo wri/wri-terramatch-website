@@ -1,152 +1,307 @@
+import { Box, TableCell, TableRow } from "@chakra-ui/react";
+import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
+import { Checkbox } from "@worldresources/wri-design-systems";
 import { useRouter } from "next/router";
-import { FC, useCallback, useRef, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import Button from "@/components/elements/Button/Button";
-import Text from "@/components/elements/Text/Text";
-import List from "@/components/extensive/List/List";
-import Modal from "@/components/extensive/Modal/Modal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import Container from "@/components/generic/Layout/Container";
-import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useOrgUserAssociationUpdate } from "@/connections/Organisation";
 import { useOrganisationUserAssociations } from "@/connections/UserAssociation";
-import { useModalContext } from "@/context/modal.provider";
 import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
-import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
+import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
+import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
+import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
+import Table, {
+  type TableColumn,
+  type TableRenderRowContext,
+  CHECKBOX_COLUMN_KEY
+} from "@/redesignComponents/dataDisplay/Table/Table";
+import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
+import {
+  CheckApprovedIcon,
+  CheckIcon,
+  DeleteIcon,
+  EditIcon,
+  InformationRequiredIcon,
+  RejectedIcon,
+  UserAddIcon
+} from "@/redesignComponents/foundations/Icons";
+import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
-import InviteTeamMemberModal from "../InviteTeamMemberModal";
-import TeamMemberCard from "./TeamMemberCard";
+import TeamBulkActionToolbar from "./TeamBulkActionToolbar";
+import TeamMemberActionModal, { type TeamMemberAction } from "./TeamMemberActionModal";
+
+type AssociationStatus = "requested" | "approved";
+
+type TeamMemberRow = Omit<UserAssociationDto, "status"> & {
+  id: string;
+  status: string;
+  associationStatus: AssociationStatus;
+};
+
+type RowActionState = {
+  action: TeamMemberAction;
+  member: TeamMemberRow;
+};
+
+const ROLE_LABELS: Record<string, string> = {
+  "project-developer": "Monitoring Partner",
+  "project-manager": "Project Manager"
+};
 
 const TeamTabContent: FC = () => {
   const t = useT();
-
   const { query } = useRouter();
-  const { openModal, closeModal } = useModalContext();
-  const [selectedUserUuid, setSelectedUserUuid] = useState<string>("");
+  const organisationUuid = String(query.id ?? "");
+  const isMobile = useMediaQuery("(max-width: 1200px)");
 
-  const [, { data: approvedUsers, refetch: refetchApproved }] = useOrganisationUserAssociations({
-    organisationUuid: String(query.id),
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResetKey, setSearchResetKey] = useState(0);
+  const [showRoleFilter, setShowRoleFilter] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [rowAction, setRowAction] = useState<RowActionState | null>(null);
+
+  const [approvedLoaded, { data: approvedUsers }] = useOrganisationUserAssociations({
+    organisationUuid,
     status: "approved"
   });
-
-  const [, { data: pendingUsers, refetch: refetchPending }] = useOrganisationUserAssociations({
-    organisationUuid: String(query.id),
+  const [pendingLoaded, { data: pendingUsers }] = useOrganisationUserAssociations({
+    organisationUuid,
     status: "requested"
   });
 
-  const [, { create, isCreating, createFailure }] = useOrgUserAssociationUpdate({
-    organisationUuid: query.id as string,
-    userUuid: selectedUserUuid
-  });
-  const createRef = useRef(create);
-  createRef.current = create;
+  const allMembers = useMemo<TeamMemberRow[]>(
+    () => [
+      ...(pendingUsers ?? []).map(user => ({
+        ...user,
+        id: user.uuid,
+        status: t("Pending"),
+        associationStatus: "requested" as const
+      })),
+      ...(approvedUsers ?? []).map(user => ({
+        ...user,
+        id: user.uuid,
+        status: t("Accepted"),
+        associationStatus: "approved" as const
+      }))
+    ],
+    [approvedUsers, pendingUsers, t]
+  );
 
-  const handleUpdateSuccess = useCallback(() => {
-    refetchApproved();
-    refetchPending();
-    closeModal(ModalId.CONFIRM_USER);
-    setSelectedUserUuid("");
-  }, [refetchApproved, refetchPending, closeModal]);
+  const roleOptions = useMemo(
+    () =>
+      Array.from(new Set(allMembers.map(member => member.roleName).filter((role): role is string => role != null))).map(
+        role => ({
+          label: t(ROLE_LABELS[role] ?? role),
+          value: role,
+          onClick: () => setSelectedRole(role)
+        })
+      ),
+    [allMembers, t]
+  );
 
-  useRequestSuccess(isCreating, createFailure, handleUpdateSuccess);
+  const teamMembers = useMemo(() => {
+    const queryValue = searchQuery.trim().toLowerCase();
 
-  /**
-   * Conditionally render Approve or Reject Modal Content
-   * @param type approve | reject
-   * @param user UserAssociationDto
-   */
-  const handleOpenModal = (type: "approve" | "reject", user?: UserAssociationDto) => {
-    if (user?.uuid == null) return;
+    return allMembers.filter(member => {
+      if (selectedRole != null && member.roleName !== selectedRole) return false;
+      if (queryValue.length === 0) return true;
 
-    setSelectedUserUuid(user.uuid);
+      return [member.fullName, member.emailAddress, member.roleName, member.status]
+        .filter((value): value is string => value != null)
+        .some(value => value.toLowerCase().includes(queryValue));
+    });
+  }, [allMembers, searchQuery, selectedRole]);
 
-    const title = type === "approve" ? t("Confirm User Approval") : t("Confirm User Rejection");
-    const content =
-      type === "approve"
-        ? t(
-            "Are you sure you want to approve this user's request to join your organization? Once approved, the user will be granted access to your organization's resources and will receive a notification confirming their acceptance. Please note that once approved, the user will have the same level of access as other members in your organization."
+  const { selectedRows, selectedRowIds, setSelectedRowIds, handleRowSelected, onAllItemsSelected } = useTableSelection(
+    true,
+    teamMembers
+  );
+
+  const openRowAction = useCallback((action: TeamMemberAction, member: TeamMemberRow) => {
+    setRowAction({ action, member });
+  }, []);
+
+  const columns = useMemo<TableColumn[]>(
+    () => [
+      {
+        key: "fullName",
+        label: t("Name"),
+        sortable: true,
+        cell: (member: TeamMemberRow) => (
+          <CustomTableCell avatars={[{ name: member.fullName, ariaLabel: member.fullName }]} />
+        )
+      },
+      ...(!isMobile ? [{ key: "emailAddress", label: t("Email"), sortable: true }] : []),
+      {
+        key: "roleName",
+        label: t("Role"),
+        sortable: true,
+        cell: (member: TeamMemberRow) => t(ROLE_LABELS[member.roleName ?? ""] ?? member.roleName ?? "—")
+      },
+      {
+        key: "status",
+        label: t("Status"),
+        sortable: true,
+        cell: (member: TeamMemberRow) => (
+          <ActionStatusTag
+            state={member.associationStatus === "requested" ? "attention" : "success"}
+            size="small"
+            label={member.status}
+            icon={
+              member.associationStatus === "requested" ? (
+                <InformationRequiredIcon boxSize={3} color='warning.500' />
+              ) : (
+                <CheckApprovedIcon boxSize={3} color='success.500' />
+              )
+            }
+          />
+        )
+      },
+      {
+        key: "actions",
+        label: "",
+        width: "214px",
+        cell: (member: TeamMemberRow) =>
+          member.associationStatus === "requested" ? (
+            <ActionCell
+              button={{
+                children: t("Approve"),
+                leftIcon: <CheckIcon boxSize={3} />,
+                onClick: () => openRowAction("approve", member)
+              }}
+              buttonSecondary={{
+                children: t("Reject"),
+                leftIcon: <RejectedIcon boxSize={3} color="error.500" />,
+                className: "!border-theme-error-300 !bg-theme-error-100 !text-theme-error-900",
+                size: "small",
+                onClick: () => openRowAction("reject", member)
+              }}
+            />
+          ) : (
+            <ActionCell
+              button={{
+                children: t("Edit"),
+                leftIcon: <EditIcon boxSize={3} />,
+                onClick: () => {}
+              }}
+              buttonSecondary={{
+                children: t("Remove"),
+                leftIcon: <DeleteIcon boxSize={3} color="error.500" />,
+                className: "!border-theme-error-300 !bg-theme-error-100 !text-theme-error-900",
+                size: "small",
+                onClick: () => openRowAction("remove", member)
+              }}
+            />
           )
-        : t(
-            "Are you sure you want to reject this user's request to join your organization? Once rejected, the user will be unable to access your organization's resources and will receive a notification confirming their rejection."
-          );
+      }
+    ],
+    [isMobile, openRowAction, t]
+  );
 
-    return openModal(
-      ModalId.CONFIRM_USER,
-      <Modal
-        title={title}
-        content={content}
-        primaryButtonProps={{
-          children: type === "approve" ? t("Approve User") : t("Reject User"),
-          onClick: () => {
-            // createRef.current is always the latest create fn (updated each render)
-            const status = type === "approve" ? "approved" : "rejected";
-            (createRef.current as (attributes: { status: "approved" | "rejected" }) => void)({
-              status
-            });
-          }
-        }}
-        secondaryButtonProps={{
-          children: t("Cancel"),
-          onClick: () => {
-            closeModal(ModalId.CONFIRM_USER);
-            setSelectedUserUuid("");
-          }
-        }}
-      />
-    );
-  };
+  const renderRow = useCallback(
+    (member: TeamMemberRow, context?: TableRenderRowContext) => {
+      const isSelected = selectedRowIds.has(member.id);
 
-  const handleInvite = () => {
-    openModal(
-      ModalId.INVITE_MONITORING_PARTNER_MODAL,
-      <InviteTeamMemberModal organisationUUID={query.id as string} onSuccess={() => {}} />
-    );
-  };
+      return (
+        <TableRow
+          className={context?.className != null ? `group ${context.className}` : "group"}
+          aria-selected={isSelected}
+        >
+          <TableCell {...context?.getCellProps(CHECKBOX_COLUMN_KEY)}>
+            <Checkbox
+              name={`team-member-${member.id}`}
+              aria-label={t("Select {name}", { name: member.fullName })}
+              checked={isSelected}
+              onCheckedChange={({ checked }) => handleRowSelected(member, checked === true)}
+            />
+          </TableCell>
+          {columns.map(column => (
+            <TableCell key={column.key} {...context?.getCellProps(column.key)}>
+              {column.cell != null
+                ? column.cell(member)
+                : (member as unknown as Record<string, React.ReactNode>)[column.key] ?? "—"}
+            </TableCell>
+          ))}
+        </TableRow>
+      );
+    },
+    [columns, handleRowSelected, selectedRowIds, t]
+  );
 
   return (
-    <Container className="py-15">
-      <LoadingContainer loading={false}>
-        <Text variant="text-heading-2000">{t("Meet the Team")}</Text>
+    <Box paddingX={6} paddingTop={3} paddingBottom={8} minHeight="644px" width="100%" overflow="auto">
+      <ToolbarTable
+        className="mb-4 !px-0"
+        classNameContentLeft="min-w-0"
+        onClearFilters={() => {
+          setSelectedRole(null);
+          setShowRoleFilter(false);
+          setSearchQuery("");
+          setSearchResetKey(key => key + 1);
+        }}
+        onClickFilterButton={() => setShowRoleFilter(true)}
+        filters={
+          showRoleFilter
+            ? [
+                {
+                  mainActionLabel: selectedRole == null ? t("Role") : t(ROLE_LABELS[selectedRole] ?? selectedRole),
+                  mainActionOnClick: () => setSelectedRole(null),
+                  otherActions: roleOptions,
+                  variant: "secondary"
+                }
+              ]
+            : undefined
+        }
+        search={{
+          label: t("Results"),
+          placeholder: t("Search"),
+          options: [],
+          displayResults: "none",
+          onQueryChange: setSearchQuery,
+          count: teamMembers.length,
+          resetKey: searchResetKey
+        }}
+        button={{ children: t("Add Team Member"), leftIcon: <UserAddIcon /> }}
+        showClearFilters={selectedRole != null || searchQuery.length > 0}
+      />
 
-        {(approvedUsers?.length ?? 0) > 0 && (
-          <div className="mt-12 rounded-lg bg-neutral-150 py-8 px-14">
-            <div className="flex items-center justify-between">
-              <Text variant="text-heading-200">
-                {t("Your Organizations' TerraMatch Users ({n})", { n: approvedUsers?.length })}
-              </Text>
-              <Button onClick={handleInvite}>{t("add Team Member")}</Button>
-            </div>
+      <Table<TeamMemberRow>
+        data={teamMembers}
+        columns={columns}
+        selectable
+        selectedRows={selectedRows}
+        onRowSelected={handleRowSelected}
+        onAllItemsSelected={onAllItemsSelected}
+        renderRow={renderRow}
+        pageSize={10}
+        loading={!approvedLoaded || !pendingLoaded}
+      />
 
-            <List
-              className="mt-10 grid grid-cols-4 gap-6"
-              items={approvedUsers ?? []}
-              render={user => <TeamMemberCard user={user} />}
-            />
-          </div>
-        )}
-
-        {(pendingUsers?.length ?? 0) > 0 && (
-          <div className="mt-12 rounded-lg bg-neutral-150 py-8 px-14">
-            <Text variant="text-heading-200">
-              {t("Requests to Join Organization ({n})", { n: pendingUsers?.length })}
-            </Text>
-            <List
-              className="mt-10 grid grid-cols-3 gap-6"
-              items={pendingUsers ?? []}
-              render={user => (
-                <TeamMemberCard
-                  type="pending"
-                  user={user}
-                  onApprove={user => handleOpenModal("approve", user)}
-                  onReject={user => handleOpenModal("reject", user)}
-                />
-              )}
-            />
-          </div>
-        )}
-      </LoadingContainer>
-    </Container>
+      <TeamBulkActionToolbar
+        selectedMembers={selectedRows.map(member => ({
+          id: member.id,
+          fullName: member.fullName,
+          associationStatus: member.associationStatus
+        }))}
+        onCancel={() => setSelectedRowIds(new Set())}
+      />
+      <TeamMemberActionModal
+        action={rowAction?.action ?? null}
+        members={
+          rowAction == null
+            ? []
+            : [
+                {
+                  id: rowAction.member.id,
+                  fullName: rowAction.member.fullName,
+                  associationStatus: rowAction.member.associationStatus
+                }
+              ]
+        }
+        onClose={() => setRowAction(null)}
+        onConfirm={() => setRowAction(null)}
+      />
+    </Box>
   );
 };
 
