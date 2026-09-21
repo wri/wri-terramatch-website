@@ -69,6 +69,16 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
     return <ToolbarInfoTooltipContent lines={lines} />;
   }, [approvalLockReason, isEditDisabled, selectedCount, t]);
 
+  const deleteTooltip = useMemo(() => {
+    if (canDelete) return undefined;
+    if (selectedCount === 1) {
+      return t("This profile can't be deleted because it's already submitted or approved");
+    }
+    return t(
+      "One or more selected profiles can't be deleted because only drafts can be deleted. Deselect those to continue"
+    );
+  }, [canDelete, selectedCount, t]);
+
   if (!visible) return null;
 
   return (
@@ -85,7 +95,8 @@ const NurseriesIndexBulkActionToolbar: FC<NurseriesIndexBulkActionToolbarProps> 
           tone: "danger",
           children: t("Delete"),
           onClick: onDelete,
-          disabled: !canDelete || isUpdating
+          disabled: !canDelete || isUpdating,
+          tooltip: deleteTooltip
         }}
         actions={[
           {
