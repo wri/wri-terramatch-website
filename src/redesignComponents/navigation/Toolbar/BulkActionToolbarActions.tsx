@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { type ReactElement, Fragment, memo } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -29,21 +29,26 @@ const renderToolbarActionButton = ({
   id: _id,
   ...buttonProps
 }: BulkToolbarAction): ReactElement => {
+  const isDisabledTooltip = tooltip != null && buttonProps.disabled === true;
   const button = (
     <Button
       {...buttonProps}
-      className={twMerge(getActionClassName(tone, buttonProps.disabled), className)}
+      className={twMerge(
+        getActionClassName(tone, buttonProps.disabled),
+        className,
+        isDisabledTooltip && "pointer-events-none"
+      )}
       variant="borderless"
     />
   );
 
-  if (tooltip == null || buttonProps.disabled !== true) {
+  if (!isDisabledTooltip) {
     return button;
   }
 
   return (
     <Tooltip content={wrapToolbarInfoTooltipContent(tooltip)} position="top">
-      <Text as="span">{button}</Text>
+      <span className="inline-flex">{button}</span>
     </Tooltip>
   );
 };
