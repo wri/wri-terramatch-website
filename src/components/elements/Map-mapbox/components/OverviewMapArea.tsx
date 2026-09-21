@@ -337,6 +337,7 @@ const OverviewMapArea = ({
           disabledPolygonPanel={disabledPolygonPanel}
           hideFullscreenControl={hideFullscreenControl}
           hideMediaPopupActions={disabledPolygonPanel}
+          hideMediaOnMap
           isPolygonGeometryLoading={isMapLoading}
           onPolygonTilesLoadingChange={setIsPolygonTilesLoading}
           overviewPolygonPopup={overviewPolygonPopup}
