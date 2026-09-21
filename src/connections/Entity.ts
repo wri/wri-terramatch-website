@@ -108,6 +108,7 @@ const createEntityGetConnection = <D extends EntityDtoType, U extends EntityUpda
       if (id != null) ApiSlice.pruneCache(entity, [id]);
     })
     .update<U["attributes"], EntityUpdateVariables>(entityUpdate)
+    .enabledProp()
     .buildConnection();
 };
 

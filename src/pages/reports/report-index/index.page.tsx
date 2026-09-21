@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { isString } from "lodash";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useRef } from "react";
@@ -18,15 +19,17 @@ import ReportsSelectionProvider from "./ReportsSelection.provider";
 const ReportsIndexPage = () => {
   const router = useRouter();
   const t = useT();
-  const sourceParam = typeof router.query.source === "string" ? router.query.source : undefined;
+  const sourceParam = isString(router.query.source) ? router.query.source : undefined;
   const source = isReportsIndexSource(sourceParam) ? sourceParam : undefined;
-  const sourceUuid = typeof router.query.uuid === "string" ? router.query.uuid : undefined;
+  const sourceUuid = isString(router.query.uuid) ? router.query.uuid : undefined;
 
   const [siteLoaded, { data: site }] = useFullSite({
-    id: source === "site" ? sourceUuid : undefined
+    id: source === "site" ? sourceUuid : undefined,
+    enabled: source === "site"
   });
   const [nurseryLoaded, { data: nursery }] = useFullNursery({
-    id: source === "nursery" ? sourceUuid : undefined
+    id: source === "nursery" ? sourceUuid : undefined,
+    enabled: source === "nursery"
   });
 
   const projectUuid =
