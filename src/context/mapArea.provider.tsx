@@ -80,8 +80,6 @@ type MapAreaType = {
   setPolygonRequestInformationConfirmation: (value: string | null) => void;
   editPhotoDetailsMedia: MediaDto | null;
   setEditPhotoDetailsMedia: (value: MediaDto | null) => void;
-  showPhotosOnMap: boolean;
-  setShowPhotosOnMap: (value: boolean) => void;
   geotaggedPhotosMapVisible: boolean;
   setGeotaggedPhotosMapVisible: (value: boolean) => void;
   mediaFiles: MediaDto[];
@@ -138,9 +136,7 @@ const defaultValue: MapAreaType = {
   setPolygonRequestInformationConfirmation: () => {},
   editPhotoDetailsMedia: null,
   setEditPhotoDetailsMedia: () => {},
-  showPhotosOnMap: false,
-  setShowPhotosOnMap: () => {},
-  geotaggedPhotosMapVisible: false,
+  geotaggedPhotosMapVisible: true,
   setGeotaggedPhotosMapVisible: () => {},
   mediaFiles: [],
   setMediaFiles: () => {},
@@ -178,8 +174,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     null
   );
   const [editPhotoDetailsMedia, setEditPhotoDetailsMedia] = useState<MediaDto | null>(null);
-  const [showPhotosOnMap, setShowPhotosOnMap] = useState(false);
-  const [geotaggedPhotosMapVisible, setGeotaggedPhotosMapVisible] = useState(false);
+  const [geotaggedPhotosMapVisible, setGeotaggedPhotosMapVisible] = useState(true);
   const [mediaFiles, setMediaFiles] = useState<MediaDto[]>([]);
 
   const setEditPolygon = useCallback((value: EditPolygonState) => {
@@ -239,8 +234,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonMapTileNonce(0);
     setPolygonSubmitConfirmation(null);
     setEditPhotoDetailsMedia(null);
-    setShowPhotosOnMap(false);
-    setGeotaggedPhotosMapVisible(false);
+    setGeotaggedPhotosMapVisible(true);
     setMediaFiles([]);
   }, [closeMapPopups]);
 
@@ -293,8 +287,6 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonRequestInformationConfirmation,
     editPhotoDetailsMedia,
     setEditPhotoDetailsMedia,
-    showPhotosOnMap,
-    setShowPhotosOnMap,
     geotaggedPhotosMapVisible,
     setGeotaggedPhotosMapVisible,
     mediaFiles,
