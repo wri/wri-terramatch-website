@@ -709,6 +709,7 @@ const MapContainerInner: FC<MapContainerInnerProps> = ({
             setAlertTitle,
             disabledPolygonPanel,
             hideFullscreenControl,
+            hideMediaOnMap,
             selectedPolygonsInCheckbox
           }}
           form={{
