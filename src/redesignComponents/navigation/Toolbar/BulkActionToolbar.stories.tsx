@@ -27,7 +27,8 @@ const meta: Meta<typeof BulkActionToolbar> = {
       description: "Configuration for the delete button"
     },
     actions: {
-      description: "Ordered secondary actions rendered between delete and the primary action"
+      description:
+        "Ordered secondary actions rendered between delete and the primary action. Optional `tooltip` is shown only when the action is disabled."
     },
     primaryAction: {
       description: "Filled primary action (e.g. submit)"
@@ -74,6 +75,20 @@ export const Default: Story = {
     primaryAction: {
       children: "Submit",
       onClick: () => console.log("Submit clicked")
+    }
+  }
+};
+
+export const DisabledActionTooltip: Story = {
+  args: {
+    ...Default.args,
+    deleteAction: {
+      id: "delete",
+      tone: "danger",
+      children: "Delete",
+      disabled: true,
+      tooltip: "This profile can't be deleted because it's already submitted or approved",
+      onClick: () => console.log("Delete clicked")
     }
   }
 };

@@ -1,11 +1,13 @@
 import { Flex } from "@chakra-ui/react";
-import { Fragment, memo } from "react";
+import { type ReactElement, Fragment, memo } from "react";
 import { twMerge } from "tailwind-merge";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 import { BulkToolbarAction, BulkToolbarActionTone } from "./ToolBar.type";
+import { wrapToolbarInfoTooltipContent } from "./ToolbarInfoTooltipContent";
 
 const ACTION_DIVIDER_CLASS = "!h-3.5 !w-[0.0625rem]";
 const BORDERLESS_NEUTRAL_CLASS = "!text-theme-neutral-100";
@@ -20,33 +22,50 @@ type BulkActionToolbarActionsProps = {
   actions: BulkToolbarAction[];
 };
 
+const renderToolbarActionButton = ({
+  tone,
+  className,
+  tooltip,
+  id: _id,
+  ...buttonProps
+}: BulkToolbarAction): ReactElement => {
+  const isDisabledTooltip = tooltip != null && buttonProps.disabled === true;
+  const button = (
+    <Button
+      {...buttonProps}
+      className={twMerge(
+        getActionClassName(tone, buttonProps.disabled),
+        className,
+        isDisabledTooltip && "pointer-events-none"
+      )}
+      variant="borderless"
+    />
+  );
+
+  if (!isDisabledTooltip) {
+    return button;
+  }
+
+  return (
+    <Tooltip content={wrapToolbarInfoTooltipContent(tooltip)} position="top">
+      <span className="inline-flex">{button}</span>
+    </Tooltip>
+  );
+};
+
 const BulkActionToolbarActions = memo(function BulkActionToolbarActions({
   deleteAction,
   actions
 }: BulkActionToolbarActionsProps) {
-  const { tone: deleteTone, className: deleteClassName, ...deleteButtonProps } = deleteAction;
-
   return (
     <Flex alignItems="center" gap={2} flexWrap="wrap">
-      <Button
-        {...deleteButtonProps}
-        className={twMerge(getActionClassName(deleteTone, deleteButtonProps.disabled), deleteClassName)}
-        variant="borderless"
-      />
-      {actions.map(action => {
-        const { id, tone, className, ...buttonProps } = action;
-
-        return (
-          <Fragment key={id}>
-            <SimpleDivider className={ACTION_DIVIDER_CLASS} />
-            <Button
-              {...buttonProps}
-              className={twMerge(getActionClassName(tone, buttonProps.disabled), className)}
-              variant="borderless"
-            />
-          </Fragment>
-        );
-      })}
+      {renderToolbarActionButton(deleteAction)}
+      {actions.map(action => (
+        <Fragment key={action.id}>
+          <SimpleDivider className={ACTION_DIVIDER_CLASS} />
+          {renderToolbarActionButton(action)}
+        </Fragment>
+      ))}
     </Flex>
   );
 });
