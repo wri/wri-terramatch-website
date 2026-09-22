@@ -21,9 +21,7 @@ export type BulkToolbarActionTone = "default" | "danger";
 export type BulkToolbarAction = IButtonProps & {
   id: string;
   tone?: BulkToolbarActionTone;
-  /** Always-visible info icon rendered beside the action, revealing this content on hover. */
   infoTooltip?: ReactNode;
-  /** Explains why the action is unavailable. Only rendered while the action is disabled. */
   tooltip?: ReactNode;
 };
 
