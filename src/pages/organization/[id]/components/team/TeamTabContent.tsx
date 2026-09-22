@@ -24,13 +24,13 @@ import {
   CheckApprovedIcon,
   CheckIcon,
   DeleteIcon,
-  EditIcon,
   InformationRequiredIcon,
   RejectedIcon,
   UserAddIcon
 } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
+import InviteTeamMemberModal from "../InviteTeamMemberModal";
 import TeamBulkActionToolbar from "./TeamBulkActionToolbar";
 import TeamMemberActionModal, { type TeamMemberAction } from "./TeamMemberActionModal";
 
@@ -63,7 +63,10 @@ const TeamTabContent: FC = () => {
   const [showRoleFilter, setShowRoleFilter] = useState(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [rowAction, setRowAction] = useState<RowActionState | null>(null);
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const isSubmittingRef = useRef(false);
+
+  const handleInvite = () => setShowInviteModal(true);
 
   const [approvedLoaded, { data: approvedUsers }] = useOrganisationUserAssociations({
     organisationUuid,
@@ -216,11 +219,6 @@ const TeamTabContent: FC = () => {
             />
           ) : (
             <ActionCell
-              button={{
-                children: t("Edit"),
-                leftIcon: <EditIcon boxSize={3} />,
-                onClick: () => {}
-              }}
               buttonSecondary={{
                 children: t("Remove"),
                 leftIcon: <DeleteIcon boxSize={3} color="error.500" />,
@@ -298,8 +296,13 @@ const TeamTabContent: FC = () => {
           count: teamMembers.length,
           resetKey: searchResetKey
         }}
-        button={{ children: t("Add Team Member"), leftIcon: <UserAddIcon /> }}
+        button={{ children: t("Add Team Member"), leftIcon: <UserAddIcon />, onClick: handleInvite }}
         showClearFilters={selectedRole != null || searchQuery.length > 0}
+      />
+      <InviteTeamMemberModal
+        organisationUUID={organisationUuid}
+        open={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
       />
 
       <Table<TeamMemberRow>

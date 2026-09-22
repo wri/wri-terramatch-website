@@ -73,22 +73,13 @@ const TeamBulkActionToolbar: FC<TeamBulkActionToolbarProps> = ({ organisationUui
   );
 
   const primaryAction = useMemo(() => {
-    if (hasPendingMembers) {
-      return {
-        children: t("Approve"),
-        onClick: () => setModalAction("approve" as const)
-      };
-    }
+    if (!hasPendingMembers) return undefined;
 
-    if (acceptedMembers.length === 1) {
-      return {
-        children: t("Edit"),
-        onClick: () => {}
-      };
-    }
-
-    return undefined;
-  }, [acceptedMembers.length, hasPendingMembers, t]);
+    return {
+      children: t("Approve"),
+      onClick: () => setModalAction("approve" as const)
+    };
+  }, [hasPendingMembers, t]);
 
   const modalMembers =
     modalAction === "approve" || modalAction === "reject"
