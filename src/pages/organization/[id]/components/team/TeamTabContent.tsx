@@ -3,10 +3,12 @@ import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
 import { Checkbox } from "@worldresources/wri-design-systems";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
 
+import { useOrgUserAssociationUpdate } from "@/connections/Organisation";
 import { useOrganisationUserAssociations } from "@/connections/UserAssociation";
 import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
@@ -20,13 +22,13 @@ import {
   CheckApprovedIcon,
   CheckIcon,
   DeleteIcon,
-  EditIcon,
   InformationRequiredIcon,
   RejectedIcon,
   UserAddIcon
 } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable/ToolbarTable";
 
+import InviteTeamMemberModal from "../InviteTeamMemberModal";
 import TeamBulkActionToolbar from "./TeamBulkActionToolbar";
 import TeamMemberActionModal, { type TeamMemberAction } from "./TeamMemberActionModal";
 
@@ -59,12 +61,15 @@ const TeamTabContent: FC = () => {
   const [showRoleFilter, setShowRoleFilter] = useState(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [rowAction, setRowAction] = useState<RowActionState | null>(null);
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
-  const [approvedLoaded, { data: approvedUsers }] = useOrganisationUserAssociations({
+  const handleInvite = () => setShowInviteModal(true);
+
+  const [approvedLoaded, { data: approvedUsers, refetch: refetchApproved }] = useOrganisationUserAssociations({
     organisationUuid,
     status: "approved"
   });
-  const [pendingLoaded, { data: pendingUsers }] = useOrganisationUserAssociations({
+  const [pendingLoaded, { data: pendingUsers, refetch: refetchPending }] = useOrganisationUserAssociations({
     organisationUuid,
     status: "requested"
   });
@@ -117,6 +122,22 @@ const TeamTabContent: FC = () => {
     teamMembers
   );
 
+  const [, { create, isCreating, createFailure }] = useOrgUserAssociationUpdate({
+    organisationUuid: organisationUuid,
+    userUuid: rowAction?.member?.uuid ?? ""
+  });
+
+  const createRef = useRef(create);
+  createRef.current = create;
+
+  const handleUpdateSuccess = useCallback(() => {
+    refetchApproved();
+    refetchPending();
+    setRowAction(null);
+  }, [refetchApproved, refetchPending, setRowAction]);
+
+  useRequestSuccess(isCreating, createFailure, handleUpdateSuccess);
+
   const openRowAction = useCallback((action: TeamMemberAction, member: TeamMemberRow) => {
     setRowAction({ action, member });
   }, []);
@@ -149,9 +170,9 @@ const TeamTabContent: FC = () => {
             label={member.status}
             icon={
               member.associationStatus === "requested" ? (
-                <InformationRequiredIcon boxSize={3} color='warning.500' />
+                <InformationRequiredIcon boxSize={3} color="warning.500" />
               ) : (
-                <CheckApprovedIcon boxSize={3} color='success.500' />
+                <CheckApprovedIcon boxSize={3} color="success.500" />
               )
             }
           />
@@ -179,11 +200,6 @@ const TeamTabContent: FC = () => {
             />
           ) : (
             <ActionCell
-              button={{
-                children: t("Edit"),
-                leftIcon: <EditIcon boxSize={3} />,
-                onClick: () => {}
-              }}
               buttonSecondary={{
                 children: t("Remove"),
                 leftIcon: <DeleteIcon boxSize={3} color="error.500" />,
@@ -261,8 +277,13 @@ const TeamTabContent: FC = () => {
           count: teamMembers.length,
           resetKey: searchResetKey
         }}
-        button={{ children: t("Add Team Member"), leftIcon: <UserAddIcon /> }}
+        button={{ children: t("Add Team Member"), leftIcon: <UserAddIcon />, onClick: handleInvite }}
         showClearFilters={selectedRole != null || searchQuery.length > 0}
+      />
+      <InviteTeamMemberModal
+        organisationUUID={organisationUuid}
+        open={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
       />
 
       <Table<TeamMemberRow>
@@ -299,7 +320,12 @@ const TeamTabContent: FC = () => {
               ]
         }
         onClose={() => setRowAction(null)}
-        onConfirm={() => setRowAction(null)}
+        onConfirm={() => {
+          const status = rowAction?.action === "approve" ? "approved" : "rejected";
+          (createRef.current as (attributes: { status: "approved" | "rejected" }) => void)({
+            status
+          });
+        }}
       />
     </Box>
   );
