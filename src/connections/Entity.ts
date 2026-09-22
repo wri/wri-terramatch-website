@@ -199,6 +199,12 @@ export const loadLightProjectReport = connectionLoader(lightProjectReportConnect
 export const useFullProjectReport = connectionHook(fullProjectReportConnection);
 export const useLightProjectReport = connectionHook(lightProjectReportConnection);
 export const deleteProjectReport = createEntityDeleter("projectReports");
+const projectReportListConnection = v3Resource("projectReports").list<ProjectReportLightDto>().buildConnection();
+/**
+ * Delivers the cached light DTOs for project reports corresponding to the UUIDs in the props. Does
+ * not attempt to load them from the server.
+ */
+export const useLightProjectReportList = connectionHook(projectReportListConnection);
 
 // Site Reports
 export const indexSiteReportConnection = createEntityIndexConnection<SiteReportLightDto>("siteReports");

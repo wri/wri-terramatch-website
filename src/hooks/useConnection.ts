@@ -53,6 +53,7 @@ export const useAllPages = <
   // https://stackoverflow.com/a/76295763/139109
   connection: Connection<S & IndexConnection<D>, P>,
   props: Omit<P, "pageNumber" | "pageSize">,
+  // TODO: hopefully can drop this nonsense.
   resetKey?: unknown
 ): [boolean, D[], PendingError | undefined] => {
   const stableProps = useStableProps(props);

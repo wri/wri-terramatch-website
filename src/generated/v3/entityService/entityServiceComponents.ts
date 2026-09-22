@@ -1048,6 +1048,10 @@ export type TaskIndexQueryParams = {
   status?: string;
   frameworkKey?: string;
   projectUuid?: string;
+  /**
+   * @default false
+   */
+  sideloadReports?: boolean;
 };
 
 export type TaskIndexError = Fetcher.ErrorWrapper<{
@@ -1115,7 +1119,95 @@ export type TaskIndexResponse = {
      */
     id?: string;
     attributes?: Schemas.TaskLightDto;
+    relationships?: {
+      projectReport?: {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      };
+      siteReports?: {
+        /**
+         * @example siteReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      }[];
+      nurseryReports?: {
+        /**
+         * @example nurseryReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      }[];
+      srpReports?: {
+        /**
+         * @example srpReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      }[];
+    };
   }[];
+  included?: (
+    | {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ProjectReportLightDto;
+      }
+    | {
+        /**
+         * @example siteReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SiteReportLightDto;
+      }
+    | {
+        /**
+         * @example nurseryReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.NurseryReportLightDto;
+      }
+    | {
+        /**
+         * @example srpReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SrpReportLightDto;
+      }
+  )[];
 };
 
 export type TaskIndexVariables = {
@@ -2179,6 +2271,129 @@ export const treeReportCountsFind = new V3ApiEndpoint<
   {}
 >("/trees/v3/reportCounts/{entity}/{uuid}", "GET");
 
+export type TreeBulkImportCsvGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type TreeBulkImportCsvGetQueryParams = {
+  /**
+   * The collection to download
+   */
+  collection: "anr" | "replanting" | "tree-planted" | "non-tree" | "invasive" | "established";
+};
+
+export type TreeBulkImportCsvGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type TreeBulkImportCsvGetVariables = {
+  pathParams: TreeBulkImportCsvGetPathParams;
+  queryParams: TreeBulkImportCsvGetQueryParams;
+};
+
+export const treeBulkImportCsvGet = new V3ApiEndpoint<
+  undefined,
+  TreeBulkImportCsvGetError,
+  TreeBulkImportCsvGetVariables,
+  {}
+>("/trees/v3/bulkImportCsv/{uuid}", "GET");
+
+export type TreeBulkImportCsvUploadPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type TreeBulkImportCsvUploadError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type TreeBulkImportCsvUploadResponse = {
+  meta?: {
+    /**
+     * @example treeBulkUploads
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example treeBulkUploads
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.TreeBulkUploadDto;
+  };
+};
+
+export type TreeBulkImportCsvUploadVariables = {
+  body: Schemas.TreeBulkUploadBody;
+  pathParams: TreeBulkImportCsvUploadPathParams;
+};
+
+export const treeBulkImportCsvUpload = new V3ApiEndpoint<
+  TreeBulkImportCsvUploadResponse,
+  TreeBulkImportCsvUploadError,
+  TreeBulkImportCsvUploadVariables,
+  {}
+>("/trees/v3/bulkImportCsv/{uuid}", "PUT");
+
 export type DisturbanceIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -2930,7 +3145,7 @@ export type EntityIndexQueryParams = {
   /**
    * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
    */
-  taskId?: number;
+  taskIds?: number[];
   /**
    * Filter projects by polygon submission status
    */
@@ -4935,7 +5150,7 @@ export type EntityAssociationIndexQueryParams = {
   /**
    * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
    */
-  taskId?: number;
+  taskIds?: number[];
   /**
    * Filter projects by polygon submission status
    */
@@ -7366,7 +7581,13 @@ export const operationsByTag = {
   aboutSections: { aboutSectionIndex, aboutSectionCreate, aboutSectionGet, aboutSectionUpdate, aboutSectionDelete },
   tasks: { taskIndex, taskGet, taskUpdate },
   files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
-  trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
+  trees: {
+    treeScientificNamesSearch,
+    establishmentTreesFind,
+    treeReportCountsFind,
+    treeBulkImportCsvGet,
+    treeBulkImportCsvUpload
+  },
   disturbances: { disturbanceIndex },
   reminders: { sendReminder },
   auditStatus: { getAuditStatuses, createAuditStatus, updateAuditStatus, deleteAuditStatus },

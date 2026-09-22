@@ -428,27 +428,6 @@ export type TaskLightDto = {
   updatedAt: string;
 };
 
-export type TaskFullDto = {
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-  uuid: string;
-  projectName: string;
-  organisationName: string;
-  frameworkKey: string;
-  status: string;
-  /**
-   * @format date-time
-   */
-  dueAt: string;
-  /**
-   * @format date-time
-   */
-  updatedAt: string;
-  treesPlantedCount: number;
-};
-
 export type ProjectReportLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -693,6 +672,27 @@ export type SrpReportLightDto = {
    * @format date-time
    */
   submittedAt: string | null;
+};
+
+export type TaskFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  projectName: string;
+  organisationName: string;
+  frameworkKey: string;
+  status: string;
+  /**
+   * @format date-time
+   */
+  dueAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  treesPlantedCount: number;
 };
 
 export type TaskUpdateAttributes = {
@@ -973,6 +973,53 @@ export type TreeReportCountsDto = {
       [key: string]: PlantingCountDto;
     };
   } | null;
+};
+
+export type BulkUploadWarningLocation = {
+  row: number;
+  col: number;
+};
+
+export type BulkUploadWarning = {
+  /**
+   * If relevant, the location where the warning occurred
+   */
+  location: BulkUploadWarningLocation;
+  /**
+   * The warning message
+   */
+  message: string;
+  /**
+   * The translation code
+   */
+  code: string;
+  /**
+   * The translation variables
+   */
+  variables?: Record<string, any>;
+};
+
+export type TreeBulkUploadDto = {
+  /**
+   * Warnings that occurred during the import of the tree data for site reports.
+   */
+  warnings: BulkUploadWarning[];
+};
+
+export type TreeBulkUploadAttributes = {
+  /**
+   * The collection the trees belong to
+   */
+  collection: "anr" | "replanting" | "tree-planted" | "non-tree" | "invasive" | "established";
+};
+
+export type TreeBulkUploadData = {
+  type: "treeBulkUploads";
+  attributes: TreeBulkUploadAttributes;
+};
+
+export type TreeBulkUploadBody = {
+  data: TreeBulkUploadData;
 };
 
 export type DisturbanceDto = {
@@ -1647,6 +1694,10 @@ export type ProjectFullDto = {
    * True for projects that are test data and do not represent actual planting on the ground.
    */
   isTest: boolean;
+  /**
+   * When true, report generation is paused for this project. Does not archive child sites or nurseries.
+   */
+  isArchived: boolean;
   feedback: string | null;
   feedbackFields: string[] | null;
   cohort: string | null;
@@ -1669,6 +1720,9 @@ export type ProjectFullDto = {
   socioeconomicGoals: string | null;
   sdgsImpacted: string | null;
   totalHectaresRestoredGoal: number | null;
+  /**
+   * Project trees restored goal: sum of trees-planted-goal year entries (plus any remaining trees-goal year entries) and trees-goal ANR and direct-seeding strategy amounts.
+   */
   treesGrownGoal: number | null;
   jobsCreatedGoal: number | null;
   survivalRate: number | null;
@@ -1709,7 +1763,7 @@ export type ProjectFullDto = {
   assistedNaturalRegenerationList: ANRDto[];
   goalTreesRestoredAnr: number | null;
   /**
-   * Expected trees restored from project tree goals: (sum of trees-goal tracking entries with type years) × (survivalRate / 100) + ANR strategy goal, rounded to the nearest integer.
+   * Expected trees restored from project tree goals: (sum of trees-planted-goal year entries, plus any remaining trees-goal year entries) × (survivalRate / 100) + ANR strategy goal, rounded to the nearest integer.
    */
   treesToBeRestoredGoal: number;
   /**
@@ -1797,6 +1851,10 @@ export type SiteFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  /**
+   * When true, report generation is paused for this site. Independent of project archival.
+   */
+  isArchived: boolean;
   seedsPlantedCount: number;
   overdueSiteReportsTotal: number;
   selfReportedWorkdayCount: number;
@@ -1923,6 +1981,10 @@ export type NurseryFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  /**
+   * When true, report generation is paused for this nursery. Independent of project archival.
+   */
+  isArchived: boolean;
   feedback: string | null;
   feedbackFields: string[] | null;
   type: string | null;

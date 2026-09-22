@@ -53,7 +53,6 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
   );
   const { clearSelection } = useReportsSelectionActions();
-  const [reloadNonce, setReloadNonce] = useState(0);
   const [, { data: projects }] = useProjectIndex({});
   const organisationViewItems = useMemo<HighLevelSelectorItem[]>(() => {
     const labelsByUuid = new Map<string, string>();
@@ -81,9 +80,8 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const {
     sections: progressSections,
     loading: progressLoading,
-    metricsReady: progressMetricsReady,
     error: progressError
-  } = useReportsIndexData(project, source, sourceEntity.uuid, isAllProjectsView, reloadNonce);
+  } = useReportsIndexData(project, source, sourceEntity.uuid, isAllProjectsView);
   const {
     sections: additionalSections,
     loading: additionalLoading,
@@ -270,10 +268,6 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     [clearSelection, router]
   );
 
-  const handleReportsChanged = useCallback(() => {
-    setReloadNonce(current => current + 1);
-  }, []);
-
   return (
     <>
       <ReportsIndexHeader
@@ -323,7 +317,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                     unfilteredPeriods={unfilteredPeriodsByProjectId.get(section.id)}
                     defaultOpen={index === 0 && !isAllProjectsView}
                     expandForPeriodFilter={hasActivePeriodFilter}
-                    metricsReady={progressMetricsReady}
+                    metricsReady={!progressLoading}
                     hasReportSubset={hasReportSubset}
                     indexHref={indexHref}
                     restoreSectionId={progressRestore?.sectionId}
@@ -350,7 +344,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
           />
         )}
 
-        <ReportsIndexBulkBar onReportsChanged={handleReportsChanged} />
+        <ReportsIndexBulkBar />
       </PageContent>
     </>
   );

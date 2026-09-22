@@ -1,19 +1,18 @@
+import isArray from "lodash/isArray";
 import { useMemo } from "react";
 
-import {
-  indexNurseryReportConnection,
-  indexProjectReportConnection,
-  indexSiteReportConnection
-} from "@/connections/Entity";
+import { useLightNurseryReportList, useLightProjectReportList, useLightSiteReportList } from "@/connections/Entity";
+import { taskIndexConnection, TaskRelationships } from "@/connections/Task";
+import { IdsProp, ListConnection } from "@/connections/util/apiConnectionFactory";
 import {
   NurseryReportLightDto,
-  ProjectFullDto,
+  ProjectLightDto,
   ProjectReportLightDto,
   SiteReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useAllPages } from "@/hooks/useConnection";
-import { useValueChanged } from "@/hooks/useValueChanged";
-import ApiSlice from "@/store/apiSlice";
+import { Connected } from "@/types/connection";
+import { isNotNull } from "@/utils/array";
 
 import {
   ReportsIndexPeriod,
@@ -25,7 +24,6 @@ import { ReportsIndexSource, resolveReportsIndexStatus } from "./reportIndex.uti
 
 type ReportsIndexDataState = {
   loading: boolean;
-  metricsReady: boolean;
   sections: ReportsIndexProjectSection[];
   error: boolean;
 };
@@ -71,6 +69,23 @@ type ProjectSectionDraft = Omit<ReportsIndexProjectSection, "periods"> & {
   periodsByDueAt: Map<string, ReportsIndexPeriod>;
 };
 
+const useTasksReports = <LightDto>(
+  tasks: TaskRelationships[],
+  prop: keyof TaskRelationships,
+  useDtoList: (props: IdsProp) => Connected<ListConnection<LightDto>>
+) => {
+  const ids = useMemo(
+    () =>
+      tasks
+        .map(task => (isArray(task[prop]) ? task[prop] : (task[prop] as string | undefined)) as (string | undefined)[])
+        .flat()
+        .filter(isNotNull),
+    [prop, tasks]
+  );
+  const [, { data: reports = [] }] = useDtoList({ ids });
+  return reports;
+};
+
 /**
  * Loads the progress reports (project, site and nursery) that belong to the entity the reports page
  * was opened for, or to every project in the "All Projects" view, and groups them by project and
@@ -82,65 +97,47 @@ type ProjectSectionDraft = Omit<ReportsIndexProjectSection, "periods"> & {
  * loaded lazily from the project report when a period accordion opens.
  */
 export const useReportsIndexData = (
-  project: ProjectFullDto,
+  project: ProjectLightDto,
   source: ReportsIndexSource,
   sourceUuid: string,
-  allProjects: boolean,
-  // Bumped by the bulk actions once the reports they touched have been updated, so the indexes are
-  // fetched again instead of serving the snapshot the page loaded with.
-  reloadNonce = 0
+  allProjects: boolean
 ): ReportsIndexDataState => {
   const { uuid: projectUuid, name: projectName, organisationName, organisationUuid } = project;
 
-  useValueChanged(reloadNonce, () => {
-    if (reloadNonce === 0) return;
-    ApiSlice.pruneIndex("projectReports", "");
-    ApiSlice.pruneIndex("siteReports", "");
-    ApiSlice.pruneIndex("nurseryReports", "");
+  // TODO: this will need to load page by page with infinite scroll behavior in a future ticket.
+  const [tasksLoaded, tasks, taskFailure] = useAllPages(taskIndexConnection, {
+    // TODO: move sideloadReports out of filter
+    filter: { projectUuid, sideloadReports: true }
   });
+  // These are all cached because they were sideloaded on the tasks index request.
+  const projectReports = useTasksReports(tasks, "projectReportUuid", useLightProjectReportList);
+  const siteReports = useTasksReports(tasks, "siteReportUuids", useLightSiteReportList);
+  const nurseryReports = useTasksReports(tasks, "nurseryReportUuids", useLightNurseryReportList);
 
+  // TODO: add site / nursery filtering on the tasks index and only sideload the reports associated
+  //  with that site or nursery. Maybe consider an array of sideloads so that the BE doesn't
+  //  sideload the SRP reports which this page doesn't want for some reason.
   // The "All Projects" view pulls the indexes unfiltered; otherwise they're scoped to the entity the
   // page was opened for, and the indexes that can't hold reports for that entity stay disabled.
-  const [projectReportsLoaded, projectReports, projectReportsFailure] = useAllPages(
-    indexProjectReportConnection,
-    {
-      filter: allProjects ? {} : { projectUuid },
-      enabled: allProjects || source === "project"
-    },
-    reloadNonce
-  );
+  // const [projectReportsLoaded, projectReports, projectReportsFailure] = useAllPages(indexProjectReportConnection, {
+  //   filter: allProjects ? {} : { projectUuid },
+  //   enabled: allProjects || source === "project"
+  // });
+  //
+  // const [siteReportsLoaded, siteReports, siteReportsFailure] = useAllPages(indexSiteReportConnection, {
+  //   filter: allProjects ? {} : source === "site" ? { siteUuid: sourceUuid } : { projectUuid },
+  //   enabled: allProjects || source !== "nursery"
+  // });
+  //
+  // const [nurseryReportsLoaded, nurseryReports, nurseryReportsFailure] = useAllPages(indexNurseryReportConnection, {
+  //   filter: allProjects ? {} : source === "nursery" ? { nurseryUuid: sourceUuid } : { projectUuid },
+  //   enabled: allProjects || source !== "site"
+  // });
 
-  const [siteReportsLoaded, siteReports, siteReportsFailure] = useAllPages(
-    indexSiteReportConnection,
-    {
-      filter: allProjects ? {} : source === "site" ? { siteUuid: sourceUuid } : { projectUuid },
-      enabled: allProjects || source !== "nursery"
-    },
-    reloadNonce
-  );
-
-  const [nurseryReportsLoaded, nurseryReports, nurseryReportsFailure] = useAllPages(
-    indexNurseryReportConnection,
-    {
-      filter: allProjects ? {} : source === "nursery" ? { nurseryUuid: sourceUuid } : { projectUuid },
-      enabled: allProjects || source !== "site"
-    },
-    reloadNonce
-  );
-
-  // All Projects walks every index page (max 100 rows each). Keep the tab on loading until the
-  // full walk finishes so intermediate grouping of hundreds of projects cannot freeze the page.
-  const loading = allProjects
-    ? !(projectReportsLoaded && siteReportsLoaded && nurseryReportsLoaded)
-    : (!projectReportsLoaded && projectReports.length === 0) ||
-      (!siteReportsLoaded && siteReports.length === 0) ||
-      (!nurseryReportsLoaded && nurseryReports.length === 0);
-  const error = projectReportsFailure != null || siteReportsFailure != null || nurseryReportsFailure != null;
-  const metricsReady = projectReportsLoaded && siteReportsLoaded && nurseryReportsLoaded;
   const projectReportsEnabled = allProjects || source === "project";
 
   const sections = useMemo((): ReportsIndexProjectSection[] => {
-    if (loading || error) return [];
+    if (!tasksLoaded || taskFailure != null) return [];
 
     const draftsByProject = new Map<string, ProjectSectionDraft>();
 
@@ -178,7 +175,7 @@ export const useReportsIndexData = (
       // against a stale or unauthorized project-report id.
       if (type === "project-report") {
         period.projectReportUuid = report.uuid;
-      } else if (period.projectReportUuid == null && (!projectReportsEnabled || projectReportsLoaded)) {
+      } else if (period.projectReportUuid == null && !projectReportsEnabled) {
         period.projectReportUuid = resolveProjectReportUuid(report, type);
       }
 
@@ -196,18 +193,17 @@ export const useReportsIndexData = (
       }))
       .sort(byNameAscending);
   }, [
-    error,
-    loading,
-    nurseryReports,
-    organisationName,
-    organisationUuid,
-    projectName,
+    tasksLoaded,
+    taskFailure,
     projectReports,
+    siteReports,
+    nurseryReports,
     projectReportsEnabled,
-    projectReportsLoaded,
     projectUuid,
-    siteReports
+    projectName,
+    organisationName,
+    organisationUuid
   ]);
 
-  return { loading, metricsReady, sections, error };
+  return { loading: !tasksLoaded, sections, error: taskFailure != null };
 };
