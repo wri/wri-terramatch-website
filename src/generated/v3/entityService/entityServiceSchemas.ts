@@ -548,6 +548,13 @@ export type SiteReportLightDto = {
    */
   createdAt: string;
   nothingToReport: boolean | null;
+  totalTreesPlantedCount: number | null;
+  totalSeedsPlantedCount: number | null;
+  /**
+   * Sum of tree species amounts for collection 'anr' on this site report (disaggregated ANR reporting)
+   */
+  totalTreesRegeneratingSpeciesCount: number | null;
+  numTreesRegenerating: number | null;
 };
 
 export type NurseryReportLightDto = {
@@ -617,6 +624,7 @@ export type NurseryReportLightDto = {
    */
   createdAt: string;
   nothingToReport: boolean | null;
+  seedlingsYoungTrees: number | null;
 };
 
 export type SrpReportLightDto = {
@@ -2212,10 +2220,10 @@ export type NurseryReportFullDto = {
    */
   createdAt: string;
   nothingToReport: boolean | null;
+  seedlingsYoungTrees: number | null;
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
-  seedlingsYoungTrees: number | null;
   interestingFacts: string | null;
   sitePrep: string | null;
   sharedDriveLink: string | null;
@@ -2296,6 +2304,13 @@ export type SiteReportFullDto = {
    */
   createdAt: string;
   nothingToReport: boolean | null;
+  totalTreesPlantedCount: number | null;
+  totalSeedsPlantedCount: number | null;
+  /**
+   * Sum of tree species amounts for collection 'anr' on this site report (disaggregated ANR reporting)
+   */
+  totalTreesRegeneratingSpeciesCount: number | null;
+  numTreesRegenerating: number | null;
   projectReportTitle: string | null;
   feedback: string | null;
   feedbackFields: string[] | null;
@@ -2305,7 +2320,6 @@ export type SiteReportFullDto = {
   createdByLastName: string | null;
   approvedByFirstName: string | null;
   approvedByLastName: string | null;
-  numTreesRegenerating: number | null;
   regenerationDescription: string | null;
   invasiveSpeciesRemoved: string | null;
   invasiveSpeciesManagement: string | null;
@@ -2318,12 +2332,6 @@ export type SiteReportFullDto = {
   polygonStatus: string | null;
   totalNonTreeSpeciesPlantedCount: number | null;
   totalTreeReplantingCount: number | null;
-  totalTreesPlantedCount: number | null;
-  /**
-   * Sum of tree species amounts for collection 'anr' on this site report (disaggregated ANR reporting)
-   */
-  totalTreesRegeneratingSpeciesCount: number | null;
-  totalSeedsPlantedCount: number | null;
   plantingStatus: string | null;
   survivalCalculation: string | null;
   survivalDescription: string | null;

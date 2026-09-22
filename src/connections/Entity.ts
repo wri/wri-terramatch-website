@@ -216,6 +216,7 @@ const lightSiteReportConnection = createEntityGetConnection<SiteReportLightDto, 
 );
 export const loadFullSiteReport = connectionLoader(fullSiteReportConnection);
 export const useFullSiteReport = connectionHook(fullSiteReportConnection);
+export const loadLightSiteReport = connectionLoader(lightSiteReportConnection);
 export const useLightSiteReport = connectionHook(lightSiteReportConnection);
 const siteReportListConnection = v3Resource("siteReports").list<SiteReportLightDto>().buildConnection();
 /**
@@ -238,6 +239,7 @@ const lightNurseryReportConnection = createEntityGetConnection<NurseryReportLigh
 );
 export const loadFullNurseryReport = connectionLoader(fullNurseryReportConnection);
 export const useFullNurseryReport = connectionHook(fullNurseryReportConnection);
+export const loadLightNurseryReport = connectionLoader(lightNurseryReportConnection);
 export const useLightNurseryReport = connectionHook(lightNurseryReportConnection);
 const nurseryReportListConnection = v3Resource("nurseryReports").list<NurseryReportLightDto>().buildConnection();
 /**
