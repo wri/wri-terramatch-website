@@ -99,7 +99,7 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
       className={className}
       collection={collection}
       defaultInputValue={defaultInputValue}
-      defaultValue={defaultValue ? [defaultValue] : undefined}
+      defaultValue={defaultValue != null ? [defaultValue] : undefined}
       disabled={disabled}
       inputBehavior="autocomplete"
       inputValue={inputValue}
@@ -140,6 +140,7 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
           pl={8}
           pr={10}
           pt={6}
+          truncate
           textStyle={disabled ? "400" : "400-bold"}
           width="100%"
           {...keyboardFocus.focusRingStyles}
