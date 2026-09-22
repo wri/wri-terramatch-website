@@ -58,7 +58,6 @@ const TeamTabContent: FC = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResetKey, setSearchResetKey] = useState(0);
-  const [showRoleFilter, setShowRoleFilter] = useState(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [rowAction, setRowAction] = useState<RowActionState | null>(null);
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -247,27 +246,21 @@ const TeamTabContent: FC = () => {
   return (
     <Box paddingX={6} paddingTop={3} paddingBottom={8} minHeight="644px" width="100%" overflow="auto">
       <ToolbarTable
-        className="mb-4 !px-0"
+        className="mb-7 mt-3 !px-0"
         classNameContentLeft="min-w-0"
         onClearFilters={() => {
           setSelectedRole(null);
-          setShowRoleFilter(false);
           setSearchQuery("");
           setSearchResetKey(key => key + 1);
         }}
-        onClickFilterButton={() => setShowRoleFilter(true)}
-        filters={
-          showRoleFilter
-            ? [
-                {
-                  mainActionLabel: selectedRole == null ? t("Role") : t(ROLE_LABELS[selectedRole] ?? selectedRole),
-                  mainActionOnClick: () => setSelectedRole(null),
-                  otherActions: roleOptions,
-                  variant: "secondary"
-                }
-              ]
-            : undefined
-        }
+        filters={[
+          {
+            mainActionLabel: selectedRole == null ? t("Role") : t(ROLE_LABELS[selectedRole] ?? selectedRole),
+            mainActionOnClick: () => setSelectedRole(null),
+            otherActions: roleOptions,
+            variant: "secondary"
+          }
+        ]}
         search={{
           label: t("Results"),
           placeholder: t("Search"),
