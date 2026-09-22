@@ -106,8 +106,8 @@ export const useReportsIndexData = (
 
   // TODO: this will need to load page by page with infinite scroll behavior in a future ticket.
   const [tasksLoaded, tasks, taskFailure] = useAllPages(taskIndexConnection, {
-    // TODO: move sideloadReports out of filter
-    filter: { projectUuid, sideloadReports: true }
+    filter: { projectUuid },
+    sideloadReports: true
   });
   // These are all cached because they were sideloaded on the tasks index request.
   const projectReports = useTasksReports(tasks, "projectReportUuid", useLightProjectReportList);
