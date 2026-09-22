@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useProjectIndex } from "@/connections/Entity";
 import { useReportsContext } from "@/context/reports.provider";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -35,7 +35,7 @@ import ReportsIndexHeader from "./ReportsIndexHeader";
 import ReportsSearchNoResults from "./ReportsSearchNoResults";
 
 type ReportsIndexContentProps = {
-  project: ProjectFullDto;
+  project: ProjectLightDto;
   source: ReportsIndexSource;
   sourceEntity: ReportsIndexSourceEntity;
 };

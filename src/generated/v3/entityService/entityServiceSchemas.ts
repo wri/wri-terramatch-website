@@ -1374,6 +1374,10 @@ export type SiteLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
 };
 
 export type NurseryLightDto = {
@@ -1426,6 +1430,7 @@ export type NurseryLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  projectUuid: string | null;
 };
 
 export type FinancialReportLightDto = {
@@ -1860,6 +1865,10 @@ export type SiteFullDto = {
    */
   updatedAt: string;
   /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
    * When true, report generation is paused for this site. Independent of project archival.
    */
   isArchived: boolean;
@@ -1918,10 +1927,6 @@ export type SiteFullDto = {
   treeSpecies: MediaDto[];
   documentFiles: MediaDto[];
   stratificationForHeterogeneity: MediaDto;
-  /**
-   * The associated project uuid
-   */
-  projectUuid: string | null;
   /**
    * The associated project country
    */
@@ -1989,6 +1994,7 @@ export type NurseryFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  projectUuid: string | null;
   /**
    * When true, report generation is paused for this nursery. Independent of project archival.
    */
@@ -2000,7 +2006,6 @@ export type NurseryFullDto = {
   plantingContribution: string | null;
   oldModel: string | null;
   overdueNurseryReportsTotal: number | null;
-  projectUuid: string | null;
   media: MediaDto[];
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];

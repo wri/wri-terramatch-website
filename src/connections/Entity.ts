@@ -171,6 +171,8 @@ export const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("si
 export const loadSiteIndex = connectionLoader(indexSiteConnection);
 export const useSiteIndex = connectionHook(indexSiteConnection);
 export const useCreateSite = creationHook(createEntityCreateConnection<SiteFullDto, SiteCreateData>("sites"));
+const lightSiteConnection = createEntityGetConnection<SiteLightDto, SiteUpdateData>("sites");
+export const useLightSite = connectionHook(lightSiteConnection);
 
 // Nurseries
 const fullNurseryConnection = createEntityGetConnection<NurseryFullDto, EntityUpdateData>("nurseries");
@@ -183,6 +185,8 @@ export const useNurseryIndex = connectionHook(indexNurseryConnection);
 export const useCreateNursery = creationHook(
   createEntityCreateConnection<NurseryFullDto, NurseryCreateData>("nurseries")
 );
+const lightNurseryConnection = createEntityGetConnection<NurseryLightDto, NurseryUpdateData>("nurseries");
+export const useLightNursery = connectionHook(lightNurseryConnection);
 
 // Project Reports
 export const indexProjectReportConnection = createEntityIndexConnection<ProjectReportLightDto>("projectReports");
@@ -216,7 +220,6 @@ const lightSiteReportConnection = createEntityGetConnection<SiteReportLightDto, 
 );
 export const loadFullSiteReport = connectionLoader(fullSiteReportConnection);
 export const useFullSiteReport = connectionHook(fullSiteReportConnection);
-export const loadLightSiteReport = connectionLoader(lightSiteReportConnection);
 export const useLightSiteReport = connectionHook(lightSiteReportConnection);
 const siteReportListConnection = v3Resource("siteReports").list<SiteReportLightDto>().buildConnection();
 /**
