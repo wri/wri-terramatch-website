@@ -1,11 +1,15 @@
 import { Box, TableCell, TableRow } from "@chakra-ui/react";
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
-import { Checkbox } from "@worldresources/wri-design-systems";
+import { Checkbox, showToast } from "@worldresources/wri-design-systems";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
 
-import { useOrganisationUserAssociations } from "@/connections/UserAssociation";
+import {
+  bulkDeleteUserAssociations,
+  updateOrganisationUserStatuses,
+  useOrganisationUserAssociations
+} from "@/connections/UserAssociation";
 import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
 import ActionStatusTag from "@/redesignComponents/actions/Tags/ActionStatusTag/ActionStatusTag";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
@@ -59,6 +63,7 @@ const TeamTabContent: FC = () => {
   const [showRoleFilter, setShowRoleFilter] = useState(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [rowAction, setRowAction] = useState<RowActionState | null>(null);
+  const isSubmittingRef = useRef(false);
 
   const [approvedLoaded, { data: approvedUsers }] = useOrganisationUserAssociations({
     organisationUuid,
@@ -121,6 +126,38 @@ const TeamTabContent: FC = () => {
     setRowAction({ action, member });
   }, []);
 
+  const handleConfirmRowAction = useCallback(async () => {
+    if (rowAction == null || organisationUuid === "" || isSubmittingRef.current) return;
+
+    isSubmittingRef.current = true;
+    try {
+      if (rowAction.action === "remove") {
+        await bulkDeleteUserAssociations(organisationUuid, [rowAction.member.id], "organisations");
+      } else {
+        await updateOrganisationUserStatuses(
+          organisationUuid,
+          [rowAction.member.id],
+          rowAction.action === "approve" ? "approved" : "rejected"
+        );
+      }
+      setRowAction(null);
+    } catch {
+      showToast({
+        label:
+          rowAction.action === "approve"
+            ? t("Unable to approve the selected team members.")
+            : rowAction.action === "reject"
+            ? t("Unable to reject the selected team members.")
+            : t("Unable to remove the selected team members from the Organization."),
+        type: "error",
+        placement: "bottom",
+        duration: 5000
+      });
+    } finally {
+      isSubmittingRef.current = false;
+    }
+  }, [organisationUuid, rowAction, t]);
+
   const columns = useMemo<TableColumn[]>(
     () => [
       {
@@ -149,9 +186,9 @@ const TeamTabContent: FC = () => {
             label={member.status}
             icon={
               member.associationStatus === "requested" ? (
-                <InformationRequiredIcon boxSize={3} color='warning.500' />
+                <InformationRequiredIcon boxSize={3} color="warning.500" />
               ) : (
-                <CheckApprovedIcon boxSize={3} color='success.500' />
+                <CheckApprovedIcon boxSize={3} color="success.500" />
               )
             }
           />
@@ -278,6 +315,7 @@ const TeamTabContent: FC = () => {
       />
 
       <TeamBulkActionToolbar
+        organisationUuid={organisationUuid}
         selectedMembers={selectedRows.map(member => ({
           id: member.id,
           fullName: member.fullName,
@@ -299,7 +337,9 @@ const TeamTabContent: FC = () => {
               ]
         }
         onClose={() => setRowAction(null)}
-        onConfirm={() => setRowAction(null)}
+        onConfirm={() => {
+          void handleConfirmRowAction();
+        }}
       />
     </Box>
   );
