@@ -2482,10 +2482,6 @@ export type FinancialReportFullDto = {
    */
   updatedAt: string;
   title: string | null;
-  /**
-   * @format date-time
-   */
-  approvedAt: string | null;
   completion: number | null;
   nothingToReport: boolean | null;
   feedback: string | null;
@@ -2564,10 +2560,6 @@ export type DisturbanceReportFullDto = {
   /**
    * @format date-time
    */
-  approvedAt: string | null;
-  /**
-   * @format date-time
-   */
   submittedAt: string | null;
   /**
    * @format date-time
@@ -2638,10 +2630,6 @@ export type SrpReportFullDto = {
    */
   submittedAt: string | null;
   title: string | null;
-  /**
-   * @format date-time
-   */
-  approvedAt: string | null;
   nothingToReport: boolean | null;
   frameworkKey: string | null;
   feedback: string | null;
