@@ -63,12 +63,7 @@ import {
   showPolygonErrorToast,
   showPolygonProgressToast
 } from "../utils/polygonOperationToasts";
-import UploadGeotaggedPhotos from "./Modals/GeotaggedPhotos/UploadGeotaggedPhotos";
-import type {
-  PolygonRunValidationWithResultsCallback,
-  PolygonSaveCallback,
-  PolygonValidationJobsStartedCallback
-} from "./polygonEdit.types";
+import type { PolygonRunValidationWithResultsCallback, PolygonSaveCallback } from "./polygonEdit.types";
 import {
   type PolygonEditFormValues,
   type SavePolygonFlowOptions,
@@ -115,7 +110,6 @@ type PolygonEditContentProps = {
   onRequestInformationModal?: () => void;
   onSaved?: PolygonSaveCallback;
   onRunValidationWithResultsModal?: PolygonRunValidationWithResultsCallback;
-  onValidationJobsStarted?: PolygonValidationJobsStartedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onUnsavedChangesInvalidatingValidationChange?: (value: boolean) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
@@ -125,12 +119,7 @@ type PolygonEditContentProps = {
 
 type PolygonVersionRow = SitePolygonLightDto & { id: string };
 
-type PolygonEditAccordionSection =
-  | "details"
-  | "optional-attributes"
-  | "monitoring-plots"
-  | "geotagged-photos"
-  | "versions";
+type PolygonEditAccordionSection = "details" | "optional-attributes" | "monitoring-plots" | "versions";
 
 const isoStringToDateValue = (value: string | null | undefined): DateValue[] => {
   if (value == null || value === "") return [];
@@ -222,7 +211,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   onRequestInformationModal,
   onSaved,
   onRunValidationWithResultsModal,
-  onValidationJobsStarted,
   onPolygonUpdated,
   onUnsavedChangesInvalidatingValidationChange,
   onSuppressMapSelectionHighlightChange,
@@ -265,11 +253,7 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
     invalidatePolygonMapTiles,
     setSelectedPolyVersion,
     setPreviewVersion,
-    setStatusSelectedPolygon,
-    showPhotosOnMap,
-    setShowPhotosOnMap,
-    setGeotaggedPhotosMapVisible,
-    mediaFiles
+    setStatusSelectedPolygon
   } = useMapAreaContext();
   const [polygonName, setPolygonName] = useState("");
   const [plantStartDate, setPlantStartDate] = useState<DateValue[]>([]);
@@ -281,7 +265,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const [customAttributes, setCustomAttributes] = useState<CustomAttributeFormValues>({});
   const [plotsVisible, setPlotsVisible] = useState(false);
   const [isVersionUpdating, setIsVersionUpdating] = useState(false);
-  const [showUploadPhotosModal, setShowUploadPhotosModal] = useState(false);
   const [openAccordionSection, setOpenAccordionSection] = useState<PolygonEditAccordionSection | null>("details");
   const formBaselineRef = useRef<PolygonEditFormValues | null>(null);
 
@@ -307,13 +290,8 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   const submitTooltip = getSingleSitePolygonSubmitTooltip(polygon, t);
   const isPolygonApprovable = isSitePolygonApprovable(polygon);
   const approveTooltip = getSingleSitePolygonApproveTooltip(polygon, t);
-  const shouldMapEditPolygon =
-    openAccordionSection !== "monitoring-plots" && openAccordionSection !== "geotagged-photos";
+  const shouldMapEditPolygon = openAccordionSection !== "monitoring-plots";
   const resolvedSiteUuid = polygon?.siteId ?? (siteData != null && "uuid" in siteData ? siteData.uuid : "");
-  const geotaggedPhotosCount = useMemo(
-    () => mediaFiles.filter(file => file.lat != null && file.lng != null).length,
-    [mediaFiles]
-  );
   const geometryChanged =
     !isCreateMode &&
     polygonGeometryEdit?.polygonUuid === geometryPolygonUuid &&
@@ -718,30 +696,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
   );
 
   useEffect(() => {
-    if (openAccordionSection !== "geotagged-photos") {
-      setShowPhotosOnMap(false);
-    }
-  }, [openAccordionSection, setShowPhotosOnMap]);
-
-  useEffect(() => {
-    if (geotaggedPhotosCount === 0 && showPhotosOnMap) {
-      setShowPhotosOnMap(false);
-    }
-  }, [geotaggedPhotosCount, showPhotosOnMap, setShowPhotosOnMap]);
-
-  useEffect(() => {
-    setGeotaggedPhotosMapVisible(openAccordionSection === "geotagged-photos" && showPhotosOnMap);
-  }, [openAccordionSection, showPhotosOnMap, setGeotaggedPhotosMapVisible]);
-
-  useEffect(
-    () => () => {
-      setShowPhotosOnMap(false);
-      setGeotaggedPhotosMapVisible(false);
-    },
-    [setGeotaggedPhotosMapVisible, setShowPhotosOnMap]
-  );
-
-  useEffect(() => {
     if (openAccordionSection !== "monitoring-plots") {
       setPlotsVisible(false);
     }
@@ -913,9 +867,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
         onClose?.();
         await waitForMapEditCleanup();
         await onSaved?.();
-        if (targetGeometryPolygonUuid !== "") {
-          onValidationJobsStarted?.([targetGeometryPolygonUuid], { trackBulkCompletion: false });
-        }
         return true;
       } catch (error) {
         closePolygonProgressToast(POLYGON_TOAST_IDS.submitting);
@@ -931,7 +882,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
       onClose,
       onSaved,
       onSubmittingChange,
-      onValidationJobsStarted,
       resolvedSiteUuid,
       setIsUserDrawingEnabled,
       setPolygonGeometryEdit,
@@ -1092,11 +1042,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
 
   return (
     <Flex className="min-h-0 flex-1 flex-col gap-2">
-      <UploadGeotaggedPhotos
-        open={showUploadPhotosModal}
-        siteUuid={resolvedSiteUuid}
-        onOpenChange={setShowUploadPhotosModal}
-      />
       <Flex className="mr-[0.25rem] min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden py-5 px-2 pl-6 pr-7">
         <SubmissionValidationTags
           polygon={polygon}
@@ -1268,40 +1213,6 @@ const PolygonEditContent: FC<PolygonEditContentProps> = ({
             </Flex>
           </Accordion>
         ) : null}
-        <Accordion
-          header={<AccordionHeader title={t("Geotagged Photos")} />}
-          open={openAccordionSection === "geotagged-photos"}
-          onOpenChange={handleAccordionOpenChange("geotagged-photos")}
-          actions={
-            <Button
-              leftIcon={<UploadIcon />}
-              onClick={() => setShowUploadPhotosModal(true)}
-              size="small"
-              variant="secondary"
-            >
-              {t("Upload")}
-            </Button>
-          }
-        >
-          <Flex className="mb-4 flex-1 flex-col gap-4">
-            <Flex className="items-center gap-1">
-              <Text textStyle="400-bold" color="neutral.900">{`${geotaggedPhotosCount} ${t("Photos")}`}</Text>
-              <Text textStyle="400" color="neutral.900">
-                {t("available")}
-              </Text>
-            </Flex>
-            <Switch
-              name="showPhotosOnMap"
-              checked={showPhotosOnMap}
-              disabled={geotaggedPhotosCount === 0}
-              onCheckedChange={({ checked }: { checked?: boolean | "indeterminate" }) =>
-                setShowPhotosOnMap(checked === true)
-              }
-            >
-              {t("Show Photos on Map")}
-            </Switch>
-          </Flex>
-        </Accordion>
         <Accordion
           header={t("Versions")}
           open={openAccordionSection === "versions"}

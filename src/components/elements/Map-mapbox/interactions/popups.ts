@@ -12,7 +12,7 @@ import React, { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { SitePolygonLightDto, SitePolygonMapEntryDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { ANR_PLOT_FILL_LAYER_ID } from "../adapters/geoserver";
@@ -22,6 +22,7 @@ import type {
   EditPolygonState,
   LayerType,
   MobilePopupData,
+  PolygonEntityScope,
   PopupComponentProps,
   SetPolygonFromMap,
   TooltipType
@@ -98,6 +99,8 @@ export type PopupHandlerOptions = {
   setPolygonFromMap?: SetPolygonFromMap;
   setShouldRefetchPolygonData?: (value: boolean) => void;
   sitePolygonData?: SitePolygonLightDto[];
+  polygonEntityScope?: PolygonEntityScope;
+  mapIndexPolygons?: SitePolygonMapEntryDto[];
   type: TooltipType;
   editPolygon: EditPolygonState;
   setEditPolygon: (value: EditPolygonState) => void;
@@ -126,6 +129,8 @@ export const openPolygonPopup = (
     setPolygonFromMap,
     setShouldRefetchPolygonData,
     sitePolygonData,
+    polygonEntityScope,
+    mapIndexPolygons,
     type,
     editPolygon,
     setEditPolygon,
@@ -184,6 +189,8 @@ export const openPolygonPopup = (
         setPolygonFromMap,
         setShouldRefetchPolygonData,
         sitePolygonData,
+        polygonEntityScope,
+        mapIndexPolygons,
         type,
         editPolygon,
         setEditPolygon,
@@ -219,6 +226,8 @@ const handleLayerClick = (
       setPolygonFromMap: options.setPolygonFromMap,
       setShouldRefetchPolygonData: options.setShouldRefetchPolygonData,
       sitePolygonData: options.sitePolygonData,
+      polygonEntityScope: options.polygonEntityScope,
+      mapIndexPolygons: options.mapIndexPolygons,
       editPolygon: options.editPolygon,
       setEditPolygon: options.setEditPolygon,
       setLoader,

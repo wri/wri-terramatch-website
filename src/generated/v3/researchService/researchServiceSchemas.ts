@@ -192,6 +192,75 @@ export type GeometryUploadComparisonSummaryDto = {
   featuresForCreation: number;
 };
 
+export type SitePolygonMapEntryDto = {
+  /**
+   * UUID of the site polygon version.
+   */
+  uuid: string;
+  /**
+   * UUID of the associated polygon geometry. Used to match features in GeoServer tiles.
+   */
+  polygonUuid: string | null;
+  /**
+   * Approval status of the polygon, used for map styling and status counts.
+   */
+  status: "draft" | "pending-approval" | "information-required" | "approved" | null;
+  /**
+   * Polygon display name (from polyName).
+   */
+  name: string | null;
+  /**
+   * Number of trees planted.
+   */
+  numTrees: number | null;
+  /**
+   * Calculated area in hectares.
+   */
+  calcArea: number | null;
+  /**
+   * Validation status. Null means validation has not started.
+   */
+  validationStatus: "passed" | "partial" | "failed" | null;
+};
+
+export type SitePolygonMapIndexDto = {
+  /**
+   * Every polygon matching the requested scope and filters.
+   */
+  polygons: SitePolygonMapEntryDto[];
+  /**
+   * Number of polygons in the polygons array.
+   */
+  total: number;
+};
+
+export type SitePolygonSummaryDto = {
+  /**
+   * Sum of numTrees across polygons in scope.
+   */
+  sumNumTrees: number;
+  /**
+   * Sum of calcArea (ha) across polygons in scope.
+   */
+  sumCalcArea: number;
+  /**
+   * Count of polygons in scope.
+   */
+  totalPolygons: number;
+  /**
+   * Polygon counts keyed by status.
+   *
+   * @example {"draft":0,"pending-approval":0,"information-required":0,"approved":0}
+   */
+  countByStatus: {
+    [key: string]: number;
+  };
+  /**
+   * Optional indicator aggregates keyed by requested indicatorSlug.
+   */
+  indicators?: Record<string, any>;
+};
+
 export type SitePolygonLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -1182,6 +1251,7 @@ export type PolygonAttributeDefinitionConstants = {
   /**
    * @example single_select
    * @example multi_select
+   * @example date
    */
   INPUT_TYPES: string[];
 };
@@ -1212,7 +1282,7 @@ export type PolygonAttributeDefinitionDto = {
    */
   key: string;
   label: string;
-  inputType: "single_select" | "multi_select";
+  inputType: "single_select" | "multi_select" | "date";
   frameworkKey:
     | "terrafund"
     | "terrafund-landscapes"
@@ -1245,14 +1315,14 @@ export type StorePolygonAttributeDefinitionOptionAttributes = {
    */
   uuid?: string;
   /**
-   * Option display label. On create, the stored value is camelCased from this label.
+   * Option display label. On create, the stored value is kebab-cased from this label.
    */
   label: string;
 };
 
 export type CreatePolygonAttributeDefinitionAttributes = {
   label: string;
-  inputType: "single_select" | "multi_select";
+  inputType: "single_select" | "multi_select" | "date";
   frameworkKey:
     | "terrafund"
     | "terrafund-landscapes"
@@ -1273,6 +1343,9 @@ export type CreatePolygonAttributeDefinitionAttributes = {
    * Display order within the framework. Defaults to 0.
    */
   order?: number;
+  /**
+   * Required with at least one entry for single_select/multi_select. Must be an empty array for date.
+   */
   options: StorePolygonAttributeDefinitionOptionAttributes[];
 };
 
@@ -1293,7 +1366,7 @@ export type UpdatePolygonAttributeDefinitionAttributes = {
    */
   order?: number;
   /**
-   * When provided, replaces the full option list. Omitted options are removed only if no polygon stores that option value. Existing option values stay locked.
+   * When provided, replaces the full option list (single_select/multi_select require at least one entry; date must be empty). Omitted options are removed only if no polygon stores that option value. Existing option values stay locked.
    */
   options?: StorePolygonAttributeDefinitionOptionAttributes[];
 };

@@ -92,6 +92,7 @@ const PolygonCommentContent: FC<PolygonCommentContentProps> = ({ polygonUuid = "
   const [isLoaded, { data: auditStatusesData, refetch }] = useAuditStatuses({
     entity: "sitePolygons",
     uuid: polygonUuid,
+    types: ["comment"],
     enabled: hasValidPolygonUuid
   });
 

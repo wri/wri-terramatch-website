@@ -34,11 +34,11 @@ const meta: Meta<typeof MetricCard> = {
     },
     selection: {
       control: "number",
-      description: "Optional selected value shown in the metric context"
+      description: "Selected total shown in the context row below the card. Pass null when unavailable"
     },
     filtered: {
       control: "number",
-      description: "Optional filtered value shown in the metric context"
+      description: "Filtered total shown in the context row below the card. Pass null when unavailable"
     }
   }
 };
@@ -72,18 +72,44 @@ export const MediumWithSelection: Story = {
   }
 };
 
-export const MediumWithSelectionAndFiltered: Story = {
+export const MediumWithFiltered: Story = {
   args: {
     title: "Stat label",
     progress: 1234,
     goal: 10000,
-    progressSuffix: "ha",
     variant: "medium",
     icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
     className: "w-fit",
-    selection: 1000,
-    filtered: 400
+    filtered: 800
+  }
+};
+
+export const MediumWithFilteredAndSelection: Story = {
+  args: {
+    title: "Stat label",
+    progress: 1234,
+    goal: 10000,
+    variant: "medium",
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit",
+    filtered: 800,
+    selection: 200
+  }
+};
+
+export const MediumWithFilteredUnavailable: Story = {
+  args: {
+    title: "Stat label",
+    progress: 1234,
+    goal: 10000,
+    variant: "medium",
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit",
+    filtered: null,
+    selection: null
   }
 };
 
@@ -111,17 +137,16 @@ export const ProgressBar: Story = {
   }
 };
 
-export const ProgressBarWithSelectionAndFiltered: Story = {
+export const ProgressBarWithBreakdown: Story = {
   args: {
-    title: "Stat label",
-    progress: 750,
-    goal: 1000,
+    title: "Trees Growing",
+    progress: 25631,
+    goal: 0,
+    filtered: 0,
+    selection: 0,
     variant: "progressBar",
     icon: <PlaceholderIcon />,
-    tooltipContent: "This is a tooltip",
-    className: "w-[30rem]",
-    selection: 10000,
-    filtered: 2500
+    className: "w-fit"
   }
 };
 

@@ -40,6 +40,10 @@ interface SiteAttributeTableProps {
   setCurrentPage: Dispatch<SetStateAction<number>>;
   setPageSize: Dispatch<SetStateAction<number>>;
   containerRef: React.RefObject<HTMLDivElement>;
+  summaryTotals?: {
+    totalTreesPlanted: number;
+    totalCalculatedArea: number;
+  };
 }
 
 export default function SiteAttributeTable({
@@ -55,7 +59,8 @@ export default function SiteAttributeTable({
   pageSize,
   setCurrentPage,
   setPageSize,
-  containerRef
+  containerRef,
+  summaryTotals
 }: SiteAttributeTableProps) {
   const [isStickyActive, setIsStickyActive] = useState(false);
 
@@ -106,6 +111,10 @@ export default function SiteAttributeTable({
 
   // Calculate totals from all data (not just current page)
   const totals = useMemo(() => {
+    if (summaryTotals != null) {
+      return summaryTotals;
+    }
+
     return allData.reduce(
       (acc, row) => {
         acc.totalTreesPlanted += row["num-trees"] ?? 0;
@@ -114,7 +123,7 @@ export default function SiteAttributeTable({
       },
       { totalTreesPlanted: 0, totalCalculatedArea: 0 }
     );
-  }, [allData]);
+  }, [allData, summaryTotals]);
 
   const tableItemMenu = (props: TableItemMenuProps) => [
     {

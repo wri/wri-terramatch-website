@@ -1,8 +1,9 @@
 import router from "next/router";
 
 import { setPendingPolygonFocusUuid } from "@/context/polygonTableInteraction.store";
-import type { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
+
+import type { SitePolygonPopupFields } from "./sitePolygonPopupUtils";
 
 const SITE_DETAIL_PATH = "/site/[uuid]";
 
@@ -14,7 +15,7 @@ export const setViewDetailsSiteUuid = (siteUuid?: string | null): void => {
   viewDetailsSiteUuid = siteUuid != null && siteUuid !== "" ? siteUuid : null;
 };
 
-export const resolveViewDetailsSiteUuid = (sitePolygon?: SitePolygonLightDto): string | null => {
+export const resolveViewDetailsSiteUuid = (sitePolygon?: SitePolygonPopupFields): string | null => {
   const siteId = sitePolygon?.siteId;
   if (siteId != null && siteId !== "") {
     return siteId;

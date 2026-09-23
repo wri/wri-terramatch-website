@@ -34,24 +34,25 @@ const BulkActionToolbar = memo(function BulkActionToolbar({
       contentRight={
         <Flex alignItems="center" gap={2} flexWrap="wrap">
           <BulkActionToolbarActions deleteAction={deleteAction} actions={actions} />
-          {primaryAction != null && "otherActions" in primaryAction && primaryAction.otherActions.length > 0 ? (
-            <MultiActionButton
-              {...(primaryAction as IMultiActionButtonProps)}
-              mainActionLabel={
-                (primaryAction as IMultiActionButtonProps).mainActionLabel ??
-                String((primaryAction as IButtonProps).children ?? "")
-              }
-              mainActionOnClick={(primaryAction as IMultiActionButtonProps).mainActionOnClick ?? (() => {})}
-              variant="primary"
-              className="disabled:!border-theme-neutral-400 disabled:!bg-theme-neutral-300 disabled:!text-theme-neutral-500 disabled:!opacity-100"
-            />
-          ) : (
-            <Button
-              {...(primaryAction as IButtonProps)}
-              variant="primary"
-              className="disabled:!border-theme-neutral-400 disabled:!bg-theme-neutral-300 disabled:!text-theme-neutral-500 disabled:!opacity-100"
-            />
-          )}
+          {primaryAction != null &&
+            ("otherActions" in primaryAction && primaryAction.otherActions.length > 0 ? (
+              <MultiActionButton
+                {...(primaryAction as IMultiActionButtonProps)}
+                mainActionLabel={
+                  (primaryAction as IMultiActionButtonProps).mainActionLabel ??
+                  String((primaryAction as IButtonProps).children ?? "")
+                }
+                mainActionOnClick={(primaryAction as IMultiActionButtonProps).mainActionOnClick ?? (() => {})}
+                variant="primary"
+                className="disabled:!border-theme-neutral-400 disabled:!bg-theme-neutral-300 disabled:!text-theme-neutral-500 disabled:!opacity-100"
+              />
+            ) : (
+              <Button
+                {...(primaryAction as IButtonProps)}
+                variant="primary"
+                className="disabled:!border-theme-neutral-400 disabled:!bg-theme-neutral-300 disabled:!text-theme-neutral-500 disabled:!opacity-100"
+              />
+            ))}
           {infoTooltip != null && (
             <Tooltip content={wrapToolbarInfoTooltipContent(infoTooltip)} position="top">
               <InfoIcon height="1rem" width="1rem" color="neutral.100" />

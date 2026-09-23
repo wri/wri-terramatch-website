@@ -28,7 +28,7 @@ const meta: Meta<typeof BulkActionToolbar> = {
     },
     actions: {
       description:
-        "Ordered secondary actions rendered between delete and the primary action. Optional `tooltip` is shown only when the action is disabled."
+        "Ordered secondary actions rendered between delete and the primary action. Each action may set `infoTooltip` for an always-visible info icon, or `tooltip` to explain why it is disabled."
     },
     primaryAction: {
       description: "Filled primary action (e.g. submit)"
@@ -79,6 +79,39 @@ export const Default: Story = {
   }
 };
 
+export const DisabledSubmitWithTooltip: Story = {
+  args: {
+    selectedCount: 1,
+    cancelAction: {
+      children: "Cancel",
+      onClick: () => console.log("Cancel clicked")
+    },
+    deleteAction: {
+      id: "download",
+      children: "Download",
+      onClick: () => console.log("Download clicked")
+    },
+    actions: [
+      {
+        id: "nothing-to-report",
+        children: "Nothing to Report",
+        onClick: () => console.log("Nothing to Report clicked")
+      },
+      {
+        id: "edit",
+        children: "Edit",
+        onClick: () => console.log("Edit clicked")
+      }
+    ],
+    primaryAction: {
+      children: "Submit",
+      disabled: true,
+      onClick: () => console.log("Submit clicked")
+    },
+    infoTooltip: "This report is missing mandatory information. Please complete the required fields before submitting."
+  }
+};
+
 export const DisabledActionTooltip: Story = {
   args: {
     ...Default.args,
@@ -87,7 +120,7 @@ export const DisabledActionTooltip: Story = {
       tone: "danger",
       children: "Delete",
       disabled: true,
-      tooltip: "This profile can't be deleted because it's already submitted or approved",
+      tooltip: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
       onClick: () => console.log("Delete clicked")
     }
   }

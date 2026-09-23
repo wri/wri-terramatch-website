@@ -24,8 +24,7 @@ import PolygonCommentContent from "./PolygonCommentContent";
 import type {
   PolygonOverlapFixCallback,
   PolygonRunValidationWithResultsCallback,
-  PolygonSaveCallback,
-  PolygonValidationJobsStartedCallback
+  PolygonSaveCallback
 } from "./polygonEdit.types";
 import PolygonEditContent from "./PolygonEditContent";
 import type { SavePolygonFlowOptions } from "./polygonEditSave";
@@ -43,7 +42,6 @@ interface PolygonEditDrawerProps {
   onOverlapFixed?: PolygonOverlapFixCallback;
   onRunValidation?: (geometryPolygonUuids: string[]) => Promise<void>;
   onRunValidationWithResultsModal?: PolygonRunValidationWithResultsCallback;
-  onValidationJobsStarted?: PolygonValidationJobsStartedCallback;
   onPolygonUpdated?: (polygon: SitePolygonLightDto) => void;
   onSuppressMapSelectionHighlightChange?: (value: boolean) => void;
   onDeletingChange?: (isDeleting: boolean, count?: number) => void;
@@ -62,7 +60,6 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   onOverlapFixed,
   onRunValidation,
   onRunValidationWithResultsModal,
-  onValidationJobsStarted,
   onPolygonUpdated,
   onSuppressMapSelectionHighlightChange,
   onDeletingChange,
@@ -117,6 +114,7 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
   const [, { data: auditStatusesData }] = useAuditStatuses({
     entity: "sitePolygons",
     uuid: selectedPolygon?.uuid ?? "",
+    types: ["comment"],
     enabled: hasValidPolygonUuid
   });
 
@@ -419,7 +417,6 @@ const PolygonEditDrawer: FC<PolygonEditDrawerProps> = ({
                       onRequestInformationModal={onRequestInformationModal}
                       onSaved={onSaved}
                       onRunValidationWithResultsModal={onRunValidationWithResultsModal}
-                      onValidationJobsStarted={onValidationJobsStarted}
                       onPolygonUpdated={onPolygonUpdated}
                       onUnsavedChangesInvalidatingValidationChange={setHasUnsavedChangesInvalidatingValidation}
                       onSuppressMapSelectionHighlightChange={onSuppressMapSelectionHighlightChange}

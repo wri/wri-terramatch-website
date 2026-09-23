@@ -26,20 +26,20 @@ const shouldRenderSuffix = (progressLabel?: string, suffix?: string): boolean =>
 
 type MetricContextItemProps = {
   label: string;
-  value: number;
+  value: number | null;
   suffix?: string;
 };
 
 const MetricContextItem: FC<MetricContextItemProps> = ({ label, value, suffix }) => {
-  const valueSuffix = suffix != null && suffix !== "" ? suffix : undefined;
+  const valueSuffix = value != null && suffix != null && suffix !== "" ? suffix : undefined;
 
   return (
-    <Flex gap={1} className="items-center">
+    <Flex gap={1} className="items-center whitespace-nowrap">
       <Text color="neutral.700" textStyle="200">
         {label}
       </Text>
       <Text color="neutral.900" textStyle="300-bold">
-        {formatNumberLocaleString(value)}
+        {value == null ? "-" : formatNumberLocaleString(value)}
       </Text>
       {valueSuffix != null ? (
         <Text color="neutral.900" textStyle="300-bold">
@@ -50,19 +50,23 @@ const MetricContextItem: FC<MetricContextItemProps> = ({ label, value, suffix })
   );
 };
 
+type MetricContextItemConfig = {
+  key: string;
+  label: string;
+  value: number | null;
+};
+
 type MetricContextDetailsProps = {
-  selection?: number;
-  filtered?: number;
+  selection?: number | null;
+  filtered?: number | null;
   suffix?: string;
 };
 
 const MetricContextDetails: FC<MetricContextDetailsProps> = ({ selection, filtered, suffix }) => {
   const t = useT();
-  const selectionItem = selection != null ? { key: "selection", label: t("Selected:"), value: selection } : null;
-  const filteredItem = filtered != null ? { key: "filtered", label: t("Filtered:"), value: filtered } : null;
-  const items = [filteredItem, selectionItem].filter(
-    (item): item is { key: string; label: string; value: number } => item != null
-  );
+  const selectionItem = selection !== undefined ? { key: "selection", label: t("Selected:"), value: selection } : null;
+  const filteredItem = filtered !== undefined ? { key: "filtered", label: t("Filtered:"), value: filtered } : null;
+  const items = [filteredItem, selectionItem].filter((item): item is MetricContextItemConfig => item != null);
 
   if (items.length === 0) {
     return null;
@@ -73,7 +77,7 @@ const MetricContextDetails: FC<MetricContextDetailsProps> = ({ selection, filter
       {items.map((item, itemIndex) => (
         <Flex key={item.key} gap={2} className="items-center">
           {itemIndex > 0 && <SimpleDivider variant="vertical" className="!h-3 shrink-0" />}
-          <MetricContextItem key={item.key} label={item.label} value={item.value} suffix={suffix} />
+          <MetricContextItem label={item.label} value={item.value} suffix={suffix} />
         </Flex>
       ))}
     </Flex>
@@ -101,7 +105,7 @@ const MetricTooltipTrigger: FC<MetricTooltipTriggerProps> = ({ tooltipContent, m
   return (
     <Tooltip content={tooltipContent} position="top">
       <button type="button" className="inline-flex items-center" onClick={handleClick} aria-label="Metric information">
-        <InfoIcon color="neutral.800" boxSize="14px" />
+        <InfoIcon color="neutral.800" boxSize="0.875rem" />
       </button>
     </Tooltip>
   );
@@ -344,9 +348,9 @@ const MetricCard: FC<MetricCardProps> = props => {
     metricLabel,
     widthProgressBar
   } = props;
-  const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "14px", color, variant);
-  const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "24px", color, variant);
-  const iconWithColor50 = getIconWithProgressColor(icon, progress, goal, "50px", color, variant);
+  const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "0.875rem", color, variant);
+  const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "1.5rem", color, variant);
+  const iconWithColor50 = getIconWithProgressColor(icon, progress, goal, "3.125rem", color, variant);
 
   let content: ReactNode;
 

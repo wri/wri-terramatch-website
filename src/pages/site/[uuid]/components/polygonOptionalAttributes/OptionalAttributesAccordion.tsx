@@ -4,7 +4,9 @@ import { FC } from "react";
 
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
+import DatePickerInput from "@/redesignComponents/Forms/Inputs/DateInputs/DatePickerInput/DatePickerInput";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
+import { dateValueToIsoDateOnly, isoDateOnlyToDateValue } from "@/utils/date";
 
 import type { CustomAttributeFormValues, PolygonAttributeDefinitionDto } from "./types";
 
@@ -30,24 +32,35 @@ const OptionalAttributesAccordion: FC<OptionalAttributesAccordionProps> = ({
   if (definitions.length === 0) return null;
 
   return (
-    <Accordion
-      header={<AccordionHeader title={t("Optional Attributes")} badge={t("Optional")} />}
-      open={open}
-      onOpenChange={onOpenChange}
-    >
+    <Accordion header={<AccordionHeader title={t("Optional Attributes")} />} open={open} onOpenChange={onOpenChange}>
       <Flex className="mb-4 flex-1 flex-col gap-4">
         {definitions.map(definition => {
+          const value = values[definition.key] ?? [];
+
+          if (definition.inputType === "date") {
+            return (
+              <DatePickerInput
+                key={`custom-attribute-${definition.key}-${instanceKey}`}
+                label={definition.label}
+                value={isoDateOnlyToDateValue(value[0])}
+                onValueChange={selected => {
+                  const isoDate = dateValueToIsoDateOnly(selected[0]);
+                  onChange(definition.key, isoDate == null ? [] : [isoDate]);
+                }}
+              />
+            );
+          }
+
           const items = definition.options
             .slice()
             .sort((left, right) => left.order - right.order)
             .map(option => ({ value: option.value, label: option.label }));
-          const value = values[definition.key] ?? [];
 
           return (
             <SelectInput
               key={`custom-attribute-${definition.key}-${instanceKey}-${value.join("|")}`}
               items={items}
-              label={definition.label}
+              label={`${definition.label}${t(" (Optional)")}`}
               defaultValue={value}
               onChange={selected =>
                 onChange(definition.key, definition.inputType === "single_select" ? selected.slice(0, 1) : selected)

@@ -3,7 +3,7 @@ import { Box, Divider, Typography } from "@mui/material";
 import {
   ArrayInput,
   AutocompleteInput,
-  DateTimeInput,
+  DateInput,
   maxLength,
   ReferenceInput,
   required,
@@ -104,7 +104,7 @@ const FundingForm = () => {
             <AutocompleteInput optionText="title" fullWidth validate={[required()]} />
           </ReferenceInput>
 
-          <DateTimeInput source="deadlineAt" label="Stage Deadline" fullWidth />
+          <DateInput source="deadlineAt" label="Stage Deadline" fullWidth />
         </AccordionFormIterator>
       </ArrayInput>
       <Divider />
