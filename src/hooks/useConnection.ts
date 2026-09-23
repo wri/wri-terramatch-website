@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { EnabledProp, IndexConnection, LoadFailureConnection } from "@/connections/util/apiConnectionFactory";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice, { PendingError } from "@/store/apiSlice";
 import { AppStore } from "@/store/store";
 import { Connected, Connection, OptionalProps, PaginatedConnectionProps } from "@/types/connection";
@@ -52,23 +53,22 @@ export const useAllPages = <
   // & IndexConnection<D> needed to get TS to correctly infer D for the return type
   // https://stackoverflow.com/a/76295763/139109
   connection: Connection<S & IndexConnection<D>, P>,
-  props: Omit<P, "pageNumber" | "pageSize">,
-  // TODO: hopefully can drop this nonsense.
-  resetKey?: unknown
+  props: Omit<P, "pageNumber" | "pageSize">
 ): [boolean, D[], PendingError | undefined] => {
   const stableProps = useStableProps(props);
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesByNumber, setPagesByNumber] = useState<Record<number, D[]>>({});
   const advancedFromPageRef = useRef<number | null>(null);
-  const [paginationIdentity, setPaginationIdentity] = useState({ props: stableProps, resetKey });
 
-  // Reset in render so a filter change cannot paint the previous query's pages.
-  if (stableProps !== paginationIdentity.props || resetKey !== paginationIdentity.resetKey) {
-    setPaginationIdentity({ props: stableProps, resetKey });
+  const resetPagination = useCallback(() => {
     setPageNumber(1);
     setPagesByNumber({});
     advancedFromPageRef.current = null;
-  }
+  }, []);
+
+  // Declared before the effects that accumulate pages so stale pages are dropped before the first
+  // page of the new query arrives.
+  useValueChanged(stableProps, resetPagination);
 
   const [pageLoaded, { data: pageData, indexTotal, loadFailure }] = useConnection(connection, {
     ...stableProps,
