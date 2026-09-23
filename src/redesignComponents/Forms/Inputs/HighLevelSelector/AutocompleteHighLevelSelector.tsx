@@ -99,7 +99,7 @@ const AutocompleteHighLevelSelector: FC<SelectorImplementationProps> = ({
       className={className}
       collection={collection}
       defaultInputValue={defaultInputValue}
-      defaultValue={defaultValue ? [defaultValue] : undefined}
+      defaultValue={defaultValue != null ? [defaultValue] : undefined}
       disabled={disabled}
       inputBehavior="autocomplete"
       inputValue={inputValue}

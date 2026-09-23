@@ -13,7 +13,7 @@ import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { HookFilters } from "@/types/connection";
-import { calculateTotalsFromProjects, groupProjectsByCountry } from "@/utils/dashboardUtils";
+import { calculateTotalsFromProjects, groupProjectsByCountry, sumGroupedHectares } from "@/utils/dashboardUtils";
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
 import Log from "@/utils/log";
 
@@ -245,6 +245,11 @@ export const useDashboardData = (filters: any) => {
     filter: dashboardV3Filter
   });
 
+  const hectaresFromPolygons = useMemo(
+    () => sumGroupedHectares(generalHectaresUnderRestoration?.restorationStrategiesRepresented),
+    [generalHectaresUnderRestoration]
+  );
+
   const [projectLoaded, { data: singleDashboardProject }] = useDashboardProject({
     id: filters?.uuid ?? null
   });
@@ -393,6 +398,7 @@ export const useDashboardData = (filters: any) => {
         totalValue: singleDashboardProject.treesGrownGoal ?? 0
       });
     } else if (calculatedTotals != null) {
+      const hectaresValue = hectaresFromPolygons > 0 ? hectaresFromPolygons : calculatedTotals.totalHectaresRestored;
       setDashboardHeader(prev => [
         {
           ...prev[0],
@@ -400,9 +406,7 @@ export const useDashboardData = (filters: any) => {
         },
         {
           ...prev[1],
-          value: calculatedTotals?.totalHectaresRestored
-            ? `${calculatedTotals?.totalHectaresRestored.toLocaleString("en-US", { maximumFractionDigits: 0 })} ha`
-            : "-"
+          value: hectaresValue ? `${hectaresValue.toLocaleString("en-US", { maximumFractionDigits: 0 })} ha` : "-"
         },
         {
           ...prev[2],
@@ -414,7 +418,7 @@ export const useDashboardData = (filters: any) => {
         totalValue: Number(calculatedTotals?.totalTreesRestoredGoal)
       });
     }
-  }, [calculatedTotals, filters.uuid, singleDashboardProject]);
+  }, [calculatedTotals, filters.uuid, hectaresFromPolygons, singleDashboardProject]);
 
   useEffect(() => {
     const areBboxEqual = (a: BBox | undefined, b: BBox | undefined): boolean => {

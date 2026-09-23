@@ -31,6 +31,14 @@ const meta: Meta<typeof MetricCard> = {
     goalSuffix: {
       control: "text",
       description: "Suffix displayed next to goal value"
+    },
+    selection: {
+      control: "number",
+      description: "Selected total shown in the context row below the card. Pass null when unavailable"
+    },
+    filtered: {
+      control: "number",
+      description: "Filtered total shown in the context row below the card. Pass null when unavailable"
     }
   }
 };
