@@ -64,11 +64,11 @@ const items: StorySitePolygon[] = [
     validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
+    disturbanceReportUuid: null,
     isActive: true,
     createdAt: null,
     deletedAt: null,
     customAttributes: {},
-    disturbanceReportUuid: null
   },
   {
     uuid: "2",
@@ -98,11 +98,11 @@ const items: StorySitePolygon[] = [
     validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
+    disturbanceReportUuid: null,
     isActive: true,
     createdAt: null,
     deletedAt: null,
     customAttributes: {},
-    disturbanceReportUuid: null
   },
   {
     uuid: "3",
@@ -132,10 +132,10 @@ const items: StorySitePolygon[] = [
     validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
+    disturbanceReportUuid: null,
     isActive: true,
     createdAt: null,
     deletedAt: null,
     customAttributes: {},
-    disturbanceReportUuid: null
   }
 ];
