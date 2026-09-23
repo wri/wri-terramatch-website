@@ -43,11 +43,11 @@ const items: SitePolygonLightDto[] = [
     validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
+    disturbanceReportUuid: null,
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {},
-    disturbanceReportUuid: null
+    customAttributes: {}
   },
   {
     uuid: "2",
@@ -77,11 +77,11 @@ const items: SitePolygonLightDto[] = [
     validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
+    disturbanceReportUuid: null,
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {},
-    disturbanceReportUuid: null
+    customAttributes: {}
   },
   {
     uuid: "3",
@@ -111,11 +111,11 @@ const items: SitePolygonLightDto[] = [
     validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
+    disturbanceReportUuid: null,
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {},
-    disturbanceReportUuid: null
+    customAttributes: {}
   },
   {
     uuid: "4",
@@ -145,11 +145,11 @@ const items: SitePolygonLightDto[] = [
     validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
+    disturbanceReportUuid: null,
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {},
-    disturbanceReportUuid: null
+    customAttributes: {}
   },
   {
     uuid: "5",
@@ -179,11 +179,11 @@ const items: SitePolygonLightDto[] = [
     validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
+    disturbanceReportUuid: null,
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {},
-    disturbanceReportUuid: null
+    customAttributes: {}
   },
   {
     uuid: "6",
@@ -213,11 +213,11 @@ const items: SitePolygonLightDto[] = [
     validationStatus: null,
     primaryUuid: null,
     disturbanceableId: null,
+    disturbanceReportUuid: null,
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {},
-    disturbanceReportUuid: null
+    customAttributes: {}
   }
 ];
 
