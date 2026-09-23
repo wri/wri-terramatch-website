@@ -221,6 +221,10 @@ export type SitePolygonMapEntryDto = {
    * Validation status. Null means validation has not started.
    */
   validationStatus: "passed" | "partial" | "failed" | null;
+  /**
+   * UUID of the linked DisturbanceReport when this polygon has a disturbance owned by a report. Use for /reports/disturbance-report/{uuid}.
+   */
+  disturbanceReportUuid: string | null;
 };
 
 export type SitePolygonMapIndexDto = {
@@ -335,6 +339,10 @@ export type SitePolygonLightDto = {
    */
   uuid: string;
   disturbanceableId: number | null;
+  /**
+   * UUID of the DisturbanceReport linked via disturbance, when disturbanceableType is DisturbanceReport. Use for /reports/disturbance-report/{uuid}.
+   */
+  disturbanceReportUuid: string | null;
   /**
    * Whether the site polygon is active
    */
@@ -595,6 +603,10 @@ export type SitePolygonFullDto = {
    */
   uuid: string;
   disturbanceableId: number | null;
+  /**
+   * UUID of the DisturbanceReport linked via disturbance, when disturbanceableType is DisturbanceReport. Use for /reports/disturbance-report/{uuid}.
+   */
+  disturbanceReportUuid: string | null;
   /**
    * Whether the site polygon is active
    */
