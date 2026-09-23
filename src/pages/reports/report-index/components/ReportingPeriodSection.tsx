@@ -11,7 +11,7 @@ import {
   getReportKeyIndicatorFramework,
   getTooltipContent
 } from "@/components/reports/KeyIndicators/reportKeyIndicatorPrimitives";
-import { useFullProjectReport } from "@/connections/Entity";
+import { useLightProjectReport } from "@/connections/Entity";
 import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
@@ -91,14 +91,7 @@ const ReportingPeriodMetricsRow = ({
   className
 }: ReportingPeriodMetricsRowProps) => {
   const jobsTotal = usePeriodJobsTotal(open ? projectReportUuid : null, frameworkKey);
-  const {
-    loading: subsetMetricsLoading,
-    periodTotals,
-    filteredTotals,
-    selectionTotals,
-    jobsProgress
-  } = useReportingPeriodMetrics({
-    open,
+  const { periodTotals, filteredTotals, selectionTotals, jobsProgress } = useReportingPeriodMetrics({
     reports,
     allReports,
     hasReportSubset,
@@ -115,7 +108,7 @@ const ReportingPeriodMetricsRow = ({
   const framework = getReportKeyIndicatorFramework(frameworkKey);
   const metricScope = selectionTotals != null ? "selection" : "period";
 
-  if (subsetMetricsLoading || jobsLoading) {
+  if (jobsLoading) {
     return <DemographicsLoader className="mb-5 h-10 w-full" />;
   }
 
@@ -191,7 +184,7 @@ const ReportingPeriodSection = ({
   const metricCardClassName = "w-auto min-w-[12.5rem] border-[0.125rem] bg-theme-neutral-100";
   const projectReportUuid = metricsReady ? period.projectReportUuid : null;
 
-  const [reportLoaded, { data: projectReport }] = useFullProjectReport({
+  const [reportLoaded, { data: projectReport }] = useLightProjectReport({
     id: open && projectReportUuid != null ? projectReportUuid : undefined
   });
   const frameworkKey = projectReport?.frameworkKey ?? period.frameworkKey;

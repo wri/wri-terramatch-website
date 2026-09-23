@@ -1,19 +1,18 @@
+import isArray from "lodash/isArray";
 import { useMemo } from "react";
 
-import {
-  indexNurseryReportConnection,
-  indexProjectReportConnection,
-  indexSiteReportConnection
-} from "@/connections/Entity";
+import { useLightNurseryReportList, useLightProjectReportList, useLightSiteReportList } from "@/connections/Entity";
+import { taskIndexConnection, TaskRelationships } from "@/connections/Task";
+import { IdsProp, ListConnection } from "@/connections/util/apiConnectionFactory";
 import {
   NurseryReportLightDto,
-  ProjectFullDto,
+  ProjectLightDto,
   ProjectReportLightDto,
   SiteReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useAllPages } from "@/hooks/useConnection";
-import { useValueChanged } from "@/hooks/useValueChanged";
-import ApiSlice from "@/store/apiSlice";
+import { Connected, ConnectionProps } from "@/types/connection";
+import { isNotNull } from "@/utils/array";
 
 import {
   ReportsIndexPeriod,
@@ -25,7 +24,6 @@ import { ReportsIndexSource, resolveReportsIndexStatus } from "./reportIndex.uti
 
 type ReportsIndexDataState = {
   loading: boolean;
-  metricsReady: boolean;
   sections: ReportsIndexProjectSection[];
   error: boolean;
 };
@@ -55,12 +53,6 @@ const toReport = (report: ReportsIndexRawReport, type: ReportsIndexReportType): 
   };
 };
 
-const resolveProjectReportUuid = (report: ReportsIndexRawReport, type: ReportsIndexReportType) => {
-  if (type === "project-report") return report.uuid;
-  if ("projectReportUuid" in report) return report.projectReportUuid ?? null;
-  return null;
-};
-
 const byDueAtDescending = (a: ReportsIndexPeriod, b: ReportsIndexPeriod) =>
   (b.dueAt ?? "").localeCompare(a.dueAt ?? "");
 
@@ -71,76 +63,61 @@ type ProjectSectionDraft = Omit<ReportsIndexProjectSection, "periods"> & {
   periodsByDueAt: Map<string, ReportsIndexPeriod>;
 };
 
+const useTasksReports = <LightDto>(
+  tasks: TaskRelationships[],
+  prop: keyof TaskRelationships,
+  useDtoList: (props: IdsProp) => Connected<ListConnection<LightDto>>
+) => {
+  const ids = useMemo(
+    () =>
+      tasks
+        .map(task => (isArray(task[prop]) ? task[prop] : (task[prop] as string | undefined)) as (string | undefined)[])
+        .flat()
+        .filter(isNotNull),
+    [prop, tasks]
+  );
+  const [, { data: reports = [] }] = useDtoList({ ids });
+  return reports;
+};
+
 /**
  * Loads the progress reports (project, site and nursery) that belong to the entity the reports page
  * was opened for, or to every project in the "All Projects" view, and groups them by project and
  * then by reporting period.
- *
- * The reports are read straight from their indexes rather than walking the reporting tasks one by
- * one: the "All Projects" view would need a request per task across every project, and the index
- * DTOs already carry everything a period needs (due date and framework). Period metric values are
- * loaded lazily from the project report when a period accordion opens.
  */
 export const useReportsIndexData = (
-  project: ProjectFullDto,
+  project: ProjectLightDto,
   source: ReportsIndexSource,
   sourceUuid: string,
-  allProjects: boolean,
-  // Bumped by the bulk actions once the reports they touched have been updated, so the indexes are
-  // fetched again instead of serving the snapshot the page loaded with.
-  reloadNonce = 0
+  allProjects: boolean
 ): ReportsIndexDataState => {
   const { uuid: projectUuid, name: projectName, organisationName, organisationUuid } = project;
 
-  useValueChanged(reloadNonce, () => {
-    if (reloadNonce === 0) return;
-    ApiSlice.pruneIndex("projectReports", "");
-    ApiSlice.pruneIndex("siteReports", "");
-    ApiSlice.pruneIndex("nurseryReports", "");
-  });
+  const props = useMemo(() => {
+    const props: ConnectionProps<typeof taskIndexConnection> = {};
 
-  // The "All Projects" view pulls the indexes unfiltered; otherwise they're scoped to the entity the
-  // page was opened for, and the indexes that can't hold reports for that entity stay disabled.
-  const [projectReportsLoaded, projectReports, projectReportsFailure] = useAllPages(
-    indexProjectReportConnection,
-    {
-      filter: allProjects ? {} : { projectUuid },
-      enabled: allProjects || source === "project"
-    },
-    reloadNonce
-  );
+    if (allProjects || source === "project") {
+      if (!allProjects) props.filter = { projectUuid };
+      props.sideloads = ["projectReports", "siteReports", "nurseryReports"];
+    } else if (source === "site") {
+      props.filter = { siteUuid: sourceUuid };
+      props.sideloads = ["siteReports"];
+    } else if (source === "nursery") {
+      props.filter = { nurseryUuid: sourceUuid };
+      props.sideloads = ["nurseryReports"];
+    }
 
-  const [siteReportsLoaded, siteReports, siteReportsFailure] = useAllPages(
-    indexSiteReportConnection,
-    {
-      filter: allProjects ? {} : source === "site" ? { siteUuid: sourceUuid } : { projectUuid },
-      enabled: allProjects || source !== "nursery"
-    },
-    reloadNonce
-  );
-
-  const [nurseryReportsLoaded, nurseryReports, nurseryReportsFailure] = useAllPages(
-    indexNurseryReportConnection,
-    {
-      filter: allProjects ? {} : source === "nursery" ? { nurseryUuid: sourceUuid } : { projectUuid },
-      enabled: allProjects || source !== "site"
-    },
-    reloadNonce
-  );
-
-  // All Projects walks every index page (max 100 rows each). Keep the tab on loading until the
-  // full walk finishes so intermediate grouping of hundreds of projects cannot freeze the page.
-  const loading = allProjects
-    ? !(projectReportsLoaded && siteReportsLoaded && nurseryReportsLoaded)
-    : (!projectReportsLoaded && projectReports.length === 0) ||
-      (!siteReportsLoaded && siteReports.length === 0) ||
-      (!nurseryReportsLoaded && nurseryReports.length === 0);
-  const error = projectReportsFailure != null || siteReportsFailure != null || nurseryReportsFailure != null;
-  const metricsReady = projectReportsLoaded && siteReportsLoaded && nurseryReportsLoaded;
-  const projectReportsEnabled = allProjects || source === "project";
+    return props;
+  }, [allProjects, projectUuid, source, sourceUuid]);
+  // TODO: this will need to load page by page with infinite scroll behavior in a future ticket.
+  const [tasksLoaded, tasks, taskFailure] = useAllPages(taskIndexConnection, props);
+  // These are all cached because they were sideloaded on the tasks index request.
+  const projectReports = useTasksReports(tasks, "projectReportUuid", useLightProjectReportList);
+  const siteReports = useTasksReports(tasks, "siteReportUuids", useLightSiteReportList);
+  const nurseryReports = useTasksReports(tasks, "nurseryReportUuids", useLightNurseryReportList);
 
   const sections = useMemo((): ReportsIndexProjectSection[] => {
-    if (loading || error) return [];
+    if (!tasksLoaded || taskFailure != null) return [];
 
     const draftsByProject = new Map<string, ProjectSectionDraft>();
 
@@ -173,21 +150,34 @@ export const useReportsIndexData = (
         draft.periodsByDueAt.set(periodKey, period);
       }
 
-      // Prefer the project-report uuid when present. Site/nursery DTOs only fill the gap after the
-      // project-report index has finished, so a partial first page cannot trigger metric fetches
-      // against a stale or unauthorized project-report id.
-      if (type === "project-report") {
-        period.projectReportUuid = report.uuid;
-      } else if (period.projectReportUuid == null && (!projectReportsEnabled || projectReportsLoaded)) {
-        period.projectReportUuid = resolveProjectReportUuid(report, type);
+      if (period.projectReportUuid == null) {
+        period.projectReportUuid =
+          type === "project-report"
+            ? report.uuid
+            : (report as SiteReportLightDto | NurseryReportLightDto).projectReportUuid;
       }
 
       period.reports.push(toReport(report, type));
     };
 
-    projectReports.forEach(report => addReport(report, "project-report"));
-    siteReports.forEach(report => addReport(report, "site-report"));
-    nurseryReports.forEach(report => addReport(report, "nursery-report"));
+    if (allProjects || source === "project") {
+      projectReports.forEach(report => addReport(report, "project-report"));
+      siteReports.forEach(report => addReport(report, "site-report"));
+      nurseryReports.forEach(report => addReport(report, "nursery-report"));
+    } else if (source === "site") {
+      // In the case of sites and nurseries we have to filter down to the reports that are associated
+      // with the source. When requesting a given type of sideload (e.g. site-reports), the BE sends
+      // every report of that type on the task index request. This is important for keeping the
+      // client side cache store coherent - the definition of a given task in an index needs to
+      // remain the same regardless of how it was fetched. It can't pretend that a task only
+      // contains reports for a single site, even if that's how it was requested in a given index
+      // call.
+      siteReports.filter(report => report.siteUuid === sourceUuid).forEach(report => addReport(report, "site-report"));
+    } else if (source === "nursery") {
+      nurseryReports
+        .filter(report => report.nurseryUuid === sourceUuid)
+        .forEach(report => addReport(report, "nursery-report"));
+    }
 
     return Array.from(draftsByProject.values())
       .map(({ periodsByDueAt, ...draft }) => ({
@@ -196,18 +186,19 @@ export const useReportsIndexData = (
       }))
       .sort(byNameAscending);
   }, [
-    error,
-    loading,
-    nurseryReports,
+    tasksLoaded,
+    taskFailure,
+    allProjects,
+    source,
+    projectUuid,
+    projectName,
     organisationName,
     organisationUuid,
-    projectName,
     projectReports,
-    projectReportsEnabled,
-    projectReportsLoaded,
-    projectUuid,
-    siteReports
+    siteReports,
+    nurseryReports,
+    sourceUuid
   ]);
 
-  return { loading, metricsReady, sections, error };
+  return { loading: !tasksLoaded, sections, error: taskFailure != null };
 };

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useProjectIndex } from "@/connections/Entity";
 import { useReportsContext } from "@/context/reports.provider";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -35,7 +35,7 @@ import ReportsIndexHeader from "./ReportsIndexHeader";
 import ReportsSearchNoResults from "./ReportsSearchNoResults";
 
 type ReportsIndexContentProps = {
-  project: ProjectFullDto;
+  project: ProjectLightDto;
   source: ReportsIndexSource;
   sourceEntity: ReportsIndexSourceEntity;
 };
@@ -53,7 +53,6 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     viewFromQuery === ALL_PROJECTS_VIEW_VALUE ? ALL_PROJECTS_VIEW_VALUE : project.uuid
   );
   const { clearSelection } = useReportsSelectionActions();
-  const [reloadNonce, setReloadNonce] = useState(0);
   const [, { data: projects }] = useProjectIndex({});
   const organisationViewItems = useMemo<HighLevelSelectorItem[]>(() => {
     const labelsByUuid = new Map<string, string>();
@@ -81,9 +80,8 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const {
     sections: progressSections,
     loading: progressLoading,
-    metricsReady: progressMetricsReady,
     error: progressError
-  } = useReportsIndexData(project, source, sourceEntity.uuid, isAllProjectsView, reloadNonce);
+  } = useReportsIndexData(project, source, sourceEntity.uuid, isAllProjectsView);
   const {
     sections: additionalSections,
     loading: additionalLoading,
@@ -270,10 +268,6 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
     [clearSelection, router]
   );
 
-  const handleReportsChanged = useCallback(() => {
-    setReloadNonce(current => current + 1);
-  }, []);
-
   return (
     <>
       <ReportsIndexHeader
@@ -323,7 +317,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
                     unfilteredPeriods={unfilteredPeriodsByProjectId.get(section.id)}
                     defaultOpen={index === 0 && !isAllProjectsView}
                     expandForPeriodFilter={hasActivePeriodFilter}
-                    metricsReady={progressMetricsReady}
+                    metricsReady={!progressLoading}
                     hasReportSubset={hasReportSubset}
                     indexHref={indexHref}
                     restoreSectionId={progressRestore?.sectionId}
@@ -350,7 +344,7 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
           />
         )}
 
-        <ReportsIndexBulkBar onReportsChanged={handleReportsChanged} />
+        <ReportsIndexBulkBar />
       </PageContent>
     </>
   );
