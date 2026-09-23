@@ -20,7 +20,7 @@ export interface NavbarLinkItem {
   isActive?: boolean;
 }
 
-const LANGUAGES: Array<{ value: string; label: string }> = [
+const LANGUAGES: Array<{ value: ValidLocale; label: string }> = [
   { value: "en-US", label: "English" },
   { value: "es-MX", label: "Spanish" },
   { value: "fr-FR", label: "French" },
@@ -92,9 +92,9 @@ export const useNavbarData = (): NavbarData => {
 
   const handleLanguageSelect = (index: number) => {
     const lang = LANGUAGES[index]?.value;
-    if (!lang) return;
+    if (lang == null) return;
     if (setLocale != null) {
-      setLocale(lang as ValidLocale);
+      setLocale(lang);
     } else {
       router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale: lang });
     }

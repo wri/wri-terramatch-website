@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, ReactNode } from "react";
 
@@ -60,22 +60,28 @@ const Navbar: FC<NavbarProps> = ({
     data.onAccountSelect(index);
   };
 
-  const accountPrefix = <Avatar name={data.user?.firstName + " " + data.user?.lastName} size="small" />;
+  const accountPrefix = (
+    <Avatar name={`${data.user?.firstName ?? ""} ${data.user?.lastName ?? ""}`.trim()} size="small" />
+  );
   return (
     <Box as="header" backgroundColor="primary.900" position="sticky" top={0} zIndex={50}>
       <Flex justifyContent="space-between" alignItems="center" gap={4} h="3rem">
         <Flex gap={4} alignItems="center" pl={4}>
           <TMLogo boxSize="3.25rem" />
-          {navLinks.map((link, index) => (
+          {navLinks.map(link => (
             <Button
-              key={index}
+              key={link.label}
               variant="borderless"
-              className={`!text-white ${link.isActive ? "!opacity-100" : "opacity-100 hover:opacity-100"}`}
+              className="!text-white opacity-100 hover:opacity-100"
               onClick={link.onClick}
             >
-              <span className={` ${link.isActive ? "font-bold text-theme-primary-300" : "text-theme-neutral-100"}`}>
+              <Text
+                as="span"
+                textStyle={link.isActive === true ? "400-bold" : "400"}
+                color={link.isActive === true ? "primary.300" : "neutral.100"}
+              >
                 {link.label}
-              </span>
+              </Text>
             </Button>
           ))}
         </Flex>

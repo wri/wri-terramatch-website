@@ -1,5 +1,6 @@
 // Delete this component when the modal from wri dont crash with the trap focus error.
 import { Dialog, Portal } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import CloseButton from "@/redesignComponents/actions/Buttons/CloseButton/CloseButton";
@@ -17,7 +18,7 @@ const TypedDialogBody = Dialog.Body as FC<DialogContainerTyped>;
 const TypedDialogFooter = Dialog.Footer as FC<DialogContainerTyped>;
 const TypedDialogCloseTrigger = Dialog.CloseTrigger as FC<DialogCloseTriggerTyped>;
 
-const BaseModal = ({
+const BaseModal: FC<BaseModalProps> = ({
   header,
   content,
   footer,
@@ -29,7 +30,9 @@ const BaseModal = ({
   open,
   onClose
 }: BaseModalProps) => {
-  if (!open) return null;
+  const t = useT();
+
+  if (open !== true) return null;
   return (
     <Dialog.Root
       open={open}
@@ -37,29 +40,29 @@ const BaseModal = ({
       placement="center"
       scrollBehavior="inside"
       trapFocus={false}
-      closeOnInteractOutside={!blocking}
-      preventScroll={!blocking}
-      closeOnEscape={!blocking}
+      closeOnInteractOutside={blocking !== true}
+      preventScroll={blocking !== true}
+      closeOnEscape={blocking !== true}
       defaultOpen
     >
       <Portal>
-        <TypedDialogBackdrop css={{ background: "rgba(0, 0, 0, 0.64)" }} />
+        <TypedDialogBackdrop css={{ backgroundColor: "neutral.900", opacity: 0.64 }} />
         <TypedDialogPositioner>
           <TypedDialogContent
             tabIndex={0}
-            aria-label="Modal dialog"
+            aria-label={t("Modal dialog")}
             css={modalContainerStyles(size, width, height, maxHeight)}
           >
             <TypedDialogHeader css={modalHeaderStyles}>
               {header}
-              {!blocking ? (
+              {blocking !== true ? (
                 <TypedDialogCloseTrigger css={modalCloseButtonStyles} asChild>
                   <CloseButton />
                 </TypedDialogCloseTrigger>
               ) : null}
             </TypedDialogHeader>
             <TypedDialogBody css={modalContentStyles}>{content}</TypedDialogBody>
-            {footer ? <TypedDialogFooter padding="0.75rem">{footer}</TypedDialogFooter> : null}
+            {footer != null ? <TypedDialogFooter padding="0.75rem">{footer}</TypedDialogFooter> : null}
           </TypedDialogContent>
         </TypedDialogPositioner>
       </Portal>

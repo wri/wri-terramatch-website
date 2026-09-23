@@ -11,7 +11,7 @@ import type {
   PolygonSaveCallback
 } from "@/pages/site/[uuid]/components/polygonEdit.types";
 import PolygonEditDrawer from "@/pages/site/[uuid]/components/PolygonEditDrawer";
-import { useLayoutShell } from "@/redesignComponents/Loayout/LayoutShell.provider";
+import { useLayoutShell } from "@/redesignComponents/Layout/LayoutShell.provider";
 
 import type { PolygonEditDrawerPolygon, PolygonEditDrawerTab } from "./polygonEditDrawer.types";
 

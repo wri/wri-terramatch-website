@@ -2,7 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect } from "react";
 
-import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
+import type { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 
@@ -36,28 +36,15 @@ const ModalConfirmation: FC<ModalConfirmationProps> = ({
   }, [onOpenChange]);
 
   const groups = [
-    buttonsCancel?.length && {
-      id: "cancel",
-      buttons: buttonsCancel.map(button => ({
-        ...button
-      }))
-    },
-    buttonsSecondary?.length && {
-      id: "secondary",
-      buttons: buttonsSecondary.map(button => ({
-        ...button
-      }))
-    },
-    buttonsPrimary?.length && {
-      id: "primary",
-      buttons: buttonsPrimary.map(button => ({
-        ...button
-      }))
-    }
-  ].filter(Boolean);
+    ...(buttonsCancel == null || buttonsCancel.length === 0 ? [] : [{ id: "cancel", buttons: buttonsCancel }]),
+    ...(buttonsSecondary == null || buttonsSecondary.length === 0
+      ? []
+      : [{ id: "secondary", buttons: buttonsSecondary }]),
+    ...(buttonsPrimary == null || buttonsPrimary.length === 0 ? [] : [{ id: "primary", buttons: buttonsPrimary }])
+  ];
 
   useEffect(() => {
-    if (!open) {
+    if (open === false) {
       document.body.style.removeProperty("overflow");
       document.body.style.removeProperty("pointer-events");
     }
@@ -84,12 +71,7 @@ const ModalConfirmation: FC<ModalConfirmationProps> = ({
           </Text>
         </Flex>
       }
-      footer={
-        <ButtonGroup
-          groups={groups as { id: string; buttons: IButtonProps[] }[]}
-          classNameGroup={classNameGroup ?? "!w-full"}
-        />
-      }
+      footer={<ButtonGroup groups={groups} classNameGroup={classNameGroup ?? "!w-full"} />}
     />
   );
 };

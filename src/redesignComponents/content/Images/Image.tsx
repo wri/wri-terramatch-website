@@ -1,15 +1,16 @@
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { CSSProperties, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
+import NextImage from "next/image";
+import { CSSProperties, FC, HTMLAttributes, useEffect, useState } from "react";
 
-import Text from "@/components/elements/Text/Text";
 import { type SizeValue, resolveRemSizeValue } from "@/lib/sizing";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
 import { EditIcon, PhotoAddIcon, RejectedIcon, VideoIcon } from "@/redesignComponents/foundations/Icons";
 
 export type MediaType = "video" | "image";
-export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+export interface BaseImageProps extends HTMLAttributes<HTMLDivElement> {
   src?: string;
   alt?: string;
   size?: SizeValue;
@@ -64,18 +65,18 @@ const BaseImage: FC<BaseImageProps> = ({
   const showNotAvailable = src == null || loadError;
 
   const hoverContentComponent = (
-    <div
+    <Flex
       className={classNames(
-        "absolute inset-[0.1875rem] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+        "bg-theme-primary-900/50 absolute inset-[0.1875rem] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
         borderRadius
       )}
       role="button"
       tabIndex={0}
       onClick={onClickEdit}
     >
-      <div className={classNamesHover} />
-      <Text variant="text-16-bold" className="flex items-center gap-1 text-white" onClick={onClickEdit}>
-        {hoverContent ? (
+      <Box className={classNamesHover} />
+      <Text textStyle="400-bold" color="neutral.100" className="flex items-center gap-1" onClick={onClickEdit}>
+        {hoverContent != null ? (
           hoverContent
         ) : (
           <>
@@ -84,22 +85,21 @@ const BaseImage: FC<BaseImageProps> = ({
           </>
         )}
       </Text>
-    </div>
+    </Flex>
   );
 
   const videoComponent = (
-    <div
+    <Flex
       className={classNames(
-        "absolute inset-[0.1875rem] flex flex-col items-center justify-center gap-1 bg-[#3D3B3B80] duration-200 group-hover:opacity-0",
-        isVideo && "bg-[#3D3B3B80]",
+        "bg-theme-neutral-900/50 absolute inset-[0.1875rem] flex flex-col items-center justify-center gap-1 duration-200 group-hover:opacity-0",
         borderRadius
       )}
     >
-      {isVideo && <VideoIcon className={classNames("h-9 w-9 text-theme-neutral-100", classNamesVideoIcon)} />}
-    </div>
+      {isVideo && <VideoIcon className={classNames("text-theme-neutral-100 h-9 w-9", classNamesVideoIcon)} />}
+    </Flex>
   );
   return (
-    <div
+    <Flex
       {...rest}
       className={classNames(
         "group relative flex items-center justify-center",
@@ -113,73 +113,75 @@ const BaseImage: FC<BaseImageProps> = ({
     >
       {showNotAvailable || isAdd ? (
         isAdd ? (
-          <div
+          <Flex
             className={classNames(
-              "flex h-[calc(100%-0.25rem)] w-[calc(100%-0.25rem)] flex-col items-center justify-center gap-1 bg-theme-neutral-200",
+              "bg-theme-neutral-200 flex h-[calc(100%-0.25rem)] w-[calc(100%-0.25rem)] flex-col items-center justify-center gap-1",
               borderRadius
             )}
           >
             <PhotoAddIcon className="h-6 w-6" />
-            {onClickAdd && (
+            {onClickAdd != null && (
               <Button onClick={onClickAdd} variant="borderless" size="small">
                 {t("Add Image")}
               </Button>
             )}
-            {menuItems && <MenuCustom label={menuLabel ?? t("Add Image")} items={menuItems} />}
-          </div>
+            {menuItems != null && <MenuCustom label={menuLabel ?? t("Add Image")} items={menuItems} />}
+          </Flex>
         ) : (
-          <div
+          <Flex
             className={classNames(
-              "relative flex h-full w-full items-center justify-center bg-theme-neutral-300",
+              "bg-theme-neutral-300 relative flex h-full w-full items-center justify-center",
               borderRadius
             )}
           >
-            <div className="flex flex-col items-center justify-center gap-1.5">
-              <RejectedIcon className="h-5 w-5 text-theme-neutral-500" />
-              {!hideNotAvailableText && (
-                <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
+            <Flex flexDirection="column" alignItems="center" justifyContent="center" gap={1.5}>
+              <RejectedIcon className="text-theme-neutral-500 h-5 w-5" />
+              {hideNotAvailableText === false && (
+                <Text textStyle="200" color="neutral.900" className="flex items-center gap-1">
                   {t("Image unavailable")}
                 </Text>
               )}
-            </div>
-            {onClickEdit && hoverContentComponent}
-          </div>
+            </Flex>
+            {onClickEdit != null && hoverContentComponent}
+          </Flex>
         )
       ) : isVideo ? (
         <>
-          <div
+          <Box
             className={classNames(
               "relative h-[calc(100%-0.25rem)] w-[calc(100%-0.25rem)] overflow-hidden",
               borderRadius
             )}
           >
-            <video src={src!} className="h-full w-full object-cover" muted onError={() => setLoadError(true)} />
-          </div>
+            <video src={src ?? ""} className="h-full w-full object-cover" muted onError={() => setLoadError(true)} />
+          </Box>
 
           {isVideo && videoComponent}
-          {onClickEdit && hoverContentComponent}
+          {onClickEdit != null && hoverContentComponent}
         </>
       ) : (
         <>
-          <div
+          <Box
             className={classNames(
               "relative h-[calc(100%-0.25rem)] w-[calc(100%-0.25rem)] overflow-hidden",
               borderRadius
             )}
           >
-            {/* Native img avoids Next/React fetchPriority SSR warning for gallery thumbnails */}
-            <img
+            <NextImage
               src={src}
-              alt={alt ?? defaultAlt}
+              alt={alt ?? t(defaultAlt)}
+              width={656}
+              height={656}
+              unoptimized
               className="h-full w-full object-cover"
               style={style}
               onError={() => setLoadError(true)}
             />
-          </div>
-          {onClickEdit && hoverContentComponent}
+          </Box>
+          {onClickEdit != null && hoverContentComponent}
         </>
       )}
-    </div>
+    </Flex>
   );
 };
 

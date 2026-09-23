@@ -11,7 +11,7 @@ import Checkbox from "../../Forms/Actions/Checkbox/Checkbox";
 import Search from "../../Forms/Actions/Search/Search";
 import CheckboxList from "../../Forms/Inputs/CheckboxList";
 import FilterPanel from "../FilterPanel/FilterPanel";
-import FilterCard from "../FilterPanel/FilterPanelElements/FilteCards";
+import FilterCard from "../FilterPanel/FilterPanelElements/FilterCards";
 import Drawer from "./Drawer";
 
 const meta: Meta<typeof Drawer> = {
