@@ -34,6 +34,7 @@ const SiteIndexPageContent = () => {
   const { clearSelection } = useSiteIndexSelectionActions();
   const [reloadNonce, setReloadNonce] = useState(0);
   const [selectedProject, setSelectedProject] = useState(ALL_PROJECTS_VIEW);
+  const [hasHydratedQuery, setHasHydratedQuery] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilters, setStatusFilters] = useState<SiteIndexFilterStatus[]>([]);
@@ -45,9 +46,19 @@ const SiteIndexPageContent = () => {
     return () => window.clearTimeout(timeoutId);
   }, [searchQuery]);
 
+  useEffect(() => {
+    if (!router.isReady) return;
+    const projectFromQuery = router.query.project;
+    if (typeof projectFromQuery === "string" && projectFromQuery !== "") {
+      setSelectedProject(projectFromQuery);
+    }
+    setHasHydratedQuery(true);
+  }, [router.isReady, router.query.project]);
+
   const hasActiveSearch = searchQuery.trim().length > 0;
   const hasAppliedFilters = statusFilters.length > 0 || updateFilter != null;
   const hasActiveFilters = hasActiveSearch || hasAppliedFilters;
+  const shouldAutoOpenFolders = selectedProject !== ALL_PROJECTS_VIEW || hasActiveFilters;
   const filtering = searchQuery.trim() !== debouncedSearch;
   const { loading, loadingMore, hasMore, loadMore, viewProjects, projects, totalSiteCount, onProjectOpened } =
     useSiteIndexData({
@@ -55,7 +66,8 @@ const SiteIndexPageContent = () => {
       search: debouncedSearch,
       statusFilters,
       updateFilter,
-      projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject
+      projectUuid: selectedProject === ALL_PROJECTS_VIEW ? undefined : selectedProject,
+      enabled: hasHydratedQuery
     });
   const accordionOpenResetKey = `${selectedProject}:${debouncedSearch}:${statusFilters.join(",")}:${
     updateFilter ?? ""
@@ -122,8 +134,13 @@ const SiteIndexPageContent = () => {
     (nextView: string) => {
       clearSelection();
       setSelectedProject(nextView);
+      if (nextView === ALL_PROJECTS_VIEW) {
+        void router.replace("/site", undefined, { shallow: true });
+        return;
+      }
+      void router.replace(`/site?project=${nextView}`, undefined, { shallow: true });
     },
-    [clearSelection]
+    [clearSelection, router]
   );
 
   const handleAddSite = useCallback(() => {
@@ -174,6 +191,11 @@ const SiteIndexPageContent = () => {
           <Flex gap="0.5rem" alignItems="center" className="mobile:w-full mobile:flex-col mobile:items-stretch">
             <Box className="w-[25rem] mobile:w-full">
               <HighLevelSelector
+                key={
+                  selectedProject === ALL_PROJECTS_VIEW
+                    ? ALL_PROJECTS_VIEW
+                    : `${selectedProject}:${viewProjects.find(project => project.id === selectedProject)?.name ?? ""}`
+                }
                 autocomplete
                 width="100%"
                 label={t("View:")}
@@ -218,7 +240,7 @@ const SiteIndexPageContent = () => {
         showClearFilters={selectedFilters.length > 0}
       />
 
-      <PageContent heightFull={false} className="bg-theme-neutral-200 flex-1 !gap-0 px-2 pb-9 pt-1">
+      <PageContent heightFull={false} className="flex-1 !gap-0 bg-theme-neutral-200 px-2 pb-9 pt-1">
         {loading ? (
           <Flex minHeight="15rem" alignItems="center" justifyContent="center" gap={3}>
             <LoadingIcon boxSize={6} className="animate-spin" color="primary.700" />
@@ -239,6 +261,7 @@ const SiteIndexPageContent = () => {
                   searchQuery={debouncedSearch}
                   statusFilters={statusFilters}
                   updateFilter={updateFilter}
+                  defaultOpen={shouldAutoOpenFolders}
                   openResetKey={accordionOpenResetKey}
                   onProjectOpened={onProjectOpened}
                   onSitesChanged={handleSitesChanged}
