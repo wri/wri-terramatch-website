@@ -1047,11 +1047,22 @@ export type TaskIndexQueryParams = {
   ["page[number]"]?: number;
   status?: string;
   frameworkKey?: string;
+  /**
+   * Only one of projectUuid, siteUuid and nurseryUuid may be provided
+   */
   projectUuid?: string;
   /**
-   * @default false
+   * Only one of projectUuid, siteUuid and nurseryUuid may be provided
    */
-  sideloadReports?: boolean;
+  siteUuid?: string;
+  /**
+   * Only one of projectUuid, siteUuid and nurseryUuid may be provided
+   */
+  nurseryUuid?: string;
+  /**
+   * sideloads to include
+   */
+  sideloads?: ("projectReports" | "siteReports" | "nurseryReports" | "srpReports")[];
 };
 
 export type TaskIndexError = Fetcher.ErrorWrapper<{

@@ -32,7 +32,7 @@ export const taskIndexConnection = v3Resource("tasks", taskIndex)
   .indexWithRelationships<TaskLightDto, TaskRelationships>(selectRelationships)
   .pagination()
   .filter<Filter<Omit<TaskIndexQueryParams, "sideloadReports">>>()
-  .addProps<{ sideloadReports?: boolean }>(({ sideloadReports }) => ({ queryParams: { sideloadReports } }))
+  .addProps<{ sideloads?: TaskIndexQueryParams["sideloads"] }>(({ sideloads }) => ({ queryParams: { sideloads } }))
   .buildConnection();
 
 const taskConnection = v3Resource("tasks", taskGet)
