@@ -7,7 +7,7 @@ import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
 import { SiteIcon } from "@/redesignComponents/foundations/Icons";
-import Layout from "@/redesignComponents/Loayout/Layout";
+import Layout from "@/redesignComponents/Layout/Layout";
 
 import SitePolygonsWorkspace from "./SitePolygonsWorkspace";
 
@@ -58,7 +58,7 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
             >
               {t("Project Profile")}
             </Button>
-            <span className="text-sm text-theme-neutral-300">|</span>
+            <span className="text-theme-neutral-300 text-sm">|</span>
             <Button
               variant="borderless"
               size="small"

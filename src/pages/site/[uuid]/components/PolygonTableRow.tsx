@@ -13,7 +13,7 @@ import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { type TableRenderRowContext, CHECKBOX_COLUMN_KEY } from "@/redesignComponents/dataDisplay/Table/Table";
 import {
   AgriculturalLandIcon,
-  AgroforestyIcon,
+  AgroforestryIcon,
   AssistedNaturalRegenIcon,
   CalendarIcon,
   DirectSeedingIcon,
@@ -55,7 +55,7 @@ export type PolygonTableRow = {
 type SiteTypeConfig = { icon: ReactNode; label: string };
 
 const TARGET_LAND_USE_ICONS: Record<targetLandUseType, ReactNode> = {
-  agroforest: <AgroforestyIcon boxSize={3.5} />,
+  agroforest: <AgroforestryIcon boxSize={3.5} />,
   "agricultural-land": <AgriculturalLandIcon boxSize={3.5} />,
   grassland: <GrasslandIcon boxSize={3.5} />,
   mangrove: <MangroveIcon boxSize={3.5} />,

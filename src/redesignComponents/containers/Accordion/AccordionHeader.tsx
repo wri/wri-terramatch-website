@@ -46,24 +46,24 @@ const StatusLabelTag: FC<StatusLabelTagProps> = ({ label, status }) => {
 const AccordionHeader: FC<AccordionHeaderProps> = ({ label, title, badge, status, statusLabel }) => {
   const t = useT();
   return (
-    <div className="flex w-full items-center justify-between">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 text-[1.25rem] leading-[1.75rem] text-theme-primary-900">
-          {label && (
-            <Text textStyle="400" color={"neutral.800"}>
+    <Flex width="100%" alignItems="center" justifyContent="space-between">
+      <Flex alignItems="center" gap={3}>
+        <Flex alignItems="center" gap={2} color="primary.900">
+          {label != null && (
+            <Text textStyle="400" color="neutral.800">
               {label}:
             </Text>
           )}
           {typeof title === "string" ? t(title) : title}
-        </div>
-        {badge && <TextBadge>{badge}</TextBadge>}
-      </div>
+        </Flex>
+        {badge != null && <TextBadge>{badge}</TextBadge>}
+      </Flex>
       {statusLabel != null && status != null ? (
         <StatusLabelTag label={statusLabel} status={status} />
       ) : (
         status != null && getStatusIcon(status)
       )}
-    </div>
+    </Flex>
   );
 };
 

@@ -1,12 +1,11 @@
-import { Box, TabsTrigger } from "@chakra-ui/react";
+import { Box, Flex, TabsTrigger, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
-import { twMerge } from "tailwind-merge";
 
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
 import { TabType } from "./formNavigation.constants";
-import { getLabelClasses, getTabClasses } from "./formNavigation.utils";
+import { getTabClasses } from "./formNavigation.utils";
 import { NavigationTabBadge } from "./NavigationTabBadge";
 
 interface NavigationTabItemProps {
@@ -47,13 +46,17 @@ export const NavigationTabItem: FC<NavigationTabItemProps> = ({
       className={getTabClasses(isSelected)}
     >
       <Box display="flex" alignItems="center" flexDirection="row" gap="0.3125rem" className="w-full justify-between">
-        <span className="flex items-center text-left text-theme-primary-900">
+        <Flex alignItems="center" textAlign="left" color="primary.900">
           <NavigationTabBadge type={type} isSelected={isSelected} index={index} />
 
-          {label != null && (
-            <p className={twMerge("truncate whitespace-nowrap", getLabelClasses(isSelected))}>{t(label)}</p>
-          )}
-        </span>
+          <Text
+            className="truncate whitespace-nowrap"
+            textStyle={isSelected ? "400-bold" : "400"}
+            color={isSelected ? "primary.900" : "neutral.700"}
+          >
+            {t(label)}
+          </Text>
+        </Flex>
         <ChevronRightIcon />
       </Box>
     </TabsTriggerTyped>

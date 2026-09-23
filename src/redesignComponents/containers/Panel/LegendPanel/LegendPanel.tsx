@@ -1,4 +1,5 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { FC, ReactNode, useRef, useState } from "react";
 
 import { useOnMount } from "@/hooks/useOnMount";
@@ -25,13 +26,18 @@ interface LegendPanelProps {
   title?: string;
 }
 
-const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title = "Legend" }) => {
+const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title }) => {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useOnMount(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current != null &&
+        event.target instanceof Node &&
+        !containerRef.current.contains(event.target)
+      ) {
         setOpen(false);
       }
     };
@@ -59,7 +65,7 @@ const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title = "Legend" }) =>
         aria-expanded={open}
       >
         <Text textStyle={"400-bold"} color={"primary.900"}>
-          {title}
+          {title ?? t("Legend")}
         </Text>
         <ChevronDownIcon
           boxSize={4}
@@ -73,8 +79,8 @@ const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title = "Legend" }) =>
         <Box left={0} bg="white" borderRadius={"0 0 0.25rem 0.25rem"} minW="13.75rem" px={4} pb={3} zIndex={9999}>
           <Flex gap={3} flexDir={"column"}>
             <SimpleDivider />
-            {legendItems.map((legendItem, index) => (
-              <Box key={index}>
+            {legendItems.map(legendItem => (
+              <Box key={legendItem.attribute}>
                 <Flex align="center" gap={2} w="100%" justifyContent="space-between">
                   <Flex gap={2} alignItems="self-start">
                     <Flex h={4} w={4} justifyContent="center" alignItems="center">
@@ -113,12 +119,12 @@ const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title = "Legend" }) =>
                     </Flex>
 
                     <Box textAlign={"start"}>
-                      {legendItem.attribute && (
+                      {legendItem.attribute.length > 0 && (
                         <Text textStyle={"300"} lineHeight={"normal"} color={"neutral.800"}>
                           {legendItem.attribute}
                         </Text>
                       )}
-                      {legendItem.caption && (
+                      {legendItem.caption != null && (
                         <Text textStyle={"200"} color={"neutral.700"}>
                           {legendItem.caption}
                         </Text>
@@ -126,13 +132,13 @@ const LegendPanel: FC<LegendPanelProps> = ({ legendItems, title = "Legend" }) =>
                     </Box>
                   </Flex>
 
-                  {legendItem.showHideButton ? (
+                  {legendItem.showHideButton === true ? (
                     <Button
                       size="small"
                       variant="borderless"
-                      onClick={legendItem.show ? legendItem.onHide : legendItem.onShow}
+                      onClick={legendItem.show === true ? legendItem.onHide : legendItem.onShow}
                     >
-                      {legendItem.show ? "Hide" : "Show"}
+                      {legendItem.show === true ? t("Hide") : t("Show")}
                     </Button>
                   ) : null}
                 </Flex>

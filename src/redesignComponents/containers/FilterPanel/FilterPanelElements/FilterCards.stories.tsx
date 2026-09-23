@@ -7,7 +7,7 @@ import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRan
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 
-import FilterCards from "./FilteCards";
+import FilterCards from "./FilterCards";
 
 const meta = {
   title: "Redesign Components/Containers/Panel/Filter Cards",

@@ -1,7 +1,7 @@
 import { Tag, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import { STATE_PROGRESS_TAG } from "./constants/stateProgressTag";
 
@@ -12,18 +12,19 @@ export interface ProgressTagProps extends DetailedHTMLProps<HTMLAttributes<HTMLD
   className?: string;
 }
 
-export function ProgressTag({ state = null, className }: ProgressTagProps) {
+export const ProgressTag: FC<ProgressTagProps> = ({ state = null, className }) => {
+  const t = useT();
+
   if (state == null) {
     return null;
   }
 
-  const t = useT();
   const config = STATE_PROGRESS_TAG[state];
 
   return (
     <Tag.Root
       className={classNames(
-        "box-shadow-none flex w-fit items-center gap-2 rounded-full border-2 bg-white px-2 py-1 shadow-none",
+        "box-shadow-none bg-theme-neutral-100 flex w-fit items-center gap-2 rounded-full border-2 px-2 py-1 shadow-none",
         {
           "border-theme-neutral-400": state === "not-started",
           "border-theme-primary-400": state === "in-progress",
@@ -33,7 +34,7 @@ export function ProgressTag({ state = null, className }: ProgressTagProps) {
       )}
     >
       <Tag.Label className="flex items-center gap-2">
-        {config?.icon}
+        {config.icon}
         <Text color="netral.900" textStyle="200">
           {t("Planting: ")}
           <Text color="netral.900" textStyle="300-bold" as="span">
@@ -43,4 +44,6 @@ export function ProgressTag({ state = null, className }: ProgressTagProps) {
       </Tag.Label>
     </Tag.Root>
   );
-}
+};
+
+export default ProgressTag;

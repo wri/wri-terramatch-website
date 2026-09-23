@@ -1,5 +1,4 @@
 ﻿import { Box, Button, Menu, MenuContent, MenuPositioner, MenuTrigger, Portal, Text } from "@chakra-ui/react";
-import { MenuItem } from "@chakra-ui/react";
 import { css, Global } from "@emotion/react";
 import { FC, ReactNode, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -42,7 +41,7 @@ export interface MenuItemTyped {
 const TypedMenuTrigger = MenuTrigger as FC<MenuTriggerTyped>;
 const TypedMenuPositioner = MenuPositioner as FC<MenuContainerTyped>;
 const TypedMenuContent = MenuContent as FC<MenuContainerTyped>;
-const TypedMenuItem = MenuItem as FC<MenuItemTyped>;
+const TypedMenuItem = Menu.Item as FC<MenuItemTyped>;
 
 const Caret: FC<{ direction: "top" | "bottom" }> = ({ direction }) => {
   const isTop = direction === "top";
@@ -59,7 +58,7 @@ const Caret: FC<{ direction: "top" | "bottom" }> = ({ direction }) => {
       <Box
         w="0.75rem"
         h="0.75rem"
-        bg="white"
+        bg="neutral.100"
         borderTop={isTop ? "0.0625rem solid" : undefined}
         borderLeft={isTop ? "0.0625rem solid" : undefined}
         borderBottom={isTop ? undefined : "0.0625rem solid"}
@@ -106,7 +105,7 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
         <Button
           disabled={disabled}
           className={twMerge(
-            "!h-fit w-fit items-center !gap-2 !rounded-none !px-4 !py-3 !text-theme-neutral-100",
+            "!text-theme-neutral-100 !h-fit w-fit items-center !gap-2 !rounded-none !px-4 !py-3",
             "hover:!bg-theme-primary-700",
             "active:!bg-theme-primary-800",
             "data-[state=open]:!bg-theme-primary-800",
@@ -137,11 +136,11 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
             <Box display="flex" flexDirection="column">
               <Caret direction="top" />
               <Box
-                bg="white"
+                bg="neutral.100"
                 borderRadius="0.5rem"
                 border="0.0625rem solid"
                 borderColor="neutral.300"
-                boxShadow="0 0.25rem 1rem rgba(0, 0, 0, 0.08)"
+                boxShadow="lg"
                 p={3}
                 minW={variant === "mega" ? "17.5rem" : "12.5rem"}
                 display="flex"
@@ -150,8 +149,8 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
               >
                 {items.map((item, index) => (
                   <TypedMenuItem
-                    key={index}
-                    value={String(index)}
+                    key={item.label}
+                    value={item.label}
                     pb={variant === "mega" ? 2 : undefined}
                     borderBottom={variant === "mega" && index !== items.length - 1 ? "0.0625rem solid" : "none"}
                     borderColor="neutral.300"
@@ -164,12 +163,7 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
                     cursor="pointer"
                     onClick={() => onSelect?.(index)}
                   >
-                    <NavigationMenuItemRow
-                      variant={variant}
-                      item={item}
-                      isSelected={index === selectedIndex}
-                      showBorder={false}
-                    />
+                    <NavigationMenuItemRow variant={variant} item={item} isSelected={index === selectedIndex} />
                   </TypedMenuItem>
                 ))}
               </Box>
