@@ -16,6 +16,7 @@ type UseSiteIndexDataParams = {
   statusFilters?: SiteIndexFilterStatus[];
   updateFilter?: SiteIndexFilterUpdate | null;
   projectUuid?: string;
+  enabled?: boolean;
 };
 
 type UseSiteIndexDataResult = {
@@ -30,6 +31,7 @@ type UseSiteIndexDataResult = {
 };
 
 export const PROJECT_PAGE_SIZE = 10;
+const VIEW_CATALOG_PAGE_SIZE = 100;
 
 const PROJECT_SITE_SIDELOADS = [{ entity: "sites" as const, pageSize: 100 }];
 const SEARCH_SITES_PAGE_SIZE = 100;
@@ -241,11 +243,13 @@ export const useSiteIndexData = ({
   search = "",
   statusFilters = [],
   updateFilter = null,
-  projectUuid
+  projectUuid,
+  enabled = true
 }: UseSiteIndexDataParams = {}): UseSiteIndexDataResult => {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [projectIndex, setProjectIndex] = useState<ProjectLightDto[]>([]);
+  const [viewProjectIndex, setViewProjectIndex] = useState<ProjectLightDto[]>([]);
   const [siteCountByProjectId, setSiteCountByProjectId] = useState<Map<string, number>>(new Map());
   const [sitesByProjectId, setSitesByProjectId] = useState<Map<string, SiteIndexProject["sites"]>>(new Map());
   const [fullProjectsById, setFullProjectsById] = useState<Map<string, ProjectFullDto>>(new Map());
@@ -266,6 +270,7 @@ export const useSiteIndexData = ({
   const probingRef = useRef(false);
   const inFlightRef = useRef(new Set<string>());
   const requestIdRef = useRef(0);
+  const viewCatalogRequestIdRef = useRef(0);
   const projectUuidRef = useRef(projectUuid);
   projectUuidRef.current = projectUuid;
 
@@ -564,6 +569,11 @@ export const useSiteIndexData = ({
   );
 
   useEffect(() => {
+    if (!enabled) {
+      setLoading(true);
+      return;
+    }
+
     let cancelled = false;
     const requestId = ++requestIdRef.current;
     inFlightRef.current.clear();
@@ -579,6 +589,7 @@ export const useSiteIndexData = ({
       setLoadingMore(false);
       setHasMorePages(false);
       setProjectIndex([]);
+      setViewProjectIndex([]);
       setSiteCountByProjectId(new Map());
       siteCountByProjectIdRef.current = new Map();
       setSitesByProjectId(new Map());
@@ -594,6 +605,39 @@ export const useSiteIndexData = ({
 
       const visibleTarget = getViewportProjectCount();
       const hasStatusOrUpdateFilter = statusFilters.length > 0 || updateFilter != null;
+      const isScopedToProject = requireProjectUuid(projectUuid);
+
+      const loadViewCatalog = async () => {
+        const viewRequestId = ++viewCatalogRequestIdRef.current;
+        const allProjects: ProjectLightDto[] = [];
+        let pageNumber = 1;
+        let total: number | null = null;
+
+        while (!cancelled) {
+          const page = await loadProjectIndex({
+            pageNumber,
+            pageSize: VIEW_CATALOG_PAGE_SIZE,
+            sortField: "name",
+            sortDirection: "ASC"
+          });
+          if (cancelled || viewRequestId !== viewCatalogRequestIdRef.current) return;
+
+          const batch = page.data ?? [];
+          allProjects.push(...batch);
+          if (page.indexTotal != null) total = page.indexTotal;
+          if (
+            batch.length === 0 ||
+            batch.length < VIEW_CATALOG_PAGE_SIZE ||
+            (total != null && allProjects.length >= total)
+          ) {
+            break;
+          }
+          pageNumber += 1;
+        }
+
+        if (cancelled || viewRequestId !== viewCatalogRequestIdRef.current) return;
+        setViewProjectIndex(allProjects);
+      };
 
       try {
         if (normalisedSearch !== "" || hasStatusOrUpdateFilter) {
@@ -605,9 +649,32 @@ export const useSiteIndexData = ({
           });
           if (cancelled || requestId !== requestIdRef.current) return;
           await mergeSearchSites(matchingSites, requestId);
-        }
+          void loadViewCatalog();
+        } else if (isScopedToProject) {
+          const result = await loadFullProject({ id: projectUuid });
+          if (cancelled || requestId !== requestIdRef.current || result.data == null) return;
 
-        if (!hasStatusOrUpdateFilter) {
+          appendProject(result.data);
+          setViewProjectIndex([result.data as ProjectLightDto]);
+          void loadViewCatalog();
+
+          const sitesPage = await loadSiteIndex({
+            pageNumber: 1,
+            pageSize: 1,
+            sortField: "name",
+            sortDirection: "ASC",
+            filter: { projectUuid }
+          });
+          if (cancelled || requestId !== requestIdRef.current) return;
+
+          const siteCount = sitesPage.indexTotal ?? sitesPage.data?.length ?? 0;
+          const nextCounts = new Map(siteCountByProjectIdRef.current);
+          nextCounts.set(projectUuid, siteCount);
+          siteCountByProjectIdRef.current = nextCounts;
+          setSiteCountByProjectId(nextCounts);
+          setHasMorePages(false);
+        } else {
+          void loadViewCatalog();
           do {
             const loadedBatch = await loadNextProjectBatch(requestId);
             if (!loadedBatch) break;
@@ -620,13 +687,13 @@ export const useSiteIndexData = ({
         }
 
         if (!cancelled && requestId === requestIdRef.current) {
-          setHasMorePages(!hasStatusOrUpdateFilter && hasMoreProjectPages());
+          setHasMorePages(!isScopedToProject && !hasStatusOrUpdateFilter && hasMoreProjectPages());
           setLoading(false);
         }
       } catch (error) {
         Log.error("Failed to load site index", error);
         if (!cancelled && requestId === requestIdRef.current) {
-          setHasMorePages(!hasStatusOrUpdateFilter && hasMoreProjectPages());
+          setHasMorePages(!isScopedToProject && !hasStatusOrUpdateFilter && hasMoreProjectPages());
           setLoading(false);
         }
       }
@@ -637,7 +704,16 @@ export const useSiteIndexData = ({
     return () => {
       cancelled = true;
     };
-  }, [loadNextProjectBatch, normalisedSearch, projectUuid, reloadNonce, statusFilters, updateFilter, mergeSearchSites]);
+  }, [
+    enabled,
+    loadNextProjectBatch,
+    normalisedSearch,
+    projectUuid,
+    reloadNonce,
+    statusFilters,
+    updateFilter,
+    mergeSearchSites
+  ]);
 
   const loadMore = useCallback(async () => {
     if (
@@ -662,15 +738,21 @@ export const useSiteIndexData = ({
     }
   }, [hasMorePages, loadNextProjectBatch, statusFilters.length, updateFilter]);
 
-  const viewProjects = useMemo(
-    () =>
-      projectIndex.map(project =>
+  const viewProjects = useMemo(() => {
+    const byId = new Map<string, ProjectLightDto>();
+    viewProjectIndex.forEach(project => byId.set(project.uuid, project));
+    projectIndex.forEach(project => {
+      if (!byId.has(project.uuid)) byId.set(project.uuid, project);
+    });
+
+    return [...byId.values()]
+      .sort((left, right) => (left.name ?? "").localeCompare(right.name ?? ""))
+      .map(project =>
         toSiteIndexProject(project, {
           fullProject: fullProjectsById.get(project.uuid) ?? asFullProject(project)
         })
-      ),
-    [fullProjectsById, projectIndex]
-  );
+      );
+  }, [fullProjectsById, projectIndex, viewProjectIndex]);
 
   const projects = useMemo(
     () =>
