@@ -267,6 +267,10 @@ export type SitePolygonLightDto = {
   uuid: string;
   disturbanceableId: number | null;
   /**
+   * UUID of the DisturbanceReport linked via disturbance, when disturbanceableType is DisturbanceReport. Use for /reports/disturbance-report/{uuid}.
+   */
+  disturbanceReportUuid: string | null;
+  /**
    * Whether the site polygon is active
    */
   isActive: boolean;
@@ -526,6 +530,10 @@ export type SitePolygonFullDto = {
    */
   uuid: string;
   disturbanceableId: number | null;
+  /**
+   * UUID of the DisturbanceReport linked via disturbance, when disturbanceableType is DisturbanceReport. Use for /reports/disturbance-report/{uuid}.
+   */
+  disturbanceReportUuid: string | null;
   /**
    * Whether the site polygon is active
    */
