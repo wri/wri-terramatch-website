@@ -65,6 +65,7 @@ export function PolygonPopupChampions({
   const [, { data: auditStatusesData }] = useAuditStatuses({
     entity: "sitePolygons",
     uuid: selectedSitePolygonUuid,
+    types: ["comment"],
     enabled: hasValidSitePolygonUuid && !overviewPolygonPopup
   });
 
