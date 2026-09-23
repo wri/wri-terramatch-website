@@ -1,5 +1,5 @@
 import { APPROVED, PENDING_APPROVAL } from "@/constants/statuses";
-import { Framework, toFramework } from "@/context/framework.provider";
+import { Framework, isTerrafund, toFramework } from "@/context/framework.provider";
 import type { EntityExportAllQueryParams } from "@/generated/v3/entityService/entityServiceComponents";
 import type {
   NurseryLightDto,
@@ -13,6 +13,8 @@ import type { NurseryIndexMetric, NurseryIndexProjectSection, NurseryIndexRow } 
 type NurseryWithProjectUuid = NurseryLightDto & { projectUuid?: string | null };
 
 const normalize = (value?: string | null) => value?.trim().toLocaleLowerCase() ?? "";
+
+export const projectSupportsNurseries = (frameworkKey?: string | null) => isTerrafund(toFramework(frameworkKey));
 
 const getProjectMatch = (nursery: NurseryWithProjectUuid, projects: ProjectLightDto[]) => {
   if (nursery.projectUuid != null) {

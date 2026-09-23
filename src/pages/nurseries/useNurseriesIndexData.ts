@@ -8,7 +8,11 @@ import ApiSlice from "@/store/apiSlice";
 import type { Filter, PaginatedConnectionProps } from "@/types/connection";
 
 import type { NurseryIndexData } from "./nurseryIndex.types";
-import { buildNurseryProjectSections, createNurseryProjectSection } from "./nurseryIndex.utils";
+import {
+  buildNurseryProjectSections,
+  createNurseryProjectSection,
+  projectSupportsNurseries
+} from "./nurseryIndex.utils";
 
 export const DISCOVERY_PAGE_SIZE = 25;
 export const PROJECT_INDEX_PAGE_SIZE = 100;
@@ -166,7 +170,7 @@ export const useNurseriesIndexData = (reloadNonce = 0, query: NurseriesIndexQuer
 
         const nurseryPage = firstNurseries.data ?? [];
         const total = firstNurseries.indexTotal ?? nurseryPage.length;
-        setProjects(loadedProjects);
+        setProjects(loadedProjects.filter(project => projectSupportsNurseries(project.frameworkKey)));
         setNurseries(nurseryPage);
         setNurseryTotal(total);
         const nextHasMore = query.projectUuid == null && DISCOVERY_PAGE_SIZE < total;
