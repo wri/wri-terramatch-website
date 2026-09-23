@@ -14,7 +14,11 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-const items: SitePolygonLightDto[] = [
+type StorySitePolygon = SitePolygonLightDto & {
+  disturbanceReportUuid?: string | null;
+};
+
+const items: StorySitePolygon[] = [
   {
     uuid: "1",
     lightResource: true,
@@ -46,7 +50,8 @@ const items: SitePolygonLightDto[] = [
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {}
+    customAttributes: {},
+    disturbanceReportUuid: null
   },
   {
     uuid: "2",
@@ -79,7 +84,8 @@ const items: SitePolygonLightDto[] = [
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {}
+    customAttributes: {},
+    disturbanceReportUuid: null
   },
   {
     uuid: "3",
@@ -112,7 +118,8 @@ const items: SitePolygonLightDto[] = [
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {}
+    customAttributes: {},
+    disturbanceReportUuid: null
   },
   {
     uuid: "4",
@@ -145,7 +152,8 @@ const items: SitePolygonLightDto[] = [
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {}
+    customAttributes: {},
+    disturbanceReportUuid: null
   },
   {
     uuid: "5",
@@ -178,7 +186,8 @@ const items: SitePolygonLightDto[] = [
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {}
+    customAttributes: {},
+    disturbanceReportUuid: null
   },
   {
     uuid: "6",
@@ -211,7 +220,8 @@ const items: SitePolygonLightDto[] = [
     isActive: true,
     createdAt: null,
     deletedAt: null,
-    customAttributes: {}
+    customAttributes: {},
+    disturbanceReportUuid: null
   }
 ];
 
