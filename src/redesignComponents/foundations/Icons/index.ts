@@ -53,6 +53,7 @@ export { MoreVertIcon } from "./Function/MoreVertIcon";
 export { MangroveIcon } from "./RestorationAndLand/MangroveIcon";
 export { NaturalForestIcon } from "./RestorationAndLand/NaturalForestIcon";
 export { NewTabIcon } from "./Function/NewTabIcon";
+export { NoPhotosIcon } from "./Function/NoPhotosIcon";
 export { NothingReportedIcon } from "./Status/NothingReportedIcon";
 export { NotificationIcon } from "./NavigationSections/NotificationIcon";
 export { NurseryIcon } from "./NavigationSections/NurseryIcon";

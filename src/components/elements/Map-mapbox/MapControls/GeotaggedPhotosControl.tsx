@@ -3,7 +3,7 @@ import type { FC } from "react";
 import { useCallback, useMemo } from "react";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { PhotosIcon } from "@/redesignComponents/foundations/Icons";
+import { NoPhotosIcon, PhotosIcon } from "@/redesignComponents/foundations/Icons";
 import MapControls from "@/redesignComponents/geospatial/MapControls/MapControls";
 import Badge from "@/redesignComponents/status/Badge/Badge";
 
@@ -31,7 +31,7 @@ export const GeotaggedPhotosControl: FC = () => {
         active: isActive,
         ariaLabel: tooltipText,
         disabled: !hasGeotaggedPhotos,
-        icon: <PhotosIcon />,
+        icon: isActive ? <PhotosIcon /> : <NoPhotosIcon />,
         label: "Geotagged photos",
         onClick: handleToggle,
         tooltip: tooltipText
