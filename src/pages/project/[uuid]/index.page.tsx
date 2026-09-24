@@ -70,7 +70,9 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
       {
         key: "overview",
         title: t("Overview"),
-        body: <ProjectOverviewTab project={project} onViewSites={() => navigateToTab("sites")} />
+        body: (
+          <ProjectOverviewTab project={project} onViewSites={() => void router.push(`/site?project=${project.uuid}`)} />
+        )
       },
       { key: "details", title: t("Project Details"), body: <ProjectDetailTab project={project} /> },
       {
@@ -96,7 +98,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         body: <AuditLog project={project} refresh={refetch} />
       }
     ],
-    [project, t, refetch, navigateToTab]
+    [project, t, refetch, router]
   );
 
   const tabBarTabs = useMemo(
@@ -176,6 +178,10 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
                   size="small"
                   className={`underline underline-offset-2 ${activeSuffixView === button.key ? "font-semibold" : ""}`}
                   onClick={() => {
+                    if (button.key === "sites") {
+                      void router.push(`/site?project=${project.uuid}`);
+                      return;
+                    }
                     navigateToTab(button.key);
                   }}
                 >

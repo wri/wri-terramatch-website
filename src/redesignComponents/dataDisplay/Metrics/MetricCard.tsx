@@ -289,7 +289,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
             {filtered !== undefined ? (
               <MetricCardExtraLayer
                 label={t("Filtered:")}
-                value={filtered}
+                value={typeof filtered === "number" ? filtered : null}
                 progressSuffix={progressSuffix}
                 labelTextStyle="200"
                 valueTextStyle="300-bold"
@@ -299,7 +299,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
             {selection !== undefined ? (
               <MetricCardExtraLayer
                 label={t("Selected:")}
-                value={selection}
+                value={typeof selection === "number" ? selection : null}
                 progressSuffix={progressSuffix}
                 labelTextStyle="200"
                 valueTextStyle="300-bold"

@@ -3,13 +3,14 @@ import { useT } from "@transifex/react";
 import { showToast } from "@worldresources/wri-design-systems";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { type FC, type MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { type FC, type MouseEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 
 import { deleteSite } from "@/connections/Entity";
 import { Framework, isTerrafund } from "@/context/framework.provider";
 import { getEntityEditPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { getThemedColor } from "@/lib/theme";
+import { useKeyIndicatorsTooltipContent } from "@/pages/project/[uuid]/tabs/constants/keyIndicatorsTooltipContent";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -43,6 +44,18 @@ import type { SiteIndexProject, SiteIndexSite, SiteIndexStatus, SiteIndexUpdate 
 import { filterSiteIndexSites, isSiteApproved } from "./siteIndex.utils";
 import { useSiteIndexSelectionActions, useSiteTableSelection } from "./SiteIndexSelection.provider";
 import { isSiteDeletable } from "./siteIndexSubmit";
+
+const keyIndicatorTooltip = (title?: string, content?: string): ReactNode => {
+  if (title == null || title === "" || content == null || content === "") return undefined;
+
+  return (
+    <Box fontSize="14px" lineHeight="20px">
+      <b>{title}</b>
+      <br />
+      {content}
+    </Box>
+  );
+};
 
 interface SiteProjectSectionProps {
   project: SiteIndexProject;
@@ -124,8 +137,17 @@ const SiteProjectMetrics: FC<{
     : isTerraFund
     ? project.metrics.treesPlanted
     : project.metrics.treesGrowing;
-  const primaryMetricTitle = isHbf ? "Saplings Growing" : isTerraFund ? "Trees Planted" : "Trees Growing";
   const primaryMetricIcon = isHbf ? <SeedlingsIcon /> : <TreeIcon />;
+  const keyIndicatorsTooltipContent = useKeyIndicatorsTooltipContent();
+  const keyIndicatorsTooltipContentItem = useMemo(
+    () => keyIndicatorsTooltipContent.find(content => content.frameworks.includes(project.frameworkKey)),
+    [keyIndicatorsTooltipContent, project.frameworkKey]
+  );
+  const primaryMetricTitle =
+    keyIndicatorsTooltipContentItem?.treesRestored.title ||
+    (isHbf ? "Saplings Growing" : isTerraFund ? "Trees Planted" : "Trees Growing");
+  const areaTitle = keyIndicatorsTooltipContentItem?.hectaresRestored.title || t("Area restored (Ha)");
+  const workdaysTitle = keyIndicatorsTooltipContentItem?.jobsCreated.title || t("Workdays");
 
   return (
     <div className="mb-5 flex flex-wrap gap-4">
@@ -140,13 +162,17 @@ const SiteProjectMetrics: FC<{
           icon={primaryMetricIcon}
           color="secondary.600"
           className={metricCardClassName}
+          tooltipContent={keyIndicatorTooltip(
+            keyIndicatorsTooltipContentItem?.treesRestored.title,
+            keyIndicatorsTooltipContentItem?.treesRestored.content
+          )}
           filtered={isFiltered ? filteredTrees : undefined}
           selection={selectedSites.length > 0 ? selectedTrees : undefined}
         />
       )}
       {isTerraFund && project.metrics.treesRegenerated != null && (
         <MetricCard
-          title={t("Trees Regenerated")}
+          title={t(keyIndicatorsTooltipContentItem?.treesRegenerated.title ?? "Trees Regenerated")}
           progress={project.metrics.treesRegenerated.progress}
           goal={project.metrics.treesRegenerated.goal}
           progressSuffix=""
@@ -160,7 +186,7 @@ const SiteProjectMetrics: FC<{
         />
       )}
       <MetricCard
-        title={t("Area restored (Ha)")}
+        title={t(areaTitle)}
         progress={project.metrics.areaRestored.progress}
         goal={project.metrics.areaRestored.goal}
         variant="progressBar"
@@ -168,12 +194,16 @@ const SiteProjectMetrics: FC<{
         color="secondary.700"
         icon={<AreaHectaresIcon />}
         className={metricCardClassName}
+        tooltipContent={keyIndicatorTooltip(
+          keyIndicatorsTooltipContentItem?.hectaresRestored.title,
+          keyIndicatorsTooltipContentItem?.hectaresRestored.content
+        )}
         filtered={isFiltered ? filteredArea : undefined}
         selection={selectedSites.length > 0 ? selectedArea : undefined}
       />
       {!isHbf && !isTerraFund && project.metrics.workdays != null && (
         <MetricCard
-          title={t("Workdays")}
+          title={t(workdaysTitle)}
           progress={project.metrics.workdays.progress}
           goal={project.metrics.workdays.goal}
           variant="progressBar"
@@ -181,6 +211,10 @@ const SiteProjectMetrics: FC<{
           icon={<JobsIcon />}
           color="primary.600"
           className={metricCardClassName}
+          tooltipContent={keyIndicatorTooltip(
+            keyIndicatorsTooltipContentItem?.jobsCreated.title,
+            keyIndicatorsTooltipContentItem?.jobsCreated.content
+          )}
           filtered={isFiltered ? filteredMetric(project.metrics.workdays.progress) : undefined}
           selection={selectedSites.length > 0 ? selectedMetric(project.metrics.workdays.progress) : undefined}
         />

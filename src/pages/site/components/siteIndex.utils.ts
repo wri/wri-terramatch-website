@@ -273,7 +273,7 @@ export const groupSitesByProject = (
         name: section.projectName,
         frameworkKey: firstSite?.frameworkKey ?? Framework.UNDEFINED,
         organisationName: "-",
-        attentionCount: 0,
+        attentionCount: getSitesRequiringAttention(section.sites),
         metrics: buildProjectMetrics(firstSite?.frameworkKey ?? Framework.UNDEFINED, undefined, section.sites),
         sites: section.sites,
         sitesLoaded: true,
