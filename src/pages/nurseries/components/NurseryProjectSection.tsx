@@ -7,7 +7,7 @@ import type { ProjectFullDto } from "@/generated/v3/entityService/entityServiceS
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
-import { FolderIcon, FolderOpenIcon, LoadingIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
+import { LoadingIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 import Log from "@/utils/log";
 
@@ -110,13 +110,7 @@ const NurseryProjectSection = ({
           title={section.projectName}
           titleHref={section.projectUuid == null ? undefined : `/project/${section.projectUuid}`}
           caption={section.organisationName ?? ""}
-          icon={
-            open ? (
-              <FolderOpenIcon minWidth={5} width={5} height="auto" color="primary.600" mt={2} mb='auto' />
-            ) : (
-              <FolderIcon minWidth={5} width={5} height="auto" color="primary.600" mt={2} mb='auto' />
-            )
-          }
+          open={open}
           statusLabels={
             <>
               {attentionCount > 0 ? (
