@@ -10,7 +10,7 @@ import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchem
 import type { HighLevelSelectorItem } from "@/redesignComponents/Forms/Inputs/HighLevelSelector/HighLevelSelector.types";
 import { LoadingIcon } from "@/redesignComponents/foundations/Icons";
 
-import { ReportsIndexSourceEntity } from "../reportIndex.types";
+import { ReportsIndexProjectSection, ReportsIndexSourceEntity } from "../reportIndex.types";
 import {
   ALL_PROJECTS_VIEW_VALUE,
   clearReportsIndexRestore,
@@ -38,6 +38,36 @@ type ReportsIndexContentProps = {
   project: ProjectLightDto;
   source: ReportsIndexSource;
   sourceEntity: ReportsIndexSourceEntity;
+};
+
+type ProgressIndexState = {
+  sections: ReportsIndexProjectSection[];
+  loading: boolean;
+  error: boolean;
+};
+
+const NO_PROGRESS_SECTIONS: ReportsIndexProjectSection[] = [];
+
+const ProgressReportsFetcher = ({
+  project,
+  source,
+  sourceUuid,
+  allProjects,
+  onProgress
+}: {
+  project: ProjectLightDto;
+  source: ReportsIndexSource;
+  sourceUuid: string;
+  allProjects: boolean;
+  onProgress: (progress: ProgressIndexState) => void;
+}) => {
+  const { sections, loading, error } = useReportsIndexData(project, source, sourceUuid, allProjects);
+
+  useEffect(() => {
+    onProgress({ sections, loading, error });
+  }, [error, loading, onProgress, sections]);
+
+  return null;
 };
 
 const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexContentProps) => {
@@ -76,12 +106,18 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
   const isSwitchingProject = !isAllProjectsView && viewValue !== project.uuid;
   const additionalOrganisationUuid =
     viewValue === ALL_PROJECTS_VIEW_VALUE ? null : isOrganisationView ? viewValue : project.organisationUuid ?? null;
-
-  const {
-    sections: progressSections,
-    loading: progressLoading,
-    error: progressError
-  } = useReportsIndexData(project, source, sourceEntity.uuid, isAllProjectsView);
+  const loadProgressReports = router.isReady && activeTab === "progress-reports";
+  const [progress, setProgress] = useState<ProgressIndexState>({ sections: [], loading: true, error: false });
+  const handleProgress = useCallback((next: ProgressIndexState) => {
+    setProgress(current =>
+      current.sections === next.sections && current.loading === next.loading && current.error === next.error
+        ? current
+        : next
+    );
+  }, []);
+  const progressSections = loadProgressReports ? progress.sections : NO_PROGRESS_SECTIONS;
+  const progressLoading = !router.isReady || (loadProgressReports && progress.loading);
+  const progressError = loadProgressReports && progress.error;
   const {
     sections: additionalSections,
     loading: additionalLoading,
@@ -187,6 +223,20 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
       : isOrganisationView
       ? ALL_PROJECTS_VIEW_VALUE
       : viewValue;
+  const disturbanceReportProjectUuid = (() => {
+    if (viewValue === ALL_PROJECTS_VIEW_VALUE) return null;
+    if (viewValue === project.uuid) return project.uuid;
+
+    const selectedProject = (projects ?? []).find(item => item.uuid === viewValue);
+    if (selectedProject != null) return selectedProject.uuid;
+
+    const isSelectedOrganisation = organisationViewItems.some(item => item.value === viewValue);
+    if (!isSelectedOrganisation) return viewValue;
+    if (project.organisationUuid === viewValue) return project.uuid;
+
+    const projectsInOrganisation = (projects ?? []).filter(item => item.organisationUuid === viewValue);
+    return projectsInOrganisation.length === 1 ? projectsInOrganisation[0].uuid : null;
+  })();
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -270,11 +320,21 @@ const ReportsIndexContent = ({ project, source, sourceEntity }: ReportsIndexCont
 
   return (
     <>
+      {loadProgressReports && (
+        <ProgressReportsFetcher
+          project={project}
+          source={source}
+          sourceUuid={sourceEntity.uuid}
+          allProjects={isAllProjectsView}
+          onProgress={handleProgress}
+        />
+      )}
       <ReportsIndexHeader
         activeTab={activeTab}
         source={source}
         sourceUuid={sourceEntity.uuid}
         projectUuid={project.uuid}
+        disturbanceReportProjectUuid={disturbanceReportProjectUuid}
         reportCount={reportCount}
         viewValue={headerViewValue}
         viewItems={viewItems}

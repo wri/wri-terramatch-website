@@ -36,6 +36,7 @@ type ReportsIndexHeaderProps = {
   source: "project" | "site" | "nursery";
   sourceUuid: string;
   projectUuid: string;
+  disturbanceReportProjectUuid: string | null;
   reportCount: number;
   viewValue: string;
   viewItems: HighLevelSelectorItem[];
@@ -51,6 +52,7 @@ const ReportsIndexHeader = ({
   source,
   sourceUuid,
   projectUuid,
+  disturbanceReportProjectUuid,
   reportCount,
   viewValue,
   viewItems,
@@ -206,10 +208,11 @@ const ReportsIndexHeader = ({
           <Button
             size="small"
             leftIcon={<PlusIcon boxSize="0.625rem" />}
-            disabled={disturbanceReportCreating}
+            disabled={disturbanceReportProjectUuid == null || disturbanceReportCreating}
             onClick={() => {
+              if (disturbanceReportProjectUuid == null) return;
               trackDisturbanceReportClicked();
-              createDisturbanceReport({ parentUuid: projectUuid });
+              createDisturbanceReport({ parentUuid: disturbanceReportProjectUuid });
             }}
           >
             {t("Add Disturbance Report")}
@@ -234,6 +237,7 @@ const ReportsIndexHeader = ({
         }
         contentRight={
           <HighLevelSelector
+            key={activeTab}
             autocomplete
             label={t("View:")}
             items={viewItems}
