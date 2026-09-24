@@ -133,7 +133,7 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
       data-side-navigation-item-row
       className={classNames(
         "h-9 w-full items-center justify-between gap-2",
-        "border-theme-primary-800 text-theme-neutral-100 rounded-md border-2 px-3 py-2",
+        "rounded-md border-2 border-theme-primary-800 px-3 py-2 text-theme-neutral-100",
         "hover:bg-theme-primary-500/20",
         "active:bg-theme-primary-500/40"
       )}
@@ -157,7 +157,7 @@ const SideNavigationItem: FC<SideNavigationItemProps> = props => {
           <AccordionChakra.ItemTrigger {...interactiveItemProps}>{itemRow}</AccordionChakra.ItemTrigger>
           <AccordionChakra.ItemContent>
             <Flex>
-              <Box className="bg-theme-neutral-100 ml-5 mr-1 w-[0.125rem] shrink-0" />
+              <Box className="ml-5 mr-1 w-[0.125rem] shrink-0 bg-theme-neutral-100" />
               <Flex flexDirection="column" gap={1} width="100%">
                 {items.map(item => (
                   <SideNavigationLinkItem

@@ -24,7 +24,7 @@ export const ProgressTag: FC<ProgressTagProps> = ({ state = null, className }) =
   return (
     <Tag.Root
       className={classNames(
-        "box-shadow-none bg-theme-neutral-100 flex w-fit items-center gap-2 rounded-full border-2 px-2 py-1 shadow-none",
+        "box-shadow-none flex w-fit items-center gap-2 rounded-full border-2 bg-theme-neutral-100 px-2 py-1 shadow-none",
         {
           "border-theme-neutral-400": state === "not-started",
           "border-theme-primary-400": state === "in-progress",

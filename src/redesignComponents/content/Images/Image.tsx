@@ -67,7 +67,7 @@ const BaseImage: FC<BaseImageProps> = ({
   const hoverContentComponent = (
     <Flex
       className={classNames(
-        "bg-theme-primary-900/50 absolute inset-[0.1875rem] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+        "absolute inset-[0.1875rem] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
         borderRadius
       )}
       role="button"
@@ -91,11 +91,11 @@ const BaseImage: FC<BaseImageProps> = ({
   const videoComponent = (
     <Flex
       className={classNames(
-        "bg-theme-neutral-900/50 absolute inset-[0.1875rem] flex flex-col items-center justify-center gap-1 duration-200 group-hover:opacity-0",
+        "absolute inset-[0.1875rem] flex flex-col items-center justify-center gap-1 bg-theme-neutral-900/50 duration-200 group-hover:opacity-0",
         borderRadius
       )}
     >
-      {isVideo && <VideoIcon className={classNames("text-theme-neutral-100 h-9 w-9", classNamesVideoIcon)} />}
+      {isVideo && <VideoIcon className={classNames("h-9 w-9 text-theme-neutral-100", classNamesVideoIcon)} />}
     </Flex>
   );
   return (
@@ -115,7 +115,7 @@ const BaseImage: FC<BaseImageProps> = ({
         isAdd ? (
           <Flex
             className={classNames(
-              "bg-theme-neutral-200 flex h-[calc(100%-0.25rem)] w-[calc(100%-0.25rem)] flex-col items-center justify-center gap-1",
+              "flex h-[calc(100%-0.25rem)] w-[calc(100%-0.25rem)] flex-col items-center justify-center gap-1 bg-theme-neutral-200",
               borderRadius
             )}
           >
@@ -130,12 +130,12 @@ const BaseImage: FC<BaseImageProps> = ({
         ) : (
           <Flex
             className={classNames(
-              "bg-theme-neutral-300 relative flex h-full w-full items-center justify-center",
+              "relative flex h-full w-full items-center justify-center bg-theme-neutral-300",
               borderRadius
             )}
           >
             <Flex flexDirection="column" alignItems="center" justifyContent="center" gap={1.5}>
-              <RejectedIcon className="text-theme-neutral-500 h-5 w-5" />
+              <RejectedIcon className="h-5 w-5 text-theme-neutral-500" />
               {hideNotAvailableText === false && (
                 <Text textStyle="200" color="neutral.900" className="flex items-center gap-1">
                   {t("Image unavailable")}
