@@ -110,6 +110,7 @@ const NurseryProjectSection = ({
           title={section.projectName}
           titleHref={section.projectUuid == null ? undefined : `/project/${section.projectUuid}`}
           caption={section.organisationName ?? ""}
+          open={open}
           statusLabels={
             <>
               {attentionCount > 0 ? (
