@@ -38,7 +38,7 @@ const ToolbarObject: FC<ToolbarObjectProps> = ({ breadcrumbs, suffix, className,
 
   return (
     <Toolbar
-      className={classNames("border-theme-neutral-300 border-b px-5 py-2", className)}
+      className={classNames("border-b border-theme-neutral-300 px-5 py-2", className)}
       contentLeft={<Breadcrumb {...breadcrumbs} links={truncatedBreadcrumbs} />}
       contentRight={
         suffix != null ? <Flex className={"flex-row-reverse items-center gap-3"}>{suffix}</Flex> : undefined

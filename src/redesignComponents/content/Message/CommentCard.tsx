@@ -106,7 +106,7 @@ const CommentCard: FC<CommentCardProps> = ({
 
   if (isEmpty) {
     return (
-      <Flex className="bg-theme-neutral-100 items-center gap-3 px-6 py-5">
+      <Flex className="items-center gap-3 bg-theme-neutral-100 px-6 py-5">
         <CommentIcon color="neutral.600" boxSize={5} />
         <Text textStyle="600-bold" color="neutral.900">
           {t("No comments yet.")}
@@ -118,7 +118,7 @@ const CommentCard: FC<CommentCardProps> = ({
   return (
     <Flex
       className={twMerge(
-        "bg-theme-neutral-100 flex-col gap-2 px-6 py-5",
+        "flex-col gap-2 bg-theme-neutral-100 px-6 py-5",
         isCurrentUser && "bg-theme-primary-100",
         className
       )}
@@ -139,7 +139,7 @@ const CommentCard: FC<CommentCardProps> = ({
             {!isCurrentUser && showUnreadIcon && (
               <IconButton
                 variant="borderless"
-                className="hover:!bg-theme-primary-500/20 !h-6 !w-6 !bg-transparent"
+                className="!h-6 !w-6 !bg-transparent hover:!bg-theme-primary-500/20"
                 icon={<UnreadIcon color="neutral.900" boxSize={4} />}
                 onClick={onMarkRead}
                 aria-label={t("Mark as read")}
@@ -152,7 +152,7 @@ const CommentCard: FC<CommentCardProps> = ({
                 customTrigger={
                   <IconButton
                     variant="borderless"
-                    className="hover:!bg-theme-primary-500/20 !h-6 !w-6 !bg-transparent"
+                    className="!h-6 !w-6 !bg-transparent hover:!bg-theme-primary-500/20"
                     icon={<MoreVertIcon color="primary.800" boxSize={4} />}
                   />
                 }
@@ -177,7 +177,7 @@ const CommentCard: FC<CommentCardProps> = ({
                   width={170}
                   height={140}
                   unoptimized
-                  className="border-theme-neutral-300 h-[8.75rem] w-[10.625rem] rounded border object-cover"
+                  className="h-[8.75rem] w-[10.625rem] rounded border border-theme-neutral-300 object-cover"
                 />
               ))}
             </Flex>

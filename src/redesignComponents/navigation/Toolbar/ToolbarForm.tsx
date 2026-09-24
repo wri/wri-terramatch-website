@@ -26,13 +26,13 @@ const ToolbarForm: FC<ToolbarFormProps> = ({
           {primaryButtonProps != null && <Button {...primaryButtonProps} variant="primary" />}
           {secondaryButtonProps != null && (
             <>
-              <Box className="bg-theme-neutral-300 h-4 w-[0.0625rem]" />
+              <Box className="h-4 w-[0.0625rem] bg-theme-neutral-300" />
               <Button {...secondaryButtonProps} variant="secondary" />
             </>
           )}
           {tertiaryButtonProps != null && (
             <>
-              <Box className="bg-theme-neutral-300 h-4 w-[0.0625rem]" />
+              <Box className="h-4 w-[0.0625rem] bg-theme-neutral-300" />
               <Button {...tertiaryButtonProps} variant="borderless" />
             </>
           )}

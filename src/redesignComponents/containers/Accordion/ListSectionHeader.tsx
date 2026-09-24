@@ -44,11 +44,13 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   const isCaptionLink = captionHref != null;
   const resolvedIcon =
     icon ??
-    (level === "top-level"
-      ? open
-        ? <FolderOpenIcon boxSize={5} color="primary.600" />
-        : <FolderIcon boxSize={5} color="primary.300" />
-      : null);
+    (level === "top-level" ? (
+      open ? (
+        <FolderOpenIcon boxSize={5} color="primary.600" />
+      ) : (
+        <FolderIcon boxSize={5} color="primary.300" />
+      )
+    ) : null);
 
   const router = useRouter();
 
