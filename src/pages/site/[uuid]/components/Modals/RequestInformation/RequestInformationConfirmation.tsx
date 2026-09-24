@@ -3,8 +3,7 @@ import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useState } from "react";
 
 import { useMyUser } from "@/connections/User";
-import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
-import Modal from "@/redesignComponents/containers/Modal/Modal";
+import ModalConfirmation from "@/redesignComponents/containers/Modal/ModalConfirmation";
 import CommentInput from "@/redesignComponents/content/Message/CommentInput";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
@@ -39,10 +38,6 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
     }
   }, [open]);
 
-  const handleClose = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
-
   const handleConfirm = useCallback(async () => {
     if (onRequestInformation == null || isCommentMissing) {
       return;
@@ -57,13 +52,14 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
   }, [comment, isCommentMissing, onRequestInformation, onOpenChange]);
 
   return (
-    <Modal
+    <ModalConfirmation
       modal={false}
       open={open}
-      onClose={handleClose}
+      onOpenChange={onOpenChange}
       size="large"
       contentPadding={false}
-      header={<b className="text-theme-neutral-800">{t("Request information?")}</b>}
+      title={t("Request information?")}
+      contentLayout="custom"
       content={
         <Flex className="flex-col gap-4">
           <Box px={4} pt={4}>
@@ -104,25 +100,13 @@ const RequestInformationConfirmation: FC<RequestInformationConfirmationProps> = 
           </Box>
         </Flex>
       }
-      footer={
-        <ButtonGroup
-          borderColor="warning.300"
-          buttons={[
-            {
-              id: "cancel",
-              variant: "secondary",
-              children: t("Cancel"),
-              onClick: handleClose
-            },
-            {
-              id: "confirm",
-              children: t("Request Information"),
-              disabled: isSaving || isCommentMissing,
-              onClick: () => void handleConfirm()
-            }
-          ]}
-        />
-      }
+      confirmButton={{
+        id: "confirm",
+        children: t("Request Information"),
+        disabled: isSaving || isCommentMissing,
+        onClick: () => void handleConfirm()
+      }}
+      footerBorderColor="warning.300"
     />
   );
 };
