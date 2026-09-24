@@ -8,7 +8,8 @@ import {
   getUserAssociation,
   GetUserAssociationPathParams,
   GetUserAssociationQueryParams,
-  inviteOrganisationUser
+  inviteOrganisationUser,
+  updateUserAssociation
 } from "@/generated/v3/userService/userServiceComponents";
 import {
   OrganisationInviteRequestDto,
@@ -128,32 +129,38 @@ const organisationUserAssociationConnection = v3Resource("associatedUsers", getU
 
 export const useOrganisationUserAssociations = connectionHook(organisationUserAssociationConnection);
 
-export const bulkDeleteUserAssociations = async (projectUuid: string, uuids: string[]): Promise<void> => {
-  const failureSelector = deleteUserAssociation.fetchFailedSelector({});
-  const previousFailure = failureSelector(ApiSlice.currentState);
-  if (previousFailure != null) {
-    ApiSlice.clearPending(resolveUrl(deleteUserAssociation.url, {}), deleteUserAssociation.method);
-  }
-
-  deleteUserAssociation.fetch({ pathParams: { uuid: projectUuid, model: "projects" }, queryParams: { uuids } });
-
-  await new Promise<void>((resolve, reject) => {
-    const unsubscribe = ApiSlice.redux.subscribe(() => {
-      const currentState = ApiSlice.currentState;
-      const deleted = currentState.meta.deleted.associatedUsers ?? [];
-      const allDeleted = uuids.every(uuid => deleted.includes(uuid));
-      const failure = failureSelector(currentState);
-
-      if (allDeleted) {
-        unsubscribe();
-        resolve();
-      } else if (failure != null) {
-        unsubscribe();
-        reject(failure);
-      }
-    });
+export const bulkDeleteUserAssociations = async (
+  resourceUuid: string,
+  uuids: string[],
+  model: "projects" | "organisations" = "projects"
+): Promise<void> => {
+  await deleteUserAssociation.fetchAwait({
+    pathParams: { uuid: resourceUuid, model },
+    queryParams: { uuids }
   });
+  ApiSlice.pruneCache("associatedUsers");
+  ApiSlice.pruneIndex("associatedUsers", "");
+};
+
+export const updateOrganisationUserStatuses = async (
+  organisationUuid: string,
+  userUuids: string[],
+  status: "approved" | "rejected"
+): Promise<void> => {
+  let failure: unknown;
+  for (const userUuid of userUuids) {
+    try {
+      await updateUserAssociation.fetchAwait({
+        pathParams: { model: "organisations", uuid: organisationUuid, userUuid },
+        body: { data: { type: "associatedUsers", attributes: { status } } }
+      });
+    } catch (error) {
+      failure = error;
+      break;
+    }
+  }
 
   ApiSlice.pruneCache("associatedUsers");
   ApiSlice.pruneIndex("associatedUsers", "");
+  if (failure != null) throw failure;
 };
