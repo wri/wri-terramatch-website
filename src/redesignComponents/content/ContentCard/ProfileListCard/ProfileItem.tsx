@@ -6,7 +6,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { MessagesIcon } from "@/redesignComponents/foundations/Icons";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
 
-import { IProfile } from "./ProfileListCard";
+import type { IProfile } from "./ProfileListCard";
 
 interface ProfileProps {
   profile: IProfile;
@@ -17,11 +17,11 @@ interface ProfileProps {
 const ProfileItem: FC<ProfileProps> = ({ profile, onProfileClick, ...props }) => {
   const t = useT();
 
-  const canMessage = profile.isProjectManager && !!profile.email;
+  const canMessage = profile.isProjectManager === true && profile.email != null && profile.email.length > 0;
 
   const handleClick = useCallback(() => {
     onProfileClick(profile);
-    if (canMessage && profile.email) {
+    if (canMessage && profile.email != null) {
       const mailtoUrl = `mailto:${profile.email}?cc=info@terramatch.org`;
       window.location.href = mailtoUrl;
     }

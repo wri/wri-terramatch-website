@@ -3,6 +3,7 @@ import {
   type AlertProps as WriAlertBannerProps,
   AlertBanner as WriAlertBanner
 } from "@worldresources/wri-design-systems";
+import { FC } from "react";
 
 export interface AlertBannerProps extends WriAlertBannerProps {
   className?: string;
@@ -20,12 +21,10 @@ const INFORMATION_STYLES = {
   }
 };
 
-const AlertBanner = ({ className, ...props }: AlertBannerProps) => {
-  return (
-    <Box className={className} css={props.variant === "information" ? INFORMATION_STYLES : undefined}>
-      <WriAlertBanner width={props.width} {...props} />
-    </Box>
-  );
-};
+const AlertBanner: FC<AlertBannerProps> = ({ className, ...props }) => (
+  <Box className={className} css={props.variant === "information" ? INFORMATION_STYLES : undefined}>
+    <WriAlertBanner width={props.width} {...props} />
+  </Box>
+);
 
 export default AlertBanner;

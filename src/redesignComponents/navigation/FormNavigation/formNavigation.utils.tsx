@@ -1,3 +1,4 @@
+import { Text } from "@chakra-ui/react";
 import classNames from "classnames";
 import { ReactNode } from "react";
 
@@ -11,20 +12,6 @@ export const getBadgeClasses = (type: TabType, isSelected: boolean): string => {
     [NAVIGATION_CLASSES.badge.available]: type === "available",
     [NAVIGATION_CLASSES.badge.disabled]: type === "disabled",
     [NAVIGATION_CLASSES.badge.error]: type === "error"
-  });
-};
-
-export const getLabelClasses = (isSelected: boolean): string => {
-  return classNames({
-    [NAVIGATION_CLASSES.label.default]: !isSelected,
-    [NAVIGATION_CLASSES.label.selected]: isSelected
-  });
-};
-
-export const getNumberClasses = (type: TabType, isSelected: boolean): string => {
-  return classNames(NAVIGATION_CLASSES.number.base, {
-    [NAVIGATION_CLASSES.number.selected]: isSelected,
-    [NAVIGATION_CLASSES.number.default]: type === "available" || type === "disabled"
   });
 };
 
@@ -63,7 +50,11 @@ export const getBadgeContent = (
   isSelected: boolean = false,
   showNumberForActive: boolean = false
 ): ReactNode => {
-  const numberBadge = <div className={getNumberClasses(type, isSelected)}>{index}</div>;
+  const numberBadge = (
+    <Text textStyle="500-bold" color={isSelected ? "primary.800" : "neutral.700"}>
+      {index}
+    </Text>
+  );
 
   if (type === "error") {
     return <InformationRequiredSimpleIcon boxSize={4} />;

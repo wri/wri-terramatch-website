@@ -1,4 +1,4 @@
-import { CollapsibleRoot, CollapsibleTrigger } from "@chakra-ui/react";
+import { Box, Button, CollapsibleRoot, CollapsibleTrigger, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
@@ -20,13 +20,17 @@ export const SidebarToggle: FC<SidebarToggleProps> = ({ isHidden, onToggle }) =>
   return (
     <CollapsibleRoot onOpenChange={onToggle}>
       <CollapsibleTriggerAsChild asChild>
-        <button type="button" className="flex items-center gap-2">
-          <div>{isHidden ? <ChevronRightIcon /> : <ChevronDownIcon />}</div>
-          <div className="ds-tab-label">
-            <p>{isHidden ? t("Show") : t("Hide")}</p>
-            <p>{t("Sidebar")}</p>
-          </div>
-        </button>
+        <Button type="button" className="flex items-center gap-2">
+          <Box>{isHidden ? <ChevronRightIcon /> : <ChevronDownIcon />}</Box>
+          <Box className="ds-tab-label">
+            <Text textStyle="400" color="primary.900">
+              {isHidden ? t("Show") : t("Hide")}
+            </Text>
+            <Text textStyle="400" color="primary.900">
+              {t("Sidebar")}
+            </Text>
+          </Box>
+        </Button>
       </CollapsibleTriggerAsChild>
     </CollapsibleRoot>
   );

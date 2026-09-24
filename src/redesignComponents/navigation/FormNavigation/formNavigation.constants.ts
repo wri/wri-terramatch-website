@@ -41,14 +41,5 @@ export const NAVIGATION_CLASSES = {
       "border-theme-neutral-300 text-theme-neutral-700 group-hover:bg-theme-neutral-300 bg-theme-neutral-300 group-active:bg-theme-neutral-300",
     error:
       "border-theme-error-300 bg-theme-error-100 text-theme-error-500 group-hover:bg-theme-error-150 group-active:bg-theme-error-300"
-  },
-  label: {
-    default: "text-16-light text-theme-neutral-700",
-    selected: "text-16-bold text-theme-primary-900 font-bold"
-  },
-  number: {
-    base: "text-18-bold leading-[normal]",
-    selected: "text-theme-primary-800",
-    default: "text-theme-neutral-700"
   }
 } as const;

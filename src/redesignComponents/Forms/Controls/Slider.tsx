@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { type SystemStyleObject, Box } from "@chakra-ui/react";
 import { Slider as WriSlider } from "@worldresources/wri-design-systems";
 import type { ComponentProps } from "react";
 import { FC } from "react";
@@ -14,7 +14,7 @@ const centeredSliderMarkerStyles = {
 };
 
 interface SliderProps extends ComponentProps<typeof WriSlider> {
-  css?: any;
+  css?: SystemStyleObject;
   className?: string;
 }
 

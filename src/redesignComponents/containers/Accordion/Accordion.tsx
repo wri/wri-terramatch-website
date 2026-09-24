@@ -48,8 +48,7 @@ const variantStyles = {
       alignItems: "center",
       justifyContent: "space-between",
       borderRadius:
-        "var(--Border-Radius-300, 0.25rem) var(--Border-Radius-300, 0.25rem) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
-      borderTop: "var(--Border-Width-300, 0.25rem) solid var(--Primary-500, #78CAED)"
+        "var(--Border-Radius-300, 0.25rem) var(--Border-Radius-300, 0.25rem) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)"
     },
     header: {
       gap: 2
@@ -113,6 +112,15 @@ const Accordion: FC<AccordionProps> = ({
   const isOpen = isControlled ? open : uncontrolledOpen;
   const onOpenChangeRef = useRef(onOpenChange);
   onOpenChangeRef.current = onOpenChange;
+  const headerContainerStyles =
+    variant === "tertiary"
+      ? {
+          ...container,
+          borderTopWidth: "0.25rem",
+          borderTopStyle: "solid" as const,
+          borderTopColor: isOpen ? "primary.500" : "primary.300"
+        }
+      : container;
 
   const setIsOpen = useCallback(
     (nextOpen: boolean) => {
@@ -160,7 +168,6 @@ const Accordion: FC<AccordionProps> = ({
               "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
                 borderRadius:
                   "var(--Border-Radius-300, 0.25rem) var(--Border-Radius-300, 0.25rem) var(--Border-Radius-100, 0) var(--Border-Radius-100, 0)",
-                borderTop: "var(--Border-Width-300, 0.25rem) solid var(--Primary-500, #78CAED)",
                 background: "var(--Primary-100, #F7FBFD)"
               }
             }
@@ -168,7 +175,7 @@ const Accordion: FC<AccordionProps> = ({
         ...(variant === "quaternary"
           ? {
               "& [data-scope='accordion'][data-part='item'][data-state='open'] > [data-accordion-header]": {
-                borderBottom: "var(--Border-Width-100, 0.0625rem) solid var(--Neutrals-300, #E7E6E6) !important",
+                borderBottom: "var(--Border-Width-100, 0.0625rem) solid var(--Neutrals-300) !important",
                 borderTop: "none !important",
                 background: "neutral.100 !important"
               }
@@ -178,7 +185,7 @@ const Accordion: FC<AccordionProps> = ({
     >
       <AccordionChakra.Root multiple collapsible value={isOpen ? [ACCORDION_ITEM_VALUE] : []}>
         <AccordionChakra.Item value={ACCORDION_ITEM_VALUE}>
-          <Flex {...container} gap={4} className={classNameHeader} alignItems="center" data-accordion-header="">
+          <Flex {...headerContainerStyles} gap={4} className={classNameHeader} alignItems="center" data-accordion-header="">
             <AccordionChakra.ItemTrigger
               onPointerDown={handleTriggerPointerDown}
               onClick={handleTriggerClick}

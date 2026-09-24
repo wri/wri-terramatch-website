@@ -4,7 +4,7 @@ import type { ElementType } from "react";
 
 import {
   AgriculturalLandIcon,
-  AgroforestyIcon,
+  AgroforestryIcon,
   ApplicationsIcon,
   AreaHectaresCircleIcon,
   AreaHectaresIcon,
@@ -142,7 +142,7 @@ const DATA_VISUALISATION_ICONS: IconEntry[] = [
 ];
 
 const RESTORATION_AND_LAND_ICONS: IconEntry[] = [
-  { name: "Agroforesty", Icon: AgroforestyIcon },
+  { name: "Agroforestry", Icon: AgroforestryIcon },
   { name: "Agricultural Land", Icon: AgriculturalLandIcon },
   { name: "Assisted Natural Regen", Icon: AssistedNaturalRegenIcon },
   { name: "Direct Seeding", Icon: DirectSeedingIcon },

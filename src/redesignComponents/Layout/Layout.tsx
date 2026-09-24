@@ -1,5 +1,6 @@
+import { Box, Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { FC, PropsWithChildren, useState } from "react";
 
 import { UserIcon } from "../foundations/Icons/Function/UserIcon";
 import { DashboardIcon } from "../foundations/Icons/NavigationSections/DashboardIcon";
@@ -17,22 +18,23 @@ import InlineMessage from "../status/InlineMessage/InlineMessage";
 import { LayoutShellProvider, useLayoutShell } from "./LayoutShell.provider";
 
 // Temporary admin-review shell: sidebar links, labels, and notification counts are design placeholders.
-function LayoutContent({ children }: { children: React.ReactNode }) {
+const LayoutContent: FC<PropsWithChildren> = ({ children }) => {
   const [isWarningVisible, setIsWarningVisible] = useState(true);
   const { isSidebarCollapseDisabled } = useLayoutShell();
   const t = useT();
 
   return (
-    <div className="flex h-screen w-full flex-col">
-      <header className="fixed inset-x-0 top-0 z-50 h-[3rem]">
+    <Flex height="100vh" width="100%" flexDirection="column">
+      <Box as="header" className="fixed inset-x-0 top-0 z-50 h-[3rem]">
         <Navbar />
-      </header>
-      <div className="flex min-h-0 overflow-hidden pt-[3rem]">
+      </Box>
+      <Flex className="min-h-0 overflow-hidden pt-[3rem]">
         <SideNavigation
           collapsed={true}
           isCollapsedDisabled={isSidebarCollapseDisabled}
           groups={[
             {
+              id: "communication",
               links: [
                 {
                   href: "#",
@@ -47,6 +49,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
               ]
             },
             {
+              id: "management",
               links: [
                 {
                   href: "#",
@@ -93,7 +96,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
           ]}
           title="Management Panel"
         />
-        <main className="flex min-h-0 flex-[1_1_0] flex-col overflow-auto">
+        <Flex as="main" className="min-h-0 flex-[1_1_0] flex-col overflow-auto">
           {isWarningVisible && (
             <InlineMessage
               className="!w-full"
@@ -105,20 +108,20 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
               size="full-width"
               actionLabel={t("Close")}
               onActionClick={() => setIsWarningVisible(false)}
-              isButtonRight={true}
+              isButtonRight
             />
           )}
           {children}
-        </main>
-      </div>
-    </div>
+        </Flex>
+      </Flex>
+    </Flex>
   );
-}
+};
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <LayoutShellProvider>
-      <LayoutContent>{children}</LayoutContent>
-    </LayoutShellProvider>
-  );
-}
+const Layout: FC<PropsWithChildren> = ({ children }) => (
+  <LayoutShellProvider>
+    <LayoutContent>{children}</LayoutContent>
+  </LayoutShellProvider>
+);
+
+export default Layout;

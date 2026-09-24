@@ -1,14 +1,15 @@
 import { IconButton as WriIconButton } from "@worldresources/wri-design-systems";
-import { FC } from "react";
+import { FC, MouseEventHandler, ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface IconButtonProps {
-  icon: React.ReactNode;
-  disabled?: boolean;
-  onClick?: () => void;
-  variant?: "primary" | "secondary" | "borderless";
-  size?: "default" | "small";
+  "aria-label"?: string;
   className?: string;
+  disabled?: boolean;
+  icon: ReactNode;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  size?: "default" | "small";
+  variant?: "primary" | "secondary" | "borderless";
 }
 
 const IconButton: FC<IconButtonProps> = ({
@@ -26,7 +27,7 @@ const IconButton: FC<IconButtonProps> = ({
       disabled={disabled}
       onClick={onClick}
       {...props}
-      className={twMerge("h-6 w-6 rounded-sm hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40", className)}
+      className={twMerge("hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40 h-6 w-6 rounded-sm", className)}
     />
   );
 };
