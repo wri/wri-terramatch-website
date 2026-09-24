@@ -18,6 +18,7 @@ import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
+import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner/ProjectBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -26,7 +27,6 @@ import ResponsiveTypography from "@/styles/ResponsiveTypography";
 import InviteMonitoringPartnerModal from "./components/InviteMonitoringPartnerModal";
 import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
-import ProgressReportTab from "./tabs/ProgressReport";
 import TeamMembersTab from "./tabs/TeamMembers";
 
 type TabItem = {
@@ -45,7 +45,7 @@ export type SuffixButtonConfig = {
   labelKey: string;
 };
 
-const SUFFIX_VIEW_KEYS = ["reporting-tasks", "sites", "nurseries"];
+const SUFFIX_VIEW_KEYS = ["sites", "nurseries"];
 
 const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const t = useT();
@@ -116,7 +116,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     if (!activeSuffixView) return null;
 
     const viewMap: Record<string, ReactElement> = {
-      "reporting-tasks": <ProgressReportTab projectUUID={project.uuid} />,
       sites: <ProjectSitesTab project={project} />,
       nurseries: <ProjectNurseriesTab project={project} />
     };
@@ -126,7 +125,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
 
   const suffixButtons: SuffixButtonConfig[] = useMemo(
     () => [
-      { key: "reporting-tasks", labelKey: "Reports" },
+      { key: "reports", labelKey: "Reports" },
       { key: "sites", labelKey: "Sites" },
       ...(hideNurseries ? [] : [{ key: "nurseries", labelKey: "Nurseries" }])
     ],
@@ -162,7 +161,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           ...(activeSuffixView
             ? [
                 {
-                  label: t(activeSuffixView === "reporting-tasks" ? "Reports" : activeSuffixView),
+                  label: t(activeSuffixView),
                   link: `/project/${project?.uuid}?tab=${activeSuffixView}`
                 }
               ]
@@ -178,11 +177,11 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
                   size="small"
                   className={`underline underline-offset-2 ${activeSuffixView === button.key ? "font-semibold" : ""}`}
                   onClick={() => {
-                    if (button.key === "sites") {
-                      void router.push(`/site?project=${project.uuid}`);
-                      return;
+                    if (button.key === "reports") {
+                      void router.push(getReportsIndexUrl("project", project.uuid));
+                    } else {
+                      navigateToTab(button.key);
                     }
-                    navigateToTab(button.key);
                   }}
                 >
                   {t(button.labelKey)}

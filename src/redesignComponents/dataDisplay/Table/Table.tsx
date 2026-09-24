@@ -83,12 +83,12 @@ const Table = <T extends BaseRow>({
   selectedRows: controlledSelectedRows,
   onRowSelected: controlledOnRowSelected,
   onAllItemsSelected: controlledOnAllItemsSelected,
-  restoreRowId,
-  onRowRestored,
   onPageChange: controlledOnPageChange,
   onPageSizeChange: controlledOnPageSizeChange,
   onSortChange,
-  currentPage: controlledCurrentPage
+  currentPage: controlledCurrentPage,
+  restoreRowId,
+  onRowRestored
 }: TableProps<T>) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const didScrollRestoreRef = useRef(false);

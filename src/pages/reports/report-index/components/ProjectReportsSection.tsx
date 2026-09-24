@@ -1,0 +1,106 @@
+import { useT } from "@transifex/react";
+import { useEffect, useMemo, useState } from "react";
+
+import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
+import ListSectionHeader from "@/redesignComponents/containers/Accordion/ListSectionHeader";
+import { FolderIcon, FolderOpenIcon } from "@/redesignComponents/foundations/Icons";
+import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
+
+import { ReportsIndexPeriod, ReportsIndexProjectSection } from "../reportIndex.types";
+import { getReportsRequiringAttention } from "../reportIndex.utils";
+import ReportingPeriodSection from "./ReportingPeriodSection";
+
+type ProjectReportsSectionProps = {
+  section: ReportsIndexProjectSection;
+  unfilteredPeriods?: ReportsIndexPeriod[];
+  defaultOpen?: boolean;
+  metricsReady?: boolean;
+  hasReportSubset?: boolean;
+  indexHref?: string;
+  expandForPeriodFilter?: boolean;
+  restoreSectionId?: string;
+  restorePeriodId?: string;
+  restoreReportId?: string;
+  onRowRestored?: () => void;
+};
+
+const ProjectReportsSection = ({
+  section,
+  unfilteredPeriods,
+  defaultOpen = false,
+  metricsReady = true,
+  hasReportSubset = false,
+  indexHref,
+  expandForPeriodFilter = false,
+  restoreSectionId,
+  restorePeriodId,
+  restoreReportId,
+  onRowRestored
+}: ProjectReportsSectionProps) => {
+  const t = useT();
+  const [open, setOpen] = useState(restoreSectionId != null ? section.id === restoreSectionId : defaultOpen);
+
+  useEffect(() => {
+    if (expandForPeriodFilter) {
+      setOpen(true);
+    }
+  }, [expandForPeriodFilter]);
+
+  const attentionCount = useMemo(
+    () => section.periods.reduce((total, period) => total + getReportsRequiringAttention(period.reports), 0),
+    [section.periods]
+  );
+
+  return (
+    <Accordion
+      variant="tertiary"
+      open={open}
+      onOpenChange={setOpen}
+      className="overflow-hidden rounded bg-theme-neutral-100"
+      classNameHeader="!mb-0"
+      header={
+        <ListSectionHeader
+          level="top-level"
+          title={section.name ?? t("Project")}
+          titleHref={`/project/${section.id}`}
+          caption={section.organisationName ?? ""}
+          icon={
+            open ? (
+              <FolderOpenIcon minWidth={5} width={5} height={"auto"} color="primary.600" />
+            ) : (
+              <FolderIcon minWidth={5} width={5} height={"auto"} color="neutral.400" />
+            )
+          }
+          statusLabels={
+            attentionCount > 0 ? (
+              <TextBadge>{t("{count} Require Attention", { count: attentionCount })}</TextBadge>
+            ) : null
+          }
+        />
+      }
+    >
+      <div className="space-y-0.5 bg-theme-neutral-200 pt-0.5">
+        {open
+          ? section.periods.map((period, index) => (
+              <ReportingPeriodSection
+                key={period.id}
+                period={period}
+                allPeriodReports={unfilteredPeriods?.find(item => item.id === period.id)?.reports}
+                defaultOpen={
+                  restorePeriodId != null ? period.id === restorePeriodId : expandForPeriodFilter || index === 0
+                }
+                expandForPeriodFilter={expandForPeriodFilter}
+                metricsReady={metricsReady}
+                hasReportSubset={hasReportSubset}
+                indexHref={indexHref}
+                restoreReportId={period.id === restorePeriodId ? restoreReportId : undefined}
+                onRowRestored={onRowRestored}
+              />
+            ))
+          : null}
+      </div>
+    </Accordion>
+  );
+};
+
+export default ProjectReportsSection;

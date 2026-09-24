@@ -3,11 +3,15 @@ import { useCallback, useMemo } from "react";
 import { ReportEntityType } from "@/utils/analytics/reportAnalytics";
 import {
   IndexBulkActionType,
+  IndexDateDimension,
   IndexFilterField,
+  IndexPeriodStatus,
   IndexRowActionType,
   IndexSearchScope,
   IndexSortField,
   resolveIndexMixedEligibility,
+  trackAddDisturbanceReportClicked,
+  trackAttentionCountDisplayed,
   trackIndexBulkActionSubmitted,
   trackIndexFilterApplied,
   trackIndexRowActionClicked,
@@ -20,7 +24,12 @@ import {
 
 export const useReportsIndexAnalytics = () => {
   const trackFilterApplied = useCallback(
-    (params: { filterField: IndexFilterField; filterValue: string; isDefaultFilter: boolean }) => {
+    (params: {
+      filterField: IndexFilterField;
+      filterValue: string;
+      isDefaultFilter: boolean;
+      dateDimension?: IndexDateDimension;
+    }) => {
       trackIndexFilterApplied(params);
     },
     []
@@ -66,6 +75,14 @@ export const useReportsIndexAnalytics = () => {
     trackReportsIndexAccordionExpanded(params);
   }, []);
 
+  const trackAttentionDisplayed = useCallback((params: { attentionCount: number; periodStatus: IndexPeriodStatus }) => {
+    trackAttentionCountDisplayed(params);
+  }, []);
+
+  const trackDisturbanceReportClicked = useCallback(() => {
+    trackAddDisturbanceReportClicked();
+  }, []);
+
   return useMemo(
     () => ({
       trackFilterApplied,
@@ -76,11 +93,15 @@ export const useReportsIndexAnalytics = () => {
       trackBulkActionSubmitted,
       trackReportOpened,
       trackAccordionExpanded,
+      trackAttentionDisplayed,
+      trackDisturbanceReportClicked,
       resolveIndexMixedEligibility
     }),
     [
       trackAccordionExpanded,
+      trackAttentionDisplayed,
       trackBulkActionSubmitted,
+      trackDisturbanceReportClicked,
       trackFilterApplied,
       trackReportOpened,
       trackRowActionClicked,

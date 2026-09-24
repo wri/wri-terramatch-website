@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import { sortByDate } from "@/utils/sort";
 
 import { IconNames } from "../../Icon/Icon";
@@ -41,13 +42,12 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
       const target = action.target as ReportActionTarget;
       const status = getEntityCombinedStatus(target);
       const projectUuid = getProjectUuid(target);
-      const taskUuid = getTaskUuid(target);
 
       const dueText = target?.dueAt != null ? t("<strong>Due:</strong> {date}", { date: format(target.dueAt) }) : "";
 
       const ctaLink =
-        status?.includes("due") && projectUuid && taskUuid
-          ? `/project/${projectUuid}/reporting-task/${taskUuid}`
+        status?.includes("due") && projectUuid
+          ? getReportsIndexUrl("project", projectUuid)
           : getEntityDetailPageLink("project-reports", target?.uuid ?? "");
 
       cardsWithSort.push({
@@ -106,7 +106,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
 
         const dueText = earliestDue != null ? t("<strong>Due:</strong> {date}", { date: format(earliestDue) }) : "";
 
-        const ctaLink = `/project/${projectUuid}/reporting-task/${taskUuid}`;
+        const ctaLink = getReportsIndexUrl("project", projectUuid);
 
         cardsWithSort.push({
           sortAt: maxUpdatedAt,

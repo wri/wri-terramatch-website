@@ -32,12 +32,12 @@ describe("reportAnalytics", () => {
       expect(resolveReportEntityType("siteReports")).toBe("site-report");
       expect(resolveReportEntityType("nurseryReports")).toBe("nursery-report");
       expect(resolveReportEntityType("financialReports")).toBe("financial-report");
+      expect(resolveReportEntityType("disturbanceReports")).toBe("disturbance-report");
+      expect(resolveReportEntityType("srpReports")).toBe("srp-report");
     });
 
     it("returns null for non-report models", () => {
       expect(resolveReportEntityType("projects")).toBeNull();
-      expect(resolveReportEntityType("srpReports")).toBeNull();
-      expect(resolveReportEntityType("disturbanceReports")).toBeNull();
     });
   });
 
@@ -45,6 +45,8 @@ describe("reportAnalytics", () => {
     it("maps kebab-case report entity names", () => {
       expect(resolveReportEntityTypeFromEntityName("project-reports")).toBe("project-report");
       expect(resolveReportEntityTypeFromEntityName("financial-reports")).toBe("financial-report");
+      expect(resolveReportEntityTypeFromEntityName("disturbance-reports")).toBe("disturbance-report");
+      expect(resolveReportEntityTypeFromEntityName("srp-reports")).toBe("srp-report");
     });
   });
 

@@ -1,6 +1,11 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect } from "react";
 
-import { trackMetricsCardAnalyticsEvent, trackMetricsCardViewedOnce } from "@/utils/analytics/metricsCardAnalytics";
+import {
+  MetricsCardFramework,
+  MetricsCardScope,
+  trackMetricsCardAnalyticsEvent,
+  trackMetricsCardViewedOnce
+} from "@/utils/analytics/metricsCardAnalytics";
 import { PAGE_CONTEXT_REPORT_OVERVIEW, PageContext } from "@/utils/analytics/pageContext";
 import { MetricsCardEntityType } from "@/utils/ga4";
 
@@ -18,17 +23,21 @@ export type HighLevelMetricsCardProps = {
   entityId: string;
   children: ReactNode;
   pageContext?: PageContext;
+  framework?: MetricsCardFramework;
+  metricScope?: MetricsCardScope;
 };
 
 const HighLevelMetricsCard: FC<HighLevelMetricsCardProps> = ({
   entityType,
   entityId,
   children,
-  pageContext = PAGE_CONTEXT_REPORT_OVERVIEW
+  pageContext = PAGE_CONTEXT_REPORT_OVERVIEW,
+  framework,
+  metricScope
 }) => {
   useEffect(() => {
-    trackMetricsCardViewedOnce({ entityType, entityId, pageContext });
-  }, [entityId, entityType, pageContext]);
+    trackMetricsCardViewedOnce({ entityType, entityId, pageContext, framework, metricScope });
+  }, [entityId, entityType, framework, metricScope, pageContext]);
 
   const onTooltipEngaged = useCallback(
     (metricLabel: string) => {
@@ -36,10 +45,12 @@ const HighLevelMetricsCard: FC<HighLevelMetricsCardProps> = ({
         entityType,
         entityId,
         metricLabel,
-        pageContext
+        pageContext,
+        framework,
+        metricScope
       });
     },
-    [entityId, entityType, pageContext]
+    [entityId, entityType, framework, metricScope, pageContext]
   );
 
   return (

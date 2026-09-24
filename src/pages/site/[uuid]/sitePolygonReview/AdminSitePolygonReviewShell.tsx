@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { FC } from "react";
 
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
+import { getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
 import { SiteIcon } from "@/redesignComponents/foundations/Icons";
@@ -21,9 +21,7 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
   const siteUUID = router.query.uuid as string;
   const polygonReviewPath = `/site/${siteUUID}/polygon-review`;
 
-  const currentTab = (router.query.tab as string) ?? "polygons";
-  const isSuffixView = currentTab === "completed-tasks";
-  const activeTab = isSuffixView ? "polygons" : currentTab;
+  const activeTab = (router.query.tab as string) ?? "polygons";
 
   const tabItems = [
     {
@@ -32,8 +30,6 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
       body: <SitePolygonsWorkspace site={site} variant="adminReview" />
     }
   ];
-
-  const suffixContent = isSuffixView ? <SiteCompletedReportsTab site={site} /> : null;
 
   return (
     <Layout>
@@ -45,8 +41,7 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
             link: "/admin#/site?filter=%7B%7D&order=ASC&page=1&perPage=10&sort=",
             icon: <SiteIcon className="!text-theme-primary-900" />
           },
-          { label: site.name ?? "", link: `/admin#/site/${site.uuid}/show` },
-          ...(isSuffixView ? [{ label: t("Reports"), link: `${polygonReviewPath}?tab=completed-tasks` }] : [])
+          { label: site.name ?? "", link: `/admin#/site/${site.uuid}/show` }
         ]}
         suffix={
           <div className="flex gap-1.5">
@@ -63,7 +58,7 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
               variant="borderless"
               size="small"
               className="underline underline-offset-2"
-              onClick={() => router.push(`/admin#/site/${site.uuid}/show?tab=completed-tasks`)}
+              onClick={() => router.push(getReportsIndexUrl("site", site.uuid))}
             >
               {t("Site Reports")}
             </Button>
@@ -75,16 +70,14 @@ const AdminSitePolygonReviewShell: FC<AdminSitePolygonReviewShellProps> = ({ sit
               value: item.key,
               label: item.title
             })),
-            defaultValue: isSuffixView ? "__none__" : activeTab,
+            defaultValue: activeTab,
             onTabClick: (tabValue: string) => {
               void router.push(`${polygonReviewPath}?tab=${tabValue}`, undefined, { shallow: true });
             }
           }
         }}
       />
-      <div className="flex w-full min-w-0 flex-1">
-        {suffixContent ?? tabItems.find(item => item.key === activeTab)?.body}
-      </div>
+      <div className="flex w-full min-w-0 flex-1">{tabItems.find(item => item.key === activeTab)?.body}</div>
     </Layout>
   );
 };

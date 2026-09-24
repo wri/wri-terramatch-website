@@ -16,6 +16,39 @@ const nextConfig = {
   //Added "page.tsx", "page.ts" to get middleware.page.ts working
   // https://github.com/vercel/next.js/issues/38233#issuecomment-1172457237
   pageExtensions: ["tsx", "page.tsx", "page.ts"],
+  async redirects() {
+    return [
+      {
+        source: "/project/:uuid/reporting-task/:reportingTaskUUID",
+        destination: "/reports/report-index?source=project&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/project/:uuid",
+        has: [{ type: "query", key: "tab", value: "reporting-tasks" }],
+        destination: "/reports/report-index?source=project&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/site/:uuid",
+        has: [{ type: "query", key: "tab", value: "completed-tasks" }],
+        destination: "/reports/report-index?source=site&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/nursery/:uuid",
+        has: [{ type: "query", key: "tab", value: "completed-tasks" }],
+        destination: "/reports/report-index?source=nursery&uuid=:uuid",
+        permanent: true
+      },
+      {
+        source: "/site/:uuid/polygon-review",
+        has: [{ type: "query", key: "tab", value: "completed-tasks" }],
+        destination: "/reports/report-index?source=site&uuid=:uuid",
+        permanent: true
+      }
+    ];
+  },
   images: { domains: process.env.IMAGE_DOMAINS?.split(",") ?? ["s3-eu-west-1.amazonaws.com"] },
   // webpack5: true,
   webpack(config) {

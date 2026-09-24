@@ -23,12 +23,14 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
+import { getReportsIndexHrefFromQuery, getReportsIndexUrl } from "@/pages/reports/report-index/reportIndex.utils";
 import { EntityName } from "@/types/common";
 
 const getCallToAction = (
   entityName: FormEntity,
   entity: EntityFullDto | undefined,
-  t: typeof useT
+  t: typeof useT,
+  from: unknown
 ): IButtonProps[] | undefined => {
   if (entity == null) return undefined;
 
@@ -59,6 +61,9 @@ const getCallToAction = (
     }
     case "projectReports": {
       const report = entity as ProjectReportFullDto;
+      const reportsIndexHref =
+        getReportsIndexHrefFromQuery(from) ??
+        (report.projectUuid != null ? getReportsIndexUrl("project", report.projectUuid) : undefined);
       return [
         {
           variant: "secondary",
@@ -66,58 +71,85 @@ const getCallToAction = (
           href: getEntityDetailPageLink("project-reports", report.uuid)
         },
         {
-          children: t("Back to reporting tasks"),
-          href: `/project/${report.projectUuid}/reporting-task/${report.taskUuid}`
+          children: t("Back to reports"),
+          href: reportsIndexHref ?? `/project/${report.projectUuid}`
         }
       ];
     }
     case "siteReports": {
       const report = entity as SiteReportFullDto;
+      const reportsIndexHref =
+        getReportsIndexHrefFromQuery(from) ??
+        (report.siteUuid != null
+          ? getReportsIndexUrl("site", report.siteUuid)
+          : report.projectUuid != null
+          ? getReportsIndexUrl("project", report.projectUuid)
+          : undefined);
       return [
         { children: t("View Report"), href: getEntityDetailPageLink("site-reports", report.uuid) },
         {
-          children: t("Back to reporting tasks"),
-          href: `/project/${report.projectUuid}/reporting-task/${report.taskUuid}`
+          children: t("Back to reports"),
+          href: reportsIndexHref ?? `/project/${report.projectUuid}`
         }
       ];
     }
     case "nurseryReports": {
       const report = entity as NurseryReportFullDto;
+      const reportsIndexHref =
+        getReportsIndexHrefFromQuery(from) ??
+        (report.nurseryUuid != null
+          ? getReportsIndexUrl("nursery", report.nurseryUuid)
+          : report.projectUuid != null
+          ? getReportsIndexUrl("project", report.projectUuid)
+          : undefined);
       return [
         { children: t("View Report"), href: getEntityDetailPageLink("nursery-reports", report.uuid) },
         {
-          children: t("Back to reporting tasks"),
-          href: `/project/${report.projectUuid}/reporting-task/${report.taskUuid}`
+          children: t("Back to reports"),
+          href: reportsIndexHref ?? `/project/${report.projectUuid}`
         }
       ];
     }
     case "financialReports": {
       const report = entity as FinancialReportFullDto;
+      const reportsIndexHref =
+        getReportsIndexHrefFromQuery(from) ??
+        (report.organisationUuid != null ? `/organization/${report.organisationUuid}` : "/my-projects");
       return [
         { children: t("View Report"), href: getEntityDetailPageLink("financial-reports", report.uuid) },
         {
-          children: t("Back to organization"),
-          href: `/organization/${report.organisationUuid}?tab=financial_information`
+          children: t("Back to reports"),
+          href: reportsIndexHref
         }
       ];
     }
     case "disturbanceReports": {
       const report = entity as DisturbanceReportFullDto;
+      const reportsIndexHref =
+        getReportsIndexHrefFromQuery(from) ??
+        (report.projectUuid != null
+          ? getReportsIndexUrl("project", report.projectUuid, { tab: "additional-reports" })
+          : `/project/${report.projectUuid}`);
       return [
         { children: t("View Report"), href: getEntityDetailPageLink("disturbance-reports", report.uuid) },
         {
-          children: t("Back to project"),
-          href: `/project/${report.projectUuid}`
+          children: t("Back to reports"),
+          href: reportsIndexHref
         }
       ];
     }
     case "srpReports": {
       const report = entity as SrpReportFullDto;
+      const reportsIndexHref =
+        getReportsIndexHrefFromQuery(from) ??
+        (report.projectUuid != null
+          ? getReportsIndexUrl("project", report.projectUuid, { tab: "additional-reports" })
+          : `/project/${report.projectUuid}`);
       return [
         { children: t("View Report"), href: getEntityDetailPageLink("srp-reports", report.uuid) },
         {
-          children: t("Back to reporting tasks"),
-          href: `/project/${report.projectUuid}/reporting-task/${report.taskUuid}`
+          children: t("Back to reports"),
+          href: reportsIndexHref
         }
       ];
     }
@@ -134,7 +166,10 @@ const ConfirmPage = () => {
 
   const formEntity = v3EntityName(entityName) as FormEntity;
   const [entityLoaded, { data: entity }] = useFullEntity(formEntity, entityUUID);
-  const callToActions = useMemo(() => getCallToAction(formEntity, entity, t), [entity, formEntity, t]);
+  const callToActions = useMemo(
+    () => getCallToAction(formEntity, entity, t, router.query.from),
+    [entity, formEntity, router.query.from, t]
+  );
 
   return (
     <BackgroundLayout>
