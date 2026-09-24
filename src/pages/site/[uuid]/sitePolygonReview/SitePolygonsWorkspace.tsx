@@ -1,4 +1,3 @@
-import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -30,6 +29,7 @@ import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { SITE_POLYGON_TAB_HEADER_ID } from "@/pages/site/[uuid]/constants/sitePolygonMapSizing";
+import NoResults from "@/redesignComponents/content/NoResults/NoResults";
 import { HIDDEN_STICKY_COLUMN_EDGE_STYLES } from "@/redesignComponents/dataDisplay/Table/tableStyles";
 import type { SortColumn } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { useTableSelection } from "@/redesignComponents/dataDisplay/Table/useTableSelection";
@@ -893,12 +893,10 @@ const SitePolygonsWorkspaceContent: FC<SitePolygonsWorkspaceProps> = ({ site, va
           />
         )}
         {shouldShowNoResults ? (
-          <Box>
-            <Text textStyle="400-bold">{t("No results found")}</Text>
-            <Text textStyle="400">
-              {t("We couldn’t find any site areas matching your search. Try a different keyword.")}
-            </Text>
-          </Box>
+          <NoResults
+            title={t("No results found")}
+            description={t("We couldn’t find any site areas matching your search. Try a different keyword.")}
+          />
         ) : (
           <>
             {!isDeletedAuditView && (

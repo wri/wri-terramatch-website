@@ -75,6 +75,7 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
     jobsCreatedGoal: null,
     seedsGrownGoal: null,
     isTest: false,
+    isArchived: false,
     feedback: null,
     feedbackFields: null,
     cohort: null,

@@ -16,4 +16,5 @@ export type RadioOption = {
 export type RadioButtonGroupProps = RadioGroupProps & {
   options: RadioOption[];
   color?: string;
+  css?: any;
 };

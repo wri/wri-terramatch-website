@@ -19,6 +19,7 @@ export type TableColumn = {
   width?: string;
   cell?: (rowData: any) => React.ReactNode;
   sticky?: boolean;
+  sortValue?: (row: BaseRow) => string | number;
 };
 
 export type TableRenderRowContext = {
@@ -51,6 +52,8 @@ interface TableProps<T extends BaseRow> {
   selectedRows?: T[];
   onRowSelected?: (rowData: T, checked: boolean) => void;
   onAllItemsSelected?: (checked: boolean, visibleRows: T[]) => void;
+  restoreRowId?: string;
+  onRowRestored?: () => void;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
   onSortChange?: (sortColumn: SortColumn) => void;
@@ -80,12 +83,15 @@ const Table = <T extends BaseRow>({
   selectedRows: controlledSelectedRows,
   onRowSelected: controlledOnRowSelected,
   onAllItemsSelected: controlledOnAllItemsSelected,
+  restoreRowId,
+  onRowRestored,
   onPageChange: controlledOnPageChange,
   onPageSizeChange: controlledOnPageSizeChange,
   onSortChange,
   currentPage: controlledCurrentPage
 }: TableProps<T>) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const didScrollRestoreRef = useRef(false);
   const isServerPaginated = controlledOnPageChange != null && totalItems != null;
   const [paginationResetKey, setPaginationResetKey] = useState(0);
   const previousControlledPageRef = useRef(controlledCurrentPage);
@@ -97,7 +103,19 @@ const Table = <T extends BaseRow>({
   } = useTablePaginationState(DEFAULT_CURRENT_PAGE, initialPageSize);
   const currentPage = controlledCurrentPage ?? internalCurrentPage;
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
-  const { setSortColumn, sortedData } = useTableSorting(data);
+  const customSortKeys = useMemo(
+    () => new Set(columns.filter(column => column.sortValue != null).map(column => column.key)),
+    [columns]
+  );
+  const getSortValue = useCallback(
+    (row: T, key: string) => {
+      const column = columns.find(item => item.key === key);
+      if (column?.sortValue != null) return column.sortValue(row);
+      return (row as Record<string, unknown>)[key];
+    },
+    [columns]
+  );
+  const { setSortColumn, sortedData } = useTableSorting(data, getSortValue, customSortKeys);
   const {
     selectedRows: internalSelectedRows,
     handleRowSelected: internalHandleRowSelected,
@@ -172,6 +190,24 @@ const Table = <T extends BaseRow>({
     [controlledOnPageChange, isServerPaginated, onSortChange, setCurrentPage, setSortColumn]
   );
 
+  useLayoutEffect(() => {
+    if (restoreRowId == null || didScrollRestoreRef.current) return;
+    const index = sortedData.findIndex(row => String(row.id) === restoreRowId);
+    if (index < 0) return;
+
+    const targetPage = Math.floor(index / pageSize) + 1;
+    if (currentPage !== targetPage) {
+      setCurrentPage(targetPage);
+      return;
+    }
+
+    const row = wrapperRef.current?.querySelector(`[data-report-id="${restoreRowId}"]`);
+    if (row == null) return;
+    didScrollRestoreRef.current = true;
+    row.scrollIntoView({ block: "center", behavior: "auto" });
+    onRowRestored?.();
+  }, [currentPage, onRowRestored, pageSize, restoreRowId, setCurrentPage, sortedData]);
+
   const assignRef = useCallback((ref: Ref<HTMLDivElement> | undefined, node: HTMLDivElement | null) => {
     if (ref == null) {
       return;
@@ -206,11 +242,13 @@ const Table = <T extends BaseRow>({
 
   const resolvedColumns = useMemo<TableColumn[]>(
     () =>
-      columns.map(column =>
-        column.cell == null && customRenderDataCell != null
-          ? { ...column, cell: (rowData: T) => customRenderDataCell(rowData, column.key) }
-          : column
-      ),
+      columns.map(column => {
+        const withCell =
+          column.cell == null && customRenderDataCell != null
+            ? { ...column, cell: (rowData: T) => customRenderDataCell(rowData, column.key) }
+            : column;
+        return Object.fromEntries(Object.entries(withCell).filter(([key]) => key !== "sortValue")) as TableColumn;
+      }),
     [columns, customRenderDataCell]
   );
 
