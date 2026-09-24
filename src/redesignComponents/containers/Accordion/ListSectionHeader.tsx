@@ -44,7 +44,11 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   const isCaptionLink = captionHref != null;
   const resolvedIcon =
     icon ??
-    (open && level === "top-level" ? <FolderOpenIcon boxSize={5} color="primary.600" /> : <FolderIcon boxSize={5} color="primary.300" />);
+    (level === "top-level"
+      ? open
+        ? <FolderOpenIcon boxSize={5} color="primary.600" />
+        : <FolderIcon boxSize={5} color="primary.300" />
+      : null);
 
   const router = useRouter();
 
@@ -81,9 +85,11 @@ const ListSectionHeader: FC<ListSectionHeaderProps> = ({
   return (
     <Flex alignItems="center" justifyContent="space-between" width="100%" gap={3} className={className}>
       <Flex alignItems={level === "top-level" ? "flex-start" : "baseline"} gap={gap} minWidth={0} flex={1}>
-        <Box flexShrink={0} paddingTop={level === "top-level" ? 1 : 0}>
-          {resolvedIcon}
-        </Box>
+        {resolvedIcon != null && (
+          <Box flexShrink={0} paddingTop={level === "top-level" ? 1 : 0}>
+            {resolvedIcon}
+          </Box>
+        )}
         <Flex direction="column" minWidth={0} alignItems="flex-start">
           <Flex alignItems="center" gap={1} width="100%" minWidth={0}>
             {label && (
